@@ -37,7 +37,7 @@ file__make_usable_dir(
 
 typedef struct FILEUTIL_STATICS
 {
-#define N_SPECIAL_PATHS 3 /*std,net,exe*/
+#define N_SPECIAL_PATHS 4 /*std,net,exe,res*/
     PTSTR path[N_SPECIAL_PATHS]; /* alloc_block_tstr_set() */
 
     PTSTR search_path; /* alloc_block_tstr_set() */
@@ -633,10 +633,11 @@ extern STATUS
 file_find_on_path(
     _Out_writes_z_(elemof_buffer) PTSTR filename,
     _InVal_     U32 elemof_buffer,
+    _In_z_      PCTSTR path,
     _In_z_      PCTSTR srcfilename)
 {
-    S32 res = 0;
-    P_FILE_PATHENUM path;
+    STATUS status = STATUS_OK;
+    P_FILE_PATHENUM pathenum;
     PTSTR pathelem;
     U32 frt = file_reference_type(srcfilename);
 
@@ -660,12 +661,12 @@ file_find_on_path(
     {
         /* ALWAYS copy in! */
         tstr_xstrkpy(filename, elemof_buffer, srcfilename);
-        if((res = file_is_file(filename)) != 0)
-            return(res);
+        if(file_is_file(filename))
+            return(STATUS_DONE);
         srcfilename = file_leafname(srcfilename); /* SKS 21may96 continues the above hack */
     }
 
-    for(pathelem = file_path_element_first(&path, file_get_search_path()); NULL != pathelem; pathelem = file_path_element_next(&path))
+    for(pathelem = file_path_element_first(&pathenum, path); NULL != pathelem; pathelem = file_path_element_next(&pathenum))
     {
         if(file_is_dir(pathelem))
         {
@@ -681,16 +682,19 @@ file_find_on_path(
             } /*block*/
 #endif
 
-            if((res = file_is_file(filename)) != 0)
+            if(file_is_file(filename))
+            {
+                status = STATUS_DONE;
                 break;
+            }
         }
     }
 
-    file_path_element_close(&path);
+    file_path_element_close(&pathenum);
 
     trace_3(TRACE_MODULE_FILE, TEXT("file_find_on_path(%s) yields filename \")%s\" & %s"),
-            report_tstr(srcfilename), report_tstr(filename), report_boolstring(res > 0));
-    return(res);
+            report_tstr(srcfilename), report_tstr(filename), report_boolstring(status_done(status)));
+    return(status);
 }
 
 _Check_return_
@@ -698,17 +702,18 @@ extern STATUS
 file_find_on_path_or_relative(
     _Out_writes_z_(elemof_buffer) PTSTR filename,
     _InVal_     U32 elemof_buffer,
+    _In_z_      PCTSTR path,
     _In_z_      PCTSTR srcfilename,
     _In_opt_z_  PCTSTR currentfilename)
 {
-    S32 res = 0;
-    PTSTR tstr_path;
-    P_FILE_PATHENUM path;
+    STATUS status = STATUS_OK;
+    PTSTR combined_path;
+    P_FILE_PATHENUM pathenum;
     PTSTR pathelem;
     U32 frt;
 
     if(NULL == currentfilename)
-        return(file_find_on_path(filename, elemof_buffer, srcfilename));
+        return(file_find_on_path(filename, elemof_buffer, path, srcfilename));
 
     *filename = CH_NULL;
 
@@ -732,14 +737,14 @@ file_find_on_path_or_relative(
     {
         /* ALWAYS copy in! */
         tstr_xstrkpy(filename, elemof_buffer, srcfilename);
-        if((res = file_is_file(filename)) != 0)
-            return(res);
+        if(file_is_file(filename))
+            return(STATUS_DONE);
         srcfilename = file_leafname(srcfilename); /* SKS 21may96 continues the above hack */
     }
 
-    status_assert(file_combine_path(&tstr_path, currentfilename, file_get_search_path()));
+    status_assert(file_combine_path(&combined_path, currentfilename, path));
 
-    for(pathelem = file_path_element_first(&path, tstr_path); NULL != pathelem; pathelem = file_path_element_next(&path))
+    for(pathelem = file_path_element_first(&pathenum, combined_path); NULL != pathelem; pathelem = file_path_element_next(&pathenum))
     {
         if(file_is_dir(pathelem))
         {
@@ -756,18 +761,21 @@ file_find_on_path_or_relative(
             } /*block*/
 #endif
 
-            if((res = file_is_file(filename)) != 0)
+            if(file_is_file(filename))
+            {
+                status = STATUS_DONE;
                 break;
+            }
         }
     }
 
-    file_path_element_close(&path);
+    file_path_element_close(&pathenum);
 
-    tstr_clr(&tstr_path);
+    tstr_clr(&combined_path);
 
     trace_4(TRACE_MODULE_FILE, TEXT("file_find_on_path_or_relative(%s, %s) yields filename \")%s\" & %s"),
-            report_tstr(srcfilename), report_tstr(currentfilename), report_tstr(filename), report_boolstring(res > 0));
-    return(res);
+            report_tstr(srcfilename), report_tstr(currentfilename), report_tstr(filename), report_boolstring(status_done(status)));
+    return(status);
 }
 
 #if defined(UNUSED_KEEP_ALIVE) /* currently unused */
@@ -786,15 +794,16 @@ file_find_on_path_or_relative(
 
 _Check_return_
 extern STATUS
-file_find_dir_on_path(
+file_find_dir_on_path_or_relative(
     _Out_writes_z_(elemof_buffer) PTSTR filename,
     _InVal_     U32 elemof_buffer,
+    _In_z_      PCTSTR path,
     _In_z_      PCTSTR srcfilename,
     _In_opt_z_  PCTSTR currentfilename)
 {
-    S32 res = 0;
-    PTSTR tstr_path;
-    P_FILE_PATHENUM path;
+    STATUS status = STATUS_OK;
+    PTSTR combined_path;
+    P_FILE_PATHENUM pathenum;
     PTSTR pathelem;
 
     if(file_is_rooted(srcfilename))
@@ -803,26 +812,29 @@ file_find_dir_on_path(
         return(file_is_dir(filename));
     }
 
-    status_assert(file_combine_path(&tstr_path, currentfilename, file_get_search_path()));
+    status_assert(file_combine_path(&combined_path, currentfilename, path));
 
-    for(pathelem = file_path_element_first(&path, tstr_path); NULL != pathelem; pathelem = file_path_element_next(&path))
+    for(pathelem = file_path_element_first(&pathenum, combined_path); NULL != pathelem; pathelem = file_path_element_next(&pathenum))
     {
         if(file_is_dir(pathelem))
         {
             tstr_xstrkpy(filename, elemof_buffer, pathelem);
             tstr_xstrkat(filename, elemof_buffer, srcfilename);
 
-            if((res = file_is_dir(filename)) != 0)
+            if(file_is_dir(filename))
+            {
+                status = STATUS_DONE;
                 break;
+            }
         }
     }
 
-    file_path_element_close(&path); /* SKS 1.03 17mar93 */
+    file_path_element_close(&pathenum); /* SKS 1.03 17mar93 */
 
-    tstr_clr(&tstr_path);
+    tstr_clr(&combined_path);
 
-    trace_2(TRACE_MODULE_FILE, TEXT("file_find_dir_on_path() yields dirname \")%s\" & %s"), report_tstr(filename), report_boolstring(res > 0));
-    return(res);
+    trace_2(TRACE_MODULE_FILE, TEXT("file_find_dir_on_path() yields dirname \")%s\" & %s"), report_tstr(filename), report_boolstring(status_done(status)));
+    return(status);
 }
 
 #endif /* UNUSED_KEEP_ALIVE */
@@ -896,6 +908,20 @@ file_get_prefix(
 
     trace_1(TRACE_MODULE_FILE, TEXT("file_get_prefix yields %s"), destpath);
     return(*destpath ? destpath : NULL);
+}
+
+/******************************************************************************
+*
+* --out--
+*
+*   current path being used for resources
+*
+******************************************************************************/
+
+extern PCTSTR
+file_get_resources_path(void)
+{
+    return(fileutil_statics.path[FILE_PATH_RESOURCES]);
 }
 
 /******************************************************************************
@@ -1673,27 +1699,27 @@ file_path_set(
 /* loop over the places we've set up and build a full search path for those that need it */
 
 extern void
-file_build_path(void)
+file_build_paths(void)
 {
     TCHARZ full_path[BUF_MAX_PATHSTRING * 4];
     UINT i;
 
     full_path[0] = CH_NULL;
 
-    for(i = FILE_PATH_STANDARD; i <= FILE_PATH_EXECUTABLE; ++i)
+    for(i = FILE_PATH_STANDARD; i <= FILE_PATH_SYSTEM; ++i)
     {
-        PCTSTR p_path = file_path_query(i);
+        PCTSTR tstr_path = file_path_query(i);
 
-        if(NULL == p_path)
+        if(NULL == tstr_path)
             continue;
 
-        if(NULL != tstrstr(full_path, p_path))
+        if(NULL != tstrstr(full_path, tstr_path))
             continue;
 
         if(full_path[0])
             tstr_xstrkat(full_path, elemof32(full_path), FILE_PATH_SEP_TSTR);
 
-        tstr_xstrkat(full_path, elemof32(full_path), p_path);
+        tstr_xstrkat(full_path, elemof32(full_path), tstr_path);
     }
 
     status_assert(alloc_block_tstr_set(&fileutil_statics.search_path, full_path, &global_string_alloc_block));

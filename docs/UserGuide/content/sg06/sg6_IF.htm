@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>IF</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="IF" />
+        <param name="Keyword" value="Functions, Miscellaneous, IF" />
+        <param name="Keyword" value="Miscellaneous functions, conditional value" />
+    </object>
+
+    <h1><a name="if" id="if"></a>IF</h1>
+
+    <p>Returns one of two values depending on a condition.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        IF(<span class="csg-function-parameter">condition</span>:<span class="csg-function-parameter-type">Boolean</span>,
+        <span class="csg-function-parameter">then-expression</span>,
+        <span class="csg-function-parameter">else-expression</span>)
+    </p>
+    <p>
+        If the value of <span class="csg-function-parameter">condition</span> is <code>TRUE</code> (or any non-zero number),
+        the <code>IF</code> function evaluates and returns <span class="csg-function-parameter">then-expression</span>;
+        otherwise it evaluates and returns <span class="csg-function-parameter">else-expression</span>.
+    </p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">IF(A1=3, &quot;A1 is 3&quot;, &quot;A1 is not 3&quot;)</pre>
+    <p>returns &quot;A1 is 3&quot; if the condition <code>A1=3</code> is true.</p>
+
+    <p><code>IF</code> functions can be nested; for example;</p>
+    <pre class="csg-sample-indent">IF(A1=3, &quot;A1 is 3&quot;, IF(B1=3, &quot;A1 is not 3 but B1 is&quot;, &quot;Neither cell is 3&quot;))</pre>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_FLIP.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_miscellaneous_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_INDEX.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

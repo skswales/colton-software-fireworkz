@@ -104,7 +104,8 @@ static STATUS
 save_drawfile_save(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     P_SAVE_AS_DRAWFILE_CALLBACK p_save_as_drawfile_callback,
-    _In_z_      PCTSTR filename);
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype);
 
 /* ------------------------------------------------------------------------------------------------------- */
 
@@ -310,6 +311,7 @@ static S32 save_as_drawfile_range_y0, save_as_drawfile_range_y1;
 static BOOL
 proc_save_as_drawfile(
     _In_z_      PCTSTR filename /*low lifetime*/,
+    _InVal_     T5_FILETYPE t5_filetype,
     CLIENT_HANDLE client_handle)
 {
     const P_SAVE_AS_DRAWFILE_CALLBACK p_save_as_drawfile_callback = (P_SAVE_AS_DRAWFILE_CALLBACK) client_handle;
@@ -319,7 +321,7 @@ proc_save_as_drawfile(
 
     tstr_xstrkpy(save_name, elemof32(save_name), filename);
 
-    status = save_drawfile_save(p_docu, p_save_as_drawfile_callback, save_name);
+    status = save_drawfile_save(p_docu, p_save_as_drawfile_callback, save_name, t5_filetype);
 
     if(status_fail(status))
     {
@@ -465,7 +467,7 @@ dialog_save_as_drawfile_ctl_pushbutton(
 
         status_return(save_as_drawfile_dialog_check(p_save_as_drawfile_callback));
 
-        proc_save_as_drawfile(filename, (CLIENT_HANDLE) p_save_as_drawfile_callback);
+        proc_save_as_drawfile(filename, p_save_as_drawfile_callback->t5_filetype, (CLIENT_HANDLE) p_save_as_drawfile_callback);
 
         break;
         }
@@ -780,7 +782,8 @@ static STATUS
 save_drawfile_save(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     P_SAVE_AS_DRAWFILE_CALLBACK p_save_as_drawfile_callback,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     STATUS status = STATUS_OK;
     S32 last_page_x_read = last_page_x_non_blank(p_docu);
@@ -817,7 +820,7 @@ save_drawfile_save(
     print_ctrl.flags.landscape = p_docu->page_def.landscape;
 
     if(status_ok(status))
-        status = save_as_drawfile_host_print_document(p_docu, &print_ctrl, filename);
+        status = save_as_drawfile_host_print_document(p_docu, &print_ctrl, filename, t5_filetype);
 
     al_array_dispose(&print_ctrl.h_page_list);
 
@@ -1159,7 +1162,7 @@ T5_CMD_PROTO(static, t5_cmd_save_as_drawfile)
         }
     }
 
-    return(proc_save_as_drawfile(filename, (CLIENT_HANDLE) &save_as_drawfile_callback));
+    return(proc_save_as_drawfile(filename, save_as_drawfile_callback.t5_filetype, (CLIENT_HANDLE) &save_as_drawfile_callback));
 }
 
 /******************************************************************************

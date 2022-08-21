@@ -351,137 +351,203 @@ host_keys_in_buffer(void)
 
 #if RISCOS
 
+_Check_return_
+static KMAP_CODE
+cs_mutate_key(
+    KMAP_CODE kmap_code)
+{
+    const KMAP_CODE shift_added = host_shift_pressed() ? KMAP_CODE_ADDED_SHIFT : 0;
+    const KMAP_CODE ctrl_added  = host_ctrl_pressed()  ? KMAP_CODE_ADDED_CTRL  : 0;
+
+#if CHECKING
+    switch(kmap_code)
+    {
+    case KMAP_FUNC_DELETE:
+    case KMAP_FUNC_HOME:
+    case KMAP_FUNC_BACKSPACE:
+    case KMAP_FUNC_RETURN:
+        break;
+
+    default: default_unhandled();
+        break;
+    }
+#endif
+
+    kmap_code |= (shift_added | ctrl_added);
+
+    return(kmap_code);
+}
+
+_Check_return_
+static KMAP_CODE
+convert_ctrl_key(
+    _InVal_     int ch_chode)
+{
+    KMAP_CODE kmap_code;
+
+    if(ch_chode <= CTRL_Z)
+    {
+        kmap_code = (ch_chode - 1 + 'A') | KMAP_CODE_ADDED_ALT; /* Uppercase Alt-letter by default */
+
+        /* Watch out for useful CtrlChars not produced by Ctrl+letter */
+
+        /* SKS after PD 4.11 10jan92 - if already in Alt-sequence then these go in as Alt-letters
+         * without considering Ctrl-state (allows ^BM, ^PHB etc. from !Chars but not ^M, ^H still)
+        */
+        if(ch_chode == CTRL_M)
+            kmap_code = RISCOS_EKEY_RETURN;
+        else if((ch_chode == CTRL_H) && !host_ctrl_pressed())
+            kmap_code = RISCOS_EKEY_BACKSPACE;
+    }
+    else
+    {
+        kmap_code = ch_chode;
+    }
+
+    /* transform simply produced Return (some of), Delete, Home and Backspace keys into function-like keys */
+    switch(kmap_code)
+    {
+    default:
+        if(kmap_code & KMAP_CODE_ADDED_ALT)
+            if(host_shift_pressed())
+                kmap_code |= KMAP_CODE_ADDED_SHIFT;
+        break;
+
+    case RISCOS_EKEY_DELETE:
+        kmap_code = cs_mutate_key(KMAP_FUNC_DELETE);
+        break;
+
+    case RISCOS_EKEY_HOME:
+        kmap_code = cs_mutate_key(KMAP_FUNC_HOME);
+        break;
+
+    case RISCOS_EKEY_BACKSPACE:
+        kmap_code = cs_mutate_key(KMAP_FUNC_BACKSPACE);
+        break;
+
+    case RISCOS_EKEY_RETURN:
+        kmap_code = cs_mutate_key(KMAP_FUNC_RETURN);
+        break;
+    }
+
+    return(kmap_code);
+}
+
+/* convert RISC OS Fn keys to our internal representations */
+
+_Check_return_
+static KMAP_CODE
+convert_function_key(
+    _InVal_     int ch_chode /*from Key_Pressed*/)
+{
+    KMAP_CODE kmap_code = ch_chode ^ 0x180; /* map RISC OS F0 (0x180) to 0x00, F10 (0x1CA) to 0x4A etc. */
+
+    KMAP_CODE shift_added = 0;
+    KMAP_CODE ctrl_added  = 0;
+
+    /* remap RISC OS shift and control bits to our definitions */
+    if(0 != (kmap_code & 0x10))
+    {
+        kmap_code ^= 0x10;
+        shift_added = KMAP_CODE_ADDED_SHIFT;
+    }
+
+    if(0 != (kmap_code & 0x20))
+    {
+        kmap_code ^= 0x20;
+        ctrl_added = KMAP_CODE_ADDED_CTRL;
+    }
+
+    /* map F10-F15 range onto end of F0-F9 range ... */
+    if((kmap_code >= 0x4A) && (kmap_code <= 0x4F))
+    {
+        kmap_code ^= (0x40 | KMAP_BASE_FUNC);
+    }
+    /* ... and map TAB-up arrow out of that range */
+    else if((kmap_code >= 0x0A) && (kmap_code <= 0x0F))
+    {
+        kmap_code ^= (0x00 | KMAP_BASE_FUNC2);
+    }
+    else
+    {
+        kmap_code ^= KMAP_BASE_FUNC;
+    }
+
+    /* SKS 18aug94 distinguish between shift-arrow and page up/down 'cos Window Manager doesn't */
+    if((kmap_code == KMAP_FUNC_ARROW_UP) || (kmap_code == KMAP_FUNC_ARROW_DOWN))
+    {
+        if(shift_added && !ctrl_added)
+        {
+            if(!host_shift_pressed())
+            {
+                kmap_code = (kmap_code == KMAP_FUNC_ARROW_UP) ? KMAP_FUNC_PAGE_UP : KMAP_FUNC_PAGE_DOWN;
+                shift_added = 0;
+            }
+        }
+    }
+
+    kmap_code |= (shift_added | ctrl_added);
+
+    return(kmap_code);
+}
+
+_Check_return_
+static KMAP_CODE
+convert_standard_key(
+    _InVal_     int ch_chode /*from Key_Pressed*/)
+{
+    KMAP_CODE kmap_code;
+
+    if((ch_chode < 0x20) || (ch_chode == RISCOS_EKEY_DELETE))
+    {
+        kmap_code = convert_ctrl_key(ch_chode); /* RISC OS 'Hot Key' here we come */
+    }
+    else
+    {
+        kmap_code = ch_chode;
+    }
+
+    return(kmap_code);
+}
+
 /* Translate key from RISC OS Window manager into what application expects */
 
 _Check_return_
 extern KMAP_CODE
-ri_kmap_convert(
-    _InVal_     S32 code /*from Wimp_EKeyPressed*/)
+kmap_convert(
+    _InVal_     int ch_chode /*from Key_Pressed*/)
 {
-    KMAP_CODE kmap_code = code;
-    KMAP_CODE shift_added = 0;
-    KMAP_CODE ctrl_added  = 0;
+    KMAP_CODE kmap_code;
 
-    trace_1(0, TEXT("ri_kmap_convert: key in ") U32_XTFMT, (U32) kmap_code);
+    trace_1(0, TEXT("kmap_convert: ch_chode in ") U32_XTFMT, (U32) ch_chode);
 
-    switch(code & ~0x00FF)
+    switch(ch_chode & ~0x000000FF)
     {
-    default: default_unhandled(); kmap_code = 0; break;
+    /* 'normal' chars in 0..255 */
+    case 0x0000:
+        kmap_code = convert_standard_key(ch_chode);
+        break;
 
     /* convert RISC OS Fn keys to our internal representations */
     case 0x0100:
-
-        kmap_code ^= 0x180;       /* map RISC OS F0 (0x180) to 0x00, F10 (0x1CA) to 0x4A etc. */
-
-        /* remap RISC OS shift and control bits to our definitions */
-        if(kmap_code & 0x10)
-        {
-            kmap_code ^= 0x10;
-            shift_added = KMAP_CODE_ADDED_SHIFT;
-        }
-
-        if(kmap_code & 0x20)
-        {
-            kmap_code ^= 0x20;
-            ctrl_added = KMAP_CODE_ADDED_CTRL;
-        }
-
-        /* map F10-F15 range onto end of F0-F9 range and map TAB-up arrow out of that range */
-        if(     (kmap_code >= 0x4A) && (kmap_code <= 0x4F))
-            kmap_code ^= 0x40 | KMAP_BASE_FUNC;
-        else if((kmap_code >= 0x0A) && (kmap_code <= 0x0F))
-            kmap_code ^= 0x00 | KMAP_BASE_FUNC2;
-        else
-            kmap_code ^= KMAP_BASE_FUNC;
-
-        /* SKS 18aug94 distinguish between shift-arrow and page up/down 'cos Window Manager doesn't */
-        if((kmap_code == KMAP_FUNC_ARROW_UP) || (kmap_code == KMAP_FUNC_ARROW_DOWN))
-            if(shift_added && !ctrl_added)
-                if(!host_shift_pressed())
-                {
-                    kmap_code = (kmap_code == KMAP_FUNC_ARROW_UP) ? KMAP_FUNC_PAGE_UP : KMAP_FUNC_PAGE_DOWN;
-                    shift_added = 0;
-                }
-
+        kmap_code = convert_function_key(ch_chode);
         break;
 
-    /* 'normal' chars in 0..255 */
-    case 0x0000:
-
-        if((code < 0x20) || (code == RISCOS_EKEY_DELETE))                /* RISC OS 'Hot Key' here we come */
-        {
-            if(code <= CTRL_Z)
-            {
-                kmap_code = (code - 1 + 'A') | KMAP_CODE_ADDED_ALT; /* Uppercase Alt-letter by default */
-
-                /* Watch out for useful CtrlChars not produced by Ctrl+letter */
-
-                /* SKS after PD 4.11 10jan92 - if already in Alt-sequence then these go in as Alt-letters
-                 * without considering Ctrl-state (allows ^BM, ^PHB etc. from !Chars but not ^M, ^H still)
-                */
-                if(code == CTRL_M)
-                    kmap_code = RISCOS_EKEY_RETURN;
-                else if((code == CTRL_H) && !host_ctrl_pressed())
-                    kmap_code = RISCOS_EKEY_BACKSPACE;
-            }
-
-            /* transform simply produced Return (some of), Delete, Home and Backspace keys into function-like keys */
-            switch(kmap_code)
-            {
-            default:
-                if(kmap_code & KMAP_CODE_ADDED_ALT)
-                    if(host_shift_pressed())
-                        shift_added = KMAP_CODE_ADDED_SHIFT;
-                break;
-
-            case RISCOS_EKEY_DELETE:
-            case RISCOS_EKEY_HOME:
-            case RISCOS_EKEY_BACKSPACE:
-            case RISCOS_EKEY_RETURN:
-                switch(kmap_code)
-                {
-                default: default_unhandled();
-#if CHECKING
-                case RISCOS_EKEY_DELETE:
-#endif
-                    kmap_code = KMAP_FUNC_DELETE;
-                    break;
-
-                case RISCOS_EKEY_HOME:
-                    kmap_code = KMAP_FUNC_HOME;
-                    break;
-
-                case RISCOS_EKEY_BACKSPACE:
-                    kmap_code = KMAP_FUNC_BACKSPACE;
-                    break;
-
-                case RISCOS_EKEY_RETURN:
-                    kmap_code = KMAP_FUNC_RETURN;
-                    break;
-                }
-
-                if(host_shift_pressed())
-                    shift_added = KMAP_CODE_ADDED_SHIFT;
-                if(host_ctrl_pressed())
-                    ctrl_added  = KMAP_CODE_ADDED_CTRL;
-
-                break;
-            }
-        }
-
+    default: default_unhandled();
+        kmap_code = 0;
         break;
     }
 
-    trace_1(0, TEXT("ri_kmap_convert: key out ") U32_XTFMT, (U32) (kmap_code | shift_added | ctrl_added));
+    trace_1(0, TEXT("kmap_convert: kmap_code out ") U32_XTFMT, (U32) kmap_code);
 
-    return(kmap_code | shift_added | ctrl_added);
+    return(kmap_code);
 }
 
 #elif WINDOWS
 
 _Check_return_
 extern KMAP_CODE
-ri_kmap_convert(
+kmap_convert(
     _InVal_     UINT vk)
 {
     KMAP_CODE kmap_code = (KMAP_CODE) vk;
@@ -490,7 +556,7 @@ ri_kmap_convert(
     const BOOL shift_pressed = host_shift_pressed();
     const BOOL ctrl_pressed  = host_ctrl_pressed();
 
-    trace_1(0, TEXT("ri_kmap_convert: key in ") U32_XTFMT, (U32) kmap_code);
+    trace_1(0, TEXT("kmap_convert: key in ") U32_XTFMT, (U32) vk);
 
     switch(vk)
     {
@@ -626,7 +692,7 @@ ri_kmap_convert(
         break;
     }
 
-    trace_1(0, TEXT("ri_kmap_convert: key out ") U32_XTFMT, (U32) (kmap_code | shift_added | ctrl_added));
+    trace_1(0, TEXT("kmap_convert: kmap_code out ") U32_XTFMT, (U32) (kmap_code | shift_added | ctrl_added));
 
     return(kmap_code | shift_added | ctrl_added);
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>TREND</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="TREND" />
+        <param name="Keyword" value="Statistical functions, TREND" />
+    </object>
+
+    <h1><a name="trend" id="trend"></a>TREND</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        TREND(<span class="csg-function-parameter">linest-data</span>:<a href="sg6_array_or_range.htm">array|range</a>,
+        <span class="csg-function-parameter">x-data</span>:<a href="sg6_array_or_range.htm">array|range</a>)
+    </p>
+    <p>
+        Takes the result of a <code><a href="sg6_LINEST.htm">LINEST</a></code> function
+        (the <span class="csg-function-parameter">linest-data</span> <a href="sg6_arrays.htm">array</a>)
+        and applies it to the <span class="csg-function-parameter">x-data</span> <a href="sg6_array_or_range.htm">array</a> (or range of cells)
+        to return corresponding estimated y-data <a href="sg6_arrays.htm">array</a>.
+    </p>
+    <p>
+        If <span class="csg-function-parameter">x-data</span> is of dimensions <code>m&times;n</code>
+        and the LINEST function has returned <code>n+1</code> coefficients,
+        then you will get <code>m</code> output y-data, or vice versa.
+    </p>
+    <p>
+        Note that the estimated y-data may be very poor quality if any of the
+        <span class="csg-function-parameter">x-data</span> values are beyond the limits of the
+        <span class="csg-function-parameter">x-data</span> supplied to the <code>LINEST</code> function.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_STDP.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_statistical_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_TRIMMEAN.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

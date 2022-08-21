@@ -862,6 +862,9 @@
 				Name="VCWebServiceProxyGeneratorTool"
 			/>
 			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
 				Name="VCCLCompilerTool"
 				ExecutionBucket="7"
 				AdditionalOptions="/Wall"
@@ -1003,6 +1006,9 @@
 				Name="VCWebServiceProxyGeneratorTool"
 			/>
 			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
 				Name="VCCLCompilerTool"
 				ExecutionBucket="7"
 				AdditionalOptions="/Wall"
@@ -1141,6 +1147,9 @@
 			/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -1304,61 +1313,69 @@
 					Name="ob_chart_resource"
 					>
 					<File
-						RelativePath="..\..\ob_chart\resource\bmp\bar.bmp"
-						>
-					</File>
-					<File
 						RelativePath="..\..\ob_chart\resource\chart.rci"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\BMP\com16x16.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\ldadodo.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\ldash.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\ldashdot.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\ldot.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\line.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\overlay.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\pie.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\firewrkz\resource\windows\uk\res06.rci"
 						>
 					</File>
 					<File
 						RelativePath="..\..\ob_chart\resource\resource.h"
 						>
 					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\bmp\scatter.bmp"
+					<Filter
+						Name="Neutral"
 						>
-					</File>
-					<File
-						RelativePath="..\..\ob_chart\resource\uk-msg"
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\bar.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\com16x16.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\ldadodo.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\ldash.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\ldashdot.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\ldot.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\line.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\overlay.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\pie.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\Neutral\BMP\scatter.bmp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="UK"
 						>
-					</File>
+						<File
+							RelativePath="..\..\ob_chart\resource\UK\msg"
+							>
+						</File>
+						<File
+							RelativePath="..\..\firewrkz\resource\windows\UK\res06.rci"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="ob_chart_cmodules"
@@ -3808,7 +3825,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\ob_skel\riscos\cs-pollfpm.c"
+						RelativePath="..\..\ob_skel\riscos\cs-poll.s"
 						>
 						<FileConfiguration
 							Name="Debug XP ANSI|Win32"
@@ -4288,7 +4305,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\ob_skel\riscos\ho_asm.c"
+						RelativePath="..\..\ob_skel\riscos\ho_asm.s"
 						>
 						<FileConfiguration
 							Name="Debug XP ANSI|Win32"
@@ -5512,7 +5529,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\cmodules\riscos\muldivas.c"
+						RelativePath="..\..\cmodules\riscos\muldivas.s"
 						>
 						<FileConfiguration
 							Name="Debug XP ANSI|Win32"
@@ -5644,7 +5661,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\ob_skel\riscos\nsx.c"
+						RelativePath="..\..\ob_skel\riscos\nsx.s"
 						>
 						<FileConfiguration
 							Name="Debug XP ANSI|Win32"
@@ -7685,173 +7702,181 @@
 					Name="ob_skel_resource"
 					>
 					<File
-						RelativePath="..\..\ob_skel\resource\CUR\arr_lr.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\arr_ud.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\arrows.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\firewrkz\resource\windows\uk\banner.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\col.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\col_l.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\col_r.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\col_r.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\com07x11.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\BMP\com16x16.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\BMP\com24x24.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\dec.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\inc.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\ls_none.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\ls_std.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\ls_stdd.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\ls_thick.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\ls_thin.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\mar_f.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\mar_h.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\mar_l.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\mar_p.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\mar_r.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\firewrkz\resource\windows\uk\res00.rci"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\row.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\row_b.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\row_d.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\row_u.cur"
-						>
-					</File>
-					<File
 						RelativePath="..\..\ob_skel\resource\skel.rci"
 						>
 					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\BMP\skel_tbar_32bpp.bmp"
+					<Filter
+						Name="UK"
 						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\BMP\skel_tbar_4bpp.bmp"
+						<File
+							RelativePath="..\..\firewrkz\resource\windows\UK\banner.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\UK\msg"
+							>
+						</File>
+						<File
+							RelativePath="..\..\firewrkz\resource\windows\UK\res00.rci"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\UK\BMP\skel_tbar_32bpp.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\UK\BMP\skel_tbar_4bpp.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\UK\BMP\skel_tbarh_32bpp.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\UK\BMP\skel_tbarh_4bpp.bmp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Neutral"
 						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\BMP\skel_tbarh_32bpp.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\BMP\skel_tbarh_4bpp.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\spl_lr.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\spl_ud.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\split.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\tab_c.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\tab_d.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\tab_l.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\bmp\tab_r.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\CUR\tank.cur"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_skel\resource\uk-msg"
-						>
-					</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\arr_lr.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\arr_ud.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\arrows.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\col.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\col_l.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\col_r.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\col_r.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\com07x11.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\com16x16.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\com24x24.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\dec.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\inc.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\ls_none.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\ls_std.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\ls_stdd.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\ls_thick.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\ls_thin.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\mar_f.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\mar_h.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\mar_l.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\mar_p.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\mar_r.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\row.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\row_b.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\row_d.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\row_u.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\spl_lr.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\spl_ud.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\split.cur"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\tab_c.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\tab_d.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\tab_l.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\BMP\tab_r.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_skel\resource\Neutral\CUR\tank.cur"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="ob_skel_external"
@@ -8575,10 +8600,6 @@
 					Name="ob_ss_resource"
 					>
 					<File
-						RelativePath="..\..\firewrkz\resource\windows\uk\res01.rci"
-						>
-					</File>
-					<File
 						RelativePath="..\..\ob_ss\resource\resource.h"
 						>
 					</File>
@@ -8586,26 +8607,34 @@
 						RelativePath="..\..\ob_ss\resource\ss.rci"
 						>
 					</File>
-					<File
-						RelativePath="..\..\ob_ss\resource\BMP\ss_tbar_32bpp.bmp"
+					<Filter
+						Name="UK"
 						>
-					</File>
-					<File
-						RelativePath="..\..\ob_ss\resource\BMP\ss_tbar_4bpp.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_ss\resource\BMP\ss_tbarh_32bpp.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_ss\resource\BMP\ss_tbarh_4bpp.bmp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\ob_ss\resource\uk-msg"
-						>
-					</File>
+						<File
+							RelativePath="..\..\ob_ss\resource\UK\msg"
+							>
+						</File>
+						<File
+							RelativePath="..\..\firewrkz\resource\windows\UK\res01.rci"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_ss\resource\UK\BMP\ss_tbar_32bpp.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_ss\resource\UK\BMP\ss_tbar_4bpp.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_ss\resource\UK\BMP\ss_tbarh_32bpp.bmp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\ob_ss\resource\UK\BMP\ss_tbarh_4bpp.bmp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="ob_ss_cmodules"
@@ -9536,6 +9565,10 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\..\fprowrkz\ob_rec\resource\UK\msg"
+						>
 					</File>
 					<File
 						RelativePath="..\..\..\fprowrkz\ob_rec\ob_rec.c"
@@ -10586,10 +10619,6 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\..\fprowrkz\ob_rec\resource\uk-msg"
-						>
 					</File>
 					<Filter
 						Name="ob_rec_dplib_low"
@@ -14324,7 +14353,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\firewrkz\resource\windows\uk\resXX.rci"
+				RelativePath="..\..\firewrkz\resource\windows\UK\resXX.rci"
 				>
 			</File>
 		</Filter>
@@ -15394,7 +15423,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\docs\htmlhelp\html\us99_addenda.htm"
+			RelativePath="..\..\firewrkz\RelHistPrev.htm"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm"
 			DeploymentContent="true"
 			>
 		</File>

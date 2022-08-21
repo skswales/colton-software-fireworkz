@@ -1585,9 +1585,9 @@ do_arc_cosh_sinh_tanh(
         COMPLEX in1, in2;
 
         in1.r = 1.0 + z->r;
-        in1.i = z->i;
+        in1.i =   z->i;
         in2.r = 1.0 - z->r;
-        in2.i =        - z->i;
+        in2.i = - z->i;
 
         if(!do_complex_divide(p_ev_data_res, &in1, &in2, &temp))
             return;

@@ -118,8 +118,14 @@ ho_menu_init_for_docu(
 
     /* can only paste to certain target objects */
     paste_valid = ((OBJECT_ID_CELLS == p_docu->focus_owner) || (OBJECT_ID_NOTE == p_docu->focus_owner));
-    if(paste_valid)
-        paste_valid = (local_clip_data_query() != 0);
+    if(paste_valid && (0 == local_clip_data_query()))
+    {   /* accept lots of different kinds of data, so if there's any global clip data, say OK */
+#if defined(USE_GLOBAL_CLIPBOARD)
+        paste_valid = TRUE;
+#else
+        paste_valid = FALSE;
+#endif
+    }
 
     /* now setup the disable array so that items can be enabled and disabled */
     disable[MENU_PASTE] = !paste_valid;

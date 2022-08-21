@@ -125,6 +125,8 @@ __pragma(warning(pop))
 
 /* our additional helper structures and functions to go with tboxlibs */
 
+typedef WimpMessage * P_WimpMessage; typedef const WimpMessage * PC_WimpMessage;
+
 typedef BBox * P_BBox; typedef const BBox * PC_BBox;
 
 _Check_return_
@@ -322,10 +324,10 @@ typedef struct WimpCreateIconBlockWithBitset
 }
 WimpCreateIconBlockWithBitset; /* analogous to WimpCreateIconBlock */
 
-union wimp_window_state_open_window_u
+union wimp_window_state_open_window_block_u
 {
-    WimpGetWindowStateBlock window_state;
-    WimpOpenWindowBlock     open_window; /* a sub-set thereof */
+    WimpGetWindowStateBlock window_state_block;
+    WimpOpenWindowBlock     open_window_block; /* a sub-set thereof */
 };
 
 /* other useful button state bits not defined by tboxlibs wimp.h */
@@ -364,6 +366,17 @@ typedef struct WimpPreQuitMessage
 WimpPreQuitMessage;
 
 #define Wimp_MPreQuit_flags_killthistask 0x01
+
+typedef struct WimpDataRequestMessage
+{
+    wimp_w     destination_window_handle;
+    int        destination_handle;
+    int        destination_x;               /* abs */
+    int        destination_y;
+    int        flags;
+    int        type[236/4 - 5];             /* list of acceptable file types, -1 at end */
+}
+WimpDataRequestMessage;
 
 typedef struct WimpMenuWarningMessage
 {
@@ -488,6 +501,8 @@ wimp_set_caret_position_block(
             c->height,
             c->index));
 }
+
+/* NB winx_set_caret_position is preferred */
 
 #if TRACE_ALLOWED
 static inline _kernel_oserror *
@@ -788,6 +803,13 @@ winx_register_general_event_handler(
     winx_event_handler proc,
     P_ANY handle);
 
+extern void
+winx_claim_caret(void); /* and selection */
+
+_Check_return_
+extern BOOL
+winx_owns_caret(void); /* and selection */
+
 _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
@@ -799,6 +821,16 @@ _Ret_maybenull_
 extern _kernel_oserror *
 winx_set_caret_position(
     _In_        const WimpCaret * const caret);
+
+extern void
+winx_claim_global_clipboard(
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DISPOSE p_proc_global_clipboard_data_dispose,
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST p_proc_global_clipboard_data_DataRequest);
+
+_Check_return_
+_Ret_maybenull_
+extern P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST
+winx_global_clipboard_owner(void);
 
 _Check_return_
 extern wimp_w
@@ -876,12 +908,12 @@ _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
 winx_open_window(
-    _Inout_     WimpOpenWindowBlock * const p_open_window);
+    _Inout_     WimpOpenWindowBlock * const p_open_window_block);
 
 extern void
 winx_open_child_windows(
     _InVal_     wimp_w window_handle,
-    _In_        const WimpOpenWindowBlock * const p_open_window,
+    _In_        const WimpOpenWindowBlock * const p_open_window_block,
     _Out_       wimp_w * const p_new_behind);
 
 extern void
@@ -893,7 +925,7 @@ extern void
 winx_send_open_window_request(
     _InVal_     wimp_w window_handle,
     _InVal_     BOOL immediate,
-    _In_        const WimpOpenWindowBlock * const p_open_window);
+    _In_        const WimpOpenWindowBlock * const p_open_window_block);
 
 extern void
 winx_send_front_window_request(
@@ -1049,22 +1081,23 @@ host_task_handle(void);
 
 extern void
 host_xfer_import_file_via_scrap(
-    _In_        const WimpMessage * const p_wimp_message /*DataSave*/);
+    _InRef_     PC_WimpMessage p_wimp_message /*DataSave*/);
 
 extern void
 host_xfer_load_file_done(void); /* MUST be called if host_xfer_load_file_setup() has been called */
 
 extern void
 host_xfer_load_file_setup(
-    _In_        const WimpMessage * const p_wimp_message /*DataLoad/DataOpen*/);
+    _InRef_     PC_WimpMessage p_wimp_message /*DataLoad/DataOpen*/);
 
 extern void
 host_xfer_print_file_done(
-    _In_        const WimpMessage * const p_wimp_message /*PrintTypeOdd*/,
+    _InRef_     PC_WimpMessage p_wimp_message /*PrintTypeOdd*/,
     int type);
 
 typedef /*_Check_return_*/ BOOL (* P_PROC_HOST_XFER_SAVE) (
     _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype,
     CLIENT_HANDLE client_handle);
 
 _Check_return_
@@ -1076,6 +1109,16 @@ host_xfer_save_file(
     P_PROC_HOST_XFER_SAVE p_proc_host_xfer_save,
     CLIENT_HANDLE client_handle,
     _In_        const WimpGetPointerInfoBlock * const p_pointer_info);
+
+_Check_return_
+extern BOOL
+host_xfer_save_file_for_DataRequest(
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype,
+    int estimated_size,
+    P_PROC_HOST_XFER_SAVE p_proc_host_xfer_save,
+    CLIENT_HANDLE client_handle,
+    _In_        const WimpMessage * const p_wimp_message /*DataRequest*/);
 
 #endif /* RISCOS */
 

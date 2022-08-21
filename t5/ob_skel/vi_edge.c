@@ -173,10 +173,10 @@ border_horz_cache_height(
             col_repr_descent = p_border_style->font_spec.size_y - col_repr_height;
         }
 
-        col_repr_height   = div_round_ceil_u(col_repr_height,  pixits_per_riscos_d_y);
+        col_repr_height   = idiv_ceil_u(col_repr_height,  pixits_per_riscos_d_y);
         col_repr_height  *= pixits_per_riscos_d_y;
 
-        col_repr_descent  = div_round_ceil_u(col_repr_descent, pixits_per_riscos_d_y);
+        col_repr_descent  = idiv_ceil_u(col_repr_descent, pixits_per_riscos_d_y);
         col_repr_descent *= pixits_per_riscos_d_y;
 #elif WINDOWS
         { /* dpi-dependent pixels */
@@ -194,8 +194,8 @@ border_horz_cache_height(
         SIZE PixelsPerInch;
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-        col_repr_height  = div_round_ceil_u(col_repr_height  * PIXITS_PER_INCH, PixelsPerInch.cy);
-        col_repr_descent = div_round_ceil_u(col_repr_descent * PIXITS_PER_INCH, PixelsPerInch.cy);
+        col_repr_height  = idiv_ceil_u(col_repr_height  * PIXITS_PER_INCH, PixelsPerInch.cy);
+        col_repr_descent = idiv_ceil_u(col_repr_descent * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
 #endif /* OS */
     }
@@ -246,14 +246,14 @@ border_vert_cache_width(
         status_consume(GetTextExtentPoint32(hdc, TEXT("01234567"), 4*2, &size));
         consume(HFONT, SelectFont(hdc, h_font_old));
 
-        four_digits_width = div_round_ceil_u(size.cx, 2); /* average width of four digits */
+        four_digits_width = idiv_ceil_u(size.cx, 2); /* average width of four digits */
         } /*block*/
 
         { /* convert to dpi-independent pixits */ /* DPI-aware */
         SIZE PixelsPerInch;
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-        four_digits_width = div_round_ceil_u(four_digits_width  * PIXITS_PER_INCH, PixelsPerInch.cy);
+        four_digits_width = idiv_ceil_u(four_digits_width  * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
 
         g_border_vert_pixit_width = MAX(four_digits_width + 2 * (4 * PIXITS_PER_PROGRAM_PIXEL_X) /*lm,rm*/, BORDER_VERT_PIXIT_MIN_WIDTH);
@@ -417,7 +417,7 @@ ruler_horz_cache_height(
             digits_height = base_line;
         }
 
-        digits_height = div_round_ceil_u(digits_height, pixits_per_riscos_d_y);
+        digits_height = idiv_ceil_u(digits_height, pixits_per_riscos_d_y);
         digits_height *= pixits_per_riscos_d_y;
 #elif WINDOWS
         { /* dpi-dependent pixels */
@@ -434,7 +434,7 @@ ruler_horz_cache_height(
         SIZE PixelsPerInch;
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-        digits_height = div_round_ceil_u(digits_height * PIXITS_PER_INCH, PixelsPerInch.cy);
+        digits_height = idiv_ceil_u(digits_height * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
 
         base_line = digits_height;
@@ -503,14 +503,14 @@ ruler_vert_cache_width(
         status_consume(GetTextExtentPoint32(hdc, TEXT("0123456789"), 10, &size));
         consume(HFONT, SelectFont(hdc, h_font_old));
 
-        two_digits_width = div_round_ceil_u(size.cx, 5); /*(10/2)*/ /* average width of two digits */
+        two_digits_width = idiv_ceil_u(size.cx, 5); /*(10/2)*/ /* average width of two digits */
         } /*block*/
 
         { /* convert to dpi-independent pixits */ /* DPI-aware */
         SIZE PixelsPerInch;
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-        two_digits_width = div_round_ceil_u(two_digits_width  * PIXITS_PER_INCH, PixelsPerInch.cy);
+        two_digits_width = idiv_ceil_u(two_digits_width  * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
 #endif /* OS */
     }

@@ -11,8 +11,9 @@
 
 # By the way, you may need set the wimpslot in !Amu.Desc to at 2760k or so ...
 
-# Specify trunk, branch (e.g. branches/fireworkz__2_10__branch) or tag (e.g. tags/fireworkz__2016_06_26__2_10_00)
-$(FIREWORKZ_TBT)=fireworkz__2_10__branch
+# Specify trunk, branch (e.g. branches/fireworkz__2_10__branch) or tag (e.g. tags/fireworkz__2016_06_26__2_10_00) by leaf
+$(FIREWORKZ_TBT)=fireworkz__2_20__branch
+# $(FIREWORKZ_TBT)=trunk
 
 # NB Substitute URD location as necessary
 URD=$.fireworkz.$(FIREWORKZ_TBT)

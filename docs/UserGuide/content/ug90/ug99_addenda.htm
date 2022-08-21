@@ -1,0 +1,1797 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>Addenda and Errata</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Addenda and Errata" />
+    </object>
+
+    <h1><a name="addenda" id="addenda"></a>Addenda and Errata</h1>
+
+    <h2>Features added since documentation printed</h2>
+
+    <p>
+        Fireworkz now uses the global clipboard for copy and paste, and to a more limited extent, cut.
+        Fireworkz documents can accept clipboard data in Fireworkz native format and any other that it can import.
+        Fireworkz documents can supply clipboard data in Fireworkz native format and any other that it can export.
+    </p>
+
+    <p>
+        There is now an Effects sub-menu on the style menu giving menu access to several style effects you may wish to apply;
+        it also designates control key shortcuts for underline, superscript and subscript.
+        This is defined by the new Config file.
+    </p>
+
+    <p>
+        There is now an option 'Recalc on load' in the Choices dialogue box which allows Fireworkz to force recalculation of spreadsheets on loading:
+        you may wish to set this option if you regularly modify spreadsheets on which other documents depend without having those dependent documents loaded.
+        The default is off, which allows Fireworkz to simply use the recalculated values stored in the document when it was last saved.
+        Certain spreadsheet functions always force recalculation of themselves (and their dependent cells)
+        on reload in any case (the GRAND(), INPUT(), NOW(), PAGE(), PAGES() and RAND() spreadsheet functions).
+        Charts always recalculate in any case as the picture is not stored with the document.
+    </p>
+
+    <p>
+        Several toolbar buttons have been added since the documentation was printed;
+        simply point at them and the status line will tell you what they can do.
+    </p>
+
+    <p>
+        The toolbar in Fireworkz is actually configurable.
+        The file <code>Choice18</code> controls the order in which tools appear on each toolbar - it may be found in the directory<br />
+        RISC&nbsp;OS: <code>&lt;Fireworkz$Dir&gt;.AppData.UK.Choices</code><br />
+        Windows: <code>%FireworkzDir%\AppData\UK\Choices\</code> .
+    </p>
+
+    <p>Examples:</p>
+    <ul>
+        <li><code>{Tool-t:0;VIEW}</code> puts the View Control button on toolbar 0 (default)</li>
+        <li><code>{Tool-t:1;FILL_DOWN}</code> is on toolbar 1 (spreadsheet)</li>
+        <li><code>{Tool-t:1}</code> puts a small separator before the next button on the given toolbar.</li>
+    </ul>
+
+    <p>
+        You can reorder the commands within each toolbar group.
+        We recommend not moving buttons between groups unless you are very careful.
+        We also strongly recommend that you make a backup of this file before modifying it.
+    </p>
+
+    <p>
+        There are several other buttons defined that you can add that may be useful for use in primary schools: PLUS, MINUS, TIMES, DIVIDE.<br />
+        These now appear in the <code>Choice18</code> file commented out thus
+        <code>{ToolPossible-t:0;PLUS}</code>.
+        Simply delete the word Possible to make the button work.
+        You can similarly comment out existing buttons.
+    </p>
+
+    <p>The Tab well has been removed from the default toolbar by commenting it out using the ToolPossible commands (so it's easy to restore if you want it).</p>
+
+
+    <h3>Registry entries (Windows)</h3>
+
+    <h4><code>HKEY_CURRENT_USER\SOFTWARE\Colton Software\Fireworkz</code></h4>
+
+    <p>Fireworkz uses entries in this section of the Registry for user-specific configuration.</p>
+
+    <p><code>ButtonStyle</code>: This controls the appearance and behaviour of the toolbar buttons in Fireworkz when themes are not being used.</p>
+
+    <ul>
+        <li><code>ButtonStyle</code>=97 - Office 97 style buttons (default)</li>
+        <li><code>ButtonStyle</code>=95 - Windows 95 style buttons</li>
+    </ul>
+
+    <p><code>ReportEnable</code>: Flag to allow some build-selective reporting by Fireworkz.</p>
+
+    <p><code>UserPath</code>: Location of Fireworkz' user-writable files such as Choices and Dicts.</p>
+
+    <p>2.00: <code>InstalledDefaultTemplate</code>: &lt;version&gt;;.&lt;name&gt; - version and name of installed default template file in the user's profile.</p>
+
+    <p>2.00: <code>InstalledStandardTemplates</code>: &lt;version&gt;;.&lt;name&gt; - list of versions and names of installed standard template files in the user's profile.</p>
+
+
+    <h4><code>HKEY_LOCAL_MACHINE\SOFTWARE\Colton Software\Fireworkz</code></h4>
+
+    <p>Fireworkz uses entries in this section of the Registry for machine-wide configuration.</p>
+
+    <p><code>ButtonStyle</code>: This controls the appearance and behaviour of the toolbar buttons in Fireworkz if not specified for the current user.</p>
+
+    <p><code>Directory</code>: Installation directory of Fireworkz.</p>
+
+    <p><code>SystemPath</code>: Locations of Fireworkz' data files (analagous to RISC&nbsp;OS Fireworkz$Path).</p>
+
+    <p><code>Usr1</code>: User name</p>
+
+    <p><code>Usr2</code>: Organisation name (this may be left blank or omitted entirely).</p>
+
+    <p>2.00: <code>DefaultTemplate</code>: &lt;version&gt;;.&lt;name&gt; - version and name of default template file to be installed in each user's profile.</p>
+
+    <p>2.00: <code>StandardTemplates</code>: &lt;version&gt;;.&lt;name&gt; - list of versions and names of standard template files to be installed in each user's profile.</p>
+
+    <p>2.20: <code>ResourcesPath</code>: Locations of Fireworkz' Windows-specific data files (analagous to RISC&nbsp;OS FireworkzRes$Path).</p>
+
+    <p>Redundant: <code>DialogStyle</code>: Previously controlled the appearance of the dialogue boxes in Fireworkz.</p>
+
+    <p>
+        Redundant: <code>RegistrationNumber</code>: Encoded version of the registration number.
+        Only present on old installations.
+    </p>
+
+
+    <h2>Spreadsheet functions behaviour and interface changes since documentation printed</h2>
+
+    <h3>General</h3>
+
+    <p>Starting with 1.35, all Arithmetic functions are reclassified as Mathematical functions.</p>
+
+    <p>Starting with 2.00, all Complex number functions are reclassified as Engineering functions.</p>
+
+    <p>Starting with 2.00, date/time values may have fractional values added and subtracted from them.</p>
+
+    <p>
+        Starting with 2.00, evaluator coercion of real numbers to (internal) spreadsheet functions which
+        require integer parameters now applies the same rounding as ODF.INT() to improve accuracy.<br />
+        This is similar rounding (around the 14th significant place) as applied to INT() in 1.30/05
+        such that formulae which are affected by the imprecise floating point representation of
+        fractional numbers e.g. INT((0.06-0.02)/2E-6) yield the correct integer value.
+        Note that all such extra rounding in the evaluator, including that applied by INT(),
+        may be completely suppressed by deselecting the option in the Choices dialogue box.
+    </p>
+
+    <h3>Date and time functions</h3>
+
+    <h4>TIMEVALUE</h4>
+
+    <p>
+        Starting with 2.00, this function will accept a date as well as a time.
+        Previously this would have given an error.
+    </p>
+
+    <p>See <a href="sg06/sg6_TIMEVALUE.htm">TIMEVALUE</a>.</p>
+
+    <h3>Engineering functions</h3>
+
+    <h4>Complex number functions</h4>
+
+    <p>
+        Starting with 2.00, complex number engineering functions will also accept Open Document / Microsoft Excel-style
+        <a href="../sg06/sg6_complex_numbers_odf.htm">complex number strings</a>
+        (e.g. "2+1i", "1", "-j") as well as 2x1 arrays of numbers.<br />
+        The acceptable imaginary numbers suffix is either lower-case i or j,
+        and where a function takes a pair of complex numbers and an imaginary number suffix is specified on both numbers,
+        both numbers need not use the same suffix (Microsoft Excel would require both to be the same) and 'i' will dominate.
+    </p>
+
+    <p>See <a href="sg05/sg5_engineering_functions.htm">Engineering functions</a>.</p>
+
+    <h3>Financial functions</h3>
+
+    <h4>DDB</h4>
+
+    <p>Starting with 2.00, this function will accept an extra optional parameter, <span class="csg-function-parameter">factor</span>.</p>
+
+    <p>See <a href="sg06/sg6_DDB.htm">DDB</a>.</p>
+
+    <h3>Lookup functions</h3>
+
+    <h4>HLOOKUP</h4>
+
+    <p>
+        Starting with 1.34/10, this function will always use the faster
+        binary chop algorithm to help speed up searching large ranges.<br />
+        It will also accept a fourth optional parameter <span class="csg-function-parameter">lookup_type</span>:<span class="csg-function-parameter">number</span>
+        with meanings the same as that for MATCH, i.e.:
+    </p>
+
+    <ul>
+        <li><span class="csg-function-parameter">lookup_type</span> = +1 - finds the largest value from the range which is less than or equal to key - this is the default if omitted;</li>
+        <li><span class="csg-function-parameter">lookup_type</span> = &nbsp; 0 - finds the value from the range which exactly matches key;</li>
+        <li><span class="csg-function-parameter">lookup_type</span> = -1 - finds the smallest value from the range which is greater than or equal to key.</li>
+    </ul>
+
+    <p>See <a href="sg06/sg6_HLOOKUP.htm">HLOOKUP</a>.</p>
+
+    <h4>VLOOKUP</h4>
+
+    <p>Changes as per HLOOKUP.</p>
+
+    <p>See <a href="sg06/sg6_VLOOKUP.htm">VLOOKUP</a>.</p>
+
+    <h3>Mathematical functions</h3>
+
+    <h4>INT</h4>
+
+    <p>
+        Starting with 2.00, this function will return a (largely) Microsoft Excel-compatible serial number when passed a
+        <span class="csg-function-parameter">date</span> parameter. Previously this would have given an error.
+    </p>
+
+    <p>
+        The conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Excel.<br />
+        Earlier dates in 1900 do not match as Microsoft Excel incorrectly believes 1900 to be a leap year.<br />
+        Unlike Microsoft Excel, Fireworkz can also yield serial numbers for dates before 1900.
+    </p>
+
+    <p>See <a href="sg06/sg6_INT.htm">INT</a>.</p>
+
+    <h4>LOG</h4>
+
+    <p>
+        Starting with 2.00, this function will accept an extra optional parameter, <span class="csg-function-parameter">b</span>, which then
+        returns the logarithm of <span class="csg-function-parameter">x</span> to base <span class="csg-function-parameter">b</span>.<br />
+        If <span class="csg-function-parameter">b</span> is omitted, the logarithm of <span class="csg-function-parameter">x</span> to base 10 is returned as before.
+    </p>
+
+    <p>See <a href="sg06/sg6_LOG.htm">LOG</a>.</p>
+
+    <h3>Matrix functions</h3>
+
+    <h4>M_INVERSE</h4>
+
+    <p>Starting with 1.34/10, this function will allow the inverse of a matrix to be calculated for n &gt; 3.</p>
+
+    <p>See <a href="sg06/sg6_M_INVERSE.htm">M_INVERSE</a>.</p>
+
+    <h3>Miscellaneous functions</h3>
+
+    <h4>INDEX</h4>
+
+    <p>
+        Starting with 2.00, this function will accept zero for the column and/or row number.<br />
+        If the column number is zero, the whole of the specified row(s) is returned.<br />
+        If the row number is zero, the whole of the specified column(s) is returned.
+    </p>
+
+    <p>
+        Starting with 2.00, this function will accept zero for the optional column and/or row size.<br />
+        If the column size is zero, the rest of the specified row(s) beginning at the given column number is returned.<br />
+        If the row size is zero, the whole of the specified column(s) beginning at the given row number is returned.
+    </p>
+
+    <p>See <a href="sg06/sg6_INDEX.htm">INDEX</a>.</p>
+
+    <h3>Statistical functions</h3>
+
+    <h4>BIN</h4>
+
+    <p>
+        Starting with 2.00, all the supplied arbitrary dimensioned array or range of data is binned.<br />
+        Prior to that only the first column of this data would have been binned.
+    </p>
+
+    <p>See <a href="sg06/sg6_BIN.htm">BIN</a>.</p>
+
+    <h4>GRAND</h4>
+
+    <p>Starting with 2.00, this function will now recalculate automatically on reload.</p>
+
+    <p>See <a href="sg06/sg6_GRAND.htm">GRAND</a>.</p>
+
+    <h4>MEDIAN</h4>
+
+    <p>Starting with 2.00, this function will accept a list of parameters (like AVG etc.)</p>
+
+    <p>See <a href="sg06/sg6_MEDIAN.htm">MEDIAN</a>.</p>
+
+    <h3>String functions</h3>
+    
+    <h4>CODE</h4>
+    
+    <p>
+        Starting with 2.20, this function will return zero if supplied with an empty string
+        (compatible with LibreOffice Calc behaviour).
+    </p>
+    
+    <h4>CHAR</h4>
+
+    <p>
+        Starting with 2.00, this function will no longer allow
+        Fireworkz' internal inline escape character (ASCII 7) to be inserted into a string
+        (would subsequently crash the text formatter).
+    </p>
+
+    <p>See <a href="sg06/sg6_CHAR.htm">CHAR</a>.</p>
+
+    <h4>FORMULA_TEXT</h4>
+
+    <p>Starting with 2.00, this function takes notice of the Alternate formula style choice.</p>
+
+    <p>
+        If set, this choice outputs a string with an initial equal sign,
+        upper-case function names and cell references and cell references in ranges are given with a colon separator.
+    </p>
+
+    <p>See <a href="sg06/sg6_FORMULA_TEXT.htm">FORMULA_TEXT</a>.</p>
+
+    <h4>LEFT</h4>
+
+    <p>
+        Starting with 2.00, this function will accept a <span class="csg-function-parameter">length</span> of zero.
+        If the <span class="csg-function-parameter">length</span> parameter is omitted, <span class="csg-function-parameter">length</span> of one is assumed.
+    </p>
+
+    <p>See <a href="sg06/sg6_LEFT.htm">LEFT</a>.</p>
+
+    <h4>REPLACE</h4>
+
+    <p>Clarified parameter usage such that <span class="csg-function-parameter">length</span> == zero is not a fault but simply allows insertion of <span class="csg-function-parameter">new_text</span> at <span class="csg-function-parameter">start_n</span>.</p>
+
+    <p>See <a href="sg06/sg6_REPLACE.htm">REPLACE</a>.</p>
+
+    <h4>REPT</h4>
+
+    <p>Starting with 2.00, this function will accept a repeat count of zero, which returns an empty string.</p>
+
+    <p>See <a href="sg06/sg6_REPT.htm">REPT</a>.</p>
+
+    <h4>RIGHT</h4>
+
+    <p>
+        Starting with 2.00, this function will accept a <span class="csg-function-parameter">length</span> of zero.
+        If the <span class="csg-function-parameter">length</span> parameter is omitted, <span class="csg-function-parameter">length</span> of one is assumed.
+    </p>
+
+    <p>See <a href="sg06/sg6_RIGHT.htm">RIGHT</a>.</p>
+
+
+    <h2>Compatibility spreadsheet functions added since documentation printed</h2>
+
+    <h3>Engineering compatibility functions</h3>
+
+    <h4>
+        ODF.COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">text</span>})
+    </h4>
+
+    <p>As Fireworkz C_COMPLEX() but always produces an OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_COMPLEX.htm">ODF.COMPLEX</a>.</p>
+
+
+    <h4>ODF.IMABS(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_RADIUS() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMABS.htm">ODF.IMABS</a>.</p>
+
+
+    <h4>ODF.IMAGINARY(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_IMAGINARY() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMAGINARY.htm">ODF.IMAGINARY</a>.</p>
+
+
+    <h4>ODF.IMARGUMENT(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_THETA() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMARGUMENT.htm">ODF.IMARGUMENT</a>.</p>
+
+
+    <h4>ODF.IMCONJUGATE(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_CONJUGATE() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMCONJUGATE.htm">ODF.IMCONJUGATE</a>.</p>
+
+
+    <h4>ODF.IMCOS(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_COS() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMCOS.htm">ODF.IMCOS</a>.</p>
+
+
+    <h4>
+        ODF.IMDIV(<span class="csg-function-parameter">complex dividend</span>,
+        <span class="csg-function-parameter">complex divisor</span>)
+    </h4>
+
+    <p>As Fireworkz C_DIV() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number strings</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMDIV.htm">ODF.IMDIV</a>.</p>
+
+
+    <h4>ODF.IMEXP(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_EXP() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMEXP.htm">ODF.IMEXP</a>.</p>
+
+
+    <h4>ODF.IMLN(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_LN() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMLN.htm">ODF.IMLN</a>.</p>
+
+
+    <h4>ODF.IMLOG10(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>Returns the logarithm to base ten of <span class="csg-function-parameter">complex number</span>.</p>
+
+    <p>Requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMLOG10.htm">ODF.IMLOG10</a>.</p>
+
+
+    <h4>ODF.IMLOG2(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>Returns the logarithm to base two of <span class="csg-function-parameter">complex number</span>.</p>
+
+    <p>Requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMLOG2.htm">ODF.IMLOG2</a>.</p>
+
+
+    <h4>ODF.IMPOWER(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_POWER() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMPOWER.htm">ODF.IMPOWER</a>.</p>
+
+
+    <h4>
+        ODF.IMPRODUCT(<span class="csg-function-parameter">complex multiplicand 1</span>,
+        <span class="csg-function-parameter">complex multiplicand 2</span>)
+    </h4>
+
+    <p>As Fireworkz C_MUL() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMPRODUCT.htm">ODF.IMPRODUCT</a>.</p>
+
+
+    <h4>ODF.IMREAL(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_REAL() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMREAL.htm">ODF.IMREAL</a>.</p>
+
+
+    <h4>ODF.IMSIN(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_SIN() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMSIN.htm">ODF.IMSIN</a>.</p>
+
+
+    <h4>ODF.IMSQRT(<span class="csg-function-parameter">complex number</span>)</h4>
+
+    <p>As Fireworkz C_SQRT() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMSQRT.htm">ODF.IMSQRT</a>.</p>
+
+
+    <h4>
+        ODF.IMSUB(<span class="csg-function-parameter">complex minuend</span>,
+        <span class="csg-function-parameter">complex subtrahend</span>)
+    </h4>
+
+    <p>As Fireworkz C_SUB() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>s.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMSUB.htm">ODF.IMSUB</a>.</p>
+
+
+    <h4>
+        ODF.IMSUM(<span class="csg-function-parameter">complex addend 1</span>,
+        <span class="csg-function-parameter">complex addend 2</span>)
+    </h4>
+
+    <p>As Fireworkz C_ADD() but requires OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>s.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IMSUM.htm">ODF.IMSUM</a>.</p>
+
+
+    <h3>Financial compatibility functions</h3>
+
+    <h4>
+        ODF.FV(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">nper</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">pmt</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>As Fireworkz FV() but with different parameter list order and sign of result.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_FV.htm">ODF.FV</a>.</p>
+
+
+    <h4>
+        ODF.IRR(<span class="csg-function-parameter">cashflows</span>:<span class="csg-function-parameter-type">array</span>
+        {,&nbsp;<span class="csg-function-parameter">guess</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>As Fireworkz IRR() but with different parameter list order and optional guess parameter.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_IRR.htm">ODF.IRR</a>.</p>
+
+
+    <h4>
+        ODF.PMT(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">nper</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">pv</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>As Fireworkz PMT() but with different parameter list order and sign of result.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_PMT.htm">ODF.PMT</a>.</p>
+
+
+    <h3>Miscellaneous compatibility functions</h3>
+
+    <h4>ODF.TYPE(<span class="csg-function-parameter">parameter</span>)</h4>
+
+    <p>Returns an OpenDocument / Microsoft Excel-compatible number corresponding to the type of <span class="csg-function-parameter">parameter</span>.</p>
+
+    <ul>
+        <li>1 = Number (includes dates and blank cells)</li>
+        <li>2 = Text</li>
+        <li>4 = Boolean value</li>
+        <li>16 = Error</li>
+        <li>64 = Array</li>
+    </ul>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_TYPE.htm">ODF.TYPE</a>.</p>
+
+
+    <h3>Statistical compatibility functions</h3>
+
+    <h4>
+        ODF.BETADIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>}}})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        beta distribution with given
+        <span class="csg-function-parameter">alpha</span> and
+        <span class="csg-function-parameter">beta</span> shape parameters.
+    </p>
+
+    <p>If <span class="csg-function-parameter">lower_limit</span> is omitted the standard beta distribution lower limit of zero is used.</p>
+
+    <p>If <span class="csg-function-parameter">upper_limit</span> is omitted the standard beta distribution upper limit of one is used.</p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>As BETA.DIST() but with different parameter list order.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODF_BETADIST.htm">ODF.BETADIST</a>.</p>
+
+
+    <h2>Database spreadsheet function added since documentation printed</h2>
+
+    <h4>
+        DPRODUCT(<span class="csg-function-parameter">range</span>,
+        <span class="csg-function-parameter">condition</span>)
+    </h4>
+
+    <p>Returns the product of all those values in the range for which the condition is satisfied.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_DPRODUCT.htm">DPRODUCT</a>.</p>
+
+
+    <h2>Date and time spreadsheet functions added since documentation printed</h2>
+
+    <h4>
+        DAYS_360(<span class="csg-function-parameter">start:<span class="csg-function-parameter-type">date</span></span>,
+        <span class="csg-function-parameter">end:<span class="csg-function-parameter-type">date</span></span>
+        {,&nbsp;<span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>This function returns the number of days between the given dates according to the desired 360-day calendar method.</p>
+
+    <ul>
+        <li><span class="csg-function-parameter">method</span> = 1 - European Method (recommended for consistent results)</li>
+        <li><span class="csg-function-parameter">method</span> = 0 - US/NASD Method (30US/360) (this is the default if omitted)</li>
+    </ul>
+
+    <p>See http://en.wikipedia.org/wiki/360-day_calendar.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_DAYS_360.htm">DAYS_360</a>.</p>
+
+
+    <h4>WEEKNUMBER(<span class="csg-function-parameter">date</span>)</h4>
+
+    <p>This function returns the week number corresponding to the date.</p>
+
+    <p>See <a href="sg06/sg6_WEEKNUMBER.htm">WEEKNUMBER</a>.</p>
+
+
+    <h2>Engineering spreadsheet functions added since documentation printed</h2>
+
+    <h4>
+        C_COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">text</span>})
+    </h4>
+
+    <p>
+        Returns the <a href="../sg06/sg6_complex_numbers.htm">complex number</a> array formed from the given
+        <span class="csg-function-parameter">real part</span> and <span class="csg-function-parameter">imaginary part</span>.
+        An optional imaginary number <span class="csg-function-parameter">suffix</span> may be supplied,
+        in which case a <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a> is returned.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_C_COMPLEX.htm">C_COMPLEX</a>.</p>
+
+
+    <h4>C_CONJUGATE(<span class="csg-function-parameter">complex_number</span>)</h4>
+
+    <p>Returns the complex conjugate of <span class="csg-function-parameter">complex_number</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_C_CONJUGATE.htm">C_CONJUGATE</a>.</p>
+
+
+    <h4>C_IMAGINARY(<span class="csg-function-parameter">complex_number</span>)</h4>
+
+    <p>Returns the imaginary part of <span class="csg-function-parameter">complex_number</span> as a real number.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_C_IMAGINARY.htm">C_IMAGINARY</a>.</p>
+
+
+    <h4>C_REAL(<span class="csg-function-parameter">complex_number</span>)</h4>
+
+    <p>Returns the real part of <span class="csg-function-parameter">complex_number</span> as a real number.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_C_REAL.htm">C_REAL</a>.</p>
+
+
+    <h4>
+        C_ROUND(<span class="csg-function-parameter">complex_number</span>
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>Separately rounds the components of <span class="csg-function-parameter">complex_number</span> to <span class="csg-function-parameter">digits</span> decimal places.</p>
+
+    <p><span class="csg-function-parameter">digits</span> must be an integer, either positive or negative (which rounds to the left of the decimal point).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_C_ROUND.htm">C_ROUND</a>.</p>
+
+
+    <h4>C_SQRT(<span class="csg-function-parameter">complex_number</span>)</h4>
+
+    <p>Returns the square root of <span class="csg-function-parameter">complex_number</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_C_SQRT.htm">C_SQRT</a>.</p>
+
+
+    <h2>Financial spreadsheet functions added since documentation printed</h2>
+
+    <h4>
+        FVSCHEDULE(<span class="csg-function-parameter">principal</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">rates</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>Calculates the future value of <span class="csg-function-parameter">principal</span> given the series of compounded interest <span class="csg-function-parameter">rates</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_FVSCHEDULE.htm">FVSCHEDULE</a>.</p>
+
+
+    <h4>
+        NPER(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">pmt</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">pv</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Microsoft Excel compatible function. As Fireworkz TERM() but with different parameter list order and sign of result.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_NPER.htm">NPER</a>.</p>
+
+
+    <h2>Logical spreadsheet functions added since documentation printed</h2>
+
+    <h4>AND(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the logical AND of all the Boolean values in <span class="csg-function-parameter">list</span>.</p>
+
+    <p>Unlike the corresponding AND logical operator, &amp;, all parameters of the AND() function are always evaluated.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_AND.htm">AND</a>.</p>
+
+
+    <h4>FALSE</h4>
+
+    <p>Returns the Boolean constant FALSE (numeric value zero).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_FALSE.htm">FALSE</a>.</p>
+
+
+    <h4>NOT(<span class="csg-function-parameter">boolean_value</span>)</h4>
+
+    <p>Returns the logical negation of <span class="csg-function-parameter">boolean_value</span> (as per the ! operator).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_NOT.htm">NOT</a>.</p>
+
+
+    <h4>OR(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the logical OR of all the Boolean values in <span class="csg-function-parameter">list</span>.</p>
+
+    <p>Unlike the corresponding OR logical operator, |, all parameters of the OR() function are always evaluated.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_OR.htm">OR</a>.</p>
+
+
+    <h4>TRUE</h4>
+
+    <p>Returns the Boolean constant TRUE (numeric value one).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_TRUE.htm">TRUE</a>.</p>
+
+
+    <h4>XOR(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the logical exclusive-OR of all the Boolean values in <span class="csg-function-parameter">list</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_XOR.htm">XOR</a>.</p>
+
+
+    <h2>Mathematical spreadsheet functions added since documentation printed</h2>
+
+    <h4>
+        CEILING(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>
+        Rounds <span class="csg-function-parameter">number</span> to the given <span class="csg-function-parameter">multiple</span> towards +infinity (or away from zero, if both are negative).<br />
+        If <span class="csg-function-parameter">multiple</span> is omitted, 1 is used.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_CEILING.htm">CEILING</a>.</p>
+
+
+    <h4>EVEN(<span class="csg-function-parameter">number</span>)</h4>
+
+    <p>Rounds <span class="csg-function-parameter">number</span> up to the next even integer, away from zero.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_EVEN.htm">EVEN</a>.</p>
+
+
+    <h4>FACT(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+
+    <p>This function yields the factorial of <span class="csg-function-parameter">n</span> (most commonly shortened to <span class="csg-function-parameter">n</span>!).</p>
+
+    <p><span class="csg-function-parameter">n</span> must be an integer greater than or equal to zero.</p>
+
+    <p>See <a href="sg06/sg6_FACT.htm">FACT</a>.</p>
+
+
+    <h4>
+        FLOOR(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>
+        Rounds <span class="csg-function-parameter">number</span> to the given <span class="csg-function-parameter">multiple</span> towards -infinity (or towards zero, if both are negative).<br />
+        If <span class="csg-function-parameter">multiple</span> is omitted, 1 is used.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_FLOOR.htm">FLOOR</a>.</p>
+
+
+    <h4>
+        MROUND(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Rounds <span class="csg-function-parameter">number</span> to the given <span class="csg-function-parameter">multiple</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_MROUND.htm">MROUND</a>.</p>
+
+
+    <h4>MULTINOMIAL(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the multinomial of all the numeric values in <span class="csg-function-parameter">list</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_MULTINOMIAL.htm">MULTINOMIAL</a>.</p>
+
+
+    <h4>ODD(<span class="csg-function-parameter">number</span>)</h4>
+
+    <p>Rounds <span class="csg-function-parameter">number</span> up to the next odd integer, away from zero.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ODD.htm">ODD</a>.</p>
+
+
+    <h4>
+        POWER(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Returns the number <span class="csg-function-parameter">a</span> raised to the power of <span class="csg-function-parameter">b</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_POWER.htm">POWER</a>.</p>
+
+
+    <h4>PRODUCT(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the product of all the values in the list, which is usually a range of cells.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_PRODUCT.htm">PRODUCT</a>.</p>
+
+
+    <h4>
+        QUOTIENT(<span class="csg-function-parameter">numerator</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">denominator</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Truncates the result of <span class="csg-function-parameter">numerator</span> &divide; <span class="csg-function-parameter">denominator</span> to an integer, always towards zero.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_QUOTIENT.htm">QUOTIENT</a>.</p>
+
+
+    <h4>
+        RANDBETWEEN(<span class="csg-function-parameter">lower</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">upper</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Returns a random integer in the interval [<span class="csg-function-parameter">lower</span>,<span class="csg-function-parameter">upper</span>].</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_RANDBETWEEN.htm">RANDBETWEEN</a>.</p>
+
+
+    <h4>
+        ROUNDDOWN(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Rounds <span class="csg-function-parameter">number</span> down to <span class="csg-function-parameter">digits</span> decimal places, towards zero.</p>
+
+    <p><span class="csg-function-parameter">digits</span> must be an integer, either positive or negative (which rounds to the left of the decimal point).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ROUNDDOWN.htm">ROUNDDOWN</a>.</p>
+
+
+    <h4>
+        ROUNDUP(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Rounds <span class="csg-function-parameter">number</span> up to <span class="csg-function-parameter">digits</span> decimal places, away from zero.</p>
+
+    <p><span class="csg-function-parameter">digits</span> must be an integer, either positive or negative (which rounds to the left of the decimal point).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ROUNDUP.htm">ROUNDUP</a>.</p>
+
+
+    <h4>
+        SERIESSUM(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">m</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">coefficients</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>Returns the sum of the given power series for <span class="csg-function-parameter">x</span>.</p>
+
+    <p>
+        <span class="csg-function-parameter">n</span> is the initial power to which <span class="csg-function-parameter">x</span> is raised,
+        this being multiplied by the first <span class="csg-function-parameter">coefficient</span> in the array.<br />
+        For each subsequent <span class="csg-function-parameter">coefficient</span>, <span class="csg-function-parameter">m</span> is added to the power.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SERIESSUM.htm">SERIESSUM</a>.</p>
+
+
+    <h4>SUMPRODUCT(<span class="csg-function-parameter">array_1</span> &hellip; <span class="csg-function-parameter">array_N</span>)</h4>
+
+    <p>Returns the sum of the products of all the corresponding values in each of the given <span class="csg-function-parameter">array</span> parameters.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SUMPRODUCT.htm">SUMPRODUCT</a>.</p>
+
+
+    <h4>SUMSQ(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the sum of the squares of all the values in the <span class="csg-function-parameter">list</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SUMSQ.htm">SUMSQ</a>.</p>
+
+
+    <h4>
+        SUM_X2MY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Sum of the difference of the squares of the corresponding values from the
+        <span class="csg-function-parameter">x-data</span> array and
+        <span class="csg-function-parameter">y-data</span> array.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SUM_X2MY2.htm">SUM_X2MY2</a>.</p>
+
+
+    <h4>
+        SUM_X2PY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Sum of the sum of the squares of the corresponding values from the
+        <span class="csg-function-parameter">x-data</span> array and
+        <span class="csg-function-parameter">y-data</span> array.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SUM_X2PY2.htm">SUM_X2PY2</a>.</p>
+
+
+    <h4>
+        SUM_XMY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Sum of the squares of the difference of the corresponding values from the
+        <span class="csg-function-parameter">x-data</span> array and
+        <span class="csg-function-parameter">y-data</span> array.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SUM_XMY2.htm">SUM_XMY2</a>.</p>
+
+
+    <h4>
+        TRUNC(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>Truncates <span class="csg-function-parameter">number</span> to <span class="csg-function-parameter">digits</span> decimal places, always towards zero.</p>
+
+    <p>If supplied, <span class="csg-function-parameter">digits</span> must be an integer, either positive or negative (which applies truncation to the left of the decimal point).</p>
+
+    <p>If <span class="csg-function-parameter">digits</span> is omitted, zero is used.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_TRUNC.htm">TRUNC</a>.</p>
+
+
+    <h2>Miscellaneous spreadsheet functions added since documentation printed</h2>
+
+    <h4>ISEVEN(<span class="csg-function-parameter">number</span>)</h4>
+
+    <p>
+        Returns the Boolean value <code>TRUE</code> if <span class="csg-function-parameter">number</span> is an even integer, otherwise returns <code>FALSE</code>.
+        Non-integral values are first truncated.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ISEVEN.htm">ISEVEN</a>.</p>
+
+
+    <h4>ISODD(<span class="csg-function-parameter">number</span>)</h4>
+
+    <p>
+        Returns the Boolean value <code>TRUE</code> if <span class="csg-function-parameter">number</span> is an odd integer, otherwise returns <code>FALSE</code>.
+        Non-integral values are first truncated.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ISODD.htm">ISODD</a>.</p>
+
+
+    <h4>N(<span class="csg-function-parameter">value</span>)</h4>
+
+    <p>Provided to allow some Microsoft Excel and Lotus 1-2-3 spreadsheets to load.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_N.htm">N</a>.</p>
+
+
+    <h2>Statistical spreadsheet functions added since documentation printed</h2>
+
+    <h4>AVEDEV(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the average deviation of the values in <span class="csg-function-parameter">list</span> from their arithmetic mean.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_AVEDEV.htm">AVEDEV</a>.</p>
+
+
+    <h4>
+        BETA(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>See <a href="sg06/sg6_BETA.htm">BETA</a>.</p>
+
+
+    <h4>
+        BETA.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>
+        {,&nbsp;<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">number</span>}}})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        beta distribution with given
+        <span class="csg-function-parameter">alpha</span>
+        and <span class="csg-function-parameter">beta</span> shape parameters.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>If <span class="csg-function-parameter">lower_limit</span> is omitted the standard beta distribution lower limit of zero is used.</p>
+
+    <p>If <span class="csg-function-parameter">upper_limit</span> is omitted the standard beta distribution upper limit of one is used.</p>
+
+    <p>See <a href="sg06/sg6_BETA_DIST.htm">BETA.DIST</a>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+
+    <h4>
+        COMBIN(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p><span class="csg-function-parameter">n</span>C<span class="csg-function-parameter">k</span> = <span class="csg-function-parameter">n</span>! / ((<span class="csg-function-parameter">n</span>-<span class="csg-function-parameter">k</span>)! <span class="csg-function-parameter">k</span>!)</p>
+
+    <p>This function yields the number of combinations of <span class="csg-function-parameter">n</span> unlike things taken <span class="csg-function-parameter">k</span> at a time.</p>
+
+    <p>For very large <span class="csg-function-parameter">n</span> this is an approximation achieved using logarithms.</p>
+
+    <p>See <a href="sg06/sg6_COMBIN.htm">COMBIN</a>.</p>
+
+
+    <h4>COUNTBLANK(<span class="csg-function-parameter">range</span>)</h4>
+
+    <p>Returns the number of blank cells (or empty text strings) in <span class="csg-function-parameter">range</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_COUNTBLANK.htm">COUNTBLANK</a>.</p>
+
+
+    <h4>
+        COVARIANCE.P(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>Returns the population covariance of the two arrays.
+
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_COVARIANCE_P.htm">COVARIANCE.P</a>.</p>
+
+
+    <h4>
+        COVARIANCE.S(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>Returns the sample covariance of the two arrays.
+
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_COVARIANCE_S.htm">COVARIANCE.S</a>.</p>
+
+
+    <h4>DEVSQ(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the sum of the squares of the deviations of the values in the <span class="csg-function-parameter">list</span> from their arithmetic mean.
+
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_DEVSQ.htm">DEVSQ</a>.</p>
+
+
+    <h4>
+        EXPON.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">lambda</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        exponential distribution with
+        parameter <span class="csg-function-parameter">lambda</span>.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span>: selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_EXPON_DIST.htm">EXPON.DIST</a>.</p>
+
+
+    <h4>
+        FORECAST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Returns the predicted y-value corresponding to the given <span class="csg-function-parameter">x</span>-value
+        using the linear regression line given by the <span class="csg-function-parameter">y-data</span> and <span class="csg-function-parameter">x-data</span> arrays.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_FORECAST.htm">FORECAST</a>.</p>
+
+
+    <h4>GEOMEAN(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the geometric mean of the values in the <span class="csg-function-parameter">list</span>.
+
+    </p>
+
+    <p>All values in the <span class="csg-function-parameter">list</span> must be positive, non-zero numbers.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_GEOMEAN.htm">GEOMEAN</a>.</p>
+
+
+    <p>See <a href="sg06/sg6_.htm"></a>.</p>
+
+    <h4>GAMMA(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+
+    <p>This special function yields the value of the gamma function of x, &Gamma;(x).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_GAMMA.htm">GAMMA</a>.</p>
+
+
+    <h4>
+        GAMMA.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">shape</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">scale</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        gamma distribution with given
+        <span class="csg-function-parameter">shape</span> and
+        <span class="csg-function-parameter">scale</span> parameters.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_GAMMA_DIST.htm">GAMMA.DIST</a>.</p>
+
+
+    <h4>GAMMALN(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+
+    <p>This special function yields the natural logarithm of the absolute value of the gamma function of x.</p>
+
+    <p>See <a href="sg06/sg6_GAMMALN.htm">GAMMALN</a>.</p>
+
+
+    <h4>HARMEAN(<span class="csg-function-parameter">list</span>)</h4>
+
+    <p>Returns the harmonic mean of the values in the <span class="csg-function-parameter">list</span>.
+
+    </p>
+
+    <p>All values in the <span class="csg-function-parameter">list</span> must be non-zero numbers.</p>
+
+    <p>The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the values.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_HARMEAN.htm">HARMEAN</a>.</p>
+
+
+    <h4>
+        HYPGEOM.DIST(<span class="csg-function-parameter">sample_successes</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">number_sample</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">population_successes</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">number_population</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        hypergeometric distribution
+        for a sample with <span class="csg-function-parameter">sample_successes</span>, <span class="csg-function-parameter">number_sample</span>
+        and a population with <span class="csg-function-parameter">population_successes</span>, <span class="csg-function-parameter">number_population</span>.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>) or PDF (<code>FALSE</code>, default).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_HYPGEOM_DIST.htm">HYPGEOM.DIST</a>.</p>
+
+
+    <h4>
+        INTERCEPT(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Returns the intercept of the linear regression line given by the
+        <span class="csg-function-parameter">y-data</span> array and
+        <span class="csg-function-parameter">x-data</span> array.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_INTERCEPT.htm">INTERCEPT</a>.</p>
+
+
+    <h4>
+        LARGE(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Returns the <span class="csg-function-parameter">k</span>-th largest value in <span class="csg-function-parameter">array</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_LARGE.htm">LARGE</a>.</p>
+
+
+    <h4>
+        LOGNORM.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        log-normal distribution with given
+        <span class="csg-function-parameter">mean</span> and
+        <span class="csg-function-parameter">standard deviation</span>.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span>: selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_LOGNORM_DIST.htm">LOGNORM.DIST</a>.</p>
+
+
+    <h4>MODE.SNGL(<span class="csg-function-parameter">array</span>)</h4>
+
+    <p>Returns the mode of <span class="csg-function-parameter">array</span>.</p>
+
+    <p>The mode is the most frequently occuring value in a data set.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_MODE_SNGL.htm">MODE.SNGL</a>.</p>
+
+
+    <h4>
+        PERCENTILE.EXC(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">k</span>-th (exclusive) percentile value in
+        <span class="csg-function-parameter">array</span> where <span class="csg-function-parameter">k</span> is in (0,1).
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_PERCENTILE_EXC.htm">PERCENTILE.EXC</a>.</p>
+
+
+    <h4>
+        PERCENTILE.INC(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">k</span>-th (inclusive) percentile value in
+        <span class="csg-function-parameter">array</span> where <span class="csg-function-parameter">k</span> is in [0,1].
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_PERCENTILE_INC.htm">PERCENTILE.INC</a>.</p>
+
+
+    <h4>
+        PERMUT(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p><span class="csg-function-parameter">n</span>P<span class="csg-function-parameter">k</span> = <span class="csg-function-parameter">n</span>! / (<span class="csg-function-parameter">n</span>-<span class="csg-function-parameter">k</span>)!</p>
+
+    <p>This function yields the number of permutations of <span class="csg-function-parameter">n</span> unlike things taken <span class="csg-function-parameter">k</span> at a time.</p>
+
+    <p>For very large <span class="csg-function-parameter">n</span> this is an approximation achieved using logarithms.</p>
+
+    <p>See <a href="sg06/sg6_PERMUT.htm">PERMUT</a>.</p>
+
+
+    <h4>
+        NORM.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        normal distribution with given <span class="csg-function-parameter">mean</span> and
+        <span class="csg-function-parameter">standard deviation</span>.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_NORM_DIST.htm">NORM.DIST</a>.</p>
+
+
+    <h4>
+        NORM.S.DIST(<span class="csg-function-parameter">z</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        standard normal distribution
+        (i.e. the normal distribution with mean value of zero and standard deviation of one).
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_NORM_S_DIST.htm">NORM.S.DIST</a>.</p>
+
+
+    <h4>PHI(<span class="csg-function-parameter">z</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+
+    <p>
+        Returns the value of the probability density function for the
+        standard normal distribution (i.e. the normal distribution with mean value of zero and standard deviation of one).
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_PHI.htm">PHI</a>.</p>
+
+
+    <h4>
+        POISSON.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">lambda</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>)
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        Poisson distribution with
+        parameter <span class="csg-function-parameter">lambda</span>.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_POISSON_DIST.htm">POISSON.DIST</a>.</p>
+
+
+    <h4>
+        QUARTILE.EXC(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">q</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">q</span>-th quartile value in
+        <span class="csg-function-parameter">array</span> where <span class="csg-function-parameter">q</span> is one of:
+    </p>
+
+    <p>q=1 25% Q1</p>
+    <p>q=2 50% Q2 (MEDIAN)</p>
+    <p>q=3 75% Q3</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_QUARTILE_EXC.htm">QUARTILE.EXC</a>.</p>
+
+
+    <h4>
+        QUARTILE.INC(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">q</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">q</span>-th quartile value in
+        <span class="csg-function-parameter">array</span> where <span class="csg-function-parameter">q</span> is one of:
+    </p>
+
+    <p>q=0 0% (MIN)</p>
+    <p>q=1 25% Q1</p>
+    <p>q=2 50% Q2 (MEDIAN)</p>
+    <p>q=3 75% Q3</p>
+    <p>q=4 100% (MAX)</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_QUARTILE_INC.htm">QUARTILE.INC</a>.</p>
+
+
+    <h4>
+        RANK.EQ(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">array</span>
+        {,&nbsp;<span class="csg-function-parameter">order</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>Returns the rank of <span class="csg-function-parameter">number</span> in the given <span class="csg-function-parameter">array</span>.</p>
+
+    <p>
+        If <span class="csg-function-parameter">order</span> is zero or omitted,
+        <span class="csg-function-parameter">array</span> is treated as being sorted in descending order.
+    </p>
+
+    <p>
+        If <span class="csg-function-parameter">order</span> is non-zero,
+        <span class="csg-function-parameter">array</span> is treated as being sorted in ascending order.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_RANK_EQ.htm">RANK.EQ</a>.</p>
+
+
+    <h4>
+        SLOPE(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Returns the slope of the linear regression line given by the
+        <span class="csg-function-parameter">y-data</span> array and
+        <span class="csg-function-parameter">x-data</span> array.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SLOPE.htm">SLOPE</a>.</p>
+
+
+    <h4>
+        SMALL(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>Returns the <span class="csg-function-parameter">k</span>-th smallest value in <span class="csg-function-parameter">array</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SMALL.htm">SMALL</a>.</p>
+
+
+    <h4>
+        STANDARDIZE(<span class="csg-function-parameter">x</span>,
+        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>
+        Normalises <span class="csg-function-parameter">x</span> to the normal distribution given by
+        <span class="csg-function-parameter">mean</span> and <span class="csg-function-parameter">standard deviation</span>.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_STANDARDIZE.htm">STANDARDIZE</a>.</p>
+
+
+    <h4>
+        STEYX(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+    </h4>
+
+    <p>
+        Returns the standard error of the linear regression line given by the
+        <span class="csg-function-parameter">y-data</span> and
+        <span class="csg-function-parameter">x-data</span> arrays.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_STEYX.htm">STEYX</a>.</p>
+
+
+    <h4>
+        TRIMMEAN(<span class="csg-function-parameter">array</span>,
+        <span class="csg-function-parameter">percent</span>:<span class="csg-function-parameter-type">number</span>)
+    </h4>
+
+    <p>
+        Returns the arithmetic mean value of the interior of the data in
+        <span class="csg-function-parameter">array</span> (or range of cells) when the lower and upper
+        <span class="csg-function-parameter">percent</span> range of values are excluded from the calculation.
+    </p>
+
+    <p><span class="csg-function-parameter">percent</span> should be in the range <code>0.0..0.5</code> (i.e. 0 to 50%).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_TRIMMEAN.htm">TRIMMEAN</a>.</p>
+
+
+    <h4>
+        WEIBULL.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">shape</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">scale</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>)
+    </h4>
+
+    <p>
+        Returns the value of the probability density function (PDF)
+        or the cumulative distribution function (CDF) for the
+        Weibull distribution with given
+        <span class="csg-function-parameter">shape</span> and
+        <span class="csg-function-parameter">scale</span> parameters.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>) or PDF (<code>FALSE</code>).</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_WEIBULL_DIST.htm">WEIBULL.DIST</a>.</p>
+
+
+    <h2>String spreadsheet functions added since documentation printed</h2>
+
+    <h4>CLEAN(<span class="csg-function-parameter">text</span>)</h4>
+
+    <p>Removes all unprintable characters from <span class="csg-function-parameter">text</span>.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_CLEAN.htm">CLEAN</a>.</p>
+
+
+    <h4>
+        DOLLAR(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>Converts <span class="csg-function-parameter">number</span> into a string with a currency symbol, thousands commas, <span class="csg-function-parameter">digits</span> decimal places and with negative numbers in parentheses.</p>
+
+    <p>Note that any rounding is carried out according to the same formula as that used by the <a href="../sg06/sg6_ROUND.htm"><code>ROUND</code></a> function.</p>
+
+    <p>This function is like <a href="../sg06/sg6_STRING.htm"><code>STRING</code></a> but with the addition of a currency symbol, thousands commas and negative parentheses.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_DOLLAR.htm">DOLLAR</a>.</p>
+
+
+    <h4>
+        FIXED(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>
+        {,&nbsp;<span class="csg-function-parameter">no_commas</span>:<span class="csg-function-parameter-type">number</span>}})
+    </h4>
+
+    <p>Converts <span class="csg-function-parameter">number</span> into a string with <span class="csg-function-parameter">digits</span> decimal places.</p>
+
+    <p>Note that any rounding is carried out according to the same formula as that used by the <a href="../sg06/sg6_ROUND.htm"><code>ROUND</code></a> function.</p>
+
+    <p>This function is like <a href="../sg06/sg6_STRING.htm"><code>STRING</code></a> when <span class="csg-function-parameter">no_commas</span> is <code>FALSE</code>, otherwise STRING()-like but with the addition of thousands commas.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_FIXED.htm">FIXED</a>.</p>
+
+
+    <h4>
+        SUBSTITUTE(<span class="csg-function-parameter">text</span>,
+        <span class="csg-function-parameter">old</span>:<span class="csg-function-parameter-type">text</span>,
+        <span class="csg-function-parameter">new</span>:<span class="csg-function-parameter-type">text</span>
+        {,&nbsp;<span class="csg-function-parameter">instance</span>:<span class="csg-function-parameter-type">number</span>})
+    </h4>
+
+    <p>
+        Replaces occurences of the <span class="csg-function-parameter">old</span> text string with the
+        <span class="csg-function-parameter">new</span> text string in <span class="csg-function-parameter">text</span>.
+    </p>
+
+    <p>
+        If <span class="csg-function-parameter">instance</span> is omitted,
+        all occurences of the <span class="csg-function-parameter">old</span> text string are subtituted.
+    </p>
+
+    <p>
+        If <span class="csg-function-parameter">instance</span> is supplied,
+        only the <span class="csg-function-parameter">instance</span>-th occurence of the <span class="csg-function-parameter">old</span> text string is subtituted.
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_SUBSTITUTE.htm">SUBSTITUTE</a>.</p>
+
+
+    <h4>T(<span class="csg-function-parameter">value</span>)</h4>
+
+    <p>Provided to allow some Microsoft Excel and Lotus 1-2-3 spreadsheets to load.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_T.htm">T</a>.</p>
+
+
+
+    <h2>Printed documentation errata and notes</h2>
+
+    <p>
+        The printed <em>Spreadsheet Guide</em> p32 para2 refers to using the TRANSPOSE()
+        spreadsheet function in order to process columns of data into rows for sorting.<br />
+        This should say: 'If you want to sort data that is organised along rows,
+        not down columns, you will need to use the TRANSPOSE() spreadsheet function
+        to swap the data around'.
+    </p>
+
+    <p>
+        Please note that the automatic detection of number styles on numeric entry
+        only operates when the Edit in cell option is switched on.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="ug98_glossary.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../index.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

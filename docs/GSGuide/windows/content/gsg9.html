@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="gsguide.css" rel="stylesheet" type="text/css" />
+    <title>Transferring files between platforms</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td id="navheader_PCN_L"><a href="gsg8.html">Prev</a></td>
+                <th id="navheader_PCN_C">Fireworkz<br />Getting Started Guide for Windows</th>
+                <td id="navheader_PCN_R"> <a href="gsg_glossary.html">Next</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><div class="csg-section-number">9</div>Transferring files between platforms</h1>
+
+    <p>
+        This chapter shows you further ways in which you can use Fireworkz to
+        simplify tasks which would be much more complicated if you were using separate
+        word processor and spreadsheet programs.
+    </p>
+
+    <p>It includes sections on:</p>
+
+    <ul>
+        <li>Fonts;</li>
+
+        <li>Pictures and charts;</li>
+
+        <li>Databases.</li>
+    </ul>
+
+    <h2>Before you transfer files</h2>
+
+    <p>
+        You may wish to transfer documents between Windows and RISC&nbsp;OS.
+        Fireworkz documents can easily be transferred between the two platforms,
+        but there are some potential problems which you should watch out for.
+    </p>
+
+    <p>Before copying a file, you should check for the following:</p>
+
+    <h3>Fonts</h3>
+
+    <p>
+        Fireworkz stores the fonts used in documents internally by their PostScript name,
+        if there is one, rather than any platform- or vendor-specific name.
+        If most of the fonts you use on both platforms are standard fonts with
+        analagous PostScript names, you should find that the correct fonts are used.
+    </p>
+
+    <p>
+        For example, documents which use the RISC&nbsp;OS fonts Trinity and Homerton
+        will be displayed in Times New Roman and Arial, the equivalent standard Windows fonts.
+    </p>
+
+    <p>
+        If your documents use non-standard fonts which do not have
+        a direct equivalent on your other systems, another font will be substituted.
+        Inevitably, this will mean that your text is reformatted.
+    </p>
+
+    <h4>Height and width</h4>
+
+    <p>
+        Fireworkz allows you to stretch and shrink type using the Width option
+        in the Text section of the Style editor. Unfortunately, if this option has been set
+        in RISC&nbsp;OS, it will mean that with some fonts, Windows may not display the text
+        at the correct height or width.
+    </p>
+
+    <p>Ideally, you should turn this option off in all text before transferring files.</p>
+
+    <h3>Pictures and charts</h3>
+
+    <p>
+        Charts and pictures which are embedded within documents will be
+        transferred along with the text and the rest of the document.
+        Fireworkz will interpret and display most embedded picture files,
+        and also more complex pictures such as pictogram charts which are effectively
+        a Draw file containing embedded sprites or further Draw files.
+    </p>
+
+    <p>
+        Referenced pictures will usually be transferred or translated.
+        However, you must first make sure that the file names of referenced pictures can be
+        understood by both systems. You will also need to make sure that in both the
+        original and the copy that all the files are in the same directory:
+        this makes it much easier for Fireworkz to find the files.
+    </p>
+
+    <h3>Databases</h3>
+
+    <p>
+        Fireworkz for Windows will not understand any databases inserted into
+        Fireworkz Pro documents. All database areas of such documents will be ignored.
+    </p>
+
+    <h2>Transferring files from Windows to RISC&nbsp;OS</h2>
+
+    <p>To transfer files from Windows to RISC&nbsp;OS:</p>
+
+    <ol>
+        <li>
+            Check the document for any of the potential problems outlined above.
+            These problems apply to transfers in either direction.
+        </li>
+
+        <li>
+            Save the file in a location which your RISC&nbsp;OS computer can access
+            (for example on a DOS format floppy disc, or on a network server accessible
+            to both types of machine).
+        </li>
+
+        <li>Select the file in the filer window on the RISC&nbsp;OS desktop.</li>
+
+        <li>
+            Press the middle mouse button (Menu) and choose
+            <span class="csg-menu-option">Set Type</span> from the menu which appears.
+        </li>
+
+        <li>Change the file type to <code>Firewrkz</code>.</li>
+    </ol>
+
+    <p>You will now be able to use the file in RISC&nbsp;OS.</p>
+
+    <h2>Transferring files from RISC&nbsp;OS to Windows</h2>
+
+    <p>
+        The process of transferring files to Windows is quite simple.
+        The work needs to be done at the RISC&nbsp;OS end, so if you are
+        going to be sent files and do not have access to an RISC&nbsp;OS computer,
+        make sure that the person sending the files has a copy these instructions.
+    </p>
+
+    <ol>
+        <li>
+            Check the document for any of the potential problems outlined above.
+            These problems apply to transfers in either direction.
+        </li>
+
+        <li>
+            Either place a DOS format floppy in your floppy drive,
+            or mount a PC or other server disc across your network.
+        </li>
+
+        <li>Copy the files on to the disc.</li>
+
+        <li>
+            You will need to rename the file in order to change its type.
+            Select the file in the filer window and press the menu button.
+            Choose <span class="csg-menu-option">Rename file</span>
+            from the menu which appears.
+        </li>
+
+        <li>
+            Add the extension /FWK, for example FILENAME/FWK.
+            This will be interpreted by Windows as FILENAME.FWK.
+        </li>
+
+        <li>
+            Dismount the floppy disc by choosing
+            <span class="csg-menu-option">Dismount</span> from the floppy disc menu.
+            You must do this to ensure that all the data is correctly written onto the disc.
+        </li>
+    </ol>
+
+    <p>You can now take the file to a Windows computer.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <col />
+            <col />
+            <col />
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="gsg8.html">Prev</a> </td>
+                <td id="navfooter_PUN_C"> </td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="gsg_glossary.html">Next</a></td>
+            </tr>
+            <tr>
+                <td id="navfooter_PUN_L">Combining text and numbers </td>
+                <td id="navfooter_PUN_C"><a accesskey="h" href="../index.html">Home</a></td>
+                <td id="navfooter_PUN_R"> Glossary</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

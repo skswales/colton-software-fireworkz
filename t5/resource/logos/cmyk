@@ -1,0 +1,17 @@
+Pantone -> CMYK mapping
+-----------------------
+
+313C (cyan)   C100 M0   Y6   K18
+ not possible with RGB - use C94 M 0 Y6 K6 instead
+
+Green C       C100 M0   Y65  K0
+
+Violet C      C94  M91  Y0   K0
+
+804C (orange) unrepresentable
+Orange 021C   CC0  M51  Y87  K0
+
+Colton Software Logo
+296            C100 M47 Y0 K69
+ not possible with RGB - use C31 M31 Y0 K69
+

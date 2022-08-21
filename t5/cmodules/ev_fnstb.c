@@ -886,6 +886,14 @@ PROC_EXEC_PROTO(c_randbetween)
     }
     else
     {
+#if 0 /* test harness for h.r.b. */
+        if(upper_exc < 64.0)
+        {
+            F64 f64 = host_rand_between((U32) lower_inc, (U32) upper_exc);
+            randbetween_result = f64;
+        }
+        else
+#endif
         for(;;)
         {
             F64 f64 = uniform_distribution(); /* generates a random number on [0,1) */

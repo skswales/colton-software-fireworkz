@@ -648,7 +648,7 @@ dialog_cmd_ctl_size_estimate(
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for a dialog e.g. 96 or 120 */
 
         /* +2 is a bit hacky for Windows Classic theme on XP */ /* DPI-aware */
-        est_size.x = div_round_ceil_u((vscroll_pixels_cx + 2 * edge_pixels_cx + 2) * PIXITS_PER_PIXEL * 96, PixelsPerInch.cx);
+        est_size.x = idiv_ceil_u((vscroll_pixels_cx + 2 * edge_pixels_cx + 2) * PIXITS_PER_PIXEL * 96, PixelsPerInch.cx);
         } /*block*/
 #endif
         break;

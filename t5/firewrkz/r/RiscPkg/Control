@@ -1,12 +1,24 @@
 Package: Fireworkz
-Version: 2.10.2
+Version: 2.20.0
 Section: Document
 Priority: Optional
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
 Licence: Free
 Description: Word Processor & Spreadsheet
- Fireworkz offers all the facilities you would expect from the following separate programs:
- word processor, spreadsheet and charts package.
- Thanks to Richard Colton, Fireworkz is now open source and completely free.
+ You can use Fireworkz as a word processor to write letters, reports, books, invitations, shopping lists, schedules and other documents.
+ .
+ You can use Fireworkz as a spreadsheet to perform calculations, analyse figures and produce colourful charts.
+ .
+ Fireworkz also combines these functions enabling you to do even more - for example, incorporate live results in your reports, or automatic mail-merge to your friends or customers.
+ .
+ Thanks to Richard Colton, Fireworkz is now open source and completely free to use.
+ .
+ Recommended: The Fireworkz-Manuals package contains a Getting Started Guide for RISC OS which is designed to help you get to know the basic word processing and spreadsheet capabilities of Fireworkz. You can find the accompanying files for the Getting Started Guide in the Fireworkz-Examples package.
+ .
+ The Fireworkz-Manuals package also contains a combined User & Spreadsheet Guide that provides a complete reference for all the menu commands, toolbar buttons and spreadsheet functions in Fireworkz, so that if you have any questions while you are doing your work you will quickly be able to find the answer. Separate chapters cover each subject in detail.
+ .
+ Fireworkz website
+ .
+ http://croftnuisk.co.uk/coltsoft/fireworkz
 Components: Apps.Document.!Fireworkz (Movable LookAt)

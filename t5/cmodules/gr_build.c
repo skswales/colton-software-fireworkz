@@ -1069,7 +1069,7 @@ gr_chart_save_draw_file_without_dialog(
 
     save_filename = filename ? filename : cp->core.currentdrawname;
 
-    res = gr_riscdiag_diagram_save(p_gr_riscdiag, save_filename);
+    res = gr_riscdiag_diagram_save(p_gr_riscdiag, save_filename, FILETYPE_DRAW);
 
     if(res > 0)
     {
@@ -1107,18 +1107,19 @@ static void
 gr_chart_riscos_broadcast_changed(
     _In_z_      PCTSTR filename)
 {
-    U32 n_bytes = tstrlen32p1(filename); /*CH_NULL*/
     WimpMessage msg;
 
-    n_bytes = round_up(n_bytes, 4);
-
-    msg.hdr.size = offsetof32(ExtendedWimpMessage, data.pd_dde.type.d) + n_bytes;
-    msg.hdr.my_ref = 0; /* fresh msg */
+    zero_struct(msg);
+    msg.hdr.size = offsetof32(ExtendedWimpMessage, data.pd_dde.type.d);
+  /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = wimp_MPD_DDE;
 
     msg.data.pd_dde.id = wimp_MPD_DDE_DrawFileChanged;
 
     tstr_xstrkpy(msg.data.pd_dde.type.d.leafname, elemof32(msg.data.pd_dde.type.d.leafname), filename);
+
+    msg.hdr.size += tstrlen32p1(msg.data.pd_dde.type.d.leafname); /*CH_NULL*/;
+    msg.hdr.size  = round_up(msg.hdr.size, 4);
 
     void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, 0 /*broadcast*/, BAD_WIMP_I, NULL));
 }
@@ -1216,7 +1217,7 @@ cache_automap_for(
             }
 
             if(STATUS_OK == status)
-                status_return(status = file_find_on_path(buffer, elemof32(buffer), leafname));
+                status_return(status = file_find_on_path(buffer, elemof32(buffer), file_get_search_path(), leafname));
 
             if(status_done(status))
             {
@@ -1297,7 +1298,7 @@ cache_automap_for(
     }
 
     if(STATUS_OK == status)
-        status_return(status = file_find_on_path(buffer, elemof32(buffer), leafname));
+        status_return(status = file_find_on_path(buffer, elemof32(buffer), file_get_search_path(), leafname));
 
     if(status_done(status))
     {

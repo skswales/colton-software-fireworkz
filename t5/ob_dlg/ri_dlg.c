@@ -58,13 +58,13 @@ dialog_riscos_event_lbn_scan_ictls_for_owner(
 
 _Check_return_
 static STATUS
-dialog_riscos_key_pressed(
+dialog_riscos_Key_Pressed(
     P_DIALOG p_dialog,
     _In_        KMAP_CODE ch);
 
 _Check_return_
 static STATUS
-dialog_riscos_mlec_event_mouse_click(
+dialog_riscos_mlec_event_Mouse_Click(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl,
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
@@ -72,7 +72,7 @@ dialog_riscos_mlec_event_mouse_click(
 
 _Check_return_
 static POINTER_SHAPE
-dialog_riscos_mlec_event_mouse_click_pshape(
+dialog_riscos_mlec_event_determine_pshape(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl,
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
@@ -101,8 +101,7 @@ dialog_riscos_redraw_controls_in(
 
 static void
 dialog_riscos_redraw_core(
-    _Inout_     WimpRedrawWindowBlock * const p_redraw_window,
-    _Inout_     int * const p_more,
+    _Inout_     WimpRedrawWindowBlock * const p_redraw_window_block,
     _InVal_     H_DIALOG h_dialog,
     _InVal_     BOOL is_update_now);
 
@@ -110,7 +109,7 @@ static DIALOG_CONTROL_ID
 dialog_riscos_scan_controls_in(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL_GROUP p_ictl_group,
-    _In_        const WimpMouseClickEvent * const p_mouse_click);
+    _InVal_     wimp_i icon_handle);
 
 _Check_return_
 static STATUS
@@ -195,16 +194,16 @@ dialog_riscos_box_from_pixit_rect(
     const S32 dy = host_modevar_cache_current.dy;
 
     /* bl */
-    p_box->x0 = +div_round_floor(p_rect->tl.x, dx * PIXITS_PER_RISCOS) * dx;
-    p_box->y0 = -div_round_floor(p_rect->br.y, dy * PIXITS_PER_RISCOS) * dy;
+    p_box->x0 = +idiv_floor(p_rect->tl.x, dx * PIXITS_PER_RISCOS) * dx;
+    p_box->y0 = -idiv_floor(p_rect->br.y, dy * PIXITS_PER_RISCOS) * dy;
     /* one would naturally add a dy to convert from exc to inc, but a dy in the opposite direction
      * is needed to shift the zero line down to the first visible raster of a window
      * also draw yourself a diagram - if the br is exclusive, it ought not to draw in the pixel that maps to
     */
 
     /* tr */
-    p_box->x1 = +div_round_floor(p_rect->br.x, dx * PIXITS_PER_RISCOS) * dx;
-    p_box->y1 = -div_round_floor(p_rect->tl.y, dy * PIXITS_PER_RISCOS) * dy; /* ditto, from inc to exc ... */
+    p_box->x1 = +idiv_floor(p_rect->br.x, dx * PIXITS_PER_RISCOS) * dx;
+    p_box->y1 = -idiv_floor(p_rect->tl.y, dy * PIXITS_PER_RISCOS) * dy; /* ditto, from inc to exc ... */
 }
 
 static const RESOURCE_BITMAP_ID radio[2] =
@@ -293,7 +292,7 @@ dialog_riscos_combobox_dropdown(
     GDI_POINT gdi_org;
     WimpIconBlockWithBitset icon;
 
-    host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window w.a. ABS origin */
+    host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window work area ABS origin */
 
     void_WrapOsErrorReporting(wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_dialog_ictl->riscos.dwi[0].icon_handle, &icon));
     abs_bbox.xmin = icon.bbox.xmin + gdi_org.x;
@@ -390,50 +389,54 @@ dialog_riscos_current_move(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_close_window(
+dialog_riscos_dbox_event_Close_Window(
     _InVal_     H_DIALOG h_dialog);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_open_window(
+dialog_riscos_dbox_event_Open_Window_Request(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpOpenWindowRequestEvent * const p_open_window_request);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_redraw_window(
+dialog_riscos_dbox_event_Redraw_Window_Request(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpRedrawWindowRequestEvent * const p_redraw_window_request);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_mouse_click(
+dialog_riscos_dbox_event_Mouse_Click(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpMouseClickEvent * const p_mouse_click);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_key_pressed(
+dialog_riscos_dbox_event_Key_Pressed(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpKeyPressedEvent * const p_key_pressed);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_user_drag_box(
+dialog_riscos_dbox_event_User_Drag_Box(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpUserDragBoxEvent * const p_user_drag_box);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_pointer_enter_leave(
-    _InVal_     H_DIALOG h_dialog,
-    _InVal_     int event_code);
+dialog_riscos_dbox_event_Pointer_Entering_Window(
+    _InVal_     H_DIALOG h_dialog);
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_user_message(
+dialog_riscos_dbox_event_Pointer_Leaving_Window(
+    _InVal_     H_DIALOG h_dialog);
+
+_Check_return_
+static int
+dialog_riscos_dbox_event_User_Message(
     _InVal_     H_DIALOG h_dialog,
-    _In_        const WimpMessage * const p_wimp_message);
+    _InRef_     PC_WimpMessage p_wimp_message);
 
 _Check_return_
 extern int
@@ -446,31 +449,33 @@ dialog_riscos_dbox_event_handler(
 
     switch(event_code)
     {
-    case Wimp_ECloseWindow:
-        return(dialog_riscos_dbox_event_close_window((H_DIALOG) handle));
+    case Wimp_ERedrawWindow:
+        return(dialog_riscos_dbox_event_Redraw_Window_Request((H_DIALOG) handle, &p_event_data->redraw_window_request));
 
     case Wimp_EOpenWindow:
-        return(dialog_riscos_dbox_event_open_window((H_DIALOG) handle, &p_event_data->open_window_request));
+        return(dialog_riscos_dbox_event_Open_Window_Request((H_DIALOG) handle, &p_event_data->open_window_request));
 
-    case Wimp_ERedrawWindow:
-        return(dialog_riscos_dbox_event_redraw_window((H_DIALOG) handle, &p_event_data->redraw_window_request));
-
-    case Wimp_EMouseClick:
-        return(dialog_riscos_dbox_event_mouse_click((H_DIALOG) handle, &p_event_data->mouse_click));
-
-    case Wimp_EKeyPressed:
-        return(dialog_riscos_dbox_event_key_pressed((H_DIALOG) handle, &p_event_data->key_pressed));
-
-    case Wimp_EUserDrag:
-        return(dialog_riscos_dbox_event_user_drag_box((H_DIALOG) handle, &p_event_data->user_drag_box));
+    case Wimp_ECloseWindow:
+        return(dialog_riscos_dbox_event_Close_Window((H_DIALOG) handle));
 
     case Wimp_EPointerLeavingWindow:
+        return(dialog_riscos_dbox_event_Pointer_Leaving_Window((H_DIALOG) handle));
+
     case Wimp_EPointerEnteringWindow:
-        return(dialog_riscos_dbox_event_pointer_enter_leave((H_DIALOG) handle, event_code));
+        return(dialog_riscos_dbox_event_Pointer_Entering_Window((H_DIALOG) handle));
+
+    case Wimp_EMouseClick:
+        return(dialog_riscos_dbox_event_Mouse_Click((H_DIALOG) handle, &p_event_data->mouse_click));
+
+    case Wimp_EUserDrag:
+        return(dialog_riscos_dbox_event_User_Drag_Box((H_DIALOG) handle, &p_event_data->user_drag_box));
+
+    case Wimp_EKeyPressed:
+        return(dialog_riscos_dbox_event_Key_Pressed((H_DIALOG) handle, &p_event_data->key_pressed));
 
     case Wimp_EUserMessage:
     case Wimp_EUserMessageRecorded:
-        return(dialog_riscos_dbox_event_user_message((H_DIALOG) handle, &p_event_data->user_message));
+        return(dialog_riscos_dbox_event_User_Message((H_DIALOG) handle, &p_event_data->user_message));
 
     default:
         break;
@@ -481,7 +486,7 @@ dialog_riscos_dbox_event_handler(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_close_window(
+dialog_riscos_dbox_event_Close_Window(
     _InVal_     H_DIALOG h_dialog)
 {
     /* send a Cancel to the user's processor */
@@ -496,7 +501,7 @@ dialog_riscos_dbox_event_close_window(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_open_window(
+dialog_riscos_dbox_event_Open_Window_Request(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpOpenWindowRequestEvent * const p_open_window_request)
 {
@@ -517,26 +522,32 @@ dialog_riscos_dbox_event_open_window(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_redraw_window(
+dialog_riscos_dbox_event_Redraw_Window_Request(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpRedrawWindowRequestEvent * const p_redraw_window_request)
 {
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more;
 
-    redraw_window.window_handle = p_redraw_window_request->window_handle;
+    redraw_window_block.window_handle = p_redraw_window_request->window_handle;
 
-    if(WrapOsErrorReporting(wimp_redraw_window(&redraw_window, &wimp_more)))
+    if(NULL != WrapOsErrorReporting(wimp_redraw_window(&redraw_window_block, &wimp_more)))
         wimp_more = 0;
 
-    dialog_riscos_redraw_core(&redraw_window, &wimp_more, h_dialog, 0);
+    while(0 != wimp_more)
+    {
+        dialog_riscos_redraw_core(&redraw_window_block, h_dialog, 0);
+
+        if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
+            wimp_more = 0;
+    }
 
     return(TRUE /*processed*/);
 }
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_mouse_click(
+dialog_riscos_dbox_event_Mouse_Click(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpMouseClickEvent * const p_mouse_click)
 {
@@ -550,7 +561,7 @@ dialog_riscos_dbox_event_mouse_click(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_key_pressed(
+dialog_riscos_dbox_event_Key_Pressed(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpKeyPressedEvent * const p_key_pressed)
 {
@@ -564,7 +575,7 @@ dialog_riscos_dbox_event_key_pressed(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_user_drag_box(
+dialog_riscos_dbox_event_User_Drag_Box(
     _InVal_     H_DIALOG h_dialog,
     _In_        const WimpUserDragBoxEvent * const p_user_drag_box)
 {
@@ -578,31 +589,42 @@ dialog_riscos_dbox_event_user_drag_box(
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_pointer_enter_leave(
-    _InVal_     H_DIALOG h_dialog,
-    _InVal_     int event_code)
+dialog_riscos_dbox_event_Pointer_Entering_Window(
+    _InVal_     H_DIALOG h_dialog)
 {
     DIALOG_RISCOS_EVENT_POINTER_ENTER dialog_riscos_event_pointer_enter;
     dialog_riscos_event_pointer_enter.h_dialog = h_dialog;
-    dialog_riscos_event_pointer_enter.enter = (event_code == Wimp_EPointerEnteringWindow);
+    dialog_riscos_event_pointer_enter.enter = TRUE;
     status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
     return(TRUE /*processed*/);
 }
 
 _Check_return_
 static int
-dialog_riscos_dbox_event_user_message(
+dialog_riscos_dbox_event_Pointer_Leaving_Window(
+    _InVal_     H_DIALOG h_dialog)
+{
+    DIALOG_RISCOS_EVENT_POINTER_ENTER dialog_riscos_event_pointer_enter;
+    dialog_riscos_event_pointer_enter.h_dialog = h_dialog;
+    dialog_riscos_event_pointer_enter.enter = FALSE;
+    status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
+    return(TRUE /*processed*/);
+}
+
+_Check_return_
+static int
+dialog_riscos_dbox_event_User_Message(
     _InVal_     H_DIALOG h_dialog,
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     switch(p_wimp_message->hdr.action_code)
     {
     case Wimp_MHelpRequest:
         {
+        P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
+
         if((int) p_wimp_message->data.help_request.icon_handle >= -1) /* don't reply to system icons help requests */
         {
-            P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
-
             if(DOCNO_NONE != p_dialog->docno)
                 reply_to_help_request(p_docu_from_docno(p_dialog->docno), p_wimp_message);
         }
@@ -610,11 +632,32 @@ dialog_riscos_dbox_event_user_message(
         return(TRUE /*processed*/);
         }
 
-    default:
-        break;
-    }
+    case Wimp_MDataLoad:    /* File dragged from directory display, dropped on our window */
+    case Wimp_MDataSave:    /* File dragged from another application, dropped on our window */
+        {
+        P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
+        DIALOG_CONTROL_ID dialog_control_id;
+        BOOL processed = FALSE;
 
-    return(FALSE /*unprocessed*/);
+        if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_wimp_message->data.data_load.destination_icon)) != 0)
+        {
+            const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
+            P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
+
+            if((NULL != p_dialog_ictl_edit_xx) && (NULL != p_dialog_ictl_edit_xx->riscos.mlec))
+            {
+                STATUS status = mlec__User_Message(p_dialog_ictl_edit_xx->riscos.mlec, p_wimp_message);
+
+                processed = status_done(status);
+            }
+        }
+
+        return(processed);
+        }
+
+    default:
+        return(FALSE /*unprocessed*/);
+    }
 }
 
 _Check_return_
@@ -636,7 +679,7 @@ dialog_riscos_file_icon_drag(
 
     { /* Find ABS screen origin of containing window's work area */
     GDI_POINT gdi_org;
-    host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window w.a. ABS origin */
+    host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window work area ABS origin */
     dr.dragging_box.xmin += gdi_org.x;
     dr.dragging_box.ymin += gdi_org.y;
     dr.dragging_box.xmax += gdi_org.x;
@@ -768,7 +811,7 @@ dialog_riscos_event_mouse_click_core(
         return(STATUS_OK);
     }
 
-    if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click)) != 0)
+    if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click->icon_handle)) != 0)
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
         const wimp_i hit_icon_handle = p_mouse_click->icon_handle;
@@ -843,13 +886,13 @@ dialog_riscos_event_mouse_click_core(
 #endif
 
             case DIALOG_CONTROL_EDIT:
-                status = dialog_riscos_mlec_event_mouse_click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.edit.edit_xx, p_mouse_click);
+                status = dialog_riscos_mlec_event_Mouse_Click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.edit.edit_xx, p_mouse_click);
                 break;
 
             case DIALOG_CONTROL_BUMP_S32:
             case DIALOG_CONTROL_BUMP_F64:
                 if(hit_icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle)
-                    status = dialog_riscos_mlec_event_mouse_click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.bump_xx.edit_xx, p_mouse_click);
+                    status = dialog_riscos_mlec_event_Mouse_Click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.bump_xx.edit_xx, p_mouse_click);
                 else if((hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle) || (hit_icon_handle == p_dialog_ictl->riscos.dwi[2].icon_handle))
                 {
                     switch(p_mouse_click->buttons)
@@ -869,7 +912,7 @@ dialog_riscos_event_mouse_click_core(
             case DIALOG_CONTROL_COMBO_TEXT:
             case DIALOG_CONTROL_COMBO_S32:
                 if(hit_icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle)
-                    status = dialog_riscos_mlec_event_mouse_click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.combo_xx.edit_xx, p_mouse_click);
+                    status = dialog_riscos_mlec_event_Mouse_Click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.combo_xx.edit_xx, p_mouse_click);
                 else if(hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle)
                 {
                     switch(p_mouse_click->buttons)
@@ -977,7 +1020,7 @@ dialog_riscos_event_key_pressed(
         return(STATUS_OK);
     }
 
-    status_assert(status = dialog_riscos_key_pressed(p_dialog, ri_kmap_convert(p_dialog_riscos_event_key_pressed->key_pressed.key_code)));
+    status_assert(status = dialog_riscos_Key_Pressed(p_dialog, kmap_convert(p_dialog_riscos_event_key_pressed->key_pressed.key_code)));
 
     p_dialog_riscos_event_key_pressed->processed = status_done(status);
 
@@ -1073,7 +1116,7 @@ dialog_riscos_event_redraw_window(
 
     dialog_control_redraw.dialog_riscos_redraw_window.redraw_context = p_dialog_riscos_event_redraw_window->redraw_context;
 
-    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window.window_handle = p_dialog_riscos_event_redraw_window->redraw_context.riscos.hwnd;
+    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window_block.window_handle = p_dialog_riscos_event_redraw_window->redraw_context.riscos.hwnd;
 
     {
     GDI_RECT gdi_rect;
@@ -1082,13 +1125,13 @@ dialog_riscos_event_redraw_window(
         assert0();
         return(STATUS_OK);
     }
-    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window.visible_area.xmin = gdi_rect.tl.x;
-    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window.visible_area.ymin = gdi_rect.br.y;
-    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window.visible_area.xmax = gdi_rect.br.x;
-    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window.visible_area.ymax = gdi_rect.tl.y;
+    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window_block.visible_area.xmin = gdi_rect.tl.x;
+    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window_block.visible_area.ymin = gdi_rect.br.y;
+    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window_block.visible_area.xmax = gdi_rect.br.x;
+    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window_block.visible_area.ymax = gdi_rect.tl.y;
     } /*block*/
 
-    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window.redraw_area = * (const BBox *) &p_dialog_riscos_event_redraw_window->redraw_context.riscos.host_machine_clip_box;
+    dialog_control_redraw.dialog_riscos_redraw_window.redraw_window_block.redraw_area = * (const BBox *) &p_dialog_riscos_event_redraw_window->redraw_context.riscos.host_machine_clip_box;
 
     dialog_control_redraw.p_ictl_group = &dialog_control_redraw.p_dialog->ictls;
 
@@ -1377,7 +1420,7 @@ dialog_riscos_event_lbn_key(
         return(STATUS_OK);
     }
 
-    status_assert(status = dialog_riscos_key_pressed(p_dialog, p_dialog_msg_lbn_key->kmap_code));
+    status_assert(status = dialog_riscos_Key_Pressed(p_dialog, p_dialog_msg_lbn_key->kmap_code));
 
     p_dialog_msg_lbn_key->processed = status_done(status);
 
@@ -1653,21 +1696,21 @@ dialog_riscos_icon_recreate(
     _In_        const WimpIconBlockWithBitset * const p_icon,
     _InoutRef_  P_DIALOG_WIMP_I p_i)
 {
-    if(p_i->icon_handle != BAD_WIMP_I)
+    if(p_i->icon_handle == BAD_WIMP_I)
+        return(STATUS_OK);
+
+    void_WrapOsErrorReporting(wimp_dispose_icon(p_dialog->hwnd, &p_i->icon_handle));
+
+    if( (p_icon->bbox.xmin < p_icon->bbox.xmax) &&
+        (p_icon->bbox.ymin < p_icon->bbox.ymax) )
     {
-        void_WrapOsErrorReporting(wimp_dispose_icon(p_dialog->hwnd, &p_i->icon_handle));
+        WimpCreateIconBlockWithBitset icreate;
 
-        if( (p_icon->bbox.xmin < p_icon->bbox.xmax) &&
-            (p_icon->bbox.ymin < p_icon->bbox.ymax) )
-        {
-            WimpCreateIconBlockWithBitset icreate;
+        icreate.window_handle = p_dialog->hwnd;
+        icreate.icon = *p_icon;
 
-            icreate.window_handle = p_dialog->hwnd;
-            icreate.icon = *p_icon;
-
-            if(WrapOsErrorReporting(wimp_create_icon_with_bitset(&icreate, &p_i->icon_handle)))
-                return(status_nomem());
-        }
+        if(WrapOsErrorReporting(wimp_create_icon_with_bitset(&icreate, &p_i->icon_handle)))
+            return(status_nomem());
     }
 
     return(STATUS_OK);
@@ -1734,7 +1777,9 @@ dialog_riscos_icon_redraw_for_enable(
             p_dialog->riscos.invalid_bbox.ymax = icon.bbox.ymax;
     }
     else
+    {
         void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &icon.bbox));
+    }
 }
 
 extern void
@@ -1749,38 +1794,46 @@ dialog_riscos_icon_redraw_for_encode(
     if(p_i->icon_handle == BAD_WIMP_I)
         return;
 
-    if(!wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_i->icon_handle, &icon))
+    if(NULL == wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_i->icon_handle, &icon))
     {
-        WimpRedrawWindowBlock redraw_window;
+        WimpRedrawWindowBlock redraw_window_block;
 
-        redraw_window.visible_area = icon.bbox;
+        redraw_window_block.visible_area = icon.bbox;
 
-        host_framed_BBox_trim(&redraw_window.visible_area, border_style);
+        host_framed_BBox_trim(&redraw_window_block.visible_area, border_style);
 
         if(encode_bits & DIALOG_ENCODE_UPDATE_NOW)
         {
             int wimp_more;
 
-            redraw_window.window_handle = p_dialog->hwnd;
+            redraw_window_block.window_handle = p_dialog->hwnd;
 
-            if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+            if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
                 wimp_more = 0;
+    
+            while(0 != wimp_more)
+            {
+                dialog_riscos_redraw_core(&redraw_window_block, p_dialog->h_dialog, 1 /*is_update_now*/);
 
-            dialog_riscos_redraw_core(&redraw_window, &wimp_more, p_dialog->h_dialog, 1 /*is_update_now*/);
+                if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
+                    wimp_more = 0;
+            }
         }
         else if(p_dialog->riscos.accumulate_box)
         {
-            if( p_dialog->riscos.invalid_bbox.xmin > redraw_window.visible_area.xmin)
-                p_dialog->riscos.invalid_bbox.xmin = redraw_window.visible_area.xmin;
-            if( p_dialog->riscos.invalid_bbox.ymin > redraw_window.visible_area.ymin)
-                p_dialog->riscos.invalid_bbox.ymin = redraw_window.visible_area.ymin;
-            if( p_dialog->riscos.invalid_bbox.xmax < redraw_window.visible_area.xmax)
-                p_dialog->riscos.invalid_bbox.xmax = redraw_window.visible_area.xmax;
-            if( p_dialog->riscos.invalid_bbox.ymax < redraw_window.visible_area.ymax)
-                p_dialog->riscos.invalid_bbox.ymax = redraw_window.visible_area.ymax;
+            if( p_dialog->riscos.invalid_bbox.xmin > redraw_window_block.visible_area.xmin)
+                p_dialog->riscos.invalid_bbox.xmin = redraw_window_block.visible_area.xmin;
+            if( p_dialog->riscos.invalid_bbox.ymin > redraw_window_block.visible_area.ymin)
+                p_dialog->riscos.invalid_bbox.ymin = redraw_window_block.visible_area.ymin;
+            if( p_dialog->riscos.invalid_bbox.xmax < redraw_window_block.visible_area.xmax)
+                p_dialog->riscos.invalid_bbox.xmax = redraw_window_block.visible_area.xmax;
+            if( p_dialog->riscos.invalid_bbox.ymax < redraw_window_block.visible_area.ymax)
+                p_dialog->riscos.invalid_bbox.ymax = redraw_window_block.visible_area.ymax;
         }
         else
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &redraw_window.visible_area));
+        {
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &redraw_window_block.visible_area));
+        }
     }
 }
 
@@ -2001,7 +2054,9 @@ dialog_riscos_ictl_create_here(
 
         a_icon.flags.bits.button_type = ButtonType_Never;
 
-        a_icon.flags.bits.redraw = 1;
+        a_icon.flags.bits.sprite = 1;
+
+        dialog_riscos_icon_sprite_setup(&a_icon, p_dialog_ictl->data.staticpicture.riscos.h_bitmap);
 
         break;
         }
@@ -2343,7 +2398,7 @@ dialog_riscos_ictl_create_here(
 
         {
         GDI_POINT gdi_org;
-        host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window w.a. ABS origin */
+        host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window work area ABS origin */
         _ri_lbox_new.bbox.xmin = a_icon.bbox.xmin + gdi_org.x;
         _ri_lbox_new.bbox.ymin = a_icon.bbox.ymin + gdi_org.y;
         _ri_lbox_new.bbox.xmax = a_icon.bbox.xmax + gdi_org.x;
@@ -2669,14 +2724,14 @@ dialog_riscos_ictl_focus_query(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl)
 {
-    WimpCaret caretstr;
-
     {
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
 
     if(NULL != p_dialog_ictl_edit_xx)
     {
-        void_WrapOsErrorReporting(wimp_get_caret_position(&caretstr));
+        WimpCaret caretstr;
+
+        void_WrapOsErrorReporting(winx_get_caret_position(&caretstr));
 
         if((caretstr.window_handle == p_dialog->hwnd) && (caretstr.icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle))
             return(STATUS_OK);
@@ -2778,29 +2833,12 @@ dialog_riscos_key_pressed_hot_key_in(
 
 _Check_return_
 static STATUS
-dialog_riscos_help_common(
-    _In_z_      PCTSTR filename)
-{
-    TCHARZ help_filename[BUF_MAX_PATHSTRING];
-    U32 prefix_len;
-
-    tstr_xstrkpy(help_filename, elemof32(help_filename), TEXT("file:///"));
-    prefix_len = tstrlen32(help_filename);
-
-    if(file_find_on_path(help_filename + prefix_len, elemof32(help_filename) - prefix_len, filename) <= 0)
-        return(create_error(ERR_HELP_FAILURE));
-
-    return(ho_help_url(help_filename));
-}
-
-_Check_return_
-static STATUS
 dialog_riscos_help_contents(
     _InoutRef_  P_DIALOG p_dialog)
 {
     UNREFERENCED_PARAMETER_InRef_(p_dialog);
 
-    return(dialog_riscos_help_common(TEXT("HTMLhelp.html.") TEXT("index/htm")));
+    return(ho_help_contents(NULL));
 }
 
 _Check_return_
@@ -2808,22 +2846,16 @@ static STATUS
 dialog_riscos_help_topic(
     _InoutRef_  P_DIALOG p_dialog)
 {
-    TCHARZ filename[BUF_MAX_PATHSTRING];
+    TCHARZ url[BUF_MAX_PATHSTRING];
     PCTSTR tstr_help_topic;
     
     if(NULL == (tstr_help_topic = resource_lookup_tstr_no_default(p_dialog->help_topic_resource_id)))
         return(dialog_riscos_help_contents(p_dialog));
 
-    tstr_xstrkpy(filename, elemof32(filename), TEXT("HTMLhelp.html."));
-    tstr_xstrkat(filename, elemof32(filename), tstr_help_topic);
+    tstr_xstrkpy(url, elemof32(url), prefix_uri_userguide_content_tstr);
+    tstr_xstrkat(url, elemof32(url), tstr_help_topic);
 
-    { /* Replace the last dot with a slash for RISC OS zipped HTMLhelp */
-    PTSTR tstr = filename + tstrlen32(filename);
-    if(CH_FULL_STOP == tstr[-4]) /* .htm */
-        tstr[-4] = CH_FORWARDS_SLASH;
-    } /*block*/
-
-    return(dialog_riscos_help_common(filename));
+    return(ho_help_url(url));
 }
 
 _Check_return_
@@ -2833,13 +2865,13 @@ dialog_riscos_help(
 {
     if(p_dialog->help_topic_resource_id)
         return(dialog_riscos_help_topic(p_dialog));
-    else
-        return(dialog_riscos_help_contents(p_dialog));
+
+    return(dialog_riscos_help_contents(p_dialog));
 }
 
 _Check_return_
 static STATUS
-dialog_riscos_key_pressed_hot_key(
+dialog_riscos_Key_Pressed_hot_key(
     P_DIALOG p_dialog,
     _InVal_     U8 kh)
 {
@@ -2894,9 +2926,9 @@ dialog_riscos_key_pressed_hot_key(
 
 _Check_return_
 static STATUS
-dialog_riscos_key_pressed(
+dialog_riscos_Key_Pressed(
     P_DIALOG p_dialog,
-    _In_        KMAP_CODE ch)
+    _In_        KMAP_CODE kmap_code)
 {
     P_DIALOG_ICTL p_dialog_ictl = NULL;
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = NULL;
@@ -2922,7 +2954,7 @@ dialog_riscos_key_pressed(
 
             dialog_msg_ctl_key.processed = 0;
 
-            dialog_msg_ctl_key.key_code = ch;
+            dialog_msg_ctl_key.key_code = kmap_code;
 
             if(status_fail(status = dialog_call_client(p_dialog, DIALOG_MSG_CODE_CTL_KEY, &dialog_msg_ctl_key, p_proc_client)))
             {
@@ -2937,7 +2969,7 @@ dialog_riscos_key_pressed(
 
     status = STATUS_DONE; /* assume processed till shown otherwise */
 
-    switch(ch)
+    switch(kmap_code)
     {
     case KMAP_ESCAPE:
         {
@@ -2953,7 +2985,7 @@ dialog_riscos_key_pressed(
     case KMAP_FUNC_CRETURN:
     case KMAP_FUNC_CSRETURN:
         if((NULL != p_dialog_ictl_edit_xx) && (NULL != p_dialog_ictl_edit_xx->riscos.mlec) && p_dialog_ictl_edit_xx->multiline)
-            status = mlec__key_core(p_dialog_ictl_edit_xx->riscos.mlec, ch);
+            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
         break;
 
     case KMAP_FUNC_RETURN:
@@ -2966,9 +2998,13 @@ dialog_riscos_key_pressed(
         }
 
     case KMAP_FUNC_TAB:
+        /* move input focus along to next item with a tabstop set */
+        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, +1);
+        break;
+
     case KMAP_FUNC_STAB:
-        /* move input focus along to next/prev item with a tabstop set */
-        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, (ch == KMAP_FUNC_TAB) ? +1 : -1);
+        /* move input focus along to prev item with a tabstop set */
+        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, -1);
         break;
 
     case KMAP_FUNC_ARROW_DOWN:
@@ -2976,18 +3012,19 @@ dialog_riscos_key_pressed(
 #if 1
         if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec && p_dialog_ictl_edit_xx->multiline)
         {
-            status = mlec__key_core(p_dialog_ictl_edit_xx->riscos.mlec, ch);
+            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
             break;
         }
 #else
         if(NULL != p_dialog_ictl_edit_xx)
         {
             if(!p_dialog_ictl_edit_xx->multiline)
-                ch = (ch == KMAP_FUNC_ARROW_UP)
+                kmap_code = (kmap_code == KMAP_FUNC_ARROW_UP)
                    ? KMAP_FUNC_ARROW_LEFT
                    : KMAP_FUNC_ARROW_RIGHT;
 
-            return(mlec__key_core(p_dialog_ictl_edit_xx->riscos.mlec, ch));
+            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
+            break;
         }
 #endif
 
@@ -2995,12 +3032,12 @@ dialog_riscos_key_pressed(
         {
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
-            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, (ch == KMAP_FUNC_ARROW_UP)));
+            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, (kmap_code == KMAP_FUNC_ARROW_UP)));
             break;
 
         default:
             /* move input focus along to next/prev control */
-            dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, (ch == KMAP_FUNC_ARROW_UP) ? -1 : +1);
+            dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, (kmap_code == KMAP_FUNC_ARROW_UP) ? -1 : +1);
             break;
         }
 
@@ -3010,7 +3047,7 @@ dialog_riscos_key_pressed(
     case KMAP_FUNC_ARROW_RIGHT:
         if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec)
         {
-            status = mlec__key_core(p_dialog_ictl_edit_xx->riscos.mlec, ch);
+            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
         }
         break;
 
@@ -3023,29 +3060,29 @@ dialog_riscos_key_pressed(
         if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec)
         {
             /* early validation prevents much state thrash */
-            if(ch < 0x100)
+            if(kmap_code < 0x100)
             {
                 if(p_dialog_ictl_edit_xx->p_bitmap_validation)
-                    if(bitmap_bit_test((PC_BITMAP) p_dialog_ictl_edit_xx->p_bitmap_validation, ch, N_BITS_ARG(256)))
-                        status_break(status = mlec__insert_char(p_dialog_ictl_edit_xx->riscos.mlec, (U8) ch));
+                    if(bitmap_bit_test((PC_BITMAP) p_dialog_ictl_edit_xx->p_bitmap_validation, kmap_code, N_BITS_ARG(256)))
+                        status_break(status = mlec__insert_char(p_dialog_ictl_edit_xx->riscos.mlec, (U8) kmap_code));
 
                 return(STATUS_DONE /*processed*/);
             }
-            else if(status_ok(status = mlec__key_core(p_dialog_ictl_edit_xx->riscos.mlec, ch)))
+            else if(status_ok(status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code)))
                 return(STATUS_DONE /*processed*/);
         }
 
-        if(ch & KMAP_CODE_ADDED_ALT)
+        if(0 != (kmap_code & KMAP_CODE_ADDED_ALT))
         {
-            U8 kh = (U8) ch & 0xFF;
+            U8 kh = (U8) kmap_code & 0xFF;
 
-            status = dialog_riscos_key_pressed_hot_key(p_dialog, kh);
+            status = dialog_riscos_Key_Pressed_hot_key(p_dialog, kh);
             break;
         }
 
-        if((ch < 0x100) && sbchar_isalpha(ch))
+        if((kmap_code < 0x100) && sbchar_isalpha(kmap_code))
         {
-            status = dialog_riscos_key_pressed_hot_key(p_dialog, sbchar_toupper(ch));
+            status = dialog_riscos_Key_Pressed_hot_key(p_dialog, sbchar_toupper(kmap_code));
             break;
         }
 
@@ -3074,7 +3111,7 @@ dialog_riscos_null_event_status(
 {
     /* track pointer shape over controls */
     WimpGetPointerInfoBlock pointer_info;
-    const WimpMouseClickEvent * const p_mouse_click = (const WimpMouseClickEvent * const) &pointer_info;
+    const WimpMouseClickEvent * const p_mouse_click = (const WimpMouseClickEvent *) &pointer_info;
     POINTER_SHAPE pshape;
     UI_TEXT ui_text;
     DIALOG_CONTROL_ID dialog_control_id;
@@ -3085,10 +3122,10 @@ dialog_riscos_null_event_status(
     pshape = POINTER_DEFAULT;
     ui_text.type = UI_TEXT_TYPE_NONE;
 
-    if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click)) != 0)
+    if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, pointer_info.icon_handle)) != 0)
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
-        const wimp_i hit_icon_handle = p_mouse_click->icon_handle;
+        const wimp_i hit_icon_handle = pointer_info.icon_handle;
 
         PTR_ASSERT(p_dialog_ictl);
 
@@ -3147,19 +3184,19 @@ dialog_riscos_null_event_status(
                 }
 
             case DIALOG_CONTROL_EDIT:
-                pshape = dialog_riscos_mlec_event_mouse_click_pshape(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.edit.edit_xx, p_mouse_click);
+                pshape = dialog_riscos_mlec_event_determine_pshape(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.edit.edit_xx, p_mouse_click);
                 break;
 
             case DIALOG_CONTROL_BUMP_S32:
             case DIALOG_CONTROL_BUMP_F64:
                 if(hit_icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle)
-                    pshape = dialog_riscos_mlec_event_mouse_click_pshape(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.bump_xx.edit_xx, p_mouse_click);
+                    pshape = dialog_riscos_mlec_event_determine_pshape(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.bump_xx.edit_xx, p_mouse_click);
                 break;
 
             case DIALOG_CONTROL_COMBO_TEXT:
             case DIALOG_CONTROL_COMBO_S32:
                 if(hit_icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle)
-                    pshape = dialog_riscos_mlec_event_mouse_click_pshape(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.combo_xx.edit_xx, p_mouse_click);
+                    pshape = dialog_riscos_mlec_event_determine_pshape(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.combo_xx.edit_xx, p_mouse_click);
                 else if(hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle)
                     pshape = POINTER_MENU;
                 break;
@@ -3416,64 +3453,57 @@ dialog_host_redraw_context_set_host_xform(
 
 static void
 dialog_riscos_redraw_core(
-    _Inout_     WimpRedrawWindowBlock * const p_redraw_window,
-    _Inout_     int * const p_wimp_more,
+    _Inout_     WimpRedrawWindowBlock * const p_redraw_window_block,
     _InVal_     H_DIALOG h_dialog,
     _InVal_     BOOL is_update_now)
 {
-    while(0 != *p_wimp_more)
+    DIALOG_RISCOS_EVENT_REDRAW_WINDOW dialog_riscos_event_redraw_window;
+    REDRAW_CONTEXT_CACHE redraw_context_cache;
+    const P_REDRAW_CONTEXT p_redraw_context = &dialog_riscos_event_redraw_window.redraw_context;
+
+    zero_struct(dialog_riscos_event_redraw_window);
+
+    zero_struct(redraw_context_cache);
+    p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
+
+    host_invalidate_cache(HIC_REDRAW_LOOP_START);
+
+    dialog_riscos_event_redraw_window.h_dialog = h_dialog;
+    dialog_riscos_event_redraw_window.is_update_now = is_update_now;
+
+    p_redraw_context->riscos.hwnd = p_redraw_window_block->window_handle;
+
+    p_redraw_context->riscos.host_machine_clip_box = * (PC_GDI_BOX) &p_redraw_window_block->redraw_area;
+
+    p_redraw_context->host_xform.scale.t.x = 1;
+    p_redraw_context->host_xform.scale.t.y = 1;
+    p_redraw_context->host_xform.scale.b.x = 1;
+    p_redraw_context->host_xform.scale.b.y = 1;
+
+    p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
+
+    p_redraw_context->border_width.x = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.d_x;
+    p_redraw_context->border_width.y = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.d_y;
+    p_redraw_context->border_width_2.x = 2 * p_redraw_context->border_width.x;
+    p_redraw_context->border_width_2.y = 2 * p_redraw_context->border_width.y;
+
+    dialog_host_redraw_context_set_host_xform(&p_redraw_context->host_xform);
+
+    p_redraw_context->gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(p_redraw_window_block); /* window work area ABS origin */
+    p_redraw_context->gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(p_redraw_window_block);
+
+    host_redraw_context_fillin(p_redraw_context);
+
     {
-        DIALOG_RISCOS_EVENT_REDRAW_WINDOW dialog_riscos_event_redraw_window;
-        REDRAW_CONTEXT_CACHE redraw_context_cache;
-        const P_REDRAW_CONTEXT p_redraw_context = &dialog_riscos_event_redraw_window.redraw_context;
+    GDI_RECT gdi_rect;
+    gdi_rect.tl.x = p_redraw_window_block->redraw_area.xmin;
+    gdi_rect.br.y = p_redraw_window_block->redraw_area.ymin;
+    gdi_rect.br.x = p_redraw_window_block->redraw_area.xmax;
+    gdi_rect.tl.y = p_redraw_window_block->redraw_area.ymax;
+    pixit_rect_from_screen_rect_and_context(&dialog_riscos_event_redraw_window.area_rect, &gdi_rect, p_redraw_context);
+    } /*block*/
 
-        zero_struct(dialog_riscos_event_redraw_window);
-
-        zero_struct(redraw_context_cache);
-        p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
-
-        host_invalidate_cache(HIC_REDRAW_LOOP_START);
-
-        dialog_riscos_event_redraw_window.h_dialog = h_dialog;
-        dialog_riscos_event_redraw_window.is_update_now = is_update_now;
-
-        p_redraw_context->riscos.hwnd = p_redraw_window->window_handle;
-
-        p_redraw_context->riscos.host_machine_clip_box = * (PC_GDI_BOX) &p_redraw_window->redraw_area;
-
-        p_redraw_context->host_xform.scale.t.x = 1;
-        p_redraw_context->host_xform.scale.t.y = 1;
-        p_redraw_context->host_xform.scale.b.x = 1;
-        p_redraw_context->host_xform.scale.b.y = 1;
-
-        p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
-
-        p_redraw_context->border_width.x = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.d_x;
-        p_redraw_context->border_width.y = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.d_y;
-        p_redraw_context->border_width_2.x = 2 * p_redraw_context->border_width.x;
-        p_redraw_context->border_width_2.y = 2 * p_redraw_context->border_width.y;
-
-        dialog_host_redraw_context_set_host_xform(&p_redraw_context->host_xform);
-
-        p_redraw_context->gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(p_redraw_window); /* window w.a. ABS origin */
-        p_redraw_context->gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(p_redraw_window);
-
-        host_redraw_context_fillin(p_redraw_context);
-
-        {
-        GDI_RECT gdi_rect;
-        gdi_rect.tl.x = p_redraw_window->redraw_area.xmin;
-        gdi_rect.br.y = p_redraw_window->redraw_area.ymin;
-        gdi_rect.br.x = p_redraw_window->redraw_area.xmax;
-        gdi_rect.tl.y = p_redraw_window->redraw_area.ymax;
-        pixit_rect_from_screen_rect_and_context(&dialog_riscos_event_redraw_window.area_rect, &gdi_rect, p_redraw_context);
-        } /*block*/
-
-        status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_REDRAW_WINDOW, &dialog_riscos_event_redraw_window));
-
-        if(WrapOsErrorReporting(wimp_get_rectangle(p_redraw_window, p_wimp_more)))
-            *p_wimp_more = 0;
-    }
+    status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_REDRAW_WINDOW, &dialog_riscos_event_redraw_window));
 }
 
 /******************************************************************************
@@ -3487,9 +3517,8 @@ static DIALOG_CONTROL_ID
 dialog_riscos_scan_controls_in(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL_GROUP p_ictl_group,
-    _In_        const WimpMouseClickEvent * const p_mouse_click)
+    _InVal_     wimp_i hit_icon_handle)
 {
-    const wimp_i hit_icon_handle = p_mouse_click->icon_handle;
     ARRAY_INDEX i;
     DIALOG_CONTROL_ID dialog_control_id;
     BOOL is_hit = 0;
@@ -3526,7 +3555,7 @@ dialog_riscos_scan_controls_in(
             break;
 
         case DIALOG_CONTROL_GROUPBOX:
-            if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog_ictl->data.groupbox.ictls, p_mouse_click)) != 0)
+            if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog_ictl->data.groupbox.ictls, hit_icon_handle)) != 0)
                 return(dialog_control_id);
 
             n_test = 0;
@@ -3575,7 +3604,7 @@ dialog_riscos_scan_controls_in(
 
 _Check_return_
 static STATUS
-dialog_riscos_mlec_event_mouse_click(
+dialog_riscos_mlec_event_Mouse_Click(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl,
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
@@ -3595,7 +3624,7 @@ dialog_riscos_mlec_event_mouse_click(
             WimpIconBlockWithBitset icon;
             GDI_POINT mlec_origin_rel;
 
-            host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window w.a. ABS origin */
+            host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window work area ABS origin */
 
             void_WrapOsErrorReporting(wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_dialog_ictl->riscos.dwi[0].icon_handle, &icon));
 
@@ -3619,7 +3648,7 @@ dialog_riscos_mlec_event_mouse_click(
                 break;
             }
 
-            mlec__click_core(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, p_mouse_click);
+            mlec__Mouse_Click(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, p_mouse_click);
         }
     }
 
@@ -3628,7 +3657,7 @@ dialog_riscos_mlec_event_mouse_click(
 
 _Check_return_
 static POINTER_SHAPE
-dialog_riscos_mlec_event_mouse_click_pshape(
+dialog_riscos_mlec_event_determine_pshape(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl,
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
@@ -3655,39 +3684,35 @@ dialog_riscos_mlec_enull(
     P_DIALOG_ICTL p_dialog_ictl)
 {
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
+    WimpGetPointerInfoBlock pointer_info;
+    GDI_POINT gdi_org;
+    WimpIconBlockWithBitset icon;
+    GDI_POINT mlec_origin_rel, mlec_origin_abs;
 
     if(NULL == p_dialog_ictl_edit_xx)
         return;
 
-    if(p_dialog_ictl_edit_xx->riscos.mlec)
-    {
-        WimpGetPointerInfoBlock pointer_info;
-        GDI_POINT mlec_origin_abs;
+    if(NULL == p_dialog_ictl_edit_xx->riscos.mlec)
+        return;
 
-        void_WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info));
+    if(NULL != WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info)))
+        return;
 
-        {
-        GDI_POINT gdi_org;
-        WimpIconBlockWithBitset icon;
-        GDI_POINT mlec_origin_rel, mlec_origin_abs;
+    host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window work area ABS origin */
 
-        host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window w.a. ABS origin */
+    void_WrapOsErrorReporting(wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_dialog_ictl->riscos.dwi[0].icon_handle, &icon));
 
-        void_WrapOsErrorReporting(wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_dialog_ictl->riscos.dwi[0].icon_handle, &icon));
+    host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
 
-        host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
+    /* The origin of the text is (icon.bbox.xmin,icon.bbox.ymax), then we scroll it. */
 
-        /* The origin of the text is (icon.bbox.xmin,icon.bbox.ymax), then we scroll it. */
+    mlec_origin_rel.x = icon.bbox.xmin - p_dialog_ictl_edit_xx->riscos.scroll.x;
+    mlec_origin_rel.y = icon.bbox.ymax - p_dialog_ictl_edit_xx->riscos.scroll.y;
 
-        mlec_origin_rel.x = icon.bbox.xmin - p_dialog_ictl_edit_xx->riscos.scroll.x;
-        mlec_origin_rel.y = icon.bbox.ymax - p_dialog_ictl_edit_xx->riscos.scroll.y;
+    mlec_origin_abs.x = gdi_org.x + mlec_origin_rel.x;
+    mlec_origin_abs.y = gdi_org.y + mlec_origin_rel.y;
 
-        mlec_origin_abs.x = gdi_org.x + mlec_origin_rel.x;
-        mlec_origin_abs.y = gdi_org.y + mlec_origin_rel.y;
-        } /*block*/
-
-        mlec__drag_core(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, &pointer_info);
-    }
+    mlec__drag_core(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, &pointer_info);
 }
 
 /******************************************************************************
@@ -3715,306 +3740,444 @@ dialog_riscos_mlec_event_common(
     return(p_dialog);
 }
 
-static
-mlec_event_proto(dialog_riscos_mlec_event_handler, rc, handle, p_eventdata)
+static STATUS
+dialog_riscos_mlec_CODE_KEY(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    P_KMAP_CODE p_kmap_code)
 {
-    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = handle;
-    P_DIALOG_ICTL p_dialog_ictl;
-    P_DIALOG p_dialog;
-    WimpIconBlockWithBitset icon;
+    UNREFERENCED_PARAMETER(p_dialog_ictl_edit_xx);
 
-    switch(rc)
+    switch(*p_kmap_code)
     {
-    case MLEC_CODE_KEY:
-        {
-        P_KMAP_CODE p_kmap_code = p_eventdata;
-
-        switch(*p_kmap_code)
-        {
-        case KMAP_CODE_ADDED_ALT | 'U':
-            *p_kmap_code = KMAP_FUNC_CEND;    /* delete line */
-            break;
-
-        case KMAP_CODE_ADDED_ALT | 'X':
-            *p_kmap_code = KMAP_FUNC_SDELETE; /* cut to clipboard */
-            break;
-
-        case KMAP_CODE_ADDED_ALT | 'C':
-            *p_kmap_code = KMAP_FUNC_CINSERT; /* copy to clipboard */
-            break;
-
-        case KMAP_CODE_ADDED_ALT | 'V':
-            *p_kmap_code = KMAP_FUNC_SINSERT; /* paste from clipboard */
-            break;
-
-        default:
-            break;
-        }
-
+    case KMAP_CODE_ADDED_ALT | 'U':
+        *p_kmap_code = KMAP_FUNC_CEND;    /* delete line */
         break;
-        }
 
-    case MLEC_CODE_UPDATELATER:
-        {
-        /* The mlec is trying to tell us that part of its text needs repainting. */
-        /* We must call wimp_force_redraw for each edit control in each view,    */
-        /* taking into account the scroll state for each one.                    */
-        WimpRedrawWindowBlock * p_redraw_window = (WimpRedrawWindowBlock *) p_eventdata;
-        ARRAY_INDEX i = array_elements(&dialog_statics.handles);
-
-        while(--i >= 0)
-        {
-            /*P_DIALOG*/ p_dialog = array_ptr(&dialog_statics.handles, DIALOG, i);
-
-            if(p_dialog->h_dialog == p_dialog_ictl_edit_xx->h_dialog)
-                dialog_riscos_mlec_update(p_dialog, p_dialog_ictl_edit_xx, &p_redraw_window->visible_area, 1);
-        }
-
+    case KMAP_CODE_ADDED_ALT | 'X':
+        *p_kmap_code = KMAP_FUNC_SDELETE; /* cut to clipboard */
         break;
-        }
 
-    case MLEC_CODE_UPDATENOW:
-        {
-        /* The mlec is trying to tell us that part of its text needs highlighting by EORing.  */
-        /* We must call wimp_update_window() for each edit control in each view.                */
-        /* From within the update loop, call mlec_area_update(), then mlec will do it for us. */
-        /* We could just call wimp_force_redraw() for each view instead, but this flickers.   */
-        WimpRedrawWindowBlock * p_redraw_window = (WimpRedrawWindowBlock *) p_eventdata;
-        ARRAY_INDEX i = array_elements(&dialog_statics.handles);
-
-        while(--i >= 0)
-        {
-            /*P_DIALOG*/ p_dialog = array_ptr(&dialog_statics.handles, DIALOG, i);
-
-            if(p_dialog->h_dialog == p_dialog_ictl_edit_xx->h_dialog)
-                dialog_riscos_mlec_update(p_dialog, p_dialog_ictl_edit_xx, &p_redraw_window->visible_area, p_dialog_ictl_edit_xx->always_update_later);
-        }
-
+    case KMAP_CODE_ADDED_ALT | 'C':
+        *p_kmap_code = KMAP_FUNC_CINSERT; /* copy to clipboard */
         break;
-        }
 
-    case MLEC_CODE_PLACECARET:
-        {
-        if(!p_dialog_ictl_edit_xx->readonly)
-        {
-            if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
-            {
-                WimpCaret carrot = * ((WimpCaret *) p_eventdata);
-                WimpCaret current;
-                GDI_POINT mlec_origin_rel;
-
-                void_WrapOsErrorReporting(wimp_get_caret_position(&current));
-
-                if((current.window_handle == p_dialog->hwnd) && (p_dialog->current_dialog_control_id == p_dialog_ictl->dialog_control_id))
-                {
-                    trace_0(TRACE_RISCOS_HOST, TEXT("window and control own input focus "));
-
-                    /* Take the WimpCaret passed by mlec, add the origin (icon.box.x0,icon.box.y1), then scroll it. */
-                    host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
-
-                    mlec_origin_rel.x = icon.bbox.xmin - p_dialog_ictl_edit_xx->riscos.scroll.x;
-                    mlec_origin_rel.y = icon.bbox.ymax - p_dialog_ictl_edit_xx->riscos.scroll.y;
-
-                    carrot.window_handle = p_dialog->hwnd;
-                    carrot.xoffset += mlec_origin_rel.x;
-                    carrot.yoffset += mlec_origin_rel.y;
-
-                    if(
-                       (current.icon_handle != carrot.icon_handle) ||           /* test whether caret is in some other icon too */
-                       (current.xoffset != carrot.xoffset) ||
-                       (current.yoffset != carrot.yoffset) ||
-                       (current.height != carrot.height)    /* cos this field holds caret (in)visible bit */
-                      )
-                    {
-                        trace_3(TRACE_RISCOS_HOST, TEXT("place caret (") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT(")"), carrot.xoffset, carrot.yoffset, carrot.height);
-                        void_WrapOsErrorReporting(wimp_set_caret_position_block(&carrot));
-                    }
-                    else
-                    {
-                        trace_0(TRACE_RISCOS_HOST, TEXT(" no action (caret already positioned)"));
-                    }
-                }
-                else
-                {
-                    trace_0(TRACE_RISCOS_HOST, TEXT(" no action (focus belongs elsewhere)"));
-                }
-            }
-        }
-
+    case KMAP_CODE_ADDED_ALT | 'V':
+        *p_kmap_code = KMAP_FUNC_SINSERT; /* paste from clipboard */
         break;
-        }
-
-    case MLEC_CODE_QUERYSCROLL:
-        { /* query the scroll and size of the primary view of this control */
-        if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
-        {
-            P_MLEC_QUERYSCROLL p_mlec_queryscroll = p_eventdata;
-
-            host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
-
-            p_mlec_queryscroll->scroll = p_dialog_ictl_edit_xx->riscos.scroll;
-
-            p_mlec_queryscroll->visible.x = BBox_width(&icon.bbox);
-            p_mlec_queryscroll->visible.y = BBox_height(&icon.bbox);
-
-            p_mlec_queryscroll->use = 1;
-        }
-
-        break;
-        }
-
-    case MLEC_CODE_DOSCROLL:
-        { /* scroll the primary view of this control */
-        if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
-        {
-            P_MLEC_DOSCROLL p_mlec_doscroll = p_eventdata;
-
-            if( (p_dialog_ictl_edit_xx->riscos.scroll.x != p_mlec_doscroll->scroll.x) ||
-                (p_dialog_ictl_edit_xx->riscos.scroll.y != p_mlec_doscroll->scroll.y) )
-            {
-                host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
-
-                void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &icon.bbox));
-
-                p_dialog_ictl_edit_xx->riscos.scroll = p_mlec_doscroll->scroll;
-            }
-        }
-
-        break;
-        }
-
-    case MLEC_CODE_STARTDRAG:
-        { /* start a drag in the primary view of this control */
-        if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
-        {
-            WimpDragBox * p_dragstr = p_eventdata;
-            GDI_POINT gdi_org;
-
-            /* drag boxes specified ABS even if given a window */
-            host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window w.a. ABS origin */
-
-            host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
-
-            p_dragstr->wimp_window = p_dialog->hwnd;
-            p_dragstr->parent_box.xmin = icon.bbox.xmin + gdi_org.x;
-            p_dragstr->parent_box.ymin = icon.bbox.ymin + gdi_org.y;
-            p_dragstr->parent_box.xmax = icon.bbox.xmax + gdi_org.x;
-            p_dragstr->parent_box.ymax = icon.bbox.ymax + gdi_org.y;
-
-            return(MLEC_EVENT_DOSTARTDRAG);
-        }
-
-        break;
-        }
-
-    case MLEC_CODE_STARTEDDRAG:
-        { /* the drag has been started, so set up our null handler for the primary view */
-#if 0
-        const P_DIALOG p_dialog = p_dialog_from_h_dialog(p_dialog_ictl_edit_xx->h_dialog);
-        const H_DIALOG h_dialog = p_dialog->h_current;
-
-        assert(p_dialog->h_current);
-
-        if(status_fail(status_wrap(null_events_start(p_docu_from_docno(p_dialog->docno), DIALOG_CMD_CODE_NULL_EVENT, dialog, (P_ANY) h_dialog))))
-            /*winx_drag_abort()*/;
-        else
-        {
-            p_dialog = p_dialog_from_h_dialog(h_dialog);
-
-            p_dialog->has_nulls = 1;
-        }
-#endif
-
-        break;
-        }
-
-    case MLEC_CODE_UPDATE:
-        {
-        /* the edit control's contents have changed, so read and validate it iff not caused by this bit of code*/
-        if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
-        {
-            if(0 == p_dialog_ictl->bits.in_update)
-            {
-                UI_TEXT ui_text;
-                DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
-                STATUS status;
-
-                status_assert(ui_text_from_ictl_edit_xx(&ui_text, p_dialog_ictl_edit_xx));
-
-                /* state change will want to rejig views iff chars rejected */
-                p_dialog_ictl->bits.force_update = (ui_text_validate(&ui_text, p_dialog_ictl_edit_xx->p_bitmap_validation) != 0);
-
-                msgclr(dialog_cmd_ctl_state_set);
-
-                switch(p_dialog_ictl->dialog_control_type)
-                {
-                default: default_unhandled();
-#if CHECKING
-                case DIALOG_CONTROL_EDIT:
-#endif
-                    dialog_cmd_ctl_state_set.state.edit.ui_text = ui_text;
-                    break;
-
-                case DIALOG_CONTROL_BUMP_F64:
-                    {
-                    PC_USTR i_ustr = ui_text_ustr(&ui_text);
-                    PC_USTR e_ustr;
-                    SS_RECOG_CONTEXT ss_recog_context;
-                    ss_recog_context_push(&ss_recog_context);
-                    errno = 0;
-                    dialog_cmd_ctl_state_set.state.bump_f64 = ui_strtod(i_ustr, &e_ustr);
-                    if(errno)
-                        dialog_cmd_ctl_state_set.state.bump_f64 = 0.0;
-                    ss_recog_context_pull(&ss_recog_context);
-                    break;
-                    }
-
-                case DIALOG_CONTROL_BUMP_S32:
-                    {
-                    PC_USTR i_ustr = ui_text_ustr(&ui_text);
-                    P_USTR e_ustr;
-                    errno = 0;
-                    dialog_cmd_ctl_state_set.state.bump_s32 = ui_strtol(i_ustr, &e_ustr, 10);
-                    if(errno)
-                        dialog_cmd_ctl_state_set.state.bump_s32 = 0;
-                    break;
-                    }
-
-                case DIALOG_CONTROL_COMBO_TEXT:
-                    dialog_cmd_ctl_state_set.state.combo_text.ui_text = ui_text;
-                    break;
-                }
-
-                /* command ourselves with a state change, with interlock against killer recursion */
-                dialog_cmd_ctl_state_set.h_dialog = p_dialog_ictl_edit_xx->h_dialog;
-                dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl_edit_xx->dialog_control_id;
-                dialog_cmd_ctl_state_set.bits = 0;
-
-                p_dialog_ictl->bits.in_update += 1;
-                status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
-                p_dialog_ictl->bits.in_update -= 1;
-
-                if(status_fail(status))
-                {
-                    status_assert(status);
-                    reperr_null(status);
-                    status = STATUS_OK;
-                }
-
-                p_dialog_ictl->bits.force_update = 0;
-
-                ui_text_dispose(&ui_text);
-            }
-        }
-
-        break;
-        }
 
     default:
         break;
     }
 
     return(STATUS_OK);
+}
+
+/* The mlec is trying to tell us that part of its text needs repainting. */
+/* We must call wimp_force_redraw for each edit control in each view,    */
+/* taking into account the scroll state for each one.                    */
+
+static STATUS
+dialog_riscos_mlec_CODE_UPDATELATER(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    const WimpRedrawWindowBlock * const p_redraw_window_block)
+{
+    ARRAY_INDEX i = array_elements(&dialog_statics.handles);
+
+    while(--i >= 0)
+    {
+        const P_DIALOG p_dialog = array_ptr(&dialog_statics.handles, DIALOG, i);
+
+        if(p_dialog->h_dialog == p_dialog_ictl_edit_xx->h_dialog)
+            dialog_riscos_mlec_update(p_dialog, p_dialog_ictl_edit_xx, &p_redraw_window_block->visible_area, 1);
+    }
+
+    return(STATUS_OK);
+}
+
+/* The mlec is trying to tell us that part of its text needs highlighting by EORing.  */
+/* We must call wimp_update_window() for each edit control in each view.              */
+/* From within the update loop, call mlec_area_update(), then mlec will do it for us. */
+/* We could just call wimp_force_redraw() for each view instead, but this flickers.   */
+
+static STATUS
+dialog_riscos_mlec_CODE_UPDATENOW(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    const WimpRedrawWindowBlock * const p_redraw_window_block)
+{
+    ARRAY_INDEX i = array_elements(&dialog_statics.handles);
+
+    while(--i >= 0)
+    {
+        const P_DIALOG p_dialog = array_ptr(&dialog_statics.handles, DIALOG, i);
+
+        if(p_dialog->h_dialog == p_dialog_ictl_edit_xx->h_dialog)
+            dialog_riscos_mlec_update(p_dialog, p_dialog_ictl_edit_xx, &p_redraw_window_block->visible_area, p_dialog_ictl_edit_xx->always_update_later);
+    }
+
+    return(STATUS_OK);
+}
+
+static STATUS
+dialog_riscos_mlec_CODE_PLACECARET(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    const WimpCaret * const p_caret)
+{
+    WimpCaret carrot = *p_caret;
+    WimpIconBlockWithBitset icon;
+    P_DIALOG_ICTL p_dialog_ictl;
+    const P_DIALOG p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon);
+
+    if(NULL != p_dialog)
+    {
+        if(!p_dialog_ictl_edit_xx->readonly)
+        {
+            WimpCaret current;
+            GDI_POINT mlec_origin_rel;
+
+            void_WrapOsErrorReporting(winx_get_caret_position(&current));
+
+            if((current.window_handle == p_dialog->hwnd) && (p_dialog->current_dialog_control_id == p_dialog_ictl->dialog_control_id))
+            {
+                trace_0(TRACE_RISCOS_HOST, TEXT("window and control own input focus "));
+
+                /* Take the WimpCaret passed by mlec, add the origin (icon.box.x0,icon.box.y1), then scroll it. */
+                host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
+
+                mlec_origin_rel.x = icon.bbox.xmin - p_dialog_ictl_edit_xx->riscos.scroll.x;
+                mlec_origin_rel.y = icon.bbox.ymax - p_dialog_ictl_edit_xx->riscos.scroll.y;
+
+                carrot.window_handle = p_dialog->hwnd;
+                carrot.xoffset += mlec_origin_rel.x;
+                carrot.yoffset += mlec_origin_rel.y;
+
+                if(
+                   (current.icon_handle != carrot.icon_handle) || /* test whether caret is in some other icon too */
+                   (current.xoffset != carrot.xoffset) ||
+                   (current.yoffset != carrot.yoffset) ||
+                   (current.height != carrot.height) /* cos this field holds caret (in)visible bit */ )
+                {
+                    trace_3(TRACE_RISCOS_HOST, TEXT(" place caret (") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT(")"), carrot.xoffset, carrot.yoffset, carrot.height);
+                    void_WrapOsErrorReporting(winx_set_caret_position(&carrot));
+                }
+                else
+                {
+                    trace_0(TRACE_RISCOS_HOST, TEXT(" no action (caret already positioned)"));
+                }
+            }
+            else
+            {
+                trace_0(TRACE_RISCOS_HOST, TEXT(" no action (focus belongs elsewhere)"));
+            }
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+static STATUS
+dialog_riscos_mlec_CODE_PASTEATCARET(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    P_ANY p_eventdata)
+{
+    WimpIconBlockWithBitset icon;
+    P_DIALOG_ICTL p_dialog_ictl;
+    const P_DIALOG p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon);
+
+    UNREFERENCED_PARAMETER(p_eventdata);
+
+    if(NULL != p_dialog)
+    {
+        if(!p_dialog_ictl_edit_xx->readonly)
+        {
+            /* initiate paste from external clipboard data source */
+            static const T5_FILETYPE t5_filetypes[] =
+            {
+                FILETYPE_TEXT
+            };
+
+            WimpCaret carrot;
+            WimpCaret current;
+            GDI_POINT mlec_origin_rel;
+
+            void_WrapOsErrorReporting(winx_get_caret_position(&current));
+
+            if((current.window_handle == p_dialog->hwnd) && (p_dialog->current_dialog_control_id == p_dialog_ictl->dialog_control_id))
+            {
+                trace_0(TRACE_RISCOS_HOST, TEXT("window and control own input focus "));
+                carrot = current;
+
+                /* Take the WimpCaret passed by mlec, add the origin (icon.box.x0,icon.box.y1), then scroll it. */
+                host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
+
+                mlec_origin_rel.x = icon.bbox.xmin - p_dialog_ictl_edit_xx->riscos.scroll.x;
+                mlec_origin_rel.y = icon.bbox.ymax - p_dialog_ictl_edit_xx->riscos.scroll.y;
+
+                carrot.xoffset += mlec_origin_rel.x;
+                carrot.yoffset += mlec_origin_rel.y;
+
+                host_paste_from_global_clipboard(p_dialog->hwnd, p_dialog_ictl->riscos.dwi[0].icon_handle,
+                                                 carrot.xoffset, carrot.yoffset,
+                                                 t5_filetypes, elemof32(t5_filetypes));
+
+                return(STATUS_DONE);
+            }
+            else
+            {
+                trace_0(TRACE_RISCOS_HOST, TEXT(" no action (focus belongs elsewhere)"));
+            }
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+/* query the scroll and size of the primary view of this control */
+
+static STATUS
+dialog_riscos_mlec_CODE_QUERYSCROLL(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    P_MLEC_QUERYSCROLL p_mlec_queryscroll)
+{
+    WimpIconBlockWithBitset icon;
+    P_DIALOG_ICTL p_dialog_ictl;
+    P_DIALOG p_dialog;
+
+    if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
+    {
+        host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
+
+        p_mlec_queryscroll->scroll = p_dialog_ictl_edit_xx->riscos.scroll;
+
+        p_mlec_queryscroll->visible.x = BBox_width(&icon.bbox);
+        p_mlec_queryscroll->visible.y = BBox_height(&icon.bbox);
+
+        p_mlec_queryscroll->use = 1;
+    }
+
+    return(STATUS_OK);
+}
+
+/* scroll the primary view of this control */
+
+static STATUS
+dialog_riscos_mlec_CODE_DOSCROLL(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    P_MLEC_DOSCROLL p_mlec_doscroll)
+{
+    WimpIconBlockWithBitset icon;
+    P_DIALOG_ICTL p_dialog_ictl;
+    P_DIALOG p_dialog;
+
+    if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
+    {
+        if( (p_dialog_ictl_edit_xx->riscos.scroll.x != p_mlec_doscroll->scroll.x) ||
+            (p_dialog_ictl_edit_xx->riscos.scroll.y != p_mlec_doscroll->scroll.y) )
+        {
+            host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
+
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &icon.bbox));
+
+            p_dialog_ictl_edit_xx->riscos.scroll = p_mlec_doscroll->scroll;
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+/* start a drag in the primary view of this control */
+
+static STATUS
+dialog_riscos_mlec_CODE_STARTDRAG(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    WimpDragBox * p_dragstr)
+{
+    WimpIconBlockWithBitset icon;
+    P_DIALOG_ICTL p_dialog_ictl;
+    P_DIALOG p_dialog;
+
+    if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
+    {
+        GDI_POINT gdi_org;
+
+        /* drag boxes specified ABS even if given a window */
+        host_gdi_org_from_screen(&gdi_org, p_dialog->hwnd); /* window work area ABS origin */
+
+        host_framed_BBox_trim(&icon.bbox, p_dialog_ictl_edit_xx->border_style);
+
+        p_dragstr->wimp_window = p_dialog->hwnd;
+        p_dragstr->parent_box.xmin = icon.bbox.xmin + gdi_org.x;
+        p_dragstr->parent_box.ymin = icon.bbox.ymin + gdi_org.y;
+        p_dragstr->parent_box.xmax = icon.bbox.xmax + gdi_org.x;
+        p_dragstr->parent_box.ymax = icon.bbox.ymax + gdi_org.y;
+
+        return(MLEC_EVENT_DOSTARTDRAG);
+    }
+
+    return(STATUS_OK);
+}
+
+/* the drag has been started, so set up our null handler for the primary view */
+
+static STATUS
+dialog_riscos_mlec_CODE_STARTEDDRAG(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    P_ANY p_eventdata)
+{
+#if 0
+    const P_DIALOG p_dialog = p_dialog_from_h_dialog(p_dialog_ictl_edit_xx->h_dialog);
+    const H_DIALOG h_dialog = p_dialog->h_current;
+
+    assert(p_dialog->h_current);
+
+    if(status_fail(status_wrap(null_events_start(p_docu_from_docno(p_dialog->docno), DIALOG_CMD_CODE_NULL_EVENT, dialog, (P_ANY) h_dialog))))
+    {
+        /*winx_drag_abort()*/;
+    }
+    else
+    {
+        p_dialog = p_dialog_from_h_dialog(h_dialog);
+
+        p_dialog->has_nulls = 1;
+    }
+#else
+    UNREFERENCED_PARAMETER(p_dialog_ictl_edit_xx);
+#endif
+
+    UNREFERENCED_PARAMETER(p_eventdata);
+
+    return(STATUS_OK);
+}
+
+/* the edit control's contents have changed, so read and validate it iff not caused by this bit of code */
+
+static STATUS
+dialog_riscos_mlec_CODE_UPDATE(
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    P_ANY p_eventdata)
+{
+    WimpIconBlockWithBitset icon;
+    P_DIALOG_ICTL p_dialog_ictl;
+    P_DIALOG p_dialog;
+
+    UNREFERENCED_PARAMETER(p_eventdata);
+
+    if(NULL != (p_dialog = dialog_riscos_mlec_event_common(p_dialog_ictl_edit_xx, &p_dialog_ictl, &icon)))
+    {
+        if(0 == p_dialog_ictl->bits.in_update)
+        {
+            UI_TEXT ui_text;
+            DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
+            STATUS status;
+
+            status_assert(ui_text_from_ictl_edit_xx(&ui_text, p_dialog_ictl_edit_xx));
+
+            /* state change will want to rejig views iff chars rejected */
+            p_dialog_ictl->bits.force_update = (ui_text_validate(&ui_text, p_dialog_ictl_edit_xx->p_bitmap_validation) != 0);
+
+            msgclr(dialog_cmd_ctl_state_set);
+
+            switch(p_dialog_ictl->dialog_control_type)
+            {
+            default: default_unhandled();
+#if CHECKING
+            case DIALOG_CONTROL_EDIT:
+#endif
+                dialog_cmd_ctl_state_set.state.edit.ui_text = ui_text;
+                break;
+
+            case DIALOG_CONTROL_BUMP_F64:
+                {
+                PC_USTR i_ustr = ui_text_ustr(&ui_text);
+                PC_USTR e_ustr;
+                SS_RECOG_CONTEXT ss_recog_context;
+                ss_recog_context_push(&ss_recog_context);
+                errno = 0;
+                dialog_cmd_ctl_state_set.state.bump_f64 = ui_strtod(i_ustr, &e_ustr);
+                if(errno)
+                    dialog_cmd_ctl_state_set.state.bump_f64 = 0.0;
+                ss_recog_context_pull(&ss_recog_context);
+                break;
+                }
+
+            case DIALOG_CONTROL_BUMP_S32:
+                {
+                PC_USTR i_ustr = ui_text_ustr(&ui_text);
+                P_USTR e_ustr;
+                errno = 0;
+                dialog_cmd_ctl_state_set.state.bump_s32 = ui_strtol(i_ustr, &e_ustr, 10);
+                if(errno)
+                    dialog_cmd_ctl_state_set.state.bump_s32 = 0;
+                break;
+                }
+
+            case DIALOG_CONTROL_COMBO_TEXT:
+                dialog_cmd_ctl_state_set.state.combo_text.ui_text = ui_text;
+                break;
+            }
+
+            /* command ourselves with a state change, with interlock against killer recursion */
+            dialog_cmd_ctl_state_set.h_dialog = p_dialog_ictl_edit_xx->h_dialog;
+            dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl_edit_xx->dialog_control_id;
+            dialog_cmd_ctl_state_set.bits = 0;
+
+            p_dialog_ictl->bits.in_update += 1;
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+            p_dialog_ictl->bits.in_update -= 1;
+
+            if(status_fail(status))
+            {
+                status_assert(status);
+                reperr_null(status);
+                status = STATUS_OK;
+            }
+
+            p_dialog_ictl->bits.force_update = 0;
+
+            ui_text_dispose(&ui_text);
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+static
+mlec_event_proto(dialog_riscos_mlec_event_handler, rc, handle, p_eventdata)
+{
+    switch(rc)
+    {
+    case MLEC_CODE_KEY:
+        return(dialog_riscos_mlec_CODE_KEY((P_DIALOG_ICTL_EDIT_XX) handle, (P_KMAP_CODE) p_eventdata));
+
+    case MLEC_CODE_UPDATELATER:
+        return(dialog_riscos_mlec_CODE_UPDATELATER((P_DIALOG_ICTL_EDIT_XX) handle, (const WimpRedrawWindowBlock *) p_eventdata));
+
+    case MLEC_CODE_UPDATENOW:
+        return(dialog_riscos_mlec_CODE_UPDATENOW((P_DIALOG_ICTL_EDIT_XX) handle, (const WimpRedrawWindowBlock *) p_eventdata));
+
+    case MLEC_CODE_PLACECARET:
+        return(dialog_riscos_mlec_CODE_PLACECARET((P_DIALOG_ICTL_EDIT_XX) handle, (const WimpCaret *) p_eventdata));
+
+    case MLEC_CODE_PASTEATCARET:
+        return(dialog_riscos_mlec_CODE_PASTEATCARET((P_DIALOG_ICTL_EDIT_XX) handle, p_eventdata));
+
+    case MLEC_CODE_QUERYSCROLL:
+        return(dialog_riscos_mlec_CODE_QUERYSCROLL((P_DIALOG_ICTL_EDIT_XX) handle, (P_MLEC_QUERYSCROLL) p_eventdata));
+
+    case MLEC_CODE_DOSCROLL:
+        return(dialog_riscos_mlec_CODE_DOSCROLL((P_DIALOG_ICTL_EDIT_XX) handle, (P_MLEC_DOSCROLL) p_eventdata));
+
+    case MLEC_CODE_STARTDRAG:
+        return(dialog_riscos_mlec_CODE_STARTDRAG((P_DIALOG_ICTL_EDIT_XX) handle, (WimpDragBox *) p_eventdata));
+
+    case MLEC_CODE_STARTEDDRAG:
+        return(dialog_riscos_mlec_CODE_STARTEDDRAG((P_DIALOG_ICTL_EDIT_XX) handle, p_eventdata));
+
+    case MLEC_CODE_UPDATE:
+        return(dialog_riscos_mlec_CODE_UPDATE((P_DIALOG_ICTL_EDIT_XX) handle, p_eventdata));
+
+    default:
+        return(STATUS_OK);
+    }
 }
 
 static void
@@ -4027,7 +4190,7 @@ dialog_riscos_mlec_update(
     const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_ictl_edit_xx->dialog_control_id);
     WimpIconBlockWithBitset icon;
     GDI_POINT mlec_origin_rel;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
 
     void_WrapOsErrorReporting(wimp_get_icon_state_with_bitset(p_dialog->hwnd, p_dialog_ictl->riscos.dwi[0].icon_handle, &icon));
 
@@ -4038,30 +4201,32 @@ dialog_riscos_mlec_update(
     mlec_origin_rel.x = icon.bbox.xmin - p_dialog_ictl_edit_xx->riscos.scroll.x;
     mlec_origin_rel.y = icon.bbox.ymax - p_dialog_ictl_edit_xx->riscos.scroll.y;
 
-    redraw_window.visible_area.xmin = (mlec_origin_rel.x + p_update_bbox->xmin);
-    redraw_window.visible_area.ymin = (mlec_origin_rel.y + p_update_bbox->ymin);
-    redraw_window.visible_area.xmax = (mlec_origin_rel.x + p_update_bbox->xmax);
-    redraw_window.visible_area.ymax = (mlec_origin_rel.y + p_update_bbox->ymax);
+    redraw_window_block.visible_area.xmin = (mlec_origin_rel.x + p_update_bbox->xmin);
+    redraw_window_block.visible_area.ymin = (mlec_origin_rel.y + p_update_bbox->ymin);
+    redraw_window_block.visible_area.xmax = (mlec_origin_rel.x + p_update_bbox->xmax);
+    redraw_window_block.visible_area.ymax = (mlec_origin_rel.y + p_update_bbox->ymax);
 
     /* clip to the icon border */
-    if( redraw_window.visible_area.xmin < icon.bbox.xmin)
-        redraw_window.visible_area.xmin = icon.bbox.xmin;
-    if( redraw_window.visible_area.ymin < icon.bbox.ymin)
-        redraw_window.visible_area.ymin = icon.bbox.ymin;
-    if( redraw_window.visible_area.xmax > icon.bbox.xmax)
-        redraw_window.visible_area.xmax = icon.bbox.xmax;
-    if( redraw_window.visible_area.ymax > icon.bbox.ymax)
-        redraw_window.visible_area.ymax = icon.bbox.ymax;
+    if( redraw_window_block.visible_area.xmin < icon.bbox.xmin)
+        redraw_window_block.visible_area.xmin = icon.bbox.xmin;
+    if( redraw_window_block.visible_area.ymin < icon.bbox.ymin)
+        redraw_window_block.visible_area.ymin = icon.bbox.ymin;
+    if( redraw_window_block.visible_area.xmax > icon.bbox.xmax)
+        redraw_window_block.visible_area.xmax = icon.bbox.xmax;
+    if( redraw_window_block.visible_area.ymax > icon.bbox.ymax)
+        redraw_window_block.visible_area.ymax = icon.bbox.ymax;
 
     if(later)
-        void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &redraw_window.visible_area));
+    {
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_dialog->hwnd, &redraw_window_block.visible_area));
+    }
     else
     {
         int wimp_more = 0;
 
-        redraw_window.window_handle = p_dialog->hwnd;
+        redraw_window_block.window_handle = p_dialog->hwnd;
 
-        if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+        if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
             wimp_more = 0;
 
         while(0 != wimp_more)
@@ -4069,8 +4234,8 @@ dialog_riscos_mlec_update(
             GDI_POINT gdi_org;
             GDI_POINT mlec_origin_abs;
 
-            gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&redraw_window); /* window w.a. ABS origin */
-            gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&redraw_window);
+            gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&redraw_window_block); /* window work area ABS origin */
+            gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&redraw_window_block);
 
             mlec_origin_abs.x = gdi_org.x + mlec_origin_rel.x;
             mlec_origin_abs.y = gdi_org.y + mlec_origin_rel.y;
@@ -4079,9 +4244,9 @@ dialog_riscos_mlec_update(
             /* because we clipped the rectangle fed to wimp_update_window()  */
 
             if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
-                mlec_area_update(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, (PC_GDI_BOX) &redraw_window.redraw_area);
+                mlec_area_update(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, (PC_GDI_BOX) &redraw_window_block.redraw_area);
 
-            if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+            if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
                 wimp_more = 0;
         }
     }
@@ -4097,12 +4262,14 @@ static void
 dialog_riscos_redraw_gwindow_restore(
     P_DIALOG_RISCOS_REDRAW_WINDOW p_dialog_riscos_redraw_window)
 {
+    const PC_BBox redraw_area = &p_dialog_riscos_redraw_window->redraw_window_block.redraw_area;
+
     void_WrapOsErrorChecking(
         riscos_vdu_define_graphics_window(
-            p_dialog_riscos_redraw_window->redraw_window.redraw_area.xmin,
-            p_dialog_riscos_redraw_window->redraw_window.redraw_area.ymin,
-            p_dialog_riscos_redraw_window->redraw_window.redraw_area.xmax - 1,
-            p_dialog_riscos_redraw_window->redraw_window.redraw_area.ymax - 1));
+            redraw_area->xmin,
+            redraw_area->ymin,
+            redraw_area->xmax - 1,
+            redraw_area->ymax - 1));
 }
 
 /******************************************************************************
@@ -4247,7 +4414,7 @@ part_control_redraw(
     /* does clip box returned from Window Manager intersect this control? */
     if(gr_box_intersection((P_GR_BOX) &control_screen_clipped,
                            (PC_GR_BOX) &control_screen_border,
-                           (PC_GR_BOX) &p_dialog_control_redraw->dialog_riscos_redraw_window.redraw_window.redraw_area) <= 0)
+                           (PC_GR_BOX) &p_dialog_control_redraw->dialog_riscos_redraw_window.redraw_window_block.redraw_area) <= 0)
         return(STATUS_OK);
 
     /* border */
@@ -4405,7 +4572,7 @@ part_control_redraw(
 
     if(gr_box_intersection((P_GR_BOX) &control_screen_clipped,
                            (PC_GR_BOX) &control_screen,
-                           (PC_GR_BOX) &p_dialog_control_redraw->dialog_riscos_redraw_window.redraw_window.redraw_area) <= 0)
+                           (PC_GR_BOX) &p_dialog_control_redraw->dialog_riscos_redraw_window.redraw_window_block.redraw_area) <= 0)
         return(STATUS_OK);
 
     /* set the graphics window up */

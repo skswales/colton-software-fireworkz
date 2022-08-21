@@ -31,6 +31,10 @@
 
 #define TRACE_MODULE_MLEC 0
 
+#define MLEC_FILE_READ 1
+#define MLEC_FILE_WRITE 1
+#define MLEC_PASTE_BUFFER 1
+
 /*
 callback function
 */
@@ -41,12 +45,168 @@ PROC_EVENT_PROTO(static, null_event_mlec_drag);
 internal routines
 */
 
+#if defined(MLEC_FILE_READ) || defined(MLEC_PASTE_BUFFER)
+
 _Check_return_
 static STATUS
-mlec__callback(
-    mlec_event_reason_code message,
+text_in(
     /*_Inout_*/ MLEC mlec,
-    /*_Inout_*/ P_ANY p_data);
+    _In_z_      PCTSTR filename,
+    /*_Check_return_*/ STATUS (* openp) (
+        _In_z_      PCTSTR filename,
+        P_T5_FILETYPE p_t5_filetype,
+        P_S32 filesizep,
+        P_XFER_HANDLE xferhandlep),
+    /*_Check_return_*/ STATUS (* readp) (
+        P_XFER_HANDLE xferhandlep,
+        P_U8 dataptr,
+        int datasize),
+    /*_Check_return_*/ STATUS (* closep) (
+        P_XFER_HANDLE xferhandlep));
+
+#endif
+
+_Check_return_
+static STATUS
+text_out(
+    /*_Inout_*/ MLEC mlec,
+    P_XFER_HANDLE xferhandlep,
+    marked_text range,
+    P_U8 lineterm,
+    /*_Check_return_*/ STATUS (* sizep) (
+        P_XFER_HANDLE xferhandlep,
+        int xfersize),
+    /*_Check_return_*/ STATUS (* writep) (
+        P_XFER_HANDLE xferhandlep,
+        P_U8 dataptr,
+        int datasize),
+    /*_Check_return_*/ STATUS (* closep) (
+        P_XFER_HANDLE xferhandlep));
+
+_Check_return_
+static STATUS
+string_write_open(
+    /*out*/ P_XFER_HANDLE xferhandlep,
+    P_U8 buffptr,
+    _In_        int buffsiz);
+
+_Check_return_
+static STATUS
+string_write_size(
+    P_XFER_HANDLE xferhandlep,
+    _In_        int xfersize);
+
+_Check_return_
+static STATUS
+string_write_putblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize);
+
+_Check_return_
+static STATUS
+string_write_close(
+    P_XFER_HANDLE xferhandlep);
+
+#if defined(MLEC_FILE_READ)
+
+_Check_return_
+static STATUS
+file_read_open(
+    _In_z_      PCTSTR filename,
+    /*out*/ P_T5_FILETYPE p_t5_filetype,
+    /*out*/ P_S32 filesizep,
+    /*out*/ P_XFER_HANDLE xferhandlep);
+
+_Check_return_
+static STATUS
+file_read_getblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize);
+
+_Check_return_
+static STATUS
+file_read_close(
+    P_XFER_HANDLE xferhandlep);
+
+#endif /* MLEC_FILE_READ */
+
+#if defined(MLEC_FILE_WRITE)
+
+_Check_return_
+static STATUS
+file_write_open(
+    /*out*/ P_XFER_HANDLE xferhandlep,
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype);
+
+_Check_return_
+static STATUS
+file_write_size(
+    P_XFER_HANDLE xferhandlep,
+    _In_        int xfersize);
+
+_Check_return_
+static STATUS
+file_write_putblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize);
+
+_Check_return_
+static STATUS
+file_write_close(
+    P_XFER_HANDLE xferhandlep);
+
+#endif /* MLEC_FILE_WRITE */
+
+#if defined(MLEC_PASTE_BUFFER)
+
+_Check_return_
+static STATUS
+paste_read_open(
+    _In_z_      PCTSTR filename,
+    /*out*/ P_T5_FILETYPE p_t5_filetype,
+    /*out*/ P_S32 filesizep,
+    /*out*/ P_XFER_HANDLE xferhandlep);
+
+_Check_return_
+static STATUS
+paste_read_getblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize);
+
+_Check_return_
+static STATUS
+paste_read_close(
+    P_XFER_HANDLE xferhandlep);
+
+_Check_return_
+static STATUS
+paste_write_open(
+    /*out*/ P_XFER_HANDLE xferhandlep);
+
+_Check_return_
+static STATUS
+paste_write_size(
+    P_XFER_HANDLE xferhandlep,
+    _In_        int xfersize);
+
+_Check_return_
+static STATUS
+paste_write_putblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize);
+
+_Check_return_
+static STATUS
+paste_write_close(
+    P_XFER_HANDLE xferhandlep);
+
+#endif /* MLEC_PASTE_BUFFER */
 
 #ifdef MLEC_PANE
 
@@ -182,9 +342,8 @@ static void
 force_redraw_eotext(
     /*_Inout_*/ MLEC mlec);
 
-static void
-mlec__issue_update(
-    /*_Inout_*/ MLEC mlec);
+#define mlec__issue_update(mlec) \
+    mlec__callback(MLEC_CODE_UPDATE, mlec, NULL)
 
 static void
 mlec__select_word(
@@ -203,7 +362,7 @@ mlec__drag_start(
 static void
 mlec__drag_complete(
     /*_Inout_*/ MLEC mlec,
-    BBox * dragboxp);
+    const BBox * const dragboxp);
 
 #endif
 
@@ -243,13 +402,17 @@ show_selection(
     mark_position markstt,
     mark_position markend);
 
-#if 0
+#if defined(MLEC_FILE_READ)
 
 _Check_return_
 static int
 mlec__atcursor_load(
     /*_Inout_*/ MLEC mlec,
     _In_z_      PCTSTR filename);
+
+#endif
+
+#if defined(MLEC_FILE_WRITE) && defined(THIS_DECLARATION_NEEDED)
 
 _Check_return_
 static int
@@ -259,6 +422,10 @@ mlec__alltext_save(
     _InVal_     T5_FILETYPE t5_filetype,
     P_U8 lineterm);
 
+#endif /* MLEC_FILE_WRITE */
+
+#if defined(MLEC_FILE_WRITE) && defined(UNUSED)
+
 _Check_return_
 static int
 mlec__selection_save(
@@ -267,14 +434,14 @@ mlec__selection_save(
     _InVal_     T5_FILETYPE t5_filetype,
     P_U8 lineterm);
 
-#endif
-
-#if defined(MLEC_CLIP)
+#endif /* MLEC_FILE_WRITE */
 
 _Check_return_
 static STATUS
 mlec__atcursor_paste(
     /*_Inout_*/ MLEC mlec);
+
+#if defined(MLEC_PASTE_BUFFER)
 
 _Check_return_
 static STATUS
@@ -286,174 +453,18 @@ static STATUS
 mlec__selection_cut(
     /*_Inout_*/ MLEC mlec);
 
-#endif
+#endif /* MLEC_PASTE_BUFFER */
 
 static void
 range_is_alltext(
     /*_Inout_*/ MLEC mlec,
     marked_text * range);
 
-#if defined(MLEC_CLIP)
-
-_Check_return_
-static STATUS
-text_in(
-    /*_Inout_*/ MLEC mlec,
-    _In_z_      PCTSTR filename,
-    /*_Check_return_*/ STATUS (* openp) (
-        _In_z_      PCTSTR filename,
-        P_T5_FILETYPE p_t5_filetype,
-        P_S32 filesizep,
-        P_XFER_HANDLE xferhandlep),
-    /*_Check_return_*/ STATUS (* readp) (
-        P_XFER_HANDLE xferhandlep,
-        P_U8 dataptr,
-        int datasize),
-    /*_Check_return_*/ STATUS (* closep) (
-        P_XFER_HANDLE xferhandlep));
-
-#endif
-
-_Check_return_
-static STATUS
-text_out(
-    /*_Inout_*/ MLEC mlec,
-    P_XFER_HANDLE xferhandlep,
-    marked_text range,
-    P_U8 lineterm,
-    /*_Check_return_*/ STATUS (* sizep) (
-        P_XFER_HANDLE xferhandlep,
-        int xfersize),
-    /*_Check_return_*/ STATUS (* writep) (
-        P_XFER_HANDLE xferhandlep,
-        P_U8 dataptr,
-        int datasize),
-    /*_Check_return_*/ STATUS (* closep) (
-        P_XFER_HANDLE xferhandlep));
-
-#if 0
-
-_Check_return_
-static STATUS
-file_read_open(
-    _In_z_      PCTSTR filename,
-    /*out*/ P_T5_FILETYPE p_t5_filetype,
-    /*out*/ P_S32 filesizep,
-    /*out*/ P_XFER_HANDLE xferhandlep);
-
-_Check_return_
-static STATUS
-file_read_getblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize);
-
-_Check_return_
-static STATUS
-file_read_close(
-    P_XFER_HANDLE xferhandlep);
-
-_Check_return_
-static STATUS
-file_write_open(
-    /*out*/ P_XFER_HANDLE xferhandlep,
-    _In_z_      PCTSTR filename,
-    _InVal_     T5_FILETYPE t5_filetype);
-
-_Check_return_
-static STATUS
-file_write_size(
-    P_XFER_HANDLE xferhandlep,
-    _In_        int xfersize);
-
-_Check_return_
-static STATUS
-file_write_putblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize);
-
-_Check_return_
-static STATUS
-file_write_close(
-    P_XFER_HANDLE xferhandlep);
-
-#endif
-
-#if defined(MLEC_CLIP)
-
-_Check_return_
-static STATUS
-paste_read_open(
-    _In_z_      PCTSTR filename,
-    /*out*/ P_T5_FILETYPE p_t5_filetype,
-    /*out*/ P_S32 filesizep,
-    /*out*/ P_XFER_HANDLE xferhandlep);
-
-_Check_return_
-static STATUS
-paste_read_getblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize);
-
-_Check_return_
-static STATUS
-paste_read_close(
-    P_XFER_HANDLE xferhandlep);
-
-_Check_return_
-static STATUS
-paste_write_open(
-    /*out*/ P_XFER_HANDLE xferhandlep);
-
-_Check_return_
-static STATUS
-paste_write_size(
-    P_XFER_HANDLE xferhandlep,
-    _In_        int xfersize);
-
-_Check_return_
-static STATUS
-paste_write_putblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize);
-
-_Check_return_
-static STATUS
-paste_write_close(
-    P_XFER_HANDLE xferhandlep);
-
-static MLEC paste = NULL;        /* The paste buffer is created automatically by paste_write_open() */
-                                 /* when mlec__selection_copy() or mlec__selection_cut() are used/  */
-
-#endif /* MLEC_CLIP */
-
-_Check_return_
-static STATUS
-string_write_open(
-    /*out*/ P_XFER_HANDLE xferhandlep,
-    P_U8 buffptr,
-    _In_        int buffsiz);
-
-_Check_return_
-static STATUS
-string_write_size(
-    P_XFER_HANDLE xferhandlep,
-    _In_        int xfersize);
-
-_Check_return_
-static STATUS
-string_write_putblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize);
-
-_Check_return_
-static STATUS
-string_write_close(
-    P_XFER_HANDLE xferhandlep);
+#if defined(MLEC_PASTE_BUFFER)
+static MLEC paste_buffer = NULL;
+/* The paste buffer is created automatically by paste_write_open() */
+/* when mlec__selection_copy() or mlec__selection_cut() are used   */
+#endif /* MLEC_PASTE_BUFFER */
 
 _Check_return_
 extern int
@@ -785,6 +796,19 @@ mlec_attach_eventhandler(
     }
 }
 
+_Check_return_
+static STATUS
+mlec__callback(
+    mlec_event_reason_code message,
+    /*_Inout_*/ MLEC mlec,
+    /*_Inout_*/ P_ANY p_data)
+{
+    if(NULL == mlec->callbackproc)
+        return(STATUS_OK);
+
+    return((* mlec->callbackproc) (message, mlec->callbackhand, p_data));
+}
+
 /******************************************************************************
 *
 * buffptr   pointer to buffer that receives the text
@@ -811,6 +835,7 @@ mlec_GetText(
 
     if((err = string_write_open(&handle, buffptr, (int) buffsize)) >= 0)
         err = text_out(mlec, &handle, range, lineterm_LF, string_write_size, string_write_putblock, string_write_close);
+
     return(err);
 }
 
@@ -826,73 +851,6 @@ mlec_GetTextLen(
     /* WARNING the calculation assumes the line terminator specified by mlec_GetText will expand to ONE character */
 
     return(((S32) range.lower.end - range.lower.start) + ((S32) range.upper.end - range.upper.start));      /* excluding terminator */
-}
-
-_Check_return_
-static STATUS
-string_write_open(
-    /*out*/ P_XFER_HANDLE xferhandlep,
-    P_U8 buffptr,
-    _In_        int buffsiz)
-{
-    xferhandlep->s.ptr = buffptr;
-    xferhandlep->s.siz = buffsiz;
-    xferhandlep->s.len = 0;
-
-    return(0);
-}
-
-_Check_return_
-static STATUS
-string_write_size(
-    P_XFER_HANDLE xferhandlep,
-    _In_        int xfersize)
-{
-    /* xfersize is the total number of printable chars & lineterm chars that will be output */
-    /* by text_out to string_write_putblock, it does NOT include any end-of-text char       */
-
-    if(xferhandlep->s.siz > (xferhandlep->s.len + xfersize))    /* > not >= to allow for eot */
-        return(0);
-
-    return(create_error(MLEC_ERR_GETTEXT_BUFOVF));
-}
-
-_Check_return_
-static STATUS
-string_write_putblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize)
-{
-    if(xferhandlep->s.siz > (xferhandlep->s.len + datasize))
-    {
-        P_U8 ptr = &(xferhandlep->s.ptr[xferhandlep->s.len]);
-        int   i;
-
-        for(i = 0; i < datasize; i++)
-            ptr[i] = *dataptr++;
-
-        xferhandlep->s.len += datasize;
-        return(0);
-    }
-
-    return(create_error(MLEC_ERR_GETTEXT_BUFOVF)); /* shouldn't happen, string_write_size should catch the problem */
-}
-
-_Check_return_
-static STATUS
-string_write_close(
-    P_XFER_HANDLE xferhandlep)
-{
-    /* terminate the string */
-
-    if(xferhandlep->s.siz > xferhandlep->s.len)
-    {
-        xferhandlep->s.ptr[xferhandlep->s.len] = CH_NULL;
-        return(0);
-    }
-
-    return(create_error(MLEC_ERR_GETTEXT_BUFOVF)); /* shouldn't happen, string_write_size should catch the problem */
 }
 
 _Check_return_
@@ -963,7 +921,7 @@ static void
 mlec_report_error(
     _InVal_     STATUS err)
 {
-    reperr(err);
+    reperr_null(err);
 }
 
 /******************************************************************************
@@ -980,58 +938,71 @@ mlec_report_error(
 /*ncr*/
 extern BOOL
 mlec__event_handler(
-    _InVal_     event_code,
+    _InVal_     int event_code,
     _In_        const WimpPollBlock * const p_event_data,
     void * handle)
 {
     MLEC mlec = (MLEC) handle;
 
     /* Process the event */
-    switch(e->e)
+    switch(event_code)
     {
-    case Wimp_EOpenWindow:
-        trace_0(TRACE_MODULE_MLEC, TEXT("** Open_Window_Request on mlec pane window **"));
-        if(mlec__callback(MLEC_CODE_OPEN, mlec, &p_event_data->open_window_request) == 0)
-            void_WrapOsErrorReporting(wimp_open_window(&p_event_data->open_window_request));
-        break;
-
     case Wimp_ERedrawWindow:
         mlec__event_redraw_loop(mlec);    /* redraw text & selection */
-        break;
+        return(TRUE); /* processed */
+
+    case Wimp_EOpenWindow:
+        {
+        if(STATUS_OK != mlec__callback(MLEC_CODE_OPEN_WINDOW_REQUEST, mlec, de_const_cast(void *, &p_event_data->open_window_request)))
+            return(TRUE); /* processed */
+
+        trace_0(TRACE_MODULE_MLEC, TEXT("** unhandled Open_Window_Request on mlec pane window **"));
+        void_WrapOsErrorReporting(wimp_open_window(de_const_cast(void *, &p_event_data->open_window_request)));
+        return(TRUE); /* processed */
+        }
 
     case Wimp_ECloseWindow:
-        trace_0(TRACE_MODULE_MLEC, TEXT("** Close_Window_Request on mlec pane window **"));
-        if(mlec__callback(MLEC_CODE_CLOSE, mlec, &p_event_data->close_window_request) == 0)
-            return(FALSE);
-        break;
+        {
+        if(STATUS_OK != mlec__callback(MLEC_CODE_CLOSE_WINDOW_REQUEST, mlec, de_const_cast(void *, &p_event_data->close_window_request)))
+            return(TRUE); /* processed */
+
+        trace_0(TRACE_MODULE_MLEC, TEXT("** unhandled Close_Window_Request on mlec pane window **"));
+        return(FALSE);
+        }
 
     case Wimp_EMouseClick:
-        if(mlec__callback(MLEC_CODE_CLICK, mlec, &p_event_data->mouse_click) == 0)
-            if((int) e->data.mouse_click.icon_handle == -1)      /* work area background */
-            {
-                GDI_POINT gdi_org;
+        {
+        if(STATUS_OK != mlec__callback(MLEC_CODE_MOUSE_CLICK, mlec, de_const_cast(void *, &p_event_data->mouse_click)))
+            return(TRUE); /* processed */
 
-                trace_3(TRACE_MODULE_MLEC, TEXT("** Mouse_Click on EditBox pane window at (%d,%d), state ") U32_XTFMT TEXT(" **"),
-                        e->data.mouse_click.mouse_x, e->data.mouse_click.mouse_y, e->data.mouse_click.buttons);
+        if((int) p_event_data->mouse_click.icon_handle == -1) /* work area background */
+        {
+            GDI_POINT gdi_org;
 
-                host_gdi_org_from_screen(&gdi_org, e->data.mouse_click.window_handle); /* window w.a. ABS origin */
+            trace_3(TRACE_MODULE_MLEC, TEXT("** Mouse_Click on EditBox pane window at (%d,%d), state ") U32_XTFMT TEXT(" **"),
+                    p_event_data->mouse_click.mouse_x, p_event_data->mouse_click.mouse_y, p_event_data->mouse_click.buttons);
 
-                mlec__click_core(mlec, &gdi_org, &e->data.mouse_click);
-            }
-        break;
+            host_gdi_org_from_screen(&gdi_org, p_event_data->mouse_click.window_handle); /* window work area ABS origin */
+
+            mlec__Mouse_Click(mlec, &gdi_org, &p_event_data->mouse_click);
+        }
+
+        return(TRUE); /* processed */
+        }
 
     case Wimp_EUserDrag:
-        /* Returned when a 'User_Drag' operation (started by winx_drag_box) completes */
-        mlec__drag_complete(mlec, &p_event_data->user_drag_box);
-        break;
+        /* Returned when a 'User_Drag_Box' operation (started by winx_drag_box) completes */
+        mlec__drag_complete(mlec, &p_event_data->user_drag_box.bbox);
+        return(TRUE); /* processed */
 
     case Wimp_EKeyPressed:
         {
+        const KMAP_CODE kmap_code = kmap_convert(p_event_data->key_pressed.key_code);
         STATUS status;
 
-        trace_1(TRACE_MODULE_MLEC, TEXT("** Wimp_EKeyPressed on EditBox pane window, key code=%d **"), p_event_data->key.chcode);
+        trace_2(TRACE_MODULE_MLEC, TEXT("** Key_Pressed on EditBox pane window, chcode=%d, kmap_code=%d **"), p_event_data->key.chcode, kmap_code);
 
-        status = mlec__key_core(mlec, ri_kmap_convert(p_event_data->key.chcode));
+        status = mlec__Key_Pressed(mlec, kmap_code);
 
         /* Any error is the result of direct user interaction with the mlec, */
         /* so report the error here, cos there is no caller to return it to. */
@@ -1041,45 +1012,26 @@ mlec__event_handler(
             status = STATUS_DONE; /* prevent any further processing */
         }
 
-        return(status_done(err));
+        return(status_done(status));
         }
 
-#if 0
     case Wimp_EUserMessage:
     case Wimp_EUserMessageRecorded:
-        trace_1(TRACE_MODULE_MLEC, TEXT("action is %d"), p_event_data->msg.hdr.action);
-        switch(e->data.msg.hdr.action)
         {
-        case Wimp_MDataLoad:   /* File dragged from directory display, dropped on our window */
-        case Wimp_MDataOpen:   /* File double clicked in directory display */
-            {
-            PCTSTR filename;
+        STATUS status = mlec__User_Message(mlec, &p_event_data->user_message);
 
-            host_xfer_load_file_setup(&filename);
-            {
-                int err = mlec__atcursor_load(mlec, filename);
-                if(err < 0)
-                    mlec_report_error(err);    /* Report the error here, cos there is no caller to return it to. */
-            }
-            break;
-            }
-
-        case Wimp_MDataSave:    /* File dragged from another application, dropped on our window */
-            host_xfer_import_via_scrap();
-            break;
-
-        default:
-            return(FALSE);
+        if(status_fail(status))
+        {
+            mlec_report_error(status);
+            status = STATUS_DONE; /* prevent any further processing */
         }
-        break;
-#endif
+
+        return(status_done(status));
+        }
 
     default:
         return(FALSE);
     }
-
-    /* done something, so... */
-    return(TRUE);
 }
 
 #endif
@@ -1093,7 +1045,7 @@ mlec__event_handler(
 ******************************************************************************/
 
 extern void
-mlec__click_core(
+mlec__Mouse_Click(
     MLEC mlec,
     P_GDI_POINT p_origin,
     _In_        const WimpMouseClickEvent * const p_mouse_click)
@@ -1116,36 +1068,43 @@ mlec__click_core(
     default:
         break;
 
-    case Wimp_MouseButtonSingleSelect:  /* 0x400 Single 'select' */
+    case Wimp_MouseButtonSingleSelect:  /* 0x400 Single 'Select' */
+        riscos_claim_caret();
         mlec__cursor_setpos(mlec, col, row);
         break;
 
-    case Wimp_MouseButtonDragSelect:    /* 0x040 Long   'select' */
+    case Wimp_MouseButtonDragSelect:    /* 0x040 Long   'Select' */
+        riscos_claim_caret();
         mlec__cursor_setpos(mlec, col, row);
         mlec__drag_start(mlec);
         break;
 
-    case Wimp_MouseButtonSelect:        /* 0x004 Double 'select' */
+    case Wimp_MouseButtonSelect:        /* 0x004 Double 'Select' */
+        riscos_claim_caret();
         mlec__cursor_setpos(mlec, col, row);
         mlec__select_word(mlec);
         break;
 
-    case Wimp_MouseButtonTripleSelect:  /* 0x4000 Triple 'select' */
+    case Wimp_MouseButtonTripleSelect:  /* 0x4000 Triple 'Select' */
+        riscos_claim_caret();
         mlec__cursor_setpos(mlec, col, row);
         mlec__select_para(mlec);
         break;
 
-    case Wimp_MouseButtonSingleAdjust:  /* 0x100 Single 'adjust' */
+    case Wimp_MouseButtonSingleAdjust:  /* 0x100 Single 'Adjust' */
+        riscos_claim_caret();
         /* Alter selection, (will create one if needed, starting at cursor position) */
         mlec__selection_adjust(mlec, col, row);
         break;
 
-    case Wimp_MouseButtonDragAdjust:    /* 0x010 Long   'adjust' */
+    case Wimp_MouseButtonDragAdjust:    /* 0x010 Long   'Adjust' */
+        riscos_claim_caret();
         mlec__selection_adjust(mlec, col, row);
         mlec__drag_start(mlec);
         break;
 
-    case Wimp_MouseButtonAdjust:        /* 0x001 Double 'adjust' */
+    case Wimp_MouseButtonAdjust:        /* 0x001 Double 'Adjust' */
+        riscos_claim_caret();
         mlec__selection_adjust(mlec, col, row);
         mlec__select_word(mlec);
         break;
@@ -1176,9 +1135,9 @@ mlec__drag_core(
 *   = 0  no error, key not processed
 *   > 0  no error, key processed
 *
-* The callers event handler should look like this:
+* The caller's event handler should look like this:
 *
-*       status = mlec__key_core(mlec, kmap_code);
+*       status = mlec__Key_Pressed(mlec, kmap_code);
 *
 *       if(status < 0)                  report any error
 *           mlec_report_error(status);
@@ -1189,7 +1148,7 @@ mlec__drag_core(
 
 _Check_return_
 extern STATUS
-mlec__key_core(
+mlec__Key_Pressed(
     MLEC mlec,
     _In_        KMAP_CODE kmap_code)
 {
@@ -1228,15 +1187,17 @@ mlec__key_core(
 
     case KMAP_FUNC_BACKSPACE:             mlec__delete_left     (mlec); break;
 
-#if defined(MLEC_CLIP)
     case KMAP_FUNC_SINSERT:               status_break(status = mlec__atcursor_paste(mlec)); status = STATUS_DONE; break;
+
+#if defined(MLEC_PASTE_BUFFER)
     case KMAP_FUNC_CINSERT:               status_break(status = mlec__selection_copy(mlec)); status = STATUS_DONE; break;
 #endif
 
     case KMAP_FUNC_DELETE:                mlec__delete_left     (mlec); break;
-#if defined(MLEC_CLIP)
+#if defined(MLEC_PASTE_BUFFER)
     case KMAP_FUNC_SDELETE:               status_break(status = mlec__selection_cut(mlec)); status = STATUS_DONE; break;
 #endif
+    case KMAP_CODE_ADDED_ALT | 'K':       mlec__selection_delete(mlec); break;
     case KMAP_CODE_ADDED_ALT | 'Z':       mlec__selection_clear (mlec); break;
 
     case KMAP_FUNC_RETURN:                if(STATUS_OK != (status = mlec__callback(MLEC_CODE_KEY_RETURN, mlec, NULL)))
@@ -1278,35 +1239,40 @@ static void
 mlec__event_redraw_loop(
     /*_Inout_*/ MLEC mlec)
 {
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more;
-    GDI_POINT gdi_org;
 
     trace_0(TRACE_MODULE_MLEC, TEXT("** mlec__event_redraw_loop called **"));
 
     /* Start the redraw */
-    r.window_handle = mlec->pane;
-    if(WrapOsErrorReporting(wimp_redraw_window(&r, &wimp_more)))
+    redraw_window_block.window_handle = mlec->pane;
+    if(NULL != WrapOsErrorReporting(wimp_redraw_window(&redraw_window_block, &wimp_more)))
         wimp_more = 0;
-
-    trace_4(TRACE_MODULE_MLEC, TEXT("wimp_redraw_window returns: (%d,%d,%d,%d) "),r.visible_area.x0,r.visible_area.y0,r.visible_area.x1,r.visible_area.y1);
-    trace_2(TRACE_MODULE_MLEC, TEXT("(%d,%d) "),r.scx,r.scy);
-    trace_4(TRACE_MODULE_MLEC, TEXT("(%d,%d,%d,%d)"),r.g.x0,r.g.y0,r.g.x1,r.g.y1);
-
-    gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&r); /* window w.a. ABS origin */
-    gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&r);
 
     /* Do the redraw loop */
     while(0 != wimp_more)
     {
-        mlec__redraw_core(mlec, &gdi_org, (PC_GDI_BOX) &r.g /*screenBB*/);
+        GDI_POINT gdi_org;
 
-        if(WrapOsErrorReporting(wimp_get_rectangle(&r, &wimp_more)))
+        trace_4(TRACE_MODULE_MLEC, TEXT("wimp_redraw_window/gr returns: (%d,%d,%d,%d) "),
+                redraw_window_block.visible_area.xmin,redraw_window_block.visible_area.ymin,
+                redraw_window_block.visible_area.xmax,_blockredraw_window.visible_area.ymax);
+        trace_2(TRACE_MODULE_MLEC, TEXT("(%d,%d) "),redraw_window_block.xscroll,redraw_window_block.yscroll);
+        trace_4(TRACE_MODULE_MLEC, TEXT("(%d,%d,%d,%d)"),
+                redraw_window_block.redraw_area.xmin,redraw_window_block.redraw_area.ymin,
+                redraw_window_block.redraw_area.xmax,redraw_window_block.redraw_area.ymax);
+
+        gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&redraw_window_block); /* window work area ABS origin */
+        gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&redraw_window_block);
+
+        mlec__redraw_core(mlec, &gdi_org, (PC_GDI_BOX) &redraw_window_block.redraw_area /*screenBB*/);
+
+        if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
             wimp_more = 0;
     }
 }
 
-#endif
+#endif /* MLEC_PANE */
 
 /*
 * possibly bg colour needs to have been set up prior to call
@@ -2226,7 +2192,7 @@ mlec_claim_focus(
 
     build_caretstr(mlec, &carrot);
 
-    if(mlec__callback(MLEC_CODE_CLAIMFOCUS, mlec, &carrot) != 0)
+    if(STATUS_OK != mlec__callback(MLEC_CODE_CLAIMFOCUS, mlec, &carrot))
         return;
 
     /*CONSTANTCONDITION*/
@@ -2234,18 +2200,18 @@ mlec_claim_focus(
     {
         WimpCaret current;
 
-        void_WrapOsErrorReporting(wimp_get_caret_position(&current));
+        void_WrapOsErrorReporting(winx_get_caret_position(&current));
 
-        /* The the caret isn't exactly where we want it (and in the correct state), make it so. */
+        /* If the caret isn't exactly where we want it (and in the correct state), make it so. */
 
-        if((current.window_handle != mlec->pane) ||
-           (current.xoffset != carrot.xoffset)   ||
-           (current.yoffset != carrot.yoffset)   ||
-           (current.height != carrot.height)        /* 'cos this field holds caret (in)visible bit */
-          )
+        if( (current.window_handle != mlec->pane) ||
+            (current.xoffset != carrot.xoffset)   ||
+            (current.yoffset != carrot.yoffset)   ||
+            (current.height != carrot.height) /* 'cos this field holds caret (in)visible bit */ )
         {
-            void_WrapOsErrorReporting(wimp_set_caret_position_block(&carrot));
-            trace_3(TRACE_MODULE_MLEC, TEXT("place caret (%d,%d,%d)"),carrot.xoffset,carrot.yoffset,carrot.height);
+            trace_3(TRACE_MODULE_MLEC, TEXT(" place caret (%d,%d,%d)"),carrot.xoffset,carrot.yoffset,carrot.height);
+            riscos_claim_caret();
+            void_WrapOsErrorReporting(winx_set_caret_position(&carrot));
         }
         else
         {
@@ -2270,37 +2236,33 @@ scroll_until_cursor_visible(
 
         mlec__point_from_colrow(mlec, &extent, mlec->maxcol, mlec->linecount + 1);
 
-        trace_4(TRACE_MODULE_MLEC, TEXT("window extent (%d,%d,%d,%d)"),mlec->paneextent.x0,mlec->paneextent.y0,mlec->paneextent.x1,mlec->paneextent.y1);
-        trace_1(TRACE_MODULE_MLEC, TEXT("extenty=%d"),extent.y);
+        trace_4(TRACE_MODULE_MLEC, TEXT("window extent (%d,%d,%d,%d)"),mlec->paneextent.xmin,mlec->paneextent.ymin,mlec->paneextent.xmax,mlec->paneextent.ymax);
+        trace_1(TRACE_MODULE_MLEC, TEXT("extent.y=%d"),extent.y);
 
-        if(mlec->paneextent.x1 < extent.x)
+        if(mlec->paneextent.xmax < extent.x)
         {
-            mlec->paneextent.x1 = extent.x;
+            mlec->paneextent.xmax = extent.x;
             change = TRUE;
         }
 
-        if(mlec->paneextent.y0 > extent.y)       /* NB -ve numbers */
+        if(mlec->paneextent.ymin > extent.y)       /* NB -ve numbers */
         {
-            mlec->paneextent.y0 = extent.y;
+            mlec->paneextent.ymin = extent.y;
             change = TRUE;
         }
 
         if(change)
         {
-            WimpRedrawWindowBlock blk;
+            void_WrapOsErrorReporting(wimp_set_extent(mlec->pane, &mlec->paneextent));
 
-            blk.w   = mlec->pane;
-            blk.box = mlec->paneextent;
-            void_WrapOsErrorReporting(wimp_set_extent(&blk));
-
-            mlec__callback(MLEC_CODE_IsWorkAreaChanged, mlec, &blk);
+            status_consume(mlec__callback(MLEC_CODE_IsWorkAreaChanged, mlec, &mlec->paneextent));
         }
     }
 #endif
 
     { /* May need to scroll the window, to keep the cursor (pcol,row) visible. */
     GDI_BOX curshape;
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
     MLEC_QUERYSCROLL mlec_queryscroll;
 
     mlec__point_from_colrow(mlec, (P_GDI_POINT) &curshape.x0, mlec->cursor.pcol, mlec->cursor.row);
@@ -2319,17 +2281,17 @@ scroll_until_cursor_visible(
     /*CONSTANTCONDITION*/
     if_pane(mlec)
     {
-        window_u.window_state.window_handle = mlec->pane;
-        if(NULL == wimp_get_window_state(&window_u.window_state))
+        window_u.window_state_block.window_handle = mlec->pane;
+        if(NULL == wimp_get_window_state(&window_u.window_state_block))
         {
-            trace_4(TRACE_MODULE_MLEC, TEXT("wimp_get_window_state returns: visible area=(%d,%d, %d,%d)"),window_u.window_state.visible_area.xmin,window_u.window_state.visible_area.ymin,window_u.window_state.visible_area.xmax,window_u.window_state.visible_area.ymax);
-            trace_2(TRACE_MODULE_MLEC, TEXT("scroll offset=(%d,%d)"), window_u.window_state.xscroll,window_u.window_state.yscroll);
+            trace_4(TRACE_MODULE_MLEC, TEXT("wimp_get_window_state returns: visible area=(%d,%d, %d,%d)"),window_u.window_state_block.visible_area.xmin,window_u.window_state_block.visible_area.ymin,window_u.window_state_block.visible_area.xmax,window_u.window_state_block.visible_area.ymax);
+            trace_2(TRACE_MODULE_MLEC, TEXT("scroll offset=(%d,%d)"), window_u.window_state_block.xscroll,window_u.window_state_block.yscroll);
 
-            mlec_queryscroll.scroll.x  = window_u.window_state.xscroll;
-            mlec_queryscroll.scroll.y  = window_u.window_state.yscroll;
+            mlec_queryscroll.scroll.x  = window_u.window_state_block.xscroll;
+            mlec_queryscroll.scroll.y  = window_u.window_state_block.yscroll;
 
-            mlec_queryscroll.visible.x = (PIXIT) BBox_width(&window_u.window_state.visible_area);
-            mlec_queryscroll.visible.y = (PIXIT) BBox_height(&window_u.window_state.visible_area);
+            mlec_queryscroll.visible.x = (PIXIT) BBox_width(&window_u.window_state_block.visible_area);
+            mlec_queryscroll.visible.y = (PIXIT) BBox_height(&window_u.window_state_block.visible_area);
 
             mlec_queryscroll.use       = 1;
         }
@@ -2339,9 +2301,11 @@ scroll_until_cursor_visible(
         /* Not attached to a pane, so call client. If the client is maintaining its own view(s) onto this mlec */
         /* it may wish to scroll it/them (probably just the view with the input focus).                        */
 
-        if(mlec__callback(MLEC_CODE_SCROLL, mlec, &curshape) == 0)
+        if(STATUS_OK == mlec__callback(MLEC_CODE_SCROLL, mlec, &curshape))
+        {
             /* SKS default mechanism for scrolling a la main mlec panes */
-            mlec__callback(MLEC_CODE_QUERYSCROLL, mlec, &mlec_queryscroll);
+            status_consume(mlec__callback(MLEC_CODE_QUERYSCROLL, mlec, &mlec_queryscroll));
+        }
     }
 
     if(mlec_queryscroll.use)
@@ -2378,15 +2342,15 @@ scroll_until_cursor_visible(
             if_pane(mlec)
             {
 #if FALSE
-                mlec__event_redraw_loop(mlec);    /* redraw all invalid rectangles BEFORE scrolling window */
-                                            /* cos wimp fails to scroll the invalid rectangle list   */
+                mlec__event_redraw_loop(mlec); /* redraw all invalid rectangles BEFORE scrolling window */
+                                               /* cos wimp fails to scroll the invalid rectangle list   */
                 /*>>>causes a lot of flicker when cursor up/down causes a scroll */
 #endif
 
-                window_u.open_window.xscroll = (int) mlec_queryscroll.scroll.x;
-                window_u.open_window.yscroll = (int) mlec_queryscroll.scroll.y;
+                window_u.open_window_block.xscroll = (int) mlec_queryscroll.scroll.x;
+                window_u.open_window_block.yscroll = (int) mlec_queryscroll.scroll.y;
 
-                void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window));
+                void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window_block));
             }
             else
             {
@@ -2394,7 +2358,7 @@ scroll_until_cursor_visible(
 
                 mlec_doscroll.scroll = mlec_queryscroll.scroll;
 
-                status_assert(mlec__callback(MLEC_CODE_DOSCROLL, mlec, &mlec_doscroll));
+                status_consume(mlec__callback(MLEC_CODE_DOSCROLL, mlec, &mlec_doscroll));
             }
         }
     }
@@ -2413,7 +2377,7 @@ show_caret(
 
     build_caretstr(mlec, &carrot);
 
-    if(mlec__callback(MLEC_CODE_PLACECARET, mlec, &carrot) != 0)
+    if(STATUS_OK != mlec__callback(MLEC_CODE_PLACECARET, mlec, &carrot))
         return;
 
     /*CONSTANTCONDITION*/
@@ -2421,28 +2385,26 @@ show_caret(
     {
         WimpCaret current;
 
-        void_WrapOsErrorReporting(wimp_get_caret_position(&current));
+        void_WrapOsErrorReporting(winx_get_caret_position(&current));
 
-        if(current.window_handle == mlec->pane)
+        if(current.window_handle != mlec->pane)
         {
-            trace_0(TRACE_MODULE_MLEC, TEXT("we own input focus "));
+            trace_0(TRACE_MODULE_MLEC, TEXT(" no action (focus belongs elsewhere)"));
+            return;
+        }
 
-            if((current.xoffset != carrot.xoffset) ||
-               (current.yoffset != carrot.yoffset) ||
-               (current.height != carrot.height)    /* 'cos this field holds caret (in)visible bit */
-              )
-            {
-                void_WrapOsErrorReporting(wimp_set_caret_position_block(&carrot));
-                trace_3(TRACE_MODULE_MLEC, TEXT("place caret (%d,%d,%d)"),carrot.xoffset,carrot.yoffset,carrot.height);
-            }
-            else
-            {
-                trace_0(TRACE_MODULE_MLEC, TEXT(" no action (caret already positioned)"));
-            }
+        trace_0(TRACE_MODULE_MLEC, TEXT("we own input focus "));
+
+        if( (current.xoffset != carrot.xoffset) ||
+            (current.yoffset != carrot.yoffset) ||
+            (current.height != carrot.height) /* 'cos this field holds caret (in)visible bit */ )
+        {
+            trace_3(TRACE_MODULE_MLEC, TEXT(" place caret (%d,%d,%d)"),carrot.xoffset,carrot.yoffset,carrot.height);
+            void_WrapOsErrorReporting(winx_set_caret_position(&carrot));
         }
         else
         {
-            trace_0(TRACE_MODULE_MLEC, TEXT(" no action (focus belongs elsewhere)"));
+            trace_0(TRACE_MODULE_MLEC, TEXT(" no action (caret already positioned)"));
         }
     }
 }
@@ -2822,20 +2784,26 @@ checkspace_delete_selection(
     return(0); /*>>>not quite right, we don't consider the space the delete_selection will free*/
 }
 
-#if FALSE
-void force_redraw(MLEC mlec)
+#if defined(UNUSED)
+
+extern void
+force_redraw(
+    MLEC mlec)
 {
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
 
-    redraw_window.window_handle =  mlec->pane;
-    redraw_window.box.x0 = -0x1FFFFFFF; redraw_window.box.y0 = -0x1FFFFFFF;
-    redraw_window.box.x1 =  0x1FFFFFFF; redraw_window.box.y1 =  0x1FFFFFFF;
+    redraw_window_block.window_handle =  mlec->pane;
+    redraw_window_block.box.xmin = -0x1FFFFFFF; redraw_window_block.box.ymin = -0x1FFFFFFF;
+    redraw_window_block.box.xmax =  0x1FFFFFFF; redraw_window_block.box.ymax =  0x1FFFFFFF;
 
-    if(mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_window) == 0)
-        /*CONSTANTCONDITION*/
-        if_pane(mlec)
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_window.box));
+    if(STATUS_OK != mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_window_block))
+        return;
+
+    /*CONSTANTCONDITION*/
+    if_pane(mlec)
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_window_block.box));
 }
+
 #endif
 
 /******************************************************************************
@@ -2852,22 +2820,22 @@ static void
 force_redraw_eoline(
     /*_Inout_*/ MLEC mlec)
 {
-    WimpRedrawWindowBlock redraw_eoln;
+    WimpRedrawWindowBlock redraw_window_block;
 
     /* invalidate right of cursor to eol */
-    redraw_eoln.window_handle = mlec->pane;
+    redraw_window_block.window_handle = mlec->pane;
 
-    mlec__point_from_colrow(mlec, (P_GDI_POINT) &redraw_eoln.visible_area.xmin, mlec->cursor.pcol, mlec->cursor.row);
-    redraw_eoln.visible_area.xmax = 0x1FFFFFFF;
-    redraw_eoln.visible_area.ymax = redraw_eoln.visible_area.ymin;
-    redraw_eoln.visible_area.ymin = redraw_eoln.visible_area.ymax - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE]; /*>>>actually charheight??*/
+    mlec__point_from_colrow(mlec, (P_GDI_POINT) &redraw_window_block.visible_area.xmin, mlec->cursor.pcol, mlec->cursor.row);
+    redraw_window_block.visible_area.xmax = 0x1FFFFFFF;
+    redraw_window_block.visible_area.ymax = redraw_window_block.visible_area.ymin;
+    redraw_window_block.visible_area.ymin = redraw_window_block.visible_area.ymax - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE]; /*>>>actually charheight??*/
 
-    if(mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_eoln) != 0)
+    if(STATUS_OK != mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_window_block))
         return;
 
     /*CONSTANTCONDITION*/
     if_pane(mlec)
-        void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_eoln.visible_area));
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_window_block.visible_area));
 }
 
 /******************************************************************************
@@ -2884,33 +2852,40 @@ void
 force_redraw_eotext(
     /*_Inout_*/ MLEC mlec)
 {
-    WimpRedrawWindowBlock redraw_eoln, redraw_eotx;
+    WimpRedrawWindowBlock redraw_window_block;
+    int cursor_line_ymin;
 
     /* invalidate right of cursor to eol */
-    redraw_eoln.window_handle = mlec->pane;
+    redraw_window_block.window_handle = mlec->pane;
 
-    mlec__point_from_colrow(mlec, (P_GDI_POINT) &redraw_eoln.visible_area.xmin, mlec->cursor.pcol, mlec->cursor.row);
-    redraw_eoln.visible_area.xmax = 0x1FFFFFFF;
-    redraw_eoln.visible_area.ymax = redraw_eoln.visible_area.ymin;
-    redraw_eoln.visible_area.ymin = redraw_eoln.visible_area.ymax - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE]; /*>>>actually charheight??*/
+    mlec__point_from_colrow(mlec, (P_GDI_POINT) &redraw_window_block.visible_area.xmin, mlec->cursor.pcol, mlec->cursor.row);
+    redraw_window_block.visible_area.xmax = 0x1FFFFFFF;
+    redraw_window_block.visible_area.ymax = redraw_window_block.visible_area.ymin;
+    redraw_window_block.visible_area.ymin = redraw_window_block.visible_area.ymax - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE]; /*>>>actually charheight??*/
+
+    cursor_line_ymin = redraw_window_block.visible_area.ymin;
+
+    if(STATUS_OK == mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_window_block))
+    {
+        /*CONSTANTCONDITION*/
+        if_pane(mlec)
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_window_block.visible_area));
+    }
 
     /* invalidate rows below cursor */
-    redraw_eotx.window_handle = mlec->pane;
+    redraw_window_block.window_handle = mlec->pane;
 
-    redraw_eotx.visible_area.xmin =  mlec->attributes[MLEC_ATTRIBUTE_MARGIN_LEFT];    /* left   (inc) */
-    redraw_eotx.visible_area.xmax =  0x1FFFFFFF;                                      /* right  (exc) */
-    redraw_eotx.visible_area.ymax =  redraw_eoln.visible_area.ymin;                     /* top    (exc) */
-    redraw_eotx.visible_area.ymin = -0x1FFFFFFF;                                      /* bottom (inc) */
+    redraw_window_block.visible_area.xmin =  mlec->attributes[MLEC_ATTRIBUTE_MARGIN_LEFT];    /* left   (inc) */
+    redraw_window_block.visible_area.xmax =  0x1FFFFFFF;                                      /* right  (exc) */
+    redraw_window_block.visible_area.ymax =  cursor_line_ymin;                                /* top    (exc) */
+    redraw_window_block.visible_area.ymin = -0x1FFFFFFF;                                      /* bottom (inc) */
 
-    if(mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_eoln) == 0)
+    if(STATUS_OK == mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_window_block))
+    {
         /*CONSTANTCONDITION*/
         if_pane(mlec)
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_eoln.visible_area));
-
-    if(mlec__callback(MLEC_CODE_UPDATELATER, mlec, &redraw_eotx) == 0)
-        /*CONSTANTCONDITION*/
-        if_pane(mlec)
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_eotx.visible_area));
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(mlec->pane, &redraw_window_block.visible_area));
+    }
 }
 
 static void
@@ -2977,15 +2952,70 @@ mlec__drag_start(
 static void
 mlec__drag_complete(
     /*_Inout_*/ MLEC mlec,
-    BBox * dragboxp)
+    const BBox * const dragboxp)
 {
-    UNREFERENCED_PARAMETER(dragboxp);
+    UNREFERENCED_PARAMETER_InRef_(dragboxp);
 
     trace_0(TRACE_OUT | TRACE_ANY, TEXT("mlec__drag_complete() - *** null_events_stop(DOCNO_NONE)"));
-    null_events_stop(P_DOCU_NONE, T5_EVENT_NULL, null_event_mlec_drag, mlec);
+    null_events_stop(DOCNO_NONE, T5_EVENT_NULL, null_event_mlec_drag, (CLIENT_HANDLE) mlec);
 }
 
 #endif
+
+_Check_return_
+extern STATUS
+mlec__User_Message(
+    /*_Inout_*/ MLEC mlec,
+    _InRef_     PC_WimpMessage p_wimp_message)
+{
+    trace_1(TRACE_MODULE_MLEC, TEXT("ml: %s"), report_wimp_message(p_wimp_message, FALSE));
+
+    switch(p_wimp_message->hdr.action_code)
+    {
+#if defined(MLEC_FILE_READ)
+
+    case Wimp_MDataSave:
+        { /* File dragged from another application, dropped on our window */
+        const T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_save.file_type;
+
+        if(FILETYPE_TEXT != t5_filetype)
+            return(STATUS_OK);
+
+        host_xfer_import_file_via_scrap(p_wimp_message);
+
+        return(STATUS_DONE);
+        }
+
+    case Wimp_MDataLoad:
+        { /* File dragged from directory display, dropped on our window */
+        const WimpDataLoadMessage * const p_wimp_message_data_load = &p_wimp_message->data.data_load;
+        T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message_data_load->file_type;
+        TCHARZ filename[256];
+        int err;
+
+        if(FILETYPE_TEXT != t5_filetype)
+            return(STATUS_OK);
+
+        xstrkpy(filename, elemof32(filename), p_wimp_message_data_load->leaf_name); /* low-lifetime name */
+
+        host_xfer_load_file_setup(p_wimp_message);
+
+        err = mlec__atcursor_load(mlec, filename);
+        if(status_ok(err))
+            err = STATUS_DONE;
+
+        host_xfer_load_file_done();
+
+        return(err);
+        }
+
+#endif /* MLEC_FILE_READ */
+
+    default:
+        UNREFERENCED_PARAMETER(mlec);
+        return(STATUS_OK);
+    }
+}
 
 /******************************************************************************
 *
@@ -3004,7 +3034,7 @@ mlec_drag_null_event(
 
     void_WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info));
 
-    host_gdi_org_from_screen(&gdi_org, mlec->pane); /* window w.a. ABS origin */
+    host_gdi_org_from_screen(&gdi_org, mlec->pane); /* window work area ABS origin */
 
     mlec__drag_core(mlec, &gdi_org, &pointer_info);
 
@@ -3342,15 +3372,15 @@ static void
 mlec__update_loop(
     /*_Inout_*/ MLEC mlec, mark_position mark1, cursor_position mark2)
 {
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     mark_position markstt, markend;
 
     /* quit now if null region, as doing the wimp_update_window loop causes the caret to flicker */
     if((mark1.col == mark2.pcol) && (mark1.row == mark2.row))
         return;
 
-    if((mark1.row < mark2.row) ||
-       ((mark1.row == mark2.row) && (mark1.col < mark2.pcol))
+    if( (mark1.row < mark2.row) ||
+        ((mark1.row == mark2.row) && (mark1.col < mark2.pcol))
       )
     {
         markstt = mark1; markend.col = mark2.pcol; markend.row = mark2.row;
@@ -3362,11 +3392,11 @@ mlec__update_loop(
 
     trace_4(TRACE_MODULE_MLEC, TEXT("mlec__update_loop (%d,%d, %d,%d)"), markstt.col, markstt.row, markend.col, markend.row);
 
-    redraw_window.window_handle =  mlec->pane;
-    redraw_window.visible_area.xmin = -0x1FFFFFFF;
-    redraw_window.visible_area.xmax =  0x1FFFFFFF;
-    redraw_window.visible_area.ymax = - mlec->attributes[MLEC_ATTRIBUTE_MARGIN_TOP] - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] *  markstt.row;
-    redraw_window.visible_area.ymin = - mlec->attributes[MLEC_ATTRIBUTE_MARGIN_TOP] - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] * (markend.row + 1);
+    redraw_window_block.window_handle =  mlec->pane;
+    redraw_window_block.visible_area.xmin = -0x1FFFFFFF;
+    redraw_window_block.visible_area.xmax =  0x1FFFFFFF;
+    redraw_window_block.visible_area.ymax = - mlec->attributes[MLEC_ATTRIBUTE_MARGIN_TOP] - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] *  markstt.row;
+    redraw_window_block.visible_area.ymin = - mlec->attributes[MLEC_ATTRIBUTE_MARGIN_TOP] - mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] * (markend.row + 1);
 
     stashed_for_update_markstt = markstt;
     stashed_for_update_markend = markend;
@@ -3375,31 +3405,38 @@ mlec__update_loop(
     threaded_through_update = TRUE;
 #endif
 
-    if(mlec__callback(MLEC_CODE_UPDATENOW, mlec, &redraw_window) == 0)
+    if(STATUS_OK == mlec__callback(MLEC_CODE_UPDATENOW, mlec, &redraw_window_block))
+    {
         /*CONSTANTCONDITION*/
         if_pane(mlec)
         {
             int wimp_more;
-            GDI_POINT gdi_org;
 
-            if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+            if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
                 wimp_more = 0;
-
-            trace_4(TRACE_MODULE_MLEC, TEXT("wimp_update_window returns: (%d,%d,%d,%d) "),redraw_window.visible_area.xmin,redraw_window.visible_area.ymin,redraw_window.visible_area.xmax,redraw_window.visible_area.ymax);
-            trace_2(TRACE_MODULE_MLEC, TEXT("(%d,%d) "),redraw_window.xscroll,redraw_window.yscroll);
-            trace_4(TRACE_MODULE_MLEC, TEXT("(%d,%d,%d,%d)"),redraw_window.redraw_area.xmin,redraw_window.redraw_area.ymin,redraw_window.redraw_area.xmax,redraw_window.redraw_area.ymax);
-
-            gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&redraw_window); /* window w.a. ABS origin */
-            gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&redraw_window);
 
             while(0 != wimp_more)
             {
-                mlec_area_update(mlec, &gdi_org, (PC_GDI_BOX) &redraw_window.redraw_area);
+                GDI_POINT gdi_org;
 
-                if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+                trace_4(TRACE_MODULE_MLEC, TEXT("wimp_update_window/gr returns: (%d,%d,%d,%d) "),
+                        redraw_window_block.visible_area.xmin,redraw_window_block.visible_area.ymin,
+                        redraw_window_block.visible_area.xmax,redraw_window_block.visible_area.ymax);
+                trace_2(TRACE_MODULE_MLEC, TEXT("(%d,%d) "),redraw_window_block.xscroll,redraw_window_block.yscroll);
+                trace_4(TRACE_MODULE_MLEC, TEXT("(%d,%d,%d,%d)"),
+                        redraw_window_block.redraw_area.xmin,redraw_window_block.redraw_area.ymin,
+                        redraw_window_block.redraw_area.xmax,redraw_window_block.redraw_area.ymax);
+
+                gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&redraw_window_block); /* window work area ABS origin */
+                gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&redraw_window_block);
+
+                mlec_area_update(mlec, &gdi_org, (PC_GDI_BOX) &redraw_window_block.redraw_area);
+
+                if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
                     wimp_more = 0;
             }
         }
+    }
 
 #if CHECKING
     threaded_through_update = FALSE;
@@ -3638,7 +3675,7 @@ show_selection(
 *
 ******************************************************************************/
 
-#if 0
+#if defined(MLEC_FILE_READ)
 
 _Check_return_
 static int
@@ -3650,6 +3687,10 @@ mlec__atcursor_load(
 
     return(text_in(mlec, filename, file_read_open, file_read_getblock, file_read_close));
 }
+
+#endif /* MLEC_FILE_READ */
+
+#if defined(MLEC_FILE_WRITE)
 
 _Check_return_
 static int
@@ -3668,6 +3709,10 @@ mlec__alltext_save(
 
     return(text_out(mlec, &handle, range, lineterm, file_write_size, file_write_putblock, file_write_close));
 }
+
+#endif /* MLEC_FILE_WRITE */
+
+#if defined(MLEC_FILE_WRITE) && defined(UNUSED)
 
 _Check_return_
 static int
@@ -3690,109 +3735,44 @@ mlec__selection_save(
     return(create_error(MLEC_ERR_NOSELECTION));
 }
 
-#endif
+#endif /* MLEC_FILE_WRITE */
 
-#if 0
-
-_Check_return_
-static STATUS
-file_read_open(
-    _In_z_      PCTSTR filename,
-    /*out*/ P_T5_FILETYPE p_t5_filetype,
-    /*out*/ P_S32 filesizep,
-    /*out*/ P_XFER_HANDLE xferhandlep)
-{
-    STATUS status;
-    filelength_t filelength;
-
-    status_return(t5_file_open(filename, file_open_read, &xferhandlep->f, TRUE));
-
-    if(status_fail(status = file_length(xferhandlep->f, &filelength)))
-        t5_file_close(&xferhandlep->f);
-    else
-    {
-        *p_t5_filetype = file_get_type(xferhandlep->f);
-        *filesizep = (S32) filelength.u.words.lo;
-    }
-
-    return(status);        /*>>>what about filetype checks???*/
-}
-
-_Check_return_
-static STATUS
-file_read_getblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize)
-{
-    U32 bytesread;
-    status_return(file_read_bytes(dataptr, datasize, &bytesread, xferhandlep->f));
-    return((STATUS) bytesread);
-}
-
-_Check_return_
-static STATUS
-file_read_close(
-    P_XFER_HANDLE xferhandlep)
-{
-    return(t5_file_close(&(xferhandlep->f)));
-}
-
-_Check_return_
-static STATUS
-file_write_open(
-    /*out*/ P_XFER_HANDLE xferhandlep,
-    _In_z_      PCTSTR filename,
-    _InVal_     T5_FILETYPE t5_filetype)
-{
-    status_return(t5_file_open(filename, file_open_write, &xferhandlep->f, TRUE));
-
-    return(file_set_risc_os_filetype(xferhandlep->f, t5_filetype));
-}
-
-_Check_return_
-static STATUS
-file_write_size(
-    P_XFER_HANDLE xferhandlep,
-    _In_        int xfersize)
-{
-    UNREFERENCED_PARAMETER(xferhandlep);
-    UNREFERENCED_PARAMETER(xfersize);
-
-    return(0);    /*>>>might be better to set the file extent to xfersize - ask Tutu */
-}
-
-_Check_return_
-static STATUS
-file_write_putblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize)
-{
-    return(file_write_bytes(dataptr, datasize, xferhandlep->f));
-}
-
-_Check_return_
-static STATUS
-file_write_close(
-    P_XFER_HANDLE xferhandlep)
-{
-    return(t5_file_close(&(xferhandlep->f)));
-}
-
-#endif
-
-#if defined(MLEC_CLIP)
+static void
+mlec_global_clipboard_data_DataRequest(
+    const void * const ep_wimp_message /*DataRequest*/);
 
 _Check_return_
 static STATUS
 mlec__atcursor_paste(
     /*_Inout_*/ MLEC mlec)
 {
+    BOOL fTryPasteAtCaret = TRUE;
+    STATUS status = STATUS_OK;
+
     trace_0(TRACE_MODULE_MLEC, TEXT("mlec__atcursor_paste"));
 
-    return(text_in(mlec, "", paste_read_open, paste_read_getblock, paste_read_close));
+#if defined(MLEC_PASTE_BUFFER) && defined(USE_GLOBAL_CLIPBOARD)
+    /* bypass global clipboard mechanisms if mlec paste_buffer is the owner */
+    if(winx_global_clipboard_owner() == mlec_global_clipboard_data_DataRequest)
+        if(NULL != paste_buffer)
+            fTryPasteAtCaret = FALSE;
+#endif
+
+    if(fTryPasteAtCaret)
+    {
+        if(STATUS_OK != (status = mlec__callback(MLEC_CODE_PASTEATCARET, mlec, NULL)))
+            return(status);
+    }
+
+#if defined(MLEC_PASTE_BUFFER)
+    if(NULL != paste_buffer)
+        return(text_in(mlec, "", paste_read_open, paste_read_getblock, paste_read_close));
+#endif
+
+    return(STATUS_OK);
 }
+
+#if defined(MLEC_PASTE_BUFFER)
 
 /******************************************************************************
 *
@@ -3845,140 +3825,9 @@ mlec__selection_cut(
     return(err);
 }
 
-_Check_return_
-static STATUS
-paste_read_open(
-    _In_z_      PCTSTR filename,
-    /*out*/ P_T5_FILETYPE p_t5_filetype,
-    /*out*/ P_S32 filesizep,
-    /*out*/ P_XFER_HANDLE xferhandlep)
-{
-    marked_text range;
+#endif /* MLEC_PASTE_BUFFER */
 
-    UNREFERENCED_PARAMETER(filename);
-
-    xferhandlep->p = (MLEC) paste;
-
-    if(!paste)
-        return(create_error(MLEC_ERR_NOPASTEBUFFER));
-
-    range_is_alltext(paste, &range);
-
-    *p_t5_filetype = FILETYPE_TEXT;
-
-    *filesizep = ((S32) range.lower.end - range.lower.start) +
-                 ((S32) range.upper.end - range.upper.start);
-
-    return(0);
-}
-
-/******************************************************************************
-*
-* NB The data size field is ignored, all the data is written to dataptr
-*
-******************************************************************************/
-
-_Check_return_
-static STATUS
-paste_read_getblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize)
-{
-    MLEC mlec = (MLEC) xferhandlep->p;
-
-    UNREFERENCED_PARAMETER(datasize);
-
-    if(mlec)
-    {
-        marked_text  range;
-        char       * buff = mlec->buffptr;
-        int          i;
-
-        range_is_alltext(mlec, &range);
-
-        for(i = range.lower.start; i < range.lower.end; i++)
-            *dataptr++ = buff[i];
-
-        for(i = range.upper.start; i < range.upper.end; i++)
-            *dataptr++ = buff[i];
-
-        return(0);
-    }
-
-    return(create_error(MLEC_ERR_BUFFERWENT_AWOL));
-}
-
-_Check_return_
-static STATUS
-paste_read_close(
-    P_XFER_HANDLE xferhandlep)
-{
-    xferhandlep->p = NULL;
-    return(0);
-}
-
-_Check_return_
-static STATUS
-paste_write_open(
-    /*out*/ P_XFER_HANDLE xferhandlep)
-{
-    if(!paste)
-        status_return(mlec_create(&paste)); /* probably STATUS_NOMEM */
-
-    xferhandlep->p = paste;
-
-    if(!paste)
-        return(create_error(MLEC_ERR_NOPASTEBUFFER));
-
-    return(mlec_SetText(paste, ""));
-}
-
-_Check_return_
-static STATUS
-paste_write_size(
-    P_XFER_HANDLE xferhandlep,
-    _In_        int xfersize)
-{
-    /* Since paste_write_open does mlec_SetText(paste, "") to clear all text (and selection!), */
-    /* we can use either checkspace_deletealltext or checkspace_delete_selection               */
-
-    return(checkspace_delete_selection((MLEC) xferhandlep->p, xfersize + 1));  /* plus 1 to allow room for terminator */
-}
-
-_Check_return_
-static STATUS
-paste_write_putblock(
-    P_XFER_HANDLE xferhandlep,
-    P_U8 dataptr,
-    _In_        int datasize)
-{
-    MLEC mlec = (MLEC) xferhandlep->p;
-
-    if(mlec)
-    {
-        P_U8 ptr = &mlec->buffptr[mlec->lower.end];
-        int   i;
-
-        for(i = 0; i < datasize; i++)
-            ptr[i] = *dataptr++;
-        ptr[i] = CH_NULL;
-
-        return(mlec__insert_text(mlec, ptr));   /* space test WILL be successful */
-                                                /*>>> could flex space move???   */
-    }
-
-    return(create_error(MLEC_ERR_BUFFERWENT_AWOL));
-}
-
-_Check_return_
-static STATUS
-paste_write_close(
-    P_XFER_HANDLE xferhandlep)
-{
-    xferhandlep->p = NULL;
-    return(0);
-}
+#if defined(MLEC_FILE_READ) || defined(MLEC_PASTE_BUFFER)
 
 _Check_return_
 static STATUS
@@ -4027,7 +3876,7 @@ text_in(
     return(err);
 }
 
-#endif /* MLEC_CLIP */
+#endif /* MLEC_FILE_READ || MLEC_PASTE_BUFFER */
 
 _Check_return_
 static STATUS
@@ -4142,23 +3991,363 @@ text_out(
 
 _Check_return_
 static STATUS
-mlec__callback(
-    mlec_event_reason_code message,
-    /*_Inout_*/ MLEC mlec,
-    /*_Inout_*/ P_ANY p_data)
+string_write_open(
+    /*out*/ P_XFER_HANDLE xferhandlep,
+    P_U8 buffptr,
+    _In_        int buffsiz)
 {
-    if(!mlec->callbackproc)
-        return(STATUS_OK);
+    xferhandlep->s.ptr = buffptr;
+    xferhandlep->s.siz = buffsiz;
+    xferhandlep->s.len = 0;
 
-    return((* mlec->callbackproc) (message, mlec->callbackhand, p_data));
+    return(0);
 }
+
+_Check_return_
+static STATUS
+string_write_size(
+    P_XFER_HANDLE xferhandlep,
+    _In_        int xfersize)
+{
+    /* xfersize is the total number of printable chars & lineterm chars that will be output */
+    /* by text_out to string_write_putblock, it does NOT include any end-of-text char       */
+
+    if(xferhandlep->s.siz > (xferhandlep->s.len + xfersize))    /* > not >= to allow for eot */
+        return(0);
+
+    return(create_error(MLEC_ERR_GETTEXT_BUFOVF));
+}
+
+_Check_return_
+static STATUS
+string_write_putblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize)
+{
+    if(xferhandlep->s.siz > (xferhandlep->s.len + datasize))
+    {
+        P_U8 ptr = &(xferhandlep->s.ptr[xferhandlep->s.len]);
+        int   i;
+
+        for(i = 0; i < datasize; i++)
+            ptr[i] = *dataptr++;
+
+        xferhandlep->s.len += datasize;
+        return(0);
+    }
+
+    return(create_error(MLEC_ERR_GETTEXT_BUFOVF)); /* shouldn't happen, string_write_size should catch the problem */
+}
+
+_Check_return_
+static STATUS
+string_write_close(
+    P_XFER_HANDLE xferhandlep)
+{
+    /* terminate the string */
+
+    if(xferhandlep->s.siz > xferhandlep->s.len)
+    {
+        xferhandlep->s.ptr[xferhandlep->s.len] = CH_NULL;
+        return(0);
+    }
+
+    return(create_error(MLEC_ERR_GETTEXT_BUFOVF)); /* shouldn't happen, string_write_size should catch the problem */
+}
+
+#if defined(MLEC_FILE_READ)
+
+_Check_return_
+static STATUS
+file_read_open(
+    _In_z_      PCTSTR filename,
+    /*out*/ P_T5_FILETYPE p_t5_filetype,
+    /*out*/ P_S32 filesizep,
+    /*out*/ P_XFER_HANDLE xferhandlep)
+{
+    STATUS status;
+    filelength_t filelength;
+
+    status_return(t5_file_open(filename, file_open_read, &xferhandlep->f, TRUE));
+
+    *p_t5_filetype = (T5_FILETYPE) file_get_risc_os_filetype(xferhandlep->f);
+
+    if(status_fail(status = file_length(xferhandlep->f, &filelength)))
+        t5_file_close(&xferhandlep->f);
+    else
+        *filesizep = (S32) filelength.u.words.lo;
+
+    return(status);        /*>>>what about filetype checks???*/
+}
+
+_Check_return_
+static STATUS
+file_read_getblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize)
+{
+    U32 bytesread;
+    status_return(file_read_bytes(dataptr, datasize, &bytesread, xferhandlep->f));
+    return((STATUS) bytesread);
+}
+
+_Check_return_
+static STATUS
+file_read_close(
+    P_XFER_HANDLE xferhandlep)
+{
+    return(t5_file_close(&(xferhandlep->f)));
+}
+
+#endif /* MLEC_FILE_READ */
+
+#if defined(MLEC_FILE_WRITE)
+
+_Check_return_
+static STATUS
+file_write_open(
+    /*out*/ P_XFER_HANDLE xferhandlep,
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
+{
+    status_return(t5_file_open(filename, file_open_write, &xferhandlep->f, TRUE));
+
+    return(file_set_risc_os_filetype(xferhandlep->f, t5_filetype));
+}
+
+_Check_return_
+static STATUS
+file_write_size(
+    P_XFER_HANDLE xferhandlep,
+    _In_        int xfersize)
+{
+    UNREFERENCED_PARAMETER(xferhandlep);
+    UNREFERENCED_PARAMETER(xfersize);
+
+    return(0);    /*>>>might be better to set the file extent to xfersize - ask Tutu */
+}
+
+_Check_return_
+static STATUS
+file_write_putblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize)
+{
+    return(file_write_bytes(dataptr, datasize, xferhandlep->f));
+}
+
+_Check_return_
+static STATUS
+file_write_close(
+    P_XFER_HANDLE xferhandlep)
+{
+    return(t5_file_close(&(xferhandlep->f)));
+}
+
+#endif /* MLEC_FILE_WRITE */
+
+#if defined(MLEC_PASTE_BUFFER)
+
+_Check_return_
+static STATUS
+paste_read_open(
+    _In_z_      PCTSTR filename,
+    /*out*/ P_T5_FILETYPE p_t5_filetype,
+    /*out*/ P_S32 filesizep,
+    /*out*/ P_XFER_HANDLE xferhandlep)
+{
+    marked_text range;
+
+    UNREFERENCED_PARAMETER(filename);
+
+    if(NULL == paste_buffer)
+        return(create_error(MLEC_ERR_NOPASTEBUFFER));
+
+    xferhandlep->p = (MLEC) paste_buffer;
+
+    range_is_alltext(paste_buffer, &range);
+
+    *p_t5_filetype = FILETYPE_TEXT;
+
+    *filesizep = ((S32) range.lower.end - range.lower.start) +
+                 ((S32) range.upper.end - range.upper.start);
+
+    return(0);
+}
+
+/******************************************************************************
+*
+* NB The data size field is ignored, all the data is written to dataptr
+*
+******************************************************************************/
+
+_Check_return_
+static STATUS
+paste_read_getblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize)
+{
+    MLEC mlec = (MLEC) xferhandlep->p;
+
+    UNREFERENCED_PARAMETER(datasize);
+
+    if(mlec)
+    {
+        marked_text  range;
+        char       * buff = mlec->buffptr;
+        int          i;
+
+        range_is_alltext(mlec, &range);
+
+        for(i = range.lower.start; i < range.lower.end; i++)
+            *dataptr++ = buff[i];
+
+        for(i = range.upper.start; i < range.upper.end; i++)
+            *dataptr++ = buff[i];
+
+        return(0);
+    }
+
+    return(create_error(MLEC_ERR_BUFFERWENT_AWOL));
+}
+
+_Check_return_
+static STATUS
+paste_read_close(
+    P_XFER_HANDLE xferhandlep)
+{
+    xferhandlep->p = NULL;
+    return(0);
+}
+
+#if defined(USE_GLOBAL_CLIPBOARD)
+
+/* called from winx when someone else claims the global clipboard */
 
 static void
-mlec__issue_update(
-    /*_Inout_*/ MLEC mlec)
+mlec_global_clipboard_data_dispose(void)
 {
-    mlec__callback(MLEC_CODE_UPDATE, mlec, NULL);
+    mlec_destroy(&paste_buffer);
 }
+
+static BOOL
+mlec_global_clipboard_data_xfer_save(
+    _In_z_      PCTSTR filename /*low lifetime*/,
+    _InVal_     T5_FILETYPE t5_filetype,
+    CLIENT_HANDLE client_handle)
+{
+    UNREFERENCED_PARAMETER(client_handle);
+
+    if(NULL == paste_buffer)
+        return(FALSE);
+
+    mlec__alltext_save(
+        paste_buffer,
+        filename,
+        t5_filetype,
+        "\n");
+
+    return(TRUE);
+}
+
+/* make an offer of some text */
+
+static void
+mlec_global_clipboard_data_DataRequest(
+    const void * const ep_wimp_message /*DataRequest*/)
+{
+    const WimpMessage * const p_wimp_message = (const WimpMessage *) ep_wimp_message;
+    const WimpDataRequestMessage * const p_wimp_data_request_message = (const WimpDataRequestMessage *) &p_wimp_message->data;
+
+    if((1 << 2) != p_wimp_data_request_message->flags)
+        return;
+
+    if(NULL == paste_buffer)
+        return;
+
+    consume_bool(
+        host_xfer_save_file_for_DataRequest(
+            TEXT("mlec"),
+            FILETYPE_TEXT,
+            42 /*estimated_size*/,
+            mlec_global_clipboard_data_xfer_save,
+            (CLIENT_HANDLE) 0,
+            p_wimp_message));
+}
+
+#endif /* USE_GLOBAL_CLIPBOARD */
+
+_Check_return_
+static STATUS
+paste_write_open(
+    /*out*/ P_XFER_HANDLE xferhandlep)
+{
+    if(NULL == paste_buffer)
+    {
+        status_return(mlec_create(&paste_buffer)); /* probably STATUS_NOMEM */
+
+        if(NULL == paste_buffer)
+            return(create_error(MLEC_ERR_NOPASTEBUFFER));
+    }
+
+    winx_claim_global_clipboard(mlec_global_clipboard_data_dispose, mlec_global_clipboard_data_DataRequest);
+
+    xferhandlep->p = paste_buffer;
+
+    return(mlec_SetText(paste_buffer, ""));
+}
+
+_Check_return_
+static STATUS
+paste_write_size(
+    P_XFER_HANDLE xferhandlep,
+    _In_        int xfersize)
+{
+    /* Since paste_write_open does mlec_SetText(paste, "") to clear all text (and selection!), */
+    /* we can use either checkspace_deletealltext or checkspace_delete_selection               */
+
+    return(checkspace_delete_selection((MLEC) xferhandlep->p, xfersize + 1));  /* plus 1 to allow room for terminator */
+}
+
+_Check_return_
+static STATUS
+paste_write_putblock(
+    P_XFER_HANDLE xferhandlep,
+    P_U8 dataptr,
+    _In_        int datasize)
+{
+    MLEC mlec = (MLEC) xferhandlep->p;
+
+    if(mlec)
+    {
+        P_U8 ptr = &mlec->buffptr[mlec->lower.end];
+        int   i;
+
+        for(i = 0; i < datasize; i++)
+            ptr[i] = *dataptr++;
+        ptr[i] = CH_NULL;
+
+        return(mlec__insert_text(mlec, ptr));   /* space test WILL be successful */
+                                                /*>>> could flex space move???   */
+    }
+
+    return(create_error(MLEC_ERR_BUFFERWENT_AWOL));
+}
+
+_Check_return_
+static STATUS
+paste_write_close(
+    P_XFER_HANDLE xferhandlep)
+{
+    xferhandlep->p = NULL;
+    return(0);
+}
+
+#endif /* MLEC_PASTE_BUFFER */
 
 #endif /* RISCOS */
 

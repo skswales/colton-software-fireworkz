@@ -336,7 +336,7 @@ image_convert_ensure_PicConvert(void)
     tstr_xstrkpy(tstr, elemof32(command_buffer), "%RMLoad ");
     tstr += tstrlen32(tstr);
 
-    status_return(status = file_find_on_path(tstr, elemof32(command_buffer) - (tstr - command_buffer), TEXT("RISC_OS.PicConvert")));
+    status_return(status = file_find_on_path(tstr, elemof32(command_buffer) - (tstr - command_buffer), file_get_resources_path(), TEXT("PicConvert")));
 
     if(STATUS_OK == status)
         return(status = create_error(FILE_ERR_NOTFOUND));

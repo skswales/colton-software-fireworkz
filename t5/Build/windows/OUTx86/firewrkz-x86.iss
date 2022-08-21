@@ -24,18 +24,18 @@ MinVersion=5.1sp3
 ; Require XP SP3
 ; AppVersion=2.xx.yy
 ; AppVerName=Colton Software Fireworkz 2.xx.yy
-AppVersion=2.10.02
-AppVerName=Colton Software Fireworkz 2.10.02
+AppVersion=2.20.00
+AppVerName=Colton Software Fireworkz 2.20
 AppCopyright=Copyright (C) 1992-2016 Colton Software
 AppId=Colton Fireworkz for Windows (32-bit)
 AppName=Colton Software Fireworkz for Windows (32-bit)
 AppPublisher=Colton Software
-AppPublisherURL=http://groups.google.com/group/colton-software-fireworkz
-AppSupportURL=http://groups.google.com/group/colton-software-fireworkz
-AppUpdatesURL=http://groups.google.com/group/colton-software-fireworkz
+AppPublisherURL=https://groups.google.com/group/colton-software-fireworkz
+AppSupportURL=https://groups.google.com/group/colton-software-fireworkz
+AppUpdatesURL=https://groups.google.com/group/colton-software-fireworkz
 DefaultDirName={pf}\Colton Software\Fireworkz
 DefaultGroupName=Colton Software
-LicenseFile=.\CD\LICENCE.TXT
+LicenseFile=.\CD\Licence.txt
 OutputDir=InnoSetup
 OutputBaseFilename={#SetupBaseName + AppVersionFile + "-windows-" + ThisArchitecture}
 PrivilegesRequired=poweruser
@@ -55,6 +55,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "CD\RelNotes.htm"; DestDir: "{app}"; Flags: ignoreversion isreadme
 Source: "CD\firewrkz.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "CD\DefaultUser\*"; DestDir: "{app}\DefaultUser\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "CD\Resources\*"; DestDir: "{app}\Resources\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "CD\System\*"; DestDir: "{app}\System\"; Flags: ignoreversion recursesubdirs createallsubdirs
 ;
 ; INI file used by Dial Solutions DLLs
@@ -77,7 +78,8 @@ Name: "{userdesktop}\Fireworkz"; Filename: "{app}\firewrkz.exe"; Tasks: desktopi
 Root: HKLM; Subkey: "SOFTWARE\Colton Software"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "Directory"; ValueData: "{app}"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "SystemPath"; ValueData: "{app}\System\UK"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ResourcesPath"; ValueData: "{app}\Resources\UK\;{app}\Resources\Neutral\"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "SystemPath"; ValueData: "{app}\System\UK\;{app}\System\Neutral\"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "NetworkPath"; ValueData: ""; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "Usr1"; ValueData: "{userinfoname}"; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "Usr2"; ValueData: "{userinfoorg}"; Flags: uninsdeletekey createvalueifdoesntexist

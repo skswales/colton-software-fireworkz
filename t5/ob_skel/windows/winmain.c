@@ -346,7 +346,7 @@ copy_this_template_to_current_user_ThisAppData(
         tstr_xstrkat(
             source_directory, elemof32(source_directory),
             FILE_DIR_SEP_TSTR TEXT("DefaultUser")
-            FILE_DIR_SEP_TSTR TEXT("ApplicationData")
+            FILE_DIR_SEP_TSTR TEXT("AppData")
             FILE_DIR_SEP_TSTR );
 
         tstr_xstrkat(source_directory, elemof32(source_directory), subdirectory);
@@ -809,8 +809,55 @@ ensure_user_path(
     return(status);
 }
 
+static void
+host_initialise_resources_path(
+    _In_z_      PCTSTR module_path)
+{
+    TCHARZ resources_path[BUF_MAX_PATHSTRING*2];
+
+    if(0 != MyGetProfileString(TEXT("ResourcesPath"), tstr_empty_string, resources_path, elemof32(resources_path)))
+    {
+        PTSTR tstr = resources_path;
+
+        tstr += tstrlen32(tstr);
+
+        if((tstr != resources_path) && (tstr[-1] != FILE_DIR_SEP_CH))
+        {   /* append to non-empty path if needed */
+            *tstr++ = FILE_DIR_SEP_CH;
+            *tstr = CH_NULL;
+        }
+    }
+    else
+        resources_path[0] = CH_NULL;
+
+    if(CH_NULL == resources_path[0])
+    {
+        TCHARZ resources_path_country[BUF_MAX_PATHSTRING];
+        TCHARZ resources_path_neutral[BUF_MAX_PATHSTRING];
+        PCTSTR default_country = TEXT("UK");
+        TCHARZ country[BUF_MAX_PATHSTRING];
+        tstr_xstrkpy(resources_path_neutral, elemof32(resources_path_neutral), module_path);
+        tstr_xstrkat(resources_path_neutral, elemof32(resources_path_neutral), TEXT("Resources") FILE_DIR_SEP_TSTR);
+
+        tstr_xstrkpy(resources_path_country, elemof32(resources_path_country), resources_path_neutral);
+        tstr_xstrkat(resources_path_neutral, elemof32(resources_path_neutral), TEXT("Neutral") FILE_DIR_SEP_TSTR);
+
+        consume(U32, MyGetProfileString(TEXT("Country"), default_country, country, elemof32(country)));
+        tstr_xstrkat(resources_path_country, elemof32(resources_path_country), country);
+        tstr_xstrkat(resources_path_country, elemof32(resources_path_country), FILE_DIR_SEP_TSTR);
+
+        /* res path is country first, then neutral */
+        tstr_xstrkpy(resources_path, elemof32(resources_path), resources_path_country);
+        tstr_xstrkat(resources_path, elemof32(resources_path), FILE_PATH_SEP_TSTR);
+        tstr_xstrkat(resources_path, elemof32(resources_path), resources_path_neutral);
+    }
+
+    trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_RESOURCES, report_tstr(resources_path));
+    status_assert(file_path_set(resources_path, FILE_PATH_RESOURCES));
+}
+
 extern void
-host_initialise_file_path(void)
+host_initialise_file_paths(void)
 {
     { /* code that belongs in ob_file.c unfortunately has to be here */
     TCHARZ module_path[BUF_MAX_PATHSTRING];
@@ -821,14 +868,17 @@ host_initialise_file_path(void)
     GetModuleFileName(GetInstanceHandle(), module_path, elemof32(module_path));
     file_dirname(module_path, module_path); /* has trailing DIR_SEP */
 
+    host_initialise_resources_path(module_path);
+
+    /* contents are like RISC OS AppData */
     if(0 != MyGetProfileString(TEXT("SystemPath"), tstr_empty_string, system_path, elemof32(system_path)))
     {
         PTSTR tstr = system_path;
 
         tstr += tstrlen32(tstr);
 
-        if(tstr[-1] != FILE_DIR_SEP_CH)
-        {
+        if((tstr != system_path) && (tstr[-1] != FILE_DIR_SEP_CH))
+        {   /* append to non-empty path if needed */
             *tstr++ = FILE_DIR_SEP_CH;
             *tstr = CH_NULL;
         }
@@ -836,7 +886,7 @@ host_initialise_file_path(void)
     else
         system_path[0] = CH_NULL;
 
-    if(!system_path[0])
+    if(CH_NULL == system_path[0])
     {
         PCTSTR default_country = TEXT("UK");
         TCHARZ country[BUF_MAX_PATHSTRING];
@@ -847,10 +897,10 @@ host_initialise_file_path(void)
         tstr_xstrkat(system_path, elemof32(system_path), FILE_DIR_SEP_TSTR);
     }
 
-    if(system_path[0]) /* TRUE */
+    if(CH_NULL != system_path[0]) /* TRUE */
     {
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_EXECUTABLE, report_tstr(system_path));
-        status_assert(file_path_set(system_path, FILE_PATH_EXECUTABLE));
+        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_SYSTEM, report_tstr(system_path));
+        status_assert(file_path_set(system_path, FILE_PATH_SYSTEM));
     }
 
     if(0 != MyGetProfileString(TEXT("NetworkPath"), tstr_empty_string, network_path, elemof32(network_path)))
@@ -859,8 +909,8 @@ host_initialise_file_path(void)
 
         tstr += tstrlen32(tstr);
 
-        if(tstr[-1] != FILE_DIR_SEP_CH)
-        {
+        if((tstr != network_path) && (tstr[-1] != FILE_DIR_SEP_CH))
+        {   /* append to non-empty path if needed */
             *tstr++ = FILE_DIR_SEP_CH;
             *tstr = CH_NULL;
         }
@@ -868,7 +918,7 @@ host_initialise_file_path(void)
     else
         network_path[0] = CH_NULL;
 
-    if(network_path[0])
+    if(CH_NULL != network_path[0])
     {
         trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_NETWORK, report_tstr(network_path));
         status_assert(file_path_set(network_path, FILE_PATH_NETWORK));
@@ -876,21 +926,21 @@ host_initialise_file_path(void)
 
     status_assert(ensure_user_path(user_path, elemof32(user_path)));
 
-    if(!user_path[0])
+    if(CH_NULL == user_path[0])
     {
         tstr_xstrkpy(user_path, elemof32(user_path), module_path);
         tstr_xstrkat(user_path, elemof32(user_path), TEXT("User") FILE_DIR_SEP_TSTR);
     }
 
     /* if no explicit network path set up, treat system path as shared area iff someone's been bothered enough to set up User Path */
-    if(user_path[0] && !network_path[0])
+    if((CH_NULL != user_path[0]) && (CH_NULL == network_path[0]))
     {
         trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_NETWORK, report_tstr(system_path));
         status_assert(file_path_set(system_path, FILE_PATH_NETWORK));
     }
 
     {
-    PTSTR standard_path = user_path[0] ? user_path : system_path;
+    PTSTR standard_path = (CH_NULL != user_path[0]) ? user_path : system_path;
     trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_STANDARD, report_tstr(standard_path));
     status_assert(file_path_set(standard_path, FILE_PATH_STANDARD));
     } /*block*/
@@ -1054,11 +1104,11 @@ _tWinMain(
     (void) decode_command_line_options(ptzCmdLine_in, 1);
 
     /* first off, allow punter to place resources elsewhere. Installation will have inserted our path */
-    host_initialise_file_path();
+    host_initialise_file_paths();
 
     file_startup();
 
-    file_build_path();
+    file_build_paths();
 
     /* Make error messages available for startup */
     resource_startup(dll_store);

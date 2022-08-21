@@ -307,7 +307,6 @@ BIFF3_compiler_functions[] = /* ordered as Fireworkz */
     xls_func_entry(BIFF_FN_Len,                 tFuncV,         arg_V,          1, 1,   "LENGTH"), /* XLS:LEN */
     xls_func_entry(BIFF_FN_Linest,              tFuncVarA,      arg_R,          1, 2,   "LINEST"),
     xls_func_entry(BIFF_FN_Ln,                  tFuncV,         arg_V,          1, 1,   "LN"),
-    xls_func_entry(BIFF_FN_Log10,               tFuncV,         arg_V,          1, 1,   "ODF.LOG10"), /* XLS:LOG10 */
     xls_func_entry(BIFF_FN_Log,                 tFuncVarV,      arg_V,          1, 2,   "LOG"),
     xls_func_entry(BIFF_FN_Logest,              tFuncVarA,      arg_R,          1, 2,   "LOGEST"),
     xls_func_entry(BIFF_FN_Lookup,              tFuncVarV,      arg_V_R,        2, 3,   "LOOKUP"),
@@ -324,7 +323,7 @@ BIFF3_compiler_functions[] = /* ordered as Fireworkz */
     xls_func_entry(BIFF_FN_Min,                 tFuncVarV,      arg_R,          1, 30,  "MIN"),
     xls_func_entry(BIFF_FN_Minute,              tFuncV,         arg_V,          1, 1,   "MINUTE"),
     xls_func_entry(BIFF_FN_Mirr,                tFuncV,         arg_R_V,        3, 3,   "MIRR"),
-    xls_func_entry(BIFF_FN_Mod,                 tFuncV,         arg_V,          2, 2,   "MOD"),
+    xls_func_entry(BIFF_FN_Mod,                 tFuncV,         arg_V,          2, 2,   "MOD"),/* NB XLS:MOD is different for negative numbers but this is better than failing */
     xls_func_entry(BIFF_FN_Month,               tFuncV,         arg_V,          1, 1,   "MONTH"),
 
     xls_func_entry(BIFF_FN_N,                   tFuncV,         arg_R,          1, 1,   "N"),
@@ -338,6 +337,8 @@ BIFF3_compiler_functions[] = /* ordered as Fireworkz */
     xls_func_entry(BIFF_FN_Index,               tFuncVarR,      arg_R_V,        2, 4,   "ODF.INDEX"), /* XLS:INDEX */
     xls_func_entry(BIFF_FN_Int,                 tFuncV,         arg_V,          1, 1,   "ODF.INT"), /* XLS:INT */
     xls_func_entry(BIFF_FN_Irr,                 tFuncVarV,      arg_R_V,        1, 2,   "ODF.IRR"), /* XLS:IRR */
+    xls_func_entry(BIFF_FN_Log10,               tFuncV,         arg_V,          1, 1,   "ODF.LOG10"), /* XLS:LOG10 */
+    xls_func_entry(BIFF_FN_Mod,                 tFuncV,         arg_V,          2, 2,   "ODF.MOD"),/* XLS:MOD */
     xls_func_entry(BIFF_FN_Pmt,                 tFuncVarV,      arg_V,          3, 5,   "ODF.PMT"), /* XLS:PMT */
     xls_func_entry(BIFF_FN_Type,                tFuncV,         arg_V,          1, 1,   "ODF.TYPE"), /* XLS:TYPE */
 

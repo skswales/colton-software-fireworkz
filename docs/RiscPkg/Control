@@ -1,14 +1,13 @@
 Package: Fireworkz-Manuals
-Version: 20151105
+Version: 20161025
 Section: Manuals
 Priority: Optional
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
 Licence: Free
-Description: Fireworkz User and Spreadsheet Guide
- Fireworkz offers all the facilities you would expect from the following separate programs:
- word processor, spreadsheet, database and charts package.
- Thanks to Richard Colton, Fireworkz is now open source and completely free.
- These are the HTML User and Spreadsheer Guides for Fireworkz.
+Description: Fireworkz Getting Started Guide and User Guide
+ The Getting Started Guide for RISC OS is designed to help you get to know the basic word processing and spreadsheet capabilities of Fireworkz. You can find the accompanying files for the Getting Started Guide in the Fireworkz-Examples package.
+ .
+ The User Guide provides a complete reference for all the menu commands, toolbar buttons and spreadsheet functions in Fireworkz, so that if you have any questions while you are doing your work you will quickly be able to find the answer. Separate chapters cover each subject in detail.
 Components: Manuals.Fireworkz (Movable LookAt)
 Recommends: Fireworkz

@@ -386,7 +386,7 @@ BIFF2_functions[] =  /* ordered as Excel for completeness checking */
     xls_func_entry(BIFF_FN_And,             /*Var*/ 0, "AND"),
     xls_func_entry(BIFF_FN_Or,              /*Var*/ 0, "OR"),
     xls_func_entry(BIFF_FN_Not,                     1, "NOT"),
-    xls_func_entry(BIFF_FN_Mod,                     2, "MOD"),
+    xls_func_entry(BIFF_FN_Mod,                     2, "ODF.MOD"), /* XLS:MOD */
     xls_func_entry(BIFF_FN_Dcount,                  3, ".DCOUNT.XLS"), /* XLS:DCOUNT */ /* Fireworkz is incompatible */
     xls_func_entry(BIFF_FN_Dsum,                    3, ".DSUM.XLS"), /* XLS:DSUM */ /* Fireworkz is incompatible */
     xls_func_entry(BIFF_FN_Daverage,                3, ".DAVG.XLS"), /* XLS:DAVERAGE */ /* Fireworkz is incompatible */

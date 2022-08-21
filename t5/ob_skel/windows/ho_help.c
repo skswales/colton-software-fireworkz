@@ -32,7 +32,7 @@ ho_help_contents(
 {
     TCHARZ filename[BUF_MAX_PATHSTRING];
 
-    if(file_find_on_path(filename, elemof32(filename), filename_in) <= 0)
+    if(file_find_on_path(filename, elemof32(filename), file_get_resources_path(), filename_in) <= 0)
         return(create_error(ERR_HELP_FAILURE));
 
     if(!WrapOsBoolChecking(NULL != HtmlHelp(hwnd, filename, HH_DISPLAY_TOC, 0)))
@@ -56,7 +56,7 @@ ho_help_search_keyword(
 {
     TCHARZ filename[BUF_MAX_PATHSTRING];
 
-    if(file_find_on_path(filename, elemof32(filename), filename_in) <= 0)
+    if(file_find_on_path(filename, elemof32(filename), file_get_resources_path(), filename_in) <= 0)
         return(create_error(ERR_HELP_FAILURE));
 
     if((NULL == keyword) || (CH_NULL == *keyword))

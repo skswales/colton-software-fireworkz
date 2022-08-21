@@ -294,40 +294,40 @@ fillstyle_event_handler(dbox d, P_ANY event, P_ANY handle)
 
     switch(e->e)
     {
-        case wimp_EREDRAW:
+    case wimp_EREDRAW:
         {
-            fillstyle_entrycp entryp;
-            GR_CACHE_HANDLE   cah;
-            wimp_redrawstr    r;
-            wimp_icon         picture;
-            BOOL              more;
+        fillstyle_entrycp entryp;
+        GR_CACHE_HANDLE   cah;
+        wimp_redrawstr    redraw_window_block;
+        wimp_icon         picture;
+        int wimp_more;
 
-            /* get the window relative bbox of the picture icon */
-            r.w = e->data.redraw.w;
-            wimp_get_icon_info(r.w, GR_CHART_EDIT_TEM_FILLSTYLE_ICON_DRAW_PICT, &picture);
+        /* get the window relative bbox of the picture icon */
+        redraw_window_block.w = e->data.redraw.w;
+        wimp_get_icon_info(redraw_window_block.w, GR_CHART_EDIT_TEM_FILLSTYLE_ICON_DRAW_PICT, &picture);
 
-            cah = 0;
+        cah = 0;
 
-            if((entryp = list_gotoitemcontents(&fillstyle_list, *keyp)) != NULL)
-                cah = entryp->cah;
+        if((entryp = list_gotoitemcontents(&fillstyle_list, *keyp)) != NULL)
+            cah = entryp->cah;
 
-            /* only redrawing required is of the 'picture' (a draw file identified by cah), */
-            /* which must be scaled to fit within the limits of its icon                    */
-            if(new_wimpt_complain(wimp_redraw_wind(&r, &more)))
-                more = FALSE;
+        /* only redrawing required is of the 'picture' (a draw file identified by cah), */
+        /* which must be scaled to fit within the limits of its icon                    */
+        if(NULL != WrapOsErrorReporting(wimp_redraw_window(&redraw_window_block, &more)))
+            more = FALSE;
 
-            while(more)
-            {
-                fillstyle_redraw_core(cah, &r, &picture);
+        while(more)
+        {
+            fillstyle_redraw_core(cah, &redraw_window_block, &picture);
 
-                if(new_wimpt_complain(wimp_get_rectangle(&r, &more)))
-                    more = FALSE;
-            }
+            if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &more)))
+                wimp_more = 0;
         }
-            break;
+        }
+        break;
 
-        default:
-            return(FALSE);
+    default:
+        return(FALSE);
     }
 
     return(TRUE);

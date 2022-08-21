@@ -1571,12 +1571,12 @@ ss_string_skip_leading_whitespace(
 {
     assert(RPN_DAT_STRING == p_ev_data->did_num);
 
-    return(str_hlp_skip_leading_whitespace(p_ev_data->arg.string.uchars, p_ev_data->arg.string.size));
+    return(ss_string_skip_leading_whitespace_uchars(p_ev_data->arg.string.uchars, p_ev_data->arg.string.size));
 }
 
 _Check_return_
 extern U32
-str_hlp_skip_leading_whitespace(
+ss_string_skip_leading_whitespace_uchars(
     _In_reads_(uchars_n) PC_UCHARS uchars,
     _InRef_     U32 uchars_n)
 {

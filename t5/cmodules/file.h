@@ -485,7 +485,7 @@ fileutil.c
 */
 
 extern void
-file_build_path(void);
+file_build_paths(void);
 
 _Check_return_
 extern STATUS
@@ -547,6 +547,7 @@ extern STATUS
 file_find_on_path(
     _Out_writes_z_(elemof_buffer) PTSTR filename,
     _InVal_     U32 elemof_buffer,
+    _In_z_      PCTSTR path,
     _In_z_      PCTSTR srcfilename);
 
 _Check_return_
@@ -554,6 +555,7 @@ extern STATUS
 file_find_on_path_or_relative(
     _Out_writes_z_(elemof_buffer) PTSTR filename,
     _InVal_     U32 elemof_buffer,
+    _In_z_      PCTSTR path,
     _In_z_      PCTSTR srcfilename,
     _In_opt_z_  PCTSTR currentfilename);
 
@@ -573,6 +575,9 @@ file_get_prefix(
     _Out_writes_z_(elemof_buffer) PTSTR destpath,
     _InVal_     U32 elemof_buffer,
     _In_opt_z_  PCTSTR currentfilename);
+
+extern PCTSTR
+file_get_resources_path(void);
 
 extern PCTSTR
 file_get_search_path(void);
@@ -796,9 +801,10 @@ can only say for sure about EOF if read last buffer in and not yet at end
 #define file_postooff(fileposp) ( \
     (S32) ((fileposp)->lo) )
 
-#define FILE_PATH_STANDARD 0
-#define FILE_PATH_NETWORK 1
-#define FILE_PATH_EXECUTABLE 2
+#define FILE_PATH_STANDARD  0
+#define FILE_PATH_NETWORK   1
+#define FILE_PATH_SYSTEM    2
+#define FILE_PATH_RESOURCES 3
 
 #define RESOURCE_NUM_FILE 31
 

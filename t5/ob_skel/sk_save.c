@@ -917,8 +917,12 @@ skel_save_version(
             TCHARZ user_buffer[128];
             TCHARZ encoding_buffer[64];
             PCTSTR tstr;
-            
-            tstr_xstrkpy(user_buffer, elemof32(user_buffer), user_id());
+
+            tstr = user_id();
+            if(CH_NULL != tstr[0])
+                tstr_xstrkpy(user_buffer, elemof32(user_buffer), tstr);
+            else
+                resource_lookup_tstr_buffer(user_buffer, elemof32(user_buffer), MSG_SKEL_NO_USER_ID);
 
             tstr = user_organ_id();
             if(CH_NULL != tstr[0])

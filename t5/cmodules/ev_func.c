@@ -205,7 +205,7 @@ PROC_EXEC_PROTO(c_cols)
 
 /******************************************************************************
 *
-* SLR|other index(array, x:number, y:number {, xsize:number, ysize:number})
+* SLR|other index(array, x:number, y:number {, x_size:number, y_size:number})
 *
 * returns SLR if it can
 *
@@ -282,14 +282,14 @@ PROC_EXEC_PROTO(c_index)
     if(n_args > 4)
     {
         if(0 == args[3]->arg.integer)
-        {   /* zero xsize -> all of row starting from column index x */
+        {   /* zero x_size -> all of row starting from column index x */
             x_size_out = x_size_in - ix;
         }
         else
             x_size_out = MAX(1, args[3]->arg.integer);
 
         if(0 == args[4]->arg.integer)
-        {   /* zero ysize -> all of column starting from row index y */
+        {   /* zero y_size -> all of column starting from row index y */
             y_size_out = y_size_in - iy;
         }
         else
@@ -935,6 +935,7 @@ PROC_EXEC_PROTO(c_set_name)
     }
 
     name_num = name_def_find(name_key);
+    assert(name_num >= 0);
 
     status_assert(ss_data_resource_copy(p_ev_data_res, &array_ptr(&name_def.h_table, EV_NAME, name_num)->def_data));
 }
@@ -953,7 +954,7 @@ PROC_EXEC_PROTO(c_sort)
     exec_func_ignore_parms();
 
     if(n_args > 1)
-        x_index = (U32) args[1]->arg.integer; /* array_sort() does range checking */ /* NB NOT -1 - see printed documentation */
+        x_index = (U32) args[1]->arg.integer; /* array_sort() does range checking */ /* NB NOT -1 - SORT() is zero-based (see printed Fireworkz documentation) */
 
     status_assert(ss_data_resource_copy(p_ev_data_res, args[0]));
     data_ensure_constant(p_ev_data_res);

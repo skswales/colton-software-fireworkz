@@ -30,13 +30,9 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart);
 #if RISCOS
 #define MSG_WEAK &rb_chart_msg_weak
 extern PC_U8 rb_chart_msg_weak;
-extern P_ANY rb_chart_spr_22_weak;
-extern P_ANY rb_chart_spr_24_weak;
-static BOUND_RESOURCES BOUND_RESOURCES_OBJECT_ID_CHART = { NULL, &rb_chart_spr_22_weak, &rb_chart_spr_24_weak };
-#define P_BOUND_RESOURCES_OBJECT_ID_CHART &BOUND_RESOURCES_OBJECT_ID_CHART
-#else
-#define P_BOUND_RESOURCES_OBJECT_ID_CHART LOAD_RESOURCES
 #endif
+
+#define P_BOUND_RESOURCES_OBJECT_ID_CHART LOAD_RESOURCES
 
 /*
 internal routines

@@ -109,25 +109,25 @@ host_marker_rect_flags(
         if(!cache_bitmap_size(ruler_marker, p_size))
             return(rect_flags);
 
-    program_pixels = /*div_round_ceil(*/ (-p_marker_bitmap->offset.x) /*, DU_PER_PROGRAM_PIXEL_X)*/;
+    program_pixels = /*idiv_ceil(*/ (-p_marker_bitmap->offset.x) /*, DU_PER_PROGRAM_PIXEL_X)*/;
     if(program_pixels > 0)
     {
         assert((program_pixels >= 0) &&           (program_pixels <= 7));
         rect_flags.extend_left_ppixels  = UBF_PACK((program_pixels & 7));
     }
 
-    program_pixels = div_round_ceil(     (-p_marker_bitmap->offset.y), DU_PER_PROGRAM_PIXEL_Y);
+    program_pixels = idiv_ceil(     (-p_marker_bitmap->offset.y), DU_PER_PROGRAM_PIXEL_Y);
     if(program_pixels > 0)
     {
         assert((program_pixels >= 0) &&           (program_pixels <= 7));
         rect_flags.extend_up_ppixels    = UBF_PACK((program_pixels & 7));
     }
 
-    program_pixels = /*div_round_ceil(*/ (p_size->cx + p_marker_bitmap->offset.x) /*, DU_PER_PROGRAM_PIXEL_X)*/;
+    program_pixels = /*idiv_ceil(*/ (p_size->cx + p_marker_bitmap->offset.x) /*, DU_PER_PROGRAM_PIXEL_X)*/;
     assert((program_pixels >= 0) &&           (program_pixels <= 31));
     rect_flags.extend_right_ppixels = UBF_PACK((program_pixels & 31));
 
-    program_pixels = div_round_ceil(     (p_size->cy + p_marker_bitmap->offset.y), DU_PER_PROGRAM_PIXEL_Y);
+    program_pixels = idiv_ceil(     (p_size->cy + p_marker_bitmap->offset.y), DU_PER_PROGRAM_PIXEL_Y);
     assert((program_pixels >= 0) &&           (program_pixels <= 15));
     rect_flags.extend_down_ppixels  = UBF_PACK((program_pixels & 15));
 

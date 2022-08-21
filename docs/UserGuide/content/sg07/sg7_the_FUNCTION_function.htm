@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>The FUNCTION function</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="The FUNCTION function" />
+    </object>
+
+    <h1><a name="the_function_function" id="the_function_function"></a>The FUNCTION function</h1>
+
+    <p>
+        You declare a custom function using the <code>FUNCTION</code> function.
+        This must be done on a worksheet created from a special custom function template.
+        A custom function template, Custom, is provided in the Custom subdirectory in the Examples archive.
+        If you are going to create a number of custom function sheets you might want to copy the Custom template as one of your standard templates.
+    </p>
+
+    <p>You should use <code>FUNCTION</code> in the following way:</p>
+
+    <p class="csg-function-declaration">
+        FUNCTION(<span class="csg-function-parameter">name</span>:<span class="csg-function-parameter-type">text</span>
+        {,&nbsp;<span class="csg-function-parameter">parameter_1</span>:<span class="csg-function-parameter-type">text</span>
+        {,&nbsp;<span class="csg-function-parameter">parameter_2</span>:<span class="csg-function-parameter-type">text</span> &hellip;}})
+    </p>
+
+    <p>You must always specify the <span class="csg-function-parameter">name</span> of a custom function.</p>
+
+    <p><span class="csg-function-parameter">parameter_<span style="font-style: italic"></span>n</span> are optional data which may be required by your custom function.</p>
+
+    <p>The custom function <code>tangent</code> has one parameter, called <code>angle</code>, which is specified to be of type <code>number</code>, so its first line reads:</p>
+    <pre class="csg-sample-indent">FUNCTION(&quot;tangent&quot;, &quot;angle:number&quot;)</pre>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg7_writing_custom_functions.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="sg7_writing_custom_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg7_naming_custom_functions.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

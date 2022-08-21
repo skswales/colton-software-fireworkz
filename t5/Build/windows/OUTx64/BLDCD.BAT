@@ -9,83 +9,90 @@ IF NOT EXIST BLDCD.BAT EXIT
 @
 @rem The echo F | xcopy /f is needed to copy and rename at the same time.
 @
-rmdir /s /q                                                    InnoSetup
+rmdir /s /q                                                        InnoSetup
 @
-rmdir /s /q                                                    CD
-mkdir                                                          CD\
+rmdir /s /q                                                        CD
+mkdir                                                              CD\
 @if errorlevel 1 goto failed
 @
 @rem copy newly built stuff i.e. the main executable
 xcopy             "..\..\..\Build\windows\x64\Release\firewrkz.exe" CD\
 @if errorlevel 1 goto failed
 @
-@rem copy standard stuff
-xcopy             ..\..\..\firewrkz\windows\DISC1-x64.SRC\*.*  CD\    /s /EXCLUDE:..\..\..\firewrkz\windows\DISC1-x64.SRC\EXCLUDE.TXT
-@if errorlevel 1 goto failed
-@
 @rem copy release notes
-@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm                CD\RelNotes.htm
+@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm                    CD\RelNotes.htm
 @if errorlevel 1 goto failed
 @
-@rem copy other files (compound file helpers)
-@echo F | xcopy /f ..\..\..\resource\cfbf?ffd                  CD\System\UK\cfbf
+@rem copy standard stuff
+xcopy             ..\..\..\firewrkz\windows\DISC1-x64.SRC\*.*      CD\     /s /EXCLUDE:..\..\..\firewrkz\windows\DISC1-x64.SRC\EXCLUDE.TXT
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\cfbf-mini?ffd             CD\System\UK\cfbf-mini
-@if errorlevel 1 goto failed
+@
+mkdir                                                              CD\System\Neutral\
 @
 @rem copy other files (built on RISC OS)
-@echo F | xcopy /f ..\..\..\firewrkz\resource\windows\uk\config CD\System\UK\config.txt
-@if errorlevel 1 goto failed
-@
-@rem copy other files (compiled help)
-@echo F | xcopy /f ..\..\..\..\docs\htmlhelp\firewrkz.chm      CD\System\UK\
+@echo F | xcopy /f ..\..\..\firewrkz\resource\windows\UK\config    CD\System\UK\config.txt
 @if errorlevel 1 goto failed
 @
 @rem copy other files (markers)
-mkdir                                                          CD\System\UK\Markers\
+mkdir                                                              CD\System\Neutral\Markers\
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\markers\s1?aff            CD\System\UK\Markers\S1.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Markers\s1?aff         CD\System\Neutral\Markers\S1.aff
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\markers\s2?aff            CD\System\UK\Markers\S2.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Markers\s2?aff         CD\System\Neutral\Markers\S2.aff
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\markers\s3?aff            CD\System\UK\Markers\S3.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Markers\s3?aff         CD\System\Neutral\Markers\S3.aff
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\markers\s4?aff            CD\System\UK\Markers\S4.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Markers\s4?aff         CD\System\Neutral\Markers\S4.aff
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\markers\s5?aff            CD\System\UK\Markers\S5.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Markers\s5?aff         CD\System\Neutral\Markers\S5.aff
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\markers\s6?aff            CD\System\UK\Markers\S6.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Markers\s6?aff         CD\System\Neutral\Markers\S6.aff
 @if errorlevel 1 goto failed
 @
 @rem copy other files (pictures)
-mkdir                                                          CD\System\UK\Pictures\
-@echo F | xcopy /f ..\..\..\resource\pictures\s1?aff           CD\System\UK\Pictures\S1.aff
+mkdir                                                              CD\System\Neutral\Pictures\
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Pictures\s1?aff        CD\System\Neutral\Pictures\S1.aff
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\pictures\s2?aff           CD\System\UK\Pictures\S2.aff
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Pictures\s2?aff        CD\System\Neutral\Pictures\S2.aff
+@if errorlevel 1 goto failed
+@
+@rem copy other files (compound file helpers)
+mkdir                                                              CD\System\Neutral\Support\
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Support\cfbf?ffd       CD\System\Neutral\Support\cfbf
+@if errorlevel 1 goto failed
+@echo F | xcopy /f ..\..\..\AppData\Neutral\Support\cfbf-mini?ffd  CD\System\Neutral\Support\cfbf-mini
+@if errorlevel 1 goto failed
+@
+mkdir                                                              CD\Resources\
+mkdir                                                              CD\Resources\Neutral\
+mkdir                                                              CD\Resources\UK\
+@
+@rem copy other files (compiled HTML help)
+@echo F | xcopy /f ..\..\..\..\docs\UserGuide\firewrkz.chm         CD\Resources\UK\
 @if errorlevel 1 goto failed
 @
 @rem copy other files (Dial Solutions)
-@rem xcopy             ..\..\..\external\Dial_Solutions\*.dll       CD\System\UK\DLL\
+@rem xcopy             ..\..\..\external\Dial_Solutions\*.dll      CD\Res\UK\DLL\
 @rem
-@rem mkdir                                                          CD\Windows\
+@rem mkdir                                                         CD\Windows\
 @rem @if errorlevel 1 goto failed
-@rem xcopy             ..\..\..\external\Dial_Solutions\RO.ini      CD\Windows\
+@rem xcopy             ..\..\..\external\Dial_Solutions\RO.ini     CD\Windows\
 @rem @if errorlevel 1 goto failed
 @
 @rem copy other files (standard templates)
-@rem mkdir                                                     CD\DefaultUser\
-@rem mkdir                                                     CD\DefaultUser\ApplicationData\
-mkdir                                                          CD\DefaultUser\ApplicationData\Templates\
+@rem mkdir                                                         CD\DefaultUser\
+@rem mkdir                                                         CD\DefaultUser\AppData\
+mkdir                                                              CD\DefaultUser\AppData\Templates\
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\template\Letter?c1d       CD\DefaultUser\ApplicationData\Templates\Letter.fwt
+@echo F | xcopy /f ..\..\..\AppData\UK\Template\Letter?c1d         CD\DefaultUser\AppData\Templates\Letter.fwt
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\template\SheetUK?c1d      CD\DefaultUser\ApplicationData\Templates\Sheet.fwt
+@echo F | xcopy /f ..\..\..\AppData\UK\Template\Sheet?c1d          CD\DefaultUser\AppData\Templates\Sheet.fwt
 @if errorlevel 1 goto failed
 @
 @rem copy other files (default template)
-mkdir                                                          CD\DefaultUser\Templates\
+mkdir                                                              CD\DefaultUser\Templates\
 @if errorlevel 1 goto failed
-@echo F | xcopy /f ..\..\..\resource\template\SheetUK?c1d      CD\DefaultUser\Templates\firewrkz.fwt
+@echo F | xcopy /f ..\..\..\AppData\UK\Template\Sheet?c1d         CD\DefaultUser\Templates\firewrkz.fwt
 @if errorlevel 1 goto failed
 @
 @popd

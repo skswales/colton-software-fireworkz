@@ -10,55 +10,55 @@
 // (language independent)
 
 // cursors
-100 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/arrows.cur"
-101 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/arr_lr.cur"
-102 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/arr_ud.cur"
-103 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/col.cur"
-104 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/col_l.cur"
-105 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/col_r.cur"
-106 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/row.cur"
-107 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/row_u.cur"
-108 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/row_d.cur"
-109 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/split.cur"
-110 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/spl_lr.cur"
-111 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/spl_ud.cur"
-112 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/tank.cur"
+100 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arrows.cur"
+101 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arr_lr.cur"
+102 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arr_ud.cur"
+103 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col.cur"
+104 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col_l.cur"
+105 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col_r.cur"
+106 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row.cur"
+107 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row_u.cur"
+108 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row_d.cur"
+109 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/split.cur"
+110 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/spl_lr.cur"
+111 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/spl_ud.cur"
+112 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/tank.cur"
 
 // multi-bitmaps: 0x0n (+1 = high-dpi variant)
-1 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbar_4bpp.bmp"
-2 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbarh_4bpp.bmp"
-3 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbar_32bpp.bmp"
-4 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbarh_32bpp.bmp"
+1 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbar_4bpp.bmp"
+2 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbarh_4bpp.bmp"
+3 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbar_32bpp.bmp"
+4 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbarh_32bpp.bmp"
 
-5 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com16x16.bmp"
-6 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com24x24.bmp"
+5 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/com16x16.bmp"
+6 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/com24x24.bmp"
 
-7 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com07x11.bmp"
+7 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/com07x11.bmp"
 // no 8
 
 // bitmaps
-1216 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/inc.bmp"
-1217 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/dec.bmp"
+1216 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/inc.bmp"
+1217 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/dec.bmp"
 
-1225 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_none.bmp"
-1226 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_thin.bmp"
-1227 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_std.bmp"
-1228 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_stdd.bmp"
-1229 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_thick.bmp"
+1225 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/ls_none.bmp"
+1226 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/ls_thin.bmp"
+1227 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/ls_std.bmp"
+1228 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/ls_stdd.bmp"
+1229 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/ls_thick.bmp"
 
-1250 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/tab_l.bmp"
-1251 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/tab_r.bmp"
-1252 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/tab_c.bmp"
-1253 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/tab_d.bmp"
+1250 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/tab_l.bmp"
+1251 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/tab_r.bmp"
+1252 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/tab_c.bmp"
+1253 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/tab_d.bmp"
 
-1254 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/mar_l.bmp"
-1255 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/mar_p.bmp"
-1256 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/mar_r.bmp"
+1254 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/mar_l.bmp"
+1255 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/mar_p.bmp"
+1256 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/mar_r.bmp"
 
-1257 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/mar_h.bmp"
-1258 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/mar_f.bmp"
-1259 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/row_b.bmp"
+1257 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/mar_h.bmp"
+1258 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/mar_f.bmp"
+1259 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/row_b.bmp"
 
-1260 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/col_r.bmp"
+1260 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/col_r.bmp"
 
 // end

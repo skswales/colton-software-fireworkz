@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug Code Analysis|Win32">
-      <Configuration>Debug Code Analysis</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Code Analysis|Win32">
+      <Configuration>Debug Code Analysis</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug XP|Win32">
@@ -17,12 +17,12 @@
       <Configuration>Debug XP ANSI</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release Code Analysis|Win32">
-      <Configuration>Release Code Analysis</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Code Analysis|Win32">
+      <Configuration>Release Code Analysis</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release XP|Win32">
@@ -411,80 +411,90 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\fprowrkz\fprowrkz\fprowrkz.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\myrand.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\filetypes.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\lashup.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\memalloc.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\myos.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\winderror.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windflex.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windheap.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
@@ -970,17 +980,97 @@
     <ClCompile Include="..\..\ob_skel\of_load.c" />
     <ClCompile Include="..\..\ob_skel\of_save.c" />
     <ClCompile Include="..\..\ob_skel\prodinfo.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\cmodules\quickblk.c" />
     <ClCompile Include="..\..\cmodules\resource.c" />
+    <ClCompile Include="..\..\ob_skel\riscos\colourpick.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\cs-flex.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\cs-poll.s">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\cs-winx.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\event.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\flex.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\tb-flex.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\wimpt.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\ob_skel\sk_alpha.c" />
     <ClCompile Include="..\..\ob_skel\sk_area.c" />
     <ClCompile Include="..\..\ob_skel\sk_bord.c" />
@@ -1010,14 +1100,14 @@
     <ClCompile Include="..\..\cmodules\ss_const.c" />
     <ClCompile Include="..\..\ob_skel\startup.c" />
     <ClCompile Include="..\..\ob_skel\t5_glue.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\cmodules\typepack.c" />
     <ClCompile Include="..\..\ob_skel\ui_data.c" />
@@ -1038,17 +1128,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\flex.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\ob_skel\riscos\ho_asm.c">
+    <ClCompile Include="..\..\ob_skel\riscos\ho_asm.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
@@ -1168,7 +1248,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\muldivas.c">
+    <ClCompile Include="..\..\cmodules\riscos\muldivas.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
@@ -1178,37 +1258,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\ob_skel\riscos\nsx.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\profile.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\win.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\winxtra.c">
+    <ClCompile Include="..\..\ob_skel\riscos\nsx.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
@@ -1643,6 +1693,12 @@
     <ClInclude Include="..\..\cmodules\resource.h" />
     <ClInclude Include="..\..\cmodules\ss_const.h" />
     <ClInclude Include="..\..\cmodules\typepack.h" />
+    <ClInclude Include="..\..\ob_skel\riscos\swiextra.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\ob_skel\vi_edge.h" />
     <ClInclude Include="..\..\ob_skel\xp_skel.h" />
     <ClInclude Include="..\..\ob_skel\xp_skeld.h" />
@@ -1786,1798 +1842,1841 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg1.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg2.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg3.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg4.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg5.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg6.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg7.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg8.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg9.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsguide.css" />
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg_glossary.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\index.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg1.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg2.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg3.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg4.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg5.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg6.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg7.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg8.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg9.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsguide.css" />
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg_glossary.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\index.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug00\ug00_contents.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\indexR.htm" />
     <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll" />
-    <None Include="..\..\..\docs\GSGuide\windows\gsg1.htm">
+    <None Include="..\..\..\docs\UserGuide\firewrkz.hhc" />
+    <None Include="..\..\..\docs\UserGuide\firewrkz.hhk" />
+    <None Include="..\..\..\docs\UserGuide\firewrkz.hhp" />
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg2.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_fonts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg3.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg4.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_risc_os_to_windows.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg5.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_windows_to_risc_os.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg6.htm">
+    <None Include="..\..\..\docs\UserGuide\content\index.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg7.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug00\sg00_spreadsheets.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg8.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_absolute_references.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsgindex.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_autoentry.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsguide.css" />
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc" />
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk" />
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp" />
-    <None Include="..\..\..\docs\htmlhelp\html\frindex.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_cell_references.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_cell_types.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms_fonts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_cell_type_problem_areas.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_changing_cell_types.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_from_risc_os_to_windows.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_clearing_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_from_windows_to_risc_os.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_confirming_data_entry.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\index.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_copying_data_from_cell_to_cell.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg0_spreadsheets.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_editing_number_cell_contents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_absolute_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_and_editing_numerical_data.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_autoentry.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_cell_references.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_dates.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_types.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_numbers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_type_problem_areas.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_strings.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_changing_cell_types.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_text_and_data_in_number_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_clearing_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_external_references.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_confirming_data_entry.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_filling_data.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_copying_data_from_cell_to_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_moving_from_cell_to_cell.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_editing_number_cell_contents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_number_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_and_editing_numerical_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_ranges.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_cell_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_single_cell_references.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_dates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_sorting_your_data.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_text_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_strings.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_arithmetic_operators.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_text_and_data_in_number_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_arrays.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_external_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_autosum.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_filling_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_building_and_editing_formulae.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_moving_from_cell_to_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_displaying_arrays.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_number_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_entering_and_editing_formulae.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_ranges.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_formula_building_blocks.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_single_cell_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_logical_operators.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_sorting_your_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_names.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_text_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_operator_precedence.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_arithmetic_operators.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_relational_operators.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_the_function_selector.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_autosum.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_troubleshooting.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_building_and_editing_formulae.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_typing_arrays_directly_into_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_displaying_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_using_arrays.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_entering_and_editing_formulae.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_using_operators_in_formulae.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_formula_building_blocks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_12_and_24_hour_clocks.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_logical_operators.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_base_number_format.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_names.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_constructing_date_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_operator_precedence.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_constructing_number_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_relational_operators.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_constructing_time_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_the_function_selector.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_creating_date_and_time_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_troubleshooting.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_days.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_typing_arrays_directly_into_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_displaying_parts_of_a_time.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_using_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_engineering_format.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_using_operators_in_formulae.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_expressing_roman_numerals.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_12_and_24_hour_clocks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_foreign_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_base_number_format.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_hashes_and_zeroes.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_date_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_including_text_strings_in_number_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_interpreting_numbers_as_dates_or_times.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_time_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_months.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_creating_date_and_time_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_number_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_days.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_number_formats_and_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_displaying_parts_of_a_time.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_percentage.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_engineering_format.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_positive_and_negative_numbers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_expressing_roman_numerals.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_precision.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_foreign_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_protecting_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_hashes_and_zeroes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_saving_a_number_format_as_a_style.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_including_text_strings_in_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_scientific_number_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_interpreting_numbers_as_dates_or_times.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_styles_in_spreadsheet_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_months.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_text_strings.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_years.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_number_formats_and_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_bar_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_percentage.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_positive_and_negative_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_creating_a_chart.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_precision.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_customising_bar_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_protecting_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_customising_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_saving_a_number_format_as_a_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_direction.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_scientific_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_axes.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_styles_in_spreadsheet_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_text_strings.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_data_series.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_years.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_lines.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_bar_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_text_in_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_exploding_segments.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_creating_a_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_line_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_customising_bar_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_overlays.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_customising_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_pictograms.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_direction.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_pie_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_axes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_pie_labelling_options.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_positioning_the_chart.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_data_series.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_start_position.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_lines.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_types_of_bar_chart.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_text_in_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_types_of_line_chart.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_exploding_segments.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_types_of_scatter_graph.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_line_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_updating_chart_data.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_overlays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_using_colour_in_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_pictograms.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_x_y_scatter_graphs.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_pie_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_function_reference.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_pie_labelling_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_compatibility_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_positioning_the_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_database_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_start_position.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_date_time_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_bar_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_engineering_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_line_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_financial_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_scatter_graph.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_logical_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_updating_chart_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_lookup_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_using_colour_in_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_mathematical_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_x_y_scatter_graphs.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_matrix_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_compatibility_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_miscellaneous_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_database_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_statistical_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_date_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_string_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_engineering_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_trigonometrical_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_financial_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ABS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_logical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_lookup_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOSEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_mathematical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOSECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_matrix_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOSH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_miscellaneous_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_statistical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_string_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AGE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_trigonometrical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ALERT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ABS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_arrays.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_array_or_range.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASINH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AGE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ATAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ALERT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ATANH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ATAN_2.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AVEDEV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_array_or_range.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AVG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_BETA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_BIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CEILING.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASINH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CHAR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CHOOSE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATANH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CLEAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATAN_2.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CODE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AVEDEV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AVG.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COLS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_BETA.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COMBIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_BIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COMMAND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CEILING.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_complex_numbers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CHAR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_complex_numbers_odf.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CHOOSE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CLEAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COSEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CODE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COSECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COSH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COLS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COMBIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COMMAND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COUNT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_complex_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COUNTA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_complex_numbers_odf.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COUNTBLANK.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COVARIANCE_P.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COVARIANCE_S.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CTERM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CURRENT_CELL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOSEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOSECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNTA.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOSH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNTBLANK.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COVARIANCE_P.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COVARIANCE_S.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ADD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CTERM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CURRENT_CELL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASINH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ATAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ATANH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COMPLEX.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_CONJUGATE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ADD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COSEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COSECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COSH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASINH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ATAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ATANH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_DIV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COMPLEX.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_EXP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_CONJUGATE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_IMAGINARY.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_LN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_MUL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_POWER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_RADIUS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_REAL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ROUND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_DIV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_EXP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_IMAGINARY.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_LN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SINH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_MUL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SQRT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_POWER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SUB.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_RADIUS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_TAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_REAL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_TANH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ROUND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_THETA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DATE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DATEVALUE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_date_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SINH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAVG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SQRT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAY.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SUB.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAYNAME.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_TAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAYS_360.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_TANH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DCOUNT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_THETA.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DCOUNTA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DATE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DDB.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DATEVALUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DEG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_date_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DEREF.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAVG.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DEVSQ.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAY.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DMAX.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAYNAME.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DMIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAYS_360.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DOLLAR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DCOUNT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DOUBLECLICK.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DCOUNTA.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DPRODUCT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DDB.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DSTD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEG.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DSTDP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEREF.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DSUM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEVSQ.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DVAR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DMAX.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DVARP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DMIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_EVEN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DOLLAR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_EXACT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DOUBLECLICK.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_EXP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DPRODUCT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FACT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSTD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FALSE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSTDP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FIND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSUM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FIXED.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DVAR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FLIP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DVARP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FLOOR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_EVEN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FORMULA_TEXT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_EXACT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_EXP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GAMMALN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FACT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GEOMEAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FALSE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GRAND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FIND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GROWTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FIXED.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_HARMEAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FLIP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_HLOOKUP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FLOOR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_HOUR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FORMULA_TEXT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_IF.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_INDEX.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GAMMALN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_INPUT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GEOMEAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_INT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GRAND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_IRR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GROWTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ISEVEN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_HARMEAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ISODD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_HLOOKUP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_JOIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_HOUR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_KURT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_IF.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LARGE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_INDEX.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LEFT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_INPUT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LENGTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_INT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LINEST.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_IRR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LISTCOUNT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ISEVEN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ISODD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_JOIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOGEST.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_KURT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOOKUP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LARGE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOWER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LEFT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MATCH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LENGTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MAX.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LINEST.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MEDIAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LISTCOUNT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MID.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOG.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MINUTE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOGEST.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MIRR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOOKUP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MOD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOWER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MODE_SNGL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MATCH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MONTH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MAX.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MONTHDAYS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MEDIAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MONTHNAME.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MID.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MROUND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_M_DETERM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MINUTE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_M_INVERSE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MIRR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_M_MULT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MOD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NOT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MODE_SNGL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NOW.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NPER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTHDAYS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NPV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTHNAME.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MROUND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_BETADIST.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_DETERM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_COMPLEX.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_INVERSE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_FV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_MULT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMABS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NOT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMAGINARY.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NOW.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMARGUMENT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NPER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMCONJUGATE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NPV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMCOS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMDIV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_BETADIST.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMEXP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_COMPLEX.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMLN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_FV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMLOG10.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMABS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMLOG2.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMAGINARY.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMPOWER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMARGUMENT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMPRODUCT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMCONJUGATE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMREAL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMCOS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMDIV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSQRT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMEXP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSUB.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSUM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLOG10.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_PMT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLOG2.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_TYPE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMPOWER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_OR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMPRODUCT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PAGE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMREAL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PAGES.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PERCENTILE_EXC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSQRT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PERCENTILE_INC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSUB.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PERMUT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSUM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PI.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_PMT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PMT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_TYPE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_POWER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_OR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PRODUCT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PAGE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PROPER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PAGES.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PV.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_EXC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_QUARTILE_EXC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_INC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_QUARTILE_INC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERMUT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RAD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PI.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RAND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PMT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RANDBETWEEN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_POWER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ranges.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PRODUCT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RANK.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PROPER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RANK_EQ.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PV.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RATE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_QUARTILE_EXC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_REPLACE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_QUARTILE_INC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_REPT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RAD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_REVERSE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RAND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RIGHT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANDBETWEEN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROUND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ranges.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROUNDDOWN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANK.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROUNDUP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANK_EQ.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROW.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RATE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROWS.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_REPLACE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_REPT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SECH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_REVERSE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SECOND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RIGHT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SET_NAME.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SET_VALUE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUNDDOWN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SGN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUNDUP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SIN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROW.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SINH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROWS.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SKEW.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SEC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SKEW_P.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SECH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SLN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SECOND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SMALL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SET_NAME.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SORT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SET_VALUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SPEARMAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SGN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SQR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SIN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STANDARDIZE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SINH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SKEW.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STDP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SKEW_P.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STRING.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SLN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUBSTITUTE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SMALL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SORT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUMPRODUCT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SPEARMAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUMSQ.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SQR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM_X2MY2.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STANDARDIZE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM_X2PY2.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM_XMY2.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STDP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SYD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STRING.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUBSTITUTE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TANH.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TERM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUMPRODUCT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TEXT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUMSQ.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TIME.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_X2MY2.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TIMEVALUE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_X2PY2.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_time_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_XMY2.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TODAY.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SYD.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRANSPOSE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TREND.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TANH.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRIM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TERM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRIMMEAN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TEXT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRUE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TIME.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRUNC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TIMEVALUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TYPE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_time_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_UPPER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TODAY.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VALUE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRANSPOSE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VAR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TREND.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VARP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRIM.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VERSION.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRIMMEAN.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VLOOKUP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_WEEKDAY.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRUNC.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_WEEKNUMBER.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TYPE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_XOR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_UPPER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_YEAR.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VALUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_BREAK.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VAR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_CONTINUE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VARP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_custom_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VERSION.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_custom_function_control_statements.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VLOOKUP.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_custom_function_libraries.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_WEEKDAY.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_declaring_the_result.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_WEEKNUMBER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_editing_custom_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_XOR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_FOR_NEXT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_YEAR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_GOTO.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_BREAK.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_IF_ELSE_ELSEIF_ENDIF.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_CONTINUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_naming_custom_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_parameters_to_FUNCTION.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_function_control_statements.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_processing_ranges_of_data.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_function_libraries.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_recalculation_and_custom_function_sheets.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_declaring_the_result.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_REPEAT_UNTIL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_editing_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_RESULT.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_FOR_NEXT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_the_FUNCTION_function.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_GOTO.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_using_custom_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_IF_ELSE_ELSEIF_ENDIF.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_what_is_a_custom_function.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_naming_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_WHILE_ENDWHILE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_parameters_to_FUNCTION.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_writing_custom_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_processing_ranges_of_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_adding_pictures_to_your_document.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_recalculation_and_custom_function_sheets.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_backdrop_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_REPEAT_UNTIL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_how_fireworkz_handles_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_RESULT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_the_FUNCTION_function.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_picture_file_formats.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_using_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_positioning_pictures_on_the_page.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_what_is_a_custom_function.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_resizing_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_WHILE_ENDWHILE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_showing_and_hiding_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_writing_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_storing_pictures_in_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_adding_pictures_to_your_document.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_basic_print_options.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_backdrop_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_before_printing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_how_fireworkz_handles_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_choosing_to_print.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_collated.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_picture_file_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_extra_print_options.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_positioning_pictures_on_the_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_pamphlet_printing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_resizing_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_printing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_showing_and_hiding_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_printing_labels.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_storing_pictures_in_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_printing_problems.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_basic_print_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_print_scale.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_before_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_range_of_pages.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_choosing_to_print.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_reverse_printing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_collated.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_sides.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_extra_print_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_two_up.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_pamphlet_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug00\ug01_introduction.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_accessing_the_view_control_dialogue_box.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing_labels.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_auto_save.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing_problems.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_charts_options.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_print_scale.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_choices_dialogue_box.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_range_of_pages.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_choices_status_line.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_reverse_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_choosing_the_ruler_measurement.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_sides.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_customising_the_look_of_the_program.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_two_up.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_default_ruler.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug1_introduction.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_dialogue_boxes.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_accessing_the_view_control_dialogue_box.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_displaying_paper_and_borders.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_auto_save.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_dithering.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_charts_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_fireworkz_basics.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_choices_dialogue_box.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_kerning.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_choices_status_line.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_menus.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_choosing_the_ruler_measurement.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_new_view.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_customising_the_look_of_the_program.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_pictures.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_default_ruler.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_recalculation.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_dialogue_boxes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_rulers_and_borders.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_displaying_paper_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_selecting_a_view_scale.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_dithering.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_spelling.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_fireworkz_basics.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_splitting_the_view.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_kerning.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_fireworkz_document_window.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_menus.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_ruler.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_new_view.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_status_line.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_toolbar.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_recalculation.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_creating_a_new_document.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_rulers_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_creating_new_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_selecting_a_view_scale.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_creating_templates.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_spelling.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_opening_existing_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_splitting_the_view.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_removing_templates_from_the_template_selector.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_fireworkz_document_window.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_setting_up_a_template_file.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_ruler.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_templates.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_status_line.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_using_templates_to_reformat_existing_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_toolbar.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_bold.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_a_new_document.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_checking_spellings.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_new_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_clearing_a_selected_area.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_templates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_copying_text_within_and_between_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_opening_existing_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_correcting_typing_errors.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_removing_templates_from_the_template_selector.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_counting_words.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_setting_up_a_template_file.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_dates.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_templates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_editing_text.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_using_templates_to_reformat_existing_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_entering_special_text_and_characters.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_bold.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_entering_text_effects.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_checking_spellings.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_find_and_replace.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_clearing_a_selected_area.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_forcing_a_page_break.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_copying_text_within_and_between_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_hints_and_tips.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_correcting_typing_errors.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_italic.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_counting_words.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_line_spaces_and_paragraph_spaces.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_dates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_moving_around_the_document.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_editing_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_moving_text_around_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_entering_special_text_and_characters.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_overtyping_existing_text.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_entering_text_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_page_numbers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_find_and_replace.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_paragraphs_and_rows.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_forcing_a_page_break.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_positioning_the_caret.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_hints_and_tips.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_preventing_line_breaks.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_italic.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_preventing_page_breaks_within_paragraphs.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_line_spaces_and_paragraph_spaces.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_printing_filename_within_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_moving_around_the_document.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_selecting_areas_of_text.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_moving_text_around_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_special_characters.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_overtyping_existing_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_starting_a_new_line_without_starting_a_new_paragraph.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_page_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_starting_a_new_page.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_paragraphs_and_rows.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_starting_a_new_paragraph.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_positioning_the_caret.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_typing_text.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_preventing_line_breaks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_upper_and_lower_case.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_preventing_page_breaks_within_paragraphs.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_adding_a_current_cell_style.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_printing_filename_within_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_applying_effects.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_selecting_areas_of_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_buttons_and_effects.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_special_characters.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_deleting_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_line_without_starting_a_new_paragraph.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_effects.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_layering_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_paragraph.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_removing_styles_and_effects.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_typing_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_special_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_upper_and_lower_case.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_the_region_editor.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_adding_a_current_cell_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_the_style_list.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_applying_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_what_are_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_buttons_and_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_working_with_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_deleting_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_working_with_styles_and_effects.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_adding_a_new_style.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_layering_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_adding_colour_to_a_style.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_removing_styles_and_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_alignment.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_special_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_attributes.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_the_region_editor.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_background_colour_and_borders.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_the_style_list.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_colour.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_what_are_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_colour_editing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_working_with_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_column.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_working_with_styles_and_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_editing_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_adding_a_new_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_fonts_and_typefaces.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_adding_colour_to_a_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_height_and_width.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_alignment.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_line_spacing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_attributes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_margins.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_background_colour_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_paragraph_spacing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_colour.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_row.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_colour_editing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_ruler.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_column.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_setting_up_styles.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_editing_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_spacing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_fonts_and_typefaces.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_style.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_height_and_width.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_tabs.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_line_spacing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_text.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_margins.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_the_style_dialogue_box.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_paragraph_spacing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_the_style_editor.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_row.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_vertical_justification.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_ruler.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_creating_headers_and_footers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_setting_up_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_custom_page_sizes.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_spacing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_different_headers_or_footers_on_the_first_page.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_editing_header_and_footer_text.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_tabs.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_forcing_page_breaks.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_headers_and_footers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_the_style_dialogue_box.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_multiple_headers_and_footers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_the_style_editor.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_numbering_pages.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_vertical_justification.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_opposing_headers_and_footers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_creating_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_page_design.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_custom_page_sizes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_paper_margins.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_different_headers_or_footers_on_the_first_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_paper_orientation.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_editing_header_and_footer_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_printing_the_row_and_column_borders.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_forcing_page_breaks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_repositioning_headers_and_footers.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_setting_paper_size.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_multiple_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_setting_up_paper_size.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_numbering_pages.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_x_and_y_pages.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_opposing_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_adding_extra_rows_and_columns.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_page_design.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_adding_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_paper_margins.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_autowidth_and_autoheight.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_paper_orientation.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_boxes.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_printing_the_row_and_column_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_boxes_and_the_grid.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_repositioning_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_changing_column_width.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_setting_paper_size.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_changing_row_height.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_setting_up_paper_size.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_designing_grids_boxes_and_borders.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_x_and_y_pages.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_editing_table_layouts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_adding_extra_rows_and_columns.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_editing_the_cell_layout.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_adding_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_entering_numerical_live_data_into_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_autowidth_and_autoheight.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_entering_text_into_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_boxes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_grid_lines.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_boxes_and_the_grid.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_importing_data_into_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_changing_column_width.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_merging_two_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_changing_row_height.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_removing_boxes_and_grid_lines.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_designing_grids_boxes_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_removing_redundant_rows_and_columns.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_editing_table_layouts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_repositioning_the_table_on_the_page.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_editing_the_cell_layout.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_straddling_cells.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_entering_numerical_live_data_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_entering_text_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_typing_directly_into_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_grid_lines.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_using_background_colours.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_importing_data_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_using_styles_and_effects_in_tables.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_merging_two_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_adding_a_name_to_a_number_cell.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_removing_boxes_and_grid_lines.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_adding_a_name_to_a_text_cell.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_removing_redundant_rows_and_columns.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_advanced_features.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_repositioning_the_table_on_the_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_naming_names.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_straddling_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_printing_a_mail_shot.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_setting_up_a_name.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_typing_directly_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_setting_up_your_letter.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_using_background_colours.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_suitable_lists_for_mail_shots.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_using_styles_and_effects_in_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_uses_for_names.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_adding_a_name_to_a_number_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_using_mail_merge.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_adding_a_name_to_a_text_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_using_names_in_fireworkz.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_advanced_features.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug98_glossary.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_naming_names.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_printing_a_mail_shot.htm">
+    <None Include="..\..\..\docs\UserGuide\content\usguide.css" />
+    <None Include="..\..\..\docs\UserGuide\content\usindex.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_setting_up_a_name.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_setting_up_your_letter.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_suitable_lists_for_mail_shots.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_uses_for_names.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_using_mail_merge.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_using_names_in_fireworkz.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\us98_glossary.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\us99_addenda.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\usguide.css" />
-    <None Include="..\..\..\docs\htmlhelp\html\usindex.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\LICENSE" />
     <None Include="..\..\..\docs\MakeRiscPkg,fd7" />
     <None Include="..\..\..\docs\RiscPkg\Control" />
     <None Include="..\..\..\docs\RiscPkg\Copyright" />
-    <None Include="..\..\..\docs\RiscPkg\LICENSE" />
     <None Include="..\..\..\fprowrkz\fprowrkz\RelNotes.htm" />
+    <None Include="..\..\firewrkz\RelHistPrev.html" />
     <None Include="..\..\firewrkz\RelNotesW.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\res00.rci" />
+    <None Include="..\..\firewrkz\resource\windows\UK\res00.rci" />
     <None Include="..\..\firewrkz\RelNotes.htm">
       <SubType>Designer</SubType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
@@ -3586,7 +3685,6 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</DeploymentContent>
     </None>
     <None Include="..\..\fl_123\resource\uk-msg" />
-    <None Include="..\..\LICENSE" />
     <None Include="..\..\ob_chart\resource\uk-msg" />
     <None Include="..\..\fl_csv\resource\uk-msg" />
     <None Include="..\..\ob_dlg\resource\uk-msg" />
@@ -3597,16 +3695,29 @@
     <None Include="..\..\ob_mails\resource\uk-msg" />
     <None Include="..\..\ob_mlec\resource\uk-msg" />
     <None Include="..\..\ob_recn\resource\uk-msg" />
-    <None Include="..\..\..\fprowrkz\ob_rec\resource\uk-msg" />
+    <None Include="..\..\..\fprowrkz\ob_rec\resource\UK\msg" />
     <None Include="..\..\..\fprowrkz\ob_recb\resource\uk-msg" />
     <None Include="..\..\fl_rtf\resource\uk-msg" />
     <None Include="..\..\ob_ruler\resource\uk-msg" />
-    <None Include="..\..\ob_skel\resource\uk-msg" />
+    <None Include="..\..\ob_skel\resource\CUR\arrows.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\arr_lr.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\arr_ud.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\col.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\col_l.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\col_r.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\row.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\row_d.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\row_u.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\split.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\spl_lr.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\spl_ud.cur" />
+    <None Include="..\..\ob_skel\resource\CUR\tank.cur" />
+    <None Include="..\..\ob_skel\resource\UK\msg" />
     <None Include="..\..\ob_skspt\resource\uk-msg" />
     <None Include="..\..\ob_spelb\resource\uk-msg" />
     <None Include="..\..\ob_spell\resource\uk-msg" />
     <None Include="..\..\ob_ss\resource\ss.rci" />
-    <None Include="..\..\ob_ss\resource\uk-msg" />
+    <None Include="..\..\ob_ss\resource\UK\msg" />
     <None Include="..\..\ob_toolb\resource\uk-msg" />
     <None Include="..\..\fl_xls\resource\uk-msg" />
     <None Include="OUTx64\firewrkz-x64.iss" />
@@ -3619,18 +3730,18 @@
     <None Include="..\..\ob_skel\resource\skel.rci">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\res01.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\res01.rci">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\res06.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\res06.rci">
       <FileType>Document</FileType>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\resXX.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\resXX.rci">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\firewrkz\resource\windows\uk\banner.bmp" />
+    <Image Include="..\..\firewrkz\resource\windows\UK\banner.bmp" />
     <Image Include="..\..\ob_chart\resource\bmp\ldadodo.bmp" />
     <Image Include="..\..\ob_chart\resource\bmp\ldash.bmp" />
     <Image Include="..\..\ob_chart\resource\bmp\ldashdot.bmp" />

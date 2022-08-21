@@ -657,7 +657,8 @@ _Check_return_
 extern STATUS
 gr_riscdiag_diagram_save(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _In_z_      PCTSTR filename);
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype);
 
 _Check_return_
 extern STATUS

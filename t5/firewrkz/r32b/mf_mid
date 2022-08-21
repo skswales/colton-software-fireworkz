@@ -17,8 +17,8 @@ OBJMUNGE=@| No 32-bit ObjMunge
 
 # just one product-specific file is built for each target product
 # NB this #include profinfo.c and t5_glue.c
-$(PROD_BUILD_DIR).o.firewrkz: $(PROD_SOURCE_DIR).c.firewrkz
- $(CC) -o $@ $(ccflags) $?
+$(PROD_BUILD_DIR).o.firewrkz: $(PROD_SOURCE_DIR).c.firewrkz $(T5).ob_skel.c.prodinfo $(T5).ob_skel.h.prodinfo
+ $(CC) -o $@ $(ccflags) $(PROD_SOURCE_DIR).c.firewrkz
 
 # objects to be bound into !RunImage
 

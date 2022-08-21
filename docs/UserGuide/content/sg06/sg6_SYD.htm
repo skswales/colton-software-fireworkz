@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>SYD</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="SYD" />
+        <param name="Keyword" value="Functions, Financial, SYD" />
+        <param name="Keyword" value="Financial functions, depreciation allowance (sum-of-years digit method)" />
+    </object>
+
+    <h1><a name="syd" id="syd"></a>SYD</h1>
+
+    <p>Determines the depreciation allowance of a given period using the sum-of-years digit method.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        SYD(<span class="csg-function-parameter">cost</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">salvage</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">life</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">period</span>:<span class="csg-function-parameter-type">number</span>)
+    </p>
+    <p>where:</p>
+    <table>
+        <tr>
+            <td class="csg-function-parameter">cost</td>
+            <td>is the original value of the asset;</td>
+        </tr>
+        <tr>
+            <td class="csg-function-parameter">salvage</td>
+            <td>
+                is the predicted future value at the end of the depreciation period.<br />
+                Both cost and salvage must be presented in the same format, e.g. both in the same currency;
+            </td>
+        </tr>
+        <tr>
+            <td class="csg-function-parameter">life</td>
+            <td>is the number of periods in the depreciation period;</td>
+        </tr>
+        <tr>
+            <td class="csg-function-parameter">period</td>
+            <td>is the year of the life for which you wish to calculate the depreciation allowance.</td>
+        </tr>
+    </table>
+
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        You purchase a &pound;500 computer that has a salvage value of &pound;100 after five years.
+        The depreciation allowance for the first year is given by the formula
+    </p>
+    <pre class="csg-sample-indent">SYD(500, 100, 5, 1)</pre>
+    <p>which returns the number <code>133.33</code> (pounds).</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_SLN.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_financial_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_TERM.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

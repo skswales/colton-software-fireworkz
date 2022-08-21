@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>Complex numbers (Open Document compatibility)</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Complex numbers, compatibility with Microsoft Excel" />
+        <param name="Keyword" value="Complex numbers, compatibility with OpenDocument" />
+    </object>
+
+    <h1><a name="complex_numbers_odf" id="complex_numbers_odf"></a>Complex numbers<br />(Open Document compatibility)</h1>
+
+    <p>Open Document (and Microsoft Excel) compatible complex numbers<sup><a href="#cite_note-1">[1]</a></sup> are represented by text strings<sup><a href="#cite_note-2">[2]</a></sup>, where lower-case suffixes i or j denote the imaginary part.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">"0+1i"</pre>
+    <p>may be used to represent the complex number <i>i</i>, the square root of -1.</p>
+
+    <p>Complex numbers should always be manipulated using the appropriate complex number function.</p>
+
+    <p>
+        Fireworkz <code>"C_"</code>-prefixed <a href="../sg05/sg5_engineering_functions.htm">complex number functions</a> may be used in addition to the
+        compatibility <code>"ODF.IM"</code>-prefixed <a href="../sg05/sg5_compatibility_functions.htm#compatibility_engineering_functions">engineering functions</a>.
+    </p>
+
+    <p>A single real number may be passed to complex number functions, where it behaves as the real part of a complex number with an imaginary part of zero.</p>
+
+    <p>
+        Where a function takes a pair of complex numbers and an imaginary number suffix is specified on both numbers,
+        both numbers need not use the same suffix and 'i' will dominate.
+        Microsoft Excel would require both suffixes to be the same.
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>Support for complex number strings was added in 2.00.</p>
+
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            <a class="external" target="_blank" href="http://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a>
+            "Complex Number."
+            From <a class="external" target="_blank" href="http://mathworld.wolfram.com/">MathWorld</a>--A Wolfram Web Resource.
+            <a class="external" target="_blank" href="http://mathworld.wolfram.com/ComplexNumber.html">http://mathworld.wolfram.com/ComplexNumber.html</a>
+        </li>
+        <li id="cite_note-2">
+            "Open Document Format for Office Applications (OpenDocument) Version 1.2 Part 2: Recalculated Formula (OpenFormula) Format".
+            29 September 2011.
+            OASIS Standard.
+            <a class="external" target="_blank" href="http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part2.html#ConversionToComplexNumber">http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part2.html#ConversionToComplexNumber</a>
+        </li>
+    </ol>
+</body>
+</html>

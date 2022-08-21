@@ -54,29 +54,29 @@ AOF_S_LOAD=\
 DYNLOAD_S0=\
 
 DYNLOAD_S1=\
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob04 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob06 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob07 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob08 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob09 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob12 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob17 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob19 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob04 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob06 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob07 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob08 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob09 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob12 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob17 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob19 \
 
 DYNLOAD_S2=\
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob20 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob21 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob22 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob23 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob24 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob25 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob26 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob27 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob28 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob33 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob35 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob40 \
-$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob41 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob20 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob21 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob22 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob23 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob24 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob25 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob26 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob27 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob28 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob33 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob35 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob40 \
+$(PROD_BUILD_DIR).!$(APPL).AppData.Objects.Ob41 \
 
 AOF_DYNLOAD_S0=\
 

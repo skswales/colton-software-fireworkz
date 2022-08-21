@@ -585,7 +585,7 @@ opendict(
     if(status_ok(ob_spell_.dictionary[dictionary_id].status))
         return(STATUS_OK);
 
-    if((status = file_find_on_path(filename, elemof32(filename), ob_spell_.dictionary[dictionary_id].name)) <= 0)
+    if((status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), ob_spell_.dictionary[dictionary_id].name)) <= 0)
     {
         if(status == 0)
             status = create_error(FILE_ERR_NOTFOUND);
@@ -994,8 +994,10 @@ skip_list_find_word(
             continue;
 
         /* now requires precise match - caps variants must be added separately */
-        if(0 == memcmp(ustr_entry, ustr, ustr_len))
-            return(TRUE); /* found */
+        if(0 != memcmp(ustr_entry, ustr, ustr_len))
+            continue;
+
+        return(TRUE); /* found */
     }
 
     return(FALSE); /* not found */

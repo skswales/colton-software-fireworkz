@@ -68,6 +68,7 @@ enum INFO_CONTROL_IDS
     INFO_ID_AUTHOR_1,
     INFO_ID_AUTHOR_2,
     INFO_ID_EXTRA_BUMPH,
+    INFO_ID_PICTURE,
     INFO_ID_WEB,
     INFO_ID_VERSION_1,
     INFO_ID_VERSION_2,
@@ -154,6 +155,15 @@ static const DIALOG_CONTROL_DATA_STATICTEXT
 info_version_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_VERSION_1), { 0 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL
+info_version_2_sans_extra =
+{
+    INFO_ID_VERSION_2, DIALOG_MAIN_GROUP,
+    { INFO_ID_AUTHOR_2, INFO_ID_AUTHOR_2, INFO_ID_AUTHOR_2 },
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
+    { DRT(LBRT, STATICFRAME) }
+};
+
+static const DIALOG_CONTROL
 info_version_2 =
 {
     INFO_ID_VERSION_2, DIALOG_MAIN_GROUP,
@@ -164,6 +174,36 @@ info_version_2 =
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
 info_version_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+
+static const DIALOG_CONTROL
+info_picture =
+{
+    INFO_ID_PICTURE, DIALOG_MAIN_GROUP,
+    { INFO_ID_NAME_2, INFO_ID_NAME_2, INFO_ID_WEB },
+    { DIALOG_SMALLSPACING_H, 0, 0 /*120 * PIXITS_PER_RISCOS*/, 96 * PIXITS_PER_RISCOS },
+    { DRT(RTRT, STATICPICTURE) }
+};
+
+static const DIALOG_CONTROL_DATA_STATICPICTURE
+info_picture_data = { { OBJECT_ID_SKEL, "!fireworkz" } };
+
+static const DIALOG_CONTROL
+info_web =
+{
+    INFO_ID_WEB, DIALOG_MAIN_GROUP,
+    { INFO_ID_VERSION_2, INFO_ID_VERSION_2, DIALOG_CONTROL_SELF, INFO_ID_VERSION_2 },
+    { DIALOG_SMALLSPACING_H, 0, INFO_FIELDS_1_H, 0 },
+    { DRT(RTLB, PUSHBUTTON) }
+};
+
+static const DIALOG_CONTROL_ID
+info_web_argmap[] = { INFO_ID_WEB };
+
+static const DIALOG_CONTROL_DATA_PUSH_COMMAND
+info_web_command = { T5_CMD_HELP_URL, OBJECT_ID_SKEL, NULL, info_web_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+info_web_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_WEB_BUTTON), &info_web_command };
 
 static const DIALOG_CONTROL
 info_user_1 =
@@ -231,23 +271,28 @@ info_regno_2 =
 static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
 info_regno_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
-static const DIALOG_CONTROL
-info_web =
+static const DIALOG_CTL_CREATE
+info_ctl_create_sans_extra[] =
 {
-    INFO_ID_WEB, DIALOG_MAIN_GROUP,
-    { INFO_ID_VERSION_2, INFO_ID_REGNO_2, INFO_ID_VERSION_2 },
-    { 0, DIALOG_STDSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, PUSHBUTTON) }
+    { &dialog_main_group },
+
+    { &info_name_1, &info_name_1_data },
+    { &info_name_2, &info_name_2_data },
+    { &info_author_1, &info_author_1_data },
+    { &info_author_2, &info_author_2_data },
+
+    { &info_version_1, &info_version_1_data },
+    { &info_version_2_sans_extra, &info_version_2_data },
+
+    { &info_picture, &info_picture_data },
+    { &info_web, &info_web_data },
+
+    { &info_user_1, &info_user_1_data },
+    { &info_user_2, &info_user_2_data },
+    { &info_organ, &info_organ_data },
+    { &info_regno_1, &info_regno_1_data },
+    { &info_regno_2, &info_regno_2_data }
 };
-
-static const DIALOG_CONTROL_ID
-info_web_argmap[] = { INFO_ID_WEB };
-
-static const DIALOG_CONTROL_DATA_PUSH_COMMAND
-info_web_command = { T5_CMD_HELP_URL, OBJECT_ID_SKEL, NULL, info_web_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-info_web_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_WEB_BUTTON), &info_web_command };
 
 static const DIALOG_CTL_CREATE
 info_ctl_create[] =
@@ -258,16 +303,20 @@ info_ctl_create[] =
     { &info_name_2, &info_name_2_data },
     { &info_author_1, &info_author_1_data },
     { &info_author_2, &info_author_2_data },
+
     { &info_extra_bumph, &info_extra_bumph_data },
+
     { &info_version_1, &info_version_1_data },
     { &info_version_2, &info_version_2_data },
+
+    { &info_picture, &info_picture_data },
+    { &info_web, &info_web_data },
+
     { &info_user_1, &info_user_1_data },
     { &info_user_2, &info_user_2_data },
     { &info_organ, &info_organ_data },
     { &info_regno_1, &info_regno_1_data },
-    { &info_regno_2, &info_regno_2_data },
-
-    { &info_web, &info_web_data }
+    { &info_regno_2, &info_regno_2_data }
 };
 
 _Check_return_
@@ -302,6 +351,7 @@ t5_cmd_info(
     _DocuRef_   P_DOCU p_docu)
 {
     STATUS status;
+    U32 n_strip = 0;
     QUICK_TBLOCK_WITH_BUFFER(version_quick_tblock, 64);
     quick_tblock_with_buffer_setup(version_quick_tblock);
 
@@ -338,8 +388,22 @@ t5_cmd_info(
         }
     }
 
-    info_user_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    info_user_2_data.caption.text.tstr = user_id();
+    {
+    PCTSTR tstr = user_id();
+    if(CH_NULL != tstr[0])
+    {
+        info_user_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
+        info_user_2_data.caption.text.tstr = user_id();
+    }
+    else
+    {
+        info_user_2_data.caption.type = UI_TEXT_TYPE_RESID;
+        info_user_2_data.caption.text.resource_id = MSG_SKEL_NO_USER_ID;
+
+        /* and try omitting the user info block */
+        n_strip = 5;
+    }
+    } /*block*/
 
     info_organ_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
     info_organ_data.caption.text.tstr = user_organ_id();
@@ -349,7 +413,16 @@ t5_cmd_info(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create, elemof32(info_ctl_create), 0);
+#if RISCOS
+    if(!has_real_database)
+    {
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create_sans_extra, elemof32(info_ctl_create_sans_extra) - n_strip, 0);
+    }
+#endif
+    else
+    {
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create, elemof32(info_ctl_create) - n_strip, 0);
+    }
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_INFO_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_info;
@@ -660,9 +733,9 @@ query_quit(
     /* if not aborted then all modified documents either saved or ignored - delete all documents (must be at least one) */
     if(STATUS_FAIL != completion_code)
     {
-#if WINDOWS && defined(USE_GLOBAL_CLIPBOARD)
-        host_release_global_clipboard(TRUE); /* doing it now avoids any deferred clipboard rendering request */
-#endif
+#if defined(USE_GLOBAL_CLIPBOARD)
+        host_release_global_clipboard(TRUE); /* doing it now avoids any deferred clipboard rendering request */ /* harmless on RISC OS */
+#endif /* USE_GLOBAL_CLIPBOARD */
 
         docno_close_all();
 

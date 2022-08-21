@@ -47,12 +47,21 @@ internal functions
 
 #if RISCOS
 
-typedef struct RISCOS_BOUND_MSGS
+typedef struct RISCOS_MSGS_INDEX
+{
+    PC_U8Z tag;
+    U32 tag_length;
+}
+RISCOS_MSGS_INDEX, * P_RISCOS_MSGS_INDEX;
+
+typedef struct RISCOS_MSGS
 {
     PC_U8 msgs_block;
     PC_U8 lookup_ptr;
+    P_RISCOS_MSGS_INDEX msgs_index;
+    U32 n_msgs;
 }
-RISCOS_BOUND_MSGS, * P_RISCOS_BOUND_MSGS;
+RISCOS_MSGS, * P_RISCOS_MSGS;
 
 typedef struct RISCOS_LOADED_SPRITES
 {
@@ -70,13 +79,13 @@ RISCOS_LOADED_SPRITES, * P_RISCOS_LOADED_SPRITES;
 
 typedef struct RESOURCE_STATICS
 {
-    PCTSTR p_str_dll_store;
+    PCTSTR tstr_dll_store;
     ARRAY_HANDLE bitmap_index;
 
 #if RISCOS
     struct RESOURCE_STATICS_WINDOWS
     {
-        RISCOS_BOUND_MSGS mangled_msgs[MAX_OBJECTS];
+        RISCOS_MSGS mangled_msgs[MAX_OBJECTS];
         RISCOS_LOADED_SPRITES sprites[MAX_OBJECTS];
     } riscos;
 #elif WINDOWS
@@ -106,7 +115,12 @@ _Ret_z_
 static PCTSTR
 riscos_msg_lookup_in(
     PCTSTR tag_and_default,
-    /*inout*/ P_RISCOS_BOUND_MSGS p_msgs);
+    /*inout*/ P_RISCOS_MSGS p_msgs);
+
+_Check_return_
+static STATUS
+riscos_msg_init(
+    _InRef_     P_RISCOS_MSGS p_msgs);
 
 #endif /* RISCOS */
 
@@ -596,9 +610,9 @@ resource_dll_find(
 
     assert(IS_OBJECT_ID_VALID(object_id));
 
-    consume_int(tstr_xsnprintf(name, elemof32(name), resource_statics.p_str_dll_store, (U32) object_id));
+    consume_int(tstr_xsnprintf(name, elemof32(name), resource_statics.tstr_dll_store, (U32) object_id));
 
-    if(file_find_on_path(tstr_buf, elemof_buffer, name) > 0)
+    if(file_find_on_path(tstr_buf, elemof_buffer, file_get_resources_path(), name) > 0)
         return(STATUS_OK);
 
     tstr_buf[0] = CH_NULL;
@@ -659,18 +673,37 @@ resource_init(
     assert(NULL != p_u8_bound_msg);
     resource_statics.riscos.mangled_msgs[object_id].msgs_block = (PC_U8) p_u8_bound_msg;
 
+    if(NULL != p_u8_bound_msg)
+    {
+        if(LOAD_MESSAGES == p_u8_bound_msg)
+        {
+            status_return(resource_load_messages(object_id));
+        }
+        else
+        {
+            riscos_msg_init(&resource_statics.riscos.mangled_msgs[object_id]);
+        }
+    }
+
     if(NULL != p_bound)
     {
-        /* load common sprites */
-        if(p_bound->sprite_area_c)
-            resource_statics.riscos.sprites[object_id].s_c = p_bound->sprite_area_c;
+        if(LOAD_RESOURCES == p_bound)
+        {
+            status_return(resource_load_appropriate_sprites(object_id));
+        }
+        else
+        {
+            /* load common sprites */
+            if(p_bound->sprite_area_c)
+                resource_statics.riscos.sprites[object_id].s_c = p_bound->sprite_area_c;
 
-        /* load mode-dependent sprites */
-        if(p_bound->sprite_area_22)
-            resource_statics.riscos.sprites[object_id].s_22 = p_bound->sprite_area_22;
+            /* load mode-dependent sprites */
+            if(p_bound->sprite_area_22)
+                resource_statics.riscos.sprites[object_id].s_22 = p_bound->sprite_area_22;
 
-        if(p_bound->sprite_area_24)
-            resource_statics.riscos.sprites[object_id].s_24 = p_bound->sprite_area_24;
+            if(p_bound->sprite_area_24)
+                resource_statics.riscos.sprites[object_id].s_24 = p_bound->sprite_area_24;
+        }
     }
 #elif WINDOWS
     UNREFERENCED_PARAMETER_CONST(p_u8_bound_msg);
@@ -752,12 +785,43 @@ riscos_sprite_readfile_into(
 }
 
 _Check_return_
+static STATUS
+resource_find_sprites(
+    _Out_writes_(elemof_buffer) PTSTR buffer,
+    U32 elemof_buffer,
+    _InVal_     OBJECT_ID object_id,
+    _In_        UINT which)
+{
+    TCHARZ name[BUF_MAX_PATHSTRING];
+
+    if(NULL == _kernel_getenv("Wimp$IconTheme", name, elemof32(name)))
+    {
+        const U32 used = strlen(name);
+
+        consume_int(snprintf(name + used, elemof32(name) - used,
+                             "Sprites%.2u" FILE_DIR_SEP_TSTR "Ob%.2u",
+                             (unsigned int) which, (unsigned int) object_id));
+
+        if(file_find_on_path(buffer, elemof_buffer, file_get_resources_path(), name) > 0)
+            return(STATUS_DONE);
+    }
+
+    consume_int(snprintf(name, elemof32(name),
+                         "Sprites%.2u" FILE_DIR_SEP_TSTR "Ob%.2u",
+                         (unsigned int) which, (unsigned int) object_id));
+
+    if(file_find_on_path(buffer, elemof_buffer, file_get_resources_path(), name) > 0)
+        return(STATUS_DONE);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
 extern STATUS
 resource_load_sprites(
     _InVal_     OBJECT_ID object_id,
     _In_        UINT which)
 {
-    TCHARZ name[BUF_MAX_PATHSTRING];
     TCHARZ resource_file[BUF_MAX_PATHSTRING];
     STATUS status = STATUS_OK;
 
@@ -767,25 +831,50 @@ resource_load_sprites(
         break;
 
     case 24:
-        /* same as below if you can be bothered, just replace 22 by 24 */
+        if(status_done(resource_find_sprites(resource_file, elemof32(resource_file), object_id, which)))
+        {
+            reportf("resource_load_sprites(%u): load %s", object_id, resource_file);
+            riscos_sprite_readfile_into(resource_file, &resource_statics.riscos.sprites[object_id].s_24);
+            resource_statics.riscos.sprites[object_id].loaded_24 = 1;
+            return(STATUS_DONE);
+        }
+
         break;
 
     case 22:
-        strcat(strcpy(resource_file, resource_statics.p_str_dll_store), "_22"); /* abuse this convenient store */
-
-        consume_int(snprintf(name, elemof32(name), resource_file, (S32) object_id));
-
-        if(file_find_on_path(resource_file, elemof32(resource_file), name) > 0)
+        if(status_done(resource_find_sprites(resource_file, elemof32(resource_file), object_id, which)))
         {
+            reportf("resource_load_sprites(%u): load %s", object_id, resource_file);
             riscos_sprite_readfile_into(resource_file, &resource_statics.riscos.sprites[object_id].s_22);
             resource_statics.riscos.sprites[object_id].loaded_22 = 1;
-            status = STATUS_DONE;
+            return(STATUS_DONE);
         }
 
         break;
     }
 
+    reportf("resource_load_sprites(%u, %u): no match", object_id, which);
     return(status);
+}
+
+_Check_return_
+extern STATUS
+resource_load_appropriate_sprites(
+    _InVal_     OBJECT_ID object_id)
+{
+    STATUS status;
+    int load_hi_res = (host_modevar_cache_current.XEig < 2) && (host_modevar_cache_current.YEig < 2);
+
+    if(load_hi_res)
+    {
+        if(STATUS_OK != (status = resource_load_sprites(object_id, 22)))
+            return(status);
+    }
+
+    if(STATUS_OK != (status = resource_load_sprites(object_id, 24)))
+        return(status);
+
+    return(ERR_NO_SPRITES);
 }
 
 #endif /* OS */
@@ -834,9 +923,9 @@ resource_shutdown(void)
 
 extern void
 resource_startup(
-    _In_z_      PCTSTR p_str_dll_store)
+    _In_z_      PCTSTR tstr_dll_store)
 {
-    resource_statics.p_str_dll_store = p_str_dll_store;
+    resource_statics.tstr_dll_store = tstr_dll_store;
 }
 
 #if WINDOWS
@@ -1295,15 +1384,52 @@ tstrrncmp(
 _Check_return_
 _Ret_z_
 static PCTSTR
+riscos_msg_lookup_using_index(
+    PCTSTR tag_and_default,
+    /*inout*/ P_RISCOS_MSGS p_msgs)
+{
+    PCTSTR tag = tag_and_default;
+    PCTSTR default_ptr;
+    U32 tag_length;
+    U32 msg_idx;
+
+    if(NULL == (default_ptr = tstrchr(tag_and_default, TAG_DELIMITER)))
+        tag_length = tstrlen32(tag);
+    else
+    {
+        tag_length = default_ptr - tag_and_default;
+        default_ptr++; /* skip delimiter */
+    }
+
+    for(msg_idx = 0; msg_idx < p_msgs->n_msgs; ++msg_idx)
+    {
+        if(p_msgs->msgs_index[msg_idx].tag_length != tag_length)
+            continue;
+
+        /*reportf("lookup(%s) tag:msg %s", tag, p_msgs->msgs_index[msg_idx].tag);*/
+        if(0 == memcmp(tag, p_msgs->msgs_index[msg_idx].tag, tag_length))
+            return(p_msgs->msgs_index[msg_idx].tag + tag_length + 1);
+    }
+
+    /* return the default, or if that fails, the tag */
+    return(default_ptr ? default_ptr : tag_and_default);
+}
+
+_Check_return_
+_Ret_z_
+static PCTSTR
 riscos_msg_lookup_in(
     PCTSTR tag_and_default,
-    /*inout*/ P_RISCOS_BOUND_MSGS p_msgs)
+    /*inout*/ P_RISCOS_MSGS p_msgs)
 {
     PCTSTR tag = tag_and_default;
     U32 tag_length;
     char tag_buffer[msgs_TAG_MAX + 1];
     PCTSTR default_ptr;
     PCTSTR init_lookup_ptr;
+
+    if(NULL != p_msgs->msgs_index)
+        return(riscos_msg_lookup_using_index(tag_and_default, p_msgs));
 
     if(NULL == (default_ptr = tstrchr(tag_and_default, TAG_DELIMITER)))
         tag_length = tstrlen32(tag);
@@ -1316,7 +1442,7 @@ riscos_msg_lookup_in(
     }
 
     /* if there ain't a message block or it's bad then we can't do lookup */
-    if(p_msgs->msgs_block  &&  (p_msgs->msgs_block != INVALID_MSGS_BLOCK))
+    if((NULL != p_msgs->msgs_block)  &&  (p_msgs->msgs_block != INVALID_MSGS_BLOCK))
     {
         init_lookup_ptr = p_msgs->lookup_ptr;
 
@@ -1354,6 +1480,176 @@ riscos_msg_lookup_in(
 
     /* return the default, or if that fails, the tag */
     return(default_ptr ? default_ptr : tag_and_default);
+}
+
+#define MSG_PARSE_STATE_IN_TAG 0
+#define MSG_PARSE_STATE_IN_MESSAGE 1
+#define MSG_PARSE_STATE_IN_COMMENT 2
+
+_Check_return_
+static STATUS
+riscos_msg_init(
+    _InRef_     P_RISCOS_MSGS p_msgs)
+{
+    STATUS status = STATUS_OK;
+    UINT pass;
+
+    if((NULL == p_msgs->msgs_block) || (p_msgs->msgs_block == INVALID_MSGS_BLOCK))
+        return(status);
+
+    /*reportf("riscos_msg_init %s", p_msgs->msgs_block);*/
+
+    for(pass = 1; pass <= 2; ++pass)
+    {
+        U32 n_msgs = 0;
+        int msg_parse_state = MSG_PARSE_STATE_IN_TAG;
+        P_U8 p_u8;
+        P_U8 tag;
+
+        for(p_u8 = tag = de_const_cast(P_U8, p_msgs->msgs_block); ; ++p_u8)
+        {
+            if(*p_u8 < CH_SPACE)
+            {
+                if((2 == pass) && (CH_NULL != *p_u8)) /* avoid writing to preprocessed read-only area */
+                    *p_u8++ = CH_NULL; /* replace any CtrlChar with CH_NULL-termination */
+                else
+                    p_u8++; /* skip CtrlChar */
+
+                if(CH_NULL == *p_u8)
+                {   /* ended this pass of this file of tag,msg pairs */
+                    break;
+                }
+
+                tag = p_u8; /* first character after any newline character */
+                msg_parse_state = MSG_PARSE_STATE_IN_TAG;
+                /* obviously another newline will reset harmlessly */
+                continue;
+            }
+
+            /* ignore ':' in message part */
+            if((TAG_DELIMITER == *p_u8) && (MSG_PARSE_STATE_IN_TAG == msg_parse_state))
+            {
+                /*reportf("[%u] tag:msg %s", pass, report_sbstr(tag));*/
+                if(2 == pass)
+                {
+                    p_msgs->msgs_index[n_msgs].tag = tag;
+                    p_msgs->msgs_index[n_msgs].tag_length = PtrDiffBytesU32(p_u8, tag);
+                }
+
+                msg_parse_state = MSG_PARSE_STATE_IN_MESSAGE;
+
+                ++n_msgs;
+                continue;
+            }
+
+            /* ignore '#' in message part */
+            if((COMMENT_CH == *p_u8) && (MSG_PARSE_STATE_IN_TAG == msg_parse_state))
+            {   /* will skip lines like 'some-chars#more-chars' */
+                msg_parse_state = MSG_PARSE_STATE_IN_COMMENT;
+                continue;
+            }
+        }
+
+        if(1 == pass)
+        {
+            /*U32 n_bytes = PtrDiffBytesU32(p_u8, p_msgs->msgs_block);*/
+            /*reportf("n_msgs[1]: %u %u", n_msgs, n_bytes);*/
+            if(NULL == (p_msgs->msgs_index = al_ptr_calloc_bytes(P_RISCOS_MSGS_INDEX, sizeof32(p_msgs->msgs_index[0]) * n_msgs, &status)))
+                break;
+            p_msgs->n_msgs = n_msgs;
+        }
+        else /* 2 == pass */
+        {   /* sort at some point */
+            /*reportf("n_msgs[2]: %u", n_msgs);*/
+            if(n_msgs != p_msgs->n_msgs) { reportf("n_msgs[2]!=n_msgs[1]"); break; }
+        }
+    }
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+resource_find_messages(
+    _Out_writes_(elemof_buffer) PTSTR buffer,
+    U32 elemof_buffer,
+    _InVal_     OBJECT_ID object_id)
+{
+    TCHARZ name[BUF_MAX_PATHSTRING];
+
+    consume_int(snprintf(name, elemof32(name),
+                         "Messages" FILE_DIR_SEP_TSTR "Ob%.2u",
+                         (unsigned int) object_id));
+
+    if(file_find_on_path(buffer, elemof_buffer, file_get_resources_path(), name) > 0)
+        return(STATUS_DONE);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+riscos_messages_readfile_into(
+    _In_z_      PCTSTR filename,
+    _Out_       P_P_U8 p_p_u8)
+{
+    STATUS status = STATUS_OK;
+    _kernel_swi_regs rs;
+    _kernel_oserror * e;
+
+    *p_p_u8 = NULL;
+
+    rs.r[0] = 17; /*InfoNoPath*/
+    rs.r[1] = (int) filename;
+    void_WrapOsErrorChecking(_kernel_swi(OS_File, &rs, &rs));
+
+    if(rs.r[0] == 1)
+    {
+        const U32 file_length = (U32) rs.r[4]; /* file is sprite area without the length word */
+        P_BYTE p_u8;
+
+        if(NULL != (p_u8 = al_ptr_alloc_bytes(P_U8, file_length + 1, &status)))
+        {
+            rs.r[0] = 16; /*LoadNoPath*/
+            rs.r[1] = (int) filename;
+            rs.r[2] = (int) p_u8;
+            rs.r[3] = 0;
+            if(NULL != (e = WrapOsErrorChecking(_kernel_swi(OS_File, &rs, &rs))))
+            {
+                al_ptr_dispose(P_P_ANY_PEDANTIC(&p_u8));
+            }
+            else
+            {
+                p_u8[file_length] = CH_NULL;
+                *p_p_u8 = p_u8;
+                status = STATUS_DONE;
+            }
+        }
+    }
+
+    return(status);
+}
+
+_Check_return_
+extern STATUS
+resource_load_messages(
+    _InVal_     OBJECT_ID object_id)
+{
+    TCHARZ resource_file[BUF_MAX_PATHSTRING];
+    STATUS status = STATUS_OK;
+
+    if(status_done(resource_find_messages(resource_file, elemof32(resource_file), object_id)))
+    {
+        P_U8 msgs_block = NULL;
+        reportf("resource_load_messages(%u): load %s", object_id, resource_file);
+        status_return(riscos_messages_readfile_into(resource_file, &msgs_block));
+        resource_statics.riscos.mangled_msgs[object_id].msgs_block = msgs_block;
+        riscos_msg_init(&resource_statics.riscos.mangled_msgs[object_id]);
+        return(STATUS_DONE);
+    }
+
+    reportf("resource_load_messages(%u): no match", object_id);
+    return(status);
 }
 
 _Check_return_

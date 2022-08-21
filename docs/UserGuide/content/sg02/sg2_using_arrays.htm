@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>Using arrays</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Using arrays" />
+    </object>
+
+    <h1><a name="using_arrays" id="using_arrays"></a>Using arrays</h1>
+
+    <p>You can use <a href="sg2_arrays.htm">arrays</a> for a number of different purposes.</p>
+
+    <h2>Matrices and complex numbers</h2>
+
+    <p>Arrays may be used for entering complex numbers and matrices in your worksheet. For example the matrix would be expressed as an array:</p>
+
+    <p>{5,4,2;3,4,8}</p>
+
+    <p>or if the values were entered in cells A1 to C2 you could express it as A1:C2.</p>
+
+    <p>But the cell containing it would display the following:</p>
+
+    <p>5</p>
+
+    <p>Most matrix and complex number functions return an array as their result.</p>
+
+    <h2>Batch processing</h2>
+
+    <p>Arrays can be used to automate data processing and reduce the number of formulae which you have to create. For example, if a worksheet consists of three columns of numbers, and each row needs to be totalled, you could write a SUM formula in each row, or you could use arrays to simplify the process.</p>
+
+    <p>If you used arrays you could write the following formula:</p>
+
+    <p>A1:A10+B1:B10+C1:C10</p>
+
+    <p>This would create an array of ten rows and one column. Each element would be the result of the formula A1+B1+C1, A2+B2+C2, etc. Again you would need to use SET_VALUE to display the results on the worksheet, so your actual formula would look like:</p>
+
+    <p>SET_VALUE(D1:D10, A1:A10+B1:B10+C1:C10)</p>
+
+    <p>The advantages of this approach are that you save on the memory required to store all the separate SUM functions which you could have used, and all the individual cell references involved. If you inserted a new row between, say, rows 5 and 6, it would automatically be included in the calculation.</p>
+
+    <p>The disadvantage is that if you change any element of the data, the whole block has to recalculate rather than just one row. This slows down recalculation.</p>
+
+    <h2>Arrays as parameters to functions</h2>
+
+    <p>Arrays can be used as the parameters to a wide range of functions.</p>
+
+    <p>Some functions understand arrays and automatically process them. These are the same functions which can process ranges. For example:</p>
+
+    <p>SUM(A1)</p>
+
+    <p>adds all the elements in the array stored in cell A1.</p>
+
+    <p>Functions which do not expect arrays process each array element individually and return those results in an array of the same size as that passed to them. For example:</p>
+
+    <p>SIN(A1:A10)</p>
+
+    <p>returns the array {SIN(A1), SIN(A2) ... SIN(A10)}. This is referred to as automatic array processing.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

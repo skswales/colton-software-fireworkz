@@ -312,6 +312,7 @@ enum __ss_function_indices
     SS_SPLIT_ODF_INT,
     SS_SPLIT_ODF_IRR,
     SS_SPLIT_ODF_LOG10,
+    SS_SPLIT_ODF_MOD,
     SS_SPLIT_ODF_PMT,
     SS_SPLIT_ODF_TDIST,
     SS_SPLIT_ODF_TYPE,

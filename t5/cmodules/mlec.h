@@ -155,7 +155,7 @@ mlec_area_update(
     _InRef_     PC_GDI_BOX p_screen);
 
 extern void
-mlec__click_core(
+mlec__Mouse_Click(
     MLEC mlec,
     P_GDI_POINT p_origin,
     _In_        const WimpMouseClickEvent * const p_mouse_click);
@@ -168,9 +168,15 @@ mlec__drag_core(
 
 _Check_return_
 extern STATUS
-mlec__key_core(
+mlec__Key_Pressed(
     MLEC mlec,
     _In_        KMAP_CODE kmap_code);
+
+_Check_return_
+extern STATUS
+mlec__User_Message(
+    MLEC mlec,
+    _InRef_     PC_WimpMessage p_wimp_message);
 
 extern void
 mlec__redraw_core(
@@ -192,27 +198,30 @@ extern void
 mlec__selection_delete(
     MLEC mlec);
 
-#define MLEC_CODE_NONE         0
-#define MLEC_CODE_OPEN         1
-#define MLEC_CODE_CLOSE        2
-#define MLEC_CODE_KEY_RETURN   3
-#define MLEC_CODE_KEY_ESCAPE   4
-#define MLEC_CODE_CLICK        5
-#define MLEC_CODE_IsWorkAreaChanged 6
-#define MLEC_CODE_UPDATELATER  7
-#define MLEC_CODE_PLACECARET   8
-#define MLEC_CODE_CLAIMFOCUS   9
-#define MLEC_CODE_RELEASEFOCUS 0x0A
-#define MLEC_CODE_STARTDRAG    0x0B
-#define MLEC_CODE_UPDATENOW    0x0C
-#define MLEC_CODE_SCROLL       0x0D
-#define MLEC_CODE_STARTEDDRAG  0x0E
-#define MLEC_CODE_QUERYSCROLL  0x0F
-#define MLEC_CODE_DOSCROLL     0x10
-#define MLEC_CODE_UPDATE       0x11
-#define MLEC_CODE_KEY          0x12
-
-#define mlec_event_reason_code int
+typedef enum mlec_event_reason_code
+{
+    MLEC_CODE_NONE                 = 0,
+    MLEC_CODE_OPEN_WINDOW_REQUEST  = 1,
+    MLEC_CODE_CLOSE_WINDOW_REQUEST = 2,
+    MLEC_CODE_KEY_RETURN           = 3,
+    MLEC_CODE_KEY_ESCAPE           = 4,
+    MLEC_CODE_MOUSE_CLICK          = 5,
+    MLEC_CODE_IsWorkAreaChanged    = 6,
+    MLEC_CODE_UPDATELATER          = 7,
+    MLEC_CODE_PLACECARET           = 8,
+    MLEC_CODE_CLAIMFOCUS           = 9,
+    MLEC_CODE_RELEASEFOCUS         = 0x0A,
+    MLEC_CODE_STARTDRAG            = 0x0B,
+    MLEC_CODE_UPDATENOW            = 0x0C,
+    MLEC_CODE_SCROLL               = 0x0D,
+    MLEC_CODE_STARTEDDRAG          = 0x0E,
+    MLEC_CODE_QUERYSCROLL          = 0x0F,
+    MLEC_CODE_DOSCROLL             = 0x10,
+    MLEC_CODE_UPDATE               = 0x11,
+    MLEC_CODE_KEY                  = 0x12,
+    MLEC_CODE_PASTEATCARET         = 0x13
+}
+mlec_event_reason_code;
 
     /* from IsWorkAreaChanged */
 #define mlec_event_workareachanged 0x60

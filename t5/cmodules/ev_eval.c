@@ -4277,7 +4277,7 @@ stack_grow(
         if(0 == n_spaces)
              new_stack_size = STACK_INC; /* reduce to minimum */
         else
-             new_stack_size = STACK_INC * (div_round_ceil_u((stack_offset + 1U) + n_spaces, STACK_INC));
+             new_stack_size = STACK_INC * (idiv_ceil_u((stack_offset + 1U) + n_spaces, STACK_INC));
 
         if(new_stack_size != old_stack_size)
         {

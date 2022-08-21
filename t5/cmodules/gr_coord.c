@@ -224,10 +224,10 @@ gdi_rect_clip_mesh(
     _InRef_     PC_GDI_RECT p_clip_rect,
     _InRef_     PC_GDI_SIZE meshsize)
 {
-    p_rect->tl.x = div_round_floor(p_clip_rect->tl.x, meshsize->cx);
-    p_rect->tl.y = div_round_floor(p_clip_rect->tl.y, meshsize->cy);
-    p_rect->br.x = div_round_ceil( p_clip_rect->br.x, meshsize->cx);
-    p_rect->br.y = div_round_ceil( p_clip_rect->br.y, meshsize->cy);
+    p_rect->tl.x = idiv_floor(p_clip_rect->tl.x, meshsize->cx);
+    p_rect->tl.y = idiv_floor(p_clip_rect->tl.y, meshsize->cy);
+    p_rect->br.x = idiv_ceil( p_clip_rect->br.x, meshsize->cx);
+    p_rect->br.y = idiv_ceil( p_clip_rect->br.y, meshsize->cy);
 }
 
 #if defined(UNUSED_KEEP_ALIVE)
@@ -477,8 +477,8 @@ gdi_point_mesh_hit(
     _InRef_     PC_GDI_POINT testpoint,
     _InRef_     PC_GDI_SIZE meshsize)
 {
-    meshpoint->x = div_round_floor(testpoint->x, meshsize->cx);
-    meshpoint->y = div_round_floor(testpoint->y, meshsize->cy);
+    meshpoint->x = idiv_floor(testpoint->x, meshsize->cx);
+    meshpoint->y = idiv_floor(testpoint->y, meshsize->cy);
 }
 
 #if defined(UNUSED_KEEP_ALIVE)

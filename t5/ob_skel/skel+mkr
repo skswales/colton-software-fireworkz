@@ -11,28 +11,22 @@ OBJID=00
 # Copyright (C) 1998-2015 R W Colton
 
 # Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY)-msg
+$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY).msg
  Basic -quit $(RCGen) -output $@ -from $? -object 00
 
 # RISC OS bound messages
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00: $(T5).ob_skel.resource.$(COUNTRY)-msg
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00: $(T5).ob_skel.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -symbol rb_skel_msg_weak
 
-# RISC OS bound sprites
-$(BUILD_DIR).ob_skel.riscos.o.bs_00: $(T5).ob_skel.resource.spr
- $(MAKEAOF) -to $@ -from $? -symbol rb_skel_spr_weak -spritearea
-# may have to avoid putting these vvv in a const segment if it goes read-only
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s22: $(T5).ob_skel.resource.$(COUNTRY)-spr22
- $(MAKEAOF) -to $@ -from $? -symbol rb_skel_spr_22_weak -spritearea
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s24: $(T5).ob_skel.resource.$(COUNTRY)-spr24
- $(MAKEAOF) -to $@ -from $? -symbol rb_skel_spr_24_weak -spritearea
+# RISC OS loaded sprites
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob00: $(T5).ob_skel.resource.$(COUNTRY).spr22
+ Copy $? $@ ~C FV
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob00: $(T5).ob_skel.resource.$(COUNTRY).spr24
+ Copy $? $@ ~C FV
 
 OBJS_00_X=\
 $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00 \
-$(BUILD_DIR).ob_skel.riscos.o.bs_00 \
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s22 \
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s24 \
 
 $(PROD_BUILD_DIR).o.$(COUNTRY)-M00: $(OBJS_00_X)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_00_X)
@@ -216,7 +210,10 @@ $(BUILD_DIR).ob_skel.riscos.o.ho_dll: $(T5).cmodules.riscos.c.ho_dll
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.ho_sqush: $(T5).cmodules.riscos.c.ho_sqush
  $(CC) -o $@ $(ccflags) $?
-$(BUILD_DIR).ob_skel.riscos.o.muldivas: $(T5).cmodules.riscos.c.muldivas
+$(BUILD_DIR).ob_skel.riscos.o.muldivas: $(T5).cmodules.riscos.s.muldivas
+ Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
+ $(AS) -o $@ $(ASflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.myrand: $(T5).cmodules.riscos.s.myrand
  Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
  $(AS) -o $@ $(ASflags) $?
 
@@ -224,14 +221,14 @@ $(BUILD_DIR).ob_skel.riscos.o.colourpick: $(T5).ob_skel.riscos.c.colourpick
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.cs-flex: $(T5).ob_skel.riscos.c.cs-flex
  $(CC) -o $@ $(ccflags) $?
-$(BUILD_DIR).ob_skel.riscos.o.cs-pollfpm: $(T5).ob_skel.riscos.c.cs-pollfpm
+$(BUILD_DIR).ob_skel.riscos.o.cs-poll: $(T5).ob_skel.riscos.s.cs-poll
  Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
  $(AS) -o $@ $(ASflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.cs-winx: $(T5).ob_skel.riscos.c.cs-winx
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.host: $(T5).ob_skel.riscos.c.host
  $(CC) -o $@ $(ccflags) $?
-$(BUILD_DIR).ob_skel.riscos.o.ho_asm: $(T5).ob_skel.riscos.c.ho_asm
+$(BUILD_DIR).ob_skel.riscos.o.ho_asm: $(T5).ob_skel.riscos.s.ho_asm
  Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
  $(AS) -o $@ $(ASflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.ho_core: $(T5).ob_skel.riscos.c.ho_core
@@ -254,7 +251,7 @@ $(BUILD_DIR).ob_skel.riscos.o.main: $(T5).ob_skel.riscos.c.main
 SKEL_SA=\
 $(BUILD_DIR).ob_skel.riscos.o.colourpick \
 $(BUILD_DIR).ob_skel.riscos.o.cs-flex \
-$(BUILD_DIR).ob_skel.riscos.o.cs-pollfpm \
+$(BUILD_DIR).ob_skel.riscos.o.cs-poll \
 $(BUILD_DIR).ob_skel.riscos.o.cs-winx \
 $(BUILD_DIR).ob_skel.riscos.o.host \
 $(BUILD_DIR).ob_skel.riscos.o.ho_asm \
@@ -269,6 +266,7 @@ $(BUILD_DIR).ob_skel.riscos.o.main \
 $(BUILD_DIR).ob_skel.riscos.o.ho_dll \
 $(BUILD_DIR).ob_skel.riscos.o.ho_sqush \
 $(BUILD_DIR).ob_skel.riscos.o.muldivas \
+$(BUILD_DIR).ob_skel.riscos.o.myrand \
 
 SKEL_SB=\
 $(BUILD_DIR).ob_skel.o.arglist \

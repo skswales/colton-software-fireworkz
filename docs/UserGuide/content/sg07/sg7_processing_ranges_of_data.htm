@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>Processing ranges of data</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Using custom functions to process ranges of data" />
+        <param name="Keyword" value="Custom functions, processing ranges of data" />
+    </object>
+
+    <h1><a name="processing_ranges_of_data" id="processing_ranges_of_data"></a>Processing ranges of data</h1>
+
+    <p>You can use custom functions to process arrays of data or ranges of cells. The example Total, in the directory Custom in the Examples archive, illustrates this use of custom functions. It returns the sum of the numbers contained in the first column of the range of cells. It can be used as the starting point for your own custom functions which process ranges of cells.</p>
+
+    <p>Cell <code>A4 SET_NAME(&quot;sumtotal&quot;, D4)</code> creates a name sumtotal and defines it to refer to the cell <code>D4</code>.</p>
+
+    <p>Cell <code>A5 SET_VALUE(&quot;sumtotal&quot;, 0)</code> sets the value of sumtotal (i.e. <code>D4</code>) to <code>0</code>. Note the use of quotes in <code>A4</code> and their absence in <code>A5</code>.</p>
+
+    <p>In cell <code>A8, FOR(&quot;i&quot;, 1, rows(@list))</code>, the part <code>rows(@list)</code> returns the number of rows in the array.</p>
+
+    <p>Cell <code>A9 ...index(@list, 1, i)</code> returns the <i>i</i>-th element of the array to be added to the total.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg7_custom_function_control_statements.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="sg7_custom_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg7_recalculation_and_custom_function_sheets.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

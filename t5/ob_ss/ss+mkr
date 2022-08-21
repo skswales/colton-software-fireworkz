@@ -11,19 +11,19 @@ OBJID=01
 # Copyright (C) 1998-2015 R W Colton
 
 # Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY)-msg
+$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY).msg
  Basic -quit $(RCGen) -output $@ -from $? -object 01 -base &2000
 
 # RISC OS bound messages
-$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01: $(T5).ob_ss.resource.$(COUNTRY)-msg
+$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01: $(T5).ob_ss.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -symbol rb_ss_msg_weak
 
-# RISC OS bound sprites
-$(BUILD_DIR).ob_ss.o.b22_01: $(T5).ob_ss.resource.spr22
- $(MAKEAOF) -to $@ -from $? -symbol rb_ss_spr_22_weak -spritearea
-$(BUILD_DIR).ob_ss.o.b24_01: $(T5).ob_ss.resource.spr24
- $(MAKEAOF) -to $@ -from $? -symbol rb_ss_spr_24_weak -spritearea
+# RISC OS loaded sprites
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob01: $(T5).ob_ss.resource.$(COUNTRY).spr22
+ Copy $? $@ ~C FV
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob01: $(T5).ob_ss.resource.$(COUNTRY).spr24
+ Copy $? $@ ~C FV
 
 $(BUILD_DIR).ob_ss.o.ob_ss: $(T5).ob_ss.c.ob_ss
  $(CC) -o $@ $(ccflags) $?
@@ -109,7 +109,7 @@ $(BUILD_DIR).ob_ss.o.e_j0: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_j0
 $(BUILD_DIR).ob_ss.o.e_j1: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_j1
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.e_jn: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_jn
- $(CC) -o $@ $(ccflags) $?
+ $(CC) -o $@ $(ccflags) -wl $?
 $(BUILD_DIR).ob_ss.o.k_cos: $(T5).external.FreeBSD.srcp.lib.msun.src.c.k_cos
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.k_sin: $(T5).external.FreeBSD.srcp.lib.msun.src.c.k_sin
@@ -156,7 +156,7 @@ $(BUILD_DIR).ob_ss.o.e_j0 \
 $(BUILD_DIR).ob_ss.o.e_j1 \
 $(BUILD_DIR).ob_ss.o.e_jn \
 
-OBJS_01_X=$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01 $(BUILD_DIR).ob_ss.o.b22_01 $(BUILD_DIR).ob_ss.o.b24_01
+OBJS_01_X=$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01
 
 $(PROD_BUILD_DIR).o.$(COUNTRY)-M01: $(OBJS_01_X) $(OBJS_01_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_01_X) $(OBJS_01_S)

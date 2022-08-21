@@ -57,7 +57,7 @@ typedef S32 EV_ROW;
 #define EV_MAX_COL          ((EV_COL) 1 << (EV_COL_BITS - 1 - 1))   /* extra -1 for sign bit */
 #define EV_MAX_ROW          ((EV_ROW) 1 << (EV_ROW_BITS - 1 - 1))
 
-#define EV_MAX_ARRAY_ELES   0x8000000   /* maximum number of array elements */
+#define EV_MAX_ARRAY_ELES   0x08000000  /* maximum number of array elements */
 
 #define EV_MAX_SLR_LEN      (1/*%*/ + 1/*$*/ + 4/*cols*/ + 1/*$*/ + 10/*rows*/)
 #define BUF_EV_MAX_SLR_LEN  (EV_MAX_SLR_LEN + 1)
@@ -638,7 +638,7 @@ ss_string_skip_leading_whitespace(
 
 _Check_return_
 extern U32
-str_hlp_skip_leading_whitespace(
+ss_string_skip_leading_whitespace_uchars(
     _In_reads_(uchars_n) PC_UCHARS uchars,
     _InRef_     U32 uchars_n);
 

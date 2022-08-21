@@ -1305,6 +1305,8 @@ dialog_current_set(
 #endif
 
 #if RISCOS
+    riscos_claim_caret();
+
     {
     WimpCaret caretstr;
     caretstr.window_handle = p_dialog->hwnd;
@@ -1313,7 +1315,7 @@ dialog_current_set(
     caretstr.yoffset = 0;
     caretstr.height = 1 << 25; /* invisible */
     caretstr.index = 0;
-    void_WrapOsErrorReporting(wimp_set_caret_position_block(&caretstr));
+    void_WrapOsErrorReporting(winx_set_caret_position(&caretstr));
     } /*block*/
 #endif
 
@@ -1580,7 +1582,7 @@ dialog_dbox_process_focus_steal(
     p_dialog->stolen_focus = 1;
 
 #if RISCOS
-    void_WrapOsErrorReporting(wimp_get_caret_position(&p_dialog->riscos.stolen_focus_caretstr));
+    void_WrapOsErrorReporting(winx_get_caret_position(&p_dialog->riscos.stolen_focus_caretstr));
 #endif
 
     /* is it one of our documents that we have stolen from? */
@@ -1629,7 +1631,7 @@ dialog_dbox_process_focus_return_pre(
     {
         WimpCaret caretstr;
 
-        void_WrapOsErrorReporting(wimp_get_caret_position(&caretstr));
+        void_WrapOsErrorReporting(winx_get_caret_position(&caretstr));
 
         if(caretstr.window_handle != p_dialog->hwnd)
         {
@@ -1670,9 +1672,11 @@ dialog_dbox_process_focus_return_post(
             WimpGetWindowStateBlock window_state;
 
             window_state.window_handle = p_dialog->riscos.stolen_focus_caretstr.window_handle;
-            if(!wimp_get_window_state(&window_state))
-                if(WimpWindow_Open & window_state.flags)
-                    void_WrapOsErrorReporting(wimp_set_caret_position_block(&p_dialog->riscos.stolen_focus_caretstr));
+            if(NULL == wimp_get_window_state(&window_state))
+            {
+                if(0 != (WimpWindow_Open & window_state.flags))
+                    void_WrapOsErrorReporting(winx_set_caret_position(&p_dialog->riscos.stolen_focus_caretstr));
+            }
         }
 #endif
     }
@@ -1754,8 +1758,8 @@ dialog_dbox_process_riscos(
     gdi_size.cy = gdi_box.y1 - gdi_box.y0;
 
     /* round size to worst possible pixel granularity */
-    gdi_size.cx = 4 * div_round_ceil_u(gdi_size.cx, 4);
-    gdi_size.cy = 4 * div_round_ceil_u(gdi_size.cy, 4);
+    gdi_size.cx = 4 * idiv_ceil_u(gdi_size.cx, 4);
+    gdi_size.cy = 4 * idiv_ceil_u(gdi_size.cy, 4);
 
     menu_requested = p_dialog_cmd_process_dbox->bits.use_riscos_menu
                    ? p_dialog_cmd_process_dbox->riscos.menu
@@ -1791,8 +1795,8 @@ dialog_dbox_process_riscos(
         gdi_tl.y = (screen_gdi_size.cy + gdi_size.cy) / 2;
 
         /* round posn to worst possible pixel granularity */
-        gdi_tl.x = 4 * div_round_floor(gdi_tl.x, 4);
-        gdi_tl.y = 4 * div_round_floor(gdi_tl.y, 4);
+        gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
+        gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
         break;
 
     default: default_unhandled();
@@ -1826,8 +1830,8 @@ dialog_dbox_process_riscos(
                 gdi_tl.y = m.y + 64 /*32*/;
 
                 /* round posn to worst possible pixel granularity */
-                gdi_tl.x = 4 * div_round_floor(gdi_tl.x, 4);
-                gdi_tl.y = 4 * div_round_floor(gdi_tl.y, 4);
+                gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
+                gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
             }
             break;
         }

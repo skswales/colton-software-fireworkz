@@ -263,6 +263,66 @@
     <Filter Include="Docs\Windows\HTMLHelp">
       <UniqueIdentifier>{c86fd575-e66f-46fe-89d7-34eac87ce040}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Docs\html\ug\ug90">
+      <UniqueIdentifier>{1cdcac3f-3174-4628-8f8c-920a8b654508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\bitmaps">
+      <UniqueIdentifier>{6cb124ab-9b20-484f-8393-63abf140b3d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_resource\bitmaps">
+      <UniqueIdentifier>{e6df61eb-2068-464e-8df6-5e276c27daaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_resource\bitmaps">
+      <UniqueIdentifier>{7185090b-f7d4-4498-910d-809262be2868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\cursors">
+      <UniqueIdentifier>{86586a10-b327-4e9f-9466-efde4f3b1f65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_database">
+      <UniqueIdentifier>{1d696de1-be0d-4abe-8f7e-099b400eee7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_trigonometrical">
+      <UniqueIdentifier>{7bb6e9c3-d569-49de-89d5-77ad4dc62d8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_compatibility">
+      <UniqueIdentifier>{6b350e6f-fe8c-4c27-ae67-b8efc98a8336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_date_time">
+      <UniqueIdentifier>{c5229fd6-1ab5-4912-8cd5-193ce0000a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_logical">
+      <UniqueIdentifier>{659676e3-f8e0-48f6-853b-5d4a790ad9b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_miscellaneous">
+      <UniqueIdentifier>{8c9dd600-0d58-4c5e-ad88-7613e0de12a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_statistical">
+      <UniqueIdentifier>{4f96b665-959a-44e0-bbbe-84ce0d624283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_matrix">
+      <UniqueIdentifier>{b735a126-8daf-40fc-9a96-4b76261e8b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_mathematical">
+      <UniqueIdentifier>{842f743e-124d-4dbe-a9a1-8e6f2c8f231e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_financial">
+      <UniqueIdentifier>{4a293042-9f44-44e5-8d32-a4e6a3e8f147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_string">
+      <UniqueIdentifier>{46e95858-c2cb-4089-b546-a3b3ed419af1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_lookup">
+      <UniqueIdentifier>{34fd2442-4c9f-49d8-be26-904dcedce697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6\sg6_engineering">
+      <UniqueIdentifier>{671b4854-66c2-45a0-9fe3-45b288395d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\RISC OS\GSGuide\content">
+      <UniqueIdentifier>{7888b750-5866-4e18-b340-13840dbf9558}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\Windows\GSGuide\content">
+      <UniqueIdentifier>{4b5b6168-63b5-408d-87b2-4e4d4de9f4c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\fl_123\fl_123.c">
@@ -583,10 +643,7 @@
     <ClCompile Include="..\..\cmodules\alloc.c">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\flex.c">
-      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ob_skel\riscos\ho_asm.c">
+    <ClCompile Include="..\..\ob_skel\riscos\ho_asm.s">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ob_skel\riscos\ho_core.c">
@@ -619,19 +676,10 @@
     <ClCompile Include="..\..\ob_skel\riscos\main.c">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\muldivas.c">
+    <ClCompile Include="..\..\cmodules\riscos\muldivas.s">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ob_skel\riscos\nsx.c">
-      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\profile.c">
-      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\win.c">
-      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\riscos\winxtra.c">
+    <ClCompile Include="..\..\ob_skel\riscos\nsx.s">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ob_skel\windows\ho_color.c">
@@ -1107,6 +1155,33 @@
     </ClCompile>
     <ClCompile Include="..\..\..\fprowrkz\fprowrkz\fprowrkz.c">
       <Filter>Source Files\fprowrkz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\colourpick.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\cs-flex.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\cs-poll.s">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\cs-winx.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\event.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\flex.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\tb-flex.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\wimpt.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\myrand.s">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1602,6 +1677,9 @@
     <ClInclude Include="..\..\cmodules\unicode\u0000.h">
       <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ob_skel\riscos\swiextra.h">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\fl_123\resource\uk-msg">
@@ -1631,7 +1709,7 @@
     <None Include="..\..\ob_mlec\resource\uk-msg">
       <Filter>Source Files\ob_mlec</Filter>
     </None>
-    <None Include="..\..\..\fprowrkz\ob_rec\resource\uk-msg">
+    <None Include="..\..\..\fprowrkz\ob_rec\resource\UK\msg">
       <Filter>Source Files\fprowrkz\ob_rec</Filter>
     </None>
     <None Include="..\..\..\fprowrkz\ob_recb\resource\uk-msg">
@@ -1664,13 +1742,13 @@
     <None Include="..\..\ob_chart\resource\uk-msg">
       <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
     </None>
-    <None Include="..\..\ob_skel\resource\uk-msg">
+    <None Include="..\..\ob_skel\resource\UK\msg">
       <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
     </None>
-    <None Include="..\..\ob_ss\resource\uk-msg">
+    <None Include="..\..\ob_ss\resource\UK\msg">
       <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\res00.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\res00.rci">
       <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
     </None>
     <None Include="..\..\ob_ss\resource\ss.rci">
@@ -1679,16 +1757,16 @@
     <None Include="..\..\ob_chart\resource\chart.rci">
       <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\res06.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\res06.rci">
       <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\res01.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\res01.rci">
       <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\skel.rci">
       <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
     </None>
-    <None Include="..\..\firewrkz\resource\windows\uk\resXX.rci">
+    <None Include="..\..\firewrkz\resource\windows\UK\resXX.rci">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\ob_recn\resource\uk-msg">
@@ -1697,1765 +1775,936 @@
     <None Include="..\..\firewrkz\RelNotes.htm">
       <Filter>Source Files\firewrkz</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\index.htm">
+    <None Include="..\..\..\docs\UserGuide\content\index.htm">
       <Filter>Docs\html</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\frindex.htm">
-      <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms.htm">
-      <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms_fonts.htm">
-      <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms_pictures.htm">
-      <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_from_risc_os_to_windows.htm">
-      <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_from_windows_to_risc_os.htm">
-      <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg0_spreadsheets.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug00\sg00_spreadsheets.htm">
       <Filter>Docs\html\sg</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_absolute_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_absolute_references.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_autoentry.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_autoentry.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_cell_references.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_type_problem_areas.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_cell_type_problem_areas.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_types.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_cell_types.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_changing_cell_types.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_changing_cell_types.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_clearing_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_clearing_cells.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_confirming_data_entry.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_confirming_data_entry.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_copying_data_from_cell_to_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_copying_data_from_cell_to_cell.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_editing_number_cell_contents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_editing_number_cell_contents.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_and_editing_numerical_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_and_editing_numerical_data.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_cell_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_cell_references.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_dates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_dates.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_numbers.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_strings.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_strings.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_text_and_data_in_number_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_entering_text_and_data_in_number_cells.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_external_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_external_references.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_filling_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_filling_data.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_moving_from_cell_to_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_moving_from_cell_to_cell.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_number_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_number_cells.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_ranges.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_ranges.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_single_cell_references.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_single_cell_references.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_sorting_your_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_sorting_your_data.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg1_text_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg1_text_cells.htm">
       <Filter>Docs\html\sg\sg1</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_arithmetic_operators.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_arithmetic_operators.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_arrays.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_autosum.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_autosum.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_building_and_editing_formulae.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_building_and_editing_formulae.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_displaying_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_displaying_arrays.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_entering_and_editing_formulae.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_entering_and_editing_formulae.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_formula_building_blocks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_formula_building_blocks.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_logical_operators.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_logical_operators.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_names.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_names.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_operator_precedence.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_operator_precedence.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_relational_operators.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_relational_operators.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_the_function_selector.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_the_function_selector.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_troubleshooting.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_troubleshooting.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_typing_arrays_directly_into_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_typing_arrays_directly_into_cells.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_using_arrays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_using_arrays.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg2_using_operators_in_formulae.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg2_using_operators_in_formulae.htm">
       <Filter>Docs\html\sg\sg2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_12_and_24_hour_clocks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_12_and_24_hour_clocks.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_base_number_format.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_base_number_format.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_date_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_constructing_date_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_constructing_number_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_time_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_constructing_time_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_creating_date_and_time_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_creating_date_and_time_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_days.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_days.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_displaying_parts_of_a_time.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_displaying_parts_of_a_time.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_engineering_format.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_engineering_format.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_expressing_roman_numerals.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_expressing_roman_numerals.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_foreign_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_foreign_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_hashes_and_zeroes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_hashes_and_zeroes.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_including_text_strings_in_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_including_text_strings_in_number_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_interpreting_numbers_as_dates_or_times.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_interpreting_numbers_as_dates_or_times.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_months.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_months.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_number_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_number_formats_and_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_number_formats_and_styles.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_percentage.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_percentage.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_positive_and_negative_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_positive_and_negative_numbers.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_precision.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_precision.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_protecting_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_protecting_cells.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_saving_a_number_format_as_a_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_saving_a_number_format_as_a_style.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_scientific_number_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_scientific_number_formats.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_styles_in_spreadsheet_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_styles_in_spreadsheet_documents.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_text_strings.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_text_strings.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg3_years.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg3_years.htm">
       <Filter>Docs\html\sg\sg3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_bar_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_bar_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_creating_a_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_creating_a_chart.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_customising_bar_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_customising_bar_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_customising_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_customising_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_direction.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_direction.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_axes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_axes.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_data_series.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_data_series.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_lines.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_lines.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_text_in_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_editing_text_in_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_exploding_segments.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_exploding_segments.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_line_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_line_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_overlays.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_overlays.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_pictograms.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_pictograms.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_pie_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_pie_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_pie_labelling_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_pie_labelling_options.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_positioning_the_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_positioning_the_chart.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_start_position.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_start_position.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_bar_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_types_of_bar_chart.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_line_chart.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_types_of_line_chart.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_scatter_graph.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_types_of_scatter_graph.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_updating_chart_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_updating_chart_data.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_using_colour_in_charts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_using_colour_in_charts.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg4_x_y_scatter_graphs.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg4_x_y_scatter_graphs.htm">
       <Filter>Docs\html\sg\sg4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_compatibility_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_compatibility_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_database_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_database_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_date_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_engineering_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_engineering_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_financial_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_financial_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_logical_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_logical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_lookup_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_lookup_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_mathematical_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_mathematical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_matrix_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_matrix_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_miscellaneous_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_miscellaneous_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_statistical_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_statistical_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_string_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_string_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_trigonometrical_functions.htm">
       <Filter>Docs\html\sg\sg5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg5_trigonometrical_functions.htm">
-      <Filter>Docs\html\sg\sg5</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ABS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AGE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ALERT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_array_or_range.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_arrays.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASINH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATAN_2.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATANH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AVEDEV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_AVG.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_BETA.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_BIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ADD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASINH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ATAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ATANH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COMPLEX.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_CONJUGATE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_DIV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_EXP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_IMAGINARY.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_LN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_MUL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_POWER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_RADIUS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_REAL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ROUND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SINH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SQRT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SUB.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_TAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_TANH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_THETA.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CEILING.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CHAR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CHOOSE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CLEAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CODE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COLS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COMBIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COMMAND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_complex_numbers.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_complex_numbers_odf.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNTA.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNTBLANK.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COVARIANCE_P.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_COVARIANCE_S.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CTERM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_CURRENT_CELL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DATE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_date_formats.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DATEVALUE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAVG.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAY.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAYNAME.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAYS_360.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DCOUNT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DCOUNTA.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DDB.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEG.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEREF.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEVSQ.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DMAX.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DMIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DOLLAR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DOUBLECLICK.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DPRODUCT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSTD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSTDP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSUM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DVAR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_DVARP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_EVEN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_EXACT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_EXP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FACT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FALSE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FIND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FIXED.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FLIP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FLOOR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FORMULA_TEXT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_FV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GAMMALN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GEOMEAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GRAND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_GROWTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_HARMEAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_HLOOKUP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_HOUR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_IF.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_INDEX.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_INPUT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_INT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_IRR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ISEVEN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ISODD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_JOIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_KURT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LARGE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LEFT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LENGTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LINEST.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LISTCOUNT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOG.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOGEST.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOOKUP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOWER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_DETERM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_INVERSE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_MULT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MATCH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MAX.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MEDIAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MID.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MINUTE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MIRR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MOD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MODE_SNGL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTHDAYS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTHNAME.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_MROUND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NOT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NOW.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NPER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_NPV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_BETADIST.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_COMPLEX.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_FV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMABS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMAGINARY.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMARGUMENT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMCONJUGATE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMCOS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMDIV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMEXP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLOG2.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLOG10.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMPOWER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMPRODUCT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMREAL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSQRT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSUB.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSUM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_PMT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_TYPE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_OR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PAGE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PAGES.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_INC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERMUT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PI.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PMT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_POWER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PRODUCT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PROPER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PV.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_QUARTILE_INC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RAD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RAND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANDBETWEEN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ranges.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANK.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANK_EQ.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RATE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_REPLACE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_REPT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_REVERSE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_RIGHT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUNDDOWN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUNDUP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROW.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROWS.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SEC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SECH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SECOND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SET_NAME.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SET_VALUE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SGN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SIN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SINH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SKEW.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SKEW_P.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SLN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SMALL.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SORT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SPEARMAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SQR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STANDARDIZE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STDP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_STRING.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUBSTITUTE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_X2MY2.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_X2PY2.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_XMY2.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUMPRODUCT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUMSQ.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_SYD.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TANH.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TERM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TEXT.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TIME.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_time_formats.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TIMEVALUE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TODAY.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRANSPOSE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TREND.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRIM.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRIMMEAN.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRUE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRUNC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_TYPE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_UPPER.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VALUE.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VAR.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VARP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VERSION.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_VLOOKUP.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_WEEKDAY.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_WEEKNUMBER.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_array_or_range.htm">
       <Filter>Docs\html\sg\sg6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_XOR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_arrays.htm">
       <Filter>Docs\html\sg\sg6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_YEAR.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ranges.htm">
       <Filter>Docs\html\sg\sg6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_BREAK.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_BREAK.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_CONTINUE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_CONTINUE.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_function_control_statements.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_custom_function_control_statements.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_function_libraries.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_custom_function_libraries.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_custom_functions.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_declaring_the_result.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_declaring_the_result.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_editing_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_editing_custom_functions.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_FOR_NEXT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_FOR_NEXT.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_GOTO.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_GOTO.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_IF_ELSE_ELSEIF_ENDIF.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_IF_ELSE_ELSEIF_ENDIF.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_naming_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_naming_custom_functions.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_parameters_to_FUNCTION.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_parameters_to_FUNCTION.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_processing_ranges_of_data.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_processing_ranges_of_data.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_recalculation_and_custom_function_sheets.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_recalculation_and_custom_function_sheets.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_REPEAT_UNTIL.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_REPEAT_UNTIL.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_RESULT.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_RESULT.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_the_FUNCTION_function.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_the_FUNCTION_function.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_using_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_using_custom_functions.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_what_is_a_custom_function.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_what_is_a_custom_function.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_WHILE_ENDWHILE.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_WHILE_ENDWHILE.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg7_writing_custom_functions.htm">
+    <None Include="..\..\..\docs\UserGuide\content\sg7_writing_custom_functions.htm">
       <Filter>Docs\html\sg\sg7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug1_introduction.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug00\ug01_introduction.htm">
       <Filter>Docs\html\ug</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_accessing_the_view_control_dialogue_box.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_accessing_the_view_control_dialogue_box.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_auto_save.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_auto_save.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_charts_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_charts_options.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_choices_dialogue_box.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_choices_dialogue_box.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_choices_status_line.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_choices_status_line.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_choosing_the_ruler_measurement.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_choosing_the_ruler_measurement.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_customising_the_look_of_the_program.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_customising_the_look_of_the_program.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_default_ruler.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_default_ruler.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_dialogue_boxes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_dialogue_boxes.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_displaying_paper_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_displaying_paper_and_borders.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_dithering.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_dithering.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_fireworkz_basics.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_fireworkz_basics.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_kerning.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_kerning.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_menus.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_menus.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_new_view.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_new_view.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_pictures.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_recalculation.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_recalculation.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_rulers_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_rulers_and_borders.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_selecting_a_view_scale.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_selecting_a_view_scale.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_spelling.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_spelling.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_splitting_the_view.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_splitting_the_view.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_fireworkz_document_window.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_fireworkz_document_window.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_ruler.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_ruler.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_status_line.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_status_line.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_toolbar.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug2_the_toolbar.htm">
       <Filter>Docs\html\ug\ug2</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_a_new_document.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_creating_a_new_document.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_new_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_creating_new_documents.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_templates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_creating_templates.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_opening_existing_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_opening_existing_documents.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_removing_templates_from_the_template_selector.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_removing_templates_from_the_template_selector.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_setting_up_a_template_file.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_setting_up_a_template_file.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_templates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_templates.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug3_using_templates_to_reformat_existing_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug3_using_templates_to_reformat_existing_documents.htm">
       <Filter>Docs\html\ug\ug3</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_bold.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_bold.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_checking_spellings.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_checking_spellings.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_clearing_a_selected_area.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_clearing_a_selected_area.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_copying_text_within_and_between_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_copying_text_within_and_between_documents.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_correcting_typing_errors.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_correcting_typing_errors.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_counting_words.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_counting_words.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_dates.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_dates.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_editing_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_editing_text.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_entering_special_text_and_characters.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_entering_special_text_and_characters.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_entering_text_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_entering_text_effects.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_find_and_replace.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_find_and_replace.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_forcing_a_page_break.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_forcing_a_page_break.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_hints_and_tips.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_hints_and_tips.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_italic.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_italic.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_line_spaces_and_paragraph_spaces.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_line_spaces_and_paragraph_spaces.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_moving_around_the_document.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_moving_around_the_document.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_moving_text_around_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_moving_text_around_documents.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_overtyping_existing_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_overtyping_existing_text.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_page_numbers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_page_numbers.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_paragraphs_and_rows.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_paragraphs_and_rows.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_positioning_the_caret.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_positioning_the_caret.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_preventing_line_breaks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_preventing_line_breaks.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_preventing_page_breaks_within_paragraphs.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_preventing_page_breaks_within_paragraphs.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_printing_filename_within_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_printing_filename_within_documents.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_selecting_areas_of_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_selecting_areas_of_text.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_special_characters.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_special_characters.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_line_without_starting_a_new_paragraph.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_starting_a_new_line_without_starting_a_new_paragraph.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_starting_a_new_page.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_paragraph.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_starting_a_new_paragraph.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_typing_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_typing_text.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug4_upper_and_lower_case.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug4_upper_and_lower_case.htm">
       <Filter>Docs\html\ug\ug4</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_adding_a_current_cell_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_adding_a_current_cell_style.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_applying_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_applying_effects.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_buttons_and_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_buttons_and_effects.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_deleting_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_deleting_styles.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_effects.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_layering_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_layering_styles.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_removing_styles_and_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_removing_styles_and_effects.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_special_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_special_styles.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_the_region_editor.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_the_region_editor.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_the_style_list.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_the_style_list.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_what_are_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_what_are_styles.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_working_with_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_working_with_styles.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug5_working_with_styles_and_effects.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug5_working_with_styles_and_effects.htm">
       <Filter>Docs\html\ug\ug5</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_adding_a_new_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_adding_a_new_style.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_adding_colour_to_a_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_adding_colour_to_a_style.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_alignment.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_alignment.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_attributes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_attributes.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_background_colour_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_background_colour_and_borders.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_colour.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_colour.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_colour_editing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_colour_editing.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_column.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_column.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_editing_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_editing_styles.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_fonts_and_typefaces.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_fonts_and_typefaces.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_height_and_width.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_height_and_width.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_line_spacing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_line_spacing.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_margins.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_margins.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_paragraph_spacing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_paragraph_spacing.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_row.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_row.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_ruler.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_ruler.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_setting_up_styles.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_setting_up_styles.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_spacing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_spacing.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_style.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_style.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_tabs.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_tabs.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_text.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_the_style_dialogue_box.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_the_style_dialogue_box.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_the_style_editor.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_the_style_editor.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug6_vertical_justification.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug6_vertical_justification.htm">
       <Filter>Docs\html\ug\ug6</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_creating_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_creating_headers_and_footers.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_custom_page_sizes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_custom_page_sizes.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_different_headers_or_footers_on_the_first_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_different_headers_or_footers_on_the_first_page.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_editing_header_and_footer_text.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_editing_header_and_footer_text.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_forcing_page_breaks.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_forcing_page_breaks.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_headers_and_footers.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_multiple_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_multiple_headers_and_footers.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_numbering_pages.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_numbering_pages.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_opposing_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_opposing_headers_and_footers.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_page_design.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_page_design.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_paper_margins.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_paper_margins.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_paper_orientation.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_paper_orientation.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_printing_the_row_and_column_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_printing_the_row_and_column_borders.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_repositioning_headers_and_footers.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_repositioning_headers_and_footers.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_setting_paper_size.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_setting_paper_size.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_setting_up_paper_size.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_setting_up_paper_size.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug7_x_and_y_pages.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug7_x_and_y_pages.htm">
       <Filter>Docs\html\ug\ug7</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_adding_extra_rows_and_columns.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_adding_extra_rows_and_columns.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_adding_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_adding_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_autowidth_and_autoheight.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_autowidth_and_autoheight.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_boxes.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_boxes.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_boxes_and_the_grid.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_boxes_and_the_grid.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_changing_column_width.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_changing_column_width.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_changing_row_height.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_changing_row_height.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_designing_grids_boxes_and_borders.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_designing_grids_boxes_and_borders.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_editing_table_layouts.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_editing_table_layouts.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_editing_the_cell_layout.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_editing_the_cell_layout.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_entering_numerical_live_data_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_entering_numerical_live_data_into_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_entering_text_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_entering_text_into_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_grid_lines.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_grid_lines.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_importing_data_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_importing_data_into_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_merging_two_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_merging_two_cells.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_removing_boxes_and_grid_lines.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_removing_boxes_and_grid_lines.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_removing_redundant_rows_and_columns.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_removing_redundant_rows_and_columns.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_repositioning_the_table_on_the_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_repositioning_the_table_on_the_page.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_straddling_cells.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_straddling_cells.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_typing_directly_into_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_typing_directly_into_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_using_background_colours.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_using_background_colours.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug8_using_styles_and_effects_in_tables.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug8_using_styles_and_effects_in_tables.htm">
       <Filter>Docs\html\ug\ug8</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_adding_a_name_to_a_number_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_adding_a_name_to_a_number_cell.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_adding_a_name_to_a_text_cell.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_adding_a_name_to_a_text_cell.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_advanced_features.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_advanced_features.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_naming_names.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_naming_names.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_printing_a_mail_shot.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_printing_a_mail_shot.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_setting_up_a_name.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_setting_up_a_name.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_setting_up_your_letter.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_setting_up_your_letter.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_suitable_lists_for_mail_shots.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_suitable_lists_for_mail_shots.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_uses_for_names.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_uses_for_names.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_using_mail_merge.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_using_mail_merge.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug9_using_names_in_fireworkz.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug9_using_names_in_fireworkz.htm">
       <Filter>Docs\html\ug\ug9</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_adding_pictures_to_your_document.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_adding_pictures_to_your_document.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_backdrop_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_backdrop_pictures.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_how_fireworkz_handles_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_how_fireworkz_handles_pictures.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_picture_file_formats.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_picture_file_formats.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_pictures.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_positioning_pictures_on_the_page.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_positioning_pictures_on_the_page.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_resizing_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_resizing_pictures.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_showing_and_hiding_pictures.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_showing_and_hiding_pictures.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug10_storing_pictures_in_documents.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug10_storing_pictures_in_documents.htm">
       <Filter>Docs\html\ug\ug10</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_basic_print_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_basic_print_options.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_before_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_before_printing.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_choosing_to_print.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_choosing_to_print.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_collated.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_collated.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_extra_print_options.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_extra_print_options.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_pamphlet_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_pamphlet_printing.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_print_scale.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_print_scale.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_printing.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing_labels.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_printing_labels.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing_problems.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_printing_problems.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_range_of_pages.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_range_of_pages.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_reverse_printing.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_reverse_printing.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_sides.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_sides.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\ug11_two_up.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug11_two_up.htm">
       <Filter>Docs\html\ug\ug11</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\us98_glossary.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug98_glossary.htm">
       <Filter>Docs\html</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\us99_addenda.htm">
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm">
       <Filter>Docs\html</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\usguide.css">
+    <None Include="..\..\..\docs\UserGuide\content\usguide.css">
       <Filter>Docs\html</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\usindex.htm">
+    <None Include="..\..\..\docs\UserGuide\content\usindex.htm">
       <Filter>Docs\html</Filter>
-    </None>
-    <None Include="..\..\..\docs\LICENSE">
-      <Filter>Docs</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_EXC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
     </None>
     <None Include="..\..\..\fprowrkz\fprowrkz\RelNotes.htm">
       <Filter>Source Files\fprowrkz</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\html\sg6_QUARTILE_EXC.htm">
-      <Filter>Docs\html\sg\sg6</Filter>
-    </None>
-    <None Include="..\..\LICENSE" />
     <None Include="OUTx86\firewrkz-x86.iss">
       <Filter>Source Files\firewrkz</Filter>
     </None>
@@ -3465,55 +2714,967 @@
     <None Include="..\..\firewrkz\RelNotesW.htm">
       <Filter>Source Files\firewrkz</Filter>
     </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg1.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg2.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg3.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg4.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg5.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg6.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg7.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsg8.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsgindex.htm">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\GSGuide\windows\gsguide.css">
-      <Filter>Docs\Windows\GSGuide</Filter>
-    </None>
     <None Include="..\..\..\docs\RiscPkg\Control">
       <Filter>Docs\RISC OS\RiscPkg</Filter>
     </None>
     <None Include="..\..\..\docs\RiscPkg\Copyright">
       <Filter>Docs\RISC OS\RiscPkg</Filter>
     </None>
-    <None Include="..\..\..\docs\RiscPkg\LICENSE">
-      <Filter>Docs\RISC OS\RiscPkg</Filter>
-    </None>
     <None Include="..\..\..\docs\MakeRiscPkg,fd7">
       <Filter>Docs\RISC OS\RiscPkg</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc">
+    <None Include="..\..\..\docs\UserGuide\content\sg5_function_reference.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms.htm">
+      <Filter>Docs\html\ug\ug90</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_fonts.htm">
+      <Filter>Docs\html\ug\ug90</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_pictures.htm">
+      <Filter>Docs\html\ug\ug90</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_risc_os_to_windows.htm">
+      <Filter>Docs\html\ug\ug90</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_windows_to_risc_os.htm">
+      <Filter>Docs\html\ug\ug90</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\index.html">
+      <Filter>Docs\RISC OS\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\index.html">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\arr_lr.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\arr_ud.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\arrows.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\col.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\col_l.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\col_r.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\row.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\row_d.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\row_u.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\spl_lr.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\spl_ud.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\split.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\CUR\tank.cur">
+      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug00\ug00_contents.htm">
+      <Filter>Docs\html\ug</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\indexR.htm">
+      <Filter>Docs\RISC OS\RiscPkg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOSEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOSECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOSH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ACOTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ADD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ASINH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ATAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ATANH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COMPLEX.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_CONJUGATE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COSEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COSECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COSH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_COTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_DIV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_EXP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_IMAGINARY.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_LN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_MUL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_POWER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_RADIUS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_REAL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_ROUND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SINH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SQRT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_SUB.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_TAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_TANH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_C_THETA.htm">
+      <Filter>Docs\html\sg\sg6\sg6_engineering</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAVG.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DMAX.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DMIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DSTD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DSTDP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DSUM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DVAR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DVARP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOSEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOSECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOSH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ACOTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ASINH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ATAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ATAN_2.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ATANH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COSEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COSECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COSH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PI.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SINH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TANH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_BETADIST.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_COMPLEX.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_FV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMABS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMAGINARY.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMARGUMENT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMCONJUGATE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMCOS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMDIV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMEXP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMLN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMLOG2.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMLOG10.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMPOWER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMPRODUCT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMREAL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSQRT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSUB.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_IMSUM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_PMT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODF_TYPE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DCOUNT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DCOUNTA.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DATE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DATEVALUE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAY.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAYNAME.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DAYS_360.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_HOUR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MINUTE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MONTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MONTHDAYS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MONTHNAME.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NOW.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SECOND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_YEAR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_WEEKNUMBER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_WEEKDAY.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TODAY.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TIMEVALUE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TIME.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_logical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FALSE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_logical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NOT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_logical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_OR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_logical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRUE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_logical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_XOR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_logical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ALERT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AVEDEV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_BETA.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_BIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COUNT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COUNTA.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COUNTBLANK.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COVARIANCE_P.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COVARIANCE_S.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DEVSQ.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DEG.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SEC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SECH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RAD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_trigonometrical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CURRENT_CELL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DOUBLECLICK.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_KURT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GEOMEAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_HARMEAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GRAND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MAX.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RANK.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RANK_EQ.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PERCENTILE_EXC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PERCENTILE_INC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_QUARTILE_EXC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_QUARTILE_INC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STANDARDIZE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SPEARMAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SKEW.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SKEW_P.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRIMMEAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VAR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VARP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STDP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_M_DETERM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_matrix</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_M_INVERSE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_matrix</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_M_MULT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_matrix</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRANSPOSE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_matrix</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AGE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_AVG.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ABS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DDB.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CTERM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NPV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_NPER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PV.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SLN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SYD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_IRR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MIRR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PMT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RATE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DPRODUCT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_database</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DOLLAR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_DEREF.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_EVEN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_EXACT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_EXP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FACT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FLOOR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_INT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOG.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MROUND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_HLOOKUP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_lookup</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOOKUP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_lookup</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MATCH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_lookup</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VLOOKUP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_lookup</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CHOOSE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_lookup</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TERM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_financial</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CEILING.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RAND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RANDBETWEEN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SQR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SGN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PRODUCT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COMBIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PERMUT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MOD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ODD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_POWER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROUND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROUNDDOWN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROUNDUP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM_X2MY2.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM_X2PY2.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUM_XMY2.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUMPRODUCT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRUNC.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUMSQ.htm">
+      <Filter>Docs\html\sg\sg6\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COLS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_IF.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROW.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ROWS.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SET_NAME.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SET_VALUE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_COMMAND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_INPUT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FLIP.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_INDEX.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ISEVEN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_ISODD.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PAGE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PAGES.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VERSION.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TYPE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SORT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_complex_numbers_odf.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_complex_numbers.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_date_formats.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_time_formats.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TREND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LINEST.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOGEST.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LISTCOUNT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GROWTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MEDIAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LARGE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MODE_SNGL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SMALL.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CHAR.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CLEAN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_CODE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FIND.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FIXED.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_FORMULA_TEXT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_JOIN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LEFT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LENGTH.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_LOWER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_MID.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_PROPER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_REPLACE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_REPT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_REVERSE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_RIGHT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_STRING.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_SUBSTITUTE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TEXT.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_TRIM.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_UPPER.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_VALUE.htm">
+      <Filter>Docs\html\sg\sg6\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg6_GAMMALN.htm">
+      <Filter>Docs\html\sg\sg6\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg5_date_time_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg_glossary.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg1.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg2.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg3.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg4.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg5.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg6.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg7.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg8.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsg9.html">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\content\gsguide.css">
+      <Filter>Docs\RISC OS\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg_glossary.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg1.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg2.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg3.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg4.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg5.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg6.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg7.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg8.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsg9.html">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\content\gsguide.css">
+      <Filter>Docs\Windows\GSGuide\content</Filter>
+    </None>
+    <None Include="..\..\firewrkz\RelHistPrev.html">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\firewrkz.hhc">
       <Filter>Docs\Windows\HTMLHelp</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk">
+    <None Include="..\..\..\docs\UserGuide\firewrkz.hhk">
       <Filter>Docs\Windows\HTMLHelp</Filter>
     </None>
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp">
+    <None Include="..\..\..\docs\UserGuide\firewrkz.hhp">
       <Filter>Docs\Windows\HTMLHelp</Filter>
     </None>
   </ItemGroup>
@@ -3527,50 +3688,50 @@
     <Image Include="..\..\firewrkz\resource\windows\prog.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\firewrkz\resource\windows\UK\banner.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </Image>
     <Image Include="..\..\ob_chart\resource\bmp\bar.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\ldadodo.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\ldash.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\ldashdot.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\ldot.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\line.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\pie.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </Image>
-    <Image Include="..\..\ob_chart\resource\bmp\scatter.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\bmp\com16x16.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldadodo.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldash.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldashdot.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldot.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\line.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\bmp\overlay.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
     </Image>
-    <Image Include="..\..\firewrkz\resource\windows\uk\banner.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    <Image Include="..\..\ob_chart\resource\bmp\pie.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\scatter.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\BMP\ss_tbar_4bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\BMP\ss_tbar_32bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\BMP\ss_tbarh_4bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\BMP\ss_tbarh_32bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -3601,74 +3762,74 @@
     <CustomBuild Include="..\..\cmodules\alloc.h">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\com16x16.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\com24x24.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\col_r.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\com07x11.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\dec.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\inc.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_none.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_std.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_stdd.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_thick.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_thin.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_F.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_H.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_L.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_P.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_R.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\row_b.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_C.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_D.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_L.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_R.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\external\Microsoft\InsideOLE2\BTTNCURP\BTTNCUR.H">
       <Filter>Source Files\ob_skel\ob_skel_external</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\external\Microsoft\InsideOLE2\BTTNCURP\BTTNCURI.H">
       <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\col_r.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\com07x11.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\com16x16.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\com24x24.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\dec.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\inc.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_none.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_std.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_stdd.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_thick.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_thin.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_F.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_H.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_L.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_R.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_P.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\row_b.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_C.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_D.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_R.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_L.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

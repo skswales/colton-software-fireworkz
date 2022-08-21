@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>STANDARDIZE</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 2014-2016 Stuart Swales -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="STANDARDIZE" />
+        <param name="Keyword" value="Statistical functions, STANDARDIZE" />
+        <param name="Keyword" value="Statistical functions, standarise value to a normal distribution" />
+    </object>
+
+    <h1><a name="standardize" id="standardize"></a>STANDARDIZE</h1>
+
+    <p>Standarises a value to a normal distribution.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        STANDARDIZE(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">mu</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">sigma</span>:<span class="csg-function-parameter-type">number</span>)
+    </p>
+    <p>Standarises the value <i>x</i> to the normal distribution given by mean <i>mu</i> and standard deviation <i>sigma</i>.</p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        <i>Z</i> = (</span><i>x</i> &minus; <i>mu</i>) &divide; <i>sigma</i>
+    </p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">SET_VALUE(B1:B15, STANDARDIZE(A1:A15, C1, D1))</pre>
+    <p>
+        returns, in cells <code>B1:B15</code>,
+        the corresponding standarised values of each the contents of cells in the range <code>A1:A15</code>
+        from the given distribution's mean (<code>C1</code>) and standard deviation (<code>D1</code>) values.
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.00.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_SPEARMAN.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_statistical_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_STD.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

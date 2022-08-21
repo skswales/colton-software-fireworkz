@@ -1077,7 +1077,7 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
             STATUS status = 0;
 
 #if RISCOS
-            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), filename, input_filename);
+            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), filename, input_filename);
 
             /* try removing any pseudo-extension */
             if(status == 0)
@@ -1089,10 +1089,10 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
                     tstr_extension = file_extension(tstr_buf_f);
                     PTR_ASSERT(tstr_extension);
                     *--tstr_extension = CH_NULL;
-                    status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), tstr_buf_f, input_filename);
+                    status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), tstr_buf_f, input_filename);
                 }
 #elif WINDOWS
-            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), filename, input_filename);
+            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), filename, input_filename);
 
             /* try with Drawfile extension */
             if(status == 0)
@@ -1101,7 +1101,7 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
                     TCHARZ f[BUF_MAX_PATHSTRING];
                     tstr_xstrkpy(f, elemof32(f), filename);
                     tstr_xstrkat(f, elemof32(f), DRAWFILE_EXTENSION_TSTR); /* just have to assume this. sorry */
-                    status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), f, input_filename);
+                    status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), f, input_filename);
                 }
 
             /* try swapping sep chars from RISC OS */
@@ -1124,7 +1124,7 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
                 }
                 while(c != CH_NULL);
 
-                status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), f, input_filename);
+                status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), f, input_filename);
             }
 #endif /* OS */
 

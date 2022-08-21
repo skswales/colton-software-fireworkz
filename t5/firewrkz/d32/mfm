@@ -28,4 +28,4 @@ s/\$(APPL)/Fireworkz/g
 s/\$(PROD)/firewrkz/g
 s/\$(NAME)/FIREWORKZ/g
 s/\$(DIR)/d32/g
-s/\$(COUNTRY)/uk/g
+s/\$(COUNTRY)/UK/g

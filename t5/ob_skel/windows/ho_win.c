@@ -2523,37 +2523,8 @@ wndproc_host_onWindowPosChanged(
 
 #if defined(USE_GLOBAL_CLIPBOARD)
 
-_Check_return_
-extern BOOL
-host_open_global_clipboard(
-    _DocuRef_   PC_DOCU p_docu,
-    _ViewRef_   PC_VIEW p_view)
-{
-    HWND hwndClipOwner = NULL;
-    BOOL res;
-
-    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard(docno=%d, viewno=%d)"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
-
-    if(!IS_VIEW_NONE(p_view))
-    {
-        hwndClipOwner = p_view->main[WIN_BACK].hwnd;
-        assert(p_view->docno == docno_from_p_docu(p_docu));
-    }
-
-    res = WrapOsBoolChecking(OpenClipboard(hwndClipOwner));
-    trace_1(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard: OpenClipboard res=%s"), report_boolstring(res));
-    return(res);
-}
-
-extern void
-host_close_global_clipboard(void)
-{
-    trace_0(TRACE_WINDOWS_HOST, TEXT("host_close_global_clipboard"));
-}
-
-static DOCNO  clipboard_owning_docno  = DOCNO_NONE;
-static VIEWNO clipboard_owning_viewno = VIEWNO_NONE;
+DOCNO  g_global_clipboard_owning_docno  = DOCNO_NONE;
+VIEWNO g_global_clipboard_owning_viewno = VIEWNO_NONE;
 
 _Check_return_
 extern BOOL
@@ -2582,14 +2553,14 @@ host_acquire_global_clipboard(
         trace_0(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: EmptyClipboard"));
         EmptyClipboard();
 
-        clipboard_owning_docno  = acquiring_docno;
-        clipboard_owning_viewno = acquiring_viewno;
-        trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=%d, viewno:=%d"), clipboard_owning_docno, clipboard_owning_viewno);
+        g_global_clipboard_owning_docno  = acquiring_docno;
+        g_global_clipboard_owning_viewno = acquiring_viewno;
+        trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=%d, viewno:=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
     }
     else
     {
-        clipboard_owning_docno  = DOCNO_NONE;
-        clipboard_owning_viewno = VIEWNO_NONE;
+        g_global_clipboard_owning_docno  = DOCNO_NONE;
+        g_global_clipboard_owning_viewno = VIEWNO_NONE;
         trace_0(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
     }
 
@@ -2601,33 +2572,54 @@ host_release_global_clipboard(
     _InVal_     BOOL render_if_acquired)
 {
     trace_1(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno=%d, viewno=%d"), clipboard_owning_docno, clipboard_owning_viewno);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
-    if(DOCNO_NONE != clipboard_owning_docno)
+    if(DOCNO_NONE != g_global_clipboard_owning_docno)
     {
-        P_DOCU clipboard_owning_p_docu = p_docu_from_docno(clipboard_owning_docno);
-        P_VIEW clipboard_owning_p_view = p_view_from_viewno(clipboard_owning_p_docu, clipboard_owning_viewno);
+        P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
+        P_VIEW global_clipboard_owning_p_view = p_view_from_viewno(global_clipboard_owning_p_docu, g_global_clipboard_owning_viewno);
 
-        if(host_open_global_clipboard(clipboard_owning_p_docu, clipboard_owning_p_view))
+        if(host_open_global_clipboard(global_clipboard_owning_p_docu, global_clipboard_owning_p_view))
         {
             if(render_if_acquired)
             {
                 trace_0(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: clip_render_all_formats"));
-                status_assert(clip_render_all_formats(clipboard_owning_p_docu));
+                status_assert(clip_render_all_formats(global_clipboard_owning_p_docu));
             }
             else
             {
                 trace_0(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: EmptyClipboard"));
                 EmptyClipboard(); /* we will immediately get WM_DESTROYCLIPBOARD */
             }
-
-            host_close_global_clipboard();
         }
     }
 
-    clipboard_owning_docno  = DOCNO_NONE;
-    clipboard_owning_viewno = VIEWNO_NONE;
+    g_global_clipboard_owning_docno  = DOCNO_NONE;
+    g_global_clipboard_owning_viewno = VIEWNO_NONE;
     trace_0(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
+}
+
+_Check_return_
+extern BOOL
+host_open_global_clipboard(
+    _DocuRef_   PC_DOCU p_docu,
+    _ViewRef_   PC_VIEW p_view)
+{
+    HWND hwndClipOwner = NULL;
+    BOOL res;
+
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard(docno=%d, viewno=%d)"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
+
+    if(!IS_VIEW_NONE(p_view))
+    {
+        hwndClipOwner = p_view->main[WIN_BACK].hwnd;
+        assert(p_view->docno == docno_from_p_docu(p_docu));
+    }
+
+    res = WrapOsBoolChecking(OpenClipboard(hwndClipOwner));
+    trace_1(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard: OpenClipboard res=%s"), report_boolstring(res));
+    return(res);
 }
 
 static void
@@ -2636,10 +2628,10 @@ host_onClose_process_clipboard(
     _ViewRef_   P_VIEW p_view)
 {
     trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: msg docno=%d, viewno=%d"), docno_from_p_docu(p_docu), viewno_from_p_view(p_view));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno=%d, viewno=%d"), clipboard_owning_docno, clipboard_owning_viewno);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
-    if( (clipboard_owning_docno  != docno_from_p_docu(p_docu))  ||
-        (clipboard_owning_viewno != viewno_from_p_view(p_view)) )
+    if( (g_global_clipboard_owning_docno  != docno_from_p_docu(p_docu))  ||
+        (g_global_clipboard_owning_viewno != viewno_from_p_view(p_view)) )
     {
         return;
     }
@@ -2656,12 +2648,10 @@ host_onClose_process_clipboard(
     {
         trace_0(TRACE_WINDOWS_HOST, TEXT("host_onClose: clip_render_all_formats"));
         status_assert(clip_render_all_formats(p_docu));
-
-        host_close_global_clipboard();
     }
 
-    clipboard_owning_docno  = DOCNO_NONE;
-    clipboard_owning_viewno = VIEWNO_NONE;
+    g_global_clipboard_owning_docno  = DOCNO_NONE;
+    g_global_clipboard_owning_viewno = VIEWNO_NONE;
     trace_0(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno:=NONE, viewno:=NONE"));
 #endif
 }
@@ -3542,8 +3532,6 @@ host_onSetFocus(
     } /*block*/
 
     caret_show_claim(p_docu, p_docu->focus_owner, FALSE); /* MRJC 3.8.94 */
-
-    p_docu->flags.has_input_focus = TRUE;
 }
 
 static void
@@ -3573,8 +3561,6 @@ host_onKillFocus(
     _DocuRef_   P_DOCU p_docu)
 {
     status_assert(host_key_cache_emit_events_for(docno_from_p_docu(p_docu)));
-
-    p_docu->flags.has_input_focus = FALSE;
 
     DestroyCaret();
 }
@@ -3680,13 +3666,15 @@ host_onKeyDown(
     _InVal_     UINT vk,
     _DocuRef_   P_DOCU p_docu)
 {
-    KMAP_CODE kmap_code = ri_kmap_convert(vk);
+    const KMAP_CODE kmap_code = kmap_convert(vk);
 
     if(0 == kmap_code)
         return(FALSE);
 
     status_line_auto_clear(p_docu);
+
     status_assert(send_key_to_docu(p_docu, kmap_code)); /* don't pass on unprocessed keys */
+
     /* there will be a WM_KEYUP to come so flush there in any case */
     return(TRUE);
 }
@@ -3777,17 +3765,21 @@ wndproc_host_onDestroyClipboard(
     P_VIEW p_view;
     EVENT_HANDLER event_handler;
 
-    docno = resolve_hwnd(hwnd, &p_view, &event_handler);
+    if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
+    {
+        /*EMPTY*/ /* we no longer own the clipboard, regardless */
+    }
+
     trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: msg docno=%d, viewno=%d"), docno, viewno_from_p_view_fn(p_view));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno=%d, viewno=%d"), clipboard_owning_docno, clipboard_owning_viewno);
-    assert(clipboard_owning_docno  == docno);
-    assert(clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    assert(g_global_clipboard_owning_docno  == docno);
+    assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
 
-    assert(clipboard_owning_docno  != DOCNO_NONE);
-    assert(clipboard_owning_viewno != VIEWNO_NONE);
+    assert(g_global_clipboard_owning_docno  != DOCNO_NONE);
+    assert(g_global_clipboard_owning_viewno != VIEWNO_NONE);
 
-    clipboard_owning_docno  = DOCNO_NONE;
-    clipboard_owning_viewno = VIEWNO_NONE;
+    g_global_clipboard_owning_docno  = DOCNO_NONE;
+    g_global_clipboard_owning_viewno = VIEWNO_NONE;
     trace_0(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno:=NONE, viewno:=NONE"));
 }
 
@@ -3805,22 +3797,22 @@ wndproc_host_onRenderFormat(
     {
         trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: received, event handler %d, format ") U32_XTFMT, event_handler, (U32) uFormat);
         trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: msg docno=%d, viewno=%d"), docno, viewno_from_p_view_fn(p_view));
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: cbo docno=%d, viewno=%d"), clipboard_owning_docno, clipboard_owning_viewno);
-        assert(clipboard_owning_docno  == docno);
-        assert(clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+        assert(g_global_clipboard_owning_docno  == docno);
+        assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
 
-        if(DOCNO_NONE == clipboard_owning_docno)
+        if(DOCNO_NONE == g_global_clipboard_owning_docno)
         {
             trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: deny render request"));
             lresult = 1; /* deny render request */
         }
         else
         {
-            P_DOCU clipboard_owning_p_docu = p_docu_from_docno(clipboard_owning_docno);
+            const P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
 
             /* clipboard is already open ready to receive data */
 
-            if(status_fail(clip_render_format(clipboard_owning_p_docu, uFormat)))
+            if(status_fail(clip_render_format(global_clipboard_owning_p_docu, uFormat)))
             {
                 trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: clip_render_format failed"));
                 lresult = 1; /* didn't work */
@@ -3848,29 +3840,27 @@ wndproc_host_onRenderAllFormats(
     {
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: received, event handler %d"), event_handler);
         trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: msg docno=%d, viewno=%d"), docno, viewno_from_p_view_fn(p_view));
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: cbo docno=%d, viewno=%d"), clipboard_owning_docno, clipboard_owning_viewno);
-        assert(clipboard_owning_docno  == docno);
-        assert(clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+        assert(g_global_clipboard_owning_docno  == docno);
+        assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
 
-        if(DOCNO_NONE == clipboard_owning_docno)
+        if(DOCNO_NONE == g_global_clipboard_owning_docno)
         {
             trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: deny render request"));
             lresult = 1; /* deny render request */
         }
         else
         {
-            P_DOCU clipboard_owning_p_docu = p_docu_from_docno(clipboard_owning_docno);
-            P_VIEW clipboard_owning_p_view = p_view_from_viewno(clipboard_owning_p_docu, clipboard_owning_viewno);
+            P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
+            P_VIEW global_clipboard_owning_p_view = p_view_from_viewno(global_clipboard_owning_p_docu, g_global_clipboard_owning_viewno);
 
-            if(host_open_global_clipboard(clipboard_owning_p_docu, clipboard_owning_p_view))
+            if(host_open_global_clipboard(global_clipboard_owning_p_docu, global_clipboard_owning_p_view))
             {
-                if(status_fail(clip_render_all_formats(clipboard_owning_p_docu)))
+                if(status_fail(clip_render_all_formats(global_clipboard_owning_p_docu)))
                 {
                     trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: clip_render_all_formats failed"));
                     lresult = 1; /* didn't work */
                 }
-
-                host_close_global_clipboard();
             }
             else
             {

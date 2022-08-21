@@ -9,8 +9,8 @@
 
 /*#define VER_FILEVERSION            2,xx,y,0*/
 /*#define VER_FILEVERSION            2,xx,0,0*/
-#define VER_FILEVERSION              2,10,1,0
-#define VER_FILEVERSION_STR         "2.10.01\0"
+#define VER_FILEVERSION              2,20,0,0
+#define VER_FILEVERSION_STR         "2.20\0"
 /*#define VER_FILEVERSION_STR       "2.xx\0"*/
 /*#define VER_FILEVERSION_STR       "2.xx.yy\0"*/
 
@@ -22,7 +22,7 @@
 #include "../../ob_skel/resource/skel.rci"
 
 // normal STRINGTABLE
-#include "../../firewrkz/resource/windows/uk/res00.rci"
+#include "../../firewrkz/resource/windows/UK/res00.rci"
 
 // from object 01
 
@@ -30,7 +30,7 @@
 #include "../../ob_ss/resource/ss.rci"
 
 // normal STRINGTABLE
-#include "../../firewrkz/resource/windows/uk/res01.rci"
+#include "../../firewrkz/resource/windows/UK/res01.rci"
 
 // from object 06
 
@@ -38,11 +38,11 @@
 #include "../../ob_chart/resource/chart.rci"
 
 // normal STRINGTABLE
-#include "../../firewrkz/resource/windows/uk/res06.rci"
+#include "../../firewrkz/resource/windows/UK/res06.rci"
 
 // from all other objects
 
-#include "../../firewrkz/resource/windows/uk/resXX.rci"
+#include "../../firewrkz/resource/windows/UK/resXX.rci"
 
 #endif /* NOT_ALL_IN_ONE */
 
@@ -78,7 +78,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 // Bitmap
 //
 
-80                      BITMAP  "../../firewrkz/resource/windows/uk/banner.bmp"
+80                      BITMAP  "../../firewrkz/resource/windows/UK/banner.bmp"
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////

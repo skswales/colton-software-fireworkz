@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>Displaying arrays</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Displaying arrays" />
+    </object>
+
+    <h1><a name="displaying_arrays" id="displaying_arrays"></a>Displaying arrays</h1>
+
+    <p>If the result of a formula is an array, you only see the top left entry in the array displayed on the worksheet.</p>
+
+    <h2>Displaying the whole array</h2>
+
+    <p>If you want to expand an array over a block of cells you can use the SET_VALUE function to see the array on the worksheet in full:</p>
+
+    <ol>
+        <li>Select a cell.</li>
+
+        <li>Enter a formula using the SET_VALUE function, for example:</li>
+
+        <p>SET_VALUE(E1:F5, A1)</p>
+
+        <p>This writes the contents of an array held in cell A1 into cells E1 to F5</p>
+
+        <li>Click the <b>Tick</b> button or press Return. The array named in the second parameter will be written into the range of cells defined in the first parameter.</li>
+    </ol>
+
+    <h2>Accessing a sub-array or a single array component</h2>
+
+    <p>You can use the INDEX function to extract and display a section of an array or a single component from it.</p>
+
+    <p>For example:</p>
+
+    <p>INDEX(A1, 2, 3)</p>
+
+    <p>will return the component of the array held in cell A1 in the second column and third row of the array.</p>
+
+    <p>INDEX(A1, 1, 2, 2, 3)</p>
+
+    <p>will return a sub-array of two columns and three rows starting with the first column and second row.</p>
+
+    <p>If you extract a sub-array, you would still need to use SET_VALUE to display it, for example:</p>
+
+    <p>SET_VALUE(C3:D5, INDEX(A1, 1, 2, 2, 3))</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

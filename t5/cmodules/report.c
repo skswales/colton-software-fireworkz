@@ -26,6 +26,11 @@
 static BOOL
 g_report_enabled = TRUE;
 
+#if RISCOS
+static int try_reporter = TRUE;
+static int try_rpcemu_report = TRUE;
+#endif
+
 extern void
 report_enable(
     _InVal_     BOOL enable)
@@ -38,6 +43,25 @@ extern BOOL
 report_enabled(void)
 {
     return(g_report_enabled);
+}
+
+_Check_return_
+extern BOOL
+reporting_is_enabled(void)
+{
+    if(!g_report_enabled)
+        return(FALSE);
+
+#if RISCOS
+    if( !try_reporter &&
+        !try_rpcemu_report &&
+        (0 == stderr->__file) /* not redirected? */ )
+    {
+        return(FALSE);
+    }
+#endif
+
+    return(TRUE);
 }
 
 /******************************************************************************
@@ -76,6 +100,7 @@ vreportf(
 {
     PCTSTR tail;
     BOOL wants_continuation;
+    int len;
 
     if(!g_report_enabled) return;
 
@@ -93,18 +118,30 @@ vreportf(
     wants_continuation = (tail != format) && (tail[-1] == CH_VERTICAL_LINE);
 
 #if WINDOWS
-    consume_int(_vsntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, format, args));
+    len = _vsntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, format, args);
+    if(-1 == len)
+        len = tstrlen32(report_buffer); /* limit to what actually was achieved */
 #else /* C99 CRT */
-    consume_int(vsnprintf(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, format, args));
+    len = vsnprintf(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, format, args);
+    if(len < 0)
+        len = 0;
+    else if((U32) len >= elemof32(report_buffer))
+        len = strlen32(report_buffer); /* limit to what actually was achieved */
 #endif
 
     if(wants_continuation)
     {
-        report_buffer_offset += tstrlen32(report_buffer + report_buffer_offset);
-        if(report_buffer[report_buffer_offset - 1] == CH_VERTICAL_LINE) /* may have been truncated - if so, just output */
+        const U32 original_report_buffer_offset = report_buffer_offset;
+
+        report_buffer_offset += len;
+
+        if(0 != original_report_buffer_offset)
         {
-            report_buffer[--report_buffer_offset] = CH_NULL; /* otherwise retract back over the terminal continuation char */
-            return;
+            if(report_buffer[report_buffer_offset - 1] == CH_VERTICAL_LINE) /* may have been truncated - if so, just output */
+            {
+                report_buffer[--report_buffer_offset] = CH_NULL; /* otherwise retract back over the terminal continuation char */
+                return;
+            }
         }
     }
 
@@ -148,9 +185,6 @@ report_output(
 #if RISCOS
     PCTSTR ptr;
     U8 ch;
-
-    static int try_reporter = TRUE;
-    static int try_rpcemu_report = TRUE;
 
     if(!g_report_enabled) return;
 
@@ -198,14 +232,14 @@ report_output(
             break;
 
         case 0x7F: /* DEL */
-            fputc('|', stderr);
+            fputc(CH_VERTICAL_LINE, stderr);
             fputc('?', stderr);
             break;
 
         default:
             if(ch <= 0x1F)
             {
-                fputc('|', stderr);
+                fputc(CH_VERTICAL_LINE, stderr);
                 ch = ch + '@';
             }
 
@@ -411,7 +445,7 @@ report_sbstr(
 
     if(
 #if defined(HIGH_MEMORY_LIMIT)
-        ((uintptr_t) sbstr < (uintptr_t) LOW_MEMORY_LIMIT)  ||
+        ((uintptr_t) sbstr < (uintptr_t) LOW_MEMORY_LIMIT ) ||
         ((uintptr_t) sbstr > (uintptr_t) HIGH_MEMORY_LIMIT) ||
 #endif
         IS_BAD_POINTER(sbstr) )
@@ -453,24 +487,24 @@ report_wimp_event_code(
 
     switch(event_code)
     {
-    case Wimp_ENull:                    return(TEXT("Wimp_ENull"));
-    case Wimp_ERedrawWindow:            return(TEXT("Wimp_ERedrawWindow"));
-    case Wimp_EOpenWindow:              return(TEXT("Wimp_EOpenWindow"));
-    case Wimp_ECloseWindow:             return(TEXT("Wimp_ECloseWindow"));
-    case Wimp_EPointerLeavingWindow:    return(TEXT("Wimp_EPointerLeavingWindow"));
-    case Wimp_EPointerEnteringWindow:   return(TEXT("Wimp_EPointerEnteringWindow"));
-    case Wimp_EMouseClick:              return(TEXT("Wimp_EMouseClick"));
-    case Wimp_EUserDrag:                return(TEXT("Wimp_EUserDrag"));
-    case Wimp_EKeyPressed:              return(TEXT("Wimp_EKeyPressed"));
-    case Wimp_EMenuSelection:           return(TEXT("Wimp_EMenuSelection"));
-    case Wimp_EScrollRequest:           return(TEXT("Wimp_EScrollRequest"));
-    case Wimp_ELoseCaret:               return(TEXT("Wimp_ELoseCaret"));
-    case Wimp_EGainCaret:               return(TEXT("Wimp_EGainCaret"));
-    case Wimp_EPollWordNonZero:         return(TEXT("Wimp_EPollWordNonZero"));
+    case Wimp_ENull:                    return(TEXT("Null_Reason_Code"));
+    case Wimp_ERedrawWindow:            return(TEXT("Redraw_Window_Request"));
+    case Wimp_EOpenWindow:              return(TEXT("Open_Window_Request"));
+    case Wimp_ECloseWindow:             return(TEXT("Close_Window_Request"));
+    case Wimp_EPointerLeavingWindow:    return(TEXT("Pointer_Leaving_Window"));
+    case Wimp_EPointerEnteringWindow:   return(TEXT("Pointer_Entering_Window"));
+    case Wimp_EMouseClick:              return(TEXT("Mouse_Click"));
+    case Wimp_EUserDrag:                return(TEXT("User_Drag_Box"));
+    case Wimp_EKeyPressed:              return(TEXT("Key_Pressed"));
+    case Wimp_EMenuSelection:           return(TEXT("Menu_Selection"));
+    case Wimp_EScrollRequest:           return(TEXT("Scroll_Request"));
+    case Wimp_ELoseCaret:               return(TEXT("Lose_Caret"));
+    case Wimp_EGainCaret:               return(TEXT("Gain_Caret"));
+    case Wimp_EPollWordNonZero:         return(TEXT("Poll_Word_Non_Zero"));
     /* 14..16 not defined */
-    case Wimp_EUserMessage:             return(TEXT("Wimp_EUserMessage"));
-    case Wimp_EUserMessageRecorded:     return(TEXT("Wimp_EUserMessageRecorded"));
-    case Wimp_EUserMessageAcknowledge:  return(TEXT("Wimp_EUserMessageAcknowledge"));
+    case Wimp_EUserMessage:             return(TEXT("User_Message"));
+    case Wimp_EUserMessageRecorded:     return(TEXT("User_Message_Recorded"));
+    case Wimp_EUserMessageAcknowledge:  return(TEXT("User_Message_Acknowledge"));
 
     default:
         consume_int(snprintf(default_eventstring, elemof32(default_eventstring), U32_XTFMT, (U32) event_code));
@@ -592,55 +626,55 @@ report_wimp_message_action(
 
     switch(message_action)
     {
-    case Wimp_MQuit:            return(TEXT("Wimp_MQuit"));
-    case Wimp_MDataSave:        return(TEXT("Wimp_MDataSave"));
-    case Wimp_MDataSaveAck:     return(TEXT("Wimp_MDataSaveAck"));
-    case Wimp_MDataLoad:        return(TEXT("Wimp_MDataLoad"));
-    case Wimp_MDataLoadAck:     return(TEXT("Wimp_MDataLoadAck"));
-    case Wimp_MDataOpen:        return(TEXT("Wimp_MDataOpen"));
-    case Wimp_MRAMFetch:        return(TEXT("Wimp_MRAMFetch"));
-    case Wimp_MRAMTransmit:     return(TEXT("Wimp_MRAMTransmit"));
-    case Wimp_MPreQuit:         return(TEXT("Wimp_MPreQuit"));
-    case Wimp_MPaletteChange:   return(TEXT("Wimp_MPaletteChange"));
-    case Wimp_MSaveDesktop:     return(TEXT("Wimp_MSaveDesktop"));
+    case Wimp_MQuit:            return(TEXT("Message_Quit"));
+    case Wimp_MDataSave:        return(TEXT("Message_DataSave"));
+    case Wimp_MDataSaveAck:     return(TEXT("Message_DataSaveAck"));
+    case Wimp_MDataLoad:        return(TEXT("Message_DataLoad"));
+    case Wimp_MDataLoadAck:     return(TEXT("Message_DataLoadAck"));
+    case Wimp_MDataOpen:        return(TEXT("Message_DataOpen"));
+    case Wimp_MRAMFetch:        return(TEXT("Message_RAMFetch"));
+    case Wimp_MRAMTransmit:     return(TEXT("Message_RAMTransmit"));
+    case Wimp_MPreQuit:         return(TEXT("Message_PreQuit"));
+    case Wimp_MPaletteChange:   return(TEXT("Message_PaletteChange"));
+    case Wimp_MSaveDesktop:     return(TEXT("Message_SaveDesktop"));
     /*Wimp_MDeviceClaim*/
     /*Wimp_MDeviceInUse*/
-    case Wimp_MDataSaved:       return(TEXT("Wimp_MDataSaved"));
-    case Wimp_MShutDown:        return(TEXT("Wimp_MShutDown"));
-    /*Wimp_MClaimEntity*/
+    case Wimp_MDataSaved:       return(TEXT("Message_DataSaved"));
+    case Wimp_MShutDown:        return(TEXT("Message_ShutDown"));
+    case Wimp_MClaimEntity:     return(TEXT("Message_ClaimEntity"));
     /*Wimp_MDataRequest*/
     /*Wimp_MDragging*/
     /*Wimp_MDragClaim*/
-    case Wimp_MAppControl:      return(TEXT("Wimp_MAppControl"));
+    case Wimp_MAppControl:      return(TEXT("Message_AppControl"));
 
-    case Wimp_MHelpRequest:     return(TEXT("Wimp_MHelpRequest"));
-    case Wimp_MHelpReply:       return(TEXT("Wimp_MHelpReply"));
+    case Wimp_MHelpRequest:     return(TEXT("Message_HelpRequest"));
+    case Wimp_MHelpReply:       return(TEXT("Message_HelpReply"));
 
-    case Wimp_MMenuWarning:     return(TEXT("Wimp_MMenuWarning"));
-    case Wimp_MModeChange:      return(TEXT("Wimp_MModeChange"));
-    case Wimp_MTaskInitialise:  return(TEXT("Wimp_MTaskInitialise"));
-    case Wimp_MTaskCloseDown:   return(TEXT("Wimp_MTaskCloseDown"));
-    case Wimp_MSlotSize:        return(TEXT("Wimp_MSlotSize"));
-    case Wimp_MSetSlot:         return(TEXT("Wimp_MSetSlot"));
-    case Wimp_MTaskNameRq:      return(TEXT("Wimp_MTaskNameRq"));
-    case Wimp_MTaskNameIs:      return(TEXT("Wimp_MTaskNameIs"));
-    case Wimp_MTaskStarted:     return(TEXT("Wimp_MTaskStarted"));
-    case Wimp_MMenusDeleted:    return(TEXT("Wimp_MMenusDeleted"));
-    case Wimp_MIconize:         return(TEXT("Wimp_MIconize"));
-    case Wimp_MWindowClosed:    return(TEXT("Wimp_MWindowClosed"));
-    case Wimp_MWindowInfo:      return(TEXT("Wimp_MWindowInfo"));
-    case Wimp_MSwap:            return(TEXT("Wimp_MSwap"));
-    case Wimp_MToolsChanged:    return(TEXT("Wimp_MToolsChanged"));
-    case Wimp_MFontChanged:     return(TEXT("Wimp_MFontChanged"));
+    case Wimp_MMenuWarning:     return(TEXT("Message_MenuWarning"));
+    case Wimp_MModeChange:      return(TEXT("Message_ModeChange"));
+    case Wimp_MTaskInitialise:  return(TEXT("Message_TaskInitialise"));
+    case Wimp_MTaskCloseDown:   return(TEXT("Message_TaskCloseDown"));
+    case Wimp_MSlotSize:        return(TEXT("Message_SlotSize"));
+    case Wimp_MSetSlot:         return(TEXT("Message_SetSlot"));
+    case Wimp_MTaskNameRq:      return(TEXT("Message_TaskNameRq"));
+    case Wimp_MTaskNameIs:      return(TEXT("Message_TaskNameIs"));
+    case Wimp_MTaskStarted:     return(TEXT("Message_TaskStarted"));
+    case Wimp_MMenusDeleted:    return(TEXT("Message_MenusDeleted"));
+    case Wimp_MIconize:         return(TEXT("Message_Iconize"));
+    case Wimp_MWindowClosed:    return(TEXT("Message_WindowClosed"));
+    case Wimp_MWindowInfo:      return(TEXT("Message_WindowInfo"));
+    case Wimp_MSwap:            return(TEXT("Message_Swap"));
+    case Wimp_MToolsChanged:    return(TEXT("Message_ToolsChanged"));
+    case Wimp_MFontChanged:     return(TEXT("Message_FontChanged"));
 
-    case Wimp_MPrintFile:       return(TEXT("Wimp_MPrintFile"));
-    case Wimp_MWillPrint:       return(TEXT("Wimp_MWillPrint"));
-    case Wimp_MPrintSave:       return(TEXT("Wimp_MPrintSave"));
-    case Wimp_MPrintInit:       return(TEXT("Wimp_MPrintInit"));
-    case Wimp_MPrintError:      return(TEXT("Wimp_MPrintError"));
-    case Wimp_MPrintTypeOdd:    return(TEXT("Wimp_MPrintTypeOdd"));
-    case Wimp_MPrintTypeKnown:  return(TEXT("Wimp_MPrintTypeKnown"));
-    case Wimp_MSetPrinter:      return(TEXT("Wimp_MSetPrinter"));
+    case Wimp_MPrintFile:       return(TEXT("Message_PrintFile"));
+    case Wimp_MWillPrint:       return(TEXT("Message_WillPrint"));
+    case Wimp_MPrintSave:       return(TEXT("Message_PrintSave"));
+    case Wimp_MPrintInit:       return(TEXT("Message_PrintInit"));
+    case Wimp_MPrintError:      return(TEXT("Message_PrintError"));
+    case Wimp_MPrintTypeOdd:    return(TEXT("Message_PrintTypeOdd"));
+    case Wimp_MPrintTypeKnown:  return(TEXT("Message_PrintTypeKnown"));
+    case Wimp_MSetPrinter:      return(TEXT("Message_SetPrinter"));
 
     default:
         consume_int(snprintf(default_actionstring, elemof32(default_actionstring), U32_XTFMT, (U32) message_action));
@@ -711,6 +745,24 @@ report_wimp_message(
                      TEXT(": buffer ") PTR_XTFMT TEXT("; nbytes ") U32_XTFMT,
                      m->data.ram_transmit.buffer,
                      m->data.ram_transmit.nbytes));
+        break;
+
+    case Wimp_MClaimEntity:
+        consume_int(
+            snprintf(tempbuffer, elemof32(tempbuffer),
+                     TEXT(": ") U32_XTFMT,
+                     m->data.words[0]));
+        break;
+
+    case Wimp_MDataRequest:
+        consume_int(
+            snprintf(tempbuffer, elemof32(tempbuffer),
+                     TEXT(": dest window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; flags ") U32_XTFMT TEXT("; type[0]: 0x%.3X"),
+                     m->data.data_load.destination_window,
+                     m->data.data_load.destination_icon,
+                     m->data.data_load.destination_x, m->data.data_load.destination_y,
+                     ((const WimpDataRequestMessage *) (&m->data))->flags,
+                     ((const WimpDataRequestMessage *) (&m->data))->type[0]));
         break;
 
     case Wimp_MHelpRequest:

@@ -76,7 +76,7 @@ product_between_calc(
 
             umul64(p_ev_data_res->arg.integer, i, &result);
 
-            if((0 == result.HighPart) && (0 == (result.LowPart & 0x8000000U)))
+            if((0 == result.HighPart) && (0 == (result.LowPart & 0x80000000U)))
             {   /* result still fits in integer */
                 p_ev_data_res->arg.integer = (S32) result.LowPart;
                 continue;
@@ -192,7 +192,8 @@ PROC_EXEC_PROTO(c_fact)
 *
 * NUMBER int(number)
 *
-* NB truncates towards zero - this is unlike OpenDocument and Microsoft Excel (but is what Lotus 1-2-3 and PipeDream did)
+* NB truncates towards zero - this is unlike OpenDocument and Microsoft Excel
+* but is what Lotus 1-2-3 and PipeDream did
 *
 ******************************************************************************/
 
@@ -248,26 +249,6 @@ PROC_EXEC_PROTO(c_ln)
 
 /******************************************************************************
 *
-* REAL odf.log10(number)
-*
-******************************************************************************/
-
-PROC_EXEC_PROTO(c_odf_log10)
-{
-    const F64 number = args[0]->arg.fp;
-
-    exec_func_ignore_parms();
-
-    errno = 0;
-
-    ev_data_set_real(p_ev_data_res, log10(number));
-
-    if(errno /* == EDOM, ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_BAD_LOG);
-}
-
-/******************************************************************************
-*
 * NUMBER mod(a, b)
 *
 ******************************************************************************/
@@ -282,16 +263,19 @@ PROC_EXEC_PROTO(c_mod)
         {
         const S32 s32_a = args[0]->arg.integer;
         const S32 s32_b = args[1]->arg.integer;
+        div_t d;
         S32 s32_mod_result;
 
         /* SKS after PD 4.11 03feb92 - gave FP error not zero if trap taken */
-        if(s32_b == 0)
+        if(0 == s32_b)
         {
             ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
             return;
         }
 
-        s32_mod_result = (s32_a % s32_b);
+        d = div((int) s32_a, (int) s32_b);
+
+        s32_mod_result = d.rem; /* remainder has the same sign as the dividend */
 
         ev_data_set_integer(p_ev_data_res, s32_mod_result);
         break;
@@ -305,9 +289,9 @@ PROC_EXEC_PROTO(c_mod)
 
         errno = 0;
 
-        f64_mod_result = fmod(f64_a, f64_b);
+        f64_mod_result = fmod(f64_a, f64_b); /* remainder has the same sign as the dividend */
 
-        ev_data_set_real(p_ev_data_res, f64_mod_result);
+        ev_data_set_real_ti(p_ev_data_res, f64_mod_result);
 
         /* would have divided by zero? */
         if(errno /* == EDOM */)

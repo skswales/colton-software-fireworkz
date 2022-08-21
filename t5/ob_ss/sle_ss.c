@@ -1021,10 +1021,10 @@ sle_tool_user_posn_set(
     SIZE PixelsPerInch;
     host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    new_pos_rect.left   = (int) div_round_floor_fn(p_sle_info_block->pixit_rect.tl.x * PixelsPerInch.cx, PIXITS_PER_INCH);
-    new_pos_rect.top    = (int) div_round_floor_fn(p_sle_info_block->pixit_rect.tl.y * PixelsPerInch.cy, PIXITS_PER_INCH);
-    new_pos_rect.right  = (int) div_round_ceil_fn( p_sle_info_block->pixit_rect.br.x * PixelsPerInch.cx, PIXITS_PER_INCH);
-    new_pos_rect.bottom = (int) div_round_ceil_fn( p_sle_info_block->pixit_rect.br.y * PixelsPerInch.cy, PIXITS_PER_INCH);
+    new_pos_rect.left   = (int) idiv_floor_fn(p_sle_info_block->pixit_rect.tl.x * PixelsPerInch.cx, PIXITS_PER_INCH);
+    new_pos_rect.top    = (int) idiv_floor_fn(p_sle_info_block->pixit_rect.tl.y * PixelsPerInch.cy, PIXITS_PER_INCH);
+    new_pos_rect.right  = (int) idiv_ceil_fn( p_sle_info_block->pixit_rect.br.x * PixelsPerInch.cx, PIXITS_PER_INCH);
+    new_pos_rect.bottom = (int) idiv_ceil_fn( p_sle_info_block->pixit_rect.br.y * PixelsPerInch.cy, PIXITS_PER_INCH);
     } /*block*/
 
     SetWindowPos(p_view->main[WIN_SLE].hwnd, NULL, new_pos_rect.left, new_pos_rect.top, new_pos_rect.right - new_pos_rect.left, new_pos_rect.bottom - new_pos_rect.top, SWP_NOZORDER);
@@ -1145,7 +1145,7 @@ sle_select_font(
     SIZE PixelsPerInch;
     host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    host_font_spec.size_y = div_round_floor_u(host_font_spec.size_y * PixelsPerInch.cy, PIXITS_PER_INCH);
+    host_font_spec.size_y = idiv_floor_u(host_font_spec.size_y * PixelsPerInch.cy, PIXITS_PER_INCH);
     } /*block*/
 
     host_font = host_font_find(&host_font_spec, P_REDRAW_CONTEXT_NONE);

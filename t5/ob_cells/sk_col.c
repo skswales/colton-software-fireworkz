@@ -50,10 +50,6 @@ COL_ENUM_CACHE, * P_COL_ENUM_CACHE; typedef const COL_ENUM_CACHE * PC_COL_ENUM_C
 
 static ARRAY_HANDLE h_col_enum_cache;
 
-#if RISCOS
-static MYRAND_SEED myrand_seed = {0x12345678, 1};
-#endif
-
 /******************************************************************************
 *
 * work out which column contains a skeleton point
@@ -792,11 +788,7 @@ skel_col_enum_cache_insert(
     }
 
     do  {
-#if RISCOS
-        i = myrand(&myrand_seed, n_cache_elements);
-#else
-        i = rand() % n_cache_elements;
-#endif
+        i = host_rand_between(0, n_cache_elements);
         p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
         limit += 1;
     }

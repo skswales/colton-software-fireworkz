@@ -217,12 +217,13 @@ struct HOST_SYSTEM_SPRITES
 }
 host_system_sprites[] =
 {
-/*    { 0x5E58, OBJECT_ID_SKEL, "up!" },  */ /* SKS 11apr95 we used to let people override these but NO MORE COS THEY'RE WANKERS */
-/*    { 0x19D5, OBJECT_ID_SKEL, "down!" },*/
+    { /*0x5E58,*/ /*OBJECT_ID_SKEL,*/ "up!" },
+    { /*0x19D5,*/ /*OBJECT_ID_SKEL,*/ "down!" },
     { /*0x664D,*/ /*OBJECT_ID_SKEL,*/ "opton!" },
     { /*0x7649,*/ /*OBJECT_ID_SKEL,*/ "optoff!" },
     { /*0x06E9,*/ /*OBJECT_ID_SKEL,*/ "radioon!" },
     { /*0x3F4B,*/ /*OBJECT_ID_SKEL,*/ "radiooff!" },
+    { /*0x0000,*/ /*OBJECT_ID_SKEL,*/ "gright!" },
     { /*0x0000,*/ /*OBJECT_ID_SKEL,*/ "ptr_write!" } /* not in any ROM a ce moment, CRC of 0 should sort it */
 };
 
@@ -237,7 +238,7 @@ host_fixup_system_sprites(void)
 
     for(i = 0; i < elemof32(host_system_sprites); ++i)
     {
-        RESOURCE_BITMAP_HANDLE resource_bitmap_handle; /* SKS 11may95 ALWAYS use our bound versions if not on Medusa */
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle; /* SKS 11may95 ALWAYS use our bound versions if not on 3.5+ */
         RESOURCE_BITMAP_ID resource_bitmap_id_pling;
         S32 area_id;
 

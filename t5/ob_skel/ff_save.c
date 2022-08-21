@@ -25,6 +25,9 @@
 #include "cmodules/utf16.h"
 #endif
 
+ARRAY_HANDLE
+g_installed_save_objects_handle;
+
 _Check_return_
 extern STATUS
 plain_write_newline(
@@ -459,10 +462,11 @@ foreign_initialise_save(
 ******************************************************************************/
 
 _Check_return_
-extern STATUS
-save_foreign_to_array_from_docu_area(
+static STATUS
+save_foreign_from_docu_area(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_opt_ P_ARRAY_HANDLE p_array_handle,
+    _In_opt_z_  PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype,
     _InRef_     PC_DOCU_AREA p_docu_area)
 {
@@ -475,9 +479,9 @@ save_foreign_to_array_from_docu_area(
     {
     ARRAY_INDEX i;
 
-    for(i = 0; i < array_elements(&installed_save_objects_handle); ++i)
+    for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
     {
-        P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptr(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+        const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
 
         if(t5_filetype == p_installed_save_object->t5_filetype)
         {
@@ -493,7 +497,7 @@ save_foreign_to_array_from_docu_area(
     ff_op_format.of_op_format.process_status.reason.type = UI_TEXT_TYPE_RESID;
     ff_op_format.of_op_format.process_status.reason.text.resource_id = MSG_STATUS_CUTTING;
 
-    status_return(foreign_initialise_save(p_docu, &ff_op_format, p_array_handle, NULL, t5_filetype, p_docu_area));
+    status_return(foreign_initialise_save(p_docu, &ff_op_format, p_array_handle, filename, t5_filetype, p_docu_area));
 
     {
     MSG_SAVE_FOREIGN msg_save_foreign;
@@ -503,6 +507,28 @@ save_foreign_to_array_from_docu_area(
     } /*block*/
 
     return(foreign_finalise_save(&p_docu, &ff_op_format, status));
+}
+
+_Check_return_
+extern STATUS
+save_foreign_to_array_from_docu_area(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_opt_ P_ARRAY_HANDLE p_array_handle,
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InRef_     PC_DOCU_AREA p_docu_area)
+{
+    return(save_foreign_from_docu_area(p_docu, p_array_handle, NULL, t5_filetype, p_docu_area));
+}
+
+_Check_return_
+extern STATUS
+save_foreign_to_file_from_docu_area(
+    _DocuRef_   P_DOCU p_docu,
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InRef_     PC_DOCU_AREA p_docu_area)
+{
+    return(save_foreign_from_docu_area(p_docu, NULL, filename, t5_filetype, p_docu_area));
 }
 
 /* end of ff_save.c */

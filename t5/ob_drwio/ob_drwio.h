@@ -45,6 +45,7 @@ extern STATUS
 save_as_drawfile_host_print_document(
     _DocuRef_   P_DOCU p_docu,
     P_PRINT_CTRL p_save_as_drawfile_ctrl,
-    _In_z_      PCTSTR filename);
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype);
 
 /* end of ob_drwio.h */

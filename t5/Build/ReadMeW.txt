@@ -12,13 +12,15 @@ Prerequisites
 
 A Windows SVN client such as TortoiseSVN (minimal install, with command line tools, no en_US dictionary, no additional iconsets will suffice).
 
+GNU Win32 Patch to generate the patched BTTNCUR(P) source files.
+
 Microsoft Visual Studio 2013 or later (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options).
 
 I recommend setting:
 
-    Options - Text editor - C++ - Tabs - Insert Spaces
-
-GNU Win32 Patch to generate the patched BTTNCUR(P) source files.
+    Tools - Options - Text editor - C++:
+		Tabs - Insert Spaces
+		Formatting - Spacing - Spacing for control blocks - Insert space between keyword ... (Off)
 
 InnoSetup to create the distributable setup executable.
 

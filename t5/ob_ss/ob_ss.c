@@ -32,13 +32,9 @@
 #if RISCOS
 #define MSG_WEAK &rb_ss_msg_weak
 extern PC_U8 rb_ss_msg_weak;
-extern P_ANY rb_ss_spr_22_weak;
-extern P_ANY rb_ss_spr_24_weak;
-static BOUND_RESOURCES BOUND_RESOURCES_OBJECT_ID_SS = { NULL, &rb_ss_spr_22_weak, &rb_ss_spr_24_weak };
-#define P_BOUND_RESOURCES_OBJECT_ID_SS &BOUND_RESOURCES_OBJECT_ID_SS
-#else
-#define P_BOUND_RESOURCES_OBJECT_ID_SS LOAD_RESOURCES
 #endif
+
+#define P_BOUND_RESOURCES_OBJECT_ID_SS LOAD_RESOURCES
 
 /*
 internal functions
@@ -429,6 +425,7 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_INT,           c_odf_int),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_IRR,           c_odf_irr),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_LOG10,         c_odf_log10),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_MOD,           c_odf_mod),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_PMT,           c_odf_pmt),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_TDIST,         c_odf_tdist),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_TYPE,          c_odf_type),
@@ -2868,6 +2865,7 @@ ss_msg_startup(void)
         assert(i == ss_func_table[i].index);
     } /*block*/
 #endif
+
     status_return(resource_init(OBJECT_ID_SS, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_SS));
 
 #if WINDOWS

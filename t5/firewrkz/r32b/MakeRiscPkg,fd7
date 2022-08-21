@@ -7,114 +7,169 @@
 | Copyright (C) 1993-1998 Colton Software Limited
 | Copyright (C) 1998-2015 R W Colton
 
-IfThere $.Temp Then Else %CDir $.Temp
+Set t5$Release 2_20
+| Set t5$Release 2_20_01
 
-Set t5$Release 2_10_02
+Set t5$Disc $.Temp.Fire.Fireworkz_<t5$Release>
+Set t5$Zip  $.Temp.Fire.Fireworkz_<t5$Release>/zip
 
-Set t5$Disc $.Temp.Fireworkz_<t5$Release>
-Set t5$Zip  $.Temp.Fireworkz_<t5$Release>/zip
+IfThere $.Temp      Then Else %CDir $.Temp
+IfThere $.Temp.Fire Then Else %CDir $.Temp.Fire
 
 %CDir <t5$Disc>
 
 X %Wipe <t5$Disc>.* ~cfr~v
 
 Set t5$Product firewrkz
-Set t5$Country uk
 
-Set t5$Build$Dir    <Obey$Dir>.^.^.Build.r32b.<t5$Product>.!Fireworkz
-Set t5$Resource$Dir <t5$Build$Dir>.Resource
-Set ap$Resource$Dir <Obey$Dir>.^.^.<t5$Product>.resource.riscos.<t5$Country>
+Set t5$Build$Dir        <Obey$Dir>.^.^.Build.r32b.<t5$Product>.!Fireworkz
 
-%CDir                                           <t5$Disc>.Z
+Set t5$AppData$Dir      <t5$Build$Dir>.AppData
 
-%Copy <ap$Resource$Dir>.LICENSE                 <t5$Disc>.Z.* ~rf~cln~v
+Set t5$Resources$Dir    <t5$Build$Dir>.Resources
 
-%Copy <t5$Build$Dir>.!Boot                      <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!Help                      <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!Help2                     <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!Run                       <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!Sprites                   <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!Sprites22                 <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!SpritesR5                 <t5$Disc>.Z.* ~rf~cln~v
-%Copy <t5$Build$Dir>.!RunImage                  <t5$Disc>.Z.* ~rf~cln~v
+Set t5$Product$Dir      <Obey$Dir>.^.^.<t5$Product>
 
-%Access                                         <t5$Disc>.Z.* r/r
+Set ap$Resource$Dir     <t5$Product$Dir>.resource.riscos
 
-%CDir                                           <t5$Disc>.Z.Resource
+%CDir                                               <t5$Disc>.Z
 
-%Copy <ap$Resource$Dir>.Config                  <t5$Disc>.Z.Resource.* ~rf~cln~v
+| Use the same licence in the distributed package
+%Copy <t5$Product$Dir>.r.RiscPkg.Copyright          <t5$Disc>.Z.LICENCE ~rf~cln~v
 
-|||NOT YET %Copy <t5$Resource$Dir>.cfbf                    <t5$Disc>.Z.Resource.* ~rf~cln~v
-|||NOT YET %Copy <t5$Resource$Dir>.cfbf-mini               <t5$Disc>.Z.Resource.* ~rf~cln~v
-
-%CDir                                           <t5$Disc>.Z.Resource.RISC_OS
-%Copy <t5$Resource$Dir>.RISC_OS.!Sprite         <t5$Disc>.Z.Resource.RISC_OS.* ~rf~cln~v
-%Copy <t5$Resource$Dir>.RISC_OS.ImageSlot       <t5$Disc>.Z.Resource.RISC_OS.* ~rf~cln~v
-%Copy <t5$Resource$Dir>.RISC_OS.Loader          <t5$Disc>.Z.Resource.RISC_OS.* ~rf~cln~v
-%Copy <t5$Resource$Dir>.RISC_OS.PicConvert      <t5$Disc>.Z.Resource.RISC_OS.* ~rf~cln~v
-%Access                                         <t5$Disc>.Z.Resource.RISC_OS.* r/r
-
-|||%CDir                                           <t5$Disc>.Z.Resource.Objects
-|||%Copy <t5$Build$Dir>.Resource.Objects.Ob42_22   <t5$Disc>.Z.Resource.Objects.* ~rf~cln~v
-|||%Access                                         <t5$Disc>.Z.Resource.Objects.* r/r
-
-%CDir                                           <t5$Disc>.Z.Resource.Choices
-|||%Copy <ap$Resource$Dir>.Choices.Choice00        <t5$Disc>.Z.Resource.Choices.* ~rf~cln~v
-|||%Copy <ap$Resource$Dir>.Choices.Choice01        <t5$Disc>.Z.Resource.Choices.* ~rf~cln~v
-%Copy <ap$Resource$Dir>.Choices.Choice18        <t5$Disc>.Z.Resource.Choices.* ~rf~cln~v
-|||%Copy <ap$Resource$Dir>.Choices.Choice29        <t5$Disc>.Z.Resource.Choices.* ~rf~cln~v
-|||%Copy <ap$Resource$Dir>.Choices.Choice37        <t5$Disc>.Z.Resource.Choices.* ~rf~cln~v
-%Access                                         <t5$Disc>.Z.Resource.Choices.* r/r
-
-%CDir                                           <t5$Disc>.Z.Resource.Dicts
-%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.MasterAsz <t5$Disc>.Z.Resource.Dicts.Master  ~rf~cln~v
-%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.MasterCsz <t5$Disc>.Z.Resource.Dicts.MasterC ~rf~cln~v
-%Access                                         <t5$Disc>.Z.Resource.Dicts.* r/r
-
-|||%CDir                                           <t5$Disc>.Z.Resource.ForeignTem
-|||%Copy <t5$Resource$Dir>.ForeignTem.*            <t5$Disc>.Z.Resource.ForeignTem.* ~rf~cln~v
-|||%Access                                         <t5$Disc>.Z.Resource.ForeignTem.* r/r
-
-%CDir                                           <t5$Disc>.Z.Resource.Markers
-%Copy <t5$Resource$Dir>.Markers.*               <t5$Disc>.Z.Resource.Markers.* ~rf~cln~v
-%Access                                         <t5$Disc>.Z.Resource.Markers.* r/r
-
-%CDir                                           <t5$Disc>.Z.Resource.Pictures
-%Copy <t5$Resource$Dir>.Pictures.*              <t5$Disc>.Z.Resource.Pictures.* ~rf~cln~v
-%Access                                         <t5$Disc>.Z.Resource.Pictures.* r/r
-
-%CDir                                           <t5$Disc>.Z.Resource.Template
-%Copy <t5$Resource$Dir>.Template.*              <t5$Disc>.Z.Resource.Template.* ~rf~cln~v
-%Access                                         <t5$Disc>.Z.Resource.Template.* r/r
-
-| *Pro* %Copy <t5$Resource$Dir>.DateFormat              <t5$Disc>.Z.Resource.* ~rf~cln~v
-| *Pro* %Copy <t5$Resource$Dir>.Holidays                <t5$Disc>.Z.Resource.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Boot                          <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Help                          <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Run                           <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!RunImage                      <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Sprites                       <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Sprites22                     <t5$Disc>.Z.* ~rf~cln~v
+| RISC OS 5 has different orientation pin in ic_xxx
+%Copy <t5$Build$Dir>.!SpritesR5                     <t5$Disc>.Z.* ~rf~cln~v
 
 | These used to be at top level - R-Comp can extract from here for PlingStore
-%Copy <Obey$Dir>.^.^.<t5$Product>.Relnotes/htm  <t5$Disc>.Z.Resource.Relnotes ~rf~cln~v
-%SetType                                        <t5$Disc>.Z.Resource.Relnotes &FAF
-| vvv now separate package
-| %Copy <Obey$Dir>.^.^.resource.HTMLhelp          <t5$Disc>.Z.Resource.* ~rf~cln~v
+%Copy <t5$Product$Dir>.Relnotes/htm                 <t5$Disc>.Z.Relnotes ~rf~cln~v
+%SetType                                            <t5$Disc>.Z.Relnotes &FAF
 
-%Access                                         <t5$Disc>.Z.Resource.* r/r
-%Access                                         <t5$Disc>.Z.Resource r/r
+%Access                                             <t5$Disc>.Z.* r/r
+
+|
+| Resource (RISC OS specific)
+|
+%CDir                                               <t5$Disc>.Z.Resources
+|
+| Language-independent
+%CDir                                               <t5$Disc>.Z.Resources.Neutral
+%Copy <t5$Resources$Dir>.Neutral.!Sprite            <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.ImageSlot          <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.Loader             <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.PicConvert         <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
+|
+%CDir                                               <t5$Disc>.Z.Resources.Neutral.Sprites22
+%Copy <t5$Resources$Dir>.Neutral.Sprites22.Ob06     <t5$Disc>.Z.Resources.Neutral.Sprites22.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.Resources.Neutral.Sprites22.* r/r
+|
+%CDir                                               <t5$Disc>.Z.Resources.Neutral.Sprites24
+%Copy <t5$Resources$Dir>.Neutral.Sprites24.Ob06     <t5$Disc>.Z.Resources.Neutral.Sprites24.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.Resources.Neutral.Sprites24.* r/r
+|
+| Language-dependent (UK)
+%CDir                                               <t5$Disc>.Z.Resources.UK
+%CDir                                               <t5$Disc>.Z.Resources.UK.Help
+%Copy <ap$Resource$Dir>.UK.Help.Text                <t5$Disc>.Z.Resources.UK.Help.* ~rf~cln~v
+%CDir                                               <t5$Disc>.Z.Resources.UK.Help.HTML
+%Copy <ap$Resource$Dir>.UK.Help.HTML.*              <t5$Disc>.Z.Resources.UK.Help.HTML.* ~rf~cln~v
+| CSS files
+SetMacro Alias$t5_settype_F79 SetType %%0 &F79
+t5_settype_F79                                      <t5$Disc>.Z.Resources.UK.Help.HTML.help/css
+Unset Alias$t5_settype_F79
+%Access                                             <t5$Disc>.Z.Resources.UK.Help.HTML.* r/r
+%Access                                             <t5$Disc>.Z.Resources.UK.Help.* r/r
+|
+%CDir                                               <t5$Disc>.Z.Resources.UK.Sprites22
+%Copy <t5$Resources$Dir>.UK.Sprites22.Ob00          <t5$Disc>.Z.Resources.UK.Sprites22.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.Sprites22.Ob01          <t5$Disc>.Z.Resources.UK.Sprites22.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.Resources.UK.Sprites22.* r/r
+|
+%CDir                                               <t5$Disc>.Z.Resources.UK.Sprites24
+%Copy <t5$Resources$Dir>.UK.Sprites24.Ob00          <t5$Disc>.Z.Resources.UK.Sprites24.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.Sprites24.Ob01          <t5$Disc>.Z.Resources.UK.Sprites24.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.Resources.UK.Sprites24.* r/r
+
+%Access                                             <t5$Disc>.Z.Resources.Neutral.* r/r
+%Access                                             <t5$Disc>.Z.Resources.UK.* r/r
+%Access                                             <t5$Disc>.Z.Resources.* r/r
+%Access                                             <t5$Disc>.Z.Resources r/r
+
+|
+| Resource (AppData)
+|
+%CDir                                               <t5$Disc>.Z.AppData
+%CDir                                               <t5$Disc>.Z.AppData.Neutral
+%CDir                                               <t5$Disc>.Z.AppData.UK
+|
+| Language-independent
+%CDir                                               <t5$Disc>.Z.AppData.Neutral.Markers
+%Copy <t5$AppData$Dir>.Neutral.Markers.*            <t5$Disc>.Z.AppData.Neutral.Markers.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.AppData.Neutral.Markers.* r/r
+
+| Language-independent
+%CDir                                               <t5$Disc>.Z.AppData.Neutral.Pictures
+%Copy <t5$AppData$Dir>.Neutral.Pictures.*           <t5$Disc>.Z.AppData.Neutral.Pictures.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.AppData.Neutral.Pictures.* r/r
+
+| Language-independent
+|*Pro*                                              <t5$Disc>.Z.AppData.Neutral.Support
+|*Pro*<t5$AppData$Dir>.Neutral.Support.cfbf         <t5$Disc>.Z.AppData.Neutral.Support.* ~rf~cln~v
+|*Pro*<t5$AppData$Dir>.Neutral.Support.cfbf-mini    <t5$Disc>.Z.AppData.Neutral.Support.* ~rf~cln~v
+
+| Language-dependent (UK)
+%Copy <ap$Resource$Dir>.UK.Config                   <t5$Disc>.Z.AppData.UK.* ~rf~cln~v
+
+| Language-dependent (UK)
+%CDir                                               <t5$Disc>.Z.AppData.UK.Choices
+|||py <ap$Resource$Dir>.UK.Choices.Choice00         <t5$Disc>.Z.AppData.UK.Choices.* ~rf~cln~v
+|||py <ap$Resource$Dir>.UK.Choices.Choice01         <t5$Disc>.Z.AppData.UK.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.Choices.Choice18         <t5$Disc>.Z.AppData.UK.Choices.* ~rf~cln~v
+|||py <ap$Resource$Dir>.UK.Choices.Choice29         <t5$Disc>.Z.AppData.UK.Choices.* ~rf~cln~v
+|||py <ap$Resource$Dir>.UK.Choices.Choice37         <t5$Disc>.Z.AppData.UK.Choices.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.AppData.UK.Choices.* r/r
+
+| Language-dependent (UK)
+%CDir                                               <t5$Disc>.Z.AppData.UK.Dicts
+%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.MasterAsz <t5$Disc>.Z.AppData.UK.Dicts.Master  ~rf~cln~v
+%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.MasterCsz <t5$Disc>.Z.AppData.UK.Dicts.MasterC ~rf~cln~v
+%Access                                             <t5$Disc>.Z.AppData.UK.Dicts.* r/r
+
+| Language-dependent (UK)
+%CDir                                               <t5$Disc>.Z.AppData.UK.Template
+%Copy <t5$AppData$Dir>.UK.Template.*                <t5$Disc>.Z.AppData.UK.Template.* ~rf~cln~v
+%Access                                             <t5$Disc>.Z.AppData.UK.Template.* r/r
+
+| Language-dependent (UK)
+|*Pro*<t5$AppData$Dir>.UK.DateFormat                <t5$Disc>.Z.AppData.UK.* ~rf~cln~v
+|*Pro*<t5$AppData$Dir>.UK.Holidays                  <t5$Disc>.Z.AppData.UK.* ~rf~cln~v
+
+%Access                                             <t5$Disc>.Z.AppData.Neutral.* r/r
+%Access                                             <t5$Disc>.Z.AppData.UK.* r/r
+%Access                                             <t5$Disc>.Z.AppData.* r/r
+%Access                                             <t5$Disc>.Z.AppData r/r
 
 | User Choices (destined for Choices$Write on target system)
 
-%CDir                                           <t5$Disc>.Z.uChoices
+%CDir                                               <t5$Disc>.Z.uChoices
 
-%Copy <ap$Resource$Dir>.uChoices.DoCopy         <t5$Disc>.Z.uChoices.* ~rf~cln~v
-%Copy <ap$Resource$Dir>.uChoices.ReadMe         <t5$Disc>.Z.uChoices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.uChoices.DoCopy          <t5$Disc>.Z.uChoices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.uChoices.ReadMe          <t5$Disc>.Z.uChoices.* ~rf~cln~v
 
-%CDir                                           <t5$Disc>.Z.uChoices.Fireworkz
+%CDir                                               <t5$Disc>.Z.uChoices.Fireworkz
 
 %CDir                                               <t5$Disc>.Z.uChoices.Fireworkz.Choices
 | Choice18 not saved so don't put it here
-%Copy <ap$Resource$Dir>.Choices.Choice00            <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
-%Copy <ap$Resource$Dir>.Choices.Choice01            <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
-%Copy <ap$Resource$Dir>.Choices.Choice29            <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
-| *Pro* %Copy <ap$Resource$Dir>.Choices.Choice37    <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
-%Copy <ap$Resource$Dir>.Choices.ChoicesDoc          <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.Choices.Choice00         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.Choices.Choice01         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.Choices.Choice29         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+|*Pro*<ap$Resource$Dir>.UK.Choices.Choice37         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.UK.Choices.ChoicesDoc       <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
 %Access                                             <t5$Disc>.Z.uChoices.Fireworkz.Choices.* wr/r
 
 | These are the big dicts, later datestamps
@@ -128,23 +183,25 @@ Set ap$Resource$Dir <Obey$Dir>.^.^.<t5$Product>.resource.riscos.<t5$Country>
 %CDir                                               <t5$Disc>.Z.uChoices.Fireworkz.Pictures
 %CDir                                               <t5$Disc>.Z.uChoices.Fireworkz.Template
 
-%Access                                         <t5$Disc>.Z.uChoices.Fireworkz.* wr/r
-%Access                                         <t5$Disc>.Z.uChoices.Fireworkz wr/r
-%Access                                         <t5$Disc>.Z.uChoices wr/r
+%Access                                             <t5$Disc>.Z.uChoices.Fireworkz.* wr/r
+%Access                                             <t5$Disc>.Z.uChoices.Fireworkz wr/r
+%Access                                             <t5$Disc>.Z.uChoices wr/r
 
 | Top level, contains just Apps and RiscPkg
 
-%CDir               <t5$Disc>.Apps
-%CDir               <t5$Disc>.Apps.Document
-%Rename <t5$Disc>.Z <t5$Disc>.Apps.Document.!Fireworkz
+%CDir                                               <t5$Disc>.Apps
+%CDir                                               <t5$Disc>.Apps.Document
+%Rename <t5$Disc>.Z                                 <t5$Disc>.Apps.Document.!Fireworkz
 
-%CDir                                                 <t5$Disc>.RiscPkg
-%Copy <Obey$Dir>.^.^.<t5$Product>.r.RiscPkg.Control   <t5$Disc>.RiscPkg.* ~rf~cln~v
-%Copy <Obey$Dir>.^.^.<t5$Product>.r.RiscPkg.Copyright <t5$Disc>.RiscPkg.* ~rf~cln~v
+%CDir                                               <t5$Disc>.RiscPkg
+%Copy <t5$Product$Dir>.r.RiscPkg.Control            <t5$Disc>.RiscPkg.* ~rf~cln~v
+%Copy <t5$Product$Dir>.r.RiscPkg.Copyright          <t5$Disc>.RiscPkg.* ~rf~cln~v
 
 %Dir <t5$Disc>
+%Remove <t5$Zip>
 zip -r <t5$Zip> RiscPkg Apps
-%Back
+SetType <t5$Zip> &A91
 Info <t5$Zip>
+%Back
 
 Filer_OpenDir <t5$Disc>

@@ -20,6 +20,10 @@
 #include "ob_toolb/xp_toolb.h"
 
 #if RISCOS
+#include "ob_skel/xp_skelr.h"
+#endif
+
+#if RISCOS
 #define MSG_WEAK &rb_cells_msg_weak
 extern PC_U8 rb_cells_msg_weak;
 #endif
@@ -82,6 +86,10 @@ enum CARET_ACTIONS
     CARET_STAY,
     CARET_TO_RIGHT
 };
+
+#if defined(USE_GLOBAL_CLIPBOARD) && RISCOS
+static ARRAY_HANDLE g_h_global_clip_data = 0; /* no real global clipboard on RISC OS to store data in */
+#endif
 
 static ARRAY_HANDLE g_h_local_clip_data = 0;
 
@@ -254,17 +262,19 @@ clip_data_array_handle_prepare(
 {
     static /*poked*/ ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(BYTE), FALSE);
 
-#if WINDOWS && defined(USE_GLOBAL_CLIPBOARD)
+#if defined(USE_GLOBAL_CLIPBOARD)
+    *p_f_local_clip_data = FALSE;
+#else
+    *p_f_local_clip_data = TRUE;
+#endif
+
+#if defined(USE_GLOBAL_CLIPBOARD) && WINDOWS
 #define GLOBAL_CLIPBOARD_SAVE_OUTPUT_BUFFER_INC 512 /* smaller if going to Windows clipboard */
     array_init_block.size_increment = GLOBAL_CLIPBOARD_SAVE_OUTPUT_BUFFER_INC;
 
     array_init_block.use_alloc = ALLOC_USE_GLOBAL_ALLOC; /* will become owned by Windows clipboard */
-
-    *p_f_local_clip_data = FALSE;
 #else
     array_init_block.size_increment = 4096; /* as #define SAVE_OUTPUT_BUFFER_INC 4096 in of_save.c */
-
-    *p_f_local_clip_data = TRUE;
 #endif
 
     return(al_array_alloc_zero(p_h_clip_data, &array_init_block));
@@ -307,8 +317,124 @@ global_clip_data_dispose(void)
 {
 #if defined(USE_GLOBAL_CLIPBOARD)
     host_release_global_clipboard(FALSE);
+
+#if RISCOS
+    al_array_dispose(&g_h_global_clip_data);
+#endif
 #endif
 }
+
+#if defined(USE_GLOBAL_CLIPBOARD) && RISCOS
+
+/* called from winx when someone else claims the global clipboard */
+
+static void
+cells_global_clipboard_data_dispose(void)
+{
+    global_clip_data_dispose();
+}
+
+static STATUS
+cells_global_clipboard_data_xfer_save_native(
+    _In_z_      PCTSTR filename /*low lifetime*/,
+    _InVal_     T5_FILETYPE t5_filetype)
+{
+    STATUS status = STATUS_OK;
+    const U32 n_bytes = array_elements32(&g_h_global_clip_data);
+    const PC_BYTE p_data = array_rangec(&g_h_global_clip_data, BYTE, 0, n_bytes);
+    _kernel_osfile_block osfile_block;
+
+    osfile_block.load  = (int) t5_filetype;
+    osfile_block.exec  = 0;
+    osfile_block.start = (int) p_data;
+    osfile_block.end   = osfile_block.start + (int) n_bytes;
+
+    if(_kernel_ERROR == _kernel_osfile(OSFile_SaveStamp, filename, &osfile_block))
+        status = file_error_set(_kernel_last_oserror()->errmess);
+
+    return(status);
+}
+
+static BOOL
+cells_global_clipboard_data_xfer_save(
+    _In_z_      PCTSTR filename /*low lifetime*/,
+    _InVal_     T5_FILETYPE t5_filetype,
+    CLIENT_HANDLE client_handle)
+{
+    STATUS status;
+    P_DOCU_AREA p_docu_area = &g_clip_data_docu_area;
+    /* see clip_data_array_handle_prepare() */
+    P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
+
+    UNREFERENCED_PARAMETER(client_handle);
+
+reportf("cells_global_clipboard_data_xfer_save(0x%.3X)", t5_filetype);
+
+    if(!IS_DOCU_NONE(global_clipboard_owning_p_docu))
+    {
+        switch(t5_filetype)
+        {
+        case FILETYPE_T5_FIREWORKZ:
+            status = cells_global_clipboard_data_xfer_save_native(filename, t5_filetype);
+            break;
+
+        default:
+            status = save_foreign_to_file_from_docu_area(global_clipboard_owning_p_docu, filename, t5_filetype, p_docu_area);
+            break;
+        }
+    }
+
+    return(TRUE);
+}
+
+/* make an offer of some text */
+
+static void
+cells_global_clipboard_data_DataRequest(
+    const void * const ep_wimp_message /*DataRequest*/)
+{
+    const WimpMessage * const p_wimp_message = (const WimpMessage *) ep_wimp_message;
+    const WimpDataRequestMessage * const p_wimp_data_request_message = (const WimpDataRequestMessage *) &p_wimp_message->data;
+    T5_FILETYPE save_as_t5_filetype = FILETYPE_T5_FIREWORKZ; /* default is to offer our native format */
+    U32 type_idx;
+
+    if((1 << 2) != p_wimp_data_request_message->flags)
+        return;
+
+    for(type_idx = 0; p_wimp_data_request_message->type[type_idx] != -1; ++type_idx)
+    {   /* what would the client prefer to be sent? */
+        const T5_FILETYPE requested_t5_filetype = (T5_FILETYPE) p_wimp_data_request_message->type[type_idx];
+        ARRAY_INDEX i;
+
+        /* requested our native format - offer that */
+        if(FILETYPE_T5_FIREWORKZ == requested_t5_filetype)
+            break;
+
+        /* compare request with what we can save */
+        for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
+        {
+            const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+
+            if(requested_t5_filetype == p_installed_save_object->t5_filetype)
+            {   /* can save the requested type - offer that */
+                save_as_t5_filetype = requested_t5_filetype;
+                break;
+            }
+        }
+    }
+
+reportf("cells_global_clipboard_data_DataRequest(0x%.3X)", save_as_t5_filetype);
+    consume_bool(
+        host_xfer_save_file_for_DataRequest(
+            TEXT("cells"),
+            save_as_t5_filetype,
+            42 /*estimated_size*/,
+            cells_global_clipboard_data_xfer_save,
+            (CLIENT_HANDLE) 0,
+            p_wimp_message));
+}
+
+#endif /* USE_GLOBAL_CLIPBOARD */
 
 /******************************************************************************
 *
@@ -323,7 +449,7 @@ global_clip_data_set(
     _InVal_     BOOL clip_data_from_cut_operation,
     _InVal_     OBJECT_ID object_id)
 {
-#if WINDOWS && defined(USE_GLOBAL_CLIPBOARD)
+#if defined(USE_GLOBAL_CLIPBOARD)
     global_clip_data_dispose();
 
     g_clip_data_from_cut_operation = clip_data_from_cut_operation;
@@ -351,6 +477,21 @@ global_clip_data_set(
     }
 #endif /* CHECKING */
 
+#if RISCOS
+    if(host_acquire_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu), cells_global_clipboard_data_dispose, cells_global_clipboard_data_DataRequest))
+    {
+        { /* render(ed by saver) as Fireworkz already */
+        g_h_global_clip_data = h_clip_data; /* steal */
+        h_clip_data = 0;
+        } /*block*/
+
+        if(!clip_data_from_cut_operation || (OBJECT_ID_CELLS != object_id))
+        {
+        }
+
+        return;
+    }
+#elif WINDOWS
     /* Put on Windows clipboard best-format-first after first acquiring clipboard (emptying establishes ownership) */
     if(host_acquire_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu)))
     {
@@ -375,9 +516,9 @@ global_clip_data_set(
             { /* Then loop over all clipboard formats that we've registered */
             ARRAY_INDEX i;
 
-            for(i = 0; i < array_elements(&installed_save_objects_handle); ++i)
+            for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
             {
-                P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptr(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+                const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
 
                 if(0 != p_installed_save_object->uClipboardFormat)
                     (void) SetClipboardData(p_installed_save_object->uClipboardFormat, NULL);
@@ -389,6 +530,7 @@ global_clip_data_set(
 
         return;
     }
+#endif /* OS */
 
     /*clip_issue_change();*/
 #else
@@ -422,7 +564,14 @@ _Check_return_
 extern ARRAY_HANDLE
 local_clip_data_query(void)
 {
+#if defined(USE_GLOBAL_CLIPBOARD) && RISCOS
+    if(g_h_local_clip_data)
+        return(g_h_local_clip_data);
+
+    return(g_h_global_clip_data); /* fallback for paste to notes */
+#else
     return(g_h_local_clip_data);
+#endif
 }
 
 /******************************************************************************
@@ -484,7 +633,11 @@ clip_issue_change(void)
 
 #endif /* UNDEF */
 
-#if WINDOWS && defined(USE_GLOBAL_CLIPBOARD)
+#if defined(USE_GLOBAL_CLIPBOARD)
+
+#if RISCOS
+
+#elif WINDOWS
 
 _Check_return_
 static STATUS
@@ -784,9 +937,9 @@ clip_render_format(
         { /* loop over all Windows clipboard formats that we've registered */
         ARRAY_INDEX i;
 
-        for(i = 0; i < array_elements(&installed_save_objects_handle); ++i)
+        for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
         {
-            P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptr(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+            const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
 
             if(p_installed_save_object->uClipboardFormat == uFormat)
             {
@@ -817,9 +970,9 @@ clip_render_all_formats(
     status = clip_render_format_for_filetype(p_docu, CF_TEXT, FILETYPE_TEXT);
 
     /* Then loop over all Windows clipboard formats that we've registered */
-    for(i = 0; status_ok(status) && (i < array_elements(&installed_save_objects_handle)); ++i)
+    for(i = 0; status_ok(status) && (i < array_elements(&g_installed_save_objects_handle)); ++i)
     {
-        P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptr(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+        const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
         const UINT uFormat = p_installed_save_object->uClipboardFormat;
 
         if(0 != uFormat)
@@ -834,7 +987,9 @@ clip_render_all_formats(
     return(status);
 }
 
-#endif /* WINDOWS && USE_GLOBAL_CLIPBOARD */
+#endif /* OS */
+
+#endif /* USE_GLOBAL_CLIPBOARD */
 
 /******************************************************************************
 *
@@ -1716,11 +1871,13 @@ col_auto_width(
             slr.row = row_s + (rand() % n_rows);
 
             for(x = 0; x < rows_done_idx; x += 1)
+            {
                 if(slr.row == rows_done[x])
                 {
                     done_already = 1;
                     break;
                 }
+            }
         }
         else
             slr.row = row_s + n_rows_done;
@@ -2580,15 +2737,19 @@ selection_delete_auto(
     if(p_docu->mark_info_cells.h_markers)
     {
         DOCU_AREA docu_area;
+#if defined(CLIP_DATA_REPLACED_BY_DELETED_TEXT_AUTO)
         const BOOL clip_data_from_cut_operation = TRUE;
         BOOL f_local_clip_data;
-        ARRAY_HANDLE h_clip_data; /* may become owned by Windows clipboard */
+#endif
+        ARRAY_HANDLE h_clip_data = 0; /* may become owned by Windows clipboard */
 
         docu_area_from_markers_first(p_docu, &docu_area);
 
+#if defined(CLIP_DATA_REPLACED_BY_DELETED_TEXT_AUTO)
         status_return(clip_data_array_handle_prepare(&h_clip_data, &f_local_clip_data));
 
         status = cells_save_clip_data(p_docu, &h_clip_data, &docu_area);
+#endif
 
         if(status_ok(status))
         {
@@ -2613,8 +2774,10 @@ selection_delete_auto(
                 status = cells_docu_area_delete(p_docu, &docu_area, docu_area_spans_across_table(p_docu, &docu_area), TRUE);
                 caret_position_after_command(p_docu);
 
+#if defined(CLIP_DATA_REPLACED_BY_DELETED_TEXT_AUTO)
                 clip_data_set(p_docu, f_local_clip_data, h_clip_data, clip_data_from_cut_operation, OBJECT_ID_CELLS);
                 g_clip_data_docu_area = docu_area;
+#endif
             }
         }
         else
@@ -3066,17 +3229,20 @@ static STATUS
 cells_cmd_paste_at_cursor(
     _DocuRef_   P_DOCU p_docu)
 {
+    STATUS status;
+#if defined(CLIP_DATA_REPLACED_BY_DELETED_TEXT_ON_PASTE)
     DOCU_AREA docu_area;
     BOOL f_local_clip_data = TRUE;
     ARRAY_HANDLE h_clip_data = 0;
-    STATUS status;
 
     docu_area_init(&docu_area);
+#endif
 
 #if 0
     cur_change_before(p_docu);
 #endif
 
+#if defined(DELETED_TEXT_REPLACES_CLIP_DATA)
     if(p_docu->mark_info_cells.h_markers)
     {
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -3091,21 +3257,57 @@ cells_cmd_paste_at_cursor(
             return(status);
         }
     }
+#endif
 
     status = delete_selection(p_docu);
 
     if(status_ok(status))
     {
-#if WINDOWS && defined(USE_GLOBAL_CLIPBOARD)
+#if defined(USE_GLOBAL_CLIPBOARD)
+#if RISCOS
+        if(winx_global_clipboard_owner() == cells_global_clipboard_data_DataRequest)
+        {   /* we are the global clipboard owner, just paste from our data */
+            ARRAY_HANDLE h_clip_data = local_clip_data_query();
+            reportf("owns_global_clipboard - h_clip_data %d", h_clip_data);
+            status = load_ownform_from_array_handle(p_docu, &h_clip_data, P_POSITION_NONE, g_clip_data_from_cut_operation);
+        }
+        else if(OBJECT_ID_REC_FLOW == p_docu->object_id_flow) /* SKS bit bodgey */
+        {
+            static const T5_FILETYPE t5_filetypes[] =
+            {
+                FILETYPE_TEXT
+            };
+
+            host_paste_from_global_clipboard_at_caret(t5_filetypes, elemof32(t5_filetypes));
+        }
+        else
+        {   /* initiate paste from external clipboard data source */
+            static const T5_FILETYPE t5_filetypes[] =
+            {
+                FILETYPE_T5_FIREWORKZ,
+                FILETYPE_PIPEDREAM,
+                FILETYPE_MS_XLS,
+                FILETYPE_LOTUS123,
+                FILETYPE_CSV,
+                FILETYPE_RTF,
+                FILETYPE_TEXT
+            };
+
+            host_paste_from_global_clipboard_at_caret(t5_filetypes, elemof32(t5_filetypes));
+        }
+#elif WINDOWS
         status = load_from_windows_clipboard(p_docu, g_clip_data_from_cut_operation);
+#endif /* USE_GLOBAL_CLIPBOARD */
 #else
-        status = load_ownform_from_array_handle(p_docu, &g_h_local_clip_data, P_POSITION_NONE, g_clip_data_from_cut_operation);
+        ARRAY_HANDLE h_clip_data = local_clip_data_query();
+        status = load_ownform_from_array_handle(p_docu, &h_clip_data, P_POSITION_NONE, g_clip_data_from_cut_operation);
 #endif
     }
 
-#if 0
+#if defined(CLIP_DATA_REPLACED_BY_DELETED_TEXT_ON_PASTE)
     if(0 != h_clip_data)
-    {   /* replace clipboard data with the saved data from above */
+    {
+        /* replace clipboard data with the saved data from above */
         clip_data_set(p_docu, f_local_clip_data, h_clip_data, TRUE /*clip_data_from_cut_operation*/);
 
         g_clip_data_docu_area = docu_area;
@@ -4258,6 +4460,13 @@ T5_MSG_PROTO(static, cells_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
         return(resource_init(OBJECT_ID_CELLS, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_CELLS));
 
     case T5_MSG_IC__EXIT1:
+#if defined(USE_GLOBAL_CLIPBOARD)
+#if RISCOS
+        global_clip_data_dispose();
+#elif WINDOWS
+        /* leave data on real global clipboard */
+#endif
+#endif /* USE_GLOBAL_CLIPBOARD */
         local_clip_data_dispose();
         return(STATUS_OK);
 

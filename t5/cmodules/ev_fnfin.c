@@ -515,7 +515,7 @@ PROC_EXEC_PROTO(c_nper)
 
     /* Excel: really up to 5 args but I don't yet support that */
 
-    /* Excel: like TERM() but different parameter order and result sign */
+    /* Excel: like TERM() but different parameter order and sign of result */
     /* nper(rate, payment, pv) = - ln(1+(pv * rate/payment)) / ln(1+rate) */
     ev_data_set_real(p_ev_data_res, - term_nper_common(payment, rate, pv));
 }

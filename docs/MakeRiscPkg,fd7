@@ -1,14 +1,21 @@
-| MakeRiscPkg.oby - Fireworkz-Manuals
-
+| MakeRiscPkg for Fireworkz-Manuals
+|
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+|
 | Copyright (C) 2013-2016 Stuart Swales
 
-IfThere $.Temp Then Else %CDir $.Temp
+| !!! ENSURE EVERYTHING IS CHECKED IN FIRST !!!
 
+Set t5$Release 20161025
 | Remember to update RiscPkg.Control too
-Set t5$Release 201602xx
 
-Set t5$Disc $.Temp.FzManuals_<t5$Release>
-Set t5$Zip  $.Temp.FzManuals_<t5$Release>/zip
+Set t5$Disc $.Temp.Fire.FzManuals_<t5$Release>
+Set t5$Zip  $.Temp.Fire.FzManuals_<t5$Release>/zip
+
+IfThere $.Temp      Then Else %CDir $.Temp
+IfThere $.Temp.Fire Then Else %CDir $.Temp.Fire
 
 X %Wipe <t5$Disc> ~cfr~v
 
@@ -19,31 +26,79 @@ svn export docs <t5$Disc>
 Back
 time
 
+| Enable only for script debugging
+| Filer_OpenDir <t5$Disc>
+
 cdir <t5$Disc>.Manuals
 cdir <t5$Disc>.Manuals.Fireworkz
+cdir <t5$Disc>.Manuals.Fireworkz.UK
 
-| Move the docs to where they are expected in the package
-rename <t5$Disc>.GSGuide.riscos  <t5$Disc>.Manuals.Fireworkz.GSGuide
-rename <t5$Disc>.htmlhelp.html   <t5$Disc>.Manuals.Fireworkz.USGuide
+| Move the Getting Started Guide docs to where they are expected in the package (NB These HTML files are suffixed /html)
+rename <t5$Disc>.GSGuide.riscos         <t5$Disc>.Manuals.Fireworkz.UK.StartGuide
 
-| Get rid of everything else
-X %Wipe <t5$Disc>.GSGuide  ~cfr~v
-X %Wipe <t5$Disc>.htmlhelp ~cfr~v
+| Move the User Guide docs to where they are expected in the package (NB These HTML files are suffixed /htm)
+cdir <t5$Disc>.Manuals.Fireworkz.UK.UserGuide
+rename <t5$Disc>.UserGuide.content      <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content
+
+| Fireworkz has extra top-level index in the User Guide
+rename <t5$Disc>.UserGuide.indexR/htm   <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.index/htm
+
+| Get rid of everything else (Windows StartGuide, Windows compiled Help framework)
+X %Wipe <t5$Disc>.GSGuide ~cfr~v
+X %Wipe <t5$Disc>.UserGuide ~cfr~v
 X %Wipe <t5$Disc>.Originals ~cfr~v
 
-settype <t5$Disc>.Manuals.Fireworkz.GSGuide.gsgindex/htm &FAF
-|
-settype <t5$Disc>.Manuals.Fireworkz.USGuide.index/htm   &FAF
-settype <t5$Disc>.Manuals.Fireworkz.USGuide.frindex/htm &FAF
-settype <t5$Disc>.Manuals.Fireworkz.USGuide.usindex/htm &FAF
+| This one is really just for Windows compiled Help
+delete <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.usindex/htm
 
-| The one in RiscPkg is the useful one for these packaged docs
-delete <t5$Disc>.LICENSE
+| HTML files
+SetMacro Alias$t5_settype SetType %%0 &FAF
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide.content -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg01 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg02 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg03 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg04 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg05 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg06 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg07 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug00 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug02 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug03 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug04 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug05 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug06 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug07 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug08 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug09 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug10 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug11 -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug90 -files -verbose
+
+| CSS files
+SetMacro Alias$t5_settype SetType %%0 &F79
+t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide.content.gsguide/css
+t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.common.usguide/css
+
+| PNG files
+SetMacro Alias$t5_settype SetType %%0 &B60
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide.content.images -files -verbose
+Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.common.images -files -verbose
+
+Unset Alias$t5_settype
+
+| The one in RiscPkg.Copyright is the useful one for the packaged docs
+delete <t5$Disc>.RiscPkg.LICENCE
+delete <t5$Disc>.LICENCE
 delete <t5$Disc>.MakeRiscPkg
 
 %Dir <t5$Disc>
+%Remove <t5$Zip>
 zip -r <t5$Zip> RiscPkg Manuals
-%Back
+SetType <t5$Zip> &A91
 Info <t5$Zip>
+%Back
 
 Filer_OpenDir <t5$Disc>

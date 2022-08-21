@@ -31,6 +31,7 @@ g_ascii_save_field_sep_ch = CH_TAB;
 T5_MSG_PROTO(extern, ascii_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg_save_foreign)
 {
     P_FF_OP_FORMAT p_ff_op_format = p_msg_save_foreign->p_ff_op_format;
+    const BOOL fSuppressNewline = docu_area_is_frag(&p_ff_op_format->of_op_format.save_docu_area);
     SCAN_BLOCK scan_block;
     OBJECT_DATA object_data;
     STATUS status;
@@ -112,6 +113,9 @@ T5_MSG_PROTO(extern, ascii_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg
             /*p_ff_op_format->of_op_format.offset++;*/
         }
     }
+
+    if(fSuppressNewline)
+        return(STATUS_OK);
 
     /* SKS 20apr93 after 1.03 - output a final record separator too */
     return(plain_write_newline(p_ff_op_format));

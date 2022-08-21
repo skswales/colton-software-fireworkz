@@ -166,7 +166,7 @@ dialog_windows_help_topic(
         return(dialog_windows_help_contents(p_dialog));
 
     tstr_xstrkpy(filename, elemof32(filename), p_dialog->windows.help_filename);
-    tstr_xstrkat(filename, elemof32(filename), TEXT("::/html/"));
+    tstr_xstrkat(filename, elemof32(filename), TEXT("::/content/"));
     tstr_xstrkat(filename, elemof32(filename), tstr_help_topic);
 
     if(!WrapOsBoolChecking(NULL != HtmlHelp(p_dialog->hwnd, filename, HH_DISPLAY_TOPIC, 0)))
@@ -186,22 +186,17 @@ dialog_windows_help(
     PCTSTR filename = leafname_helpfile_tstr;
     TCHARZ help_filename[BUF_MAX_PATHSTRING];
 
-    if(file_find_on_path(help_filename, elemof32(help_filename), filename) <= 0)
+    if(file_find_on_path(help_filename, elemof32(help_filename), file_get_resources_path(), filename) <= 0)
         return(create_error(ERR_HELP_FAILURE));
 
     tstr_clr(&p_dialog->windows.help_filename);
     status_return(tstr_set(&p_dialog->windows.help_filename, help_filename));
     } /*block*/
 
-    if(p_dialog->windows.help_filename)
-    {
-        if(p_dialog->help_topic_resource_id)
-            return(dialog_windows_help_topic(p_dialog));
-        else
-            return(dialog_windows_help_contents(p_dialog));
-    }
+    if(p_dialog->help_topic_resource_id)
+        return(dialog_windows_help_topic(p_dialog));
 
-    return(STATUS_OK);
+    return(dialog_windows_help_contents(p_dialog));
 }
 
 static H_DIALOG bastard_windows_h_dialog; /* Windows 3.1 inadequacy */

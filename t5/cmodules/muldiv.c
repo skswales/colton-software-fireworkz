@@ -249,12 +249,4 @@ muldiv_limiting(S32 a, S32 b, S32 c)
 	return(0);
 }
 
-extern U32
-myrand(P_MYRAND_SEED p_myrand_seed, U32 n)
-{
-	IGNOREPARM(p_myrand_seed);
-	IGNOREPARM(n);
-	return(0);
-}
-
 /* end of muldiv.c */

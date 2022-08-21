@@ -496,7 +496,7 @@ load_drawfile_dlls(void)
     BOOL (PASCAL * p_proc_LoadFunctions) (HMODULE hModule, FARPROC *);
 
 	/* Load DLLs in sequence from local resource */
-    if(status_done(file_find_on_path(name, elemof32(name), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("DSAppLib.dll"))))
+    if(status_done(file_find_on_path(name, elemof32(name), file_get_resources_path(), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("DSAppLib.dll"))))
     {
         df = LoadLibrary(name);
         if(NULL != df)
@@ -509,7 +509,7 @@ load_drawfile_dlls(void)
         }
     }
 
-    if((NULL != df) && status_done(file_find_on_path(name, elemof32(name), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("DSFF9.dll"))))
+    if((NULL != df) && status_done(file_find_on_path(name, elemof32(name), file_get_resources_path(), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("DSFF9.dll"))))
     {
         dsff9_lib = df = LoadLibrary(name);
         if(NULL != df)
@@ -519,7 +519,7 @@ load_drawfile_dlls(void)
         }
     }
 
-    if((NULL != df) && status_done(file_find_on_path(name, elemof32(name), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("DSFntMap.dll"))))
+    if((NULL != df) && status_done(file_find_on_path(name, elemof32(name), file_get_resources_path(), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("DSFntMap.dll"))))
     {
         dsfntmap_lib = df = LoadLibrary(name);
         if(NULL != df)
@@ -529,7 +529,7 @@ load_drawfile_dlls(void)
         }
     }
 
-    if((NULL != df) && status_done(file_find_on_path(name, elemof32(name), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("dsaff.dll"))))
+    if((NULL != df) && status_done(file_find_on_path(name, elemof32(name), file_get_resources_path(), TEXT("DLL") FILE_DIR_SEP_TSTR TEXT("dsaff.dll"))))
     {
         dsaff_lib = df = LoadLibrary(name);
         if(NULL != df)

@@ -15,9 +15,9 @@ e0:Can't delete the base style
 # messages
 #
 1:Styles
-10:ug6_the_style_editor.htm
+10:ug06/ug6_the_style_editor.htm
 2:Define new style
-11:ug6_adding_a_new_style.htm
+11:ug06/ug6_adding_a_new_style.htm
 3:NewStyle%ld
 4:New style name
 5:Based on
@@ -31,14 +31,14 @@ r7:Editing style: %s
 13:Region
 14:ug5_removing_styles_and_effects.htm
 15:Style
-16:ug5_deleting_styles.htm
+16:ug05/ug5_deleting_styles.htm
 #
-20:ug6_style.htm
-21:ug6_text.htm
-22:ug6_ruler.htm
-23:ug6_colour.htm
-24:ug6_spacing.htm
-25:sg3_styles_in_spreadsheet_documents.htm
-26:ug6_row.htm
+20:ug06/ug6_style.htm
+21:ug06/ug6_text.htm
+22:ug06/ug6_ruler.htm
+23:ug06/ug6_colour.htm
+24:ug06/ug6_spacing.htm
+25:sg03/sg3_styles_in_spreadsheet_documents.htm
+26:ug06/ug6_row.htm
 #
 # end of msg (ob_skspt)

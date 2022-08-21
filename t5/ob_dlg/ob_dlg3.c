@@ -350,7 +350,7 @@ dialog_ictls_create(
 
         case DIALOG_CONTROL_STATICPICTURE:
 #if RISCOS
-            p_dialog_ictl->data.staticpicture.riscos.h_bitmap = resource_bitmap_find(&p_dialog_control_data.staticpicture->picture_bitmap_id);
+            p_dialog_ictl->data.staticpicture.riscos.h_bitmap = resource_bitmap_find_defaulting(&p_dialog_control_data.staticpicture->picture_bitmap_id);
 #endif
             break;
 

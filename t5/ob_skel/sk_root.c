@@ -972,6 +972,7 @@ caret_show_claim(
     _InVal_     BOOL scroll)
 {
     CARET_SHOW_CLAIM caret_show_claim;
+    riscos_claim_caret(); /* bit more global effect than I'd like */
     caret_show_claim.focus = object_id;
     caret_show_claim.scroll = scroll;
     status_consume(object_skel(p_docu, T5_MSG_CARET_SHOW_CLAIM, &caret_show_claim));

@@ -180,7 +180,7 @@ cfbf_write_read_template(
     U32 bytes_read;
     FILE_HANDLE file_handle;
 
-    if(file_find_on_path(template_filename, elemof32(template_filename), template_leafname) <= 0)
+    if(file_find_on_path(template_filename, elemof32(template_filename), file_get_search_path(), template_leafname) <= 0)
     {
         *p_status = create_error(ERR_CFBF_SAVE_NEEDS_TEMPLATE);
         return(NULL);
@@ -233,7 +233,10 @@ cfbf_write_stream_in_storage(
     const BOOL use_mini_stream = (n_bytes < 4096);
     const U32 header_bytes = sizeof32(StructuredStorageHeader) + (use_mini_stream ? 3 : 2) * 512;
     P_StructuredStorageHeader p_structured_storage_header;
-    PCTSTR template_leafname = use_mini_stream ? TEXT("cfbf-mini") : TEXT("cfbf");
+    PCTSTR template_leafname =
+        use_mini_stream
+            ? TEXT("Support") FILE_DIR_SEP_TSTR TEXT("cfbf-mini")
+            : TEXT("Support") FILE_DIR_SEP_TSTR TEXT("cfbf");
 
     /* read in the empty compound file template file appropriate to this size of file */
     if(NULL == (p_structured_storage_header = cfbf_write_read_template(template_leafname, header_bytes, &status)))
@@ -276,7 +279,7 @@ cfbf_write_stream_in_storage(
 
             /* pad the whole file up to sector boundary - watch out for unwanted optimisation */
             const U32 sector_size = (U32) 1 << p_structured_storage_header->_uSectorShift;
-            const U32 total_sectors = div_round_ceil(header_bytes + n_bytes, sector_size);
+            const U32 total_sectors = idiv_ceil(header_bytes + n_bytes, sector_size);
             const U32 total_bytes = total_sectors * sector_size;
             P_BYTE p_storage_data = al_array_extend_by_BYTE(p_array_handle_storage, total_bytes, PC_ARRAY_INIT_BLOCK_NONE, &status);
 

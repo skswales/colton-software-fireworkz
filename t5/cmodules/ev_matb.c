@@ -174,6 +174,99 @@ PROC_EXEC_PROTO(c_log)
 
 /******************************************************************************
 *
+* REAL odf.log10(number)
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_odf_log10)
+{
+    const F64 number = args[0]->arg.fp;
+
+    exec_func_ignore_parms();
+
+    errno = 0;
+
+    ev_data_set_real(p_ev_data_res, log10(number));
+
+    if(errno /* == EDOM, ERANGE */)
+        ev_data_set_error(p_ev_data_res, EVAL_ERR_BAD_LOG);
+}
+
+/******************************************************************************
+*
+* NUMBER odf.mod(a, b)
+*
+* Remainder has the same sign as the divisor (same as OpenOffice and Microsoft Excel)
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_odf_mod)
+{
+    exec_func_ignore_parms();
+
+    switch(two_nums_type_match(args[0], args[1], FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
+    {
+    case TWO_INTS:
+        {
+        const S32 s32_a = args[0]->arg.integer;
+        const S32 s32_b = args[1]->arg.integer;
+        div_t d;
+        S32 s32_odf_mod_result;
+
+        /* SKS after PD 4.11 03feb92 - gave FP error not zero if trap taken */
+        if(s32_b == 0)
+        {
+            ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
+            return;
+        }
+
+        d = div((int) s32_a, (int) s32_b);
+
+        s32_odf_mod_result = d.rem; /* remainder has the same sign as the dividend */
+
+        if(0 != s32_odf_mod_result)
+        {
+            if((s32_odf_mod_result < 0) != (s32_b < 0))
+            {
+                s32_odf_mod_result += s32_b;
+            }
+        }
+
+        ev_data_set_integer(p_ev_data_res, s32_odf_mod_result);
+        break;
+        }
+
+    case TWO_REALS:
+        {
+        const F64 f64_a = args[0]->arg.fp;
+        const F64 f64_b = args[1]->arg.fp;
+        F64 f64_odf_mod_result;
+
+        errno = 0;
+
+        f64_odf_mod_result = fmod(f64_a, f64_b); /* remainder has the same sign as the dividend */
+
+        if(0.0 != f64_odf_mod_result)
+        {
+            if((f64_odf_mod_result < 0) != (f64_b < 0))
+            {
+                f64_odf_mod_result += f64_b;
+            }
+        }
+
+        ev_data_set_real_ti(p_ev_data_res, f64_odf_mod_result);
+
+        /* would have divided by zero? */
+        if(errno /* == EDOM */)
+            ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
+
+        break;
+        }
+    }
+}
+
+/******************************************************************************
+*
 * NUMBER ceiling(n {, multiple})
 *
 * NUMBER floor(n {, multiple})

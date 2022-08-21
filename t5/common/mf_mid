@@ -10,26 +10,26 @@
 # Copyright (C) 1992-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-#TEXTUAL_VERSION_NUMBER=2.xx.yy (when yy is 00, omit .yy)
-TEXTUAL_VERSION_NUMBER=2.10.02
+#TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
+TEXTUAL_VERSION_NUMBER=2.20
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=21002
+STUBS_VERSION_NUMBER=22000
 # when changing version number for release, remember:
 #   common.gflags.h
 #   common.mf_mid
-#   ob_skel.resource.xx-msg
+#   ob_skel.resource.xx.msg
 # RISC OS
 #   firewrkz.RelNotes/htm
 #   firewrkz.r.RiscPkg.Control
 #   firewrkz.r32b.MakeRiscPkg
 # Windows
 #   firewrkz\RelNotesW.htm
-#   firewrkz\resource\windows\uk\res00.rci (updated by RISC OS build)
+#   firewrkz\resource\windows\UK\res00.rci (updated by RISC OS build)
 #   Build\windows\firewrkz.rc
-#   Build\windows\OUTx64\BUILDCD2.BAT
+#   Build\windows\OUTx64\BLDCD2.BAT
 #   Build\windows\OUTx64\firewrkz-x64.iss
-#   Build\windows\OUTx86\BUILDCD2.BAT
+#   Build\windows\OUTx86\BLDCD2.BAT
 #   Build\windows\OUTx86\firewrkz-x86.iss
 
 # and for Fireworkz Pro:

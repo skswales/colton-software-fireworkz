@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>Custom function control statements</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Custom function control statements" />
+        <param name="Keyword" value="Custom functions, control statements" />
+    </object>
+
+    <h1><a name="custom_function_control_statements" id="custom_function_control_statements"></a>Custom function control statements</h1>
+
+    <p>Normally a custom function is executed in a precise order, working line by line down the column from the cell containing the FUNCTION function which marked its beginning. As each cell is evaluated, the result is stored in the cell and this can be referred to by references in other cells.</p>
+
+    <p>Fireworkz includes some features for use in custom functions which are more like a programming language, and control the order in which commands are executed or formulae evaluated. These are the custom function control statements.</p>
+
+    <p><code><a href="sg7_BREAK.htm">BREAK</a></code></p>
+
+    <p><code><a href="sg7_CONTINUE.htm">CONTINUE</a></code></p>
+
+    <p><code><a href="sg7_FOR_NEXT.htm">FOR &hellip; NEXT</a></code></p>
+
+    <p><code><a href="sg7_GOTO.htm">GOTO</a></code></p>
+
+    <p><code><a href="sg7_IF_ELSE_ELSEIF_ENDIF.htm">IF &hellip; ELSE &hellip; ELSEIF &hellip; ENDIF</a></code></p>
+
+    <p><code><a href="sg7_REPEAT_UNTIL.htm">REPEAT &hellip; UNTIL</a></code></p>
+
+    <p><code><a href="sg7_RESULT.htm">RESULT</a></code></p>
+
+    <p><code><a href="sg7_WHILE_ENDWHILE.htm">WHILE &hellip; ENDWHILE</a></code></p>
+
+    <p>Most of these control statements must appear in their own cell (with their parameters if appropriate) but <code>BREAK</code>, <code>CONTINUE</code>, <code>RESULT</code> and <code>GOTO</code> can appear in the parameters to other control statements, for example:</p>
+
+    <pre class="csg-sample-indent">IF(C &lt;= D, RESULT(C))</pre>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg7_writing_custom_functions.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="sg7_custom_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg7_processing_ranges_of_data.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -189,6 +189,140 @@ event_popup_menu(
     event_.menu_click.valid = FALSE;
 }
 
+/* A hit on the submenu pointer may be interpreted as slightly different
+ * from actually clicking on the menu entry with the arrow. The most
+ * important example of this is the standard "save" menu item, where clicking
+ * on "Save" causes a save immediately while following the arrow gets
+ * the standard save dbox up.
+*/
+
+static void
+event_preprocess_Message_MenuWarning(
+    _Inout_     int * p_event_code,
+    _Inout_     WimpPollBlock * const p_event_data)
+{
+    const WimpMenuWarningMessage * const p_wimp_message_menu_warning = (const WimpMenuWarningMessage *) &p_event_data->user_message.data;
+    int i;
+
+    trace_1(TRACE_RISCOS_HOST, TEXT("event_do_process(%s)"), report_wimp_event(*p_event_code, p_event_data));
+    trace_0(TRACE_RISCOS_HOST, TEXT("hit on submenu => pointer, fake menu hit"));
+
+    /* cache submenu opening info for use later on this event */
+    event_.submenu.m = p_wimp_message_menu_warning->submenu.m;
+    event_.submenu.x = p_wimp_message_menu_warning->x;
+    event_.submenu.y = p_wimp_message_menu_warning->y;
+
+    *p_event_code = Wimp_EMenuSelection;
+
+    i = 0;
+    do  {
+        p_event_data->words[i] = p_wimp_message_menu_warning->menu[i];
+
+        if(i == 9)
+        {   /* ensure we don't walk off end if badly terminated */
+            p_event_data->words[i] = -1;
+            break;
+        }
+    }
+    while(p_event_data->words[i++] != -1);
+}
+
+/* Menu hit */
+
+static BOOL
+event_process_Menu_Selection(
+    _In_        const WimpPollBlock * const p_event_data,
+    _InVal_     BOOL submenu_fake_hit)
+{
+    char hit[20];
+    int i;
+    mstr * p = NULL;
+
+    /*if(event_.menuclick.m.w != ICONBAR_WIMP_W)*/
+        p = winx_menu_get_handle(event_.menu_click.mce.window_handle, event_.menu_click.mce.icon_handle);
+
+    if(NULL == p)
+        p = winx_menu_get_handle(event_.menu_click.mce.window_handle, BAD_WIMP_I);
+
+    trace_0(TRACE_RISCOS_HOST, TEXT("menu hit|"));
+
+    if(NULL != p)
+    {
+        assert(p->event  == event_.current_menu_event);
+        assert(p->handle == event_.current_menu_handle);
+    }
+
+    if(!submenu_fake_hit)
+    {
+        event_.recreatepending = winx_adjustclicked();
+    }
+    else
+    {
+        /* say the submenu opening cache is valid */
+        event_.submenu.valid = TRUE;
+        event_.recreatepending = FALSE;
+    }
+
+    /* form array of one-based menu hits ending in 0 */
+    i = 0;
+    do  {
+        hit[i] = (char) (p_event_data->words[i] + 1); /* convert hit on 0 to 1 etc. */
+        trace_1(TRACE_RISCOS_HOST, TEXT("| [%d]|"), hit[i]);
+        if(i == 9)
+        {   /* ensure we don't walk off end if badly terminated */
+            hit[i] = 0;
+            break;
+        }
+    }
+    while(p_event_data->words[i++] != -1);
+
+    trace_1(TRACE_RISCOS_HOST, TEXT("| ADJUST = %s"), report_boolstring(event_.recreatepending));
+
+    /* allow access to initial click cache during handler */
+    event_.menu_click.valid = TRUE;
+
+    if(! (* event_.current_menu_event) (event_.current_menu_handle, hit, submenu_fake_hit))
+    {
+        if(submenu_fake_hit)
+        {
+            /* handle unprocessed submenu open events */
+            WimpMenu * submenu;
+            int x, y;
+            status_assert(event_read_submenudata(&submenu, &x, &y));
+            void_WrapOsErrorReporting(event_create_submenu(submenu, x, y));
+        }
+    }
+
+    /* submenu opening cache no longer valid */
+    event_.submenu.valid = FALSE;
+
+    if(event_.recreatepending)
+    {
+        /* Twas an ADJ-hit on a menu item.
+         * The menu should be recreated.
+        */
+        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by ADJUST - recreating menu"));
+        event_.menu_click.valid = TRUE;
+        event_.recreation = 1;
+
+        event_.current_menu_real = 0;
+        event_.current_menu = (* event_.current_menu_maker) (event_.current_menu_handle);
+        assert(event_.current_menu_real);
+        event__createmenu((WimpMenu *) event_.current_menu);
+    }
+#if TRACE_ALLOWED
+    else if(submenu_fake_hit)
+        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit was faked"));
+    else
+        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by SELECT - let tree collapse"));
+#endif
+
+    /* initial click cache no longer valid */
+    event_.menu_click.valid = FALSE;
+
+    return(FALSE);
+}
+
 /*
 SKS: process event: returns true if idle
 */
@@ -198,42 +332,15 @@ event_do_process(
     _In_        int event_code,
     _Inout_     WimpPollBlock * const p_event_data)
 {
-    const WimpMessage * const p_wimp_message = &p_event_data->user_message;
-    char hit[20];
-    int i;
-    BOOL submenu_fake_hit;
+    BOOL submenu_fake_hit = FALSE;
 
     /* Look for submenu requests, and if found turn them into menu hits. */
     /* People wishing to respond can pick up the original from wimpt. */
-    if((event_code == Wimp_EUserMessage)  &&  (p_wimp_message->hdr.action_code == Wimp_MMenuWarning))
+    if((event_code == Wimp_EUserMessage)  &&  (p_event_data->user_message.hdr.action_code == Wimp_MMenuWarning))
     {
-        /* A hit on the submenu pointer may be interpreted as slightly different
-         * from actually clicking on the menu entry with the arrow. The most
-         * important example of this is the standard "save" menu item, where clicking
-         * on "Save" causes a save immediately while following the arrow gets
-         * the standard save dbox up.
-        */
-        const WimpMenuWarningMessage * const p_wimp_message_menu_warning = (const WimpMenuWarningMessage *) &p_wimp_message->data;
-        i = 0;
-
-        trace_1(TRACE_RISCOS_HOST, TEXT("event_do_process(%s)"), report_wimp_event(event_code, p_event_data));
-        trace_0(TRACE_RISCOS_HOST, TEXT("hit on submenu => pointer, fake menu hit"));
-
-        /* cache submenu opening info for use later on this event */
-        event_.submenu.m = p_wimp_message_menu_warning->submenu.m;
-        event_.submenu.x = p_wimp_message_menu_warning->x;
-        event_.submenu.y = p_wimp_message_menu_warning->y;
-
-        event_code = Wimp_EMenuSelection;
-        do  {
-            p_event_data->words[i] = p_wimp_message_menu_warning->menu[i];
-        }
-        while(p_event_data->words[i++] != -1);
-
+        event_preprocess_Message_MenuWarning(&event_code, p_event_data);
         submenu_fake_hit = TRUE;
     }
-    else
-        submenu_fake_hit = FALSE;
 
     /* Look for events to do with menus */
     if(event_code == Wimp_EMouseClick)
@@ -298,89 +405,8 @@ event_do_process(
 
     if((event_code == Wimp_EMenuSelection)  &&  event_.current_menu)
     {
-        /* Menu hit */
-        mstr * p = NULL;
-
         trace_1(TRACE_RISCOS_HOST, TEXT("event_do_process(%s)"), report_wimp_event(event_code, p_event_data));
-
-        /*if(event_.menuclick.m.w != ICONBAR_WIMP_W)*/
-            p = winx_menu_get_handle(event_.menu_click.mce.window_handle, event_.menu_click.mce.icon_handle);
-
-        if(NULL == p)
-            p = winx_menu_get_handle(event_.menu_click.mce.window_handle, BAD_WIMP_I);
-
-        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit|"));
-
-        if(NULL != p)
-        {
-            assert(p->event  == event_.current_menu_event);
-            assert(p->handle == event_.current_menu_handle);
-        }
-
-        if(!submenu_fake_hit)
-        {
-            event_.recreatepending = winx_adjustclicked();
-        }
-        else
-        {
-            /* say the submenu opening cache is valid */
-            event_.submenu.valid = TRUE;
-            event_.recreatepending = FALSE;
-        }
-
-        /* form array of menu hits ending in 0 */
-        i = 0;
-        do  {
-            hit[i] = (char) (p_event_data->words[i] + 1); /* convert hit on 0 to 1 etc. */
-            trace_1(TRACE_RISCOS_HOST, TEXT("| [%d]|"), hit[i]);
-        }
-        while(p_event_data->words[i++] != -1);
-
-        trace_1(TRACE_RISCOS_HOST, TEXT("| ADJUST = %s"), report_boolstring(event_.recreatepending));
-
-        /* allow access to initial click cache during handler */
-        event_.menu_click.valid = TRUE;
-
-        if(! (* event_.current_menu_event) (event_.current_menu_handle, hit, submenu_fake_hit))
-        {
-            if(submenu_fake_hit)
-            {
-                /* handle unprocessed submenu open events */
-                WimpMenu * submenu;
-                int x, y;
-                status_assert(event_read_submenudata(&submenu, &x, &y));
-                void_WrapOsErrorReporting(event_create_submenu(submenu, x, y));
-            }
-        }
-
-        /* submenu opening cache no longer valid */
-        event_.submenu.valid = FALSE;
-
-        if(event_.recreatepending)
-        {
-            /* Twas an ADJ-hit on a menu item.
-             * The menu should be recreated.
-            */
-            trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by ADJUST - recreating menu"));
-            event_.menu_click.valid = TRUE;
-            event_.recreation = 1;
-
-            event_.current_menu_real = 0;
-            event_.current_menu = (* event_.current_menu_maker) (event_.current_menu_handle);
-            assert(event_.current_menu_real);
-            event__createmenu((WimpMenu *) event_.current_menu);
-        }
-#if TRACE_ALLOWED
-        else if(submenu_fake_hit)
-            trace_0(TRACE_RISCOS_HOST, TEXT("menu hit was faked"));
-        else
-            trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by SELECT - let tree collapse"));
-#endif
-
-        /* initial click cache no longer valid */
-        event_.menu_click.valid = FALSE;
-
-        return(FALSE);
+        return(event_process_Menu_Selection(p_event_data, submenu_fake_hit));
     }
 
     /* now dispatch the event for processing */

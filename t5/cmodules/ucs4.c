@@ -112,7 +112,7 @@ load_case_map_simple(
     {   /* Read and Parse Unicode Character Database file UnicodeData.txt, adding entries for this range */
         TCHARZ filename[BUF_MAX_PATHSTRING];
 
-        if(status_fail(status = file_find_on_path(filename, elemof32(filename), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("UnicodeData.txt"))))
+        if(status_fail(status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("UnicodeData.txt"))))
         {
             read_failed_UnicodeData = 1;
         }
@@ -494,7 +494,7 @@ load_DerivedCoreProperties(
     {   /* Read and Parse Unicode Character Database file DerivedCoreProperties.txt, adding entries for this new range */
         TCHARZ filename[BUF_MAX_PATHSTRING];
 
-        if(status_fail(status = file_find_on_path(filename, elemof32(filename), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("DerivedCoreProperties.txt"))))
+        if(status_fail(status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("DerivedCoreProperties.txt"))))
         {
             read_failed_DerivedCoreProperties = 1;
         }
@@ -907,7 +907,7 @@ load_case_fold_simple(
     {   /* Read and Parse Unicode Character Database file CaseFolding.txt, adding entries for this range */
         TCHARZ filename[BUF_MAX_PATHSTRING];
 
-        if(status_fail(status = file_find_on_path(filename, elemof32(filename), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("CaseFolding.txt"))))
+        if(status_fail(status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("CaseFolding.txt"))))
         {
             read_failed_CaseFolding = 1;
         }

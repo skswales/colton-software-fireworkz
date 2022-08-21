@@ -160,7 +160,7 @@ colourpicker_event_handler(
 
 static BOOL
 colourpicker_message_ColourPickerColourChoice(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     P_COLOURPICKER_CALLBACK p_colourpicker_callback)
 {
     const PC_COLOUR_DESCRIPTOR p_colour_descriptor = (PC_COLOUR_DESCRIPTOR) &p_wimp_message->data.words[2];
@@ -178,7 +178,7 @@ colourpicker_message_ColourPickerColourChoice(
 
 static BOOL
 colourpicker_message_ColourPickerCloseDialogueRequest(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     P_COLOURPICKER_CALLBACK p_colourpicker_callback)
 {
     UNREFERENCED_PARAMETER_InRef_(p_wimp_message);
@@ -192,7 +192,7 @@ colourpicker_message_ColourPickerCloseDialogueRequest(
 
 static BOOL
 colourpicker_message_ColourPickerResetColourRequest(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     P_COLOURPICKER_CALLBACK p_colourpicker_callback)
 {
     UNREFERENCED_PARAMETER_InRef_(p_wimp_message);
@@ -215,7 +215,7 @@ colourpicker_message_ColourPickerResetColourRequest(
 
 static BOOL
 colourpicker_message(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     P_COLOURPICKER_CALLBACK p_colourpicker_callback)
 {
     switch(p_wimp_message->hdr.action_code)
@@ -230,10 +230,8 @@ colourpicker_message(
         return(colourpicker_message_ColourPickerResetColourRequest(p_wimp_message, p_colourpicker_callback));
 
     default:
-        break;
+        return(FALSE); /* we don't want it - pass it on to the real handler */
     }
-
-    return(FALSE); /* we don't want it - pass it on to the real handler */
 }
 
 /* the list of messages that we are specifically interested in */
@@ -261,10 +259,8 @@ colourpicker_message_filter(
         return(colourpicker_message(&p_event_data->user_message, (P_COLOURPICKER_CALLBACK) client_handle));
 
     default:
-        break;
+        return(FALSE); /* we don't want it - pass it on to the real handler */
     }
-
-    return(FALSE); /* we don't want it - pass it on to the real handler */
 }
 
 static BOOL

@@ -127,6 +127,10 @@ report_wimp_message(
 
 #endif /* RISCOS */
 
+_Check_return_
+extern BOOL
+reporting_is_enabled(void);
+
 #endif /* __report_h */
 
 /* end of report.h */

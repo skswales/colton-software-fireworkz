@@ -23,7 +23,8 @@ If "<disc_root>"="" Then IfThere SDFS::RISCOSpi.$.!Boot Then Set disc_root SDFS:
 | RPCEmu
 If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
 |
-Set fireworkz_tbt fireworkz__2_10__branch
+set fireworkz_tbt fireworkz__2_20__branch
+|et fireworkz_tbt trunk
 Set fireworkz_root <disc_root>.fireworkz.<fireworkz_tbt>
 |
 URD <fireworkz_root>

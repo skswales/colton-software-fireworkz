@@ -53,17 +53,20 @@ copy /A "%SRC_DIR%\Functions\complex,bdf"    %OUT_DIR%\Functions\complex.fwk
 copy /A "%SRC_DIR%\Functions\database,bdf"   %OUT_DIR%\Functions\database.fwk
 copy /A "%SRC_DIR%\Functions\date,bdf"       %OUT_DIR%\Functions\date.fwk
 copy /A "%SRC_DIR%\Functions\finance,bdf"    %OUT_DIR%\Functions\finance.fwk
-copy /A "%SRC_DIR%\Functions\linest,bdf"     %OUT_DIR%\Functions\linest.fwk
-copy /A "%SRC_DIR%\Functions\linest_m,bdf"   %OUT_DIR%\Functions\linest_m.fwk
-copy /A "%SRC_DIR%\Functions\listcount,bdf"  %OUT_DIR%\Functions\listcount.fwk
 copy /A "%SRC_DIR%\Functions\lookup,bdf"     %OUT_DIR%\Functions\lookup.fwk
-copy /A "%SRC_DIR%\Functions\maths,bdf"      %OUT_DIR%\Functions\maths.fwk
 copy /A "%SRC_DIR%\Functions\matrix,bdf"     %OUT_DIR%\Functions\matrix.fwk
 copy /A "%SRC_DIR%\Functions\misc,bdf"       %OUT_DIR%\Functions\misc.fwk
-copy /A "%SRC_DIR%\Functions\spearman,bdf"   %OUT_DIR%\Functions\spearman.fwk
-copy /A "%SRC_DIR%\Functions\statistic,bdf"  %OUT_DIR%\Functions\statistic.fwk
 copy /A "%SRC_DIR%\Functions\string,bdf"     %OUT_DIR%\Functions\string.fwk
 copy /A "%SRC_DIR%\Functions\trig,bdf"       %OUT_DIR%\Functions\trig.fwk
+
+copy /A "%SRC_DIR%\Functions\Maths\Maths,bdf"            %OUT_DIR%\Functions\Maths\Maths.fwk
+copy /A "%SRC_DIR%\Functions\Maths\Quotient,bdf"         %OUT_DIR%\Functions\Maths\Quotient.fwk
+
+copy /A "%SRC_DIR%\Functions\Statistics\Linest,bdf"      %OUT_DIR%\Functions\Statistics\Linest.fwk
+copy /A "%SRC_DIR%\Functions\Statistics\Linest_m,bdf"    %OUT_DIR%\Functions\Statistics\Linest_m.fwk
+copy /A "%SRC_DIR%\Functions\Statistics\Listcount,bdf"   %OUT_DIR%\Functions\Statistics\Listcount.fwk
+copy /A "%SRC_DIR%\Functions\Statistics\Statistic,bdf"   %OUT_DIR%\Functions\Statistics\Statistic.fwk
+copy /A "%SRC_DIR%\Functions\Statistics\Spearman,bdf"    %OUT_DIR%\Functions\Statistics\Spearman.fwk
 
 @rem
 copy /A "%SRC_DIR%\Labels\csv_file,dfe"      %OUT_DIR%\Labels\csv_file.csv
@@ -80,9 +83,10 @@ copy /A "%SRC_DIR%\MonthPlan\input_date,bdf" %OUT_DIR%\MonthPlan\input_date.fwk
 copy /A "%SRC_DIR%\MonthPlan\monthplan,bdf"  %OUT_DIR%\MonthPlan\monthplan.fwk
 copy /A "%SRC_DIR%\MonthPlan\ReadMe,bdf"     %OUT_DIR%\MonthPlan\ReadMe.fwk
 @rem
+@copy /A "%SRC_DIR%\Mountains\Export,dfe"    %OUT_DIR%\Mountains\Export.csv
 @rem FPro copy /B "%SRC_DIR%\Mountains\Mountain_d,c27"   %OUT_DIR%\Mountains\Mountain_d.c27
 @rem FPro copy /A "%SRC_DIR%\Mountains\Mountain_f,bdf"   %OUT_DIR%\Mountains\Mountain_f.fwk
-                                       rd /q %OUT_DIR%\Mountains
+@rem                                         rd /q %OUT_DIR%\Mountains
 @rem
 copy /A "%SRC_DIR%\New\AutoFormat,bdf"       %OUT_DIR%\New\AutoFormat.fwk
 copy /A "%SRC_DIR%\New\ButtonBar,bdf"        %OUT_DIR%\New\ButtonBar.fwk
@@ -93,9 +97,10 @@ copy /A "%SRC_DIR%\New\ValueLists,bdf"       %OUT_DIR%\New\ValueLists.fwk
 @rem
 copy /A "%SRC_DIR%\PipeDream\ReadMe,bdf"     %OUT_DIR%\PipeDream\ReadMe.fwk
 @rem
+copy /A "%SRC_DIR%\Pupils\Export,dfe"        %OUT_DIR%\Pupils\Export.dfe
 @rem FPro copy /B "%SRC_DIR%\Pupils\Pupils_d,c27"        %OUT_DIR%\Pupils\Pupils_d.c27
 @rem FPro copy /A "%SRC_DIR%\Pupils\Pupils_f,bdf"        %OUT_DIR%\Pupils\Pupils_f.fwk
-                                       rd /q %OUT_DIR%\Pupils                               
+@rem                                         rd /q %OUT_DIR%\Pupils                               
 @rem
 copy /A "%SRC_DIR%\Styles\0dp,c1d"           %OUT_DIR%\Styles\0dp.fwt
 copy /A "%SRC_DIR%\Styles\1dp,c1d"           %OUT_DIR%\Styles\1dp.fwt

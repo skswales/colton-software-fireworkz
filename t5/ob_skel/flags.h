@@ -444,7 +444,7 @@ extern void
 startup_t5_personal(void);
 
 extern void
-host_initialise_file_path(void);
+host_initialise_file_paths(void);
 
 #if WINDOWS
 

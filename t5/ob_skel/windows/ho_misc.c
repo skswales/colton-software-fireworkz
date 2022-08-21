@@ -42,4 +42,23 @@ host_xfer_saved_file_is_safe(void)
     return(TRUE);
 }
 
+_Check_return_
+extern U32
+host_rand_between(
+    _InVal_ U32 lo /*incl*/,
+    _InVal_ U32 hi /*excl*/) /* NB NOT like RANDBETWEEN() */
+{
+    U32 res = lo;
+
+    if(hi > lo)
+    {
+        const U32 n = hi - lo;
+        const U32 r = (U32) rand();
+        assert(n < (U32) RAND_MAX);
+        res = lo + (r % n);
+    }
+
+    return(res);
+}
+
 /* end of windows/ho_misc.c */

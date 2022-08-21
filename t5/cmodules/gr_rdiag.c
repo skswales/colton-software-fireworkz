@@ -338,7 +338,8 @@ _Check_return_
 extern STATUS
 gr_riscdiag_diagram_save(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     FILE_HANDLE file_handle;
     STATUS status;
@@ -346,7 +347,9 @@ gr_riscdiag_diagram_save(
     status_return(status = t5_file_open(filename, file_open_write, &file_handle, TRUE));
 
 #if RISCOS
-    status_assert(file_set_risc_os_filetype(file_handle, FILETYPE_DRAW));
+    status_assert(file_set_risc_os_filetype(file_handle, t5_filetype));
+#else
+    UNREFERENCED_PARAMETER_InVal_(t5_filetype);
 #endif
 
     status = gr_riscdiag_diagram_save_into(p_gr_riscdiag, file_handle);

@@ -1,32 +1,38 @@
 | MakeRiscPkg.oby - Fireworkz-Examples
 
-IfThere $.Temp Then Else %CDir $.Temp
-
+Set t5$Release 201607xx
 | Remember to update RiscPkg.Control too
-Set t5$Release 20151007
 
-Set t5$Disc $.Temp.FzExamples_<t5$Release>
-Set t5$Zip  $.Temp.FzExamples_<t5$Release>/zip
+Set t5$Disc $.Temp.Fire.FzExamples_<t5$Release>
+Set t5$Zip  $.Temp.Fire.FzExamples_<t5$Release>/zip
+
+IfThere $.Temp      Then Else %CDir $.Temp
+IfThere $.Temp.Fire Then Else %CDir $.Temp.Fire
 
 X %Wipe <t5$Disc> ~cfr~v
 
+time
+echo Starting svn export (local) - please be patient
 svn export <Obey$Dir> <t5$Disc>
+time
 
 | Remove the examples which only work in Fireworkz Pro
-%Wipe   <t5$Disc>.Apps.Document.FzExamples.Mountains ~cfr~v
-%Wipe   <t5$Disc>.Apps.Document.FzExamples.Pupils ~cfr~v
+%Wipe   <t5$Disc>.Apps.Document.FzExamples.Mountains.Mountain* ~cf~r~v
+%Wipe   <t5$Disc>.Apps.Document.FzExamples.Pupils.Pupils* ~cf~r~v
 %delete <t5$Disc>.Apps.Document.FzExamples.Tutorial.names
 %delete <t5$Disc>.Apps.Document.FzExamples.Tutorial.names_b
 
 delete <t5$Disc>._make_w32/cmd
 
-| The one in RiscPkg is the useful one for the packaged examples
-delete <t5$Disc>.LICENSE
+| The one in RiscPkg.Copyright is the useful one for the packaged examples
+delete <t5$Disc>.LICENCE
 delete <t5$Disc>.MakeRiscPkg
 
 %Dir <t5$Disc>
+%Remove <t5$Zip>
 zip -r <t5$Zip> RiscPkg Apps
-%Back
+SetType <t5$Zip> &A91
 Info <t5$Zip>
+%Back
 
 Filer_OpenDir <t5$Disc>

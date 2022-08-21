@@ -11,19 +11,25 @@ OBJID=06
 # Copyright (C) 1998-2015 R W Colton
 
 # Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res06/rci: $(T5).ob_chart.resource.$(COUNTRY)-msg
+$(T5).$(PROD).resource.windows.$(COUNTRY).res06/rci: $(T5).ob_chart.resource.$(COUNTRY).msg
  Basic -quit $(RCGen) -output $@ -from $? -object 06 -base &3000
 
 # RISC OS bound messages
-$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06: $(T5).ob_chart.resource.$(COUNTRY)-msg
+$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06: $(T5).ob_chart.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_chart.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_chart.o.$(COUNTRY)-B_tmp -symbol rb_chart_msg_weak
 
-# RISC OS bound sprites
-$(BUILD_DIR).ob_chart.o.b22_06: $(T5).ob_chart.resource.spr22
- $(MAKEAOF) -to $@ -from $? -symbol rb_chart_spr_22_weak -spritearea
-$(BUILD_DIR).ob_chart.o.b24_06: $(T5).ob_chart.resource.spr24
- $(MAKEAOF) -to $@ -from $? -symbol rb_chart_spr_24_weak -spritearea
+# RISC OS bound sprites (leave as example)
+#$(BUILD_DIR).ob_chart.o.b22_06: $(T5).ob_chart.resource.spr22
+# $(MAKEAOF) -to $@ -from $? -symbol rb_chart_spr_22_weak -spritearea
+#$(BUILD_DIR).ob_chart.o.b24_06: $(T5).ob_chart.resource.spr24
+# $(MAKEAOF) -to $@ -from $? -symbol rb_chart_spr_24_weak -spritearea
+
+# RISC OS loaded sprites
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Sprites22.Ob06: $(T5).ob_chart.resource.Neutral.spr22
+ Copy $? $@ ~C FV
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Sprites24.Ob06: $(T5).ob_chart.resource.Neutral.spr24
+ Copy $? $@ ~C FV
 
 $(BUILD_DIR).ob_chart.o.ob_chart: $(T5).ob_chart.c.ob_chart
  $(CC) -o $@ $(ccflags) $?
@@ -95,7 +101,7 @@ $(BUILD_DIR).ob_chart.o.gr_style \
 $(BUILD_DIR).ob_chart.o.gr_texts \
 $(BUILD_DIR).ob_chart.o.wn_pnpoly \
 
-OBJS_06_X=$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06 $(BUILD_DIR).ob_chart.o.b22_06 $(BUILD_DIR).ob_chart.o.b24_06
+OBJS_06_X=$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06
 
 $(PROD_BUILD_DIR).o.$(COUNTRY)-M06: $(OBJS_06_X) $(OBJS_06_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_06_X) $(OBJS_06_S)

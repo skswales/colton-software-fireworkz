@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>DCOUNT</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="DCOUNT" />
+        <param name="Keyword" value="Functions, Database, DCOUNT" />
+        <param name="Keyword" value="Database functions, count of number of corresponding numeric values matching condition" />
+    </object>
+
+    <h1><a name="dcount" id="dcount"></a>DCOUNT</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        DCOUNT(<span class="csg-function-parameter"><a href="sg6_ranges.htm">range</a></span>,
+        <span class="csg-function-parameter">condition</span>)
+    </p>
+    <p>
+        Returns the number of number cells in the <span class="csg-function-parameter"><a href="sg6_ranges.htm">range</a></span>
+        for which the corresponding <span class="csg-function-parameter">condition</span> is satisfied.
+    </p>
+    <p>Note that this function will only count cells which contain a numeric value or a formula evaluating to a numeric value.</p>
+    <p>
+        It is often more useful to use <code><a href="sg6_DCOUNTA.htm">DCOUNTA</a></code>
+        as this does not impose the requirement that the cells in the range are numeric.
+    </p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">DCOUNT(A1:A25, A1:A25&gt;=18)</pre>
+    <p>returns the number of cells whose value is greater than or equal to <code>18</code>.</p>
+
+    <p>See <code><a href="sg6_DAVG.htm#Example_conditions">DAVG</a></code> for more examples of how to use the condition to control which cells are counted.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_DAVG.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_database_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_DCOUNTA.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

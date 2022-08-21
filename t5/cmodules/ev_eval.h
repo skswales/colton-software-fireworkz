@@ -681,9 +681,10 @@ enum RPN_NUMBERS
     RPN_FNF_LOGNORM_INV,
     RPN_FNV_PERCENTRANK_EXC,
 
-    /* 2.01 */
-    RPN_FNF_EDATE,
-    RPN_FNF_EOMONTH,
+    RPN_FNF_EDATE, /* 2.01 */
+    RPN_FNF_EOMONTH, /* 2.01 */
+
+    RPN_FNF_ODF_MOD, /* 2.20 */
 
 #endif /* end of any new functions */
 

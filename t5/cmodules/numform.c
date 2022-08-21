@@ -940,7 +940,7 @@ numform(
             numform_info.number.negative = 1;
         }
 
-        if(!IS_P_DATA_NONE(p_numform_parms->ustr_numform_numeric))
+        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_numeric))
             numform_section_extract_numeric(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_numeric, ustr_bptr(num_ustr_buf), sizeof32(num_ustr_buf));
         break;
 
@@ -959,7 +959,7 @@ numform(
             numform_info.number.negative = 1;
         }
 
-        if(!IS_P_DATA_NONE(p_numform_parms->ustr_numform_numeric))
+        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_numeric))
             numform_section_extract_numeric(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_numeric, ustr_bptr(num_ustr_buf), sizeof32(num_ustr_buf));
         break;
 
@@ -969,7 +969,7 @@ numform(
         numform_info.date.valid = status_ok(ss_dateval_to_ymd(&numform_info.ev_data.arg.ev_date.date, &numform_info.date.year, &numform_info.date.month,  &numform_info.date.day));
         numform_info.time.valid = status_ok(ss_timeval_to_hms(&numform_info.ev_data.arg.ev_date.time, &numform_info.time.hours, &numform_info.time.minutes, &numform_info.time.seconds));
 
-        if(!IS_P_DATA_NONE(p_numform_parms->ustr_numform_datetime))
+        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_datetime))
             numform_section_extract_datetime(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_datetime);
         break;
 
@@ -986,7 +986,7 @@ numform(
 #endif
         numform_info.type = RPN_DAT_STRING;
 
-        if(!IS_P_DATA_NONE(p_numform_parms->ustr_numform_texterror))
+        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_texterror))
             numform_section_extract_texterror(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_texterror);
         break;
 

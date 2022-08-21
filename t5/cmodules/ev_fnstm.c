@@ -690,7 +690,7 @@ PROC_EXEC_PROTO(c_trend)
 
             sum = a_data.arg.fp;
 
-            /* loop across a row summing coefficients * x variables */
+            /* loop across a row/down a column summing coefficients * x variables */
             for(ci = 0; ci < x_vars; ++ci)
             {
                 EV_DATA x_data;

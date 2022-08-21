@@ -35,6 +35,9 @@ g_product_sprite_name = "!fireworkz";
 
 const PC_U8Z
 g_dynamic_area_name = "Fireworkz workspace";
+
+const PCTSTR
+prefix_uri_userguide_content_tstr = "file:///FireworkzManuals:UserGuide/content/";
 #endif
 
 #if WINDOWS

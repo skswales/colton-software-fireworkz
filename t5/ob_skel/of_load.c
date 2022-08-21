@@ -606,7 +606,7 @@ load_object_config_file(
     consume_int(tstr_xsnprintf(config_leaf, elemof32(config_leaf),
                                CHOICES_FILE_FORMAT_STR,
                                (S32) object_id));
-    status = file_find_on_path(filename, elemof32(filename), config_leaf);
+    status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), config_leaf);
     } /*block*/
 
     if(status_done(status))
@@ -872,7 +872,7 @@ new_docno_using(
 
     {
     TCHARZ filename_buffer[BUF_MAX_PATHSTRING];
-    status_return(status = file_find_on_path(filename_buffer, elemof32(filename_buffer), leafname));
+    status_return(status = file_find_on_path(filename_buffer, elemof32(filename_buffer), file_get_search_path(), leafname));
     if(status == 0)
         return(create_error(FILE_ERR_NOTFOUND));
     status_return(tstr_set(&filename, filename_buffer));
@@ -2450,7 +2450,7 @@ load_one_supporting_document(
             }
 
             reportf(TEXT("load_one_supporting_document.2(%d): searching on path - name(%s)"), pass, searchname);
-            if((status_ffop = file_find_on_path(tempname, elemof32(tempname), searchname)) > 0)
+            if((status_ffop = file_find_on_path(tempname, elemof32(tempname), file_get_search_path(), searchname)) > 0)
             {
                 reportf(TEXT("found on path: name(%s)"), tempname);
                 name_dispose(&p_docu->docu_name);
@@ -2652,7 +2652,7 @@ load_ownform_config_file(void)
 
     status_return(status = name_read_tstr(&docu_name, TEXT("$$$Config")));
 
-    if(STATUS_OK == (status = file_find_on_path(filename, elemof32(filename), CONFIG_FILE_NAME)))
+    if(STATUS_OK == (status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), CONFIG_FILE_NAME)))
     {
         reperr(ERR_NO_CONFIG, product_ui_id());
         status = STATUS_FAIL;
@@ -2666,7 +2666,7 @@ load_ownform_config_file(void)
 
         if(status_ok(status))
         {   /* try overwriting this bare document with one containing UI styles and a trivial amount of data */
-            status = file_find_on_path(filename, elemof32(filename), CHOICES_DOCU_FILE_NAME);
+            status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), CHOICES_DOCU_FILE_NAME);
 
             if(status_done(status))
             {

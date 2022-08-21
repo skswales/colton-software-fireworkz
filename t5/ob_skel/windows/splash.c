@@ -62,8 +62,8 @@ splash_onPaint_banner(
     SIZE PixelsPerInch;
     host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    p_size->cx = div_round_ceil_u(p_size->cx * PixelsPerInch.cx, 96);
-    p_size->cy = div_round_ceil_u(p_size->cy * PixelsPerInch.cy, 96);
+    p_size->cx = idiv_ceil_u(p_size->cx * PixelsPerInch.cx, 96);
+    p_size->cy = idiv_ceil_u(p_size->cy * PixelsPerInch.cy, 96);
     } /*block*/
 
     /* dest */
@@ -110,8 +110,8 @@ splash_onPaint_text(
     SIZE PixelsPerInch;
     host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    text_y_inter_line += div_round_ceil_u(SPLASH_INTER_LINE_SPACING * PixelsPerInch.cy, 96);
-    bottom_margin_pixels = div_round_ceil_u(SPLASH_BOTTOM_MARGIN_PIXELS * PixelsPerInch.cy, 96);
+    text_y_inter_line += idiv_ceil_u(SPLASH_INTER_LINE_SPACING * PixelsPerInch.cy, 96);
+    bottom_margin_pixels = idiv_ceil_u(SPLASH_BOTTOM_MARGIN_PIXELS * PixelsPerInch.cy, 96);
     } /*block*/
 
     text_y_0 = p_size->cy - (user_info_height + bottom_margin_pixels);  /* bottom line */
@@ -388,8 +388,8 @@ splash_window_create(
         SIZE PixelsPerInch;
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-        size.cx = div_round_ceil_u(size.cx * PixelsPerInch.cx, 96);
-        size.cy = div_round_ceil_u(size.cy * PixelsPerInch.cy, 96);
+        size.cx = idiv_ceil_u(size.cx * PixelsPerInch.cx, 96);
+        size.cy = idiv_ceil_u(size.cy * PixelsPerInch.cy, 96);
         } /*block*/
     }
 
@@ -439,8 +439,8 @@ splash_window_create(
             SIZE PixelsPerInch;
             host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-            text_y_inter_line += div_round_ceil_u(SPLASH_INTER_LINE_SPACING * PixelsPerInch.cy, 96);
-            bottom_margin_pixels = div_round_ceil_u(SPLASH_BOTTOM_MARGIN_PIXELS * PixelsPerInch.cy, 96);
+            text_y_inter_line += idiv_ceil_u(SPLASH_INTER_LINE_SPACING * PixelsPerInch.cy, 96);
+            bottom_margin_pixels = idiv_ceil_u(SPLASH_BOTTOM_MARGIN_PIXELS * PixelsPerInch.cy, 96);
             } /*block*/
 
             g_extra_text_pixels_y = (1 * text_y_inter_line) + (user_info_height + bottom_margin_pixels);

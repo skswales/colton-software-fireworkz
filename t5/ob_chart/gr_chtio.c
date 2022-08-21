@@ -108,7 +108,7 @@ T5_CMD_PROTO(static, chart_load_pict_trans)
         /* use external handle as key into list */
         key = (LIST_ITEMNO) p_args[0].val.s32;
 
-        if((res = file_find_on_path_or_relative(picture_namebuf, elemof32(picture_namebuf), tstr_in_name, input_filename)) <= 0)
+        if((res = file_find_on_path_or_relative(picture_namebuf, elemof32(picture_namebuf), file_get_search_path(), tstr_in_name, input_filename)) <= 0)
             return(res ? res : create_error(FILE_ERR_NOTFOUND));
 
         t5_filetype = t5_filetype_from_filename(picture_namebuf);

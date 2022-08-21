@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>MIRR</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="MIRR" />
+        <param name="Keyword" value="Functions, Financial, MIRR" />
+        <param name="Keyword" value="Financial functions, modified internal rate of return" />
+    </object>
+
+    <h1><a name="mirr" id="mirr"></a>MIRR</h1>
+
+    <p>Returns the modified internal rate of return for a series of periodic cash flows.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        MIRR(<span class="csg-function-parameter">values</span>:<span class="csg-function-parameter-type"><a href="sg6_array_or_range.htm">array|range</a></span>,
+        <span class="csg-function-parameter">finance_rate</span>:<span class="csg-function-parameter-type">number</span>,
+        <span class="csg-function-parameter">reinvest_rate</span>:<span class="csg-function-parameter-type">number</span>)
+    </p>
+    <p>where:</p>
+    <table>
+        <tr>
+            <td class="csg-function-parameter">values</td>
+            <td>is an <a href="sg6_array_or_range.htm">array</a> (or range of cells) containing numbers representing payments (negative numbers) and receipts (positive numbers) occurring at regular periods.</td>
+        </tr>
+        <tr>
+            <td class="csg-function-parameter">finance_rate</td>
+            <td>is the interest rate you pay;</td>
+        </tr>
+        <tr>
+            <td class="csg-function-parameter">reinvest_rate</td>
+            <td>is the interest rate you receive on reinvested cash.</td>
+        </tr>
+    </table>
+    <p>This function considers both the cost of the investment and the interest received on reinvestment of the cash receipts.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        If you borrowed &pound;120,000 to set up a business, and reinvested income of &pound;39,000, &pound;30,000, and &pound;21,000,
+        you should enter these figures in four cells (say <code>B1:B4</code>).
+        Interest paid on the load was 10% and interest received on investments 12%.
+        The formula would be:
+    </p>
+    <pre class="csg-sample-indent">MIRR(B1:B4, 0.10, 0.12)</pre>
+    <p>and the rate of return calculated would be <code>0.04804</code>.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_IRR.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_financial_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_NPER.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

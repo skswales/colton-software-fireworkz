@@ -332,7 +332,7 @@ PROC_EXEC_PROTO(c_cosec)
     /* various periodic input yields infinity or overflows */
     /* large magnitude input yields imprecise value */
     if(errno /* == ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_OUTOFRANGE);
+        ev_data_set_error(p_ev_data_res, status_from_errno());
 }
 
 /******************************************************************************
@@ -374,7 +374,7 @@ PROC_EXEC_PROTO(c_cosh)
 
     /* large magnitude input causes overflow */
     if(errno /* == ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_OUTOFRANGE);
+        ev_data_set_error(p_ev_data_res, status_from_errno());
 }
 
 /******************************************************************************
@@ -396,7 +396,7 @@ PROC_EXEC_PROTO(c_cot)
     /* various periodic input yields infinity or overflows */
     /* large magnitude input yields imprecise value */
     if(errno /* == ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_OUTOFRANGE);
+        ev_data_set_error(p_ev_data_res, status_from_errno());
 }
 
 /******************************************************************************
@@ -482,7 +482,7 @@ PROC_EXEC_PROTO(c_sec)
     /* various periodic input yields infinity or overflows */
     /* large magnitude input yields imprecise value */
     if(errno /* == ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_OUTOFRANGE);
+        ev_data_set_error(p_ev_data_res, status_from_errno());
 }
 
 /******************************************************************************
@@ -541,7 +541,7 @@ PROC_EXEC_PROTO(c_sinh)
 
     /* large magnitude input causes overflow */
     if(errno /* == ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_OUTOFRANGE);
+        ev_data_set_error(p_ev_data_res, status_from_errno());
 }
 
 /******************************************************************************

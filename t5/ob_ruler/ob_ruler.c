@@ -1707,8 +1707,8 @@ ruler_scale_and_figures(
     start_xy -= zero_xy;
     end_xy   -= zero_xy;
 
-    numbered_units_loop_start = div_round_floor_fn(start_xy, (PIXIT) numbered_units_step_fp_pixits); /* inclusive */
-    numbered_units_loop_end   = div_round_ceil_fn(end_xy,    (PIXIT) numbered_units_step_fp_pixits); /* inclusive */
+    numbered_units_loop_start = idiv_floor_fn(start_xy, (PIXIT) numbered_units_step_fp_pixits); /* inclusive */
+    numbered_units_loop_end   = idiv_ceil_fn(end_xy,    (PIXIT) numbered_units_step_fp_pixits); /* inclusive */
 
     if(status_ok(status = fonty_handle_from_font_spec(&font_spec, FALSE)))
     {
@@ -1743,7 +1743,7 @@ ruler_scale_and_figures(
         digits_height = base_line;
     }
 
-    digits_height = div_round_ceil_u(digits_height, pixits_per_riscos_d_y);
+    digits_height = idiv_ceil_u(digits_height, pixits_per_riscos_d_y);
     digits_height *= pixits_per_riscos_d_y;
     } /*block*/
 
@@ -1758,7 +1758,7 @@ ruler_scale_and_figures(
     WrapOsBoolChecking(GetTextMetrics(hdc, &textmetric));
     consume(HFONT, SelectFont(hdc, h_font_old));
 
-    two_digits_width = div_round_ceil_u(size.cx, 5); /* average width of two digits */
+    two_digits_width = idiv_ceil_u(size.cx, 5); /* average width of two digits */
     digits_height    = textmetric.tmAscent - textmetric.tmInternalLeading;
     } /*block*/
 
@@ -1766,8 +1766,8 @@ ruler_scale_and_figures(
     SIZE PixelsPerInch;
     host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    two_digits_width = div_round_ceil_u(two_digits_width * PIXITS_PER_INCH, PixelsPerInch.cx);
-    digits_height    = div_round_ceil_u(digits_height    * PIXITS_PER_INCH, PixelsPerInch.cy);
+    two_digits_width = idiv_ceil_u(two_digits_width * PIXITS_PER_INCH, PixelsPerInch.cx);
+    digits_height    = idiv_ceil_u(digits_height    * PIXITS_PER_INCH, PixelsPerInch.cy);
     } /*block*/
 
     base_line = digits_height;
@@ -1782,7 +1782,7 @@ ruler_scale_and_figures(
         init_figure_point.y += base_line;
 
         p_base_line->tl.y = p_base_line->br.y = init_figure_point.y;
-    reportf(TEXT("H BL y ") PIXIT_TFMT, p_base_line->br.y);
+        //reportf(TEXT("H BL y ") PIXIT_TFMT, p_base_line->br.y);
 
         centre_line.br.y = init_figure_point.y - (base_line / 2);
 
@@ -1806,7 +1806,7 @@ ruler_scale_and_figures(
         init_figure_point.x = RULER_VERT_SCALE_LEFT_X + digits_half_width;
 
         p_base_line->tl.x = p_base_line->br.x = init_figure_point.x;
-    reportf(TEXT("V BL x ") PIXIT_TFMT, p_base_line->br.x);
+        //reportf(TEXT("V BL x ") PIXIT_TFMT, p_base_line->br.x);
 
         centre_line.br.x = init_figure_point.x;
 
@@ -1825,7 +1825,7 @@ ruler_scale_and_figures(
         init_figure_point.x = p_base_line->br.x + (2 * PIXITS_PER_PROGRAM_PIXEL_X);
 
         p_base_line->tl.x = p_base_line->br.x = init_figure_point.x + two_digits_width + digits_extra_width;
-    reportf(TEXT("V BL x ") PIXIT_TFMT, p_base_line->br.x);
+        //reportf(TEXT("V BL x ") PIXIT_TFMT, p_base_line->br.x);
 
         init_figure_point.x += ((two_digits_width + digits_extra_width) / 2);
 

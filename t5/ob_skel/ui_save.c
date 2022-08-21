@@ -48,7 +48,8 @@ typedef struct SAVE_CALLBACK * P_SAVE_CALLBACK;
 typedef STATUS (* P_PROC_SAVE) (
     _DocuRef_   P_DOCU p_docu,
     P_SAVE_CALLBACK p_save_callback,
-    _In_z_      PCTSTR filename);
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype);
 
 typedef struct SAVE_CALLBACK
 {
@@ -127,9 +128,6 @@ windows_save_as(
 
 #endif /* OS */
 
-ARRAY_HANDLE
-installed_save_objects_handle;
-
 #if RISCOS
 static
 BITMAP(save_name_validation, 256);
@@ -194,9 +192,9 @@ ui_save_msg_exit2(void)
     {
     ARRAY_INDEX i;
 
-    for(i = 0; i < array_elements(&installed_save_objects_handle); ++i)
+    for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
     {
-        P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptr(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+        const P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptr(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
 
         al_array_dispose(&p_installed_save_object->h_tstr_ClipboardFormat);
 
@@ -205,7 +203,7 @@ ui_save_msg_exit2(void)
     } /*block*/
 #endif
 
-    al_array_dispose(&installed_save_objects_handle);
+    al_array_dispose(&g_installed_save_objects_handle);
 
     return(STATUS_OK);
 }
@@ -263,7 +261,7 @@ T5_CMD_PROTO(extern, t5_cmd_object_bind_saver)
     }
 #endif
 
-    return(al_array_add(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, 1, &array_init_block, &installed_save_object));
+    return(al_array_add(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, 1, &array_init_block, &installed_save_object));
 }
 
 /******************************************************************************
@@ -486,6 +484,7 @@ save_picture_type_list =
 static BOOL
 proc_save_common(
     _In_z_      PCTSTR filename /*low lifetime*/,
+    _InVal_     T5_FILETYPE t5_filetype,
     CLIENT_HANDLE client_handle)
 {
     const P_SAVE_CALLBACK p_save_callback = (P_SAVE_CALLBACK) client_handle;
@@ -524,7 +523,7 @@ proc_save_common(
     else
         tstr_xstrkpy(save_name, elemof32(save_name), filename);
 
-    if(status_fail(status = (* p_save_callback->p_proc_save) (p_docu, p_save_callback, save_name)))
+    if(status_fail(status = (* p_save_callback->p_proc_save) (p_docu, p_save_callback, save_name, t5_filetype)))
         reperr(status, save_name);
     else if(p_save_callback->h_dialog)
     {
@@ -747,7 +746,7 @@ dialog_save_common_ctl_pushbutton(
 
         status_return(save_common_dialog_check(p_save_callback));
 
-        proc_save_common(filename, (CLIENT_HANDLE) p_save_callback);
+        proc_save_common(filename, p_save_callback->t5_filetype, (CLIENT_HANDLE) p_save_callback);
         return(STATUS_OK);
         }
 
@@ -962,7 +961,8 @@ static STATUS
 save_ownform_save(
     _DocuRef_   P_DOCU p_docu,
     P_SAVE_CALLBACK p_save_callback,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     OF_OP_FORMAT of_op_format = OF_OP_FORMAT_INIT;
     STATUS status;
@@ -987,7 +987,7 @@ save_ownform_save(
     if(p_save_callback->save_selection)
         of_op_format.of_template.data_class = DATA_SAVE_DOC; /* SKS 05jan95 attempt to make saved selections directly reloadable */
 
-    status_return(ownform_initialise_save(p_docu, &of_op_format, NULL, filename, p_save_callback->t5_filetype,
+    status_return(ownform_initialise_save(p_docu, &of_op_format, NULL, filename, t5_filetype,
                                           p_save_callback->save_selection ? &save_docu_area : NULL));
 
     status = save_ownform_file(p_docu, &of_op_format);
@@ -1048,7 +1048,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform)
             /*save_callback.rename_after_save = FALSE; implied */
             save_callback.clear_modify_after_save = TRUE;
 
-            status = proc_save_common(filename, (CLIENT_HANDLE) &save_callback);
+            status = proc_save_common(filename, save_callback.t5_filetype, (CLIENT_HANDLE) &save_callback);
 
             quick_tblock_dispose(&quick_tblock);
 
@@ -1191,7 +1191,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform_as)
     if(arg_is_present(p_args, 1))
         save_callback.save_selection = p_args[1].val.fBool;
 
-    return(proc_save_common(filename, (CLIENT_HANDLE) &save_callback));
+    return(proc_save_common(filename, save_callback.t5_filetype, (CLIENT_HANDLE) &save_callback));
 }
 
 CCBA_WRAP_T5_CMD(extern, t5_cmd_save_ownform_as)
@@ -1348,9 +1348,9 @@ save_foreign_create_filemap(
     _InoutRef_opt_ P_UI_SOURCE p_ui_source_dst)
 {
     const P_DOCU p_docu = p_docu_from_docno(p_save_callback->docno);
-    const ARRAY_INDEX n_elements = array_elements(&installed_save_objects_handle);
+    const ARRAY_INDEX n_elements = array_elements(&g_installed_save_objects_handle);
     ARRAY_INDEX i;
-    P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_range(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, 0, n_elements);
+    PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_rangec(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, 0, n_elements);
     STATUS status = STATUS_OK;
 
     { /* each exporting objects will each append a type to this handle */
@@ -1447,12 +1447,12 @@ static STATUS
 save_foreign_save(
     _DocuRef_   P_DOCU p_docu,
     P_SAVE_CALLBACK p_save_callback,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     FF_OP_FORMAT ff_op_format = { OP_OUTPUT_INVALID };
     STATUS status;
     DOCU_AREA save_docu_area;
-    const T5_FILETYPE t5_filetype = p_save_callback->t5_filetype;
     const OBJECT_ID object_id = save_foreign_lookup_object_id_from_t5_filetype(p_save_callback, t5_filetype);
 
     status_return(object_load(object_id));
@@ -1625,7 +1625,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign)
     save_callback.t5_filetype = p_args[1].val.t5_filetype;
     assert(p_args[1].type == (ARG_TYPE_S32 | ARG_MANDATORY));
 
-    status = proc_save_common(filename, (CLIENT_HANDLE) &save_callback);
+    status = proc_save_common(filename, save_callback.t5_filetype, (CLIENT_HANDLE) &save_callback);
 
     al_array_dispose(&save_callback.h_save_filetype);
 
@@ -1639,11 +1639,11 @@ static STATUS
 save_picture_save(
     _DocuRef_   P_DOCU p_docu,
     P_SAVE_CALLBACK p_save_callback,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     FF_OP_FORMAT ff_op_format = { OP_OUTPUT_INVALID };
     STATUS status;
-    const T5_FILETYPE t5_filetype = p_save_callback->t5_filetype;
 
     status_return(foreign_initialise_save(p_docu, &ff_op_format, NULL, filename, t5_filetype, NULL));
 
@@ -1787,14 +1787,15 @@ static STATUS
 save_template_save(
     _DocuRef_   P_DOCU p_docu,
     P_SAVE_CALLBACK p_save_callback,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     OF_OP_FORMAT of_op_format = OF_OP_FORMAT_INIT;
     STATUS status;
 
     * (P_U32) &of_op_format.of_template = 0xFFFFFFFFU;
 
-    status_return(ownform_initialise_save(p_docu, &of_op_format, NULL, filename, p_save_callback->t5_filetype, NULL));
+    status_return(ownform_initialise_save(p_docu, &of_op_format, NULL, filename, t5_filetype, NULL));
 
     switch(p_save_callback->style_radio)
     {
@@ -1951,7 +1952,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_template)
             return(create_error(ERR_NAMED_STYLE_NOT_FOUND));
     }
 
-    return(proc_save_common(filename, (CLIENT_HANDLE) &save_callback));
+    return(proc_save_common(filename, save_callback.t5_filetype, (CLIENT_HANDLE) &save_callback));
 }
 
 CCBA_WRAP_T5_CMD(extern, t5_cmd_save_template)
@@ -2285,7 +2286,7 @@ windows_save_as(
         }
 
         p_save_callback->t5_filetype = t5_filetype;
-        status = proc_save_common(openfilename.lpstrFile, (CLIENT_HANDLE) p_save_callback);
+        status = proc_save_common(openfilename.lpstrFile, t5_filetype, (CLIENT_HANDLE) p_save_callback);
         break;
 
     case FILETYPE_UNDETERMINED:
@@ -2307,7 +2308,7 @@ windows_save_as(
         }
 
         p_save_callback->t5_filetype = t5_filetype;
-        status = proc_save_common(openfilename.lpstrFile, (CLIENT_HANDLE) p_save_callback);
+        status = proc_save_common(openfilename.lpstrFile, t5_filetype, (CLIENT_HANDLE) p_save_callback);
         break;
     }
     } /*block*/
@@ -2393,7 +2394,8 @@ static STATUS
 save_template_locate(
     _DocuRef_   P_DOCU cur_p_docu,
     P_SAVE_CALLBACK p_save_callback,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     STATUS status = STATUS_OK;
 
@@ -2420,6 +2422,7 @@ save_template_locate(
     tstr_xstrkpy(g_dirname_buffer, g_elemof_dirname_buffer, filename);
 
     UNREFERENCED_PARAMETER(cur_p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_filetype);
 
     return(status);
 }

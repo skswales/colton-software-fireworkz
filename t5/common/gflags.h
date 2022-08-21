@@ -15,7 +15,7 @@
 #define __gflags_h
 
 /* Define the version number of this release */
-#define VERSION_NUMBER 21002
+#define VERSION_NUMBER 22000
 /* NB keep in step with other files (definitive list in common.mf_mid) */
 
 #ifdef RELEASED
@@ -82,7 +82,7 @@
 
 #define COMPLEX_STRING 1
 
-#if WINDOWS && 1
+#if (WINDOWS && 1) || (RISCOS && 1)
 #define USE_GLOBAL_CLIPBOARD 1
 #endif
 

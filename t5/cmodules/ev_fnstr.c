@@ -110,17 +110,12 @@ PROC_EXEC_PROTO(c_clean)
 
 PROC_EXEC_PROTO(c_code)
 {
-    S32 code_result;
-    
+    S32 code_result = 0; /* SKS 20160801 allow empty string */
+
     exec_func_ignore_parms();
 
-    if(0 == args[0]->arg.string.size)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
-
-    code_result = (S32) PtrGetByte(args[0]->arg.string.uchars);
+    if(0 != args[0]->arg.string.size)
+        code_result = (S32) PtrGetByte(args[0]->arg.string.uchars);
 
     ev_data_set_integer(p_ev_data_res, code_result);
 }
@@ -594,7 +589,7 @@ PROC_EXEC_PROTO(c_replace)
 
 PROC_EXEC_PROTO(c_rept)
 {
-    const S32 len = args[0]->arg.string.size;
+    const U32 len = args[0]->arg.string.size;
     S32 n = args[1]->arg.integer;
     P_UCHARS uchars;
     S32 x;
@@ -607,7 +602,7 @@ PROC_EXEC_PROTO(c_rept)
         return;
     }
 
-    if(status_fail(ss_string_make_uchars(p_ev_data_res, NULL, n * len)))
+    if(status_fail(ss_string_make_uchars(p_ev_data_res, NULL, (U32) n * len)))
         return;
 
     uchars = p_ev_data_res->arg.string_wr.uchars;

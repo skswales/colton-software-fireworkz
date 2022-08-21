@@ -185,14 +185,14 @@ host_redraw_context_fillin(
 
     /* users of one_pixel please note that it is only an approximation and MUST BE >= real pixel size */
     p_redraw_context->one_real_pixel.x = muldiv64(p_redraw_context->host_xform.scale.b.x, PIXITS_PER_METRE, p_redraw_context->host_xform.windows.d.x);
-    p_redraw_context->one_real_pixel.x = div_round_ceil(p_redraw_context->one_real_pixel.x, p_redraw_context->host_xform.scale.t.x);
+    p_redraw_context->one_real_pixel.x = idiv_ceil(p_redraw_context->one_real_pixel.x, p_redraw_context->host_xform.scale.t.x);
     p_redraw_context->one_real_pixel.y = muldiv64(p_redraw_context->host_xform.scale.b.y, PIXITS_PER_METRE, p_redraw_context->host_xform.windows.d.y);
-    p_redraw_context->one_real_pixel.y = div_round_ceil(p_redraw_context->one_real_pixel.y, p_redraw_context->host_xform.scale.t.y);
+    p_redraw_context->one_real_pixel.y = idiv_ceil(p_redraw_context->one_real_pixel.y, p_redraw_context->host_xform.scale.t.y);
 
     p_redraw_context->one_program_pixel.x = p_redraw_context->host_xform.scale.b.x * PIXITS_PER_PROGRAM_PIXEL_X;
-    p_redraw_context->one_program_pixel.x = div_round_ceil(p_redraw_context->one_program_pixel.x, p_redraw_context->host_xform.scale.t.x);
+    p_redraw_context->one_program_pixel.x = idiv_ceil(p_redraw_context->one_program_pixel.x, p_redraw_context->host_xform.scale.t.x);
     p_redraw_context->one_program_pixel.y = p_redraw_context->host_xform.scale.b.y * PIXITS_PER_PROGRAM_PIXEL_Y;
-    p_redraw_context->one_program_pixel.y = div_round_ceil(p_redraw_context->one_program_pixel.y, p_redraw_context->host_xform.scale.t.y);
+    p_redraw_context->one_program_pixel.y = idiv_ceil(p_redraw_context->one_program_pixel.y, p_redraw_context->host_xform.scale.t.y);
 
     /* standard (half-width) lines */
     p_redraw_context->line_width.x = p_redraw_context->border_width.x / 2;
@@ -276,14 +276,14 @@ host_set_click_context(
 
     /* users of one_pixel please note that it is only an approximation and MUST BE >= real pixel size */
     p_click_context->one_real_pixel.x = muldiv64(p_click_context->host_xform.scale.b.x, PIXITS_PER_METRE, p_click_context->host_xform.windows.d.x);
-    p_click_context->one_real_pixel.x = div_round_ceil(p_click_context->one_real_pixel.x, p_click_context->host_xform.scale.t.x);
+    p_click_context->one_real_pixel.x = idiv_ceil(p_click_context->one_real_pixel.x, p_click_context->host_xform.scale.t.x);
     p_click_context->one_real_pixel.y = muldiv64(p_click_context->host_xform.scale.b.y, PIXITS_PER_METRE, p_click_context->host_xform.windows.d.y);
-    p_click_context->one_real_pixel.y = div_round_ceil(p_click_context->one_real_pixel.y, p_click_context->host_xform.scale.t.y);
+    p_click_context->one_real_pixel.y = idiv_ceil(p_click_context->one_real_pixel.y, p_click_context->host_xform.scale.t.y);
 
     p_click_context->one_program_pixel.x = p_click_context->host_xform.scale.b.x * PIXITS_PER_PROGRAM_PIXEL_X;
-    p_click_context->one_program_pixel.x = div_round_ceil(p_click_context->one_program_pixel.x, p_click_context->host_xform.scale.t.x);
+    p_click_context->one_program_pixel.x = idiv_ceil(p_click_context->one_program_pixel.x, p_click_context->host_xform.scale.t.x);
     p_click_context->one_program_pixel.y = p_click_context->host_xform.scale.b.y * PIXITS_PER_PROGRAM_PIXEL_Y;
-    p_click_context->one_program_pixel.y = div_round_ceil(p_click_context->one_program_pixel.y, p_click_context->host_xform.scale.t.y);
+    p_click_context->one_program_pixel.y = idiv_ceil(p_click_context->one_program_pixel.y, p_click_context->host_xform.scale.t.y);
 }
 
 extern void

@@ -29,9 +29,6 @@
 
 #include "cmodules/mleci.h"
 
-#define return_if_no_pane(mlec)      if(mlec->pane == window_NULL) return
-#define reject_if_paste_buffer(mlec) if(mlec == paste) return(create_error(MLEC_ERR_INVALID_PASTE_OP))
-
 #if defined(SUPPORT_PANEMENU) && (SUPPORT_PANEMENU > 0)
 
 /* Pane window menu structure */

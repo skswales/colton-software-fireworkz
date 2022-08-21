@@ -498,7 +498,7 @@ alloc_initialise_heap(
     if(ahp->increment)
     {
         new_size += RHM_SIZEOF_FLEX_USED_BLOCK;
-        new_size  = div_round_ceil_u(new_size, ahp->increment) * ahp->increment;
+        new_size  = idiv_ceil_u(new_size, ahp->increment) * ahp->increment;
         new_size -= RHM_SIZEOF_FLEX_USED_BLOCK;
     }
 
@@ -668,7 +668,7 @@ alloc_needtoallocate(
     if(ahp->increment)
     {
         new_size += RHM_SIZEOF_FLEX_USED_BLOCK;
-        new_size  = div_round_ceil_u(new_size, ahp->increment) * ahp->increment;
+        new_size  = idiv_ceil_u(new_size, ahp->increment) * ahp->increment;
         new_size -= RHM_SIZEOF_FLEX_USED_BLOCK;
     }
 
@@ -722,7 +722,7 @@ alloc_freeextrastore(
     U32 spare;
 
     new_size += RHM_SIZEOF_FLEX_USED_BLOCK;
-    new_size  = div_round_ceil_u(new_size, ahp->increment) * ahp->increment;
+    new_size  = idiv_ceil_u(new_size, ahp->increment) * ahp->increment;
     new_size -= RHM_SIZEOF_FLEX_USED_BLOCK;
 
     /* don't let heap size fall too low */

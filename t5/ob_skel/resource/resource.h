@@ -171,7 +171,7 @@
 #endif /* OS */
 
 /*
-keep consistent with &.t5.Resource.Res00.msg
+keep consistent with &.t5.ob_skel.resource.msg
 */
 
 /* following on from STATUS_xxx we have...*/
@@ -193,7 +193,7 @@ keep consistent with &.t5.Resource.Res00.msg
 #define ERR_ALREADYRECORDING                -61
 #define ERR_KEY_DEF_IN_USE                  -62
 #define ERR_DUPLICATE_FILE                  -63
-#define ERR_spare_64                        -64
+#define ERR_NO_SPRITES                      -64
 #define ERR_DUPLICATE_LEAFNAME              -65
 #define ERR_UNKNOWN_FILETYPE                -66
 #define ERR_EOF_BEFORE_FINISHED             -67
@@ -269,7 +269,7 @@ string resource allocation
 
 #define MSG_SKEL_VERSION                        1
 #define MSG_SKEL_DATE                           2
-#define MSG_SKEL_SINGLE_USER                    3
+#define MSG_SKEL_NO_USER_ID                     3
 
 #define MSG_REMOVE                              92
 #define MSG_INSERT                              93

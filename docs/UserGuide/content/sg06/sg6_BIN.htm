@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>BIN</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="BIN" />
+        <param name="Keyword" value="Statistical functions, BIN" />
+        <param name="Keyword" value="Organising data to make a histogram" />
+    </object>
+
+    <h1><a name="bin" id="bin"></a>BIN</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        BIN(<span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="sg6_array_or_range.htm">array|range</a></span>,
+        <span class="csg-function-parameter">bins</span>:<span class="csg-function-parameter-type"><a href="sg6_array_or_range.htm">array|range</a></span>)
+    </p>
+    <p>
+        The <span class="csg-function-parameter">bins</span> <a href="sg6_array_or_range.htm">array</a></i> (or range of cells)
+        defines a set of bins into which the values from the
+        <span class="csg-function-parameter">data</span> <a href="sg6_array_or_range.htm">array</a> (or range of cells) is counted.
+    </p>
+    <p>
+        For example, if <span class="csg-function-parameter">bins</span> is {20,40,60,80},
+        the returned <a href="sg6_arrays.htm">array</a> gives the number of elements of
+        <span class="csg-function-parameter">data</span> that have:
+    </p>
+    <ul style="list-style-type: none;">
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value &le;20</li>
+        <li>20&lt; value &le;40</li>
+        <li>40&lt; value &le;60</li>
+        <li>60&lt; value &le;80</li>
+        <li>80&lt; value </li>
+    </ul>
+    <p>
+        The returned <a href="sg6_arrays.htm">array</a> will therefore always have one more element than the
+        <span class="csg-function-parameter">bins</span> <a href="sg6_array_or_range.htm">array</a> (or range of cells).
+        Neither data nor bins need be sorted.
+    </p>
+    <p>One common use of this function is to organise data for making a histogram.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        With data in <code>A1:A100</code>, and bin categories in <code>B1:B5</code>,
+        the following formula would provide the basis for a bar chart:
+    </p>
+    <pre class="csg-sample-indent"><a href="sg6_SET_VALUE.htm">SET_VALUE</a>(C1:C6, BIN(A1:A100, B1:B5))</pre>
+    <p>You would then make a bar chart from the range <code>B1:C6</code>, using column B as labels.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>
+        Starting with 2.00, all the supplied arbitrary dimensioned data array (or range of cells) is binned.<br />
+        Prior to that only the first column of this data would have been binned.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_BETA.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_statistical_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_COUNT.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

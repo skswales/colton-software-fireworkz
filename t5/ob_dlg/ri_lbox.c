@@ -68,7 +68,7 @@ internal routines
 static void
 ri_lbox_extent_set(
     P_RI_LBOX p_lbox,
-    _In_        const WimpOpenWindowBlock * const p_open_window);
+    _In_        const WimpOpenWindowBlock * const p_open_window_block);
 
 static void
 ri_lbox_focus_lose(
@@ -90,7 +90,7 @@ _Check_return_
 static STATUS
 ri_lbox_redraw_core(
     P_RI_LBOX p_lbox,
-    _In_        const WimpRedrawWindowBlock * const p_redraw_window);
+    _In_        const WimpRedrawWindowBlock * const p_redraw_window_block);
 
 static void
 ri_lbox_selection_send_to_client(
@@ -137,7 +137,7 @@ ri_lbox_current_ensure_visible(
     P_RI_LBOX p_lbox,
     _InVal_     STATUS page_up_down)
 {
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
     GDI_COORD window_height;
     GDI_RECT items;
 
@@ -153,20 +153,20 @@ ri_lbox_current_ensure_visible(
     GDI_RECT  window_rect;
 
     /* compute the position in absolute screen coordinates of the work area origin (as per host_gdi_org_from_screen()) */
-    window_u.window_state.window_handle = p_lbox->window_handle;
-    void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state));
-    gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&window_u.window_state); /* window w.a. ABS origin */
-    gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&window_u.window_state);
+    window_u.window_state_block.window_handle = p_lbox->window_handle;
+    void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block));
+    gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(&window_u.window_state_block); /* window w.a. ABS origin */
+    gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(&window_u.window_state_block);
 
-    window_height = BBox_height(&window_u.window_state.visible_area);
+    window_height = BBox_height(&window_u.window_state_block.visible_area);
 
     /* currently origins same */
     lbox_mesh_origin = gdi_org;
 
-    window_rect.tl.x = +(window_u.window_state.visible_area.xmin - lbox_mesh_origin.x);
-    window_rect.tl.y = -(window_u.window_state.visible_area.ymax - lbox_mesh_origin.y);
-    window_rect.br.x = +(window_u.window_state.visible_area.xmax - lbox_mesh_origin.x);
-    window_rect.br.y = -(window_u.window_state.visible_area.ymin - lbox_mesh_origin.y);
+    window_rect.tl.x = +(window_u.window_state_block.visible_area.xmin - lbox_mesh_origin.x);
+    window_rect.tl.y = -(window_u.window_state_block.visible_area.ymax - lbox_mesh_origin.y);
+    window_rect.br.x = +(window_u.window_state_block.visible_area.xmax - lbox_mesh_origin.x);
+    window_rect.br.y = -(window_u.window_state_block.visible_area.ymin - lbox_mesh_origin.y);
 
     /* compute the indices (tl incl,br excl) of items the whole window intersects */
     gdi_rect_clip_mesh(&items, &window_rect, &lbox_mesh_size);
@@ -176,12 +176,12 @@ ri_lbox_current_ensure_visible(
     {
         /* ensure currently totally invisible off top item aligned at top by adjusting scroll offset of window to top of item */
 
-        if( window_u.window_state.yscroll == (-(items.tl.y    ) * RI_LBOX_ITEM_HEIGHT))
+        if( window_u.window_state_block.yscroll == (-(items.tl.y    ) * RI_LBOX_ITEM_HEIGHT))
         {
-            window_u.window_state.yscroll  = (-(items.tl.y - 1) * RI_LBOX_ITEM_HEIGHT);
+            window_u.window_state_block.yscroll  = (-(items.tl.y - 1) * RI_LBOX_ITEM_HEIGHT);
 
             /* NB. not moving position of window or place in window stack so just wimp_ not win_ */
-            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window));
+            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window_block));
         }
     }
 
@@ -189,12 +189,12 @@ ri_lbox_current_ensure_visible(
     {
         /* ensure possibly partially visible top item aligned at top by adjusting scroll offset of window to top of item */
 
-        if( window_u.window_state.yscroll != (-(items.tl.y) * RI_LBOX_ITEM_HEIGHT))
+        if( window_u.window_state_block.yscroll != (-(items.tl.y) * RI_LBOX_ITEM_HEIGHT))
         {
-            window_u.window_state.yscroll  = (-(items.tl.y) * RI_LBOX_ITEM_HEIGHT);
+            window_u.window_state_block.yscroll  = (-(items.tl.y) * RI_LBOX_ITEM_HEIGHT);
 
             /* NB. not moving position of window or place in window stack so just wimp_ not win_ */
-            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window));
+            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window_block));
         }
     }
 
@@ -202,12 +202,12 @@ ri_lbox_current_ensure_visible(
     {
         /* ensure possibly partially visible bottom item aligned at bottom by adjusting scroll offset of window to bottom of item */
 
-        if( window_u.window_state.yscroll != (+window_height + (-(items.br.y - 1 + 1) * RI_LBOX_ITEM_HEIGHT)))
+        if( window_u.window_state_block.yscroll != (+window_height + (-(items.br.y - 1 + 1) * RI_LBOX_ITEM_HEIGHT)))
         {
-            window_u.window_state.yscroll  = (+window_height + (-(items.br.y - 1 + 1) * RI_LBOX_ITEM_HEIGHT));
+            window_u.window_state_block.yscroll  = (+window_height + (-(items.br.y - 1 + 1) * RI_LBOX_ITEM_HEIGHT));
 
             /* NB. not moving position of window or place in window stack so just wimp_ not win_ */
-            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window));
+            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window_block));
         }
     }
 
@@ -215,12 +215,12 @@ ri_lbox_current_ensure_visible(
     {
         /* ensure currently totally invisible off bottom item aligned at bottom by adjusting scroll offset of window to bottom of item */
 
-        if( window_u.window_state.yscroll == (+window_height + (-(items.br.y - 1 + 1) * RI_LBOX_ITEM_HEIGHT)))
+        if( window_u.window_state_block.yscroll == (+window_height + (-(items.br.y - 1 + 1) * RI_LBOX_ITEM_HEIGHT)))
         {
-            window_u.window_state.yscroll  = (+window_height + (-(items.br.y     + 1) * RI_LBOX_ITEM_HEIGHT));
+            window_u.window_state_block.yscroll  = (+window_height + (-(items.br.y     + 1) * RI_LBOX_ITEM_HEIGHT));
 
             /* NB. not moving position of window or place in window stack so just wimp_ not win_ */
-            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window));
+            void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window_block));
         }
     }
 
@@ -228,10 +228,10 @@ ri_lbox_current_ensure_visible(
     {
         /* ensure currently invisible item centred in window by adjusting scroll offset of window */
 
-        window_u.window_state.yscroll = ((-(p_lbox->selected_item) * RI_LBOX_ITEM_HEIGHT) - (RI_LBOX_ITEM_HEIGHT / 2) + (window_height / 2));
+        window_u.window_state_block.yscroll = ((-(p_lbox->selected_item) * RI_LBOX_ITEM_HEIGHT) - (RI_LBOX_ITEM_HEIGHT / 2) + (window_height / 2));
 
         /* NB. not moving position of window or place in window stack so just wimp_ not win_ */
-        void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window));
+        void_WrapOsErrorReporting(wimp_open_window(&window_u.open_window_block));
     }
 }
 
@@ -298,37 +298,37 @@ ri_lbox_enable(
 
 _Check_return_
 static int
-ri_lbox_event_close_window(
+ri_lbox_event_Close_Window_Request(
     RI_LBOX_HANDLE handle,
     _In_        const WimpCloseWindowRequestEvent * const p_close_window_request);
 
 _Check_return_
 static int
-ri_lbox_event_open_window(
+ri_lbox_event_Open_Window_Request(
     RI_LBOX_HANDLE handle,
     _In_        const WimpOpenWindowRequestEvent * const p_open_window_request);
 
 _Check_return_
 static int
-ri_lbox_event_redraw_window(
+ri_lbox_event_Redraw_Window_Request(
     RI_LBOX_HANDLE handle,
     _In_        const WimpRedrawWindowRequestEvent * const p_redraw_window_request);
 
 _Check_return_
 static int
-ri_lbox_event_mouse_click(
+ri_lbox_event_Mouse_Click(
     RI_LBOX_HANDLE handle,
     _In_        const WimpMouseClickEvent * const p_mouse_click);
 
 _Check_return_
 static int
-ri_lbox_event_key_pressed(
+ri_lbox_event_Key_Pressed(
     RI_LBOX_HANDLE handle,
     _In_        const WimpKeyPressedEvent * const p_key_pressed);
 
 _Check_return_
 static int
-ri_lbox_event_caret_gain_lose(
+ri_lbox_event_Lose_Caret(
     RI_LBOX_HANDLE handle);
 
 _Check_return_
@@ -342,30 +342,28 @@ ri_lbox_event_handler(
 
     switch(event_code)
     {
-    case Wimp_ECloseWindow:
-        return(ri_lbox_event_close_window((RI_LBOX_HANDLE) handle, &p_event_data->close_window_request));
+    case Wimp_ERedrawWindow:
+        return(ri_lbox_event_Redraw_Window_Request((RI_LBOX_HANDLE) handle, &p_event_data->redraw_window_request));
 
     case Wimp_EOpenWindow:
-        return(ri_lbox_event_open_window((RI_LBOX_HANDLE) handle, &p_event_data->open_window_request));
+        return(ri_lbox_event_Open_Window_Request((RI_LBOX_HANDLE) handle, &p_event_data->open_window_request));
 
-    case Wimp_ERedrawWindow:
-        return(ri_lbox_event_redraw_window((RI_LBOX_HANDLE) handle, &p_event_data->redraw_window_request));
+    case Wimp_ECloseWindow:
+        return(ri_lbox_event_Close_Window_Request((RI_LBOX_HANDLE) handle, &p_event_data->close_window_request));
 
     case Wimp_EMouseClick:
-        return(ri_lbox_event_mouse_click((RI_LBOX_HANDLE) handle, &p_event_data->mouse_click));
+        return(ri_lbox_event_Mouse_Click((RI_LBOX_HANDLE) handle, &p_event_data->mouse_click));
 
     case Wimp_EKeyPressed:
-        return(ri_lbox_event_key_pressed((RI_LBOX_HANDLE) handle, &p_event_data->key_pressed));
+        return(ri_lbox_event_Key_Pressed((RI_LBOX_HANDLE) handle, &p_event_data->key_pressed));
 
     case Wimp_ELoseCaret:
     case Wimp_EGainCaret:
-        return(ri_lbox_event_caret_gain_lose((RI_LBOX_HANDLE) handle));
+        return(ri_lbox_event_Lose_Caret((RI_LBOX_HANDLE) handle));
 
     default:
-        break;
+        return(FALSE /*unprocessed*/);
     }
-
-    return(FALSE /*unprocessed*/);
 }
 
 /******************************************************************************
@@ -376,7 +374,7 @@ ri_lbox_event_handler(
 
 _Check_return_
 static int
-ri_lbox_event_close_window(
+ri_lbox_event_Close_Window_Request(
     RI_LBOX_HANDLE handle,
     _In_        const WimpCloseWindowRequestEvent * const p_close_window_request)
 {
@@ -406,7 +404,7 @@ ri_lbox_event_close_window(
 
 _Check_return_
 static int
-ri_lbox_event_open_window(
+ri_lbox_event_Open_Window_Request(
     RI_LBOX_HANDLE handle,
     _In_        const WimpOpenWindowRequestEvent * const p_open_window_request)
 {
@@ -436,26 +434,26 @@ ri_lbox_event_open_window(
 
 _Check_return_
 static int
-ri_lbox_event_redraw_window(
+ri_lbox_event_Redraw_Window_Request(
     RI_LBOX_HANDLE handle,
     _In_        const WimpRedrawWindowRequestEvent * const p_redraw_window_request)
 {
     P_RI_LBOX p_lbox = ri_lbox_p_from_h(handle);
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more = 0;
 
-    redraw_window.window_handle = p_redraw_window_request->window_handle;
+    redraw_window_block.window_handle = p_redraw_window_request->window_handle;
 
-    if(WrapOsErrorReporting(wimp_redraw_window(&redraw_window, &wimp_more)))
+    if(NULL != WrapOsErrorReporting(wimp_redraw_window(&redraw_window_block, &wimp_more)))
         wimp_more = 0;
 
     while(0 != wimp_more)
     {
         host_invalidate_cache(HIC_REDRAW_LOOP_START);
 
-        (void) ri_lbox_redraw_core(p_lbox, &redraw_window);
+        (void) ri_lbox_redraw_core(p_lbox, &redraw_window_block);
 
-        if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+        if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
             wimp_more = 0;
     }
 
@@ -464,13 +462,13 @@ ri_lbox_event_redraw_window(
 
 /******************************************************************************
 *
-* handle button clicks in our workspace
+* handle mouse clicks in our workspace
 *
 ******************************************************************************/
 
 _Check_return_
 static int
-ri_lbox_event_mouse_click(
+ri_lbox_event_Mouse_Click(
     RI_LBOX_HANDLE handle,
     _In_        const WimpMouseClickEvent * const p_mouse_click)
 {
@@ -549,14 +547,14 @@ ri_lbox_event_mouse_click(
 
 _Check_return_
 static int
-ri_lbox_event_key_pressed(
+ri_lbox_event_Key_Pressed(
     RI_LBOX_HANDLE handle,
     _In_        const WimpKeyPressedEvent * const p_key_pressed)
 {
     P_RI_LBOX p_lbox = ri_lbox_p_from_h(handle);
     WimpGetWindowStateBlock window_state;
     S32 whole_items_in_window;
-    S32 ch;
+    KMAP_CODE kmap_code;
 
     if(p_lbox->bits.disabled)
         return(FALSE /*unprocessed*/);
@@ -568,9 +566,9 @@ ri_lbox_event_key_pressed(
     if(!whole_items_in_window)
         whole_items_in_window = 1;
 
-    ch = ri_kmap_convert(p_key_pressed->key_code);
+    kmap_code = kmap_convert(p_key_pressed->key_code);
 
-    switch(ch)
+    switch(kmap_code)
     {
     case KMAP_FUNC_HOME:
     case KMAP_FUNC_END:
@@ -584,7 +582,7 @@ ri_lbox_event_key_pressed(
         S32 itemno = RI_LBOX_SELECTION_NONE;
         STATUS page_up_down = 0;
 
-        switch(ch)
+        switch(kmap_code)
         {
         /* may want sometime to emulate Windows-like ctrl-func to more current pos without altering selection */
 
@@ -651,10 +649,10 @@ ri_lbox_event_key_pressed(
     default:
         {
         /* if a letter, try to select an appropriate entry */
-        if((ch < 0x100) && (sbchar_isalnum(ch) || (CH_UNDERSCORE == ch)))
+        if((kmap_code < 0x100) && (sbchar_isalnum(kmap_code) || (CH_UNDERSCORE == kmap_code)))
         {
             TCHARZ s[2];
-            s[0] = (TCHAR) ch;
+            s[0] = (TCHAR) kmap_code;
             s[1] = CH_NULL;
             (void) ri_lbox_selection_set_from_tstr(handle, s);
             ri_lbox_current_ensure_visible(p_lbox, 1);
@@ -669,7 +667,7 @@ ri_lbox_event_key_pressed(
             dialog_msg_lbn_key.client_handle = p_lbox->client_handle;
             dialog_msg_lbn_key.lbox_handle   = handle;
             dialog_msg_lbn_key.selected_item = p_lbox->selected_item;
-            dialog_msg_lbn_key.kmap_code     = ch;
+            dialog_msg_lbn_key.kmap_code     = kmap_code;
             (* p_lbox->p_proc_dialog_event) (p_docu_from_docno(p_lbox->docno), DIALOG_MSG_CODE_LBN_KEY, &dialog_msg_lbn_key);
             return((BOOL) dialog_msg_lbn_key.processed);
         }
@@ -687,7 +685,7 @@ ri_lbox_event_key_pressed(
 
 _Check_return_
 static int
-ri_lbox_event_caret_gain_lose(
+ri_lbox_event_Lose_Caret(
     RI_LBOX_HANDLE handle)
 {
     /* ensure window redrawn if needed */
@@ -775,8 +773,10 @@ ri_lbox_focus_lose(
 
         window_state.window_handle = p_lbox->stolen_focus_caretstr.window_handle;
         if(NULL == wimp_get_window_state(&window_state))
-            if(WimpWindow_Open & window_state.flags)
-                void_WrapOsErrorReporting(wimp_set_caret_position_block(&p_lbox->stolen_focus_caretstr));
+        {
+            if(0 != (WimpWindow_Open & window_state.flags))
+                void_WrapOsErrorReporting(winx_set_caret_position(&p_lbox->stolen_focus_caretstr));
+        }
 
         p_lbox->stolen_focus_caretstr.window_handle = 0;
     }
@@ -821,6 +821,8 @@ ri_lbox_focus_set(
         if(!p_lbox->stolen_focus_caretstr.window_handle)
             memcpy32(&p_lbox->stolen_focus_caretstr, &cur_caret, sizeof32(cur_caret));
 
+        riscos_claim_caret();
+
         if(WrapOsErrorReporting(winx_set_caret_position(&des_caret)))
             return(STATUS_FAIL);
     }
@@ -861,13 +863,14 @@ ri_lbox_hide(
         WimpGetWindowStateBlock window_state;
 
         window_state.window_handle = p_lbox->window_handle;
-        void_WrapOsErrorReporting(wimp_get_window_state(&window_state));
-
-        if(WimpWindow_Open & window_state.flags)
+        if(NULL == WrapOsErrorReporting(wimp_get_window_state(&window_state)))
         {
-            ri_lbox_focus_lose(p_lbox);
+            if(0 != (WimpWindow_Open & window_state.flags))
+            {
+                ri_lbox_focus_lose(p_lbox);
 
-            winx_send_close_window_request(p_lbox->window_handle, FALSE);
+                winx_send_close_window_request(p_lbox->window_handle, FALSE);
+            }
         }
     }
 
@@ -887,36 +890,38 @@ ri_lbox_item_update(
     _InVal_     S32 end_itemno,
     _InVal_     S32 later)
 {
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
 
     /* this window, so all coords are work area relative */
     if(!p_lbox->window_handle)
         return;
 
     /* tl */
-    redraw_window.visible_area.xmin =       -0x00800000; /* large -ve */
-    redraw_window.visible_area.ymax = (int) -(stt_itemno * RI_LBOX_ITEM_HEIGHT);
+    redraw_window_block.visible_area.xmin =       -0x00800000; /* large -ve */
+    redraw_window_block.visible_area.ymax = (int) -(stt_itemno * RI_LBOX_ITEM_HEIGHT);
 
     /* br */
-    redraw_window.visible_area.xmax =       +0x00800000; /* large +ve */
-    redraw_window.visible_area.ymin = (int) -(end_itemno * RI_LBOX_ITEM_HEIGHT);
+    redraw_window_block.visible_area.xmax =       +0x00800000; /* large +ve */
+    redraw_window_block.visible_area.ymin = (int) -(end_itemno * RI_LBOX_ITEM_HEIGHT);
 
     if(later)
-        void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_lbox->window_handle, &redraw_window.visible_area));
+    {
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(p_lbox->window_handle, &redraw_window_block.visible_area));
+    }
     else
     {
         int wimp_more = 0;
 
-        redraw_window.window_handle = p_lbox->window_handle;
+        redraw_window_block.window_handle = p_lbox->window_handle;
 
-        if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+        if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
             wimp_more = 0;
 
         while(0 != wimp_more)
         {
-            (void) ri_lbox_redraw_core(p_lbox, &redraw_window);
+            (void) ri_lbox_redraw_core(p_lbox, &redraw_window_block);
 
-            if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+            if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
                 wimp_more = 0;
         }
     }
@@ -1136,35 +1141,35 @@ _Check_return_
 static STATUS
 ri_lbox_redraw_core(
     P_RI_LBOX p_lbox,
-    _In_        const WimpRedrawWindowBlock * const p_redraw_window)
+    _In_        const WimpRedrawWindowBlock * const p_redraw_window_block)
 {
     GDI_POINT gdi_org;
     GDI_POINT item_origin;
     GDI_POINT lbox_mesh_origin;
     GDI_RECT items;
     LIST_ITEMNO itemno;
-    STATUS has_focus;
+    BOOL has_focus;
 
     {
     WimpCaret caret;
-    void_WrapOsErrorReporting(wimp_get_caret_position(&caret));
-    has_focus = (caret.window_handle == p_redraw_window->window_handle);
+    void_WrapOsErrorReporting(winx_get_caret_position(&caret));
+    has_focus = (caret.window_handle == p_redraw_window_block->window_handle);
     } /*block*/
 
     {
     GDI_RECT clip_rect;
 
     /* compute the position in absolute screen coordinates of the work area origin */
-    gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(p_redraw_window);
-    gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(p_redraw_window);
+    gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(p_redraw_window_block);
+    gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(p_redraw_window_block);
 
     /* currently origins same */
     lbox_mesh_origin = gdi_org;
 
-    clip_rect.tl.x = +(p_redraw_window->redraw_area.xmin - lbox_mesh_origin.x);
-    clip_rect.tl.y = -(p_redraw_window->redraw_area.ymax - lbox_mesh_origin.y);
-    clip_rect.br.x = +(p_redraw_window->redraw_area.xmax - lbox_mesh_origin.x);
-    clip_rect.br.y = -(p_redraw_window->redraw_area.ymin - lbox_mesh_origin.y);
+    clip_rect.tl.x = +(p_redraw_window_block->redraw_area.xmin - lbox_mesh_origin.x);
+    clip_rect.tl.y = -(p_redraw_window_block->redraw_area.ymax - lbox_mesh_origin.y);
+    clip_rect.br.x = +(p_redraw_window_block->redraw_area.xmax - lbox_mesh_origin.x);
+    clip_rect.br.y = -(p_redraw_window_block->redraw_area.ymin - lbox_mesh_origin.y);
 
     /* compute the indices (tl incl, br excl) of items the clip rectangle intersects */
     gdi_rect_clip_mesh(&items, &clip_rect, &lbox_mesh_size);
@@ -1200,7 +1205,7 @@ ri_lbox_redraw_core(
 
             void_WrapOsErrorChecking(
                 os_plot(0x60 /*bbc_RectangleFill*/ + 3 /*bbc_DrawRelBack*/,
-                        (int) +(BBox_width(&p_redraw_window->visible_area) - 1),
+                        (int) +(BBox_width(&p_redraw_window_block->visible_area) - 1),
                         (int) -(lbox_mesh_size.cy - 1)));
         }
 
@@ -1420,26 +1425,26 @@ ri_lbox_selection_set_from_tstr(
 static void
 ri_lbox_extent_set(
     P_RI_LBOX p_lbox,
-    _In_        const WimpOpenWindowBlock * const p_open_window)
+    _In_        const WimpOpenWindowBlock * const p_open_window_block)
 {
-    if(0 != p_lbox->window_handle)
+    BBox extent_bbox;
+
+    if(0 == p_lbox->window_handle)
+        return;
+
+    extent_bbox.xmin = p_lbox->prev_extent.xmin;
+    extent_bbox.ymax = p_lbox->prev_extent.ymax;
+
+    extent_bbox.xmax = extent_bbox.xmin + MAX(BBox_width(&p_open_window_block->visible_area),  (int) p_lbox->max_item_len * 16);
+    extent_bbox.ymin = extent_bbox.ymax - MAX(BBox_height(&p_open_window_block->visible_area), (int) p_lbox->n_items * RI_LBOX_ITEM_HEIGHT);
+
+    if( (p_lbox->prev_extent.xmax != extent_bbox.xmax) ||
+        (p_lbox->prev_extent.ymin != extent_bbox.ymin) )
     {
-        BBox extent_box;
+        void_WrapOsErrorReporting(wimp_set_extent(p_lbox->window_handle, &extent_bbox));
 
-        extent_box.xmin = p_lbox->prev_extent.xmin;
-        extent_box.ymax = p_lbox->prev_extent.ymax;
-
-        extent_box.xmax = extent_box.xmin + MAX(BBox_width(&p_open_window->visible_area),  (int) p_lbox->max_item_len * 16);
-        extent_box.ymin = extent_box.ymax - MAX(BBox_height(&p_open_window->visible_area), (int) p_lbox->n_items * RI_LBOX_ITEM_HEIGHT);
-
-        if( (p_lbox->prev_extent.xmax != extent_box.xmax) ||
-            (p_lbox->prev_extent.ymin != extent_box.ymin) )
-        {
-            void_WrapOsErrorReporting(wimp_set_extent(p_lbox->window_handle, &extent_box));
-
-            p_lbox->prev_extent.xmax = extent_box.xmax;
-            p_lbox->prev_extent.ymin = extent_box.ymin;
-        }
+        p_lbox->prev_extent.xmax = extent_bbox.xmax;
+        p_lbox->prev_extent.ymin = extent_bbox.ymin;
     }
 }
 
@@ -1455,23 +1460,23 @@ ri_lbox_show(
     _InVal_     RI_LBOX_HANDLE handle)
 {
     P_RI_LBOX p_lbox = ri_lbox_p_from_h(handle);
+    WimpGetWindowStateBlock window_state;
 
-    if(0 != p_lbox->window_handle)
+    if(0 == p_lbox->window_handle)
+        return(STATUS_OK);
+
+    window_state.window_handle = p_lbox->window_handle;
+    if(NULL == WrapOsErrorReporting(wimp_get_window_state(&window_state)))
     {
-        WimpGetWindowStateBlock window_state;
-
-        window_state.window_handle = p_lbox->window_handle;
-        void_WrapOsErrorReporting(wimp_get_window_state(&window_state));
-
-        if(!(WimpWindow_Open & window_state.flags))
+        if(0 == (WimpWindow_Open & window_state.flags))
         {
             p_lbox->bits.deferred_ensure_visible = 1;
 
             winx_send_front_window_request(p_lbox->window_handle, FALSE /*not immediate front*/, NULL);
         }
-
-        ri_lbox_current_ensure_visible(p_lbox, 0);
     }
+
+    ri_lbox_current_ensure_visible(p_lbox, 0);
 
     return(STATUS_OK);
 }
@@ -1558,15 +1563,15 @@ ri_lbox_source_modified(
     {
         if(0 != p_lbox->window_handle)
         {
-            union wimp_window_state_open_window_u window_u;
+            union wimp_window_state_open_window_block_u window_u;
 
-            window_u.window_state.window_handle = p_lbox->window_handle;
-            void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state));
+            window_u.window_state_block.window_handle = p_lbox->window_handle;
+            void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block));
 
-            ri_lbox_extent_set(p_lbox, &window_u.open_window);
+            ri_lbox_extent_set(p_lbox, &window_u.open_window_block);
 
             /* queue an open so the sausage gets redrawn */
-            winx_send_open_window_request(p_lbox->window_handle, FALSE, &window_u.open_window);
+            winx_send_open_window_request(p_lbox->window_handle, FALSE, &window_u.open_window_block);
         }
     }
 

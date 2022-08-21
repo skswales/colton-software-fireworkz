@@ -16,7 +16,7 @@ e2:No documents with tables for mailshot
 # messages
 #
 1:Document
-2:ug9_setting_up_your_letter.htm
+2:ug09/ug9_setting_up_your_letter.htm
 3:Row
 4:Blank fields
 5:Shuffle
@@ -24,7 +24,7 @@ e2:No documents with tables for mailshot
 7:End
 #
 10:Insert mailshot field
-11:ug9_setting_up_your_letter.htm
+11:ug09/ug9_setting_up_your_letter.htm
 12:Field number
 #
 # end of msg (ob_mails)

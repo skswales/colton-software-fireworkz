@@ -26,7 +26,7 @@
 ******************************************************************************/
 
 /* poked at startup from Info (RISC OS) / Registry (Windows) */
-/*extern*/ TCHARZ __user_name[64] = TEXT("Unregistered copy");
+/*extern*/ TCHARZ __user_name[64];
 /*extern*/ TCHARZ __organisation_name[64];
 /*extern*/ TCHARZ __registration_number[REG_NUMB_LENGTH + 1]; /* NB no spaces */
 

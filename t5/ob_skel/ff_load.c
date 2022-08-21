@@ -1615,7 +1615,7 @@ foreign_template_check(
     {
         PCTSTR composite_filename = quick_tblock_tstr(&quick_tblock);
         TCHARZ filename_buffer[BUF_MAX_PATHSTRING];
-        status = file_find_on_path(filename_buffer, elemof32(filename_buffer), composite_filename);
+        status = file_find_on_path(filename_buffer, elemof32(filename_buffer), file_get_search_path(), composite_filename);
     } /*block*/
 
     quick_tblock_dispose(&quick_tblock);

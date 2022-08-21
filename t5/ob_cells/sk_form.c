@@ -1446,7 +1446,7 @@ T5_MSG_PROTO(static, rowtab_msg_reformat, _InRef_ PC_DOCU_REFORMAT p_docu_reform
         case REFORMAT_Y:
             format_below_row(p_docu, row_from_docu_reformat(p_docu_reformat));
 
-            caret_repos = p_docu->flags.is_current; /* 8.11.93 */;
+            caret_repos = p_docu->flags.is_current; /* 8.11.93 */
 
             trace_1(TRACE_APP_SKEL, TEXT("REFORMAT_Y row: ") ROW_TFMT, row_from_docu_reformat(p_docu_reformat));
             break;

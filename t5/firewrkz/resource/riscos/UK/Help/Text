@@ -1,0 +1,73 @@
+* Colton Software Fireworkz - Help *
+
+You are seeing this text help file as no browser was
+available to display the HTML help file. It may be
+helpful to run a browser and then display Help again.
+
+
+* Copyright and Licence *
+
+Copyright (C) 1992-2016 Colton Software
+Portions Copyright (C) 2012-2016 Stuart Swales
+
+The Release Notes contain additional copyright information
+that pertains to certain portions of Fireworkz.
+
+Fireworkz is made available to you under the terms
+of the Mozilla Public License, v. 2.0.
+You may obtain a copy of the MPL at:
+http://mozilla.org/MPL/2.0/ .
+
+This means you may use, copy and distribute Fireworkz
+to others. You are also welcome to modify the source
+code of Fireworkz as you want to meet your needs.
+The Mozilla Public License also gives you the right
+to distribute your modified versions.
+
+
+* Online Resources *
+
+Many resources for Fireworkz are available online:
+
+The Fireworkz Getting Started Guide for RISC OS
+may be accessed online at
+http://croftnuisk.co.uk/coltsoft/docs/fireworkz/gsguide/riscos/index.html
+
+The Fireworkz User Guide
+may be accessed online at
+http://croftnuisk.co.uk/coltsoft/docs/fireworkz/usguide/index.html
+
+Hints and Tips on using Fireworkz
+may be accessed online at
+http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips
+
+Addenda and Errata to the printed documentation
+may be accessed online at
+http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata
+
+Updated Fireworkz packages and example files,
+including those used in the Getting Started Guide,
+may be obtained from
+http://croftnuisk.co.uk/coltsoft/fireworkz
+
+
+* Support *
+
+Fireworkz is now open source and completely free to use,
+so support is a self-help affair.
+There is a Google Group colton-software-fireworkz
+ Web site: http://groups.google.com/group/colton-software-fireworkz
+ E-mail: colton-software-fireworkz@googlegroups.com
+where you may seek help from other users.
+Please include files which demonstrate any problems
+(using a Spark or ZIP archive).
+
+
+* Release Notes *
+
+The release notes for this version of Fireworkz may
+be found in the application's directory. As they are
+in HTML format you will need to use a browser.
+
+A fuller release history may be found online:
+http://croftnuisk.co.uk/coltsoft/fireworkz/fireworkz-release-history

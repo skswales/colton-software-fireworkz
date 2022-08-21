@@ -637,7 +637,7 @@ ui_text_state_change(
 typedef struct DIALOG_RISCOS_REDRAW_WINDOW
 {
     REDRAW_CONTEXT redraw_context; /*IN*/
-    WimpRedrawWindowBlock redraw_window; /*IN*/
+    WimpRedrawWindowBlock redraw_window_block; /*IN*/
 }
 DIALOG_RISCOS_REDRAW_WINDOW, * P_DIALOG_RISCOS_REDRAW_WINDOW;
 

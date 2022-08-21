@@ -601,7 +601,8 @@ static STATUS
 save_as_drawfile_drawfile_finalise(
     _InoutRef_  P_P_GR_RISCDIAG p_p_gr_riscdiag_saving,
     _InoutRef_  P_P_GR_RISCDIAG p_p_gr_riscdiag_lookup,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     P_GR_RISCDIAG p_gr_riscdiag_saving = *p_p_gr_riscdiag_saving;
     P_GR_RISCDIAG p_gr_riscdiag_lookup = *p_p_gr_riscdiag_lookup;
@@ -669,7 +670,7 @@ save_as_drawfile_drawfile_finalise(
         /* which will itself set sensible bbox again */
         gr_riscdiag_diagram_end(p_gr_riscdiag_saving);
 
-        status = gr_riscdiag_diagram_save(p_gr_riscdiag_saving, filename);
+        status = gr_riscdiag_diagram_save(p_gr_riscdiag_saving, filename, t5_filetype);
     }
 
     /* and finally tidy up */
@@ -684,7 +685,8 @@ extern STATUS
 save_as_drawfile_host_print_document(
     _DocuRef_   P_DOCU p_docu,
     P_PRINT_CTRL p_print_ctrl,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     STATUS status = STATUS_OK;
     P_GR_RISCDIAG p_gr_riscdiag_saving, p_gr_riscdiag_lookup;
@@ -693,7 +695,7 @@ save_as_drawfile_host_print_document(
 
     status = save_as_drawfile_host_print_document_core(p_docu, p_print_ctrl, p_gr_riscdiag_saving, p_gr_riscdiag_lookup);
 
-    status = save_as_drawfile_drawfile_finalise(&p_gr_riscdiag_saving, &p_gr_riscdiag_lookup, filename);
+    status = save_as_drawfile_drawfile_finalise(&p_gr_riscdiag_saving, &p_gr_riscdiag_lookup, filename, t5_filetype);
 
     return(status);
 }

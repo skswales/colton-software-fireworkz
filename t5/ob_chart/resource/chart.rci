@@ -10,35 +10,35 @@
 // (language independent)
 
 // multi-bitmaps: 0x6n (+1 = high-dpi variant)
-96 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/bar.bmp"
+96 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/bar.bmp"
 // no 97
 
-98 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/line.bmp"
+98 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/line.bmp"
 // no 99
 
-100 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/overlay.bmp"
+100 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/overlay.bmp"
 // no 101
 
-102 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/pie.bmp"
+102 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/pie.bmp"
 // no 103
 
-104 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/scatter.bmp"
+104 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/scatter.bmp"
 // no 105
 
-108 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/com16x16.bmp"
+108 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/com16x16.bmp"
 // no 109
 
 // rebased for ALL_IN_ONE at 0x2000 / 8192
 
 // bitmaps
-8435 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldash.bmp"
-8436 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldot.bmp"
-8437 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldashdot.bmp"
-8438 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldadodo.bmp"
+8435 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldash.bmp"
+8436 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldot.bmp"
+8437 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldashdot.bmp"
+8438 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldadodo.bmp"
 
-//243 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldash.bmp"
-//244 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldot.bmp"
-//245 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldashdot.bmp"
-//246 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/ldadodo.bmp"
+//243 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldash.bmp"
+//244 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldot.bmp"
+//245 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldashdot.bmp"
+//246 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldadodo.bmp"
 
 // end

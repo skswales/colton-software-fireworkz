@@ -77,7 +77,7 @@ typedef enum T5_FILETYPE
 
     FILETYPE_UNDETERMINED = -1
 }
-T5_FILETYPE, * P_T5_FILETYPE;
+T5_FILETYPE, * P_T5_FILETYPE; typedef const T5_FILETYPE * PC_T5_FILETYPE;
 
 #endif /* __filetype_h */
 

@@ -77,7 +77,7 @@ struct DIALOG_MSG_CTL_USER_REDRAW
 
     struct DIALOG_MSG_CTL_USER_REDRAW_RISCOS
     {
-        WimpRedrawWindowBlock redraw_window; /*IN*/
+        WimpRedrawWindowBlock redraw_window_block; /*IN*/
     }
     riscos;
 

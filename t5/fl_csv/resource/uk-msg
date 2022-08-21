@@ -17,7 +17,7 @@ e2:Cannot import CSV as database file '%s' as a file of that name already exists
 # messages
 #
 1:Loading CSV
-2:ug8_importing_data_into_tables.htm
+2:ug08/ug8_importing_data_into_tables.htm
 3:Insert as table
 4:Insert as labels
 5:Labels across

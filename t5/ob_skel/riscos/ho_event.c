@@ -343,42 +343,36 @@ host_message_filter_remove(
 
 static void
 general_message_PreQuit(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     WimpMessage msg = *p_wimp_message;
     const WimpPreQuitMessage * const p_wimp_message_prequit = (const WimpPreQuitMessage *) &msg.data;
-    S32 count;
-    int kill_this_task;
-
-    kill_this_task = p_wimp_message_prequit->flags & Wimp_MPreQuit_flags_killthistask;
-
-    count = docs_modified();
+    int kill_this_task = p_wimp_message_prequit->flags & Wimp_MPreQuit_flags_killthistask;
+    S32 count = docs_modified();
 
     /* if any modified, it gets hard */
-    if(count)
-    {
-        /* First, acknowledge the message to stop it going any further */
-        trace_0(TRACE_RISCOS_HOST, TEXT("acknowledging PREQUIT message: "));
-        msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
-        void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageAcknowledge, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
+    if(0 == count)
+        return;
 
-        /* And then tell the user. */
-        if(status_ok(query_quit(P_DOCU_NONE, count)))
-        {
-            WimpKeyPressedEvent key_pressed;
+    /* First, acknowledge the message to stop it going any further */
+    trace_0(TRACE_RISCOS_HOST, TEXT("acknowledging PREQUIT message: "));
+    msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
+    void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageAcknowledge, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
 
-            if(kill_this_task)
-                exit(EXIT_SUCCESS);
+    /* And then ask the user. */
+    if(!status_ok(query_quit(P_DOCU_NONE, count)))
+        return;
 
-            /* Start up the closedown sequence again if OK and all tasks are to die. (not RISC OS 2) */
-            /* We assume that the sender is the Task Manager,
-             * so that Ctrl+Shift+F12 is the closedown key sequence.
-            */
-            void_WrapOsErrorReporting(wimp_get_caret_position(&key_pressed.caret));
-            key_pressed.key_code = 16 /*Sh*/ + 32 /*Ctl*/ + 0x1CC /*F12*/;
-            void_WrapOsErrorReporting(wimp_send_message(Wimp_EKeyPressed, &key_pressed, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
-        }
-    }
+    if(kill_this_task)
+        exit(EXIT_SUCCESS);
+
+    { /* Start up the closedown sequence again if OK and all tasks are to die. (not RISC OS 2) */
+    WimpKeyPressedEvent key_pressed;
+    void_WrapOsErrorReporting(winx_get_caret_position(&key_pressed.caret));
+    /* We assume that the sender is the Task Manager so that Ctrl+Shift+F12 is the closedown key sequence */
+    key_pressed.key_code = 16 /*Sh*/ + 32 /*Ctl*/ + 0x1CC /*F12*/;
+    void_WrapOsErrorReporting(wimp_send_message(Wimp_EKeyPressed, &key_pressed, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
+    } /*block*/
 }
 
 static _kernel_oserror *
@@ -397,7 +391,7 @@ _kernel_fwrite0(
 
 static void
 general_message_SaveDesktop(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     const int file_handle = p_wimp_message->data.save_desktop.file_handle;
     _kernel_oserror * e = NULL;
@@ -439,22 +433,22 @@ general_message_SaveDesktop(
             e = _kernel_fwrite0(file_handle, "\x0A");
     }
 
-    if(NULL != e)
-    {
-        void_WrapOsErrorReporting(e);
+    if(NULL == e)
+        return;
 
-        { /* ack the message to stop desktop save and remove file */
-        WimpMessage msg = *p_wimp_message;
-        trace_0(TRACE_RISCOS_HOST, TEXT("acknowledging SaveDesktop message: "));
-        msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
-        void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageAcknowledge, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
-        } /*block*/
-    }
+    void_WrapOsErrorReporting(e);
+
+    { /* acknowledge the message to stop desktop save and remove file */
+    WimpMessage msg = *p_wimp_message;
+    trace_0(TRACE_RISCOS_HOST, TEXT("acknowledging SaveDesktop message: "));
+    msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
+    void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageAcknowledge, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
+    } /*block*/
 }
 
 static void
 general_message_Shutdown(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     UNREFERENCED_PARAMETER_InRef_(p_wimp_message);
 
@@ -471,31 +465,37 @@ extern BOOL g_kill_duplicates = FALSE;
 
 static void
 general_message_TaskInitialise(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
-    if(g_kill_duplicates)
+    static int seen_my_birth = FALSE;
+
+    const WimpTaskInitMessage * const p_wimp_message_task_init = (const WimpTaskInitMessage *) &p_wimp_message->data;
+    const char * taskname = p_wimp_message_task_init->taskname;
+
+    trace_1(TRACE_RISCOS_HOST, TEXT("Wimp_MTaskInitialise for %s"), taskname);
+
+    if(0 != /*"C"*/strcmp(product_ui_id(), taskname))
+        return;
+
+    if(seen_my_birth)
     {
-        const WimpTaskInitMessage * const p_wimp_message_task_init = (const WimpTaskInitMessage *) &p_wimp_message->data;
-        const char * taskname = p_wimp_message_task_init->taskname;
-        trace_1(TRACE_RISCOS_HOST, TEXT("Wimp_MTaskInitialise for %s"), taskname);
-        if(0 == /*"C"*/strcmp(product_ui_id(), taskname))
+        trace_1(TRACE_RISCOS_HOST, TEXT("Another %s is trying to start"), taskname);
+        if(g_kill_duplicates)
         {
-            static int seen_my_birth = FALSE;
-            if(seen_my_birth)
-            {
-                WimpMessage msg;
-                trace_1(TRACE_RISCOS_HOST, TEXT("Another %s is trying to start! I'll kill it"), taskname);
-                msg.hdr.size = sizeof32(msg.hdr);
-                msg.hdr.your_ref = 0; /* fresh msg */
-                msg.hdr.action_code = Wimp_MQuit;
-                void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
-            }
-            else
-            {
-                trace_0(TRACE_RISCOS_HOST, TEXT("witnessing our own birth"));
-                seen_my_birth = TRUE;
-            }
+            WimpMessage msg;
+
+            zero_struct(msg);
+            msg.hdr.size = sizeof32(msg.hdr);
+          /*msg.hdr.your_ref = 0;*/ /* fresh msg */
+            msg.hdr.action_code = Wimp_MQuit;
+
+            void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
         }
+    }
+    else
+    {
+        trace_0(TRACE_RISCOS_HOST, TEXT("witnessing our own birth"));
+        seen_my_birth = TRUE;
     }
 }
 
@@ -593,32 +593,38 @@ host_xfer_save_statics;
 
 static void
 general_message_DataSaveAck(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     WimpMessage msg = *p_wimp_message; /* take a copy so that client proc can access filename safely */
 
-    if(msg.hdr.your_ref == host_xfer_save_statics.my_ref)
+    if(msg.hdr.your_ref != host_xfer_save_statics.my_ref)
     {
-        host_xfer_set_saved_file_is_safe(msg.data.data_save_ack.estimated_size >= 0); /* -1 => Scrap file transfer */
-
-        if((* host_xfer_save_statics.p_proc_host_xfer_save) (msg.data.data_save_ack.leaf_name, host_xfer_save_statics.client_handle))
-        {
-            /* saved OK - turn message around into a DataLoad */
-            msg.hdr.your_ref = msg.hdr.my_ref;
-            msg.hdr.action_code = Wimp_MDataLoad;
-
-            void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageRecorded, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
-        }
-        /* else error - should have been reported */
+        /* winge? */
+        return;
     }
+
+    host_xfer_set_saved_file_is_safe(msg.data.data_save_ack.estimated_size >= 0); /* -1 => Scrap file transfer */
+
+    if( (* host_xfer_save_statics.p_proc_host_xfer_save)
+            (msg.data.data_save_ack.leaf_name,
+             (T5_FILETYPE) msg.data.data_save_ack.file_type,
+             host_xfer_save_statics.client_handle) )
+    {
+        /* saved OK - turn message around into a Message_DataLoad as an acknowledgement of the Message_DataSaveAck */
+        msg.hdr.your_ref = msg.hdr.my_ref;
+        msg.hdr.action_code = Wimp_MDataLoad;
+
+        void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageRecorded, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
+    }
+    /* else error - should have been reported */
 }
 
 static void
 general_message_DataOpen(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     /* File double-clicked in directory display */
-    PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
+    const PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
     T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
 
     switch(t5_filetype)
@@ -677,10 +683,10 @@ general_message_DataOpen(
 
 static void
 general_message_PrintTypeOdd(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     /* printer broadcast to find someone to print this odd filetype */
-    PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
+    const PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
     const T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
 
     switch(t5_filetype)
@@ -731,7 +737,7 @@ _Check_return_
 static BOOL
 general_message_ThesaurusSend_for_docu(
     _DocuRef_   P_DOCU p_docu,
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     const PC_SBSTR sbstr_replace_string = p_wimp_message->data.bytes;
     OBJECT_STRING_REPLACE object_string_replace;
@@ -781,7 +787,7 @@ general_message_ThesaurusSend_for_docu(
 _Check_return_
 static BOOL
 general_message_ThesaurusSend(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     DOCNO docno = DOCNO_NONE;
 
@@ -789,8 +795,10 @@ general_message_ThesaurusSend(
     {
         const P_DOCU p_docu = p_docu_from_docno_valid(docno);
 
-        if(p_docu->flags.is_current && p_docu->flags.has_input_focus)
-            return(general_message_ThesaurusSend_for_docu(p_docu, p_wimp_message));
+        if(!p_docu->flags.is_current)
+            continue;
+
+        return(general_message_ThesaurusSend_for_docu(p_docu, p_wimp_message));
     }
 
     return(FALSE);
@@ -798,57 +806,57 @@ general_message_ThesaurusSend(
 
 static BOOL
 general_message(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     switch(p_wimp_message->hdr.action_code)
     {
     case Wimp_MQuit:
         exit(EXIT_SUCCESS);
-        break;
+        return(TRUE);
 
     case Wimp_MPreQuit:
         general_message_PreQuit(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MSaveDesktop:
         general_message_SaveDesktop(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MTaskInitialise:
         general_message_TaskInitialise(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MShutDown:
         general_message_Shutdown(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MDataSaveAck:
         general_message_DataSaveAck(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MDataOpen:
         general_message_DataOpen(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MPrintTypeOdd:
         general_message_PrintTypeOdd(p_wimp_message);
-        break;
+        return(TRUE);
 
     case Wimp_MPaletteChange:
         general_message_PaletteChange();
-        break;
+        return(TRUE);
 
     case Wimp_MModeChange:
         general_message_ModeChange();
-        break;
+        return(TRUE);
 
     case Message_ThesaurusStarting:
         thesaurus_loaded_state = 1;
-        break;
+        return(TRUE);
 
     case Message_ThesaurusDying:
         thesaurus_loaded_state = 0;
-        break;
+        return(TRUE);
 
     case Message_ThesaurusSend:
         return(general_message_ThesaurusSend(p_wimp_message));
@@ -856,13 +864,11 @@ general_message(
     default:
         return(FALSE);
     }
-
-    return(TRUE);
 }
 
 static BOOL
 general_message_bounced(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     switch(p_wimp_message->hdr.action_code)
     {
@@ -870,10 +876,8 @@ general_message_bounced(
 
     case Message_ThesaurusQuery:
         thesaurus_loaded_state = 0;
-        break;
+        return(TRUE);
     }
-
-    return(TRUE);
 }
 
 static BOOL
@@ -904,10 +908,8 @@ general_event_handler(
         return(general_message_bounced(&p_event_data->user_message_acknowledge));
 
     default:
-        break;
+        return(FALSE /*unprocessed*/);
     }
-
-    return(FALSE /*unprocessed*/);
 }
 
 /******************************************************************************
@@ -965,9 +967,9 @@ iconbar_mouse_click(
     return(TRUE);
 }
 
-static void
+static BOOL
 iconbar_message_DataSave(
-    const WimpMessage * const p_wimp_message /*DataSave*/)
+    _InRef_     PC_WimpMessage p_wimp_message /*DataSave*/)
 {
     /* File dragged from another application, dropped on our icon */
     const T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_save.file_type;
@@ -990,11 +992,14 @@ iconbar_message_DataSave(
         host_xfer_import_file_via_scrap(p_wimp_message);
         break;
     }
+
+    /* done something, so... */
+    return(TRUE);
 }
 
-static void
+static BOOL
 iconbar_message_DataLoad(
-    const WimpMessage * const p_wimp_message /*DataLoad*/)
+    _InRef_     PC_WimpMessage p_wimp_message /*DataLoad*/)
 {
     /* File dragged from directory display, dropped on our icon */
     TCHARZ filename[256];
@@ -1073,25 +1078,28 @@ iconbar_message_DataLoad(
     }
 
     host_xfer_load_file_done();
+
+    /* done something, so... */
+    return(TRUE);
 }
 
-static void
+static BOOL
 iconbar_message_HelpRequest(
-    const WimpMessage * const p_wimp_message /*HelpRequest*/)
+    _InRef_     PC_WimpMessage p_wimp_message /*HelpRequest*/)
 {
     WimpMessage msg = *p_wimp_message;
     PCTSTR format = resource_lookup_tstr(MSG_HELP_ICONBAR);
     QUICK_TBLOCK quick_tblock;
     _quick_tblock_setup(&quick_tblock, msg.data.bytes, sizeof32(msg.data.bytes));
 
+    msg.hdr.size = sizeof32(msg.hdr);
+    msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
+    msg.hdr.action_code = Wimp_MHelpReply;
+
     if(status_ok(quick_tblock_printf(&quick_tblock, format, product_id())) && status_ok(quick_tblock_nullch_add(&quick_tblock)))
     {
-        msg.hdr.size  = sizeof32(msg.hdr);
         msg.hdr.size += (int) strlen32p1(msg.data.bytes); /*CH_NULL*/
         msg.hdr.size  = (msg.hdr.size + (4-1)) & ~(4-1);
-
-        msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
-        msg.hdr.action_code = Wimp_MHelpReply;
 
         trace_2(0, TEXT("helpreply is ") S32_TFMT TEXT(" long, %s"), msg.hdr.size, quick_tblock_tstr(&quick_tblock));
 
@@ -1099,34 +1107,29 @@ iconbar_message_HelpRequest(
     }
 
     quick_tblock_dispose(&quick_tblock);
+
+    /* done something, so... */
+    return(TRUE);
 }
 
 static BOOL
 iconbar_message(
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     switch(p_wimp_message->hdr.action_code)
     {
     case Wimp_MDataSave:
-        iconbar_message_DataSave(p_wimp_message);
-        /* done something, so... */
-        return(TRUE);
+        return(iconbar_message_DataSave(p_wimp_message));
 
     case Wimp_MDataLoad:
-        iconbar_message_DataLoad(p_wimp_message);
-        /* done something, so... */
-        return(TRUE);
+        return(iconbar_message_DataLoad(p_wimp_message));
 
     case Wimp_MHelpRequest:
-        iconbar_message_HelpRequest(p_wimp_message);
-        /* done something, so... */
-        return(TRUE);
+        return(iconbar_message_HelpRequest(p_wimp_message));
 
     default:
-        break;
+        return(FALSE /*unprocessed*/);
     }
-
-    return(FALSE /*unprocessed*/);
 }
 
 static BOOL
@@ -1149,10 +1152,8 @@ iconbar_event_handler(
         return(iconbar_message(&p_event_data->user_message));
 
     default:
-        break;
+        return(FALSE /*unprocessed*/);
     }
-
-    return(FALSE /*unprocessed*/);
 }
 
 /******************************************************************************
@@ -1167,7 +1168,7 @@ iconbar_event_handler(
 
 extern void
 host_xfer_import_file_via_scrap(
-    _In_        const WimpMessage * const p_wimp_message /*DataSave*/)
+    _InRef_     PC_WimpMessage p_wimp_message /*DataSave*/)
 {
     WimpMessage msg = *p_wimp_message;
     char buffer[16];
@@ -1231,13 +1232,13 @@ host_xfer_import_file_via_scrap(
 *
 * Set up file loading from a DataLoad/DataOpen message
 *
-* Sends an acknowledge back to the original application
+* Sends a Message_DataLoadAck back to the original application
 *
 ******************************************************************************/
 
 extern void
 host_xfer_load_file_setup(
-    _In_        const WimpMessage * const p_wimp_message /*DataLoad/DataOpen*/)
+    _InRef_     PC_WimpMessage p_wimp_message /*DataLoad/DataOpen*/)
 {
     WimpMessage msg = *p_wimp_message;
 
@@ -1285,7 +1286,7 @@ host_xfer_loaded_file_is_safe(void)
 
 extern void
 host_xfer_print_file_done(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     int type)
 {
     WimpMessage msg = *p_wimp_message;
@@ -1314,10 +1315,11 @@ host_xfer_save_file(
     host_xfer_save_statics.p_proc_host_xfer_save = p_proc_host_xfer_save;
     host_xfer_save_statics.client_handle = client_handle;
 
-    msg.hdr.size = sizeof32(WimpDataSaveMessage);
+    zero_struct(msg);
+    msg.hdr.size = sizeof32(msg.hdr) + sizeof32(WimpDataSaveMessage);
     msg.hdr.sender = p_pointer_info->window_handle;
-    msg.hdr.my_ref = 0; /* will be filled in by the Window Manager */
-    msg.hdr.your_ref = 0;
+  /*msg.hdr.my_ref = 0;*/ /* will be filled in by the Window Manager */
+  /*msg.hdr.your_ref = 0;*/
     msg.hdr.action_code = Wimp_MDataSave;
 
     msg.data.data_save.destination_window = p_pointer_info->window_handle;
@@ -1330,6 +1332,43 @@ host_xfer_save_file(
     xstrkpy(msg.data.data_save.leaf_name, elemof32(msg.data.data_save.leaf_name), file_leafname(filename));
 
     void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, p_pointer_info->window_handle, p_pointer_info->icon_handle, NULL));
+
+    host_xfer_save_statics.my_ref = msg.hdr.my_ref; /* note the my_ref of this message which has been filled in by the Window Manager for protocol validation */
+
+    return(TRUE);
+}
+
+_Check_return_
+extern BOOL
+host_xfer_save_file_for_DataRequest(
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype,
+    int estimated_size,
+    P_PROC_HOST_XFER_SAVE p_proc_host_xfer_save,
+    CLIENT_HANDLE client_handle,
+    _In_        const WimpMessage * const p_wimp_message /*DataRequest*/)
+{
+    const WimpDataRequestMessage * const p_wimp_data_request_message = (const WimpDataRequestMessage *) &p_wimp_message->data;
+    WimpMessage msg;
+
+    host_xfer_save_statics.p_proc_host_xfer_save = p_proc_host_xfer_save;
+    host_xfer_save_statics.client_handle = client_handle;
+
+    zero_struct(msg);
+    msg.hdr.size = sizeof(msg.hdr) + sizeof32(WimpDataSaveMessage);
+    msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
+    msg.hdr.action_code = Wimp_MDataSave;
+
+    msg.data.data_save.destination_window = p_wimp_data_request_message->destination_window_handle;
+    msg.data.data_save.destination_icon = p_wimp_data_request_message->destination_handle;
+    msg.data.data_save.destination_x = p_wimp_data_request_message->destination_x;
+    msg.data.data_save.destination_y = p_wimp_data_request_message->destination_y;
+    msg.data.data_save.estimated_size = estimated_size; /* in Fireworkz this is never known so 42 is supplied */
+    msg.data.data_save.file_type = (int) t5_filetype;
+
+    xstrkpy(msg.data.data_save.leaf_name, elemof32(msg.data.data_save.leaf_name), file_leafname(filename));
+
+    void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
 
     host_xfer_save_statics.my_ref = msg.hdr.my_ref; /* note the my_ref of this message which has been filled in by the Window Manager for protocol validation */
 
@@ -1465,6 +1504,11 @@ thesaurus_process_word(
     if(!thesaurus_loaded())
         return(create_error(ERR_NO_THESAURUS));
 
+    zero_struct(msg);
+    msg.hdr.size = sizeof32(msg.hdr);
+  /*msg.hdr.my_ref = 0;*/ /* fresh msg */
+    msg.hdr.action_code = Message_ThesaurusReceive;
+
     {
     QUICK_TBLOCK quick_tblock;
     quick_tblock_setup_without_clearing_tbuf(&quick_tblock, msg.data.bytes, elemof32(msg.data.bytes));
@@ -1472,11 +1516,8 @@ thesaurus_process_word(
     quick_tblock_dispose_leaving_buffer_valid(&quick_tblock);
     } /*block*/
 
-    msg.hdr.size  = sizeof32(msg.hdr);
-    msg.hdr.size += strlen32p1(msg.data.bytes);
+    msg.hdr.size += strlen32p1(msg.data.bytes); /*CH_NULL*/
     msg.hdr.size  = (msg.hdr.size + (4-1)) & ~(4-1);
-    msg.hdr.my_ref = 0; /* fresh msg */
-    msg.hdr.action_code = Message_ThesaurusReceive;
 
     void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage /*no ack required*/, &msg, 0 /*broadcast*/, BAD_WIMP_I, NULL));
 
@@ -1489,8 +1530,9 @@ thesaurus_startup(void)
     /* queue a message to Desktop Thesaurus to see if it's loaded; it will reply 'soon' */
     WimpMessage msg;
 
+    zero_struct(msg);
     msg.hdr.size = sizeof32(msg.hdr);
-    msg.hdr.my_ref = 0; /* fresh msg */
+  /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = Message_ThesaurusQuery;
 
     void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageRecorded, &msg, 0 /* broadcast */, BAD_WIMP_I, NULL));

@@ -46,39 +46,39 @@ muldiv64_init(void);
 _Check_return_
 extern S32
 muldiv64(
-    _InRef_     S32 a,
-    _InRef_     S32 b,
-    _InRef_     S32 c);
+    _InVal_     S32 dividend,
+    _InVal_     S32 numerator,
+    _InVal_     S32 denominator);
 
 _Check_return_
 extern S32
 muldiv64_ceil(
-    _InRef_     S32 a,
-    _InRef_     S32 b,
-    _InRef_     S32 c);
+    _InVal_     S32 dividend,
+    _InVal_     S32 numerator,
+    _InVal_     S32 denominator);
 
 _Check_return_
 extern S32
 muldiv64_floor(
-    _InRef_     S32 a,
-    _InRef_     S32 b,
-    _InRef_     S32 c);
+    _InVal_     S32 dividend,
+    _InVal_     S32 numerator,
+    _InVal_     S32 denominator);
 
 _Check_return_
 extern S32
 muldiv64_round_floor(
-    _InRef_     S32 a,
-    _InRef_     S32 b,
-    _InRef_     S32 c);
+    _InVal_     S32 dividend,
+    _InVal_     S32 numerator,
+    _InVal_     S32 denominator);
 
-/* ditto, but limit against +/-S32_MAX on overflows */
+/* muldiv64, but limit against +/-S32_MAX on overflows */
 
 _Check_return_
 extern S32
 muldiv64_limiting(
-    _InRef_     S32 a,
-    _InRef_     S32 b,
-    _InRef_     S32 c);
+    _InVal_     S32 dividend,
+    _InVal_     S32 numerator,
+    _InVal_     S32 denominator);
 
 /* the overflow from a prior muldiv64() */
 
@@ -97,12 +97,6 @@ umul64(
     _InVal_     U32 a,
     _InVal_     U32 b,
     _OutRef_    P_UMUL64_RESULT result);
-
-_Check_return_
-extern U32
-myrand(
-    _InoutRef_  P_MYRAND_SEED p_myrand_seed,
-    _InVal_     U32 n /*exclusive*/);
 
 #if defined(__cplusplus)
 }

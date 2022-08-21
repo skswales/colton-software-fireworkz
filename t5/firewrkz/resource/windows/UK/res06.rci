@@ -1,0 +1,188 @@
+//
+// RCGen created for Object 6
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// Manually based at 0x3000
+//
+STRINGTABLE PRELOAD MOVEABLE PURE
+BEGIN
+//
+// this is the messages file for ob_chart (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// errors
+//
+	0xB000,	"Not enough data for pie chart"
+	0xB002,	"Negative and/or zero data ignored in pie chart"
+	0xB003,	"Arithmetic exception in chart creation"
+	0xB004,	"Negative and/or zero data ignored in stacked chart"
+	0xB005,	"Unable to load chart because memory full; chart discarded"
+	0xB006,	"No data for chart"
+	0xB007,	"Charts can only use Draw and Sprite files"
+//
+// messages
+//
+	0x3000,	"Pie chart"
+	0x3001,	"sg04/sg4_pie_charts.htm"
+	0x3002,	"Label"
+	0x3003,	"Explode"
+	0x3004,	"% by"
+	0x3005,	"Start position"
+	0x3006,	"°"
+	0x3007,	"Anticlockwise"
+//
+	0x300A,	"Chart"
+//
+	0x3064,	"Bar chart"
+	0x3065,	"sg04/sg4_bar_charts.htm"
+	0x3066,	"Horizontal"
+	0x3067,	"3-D"
+//
+	0x3069,	"Bar / line overlay chart"
+	0x306A,	"sg04/sg4_overlays.htm"
+//
+	0x306E,	"Data series are in"
+	0x306F,	"Columns"
+	0x3070,	"Rows"
+	0x3071,	"First series contains"
+	0x3072,	"Category (X) labels"
+	0x3073,	"Series data"
+	0x3074,	"First category is"
+	0x3075,	"Series labels"
+	0x3076,	"First data point"
+	0x3077,	"Category (Y) labels"
+	0x3078,	"Data series arranged as"
+	0x3079,	"X,Y,Y"
+	0x307A,	"X,Y X,Y"
+	0x307B,	"First data point is"
+	0x307C,	"First data point"
+	0x307D,	"Category labels"
+	0x307E,	"Series label"
+//
+// r130:Click on a chart element to select it. ADJUST-click for finer selection
+	0x3082,	"Click on a chart element to select it. Ctrl-click for finer selection"
+//
+	0x3096,	"Bar"
+	0x3097,	"% width"
+	0x3098,	"% overlap"
+	0x3099,	"% depth"
+	0x30A0,	"sg04/sg4_customising_bar_charts.htm"
+//
+	0x30BE,	"3D"
+	0x30BF,	"° droop"
+	0x30C0,	"° turn"
+//
+	0x30C8,	"Line chart"
+	0x30C9,	"sg04/sg4_line_charts.htm"
+	0x30CA,	"3-D ribbons"
+//
+	0x30FA,	"Line"
+	0x30FB,	"% width"
+	0x30FC,	"% shift"
+	0x30FD,	"% depth"
+//260:sg04/sg4_customising_line_charts.htm
+	0x3104,	"sg04/sg4_line_charts.htm"
+//
+	0x312C,	"Scatter graph"
+	0x312D,	"sg04/sg4_x_y_scatter_graphs.htm"
+//
+	0x315E,	"Point"
+	0x315F,	"% width"
+//360:sg04/sg4_customising_scatter_charts.htm
+	0x3168,	"sg04/sg4_x_y_scatter_graphs.htm"
+//
+	0x3190,	"Position"
+	0x3191,	"Left"
+	0x3192,	"Top"
+	0x3193,	"Right"
+	0x3194,	"Bottom"
+	0x3195,	"Zero"
+	0x3196,	"Front"
+	0x3197,	"Auto"
+	0x3198,	"Rear"
+	0x3199,	"Major interval"
+	0x319A,	"Automatic"
+	0x319B,	"Spacing"
+	0x319C,	"Grid lines"
+	0x319D,	"Ticks"
+	0x319E,	"Minor interval"
+	0x31A4,	"Scaling"
+	0x31A5,	"Automatic"
+	0x31A6,	"Minimum value"
+	0x31A7,	"Maximum value"
+	0x31A8,	"Include zero"
+	0x31A9,	"Logarithmic"
+	0x31AA,	"Log labels"
+	0x31AB,	"Series defaults"
+	0x31AC,	"Cumulative"
+	0x31AD,	"Vary by point"
+	0x31AE,	"Line of best fit"
+	0x31AF,	"Fill to axis"
+	0x31B0,	"Stack series"
+	0x31B1,	"Overlay"
+//
+	0x31F4,	"Line colour"
+	0x31F7,	"Fill style"
+	0x31F8,	"Fill colour"
+	0x31F9,	"Solid"
+	0x31FA,	"Picture"
+	0x31FB,	"Preserve aspect ratio"
+	0x31FC,	"Allow recolouring"
+	0x31FE,	"sg04/sg4_using_colour_in_charts.htm"
+	0x31FF,	"sg04/sg4_editing_lines.htm"
+//
+	0x3208,	"Chart margins"
+	0x3209,	"sg04/sg4_positioning_the_chart.htm"
+	0x320A,	"Top"
+	0x320B,	"Bottom"
+	0x320C,	"Left"
+	0x320D,	"Right"
+//
+	0x3212,	"Legend"
+	0x3213,	"sg04/sg4_editing_text_in_charts.htm"
+	0x3214,	"On"
+	0x3215,	"Arrange horizontally"
+//
+	0x3258,	"8 0 Helvetica"
+	0x325A,	"Chart%d"
+//
+	0x32BC,	"Chart"
+	0x32BD,	"Wall"
+	0x32BE,	"Floor"
+	0x32BF,	"Plot area"
+	0x32C0,	"Legend"
+	0x32C1,	"Text %hd"
+	0x32C2,	"Series %hd"
+	0x32C3,	"Series %hd Point %hd"
+	0x32C4,	"Series %hd drop"
+	0x32C5,	"Series %hd Point %hd drop"
+	0x32C6,	"Axis %hd"
+	0x32C7,	"X Axis"
+	0x32C8,	"Y Axis"
+	0x32C9,	"Category (X) axis"
+	0x32CA,	"Value (Y) axis"
+	0x32CB,	"Series (Z) axis"
+	0x32CC,	"Grid %hd"
+	0x32CD,	"Tick %hd"
+	0x32CE,	"Best fit %hd"
+//
+	0x3320,	"sg04/sg4_editing_data_series.htm"
+	0x3321,	"sg04/sg4_editing_axes.htm"
+	0x3322,	"sg04/sg4_editing_axes.htm"
+//
+// end of msg (ob_chart)
+END
+//
+// end of RCGen created string table

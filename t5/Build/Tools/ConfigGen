@@ -84,9 +84,9 @@ country_de% = FALSE
 country_fr% = FALSE
 country_uk% = FALSE
 :
-IF country$ = "de" THEN country_de% = TRUE
-IF country$ = "fr" THEN country_fr% = TRUE
-IF country$ = "uk" THEN country_uk% = TRUE
+IF country$ = "Germany" THEN country_de% = TRUE
+IF country$ = "France" THEN country_fr% = TRUE
+IF country$ = "UK" THEN country_uk% = TRUE
 :
 REM sequence for numform
 thousands_seq$ = FNselect(",",",.")
@@ -825,7 +825,7 @@ IF windows% THEN
   PROCma(f%,top_menu$,FNselect("About Fireworkz","")+ellipsis$,";;Info")
 ELSE
   help_key$ = "": IF main_window% THEN help_key$ = "F1"
-  PROCma(f%,root_menu$,FNselect("&Help","&Hilfe")+ellipsis$,";"+help_key$+";HelpContents:<"+product$+"$Dir>.!Help")
+  PROCma(f%,root_menu$,FNselect("&Help","&Hilfe")+ellipsis$,";"+help_key$+";HelpContents"): REM :<"+product$+"$Dir>.!Help")
 ENDIF
 ENDPROC
 :

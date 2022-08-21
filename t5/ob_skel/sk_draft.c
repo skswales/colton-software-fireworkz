@@ -550,11 +550,15 @@ _Check_return_
 static STATUS
 host_print_document_draft_and_send(
     P_PRINTING p_printing,
-    _In_        const WimpMessage * const p_wimp_messsage /*DataSaveAck*/)
+    _InRef_     PC_WimpMessage p_wimp_messsage /*DataSaveAck*/)
 {
     WimpMessage msg = *p_wimp_messsage;
     PCTSTR filename = msg.data.data_load.leaf_name;
     STATUS status;
+
+    msg.hdr.size = offsetof32(WimpMessage, data.data_load.leaf_name);
+    msg.hdr.my_ref = p_wimp_messsage->hdr.your_ref;
+    msg.hdr.action_code = Wimp_MDataLoad;
 
     {
     DRAFT_PRINT_TO_FILE draft_print_to_file;
@@ -573,11 +577,8 @@ host_print_document_draft_and_send(
         msg.data.data_load.file_type = (osfile_block.load & 0x000FFF00) >> 8;
         msg.data.data_load.estimated_size = osfile_block.start;
 
-        msg.hdr.size  = offsetof32(WimpMessage, data.data_load.leaf_name);
-        msg.hdr.size += strlen32p1(filename) /*CH_NULL*/;
+        msg.hdr.size += strlen32p1(msg.data.data_load.leaf_name) /*CH_NULL*/;
         msg.hdr.size  = (msg.hdr.size + (4-1)) & ~(4-1);
-        msg.hdr.my_ref = p_wimp_messsage->hdr.your_ref;
-        msg.hdr.action_code = Wimp_MDataLoad;
 
         void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageRecorded, &msg, p_wimp_messsage->hdr.sender, BAD_WIMP_I, NULL));
     }
@@ -589,29 +590,32 @@ host_print_document_draft_and_send(
 
 _Check_return_
 static BOOL
+draft_print_message_PrintError(
+    _InRef_     PC_WimpMessage p_wimp_message,
+    P_PRINTING p_printing)
+{
+    if(20 == p_wimp_message->hdr.size)
+    {   /* RISC OS 2 style driver (can even happen on RISC OS 3) */
+        p_printing->printing_state = ERR_PRINT_BUSY;
+    }
+    else
+    {   /* report the error */
+        consume(_kernel_oserror *, wimp_reporterror_simple(de_const_cast(_kernel_oserror *, &p_wimp_message->data)));
+
+        p_printing->printing_state = STATUS_FAIL;
+    }
+
+    return(TRUE);
+}
+
+_Check_return_
+static BOOL
 draft_print_message(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     P_PRINTING p_printing)
 {
     switch(p_wimp_message->hdr.action_code)
     {
-    case Wimp_MPrintFile:
-        /* naff all on RISC OS 3.1 and later, as directed by PRM */
-        return(TRUE);
-
-    case Wimp_MPrintError:
-        if(p_wimp_message->hdr.size == 20)
-            /* RISC OS 2 style driver (can even happen on RISC OS 3) */
-            p_printing->printing_state = ERR_PRINT_BUSY;
-        else
-        {
-            wimp_reporterror_simple((_kernel_oserror *) &p_wimp_message->data);
-
-            p_printing->printing_state = STATUS_FAIL;
-        }
-
-        return(TRUE);
-
     case Wimp_MDataSaveAck:
         status_assert(host_print_document_draft_and_send(p_printing, p_wimp_message));
         return(TRUE);
@@ -620,17 +624,22 @@ draft_print_message(
         p_printing->printing_state = STATUS_OK;
         return(TRUE);
 
-    default:
-        break;
-    }
+    case Wimp_MPrintFile:
+        /* naff all on RISC OS 3.1 and later, as directed by PRM */
+        return(TRUE);
 
-    return(FALSE); /* we don't want it - pass it on to the real handler */
+    case Wimp_MPrintError:
+        return(draft_print_message_PrintError(p_wimp_message, p_printing));
+
+    default:
+        return(FALSE); /* we don't want it - pass it on to the real handler */
+    }
 }
 
 _Check_return_
 static BOOL
 draft_print_message_bounced(
-    _In_        const WimpMessage * const p_wimp_message,
+    _InRef_     PC_WimpMessage p_wimp_message,
     P_PRINTING p_printing)
 {
     switch(p_wimp_message->hdr.action_code)
@@ -648,10 +657,8 @@ draft_print_message_bounced(
         return(TRUE);
 
     default:
-        break;
+        return(FALSE); /* we don't want it - pass it on to the real handler */
     }
-
-    return(FALSE); /* we don't want it - pass it on to the real handler */
 }
 
 static BOOL
@@ -672,10 +679,8 @@ host_print_document_draft_message_filter(
         return(draft_print_message_bounced(&p_event_data->user_message_acknowledge, (P_PRINTING) client_handle));
 
     default:
-        break;
+        return(FALSE); /* we don't want it - pass it on to the real handler */
     }
-
-    return(FALSE); /* we don't want it - pass it on to the real handler */
 }
 
 T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
@@ -688,6 +693,11 @@ T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
     printing.p_docu         = p_docu;
     printing.p_print_ctrl   = p_print_ctrl;
     printing.printing_state = PRINTING_START;
+
+    zero_struct(msg);
+    msg.hdr.size = offsetof32(WimpMessage, data.data_save.leaf_name);
+  /*msg.hdr.my_ref = 0;*/ /* fresh msg */
+    msg.hdr.action_code = Wimp_MPrintSave;
 
     msg.data.data_save.destination_window = 0;
     msg.data.data_save.destination_icon = BAD_WIMP_I;
@@ -702,11 +712,8 @@ T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
         xstrkat(msg.data.data_save.leaf_name, elemof32(msg.data.data_save.leaf_name), p_docu->docu_name.extension);
     }
 
-    msg.hdr.size  = offsetof32(WimpMessage, data.data_save.leaf_name);
     msg.hdr.size += strlen32p1(msg.data.data_save.leaf_name); /* SKS 1.03 16mar93 send correct size msg to printer app */
     msg.hdr.size  = (msg.hdr.size + (4-1)) & ~(4-1);
-    msg.hdr.my_ref = 0; /* fresh msg */
-    msg.hdr.action_code = Wimp_MPrintSave;
 
     void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessageRecorded, &msg, 0 /* broadcast */, BAD_WIMP_I, NULL));
 

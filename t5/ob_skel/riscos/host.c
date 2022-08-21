@@ -86,7 +86,7 @@ back_window_event_handler(
 static void
 back_window_open(
     _ViewRef_   P_VIEW p_view,
-    _In_        const WimpOpenWindowBlock * const p_open_window);
+    _In_        const WimpOpenWindowBlock * const p_open_window_block);
 
 static void
 calc_window_positions(
@@ -112,7 +112,7 @@ _Check_return_
 static BOOL
 edge_window_open(
     P_ANY event_handle,
-    _In_        const WimpOpenWindowBlock * const p_open_window);
+    _In_        const WimpOpenWindowBlock * const p_open_window_block);
 
 static GDI_COORD
 mouse_autoscroll_by(
@@ -146,7 +146,7 @@ pane_window_make_break(
 static void
 pane_window_open(
     _ViewRef_   P_VIEW p_view,
-    _In_        const WimpOpenWindowBlock * const p_open_window);
+    _In_        const WimpOpenWindowBlock * const p_open_window_block);
 
 _Check_return_
 static STATUS
@@ -668,17 +668,17 @@ host_view_show(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* Get the state of the window */
-    window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
-    if(!WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state)))
+    window_u.window_state_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    if(!WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block)))
     {
-        window_u.open_window.behind = (wimp_w) -1; /* open at the top of the window stack */
+        window_u.open_window_block.behind = (wimp_w) -1; /* open at the top of the window stack */
 
-        back_window_open(p_view, &window_u.open_window);
+        back_window_open(p_view, &window_u.open_window_block);
     }
 }
 
@@ -687,20 +687,20 @@ host_view_reopen(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* Get the state of the window */
-    window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
-    if(!WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state)))
+    window_u.window_state_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    if(!WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block)))
     {
         /* Ask back window to open behind itself, as the window it is currently
          * behind may be one of the 'split' windows that we want to kill
         */
-        window_u.open_window.behind = p_view->main[WIN_BACK].hwnd;
+        window_u.open_window_block.behind = p_view->main[WIN_BACK].hwnd;
 
-        back_window_open(p_view, &window_u.open_window);
+        back_window_open(p_view, &window_u.open_window_block);
     }
 }
 
@@ -711,24 +711,24 @@ host_view_maximize(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(p_view->flags.maximized)
         return;
 
-    window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
-    void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state));
+    window_u.window_state_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block));
 
-    window_u.open_window.visible_area.xmin = 0;
-    window_u.open_window.visible_area.ymin = 0;
-    window_u.open_window.visible_area.xmax = host_modevar_cache_current.gdi_size.cx;
-    window_u.open_window.visible_area.ymax = host_modevar_cache_current.gdi_size.cy;
+    window_u.open_window_block.visible_area.xmin = 0;
+    window_u.open_window_block.visible_area.ymin = 0;
+    window_u.open_window_block.visible_area.xmax = host_modevar_cache_current.gdi_size.cx;
+    window_u.open_window_block.visible_area.ymax = host_modevar_cache_current.gdi_size.cy;
 
     bodge_max = 1;
 
-    back_window_open(p_view, &window_u.open_window);
+    back_window_open(p_view, &window_u.open_window_block);
 
     bodge_max = 0;
 }
@@ -747,9 +747,9 @@ host_view_minimize(
         return;
 
     /* ask a RISC OS iconizer to have a stab */
-    msg.hdr.size = sizeof32(msg.hdr) +
-                   sizeof32(*p_wimp_message_iconize);
-    msg.hdr.your_ref = 0; /* start of message sequence */
+    zero_struct(msg);
+    msg.hdr.size = sizeof32(msg.hdr) + sizeof32(WimpIconizeMessage);
+  /*msg.hdr.your_ref = 0;*/ /* start of message sequence */
     msg.hdr.action_code = Wimp_MIconize;
 
     p_wimp_message_iconize->window_handle = p_view->main[WIN_BACK].hwnd;
@@ -767,31 +767,30 @@ reply_to_help_request(
     const WimpMessage * const p_wimp_message = (const WimpMessage *) p_any_wimp_message;
     WimpMessage msg = *p_wimp_message;
 
-    fill_in_help_request(p_docu, msg.data.bytes, sizeof32(msg.data.bytes));
-
-    msg.hdr.size  = sizeof32(msg.hdr);
-    msg.hdr.size += strlen32p1(msg.data.bytes); /*CH_NULL*/
-    msg.hdr.size  = (msg.hdr.size + (4-1)) & ~(4-1);
+    msg.hdr.size = sizeof32(msg.hdr);
     msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
     msg.hdr.action_code = Wimp_MHelpReply;
+
+    fill_in_help_request(p_docu, msg.data.bytes, sizeof32(msg.data.bytes));
+
+    msg.hdr.size += strlen32p1(msg.data.bytes); /*CH_NULL*/
+    msg.hdr.size  = (msg.hdr.size + (4-1)) & ~(4-1);
 
     void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
 }
 
 _Check_return_
 static STATUS
-generic_window_process_dataload(
+generic_window_process_DataLoad(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     P_CTRL_HOST_VIEW p_ctrl_host_view,
-    _In_        const WimpMessage * const p_wimp_message)
+    _InRef_     PC_WimpMessage p_wimp_message)
 {
     const WimpDataLoadMessage * const p_wimp_message_data_load = &p_wimp_message->data.data_load;
     T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message_data_load->file_type;
     TCHARZ filename[256];
     STATUS status = STATUS_OK;
-
-    xstrkpy(filename, elemof32(filename), p_wimp_message_data_load->leaf_name); /* low-lifetime name */
 
     switch(t5_filetype)
     {
@@ -802,6 +801,8 @@ generic_window_process_dataload(
     default:
         break;
     }
+
+    xstrkpy(filename, elemof32(filename), p_wimp_message_data_load->leaf_name); /* low-lifetime name */
 
     host_xfer_load_file_setup(p_wimp_message);
 
@@ -850,7 +851,7 @@ generic_window_process_dataload(
 
         zero_struct(viewevent_click);
 
-        /* NB dataload event x,y are screen coordinates (i.e. not window relative) */
+        /* NB DataLoad event x,y are absolute screen coordinates (i.e. not window relative) */
         viewevent_click.click_context.hwnd = p_wimp_message_data_load->destination_window;
         viewevent_click.click_context.ctrl_pressed = host_ctrl_pressed();
         viewevent_click.click_context.shift_pressed = host_shift_pressed();
@@ -912,13 +913,13 @@ generic_window_event_handler(
 
     case Wimp_EKeyPressed:
         {
-        S32 keycode = ri_kmap_convert(p_event_data->key_pressed.key_code);
+        const KMAP_CODE kmap_code = kmap_convert(p_event_data->key_pressed.key_code);
 
-        trace_2(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("Wimp_EKeyPressed key ") U32_XTFMT TEXT(" (kmap=") U32_XTFMT TEXT(")"), p_event_data->key_pressed.key_code, keycode);
+        trace_2(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("Key_Pressed key ") U32_XTFMT TEXT(" (kmap=") U32_XTFMT TEXT(")"), p_event_data->key_pressed.key_code, kmap_code);
 
         status_line_auto_clear(p_docu);
 
-        status = send_key_event_to_docu(p_docu, keycode);
+        status = send_key_event_to_docu(p_docu, kmap_code);
 
         if(status == 0)
             return(FALSE);
@@ -939,21 +940,18 @@ generic_window_event_handler(
         break;
 
     case Wimp_ELoseCaret:
-        p_docu->flags.has_input_focus = 0;
-
         /* SKS 30jul93 dump out any keys still destined for this document */
         trace_1(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("Wimp_ELoseCaret: host_key_cache_emit_events(docno ") S32_TFMT TEXT(")"), docno_from_p_docu(p_docu));
         status = host_key_cache_emit_events_for(docno_from_p_docu(p_docu));
         break;
 
     case Wimp_EGainCaret:
-        p_docu->flags.has_input_focus = 1;
         return(TRUE);
 
     case Wimp_EUserMessage:
     case Wimp_EUserMessageRecorded:
         {
-        const WimpMessage * const p_wimp_message = &p_event_data->user_message;
+        const PC_WimpMessage p_wimp_message = &p_event_data->user_message;
 
         switch(p_wimp_message->hdr.action_code)
         {
@@ -986,7 +984,7 @@ generic_window_event_handler(
 
             p_docu->viewno_caret = viewno_from_p_view(p_view);
 
-            status = generic_window_process_dataload(p_docu, p_view, p_ctrl_host_view, p_wimp_message);
+            status = generic_window_process_DataLoad(p_docu, p_view, p_ctrl_host_view, p_wimp_message);
             break;
             }
 
@@ -1066,7 +1064,7 @@ back_window_event_handler(
     case Wimp_EUserMessage:
     case Wimp_EUserMessageRecorded:
         {
-        const WimpMessage * const p_wimp_message = &p_event_data->user_message;
+        const PC_WimpMessage p_wimp_message = &p_event_data->user_message;
 
         switch(p_wimp_message->hdr.action_code)
         {
@@ -1074,6 +1072,10 @@ back_window_event_handler(
             { /* help out the iconizer - send him an acknowledgement of his request */
             WimpMessage msg = *p_wimp_message;
             WimpWindowInfoMessage * const p_wimp_message_window_info = (WimpWindowInfoMessage *) &msg.data;
+
+            msg.hdr.size = sizeof32(msg.hdr) + sizeof32(WimpWindowInfoMessage);
+            msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
+            msg.hdr.action_code = Wimp_MWindowInfo;
 
             p_wimp_message_window_info->reserved_0 = 0;
             (void) strcpy(p_wimp_message_window_info->sprite, /*"ic_"*/ "bdf"); /* bdf == FIREWORKZ */
@@ -1083,11 +1085,6 @@ back_window_event_handler(
                 xstrkat(p_wimp_message_window_info->title, elemof32(p_wimp_message_window_info->title), FILE_EXT_SEP_TSTR);
                 xstrkat(p_wimp_message_window_info->title, elemof32(p_wimp_message_window_info->title), p_docu->docu_name.extension);
             }
-
-            msg.hdr.size = sizeof32(msg.hdr) +
-                           sizeof32(*p_wimp_message_window_info);
-            msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
-            msg.hdr.action_code = Wimp_MWindowInfo;
 
             void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, p_wimp_message->hdr.sender, BAD_WIMP_I, NULL));
 
@@ -1114,17 +1111,17 @@ back_window_event_handler(
 static void
 back_window_open(
     _ViewRef_   P_VIEW p_view,
-    _In_        const WimpOpenWindowBlock * const p_open_window)
+    _In_        const WimpOpenWindowBlock * const p_open_window_block)
 {
     const P_DOCU p_docu = p_docu_from_docno(p_view->docno);
-    union wimp_window_state_open_window_u back_window_u;
-    wimp_w behind = p_open_window->behind;
+    union wimp_window_state_open_window_block_u back_window_u;
+    wimp_w behind = p_open_window_block->behind;
     PIXIT_RECT visible_limits;
     WimpCaret current;
     BOOL had_input_focus = FALSE;
     const GDI_SIZE screen_gdi_size = host_modevar_cache_current.gdi_size;
 
-    void_WrapOsErrorReporting(wimp_get_caret_position(&current));
+    void_WrapOsErrorReporting(winx_get_caret_position(&current));
 
     if(HOST_WND_NONE != p_view->pane[p_view->cur_pane].hwnd)
         had_input_focus = (current.window_handle == p_view->pane[p_view->cur_pane].hwnd);
@@ -1171,46 +1168,46 @@ back_window_open(
 
     host_set_extent_this_view(p_docu, p_view);  /* Set correct back window extent after pane_window_make_break's */
 
-    /* p_open_window gives the screen position (p_open_window->box) and window stack position (p_open_window->behind)
+    /* p_open_window_block gives the screen position (p_open_window_block->box) and window stack position (p_open_window_block->behind)
      * that the Window Manager would like our back window opened at.
-     * Since clicking 'fullsize' on the back window gives an p_open_window->box bigger than the screen,
+     * Since clicking 'fullsize' on the back window gives an p_open_window_block->box bigger than the screen,
      * we open the back window at its current stack position, but with the new screen position,
      * then read back the sanitised screen position.
      * We can then calculate the correct screen and stack positions for all
      * our borders/rulers/panes and a new stack position for the back window.
      */
-    back_window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
-    void_WrapOsErrorReporting(wimp_get_window_state(&back_window_u.window_state)); /* get back window's current 'behind' */
+    back_window_u.window_state_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    void_WrapOsErrorReporting(wimp_get_window_state(&back_window_u.window_state_block)); /* get back window's current 'behind' */
 
-    back_window_u.open_window.window_handle = p_view->main[WIN_BACK].hwnd;
-    back_window_u.open_window.visible_area = p_open_window->visible_area;
-    back_window_u.open_window.xscroll = 0;
-    back_window_u.open_window.yscroll = 0;
+    back_window_u.open_window_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    back_window_u.open_window_block.visible_area = p_open_window_block->visible_area;
+    back_window_u.open_window_block.xscroll = 0;
+    back_window_u.open_window_block.yscroll = 0;
 
     /* SKS 30jun93 try to keep window on screen even when Window Manager goes mad */
-    if(back_window_u.open_window.visible_area.xmin >= screen_gdi_size.cx)
-        back_window_u.open_window.visible_area.xmin = screen_gdi_size.cx - 96; /* giving a view of the title bar past the close and back tools */
+    if(back_window_u.open_window_block.visible_area.xmin >= screen_gdi_size.cx)
+        back_window_u.open_window_block.visible_area.xmin = screen_gdi_size.cx - 96; /* giving a view of the title bar past the close and back tools */
 
-    if(back_window_u.open_window.visible_area.ymax >= screen_gdi_size.cy)
+    if(back_window_u.open_window_block.visible_area.ymax >= screen_gdi_size.cy)
     {
-        int y_size = BBox_height(&back_window_u.open_window.visible_area);
-        back_window_u.open_window.visible_area.ymax = screen_gdi_size.cy - 32;
-        back_window_u.open_window.visible_area.ymin = back_window_u.open_window.visible_area.ymax - y_size;
+        int y_size = BBox_height(&back_window_u.open_window_block.visible_area);
+        back_window_u.open_window_block.visible_area.ymax = screen_gdi_size.cy - 32;
+        back_window_u.open_window_block.visible_area.ymin = back_window_u.open_window_block.visible_area.ymax - y_size;
     }
 
-    void_WrapOsErrorReporting(wimp_open_window(&back_window_u.open_window)); /* open back window at current 'behind', but new 'box' */
+    void_WrapOsErrorReporting(wimp_open_window(&back_window_u.open_window_block)); /* open back window at current 'behind', but new 'box' */
 
-    back_window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
-    void_WrapOsErrorReporting(wimp_get_window_state(&back_window_u.window_state)); /* read back sanitised box */
+    back_window_u.window_state_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    void_WrapOsErrorReporting(wimp_get_window_state(&back_window_u.window_state_block)); /* read back sanitised box */
 
-    if(p_open_window->behind == (wimp_w) -3 /* behind the Window Manager's backwindow => hidden */)
+    if(p_open_window_block->behind == (wimp_w) -3 /* behind the Window Manager's backwindow => hidden */)
     {
         p_view->flags.maximized = 0;
         p_view->flags.minimized = 1;
     }
     else
     {
-        p_view->flags.maximized = bodge_max || (WimpWindow_Toggled & back_window_u.window_state.flags);
+        p_view->flags.maximized = bodge_max || (WimpWindow_Toggled & back_window_u.window_state_block.flags);
         p_view->flags.minimized = 0;
     }
 
@@ -1241,7 +1238,7 @@ back_window_open(
         arglist_dispose(&arglist_handle);
     }
 
-    behind = p_open_window->behind;
+    behind = p_open_window_block->behind;
 
 #if defined(UNUSED) /* currently there are no such windows (e.g. list boxes) */
     /* open any windows maintained by win layer, modifying who to open this stack behind */
@@ -1273,7 +1270,7 @@ back_window_open(
     {
     WINDOW_POSITIONS position;
 
-    calc_window_positions(p_docu, p_view, &position, &back_window_u.window_state.visible_area);
+    calc_window_positions(p_docu, p_view, &position, &back_window_u.window_state_block.visible_area);
 
     { /* open the borders and rulers (if any) */
     EDGE_ID edge_id = NUMEDGE;
@@ -1283,25 +1280,25 @@ back_window_open(
 
         if(HOST_WND_NONE != p_view->edge[edge_id].hwnd)
         {
-            WimpOpenWindowBlock edge_open_window;
+            WimpOpenWindowBlock edge_open_window_block;
 
-            edge_open_window.visible_area = position.edge[edge_id].visible_area;
-            edge_open_window.xscroll = position.edge[edge_id].xscroll;
-            edge_open_window.yscroll = position.edge[edge_id].yscroll;
+            edge_open_window_block.visible_area = position.edge[edge_id].visible_area;
+            edge_open_window_block.xscroll = position.edge[edge_id].xscroll;
+            edge_open_window_block.yscroll = position.edge[edge_id].yscroll;
 
-            if( (edge_open_window.visible_area.xmin < edge_open_window.visible_area.xmax) &&
-                (edge_open_window.visible_area.ymin < edge_open_window.visible_area.ymax) )
+            if( (edge_open_window_block.visible_area.xmin < edge_open_window_block.visible_area.xmax) &&
+                (edge_open_window_block.visible_area.ymin < edge_open_window_block.visible_area.ymax) )
             {
-                edge_open_window.behind = behind;
-                edge_open_window.window_handle = behind = p_view->edge[edge_id].hwnd; /* everything else MUST open behind us */
+                edge_open_window_block.behind = behind;
+                edge_open_window_block.window_handle = behind = p_view->edge[edge_id].hwnd; /* everything else MUST open behind us */
 
-                void_WrapOsErrorReporting(wimp_open_window(&edge_open_window));
+                void_WrapOsErrorReporting(wimp_open_window(&edge_open_window_block));
             }
             else
             {   /* close window to Window Manager */
-                WimpCloseWindowBlock close_window;
-                close_window.window_handle = p_view->edge[edge_id].hwnd;
-                void_WrapOsErrorReporting(wimp_close_window(&close_window.window_handle));
+                WimpCloseWindowBlock edge_close_window_block;
+                edge_close_window_block.window_handle = p_view->edge[edge_id].hwnd;
+                void_WrapOsErrorReporting(wimp_close_window(&edge_close_window_block.window_handle));
             }
         }
     } while(edge_id != EDGE_ID_START);
@@ -1319,32 +1316,32 @@ back_window_open(
 
         if(HOST_WND_NONE != p_pane->hwnd)
         {
-            WimpOpenWindowBlock pane_open_window;
+            WimpOpenWindowBlock pane_open_window_block;
 
-            pane_open_window.visible_area = position.pane[pane_id].visible_area;
-            pane_open_window.xscroll = position.pane[pane_id].xscroll;
-            pane_open_window.yscroll = position.pane[pane_id].yscroll;
+            pane_open_window_block.visible_area = position.pane[pane_id].visible_area;
+            pane_open_window_block.xscroll = position.pane[pane_id].xscroll;
+            pane_open_window_block.yscroll = position.pane[pane_id].yscroll;
 
-            pane_open_window.behind = behind;
-            pane_open_window.window_handle = behind = p_pane->hwnd; /* everything else MUST open behind us */
+            pane_open_window_block.behind = behind;
+            pane_open_window_block.window_handle = behind = p_pane->hwnd; /* everything else MUST open behind us */
 
-            void_WrapOsErrorReporting(wimp_open_window(&pane_open_window));
+            void_WrapOsErrorReporting(wimp_open_window(&pane_open_window_block));
 
-            p_pane->lastopen.margin.x0 = (GDI_COORD) pane_open_window.visible_area.xmin - back_window_u.window_state.visible_area.xmin;
-            p_pane->lastopen.margin.y0 = (GDI_COORD) pane_open_window.visible_area.ymin - back_window_u.window_state.visible_area.ymin;
-            p_pane->lastopen.margin.x1 = (GDI_COORD) pane_open_window.visible_area.xmax - back_window_u.window_state.visible_area.xmax;
-            p_pane->lastopen.margin.y1 = (GDI_COORD) pane_open_window.visible_area.ymax - back_window_u.window_state.visible_area.ymax;
-            p_pane->lastopen.width     = BBox_width(&pane_open_window.visible_area);
-            p_pane->lastopen.height    = BBox_height(&pane_open_window.visible_area);
-            p_pane->lastopen.xscroll   = pane_open_window.xscroll;
-            p_pane->lastopen.yscroll   = pane_open_window.yscroll;
+            p_pane->lastopen.margin.x0 = (GDI_COORD) pane_open_window_block.visible_area.xmin - back_window_u.window_state_block.visible_area.xmin;
+            p_pane->lastopen.margin.y0 = (GDI_COORD) pane_open_window_block.visible_area.ymin - back_window_u.window_state_block.visible_area.ymin;
+            p_pane->lastopen.margin.x1 = (GDI_COORD) pane_open_window_block.visible_area.xmax - back_window_u.window_state_block.visible_area.xmax;
+            p_pane->lastopen.margin.y1 = (GDI_COORD) pane_open_window_block.visible_area.ymax - back_window_u.window_state_block.visible_area.ymax;
+            p_pane->lastopen.width     = BBox_width(&pane_open_window_block.visible_area);
+            p_pane->lastopen.height    = BBox_height(&pane_open_window_block.visible_area);
+            p_pane->lastopen.xscroll   = pane_open_window_block.xscroll;
+            p_pane->lastopen.yscroll   = pane_open_window_block.yscroll;
 
             {
             GDI_RECT gdi_rect; /* cf work_area_origin_x_from_visible_area_and_scroll() */
-            gdi_rect.tl.x = pane_open_window.xscroll; /* i.e. pane_open_window.visible_area.xmin - (pane_open_window.visible_area.xmin - pane_open_window.xscroll); */
-            gdi_rect.tl.y = pane_open_window.yscroll; /* i.e. pane_open_window.visible_area.ymax - (pane_open_window.visible_area.ymax - pane_open_window.yscroll); */
-            gdi_rect.br.x = pane_open_window.visible_area.xmax - ((GDI_COORD) pane_open_window.visible_area.xmin - pane_open_window.xscroll);
-            gdi_rect.br.y = pane_open_window.visible_area.ymin - ((GDI_COORD) pane_open_window.visible_area.ymax - pane_open_window.yscroll);
+            gdi_rect.tl.x = pane_open_window_block.xscroll; /* i.e. pane_open_window_block.visible_area.xmin - (pane_open_window_block.visible_area.xmin - pane_open_window_block.xscroll); */
+            gdi_rect.tl.y = pane_open_window_block.yscroll; /* i.e. pane_open_window_block.visible_area.ymax - (pane_open_window_block.visible_area.ymax - pane_open_window_block.yscroll); */
+            gdi_rect.br.x = pane_open_window_block.visible_area.xmax - ((GDI_COORD) pane_open_window_block.visible_area.xmin - pane_open_window_block.xscroll);
+            gdi_rect.br.y = pane_open_window_block.visible_area.ymin - ((GDI_COORD) pane_open_window_block.visible_area.ymax - pane_open_window_block.yscroll);
             pixit_rect_from_window_rect(&p_pane->visible_pixit_rect, &gdi_rect, &p_view->host_xform[XFORM_PANE]);
             } /*block*/
 
@@ -1362,9 +1359,9 @@ back_window_open(
     /*block*/
 
     /* last, but not least, open the back window behind the last pane */
-    back_window_u.open_window.behind = behind;
+    back_window_u.open_window_block.behind = behind;
 
-    void_WrapOsErrorReporting(wimp_open_window(&back_window_u.open_window));
+    void_WrapOsErrorReporting(wimp_open_window(&back_window_u.open_window_block));
 
     { /* tell the toolbar what's going on */
     VIEWEVENT_VISIBLEAREA_CHANGED event_info;
@@ -1375,8 +1372,8 @@ back_window_open(
     GDI_RECT gdi_rect;
     gdi_rect.tl.x = 0;
     gdi_rect.tl.y = 0;
-    gdi_rect.br.x = (GDI_COORD) BBox_width(&back_window_u.open_window.visible_area);
-    gdi_rect.br.y = (GDI_COORD) BBox_height(&back_window_u.open_window.visible_area);
+    gdi_rect.br.x = (GDI_COORD) BBox_width(&back_window_u.open_window_block.visible_area);
+    gdi_rect.br.y = (GDI_COORD) BBox_height(&back_window_u.open_window_block.visible_area);
     pixit_rect_from_window_rect(&event_info.visible_area.rect, &gdi_rect, &p_view->host_xform[XFORM_BACK]);
     p_view->backwindow_pixit_rect = event_info.visible_area.rect;
     } /*block*/
@@ -1406,7 +1403,7 @@ back_window_open(
         {
             current.window_handle = p_view->pane[p_view->cur_pane].hwnd;
 
-            void_WrapOsErrorReporting(wimp_set_caret_position_block(&current));
+            void_WrapOsErrorReporting(winx_set_caret_position(&current));
         }
     }
 }
@@ -1647,17 +1644,17 @@ pane_window_event_handler(
 static void
 pane_window_open(
     _ViewRef_   P_VIEW p_view,
-    _In_        const WimpOpenWindowBlock * const p_open_window)
+    _In_        const WimpOpenWindowBlock * const p_open_window_block)
 {
-    PANE_ID pane_id = find_pane(p_view, p_open_window->window_handle);
+    const PANE_ID pane_id = find_pane(p_view, p_open_window_block->window_handle);
     const P_PANE p_pane = &p_view->pane[pane_id];
-    WimpOpenWindowBlock back_open_window;
+    WimpOpenWindowBlock back_open_window_block;
 
-    p_pane->lastopen.xscroll = p_open_window->xscroll;
-    p_pane->lastopen.yscroll = p_open_window->yscroll;
+    p_pane->lastopen.xscroll = p_open_window_block->xscroll;
+    p_pane->lastopen.yscroll = p_open_window_block->yscroll;
 
-    p_view->pane[pane_id ^ 2].lastopen.xscroll = p_open_window->xscroll;
-    p_view->pane[pane_id ^ 1].lastopen.yscroll = p_open_window->yscroll;
+    p_view->pane[pane_id ^ 2].lastopen.xscroll = p_open_window_block->xscroll;
+    p_view->pane[pane_id ^ 1].lastopen.yscroll = p_open_window_block->yscroll;
 
     switch(pane_id)
     {
@@ -1666,7 +1663,7 @@ pane_window_open(
 
     case WIN_PANE_SPLIT_HORZ:
         {
-        S32 change = ((S32) BBox_width(&p_open_window->visible_area)  + host_modevar_cache_current.dx) - p_view->horz_split_pos / PIXITS_PER_RISCOS;
+        S32 change = ((S32) BBox_width(&p_open_window_block->visible_area)  + host_modevar_cache_current.dx) - p_view->horz_split_pos / PIXITS_PER_RISCOS;
         assert(p_view->flags.horz_split_on);
         p_view->horz_split_pos     += change * PIXITS_PER_RISCOS;
         p_pane->lastopen.margin.x1 += change;
@@ -1675,7 +1672,7 @@ pane_window_open(
 
     case WIN_PANE_SPLIT_VERT:
         {
-        S32 change = ((S32) BBox_height(&p_open_window->visible_area) + host_modevar_cache_current.dy) - p_view->vert_split_pos / PIXITS_PER_RISCOS;
+        S32 change = ((S32) BBox_height(&p_open_window_block->visible_area) + host_modevar_cache_current.dy) - p_view->vert_split_pos / PIXITS_PER_RISCOS;
         assert(p_view->flags.vert_split_on);
         p_view->vert_split_pos     += change * PIXITS_PER_RISCOS;
         p_pane->lastopen.margin.y0 -= change;
@@ -1683,15 +1680,15 @@ pane_window_open(
         }
     }
 
-    back_open_window.window_handle = p_view->main[WIN_BACK].hwnd;
-    back_open_window.visible_area.xmin = p_open_window->visible_area.xmin - p_pane->lastopen.margin.x0;
-    back_open_window.visible_area.xmax = p_open_window->visible_area.xmax - p_pane->lastopen.margin.x1;
-    back_open_window.visible_area.ymin = p_open_window->visible_area.ymin - p_pane->lastopen.margin.y0;
-    back_open_window.visible_area.ymax = p_open_window->visible_area.ymax - p_pane->lastopen.margin.y1;
-    back_open_window.xscroll = back_open_window.yscroll = 0;
-    back_open_window.behind = p_open_window->behind;
+    back_open_window_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    back_open_window_block.visible_area.xmin = p_open_window_block->visible_area.xmin - p_pane->lastopen.margin.x0;
+    back_open_window_block.visible_area.xmax = p_open_window_block->visible_area.xmax - p_pane->lastopen.margin.x1;
+    back_open_window_block.visible_area.ymin = p_open_window_block->visible_area.ymin - p_pane->lastopen.margin.y0;
+    back_open_window_block.visible_area.ymax = p_open_window_block->visible_area.ymax - p_pane->lastopen.margin.y1;
+    back_open_window_block.xscroll = back_open_window_block.yscroll = 0;
+    back_open_window_block.behind = p_open_window_block->behind;
 
-    back_window_open(p_view, &back_open_window);
+    back_window_open(p_view, &back_open_window_block);
 }
 
 static BOOL
@@ -1836,19 +1833,19 @@ _Check_return_
 static BOOL
 edge_window_open(
     P_ANY event_handle,
-    _In_        const WimpOpenWindowBlock * const p_open_window)
+    _In_        const WimpOpenWindowBlock * const p_open_window_block)
 {
     P_VIEW p_view;
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
 
     consume(P_DOCU, viewid_unpack((U32) event_handle, &p_view, NULL));
 
-    window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
-    if(NULL != WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state)))
+    window_u.window_state_block.window_handle = p_view->main[WIN_BACK].hwnd;
+    if(NULL != WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block)))
         return(FALSE);
 
-    window_u.open_window.behind = p_open_window->behind;
-    back_window_open(p_view, &window_u.open_window);
+    window_u.open_window_block.behind = p_open_window_block->behind;
+    back_window_open(p_view, &window_u.open_window_block);
     return(TRUE);
 }
 
@@ -1889,13 +1886,13 @@ set_cur_pane(
     {
         WimpCaret current;
 
-        void_WrapOsErrorReporting(wimp_get_caret_position(&current));
+        void_WrapOsErrorReporting(winx_get_caret_position(&current));
 
         if(current.window_handle == p_view->pane[p_view->cur_pane].hwnd)
         {
             current.window_handle = p_view->pane[pane_id].hwnd;
 
-            void_WrapOsErrorReporting(wimp_set_caret_position_block(&current));
+            void_WrapOsErrorReporting(winx_set_caret_position(&current));
         }
 
         p_view->cur_pane = pane_id;
@@ -1917,7 +1914,7 @@ set_cur_pane(
 *
 ******************************************************************************/
 
-static S32 threaded_through_redraw = FALSE;
+static BOOL threaded_through_redraw = FALSE;
 
 static void
 update_common_pre_loop(
@@ -1962,7 +1959,7 @@ update_common_in_loop(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     P_VIEWEVENT_REDRAW p_viewevent_redraw,
-    _In_        const WimpRedrawWindowBlock * const p_redraw_window)
+    _In_        const WimpRedrawWindowBlock * const p_redraw_window_block)
 {
     const P_REDRAW_CONTEXT p_redraw_context = &p_viewevent_redraw->redraw_context;
 
@@ -1976,20 +1973,20 @@ update_common_in_loop(
     p_redraw_context->p_docu = p_docu;
     p_redraw_context->p_view = p_view;
 
-    p_redraw_context->gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(p_redraw_window); /* window w.a. ABS origin */
-    p_redraw_context->gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(p_redraw_window);
+    p_redraw_context->gdi_org.x = work_area_origin_x_from_visible_area_and_scroll(p_redraw_window_block); /* window w.a. ABS origin */
+    p_redraw_context->gdi_org.y = work_area_origin_y_from_visible_area_and_scroll(p_redraw_window_block);
 
     p_redraw_context->pixit_origin.x = 0;
     p_redraw_context->pixit_origin.y = 0;
 
-    p_redraw_context->riscos.host_machine_clip_box = * (PC_GDI_BOX) &p_redraw_window->redraw_area;
+    p_redraw_context->riscos.host_machine_clip_box = * (PC_GDI_BOX) &p_redraw_window_block->redraw_area;
 
     {
     GDI_RECT gdi_rect;
-    gdi_rect.tl.x = p_redraw_window->redraw_area.xmin;
-    gdi_rect.br.y = p_redraw_window->redraw_area.ymin;
-    gdi_rect.br.x = p_redraw_window->redraw_area.xmax;
-    gdi_rect.tl.y = p_redraw_window->redraw_area.ymax;
+    gdi_rect.tl.x = p_redraw_window_block->redraw_area.xmin;
+    gdi_rect.br.y = p_redraw_window_block->redraw_area.ymin;
+    gdi_rect.br.x = p_redraw_window_block->redraw_area.xmax;
+    gdi_rect.tl.y = p_redraw_window_block->redraw_area.ymax;
     pixit_rect_from_screen_rect_and_context(&p_viewevent_redraw->area.rect, &gdi_rect, p_redraw_context);
     } /*block*/
 }
@@ -2004,7 +2001,7 @@ send_redraw_event_to_view(
     const P_HOST_XFORM p_host_xform = &p_view->host_xform[p_ctrl_host_view->xform_idx];
     REDRAW_FLAGS redraw_flags;
     VIEWEVENT_REDRAW viewevent_redraw;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more = 0;
 
     REDRAW_FLAGS_CLEAR(redraw_flags);
@@ -2014,14 +2011,14 @@ send_redraw_event_to_view(
     trace_0(TRACE_RISCOS_HOST, TEXT("host event: send_redraw_event_to_view"));
     update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, hwnd, redraw_flags);
 
-    redraw_window.window_handle = hwnd;
+    redraw_window_block.window_handle = hwnd;
 
-    if(WrapOsErrorReporting(wimp_redraw_window(&redraw_window, &wimp_more)))
+    if(NULL != WrapOsErrorReporting(wimp_redraw_window(&redraw_window_block, &wimp_more)))
         wimp_more = 0;
 
     while(0 != wimp_more)
     {
-        update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window);
+        update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window_block);
 
         threaded_through_redraw = TRUE;
         (* p_ctrl_host_view->p_proc_view_event) (p_docu, T5_EVENT_REDRAW, &viewevent_redraw);
@@ -2029,7 +2026,7 @@ send_redraw_event_to_view(
 
         host_restore_clip_rectangle(&viewevent_redraw.redraw_context);
 
-        if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+        if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
             wimp_more = 0;
     }
 }
@@ -2594,22 +2591,23 @@ host_show_caret(
 
     UNREFERENCED_PARAMETER(width);
 
-    void_WrapOsErrorReporting(wimp_get_caret_position(&caret_cur));
+    if(NULL != winx_get_caret_position(&caret_cur))
+        zero_struct(caret_cur);
 
     caret_new.window_handle = hwnd;
     caret_new.icon_handle = BAD_WIMP_I;
     caret_new.xoffset = x;
     caret_new.yoffset = y;
-    caret_new.index = 0;
     caret_new.height = height;
+    caret_new.index = 0;
 
-    if((caret_cur.window_handle != caret_new.window_handle) ||
-       (caret_cur.xoffset != caret_new.xoffset) ||
-       (caret_cur.yoffset != caret_new.yoffset) ||
-       (caret_cur.height != caret_new.height) /* cos this field holds caret (in)visible bit */ )
+    if( (caret_cur.window_handle != caret_new.window_handle) ||
+        (caret_cur.xoffset != caret_new.xoffset) ||
+        (caret_cur.yoffset != caret_new.yoffset) ||
+        (caret_cur.height != caret_new.height) /* cos this field holds caret (in)visible bit */ )
     {
-        trace_3(TRACE_RISCOS_HOST, TEXT("place caret (") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT(")"), caret_new.xoffset, caret_new.yoffset, caret_new.height);
-        void_WrapOsErrorReporting(wimp_set_caret_position_block(&caret_new));
+        trace_3(TRACE_RISCOS_HOST, TEXT("host_show_caret (") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT(")"), caret_new.xoffset, caret_new.yoffset, caret_new.height);
+        void_WrapOsErrorReporting(winx_set_caret_position(&caret_new));
         return(TRUE);
     }
 
@@ -2653,7 +2651,7 @@ host_main_show_caret(
                 p_docu_from_docno_valid(docno)->flags.is_current = 0;
         }
 
-        p_docu->flags.is_current = p_docu->flags.has_input_focus = 1;
+        p_docu->flags.is_current = 1;
     }
 }
 
@@ -2821,27 +2819,28 @@ host_update_all(
     _InVal_     REDRAW_TAG redraw_tag)
 {
     int index[2], i;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(threaded_through_redraw)
         return;
 
-    redraw_window.visible_area.xmin = 0;
-    redraw_window.visible_area.ymin = p_view->scaled_paneextent.y0;
-    redraw_window.visible_area.xmax = p_view->scaled_paneextent.x1;
-    redraw_window.visible_area.ymax = 0;
+    redraw_window_block.visible_area.xmin = 0;
+    redraw_window_block.visible_area.ymin = p_view->scaled_paneextent.y0;
+    redraw_window_block.visible_area.xmax = p_view->scaled_paneextent.x1;
+    redraw_window_block.visible_area.ymax = 0;
 
     switch(redraw_tag)
     {
     case UPDATE_BACK_WINDOW:
         {
-        redraw_window.window_handle = p_view->main[WIN_BACK].hwnd;
+        redraw_window_block.window_handle = p_view->main[WIN_BACK].hwnd;
 
-        if(redraw_window.window_handle)
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
+        if(HOST_WND_NONE == redraw_window_block.window_handle)
+            return;
 
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
         return;
         }
 
@@ -2861,10 +2860,12 @@ host_update_all(
         do  {
             PANE_ID_DECR(pane_id);
 
-            redraw_window.window_handle = p_view->pane[pane_id].hwnd;
+            redraw_window_block.window_handle = p_view->pane[pane_id].hwnd;
 
-            if(redraw_window.window_handle)
-                void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
+            if(HOST_WND_NONE == redraw_window_block.window_handle)
+                continue;
+
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
 
         } while(PANE_ID_START != pane_id);
 
@@ -2894,10 +2895,12 @@ host_update_all(
 
     for(i = 0; i <= 1; ++i)
     {
-        redraw_window.window_handle = p_view->edge[index[i]].hwnd;
+        redraw_window_block.window_handle = p_view->edge[index[i]].hwnd;
 
-        if(redraw_window.window_handle)
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
+        if(HOST_WND_NONE == redraw_window_block.window_handle)
+            continue;
+
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
     }
 }
 
@@ -2928,45 +2931,47 @@ host_update_back_window(
     const P_VIEW p_view = p_view_rect->p_view;
     const P_HOST_XFORM p_host_xform = &p_view->host_xform[XFORM_BACK];
     VIEWEVENT_REDRAW viewevent_redraw;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more = 0;
 
-    redraw_window.window_handle = p_view->main[WIN_BACK].hwnd;
+    redraw_window_block.window_handle = p_view->main[WIN_BACK].hwnd;
 
-    if(redraw_window.window_handle)
+    if(HOST_WND_NONE == redraw_window_block.window_handle)
+        return;
+
     {
-        {
-        GDI_RECT gdi_rect;
-        window_rect_from_view_rect(&gdi_rect, p_docu, p_view_rect, p_rect_flags, p_host_xform);
-        redraw_window.visible_area.xmin = gdi_rect.tl.x;
-        redraw_window.visible_area.ymin = gdi_rect.br.y;
-        redraw_window.visible_area.xmax = gdi_rect.br.x;
-        redraw_window.visible_area.ymax = gdi_rect.tl.y;
-        } /*block*/
+    GDI_RECT gdi_rect;
+    window_rect_from_view_rect(&gdi_rect, p_docu, p_view_rect, p_rect_flags, p_host_xform);
+    redraw_window_block.visible_area.xmin = gdi_rect.tl.x;
+    redraw_window_block.visible_area.ymin = gdi_rect.br.y;
+    redraw_window_block.visible_area.xmax = gdi_rect.br.x;
+    redraw_window_block.visible_area.ymax = gdi_rect.tl.y;
+    } /*block*/
 
-        if(redraw_flags.update_now)
-        {
-            update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, redraw_window.window_handle, redraw_flags);
+    if(redraw_flags.update_now)
+    {
+        update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, redraw_window_block.window_handle, redraw_flags);
 
-            if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+        if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
+            wimp_more = 0;
+
+        while(0 != wimp_more)
+        {
+            update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window_block);
+
+            threaded_through_redraw = TRUE;
+            (* window_ctrl[WINTYPE_BACK].p_proc_view_event) (p_docu, T5_EVENT_REDRAW, &viewevent_redraw);
+            threaded_through_redraw = FALSE;
+
+            host_restore_clip_rectangle(&viewevent_redraw.redraw_context);
+
+            if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
                 wimp_more = 0;
-
-            while(0 != wimp_more)
-            {
-                update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window);
-
-                threaded_through_redraw = TRUE;
-                (* window_ctrl[WINTYPE_BACK].p_proc_view_event) (p_docu, T5_EVENT_REDRAW, &viewevent_redraw);
-                threaded_through_redraw = FALSE;
-
-                host_restore_clip_rectangle(&viewevent_redraw.redraw_context);
-
-                if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
-                    wimp_more = 0;
-            }
         }
-        else
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
+    }
+    else
+    {
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
     }
 }
 
@@ -2980,37 +2985,37 @@ host_update_pane_window(
     const P_VIEW p_view = p_view_rect->p_view;
     const P_HOST_XFORM p_host_xform = &p_view->host_xform[XFORM_PANE];
     VIEWEVENT_REDRAW viewevent_redraw;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more = 0;
     PANE_ID pane_id = NUMPANE;
 
     do  {
         PANE_ID_DECR(pane_id);
 
-        redraw_window.window_handle = p_view->pane[pane_id].hwnd;
+        redraw_window_block.window_handle = p_view->pane[pane_id].hwnd;
 
-        if(HOST_WND_NONE == redraw_window.window_handle)
+        if(HOST_WND_NONE == redraw_window_block.window_handle)
             continue;
 
         {
         GDI_RECT gdi_rect;
         window_rect_from_view_rect(&gdi_rect, p_docu, p_view_rect, p_rect_flags, p_host_xform);
-        redraw_window.visible_area.xmin = gdi_rect.tl.x;
-        redraw_window.visible_area.ymin = gdi_rect.br.y;
-        redraw_window.visible_area.xmax = gdi_rect.br.x;
-        redraw_window.visible_area.ymax = gdi_rect.tl.y;
+        redraw_window_block.visible_area.xmin = gdi_rect.tl.x;
+        redraw_window_block.visible_area.ymin = gdi_rect.br.y;
+        redraw_window_block.visible_area.xmax = gdi_rect.br.x;
+        redraw_window_block.visible_area.ymax = gdi_rect.tl.y;
         } /*block*/
 
         if(redraw_flags.update_now)
         {
-            update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, redraw_window.window_handle, redraw_flags);
+            update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, redraw_window_block.window_handle, redraw_flags);
 
-            if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+            if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
                 wimp_more = 0;
 
             while(0 != wimp_more)
             {
-                update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window);
+                update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window_block);
 
                 threaded_through_redraw = TRUE;
                 (* window_ctrl[WINTYPE_PANE].p_proc_view_event) (p_docu, T5_EVENT_REDRAW, &viewevent_redraw);
@@ -3018,12 +3023,14 @@ host_update_pane_window(
 
                 host_restore_clip_rectangle(&viewevent_redraw.redraw_context);
 
-                if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+                if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
                     wimp_more = 0;
             }
         }
         else
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
+        {
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
+        }
 
     } while(PANE_ID_START != pane_id);
 }
@@ -3041,7 +3048,7 @@ host_update(
     P_HOST_XFORM p_host_xform;
     P_PROC_EVENT p_proc_event;
     VIEWEVENT_REDRAW viewevent_redraw;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more = 0;
 
     UNREFERENCED_PARAMETER_InVal_(redraw_flags);
@@ -3104,42 +3111,44 @@ host_update(
 
     for(i = 0; i <= 1; ++i)
     {
-        redraw_window.window_handle = p_view->edge[index[i]].hwnd;
+        redraw_window_block.window_handle = p_view->edge[index[i]].hwnd;
 
-        if(redraw_window.window_handle)
+        if(HOST_WND_NONE == redraw_window_block.window_handle)
+            continue;
+
         {
-            {
-            GDI_RECT gdi_rect;
-            window_rect_from_view_rect(&gdi_rect, p_docu, p_view_rect, p_rect_flags, p_host_xform);
-            redraw_window.visible_area.xmin = gdi_rect.tl.x;
-            redraw_window.visible_area.ymin = gdi_rect.br.y;
-            redraw_window.visible_area.xmax = gdi_rect.br.x;
-            redraw_window.visible_area.ymax = gdi_rect.tl.y;
-            } /*block*/
+        GDI_RECT gdi_rect;
+        window_rect_from_view_rect(&gdi_rect, p_docu, p_view_rect, p_rect_flags, p_host_xform);
+        redraw_window_block.visible_area.xmin = gdi_rect.tl.x;
+        redraw_window_block.visible_area.ymin = gdi_rect.br.y;
+        redraw_window_block.visible_area.xmax = gdi_rect.br.x;
+        redraw_window_block.visible_area.ymax = gdi_rect.tl.y;
+        } /*block*/
 
-            if(redraw_flags.update_now)
-            {
-                update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, redraw_window.window_handle, redraw_flags);
+        if(redraw_flags.update_now)
+        {
+            update_common_pre_loop(p_docu, p_view, &viewevent_redraw, p_host_xform, redraw_window_block.window_handle, redraw_flags);
 
-                if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+            if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
+                wimp_more = 0;
+
+            while(0 != wimp_more)
+            {
+                update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window_block);
+
+                threaded_through_redraw = TRUE;
+                (* p_proc_event) (p_docu, T5_EVENT_REDRAW, &viewevent_redraw);
+                threaded_through_redraw = FALSE;
+
+                host_restore_clip_rectangle(&viewevent_redraw.redraw_context);
+
+                if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
                     wimp_more = 0;
-
-                while(0 != wimp_more)
-                {
-                    update_common_in_loop(p_docu, p_view, &viewevent_redraw, &redraw_window);
-
-                    threaded_through_redraw = TRUE;
-                    (* p_proc_event) (p_docu, T5_EVENT_REDRAW, &viewevent_redraw);
-                    threaded_through_redraw = FALSE;
-
-                    host_restore_clip_rectangle(&viewevent_redraw.redraw_context);
-
-                    if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
-                        wimp_more = 0;
-                }
             }
-            else
-                void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
+        }
+        else
+        {
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
         }
     }
 }
@@ -3152,28 +3161,30 @@ host_update_fast_continue(
 {
     const P_REDRAW_CONTEXT p_redraw_context = &p_viewevent_redraw->redraw_context;
     const P_VIEW p_view = p_viewevent_redraw->p_view;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     int wimp_more = 0;
     BOOL more;
 
     host_restore_clip_rectangle(p_redraw_context);
 
-    redraw_window.window_handle = p_redraw_context->riscos.hwnd;
+    redraw_window_block.window_handle = p_redraw_context->riscos.hwnd;
 
-    if(WrapOsErrorReporting(wimp_get_rectangle(&redraw_window, &wimp_more)))
+    if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
         wimp_more = 0;
 
-    more = (wimp_more != 0);  /* Don't just return more, cos its 0/-1 !!! */
+    more = (wimp_more != 0);  /* Don't just return wimp_more, cos its 0/-1 !!! */
 
     if(more)
-        update_common_in_loop(p_docu, p_view, p_viewevent_redraw, &redraw_window);
-    else
-        threaded_through_redraw = FALSE;
+    {
+        update_common_in_loop(p_docu, p_view, p_viewevent_redraw, &redraw_window_block);
+        return(TRUE);
+    }
 
-    if(!more)
-        host_paint_end(&p_viewevent_redraw->redraw_context);
+    threaded_through_redraw = FALSE;
 
-    return(more);
+    host_paint_end(&p_viewevent_redraw->redraw_context);
+
+    return(FALSE);
 }
 
 _Check_return_
@@ -3187,7 +3198,7 @@ host_update_fast_start(
 {
     const P_VIEW p_view = p_view_rect->p_view;
     PANE_ID pane_id = NUMPANE;
-    WimpRedrawWindowBlock redraw_window;
+    WimpRedrawWindowBlock redraw_window_block;
     BOOL more;
 
     UNREFERENCED_PARAMETER_InVal_(redraw_tag);
@@ -3198,36 +3209,36 @@ host_update_fast_start(
     {
     GDI_RECT gdi_rect;
     window_rect_from_view_rect(&gdi_rect, p_docu, p_view_rect, &rect_flags, &p_view->host_xform[XFORM_PANE]);
-    redraw_window.visible_area.xmin = gdi_rect.tl.x;
-    redraw_window.visible_area.ymin = gdi_rect.br.y;
-    redraw_window.visible_area.xmax = gdi_rect.br.x;
-    redraw_window.visible_area.ymax = gdi_rect.tl.y;
+    redraw_window_block.visible_area.xmin = gdi_rect.tl.x;
+    redraw_window_block.visible_area.ymin = gdi_rect.br.y;
+    redraw_window_block.visible_area.xmax = gdi_rect.br.x;
+    redraw_window_block.visible_area.ymax = gdi_rect.tl.y;
     } /*block*/
 
     /* mark all panes except cur_pane for update_later */
     do  {
         PANE_ID_DECR(pane_id);
 
-        redraw_window.window_handle = p_view->pane[pane_id].hwnd;
+        redraw_window_block.window_handle = p_view->pane[pane_id].hwnd;
 
-        if(redraw_window.window_handle)
-        {
+        if(HOST_WND_NONE == redraw_window_block.window_handle)
+            continue;
+
 #if FAST_UPDATE_CALLS_NOTELAYER
-            if(pane_id == p_view->cur_pane)
-                continue;
+        if(pane_id == p_view->cur_pane)
+            continue;
 #endif
 
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window.window_handle, &redraw_window.visible_area));
-        }
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(redraw_window_block.window_handle, &redraw_window_block.visible_area));
 
     } while(PANE_ID_START != pane_id);
 
     host_paint_start(&p_viewevent_redraw->redraw_context);
 
     /* do a fast update of the cur_pane (if any) */
-    redraw_window.window_handle = p_view->pane[p_view->cur_pane].hwnd;
+    redraw_window_block.window_handle = p_view->pane[p_view->cur_pane].hwnd;
 
-    if(redraw_window.window_handle)
+    if(HOST_WND_NONE != redraw_window_block.window_handle)
     {
         REDRAW_FLAGS redraw_flags;
         int wimp_more = 0;
@@ -3236,27 +3247,25 @@ host_update_fast_start(
         redraw_flags.show_content = TRUE;
         redraw_flags.show_selection = TRUE;
 
-        update_common_pre_loop(p_docu, p_view, p_viewevent_redraw, &p_view->host_xform[XFORM_PANE], redraw_window.window_handle, redraw_flags);
+        update_common_pre_loop(p_docu, p_view, p_viewevent_redraw, &p_view->host_xform[XFORM_PANE], redraw_window_block.window_handle, redraw_flags);
 
-        if(WrapOsErrorReporting(wimp_update_window(&redraw_window, &wimp_more)))
+        if(NULL != WrapOsErrorReporting(wimp_update_window(&redraw_window_block, &wimp_more)))
             wimp_more = 0;
 
-        more = (wimp_more != 0); /* Don't just return more, 'cos its 0 or -1 !!! */
+        more = (wimp_more != 0); /* Don't just return wimp_more, 'cos its 0 or -1 !!! */
 
         if(more)
         {
             threaded_through_redraw = TRUE;
-            update_common_in_loop(p_docu, p_view, p_viewevent_redraw, &redraw_window);
-            threaded_through_redraw = FALSE;
+            update_common_in_loop(p_docu, p_view, p_viewevent_redraw, &redraw_window_block);
+            threaded_through_redraw = FALSE; /* SKS is somewhat suspicious of this */
+            return(TRUE);
         }
     }
-    else
-        more = FALSE;
 
-    if(!more)
-        host_paint_end(&p_viewevent_redraw->redraw_context);
+    host_paint_end(&p_viewevent_redraw->redraw_context);
 
-    return(more);
+    return(FALSE);
 }
 
 extern void
@@ -3643,6 +3652,7 @@ filer_launch(
 
     consume_int(snprintf(cmdbuffer, elemof32(cmdbuffer), "Filer_Run %s", filename));
 
+    report_output(cmdbuffer);
     (void) _kernel_oscli(cmdbuffer);
 }
 
@@ -3659,6 +3669,7 @@ filer_opendir(
     consume_int(snprintf(cmdbuffer, elemof32(cmdbuffer), "Filer_OpenDir %.*s", (leafname - filename) - 1, filename));
 
     /* which will pop up ca. 0.5 seconds later ... */
+    report_output(cmdbuffer);
     (void) _kernel_oscli(cmdbuffer);
 }
 
@@ -3676,24 +3687,43 @@ make_var_name(
 }
 
 extern void
-host_initialise_file_path(void)
+host_initialise_file_paths(void)
 {
     TCHARZ var_name[BUF_MAX_PATHSTRING];
-    TCHARZ resource_path[BUF_MAX_PATHSTRING * 3];
+    TCHARZ resources_path[BUF_MAX_PATHSTRING * 3];
 
-    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$Path"), resource_path, elemof32(resource_path)))
+    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "Res$Path"), resources_path, elemof32(resources_path)))
     {
-        trace_2(TRACE_APP_SKEL, "var=%s, path=%s", report_tstr(var_name), report_tstr(resource_path));
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_STANDARD, report_tstr(resource_path));
-        status_assert(file_path_set(resource_path, FILE_PATH_STANDARD));
+        trace_2(TRACE_APP_SKEL, "var=%s, path=%s", report_tstr(var_name), report_tstr(resources_path));
+        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_RESOURCES, report_tstr(resources_path));
+        status_assert(file_path_set(resources_path, FILE_PATH_RESOURCES));
+    }
+
+    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$Path"), resources_path, elemof32(resources_path)))
+    {
+        trace_2(TRACE_APP_SKEL, "var=%s, path=%s", report_tstr(var_name), report_tstr(resources_path));
+        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_STANDARD, report_tstr(resources_path));
+        status_assert(file_path_set(resources_path, FILE_PATH_STANDARD));
     }
 }
 
 _Check_return_
-static STATUS
+extern STATUS
 ho_help_contents(
     _In_z_      PCTSTR filename)
 {
+    TCHARZ help_filename[BUF_MAX_PATHSTRING];
+
+    reportf("ho_help_contents(%s)", filename);
+
+    if(CH_NULL == filename[0])
+    {
+        tstr_xstrkpy(help_filename, elemof32(help_filename), TEXT("<"));
+        tstr_xstrkat(help_filename, elemof32(help_filename), product_id());
+        tstr_xstrkat(help_filename, elemof32(help_filename), TEXT("$Dir>.!Help"));
+        filename = help_filename;
+    }
+
     filer_launch(filename);
     return(STATUS_OK);
 }
@@ -3706,13 +3736,15 @@ ho_help_url(
     STATUS status = STATUS_OK;
     char tempstr[1024];
 
-    if( (NULL == _kernel_getenv("MusicMan$acornuri", tempstr, elemof32(tempstr)-1)) &&
-        (0 == /*"C"*/strcmp(tempstr, "TRUE")) )
+    if( (NULL == _kernel_getenv("Alias$Open_URI_http", tempstr, elemof32(tempstr)-1)) &&
+        (CH_NULL != tempstr[0]) )
     {
-        if( (NULL == _kernel_getenv("Alias$Open_URI_http", tempstr, elemof32(tempstr)-1)) &&
-            (CH_NULL != tempstr[0]) )
+       _kernel_swi_regs rs;
+        rs.r[0] = 0;
+        if( (NULL == _kernel_swi(0x4E380 /*URI_Version*/, &rs, &rs)) )
         {
             consume_int(snprintf(tempstr, elemof32(tempstr), "URIdispatch %s", url));
+            reportf("StartTask %s", tempstr);
             void_WrapOsErrorReporting(wimp_start_task(tempstr, NULL));
             return(status);
         }
@@ -3722,6 +3754,7 @@ ho_help_url(
         (CH_NULL != tempstr[0]) )
     {
         consume_int(snprintf(tempstr, elemof32(tempstr), "URLOpen_HTTP %s", url));
+        reportf("StartTask %s", tempstr);
         void_WrapOsErrorReporting(wimp_start_task(tempstr, NULL));
         return(status);
     }
@@ -3744,6 +3777,106 @@ T5_CMD_PROTO(extern, t5_cmd_help)
     case T5_CMD_HELP_URL:
         return(ho_help_url(p_args[0].val.tstr));
     }
+}
+
+#if defined(USE_GLOBAL_CLIPBOARD)
+
+DOCNO  g_global_clipboard_owning_docno  = DOCNO_NONE;
+VIEWNO g_global_clipboard_owning_viewno = VIEWNO_NONE;
+
+_Check_return_
+extern BOOL
+host_acquire_global_clipboard(
+    _DocuRef_   PC_DOCU p_docu,
+    _ViewRef_   PC_VIEW p_view,
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DISPOSE p_proc_global_clipboard_data_dispose,
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST p_proc_global_clipboard_data_DataRequest)
+{
+    const DOCNO acquiring_docno = docno_from_p_docu(p_docu);
+    const VIEWNO acquiring_viewno = viewno_from_p_view_fn(p_view);
+
+    trace_2(TRACE_RISCOS_HOST, TEXT("host_acquire_global_clipboard(docno=%d, viewno=%d)"), acquiring_docno, acquiring_viewno);
+
+#if CHECKING
+    if(!IS_VIEW_NONE(p_view))
+    {
+        assert(p_view->docno == acquiring_docno);
+    }
+#endif
+
+    winx_claim_global_clipboard(p_proc_global_clipboard_data_dispose, p_proc_global_clipboard_data_DataRequest);
+
+    g_global_clipboard_owning_docno  = acquiring_docno;
+    g_global_clipboard_owning_viewno = acquiring_viewno;
+    trace_2(TRACE_RISCOS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=%d, viewno:=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+
+    return(TRUE);
+}
+
+extern void
+host_release_global_clipboard(
+    _InVal_     BOOL render_if_acquired)
+{
+    trace_1(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
+    trace_2(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+
+    UNREFERENCED_PARAMETER_InVal_(render_if_acquired); /* no deferred rendering for close on RISC OS */
+
+    if(DOCNO_NONE != g_global_clipboard_owning_docno)
+    {
+#if 0
+        P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
+        P_VIEW global_clipboard_owning_p_view = p_view_from_viewno(global_clipboard_owning_p_docu, g_global_clipboard_owning_viewno);
+
+        /* nothing to see here */
+#endif
+    }
+
+    g_global_clipboard_owning_docno  = DOCNO_NONE;
+    g_global_clipboard_owning_viewno = VIEWNO_NONE;
+    trace_0(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
+}
+
+#endif /* USE_GLOBAL_CLIPBOARD */
+
+_Check_return_
+extern U32
+myrand(
+    _InoutRef_  P_MYRAND_SEED p_myrand_seed,
+    _InVal_     U32 n /*excl*/,
+    _InVal_     U32 bias);
+
+static MYRAND_SEED myrand_seed = {0x12345678, 1};
+
+_Check_return_
+extern U32
+host_rand_between(
+    _InVal_ U32 lo /*incl*/,
+    _InVal_ U32 hi /*excl*/) /* NB NOT like RANDBETWEEN() */
+{
+#if 1
+    U32 res = lo;
+
+    if(hi > lo)
+        res = myrand(&myrand_seed, hi - lo, lo);
+
+    /*reportf("hrb[%u,%u] %u", lo, hi, res);*/
+    return(res);
+#else
+    /* fallback implementation using standard library */
+    U32 res = lo;
+
+    if(hi > lo)
+    {
+        const U32 n = hi - lo;
+        const U32 r = (U32) rand();
+        assert(n < (U32) RAND_MAX);
+        res = lo + ((r & (U32) RAND_MAX) % n);
+    }
+
+    /*reportf("hrb[%u,%u] %u", lo, hi, res);*/
+    return(res);
+#endif
 }
 
 #endif /* RISCOS */

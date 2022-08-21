@@ -7,19 +7,18 @@
 pushd %~dp0
 IF NOT EXIST BLDCD2.BAT EXIT
 
-rmdir /s /q                                fwin-21002
-mkdir                                      fwin-21002\
+rmdir /s /q                                            fwin-22000
+mkdir                                                  fwin-22000\
 @if errorlevel 1 goto failed
 @
 @rem copy newly built stuff ie. the Setup EXE
-xcopy .\InnoSetup\*.exe                    fwin-21002\
+xcopy .\InnoSetup\*.exe                                fwin-22000\
 @if errorlevel 1 goto failed
 @
-@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm         fwin-21002\RelNotes.htm
+@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm        fwin-22000\RelNotes.htm
 @if errorlevel 1 goto failed
 @
-mkdir                                      fwin-21002\GSGuide\
-@echo D | xcopy /s ..\..\..\..\docs\GSGuide\windows     fwin-21002\GSGuide\Windows
+@echo D | xcopy /s ..\..\..\..\docs\GSGuide\windows    fwin-22000\StartGuide\
 @if errorlevel 1 goto failed
 @
 @explorer .

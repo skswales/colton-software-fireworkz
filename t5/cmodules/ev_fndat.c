@@ -44,11 +44,12 @@ PROC_EXEC_PROTO(c_age)
     {
         ev_date.date = args[0]->arg.ev_date.date - args[1]->arg.ev_date.date;
 
-        { /* here 31/12/2015 00:00:00 == 31/12/2015 */
-        EV_DATE_TIME time_1 = (EV_TIME_NULL != args[0]->arg.ev_date.time) ? args[0]->arg.ev_date.time : 0;
-        EV_DATE_TIME time_2 = (EV_TIME_NULL != args[1]->arg.ev_date.time) ? args[1]->arg.ev_date.time : 0;
-        ev_date.time = time_1 - time_2;
-        } /*block*/
+        if((EV_TIME_NULL != args[0]->arg.ev_date.time) || (EV_TIME_NULL != args[1]->arg.ev_date.time))
+        {   /* here 31/12/2015 00:00:00 == 31/12/2015 */
+            EV_DATE_TIME time_1 = (EV_TIME_NULL != args[0]->arg.ev_date.time) ? args[0]->arg.ev_date.time : 0;
+            EV_DATE_TIME time_2 = (EV_TIME_NULL != args[1]->arg.ev_date.time) ? args[1]->arg.ev_date.time : 0;
+            ev_date.time = time_1 - time_2;
+        }
 
         ss_date_normalise(&ev_date);
     }

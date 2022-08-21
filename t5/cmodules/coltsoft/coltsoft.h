@@ -1317,36 +1317,36 @@ typedef int align_t;
 
 /* useful division a/b macros to round result to +/- infinity rather than towards zero (NB watch out for multiple-evaluation side-effects) */
 
-#define div_round_ceil_u(a, b) ( \
+#define idiv_ceil_u(a, b) ( \
     ((a) + (b) - 1) / (b) ) /* for unsigned a */
 
-#define div_round_ceil(a, b) ( \
+#define idiv_ceil(a, b) ( \
     (((a) >  0) ? ((a) + (b) - 1) : (a)) / (b) )
 
-#define div_round_floor_u(a, b) ( \
+#define idiv_floor_u(a, b) ( \
     (a) / (b) ) /* for unsigned a */
 
-#define div_round_floor(a, b) ( \
+#define idiv_floor(a, b) ( \
     (((a) >= 0) ? (a) : ((a) - (b) + 1)) / (b) )
 
 /* functions for where it can't be avoided */
 
 _Check_return_
 static inline S32
-div_round_ceil_fn(
+idiv_ceil_fn(
     _InVal_     S32 a,
     _InVal_     S32 b)
 {
-    return(div_round_ceil(a, b));
+    return(idiv_ceil(a, b));
 }
 
 _Check_return_
 static inline S32
-div_round_floor_fn(
+idiv_floor_fn(
     _InVal_     S32 a,
     _InVal_     S32 b)
 {
-    return(div_round_floor(a, b));
+    return(idiv_floor(a, b));
 }
 
 #if !defined(UNREFERENCED_PARAMETER)

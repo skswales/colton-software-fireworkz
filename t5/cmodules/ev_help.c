@@ -1256,7 +1256,7 @@ name_deref(
 
         if(!p_ev_name->flags.undefined)
         {
-            got_def = 1;
+            got_def = TRUE;
             status_assert(ss_data_resource_copy(p_ev_data, &p_ev_name->def_data));
         }
     }
@@ -1491,12 +1491,14 @@ two_nums_divide_try(
     switch(two_nums_type_match(p_ev_data1, p_ev_data2, FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
     {
     case TWO_INTS:
-        if(p_ev_data2->arg.integer == 0)
+        if(0 == p_ev_data2->arg.integer)
             ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
         else
         {
-            if(0 == (p_ev_data1->arg.integer % p_ev_data2->arg.integer))
-                ev_data_set_integer(p_ev_data_res, p_ev_data1->arg.integer / p_ev_data2->arg.integer);
+            const div_t d = div((int) p_ev_data1->arg.integer, (int) p_ev_data2->arg.integer);
+
+            if(0 == d.rem)
+                ev_data_set_integer(p_ev_data_res, d.quot);
             else
                 ev_data_set_real(p_ev_data_res, (F64) p_ev_data1->arg.integer / p_ev_data2->arg.integer);
         }
@@ -1505,51 +1507,11 @@ two_nums_divide_try(
         break;
 
     case TWO_REALS:
-        if(p_ev_data2->arg.fp == 0.0)
+        if(0.0 == p_ev_data2->arg.fp)
             ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
         else
             ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp / p_ev_data2->arg.fp);
 
-        did_op = TRUE;
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case TWO_MIXED:
-#endif
-        if(propogate_errors)
-            did_op = two_nums_propogate_errors(p_ev_data_res, p_ev_data1, p_ev_data2);
-        break;
-    }
-
-    return(did_op);
-}
-
-/******************************************************************************
-*
-* p_ev_data_res = p_ev_data1 - p_ev_data2
-*
-******************************************************************************/
-
-_Check_return_ _Success_(return)
-extern BOOL
-two_nums_subtract_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors)
-{
-    BOOL did_op = FALSE;
-
-    switch(two_nums_type_match(p_ev_data1, p_ev_data2, TRUE))
-    {
-    case TWO_INTS:
-        ev_data_set_integer(p_ev_data_res, p_ev_data1->arg.integer - p_ev_data2->arg.integer);
-        did_op = TRUE;
-        break;
-
-    case TWO_REALS:
-        ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp - p_ev_data2->arg.fp);
         did_op = TRUE;
         break;
 
@@ -1590,6 +1552,46 @@ two_nums_multiply_try(
 
     case TWO_REALS:
         ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp * p_ev_data2->arg.fp);
+        did_op = TRUE;
+        break;
+
+    default: default_unhandled();
+#if CHECKING
+    case TWO_MIXED:
+#endif
+        if(propogate_errors)
+            did_op = two_nums_propogate_errors(p_ev_data_res, p_ev_data1, p_ev_data2);
+        break;
+    }
+
+    return(did_op);
+}
+
+/******************************************************************************
+*
+* p_ev_data_res = p_ev_data1 - p_ev_data2
+*
+******************************************************************************/
+
+_Check_return_ _Success_(return)
+extern BOOL
+two_nums_subtract_try(
+    _OutRef_    P_EV_DATA p_ev_data_res,
+    _InoutRef_  P_EV_DATA p_ev_data1,
+    _InoutRef_  P_EV_DATA p_ev_data2,
+    _InVal_     BOOL propogate_errors)
+{
+    BOOL did_op = FALSE;
+
+    switch(two_nums_type_match(p_ev_data1, p_ev_data2, TRUE))
+    {
+    case TWO_INTS:
+        ev_data_set_integer(p_ev_data_res, p_ev_data1->arg.integer - p_ev_data2->arg.integer);
+        did_op = TRUE;
+        break;
+
+    case TWO_REALS:
+        ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp - p_ev_data2->arg.fp);
         did_op = TRUE;
         break;
 

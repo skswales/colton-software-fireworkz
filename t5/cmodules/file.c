@@ -669,14 +669,15 @@ file_gets(
     U32 usable_bufsize;
     U32 count = 0;
 
-    assert(bufsize);
+    if(bufsize < 2)
+    {
+        assert(bufsize >= 2);
+        return(STATUS_OK);
+    }
 
     usable_bufsize = bufsize - 1; /* always CH_NULL-terminated, so leave space */
 
     *buffer = CH_NULL;
-
-    if(usable_bufsize < 1)
-        return(STATUS_OK);
 
     if(!file_handle || (file_handle->magic != _FILE_MAGIC_WORD))
         return(create_error(FILE_ERR_BADHANDLE));

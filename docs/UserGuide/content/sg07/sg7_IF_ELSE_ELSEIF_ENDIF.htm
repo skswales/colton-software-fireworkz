@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>IF, ELSE, ELSEIF, ENDIF</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="IF" />
+        <param name="Keyword" value="ELSE" />
+        <param name="Keyword" value="ELSEIF" />
+        <param name="Keyword" value="ENDIF" />
+        <param name="Keyword" value="Functions, Custom control, IF" />
+        <param name="Keyword" value="Functions, Custom control, ELSE" />
+        <param name="Keyword" value="Functions, Custom control, ELSEIF" />
+        <param name="Keyword" value="Functions, Custom control, ENDIF" />
+        <param name="Keyword" value="Custom functions, control statements, conditional execution" />
+    </object>
+
+    <h1><a name="IF_ELSE_ELSEIF_ENDIF" id="IF_ELSE_ELSEIF_ENDIF"></a>IF, ELSE, ELSEIF, ENDIF</h1>
+
+    <p>Conditional execution of statements in a custom function.</p>
+
+    <p class="csg-function-subheading">Syntax #1:</p>
+
+    <p class="csg-function-declaration">IF(<span class="csg-function-parameter">parameter</span>)</p>
+
+    <p>
+        When <code>IF</code> has only a single parameter,
+        it signals the start of an <code>IF &hellip; ENDIF</code> sequence.
+        The parameter is a condition:
+        if it is <code>TRUE</code>, execution follows on the following line;
+        if it is <code>FALSE</code>, execution continues after the next <code>ELSE</code>, <code>ELSEIF</code> or <code>ENDIF</code> statement that follows.
+        For example:
+    </p>
+
+<pre class="csg-sample-indent">
+IF(@parameter_1 &gt; 10)
+  SET_VALUE(C10, 1)
+ELSEIF(@parameter_1 &gt; 8)
+  SET_VALUE(C12, 1)
+ELSEIF(@parameter_1 &gt; 6)
+  SET_VALUE(C14, 1)
+ELSE
+  SET_VALUE(C16, 1)
+ENDIF
+</pre>
+
+    <p>
+        <code>ENDIF</code> marks the end of the sequence,
+        <code>ELSEIF</code> marks the beginning of a second condition, and
+        <code>ELSE</code> a statement to be executed if the preceding conditions evaluated to <code>FALSE</code>.
+    </p>
+
+    <p>
+        You can nest <code>IF</code> statements inside each other,
+        and it is advisable to use spaces to make <code>IF</code> statements more readable:
+    </p>
+
+<pre class="csg-sample-indent">
+IF(A15 &gt; B15)
+  IF(TYPE(DEREF(C16))=&quot;error&quot;)
+    RESULT(&quot;Bad value&quot;)
+  ENDIF
+  C16+4+SUM(E1:E10)
+ENDIF
+</pre>
+
+    <p class="csg-function-subheading"><br />Syntax #2:</p>
+    <p class="csg-function-declaration">
+        IF(<span class="csg-function-parameter">parameter_1</span>,
+        <span class="csg-function-parameter">parameter_2</span>
+        {,&nbsp;<span class="csg-function-parameter">parameter_3</span>})
+    </p>
+    <p>
+        If the condition expressed in <span class="csg-function-parameter">parameter_1</span> is <code>TRUE</code>,
+        then <span class="csg-function-parameter">parameter_2</span> is executed.
+        If it is <code>FALSE</code>, execution continues or if a third parameter is supplied, that is executed.
+        You should not use an <code>ENDIF</code> statement to mark the end of the sequence.
+    </p>
+
+    <p class="csg-function-subheading">Examples:</p>
+    <pre class="csg-sample-indent">IF(B3 &gt; 7, RESULT(C3))</pre>
+    <pre class="csg-sample-indent">IF(B5 = 2,, BREAK)</pre>
+    <pre class="csg-sample-indent">IF(@num &lt;= 0, RESULT(1), RESULT(@num))</pre>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg7_GOTO.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="sg7_custom_function_control_statements.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg7_REPEAT_UNTIL.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

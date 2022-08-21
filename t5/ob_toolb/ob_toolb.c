@@ -1355,7 +1355,7 @@ paint_status_line_in_toolbar_riscos(
             HOST_FONT host_font_redraw;
             HOST_FONT_SPEC host_font_spec;
             PIXIT height = pixit_rect.br.y - pixit_rect.tl.y;
-            PIXIT base_line = div_round_ceil_u((height * 3), 4);
+            PIXIT base_line = idiv_ceil_u((height * 3), 4);
             status_assert(fontmap_host_font_spec_from_font_spec(&host_font_spec, &p_status_line_style->font_spec, FALSE));
             host_font_redraw = host_font_find(&host_font_spec, p_redraw_context);
             host_font_spec_dispose(&host_font_spec);
@@ -2119,7 +2119,7 @@ status_line_view_new(
         SIZE PixelsPerInch;
         host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-        host_font_spec.size_y = div_round_floor_u(host_font_spec.size_y * PixelsPerInch.cy, PIXITS_PER_INCH);
+        host_font_spec.size_y = idiv_floor_u(host_font_spec.size_y * PixelsPerInch.cy, PIXITS_PER_INCH);
         } /*block*/
 
         host_font_formatting = host_font_find(&host_font_spec, P_REDRAW_CONTEXT_NONE);
@@ -2588,7 +2588,7 @@ toolbar_view_new(
     SIZE PixelsPerInch;
     host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    toolbar_height_pixels = div_round_ceil_u(cur_point.y * PixelsPerInch.cy, PIXITS_PER_INCH);
+    toolbar_height_pixels = idiv_ceil_u(cur_point.y * PixelsPerInch.cy, PIXITS_PER_INCH);
     } /*block*/
 #endif
 

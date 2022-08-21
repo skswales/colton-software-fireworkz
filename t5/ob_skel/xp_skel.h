@@ -1925,17 +1925,21 @@ other structure & code exports
 host specific window and event routines
 */
 
-extern const PCTSTR leafname_helpfile_tstr;
-
 extern const UINT g_product_id;
 
 extern const PCTSTR dll_store;
 
-#if WINDOWS
+#if RISCOS
+
+extern const PCTSTR prefix_uri_userguide_content_tstr;
+
+#elif WINDOWS
 
 extern const PCTSTR key_program;
 
 extern const PCTSTR atom_program;
+
+extern const PCTSTR leafname_helpfile_tstr;
 
 extern UINT g_nColours;
 
@@ -2503,6 +2507,12 @@ host_longjmp_to_event_loop(void);
 extern void
 host_bleep(void);
 
+_Check_return_
+extern U32
+host_rand_between(
+    _InVal_ U32 lo /*incl*/,
+    _InVal_ U32 hi /*excl*/); /* NB NOT like RANDBETWEEN() */
+
 extern void
 host_read_default_paper_details(
     P_PAPER p_paper);
@@ -2864,6 +2874,12 @@ frame_windows_set_margins(
     _ViewRef_   P_VIEW p_view);
 #endif
 
+#if RISCOS
+#define riscos_claim_caret() winx_claim_caret()
+#else
+#define riscos_claim_caret() /*EMPTY*/
+#endif
+
 #define HIC_PURGE 0x01
 #define HIC_BG    0x02
 #define HIC_FG    0x04
@@ -3165,6 +3181,56 @@ host_cache_view_info(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view);
 
+#if defined(USE_GLOBAL_CLIPBOARD)
+
+extern DOCNO  g_global_clipboard_owning_docno;
+extern VIEWNO g_global_clipboard_owning_viewno;
+
+extern void
+host_release_global_clipboard(
+    _InVal_     BOOL render_if_acquired);
+
+#if RISCOS
+
+typedef void (* P_PROC_GLOBAL_CLIPBOARD_DATA_DISPOSE) (void);
+
+typedef void (* P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST) (
+    const void * const p_wimp_message /*DataRequest*/);
+
+_Check_return_
+extern BOOL
+host_acquire_global_clipboard(
+    _DocuRef_   PC_DOCU p_docu,
+    _ViewRef_   PC_VIEW p_view,
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DISPOSE p_proc_global_clipboard_data_dispose,
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST p_proc_global_clipboard_data_DataRequest);
+
+extern void
+host_paste_from_global_clipboard(
+    _HwndRef_   HOST_WND destination_window_handle,
+    _InVal_     int destination_icon_handle,
+    _InVal_     GDI_COORD destination_x,
+    _InVal_     GDI_COORD destination_y,
+    _In_reads_(n_filetypes) PC_T5_FILETYPE p_t5_filetypes,
+    _InVal_     U32 n_filetypes);
+
+extern void
+host_paste_from_global_clipboard_at_caret(
+    _In_reads_(n_filetypes) PC_T5_FILETYPE p_t5_filetypes,
+    _InVal_     U32 n_filetypes);
+
+#elif WINDOWS
+
+_Check_return_
+extern BOOL
+host_acquire_global_clipboard(
+    _DocuRef_   PC_DOCU p_docu,
+    _ViewRef_   PC_VIEW p_view);
+
+#endif /* OS */
+
+#endif /* USE_GLOBAL_CLIPBOARD */
+
 #if WINDOWS
 
 extern HBITMAP
@@ -3236,19 +3302,9 @@ host_set_tracking_for_window(
 
 _Check_return_
 extern BOOL
-host_acquire_global_clipboard(
-    _DocuRef_   PC_DOCU p_docu,
-    _ViewRef_   PC_VIEW p_view);
-
-_Check_return_
-extern BOOL
 host_open_global_clipboard(
     _DocuRef_   PC_DOCU p_docu,
     _ViewRef_   PC_VIEW p_view);
-
-extern void
-host_release_global_clipboard(
-    _InVal_     BOOL render_if_acquired);
 
 #endif /* USE_GLOBAL_CLIPBOARD */
 
@@ -4064,11 +4120,10 @@ exported routines
 
 _Check_return_
 extern KMAP_CODE
+kmap_convert(
 #if RISCOS
-ri_kmap_convert(
-    _InVal_     S32 chcode /*from Wimp_EKeyPressed*/);
+    _InVal_     int ch_code /*from Key_Pressed*/);
 #elif WINDOWS
-ri_kmap_convert(
     _InVal_     UINT vk /* from WM_KEYthing */);
 #endif
 
@@ -4937,6 +4992,11 @@ extern void
 maeve_service_event_exit2(void);
 
 #if RISCOS
+
+_Check_return_
+extern STATUS
+ho_help_contents(
+    _In_z_      PCTSTR filename);
 
 _Check_return_
 extern STATUS
@@ -8158,6 +8218,14 @@ extern STATUS
 save_foreign_to_array_from_docu_area(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_opt_ P_ARRAY_HANDLE p_array_handle,
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InRef_     PC_DOCU_AREA p_docu_area);
+
+_Check_return_
+extern STATUS
+save_foreign_to_file_from_docu_area(
+    _DocuRef_   P_DOCU p_docu,
+    _In_z_      PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype,
     _InRef_     PC_DOCU_AREA p_docu_area);
 
@@ -11400,7 +11468,6 @@ typedef struct DOCU_FLAGS
     BOOL read_only;
 
     BOOL is_current;                /* should have caret */
-    BOOL has_input_focus;           /* caret is in one of pane windows */
 
     BOOL new_extent;                /* set new extent */
     BOOL x_extent_changed;          /* x extent needs recalculating */
@@ -12510,7 +12577,7 @@ t5_cmd_quit(
     _DocuRef_   P_DOCU p_docu);
 
 /*
-exports from ui_save.c
+exports from ff_save.c
 */
 
 typedef struct INSTALLED_SAVE_OBJECT
@@ -12522,10 +12589,14 @@ typedef struct INSTALLED_SAVE_OBJECT
     UINT uClipboardFormat;
 #endif
 }
-INSTALLED_SAVE_OBJECT, * P_INSTALLED_SAVE_OBJECT;
+INSTALLED_SAVE_OBJECT, * P_INSTALLED_SAVE_OBJECT; typedef const INSTALLED_SAVE_OBJECT * PC_INSTALLED_SAVE_OBJECT;
 
 extern ARRAY_HANDLE
-installed_save_objects_handle; /* [] of INSTALLED_SAVE_OBJECT */
+g_installed_save_objects_handle; /* [] of INSTALLED_SAVE_OBJECT */
+
+/*
+exports from ui_save.c
+*/
 
 extern void
 style_name_from_marked_area(

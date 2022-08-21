@@ -143,10 +143,6 @@ updatepoolitems(
 static data
 */
 
-#ifdef LIST_CACHE
-static MYRAND_SEED myrand_seed = {0x12345678, 1};
-#endif
-
 /******************************************************************************
 *
 * create an item for a particular list and item of a given size
@@ -555,7 +551,7 @@ list_gotoitem_opt(
 
     if(n_cache)
     {
-        ARRAY_INDEX replace_entry = myrand(&myrand_seed, n_cache);
+        ARRAY_INDEX replace_entry = host_rand_between(0, n_cache);
         P_LIST_CACHE_ENTRY p_list_cache_entry;
 
         p_list_cache_entry = array_ptr(&p_list_block->h_list_cache, LIST_CACHE_ENTRY, replace_entry);

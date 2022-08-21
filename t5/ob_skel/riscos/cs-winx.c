@@ -66,6 +66,12 @@ WINX_CHILD_WINDOW, * P_WINX_CHILD_WINDOW;
 
 static struct WINX_STATICS
 {
+    BOOL owns_caret;
+
+    BOOL owns_global_clipboard;
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DISPOSE p_proc_global_clipboard_data_dispose;
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST p_proc_global_clipboard_data_DataRequest;
+
     WimpCaret deferred_caret;
 
     wimp_w drag_window_handle;
@@ -103,27 +109,27 @@ winx_changedtitle(
     WimpGetWindowStateBlock window_state;
 
     window_state.window_handle = window_handle;
-    if(WrapOsErrorReporting(wimp_get_window_state(&window_state)))
+    if(NULL != WrapOsErrorReporting(wimp_get_window_state(&window_state)))
         return;
 
-    if(WimpWindow_Open & window_state.flags)
+    if(0 == (WimpWindow_Open & window_state.flags))
+        return;
+
+    if(g_current_wm_version < 380)
     {
-        if(g_current_wm_version >= 380)
-        {   /* use more efficient method */
-            void_WrapOsErrorReporting(wimp_force_redraw(window_handle, 0x4B534154 /*TASK*/, 3 /*Title Bar*/, 0, 0));
-        }
-        else
-        {
-            const int dy = host_modevar_cache_current.dy;
-            BBox bbox;
-            bbox.xmin = window_state.visible_area.xmin;
-            bbox.ymin = window_state.visible_area.ymax + dy; /* title bar contents starts one raster up */
-            bbox.xmax = window_state.visible_area.xmax;
-            bbox.ymax = bbox.ymin + wimp_win_title_height(dy) - 2*dy;
-            trace_1(TRACE_RISCOS_HOST, TEXT("%s: forcing global redraw of inside of title bar area"), __Tfunc__);
-            void_WrapOsErrorReporting(wimp_force_redraw_BBox(-1 /* entire screen */, &bbox));
-        }
+        const int dy = host_modevar_cache_current.dy;
+        BBox bbox;
+        bbox.xmin = window_state.visible_area.xmin;
+        bbox.ymin = window_state.visible_area.ymax + dy; /* title bar contents starts one raster up */
+        bbox.xmax = window_state.visible_area.xmax;
+        bbox.ymax = bbox.ymin + wimp_win_title_height(dy) - 2*dy;
+        trace_1(TRACE_RISCOS_HOST, TEXT("%s: forcing global redraw of inside of title bar area"), __Tfunc__);
+        void_WrapOsErrorReporting(wimp_force_redraw_BBox(-1 /* entire screen */, &bbox));
+        return;
     }
+
+    /* use more efficient method */
+    void_WrapOsErrorReporting(wimp_force_redraw(window_handle, 0x4B534154 /*TASK*/, 3 /*Title Bar*/, 0, 0));
 }
 
 PROC_BSEARCH_PROTO(static, winx_compare, WINX_FIND_KEY, WINX_WINDOW)
@@ -288,6 +294,38 @@ winx_register_general_event_handler(
     return(winx_window_register(NULL_WIMP_W, BAD_WIMP_I, eventproc, handle,  NULL));
 }
 
+static void
+winx_claim_entity(
+    _InVal_     int bits)
+{
+    WimpMessage msg;
+    zero_struct(msg);
+    msg.hdr.size = sizeof32(msg.hdr) + 4; /* one word */
+  /*msg.hdr.my_ref = 0;*/ /* fresh msg */
+    msg.hdr.action_code = Wimp_MClaimEntity;
+    msg.data.words[0] = bits;
+    void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, 0 /*broadcast*/, BAD_WIMP_I, NULL));
+}
+
+extern void
+winx_claim_caret(void) /* and selection */
+{
+    if(winx_statics.owns_caret)
+        return;
+
+    winx_claim_entity((1 << 1) | (1 << 0)); /* claims both caret and selection */
+
+    winx_statics.owns_caret = TRUE;
+    reportf("owns_caret := TRUE");
+}
+
+_Check_return_
+extern BOOL
+winx_owns_caret(void) /* and selection */
+{
+    return(winx_statics.owns_caret);
+}
+
 /*
 position the caret but coping with not-yet-open windows
 */
@@ -315,17 +353,123 @@ winx_set_caret_position(
 {
     WimpGetWindowStateBlock window_state;
 
+    /* only set caret position if something in application has ensured that it is claimed already */
+    if(!winx_statics.owns_caret)
+        return(NULL);
+
     window_state.window_handle = caret->window_handle;
     if(NULL == wimp_get_window_state(&window_state))
-        if(!(WimpWindow_Open & window_state.flags))
+    {
+        if(0 == (WimpWindow_Open & window_state.flags))
         {
             winx_statics.deferred_caret = *caret;
             return(NULL);
         }
+    }
 
     winx_statics.deferred_caret.window_handle = 0;
 
     return(wimp_set_caret_position_block(caret));
+}
+
+static void
+winx_global_clipboard_data_dispose(void)
+{
+    if(NULL != winx_statics.p_proc_global_clipboard_data_dispose)
+    {
+        (* winx_statics.p_proc_global_clipboard_data_dispose) ();
+    }
+}
+
+extern void
+winx_claim_global_clipboard(
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DISPOSE p_proc_global_clipboard_data_dispose,
+    P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST p_proc_global_clipboard_data_DataRequest)
+{
+    if(winx_statics.owns_global_clipboard)
+    {
+        if(winx_statics.p_proc_global_clipboard_data_dispose != p_proc_global_clipboard_data_dispose)
+        {
+            winx_global_clipboard_data_dispose();
+
+        }
+
+        winx_statics.p_proc_global_clipboard_data_dispose = p_proc_global_clipboard_data_dispose;
+        winx_statics.p_proc_global_clipboard_data_DataRequest = p_proc_global_clipboard_data_DataRequest;
+        return;
+    }
+
+    winx_claim_entity(1 << 2); /* clipboard */
+
+    winx_statics.owns_global_clipboard = TRUE;
+    reportf("owns_global_clipboard := TRUE");
+
+    winx_statics.p_proc_global_clipboard_data_dispose = p_proc_global_clipboard_data_dispose;
+    winx_statics.p_proc_global_clipboard_data_DataRequest = p_proc_global_clipboard_data_DataRequest;
+}
+
+_Check_return_
+_Ret_maybenull_
+extern P_PROC_GLOBAL_CLIPBOARD_DATA_DATAREQUEST
+winx_global_clipboard_owner(void)
+{
+    return(winx_statics.owns_global_clipboard ? winx_statics.p_proc_global_clipboard_data_DataRequest : NULL);
+}
+
+extern void
+host_paste_from_global_clipboard(
+    _HwndRef_   HOST_WND destination_window_handle,
+    _InVal_     int destination_icon_handle,
+    _InVal_     GDI_COORD destination_x,
+    _InVal_     GDI_COORD destination_y,
+    _In_reads_(n_filetypes) PC_T5_FILETYPE p_t5_filetypes,
+    _InVal_     U32 n_filetypes)
+{
+    WimpMessage msg;
+    WimpDataRequestMessage * const p_wimp_data_request_message = (WimpDataRequestMessage *) &msg.data;
+    U32 i;
+
+    zero_struct(msg);
+    msg.hdr.size = sizeof32(msg);
+  /*msg.hdr.my_ref = 0;*/ /* fresh msg */
+    msg.hdr.action_code = Wimp_MDataRequest;
+
+    p_wimp_data_request_message->destination_window_handle = destination_window_handle;
+    p_wimp_data_request_message->destination_handle = destination_icon_handle;
+    p_wimp_data_request_message->destination_x = destination_x;
+    p_wimp_data_request_message->destination_y = destination_y;
+
+    p_wimp_data_request_message->flags = 1 << 2; /* send data from clipboard */
+
+    for(i = 0; i < n_filetypes; ++i)
+        p_wimp_data_request_message->type[i] = p_t5_filetypes[i];
+    p_wimp_data_request_message->type[i] = -1;
+    assert(i < elemof32(p_wimp_data_request_message->type));
+
+    reportf("host_paste_from_global_clipboard()");
+    void_WrapOsErrorReporting(wimp_send_message(Wimp_EUserMessage, &msg, 0 /*broadcast*/, BAD_WIMP_I, NULL));
+}
+
+extern void
+host_paste_from_global_clipboard_at_caret(
+    _In_reads_(n_filetypes) PC_T5_FILETYPE p_t5_filetypes,
+    _InVal_     U32 n_filetypes)
+{
+    WimpGetWindowStateBlock window_state;
+    WimpCaret caret;
+
+    if(NULL != winx_get_caret_position(&caret))
+        return;
+
+    window_state.window_handle = caret.window_handle;
+    if(NULL != wimp_get_window_state(&window_state))
+        return;
+
+    host_paste_from_global_clipboard(caret.window_handle,
+                                     caret.icon_handle,
+                                     window_state.visible_area.xmin + caret.xoffset,
+                                     window_state.visible_area.ymax + caret.yoffset,
+                                     p_t5_filetypes, n_filetypes);
 }
 
 _Check_return_
@@ -703,19 +847,24 @@ winx_default_event_handler(
 
     case Wimp_ERedrawWindow:
         {
-        WimpRedrawWindowBlock r;
+        WimpRedrawWindowBlock redraw_window_block;
         int wimp_more = 0;
+
         trace_2(TRACE_RISCOS_HOST, TEXT("%s: doing redraw for window ") UINTPTR_XTFMT, __Tfunc__, p_event_data->redraw_window_request.window_handle);
-        r.window_handle = p_event_data->redraw_window_request.window_handle;
-        if(!WrapOsErrorReporting(wimp_redraw_window(&r, &wimp_more)))
+
+        redraw_window_block.window_handle = p_event_data->redraw_window_request.window_handle;
+
+        if(NULL != WrapOsErrorReporting(wimp_redraw_window(&redraw_window_block, &wimp_more)))
+            wimp_more = 0;
+
+        while(0 != wimp_more)
         {
-            while(0 != wimp_more)
-            {
-                /* nothing to actually paint here */
-                if(WrapOsErrorReporting(wimp_get_rectangle(&r, &wimp_more)))
-                    wimp_more = 0;
-            }
+            /* nothing to actually paint here */
+
+            if(NULL != WrapOsErrorReporting(wimp_get_rectangle(&redraw_window_block, &wimp_more)))
+                wimp_more = 0;
         }
+
         break;
         }
 
@@ -782,7 +931,9 @@ winx_dispatch_event(
     case Wimp_EUserMessage:
     case Wimp_EUserMessageRecorded:
         {
-        const WimpMessage * const p_wimp_message = &p_event_data->user_message;
+        const PC_WimpMessage p_wimp_message = &p_event_data->user_message;
+
+        reportf(/*trace_1(TRACE_RISCOS_HOST,*/ TEXT("wx: %s"), report_wimp_message(p_wimp_message, FALSE));
 
         switch(p_wimp_message->hdr.action_code)
         {
@@ -790,6 +941,42 @@ winx_dispatch_event(
         case Wimp_MDataSave:
             window_handle = p_wimp_message->data.data_load.destination_window;
             icon_handle = p_wimp_message->data.data_load.destination_icon;
+            break;
+
+        case Wimp_MClaimEntity:
+            /* watch out - we get our own broadcast messages */
+            if(host_task_handle() != p_wimp_message->hdr.sender)
+            {
+                if(0 != (p_wimp_message->data.words[0] & ((1 << 1) | (1 << 0))))
+                {   /* someone else is claiming caret / selection */
+                    if(winx_statics.owns_caret)
+                    {
+                        winx_statics.owns_caret = FALSE;
+                        reportf("owns_caret := FALSE");
+                    }
+                }
+
+                if(0 != (p_wimp_message->data.words[0] & (1 << 2)))
+                {   /* someone else is claiming global clipboard */
+                    if(winx_statics.owns_global_clipboard)
+                    {
+                        winx_statics.owns_global_clipboard = FALSE;
+                        reportf("owns_global_clipboard := FALSE");
+                        winx_global_clipboard_data_dispose();
+                    }
+                }
+            }
+            break;
+
+        case Wimp_MDataRequest:
+            if(winx_statics.owns_global_clipboard)
+            {
+                reportf("DataRequest: owns_global_clipboard == TRUE");
+                if(NULL != winx_statics.p_proc_global_clipboard_data_DataRequest)
+                {
+                    (* winx_statics.p_proc_global_clipboard_data_DataRequest) (p_wimp_message);
+                }
+            }
             break;
 
         case Wimp_MHelpRequest:
@@ -1042,15 +1229,15 @@ _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
 winx_open_window(
-    _Inout_     WimpOpenWindowBlock * const p_open_window)
+    _Inout_     WimpOpenWindowBlock * const p_open_window_block)
 {
-    WimpOpenWindowBlock open_window = *p_open_window;
-    wimp_w window_handle = p_open_window->window_handle;
+    WimpOpenWindowBlock open_window_block = *p_open_window_block;
+    const wimp_w window_handle = p_open_window_block->window_handle;
     BOOL has_children = FALSE;
     _kernel_oserror * e;
 
     trace_6(TRACE_RISCOS_HOST, TEXT("winx_open_window(window ") UINTPTR_XTFMT TEXT(" at %d,%d;%d,%d behind window ") UINTPTR_XTFMT,
-            window_handle, p_open_window->visible_area.xmin, p_open_window->visible_area.ymin, p_open_window->visible_area.xmax, p_open_window->visible_area.ymax, p_open_window->behind);
+            window_handle, p_open_window_block->visible_area.xmin, p_open_window_block->visible_area.ymin, p_open_window_block->visible_area.xmax, p_open_window_block->visible_area.ymax, p_open_window_block->behind);
  
     {
     P_WINX_WINDOW p_winx_window = winx_find_w(window_handle);
@@ -1062,11 +1249,11 @@ winx_open_window(
     if(has_children)
     {   /* always open a parent window behind last pane window */
         /*trace_1(TRACE_RISCOS_HOST, TEXT(". has %d child windows"), array_elements(&winx_find_w(window_handle)->h_winx_children));*/
-        winx_open_child_windows(window_handle, p_open_window, &p_open_window->behind);
+        winx_open_child_windows(window_handle, p_open_window_block, &p_open_window_block->behind);
     }
 
     /* open this window at the given position, possibly behind a different window if has_children */
-    if(NULL != (e = wimp_open_window(p_open_window)))
+    if(NULL != (e = wimp_open_window(p_open_window_block)))
         return(e);
 
     if(window_handle == winx_statics.deferred_caret.window_handle)
@@ -1077,11 +1264,11 @@ winx_open_window(
 
     if(has_children)
     {   /* reopen children with corrected coords behind the same guy as before iff needed */
-        if(0 != memcmp32(&open_window.visible_area, &p_open_window->visible_area, sizeof32(open_window.visible_area)))
+        if(0 != memcmp32(&open_window_block.visible_area, &p_open_window_block->visible_area, sizeof32(open_window_block.visible_area)))
         {
-            open_window.visible_area = p_open_window->visible_area;
+            open_window_block.visible_area = p_open_window_block->visible_area;
 
-            winx_open_child_windows(window_handle, &open_window, &open_window.behind);
+            winx_open_child_windows(window_handle, &open_window_block, &open_window_block.behind);
         }
     }
 
@@ -1098,15 +1285,15 @@ winx_open_window(
 extern void
 winx_open_child_windows(
     _InVal_     wimp_w window_handle,
-    _In_        const WimpOpenWindowBlock * const p_open_window,
+    _In_        const WimpOpenWindowBlock * const p_open_window_block,
     _Out_       wimp_w * const p_new_behind)
 {
-    wimp_w behind_window_handle = p_open_window->behind;
+    wimp_w behind_window_handle = p_open_window_block->behind;
     P_WINX_WINDOW p_winx_window = winx_find_w(window_handle);
     ARRAY_INDEX array_index;
 
     trace_6(TRACE_RISCOS_HOST, TEXT("winx_open_child_windows(window ") UINTPTR_XTFMT TEXT(" at %d,%d;%d,%d behind window ") UINTPTR_XTFMT,
-            window_handle, p_open_window->visible_area.xmin, p_open_window->visible_area.ymin, p_open_window->visible_area.xmax, p_open_window->visible_area.ymax, behind_window_handle);
+            window_handle, p_open_window_block->visible_area.xmin, p_open_window_block->visible_area.ymin, p_open_window_block->visible_area.xmax, p_open_window_block->visible_area.ymax, behind_window_handle);
 
     if((NULL != p_winx_window) && (0 != array_elements(&p_winx_window->h_winx_children)))
     {
@@ -1134,24 +1321,24 @@ winx_open_child_windows(
                 STATUS send_event;
 
                 {
-                union wimp_window_state_open_window_u window_u;
+                union wimp_window_state_open_window_block_u window_u;
 
                 /* need to preserve size and scrolls */
-                window_u.window_state.window_handle = c->window_handle;
-                void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state));
+                window_u.window_state_block.window_handle = c->window_handle;
+                void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block));
 
-                event_data.open_window_request = window_u.open_window;
+                event_data.open_window_request = window_u.open_window_block;
 
-                event_data.open_window_request.visible_area.xmin = p_open_window->visible_area.xmin + c->xoffset; /* keep top left relative */
-                event_data.open_window_request.visible_area.ymax = p_open_window->visible_area.ymax + c->yoffset;
-                event_data.open_window_request.visible_area.xmax = event_data.open_window_request.visible_area.xmin + BBox_width(&window_u.open_window.visible_area);
-                event_data.open_window_request.visible_area.ymin = event_data.open_window_request.visible_area.ymax - BBox_height(&window_u.open_window.visible_area);
+                event_data.open_window_request.visible_area.xmin = p_open_window_block->visible_area.xmin + c->xoffset; /* keep top left relative */
+                event_data.open_window_request.visible_area.ymax = p_open_window_block->visible_area.ymax + c->yoffset;
+                event_data.open_window_request.visible_area.xmax = event_data.open_window_request.visible_area.xmin + BBox_width(&window_u.open_window_block.visible_area);
+                event_data.open_window_request.visible_area.ymin = event_data.open_window_request.visible_area.ymax - BBox_height(&window_u.open_window_block.visible_area);
 
                 event_data.open_window_request.behind = behind_window_handle;
 
                 send_event =
-                    (!(WimpWindow_Open & window_u.window_state.flags)) ||
-                    (0 != memcmp32(&event_data.open_window_request, &window_u.open_window, sizeof32(event_data.open_window_request)));
+                    (0 == (WimpWindow_Open & window_u.window_state_block.flags)) ||
+                    (0 != memcmp32(&event_data.open_window_request, &window_u.open_window_block, sizeof32(event_data.open_window_request)));
                 } /*block*/
 
                 behind_window_handle = c->window_handle; /* open next child window behind this one */
@@ -1179,14 +1366,14 @@ winx_open_child_windows(
 ***********************************************************/
 
 static void
-win_close_submenu(
+winx_close_submenu(
     _Inout_     wimp_w * const p_submenu_window_handle)
 {
     if(!*p_submenu_window_handle)
         return;
 
     /* send him a close request */
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("win_close_submenu: send Wimp_ECloseWindow to window ") UINTPTR_XTFMT, *p_submenu_window_handle);
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("winx_close_submenu: send Wimp_ECloseWindow to window ") UINTPTR_XTFMT, *p_submenu_window_handle);
 
     winx_send_close_window_request(*p_submenu_window_handle, TRUE /*immediate*/);
 
@@ -1201,7 +1388,7 @@ win_close_submenu(
 
 _Check_return_
 static BOOL
-win_is_child_of(
+winx_is_child_of(
     _InVal_     wimp_w root_window_handle,
     _InVal_     wimp_w window_handle)
 {
@@ -1218,7 +1405,7 @@ win_is_child_of(
         if(c->window_handle == window_handle)
             return(TRUE);
 
-        if(win_is_child_of(c->window_handle, window_handle))
+        if(winx_is_child_of(c->window_handle, window_handle))
             return(TRUE);
     }
 
@@ -1258,7 +1445,7 @@ winx_menu_process(
             /* only closure of windows within submenu tree allowed */
             if(p_event_data->close_window_request.window_handle != winx_statics.submenu_window_handle)
                 /* scan its children, if any */
-                if(!win_is_child_of(winx_statics.submenu_window_handle, p_event_data->close_window_request.window_handle))
+                if(!winx_is_child_of(winx_statics.submenu_window_handle, p_event_data->close_window_request.window_handle))
                 {
                     close_up_shop = 1;
                     trace_2(TRACE_OUT | TRACE_ANY, TEXT("Close of window ") UINTPTR_XTFMT TEXT(" which is not a child of ") UINTPTR_XTFMT TEXT(", so send our client a close request NOW"), p_event_data->close_window_request.window_handle, winx_statics.submenu_window_handle);
@@ -1269,7 +1456,7 @@ winx_menu_process(
             /* only clicks within submenu tree are allowed */
             if(p_event_data->mouse_click.window_handle != winx_statics.submenu_window_handle)
                 /* scan its children, if any */
-                if(!win_is_child_of(winx_statics.submenu_window_handle, p_event_data->mouse_click.window_handle))
+                if(!winx_is_child_of(winx_statics.submenu_window_handle, p_event_data->mouse_click.window_handle))
                 {
                     close_up_shop = 1;
                     trace_2(TRACE_OUT | TRACE_ANY, TEXT("Click in window ") UINTPTR_XTFMT TEXT(" which is not a child of ") UINTPTR_XTFMT TEXT(", so send our client a close request NOW"), p_event_data->mouse_click.window_handle, winx_statics.submenu_window_handle);
@@ -1303,9 +1490,15 @@ winx_menu_process(
                 }
 
             case Wimp_MDataLoad:
-                {
-                close_up_shop = 1;
-                trace_0(TRACE_OUT | TRACE_ANY, TEXT("Wimp_MDataLoad event so send our client a close request NOW"));
+                { /* allow paste to do scrap transfer to t5 dialogs */
+                const WimpDataLoadMessage * const p_wimp_message_data_load = &p_event_data->user_message.data.data_load;
+
+                if(p_wimp_message_data_load->destination_window != winx_statics.submenu_window_handle)
+                {   /* dropped a file on a document window or icon bar I presume */
+                    close_up_shop = 1;
+                    trace_0(TRACE_OUT | TRACE_ANY, TEXT("Wimp_MDataLoad event so send our client a close request NOW"));
+                }
+
                 break;
                 }
 
@@ -1325,7 +1518,7 @@ winx_menu_process(
     {
         wimpt_fake_event(event_code, p_event_data); /* stuff received event back in the queue */
 
-        win_close_submenu(&winx_statics.submenu_window_handle);
+        winx_close_submenu(&winx_statics.submenu_window_handle);
 
         return(1);
     }
@@ -1344,7 +1537,7 @@ winx_menu_process(
     {
         wimpt_fake_event(event_code, p_event_data); /* stuff received event back in the queue */
 
-        win_close_submenu(&winx_statics.submenu_window_handle_child);
+        winx_close_submenu(&winx_statics.submenu_window_handle_child);
 
         return(1);
     }
@@ -1369,7 +1562,7 @@ winx_create_submenu_child(
     if(winx_statics.submenu_window_handle_child  &&  (winx_statics.submenu_window_handle_child != window_handle))
     {
         assert0(); /* should always have closed any existing menu windows before this happens! */
-        win_close_submenu(&winx_statics.submenu_window_handle_child);
+        winx_close_submenu(&winx_statics.submenu_window_handle_child);
     }
 
     err = event_create_menu((WimpMenu *) window_handle, x, y); /* yes, a menu, else get whinge about submenus requiring a parent tree */
@@ -1403,7 +1596,7 @@ winx_create_submenu(
     if(winx_statics.submenu_window_handle   &&  (winx_statics.submenu_window_handle != window_handle))
     {
         assert0(); /* should always have closed any existing menu windows before this happens! */
-        win_close_submenu(&winx_statics.submenu_window_handle);
+        winx_close_submenu(&winx_statics.submenu_window_handle);
     }
 
     err = event_create_submenu((WimpMenu *) window_handle, x, y);
@@ -1438,7 +1631,7 @@ winx_create_menu(
 
     /* do we have a different menu tree window up already? if so, close it */
     if(winx_statics.submenu_window_handle  &&  (winx_statics.submenu_window_handle != window_handle))
-        win_close_submenu(&winx_statics.submenu_window_handle);
+        winx_close_submenu(&winx_statics.submenu_window_handle);
 
     err = event_create_menu((WimpMenu *) window_handle, x, y);
 
@@ -1465,7 +1658,7 @@ winx_create_complex_menu(
 {
     /* do we have a different menu tree window up already? if so, close it */
     if(winx_statics.submenu_window_handle  &&  (winx_statics.submenu_window_handle != window_handle))
-        win_close_submenu(&winx_statics.submenu_window_handle);
+        winx_close_submenu(&winx_statics.submenu_window_handle);
 
     winx_statics.submenu_window_handle = window_handle; /* there can be only one */
     winx_statics.submenu_complex = 1;
@@ -1497,8 +1690,8 @@ winx_submenu_query_closed(void)
     {
         WimpGetWindowStateBlock window_state;
         window_state.window_handle = winx_statics.submenu_window_handle;
-        if(!WrapOsErrorReporting(wimp_get_window_state(&window_state)))
-            return(!(WimpWindow_Open & window_state.flags));
+        if(NULL == wimp_get_window_state(&window_state))
+            return(0 == (WimpWindow_Open & window_state.flags));
     }
 
     /* there is none, you fool */
@@ -1513,8 +1706,8 @@ winx_submenu_query_closed_child(void)
     {
         WimpGetWindowStateBlock window_state;
         window_state.window_handle = winx_statics.submenu_window_handle_child;
-        if(!WrapOsErrorReporting(wimp_get_window_state(&window_state)))
-            return(!(WimpWindow_Open & window_state.flags));
+        if(NULL == wimp_get_window_state(&window_state))
+            return(0 == (WimpWindow_Open & window_state.flags));
     }
 
     /* there is none, you fool */
@@ -1558,13 +1751,13 @@ extern void
 winx_send_open_window_request(
     _InVal_     wimp_w window_handle,
     _InVal_     BOOL immediate,
-    _In_        const WimpOpenWindowBlock * const p_open_window)
+    _In_        const WimpOpenWindowBlock * const p_open_window_block)
 {
     WimpPollBlock event_data;
 
     trace_2(TRACE_RISCOS_HOST, TEXT("winx_send_open_window_request(window ") UINTPTR_XTFMT TEXT(", immediate = %s)"), window_handle, report_boolstring(immediate));
 
-    event_data.open_window_request = *p_open_window;
+    event_data.open_window_request = *p_open_window_block;
     event_data.open_window_request.window_handle = window_handle;
 
     if(!immediate)
@@ -1589,18 +1782,18 @@ winx_send_front_window_request(
     _InVal_     BOOL immediate,
     _InRef_opt_ PC_BBox p_bbox)
 {
-    union wimp_window_state_open_window_u window_u;
+    union wimp_window_state_open_window_block_u window_u;
 
     trace_2(TRACE_RISCOS_HOST, TEXT("winx_send_front_window_request(window ") UINTPTR_XTFMT TEXT(", immediate = %s)"), window_handle, report_boolstring(immediate));
 
     /* get current scroll offsets */
-    window_u.window_state.window_handle = window_handle;
-    void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state));
+    window_u.window_state_block.window_handle = window_handle;
+    void_WrapOsErrorReporting(wimp_get_window_state(&window_u.window_state_block));
 
-    window_u.open_window.behind = (wimp_w) -1; /* force to the top of the window stack */
+    window_u.open_window_block.behind = (wimp_w) -1; /* force to the top of the window stack */
     if(NULL != p_bbox)
-        window_u.open_window.visible_area = *p_bbox;
-    winx_send_open_window_request(window_handle, immediate, &window_u.open_window);
+        window_u.open_window_block.visible_area = *p_bbox;
+    winx_send_open_window_request(window_handle, immediate, &window_u.open_window_block);
 }
 
 #endif /* RISCOS */

@@ -304,7 +304,7 @@ WrapOsBoolReporting(
 
 #define assert_EQ(exp1, exp2) do { \
     if(__myasserted_EQ(__Tfunc__, __TFILE__, __LINE__, (U32) (exp1), (U32) (exp2))) \
-        __crash_and_burn_here(); }  while_constant(0)
+        __crash_and_burn_here(); } while_constant(0)
 
 #ifndef _bool_assert_function_declared
 #define _bool_assert_function_declared 1

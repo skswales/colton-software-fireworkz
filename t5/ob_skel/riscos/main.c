@@ -52,11 +52,7 @@ main(
     char * argv[]);
 
 extern PC_U8 rb_skel_msg_weak;
-extern P_ANY rb_skel_spr_weak;
-extern P_ANY rb_skel_spr_22_weak;
-extern P_ANY rb_skel_spr_24_weak;
-static BOUND_RESOURCES BOUND_RESOURCES_OBJECT_ID_SKEL = { &rb_skel_spr_weak, &rb_skel_spr_22_weak, &rb_skel_spr_24_weak };
-#define P_BOUND_RESOURCES &BOUND_RESOURCES_OBJECT_ID_SKEL;
+#define P_BOUND_RESOURCES_OBJECT_ID_SKEL LOAD_RESOURCES
 
 #if defined(PROFILING)
 
@@ -438,6 +434,8 @@ t5_wimp_messages[] =
     Wimp_MPaletteChange,
     Wimp_MSaveDesktop,
     Wimp_MShutDown,
+    Wimp_MClaimEntity,
+    Wimp_MDataRequest,
 
     Wimp_MHelpRequest,
 
@@ -547,16 +545,20 @@ main(
 
     thesaurus_startup();
 
-    host_initialise_file_path();
+    host_initialise_file_paths();
 
     file_startup();
 
-    file_build_path();
+    file_build_paths();
 
     /* Make error messages available for startup */
     resource_startup(dll_store);
 
-    status_assert(resource_init(OBJECT_ID_SKEL, &rb_skel_msg_weak, &BOUND_RESOURCES_OBJECT_ID_SKEL));
+    if(status_fail(status = resource_init(OBJECT_ID_SKEL, &rb_skel_msg_weak, P_BOUND_RESOURCES_OBJECT_ID_SKEL)))
+    {
+        reperr_null(status);
+        exit(EXIT_FAILURE);
+    }
 
     /* Now try and startup some non-host specific stuff */
     if(status_fail(startup_t5_application_2()))
@@ -570,8 +572,8 @@ main(
     {
     STUB_DESC stub_desc;
     RUNTIME_INFO runtime_info;
-    if( status_ok(host_load_stubs("<Fireworkz$Dir>.Resource.xxMstubs", &stub_desc)) &&
-        status_ok(host_load_module("<Fireworkz$Dir>.Resource.xxMso", &runtime_info, 1, stub_desc.p_stub_data)) )
+    if( status_ok(host_load_stubs("<Fireworkz$Dir>.AppData.Neutral.xxMstubs", &stub_desc)) &&
+        status_ok(host_load_module("<Fireworkz$Dir>.AppData.Neutral.xxMso", &runtime_info, 1, stub_desc.p_stub_data)) )
     {
         xxM_usr_init(runtime_info.p_module_entry);
         xxM_test_routine();

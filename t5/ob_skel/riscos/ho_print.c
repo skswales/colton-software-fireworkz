@@ -1017,10 +1017,10 @@ host_read_printer_paper_details(
     p_paper->y_size = (S32) rs.r[2] /*ysize*/ / MILLIPOINTS_PER_PIXIT;
 
     /* round printable area inwards to pixit grid */
-    pixit_bbox.xmin = div_round_ceil( rs.r[3] /*bbox.x0*/, MILLIPOINTS_PER_PIXIT);
-    pixit_bbox.ymin = div_round_ceil( rs.r[4] /*bbox.y0*/, MILLIPOINTS_PER_PIXIT);
-    pixit_bbox.xmax = div_round_floor(rs.r[5] /*bbox.x1*/, MILLIPOINTS_PER_PIXIT);
-    pixit_bbox.ymax = div_round_floor(rs.r[6] /*bbox.y1*/, MILLIPOINTS_PER_PIXIT);
+    pixit_bbox.xmin = idiv_ceil( rs.r[3] /*bbox.x0*/, MILLIPOINTS_PER_PIXIT);
+    pixit_bbox.ymin = idiv_ceil( rs.r[4] /*bbox.y0*/, MILLIPOINTS_PER_PIXIT);
+    pixit_bbox.xmax = idiv_floor(rs.r[5] /*bbox.x1*/, MILLIPOINTS_PER_PIXIT);
+    pixit_bbox.ymax = idiv_floor(rs.r[6] /*bbox.y1*/, MILLIPOINTS_PER_PIXIT);
 
     p_paper->lm = pixit_bbox.xmin;
     p_paper->bm = pixit_bbox.ymin;

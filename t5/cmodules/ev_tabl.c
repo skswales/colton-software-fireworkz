@@ -733,7 +733,7 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SUM_X2PY2,     arg_ARY, RPN_FNF_SUM_X2PY2 ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SUM_XMY2,      arg_ARY, RPN_FNF_SUM_XMY2 ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_TYPE,      arg_tyx, RPN_FNF_ODF_TYPE ),
-    rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MISC,      FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
+    rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_ARY, RPN_FNF_COUNTBLANK ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_COVARIANCE_P,  arg_ARY, RPN_FNF_COVARIANCE_P ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PEARSON,       arg_ARY, RPN_FNF_PEARSON ),
@@ -863,6 +863,8 @@ _rpn_table[] =
 
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EDATE,         arg_D_I, RPN_FNF_EDATE ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EOMONTH,       arg_D_I, RPN_FNF_EOMONTH ),
+
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_MOD,       arg_IoR, RPN_FNF_ODF_MOD ),
 
 #endif /* end of any new functions */
 
@@ -1194,6 +1196,7 @@ look_table[] = /* ordered by id for bsearch()*/
     look_table_entry("odf.int",         RPN_FNF_ODF_INT),
     look_table_entry("odf.irr",         RPN_FNV_ODF_IRR),
     look_table_entry("odf.log10",       RPN_FNF_ODF_LOG10),
+    look_table_entry("odf.mod",         RPN_FNF_ODF_MOD),
     look_table_entry("odf.pmt",         RPN_FNF_ODF_PMT),
     look_table_entry("odf.tdist",       RPN_FNF_ODF_TDIST),
     look_table_entry("odf.type",        RPN_FNF_ODF_TYPE),

@@ -30,13 +30,13 @@ e100:No user dictionaries
 # messages
 #
 3:Dictionary
-1:ug4_checking_spellings.htm
+1:ug04/ug4_checking_spellings.htm
 4:&Word
 5:&Add
 6:&Delete
 #
 9:Word not found
-2:ug4_checking_spellings.htm
+2:ug04/ug4_checking_spellings.htm
 10:&Replace
 11:&Next
 12:&Guess

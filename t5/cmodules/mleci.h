@@ -91,7 +91,7 @@ extern MLEC paste;      /* The paste buffer */
 #endif
 
 #define reject_if_paste_buffer(mlec) \
-    if(mlec == paste) return(create_error(MLEC_ERR_INVALID_PASTE_OP))
+    if(mlec == paste_buffer) return(create_error(MLEC_ERR_INVALID_PASTE_OP))
 
 #ifndef MLEC_DEFAULT_BUFSIZ
 #define MLEC_DEFAULT_BUFSIZ 8

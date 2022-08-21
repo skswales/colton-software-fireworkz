@@ -2192,7 +2192,7 @@ recog_slr(
         p_ev_slr->abs_col = 1;;
     }
 
-    if((res = stox(pos, &col_temp)) == 0 || col_temp >= EV_MAX_COL)
+    if(((res = stox(pos, &col_temp)) == 0) || (col_temp >= EV_MAX_COL))
         return(0);
 
     p_ev_slr->col = EV_COL_PACK(col_temp);
@@ -2205,8 +2205,7 @@ recog_slr(
         p_ev_slr->abs_row = 1;
     }
 
-    /* stop things like + and - being munged
-     */
+    /* stop things like + and - being munged */
     if(!sbchar_isdigit(PtrGetByte(pos)))
         return(0);
 
@@ -2243,48 +2242,29 @@ recog_slr_range(
     _InVal_     EV_DOCNO ev_docno_from,
     _In_z_      PC_USTR in_str)
 {
-    S32 len = 0, len_ext = 0;
     PC_USTR pos = in_str;
+    S32 len = 0;
 
-    if(name_is_blank(p_docu_name) && (len_ext = recog_extref(p_docu_name, pos)) != 0)
-        ustr_IncBytes(pos, len_ext);
-
-    {
-    S32 len_slr_1;
+    S32 len_ext_1 = 0;
     EV_SLR s_slr;
+    S32 len_slr_1;
 
-    if((len_slr_1 = recog_slr(&s_slr, pos)) > 0)
+    S32 len_colon = 0;
+
+    S32 len_ext_2 = 0;
+    EV_SLR e_slr;
+    S32 len_slr_2;
+
+    /* don't check for an external id here if one is supplied by caller */
+    if(name_is_blank(p_docu_name))
+        if(0 != (len_ext_1 = recog_extref(p_docu_name, pos)))
+            ustr_IncBytes(pos, len_ext_1);
+
+    len_slr_1 = recog_slr(&s_slr, pos);
+
+    if(len_slr_1 > 0)
     {
-        S32 len_colon = 0;
-
         ustr_IncBytes(pos, len_slr_1);
-        len += len_slr_1 + len_ext;
-
-        /* allow foreign range input */
-        if(CH_COLON == PtrGetByte(pos))
-        {
-            len_colon = 1;
-            ustr_IncByte(pos);
-        }
-        else
-            len_colon = 0;
-
-        /* check for a second external reference, and
-         * allow it if it's the same as the first one
-         */
-        {
-        DOCU_NAME docu_name_temp;
-        S32 len_ext;
-        if(!name_is_blank(p_docu_name) && (len_ext = recog_extref(&docu_name_temp, pos)) != 0)
-        {
-            if(0 == name_compare(p_docu_name, &docu_name_temp, TRUE))
-            {
-                ustr_IncBytes(pos, len_ext); /* SKS 26may95 after 1.22 - failed to recognise [sht1]a1[sht1]b1 */
-                len += len_ext;
-            }
-            name_dispose(&docu_name_temp);
-        }
-        } /*block*/
 
         s_slr.docno = EV_DOCNO_PACK(ev_establish_docno_from_docu_name(p_docu_name, ev_docno_from));
 
@@ -2292,39 +2272,61 @@ recog_slr_range(
         if(!name_is_blank(p_docu_name))
             s_slr.ext_ref = 1;
 
-        { /* check for another SLR to make range */
-        S32 len_slr_2 = 0;
-        EV_SLR e_slr = s_slr;
-
-        if((len_slr_2 = recog_slr(&e_slr, pos)) > 0)
+        /* allow foreign range input */
+        if(CH_COLON == PtrGetByte(pos))
         {
-            /* set up range */
+            ustr_IncByte(pos);
+            len_colon = 1;
+        }
+
+        /* if there is an external id, check for a second one, and allow it if it's the same */
+        if(!name_is_blank(p_docu_name))
+        {
+            DOCU_NAME docu_name_temp;
+
+            if(0 != (len_ext_2 = recog_extref(&docu_name_temp, pos)))
+            {
+                if(0 == name_compare(p_docu_name, &docu_name_temp, TRUE))
+                {
+                    ustr_IncBytes(pos, len_ext_2); /* SKS 26may95 after 1.22 - failed to recognise [sht1]a1[sht1]b1 */
+                }
+                /* else don't increment pos - next SLR test will fail and just return first SLR */
+
+                name_dispose(&docu_name_temp);
+            }
+        }
+
+        /* check for another SLR to make range */
+        len_slr_2 = recog_slr(&e_slr, pos);
+
+        if(len_slr_2 > 0)
+        {
+            /* set up range (i,i,i,i->i,i,e,e) */
             e_slr.col += 1;
             e_slr.row += 1;
             e_slr.docno = s_slr.docno; /* equivalent UBF */
 
-            if(s_slr.col < e_slr.col &&
-               s_slr.row < e_slr.row)
+            if((s_slr.col < e_slr.col) && (s_slr.row < e_slr.row))
             {
                 p_ev_data->arg.range.s = s_slr;
                 p_ev_data->arg.range.e = e_slr;
                 p_ev_data->did_num = RPN_DAT_RANGE;
-                len += len_slr_2 + len_colon;
+
+                len = (len_ext_1 + len_slr_1) + len_colon + (len_ext_2 + len_slr_2); /* all components for range */
             }
-            else
-                len = 0;
+            /* else bad range - ignore everything here */
         }
         else
-        {
+        {   /* stick with the SLR we obtained */
             p_ev_data->arg.slr = s_slr;
             p_ev_data->did_num = RPN_DAT_SLR;
+
+            len = len_ext_1 + len_slr_1; /* all components for SLR */
         } /*fi*/
 
-        } /*block*/
-
-    } /*fi*/
-
-    } /*block*/
+    }
+    /* else bad SLR - ignore everything here */
+    /*fi*/
 
     return(len);
 }
@@ -2371,33 +2373,34 @@ scan_next_symbol(void)
 
     for(;;)
     {
-        /* look for EXCEL type equals sign (only before first symbol) - and then ignore it! */
-        if((0 == compiler_context.n_scanned) && (CH_EQUALS_SIGN == PtrGetByte(compiler_context.ip_pos.ustr)))
-        {
-            ++compiler_context.ip_pos.p_u8;
-            compiler_context.sym_inf.sym_equals = 0;
-            continue;
-        }
+        const U8 u8 = *compiler_context.ip_pos.p_u8;
 
-        if((LF == *compiler_context.ip_pos.p_u8) || (CR == *compiler_context.ip_pos.p_u8))
+        if((LF == u8) || (CR == u8))
         {
-            U8 this_cr = *compiler_context.ip_pos.p_u8;
             ++compiler_context.ip_pos.p_u8;
-            if((*compiler_context.ip_pos.p_u8 ^ this_cr) == (LF ^ CR)) /* consume a CR,LF or LF,CR pair as one */
+            if(*compiler_context.ip_pos.p_u8 == (u8 ^ (LF ^ CR))) /* consume a CR,LF or LF,CR pair as one */
                 ++compiler_context.ip_pos.p_u8;
             ++compiler_context.sym_inf.sym_cr;
+            compiler_context.sym_inf.sym_space = 0; /* reset so trailing spaces on one line don't get counted as leading spaces on the next */
             continue;
         }
 
-        if(CH_SPACE == *compiler_context.ip_pos.p_u8)
+        if(CH_SPACE == u8)
         {
-            do  {
-                ++compiler_context.ip_pos.p_u8;
-                ++compiler_context.sym_inf.sym_space;
-            }
-            while(CH_SPACE == *compiler_context.ip_pos.p_u8);
-
+            ++compiler_context.ip_pos.p_u8;
+            ++compiler_context.sym_inf.sym_space;
             continue;
+        }
+
+        /* look for EXCEL type equals sign */
+        if(CH_EQUALS_SIGN == u8)
+        {   /* NB only before first symbol */
+            if(0 == compiler_context.n_scanned)
+            {
+                ++compiler_context.ip_pos.p_u8;
+                /*compiler_context.sym_inf.sym_equals = 0;*/ /* and then ignore it! */
+                continue;
+            }
         }
 
         break; /* none of the above matched on this pass */

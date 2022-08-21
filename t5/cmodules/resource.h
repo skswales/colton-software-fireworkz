@@ -36,9 +36,11 @@ typedef struct BOUND_RESOURCES
 }
 BOUND_RESOURCES, * P_BOUND_RESOURCES; typedef const BOUND_RESOURCES * PC_BOUND_RESOURCES;
 
-#if !RISCOS
 #define LOAD_RESOURCES ((P_BOUND_RESOURCES) (intptr_t) 1)
 
+#define LOAD_MESSAGES ((P_PC_U8) (intptr_t) 1)
+
+#if !RISCOS
 #define MSG_WEAK NULL
 #endif
 
@@ -97,7 +99,7 @@ standard bitmap names
 #define BITMAP_NAME_TRISTATE_ON        "opton"
 #define BITMAP_NAME_TRISTATE_OFF       "optoff"
 #define BITMAP_NAME_TRISTATE_DONT_CARE "optunk"
-#define BITMAP_NAME_COMBO              "obm_combo"
+#define BITMAP_NAME_COMBO              "gright"
 
 #define RESOURCE_BITMAP_AREA_STANDARD 0
 #define RESOURCE_BITMAP_AREA_LO_RES 1
@@ -201,9 +203,19 @@ resource_init(
 
 _Check_return_
 extern STATUS
+resource_load_messages(
+    _InVal_     OBJECT_ID object_id);
+
+_Check_return_
+extern STATUS
 resource_load_sprites(
     _InVal_     OBJECT_ID object_id,
     _In_        UINT which);
+
+_Check_return_
+extern STATUS
+resource_load_appropriate_sprites(
+    _InVal_     OBJECT_ID object_id);
 
 #endif
 
@@ -219,7 +231,7 @@ resource_shutdown(void);
 
 extern void
 resource_startup(
-    _In_z_      PCTSTR p_str_dll_store);
+    _In_z_      PCTSTR tstr_dll_store);
 
 #if WINDOWS
 
