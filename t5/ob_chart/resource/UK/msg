@@ -8,16 +8,6 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
-#
-e0:Not enough data for pie chart
-e2:Negative and/or zero data ignored in pie chart
-e3:Arithmetic exception in chart creation
-e4:Negative and/or zero data ignored in stacked chart
-e5:Unable to load chart because memory full; chart discarded
-e6:No data for chart
-e7:Charts can only use Draw and Sprite files
-#
 # messages
 #
 0:Pie chart
@@ -167,5 +157,15 @@ w130:Click on a chart element to select it. Ctrl-click for finer selection
 800:sg04/sg4_editing_data_series.htm
 801:sg04/sg4_editing_axes.htm
 802:sg04/sg4_editing_axes.htm
+#
+# errors
+#
+e0:Not enough data for pie chart
+e2:Negative and/or zero data ignored in pie chart
+e3:Arithmetic exception in chart creation
+e4:Negative and/or zero data ignored in stacked chart
+e5:Unable to load chart because memory full; chart discarded
+e6:No data for chart
+e7:Charts can only use Draw and Sprite files
 #
 # end of msg (ob_chart)

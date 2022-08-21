@@ -118,7 +118,7 @@ typedef struct DICT
     ARRAY_HANDLE_TSTR h_dict_filename;  /* dictionary filename */
     ARRAY_HANDLE_USTR h_dict_name;      /* dictionary name */
 }
-DICT, * P_DICT, ** P_P_DICT;
+DICT, * P_DICT, ** P_P_DICT; typedef const DICT * PC_DICT;
 
 #define P_DICT_NONE _P_DATA_NONE(P_DICT)
 
@@ -3765,9 +3765,9 @@ release_dict_entry(
 
     for(i = 0; i < array_elements(&h_dict_table); ++i)
     {
-        P_DICT p_dict = array_ptr(&h_dict_table, DICT, i);
+        const PC_DICT p_dict_check = array_ptrc(&h_dict_table, DICT, i);
 
-        if(p_dict->file_handle_dict || p_dict->h_index)
+        if(p_dict_check->file_handle_dict || p_dict_check->h_index)
             break;
     }
 

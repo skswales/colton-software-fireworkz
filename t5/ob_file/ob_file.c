@@ -37,7 +37,8 @@ __pragma(warning(pop))
 #define MSG_WEAK &rb_file_msg_weak
 extern PC_U8 rb_file_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FILE NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FILE DONT_LOAD_RESOURCES
 
 /*
 internal routines

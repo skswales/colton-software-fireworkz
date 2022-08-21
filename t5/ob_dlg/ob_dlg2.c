@@ -107,10 +107,12 @@ dialog_arglist_construct(
 #if CHECKING
             case DIALOG_CONTROL_CHECKBOX:
             case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
             case DIALOG_CONTROL_TRISTATE:
             case DIALOG_CONTROL_TRIPICTURE:
-                /* all these are generic_u8n or bool */
 #endif
+#endif
+                /* all these are generic_u8n or bool */
                 assert(((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_U8N) || ((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_BOOL));
                 p_arg->val.u8n = dialog_cmd_ctl_state_query.state.generic_u8n;
                 break;
@@ -733,7 +735,7 @@ dialog_control_rect_using_bitmap(
                 DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
                 dialog_cmd_ctl_size_estimate.p_dialog_control = p_dialog_control;
                 dialog_cmd_ctl_size_estimate.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data.p_any;
-                status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_SIZE_ESTIMATE, &dialog_cmd_ctl_size_estimate));
+                ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
                 relative_offset = dialog_cmd_ctl_size_estimate.size.x;
             }
             else
@@ -1294,7 +1296,7 @@ dialog_current_set(
 
             if(NULL != p_dialog_ictl_edit_xx)
             {   /* scroll any edit controls back to the start when they are no longer current */
-                if(p_dialog_ictl_edit_xx->readonly)
+                if(p_dialog_ictl_edit_xx->read_only)
                     return;
 
                 if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
@@ -1353,7 +1355,7 @@ dialog_current_set(
 
         if(NULL != p_dialog_ictl_edit_xx)
         {   /* position cursor at end of any edit control */
-            if(!p_dialog_ictl_edit_xx->readonly && (NULL != p_dialog_ictl_edit_xx->riscos.mlec))
+            if(!p_dialog_ictl_edit_xx->read_only && (NULL != p_dialog_ictl_edit_xx->riscos.mlec))
             {
                 mlec_claim_focus(p_dialog_ictl_edit_xx->riscos.mlec);
 

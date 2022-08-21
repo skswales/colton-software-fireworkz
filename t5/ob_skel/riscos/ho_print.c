@@ -642,11 +642,11 @@ static void
 print_host_redraw_context_set_host_xform(
     _InoutRef_  P_HOST_XFORM p_host_xform /*updated*/)
 {
-    p_host_xform->riscos.d_x = 2; /* cast in stone somewhere! */
-    p_host_xform->riscos.d_y = 2;
+    p_host_xform->riscos.dx = 2; /* cast in stone somewhere! */
+    p_host_xform->riscos.dy = 2;
 
-    p_host_xform->riscos.eig_x = 1;
-    p_host_xform->riscos.eig_y = 1;
+    p_host_xform->riscos.XEigFactor = 1;
+    p_host_xform->riscos.YEigFactor = 1;
 }
 
 static void

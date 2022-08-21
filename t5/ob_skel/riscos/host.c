@@ -396,11 +396,11 @@ host_recache_mode_dependent_vars(void)
     p_host_xform->do_x_scale = FALSE;
     p_host_xform->do_y_scale = FALSE;
 
-    p_host_xform->riscos.d_x = host_modevar_cache_current.dx;
-    p_host_xform->riscos.d_y = host_modevar_cache_current.dy;
+    p_host_xform->riscos.dx = host_modevar_cache_current.dx;
+    p_host_xform->riscos.dy = host_modevar_cache_current.dy;
 
-    p_host_xform->riscos.eig_x = host_modevar_cache_current.XEig;
-    p_host_xform->riscos.eig_y = host_modevar_cache_current.YEig;
+    p_host_xform->riscos.XEigFactor = host_modevar_cache_current.XEigFactor;
+    p_host_xform->riscos.YEigFactor = host_modevar_cache_current.YEigFactor;
 }
 
 /******************************************************************************
@@ -3741,7 +3741,7 @@ ho_help_url(
     {
        _kernel_swi_regs rs;
         rs.r[0] = 0;
-        if( (NULL == _kernel_swi(0x4E380 /*URI_Version*/, &rs, &rs)) )
+        if( (NULL == _kernel_swi(/*URI_Version*/ 0x4E380, &rs, &rs)) )
         {
             consume_int(snprintf(tempstr, elemof32(tempstr), "URIdispatch %s", url));
             reportf("StartTask %s", tempstr);

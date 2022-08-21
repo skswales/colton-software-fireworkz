@@ -21,7 +21,8 @@
 #define MSG_WEAK &rb_mlec_msg_weak
 extern PC_U8 rb_mlec_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_MLEC NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_MLEC DONT_LOAD_RESOURCES
 
 /******************************************************************************
 *

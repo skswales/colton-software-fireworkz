@@ -56,7 +56,7 @@ DIALOG_ICTL_GROUP, * P_DIALOG_ICTL_GROUP, ** P_P_DIALOG_ICTL_GROUP; typedef cons
 
 typedef struct DIALOG_ICTL_EDIT_XX
 {
-    UBF readonly            : 1; /* bits copied from DIALOG_CONTROL_DATA_EDIT_XX_BITS */
+    UBF read_only           : 1; /* bits copied from DIALOG_CONTROL_DATA_EDIT_XX_BITS */
     UBF multiline           : 1;
     UBF h_scroll            : 1;
     UBF v_scroll            : 1;
@@ -135,7 +135,7 @@ union DIALOG_ICTL_DATA
 #if RISCOS
         struct DIALOG_ICTL_DATA_STATICPICTURE_RISCOS
         {
-            RESOURCE_BITMAP_HANDLE h_bitmap; /* copy owned by dialog */
+            RESOURCE_BITMAP_HANDLE resource_bitmap_handle; /* copy owned by dialog */
         } riscos;
 #else
         U32 foo;
@@ -152,7 +152,7 @@ union DIALOG_ICTL_DATA
 #if RISCOS
         struct DIALOG_ICTL_DATA_PUSHPICTURE_RISCOS
         {
-            RESOURCE_BITMAP_HANDLE h_bitmap; /* copy owned by dialog */
+            RESOURCE_BITMAP_HANDLE resource_bitmap_handle; /* copy owned by dialog */
         } riscos;
 #else
         U32 foo;
@@ -169,7 +169,7 @@ union DIALOG_ICTL_DATA
 #if RISCOS
         struct DIALOG_ICTL_DATA_RADIOPICTURE_RISCOS
         {
-            RESOURCE_BITMAP_HANDLE h_bitmap_on, h_bitmap_off;
+            RESOURCE_BITMAP_HANDLE resource_bitmap_handle_on, resource_bitmap_handle_off;
         } riscos;
 #else
         U32 foo;
@@ -186,7 +186,7 @@ union DIALOG_ICTL_DATA
 #if RISCOS
         struct DIALOG_ICTL_DATA_CHECKPICTURE_RISCOS
         {
-            RESOURCE_BITMAP_HANDLE h_bitmap_on, h_bitmap_off;
+            RESOURCE_BITMAP_HANDLE resource_bitmap_handle_on, resource_bitmap_handle_off;
         } riscos;
 #else
         U32 foo;
@@ -203,7 +203,7 @@ union DIALOG_ICTL_DATA
 #if RISCOS
         struct DIALOG_ICTL_DATA_TRIPICTURE_RISCOS
         {
-            RESOURCE_BITMAP_HANDLE h_bitmap_on, h_bitmap_off, h_bitmap_dont_care;
+            RESOURCE_BITMAP_HANDLE resource_bitmap_handle_on, resource_bitmap_handle_off, resource_bitmap_handle_dont_care;
         } riscos;
 #else
         U32 foo;
@@ -221,7 +221,7 @@ union DIALOG_ICTL_DATA
 #if RISCOS
         struct DIALOG_ICTL_DATA_BUMP_XX_RISCOS
         {
-            RESOURCE_BITMAP_HANDLE h_bitmap_inc, h_bitmap_dec;
+            RESOURCE_BITMAP_HANDLE resource_bitmap_handle_inc, resource_bitmap_handle_dec;
         } riscos;
 #elif WINDOWS
         struct DIALOG_ICTL_DATA_BUMP_XX_WINDOWS
@@ -320,7 +320,7 @@ internal structure to maintain a dialog box
 #if RISCOS
 typedef struct DIALOG_RISCOS_RESOURCE_BITMAP_COMMON
 {
-    RESOURCE_BITMAP_HANDLE handle;
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     GDI_SIZE size;
 }
 DIALOG_RISCOS_RESOURCE_BITMAP_COMMON, * P_DIALOG_RISCOS_RESOURCE_BITMAP_COMMON;
@@ -705,7 +705,7 @@ dialog_riscos_icon_recreate_with(
     P_DIALOG p_dialog,
     _Inout_     WimpIconBlockWithBitset * const p_icon,
     _InoutRef_  P_DIALOG_WIMP_I p_i,
-    RESOURCE_BITMAP_HANDLE h_bitmap);
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle);
 
 extern void
 dialog_riscos_icon_redraw_for_encode(

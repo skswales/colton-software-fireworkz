@@ -624,8 +624,9 @@ T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_date)
             }
             else
             {
-                P_FIELD_LIST_ENTRY p_field_list_entry = array_ptr(&field_list_handle[s_idx], FIELD_LIST_ENTRY, selected_field);
                 T5_MESSAGE new_t5_message;
+
+                p_field_list_entry = array_ptr(&field_list_handle[s_idx], FIELD_LIST_ENTRY, selected_field);
 
                 switch(s_idx)
                 {
@@ -802,8 +803,9 @@ T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_page)
             }
             else
             {
-                P_FIELD_LIST_ENTRY p_field_list_entry = array_ptr(&field_list_handle[s_idx], FIELD_LIST_ENTRY, selected_field);
                 T5_MESSAGE new_t5_message;
+
+                p_field_list_entry = array_ptr(&field_list_handle[s_idx], FIELD_LIST_ENTRY, selected_field);
 
                 switch(s_idx)
                 {

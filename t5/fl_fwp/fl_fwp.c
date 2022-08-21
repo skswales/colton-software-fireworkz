@@ -23,7 +23,8 @@ callback routines
 #define MSG_WEAK &rb_fl_fwp_msg_weak
 extern PC_U8 rb_fl_fwp_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FWP NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FWP DONT_LOAD_RESOURCES
 
 /*
 internal routines

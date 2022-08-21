@@ -118,7 +118,7 @@ dialog_ictl_edit_xx_init(
         p_dialog_ictl_edit_xx->h_dialog = p_dialog->h_dialog;
         p_dialog_ictl_edit_xx->p_bitmap_validation = pcd_edit_xx->p_bitmap_validation; /* maybe NULL, defaults filled in later */
 
-        p_dialog_ictl_edit_xx->readonly = pcd_edit_xx->bits.readonly;
+        p_dialog_ictl_edit_xx->read_only = pcd_edit_xx->bits.read_only;
         p_dialog_ictl_edit_xx->multiline = pcd_edit_xx->bits.multiline;
         p_dialog_ictl_edit_xx->always_update_later = pcd_edit_xx->bits.always_update_later;
         p_dialog_ictl_edit_xx->border_style = pcd_edit_xx->bits.border_style;
@@ -149,7 +149,7 @@ dialog_ictls_bbox_in(
 
         case DIALOG_CONTROL_GROUPBOX:
             {
-            BOOL logical_group = p_dialog_ictl->p_dialog_control->bits.logical_group || !p_dialog_ictl->p_dialog_control_data.groupbox || p_dialog_ictl->p_dialog_control_data.groupbox->bits.logical_group;
+            const BOOL logical_group = p_dialog_ictl->p_dialog_control->bits.logical_group || !p_dialog_ictl->p_dialog_control_data.groupbox || p_dialog_ictl->p_dialog_control_data.groupbox->bits.logical_group;
 
             if(!logical_group)
                 gr_box_union((P_GR_BOX) p_rect, (P_GR_BOX) p_rect, (P_GR_BOX) &pixit_rect);
@@ -350,7 +350,7 @@ dialog_ictls_create(
 
         case DIALOG_CONTROL_STATICPICTURE:
 #if RISCOS
-            p_dialog_ictl->data.staticpicture.riscos.h_bitmap = resource_bitmap_find_defaulting(&p_dialog_control_data.staticpicture->picture_bitmap_id);
+            p_dialog_ictl->data.staticpicture.riscos.resource_bitmap_handle = resource_bitmap_find_defaulting(&p_dialog_control_data.staticpicture->picture_bitmap_id);
 #endif
             break;
 
@@ -364,7 +364,7 @@ dialog_ictls_create(
 #if RISCOS
             p_dialog_ictl->riscos.hot_key = (U8) p_dialog_ictl->p_dialog_control_data.pushpicture->push_xx.hot_key;
 
-            p_dialog_ictl->data.pushpicture.riscos.h_bitmap = resource_bitmap_find(&p_dialog_control_data.pushpicture->picture_bitmap_id);
+            p_dialog_ictl->data.pushpicture.riscos.resource_bitmap_handle = resource_bitmap_find(&p_dialog_control_data.pushpicture->picture_bitmap_id);
 #endif
             break;
 
@@ -393,8 +393,8 @@ dialog_ictls_create(
             if(NULL == p_bitmap_id_on)
                 p_bitmap_id_on = p_bitmap_id_off;
 
-            p_dialog_ictl->data.radiopicture.riscos.h_bitmap_off = resource_bitmap_find_defaulting(p_bitmap_id_off);
-            p_dialog_ictl->data.radiopicture.riscos.h_bitmap_on  = resource_bitmap_find_defaulting(p_bitmap_id_on);
+            p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_off = resource_bitmap_find_defaulting(p_bitmap_id_off);
+            p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_on  = resource_bitmap_find_defaulting(p_bitmap_id_on);
 #endif
 
             /* radiobuttons no longer allowed in the root */
@@ -424,8 +424,8 @@ dialog_ictls_create(
             if(NULL == p_bitmap_id_on)
                 p_bitmap_id_on = p_bitmap_id_off;
 
-            p_dialog_ictl->data.checkpicture.riscos.h_bitmap_off = resource_bitmap_find_defaulting(p_bitmap_id_off);
-            p_dialog_ictl->data.checkpicture.riscos.h_bitmap_on  = resource_bitmap_find_defaulting(p_bitmap_id_on);
+            p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_off = resource_bitmap_find_defaulting(p_bitmap_id_off);
+            p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_on  = resource_bitmap_find_defaulting(p_bitmap_id_on);
 #endif
             break;
             }
@@ -461,9 +461,9 @@ dialog_ictls_create(
             if(NULL == p_bitmap_id_dontcare)
                 p_bitmap_id_dontcare = p_bitmap_id_off;
 
-            p_dialog_ictl->data.tripicture.riscos.h_bitmap_off = resource_bitmap_find_defaulting(p_bitmap_id_dontcare);
-            p_dialog_ictl->data.tripicture.riscos.h_bitmap_on  = resource_bitmap_find_defaulting(p_bitmap_id_dontcare);
-            p_dialog_ictl->data.tripicture.riscos.h_bitmap_dont_care = resource_bitmap_find_defaulting(p_bitmap_id_dontcare);
+            p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_off = resource_bitmap_find_defaulting(p_bitmap_id_dontcare);
+            p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_on  = resource_bitmap_find_defaulting(p_bitmap_id_dontcare);
+            p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_dont_care = resource_bitmap_find_defaulting(p_bitmap_id_dontcare);
 #endif
             break;
             }
@@ -481,7 +481,7 @@ dialog_ictls_create(
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
             {
-            PC_DIALOG_CONTROL_DATA_BUMP_XX pcd_bump_xx;
+            const PC_DIALOG_CONTROL_DATA_BUMP_XX pcd_bump_xx = &p_dialog_control_data.bump_s32->bump_xx;
             P_BITMAP p_bitmap_validation_default;
 
             switch(p_dialog_ictl->dialog_control_type)
@@ -497,8 +497,6 @@ dialog_ictls_create(
                 p_bitmap_validation_default = dialog_statics.bitmap_validation_f64;
                 break;
             }
-
-            pcd_bump_xx = &p_dialog_control_data.bump_s32->bump_xx;
 
             dialog_ictl_edit_xx_init(p_dialog, p_dialog_ictl, &pcd_bump_xx->edit_xx);
 
@@ -844,7 +842,7 @@ dialog_ictls_dispose_in(
 
         case DIALOG_CONTROL_STATICPICTURE:
 #if RISCOS
-            resource_bitmap_lose(&p_dialog_ictl->data.staticpicture.riscos.h_bitmap);
+            resource_bitmap_lose(&p_dialog_ictl->data.staticpicture.riscos.resource_bitmap_handle);
 #endif
             break;
 
@@ -853,7 +851,7 @@ dialog_ictls_dispose_in(
 
         case DIALOG_CONTROL_PUSHPICTURE:
 #if RISCOS
-            resource_bitmap_lose(&p_dialog_ictl->data.pushpicture.riscos.h_bitmap);
+            resource_bitmap_lose(&p_dialog_ictl->data.pushpicture.riscos.resource_bitmap_handle);
 #endif
             break;
 
@@ -862,8 +860,8 @@ dialog_ictls_dispose_in(
 
         case DIALOG_CONTROL_RADIOPICTURE:
 #if RISCOS
-            resource_bitmap_lose(&p_dialog_ictl->data.radiopicture.riscos.h_bitmap_on);
-            resource_bitmap_lose(&p_dialog_ictl->data.radiopicture.riscos.h_bitmap_off);
+            resource_bitmap_lose(&p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_on);
+            resource_bitmap_lose(&p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_off);
 #endif
             break;
 
@@ -872,8 +870,8 @@ dialog_ictls_dispose_in(
 
         case DIALOG_CONTROL_CHECKPICTURE:
 #if RISCOS
-            resource_bitmap_lose(&p_dialog_ictl->data.checkpicture.riscos.h_bitmap_on);
-            resource_bitmap_lose(&p_dialog_ictl->data.checkpicture.riscos.h_bitmap_off);
+            resource_bitmap_lose(&p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_on);
+            resource_bitmap_lose(&p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_off);
 #endif
             break;
 
@@ -883,9 +881,9 @@ dialog_ictls_dispose_in(
 
         case DIALOG_CONTROL_TRIPICTURE:
 #if RISCOS
-            resource_bitmap_lose(&p_dialog_ictl->data.tripicture.riscos.h_bitmap_on);
-            resource_bitmap_lose(&p_dialog_ictl->data.tripicture.riscos.h_bitmap_off);
-            resource_bitmap_lose(&p_dialog_ictl->data.tripicture.riscos.h_bitmap_dont_care);
+            resource_bitmap_lose(&p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_on);
+            resource_bitmap_lose(&p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_off);
+            resource_bitmap_lose(&p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_dont_care);
 #endif
             break;
 #endif

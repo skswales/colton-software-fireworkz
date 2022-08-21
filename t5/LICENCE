@@ -2,30 +2,32 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 2016-2018 Stuart Swales
+# Copyright (C) 1989-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+# Portions Copyright (C) 2012-2019 Stuart Swales
 
 # NB This licence file pertains to the Fireworkz code source tree;
-# a different licence is shipped to the end user in:
-#   RiscPkg.Copyright (RISC OS)
-#   LICENCE.TXT (Windows)
+# a different licence is shipped to the end user from:
+#   firewrkz.r.RiscPkg.Copyright (RISC OS)
+#   firewrkz\windows\Disc1.src\Licence.txt (Windows)
 
 This licence also applies to the following files in this directory
 and subdirectories unless specified otherwise:
 
-*.bmp, *.cur, *.ico
+ *.bmp, *.cur, *.ico
 
-*,aff (RISC OS: filetype AFF/Drawfile)
-*,ff9 (RISC OS: filetype FF9/Sprite)
-*,ffa (RISC OS: filetype FFA/Module)
-*,ffb (RISC OS: filetype FFB/BASIC)
-*,ffc (RISC OS: filetype FFC/Utility)
-*,ffd (RISC OS: filetype FFD/Data)
+ *,aff (RISC OS: filetype AFF/Drawfile)
+ *,ff9 (RISC OS: filetype FF9/Sprite)
+ *,ffa (RISC OS: filetype FFA/Module)
+ *,ffb (RISC OS: filetype FFB/BASIC)
+ *,ffc (RISC OS: filetype FFC/Utility)
+ *,ffd (RISC OS: filetype FFD/Data)
 
 ----------------------------------------------------------------------------
 
 Copyright (C) 1989-1998 Colton Software Limited
 Copyright (C) 1998-2015 R W Colton
-Portions Copyright (C) 2012-2018 Stuart Swales
+Portions Copyright (C) 2012-2019 Stuart Swales
 
 See the Release Notes for additional copyright information.
 

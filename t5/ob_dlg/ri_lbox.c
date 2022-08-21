@@ -707,10 +707,8 @@ ri_lbox_build_caretstr(
     p_caret->xoffset = 0;
     p_caret->yoffset = 0;
     p_caret->height = 0         /* caret height */
-#if 0
-                    | (1 << 24) /* VDU-5 type caret */
-#endif
-                    | (1 << 25) /* caret invisible */;
+                    | (1 << 25) /* caret invisible */
+                    ;
     p_caret->index  = 0;
 }
 
@@ -1181,33 +1179,33 @@ ri_lbox_redraw_core(
     item_origin.y = lbox_mesh_origin.y - items.tl.y * lbox_mesh_size.cy; /* tl of topmost visible item */
 
     do  {
-        int item_fg, item_bg;
         UI_TEXT ui_text;
-        STATUS is_selected_item = (itemno >= 0) && (itemno < p_lbox->n_items) && (itemno == p_lbox->selected_item);
+        const BOOL is_selected_item = (itemno >= 0) && (itemno < p_lbox->n_items) && (itemno == p_lbox->selected_item);
+        const BOOL is_disabled_item = (0 != p_lbox->bits.disabled);
 
-        item_fg = p_lbox->bits.disabled ? 0x01 /*light grey*/ : 0x07 /*black*/;
-        item_bg = 0x00 /*white*/;
+        const int item_fg = 0x07 /*black*/;
+        const int item_bg = 0x00 /*white*/;
 
-        if(is_selected_item && (p_lbox->bits.always_show_selection || has_focus))
         {
-            /* swap colours around */
-            item_fg ^= item_bg;
-            item_bg ^= item_fg;
-            item_fg ^= item_bg;
-        }
+        WimpIconBlockWithBitset icon;
 
-        /* clear item background to item bg colour, print item text in item fg colour */
+        icon.flags.u32 = 0;
 
-        if(host_setbgcolour(&rgb_stash[item_bg]))
-        {
-            void_WrapOsErrorChecking(
-                bbc_move((int) item_origin.x, (int) item_origin.y - 1));
+        icon.flags.bits.fg_colour = item_fg;
+        icon.flags.bits.bg_colour = item_bg;
+        icon.flags.bits.filled = 1;
 
-            void_WrapOsErrorChecking(
-                os_plot(0x60 /*bbc_RectangleFill*/ + 3 /*bbc_DrawRelBack*/,
-                        (int) +(BBox_width(&p_redraw_window_block->visible_area) - 1),
-                        (int) -(lbox_mesh_size.cy - 1)));
-        }
+        if(is_disabled_item)
+            icon.flags.bits.disabled = 1;
+
+        icon.bbox.xmin = (item_origin.x - gdi_org.x);
+        icon.bbox.ymax = (item_origin.y - gdi_org.y);
+
+        icon.bbox.xmax = icon.bbox.xmin + BBox_width(&p_redraw_window_block->visible_area);
+        icon.bbox.ymin = icon.bbox.ymax - lbox_mesh_size.cy;
+
+        host_ploticon(&icon);
+        } /*block*/
 
         /* may get stray pixels up top, and also at bottom, but more importantly, empty space when small n_items in larger list box */
         if((itemno >= 0) && (itemno < p_lbox->n_items))
@@ -1225,22 +1223,7 @@ ri_lbox_redraw_core(
                 while(NULL != (p_tab = strchr(p_tab, '\t')))
                     *p_tab++ = CH_SPACE;
                 } /*block*/
-#if 0
-                if(host_setfgcolour(&rgb_stash[item_fg]))
-                {
-                    /* it's that wretched VDU 5 again! */
-                    bbc_move(item_origin.x
-                             + RI_LBOX_ITEM_LM   /* left margin of text within item in list box */,
 
-                             item_origin.y
-                             - RI_LBOX_ITEM_TM   /* top border of text within item */
-                             - 4                 /* VDU 5 offset down from cell top */);
-
-                    bbc_write0(p_u8);
-                }
-#endif
-
-#if 1
                 {
                 WimpIconBlockWithBitset icon;
 
@@ -1252,8 +1235,14 @@ ri_lbox_redraw_core(
                 icon.flags.bits.bg_colour = item_bg; /* keep proportional font happy */
                 icon.flags.bits.filled = 1; /* ditto? */
 
-                icon.bbox.xmin = (item_origin.x + RI_LBOX_ITEM_LM /* left margin of text within item in list box */ - gdi_org.x - 6 /*bodge for PDM*/);
-                icon.bbox.ymax = (item_origin.y - RI_LBOX_ITEM_TM /* top  border of text within item in list box */ - gdi_org.y + 4 /*bodge for PDM*/);
+                if(is_selected_item)
+                    icon.flags.bits.selected = 1;
+
+                if(is_disabled_item)
+                    icon.flags.bits.disabled = 1;
+
+                icon.bbox.xmin = (item_origin.x - gdi_org.x + RI_LBOX_ITEM_LM /* left margin of text within item in list box */ - 6 /*bodge for PDM*/);
+                icon.bbox.ymax = (item_origin.y - gdi_org.y - RI_LBOX_ITEM_TM /* top  border of text within item in list box */ + 4 /*bodge for PDM*/);
                 icon.bbox.xmax = icon.bbox.xmin + 0x3FFF;
                 icon.bbox.ymin = icon.bbox.ymax - lbox_mesh_size.cy;
 
@@ -1263,7 +1252,6 @@ ri_lbox_redraw_core(
 
                 host_ploticon(&icon);
                 } /*block*/
-#endif
 
                 if(p_lbox->max_item_len)
                     p_lbox->max_item_len = MAX(p_lbox->max_item_len, len);

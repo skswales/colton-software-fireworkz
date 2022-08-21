@@ -208,10 +208,6 @@ think VERY CAREFULLY about changing any of these!
 
 typedef enum OBJECT_ID
 {
-    OBJECT_ID_ENUM_START = -1,  /* for while(status_ok(object_next(&object_id))) loops */
-
-    OBJECT_ID_FIRST = 0,        /* for explicit for(;;) loops */
-
     OBJECT_ID_SKEL = 0,         /*  0 * */
     OBJECT_ID_SS = 1,           /*  1 S (see above) */
     OBJECT_ID_REC = 2,          /*  2 B */
@@ -260,7 +256,13 @@ typedef enum OBJECT_ID
 
 #define OBJECT_ID_SS_SPLIT OBJECT_ID_SS
 
-    MAX_OBJECTS = 64            /* makes for a two 32-bit word bitmap */
+    MAX_OBJECTS = 64,           /* makes for a two 32-bit word bitmap */
+
+    /* these specials at end for Windows debugging */
+
+    OBJECT_ID_ENUM_START = -1,  /* for while(status_ok(object_next(&object_id))) loops */
+
+    OBJECT_ID_FIRST = 0         /* for explicit for(;;) loops */
 }
 OBJECT_ID, * P_OBJECT_ID;
 
@@ -2253,10 +2255,10 @@ typedef struct HOST_XFORM
 #if RISCOS
     struct HOST_XFORM_RISCOS
     {
-        U32 d_x; /* x-pixel size in OS units */
-        U32 d_y; /* y-pixel size in OS units */
-        U32 eig_x; /* x-EIG shift */
-        U32 eig_y; /* y-EIG shift */
+        U32 dx; /* x-pixel size in OS units */
+        U32 dy; /* y-pixel size in OS units */
+        U32 XEigFactor; /* x-EIG shift */
+        U32 YEigFactor; /* y-EIG shift */
     } riscos;
 #elif WINDOWS
     struct HOST_XFORM_WINDOWS
@@ -2502,7 +2504,7 @@ filer_launch(
     _In_z_      PCTSTR filename);
 
 extern void
-host_longjmp_to_event_loop(void);
+host_longjmp_to_event_loop(int val);
 
 extern void
 host_bleep(void);

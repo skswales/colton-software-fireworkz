@@ -38,7 +38,8 @@
 #define MSG_WEAK &rb_draw_io_msg_weak
 extern PC_U8 rb_draw_io_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_DRAW_IO NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_DRAW_IO DONT_LOAD_RESOURCES
 
 #if !RISCOS
 #define DRAWFILE_EXTENSION_TSTR FILE_EXT_SEP_TSTR TEXT("aff")

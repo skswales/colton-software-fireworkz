@@ -14,6 +14,7 @@
 #include "common/gflags.h"
 
 #define EXPOSE_RISCOS_FONT 1
+#define EXPOSE_RISCOS_SWIS 1
 
 #include "ob_chart/ob_chart.h"
 
@@ -104,7 +105,7 @@ gr_riscdiag_host_font_from_textstyle(
         rs.r[4] = 0;
         rs.r[5] = 0;
 
-        if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+        if(NULL == (p_kernel_oserror = (_kernel_swi(Font_FindFont, &rs, &rs))))
             host_font = (HOST_FONT) rs.r[0];
     }
 

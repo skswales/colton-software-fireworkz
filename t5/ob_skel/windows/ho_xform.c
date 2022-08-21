@@ -27,16 +27,17 @@ gdi_point_from_pixit_point_and_context(
     _InRef_     PC_PIXIT_POINT p_pixit_point,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_POINT pixit_point = *p_pixit_point;
+    PIXIT_POINT pixit_point;
+    GDI_POINT gdi_point;
 
-    pixit_point.x += p_redraw_context->pixit_origin.x;
-    pixit_point.y += p_redraw_context->pixit_origin.y;
+    pixit_point.x = p_pixit_point->x + p_redraw_context->pixit_origin.x;
+    pixit_point.y = p_pixit_point->y + p_redraw_context->pixit_origin.y;
 
-    p_gdi_point->x = muldiv64_round_floor(pixit_point.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
-    p_gdi_point->y = muldiv64_round_floor(pixit_point.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
+    gdi_point.x = muldiv64_round_floor(pixit_point.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
+    gdi_point.y = muldiv64_round_floor(pixit_point.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
 
-    p_gdi_point->x -= p_redraw_context->gdi_org.x;
-    p_gdi_point->y -= p_redraw_context->gdi_org.y;
+    p_gdi_point->x = gdi_point.x - p_redraw_context->gdi_org.x;
+    p_gdi_point->y = gdi_point.y - p_redraw_context->gdi_org.y;
 }
 
 /******************************************************************************
@@ -54,22 +55,23 @@ gdi_rect_from_pixit_rect_and_context(
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_RECT pixit_rect = *p_pixit_rect;
+    PIXIT_RECT pixit_rect;
+    GDI_RECT gdi_rect;
 
-    pixit_rect.tl.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.tl.y += p_redraw_context->pixit_origin.y;
-    pixit_rect.br.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.br.y += p_redraw_context->pixit_origin.y;
+    pixit_rect.tl.x = p_pixit_rect->tl.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.tl.y = p_pixit_rect->tl.y + p_redraw_context->pixit_origin.y;
+    pixit_rect.br.x = p_pixit_rect->br.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.br.y = p_pixit_rect->br.y + p_redraw_context->pixit_origin.y;
 
-    p_gdi_rect->tl.x = muldiv64_round_floor(pixit_rect.tl.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
-    p_gdi_rect->tl.y = muldiv64_round_floor(pixit_rect.tl.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
-    p_gdi_rect->br.x = muldiv64_round_floor(pixit_rect.br.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
-    p_gdi_rect->br.y = muldiv64_round_floor(pixit_rect.br.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
+    gdi_rect.tl.x = muldiv64_round_floor(pixit_rect.tl.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
+    gdi_rect.tl.y = muldiv64_round_floor(pixit_rect.tl.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
+    gdi_rect.br.x = muldiv64_round_floor(pixit_rect.br.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
+    gdi_rect.br.y = muldiv64_round_floor(pixit_rect.br.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
 
-    p_gdi_rect->tl.x -= p_redraw_context->gdi_org.x;
-    p_gdi_rect->tl.y -= p_redraw_context->gdi_org.y;
-    p_gdi_rect->br.x -= p_redraw_context->gdi_org.x;
-    p_gdi_rect->br.y -= p_redraw_context->gdi_org.y;
+    p_gdi_rect->tl.x = gdi_rect.tl.x - p_redraw_context->gdi_org.x;
+    p_gdi_rect->tl.y = gdi_rect.tl.y - p_redraw_context->gdi_org.y;
+    p_gdi_rect->br.x = gdi_rect.br.x - p_redraw_context->gdi_org.x;
+    p_gdi_rect->br.y = gdi_rect.br.y - p_redraw_context->gdi_org.y;
 
     /* i,i,e,e return! */
     if((p_gdi_rect->tl.x >= p_gdi_rect->br.x) || (p_gdi_rect->tl.y >= p_gdi_rect->br.y))
@@ -130,22 +132,23 @@ gdi_rect_from_pixit_rect_and_context_draw(
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_RECT pixit_rect = *p_pixit_rect;
+    PIXIT_RECT pixit_rect;
+    S32_RECT draw_units;
 
-    pixit_rect.tl.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.tl.y += p_redraw_context->pixit_origin.y;
-    pixit_rect.br.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.br.y += p_redraw_context->pixit_origin.y;
+    pixit_rect.tl.x = p_pixit_rect->tl.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.tl.y = p_pixit_rect->tl.y + p_redraw_context->pixit_origin.y;
+    pixit_rect.br.x = p_pixit_rect->br.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.br.y = p_pixit_rect->br.y + p_redraw_context->pixit_origin.y;
 
-    p_gdi_rect->tl.x = muldiv64_round_floor(pixit_rect.tl.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
-    p_gdi_rect->tl.y = muldiv64_round_floor(pixit_rect.tl.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
-    p_gdi_rect->br.x = muldiv64_round_floor(pixit_rect.br.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
-    p_gdi_rect->br.y = muldiv64_round_floor(pixit_rect.br.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
+    draw_units.tl.x = muldiv64_round_floor(pixit_rect.tl.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
+    draw_units.tl.y = muldiv64_round_floor(pixit_rect.tl.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
+    draw_units.br.x = muldiv64_round_floor(pixit_rect.br.x, p_redraw_context->host_xform.windows.divisor_of_pixels.x << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.x);
+    draw_units.br.y = muldiv64_round_floor(pixit_rect.br.y, p_redraw_context->host_xform.windows.divisor_of_pixels.y << 8, p_redraw_context->host_xform.windows.multiplier_of_pixels.y);
 
-    p_gdi_rect->tl.x -= p_redraw_context->gdi_org.x << 8;
-    p_gdi_rect->tl.y -= p_redraw_context->gdi_org.y << 8;
-    p_gdi_rect->br.x -= p_redraw_context->gdi_org.x << 8;
-    p_gdi_rect->br.y -= p_redraw_context->gdi_org.y << 8;
+    p_gdi_rect->tl.x = draw_units.tl.x - (p_redraw_context->gdi_org.x << 8);
+    p_gdi_rect->tl.y = draw_units.tl.y - (p_redraw_context->gdi_org.y << 8);
+    p_gdi_rect->br.x = draw_units.br.x - (p_redraw_context->gdi_org.x << 8);
+    p_gdi_rect->br.y = draw_units.br.y - (p_redraw_context->gdi_org.y << 8);
 
     return(STATUS_DONE);
 }

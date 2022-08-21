@@ -27,7 +27,8 @@
 #define MSG_WEAK &rb_fl_csv_msg_weak
 extern PC_U8 rb_fl_csv_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FL_CSV NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FL_CSV DONT_LOAD_RESOURCES
 
 /*
 internal routines
@@ -56,8 +57,8 @@ enum CSV_LOAD_QUERY_IDS
     CSV_LOAD_QUERY_ID_INSERT_AS_TABLE = 666,
     CSV_LOAD_QUERY_ID_OVERWRITE_BLANK_CELLS,
     CSV_LOAD_QUERY_ID_LABELS,
-    CSV_LOAD_QUERY_ID_ACROSS_TEXT,
-    CSV_LOAD_QUERY_ID_ACROSS,
+    CSV_LOAD_QUERY_ID_LABELS_ACROSS_LABEL,
+    CSV_LOAD_QUERY_ID_LABELS_ACROSS,
     CSV_LOAD_QUERY_ID_DATABASE
 };
 
@@ -894,40 +895,40 @@ csv_load_query_labels_data = { { 0 }, CSV_LOAD_QUERY_ID_LABELS, UI_TEXT_INIT_RES
 #define BUMP_FIELDS_H DIALOG_BUMP_H(3)
 
 static const DIALOG_CONTROL
-csv_load_query_across_text =
+csv_load_query_labels_across_label =
 {
-    CSV_LOAD_QUERY_ID_ACROSS_TEXT, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, CSV_LOAD_QUERY_ID_ACROSS, DIALOG_CONTROL_SELF, CSV_LOAD_QUERY_ID_ACROSS },
+    CSV_LOAD_QUERY_ID_LABELS_ACROSS_LABEL, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, CSV_LOAD_QUERY_ID_LABELS_ACROSS, DIALOG_CONTROL_SELF, CSV_LOAD_QUERY_ID_LABELS_ACROSS },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-csv_load_query_across_text_data = { UI_TEXT_INIT_RESID(CSV_MSG_LOAD_QUERY_ACROSS), { 0 /*left_text*/ } };
+csv_load_query_labels_across_label_data = { UI_TEXT_INIT_RESID(CSV_MSG_LOAD_QUERY_LABELS_ACROSS), { 0 /*left_text*/ } };
 
 static const DIALOG_CONTROL
-csv_load_query_across =
+csv_load_query_labels_across =
 {
-    CSV_LOAD_QUERY_ID_ACROSS, DIALOG_MAIN_GROUP,
-    { CSV_LOAD_QUERY_ID_ACROSS_TEXT, CSV_LOAD_QUERY_ID_LABELS },
+    CSV_LOAD_QUERY_ID_LABELS_ACROSS, DIALOG_MAIN_GROUP,
+    { CSV_LOAD_QUERY_ID_LABELS_ACROSS_LABEL, CSV_LOAD_QUERY_ID_LABELS },
     { DIALOG_STDSPACING_H, DIALOG_SMALLSPACING_V, BUMP_FIELDS_H, DIALOG_STDBUMP_V },
     { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
-csv_load_query_across_control = { 1, 1000 };
+csv_load_query_labels_across_control = { 1, 1000 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-csv_load_query_across_data = { { { { FRAMED_BOX_EDIT } }, &csv_load_query_across_control } };
+csv_load_query_labels_across_data = { { { { FRAMED_BOX_EDIT } }, &csv_load_query_labels_across_control } };
 
 static S32
-csv_load_query_across_data_state = 3;
+csv_load_query_labels_across_data_state = 3;
 
 static const DIALOG_CONTROL
 csv_load_query_database =
 {
     CSV_LOAD_QUERY_ID_DATABASE, DIALOG_MAIN_GROUP,
-    { CSV_LOAD_QUERY_ID_LABELS, CSV_LOAD_QUERY_ID_ACROSS },
+    { CSV_LOAD_QUERY_ID_LABELS, CSV_LOAD_QUERY_ID_LABELS_ACROSS },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
     { DRT(LBLT, RADIOBUTTON) }
 };
@@ -946,8 +947,8 @@ csv_load_query_ctl_create[] =
     { &csv_load_query_overwrite_blank_cells,    &csv_load_query_overwrite_blank_cells_data },
     { &csv_load_query_insert_as_table,          &csv_load_query_insert_as_table_data },
     { &csv_load_query_labels,                   &csv_load_query_labels_data },
-    { &csv_load_query_across_text,              &csv_load_query_across_text_data },
-    { &csv_load_query_across,                   &csv_load_query_across_data },
+    { &csv_load_query_labels_across_label,      &csv_load_query_labels_across_label_data },
+    { &csv_load_query_labels_across,            &csv_load_query_labels_across_data },
 
     { &csv_load_query_database, &csv_load_query_database_data } /* optional ... */
 };
@@ -957,7 +958,7 @@ static STATUS
 dialog_csv_load_query_process_start(
     _InRef_     PC_DIALOG_MSG_PROCESS_START p_dialog_msg_process_start)
 {
-    status_return(ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, CSV_LOAD_QUERY_ID_ACROSS, csv_load_query_across_data_state));
+    status_return(ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, CSV_LOAD_QUERY_ID_LABELS_ACROSS, csv_load_query_labels_across_data_state));
     return(ui_dlg_set_radio_forcing(p_dialog_msg_process_start->h_dialog, DIALOG_MAIN_GROUP, csv_load_query_current));
 }
 
@@ -971,8 +972,8 @@ dialog_csv_load_query_ctl_state_change(
     case DIALOG_MAIN_GROUP:
         {
         const BOOL enabled = (CSV_LOAD_QUERY_ID_LABELS == p_dialog_msg_ctl_state_change->new_state.radiobutton);
-        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, CSV_LOAD_QUERY_ID_ACROSS, enabled);
-        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, CSV_LOAD_QUERY_ID_ACROSS_TEXT, enabled);
+        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, CSV_LOAD_QUERY_ID_LABELS_ACROSS, enabled);
+        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, CSV_LOAD_QUERY_ID_LABELS_ACROSS_LABEL, enabled);
         break;
         }
 
@@ -992,7 +993,7 @@ dialog_csv_load_query_ctl_pushbutton(
     {
     case IDOK:
         {
-        csv_load_query_across_data_state = ui_dlg_get_s32(p_dialog_msg_ctl_pushbutton->h_dialog, CSV_LOAD_QUERY_ID_ACROSS); /* remember for next time round as well */
+        csv_load_query_labels_across_data_state = ui_dlg_get_s32(p_dialog_msg_ctl_pushbutton->h_dialog, CSV_LOAD_QUERY_ID_LABELS_ACROSS); /* remember for next time round as well */
         csv_load_query_current = ui_dlg_get_radio(p_dialog_msg_ctl_pushbutton->h_dialog, DIALOG_MAIN_GROUP); /* remember for next time round as well */
 
         p_dialog_msg_ctl_pushbutton->completion_code = csv_load_query_current;
@@ -1076,7 +1077,7 @@ T5_MSG_PROTO(static, csv_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
         if(CSV_LOAD_QUERY_ID_DATABASE == status)
             status = csv_msg_insert_foreign_as_db(p_docu, p_msg_insert_foreign);
         else
-            status = csv_msg_insert_foreign_normal(p_docu, p_msg_insert_foreign, status, (COL) csv_load_query_across_data_state, (p_msg_insert_foreign->t5_filetype == FILETYPE_SID));
+            status = csv_msg_insert_foreign_normal(p_docu, p_msg_insert_foreign, status, (COL) csv_load_query_labels_across_data_state, (p_msg_insert_foreign->t5_filetype == FILETYPE_SID));
     }
 
     return(status);

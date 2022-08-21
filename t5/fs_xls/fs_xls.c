@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2018 Stuart Swales */
+/* Copyright (C) 2014-2019 Stuart Swales */
 
 /* Excel spreadsheet save object module for Fireworkz */
 
@@ -18,7 +18,8 @@
 #define MSG_WEAK &rb_fs_xls_msg_weak
 extern PC_U8 rb_fs_xls_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FS_XLS NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FS_XLS DONT_LOAD_RESOURCES
 
 /******************************************************************************
 *

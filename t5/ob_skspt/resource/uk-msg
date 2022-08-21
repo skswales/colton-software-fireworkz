@@ -8,10 +8,6 @@
 # Copyright (C) 1995-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
-#
-e0:Can't delete the base style
-#
 # messages
 #
 1:Styles
@@ -40,5 +36,9 @@ r7:Editing style: %s
 24:ug06/ug6_spacing.htm
 25:sg03/sg3_styles_in_spreadsheet_documents.htm
 26:ug06/ug6_row.htm
+#
+# errors
+#
+e0:Can't delete the base style
 #
 # end of msg (ob_skspt)

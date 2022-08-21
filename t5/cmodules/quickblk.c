@@ -118,7 +118,7 @@ quick_block_extend_by(
     /* does the request fit in the current buffer? */
     if(extend_by <= (p_quick_block->static_buffer_size - p_quick_block->static_buffer_used))
     {
-        P_BYTE p_output = PtrAddBytes(P_BYTE, p_quick_block->p_static_buffer, p_quick_block->static_buffer_used);
+        p_output = PtrAddBytes(P_BYTE, p_quick_block->p_static_buffer, p_quick_block->static_buffer_used);
         p_quick_block->static_buffer_used += extend_by;
         return(p_output);
     }

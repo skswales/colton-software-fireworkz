@@ -19,7 +19,8 @@
 #define MSG_WEAK &rb_note_msg_weak
 extern PC_U8 rb_note_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_NOTE NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_NOTE DONT_LOAD_RESOURCES
 
 /*
 internal structure

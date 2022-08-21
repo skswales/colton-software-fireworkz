@@ -59,10 +59,10 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_ENABLE,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN,
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_UNITS,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET,
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET_UNITS,
 
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_GROUP = 220,
@@ -70,10 +70,10 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_ENABLE,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN,
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_UNITS,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET,
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET_UNITS,
 
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_GROUP = 240,
@@ -81,10 +81,10 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_ENABLE,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN,
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_UNITS,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET,
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET_UNITS,
 
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_GROUP = 300,
@@ -92,10 +92,10 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_ENABLE,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN,
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_UNITS,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET,
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET_UNITS,
 
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_GROUP = 320,
@@ -103,10 +103,10 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_ENABLE,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN,
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_UNITS,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET,
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET_UNITS,
 
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_GROUP = 340,
@@ -114,10 +114,10 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_ENABLE,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN,
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_UNITS,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET,
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET_TEXT,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET_LABEL,
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET_UNITS,
 
     PAGE_HEFO_BREAK_VALUES_ID_MAX
@@ -127,10 +127,10 @@ static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
 page_hefo_break_values_hf_oef_units_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-page_hefo_break_values_hf_oef_margin_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_MARGIN) };
+page_hefo_break_values_hf_oef_margin_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_MARGIN) };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-page_hefo_break_values_hf_oef_offset_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_OFFSET) };
+page_hefo_break_values_hf_oef_offset_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_OFFSET) };
 
 static /*poked*/ UI_CONTROL_F64
 page_hefo_break_values_units_control;
@@ -186,9 +186,9 @@ margin
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_header_odd_margin_text =
+page_hefo_break_values_header_odd_margin_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -211,7 +211,7 @@ page_hefo_break_values_header_odd_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -220,10 +220,10 @@ offset
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_header_odd_offset_text =
+page_hefo_break_values_header_odd_offset_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET },
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
+    { PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
@@ -301,9 +301,9 @@ margin
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_header_even_margin_text =
+page_hefo_break_values_header_even_margin_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -326,7 +326,7 @@ page_hefo_break_values_header_even_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -335,10 +335,10 @@ offset
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_header_even_offset_text =
+page_hefo_break_values_header_even_offset_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET },
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
+    { PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
@@ -416,9 +416,9 @@ margin
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_header_first_margin_text =
+page_hefo_break_values_header_first_margin_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -441,7 +441,7 @@ page_hefo_break_values_header_first_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -450,10 +450,10 @@ offset
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_header_first_offset_text =
+page_hefo_break_values_header_first_offset_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET },
+    PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
+    { PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
@@ -531,9 +531,9 @@ margin
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_footer_odd_margin_text =
+page_hefo_break_values_footer_odd_margin_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -556,7 +556,7 @@ page_hefo_break_values_footer_odd_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -565,10 +565,10 @@ offset
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_footer_odd_offset_text =
+page_hefo_break_values_footer_odd_offset_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET },
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
+    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
@@ -646,9 +646,9 @@ margin
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_footer_even_margin_text =
+page_hefo_break_values_footer_even_margin_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -658,7 +658,7 @@ static const DIALOG_CONTROL
 page_hefo_break_values_footer_even_margin =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_TEXT, DIALOG_CONTROL_PARENT },
+    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_VALUES_FIELDS_H, DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
 };
@@ -671,7 +671,7 @@ page_hefo_break_values_footer_even_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -680,10 +680,10 @@ offset
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_footer_even_offset_text =
+page_hefo_break_values_footer_even_offset_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET },
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
+    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
@@ -761,9 +761,9 @@ margin
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_footer_first_margin_text =
+page_hefo_break_values_footer_first_margin_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -786,7 +786,7 @@ page_hefo_break_values_footer_first_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -795,10 +795,10 @@ offset
 */
 
 static const DIALOG_CONTROL
-page_hefo_break_values_footer_first_offset_text =
+page_hefo_break_values_footer_first_offset_label =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_TEXT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET },
+    PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
+    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
@@ -935,10 +935,10 @@ page_hefo_break_values_ctl_create[] =
     { &page_hefo_break_values_header_odd_caption_group2 },
     { &page_hefo_break_values_header_odd_enable,           &page_hefo_break_values_header_odd_enable_data },
     { &page_hefo_break_values_header_odd_margin,           &page_hefo_break_values_header_odd_margin_data },
-    { &page_hefo_break_values_header_odd_margin_text,      &page_hefo_break_values_hf_oef_margin_text_data },
+    { &page_hefo_break_values_header_odd_margin_label,     &page_hefo_break_values_hf_oef_margin_label_data },
     { &page_hefo_break_values_header_odd_margin_units,     &page_hefo_break_values_hf_oef_units_data },
     { &page_hefo_break_values_header_odd_offset,           &page_hefo_break_values_header_odd_offset_data },
-    { &page_hefo_break_values_header_odd_offset_text,      &page_hefo_break_values_hf_oef_offset_text_data },
+    { &page_hefo_break_values_header_odd_offset_label,     &page_hefo_break_values_hf_oef_offset_label_data },
     { &page_hefo_break_values_header_odd_offset_units,     &page_hefo_break_values_hf_oef_units_data },
 
     { &page_hefo_break_values_header_even_group,           &page_hefo_break_values_header_even_group_data },
@@ -946,10 +946,10 @@ page_hefo_break_values_ctl_create[] =
     { &page_hefo_break_values_header_even_caption_group2 },
     { &page_hefo_break_values_header_even_enable,          &page_hefo_break_values_header_even_enable_data },
     { &page_hefo_break_values_header_even_margin,          &page_hefo_break_values_header_even_margin_data },
-    { &page_hefo_break_values_header_even_margin_text,     &page_hefo_break_values_hf_oef_margin_text_data },
+    { &page_hefo_break_values_header_even_margin_label,    &page_hefo_break_values_hf_oef_margin_label_data },
     { &page_hefo_break_values_header_even_margin_units,    &page_hefo_break_values_hf_oef_units_data },
     { &page_hefo_break_values_header_even_offset,          &page_hefo_break_values_header_even_offset_data },
-    { &page_hefo_break_values_header_even_offset_text,     &page_hefo_break_values_hf_oef_offset_text_data },
+    { &page_hefo_break_values_header_even_offset_label,    &page_hefo_break_values_hf_oef_offset_label_data },
     { &page_hefo_break_values_header_even_offset_units,    &page_hefo_break_values_hf_oef_units_data },
 
     { &page_hefo_break_values_header_first_group,          &page_hefo_break_values_header_first_group_data },
@@ -957,10 +957,10 @@ page_hefo_break_values_ctl_create[] =
     { &page_hefo_break_values_header_first_caption_group2 },
     { &page_hefo_break_values_header_first_enable,         &page_hefo_break_values_header_first_enable_data },
     { &page_hefo_break_values_header_first_margin,         &page_hefo_break_values_header_first_margin_data },
-    { &page_hefo_break_values_header_first_margin_text,    &page_hefo_break_values_hf_oef_margin_text_data },
+    { &page_hefo_break_values_header_first_margin_label,   &page_hefo_break_values_hf_oef_margin_label_data },
     { &page_hefo_break_values_header_first_margin_units,   &page_hefo_break_values_hf_oef_units_data },
     { &page_hefo_break_values_header_first_offset,         &page_hefo_break_values_header_first_offset_data },
-    { &page_hefo_break_values_header_first_offset_text,    &page_hefo_break_values_hf_oef_offset_text_data },
+    { &page_hefo_break_values_header_first_offset_label,   &page_hefo_break_values_hf_oef_offset_label_data },
     { &page_hefo_break_values_header_first_offset_units,   &page_hefo_break_values_hf_oef_units_data },
 
     { &page_hefo_break_values_footer_odd_group,            &page_hefo_break_values_footer_odd_group_data },
@@ -968,10 +968,10 @@ page_hefo_break_values_ctl_create[] =
     { &page_hefo_break_values_footer_odd_caption_group2 },
     { &page_hefo_break_values_footer_odd_enable,           &page_hefo_break_values_footer_odd_enable_data },
     { &page_hefo_break_values_footer_odd_margin,           &page_hefo_break_values_footer_odd_margin_data },
-    { &page_hefo_break_values_footer_odd_margin_text,      &page_hefo_break_values_hf_oef_margin_text_data },
+    { &page_hefo_break_values_footer_odd_margin_label,     &page_hefo_break_values_hf_oef_margin_label_data },
     { &page_hefo_break_values_footer_odd_margin_units,     &page_hefo_break_values_hf_oef_units_data },
     { &page_hefo_break_values_footer_odd_offset,           &page_hefo_break_values_footer_odd_offset_data },
-    { &page_hefo_break_values_footer_odd_offset_text,      &page_hefo_break_values_hf_oef_offset_text_data },
+    { &page_hefo_break_values_footer_odd_offset_label,     &page_hefo_break_values_hf_oef_offset_label_data },
     { &page_hefo_break_values_footer_odd_offset_units,     &page_hefo_break_values_hf_oef_units_data },
 
     { &page_hefo_break_values_footer_even_group,           &page_hefo_break_values_footer_even_group_data },
@@ -979,10 +979,10 @@ page_hefo_break_values_ctl_create[] =
     { &page_hefo_break_values_footer_even_caption_group2 },
     { &page_hefo_break_values_footer_even_enable,          &page_hefo_break_values_footer_even_enable_data },
     { &page_hefo_break_values_footer_even_margin,          &page_hefo_break_values_footer_even_margin_data },
-    { &page_hefo_break_values_footer_even_margin_text,     &page_hefo_break_values_hf_oef_margin_text_data },
+    { &page_hefo_break_values_footer_even_margin_label,    &page_hefo_break_values_hf_oef_margin_label_data },
     { &page_hefo_break_values_footer_even_margin_units,    &page_hefo_break_values_hf_oef_units_data },
     { &page_hefo_break_values_footer_even_offset,          &page_hefo_break_values_footer_even_offset_data },
-    { &page_hefo_break_values_footer_even_offset_text,     &page_hefo_break_values_hf_oef_offset_text_data },
+    { &page_hefo_break_values_footer_even_offset_label,    &page_hefo_break_values_hf_oef_offset_label_data },
     { &page_hefo_break_values_footer_even_offset_units,    &page_hefo_break_values_hf_oef_units_data },
 
     { &page_hefo_break_values_footer_first_group,          &page_hefo_break_values_footer_first_group_data },
@@ -990,10 +990,10 @@ page_hefo_break_values_ctl_create[] =
     { &page_hefo_break_values_footer_first_caption_group2 },
     { &page_hefo_break_values_footer_first_enable,         &page_hefo_break_values_footer_first_enable_data },
     { &page_hefo_break_values_footer_first_margin,         &page_hefo_break_values_footer_first_margin_data },
-    { &page_hefo_break_values_footer_first_margin_text,    &page_hefo_break_values_hf_oef_margin_text_data },
+    { &page_hefo_break_values_footer_first_margin_label,   &page_hefo_break_values_hf_oef_margin_label_data },
     { &page_hefo_break_values_footer_first_margin_units,   &page_hefo_break_values_hf_oef_units_data },
     { &page_hefo_break_values_footer_first_offset,         &page_hefo_break_values_footer_first_offset_data },
-    { &page_hefo_break_values_footer_first_offset_text,    &page_hefo_break_values_hf_oef_offset_text_data },
+    { &page_hefo_break_values_footer_first_offset_label,   &page_hefo_break_values_hf_oef_offset_label_data },
     { &page_hefo_break_values_footer_first_offset_units,   &page_hefo_break_values_hf_oef_units_data },
 
     { &page_hefo_break_values_page_break,                  &page_hefo_break_values_page_break_data },

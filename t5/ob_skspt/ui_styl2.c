@@ -2326,7 +2326,7 @@ es_ps_new_object_list_data =
 {
   {/*combo_xx*/
 
-    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT, 1 /*readonly*/ /*bits*/}, NULL /*edit_xx*/},
+    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT, 1 /*read_only*/ /*bits*/}, NULL /*edit_xx*/},
     {/*list_xx*/ { 0 /*force_v_scroll*/, 0 /*disable_double*/, 0 /*tab_position*/} /*list_xx*/},
         NULL,
         ES_PS_NEW_OBJECT_LIST_DROP_V /*dropdown_size*/

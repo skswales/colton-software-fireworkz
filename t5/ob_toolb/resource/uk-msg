@@ -8,12 +8,12 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
-#
-e0:Unknown toolbar control
-#
 # messages
 #
 w1:%s [%d%%]: Left click to change the background colour. Right click to change the text colour
+#
+# errors
+#
+e0:Unknown toolbar control
 #
 # end of msg (ob_toolb)

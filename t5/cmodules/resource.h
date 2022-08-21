@@ -37,8 +37,10 @@ typedef struct BOUND_RESOURCES
 BOUND_RESOURCES, * P_BOUND_RESOURCES; typedef const BOUND_RESOURCES * PC_BOUND_RESOURCES;
 
 #define LOAD_RESOURCES ((P_BOUND_RESOURCES) (intptr_t) 1)
+#define DONT_LOAD_RESOURCES NULL
 
-#define LOAD_MESSAGES ((P_PC_U8) (intptr_t) 1)
+#define LOAD_MESSAGES_FILE ((P_PC_U8) (intptr_t) 1)
+#define DONT_LOAD_MESSAGES_FILE NULL
 
 #if !RISCOS
 #define MSG_WEAK NULL
@@ -87,19 +89,6 @@ typedef U32 T5_RESOURCE_BITMAP_ID_PACKED;
  */
 #define T5_RESOURCE_COMMON_BMP_BASE(object_signifier, id) ( \
     ((object_signifier) << 4) | (id) )
-
-/*
-standard bitmap names
-*/
-
-#define BITMAP_NAME_RADIO_ON           "radioon"
-#define BITMAP_NAME_RADIO_OFF          "radiooff"
-#define BITMAP_NAME_CHECK_ON           "opton"
-#define BITMAP_NAME_CHECK_OFF          "optoff"
-#define BITMAP_NAME_TRISTATE_ON        "opton"
-#define BITMAP_NAME_TRISTATE_OFF       "optoff"
-#define BITMAP_NAME_TRISTATE_DONT_CARE "optunk"
-#define BITMAP_NAME_COMBO              "gright"
 
 #define RESOURCE_BITMAP_AREA_STANDARD 0
 #define RESOURCE_BITMAP_AREA_LO_RES 1

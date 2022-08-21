@@ -18,6 +18,8 @@
 #include "ob_toolb/xp_toolb.h"
 
 #if RISCOS
+#define EXPOSE_RISCOS_SWIS 1
+
 #include "ob_skel/xp_skeld.h"
 
 #include "ob_dlg/xp_dlgr.h"
@@ -1006,7 +1008,7 @@ sle_tool_user_posn_set(
     icreate.icon.bbox.xmax = icreate.icon.bbox.xmin + width;
     icreate.icon.bbox.ymin = icreate.icon.bbox.ymax - 48;
     icreate.icon.flags.text = 1;
-    icreate.icon.flags.redraw = 1;
+    icreate.icon.flags.needs_help = 1;
     icreate.icon.flags.button_type = ButtonType_DoubleClickDrag;
     (void) strcpy(icreate.icon.data.t, "PinkDuckMan");
     if(icreate.icon.bbox.xmax > icreate.icon.bbox.xmin)
@@ -2763,7 +2765,7 @@ sle_find_font(
     rs.r[4] = 0;
     rs.r[5] = 0;
 
-    if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+    if(NULL == (p_kernel_oserror = (_kernel_swi(Font_FindFont, &rs, &rs))))
         host_font = (HOST_FONT) rs.r[0];
 
     return(host_font);
@@ -2883,10 +2885,10 @@ sle_tool_user_redraw(
 
 #if 0
                 /* round formatting values to pixels */
-                const PIXIT pixits_per_riscos_d_x = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_x;
-                const PIXIT pixits_per_riscos_d_y = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_y;
-                pixit_width_of_zero = pixits_per_riscos_d_x * muldiv64_round_floor(pixit_width_of_zero, 1, pixits_per_riscos_d_x);
-                ascent = pixits_per_riscos_d_y * muldiv64_round_floor(ascent, 1, pixits_per_riscos_d_y);
+                const PIXIT pixits_per_riscos_dx = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.XEigFactor;
+                const PIXIT pixits_per_riscos_dy = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.YEigFactor;
+                pixit_width_of_zero = pixits_per_riscos_dx * muldiv64_round_floor(pixit_width_of_zero, 1, pixits_per_riscos_dx);
+                ascent = pixits_per_riscos_dy * muldiv64_round_floor(ascent, 1, pixits_per_riscos_dy);
                 reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&font_spec.h_app_name_tstr), font_spec.size_y);
                 reportf(TEXT("ascent=") PIXIT_TFMT, ascent);
 #endif

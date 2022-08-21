@@ -23,7 +23,8 @@
 #define MSG_WEAK &rb_text_msg_weak
 extern PC_U8 rb_text_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_TEXT NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_TEXT DONT_LOAD_RESOURCES
 
 /*
 internal routines

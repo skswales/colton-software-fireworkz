@@ -19,6 +19,7 @@
 
 #if RISCOS
 #define EXPOSE_RISCOS_FONT 1
+#define EXPOSE_RISCOS_SWIS 1
 
 #include "ob_skel/xp_skelr.h"
 #endif
@@ -214,7 +215,7 @@ fonty_scanstring(
         rs.r[2] |= FONT_SCANSTRING_FIND;
     }
 
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_ScanString*/ 0x400A1, &rs, &rs)))
+    if(NULL == (p_kernel_oserror = _kernel_swi(Font_ScanString, &rs, &rs)))
     {
 //reportf(TEXT("fonty_scanstring(x:%u,len:%u,%.*s) returns x:%u,len:%u"),
 //        *x_stop, *p_len, (int) *p_len, sbstr, rs.r[3], PtrDiffBytesU32(rs.r[1], p_buffer));
@@ -268,7 +269,7 @@ fonty_scanstring_old(
         rs.r[2] |= FONT_SCANSTRING_FIND;
     }
 
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_ScanString*/ 0x400A1, &rs, &rs)))
+    if(NULL == (p_kernel_oserror = _kernel_swi(Font_ScanString, &rs, &rs)))
     {
         *x_stop = rs.r[3];
         *p_len = (U32) ((P_U8) rs.r[1] - p_buffer);
@@ -338,14 +339,14 @@ host_font_context_fill_info_riscos(
     rs.r[0] = host_font_formatting;
     rs.r[1] = (int) UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX; /* This is generally the tallest Latin-1 character */
     rs.r[2] = 0;
-    if(NULL == _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs))
+    if(NULL == _kernel_swi(Font_CharBBox, &rs, &rs))
         p_font_context->ascent = pixits_from_millipoints_ceil(abs(rs.r[4]));
 
     if(0 == p_font_context->ascent)
     {
         /* SKS 21sep94 stop Test Automation wingeing about silly techie fonts with only a couple of symbols defined */
         rs.r[0] = host_font_formatting;
-        if(NULL == _kernel_swi(/*Font_ReadInfo*/ 0x040084, &rs, &rs))
+        if(NULL == _kernel_swi(Font_ReadInfo, &rs, &rs))
             p_font_context->ascent = (S32) rs.r[4] * PIXITS_PER_RISCOS;
     }
 
@@ -1968,7 +1969,7 @@ fontmap_list_riscos(
     rs.r[2] = *count;
     rs.r[3] = -1;
 
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_ListFonts*/ 0x040091, &rs, &rs)))
+    if(NULL == (p_kernel_oserror = _kernel_swi(Font_ListFonts, &rs, &rs)))
     {
         int i;
 

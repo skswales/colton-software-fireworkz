@@ -1026,10 +1026,10 @@ static BOOL event_loop_jmp_set = FALSE;
 static jmp_buf event_loop_jmp_buf;
 
 extern void
-host_longjmp_to_safepoint(void)
+host_longjmp_to_event_loop(int val)
 {
     if(event_loop_jmp_set)
-        longjmp(event_loop_jmp_buf, 1);
+        longjmp(event_loop_jmp_buf, val);
 }
 
 extern int

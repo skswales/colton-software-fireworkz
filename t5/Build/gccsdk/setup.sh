@@ -6,7 +6,7 @@
 #rem License, v. 2.0. If a copy of the MPL was not distributed with this
 #rem file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#rem Copyright (C) 2013-2018 Stuart Swales
+#rem Copyright (C) 2013-2019 Stuart Swales
 
 #rem Execute from top-level t5 directory (move as t5/external/setup-gccsdk.sh soon)
 

@@ -12,6 +12,7 @@
 #include "common/gflags.h"
 
 #define EXPOSE_RISCOS_FONT 1
+#define EXPOSE_RISCOS_SWIS 1
 
 #include "ob_chart/ob_chart.h"
 
@@ -45,7 +46,7 @@ gr_host_font_string_truncate(
         rs.r[3] = swidth_mp_truncate;
         rs.r[4] = INT_MAX;
 
-        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(/*Font_ScanString*/ 0x0400A1, &rs, &rs))))
+        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_ScanString, &rs, &rs))))
         {
             swidth_mp = rs.r[3]; /*x*/
 reportf(TEXT("gr_host_font_string_truncate(x:%u,len:%u,%s) returns x:%u,len:%u"), swidth_mp_truncate, ustrlen32(ustr), report_ustr(ustr), swidth_mp, PtrDiffBytesU32(rs.r[1], ustr));
@@ -64,7 +65,7 @@ reportf(TEXT("gr_host_font_string_truncate(x:%u,len:%u,%s) returns x:%u,len:%u")
         rs.r[4] = -1;
         rs.r[5] = INT_MAX;
 
-        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(/*Font_StringWidth*/ 0x040085, &rs, &rs))))
+        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_StringWidth, &rs, &rs))))
         {
             swidth_mp = rs.r[2]; /*x*/
 //reportf(TEXT("gr_host_font_string_truncate(x:%u,len:%u,%s) returns x:%u,len:%u"), swidth_mp_truncate, ustrlen32(ustr), report_ustr(ustr), swidth_mp, rs.r[5]);
@@ -137,7 +138,7 @@ gr_host_font_string_width(
         rs.r[3] = INT_MAX;
         rs.r[4] = INT_MAX;
 
-        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(/*Font_ScanString*/ 0x0400A1, &rs, &rs))))
+        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_ScanString, &rs, &rs))))
         {
             swidth_mp = rs.r[3]; /*x*/
 #else
@@ -156,7 +157,7 @@ gr_host_font_string_width(
         rs.r[4] = -1;
         rs.r[5] = INT_MAX;
 
-        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(/*Font_StringWidth*/ 0x040085, &rs, &rs))))
+        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_StringWidth, &rs, &rs))))
         {
             swidth_mp = rs.r[2];
 #endif

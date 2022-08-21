@@ -8,12 +8,6 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
-#
-e0:Cannot import CSV as database when the destination document has not been saved
-#e1:ERROR_RQ
-e2:Cannot import CSV as database file '%s' as a file of that name already exists
-#
 # messages
 #
 1:Loading CSV
@@ -24,5 +18,11 @@ e2:Cannot import CSV as database file '%s' as a file of that name already exists
 7:Insert, overwriting blank cells
 8:Insert as database
 10:Loading delimited text
+#
+# errors
+#
+e0:Cannot import CSV as database when the destination document has not been saved
+#e1:ERROR_RQ
+e2:Cannot import CSV as database file '%s' as a file of that name already exists
 #
 # end of msg (fl_csv)

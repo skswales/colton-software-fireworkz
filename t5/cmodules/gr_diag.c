@@ -1286,10 +1286,10 @@ gr_diag_object_reset_bbox_between(
                 mul_x = GR_PIXITS_PER_RISCOS;
                 mul_y = GR_PIXITS_PER_RISCOS;
 #if RISCOS
-                div_x <<= host_modevar_cache_current.XEig;
-                div_y <<= host_modevar_cache_current.YEig;
-                mul_x <<= host_modevar_cache_current.XEig;
-                mul_y <<= host_modevar_cache_current.YEig;
+                div_x <<= host_modevar_cache_current.XEigFactor;
+                div_y <<= host_modevar_cache_current.YEigFactor;
+                mul_x <<= host_modevar_cache_current.XEigFactor;
+                mul_y <<= host_modevar_cache_current.YEigFactor;
 #else
                 div_x *= 2;
                 div_y *= 2;

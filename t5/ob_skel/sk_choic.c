@@ -672,7 +672,7 @@ enum CHOICES_CONTROL_IDS
     CHOICES_ID_SAVE = 33,
 
     CHOICES_MAIN_ID_GROUP,
-    CHOICES_MAIN_ID_AUTO_SAVE_TEXT,
+    CHOICES_MAIN_ID_AUTO_SAVE_LABEL,
     CHOICES_MAIN_ID_AUTO_SAVE_PERIOD,
     CHOICES_MAIN_ID_AUTO_SAVE_UNITS,
     CHOICES_MAIN_ID_DISPLAY_PICTURES,
@@ -683,7 +683,7 @@ enum CHOICES_CONTROL_IDS
     CHOICES_MAIN_ID_TOOLBAR,
     CHOICES_MAIN_ID_UPDATE_STYLES_FROM_CHOICES,
 
-    CHOICES_MAIN_ID_RULERS_RULER_TEXT,
+    CHOICES_MAIN_ID_RULERS_RULER_LABEL,
     CHOICES_MAIN_ID_RULERS_RULER_COMBO,
 #define CHOICES_MAIN_RULERS_LIST_V (DIALOG_STDLISTOVH_V + 4 * DIALOG_STDLISTITEM_V)
 
@@ -710,22 +710,22 @@ choices_main_group =
 };
 
 static const DIALOG_CONTROL
-choices_main_auto_save_text =
+choices_main_auto_save_label =
 {
-    CHOICES_MAIN_ID_AUTO_SAVE_TEXT, CHOICES_MAIN_ID_GROUP,
+    CHOICES_MAIN_ID_AUTO_SAVE_LABEL, CHOICES_MAIN_ID_GROUP,
     { DIALOG_CONTROL_PARENT, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_SELF, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-choices_main_auto_save_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_AUTO_SAVE), { 1 /*left_text*/ } };
+choices_main_auto_save_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_AUTO_SAVE), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 choices_main_auto_save_period_minutes =
 {
     CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_WINDOW,
-    { CHOICES_MAIN_ID_AUTO_SAVE_TEXT, DIALOG_CONTROL_PARENT },
+    { CHOICES_MAIN_ID_AUTO_SAVE_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
@@ -752,7 +752,7 @@ static const DIALOG_CONTROL
 choices_main_display_pictures =
 {
     CHOICES_MAIN_ID_DISPLAY_PICTURES, CHOICES_MAIN_ID_GROUP,
-    { CHOICES_MAIN_ID_AUTO_SAVE_TEXT, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
+    { CHOICES_MAIN_ID_AUTO_SAVE_LABEL, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
@@ -879,16 +879,16 @@ static DIALOG_CONTROL_DATA_CHECKBOX
 choices_main_toolbar_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_TOOLBAR) };
 
 static const DIALOG_CONTROL
-choices_main_rulers_ruler_text =
+choices_main_rulers_ruler_label =
 {
-    CHOICES_MAIN_ID_RULERS_RULER_TEXT, CHOICES_MAIN_ID_GROUP,
+    CHOICES_MAIN_ID_RULERS_RULER_LABEL, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_TOOLBAR, CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_RULERS_RULER_COMBO },
     { 0, 0, DIALOG_STDSPACING_H, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-choices_main_rulers_ruler_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_RULERS_RULER), { 1 /*left_text*/ } };
+choices_main_rulers_ruler_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_RULERS_RULER), { 1 /*left_text*/ } };
 
 static /*poked*/ DIALOG_CONTROL
 choices_main_rulers_ruler_combo =
@@ -908,7 +908,7 @@ choices_main_rulers_ruler_combo_data =
 {
   {/*combo_xx*/
 
-    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT, 1 /*readonly*/ /*bits*/}, NULL /*edit_xx*/},
+    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT, 1 /*read_only*/ /*bits*/}, NULL /*edit_xx*/},
 
     {/*list_xx*/ { 0 /*force_v_scroll*/, 1 /*disable_double*/, 0 /*tab_position*/} /*list_xx*/},
 
@@ -927,7 +927,7 @@ choices_main_ctl_create[] =
     { &dialog_main_group },
 
     { &choices_main_group },
-    { &choices_main_auto_save_text,             &choices_main_auto_save_text_data },
+    { &choices_main_auto_save_label,            &choices_main_auto_save_label_data },
     { &choices_main_auto_save_period_minutes,   &choices_main_auto_save_period_minutes_data },
     { &choices_main_auto_save_units,            &choices_main_auto_save_units_data },
     { &choices_main_display_pictures,           &choices_main_display_pictures_data },
@@ -943,7 +943,7 @@ choices_main_ctl_create[] =
 #endif
     { &choices_main_status_line,                &choices_main_status_line_data },
     { &choices_main_toolbar,                    &choices_main_toolbar_data },
-    { &choices_main_rulers_ruler_text,          &choices_main_rulers_ruler_text_data },
+    { &choices_main_rulers_ruler_label,         &choices_main_rulers_ruler_label_data },
     { &choices_main_rulers_ruler_combo,         &choices_main_rulers_ruler_combo_data }
 };
 

@@ -8,6 +8,10 @@
 # Copyright (C) 1994-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
+# messages
+#
+0:Password required
+#
 # errors
 #
 e0:Excel load: unknown BOF record
@@ -18,7 +22,5 @@ e4:Excel load: no DIMENSIONS record
 e5:Excel load: bad BOUNDSHEET record
 e6:Excel load: unsupported file encryption
 e7:Excel load: wrong file password
-#
-0:Password required
 #
 # end of msg (fl_xls)

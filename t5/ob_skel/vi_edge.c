@@ -17,6 +17,11 @@
 #include "ob_skel/vi_edge.h"
 #endif
 
+#if RISCOS
+#define EXPOSE_RISCOS_SWIS 1
+#include "ob_skel/xp_skelr.h"
+#endif
+
 static STYLE_SELECTOR _border_style_selector; /* const after T5_MSG_IC__STARTUP */
 
 _Check_return_
@@ -156,12 +161,12 @@ border_horz_cache_height(
     if(HOST_FONT_NONE != host_font_redraw)
     {
 #if RISCOS
-        const PIXIT pixits_per_riscos_d_y = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_y;
+        const PIXIT pixits_per_riscos_dy = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.YEigFactor;
         _kernel_swi_regs rs;
         rs.r[0] = host_font_redraw;
         rs.r[1] = 'A';
         rs.r[2] = 0;
-        if(NULL == _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs))
+        if(NULL == _kernel_swi(Font_CharBBox, &rs, &rs))
         {
             col_repr_height  = pixits_from_millipoints_ceil(abs(rs.r[4]));
             col_repr_descent = pixits_from_millipoints_ceil(abs(rs.r[2]));
@@ -173,11 +178,11 @@ border_horz_cache_height(
             col_repr_descent = p_border_style->font_spec.size_y - col_repr_height;
         }
 
-        col_repr_height   = idiv_ceil_u(col_repr_height,  pixits_per_riscos_d_y);
-        col_repr_height  *= pixits_per_riscos_d_y;
+        col_repr_height   = idiv_ceil_u(col_repr_height,  pixits_per_riscos_dy);
+        col_repr_height  *= pixits_per_riscos_dy;
 
-        col_repr_descent  = idiv_ceil_u(col_repr_descent, pixits_per_riscos_d_y);
-        col_repr_descent *= pixits_per_riscos_d_y;
+        col_repr_descent  = idiv_ceil_u(col_repr_descent, pixits_per_riscos_dy);
+        col_repr_descent *= pixits_per_riscos_dy;
 #elif WINDOWS
         { /* dpi-dependent pixels */
         const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
@@ -401,12 +406,12 @@ ruler_horz_cache_height(
     if(HOST_FONT_NONE != host_font_redraw)
     {
 #if RISCOS
-        const PIXIT pixits_per_riscos_d_y = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_y;
+        const PIXIT pixits_per_riscos_dy = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.YEigFactor;
         _kernel_swi_regs rs;
         rs.r[0] = host_font_redraw;
         rs.r[1] = '0';
         rs.r[2] = 0;
-        if(NULL == _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs))
+        if(NULL == _kernel_swi(Font_CharBBox, &rs, &rs))
         {
             digits_height = pixits_from_millipoints_ceil(abs(rs.r[4]));
             base_line = digits_height;
@@ -417,8 +422,8 @@ ruler_horz_cache_height(
             digits_height = base_line;
         }
 
-        digits_height = idiv_ceil_u(digits_height, pixits_per_riscos_d_y);
-        digits_height *= pixits_per_riscos_d_y;
+        digits_height = idiv_ceil_u(digits_height, pixits_per_riscos_dy);
+        digits_height *= pixits_per_riscos_dy;
 #elif WINDOWS
         { /* dpi-dependent pixels */
         const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
@@ -487,7 +492,7 @@ ruler_vert_cache_width(
         rs.r[0] = host_font_redraw;
         rs.r[1] = '0';
         rs.r[2] = 0;
-        if(NULL == _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs))
+        if(NULL == _kernel_swi(Font_CharBBox, &rs, &rs))
         {
             two_digits_width = pixits_from_millipoints_ceil(abs(rs.r[3])) * 2;
         }

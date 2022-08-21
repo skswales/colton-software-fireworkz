@@ -2189,7 +2189,7 @@ recog_slr(
     if(PtrGetByte(pos) == CH_DOLLAR_SIGN)
     {
         ustr_IncByte(pos);
-        p_ev_slr->abs_col = 1;;
+        p_ev_slr->abs_col = 1;
     }
 
     if(((res = stox(pos, &col_temp)) == 0) || (col_temp >= EV_MAX_COL))

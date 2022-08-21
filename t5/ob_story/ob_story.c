@@ -19,7 +19,8 @@
 #define MSG_WEAK &rb_story_msg_weak
 extern PC_U8 rb_story_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_STORY NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_STORY DONT_LOAD_RESOURCES
 
 /******************************************************************************
 *

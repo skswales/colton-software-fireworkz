@@ -142,7 +142,7 @@ __vmyasserted(
     va_list va;
     _kernel_oserror err;
     PTSTR p = err.errmess;
-    int errflags_out;
+    int button_clicked;
 
     /* we need to know how to copy this! */
 #if !RISCOS
@@ -173,7 +173,7 @@ __vmyasserted(
             /* plonk it in */
             memcpy32(p, ASSERTION_FAILURE_PREFIX_RISCOS, sizeof32(ASSERTION_FAILURE_PREFIX_RISCOS)-1);
 
-            consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK, &errflags_out, NULL, 3));
+            consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK, &button_clicked, NULL, 3 /*STOP*/));
 
             format = NULL;
         }
@@ -189,16 +189,16 @@ __vmyasserted(
         consume_int(vsnprintf(p, elemof32(err.errmess) - (p - err.errmess), format, va));
     }
 
-    consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK | Wimp_ReportError_Cancel, &errflags_out, NULL, 3));
+    consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK | Wimp_ReportError_Cancel, &button_clicked, NULL, 3 /*STOP*/));
 
-    if(errflags_out & Wimp_ReportError_OK)
+    if(button_clicked & Wimp_ReportError_OK)
     {
 #if !RELEASED
         tstr_xstrkpy(err.errmess, elemof32(err.errmess), message ? message : ASSERTION_TRAP_QUERY);
 
-        consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK | Wimp_ReportError_Cancel, &errflags_out, NULL, 3));
+        consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK | Wimp_ReportError_Cancel, &button_clicked, NULL, 3 /*STOP*/));
 
-        if(errflags_out & Wimp_ReportError_OK)
+        if(button_clicked & Wimp_ReportError_OK)
             return(TRUE);
 #endif
 

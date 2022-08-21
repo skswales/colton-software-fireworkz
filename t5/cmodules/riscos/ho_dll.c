@@ -525,7 +525,7 @@ host_load_module(
             rs.r[1] = (int) p_runtime_info->p_code;
             rs.r[2] = (int) p_runtime_info->p_code + (int) p_runtime_info->code_size;
             rs.r[2] = ((rs.r[2] + 3) & ~3) - 4; /* inclusive address required, so round up then lose a word */
-            WrapOsErrorReporting(_kernel_swi(/*OS_SynchroniseCodeAreas*/ 0x6E, &rs, &rs));
+            WrapOsErrorReporting(_kernel_swi(OS_SynchroniseCodeAreas, &rs, &rs));
         }
 
         if(module_header.entry_offset != 0)

@@ -27,6 +27,12 @@ dialog_col1_group;
 extern const DIALOG_CONTROL
 dialog_col2_group;
 
+#if WINDOWS
+#define ID_LEFT_OKCANCEL IDOK
+#else
+#define ID_LEFT_OKCANCEL IDCANCEL
+#endif
+
 extern const DIALOG_CONTROL
 defbutton_ok;
 
@@ -155,7 +161,7 @@ measurement_points_data;
 #define RGB_PATCHES_H (28 * PIXITS_PER_RISCOS)
 #define RGB_PATCHES_V (28 * PIXITS_PER_RISCOS)
 #elif WINDOWS
-#define RGB_TX_H      (1 * DIALOG_FATCHAR_H)
+#define RGB_TX_H      (8 * PIXITS_PER_WDU_H)
 
 #define RGB_PATCHES_H (8 * PIXITS_PER_WDU_H)
 #define RGB_PATCHES_V (8 * PIXITS_PER_WDU_V)

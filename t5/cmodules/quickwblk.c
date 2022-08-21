@@ -128,7 +128,7 @@ quick_wblock_extend_by(
     /* does the request fit in the current buffer? */
     if(extend_by <= (p_quick_wblock->wb_static_buffer_elem - p_quick_wblock->wb_static_buffer_used))
     {
-        PWCH p_output = p_quick_wblock->wb_p_static_buffer + p_quick_wblock->wb_static_buffer_used;
+        p_output = p_quick_wblock->wb_p_static_buffer + p_quick_wblock->wb_static_buffer_used;
         p_quick_wblock->wb_static_buffer_used += extend_by;
         return(p_output);
     }

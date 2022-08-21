@@ -22,16 +22,6 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
-	0xB000,	"Not enough data for pie chart"
-	0xB002,	"Negative and/or zero data ignored in pie chart"
-	0xB003,	"Arithmetic exception in chart creation"
-	0xB004,	"Negative and/or zero data ignored in stacked chart"
-	0xB005,	"Unable to load chart because memory full; chart discarded"
-	0xB006,	"No data for chart"
-	0xB007,	"Charts can only use Draw and Sprite files"
-//
 // messages
 //
 	0x3000,	"Pie chart"
@@ -181,6 +171,16 @@ BEGIN
 	0x3320,	"sg04/sg4_editing_data_series.htm"
 	0x3321,	"sg04/sg4_editing_axes.htm"
 	0x3322,	"sg04/sg4_editing_axes.htm"
+//
+// errors
+//
+	0xB000,	"Not enough data for pie chart"
+	0xB002,	"Negative and/or zero data ignored in pie chart"
+	0xB003,	"Arithmetic exception in chart creation"
+	0xB004,	"Negative and/or zero data ignored in stacked chart"
+	0xB005,	"Unable to load chart because memory full; chart discarded"
+	0xB006,	"No data for chart"
+	0xB007,	"Charts can only use Draw and Sprite files"
 //
 // end of msg (ob_chart)
 END

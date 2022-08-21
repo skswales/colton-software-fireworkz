@@ -86,12 +86,6 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
-	0xEC00,	"Cannot import CSV as database when the destination document has not been saved"
-//e1:ERROR_RQ
-	0xEC02,	"Cannot import CSV as database file '%s' as a file of that name already exists"
-//
 // messages
 //
 	0x6C01,	"Loading CSV"
@@ -102,6 +96,12 @@ BEGIN
 	0x6C07,	"Insert, overwriting blank cells"
 	0x6C08,	"Insert as database"
 	0x6C0A,	"Loading delimited text"
+//
+// errors
+//
+	0xEC00,	"Cannot import CSV as database when the destination document has not been saved"
+//e1:ERROR_RQ
+	0xEC02,	"Cannot import CSV as database file '%s' as a file of that name already exists"
 //
 // end of msg (fl_csv)
 END
@@ -240,6 +240,10 @@ BEGIN
 // Copyright (C) 1994-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+// messages
+//
+	0x6D00,	"Password required"
+//
 // errors
 //
 	0xED00,	"Excel load: unknown BOF record"
@@ -250,8 +254,6 @@ BEGIN
 	0xED05,	"Excel load: bad BOUNDSHEET record"
 	0xED06,	"Excel load: unsupported file encryption"
 	0xED07,	"Excel load: wrong file password"
-//
-	0x6D00,	"Password required"
 //
 // end of msg (fl_xls)
 END
@@ -509,6 +511,11 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+// messages
+//
+	0x6F81,	"Insert file"
+	0x6F82,	"Import file"
+//
 // errors
 //
 	0xEF80,	"Can't open file"
@@ -618,11 +625,6 @@ BEGIN
 	0xEFE6,	"FileOpenDlg: Failed to load resource"
 	0xEFE7,	"FileOpenDlg: Failed to lock resource"
 //
-// messages
-//
-	0x6F81,	"Insert file"
-	0x6F82,	"Import file"
-//
 // end of msg (ob_file)
 END
 //
@@ -649,8 +651,6 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
 // messages
 //
 	0x6380,	"Page"
@@ -670,6 +670,8 @@ BEGIN
 //
 	0x6394,	"Header"
 	0x6395,	"Footer"
+//
+// errors
 //
 // end of msg (ob_hefo)
 END
@@ -697,11 +699,6 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
-	0xEA80,	"No document selected for mailshot"
-	0xEA82,	"No documents with tables for mailshot"
-//
 // messages
 //
 	0x6A81,	"Document"
@@ -715,6 +712,11 @@ BEGIN
 	0x6A8A,	"Insert mailshot field"
 	0x6A8B,	"ug09/ug9_setting_up_your_letter.htm"
 	0x6A8C,	"Field number"
+//
+// errors
+//
+	0xEA80,	"No document selected for mailshot"
+	0xEA82,	"No documents with tables for mailshot"
 //
 // end of msg (ob_mails)
 END
@@ -766,7 +768,7 @@ BEGIN
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 2014-2018 Stuart Swales
+// Copyright (C) 2014-2019 Stuart Swales
 //
 // errors
 //
@@ -852,10 +854,6 @@ BEGIN
 // Copyright (C) 1995-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
-	0xE480,	"Can't delete the base style"
-//
 // messages
 //
 	0x6481,	"Styles"
@@ -884,6 +882,10 @@ BEGIN
 	0x6498,	"ug06/ug6_spacing.htm"
 	0x6499,	"sg03/sg3_styles_in_spreadsheet_documents.htm"
 	0x649A,	"ug06/ug6_row.htm"
+//
+// errors
+//
+	0xE480,	"Can't delete the base style"
 //
 // end of msg (ob_skspt)
 END
@@ -946,25 +948,6 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
-	0xE400,	"File already exists"
-	0xE404,	"Bad dictionary"
-	0xE406,	"Bad word"
-	0xE407,	"Dictionary read only"
-//
-	0xE40A,	"Word not found"
-	0xE40B,	"Escape"
-	0xE40C,	"Can't update dictionary"
-	0xE40D,	"Can't read dictionary"
-	0xE40E,	"Can't enlarge dictionary"
-	0xE40F,	"Bad dictionary definition file"
-	0xE410,	"Bad character in dictionary definition file"
-//
-// ob_spell errors
-//
-	0xE464,	"No user dictionaries"
-//
 // messages
 //
 	0x6403,	"Dictionary"
@@ -984,6 +967,25 @@ BEGIN
 	0x6414,	"Spell check complete: %d word not found"
 	0x6415,	"Spell check complete: %d words not found"
 	0x6416,	"All"
+//
+// errors
+//
+	0xE400,	"File already exists"
+	0xE404,	"Bad dictionary"
+	0xE406,	"Bad word"
+	0xE407,	"Dictionary read only"
+//
+	0xE40A,	"Word not found"
+	0xE40B,	"Escape"
+	0xE40C,	"Can't update dictionary"
+	0xE40D,	"Can't read dictionary"
+	0xE40E,	"Can't enlarge dictionary"
+	0xE40F,	"Bad dictionary definition file"
+	0xE410,	"Bad character in dictionary definition file"
+//
+// ob_spell errors
+//
+	0xE464,	"No user dictionaries"
 //
 // end of msg (ob_spell)
 END
@@ -1065,13 +1067,13 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// errors
-//
-	0xE900,	"Unknown toolbar control"
-//
 // messages
 //
 	0x6901,	"%s [%d%%]: Left click to change the background colour. Right click to change the text colour"
+//
+// errors
+//
+	0xE900,	"Unknown toolbar control"
 //
 // end of msg (ob_toolb)
 END

@@ -1683,8 +1683,8 @@ gr_riscdiag_sprite_recompute_bbox(
         }
         else if(SPRITE_TYPE_RO5_WORD == sprite_mode_word.u.riscos_3_5.type)
         {   /* RISC OS 5 style Mode Word */
-            x1 = (rs.r[3] * GR_RISCDRAW_PER_INCH) / (180 >> sprite_mode_word.u.riscos_5.x_eig);
-            y1 = (rs.r[4] * GR_RISCDRAW_PER_INCH) / (180 >> sprite_mode_word.u.riscos_5.y_eig);
+            x1 = (rs.r[3] * GR_RISCDRAW_PER_INCH) / (180 >> sprite_mode_word.u.riscos_5.XEigFactor);
+            y1 = (rs.r[4] * GR_RISCDRAW_PER_INCH) / (180 >> sprite_mode_word.u.riscos_5.YEigFactor);
         }
         else
         {   /* RISC OS 3.5 style Mode Word */

@@ -43,9 +43,9 @@ enum BL_CONTROL_IDS
     BL_ID_3D_ON,
     BL_ID_3D_GROUP_I,
     BL_ID_3D_DROOP,
-    BL_ID_3D_DROOP_TEXT,
+    BL_ID_3D_DROOP_LABEL,
     BL_ID_3D_TURN,
-    BL_ID_3D_TURN_TEXT
+    BL_ID_3D_TURN_LABEL
 };
 
 static const DIALOG_CONTROL
@@ -77,7 +77,7 @@ bl_process_bl_1_text =
 {
     BL_ID_BL_1_TEXT, BL_ID_BL_GROUP,
     { BL_ID_BL_1, BL_ID_BL_1, DIALOG_CONTROL_SELF, BL_ID_BL_1 },
-    { DIALOG_SMALLSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -182,16 +182,16 @@ static const DIALOG_CONTROL_DATA_BUMP_F64
 bl_process_3d_turn_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_turn_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
-bl_process_3d_turn_text =
+bl_process_3d_turn_label =
 {
-    BL_ID_3D_TURN_TEXT, BL_ID_3D_GROUP_I,
+    BL_ID_3D_TURN_LABEL, BL_ID_3D_GROUP_I,
     { BL_ID_3D_TURN, BL_ID_3D_TURN, DIALOG_CONTROL_SELF, BL_ID_3D_TURN },
-    { DIALOG_SMALLSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_process_3d_turn_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_TURN), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+bl_process_3d_turn_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_TURN), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL
 bl_process_3d_droop =
@@ -209,16 +209,16 @@ static const DIALOG_CONTROL_DATA_BUMP_F64
 bl_process_3d_droop_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_droop_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
-bl_process_3d_droop_text =
+bl_process_3d_droop_label =
 {
-    BL_ID_3D_DROOP_TEXT, BL_ID_3D_GROUP_I,
-    { BL_ID_3D_TURN_TEXT, BL_ID_3D_DROOP, DIALOG_CONTROL_SELF, BL_ID_3D_DROOP },
+    BL_ID_3D_DROOP_LABEL, BL_ID_3D_GROUP_I,
+    { BL_ID_3D_TURN_LABEL, BL_ID_3D_DROOP, DIALOG_CONTROL_SELF, BL_ID_3D_DROOP },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_process_3d_droop_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_DROOP), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+bl_process_3d_droop_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_DROOP), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
 bar_process_bar_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BAR_PROCESS), { 0, 0, 0, FRAMED_BOX_GROUP } };
@@ -258,9 +258,9 @@ bar_process_ctl_create[] =
     { &bl_process_3d_on, &bl_process_3d_on_data },
     { &bl_process_3d_group_i, NULL },
     { &bl_process_3d_turn, &bl_process_3d_turn_data },
-    { &bl_process_3d_turn_text, &bl_process_3d_turn_text_data },
+    { &bl_process_3d_turn_label, &bl_process_3d_turn_label_data },
     { &bl_process_3d_droop, &bl_process_3d_droop_data },
-    { &bl_process_3d_droop_text, &bl_process_3d_droop_text_data },
+    { &bl_process_3d_droop_label, &bl_process_3d_droop_label_data },
 
     { &bar_process_ok, &defbutton_ok_persist_data },
     { &stdbutton_cancel, &stdbutton_cancel_data }
@@ -458,9 +458,9 @@ line_process_ctl_create[] =
     { &bl_process_3d_on, &bl_process_3d_on_data },
     { &bl_process_3d_group_i, NULL },
     { &bl_process_3d_turn, &bl_process_3d_turn_data },
-    { &bl_process_3d_turn_text, &bl_process_3d_turn_text_data },
+    { &bl_process_3d_turn_label, &bl_process_3d_turn_label_data },
     { &bl_process_3d_droop, &bl_process_3d_droop_data },
-    { &bl_process_3d_droop_text, &bl_process_3d_droop_text_data },
+    { &bl_process_3d_droop_label, &bl_process_3d_droop_label_data },
 
     { &line_process_ok, &defbutton_ok_persist_data },
     { &stdbutton_cancel, &stdbutton_cancel_data }

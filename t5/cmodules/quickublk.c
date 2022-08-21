@@ -121,7 +121,7 @@ quick_ublock_extend_by(
 
     if(extend_by <= (p_quick_ublock->ub_static_buffer_size - p_quick_ublock->ub_static_buffer_used))
     {
-        P_UCHARS p_output = uchars_AddBytes_wr(p_quick_ublock->ub_p_static_buffer, p_quick_ublock->ub_static_buffer_used);
+        p_output = uchars_AddBytes_wr(p_quick_ublock->ub_p_static_buffer, p_quick_ublock->ub_static_buffer_used);
         p_quick_ublock->ub_static_buffer_used += extend_by;
         return(p_output);
     }

@@ -8,6 +8,11 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
+# messages
+#
+1:Insert file
+w2:Import file
+#
 # errors
 #
 e0:Can't open file
@@ -116,10 +121,5 @@ we100:FileOpenDlg: LoadString failed
 we101:FileOpenDlg: Resource unavailable
 we102:FileOpenDlg: Failed to load resource
 we103:FileOpenDlg: Failed to lock resource
-#
-# messages
-#
-1:Insert file
-w2:Import file
 #
 # end of msg (ob_file)

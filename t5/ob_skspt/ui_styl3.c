@@ -498,43 +498,50 @@ tweak_style_ctl_user_redraw(
 {
     const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
     const P_ES_CALLBACK p_es_callback = (P_ES_CALLBACK) p_dialog_msg_ctl_user_redraw->client_handle;
-    P_RGB p_rgb;
+    P_RGB p_rgb = NULL;
+    S32 i = (S32) dialog_control_id - ES_ID_LIGHT_STT;
 
-    if(!p_dialog_msg_ctl_user_redraw->enabled)
-        p_rgb = &rgb_stash[0];
-    else
+    if((i >= 0) && (i < ES_SUBDIALOG_MAX))
     {
-        S32 i = (S32) dialog_control_id - ES_ID_LIGHT_STT;
+        const BOOL light_on = es_light_on_for(p_es_callback, i);
 
-        if((i >= 0) && (i < ES_SUBDIALOG_MAX))
-        {
-            p_rgb = es_light_on_for(p_es_callback, i) ? &rgb_stash[10] /* green */ : &rgb_stash[1]; /* lt grey */
-        }
-        else switch(dialog_control_id)
-        {
-        case ES_FS_ID_COLOUR_PATCH:
-            p_rgb = &p_es_callback->style.font_spec.colour;
-            break;
+        p_rgb = light_on ? &rgb_stash[10] /* green */ : &rgb_stash[1]; /* lt grey */
+    }
+    else switch(dialog_control_id)
+    {
+    case ES_FS_ID_COLOUR_PATCH:
+        p_rgb = &p_es_callback->style.font_spec.colour;
+        break;
 
-        case ES_PS_ID_RGB_BACK_PATCH:
-            p_rgb = &p_es_callback->style.para_style.rgb_back;
-            break;
+    case ES_PS_ID_RGB_BACK_PATCH:
+        p_rgb = &p_es_callback->style.para_style.rgb_back;
+        break;
 
-        case ES_PS_ID_BORDER_PATCH:
-            p_rgb = &p_es_callback->style.para_style.rgb_border;
-            break;
+    case ES_PS_ID_BORDER_PATCH:
+        p_rgb = &p_es_callback->style.para_style.rgb_border;
+        break;
 
-        case ES_PS_ID_GRID_PATCH:
-            p_rgb = &p_es_callback->style.para_style.rgb_grid_left;
-            break;
+    case ES_PS_ID_GRID_PATCH:
+        p_rgb = &p_es_callback->style.para_style.rgb_grid_left;
+        break;
 
-        default:
-            return(STATUS_OK);
-        }
+    default:
+        break;
     }
 
-    if(host_setbgcolour(p_rgb))
-        host_clg();
+    if(NULL != p_rgb)
+    {
+        RGB rgb = *p_rgb;
+
+        if(!p_dialog_msg_ctl_user_redraw->enabled)
+        {
+            static const RGB rgb_d = RGB_INIT(221, 221, 221);
+            host_disable_rgb(&rgb, &rgb_d, 4);
+        }
+
+        if(host_setbgcolour(&rgb))
+            host_clg();
+    }
 
     return(STATUS_OK);
 }

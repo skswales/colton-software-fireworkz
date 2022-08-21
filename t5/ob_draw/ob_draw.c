@@ -87,7 +87,8 @@ DRAW_SAVE_MAP, * P_DRAW_SAVE_MAP;
 #define MSG_WEAK &rb_draw_msg_weak
 extern PC_U8 rb_draw_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_DRAW NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_DRAW DONT_LOAD_RESOURCES
 
 /*
 construct argument types
@@ -251,9 +252,9 @@ T5_CMD_PROTO(static, draw_file_load)
 
         if(NULL == p_draw_load_map)
         {
-            SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_draw_load_map), TRUE);
+            SC_ARRAY_INIT_BLOCK array_init_block_draw_load_map = aib_init(1, sizeof32(*p_draw_load_map), TRUE);
 
-            if(NULL == (p_draw_load_map = al_array_extend_by(&p_draw_load_instance->h_mapping_list, DRAW_LOAD_MAP, 1, &array_init_block, &status)))
+            if(NULL == (p_draw_load_map = al_array_extend_by(&p_draw_load_instance->h_mapping_list, DRAW_LOAD_MAP, 1, &array_init_block_draw_load_map, &status)))
                 break;
 
             p_draw_load_map->extref = extref;

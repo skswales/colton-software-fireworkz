@@ -29,7 +29,8 @@
 #define MSG_WEAK &rb_fl_123_msg_weak
 extern PC_U8 rb_fl_123_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FL_LOTUS123 NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FL_LOTUS123 DONT_LOAD_RESOURCES
 
 /*
 internal routines

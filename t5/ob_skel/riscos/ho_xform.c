@@ -31,23 +31,23 @@ gdi_point_from_pixit_point_and_context(
     _InRef_     PC_PIXIT_POINT p_pixit_point,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_POINT pixit_point = *p_pixit_point;
-    PIXIT_POINT divisor;
+    PIXIT_POINT pixit_point;
+    const U32 XEigFactor = p_redraw_context->host_xform.riscos.XEigFactor;
+    const U32 YEigFactor = p_redraw_context->host_xform.riscos.YEigFactor;
+    S32_POINT divisor; /* scale.b * pixits per pixel */
+    S32_POINT pixels;
 
-    pixit_point.x += p_redraw_context->pixit_origin.x;
-    pixit_point.y += p_redraw_context->pixit_origin.y;
+    pixit_point.x = p_pixit_point->x + p_redraw_context->pixit_origin.x;
+    pixit_point.y = p_pixit_point->y + p_redraw_context->pixit_origin.y;
 
-    divisor.x = p_redraw_context->host_xform.riscos.d_x * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.x);
-    divisor.y = p_redraw_context->host_xform.riscos.d_y * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
+    divisor.x = (p_redraw_context->host_xform.scale.b.x * PIXITS_PER_RISCOS) << XEigFactor;
+    divisor.y = (p_redraw_context->host_xform.scale.b.y * PIXITS_PER_RISCOS) << YEigFactor;
 
-    p_gdi_point->x = +muldiv64_round_floor(/*+*/pixit_point.x, p_redraw_context->host_xform.scale.t.x, divisor.x);
-    p_gdi_point->y = -muldiv64_round_floor(/*-*/pixit_point.y, p_redraw_context->host_xform.scale.t.y, divisor.y);
+    pixels.x = +muldiv64_round_floor(/*+*/pixit_point.x, p_redraw_context->host_xform.scale.t.x, divisor.x);
+    pixels.y = -muldiv64_round_floor(/*-*/pixit_point.y, p_redraw_context->host_xform.scale.t.y, divisor.y);
 
-    p_gdi_point->x <<= p_redraw_context->host_xform.riscos.eig_x;
-    p_gdi_point->y <<= p_redraw_context->host_xform.riscos.eig_y;
-
-    p_gdi_point->x += p_redraw_context->gdi_org.x;
-    p_gdi_point->y += p_redraw_context->gdi_org.y;
+    p_gdi_point->x = (pixels.x << XEigFactor) + p_redraw_context->gdi_org.x;
+    p_gdi_point->y = (pixels.y << YEigFactor) + p_redraw_context->gdi_org.y;
 }
 
 /******************************************************************************
@@ -65,31 +65,29 @@ gdi_rect_from_pixit_rect_and_context(
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_RECT pixit_rect = *p_pixit_rect;
-    PIXIT_POINT divisor;
+    PIXIT_RECT pixit_rect;
+    const U32 XEigFactor = p_redraw_context->host_xform.riscos.XEigFactor;
+    const U32 YEigFactor = p_redraw_context->host_xform.riscos.YEigFactor;
+    S32_POINT divisor; /* scale.b * pixits per pixel */
+    S32_RECT pixels;
 
-    pixit_rect.tl.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.tl.y += p_redraw_context->pixit_origin.y;
-    pixit_rect.br.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.br.y += p_redraw_context->pixit_origin.y;
+    pixit_rect.tl.x = p_pixit_rect->tl.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.tl.y = p_pixit_rect->tl.y + p_redraw_context->pixit_origin.y;
+    pixit_rect.br.x = p_pixit_rect->br.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.br.y = p_pixit_rect->br.y + p_redraw_context->pixit_origin.y;
 
-    divisor.x = p_redraw_context->host_xform.riscos.d_x * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.x);
-    divisor.y = p_redraw_context->host_xform.riscos.d_y * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
+    divisor.x = (p_redraw_context->host_xform.scale.b.x * PIXITS_PER_RISCOS) << XEigFactor;
+    divisor.y = (p_redraw_context->host_xform.scale.b.y * PIXITS_PER_RISCOS) << YEigFactor;
 
-    p_gdi_rect->tl.x = +muldiv64_round_floor(pixit_rect.tl.x, p_redraw_context->host_xform.scale.t.x, divisor.x);
-    p_gdi_rect->tl.y = -muldiv64_round_floor(pixit_rect.tl.y, p_redraw_context->host_xform.scale.t.y, divisor.y);
-    p_gdi_rect->br.x = +muldiv64_round_floor(pixit_rect.br.x, p_redraw_context->host_xform.scale.t.x, divisor.x);
-    p_gdi_rect->br.y = -muldiv64_round_floor(pixit_rect.br.y, p_redraw_context->host_xform.scale.t.y, divisor.y);
+    pixels.tl.x = +muldiv64_round_floor(pixit_rect.tl.x, p_redraw_context->host_xform.scale.t.x, divisor.x);
+    pixels.tl.y = -muldiv64_round_floor(pixit_rect.tl.y, p_redraw_context->host_xform.scale.t.y, divisor.y);
+    pixels.br.x = +muldiv64_round_floor(pixit_rect.br.x, p_redraw_context->host_xform.scale.t.x, divisor.x);
+    pixels.br.y = -muldiv64_round_floor(pixit_rect.br.y, p_redraw_context->host_xform.scale.t.y, divisor.y);
 
-    p_gdi_rect->tl.x <<= p_redraw_context->host_xform.riscos.eig_x;
-    p_gdi_rect->tl.y <<= p_redraw_context->host_xform.riscos.eig_y;
-    p_gdi_rect->br.x <<= p_redraw_context->host_xform.riscos.eig_x;
-    p_gdi_rect->br.y <<= p_redraw_context->host_xform.riscos.eig_y;
-
-    p_gdi_rect->tl.x += p_redraw_context->gdi_org.x;
-    p_gdi_rect->tl.y += p_redraw_context->gdi_org.y;
-    p_gdi_rect->br.x += p_redraw_context->gdi_org.x;
-    p_gdi_rect->br.y += p_redraw_context->gdi_org.y;
+    p_gdi_rect->tl.x = (pixels.tl.x << XEigFactor) + p_redraw_context->gdi_org.x;
+    p_gdi_rect->tl.y = (pixels.tl.y << YEigFactor) + p_redraw_context->gdi_org.y;
+    p_gdi_rect->br.x = (pixels.br.x << XEigFactor) + p_redraw_context->gdi_org.x;
+    p_gdi_rect->br.y = (pixels.br.y << YEigFactor) + p_redraw_context->gdi_org.y;
 
     if((p_gdi_rect->tl.x >= p_gdi_rect->br.x) || (p_gdi_rect->br.y >= p_gdi_rect->tl.y))
         return(STATUS_OK);
@@ -126,26 +124,27 @@ gdi_rect_from_pixit_rect_and_context_draw(
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_RECT pixit_rect = *p_pixit_rect;
-    PIXIT_POINT divisor;
+    PIXIT_RECT pixit_rect;
+    S32_POINT divisor;
+    S32_RECT draw_units;
 
-    pixit_rect.tl.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.tl.y += p_redraw_context->pixit_origin.y;
-    pixit_rect.br.x += p_redraw_context->pixit_origin.x;
-    pixit_rect.br.y += p_redraw_context->pixit_origin.y;
+    pixit_rect.tl.x = p_pixit_rect->tl.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.tl.y = p_pixit_rect->tl.y + p_redraw_context->pixit_origin.y;
+    pixit_rect.br.x = p_pixit_rect->br.x + p_redraw_context->pixit_origin.x;
+    pixit_rect.br.y = p_pixit_rect->br.y + p_redraw_context->pixit_origin.y;
 
-    divisor.x = p_redraw_context->host_xform.riscos.d_x * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.x);
-    divisor.y = p_redraw_context->host_xform.riscos.d_y * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
+    divisor.x = (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.x) * p_redraw_context->host_xform.riscos.dx;
+    divisor.y = (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y) * p_redraw_context->host_xform.riscos.dy;
 
-    p_gdi_rect->tl.x = +muldiv64(pixit_rect.tl.x, (p_redraw_context->host_xform.riscos.d_x << 8) * p_redraw_context->host_xform.scale.t.x, divisor.x);
-    p_gdi_rect->tl.y = -muldiv64(pixit_rect.tl.y, (p_redraw_context->host_xform.riscos.d_y << 8) * p_redraw_context->host_xform.scale.t.y, divisor.y);
-    p_gdi_rect->br.x = +muldiv64(pixit_rect.br.x, (p_redraw_context->host_xform.riscos.d_x << 8) * p_redraw_context->host_xform.scale.t.x, divisor.x);
-    p_gdi_rect->br.y = -muldiv64(pixit_rect.br.y, (p_redraw_context->host_xform.riscos.d_y << 8) * p_redraw_context->host_xform.scale.t.y, divisor.y);
+    draw_units.tl.x = +muldiv64(pixit_rect.tl.x, (p_redraw_context->host_xform.riscos.dx << 8) * p_redraw_context->host_xform.scale.t.x, divisor.x);
+    draw_units.tl.y = -muldiv64(pixit_rect.tl.y, (p_redraw_context->host_xform.riscos.dy << 8) * p_redraw_context->host_xform.scale.t.y, divisor.y);
+    draw_units.br.x = +muldiv64(pixit_rect.br.x, (p_redraw_context->host_xform.riscos.dx << 8) * p_redraw_context->host_xform.scale.t.x, divisor.x);
+    draw_units.br.y = -muldiv64(pixit_rect.br.y, (p_redraw_context->host_xform.riscos.dy << 8) * p_redraw_context->host_xform.scale.t.y, divisor.y);
 
-    p_gdi_rect->tl.x += p_redraw_context->gdi_org.x << 8;
-    p_gdi_rect->tl.y += p_redraw_context->gdi_org.y << 8;
-    p_gdi_rect->br.x += p_redraw_context->gdi_org.x << 8;
-    p_gdi_rect->br.y += p_redraw_context->gdi_org.y << 8;
+    p_gdi_rect->tl.x = draw_units.tl.x + (p_redraw_context->gdi_org.x << 8);
+    p_gdi_rect->tl.y = draw_units.tl.y + (p_redraw_context->gdi_org.y << 8);
+    p_gdi_rect->br.x = draw_units.br.x + (p_redraw_context->gdi_org.x << 8);
+    p_gdi_rect->br.y = draw_units.br.y + (p_redraw_context->gdi_org.y << 8);
 
     return(STATUS_DONE);
 }
@@ -161,11 +160,11 @@ host_redraw_context_set_host_xform(
     _InoutRef_  P_REDRAW_CONTEXT p_redraw_context,
     _InoutRef_  P_HOST_XFORM p_host_xform /*updated*/)
 {
-    p_host_xform->riscos.d_x = host_modevar_cache_current.dx;
-    p_host_xform->riscos.d_y = host_modevar_cache_current.dy;
+    p_host_xform->riscos.dx = host_modevar_cache_current.dx;
+    p_host_xform->riscos.dy = host_modevar_cache_current.dy;
 
-    p_host_xform->riscos.eig_x = host_modevar_cache_current.XEig;
-    p_host_xform->riscos.eig_y = host_modevar_cache_current.YEig;
+    p_host_xform->riscos.XEigFactor = host_modevar_cache_current.XEigFactor;
+    p_host_xform->riscos.YEigFactor = host_modevar_cache_current.YEigFactor;
 
     p_redraw_context->host_xform = *p_host_xform;
 }
@@ -178,9 +177,9 @@ host_redraw_context_fillin(
     GDI_RECT gdi_rect;
 
     /* users of one_pixel please note that it is only an approximation and MUST BE >= real pixel size */
-    p_redraw_context->one_real_pixel.x = p_redraw_context->host_xform.riscos.d_x * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.x);
+    p_redraw_context->one_real_pixel.x = p_redraw_context->host_xform.riscos.dx * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.x);
     p_redraw_context->one_real_pixel.x = idiv_ceil(p_redraw_context->one_real_pixel.x, p_redraw_context->host_xform.scale.t.x);
-    p_redraw_context->one_real_pixel.y = p_redraw_context->host_xform.riscos.d_y * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
+    p_redraw_context->one_real_pixel.y = p_redraw_context->host_xform.riscos.dy * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
     p_redraw_context->one_real_pixel.y = idiv_ceil(p_redraw_context->one_real_pixel.y, p_redraw_context->host_xform.scale.t.y);
 
     p_redraw_context->one_program_pixel.x = p_redraw_context->host_xform.scale.b.x * PIXITS_PER_PROGRAM_PIXEL_X;
@@ -199,10 +198,10 @@ host_redraw_context_fillin(
 
     status_consume(gdi_rect_from_pixit_rect_and_context(&gdi_rect, &pixit_rect, p_redraw_context)); /* origin,org semi-irrelevant for diffs */
 
-    p_redraw_context->line_width_eff.x = ((U32) (gdi_rect.br.x - gdi_rect.tl.x) > p_redraw_context->host_xform.riscos.d_x)
+    p_redraw_context->line_width_eff.x = ((U32) (gdi_rect.br.x - gdi_rect.tl.x) > p_redraw_context->host_xform.riscos.dx)
                                        ? p_redraw_context->line_width.x
                                        : MIN(p_redraw_context->border_width.x, p_redraw_context->one_real_pixel.x);
-    p_redraw_context->line_width_eff.y = ((U32) (gdi_rect.tl.y - gdi_rect.br.y) > p_redraw_context->host_xform.riscos.d_y)
+    p_redraw_context->line_width_eff.y = ((U32) (gdi_rect.tl.y - gdi_rect.br.y) > p_redraw_context->host_xform.riscos.dy)
                                        ? p_redraw_context->line_width.y
                                        : MIN(p_redraw_context->border_width.y, p_redraw_context->one_real_pixel.y);
 
@@ -217,10 +216,10 @@ host_redraw_context_fillin(
 
     status_consume(gdi_rect_from_pixit_rect_and_context(&gdi_rect, &pixit_rect, p_redraw_context)); /* origin,org semi-irrelevant for diffs */
 
-    p_redraw_context->thin_width_eff.x = ((U32) (gdi_rect.br.x - gdi_rect.tl.x) > p_redraw_context->host_xform.riscos.d_x)
+    p_redraw_context->thin_width_eff.x = ((U32) (gdi_rect.br.x - gdi_rect.tl.x) > p_redraw_context->host_xform.riscos.dx)
                                        ? p_redraw_context->thin_width.x
                                        : MIN(p_redraw_context->border_width.x, p_redraw_context->one_real_pixel.x);
-    p_redraw_context->thin_width_eff.y = ((U32) (gdi_rect.tl.y - gdi_rect.br.y) > p_redraw_context->host_xform.riscos.d_y)
+    p_redraw_context->thin_width_eff.y = ((U32) (gdi_rect.tl.y - gdi_rect.br.y) > p_redraw_context->host_xform.riscos.dy)
                                        ? p_redraw_context->thin_width.y
                                        : MIN(p_redraw_context->border_width.y, p_redraw_context->one_real_pixel.y);
 }
@@ -231,11 +230,11 @@ host_click_context_set_host_xform(
     _InoutRef_  P_HOST_XFORM p_host_xform /*updated*/)
 {
     /* NB. clicks are in views and so pertain only to the screen */
-    p_host_xform->riscos.d_x = host_modevar_cache_current.dx;
-    p_host_xform->riscos.d_y = host_modevar_cache_current.dy;
+    p_host_xform->riscos.dx = host_modevar_cache_current.dx;
+    p_host_xform->riscos.dy = host_modevar_cache_current.dy;
 
-    p_host_xform->riscos.eig_x = host_modevar_cache_current.XEig;
-    p_host_xform->riscos.eig_y = host_modevar_cache_current.YEig;
+    p_host_xform->riscos.XEigFactor = host_modevar_cache_current.XEigFactor;
+    p_host_xform->riscos.YEigFactor = host_modevar_cache_current.YEigFactor;
 
     p_click_context->host_xform = *p_host_xform;
 }
@@ -259,9 +258,9 @@ host_set_click_context(
     p_click_context->border_width.x = p_click_context->border_width.y = p_docu->page_def.grid_size;
 
     /* users of one_pixel please note that it is only an approximation and MUST BE >= real pixel size */
-    p_click_context->one_real_pixel.x = p_click_context->host_xform.riscos.d_x * (PIXITS_PER_RISCOS * p_click_context->host_xform.scale.b.x);
+    p_click_context->one_real_pixel.x = p_click_context->host_xform.riscos.dx * (PIXITS_PER_RISCOS * p_click_context->host_xform.scale.b.x);
     p_click_context->one_real_pixel.x = idiv_ceil(p_click_context->one_real_pixel.x, p_click_context->host_xform.scale.t.x);
-    p_click_context->one_real_pixel.y = p_click_context->host_xform.riscos.d_y * (PIXITS_PER_RISCOS * p_click_context->host_xform.scale.b.y);
+    p_click_context->one_real_pixel.y = p_click_context->host_xform.riscos.dy * (PIXITS_PER_RISCOS * p_click_context->host_xform.scale.b.y);
     p_click_context->one_real_pixel.y = idiv_ceil(p_click_context->one_real_pixel.y, p_click_context->host_xform.scale.t.y);
 
     p_click_context->one_program_pixel.x = p_click_context->host_xform.scale.b.x * PIXITS_PER_PROGRAM_PIXEL_X;
@@ -390,11 +389,11 @@ set_host_xform_for_view(
 {
     set_host_xform_for_view_common(p_host_xform, p_view, do_x_scale, do_y_scale);
 
-    p_host_xform->riscos.d_x = host_modevar_cache_current.dx;
-    p_host_xform->riscos.d_y = host_modevar_cache_current.dy;
+    p_host_xform->riscos.dx = host_modevar_cache_current.dx;
+    p_host_xform->riscos.dy = host_modevar_cache_current.dy;
 
-    p_host_xform->riscos.eig_x = host_modevar_cache_current.XEig;
-    p_host_xform->riscos.eig_y = host_modevar_cache_current.YEig;
+    p_host_xform->riscos.XEigFactor = host_modevar_cache_current.XEigFactor;
+    p_host_xform->riscos.YEigFactor = host_modevar_cache_current.YEigFactor;
 }
 
 /******************************************************************************
@@ -409,16 +408,19 @@ window_point_from_pixit_point(
     _InRef_     PC_PIXIT_POINT p_pixit_point,
     _InRef_     PC_HOST_XFORM p_host_xform)
 {
-    PIXIT_POINT divisor;
+    const U32 XEigFactor = p_host_xform->riscos.XEigFactor;
+    const U32 YEigFactor = p_host_xform->riscos.YEigFactor;
+    S32_POINT divisor; /* scale.b * pixits per pixel */
+    S32_POINT pixels;
 
-    divisor.x = p_host_xform->riscos.d_x * (PIXITS_PER_RISCOS * p_host_xform->scale.b.x);
-    divisor.y = p_host_xform->riscos.d_y * (PIXITS_PER_RISCOS * p_host_xform->scale.b.y);
+    divisor.x = (p_host_xform->scale.b.x * PIXITS_PER_RISCOS) << XEigFactor;
+    divisor.y = (p_host_xform->scale.b.y * PIXITS_PER_RISCOS) << YEigFactor;
 
-    p_gdi_point->x = +muldiv64_round_floor(/*+*/p_pixit_point->x, p_host_xform->scale.t.x, divisor.x);
-    p_gdi_point->y = -muldiv64_round_floor(/*-*/p_pixit_point->y, p_host_xform->scale.t.y, divisor.y);
+    pixels.x = +muldiv64_round_floor(/*+*/p_pixit_point->x, p_host_xform->scale.t.x, divisor.x);
+    pixels.y = -muldiv64_round_floor(/*-*/p_pixit_point->y, p_host_xform->scale.t.y, divisor.y);
 
-    p_gdi_point->x <<= p_host_xform->riscos.eig_x;
-    p_gdi_point->y <<= p_host_xform->riscos.eig_y;
+    p_gdi_point->x = pixels.x << XEigFactor;
+    p_gdi_point->y = pixels.y << YEigFactor;
 }
 
 /******************************************************************************
@@ -436,20 +438,23 @@ window_rect_from_pixit_rect(
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_HOST_XFORM p_host_xform)
 {
-    PIXIT_POINT divisor;
+    const U32 XEigFactor = p_host_xform->riscos.XEigFactor;
+    const U32 YEigFactor = p_host_xform->riscos.YEigFactor;
+    S32_POINT divisor; /* scale.b * pixits per pixel */
+    S32_RECT pixels;
 
-    divisor.x = p_host_xform->riscos.d_x * (PIXITS_PER_RISCOS * p_host_xform->scale.b.x);
-    divisor.y = p_host_xform->riscos.d_y * (PIXITS_PER_RISCOS * p_host_xform->scale.b.y);
+    divisor.x = (p_host_xform->scale.b.x * PIXITS_PER_RISCOS) << XEigFactor;
+    divisor.y = (p_host_xform->scale.b.y * PIXITS_PER_RISCOS) << YEigFactor;
 
-    p_gdi_rect->tl.x = +muldiv64_round_floor(p_pixit_rect->tl.x, p_host_xform->scale.t.x, divisor.x);
-    p_gdi_rect->tl.y = -muldiv64_round_floor(p_pixit_rect->tl.y, p_host_xform->scale.t.y, divisor.y);
-    p_gdi_rect->br.x = +muldiv64_round_floor(p_pixit_rect->br.x, p_host_xform->scale.t.x, divisor.x);
-    p_gdi_rect->br.y = -muldiv64_round_floor(p_pixit_rect->br.y, p_host_xform->scale.t.y, divisor.y);
+    pixels.tl.x = +muldiv64_round_floor(p_pixit_rect->tl.x, p_host_xform->scale.t.x, divisor.x);
+    pixels.tl.y = -muldiv64_round_floor(p_pixit_rect->tl.y, p_host_xform->scale.t.y, divisor.y);
+    pixels.br.x = +muldiv64_round_floor(p_pixit_rect->br.x, p_host_xform->scale.t.x, divisor.x);
+    pixels.br.y = -muldiv64_round_floor(p_pixit_rect->br.y, p_host_xform->scale.t.y, divisor.y);
 
-    p_gdi_rect->tl.x <<= p_host_xform->riscos.eig_x;
-    p_gdi_rect->tl.y <<= p_host_xform->riscos.eig_y;
-    p_gdi_rect->br.x <<= p_host_xform->riscos.eig_x;
-    p_gdi_rect->br.y <<= p_host_xform->riscos.eig_y;
+    p_gdi_rect->tl.x = pixels.tl.x << XEigFactor;
+    p_gdi_rect->tl.y = pixels.tl.y << YEigFactor;
+    p_gdi_rect->br.x = pixels.br.x << XEigFactor;
+    p_gdi_rect->br.y = pixels.br.y << YEigFactor;
 
     if((p_gdi_rect->tl.x >= p_gdi_rect->br.x) || (p_gdi_rect->br.y >= p_gdi_rect->tl.y))
         return(STATUS_OK);

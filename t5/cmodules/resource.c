@@ -135,13 +135,13 @@ extern RESOURCE_BITMAP_HANDLE
 resource_bitmap_find(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id)
 {
-    RESOURCE_BITMAP_HANDLE h_bitmap;
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     OBJECT_ID object_id;
 
-    h_bitmap.i = 0;
+    resource_bitmap_handle.i = 0;
 
     if(NULL == p_resource_bitmap_id)
-        return(h_bitmap);
+        return(resource_bitmap_handle);
 
     object_id = p_resource_bitmap_id->object_id;
 
@@ -153,26 +153,26 @@ resource_bitmap_find(
 
         while(status_ok(object_next(&resource_bitmap_id.object_id)))
         {
-            h_bitmap = resource_bitmap_find(&resource_bitmap_id);
+            resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
 
-            if(h_bitmap.i)
+            if(resource_bitmap_handle.i)
                 break;
         }
 
-        return(h_bitmap);
+        return(resource_bitmap_handle);
     }
 
     myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("resource_bitmap_find(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
 
     if(!object_present(object_id))
-        return(h_bitmap);
+        return(resource_bitmap_handle);
 
     {
 #if RISCOS
     _kernel_swi_regs  rs;
     _kernel_oserror * p_kernel_oserror;
     P_SAH area;
-    int scan_hi_res = (host_modevar_cache_current.XEig < 2) && (host_modevar_cache_current.YEig < 2);
+    int scan_hi_res = (host_modevar_cache_current.XEigFactor < 2) && (host_modevar_cache_current.YEigFactor < 2);
 
     /* can't really use system-defined bitmaps here? */
 
@@ -186,8 +186,8 @@ resource_bitmap_find(
 
             if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
             {
-                h_bitmap.i = rs.r[2];
-                return(h_bitmap);
+                resource_bitmap_handle.i = rs.r[2];
+                return(resource_bitmap_handle);
             }
         }
     }
@@ -200,8 +200,8 @@ resource_bitmap_find(
 
         if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
         {
-            h_bitmap.i = rs.r[2];
-            return(h_bitmap);
+            resource_bitmap_handle.i = rs.r[2];
+            return(resource_bitmap_handle);
         }
     }
 
@@ -212,7 +212,7 @@ resource_bitmap_find(
         rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
         if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
-            h_bitmap.i = rs.r[2];
+            resource_bitmap_handle.i = rs.r[2];
     }
 #elif WINDOWS
     /* scan this object's cache for bitmap */
@@ -223,18 +223,18 @@ resource_bitmap_find(
     /*STATUS status;*/
     if(NULL != p_hBitmap)
     {
-        h_bitmap.i = *p_hBitmap;
+        resource_bitmap_handle.i = *p_hBitmap;
     }
     else if(NULL != (p_hBitmap = collect_add_entry_elem(HBITMAP, p_list_block, P_DATA_NONE, item, &status)))
     {
         HINSTANCE hInstance = resource_get_object_resources(object_id);
 
-        h_bitmap.i = *p_hBitmap = (HBITMAP) LoadImage(hInstance, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id), IMAGE_BITMAP, 0, 0, 0);
+        resource_bitmap_handle.i = *p_hBitmap = (HBITMAP) LoadImage(hInstance, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id), IMAGE_BITMAP, 0, 0, 0);
     }
 #endif /* OS */
     } /*block*/
 
-    return(h_bitmap);
+    return(resource_bitmap_handle);
 }
 
 #if WINDOWS
@@ -300,20 +300,20 @@ resource_bitmap_find_in_area(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id,
     _InVal_     S32 area_id)
 {
-    RESOURCE_BITMAP_HANDLE h_bitmap;
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     OBJECT_ID object_id;
 
-    h_bitmap.i = 0;
+    resource_bitmap_handle.i = 0;
 
     if(NULL == p_resource_bitmap_id)
-        return(h_bitmap);
+        return(resource_bitmap_handle);
 
     object_id = p_resource_bitmap_id->object_id;
 
     myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("resource_bitmap_find(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
 
     if(!object_present(object_id))
-        return(h_bitmap);
+        return(resource_bitmap_handle);
 
     {
     P_SAH area;
@@ -346,11 +346,11 @@ resource_bitmap_find_in_area(
         rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
         if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
-            h_bitmap.i = rs.r[2];
+            resource_bitmap_handle.i = rs.r[2];
     }
     } /*block*/
 
-    return(h_bitmap);
+    return(resource_bitmap_handle);
 }
 
 #endif /* OS */
@@ -362,22 +362,22 @@ extern RESOURCE_BITMAP_HANDLE
 resource_bitmap_find_defaulting(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id)
 {
-    RESOURCE_BITMAP_HANDLE h_bitmap;
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
-    h_bitmap = resource_bitmap_find(p_resource_bitmap_id);
+    resource_bitmap_handle = resource_bitmap_find(p_resource_bitmap_id);
 
-    if(!h_bitmap.i)
+    if(!resource_bitmap_handle.i)
     {
-        h_bitmap = resource_bitmap_find_system(p_resource_bitmap_id);
+        resource_bitmap_handle = resource_bitmap_find_system(p_resource_bitmap_id);
 
-        if(h_bitmap.i)
+        if(resource_bitmap_handle.i)
         {   /* return a bodged pointer to the name rather than an address */
-            h_bitmap.p_u8 = de_const_cast(P_U8, p_resource_bitmap_id->bitmap_name);
-            h_bitmap.i |= RESOURCE_BITMAP_HANDLE_RISCOS_BODGE;
+            resource_bitmap_handle.p_u8 = de_const_cast(P_U8, p_resource_bitmap_id->bitmap_name);
+            resource_bitmap_handle.i |= RESOURCE_BITMAP_HANDLE_RISCOS_BODGE;
         }
     }
 
-    return(h_bitmap);
+    return(resource_bitmap_handle);
 }
 
 #endif /* RISCOS */
@@ -389,13 +389,13 @@ extern RESOURCE_BITMAP_HANDLE
 resource_bitmap_find_system(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id)
 {
-    RESOURCE_BITMAP_HANDLE h_bitmap;
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     _kernel_swi_regs rs;
     _kernel_oserror * p_kernel_oserror;
     SAH * area[2];
     U32 area_idx;
 
-    h_bitmap.i = 0;
+    resource_bitmap_handle.i = 0;
 
     /* have a look in Window Manager's back pockets */
     void_WrapOsErrorChecking(_kernel_swi(/*Wimp_BaseOfSprites*/ 0x000400EA, &rs, &rs));
@@ -413,13 +413,13 @@ resource_bitmap_find_system(
 
             if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
             {
-                h_bitmap.i = rs.r[2];
+                resource_bitmap_handle.i = rs.r[2];
                 break;
             }
         }
     }
 
-    return(h_bitmap);
+    return(resource_bitmap_handle);
 }
 
 #endif /* RISCOS */
@@ -675,7 +675,7 @@ resource_init(
 
     if(NULL != p_u8_bound_msg)
     {
-        if(LOAD_MESSAGES == p_u8_bound_msg)
+        if(LOAD_MESSAGES_FILE == p_u8_bound_msg)
         {
             status_return(resource_load_messages(object_id));
         }
@@ -863,7 +863,7 @@ resource_load_appropriate_sprites(
     _InVal_     OBJECT_ID object_id)
 {
     STATUS status;
-    int load_hi_res = (host_modevar_cache_current.XEig < 2) && (host_modevar_cache_current.YEig < 2);
+    int load_hi_res = (host_modevar_cache_current.XEigFactor < 2) && (host_modevar_cache_current.YEigFactor < 2);
 
     if(load_hi_res)
     {

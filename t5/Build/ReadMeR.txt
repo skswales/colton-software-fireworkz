@@ -5,7 +5,7 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-Copyright (C) 2013-2018 Stuart Swales
+Copyright (C) 2013-2019 Stuart Swales
 
 Prerequisites
 -------------
@@ -28,12 +28,6 @@ First-time configuration and build
 Ensure that the system has 'seen' AcornC/C++ and set that environment.
 
 Run !!!Boot in Build to set up the 32-bit Fireworkz release build environment.
-
-Drop a copy of !ArcFS (read-only) in Build.bld_mkdir.  This is needed to
-unpack the archive file that is used to populate empty build directories.
-
-You need to check out a copy of RISC_OSLib for Fireworkz to build.
-See ^.external.RISC_OSLib.ReadMe for instructions on how to do this.
 
 Edit 'configure' - set the URD macro to the directory containing t5.
 
@@ -60,9 +54,9 @@ After any reboot, you will need to run !!!Boot to set up the 32-bit
 Fireworkz build environment again. This also depends on the system having
 already 'seen' AcornC/C++.
 
-To clean up a build, run bld_mkdir.clean_r32b
+To clean up a build, run bld_mkdir.r32b_clean
 
-In order to build again, you will need to run bld_mkdir.mkdir_r32b
+In order to build again, you will need to run bld_mkdir.r32b_mkdir
 
 Then drag 'r32b.firewrkz.Makefile' to !Amu... and wait...
 

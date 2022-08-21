@@ -53,11 +53,11 @@ preprocess_mouse_click(
     }
     else
     {
-        WimpGetIconStateBlock icon_state_block;
-        icon_state_block.window_handle = block->mouse_click.window_handle;
-        icon_state_block.icon_handle = block->mouse_click.icon_handle;
-        void_WrapOsErrorReporting(wimp_get_icon_state(&icon_state_block));
-        window_button_type = (* (WimpIconFlagsBitset *) &icon_state_block.icon.flags).button_type;
+        WimpGetIconStateBlock get_icon_state_block;
+        get_icon_state_block.window_handle = block->mouse_click.window_handle;
+        get_icon_state_block.icon_handle = block->mouse_click.icon_handle;
+        void_WrapOsErrorReporting(wimp_get_icon_state(&get_icon_state_block));
+        window_button_type = (* (WimpIconFlagsBitset *) &get_icon_state_block.icon.flags).button_type;
     }
 
     switch(window_button_type)
@@ -327,7 +327,7 @@ host_message_filter_add(
     _kernel_oserror * e;
 
     rs.r[0] = (int) wimp_messages;
-    e = _kernel_swi(0x400F6 /*Wimp_AddMessages*/, &rs, &rs);
+    e = _kernel_swi(Wimp_AddMessages, &rs, &rs);
 }
 
 extern void
@@ -338,7 +338,7 @@ host_message_filter_remove(
     _kernel_oserror * e;
 
     rs.r[0] = (int) wimp_messages;
-    e = _kernel_swi(0x400F7 /*Wimp_RemoveMessages*/, &rs, &rs);
+    e = _kernel_swi(Wimp_RemoveMessages, &rs, &rs);
 }
 
 static void

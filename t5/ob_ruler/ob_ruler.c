@@ -23,7 +23,8 @@
 #define MSG_WEAK &rb_ruler_msg_weak
 extern PC_U8 rb_ruler_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_RULER NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_RULER DONT_LOAD_RESOURCES
 
 /*
 internal structure
@@ -1726,7 +1727,7 @@ ruler_scale_and_figures(
 
 #if RISCOS
     {
-    const PIXIT pixits_per_riscos_d_y = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_y;
+    const PIXIT pixits_per_riscos_dy = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.dy;
     _kernel_swi_regs rs;
     rs.r[0] = host_font_redraw;
     rs.r[1] = '0';
@@ -1743,8 +1744,8 @@ ruler_scale_and_figures(
         digits_height = base_line;
     }
 
-    digits_height = idiv_ceil_u(digits_height, pixits_per_riscos_d_y);
-    digits_height *= pixits_per_riscos_d_y;
+    digits_height = idiv_ceil_u(digits_height, pixits_per_riscos_dy);
+    digits_height *= pixits_per_riscos_dy;
     } /*block*/
 
     base_line = digits_height;

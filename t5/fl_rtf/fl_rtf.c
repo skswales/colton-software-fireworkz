@@ -23,7 +23,8 @@
 #define MSG_WEAK &rb_fl_rtf_msg_weak
 extern PC_U8 rb_fl_rtf_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FL_RTF NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FL_RTF DONT_LOAD_RESOURCES
 
 #define TRACE_IO_RTF TRACE_APP_FOREIGN
 

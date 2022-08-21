@@ -257,7 +257,7 @@ dialog_dictionary_ctl_fill_source(
     switch(p_dialog_msg_ctl_fill_source->dialog_control_id)
     {
     case CONTROL_ID_LIST:
-        p_dialog_msg_ctl_fill_source->p_ui_source = &p_dictionary_callback->ui_source;;
+        p_dialog_msg_ctl_fill_source->p_ui_source = &p_dictionary_callback->ui_source;
         break;
 
     default:

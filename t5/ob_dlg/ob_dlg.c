@@ -19,7 +19,8 @@
 #define MSG_WEAK &rb_dlg_msg_weak
 extern PC_U8 rb_dlg_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_DIALOG NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_DIALOG DONT_LOAD_RESOURCES
 
 /*
 internal routines
@@ -519,26 +520,36 @@ dialog_cmd_ctl_size_estimate(
 
     p_dialog_control_data.p_any = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
 
+    est_size.x = est_size.y = 0;
+
     switch(p_dialog_control->bits.packed_dialog_control_type)
     {
     default:
-        est_size.x = est_size.y = 0;
         break;
 
     case DIALOG_CONTROL_GROUPBOX:
         {
         PIXIT width = 0;
 
-#if RISCOS
-        est_size.x = DIALOG_STDGROUP_LM + DIALOG_STDGROUP_RM; /*180 * PIXITS_PER_RISCOS;*/
-        est_size.y = 120 * PIXITS_PER_RISCOS;
-#elif WINDOWS
         est_size.x = DIALOG_STDGROUP_LM + DIALOG_STDGROUP_RM;
         est_size.y = DIALOG_STDGROUP_TM + DIALOG_STDGROUP_BM;
+#if RISCOS
+        est_size.y = 120 * PIXITS_PER_RISCOS;
 #endif /* OS */
 
-        if(p_dialog_control_data.groupbox)
+        if(NULL != p_dialog_control_data.groupbox)
+        {
             width = ui_width_from_p_ui_text(&p_dialog_control_data.groupbox->caption);
+
+            if(FRAMED_BOX_GROUP == p_dialog_control_data.groupbox->bits.border_style)
+            {
+#if RISCOS
+                width += 8 * PIXITS_PER_RISCOS;
+#elif WINDOWS
+                width += 6 * PIXITS_PER_WDU_H;
+#endif /* OS */
+            }
+        }
 
         if( est_size.x < width)
             est_size.x = width;
@@ -554,9 +565,11 @@ dialog_cmd_ctl_size_estimate(
         assert_EQ(offsetof32(DIALOG_CONTROL_DATA_STATICTEXT, caption), offsetof32(DIALOG_CONTROL_DATA_STATICFRAME, caption));
 
         est_size.x = width;
-#if WINDOWS
-        if(est_size.x)
+        if(0 != est_size.x)
         {
+#if RISCOS
+            est_size.x += (4 * PIXITS_PER_RISCOS);
+#elif WINDOWS
             if(!p_dialog_control_data.statictext->bits.windows_no_colon)
             {
                 static PIXIT colon_width = 0;
@@ -565,8 +578,8 @@ dialog_cmd_ctl_size_estimate(
                 est_size.x += colon_width;
             }
             est_size.x += (4 * PIXITS_PER_WDU_H); /* needs some bodging too */
-        }
 #endif
+        }
         est_size.y = DIALOG_STDTEXT_V;
 
         break;
@@ -588,7 +601,9 @@ dialog_cmd_ctl_size_estimate(
         }
 
     case DIALOG_CONTROL_CHECKBOX:
+#ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRISTATE:
+#endif
         {
         PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.checkbox->caption);
 
@@ -609,7 +624,9 @@ dialog_cmd_ctl_size_estimate(
 
     case DIALOG_CONTROL_RADIOPICTURE:
     case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRIPICTURE:
+#endif
         est_size.x = DIALOG_STDRADIO_H;
         est_size.y = DIALOG_STDRADIO_V;
         break;
@@ -638,7 +655,7 @@ dialog_cmd_ctl_size_estimate(
         est_size.y = DIALOG_STDCOMBO_V;
 
 #if RISCOS
-        est_size.x += ((S32) 2 * PIXITS_PER_RISCOS ) << host_modevar_cache_current.XEig;
+        est_size.x += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.XEigFactor;
 #elif WINDOWS
         {
         const int vscroll_pixels_cx = GetSystemMetrics(SM_CXVSCROLL);
@@ -683,8 +700,8 @@ dialog_cmd_ctl_size_estimate(
             est_size.x = DIALOG_MINLISTOVH_H;
 
 #if RISCOS
-        est_size.x += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.XEig;
-        est_size.y += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.YEig;
+        est_size.x += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.XEigFactor;
+        est_size.y += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.YEigFactor;
 #endif
         break;
     }
@@ -833,8 +850,10 @@ dialog_cmd_ctl_state_query(
         case DIALOG_CONTROL_GROUPBOX:
         case DIALOG_CONTROL_CHECKBOX:
         case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
         case DIALOG_CONTROL_TRISTATE:
         case DIALOG_CONTROL_TRIPICTURE:
+#endif
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
         case DIALOG_CONTROL_LIST_S32:
@@ -904,8 +923,10 @@ dialog_cmd_ctl_state_query_dispose(
         case DIALOG_CONTROL_GROUPBOX:
         case DIALOG_CONTROL_CHECKBOX:
         case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
         case DIALOG_CONTROL_TRISTATE:
         case DIALOG_CONTROL_TRIPICTURE:
+#endif
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
         case DIALOG_CONTROL_LIST_S32:
@@ -1888,11 +1909,12 @@ dialog_ictl_encode_here(
         {
 #if RISCOS
         WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE h_bitmap = p_dialog_ictl->bits.radiobutton_active
-                                        ? p_dialog->riscos.bitmap_radio_on.handle
-                                        : p_dialog->riscos.bitmap_radio_off.handle;
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle =
+            p_dialog_ictl->bits.radiobutton_active
+                ? p_dialog->riscos.bitmap_radio_on.resource_bitmap_handle
+                : p_dialog->riscos.bitmap_radio_off.resource_bitmap_handle;
         status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, h_bitmap));
+        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetCheck(hwnd, p_dialog_ictl->bits.radiobutton_active);
@@ -1904,11 +1926,12 @@ dialog_ictl_encode_here(
         {
 #if RISCOS
         WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE h_bitmap = p_dialog_ictl->bits.radiobutton_active
-                                        ? p_dialog_ictl->data.radiopicture.riscos.h_bitmap_on
-                                        : p_dialog_ictl->data.radiopicture.riscos.h_bitmap_off;
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle =
+            p_dialog_ictl->bits.radiobutton_active
+                ? p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_on
+                : p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_off;
         status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, h_bitmap));
+        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             InvalidateRect(hwnd, NULL, FALSE);
@@ -1920,7 +1943,7 @@ dialog_ictl_encode_here(
         {
 #if RISCOS
         WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE h_bitmap;
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.checkbox)
         {
@@ -1928,16 +1951,16 @@ dialog_ictl_encode_here(
 #if CHECKING
         case DIALOG_BUTTONSTATE_OFF:
 #endif
-            h_bitmap = p_dialog->riscos.bitmap_check_off.handle;
+            resource_bitmap_handle = p_dialog->riscos.bitmap_check_off.resource_bitmap_handle;
             break;
 
         case DIALOG_BUTTONSTATE_ON:
-            h_bitmap = p_dialog->riscos.bitmap_check_on.handle;
+            resource_bitmap_handle = p_dialog->riscos.bitmap_check_on.resource_bitmap_handle;
             break;
             }
 
         status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, h_bitmap));
+        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetCheck(hwnd, (p_dialog_ictl->state.checkbox != DIALOG_BUTTONSTATE_OFF));
@@ -1949,7 +1972,7 @@ dialog_ictl_encode_here(
         {
 #if RISCOS
         WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE h_bitmap;
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.checkbox)
         {
@@ -1957,16 +1980,16 @@ dialog_ictl_encode_here(
 #if CHECKING
         case DIALOG_BUTTONSTATE_OFF:
 #endif
-            h_bitmap = p_dialog_ictl->data.checkpicture.riscos.h_bitmap_off;
+            resource_bitmap_handle = p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_off;
             break;
 
         case DIALOG_BUTTONSTATE_ON:
-            h_bitmap = p_dialog_ictl->data.checkpicture.riscos.h_bitmap_on;
+            resource_bitmap_handle = p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_on;
             break;
             }
 
         status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, h_bitmap));
+        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             InvalidateRect(hwnd, NULL, FALSE);
@@ -1979,7 +2002,7 @@ dialog_ictl_encode_here(
         {
 #if RISCOS
         WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE h_bitmap;
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.tristate)
         {
@@ -1987,20 +2010,20 @@ dialog_ictl_encode_here(
 #if CHECKING
         case DIALOG_TRISTATE_OFF:
 #endif
-            h_bitmap = p_dialog->riscos.bitmap_tristate_off.handle;
+            resource_bitmap_handle = p_dialog->riscos.bitmap_tristate_off.resource_bitmap_handle;
             break;
 
         case DIALOG_TRISTATE_ON:
-            h_bitmap = p_dialog->riscos.bitmap_tristate_on.handle;
+            resource_bitmap_handle = p_dialog->riscos.bitmap_tristate_on.resource_bitmap_handle;
             break;
 
         case DIALOG_TRISTATE_DONT_CARE:
-            h_bitmap = p_dialog->riscos.bitmap_tristate_dont_care.handle;
+            resource_bitmap_handle = p_dialog->riscos.bitmap_tristate_dont_care.resource_bitmap_handle;
             break;
         }
 
         status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, h_bitmap));
+        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetCheck(hwnd, p_dialog_ictl->state.tristate);
@@ -2012,7 +2035,7 @@ dialog_ictl_encode_here(
         {
 #if RISCOS
         WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE h_bitmap;
+        RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.tristate)
         {
@@ -2020,20 +2043,20 @@ dialog_ictl_encode_here(
 #if CHECKING
         case DIALOG_TRISTATE_OFF:
 #endif
-            h_bitmap = p_dialog_ictl->data.tripicture.riscos.h_bitmap_off;
+            resource_bitmap_handle = p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_off;
             break;
 
         case DIALOG_TRISTATE_ON:
-            h_bitmap = p_dialog_ictl->data.tripicture.riscos.h_bitmap_on;
+            resource_bitmap_handle = p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_on;
             break;
 
         case DIALOG_TRISTATE_DONT_CARE:
-            h_bitmap = p_dialog_ictl->data.tripicture.riscos.h_bitmap_dont_care;
+            resource_bitmap_handle = p_dialog_ictl->data.tripicture.riscos.resource_bitmap_handle_dont_care;
             break;
         }
 
         status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, h_bitmap));
+        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             InvalidateRect(hwnd, NULL, FALSE);

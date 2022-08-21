@@ -278,43 +278,6 @@ ctrlflagp
 
         FunctionReturn "","LinkNotStacked"
 
-; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern _kernel_oserror *
-; swi_wimp_slotsize(
-; r0 a1     /*inout*/ int * currentslot,
-; r1 a2     /*inout*/ int * nextslot,
-; r2 a3     /*out*/ int * freepool)
-
-        BeginExternal swi_wimp_slotsize
-
-        FunctionEntry "v1-v6","MakeFrame"
-
-        ; We can't trust Window Manager to keep its hands off these!
-        ; Yup, at least v1 gets it in the neck occasionally
-
-        MOV     v5, a1          ; but these two seem safe enough
-        MOV     v6, a2
-        MOV     ip, a3
-
-        LDR     a1, [v5, #0]
-        LDR     a2, [v6, #0]
-        MOV     a3, #0
-
-        STR     fp, [sp, #-4]! ; Total Paranoia!
-
-        SWI     XWimp_SlotSize
-
-        LDR     fp, [sp], #4
-
-        STR     a1, [v5, #0]
-        STR     a2, [v6, #0]
-        TEQ     ip, #0
-        STRNE   a3, [ip, #0]
-
-        MOVVC   a1, #0          ; no error
-
-        FunctionReturn "v1-v6","fpbased"
-
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         END ; of riscos/ho_asm.s

@@ -29,7 +29,8 @@
 #define MSG_WEAK &rb_skel_split_msg_weak
 extern PC_U8 rb_skel_split_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_SKEL_SPLIT NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_SKEL_SPLIT DONT_LOAD_RESOURCES
 
 #ifndef          __ce_edit_h
 #include "ob_cells/ce_edit.h"
@@ -48,14 +49,14 @@ extern PC_U8 rb_skel_split_msg_weak;
 enum ADD_CR_CONTROL_IDS
 {
     ADD_CR_ID_STT = 32,
-    ADD_CR_ID_NUMBER_TEXT,
+    ADD_CR_ID_NUMBER_LABEL,
     ADD_CR_ID_NUMBER
 };
 
 static const DIALOG_CONTROL
-add_cols_number_text =
+add_cols_number_label =
 {
-    ADD_CR_ID_NUMBER_TEXT, DIALOG_MAIN_GROUP,
+    ADD_CR_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
 
     { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER,
       DIALOG_CONTROL_SELF,   ADD_CR_ID_NUMBER },
@@ -66,14 +67,14 @@ add_cols_number_text =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-add_cols_number_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_COLS_NUMBER) };
+add_cols_number_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_COLS_NUMBER) };
 
 static const DIALOG_CONTROL
 add_cr_number =
 {
     ADD_CR_ID_NUMBER, DIALOG_MAIN_GROUP,
 
-    { ADD_CR_ID_NUMBER_TEXT, DIALOG_CONTROL_PARENT },
+    { ADD_CR_ID_NUMBER_LABEL, DIALOG_CONTROL_PARENT },
 
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
 
@@ -103,11 +104,11 @@ add_cols_ctl_create[] =
 {
     { &dialog_main_group },
 
-    { &add_cols_number_text, &add_cols_number_text_data },
-    { &add_cr_number,        &add_cols_number_data      },
+    { &add_cols_number_label,   &add_cols_number_label_data },
+    { &add_cr_number,           &add_cols_number_data },
 
-    { &defbutton_ok,         &add_cols_ok_data },
-    { &stdbutton_cancel,     &stdbutton_cancel_data }
+    { &defbutton_ok,            &add_cols_ok_data },
+    { &stdbutton_cancel,        &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -117,9 +118,9 @@ add_cols_ctl_create[] =
 ******************************************************************************/
 
 static const DIALOG_CONTROL
-add_rows_number_text =
+add_rows_number_label =
 {
-    ADD_CR_ID_NUMBER_TEXT, DIALOG_MAIN_GROUP,
+    ADD_CR_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
 
     { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER,
       DIALOG_CONTROL_SELF,   ADD_CR_ID_NUMBER },
@@ -130,7 +131,7 @@ add_rows_number_text =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-add_rows_number_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_ROWS_NUMBER) };
+add_rows_number_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_ROWS_NUMBER) };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
 add_rows_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 1 };
@@ -146,11 +147,11 @@ add_rows_ctl_create[] =
 {
     { &dialog_main_group },
 
-    { &add_rows_number_text, &add_rows_number_text_data },
-    { &add_cr_number,        &add_rows_number_data      },
+    { &add_rows_number_label,   &add_rows_number_label_data },
+    { &add_cr_number,           &add_rows_number_data },
 
-    { &defbutton_ok,         &add_rows_ok_data },
-    { &stdbutton_cancel,     &stdbutton_cancel_data }
+    { &defbutton_ok,            &add_rows_ok_data },
+    { &stdbutton_cancel,        &stdbutton_cancel_data }
 };
 
 T5_CMD_PROTO(static, t5_cmd_add_cr_intro)
@@ -176,9 +177,9 @@ T5_CMD_PROTO(static, t5_cmd_add_cr_intro)
 
 enum INSERT_TABLE_CONTROL_IDS
 {
-    INSERT_TABLE_ID_COLS_TEXT = 64,
+    INSERT_TABLE_ID_COLS_LABEL = 64,
     INSERT_TABLE_ID_COLS,
-    INSERT_TABLE_ID_ROWS_TEXT,
+    INSERT_TABLE_ID_ROWS_LABEL,
     INSERT_TABLE_ID_ROWS
 };
 
@@ -196,12 +197,12 @@ cols
 */
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-insert_table_cols_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_COLS) };
+insert_table_cols_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_COLS) };
 
 static const DIALOG_CONTROL
-insert_table_cols_text =
+insert_table_cols_label =
 {
-    INSERT_TABLE_ID_COLS_TEXT, DIALOG_MAIN_GROUP,
+    INSERT_TABLE_ID_COLS_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, INSERT_TABLE_ID_COLS, DIALOG_CONTROL_SELF, INSERT_TABLE_ID_COLS },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
@@ -211,7 +212,7 @@ static const DIALOG_CONTROL
 insert_table_cols =
 {
     INSERT_TABLE_ID_COLS, DIALOG_MAIN_GROUP,
-    { INSERT_TABLE_ID_COLS_TEXT, DIALOG_CONTROL_PARENT },
+    { INSERT_TABLE_ID_COLS_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
@@ -224,16 +225,16 @@ rows
 */
 
 static const DIALOG_CONTROL
-insert_table_rows_text =
+insert_table_rows_label =
 {
-    INSERT_TABLE_ID_ROWS_TEXT, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_SELF, INSERT_TABLE_ID_ROWS, INSERT_TABLE_ID_COLS_TEXT, INSERT_TABLE_ID_ROWS },
+    INSERT_TABLE_ID_ROWS_LABEL, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_SELF, INSERT_TABLE_ID_ROWS, INSERT_TABLE_ID_COLS_LABEL, INSERT_TABLE_ID_ROWS },
     { DIALOG_CONTENTS_CALC, 0, 0, 0 },
     { DRT(RTRB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-insert_table_rows_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_ROWS) };
+insert_table_rows_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_ROWS) };
 
 static const DIALOG_CONTROL
 insert_table_rows =
@@ -252,13 +253,13 @@ insert_table_ctl_create[] =
 {
     { &dialog_main_group },
 
-    { &insert_table_cols_text, &insert_table_cols_text_data },
-    { &insert_table_cols,      &insert_table_cols_data      },
-    { &insert_table_rows_text, &insert_table_rows_text_data },
-    { &insert_table_rows,      &insert_table_rows_data      },
+    { &insert_table_cols_label, &insert_table_cols_label_data },
+    { &insert_table_cols,       &insert_table_cols_data },
+    { &insert_table_rows_label, &insert_table_rows_label_data },
+    { &insert_table_rows,       &insert_table_rows_data },
 
-    { &defbutton_ok,           &insert_table_insert_data },
-    { &stdbutton_cancel,       &stdbutton_cancel_data }
+    { &defbutton_ok,            &insert_table_insert_data },
+    { &stdbutton_cancel,        &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -722,7 +723,6 @@ sort_intro_order_data[5] =
     {
         { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
     },
-    
     {
         { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
     },
@@ -986,9 +986,9 @@ T5_CMD_PROTO(static, t5_cmd_style_for_config)
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     {
-    const P_DOCU p_docu = p_docu_from_config_wr();
+    const P_DOCU p_docu_config = p_docu_from_config_wr();
 
-    status = t5_cmd_style_intro(p_docu, t5_message, p_t5_cmd);
+    status = t5_cmd_style_intro(p_docu_config, t5_message, p_t5_cmd);
 
     issue_choice_changed(T5_CMD_STYLE_FOR_CONFIG);
     } /*block*/

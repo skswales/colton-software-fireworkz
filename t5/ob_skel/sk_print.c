@@ -197,10 +197,10 @@ enum PRINT_CONTROL_IDS
 
     CONTROL_ID_RANGE_GROUP,
     CONTROL_ID_RANGE_Y_GROUP,
-    CONTROL_ID_RANGE_Y0_TEXT,
+    CONTROL_ID_RANGE_Y0_LABEL,
     CONTROL_ID_RANGE_Y0,
     CONTROL_ID_RANGE_EDIT = CONTROL_ID_RANGE_Y0,
-    CONTROL_ID_RANGE_Y1_TEXT,
+    CONTROL_ID_RANGE_Y1_LABEL,
     CONTROL_ID_RANGE_Y1,
 
     CONTROL_ID_SIDES_GROUP = 128,
@@ -312,22 +312,22 @@ print_range_y_group =
 };
 
 static const DIALOG_CONTROL
-print_range_y0_text =
+print_range_y0_label =
 {
-    CONTROL_ID_RANGE_Y0_TEXT, CONTROL_ID_RANGE_Y_GROUP,
+    CONTROL_ID_RANGE_Y0_LABEL, CONTROL_ID_RANGE_Y_GROUP,
     { DIALOG_CONTROL_PARENT, CONTROL_ID_RANGE_Y0, DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_Y0 },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-print_range_y0_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE_Y0) };
+print_range_y0_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE_Y0) };
 
 static const DIALOG_CONTROL
 print_range_y0 =
 {
     CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y_GROUP,
-    { CONTROL_ID_RANGE_Y0_TEXT, DIALOG_CONTROL_PARENT },
+    { CONTROL_ID_RANGE_Y0_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_SMALLSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
@@ -339,16 +339,16 @@ static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
 print_range_y0_data = { { { { FRAMED_BOX_EDIT } }, &print_range_y0_data_control } };
 
 static const DIALOG_CONTROL
-print_range_y1_text =
+print_range_y1_label =
 {
-    CONTROL_ID_RANGE_Y1_TEXT, CONTROL_ID_RANGE_Y_GROUP,
-    { DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_Y1, CONTROL_ID_RANGE_Y0_TEXT , CONTROL_ID_RANGE_Y1 },
+    CONTROL_ID_RANGE_Y1_LABEL, CONTROL_ID_RANGE_Y_GROUP,
+    { DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_Y1, CONTROL_ID_RANGE_Y0_LABEL, CONTROL_ID_RANGE_Y1 },
     { DIALOG_CONTENTS_CALC, 0, 0, 0 },
     { DRT(RTRB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-print_range_y1_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE_Y1) };
+print_range_y1_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE_Y1) };
 
 static const DIALOG_CONTROL
 print_range_y1 =
@@ -580,9 +580,9 @@ s_print_dialog_create[] =
     { &print_range          , &s_print_range_data },
     { &print_range_group },
     { &print_range_y_group },
-    { &print_range_y0_text  , &print_range_y0_text_data },
+    { &print_range_y0_label , &print_range_y0_label_data },
     { &print_range_y0       , &print_range_y0_data },
-    { &print_range_y1_text  , &print_range_y1_text_data },
+    { &print_range_y1_label , &print_range_y1_label_data },
     { &print_range_y1       , &print_range_y1_data },
 
     { &print_mails          , &print_mails_data }, /* this is the fourth last entry and must not move wrt end */

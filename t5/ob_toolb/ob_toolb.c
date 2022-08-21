@@ -27,7 +27,8 @@
 #define MSG_WEAK &rb_toolb_msg_weak
 extern PC_U8 rb_toolb_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_TOOLB NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_TOOLB DONT_LOAD_RESOURCES
 
 #if RISCOS
 #define LAYER_TOOLBAR LAYER_PAPER_ABOVE
@@ -1957,8 +1958,8 @@ status_line_view_update(
     skel_rect.br.page_num.y = 0;
 
     /* try to avoid repainting the top and bottom lines */
-    skel_rect.tl.pixit_point.y += (PIXITS_PER_RISCOS) << host_modevar_cache_current.YEig;
-    skel_rect.br.pixit_point.y -= (PIXITS_PER_RISCOS) << host_modevar_cache_current.YEig;
+    skel_rect.tl.pixit_point.y += (PIXITS_PER_RISCOS) << host_modevar_cache_current.YEigFactor;
+    skel_rect.br.pixit_point.y -= (PIXITS_PER_RISCOS) << host_modevar_cache_current.YEigFactor;
 
     RECT_FLAGS_CLEAR(rect_flags);
     REDRAW_FLAGS_CLEAR(redraw_flags);

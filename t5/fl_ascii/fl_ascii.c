@@ -23,7 +23,8 @@
 #define MSG_WEAK &rb_fl_ascii_msg_weak
 extern PC_U8 rb_fl_ascii_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FL_ASCII NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FL_ASCII DONT_LOAD_RESOURCES
 
 #define ASCII_LOAD_ROWS_INCREMENT     8
 #define ASCII_LOAD_ROWS_INCREMENT_MAX 256

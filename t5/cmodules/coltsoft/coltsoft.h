@@ -935,6 +935,29 @@ GDI_RECT, * P_GDI_RECT; typedef const GDI_RECT * PC_GDI_RECT;
     (gdi_rect__ref).br.x, \
     (gdi_rect__ref).br.y
 
+/*
+S32 variants where we have neither GDI nor PIXIT units
+e.g. pixits-per-pixel values during scaling
+*/
+
+typedef struct S32_POINT
+{
+    S32 x, y;
+}
+S32_POINT, * P_S32_POINT; typedef const S32_POINT * PC_S32_POINT;
+
+typedef struct S32_BOX
+{
+    S32 x0, y0, x1, y1;
+}
+S32_BOX, * P_S32_BOX; typedef const S32_BOX * PC_S32_BOX;
+
+typedef struct S32_RECT
+{
+    S32_POINT tl, br;
+}
+S32_RECT, * P_S32_RECT; typedef const S32_RECT * PC_S32_RECT;
+
 /* NB suppressing C4127: conditional expression is constant */
 #define while_constant(c) \
     __pragma(warning(push)) __pragma(warning(disable:4127)) while(c) __pragma(warning(pop))

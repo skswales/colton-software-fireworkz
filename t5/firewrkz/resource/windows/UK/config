@@ -1,4 +1,4 @@
-{Version:2.21.03;18 Sep 2018;Fireworkz for Windows (UK);Colton Software;Windows-1252}
+{Version:2.21.04;06 Jan 2019;Fireworkz for Windows (UK);Colton Software;Windows-1252}
 {RowTable:1}
 {#:ObjectBindConstruct:object-id;command-suffix-character}
 {ObjectBindConstruct:0;*}
@@ -297,6 +297,7 @@
 {MenuAdd:$.View.Ruler.inches;1/10 in;;RulerScale:2\\\;2\\\;5\\\;1}
 {MenuAdd:$.View.Ruler.inches;1/16 in;;RulerScale:2\\\;4\\\;4\\\;1}
 {MenuAdd:$.View.Ruler;points;;RulerScale:3\\\;6\\\;2\\\;72}
+{MenuAdd:$.View.Ruler}
 {MenuAdd:$.View.Ruler;Si&de Ruler}
 {MenuAdd:$.View.Ruler.Side Ruler;cm}
 {MenuAdd:$.View.Ruler.Side Ruler.cm;0.5 cm;;VRulerScale:0\\\;2\\\;1\\\;1}

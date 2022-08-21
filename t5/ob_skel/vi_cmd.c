@@ -338,7 +338,8 @@ enum VIEW_CONTROL_IDS
     VIEW_CONTROL_ID_RULER_VERT,
 
     VIEW_CONTROL_ID_ZOOM_GROUP = 50,
-    VIEW_CONTROL_ID_ZOOM_BUMP,
+    VIEW_CONTROL_ID_ZOOM_VALUE,
+    VIEW_CONTROL_ID_ZOOM_UNITS,
     VIEW_CONTROL_ID_ZOOM_FIT_H,
     VIEW_CONTROL_ID_ZOOM_FIT_V,
     VIEW_CONTROL_ID_ZOOM_1,
@@ -445,32 +446,45 @@ static const DIALOG_CONTROL_DATA_GROUPBOX
 view_control_zoom_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_ZOOM), { 0, 0, 0, FRAMED_BOX_GROUP } };
 
 /*
-* zoom bump
+* zoom value
 */
 
 static const UI_CONTROL_S32
-view_control_zoom_bump_control = { 10, 1600, 5 };
+view_control_zoom_value_control = { 10, 1600, 5 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-view_control_zoom_bump_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &view_control_zoom_bump_control } /* BUMP_XX */ };
+view_control_zoom_value_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &view_control_zoom_value_control } /* BUMP_XX */ };
 
 static const DIALOG_CONTROL
-view_control_zoom_bump =
+view_control_zoom_value =
 {
-    VIEW_CONTROL_ID_ZOOM_BUMP, VIEW_CONTROL_ID_ZOOM_GROUP,
+    VIEW_CONTROL_ID_ZOOM_VALUE, VIEW_CONTROL_ID_ZOOM_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(LTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
+static const DIALOG_CONTROL
+view_control_zoom_units =
+{
+    VIEW_CONTROL_ID_ZOOM_UNITS, VIEW_CONTROL_ID_ZOOM_GROUP,
+    { VIEW_CONTROL_ID_ZOOM_VALUE, VIEW_CONTROL_ID_ZOOM_VALUE, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_VALUE },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(RTLB, STATICTEXT) }
+};
+
+static const DIALOG_CONTROL_DATA_STATICTEXT
+view_control_zoom_units_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+
 /*
 * zoom fit
 */
+
 static const DIALOG_CONTROL
 view_control_zoom_fit_h =
 {
     VIEW_CONTROL_ID_ZOOM_FIT_H, VIEW_CONTROL_ID_ZOOM_GROUP,
-    { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF/*VIEW_CONTROL_ID_ZOOM_BUMP*/, VIEW_CONTROL_ID_ZOOM_FIT_V, VIEW_CONTROL_ID_ZOOM_BUMP },
+    { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_FIT_V, VIEW_CONTROL_ID_ZOOM_VALUE },
     { VIEW_CONTROL_ZOOM_BUTTONS_FIT_H, DIALOG_STDPUSHBUTTON_V, 0, 0 },
     { DRT(RBLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
@@ -507,20 +521,30 @@ view_control_zoom_n_data[5] =
 static const DIALOG_CONTROL
 view_control_zoom_n[5] =
 {
-    { VIEW_CONTROL_ID_ZOOM_1, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_BUMP, VIEW_CONTROL_ID_ZOOM_BUMP },
-  { 0, DIALOG_STDSPACING_V, VIEW_CONTROL_ZOOM_BUTTONS_H, VIEW_CONTROL_ZOOM_BUTTONS_V }, { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ } },
+    {
+        VIEW_CONTROL_ID_ZOOM_1, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_VALUE, VIEW_CONTROL_ID_ZOOM_VALUE },
+        { 0, DIALOG_STDSPACING_V, VIEW_CONTROL_ZOOM_BUTTONS_H, VIEW_CONTROL_ZOOM_BUTTONS_V }, { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
+    },
 
-    { VIEW_CONTROL_ID_ZOOM_2, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_1, VIEW_CONTROL_ID_ZOOM_1, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_1 },
-   { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ } },
+    {
+        VIEW_CONTROL_ID_ZOOM_2, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_1, VIEW_CONTROL_ID_ZOOM_1, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_1 },
+        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    },
 
-    { VIEW_CONTROL_ID_ZOOM_3, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_2, VIEW_CONTROL_ID_ZOOM_2, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_2 },
-  { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ } },
+    {
+        VIEW_CONTROL_ID_ZOOM_3, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_2, VIEW_CONTROL_ID_ZOOM_2, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_2 },
+        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    },
 
-    { VIEW_CONTROL_ID_ZOOM_4, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_3, VIEW_CONTROL_ID_ZOOM_3, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_3 },
-  { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ } },
+    {
+        VIEW_CONTROL_ID_ZOOM_4, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_3, VIEW_CONTROL_ID_ZOOM_3, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_3 },
+        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    },
 
-    { VIEW_CONTROL_ID_ZOOM_5, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_4, VIEW_CONTROL_ID_ZOOM_4, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_4 },
-  { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ } }
+    {
+        VIEW_CONTROL_ID_ZOOM_5, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_4, VIEW_CONTROL_ID_ZOOM_4, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_4 },
+        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    }
 };
 
 /*
@@ -603,7 +627,7 @@ static const DIALOG_CONTROL_ID
 view_control_ok_data_argmap[] =
 {
 #define ARG_VIEW_CONTROL_ZOOM           0
-    VIEW_CONTROL_ID_ZOOM_BUMP,
+    VIEW_CONTROL_ID_ZOOM_VALUE,
 #define ARG_VIEW_CONTROL_DISPLAY        1
     VIEW_CONTROL_ID_DISPLAY_GROUP,
 #define ARG_VIEW_CONTROL_RULER_HORZ     2
@@ -653,9 +677,10 @@ view_control_ctl_create[] =
     { &dialog_main_group },
 
     { &view_control_zoom_group,     &view_control_zoom_group_data },
-    { &view_control_zoom_bump,      &view_control_zoom_bump_data },
+    { &view_control_zoom_value,     &view_control_zoom_value_data },
+    { &view_control_zoom_units,     &view_control_zoom_units_data },
     { &view_control_zoom_fit_h,     &view_control_zoom_fit_h_data },
-    { &view_control_zoom_fit_v,      &view_control_zoom_fit_v_data },
+    { &view_control_zoom_fit_v,     &view_control_zoom_fit_v_data },
     { &view_control_zoom_n[1-1],    &view_control_zoom_n_data[1-1] },
     { &view_control_zoom_n[2-1],    &view_control_zoom_n_data[2-1] },
     { &view_control_zoom_n[3-1],    &view_control_zoom_n_data[3-1] },
@@ -683,7 +708,7 @@ view_control_ctl_create[] =
 
 typedef struct VIEW_CONTROL_CALLBACK
 {
-    S32 zoom_bump_state;
+    S32 zoom_value_state;
     S32 display_mode;
     BOOL horz_ruler_on;
     BOOL vert_ruler_on;
@@ -702,7 +727,7 @@ dialog_view_control_process_start(
     const P_VIEW_CONTROL_CALLBACK p_view_control_callback = (P_VIEW_CONTROL_CALLBACK) p_dialog_msg_process_start->client_handle;
     const H_DIALOG h_dialog = p_dialog_msg_process_start->h_dialog;
 
-    status_return(ui_dlg_set_s32(h_dialog, VIEW_CONTROL_ID_ZOOM_BUMP, p_view_control_callback->zoom_bump_state));
+    status_return(ui_dlg_set_s32(h_dialog, VIEW_CONTROL_ID_ZOOM_VALUE, p_view_control_callback->zoom_value_state));
     status_return(ui_dlg_set_radio(h_dialog, VIEW_CONTROL_ID_DISPLAY_GROUP, p_view_control_callback->display_mode));
     status_return(ui_dlg_set_check(h_dialog, VIEW_CONTROL_ID_BORDER_HORZ, p_view_control_callback->horz_border_on));
     status_return(ui_dlg_set_check(h_dialog, VIEW_CONTROL_ID_BORDER_VERT, p_view_control_callback->vert_border_on));
@@ -868,7 +893,7 @@ dialog_view_control_ctl_pushbutton(
         }
 
         /* reflect into dialog */
-        return(ui_dlg_set_s32(p_dialog_msg_ctl_pushbutton->h_dialog, VIEW_CONTROL_ID_ZOOM_BUMP, new_zoom_factor));
+        return(ui_dlg_set_s32(p_dialog_msg_ctl_pushbutton->h_dialog, VIEW_CONTROL_ID_ZOOM_VALUE, new_zoom_factor));
         }
 
     default:
@@ -900,7 +925,7 @@ T5_CMD_PROTO(extern, t5_cmd_view_control_intro)
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* encode initial state of control(s) */
-    view_control_callback.zoom_bump_state = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
+    view_control_callback.zoom_value_state = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
     view_control_callback.display_mode = p_view->display_mode;
     view_control_callback.horz_ruler_on = p_view->flags.horz_ruler_on;
     view_control_callback.vert_ruler_on = p_view->flags.vert_ruler_on;

@@ -21,7 +21,8 @@
 #define MSG_WEAK &rb_fs_ascii_msg_weak
 extern PC_U8 rb_fs_ascii_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FS_ASCII NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FS_ASCII DONT_LOAD_RESOURCES
 
 static U8
 g_ascii_save_field_sep_ch = CH_TAB;

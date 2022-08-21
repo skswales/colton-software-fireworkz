@@ -23,7 +23,8 @@
 #define MSG_WEAK &rb_fl_xls_msg_weak
 extern PC_U8 rb_fl_xls_msg_weak;
 #endif
-#define P_BOUND_RESOURCES_OBJECT_ID_FL_XLS NULL
+
+#define P_BOUND_RESOURCES_OBJECT_ID_FL_XLS DONT_LOAD_RESOURCES
 
 static struct FL_XLS_STATICS
 {

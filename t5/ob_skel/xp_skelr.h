@@ -180,10 +180,10 @@ typedef struct WimpIconFlagsBitset /* flags bitset for ease of manipulation */
     UBF vert_centre   : 1;
     UBF filled        : 1;
     UBF font          : 1;
-    UBF redraw        : 1;
+    UBF needs_help    : 1;
 
     UBF indirect      : 1;
-    UBF right_just    : 1;
+    UBF right_justify : 1;
     UBF esg_no_cancel : 1;
     UBF halve_sprite  : 1;
 
@@ -1025,8 +1025,8 @@ typedef struct HOST_MODEVAR_CACHE_ENTRY
     GDI_SIZE gdi_size;
 
     /* raw values */
-    U32 XEig;
-    U32 YEig;
+    U32 XEigFactor;
+    U32 YEigFactor;
     U32 Log2BPP;
 
     U32 XWindLimit;
@@ -1050,8 +1050,14 @@ host_modevar_cache_query_bpp(
 extern void
 host_modevar_cache_query_eigs(
     _InVal_     U32 mode_specifier,
-    _OutRef_    P_S32 p_XEig,
-    _OutRef_    P_S32 p_YEig);
+    _OutRef_    P_S32 p_XEigFactor,
+    _OutRef_    P_S32 p_YEigFactor);
+
+extern void
+host_disable_rgb(
+    _InoutRef_  P_RGB p_rgb,
+    _InRef_     PC_RGB p_rgb_d,
+    _InVal_     S32 multiplier);
 
 _Check_return_
 extern BOOL

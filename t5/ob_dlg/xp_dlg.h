@@ -235,6 +235,9 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_SMALLSPACING_H   ( 8 * PIXITS_PER_RISCOS)
 #define DIALOG_SMALLSPACING_V   ( 4 * PIXITS_PER_RISCOS)
 
+#define DIALOG_LABELGAP_H       DIALOG_SMALLSPACING_H
+#define DIALOG_LABELGAP_V       DIALOG_SMALLSPACING_V
+
 #define DIALOG_STDSPACING_H     (16 * PIXITS_PER_RISCOS)
 #define DIALOG_STDSPACING_V     ( 8 * PIXITS_PER_RISCOS)
 
@@ -343,6 +346,9 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_SMALLSPACING_H   ( 2 * PIXITS_PER_WDU_H)
 #define DIALOG_SMALLSPACING_V   ( 2 * PIXITS_PER_WDU_V)
 
+#define DIALOG_LABELGAP_H       DIALOG_SMALLSPACING_H
+#define DIALOG_LABELGAP_V       ( 3 * PIXITS_PER_WDU_V)
+
 #define DIALOG_STDSPACING_H     ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDSPACING_V     ( 4 * PIXITS_PER_WDU_V)
 
@@ -395,6 +401,8 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_STDCANCEL_H      DIALOG_STDPUSHBUTTON_H
 #endif /* OS */
 
+#define DIALOG_STDWIDTH_MIN     (DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_STDCANCEL_H)
+
 #define DIALOG_MMCMIN_UNITS_H   (DIALOG_FATCHAR_H * 2) /* for mm, cm, in */
 #define DIALOG_POINTS_UNITS_H   DIALOG_SYSCHARS_H("points") /* for points */
 
@@ -439,8 +447,10 @@ typedef enum DIALOG_CONTROL_TYPE
     DIALOG_CONTROL_RADIOPICTURE     = 135,
     DIALOG_CONTROL_CHECKBOX         = 136,
     DIALOG_CONTROL_CHECKPICTURE     = 137,
+#ifdef DIALOG_HAS_TRISTATE
     DIALOG_CONTROL_TRISTATE         = 138,
     DIALOG_CONTROL_TRIPICTURE       = 139,
+#endif
     DIALOG_CONTROL_EDIT             = 140,
     DIALOG_CONTROL_BUMP_S32         = 141,
     DIALOG_CONTROL_BUMP_F64         = 142,
@@ -828,7 +838,7 @@ typedef struct DIALOG_CONTROL_DATA_EDIT_XX
     {
         UBF border_style        : DIALOG_BORDER_STYLE_BITS;
 
-        UBF readonly            : 1;
+        UBF read_only           : 1;
         UBF informational       : 1;
         UBF multiline           : 1;
         UBF h_scroll            : 1;

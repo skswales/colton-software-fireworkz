@@ -4,11 +4,11 @@
 | License, v. 2.0. If a copy of the MPL was not distributed with this
 | file, You can obtain one at http://mozilla.org/MPL/2.0/.
 |
-| Copyright (C) 2013-2018 Stuart Swales
+| Copyright (C) 2013-2019 Stuart Swales
 
 | !!! ENSURE EVERYTHING IS CHECKED IN FIRST !!!
 
-Set t5$Release 20180815
+Set t5$Release 20190105
 | Remember to update RiscPkg.Control too
 
 Set t5$Disc $.Temp.Fire.FzManuals_<t5$Release>

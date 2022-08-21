@@ -690,7 +690,7 @@ T5_CMD_PROTO(extern, t5_cmd_print_setup)
 {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
     STATUS status = STATUS_OK;
-    PRINTDLG pd = { sizeof32(PRINTDLG) };
+    PRINTDLG pd;
     BOOL ok;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
@@ -699,7 +699,7 @@ T5_CMD_PROTO(extern, t5_cmd_print_setup)
 
     zero_struct(pd);
 
-  /*pd.lStructSize = sizeof32(pd);*/
+    pd.lStructSize = sizeof32(pd);
     pd.hwndOwner = p_view->main[WIN_BACK].hwnd;
     pd.Flags = PD_PRINTSETUP | PD_RETURNIC;
     pd.hDevMode = hDevMode;

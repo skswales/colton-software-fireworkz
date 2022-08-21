@@ -116,7 +116,7 @@ ss_name_intro_value =
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
-ss_name_intro_value_data = { { { FRAMED_BOX_EDIT, 1 /*readonly*/ }, NULL } /*EDIT_XX*/ };
+ss_name_intro_value_data = { { { FRAMED_BOX_EDIT, 1 /*read_only*/ }, NULL } /*EDIT_XX*/ };
 
 static const DIALOG_CONTROL
 ss_name_intro_desc_caption =
@@ -140,7 +140,7 @@ ss_name_intro_desc =
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
-ss_name_intro_desc_data = { { { FRAMED_BOX_EDIT, 1 /*readonly*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
+ss_name_intro_desc_data = { { { FRAMED_BOX_EDIT, 1 /*read_only*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
 
 static const DIALOG_CONTROL
 ss_name_intro_insert =
@@ -810,7 +810,7 @@ ss_name_edit_desc =
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
-ss_name_edit_desc_data = { { { FRAMED_BOX_EDIT, 0 /*readonly*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
+ss_name_edit_desc_data = { { { FRAMED_BOX_EDIT, 0 /*read_only*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
 
 static const DIALOG_CTL_CREATE
 ss_name_edit_ctl_create[] =
@@ -956,7 +956,7 @@ ss_name_add(
 
     ss_name_edit_validation_setup(ss_name_edit_callback.name_validation);
     ss_name_edit_name_data.edit_xx.p_bitmap_validation = ss_name_edit_callback.name_validation;
-    ss_name_edit_name_data.edit_xx.bits.readonly = FALSE;
+    ss_name_edit_name_data.edit_xx.bits.read_only = FALSE;
     ss_name_edit_name.bits.tabstop = 1;
 
     if(p_docu->mark_info_cells.h_markers)
@@ -1070,7 +1070,7 @@ ss_name_edit(
 
     ss_name_edit_validation_setup(ss_name_edit_callback.name_validation);
     ss_name_edit_name_data.edit_xx.p_bitmap_validation = ss_name_edit_callback.name_validation;
-    ss_name_edit_name_data.edit_xx.bits.readonly = TRUE;
+    ss_name_edit_name_data.edit_xx.bits.read_only = TRUE;
     ss_name_edit_name.bits.tabstop = 0;
 
     {

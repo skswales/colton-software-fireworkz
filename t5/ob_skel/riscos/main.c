@@ -21,6 +21,7 @@
 
 #include "ob_skel/prodinfo.h"
 
+#define EXPOSE_RISCOS_SWIS
 #include "ob_skel/xp_skelr.h"
 
 #ifndef ROOT_STACK_SIZE
@@ -52,6 +53,8 @@ main(
     char * argv[]);
 
 extern PC_U8 rb_skel_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_SKEL &rb_skel_msg_weak
+
 #define P_BOUND_RESOURCES_OBJECT_ID_SKEL LOAD_RESOURCES
 
 #if defined(PROFILING)
@@ -249,10 +252,10 @@ static BOOL event_loop_jmp_set = FALSE;
 static jmp_buf event_loop_jmp_buf;
 
 extern void
-host_longjmp_to_event_loop(void)
+host_longjmp_to_event_loop(int val)
 {
     if(event_loop_jmp_set)
-        longjmp(event_loop_jmp_buf, 1);
+        longjmp(event_loop_jmp_buf, val);
 }
 
 /* keep defaults for these in case of msgs death */
@@ -326,7 +329,7 @@ t5_signal_handler(int sig)
         (void) signal(sig, &t5_signal_handler);
 
         /* give it your best shot else we come back and die soon */
-        host_longjmp_to_event_loop();
+        host_longjmp_to_event_loop(sig);
     }
 
     exit(EXIT_FAILURE);
@@ -343,7 +346,7 @@ t5_stack_overflow_handler(int sig)
 
     report_output("*** Stack overflow ***");
 
-    host_longjmp_to_event_loop();
+    host_longjmp_to_event_loop(sig);
 
     exit(EXIT_FAILURE);
 }
@@ -401,6 +404,35 @@ extern int
 host_task_handle(void)
 {
     return(g_host_task_handle);
+}
+
+static void
+host_report_and_trace_enable(void)
+{
+    /* allow application to run without any report info */
+    char env_value[BUF_MAX_PATHSTRING];
+
+    report_enable(NULL == _kernel_getenv("Fireworkz$ReportEnable", env_value, elemof32(env_value)));
+
+#if TRACE_ALLOWED
+    /* Allow a version built with TRACE_ALLOWED to run on an end-user's system without outputting any trace info */
+    if(NULL != _kernel_getenv("Fireworkz$TraceEnable", env_value, elemof32(env_value)))
+    {
+        trace_disable();
+    }
+    else
+    {
+        _kernel_stack_chunk *scptr;
+        _kernel_swi_regs rs;
+        unsigned long scsize;
+        trace_on();
+        trace_1(TRACE_OUT | TRACE_ANY, TEXT("main: sp ~= ") PTR_XTFMT, &scptr);
+        scptr = _kernel_current_stack_chunk();
+        scsize = scptr->sc_size;
+        void_WrapOsErrorChecking(_kernel_swi(OS_GetEnv, &rs, &rs));
+        trace_4(TRACE_OUT | TRACE_ANY, TEXT("main: stack chunk ") PTR_XTFMT TEXT(", size ") S32_TFMT TEXT(", top ") PTR_XTFMT TEXT(", slot end ") PTR_XTFMT, scptr, scsize, (char *) scptr + scsize, (char *) rs.r[1]);
+    }
+#endif /* TRACE_ALLOWED */
 }
 
 /******************************************************************************
@@ -479,30 +511,7 @@ main(
 
     install_t5_signal_handlers();
 
-    { /* allow application to run without any report info */
-    char env_value[BUF_MAX_PATHSTRING];
-    report_enable(NULL == _kernel_getenv("Fireworkz$ReportEnable", env_value, elemof32(env_value)));
-    } /* block */
-
-#if TRACE_ALLOWED
-    { /* Allow a version built with TRACE_ALLOWED to run on an end-user's system without outputting any trace info */
-    char env_value[BUF_MAX_PATHSTRING];
-    if(NULL != _kernel_getenv("Fireworkz$TraceEnable", env_value, elemof32(env_value)))
-        trace_disable();
-    else
-    {
-        _kernel_stack_chunk *scptr;
-        _kernel_swi_regs rs;
-        unsigned long scsize;
-        trace_on();
-        trace_1(TRACE_OUT | TRACE_ANY, TEXT("main: sp ~= ") PTR_XTFMT, &scptr);
-        scptr = _kernel_current_stack_chunk();
-        scsize = scptr->sc_size;
-        void_WrapOsErrorChecking(_kernel_swi(/*OS_GetEnv*/ 0x000010, &rs, &rs));
-        trace_4(TRACE_OUT | TRACE_ANY, TEXT("main: stack chunk ") PTR_XTFMT TEXT(", size ") S32_TFMT TEXT(", top ") PTR_XTFMT TEXT(", slot end ") PTR_XTFMT, scptr, scsize, (char *) scptr + scsize, (char *) rs.r[1]);
-    }
-    } /* block */
-#endif /* TRACE_ALLOWED */
+    host_report_and_trace_enable();
 
     /* set locale for isalpha etc. (ctype.h functions) */
     trace_1(TRACE_OUT | TRACE_ANY, TEXT("main: initial CTYPE locale is %s"), setlocale(LC_CTYPE, NULL));
@@ -554,7 +563,7 @@ main(
     /* Make error messages available for startup */
     resource_startup(dll_store);
 
-    if(status_fail(status = resource_init(OBJECT_ID_SKEL, &rb_skel_msg_weak, P_BOUND_RESOURCES_OBJECT_ID_SKEL)))
+    if(status_fail(status = resource_init(OBJECT_ID_SKEL, P_BOUND_MESSAGES_OBJECT_ID_SKEL, P_BOUND_RESOURCES_OBJECT_ID_SKEL)))
     {
         reperr_null(status);
         exit(EXIT_FAILURE);

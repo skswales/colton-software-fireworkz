@@ -223,8 +223,7 @@ host_system_sprites[] =
     { /*0x7649,*/ /*OBJECT_ID_SKEL,*/ "optoff!" },
     { /*0x06E9,*/ /*OBJECT_ID_SKEL,*/ "radioon!" },
     { /*0x3F4B,*/ /*OBJECT_ID_SKEL,*/ "radiooff!" },
-    { /*0x0000,*/ /*OBJECT_ID_SKEL,*/ "gright!" },
-    { /*0x0000,*/ /*OBJECT_ID_SKEL,*/ "ptr_write!" } /* not in any ROM a ce moment, CRC of 0 should sort it */
+    { /*0x0000,*/ /*OBJECT_ID_SKEL,*/ "gright!" }
 };
 
 extern void
@@ -560,8 +559,8 @@ host_paint_border_line(
             os_end.x   = gdi_rect.br.x; /*exc*/
             os_end.y   = gdi_rect.tl.y; /*exc*/
 
-            os_end.x -= p_redraw_context->host_xform.riscos.d_x;
-            os_end.y -= p_redraw_context->host_xform.riscos.d_y;
+            os_end.x -= p_redraw_context->host_xform.riscos.dx;
+            os_end.y -= p_redraw_context->host_xform.riscos.dy;
 
             if(flags.border_style == SF_BORDER_THIN)
             {
@@ -577,8 +576,8 @@ host_paint_border_line(
 
             void_WrapOsErrorChecking(
                 os_plot(host_setcolour(p_rgb) | bbc_MoveCursorAbs | bbc_RectangleFill,
-                        (os_end.x + p_redraw_context->host_xform.riscos.d_x - 1 /* fill out to pixel edge for printer drivers */),
-                        (os_end.y + p_redraw_context->host_xform.riscos.d_y - 1)));
+                        (os_end.x + p_redraw_context->host_xform.riscos.dx - 1 /* fill out to pixel edge for printer drivers */),
+                        (os_end.y + p_redraw_context->host_xform.riscos.dy - 1)));
 
             return;
         }
@@ -808,16 +807,16 @@ host_paint_underline(
             os_end.x   = gdi_rect.br.x; /*exc*/
             os_end.y   = gdi_rect.tl.y; /*exc*/
 
-            os_end.x -= p_redraw_context->host_xform.riscos.d_x;
-            os_end.y -= p_redraw_context->host_xform.riscos.d_y;
+            os_end.x -= p_redraw_context->host_xform.riscos.dx;
+            os_end.y -= p_redraw_context->host_xform.riscos.dy;
 
             void_WrapOsErrorChecking(
                 bbc_move(os_start.x, os_start.y));
 
             void_WrapOsErrorChecking(
                 os_plot(host_setcolour(p_rgb) | bbc_MoveCursorAbs | bbc_RectangleFill,
-                        (os_end.x + p_redraw_context->host_xform.riscos.d_x - 1 /* fill out to pixel edge for printer drivers */),
-                        (os_end.y + p_redraw_context->host_xform.riscos.d_y - 1)));
+                        (os_end.x + p_redraw_context->host_xform.riscos.dx - 1 /* fill out to pixel edge for printer drivers */),
+                        (os_end.y + p_redraw_context->host_xform.riscos.dy - 1)));
 
             return;
         }
@@ -937,69 +936,6 @@ host_paint_underline(
     } /*block*/
 }
 
-/*
-Task module documentation
-=========================
-
-The Task module in this directory is a cut down
-version of a high level WIMP handler due for
-release late in 1990.
-
-It currently supports only one SWI required for
-Tween.
-
-The syntax is:
-
- SYS"Task_DrawRender",0,File%,[Transform%],FileEnd%[,Box%]
- or
- SYS"Task_DrawRender",1,Object%,[Transform%][,,Box%]
-
-File%,FileEnd% and Object% are pointers to memory.
-The area from File% to FileEnd% contains a
-complete drawfile. Object% points to a single
-object within a drawfile.
-
-Transform% can be zero, indicating a null
-transform, otherwise it takes the same form as for
-transforms for the Draw module.
-
-Box% is a pointer to a 4 word block giving the
-left,bottom (internal) right,top (external)
-coordinates of a bounding box for the rendering.
-Box% can be zero indicating that the current
-graphics clipping window should be used for the
-rendering.
-
-On exit from this routine, the graphics clipping
-window will be set to that required, and the VDU 5
-state may have been set.
-
-Rendering includes the rendering of text areas.
-The only known discrepencies with Draw are:
-
-Soft-hyphens in text areas are ignored. Draw also
-gets these wrong in any case (it splits under the
-wrong circumstances).
-
-Sprites without palettes are rendered using the
-current Wimp pallete, rather than the default
-palette for the mode in question. (This works
-better for most icons as used on the desktop.)
-
- 0.06: R0 can now have bit 1 set and bits 8-15
-set to a mode number for rendering. This is to
-allow use of the Printer Drivers which invalidate
-calls to OS_ReadVduVariables.
-
- 0.07: R0 can now have bit 2 set and R5 is the
-flatness for calls to Draw_Fill and Draw_Stroke.
-
- 0.08: Now handles object types 12 and 13 for
-RISC OS 3.xx DrawFiles.
-
- 0.09 Now does rotated text/sprites and 256 colour sprites.
-*/
-
 /* ------------------------------------------------------------------------
  * Function:      my_xdrawfile_render()
  *
@@ -1032,25 +968,6 @@ swi_DrawFile_Render(
     rs.r[4] = (int) clip;
     rs.r[5] = flatness;
     return(_kernel_swi(/*DrawFile_Render*/ 0x45540, &rs, &rs));
-}
-
-static _kernel_oserror *
-swi_Task_DrawRender(
-    _In_        int mode,
-    _In_        int diagram_address,
-    _In_        int size,
-    _In_        DRAW_TRANSFORM * trfm,
-    _InRef_     PC_GDI_BOX clip,
-    _In_        int flatness)
-{
-    _kernel_swi_regs rs;
-    rs.r[0] = mode | (1 << 2);
-    rs.r[1] = diagram_address;
-    rs.r[2] = (int) trfm;
-    rs.r[3] = rs.r[1] + (int) size;
-    rs.r[4] = (int) clip; /* ptr to clipping window */
-    rs.r[5] = flatness;
-    return(_kernel_swi(/*Task_DrawRender*/ 0x41195, &rs, &rs));
 }
 
 static void
@@ -1199,26 +1116,11 @@ host_paint_drawfile(
 
     if(!eor_paths)
     {
-        /* SKS for 1.30 09nov96 render Draw file using Drawfile module where present */
+        /* SKS for 1.30 09nov96 render entire Draw file using Drawfile module where present */
         unsigned int flags = (1 << 2 /*flatness*/);
         _kernel_oserror * result;
 
-        if(NULL != (result = swi_DrawFile_Render(flags, (intptr_t) p_diag, (int) length, &t, &p_redraw_context->riscos.host_machine_clip_box, flatness)))
-        {
-            int mode = 0;
-
-            if(p_redraw_context->flags.printer)
-            {
-                mode = -1; /* get Mr Cheal to read mode vars on RISC PC */
-                if(host_os_version_query() < RISCOS_3_5)
-                    /* SKS fixed 08oct92 after 1.05 - was drug crazed on printing. MUST use screen mode which was in use prior to printing start job */
-                    mode = host_modevar_cache_current.mode_specifier;
-                mode <<= 8;
-                mode |= (1 << 1);
-            }
-
-            result = swi_Task_DrawRender(mode, (intptr_t) p_diag, (int) length, &t, &p_redraw_context->riscos.host_machine_clip_box, flatness);
-        }
+        result = swi_DrawFile_Render(flags, (intptr_t) p_diag, (int) length, &t, &p_redraw_context->riscos.host_machine_clip_box, flatness);
 
 #if TRACE_ALLOWED
         if(NULL != result)
@@ -1326,7 +1228,7 @@ host_font_find(
     rs.r[4] = 0;
     rs.r[5] = 0;
 
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs)))
+    if(NULL == (p_kernel_oserror = _kernel_swi(Font_FindFont, &rs, &rs)))
         host_font = (HOST_FONT) rs.r[0];
 
     /*if(*array_tstr(&p_host_font_spec->h_host_name_tstr) == '\\')*/
@@ -1370,7 +1272,7 @@ host_fonty_uchars_width_mp(
     if(host_version_font_m_read(HOST_FONT_KERNING))
         rs.r[2] |= FONT_SCANSTRING_KERNING;
 
-    if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(/*Font_ScanString*/ 0x0400A1, &rs, &rs))))
+    if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_ScanString, &rs, &rs))))
         return(rs.r[3]); /*x*/
 
     return(0);
@@ -1392,7 +1294,7 @@ host_fonty_uchars_width(
 
 static void
 gdi_point_mp_from_pixit_point_and_context(
-    _OutRef_    P_GDI_POINT p_gdi_point,
+    _OutRef_    P_GDI_POINT p_gdi_point_mp,
     _InRef_     PC_PIXIT_POINT p_pixit_point,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
@@ -1407,16 +1309,16 @@ gdi_point_mp_from_pixit_point_and_context(
     multiplier.y = (p_redraw_context->host_xform.scale.t.y);
 
     divisor.x = (p_redraw_context->host_xform.scale.b.x);
-    divisor.y = p_redraw_context->host_xform.riscos.d_y * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
+    divisor.y = p_redraw_context->host_xform.riscos.dy * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
 
-    p_gdi_point->x = +muldiv64_round_floor(/*+*/pixit_point.x, multiplier.x, divisor.x);
-    p_gdi_point->y = -muldiv64_round_floor(/*-*/pixit_point.y, multiplier.y, divisor.y);
+    p_gdi_point_mp->x = +muldiv64_round_floor(/*+*/pixit_point.x, multiplier.x, divisor.x);
+    p_gdi_point_mp->y = -muldiv64_round_floor(/*-*/pixit_point.y, multiplier.y, divisor.y);
 
-    p_gdi_point->y <<= p_redraw_context->host_xform.riscos.eig_y;
-    p_gdi_point->y *= MILLIPOINTS_PER_RISCOS;
+    p_gdi_point_mp->y <<= p_redraw_context->host_xform.riscos.YEigFactor;
+    p_gdi_point_mp->y *= MILLIPOINTS_PER_RISCOS;
 
-    p_gdi_point->x += (p_redraw_context->gdi_org.x * MILLIPOINTS_PER_RISCOS);
-    p_gdi_point->y += (p_redraw_context->gdi_org.y * MILLIPOINTS_PER_RISCOS);
+    p_gdi_point_mp->x += (p_redraw_context->gdi_org.x * MILLIPOINTS_PER_RISCOS);
+    p_gdi_point_mp->y += (p_redraw_context->gdi_org.y * MILLIPOINTS_PER_RISCOS);
 }
 
 extern void
@@ -1492,7 +1394,7 @@ host_fonty_text_paint_uchars_rubout(
     rs.r[3] = gdi_point.x; /* NB coordinates are in millipoints */
     rs.r[4] = gdi_point.y;
 
-    if(NULL != WrapOsErrorChecking(_kernel_swi(/*Font_Paint*/ 0x40086, &rs, &rs)))
+    if(NULL != WrapOsErrorChecking(_kernel_swi(Font_Paint, &rs, &rs)))
         /*ERR_FONT_PAINT*/;
 }
 
@@ -1547,7 +1449,7 @@ host_fonty_text_paint_uchars_simple(
     if(host_version_font_m_read(HOST_FONT_KERNING))
         rs.r[2] |= FONT_PAINT_KERNING;
 
-    if(NULL != WrapOsErrorChecking(_kernel_swi(/*Font_Paint*/ 0x40086, &rs, &rs)))
+    if(NULL != WrapOsErrorChecking(_kernel_swi(Font_Paint, &rs, &rs)))
         /*ERR_FONT_PAINT*/;
 }
 
@@ -1703,13 +1605,13 @@ host_font_ascent(
     rs.r[0] = host_font;
     rs.r[1] = this_character;
     rs.r[2] = FONT_PAINT_OSCOORDS;
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs)))
+    if(NULL == (p_kernel_oserror = _kernel_swi(Font_CharBBox, &rs, &rs)))
         ascent = abs(rs.r[4]) * PIXITS_PER_RISCOS;
 
     if(0 == ascent)
     {   /* Caters for silly techie fonts with only a couple of symbols defined */
         rs.r[0] = host_font;
-        if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_ReadInfo*/ 0x040084, &rs, &rs)))
+        if(NULL == (p_kernel_oserror = _kernel_swi(Font_ReadInfo, &rs, &rs)))
         {
             if(0 == ascent)
                 ascent = abs(rs.r[4]) * PIXITS_PER_RISCOS;
@@ -1762,8 +1664,8 @@ host_fonty_text_paint_uchars_in_rectangle(
                 clip_box.y1 - 1));
 
         /* make inc,inc inc,inc */
-        gdi_rect.br.x -= p_redraw_context->host_xform.riscos.d_x;
-        gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.d_y;
+        gdi_rect.br.x -= p_redraw_context->host_xform.riscos.dx;
+        gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.dy;
 
 #if 1
         /* all the rectangle is filled with this (background) colour */
@@ -1776,8 +1678,8 @@ host_fonty_text_paint_uchars_in_rectangle(
 
         void_WrapOsErrorChecking(
             os_plot(host_setcolour(p_rgb_fill) | bbc_MoveCursorAbs | bbc_RectangleFill,
-                    (gdi_rect.br.x + p_redraw_context->host_xform.riscos.d_x - 1 /* fill to pixel edge for printer drivers */),
-                    (gdi_rect.tl.y + p_redraw_context->host_xform.riscos.d_y - 1)));
+                    (gdi_rect.br.x + p_redraw_context->host_xform.riscos.dx - 1 /* fill to pixel edge for printer drivers */),
+                    (gdi_rect.tl.y + p_redraw_context->host_xform.riscos.dy - 1)));
 #endif
 
 #if 1
@@ -1970,8 +1872,8 @@ host_paint_line_solid(
     end.x   = gdi_rect.br.x; /*exc*/
     end.y   = gdi_rect.tl.y; /*exc*/
 
-    end.x -= p_redraw_context->host_xform.riscos.d_x; /*exc->inc*/
-    end.y -= p_redraw_context->host_xform.riscos.d_y;
+    end.x -= p_redraw_context->host_xform.riscos.dx; /*exc->inc*/
+    end.y -= p_redraw_context->host_xform.riscos.dy;
 
     /* ruler lines always drawn very thin on screen, never scaled */
     if(p_pixit_line->horizontal)
@@ -1984,8 +1886,8 @@ host_paint_line_solid(
 
     void_WrapOsErrorChecking(
         os_plot(host_setcolour(p_rgb) | bbc_MoveCursorAbs | bbc_RectangleFill,
-                (end.x + p_redraw_context->host_xform.riscos.d_x - 1 /* fill out to pixel edge for printer drivers */),
-                (end.y + p_redraw_context->host_xform.riscos.d_y - 1)));
+                (end.x + p_redraw_context->host_xform.riscos.dx - 1 /* fill out to pixel edge for printer drivers */),
+                (end.y + p_redraw_context->host_xform.riscos.dy - 1)));
 }
 
 extern void
@@ -2091,8 +1993,8 @@ host_paint_rectangle_outline(
     if(gdi_rect.br.y < -0x7FF0) gdi_rect.br.y = -0x7FF0;
 
     /* make inc,inc inc,inc */
-    gdi_rect.br.x -= p_redraw_context->host_xform.riscos.d_x;
-    gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.d_y;
+    gdi_rect.br.x -= p_redraw_context->host_xform.riscos.dx;
+    gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.dy;
 
     modifier = host_setcolour(p_rgb);
 
@@ -2143,8 +2045,8 @@ host_paint_rectangle_crossed(
     if(gdi_rect.br.y < -0x7FF0) gdi_rect.br.y = -0x7FF0;
 
     /* make inc,inc inc,inc */
-    gdi_rect.br.x -= p_redraw_context->host_xform.riscos.d_x;
-    gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.d_y;
+    gdi_rect.br.x -= p_redraw_context->host_xform.riscos.dx;
+    gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.dy;
 
     modifier = host_setcolour(p_rgb);
 
@@ -2203,8 +2105,8 @@ host_invert_rectangle_outline(
     if(gdi_rect.br.y < -0x7FF0) gdi_rect.br.y = -0x7FF0;
 
     /* make inc,inc inc,inc */
-    gdi_rect.br.x -= p_redraw_context->host_xform.riscos.d_x;
-    gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.d_y;
+    gdi_rect.br.x -= p_redraw_context->host_xform.riscos.dx;
+    gdi_rect.tl.y -= p_redraw_context->host_xform.riscos.dy;
 
     os_rgb_foreground.bytes.gcol  = 0;
     os_rgb_foreground.bytes.red   = p_rgb_foreground->r;
@@ -2991,7 +2893,7 @@ band_of_colour_4(
         os_plot(bbc_RectangleFill + br_plot, (p_box->x0 + 4),     (p_box->y0)));
 
     if(br_plot != tl_plot)
-        if(host_modevar_cache_current.YEig < 2)
+        if(host_modevar_cache_current.YEigFactor < 2)
         {
             /* slight tweaks (add more rectangles!) */
 
@@ -3170,7 +3072,7 @@ host_framed_box_paint_frame(
         {
         int tl_colour, br_colour;
 
-        if(host_modevar_cache_current.YEig >= 2)
+        if(host_modevar_cache_current.YEigFactor >= 2)
         {
             host_framed_box_paint_frame(&box, FRAMED_BOX_PLAIN | disabled);
             return;
@@ -3201,7 +3103,7 @@ host_framed_box_paint_frame(
         {
         int tl_colour, br_colour;
 
-        if(host_modevar_cache_current.YEig >= 2)
+        if(host_modevar_cache_current.YEigFactor >= 2)
         {
             host_framed_box_paint_frame(p_box_abs, ((border_style - FRAMED_BOX_W31_BUTTON_IN) + FRAMED_BOX_BUTTON_IN) | disabled);
             return;
@@ -3342,7 +3244,7 @@ host_framed_box_trim_frame(
 
 #if defined(FRAMED_BOX_EDIT_FANCY)
     case FRAMED_BOX_EDIT:
-        if(host_modevar_cache_current.XEig >= 2)
+        if(host_modevar_cache_current.XEigFactor >= 2)
         {
             host_framed_box_trim_frame(p_box, FRAMED_BOX_PLAIN);
             return;
@@ -3588,16 +3490,16 @@ plot_sprite(
         S32 pixW = rs.r[3];
         S32 pixH = rs.r[4];
         U32 mode = rs.r[6];
-        S32 XEig, YEig;
+        S32 XEigFactor, YEigFactor;
 
-        host_modevar_cache_query_eigs(mode, &XEig, &YEig);
+        host_modevar_cache_query_eigs(mode, &XEigFactor, &YEigFactor);
 
         if(stretch)
         {   /* Reputedly... this gives a correct set! */
             BOOL scaling;
             SPRITEOP_SCALING_FACTORS spriteop_scaling_factors;
-            spriteop_scaling_factors.numerator_x = w >> XEig;
-            spriteop_scaling_factors.numerator_y = h >> YEig;
+            spriteop_scaling_factors.numerator_x = w >> XEigFactor;
+            spriteop_scaling_factors.numerator_y = h >> YEigFactor;
             spriteop_scaling_factors.divisor_x = pixW;
             spriteop_scaling_factors.divisor_y = pixH;
             scaling =
@@ -3608,8 +3510,8 @@ plot_sprite(
         else
         {   /* just h/v centre */
             status = plotscaled2(p_scb, mode,
-                                 x + (w - (pixW << XEig)) / 2,
-                                 y + (h - (pixH << YEig)) / 2,
+                                 x + (w - (pixW << XEigFactor)) / 2,
+                                 y + (h - (pixH << YEigFactor)) / 2,
                                  NULL);
         }
     }
@@ -4116,8 +4018,8 @@ host_modevar_cache_obtain_data(
     }
 
     /* obtain raw values */
-    p_host_modevar_cache_entry->XEig = (U8) os_read_mode_variable(mode_specifier, 4/*XEigFactor*/);
-    p_host_modevar_cache_entry->YEig = (U8) os_read_mode_variable(mode_specifier, 5/*YEigFactor*/);
+    p_host_modevar_cache_entry->XEigFactor = (U8) os_read_mode_variable(mode_specifier, 4/*XEigFactor*/);
+    p_host_modevar_cache_entry->YEigFactor = (U8) os_read_mode_variable(mode_specifier, 5/*YEigFactor*/);
 
     p_host_modevar_cache_entry->Log2BPP = (U8) os_read_mode_variable(mode_specifier, 9/*Log2BPP*/);
 
@@ -4128,15 +4030,15 @@ host_modevar_cache_obtain_data(
     }
 
     /* compute derived values */
-    p_host_modevar_cache_entry->dx = 1 << p_host_modevar_cache_entry->XEig;
-    p_host_modevar_cache_entry->dy = 1 << p_host_modevar_cache_entry->YEig;
+    p_host_modevar_cache_entry->dx = 1 << p_host_modevar_cache_entry->XEigFactor;
+    p_host_modevar_cache_entry->dy = 1 << p_host_modevar_cache_entry->YEigFactor;
 
     p_host_modevar_cache_entry->bpp = 1U << p_host_modevar_cache_entry->Log2BPP;
 
     if(fScreenMode)
     {
-        p_host_modevar_cache_entry->gdi_size.cx = (p_host_modevar_cache_entry->XWindLimit + 1) << p_host_modevar_cache_entry->XEig;
-        p_host_modevar_cache_entry->gdi_size.cy = (p_host_modevar_cache_entry->YWindLimit + 1) << p_host_modevar_cache_entry->YEig;
+        p_host_modevar_cache_entry->gdi_size.cx = (p_host_modevar_cache_entry->XWindLimit + 1) << p_host_modevar_cache_entry->XEigFactor;
+        p_host_modevar_cache_entry->gdi_size.cy = (p_host_modevar_cache_entry->YWindLimit + 1) << p_host_modevar_cache_entry->YEigFactor;
     }
 
     trace_2(0, "- dx,dy = %d,%d", p_host_modevar_cache_entry->dx, p_host_modevar_cache_entry->dy);
@@ -4222,26 +4124,90 @@ host_modevar_cache_query_bpp(
         return;
     }
 
-    *p_bpp = 1 << os_read_mode_variable(mode_specifier, 9);
+    *p_bpp = 1 << os_read_mode_variable(mode_specifier, 9/*Log2BPP*/);
 }
 
 extern void
 host_modevar_cache_query_eigs(
     _InVal_     U32 mode_specifier,
-    _OutRef_    P_S32 p_XEig,
-    _OutRef_    P_S32 p_YEig)
+    _OutRef_    P_S32 p_XEigFactor,
+    _OutRef_    P_S32 p_YEigFactor)
 {
     PC_HOST_MODEVAR_CACHE_ENTRY p_host_modevar_cache_entry = host_modevar_cache_ensure_mode(mode_specifier);
 
     if(NULL != p_host_modevar_cache_entry)
     {
-        *p_XEig = p_host_modevar_cache_entry->XEig;
-        *p_YEig = p_host_modevar_cache_entry->YEig;
+        *p_XEigFactor = p_host_modevar_cache_entry->XEigFactor;
+        *p_YEigFactor = p_host_modevar_cache_entry->YEigFactor;
         return;
     }
 
-    *p_XEig = os_read_mode_variable(mode_specifier, 4);
-    *p_YEig = os_read_mode_variable(mode_specifier, 5);
+    *p_XEigFactor = os_read_mode_variable(mode_specifier, 4/*XEigFactor*/);
+    *p_YEigFactor = os_read_mode_variable(mode_specifier, 5/*YEigFactor*/);
+}
+
+extern void
+host_disable_rgb(
+    _InoutRef_  P_RGB p_rgb,
+    _InRef_     PC_RGB p_rgb_d,
+    _InVal_     S32 multiplier)
+{
+#if 0
+    S32 r_16_16 = ((S32) p_rgb->r) << 8; /* 0000.xx00 */
+    S32 g_16_16 = ((S32) p_rgb->g) << 8;
+    S32 b_16_16 = ((S32) p_rgb->b) << 8;
+    S32 h_16_16, s_16_16, v_16_16;
+    _kernel_swi_regs rs;
+    _kernel_oserror * e;
+
+    rs.r[0] = r_16_16;
+    rs.r[1] = g_16_16;
+    rs.r[2] = b_16_16;
+
+    if(NULL == (e = _kernel_swi(ColourTrans_ConvertRGBToHSV, &rs, &rs)))
+    {
+        if(-1 == rs.r[0])
+        {    /* achromatic */
+            r_16_16 = ((multiplier << 16) + r_16_16) / (multiplier + 1);
+            g_16_16 = ((multiplier << 16) + g_16_16) / (multiplier + 1);
+            b_16_16 = ((multiplier << 16) + b_16_16) / (multiplier + 1);
+        }
+        else
+        {
+            h_16_16 = rs.r[0];
+            s_16_16 = rs.r[1];
+            v_16_16 = rs.r[2];
+    reportf("rgb(%d,%d,%d) -> hsv(%d,%04x,%04x)", p_rgb->r, p_rgb->g, p_rgb->b, h_16_16, s_16_16, v_16_16);
+            s_16_16 /= 5;
+            v_16_16 = ((4 << 16) + v_16_16) / 5;
+
+            rs.r[0] = h_16_16;
+            rs.r[1] = s_16_16;
+            rs.r[2] = v_16_16;
+
+            if(NULL == (e = _kernel_swi(ColourTrans_ConvertHSVToRGB, &rs, &rs)))
+            {
+                r_16_16 = rs.r[0];
+                g_16_16 = rs.r[1];
+                b_16_16 = rs.r[2];
+            }
+        }
+
+        if(NULL == e)
+        {
+            reportf("rgb(%d,%d,%d) -> rgb(%04x,%04x,%04x)", p_rgb->r, p_rgb->g, p_rgb->b, r_16_16, g_16_16, b_16_16);
+            p_rgb->r = (U8) (r_16_16 >> 8);
+            p_rgb->g = (U8) (g_16_16 >> 8);
+            p_rgb->b = (U8) (b_16_16 >> 8);
+            return;
+        }
+    }
+#endif
+
+    /* bias towards white (ha ha maybe convert to HSV, average V and reconvert to RGB) */
+    p_rgb->r = (U8) ((multiplier * (S32) p_rgb_d->r + (S32) p_rgb->r) / (multiplier + 1));
+    p_rgb->g = (U8) ((multiplier * (S32) p_rgb_d->g + (S32) p_rgb->g) / (multiplier + 1));
+    p_rgb->b = (U8) ((multiplier * (S32) p_rgb_d->b + (S32) p_rgb->b) / (multiplier + 1));
 }
 
 extern void

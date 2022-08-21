@@ -586,8 +586,8 @@ typedef struct SPRITE_MODE_WORD /* See https://www.riscosopen.org/wiki/documenta
         {
             unsigned int mode_word_bit      : 1; /* always 1 for Mode Word */
             unsigned int zeros_1_3          : 3;
-            unsigned int x_eig              : 2;
-            unsigned int y_eig              : 2;
+            unsigned int XEigFactor         : 2;
+            unsigned int YEigFactor         : 2;
             unsigned int mode_flags_8_15    : 8;
             unsigned int zeros_16_19        : 4;
             unsigned int type               : 7;

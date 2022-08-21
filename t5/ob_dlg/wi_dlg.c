@@ -212,6 +212,17 @@ static H_DIALOG bastard_windows_h_dialog; /* Windows 3.1 inadequacy */
 
 _Check_return_
 static BOOL
+dialog_onHelp(
+    _HwndRef_   HWND hwnd)
+{
+    const H_DIALOG h_dialog = h_dialog_from_hwnd(hwnd);
+    const P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
+    status_assert(dialog_windows_help(p_dialog));
+    return(FALSE);
+}
+
+_Check_return_
+static BOOL
 modal_dialog_pm_callhelp(
     _HwndRef_   HWND hwnd)
 {
@@ -242,6 +253,9 @@ modal_dialog_handler(
 
     case WM_COMMAND:
         return(dialog_onCommand(hwnd, (int) LOWORD(wParam), (HWND) lParam, (UINT) HIWORD(wParam)));
+
+    case WM_HELP:
+        return(dialog_onHelp(hwnd));
 
     case PM_CALLHELP:
         return(modal_dialog_pm_callhelp(hwnd));
@@ -278,6 +292,9 @@ modeless_dialog_handler(
 
     case WM_COMMAND:
         return(dialog_onCommand(hwnd, (int) LOWORD(wParam), (HWND) lParam, (UINT) HIWORD(wParam)));
+
+    case WM_HELP:
+        return(dialog_onHelp(hwnd));
 
     default:
         return(DefWindowProc(hwnd, uiMsg, wParam, lParam));
@@ -430,7 +447,9 @@ dialog_ictls_subclass(
         case DIALOG_CONTROL_PUSHPICTURE:
         case DIALOG_CONTROL_RADIOPICTURE:
         case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
         case DIALOG_CONTROL_TRIPICTURE:
+#endif
             {
             const HWND hwnd = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid);
             consume(LONG, SetWindowLong(hwnd, GWLP_USERDATA, (LONG) p_dialog_ictl->dialog_control_id));
@@ -876,9 +895,11 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             pcd->di.style |= BS_OWNERDRAW;
             break;
 
+#ifdef DIALOG_HAS_TRISTATE
         case DIALOG_CONTROL_TRIPICTURE:
             pcd->di.style |= BS_OWNERDRAW;
             break;
+#endif
 
         case DIALOG_CONTROL_EDIT:
             pcd->diClass = DTIC_EDIT;
@@ -895,7 +916,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
                 pcd->di.y  += EDIT_EDIT_HEIGHT_HACK_WDU;
                 pcd->di.cy -= EDIT_EDIT_HEIGHT_HACK_WDU;
             }
-            if(p_dialog_control_data.edit->edit_xx.bits.readonly)
+            if(p_dialog_control_data.edit->edit_xx.bits.read_only)
                 pcd->di.style |= ES_READONLY;
 
             if(pass == 2)
@@ -925,7 +946,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             pcd->di.style |= CBS_AUTOHSCROLL | CBS_HASSTRINGS /*| CBS_OWNERDRAWFIXED*/;
             if(p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.list_xx.bits.force_v_scroll)
                 pcd->di.style |= CBS_DISABLENOSCROLL;
-            if(p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.edit_xx.bits.readonly)
+            if(p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.edit_xx.bits.read_only)
                 pcd->di.style |= CBS_DROPDOWNLIST;
             else
                 pcd->di.style |= CBS_DROPDOWN;
@@ -1134,6 +1155,8 @@ dialog_windows_dlgtemplate_prepare(
     /* NB this flag may be obsolete, but does affect the code below! */
 
     p_dh->dlgtemplateex.style |= DS_SETFONT /* let's have a font */;
+
+    p_dh->dlgtemplateex.exStyle |= WS_EX_CONTEXTHELP; /* all provide F1 help so why not */
 
     if(NULL != p_gdi_tl)
     {
@@ -1377,8 +1400,10 @@ dialog_windows_ictl_enable_here(
     case DIALOG_CONTROL_RADIOPICTURE:
     case DIALOG_CONTROL_CHECKBOX:
     case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRISTATE:
     case DIALOG_CONTROL_TRIPICTURE:
+#endif
     case DIALOG_CONTROL_USER:
         Button_Enable(hwnd, enabled);
         break;
