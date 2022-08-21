@@ -22,7 +22,7 @@
 
 #include "commctrl.h" /* for InitCommonControlsEx() */
 
-#include "commdlg.h"/* for HELPMSGSTRING */
+#include "commdlg.h" /* for HELPMSGSTRING */
 
 #if !defined(DD_DEFDRAGDELAY)
 #define DD_DEFDRAGDELAY         400
