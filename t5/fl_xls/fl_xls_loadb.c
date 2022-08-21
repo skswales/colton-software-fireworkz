@@ -1581,7 +1581,7 @@ xls_slurp_xf_data_from_XF_INDEX(
             if(biff_version >= 8)
             {
                 /* nothing in top bits */
-                writeval_U16_LE(&p_xf_data[18], readval_U16_LE(&p_xf_data[18]));
+                writeval_U16_LE(&p_xf_data[18], readval_U16_LE(&p_x[18]));
 
                 p_xf_data[9] |= XF_USED_ATTRIB_BACKGROUND;
             }
@@ -1592,13 +1592,13 @@ xls_slurp_xf_data_from_XF_INDEX(
 
                 if(biff_version == 5)
                 {
-                    pattern_colour            =        ((                p_xf_data[8]       ) & 0x007F); /* [6..0] */
-                    pattern_background_colour = (BYTE) ((readval_U16_LE(&p_xf_data[8]) >>  7) & 0x007F); /* [13..7] */
+                    pattern_colour            =        ((                p_x[8]       ) & 0x007F); /* [6..0] */
+                    pattern_background_colour = (BYTE) ((readval_U16_LE(&p_x[8]) >>  7) & 0x007F); /* [13..7] */
                 }
                 else /* BIFF4,BIFF3 */
                 {
-                    pattern_colour            = (BYTE) ((readval_U16_LE(&p_xf_data[6]) >>  6) & 0x001F); /* [10..6] */
-                    pattern_background_colour = (BYTE) ((readval_U16_LE(&p_xf_data[6]) >> 11) & 0x001F); /* [15..11] */
+                    pattern_colour            = (BYTE) ((readval_U16_LE(&p_x[6]) >>  6) & 0x001F); /* [10..6] */
+                    pattern_background_colour = (BYTE) ((readval_U16_LE(&p_x[6]) >> 11) & 0x001F); /* [15..11] */
                 }
 
                 /* nothing in top bits */
@@ -6307,23 +6307,23 @@ xls_cell_make(
     _InVal_     STYLE_HANDLE style_handle)
 {
     STATUS status = STATUS_OK;
+    const P_DOCU p_docu = p_docu_from_docno(p_xls_load_info->docno);
+    SLR actual_slr;
+    LOAD_CELL_FOREIGN load_cell_foreign;
+    zero_struct(load_cell_foreign);
+
+    actual_slr.col = p_xls_load_info->current_slr.col + p_xls_load_info->offset_slr.col;
+    actual_slr.row = p_xls_load_info->current_slr.row + p_xls_load_info->offset_slr.row;
+
+    status_consume(object_data_from_slr(p_docu, &load_cell_foreign.object_data, &actual_slr));
+    load_cell_foreign.original_slr = p_xls_load_info->current_slr;
+
+    load_cell_foreign.style = *p_style;
+    load_cell_foreign.style_handle = style_handle;
 
     if(quick_ublock_bytes(p_quick_ublock_result) || quick_ublock_bytes(p_quick_ublock_formula))
     {
-        const P_DOCU p_docu = p_docu_from_docno(p_xls_load_info->docno);
-        SLR actual_slr;
-        LOAD_CELL_FOREIGN load_cell_foreign;
         OBJECT_ID object_id;
-
-        actual_slr.col = p_xls_load_info->current_slr.col + p_xls_load_info->offset_slr.col;
-        actual_slr.row = p_xls_load_info->current_slr.row + p_xls_load_info->offset_slr.row;
-
-        zero_struct(load_cell_foreign);
-        status_consume(object_data_from_slr(p_docu, &load_cell_foreign.object_data, &actual_slr));
-        load_cell_foreign.original_slr = p_xls_load_info->current_slr;
-
-        load_cell_foreign.style = *p_style;
-        load_cell_foreign.style_handle = style_handle;
 
         switch(data_type)
         {
@@ -6360,6 +6360,10 @@ xls_cell_make(
 
         if(status_ok(status) && (p_xls_load_info->max_col < actual_slr.col))
             p_xls_load_info->max_col = actual_slr.col;
+    }
+    else
+    {
+        status = insert_cell_style_for_foreign(p_docu, &load_cell_foreign);
     }
 
     return(status);
@@ -6461,6 +6465,24 @@ xls_cell_make_from_excel(
 
     switch(opcode)
     {
+    case X_BLANK_B2:
+        {
+        xf_index = xls_obtain_xf_index_B2(p_xls_load_info, p_x + 4); /* cell attributes */
+
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, X_XF_B2);
+
+        break;
+        }
+
+    case X_BLANK_B3_B8:
+        {
+        xf_index = xls_read_U16_LE(p_x + 4); /* XF index */
+
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+
+        break;
+        }
+
     case X_INTEGER_B2:
         {
         S32 s32 = (S32) xls_read_U16_LE(p_x + 7);
@@ -6997,11 +7019,13 @@ xls_process_worksheet_record(
 {
     switch(opcode)
     {
+    case X_BLANK_B2:
     case X_INTEGER_B2:
     case X_NUMBER_B2:
     case X_LABEL_B2:
     case X_BOOLERR_B2:
     case X_FORMULA_B2_B5_B8:
+    case X_BLANK_B3_B8:
     case X_NUMBER_B3_B8:
     case X_LABEL_B3_B8:
     case X_BOOLERR_B3_B8:
@@ -7404,6 +7428,76 @@ xls_style_from_xf_data(
     _In_reads_(20) P_BYTE p_xf_data /* BIFF8 format */)
 {
     STATUS status = STATUS_OK;
+
+    if(0 != (p_xf_data[9]  & XF_USED_ATTRIB_BACKGROUND))
+    {
+        const BYTE pattern_colour            = (BYTE) ((readval_U16_LE(&p_xf_data[18])      ) & 0x007F); /* [6..0] */
+     /* const BYTE pattern_background_colour = (BYTE) ((readval_U16_LE(&p_xf_data[18]) >>  7) & 0x007F); */ /* [13..7] */
+
+        if(rgb_from_colour_index(&p_style->para_style.rgb_back, pattern_colour))
+            style_bit_set(p_style, STYLE_SW_PS_RGB_BACK);
+    }
+
+    if(0 != (p_xf_data[9]  & XF_USED_ATTRIB_ALIGNMENT))
+    {
+        /* XF_HOR_ALIGN:  0 General 1 Left 2 Centred 3 Right 4 Filled 5 Justified (BIFF4-BIFF8) 6 Centred across selection (BIFF4-BIFF8) 7 Distributed (BIFF8, available in Excel 10.0 (Excel XP) and later only) */
+        /* XF_VERT_ALIGN: 0 Top 1 Centred 2 Bottom 3 Justified (BIFF5-BIFF8) 4 Distributed (BIFF8, available in Excel 10.0 (Excel XP) and later only) */
+        const BYTE horizontal_alignment = (p_xf_data[6]     ) & 0x07;
+        const BYTE vertical_alignment   = (p_xf_data[6] >> 4) & 0x07;
+
+        switch(horizontal_alignment)
+        {
+        default: default_unhandled();
+        case 0: /* General */
+        case 4: /* Filled */
+        case 6: /* Centred across selection */
+        case 7: /* Distributed */
+            break;
+
+        case 1: /* Left */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY);
+            p_style->para_style.justify = SF_JUSTIFY_LEFT;
+            break;
+
+        case 2: /* Centred */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY);
+            p_style->para_style.justify = SF_JUSTIFY_CENTRE;
+            break;
+
+        case 3: /* Right */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY);
+            p_style->para_style.justify = SF_JUSTIFY_RIGHT;
+            break;
+
+        case 5: /* Justified */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY);
+            p_style->para_style.justify = SF_JUSTIFY_BOTH;
+            break;
+        }
+
+        switch(vertical_alignment)
+        {
+        default: default_unhandled();
+        case 3: /* Justified */
+        case 4: /* Distributed */
+            break;
+
+        case 0: /* Top */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY_V);
+            p_style->para_style.justify_v = SF_JUSTIFY_V_TOP;
+            break;
+
+        case 1: /* Centred */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY_V);
+            p_style->para_style.justify_v = SF_JUSTIFY_V_CENTRE;
+            break;
+
+        case 2: /* Bottom */
+            style_bit_set(p_style, STYLE_SW_PS_JUSTIFY_V);
+            p_style->para_style.justify_v = SF_JUSTIFY_V_BOTTOM;
+            break;
+        }
+    }
 
     if(0 != (p_xf_data[9] & XF_USED_ATTRIB_FONT))
     {

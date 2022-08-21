@@ -14,6 +14,8 @@ IF NOT EXIST BLD32CD.BAT EXIT
 @
 @rem The echo F | xcopy /f is needed to copy and rename at the same time.
 @
+rmdir /s /q                                                    InnoSetup
+@
 rmdir /s /q                                                    CD
 mkdir                                                          CD\
 @if errorlevel 1 goto failed

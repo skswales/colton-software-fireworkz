@@ -12263,6 +12263,12 @@ insert_cell_contents_foreign(
 
 _Check_return_
 extern STATUS
+insert_cell_style_for_foreign(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_LOAD_CELL_FOREIGN p_load_cell_foreign);
+
+_Check_return_
+extern STATUS
 t5_cmd_of_end_of_data(
     _InoutRef_  P_OF_IP_FORMAT p_of_ip_format);
 

@@ -198,7 +198,15 @@ insert_cell_contents_foreign(
 
 processed:
 
-    {
+    return(insert_cell_style_for_foreign(p_docu, p_load_cell_foreign));
+}
+
+_Check_return_
+extern STATUS
+insert_cell_style_for_foreign(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_LOAD_CELL_FOREIGN p_load_cell_foreign)
+{
     STATUS status = STATUS_OK;
 
     if(STYLE_HANDLE_NONE != p_load_cell_foreign->style_handle)
@@ -228,7 +236,6 @@ processed:
     }
 
     return(status);
-    } /*block*/
 }
 
 static void
