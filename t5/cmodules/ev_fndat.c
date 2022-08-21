@@ -183,7 +183,7 @@ ss_string_ini_cap(
 PROC_EXEC_PROTO(c_dayname)
 {
     PC_USTR ustr_dayname;
-    S32 day;
+    S32 weekday;
     S32 day_idx = 0;
 
     exec_func_ignore_parms();
@@ -194,9 +194,9 @@ PROC_EXEC_PROTO(c_dayname)
         if(SS_DATE_NULL == ss_data_get_date_date(args[0]))
             exec_func_status_return(p_ss_data_res, EVAL_ERR_NODATE);
 
-        day = ((ss_data_get_date_date(args[0]) + 1) % 7) + 1; /* [1 (Sunday),7 (Saturday)] - obviously can NOT be modified */
+        weekday = ((ss_data_get_date_date(args[0]) + 1) % 7) + 1; /* [1 (Sunday),7 (Saturday)] - obviously can NOT be modified */
 
-        day_idx = day - 1; /* [0,6] */
+        day_idx = weekday - 1; /* [0,6] */
 
         if(n_args > 1)
             exec_func_status_return(p_ss_data_res, EVAL_ERR_FUNARGS);
@@ -206,7 +206,7 @@ PROC_EXEC_PROTO(c_dayname)
     case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
-        day = ss_data_get_integer(args[0]); /* usually  [1 (Sunday),7 (Saturday)] - may be modified - will range reduce in any case at the end */
+        weekday = ss_data_get_integer(args[0]); /* usually  [1 (Sunday),7 (Saturday)] - may be modified - will range reduce in any case at the end */
 
         if(n_args > 1)
         {
@@ -219,11 +219,11 @@ PROC_EXEC_PROTO(c_dayname)
                 break;
 
             case 2: /* Monday is day one, system 1 */
-                day += 1;
+                weekday += 1;
                 break;
 
             case 3: /* Monday is day zero */
-                day += 2;
+                weekday += 2;
                 break;
 
             case 11: /* Monday is day one, system 1 */
@@ -233,12 +233,12 @@ PROC_EXEC_PROTO(c_dayname)
             case 15: /* Friday is day one, system 1 */
             case 16: /* Saturday is day one, system 1 */
             case 17: /* Sunday is day one, system 1 */
-                day += (mode - 10);
+                weekday += (mode - 10);
                 break;
 
             case 21: /* Monday is day one, system 2 (ISO 8601) */
             case 150: /* Monday is day one, system 2 (ISO 8601 - as LibreOffice WEEKNUM() for interoperability with Gnumeric) */
-                day += 1;
+                weekday += 1;
                 break;
 
             default:
@@ -247,7 +247,7 @@ PROC_EXEC_PROTO(c_dayname)
             }
         }
 
-        div_t d = div(day - 1, 7);
+        div_t d = div(weekday - 1, 7);
         if(d.rem < 0)
             day_idx = d.rem + 7; /* -> [0,6] */
         else
@@ -772,7 +772,7 @@ PROC_EXEC_PROTO(c_weekday)
     if(SS_DATE_NULL == ss_data_get_date_date(args[0]))
         exec_func_status_return(p_ss_data_res, EVAL_ERR_NODATE);
 
-    weekday = (ss_data_get_date_date(args[0]) + 1) % 7;
+    weekday = ((ss_data_get_date_date(args[0]) + 1) % 7) + 1; /* [1 (Sunday),7 (Saturday)] */
 
     if(n_args > 1)
     {

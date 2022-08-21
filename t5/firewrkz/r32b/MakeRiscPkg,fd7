@@ -8,7 +8,7 @@
 | Copyright (C) 1998-2015 R W Colton
 
 Set t5$Release 2_24
-|Set t5$Release 2_22_01
+Set t5$Release 2_24_01
 
 Set t5$Disc $.Temp.Fire.Fireworkz_<t5$Release>
 Set t5$Zip  $.Temp.Fire.Fireworkz_<t5$Release>/zip
