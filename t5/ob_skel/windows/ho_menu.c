@@ -445,13 +445,19 @@ host_wm_initmenu_recurse(
 
         if(P_DATA_NONE != p_command)
         {
-            const U32 n_bytes = sizeof32("Button:")-1;
-            if(0 == /*"C"*/strncmp("Button:", p_command, n_bytes))
+            const PC_U8Z p_colon = strchr(p_command, CH_COLON);
+            if(NULL != p_colon)
             {
-                T5_TOOLBAR_TOOL_ENABLE_QUERY t5_toolbar_tool_enable_query;
-                t5_toolbar_tool_enable_query.name = PtrAddBytes(PC_USTR, p_command, n_bytes);
-                status_assert(object_call_id(OBJECT_ID_TOOLBAR, de_const_cast(P_DOCU, p_docu), T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY, &t5_toolbar_tool_enable_query));
-                state = t5_toolbar_tool_enable_query.enabled ? MF_ENABLED : (MF_DISABLED | MF_GRAYED);
+                const U32 n_bytes_command = PtrDiffBytesU32(p_colon, p_command) + 1;
+                const U32 n_bytes_test = sizeof32("Button:")-1;
+                if( (n_bytes_command == n_bytes_test) && (0 == memcmp("Button:", p_command, n_bytes_test)) ) /* SKS eliminate strncmp() for Pentium build */
+                {
+                    const PC_U8Z p_button_name = PtrAddBytes(PC_USTR, p_command, n_bytes_command);
+                    T5_TOOLBAR_TOOL_ENABLE_QUERY t5_toolbar_tool_enable_query;
+                    t5_toolbar_tool_enable_query.name = p_button_name;
+                    status_assert(object_call_id(OBJECT_ID_TOOLBAR, de_const_cast(P_DOCU, p_docu), T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY, &t5_toolbar_tool_enable_query));
+                    state = t5_toolbar_tool_enable_query.enabled ? MF_ENABLED : (MF_DISABLED | MF_GRAYED);
+                }
             }
         }
 

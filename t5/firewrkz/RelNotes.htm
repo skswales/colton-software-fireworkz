@@ -1,28 +1,36 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Colton Software Fireworkz Release Notes - RISC OS</title>
 </head>
 <body>
-    <h1>Colton Software Fireworkz Release Notes - RISC OS</h1>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1992-1998 Colton Software Limited,
+       - Copyright (C) 1998-2015 R W Colton -->
+
+    <h1>Colton Software Fireworkz Release Notes - RISC OS</h1>
 
     <ul style="list-style: none">
         <li><a href="#Copyright">Copyright</a></li>
         <li><a href="#Licence">Licence</a></li>
+        <li><a href="#GettingStarted">Getting Started</a></li>
         <li><a href="#OnlineResources">Online Resources</a></li>
         <li><a href="#Support">Support</a></li>
         <li><a href="#ReleaseHistory">Release History</a></li>
         <li><a href="#KnownProblems">Known Problems</a></li>
-        <li><a href="#FireworkzPro">Fireworkz Pro</a></li>
+        <li><a href="#FireworkzPro">Fireworkz Pro</a></li>
     </ul>
 
 
     <h2 id="Copyright">Copyright</h2>
 
+    <p>Copyright &copy; 1992-2020 Colton Software</p>
+
     <p>
-        Copyright © 1992-2020 Colton Software<br />
         <a href="file:/FireworkzRes:Help/HTML/licence.html#CopyrightExtra">Additional copyright information</a>
     </p>
 
@@ -34,18 +42,24 @@
     <p>
         Fireworkz is made available to you under the terms of the
         <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.<br />
+        This means you may use, copy and distribute Fireworkz to others.<br />
         <a href="file:/FireworkzRes:Help/HTML/licence.html">Additional licence information</a>.
     </p>
 
+
+    <h2 id="GettingStarted">Getting Started</h2>
+
     <p>
-        The Fireworkz source code may be freely downloaded from
-        <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>.
+        The Fireworkz <em>Getting Started Guide</em> may be accessed
+        <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">online</a>
+        or from the Fireworkz-Manuals package that you can install using !PackMan.
+        We recommend that you also install the Fireworkz-Examples package for the accompanying files.
     </p>
 
 
     <h2 id="OnlineResources">Online Resources</h2>
 
-    <p>Many resources for Fireworkz are freely available <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/">online:</a></p>
+    <p>Many resources for Fireworkz are available <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/">online:</a></p>
 
     <ul>
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">Getting Started Guide</a>;</li>
@@ -59,6 +73,8 @@
             <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>
             - updated packages for RISC OS and example files, including those used in the <em>Getting Started Guide</em>;
             also Fireworkz for Windows and Fireworkz source code ZIP archive sets.
+            You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
+            The Mozilla Public License also gives you the right to distribute your modified versions.
         </li>
     </ul>
 
@@ -160,9 +176,9 @@
 
     <p>Please refer to the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a> for details.</p>
 
-    <p>RISC OS: !RunImage is squeezed for faster loading from slow devices.</p>
+    <p>RISC OS: !RunImage is squeezed for faster loading from slow devices.</p>
 
-    <p>RISC OS: Improved packaging giving homepage and indicating compatibility.</p>
+    <p>RISC OS: Improved packaging giving homepage and indicating compatibility.</p>
 
 
     <h3>2.23 (not released)</h3>
@@ -189,8 +205,6 @@
 
     <p>Fixed the DAYS_360() spreadsheet function (had inadvertently been forcing European method).</p>
 
-    <p>Please refer to the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a> for details.</p>
-
     <p>Fixed the SUM_X2PY2() spreadsheet function.</p>
 
     <p>Fixed memory leak when closing spreadsheet documents.</p>
@@ -201,8 +215,8 @@
 
     <p>
         Attempts to autoformat numeric data typed on the formula editing line (as occurs with Edit in Cell).
-        e.g. £1,234 will be recognised as a number and formatted with currency symbol and thousands separator.
-        Any text starting with an equals sign will not be autoformatted but immediately as a formula as before.
+        e.g. &pound;1,234 will be recognised as a number and formatted with currency symbol and thousands separator.
+        Any text starting with an equals sign will not be autoformatted but parsed as a formula as before.
     </p>
 
     <p>Any error when loading a template for a foreign file is now referred to using the template filename, not the foreign filename.</p>
@@ -247,35 +261,35 @@
 
     <p>Increased accuracy of numbers loaded from Microsoft Excel and Lotus 1-2-3 files.</p>
 
-    <p>RISC OS: Fix for double-clicking foreign file types when Fireworkz is not loaded.</p>
+    <p>RISC OS: Fix for double-clicking foreign file types when Fireworkz is not loaded.</p>
 
-    <p>RISC OS: Internal error handler improved to show Continue and Quit button pair with more logical outcomes.</p>
+    <p>RISC OS: Internal error handler improved to show Continue and Quit button pair with more logical outcomes.</p>
 
-    <p>RISC OS: ROOL DDE 29a build environment used.</p>
+    <p>RISC OS: ROOL DDE 29a build environment used.</p>
 
 
     <h3>2.22 (13 Feb 2019)</h3>
 
-    <p>RISC OS: Fonts are not used in edit controls and combo box controls if no Desktop font is in use.</p>
+    <p>RISC OS: Fonts are not used in edit controls and combo box controls if no Desktop font is in use.</p>
 
-    <p>RISC OS: No longer tries to conditionally provide ptr_menu for old systems.</p>
+    <p>RISC OS: No longer tries to conditionally provide ptr_menu for old systems.</p>
 
-    <p>RISC OS: More tiny adjustment to calculated width of labels in dialogue boxes to avoid clipping.</p>
+    <p>RISC OS: More tiny adjustment to calculated width of labels in dialogue boxes to avoid clipping.</p>
 
-    <p>RISC OS: Toolbar buttons render better when the display mode is changed to different EIG factors.</p>
+    <p>RISC OS: Toolbar buttons render better when the display mode is changed to different EIG factors.</p>
 
 
     <h3>2.21.04 (06 Jan 2019)</h3>
 
     <p>% displayed after View Control Scale value.</p>
 
-    <p>RISC OS: Use a single routine for consistent manipulation of RGB for disabled items.</p>
+    <p>RISC OS: Use a single routine for consistent manipulation of RGB for disabled items.</p>
 
-    <p>RISC OS: List box entries rendered using Wimp_PlotIcon for improved contrast when disabled.</p>
+    <p>RISC OS: List box entries rendered using Wimp_PlotIcon for improved contrast when disabled.</p>
 
-    <p>RISC OS: Tiny adjustment to calculated width of labels in dialogue boxes to avoid clipping.</p>
+    <p>RISC OS: Tiny adjustment to calculated width of labels in dialogue boxes to avoid clipping.</p>
 
-    <p>RISC OS: No longer tries to conditionally provide ptr_write for old systems.</p>
+    <p>RISC OS: No longer tries to conditionally provide ptr_write for old systems.</p>
 
 
     <h3>2.21.03 (18 Sep 2018)</h3>
@@ -312,7 +326,7 @@
 
     <p>Spreadsheet name intro dialogue box button reorder with Cancel at bottom.</p>
 
-    <p>RISC OS: Fix UI for Choices dialogue box to allow caret in delimiter field.</p>
+    <p>RISC OS: Fix UI for Choices dialogue box to allow caret in delimiter field.</p>
 
 
     <h3>2.20 (25 Oct 2016)</h3>
@@ -332,14 +346,14 @@
     </p>
 
     <p>
-        RISC OS: Support added for global clipboard.
+        RISC OS: Support added for global clipboard.
         Fireworkz documents can accept clipboard data in Fireworkz native format and any other that it can import.
         Fireworkz documents can supply clipboard data in Fireworkz native format and any other that it can export.
         The 'writable icons' in dialogue boxes accept and supply clipboard data as Text.
     </p>
 
     <p>
-        RISC OS: application resources moved from !Fireworkz.Resource. to !Fireworkz.AppData.
+        RISC OS: application resources moved from !Fireworkz.Resource. to !Fireworkz.AppData.
         Language-specific resources (Choices, Dictionaries, Document Templates) are located in a sub-directory of AppData.
         The only one currently provided is UK.
         Language-neutral resources (Markers, Pictures) may be found in the Neutral sub-directory of AppData.
@@ -347,7 +361,7 @@
     </p>
 
     <p>
-        RISC OS: many resources (Loader, Help) are now located in !Fireworkz.Resources.
+        RISC OS: many resources (Loader, Help) are now located in !Fireworkz.Resources.
         (They had previously been separated out of the Resource directory into a RISC_OS sub-directory).
         Language-specific resources are located in a sub-directory of Resources.
         The only one currently provided is UK.
@@ -355,14 +369,14 @@
     </p>
 
     <p>
-        RISC OS: hi-res and lo-res sprites have been unbound from the executable and
+        RISC OS: hi-res and lo-res sprites have been unbound from the executable and
         are now located in Sprites22 and Sprites24 respectively in !Fireworkz.Resources.
         Supports use of Wimp$IconTheme prefix to locate themed variants thereof (none are supplied).
     </p>
 
-    <p>RISC OS: Window Manager flags bit is set to save and restore FP state over SWI PollIdle calls rather than doing it manually.</p>
+    <p>RISC OS: Window Manager flags bit is set to save and restore FP state over SWI PollIdle calls rather than doing it manually.</p>
 
-    <p>RISC OS: Release notes are now located at top level in !Fireworkz.</p>
+    <p>RISC OS: Release notes are now located at top level in !Fireworkz.</p>
 
 
     <h3>2.10.02 (07 Jul 2016)</h3>
@@ -375,9 +389,9 @@
 
     <p>Reinstated the older Ctrl-Shift-D keyboard shortcut as synonym for Insert Date (now Ctrl-D).</p>
 
-    <p>RISC OS: Better handles upgrading from an earlier version with a Choices directory but without a ChoicesDoc.</p>
+    <p>RISC OS: Better handles upgrading from an earlier version with a Choices directory but without a ChoicesDoc.</p>
 
-    <p>RISC OS: Uses DejaVuSans.Mono 12pt (if it is available AND a Unicode Font Manager is in use) as the font for formula line text, edit controls and combo box controls.</p>
+    <p>RISC OS: Uses DejaVuSans.Mono 12pt (if it is available AND a Unicode Font Manager is in use) as the font for formula line text, edit controls and combo box controls.</p>
 
 
     <h3>2.10.01 (04 Jul 2016)</h3>
@@ -387,9 +401,9 @@
         For spreadsheets, this is usually best set in <code>BaseSheet</code>.
     </p>
 
-    <p>RISC OS: Fix for partially initialised structure that could cause fault during application exit.</p>
+    <p>RISC OS: Fix for partially initialised structure that could cause fault during application exit.</p>
 
-    <p>RISC OS: Use extended syntax Wimp_ForceRedraw to update title bar more efficiently.</p>
+    <p>RISC OS: Use extended syntax Wimp_ForceRedraw to update title bar more efficiently.</p>
 
 
     <h3>2.10 (24 Jun 2016)</h3>
@@ -403,7 +417,7 @@
 
     <p>
         Spreadsheet functions that take date parameters have been extended to accept numeric input.
-        If a number is supplied where a date is required, it is treated as an Microsoft Excel-compatible serial number and converted to a date value.
+        If a number is supplied where a date is required, it is treated as an OpenDocument / Microsoft Excel-compatible serial number and converted to a date value.
         This allows data sets containing such numeric values to be more easily processed in Fireworkz.
     </p>
 
@@ -424,7 +438,7 @@
 
     <p>Resizing charts and pictures shows the zoom factor being applied.</p>
 
-    <p>Supports loading of Poster and Vector (RISC OS) image files.</p>
+    <p>Supports loading of Poster and Vector (RISC OS) image files.</p>
 
     <p>ImageFileEmbedded construct added to handle loading/saving non-native / original format image files in addition to a more portable Draw file representation.</p>
 
@@ -436,7 +450,7 @@
 
     <p>Fix where inserting multiple copies of the same referenced picture could lead to them not being displayed until the document was reloaded.</p>
 
-    <p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not used to populate the style in the Effects dialogue box.</p>
+    <p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current&nbsp;cell) are not used to populate the style in the Effects dialogue box.</p>
 
     <p>Improved sizing and alignment of UI elements in several dialogue boxes.</p>
 
@@ -450,25 +464,25 @@
 
     <p>Templates now use separate Header and Footer styles rather than a combined BaseHeadFoot style.</p>
 
-    <p>RISC OS: Fixed bug which always mapped Shift+Select clicks as Adjust clicks and restored several Ctrl+Select clicks as mapping to Adjust clicks as documented.</p>
+    <p>RISC OS: Fixed bug which always mapped Shift+Select clicks as Adjust clicks and restored several Ctrl+Select clicks as mapping to Adjust clicks as documented.</p>
 
-    <p>RISC OS: Fixed bug which prevented menus from having dashed-line separators.</p>
+    <p>RISC OS: Fixed bug which prevented menus from having dashed-line separators.</p>
 
-    <p>RISC OS: Uses DejaVuSans.Mono 12pt (if it is available) as the font for formula line text.</p>
+    <p>RISC OS: Uses DejaVuSans.Mono 12pt (if it is available) as the font for formula line text.</p>
 
-    <p>RISC OS: Improved high-res sprites for toolbar buttons and Thin line style.</p>
+    <p>RISC OS: Improved high-res sprites for toolbar buttons and Thin line style.</p>
 
-    <p>RISC OS: Uses coloured Formula Enter (tick) and Formula Cancel (cross) toolbar buttons.</p>
+    <p>RISC OS: Uses coloured Formula Enter (tick) and Formula Cancel (cross) toolbar buttons.</p>
 
-    <p>RISC OS: Tweaked appearance of Make Constant and Function Selector buttons.</p>
+    <p>RISC OS: Tweaked appearance of Make Constant and Function Selector buttons.</p>
 
-    <p>RISC OS: Disabled toolbar buttons rendered on normal background rather than white (less intrusive effect).</p>
+    <p>RISC OS: Disabled toolbar buttons rendered on normal background rather than white (less intrusive effect).</p>
 
-    <p>RISC OS: Changed the appearance of writable field borders to more be consistent with RISC OS Style Guide Issue 3.</p>
+    <p>RISC OS: Changed the appearance of writable field borders to more be consistent with RISC OS Style Guide Issue 3.</p>
 
-    <p>RISC OS: Uses ChangeFSI, if available, to convert a much wider range of image file formats. On machines where the OS is not shadowed in RAM, you can improve ChangeFSI's performance by first typing '*RMFaster BASIC'.</p>
+    <p>RISC OS: Uses ChangeFSI, if available, to convert a much wider range of image file formats. On machines where the OS is not shadowed in RAM, you can improve ChangeFSI's performance by first typing '*RMFaster BASIC'.</p>
 
-    <p>RISC OS: Scrap files (for both file loading and image conversion) are created in the &lt;Wimp$ScrapDir&gt;.Fireworkz directory.</p>
+    <p>RISC OS: Scrap files (for both file loading and image conversion) are created in the &lt;Wimp$ScrapDir&gt;.Fireworkz directory.</p>
 
 
     <h3>2.00.05 (10 Jun 2016)</h3>
@@ -491,7 +505,7 @@
 
     <p>Fix for full release history URL with new CMS.</p>
 
-    <p>RISC OS: Changed the order of Help and Choices entries in the icon bar menu to be consistent with RISC OS Style Guide Issue 3.</p>
+    <p>RISC OS: Changed the order of Help and Choices entries in the icon bar menu to be consistent with RISC OS Style Guide Issue 3.</p>
 
 
     <h3>2.00.02 (11 Nov 2015)</h3>
@@ -502,14 +516,14 @@
 
     <p>Any documents created or modified in 2.00.00 or 2.00.01 that contain text with style/effect applications to the right of inline sequences (e.g. Insert date, Tab, Unicode) may need to have bits of style edited off with the region editor or reapplied.</p>
 
-    <p>RISC OS: No longer offers Microsoft Excel as an export format (non-Pro).</p>
+    <p>RISC OS: No longer offers Microsoft Excel as an export format (non-Pro).</p>
 
 
     <h3>2.00.01 (05 Nov 2015)</h3>
 
     <p>Fixed another error in null event handling for row formatting.</p>
 
-    <p>RISC OS: Fix for styles in text when exported as Draw file.</p>
+    <p>RISC OS: Fix for styles in text when exported as Draw file.</p>
 
 
     <h3>2.00 (20 Oct 2015)</h3>
@@ -770,10 +784,6 @@
 
     <h3>Spreadsheet enhancements</h3>
 
-    <p>
-        For details about any of the modified spreadsheet functions, please see the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>.
-    </p>
-
     <p>AVG(), MAX() and MIN() spreadsheet functions may now be applied to ranges of date / time values.</p>
 
     <p>BIN() spreadsheet function has always taken an arbitrary dimensioned array or range of data as its first parameter. Previously only the first column of this data would have been binned; now all the supplied data is binned.</p>
@@ -883,10 +893,10 @@
 
     <p>Insert file modification time (Ctrl+T) and Insert time (Ctrl+Shift+T) commands added.</p>
 
-    <p>Insert Row / Delete Row operations changed from F7 & F8 to Ctrl+F7 & Ctrl+F8 to avoid unfortunate clash with the expected Undo function on RISC OS. These may be changed back trivially by editing the Config file to remove the '^' prefixes.</p>
+    <p>Insert Row / Delete Row operations changed from F7 & F8 to Ctrl+F7 & Ctrl+F8 to avoid unfortunate clash with the expected Undo function on RISC OS. These may be changed back trivially by editing the Config file to remove the '^' prefixes.</p>
 
     <p>
-        RISC OS: <strong>IMPORTANT!</strong> Ctrl+K is now mapped to the Delete menu entry (used to be spell check).
+        RISC OS: <strong>IMPORTANT!</strong> Ctrl+K is now mapped to the Delete menu entry (used to be spell check).
     </p>
 
     <h4>Menus</h4>
@@ -916,25 +926,25 @@
 
     <p>Select template dialogue box now discriminates between usage as 'New document' and 'Select template' for inserted files.</p>
 
-    <p>RISC OS: Use DejaVuSans.Mono for edit and combo box controls if it is available.</p>
+    <p>RISC OS: Use DejaVuSans.Mono for edit and combo box controls if it is available.</p>
 
-    <p>RISC OS: Colour... buttons in style / chart dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
+    <p>RISC OS: Colour... buttons in style / chart dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
 
-    <p>RISC OS: Radio buttons and check box sizing and positioning adjusted to avoid truncation of text at right-hand side of icons.</p>
+    <p>RISC OS: Radio buttons and check box sizing and positioning adjusted to avoid truncation of text at right-hand side of icons.</p>
 
-    <p>RISC OS: Slightly less top margin in grouped items in dialogue boxes.</p>
+    <p>RISC OS: Slightly less top margin in grouped items in dialogue boxes.</p>
 
-    <p>RISC OS: Window Manager text,sprite,indirect icon used to render group box caption better when there is a textured background.</p>
+    <p>RISC OS: Window Manager text,sprite,indirect icon used to render group box caption better when there is a textured background.</p>
 
-    <p>RISC OS: Changed Window Manager icon styles to allow rounded corners on group box outlines and info fields where this is applicable.</p>
+    <p>RISC OS: Changed Window Manager icon styles to allow rounded corners on group box outlines and info fields where this is applicable.</p>
 
-    <p>RISC OS: Changed writable field (used in edit, bump and combo dialogue box controls) visual style to be less fancy.</p>
+    <p>RISC OS: Changed writable field (used in edit, bump and combo dialogue box controls) visual style to be less fancy.</p>
 
-    <p>RISC OS: Changed writable field height to 60 OS units - the RISC OS Style Guide's suggested 68 OS units is way too tall.</p>
+    <p>RISC OS: Changed writable field height to 60 OS units - the RISC OS Style Guide's suggested 68 OS units is way too tall.</p>
 
-    <p>RISC OS: Writable field validation for Save dialogue boxes allows all C1 control characters (&amp;80..&amp;9F).</p>
+    <p>RISC OS: Writable field validation for Save dialogue boxes allows all C1 control characters (&amp;80..&amp;9F).</p>
 
-    <p>RISC OS: Error handling uses newer Window Manager styles on RISC OS 3.5 and later.</p>
+    <p>RISC OS: Error handling uses newer Window Manager styles on RISC OS 3.5 and later.</p>
 
     <h4>Other</h4>
 
@@ -947,15 +957,15 @@
 
     <p>Cell content is no longer clipped by borders when these are not drawn, allowing the use of narrower cell margins.</p>
 
-    <p>Current cell style in Sheet-based templates is now a thin dark grey grid outline (was thick black border) with a paler grey background.</p>
+    <p>Current&nbsp;cell style in Sheet-based templates is now a thin dark grey grid outline (was thick black border) with a paler grey background.</p>
 
     <p>
-        The new user choices file (ChoicesDoc) can supply style updates such as Update.Current cell.
+        The new user choices file (ChoicesDoc) can supply style updates such as Update.Current&nbsp;cell.
         These styles are applied to all loaded documents, updating any corresponding style definitions,
         when the <emph>Update styles from choices</emph> option is set in the Choices dialogue box.
     </p>
 
-    <p>Current cell style in old files may be individually refined using the CurCell200 template supplied in the Styles directory of the Fireworkz Examples.</p>
+    <p>Current&nbsp;cell style in old files may be individually refined using the CurCell200 template supplied in the Styles directory of the Fireworkz Examples.</p>
 
     <p>
         The user interface style is more configurable: a new user choices file
@@ -984,20 +994,20 @@
         &lt;Field<i>N</i>&gt; is displayed in documents with mailshot fields when no source document is selected.
     </p>
 
-    <p>RISC OS: You can now use Adjust on Fill down / Fill right toolbar buttons to Fill up / Fill left.</p>
+    <p>RISC OS: You can now use Adjust on Fill down / Fill right toolbar buttons to Fill up / Fill left.</p>
 
-    <p>RISC OS: Pinboard icon in !SpritesR5 updated for RISC OS 5 style.</p>
+    <p>RISC OS: Pinboard icon in !SpritesR5 updated for RISC OS 5 style.</p>
 
-    <p>RISC OS: Pinboard icon in !Sprites22 updated for RISC OS 4 style.</p>
+    <p>RISC OS: Pinboard icon in !Sprites22 updated for RISC OS 4 style.</p>
 
-    <p>RISC OS: File icons updated for RISC OS 4 style (bottom tab).</p>
+    <p>RISC OS: File icons updated for RISC OS 4 style (bottom tab).</p>
 
     <p>
-        RISC OS: Splash screen creates a window in which to render object.
+        RISC OS: Splash screen creates a window in which to render object.
         Pressing a key will terminate the splash screen early, as does clicking in the window.
     </p>
 
-    <p>RISC OS: Improved appearance of ruler markers in high-res modes.</p>
+    <p>RISC OS: Improved appearance of ruler markers in high-res modes.</p>
 
 
     <h3>Other enhancements</h3>
@@ -1018,8 +1028,8 @@
     </p>
 
     <p>
-        Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not saved to the clipboard on Copy / Cut.
-        This avoids polluting Letter-based documents with a Current cell style when copying via the clipboard.
+        Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current&nbsp;cell) are not saved to the clipboard on Copy / Cut.
+        This avoids polluting Letter-based documents with a Current&nbsp;cell style when copying via the clipboard.
         Additionally, they are not used to populate the style in the Effects or New Style (based on) dialogue boxes.
     </p>
 
@@ -1027,7 +1037,7 @@
 
     <p>Charts are created with thin Chart border lines and mid-grey Plot Area border lines.</p>
 
-    <p>Handles files having DrawFileEmbedded or DrawFileReference with no type field set as containing Draw files (type field RISC OS).</p>
+    <p>Handles files having DrawFileEmbedded or DrawFileReference with no type field set as containing Draw files (type field RISC OS).</p>
 
     <p>Some JPEG/JFIF files (e.g. with thumbnail pictures) were not being automatically detected as such.</p>
 
@@ -1035,7 +1045,7 @@
     <h3>Other changes</h3>
 
     <p>
-        Config file can use more easily recognisable three digit hexadecimal RISC OS file types.
+        Config file can use more easily recognisable three digit hexadecimal RISC OS file types.
     </p>
 
     <p>Config file commands BorderTypeface, RulerTypeface and StatusLine-t have been withdrawn as they have been superseded.</p>
@@ -1045,7 +1055,7 @@
     <p>
         Fireworkz' internal inline sequence identifier character changed to ASCII 21 (was ASCII 7).
         NB. This character value is not exposed in file data.
-        This helps on RISC OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as
+        This helps on RISC OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as
         ASCII 21 is the Font Manager Comment sequence lead-in byte and so is ignored rather than giving an Unhandled CtrlChar error.
     </p>
 
@@ -1056,7 +1066,7 @@
 
     <p>Uses fast inline function to map internal document handles to the corresponding document structure.</p>
 
-    <h4>RISC OS</h4>
+    <h4>RISC OS</h4>
 
     <p>U:XXXX inline sequences are rendered using fonts with the \EUTF8 encoding where this is possible, or as textual representations of the form [U+XXXX] where it is not.</p>
 
@@ -1068,7 +1078,7 @@
     </p>
 
     <p>
-        Filing systems on RISC OS 4 and up are assumed to have long filename support.
+        Filing systems on RISC OS 4 and up are assumed to have long filename support.
         This affects the name given to documents created by importing foreign files.
     </p>
 
@@ -1087,7 +1097,7 @@
 
     <p>Removed Legal predefined paper size button.</p>
 
-    <p>Rationalised and improved handling of files with RISC OS file types DOS and Data, and also ones without any RISC OS file type.</p>
+    <p>Rationalised and improved handling of files with RISC OS file types DOS and Data, and also ones without any RISC OS file type.</p>
 
     <p>Fireworkz will accept any foreign filetype when broadcast (e.g. double-clicked in the Filer) if it is currently set up with an Alias$@RunType_XXX that is set with !Fireworkz.!Run or (for DOS and Text files) has an /extension that maps to a handled file type.</p>
 
@@ -1116,15 +1126,15 @@
 
     <p>Status line cleared at end of style region editing. It used to leave stale information, especially after deleting a region.</p>
 
-    <p>RISC OS: Code changes to avoid invalid instructions being emitted by the compiler in certain modules.</p>
+    <p>RISC OS: Code changes to avoid invalid instructions being emitted by the compiler in certain modules.</p>
 
-    <p>RISC OS: ZPP fixes for dialogue box handling.</p>
+    <p>RISC OS: ZPP fixes for dialogue box handling.</p>
 
-    <p>RISC OS: Added some headroom for printing to fix some pretty weird printing error reports we've had over the years.</p>
+    <p>RISC OS: Added some headroom for printing to fix some pretty weird printing error reports we've had over the years.</p>
 
-    <p>RISC OS: Status line redraw fix for non-square pixel modes.</p>
+    <p>RISC OS: Status line redraw fix for non-square pixel modes.</p>
 
-    <p>RISC OS: Fixed exception when rendering toolbar in 16 colour modes on RISC OS 5.20.</p>
+    <p>RISC OS: Fixed exception when rendering toolbar in 16 colour modes on RISC OS 5.20.</p>
 
 
     <h3>Foreign file import</h3>
@@ -1301,17 +1311,17 @@
         If you have a text cell with an inserted name which refers directly to another cell (e.g. you have defined "fred" to be h30)
         then if the value in the cell which is referred to changes,
         the text cell is not automatically reformatted or redisplayed.
-        The way to do this at the moment is to use set_name to define the name in the number cell itself (e.g. set_name("fred", calculation)).
+        The way to do this at the moment is to use set_name to define the name in the number cell itself (e.g. set_name("fred", calculation)).
     </p>
 
-    <h4>RISC OS</h4>
+    <h4>RISC OS</h4>
 
     <p>Text handling will not behave correctly if *Alphabet UTF8 is set.</p>
 
 
     <h2>32-bit !System</h2>
 
-    <p>Please note that the latest distribution of !System for use with pre-RISC OS 5 computers may be found on the RISC OS Open website at:</p>
+    <p>Please note that the latest distribution of !System for use with pre-RISC OS 5 computers may be found on the RISC OS Open website at:</p>
 
     <p>
         https://www.riscosopen.org/content/downloads/common
@@ -1329,44 +1339,44 @@
     </p>
 
 
-    <h2 id="FireworkzPro">Fireworkz Pro</h2>
-    <p>Fireworkz Pro, available from R-Comp, is a commercial product for RISC OS which contains additional functionality compared to the usual (free) Fireworkz capabilites.</p>
+    <h2 id="FireworkzPro">Fireworkz Pro</h2>
+    <p>Fireworkz Pro, available from R-Comp, is a commercial product for RISC OS which contains additional functionality compared to the usual (free) Fireworkz capabilites.</p>
 
     <p>
-        For more information, and to purchase Fireworkz Pro, please visit <a href="http://www.rcomp.co.uk">R-Comp</a>.
+        For more information, and to purchase Fireworkz Pro, please visit <a href="http://www.rcomp.co.uk">R-Comp</a>.
     </p>
 
     <h3>Database functionality</h3>
 
     <p>Fireworkz (non-Pro) only contains a limited number of spreadsheet functions to support its use as a database.</p>
 
-    <p>Fireworkz Pro contains a copy of the DataPower database engine from R-Comp.</p>
+    <p>Fireworkz Pro contains a copy of the DataPower database engine from R-Comp.</p>
 
     <p>
-        You can use Fireworkz Pro as a standalone database program to store and manage
+        You can use Fireworkz Pro as a standalone database program to store and manage
         all kinds of data, from school and business information to personal details about projects and collections.
         This data can be displayed in a choice of formats and then sorted, filtered and searched
         to locate particular pieces of information.
     </p>
 
     <p>
-        The database component of Fireworkz Pro can exchange data with other program components to create
+        The database component of Fireworkz Pro can exchange data with other program components to create
         spreadsheets, reports, graphs and mail merges based on data from your databases.
     </p>
 
     <h3>Microsoft Excel Export</h3>
 
-    <p>Fireworkz Pro contains a newly-written module to allow spreadsheet data to be saved in Microsoft Excel binary format.</p>
+    <p>Fireworkz Pro contains a newly-written module to allow spreadsheet data to be saved in Microsoft Excel binary format.</p>
 
     <p>This module is not yet available in Fireworkz.</p>
 
 
     <h2 id="CopyrightExtra">Additional Copyright Information</h2>
 
-    <h4>Portions Copyright © 2012-2020 Stuart Swales</h4>
+    <h4>Portions Copyright &copy; 2012-2020 Stuart Swales</h4>
     <p>Reporter interface code.</p>
 
-    <h4>Portions Copyright © 2014-2020 Stuart Swales</h4>
+    <h4>Portions Copyright &copy; 2014-2020 Stuart Swales</h4>
     <p>
         Logical spreadsheet functions;<br />
         Paired statistics spreadsheet functions;<br />
@@ -1377,7 +1387,7 @@
 
     <hr />
 
-    <h4>Portions Copyright © 1993 by Sun Microsystems, Inc. All rights reserved</h4>
+    <h4>Portions Copyright &copy; 1993 by Sun Microsystems, Inc. All rights reserved</h4>
     <p>
         Bessel Jn, Yn functions;<br />
         error function;<br />
@@ -1433,6 +1443,6 @@
 
     <hr />
 
-    <p>End of Fireworkz Release Notes (RISC OS)</p>
+    <p>End of Fireworkz Release Notes (RISC OS)</p>
 </body>
 </html>

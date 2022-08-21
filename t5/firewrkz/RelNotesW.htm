@@ -1,12 +1,18 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Colton Software Fireworkz Release Notes - Windows</title>
 </head>
 <body>
-    <h1>Colton Software Fireworkz Release Notes - Windows©</h1>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1992-1998 Colton Software Limited,
+       - Copyright (C) 1998-2015 R W Colton -->
+
+    <h1>Colton Software Fireworkz Release Notes - Windows&copy;</h1>
 
     <ul style="list-style: none">
         <li><a href="#Copyright">Copyright</a></li>
@@ -22,14 +28,14 @@
 
     <h2 id="Copyright">Copyright</h2>
 
+    <p>Copyright &copy; 1992-2020 Colton Software</p>
+
     <p>
-        Copyright © 1992-2020 Colton Software
+        <a href="#CopyrightExtra">Additional copyright information</a>
     </p>
 
-    <p><a href="#CopyrightExtra">Additional copyright information</a></p>
 
-
-    <h2 id="Copyright">Licence</h2>
+    <h2 id="Licence">Licence</h2>
 
     <p>Thanks to Richard Colton, Fireworkz is now open source and completely free to use!</p>
 
@@ -37,18 +43,12 @@
         Fireworkz is made available to you under the terms of the
         <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.<br />
         This means you may use, copy and distribute Fireworkz to others.
-        You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
-        The Mozilla Public License also gives you the right to distribute your modified versions.
     </p>
 
-    <p>
-        The Fireworkz source code may be freely downloaded from
-        <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a> .
-    </p>
 
     <h2 id="Installation">Installation</h2>
 
-    <p>Fireworkz may be installed on Windows© 10, Windows© 8.1, Windows© 7, Windows Vista© or Windows© XP (SP3)</p>
+    <p>Fireworkz may be installed on Windows&copy; 10, Windows&copy; 8.1, Windows&copy; 7, Windows Vista&copy; or Windows&copy; XP (SP3)</p>
 
     <p>To install Fireworkz, simply double-click on the firewrkz-<i>&lt;version&gt;</i>-windows-<i>&lt;arch&gt;</i>.exe file and follow the instructions in the dialogue boxes that follow.</p>
 
@@ -60,7 +60,7 @@
 
     <h3>Uninstallation</h3>
 
-    <p>You can uninstall Fireworkz using Control Panel -&gt; Programs and features (Windows XP: Settings -&gt; Control Panel -&gt; Add / Remove Programs).</p>
+    <p>You can uninstall Fireworkz using Control Panel -&gt; Programs and features (Windows XP: Settings -&gt; Control Panel -&gt; Add / Remove Programs).</p>
 
 
     <h2 id="GettingStarted">Getting Started</h2>
@@ -70,9 +70,10 @@
         or <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">online</a>.
     </p>
 
+
     <h2 id="OnlineResources">Online Resources</h2>
 
-    <p>Many resources for Fireworkz are freely available <a href="http://croftnuisk.co.uk/coltsoft/fireworkz">online:</a></p>
+    <p>Many resources for Fireworkz are available <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/">online:</a></p>
 
     <ul>
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">Getting Started Guide</a>;</li>
@@ -83,9 +84,11 @@
         </li>
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints and Tips</a>;</li>
         <li>
-            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads">Downloads</a>
+            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>
             - updated program and example files, including those used in the <em>Getting Started Guide</em>;
-            also Fireworkz for RISC OS and Fireworkz source code ZIP archive sets.
+            also Fireworkz for RISC OS and Fireworkz source code ZIP archive sets.
+            You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
+            The Mozilla Public License also gives you the right to distribute your modified versions.
         </li>
     </ul>
 
@@ -104,9 +107,14 @@
     <h2 id="ReleaseHistory">Release History</h2>
 
     <p>
-        The full release history may be found <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/release_history">online</a>;
+        The full release history may be found <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/release_history/">online</a>;
         just the last few revisions of Fireworkz are documented here.
     </p>
+
+
+    <h3>2.24.07 (05 May 2020)</h3>
+
+    <p>Windows: Menu code no longer uses strncmp() routine that uses enhanced CPU instructions in 32-bit build. Allows use on older (Pentium-class) systems.</p>
 
 
     <h3>2.24.06 (28 Apr 2020)</h3>
@@ -126,7 +134,7 @@
 
     <h3>2.24.03 (01 Apr 2020)</h3>
 
-    <p>Fixed an unitialised memory issue that cased problems with zero length strings as results of spreadsheet functions.</p>
+    <p>Fixed an unitialised memory issue that caused problems with zero length strings as results of spreadsheet functions.</p>
 
 
     <h3>2.24.02 (27 Mar 2020)</h3>
@@ -229,8 +237,8 @@
 
     <p>
         Attempts to autoformat numeric data typed on the formula editing line (as occurs with Edit in Cell).
-        e.g. £1,234 will be recognised as a number and formatted with currency symbol and thousands separator.
-        Any text starting with an equals sign will not be autoformatted but immediately as a formula as before.
+        e.g. &pound;1,234 will be recognised as a number and formatted with currency symbol and thousands separator.
+        Any text starting with an equals sign will not be autoformatted but parsed as a formula as before.
     </p>
 
     <p>Any error when loading a template for a foreign file is now referred to using the template filename, not the foreign filename.</p>
@@ -403,7 +411,7 @@
 
     <p>
         Spreadsheet functions that take date parameters have been extended to accept numeric input.
-        If a number is supplied where a date is required, it is treated as an Microsoft Excel-compatible serial number and converted to a date value.
+        If a number is supplied where a date is required, it is treated as an OpenDocument / Microsoft Excel-compatible serial number and converted to a date value.
         This allows data sets containing such numeric values to be more easily processed in Fireworkz.
     </p>
 
@@ -424,7 +432,7 @@
 
     <p>Resizing charts and pictures shows the zoom factor being applied.</p>
 
-    <p>Supports loading of Poster and Vector (RISC OS) image files.</p>
+    <p>Supports loading of Poster and Vector (RISC OS) image files.</p>
 
     <p>ImageFileEmbedded construct added to handle loading/saving non-native / original format image files in addition to a more portable Draw file representation.</p>
 
@@ -436,7 +444,7 @@
 
     <p>Fix where inserting multiple copies of the same referenced picture could lead to them not being displayed until the document was reloaded.</p>
 
-    <p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not used to populate the style in the Effects dialogue box.</p>
+    <p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current&nbsp;cell) are not used to populate the style in the Effects dialogue box.</p>
 
     <p>Improved sizing and alignment of UI elements in several dialogue boxes.</p>
 
@@ -476,7 +484,7 @@
 
     <p>Windows: Uses GDI+ to handle a much wider range of image file formats.</p>
 
-    <p>Windows: Windows 2000 Professional is no longer supported.</p>
+    <p>Windows: Windows 2000 Professional is no longer supported.</p>
 
 
     <h3>2.00.05 (10 Jun 2016)</h3>
@@ -523,7 +531,7 @@
     <p>A large number of spreadsheet functions have been implemented in Fireworkz to assist Microsoft Excel file loading, most of which are useful additions in any case.</p>
 
     <p>
-        For details about any of the newly added spreadsheet functions, please see see <a href="#AddendaAndErrata">Addenda and Errata</a>.
+        For details about any of the newly added spreadsheet functions, please see the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>.
     </p>
 
     <p>
@@ -774,10 +782,6 @@
 
     <h3>Spreadsheet enhancements</h3>
 
-    <p>
-        For details about any of the modified spreadsheet functions, please see see <a href="#AddendaAndErrata">Addenda and Errata</a>.
-    </p>
-
     <p>AVG(), MAX() and MIN() spreadsheet functions may now be applied to ranges of date / time values.</p>
 
     <p>BIN() spreadsheet function has always taken an arbitrary dimensioned array or range of data as its first parameter. Previously only the first column of this data would have been binned; now all the supplied data is binned.</p>
@@ -824,7 +828,7 @@
     </p>
 
     <p>
-        INT() spreadsheet function extended to return an OpenDocument /  Microsoft Excel-compatible serial number
+        INT() spreadsheet function extended to return an OpenDocument / Microsoft Excel-compatible serial number
         when passed <i>date</i> parameter. Prevously this would have yielded an error.
         Given that Microsoft Excel incorrectly believes 1900 to be a leap year,
         the conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Excel.
@@ -887,10 +891,10 @@
 
     <p>Insert file modification time (Ctrl+T) and Insert time (Ctrl+Shift+T) commands added.</p>
 
-    <p>Insert Row / Delete Row operations changed from F7 & F8 to Ctrl+F7 & Ctrl+F8 to avoid unfortunate clash with the expected Undo function on RISC OS. These may be changed back trivially by editing the Config file to remove the '^' prefixes.</p>
+    <p>Insert Row / Delete Row operations changed from F7 & F8 to Ctrl+F7 & Ctrl+F8 to avoid unfortunate clash with the expected Undo function on RISC OS. These may be changed back trivially by editing the Config file to remove the '^' prefixes.</p>
 
     <p>
-        Windows: Ctrl+K is no longer mapped to the Spell check menu entry (consistency with RISC OS key mapping).
+        Windows: Ctrl+K is no longer mapped to the Spell check menu entry (consistency with RISC OS key mapping).
     </p>
 
     <h4>Menus</h4>
@@ -938,15 +942,15 @@
 
     <p>Cell content is no longer clipped by borders when these are not drawn, allowing the use of narrower cell margins.</p>
 
-    <p>Current cell style in Sheet-based templates is now a thin dark grey grid outline (was thick black border) with a paler grey background.</p>
+    <p>Current&nbsp;cell style in Sheet-based templates is now a thin dark grey grid outline (was thick black border) with a paler grey background.</p>
 
     <p>
-        The new user choices file (ChoicesDoc) can supply style updates such as Update.Current cell.
+        The new user choices file (ChoicesDoc) can supply style updates such as Update.Current&nbsp;cell.
         These styles are applied to all loaded documents, updating any corresponding style definitions,
         when the <emph>Update styles from choices</emph> option is set in the Choices dialogue box.
     </p>
 
-    <p>Current cell style in old files may be individually refined using the CurCell200 template supplied in the Styles directory of the Fireworkz Examples.</p>
+    <p>Current&nbsp;cell style in old files may be individually refined using the CurCell200 template supplied in the Styles directory of the Fireworkz Examples.</p>
 
     <p>
         The user interface style is more configurable: a new user choices file
@@ -993,7 +997,7 @@
 
     <p>Windows: Reinstated process status window.</p>
 
-    <p>Windows: Improved palette for 256 colour modes to include all RISC OS Window Manager colours and better greyscale.</p>
+    <p>Windows: Improved palette for 256 colour modes to include all RISC OS Window Manager colours and better greyscale.</p>
 
     <p>Windows: ChoicesDoc file supplies UI.FormulaLine style which determines typeface and size used in the formula line.</p>
 
@@ -1016,8 +1020,8 @@
     </p>
 
     <p>
-        Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not saved to the clipboard on Copy / Cut.
-        This avoids polluting Letter-based documents with a Current cell style when copying via the clipboard.
+        Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current&nbsp;cell) are not saved to the clipboard on Copy / Cut.
+        This avoids polluting Letter-based documents with a Current&nbsp;cell style when copying via the clipboard.
         Additionally, they are not used to populate the style in the Effects or New Style (based on) dialogue boxes.
     </p>
 
@@ -1025,7 +1029,7 @@
 
     <p>Charts are created with thin Chart border lines and mid-grey Plot Area border lines.</p>
 
-    <p>Handles files having DrawFileEmbedded or DrawFileReference with no type field set as containing Draw files (type field RISC OS).</p>
+    <p>Handles files having DrawFileEmbedded or DrawFileReference with no type field set as containing Draw files (type field RISC OS).</p>
 
     <p>Some JPEG/JFIF files (e.g. with thumbnail pictures) were not being automatically detected as such.</p>
 
@@ -1037,7 +1041,7 @@
     <h3>Other changes</h3>
 
     <p>
-        Config file can use more easily recognisable three digit hexadecimal RISC OS file types.
+        Config file can use more easily recognisable three digit hexadecimal RISC OS file types.
     </p>
 
     <p>Config file commands BorderTypeface, RulerTypeface and StatusLine-t have been withdrawn as they have been superseded.</p>
@@ -1047,7 +1051,7 @@
     <p>
         Fireworkz' internal inline sequence identifier character changed to ASCII 21 (was ASCII 7).
         NB. This character value is not exposed in file data.
-        This helps on RISC OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as
+        This helps on RISC OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as
         ASCII 21 is the Font Manager Comment sequence lead-in byte and so is ignored rather than giving an Unhandled CtrlChar error.
     </p>
 
@@ -1072,7 +1076,7 @@
         This helps with cross-platform portability and centralised storage of supporting documents.
     </p>
 
-    <p>Updated templates in line with RISC OS ones (use of four-digit year).</p>
+    <p>Updated templates in line with RISC OS ones (use of four-digit year).</p>
 
 
     <h3>Other fixes</h3>
@@ -1322,7 +1326,7 @@
         If you have a text cell with an inserted name which refers directly to another cell (e.g. you have defined "fred" to be h30)
         then if the value in the cell which is referred to changes,
         the text cell is not automatically reformatted or redisplayed.
-        The way to do this at the moment is to use set_name to define the name in the number cell itself (e.g. set_name("fred", calculation)).
+        The way to do this at the moment is to use set_name to define the name in the number cell itself (e.g. set_name("fred", calculation)).
     </p>
 
     <p>The dotted line drawn around chart objects when they are selected is not rendered correctly.</p>
@@ -1332,11 +1336,11 @@
     <p>JPEG files inserted into Drawfiles do not render on Windows.</p>
 
 
-    <h2>Transferring files between Windows and RISC OS</h2>
+    <h2>Transferring files between Windows and RISC OS</h2>
 
-    <p>If you want to transfer files between Windows and RISC OS, please read the sections in the <em>Getting Started Guide</em> and the <em>User Guide</em>. There's also information in the help system on this subject.</p>
+    <p>If you want to transfer files between Windows and RISC OS, please read the sections in the <em>Getting Started Guide</em> and the <em>User Guide</em>. There's also information in the help system on this subject.</p>
 
-    <p>Font names stored within Draw file font table objects are mapped from RISC OS names to Windows names by the DLL DsFntMap.dll. This DLL creates and uses font mappings in the registry at</p>
+    <p>Font names stored within Draw file font table objects are mapped from RISC OS names to Windows names by the DLL DsFntMap.dll. This DLL creates and uses font mappings in the registry at</p>
 
     <p>
         <pre>HKEY_LOCAL_MACHINE\SOFTWARE\Dial Solutions Limited\DsFntMap\1.0\FontMap</pre>
@@ -1345,15 +1349,15 @@
 
     <h2 id="CopyrightExtra">Additional Copyright Information</h2>
 
-    <h4>Portions Copyright © 1994-2005 Dial Solutions. All rights reserved.</h4>
+    <h4>Portions Copyright &copy; 1994-2005 Dial Solutions. All rights reserved.</h4>
     <p>Draw file rendering code.</p>
 
     <hr />
 
-    <h4>Portions Copyright © 2012-2020 Stuart Swales</h4>
+    <h4>Portions Copyright &copy; 2012-2020 Stuart Swales</h4>
     <p>Reporter interface code.</p>
 
-    <h4>Portions Copyright © 2014-2020 Stuart Swales</h4>
+    <h4>Portions Copyright &copy; 2014-2020 Stuart Swales</h4>
     <p>
         Logical spreadsheet functions;<br />
         Paired statistics spreadsheet functions;<br />
@@ -1364,7 +1368,7 @@
 
     <hr />
 
-    <h4>Portions Copyright © 1993 by Sun Microsystems, Inc. All rights reserved</h4>
+    <h4>Portions Copyright &copy; 1993 by Sun Microsystems, Inc. All rights reserved</h4>
     <p>
         Bessel Jn, Yn functions;<br />
         error function;<br />
@@ -1381,8 +1385,8 @@
     <hr />
 
     <h4>
-        Portions Copyright © 2007, 2008, 2009 Mutsuo Saito, Makoto Matsumoto and Hiroshima University.<br />
-        Copyright © 2011, 2002 Mutsuo Saito, Makoto Matsumoto, Hiroshima University and The University of Tokyo.<br />
+        Portions Copyright &copy; 2007, 2008, 2009 Mutsuo Saito, Makoto Matsumoto and Hiroshima University.<br />
+        Copyright &copy; 2011, 2002 Mutsuo Saito, Makoto Matsumoto, Hiroshima University and The University of Tokyo.<br />
         All rights reserved.
     </h4>
     <p>Double precision Fast Mersenne Twister (random number generator code).</p>
@@ -1453,7 +1457,7 @@
 
     <h3>Trademarks</h3>
 
-    <p>Microsoft, Windows and Windows Vista are either registered trademarks or trademarks of Microsoft Corporation in the United States and/or other countries.</p>
+    <p>Microsoft, Windows and Windows Vista are either registered trademarks or trademarks of Microsoft Corporation in the United States and/or other countries.</p>
 
     <p>The Unicode Word Mark is a trademark of Unicode, Inc.</p>
 

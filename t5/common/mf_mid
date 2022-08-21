@@ -12,10 +12,10 @@
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
 TEXTUAL_VERSION_NUMBER=2.24
-TEXTUAL_VERSION_NUMBER=2.24.06
+TEXTUAL_VERSION_NUMBER=2.24.07
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=22406
+STUBS_VERSION_NUMBER=22407
 # when changing version number for release, remember:
 #   common.mf_mid
 #   ob_skel.resource.xx.msg

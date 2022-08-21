@@ -21,11 +21,11 @@ internal functions
 
 PROC_BSEARCH_PROTO(static, proc_compare_custom_def, EV_CUSTOM, EV_CUSTOM);
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_custom_def);
+PROC_ELEMENT_IS_DELETED_PROTO(static, custom_def_is_deleted);
 
 PROC_BSEARCH_PROTO(static, proc_compare_name_def, EV_NAME, EV_NAME);
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_name_def);
+PROC_ELEMENT_IS_DELETED_PROTO(static, name_def_is_deleted);
 
 /*
 resource lists
@@ -74,11 +74,11 @@ name_set_def(
 
 /******************************************************************************
 *
-* lookup custom id in custom table
+* lookup custom id in custom function definition table
 *
 * --out--
-* <0  custom not in table
-* >=0 entry number of custom
+* <0  custom function not in definition table
+* >=0 entry number of custom function
 *
 ******************************************************************************/
 
@@ -96,7 +96,7 @@ custom_def_from_handle(
 
     if(array_elements(&custom_def_deptable.h_table))
     {
-        P_EV_CUSTOM p_ev_custom = (P_EV_CUSTOM)
+        const PC_EV_CUSTOM p_ev_custom = (PC_EV_CUSTOM)
             bsearch(&temp, array_basec(&custom_def_deptable.h_table, EV_CUSTOM), (U32) custom_def_deptable.sorted, sizeof(EV_CUSTOM), proc_compare_custom_def);
 
         if(NULL != p_ev_custom)
@@ -108,20 +108,20 @@ custom_def_from_handle(
 
 /******************************************************************************
 *
-* sort custom definition table
+* sort custom function definition table
 *
 ******************************************************************************/
 
 static inline void
 custom_list_sort_checkuse(void)
 {
-    /* check through custom table to see if the deletion of
+    /* check through custom function definition table to see if the deletion of
      * a custom use has rendered the definition record useless
      */
-    const ARRAY_INDEX n_elements = array_elements(&custom_def_deptable.h_table);
+    const ARRAY_INDEX custom_table_elements = array_elements(&custom_def_deptable.h_table);
     ARRAY_INDEX custom_num;
 
-    for(custom_num = 0; custom_num < n_elements; ++custom_num)
+    for(custom_num = 0; custom_num < custom_table_elements; ++custom_num)
     {
         const P_EV_CUSTOM p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
@@ -137,9 +137,9 @@ custom_list_sort_checkuse(void)
             trace_1(TRACE_MODULE_EVAL, TEXT("custom_list_sort deleting undefined custom: %s"), report_ustr(ustr_bptr(p_ev_custom->ustr_custom_id)));
 
             {
-            P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
+            const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
 
-            if(P_DATA_NONE != p_ss_doc)
+            if(P_SS_DOC_NONE != p_ss_doc)
                 p_ss_doc->custom_ref_count -= 1;
             } /*block*/
 
@@ -158,7 +158,11 @@ custom_list_sort(void)
     if(custom_def_deptable.flags.checkuse /* && !custom_def_deptable.flags.delhold */) /* SKS -delhold 08aug2015 as unused in Fz */
         custom_list_sort_checkuse();
 
-    tree_sort(&custom_def_deptable, proc_deleted_custom_def, proc_compare_custom_def);
+    consume_bool(tree_sort(&custom_def_deptable, custom_def_is_deleted, proc_compare_custom_def));
+
+    trace_2(TRACE_APP_MEMORY_USE,
+            TEXT("custom definition table is: ") U32_TFMT TEXT(" elements") U32_TFMT TEXT(" bytes"),
+            array_elements32(&custom_def_deptable.h_table), array_size32(&custom_def_deptable.h_table) * array_element_size32(&custom_def_deptable.h_table));
 }
 
 /******************************************************************************
@@ -212,9 +216,9 @@ ensure_custom_in_list(
     ustr_xstrkpy(ustr_bptr(p_ev_custom->ustr_custom_id), sizeof32(p_ev_custom->ustr_custom_id), ustr_custom_name);
 
     {
-    P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
+    const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
 
-    if(P_DATA_NONE != p_ss_doc)
+    if(P_SS_DOC_NONE != p_ss_doc)
         p_ss_doc->custom_ref_count += 1;
     } /*block*/
 
@@ -250,8 +254,6 @@ ensure_name_in_list(
     if(NULL == (p_ev_name = al_array_extend_by(&name_def_deptable.h_table, EV_NAME, 1, &array_init_block, &status)))
         return(status);
 
-    name_num = array_indexof_element(&name_def_deptable.h_table, EV_NAME, p_ev_name);
-
     p_ev_name->handle = next_name_handle++;
     p_ev_name->owner.docno = EV_DOCNO_PACK(owner_ev_docno);
     /* col, row need to be large enough not to be caught by accident */
@@ -266,13 +268,13 @@ ensure_name_in_list(
     } /*block*/
 
     {
-    P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
+    const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
 
-    if(P_DATA_NONE != p_ss_doc)
+    if(P_SS_DOC_NONE != p_ss_doc)
         p_ss_doc->name_ref_count += 1;
     } /*block*/
 
-    return(name_num);
+    return(array_indexof_element(&name_def_deptable.h_table, EV_NAME, p_ev_name));
 }
 
 #if defined(UNUSED)
@@ -332,9 +334,9 @@ ev_name_make(
 
     if(undefine)
     {
-        EV_HANDLE name_num;
+        EV_HANDLE name_num = find_name_in_list(ev_docno, ustr_name_id);
 
-        if((name_num = find_name_in_list(ev_docno, ustr_name_id)) >= 0)
+        if(name_num >= 0)
         {
             const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
             ev_todo_add_name_dependents(p_ev_name->handle);
@@ -386,7 +388,7 @@ ev_name_make(
 
 /******************************************************************************
 *
-* search internal resource list for a custom
+* search internal resource list for a custom function
 *
 * --out--
 * <0  custom not found
@@ -401,8 +403,8 @@ find_custom_in_list(
     _In_z_      PC_USTR ustr_custom_name)
 {
     const ARRAY_INDEX n_elements = array_elements(&custom_def_deptable.h_table);
-    P_EV_CUSTOM p_ev_custom = array_range(&custom_def_deptable.h_table, EV_CUSTOM, 0, n_elements);
     ARRAY_INDEX i;
+    PC_EV_CUSTOM p_ev_custom = array_rangec(&custom_def_deptable.h_table, EV_CUSTOM, 0, n_elements);
 
     for(i = 0; i < n_elements; ++i, ++p_ev_custom)
     {
@@ -436,8 +438,8 @@ find_name_in_list(
     _In_z_      PC_USTR ustr_name)
 {
     const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
-    PC_EV_NAME p_ev_name = array_rangec(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
     ARRAY_INDEX i;
+    PC_EV_NAME p_ev_name = array_rangec(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
 
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
     {
@@ -461,7 +463,7 @@ find_name_in_list(
 ******************************************************************************/
 
 static void
-nam_ref_count_update(
+name_ref_count_update(
     _InRef_     PC_EV_NAME p_ev_name,
     _InVal_     S32 update)
 {
@@ -469,13 +471,14 @@ nam_ref_count_update(
     {
     case DATA_ID_SLR:
         {
-        P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->def_data.arg.slr));
+        const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->def_data.arg.slr));
 
-        if(P_DATA_NONE != p_ss_doc)
+        PTR_ASSERT(p_ss_doc);
+        if(P_SS_DOC_NONE != p_ss_doc)
         {
             p_ss_doc->name_ref_count += update;
             trace_2(TRACE_MODULE_EVAL,
-                    TEXT("nam_ref_count_update docno: ") U32_TFMT TEXT(", ref now: ") S32_TFMT,
+                    TEXT("name_ref_count_update docno: ") U32_TFMT TEXT(", ref now: ") S32_TFMT,
                     (U32) ev_slr_docno(&p_ev_name->def_data.arg.slr), p_ss_doc->name_ref_count);
         }
 
@@ -484,13 +487,14 @@ nam_ref_count_update(
 
     case DATA_ID_RANGE:
         {
-        P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->def_data.arg.range.s));
+        const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->def_data.arg.range.s));
 
-        if(P_DATA_NONE != p_ss_doc)
+        PTR_ASSERT(p_ss_doc);
+        if(P_SS_DOC_NONE != p_ss_doc)
         {
             p_ss_doc->name_ref_count += update;
             trace_2(TRACE_MODULE_EVAL,
-                    TEXT("nam_ref_count_update docno: ") U32_TFMT TEXT(", ref now: ") S32_TFMT,
+                    TEXT("name_ref_count_update docno: ") U32_TFMT TEXT(", ref now: ") S32_TFMT,
                     (U32) ev_slr_docno(&p_ev_name->def_data.arg.range.s), p_ss_doc->name_ref_count);
         }
 
@@ -501,7 +505,7 @@ nam_ref_count_update(
 
 /******************************************************************************
 *
-* lookup id in named resource table
+* lookup id in names definition table
 *
 * --out--
 * <0  name not in table
@@ -543,7 +547,7 @@ extern void
 name_free_resources(
     _InoutRef_  P_EV_NAME p_ev_name)
 {
-    nam_ref_count_update(p_ev_name, -1);
+    name_ref_count_update(p_ev_name, -1);
     ss_data_free_resources(&p_ev_name->def_data);
     ustr_clr(&p_ev_name->ustr_description);
     ss_data_set_blank(&p_ev_name->def_data);
@@ -558,7 +562,7 @@ name_free_resources(
 static inline void
 name_list_sort_checkuse(void)
 {
-    /* check through name table to see if the deletion of
+    /* check through name definition table to see if the deletion of
      * a name use has rendered the definition record useless
      */
     const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
@@ -577,16 +581,16 @@ name_list_sort_checkuse(void)
 
         if( (search_for_name_use(p_ev_name->handle) < 0)
             &&
-            !ev_tell_name_clients(p_ev_name->handle, FALSE /* changed */))
+            !ev_tell_name_clients(p_ev_name->handle, FALSE /* changed */) )
         {
             trace_1(TRACE_MODULE_EVAL, TEXT("name_list_sort deleting undefined name: %s"), report_ustr(ustr_bptr(p_ev_name->ustr_name_id)));
 
             name_free_resources(p_ev_name);
 
             {
-            P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
+            const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
 
-            if(P_DATA_NONE != p_ss_doc)
+            if(P_SS_DOC_NONE != p_ss_doc)
                 p_ss_doc->name_ref_count -= 1;
             } /*block*/
 
@@ -605,7 +609,11 @@ name_list_sort(void)
     if(name_def_deptable.flags.checkuse /* && !name_def_deptable.flags.delhold */) /* SKS -delhold 08aug2015 as unused in Fz */
         name_list_sort_checkuse();
 
-    tree_sort(&name_def_deptable, proc_deleted_name_def, proc_compare_name_def);
+    consume_bool(tree_sort(&name_def_deptable, name_def_is_deleted, proc_compare_name_def));
+
+    trace_2(TRACE_APP_MEMORY_USE,
+            TEXT("name definition table is: ") U32_TFMT TEXT(" elements") U32_TFMT TEXT(" bytes"),
+            array_elements32(&name_def_deptable.h_table), array_size32(&name_def_deptable.h_table) * array_element_size32(&name_def_deptable.h_table));
 }
 
 /******************************************************************************
@@ -642,8 +650,10 @@ name_make(
         const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
         name_free_resources(p_ev_name);
+
         name_set_def(p_ev_name, p_ss_data_in, 0);
-        nam_ref_count_update(p_ev_name, 1);
+
+        name_ref_count_update(p_ev_name, 1);
 
         if(NULL != ustr_description)
             status_assert(res = ustr_set(&p_ev_name->ustr_description, ustr_description));
@@ -676,13 +686,15 @@ PROC_BSEARCH_PROTO(static, proc_compare_custom_def, EV_CUSTOM, EV_CUSTOM)
 
 /******************************************************************************
 *
-* return flag saying whether entry* is deleted for aligator garbage collection
+* return flag saying whether entry is deleted for aligator garbage collection
 *
 ******************************************************************************/
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_custom_def)
+PROC_ELEMENT_IS_DELETED_PROTO(static, custom_def_is_deleted)
 {
-    return(((PC_EV_CUSTOM) p_any)->flags.to_be_deleted);
+    const PC_EV_CUSTOM p_ev_custom = (PC_EV_CUSTOM) p_any;
+
+    return(p_ev_custom->flags.to_be_deleted);
 }
 
 /******************************************************************************
@@ -708,9 +720,11 @@ PROC_BSEARCH_PROTO(static, proc_compare_name_def, EV_NAME, EV_NAME)
 *
 ******************************************************************************/
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_name_def)
+PROC_ELEMENT_IS_DELETED_PROTO(static, name_def_is_deleted)
 {
-    return(((PC_EV_NAME) p_any)->flags.to_be_deleted);
+    const PC_EV_NAME p_ev_name = (PC_EV_NAME) p_any;
+
+    return(p_ev_name->flags.to_be_deleted);
 }
 
 /* end of ev_name.c */

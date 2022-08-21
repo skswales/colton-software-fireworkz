@@ -3793,6 +3793,15 @@
     <None Include="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm">
       <Filter>Docs\UserGuide\ug\ug90</Filter>
     </None>
+    <None Include="..\..\..\docs\GSGuide\riscos\.htaccess">
+      <Filter>Docs\RISC OS\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\.htaccess">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\.htaccess">
+      <Filter>Docs\UserGuide</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\firewrkz\resource\windows\Neutral\banner.bmp">

@@ -8,7 +8,7 @@
 
 | !!! ENSURE EVERYTHING IS CHECKED IN FIRST !!!
 
-Set t5$Release 20200322
+Set t5$Release 20200503
 | Remember to update RiscPkg.Control too
 
 Set t5$Disc $.Temp.Fire.FzManuals_<t5$Release>

@@ -18,10 +18,15 @@
 </head>
 
 <body>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!-- Copyright (C) 1992-1998 Colton Software Limited,
+   - Copyright (C) 1998-2015 R W Colton -->
 <!--
     *** Do not reformat - this is a dump straight from the Drupal CMS ***
 -->
-<p><strong>This is the full merged release history of Fireworkz (both RISC OS and Windows) and Fireworkz Pro (from Drupal)</strong></p>
+<p><strong>This is the full merged release history of Fireworkz (both RISC OS and Windows) and Fireworkz Pro (from Drupal)</strong></p>
 <p><strong>2.10 (25 Jun 2016)</strong></p>
 <p>Spreadsheet functions that take date parameters have been extended to accept numeric input. If a number is supplied where a date is required, it is treated as an Microsoft Excel-compatible serial number and converted to a date value. This allows data sets containing such numeric values to be more easily processed in Fireworkz.</p>
 <p>Read-only files are locked against editing; to edit a read-only file it must first be saved with a different file name.</p>
@@ -31,30 +36,30 @@
 <p>Greatly improved click selection of objects in charts; more refined tests are applied if the simple object bounding box is hit.</p>
 <p>JPEG files inserted into charts now render correctly.</p>
 <p>Resizing charts and pictures shows the zoom factor being applied.</p>
-<p>Supports loading of Poster and Vector (RISC OS) image files.</p>
+<p>Supports loading of Poster and Vector (RISC OS) image files.</p>
 <p>ImageFileEmbedded construct added to handle loading/saving non-native / original format image files in addition to a more portable Draw file representation.</p>
 <p>Fixes for note unpinning / repinning.</p>
 <p>Fixes for note saving - compatibility for older readers.</p>
 <p>Note saving - where the original image file data is available (and is of type other than Draw file) this will be listed as the default option.</p>
 <p>Fix where inserting multiple copies of the same referenced picture could lead to them not being displayed until the document was reloaded.</p>
-<p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not used to populate the style in the Effects dialogue box.</p>
+<p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not used to populate the style in the Effects dialogue box.</p>
 <p>Improved sizing and alignment of UI elements in several dialogue boxes.</p>
 <p>Several OK buttons in dialogue boxes replaced with Insert buttons (e.g. for Insert field).</p>
 <p>Any errors when saving a user's Choices file will now delete that file: this avoids malformed Choices files preventing startup.</p>
 <p>Removed support for ancient 'Integrale' format spell check dictionaries.</p>
 <p>Template Text and Number styles updated to have an appropriate New Object attribute.</p>
 <p>Templates now use separate Header and Footer styles rather than a combined BaseHeadFoot style.</p>
-<p>Fireworkz Pro: Grey out 'Cols' label in Database Layout dialogue box when Card is selected.</p>
-<p>RISC OS: Fixed bug which always mapped Shift+Select clicks as Adjust clicks and restored several Ctrl+Select clicks as mapping to Adjust clicks as documented.</p>
-<p>RISC OS: Fixed bug which prevented menus from having dashed-line separators.</p>
-<p>RISC OS: Uses DejaVuSans.Mono 12pt (if it is available) as the font for formula line text.</p>
-<p>RISC OS: Improved high-res sprites for toolbar buttons and Thin line style.</p>
-<p>RISC OS: Uses coloured Formula Enter (tick) and Formula Cancel (cross) toolbar buttons.</p>
-<p>RISC OS: Tweaked appearance of Make Constant and Function Selector buttons.</p>
-<p>RISC OS: Disabled toolbar buttons rendered on normal background rather than white (less intrusive effect).</p>
-<p>RISC OS: Changed the appearance of writeable field borders to more be consistent with RISC OS Style Guide Issue 3.</p>
-<p>RISC OS: Uses ChangeFSI, if available, to convert a much wider range of image file formats. On machines where the OS is not shadowed in RAM, you can improve ChangeFSI's performance by first typing '*RMFaster BASIC'.</p>
-<p>RISC OS: Scrap files (for both file loading and image conversion) are created in the &lt;Wimp$ScrapDir&gt;.Fireworkz directory.</p>
+<p>Fireworkz Pro: Grey out 'Cols' label in Database Layout dialogue box when Card is selected.</p>
+<p>RISC OS: Fixed bug which always mapped Shift+Select clicks as Adjust clicks and restored several Ctrl+Select clicks as mapping to Adjust clicks as documented.</p>
+<p>RISC OS: Fixed bug which prevented menus from having dashed-line separators.</p>
+<p>RISC OS: Uses DejaVuSans.Mono 12pt (if it is available) as the font for formula line text.</p>
+<p>RISC OS: Improved high-res sprites for toolbar buttons and Thin line style.</p>
+<p>RISC OS: Uses coloured Formula Enter (tick) and Formula Cancel (cross) toolbar buttons.</p>
+<p>RISC OS: Tweaked appearance of Make Constant and Function Selector buttons.</p>
+<p>RISC OS: Disabled toolbar buttons rendered on normal background rather than white (less intrusive effect).</p>
+<p>RISC OS: Changed the appearance of writeable field borders to more be consistent with RISC OS Style Guide Issue 3.</p>
+<p>RISC OS: Uses ChangeFSI, if available, to convert a much wider range of image file formats. On machines where the OS is not shadowed in RAM, you can improve ChangeFSI's performance by first typing '*RMFaster BASIC'.</p>
+<p>RISC OS: Scrap files (for both file loading and image conversion) are created in the &lt;Wimp$ScrapDir&gt;.Fireworkz directory.</p>
 <p>Windows: File Open dialogue box may be used to open multiple files at once; use Ctrl-click to select more than one file.</p>
 <p>Windows: Open as read-only option is now present in File Open dialogue box.</p>
 <p>Windows: Dialogue box captions are Appropriately Capitalised.</p>
@@ -64,11 +69,11 @@
 <p>Windows: Toolbar buttons are rendered using current theme if possible. Disabled toolbar buttons are rendered dimmed using alpha blending. When themes are active, the theme separator is rendered rather than just leaving the space blank.</p>
 <p>Windows: Dialogue box owner-draw buttons are rendered using current theme if possible; if not, they are always framed using DrawFrameControl (previously the frame could disappear leading to confusion).</p>
 <p>Windows: Dialogue box owner-draw buttons are slightly larger than before.</p>
-<p>Windows: Colour dialogue box custom colours are initially populated with RISC OS Window Manager sixteen default colours for convenience.</p>
+<p>Windows: Colour dialogue box custom colours are initially populated with RISC OS Window Manager sixteen default colours for convenience.</p>
 <p>Windows: Dictionary dialogue box list was too large and had internal scroll bar.</p>
 <p>Windows: As JPEG files inserted into Drawfiles do not render on Windows, when you insert them into charts on Windows they are first transformed to Windows BMP.</p>
 <p>Windows: Uses GDI+ to handle a much wider range of image file formats.</p>
-<p>Windows: Windows 2000 Professional is no longer supported.</p>
+<p>Windows: Windows 2000 Professional is no longer supported.</p>
 <p><strong>Date spreadsheet functions added:</strong></p>
 <p>EDATE(),<br />
 EOMONTH()</p>
@@ -86,19 +91,19 @@ EOMONTH()</p>
 <p>Fix for inline sequence size change perturbing style applications.</p>
 <p><strong><em>This is a critical backwards compatibility fix for all users.</em></strong></p>
 <p>Any documents created or modified in 2.00.00 or 2.00.01 that contain text with style/effect applications after inline sequences (e.g. Insert date, Tab, Unicode) may need to have bits of style edited off with the region editor or reapplied. </p>
-<p>RISC OS: No longer offers Microsoft Excel as an export format (non-Pro).</p>
+<p>RISC OS: No longer offers Microsoft Excel as an export format (non-Pro).</p>
 <p><strong>2.00.01 (05 Nov 2015)</strong></p>
 <p>Fixed another error in null event handling for row formatting.</p>
-<p>RISC OS: Fix for styles in text when exported as Draw file.</p>
+<p>RISC OS: Fix for styles in text when exported as Draw file.</p>
 <p><strong>2.00 (20 Oct 2015)</strong></p>
-<p><strong>Fireworkz Pro</strong></p>
+<p><strong>Fireworkz Pro</strong></p>
 <p>Microsoft Excel export (as binary file format) module provided. This currently supports export in BIFF5 format, wrapped as a compound document as per Microsoft Excel 97.</p>
 <p>The Fireworkz AND (&amp;), NOT (!) and OR (|) logical operators are translated to the equivalent Microsoft Excel functions when exporting as BIFF.</p>
-<p>HTML help is supplied fully expanded within !Fireworkz rather than as a ZIP archive, so SparkFS is no longer needed at run-time. Note that this requires you to install Fireworkz Pro on a long filenames capable filing system.</p>
-<p>Correct Fireworkz Pro icon used in !SpritesR5.</p>
-<p>Pinboard icon in !SpritesR5 updated for RISC OS 5 style.</p>
-<p>Pinboard icon in !Sprites22 and !SpritesR4 updated for RISC OS 4 style.</p>
-<p>Dynamic area (if used) is labelled as Fireworkz Pro workspace.</p>
+<p>HTML help is supplied fully expanded within !Fireworkz rather than as a ZIP archive, so SparkFS is no longer needed at run-time. Note that this requires you to install Fireworkz Pro on a long filenames capable filing system.</p>
+<p>Correct Fireworkz Pro icon used in !SpritesR5.</p>
+<p>Pinboard icon in !SpritesR5 updated for RISC OS 5 style.</p>
+<p>Pinboard icon in !Sprites22 and !SpritesR4 updated for RISC OS 4 style.</p>
+<p>Dynamic area (if used) is labelled as Fireworkz Pro workspace.</p>
 <p>Value list box popup menu width dynamically sized using desktop font metrics.</p>
 <p><strong>New spreadsheet functions</strong></p>
 <p>A large number of spreadsheet functions have been implemented in Fireworkz to assist Microsoft Excel file loading, most of which are useful additions in any case.</p>
@@ -330,9 +335,9 @@ If the row size is zero, the whole of the specified column(s) beginning at the g
 <p><strong>Keyboard shortcuts</strong></p>
 <p>Ctrl+A keyboard shortcut added to select whole document / header / footer.</p>
 <p>Insert file modification time (Ctrl+T) and Insert time (Ctrl+Shift+T) commands added.</p>
-<p>Insert Row / Delete Row operations changed from F7 &amp; F8 to Ctrl+F7 &amp; Ctrl+F8 to avoid unfortunate clash with the expected Undo function on RISC OS. These may be changed back trivially by editing the Config file to remove the '^' prefixes.</p>
-<p>RISC OS: <strong>IMPORTANT!</strong> Ctrl+K is now mapped to the Delete menu entry (used to be spell check).</p>
-<p>Windows: Ctrl+K is no longer mapped to the Spell check menu entry (consistency with RISC OS key mapping).</p>
+<p>Insert Row / Delete Row operations changed from F7 &amp; F8 to Ctrl+F7 &amp; Ctrl+F8 to avoid unfortunate clash with the expected Undo function on RISC OS. These may be changed back trivially by editing the Config file to remove the '^' prefixes.</p>
+<p>RISC OS: <strong>IMPORTANT!</strong> Ctrl+K is now mapped to the Delete menu entry (used to be spell check).</p>
+<p>Windows: Ctrl+K is no longer mapped to the Spell check menu entry (consistency with RISC OS key mapping).</p>
 <p><strong>Menus</strong></p>
 <p>Edit &gt; Change case sub-menu has UPPER-CASE, lower-case, Initial Caps and Swap Case entries. These replace the Case dialogue box.</p>
 <p>Inserts sub-menu moved from the Extra menu to the (more logical) Edit menu and renamed as Insert field.</p>
@@ -345,16 +350,16 @@ If the row size is zero, the whole of the specified column(s) beginning at the g
 <p>Added Cancel button to New Style dialogue box.</p>
 <p>Buttons reordered in Style dialogue box. Default button is now Change (was Apply) as this is less destructive on accidental double-click.</p>
 <p>Select template dialogue box now discriminates between usage as 'New document' and 'Select template' for inserted files.</p>
-<p>RISC OS: Use DejaVuSans.Mono for edit and combo box controls if it is available.</p>
-<p>RISC OS: Colour... buttons in style / chart dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
-<p>RISC OS: Radio buttons and check box sizing and positioning adjusted to avoid truncation of text at right-hand side of icons.</p>
-<p>RISC OS: Slightly less top margin in grouped items in dialogue boxes.</p>
-<p>RISC OS: Window Manager text,sprite,indirect icon used to render group box caption better when there is a textured background.</p>
-<p>RISC OS: Changed Window Manager icon styles to allow rounded corners on group box outlines and info fields where this is applicable.</p>
-<p>RISC OS: Changed writable field (used in edit, bump and combo dialogue box controls) visual style to be less fancy.</p>
-<p>RISC OS: Changed writable field height to 60 OS units - the RISC OS Style Guide's suggested 68 OS units is way too tall.</p>
-<p>RISC OS: Writable field validation for Save dialogue boxes allows all C1 control characters (&amp;80..&amp;9F).</p>
-<p>RISC OS: Error handling uses newer Window Manager styles on RISC OS 3.5 and later.</p>
+<p>RISC OS: Use DejaVuSans.Mono for edit and combo box controls if it is available.</p>
+<p>RISC OS: Colour... buttons in style / chart dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
+<p>RISC OS: Radio buttons and check box sizing and positioning adjusted to avoid truncation of text at right-hand side of icons.</p>
+<p>RISC OS: Slightly less top margin in grouped items in dialogue boxes.</p>
+<p>RISC OS: Window Manager text,sprite,indirect icon used to render group box caption better when there is a textured background.</p>
+<p>RISC OS: Changed Window Manager icon styles to allow rounded corners on group box outlines and info fields where this is applicable.</p>
+<p>RISC OS: Changed writable field (used in edit, bump and combo dialogue box controls) visual style to be less fancy.</p>
+<p>RISC OS: Changed writable field height to 60 OS units - the RISC OS Style Guide's suggested 68 OS units is way too tall.</p>
+<p>RISC OS: Writable field validation for Save dialogue boxes allows all C1 control characters (&amp;80..&amp;9F).</p>
+<p>RISC OS: Error handling uses newer Window Manager styles on RISC OS 3.5 and later.</p>
 <p>Windows: Open File dialogue box warns about trying to open ZIP files.</p>
 <p>Windows: Initial Open File dialogue box is now the same style as subsequent ones.</p>
 <p>Windows: Save As uses file type selected by the combo box dropdown, not that typed by the user, which may be deliberately different.</p>
@@ -363,7 +368,7 @@ If the row size is zero, the whole of the specified column(s) beginning at the g
 <p>Alternate formula style choice is applied when displaying the Functions menu, editing in the formula line and for cells in custom function documents.</p>
 <p>Cell content is no longer clipped by borders when these are not drawn, allowing the use of narrower cell margins.</p>
 <p>Current cell style in Sheet-based templates is now a thin dark grey grid outline (was thick black border) with a paler grey background.</p>
-<p>The new user choices file (ChoicesDoc) can supply style updates such as Update.Current cell. These styles are applied to all loaded documents, updating any corresponding style definitions, when the Update styles from choices option is set in the Choices dialogue box.</p>
+<p>The new user choices file (ChoicesDoc) can supply style updates such as Update.Current cell. These styles are applied to all loaded documents, updating any corresponding style definitions, when the Update styles from choices option is set in the Choices dialogue box.</p>
 <p>Current cell style in old files may be individually refined using the CurCell200 template supplied in the Styles directory of the Fireworkz Examples.</p>
 <p>The user interface style is more configurable: a new user choices file (ChoicesDoc) is loaded immediately after the Config file (remaining hidden) and contains styles which control many aspects of the appearance of the UI.</p>
 <ul><li>UI.Base: The base style that supplies defaults which may be overriden by ones from a more appropriate context</li>
@@ -375,10 +380,10 @@ If the row size is zero, the whole of the specified column(s) beginning at the g
 <p>Position and size of objects in note layer are given when dragging / resizing.</p>
 <p>More responsive toolbar updates.</p>
 <p>&lt;FieldN&gt; is displayed in documents with mailshot fields when no source document is selected.</p>
-<p>RISC OS: You can now use ADJUST on Fill down / Fill right toolbar buttons to Fill up / Fill left.</p>
-<p>RISC OS: File icons updated for RISC OS 4 style (bottom tab).</p>
-<p>RISC OS: Splash screen creates a window in which to render object. Pressing a key will terminate the splash screen early, as does clicking in the window.</p>
-<p>RISC OS: Improved appearance of ruler markers in high-res modes.</p>
+<p>RISC OS: You can now use ADJUST on Fill down / Fill right toolbar buttons to Fill up / Fill left.</p>
+<p>RISC OS: File icons updated for RISC OS 4 style (bottom tab).</p>
+<p>RISC OS: Splash screen creates a window in which to render object. Pressing a key will terminate the splash screen early, as does clicking in the window.</p>
+<p>RISC OS: Improved appearance of ruler markers in high-res modes.</p>
 <p>Windows: Toolbar buttons show info using Windows tool tips.</p>
 <p>Windows: You can now use right-click on Fill down / Fill right toolbar buttons to Fill up / Fill left.</p>
 <p>Windows: Now displays graphical 'About this program' (same as splash screen) rather than dialogue box.</p>
@@ -388,45 +393,45 @@ If the row size is zero, the whole of the specified column(s) beginning at the g
 <p>Windows: Improved initial size of imported JPEGs.</p>
 <p>Windows: Note layer now uses Windows clipboard.</p>
 <p>Windows: Reinstated process status window.</p>
-<p>Windows: Improved palette for 256 colour modes to include all RISC OS Window Manager colours and better greyscale.</p>
+<p>Windows: Improved palette for 256 colour modes to include all RISC OS Window Manager colours and better greyscale.</p>
 <p>Windows: ChoicesDoc file supplies UI.FormulaLine style which determines typeface and size used in the formula line.</p>
 <p><strong>Other enhancements</strong></p>
 <p>Fireworkz (non-Pro) issues a warning when loading documents containing database tables.</p>
 <p>New Fireworkz internal inline sequence (here termed U:XXXX) added to support Unicode characters that are imported from foreign file formats that are outside the Latin-N range in text cells. This inline sequence consists of a wrapped fragment of UTF-8. These inline sequences are currently ignored by spreadsheet functions.</p>
 <p>{U:XXXX} construct added to support loading and saving of the corresponding internal UTF-8 inline sequence.</p>
 <p>Choices supplied now use the much faster Load text as paragraphs option for plain text.</p>
-<p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not saved to the clipboard on Copy / Cut. This avoids polluting Letter-based documents with a Current cell style when copying via the clipboard.</p>
+<p>Styles that are only used in Upper regions (i.e. ones that are not printed, e.g. Current cell) are not saved to the clipboard on Copy / Cut. This avoids polluting Letter-based documents with a Current cell style when copying via the clipboard.</p>
 <p>Column and row headings now print using fonts.</p>
 <p>Charts are created with thin Chart border lines and mid-grey Plot Area border lines.</p>
-<p>Handles files having DrawFileEmbedded or DrawFileReference with no type field set as containing Draw files (type field RISC OS).</p>
+<p>Handles files having DrawFileEmbedded or DrawFileReference with no type field set as containing Draw files (type field RISC OS).</p>
 <p>Some JPEG/JFIF files (e.g. with thumbnail pictures) were not being automatically detected as such.</p>
 <p>Windows: Windows clipboard handling re-written to better support WM_RENDERALLFORMATS.</p>
 <p>Windows: Renders selection to all registered clipboard formats on document closing and on (non-urgent) application exit.</p>
 <p><strong>Other changes</strong></p>
-<p>Config file can use more easily recognisable three digit hexadecimal RISC OS file types.</p>
+<p>Config file can use more easily recognisable three digit hexadecimal RISC OS file types.</p>
 <p>Config file commands BorderTypeface, RulerTypeface and StatusLine-t have been withdrawn as they have been superseded.</p>
 <p>LoadOther and SaveOther commands renamed as LoadForeign and SaveForeign for source consistency.</p>
-<p>Fireworkz' inline identifier character changed to ASCII 21 (was ASCII 7). NB. This character value is not exposed in file data. This helps on RISC OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as ASCII 21 is the Font Manager Comment sequence lead-in byte and so is ignored rather than giving an Unhandled CtrlChar error.</p>
+<p>Fireworkz' inline identifier character changed to ASCII 21 (was ASCII 7). NB. This character value is not exposed in file data. This helps on RISC OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as ASCII 21 is the Font Manager Comment sequence lead-in byte and so is ignored rather than giving an Unhandled CtrlChar error.</p>
 <p>Normalised second-level message handlers to take message parameters even if they do not need all of them, which is often the case. Compilers generate much more efficient (and smaller) code and for the top-level handlers and so message passing within Fireworkz is far less cache-disruptive.</p>
 <p>Uses fast inline function to map internal document handles to the corresponding document structure.</p>
-<p><strong>RISC OS</strong></p>
-<p>RISC OS: U:XXXX inline sequences are rendered using fonts with the \EUTF8 encoding where this is possible, or as textual representations of the form [U+XXXX] where it is not.</p>
-<p>RISC OS: Additional value Alphabet-&lt;XXXX&gt; added to Version information in Fireworkz file if current alphabet is one of Latin1 / Latin2 / Latin3 / Latin4 / Latin9 to help file portability.</p>
-<p>RISC OS: PicConvert module updated with 32-bit compatible module flags and bug fix. This enables the automatic conversion of Windows bitmap files to Sprites.</p>
-<p>RISC OS: Filing systems on RISC OS 4 and up are assumed to have long filename support. This affects the name given to documents created by importing foreign files.</p>
-<p>RISC OS: Foreign file import no longer explicitly truncates document name to ten characters.</p>
-<p>RISC OS: Choices:Fireworkz. replaced by &lt;Choices$Write&gt;.Fireworkz. in the Fireworkz$Path variable. This should allow better resolution of custom function files.</p>
-<p>RISC OS: When loading supporting documents, such as custom function sheets, Fireworkz will first scan the path without any extension then, if needed, try again adding the extension suffix /fwk. This helps with cross-platform portability and centralised storage of supporting documents.</p>
-<p>RISC OS: Rationalised and improved handling of files with RISC OS file types DOS and Data, and also ones without any RISC OS file type.</p>
-<p>RISC OS: Fireworkz (non-Pro) no longer claims Recordz filetypes in its !Boot or when broadcast. They may still be dragged to the icon where the warning will be issued.</p>
-<p>RISC OS: Fireworkz will accept any foreign filetype when broadcast (e.g. double-clicked in the Filer) if it is currently set up with an Alias$@RunType_XXX that is set with !Fireworkz.!Run or (for DOS and Text files) has an /extension that maps to a handled file type.</p>
-<p>RISC OS: Removed Legal predefined paper size button.</p>
+<p><strong>RISC OS</strong></p>
+<p>RISC OS: U:XXXX inline sequences are rendered using fonts with the \EUTF8 encoding where this is possible, or as textual representations of the form [U+XXXX] where it is not.</p>
+<p>RISC OS: Additional value Alphabet-&lt;XXXX&gt; added to Version information in Fireworkz file if current alphabet is one of Latin1 / Latin2 / Latin3 / Latin4 / Latin9 to help file portability.</p>
+<p>RISC OS: PicConvert module updated with 32-bit compatible module flags and bug fix. This enables the automatic conversion of Windows bitmap files to Sprites.</p>
+<p>RISC OS: Filing systems on RISC OS 4 and up are assumed to have long filename support. This affects the name given to documents created by importing foreign files.</p>
+<p>RISC OS: Foreign file import no longer explicitly truncates document name to ten characters.</p>
+<p>RISC OS: Choices:Fireworkz. replaced by &lt;Choices$Write&gt;.Fireworkz. in the Fireworkz$Path variable. This should allow better resolution of custom function files.</p>
+<p>RISC OS: When loading supporting documents, such as custom function sheets, Fireworkz will first scan the path without any extension then, if needed, try again adding the extension suffix /fwk. This helps with cross-platform portability and centralised storage of supporting documents.</p>
+<p>RISC OS: Rationalised and improved handling of files with RISC OS file types DOS and Data, and also ones without any RISC OS file type.</p>
+<p>RISC OS: Fireworkz (non-Pro) no longer claims Recordz filetypes in its !Boot or when broadcast. They may still be dragged to the icon where the warning will be issued.</p>
+<p>RISC OS: Fireworkz will accept any foreign filetype when broadcast (e.g. double-clicked in the Filer) if it is currently set up with an Alias$@RunType_XXX that is set with !Fireworkz.!Run or (for DOS and Text files) has an /extension that maps to a handled file type.</p>
+<p>RISC OS: Removed Legal predefined paper size button.</p>
 <p><strong>Windows</strong></p>
 <p>Windows: Standard release build is now done on Windows 7 using Visual Studio 2013 Update 5 with the v120_xp platform toolset.</p>
 <p>Windows: U:XXXX inline sequences are translated to UTF-16 and rendered using the Wide Character API.</p>
 <p>Windows: Additional value Windows- added to Version information in Fireworkz file to help file portability, where  is the current Windows ANSI Code Page</p>
 <p>Windows: When loading supporting documents, such as custom function sheets, Fireworkz will first scan the path without using the .fwk extension then, if needed, try again without the extension. This helps with cross-platform portability and centralised storage of supporting documents.</p>
-<p>Windows: Updated templates in line with RISC OS ones (use of four-digit year).</p>
+<p>Windows: Updated templates in line with RISC OS ones (use of four-digit year).</p>
 <p><strong>Other fixes</strong></p>
 <p>AVG() and SUM() spreadsheet functions (also DAVG() and DSUM()) fixed: operating on extremely large ranges of individually small integers could eventually give an undetected integer overflow.</p>
 <p>Fixed an evaluator stack extension problem which could have given problems with large custom functions.</p>
@@ -438,12 +443,12 @@ If the row size is zero, the whole of the specified column(s) beginning at the g
 <p>Very large numbers formatted as X# (column name) could have crashed Fireworkz.</p>
 <p>Mailshot documents may now be closed in any order.</p>
 <p>Status line cleared at end of style region editing. It used to leave stale information, especially after deleting a region.</p>
-<p><strong>RISC OS</strong></p>
-<p>RISC OS: Code changes to avoid invalid instructions being emitted by the compiler in certain modules.</p>
-<p>RISC OS: ZPP fixes for dialogue box handling.</p>
-<p>RISC OS: Added some headroom for printing to fix some pretty weird printing error reports we've had over the years.</p>
-<p>RISC OS: Status line redraw fix for non-square pixel modes.</p>
-<p>RISC OS: Fixed exception when rendering toolbar in 16 colour modes on RISC OS 5.20.</p>
+<p><strong>RISC OS</strong></p>
+<p>RISC OS: Code changes to avoid invalid instructions being emitted by the compiler in certain modules.</p>
+<p>RISC OS: ZPP fixes for dialogue box handling.</p>
+<p>RISC OS: Added some headroom for printing to fix some pretty weird printing error reports we've had over the years.</p>
+<p>RISC OS: Status line redraw fix for non-square pixel modes.</p>
+<p>RISC OS: Fixed exception when rendering toolbar in 16 colour modes on RISC OS 5.20.</p>
 <p><strong>Windows</strong></p>
 <p>Windows: Added support for Windows-1252 'LATIN CAPITAL LETTER Z WITH CARON' and 'LATIN SMALL LETTER Z WITH CARON' characters.</p>
 <p>Windows: Windows-1252 'LATIN CAPITAL LETTER S WITH CARON', 'LATIN SMALL LETTER S WITH CARON', 'LATIN CAPITAL LIGATURE OE' and 'LATIN SMALL LIGATURE OE' characters now upper-case and lower-case correctly.</p>
@@ -536,23 +541,23 @@ If no delimiter character is specified, TAB is used to allow easy loading of TAB
 <p><strong>1.35/05 (07 Jun 2015)</strong></p>
 <p>Fix for importing Excel date cells with backslashes in the format string.</p>
 <p><strong>1.35/04 (27 Apr 2015)</strong></p>
-<p>RISC OS: Fix for Illegal window handle error message when opening menus after opening complex dialogue boxes as menus.</p>
+<p>RISC OS: Fix for Illegal window handle error message when opening menus after opening complex dialogue boxes as menus.</p>
 <p><strong>1.35/03 (16 Jan 2014)</strong></p>
-<p>RISC OS: Fixed crashing dialogue boxes on RISC OS 4.39 (Sprite Mode Word handling code was broken in 1.35/00).</p>
-<p>RISC OS: Uses RMEnsure FPEmulator 4.10 to ensure higher-precision FP operations.</p>
-<p>RISC OS: Use Boot$OSVersion in !Boot/!Run rather than one of own derivation.</p>
+<p>RISC OS: Fixed crashing dialogue boxes on RISC OS 4.39 (Sprite Mode Word handling code was broken in 1.35/00).</p>
+<p>RISC OS: Uses RMEnsure FPEmulator 4.10 to ensure higher-precision FP operations.</p>
+<p>RISC OS: Use Boot$OSVersion in !Boot/!Run rather than one of own derivation.</p>
 <p><strong>1.35/02 (07 Jan 2014)</strong></p>
 <p>Text files (and plain text from the Windows clipboard) loaded into non-Text cells in documents that are not based on the Letter template will attempt to load as TAB separated value (TSV) files.</p>
 <p>Windows: Removed UCD files from distribution (not needed for the non-UNICODE version).</p>
 <p><strong>1.35/01 (04 Jan 2014)</strong></p>
 <p>BREAK custom function control statement now works correctly again. It was inadvertently broken in 1.34/11.</p>
 <p>TAB separated value (TSV) files with fields containing commas now load more predictably.</p>
-<p>RISC OS: Reporter output is now disabled by default. It may be enabled by *Set Fireworkz$ReportEnable 1 before running the application.</p>
-<p>RISC OS: Fixed some errors in HTML Help.</p>
-<p>RISC OS: The HTML help file is now supplied as a ZIP archive with no compression for smaller downloads (whole file compression for program distribution is much better than individual file compression in the archive) and fast access.</p>
+<p>RISC OS: Reporter output is now disabled by default. It may be enabled by *Set Fireworkz$ReportEnable 1 before running the application.</p>
+<p>RISC OS: Fixed some errors in HTML Help.</p>
+<p>RISC OS: The HTML help file is now supplied as a ZIP archive with no compression for smaller downloads (whole file compression for program distribution is much better than individual file compression in the archive) and fast access.</p>
 <p><strong>1.35 (01 Jan 2014)</strong></p>
 <p>Repository converted to Subversion (from CVS).</p>
-<p>FontmapRemap command added. Used to translate erroneous occurrences of fonts found in Windows documents to the one found in RISC OS documents.</p>
+<p>FontmapRemap command added. Used to translate erroneous occurrences of fonts found in Windows documents to the one found in RISC OS documents.</p>
 <p>Saving a document as a Draw file now also exports any Draw files (including sprites and JPEGs) and charts present in the document.</p>
 <p>Fonts used in Draw files that are used as pictures / markers in charts now match up with existing fonts in the charts much better. It is now also possible to include Draw files that use text in a font that is otherwise unused in the chart: previously this would have mapped text in the included font to display using System font.</p>
 <p>Fixed ancient bug in chart module which could mask out-of-memory error.</p>
@@ -563,43 +568,43 @@ If no delimiter character is specified, TAB is used to allow easy loading of TAB
 <p>Pressing F1 in dialogue boxes will now display appropriate HTML Help wherever possible.</p>
 <p>Alert dialogue box was created with random processing bits and so could be unpredictable.</p>
 <p>Status line help for function arguments could sometimes leave this help in the status line.</p>
-<p>Fireworkz Pro: Exported Draw files from charts now have correct FireworkzPro creator name.</p>
-<p>Fireworkz Pro: Buffer overflow in DPlib call to obtain text filetype for RISC OS filetype.</p>
-<p>RISC OS: Selected items in charts now render EORed better using red dashed line in greater than 16 colour modes.</p>
-<p>RISC OS: Use tboxlibs' flex module for deferred compaction.</p>
-<p>RISC OS: Shift-click on the application icon will open the Choices:Fireworkz directory, in which you can find sub-directories containing the user-created Templates and Choices (amongst others) that are used by the application.</p>
-<p>RISC OS: Application now registers the list of messages in which it is interested with the Window Manager (helps overall RISC OS Desktop efficiency).</p>
-<p>RISC OS: Application now responds to the Desktop Critical Shutdown message (e.g. on power failure), saving all modified documents without prompting. Error reporting to screen is suppressed during a critical shutdown to allow all other applications to get a chance to respond.</p>
-<p>RISC OS: Rewrote the Message_DataOpen/DataLoad/DataSave handling code to eliminate all dependencies on RISC_OSLib's clunky xferrecv / xfersend routines.</p>
-<p>RISC OS: RISC_OSLib wimp layer replaced by calls to tboxlibs' wimplib which call the appropriate SWI directly with reduced overhead. Faster on older systems without built-in CallASWI support and has greatly increased readability of the source code which interfaces to this layer.</p>
-<p>RISC OS: RISC_OSLib header files are now referred to explicitly, using Acorn C/C++ headers rather than needing to access a patched and pruned copy.</p>
-<p>RISC OS: Window Manager event dispatcher now maintains a sorted array of window &amp; icon handles to speed handler lookup using a binary chop search (used to do a linear search): this is much faster when many documents are loaded and multiple views are created.</p>
-<p>RISC OS: Formula line editing code has always (incorrectly) attempted to create an icon on the toolbar when the view was created / resized. This always failed silently.</p>
-<p>RISC OS: Many more return paths from Window Manager (and other) SWIs now check for unlikely, but still possible, errors which could otherwise have been hidden and not reported. Use of inline function wrapper means this is just a CMP #0; BLNE report per call.</p>
-<p>RISC OS: Fixed truncated messages from exception handling.</p>
-<p>RISC OS: The HTML help file is now supplied as a ZIP archive for smaller downloads and faster access. (It was previously supplied as a larger, slower TAR archive). You will need SparkFS (a read-only version will suffice) running in order for a browser to access its contents.</p>
-<p>RISC OS: Can now be built on 32-bit systems, including RPCEmu (RISC OS 5.20).</p>
+<p>Fireworkz Pro: Exported Draw files from charts now have correct FireworkzPro creator name.</p>
+<p>Fireworkz Pro: Buffer overflow in DPlib call to obtain text filetype for RISC OS filetype.</p>
+<p>RISC OS: Selected items in charts now render EORed better using red dashed line in greater than 16 colour modes.</p>
+<p>RISC OS: Use tboxlibs' flex module for deferred compaction.</p>
+<p>RISC OS: Shift-click on the application icon will open the Choices:Fireworkz directory, in which you can find sub-directories containing the user-created Templates and Choices (amongst others) that are used by the application.</p>
+<p>RISC OS: Application now registers the list of messages in which it is interested with the Window Manager (helps overall RISC OS Desktop efficiency).</p>
+<p>RISC OS: Application now responds to the Desktop Critical Shutdown message (e.g. on power failure), saving all modified documents without prompting. Error reporting to screen is suppressed during a critical shutdown to allow all other applications to get a chance to respond.</p>
+<p>RISC OS: Rewrote the Message_DataOpen/DataLoad/DataSave handling code to eliminate all dependencies on RISC_OSLib's clunky xferrecv / xfersend routines.</p>
+<p>RISC OS: RISC_OSLib wimp layer replaced by calls to tboxlibs' wimplib which call the appropriate SWI directly with reduced overhead. Faster on older systems without built-in CallASWI support and has greatly increased readability of the source code which interfaces to this layer.</p>
+<p>RISC OS: RISC_OSLib header files are now referred to explicitly, using Acorn C/C++ headers rather than needing to access a patched and pruned copy.</p>
+<p>RISC OS: Window Manager event dispatcher now maintains a sorted array of window &amp; icon handles to speed handler lookup using a binary chop search (used to do a linear search): this is much faster when many documents are loaded and multiple views are created.</p>
+<p>RISC OS: Formula line editing code has always (incorrectly) attempted to create an icon on the toolbar when the view was created / resized. This always failed silently.</p>
+<p>RISC OS: Many more return paths from Window Manager (and other) SWIs now check for unlikely, but still possible, errors which could otherwise have been hidden and not reported. Use of inline function wrapper means this is just a CMP #0; BLNE report per call.</p>
+<p>RISC OS: Fixed truncated messages from exception handling.</p>
+<p>RISC OS: The HTML help file is now supplied as a ZIP archive for smaller downloads and faster access. (It was previously supplied as a larger, slower TAR archive). You will need SparkFS (a read-only version will suffice) running in order for a browser to access its contents.</p>
+<p>RISC OS: Can now be built on 32-bit systems, including RPCEmu (RISC OS 5.20).</p>
 <p>Windows: Help &gt; Search for help on... now displays the Search tab in the displayed help rather than the index.</p>
-<p>Windows: RISC OS font family 'Pembroke' is now mapped to Windows font family 'Palatino Linotype' (was previously mapped to Book Antiqua for use on versions prior to Windows 2000).</p>
-<p>Windows: Uses of the Windows font family 'Palatino Linotype' now store the font name 'Palatino' in files for compatibility with RISC OS (previously stored as-is, corrected on loading).</p>
-<p>Windows: Uses of the Windows font family 'Arial Narrow' now store the font name 'Helvetica-Narrow' in files for compatibility with RISC OS (previously stored as HelveticaNarrow ie. without a hyphen, corrected on loading).</p>
+<p>Windows: RISC OS font family 'Pembroke' is now mapped to Windows font family 'Palatino Linotype' (was previously mapped to Book Antiqua for use on versions prior to Windows 2000).</p>
+<p>Windows: Uses of the Windows font family 'Palatino Linotype' now store the font name 'Palatino' in files for compatibility with RISC OS (previously stored as-is, corrected on loading).</p>
+<p>Windows: Uses of the Windows font family 'Arial Narrow' now store the font name 'Helvetica-Narrow' in files for compatibility with RISC OS (previously stored as HelveticaNarrow ie. without a hyphen, corrected on loading).</p>
 <p>Windows: Updated Draw file DLLs to much more modern versions - these are now the same as used by Oak Draw. Thanks to Dial Solutions.</p>
-<p>Windows: INI file used by Draw file DLLs for RISC OS sprite mode info is supplied (previously relied on Oak Draw being installed).</p>
-<p>Windows: Registry entries used by Draw file DLLs for RISC OS / Windows font mapping are now created on first use of a Draw file in Fireworkz - these previously relied on Oak Draw being installed. Although these are stored in the common location HKEY_LOCAL_MACHINE\Software\Dial Solutions Limited\DsFntMap\1.0\Fontmap, Fireworkz setup creates the parent key (1.0) with sufficient permissions for standard (non-Administrator) users to be able to run Fireworkz and create the required font mappings.</p>
+<p>Windows: INI file used by Draw file DLLs for RISC OS sprite mode info is supplied (previously relied on Oak Draw being installed).</p>
+<p>Windows: Registry entries used by Draw file DLLs for RISC OS / Windows font mapping are now created on first use of a Draw file in Fireworkz - these previously relied on Oak Draw being installed. Although these are stored in the common location HKEY_LOCAL_MACHINE\Software\Dial Solutions Limited\DsFntMap\1.0\Fontmap, Fireworkz setup creates the parent key (1.0) with sufficient permissions for standard (non-Administrator) users to be able to run Fireworkz and create the required font mappings.</p>
 <p>Windows: Draw_GetAccurateTextBbox used to compute bounding boxes of strings in charts (was a bad approximation before).</p>
 <p>Windows: Draw_VerifyDiag (used when loading a Draw file as a picture or chart marker) first ensures Draw file DLLs loaded.</p>
 <p>Windows: Chart object selection now uses exclusive-OR mode for rendering selection better.</p>
-<p>Windows: Font names in charts created on Windows use new font mapping capabilities to use equivalent RISC OS font names where possible, as is required by Draw file DLLs. This mapping also applies to saving a document as a Draw file on Windows.</p>
+<p>Windows: Font names in charts created on Windows use new font mapping capabilities to use equivalent RISC OS font names where possible, as is required by Draw file DLLs. This mapping also applies to saving a document as a Draw file on Windows.</p>
 <p><strong>1.34/11 (10 May 2013)</strong></p>
 <p>Chart line and text colour transparency attribute had never been preserved over a save &amp; reload cycle. Chart fill colour was also saved as black when transparent, thereby losing the previous colour.</p>
 <p>Empty documents are now reported correctly. This had been broken by the legacy loading code introduced in 1.25/08, giving a stack overflow.</p>
-<p>Euro currency formats added (NB uses RISC OS Extended Latin 1 / Windows-1252 character set).</p>
+<p>Euro currency formats added (NB uses RISC OS Extended Latin 1 / Windows-1252 character set).</p>
 <p>Potential exception in snapshot command with low memory fixed.</p>
 <p>Removed archaic floppy-disc outline logo from splash screen.</p>
-<p>RISC OS: Supply the user Choices directory in the top-level alongside !Fireworkz. Please refer to the ReadMe in the Choices directory for further details.</p>
-<p>RISC OS: Application is now created as a fully-bound 32-bit executable with no object code loaded at run-time. However, individual object code modules are still only initialised on-demand. This does take up some more memory initially, but this should not be a problem on modern systems.</p>
-<p>RISC OS: Build system now works on 32-bit systems.</p>
-<p>RISC OS: Moved assorted run-time stuff from the !Fireworkz.Resources directory into the new !Fireworkz.Resource.RISC_OS directory to avoid any potential name clashes with user's custom function sheets etc.</p>
+<p>RISC OS: Supply the user Choices directory in the top-level alongside !Fireworkz. Please refer to the ReadMe in the Choices directory for further details.</p>
+<p>RISC OS: Application is now created as a fully-bound 32-bit executable with no object code loaded at run-time. However, individual object code modules are still only initialised on-demand. This does take up some more memory initially, but this should not be a problem on modern systems.</p>
+<p>RISC OS: Build system now works on 32-bit systems.</p>
+<p>RISC OS: Moved assorted run-time stuff from the !Fireworkz.Resources directory into the new !Fireworkz.Resource.RISC_OS directory to avoid any potential name clashes with user's custom function sheets etc.</p>
 <p>Windows: 64-bit division now tests for overflow (zombie charts would crash on Windows).</p>
 <p>Windows: Support information in Control Panel -&gt;; Add / Remove Programs improved.</p>
 <p>Windows: Improved appearance of program and document icons.</p>
@@ -614,24 +619,24 @@ If no delimiter character is specified, TAB is used to allow easy loading of TAB
 <p>Fixed import of @D@ sequences in PipeDream files imported as single column Text documents.</p>
 <p>Import of @P@ sequences in PipeDream files.</p>
 <p>Much better import of PipeDream files containing @ characters that aren't actually @xxx@ sequences (e.g. email addresses).</p>
-<p>Fireworkz Pro: Fixed bug where memory allocation error might not be signalled to DPlib.</p>
-<p>RISC OS: Add Choices:Fireworkz. to the Fireworkz$Path variable, replacing &lt;Fireworkz$Dir&gt;.User. Please note that if you already have user dictionaries etc., you may wish to copy the contents of your existing &lt;Fireworkz$Dir&gt;.User into &lt;Choices$Write&gt;.Fireworkz:</p>
+<p>Fireworkz Pro: Fixed bug where memory allocation error might not be signalled to DPlib.</p>
+<p>RISC OS: Add Choices:Fireworkz. to the Fireworkz$Path variable, replacing &lt;Fireworkz$Dir&gt;.User. Please note that if you already have user dictionaries etc., you may wish to copy the contents of your existing &lt;Fireworkz$Dir&gt;.User into &lt;Choices$Write&gt;.Fireworkz:</p>
 <p>CDir &lt;Choices$Write&gt;.Fireworkz<br />
 Copy &lt;Fireworkz$Dir&gt;.User.* &lt;Choices$Write&gt;.Fireworkz.* ~CRV</p>
-<p>RISC OS:User directory in !Fireworkz has now been renamed as Choices.Fireworkz. There is a TaskObey script file DoCopy in the Choices directory which will copy the contents of this directory into &lt;Choices$Write&gt;.Fireworkz.</p>
-<p>RISC OS: Choices, user dictionaries, new templates etc. are now written to the appropriate location in &lt;Choices$Write&gt;.Fireworkz so that each user's choices may be placed outwith the !Fireworkz directory. Subdirectories of &lt;Choices$Write&gt;.Fireworkz will be created as needed.</p>
-<p>RISC OS: Shift-click on the application icon will open the Choices: Templates directory.</p>
-<p>RISC OS: 3-D window border flag turned off for document back window as it doesn't render very well or consistently with all the toolbar / ruler / border pane windows.</p>
-<p>RISC OS: Now works with Avisoft Reporter (when built with selected instrumentation).</p>
-<p>RISC OS: 26-bit branch abandoned.</p>
+<p>RISC OS:User directory in !Fireworkz has now been renamed as Choices.Fireworkz. There is a TaskObey script file DoCopy in the Choices directory which will copy the contents of this directory into &lt;Choices$Write&gt;.Fireworkz.</p>
+<p>RISC OS: Choices, user dictionaries, new templates etc. are now written to the appropriate location in &lt;Choices$Write&gt;.Fireworkz so that each user's choices may be placed outwith the !Fireworkz directory. Subdirectories of &lt;Choices$Write&gt;.Fireworkz will be created as needed.</p>
+<p>RISC OS: Shift-click on the application icon will open the Choices: Templates directory.</p>
+<p>RISC OS: 3-D window border flag turned off for document back window as it doesn't render very well or consistently with all the toolbar / ruler / border pane windows.</p>
+<p>RISC OS: Now works with Avisoft Reporter (when built with selected instrumentation).</p>
+<p>RISC OS: 26-bit branch abandoned.</p>
 <p><strong>1.34/09 (27 Aug 2012)</strong></p>
 <p>Style 'New Object' combo box changed to list box (as there are only ever a couple of options).</p>
 <p>Cater for upper-case letters in Excel date format.</p>
-<p>RISC OS: Modal dialogue boxes are now opened as true Window Manager menus or submenus wherever possible. Notable exceptions are those dialogue boxes that contain further window elements such as list boxes or have further options such as combo box dropdowns that must be opened as menus.</p>
-<p>RISC OS: Any dialogue box opened as a true Window Manager menu or submenu, or has a Cancel button that the user can press, no longer has a close button in the title bar (which would possibly add an unwanted iconise button too).</p>
-<p>RISC OS: Edit fields in dialogue boxes are now rendered using Corpus.Medium rather than the system font.</p>
-<p>RISC OS: Group box frames &amp; captions, list box surrounds and framed text surrounds in dialogue boxes are now drawn by the Window Manager to allow more modern styling and theming.</p>
-<p>RISC OS: Code to handle running on systems prior to RISC OS 3.1 removed for clarity.</p>
+<p>RISC OS: Modal dialogue boxes are now opened as true Window Manager menus or submenus wherever possible. Notable exceptions are those dialogue boxes that contain further window elements such as list boxes or have further options such as combo box dropdowns that must be opened as menus.</p>
+<p>RISC OS: Any dialogue box opened as a true Window Manager menu or submenu, or has a Cancel button that the user can press, no longer has a close button in the title bar (which would possibly add an unwanted iconise button too).</p>
+<p>RISC OS: Edit fields in dialogue boxes are now rendered using Corpus.Medium rather than the system font.</p>
+<p>RISC OS: Group box frames &amp; captions, list box surrounds and framed text surrounds in dialogue boxes are now drawn by the Window Manager to allow more modern styling and theming.</p>
+<p>RISC OS: Code to handle running on systems prior to RISC OS 3.1 removed for clarity.</p>
 <p>Windows: Support for Windows 98 and Windows NT 4.0 was dropped some time ago when the Setup application was upgraded (late 2011).</p>
 <p><strong>1.34/08 (22 Aug 2012)</strong></p>
 <p>Apply imported Excel number and date formats to cells wherever possible.</p>
@@ -667,11 +672,11 @@ Copy &lt;Fireworkz$Dir&gt;.User.* &lt;Choices$Write&gt;.Fireworkz.* ~CRV</p>
 <p>Significant speedup of loading multi-worksheet Excel files.</p>
 <p>Handle Excel BOOLERR records.</p>
 <p>Expanded file type names shown in Save Other.</p>
-<p>RISC OS: The HTML help file is now supplied as a TAR archive, openable by SparkFS, as the filenames stored in the ArcFS HTML help archive were being truncated. Also, on unpacking the application archive, ArcFS would expand the files from the HTML help archive too, causing a problem on older ADFS filesystems with the 77 entries-per-dir ADFS limit. A read-only version of the SparkFS application and module may be obtained from David Pilling's website.</p>
-<p>RISC OS: Reinstated Help menu entries on main &amp; icon bar menus as they now work.</p>
+<p>RISC OS: The HTML help file is now supplied as a TAR archive, openable by SparkFS, as the filenames stored in the ArcFS HTML help archive were being truncated. Also, on unpacking the application archive, ArcFS would expand the files from the HTML help archive too, causing a problem on older ADFS filesystems with the 77 entries-per-dir ADFS limit. A read-only version of the SparkFS application and module may be obtained from David Pilling's website.</p>
+<p>RISC OS: Reinstated Help menu entries on main &amp; icon bar menus as they now work.</p>
 <p><strong>1.34/03 (16 Feb 2012)</strong></p>
 <p>Handle Excel FORMULA record numbers that are inconsistent with the BIFF version of the file containing them.</p>
-<p>More consistent (and better) handling of UNICODE -&gt; Latin 1 translation of strings in Excel files between Windows and RISC OS.</p>
+<p>More consistent (and better) handling of UNICODE -&gt; Latin 1 translation of strings in Excel files between Windows and RISC OS.</p>
 <p><strong>1.34/02 (14 Feb 2012)</strong></p>
 <p>Fixed STRING() spreadsheet function.</p>
 <p>Added View menu (currently accesses View Control button; more to follow).</p>
@@ -681,21 +686,21 @@ Copy &lt;Fireworkz$Dir&gt;.User.* &lt;Choices$Write&gt;.Fireworkz.* ~CRV</p>
 <p>Handle (ignore) rich-text fragments within Excel SST strings.</p>
 <p><strong>1.34/01 (01 Feb 2012)</strong></p>
 <p>Fixed loading small Excel worksheets from a Microsoft compound document short-stream segment.</p>
-<p>RISC OS: Fixed dialogue box handling which had been broken in code-convergence phase.</p>
-<p>RISC OS: Much longer path strings permitted (limited depth from which app could run).</p>
+<p>RISC OS: Fixed dialogue box handling which had been broken in code-convergence phase.</p>
+<p>RISC OS: Much longer path strings permitted (limited depth from which app could run).</p>
 <p>Function inlining used for the first time to speed some block/procedure exits.</p>
-<p>RISC OS: SWIs called directly for OS_Plot, OS_WriteN for rendering speed.</p>
-<p>RISC OS: Help archive now copied to distribution!</p>
+<p>RISC OS: SWIs called directly for OS_Plot, OS_WriteN for rendering speed.</p>
+<p>RISC OS: Help archive now copied to distribution!</p>
 <p><strong>1.34/00 (19 Jan 2012)</strong></p>
 <p>Fixed Excel BIFF8 (Office 2000) import (needed several new record types and options handling).</p>
 <p>Improved BIFF5 import (shared formulas; negative row offsets).</p>
 <p>Copy/Cut/Paste fixed to behave as expected: cut-paste leaves pasted cell references (to external cells) unmodified, copy-paste adjusts pasted cell references relative to where the block is pasted.</p>
 <p>New document window large enough to fit title.</p>
-<p>RISC OS: Converged source with 1.33/xx (Windows-only) branch; some minor common fixes incorporated.</p>
-<p>RISC OS: Improved file type detection code for DOS / Data filetyped files.</p>
-<p>RISC OS: Removed Help menu entries from main &amp; icon bar menus as they don't work.</p>
-<p>RISC OS: Added !Help to view HTML help files (stored in archive) using browser.</p>
-<p>RISC OS: BASIC Loader and Splash programs handle longer environment strings (deep paths).</p>
+<p>RISC OS: Converged source with 1.33/xx (Windows-only) branch; some minor common fixes incorporated.</p>
+<p>RISC OS: Improved file type detection code for DOS / Data filetyped files.</p>
+<p>RISC OS: Removed Help menu entries from main &amp; icon bar menus as they don't work.</p>
+<p>RISC OS: Added !Help to view HTML help files (stored in archive) using browser.</p>
+<p>RISC OS: BASIC Loader and Splash programs handle longer environment strings (deep paths).</p>
 <p><strong>1.33/12 (29 Oct 2006)</strong></p>
 <p>Windows: Fixed modification of styles that did not specify a font name, also creating new styles based on such styles.</p>
 <p><strong>1.33/11 (19 Oct 2006)</strong></p>
@@ -736,7 +741,7 @@ Copy &lt;Fireworkz$Dir&gt;.User.* &lt;Choices$Write&gt;.Fireworkz.* ~CRV</p>
 <p><strong>1.33/04 (22 Feb 2006)</strong></p>
 <p>Windows: Dialogue box style now configurable (DialogStyle entry in registry). The default is now much more in accordance with more modern GUI than the old Windows 3.1 style!</p>
 <p><strong>1.33/03 (21 Feb 2006)</strong></p>
-<p>Windows: RISC OS format referenced picture filenames automatically transformed for use on Windows.</p>
+<p>Windows: RISC OS format referenced picture filenames automatically transformed for use on Windows.</p>
 <p>Windows: Font information used to generate correct Bold &amp; Italic variants of each font family (e.g. EFF Fortuna).</p>
 <p><strong>1.33/02 (19 Feb 2006)</strong></p>
 <p>Windows: Now loads and renders JPEG files (using Windows COM IPicture interface).</p>
@@ -752,61 +757,61 @@ Copy &lt;Fireworkz$Dir&gt;.User.* &lt;Choices$Write&gt;.Fireworkz.* ~CRV</p>
 <p><strong>1.33/00 (10 Jan 2006)</strong></p>
 <p>Windows: First 32-bit version, released on CD-ROM.</p>
 <p><strong>1.32/33 (26 Oct 2011)</strong></p>
-<p>Fireworkz Pro: First 32-bit Fireworkz Pro release.</p>
-<p>Fireworkz Pro: Integrated with 32-bit DataPower engine from R-Comp.</p>
+<p>Fireworkz Pro: First 32-bit Fireworkz Pro release.</p>
+<p>Fireworkz Pro: Integrated with 32-bit DataPower engine from R-Comp.</p>
 <p><strong>1.32/32 (25 Apr 2011)</strong></p>
-<p>RISC OS: This was the first free version of Fireworkz (non-Pro) for RISC OS.</p>
-<p>RISC OS: Splash now shows Google Groups contact information.</p>
-<p>RISC OS: Registration info generation moved to Splash code - installer removed.</p>
-<p>RISC OS: Fixed linking problem where BL in AIF header to first instruction in Stubs was incorrect and could randomly crash application startup.</p>
-<p>RISC OS: 32-bit version built using RISC OS Open Limited C tools release 20 to address newer ARM CPU issues.</p>
-<p>RISC OS: Fixed 32-bit problem in PicConvert module.</p>
+<p>RISC OS: This was the first free version of Fireworkz (non-Pro) for RISC OS.</p>
+<p>RISC OS: Splash now shows Google Groups contact information.</p>
+<p>RISC OS: Registration info generation moved to Splash code - installer removed.</p>
+<p>RISC OS: Fixed linking problem where BL in AIF header to first instruction in Stubs was incorrect and could randomly crash application startup.</p>
+<p>RISC OS: 32-bit version built using RISC OS Open Limited C tools release 20 to address newer ARM CPU issues.</p>
+<p>RISC OS: Fixed 32-bit problem in PicConvert module.</p>
 <p><strong>1.32/10 (17 Apr 2005)</strong></p>
 <p>Windows: Ultimate 16-bit version, released on CD-ROM.</p>
 <p><strong>1.32/07 (29 Nov 2002)</strong></p>
-<p>RISC OS: This was IYONIX bundle release 2.</p>
-<p>RISC OS: !SpritesR5 now has correct application directory icons.</p>
-<p>RISC OS: Added Help menu entries on main &amp; icon bar menus.</p>
+<p>RISC OS: This was IYONIX bundle release 2.</p>
+<p>RISC OS: !SpritesR5 now has correct application directory icons.</p>
+<p>RISC OS: Added Help menu entries on main &amp; icon bar menus.</p>
 <p><strong>1.32/06 (28 Nov 2002)</strong></p>
 <p>Fixed GAMMALN() spreadsheet function arguments.</p>
 <p>Font mapper behaviour changed to allow specification of simply the host font family name - Regular, Bold, Italic and Bold Italic variants are built from this name if the corresponding elements are not set in the FontMap command.</p>
-<p>Fireworkz Pro: 2004 &amp; 2005 dates added to Holidays.</p>
-<p>RISC OS: This was IYONIX bundle release 1.</p>
-<p>RISC OS: Printing disabled in Iyonix bundled version.</p>
-<p>RISC OS: Loader now stalls for several seconds to better view the splash screen.</p>
-<p>RISC OS: Loader displays Abacus Training contact information.</p>
-<p>RISC OS: 'About this program' dialogue box also displays Abacus Training contact information.</p>
-<p>RISC OS: Added high res sprite set for loading on RISC OS 5 (!SpritesR5).</p>
-<p>RISC OS: Added low res Excel file sprites.</p>
-<p>RISC OS: Added high res &amp; large file sprites for Excel &amp; Lotus 1-2-3.</p>
+<p>Fireworkz Pro: 2004 &amp; 2005 dates added to Holidays.</p>
+<p>RISC OS: This was IYONIX bundle release 1.</p>
+<p>RISC OS: Printing disabled in Iyonix bundled version.</p>
+<p>RISC OS: Loader now stalls for several seconds to better view the splash screen.</p>
+<p>RISC OS: Loader displays Abacus Training contact information.</p>
+<p>RISC OS: 'About this program' dialogue box also displays Abacus Training contact information.</p>
+<p>RISC OS: Added high res sprite set for loading on RISC OS 5 (!SpritesR5).</p>
+<p>RISC OS: Added low res Excel file sprites.</p>
+<p>RISC OS: Added high res &amp; large file sprites for Excel &amp; Lotus 1-2-3.</p>
 <p><strong>1.32/05 (28 Oct 2002)</strong></p>
-<p>RISC OS: Fixed 32-bit compiler math optimisation problems. Error in the INT() spreadsheet function was the most noticeable of these. These problems did not affect the 26-bit version.</p>
+<p>RISC OS: Fixed 32-bit compiler math optimisation problems. Error in the INT() spreadsheet function was the most noticeable of these. These problems did not affect the 26-bit version.</p>
 <p><strong>1.32/04 (15 Sep 2002)</strong></p>
 <p>Files from newer Excel versions can now be loaded. Up to now, Fireworkz was able to read BIFF2/3/4 files. Fireworkz can decode the OLE2 Structured Storage wrapper that Excel 6.0/95/97/2000/XP store their worksheets in, and also interpret new constructs and data record formats found in such BIFF5/7/8 files.</p>
 <p><strong>1.32/03 (14 Jul 2002)</strong></p>
 <p>Speedup recalc (was broken in 1.32/00)</p>
 <p><strong>1.32/02 (13 Jun 2002)</strong></p>
 <p>Save as Drawfile rendering much improved.</p>
-<p>Fireworkz Pro: Golden Jubilee holidays added for 2002, 2003 dates added to Holidays.</p>
+<p>Fireworkz Pro: Golden Jubilee holidays added for 2002, 2003 dates added to Holidays.</p>
 <p><strong>1.32/01 (20 Jan 2002)</strong></p>
 <p>Page numbers in draw file group header now start at 1.</p>
 <p>Page numbers in draw file group header optimised so that single column print uses single digit.</p>
 <p><strong>1.32/00 (03 Dec 2001)</strong></p>
 <p>Sliding window date entry fixed.</p>
 <p>Added Save as Drawfile.</p>
-<p>Fireworkz Pro: More dates for 2001 and 2002 added to Holidays file for database functions.</p>
+<p>Fireworkz Pro: More dates for 2001 and 2002 added to Holidays file for database functions.</p>
 <p><strong>1.31/05 (17 Jul 2000)</strong></p>
 <p>Can now load supporting spreadsheet documents that are not themselves Fireworkz files (e.g. when a cell in a Fireworkz spreadsheet contains a reference such as [OtherFile]a1 where OtherFile may be a PipeDream or Lotus 1-2-3 spreadsheet).</p>
 <p><strong>1.31/04 (06 Jul 2000)</strong></p>
 <p>Resultz style editor fixed to allow manipulation of number style effects.</p>
 <p>Resultz now ships with Text template for creation or import of non-sheet based documents.</p>
 <p><strong>1.31/03 (13 Oct 1999)</strong></p>
-<p>RISC OS: Documents can now be saved with leafnames longer than 12 characters where this is allowed, eg RISC OS 4 new format hard discs, ADFS E+/F+ format floppies and RAM discs. This may also work on earlier systems with the Longnames module loaded or into archive files, but this has not been tested.</p>
-<p>RISC OS: You can now always force inserted files to be linked to rather than embedded, or vice versa, by holding down the Ctrl key when dragging them into the application. This inverts the effect of the 'Embed inserted files' checkbox. This applies to Draw or sprite files dragged into elements of a chart and into the note layer as well as to any files dragged into fields in the database.</p>
-<p>RISC OS: Tested against RISC OS 4.02 (patch 3 release 2).</p>
+<p>RISC OS: Documents can now be saved with leafnames longer than 12 characters where this is allowed, eg RISC OS 4 new format hard discs, ADFS E+/F+ format floppies and RAM discs. This may also work on earlier systems with the Longnames module loaded or into archive files, but this has not been tested.</p>
+<p>RISC OS: You can now always force inserted files to be linked to rather than embedded, or vice versa, by holding down the Ctrl key when dragging them into the application. This inverts the effect of the 'Embed inserted files' checkbox. This applies to Draw or sprite files dragged into elements of a chart and into the note layer as well as to any files dragged into fields in the database.</p>
+<p>RISC OS: Tested against RISC OS 4.02 (patch 3 release 2).</p>
 <p><strong>1.31/02 (10 Jun 1999)</strong></p>
 <p>RTF loading improved.</p>
-<p>RISC OS: Custom functions now load reliably again: code changes applied in 1.31/01 to allow Windows 16-bit version to use an increased number of custom functions had not been recompiled consistently on RISC OS.</p>
+<p>RISC OS: Custom functions now load reliably again: code changes applied in 1.31/01 to allow Windows 16-bit version to use an increased number of custom functions had not been recompiled consistently on RISC OS.</p>
 <p><strong>1.31/01 (11 Apr 1999)</strong></p>
 <p>Fireworkz may be more thoroughly 'continentalised' by use of the SSContext construct in the Config file. Arguments (semicolon delimited) are characters to use for thousands separator, decimal point, date separator, time separator, and alternate UI flag (must be zero). Note the use of the backslash escape character required when an argment itself contains a semicolon.</p>
 <p>eg {SSContext:.;,;.;:;\\\;;,;\\\;;\\\;;0}</p>
@@ -824,20 +829,20 @@ print</li>
 </ul><p>This forces all User Interface functions in the application to behave in a suitable way from dialogue boxes to the spreadsheet function editing line. Note that saved documents still contain standard representations of anything entered - this is obviously needed for portability of data.</p>
 <p>Chart number formatting is now more consistent and also follows SSContext.</p>
 <p>Range over which COMBIN() and PERMUT() spreadsheet functions work increased, avoiding integer overflow.</p>
-<p>RISC OS: Now uses fast single 64-bit UMULL instruction found on later ARM chips wherever possible for high precision coordinate scaling, reverting to use of multiple 32-bit MUL instructions on earlier ARM chips as before.</p>
+<p>RISC OS: Now uses fast single 64-bit UMULL instruction found on later ARM chips wherever possible for high precision coordinate scaling, reverting to use of multiple 32-bit MUL instructions on earlier ARM chips as before.</p>
 <p>Windows: Another two 64 kilobyte limits in 16-bit Windows version have been removed. The first of these caused Fireworkz to try to allocate too much style cache - this could have been hit with documents with lots (&gt; 2000) of style regions. The second limited Fireworkz to a rather small number (&lt; 50) of custom functions that could be defined and used in one session.</p>
 <p><strong>1.31/00 (26 Nov 1998)</strong></p>
 <p>Bug whereby 31.12.2000 displayed as 01.01.2001 fixed.</p>
 <p>Icelandic ð (eth) moved to correct position in sort order.</p>
 <p>{CTypeTable:b;ctb;ucb;lcb;sob} construct added where b is the character number to modify, ctb is the character type byte, ucb is the character number that b uppercases to, lcb is the character number that b lowercases to and sob is the character number that b should sort as. ctb, ucb, lcb and sob are all separately optional. This should be useful for users of non-ISO Latin 1 fonts.</p>
-<p>Fireworkz Pro: More dates added to Holidays file for database functions.</p>
-<p>Windows: Can now load Microsoft Excel version 5 worksheets on Windows. As Microsoft Excel 5 (and above) formats are stored in Windows OLE compound files, the RISC OS version of Fireworkz can not (yet) read these.</p>
+<p>Fireworkz Pro: More dates added to Holidays file for database functions.</p>
+<p>Windows: Can now load Microsoft Excel version 5 worksheets on Windows. As Microsoft Excel 5 (and above) formats are stored in Windows OLE compound files, the RISC OS version of Fireworkz can not (yet) read these.</p>
 <p>Windows: Core modules are marked for preloading by Windows at startup for speed.</p>
 <p>Windows: Toolbar button style now configurable.</p>
 <p>Windows: Checked for compatibility against Windows NT 4.0 (Build 1381 with SP3).</p>
 <p><strong>1.30/06 (12 Jan 1998)</strong></p>
 <p>When a .Table1 style is automatically created on inserting a table, it is given a New Object style attribute of Number if the Edit in Cell option is on at that time. This helps the application automatically detect the number style being used in data entry (eg Currency, Percent, date variants).</p>
-<p>Fireworkz Pro: Draw files in the database now have their aspect ratio preserved when rendered.</p>
+<p>Fireworkz Pro: Draw files in the database now have their aspect ratio preserved when rendered.</p>
 <p><strong>1.30/05 (20 Nov 1997)</strong></p>
 <p>Entering a date with a two digit year is how handled using a sliding window about the present year such that it yields a year in the range now-70 &lt; year &lt;= now+30. This also applies to the DATE() and DATEVALUE() spreadsheet functions.</p>
 <p>Subtracting one date/time value from another now behaves more rationally: if the two date/time values are pure dates then the result is the number of days between them; if the two date/time values are pure times then the result is the number of seconds between them otherwise the result is a date/time value representing the difference.</p>
@@ -845,17 +850,17 @@ print</li>
 <p>INT() spreadsheet function now performs rounding (at the 14th significant place) such that formulas which are affected by the imprecise floating point representation of fractional numbers eg INT((0.06-0.02)/2E-6) yield the correct integer value.</p>
 <p>VALUE() spreadsheet function fixed to return 0 when presented with input that doesn't yield a numeric result.</p>
 <p>Manual axis tick settings are now accepted as sensible over a much greater range of values (when compared with what the application would choose automatically).</p>
-<p>Fireworkz Pro: Database Search dialogue box now entered with the input focus in the corresponding field.</p>
+<p>Fireworkz Pro: Database Search dialogue box now entered with the input focus in the corresponding field.</p>
 <p><strong>1.30/04 (28 May 1997)</strong></p>
 <p>LISTCOUNT() spreadsheet function can now usefully be called with a wider array: it will take still take distinct values from the first column but will add up values from the last column rather than just the second column.</p>
 <p>The CSV file loader has been modified to accept TAB as a field separator as well as comma, so you can now load TAB delimited files into spreadsheets by first setting their file type to CSV.</p>
-<p>RISC OS: Demo version compiled which is now StrongARM compatible.</p>
+<p>RISC OS: Demo version compiled which is now StrongARM compatible.</p>
 <p>Windows: Checked for compatibility against Windows NT 4.0 (Build 1381 with SP1).</p>
 <p><strong>1.30/03 (10 Mar 1997)</strong></p>
 <p>Documents with many hundreds of style regions now load much faster.</p>
 <p>Manual axis settings now override any automatically calculated limits. Data values beyond the min/max axis values are now clipped at the min/max axis values.</p>
 <p>BIN() / BINOM() spreadsheet functions were swapped over.</p>
-<p>RISC OS: Saving to a locked file no longer causes an address exception.</p>
+<p>RISC OS: Saving to a locked file no longer causes an address exception.</p>
 <p>Windows: Support for large numbers (&gt; 840) of style regions added.</p>
 <p>Windows: Chart dialogue displays fixed.</p>
 <p><strong>1.30/01 (28 Nov 1996)</strong></p>
@@ -863,10 +868,10 @@ print</li>
 <p>Range over which FACT() spreadsheet function works well increased.</p>
 <p>WEEKNUMBER() spreadsheet function added (see above).</p>
 <p>Sort command user interface and code split off into a non-core module to reduce core code size and startup requirements.</p>
-<p>Fireworkz Pro: Searching a database on a RISC PC would occasionally fail when Dynamic area memory handling was being used.</p>
-<p>Fireworkz Pro: Database functions which returned INTERVAL types which were purely years/months/days displayed as blank as the hours/minutes/seconds part of the answer were detected as NULL.</p>
-<p>Fireworkz Pro: Database fields of type INTERVAL (not formula results of that type) didn't work at all prior to this release.</p>
-<p>RISC OS: host_setgcol() fixed to cope with &gt; 256 colour modes.</p>
+<p>Fireworkz Pro: Searching a database on a RISC PC would occasionally fail when Dynamic area memory handling was being used.</p>
+<p>Fireworkz Pro: Database functions which returned INTERVAL types which were purely years/months/days displayed as blank as the hours/minutes/seconds part of the answer were detected as NULL.</p>
+<p>Fireworkz Pro: Database fields of type INTERVAL (not formula results of that type) didn't work at all prior to this release.</p>
+<p>RISC OS: host_setgcol() fixed to cope with &gt; 256 colour modes.</p>
 <p><strong>1.30 (12 Nov 1996)</strong></p>
 <p>Make text and make number buttons have been added to the default toolbar.</p>
 <p>A new option 'Load text as paragraphs' has been added to the Choices dialogue box. This sets the mode of interpretation of ASCII text files. Prior to this release, a newline character was taken to be the end of one paragraph and the start of a new one. Often one wishes to load text (such as this file) which has been created with each individual line in a paragraph terminated with a newline. The new mode allows this, taking two consecutive newline characters to be a paragraph break.</p>
@@ -875,38 +880,38 @@ print</li>
 <p>More maths spreadsheet functions added: BETA(), BINOM(), COMBIN(), FACT(), GAMMALN(), PERMUT().</p>
 <p>Clicking on the Style menu entry of the Chart menu whilst chart editing with either nothing selected or the chart background selected will now take you to edit the fill style of the chart background rather than its text style.</p>
 <p>Many of the dialogue boxes used in chart creation and editing have been split out into a separate code module so that loading a document containing a chart does not suffer the memory overhead of what would otherwise be unused chart creation code.</p>
-<p>Fireworkz Pro: Handling of calculated results in the database improved when one of the referenced field has forced NULL to be returned from the formula.</p>
-<p>Fireworkz Pro: The database now takes note of the Display pictures choice.</p>
-<p>Fireworkz Pro: The database now takes note of the Embed inserted files (used to be Embed pictures) choice.</p>
-<p>RISC OS: Code rearrangements to help with StrongARM compatibility.</p>
-<p>RISC OS: Dynamic area storage for document data implemented. This speeds up task swapping on RiscPCs considerably, and permits the use of Clares' Virtualise to have documents loaded which are bigger than physical memory.</p>
-<p>RISC OS: Uses the Acorn Drawfile renderer on systems where this is loaded and hence can render JPEG files (either loaded directly or wrapped in Draw files) on RISC OS 3.7 systems and above. This should also have solved the problem of printing sprites in non-square pixel modes on RISC OS 3.5 and above.</p>
-<p>RISC OS: The hi-res sprites are only loaded if the program is started in a hi-res screen mode, and are loaded into the application's dynamic area if it is in use (Risc PC only), lowering the amount of memory in the main task slot, thereby saving time on each task swap.</p>
-<p>RISC OS: Writeable fields have been moved to the left of the up/down button pair in all bumpable number fields in order to better comply with the RISC OS 3 Style Guide.</p>
-<p>RISC OS: Writeable fields are no longer displayed using silly colours when inverted in 256 (or greater) colour modes.</p>
-<p>RISC OS: WIMPSymbol font removed from list of fonts displayed.</p>
+<p>Fireworkz Pro: Handling of calculated results in the database improved when one of the referenced field has forced NULL to be returned from the formula.</p>
+<p>Fireworkz Pro: The database now takes note of the Display pictures choice.</p>
+<p>Fireworkz Pro: The database now takes note of the Embed inserted files (used to be Embed pictures) choice.</p>
+<p>RISC OS: Code rearrangements to help with StrongARM compatibility.</p>
+<p>RISC OS: Dynamic area storage for document data implemented. This speeds up task swapping on RiscPCs considerably, and permits the use of Clares' Virtualise to have documents loaded which are bigger than physical memory.</p>
+<p>RISC OS: Uses the Acorn Drawfile renderer on systems where this is loaded and hence can render JPEG files (either loaded directly or wrapped in Draw files) on RISC OS 3.7 systems and above. This should also have solved the problem of printing sprites in non-square pixel modes on RISC OS 3.5 and above.</p>
+<p>RISC OS: The hi-res sprites are only loaded if the program is started in a hi-res screen mode, and are loaded into the application's dynamic area if it is in use (Risc PC only), lowering the amount of memory in the main task slot, thereby saving time on each task swap.</p>
+<p>RISC OS: Writeable fields have been moved to the left of the up/down button pair in all bumpable number fields in order to better comply with the RISC OS 3 Style Guide.</p>
+<p>RISC OS: Writeable fields are no longer displayed using silly colours when inverted in 256 (or greater) colour modes.</p>
+<p>RISC OS: WIMPSymbol font removed from list of fonts displayed.</p>
 <p><strong>1.25/09 (10 Jul 1996)</strong></p>
 <p>If a style called BaseTable exists when a table is created, this style is applied to the table area before the .Table1 style is applied, so you can have a more consistent style between all the tables in a document.</p>
 <p>Attempts to delete an area containing a protected region now fail - this was merely one symptom of a much larger underlying problem (now fixed) believed to have been working incorrectly since Jan 95.</p>
 <p>Preserves some of left hand side of filing system path of filename for display when filename is too long for the 'save edited file' query dialog.</p>
 <p>'Recalc on load' option added in the Choices dialogue box.</p>
 <p>The spreadsheet function REVERSE() now works again (broken since 1.24/06).</p>
-<p>Fireworkz Pro: New database queries created from the Active Queries dialogue box no longer append to the previously selected query.</p>
-<p>Fireworkz Pro: Database Search dialogue box descriptions improved.</p>
-<p>Fireworkz Pro: Database Boolean values now display correctly again (broken since 1.24/06).</p>
+<p>Fireworkz Pro: New database queries created from the Active Queries dialogue box no longer append to the previously selected query.</p>
+<p>Fireworkz Pro: Database Search dialogue box descriptions improved.</p>
+<p>Fireworkz Pro: Database Boolean values now display correctly again (broken since 1.24/06).</p>
 <p><strong>1.25/08 (12 Jun 1996)</strong></p>
 <p>Document loading has been speeded up by initially forcing all documents to use a virtual row table with fixed height rows and then applying the correct formatting once the document has been fully loaded.</p>
 <p>Now loads archaic (Wordz 1.00 - 1.03) documents correctly.</p>
 <p>Bug in Lotus 1-2-3 WK1 file loading fixed - it failed to decode several kinds of formula correctly.</p>
 <p>The paragraph margin setting of a style can now be made negative by use of the down arrow adjacent to the editable field.</p>
-<p>RISC OS: Task!09a module added again to correct RISC PC printing problems.</p>
+<p>RISC OS: Task!09a module added again to correct RISC PC printing problems.</p>
 <p><strong>1.25/06 (04 Jun 96)</strong></p>
 <p>MEDIAN() spreadsheet function can now take a general range as its argument (previously it only worked on a single column of data).</p>
 <p>Sensible default options now set in the mailshot select dialogue box.</p>
 <p>Decimal tab stop now recognises the Latin 1 decimal point character £ (ASCII value 183) as a decimal point.</p>
 <p>Lookup now can use wildcards in the search string again.</p>
-<p>If a referenced Draw file references a file on the wrong sort of file system for the current machine (eg a full RISC OS path name and the document is being loaded on Windows), or cannot be found using the current reference, then the draw file will be searched for in the directory containing the document and then on the application's normal search path, so a library of commonly used draw files may be put in either the Resource or User subdirectories of !Fireworkz (for RISC OS), or the UK or USER subdirectories (for Windows).</p>
-<p>Fireworkz Pro: Blank fields were stopping database being used as mailshot source.</p>
+<p>If a referenced Draw file references a file on the wrong sort of file system for the current machine (eg a full RISC OS path name and the document is being loaded on Windows), or cannot be found using the current reference, then the draw file will be searched for in the directory containing the document and then on the application's normal search path, so a library of commonly used draw files may be put in either the Resource or User subdirectories of !Fireworkz (for RISC OS), or the UK or USER subdirectories (for Windows).</p>
+<p>Fireworkz Pro: Blank fields were stopping database being used as mailshot source.</p>
 <p><strong>1.25/04 (22 Apr 1996)</strong></p>
 <p>Selecting reverse and even pages only for a print job would crash.</p>
 <p>Recalculate all loaded documents menu option added to Extras submenu.</p>
@@ -915,12 +920,12 @@ print</li>
 <p>Some internal speed-ups in spreadsheet functions to help recalc speed.</p>
 <p>Ruler now forbids clicking to set tabs beyond the left of the leftmost of the left and paragraph margins and beyond the right of the right margin.</p>
 <p>Save other now correctly selects either the default or last file type used when the dialogue box is invoked.</p>
-<p>Fireworkz Pro: Some internal speed-ups in database code to help recalc speed.</p>
-<p>Fireworkz Pro: Save other (CSV) of a sheet format database now works.</p>
-<p>Fireworkz Pro: CSV import to the database is fixed.</p>
-<p>Fireworkz Pro: Database now returns spaces instead of control characters (which kill print jobs) to represent newlines in multi-line text fields when being used as the source for mailshot fields. Unfortunately, newlines in multi-line text fields can't come through as newlines to the text handler as all the data in a mailshot field still has to fit on a single line.</p>
-<p>RISC OS: ADJUST-click on the Print button now correctly brings up the Print Extra dialogue box.</p>
-<p>RISC OS: No longer ships with the TaskX008 and Task!09a modules.</p>
+<p>Fireworkz Pro: Some internal speed-ups in database code to help recalc speed.</p>
+<p>Fireworkz Pro: Save other (CSV) of a sheet format database now works.</p>
+<p>Fireworkz Pro: CSV import to the database is fixed.</p>
+<p>Fireworkz Pro: Database now returns spaces instead of control characters (which kill print jobs) to represent newlines in multi-line text fields when being used as the source for mailshot fields. Unfortunately, newlines in multi-line text fields can't come through as newlines to the text handler as all the data in a mailshot field still has to fit on a single line.</p>
+<p>RISC OS: ADJUST-click on the Print button now correctly brings up the Print Extra dialogue box.</p>
+<p>RISC OS: No longer ships with the TaskX008 and Task!09a modules.</p>
 <p><strong>1.25/01 (09 Apr 1996)</strong></p>
 <p>Custom function sheets now only save the cell result data for those cells whose value is a constant.</p>
 <p>Windows: Loading a document gave 'Area is protected' error if current cell was in a protected area.</p>
@@ -928,15 +933,15 @@ print</li>
 <p>Custom function recognition and execution fixed (bug had been introduced in 1.24/06 revisions)</p>
 <p>Exception when loading non-Fireworkz files into a Letter template fixed.</p>
 <p><strong>1.24/08 (27 Mar 1996)</strong></p>
-<p>Fireworkz Pro: Errors from the database engine are now reported better.</p>
-<p>Fireworkz Pro: CSV export from the database is fixed.</p>
+<p>Fireworkz Pro: Errors from the database engine are now reported better.</p>
+<p>Fireworkz Pro: CSV export from the database is fixed.</p>
 <p><strong>1.24/07 (05 Mar 1996)</strong></p>
-<p>Fireworkz Pro: Pictures in the database now render correctly.</p>
+<p>Fireworkz Pro: Pictures in the database now render correctly.</p>
 <p><strong>1.24/06 (27 Feb 1996)</strong></p>
 <p>Some dialogue boxes now show more entries in list boxes, eg style editor.</p>
 <p>Fixed bug whereby adding to empty value lists did not display newly added values.</p>
-<p>Fireworkz Pro: Database templates now set to use 2mm coarse grid, not 5mm.</p>
-<p>Fireworkz Pro: Major work in the bottom layers of the spreadsheet and database making common data types to reduce the amount of conversion data suffers before being rendered on screen or used as data in spreadsheet calculations - this was necessary to properly fix a database bug where data appeared and disappeared from view, apparently at random.</p>
+<p>Fireworkz Pro: Database templates now set to use 2mm coarse grid, not 5mm.</p>
+<p>Fireworkz Pro: Major work in the bottom layers of the spreadsheet and database making common data types to reduce the amount of conversion data suffers before being rendered on screen or used as data in spreadsheet calculations - this was necessary to properly fix a database bug where data appeared and disappeared from view, apparently at random.</p>
 <p><strong>1.24/03 (25 Jan 1996)</strong></p>
 <p>New PMT_XLS() spreadsheet function which is compatible with Microsoft Excel argument list order and result sign. Used by Excel file loading, but also available if you want this function to behave in an Excel compatible fashion.</p>
 <p>Recalc can be applied to protected regions.</p>
@@ -944,15 +949,15 @@ print</li>
 <p><strong>1.24/01 (17 Jan 1996)</strong></p>
 <p>Small memory leaks fixed.</p>
 <p>Ruler and status line fonts no longer scale with body text.</p>
-<p>Fireworkz Pro: New database fields no longer appear at top left of a card view.</p>
-<p>Fireworkz Pro: The database field border is now drawn in the same sort of way as the inter-cell grid, allowing fields to be tiled without gaps, and no longer has redraw glitches at the top and bottom right corners.</p>
+<p>Fireworkz Pro: New database fields no longer appear at top left of a card view.</p>
+<p>Fireworkz Pro: The database field border is now drawn in the same sort of way as the inter-cell grid, allowing fields to be tiled without gaps, and no longer has redraw glitches at the top and bottom right corners.</p>
 <p><strong>1.23/05 (04 Dec 1995)</strong><br />
 There is a new button to insert the document's modification date.</p>
 <p>RTF loading no longer gives 'Memory full' error and can cope with documents that have the zeroth colortable entry defined.</p>
-<p>Fireworkz Pro: When creating a database it is no longer permitted to create two fields with the same name.</p>
-<p>Fireworkz Pro: Adding new fields to the database via the properties dialogue box now works again.</p>
-<p>RISC OS: ADJUST double-clicking on a tab in the ruler will now cycle its type between left, centre, right and decimal.</p>
-<p>RISC OS: If you have RISC Development's Desktop Thesaurus program you can allow toolbar access by changing one of the lines in your Choices18 file to read {Tool-t:0:THESAURUS} rather than {ToolPossible-t:0:THESAURUS}.</p>
+<p>Fireworkz Pro: When creating a database it is no longer permitted to create two fields with the same name.</p>
+<p>Fireworkz Pro: Adding new fields to the database via the properties dialogue box now works again.</p>
+<p>RISC OS: ADJUST double-clicking on a tab in the ruler will now cycle its type between left, centre, right and decimal.</p>
+<p>RISC OS: If you have RISC Development's Desktop Thesaurus program you can allow toolbar access by changing one of the lines in your Choices18 file to read {Tool-t:0:THESAURUS} rather than {ToolPossible-t:0:THESAURUS}.</p>
 <p><strong>1.23/03 (24 Nov 1995)</strong></p>
 <p>ToolPossible command added to support showing of possible, but not active, tools for the toolbar.</p>
 <p>Spell Check button added to the toolbar.</p>
@@ -973,18 +978,18 @@ There is a new button to insert the document's modification date.</p>
 <p>The number of views displayed in a document title now updates at the right time when a view is closed.</p>
 <p>The typeface and size of the font used in the status line can now be modified. The default spec {StatusLine-t:240;Times} is in the Config file. If this line is removed from the Config file, the system font will be used instead - you may wish to use this on lo-res monitors for clarity.</p>
 <p>set_value can now take an array of cell references as the target range to be filled e.g. set_value(index(a12d26,1,b1,4,1),a6d6)). This did not work before, but did not give an error.</p>
-<p>Fireworkz Pro: The database engine should now report errors correctly through to the main program eg. Disc full when sorting when there's no room for a temporary file.</p>
-<p>Fireworkz Pro: The compulsory option no longer has an effect on the database as it can prevent records from being added - this will be fixed at a later date.</p>
-<p>Fireworkz Pro: Corrected problems with caret positioning in card views.</p>
-<p>Fireworkz Pro: Databases created by selecting 'database' in New document now have a !Run file so that you can rename them as !applications and have then automatically load into a running Fireworkz Pro, or load it as necessary, when you double-click on them, rather than having to drag the database directory to the Fireworkz Pro icon. This mechanism only works on RISC OS 3 and above.</p>
-<p>Fireworkz Pro: When specifying criteria for a database search, starting by typing &lt;, &gt; or = will set the search type to be 'expression' rather than 'contains'.</p>
-<p>RISC OS: If the mode is changed from lo-res to hi-res after loading the application, the code no longer draws empty button faces on the toolbar.</p>
+<p>Fireworkz Pro: The database engine should now report errors correctly through to the main program eg. Disc full when sorting when there's no room for a temporary file.</p>
+<p>Fireworkz Pro: The compulsory option no longer has an effect on the database as it can prevent records from being added - this will be fixed at a later date.</p>
+<p>Fireworkz Pro: Corrected problems with caret positioning in card views.</p>
+<p>Fireworkz Pro: Databases created by selecting 'database' in New document now have a !Run file so that you can rename them as !applications and have then automatically load into a running Fireworkz Pro, or load it as necessary, when you double-click on them, rather than having to drag the database directory to the Fireworkz Pro icon. This mechanism only works on RISC OS 3 and above.</p>
+<p>Fireworkz Pro: When specifying criteria for a database search, starting by typing &lt;, &gt; or = will set the search type to be 'expression' rather than 'contains'.</p>
+<p>RISC OS: If the mode is changed from lo-res to hi-res after loading the application, the code no longer draws empty button faces on the toolbar.</p>
 <p><strong>1.22/05</strong></p>
 <p>The spreadsheet function MEDIAN() has been fixed (failed to find median in certain data sets).</p>
 <p>Deleting characters in the body text affected the positioning of styles in the header and footer areas.</p>
 <p>The spreadsheet function SORT() has been found to be at variance with its documentation: to sort on the first column in an array, you must pass 0 as the second parameter to SORT(), not 1 as described in the manual, and as you'd expect from this parameter being an index value. This will not be changed as user spreadsheets now depend on this action.</p>
 <p>The spreadsheet functions PAGE() and PAGES() have been made to recalculate on a document reload as formatting differences on the reload (especially between platforms) will cause the loaded values to be invalid.</p>
-<p>Fireworkz Pro: Resizing frames in a card layout has reverted to the finer grid. Moving frames around in the card layout and note layer still snaps to the coarse ruler markings unless the Ctrl key is held down.</p>
+<p>Fireworkz Pro: Resizing frames in a card layout has reverted to the finer grid. Moving frames around in the card layout and note layer still snaps to the coarse ruler markings unless the Ctrl key is held down.</p>
 <p><strong>1.22/04 (01 Jun 1995)</strong></p>
 <p>Fixes a problem whereby external references of the form [doc]a1[doc]b4 (i.e. a range) were not recognized and compiled correctly.</p>
 <p>Windows: Help on help now uses the Windows HELP_HELPONHELP constant to obtain help in the right help file on Windows 95.</p>
@@ -992,12 +997,12 @@ There is a new button to insert the document's modification date.</p>
 <p>Windows: Checked for compatibility against Windows NT 3.51 (Build 944).</p>
 <p><strong>1.22</strong></p>
 <p>The spreadsheet function LENGTH() now works again.</p>
-<p>Fireworkz Pro: Dragging frames in a card layout now snaps to a coarser grid (actually the coarse ruler markings) unless the Ctrl key is held down. This also applies to dragging pictures in the note layer.</p>
-<p>Fireworkz Pro: Data can now be pasted into the database at columns other than 1.</p>
-<p>Fireworkz Pro: Exporting a subset of a database as a DataPower file now exports the data given by the current query, not the whole file.</p>
-<p>Fireworkz Pro: Pasting sub-paragraph fragments of text from another document into a database no longer creates a text cell overlying the database.</p>
-<p>Fireworkz Pro: Pictures embedded in databases had a spurious NUL character appended in some previous versions, so Draw file rendering may have crashed. Draw file loading now checks itself so this and subsequent releases should not be affected by older databases.</p>
-<p>RISC OS: The hi-res sprites are only loaded if the program is started in a hi-res screen mode, thereby saving memory for some users.</p>
+<p>Fireworkz Pro: Dragging frames in a card layout now snaps to a coarser grid (actually the coarse ruler markings) unless the Ctrl key is held down. This also applies to dragging pictures in the note layer.</p>
+<p>Fireworkz Pro: Data can now be pasted into the database at columns other than 1.</p>
+<p>Fireworkz Pro: Exporting a subset of a database as a DataPower file now exports the data given by the current query, not the whole file.</p>
+<p>Fireworkz Pro: Pasting sub-paragraph fragments of text from another document into a database no longer creates a text cell overlying the database.</p>
+<p>Fireworkz Pro: Pictures embedded in databases had a spurious NUL character appended in some previous versions, so Draw file rendering may have crashed. Draw file loading now checks itself so this and subsequent releases should not be affected by older databases.</p>
+<p>RISC OS: The hi-res sprites are only loaded if the program is started in a hi-res screen mode, thereby saving memory for some users.</p>
 <p><strong>1.21/03 (03 May 1995)</strong></p>
 <p>Windows: Workaround a compiler bug which could prevent certain spreadsheets from loading.</p>
 <p><strong>1.21</strong></p>
@@ -1007,13 +1012,13 @@ There is a new button to insert the document's modification date.</p>
 <p>Printing of draft spreadsheets now does not give spurious errors in blank cells and continuous underlines are now output in draft mode.</p>
 <p>Spreadsheets with arrays of data consumed too much memory, particularly the MineSweep examples.</p>
 <p>There is a new option 'Edit in cell' in the Choices dialogue box which controls whether the new feature of in-cell editing is allowed. The default is off, as it impacts on the apparent display speed of very large spreadsheets. If you turn this value on, then it is best to set the 'Fixed height' option in the 'Row' section of the BaseSheet style to off.</p>
-<p>Fireworkz Pro: Card layouts now take the border style into account when drawing fields, so you can change the colour and line style if you so wish.</p>
-<p>Fireworkz Pro: Database styles are now correctly reapplied on load to card layouts which have more than one card across.</p>
-<p>Fireworkz Pro: File fields in databases now work. To enter a file into the database, drag it from a directory viewer to the desired record and field. Double-clicking on the field will 'launch' the file to be edited by its associated application, if one has been seen by the system.</p>
-<p>Fireworkz Pro: Having a database embedded in the middle of a sheet document no longer inserts spurious rows above the database.</p>
-<p>Fireworkz Pro: Mailshot using a database as a source now works correctly.</p>
-<p>Fireworkz Pro: The number of characters that you can enter into a database value list has been increased from 80 to 255.</p>
-<p>Fireworkz Pro: You can now paste data into the database, either copied from other records in the same database, or from another source. To transform Fireworkz spreadsheet documents into databases you can now create a new database with the appropriate number of fields, copy the data to the clipboard from the Fireworkz spreadsheet document and paste it into the new database.</p>
+<p>Fireworkz Pro: Card layouts now take the border style into account when drawing fields, so you can change the colour and line style if you so wish.</p>
+<p>Fireworkz Pro: Database styles are now correctly reapplied on load to card layouts which have more than one card across.</p>
+<p>Fireworkz Pro: File fields in databases now work. To enter a file into the database, drag it from a directory viewer to the desired record and field. Double-clicking on the field will 'launch' the file to be edited by its associated application, if one has been seen by the system.</p>
+<p>Fireworkz Pro: Having a database embedded in the middle of a sheet document no longer inserts spurious rows above the database.</p>
+<p>Fireworkz Pro: Mailshot using a database as a source now works correctly.</p>
+<p>Fireworkz Pro: The number of characters that you can enter into a database value list has been increased from 80 to 255.</p>
+<p>Fireworkz Pro: You can now paste data into the database, either copied from other records in the same database, or from another source. To transform Fireworkz spreadsheet documents into databases you can now create a new database with the appropriate number of fields, copy the data to the clipboard from the Fireworkz spreadsheet document and paste it into the new database.</p>
 <p><strong>1.20/60 (07 Apr 1995)</strong></p>
 <p>It is now possible to change the min/max axis values by using the up/down arrows - previously these could only be changed by typing.</p>
 <p>Make different series different colours when using 2-D line chart.</p>
@@ -1028,17 +1033,17 @@ There is a new button to insert the document's modification date.</p>
 <p><strong>1.20/50 (01 Mar 1995)</strong></p>
 <p>In some circumstances it was possible to get the spreadsheet recalculation to stall, thereby leaving sheets in an inconsistent state.</p>
 <p>The caret is no longer hidden in rows whose small height would otherwise have caused it to have been hidden previously.</p>
-<p>Fireworkz Pro: Active database queries are now saved and loaded with documents.</p>
-<p>Fireworkz Pro: Editing data in a card layout no longer causes the top of the card to scrolled out of the window.</p>
-<p>Fireworkz Pro: Entering a formula into the database properties no longer corrupts an otherwise empty check formula, so no check formula needs to be entered in order to make this facility work.</p>
-<p>RISC OS: Fill Down of a blank cell in a table in a Letter-based document caused the string 'Kaewoo' to be copied into the selection, rather than the blanks expected.</p>
-<p>RISC OS: Sprites now load correctly again.</p>
+<p>Fireworkz Pro: Active database queries are now saved and loaded with documents.</p>
+<p>Fireworkz Pro: Editing data in a card layout no longer causes the top of the card to scrolled out of the window.</p>
+<p>Fireworkz Pro: Entering a formula into the database properties no longer corrupts an otherwise empty check formula, so no check formula needs to be entered in order to make this facility work.</p>
+<p>RISC OS: Fill Down of a blank cell in a table in a Letter-based document caused the string 'Kaewoo' to be copied into the selection, rather than the blanks expected.</p>
+<p>RISC OS: Sprites now load correctly again.</p>
 <p>Windows: Fixes a problem whereby the popup menus did not work on Windows NT.</p>
 <p>Windows: Corrects the problem whereby Fireworkz could GPF on closedown when recalc had not completed.</p>
 <p><strong>1.20</strong></p>
 <p>Fixes cell reference of bottom right corner of doubly-pinned.</p>
 <p>Fixes invalid scaling factors found in note layer objects in 1.07-era files.</p>
-<p>Fireworkz Pro: First release of Fireworkz Pro (26-bit).</p>
+<p>Fireworkz Pro: First release of Fireworkz Pro (26-bit).</p>
 <p><strong>1.14 (21 Nov 1994)</strong></p>
 <p>Fixes a text loading problem in the PipeDream letter/sheet converters and allows auto-recognition of files created with PipeDream 2 (i.e. with no version info in the file).</p>
 <p>Windows: Corrects the problem whereby Fireworkz could GPF when Delete is pressed in the recently used box when the list of files is empty.</p>

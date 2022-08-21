@@ -4,7 +4,7 @@ Priority: Optional
 Licence: Free
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
-Version: 20200322
+Version: 20200503
 Recommends: Fireworkz
 Description: Fireworkz Getting Started Guide and User Guide
  The Getting Started Guide for RISC OS is designed to help you get to know the basic word processing and spreadsheet capabilities of Fireworkz. You can find the accompanying files for the Getting Started Guide in the Fireworkz-Examples package.

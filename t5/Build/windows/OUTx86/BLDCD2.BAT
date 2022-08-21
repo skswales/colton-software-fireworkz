@@ -7,7 +7,7 @@
 pushd %~dp0
 IF NOT EXIST BLDCD2.BAT EXIT
 
-set OUT_DIR=fwin-22406
+set OUT_DIR=fwin-22407
 
 rmdir /s /q                                            %OUT_DIR%
 mkdir                                                  %OUT_DIR%\

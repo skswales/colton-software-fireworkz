@@ -429,12 +429,12 @@ ev_uref_event_scan_name_definition_table(
     if(0 == array_elements(&name_def_deptable.h_table))
         return;
 
+    name_list_sort();
+
     {
     BOOL name_def_to_be_deleted = FALSE;
     ARRAY_INDEX name_def_mindel = name_def_deptable.mindel;
     ARRAY_INDEX name_def_idx;
-
-    name_list_sort();
 
     CHECKING_ONLY(const ARRAY_INDEX initial_n_elements = array_elements(&name_def_deptable.h_table));
 

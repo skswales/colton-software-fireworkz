@@ -215,19 +215,19 @@ blockquote {
     width: 100%;
 }
 
-#navheader_PCN_L {
+.navheader_PCN_L {
     width: 20%;
     text-align: left;
     vertical-align: top;
 }
 
-#navheader_PCN_C {
+.navheader_PCN_C {
     width: 60%;
     text-align: center;
     vertical-align: top;
 }
 
-#navheader_PCN_R {
+.navheader_PCN_R {
     width: 20%;
     text-align: right;
     vertical-align: top;
@@ -246,19 +246,19 @@ div.navfooter {
     width: 100%;
 }
 
-#navfooter_PUN_L {
+.navfooter_PUN_L {
     width: 40%;
     text-align: left;
     vertical-align: top;
 }
 
-#navfooter_PUN_C {
+.navfooter_PUN_C {
     width: 20%;
     text-align: center;
     vertical-align: top;
 }
 
-#navfooter_PUN_R {
+.navfooter_PUN_R {
     width: 40%;
     text-align: right;
     vertical-align: top;
