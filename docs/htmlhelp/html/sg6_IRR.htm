@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>IRR</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="IRR" />
+  </object>
+
+  <h1><a name="irr" id="irr"></a>IRR</h1>
+
+  <p>Returns the calculated internal rate of return of an initial series of expected returns, based on an initial guess.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">IRR(<span class="csguide-arg">guess</span>:number,
+  <span class="csguide-arg">data</span>:<a href="sg6_array_or_range.htm">array</a>)</span></p>
+
+  <table>
+  <tr valign="top">
+  <td><span class="csguide-arg">guess</span></td>
+  <td>The guessed rate of return, entered as a decimal fraction.</td>
+  </tr>
+  <tr valign="top">
+  <td><span class="csguide-arg"><a href="sg6_array_or_range.htm">data</a></span></td>
+  <td>The initial investment should be entered as a negative number in the first cell in the range or element of the array.
+  Further cells in the range or elements of the array should contain positive numbers, the expected returns on the investment.</td>
+  </tr>
+  </table>
+
+  <p>For example, with <code>-5000</code> in cell <code>A1</code> and <code>500</code> in cells <code>A2</code> to <code>A14</code> and a guessed rate of return of <code>0.0</code>5 in <code>A1</code>6:</p>
+
+  <p><code>IRR(A16, A1:A14)</code></p>
+
+  <p>will return the internal rate of return for the cash flows in column <code>A</code>.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_FV_XLS.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_financial_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_MIRR.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

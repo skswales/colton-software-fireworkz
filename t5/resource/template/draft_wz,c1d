@@ -1,0 +1,42 @@
+{Version:1.36;03 Sep 2015;Wordz;Colton Software}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;1;;32;1;1}
+{Style:BaseLetter;{ColWidth:11520}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:0}{MarginRight:0}{MarginPara:0}{Tablist:L1440 L2880 L4320 L5760 L7200 L8640 L10080}
+{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yyyy hh:mm:ss\\\;dd.mm.yyyy\\\;hh:mm:ss}{NumformSE:@\\\;Error}
+{Background:255;255;255}{ParaStart:0}{ParaEnd:0}{LineSpace:3;240}{Justify:0}{NewObject:3}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}
+{Typeface:Courier}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:Text}
+{Style:Number;{Justify:2}}
+{Style:General;{StyleSearch:50}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
+{Style:Currency;{StyleSearch:60}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
+{Style:Percent;{StyleSearch:70}{Numform:0.##%\\\;-0.##%[Negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:Date;{StyleSearch:10}{NumformDT:dd.mm.yyyy}}
+{Style:Date_a;{StyleSearch:20}{NumformDT:dd/mm/yyyy}}
+{Style:Date_ISO_8601;{StyleSearch:0}{NumformDT:yyyy-mm-dd}}
+{Style:Time;{StyleSearch:30}{NumformDT:hh:mm}}
+{Style:Time_s;{StyleSearch:40}{NumformDT:hh:mm:ss}}
+{Style:BaseHeadFoot}
+{Paper:Draft A4;0;16840;11906;0;0;0;0;0;0;0;0;0}
+{PrintQuality:1}
+{StartOfData}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2;}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3;}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{RulerScale:2;2;5;1}
+{VRulerScale:2;2;3;1}
+{CmdGroup:{ViewCreate:0;0;0;0}{ViewControl:100;0;1;1;0;0;0;2048;0;2048}{CurrentPosition:0;0}}

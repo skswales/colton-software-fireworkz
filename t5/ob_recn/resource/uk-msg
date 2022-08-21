@@ -1,0 +1,15 @@
+#
+# this is the messages file for ob_recn (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 2014 Stuart Swales
+#
+# errors
+#
+re2:No database module present. You can purchase Fireworkz Pro from R-Comp
+we2:No database module present. For RISC OS, you can purchase Fireworkz Pro from R-Comp
+#
+# end of msg (ob_recn)

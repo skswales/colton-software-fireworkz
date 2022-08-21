@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>DAYS_360</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 2014-2015 Stuart Swales -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="DAYS_360" />
+  </object>
+
+  <h1><a name="days_360" id="days_360"></a>DAYS_360</h1>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">DAYS_360(<span class="csguide-arg">start:<a href="sg6_date_formats.htm">date</a></span>,
+  <span class="csguide-arg">end:<a href="sg6_date_formats.htm">date</a></span>
+  {, <span class="csguide-arg">method</span>:number})</span></p>
+
+  <p>This function returns the number of days between the given dates according to the desired 360-day calendar method.</p>
+
+  <p>Credit: <a href="http://en.wikipedia.org/wiki/360-day_calendar">http://en.wikipedia.org/wiki/360-day_calendar</a></p>
+
+  <p>A duration is calculated as an integral number of days between two dates A and B (where by convention A is earlier than B).</p>
+
+  <p>There are two methods commonly available which differ in the way that they handle the cases where the months are not 30 days long:</p>
+
+  <ul>
+    <li>The European Method (30E/360) (<span class="csguide-arg">method</span>=<code>1</code>)<br />
+        If either date A or B falls on the 31st of the month, that date will be changed to the 30th;<br />
+        Where date B falls on the last day of February, the actual date B will be used.</li>
+
+    <li>The US/NASD Method (30US/360) (<span class="csguide-arg">method</span>=<code>0</code> or omitted)<br />
+        If both date A and B fall on the last day of February, then date B will be changed to the 30th.<br />
+        If date A falls on the 31st of a month or last day of February, then date A will be changed to the 30th.<br />
+        If date A falls on the 30th of a month after applying (2) above and date B falls on the 31st of a month, then date B will be changed to the 30th.</li>
+  </ul>
+
+  <p>In both cases the difference between the possibly-adjusted dates is then computed by treating all intervening months as being 30 days long.</p>
+
+  <p>Added in 2.00.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_DAYNAME.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_date_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_HOUR.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

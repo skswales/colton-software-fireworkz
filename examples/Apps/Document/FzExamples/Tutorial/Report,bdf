@@ -1,0 +1,125 @@
+{Version:1.21;(27 Apr 1995);FireworkzPro;Adrienne Sharman - Colton Software;8021 0646 0176 1255}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;6;20;;32;6;20}
+{Style:BaseSheet;{ColWidth:1474}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}
+{LineSpace:0;72}{Justify:2}{JustifyV:0}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}
+{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:BaseHeadFoot;{ColWidth:9864}{MarginLeft:114}{MarginRight:453}{Tablist:C5385 R8900 R9807}{ParaStart:68}{ParaEnd:68}
+{LineSpace:0;72}{Justify:0}}
+{Style:Current cell;{Background:221;221;221}{BorderColour:0;0;0}{Border:4}}
+{StyleCurrent:Current cell}
+{Style:Text;{RowHeightFix:0}{ParaEnd:170}
+{Justify:0}{NewObject:3}}
+{Style:Pounds;{Numform:£#,##0.00}}
+{Style:Heading 1;{Justify:1}{Typeface:Helvetica}{Fonty:360}{Bold:1}}
+{Style:Table head;{Background:221;221;221}{Typeface:Helvetica}{Bold:1}}
+{Style:Heading 2;{ParaEnd:198}
+{Typeface:Helvetica}{Fonty:280}{Bold:1}{Italic:1}}
+{Style:Table cell;{JustifyV:1}}
+{PrintQuality:0}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;1}
+{PaperScale:100}
+{StartOfData}
+{Name-S:Redbang;f9;Bang per buck for Red Rosette}
+{S:X;X;1;0;Fireworks value report}
+{S:X;X;1;1;Introduction}
+{S:X;X;1;2;This document describes and analyses perceived values of the range of rockets produced by Pyrotechnic Prototypes. In it we compare the results of our tests on a wide range of fireworks with the price of those fireworks, to estimate perceived value for money in these products.}
+{S:X;X;1;3;We have carried out extensive research into customers' perceptions of our products and the value they offer. What we have found is that the volume of the explosion produced by an exploding firework is used by most customers as an indicator of firework quality. The louder the bang, the more impressed they are. You will see from the table that some fireworks offer a louder bang relative to cost. For example, the firework Red rosette, which scores a high value at {ITSSN-X:Redbang}, is the clear leader. }
+{S:X;X;1;5;Rocket}
+{S:X;X;1;6;Megabang}
+{S:X;X;1;7;Big boy}
+{S:X;X;1;8;Red rosette}
+{S:X;X;1;9;Purple cascade}
+{S:X;X;1;11;The best value is Red rosette with this score:}
+{S:X;X;1;12;The worst value is Big boy with this score:}
+{S:X;X;1;13;Pricing policy}
+{S:X;X;1;14;As a result of our research we have decided to implement a new policy on product pricing. All Pyrotechnic Prototypes fireworks must now have a value of at least 6, which means that the price of Big boy, currently valued at , must be reduced with immediate effect.}
+{S:X;X;1;15;The more consistently our products are priced, the easier it is for customers to use them and to feel confident about making purchases. Hopefully, this should feed through to an increased level of purchases, as customer confidence improves.}
+{S:X;X;1;16;Height achieved}
+{S:X;X;1;17;Customers also value the height achieved by our rockets when fired. Rocket height on explosion is an important safety factor and so it is important to us as well. However, if a rocket goes too high the visual impact is often not as great.}
+{S:X;X;1;18;The height achieved by all our rockets seems to be perfectly acceptable. However, we are going to start labelling rockets by height achieved so that it is easier for customers to plan their displays and produce the results which they want.}
+{S:X;X;2;5;Distance (metres)}
+{S:S;C;2;6;100}
+{S:S;C;2;7;200}
+{S:S;C;2;8;96}
+{S:S;C;2;9;125}
+{S:S;F;2;11;8.33333333333333;Redbang}
+{S:X;X;3;5;Volume (decibels)}
+{S:S;C;3;6;96}
+{S:S;C;3;7;120}
+{S:S;C;3;8;75}
+{S:S;C;3;9;86}
+{S:X;X;4;5;Price(£)}
+{S:S;C;4;6;15}
+{S:S;C;4;7;22}
+{S:S;C;4;8;9}
+{S:S;C;4;9;12}
+{S:X;X;5;5;Bang per buck}
+{S:S;F;5;6;6.4;d7/e7}
+{S:S;F;5;7;5.45454545454545;d8/e8}
+{S:S;F;5;8;8.33333333333333;d9/e9}
+{S:S;F;5;9;7.16666666666667;d10/e10}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{R:0;;;;1;;;;1;0;{ColWidth:738}}
+{R:3;;;;4;;;;1;0;{ColWidth:1474}}
+{R:4;;;;5;;;;1;0;{ColWidth:1474}}
+{R:5;;;;6;;;;1;0;{ColWidth:1474}}
+{R:6;;;;7;;;;1;0;{ColWidth:1474}}
+{R:1;0;;32;2;11;;32;0;0;{StyleHandle:Text}}
+{R:1;0;;32;2;1;;32;0;0;{StyleHandle:Heading 1}}
+{R:2;5;;32;3;6;;32;0;0;{StyleHandle:Text}}
+{R:3;5;;32;4;6;;32;0;0;{StyleHandle:Text}}
+{R:4;5;;32;5;6;;32;0;0;{StyleHandle:Text}}
+{R:5;5;;32;6;6;;32;0;0;{StyleHandle:Text}}
+{R:1;5;;32;6;6;;32;0;0;{StyleHandle:Table head}}
+{R:;16;;;;17;;;0;1;{RowHeight:360}{RowHeightFix:1}}
+{R:1;1;;32;2;2;;32;0;0;{StyleHandle:Heading 2}}
+{R:1;6;;32;6;11;;32;0;0;{StyleHandle:Table cell}}
+{R:1;;;;2;;;;1;0;{ColWidth:8674}}
+{R:2;;;;3;;;;1;0;{ColWidth:1480}}
+{R:1;4;;32;2;19;;32;0;0;{ColWidth:1701}}
+{R:;1;;;;2;;;0;1;{RowHeight:603}{RowHeightFix:1}}
+{R:;0;;;;1;;;0;1;{RowHeight:645}{RowHeightFix:1}}
+{R:;4;;;;5;;;0;1;{RowHeight:385}{RowHeightFix:1}}
+{R:;6;;;;7;;;0;1;{RowHeight:524}{RowHeightFix:1}}
+{R:;2;;;;3;;;0;1;{RowHeight:1397}{RowHeightFix:1}}
+{R:1;11;;32;2;19;;32;0;0;{ColWidth:7601}}
+{R:1;11;;32;2;19;;32;0;0;{StyleHandle:Text}}
+{R:;3;;;;4;;;0;1;{RowHeight:2161}{RowHeightFix:1}}
+{R:1;11;;32;2;14;;32;0;0;{ColWidth:6122}}
+{R:;10;;;;11;;;0;1;{RowHeight:269}{RowHeightFix:1}}
+{R:1;6;;32;2;10;;32;0;0;{ParaEnd:17}
+}
+{R:;7;;;;8;;;0;1;{RowHeight:546}{RowHeightFix:1}}
+{R:;8;;;;9;;;0;1;{RowHeight:513}{RowHeightFix:1}}
+{R:1;16;;32;2;17;;32;0;0;{StyleHandle:Heading 2}}
+{R:1;13;;32;2;14;;32;0;0;{StyleHandle:Heading 2}}
+{R:2;0;;32;3;4;;32;0;0;{ColWidth:0}}
+{R:3;0;;32;4;4;;32;0;0;{ColWidth:0}}
+{R:3;11;;32;4;19;;32;0;0;{ColWidth:0}}
+{R:4;11;;32;5;19;;32;0;0;{ColWidth:0}}
+{R:1;14;;32;2;19;;32;0;0;{ColWidth:8730}}
+{R:2;14;;32;3;19;;32;0;0;{ColWidth:12}}
+{R:5;11;;32;6;19;;32;0;0;{ColWidth:0}}
+{R:4;0;;32;6;4;;32;0;0;{ColWidth:0}}
+{R:1;0;;32;2;4;;32;0;0;{ColWidth:8730}}
+{R:2;4;;32;3;11;;32;0;0;{ColWidth:1474}}
+{Imp:1;3;;32;2;4;;32;0;0;36;1001;0;40;{StyleHandle:Current cell}}
+{PageHefoBreakValues-H:0;0;0;;1;576;32;0;;;0;;;1;576;32;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3;Fireworkz value report{ITT-X}{ITT-X}{ITP-X:#}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;7344;10208;7328}
+{ViewControl:100;1;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:1;3;475;3;0}
+}

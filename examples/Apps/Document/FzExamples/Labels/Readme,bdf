@@ -1,0 +1,45 @@
+{Version:1.20/01;08 Jan 1995;Fireworkz;Jez Turner;8000 1046 2612 7341}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;16;;32;1;16}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:1190}{MarginRight:1032}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{PrintQuality:0}
+{Paper:From Printer;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;1;Labels}
+{S:X;X;0;3;This directory contains some label sheet files to help you to print out labels quickly and easily. There is also a CSV file containing some sample names and addresses which you can use for practice.}
+{S:X;X;0;4;To print labels:}
+{S:X;X;0;5;{ITT-X}(i){ITT-X} load a label sheet file. The file Label3x8 in this directory is suitable for 3 columns of 8 rows of labels, with no margins around the edge of the page.  L7161 is suitable for Avery label sheets, code L7161, which also have 3 columns but with only 6 rows, and margins around the page}
+{S:X;X;0;6;{ITT-X}(ii){ITT-X}drag the csv file into the label sheet window. Fireworkz will ask you whether you want to load the file as a table or as labels. Click on Labels. The names and addresses will be loaded into the file and arranged as labels.}
+{S:X;X;0;7;{ITT-X}(iii){ITT-X}in the label sheets a style has been created which is particularly suitable for that size of label. In L7161 the style is called L7161, in Label3x8 it is called Labels 70mm x 37mm . Click on the Select document button (to the left of the camera) to select the whole document, and then apply the label style.}
+{S:X;X;0;8;You will now see pages of labels with gridlines between each label. Print out the first page onto ordinary paper and compare the printout with a sheet of labels. If it looks correct, select the whole document and apply the Grid off style to remove the lines, and then print out on label sheets.}
+{S:X;X;0;10;Here are some of the things which might go wrong, and their solutions:}
+{S:X;X;0;11;{ITT-X}(i){ITT-X}The paper sheet may have different margins at the edges of the paper to the settings in the file. If so, change the margins in the Paper dialogue box. You may want to underestimate the bottom and right margins slightly so that the last labels do not fall off onto the next page.}
+{S:X;X;0;12;{ITT-X}(ii){ITT-X}When you print, Fireworkz may tell you that the printable area is larger than the printer driver settings. You will have to override this and print anyway\\\; it is more important for the settings in the document to match the paper you are printing on.}
+{S:X;X;0;13;{ITT-X}(iii){ITT-X}The printer may not be able to print at the very top or left of the label sheet and the first row or column of labels may be clipped a little. If this happens at the left, increase the left margin slightly by dragging in the ruler with no selection. If it happens at the top, try increasing the Spacing above paragraph in the Paragraph section of the label style you have applied.}
+{S:X;X;0;14;{ITT-X}(iv){ITT-X}Some of your labels may have so many lines that they get clipped at the bottom. Try reducing the font size in the label style that you have applied.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{R:0;6;154;3;1;7;160;3;0;0;{Bold:1}}
+{R:0;7;178;3;1;8;;32;0;0;{Bold:1}}
+{R:0;7;146;3;1;8;151;3;0;0;{Bold:1}}
+{R:0;7;196;3;1;8;;32;0;0;{Bold:0}}
+{R:0;8;223;3;1;9;;32;0;0;{Bold:1}}
+{R:0;8;232;3;1;9;;32;0;0;{Bold:0}}
+{R:;9;;;;10;;;0;1;{RowHeight:223}{RowHeightFix:1}}
+{PageHefoBreakValues-H:0;0;0;;0;;;0;;;0;;;0;;;0;;;0}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;9264;12480;9248}
+{ViewControl:100;0;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;1;6;3;0}
+}

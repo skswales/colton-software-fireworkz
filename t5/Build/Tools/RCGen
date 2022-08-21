@@ -1,0 +1,225 @@
+REM Windows RC file generator for Fireworkz
+:
+REM This Source Code Form is subject to the terms of the Mozilla Public
+REM License, v. 2.0. If a copy of the MPL was not distributed with this
+REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
+REM
+REM Copyright (C) 1993-1998 Colton Software Limited
+REM Copyright (C) 1998-2015 R W Colton
+:
+REM TRACE TO "$.Temp.RCGen_out": TRACE ON
+PROCmain(FNreadargs)
+END
+:
+:
+DEF PROCmain(args%)
+LOCAL ptr%
+:
+raised% = FALSE
+LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: PROCraise
+:
+buflen% = 511
+DIM buffer% buflen%
+:
+REM read & decode command line args
+SYS "OS_ReadArgs","BASIC,quit/K,load/K,from/A/G,output/A/G,object/A,common/S,base",args%,buffer%,buflen%
+:
+ptr% = buffer%
+:
+REM Skip BASIC, optional -quit, -load filename
+ptr% += 4
+ptr% += 4
+ptr% += 4
+:
+srcfile$ = FNstringizeGS(!ptr%)
+ptr% += 4
+:
+outfile$ = FNstringizeGS(!ptr%)
+ptr% += 4
+:
+object$ = FNstringize(!ptr%)
+ptr% += 4
+object% = VAL(object$)
+:
+common% = FALSE: IF !ptr% THEN common% = TRUE
+ptr% += 4
+:
+base% = 0
+IF !ptr% THEN
+  base$ = FNstringize(!ptr%)
+  ptr% += 4
+  base% = EVAL(base$)
+ENDIF
+:
+mpl%=TRUE
+:
+quotes$ = """"
+:
+REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ok here we go!
+:
+s% = OPENIN(srcfile$)
+LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#s%: PROCraise
+:
+f% = OPENOUT(outfile$)
+LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#f%: PROCraise
+:
+PROCcopy(s%, f%)
+:
+RESTORE ERROR
+CLOSE#f%
+:
+OSCLI("SetType "+outfile$+" Text")
+:
+RESTORE ERROR
+CLOSE#s%
+:
+RESTORE ERROR
+ENDPROC
+:
+:
+DEF PROCcopy(s%, f%)
+LOCAL offset%
+PROCo(f%, "//")
+PROCo(f%, "// RCGen created for Object "+STR$(object%))
+PROCo(f%, "//")
+IF mpl% THEN PROCmpl(f%)
+IF base% THEN
+  PROCo(f%, "// Manually based at 0x"+STR$~(base%))
+  PROCo(f%, "//")
+ENDIF
+PROCo(f%, "STRINGTABLE PRELOAD MOVEABLE PURE")
+PROCo(f%, "BEGIN")
+:
+IF common% THEN
+  offset% = &6000 + 128*object%
+ELSE
+  REM Each *separate* DLL is based individually
+  offset% = base%
+ENDIF
+:
+WHILE NOT EOF#s%
+  PROCcopyline(f%, GET$#s%, offset%)
+ENDWHILE
+:
+PROCo(f%, "END")
+PROCo(f%, "//")
+PROCo(f%, "// end of RCGen created string table")
+ENDPROC
+:
+:
+DEF PROCcopyline(f%, line$, offset%)
+:
+WHILE LEFT$(line$, 1) = " "
+  line$ = MID$(line$, 2)
+ENDWHILE
+:
+CASE LEFT$(line$, 1) OF
+WHEN ""
+  REM output a blank line
+  PROCo(f%, "")
+:
+WHEN "#"
+  REM modify comment character
+  PROCo(f%, "//" + MID$(line$, 2))
+:
+WHEN "r"
+  REM comment out RISC OS specific lines
+  PROCo(f%, "// " + line$)
+:
+WHEN "w"
+  REM strip off Windows specific prefix and process line
+  PROCo(f%, FNdoline(MID$(line$, 2), offset%))
+:
+OTHERWISE
+  REM process line
+  PROCo(f%, FNdoline(line$, offset%))
+ENDCASE
+:
+ENDPROC
+:
+:
+DEF FNdoline(line$, offset%)
+LOCAL I%, number%
+REM error number?
+IF LEFT$(line$, 1) = "e" THEN line$ = MID$(line$, 2): offset% += &8000
+I% = INSTR(line$, ":")
+number% = VAL(LEFT$(line$, I%-1))
+line$ = FNescape_quotes(MID$(line$, I%+1))
+line$ = CHR$(9)+"0x"+STR$~(offset%+number%)+","+CHR$(9)+quotes$+line$+quotes$
+=line$
+:
+:
+DEF FNescape_quotes(line$)
+LOCAL A$, C$
+A$ = ""
+FOR I% = 1 TO LEN(line$)
+  C$ = MID$(line$, I%, 1)
+  IF C$ = quotes$ THEN C$ = C$+C$
+  A$ += C$
+NEXT
+=A$
+:
+:
+DEF PROCmpl(f%)
+PROCo(f%, "// This Source Code Form is subject to the terms of the Mozilla Public")
+PROCo(f%, "// License, v. 2.0. If a copy of the MPL was not distributed with this")
+PROCo(f%, "// file, You can obtain one at http://mozilla.org/MPL/2.0/.")
+PROCo(f%, "//")
+PROCo(f%, "// Copyright (C) 1993-1998 Colton Software Limited")
+PROCo(f%, "// Copyright (C) 1998-2015 R W Colton")
+PROCo(f%, "//")
+ENDPROC
+:
+:
+DEF PROCnl(f%)
+REM Let SVN take care of expansion to CRLF on WINDOWS
+REM BPUT#f%,13
+BPUT#f%,10
+ENDPROC
+:
+:
+DEF PROCo(f%, A$)
+BPUT#f%,A$;
+PROCnl(f%)
+ENDPROC
+:
+:
+DEF PROCno(f%, A$)
+BPUT#f%,A$;
+ENDPROC
+:
+:
+DEF FNstringize(ptr%)
+LOCAL A%
+A% = 0
+WHILE ptr%?A%
+  A% += 1
+ENDWHILE
+ptr%?A% = 13
+= $ptr%
+:
+:
+DEF FNstringizeGS(ptr%)
+LOCAL A%, L%
+L% = ?ptr%
+A% = 0
+WHILE A% < L%
+  ptr%?(A%) = ptr%?(A%+2)
+  A% += 1
+ENDWHILE
+ptr%?A% = 13
+= $ptr%
+:
+:
+DEF FNreadargs
+LOCAL env%
+SYS "OS_GetEnv" TO env%
+= env%
+:
+DEF PROCraise
+IF NOT raised% THEN raised% = TRUE: ERROR ERR,REPORT$+" at line "+STR$ERL
+ERROR ERR,REPORT$
+ENDPROC
+:
+:
+REM end of RCGen

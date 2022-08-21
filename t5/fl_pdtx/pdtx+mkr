@@ -1,0 +1,37 @@
+#
+# fl_pdtx
+#
+OBJID=22
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).fl_pdtx.$(COUNTRY)-22/rc: $(T5).resource.zz-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 22 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B22: $(T5).resource.zz-msg
+ $(MAKEMESS) -to $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B_tmp -symbol rb_fl_pdtx_msg_weak
+
+$(BUILD_DIR).fl_pdtx.o.fl_pdtx: $(T5).fl_pdtx.c.fl_pdtx
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_22_S=$(BUILD_DIR).fl_pdtx.o.fl_pdtx
+
+OBJS_22_X=$(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B22
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M22: $(OBJS_22_X) $(OBJS_22_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_22_X) $(OBJS_22_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_pdtx.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob22: $(PROD_BUILD_DIR).o.$(COUNTRY)-M22 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M22 -N22 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_pdtx
+
+# end of fl_pdtx.mkr ###############################################################################

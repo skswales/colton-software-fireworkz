@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>MATCH</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="MATCH" />
+  </object>
+
+  <h1><a name="match" id="match"></a>MATCH</h1>
+
+  <p>General lookup.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">MATCH(<span class="csguide-arg">key</span>,
+  <span class="csguide-arg">lookup:<a href="sg6_array_or_range.htm">array</a></span>,
+  <span class="csguide-arg">lookup_type</span>:number)</span></p>
+
+  <p>Looks up <span class="csguide-arg">key</span> in the
+  <span class="csguide-arg">lookup</span> <a href="sg6_array_or_range.htm">array</a> or range of cells using
+  <span class="csguide-arg">lookup_type</span> and returns the position in that array;
+  if the <span class="csguide-arg">lookup</span> parameter specifies a range,
+  <code>MATCH</code> returns the cell reference of the value found.</p>
+
+  <table>
+    <tr valign="top"><td><span class="csguide-arg">lookup_type</span>&nbsp;</td><td><code>MATCH</code> action</td></tr>
+    <tr valign="top"><td><code>-1</code></td><td><code>MATCH</code> finds the largest value which is less than or equal to <span class="csguide-arg">key</span>. Note that in this case, the <span class="csguide-arg">lookup</span> array must be sorted in ascending order.</td></tr>
+    <tr valign="top"><td><code>0</code></td><td><code>MATCH</code> finds the value which exactly matches <span class="csguide-arg">key</span>.</td></tr>
+    <tr valign="top"><td><code>1</code></td><td><code>MATCH</code> finds the smallest value which is greater than or equal to <span class="csguide-arg">key</span>. Note that in this case, <span class="csguide-arg">lookup</span> array must be sorted in descending order.</td></tr>
+  </table>
+
+  <p><b>Example:</b></p>
+
+  <p><code>MATCH(2.5, {1,2,3}, 1)</code></p>
+
+  <p>returns <code>2</code>.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_LOOKUP.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_lookup_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_VLOOKUP.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{Version:1.25;(04 Apr 1996);FireworkzPro;Debug version - Single User Licence;8000 1713 2777 7418}
+{BaseSingleCol:0}
+{RowTable:1}
+{Flow:39}
+{Block:0;0;;32;4;23;;32;4;23}
+{Style:BaseCard;{ColWidth:4762}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}
+{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:2}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yy hh:mm:ss\\\;dd.mm.yy\\\;hh:mm:ss}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseCard}
+{Style:Percent;{StyleSearch:3}{Numform:0.##%\\\;-0.##%[negative]}}
+{Style:Currency;{StyleSearch:2}{Numform:£#,##0.00\\\;£-#,##0.00[negative]}}
+{Style:Date;{StyleSearch:4}{NumformDT:dd.mm.yy}}
+{Style:Date_a;{StyleSearch:5}{NumformDT:dd/mm/yy}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:General;{StyleSearch:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:ƒdatabase_bƒDatabase;{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{LineSpace:0;72}{Justify:0}{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:ƒdatabase_bƒAll fields;{BorderColour:0;0;0}{Border:2}}
+{Style:ƒdatabase_bƒAll titles;{MarginLeft:0}{MarginRight:0}{MarginPara:0}{Border:0}}
+{Paper:A4;0;16840;11900;736;736;392;392;0;0;0;0;32;;1}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseCard}}
+{R:3;;;;4;;;;1;0;{ColWidth:1019}}
+{R:1;;;;2;;;;1;0;{ColWidth:1927}}
+{R:0;;;;1;;;;1;0;{ColWidth:5839}}
+{R:2;;;;3;;;;1;0;{ColWidth:1927}}
+{DBTable-B:229638147;database_b;0;0;0;4;23;1}
+{DBFrame-B:229638147;0;111204458;Source;1701;1142;1134;340;1024}
+{DBTitle-B:229638147;0;111204458;Source;227;1134;1474;336;1}
+{DBFrame-B:229638147;1;111204456;Track;1701;235;4082;340;3344}
+{DBTitle-B:229638147;1;111204456;Track;227;227;1474;336;1}
+{DBFrame-B:229638147;2;111204457;Artist;1701;689;4082;340;1927}
+{DBTitle-B:229638147;2;111204457;Artist;227;680;1474;336;1}
+{DBFrame-B:229638147;3;123791582;Album;1701;1596;4082;340;2210}
+{DBTitle-B:229638147;3;123791582;Album;227;1587;1474;336;1}
+{EndOfData}
+{RulerScale:0;5;2;1}
+{CmdGroup:{ViewCreate:1760;12192;11696;12160}{ViewControl:100;2;0;0;1;0;0;2048;0;2048}{CurrentPosition:1;1;8;34;0}}

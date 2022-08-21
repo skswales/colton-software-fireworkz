@@ -1,0 +1,72 @@
+{Version:1.30/04;(01 Apr 1997);FireworkzPro;Debug version - Single User Licence;8000 1713 2777 7418}
+{BaseSingleCol:0}
+{RowTable:1}
+{Flow:39}
+{Block:0;0;;32;2;42;;32;2;42}
+{Style:BaseCard;{ColWidth:5725}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}
+{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseCard}
+{Style:Percent;{StyleSearch:3}{Numform:0.##%\\\;-0.##%[negative]}}
+{Style:Currency;{StyleSearch:2}{Numform:£#,##0.00\\\;£-#,##0.00[negative]}}
+{Style:Date;{StyleSearch:4}{NumformDT:dd.mm.yy}}
+{Style:Date_a;{StyleSearch:5}{NumformDT:dd/mm/yy}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:General;{StyleSearch:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:ƒMountainsƒDatabase;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:ƒMountainsƒAll titles;{Justify:2}}
+{Style:ƒMountainsƒHeight;{Numform:#,##0"m"}}
+{Style:ƒMountainsƒGCX;{Numform:0}}
+{Style:ƒMountainsƒGCY;{Numform:0}}
+{Style:ƒMountain_dƒDatabase;{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{LineSpace:0;72}{Justify:0}{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:ƒMountain_dƒAll fields;{BorderColour:0;0;0}{Border:2}}
+{Style:ƒMountain_dƒAll titles;{MarginLeft:0}{MarginRight:0}{MarginPara:0}{Border:0}}
+{Paper:None;1;283465;283465;0;0;0;0;0;0;0;0;32;;1}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{DBTable-B:229638146;Mountain_d;1;0;0;2;42;1}
+{DBFrame-B:229638146;0;16777227;Section;2028;5436;3200;368;3230}
+{DBTitle-B:229638146;0;16777227;Section;708;5436;1280;368;1}
+{DBFrame-B:229638146;1;16777224;Book;2028;3996;3200;368;736}
+{DBTitle-B:229638146;1;16777224;Book;708;3996;1280;368;1}
+{DBFrame-B:229638146;2;16777216;Mountain;2028;156;3200;368;5442}
+{DBTitle-B:229638146;2;16777216;Mountain;708;156;1280;368;1}
+{DBFrame-B:229638146;3;16777217;Height;2028;636;2560;368;623}
+{DBTitle-B:229638146;3;16777217;Height;708;636;1280;368;1}
+{DBFrame-B:229638146;4;16777218;GCX;2028;1116;2560;368;849}
+{DBTitle-B:229638146;4;16777218;GCX;708;1116;1280;368;1}
+{DBFrame-B:229638146;5;16777219;GCY;2028;1596;2560;368;849}
+{DBTitle-B:229638146;5;16777219;GCY;708;1596;1280;368;1}
+{DBFrame-B:229638146;6;16777220;Id;2028;2076;2560;368;679}
+{DBTitle-B:229638146;6;16777220;Id;708;2076;1280;368;1}
+{DBFrame-B:229638146;7;16777221;Deleted Id;2028;2556;2560;368;509}
+{DBTitle-B:229638146;7;16777221;Deleted Id;708;2556;1280;368;1}
+{DBFrame-B:229638146;8;16777222;M;2028;3036;3200;368;679}
+{DBTitle-B:229638146;8;16777222;M;708;3036;1280;368;1}
+{DBFrame-B:229638146;9;16777223;Area;2028;3516;3200;368;509}
+{DBTitle-B:229638146;9;16777223;Area;708;3516;1280;368;1}
+{DBFrame-B:229638146;10;16777225;Chapter;2028;4476;3200;368;509}
+{DBTitle-B:229638146;10;16777225;Chapter;708;4476;1280;368;1}
+{DBFrame-B:229638146;11;16777226;Page;2028;4956;2560;368;679}
+{DBTitle-B:229638146;11;16777226;Page;708;4956;1280;368;1}
+{DBFrame-B:229638146;12;16777228;On;2028;5916;3200;368;2663}
+{DBTitle-B:229638146;12;16777228;On;708;5916;1280;368;1}
+{DBFrame-B:229638146;13;16777229;Other;2028;6396;3200;368;2663}
+{DBTitle-B:229638146;13;16777229;Other;708;6396;1280;368;1}
+{DBQuery-B:Mountain contains ben;1;-1;1;0;1}
+{DBPattern-B:"*ben*";16777216;2;2;131085}
+{DBQuery-B:Height >1100;2;-1;1;0;1}
+{DBPattern-B:>1100;16777217;0;0;131092}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseCard}}
+{Imp:0;;;;1;;;;1;0;2;1067;1;20;{StyleHandle:ƒMountainsƒDatabase}}
+{Imp:0;;;;1;;;;1;0;2;1067;3;22;{StyleHandle:ƒMountainsƒAll titles}}
+{Imp:0;;;;1;;;;1;0;2;1067;4;23;{StyleHandle:ƒMountainsƒHeight}}
+{Imp:0;;;;1;;;;1;0;2;1067;4;23;{StyleHandle:ƒMountainsƒGCX}}
+{Imp:0;;;;1;;;;1;0;2;1067;4;23;{StyleHandle:ƒMountainsƒGCY}}
+{R:;;;;;;;;1;1;{ColWidth:5669}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;11952;16352;11760}{ViewControl:100;2;0;0;1;1;0;2048;0;2048}{CurrentPosition:0;0;0;2;0}}

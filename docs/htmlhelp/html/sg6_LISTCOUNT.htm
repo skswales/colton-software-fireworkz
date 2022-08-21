@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>LISTCOUNT</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="LISTCOUNT" />
+  </object>
+
+  <h1><a name="listcount" id="listcount"></a>LISTCOUNT</h1>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">LISTCOUNT(<span class="csguide-arg"><a href="sg6_array_or_range.htm">array</a></span>)</span></p>
+
+  <p>Returns a two-column <a href="sg6_arrays.htm">array</a> with the
+  first column being a sorted list of unique entries from the first column of the
+  <span class="csguide-arg"><a href="sg6_array_or_range.htm">array</a></span>,
+  and the second column giving the number of occurrences of each entry.</p>
+
+  <p>If <span class="csguide-arg"><a href="sg6_array_or_range.htm">array</a></span> has two columns the
+  second column will be treated as a corresponding set of numbers to be added for each entry,
+  rather than simply counting the number of occcurences of each entry.</p>
+
+  <p><b>Example:</b></p>
+
+  <p>You have a list of customer names in column <code>A</code>
+  and in column <code>C</code> you have a list of sales figures for individual sales to those customers, then</p>
+
+  <p><code>SET_VALUE(D1:E20, LISTCOUNT({A1:A100, C1:C100}))</code></p>
+
+  <p>would write out 20 rows of customers names and total sales figures in <code>D1:E20</code>.
+  <code>{A1:A100,C1:C100}</code> makes a two column array of 100 rows.</p>
+
+  <p>You could use <code>SORT()</code> and <code><a href="sg6_FLIP.htm">FLIP</a>()</code>
+  to sort the result of <code>LISTCOUNT()</code> into order before listing it out.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_LINEST.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_statistical_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_LOGEST.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{Version:1.21;(27 Apr 1995);FireworkzPro;Adrienne Sharman - Colton Software;8021 0646 0176 1255}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;25;;32;1;25}
+{Style:BaseLetter;{ColWidth:11185}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:144}{MarginRight:2681}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}
+{BorderColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{PrintQuality:0}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;0;Headteacher's Office}
+{S:X;X;0;1;Middlebury Junior School}
+{S:X;X;0;2;Long Lane}
+{S:X;X;0;3;Middlebury}
+{S:X;X;0;4;Middleshire}
+{S:X;X;0;6;Dear parent or guardian}
+{S:X;X;0;7;Visit to Pantomime}
+{S:X;X;0;8;This year we will be atending Cinderella Cinderella at the Palace Theatre. It is expected to be an excellent production\\\; it features at least one well-known children's television presenter, two Australians soap stars, and retired footballers who visited the school earlier this year for coaching sessions.}
+{S:X;X;0;9;Each year will be attending on separate nights in the week starting Monday 21st. Please check that your child is ready on the appropriate nights. We will be leaving from the school gates at 6.30pm promptly so please ensure that you turn up on time. We expect to return to school at 10pm\\\; please be there to collect your child.}
+{S:X;X;0;10;Year{ITT-X}Night}
+{S:X;X;0;11;1{ITT-X}Tuesday}
+{S:X;X;0;12;2{ITT-X}Wednesday}
+{S:X;X;0;13;3{ITT-X}Thursday}
+{S:X;X;0;14;Yours sincerely}
+{S:X;X;0;22;Headteacher}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;9280;12480;9248}
+{ViewControl:100;0;1;1;0;0;0;2048;0;2048}
+{CurrentPosition:0;13;0;3;0}
+}

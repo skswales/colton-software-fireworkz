@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>LOOKUP</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="LOOKUP" />
+  </object>
+
+  <h1><a name="lookup" id="lookup"></a>LOOKUP</h1>
+
+  <p>General lookup.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">LOOKUP(<span class="csguide-arg">key</span>,
+  <span class="csguide-arg">lookup:<a href="sg6_array_or_range.htm">array</a></span>,
+  <span class="csguide-arg">result:<a href="sg6_array_or_range.htm">array</a></span>
+  {, <span class="csguide-arg">all</span>:number})</span></p>
+
+  <p>Returns the value in the <span class="csguide-arg">result</span> <a href="sg6_array_or_range.htm">array</a> or range of cells
+  corresponding to the position that <span class="csguide-arg">key</span> holds in the
+  <span class="csguide-arg">lookup</span> <a href="sg6_array_or_range.htm">array</a> or range of cells.</p>
+
+  <p><span class="csguide-arg">key</span> can be a date, string or number.
+  If <span class="csguide-arg">key</span> is a string,
+  it can include the wildcards <code>^?</code> (any single character) or <code>^#</code> (multiple characters).</p>
+
+  <p>If an exact match for <span class="csguide-arg">key</span> is found in the
+  <span class="csguide-arg">lookup</span> <a href="sg6_array_or_range.htm">array</a>,
+  the function returns the corresponding element from the
+  <span class="csguide-arg">result</span> <a href="sg6_array_or_range.htm">array</a>.</p>
+
+  <p>If <span class="csguide-arg">key</span> is not found in the <span class="csguide-arg">lookup</span> <a href="sg6_array_or_range.htm">array</a>, an error message is returned.</p>
+
+  <p>If the optional fourth parameter <span class="csguide-arg">all</span> is supplied and set to <code>1</code>,
+  the result is an <a href="sg6_arrays.htm">array</a> containing all the rows of the
+  <span class="csguide-arg">result</span> <a href="sg6_array_or_range.htm">array</a> for which the key was found in the
+  <span class="csguide-arg">lookup</span> <a href="sg6_array_or_range.htm">array</a>.</p>
+
+  <p><b>Example:</b></p>
+
+  <p><code>LOOKUP(&quot;Mark&quot;, B1:B10, B1:E10, 1)</code></p>
+
+  <p>returns an array which is all of the rows of <code>B1:E10</code> for which the value in the <code>B</code> column is <code>&quot;Mark&quot;</code>.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_HLOOKUP.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_lookup_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_MATCH.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

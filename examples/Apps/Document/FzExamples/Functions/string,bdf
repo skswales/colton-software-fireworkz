@@ -1,0 +1,175 @@
+{Version:1.07;13 Nov 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;6;23;;32;6;23}
+{Style:BaseSheet;{ColWidth:2210}{ColName:X#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:2}{JustifyV:0}{NewObject:1}{Numform:#,##0}{NumformDT:dd.mm.yy hh:mm:ss}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:BaseHeadFoot}
+{StyleHeaderFooter:BaseHeadFoot}
+{Style:Current cell;{Background:221;221;221}{BorderColour:0;0;0}{Border:1}}
+{StyleCurrent:Current cell}
+{Style:Heading;{Background:0;68;153}{Justify:1}{Fonty:600}{Bold:1}{Foreground:255;255;255}}
+{Style:Text;{Justify:0}{NewObject:3}}
+{Paper:Default A4;1;11906;16840;346;346;442;1134;0;0;0;0;32;;1}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;String Functions}
+{S:X;X;0;2;Function}
+{S:X;X;0;4;Char}
+{S:X;X;0;5;Code}
+{S:X;X;0;6;Exact}
+{S:X;X;0;7;Find}
+{S:X;X;0;8;Join}
+{S:X;X;0;9;Left}
+{S:X;X;0;10;Length}
+{S:X;X;0;11;Lower}
+{S:X;X;0;12;Mid}
+{S:X;X;0;13;Proper}
+{S:X;X;0;14;Replace}
+{S:X;X;0;15;Rept}
+{S:X;X;0;16;Reverse}
+{S:X;X;0;17;Right}
+{S:X;X;0;18;String}
+{S:X;X;0;19;Text}
+{S:X;X;0;20;Trim}
+{S:X;X;0;21;Upper}
+{S:X;X;0;22;Value}
+{S:X;X;1;2;Input 1}
+{S:S;C;1;4;65}
+{S:S;F;1;5;"A";e5}
+{S:X;X;1;6;Resultz}
+{S:X;X;1;7;nt}
+{S:X;X;1;8;Colton}
+{S:X;X;1;9;Colton Software}
+{S:X;X;1;10;Exponential}
+{S:X;X;1;11;CoMPlicAtED}
+{S:X;X;1;12;Corresponding}
+{S:X;X;1;13;this is a TITLE}
+{S:X;X;1;14;Password : Secret}
+{S:X;X;1;15;Can}
+{S:X;X;1;16;Not a Palindrome}
+{S:X;X;1;17;Colton Software}
+{S:S;C;1;18;65454}
+{S:S;C;1;19;1234.567}
+{S:S;X;1;20;"  Lots   of    space "}
+{S:X;X;1;21;jUSt liKe tHAt}
+{S:X;X;1;22;1000}
+{S:X;X;2;2;Input 2}
+{S:X;X;2;6;Results}
+{S:X;X;2;7;Ancient}
+{S:X;X;2;8;Software}
+{S:S;C;2;9;6}
+{S:X;X;2;10;-}
+{S:X;X;2;11;-}
+{S:S;C;2;12;4}
+{S:X;X;2;13;-}
+{S:S;C;2;14;12}
+{S:S;C;2;15;2}
+{S:X;X;2;16;-}
+{S:S;C;2;17;9}
+{S:S;C;2;18;0}
+{S:X;X;2;19;£#,##0.00}
+{S:X;X;3;2;In 3}
+{S:X;X;3;6;-}
+{S:S;C;3;7;1}
+{S:S;C;3;12;7}
+{S:X;X;3;13;-}
+{S:S;C;3;14;6}
+{S:X;X;4;2;Output}
+{S:S;F;4;4;"A";char(b5)}
+{S:S;F;4;5;65;code(b6)}
+{S:S;F;4;6;0;exact(b7,c7)}
+{S:S;F;4;7;6;find(b8,c8,d8)}
+{S:S;F;4;8;"ColtonSoftware";join(b9,c9)}
+{S:S;F;4;9;"Colton";left(b10,c10)}
+{S:S;F;4;10;11;length(b11)}
+{S:S;F;4;11;"complicated";lower(b12)}
+{S:S;F;4;12;"respond";mid(b13,c13,d13)}
+{S:S;F;4;13;"This Is A Title";proper(b14)}
+{S:S;F;4;14;"Password : ZZZ!";replace(b15,c15,d15,"ZZZ!")}
+{S:S;F;4;15;"CanCan";rept(b16,c16)}
+{S:S;F;4;16;"emordnilaP a toN";reverse(b17)}
+{S:S;F;4;17;" Software";right(b18,c18)}
+{S:S;F;4;18;"65454";string(b19,c19)}
+{S:S;F;4;19;"£1,234.57";text(b20,c20)}
+{S:S;F;4;20;"Lots of space";trim(b21)}
+{S:S;F;4;21;"JUST LIKE THAT";upper(b22)}
+{S:S;F;4;22;1000;value(b23)}
+{S:X;X;5;2;Summary}
+{S:X;X;5;4;Converts ASCII value to character}
+{S:X;X;5;5;Converts character to ASCII value}
+{S:X;X;5;6;Compares two strings - 1 TRUE, 0 FALSE.}
+{S:X;X;5;7;Attempts to find first string within second, starting at Input3. Input3 is optional}
+{S:X;X;5;8;Concatenates any number of strings onto the end of each other.}
+{S:X;X;5;9;Returns the first Input2 charaters of a string.}
+{S:X;X;5;10;Returns the length of a string.}
+{S:X;X;5;11;Converts a string to contain only lower case letters.}
+{S:X;X;5;12;Extracts Input3 characters from a string, starting from Input2 .}
+{S:X;X;5;13;Capitalises initials}
+{S:X;X;5;14;Replaces part of the Input1 , starting with Input2 up to Input3 with Input4}
+{S:X;X;5;15;Repeats a string Input2 times to form a new string.}
+{S:X;X;5;16;Reverses string.}
+{S:X;X;5;17;last Input2 chars of string.}
+{S:X;X;5;18;Converts number to string, using Input2  places.}
+{S:X;X;5;19;Returns a string of the number formatted by string}
+{S:X;X;5;20;Strips spaces.}
+{S:X;X;5;21;Converts to upper case }
+{S:X;X;5;22;Converts string to number.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:0;;;;1;;;;1;0;{ColWidth:1190}}
+{R:2;;;;3;;;;1;0;{ColWidth:1587}}
+{R:1;;;;2;;;;1;0;{ColWidth:1077}}
+{R:3;;;;4;;;;1;0;{ColWidth:738}}
+{R:4;;;;5;;;;1;0;{ColWidth:1987}}
+{R:7;;;;8;;;;1;0;{ColWidth:3740}}
+{R:8;;;;9;;;;1;0;{ColWidth:964}}
+{R:2;2;;32;3;3;;32;0;0;{Justify:1}}
+{R:2;4;;32;3;9;;32;0;0;{Justify:1}}
+{R:2;10;;32;3;12;;32;0;0;{Justify:1}}
+{R:2;13;;32;3;14;;32;0;0;{Justify:1}}
+{R:2;16;;32;3;17;;32;0;0;{Justify:1}}
+{R:2;20;;32;3;23;;32;0;0;{Justify:1}}
+{R:3;2;;32;4;3;;32;0;0;{Justify:1}}
+{R:3;4;;32;4;7;;32;0;0;{Justify:1}}
+{R:3;8;;32;4;12;;32;0;0;{Justify:1}}
+{R:3;13;;32;4;14;;32;0;0;{Justify:1}}
+{R:3;15;;32;4;23;;32;0;0;{Justify:1}}
+{R:4;2;;32;5;3;;32;0;0;{Justify:1}}
+{R:5;7;56;3;6;8;71;3;0;0;{Italic:1}}
+{R:5;9;17;3;6;10;24;3;0;0;{Italic:1}}
+{R:5;12;8;3;6;13;15;3;0;0;{Italic:1}}
+{R:5;12;55;3;6;13;62;3;0;0;{Italic:1}}
+{R:5;14;20;3;6;15;27;3;0;0;{Italic:1}}
+{R:5;14;43;3;6;15;50;3;0;0;{Italic:1}}
+{R:5;14;56;3;6;15;63;3;0;0;{Italic:1}}
+{R:5;14;68;3;6;15;;32;0;0;{Italic:1}}
+{R:5;15;16;3;6;16;23;3;0;0;{Italic:1}}
+{R:5;17;4;3;6;18;11;3;0;0;{Italic:1}}
+{R:5;18;32;3;6;19;39;3;0;0;{Italic:1}}
+{R:5;;;;6;;;;1;0;{ColWidth:7408}}
+{R:6;;;;7;;;;1;0;{ColWidth:0}}
+{R:4;0;;32;5;1;;32;0;0;{ColWidth:0}}
+{R:3;0;;32;4;1;;32;0;0;{ColWidth:0}}
+{R:2;0;;32;3;1;;32;0;0;{ColWidth:0}}
+{R:0;0;;32;2;1;;32;0;0;{StyleHandle:Heading}}
+{R:0;0;;32;1;1;;32;0;0;{ColWidth:15080}}
+{R:1;0;;32;2;23;;32;0;0;{ColWidth:2155}}
+{R:;3;;;;4;;;0;1;{RowHeight:224}{RowHeightFix:1}}
+{R:1;0;;32;2;1;;32;0;0;{ColWidth:0}}
+{R:5;0;;32;6;1;;32;0;0;{ColWidth:0}}
+{R:5;;;;6;;;;1;0;{StyleHandle:Text}}
+{R:0;;;;1;;;;1;0;{StyleHandle:Text}}
+{R:1;6;;32;2;23;;32;0;0;{StyleHandle:Text}}
+{R:0;0;;32;1;1;;32;0;0;{Justify:1}}
+{R:1;19;;32;2;20;;32;0;0;{Justify:2}{Numform:#.#####}}
+{PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:16;10912;14240;10528}
+{ViewControl:100;2;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:0;2;2;3}
+}

@@ -1,0 +1,127 @@
+# z1.d32.mf_mid ###################### * D e b u g * ####################################
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Debugging compilation options
+
+# Generate debug info
+ASflags=$(ASflags_BASE) -G
+
+CCflags=$(CCflags_BASE) -DUNRELEASED
+# -g option must be explicitly added to each code module needing debug as
+# not enough room (even with 64MB) to have everything compiled with full debug
+# even just -gf ends up with a 24MB image...
+
+# Include debugging information
+LDflags_AOF=-d -aof
+LDflags_AIF=-d -aif -base &8000
+
+OBJMUNGE=@| No 32-bit ObjMunge
+
+# objects to be bound into !RunImage
+
+AOF_S=\
+$(BUILD_DIR).ob_skel.skelA \
+$(BUILD_DIR).ob_skel.skelB \
+$(BUILD_DIR).ob_skel.skelC \
+$(BUILD_DIR).ob_skel.skelD \
+$(BUILD_DIR).ob_skel.skelM \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M00 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M01 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M03 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M10 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M15 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M16 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M18 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M29 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M30 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M31 \
+
+# modules that are dynamically loaded
+
+DYNLOAD_S0=\
+
+DYNLOAD_S1=\
+
+# NB only sprites were dynamically loaded, as all code objects are bound
+DYNLOAD_S2=\
+
+AOF_DYNLOAD_S0=\
+
+AOF_DYNLOAD_S1=\
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M04 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M06 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M07 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M08 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M09 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M12 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M17 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M19 \
+
+AOF_DYNLOAD_S2=\
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M20 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M21 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M22 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M23 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M24 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M25 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M26 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M27 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M28 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M33 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M35 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M40 \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M41 \
+
+# all code objects are bound rather than dynamically loaded
+
+AOF_S_LOAD=\
+$(AOF_DYNLOAD_S0) \
+$(AOF_DYNLOAD_S1) \
+$(AOF_DYNLOAD_S2)
+
+# list of files to build into !RunImage
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-sk_via: \
+$(PROD_BUILD_DIR).Makefile
+ $(MAKERESP) > $@ \
+$(AOF_S) \
+$(AOF_S_LOAD) \
+$(CCwimplib) $(CCflexlib) $(CCstubs)
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image: \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-sk_via \
+$(AOF_S) \
+$(AOF_S_LOAD) \
+$(CCwimplib) $(CCflexlib) $(CCstubs)
+ $(LD) $(LDflags_AIF) -o $@ -via $(PROD_BUILD_DIR).o.$(COUNTRY)-sk_via -map -xref > $(PROD_BUILD_DIR).binaries.$(COUNTRY)-MapIm -S $(PROD_BUILD_DIR).binaries.$(COUNTRY)-SymIm
+
+# dyamically loaded bits
+
+# NB imports is built as a side-effect of building the AOF_DYNLOAD_Sn
+$(PROD_BUILD_DIR).binaries.stubs: \
+$(AOF_DYNLOAD_S0) \
+$(AOF_DYNLOAD_S1) \
+$(AOF_DYNLOAD_S2) \
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image
+ @Remove $@
+ $(OBJMUNGE) -Su$@ \
+-O$(PROD_BUILD_DIR).o.$(COUNTRY)-sk_aof \
+-I$(PROD_BUILD_DIR).imports \
+-L$(PROD_BUILD_DIR).binaries.$(COUNTRY)-SymIm
+
+# a test copy, with Info
+
+$(PROD_BUILD_DIR).!$(APPL).!RunImage: \
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image \
+$(DYNLOAD_S2) \
+$(PROD_BUILD_DIR).!$(APPL).Info
+ Copy $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image $@ ~C FV
+ @Time
+
+# end of mf_mid (z1.d32) ##########################################################

@@ -1,0 +1,24 @@
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+| Copyright (C) 2013-2015 Stuart Swales
+
+| Prune the checked-out copy of RISC_OSLib
+echo <Obey$Dir>
+Set rlib_tmp$Dir <Obey$Dir>.castle.RiscOS.Sources.Lib.RISC_OSLib.rlib
+cdir <Obey$Dir>.rlib
+|
+cdir <Obey$Dir>.rlib.h
+| Used directly by Fireworkz source code & headers
+copy <rlib_tmp$Dir>.h.bbc        <Obey$Dir>.rlib.h.* ~CFV
+copy <rlib_tmp$Dir>.h.drawmod    <Obey$Dir>.rlib.h.* ~CFV
+|
+| Used directly by Fireworkz DPLib source code & headers
+copy <rlib_tmp$Dir>.h.os         <Obey$Dir>.rlib.h.* ~CFV
+copy <rlib_tmp$Dir>.h.sprite     <Obey$Dir>.rlib.h.* ~CFV
+|
+| Used by one or more of the above headers
+| Nothing...
+|
+Unset rlib_tmp$Dir

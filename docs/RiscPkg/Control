@@ -1,0 +1,14 @@
+Package: Fireworkz-Manuals
+Version: 20151020
+Section: Manuals
+Priority: Optional
+Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
+Standards-Version: 0.4.0
+Licence: Free
+Description: Fireworkz User and Spreadsheet Guide
+ Fireworkz offers all the facilities you would expect from the following separate programs:
+ word processor, spreadsheet, database and charts package.
+ Thanks to Richard Colton, Fireworkz is now open source and completely free.
+ These are the HTML User and Spreadsheer Guides for Fireworkz.
+Components: Manuals.Fireworkz (Movable LookAt)
+Recommends: Fireworkz

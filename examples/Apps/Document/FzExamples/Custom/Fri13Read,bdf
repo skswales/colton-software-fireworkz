@@ -1,0 +1,37 @@
+{Version:1.03/58;17 Aug 1993;Resultz;Colton Software;6000 1072 7816 4111}
+{Block:0;0;;32;1;19;;32;1;19}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:1190}{MarginRight:1032}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{Style:Indent;{MarginLeft:1814}{MarginRight:845}{MarginPara:-567}{Tablist:L1}}
+{StyleBase:BaseLetter}
+{StyleHeaderFooter:BaseHeadFoot}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;1;Friday 13th}
+{S:X;X;0;3;The files in this directory give a solution to the Friday 13th problem as posed in PipeLine many moons ago.}
+{S:X;X;0;4;The problem is to "prove" that the 13th of a month is more likely to be a Friday than any other particular day. }
+{S:X;X;0;5;This curious fact relies on (i) the modern calendar working in a 400-year cycle and (ii) the number of days in 400 years happens to be exactly divisible by 7. This implies that if 13th August 1993 is a Friday then 13th August 2393 will also be a Friday. Further, the pattern of Friday 13ths in the 400 years from 13th August 1993 to 12th August 2393 will be exactly the same as the pattern of Friday 13ths in the following 400 years. (This ignores any changes to the calendar in the next 400 years....)}
+{S:X;X;0;6;So the task is to count the number of Friday 13ths in a 400 year period and show that there are more Friday 13ths than Thursday 13ths or Wednesday 13ths and so on.}
+{S:X;X;0;7;Cell  A5 in the worksheet Fri13 invokes the custom function and displays the results in column C. c_Fri13 contains the custom function itself. While it is calculating you will see a date updating in cell D2 and the intermediate values in column E. When the function finishes its calculation the totals are returned to the calling sheet which displays them in column C. (These will be the same as the previous values in column C as the custom function gives the same answer every time it recalculates and the values are saved with the worksheet.)}
+{S:X;X;0;8;The custom function works by finding the day of the week (weekday) of each 13th for 4800 consecutive months. The set_value in cell A9 uses the weekday as in index into the table and increments the value it finds there.}
+{S:X;X;0;11;Colton Software}
+{S:X;X;0;12;Friday 13th August 1993}
+{S:X;X;0;15;(By the way, if you're reading this Gerald, I still claim my mug for the "best" solution...)}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{PageHefoBreakValues-H:0;0;0;;1;396;0;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;10912;11760;9920}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;3;0;3}
+}

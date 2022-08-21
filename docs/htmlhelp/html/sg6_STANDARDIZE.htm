@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>STANDARDIZE</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 2014-2015 Stuart Swales -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="STANDARDIZE" />
+  </object>
+
+  <h1><a name="standardize" id="standardize"></a>STANDARDIZE</h1>
+
+  <p>Standarises a value to a normal distribution.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">STANDARDIZE(<span class="csguide-arg">x</span>:number,
+  <span class="csguide-arg">mean</span>:number,
+  <span class="csguide-arg">sd</span>:number)</span></p>
+
+  <p>Standarises the value <i>x</i> to the normal distribution given by <i>mean</i> and <i>sd</i>.</p>
+
+  <p>The equation used is:</p>
+
+  <p>(</span><i>x</i> - <i>mean</i>) &divide; <i>sd</i></p>
+
+  <p><b>Example:</b></p>
+
+  <p><code>SET_VALUE(B1:B15, STANDARDIZE(A1:A15, C1, D1))</code></p>
+
+  <p>returns, in cells <code>B1</code> to <code>B15</code>, the corresponding standarised values of each the contents of cells in the range <code>A1</code> to <code>A15</code> from the given distribution's mean (<code>C1</code>) and standard deviation (<code>D1</code>) values.</p>
+
+  <p>Added in 2.00.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_SPEARMAN.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_statistical_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_STD.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,164 @@
+; Hdr:as_macro_h
+
+        MACRO
+        NameProc    $name
+        ALIGN
+ [ NAMES
+        DCB         "$name", 0
+        ALIGN
+        DCD         &FF000000 :OR: (((:LEN: "$name") + 1 + 3) :AND: :NOT: 3)
+ ]
+        MEND
+
+        MACRO
+        BeginExternal $name
+        EXPORT        $name
+        NameProc      $name
+$name ; NOROUT
+        MEND
+
+        MACRO
+        BeginInternal $name
+        NameProc      $name
+$name ; NOROUT
+        MEND
+
+; *****************************
+; ***  APCS function entry  ***
+; *****************************
+
+; This is a copy of Hdr:APCS.Common's FunctionEntry macro
+
+        MACRO
+        FunctionEntry $SaveList, $MakeFrame
+        LCLS    Temps
+        LCLS    TempsC
+Temps   SETS    "$SaveList"
+TempsC  SETS    ""
+ [ Temps <> ""
+TempsC SETS Temps :CC: ","
+ ]
+
+ [ "$MakeFrame" = ""
+   [ TempsC = ""
+        STR     lr, [sp, #-4]!
+   |
+        Push    "$TempsC.lr"
+   ]
+ |
+        MOV     ip, sp
+        Push    "$TempsC.fp,ip,lr,pc"
+        SUB     fp, ip, #4
+ ]
+        MEND
+
+; ******************************
+; ***  APCS function return  ***
+; ******************************
+
+; This is based on Hdr:APCS.Common's Return macro by just
+; changing {CONFIG} to CONFIG_ASM for old assembler compliance
+
+        MACRO
+        FunctionReturn  $ReloadList, $Base, $CC, $linkreg
+        LCLS    Temps
+        LCLS    Tempr
+Temps   SETS    "$ReloadList"
+Tempr   SETS    "$linkreg"
+
+ [ "$Base"<>"LinkNotStacked" :LAND: "$Base"<>"" :LAND: "$Base"<>"fpbased"
+ ! 1, "Unrecognised value for $Base"
+ ]
+
+ [ "$Base"="LinkNotStacked" :LAND: "$ReloadList"=""
+   [ "$Tempr" = ""
+Tempr   SETS    "lr"
+   ]
+ |
+   [ "$Tempr" <> ""
+   ! 1, "Return address cannot be held in register when LR is stacked"
+   ]
+ ]
+
+ [ CONFIG_ASM = 26
+   [ "$Base" = "LinkNotStacked" :LAND: "$ReloadList"=""
+        MOV$CC.S pc, $Tempr
+   |
+     [ Temps <> ""
+Temps   SETS    Temps :CC: ","
+     ]
+     [ "$Base" = "fpbased"
+        LDM$CC.DB fp, {$Temps.fp,sp,pc}^
+     |
+        LDM$CC.FD sp!, {$Temps.pc}^
+     ]
+   ]
+ |
+   [ "$Base" = "LinkNotStacked" :LAND: "$ReloadList"=""
+        MOV$CC  pc, $Tempr
+   |
+     [ Temps <> ""
+Temps   SETS    Temps :CC: ","
+     ]
+     [ "$Base" = "fpbased"
+        LDM$CC.DB fp, {$Temps.fp,sp,pc}
+     |
+       [ Temps = ""
+        LDR$CC  pc, [sp], #4
+       |
+        LDM$CC.FD sp!, {$Temps.pc}
+       ]
+     ]
+   ]
+ ]
+        MEND
+
+; *****************************************
+; ***  Pull registers given in reglist  ***
+; *****************************************
+        MACRO
+$label  Pull    $reglist, $cond, $hat
+        ; loop to find "-" or "," in reglist - if
+        ; not we can optimise a single-register
+        ; load to be faster on SA, ARM9.
+        ; fails (loudly) if RLIST directive in use
+        LCLS   temps
+        LCLL   onereg
+temps   SETS   "$reglist"
+onereg  SETL   "$hat" = ""
+        WHILE  onereg :LAND: :LEN: temps > 0
+        [ temps :LEFT: 1 = "," :LOR: temps :LEFT: 1 = "-"
+onereg  SETL   {FALSE}
+        ]
+temps   SETS   temps :RIGHT: (:LEN: temps - 1)
+        WEND
+        [ onereg
+$label  LDR$cond $reglist, [r13], #4
+        |
+$label  LDM$cond.FD r13!, {$reglist}$hat
+        ]
+        MEND
+
+; *****************************************
+; ***  Push registers given in reglist  ***
+; *****************************************
+        MACRO
+$label  Push   $reglist, $cond
+        LCLS   temps
+        LCLL   onereg
+temps   SETS   "$reglist"
+onereg  SETL   {TRUE}
+        WHILE  onereg :LAND: :LEN: temps > 0
+        [ temps :LEFT: 1 = "," :LOR: temps :LEFT: 1 = "-"
+onereg  SETL   {FALSE}
+        ]
+temps   SETS   temps :RIGHT: (:LEN: temps - 1)
+        WEND
+        [ onereg
+$label  STR$cond $reglist, [r13, #-4]!
+        |
+$label  STM$cond.FD r13!, {$reglist}
+        ]
+        MEND
+
+        END ; of Hdr:as_macro_h

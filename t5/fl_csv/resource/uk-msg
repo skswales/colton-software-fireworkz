@@ -1,0 +1,28 @@
+#
+# this is the messages file for fl_csv (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+e0:Cannot import CSV as database when the destination document has not been saved
+#e1:ERROR_RQ
+e2:Cannot import CSV as database file '%s' as a file of that name already exists
+#
+# messages
+#
+1:Loading CSV
+2:ug8_importing_data_into_tables.htm
+3:Insert as table
+4:Insert as labels
+5:Labels across
+7:Insert, overwriting blank cells
+8:Insert as database
+10:Loading delimited text
+#
+# end of msg (fl_csv)

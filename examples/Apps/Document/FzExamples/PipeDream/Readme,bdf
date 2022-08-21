@@ -1,0 +1,177 @@
+{Version:1.36 [Preview 5];(xx Sep 2015);Fireworkz;Stuart Swales - Colton Software;0000 0000 0000 0000;Windows-1252}
+{BaseSingleCol:1}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;84;;32;1;84}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:850}{MarginRight:849}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{Style:MainHeading;{MarginLeft:1190}{MarginRight:1032}{MarginPara:-623}{Justify:0}{Fonty:360}{Bold:1}}
+{Style:Indent;{MarginLeft:1814}{MarginRight:845}{MarginPara:-567}{Tablist:L1}}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;Fireworkz for PipeDream Users}
+{S:X;X;0;1;This document is to help PipeDream users get the most out of Fireworkz.}
+{S:X;X;0;2;It's divided into two sections according to whether it's a text type file loaded from PipeDream, or a spreadsheet type file.}
+{S:X;X;0;3;When you load a PipeDream file, you have to decide whether to convert it as a text type file, or a spreadsheet type file. If you choose a Letter-based template, Fireworkz will load the PipeDream file as a text type file, ignoring formulae and inserting tabs for columns in the PipeDream file. If you choose a Sheet-based template, Fireworkz will load the file as a spreadsheet\\\; your formulae will be converted, and PipeDream columns will be converted to Fireworkz columns.}
+{S:X;X;0;4;The two sections of this document describe the two different types of document created.}
+{S:X;X;0;5;To make Fireworkz load a PipeDream file, all you have to do is drop the PipeDream file on the Fireworkz icon, then choose the Letter or Sheet template required.}
+{S:X;X;0;6;Text files - Letter-based templates}
+{S:X;X;0;7;If you use a Letter-based template, PipeDream files are loaded into one column, no matter how many columns are in the original. Text in different columns in the PipeDream file is separated by tabs when it arrives in the Fireworkz file. Blank columns at the start of the PipeDream file are stripped out, and Fireworkz does its best to recognise paragraphs in the PipeDream file.}
+{S:X;X;0;8;Underline, bold, italic, superscript and subscript highlights are converted by Fireworkz into corresponding text effect regions.}
+{S:X;X;0;9;The @D@ field is converted into a Fireworkz live date insert\\\; other @ fields are stripped out.}
+{S:X;X;0;10;Other PipeDream options, page sizes, fonts and headers and footers are not converted.}
+{S:X;X;0;11;PipeDream text files such as letters and reports convert quite successfully. Once you have the data in Fireworkz you can quickly improve the layout by adjusting tabstops and applying styles or altering the Base style.}
+{S:X;X;0;12;If you have tabular data in PipeDream - such as a spreadsheet or database that you want in tabular form in Fireworkz - load it using a Sheet-based template, or export it as a CSV file from PipeDream and load it into a Fireworkz table.}
+{S:X;X;0;13;Editing in Fireworkz}
+{S:X;X;0;14;If you use PipeDream a lot and as your main application, you may well find editing text in Fireworkz a little weird to begin with. This is not because Fireworkz is difficult, but because PipeDream is somewhat unusual. Skills that you learn in Fireworkz will be applicable to lots of other programs, whereas your hard-won PipeDream skills really apply only to PipeDream.}
+{S:X;X;0;15;First of all, the Return key in Fireworkz splits a paragraph. In PipeDream it just moves the caret (unless you have Insert on Return switched on). Pressing Delete (or backspace) at the start of a paragraph joins two paragraphs together. There's no Insert line (Ctrl-N/F7) or Delete line (Ctrl-Y/F8) in Fireworkz. Use Return and Delete to do this. Split and Join lines (Ctrl-ESL/Shift F7 and Ctrl-EJL/Shift F8) are also replaced by Return and Delete. To split a paragraph, position the caret where you want the split, and press Return. To join together two paragraphs, put the caret at the start of the second paragraph and press Delete.}
+{S:X;X;0;16;To become slick with Fireworkz you will need to get used to making selections of pieces of text. Of course, you can select text in PipeDream, but never less than a single line, whereas in Fireworkz you can select a word, a single character or any part of a paragraph. Select text either by dragging over it with the left mouse button held down, or by positioning the caret at one end of the text to be selected and clicking the right button at the other end.}
+{S:X;X;0;17;Once you have some text selected you can do various things: }
+{S:X;X;0;18;Apply an effect like Bold (by clicking on the Bold button), or a style (by choosing a style from the style list box - click on the Style button first).}
+{S:X;X;0;19;Cut the text - click on the Cut icon (the scissors). This stores the text temporarily so that you can move the caret somewhere else and re-insert the text by clicking on the Paste icon (glue pot and brush). Note that it only remembers the last piece of text that has been cut.}
+{S:X;X;0;20;Delete the text - press the Delete key.}
+{S:X;X;0;21;Type over the text - this cuts the selected text to the clipboard and starts inserting the new text in the place of the original.}
+{S:X;X;0;22;There are some useful shortcuts to making selections: double-click with the mouse, or Ctrl-W from the keyboard selects a word\\\; triple click, or Ctrl-P selects a whole paragraph.}
+{S:X;X;0;23;Spreadsheet files - Sheet-based templates}
+{S:X;X;0;24;Fireworkz is not PipeDream. Fireworkz has been designed from scratch to be the most advanced integrated program available for RISC OS. Many Fireworkz users will have previously used PipeDream. This document introduces the features of the Fireworkz speadsheet which will be new to PipeDream users.}
+{S:X;X;0;25;Page layout. Fireworkz' page layout facilities go far beyond any other spreadsheet program available on the Archimedes, or Windows or Macintosh. }
+{S:X;X;0;26;The spreadsheet window is page-based and completely WYSIWYG. Just like a DTP system you see the pages exactly as they will print. You can have multiple views and scaled views. Columns are split across pages so that you can see exactly what will appear on each page. The Paper dialogue box enables you to match your paper size on screen to the printer driver settings with a single click, or you can specify your own paper sizes. You can work in either portrait or landscape on screen\\\; landscape probably enables that last column to fit!}
+{S:X;X;0;27;We believe that Fireworkz is unique in enabling you to change column widths at any point down the spreadsheet. Usually spreadsheets constrain you to using the same set of column widths at the bottom of the document as you used at the top. There is no such constraint in Fireworkz. Plenty of examples using this are provided in the spreadsheets in this examples archive.}
+{S:X;X;0;28;User interface. The user interface has been designed to be as simple and direct as possible. The button bar at the top of the window gives access to the most frequently used commands. }
+{S:X;X;0;29;The status line provides interactive help about Fireworkz and your spreadsheets. Descriptions of all Fireworkz' functions and their parameters are provided.}
+{S:X;X;0;30;Formula line. Function entry is much slicker than PipeDream: if you enter the function from the function selector you get automatic parameter help and pasting. When entering cell references and ranges in the formula line, they are given a soft selection so that clicking several times overrides the previous references, but typing will insert after the references. Try it, it's easier to use than to describe!}
+{S:X;X;0;31;Auto sum enables you to create totals with just a click on the button. Other RISC OS spreadsheet programs merely use the auto sum button to insert an empty sum() on the formula line. Fireworkz will do that if you wish, but if you make a selection of cells with blank cells in the last row or column, then a click on the auto sum button will create the complete sum() formula, including cell references, and insert it into the cell.}
+{S:X;X;0;32;The style editor enables you to make styles which can be applied at any level from a single character up to the whole document. Unlike in other spreadsheet programs, they can also be layered, just like in Wordz and Impression. Styles can contain a wide range of attributes, from font sizes and colours to grid styles, horizontal and vertical justification. Styles can be used to predefine areas of the sheet. You can specify that cells should become either text cells or number cells when you type data into them, or that a column should be left-aligned or in a different font.}
+{S:X;X;0;33;Styles are a very important and powerful feature of Fireworkz. Using them will enable you to build better looking documents more quickly.}
+{S:X;X;0;34;Protection is provided as a style attribute. It is probably best used by setting up a style containing just protection and applying it to cells. You may want to add a background colour to the style in order to see the protected areas.}
+{S:X;X;0;35;Number/date formats can be specified as part of a style. You can provide styles specifying different numbers of decimal places, or a percentage style, or even roman numerals.}
+{S:X;X;0;36;Gridlines of different thicknesses, line styles and colours can be drawn around cells using the Box command.}
+{S:X;X;0;37;Templates are files from which you can start new documents. The Save Template command will place your document in the templates directory (<Choices$Write>.Fireworkz.Templates). Shift-click on the Fireworkz icon will open this directory. When you click on the Fireworkz icon a menu of templates appears for you to select. You can also use Save Template to save out styles to copy into other documents.}
+{S:X;X;0;38;When creating a chart, it is automatically placed inside your spreadsheet document. So saving and printing the spreadsheet saves and prints the chart too, with no extra work. This makes it much easier to manage charts in Fireworkz than in any other RISC OS spreadsheet program. Examples of charts are provided in the charts directory.}
+{S:X;X;0;39;Some New Functions}
+{S:X;X;0;40;age() subtracts one date from another and returns the result as a date. This is useful for calculating someone's age in terms of years and months.}
+{S:X;X;0;41;bin() counts the frequencies of classes of data. The output can be used as the input to a histogram and an example of this is given in the Charts directory of the examples disc.}
+{S:X;X;0;42;counta() counts the number of elements in an array or range}
+{S:X;X;0;43;dayname() returns a string of the dayname, the day being given as a number. eg dayname(weekday(today))}
+{S:X;X;0;44;flip() turns an array upside down}
+{S:X;X;0;45;formula_text() returns as a string the formula in another cell. This can be used to annotate spreadsheets, to show what formulas were used to produce the results. It is a way of printing both the results and the formula at the same time.}
+{S:X;X;0;46;listcount() takes an array or range of data and produces a list of all the unique elements plus their frequencies. An extension takes values for each element and adds the values together. }
+{S:X;X;0;47;median() returns the median value of a range or array}
+{S:X;X;0;48;monthname(): as dayname. eg monthname(month(today))}
+{S:X;X;0;49;page() returns the page number (x or y) of a cell}
+{S:X;X;0;50;pages() returns the number of pages (x or y) in the document}
+{S:X;X;0;51;rank() returns an array of rankings from an input array}
+{S:X;X;0;52;sort() sorts an array on a given column}
+{S:X;X;0;53;spearman() calculates the Spearman correlation co-efficient from two ranked arrays. The arrays can be ranked using the rank() function.}
+{S:X;X;0;54;text() takes a number and a number format (identical to those in style editor) and returns a string of the formatted number}
+{S:X;X;0;55;Function enhancements}
+{S:X;X;0;56;lookup() has been extended. An optional fourth parameter set to 1 provides two extra types of information to be returned: (i) all occurrences which match the key are returned, rather than simply the first, (ii) for each match a whole record can be returned, rather than just a simple value.}
+{S:X;X;0;57;set_value() has been extended. Optional third and fourth parameters specify an offset in an array. This enables you to write to a single element in an array.}
+{S:X;X;0;58;After you've loaded the file}
+{S:X;X;0;59;When the PipeDream file has been loaded, it will probably look quite different to how it looked in PipeDream. The rows may look quite deep and headings and text may have "wrapped" to take up several lines within each cell.}
+{S:X;X;0;60;Column widths}
+{S:X;X;0;61;Most of the problem is solved by changing the column widths to match the data better. You can try double-clicking with the Select button on the column borders. If the data in the columns is quite short, Fireworkz will auto-width the columns and so make the columns the widths of the longest cell. If there are cell-entries which are very long, Fireworkz will not apply the auto-width.}
+{S:X;X;0;62;The Heading}
+{S:X;X;0;63;A particular problem may be the heading at the top of the document. PipeDream uses overlap to display headings. Fireworkz doesn't have overlap: instead, it enables you to change the widths of any cells at any point. In the case of a heading, you probably have a single cell which you want to expand over the whole page width. }
+{S:X;X;0;64;The best way to tackle this is to use Fireworkz' straddling command. Select the cell containing the heading, and the cells to the right of it which you want the heading to straddle. Point at the column border between the column letters. When the pointer changes shape to become two vertical lines with arrows pointing left and right, double-click with the Adjust button on the mouse. The leftmost cell will expand to the right over the other cells and these other cells will be shrunk down to nothing.}
+{S:X;X;0;65;Landscape}
+{S:X;X;0;66;You will notice that after a few columns, you get a page-break and the new columns appear on a new page to the right. If you decide you would like more columns to the page you can either shrink the column widths to fit, or you can use the Paper dialogue box to set the paper orientation to landscape. This gives you a wider page (more columns) which is less deep (fewer rows). Whilst in the Paper dialogue box, click on the Read printer button.}
+{S:X;X;0;67;If you're not going to print out the spreadsheet, you can choose the None button in the paper dialog box which will give you infinite paper.}
+{S:X;X;0;68;Formulae}
+{S:X;X;0;69;Fireworkz will understand and evaluate PipeDream formulae identically to PipeDream apart from the following differences:}
+{S:X;X;0;70;hlookup(), vlookup(). The target range is now two-dimensional and includes all of the rows and columns which can be used as the offset. An example of this will clarify:}
+{S:X;X;0;71;Suppose you want to look for the value 42 in cells A1 to A100 and return the corresponding element from column C. }
+{S:X;X;0;72;{ITT-X}In PipeDream the syntax would be vlookup(42, A1A100, 2)}
+{S:X;X;0;73;{ITT-X}In Fireworkz the syntax would be vlookup(42, A1C100, 3)}
+{S:X;X;0;74;In Fireworkz we include all of the possible offset ranges in the target range (even though the key is only looked for in the first column/row). The offset number given is the column (or row) within the target range.}
+{S:X;X;0;75;choose() has changed so that any range parameters are treated as single elements. So choose(3, 1, A1A3, 6) will return 6 rather than A2. choose(2, 1, A1A3, 6) will return the contents of A1A3 as an array.}
+{S:X;X;0;76;The trigonometrical functions acs(), asn(), atn() have been renamed as acos(), asin() and atan() in keeping with standard spreadsheet terminology.}
+{S:X;X;0;77;External references}
+{S:X;X;0;78;Fireworkz has similar external references to PipeDream. It also keeps track of which files are grouped together and if you attempt to close one file in a group, Fireworkz will prompt you to close all the files in the group. This makes loading and saving sets of linked spreadsheets rather easier.}
+{S:X;X;0;79;If you load a PipeDream file containing external references, Fireworkz will not immediately be able to find the supporting files. This is because Fireworkz will not use the PipeDream file's path, but create a new filename of the form Sheet1. the best approach to getting the linked spreadsheets working with Fireworkz is:}
+{S:X;X;0;80;(i){ITT-X}copy all of the linked spreadsheets into a new directory, retaining the old directory containing the PipeDream set if you need to refer back to them.}
+{S:X;X;0;81;(ii) {ITT-X}load each file in the new directory individually and save it back into the new directory using the existing PipeDream name.}
+{S:X;X;0;82;(iii) {ITT-X}when all of the files have been loaded and saved you will find that loading the dependent document will automatically load the supporters.}
+{S:X;X;0;83;Custom function sheets, being supporting documents, work in exactly the same way.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;13;;32;1;14;;32;0;0;{Bold:1}}
+{R:0;15;18;3;1;16;;32;0;0;{Bold:1}}
+{R:0;15;24;3;1;16;;32;0;0;{Bold:0}}
+{R:0;15;156;3;1;16;;32;0;0;{Bold:1}}
+{R:0;15;163;3;1;16;;32;0;0;{Bold:0}}
+{R:0;18;;32;1;22;;32;0;0;{MarginLeft:1587}}
+{R:0;6;;32;1;7;;32;0;0;{StyleHandle:MainHeading}}
+{R:0;39;;32;1;40;;32;0;0;{Bold:1}}
+{R:0;40;;32;1;41;5;3;0;0;{Italic:1}}
+{R:0;43;;32;1;44;9;3;0;0;{Italic:1}}
+{R:0;48;;32;1;49;11;3;0;0;{Italic:1}}
+{R:0;49;;32;1;50;6;3;0;0;{Italic:1}}
+{R:0;44;;32;1;45;6;3;0;0;{Italic:1}}
+{R:0;50;;32;1;51;7;3;0;0;{Italic:1}}
+{R:0;52;;32;1;53;6;3;0;0;{Italic:1}}
+{R:0;41;;32;1;42;5;3;0;0;{Italic:1}}
+{R:0;42;;32;1;43;8;3;0;0;{Italic:1}}
+{R:0;46;;32;1;47;11;3;0;0;{Italic:1}}
+{R:0;47;;32;1;48;8;3;0;0;{Italic:1}}
+{R:0;53;;32;1;54;10;3;0;0;{Italic:1}}
+{R:0;51;;32;1;52;6;3;0;0;{Italic:1}}
+{R:0;45;;32;1;46;14;3;0;0;{Italic:1}}
+{R:0;54;;32;1;55;6;3;0;0;{Italic:1}}
+{R:0;28;;32;1;29;14;3;0;0;{Bold:1}}
+{R:0;25;;32;1;26;11;3;0;0;{Bold:1}}
+{R:0;30;;32;1;31;12;3;0;0;{Bold:1}}
+{R:0;29;4;3;1;30;15;3;0;0;{Bold:1}}
+{R:0;32;4;3;1;33;16;3;0;0;{Bold:1}}
+{R:0;34;;32;1;35;10;3;0;0;{Bold:1}}
+{R:0;35;;32;1;36;19;3;0;0;{Bold:1}}
+{R:0;36;;32;1;37;9;3;0;0;{Bold:1}}
+{R:0;38;16;3;1;39;21;3;0;0;{Bold:1}}
+{R:0;37;;32;1;38;9;3;0;0;{Bold:1}}
+{R:0;31;;32;1;32;8;3;0;0;{Bold:1}}
+{R:0;56;;32;1;57;8;3;0;0;{Italic:1}}
+{R:0;55;;32;1;56;;32;0;0;{Bold:1}}
+{R:0;57;;32;1;58;11;3;0;0;{Italic:1}}
+{R:0;23;;32;1;24;;32;0;0;{StyleHandle:MainHeading}}
+{R:0;0;;32;1;1;;32;0;0;{StyleHandle:Heading}}
+{R:0;68;;32;1;69;;32;0;0;{Bold:1}}
+{R:0;76;30;3;1;77;35;3;0;0;{Italic:1}}
+{R:0;76;37;3;1;77;42;3;0;0;{Italic:1}}
+{R:0;76;44;3;1;77;49;3;0;0;{Italic:1}}
+{R:0;76;71;3;1;77;77;3;0;0;{Italic:1}}
+{R:0;76;79;3;1;77;85;3;0;0;{Italic:1}}
+{R:0;76;90;3;1;77;96;3;0;0;{Italic:1}}
+{R:0;70;11;3;1;71;20;3;0;0;{Italic:1}}
+{R:0;70;;32;1;71;9;3;0;0;{Italic:1}}
+{R:0;75;;32;1;76;8;3;0;0;{Italic:1}}
+{R:0;60;;32;1;61;;32;0;0;{Bold:1}}
+{R:0;62;;32;1;63;;32;0;0;{Bold:1}}
+{R:0;64;49;3;1;65;59;3;0;0;{Italic:1}}
+{R:0;66;424;3;1;67;436;3;0;0;{Bold:0}{Italic:1}}
+{R:0;65;;32;1;66;;32;0;0;{Bold:1}}
+{R:0;77;;32;1;78;;32;0;0;{Bold:1}}
+{R:0;80;;32;1;83;;32;0;0;{StyleHandle:Indent}}
+{R:0;72;;32;1;74;;32;0;0;{StyleHandle:Indent}}
+{R:0;67;69;3;1;68;;32;0;0;{Italic:1}}
+{R:0;67;73;3;1;68;;32;0;0;{Italic:0}}
+{R:0;58;;32;1;59;;32;0;0;{StyleHandle:Indent}}
+{R:0;58;;32;1;59;;32;0;0;{StyleHandle:MainHeading}}
+{R:0;24;13;3;1;25;16;3;0;0;{Bold:1}}
+{R:0;24;13;3;1;25;16;3;0;0;{Italic:1}}
+{R:0;53;118;3;1;54;125;3;0;0;{Italic:1}}
+{PageHefoBreakValues-H:0;0;0;;1;0;68;0;;;0;;;1;0;0;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:3930;0;12483;16203}{ViewControl:100;0;1;1;0;0;0;2048;0;2048}{CurrentPosition:0;0;0;3;0}}

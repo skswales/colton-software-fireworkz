@@ -1,0 +1,68 @@
+| MakeF2Core.oby - Fireworkz
+
+| Resource (2)
+
+%CDir                                                   <t5$Disc>.Z.Resource
+
+%CDir                                                   <t5$Disc>.Z.Resource.Objects
+%Copy <t5$Build$Dir>.Resource.Objects.*                 <t5$Disc>.Z.Resource.Objects.* f~cln~v
+|||%Remove                                                 <t5$Disc>.Z.Resource.Objects.Ob42
+|||%Remove                                                 <t5$Disc>.Z.Resource.Objects.Ob42_22
+%Access                                                 <t5$Disc>.Z.Resource.Objects.* r/r
+
+%CDir                                                   <t5$Disc>.Z.Resource.Choices
+|||%Copy <ap$Resource$Dir>.Choices.Choice00                <t5$Disc>.Z.Resource.Choices.* f~cln~v
+|||%Copy <ap$Resource$Dir>.Choices.Choice01                <t5$Disc>.Z.Resource.Choices.* f~cln~v
+%Copy <ap$Resource$Dir>.Choices.Choice18                <t5$Disc>.Z.Resource.Choices.* f~cln~v
+|||%Copy <ap$Resource$Dir>.Choices.Choice29                <t5$Disc>.Z.Resource.Choices.* f~cln~v
+|||%Copy <ap$Resource$Dir>.Choices.Choice37                <t5$Disc>.Z.Resource.Choices.* f~cln~v
+%Access                                                 <t5$Disc>.Z.Resource.Choices.* r/r
+
+%CDir                                                   <t5$Disc>.Z.Resource.Dicts
+%Copy <t5_root>.t5.ob_spell.resource.dicts.master       <t5$Disc>.Z.Resource.Dicts.Master  f~cln~v
+%Copy <t5_root>.t5.ob_spell.resource.dicts.masterc      <t5$Disc>.Z.Resource.Dicts.MasterC f~cln~v
+%Access                                                 <t5$Disc>.Z.Resource.Dicts.* r/r
+
+%CDir                                                   <t5$Disc>.Z.Resource.Markers
+%Copy <t5$Resource$Dir>.Markers.*                       <t5$Disc>.Z.Resource.Markers.* f~cln~v
+%Access                                                 <t5$Disc>.Z.Resource.Markers.* r/r
+
+%CDir                                                   <t5$Disc>.Z.Resource.Pictures
+%Copy <t5$Resource$Dir>.Pictures.*                      <t5$Disc>.Z.Resource.Pictures.* f~cln~v
+%Access                                                 <t5$Disc>.Z.Resource.Pictures.* r/r
+
+%CDir                                                   <t5$Disc>.Z.Resource.Template
+%Copy <t5$Resource$Dir>.Template.letter                 <t5$Disc>.Z.Resource.Template.* f~cln~v
+%Copy <t5$Resource$Dir>.Template.sheet<t5$Country>      <t5$Disc>.Z.Resource.Template.sheet f~cln~v
+%Access                                                 <t5$Disc>.Z.Resource.Template.* r/r
+
+%Access                                                 <t5$Disc>.Z.Resource.* r/r
+%Access                                                 <t5$Disc>.Z.Resource r/r
+
+| User
+
+%CDir                                                   <t5$Disc>.Z.User
+
+%CDir                                                   <t5$Disc>.Z.User.Choices
+| make space on the disc for punter to save his choices (Choice18 not saved so don't put it here)
+%Copy <ap$Resource$Dir>.Choices.Choice00                <t5$Disc>.Z.User.Choices.* f~cln~v
+%Copy <ap$Resource$Dir>.Choices.Choice01                <t5$Disc>.Z.User.Choices.* f~cln~v
+%Copy <ap$Resource$Dir>.Choices.Choice29                <t5$Disc>.Z.User.Choices.* f~cln~v
+|%Copy <ap$Resource$Dir>.Choices.Choice37                <t5$Disc>.Z.User.Choices.* f~cln~v
+%Access                                                 <t5$Disc>.Z.User.Choices.* wr/r
+
+| not enough room on disc 2 for floppy users to have user dictionaries
+|%CDir                                                   <t5$Disc>.Z.User.Dicts
+|%Copy <t5_root>.t5.ob_spell.resource.dicts.user         <t5$Disc>.Z.User.Dicts.User  f~cln~v
+|%Copy <t5_root>.t5.ob_spell.resource.dicts.userc        <t5$Disc>.Z.User.Dicts.UserC f~cln~v
+|%Access                                                 <t5$Disc>.Z.User.Dicts.* wr/r
+
+| >>> if desperate for space start to lose these three
+| >>> gone %CDir                                                   <t5$Disc>.Z.User.Markers
+| >>> gone %CDir                                                   <t5$Disc>.Z.User.Library
+| >>> gone %CDir                                                   <t5$Disc>.Z.User.Pictures
+
+%CDir                                                   <t5$Disc>.Z.User.Template
+
+%Access                                                 <t5$Disc>.Z.User.* wr/r
+%Access                                                 <t5$Disc>.Z.User wr/r

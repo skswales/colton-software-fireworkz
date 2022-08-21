@@ -1,0 +1,291 @@
+
+#
+# common.mf_end
+#
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+$(PROD_BUILD_DIR).o.nsx: $(T5).ob_skel.riscos.c.nsx
+ $(AS) -o $@ $(ASflags) $?
+#
+# Common resources
+#
+#$(PROD_BUILD_DIR).HTMLhelp: $(T5).resource.HTMLhelp
+# Copy $? $@ ~C FV
+# @Echo If the above fails, do you have SparkFS loaded?
+
+$(PROD_BUILD_DIR).!$(APPL).!Boot: \
+ $(T5).Build.Tools.BootRunGen \
+ $(PROD_BUILD_DIR).Makefile
+ Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR) -boot
+
+$(PROD_BUILD_DIR).!$(APPL).!Run: \
+ $(T5).Build.Tools.BootRunGen \
+ $(PROD_BUILD_DIR).Makefile
+ Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR)
+
+$(PROD_BUILD_DIR).!RunDB: \
+ $(T5).Build.Tools.BootRunGen \
+ $(PROD_BUILD_DIR).Makefile
+ Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR) -alternate
+
+$(PROD_BUILD_DIR).!RunND: \
+ $(T5).Build.Tools.BootRunGen \
+ $(PROD_BUILD_DIR).Makefile
+ Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR) -alternate
+
+$(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Config: \
+ $(T5).Build.Tools.ConfigGen \
+ $(PROD_BUILD_DIR).Makefile
+ Basic -quit $(T5).Build.Tools.ConfigGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -country $(COUNTRY)
+
+$(PROD_SOURCE_DIR).resource.windows.$(COUNTRY).Config: \
+ $(T5).Build.Tools.ConfigGen \
+ $(PROD_BUILD_DIR).Makefile
+ Basic -quit $(T5).Build.Tools.ConfigGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -country $(COUNTRY) -windows
+
+$(PROD_BUILD_DIR).!$(APPL).!Help: $(T5).resource.!Help
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).!Help2: $(T5).resource.!Help2
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).!Sprites: \
+$(T5).resource.!spr_comm \
+$(T5).resource.!spr24 \
+$(PROD_SOURCE_DIR).resource.riscos.!spr24
+ X SNew; ChangeDynamicArea -SpriteSize 64K; SNew
+ SMerge $(T5).resource.!spr_comm
+ SMerge $(T5).resource.!spr24
+ SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr24
+ $(SRENAME1)
+ $(SRENAME2)
+ X Wipe $@ ~cf~r~v
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+$(PROD_BUILD_DIR).!$(APPL).!Sprites22: \
+$(T5).resource.!spr_comm \
+$(T5).resource.!spr22 \
+$(PROD_SOURCE_DIR).resource.riscos.!spr22
+ X SNew; ChangeDynamicArea -SpriteSize 64K; SNew
+ SMerge $(T5).resource.!spr_comm
+ SMerge $(T5).resource.!spr22
+ SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr22
+ $(SRENAME1)
+ $(SRENAME2)
+ X Wipe $@ ~cf~r~v
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+# !SpritesR5 builds on !Sprites22
+$(PROD_BUILD_DIR).!$(APPL).!SpritesR5: \
+$(T5).resource.!spr_comm \
+$(T5).resource.!spr22 \
+$(PROD_SOURCE_DIR).resource.riscos.!spr22 \
+$(T5).resource.!sprR5 \
+$(T5).resource.!sprR5L \
+$(PROD_SOURCE_DIR).resource.riscos.!sprR5
+ X SNew; ChangeDynamicArea -SpriteSize 64K; SNew
+ SMerge $(T5).resource.!spr_comm
+ SMerge $(T5).resource.!spr22
+ SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr22
+ SMerge $(T5).resource.!sprR5
+ SMerge $(T5).resource.!sprR5L
+ SMerge $(PROD_SOURCE_DIR).resource.riscos.!sprR5
+ $(SRENAME1)
+ $(SRENAME2)
+ X Wipe $@ ~cf~r~v
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+# Copy a pre-registered (generic) Info file for testing
+$(PROD_BUILD_DIR).!$(APPL).Info: $(T5).resource.TestInfo
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Config: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Config
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.!Sprite: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).!Sprite
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.ImageSlot: $(T5).resource.ImageSlot
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.Loader: $(T5).resource.Loader
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.PicConvert: $(T5).resource.PicConvert
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.Stubs: $(PROD_BUILD_DIR).binaries.stubs
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob02: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob02
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob04: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob04
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob06: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob06
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob07: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob07
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob08: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob08
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob09: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob09
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob12: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob12
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob17: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob17
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob19: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob19
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob20: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob20
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob21: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob21
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob22: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob22
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob23: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob23
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob24: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob24
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob25: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob25
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob26: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob26
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob27: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob27
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob28: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob28
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob33: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob33
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob35: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob35
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob40: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob40
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Objects.Ob41: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob41
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice00: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice00
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice01: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice01
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice18: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice18
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice29: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice29
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice37: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice37
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.ChoicesDoc: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.ChoicesDoc
+ Copy $? $@ ~C FV
+#
+# Resultz (and Fireworkz) specific resources
+#
+$(PROD_BUILD_DIR).!$(APPL).Resource.cfbf: $(T5).resource.cfbf
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.cfbf-mini: $(T5).resource.cfbf-mini
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetFgn: $(T5).resource.ForeignTem.SheetFgn
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetXLS: $(T5).resource.ForeignTem.SheetXLS
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.TextFgn: $(T5).resource.ForeignTem.TextFgn
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S1: $(T5).resource.Markers.S1
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S2: $(T5).resource.Markers.S2
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S3: $(T5).resource.Markers.S3
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S4: $(T5).resource.Markers.S4
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S5: $(T5).resource.Markers.S5
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S6: $(T5).resource.Markers.S6
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Pictures.S1: $(T5).resource.Pictures.S1
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Pictures.S2: $(T5).resource.Pictures.S2
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Template.Sheet: $(T5).resource.Template.Sheet$(COUNTRY)
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Template.Text: $(T5).resource.Template.Text
+ Copy $? $@ ~C FV
+#
+# Wordz (and Fireworkz) specific resources
+#
+$(PROD_BUILD_DIR).!$(APPL).Resource.Template.Letter: $(T5).resource.Template.Letter
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.Master: $(T5).ob_spell.resource.dicts.master
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.MasterC: $(T5).ob_spell.resource.dicts.masterc
+ Copy $? $@ ~C FV
+#
+# CCMATH
+#
+$(PROD_BUILD_DIR).!$(APPL).Resource.CCMso: $(CCMATH_SO)
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resource.CCMstubs: $(CCMATH_STUBS)
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).Makefile: \
+$(PROD_SOURCE_DIR).$(DIR).mf_hdr \
+$(PROD_SOURCE_DIR).$(DIR).mf_mid \
+$(T5).Build.configure \
+$(T5).common.mf_mid \
+$(T5).common.mf_mid$(BITS) \
+$(T5).common.mf_end \
+$(T5).Build.configure
+ @Error 0 $(PROD_BUILD_DIR).Makefile is out-of-date: use Build.configure to regenerate it
+
+#
+# end of mf_end
+#

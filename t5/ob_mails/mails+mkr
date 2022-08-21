@@ -1,0 +1,37 @@
+#
+# ob_mails
+#
+OBJID=21
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_mails.$(COUNTRY)-21/rc: $(T5).ob_mails.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 21 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_mails.o.$(COUNTRY)-B21: $(T5).ob_mails.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_mails.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_mails.o.$(COUNTRY)-B_tmp -symbol rb_mails_msg_weak
+
+$(BUILD_DIR).ob_mails.o.ob_mails: $(T5).ob_mails.c.ob_mails
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_21_S=$(BUILD_DIR).ob_mails.o.ob_mails
+
+OBJS_21_X=$(BUILD_DIR).ob_mails.o.$(COUNTRY)-B21
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M21: $(OBJS_21_X) $(OBJS_21_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_21_X) $(OBJS_21_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_mails.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob21: $(PROD_BUILD_DIR).o.$(COUNTRY)-M21 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M21 -N21 $(OBJMUNGE_OBJFLAGS) -Eobject_mailshot
+
+# end of ob_mails.mkr ##############################################################################

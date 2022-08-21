@@ -1,0 +1,25 @@
+{Version:1.07;13 Nov 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;3;1;;32;3;1}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:0}{ParaEnd:0}{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:Labels 70mm x 37mm;{RowHeight:2098}{RowHeightFix:1}{MarginLeft:340}{MarginRight:113}{MarginPara:0}{Tablist}{ParaStart:227}{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}{Typeface:Helvetica}{Fonty:200}}
+{Style:Grid off;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}}
+{Style:Grid on;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Paper:Default A4;0;16840;11900;0;0;0;0;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:;;;;;;;;1;1;{StyleHandle:Labels 70mm x 37mm}}
+{PageHefoBreakValues-H:0;0;0;;1;0;0;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;6576;10208;3840}
+{ViewControl:100;0;1;1;0;0;0;2048;0;2048}
+{CurrentPosition:0;0}
+}

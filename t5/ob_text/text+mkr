@@ -1,0 +1,32 @@
+#
+# ob_text
+#
+OBJID=03
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_text.$(COUNTRY)-03/rc: $(T5).resource.zz-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 03 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_text.o.$(COUNTRY)-B03: $(T5).resource.zz-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_text.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_text.o.$(COUNTRY)-B_tmp -symbol rb_text_msg_weak
+
+$(BUILD_DIR).ob_text.o.ob_text: $(T5).ob_text.c.ob_text
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_03_S=$(BUILD_DIR).ob_text.o.ob_text
+
+OBJS_03_X=$(BUILD_DIR).ob_text.o.$(COUNTRY)-B03
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M03: $(OBJS_03_X) $(OBJS_03_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_03_X) $(OBJS_03_S)
+
+# end of ob_text.mkr ####################################################################################

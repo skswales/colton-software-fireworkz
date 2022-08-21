@@ -1,0 +1,10 @@
+| MakeCommon.oby - Fireworkz
+
+Set t5$Product firewrkz
+Set t5$Country uk
+
+Set t5$Build$Dir    <t5_root>.t5.Build.r32m.<t5$Product>.!Fireworkz
+Set t5$Resource$Dir <t5_root>.t5.resource
+Set ap$Resource$Dir <t5_root>.t5.<t5$Product>.resource.riscos.<t5$Country>
+
+%CDir <t5$Disc>.Z

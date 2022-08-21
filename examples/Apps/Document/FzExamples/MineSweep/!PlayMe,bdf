@@ -1,0 +1,36 @@
+{Version:1.03/60;23 Aug 1993;Resultz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;1;4;;32;1;4}
+{Style:BaseSheet;{ColWidth:1134}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}{LineSpace:0;72}{Justify:2}{JustifyV:0}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:114}{MarginRight:114}{Tablist:C5385 R10771}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{Style:Current cell;{BorderColour:0;0;0}{Border:0}}
+{Style:Text;{RowHeightFix:0}{Justify:0}{NewObject:3}}
+{Style:Pounds;{Numform:£#,##0.00}}
+{StyleBase:BaseSheet}
+{StyleCurrent:Current cell}
+{StyleHeaderFooter:BaseHeadFoot}
+{StyleText:Text}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;0}
+{PrintQuality:0}
+{StartOfData}
+{Name-S:totalmines;60}
+{S:S;F;0;0;"Please wait a few seconds for setup";[c_game]game([Board20]b3u22,totalmines,a3,a4)}
+{S:X;X;0;1;- Ctrl-F1 mark a mine ({ITSSN-X:totalmines} in total) -   Ctrl-F2 clear marked mine  -  Double click a square to reveal it. -}
+{S:S;C;0;2;0}
+{S:S;C;0;3;-1}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:0;;;;1;;;;1;0;{ColWidth:1815}}
+{R:0;0;;32;1;1;;32;0;0;{ColWidth:10488}{Justify:1}{Fonty:360}}
+{R:;0;;;;2;;;0;1;{RowHeightFix:0}}
+{R:0;1;;32;1;2;;32;0;0;{ColWidth:10488}{Justify:1}{Fonty:220}}
+{PageHefoBreakValues-H:0;0;0;;1;576;32;0;;;0;;;1;576;32;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;13984;10960;3232}
+{ViewControl:100;2;0;0;1;0;0;2048;0;2048}
+{CurrentPosition:0;0}
+}

@@ -1,0 +1,37 @@
+| Make_TS.oby - Fireworkz-Manuals
+
+IfThere $.Temp Then Else %CDir $.Temp
+
+| Remember to update RiscPkg.Control too
+Set t5$Release 20151020
+
+Set t5$Disc $.Temp.FzManuals_<t5$Release>
+Set t5$Zip  $.Temp.FzManuals_<t5$Release>/zip
+
+X %Wipe <t5$Disc> ~cfr~v
+
+time
+echo Starting svn export - please be patient
+svn export svn://repos.croftnuisk.local/svn/fireworkz/branches/fireworkz__2_00__branch/docs <t5$Disc>
+time
+
+cdir <t5$Disc>.Manuals
+cdir <t5$Disc>.Manuals.Fireworkz
+
+| Move the docs to where they are expected in the package
+rename <t5$Disc>.htmlhelp.html <t5$Disc>.Manuals.Fireworkz.USGuide
+
+X %Wipe <t5$Disc>.htmlhelp ~cfr~v
+
+settype <t5$Disc>.Manuals.Fireworkz.USGuide.index/htm FAF
+
+| The one in RiscPkg is the useful one for these packaged docs
+delete <t5$Disc>.LICENSE
+delete <t5$Disc>.MakeRiscPkg
+
+%Dir <t5$Disc>
+zip -r <t5$Zip> RiscPkg Manuals
+%Back
+Info <t5$Zip>
+
+Filer_OpenDir <t5$Disc>

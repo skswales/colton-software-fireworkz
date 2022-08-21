@@ -1,0 +1,36 @@
+#
+# fs_rtf
+#
+OBJID=41
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 2015 Stuart Swales
+
+# Windows STRINGTABLE
+$(BUILD_DIR).fs_rtf.$(COUNTRY)-41/rc: $(T5).resource.zz-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 41 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).fs_rtf.o.$(COUNTRY)-B41: $(T5).resource.zz-msg
+ $(MAKEMESS) -to $(BUILD_DIR).fs_rtf.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).fs_rtf.o.$(COUNTRY)-B_tmp -symbol rb_fs_rtf_msg_weak
+
+$(BUILD_DIR).fs_rtf.o.fs_rtf: $(T5).fs_rtf.c.fs_rtf
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_41_S=$(BUILD_DIR).fs_rtf.o.fs_rtf
+
+OBJS_41_X=$(BUILD_DIR).fs_rtf.o.$(COUNTRY)-B41
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M41: $(OBJS_41_X) $(OBJS_41_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_41_X) $(OBJS_41_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fs_rtf.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob41: $(PROD_BUILD_DIR).o.$(COUNTRY)-M41 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M41 -N41 $(OBJMUNGE_OBJFLAGS) -Eobject_fs_rtf
+
+# end of fs_rtf.mkr ################################################################################

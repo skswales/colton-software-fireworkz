@@ -1,0 +1,18 @@
+// ss.rci
+
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+
+// (language independent)
+
+// rebased for ALL_IN_ONE at 0x1C00 / 7168
+
+// multi-bitmaps: 0x1n (+1 = high-dpi variant)
+16 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbar.bmp"
+17 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbarh.bmp"
+
+// end

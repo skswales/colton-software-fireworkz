@@ -1,0 +1,40 @@
+{Version:1.36;03 Sep 2015;Wordz;Colton Software}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;1;;32;1;1}
+{Style:BaseLetter;{ColWidth:11055}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}{NumformDT:dd.mm.yyyy hh:mm:ss\\\;dd.mm.yyyy\\\;hh:mm:ss}{NumformSE:@\\\;Error}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11055}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5244 R10488}}
+{Style:Text}
+{Style:Number;{Justify:2}}
+{Style:General;{StyleSearch:50}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
+{Style:Currency;{StyleSearch:60}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
+{Style:Percent;{StyleSearch:70}{Numform:0.##%\\\;-0.##%[Negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:Date;{StyleSearch:10}{NumformDT:dd.mm.yyyy}}
+{Style:Date_a;{StyleSearch:20}{NumformDT:dd/mm/yyyy}}
+{Style:Date_ISO_8601;{StyleSearch:0}{NumformDT:yyyy-mm-dd}}
+{Style:Time;{StyleSearch:30}{NumformDT:hh:mm}}
+{Style:Time_s;{StyleSearch:40}{NumformDT:hh:mm:ss}}
+{PrintQuality:0}
+{Paper:A4;0;16840;11906;460;460;397;397;0;0;0;0;32}
+{PaperScale:100}
+{StartOfData}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{PageHefoBreakValues-H:0;0;0;;1;569;68;0;;;0;;;1;569;56;0;;;0}
+{HD-H:0;2;}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3;}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;0;0;0}{ViewControl:100;0;1;1;0;0;0;2048;0;2048}{CurrentPosition:0;0}}

@@ -1,0 +1,45 @@
+#
+# ob_dlg
+#
+OBJID=15
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_dlg.$(COUNTRY)-15/rc: $(T5).ob_dlg.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 15 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_dlg.o.$(COUNTRY)-B15: $(T5).ob_dlg.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_dlg.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_dlg.o.$(COUNTRY)-B_tmp -symbol rb_dlg_msg_weak
+
+$(BUILD_DIR).ob_dlg.o.ob_dlg: $(T5).ob_dlg.c.ob_dlg
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_dlg.o.ob_dlg2: $(T5).ob_dlg.c.ob_dlg2
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_dlg.o.ob_dlg3: $(T5).ob_dlg.c.ob_dlg3
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_dlg.o.ri_dlg: $(T5).ob_dlg.c.ri_dlg
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_dlg.o.ri_lbox: $(T5).ob_dlg.c.ri_lbox
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_15_S=\
+$(BUILD_DIR).ob_dlg.o.ob_dlg \
+$(BUILD_DIR).ob_dlg.o.ob_dlg2 \
+$(BUILD_DIR).ob_dlg.o.ob_dlg3 \
+$(BUILD_DIR).ob_dlg.o.ri_dlg \
+$(BUILD_DIR).ob_dlg.o.ri_lbox \
+
+OBJS_15_X=$(BUILD_DIR).ob_dlg.o.$(COUNTRY)-B15
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M15: $(OBJS_15_X) $(OBJS_15_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_15_X) $(OBJS_15_S)
+
+# end of ob_dlg.mkr ################################################################################

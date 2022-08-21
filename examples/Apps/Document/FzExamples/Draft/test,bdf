@@ -1,0 +1,60 @@
+{Version:1.05;01 Oct 1993;Resultz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;3;35;;32;3;35}
+{Style:BaseSheet;{ColWidth:1474}{ColName:x#}{RowHeight:240}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:288}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:0}{ParaEnd:0}{LineSpace:3;240}{Justify:2}{JustifyV:0}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Courier}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:114}{MarginRight:114}{Tablist:C5385 R10771}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{StyleHeaderFooter:BaseHeadFoot}
+{Style:Current cell;{BorderColour:0;0;0}{Border:1}}
+{StyleCurrent:Current cell}
+{Style:Text;{RowHeightFix:0}{Justify:0}{NewObject:3}}
+{StyleText:Text}
+{Style:Pounds;{Numform:£#,##0.00}}
+{Style:Underline;{StyleKey:^F1}{Underline:1}}
+{Paper:Default A4;0;16840;11906;442;1134;1185;346;0;0;0;0;0;;0}
+{PrintQuality:1}
+{StartOfData}
+{S:X;X;0;4;Acorn Archimedes range of computers}
+{S:X;X;0;7;Name}
+{S:X;X;0;9;A3010 Family Solution}
+{S:X;X;0;10;A3020 HD 60 Multiscan system}
+{S:X;X;0;11;A4000 Home/Office system{ITT-X}}
+{S:X;X;0;12;A5000 4MB HD162 system}
+{S:X;X;0;13;A4 4MB HD162 Portable}
+{S:X;X;0;16;NB the prices given exclude extended service warranty.}
+{S:X;X;1;7;RRP {ITR-X}exc VAT}
+{S:S;C;1;9;424.68}
+{S:S;C;1;10;680}
+{S:S;C;1;11;1049}
+{S:S;C;1;12;1599}
+{S:S;C;1;13;1699}
+{S:X;X;2;7;RRP{ITR-X}inc VAT}
+{S:S;F;2;9;498.999;b10*1.175}
+{S:S;F;2;10;799;b11*1.175}
+{S:S;F;2;11;1232.575;b12*1.175}
+{S:S;F;2;12;1878.825;b13*1.175}
+{S:S;F;2;13;1996.325;b14*1.175}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:0;;;;1;;;;1;0;{ColWidth:4608}}
+{R:0;;;;1;;;;1;0;{StyleHandle:Text}}
+{R:;7;;;;8;;;0;1;{StyleHandle:Text}}
+{R:1;9;;32;3;17;;32;0;0;{StyleHandle:Pounds}}
+{R:1;;;;2;;;;1;0;{ColWidth:1728}}
+{R:2;;;;3;;;;1;0;{ColWidth:1872}}
+{R:1;7;;32;3;8;;32;0;0;{Justify:1}}
+{R:0;7;;32;3;8;;32;0;0;{StyleHandle:Underline}}
+{R:1;4;;32;3;5;;32;0;0;{ColWidth:0}}
+{R:0;4;;32;1;5;;32;0;0;{ColWidth:8208}{Justify:1}{Bold:1}}
+{R:1;16;;32;3;17;;32;0;0;{ColWidth:0}}
+{R:0;16;;32;1;17;;32;0;0;{ColWidth:8208}{Italic:1}}
+{PageHefoBreakValues-H:0;0;0;;1;576;32;0;;;0;;;1;576;32;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:4208;13472;12288;8480}
+{ViewControl:120;2;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:0;0}
+}

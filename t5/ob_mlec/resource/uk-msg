@@ -1,0 +1,19 @@
+#
+# this is the messages file for ob_mlec (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+e0:No selected text
+e2:MLEC_ERR No paste buffer
+e3:MLEC_ERR Paste buffer went AWOL
+e4:MLEC_ERR Invalid paste buffer operation
+e5:MLEC_ERR Destination string too small
+#
+# end of msg (ob_mlec)

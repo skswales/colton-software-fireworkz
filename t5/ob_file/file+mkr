@@ -1,0 +1,32 @@
+#
+# ob_file
+#
+OBJID=31
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_file.$(COUNTRY)-31/rc: $(T5).ob_file.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 31 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_file.o.$(COUNTRY)-B31: $(T5).ob_file.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_file.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_file.o.$(COUNTRY)-B_tmp -symbol rb_file_msg_weak
+
+$(BUILD_DIR).ob_file.o.ob_file: $(T5).ob_file.c.ob_file
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_31_S=$(BUILD_DIR).ob_file.o.ob_file
+
+OBJS_31_X=$(BUILD_DIR).ob_file.o.$(COUNTRY)-B31
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M31: $(OBJS_31_X) $(OBJS_31_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_31_X) $(OBJS_31_S)
+
+# end of ob_file.mkr ###############################################################################

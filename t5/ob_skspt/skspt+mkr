@@ -1,0 +1,50 @@
+#
+# ob_skspt
+#
+OBJID=09
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1995-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_skspt.$(COUNTRY)-09/rc: $(T5).ob_skspt.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 09 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_skspt.o.$(COUNTRY)-B09: $(T5).ob_skspt.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_skspt.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_skspt.o.$(COUNTRY)-B_tmp -symbol rb_skel_split_msg_weak
+
+$(BUILD_DIR).ob_skspt.o.ob_skspt: $(T5).ob_skspt.c.ob_skspt
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skspt.o.ui_remov: $(T5).ob_skspt.c.ui_remov
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skspt.o.ui_style: $(T5).ob_skspt.c.ui_style
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skspt.o.ui_styl2: $(T5).ob_skspt.c.ui_styl2
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skspt.o.ui_styl3: $(T5).ob_skspt.c.ui_styl3
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_09_S=\
+$(BUILD_DIR).ob_skspt.o.ob_skspt \
+$(BUILD_DIR).ob_skspt.o.ui_remov \
+$(BUILD_DIR).ob_skspt.o.ui_style \
+$(BUILD_DIR).ob_skspt.o.ui_styl2 \
+$(BUILD_DIR).ob_skspt.o.ui_styl3 \
+
+OBJS_09_X=$(BUILD_DIR).ob_skspt.o.$(COUNTRY)-B09
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M09: $(OBJS_09_X) $(OBJS_09_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_09_X) $(OBJS_09_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_skspt.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob09: $(PROD_BUILD_DIR).o.$(COUNTRY)-M09 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M09 -N09 $(OBJMUNGE_OBJFLAGS) -Eobject_skel_split
+
+# end of ob_skspt.mkr ###############################################################################

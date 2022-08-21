@@ -1,0 +1,375 @@
+#
+# ob_skel
+#
+OBJID=00
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 00
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00: $(T5).ob_skel.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -symbol rb_skel_msg_weak
+
+# RISC OS bound sprites
+$(BUILD_DIR).ob_skel.riscos.o.bs_00: $(T5).ob_skel.resource.spr
+ $(MAKEAOF) -to $@ -from $? -symbol rb_skel_spr_weak -spritearea
+# may have to avoid putting these vvv in a const segment if it goes read-only
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s22: $(T5).ob_skel.resource.$(COUNTRY)-spr22
+ $(MAKEAOF) -to $@ -from $? -symbol rb_skel_spr_22_weak -spritearea
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s24: $(T5).ob_skel.resource.$(COUNTRY)-spr24
+ $(MAKEAOF) -to $@ -from $? -symbol rb_skel_spr_24_weak -spritearea
+
+OBJS_00_X=\
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00 \
+$(BUILD_DIR).ob_skel.riscos.o.bs_00 \
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s22 \
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_s24 \
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M00: $(OBJS_00_X)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_00_X)
+
+$(BUILD_DIR).ob_skel.o.arglist: $(T5).ob_skel.c.arglist
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.df_paint: $(T5).ob_skel.c.df_paint
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ff_load: $(T5).ob_skel.c.ff_load
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ff_save: $(T5).ob_skel.c.ff_save
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.fonty: $(T5).ob_skel.c.fonty
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.inline: $(T5).ob_skel.c.inline
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.keys: $(T5).ob_skel.c.keys
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ma_event: $(T5).ob_skel.c.ma_event
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.object: $(T5).common.h.gflags
+$(BUILD_DIR).ob_skel.o.object: $(T5).ob_skel.c.object
+ $(CC) -o $@ $(ccflags) $(T5).ob_skel.c.object
+$(BUILD_DIR).ob_skel.o.ob_imps: $(T5).ob_skel.c.ob_imps
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.of_load: $(T5).ob_skel.c.of_load
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.of_save: $(T5).ob_skel.c.of_save
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_alpha: $(T5).ob_skel.c.sk_alpha
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_area: $(T5).ob_skel.c.sk_area
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_bord: $(T5).ob_skel.c.sk_bord
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_choic: $(T5).ob_skel.c.sk_choic
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_cmd: $(T5).ob_skel.c.sk_cmd
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_cont: $(T5).ob_skel.c.sk_cont
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_docno: $(T5).ob_skel.c.sk_docno
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_draft: $(T5).ob_skel.c.sk_draft
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_find: $(T5).ob_skel.c.sk_find
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_hefod: $(T5).ob_skel.c.sk_hefod
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_load: $(T5).ob_skel.c.sk_load
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_mark: $(T5).ob_skel.c.sk_mark
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_menu: $(T5).ob_skel.c.sk_menu
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_mrof: $(T5).ob_skel.c.sk_mrof
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_name: $(T5).ob_skel.c.sk_name
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_null: $(T5).ob_skel.c.sk_null
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_plain: $(T5).ob_skel.c.sk_plain
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_print: $(T5).ob_skel.c.sk_print
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_prost: $(T5).ob_skel.c.sk_prost
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_root: $(T5).ob_skel.c.sk_root
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_save: $(T5).ob_skel.c.sk_save
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_styl: $(T5).ob_skel.c.sk_styl
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_stylc: $(T5).ob_skel.c.sk_stylc
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_stylg: $(T5).ob_skel.c.sk_stylg
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_table: $(T5).ob_skel.c.sk_table
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.sk_uref: $(T5).ob_skel.c.sk_uref
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.startup: $(T5).ob_skel.c.startup
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ui_data: $(T5).ob_skel.c.ui_data
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ui_field: $(T5).ob_skel.c.ui_field
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ui_misc: $(T5).ob_skel.c.ui_misc
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ui_page: $(T5).ob_skel.c.ui_page
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ui_save: $(T5).ob_skel.c.ui_save
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.view: $(T5).ob_skel.c.view
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.vi_cmd: $(T5).ob_skel.c.vi_cmd
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.vi_edge: $(T5).ob_skel.c.vi_edge
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_skel.modules.o.aligator: $(T5).cmodules.c.aligator
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.alloc: $(T5).cmodules.c.alloc
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.allocblk: $(T5).cmodules.c.allocblk
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.bezier: $(T5).cmodules.c.bezier
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.bitmap: $(T5).cmodules.c.bitmap
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.cfbf: $(T5).cmodules.c.cfbf
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.cfbfwrite: $(T5).cmodules.c.cfbfwrite
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.collect: $(T5).cmodules.c.collect
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.debug: $(T5).cmodules.c.debug
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.file: $(T5).cmodules.c.file
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.fileutil: $(T5).cmodules.c.fileutil
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.gr_cache: $(T5).cmodules.c.gr_cache
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.gr_coord: $(T5).cmodules.c.gr_coord
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.gr_rdiag: $(T5).cmodules.c.gr_rdiag
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.gr_rdia3: $(T5).cmodules.c.gr_rdia3
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.list: $(T5).cmodules.c.list
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.mrofmun: $(T5).cmodules.c.mrofmun
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.myassert: $(T5).cmodules.c.myassert
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.numform: $(T5).cmodules.c.numform
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.quickblk: $(T5).cmodules.c.quickblk
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.quicktblk: $(T5).cmodules.c.quicktblk
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.quickublk: $(T5).cmodules.c.quickublk
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.quickwblk: $(T5).cmodules.c.quickwblk
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.report: $(T5).cmodules.c.report
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.resource: $(T5).cmodules.c.resource
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.sprites: $(T5).cmodules.c.sprites
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.ss_const: $(T5).cmodules.c.ss_const
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.typepack: $(T5).cmodules.c.typepack
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.ucs4: $(T5).cmodules.c.ucs4
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.ucs4conv: $(T5).cmodules.c.ucs4conv
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.utf8: $(T5).cmodules.c.utf8
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.utf8str: $(T5).cmodules.c.utf8str
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.utf16: $(T5).cmodules.c.utf16
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.xstring: $(T5).cmodules.c.xstring
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.xtstring: $(T5).cmodules.c.xtstring
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.xustring: $(T5).cmodules.c.xustring
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.xwstring: $(T5).cmodules.c.xwstring
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_skel.riscos.o.ho_dll: $(T5).cmodules.riscos.c.ho_dll
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_sqush: $(T5).cmodules.riscos.c.ho_sqush
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.muldivas: $(T5).cmodules.riscos.c.muldivas
+ Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
+ $(AS) -o $@ $(ASflags) $?
+
+$(BUILD_DIR).ob_skel.riscos.o.colourpick: $(T5).ob_skel.riscos.c.colourpick
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.cs-flex: $(T5).ob_skel.riscos.c.cs-flex
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.cs-pollfpm: $(T5).ob_skel.riscos.c.cs-pollfpm
+ Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
+ $(AS) -o $@ $(ASflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.cs-winx: $(T5).ob_skel.riscos.c.cs-winx
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.host: $(T5).ob_skel.riscos.c.host
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_asm: $(T5).ob_skel.riscos.c.ho_asm
+ Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
+ $(AS) -o $@ $(ASflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_core: $(T5).ob_skel.riscos.c.ho_core
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_event: $(T5).ob_skel.riscos.c.ho_event
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_marker: $(T5).ob_skel.riscos.c.ho_marker
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_menu: $(T5).ob_skel.riscos.c.ho_menu
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_paint: $(T5).ob_skel.riscos.c.ho_paint
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_print: $(T5).ob_skel.riscos.c.ho_print
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.ho_xform: $(T5).ob_skel.riscos.c.ho_xform
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.main: $(T5).ob_skel.riscos.c.main
+ $(CC) -o $@ $(ccflags) $?
+
+SKEL_SA=\
+$(BUILD_DIR).ob_skel.riscos.o.colourpick \
+$(BUILD_DIR).ob_skel.riscos.o.cs-flex \
+$(BUILD_DIR).ob_skel.riscos.o.cs-pollfpm \
+$(BUILD_DIR).ob_skel.riscos.o.cs-winx \
+$(BUILD_DIR).ob_skel.riscos.o.host \
+$(BUILD_DIR).ob_skel.riscos.o.ho_asm \
+$(BUILD_DIR).ob_skel.riscos.o.ho_core \
+$(BUILD_DIR).ob_skel.riscos.o.ho_event \
+$(BUILD_DIR).ob_skel.riscos.o.ho_menu \
+$(BUILD_DIR).ob_skel.riscos.o.ho_marker \
+$(BUILD_DIR).ob_skel.riscos.o.ho_paint \
+$(BUILD_DIR).ob_skel.riscos.o.ho_print \
+$(BUILD_DIR).ob_skel.riscos.o.ho_xform \
+$(BUILD_DIR).ob_skel.riscos.o.main \
+$(BUILD_DIR).ob_skel.riscos.o.ho_dll \
+$(BUILD_DIR).ob_skel.riscos.o.ho_sqush \
+$(BUILD_DIR).ob_skel.riscos.o.muldivas \
+
+SKEL_SB=\
+$(BUILD_DIR).ob_skel.o.arglist \
+$(BUILD_DIR).ob_skel.o.df_paint \
+$(BUILD_DIR).ob_skel.o.ff_load \
+$(BUILD_DIR).ob_skel.o.ff_save \
+$(BUILD_DIR).ob_skel.o.fonty \
+$(BUILD_DIR).ob_skel.o.inline \
+$(BUILD_DIR).ob_skel.o.keys \
+$(BUILD_DIR).ob_skel.o.ma_event \
+$(BUILD_DIR).ob_skel.o.object \
+$(BUILD_DIR).ob_skel.o.ob_imps \
+$(BUILD_DIR).ob_skel.o.of_load \
+$(BUILD_DIR).ob_skel.o.of_save \
+$(BUILD_DIR).ob_skel.o.startup \
+$(BUILD_DIR).ob_skel.o.view \
+$(BUILD_DIR).ob_skel.o.vi_cmd \
+$(BUILD_DIR).ob_skel.o.vi_edge \
+
+SKEL_SC=\
+$(BUILD_DIR).ob_skel.o.sk_alpha \
+$(BUILD_DIR).ob_skel.o.sk_area \
+$(BUILD_DIR).ob_skel.o.sk_bord \
+$(BUILD_DIR).ob_skel.o.sk_choic \
+$(BUILD_DIR).ob_skel.o.sk_cmd \
+$(BUILD_DIR).ob_skel.o.sk_cont \
+$(BUILD_DIR).ob_skel.o.sk_docno \
+$(BUILD_DIR).ob_skel.o.sk_draft \
+$(BUILD_DIR).ob_skel.o.sk_find \
+$(BUILD_DIR).ob_skel.o.sk_hefod \
+$(BUILD_DIR).ob_skel.o.sk_load \
+$(BUILD_DIR).ob_skel.o.sk_mark \
+$(BUILD_DIR).ob_skel.o.sk_menu \
+$(BUILD_DIR).ob_skel.o.sk_mrof \
+$(BUILD_DIR).ob_skel.o.sk_name \
+$(BUILD_DIR).ob_skel.o.sk_null \
+$(BUILD_DIR).ob_skel.o.sk_plain \
+$(BUILD_DIR).ob_skel.o.sk_print \
+
+SKEL_SD=\
+$(BUILD_DIR).ob_skel.o.sk_prost \
+$(BUILD_DIR).ob_skel.o.sk_root \
+$(BUILD_DIR).ob_skel.o.sk_save \
+$(BUILD_DIR).ob_skel.o.sk_styl \
+$(BUILD_DIR).ob_skel.o.sk_stylc \
+$(BUILD_DIR).ob_skel.o.sk_stylg \
+$(BUILD_DIR).ob_skel.o.sk_table \
+$(BUILD_DIR).ob_skel.o.sk_uref \
+$(BUILD_DIR).ob_skel.o.ui_data \
+$(BUILD_DIR).ob_skel.o.ui_field \
+$(BUILD_DIR).ob_skel.o.ui_misc \
+$(BUILD_DIR).ob_skel.o.ui_page \
+$(BUILD_DIR).ob_skel.o.ui_save \
+
+SKEL_MS=\
+$(BUILD_DIR).ob_skel.modules.o.aligator \
+$(BUILD_DIR).ob_skel.modules.o.alloc \
+$(BUILD_DIR).ob_skel.modules.o.allocblk \
+$(BUILD_DIR).ob_skel.modules.o.bezier \
+$(BUILD_DIR).ob_skel.modules.o.bitmap \
+$(BUILD_DIR).ob_skel.modules.o.cfbf \
+$(BUILD_DIR).ob_skel.modules.o.cfbfwrite \
+$(BUILD_DIR).ob_skel.modules.o.collect \
+$(BUILD_DIR).ob_skel.modules.o.debug \
+$(BUILD_DIR).ob_skel.modules.o.file \
+$(BUILD_DIR).ob_skel.modules.o.fileutil \
+$(BUILD_DIR).ob_skel.modules.o.gr_cache \
+$(BUILD_DIR).ob_skel.modules.o.gr_coord \
+$(BUILD_DIR).ob_skel.modules.o.gr_rdiag \
+$(BUILD_DIR).ob_skel.modules.o.gr_rdia3 \
+$(BUILD_DIR).ob_skel.modules.o.list \
+$(BUILD_DIR).ob_skel.modules.o.mrofmun \
+$(BUILD_DIR).ob_skel.modules.o.myassert \
+$(BUILD_DIR).ob_skel.modules.o.numform \
+$(BUILD_DIR).ob_skel.modules.o.quickblk \
+$(BUILD_DIR).ob_skel.modules.o.quicktblk \
+$(BUILD_DIR).ob_skel.modules.o.quickublk \
+$(BUILD_DIR).ob_skel.modules.o.quickwblk \
+$(BUILD_DIR).ob_skel.modules.o.report \
+$(BUILD_DIR).ob_skel.modules.o.resource \
+$(BUILD_DIR).ob_skel.modules.o.ss_const \
+$(BUILD_DIR).ob_skel.modules.o.typepack \
+$(BUILD_DIR).ob_skel.modules.o.utf8 \
+$(BUILD_DIR).ob_skel.modules.o.utf8str \
+$(BUILD_DIR).ob_skel.modules.o.utf16 \
+$(BUILD_DIR).ob_skel.modules.o.ucs4 \
+$(BUILD_DIR).ob_skel.modules.o.ucs4conv \
+$(BUILD_DIR).ob_skel.modules.o.xstring \
+$(BUILD_DIR).ob_skel.modules.o.xtstring \
+$(BUILD_DIR).ob_skel.modules.o.xustring \
+$(BUILD_DIR).ob_skel.modules.o.xwstring \
+
+$(BUILD_DIR).ob_skel.skelA: $(SKEL_SA)
+ $(LD) $(LDflags_AOF) -o $@ $(SKEL_SA)
+
+$(BUILD_DIR).ob_skel.skelB: $(SKEL_SB)
+ $(LD) $(LDflags_AOF) -o $@ $(SKEL_SB)
+
+$(BUILD_DIR).ob_skel.skelC: $(SKEL_SC)
+ $(LD) $(LDflags_AOF) -o $@ $(SKEL_SC)
+
+$(BUILD_DIR).ob_skel.skelD: $(SKEL_SD)
+ $(LD) $(LDflags_AOF) -o $@ $(SKEL_SD)
+
+$(BUILD_DIR).ob_skel.skelM: $(SKEL_MS)
+ $(LD) $(LDflags_AOF) -o $@ $(SKEL_MS)
+
+# end of ob_skel.mkr ###############################################################################

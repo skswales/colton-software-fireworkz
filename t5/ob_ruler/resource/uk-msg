@@ -1,0 +1,38 @@
+#
+# this is the messages file for ob_ruler (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages
+#
+1:Ruler
+2:Side ruler
+3:Ruler. Click to place a new tab
+#
+274:Click to place a new tab
+275:Left tab
+276:Centre tab
+277:Right tab
+278:Decimal tab
+r279:Drag to reposition, double-click to clear. ADJUST double-click to change type
+w279:Drag to reposition, double-click to clear. Ctrl+double-click to change type
+#
+285:Left margin
+286:Paragraph margin
+287:Right margin
+288:Drag to reposition
+#
+729:Column width
+#
+723:Header margin
+724:Footer margin
+725:Row height
+727:Header offset
+728:Footer offset
+#
+# end of msg (ob_ruler)

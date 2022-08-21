@@ -1,0 +1,491 @@
+14c14,20
+< #include <windows.h>
+---
+> /*
+>  * Slightly butchered by SKS to directly integrate into
+>  * Colton Software Fireworkz world (i.e. not used as DLL)
+>  */
+> 
+> #include "common/gflags.h"
+> 
+18a25,41
+> #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
+> 
+> #include <tchar.h> /* for _tstoi() */
+> 
+> /* Import from Fireworkz */
+> 
+> _Check_return_
+> extern U32
+> MyGetProfileString(
+>     _In_z_      PCTSTR ptzKey,
+>     _In_z_      PCTSTR ptzDefault,
+>     _Out_writes_z_(cchReturnBuffer) PTSTR ptzReturnBuffer,
+>     _InVal_     U32 cchReturnBuffer);
+> 
+> #endif /* COLTON_SOFTWARE */
+> 
+> 
+30a54,93
+> #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
+> 
+> typedef struct _COLORREF_SET /* Added by Colton Software */
+> {
+>     COLORREF cr[4];
+> }
+> COLORREF_SET;
+> 
+> //Standard button colors.
+> static const COLORREF_SET
+> standard =
+> {
+>     {
+>     RGB(0, 0, 0),       /* STDCOLOR_BLACK */
+>     RGB(128, 128, 128), /* STDCOLOR_DKGRAY */
+>     RGB(192, 192, 192), /* STDCOLOR_LTGRAY */
+>     RGB(255, 255, 255)  /* STDCOLOR_WHITE */
+>     }
+> };
+> 
+> #define crStandard standard.cr
+> 
+> static int g_button_output_style;
+> 
+> // DrawBlankButton - Modified by Colton Software
+> 
+> static void
+> DrawBlankButtonEx(
+>     _In_        HDC hDC,
+>     _Inout_     int *p_x,
+>     _Inout_     int *p_y,
+>     _Inout_     int *p_dx,
+>     _Inout_     int *p_dy,
+>     _Inout_     UINT *p_uState,
+>     _Inout_     COLORREF_SET *p,
+>     _Out_       int *p_shift,
+>     _In_        int button_output_style);
+> 
+> #else /* NOT COLTON_SOFTWARE */
+> 
+55a119,125
+> #endif /* COLTON_SOFTWARE */
+> 
+> 
+> #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
+> 
+> void CursorsCache(HINSTANCE hInstance)
+> { hInstance=hInstance; /*EMPTY*/ }
+56a127,137
+> void CursorsFree(void)
+> { /*EMPTY*/ }
+> 
+> _Check_return_
+> extern BOOL
+> bttncur_LibMain(HINSTANCE hInstance)
+> {
+>     return FInitialize(hInstance);
+> }
+> 
+> #else /* NOT COLTON_SOFTWARE */
+108a190
+> #endif /* COLTON_SOFTWARE */
+128a211,234
+> #if defined(COLTON_SOFTWARE)
+> 
+>     TCHAR buffer[16];
+> 
+>     /* SKS 25nov96 hack to allow different button styles */
+>     if(0 != MyGetProfileString(TEXT("ButtonStyle"), TEXT(""), buffer, sizeof(buffer)/sizeof(buffer[0])))
+>         g_button_output_style = _tstoi(buffer); /*atoi*/
+>     else
+>         g_button_output_style = 97;
+> 
+>     tdd.uDPI     =96;
+>     tdd.cyBar    =CYBUTTONBAR96;
+>     tdd.cxButton =TOOLBUTTON_STD96WIDTH;
+>     tdd.cyButton =TOOLBUTTON_STD96HEIGHT;
+>     tdd.cxImage  =TOOLBUTTON_STD96IMAGEWIDTH;
+>     tdd.cyImage  =TOOLBUTTON_STD96IMAGEHEIGHT;
+> 
+>     for (i=0; i < 3; i++)
+>         {
+>         /* No rghBmpStandardImages to be loaded in Fireworkz */
+>         }
+> 
+> #else /* NOT COLTON_SOFTWARE */
+> 
+153c259,261
+<     ghInst=hInstance;
+---
+> #endif /* COLTON_SOFTWARE */
+> 
+>     ghInst=(HINSTANCE)hInstance;
+158c266
+<         CursorsCache(hInstance);
+---
+>         CursorsCache((HINSTANCE)hInstance);
+167a276,286
+> #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
+> 
+> extern void
+> bttncur_WEP(void)
+> {
+>     CursorsFree();
+>     ToolButtonFree();
+> }
+> 
+> #else
+> 
+215a335
+> #endif /* COLTON_SOFTWARE */
+273a394,420
+> 
+> #if defined(COLTON_SOFTWARE)
+> 
+>     /* Low DPI not supported */
+> 
+>     if (cy < 120)
+>         {
+>         lpDD->uDPI     =96;
+>         lpDD->cyBar    =CYBUTTONBAR96;
+>         lpDD->cxButton =TOOLBUTTON_STD96WIDTH;
+>         lpDD->cyButton =TOOLBUTTON_STD96HEIGHT;
+>         lpDD->cxImage  =TOOLBUTTON_STD96IMAGEWIDTH;
+>         lpDD->cyImage  =TOOLBUTTON_STD96IMAGEHEIGHT;
+>         }
+>     else /* (cy >= 120) */
+>         {
+>         // 125% scaling sets 120 DPI
+>         lpDD->uDPI     =120;
+>         lpDD->cyBar    =CYBUTTONBAR120;
+>         lpDD->cxButton =TOOLBUTTON_STD120WIDTH;
+>         lpDD->cyButton =TOOLBUTTON_STD120HEIGHT;
+>         lpDD->cxImage  =TOOLBUTTON_STD120IMAGEWIDTH;
+>         lpDD->cyImage  =TOOLBUTTON_STD120IMAGEHEIGHT;
+>         }
+> 
+> #else /* NOT COLTON_SOFTWARE */
+> 
+307a455,456
+> #endif /* COLTON_SOFTWARE */
+> 
+343a493,495
+> #if defined(COLTON_SOFTWARE)
+>     rgbHi=GetSysColor(COLOR_BTNHIGHLIGHT);
+> #else
+348a501
+> #endif
+405a559,561
+> #if defined(COLTON_SOFTWARE)
+>         /* No rghBmpStandardImages to delete in Fireworkz*/
+> #else
+408a565
+> #endif
+602a760,765
+> #if defined(COLTON_SOFTWARE)
+>     int             button_output_style = g_button_output_style;
+>     int             shift;
+>     COLORREF_SET    sys;
+> #define crSys sys.cr
+> #else /* NOT COLTON_SOFTWARE */
+603a767,768
+> #endif /* COLTON_SOFTWARE */
+> 
+618a784,788
+> #if defined(COLTON_SOFTWARE)
+>     /* NB No rghBmpStandardImages to use in Fireworkz */
+> 
+>     (void) pTDD;
+> #else /* NOT COLTON_SOFTWARE */
+645a816
+> #endif /* COLTON_SOFTWARE */
+658a830,839
+> #if defined(COLTON_SOFTWARE)
+>     //Get the current system colors for buttons.
+>     crSys[0] = GetSysColor(COLOR_BTNTEXT);
+>     crSys[1] = GetSysColor(COLOR_BTNSHADOW);
+>     crSys[2] = GetSysColor(COLOR_BTNFACE);
+>     crSys[3] = GetSysColor(COLOR_BTNHIGHLIGHT);
+> 
+>     /* Draw a button sans image. */
+>     DrawBlankButtonEx(hDC, &x, &y, &dx, &dy, &uState, &sys, &shift, button_output_style);
+> #else /* NOT COLTON_SOFTWARE */
+670a852
+> #endif /* COLTON_SOFTWARE */
+671a854,860
+> #if defined(COLTON_SOFTWARE)
+>     /*
+>      * Determine the offset necessary to center the image but also reflect
+>      * the pushed-in state, which means just adding a bit to the normal state.
+>      */
+>     i=shift;
+> #else
+676a866
+> #endif /* COLTON_SOFTWARE */
+696a887,889
+> #if defined(COLTON_SOFTWARE)
+>     if( ((uState & BUTTONGROUP_DISABLED) == 0) && !(uState & BUTTONGROUP_BLANK))
+> #else
+697a891
+> #endif/* COLTON_SOFTWARE */
+715a910,912
+> #if defined(COLTON_SOFTWARE)
+>         for (i=STDCOLOR_BLACK; i<=STDCOLOR_LTGRAY/*STDCOLOR_WHITE*/; i++)
+> #else
+716a914
+> #endif/* COLTON_SOFTWARE */
+751a950,952
+> #if defined(COLTON_SOFTWARE)
+>             for (i=STDCOLOR_BLACK; i<=STDCOLOR_LTGRAY/*STDCOLOR_WHITE*/; i++)
+> #else
+752a954
+> #endif /* COLTON_SOFTWARE */
+788c990
+<     if ((uState & BUTTONGROUP_DISABLED || ATTRIBUTEBUTTON_INDETERMINATE==uState)
+---
+>     if ((uState & BUTTONGROUP_DISABLED || (ATTRIBUTEBUTTON_INDETERMINATE==uState))
+792c994
+<         MaskCreate(iImage, dx, dy, bmx, bmy, xOffsetGlyph, yOffsetGlyph, 0);
+---
+>         MaskCreate((UINT) iImage, dx, dy, bmx, bmy, xOffsetGlyph, yOffsetGlyph, 0);
+858c1060,1066
+<             MaskCreate(iImage, dx, dy, bmx, bmy
+---
+> #if defined(COLTON_SOFTWARE)
+>             /* SKS 03may95 hacks +/- 1 in this block */
+> 
+>             MaskCreate((UINT) iImage, dx, dy, bmx, bmy
+>                        , xOffsetGlyph/*-1*/, yOffsetGlyph/*-1*/, uState);
+> #else
+>             MaskCreate((UINT) iImage, dx, dy, bmx, bmy
+859a1068
+> #endif
+870a1080,1087
+> #if defined(COLTON_SOFTWARE)
+>             i = (ATTRIBUTEBUTTON_INDETERMINATE & uState) ? 3 : 1;
+> 
+>             i -= 1;
+> 
+>             /* SKS 03may95 hacks +/- 1 in this block */
+>             BitBlt(hDC, x/*+1*/, y/*+1*/, dx+2-i, dy+2-i, hDCMono, 0, 0, ROP_DSPDxax);
+> #else
+874a1092
+> #endif /* COLTON_SOFTWARE */
+896a1115,1284
+> #if defined(COLTON_SOFTWARE)
+> 
+> /*
+>  * DrawBlankButtonEx
+>  *
+>  * Purpose:
+>  *  Draws a button with no face using the current system colors in either
+>  *  an up or down state.
+>  *
+>  * Parameters:
+>  *  hDC             HDC on which to draw
+>  *  x, y            int coordinates where we start drawing
+>  *  dx, dy          int size of the button
+>  *  fDown           BOOL indicating the up or down state of the button
+>  *
+>  * Return Value:
+>  *  None
+>  */
+> 
+> static void
+> DrawBlankButtonEx(
+>     _In_        HDC hDC,
+>     _Inout_     int *p_x,
+>     _Inout_     int *p_y,
+>     _Inout_     int *p_dx,
+>     _Inout_     int *p_dy,
+>     _Inout_     UINT *p_uState,
+>     _Inout_     COLORREF_SET *p,
+>     _Out_       int *p_shift,
+>     _In_        int button_output_style)
+> {
+>     int x  = *p_x;
+>     int y  = *p_y;
+>     int dx = *p_dx;
+>     int dy = *p_dy;
+>     int btnface_dim = 0;
+>     BOOL drawn_border = TRUE;
+>     COLORREF pcr4; /* frame window colour, not needed by caller */
+> 
+>     *p_shift = 0;
+> 
+>     pcr4 = GetSysColor(COLOR_WINDOWFRAME);
+> 
+>     /* If BTNFACE is dim (i.e. any two components near zero), make BTNTEXT its inverse */
+>     btnface_dim += (GetRValue(p->cr[2]) < 0x40);
+>     btnface_dim += (GetGValue(p->cr[2]) < 0x40);
+>     btnface_dim += (GetBValue(p->cr[2]) < 0x40);
+>     if(btnface_dim >= 2)
+>     {
+>         p->cr[0] = p->cr[2] ^ RGB(0xFF,0xFF,0xFF);
+>     }
+> 
+>     switch(button_output_style)
+>     {
+>     case 2005: /* Different (Visual Studio 2005 - like) style of button - temp back same as 97 */
+>     case 97: /* Different (Office 97 - like) style of button */
+>     default:
+>         {
+>         /* Draw shadows and highlights */
+>         if(*p_uState & BUTTONGROUP_MOUSEOVER)
+>         {   /* Pointed-at button look */
+>             PatB(hDC, x,      y,      1,    dy-1, p->cr[3]);
+>             PatB(hDC, x+1,    y,      dx-2, 1,    p->cr[3]);
+>             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[1]);
+>             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[1]);
+> 
+>             if(*p_uState & BUTTONGROUP_LIGHTFACE)
+>             {
+>                 /**p_uState &= ~BUTTONGROUP_LIGHTFACE;*/ /* no longer nob this off */
+> 
+>                 *p_shift = 1; /* but keep the same shift as when not pointed-at */
+>             }
+>         }
+>         else if(*p_uState & BUTTONGROUP_MOUSEDOWN)
+>         {   /* Held-down button look */
+>             PatB(hDC, x,      y,       1,    dy-1, p->cr[1]);
+>             PatB(hDC, x+1,    y,       dx-2, 1,    p->cr[1]);
+>             PatB(hDC, x+dx-1, y,       1,    dy,   p->cr[3]);
+>             PatB(hDC, x,      y+dy-1,  dx-1, 1,    p->cr[3]);
+> 
+>             *p_shift = 1;
+> 
+>             if(*p_uState & BUTTONGROUP_LIGHTFACE)
+>             {
+>                 *p_uState &= ~BUTTONGROUP_LIGHTFACE; /* nob this off */
+> 
+>                 *p_shift = 2; /* and shift even more! */
+>             }
+>         }
+>         else if(*p_uState & BUTTONGROUP_LIGHTFACE)
+>         {   /* 'on' button look */
+>             PatB(hDC, x,      y,      1,    dy-1, p->cr[1]);
+>             PatB(hDC, x+1,    y,      dx-2, 1,    p->cr[1]);
+>             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[3]);
+>             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[3]);
+> 
+>             *p_shift = 1;
+>         }
+>         else
+>         {   /* Normal, disabled, or 'off' button look */
+>             drawn_border = FALSE;
+>         }
+> 
+>         if(drawn_border)
+>         {   /* Shift coordinates to account for the border we just drew */
+>             x += 1;
+>             y += 1;
+>             dx -= 1 * 2;
+>             dy -= 1 * 2;
+>         }
+> 
+>         /* Paint the interior COLOR_BTNFACE as a default. */
+>         PatB(hDC, x, y, dx, dy, p->cr[2]);
+> 
+>         break;
+>         }
+> 
+>     case 95: /* Different (Windows 95 - like) style of button */
+>         {
+>         COLORREF vlt_gray = GetNearestColor(hDC, PALETTERGB(192, 192, 192));
+> 
+>         /* Draw shadows and highlights. */
+>         if((*p_uState & BUTTONGROUP_DOWN) || (*p_uState & BUTTONGROUP_MOUSEDOWN))
+>         {
+>             PatB(hDC, x,      y,      1,    dy-1, pcr4);
+>             PatB(hDC, x+1,    y,      dx-2, 1,    pcr4);
+>             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[3]); /* NB NOT the obvious way round! */
+>             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[3]);
+> 
+>             PatB(hDC, x+1,    y+1,    1,    dy-2, p->cr[1]);
+>             PatB(hDC, x+2,    y+1,    dx-3, 1,    p->cr[1]);
+>             PatB(hDC, x+dx-2, y+1,    1,    dy-2, vlt_gray);
+>             PatB(hDC, x+1,    y+dy-2, dx-3, 1,    vlt_gray);
+> 
+>             *p_shift = 1;
+>         }
+>         else
+>         {   /* Normal button look */
+>             PatB(hDC, x,      y,       1,    dy-1, p->cr[3]);
+>             PatB(hDC, x+1,    y,       dx-2, 1,    p->cr[3]);
+>             PatB(hDC, x+dx-1, y,       1,    dy,   pcr4);
+>             PatB(hDC, x,      y+dy-1,  dx-1, 1,    pcr4);
+> 
+>             PatB(hDC, x+1,    y+1,     1,    dy-2, vlt_gray);
+>             PatB(hDC, x+2,    y+1,     dx-3, 1,    vlt_gray);
+>             PatB(hDC, x+dx-2, y+1,     1,    dy-2, p->cr[1]);
+>             PatB(hDC, x+1,    y+dy-2,  dx-3, 1,    p->cr[1]);
+>         }
+> 
+>         /* Shift coordinates to account for the border we just drew */
+>         x += 2;
+>         y += 2;
+>         dx -= 2 * 2;
+>         dy -= 2 * 2;
+> 
+>         // Paint the interior COLOR_BTNFACE as a default.
+>         PatB(hDC, x, y, dx, dy, p->cr[2]);
+> 
+>         break;
+>         }
+>     }
+> 
+>     /* update caller too */
+>     *p_x = x;
+>     *p_y = y;
+>     *p_dx = dx;
+>     *p_dy = dy;
+> }
+> 
+> #else /* NOT COLTON_SOFTWARE */
+977a1366
+> #endif /* COLTON_SOFTWARE */
+1050c1439
+<     BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, iImage*bmx, 0, SRCCOPY);
+---
+>     BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, (int) (iImage*bmx), 0, SRCCOPY);
+1052a1442,1444
+> #if defined(COLTON_SOFTWARE)
+>     if ((ATTRIBUTEBUTTON_INDETERMINATE & uState) == 0)
+> #else
+1053a1446
+> #endif /* COLTON_SOFTWARE */
+1057c1450
+<         BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, iImage*bmx, 0, SRCPAINT);
+---
+>         BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, (int) (iImage*bmx), 0, SRCPAINT);
+1063a1457,1459
+> #if defined(COLTON_SOFTWARE)
+>     if ((ATTRIBUTEBUTTON_ON & uState) && (BUTTONGROUP_DISABLED & uState))
+> #else
+1064a1461
+> #endif /* COLTON_SOFTWARE */
+1068a1466,1489
+> 
+> #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
+> 
+> /*
+> Does the caller have to bother redrawing the button when a mouse enter/leave happens?
+> */
+> 
+> _Check_return_
+> extern BOOL
+> UIToolButtonMouseOverSignificant(void)
+> {
+>     switch(g_button_output_style)
+>     {
+>     case 97:
+>     case 2005:
+>     default:
+>         return(TRUE);
+> 
+>     case 95:
+>         return(FALSE);
+>     }
+> }
+> 
+> #endif /* COLTON_SOFTWARE */

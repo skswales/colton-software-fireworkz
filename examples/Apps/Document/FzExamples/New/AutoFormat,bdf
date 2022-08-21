@@ -1,0 +1,81 @@
+{Version:1.19/16; (02 Feb 1995);FireworkzPro;Debug version;8000 1182 2716 7191}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;4;17;;32;4;17}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5499 R10598}}
+{Style:Text;{Justify:0}{Fonty:280}}
+{Style:Number;{Justify:2}}
+{Style:Percent;{Numform:0.##%\\\;-0.##%[negative]}}
+{Style:Currency;{Numform:£#,##0.00_\\\;(£#,##0.00)[negative]}}
+{Style:Date_Time;{NumformDT:dd.mm.yy hh:mm:ss}}
+{Style:Date;{NumformDT:dd.mm.yy}}
+{Style:Date_a;{NumformDT:dd/mm/yy}}
+{Style:Time_s;{NumformDT:hh:mm:ss}}
+{Style:Time;{NumformDT:hh:mm}}
+{Style:General;{Numform:#,##0.#######\\\;-#,##0.#######[negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:.Table1;{ParaStart:68}{ParaEnd:45}
+{NewObject:1}{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}
+{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{PrintQuality:0}
+{Paper:A4;0;16840;11900;460;460;392;392;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;1;Automatic Format Recognition}
+{S:X;X;0;2;This is a new feature within Fireworkz Pro. It will intelligently guess by the format of what you type, what format you want the result to be displayed in. So for example, if you type £3 into a cell, Fireworkz will apply a currency format to this and display it as £3.00 . If you type 5.1.95 Fireworkz will interpret it as a date and display it as 05.01.1995. }
+{S:X;X;0;3;Here is a table of automatic format recognition:}
+{S:X;X;0;14;In the Styles directory on this disc, you will find a template called ProStyle. If you drop this onto older documents when loaded into Fireworkz Pro, these documents will gain the ability to do auto-format recognition. Note that it contains some styles which may overwrite styles in the existing document - check that the style names don't clash.}
+{S:X;X;1;5;Type in}
+{S:X;X;1;6;£3}
+{S:X;X;1;7;5.1.95}
+{S:X;X;1;8;05/01/95}
+{S:X;X;1;9;10%}
+{S:X;X;1;10;3:45}
+{S:X;X;1;11;3:45:55}
+{S:X;X;1;12;5.1.95 3:45:55}
+{S:X;X;2;5;Display}
+{S:S;C;2;6;3;;Currency}
+{S:S;D;2;7;5.1.1995}
+{S:S;D;2;8;5.1.1995;;Date_a}
+{S:S;C;2;9;0.1;;Percent}
+{S:S;D;2;10;03:45;;Time_s}
+{S:S;D;2;11;03:45:55;;Time_s}
+{S:S;D;2;12;5.1.1995 03:45:55;;Date_Time}
+{S:X;X;3;5;Format applied}
+{S:X;X;3;6;pounds/currency}
+{S:X;X;3;7;date}
+{S:X;X;3;8;date with slash}
+{S:X;X;3;9;percent}
+{S:X;X;3;10;time}
+{S:X;X;3;11;time with seconds}
+{S:X;X;3;12;date with time}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:1;5;;32;4;13;;32;0;0;{StyleHandle:.Table1}}
+{R:0;5;;32;1;13;;32;0;0;{ColWidth:1870}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:3;5;;32;4;13;;32;0;0;{ColWidth:2550}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:L1531}}
+{R:1;5;;32;2;13;;32;0;0;{ColWidth:2040}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:2;5;;32;3;13;;32;0;0;{ColWidth:2381}{MarginLeft:113}{MarginRight:226}{MarginPara:0}{Tablist}}
+{R:1;5;;32;4;6;;32;0;0;{Background:221;221;221}{Justify:1}}
+{R:0;1;;32;1;2;;32;0;0;{Justify:1}{Fonty:360}{Bold:1}}
+{R:2;6;;32;3;13;;32;0;0;{Justify:2}}
+{PageHefoBreakValues-H:0;0;0;;1;0;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:4048;12864;11696;11616}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;15;0;3;0}
+}

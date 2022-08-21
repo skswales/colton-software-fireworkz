@@ -1,0 +1,53 @@
+
+#
+# common.mf_mid_so
+#
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 2010-2015 R W Colton
+
+#
+# CCMATH
+#
+
+CCMATH_SO_DIR=$.pd-4_50.lgpl.ccmath.RISCOS.shared
+
+CCMATH_SO_AOF=$(CCMATH_SO_DIR).o.aof
+
+CCMATH_SO_LIB=$(CCMATH_SO_DIR).o.usr_sofns
+
+# Create the CCMATH 'so' and corresponding stubs file
+
+CCMATH_SO=$(PROD_BUILD_DIR).binaries.CCMso
+CCMATH_STUBS=$(PROD_BUILD_DIR).binaries.CCMstubs
+CCMATH_IMPORTS=$(PROD_BUILD_DIR).binaries.CCMimports
+
+# Shared Library SO
+
+$(CCMATH_SO): $(CCMATH_SO_AOF) $(CCMATH_STUBS)
+ $(OBJMUNGE) -D$@ -O$(CCMATH_SO_AOF) -S$(CCMATH_STUBS) -RS1 -Varmeisb -N63 -Eccmath_lib_init
+
+# Shared Library Stubs
+#
+# Stage 1 - Generate the Imports from the Library's final AOF
+#
+# Stage 2 - Generate the Stubs from the Library's final AOF and those Imports
+# ensuring that this app exports all the necessary functions for the Library
+
+APP_AOF=$(PROD_BUILD_DIR).o.uk-sk_aof
+APP_SYM=$(PROD_BUILD_DIR).binaries.uk-SymIm
+# NB APP_SYM not valid until APP_STUBS have been created so need extra dependency
+APP_STUBS=$(PROD_BUILD_DIR).binaries.stubs
+
+$(CCMATH_STUBS): $(CCMATH_SO_AOF) $(APP_AOF) $(APP_STUBS)
+ @Remove $(CCMATH_IMPORTS)
+ $(OBJMUNGE) -Iu$(CCMATH_IMPORTS) -O$(CCMATH_SO_AOF)
+ @Remove $@
+ $(OBJMUNGE) -Su$@ -I$(CCMATH_IMPORTS) -O$(APP_AOF) -L$(APP_SYM)
+
+#
+# end of common.mf_mid_so
+#

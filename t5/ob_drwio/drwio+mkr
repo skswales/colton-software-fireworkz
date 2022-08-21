@@ -1,0 +1,40 @@
+#
+# ob_drwio
+#
+OBJID=17
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 2001-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_drwio.$(COUNTRY)-17/rc: $(T5).ob_drwio.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 17 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_drwio.o.$(COUNTRY)-B17: $(T5).ob_drwio.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_drwio.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_drwio.o.$(COUNTRY)-B_tmp -symbol rb_draw_io_msg_weak
+
+$(BUILD_DIR).ob_drwio.o.ob_drwio: $(T5).ob_drwio.c.ob_drwio
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_drwio.o.drwprint: $(T5).ob_drwio.c.drwprint
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_17_S=\
+$(BUILD_DIR).ob_drwio.o.ob_drwio \
+$(BUILD_DIR).ob_drwio.o.drwprint \
+
+OBJS_17_X=$(BUILD_DIR).ob_drwio.o.$(COUNTRY)-B17
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M17: $(OBJS_17_X) $(OBJS_17_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_17_X) $(OBJS_17_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_drwio.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob17: $(PROD_BUILD_DIR).o.$(COUNTRY)-M17 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M17 -N17 $(OBJMUNGE_OBJFLAGS) -Eobject_draw_io
+
+# end of ob_drwio.mkr ###############################################################################

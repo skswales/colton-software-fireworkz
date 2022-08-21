@@ -1,0 +1,24 @@
+#
+# this is the messages file for fl_xls (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1994-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+e0:Excel load: unknown BOF record
+#e1:ERROR_RQ
+e2:Excel load: bad formula
+#e3:Spare
+e4:Excel load: no DIMENSIONS record
+e5:Excel load: bad BOUNDSHEET record
+e6:Excel load: unsupported file encryption
+e7:Excel load: wrong file password
+#
+0:Password required
+#
+# end of msg (fl_xls)

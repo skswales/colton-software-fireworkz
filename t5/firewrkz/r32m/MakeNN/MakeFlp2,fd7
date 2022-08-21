@@ -1,0 +1,17 @@
+| MakeFlp2.oby - Fireworkz
+
+Set t5$Disc adfs::0.$
+
+%Create <t5$Disc>.NotDOSDisk 0
+%Delete <t5$Disc>.NotDOSDisk
+
+Quiet %Wipe <t5$Disc>.* ~cfr~v
+Quiet adfs:%Dismount :0
+
+Obey -v <Obey$Dir>.MakeCommon
+
+Obey -v <Obey$Dir>.MakeF2Core
+
+%Rename <t5$Disc>.Z <t5$Disc>._Fireworkz
+
+adfs:%NameDisc :0 FirewrkzP2

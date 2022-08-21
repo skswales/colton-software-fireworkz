@@ -1,0 +1,14 @@
+{Style:Text;{Justify:0}}
+{Style:Number;{Justify:2}}
+{Style:General;{StyleSearch:50}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
+{Style:Currency;{StyleSearch:60}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
+{Style:Percent;{StyleSearch:70}{Numform:0.##%\\\;-0.##%[Negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:Date;{StyleSearch:10}{NumformDT:dd.mm.yyyy}}
+{Style:Date_a;{StyleSearch:20}{NumformDT:dd/mm/yyyy}}
+{Style:Date_ISO_8601;{StyleSearch:0}{NumformDT:yyyy-mm-dd}}
+{Style:Time;{StyleSearch:30}{NumformDT:hh:mm}}
+{Style:Time_s;{StyleSearch:40}{NumformDT:hh:mm:ss}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+

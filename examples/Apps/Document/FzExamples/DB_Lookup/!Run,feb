@@ -1,0 +1,4 @@
+| !Run for a Fireworkz Pro database directory
+RMEnsure UtilityModule 3.00 You must drag this directory to Fireworkz Pro in order to load it on RISC OS 2
+Set Alias$Database_Filer_Run Filer_Run <Obey$Dir>.database_f|MUnset Alias$Database_Filer_Run
+Database_Filer_Run

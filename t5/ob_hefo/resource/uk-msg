@@ -1,0 +1,33 @@
+#
+# this is the messages file for ob_hefo (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+# messages
+#
+0:Page
+1:Page break
+2:Page number
+3:Margin
+4:Offset
+5:Page %d
+6:Row %d
+7:Header
+8:Even header
+9:First header
+10:Footer
+11:Even footer
+12:First footer
+15:ug7_headers_and_footers.htm
+#
+20:Header
+21:Footer
+#
+# end of msg (ob_hefo)

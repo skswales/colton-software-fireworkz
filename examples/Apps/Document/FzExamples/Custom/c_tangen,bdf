@@ -1,0 +1,34 @@
+{Version:1.03/57;13 Aug 1993;Resultz;Colton Software;6000 1357 8082 3659}
+{Block:0;0;;32;2;34;;32;2;34}
+{Style:BaseSheet;{ColWidth:1134}{ColName:x#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255;1}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:2}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:114}{MarginRight:114}{Tablist:C5385 R10771}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{Style:Current cell;{BorderColour:0;0;0}{Border:1}}
+{Style:Text;{Justify:0}}
+{StyleBase:BaseSheet}
+{StyleCurrent:Current cell}
+{StyleHeaderFooter:BaseHeadFoot}
+{StyleText:Text}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;1}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;Custom function statements}
+{S:S;F;0;1;;function("tangent","angle:number")}
+{S:S;F;0;2;;result(sin(@angle)/cos(@angle))}
+{S:X;X;1;0;comments}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:1;;;;2;;;;1;0;{ColWidth:4252}}
+{R:0;;;;1;;;;1;0;{ColWidth:5045}{Justify:0}}
+{R:0;0;;32;2;1;;32;0;0;{Background:221;221;221}{Justify:1}{GridBottomColour:0;0;0}{GridBottom:2}{Foreground:0;0;0}}
+{R:1;0;;32;2;1;;32;0;0;{Justify:1}{Italic:0}{Foreground:0;0;0}}
+{PageHefoBreakValues-H:0;0;0;;1;569;68;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;10912;10848;3840}
+{ViewControl:100;2;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:1;0;4;3}
+}

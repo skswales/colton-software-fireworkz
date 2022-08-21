@@ -1,0 +1,23 @@
+ Fireworkz and User Choices
+ --------------------------
+
+ Fireworkz now uses the Choices$Path to access the user's Choices. 
+Choices:Fireworkz. has been added to the Fireworkz$Path variable, replacing
+<Fireworkz$Dir>.User.
+
+ Choices, user dictionaries, new templates etc. are now written to the
+appropriate location in <Choices$Write>.Fireworkz. Subdirectories of
+<Choices$Write>.Fireworkz will be created as needed by Fireworkz.
+
+ If this is a fresh installation of Fireworkz, Fireworkz will run the
+TaskObey script file DoCopy in this Choices directory which will copy the
+contents of this directory into <Choices$Write>.Fireworkz.
+
+ As before, please note that if you already have modified user dictionaries
+etc. in a previous non-choices installation of Fireworkz (i.e. one prior to
+1.34/10), you may wish to copy the contents of your existing
+<Fireworkz$Dir>.User tree into the new location <Choices$Write>.Fireworkz.
+If so, type the following in a (Ctrl-F12) Task window:
+
+ CDir <Choices$Write>.Fireworkz
+ Copy <Fireworkz$Dir>.User.* <Choices$Write>.Fireworkz.* ~CF~NRV

@@ -1,0 +1,56 @@
+#
+# this is the messages file for ob_spell (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+e0:File already exists
+e2:Filing system error
+e3:Can't open dictionary
+e4:Bad dictionary
+e6:Bad word
+e7:Dictionary read only
+e8:Can't close dictionary
+e9:Not implemented
+#
+e10:Word not found
+e11:Escape
+e12:Can't update dictionary
+e13:Can't read dictionary
+e14:Can't enlarge dictionary
+e15:Bad dictionary definition file
+e16:Bad character in dictionary definition file
+e17:Can't open dictionary definition file
+e18:Can't close dictionary definition file
+#
+# ob_spell errors
+#
+e100:No user dictionaries
+#
+# messages
+#
+3:Dictionary
+1:ug4_checking_spellings.htm
+4:&Word
+5:&Add
+6:&Delete
+#
+9:Word not found
+2:ug4_checking_spellings.htm
+10:&Replace
+11:&Next
+12:&Guess
+13:Cancel
+19:Spell check complete
+#
+20:Spell check complete: %d word not found
+21:Spell check complete: %d words not found
+22:All
+#
+# end of msg (ob_spell)

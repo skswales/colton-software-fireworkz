@@ -1,0 +1,26 @@
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+| Copyright (C) 2013-2015 Stuart Swales
+
+| ROOL repository
+*set CVSROOT :pserver:anonymous@riscosopen.org:/home/rool/cvsroot
+|
+| Prevent directory.c.file being remapped to directory/file.c
+*set UnixEnv$cvs$sfix ""
+|
+If "<CVSGUI$Dir>"="" Then Error CVS not yet seen
+|
+Set CVS$BinDir <CVSGUI$Dir>.Bin
+|
+WimpSlot -min 2048K
+|
+dir <Obey$Dir>
+|
+echo Checking out RISC_OSLib from ROOL
+time
+/<CVS$BinDir>.cvs -z9 co -D20130226 castle/RiscOS/Sources/Lib/RISC_OSLib/rlib/h
+time
+|
+back

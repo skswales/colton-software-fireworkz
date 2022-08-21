@@ -1,0 +1,31 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# process deepest defs first
+# vvv use DDE prefix for shorter command lines
+#s/\$(PROD_BUILD_DIR)/@/g
+#s/\$(BUILD_DIR)/@.^/g
+s/\$(PROD_BUILD_DIR)/$(BUILD_DIR).$(PROD)/g
+s/\$(BUILD_DIR)/$(T5).Build.$(DIR)/g
+s/\$(PROD_BUILD_DIR_FULL)/$(BUILD_DIR_FULL).$(PROD)/g
+s/\$(BUILD_DIR_FULL)/$(T5).Build.$(DIR)/g
+#
+s/\$(PROD_SOURCE_DIR)/$(T5).$(PROD)/g
+#
+# @   is <t5>.Build.<dir>.<prod>
+# @.^ is <t5>.Build.<dir>
+s/\$(T5)/$(URD).t5/g
+#
+# URD location
+s/\$(URD)/_URD_/g
+#
+# variable bits (product - build - country)
+s/\$(APPL)/Fireworkz/g
+s/\$(PROD)/firewrkz/g
+s/\$(NAME)/FIREWORKZ/g
+s/\$(DIR)/r32m/g
+s/\$(COUNTRY)/uk/g

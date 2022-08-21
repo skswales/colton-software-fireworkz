@@ -1,0 +1,35 @@
+{Version:1.07;13 Nov 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;2;3;;32;2;3}
+{Style:BaseSheet;{ColWidth:1134}{ColName:x#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255;1}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:2}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:Current cell;{BorderColour:0;0;0}{Border:1}}
+{StyleCurrent:Current cell}
+{Style:Text;{Justify:0}{NewObject:3}}
+{StyleText:Text}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;Angle in degrees}
+{S:X;X;0;1;Angle in radians}
+{S:S;F;0;2;"[c_tangen]tangent($b$2)";formula_text(b3)}
+{S:S;C;1;0;45}
+{S:S;F;1;1;0.78539816339745;rad(b1)}
+{S:S;F;1;2;1;[c_tangen]tangent($b$2)}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:0;;;;1;;;;1;0;{ColWidth:3231}}
+{R:1;;;;2;;;;1;0;{ColWidth:1815}}
+{R:0;0;;32;1;2;;32;0;0;{StyleHandle:Text}}
+{R:0;0;;32;2;3;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{PageHefoBreakValues-H:0;0;0;;1;569;68;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;7344;8272;4608}
+{ViewControl:100;2;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:1;0}
+}

@@ -1,0 +1,62 @@
+{Version:1.20/01;08 Jan 1995;FireworkzPro;Debug version;FJJJjJNNLjLHHZjZHJJ}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;3;11;;32;3;11}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5499 R10598}}
+{Style:Text;{Justify:0}{Fonty:280}}
+{Style:Number;{Justify:2}}
+{Style:Percent;{StyleSearch:3}{Numform:0.##%\\\;-0.##%[negative]}}
+{Style:Currency;{StyleSearch:2}{Numform:£#,##0.00_\\\;(£#,##0.00)[negative]}}
+{Style:Date_Time;{StyleSearch:8}{NumformDT:dd.mm.yy hh:mm:ss}}
+{Style:Date;{StyleSearch:4}{NumformDT:dd.mm.yy}}
+{Style:Date_a;{StyleSearch:5}{NumformDT:dd/mm/yy}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:General;{StyleSearch:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:.Table1;{ParaStart:68}{ParaEnd:45}
+{NewObject:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}
+{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{PrintQuality:0}
+{Paper:A4;0;16840;11900;460;460;392;392;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;1;Styles inside number formats}
+{S:X;X;0;2;This is a new feature in Fireworkz Pro. It allows you to use predefined styles inside a number format. A good example of this is negative numbers in red. If you look inside the number section of the BaseLetter style in this document, you'll see that the number format section reads: #,##0.#######\\\; -#,##0.#######[negative] . Positive numbers will be displayed in the format before the semi-colon. Negative numbers will be displayed in the format after the semi-colon. Negative numbers will also take on the characteristics of the style name in the square brackets, ie negative. This style has been predefined to have a text colour of red. Hence negative numbers are now displayed in red. If you do not want this to happen, delete the text [negative] from the end of the number format definition. You can create your own styles to display positive or negative numbers, or zero in different ways.}
+{S:X;X;1;4;Type in}
+{S:X;X;1;5;-123}
+{S:X;X;2;4;Display}
+{S:S;C;2;5;-123;;General}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{R:0;1;;32;1;2;28;3;0;0;{Fonty:360}{Bold:1}}
+{R:0;1;;32;1;2;;32;0;0;{Justify:1}}
+{R:0;2;;32;1;3;;32;0;0;{Justify:3}}
+{R:1;4;;32;3;6;;32;0;0;{StyleHandle:.Table1}}
+{R:0;4;;32;1;6;;32;0;0;{ColWidth:3855}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:1;4;;32;2;6;;32;0;0;{ColWidth:1474}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:2;4;;32;3;6;;32;0;0;{ColWidth:1474}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:1;4;;32;3;5;;32;0;0;{Background:221;221;221}}
+{R:1;4;;32;3;5;;32;0;0;{Justify:1}}
+{PageHefoBreakValues-H:0;0;0;;1;0;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;11104;11696;9248}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:1;5;4;3;0}
+}

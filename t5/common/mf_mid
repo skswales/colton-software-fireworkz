@@ -1,0 +1,64 @@
+
+#
+# common.mf_mid
+#
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1992-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+#TEXTUAL_VERSION_NUMBER=2.xx/yy (yy usually 00)
+TEXTUAL_VERSION_NUMBER=2.00
+
+STUBS_VERSION_NUMBER=20000
+# when changing version number for release, remember:
+#   common.gflags.h
+#   common.mf_mid
+#   ob_skel.resource.xx-msg
+# RISC OS
+#   firewrkz.RelNotes/htm
+#   firewrkz.r.RiscPkg.Control
+#   firewrkz.r32b.MakeRiscPkg
+# Windows
+#   firewrkz\w32\Disc-1.src\RelNotes.htm
+#   firewrkz\w32\firewrkz.rc
+#   firewrkz\w32\resource\windows\uk\res00.rci
+#   Build\w32\OUT\firewrkz.iss
+
+# and for Fireworkz Pro:
+#   fprowrkz.r32b.Make_TS
+#   fprowrkz.RelNotes/htm
+
+AS=objasm
+
+CC=cc
+CCstubs=C:o.stubs
+CCflexlib=C:o.flexlib
+CCwimplib=C:o.wimplib
+
+LD=link
+LDflags_AOF=-aof
+LDflags_AIF=-aif
+
+MAKEAOF=$(T5).Build.Tools.MakeAOF.MakeAOF
+
+MAKEMESS=$(T5).Build.Tools.MakeMess.MakeMess
+
+MAKERESP=$(T5).Build.Tools.MakeResp.MakeResp
+
+# You will need to load the AemulatorPro module for this to work on 32-bit systems
+OBJMUNGE=$._coltsoft.Library.ObjMunge
+
+# You could add -C to compress object modules to fit better on floppy disc
+OBJMUNGE_OBJFLAGS=-S$(PROD_BUILD_DIR).binaries.stubs -RS$(STUBS_VERSION_NUMBER) -Vb
+
+RCGen=$(T5).Build.Tools.RCGen
+
+SQUEEZE=squeeze
+
+#
+# end of common.mf_mid
+#

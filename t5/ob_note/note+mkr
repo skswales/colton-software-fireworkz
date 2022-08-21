@@ -1,0 +1,41 @@
+#
+# ob_note
+#
+OBJID=12
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1994-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_note.$(COUNTRY)-12/rc: $(T5).resource.zz-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 12 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_note.o.$(COUNTRY)-B12: $(T5).resource.zz-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_note.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_note.o.$(COUNTRY)-B_tmp -symbol rb_note_msg_weak
+
+$(BUILD_DIR).ob_note.o.ob_note: $(T5).ob_note.c.ob_note
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_note.o.ob_note2: $(T5).ob_note.c.ob_note2
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_12_S=\
+$(BUILD_DIR).ob_note.o.ob_note \
+$(BUILD_DIR).ob_note.o.ob_note2 \
+
+OBJS_12_X=$(BUILD_DIR).ob_note.o.$(COUNTRY)-B12
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M12: $(OBJS_12_X) $(OBJS_12_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_12_X) $(OBJS_12_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_note.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob12: $(PROD_BUILD_DIR).o.$(COUNTRY)-M12 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M12 -N12 $(OBJMUNGE_OBJFLAGS) -Eobject_note
+
+# end of ob_note.mkr ################################################################################

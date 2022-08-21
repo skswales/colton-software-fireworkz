@@ -1,0 +1,102 @@
+#
+# ob_chart
+#
+OBJID=06
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(T5).$(PROD).resource.windows.$(COUNTRY).res06/rci: $(T5).ob_chart.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 06 -base &3000
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06: $(T5).ob_chart.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_chart.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_chart.o.$(COUNTRY)-B_tmp -symbol rb_chart_msg_weak
+
+# RISC OS bound sprites
+$(BUILD_DIR).ob_chart.o.b22_06: $(T5).ob_chart.resource.spr22
+ $(MAKEAOF) -to $@ -from $? -symbol rb_chart_spr_22_weak -spritearea
+$(BUILD_DIR).ob_chart.o.b24_06: $(T5).ob_chart.resource.spr24
+ $(MAKEAOF) -to $@ -from $? -symbol rb_chart_spr_24_weak -spritearea
+
+$(BUILD_DIR).ob_chart.o.ob_chart: $(T5).ob_chart.c.ob_chart
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_blgal: $(T5).ob_chart.c.gr_blgal
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_blpro: $(T5).ob_chart.c.gr_blpro
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_chtio: $(T5).ob_chart.c.gr_chtio
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_edit: $(T5).ob_chart.c.gr_edit
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_uiaxi: $(T5).ob_chart.c.gr_uiaxi
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_uigal: $(T5).ob_chart.c.gr_uigal
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_uisty: $(T5).ob_chart.c.gr_uisty
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_chart.o.gr_axisp: $(T5).cmodules.c.gr_axisp
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_axis2: $(T5).cmodules.c.gr_axis2
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_barch: $(T5).cmodules.c.gr_barch
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_build: $(T5).cmodules.c.gr_build
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_chart: $(T5).cmodules.c.gr_chart
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_char2: $(T5).cmodules.c.gr_char2
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_diag: $(T5).cmodules.c.gr_diag
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_numcv: $(T5).cmodules.c.gr_numcv
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_piesg: $(T5).cmodules.c.gr_piesg
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_scale: $(T5).cmodules.c.gr_scale
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_scatc: $(T5).cmodules.c.gr_scatc
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_texts: $(T5).cmodules.c.gr_texts
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_06_S=\
+$(BUILD_DIR).ob_chart.o.ob_chart \
+$(BUILD_DIR).ob_chart.o.gr_blgal \
+$(BUILD_DIR).ob_chart.o.gr_blpro \
+$(BUILD_DIR).ob_chart.o.gr_chtio \
+$(BUILD_DIR).ob_chart.o.gr_edit \
+$(BUILD_DIR).ob_chart.o.gr_uiaxi \
+$(BUILD_DIR).ob_chart.o.gr_uigal \
+$(BUILD_DIR).ob_chart.o.gr_uisty \
+$(BUILD_DIR).ob_chart.o.gr_axisp \
+$(BUILD_DIR).ob_chart.o.gr_axis2 \
+$(BUILD_DIR).ob_chart.o.gr_barch \
+$(BUILD_DIR).ob_chart.o.gr_build \
+$(BUILD_DIR).ob_chart.o.gr_chart \
+$(BUILD_DIR).ob_chart.o.gr_char2 \
+$(BUILD_DIR).ob_chart.o.gr_diag \
+$(BUILD_DIR).ob_chart.o.gr_numcv \
+$(BUILD_DIR).ob_chart.o.gr_piesg \
+$(BUILD_DIR).ob_chart.o.gr_scatc \
+$(BUILD_DIR).ob_chart.o.gr_scale \
+$(BUILD_DIR).ob_chart.o.gr_texts \
+
+OBJS_06_X=$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06 $(BUILD_DIR).ob_chart.o.b22_06 $(BUILD_DIR).ob_chart.o.b24_06
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M06: $(OBJS_06_X) $(OBJS_06_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_06_X) $(OBJS_06_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_chart.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob06: $(PROD_BUILD_DIR).o.$(COUNTRY)-M06 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M06 -N06 $(OBJMUNGE_OBJFLAGS) -Eobject_chart
+
+# end of ob_chart.mkr ##############################################################################

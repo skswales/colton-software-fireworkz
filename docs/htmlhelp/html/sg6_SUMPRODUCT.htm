@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>SUMPRODUCT</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 2014-2015 Stuart Swales -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="SUMPRODUCT" />
+  </object>
+
+  <h1><a name="sumproduct" id="sumproduct"></a>SUMPRODUCT</h1>
+
+  <p>Returns the sum of the products of all the corresponding values in the given arrays.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">SUMPRODUCT(<span class="csguide-arg"><a href="sg6_array_or_range.htm">array_1</a></span> &hellip;
+  <span class="csguide-arg"><a href="sg6_array_or_range.htm">array_<i>N</i></a></span>)</span></p>
+
+  <p>The <code>SUMPRODUCT</code> function returns the sum of the products of all the corresponding values
+  in each of the given <span class="csguide-arg"><a href="sg6_array_or_range.htm">array</a></span> parameters.</p>
+
+  <p>The equation used is:</p>
+
+  <p><span class="csguide-greek-symbol">&Sigma;</span><sup><i>i</i>=<i>m</i></sup>
+  <span class="csguide-greek-symbol">&Sigma;</span><sup><i>j</i>=<i>n</i></sup>
+  ( <span class="csguide-greek-symbol">&Pi;</span><sup><i>k</i>=<i>N</i></sup> (<i>a<sub>ij</sub></i>)<sub><i>k</i></sub> )</p>
+
+  <p>where (<i>a<sub>ij</sub></i>)<sub><i>k</i></sub> is the value of the
+  <i>k</i>-th array at index row=<i>i</i>,column=<i>j</i>,<br />
+  <i>m</i> and <i>n</i> are the numbers of rows and columns respectively in each array and<br />
+  <i>N</i> is the number of arrays.</p>
+
+  <p><b>Example:</b></p>
+
+  <p><code>SUMPRODUCT(B1:B14, C1:C14)</code></p>
+
+  <p>returns the sum of the products of the corresponding values of cells <code>B1</code> to <code>B14</code> with cells <code>C1</code> to <code>C14</code> .</p>
+
+  <p>Added in 2.00.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_SUM.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_mathematical_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_SUMSQ.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

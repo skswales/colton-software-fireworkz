@@ -1,0 +1,75 @@
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+| Copyright (C) 1993-1998 Colton Software Limited
+| Copyright (C) 1998-2015 R W Colton
+
+If "<where>"="" then error 0 'where' is not set
+
+Set t5$Build$Dir <Obey$Dir>.^.<where>
+
+Set MkDir$Archive <Obey$Dir>._mkdir
+
+IfThere <MkDir$Archive>._std Then Else IfThere <Obey$Dir>._zip_mkdir Then Else Error 0 ZIP archive not found
+
+IfThere <MkDir$Archive>._std Then Else Unzip <Obey$Dir>._zip_mkdir -d <Obey$Dir>
+
+CDir <t5$Build$Dir>
+
+Set Saved$Copy$Options <Copy$Options>
+
+Set Copy$Options ~CFLNR~V
+
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_123
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_ascii
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_csv
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_fwp
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_pdss
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_pdtx
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_rtf
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fl_xls
+
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_123
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_ascii
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_csv
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_rtf
+
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_cells
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_chart
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_chspt
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_dlg
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_draw
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_drwio
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_file
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_hefo
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_mails
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_mlec
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_note
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_recn
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_ruler
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_skel
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_skspt
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_spelb
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_spell
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_ss
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_story
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_text
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_toolb
+
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_skel.modules
+X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_skel.riscos
+
+Copy <MkDir$Archive>._app1 <t5$Build$Dir>.firewrkz
+Copy <MkDir$Archive>._app2 <t5$Build$Dir>.firewrkz.!Fireworkz
+
+| Fireworkz Pro can only be built if R-Comp components are present
+IfThere $.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_rec
+IfThere $.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_recb
+IfThere $.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_xls
+
+IfThere $.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app1 <t5$Build$Dir>.fprowrkz
+IfThere $.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app2 <t5$Build$Dir>.fprowrkz.!Fireworkz
+
+|IfThere <t5$Build$Dir>.firewrkz Then Filer_OpenDir <t5$Build$Dir>.firewrkz
+|IfThere <t5$Build$Dir>.fprowrkz Then Filer_OpenDir <t5$Build$Dir>.fprowrkz

@@ -1,0 +1,50 @@
+{Version:1.36;03 Sep 2015;Fireworkz;Colton Software}
+{BaseSingleCol:1}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;12;;32;1;12}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:1190}{MarginRight:1032}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;Styles}
+{S:X;X;0;1;In this directory are some templates containing styles which you may like to use in your worksheets. To add the style to a worksheet simply drag the template containing the style into the worksheet window. To save your own templates containing single styles use Save template... , specify the Style and drag the file icon to a directory where you want to save it.}
+{S:X;X;0;2;The styles provided are:}
+{S:X;X;0;3;0dp - sets numbers to no decimal places}
+{S:X;X;0;4;1dp - sets numbers to 1 decimal place}
+{S:X;X;0;5;ColStripe - sets alternate columns automatically to a different style.}
+{S:X;X;0;6;CurCell135 - sets the Current cell style to pre-2.00 style (thick black border).}
+{S:X;X;0;7;CurCell200 - sets the Current cell style to the new 2.00 style (thin black grid).}
+{S:X;X;0;8;ProStyle - a package of styles for you to add to old documents so that you can use auto-format recognition. This contains the following named styles: Text, Number, General, Currency, Percent, Date, Date_a, Date_ISO_8601, Time, Time_s and Negative.}
+{S:X;X;0;9;Protection - protects cells and prevents you from editing them. There are several ways of over-riding protection: (i) have a style which switches protection off (left switch on, right switch off)\\\; using this method would tend to create many regions, (ii) temporarily switch off protection in the protection style, thus removing protection from the whole sheet, (iii) remove the region which surrounds the cell you want to change.}
+{S:X;X;0;10;RowStripe - sets alternate rows automatically to a different style.}
+{S:X;X;0;11;ValueListT - some useful value list styles - see description in New directory,}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;0;;32;1;1;;32;0;0;{StyleHandle:Heading}}
+{R:0;1;262;3;1;2;278;3;0;0;{Italic:1}}
+{R:0;3;;32;1;4;3;3;0;0;{Bold:1}}
+{R:0;4;;32;1;5;3;3;0;0;{Bold:1}}
+{R:0;9;;32;1;10;10;3;0;0;{Bold:1}}
+{R:0;8;;32;1;9;8;3;0;0;{Bold:1}}
+{R:0;5;;32;1;6;9;3;0;0;{Bold:1}}
+{R:0;10;;32;1;11;9;3;0;0;{Bold:1}}
+{R:0;11;;32;1;12;10;3;0;0;{Bold:1}}
+{R:0;6;;32;1;7;10;3;0;0;{Bold:1}}
+{R:0;7;;32;1;8;11;3;0;0;{Bold:1}}
+{PageHefoBreakValues-H:0;0;0;;1;0;0;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:3152;12960;12480;12032}{ViewControl:100;0;0;0;0;0;0;2048;0;2048}{CurrentPosition:0;1;344;3;0}}

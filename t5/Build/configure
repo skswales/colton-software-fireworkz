@@ -1,0 +1,251 @@
+# Build.configure
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Drag this file to !Amu on the toolbar to build Makefiles for Fireworkz family
+
+# By the way, you may need set the wimpslot in !Amu.Desc to at 2760k or so ...
+
+# NB Substitute URD location as necessary
+URD=$.fireworkz.branches.fireworkz__2_00__branch
+
+# Only Fireworkz Pro builders need to worry about this one
+CSNF=$.coltsoft.trunk.cs-nonfree
+
+INC_RAM=
+# vvv Uncomment this line to allow use of RAM: to speed full builds
+# INC_RAM=-IRAM:$.t5
+
+# GNU sed (our build - the packaged one doesn't run in a Task Window)
+SED=$._coltsoft.Library.gnu-sed
+
+all: \
+r32b.fprowrkz.Makefile \
+r32b.firewrkz.Makefile \
+Tools.ImageSlot.ImageSlot \
+Tools.MakeAOF.MakeAOF \
+Tools.MakeMess.MakeMess \
+Tools.MakeResp.MakeResp
+
+# Copy just the targets of interest to Build-Makefiles ^^^
+All-Makefiles: \
+d32.fprowrkz.Makefile \
+r32b.fprowrkz.Makefile \
+r32m.fprowrkz.Makefile \
+d32.firewrkz.Makefile \
+r32b.firewrkz.Makefile \
+r32m.firewrkz.Makefile
+
+TMP_FILES=\
+
+MF_FILES=\
+^.fl_123.fl_123+mkr \
+^.fl_ascii.fl_ascii+mkr \
+^.fl_csv.fl_csv+mkr \
+^.fl_fwp.fwp+mkr \
+^.fl_pdss.pdss+mkr \
+^.fl_pdtx.pdtx+mkr \
+^.fl_rtf.fl_rtf+mkr \
+^.fl_xls.fl_xls+mkr \
+^.fs_123.fs_123+mkr \
+^.fs_ascii.fs_ascii+mkr \
+^.fs_csv.fs_csv+mkr \
+^.fs_rtf.fs_rtf+mkr \
+^.ob_cells.cells+mkr \
+^.ob_chart.chart+mkr \
+^.ob_dlg.dlg+mkr \
+^.ob_draw.draw+mkr \
+^.ob_drwio.drwio+mkr \
+^.ob_file.file+mkr \
+^.ob_hefo.hefo+mkr \
+^.ob_mails.mails+mkr \
+^.ob_mlec.mlec+mkr \
+^.ob_note.note+mkr \
+^.ob_ruler.ruler+mkr \
+^.ob_skel.skel+mkr \
+^.ob_skspt.skspt+mkr \
+^.ob_spelb.spelb+mkr \
+^.ob_spell.spell+mkr \
+^.ob_ss.ss+mkr \
+^.ob_story.story+mkr \
+^.ob_text.text+mkr \
+^.ob_toolb.toolb+mkr
+
+MF_FILES_Z1=\
+^.ob_recn.recn+mkr
+
+MF_FILES_Z2=\
+^.^.fprowrkz.ob_recb.recb+mkr \
+^.fs_xls.fs_xls+mkr \
+^.ob_rec.rec+mkr
+
+INC_2_FIREWRKZ=
+
+INC_2_FPROWRKZ=-I$(URD).fprowrkz
+
+#
+# firewrkz (Fireworkz)
+#
+d32.firewrkz.Makefile: \
+    configure \
+    ^.firewrkz.d32.mfm \
+    ^.firewrkz.d32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.d32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.d32_mkdir
+   @Remove $@
+    $(SED) > $@ \
+    -f ^.firewrkz.d32.mfm \
+    -e "s/_INC_2_/$(INC_2_FIREWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.firewrkz.d32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.d32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+#
+r32b.firewrkz.Makefile: \
+    configure \
+    ^.firewrkz.r32b.mfm \
+    ^.firewrkz.r32b.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32b.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32b_mkdir
+   @Remove $@
+    $(SED) > $@ \
+    -f ^.firewrkz.r32b.mfm \
+    -e "s/_INC_2_/$(INC_2_FIREWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.firewrkz.r32b.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32b.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+#
+r32m.firewrkz.Makefile: \
+    configure \
+    ^.firewrkz.r32m.mfm \
+    ^.firewrkz.r32m.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32m.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32m_mkdir
+   @Remove $@
+    $(SED) > $@ \
+    -f ^.firewrkz.r32m.mfm \
+    -e "s/_INC_2_/$(INC_2_FIREWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.firewrkz.r32m.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32m.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+#
+# fprowrkz (Fireworkz Pro)
+#
+d32.fprowrkz.Makefile: \
+    configure \
+    ^.^.fprowrkz.fprowrkz.d32.mfm \
+    ^.^.fprowrkz.fprowrkz.d32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.d32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.d32_mkdir
+   @Remove $@
+   -$(SED) > $@ \
+    -f ^.^.fprowrkz.fprowrkz.d32.mfm \
+    -e "s/_INC_2_/$(INC_2_FPROWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.^.fprowrkz.fprowrkz.d32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.d32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+   @echo Don't worry if that failed unless you are a Fireworkz Pro builder
+#
+r32b.fprowrkz.Makefile: \
+    configure \
+    ^.^.fprowrkz.fprowrkz.r32b.mfm \
+    ^.^.fprowrkz.fprowrkz.r32b.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.r32b.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32b_mkdir
+   @Remove $@
+   -$(SED) > $@ \
+    -f ^.^.fprowrkz.fprowrkz.r32b.mfm \
+    -e "s/_INC_2_/$(INC_2_FPROWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.^.fprowrkz.fprowrkz.r32b.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.r32b.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+   @echo Don't worry if that failed unless you are a Fireworkz Pro builder
+#
+r32m.fprowrkz.Makefile: \
+    configure \
+    ^.^.fprowrkz.fprowrkz.r32m.mfm \
+    ^.^.fprowrkz.fprowrkz.r32m.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.r32m.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32m_mkdir
+   @Remove $@
+   -$(SED) > $@ \
+    -f ^.^.fprowrkz.fprowrkz.r32m.mfm \
+    -e "s/_INC_2_/$(INC_2_FPROWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.^.fprowrkz.fprowrkz.r32m.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.^.fprowrkz.fprowrkz.fprowrkz.r32m.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+   @echo Don't worry if that failed unless you are a Fireworkz Pro builder
+
+Tools.ImageSlot.ImageSlot:
+    dir Tools.ImageSlot
+    amu -f Makefile
+    dir ^.^
+
+Tools.MakeAOF.MakeAOF:
+    dir Tools.MakeAOF
+    amu -f Makefile
+    dir ^.^
+
+Tools.MakeMess.MakeMess:
+    dir Tools.MakeMess
+    amu -f Makefile
+    dir ^.^
+
+Tools.MakeResp.MakeResp:
+    dir Tools.MakeResp
+    amu -f Makefile
+    dir ^.^
+
+# end of Build.configure

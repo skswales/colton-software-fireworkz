@@ -1,0 +1,44 @@
+{Version:1.25;(04 Apr 1996);FireworkzPro;Debug version - Single User Licence;8000 1713 2777 7418}
+{BaseSingleCol:1}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;5;;32;1;5}
+{Style:BaseLetter;{ColWidth:11055}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4251 L5385 L6519 L7653 L8787 L9921}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}{NumformDT:dd.mm.yy hh:mm:ss\\\;dd.mm.yy\\\;hh:mm:ss}{NumformSE:@\\\;Error}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11055}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5244 R10488}}
+{Style:Text;{Justify:0}}
+{Style:Number;{Justify:2}}
+{Style:Percent;{StyleSearch:3}{Numform:0.##%\\\;-0.##%[Negative]}}
+{Style:Currency;{StyleSearch:2}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
+{Style:Date;{StyleSearch:4}{NumformDT:dd.mm.yy}}
+{Style:Date_a;{StyleSearch:5}{NumformDT:dd/mm/yy}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:General;{StyleSearch:1}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{Paper:A4;0;16840;11906;460;460;397;397;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;This directory contains an example of the LOOKUP() function provided by Fireworkz Pro's database.}
+{S:X;X;0;1;This example looks up details about a music album given a key reference number, so that details on that album need only be entered once. The file 'albums' is a plain text file, with TABs separating columns of data. The first row of this file gives the field names that correspond to each column. The file database_f has four fields, only two of which can have data entered in them - track and source. The latter is used as the key into the albums database for the other two fields which contain formulas:}
+{S:X;X;0;2;LOOKUP(FILE"albums",'source',2){ITT-X}returns column #2 from albums where the 'source' field matches}
+{S:X;X;0;3;LOOKUP(FILE"albums",'source',3){ITT-X}returns column #3 from albums ...}
+{S:X;X;0;4;Note that the field must be named identically in both databases for the lookup to work.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{PageHefoBreakValues-H:0;0;0;;1;569;68;0;;;0;;;1;569;56;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;11808;12768;6560}{ViewControl:100;0;1;1;0;0;0;2048;0;2048}{CurrentPosition:0;0;0;3;0}}

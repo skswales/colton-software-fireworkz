@@ -1,0 +1,7 @@
+| !Help for Fireworkz
+|
+If "<File$Type_FAF>"="" Then Error No browser found to display HTML help
+|
+| See whether the packaged manuals are installed, otherwise try a bundled HTMLHelp ZIP archive
+Set Fireworkz$HelpFile <Boot$Dir>.^.Manuals.Fireworkz.USGuide.index/htm
+IfThere <Fireworkz$HelpFile> Then Filer_Run <Fireworkz$HelpFile> Else Filer_Run <Obey$Dir>.!Help2

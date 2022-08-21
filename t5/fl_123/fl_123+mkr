@@ -1,0 +1,37 @@
+#
+# fl_123
+#
+OBJID=27
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(BUILD_DIR).fl_123.$(COUNTRY)-27/rc: $(T5).fl_123.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 27 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).fl_123.o.$(COUNTRY)-B27: $(T5).fl_123.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).fl_123.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_123.o.$(COUNTRY)-B_tmp -symbol rb_fl_123_msg_weak
+
+$(BUILD_DIR).fl_123.o.fl_123: $(T5).fl_123.c.fl_123
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_27_S=$(BUILD_DIR).fl_123.o.fl_123
+
+OBJS_27_X=$(BUILD_DIR).fl_123.o.$(COUNTRY)-B27
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M27: $(OBJS_27_X) $(OBJS_27_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_27_X) $(OBJS_27_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_123.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob27: $(PROD_BUILD_DIR).o.$(COUNTRY)-M27 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M27 -N27 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_lotus123
+
+# end of fl_123.mkr ################################################################################

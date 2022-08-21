@@ -1,0 +1,164 @@
+#
+# ob_ss
+#
+OBJID=01
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Windows STRINGTABLE
+$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 01 -base &2000
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01: $(T5).ob_ss.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -symbol rb_ss_msg_weak
+
+# RISC OS bound sprites
+$(BUILD_DIR).ob_ss.o.b22_01: $(T5).ob_ss.resource.spr22
+ $(MAKEAOF) -to $@ -from $? -symbol rb_ss_spr_22_weak -spritearea
+$(BUILD_DIR).ob_ss.o.b24_01: $(T5).ob_ss.resource.spr24
+ $(MAKEAOF) -to $@ -from $? -symbol rb_ss_spr_24_weak -spritearea
+
+$(BUILD_DIR).ob_ss.o.ob_ss: $(T5).ob_ss.c.ob_ss
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_ss.o.link_ev: $(T5).ob_ss.c.link_ev
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ui_name: $(T5).ob_ss.c.ui_name
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ui_ss: $(T5).ob_ss.c.ui_ss
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.sle_ss: $(T5).ob_ss.c.sle_ss
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_ss.o.bins: $(T5).cmodules.c.bins
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_comp: $(T5).cmodules.c.ev_comp
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_dcom: $(T5).cmodules.c.ev_dcom
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_eval: $(T5).cmodules.c.ev_eval
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_exec: $(T5).cmodules.c.ev_exec
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_help: $(T5).cmodules.c.ev_help
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_name: $(T5).cmodules.c.ev_name
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_rpn: $(T5).cmodules.c.ev_rpn
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_tabl: $(T5).cmodules.c.ev_tabl
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_todo: $(T5).cmodules.c.ev_todo
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_tree: $(T5).cmodules.c.ev_tree
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_uref: $(T5).cmodules.c.ev_uref
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_ss.o.ev_func: $(T5).cmodules.c.ev_func
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fndat: $(T5).cmodules.c.ev_fndat
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fneng: $(T5).cmodules.c.ev_fneng
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnfin: $(T5).cmodules.c.ev_fnfin
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnsta: $(T5).cmodules.c.ev_fnsta
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnstb: $(T5).cmodules.c.ev_fnstb
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnstc: $(T5).cmodules.c.ev_fnstc
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnstd: $(T5).cmodules.c.ev_fnstd
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnstm: $(T5).cmodules.c.ev_fnstm
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnstp: $(T5).cmodules.c.ev_fnstp
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnstr: $(T5).cmodules.c.ev_fnstr
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_math: $(T5).cmodules.c.ev_math
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_matb: $(T5).cmodules.c.ev_matb
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_matr: $(T5).cmodules.c.ev_matr
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_mcpx: $(T5).cmodules.c.ev_mcpx
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_mtri: $(T5).cmodules.c.ev_mtri
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.mathxtra: $(T5).cmodules.c.mathxtra
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.mathxtr2: $(T5).cmodules.c.mathxtr2
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.mathxtr3: $(T5).cmodules.c.mathxtr3
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.mathxtr4: $(T5).cmodules.c.mathxtr4
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.e_lgamma_r: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_lgamma_r
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.e_j0: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_j0
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.e_j1: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_j1
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.e_jn: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_jn
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.k_cos: $(T5).external.FreeBSD.srcp.lib.msun.src.c.k_cos
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.k_sin: $(T5).external.FreeBSD.srcp.lib.msun.src.c.k_sin
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_01_S=\
+$(BUILD_DIR).ob_ss.o.ob_ss \
+$(BUILD_DIR).ob_ss.o.link_ev \
+$(BUILD_DIR).ob_ss.o.sle_ss \
+$(BUILD_DIR).ob_ss.o.ui_name \
+$(BUILD_DIR).ob_ss.o.ui_ss \
+$(BUILD_DIR).ob_ss.o.ev_comp \
+$(BUILD_DIR).ob_ss.o.ev_dcom \
+$(BUILD_DIR).ob_ss.o.ev_eval \
+$(BUILD_DIR).ob_ss.o.ev_exec \
+$(BUILD_DIR).ob_ss.o.ev_help \
+$(BUILD_DIR).ob_ss.o.ev_name \
+$(BUILD_DIR).ob_ss.o.ev_rpn \
+$(BUILD_DIR).ob_ss.o.ev_tabl \
+$(BUILD_DIR).ob_ss.o.ev_todo \
+$(BUILD_DIR).ob_ss.o.ev_tree \
+$(BUILD_DIR).ob_ss.o.ev_uref \
+$(BUILD_DIR).ob_ss.o.ev_func \
+$(BUILD_DIR).ob_ss.o.ev_fndat \
+$(BUILD_DIR).ob_ss.o.ev_fneng \
+$(BUILD_DIR).ob_ss.o.ev_fnfin \
+$(BUILD_DIR).ob_ss.o.ev_fnsta \
+$(BUILD_DIR).ob_ss.o.ev_fnstb \
+$(BUILD_DIR).ob_ss.o.ev_fnstc \
+$(BUILD_DIR).ob_ss.o.ev_fnstd \
+$(BUILD_DIR).ob_ss.o.ev_fnstm \
+$(BUILD_DIR).ob_ss.o.ev_fnstp \
+$(BUILD_DIR).ob_ss.o.ev_fnstr \
+$(BUILD_DIR).ob_ss.o.ev_math \
+$(BUILD_DIR).ob_ss.o.ev_matb \
+$(BUILD_DIR).ob_ss.o.ev_matr \
+$(BUILD_DIR).ob_ss.o.ev_mcpx \
+$(BUILD_DIR).ob_ss.o.ev_mtri \
+$(BUILD_DIR).ob_ss.o.mathxtra \
+$(BUILD_DIR).ob_ss.o.mathxtr2 \
+$(BUILD_DIR).ob_ss.o.mathxtr3 \
+$(BUILD_DIR).ob_ss.o.mathxtr4 \
+$(BUILD_DIR).ob_ss.o.e_j0 \
+$(BUILD_DIR).ob_ss.o.e_j1 \
+$(BUILD_DIR).ob_ss.o.e_jn \
+
+OBJS_01_X=$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01 $(BUILD_DIR).ob_ss.o.b22_01 $(BUILD_DIR).ob_ss.o.b24_01
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M01: $(OBJS_01_X) $(OBJS_01_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_01_X) $(OBJS_01_S)
+
+# end of ob_ss.mkr #################################################################################

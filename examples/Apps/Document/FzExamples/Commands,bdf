@@ -1,0 +1,382 @@
+{Version:1.05/01;18 Oct 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;4;187;;32;4;187}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5499 R10598}}
+{StyleHeaderFooter:BaseHeadFoot}
+{Style:.Table1;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:Heading;{ParaStart:850}{ParaEnd:567}{Justify:1}{Typeface:Helvetica}{Fonty:360}}
+{Style:Subheading;{ParaStart:283}{Fonty:320}{Bold:1}}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;Fireworkz Command Language}
+{S:X;X;0;1;This file contains some sketchy details of the Fireworkz command language. This is provided only for advanced and intrepid users who wish to experiment. In the future we will supply some proper user interface and documentation for the command language\\\; this information is supplied for those who can't wait. PLEASE do not hope for lengthy technical support on the command language at the moment. If the information in this file seems difficult and dangerous to you, then don't attempt to use the command language\\\; please don't ask us to explain all about command languages: see if you have a techie friend who might be able to help. On the other hand, if you are an intrepid explorer, then do explore.}
+{S:X;X;0;2;The keywords and arguments described here are fairly static. But be prepared for things to change slightly in later versions, though the biggest change is likely to be addition of more commands.}
+{S:X;X;0;3;At the moment, there are two things you can do with commands: put them in a file, usually with FwrkzTem filetype, or use the command function from within a custom function. In a file, each command must be surrounded with squiggly brackets \{ \}. See any Z family file for examples of use of commands. After looking at some files you will realise that all Z family files whatever their filetype are made up of commands. You should be able to learn a lot by examining Z family files and maybe experimenting. If you have a command or commands in a FwrkzTem type file, you can execute them by dropping the file onto a Fireworkz window.}
+{S:X;X;0;4;The command function is not documented, but it takes a single argument which is a string. Don't use the squiggly brackets in the argument to the command function. The thing about using the command function is that you can use the custom function language to control the use of commands. You can also use the doubleclick function to execute a custom function at a particular time. See Minesweeper for some examples of this.}
+{S:X;X;0;5;Each command consists of a keyword. Following the keyword there may be several arguments. If there are any arguments, the keyword is separated from the arguments by a colon ':'. Each argument is separated from the next by a semi-colon '\\\;'.}
+{S:X;X;0;6;Example of a command in a file: \{DefineKey:^Insert\\\;4\\\;Copy\}}
+{S:X;X;0;7;Example of a command in the command function: command("DefineKey:^!X\\\;8\\\;BoxIntro")}
+{S:X;X;0;8;When it comes to specifying a cell or an area of a document, you give row and column and character positions. If it's an area, you give the top left co-ordinate which comes first, and the bottom right co-ordinate which comes second. All three indexes start at zero. The bottom right co-ordinate is 'exclusive' ie if area specified is A1B2, the top left col, row is 0,0 and the bottom right col row is 2,2 (not 1,1 as you might expect). When you specify character positions you need to specify an object number as well. At the moment it's simple: if the character position is to be ignored use 32\\\; if it's a character position inside a text cell, use 3. So the start character position of the word it at the start of this paragraph is 5,3\\\; the end position is 7,3. The area covering the word it is: 0\\\;8\\\;5\\\;3\\\; 1\\\;9\\\;7\\\;3 . From it to the end of the paragraph is: 0\\\;8\\\;5\\\;3\\\; 1\\\;9\\\;0\\\;32 .}
+{S:X;X;0;9;In the argument descriptions in the table below tl_col, tl_row, tl_char, tl_obj\\\; br_col, br_row, br_char, br_obj are used to represent the parameters described above.}
+{S:X;X;0;10;Some areas also accept whole_col and whole_row. These are either 0 or 1. If whole_col is 1 then the tl_row and br_row numbers are ignored: the area is taken to cover the whole column. Correspondingly for whole_row.}
+{S:X;X;0;11;When specifying sizes of fonts, paper, lines and so on, Fireworkz uses a single unit called the Twip. This is 1/20th of a point. There are 1440 Twips to the inch.}
+{S:X;X;1;13;Command keyword}
+{S:X;X;1;14;R}
+{S:X;X;1;15;S}
+{S:X;X;1;16;Style}
+{S:X;X;1;17;StyleBase}
+{S:X;X;1;18;StyleCurrent}
+{S:X;X;1;19;StyleHeaderFooter}
+{S:X;X;1;20;StyleText}
+{S:X;X;1;21;CmdGroup}
+{S:X;X;1;22;StartOfData}
+{S:X;X;1;23;EndOfData}
+{S:X;X;1;25;StyleName}
+{S:X;X;1;26;StyleKey}
+{S:X;X;1;28;ColWidth}
+{S:X;X;1;29;ColName}
+{S:X;X;1;31;RowHeight}
+{S:X;X;1;32;RowHeightFix}
+{S:X;X;1;33;RowUnbreakable}
+{S:X;X;1;34;RowName}
+{S:X;X;1;36;MarginLeft}
+{S:X;X;1;37;MarginRight}
+{S:X;X;1;38;MarginPara}
+{S:X;X;1;39;Tablist}
+{S:X;X;1;40;Background}
+{S:X;X;1;41;ParaStart}
+{S:X;X;1;42;ParaEnd}
+{S:X;X;1;43;LineSpace}
+{S:X;X;1;44;Justify}
+{S:X;X;1;45;JustifyV}
+{S:X;X;1;46;NewObject}
+{S:X;X;1;47;Numform}
+{S:X;X;1;48;NumformDT}
+{S:X;X;1;49;NumformSE}
+{S:X;X;1;51;BorderColour}
+{S:X;X;1;52;Border}
+{S:X;X;1;54;GridLeftColour}
+{S:X;X;1;55;GridTopColour}
+{S:X;X;1;56;GridRightColour}
+{S:X;X;1;57;GridBottomColour}
+{S:X;X;1;58;GridLeft}
+{S:X;X;1;59;GridTop}
+{S:X;X;1;60;GridRight}
+{S:X;X;1;61;GridBottom}
+{S:X;X;1;63;Protect}
+{S:X;X;1;65;Typeface}
+{S:X;X;1;66;Fontx}
+{S:X;X;1;67;Fonty}
+{S:X;X;1;68;Underline}
+{S:X;X;1;69;Bold}
+{S:X;X;1;70;Italic}
+{S:X;X;1;71;Superscript}
+{S:X;X;1;72;Subscript}
+{S:X;X;1;73;Foreground}
+{S:X;X;1;75;SI}
+{S:X;X;1;76;CursorLeft}
+{S:X;X;1;77;CursorRight}
+{S:X;X;1;78;CursorDown}
+{S:X;X;1;79;CursorUp}
+{S:X;X;1;80;WordLeft}
+{S:X;X;1;81;WordRight}
+{S:X;X;1;82;PageDown}
+{S:X;X;1;83;PageUp}
+{S:X;X;1;84;LineStart}
+{S:X;X;1;85;LineEnd}
+{S:X;X;1;86;DocumentTop}
+{S:X;X;1;87;DocumentBottom}
+{S:X;X;1;88;FirstColumn}
+{S:X;X;1;89;LastColumn}
+{S:X;X;1;90;DeleteLeft}
+{S:X;X;1;91;DeleteRight}
+{S:X;X;1;92;Return}
+{S:X;X;1;93;Escape}
+{S:X;X;1;95;Clear}
+{S:X;X;1;96;Copy}
+{S:X;X;1;97;Cut}
+{S:X;X;1;98;Paste}
+{S:X;X;1;99;BlockClear}
+{S:X;X;1;100;DeleteLine}
+{S:X;X;1;102;DefineKey}
+{S:X;X;1;103;MenuAdd}
+{S:X;X;1;104;MenuDelete}
+{S:X;X;1;105;CurrentDocument}
+{S:X;X;1;106;CurrentPane}
+{S:X;X;1;107;CurrentPosition}
+{S:X;X;1;108;CurrentView}
+{S:X;X;1;109;Load}
+{S:X;X;1;110;LoadOther}
+{S:X;X;1;111;LoadTemplate}
+{S:X;X;1;112;Save}
+{S:X;X;1;113;SaveAs}
+{S:X;X;1;114;SaveOther}
+{S:X;X;1;115;SavePicture}
+{S:X;X;1;116;SaveTemplate}
+{S:X;X;1;117;Execute}
+{S:X;X;1;119;PlainTextPrint}
+{S:X;X;1;120;Print}
+{S:X;X;1;121;PrintExtra}
+{S:X;X;1;122;PrintQuality}
+{S:X;X;1;124;StyleApply}
+{S:X;X;1;125;StyleApplySource}
+{S:X;X;1;126;StyleIntro}
+{S:X;X;1;127;StyleButton}
+{S:X;X;1;128;ApplyEffects}
+{S:X;X;1;129;RemoveEffects}
+{S:X;X;1;130;EffectsButton}
+{S:X;X;1;132;ToggleMarks}
+{S:X;X;1;133;SelectDocument}
+{S:X;X;1;134;SelectCell}
+{S:X;X;1;135;SelectWord}
+{S:X;X;1;136;TabLeft}
+{S:X;X;1;137;TabRight}
+{S:X;X;1;139;CaseIntro}
+{S:X;X;1;140;CaseUpper}
+{S:X;X;1;141;CaseLower}
+{S:X;X;1;142;CaseIniCap}
+{S:X;X;1;143;CaseSwap}
+{S:X;X;1;145;Paper}
+{S:X;X;1;147;FieldInsPage}
+{S:X;X;1;148;FieldInsPageX}
+{S:X;X;1;149;FieldInsDate}
+{S:X;X;1;150;FieldInsName}
+{S:X;X;1;151;FieldInsWholeN}
+{S:X;X;1;152;FieldInsLeafN}
+{S:X;X;1;153;FieldInsSoftH}
+{S:X;X;1;154;FieldInsReturn}
+{S:X;X;1;155;FieldInsField}
+{S:X;X;1;157;AddColumns}
+{S:X;X;1;158;InsertCol}
+{S:X;X;1;159;DeleteCol}
+{S:X;X;1;160;AddRows}
+{S:X;X;1;161;InsertRow}
+{S:X;X;1;162;DeleteRow}
+{S:X;X;1;163;InsertTable}
+{S:X;X;1;164;WordCount}
+{S:X;X;1;165;BoxIntro}
+{S:X;X;1;166;Box}
+{S:X;X;1;167;AutoWidth}
+{S:X;X;1;168;AutoHeight}
+{S:X;X;1;169;SearchIntro}
+{S:X;X;1;170;Search}
+{S:X;X;1;171;Choices}
+{S:X;X;1;172;Info}
+{S:X;X;1;173;Quit}
+{S:X;X;1;174;Thesaurus}
+{S:X;X;1;176;SortIntro}
+{S:X;X;1;177;Sort}
+{S:X;X;1;178;Snapshot}
+{S:X;X;1;179;ObjectConvert}
+{S:X;X;1;181;StraddleHorz}
+{S:X;X;1;183;RegionClear}
+{S:X;X;1;184;RegionCount}
+{S:X;X;1;185;Select}
+{S:X;X;1;186;ForceRecalc}
+{S:X;X;2;13;Purpose}
+{S:X;X;2;14;Define a region}
+{S:X;X;2;15;Define a slot/cell}
+{S:X;X;2;16;Define a style}
+{S:X;X;2;17;Specify the base style name}
+{S:X;X;2;18;Specify the current cell style name}
+{S:X;X;2;19;Specify the header/footer style name}
+{S:X;X;2;20;Specify the text style name}
+{S:X;X;2;21;Group commands together}
+{S:X;X;2;22;Start of data in a file}
+{S:X;X;2;23;End of data in a file}
+{S:X;X;2;25;In style string, specify name of style}
+{S:X;X;2;26;In style string, specify function key shortcut}
+{S:X;X;2;28;In style string, specify column width}
+{S:X;X;2;29;In style string, specify column name}
+{S:X;X;2;31;In style string, specify row height}
+{S:X;X;2;32;In style string, specify whether height is fixed}
+{S:X;X;2;33;In style string, specify whether row can contain page breaks}
+{S:X;X;2;34;In style string, specify row name}
+{S:X;X;2;36;In style string, specify left margin}
+{S:X;X;2;37;In style string, specify right margin}
+{S:X;X;2;38;In style string, specify paragraph margin}
+{S:X;X;2;39;In style string, specify list of tabs}
+{S:X;X;2;40;In style string, specify background colour}
+{S:X;X;2;41;In style string, specify space above paragraph}
+{S:X;X;2;42;In style string, specify space below paragraph}
+{S:X;X;2;43;In style string, specify line spacing}
+{S:X;X;2;44;In style string, specify justification, left, right, centre, both}
+{S:X;X;2;45;In style string, specify vertical justification, top, centre, bottom}
+{S:X;X;2;46;In style string, specify object type for new cells, 1=SS, 3=Text}
+{S:X;X;2;47;In style string, specify number format for numbers}
+{S:X;X;2;48;In style string, specify number format for dates}
+{S:X;X;2;49;In style string, specify number format for strings and errors}
+{S:X;X;2;51;In style string, specify border colour}
+{S:X;X;2;52;In style string, specify border style}
+{S:X;X;2;54;In style string, specify colour of left grid line}
+{S:X;X;2;55;In style string, specify colour of top grid line}
+{S:X;X;2;56;In style string, specify colour of right grid line}
+{S:X;X;2;57;In style string, specify colour of bottom grid line}
+{S:X;X;2;58;In style string, specify left grid line style}
+{S:X;X;2;59;In style string, specify top grid line style}
+{S:X;X;2;60;In style string, specify right grid line style}
+{S:X;X;2;61;In style string, specify bottom grid line style}
+{S:X;X;2;63;In style string, specify protection}
+{S:X;X;2;65;In style string, specify name of typeface}
+{S:X;X;2;66;In style string, specify x font size}
+{S:X;X;2;67;In style string, specify y font size}
+{S:X;X;2;68;In style string, specify underline}
+{S:X;X;2;69;In style string, specify bold}
+{S:X;X;2;70;In style string, specify italic}
+{S:X;X;2;71;In style string, specify superscript}
+{S:X;X;2;72;In style string, specify subscript}
+{S:X;X;2;73;In style string, specify text colour}
+{S:X;X;2;75;Set interactive}
+{S:X;X;2;100;Delete contents of formula line}
+{S:X;X;2;102;Assign a command to a key}
+{S:X;X;2;103;Add an item to a menu}
+{S:X;X;2;104;Remove a menu item}
+{S:X;X;2;109;Load a file}
+{S:X;X;2;112;Save a file}
+{S:X;X;2;115;Save selected picture}
+{S:X;X;2;117;Another command file}
+{S:X;X;2;124;apply style to selection}
+{S:X;X;2;132;Clear marks/Mark whole document}
+{S:X;X;2;133;Select whole document}
+{S:X;X;2;139;Put up case dialog}
+{S:X;X;2;145;Specifies paper}
+{S:X;X;2;147;Insert page number}
+{S:X;X;2;148;Insert X page number}
+{S:X;X;2;149;Insert live date}
+{S:X;X;2;150;Insert spreadsheet name}
+{S:X;X;2;151;Insert pathname}
+{S:X;X;2;152;Insert leafname}
+{S:X;X;2;153;Insert soft hyphen}
+{S:X;X;2;154;Insert Return in paragraph}
+{S:X;X;2;155;Insert mailshot field}
+{S:X;X;2;157;Add n columns}
+{S:X;X;2;160;Add n rows}
+{S:X;X;2;165;Put up box dialog}
+{S:X;X;2;169;Put up search dialog}
+{S:X;X;2;176;Put up sort dialog}
+{S:X;X;2;178;Remove formulas from selection}
+{S:X;X;2;179;Convert to object type}
+{S:X;X;2;181;Straddle columns}
+{S:X;X;2;183;Clear regions in selection}
+{S:X;X;2;184;Count regions in selection}
+{S:X;X;2;185;Select area}
+{S:X;X;2;186;Force a recalc}
+{S:X;X;3;13;arguments}
+{S:X;X;3;14;tl_col\\\;tl_row\\\;tl_char\\\;tl_obj\\\; br_col\\\;br_row\\\;br_char\\\;br_obj\\\; whole_col\\\;whole_row\\\;style string}
+{S:X;X;3;15;slot type\\\; data type\\\; col\\\; row\\\; contents\\\; formula}
+{S:X;X;3;16;style name\\\; style string}
+{S:X;X;3;17;string}
+{S:X;X;3;18;string}
+{S:X;X;3;19;string}
+{S:X;X;3;20;string}
+{S:X;X;3;21;string}
+{S:X;X;3;25;string}
+{S:X;X;3;26;string}
+{S:X;X;3;28;integer}
+{S:X;X;3;29;string}
+{S:X;X;3;31;integer}
+{S:X;X;3;32;0 or 1}
+{S:X;X;3;33;0 or 1}
+{S:X;X;3;34;string}
+{S:X;X;3;36;integer}
+{S:X;X;3;37;integer}
+{S:X;X;3;38;integer}
+{S:X;X;3;39;string}
+{S:X;X;3;40;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;41;integer}
+{S:X;X;3;42;integer}
+{S:X;X;3;43;integer}
+{S:X;X;3;44;0,1,2,3}
+{S:X;X;3;45;0,1,2}
+{S:X;X;3;46;number}
+{S:X;X;3;47;string}
+{S:X;X;3;48;string}
+{S:X;X;3;49;string}
+{S:X;X;3;51;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;52;0,1,2,...}
+{S:X;X;3;54;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;55;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;56;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;57;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;58;0,1,2,...}
+{S:X;X;3;59;0,1,2,...}
+{S:X;X;3;60;0,1,2,...}
+{S:X;X;3;61;0,1,2,...}
+{S:X;X;3;63;0 or 1}
+{S:X;X;3;65;string}
+{S:X;X;3;66;integer}
+{S:X;X;3;67;integer}
+{S:X;X;3;68;0 or 1}
+{S:X;X;3;69;0 or 1}
+{S:X;X;3;70;0 or 1}
+{S:X;X;3;71;0 or 1}
+{S:X;X;3;72;0 or 1}
+{S:X;X;3;73;r\\\; g\\\; b\\\; transparent (0 or 1)}
+{S:X;X;3;102;key to define\\\; length of command string\\\; command string}
+{S:X;X;3;103;menu name\\\; string for menu\\\; \\\; length of command string\\\; command string:command conditions}
+{S:X;X;3;104;menu delete arguments}
+{S:X;X;3;105;string}
+{S:X;X;3;106;integer}
+{S:X;X;3;108;integer}
+{S:X;X;3;109;string}
+{S:X;X;3;110;string_s32_string}
+{S:X;X;3;111;string}
+{S:X;X;3;113;filename\\\; U8n}
+{S:X;X;3;114;filename\\\; type\\\; U8n}
+{S:X;X;3;116;filename\\\; U8n\\\; string}
+{S:X;X;3;117;string}
+{S:X;X;3;124;stylename}
+{S:X;X;3;125;string}
+{S:X;X;3;127;integer}
+{S:X;X;3;147;number format string}
+{S:X;X;3;148;number format string}
+{S:X;X;3;149;number format string}
+{S:X;X;3;155;integer}
+{S:X;X;3;157;integer}
+{S:X;X;3;160;integer}
+{S:X;X;3;163;n_cols\\\; n_rows}
+{S:X;X;3;166;box arguments}
+{S:X;X;3;170;search string\\\; ignore capitals\\\; whole words\\\; replace?\\\; replace string\\\; copy capitals\\\; search_from}
+{S:X;X;3;177;col_0\\\; order\\\; col_1\\\; order ...}
+{S:X;X;3;179;object number}
+{S:X;X;3;185;tl_col\\\;tl_row\\\;tl_char\\\;tl_obj\\\; br_col\\\;b_row\\\;br_char\\\;br_obj\\\; whole_col\\\;whole_row}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:1;13;;32;4;187;;32;0;0;{StyleHandle:.Table1}}
+{R:0;13;;32;1;187;;32;0;0;{ColWidth:285}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:3;13;;32;4;187;;32;0;0;{ColWidth:4176}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:1;13;;32;2;187;;32;0;0;{ColWidth:2550}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:2;13;;32;3;187;;32;0;0;{ColWidth:4137}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:0;0;;32;1;1;;32;0;0;{StyleHandle:Heading}}
+{R:;13;;;;14;;;0;1;{Bold:1}}
+{R:0;3;125;3;1;4;;32;0;0;{Italic:1}}
+{R:0;3;133;3;1;4;;32;0;0;{Italic:0}}
+{R:0;4;4;3;1;5;11;3;0;0;{Italic:1}}
+{R:0;4;145;3;1;5;152;3;0;0;{Italic:1}}
+{R:0;4;308;3;1;5;319;3;0;0;{Italic:1}}
+{R:0;7;28;3;1;8;35;3;0;0;{Italic:1}}
+{R:0;8;697;3;1;9;699;3;0;0;{Italic:1}}
+{R:0;8;791;3;1;9;793;3;0;0;{Italic:1}}
+{R:0;8;822;3;1;9;824;3;0;0;{Italic:1}}
+{PageHefoBreakValues-H:0;0;0;;1;569;68;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{PageHefoBreakValues-H:13;0;0;;1;569;68;0;;;0;;;1;569;228;0;;;0}
+{HD-H:13;2}
+{HBR-H:13;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:13;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:13;3}
+{HBR-H:13;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:13;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:1152;13472;12480;11968}
+{ViewControl:100;0;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;0;0;3}
+}

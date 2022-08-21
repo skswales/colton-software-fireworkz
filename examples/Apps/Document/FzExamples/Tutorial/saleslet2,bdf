@@ -1,0 +1,101 @@
+{Version:1.21;(27 Apr 1995);FireworkzPro;Adrienne Sharman - Colton Software;8021 0646 0176 1255}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;7;30;;32;7;30}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:1133}{MarginRight:2094}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206 L10601}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5499 R10598}}
+{Style:.Table1;{ParaStart:68}{ParaEnd:45}
+{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}
+{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:special}
+{Style:pounds pence;{Justify:2}{Numform:£#,##0.00}}
+{PrintQuality:0}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;1;Pyro House}
+{S:X;X;0;2;Enterprise Plaza}
+{S:X;X;0;3;Milton Magna}
+{S:X;X;0;4;MM23 2XY}
+{S:X;X;0;5;Tel: 0456 987654}
+{S:X;X;0;8;add1}
+{S:X;X;0;9;add2}
+{S:X;X;0;10;add3}
+{S:X;X;0;11;add4}
+{S:X;X;0;13;Dear title name}
+{S:X;X;0;14;Thank you for your recent enquiry about our products. I enclose a brochure and our current price list.}
+{S:X;X;0;15;Please contact me if I can be of any further assistance. I look forward to receiving your order.}
+{S:X;X;0;16;Yours sincerely}
+{S:X;X;0;20;PS The following products are on special offer this month...}
+{S:X;X;0;28; }
+{S:X;X;1;22;Product}
+{S:X;X;1;23;Value pack}
+{S:X;X;1;24;Big bang}
+{S:X;X;1;25;Rocket attack}
+{S:X;X;1;26;Little ones}
+{S:X;X;1;27;Guy's goodies}
+{S:X;X;2;22;Contains}
+{S:X;X;2;23;20 assorted fireworks}
+{S:X;X;2;24;20 bangers}
+{S:X;X;2;25;5 large rockets and 5 small ones}
+{S:X;X;2;26;3 doz. sparklers and 10 small fireworks}
+{S:X;X;2;27;25 mixed fireworks}
+{S:X;X;3;22;Price}
+{S:S;C;3;23;30}
+{S:S;C;3;24;12}
+{S:S;C;3;25;40}
+{S:S;C;3;26;15}
+{S:S;C;3;27;35}
+{S:X;X;4;22;Special}
+{S:S;C;4;23;25}
+{S:S;C;4;24;10}
+{S:S;C;4;25;30}
+{S:S;C;4;26;12}
+{S:S;C;4;27;28}
+{S:X;X;5;22;Saving}
+{S:S;F;5;23;0.166666666666667;(d24-e24)/d24}
+{S:S;F;5;24;0.166666666666667;(d25-e25)/d25}
+{S:S;F;5;25;0.25;(d26-e26)/d26}
+{S:S;F;5;26;0.2;(d27-e27)/d27}
+{S:S;F;5;27;0.2;(d28-e28)/d28}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;1;;32;1;5;;32;0;0;{MarginRight:2094}{Justify:2}{Italic:1}}
+{R:0;5;;32;1;6;;32;0;0;{Justify:2}{Italic:1}}
+{R:0;1;;32;1;6;;32;0;0;{ParaStart:11}{ParaEnd:11}
+}
+{R:1;22;;32;6;28;;32;0;0;{StyleHandle:.Table1}}
+{R:0;22;;32;1;28;;32;0;0;{ColWidth:1133}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:1;22;;32;2;28;;32;0;0;{ColWidth:1757}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:2;22;;32;3;28;;32;0;0;{ColWidth:1757}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:3;22;;32;4;28;;32;0;0;{ColWidth:1474}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:5;22;;32;6;28;;32;0;0;{ColWidth:1474}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:6;22;;32;7;28;;32;0;0;{ColWidth:1474}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:4;22;;32;5;28;;32;0;0;{ColWidth:1474}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist}}
+{R:1;22;;32;6;23;;32;0;0;{Background:187;187;187}{Typeface:Helvetica}{Bold:1}{Foreground:221;0;0}}
+{R:1;23;;32;2;28;;32;0;0;{Background:221;221;221}}
+{R:3;23;;32;4;28;;32;0;0;{Background:221;221;221}}
+{R:0;20;;32;1;21;;32;0;0;{Bold:1}{Italic:1}{Foreground:221;0;0}}
+{R:0;7;;32;1;8;;32;0;0;{Justify:0}}
+{PageHefoBreakValues-H:0;0;0;;1;1022;68;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{DrawFileEmbedded-D:0;RISC OS;264;DrawÉ€€€€€€€Draw        \ˆ¢‚€\{\™þÿ8ƒ€\‚Êƒ€€€€€ €€€Homerton.Bold.Oblique€€‹€€€X€€€€€€€€€€€€€€€€€€€€…€€€€€€€ð?€€€€‚€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€\€€€€\ˆ“€€Œ€€€h€€€\ˆ¢‚€\{\™þÿ8ƒ€\‚Êƒ€€€€€€€€€€ÿÿ€€€€€€€€€€€€€€€€€€D\™€ÿÿÿ€€€7v€€nr€€ö‚€ë\‘þÿPyrotechnic Prototypes€€}
+{NoteSingle:D;O;1;1;9460;102;0;1;864;10624;;;0;0;65536;65536}
+{DrawFileEmbedded-D:1;RISC OS;980;DrawÉ€€€€€€€Draw        €\}€€ €€àÕ€€l€‹€€€X€€€€€€€€€€€€€€€€€€€€…€€€€€€€ð?€€€€‚€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€\€€€€\ˆ“€€†€€€œ€€€\}€€€T€€€\“€€l€            ‚€€€t€€€€\}€€€T€€€\“€€l€€Ý€€€Ý€€€€€€B€ ‚€€€`\‚€€\ŸÑ€€ˆ€€€/Š€€j€ˆ€€€\ž1€€V€€ˆ€€€€~€€à>€ˆ€€€€\’€_3€ˆ€€€`\‚€€\ŸÑ€€€€€€‚€€€\„€€€€¬€€\€æ€€€™€\€<€€Ý€€€Ý€€€€€€B€ ‚€€€€­€€\€€ˆ€€€€à€€\€:€ˆ€€€€’€\€8€ˆ€€€€˜€\€‡€ˆ€€€€Á€€\€è€€ˆ€€€€­€€\€€ˆ€€€€­€€\€€…€€€€€€€†€€€œ€€p\œ€€\@€€p²€\X€            ‚€€€t€€€p\œ€€\@€€p²€\X€€îî€€îî€€€€€B€ ‚€€€Ð¡€€/¾€€ˆ€€€\Ÿ)€\V€ˆ€€€ŽQ€\B€€ˆ€€€p\€€p+€ˆ€€€p±€ïŸ€ˆ€€€Ð¡€€/¾€€€€€€‚€€€\„€€€pË€€Ó€€p8€)€€îî€€îî€€€€€B€ ‚€€€pÌ€€î€€ˆ€€€pÿ€€'€ˆ€€€p1€%€ˆ€€€p7€ô€€ˆ€€€pà€€Õ€€ˆ€€€pÌ€€î€€ˆ€€€pÌ€€î€€…€€€€€€€†€€€œ€€à¿€€ €€àÕ€ 5€            ‚€€€t€€€à¿€€ €€àÕ€ 5€€ÿ»€€ÿ»€€€€€B€ ‚€€€@Å€€¿\š€€ˆ€€€M€ 3€ˆ€€€~t€ Ÿ€€ˆ€€€àÀ€€€ˆ€ˆ€€€àÔ€\ÿü€€ˆ€€€@Å€€¿\š€€€€€€‚€€€\„€€€àî€€ ¯€€à[€ …€€ÿ»€€ÿ»€€€€€B€ ‚€€€àï€€ Ê€€ˆ€€€à"€ ƒ€ˆ€€€àT€ €ˆ€€€àZ€ Ð€€ˆ€€€àƒ€ ±€€ˆ€€€àï€€ Ê€€ˆ€€€àï€€ Ê€€…€€€€€€€}
+{NoteSingle:D;O;1;1;2653;160;0;0;2752;2672;;;1;0;101737;101737}
+{EndOfData}
+{CmdGroup:{ViewCreate:48;7344;10128;7312}
+{ViewControl:75;0;1;1;0;0;0;2048;0;2048}
+{CurrentPosition:0;13;15;3;0}
+}

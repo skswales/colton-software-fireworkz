@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>IF, ELSE, ELSEIF, ENDIF</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="IF" />
+    <param name="Keyword" value="ELSE" />
+    <param name="Keyword" value="ELSEIF" />
+    <param name="Keyword" value="ENDIF" />
+  </object>
+
+  <h1><a name="IF_ELSE_ELSEIF_ENDIF" id="IF_ELSE_ELSEIF_ENDIF"></a>IF, ELSE, ELSEIF, ENDIF</h1>
+
+  <p>Conditional execution of statements.</p>  
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">IF(<span class="csguide-arg">parameter</span>)</span></p>
+
+  <p>When <code>IF</code> has only a single parameter, it signals the start of an <code>IF ... ENDIF</code> sequence. The parameter is a condition: if it is true, execution follows on the following line; if it is false, execution continues after the next <code>ELSE</code>, <code>ELSEIF</code> or <code>ENDIF</code> statement that follows. For example:</p>
+
+  <pre>
+  IF(@parameter_1 &gt; 10)
+    SET_VALUE(C10, 1)
+  ELSEIF(@parameter_1 &gt; 8)
+    SET_VALUE(C12, 1)
+  ELSEIF(@parameter_1 &gt; 6)
+    SET_VALUE(C14, 1)
+  ELSE
+    SET_VALUE(C16, 1)
+  ENDIF
+  </pre>
+
+  <p><code>ENDIF</code> marks the end of the sequence, <code>ELSEIF</code> marks the beginning of a second condition, and <code>ELSE</code> a statement to be executed if the preceding conditions evaluated to <code>FALSE</code>.</p>
+
+  <p>You can nest <code>IF</code> statements inside each other, (and usually should) use spaces to make <code>IF</code> statements more readable:</p>
+
+  <pre>
+  IF(A15 &gt; B15)
+  &nbsp;&nbsp;IF(TYPE(DEREF(C16))=&quot;error&quot;)
+  &nbsp;&nbsp;&nbsp;&nbsp;RESULT(&quot;Bad value&quot;)
+  &nbsp;&nbsp;ENDIF
+  &nbsp;&nbsp;C16+4+SUM(E1:E10)
+  ENDIF
+  </pre>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">IF(<span class="csguide-arg">parameter_1</span>,
+  <span class="csguide-arg">parameter_2</span>
+  {, <span class="csguide-arg">parameter_3</span>})</span></p>
+
+  <p>If the condition expressed in <span class="csguide-arg">parameter_1</span> is true,
+  then <span class="csguide-arg">parameter_2</span> is executed.
+  If it is false, execution continues or if a third parameter is supplied, that is executed.
+  You need not use an <code>ENDIF</code> statement to mark the end of the sequence.</p>
+
+  <p><b>Examples:</b></p>
+
+  <p><code>IF(B3 &gt; 7, RESULT(C3))</code></p>
+
+  <p><code>IF(B5 = 2,, BREAK)</code></p>
+
+  <p><code>IF(@num &lt;= 0, RESULT(1), RESULT(@num))</code></p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg7_GOTO.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg7_custom_function_control_statements.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg7_REPEAT_UNTIL.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

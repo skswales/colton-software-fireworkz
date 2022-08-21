@@ -1,0 +1,50 @@
+{Version:1.19/16; (02 Feb 1995);FireworkzPro;Debug version;8000 1182 2716 7191}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;5;;32;1;5}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot;{ColWidth:11164}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5499 R10598}}
+{Style:Text;{Justify:3}{Fonty:280}}
+{Style:Number;{Justify:2}}
+{Style:Percent;{StyleSearch:3}{Numform:0.##%\\\;-0.##%[negative]}}
+{Style:Currency;{StyleSearch:2}{Numform:£#,##0.00_\\\;(£#,##0.00)[negative]}}
+{Style:Date_Time;{StyleSearch:8}{NumformDT:dd.mm.yy hh:mm:ss}}
+{Style:Date;{StyleSearch:4}{NumformDT:dd.mm.yy}}
+{Style:Date_a;{StyleSearch:5}{NumformDT:dd/mm/yy}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:General;{StyleSearch:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}}
+{Style:Negative;{Foreground:221;0;0}}
+{PrintQuality:0}
+{Paper:A4;0;16840;11900;460;460;392;392;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;1;In Cell Editing}
+{S:X;X;0;2;This is a new feature. If you have not used Fireworkz before you probably won't notice its effects. Existing Fireworkz users should notice that it is easier to enter mixed data types, ie text and numbers into a document. Just try entering text or numbers into a sheet document.}
+{S:X;X;0;3;Fireworkz now allows you to enter numbers or text or formulas directly into the cell as well as the formula line. When you press return Fireworkz will automatically assess the contents as text or numbers or a formula. So you don't  have to use the formula line so much.}
+{S:X;X;0;4;In earlier versions of Fireworkz, numbers could be entered into text cells as text. You would then have to specifically make that cell a number cell again\\\; often it was necessary to remove the text style region which had been automatically applied to the cell. You don't need to do this in Fireworkz Pro, since it selects the number or text style automatically according to the type of the cell.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{R:0;1;;32;1;2;15;3;0;0;{Bold:1}}
+{R:0;1;;32;1;2;15;3;0;0;{Justify:1}{Fonty:360}}
+{PageHefoBreakValues-H:0;0;0;;1;0;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:96;9120;11696;8704}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;4;395;3;0}
+}

@@ -1,0 +1,116 @@
+{Version:1.07;13 Nov 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;6;17;;32;6;17}
+{Style:BaseSheet;{ColWidth:2210}{ColName:x#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:3}{Numform:#,###.00}{NumformDT:dd.mm.yy hh:mm:ss}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:BaseHeadFoot}
+{StyleHeaderFooter:BaseHeadFoot}
+{Style:Current cell;{Background:221;221;221}{BorderColour:0;0;0}{Border:1}}
+{StyleCurrent:Current cell}
+{Style:Heading;{Background:0;68;153}{Fonty:600}{Bold:1}{Foreground:255;255;255}}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;1}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;1;Lookup Functions Examples}
+{S:X;X;0;9;Function}
+{S:X;X;0;11;CHOOSE}
+{S:X;X;0;12;LOOKUP}
+{S:X;X;0;13;HLOOKUP}
+{S:X;X;0;14;VLOOKUP}
+{S:X;X;0;15;MATCH}
+{S:X;X;0;16;INDEX}
+{S:S;C;1;3;8}
+{S:S;C;1;4;7}
+{S:S;C;1;5;2}
+{S:S;C;1;6;11}
+{S:S;C;1;7;6}
+{S:X;X;1;9;Input 1}
+{S:S;C;1;11;4}
+{S:S;C;1;12;11}
+{S:S;C;1;13;12}
+{S:S;C;1;14;17}
+{S:S;C;1;15;13}
+{S:S;A;1;16;\{11,12,13\\\;21,22,23\\\;31,32,33\}}
+{S:S;C;2;3;5}
+{S:S;C;2;4;12}
+{S:S;C;2;5;7}
+{S:S;C;2;6;9}
+{S:S;C;2;7;17}
+{S:X;X;2;9;Input 2}
+{S:X;X;2;11;B4B8}
+{S:X;X;2;12;B4B8}
+{S:X;X;2;13;B5E6}
+{S:X;X;2;14;C4E8}
+{S:X;X;2;15;B4E4}
+{S:S;C;2;16;3}
+{S:S;C;3;3;10}
+{S:S;C;3;4;13}
+{S:S;C;3;5;7}
+{S:S;C;3;6;5}
+{S:S;C;3;7;12}
+{S:X;X;3;9;Input 3}
+{S:X;X;3;11;-}
+{S:X;X;3;12;C4C8}
+{S:S;C;3;13;2}
+{S:S;C;3;14;3}
+{S:S;C;3;15;1}
+{S:S;C;3;16;1}
+{S:S;C;4;3;12}
+{S:S;C;4;4;19}
+{S:S;C;4;5;1}
+{S:S;C;4;6;7}
+{S:S;C;4;7;1}
+{S:X;X;4;9;Result}
+{S:S;F;4;11;11;choose(b12,b4,b5,b6,b7,b8)}
+{S:S;F;4;12;9;lookup(b13,b4b8,c4c8)}
+{S:S;F;4;13;7;hlookup(b14,b5e6,d14)}
+{S:S;F;4;14;1;vlookup(b15,c4e8,d15)}
+{S:S;F;4;15;3;match(b16,b4e4,d16)}
+{S:S;F;4;16;13;index(b17,c17,d17)}
+{S:X;X;5;9;Summary}
+{S:X;X;5;11;Returns the Input1 st entry from a list of numbers.}
+{S:X;X;5;12;Returns the value in range 2 corresponding to the position of Input1 in range 1.}
+{S:X;X;5;13;As for Lookup, but the third parameter gives a vertical offset  in the target range. eg 2 means row 6 if target range is B5E6 }
+{S:X;X;5;14;As for Lookup, but the third parameter gives a horizontal offset  in the target range. eg 2 means column D if target range is C4E8 }
+{S:X;X;5;15;Returns the value in the range which Input1 matches.}
+{S:X;X;5;16;Returns the desired single element or subarray of an array.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:0;;;;1;;;;1;0;{ColWidth:1417}}
+{R:2;;;;3;;;;1;0;{ColWidth:1077}}
+{R:1;;;;2;;;;1;0;{ColWidth:1077}}
+{R:3;;;;4;;;;1;0;{ColWidth:1133}}
+{R:4;;;;5;;;;1;0;{ColWidth:1134}}
+{R:5;;;;6;;;;1;0;{ColWidth:5329}}
+{R:6;;;;7;;;;1;0;{ColWidth:907}}
+{R:7;;;;8;;;;1;0;{ColWidth:964}}
+{R:0;9;;32;1;10;;32;0;0;{Justify:1}}
+{R:1;9;;32;2;10;;32;0;0;{Justify:2}}
+{R:2;9;;32;3;10;;32;0;0;{Justify:2}}
+{R:3;9;;32;4;10;;32;0;0;{Justify:2}}
+{R:4;9;;32;5;10;;32;0;0;{Justify:2}}
+{R:5;9;;32;6;10;;32;0;0;{Justify:0}}
+{R:5;11;11;3;6;12;18;3;0;0;{Italic:1}}
+{R:5;11;18;3;6;12;21;3;0;0;{Superscript:1}}
+{R:5;12;61;3;6;13;68;3;0;0;{Italic:1}}
+{R:5;15;36;3;6;16;43;3;0;0;{Italic:1}}
+{R:1;11;;32;5;17;;32;0;0;{Justify:2}}
+{R:1;3;;32;5;8;;32;0;0;{Justify:2}}
+{R:1;1;;32;6;2;;32;0;0;{ColWidth:0}}
+{R:0;1;;32;1;2;;32;0;0;{ColWidth:11168}{Justify:1}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{R:1;3;;32;2;8;;32;0;0;{GridLeftColour:0;0;0}{GridLeft:2}}
+{R:4;3;;32;5;8;;32;0;0;{GridRightColour:0;0;0}{GridRight:2}}
+{R:1;3;;32;5;4;;32;0;0;{GridTopColour:0;0;0}{GridTop:2}}
+{R:1;7;;32;5;8;;32;0;0;{GridBottomColour:0;0;0}{GridBottom:2}}
+{PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;10912;12400;7552}
+{ViewControl:100;2;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:1;3}
+}

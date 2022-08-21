@@ -1,0 +1,37 @@
+#
+# ob_mlec
+#
+OBJID=30
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Not present on Windows
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B30: $(T5).ob_mlec.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B_tmp -symbol rb_mlec_msg_weak
+
+$(BUILD_DIR).ob_mlec.o.ob_mlec: $(T5).ob_mlec.c.ob_mlec
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_mlec.o.mlec: $(T5).cmodules.c.mlec
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_mlec.o.mlec2: $(T5).cmodules.c.mlec2
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_30_S=\
+$(BUILD_DIR).ob_mlec.o.ob_mlec \
+$(BUILD_DIR).ob_mlec.o.mlec \
+
+OBJS_30_X=$(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B30
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M30: $(OBJS_30_X) $(OBJS_30_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_30_X) $(OBJS_30_S)
+
+# end of ob_mlec.mkr ###############################################################################

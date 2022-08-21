@@ -1,0 +1,38 @@
+{Version:1.20/01;08 Jan 1995;Fireworkz;Jez Turner;8000 1046 2612 7341}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;7;;32;1;7}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:1190}{MarginRight:1032}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{Style:Indent;{MarginLeft:1814}{MarginRight:845}{MarginPara:-567}{Tablist:L1}}
+{PrintQuality:0}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;1;Fireworkz-sweeper}
+{S:X;X;0;3;This is a frustratingly addictive game written as a Fireworkzcustom function.}
+{S:X;X;0;4;To start it double-click on !Playme and wait for a few seconds until it finishes initialising. You are presented with a 20 x 20 board. There are sixty mines hidden under the squares. You have to uncover all of the mines without stepping on one. }
+{S:X;X;0;5;Double-click on one of the squares. It will change either to an 'M' or to a number. If it changes to an 'M' you have lost. Say "Dratted penguins have been moving them again", and double-click for another go. If you get a number this is the number of adjacent squares (including diagonals) which contain mines. If the number is zero there cannot be any mines adjacent and so Fireworkz turns over all of the surrounding squares - and floods outwards - to save you having to do it.}
+{S:X;X;0;6;Tread carefully and watch out for the penguins.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{PageHefoBreakValues-H:0;0;0;;1;396;0;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;9264;11760;9152}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;0;0;3;0}
+}

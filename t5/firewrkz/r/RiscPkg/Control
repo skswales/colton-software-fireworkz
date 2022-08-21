@@ -1,0 +1,12 @@
+Package: Fireworkz
+Version: 2.00.0
+Section: Document
+Priority: Optional
+Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
+Standards-Version: 0.4.0
+Licence: Free
+Description: Word Processor & Spreadsheet
+ Fireworkz offers all the facilities you would expect from the following separate programs:
+ word processor, spreadsheet and charts package.
+ Thanks to Richard Colton, Fireworkz is now open source and completely free.
+Components: Apps.Document.!Fireworkz (Movable LookAt)

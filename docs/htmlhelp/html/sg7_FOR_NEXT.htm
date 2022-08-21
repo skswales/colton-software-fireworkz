@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>FOR ... NEXT</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="FOR" />
+    <param name="Keyword" value="NEXT" />
+  </object>
+
+  <h1><a name="for_next" id="for_next"></a>FOR &hellip; NEXT</h1>
+
+  <p>Repetetive execution of statements - FOR &hellip; NEXT.</p>
+
+  <p><span class="csguide-decl">FOR(<span class="csguide-arg">counter_name</span>:text,
+  <span class="csguide-arg">start</span>:number,
+  <span class="csguide-arg">end</span>:number
+  {, <span class="csguide-arg">step</span>:number})</span></p>
+
+  <p>Loops, while incrementing the named counter from <span class="csguide-arg">start</span>,
+  until the counter is greater than <span class="csguide-arg">end</span>.</p>
+
+  <p>For each iteration 1 is added to the counter,
+  unless the optional <span class="csguide-arg">step</span> parameter is specified, in which case that value is added.</p>
+
+  <p>When the counter passes the end value, execution continues after the <code>NEXT</code> statement.</p>
+
+  <p>If <span class="csguide-arg">step</span> is negative,
+  the loop will be iterated until the counter is less than <span class="csguide-arg">end</span>.</p>
+
+  <p>The following example scans an array of numbers
+  and builds a set of square roots of the number in column D,
+  checking for negative roots along the way:</p>
+
+  <pre>
+  FOR(&quot;i&quot;, 1, rows(@list))
+  &nbsp;&nbsp;IF(index(@list, 1, i) &lt; 0)
+  &nbsp;&nbsp;&nbsp;&nbsp;SET_VALUE(INDEX(D1:D100, 1, i), 0)
+  &nbsp;&nbsp;ELSE
+  &nbsp;&nbsp;&nbsp;&nbsp;SET_VALUE(INDEX(D1:D100, 1, i), SQR(INDEX(@list, 1, i))) 
+  &nbsp;&nbsp;ENDIF
+  NEXT
+  </pre>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg7_CONTINUE.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg7_custom_function_control_statements.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg7_GOTO.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>DDB</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="DDB" />
+  </object>
+
+  <h1><a name="ddb" id="ddb"></a>DDB</h1>
+
+  <p>Returns the calculated the depreciation allowance on an asset at
+  a specific period of time using the double declining balance method.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">DDB(<span class="csguide-arg">cost</span>:number,
+  <span class="csguide-arg">salvage</span>:number,
+  <span class="csguide-arg">life</span>:number,
+  <span class="csguide-arg">period</span>:number
+  {, <span class="csguide-arg">factor</span>:number})</span></p>
+
+  <table>
+  <tr><td><span class="csguide-arg">cost</span></td><td>is the original value,</td></tr>
+  <tr><td><span class="csguide-arg">salvage</span></td><td>is the value at the end of the life,</td></tr>
+  <tr><td><span class="csguide-arg">life</span></td><td>is the number of periods for which you want to calculate the depreciation allowance,</td></tr>
+  <tr><td><span class="csguide-arg">period</span></td><td>is the period for which the depreciation is being measured.</td></tr>
+  <tr><td><span class="csguide-arg">factor</span></td><td>is the rate at which the balance declines. Default is 2.0.</td></tr>
+  </table>
+
+  <p><b>Example:</b></p>
+
+  <p><code>DDB(5000, 1000, 5, 1)</code></p>
+
+  <p>returns the number <code>2000</code> (pounds), the value of a &pound;5000 asset with a salvage value of &pound;1000 one year into its five-year depreciation.</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_CTERM.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_financial_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_FV.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

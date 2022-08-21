@@ -1,0 +1,57 @@
+# z1.r32m
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+#$(PROD_BUILD_DIR).!$(APPL).Resource.CCMso \
+#$(PROD_BUILD_DIR).!$(APPL).Resource.CCMstubs \
+
+all: \
+$(T5).$(PROD).resource.windows.$(COUNTRY).Config \
+$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci \
+$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci \
+$(T5).$(PROD).resource.windows.$(COUNTRY).res06/rci \
+$(T5).$(PROD).resource.windows.$(COUNTRY).resXX/rci \
+$(PROD_BUILD_DIR).!$(APPL).!Boot \
+$(PROD_BUILD_DIR).!$(APPL).!Help \
+$(PROD_BUILD_DIR).!$(APPL).!Help2 \
+$(PROD_BUILD_DIR).!$(APPL).!Run \
+$(PROD_BUILD_DIR).!$(APPL).!RunImage \
+$(PROD_BUILD_DIR).!$(APPL).!Sprites \
+$(PROD_BUILD_DIR).!$(APPL).!Sprites22 \
+$(PROD_BUILD_DIR).!$(APPL).!SpritesR5 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.cfbf \
+$(PROD_BUILD_DIR).!$(APPL).Resource.cfbf-mini \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Config \
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.!Sprite \
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.ImageSlot \
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.Loader \
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.PicConvert \
+$(PROD_BUILD_DIR).!$(APPL).Resource.RISC_OS.Stubs \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice00 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice01 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice18 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice29 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Choices.ChoicesDoc \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.Master \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.MasterC \
+$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetFgn \
+$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetXLS \
+$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.TextFgn \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S1 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S2 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S3 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S4 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S5 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S6 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Pictures.S1 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Pictures.S2 \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Template.Letter \
+$(PROD_BUILD_DIR).!$(APPL).Resource.Template.Sheet \
+$(PROD_BUILD_DIR).!RunDB \
+$(PROD_BUILD_DIR).Makefile
+

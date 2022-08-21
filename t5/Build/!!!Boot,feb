@@ -1,0 +1,48 @@
+| $.t5.!!!Boot (32-bit, ADFS/SDFS/HostFS)
+|
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+|
+| Copyright (C) 1991-1998 Colton Software Limited
+| Copyright (C) 1998-2015 R W Colton
+|
+If "<Hdr$Path>"="" Then Error AcornC/C++ Tools not yet opened
+|
+If "<t5_root>"<>""  Then Error 0 Please reboot and reselect
+|
+| SKS iMX6
+If "<disc_root>"="" Then IfThere SCSI::hd4.$.!Boot Then Set disc_root SCSI::hd4.$
+|
+| SKS RISC PC
+If "<disc_root>"="" Then IfThere ADFS::id0.$ Then Set disc_root ADFS::id0.$
+|
+| Raspberry Pi
+If "<disc_root>"="" Then IfThere SDFS::RISCOSpi.$.!Boot Then Set disc_root SDFS::RISCOSpi.$
+|
+| RPCEmu
+If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
+|
+Set t5_root <disc_root>.fireworkz.branches.fireworkz__2_00__branch
+|
+URD <t5_root>
+|Lib &.arm.Library
+|Dir &.t5
+|
+| Fireworkz Pro can only be built if R-Comp components are present
+IfThere <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.
+IfThere <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.WindLibC.<C$Mode>.
+|
+Set Fireworkz$ReportEnable 1
+Set Fireworkz$TraceEnable 1
+|
+| 32-bit C: and RISC_OSLib: paths from AcornC/C++ are kosher
+|
+Set Fireworkz$DefaultBuild r<C$Mode>b
+IfThere <Obey$Dir>.<Fireworkz$DefaultBuild> Then Filer_OpenDir <Obey$Dir>.<Fireworkz$DefaultBuild>
+|
+IfThere <Obey$Dir>.<Fireworkz$DefaultBuild>.fprowrkz Then Filer_OpenDir <Obey$Dir>.<Fireworkz$DefaultBuild>.fprowrkz
+|
+IfThere <Obey$Dir>.<Fireworkz$DefaultBuild>.firewrkz Then Filer_OpenDir <Obey$Dir>.<Fireworkz$DefaultBuild>.firewrkz
+|
+| end of !!!Boot

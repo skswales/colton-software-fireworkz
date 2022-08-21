@@ -1,0 +1,33 @@
+{Version:1.03/58;17 Aug 1993;Resultz;Colton Software;6000 1072 7816 4111}
+{Block:0;0;;32;1;6;;32;1;6}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:1190}{MarginRight:1032}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{Style:Indent;{MarginLeft:1814}{MarginRight:845}{MarginPara:-567}{Tablist:L1}}
+{StyleBase:BaseLetter}
+{StyleHeaderFooter:BaseHeadFoot}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;1;Month planner}
+{S:X;X;0;3;The month planner calculates and displays a list of the days in a particular month. The month and year are specified in the file input_date. }
+{S:X;X;0;4;Double-click on monthplan to load it. Scroll around it to see what is displayed. If you wish you can set a smaller scale factor in the View control dialogue box (click on the specs) but if you do, bear in mind that you may lose some of the grid lines from the screen display. Grid lines at scale factors lower than 100% may be too thin for the screen display resolution and be lost in between pixels.}
+{S:X;X;0;5;The supporting document input_date will also have loaded when you loaded monthplan and will probably be behind monthplan. Find input_date and bring it to the front. Try entering new month and year numbers in input_date and watch the effect they have in monthplan. Watch the last few cells in the second column when you change the month.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{R:0;3;129;3;1;4;139;3;0;0;{Italic:1}}
+{R:0;4;16;3;1;5;25;3;0;0;{Italic:1}}
+{PageHefoBreakValues-H:0;0;0;;1;396;0;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;10912;11760;8544}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;3;0;3}
+}

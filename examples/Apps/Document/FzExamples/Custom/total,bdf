@@ -1,0 +1,47 @@
+{Version:1.03/57;13 Aug 1993;Resultz;Colton Software;6000 1357 8082 3659}
+{Block:0;0;;32;6;7;;32;6;7}
+{Style:BaseSheet;{ColWidth:1134}{ColName:x#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:2}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy hh:mm:ss}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseHeadFoot}
+{Style:Current cell;{BorderColour:0;0;0}{Border:1}}
+{Style:Amount;{Justify:2}{NewObject:1}{Numform:#,##0}}
+{Style:Text;{Justify:0}{NewObject:3}}
+{Style:pounds pence;{Justify:2}{Numform:£#,##0.00}}
+{StyleBase:BaseSheet}
+{StyleCurrent:Current cell}
+{StyleHeaderFooter:BaseHeadFoot}
+{Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;1}
+{PrintQuality:0}
+{StartOfData}
+{S:S;C;0;1;3}
+{S:S;C;0;2;23}
+{S:S;C;0;3;5}
+{S:S;C;0;4;8}
+{S:S;C;0;5;7}
+{S:S;F;2;3;46;[c_total]total(a2a6)}
+{S:S;F;3;3;"[c_total]total(a2a6)";formula_text(c4)}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{R:0;;;;1;;;;1;0;{ColWidth:1134}}
+{R:1;;;;2;;;;1;0;{ColWidth:1134}}
+{R:2;;;;3;;;;1;0;{ColWidth:1134}}
+{R:3;;;;4;;;;1;0;{ColWidth:2323}}
+{R:4;;;;5;;;;1;0;{ColWidth:1134}}
+{R:5;;;;6;;;;1;0;{ColWidth:1134}}
+{R:6;;;;7;;;;1;0;{ColWidth:1134}}
+{R:7;;;;8;;;;1;0;{ColWidth:1134}}
+{R:8;;;;9;;;;1;0;{ColWidth:1134}}
+{R:0;;;;1;;;;1;0;{StyleHandle:Text}}
+{R:;0;;;;1;;;0;1;{StyleHandle:Text}}
+{R:0;1;;32;1;6;;32;0;0;{Justify:2}}
+{R:2;3;;32;3;4;;32;0;0;{Justify:2}}
+{PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:688;8000;7296;5472}
+{ViewControl:100;2;0;0;1;1;0;2048;0;2048}
+{CurrentPosition:3;3}
+}

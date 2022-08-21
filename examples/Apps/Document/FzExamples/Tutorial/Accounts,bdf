@@ -1,0 +1,78 @@
+{Version:1.20/64;(12 Apr 1995);FireworkzPro;Sharron - Single User Licence;8021 0582 7256 3239}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;7;41;;32;7;41}
+{Style:BaseSheet;{ColWidth:1474}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}
+{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:1}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}{NumformDT:dd.mm.yy hh:mm:ss\\\;dd.mm.yy\\\;hh:mm:ss}{NumformSE:@\\\;Error}
+{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
+{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:BaseHeadFoot;{ColWidth:11055}{MarginLeft:114}{MarginRight:114}{Tablist:C5414 R10828}{ParaStart:68}{ParaEnd:68}
+{LineSpace:0;72}{Justify:0}}
+{Style:Current cell;{Background:221;221;221}{BorderColour:0;0;0}{Border:4}}
+{StyleCurrent:Current cell}
+{Style:Text;{Justify:0}}
+{Style:Number;{Justify:2}}
+{Style:General;{StyleSearch:1}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
+{Style:Currency;{StyleSearch:2}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
+{Style:Percent;{StyleSearch:3}{Numform:0.##%\\\;-0.##%[Negative]}}
+{Style:Date;{StyleSearch:4}{NumformDT:dd.mm.yy}}
+{Style:Date_a;{StyleSearch:5}{NumformDT:dd/mm/yy}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Negative;{Foreground:221;0;0}}
+{Style:Heading;{Typeface:Helvetica}{Fonty:360}{Bold:1}{Italic:1}{Foreground:0;68;153}}
+{PrintQuality:0}
+{Paper:A4;0;16840;11906;460;460;397;397;0;0;0;0;32;;1}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;0;Expenditure}
+{S:X;X;0;1;Quarter}
+{S:X;X;0;3;Rent}
+{S:X;X;0;4;Rates}
+{S:X;X;0;5;Heating}
+{S:X;X;0;6;Telephone}
+{S:X;X;0;7;Stationery}
+{S:X;X;1;1;1st}
+{S:S;C;1;3;450;;General}
+{S:S;C;1;4;150;;General}
+{S:S;C;1;5;100;;General}
+{S:S;C;1;6;75;;General}
+{S:S;C;1;7;50;;General}
+{S:X;X;2;1;2nd}
+{S:S;C;2;3;450;;General}
+{S:S;C;2;5;120;;General}
+{S:S;C;2;6;90;;General}
+{S:S;C;2;7;40;;General}
+{S:X;X;3;1;3rd}
+{S:S;C;3;3;450;;General}
+{S:S;C;3;5;75;;General}
+{S:S;C;3;6;45;;General}
+{S:S;C;3;7;34;;General}
+{S:X;X;4;1;4th}
+{S:S;C;4;3;450;;General}
+{S:S;C;4;5;100;;General}
+{S:X;X;5;1;Annual total}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{R:0;;;;1;;;;1;0;{ColWidth:1474}}
+{R:1;;;;2;;;;1;0;{ColWidth:1474}}
+{R:2;;;;3;;;;1;0;{ColWidth:1474}}
+{R:3;;;;4;;;;1;0;{ColWidth:1474}}
+{R:4;;;;5;;;;1;0;{ColWidth:1474}}
+{R:5;;;;6;;;;1;0;{ColWidth:1757}}
+{R:6;;;;7;;;;1;0;{ColWidth:1474}}
+{R:1;0;;32;6;1;;32;0;0;{ColWidth:0}}
+{R:0;0;;32;1;1;;32;0;0;{ColWidth:9127}}
+{R:0;0;;32;1;1;11;3;0;0;{StyleHandle:Heading}}
+{R:;0;;;;1;;;0;1;{RowHeight:566}{RowHeightFix:1}}
+{R:0;0;;32;1;1;;32;0;0;{Justify:1}}
+{Imp:;;;;;;;;1;1;36;1001;0;40;{StyleHandle:Current cell}}
+{PageHefoBreakValues-H:0;0;0;;1;576;32;0;;;0;;;1;576;32;0;;;0}
+{HD-H:0;2}{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:112;7088;9920;5504}{ViewControl:100;2;0;0;1;1;0;2048;0;2048}{CurrentPosition:1;3;;;0}}

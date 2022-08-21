@@ -1,0 +1,477 @@
+#
+# this is the messages file for ob_rec (UK)
+#
+# Copyright (C) 1994-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# Portions Copyright (C) 1994-2015 R-Comp
+#
+# errors
+#
+e0:Database not open
+#e1:ERROR_RQ
+e2:Merging databases is not allowed without administrator access
+e3:Someone else is editing this record
+e4:Sorting is not allowed without administrator access
+e5:Changing field properties is not allowed without administrator access
+e6:Document not saved
+e8:Can't open database. Is it already open elsewhere?
+e9:Can't load databases from scrap files
+e10:Database not yet created
+e11:Record not written
+e12:Can't import this type of file into a database
+e13:Can't create database '%s' as a file of that name already exists
+e14:No access for item
+e15:Can't create a field with the same name as one that already exists
+e16:Can't create a field with a blank name
+e17:Database '%s' already opened by document '%s'
+e18:You do not have permission to add records to this database
+e19:You do not have permission to delete records from this database
+e20:You do not have permission to modify the layout of this database
+e21:You do not have permission to read from this database
+e22:You do not have permission to export this database
+e23:You do not have permission to search in this database
+e24:You do not have permission to sort this database
+e25:You do not have permission to access this database
+e26:Database has no visible fields
+#
+# Messages for ob_rec
+#
+1:Search
+2:Active Queries
+3:Whole File
+4:View
+5:Refine
+6:Extend
+7:Exclude
+8:Change
+9:Delete
+#
+10:New
+11:is
+12:is not
+13:contains
+14:does not contain
+15:is greater than
+16:is less than
+17:don't care
+18:is empty
+19:is not empty
+#
+20:expression
+21:Cards
+22:Fields
+23:All
+24:Any
+25:Show those records that match
+26:Don't show those records that match
+27:Edit Record
+28:Card
+29:Sheet
+#
+30:Show
+31:Hidden
+32:Layout
+33:Title
+34:Display format
+35:Columns
+36:Auto
+37:Rows
+38:
+39:Field properties
+#
+40:Sort
+41:Up
+42:Down
+43:+/-/x
+44:Save as
+45:Create database
+46:Add
+47:Remove
+48:Field type
+49:Default value
+#
+50:Check formula
+51:Value list
+52:Compulsory
+53:Hidden
+54:Export data
+55:Format
+56:CSV
+57:DataPower
+58:Export
+#
+60:Text
+61:Number
+62:Date
+63:Integer
+64:Boolean
+65:Picture
+66:File
+67:Formula
+68:Interval
+#
+70:SELECT for Database Search dialogue box, ADJUST for Database Queries dialog box
+71:Record %ld in Whole database - %ld records
+72:Record %ld in Whole database - %ld record
+96:Record %ld in Subset - %ld records
+97:Record %ld in Subset - %ld record
+78:Empty database document. This must be saved first before you can create or import a database
+79:Empty database document. Use Database=>Create or drag in an existing database file
+#
+73:Enter Password
+74:(Enter a blank password for limited access) 
+75:and
+76:or
+77:excluding
+#
+80:Scroll a database to the first record
+81:Scroll a database down as far as possible
+82:Scroll on a page-full
+83:Scroll back a page-full
+84:Move to the next record
+85:Move to the previous record
+86:Create a new record
+87:Delete the current record
+88:Change the database layout
+89:Change the properties of fields in the database
+69:Create a copy of the current record
+#
+90:Database styles
+91:Database
+92:All fields
+93:All titles
+94:Field %ld
+w95:Changing style - %s
+r95:Changing style: %s
+98:Calculating column widths
+99:Edit database styles
+#
+100:Field - %s
+101:Title for field - %s
+102:NULL
+103:NOT NULL
+104:Value
+#
+110:Refine allows you to narrow an existing query by only keeping records which match extra selection criteria
+111:Extend allows you to widen an existing query by adding records which match extra selection criteria
+112:Change allows you to modify the selection criteria for an existing simple query
+113:Rename
+114:Create chart
+115:Move to a particular record
+116:Goto record
+117:Record number
+118:Delete the current record?
+#
+# Messages for DPLib
+#
+rtaskname:Fireworkz Pro
+#
+rYes:Yes
+rNo:No
+rTrueV:1Yy
+rFalseV:0Nn
+#
+rNewCard:New
+rComment:comment
+rText:text
+rBoolean:boolean
+rInteger:integer
+rReal:real
+rDate:date/time
+rInterval:time interval
+rGraphic:graphic
+rFile:file
+rFormula:formula
+#
+rday1:1st
+rday2:2nd
+rday3:3rd
+rday4:4th
+rday5:5th
+rday6:6th
+rday7:7th
+rday8:8th
+rday9:9th
+rday10:10th
+rday11:11th
+rday12:12th
+rday13:13th
+rday14:14th
+rday15:15th
+rday16:16th
+rday17:17th
+rday18:18th
+rday19:19th
+rday20:20th
+rday21:21st
+rday22:22nd
+rday23:23rd
+rday24:24th
+rday25:25th
+rday26:26th
+rday27:27th
+rday28:28th
+rday29:29th
+rday30:30th
+rday31:31st
+#
+rmon1:Jan
+rmon2:Feb
+rmon3:Mar
+rmon4:Apr
+rmon5:May
+rmon6:Jun
+rmon7:Jul
+rmon8:Aug
+rmon9:Sep
+rmon10:Oct
+rmon11:Nov
+rmon12:Dec
+#
+rwkd0:Monday
+rwkd1:Tuesday
+rwkd2:Wednesday
+rwkd3:Thursday
+rwkd4:Friday
+rwkd5:Saturday
+rwkd6:Sunday
+#
+rad0:AD 
+rad1:
+rad2:BC 
+ram0:am
+ram1:pm
+#
+rdatefmt:[D ][M ][Y ][a][H:n[:s][ A]]
+#rdatefmt:[d/][m/][y|[Y ][a]][h:n[:s]]
+rin1y:year
+rin2y:years
+rin1m:month
+rin2m:months
+rin1d:day
+rin2d:days
+rin1h:hour
+rin2h:hours
+rin1n:minute
+rin2n:minutes
+rin1s:second
+rin2s:seconds
+#
+# Error messages for DPLib
+#
+rBadCSV:Invalid control character &%X
+rBadCSV2:Invalid control character &%X
+rBadCSVq:Mismatched quotes
+rBadType:Unrecognised field type: %s
+rBadBool:Invalid boolean
+rBigInt:Value is too large for an integer
+rBadInt:'%.64s' is not a valid integer
+rBigReal:Value is too large for a real number
+rBadReal:'%.64s' is not a valid real number
+rBadDate:'%.64s' is not a valid date
+rBadIntv:'%.64s' is not a valid time interval
+rBadCtrl:Illegal '%c' control sequence in string
+risadir:'%s' is a directory
+rErNoMem:Out of memory (&%X)
+rErNoMem2:Out of memory - increase WimpSlot in !Run file
+rErBadFile:Invalid database file '%s'
+rFileOpen:File '%.200s' is already open
+rErBadType:Fireworkz Pro does not understand files of type %s
+rErOldFile:Database file '%s' is out of date
+rErNewFile:You need a later version of Fireworkz Pro to load the database file '%s'
+rErBadFilHn:Unknown file handle &%p
+rErBadBufSz:Buffer size &%X too large (max = &%X)
+rErBuffOv:Buffer overflow
+rErNotImp:%s not yet implemented
+rErDefault:Error &%X
+rErCvt:Sorry, fields of type %s cannot be translated into type %s
+rErDrag1:Drag already registered
+rErDrag2:Drag already released
+rErDrag3:Wrong window handle when releasing drag
+rErDrag4:wind__dragevent called with DragProc == NULL
+rSafeLoad:Databases must be loaded from the filing system, not via an application
+rBadLoad:Fireworkz Pro does not understand this filetype
+rErRecLng:Record key is too long
+rErFilFul:File too long
+rErFilLng:Filename too long
+rNoScrapDir:Please open a directory viewer containing !Scrap, then try again
+rNoArtWorks:Please open a directory viewer containing !AWViewer, then try again
+rErNoTemp:Sorry, your scrap directory is full. Try opening it and deleting some unused files.
+rErNoFile:File '%s' not found
+rErSaveIt:Please save the layout first
+rNoScrap:You must save the database directly to the filing system, not to an application
+rErNoTabs:Sorry, there is no room in this file for any more tables
+rTooLong:Filename too long
+rErLayLkd:Sorry, the database layouts are currently being edited
+rErLayUse:Sorry, this layout is in use and cannot be edited
+rErLayImp:Drag the file to the icon bar to open the database
+rErPrint:%s (print cancelled)
+rErPrAcc:Sorry, you do not have permission to print this file
+rErDispType:Field '%s' displays %s data, not %s
+rdText:text
+rdGraphic:graphic
+rdBoolean:boolean
+rdFile:file
+rdNone:invisible
+rReadOnly:Sorry, this file is read-only
+rLocked:Sorry, this record is already being edited
+rLocked12s:Sorry, someone else is currently sorting, saving or printing this database
+rLocked22s:Sorry, someone else is currently sorting, saving or printing this database
+rLocked12u:Sorry, someone else is currently merging into or deleting all records in this database
+rLocked22u:Sorry, someone else is currently merging into or deleting all records in this database
+rLocked21s:Sorry, you can't save, print, sort, merge into or delete all records in this database while a record is being edited
+rLocked21u:Sorry, you can't save, print, sort, merge into or delete all records in this database while a record is being edited
+rLocked3:Sorry, you can't update the database layouts while a record is being edited
+rBadSus1:Sorry, you can't update the database layouts while a password is being entered
+rBadSus2:Sorry, you can't save the layouts while a merge is being prepared
+rBadPage:I'm afraid your record and/or headers and footers will not fit into the current page size
+rdraw:Internal Draw error %d at location %d
+rPrBusy:Printer is currently busy
+rNoPrnt:Draft printing requires a RISC OS 3 printer driver
+rErrCSV:%s at line %d in CSV file
+rErrTSV:%s at line %d in Tab file
+rErAtRec:%s in record %d
+rBadImport:To import a file into the database, drag it onto the toolbox.  To import it into a field, drag it onto the field.
+rErFTypeS:Type mismatch in formula field '%s' (should evaluate to %s, but came out as %s)
+rErExprType:Type mismatch (expression evaluates to %s, but should be %s)
+rErExprT2:Type mismatch: %s cannot be used in this context
+rErExprT3:The formula for the referenced field is not defined
+rErExprT4:The formula for field '%.64s' is not defined
+rErField:Field '%.64s' not found
+reol:end of line
+rErLastLay:You cannot delete the last layout
+rErDelLay:Sorry, layouts can only be deleted while in edit layout mode
+rErMrgLay:Sorry, layouts cannot be merged like this
+rErExpr:Invalid expression (doesn't evaluate to a single value)
+rErExpr1:Expression cannot be calculated due to arithmetic overflow
+rErExpr2:Internal error: conditional evaluates to non-boolean
+rErExpr3:Internal error: NOT applied to non-boolean
+rErExpr4:Syntax error: '%s' is not part of the expression
+rErExpr5:Syntax error: '%s' is not part of the expression
+rErExpr6:Type mismatch: boolean expected but found %s
+rErExpr7:Type mismatch: number expected but found %s
+rErExpr10:Type mismatch: number expected but found %s
+rErExpr8:Type mismatch: %s cannot be combined with %s in this context
+rErExpr11:Syntax error: %s can only be used as a unary operator in search and check formulae
+rErExpr12:Syntax error: missing ')'
+rErExpr13:Syntax error: missing THEN following IF
+rErExpr14:Syntax error: Missing ELSE
+rErExpr15:Syntax error: %s encountered unexpectedly
+rErExpr16:Syntax error: FILE "<filename>" is the only legal case, ie. a literal string only
+rErExpr18:Field type is %s, but default formula is %s
+rErExpr21:Syntax error: missing '(' after function name
+rErExpr22:Syntax error: expected ',' or ')', but found '%s'
+rErExpr23:Syntax error: expected ',' but found '%s'
+rErExpr24:Syntax error: expected ')' but found '%s'
+rErExpr25:Type mismatch: text expected but found %s
+rErExpr26:Expressions are too deeply nested (increasing the WimpSlot may help)
+rErExpr27:Fields are not allowed to reference each other in a loop
+rErExpr28:Type mismatch: %s cannot be converted to text
+rErExpr29:Type mismatch: graphic expected but found %s
+rErExpr30:Syntax error: CASE ( <fieldname>, <expression> ) is the only legal case
+rErExpr31:Syntax error: FILEIN ( <fieldtype>, <filetype>, <size>, <data> ) is the only legal case
+rErExpr32:Type mismatch: date expected but found %s
+rErExpr33:Type mismatch: date or interval expected but found %s
+rErInField:Error in '%s': %s
+rBadSurr:Sorry, you can't use the SERIAL function if the primary key is unique
+rReopen:No data has been lost, but the window could not be updated. Do you want to try again?
+rReopen2:No data has been lost, but the window could not be updated. Double-click on the file to reopen it.
+rBadChoice:Error while reading Choices file
+rBadCheck:The value in field '%s' is not allowed
+rBadNest1:Syntax error in 'datefmt' string in MessagesT file: Missing ']'
+rBadNest4:Syntax error in 'datefmt' string in MessagesT file: Missing ']'
+rBadNest2:Syntax error in 'datefmt' string in MessagesT file: Too many ']'s
+rBadNest3:Syntax error in 'datefmt' string in MessagesT file: Too many ']'s
+rBadDis:Internal error: Could not disassemble search expression
+rErNew:Sorry, the file '%.64s' has not yet been fully created
+rErPut:Internal error: putword out of range (%d,%d)
+#
+rMenuErr1:Couldn't open menu definition file '%s'
+rMenuErr2:Menu definition: Unknown identifier '%.64s'
+rMenuErr3:Menu definition: No more than %d menus may be defined
+rMenuErr4:Menu definition: Empty menus are not allowed
+rMenuErr5:Illegal menu handle %d passed to windmenu
+rErSignal1:Abort
+rErSignal2:Arithmetic exception
+rErSignal3:Illegal instruction
+rErSignal4:Attention request
+rErSignal5:Address exception
+rErSignal6:Termination request
+rErSignal7:Stack overflow
+rBadDateF:Unexpected field '%.64s' in DateFormat file
+rBadDateL:Unexpected line '%.64s' in DateFormat file
+rNoDates:No date formats in DateFormat file
+rNoDays:No day names in DateFormat file
+rNoMonths:No month names in DateFormat file
+rNoADBC:No AD/BC formats in DateFormat file
+rErNoBlocks:Internal error: No blocks left!
+rErRcNotFnd:Internal error: Record not found for '%.64s'
+rErDecomp:Internal error: decompressed record size = 0x%X, but should be 0x%X
+rErDupKey:Internal error: Duplicate record '%.64s'
+rErBadRec:Internal error: record lookup failed
+rErSvLayo:Internal error (layout_savelayout - layout->frames is null)
+rErLayLk2:Internal error: layout is not locked
+rErNoQuery:Internal error: file &%X does not contain query &%X
+rErCrsAct:Internal error: unsupported action %d on cursor for file of type &%X
+rErNoLayMenu:Internal error: no layout menu
+rErQMap:Internal error: query_get() can't remap fields
+rErDupField:Internal error: duplicate field id %d
+rErSvFlds:Internal error: attempt to replace fields directly
+rErNoKey:Internal error: the database must have a primary key
+rErVLab:Internal error: label object &%p not found
+rErNoSel:Internal error: No selection in entity_savetext
+rBadImp:Please click on the correct file type button, then click on 'Continue'
+rImpSub:Sub-file:
+rBadFile:Sorry, this database appears to be corrupt. Please contact Iota Software on +44 (0) 1223 566789 for assistance.
+rBadFile2:Sorry, an old version of Fireworkz Pro has lost some layouts from this file. To recover, save the file under a new name, and use the new copy.
+rBadFile3:Sorry, an old version of Fireworkz Pro has lost some records from this file. To recover, save the file under a new name, and use the new copy.
+rBadPass:Incorrect password
+rBadPass1:Old password incorrect
+rBadPass3:New password typed incorrectly
+rBadPass4:Internal error: no users in file
+rBadPass5:Sorry, this password does not give full access to the file
+rBadAccess:Sorry, you are not allowed to access this database
+rNoLayout:Sorry, you do not have access to any of the layouts in this database
+rBadEdit:Sorry, you are not allowed to edit records in this view
+rBadMrg1:Sorry, you are not allowed to save records from this database
+rBadMrg2:Sorry, you are not allowed to add records to this database
+rBadLay:Sorry, you are not allowed to modify this layout
+rSavePass:Do you want to save your edited passwords?
+rSaveSvPs:Do you want to save your edited server groupings?
+rPlckF?:Sorry, the passwords for this file are already being edited
+rPlckS?:Sorry, the server passwords are already being edited
+rBadPrnt:Sorry, the page numbers requested for printing do not match the actual pages
+rBadFilm1:Invalid film file (no Ace chunk present)
+rBadPlay:File '%.64s' not found
+rBadHol1:incomplete date
+rBadHol2:%s falls on a %s
+rBadHol3:holidays cannot be specified before Monday 3rd January 0 AD
+rBadHol4:Error at line %d of 'Holidays': %.128s
+#
+# Messages for DPLib client/server
+#
+rBadRpc1a:Sorry, the DataPower server is too old to work with this client
+rBadRpc1b:Sorry, this Fireworkz Pro client is too old to work with the server
+rErBadRpc2:No reply from DataPower server
+rBadRpc2a:No reply from station %s
+rBadRpc4:Internal error: expected client/server packet %d, but received %d
+rBadRpc10:Station %s port %d replaced while sending code %d
+rBadRpc10a:Station replaced while sending code %d
+rBadRpc11:Station %s port %d replaced while waiting for code %d
+rBadRpc11a:Station replaced while waiting for code %d
+rEndWait:Station %s replaced while waiting for code %d
+rBadRpcC:Could not send '%.200s' to station %s
+rBadSvr:Unknown server command %d
+rBadSvr2:Unable to read !Server Exports file
+rBadSvr3:Syntax error at line %d of !Server Exports file
+rBadSvr4:Unable to deduce local pathname of '%s'
+rRpcQuit1:Station %s is still using the server.  Are you sure you want to quit?
+rRpcQuit:%d stations are still using the server.  Are you sure you want to quit?
+#
+# Messages for WindLib
+#
+rflex2:Out of memory
+rNoTemp:Template '%s' not found
+#
+# end of msg (ob_rec)

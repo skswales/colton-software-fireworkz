@@ -1,0 +1,137 @@
+#
+# ob_rec
+#
+OBJID=02
+
+# Copyright (C) 1994-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Not present on Windows
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_rec.o.$(COUNTRY)-B02: $(T5).ob_rec.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_rec.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_rec.o.$(COUNTRY)-B_tmp -symbol rb_rec_msg_weak
+
+# RISC OS bound sprites
+$(BUILD_DIR).ob_rec.o.b22_02: $(T5).ob_rec.resource.spr22
+ $(MAKEAOF) -to $@ -from $? -symbol rb_rec_spr_22_weak -spritearea
+$(BUILD_DIR).ob_rec.o.b24_02: $(T5).ob_rec.resource.spr24
+ $(MAKEAOF) -to $@ -from $? -symbol rb_rec_spr_24_weak -spritearea
+
+# Higher-level source files
+
+$(BUILD_DIR).ob_rec.o.ob_rec: $(T5).ob_rec.c.ob_rec
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.ob_rec2: $(T5).ob_rec.c.ob_rec2
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.ed_card: $(T5).ob_rec.c.ed_card
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.ed_rec: $(T5).ob_rec.c.ed_rec
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.export: $(T5).ob_rec.c.export
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.project: $(T5).ob_rec.c.project
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.rcbuf: $(T5).ob_rec.c.rcbuf
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.rcread: $(T5).ob_rec.c.rcread
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.redraw: $(T5).ob_rec.c.redraw
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.remap: $(T5).ob_rec.c.remap
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.uilayot: $(T5).ob_rec.c.uilayot
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.uiprops: $(T5).ob_rec.c.uiprops
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.uisrch: $(T5).ob_rec.c.uisrch
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.uistyle: $(T5).ob_rec.c.uistyle
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) $?
+
+OBJS_02_A_S=\
+$(BUILD_DIR).ob_rec.o.ob_rec \
+$(BUILD_DIR).ob_rec.o.ob_rec2 \
+$(BUILD_DIR).ob_rec.o.ed_rec \
+$(BUILD_DIR).ob_rec.o.ed_card \
+$(BUILD_DIR).ob_rec.o.export \
+$(BUILD_DIR).ob_rec.o.project \
+$(BUILD_DIR).ob_rec.o.rcread \
+$(BUILD_DIR).ob_rec.o.rcbuf \
+$(BUILD_DIR).ob_rec.o.redraw \
+$(BUILD_DIR).ob_rec.o.remap \
+$(BUILD_DIR).ob_rec.o.uilayot \
+$(BUILD_DIR).ob_rec.o.uiprops \
+$(BUILD_DIR).ob_rec.o.uisrch \
+$(BUILD_DIR).ob_rec.o.uistyle \
+
+# Low-level (DPLib access) source files
+
+DATAPOWER=_CSNF_.DataPower
+
+DATAPOWER_INCLUDES=-I $(DATAPOWER).DPlib.$(BITS) -I $(DATAPOWER).WindLibC.$(BITS)
+
+$(BUILD_DIR).ob_rec.o.callback: $(T5).ob_rec.c.callback
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.dblow: $(T5).ob_rec.c.dblow
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.dbquery: $(T5).ob_rec.c.dbquery
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.dbread: $(T5).ob_rec.c.dbread
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.dppack: $(T5).ob_rec.c.dppack
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.import: $(T5).ob_rec.c.import
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+$(BUILD_DIR).ob_rec.o.rcio: $(T5).ob_rec.c.rcio
+ $(CC) -o $@ $(ccflags) $(FPROWKRZ_INCLUDES) -DDPLIB_LOW $(DATAPOWER_INCLUDES) $?
+
+OBJS_02_B_S=\
+$(BUILD_DIR).ob_rec.o.callback \
+$(BUILD_DIR).ob_rec.o.dblow \
+$(BUILD_DIR).ob_rec.o.dbread \
+$(BUILD_DIR).ob_rec.o.dbquery \
+$(BUILD_DIR).ob_rec.o.dppack \
+$(BUILD_DIR).ob_rec.o.import \
+$(BUILD_DIR).ob_rec.o.rcio \
+
+REC_ENG_A_S=\
+$(DATAPOWER).DPlib.$(BITS).o.client \
+$(DATAPOWER).DPlib.$(BITS).o.client_rpc \
+$(DATAPOWER).DPlib.$(BITS).o.CopyRite2 \
+$(DATAPOWER).DPlib.$(BITS).$(DIR).o.crnet_mc \
+$(DATAPOWER).DPlib.$(BITS).o.date \
+$(DATAPOWER).DPlib.$(BITS).$(DIR).o.date_mc \
+$(DATAPOWER).DPlib.$(BITS).o.db-passwd \
+$(DATAPOWER).DPlib.$(BITS).o.Dr4_Diag \
+$(DATAPOWER).DPlib.$(BITS).o.Draw4Scale \
+$(DATAPOWER).DPlib.$(BITS).o.fields \
+$(DATAPOWER).DPlib.$(BITS).o.framesflds \
+$(DATAPOWER).DPlib.$(BITS).o.io-buffer \
+$(DATAPOWER).DPlib.$(BITS).o.io-fields \
+
+REC_ENG_B_S=\
+$(DATAPOWER).DPlib.$(BITS).o.io-record \
+$(DATAPOWER).DPlib.$(BITS).o.query \
+$(DATAPOWER).DPlib.$(BITS).o.Security \
+$(DATAPOWER).DPlib.$(BITS).o.srchexpr \
+$(DATAPOWER).DPlib.$(BITS).o.srchexpr2 \
+$(DATAPOWER).DPlib.$(BITS).o.systables \
+$(DATAPOWER).DPlib.$(BITS).o._clipboard \
+$(DATAPOWER).DPlib.$(BITS).o._CSV \
+$(DATAPOWER).DPlib.$(BITS).o._territory \
+$(DATAPOWER).DPlib.$(BITS).o._txtframe2 \
+$(DATAPOWER).WindLibC.$(BITS).o.WindLibC \
+
+OBJS_02_X=$(BUILD_DIR).ob_rec.o.$(COUNTRY)-B02 $(BUILD_DIR).ob_rec.o.b22_02 $(BUILD_DIR).ob_rec.o.b24_02
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M02: $(OBJS_02_X) $(REC_ENG_A_S) $(REC_ENG_B_S) $(OBJS_02_A_S) $(OBJS_02_B_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_02_X) $(REC_ENG_A_S) $(REC_ENG_B_S) $(OBJS_02_A_S) $(OBJS_02_B_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_rec.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob02: $(PROD_BUILD_DIR).o.$(COUNTRY)-M02 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M02 -N02 $(OBJMUNGE_OBJFLAGS) -Eobject_rec
+
+# end of ob_rec.mkr ################################################################################

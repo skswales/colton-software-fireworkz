@@ -1,0 +1,30 @@
+#
+# this is the messages file for ob_mails (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+e0:No document selected for mailshot
+e2:No documents with tables for mailshot
+#
+# messages
+#
+1:Document
+2:ug9_setting_up_your_letter.htm
+3:Row
+4:Blank fields
+5:Shuffle
+6:Start
+7:End
+#
+10:Insert mailshot field
+11:ug9_setting_up_your_letter.htm
+12:Field number
+#
+# end of msg (ob_mails)

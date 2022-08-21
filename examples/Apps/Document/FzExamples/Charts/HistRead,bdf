@@ -1,0 +1,32 @@
+{Version:1.07;13 Nov 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
+{Block:0;0;;32;1;6;;32;1;6}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:1190}{MarginRight:1032}{MarginPara:0}{Tablist:R793 L1135 L2269 L3403 L4537 L5671 L6805 L7939 L9073}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{StyleHeaderFooter:BaseHeadFoot}
+{Style:Heading;{Justify:1}{Typeface:Times}{Fonty:480}{Bold:1}}
+{Style:Indent;{MarginLeft:1814}{MarginRight:845}{MarginPara:-567}{Tablist:L1}}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;1;Histograms}
+{S:X;X;0;3;This example (see file HistExam) creates a histogram of the results in the exams tutorial. The key cells are in row 20 onwards. In B20 the bin() function is used to count the averages in column G into five "bins". The bin values are those given in cells D20 to D23 (the last entry being all values over D23). In B21 the set_value function writes out the results from the bin function into the cells E20 to E24.}
+{S:X;X;0;4;Try changing exam values further up the sheet and watch how they affect the averages and then the bin entries. You can also try changing the bin values in cells D20 to D23. For example if the bin values determine the grades given how many extra students would achieve the top grade if it was given for marks of 75% or higher, rather than 80%?}
+{S:X;X;0;5;The histogram is plotted from the values in D20 through to E24, using the values in column D as the axis labels.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{PageHefoBreakValues-H:0;0;0;;1;396;0;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:0;7344;10208;7328}
+{ViewControl:100;2;0;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;3;0;3}
+}

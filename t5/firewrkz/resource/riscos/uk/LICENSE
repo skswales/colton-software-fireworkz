@@ -1,0 +1,45 @@
+Fireworkz is subject to the terms of the Mozilla Public License, v. 2.0
+(MPL).
+
+If a copy of the MPL was not distributed with this file, You can obtain one
+at http://mozilla.org/MPL/2.0/.
+
+Copyright (C) 1989-1998 Colton Software Limited
+Copyright (C) 1998-2015 R W Colton
+
+This licence also applies to the following files in this directory and in
+the given subdirectories that do not contain the above licence:
+
+!Boot
+!Help
+!Run
+!RunImage
+!Sprites
+!Sprites22
+!SpritesR5
+Resource.cfbf
+Resource.cfbf-mini
+Resource.Config
+Resource.Choices.Choice18
+Resource.Dicts.Master
+Resource.Dicts.MasterC
+Resource.Markers.S1
+Resource.Markers.S2
+Resource.Markers.S3
+Resource.Markers.S4
+Resource.Markers.S5
+Resource.Markers.S6
+Resource.Pictures.S1
+Resource.Pictures.S2
+Resource.RISC_OS.!Sprite
+Resource.RISC_OS.ImageSlot
+Resource.RISC_OS.Loader
+Resource.Template.Letter
+Resource.Template.Sheet
+uChoices.DoCopy
+uChoices.ReadMe
+uChoices.Fireworkz.Choices.Choice00
+uChoices.Fireworkz.Choices.Choice01
+uChoices.Fireworkz.Choices.Choice29
+uChoices.Fireworkz.Dicts.User
+uChoices.Fireworkz.Dicts.UserC

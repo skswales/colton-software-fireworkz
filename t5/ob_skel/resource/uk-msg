@@ -1,0 +1,679 @@
+#
+# this is the messages file for ob_skel (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages
+#
+# when changing version number for release, remember other files:
+# definitive list of files is in common.mf_mid
+#1:2.xx/yy
+#1:2.00
+1:2.00
+2:(20 Oct 2015)
+#
+# update date and version in the corresponding RelNotes HTML files too
+#
+1033:© 1992-2015 Colton Software
+r1034:Portions © 1994-2015 R-Comp
+w1037:The product uses the following components
+w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
+#
+3:Single User Licence
+#
+# SKS debug
+#
+1060:%d null events
+#
+92:&Remove
+94:&Help
+95:&Apply
+96:&New
+97:&Change
+98:&Delete
+99:&Replace
+#
+100:Untitled
+w101:%L - %P
+r101:%P: %W
+102: *
+103: at %g%%
+104:%
+105:&Embed
+106:Sorting
+107:Selection
+108:Revert
+109:Cancel
+110:OK
+111:Converting
+112:Loading
+113:Inserting
+114:Saving
+115:Reformatting document
+116:Pasting
+117:Cutting
+118:&Save
+119:&Discard
+#
+120:Print
+121:F1
+122:F2
+123:F3
+124:F4
+125:F5
+126:F6
+127:F7
+128:F8
+129:F9
+130:F10
+131:F11
+132:F12
+r133:Insert
+w133:Ins
+134:Tab
+135:End
+r136:ˆ
+w136:Left
+r137:‰
+w137:Right
+r138:Š
+w138:Down
+r139:‹
+w139:Up
+r140:Delete
+w140:Del
+141:Home
+142:Backspace
+143:Return
+#
+150:Shift+
+151:Ctrl+
+152:Ctrl+Shift+
+#
+r153:‹
+w153:Shift+
+r154:^
+w154:Ctrl+
+r155:^‹
+w155:Ctrl+Shift+
+#
+r160:Page Down
+w160:Page Down
+r161:Page Up
+w161:Page Up
+#
+168:Insert time
+169:Insert file mod. time
+170:Insert date
+1032:Insert file mod. date
+171:Insert page number
+172:&Live
+173:Insert x page number
+r174:Insert the date when this file was last changed (or ADJUST to insert today's date)
+w174:Insert the date when this file was last changed (or Ctrl+button to insert today's date)
+#
+180:Name
+181:Shortcut
+#
+250:Scale view
+#
+# %ge values corresponding to buttons in view zoom dialog
+#
+251:50%
+252:75%
+253:100%
+254:150%
+255:200%
+#
+256:View control
+1239:ug2_accessing_the_view_control_dialogue_box.htm
+257:Scale
+258:C&olumn border
+259:&Row border
+262:&Top ruler
+263:&Side ruler
+264:&New view
+265:Display area
+266:&Full
+267:&Printable area
+268:&Work area
+269:F&it Horz
+270:Fit Vert
+272:&Horizontal split
+273:V&ertical split
+#
+1054:Save selection
+1055:Copy template
+1056:This template is a set of files
+1057:contained in a directory. You must
+1058:drag this directory to a directory
+1059:viewer in order to make a copy of it.
+260:Save other
+261:Other
+#
+283:Column %d, width
+284:Row %d, height
+#
+290:Select template
+291:ug3_creating_a_new_document.htm
+292:New document
+#
+300:ug11_basic_print_options.htm
+301:Copies
+302:&All pages
+303:&Range
+304:&Two up
+305:ug11_extra_print_options.htm
+r307:No RISC OS printer installed
+w307:No printer selected
+321:Revers&e
+322:Co&llated
+323:Acros&s
+324:&Pamphlet
+343:&Extra
+344:Sides
+345:&Both
+346:Od&d
+347:Eve&n
+348:Draft print
+1000:Mailshot
+1035:from page
+1036:to page
+#
+1020:Print scale
+1021:Fit one page
+1022:Fit one page X
+1023:Scale
+1024:100%
+1025:ug11_print_scale.htm
+#
+309:Paragraph
+310:St&yle
+311:&Text
+312:&Colours
+313:&Ruler
+314:&Spacing
+315:&Number
+316:Ro&w
+317:Column
+#
+308:&Justify
+350:&Vertical
+351:Cell
+#
+329:New object
+#
+349:Formats
+318:Number
+319:Date
+1001:Date and time
+320:Text
+1002:Text and error
+#
+325:&Typeface
+326:&Height
+327:&Width
+328:points
+#
+330:&Paragraph
+331:&Left
+332:&Right
+333:&Tabs
+334:&Width
+335:Heading
+336:cm
+337:mm
+338:in
+478:pt
+#
+352:Protection
+#
+# UI of left/centre/right/decimal tabs - spaces following LCRD are intentional
+#
+339:L 
+340:C 
+341:R 
+342:D 
+#
+450:Height
+451:Fixed height
+452:Unbreakable
+453:Heading
+#
+455:Paper
+456:ug7_setting_paper_size.htm
+457:Paper
+458:Paper margin
+459:Binding
+460:&Name
+461:&Height
+462:&Width
+463:&Top
+464:&Bottom
+465:&Left
+466:&Right
+467:Margin
+468:&Alternate
+469:Read pr&inter
+470:None
+471:From printer
+472:&Portrait
+473:Lan&dscape
+474:C&olumn margin
+475:Row margin
+476:&Grid size
+477:&Faint grid
+#
+490:Colour
+491:Background
+492:R
+493:G
+494:B
+495:Transparent
+1028:Colour...
+#
+500:&Above paragraph
+501:&Below paragraph
+502:Bet&ween lines
+503:&Paragraph spacing
+504:&Line spacing
+#
+510:Borders
+511:Grid
+512:Left
+513:Top
+514:Right
+515:Bottom
+#
+516:Margins
+517:Line
+#
+524:Page number
+#
+534:ug8_adding_extra_rows_and_columns.htm
+535:Add columns
+536:Number of columns to add
+540:Add rows
+541:Number of rows to add
+#
+550:Case
+551:ug4_upper_and_lower_case.htm
+#
+600:Warning
+601:Printable area larger than printer driver settings;
+602:click Read Printer in Paper dialogue box for best settings.
+603:Print
+#
+700:Page %d
+701:Page x %d, y %d
+702:View control dialogue box
+1016:Create a new document
+1017:Open an existing document
+703:Apply left justification to the selection or at caret
+704:Apply centre justification to the selection or at caret
+705:Apply right justification to the selection or at caret
+706:Apply full justification to the selection or at caret
+707:Apply, change, create and delete styles
+708:Apply effects to the selection or at caret
+709:Apply bold to the selection or at caret
+710:Apply italic to the selection or at caret
+1012:Apply underline to the selection or at caret
+1018:Apply superscript to the selection or at caret
+1019:Apply subscript to the selection or at caret
+711:Use left tab stop; click in ruler to place new tab
+712:Use centre tab stop; click in ruler to place new tab
+713:Use right tab stop; click in ruler to place new tab
+714:Use decimal tab stop; click in ruler to place new tab
+715:Clear selection/select document
+716:Copy the selection to the clipboard
+717:Cut the selection to the clipboard
+718:Paste from the clipboard
+719:This is the status line
+r720:Save document. SELECT for dialogue box, ADJUST to save immediately
+w720:Save document
+r721:Print document. SELECT for dialogue box, ADJUST for Print Extra dialogue box
+w721:Print document
+1013:Apply box to the selection
+1014:Insert table at caret
+1015:Search dialogue box
+1030:Sort dialogue box
+1051:Spell check
+1052:Thesaurus
+722:Can't delete as selection spans more than one row
+726:%d words counted
+730:Not found
+731:%d replaced
+r732:Drag to resize, double-click for auto-width. ADJUST-drag to reposition
+w732:Drag to resize, double-click for auto-width. Ctrl+drag to reposition
+733:Drag to resize, double-click for auto-height
+r734:ADJUST-drag to reposition
+w734:Ctrl+drag to reposition
+738:Picture at (%s,%s) cm - w=%s h=%s cm
+739:Picture at (%s,%s) mm - w=%s h=%s mm
+740:Picture at (%s,%s) in - w=%s h=%s in
+479:Picture at (%s,%s) pt - w=%s h=%s pt
+741:No action: column too wide
+742:%d word counted
+743:Selection contains %d regions
+1026:Selection contains %d region
+#
+# generic 1,2,3 dp numforms
+#
+744:0.#
+745:0.##
+746:0.###
+#
+750:Backdrop
+751:First page
+752:All pages
+753:Print
+754:Scale to fit
+755:Origin
+756:As is
+757:Work area
+758:Printable area
+759:Paper
+760:Embed
+761:Delete
+762:ug10_backdrop_pictures.htm
+#
+790:One or more documents in the group have been modified
+791:Save group
+792:Discard group
+#
+r800:There is %d document edited but not saved in %s.
+r801:There are %d documents edited but not saved in %s.
+r799:Do you want to save the changes before exiting
+r802:or exit now, discarding all unsaved changes?
+w800:There is %d document edited but not saved in %s.
+w801:There are %d documents edited but not saved in %s.
+w799:Do you want to save the changes before exiting
+w802:or exit now, discarding all unsaved changes?
+#
+803:Do you want to save edited file
+804:'%s'?
+#
+805:This document is part of a linked group
+806:Close group
+807:Close doc
+#
+#w810:
+#w811:
+w812:Version
+w813:User
+w814:Reg. no.
+w816:About Fireworkz
+r810:Name
+#r811:
+r812:Version
+r813:User
+r814:Reg. no.
+r816:About this program
+817:Fireworkz Online...
+w818:http://groups.google.com/group/colton-software-fireworkz
+r818:http://www.croftnuisk.co.uk/coltsoft/fireworkz
+#
+819:Insert table
+820:ug8_adding_tables.htm
+821:Number of c&olumns
+822:Number of &rows
+823:.Table%d
+#
+830:Page break
+831:Page number
+#
+839:Box
+840:ug8_boxes.htm
+841:&Outside
+843:Vertical lines
+844:Horizontal lines
+845:All
+846:&Left
+847:&Right
+848:&Top
+849:&Bottom
+850:Line style
+851:Colour
+#
+857:Save
+#858:to-do.htm
+#
+859:Save template
+860:ug3_creating_templates.htm
+r861:Template
+w861:template.fwt
+862:&All
+863:All styl&es
+864:&Style
+#
+865:Save picture
+#866:to-do.htm
+867:Picture
+#
+870:Search
+871:&Find
+872:&Replace with
+873:&Ignore capitals
+874:Co&py capitals
+875:From &caret
+876:From &top
+877:&Whole words
+w878:From Text &Cursor
+879:ug4_find_and_replace.htm
+#
+880:Found
+881:ug4_find_and_replace.htm
+882:&Next
+883:Replace &all
+#
+890:<Field %d>
+#
+909:Choices
+910:ug2_choices_dialogue_box.htm
+911:Auto save
+912:(mins)
+913:Display pictures
+914:Embed inserted files
+915:Status line
+920:Toolbar
+916:Measurement
+917:Kerning
+918:Allow dithering
+921:Load text using delimiter
+919:Load text as paragraphs
+922:Update styles from choices
+#
+# Style text conversion
+# order matches style bit numbering order
+#
+930:&In
+931:&Out
+933:No more regions
+934:Region
+#
+938: on
+939: off
+#
+941: left
+942: centre
+943: right
+944: both
+945: %s
+#
+947:Region: %s
+#
+948:Style
+949:Key shortcut
+950:[Handle]
+951:[Special]
+952:Col width
+953:Col name
+954:Row height
+955:Row height fixed
+956:Row unbreakable
+957:Row name
+958:Left margin
+959:Right margin
+960:Para margin
+961:Tabs
+962:Background colour
+963:Space before para
+964:Space after para
+965:Line space
+966:Justify
+967:Justify
+968:New object
+969:Number format
+970:Date format
+971:Text format
+972:Border colour
+973:Border
+974:Grid left colour
+975:Grid top colour
+976:Grid right colour
+977:Grid bottom colour
+978:Grid left
+979:Grid top
+980:Grid right
+981:Grid bottom
+982:Protect
+983:Typeface
+984:Font width
+985:Font height
+986:Underline
+987:Bold
+988:Italic
+989:Superscript
+990:Subscript
+991:Font colour
+#
+995: top
+996: bottom
+997:Library
+#
+998:Sort
+1043:sg1_sorting_your_data.htm
+999:Descending order
+#
+r1011:This is the %s application.|MClick SELECT to create a new document.
+#
+1040:Text
+1041:* DB data
+1042:Number
+#
+# Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
+#
+# e0:Not an error
+# e1:ERROR_RQ
+e2:General failure
+e3:Memory full
+e5:Run-time check failed
+#
+# Skeleton errors: keep consistent with ob_skel/resource/resource.h ERR_xxx
+#
+e48:Error (%d:%d) not found
+e49:Message (%d:%d) not found
+#
+e51:Feature unavailable
+e52:Too many windows
+e53:Unable to start %s: Config file not found
+e54:Unable to start %s: %s when loading Config file
+re55:Font Manager: Error in setting current font
+re56:Font Manager: Error in setting colour
+re57:Font Manager: Error in Font_Paint
+re58:Font Manager: Error in Font_Find
+e59:Printer driver not loaded
+#
+e60:Can't do this whilst recording a command
+e63:File %s is already loaded
+e65:File %s has the same leafname as an already loaded file
+e66:Cannot load this type of file
+e67:End of file reached before construct end
+e68:Font not found in FontMap
+re69:RISC OS font name not found
+#
+e70:Template file not found
+re71:No fonts available
+we71:No TrueType fonts available
+e72:Style name not found in style list
+e73:Style in use in document
+re74:Print stream won't open
+we74:Failed to open print device
+e75:Print failed %s
+e76:Already printing
+re77:No printer driver loaded
+e78:Bad find string
+re79:No thesaurus loaded
+#
+e80:No data found in file
+re81:Unable to locate Stubs file
+e83:Unable to load embedded picture because memory full; picture discarded
+e84:Unable to load referenced picture %s because memory full; reference retained
+e85:Unable to load referenced picture %s because file not found; reference retained
+e86:Area is protected
+e87:Supporting file %s not found
+e88:Style name already in use
+e89:Style name can not be blank
+#
+e90:%s has missing mandatory arg %d, type %d
+e91:Can't edit notes which are scaled to fit
+e92:Unable to display help file
+e93:No browser available to access URL
+we94:Failed to load Dial Solutions Drawfile DLL
+e95:%s has bad raw arg %u, size %u, sep '%c'
+e96:Unable to locate compound file template for save
+re97:To save, drag the icon to a directory viewer
+re98:Can't transfer file (Scrap directory not set)
+e99:Invalid date/time
+#
+e100:Module not found
+e101:%s has bad arg %u, value %u, limit %u
+e102:Document has too many columns to export in this format
+e103:Document has too many rows to export in this format
+#
+e120:Read only
+e121:Destination specified for templates already exists
+e122:Can't import as '%s' because a file of that name already exists
+e123:Can't delete the text body column - use make blank to clear data
+e124:This file is too small to be correct
+e125:This file is too large to be loaded into memory
+e126:Bad UTF-8 encoding
+e127:UCS-4 NONCHARACTER
+#
+re202:Not a module file
+re203:Bad chunk within module file
+re204:Module too new for this application
+re205:Object loader failed to read entire block
+re206:Stub binding failed
+re207:Stub entry referenced that is no longer available
+re208:Attempt to relocate unknown instruction sequence
+#
+we201:Not enough disk space currently available for spooling
+we202:Not enough memory is available for spooling
+we203:Print cancelled
+we204:Print cancelled - error from printing system
+we205:Print cancelled
+we206:Native compound file write needs filename
+#
+# RISC OS specific messages looked up by name
+#
+rsig1:Abnormal termination
+rsig2:Arithmetic exception
+rsig3:Illegal instruction
+rsig4:Attention request
+rsig5:Address exception
+rsig6:Termination request
+rsig7:Stack overflow
+rsig10:OS error
+#
+# Only needed in translated message files as application has en-GB default strings
+#
+#rerror_fatal:%s has gone wrong (%s). Click Continue to exit, losing data.
+#rerror_serious:%s has gone wrong (%s). Click Continue to exit, losing data, Cancel to attempt to resume execution.
+#
+# end of msg (ob_skel)

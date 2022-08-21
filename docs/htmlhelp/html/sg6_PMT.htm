@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <link href="usguide.css" rel="stylesheet" type="text/css" />
+  <title>PMT</title>
+</head>
+
+<body>
+  <!-- This Source Code Form is subject to the terms of the Mozilla Public
+     - License, v. 2.0. If a copy of the MPL was not distributed with this
+     - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+  <!-- Copyright (C) 1994-1998 Colton Software Limited
+     - Copyright (C) 1998-2015 R W Colton -->
+  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+    <param name="Keyword" value="PMT" />
+  </object>
+
+  <h1><a name="pmt" id="pmt"></a>PMT</h1>
+
+  <p>Returns the payment on a loan.</p>
+
+  <p><b>Syntax:</b></p>
+
+  <p><span class="csguide-decl">PMT(<span class="csguide-arg">principal</span>:number,
+  <span class="csguide-arg">interest</span>:number,
+  <span class="csguide-arg">term</span>:number)</code></p>
+
+  <p>Calculates the payment on a loan given:</p>
+
+  <table>
+  <tr><td><span class="csguide-arg">principal</span></td><td>is the amount of the loan,</td></tr>
+  <tr><td><span class="csguide-arg">interest</span></td><td>is the rate of the interest,</td></tr>
+  <tr><td><span class="csguide-arg">term</span></td><td>is the term of the loan (number of periods).</td></tr>
+  </table>
+
+  <p>To calculate the monthly payment given an annual percentage rate and a term in years, divide the annual interest rate by 12 and multiply the number of years by 12.</p>
+
+  <p>The following formula underlies the PMT function:</p>
+
+  <p>payment = <i>principal</i> &times; ( <i>interest</i> &divide; (1 - (1 + <i>interest</i>)<sup>-<i>term</i></sup>) )</p>
+
+  <p><b>Example:</b></p>
+
+  <p>To calculate the monthly repayment on a loan of &pound;150,000, with 10% annual interest and a term of 20 years, the formula would be:</p>
+
+  <p><code>PMT(150000, 0.10/12, 20*12)</code></p>
+
+  <p>and the monthly payment returned would be <code>1447.53</code> (pounds).</p>
+
+<div class="navfooter">
+<hr/>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sg6_NPV.htm">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="sg5_financial_functions.htm">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="sg6_PMT_XLS.htm">Next</a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

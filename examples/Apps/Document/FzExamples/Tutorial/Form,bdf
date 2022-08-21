@@ -1,0 +1,44 @@
+{Version:1.22;(11 May 1995);FireworkzPro;Paul Fellows - Evaluation Version;8022 0659 0913 1314}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;1;9;;32;1;9}
+{Style:BaseLetter;{ColWidth:11180}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:2109}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Helvetica}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:Heading;{Typeface:Helvetica}{Fontx:640}{Fonty:480}{Bold:1}}
+{Style:Currency;{StyleSearch:4}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
+{Style:Number;{Justify:2}}
+{PrintQuality:0}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;0;Middlebury Youth Club}
+{S:X;X;0;1;Summer Activities}
+{S:X;X;0;2;This year we plan to organise plenty of outdoor activities each weekend. We hope to arrange events such as abseiling, canoeing, hiking, pony trekking and potholing. All activities will last for a single day, except for pony trekking which will involve and overnight stay in a youth hostel.}
+{S:X;X;0;3;All activities will be supervised by fully qualified staff and include all the safety equipment you need to use. Please note that to take part in canoeing you must be able to swim.}
+{S:X;X;0;4;If you are interested in taking part, please get your parent or guardian to sign the form, and return it with the dates and activities you want to take part in clearly shown. We will not be taking money at this stage but will let you know when we confirm that the activity is going to take place. So please return the form as soon as possible.}
+{S:X;X;0;5;Planned timetable}
+{S:X;X;0;7;I have read this leaflet and agree to my child taking part in the activities.}
+{S:X;X;0;8;Parent or guardian{ITT-X}{ITT-X}{ITT-X}Date}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{R:0;0;;32;1;2;;32;0;0;{StyleHandle:Heading}}
+{R:0;5;;32;1;6;;32;0;0;{StyleHandle:Heading}}
+{PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:192;12768;12480;8320}
+{ViewControl:100;0;1;1;0;0;0;2048;0;2048}
+{CurrentPosition:0;2;0;3;0}
+}

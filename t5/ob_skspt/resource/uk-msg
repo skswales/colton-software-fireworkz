@@ -1,0 +1,44 @@
+#
+# this is the messages file for ob_skspt (UK)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1995-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# errors
+#
+e0:Can't delete the base style
+#
+# messages
+#
+1:Styles
+10:ug6_the_style_editor.htm
+2:Define new style
+11:ug6_adding_a_new_style.htm
+3:NewStyle%ld
+4:New style name
+5:Based on
+w6:Defining new style - %s
+r6:Defining new style: %s
+w7:Editing style - %s
+r7:Editing style: %s
+8:Apply effects
+9:Style in use in this document. Remove all uses?
+12:Type
+13:Region
+14:ug5_removing_styles_and_effects.htm
+15:Style
+16:ug5_deleting_styles.htm
+#
+20:ug6_style.htm
+21:ug6_text.htm
+22:ug6_ruler.htm
+23:ug6_colour.htm
+24:ug6_spacing.htm
+25:sg3_styles_in_spreadsheet_documents.htm
+26:ug6_row.htm
+#
+# end of msg (ob_skspt)

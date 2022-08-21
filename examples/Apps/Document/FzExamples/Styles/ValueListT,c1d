@@ -1,0 +1,12 @@
+{Style:Dingbats;{Typeface:ZapfDingbats}}
+{Style:CrossTick;{Numform:#\{[Dingbats]c,[Dingbats]b\}}}
+{Style:_Tick;{Numform:#\{,[Dingbats]b\}}}
+{Style:_Cross;{Numform:#\{,[Dingbats]c\}}}
+{Style:_Dash;{Numform:#\{,-\}}}
+{Style:_Bullet;{Numform:#\{,[Dingbats]l\}}}
+{Style:NoYes;{Numform:#\{No,Yes\}}}
+{Style:FalseTrue;{Numform:#\{False,True\}}}
+{Style:Weekday_short;{Numform:#\{,Sun,Mon,Tue,Wed,Thu,Fri,Sat\}}}
+{Style:Weekday_long;{Numform:#\{,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday\}}}
+{Style:Month_short;{Numform:#\{,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec\}}}
+{Style:Month_long;{Numform:#\{,January,February,March,April,May,June,July,August,September,October,November,December\}}}

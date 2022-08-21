@@ -1,0 +1,8 @@
+|
+| Copy the contents of this directory as <Choices$Write>.Fireworkz
+|
+If "z<Choices$Write>"="z" Then Error 0 Fireworkz needs Choices$Write to be set
+|
+CDir <Choices$Write>.Fireworkz
+|
+Copy <Obey$Dir>.Fireworkz.* <Choices$Write>.Fireworkz.* ~CFLNR~V

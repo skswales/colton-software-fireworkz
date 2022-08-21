@@ -1,0 +1,14 @@
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+|
+| Copyright (C) 2013-2015 Stuart Swales
+|
+set COLTSOFT_CS_NONFREE $.coltsoft.trunk.cs-nonfree
+|
+IfThere <COLTSOFT_CS_NONFREE>.Microsoft Then Else Error 0 <COLTSOFT_CS_NONFREE> not present
+|
+cdir                                                               <Obey$Dir>.^.external.Microsoft.Excel97SDK.INCLUDE
+cdir                                                               <Obey$Dir>.^.external.Microsoft.Excel97SDK.INCLUDE.h
+copy <COLTSOFT_CS_NONFREE>.Microsoft.Excel_97_SDK.INCLUDE.XLCALL/H <Obey$Dir>.^.external.Microsoft.Excel97SDK.INCLUDE.h.xlcall ~CF~N~RV
+

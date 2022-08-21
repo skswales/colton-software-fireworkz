@@ -1,0 +1,144 @@
+{Version:1.19/02; (10 Jan 1995);Fireworkz;Debug version;8000 1182 2716 7191}
+{RowTable:0}
+{Flow:10}
+{Block:0;0;;32;6;38;;32;6;38}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}
+{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:L1134 L1643 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}
+{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}
+{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}
+{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:BaseHeadFoot}
+{Style:.Table1;{ParaStart:68}{ParaEnd:45}
+{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}
+{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:.Table2;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}
+{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:.Table3;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}
+{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{Style:Heading;{Typeface:Times}{Fonty:600}{Bold:1}}
+{PrintQuality:0}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{StartOfData}
+{S:X;X;0;0;Fireworkz keystrokes}
+{S:X;X;1;2;A}
+{S:X;X;1;3;B}
+{S:X;X;1;4;C}
+{S:X;X;1;5;D}
+{S:X;X;1;6;E}
+{S:X;X;1;7;F}
+{S:X;X;1;8;G}
+{S:X;X;1;9;H}
+{S:X;X;1;10;I}
+{S:X;X;1;11;J}
+{S:X;X;1;12;K}
+{S:X;X;1;13;L}
+{S:X;X;1;14;M}
+{S:X;X;1;15;N}
+{S:X;X;1;16;O}
+{S:X;X;1;17;P}
+{S:X;X;1;18;Q}
+{S:X;X;1;19;R}
+{S:X;X;1;20;S}
+{S:X;X;1;21;T}
+{S:X;X;1;22;U}
+{S:X;X;1;23;V}
+{S:X;X;1;24;W}
+{S:X;X;1;25;X}
+{S:X;X;1;26;Y}
+{S:X;X;1;27;Z}
+{S:X;X;1;30;F2}
+{S:X;X;1;31;F3}
+{S:X;X;1;32;F4}
+{S:X;X;1;33;F6}
+{S:X;X;1;34;F7}
+{S:X;X;1;35;F8}
+{S:X;X;2;1;Ctrl}
+{S:X;X;2;3;Bold}
+{S:X;X;2;4;Copy}
+{S:X;X;2;5;Insert date}
+{S:X;X;2;7;Find}
+{S:X;X;2;10;Italic}
+{S:X;X;2;12;Spell check}
+{S:X;X;2;14; }
+{S:X;X;2;15;Next match}
+{S:X;X;2;17;Select paragraph}
+{S:X;X;2;18;Thesaurus}
+{S:X;X;2;19;Regions}
+{S:X;X;2;20;Swap case}
+{S:X;X;2;23;Paste}
+{S:X;X;2;24;Select word}
+{S:X;X;2;25;Cut}
+{S:X;X;2;27;Clear }
+{S:X;X;2;30;Formula line}
+{S:X;X;2;31;Save}
+{S:X;X;2;32;Search}
+{S:X;X;2;33;Sort}
+{S:X;X;2;34;Insert row}
+{S:X;X;2;35;Delete row}
+{S:X;X;3;1;Shift-Ctrl}
+{S:X;X;3;3;Make box}
+{S:X;X;3;4;Centre}
+{S:X;X;3;6;Effects}
+{S:X;X;3;7;Full justify}
+{S:X;X;3;13;Left justify}
+{S:X;X;3;15;Insert name}
+{S:X;X;3;17;Insert page number}
+{S:X;X;3;19;Right justify}
+{S:X;X;3;20;Styles}
+{S:X;X;3;21;Table}
+{S:X;X;3;23;View control}
+{S:X;X;3;25;Make box}
+{S:X;X;3;29;Shift}
+{S:X;X;3;34;Insert column}
+{S:X;X;3;35;Delete column}
+{S:X;X;4;29;Ctrl}
+{S:X;X;4;32;Active queries}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:1;1;;32;4;28;;32;0;0;{StyleHandle:.Table1}}
+{R:0;1;;32;1;28;;32;0;0;{ColWidth:3344}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:1;1;;32;2;36;;32;0;0;{ColWidth:1134}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:1;1;;32;2;28;;32;0;0;{StyleHandle:.Table3}}
+{R:2;1;;32;3;28;;32;0;0;{ColWidth:1870}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:1;1;;32;2;2;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridLeft:0}{GridTop:0}}
+{R:1;29;;32;5;36;;32;0;0;{StyleHandle:.Table1}}
+{R:0;29;;32;1;36;;32;0;0;{ColWidth:3345}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:1;29;;32;2;36;;32;0;0;{StyleHandle:.Table3}}
+{R:0;0;;32;1;1;;32;0;0;{StyleHandle:Heading}}
+{R:0;0;;32;1;1;;32;0;0;{Justify:1}}
+{R:1;1;;32;2;28;;32;0;0;{ColWidth:452}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:0;28;;32;1;29;;32;0;0;{ColWidth:3344}}
+{R:3;1;;32;4;28;;32;0;0;{ColWidth:2160}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:3;19;;32;4;20;;32;0;0;{Justify:0}}
+{R:;0;;;;1;;;0;1;{RowHeight:963}{RowHeightFix:1}}
+{R:2;29;;32;3;36;;32;0;0;{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:L1303}}
+{R:1;29;;32;2;36;;32;0;0;{ColWidth:509}{MarginLeft:113}{MarginRight:113}{MarginPara:0}{Tablist:}}
+{R:2;1;;32;3;2;;32;0;0;{Justify:1}}
+{R:3;1;;32;4;2;;32;0;0;{Justify:1}}
+{R:2;3;;32;3;4;4;3;0;0;{Bold:0}}
+{R:3;4;;32;4;5;;32;0;0;{Justify:0}}
+{R:3;7;;32;4;8;;32;0;0;{Justify:0}}
+{R:2;10;;32;3;11;6;3;0;0;{Italic:0}}
+{R:2;29;;32;3;36;;32;0;0;{ColWidth:1814}}
+{R:3;29;;32;4;36;;32;0;0;{MarginLeft:113}{MarginRight:113}{MarginPara:0}}
+{R:4;29;;32;5;36;;32;0;0;{ColWidth:1927}{MarginLeft:113}{MarginRight:113}{MarginPara:0}}
+{R:3;29;;32;4;36;;32;0;0;{ColWidth:2154}}
+{R:1;29;;32;2;30;;32;0;0;{GridLeftColour:0;0;0}{GridLeft:0}}
+{R:1;29;;32;3;30;;32;0;0;{GridTopColour:0;0;0}{GridTop:0}}
+{R:2;29;;32;3;30;;32;0;0;{GridLeftColour:0;0;0}{GridLeft:0}}
+{R:3;29;;32;5;30;;32;0;0;{Justify:1}}
+{PageHefoBreakValues-H:0;0;0;;1;0;68;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{EndOfData}
+{CmdGroup:{ViewCreate:96;9184;12480;8000}
+{ViewControl:100;0;1;0;0;0;0;2048;0;2048}
+{CurrentPosition:0;0;24;3;0}
+}

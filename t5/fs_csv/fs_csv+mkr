@@ -1,0 +1,36 @@
+#
+# fs_csv
+#
+OBJID=35
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 2015 Stuart Swales
+
+# Windows STRINGTABLE
+$(BUILD_DIR).fs_csv.$(COUNTRY)-35/rc: $(T5).resource.zz-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 35 -common
+
+# RISC OS bound messages
+$(BUILD_DIR).fs_csv.o.$(COUNTRY)-B35: $(T5).resource.zz-msg
+ $(MAKEMESS) -to $(BUILD_DIR).fs_csv.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).fs_csv.o.$(COUNTRY)-B_tmp -symbol rb_fs_csv_msg_weak
+
+$(BUILD_DIR).fs_csv.o.fs_csv: $(T5).fs_csv.c.fs_csv
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_35_S=$(BUILD_DIR).fs_csv.o.fs_csv
+
+OBJS_35_X=$(BUILD_DIR).fs_csv.o.$(COUNTRY)-B35
+
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M35: $(OBJS_35_X) $(OBJS_35_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_35_X) $(OBJS_35_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fs_csv.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob35: $(PROD_BUILD_DIR).o.$(COUNTRY)-M35 $(PROD_BUILD_DIR).binaries.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M35 -N35 $(OBJMUNGE_OBJFLAGS) -Eobject_fs_csv
+
+# end of fs_csv.mkr ################################################################################
