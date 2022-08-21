@@ -8,7 +8,7 @@
 
 /* NB keep in step with other files (definitive list in common.mf_mid) */
 
-#define HEX_VERSION_NUMBER          0x23000
+#define HEX_VERSION_NUMBER          0x23001
 
 /* for Windows RC file */
 

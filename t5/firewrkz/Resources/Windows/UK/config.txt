@@ -1,4 +1,4 @@
-{Version:2.30;10 Nov 2020;Fireworkz for Windows (UK);Colton Software;Windows-1252}
+{Version:2.30.01;15 Nov 2020;Fireworkz for Windows (UK);Colton Software;Windows-1252}
 {RowTable:1}
 {BindFileType:1;0;All files;(*.*);*.*}
 {BindFileType:1;0xBDF;Colton Software Fireworkz;(*.fwk,*.fwkh);*.fwk\\\;*.fwkh}
@@ -26,7 +26,7 @@
 {BindFileType:12;0xB2F;Windows Metafile;(*.emf,*.wmf);*.emf\\\;*.wmf}
 {BindFileType:12;0xFF9;RISC OS Sprite;(*.ff9);*.ff9}
 {BindFileType:14;0xAFF;RISC OS Draw;(*.aff);*.aff}
-{BindFileType:12;0xA78;Embedded (OLE);(*.fwkh);*.fwkh}
+{BindFileType:12;0xA78;Fireworkz [Embedded in RISC OS Draw];(*.fwkh);*.fwkh}
 {DefineKey:F2;EditFormula-s}
 {DefineKey:!F9;SelectCell}
 {DefineKey:^F;Button:SEARCH}

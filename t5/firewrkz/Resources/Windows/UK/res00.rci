@@ -36,8 +36,8 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	L"2.30"
-	0x2,	L"10 Nov 2020"
+	0x1,	L"2.30.01"
+	0x2,	L"15 Nov 2020"
 //
 	0x3,	L"© 1992-2020 Colton Software"
 	0x40D,	L"The product uses the following components"

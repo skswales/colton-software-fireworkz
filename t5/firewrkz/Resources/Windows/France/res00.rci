@@ -36,9 +36,9 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	L"2.30"
+	0x1,	L"2.30.01"
 // UK 2:dd mmm yyyy
-	0x2,	L"10 nov 2020"
+	0x2,	L"15 nov 2020"
 //
 	0x3,	L"© 1992-2020 Colton Software"
 // UK w1037:The product uses the following components
@@ -1258,7 +1258,7 @@ BEGIN
 //re81:Unable to locate Stubs file
 // UK NEW e83:No alternate command for this toolbar button
 	0x8053,	L"No alternate command for this toolbar button"
-// UK e84:This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format
+// UK NEW e84:This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format
 	0x8054,	L"This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format"
 // UK e85:Unable to load referenced picture %s because file not found; reference retained
 	0x8055,	L"Unable to load referenced picture %s because file not found; reference retained"

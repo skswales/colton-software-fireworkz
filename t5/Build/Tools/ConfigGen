@@ -765,7 +765,11 @@ PROCbind_file_type(f%,"12","0x132","Windows Icon","*.ico","*.ico")
 PROCbind_file_type(f%,"12","0xB2F","Windows Metafile","*.emf,*.wmf","*.emf"+semico$+"*.wmf")
 PROCbind_file_type(f%,"12","0xFF9","RISC OS Sprite","*.ff9","*.ff9")
 PROCbind_file_type(f%,"14","0xAFF","RISC OS Draw","*.aff","*.aff")
-PROCbind_file_type(f%,"12","0xA78","Embedded (OLE)","*.fwkh","*.fwkh")
+IF windows% THEN
+  PROCbind_file_type(f%,"12","0xA78","Fireworkz [Embedded in RISC OS Draw]","*.fwkh","*.fwkh")
+ELSE
+  PROCbind_file_type(f%,"12","0xA78","Embedded (OLE)","*.fwkh","*.fwkh")
+ENDIF
 ENDPROC
 :
 :

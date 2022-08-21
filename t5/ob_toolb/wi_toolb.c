@@ -457,7 +457,7 @@ toolbar_set_tooltip_text(
     /* Terminate 'sentences' from status line with a newline for multi-line tooltip */
     for(tstr = tstr_buf;;)
     {
-        PTSTR tstr_next = strchr(tstr, '.');
+        PTSTR tstr_next = tstrchr(tstr, '.');
 
         if(NULL == tstr_next++)
             break;

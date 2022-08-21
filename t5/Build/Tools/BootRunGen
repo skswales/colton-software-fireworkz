@@ -555,13 +555,18 @@ ELSE
 ENDIF
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition of file types we do not actually own
+IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE)
+IF fy_or_fz% THEN PROCft_ar(f%,"BA6","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
 IF fy_or_fz% THEN PROCs(f%,"File$Type_C27","Database",TRUE)
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
-REM Never override any other definition of file types we do not actually own
-IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE)
-IF fy_or_fz% THEN PROCft_ar(f%,"BA6","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
+REM Never override any other definition...
+IF fy_or_fz% THEN PROCs(f%,"File$Type_C32","RTF",TRUE)
+IF fy_or_fz% THEN PROCft_ar(f%,"C32","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
@@ -572,10 +577,6 @@ IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
 IF fy_or_fz% THEN PROCs(f%,"File$Type_DFE","CSV",TRUE)
 IF fy_or_fz% THEN PROCft_ar(f%,"DFE","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
-:
-IF fy_or_fz% THEN PROCo(f%,"|")
-REM Never override any other definition...
-IF fy_or_fz% THEN PROCs(f%,"File$Type_C32","RTF",TRUE)
 ENDPROC
 :
 :
