@@ -485,8 +485,8 @@ IF windows% THEN
   REM PROChelp_menu(f%,root_menu$,FALSE)
 ELSE
   PROCma(f%,root_menu$,FNselect("Info","Info"),";;;Info")
-  PROCma(f%,root_menu$,FNselect("Choices","Einstellungen")+ellipsis$,";;Choices")
   PROChelp_menu(f%,root_menu$,FALSE)
+  PROCma(f%,root_menu$,FNselect("Choices","Einstellungen")+ellipsis$,";;Choices")
   PROCma(f%,root_menu$,FNselect("Quit","Beenden"),";;Quit")
 ENDIF
 :

@@ -11,9 +11,9 @@
 # Copyright (C) 1998-2015 R W Colton
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
-TEXTUAL_VERSION_NUMBER=2.00.02
+TEXTUAL_VERSION_NUMBER=2.00.03
 
-STUBS_VERSION_NUMBER=20002
+STUBS_VERSION_NUMBER=20003
 # when changing version number for release, remember:
 #   common.gflags.h
 #   common.mf_mid

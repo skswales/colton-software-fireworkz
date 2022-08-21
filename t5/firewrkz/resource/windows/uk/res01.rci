@@ -791,7 +791,7 @@ BEGIN
 	0x2179,	"Population variance of all the values in |list:List of values (or array, or range of cells)|"
 	0x2309,	"varpa"
 	0x217A,	"Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places"
-	0x230A,	"percentagerank.inc"
+	0x230A,	"percentrank.inc"
 	0x217B,	"Error function integrated between zero and |lower limit:Number|, or between lower limit and the optional |1{upper limit}:Number|"
 	0x230B,	"erf"
 	0x217C,	"Error function integrated between |x:Number| and +infinity. This is the complementary error function"
@@ -1005,7 +1005,7 @@ BEGIN
 	0x21D7,	"Find the value in the CDF for the log-normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale"
 	0x2367,	"lognorm.inv"
 	0x21D8,	"Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places"
-	0x2368,	"percentagerank.exc"
+	0x2368,	"percentrank.exc"
 //
 // end of msg (ob_ss)
 END

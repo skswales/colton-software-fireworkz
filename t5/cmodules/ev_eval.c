@@ -2103,7 +2103,7 @@ lookup_block_init(
     p_lookup_block->n_found = 0;
     p_lookup_block->ix_match = 0;
     p_lookup_block->all_occs = all_occs;
-    p_lookup_block->hlookup = 0;
+    p_lookup_block->lookup_horz = FALSE;
 }
 
 /******************************************************************************
@@ -2141,8 +2141,8 @@ hvlookup_using_bfind(
             EV_DATA ev_data;
             (void) array_range_index(&ev_data,
                                      &p_stack_lookup->arg1,
-                                     p_lookup_block->hlookup ? p_lookup_block->ix : 0,
-                                     p_lookup_block->hlookup ? 0 : p_lookup_block->ix,
+                                     p_lookup_block->lookup_horz ? p_lookup_block->ix : 0,
+                                     p_lookup_block->lookup_horz ? 0 : p_lookup_block->ix,
                                      EM_CONST);
             compare_res = ss_data_compare(&p_lookup_block->target_data, &ev_data, FALSE, FALSE);
             ss_data_free_resources(&ev_data);
@@ -2221,8 +2221,6 @@ lookup_process(
 
     array_range_sizes(&p_stack_lookup->arg1, &x_size, &y_size);
 
-    limit = p_lookup_block->hlookup ? x_size : y_size;
-
     switch(p_lookup_block->lookup_id)
     {
     default: default_unhandled();
@@ -2230,18 +2228,20 @@ lookup_process(
     case LOOKUP_HLOOKUP:
     case LOOKUP_VLOOKUP:
 #endif
-        p_lookup_block->hlookup = (LOOKUP_HLOOKUP == p_lookup_block->lookup_id);
-        return(hvlookup_using_bfind(p_stack_lookup, limit));
+        p_lookup_block->lookup_horz = (LOOKUP_HLOOKUP == p_lookup_block->lookup_id);
+        return(hvlookup_using_bfind(p_stack_lookup, p_lookup_block->lookup_horz ? x_size : y_size));
 
     case LOOKUP_LOOKUP:
-        p_lookup_block->hlookup = (y_size == 1);
+        p_lookup_block->lookup_horz = (y_size == 1);
         allow_wild_match = TRUE; /* SKS 24apr96 - I think I'd changed this around 1.23 time, but then h/vlookup would have been wrong before too */
         break;
 
     case LOOKUP_MATCH:
-        p_lookup_block->hlookup = (y_size == 1);
+        p_lookup_block->lookup_horz = (y_size == 1);
         break;
     }
+
+    limit = p_lookup_block->lookup_horz ? x_size : y_size;
 
     while(p_lookup_block->ix < limit)
     {
@@ -2251,8 +2251,8 @@ lookup_process(
         EV_DATA ev_data;
         (void) array_range_index(&ev_data,
                                  &p_stack_lookup->arg1,
-                                 p_lookup_block->hlookup ? p_lookup_block->ix : 0,
-                                 p_lookup_block->hlookup ? 0 : p_lookup_block->ix,
+                                 p_lookup_block->lookup_horz ? p_lookup_block->ix : 0,
+                                 p_lookup_block->lookup_horz ? 0 : p_lookup_block->ix,
                                  EM_CONST);
         compare_res = ss_data_compare(&ev_data, &p_lookup_block->target_data, FALSE, allow_wild_match); /* SKS 24apr96 notes that it's the 2nd string that can be wild*/
         ss_data_free_resources(&ev_data);
@@ -2363,8 +2363,8 @@ lookup_finish(
             EV_DATA ev_data;
             (void) array_range_index(&ev_data,
                                      &p_stack_lookup->arg1,
-                                     p_lookup_block->hlookup ? p_lookup_block->ix_match : p_stack_lookup->arg2.arg.integer - 1,
-                                     p_lookup_block->hlookup ? p_stack_lookup->arg2.arg.integer - 1 : p_lookup_block->ix_match,
+                                     p_lookup_block->lookup_horz ? p_lookup_block->ix_match : p_stack_lookup->arg2.arg.integer - 1,
+                                     p_lookup_block->lookup_horz ? p_stack_lookup->arg2.arg.integer - 1 : p_lookup_block->ix_match,
                                      EM_ANY);
             status_assert(ss_data_resource_copy(p_ev_data_res, &ev_data));
             ss_data_free_resources(&ev_data);
@@ -2376,8 +2376,8 @@ lookup_finish(
             EV_DATA ev_data;
             (void) array_range_index(&ev_data,
                                      &p_stack_lookup->arg2,
-                                     p_lookup_block->hlookup ? p_lookup_block->ix_match : 0,
-                                     p_lookup_block->hlookup ? 0 : p_lookup_block->ix_match,
+                                     p_lookup_block->lookup_horz ? p_lookup_block->ix_match : 0,
+                                     p_lookup_block->lookup_horz ? 0 : p_lookup_block->ix_match,
                                      EM_ANY);
             status_assert(ss_data_resource_copy(p_ev_data_res, &ev_data));
             ss_data_free_resources(&ev_data);

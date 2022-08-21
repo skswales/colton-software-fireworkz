@@ -473,7 +473,7 @@ typedef struct LOOKUP_BLOCK
     S32 n_found;
     S32 ix_match;
     BOOL all_occs;
-    BOOL hlookup;
+    BOOL lookup_horz;
 }
 LOOKUP_BLOCK, * P_LOOKUP_BLOCK;
 

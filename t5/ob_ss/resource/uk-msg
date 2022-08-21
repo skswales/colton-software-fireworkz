@@ -777,7 +777,7 @@ w776:vara
 377:Population variance of all the values in |list:List of values (or array, or range of cells)|
 w777:varpa
 378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
-w778:percentagerank.inc
+w778:percentrank.inc
 379:Error function integrated between zero and |lower limit:Number|, or between lower limit and the optional |1{upper limit}:Number|
 w779:erf
 380:Error function integrated between |x:Number| and +infinity. This is the complementary error function
@@ -991,6 +991,6 @@ w870:odf.complex
 471:Find the value in the CDF for the log-normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
 w871:lognorm.inv
 472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
-w872:percentagerank.exc
+w872:percentrank.exc
 #
 # end of msg (ob_ss)
