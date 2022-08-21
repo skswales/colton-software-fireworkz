@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 /* Define the version number of this release */
-#define VERSION_NUMBER 20000
+#define VERSION_NUMBER 20001
 /* NB keep in step with other files (definitive list in common.mf_mid) */
 
 #if defined(_PREFAST_)

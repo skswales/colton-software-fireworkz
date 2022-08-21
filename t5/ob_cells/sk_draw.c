@@ -290,11 +290,11 @@ draw_grid(
                     zero_struct(page_flags);
 
                     {
-                    ROW_ENTRY row_entry;
+                    ROW_ENTRY row_entry, row_entry_next;
                     row_entry_from_row(p_docu, &row_entry, p_row[0]);
                     page_flags.first_row_on_page = row_entry.rowtab.edge_top.pixit == 0;
-                    row_entry_from_row(p_docu, &row_entry, row_last - 1);
-                    page_flags.last_row_on_page = (row_last == row_e && row_entry.rowtab.edge_top.page != row_entry.rowtab_next.edge_top.page);
+                    row_entries_from_row(p_docu, &row_entry, &row_entry_next, row_last - 1);
+                    page_flags.last_row_on_page = (row_last == row_e) && (row_entry.rowtab.edge_top.page != row_entry_next.rowtab.edge_top.page);
                     } /*block*/
 
                     /* set page flags for col_l / col_r */

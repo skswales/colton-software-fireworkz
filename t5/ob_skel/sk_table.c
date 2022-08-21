@@ -891,7 +891,7 @@ object_construct_table[] =
     { "VRulerScale",            args_s32_s32_s32_s32,       T5_CMD_RULER_SCALE_V,                       { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
 
     { "NoteSingle",             args_cmd_note_1,            T5_CMD_NOTE,                                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
-    { "NoteTwin",               args_cmd_note_2,            T5_CMD_NOTE,                                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
+    { "NoteTwin",               args_cmd_note_2,            T5_CMD_NOTETWIN,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } }, /* compatibility */ /* not saved */
     { "NoteBackdrop",           args_cmd_note_345,          T5_CMD_NOTEBD,                              { 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
     { "NoteBack",               NULL,                       T5_CMD_NOTE_BACK,                           { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 } },
     { "NoteSwap",               NULL,                       T5_CMD_NOTE_SWAP,                           { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 } },

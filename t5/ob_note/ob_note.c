@@ -2360,6 +2360,7 @@ T5_CMD_PROTO(static, object_note_cmd)
     switch(T5_MESSAGE_CMD_OFFSET(t5_message))
     {
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTETWIN):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTEBD):
         return(t5_cmd_note(p_docu, t5_message, p_t5_cmd));
 

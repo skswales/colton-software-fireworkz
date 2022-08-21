@@ -12,7 +12,7 @@
 # By the way, you may need set the wimpslot in !Amu.Desc to at 2760k or so ...
 
 # NB Substitute URD location as necessary
-URD=$.fireworkz.branches.fireworkz__2_00__branch
+URD=$.fireworkz.fireworkz__2_00__branch
 
 # Only Fireworkz Pro builders need to worry about this one
 CSNF=$.coltsoft.trunk.cs-nonfree

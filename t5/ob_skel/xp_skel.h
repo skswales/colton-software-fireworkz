@@ -882,6 +882,7 @@ typedef enum T5_MESSAGE
 
     T5_CMD_INSERT_PAGE_BREAK,
 
+    T5_CMD_NOTETWIN,            /* maps onto T5_CMD_NOTE, exists so that old files still load */ /* not saved */
     T5_CMD_NOTEBD,              /* maps onto T5_CMD_NOTE, exists so that backdrops can be rejected on file insert */
     T5_CMD_PLAIN_TEXT_TEMP,
     T5_CMD_WORD_COUNT,

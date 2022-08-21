@@ -28,7 +28,6 @@ ROWTAB, * P_ROWTAB;
 typedef struct ROW_ENTRY
 {
     ROWTAB rowtab;
-    ROWTAB rowtab_next;
     ROW row;
 }
 ROW_ENTRY, * P_ROW_ENTRY;
@@ -121,7 +120,14 @@ row_entry_at_skel_point(
 extern void
 row_entry_from_row(
     _DocuRef_   P_DOCU p_docu,
-    P_ROW_ENTRY p_row_entry,
+    _OutRef_    P_ROW_ENTRY p_row_entry,
+    _InVal_     ROW row);
+
+extern void
+row_entries_from_row(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_ROW_ENTRY p_row_entry,
+    _OutRef_    P_ROW_ENTRY p_row_entry_next,
     _InVal_     ROW row);
 
 extern void

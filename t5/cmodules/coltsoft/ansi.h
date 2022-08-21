@@ -43,19 +43,23 @@ typedef unsigned __int64 uint64_t;
 
 #else /* OS */
 
-#ifndef __arm
-#ifndef __stdint_ll
-#define __stdint_ll /* DO need 64-bit integer base types even though cross ain't C99 */
-#define __stdint_ll_hack_defined
-#endif
-#endif
-
 #include <stdint.h> /* C99 header */
 
-#ifdef __stdint_ll_hack_defined
-#undef __stdint_ll_hack_defined
-#undef __stdint_ll /* but don't confuse the rest of the program */
+#ifndef __CC_NORCROFT
+/* DO need 64-bit integer base types even though cross ain't C99 */
+
+#ifndef INT64_MAX
+typedef __int64 int64_t;
+#define INT64_MAX _I64_MAX
+#define INT64_MIN _I64_MIN
 #endif
+
+#ifndef UINT64_MAX
+typedef unsigned __int64 uint64_t;
+#define UINT64_MAX _UI64_MAX
+#endif
+
+#endif /* __CC_NORCROFT */
 
 #endif /* OS */
 

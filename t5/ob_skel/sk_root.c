@@ -733,6 +733,7 @@ OBJECT_PROTO(extern, object_skel)
     case T5_CMD_BACKDROP: /* make/adjust backdrop */
     case T5_CMD_BACKDROP_INTRO: /* make/adjust backdrop */
     case T5_CMD_NOTE:
+    case T5_CMD_NOTETWIN: /* compatibility */
     case T5_CMD_NOTEBD: /* different so that backdrops can be rejected on file insert 'cos they aren't cell relative */
     case T5_CMD_NOTE_BACK:
     case T5_CMD_NOTE_SWAP:

@@ -842,25 +842,6 @@ text_part_invert(
 *
 ******************************************************************************/
 
-#if RISCOS
-
-static S32
-calc_spaces(
-    _InVal_     PIXIT width,
-    _InVal_     PIXIT space_width,
-    _OutRef_    P_PIXIT p_residual_width)
-{
-    PIXIT iclke_bit = space_width / 8;
-    S32 n_spaces = width / space_width;
-
-    *p_residual_width = width - (n_spaces * space_width);
-
-    if(*p_residual_width <= iclke_bit) *p_residual_width = 0;
-    else if(*p_residual_width >= space_width - iclke_bit) { *p_residual_width = 0; n_spaces++; }
-
-    return(n_spaces);
-}
-
 /* own underline code */
 
 static void
@@ -881,7 +862,8 @@ text_segment_paint_underlines(
     {
         if(p_chunk->fonty_chunk.underline)
         {
-            const PC_FONT_CONTEXT p_font_context = p_font_context_from_fonty_handle(p_chunk->fonty_chunk.fonty_handle);
+            const FONTY_HANDLE fonty_handle = p_chunk->fonty_chunk.fonty_handle;
+            const PC_FONT_CONTEXT p_font_context = p_font_context_from_fonty_handle(fonty_handle);
             PIXIT thickness = (p_chunk->fonty_chunk.ascent * 14) / 256;
             PIXIT_LINE pixit_line;
 
@@ -910,6 +892,8 @@ text_segment_paint_underlines(
     }
 }
 
+#if RISCOS
+
 static void
 text_segment_paint_drawfile(
     _DocuRef_   P_DOCU p_docu,
@@ -925,123 +909,83 @@ text_segment_paint_drawfile(
     PIXIT_POINT pixit_point = p_segment->skel_point.pixit_point;
     ARRAY_INDEX chunk_ix;
     PC_CHUNK p_chunk;
-    BOOL first_chunk = TRUE;
-    PIXIT lead_space = 0;
-    struct current_state
-    {
-        RGB rgb;
-        PIXIT shift_y;
-        FONTY_HANDLE fonty_handle;
-    } current;
-    PC_FONT_CONTEXT p_font_context = NULL; /* keep dataflower happy */
-    PIXIT move_x = 0;
-    PIXIT shift_y;
-    BOOL dump_accumulated = FALSE;
-    S32 n_spaces = 0;
-    U32 out_len;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 250);
-    quick_ublock_with_buffer_setup(quick_ublock);
+    PIXIT_RECT pixit_rect_rubout;
 
-    zero_struct(current);
+    pixit_rect_rubout.tl = p_skel_rect_seg->tl.pixit_point;
+    pixit_rect_rubout.br = p_skel_rect_seg->br.pixit_point;
 
-    pixit_point.y += p_segment->base_line;
+    trace_2(TRACE_APP_SKEL_DRAW,
+            TEXT("OB_TEXT pixit_point pixit_point.y: ") S32_TFMT TEXT(", leading: ") S32_TFMT,
+            pixit_point.y,
+            p_segment->leading);
 
-    for(chunk_ix = p_segment->start_chunk, p_chunk = array_ptrc(&p_formatted_text->h_chunks, CHUNK, p_segment->start_chunk);
+    for(chunk_ix = p_segment->start_chunk, p_chunk = array_ptrc(&p_formatted_text->h_chunks, CHUNK, chunk_ix);
         chunk_ix < p_segment->end_chunk;
         chunk_ix++, p_chunk++)
     {
-        p_font_context = p_font_context_from_fonty_handle(p_chunk->fonty_chunk.fonty_handle);
+        const FONTY_HANDLE fonty_handle = p_chunk->fonty_chunk.fonty_handle;
 
-        shift_y = drawfile_fonty_paint_calc_shift_y(p_font_context);
-
-        lead_space += p_chunk->lead_space; /* NB add as there may have been some trailing space from the last chunk */
+        pixit_point.x += p_chunk->lead_space;
 
         if(p_chunk->fonty_chunk.underline)
             found_some_underlines = TRUE;
 
-        if(first_chunk)
-        {
-            pixit_point.x += lead_space;
-            lead_space = 0;
-
-            n_spaces = 0;
-
-            pixit_point.y += shift_y;
-            current.shift_y = shift_y;
-
-            current.rgb = p_font_context->font_spec.colour;
-
-            current.fonty_handle = p_chunk->fonty_chunk.fonty_handle;
-
-            dump_accumulated = FALSE;
-        }
-        else
-        {
-            /* output part segment on colour or font change, y shift change, or too difficult a x shift */
-            if(current.shift_y != shift_y)
-                dump_accumulated = TRUE;
-            else if(current.fonty_handle != p_chunk->fonty_chunk.fonty_handle)
-                dump_accumulated = TRUE;
-            else if(rgb_compare_not_equals(&current.rgb, &p_font_context->font_spec.colour))
-                dump_accumulated = TRUE;
-
-            if(lead_space)
-            {
-                PIXIT residual_width = 0;
-
-                n_spaces = calc_spaces(lead_space, p_font_context->space_width, &residual_width);
-
-                if(residual_width)
-                    dump_accumulated = TRUE;
-            }
-        }
-
-        if(dump_accumulated)
-        {
-            out_len = quick_ublock_bytes(&quick_ublock);
-
-            if(0 != out_len)
-            {
-                drawfile_paint_uchars(p_redraw_context, &pixit_point, quick_ublock_uchars(&quick_ublock), out_len, p_rgb_back, p_font_context);
-
-                quick_ublock_dispose(&quick_ublock);
-            }
-
-            pixit_point.x += move_x;
-            move_x = 0;
-
-            lead_space = 0;
-            n_spaces = 0;
-
-            pixit_point.y += (current.shift_y - shift_y);
-            current.shift_y = shift_y;
-
-            current.rgb = p_font_context->font_spec.colour;
-
-            current.fonty_handle = p_chunk->fonty_chunk.fonty_handle;
-
-            dump_accumulated = FALSE;
-        }
-
-        /* output x shift as a number of spaces in this chunk's font */
-        while(n_spaces > 0)
-        {
-            n_spaces--;
-            status_assert(quick_ublock_a7char_add(&quick_ublock, CH_SPACE));
-        }
-
         switch(p_chunk->type)
         {
         case CHUNK_FREE:
-            status_assert(quick_ublock_uchars_add(&quick_ublock,
-                                                  uchars_AddBytes(ustr_inline, p_chunk->input_ix),
-                                                  p_chunk->input_len - p_chunk->trail_spaces));
-            lead_space = p_chunk->width - (p_chunk->fonty_chunk.width_mp / MILLIPOINTS_PER_PIXIT); /* to precede next chunk */
+            {
+            S32 len_to_use = p_chunk->input_len - p_chunk->trail_spaces;
+
+            /* work out if we need to draw trail spaces so we get underlined spaces
+             * we do this if the next chunk is also underlined
+             */
+            if(p_chunk->fonty_chunk.underline
+               &&
+               (chunk_ix + 1) < p_segment->end_chunk
+               &&
+               p_chunk[1].fonty_chunk.underline)
+                len_to_use = p_chunk->input_len;
+
+            /* paint the chunk */
+            {
+                fonty_text_paint_simple_uchars(
+                    p_docu, p_redraw_context, &pixit_point,
+                    uchars_AddBytes(ustr_inline, p_chunk->input_ix), len_to_use,
+                    p_segment->base_line, p_rgb_back, fonty_handle);
+            }
+
             break;
+            }
 
         case CHUNK_TAB:
-            lead_space = p_chunk->width;
             break;
+
+#if (TSTR_IS_SBSTR && 0)
+        case CHUNK_UTF8:
+            {
+            STATUS status;
+            const PC_UCHARS_INLINE uchars_inline = uchars_inline_AddBytes(ustr_inline, p_chunk->input_ix);
+            PC_UTF8 utf8 = inline_data_ptr(PC_UTF8, uchars_inline);
+            const U32 il_data_size = inline_data_size(uchars_inline);
+            QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 50);
+            quick_wblock_with_buffer_setup(quick_wblock);
+
+            status = quick_wblock_utf8_add(&quick_wblock, utf8, il_data_size);
+
+            status_assert(status);
+
+            /* paint the the content of the quick_block */
+            {
+                fonty_text_paint_simple_wchars(
+                    p_docu, p_redraw_context, &pixit_point,
+                    quick_wblock_wchars(&quick_wblock), quick_wblock_chars(&quick_wblock),
+                    p_segment->base_line, p_rgb_back, fonty_handle);
+            }
+
+            quick_wblock_dispose(&quick_wblock);
+            break;
+            }
+#endif /* TSTR_IS_SBSTR */
 
         default: default_unhandled();
 #if CHECKING
@@ -1054,32 +998,39 @@ text_segment_paint_drawfile(
         case CHUNK_WHOLENAME:
         case CHUNK_LEAFNAME:
         case CHUNK_HYPHEN:
+#if !(TSTR_IS_SBSTR && 0)
         case CHUNK_UTF8:
+#endif
         case CHUNK_UTF8_AS_TEXT:
 #endif
-            status_assert(text_from_field_uchars(p_docu, &quick_ublock,
-                                                 uchars_inline_AddBytes(ustr_inline, p_chunk->input_ix) CODE_ANALYSIS_ONLY_ARG(p_chunk->input_len),
-                                                 &p_skel_rect_seg->tl.page_num, p_style_text_global));
-            lead_space = p_chunk->width - (p_chunk->fonty_chunk.width_mp / MILLIPOINTS_PER_PIXIT);
-            break;
+            {
+            STATUS status;
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+            quick_ublock_with_buffer_setup(quick_ublock);
 
-        case CHUNK_RETURN:
+            status_assert(status = text_from_field_uchars(p_docu, &quick_ublock,
+                                                          uchars_inline_AddBytes(ustr_inline, p_chunk->input_ix) CODE_ANALYSIS_ONLY_ARG(p_chunk->input_len),
+                                                          &p_skel_rect_seg->tl.page_num, p_style_text_global));
+
+            /* paint the the content of the quick_block */
+           {
+                fonty_text_paint_simple_uchars(
+                    p_docu, p_redraw_context, &pixit_point,
+                    quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock),
+                    p_segment->base_line, p_rgb_back, fonty_handle);
+            }
+
+            quick_ublock_dispose(&quick_ublock);
+            break;
+            }
+
         case CHUNK_SOFT_HYPHEN:
+        case CHUNK_RETURN:
             break;
         }
 
-        move_x += (p_chunk->lead_space + p_chunk->width);
-
-        first_chunk = FALSE;
+        pixit_point.x += p_chunk->width;
     }
-
-    /* output any trailing stuff (using the last font context we had) */
-    out_len = quick_ublock_bytes(&quick_ublock);
-
-    if(0 != out_len)
-        drawfile_paint_uchars(p_redraw_context, &pixit_point, quick_ublock_uchars(&quick_ublock), out_len, p_rgb_back, p_font_context);
-
-    quick_ublock_dispose(&quick_ublock);
 
     if(found_some_underlines)
         text_segment_paint_underlines(p_redraw_context, p_formatted_text, p_segment);
@@ -1097,8 +1048,6 @@ text_segment_paint(
     _In_        U8 rubout,
     _InRef_     PC_STYLE p_style_text_global)
 {
-    BOOL found_some_underlines = FALSE;
-
     if(p_redraw_context->flags.drawfile)
     {
         text_segment_paint_drawfile(p_docu, p_redraw_context, p_formatted_text, p_segment, ustr_inline, p_skel_rect_seg, p_rgb_back, p_style_text_global);
@@ -1106,9 +1055,11 @@ text_segment_paint(
     }
 
     {
+    BOOL found_some_underlines = FALSE;
     PIXIT_POINT pixit_point = p_segment->skel_point.pixit_point;
     ARRAY_INDEX chunk_ix;
     PC_CHUNK p_chunk;
+    PIXIT_RECT pixit_rect_rubout;
     BOOL first_chunk = TRUE;
     S32 lead_space_mp = 0;
     struct current_state
@@ -1120,12 +1071,14 @@ text_segment_paint(
     PIXIT move_x = 0;
     PIXIT shift_y;
     BOOL dump_accumulated = FALSE;
-    PIXIT_RECT pixit_rect_rubout;
     U32 out_len;
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     zero_struct(current);
+
+    pixit_rect_rubout.tl = p_skel_rect_seg->tl.pixit_point;
+    pixit_rect_rubout.br = p_skel_rect_seg->br.pixit_point;
 
     trace_2(TRACE_APP_SKEL_DRAW,
             TEXT("OB_TEXT pixit_point pixit_point.y: ") S32_TFMT TEXT(", leading: ") S32_TFMT,
@@ -1134,21 +1087,19 @@ text_segment_paint(
 
     pixit_point.y += p_segment->base_line;
 
-    pixit_rect_rubout.tl = p_skel_rect_seg->tl.pixit_point;
-    pixit_rect_rubout.br = p_skel_rect_seg->br.pixit_point;
-
-    for(chunk_ix = p_segment->start_chunk, p_chunk = array_ptrc(&p_formatted_text->h_chunks, CHUNK, p_segment->start_chunk);
+    for(chunk_ix = p_segment->start_chunk, p_chunk = array_ptrc(&p_formatted_text->h_chunks, CHUNK, chunk_ix);
         chunk_ix < p_segment->end_chunk;
         chunk_ix++, p_chunk++)
     {
-        const PC_FONT_CONTEXT p_font_context = p_font_context_from_fonty_handle(p_chunk->fonty_chunk.fonty_handle);
-        HOST_FONT host_font = fonty_host_font_from_fonty_handle_redraw(p_redraw_context, p_chunk->fonty_chunk.fonty_handle, p_docu->flags.draft_mode);
+        const FONTY_HANDLE fonty_handle = p_chunk->fonty_chunk.fonty_handle;
+        const PC_FONT_CONTEXT p_font_context = p_font_context_from_fonty_handle(fonty_handle);
+        HOST_FONT host_font = fonty_host_font_from_fonty_handle_redraw(p_redraw_context, fonty_handle, p_docu->flags.draft_mode);
         HOST_FONT host_font_utf8 = HOST_FONT_NONE;
 
         /*reportf("chunk[%d]: type %d @ %d", chunk_ix, p_chunk->type, p_chunk->input_ix);*/
         if(CHUNK_UTF8 == p_chunk->type)
         {
-            host_font_utf8 = fonty_host_font_utf8_from_fonty_handle_redraw(p_redraw_context, p_chunk->fonty_chunk.fonty_handle, p_docu->flags.draft_mode);
+            host_font_utf8 = fonty_host_font_utf8_from_fonty_handle_redraw(p_redraw_context, fonty_handle, p_docu->flags.draft_mode);
             /*reportf("CHUNK_UTF8: got host font handle %d for redraw", host_font_utf8);*/
         }
 
@@ -1313,62 +1264,13 @@ text_segment_paint(
     }
 
     quick_ublock_dispose(&quick_ublock);
-    } /*block*/
 
     if(found_some_underlines)
         text_segment_paint_underlines(p_redraw_context, p_formatted_text, p_segment);
+    } /*block*/
 }
 
 #elif WINDOWS
-
-/* own underline code */
-
-static void
-text_segment_paint_underlines(
-    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
-    P_FORMATTED_TEXT p_formatted_text,
-    P_SEGMENT p_segment)
-{
-    PIXIT_POINT pixit_point = p_segment->skel_point.pixit_point;
-    ARRAY_INDEX chunk_ix;
-    PC_CHUNK p_chunk;
-
-    pixit_point.y += p_segment->base_line;
-
-    for(chunk_ix = p_segment->start_chunk, p_chunk = array_ptrc(&p_formatted_text->h_chunks, CHUNK, p_segment->start_chunk);
-        chunk_ix < p_segment->end_chunk;
-        chunk_ix++, p_chunk++)
-    {
-        if(p_chunk->fonty_chunk.underline)
-        {
-            const PC_FONT_CONTEXT p_font_context = p_font_context_from_fonty_handle(p_chunk->fonty_chunk.fonty_handle);
-            PIXIT thickness = (p_chunk->fonty_chunk.ascent * 14) / 256;
-            PIXIT_LINE pixit_line;
-
-            pixit_line.tl = pixit_point;
-            pixit_line.tl.y += (p_chunk->fonty_chunk.ascent * 26) / 256;
-            pixit_line.tl.x += p_chunk->lead_space;
-            pixit_line.br = pixit_line.tl;
-
-            /* strap together all adjacent underline chunks */
-            while((chunk_ix + 1) < p_segment->end_chunk
-                  &&
-                  p_chunk[1].fonty_chunk.underline)
-            {
-                pixit_point.x += p_chunk->lead_space + p_chunk->width;
-                chunk_ix++;
-                p_chunk++;
-            }
-
-            pixit_line.br.x = pixit_point.x + (p_chunk->lead_space + p_chunk->width);
-            pixit_line.br.x -= p_chunk->fonty_chunk.trail_space;
-
-            host_paint_underline(p_redraw_context, &pixit_line, &p_font_context->font_spec.colour, thickness);
-        }
-
-        pixit_point.x += (p_chunk->lead_space + p_chunk->width);
-    }
-}
 
 static void
 text_segment_paint(
@@ -1400,6 +1302,8 @@ text_segment_paint(
         chunk_ix < p_segment->end_chunk;
         chunk_ix++, p_chunk++)
     {
+        const FONTY_HANDLE fonty_handle = p_chunk->fonty_chunk.fonty_handle;
+
         pixit_point.x += p_chunk->lead_space;
 
         if(p_chunk->fonty_chunk.underline)
@@ -1421,9 +1325,9 @@ text_segment_paint(
                p_chunk[1].fonty_chunk.underline)
                 len_to_use = p_chunk->input_len;
 
-            /* paint the chunk using its rubout box if required */
+            /* paint the chunk */
             if(rubout)
-            {
+            {   /* using its rubout box if required */
                 pixit_rect_rubout.br.x = p_skel_rect_seg->br.pixit_point.x;
                 if(chunk_ix != (p_segment->end_chunk -1))
                     pixit_rect_rubout.br.x = MIN(pixit_rect_rubout.br.x, pixit_point.x + p_chunk->width);
@@ -1431,7 +1335,7 @@ text_segment_paint(
                 fonty_text_paint_rubout_uchars(
                     p_docu, p_redraw_context, &pixit_point,
                     uchars_AddBytes(ustr_inline, p_chunk->input_ix), len_to_use,
-                    p_segment->base_line, p_rgb_back, p_chunk->fonty_chunk.fonty_handle, &pixit_rect_rubout);
+                    p_segment->base_line, p_rgb_back, fonty_handle, &pixit_rect_rubout);
 
                 pixit_rect_rubout.tl.x = pixit_rect_rubout.br.x;
                 if(pixit_rect_rubout.tl.x >= p_skel_rect_seg->br.pixit_point.x)
@@ -1442,7 +1346,7 @@ text_segment_paint(
                 fonty_text_paint_simple_uchars(
                     p_docu, p_redraw_context, &pixit_point,
                     uchars_AddBytes(ustr_inline, p_chunk->input_ix), len_to_use,
-                    p_segment->base_line, p_rgb_back, p_chunk->fonty_chunk.fonty_handle);
+                    p_segment->base_line, p_rgb_back, fonty_handle);
             }
 
             break;
@@ -1465,9 +1369,9 @@ text_segment_paint(
 
             status_assert(status);
 
-            /* paint the the content of the quick_block using its rubout box if required */
+            /* paint the the content of the quick_block */
             if(rubout)
-            {
+            {   /* using its rubout box if required */
                 pixit_rect_rubout.br.x = p_skel_rect_seg->br.pixit_point.x;
                 if(chunk_ix != (p_segment->end_chunk -1))
                     pixit_rect_rubout.br.x = MIN(pixit_rect_rubout.br.x, pixit_point.x + p_chunk->width);
@@ -1475,7 +1379,7 @@ text_segment_paint(
                 fonty_text_paint_rubout_wchars(
                     p_docu, p_redraw_context, &pixit_point,
                     quick_wblock_wchars(&quick_wblock), quick_wblock_chars(&quick_wblock),
-                    p_segment->base_line, p_rgb_back, p_chunk->fonty_chunk.fonty_handle, &pixit_rect_rubout);
+                    p_segment->base_line, p_rgb_back, fonty_handle, &pixit_rect_rubout);
 
                 pixit_rect_rubout.tl.x = pixit_rect_rubout.br.x;
                 if(pixit_rect_rubout.tl.x >= p_skel_rect_seg->br.pixit_point.x)
@@ -1486,7 +1390,7 @@ text_segment_paint(
                 fonty_text_paint_simple_wchars(
                     p_docu, p_redraw_context, &pixit_point,
                     quick_wblock_wchars(&quick_wblock), quick_wblock_chars(&quick_wblock),
-                    p_segment->base_line, p_rgb_back, p_chunk->fonty_chunk.fonty_handle);
+                    p_segment->base_line, p_rgb_back, fonty_handle);
             }
 
             quick_wblock_dispose(&quick_wblock);
@@ -1519,9 +1423,9 @@ text_segment_paint(
                                                           uchars_inline_AddBytes(ustr_inline, p_chunk->input_ix) CODE_ANALYSIS_ONLY_ARG(p_chunk->input_len),
                                                           &p_skel_rect_seg->tl.page_num, p_style_text_global));
 
-            /* paint the the content of the quick_block using its rubout box if required */
+            /* paint the the content of the quick_block */
             if(rubout)
-            {
+            {   /* using its rubout box if required */
                 pixit_rect_rubout.br.x = p_skel_rect_seg->br.pixit_point.x;
                 if(chunk_ix != (p_segment->end_chunk -1))
                     pixit_rect_rubout.br.x = MIN(pixit_rect_rubout.br.x, pixit_point.x + p_chunk->width);
@@ -1529,7 +1433,7 @@ text_segment_paint(
                 fonty_text_paint_rubout_uchars(
                     p_docu, p_redraw_context, &pixit_point,
                     quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock),
-                    p_segment->base_line, p_rgb_back, p_chunk->fonty_chunk.fonty_handle, &pixit_rect_rubout);
+                    p_segment->base_line, p_rgb_back, fonty_handle, &pixit_rect_rubout);
 
                 pixit_rect_rubout.tl.x = pixit_rect_rubout.br.x;
                 if(pixit_rect_rubout.tl.x >= p_skel_rect_seg->br.pixit_point.x)
@@ -1540,7 +1444,7 @@ text_segment_paint(
                 fonty_text_paint_simple_uchars(
                     p_docu, p_redraw_context, &pixit_point,
                     quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock),
-                    p_segment->base_line, p_rgb_back, p_chunk->fonty_chunk.fonty_handle);
+                    p_segment->base_line, p_rgb_back, fonty_handle);
             }
 
             quick_ublock_dispose(&quick_ublock);

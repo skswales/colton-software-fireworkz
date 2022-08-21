@@ -11,15 +11,15 @@
 #define __bitmap_h
 
 /* bitmap bits per word */
-#if 0
-/*#define BITMAP_BPW 8*/    /* rubbish 16-bit processors can't cope */
-#elif RISCOS || (WINDOWS && 1)
+#if !defined(BITMAP_BPW)
+#if RISCOS || (WINDOWS && 1)
 #define BITMAP_BPW 32
 #define FAST_BITMAP_OPS_32 1 /* fast 32-bit aligned bitmap ops */
 #elif WINDOWS
 #define BITMAP_BPW 64
 #define FAST_BITMAP_OPS_64 1 /* fast 64-bit aligned bitmap ops */
 #endif
+#endif /* BITMAP_BPW */
 
 #if     BITMAP_BPW    == 8
 #define BITMAP_BPW_SHIFT 3

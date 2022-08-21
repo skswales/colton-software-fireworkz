@@ -21,8 +21,8 @@
 [Setup]
 ; AppVersion=2.xx.yy
 ; AppVerName=Colton Software Fireworkz 2.xx/yy
-AppVersion=2.00.00
-AppVerName=Colton Software Fireworkz 2.00
+AppVersion=2.00.01
+AppVerName=Colton Software Fireworkz 2.00/01
 AppCopyright=Copyright (C) 1992-2015 Colton Software
 AppId=Colton Fireworkz for Windows (32-bit)
 AppName=Colton Software Fireworkz for Windows (32-bit)

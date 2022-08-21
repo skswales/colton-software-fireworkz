@@ -37,7 +37,6 @@ X Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_rtf
 
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_cells
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_chart
-X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_chspt
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_dlg
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_draw
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_drwio

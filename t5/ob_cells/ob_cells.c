@@ -2553,9 +2553,9 @@ row_has_height(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     ROW row)
 {
-    ROW_ENTRY row_entry;
-    row_entry_from_row(p_docu, &row_entry, row);
-    return(skel_edge_compare(&row_entry.rowtab.edge_top, &row_entry.rowtab_next.edge_top));
+    ROW_ENTRY row_entry, row_entry_next;
+    row_entries_from_row(p_docu, &row_entry, &row_entry_next, row);
+    return(skel_edge_compare(&row_entry.rowtab.edge_top, &row_entry_next.rowtab.edge_top));
 }
 
 /******************************************************************************
