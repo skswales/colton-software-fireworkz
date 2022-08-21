@@ -184,7 +184,7 @@ style_intro_list =
     STYLE_INTRO_ID_LIST, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { 0, 0, 0/*poked*/, 0/*poked*/ },
-    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
@@ -193,7 +193,7 @@ style_intro_change =
     STYLE_INTRO_ID_CHANGE, DIALOG_MAIN_GROUP,
     { STYLE_INTRO_ID_LIST, STYLE_INTRO_ID_LIST },
     { DIALOG_STDSPACING_H, 0, STYLE_INTRO_BUTTONS_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -857,7 +857,7 @@ new_style_list =
     NEW_STYLE_ID_LIST, DIALOG_MAIN_GROUP,
     { NEW_STYLE_ID_USE_STYLE, NEW_STYLE_ID_USE_STYLE },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 #define NEW_STYLE_MINLIST_H (16 * PIXITS_PER_INCH / 8)

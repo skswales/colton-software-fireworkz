@@ -41,14 +41,14 @@ prefix_uri_userguide_content_tstr = "file:///FireworkzManuals:UserGuide/content/
 #endif
 
 #if WINDOWS
-const PCTSTR
-key_program =
-TEXT("Software") TEXT("\\")
-TEXT("Colton Software") TEXT("\\")
-TEXT("Fireworkz");
+const PCWSTR
+key_program_wstr =
+L"Software" L"\\"
+L"Colton Software" L"\\"
+L"Fireworkz";
 
-const PCTSTR
-atom_program = TEXT("Fireworkz");
+const PCWSTR
+atom_program_wstr = L"Fireworkz";
 
 const PCTSTR
 window_class[] =

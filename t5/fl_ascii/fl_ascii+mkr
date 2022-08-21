@@ -10,28 +10,39 @@ OBJID=23
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).fl_ascii.o.fl_ascii: $(T5).fl_ascii.c.fl_ascii
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_23_S=$(BUILD_DIR).fl_ascii.o.fl_ascii
+
+$(PROD_BUILD_DIR).o.Neutral.M23: $(OBJS_23_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_23_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_ascii.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob23: $(PROD_BUILD_DIR).o.Neutral.M23 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M23 -N23 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_ascii
+
 # Windows STRINGTABLE
 $(BUILD_DIR).fl_ascii.$(COUNTRY)-23/rc: $(T5).resource.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 23 -common
+
+# RISC OS loaded messages
+# $(T5).resource.zz-msg
 
 # RISC OS bound messages
 $(BUILD_DIR).fl_ascii.o.$(COUNTRY)-B23: $(T5).resource.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).fl_ascii.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_ascii.o.$(COUNTRY)-B_tmp -symbol rb_fl_ascii_msg_weak
 
-$(BUILD_DIR).fl_ascii.o.fl_ascii: $(T5).fl_ascii.c.fl_ascii
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_23_S=$(BUILD_DIR).fl_ascii.o.fl_ascii
-
 OBJS_23_X=$(BUILD_DIR).fl_ascii.o.$(COUNTRY)-B23
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M23: $(OBJS_23_X) $(OBJS_23_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M23: $(OBJS_23_X) $(OBJS_23_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_23_X) $(OBJS_23_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).fl_ascii.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob23: $(PROD_BUILD_DIR).o.$(COUNTRY)-M23 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M23 -N23 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_ascii
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob23: $(PROD_BUILD_DIR).o.$(COUNTRY).M23 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M23 -N23 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_ascii
 
 # end of fl_ascii.mkr ##############################################################################

@@ -16,8 +16,14 @@
 #include "ob_note/ob_note.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_note_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_NOTE)
 extern PC_U8 rb_note_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_NOTE &rb_note_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_NOTE DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_NOTE DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_NOTE DONT_LOAD_RESOURCES
@@ -2458,7 +2464,7 @@ T5_MSG_PROTO(static, note_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        return(resource_init(OBJECT_ID_NOTE, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_NOTE));
+        return(resource_init(OBJECT_ID_NOTE, P_BOUND_MESSAGES_OBJECT_ID_NOTE, P_BOUND_RESOURCES_OBJECT_ID_NOTE));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_NOTE));

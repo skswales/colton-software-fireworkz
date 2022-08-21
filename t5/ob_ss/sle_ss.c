@@ -3173,7 +3173,7 @@ T5_MSG_PROTO(static, sle_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose
 #endif
 
     case T5_MSG_IC__STARTUP:
-        /*resource_init(OBJECT_ID_SLE, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_SLE)*/
+        /*resource_init(OBJECT_ID_SLE, P_BOUND_MESSAGES_OBJECT_ID_SLE, P_BOUND_RESOURCES_OBJECT_ID_SLE)*/
         sle_style_startup();
         return(register_object_construct_table(OBJECT_ID_SLE, object_construct_table, FALSE /* no inlines */));
 

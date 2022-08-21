@@ -1260,6 +1260,8 @@ foreign_load_initialise(
 {
     STATUS status = STATUS_OK;
         
+    status_return(ensure_memory_froth());
+
     status_return(ownform_initialise_load(p_docu, p_position, (P_OF_IP_FORMAT) p_ff_ip_format, filename, p_array_handle));
 
     if(status_ok(status))

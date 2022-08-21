@@ -34,8 +34,14 @@ __pragma(warning(pop))
 #endif /* WINDOWS */
 
 #if RISCOS
-#define MSG_WEAK &rb_file_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FILE)
 extern PC_U8 rb_file_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FILE &rb_file_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FILE LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FILE DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FILE DONT_LOAD_RESOURCES
@@ -722,7 +728,7 @@ T5_MSG_PROTO(static, file_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     case T5_MSG_IC__STARTUP_SERVICES:
         file_error_buffer_set(ob_file_statics.error_buffer, elemof32(ob_file_statics.error_buffer));
 
-        return(resource_init(OBJECT_ID_FILE, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FILE));
+        return(resource_init(OBJECT_ID_FILE, P_BOUND_MESSAGES_OBJECT_ID_FILE, P_BOUND_RESOURCES_OBJECT_ID_FILE));
 
     case T5_MSG_IC__STARTUP:
         return(register_object_construct_table(OBJECT_ID_FILE, object_construct_table, FALSE /* no inlines */));

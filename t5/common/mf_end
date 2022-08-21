@@ -47,7 +47,7 @@ $(PROD_SOURCE_DIR).resource.windows.$(COUNTRY).Config: \
  $(PROD_BUILD_DIR).Makefile
  Basic -quit $(T5).Build.Tools.ConfigGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -country $(COUNTRY) -windows
 
-$(PROD_BUILD_DIR).!$(APPL).!Help: $(T5).resource.riscos.!Help
+$(PROD_BUILD_DIR).!$(APPL).!Help: $(T5).resource.riscos.Neutral.!Help
  Copy $? $@ ~C FV
 
 $(PROD_BUILD_DIR).!$(APPL).!Sprites: \
@@ -103,19 +103,19 @@ $(PROD_SOURCE_DIR).resource.riscos.!sprR5
 $(PROD_BUILD_DIR).!$(APPL).Info: $(T5).resource.TestInfo
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.!Sprite: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).!Sprite
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.!Sprite: $(PROD_SOURCE_DIR).resource.riscos.Neutral.!Sprite
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.ImageSlot: $(T5).resource.riscos.ImageSlot
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.ImageSlot: $(T5).resource.riscos.Neutral.ImageSlot
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Loader: $(T5).resource.riscos.Loader
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Loader: $(T5).resource.riscos.Neutral.Loader
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.PicConvert: $(T5).resource.riscos.PicConvert
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.PicConvert: $(T5).resource.riscos.Neutral.PicConvert
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Stubs: $(PROD_BUILD_DIR).binaries.stubs
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Stubs: $(PROD_BUILD_DIR).binaries.Neutral.stubs
  Copy $? $@ ~C FV
 
 $(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Help.Text: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Help.Text
@@ -124,70 +124,70 @@ $(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Help.Text: $(PROD_SOURCE_DIR).re
 $(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Config: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Config
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob02: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob02
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob02: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob02
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob04: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob04
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob04: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob04
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob06: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob06
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob06: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob06
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob07: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob07
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob07: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob07
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob08: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob08
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob08: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob08
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob09: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob09
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob09: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob09
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob12: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob12
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob12: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob12
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob17: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob17
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob17: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob17
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob19: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob19
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob19: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob19
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob20: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob20
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob20: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob20
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob21: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob21
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob21: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob21
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob22: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob22
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob22: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob22
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob23: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob23
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob23: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob23
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob24: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob24
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob24: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob24
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob25: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob25
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob25: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob25
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob26: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob26
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob26: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob26
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob27: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob27
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob27: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob27
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob28: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob28
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob28: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob28
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob33: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob33
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob33: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob33
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob35: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob35
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob35: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob35
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob40: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob40
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob40: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob40
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob41: $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob41
+$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob41: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob41
  Copy $? $@ ~C FV
 
 $(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.Choice00: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice00

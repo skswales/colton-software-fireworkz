@@ -17,8 +17,8 @@
 # The definitive list of files is in common.mf_mid
 #1:2.xx.yy
 #1:2.xx
-1:2.21.04
-2:06 Jan 2019
+1:2.22
+2:13 Feb 2019
 #
 # update date and version in the corresponding RelNotes HTML files too
 #
@@ -383,10 +383,14 @@ w734:Ctrl+drag to reposition
 1026:Selection contains %d region
 #
 # generic 1,2,3 dp numforms
-#
+# first set with optional trailing zeros
 744:0.#
 745:0.##
 746:0.###
+# second set with forced trailing zeros
+747:0.0
+748:0.00
+749:0.000
 #
 750:Backdrop
 751:First page

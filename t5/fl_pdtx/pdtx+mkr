@@ -10,28 +10,39 @@ OBJID=22
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).fl_pdtx.o.fl_pdtx: $(T5).fl_pdtx.c.fl_pdtx
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_22_S=$(BUILD_DIR).fl_pdtx.o.fl_pdtx
+
+$(PROD_BUILD_DIR).o.Neutral.M22: $(OBJS_22_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_22_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_pdtx.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob22: $(PROD_BUILD_DIR).o.Neutral.M22 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M22 -N22 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_pdtx
+
 # Windows STRINGTABLE
 $(BUILD_DIR).fl_pdtx.$(COUNTRY)-22/rc: $(T5).resource.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 22 -common
+
+# RISC OS loaded messages
+# $(T5).resource.zz-msg
 
 # RISC OS bound messages
 $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B22: $(T5).resource.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B_tmp -symbol rb_fl_pdtx_msg_weak
 
-$(BUILD_DIR).fl_pdtx.o.fl_pdtx: $(T5).fl_pdtx.c.fl_pdtx
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_22_S=$(BUILD_DIR).fl_pdtx.o.fl_pdtx
-
 OBJS_22_X=$(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B22
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M22: $(OBJS_22_X) $(OBJS_22_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M22: $(OBJS_22_X) $(OBJS_22_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_22_X) $(OBJS_22_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).fl_pdtx.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob22: $(PROD_BUILD_DIR).o.$(COUNTRY)-M22 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M22 -N22 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_pdtx
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob22: $(PROD_BUILD_DIR).o.$(COUNTRY).M22 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M22 -N22 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_pdtx
 
 # end of fl_pdtx.mkr ###############################################################################

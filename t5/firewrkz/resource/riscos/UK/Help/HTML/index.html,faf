@@ -18,22 +18,23 @@
 
     <p>Install the <em>Fireworkz-Examples</em> package to obtain the tutorial files referred to in the <em>Getting Started Guide</em>.</p>
 
+
     <h2 id="OnlineResources">Online Resources</h2>
 
     <p>Many resources for Fireworkz are freely available <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/">online</a>:</p>
 
     <ul>
-        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started">Getting Started Guide</a>;</li>
-        <li><a href="http://croftnuisk.co.uk/coltsoft-docs/fireworkz/usguide/index.htm">User Guide</a>;</li>
-        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints &amp; Tips</a>;</li>
+        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">Getting Started Guide</a>;</li>
+        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/user_guide/">User Guide</a>;</li>
         <li>
-            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda &amp; Errata</a>
+            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>
             - updates since the documentation was printed, and errata therein;
         </li>
+        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints and Tips</a>;</li>
         <li>
-            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads">Downloads</a>
+            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>
             - updated packages for RISC OS and example files, including those used in the <em>Getting Started Guide</em>;
-            also Fireworkz for Windows.
+            also Fireworkz for Windows and Fireworkz source code ZIP archive sets.
         </li>
     </ul>
 
@@ -63,8 +64,14 @@
 
         Fireworkz is made available to you under the terms of the
         <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.<br />
-        <a href="licence.html">Additional licence information</a>.
+        <a href="licence.html">Additional licence information</a> .
     </p>
+
+    <p>
+        The Fireworkz source code may be freely downloaded from
+        <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>.
+    </p>
+
 
 </body>
 </html>

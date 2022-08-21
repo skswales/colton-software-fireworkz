@@ -9,41 +9,47 @@
 
 /*#define VER_FILEVERSION            2,xx,y,0*/
 /*#define VER_FILEVERSION            2,xx,0,0*/
-#define VER_FILEVERSION              2,21,4,0
+#define VER_FILEVERSION              2,22,0,0
 
-#define VER_FILEVERSION_STR         "2.21.04\0"
+#define VER_FILEVERSION_STR         "2.22.00\0"
 /*#define VER_FILEVERSION_STR       "2.xx.yy\0"*/
 /*#define VER_FILEVERSION_STR       "2.xx\0"*/
+
+// Language independent resources
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+100                     ICON    "../../firewrkz/resource/windows/Neutral/prog.ico"
+
+// Unused by application source, but IS used on installation as doc icon
+101                     ICON    "../../firewrkz/resource/windows/Neutral/doc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+80                      BITMAP  "../../firewrkz/resource/windows/Neutral/banner.bmp"
 
 #if !defined(NOT_ALL_IN_ONE)
 
 // from object 00
 
 // language independent resources
-#include "../../ob_skel/resource/skel.rci"
-
-// normal STRINGTABLE
-#include "../../firewrkz/resource/windows/UK/res00.rci"
+#include "../../ob_skel/resource/Neutral/skel-li.rci"
 
 // from object 01
 
 // language independent resources
-#include "../../ob_ss/resource/ss.rci"
-
-// normal STRINGTABLE
-#include "../../firewrkz/resource/windows/UK/res01.rci"
+#include "../../ob_ss/resource/Neutral/ss-li.rci"
 
 // from object 06
 
 // language independent resources
-#include "../../ob_chart/resource/chart.rci"
-
-// normal STRINGTABLE
-#include "../../firewrkz/resource/windows/UK/res06.rci"
-
-// from all other objects
-
-#include "../../firewrkz/resource/windows/UK/resXX.rci"
+#include "../../ob_chart/resource/Neutral/chart-li.rci"
 
 #endif /* NOT_ALL_IN_ONE */
 
@@ -64,22 +70,37 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 #pragma code_page(1252)
 #endif //_WIN32
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
+#if !defined(NOT_ALL_IN_ONE)
 
-100                     ICON    "../../firewrkz/resource/windows/prog.ico"
+// from object 00
 
-// Unused by application source, but IS used on installation as doc icon
-101                     ICON    "../../firewrkz/resource/windows/doc.ico"
+// language dependent resources
+#include "../../ob_skel/resource/UK/skel-ld.rci"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
+// normal STRINGTABLE
+#include "../../firewrkz/resource/windows/UK/res00.rci"
 
-80                      BITMAP  "../../firewrkz/resource/windows/UK/banner.bmp"
+// from object 01
+
+// language dependent resources
+#include "../../ob_ss/resource/UK/ss-ld.rci"
+
+// normal STRINGTABLE
+#include "../../firewrkz/resource/windows/UK/res01.rci"
+
+// from object 06
+
+// language dependent resources
+#include "../../ob_chart/resource/UK/chart-ld.rci"
+
+// normal STRINGTABLE
+#include "../../firewrkz/resource/windows/UK/res06.rci"
+
+// from all other objects
+
+#include "../../firewrkz/resource/windows/UK/resXX.rci"
+
+#endif /* NOT_ALL_IN_ONE */
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////

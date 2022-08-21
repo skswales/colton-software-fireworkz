@@ -1,0 +1,17 @@
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+| Copyright (C) 2016-2019 Stuart Swales
+
+The following files in this directory are Public Domain and do not contain
+any licence statement:
+
+ spr_tg11
+ spr_tg22
+
+These files were derived from the (Public Domain) Tango Icon Library 0.8.90
+16x16 and 32x32 icon sets and have been converted to RISC OS Sprite format
+for RISC OS application toolbar use with suitable contrast enhancements.
+
+ http://tango.freedesktop.org/Tango_Icon_Library

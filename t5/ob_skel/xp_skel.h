@@ -1937,9 +1937,9 @@ extern const PCTSTR prefix_uri_userguide_content_tstr;
 
 #elif WINDOWS
 
-extern const PCTSTR key_program;
+extern const PCWSTR key_program_wstr;
 
-extern const PCTSTR atom_program;
+extern const PCWSTR atom_program_wstr;
 
 extern const PCTSTR leafname_helpfile_tstr;
 
@@ -2035,7 +2035,14 @@ _Check_return_
 extern UINT
 host_os_version_query(void);
 
-#endif /* RISCOS */
+_Check_return_
+extern STATUS
+ensure_memory_froth(void);
+
+#else
+#define ensure_memory_froth() STATUS_OK
+#endif /* OS */
+
 
 #define FAST_UPDATE_CALLS_NOTELAYER TRUE        /* when FALSE, fast_update marks all panes on all views for update_later */
                                                 /*             (as well as doing a fast update of the caret pane), this  */
@@ -2659,6 +2666,18 @@ host_paint_drawfile(
 
 #if RISCOS
 
+_Check_return_
+extern PIXIT
+host_font_ascent(
+    _HfontRef_  HOST_FONT host_font,
+    _InVal_     int this_character);
+
+_Check_return_
+extern PIXIT
+host_font_descent(
+    _HfontRef_  HOST_FONT host_font,
+    _InVal_     int this_character);
+
 extern void
 host_fonty_text_paint_uchars_rubout(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
@@ -2896,9 +2915,6 @@ host_invalidate_cache(
 
 extern void
 host_recache_mode_dependent_vars(void);
-
-extern void
-host_fixup_system_sprites(void);
 
 extern void
 host_framed_box_paint_frame(
@@ -3158,20 +3174,25 @@ host_paint_bitmap(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     /*_In_*/    PC_ANY p_bmp,
-    _InVal_     BOOL stretch);
+    _InVal_     int paint_sprite_scale);
+
+#define PAINT_SPRITE_SCALE_NONE     0
+#define PAINT_SPRITE_SCALE_INTEGRAL 1
+#define PAINT_SPRITE_SCALE_FULL     2
 
 extern void
 host_paint_sprite(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InoutRef_  P_SCB p_scb,
-    _InVal_     BOOL stretch);
+    _InVal_     int paint_sprite_scale);
 
 extern void
 host_paint_sprite_abs(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_GDI_BOX p_gr_box,
     _InoutRef_  P_SCB p_scb,
-    _InVal_     BOOL stretch);
+    _InVal_     int paint_sprite_scale);
 
 extern void
 host_clg(void);
@@ -9697,16 +9718,6 @@ plain_text_page_to_file(
 /*
 startup.c
 */
-
-#if RISCOS
-
-_Check_return_
-extern STATUS
-ensure_memory_froth(void);
-
-#else
-#define ensure_memory_froth() STATUS_OK
-#endif /* OS */
 
 _Check_return_
 extern STATUS

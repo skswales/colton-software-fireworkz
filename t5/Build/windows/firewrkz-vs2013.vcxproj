@@ -1348,6 +1348,7 @@
     <ClCompile Include="..\..\fs_xls\fs_xls_savex.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\fprowrkz\ob_rec\resource\resource.h" />
     <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -3710,6 +3711,8 @@
     <None Include="..\..\firewrkz\r\RiscPkg\Copyright" />
     <None Include="..\..\fl_123\resource\uk-msg" />
     <None Include="..\..\fl_csv\resource\uk-msg" />
+    <None Include="..\..\ob_chart\resource\Neutral\chart-li.rci" />
+    <None Include="..\..\ob_chart\resource\UK\chart-ld.rci" />
     <None Include="..\..\ob_chart\resource\UK\msg" />
     <None Include="..\..\ob_dlg\resource\uk-msg" />
     <None Include="..\..\ob_draw\resource\uk-msg" />
@@ -3736,11 +3739,13 @@
     <None Include="..\..\ob_skel\resource\Neutral\CUR\spl_lr.cur" />
     <None Include="..\..\ob_skel\resource\Neutral\CUR\spl_ud.cur" />
     <None Include="..\..\ob_skel\resource\Neutral\CUR\tank.cur" />
+    <None Include="..\..\ob_skel\resource\Neutral\skel-li.rci" />
     <None Include="..\..\ob_skel\resource\UK\msg" />
+    <None Include="..\..\ob_skel\resource\UK\skel-ld.rci" />
     <None Include="..\..\ob_skspt\resource\uk-msg" />
     <None Include="..\..\ob_spelb\resource\uk-msg" />
     <None Include="..\..\ob_spell\resource\uk-msg" />
-    <None Include="..\..\ob_ss\resource\ss.rci" />
+    <None Include="..\..\ob_ss\resource\Neutral\ss-li.rci" />
     <None Include="..\..\ob_ss\resource\UK\msg" />
     <None Include="..\..\ob_toolb\resource\uk-msg" />
     <None Include="..\..\fl_xls\resource\uk-msg" />
@@ -3748,12 +3753,6 @@
     <None Include="OUTx86\firewrkz-x86.iss" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\ob_chart\resource\chart.rci">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\..\ob_skel\resource\skel.rci">
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\..\firewrkz\resource\windows\UK\res01.rci">
       <FileType>Document</FileType>
     </None>
@@ -3765,10 +3764,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\firewrkz\resource\windows\UK\banner.bmp" />
-    <Image Include="..\..\firewrkz\resource\windows\doc.ico" />
-    <Image Include="..\..\firewrkz\resource\windows\prog.bmp" />
-    <Image Include="..\..\firewrkz\resource\windows\prog.ico" />
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\banner.bmp" />
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\doc.ico" />
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\prog.bmp" />
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\prog.ico" />
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\bar.bmp" />
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\com16x16.bmp" />
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\ldadodo.bmp" />

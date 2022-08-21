@@ -19,13 +19,20 @@
 
 #if RISCOS
 #define EXPOSE_RISCOS_FONT 1
+#define EXPOSE_RISCOS_SWIS 1
 
 #include "ob_skel/xp_skelr.h"
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_toolb_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_TOOLB)
 extern PC_U8 rb_toolb_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_TOOLB &rb_toolb_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_TOOLB LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_TOOLB DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_TOOLB DONT_LOAD_RESOURCES
@@ -929,7 +936,7 @@ do_paint_tool(
                 }
             }
 
-            host_paint_sprite_abs(&control_screen_inner, p_scb, FALSE);
+            host_paint_sprite_abs(p_redraw_context, &control_screen_inner, p_scb, PAINT_SPRITE_SCALE_INTEGRAL);
         }
 
         resource_bitmap_lose(&resource_bitmap_handle);
@@ -1246,35 +1253,9 @@ static PIXIT
 status_line_font_ascent(
     _In_        HOST_FONT host_font,
     _OutRef_    P_PIXIT p_descent)
-{
-    PIXIT ascent = 0;
-    PIXIT descent = 0;
-    _kernel_swi_regs rs;
-    _kernel_oserror * p_kernel_oserror;
-
-    rs.r[0] = host_font;
-    rs.r[1] = (int) UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX; /* a tall Latin-1 character */
-    rs.r[2] = FONT_PAINT_OSCOORDS;
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs)))
-        ascent = abs(rs.r[4]) * PIXITS_PER_RISCOS;
-
-    rs.r[0] = host_font;
-    rs.r[1] = (int) 'y'; /* and one with a descender */
-    rs.r[2] = FONT_PAINT_OSCOORDS;
-    if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs)))
-        descent = abs(rs.r[2]) * PIXITS_PER_RISCOS;
-
-    if((0 == ascent) || (0 == descent))
-    {   /* Caters for silly techie fonts with only a couple of symbols defined (not very useful on status line!) */
-        rs.r[0] = host_font;
-        if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_ReadInfo*/ 0x040084, &rs, &rs)))
-        {
-            if(0 == ascent)
-                ascent = abs(rs.r[4]) * PIXITS_PER_RISCOS;
-            if(0 == descent)
-                descent = abs(rs.r[2]) * PIXITS_PER_RISCOS;
-        }
-    }
+{   /* NB go via OS units not millipoints */
+    PIXIT ascent = host_font_ascent(host_font, (int) UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX); /* a tall Latin-1 character */
+    PIXIT descent = host_font_descent(host_font, (int) 'y'); /* and one with a descender */
 
     *p_descent = descent;
 
@@ -3118,7 +3099,7 @@ _Check_return_
 static STATUS
 toolbar_msg_startup(void)
 {
-    status_return(resource_init(OBJECT_ID_TOOLBAR, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_TOOLB));
+    status_return(resource_init(OBJECT_ID_TOOLBAR, P_BOUND_MESSAGES_OBJECT_ID_TOOLB, P_BOUND_RESOURCES_OBJECT_ID_TOOLB));
 
     status_line_style_startup();
 

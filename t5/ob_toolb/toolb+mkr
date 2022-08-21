@@ -10,23 +10,30 @@ OBJID=18
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).ob_toolb.o.ob_toolb: $(T5).ob_toolb.c.ob_toolb
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_18_S=$(BUILD_DIR).ob_toolb.o.ob_toolb
+
+$(PROD_BUILD_DIR).o.Neutral.M18: $(OBJS_18_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_18_S)
+
 # Windows STRINGTABLE
 $(BUILD_DIR).ob_toolb.$(COUNTRY)-18/rc: $(T5).ob_toolb.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 18 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob18: $(T5).ob_toolb.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages
 $(BUILD_DIR).ob_toolb.o.$(COUNTRY)-B18: $(T5).ob_toolb.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_toolb.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_toolb.o.$(COUNTRY)-B_tmp -symbol rb_toolb_msg_weak
 
-$(BUILD_DIR).ob_toolb.o.ob_toolb: $(T5).ob_toolb.c.ob_toolb
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_18_S=$(BUILD_DIR).ob_toolb.o.ob_toolb
-
 OBJS_18_X=$(BUILD_DIR).ob_toolb.o.$(COUNTRY)-B18
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M18: $(OBJS_18_X) $(OBJS_18_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M18: $(OBJS_18_X) $(OBJS_18_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_18_X) $(OBJS_18_S)
 
 # end of ob_toolb.mkr ##############################################################################

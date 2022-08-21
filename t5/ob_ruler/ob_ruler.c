@@ -20,8 +20,19 @@
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_ruler_msg_weak
+#define EXPOSE_RISCOS_SWIS 1
+#include "ob_skel/xp_skelr.h"
+#endif
+
+#if RISCOS
+#if defined(BOUND_MESSAGES_OBJECT_ID_RULER)
 extern PC_U8 rb_ruler_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_RULER &rb_ruler_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_RULER LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_RULER DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_RULER DONT_LOAD_RESOURCES
@@ -1732,7 +1743,7 @@ ruler_scale_and_figures(
     rs.r[0] = host_font_redraw;
     rs.r[1] = '0';
     rs.r[2] = 0;
-    if(NULL == _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs))
+    if(NULL == _kernel_swi(Font_CharBBox, &rs, &rs))
     {
         two_digits_width = pixits_from_millipoints_ceil(abs(rs.r[3])) * 2;
         digits_height = pixits_from_millipoints_ceil(abs(rs.r[4]));
@@ -3352,7 +3363,7 @@ T5_MSG_PROTO(static, ruler_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_RULER, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_RULER));
+        status_return(resource_init(OBJECT_ID_RULER, P_BOUND_MESSAGES_OBJECT_ID_RULER, P_BOUND_RESOURCES_OBJECT_ID_RULER));
 
         return(ruler_msg_startup());
 

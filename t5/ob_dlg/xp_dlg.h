@@ -241,6 +241,8 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_STDSPACING_H     (16 * PIXITS_PER_RISCOS)
 #define DIALOG_STDSPACING_V     ( 8 * PIXITS_PER_RISCOS)
 
+#define DIALOG_UNRELSPACING_V   (24 * PIXITS_PER_RISCOS)
+
 #define DIALOG_GROUPSPACING_H   (24 * PIXITS_PER_RISCOS)
 #define DIALOG_GROUPSPACING_V   DIALOG_STDSPACING_V
 
@@ -351,6 +353,8 @@ dialog positions and sizes specified in PIXITS
 
 #define DIALOG_STDSPACING_H     ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDSPACING_V     ( 4 * PIXITS_PER_WDU_V)
+
+#define DIALOG_UNRELSPACING_V   ( 7 * PIXITS_PER_WDU_V)
 
 #define DIALOG_GROUPSPACING_H   ( 7 * PIXITS_PER_WDU_H)
 #define DIALOG_GROUPSPACING_V   DIALOG_STDSPACING_V
@@ -529,7 +533,7 @@ typedef struct DIALOG_CONTROL
 
         UBF tabstop       : 1;
 
-        UBF logical_group : 1; /* can have logical group with no data for shorter defs */
+        UBF logical_group : 1; /* GROUPBOX: can have logical group with no data for shorter defs */
 
         UBF has_help      : 1;
 
@@ -561,22 +565,17 @@ typedef struct DIALOG_CONTROL_DATA_GROUPBOX
 
     struct DIALOG_CONTROL_DATA_GROUPBOX_BITS
     {
-        UBF logical_group : 1;
-        UBF has_client    : 1;
-        UBF reserved      : 8-1-1;
         UBF border_style  : 8;
+        UBF logical_group : 1;
+#if defined(DIALOG_GROUPBOX_CAN_HAVE_HANDLER)
+        UBF has_client : 1;
+#else
+        UBF _spare_was_has_client : 1;
+#endif
+        UBF reserved      : 8*sizeof(int) - (8 +1 +1);
     } bits;
 }
 DIALOG_CONTROL_DATA_GROUPBOX; typedef const DIALOG_CONTROL_DATA_GROUPBOX * PC_DIALOG_CONTROL_DATA_GROUPBOX;
-
-typedef struct DIALOG_CONTROL_DATA_GROUPBOXX
-{
-    DIALOG_CONTROL_DATA_GROUPBOX groupbox;
-
-    P_PROC_DIALOG_EVENT p_proc_client;
-    CLIENT_HANDLE client_handle;
-}
-DIALOG_CONTROL_DATA_GROUPBOXX; typedef const DIALOG_CONTROL_DATA_GROUPBOXX * PC_DIALOG_CONTROL_DATA_GROUPBOXX;
 
 /*
 a static text
@@ -839,7 +838,7 @@ typedef struct DIALOG_CONTROL_DATA_EDIT_XX
         UBF border_style        : DIALOG_BORDER_STYLE_BITS;
 
         UBF read_only           : 1;
-        UBF informational       : 1;
+        UBF right_text          : 1;
         UBF multiline           : 1;
         UBF h_scroll            : 1;
         UBF v_scroll            : 1;
@@ -972,7 +971,7 @@ typedef union PC_DIALOG_CONTROL_DATA
     PC_ANY                                  p_any;
 
     PC_DIALOG_CONTROL_DATA_GROUPBOX         groupbox;
-    PC_DIALOG_CONTROL_DATA_GROUPBOXX        groupboxx;
+
     PC_DIALOG_CONTROL_DATA_STATICTEXT       statictext;
     PC_DIALOG_CONTROL_DATA_STATICPICTURE    staticpicture;
     PC_DIALOG_CONTROL_DATA_STATICFRAME      staticframe;
@@ -1004,7 +1003,11 @@ typedef union PC_DIALOG_CONTROL_DATA
     PC_DIALOG_CONTROL_DATA_LIST_S32         list_s32;
     PC_DIALOG_CONTROL_DATA_COMBO_TEXT       combo_text;
     PC_DIALOG_CONTROL_DATA_COMBO_S32        combo_s32;
+
     PC_DIALOG_CONTROL_DATA_USER             user;
+
+    /* common */
+    PC_DIALOG_CONTROL_DATA_BUMP_XX          bump_xx;
 }
 PC_DIALOG_CONTROL_DATA;
 

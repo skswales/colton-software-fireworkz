@@ -117,8 +117,10 @@ DIALOG_WIMP_I, * P_DIALOG_WIMP_I; typedef const DIALOG_WIMP_I * PC_DIALOG_WIMP_I
 struct DIALOG_ICTL_DATA_GROUPBOX
 {
     DIALOG_ICTL_GROUP ictls;
+#if defined(DIALOG_GROUPBOX_CAN_HAVE_HANDLER)
     CLIENT_HANDLE client_handle;
     P_PROC_DIALOG_EVENT p_proc_client;
+#endif
 };
 
 union DIALOG_ICTL_DATA

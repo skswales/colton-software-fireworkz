@@ -266,23 +266,44 @@
     <Filter Include="Docs\html\ug\ug90">
       <UniqueIdentifier>{1cdcac3f-3174-4628-8f8c-920a8b654508}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ob_skel\ob_skel_resource\bitmaps">
-      <UniqueIdentifier>{6cb124ab-9b20-484f-8393-63abf140b3d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ob_chart\ob_chart_resource\bitmaps">
-      <UniqueIdentifier>{e6df61eb-2068-464e-8df6-5e276c27daaa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ob_ss\ob_ss_resource\bitmaps">
-      <UniqueIdentifier>{7185090b-f7d4-4498-910d-809262be2868}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ob_skel\ob_skel_resource\cursors">
-      <UniqueIdentifier>{86586a10-b327-4e9f-9466-efde4f3b1f65}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Docs\RISC OS\GSGuide\content">
       <UniqueIdentifier>{7888b750-5866-4e18-b340-13840dbf9558}</UniqueIdentifier>
     </Filter>
     <Filter Include="Docs\Windows\GSGuide\content">
       <UniqueIdentifier>{4b5b6168-63b5-408d-87b2-4e4d4de9f4c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\Neutral">
+      <UniqueIdentifier>{73db287c-fb89-4363-97e5-7c32f5c910f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\UK">
+      <UniqueIdentifier>{24068277-ce40-4ae1-b148-764cf6f2e087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\Neutral\cursors">
+      <UniqueIdentifier>{86586a10-b327-4e9f-9466-efde4f3b1f65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps">
+      <UniqueIdentifier>{6cb124ab-9b20-484f-8393-63abf140b3d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_resource\Neutral">
+      <UniqueIdentifier>{23532000-ba07-45ad-9862-bdad9da99310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_resource\UK">
+      <UniqueIdentifier>{5d8298bf-48da-4e8a-9b0e-bcf04c13227a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_resource\UK\bitmaps">
+      <UniqueIdentifier>{7185090b-f7d4-4498-910d-809262be2868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource\UK\bitmaps">
+      <UniqueIdentifier>{a0233e0b-e520-4a66-a2a2-5088948164f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_resource\Neutral">
+      <UniqueIdentifier>{79001579-e213-4a13-a1e2-c10c342f0f83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps">
+      <UniqueIdentifier>{e6df61eb-2068-464e-8df6-5e276c27daaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_resource\UK">
+      <UniqueIdentifier>{112ea7ca-fa23-47ca-9351-d1f5ab1ca242}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1641,6 +1662,9 @@
     <ClInclude Include="..\..\ob_skel\riscos\swiextra.h">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\fprowrkz\ob_rec\resource\resource.h">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\fl_123\resource\uk-msg">
@@ -1699,30 +1723,6 @@
     </None>
     <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
-    </None>
-    <None Include="..\..\ob_skel\resource\UK\msg">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </None>
-    <None Include="..\..\ob_ss\resource\UK\msg">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
-    </None>
-    <None Include="..\..\firewrkz\resource\windows\UK\res00.rci">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
-    </None>
-    <None Include="..\..\ob_ss\resource\ss.rci">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
-    </None>
-    <None Include="..\..\ob_chart\resource\chart.rci">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </None>
-    <None Include="..\..\firewrkz\resource\windows\UK\res06.rci">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
-    </None>
-    <None Include="..\..\firewrkz\resource\windows\UK\res01.rci">
-      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
-    </None>
-    <None Include="..\..\ob_skel\resource\skel.rci">
-      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
     </None>
     <None Include="..\..\firewrkz\resource\windows\UK\resXX.rci">
       <Filter>Resource Files</Filter>
@@ -1870,9 +1870,6 @@
     </None>
     <None Include="..\..\..\docs\UserGuide\firewrkz.hhp">
       <Filter>Docs\Windows\HTMLHelp</Filter>
-    </None>
-    <None Include="..\..\ob_chart\resource\UK\msg">
-      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
     </None>
     <None Include="..\..\firewrkz\RelHistPrev.htm">
       <Filter>Source Files\firewrkz</Filter>
@@ -3615,43 +3612,43 @@
       <Filter>Docs\html\sg\sg6</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\arr_lr.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\arr_ud.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\arrows.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\col.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\col_l.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\col_r.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\row.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\row_d.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\row_u.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\spl_lr.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\spl_ud.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\split.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\ob_skel\resource\Neutral\CUR\tank.cur">
-      <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\cursors</Filter>
     </None>
     <None Include="..\..\firewrkz\r\RiscPkg\Control">
       <Filter>Source Files\firewrkz</Filter>
@@ -3662,136 +3659,169 @@
     <None Include="..\..\..\docs\GSGuide\windows\index.html">
       <Filter>Docs\Windows\GSGuide</Filter>
     </None>
+    <None Include="..\..\ob_skel\resource\UK\msg">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\UK\res00.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\UK\skel-ld.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\Neutral\skel-li.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral</Filter>
+    </None>
+    <None Include="..\..\ob_ss\resource\Neutral\ss-li.rci">
+      <Filter>Source Files\ob_ss\ob_ss_resource\Neutral</Filter>
+    </None>
+    <None Include="..\..\ob_ss\resource\UK\msg">
+      <Filter>Source Files\ob_ss\ob_ss_resource\UK</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\UK\res01.rci">
+      <Filter>Source Files\ob_ss\ob_ss_resource\UK</Filter>
+    </None>
+    <None Include="..\..\ob_chart\resource\UK\msg">
+      <Filter>Source Files\ob_chart\ob_chart_resource\UK</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\UK\res06.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource\UK</Filter>
+    </None>
+    <None Include="..\..\ob_chart\resource\UK\chart-ld.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource\UK</Filter>
+    </None>
+    <None Include="..\..\ob_chart\resource\Neutral\chart-li.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\firewrkz\resource\windows\PROG.BMP">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\firewrkz\resource\windows\doc.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\firewrkz\resource\windows\prog.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\firewrkz\resource\windows\UK\banner.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\banner.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\bar.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\com16x16.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\ldadodo.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\ldash.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\ldashdot.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\ldot.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\line.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\overlay.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\pie.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_chart\resource\Neutral\BMP\scatter.bmp">
-      <Filter>Source Files\ob_chart\ob_chart_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_chart\ob_chart_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\col_r.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\com07x11.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\com16x16.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\com24x24.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\dec.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\inc.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\ls_none.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\ls_std.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\ls_stdd.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\ls_thick.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\ls_thin.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\mar_f.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\mar_h.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\mar_l.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\mar_p.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\mar_r.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\row_b.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\tab_c.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\tab_d.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\tab_l.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_skel\resource\Neutral\BMP\tab_r.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
-    </Image>
-    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbar_4bpp.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
-    </Image>
-    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbar_32bpp.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
-    </Image>
-    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbarh_4bpp.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
-    </Image>
-    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbarh_32bpp.bmp">
-      <Filter>Source Files\ob_skel\ob_skel_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_skel\ob_skel_resource\Neutral\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\UK\BMP\ss_tbar_4bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\UK\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\UK\BMP\ss_tbar_32bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\UK\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\UK\BMP\ss_tbarh_4bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\UK\bitmaps</Filter>
     </Image>
     <Image Include="..\..\ob_ss\resource\UK\BMP\ss_tbarh_32bpp.bmp">
-      <Filter>Source Files\ob_ss\ob_ss_resource\bitmaps</Filter>
+      <Filter>Source Files\ob_ss\ob_ss_resource\UK\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbar_4bpp.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbar_32bpp.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbarh_4bpp.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\ob_skel\resource\UK\BMP\skel_tbarh_32bpp.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource\UK\bitmaps</Filter>
+    </Image>
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\doc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\prog.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\firewrkz\resource\windows\Neutral\prog.ico">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

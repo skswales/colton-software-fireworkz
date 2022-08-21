@@ -387,7 +387,7 @@ box_V_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-box_V_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_V), { 0, 0, 0, FRAMED_BOX_GROUP } };
+box_V_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_V), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 box_V_all =
@@ -435,7 +435,7 @@ box_H_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-box_H_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_H), { 0, 0, 0, FRAMED_BOX_GROUP } };
+box_H_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_H), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 box_H_all =
@@ -500,7 +500,7 @@ box_line_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-box_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { 0, 0, 0, FRAMED_BOX_GROUP } };
+box_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 box_line[5] =

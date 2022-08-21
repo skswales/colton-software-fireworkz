@@ -52,8 +52,12 @@ main(
     int argc,
     char * argv[]);
 
+#if defined(BOUND_MESSAGES_OBJECT_ID_SKEL)
 extern PC_U8 rb_skel_msg_weak;
 #define P_BOUND_MESSAGES_OBJECT_ID_SKEL &rb_skel_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SKEL LOAD_MESSAGES_FILE
+#endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_SKEL LOAD_RESOURCES
 

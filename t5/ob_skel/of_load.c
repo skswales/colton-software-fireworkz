@@ -1876,7 +1876,7 @@ select_template_list =
     SELECT_TEMPLATE_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0 },
-    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE

@@ -1683,8 +1683,6 @@ realloc_array(
 #if WINDOWS
         if(ALLOC_USE_GLOBAL_ALLOC == p_array_block->parms.use_alloc)
         {
-            HGLOBAL hglobal = NULL;
-
             CHECKING_ONLY(if(IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
 
             if(P_DATA_NONE == p_array_block->p_data)
@@ -1692,6 +1690,8 @@ realloc_array(
                 /* first time allocation */
                 for(;;)
                 {
+                    HGLOBAL hglobal = NULL;
+
                     if(NULL != (p_new_array = GlobalAllocAndLock(GMEM_MOVEABLE, n_bytes, &hglobal)))
                         break;
 

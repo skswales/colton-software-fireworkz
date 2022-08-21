@@ -26,8 +26,14 @@ callback routines
 MAEVE_EVENT_PROTO(static, maeve_event_ob_mails);
 
 #if RISCOS
-#define MSG_WEAK &rb_mails_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_MAILSHOT)
 extern PC_U8 rb_mails_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_MAILSHOT &rb_mails_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_MAILSHOT LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_MAILSHOT DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_MAILSHOT DONT_LOAD_RESOURCES
@@ -402,7 +408,7 @@ mailshot_select_list =
     MAILSHOT_SELECT_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, MAILSHOT_SELECT_ID_BLANK_GROUP, DIALOG_CONTROL_SELF },
     { 0, 0, 0, MAILSHOT_SELECT_V },
-    { DRT(LTRT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LTRT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
@@ -442,7 +448,7 @@ mailshot_select_blank_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-mailshot_select_blank_group_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_BLANK_GROUP), { 0, 0, 0, FRAMED_BOX_GROUP } };
+mailshot_select_blank_group_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_BLANK_GROUP), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 mailshot_select_blank_blank =
@@ -1010,7 +1016,7 @@ T5_MSG_PROTO(static, mailshot_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_init
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_MAILSHOT, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_MAILSHOT));
+        status_return(resource_init(OBJECT_ID_MAILSHOT, P_BOUND_MESSAGES_OBJECT_ID_MAILSHOT, P_BOUND_RESOURCES_OBJECT_ID_MAILSHOT));
 
         return(register_object_construct_table(OBJECT_ID_MAILSHOT, object_construct_table, FALSE /* no inlines */));
 

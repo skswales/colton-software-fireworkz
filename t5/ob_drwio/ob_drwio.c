@@ -35,8 +35,14 @@
 #include "ob_file/xp_file.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_draw_io_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_DRAW_IO)
 extern PC_U8 rb_draw_io_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_DRAW_IO &rb_draw_io_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_DRAW_IO LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_DRAW_IO DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_DRAW_IO DONT_LOAD_RESOURCES
@@ -281,7 +287,7 @@ save_as_drawfile_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -1180,7 +1186,7 @@ T5_MSG_PROTO(static, draw_io_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initc
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_DRAW_IO, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_DRAW_IO));
+        status_return(resource_init(OBJECT_ID_DRAW_IO, P_BOUND_MESSAGES_OBJECT_ID_DRAW_IO, P_BOUND_RESOURCES_OBJECT_ID_DRAW_IO));
 
         return(register_object_construct_table(OBJECT_ID_DRAW_IO, object_construct_table, FALSE /* no inlines */));
 

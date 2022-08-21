@@ -91,7 +91,7 @@ ss_name_intro_list =
     SS_NAME_INTRO_ID_LIST, DIALOG_MAIN_GROUP,
     { SS_NAME_INTRO_ID_LIST_CAPTION, SS_NAME_INTRO_ID_LIST_CAPTION },
     { 0, DIALOG_SMALLSPACING_V, DIALOG_SYSCHARS_H("QuiteLongNamesGetDisplayedHere"), DIALOG_STDLISTOVH_V + 10 * DIALOG_STDLISTITEM_V },
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
@@ -148,7 +148,7 @@ ss_name_intro_insert =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { DIALOG_STDSPACING_H, 0, (3 * PIXITS_PER_INCH) / 4, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR

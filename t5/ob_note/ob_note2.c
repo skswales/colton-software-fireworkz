@@ -1331,7 +1331,7 @@ backdrop_origin_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-backdrop_origin_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BACKDROP_ORIGIN), { 0, 0, 0, FRAMED_BOX_GROUP } };
+backdrop_origin_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BACKDROP_ORIGIN), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 backdrop_origin_work_area =
@@ -1417,7 +1417,7 @@ backdrop_ok =
 
     { DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V, BACKDROP_OK_H, 0 },
 
-    { DRT(RBLB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBLB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_ID

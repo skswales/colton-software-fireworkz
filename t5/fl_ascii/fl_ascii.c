@@ -20,8 +20,14 @@
 #include "cmodules/unicode/u2000.h" /* 2000..206F General Punctuation */
 
 #if RISCOS
-#define MSG_WEAK &rb_fl_ascii_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FL_ASCII)
 extern PC_U8 rb_fl_ascii_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_ASCII &rb_fl_ascii_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_ASCII DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_ASCII DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FL_ASCII DONT_LOAD_RESOURCES
@@ -336,8 +342,6 @@ T5_MSG_PROTO(static, ascii_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p
                 return(object_call_id_load(p_docu, t5_message, p_msg_insert_foreign, OBJECT_ID_FL_CSV));
     }
 
-    status_return(ensure_memory_froth());
-
     n_rows_inserted = 0;
     n_rows_inserted_in_docu = 0;
 
@@ -390,7 +394,7 @@ T5_MSG_PROTO(static, ascii_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        return(resource_init(OBJECT_ID_FL_ASCII, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FL_ASCII));
+        return(resource_init(OBJECT_ID_FL_ASCII, P_BOUND_MESSAGES_OBJECT_ID_FL_ASCII, P_BOUND_RESOURCES_OBJECT_ID_FL_ASCII));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FL_ASCII));

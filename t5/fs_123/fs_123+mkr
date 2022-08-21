@@ -9,28 +9,39 @@ OBJID=40
 
 # Copyright (C) 2015-2019 Stuart Swales
 
+$(BUILD_DIR).fs_123.o.fs_123: $(T5).fs_123.c.fs_123
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_40_S=$(BUILD_DIR).fs_123.o.fs_123
+
+$(PROD_BUILD_DIR).o.Neutral.M40: $(OBJS_40_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_40_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fs_123.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob40: $(PROD_BUILD_DIR).o.Neutral.M40 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M40 -N40 $(OBJMUNGE_OBJFLAGS) -Eobject_fs_lotus123
+
 # Windows STRINGTABLE
 $(BUILD_DIR).fs_123.$(COUNTRY)-40/rc: $(T5).resource.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 40 -common
+
+# RISC OS loaded messages
+# $(T5).resource.zz-msg
 
 # RISC OS bound messages
 $(BUILD_DIR).fs_123.o.$(COUNTRY)-B40: $(T5).resource.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).fs_123.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fs_123.o.$(COUNTRY)-B_tmp -symbol rb_fs_123_msg_weak
 
-$(BUILD_DIR).fs_123.o.fs_123: $(T5).fs_123.c.fs_123
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_40_S=$(BUILD_DIR).fs_123.o.fs_123
-
 OBJS_40_X=$(BUILD_DIR).fs_123.o.$(COUNTRY)-B40
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M40: $(OBJS_40_X) $(OBJS_40_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M40: $(OBJS_40_X) $(OBJS_40_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_40_X) $(OBJS_40_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).fs_123.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob40: $(PROD_BUILD_DIR).o.$(COUNTRY)-M40 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M40 -N40 $(OBJMUNGE_OBJFLAGS) -Eobject_fs_lotus123
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob40: $(PROD_BUILD_DIR).o.$(COUNTRY).M40 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M40 -N40 $(OBJMUNGE_OBJFLAGS) -Eobject_fs_lotus123
 
 # end of fs_123.mkr ################################################################################

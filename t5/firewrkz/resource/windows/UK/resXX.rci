@@ -29,9 +29,9 @@ BEGIN
 //
 // errors
 //
-	0xED80,	"Lotus load: bad file"
+	0xED80,	"Bad Lotus file"
 //e1:ERROR_RQ
-	0xED82,	"Lotus file: bad formula"
+	0xED82,	"Bad formula"
 //
 // end of msg (fl_123)
 END

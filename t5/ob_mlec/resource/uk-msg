@@ -11,9 +11,9 @@
 # errors
 #
 e0:No selected text
-e2:MLEC_ERR No paste buffer
-e3:MLEC_ERR Paste buffer went AWOL
-e4:MLEC_ERR Invalid paste buffer operation
-e5:MLEC_ERR Destination string too small
+e2:No paste buffer
+e3:Paste buffer missing
+e4:Invalid paste buffer operation
+e5:Destination string too small
 #
 # end of msg (ob_mlec)

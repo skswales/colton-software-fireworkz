@@ -9,3 +9,19 @@ the given subdirectories that do not contain the above licence and are not
 covered by any other licence:
 
  *.png
+
+The following files in this directory are Public Domain and do not contain
+any licence statement:
+
+ tbar_copy.png
+ tbar_cut.png
+ tbar_paste.png
+ tbar_print.png
+ tbar_save.png
+ tbar_search.png
+
+These files were derived from the (Public Domain) Tango Icon Library 0.8.90
+icon sets and have been converted via RISC OS Sprite format for RISC OS
+application toolbar usage with suitable contrast enhancements.
+
+ http://tango.freedesktop.org/Tango_Icon_Library

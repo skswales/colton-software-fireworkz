@@ -10,21 +10,6 @@ OBJID=01
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY).msg
- Basic -quit $(RCGen) -output $@ -from $? -object 01 -base &2000
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01: $(T5).ob_ss.resource.$(COUNTRY).msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -symbol rb_ss_msg_weak
-
-# RISC OS loaded sprites
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob01: $(T5).ob_ss.resource.$(COUNTRY).spr22
- Copy $? $@ ~C FV
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob01: $(T5).ob_ss.resource.$(COUNTRY).spr24
- Copy $? $@ ~C FV
-
 $(BUILD_DIR).ob_ss.o.ob_ss: $(T5).ob_ss.c.ob_ss
  $(CC) -o $@ $(ccflags) $?
 
@@ -156,9 +141,44 @@ $(BUILD_DIR).ob_ss.o.e_j0 \
 $(BUILD_DIR).ob_ss.o.e_j1 \
 $(BUILD_DIR).ob_ss.o.e_jn \
 
+$(PROD_BUILD_DIR).o.Neutral.M01: $(OBJS_01_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_01_S)
+
+# Windows STRINGTABLE
+$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY).msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 01 -base &2000
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob01: $(T5).ob_ss.resource.$(COUNTRY).msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+
+# RISC OS loaded sprites
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites11.Ob01: \
+ $(T5).ob_ss.resource.$(COUNTRY).spr11 \
+ $(T5).ob_ss.resource.$(COUNTRY).spr22
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_ss.resource.$(COUNTRY).spr22
+ SMerge $(T5).ob_ss.resource.$(COUNTRY).spr11
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob01: \
+ $(T5).ob_ss.resource.$(COUNTRY).spr22
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob01: \
+ $(T5).ob_ss.resource.$(COUNTRY).spr24
+ Copy $? $@ ~C FV
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01: $(T5).ob_ss.resource.$(COUNTRY).msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B_tmp -symbol rb_ss_msg_weak
+
 OBJS_01_X=$(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M01: $(OBJS_01_X) $(OBJS_01_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M01: $(OBJS_01_X) $(OBJS_01_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_01_X) $(OBJS_01_S)
 
 # end of ob_ss.mkr #################################################################################

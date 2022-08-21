@@ -1,4 +1,4 @@
-// skel.rci
+// skel-li.rci - Language independent
 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -7,28 +7,11 @@
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 
-// (language independent)
-
-// cursors
-100 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arrows.cur"
-101 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arr_lr.cur"
-102 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arr_ud.cur"
-103 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col.cur"
-104 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col_l.cur"
-105 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col_r.cur"
-106 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row.cur"
-107 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row_u.cur"
-108 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row_d.cur"
-109 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/split.cur"
-110 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/spl_lr.cur"
-111 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/spl_ud.cur"
-112 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/tank.cur"
-
 // multi-bitmaps: 0x0n (+1 = high-dpi variant)
-1 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbar_4bpp.bmp"
-2 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbarh_4bpp.bmp"
-3 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbar_32bpp.bmp"
-4 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/UK/BMP/skel_tbarh_32bpp.bmp"
+//1 BITMAP BMP/skel_tbar_4bpp.bmp
+//2 BITMAP BMP/skel_tbarh_4bpp.bmp
+//3 BITMAP BMP/skel_tbar_32bpp.bmp
+//4 BITMAP BMP/skel_tbarh_32bpp.bmp
 
 5 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/com16x16.bmp"
 6 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/com24x24.bmp"
@@ -60,5 +43,20 @@
 1259 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/row_b.bmp"
 
 1260 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/BMP/col_r.bmp"
+
+// cursors
+100 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arrows.cur"
+101 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arr_lr.cur"
+102 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/arr_ud.cur"
+103 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col.cur"
+104 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col_l.cur"
+105 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/col_r.cur"
+106 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row.cur"
+107 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row_u.cur"
+108 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/row_d.cur"
+109 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/split.cur"
+110 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/spl_lr.cur"
+111 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/spl_ud.cur"
+112 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/Neutral/CUR/tank.cur"
 
 // end

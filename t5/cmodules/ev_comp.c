@@ -750,9 +750,9 @@ ev_cell_from_compiler_output(
     if(p_ev_cell->parms.slr_n)
     {
         const U32 n = p_compiler_output->ev_parms.slr_n;
-        const U32 size = n * sizeof32(EV_SLR);
-        memcpy32(p_u8, array_rangec(&p_compiler_output->h_slrs, EV_SLR, 0, n), size);
-        p_u8 += size;
+        const U32 n_bytes = n * sizeof32(EV_SLR);
+        memcpy32(p_u8, array_rangec(&p_compiler_output->h_slrs, EV_SLR, 0, n), n_bytes);
+        p_u8 += n_bytes;
     }
 
     if((NULL != p_ev_slr_offset) && p_compiler_output->ev_parms.range_n)
@@ -771,40 +771,40 @@ ev_cell_from_compiler_output(
     if(p_ev_cell->parms.range_n)
     {
         const U32 n = p_compiler_output->ev_parms.range_n;
-        const U32 size = n * sizeof32(EV_RANGE);
-        memcpy32(p_u8, array_rangec(&p_compiler_output->h_ranges, EV_RANGE, 0, n), size);
-        p_u8 += size;
+        const U32 n_bytes = n * sizeof32(EV_RANGE);
+        memcpy32(p_u8, array_rangec(&p_compiler_output->h_ranges, EV_RANGE, 0, n), n_bytes);
+        p_u8 += n_bytes;
     }
 
     if(p_ev_cell->parms.name_n)
     {
         const U32 n = p_compiler_output->ev_parms.name_n;
-        const U32 size = n * sizeof32(EV_NAME_REF);
-        memcpy32(p_u8, array_rangec(&p_compiler_output->h_names, EV_NAME_REF, 0, n), size);
-        p_u8 += size;
+        const U32 n_bytes = n * sizeof32(EV_NAME_REF);
+        memcpy32(p_u8, array_rangec(&p_compiler_output->h_names, EV_NAME_REF, 0, n), n_bytes);
+        p_u8 += n_bytes;
     }
 
     if(p_ev_cell->parms.custom_n)
     {
         const U32 n = p_compiler_output->ev_parms.custom_n;
-        const U32 size = n * sizeof32(EV_HANDLE);
-        memcpy32(p_u8, array_rangec(&p_compiler_output->h_custom_calls, EV_HANDLE, 0, n), size);
-        p_u8 += size;
+        const U32 n_bytes = n * sizeof32(EV_HANDLE);
+        memcpy32(p_u8, array_rangec(&p_compiler_output->h_custom_calls, EV_HANDLE, 0, n), n_bytes);
+        p_u8 += n_bytes;
     }
 
     if(p_ev_cell->parms.event_n)
     {
         const U32 n = p_compiler_output->ev_parms.event_n;
-        const U32 size = n * sizeof32(EVENT_TYPE);
-        memcpy32(p_u8, array_rangec(&p_compiler_output->h_events, EVENT_TYPE, 0, n), size);
-        p_u8 += size;
+        const U32 n_bytes = n * sizeof32(EVENT_TYPE);
+        memcpy32(p_u8, array_rangec(&p_compiler_output->h_events, EVENT_TYPE, 0, n), n_bytes);
+        p_u8 += n_bytes;
     }
 
     if(array_elements(&p_compiler_output->h_rpn))
     {
         const U32 n = array_elements32(&p_compiler_output->h_rpn);
-        const U32 size = n * sizeof32(U8);
-        memcpy32(p_u8, array_rangec(&p_compiler_output->h_rpn, U8, 0, n), size);
+        const U32 n_bytes = n * sizeof32(U8);
+        memcpy32(p_u8, array_rangec(&p_compiler_output->h_rpn, U8, 0, n), n_bytes);
     }
 
     return(status);

@@ -1,4 +1,4 @@
-// chart.rci
+// chart-li.rci - language independent
 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -7,13 +7,11 @@
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 
-// (language independent)
-
 // multi-bitmaps: 0x6n (+1 = high-dpi variant)
-96 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/bar.bmp"
+96  BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/bar.bmp"
 // no 97
 
-98 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/line.bmp"
+98  BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/line.bmp"
 // no 99
 
 100 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/overlay.bmp"
@@ -35,10 +33,5 @@
 8436 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldot.bmp"
 8437 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldashdot.bmp"
 8438 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldadodo.bmp"
-
-//243 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldash.bmp"
-//244 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldot.bmp"
-//245 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldashdot.bmp"
-//246 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/Neutral/BMP/ldadodo.bmp"
 
 // end

@@ -129,7 +129,7 @@ dict_list =
     CONTROL_ID_LIST, DIALOG_CONTROL_WINDOW,
     { CONTROL_ID_WORD, CONTROL_ID_WORD, CONTROL_ID_WORD, IDCANCEL },
     { 0, DIALOG_STDSPACING_V, 0, 0 },
-    { DRT(LBRB, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBRB, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL

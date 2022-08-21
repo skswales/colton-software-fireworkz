@@ -8,86 +8,6 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# evaluator errors (see xp_ss.h, ob_ss.h)
-#
-e0:Irr
-#e1:ERROR_RQ
-e2:Bad date
-e3:Lookup
-e4:Negative root
-e5:Propagated
-e6:Divide by zero
-e7:Bad index
-e8:FP error
-e9:Circular reference
-#
-e10:File not loaded
-e11:Array expected
-e12:Bad compiled data
-e13:Formula too long
-e14:Internal evaluator error 14
-e15:Mistake in formula
-e16:Number not expected
-e17:String not expected
-e18:Date not expected
-e19:Name not defined
-#
-e20:Range not expected
-e21:Internal evaluator error 21
-e22:Custom function not defined
-e23:Nested array
-e24:Array not expected
-e25:Parameter to custom function not declared
-e26:No RESULT in custom function
-e27:#N/A
-e28:Not implemented
-e29:Cell deleted
-#
-e30:No time value
-e31:No date value
-e32:Bad identifier
-e33:Bad complex number
-e34:Out of range
-e35:Array wrong size
-e36:Control function outside custom function
-e37:Bad target for GOTO
-e38:Wrongly nested loop
-e39:Parameter out of range
-#
-e40:Bad time
-e41:Wrongly nested IF ELSE ELSEIF ENDIF
-e42:Mismatched matrices
-e43:Matrix not numeric
-e44:Matrix wrong size
-e45:Mixed signs
-e46:Accuracy lost
-e47:Can't overwrite formula
-e48:Wrong number of parameters to function
-e49:Missing )
-#
-e50:Can't nest database functions
-e51:Parameter is wrong type
-e52:Custom function already defined
-e53:Type not recognised
-e54:Array size is set by first row
-e55:Missing }
-e56:Can't write beyond existing rows and columns
-e57:Bad logarithm
-e58:Matrix is not square
-e59:Matrix is singular
-#
-e60:No valid data found
-e61:Database access error
-e62:#VALUE!
-e63:#NUM!
-#
-# ob_ss errors
-#
-e100:Last column/row not blank
-e101:Spreadsheet function not available
-e102:You must give names a non-blank name
-e103:You must give names a non-blank value
-#
 # ob_ss messages
 #
 r90:Fill down (or ADJUST to Fill up)
@@ -999,5 +919,85 @@ w873:edate
 w874:eomonth
 475:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0| (OpenDocument/Excel-compatible behaviour)
 w875:odf.mod
+#
+# evaluator errors (see xp_ss.h, ob_ss.h)
+#
+e0:Irr
+#e1:ERROR_RQ
+e2:Bad date
+e3:Lookup
+e4:Negative root
+e5:Propagated
+e6:Divide by zero
+e7:Bad index
+e8:FP error
+e9:Circular reference
+#
+e10:File not loaded
+e11:Array expected
+e12:Bad compiled data
+e13:Formula too long
+e14:Internal evaluator error 14
+e15:Mistake in formula
+e16:Number not expected
+e17:String not expected
+e18:Date not expected
+e19:Name not defined
+#
+e20:Range not expected
+e21:Internal evaluator error 21
+e22:Custom function not defined
+e23:Nested array
+e24:Array not expected
+e25:Parameter to custom function not declared
+e26:No RESULT in custom function
+e27:#N/A
+e28:Not implemented
+e29:Cell deleted
+#
+e30:No time value
+e31:No date value
+e32:Bad identifier
+e33:Bad complex number
+e34:Out of range
+e35:Array wrong size
+e36:Control function outside custom function
+e37:Bad target for GOTO
+e38:Wrongly nested loop
+e39:Parameter out of range
+#
+e40:Bad time
+e41:Wrongly nested IF ELSE ELSEIF ENDIF
+e42:Mismatched matrices
+e43:Matrix not numeric
+e44:Matrix wrong size
+e45:Mixed signs
+e46:Accuracy lost
+e47:Can't overwrite formula
+e48:Wrong number of parameters to function
+e49:Missing )
+#
+e50:Can't nest database functions
+e51:Parameter is wrong type
+e52:Custom function already defined
+e53:Type not recognised
+e54:Array size is set by first row
+e55:Missing }
+e56:Can't write beyond existing rows and columns
+e57:Bad logarithm
+e58:Matrix is not square
+e59:Matrix is singular
+#
+e60:No valid data found
+e61:Database access error
+e62:#VALUE!
+e63:#NUM!
+#
+# ob_ss errors
+#
+e100:Last column/row not blank
+e101:Spreadsheet function not available
+e102:You must give names a non-blank name
+e103:You must give names a non-blank value
 #
 # end of msg (ob_ss)

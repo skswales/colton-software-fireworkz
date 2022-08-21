@@ -203,64 +203,6 @@ host_paint_end(
 
 /******************************************************************************
 *
-* patch Res00's loaded sprite file to redefine the names of our 3-D versions
-* if new ones are not loaded
-*
-******************************************************************************/
-
-static const
-struct HOST_SYSTEM_SPRITES
-{
-    /*U32 crc;*/
-    /*OBJECT_ID object_id;*/
-    U8Z name[12];
-}
-host_system_sprites[] =
-{
-    { /*0x5E58,*/ /*OBJECT_ID_SKEL,*/ "up!" },
-    { /*0x19D5,*/ /*OBJECT_ID_SKEL,*/ "down!" },
-    { /*0x664D,*/ /*OBJECT_ID_SKEL,*/ "opton!" },
-    { /*0x7649,*/ /*OBJECT_ID_SKEL,*/ "optoff!" },
-    { /*0x06E9,*/ /*OBJECT_ID_SKEL,*/ "radioon!" },
-    { /*0x3F4B,*/ /*OBJECT_ID_SKEL,*/ "radiooff!" },
-    { /*0x0000,*/ /*OBJECT_ID_SKEL,*/ "gright!" }
-};
-
-extern void
-host_fixup_system_sprites(void)
-{
-    U32 i;
-
-    if(host_os_version_query() >= RISCOS_3_5)
-        /* SKS 15nov94 - all above sprites should be taken from ROM or wherever please */
-        return;
-
-    for(i = 0; i < elemof32(host_system_sprites); ++i)
-    {
-        RESOURCE_BITMAP_HANDLE resource_bitmap_handle; /* SKS 11may95 ALWAYS use our bound versions if not on 3.5+ */
-        RESOURCE_BITMAP_ID resource_bitmap_id_pling;
-        S32 area_id;
-
-        resource_bitmap_id_pling.object_id = OBJECT_ID_SKEL /*host_system_sprites[i].object_id*/;
-        resource_bitmap_id_pling.bitmap_name = host_system_sprites[i].name;
-
-        /* rename the sprite in all areas we have loaded */
-        for(area_id = RESOURCE_BITMAP_AREA_STANDARD; area_id < RESOURCE_BITMAP_AREA_COUNT; ++area_id)
-        {
-            resource_bitmap_handle = resource_bitmap_find_in_area(&resource_bitmap_id_pling, area_id);
-
-            if(resource_bitmap_handle.i)
-            {
-                /* too many OS bugs to use rename sprite call so knock off the '!' by hand */
-                P_U8 p_u8 = resource_bitmap_handle.p_scb->name;
-                p_u8[strlen32(p_u8)-1] = CH_NULL;
-            }
-        }
-    }
-}
-
-/******************************************************************************
-*
 * Paint to screen routines
 *
 * N.B. These routines may be called by view, skel or lower layer code on receipt of a T5_EVENT_REDRAW message
@@ -1333,7 +1275,7 @@ host_fonty_text_paint_uchars_rubout(
     _InRef_opt_ PC_PIXIT_RECT p_pixit_rect_rubout)
 {
     STATUS status;
-    GDI_POINT gdi_point;
+    GDI_POINT gdi_point_mp;
     struct fontmanager_coords
     {
         int space_extra_x;
@@ -1355,7 +1297,7 @@ host_fonty_text_paint_uchars_rubout(
     if(status_fail(status = host_setfontcolours(p_rgb_foreground, p_rgb_background)))
         return;
 
-    gdi_point_mp_from_pixit_point_and_context(&gdi_point, p_pixit_point, p_redraw_context);
+    gdi_point_mp_from_pixit_point_and_context(&gdi_point_mp, p_pixit_point, p_redraw_context);
 
     rs.r[1] = (int) uchars;
     rs.r[2] = FONT_PAINT_USE_LENGTH /*r7*/ | FONT_PAINT_RUBOUT; /* rubout now always required (see simple below) */
@@ -1391,8 +1333,8 @@ host_fonty_text_paint_uchars_rubout(
         rs.r[5] = (int) &coords;
     }
 
-    rs.r[3] = gdi_point.x; /* NB coordinates are in millipoints */
-    rs.r[4] = gdi_point.y;
+    rs.r[3] = gdi_point_mp.x; /* NB coordinates are in millipoints */
+    rs.r[4] = gdi_point_mp.y;
 
     if(NULL != WrapOsErrorChecking(_kernel_swi(Font_Paint, &rs, &rs)))
         /*ERR_FONT_PAINT*/;
@@ -1593,7 +1535,7 @@ host_fonty_text_paint_uchars_in_framed_box(
 #endif /* UNUSED_KEEP_ALIVE */
 
 _Check_return_
-static PIXIT
+extern PIXIT
 host_font_ascent(
     _HfontRef_  HOST_FONT host_font,
     _InVal_     int this_character)
@@ -1619,6 +1561,35 @@ host_font_ascent(
     }
 
     return(ascent);
+}
+
+_Check_return_
+extern PIXIT
+host_font_descent(
+    _HfontRef_  HOST_FONT host_font,
+    _InVal_     int this_character)
+{
+    PIXIT descent = 0;
+    _kernel_swi_regs rs;
+    _kernel_oserror * p_kernel_oserror;
+
+    rs.r[0] = host_font;
+    rs.r[1] = this_character;
+    rs.r[2] = FONT_PAINT_OSCOORDS;
+    if(NULL == (p_kernel_oserror = _kernel_swi(Font_CharBBox, &rs, &rs)))
+        descent = abs(rs.r[2]) * PIXITS_PER_RISCOS;
+
+    if(0 == descent)
+    {   /* Caters for silly techie fonts with only a couple of symbols defined */
+        rs.r[0] = host_font;
+        if(NULL == (p_kernel_oserror = _kernel_swi(Font_ReadInfo, &rs, &rs)))
+        {
+            if(0 == descent)
+                descent = abs(rs.r[2]) * PIXITS_PER_RISCOS;
+        }
+    }
+
+    return(descent);
 }
 
 extern void
@@ -2578,13 +2549,13 @@ host_set_pointer_shape(
         else
         {
             static const BYTE pointer__ttab[] = "\0\1\2\3\0\1\2\3\0\1\2\3\0\1\2\3";
-            S32 XEigFactor, YEigFactor;
+            U32 XEigFactor, YEigFactor;
             _kernel_swi_regs rs;
 
-            host_modevar_cache_query_eigs(p_scb->mode, &XEigFactor, &YEigFactor);
+            host_modevar_cache_query_eig_factors(p_scb->mode, &XEigFactor, &YEigFactor);
 
-            rs.r[0] = 36 + 512;
-            rs.r[1] = 0x12345678; /* kill the OS or any twerp who dares to access this! */
+            rs.r[0] = 0x200 | 36; /* Set pointer shape */
+            rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
             rs.r[2] = (int) p_scb;
             rs.r[3] = 2; /* shape number */
             rs.r[4] = (int) (p_pointer_info->active_point_offset.x >> XEigFactor); /* OS units -> pixels */
@@ -2592,7 +2563,7 @@ host_set_pointer_shape(
             rs.r[6] = 0; /* scale appropriately */
             rs.r[7] = (int) pointer__ttab;
 
-            if(_kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs))
+            if(NULL != _kernel_swi(OS_SpriteOp, &rs, &rs))
                 pointer_shape = POINTER_DEFAULT;
             else
                 /* set pointer to shape 2 */
@@ -2830,34 +2801,36 @@ band_of_colour_2(
     _In_        int tl_plot,
     _In_        int br_plot)
 {
+    const GDI_BOX box = *p_box;
+
     /* bl-tl */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x0),         (p_box->y0)));
+        bbc_move(                            (box.x0),         (box.y0)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + tl_plot, (p_box->x0 + 2 - 1), (p_box->y1 - 1)));
+        os_plot(bbc_RectangleFill + tl_plot, (box.x0 + 2 - 1), (box.y1 - 2 - 1)));
 
     /* tl-tr */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x0 + 2),     (p_box->y1 - 2 + 1)));
+        bbc_move(                            (box.x0),         (box.y1 - 2)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + tl_plot, (p_box->x1 - 2 - 1), (p_box->y1 - 1)));
+        os_plot(bbc_RectangleFill + tl_plot, (box.x1 - 2 - 1), (box.y1 - 1)));
 
-    /* tr-br */
+    /* br-tr */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x1 - 2),     (p_box->y1 - 1)));
+        bbc_move(                            (box.x1 - 2),     (box.y0 + 2)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + br_plot, (p_box->x1 - 1),     (p_box->y0)));
+        os_plot(bbc_RectangleFill + br_plot, (box.x1 - 1),     (box.y1 - 1)));
 
-    /* br-bl */
+    /* bl-br */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x1 - 2 - 1), (p_box->y0 + 2 - 1)));
+        bbc_move(                            (box.x0 + 2),     (box.y0)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + br_plot, (p_box->x0 + 2),     (p_box->y0)));
+        os_plot(bbc_RectangleFill + br_plot, (box.x1 - 1),     (box.y0 + 2 - 1)));
 
-    p_box->x0 += 2;
-    p_box->y0 += 2;
-    p_box->x1 -= 2;
-    p_box->y1 -= 2;
+    p_box->x0 = box.x0 + 2;
+    p_box->y0 = box.y0 + 2;
+    p_box->x1 = box.x1 - 2;
+    p_box->y1 = box.y1 - 2;
 }
 
 /* draw a 4 OS unit band of colour */
@@ -2868,52 +2841,81 @@ band_of_colour_4(
     _In_        int tl_plot,
     _In_        int br_plot)
 {
+    const GDI_BOX box = *p_box;
+
     /* bl-tl */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x0),         (p_box->y0)));
+        bbc_move(                            (box.x0),         (box.y0)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + tl_plot, (p_box->x0 + 4 - 1), (p_box->y1 - 1)));
+        os_plot(bbc_RectangleFill + tl_plot, (box.x0 + 4 - 1), (box.y1 - 4 - 1)));
 
     /* tl-tr */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x0 + 4),     (p_box->y1 - 4 + 1)));
+        bbc_move(                            (box.x0),         (box.y1 - 4)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + tl_plot, (p_box->x1 - 4 - 1), (p_box->y1 - 1)));
+        os_plot(bbc_RectangleFill + tl_plot, (box.x1 - 4 - 1), (box.y1 - 1)));
 
-    /* tr-br */
+    /* br-tr */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x1 - 4),     (p_box->y1 - 1)));
+        bbc_move(                            (box.x1 - 4),     (box.y0 + 4)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + br_plot, (p_box->x1 - 1),     (p_box->y0)));
+        os_plot(bbc_RectangleFill + br_plot, (box.x1 - 1),     (box.y1 - 1)));
 
-    /* br-bl */
+    /* bl-br */
     void_WrapOsErrorChecking(
-        bbc_move(                            (p_box->x1 - 4 - 1), (p_box->y0 + 4 - 1)));
+        bbc_move(                            (box.x0 + 4),     (box.y0)));
     void_WrapOsErrorChecking(
-        os_plot(bbc_RectangleFill + br_plot, (p_box->x0 + 4),     (p_box->y0)));
+        os_plot(bbc_RectangleFill + br_plot, (box.x1 - 1),     (box.y0 + 4 - 1)));
 
     if(br_plot != tl_plot)
-        if(host_modevar_cache_current.YEigFactor < 2)
-        {
-            /* slight tweaks (add more rectangles!) */
+    {
+        /* slight tweaks possible (add more rectangles!) */
 
+        if(host_modevar_cache_current.YEigFactor < 2U)
+        {
             /* bl chamfer */
             void_WrapOsErrorChecking(
-                bbc_move(                            (p_box->x0 + 2),     (p_box->y0)));
+                bbc_move(                            (box.x0 + 2),     (box.y0)));
             void_WrapOsErrorChecking(
-                os_plot(bbc_RectangleFill + br_plot, (p_box->x0 + 4 - 1), (p_box->y0 + 2 - 1)));
+                os_plot(bbc_RectangleFill + br_plot, (box.x0 + 4 - 1), (box.y0 + 2 - 1)));
 
             /* tr chamfer */
             void_WrapOsErrorChecking(
-                bbc_move(                            (p_box->x1 - 4),         (p_box->y1 - 1)));
+                bbc_move(                            (box.x1 - 4),         (box.y1 - 2)));
             void_WrapOsErrorChecking(
-                os_plot(bbc_RectangleFill + tl_plot, (p_box->x1 - 4 + 2 - 1), (p_box->y1 - 2 + 1)));
+                os_plot(bbc_RectangleFill + tl_plot, (box.x1 - 4 + 2 - 1), (box.y1 - 1)));
         }
 
-    p_box->x0 += 4;
-    p_box->y0 += 4;
-    p_box->x1 -= 4;
-    p_box->y1 -= 4;
+        if(host_modevar_cache_current.YEigFactor < 1U)
+        {
+            /* bl chamfer */
+            void_WrapOsErrorChecking(
+                bbc_move(                            (box.x0 + 1), (box.y0)));
+            void_WrapOsErrorChecking(
+                os_plot(bbc_RectangleFill + br_plot, (box.x0 + 1), (box.y0)));
+
+            void_WrapOsErrorChecking(
+                bbc_move(                            (box.x0 + 3), (box.y0 + 2)));
+            void_WrapOsErrorChecking(
+                os_plot(bbc_RectangleFill + br_plot, (box.x0 + 3), (box.y0 + 2)));
+
+            /* tr chamfer */
+            void_WrapOsErrorChecking(
+                bbc_move(                            (box.x1 - 2), (box.y1 - 1)));
+            void_WrapOsErrorChecking(
+                os_plot(bbc_RectangleFill + tl_plot, (box.x1 - 2), (box.y1 - 1)));
+
+            void_WrapOsErrorChecking(
+                bbc_move(                            (box.x1 - 4), (box.y1 - 3)));
+            void_WrapOsErrorChecking(
+                os_plot(bbc_RectangleFill + tl_plot, (box.x1 - 4), (box.y1 - 3)));
+        }
+    }
+
+    p_box->x0 = box.x0 + 4;
+    p_box->y0 = box.y0 + 4;
+    p_box->x1 = box.x1 - 4;
+    p_box->y1 = box.y1 - 4;
 }
 
 extern void
@@ -2940,33 +2942,37 @@ host_framed_box_paint_frame(
 #endif
         break;
 
-    /* thinnest (but min 2 OS) lines around inside */
+    /* thinnest lines around inside */
     case FRAMED_BOX_PLAIN:
 #if !defined(FRAMED_BOX_EDIT_FANCY)
     case FRAMED_BOX_EDIT:
 #endif
         {
-        int line_colour;
+        PC_RGB p_line_colour = &rgb_stash[0x07] /*black*/;
 
-        line_colour = disabled ? 0x02 /*lt grey*/ : 0x06 /*dark grey - was black*/;
+        if(disabled)
+        {
+            static const RGB line_colour_disabled_hi_colour = RGB_INIT(0x88, 0x88, 0x88); /* a la Window Manager */
+            p_line_colour = (host_modevar_cache_current.bpp < 8) ? &rgb_stash[0x03] /*grey*/ : &line_colour_disabled_hi_colour;
+        }
 
-        (void) host_setfgcolour(&rgb_stash[line_colour]);
+        (void) host_setfgcolour(p_line_colour);
 
         /* bl */
         void_WrapOsErrorChecking(
             bbc_move(box.x0, box.y0));
         /* bl-tl */
         void_WrapOsErrorChecking(
-            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x0 + 2 - 1), (box.y1 - 1)));
+            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x0    ), (box.y1 - 1)));
         /* tl-tr */
         void_WrapOsErrorChecking(
-            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x1 - 1),     (box.y1 - 1)));
+            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x1 - 1), (box.y1 - 1)));
         /* tr-br */
         void_WrapOsErrorChecking(
-            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x1 - 2),     (box.y0)));
+            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x1 - 1), (box.y0    )));
         /* br-bl */
         void_WrapOsErrorChecking(
-            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x0),         (box.y0 + 2 - 1)));
+            os_plot(bbc_RectangleFill + bbc_DrawAbsFore, (box.x0    ), (box.y0    )));
 
         break;
     }
@@ -3072,7 +3078,7 @@ host_framed_box_paint_frame(
         {
         int tl_colour, br_colour;
 
-        if(host_modevar_cache_current.YEigFactor >= 2)
+        if(host_modevar_cache_current.YEigFactor >= 2U)
         {
             host_framed_box_paint_frame(&box, FRAMED_BOX_PLAIN | disabled);
             return;
@@ -3103,7 +3109,7 @@ host_framed_box_paint_frame(
         {
         int tl_colour, br_colour;
 
-        if(host_modevar_cache_current.YEigFactor >= 2)
+        if(host_modevar_cache_current.YEigFactor >= 2U)
         {
             host_framed_box_paint_frame(p_box_abs, ((border_style - FRAMED_BOX_W31_BUTTON_IN) + FRAMED_BOX_BUTTON_IN) | disabled);
             return;
@@ -3207,10 +3213,10 @@ host_framed_box_trim_frame(
 #if !defined(FRAMED_BOX_EDIT_FANCY)
     case FRAMED_BOX_EDIT:
 #endif
-        p_box->x0 += MAX(2, host_modevar_cache_current.dx);
-        p_box->y0 += MAX(2, host_modevar_cache_current.dy);
-        p_box->x1 -= MAX(2, host_modevar_cache_current.dx);
-        p_box->y1 -= MAX(2, host_modevar_cache_current.dy);
+        p_box->x0 += host_modevar_cache_current.dx;
+        p_box->y0 += host_modevar_cache_current.dy;
+        p_box->x1 -= host_modevar_cache_current.dx;
+        p_box->y1 -= host_modevar_cache_current.dy;
         break;
 
     case FRAMED_BOX_BUTTON_IN:
@@ -3244,7 +3250,7 @@ host_framed_box_trim_frame(
 
 #if defined(FRAMED_BOX_EDIT_FANCY)
     case FRAMED_BOX_EDIT:
-        if(host_modevar_cache_current.XEigFactor >= 2)
+        if(host_modevar_cache_current.XEigFactor >= 2U)
         {
             host_framed_box_trim_frame(p_box, FRAMED_BOX_PLAIN);
             return;
@@ -3352,7 +3358,7 @@ host_ploticon(
 
     rs.r[0] = 0;
     rs.r[1] = (int) p_icon;
-    void_WrapOsErrorReporting(_kernel_swi(/*Wimp_PlotIcon*/ 0x0400E2, &rs, &rs));
+    void_WrapOsErrorReporting(_kernel_swi(Wimp_PlotIcon, &rs, &rs));
 }
 
 /* host_ploticon() plots window relative */
@@ -3379,17 +3385,18 @@ host_ploticon_setup_bbox(
 _Check_return_
 static STATUS
 supersprite(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InVal_     GDI_COORD x,
+    _InVal_     GDI_COORD y,
+    _InVal_     GDI_COORD w,
+    _InVal_     GDI_COORD h,
     _InRef_     PC_SCB p_scb,
-    _InVal_     S32 x,
-    _InVal_     S32 y,
-    _InVal_     S32 w,
-    _InVal_     S32 h,
-    _InVal_     BOOL stretch);
+    _InVal_     int paint_sprite_scale);
 
 typedef struct SPRITEOP_SCALING_FACTORS
 {
-    S32 numerator_x;
-    S32 numerator_y;
+    S32 multiplier_x;
+    S32 multiplier_y;
     S32 divisor_x;
     S32 divisor_y;
 }
@@ -3398,16 +3405,19 @@ SPRITEOP_SCALING_FACTORS, * P_SPRITEOP_SCALING_FACTORS;
 _Check_return_
 static STATUS
 plotscaled2(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InVal_     GDI_COORD x,
+    _InVal_     GDI_COORD y,
     _InRef_     PC_SCB p_scb,
-    _InVal_     U32 mode,
-    _InVal_     S32 x,
-    _InVal_     S32 y,
-    P_SPRITEOP_SCALING_FACTORS r6);
+    P_SPRITEOP_SCALING_FACTORS r6,
+    _InVal_     U32 sprite_mode_word);
 
+_Check_return_
 static P_U8
 generate_table(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_SCB p_scb,
-    _InVal_     U32 mode,
+    _InVal_     U32 sprite_mode_word,
     P_U8 paltemp,
     P_U8 pixtrans);
 
@@ -3455,13 +3465,14 @@ process_sprite_pre_riscos_3_5(
 
 _Check_return_
 static STATUS
-plot_sprite(
+host_paint_sprite_abs_coords(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InVal_     GDI_COORD x,
+    _InVal_     GDI_COORD y,
+    _InVal_     GDI_COORD w,
+    _InVal_     GDI_COORD h,
     _InRef_     P_SCB p_scb /*poked+restored*/,
-    _InVal_     S32 x,
-    _InVal_     S32 y,
-    _InVal_     S32 w,
-    _InVal_     S32 h,
-    _InVal_     BOOL stretch)
+    _InVal_     int paint_sprite_scale)
 {
     const S32 oldpo = p_scb->offset_to_mask;
     const S32 oldmo = p_scb->mode;
@@ -3473,46 +3484,104 @@ plot_sprite(
     {
         if(process_sprite_pre_riscos_3_5(p_scb))
         {
-            status_return(status = supersprite(p_scb, x, y, w, h, stretch));
+            status_return(status = supersprite(p_redraw_context, x, y, w, h, p_scb, paint_sprite_scale));
             if(status_done(status)) /* DONE -> plotted */
                 return(STATUS_OK);
         }
     }
 
-    rs.r[0] = 0x200 | 0x28;
+    rs.r[0] = 0x200 | 40; /* Read sprite information */
     rs.r[1] = 0xFF;
     rs.r[2] = (int) p_scb;
 
-    if(NULL != _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs))
+    if(NULL != _kernel_swi(OS_SpriteOp, &rs, &rs))
         status = STATUS_FAIL;
     else
     {
-        S32 pixW = rs.r[3];
-        S32 pixH = rs.r[4];
-        U32 mode = rs.r[6];
-        S32 XEigFactor, YEigFactor;
+        const S32 sprite_pixW = rs.r[3];
+        const S32 sprite_pixH = rs.r[4];
+        const U32 sprite_mode_word = rs.r[6];
+        U32 sprite_XEigFactor, sprite_YEigFactor;
+        GDI_COORD x_offset = 0;
+        GDI_COORD y_offset = 0;
 
-        host_modevar_cache_query_eigs(mode, &XEigFactor, &YEigFactor);
+        host_modevar_cache_query_eig_factors(sprite_mode_word, &sprite_XEigFactor, &sprite_YEigFactor);
 
-        if(stretch)
-        {   /* Reputedly... this gives a correct set! */
+        switch(paint_sprite_scale)
+        {
+        case PAINT_SPRITE_SCALE_FULL:
+            {
             BOOL scaling;
             SPRITEOP_SCALING_FACTORS spriteop_scaling_factors;
-            spriteop_scaling_factors.numerator_x = w >> XEigFactor;
-            spriteop_scaling_factors.numerator_y = h >> YEigFactor;
-            spriteop_scaling_factors.divisor_x = pixW;
-            spriteop_scaling_factors.divisor_y = pixH;
+            spriteop_scaling_factors.multiplier_x = w >> p_redraw_context->host_xform.riscos.XEigFactor;
+            spriteop_scaling_factors.multiplier_y = h >> p_redraw_context->host_xform.riscos.YEigFactor;
+            spriteop_scaling_factors.divisor_x = sprite_pixW;
+            spriteop_scaling_factors.divisor_y = sprite_pixH;
             scaling =
-                (spriteop_scaling_factors.numerator_x != spriteop_scaling_factors.divisor_x) ||
-                (spriteop_scaling_factors.numerator_y != spriteop_scaling_factors.divisor_y);
-            status = plotscaled2(p_scb, mode, x, y, scaling ? &spriteop_scaling_factors : NULL);
-        }
-        else
-        {   /* just h/v centre */
-            status = plotscaled2(p_scb, mode,
-                                 x + (w - (pixW << XEigFactor)) / 2,
-                                 y + (h - (pixH << YEigFactor)) / 2,
-                                 NULL);
+                (spriteop_scaling_factors.multiplier_x != spriteop_scaling_factors.divisor_x) ||
+                (spriteop_scaling_factors.multiplier_y != spriteop_scaling_factors.divisor_y);
+            status = plotscaled2(p_redraw_context, x, y, p_scb, scaling ? &spriteop_scaling_factors : NULL, sprite_mode_word);
+            break;
+            }
+
+        case PAINT_SPRITE_SCALE_INTEGRAL:
+            {
+            BOOL scaling;
+            SPRITEOP_SCALING_FACTORS spriteop_scaling_factors;
+            spriteop_scaling_factors.multiplier_x = w >> p_redraw_context->host_xform.riscos.XEigFactor;
+            spriteop_scaling_factors.multiplier_y = h >> p_redraw_context->host_xform.riscos.YEigFactor;
+            spriteop_scaling_factors.divisor_x = sprite_pixW;
+            spriteop_scaling_factors.divisor_y = sprite_pixH;
+            /* truncate to lower scale (never go beyond target bounds) */
+            if(spriteop_scaling_factors.multiplier_x > spriteop_scaling_factors.divisor_x)
+            {
+                spriteop_scaling_factors.multiplier_x /= spriteop_scaling_factors.divisor_x;
+                spriteop_scaling_factors.divisor_x = 1;
+            }
+            if(spriteop_scaling_factors.multiplier_y > spriteop_scaling_factors.divisor_x)
+            {
+                spriteop_scaling_factors.multiplier_y /= spriteop_scaling_factors.divisor_y;
+                spriteop_scaling_factors.divisor_y = 1;
+            }
+            scaling =
+                (spriteop_scaling_factors.multiplier_x != spriteop_scaling_factors.divisor_x) ||
+                (spriteop_scaling_factors.multiplier_y != spriteop_scaling_factors.divisor_y);
+            //reportf("w %dpx, sw %dpx; h %dpx, sh %dpx", (w >> p_redraw_context->host_xform.riscos.XEigFactor), sprite_pixW, (h >> p_redraw_context->host_xform.riscos.YEigFactor), sprite_pixH);
+            //reportf("%s x=%d/%d y=%d/%d", report_boolstring(scaling), spriteop_scaling_factors.multiplier_x, spriteop_scaling_factors.divisor_x, spriteop_scaling_factors.multiplier_y, spriteop_scaling_factors.divisor_y);
+            if(scaling)
+            {
+                /* loop taking out common factors (currently just two) */
+                while( (0 == (spriteop_scaling_factors.multiplier_x & 1)) && (0 == (spriteop_scaling_factors.divisor_x & 1)) )
+                {
+                    spriteop_scaling_factors.multiplier_x >>= 1;
+                    spriteop_scaling_factors.divisor_x >>= 1;
+                }
+                while( (0 == (spriteop_scaling_factors.multiplier_y & 1)) && (0 == (spriteop_scaling_factors.divisor_y & 1)) )
+                {
+                    spriteop_scaling_factors.multiplier_y >>= 1;
+                    spriteop_scaling_factors.divisor_y >>= 1;
+                }
+                //reportf("%s x=%d/%d y=%d/%d", report_boolstring(scaling), spriteop_scaling_factors.multiplier_x, spriteop_scaling_factors.divisor_x, spriteop_scaling_factors.multiplier_y, spriteop_scaling_factors.divisor_y);
+            }
+            x_offset = (w - ((sprite_pixW << p_redraw_context->host_xform.riscos.XEigFactor) * spriteop_scaling_factors.multiplier_x) / spriteop_scaling_factors.divisor_x);
+            if(0 != x_offset) x_offset /= 2;
+            y_offset = (h - ((sprite_pixH << p_redraw_context->host_xform.riscos.YEigFactor) * spriteop_scaling_factors.multiplier_y) / spriteop_scaling_factors.divisor_y);
+            if(0 != y_offset) y_offset /= 2;
+            //reportf("%s x=%d/%d y=%d/%d tw=%dos, th=%dos, xo=%dos, yo=%dos", report_boolstring(scaling), spriteop_scaling_factors.multiplier_x, spriteop_scaling_factors.divisor_x, spriteop_scaling_factors.multiplier_y, spriteop_scaling_factors.divisor_y, ((sprite_pixW << p_redraw_context->host_xform.riscos.XEigFactor) * spriteop_scaling_factors.multiplier_x) / spriteop_scaling_factors.divisor_x, ((sprite_pixH << p_redraw_context->host_xform.riscos.YEigFactor) * spriteop_scaling_factors.multiplier_y) / spriteop_scaling_factors.divisor_y, x_offset, y_offset);
+            status = plotscaled2(p_redraw_context, x + x_offset, y + y_offset, p_scb, scaling ? &spriteop_scaling_factors : NULL, sprite_mode_word);
+            break;
+            }
+
+        default:
+        case PAINT_SPRITE_SCALE_NONE:
+            { /* just h/v centre */
+            x_offset = (w - (sprite_pixW << sprite_XEigFactor));
+            if(0 != x_offset) x_offset /= 2;
+            y_offset = (h - (sprite_pixH << sprite_YEigFactor));
+            if(0 != y_offset) y_offset /= 2;
+            status = plotscaled2(p_redraw_context, x + x_offset, y + y_offset, p_scb, NULL, sprite_mode_word);
+            break;
+            }
         }
     }
 
@@ -3530,23 +3599,24 @@ host_paint_sprite(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InoutRef_  P_SCB p_scb,
-    _InVal_     BOOL stretch)
+    _InVal_     int paint_sprite_scale)
 {
     GDI_RECT gdi_rect;
 
     if(!status_done(gdi_rect_from_pixit_rect_and_context(&gdi_rect, p_pixit_rect, p_redraw_context)))
         return;
 
-    status_consume(plot_sprite(p_scb, gdi_rect.tl.x, gdi_rect.br.y, gdi_rect.br.x - gdi_rect.tl.x, gdi_rect.tl.y - gdi_rect.br.y, stretch));
+    status_consume(host_paint_sprite_abs_coords(p_redraw_context, gdi_rect.tl.x, gdi_rect.br.y, gdi_rect.br.x - gdi_rect.tl.x, gdi_rect.tl.y - gdi_rect.br.y, p_scb, paint_sprite_scale));
 }
 
 extern void
 host_paint_sprite_abs(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_GDI_BOX p_gdi_box,
     _InoutRef_  P_SCB p_scb,
-    _InVal_     BOOL stretch)
+    _InVal_     int paint_sprite_scale)
 {
-    status_consume(plot_sprite(p_scb, p_gdi_box->x0, p_gdi_box->y0, p_gdi_box->x1 - p_gdi_box->x0, p_gdi_box->y1 - p_gdi_box->y0, stretch));
+    status_consume(host_paint_sprite_abs_coords(p_redraw_context, p_gdi_box->x0, p_gdi_box->y0, p_gdi_box->x1 - p_gdi_box->x0, p_gdi_box->y1 - p_gdi_box->y0, p_scb, paint_sprite_scale));
 }
 
 /*
@@ -3579,12 +3649,13 @@ Super sprite conversion down something which RISC OS 3 can hack
 _Check_return_
 static STATUS
 supersprite(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InVal_     GDI_COORD x,
+    _InVal_     GDI_COORD y,
+    _InVal_     GDI_COORD w,
+    _InVal_     GDI_COORD h,
     _InRef_     PC_SCB p_scb,
-    _InVal_     S32 x,
-    _InVal_     S32 y,
-    _InVal_     S32 w,
-    _InVal_     S32 h,
-    _InVal_     BOOL stretch)
+    _InVal_     int paint_sprite_scale)
 {
     _kernel_swi_regs rs;
     S32 len;
@@ -3617,10 +3688,10 @@ supersprite(
     p_sah->offset_to_free = sizeof32(*p_sah);
 
 #if 0 /* we've correctly initialised it ^^^ */
-    rs.r[0] = 0x109;
+    rs.r[0] = 0x100 | 9;
     rs.r[1] = (int) p_sah;
 
-    if(NULL != _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs))
+    if(NULL != _kernel_swi(OS_SpriteOp, &rs, &rs))
         status = STATUS_FAIL;
     else
 #endif
@@ -3633,7 +3704,7 @@ supersprite(
         if(NULL != _kernel_swi(/*PicConvert_SStoFF9*/ 0x48E01, &rs, &rs))
             status = STATUS_FAIL;
         else
-            status = plot_sprite((P_SCB) p_sah, x, y, w, h, stretch);
+            status = host_paint_sprite_abs_coords(p_redraw_context, x, y, w, h, (P_SCB) p_sah, paint_sprite_scale);
 
         if(status_ok(status))
             status = STATUS_DONE; /* plotted */
@@ -3647,46 +3718,50 @@ supersprite(
 _Check_return_
 static STATUS
 plotscaled2(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InVal_     GDI_COORD x,
+    _InVal_     GDI_COORD y,
     _InRef_     PC_SCB p_scb,
-    _InVal_     U32 mode /*that the mode the sprite was defined in */,
-    _InVal_     S32 x,
-    _InVal_     S32 y,
-    P_SPRITEOP_SCALING_FACTORS r6)
+    P_SPRITEOP_SCALING_FACTORS r6,
+    _InVal_     U32 sprite_mode_word /*that the mode the sprite was defined in */)
 {
     U8 temp_pixtrans[256];
     P_U8 r7;
     U8 temppal[1024]; /* SKS 04oct95 this used to be static */
     _kernel_swi_regs rs;
 
-    r7 = generate_table(p_scb, mode, temppal, temp_pixtrans);
+    r7 = generate_table(p_redraw_context, p_scb, sprite_mode_word, temppal, temp_pixtrans);
 
-    rs.r[0] = 0x200 | 0x34;
+    rs.r[0] = 0x200 | 52; /* Put sprite scaled */
     rs.r[1] = 0xFF;
     rs.r[2] = (int) p_scb;
     rs.r[3] = x;
     rs.r[4] = y;
-    rs.r[5] = 8;
+    rs.r[5] = 8; /* Use mask */
     rs.r[6] = (int) r6;
     rs.r[7] = (int) r7;
 
-    if(NULL != _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs))
+    if(NULL != _kernel_swi(OS_SpriteOp, &rs, &rs))
         return(STATUS_FAIL);
 
     return(STATUS_OK);
 }
 
-/* Build a table
+/* Build a pixel translation table
  return -1 or a pixtrans table for use in r7 of the SpriteOp(52)
  sptr%     -> sprite control block
  paltemp%  -> 1K buffer
  pixtrans% -> 256 byte buffer
- mode is the mode the sprite was defined in
+ sprite_mode_word is the mode the sprite was defined in
+ See Application Note in PRM
 */
 
+_Check_return_
 static P_U8
 generate_table(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_SCB p_scb,
-    _InVal_     U32 mode,
+    _InVal_     U32 sprite_mode_word,
     P_U8 paltemp,
     P_U8 pixtrans)
 {
@@ -3700,12 +3775,12 @@ generate_table(
     if( p_scb->offset_to_data == 44 )
     {
         /* Offset to sprite image implies no palette */
-        S32 bpp;
+        U32 bpp;
 
         /* palptr%=-1  :REM Current palette          */
         /* palptr%=0   :REM Default for mode         */
 
-        host_modevar_cache_query_bpp(mode, &bpp);
+        host_modevar_cache_query_bpp(sprite_mode_word, &bpp);
 
         if( bpp == 8 )
             /* Leave as 0 */
@@ -3747,21 +3822,19 @@ generate_table(
         {
             P_S32 p_s32 = (P_S32) palptr;
             rs.r[0] = (int) p_s32[Q];
-            if( _kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs) )
-                status = STATUS_FAIL;
-            else
+            if(NULL == WrapOsErrorChecking(_kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs)))
                 pixtrans[Q] = u8_from_int(rs.r[0]);
         }
     }
     else
     {
-        rs.r[0] = (int) mode;
+        rs.r[0] = (int) sprite_mode_word;
         rs.r[1] = (int) palptr;
-        rs.r[2] = -1;
-        rs.r[3] = -1;
+        rs.r[2] = -1; /* destination mode is current mode */
+        rs.r[3] = -1; /* destination palette is current palette */
         rs.r[4] = (int) pixtrans;
 
-        if( _kernel_swi(ColourTrans_SelectTable, &rs, &rs))
+        if(NULL != WrapOsErrorReporting(_kernel_swi(ColourTrans_SelectTable, &rs, &rs)))
             status = STATUS_FAIL;
     }
 
@@ -3791,7 +3864,7 @@ host_paint_bitmap(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     /*_In_*/    PC_ANY p_bmp,
-    _InVal_     BOOL stretch)
+    _InVal_     int paint_sprite_scale)
 {
     GDI_RECT gdi_rect;
     S32 w, h;
@@ -3843,7 +3916,7 @@ host_paint_bitmap(
 
         p_scb = PtrAddBytes(P_SCB, p_sah, sizeof_SPRITE_FILE_HEADER); /* Pop a Doodle Do */
 
-        status = plot_sprite(p_scb, gdi_rect.tl.x, gdi_rect.br.y, w, h, stretch);
+        status = host_paint_sprite_abs_coords(p_redraw_context, gdi_rect.tl.x, gdi_rect.br.y, w, h, p_scb, paint_sprite_scale);
 
         al_array_dispose(&newhandle);
     }
@@ -3983,6 +4056,15 @@ os_read_mode_variable(
     return(rs.r[2]);
 }
 
+_Check_return_
+static inline unsigned int
+os_read_mode_variable_u(
+    _InVal_     U32 mode_specifier,
+    _InVal_     int variable)
+{
+    return((unsigned int) os_read_mode_variable(mode_specifier, variable));
+}
+
 static void
 host_modevar_cache_obtain_data(
     _InVal_     U32 mode_specifier,
@@ -4018,10 +4100,10 @@ host_modevar_cache_obtain_data(
     }
 
     /* obtain raw values */
-    p_host_modevar_cache_entry->XEigFactor = (U8) os_read_mode_variable(mode_specifier, 4/*XEigFactor*/);
-    p_host_modevar_cache_entry->YEigFactor = (U8) os_read_mode_variable(mode_specifier, 5/*YEigFactor*/);
+    p_host_modevar_cache_entry->XEigFactor = os_read_mode_variable_u(mode_specifier, 4/*XEigFactor*/);
+    p_host_modevar_cache_entry->YEigFactor = os_read_mode_variable_u(mode_specifier, 5/*YEigFactor*/);
 
-    p_host_modevar_cache_entry->Log2BPP = (U8) os_read_mode_variable(mode_specifier, 9/*Log2BPP*/);
+    p_host_modevar_cache_entry->Log2BPP = os_read_mode_variable_u(mode_specifier, 9/*Log2BPP*/);
 
     if(fScreenMode)
     {
@@ -4114,7 +4196,7 @@ host_modevar_cache_reset(void)
 extern void
 host_modevar_cache_query_bpp(
     _InVal_     U32 mode_specifier,
-    _OutRef_    P_S32 p_bpp)
+    _OutRef_    P_U32 p_bpp)
 {
     PC_HOST_MODEVAR_CACHE_ENTRY p_host_modevar_cache_entry = host_modevar_cache_ensure_mode(mode_specifier);
 
@@ -4124,14 +4206,14 @@ host_modevar_cache_query_bpp(
         return;
     }
 
-    *p_bpp = 1 << os_read_mode_variable(mode_specifier, 9/*Log2BPP*/);
+    *p_bpp = 1U << os_read_mode_variable_u(mode_specifier, 9/*Log2BPP*/);
 }
 
 extern void
-host_modevar_cache_query_eigs(
+host_modevar_cache_query_eig_factors(
     _InVal_     U32 mode_specifier,
-    _OutRef_    P_S32 p_XEigFactor,
-    _OutRef_    P_S32 p_YEigFactor)
+    _OutRef_    P_U32 p_XEigFactor,
+    _OutRef_    P_U32 p_YEigFactor)
 {
     PC_HOST_MODEVAR_CACHE_ENTRY p_host_modevar_cache_entry = host_modevar_cache_ensure_mode(mode_specifier);
 
@@ -4142,8 +4224,8 @@ host_modevar_cache_query_eigs(
         return;
     }
 
-    *p_XEigFactor = os_read_mode_variable(mode_specifier, 4/*XEigFactor*/);
-    *p_YEigFactor = os_read_mode_variable(mode_specifier, 5/*YEigFactor*/);
+    *p_XEigFactor = os_read_mode_variable_u(mode_specifier, 4/*XEigFactor*/);
+    *p_YEigFactor = os_read_mode_variable_u(mode_specifier, 5/*YEigFactor*/);
 }
 
 extern void

@@ -16,11 +16,17 @@
 #include "fl_pdtx/fl_pdtx.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_fl_pdtx_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FL_PDTX)
 extern PC_U8 rb_fl_pdtx_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_PDTX &rb_fl_pdtx_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_PDTX DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_PDTX DONT_LOAD_MESSAGES_FILE
 #endif
 
-#define P_BOUND_RESOURCES_OBJECT_ID_PDTX DONT_LOAD_RESOURCES
+#define P_BOUND_RESOURCES_OBJECT_ID_FL_PDTX DONT_LOAD_RESOURCES
 
 /*
 PD format codes
@@ -1297,7 +1303,7 @@ T5_MSG_PROTO(static, pdtx_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        return(resource_init(OBJECT_ID_FL_PDTX, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_PDTX));
+        return(resource_init(OBJECT_ID_FL_PDTX, P_BOUND_MESSAGES_OBJECT_ID_FL_PDTX, P_BOUND_RESOURCES_OBJECT_ID_FL_PDTX));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FL_PDTX));

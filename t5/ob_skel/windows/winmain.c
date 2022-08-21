@@ -124,7 +124,7 @@ registry_get_user_name(void)
     HKEY hkey;
     DWORD err;
 
-    if(ERROR_SUCCESS == (err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key_program, 0, KEY_READ, &hkey)))
+    if(ERROR_SUCCESS == (err = RegOpenKeyExW(HKEY_LOCAL_MACHINE, key_program_wstr, 0, KEY_READ, &hkey)))
     {
         BYTE b[REG_NAME_LENGTH*2 + 1];
         DWORD bl = sizeof32(b);
@@ -147,7 +147,7 @@ registry_get_organization_name(void)
     HKEY hkey;
     DWORD err;
 
-    if(ERROR_SUCCESS == (err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key_program, 0, KEY_READ, &hkey)))
+    if(ERROR_SUCCESS == (err = RegOpenKeyExW(HKEY_LOCAL_MACHINE, key_program_wstr, 0, KEY_READ, &hkey)))
     {
         BYTE b[REG_NAME_LENGTH*2 + 1];
         DWORD bl = sizeof32(b);
@@ -177,7 +177,7 @@ registry_get_registration_number(void)
     HKEY hkey;
     DWORD err;
 
-    if(ERROR_SUCCESS == (err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key_program, 0, KEY_READ, &hkey)))
+    if(ERROR_SUCCESS == (err = RegOpenKeyExW(HKEY_LOCAL_MACHINE, key_program_wstr, 0, KEY_READ, &hkey)))
     {
         BYTE b[REG_NUMB_LENGTH*2 + 1];
         DWORD bl = sizeof32(b);
@@ -235,7 +235,7 @@ HklmGetProfileString(
     PTR_ASSERT(ptzKey); /* no general wildcard lookup allowed */
     PTR_ASSERT(ptzDefault); /* must supply a default */
 
-    if(ERROR_SUCCESS == (err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key_program, 0, KEY_READ, &hkey)))
+    if(ERROR_SUCCESS == (err = RegOpenKeyExW(HKEY_LOCAL_MACHINE, key_program_wstr, 0, KEY_READ, &hkey)))
     {
         DWORD bl = cchReturnBuffer;
         DWORD dwType;
@@ -276,7 +276,7 @@ MyGetProfileString(
     PTR_ASSERT(ptzKey); /* no general wildcard lookup allowed */
     PTR_ASSERT(ptzDefault); /* must supply a default */
 
-    if(ERROR_SUCCESS == (err = RegOpenKeyEx(HKEY_CURRENT_USER, key_program, 0, KEY_READ, &hkey)))
+    if(ERROR_SUCCESS == (err = RegOpenKeyExW(HKEY_CURRENT_USER, key_program_wstr, 0, KEY_READ, &hkey)))
     {
         DWORD bl = cchReturnBuffer;
         DWORD dwType;
@@ -747,18 +747,18 @@ ensure_user_path(
     user_path[0] = CH_NULL;
 
     /* Ensure the program's key is present */
-    if(ERROR_SUCCESS != (err = RegOpenKeyEx(HKEY_CURRENT_USER, key_program, 0, KEY_SET_VALUE, &hkey)))
+    if(ERROR_SUCCESS != (err = RegOpenKeyExW(HKEY_CURRENT_USER, key_program_wstr, 0, KEY_SET_VALUE, &hkey)))
     {
         DWORD dwDisp;
 
-        if(ERROR_SUCCESS != (err = RegCreateKeyEx(HKEY_CURRENT_USER, key_program, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwDisp)))
+        if(ERROR_SUCCESS != (err = RegCreateKeyExW(HKEY_CURRENT_USER, key_program_wstr, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwDisp)))
         {
             return(STATUS_FAIL);
         }
 
         (void) RegCloseKey(hkey);
 
-        if(ERROR_SUCCESS != (err = RegOpenKeyEx(HKEY_CURRENT_USER, key_program, 0, KEY_SET_VALUE, &hkey)))
+        if(ERROR_SUCCESS != (err = RegOpenKeyExW(HKEY_CURRENT_USER, key_program_wstr, 0, KEY_SET_VALUE, &hkey)))
         {
             return(STATUS_FAIL);
         }

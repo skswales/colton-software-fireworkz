@@ -10,23 +10,30 @@ OBJID=31
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).ob_file.o.ob_file: $(T5).ob_file.c.ob_file
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_31_S=$(BUILD_DIR).ob_file.o.ob_file
+
+$(PROD_BUILD_DIR).o.Neutral.M31: $(OBJS_31_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_31_S)
+
 # Windows STRINGTABLE
 $(BUILD_DIR).ob_file.$(COUNTRY)-31/rc: $(T5).ob_file.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 31 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob31: $(T5).ob_file.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages
 $(BUILD_DIR).ob_file.o.$(COUNTRY)-B31: $(T5).ob_file.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_file.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_file.o.$(COUNTRY)-B_tmp -symbol rb_file_msg_weak
 
-$(BUILD_DIR).ob_file.o.ob_file: $(T5).ob_file.c.ob_file
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_31_S=$(BUILD_DIR).ob_file.o.ob_file
-
 OBJS_31_X=$(BUILD_DIR).ob_file.o.$(COUNTRY)-B31
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M31: $(OBJS_31_X) $(OBJS_31_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M31: $(OBJS_31_X) $(OBJS_31_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_31_X) $(OBJS_31_S)
 
 # end of ob_file.mkr ###############################################################################

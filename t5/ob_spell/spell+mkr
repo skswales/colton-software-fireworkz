@@ -10,15 +10,6 @@ OBJID=08
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Windows STRINGTABLE
-$(BUILD_DIR).ob_spell.$(COUNTRY)-08/rc: $(T5).ob_spell.resource.$(COUNTRY)-msg
- Basic -quit $(RCGen) -output $@ -from $? -object 08 -common
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_spell.o.$(COUNTRY)-B08: $(T5).ob_spell.resource.$(COUNTRY)-msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_spell.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_spell.o.$(COUNTRY)-B_tmp -symbol rb_spell_msg_weak
-
 $(BUILD_DIR).ob_spell.o.ob_spell: $(T5).ob_spell.c.ob_spell
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_spell.o.guess: $(T5).ob_spell.c.guess
@@ -38,14 +29,35 @@ $(BUILD_DIR).ob_spell.o.ui_check \
 $(BUILD_DIR).ob_spell.o.ui_dict \
 $(BUILD_DIR).ob_spell.o.spell \
 
+$(PROD_BUILD_DIR).o.Neutral.M08: $(OBJS_08_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_08_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_spell.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob08: $(PROD_BUILD_DIR).o.Neutral.M08 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M08 -N08 $(OBJMUNGE_OBJFLAGS) -Eobject_spell
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_spell.$(COUNTRY)-08/rc: $(T5).ob_spell.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 08 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob08: $(T5).ob_spell.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_spell.o.$(COUNTRY)-B08: $(T5).ob_spell.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_spell.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_spell.o.$(COUNTRY)-B_tmp -symbol rb_spell_msg_weak
+
 OBJS_08_X=$(BUILD_DIR).ob_spell.o.$(COUNTRY)-B08
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M08: $(OBJS_08_X) $(OBJS_08_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M08: $(OBJS_08_X) $(OBJS_08_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_08_X) $(OBJS_08_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).ob_spell.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob08: $(PROD_BUILD_DIR).o.$(COUNTRY)-M08 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M08 -N08 $(OBJMUNGE_OBJFLAGS) -Eobject_spell
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob08: $(PROD_BUILD_DIR).o.$(COUNTRY).M08 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M08 -N08 $(OBJMUNGE_OBJFLAGS) -Eobject_spell
 
 # end of ob_spell.mkr ##############################################################################

@@ -10,28 +10,40 @@ OBJID=24
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).fl_csv.o.fl_csv: $(T5).fl_csv.c.fl_csv
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_24_S=$(BUILD_DIR).fl_csv.o.fl_csv
+
+$(PROD_BUILD_DIR).o.Neutral.M24: $(OBJS_24_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_24_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_csv.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob24: $(PROD_BUILD_DIR).o.Neutral.M24 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M24 -N24 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_csv
+
 # Windows STRINGTABLE
 $(BUILD_DIR).fl_csv.$(COUNTRY)-24/rc: $(T5).fl_csv.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 24 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob24: $(T5).fl_csv.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages
 $(BUILD_DIR).fl_csv.o.$(COUNTRY)-B24: $(T5).fl_csv.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $(BUILD_DIR).fl_csv.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_csv.o.$(COUNTRY)-B_tmp -symbol rb_fl_csv_msg_weak
 
-$(BUILD_DIR).fl_csv.o.fl_csv: $(T5).fl_csv.c.fl_csv
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_24_S=$(BUILD_DIR).fl_csv.o.fl_csv
-
 OBJS_24_X=$(BUILD_DIR).fl_csv.o.$(COUNTRY)-B24
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M24: $(OBJS_24_X) $(OBJS_24_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M24: $(OBJS_24_X) $(OBJS_24_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_24_X) $(OBJS_24_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).fl_csv.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob24: $(PROD_BUILD_DIR).o.$(COUNTRY)-M24 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M24 -N24 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_csv
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob24: $(PROD_BUILD_DIR).o.$(COUNTRY).M24 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M24 -N24 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_csv
 
 # end of fl_csv.mkr ################################################################################

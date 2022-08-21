@@ -415,7 +415,6 @@ host_reenter_window(void)
 {
     WimpGetPointerInfoBlock pointer_info;
     WimpPollBlock event_data;
-    _kernel_swi_regs rs;
 
     void_WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info));
 
@@ -424,15 +423,9 @@ host_reenter_window(void)
 
     event_data.pointer_leaving_window.window_handle = pointer_info.window_handle;
 
-    rs.r[0] = Wimp_EPointerLeavingWindow;
-    rs.r[1] = (int) &event_data;
-    rs.r[2] = (int)  event_data.pointer_leaving_window.window_handle;
-    void_WrapOsErrorChecking(_kernel_swi(/*Wimp_SendMessage*/ 0x0400E7, &rs, &rs));
+    void_WrapOsErrorChecking(wimp_send_message(Wimp_EPointerLeavingWindow, &event_data, event_data.pointer_leaving_window.window_handle, BAD_WIMP_I, NULL));
 
-    rs.r[0] = Wimp_EPointerEnteringWindow;
-    rs.r[1] = (int) &event_data;
-    rs.r[2] = (int)  event_data.pointer_leaving_window.window_handle;
-    void_WrapOsErrorChecking(_kernel_swi(/*Wimp_SendMessage*/ 0x0400E7, &rs, &rs));
+    void_WrapOsErrorChecking(wimp_send_message(Wimp_EPointerEnteringWindow, &event_data, event_data.pointer_leaving_window.window_handle, BAD_WIMP_I, NULL));
 }
 
 /******************************************************************************
@@ -3838,6 +3831,13 @@ host_release_global_clipboard(
 }
 
 #endif /* USE_GLOBAL_CLIPBOARD */
+
+_Check_return_
+extern STATUS
+ensure_memory_froth(void)
+{
+    return(alloc_ensure_froth(0x6000));
+}
 
 _Check_return_
 extern U32

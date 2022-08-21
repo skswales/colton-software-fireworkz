@@ -184,7 +184,7 @@ resource_bitmap_find(
             rs.r[1] = (int) area;
             rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
-            if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
+            if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
             {
                 resource_bitmap_handle.i = rs.r[2];
                 return(resource_bitmap_handle);
@@ -198,7 +198,7 @@ resource_bitmap_find(
         rs.r[1] = (int) area;
         rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
-        if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
+        if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
         {
             resource_bitmap_handle.i = rs.r[2];
             return(resource_bitmap_handle);
@@ -211,7 +211,7 @@ resource_bitmap_find(
         rs.r[1] = (int) area;
         rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
-        if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
+        if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
             resource_bitmap_handle.i = rs.r[2];
     }
 #elif WINDOWS
@@ -345,7 +345,7 @@ resource_bitmap_find_in_area(
         rs.r[1] = (int) area;
         rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
-        if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
+        if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
             resource_bitmap_handle.i = rs.r[2];
     }
     } /*block*/
@@ -411,7 +411,7 @@ resource_bitmap_find_system(
             rs.r[1] = (int) area[area_idx];
             rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
 
-            if(NULL == (p_kernel_oserror = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
+            if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
             {
                 resource_bitmap_handle.i = rs.r[2];
                 break;
@@ -495,7 +495,7 @@ resource_bitmap_gdi_size_query(
         rs.r[1] = 1; /* Use Window Manager's Sprite Pools */
         rs.r[2] = resource_bitmap_handle.i & ~RESOURCE_BITMAP_HANDLE_RISCOS_BODGE;
 
-        ok = (NULL == _kernel_swi(/*Wimp_SpriteOp*/ 0x000400E9, &rs, &rs));
+        ok = (NULL == _kernel_swi(Wimp_SpriteOp, &rs, &rs));
     }
     else
     {
@@ -503,7 +503,7 @@ resource_bitmap_gdi_size_query(
         rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
         rs.r[2] = resource_bitmap_handle.i;
 
-        ok = (NULL == _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs));
+        ok = (NULL == _kernel_swi(OS_SpriteOp, &rs, &rs));
     }
 
     if(!ok)
@@ -513,8 +513,8 @@ resource_bitmap_gdi_size_query(
     }
 
     { /* read info on defining screen mode */
-    S32 XEigFactor, YEigFactor;
-    host_modevar_cache_query_eigs(rs.r[6], &XEigFactor, &YEigFactor);
+    U32 XEigFactor, YEigFactor;
+    host_modevar_cache_query_eig_factors(rs.r[6], &XEigFactor, &YEigFactor);
     p_size->cx = (GDI_COORD) rs.r[3] << XEigFactor;
     p_size->cy = (GDI_COORD) rs.r[4] << YEigFactor;
     } /*block*/
@@ -670,7 +670,7 @@ resource_init(
     assert(IS_OBJECT_ID_VALID(object_id));
 
 #if RISCOS
-    assert(NULL != p_u8_bound_msg);
+    assert(DONT_LOAD_MESSAGES_FILE != p_u8_bound_msg);
     resource_statics.riscos.mangled_msgs[object_id].msgs_block = (PC_U8) p_u8_bound_msg;
 
     if(NULL != p_u8_bound_msg)
@@ -707,7 +707,7 @@ resource_init(
     }
 #elif WINDOWS
     UNREFERENCED_PARAMETER_CONST(p_u8_bound_msg);
-    assert(MSG_WEAK == p_u8_bound_msg);
+    assert(DONT_LOAD_MESSAGES_FILE == p_u8_bound_msg);
 
 #if defined(NOT_ALL_IN_ONE)
     if(NULL == resource_statics.windows.library_handle[object_id])
@@ -770,13 +770,13 @@ riscos_sprite_readfile_into(
             rs.r[1] = (int) *p_p_sah;
             rs.r[2] = arealen;
 
-            void_WrapOsErrorChecking(_kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs));
+            void_WrapOsErrorChecking(_kernel_swi(OS_SpriteOp, &rs, &rs));
 
             rs.r[0] = 10 + 256; /* sprite area load */
             rs.r[1] = (int) *p_p_sah;
             rs.r[2] = (int) filename;
 
-            if(NULL != (e = _kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs)))
+            if(NULL != (e = _kernel_swi(OS_SpriteOp, &rs, &rs)))
                 al_ptr_dispose((void **) p_p_sah);
         }
     }
@@ -1300,7 +1300,7 @@ riscos_filesprite(
         /* now to check if the sprite exists: do a sprite_select on the Window Manager sprite pool */
         rs.r[0] = 24;
         rs.r[2] = (int) sbstr_buf;
-        if(NULL == _kernel_swi(/*Wimp_SpriteOp*/ 0x000400E9, &rs, &rs))
+        if(NULL == _kernel_swi(Wimp_SpriteOp, &rs, &rs))
             return;
 
         /* the sprite does not exist: use general don't-know icon. */

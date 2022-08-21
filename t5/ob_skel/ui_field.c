@@ -100,7 +100,7 @@ insert_field_list =
     INSERT_FIELD_ID_LIST, DIALOG_MAIN_GROUP,
     { INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP },
     { 0, DIALOG_STDSPACING_V /*[2,3] set at runtime */},
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL
@@ -110,11 +110,11 @@ insert_field_list_dt =
 #if WINDOWS /* action buttons are so much wider */
     { INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP },
     { 0, DIALOG_STDSPACING_V /*[2,3] set at runtime */},
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 #else
     { INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP },
     { 0, DIALOG_STDSPACING_V, 0 /*[3] set at runtime */},
-    { DRT(LBRT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBRT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 #endif
 };
 

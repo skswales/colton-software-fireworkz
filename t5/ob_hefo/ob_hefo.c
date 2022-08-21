@@ -30,8 +30,14 @@
 #define FOOTER_DEFAULT_OFFSET ((PIXIT) (FP_PIXITS_PER_CM * 4.0))
 
 #if RISCOS
-#define MSG_WEAK &rb_hefo_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_HEFO)
 extern PC_U8 rb_hefo_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_HEFO &rb_hefo_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_HEFO LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_HEFO DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_HEFO DONT_LOAD_RESOURCES
@@ -1274,7 +1280,7 @@ page_hefo_break_intro_list =
     PAGE_HEFO_BREAK_INTRO_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, IDCANCEL },
     { 0, 0, PAGE_HEFO_BREAK_INTRO_LIST_H },
-    { DRT(LTLB, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LTLB, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
@@ -1283,7 +1289,7 @@ page_hefo_break_intro_change =
     PAGE_HEFO_BREAK_INTRO_ID_CHANGE, DIALOG_CONTROL_WINDOW,
     { PAGE_HEFO_BREAK_INTRO_ID_LIST, PAGE_HEFO_BREAK_INTRO_ID_LIST },
     { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_INTRO_BUTTONS_H, DIALOG_STDPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1832,7 +1838,7 @@ hefo_msg_initclose(
         object_install(OBJECT_ID_HEADER, object_header); /* these sub-objects must NOT themselves need init <<< */
         object_install(OBJECT_ID_FOOTER, object_footer);
 
-        status_return(resource_init(OBJECT_ID_HEFO, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_HEFO));
+        status_return(resource_init(OBJECT_ID_HEFO, P_BOUND_MESSAGES_OBJECT_ID_HEFO, P_BOUND_RESOURCES_OBJECT_ID_HEFO));
 
         return(register_object_construct_table(OBJECT_ID_HEFO, object_construct_table, FALSE /* no inlines in table */));
 

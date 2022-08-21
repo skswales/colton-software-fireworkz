@@ -1964,24 +1964,26 @@ custom_sequence(
 
     /* have we gone off end of file ? */
     if(next_slot.row >= last_slot.row)
+    {
         res = create_error(EVAL_ERR_NORETURN);
+    }
     /* switch to calculate next cell in macro */
     else if(status_ok(res = stack_check_n(1)))
     {
-        P_STACK_ENTRY p_stack_entry;
+        P_STACK_ENTRY p_stack_entry_next;
 
         assert(0 == res);
 
         stack_offset += 1;
 
-        p_stack_entry = &stack_base[stack_offset];
+        p_stack_entry_next = &stack_base[stack_offset];
 
-        p_stack_entry->slr = next_slot;
-        p_stack_entry->stack_flags = stack_flags_zero;
-        p_stack_entry->stack_flags.type = CALC_SLOT;
+        p_stack_entry_next->slr = next_slot;
+        p_stack_entry_next->stack_flags = stack_flags_zero;
+        p_stack_entry_next->stack_flags.type = CALC_SLOT;
 
-        p_stack_entry->stack_flags.inmacro = 1;
-        p_stack_entry->data.stack_in_calc.eval_block.p_ev_cell = NULL;
+        p_stack_entry_next->stack_flags.inmacro = 1;
+        p_stack_entry_next->data.stack_in_calc.eval_block.p_ev_cell = NULL;
     }
 
     /* if we get an error, abort and go to complete state */

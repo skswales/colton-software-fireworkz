@@ -10,28 +10,40 @@ OBJID=28
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).fl_rtf.o.fl_rtf: $(T5).fl_rtf.c.fl_rtf
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_28_S=$(BUILD_DIR).fl_rtf.o.fl_rtf
+
+$(PROD_BUILD_DIR).o.Neutral.M28: $(OBJS_28_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_28_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_rtf.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob28: $(PROD_BUILD_DIR).o.Neutral.M28 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M28 -N28 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_rtf
+
 # Windows STRINGTABLE
 $(BUILD_DIR).fl_rtf.$(COUNTRY)-28/rc: $(T5).fl_rtf.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 28 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob28: $(T5).fl_rtf.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages
 $(BUILD_DIR).fl_rtf.o.$(COUNTRY)-B28: $(T5).fl_rtf.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $(BUILD_DIR).fl_rtf.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_rtf.o.$(COUNTRY)-B_tmp -symbol rb_fl_rtf_msg_weak
 
-$(BUILD_DIR).fl_rtf.o.fl_rtf: $(T5).fl_rtf.c.fl_rtf
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_28_S=$(BUILD_DIR).fl_rtf.o.fl_rtf
-
 OBJS_28_X=$(BUILD_DIR).fl_rtf.o.$(COUNTRY)-B28
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M28: $(OBJS_28_X) $(OBJS_28_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M28: $(OBJS_28_X) $(OBJS_28_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_28_X) $(OBJS_28_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).fl_rtf.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob28: $(PROD_BUILD_DIR).o.$(COUNTRY)-M28 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M28 -N28 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_rtf
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob28: $(PROD_BUILD_DIR).o.$(COUNTRY).M28 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M28 -N28 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_rtf
 
 # end of fl_rtf.mkr ################################################################################

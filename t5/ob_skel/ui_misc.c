@@ -562,7 +562,7 @@ quit_query_save =
     QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_WINDOW,
     { QUIT_QUERY_ID_TEXT_3, QUIT_QUERY_ID_TEXT_3 },
     { 0, DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, QUIT_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -673,13 +673,12 @@ query_quit(
 {
     STATUS completion_code = QUERY_COMPLETION_DISCARD;
 
-    if(n_modified)
+    if(0 != n_modified)
     {
+        BOOL do_query = TRUE;
         STATUS status;
-        BOOL do_query = 1;
 
-        status = ensure_memory_froth();
-        if(status_fail(status))
+        if(status_fail(status = ensure_memory_froth()))
         {
             QUIT_OBJECTION quit_objection;
             quit_objection.objections = 0;
@@ -690,7 +689,7 @@ query_quit(
                 return(STATUS_FAIL);
             }
 
-            do_query = 0;
+            do_query = FALSE;
         }
 
         if(do_query)
@@ -782,7 +781,7 @@ save_linked_query_save_all =
     SAVE_LINKED_QUERY_ID_SAVE_ALL, DIALOG_CONTROL_WINDOW,
     { SAVE_LINKED_QUERY_ID_TEXT_1, SAVE_LINKED_QUERY_ID_TEXT_1 },
     { 0, DIALOG_STDSPACING_V, SAVE_LINKED_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1288,7 +1287,7 @@ close_linked_query_close_all =
     CLOSE_LINKED_QUERY_ID_CLOSE_ALL, DIALOG_CONTROL_WINDOW,
     { CLOSE_LINKED_QUERY_ID_TEXT_1, CLOSE_LINKED_QUERY_ID_TEXT_1 },
     { 0, DIALOG_STDSPACING_V, CLOSE_LINKED_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON

@@ -10,23 +10,6 @@ OBJID=10
 # Copyright (C) 1994-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Windows STRINGTABLE
-$(BUILD_DIR).ob_cells.$(COUNTRY)-10/rc: $(T5).resource.zz-msg
- Basic -quit $(RCGen) -output $@ -from $? -object 10 -common
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_cells.o.$(COUNTRY)-B10: $(T5).resource.zz-msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_cells.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_cells.o.$(COUNTRY)-B_tmp -symbol rb_cells_msg_weak
-
-OBJS_10_S=\
-$(BUILD_DIR).ob_cells.o.ob_cells \
-$(BUILD_DIR).ob_cells.o.ce_edit \
-$(BUILD_DIR).ob_cells.o.sk_col \
-$(BUILD_DIR).ob_cells.o.sk_draw \
-$(BUILD_DIR).ob_cells.o.sk_form \
-$(BUILD_DIR).ob_cells.o.sk_slot \
-
 $(BUILD_DIR).ob_cells.o.ob_cells: $(T5).ob_cells.c.ob_cells
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_cells.o.ce_edit: $(T5).ob_cells.c.ce_edit
@@ -40,9 +23,32 @@ $(BUILD_DIR).ob_cells.o.sk_form: $(T5).ob_cells.c.sk_form
 $(BUILD_DIR).ob_cells.o.sk_slot: $(T5).ob_cells.c.sk_slot
  $(CC) -o $@ $(ccflags) $?
 
+OBJS_10_S=\
+$(BUILD_DIR).ob_cells.o.ob_cells \
+$(BUILD_DIR).ob_cells.o.ce_edit \
+$(BUILD_DIR).ob_cells.o.sk_col \
+$(BUILD_DIR).ob_cells.o.sk_draw \
+$(BUILD_DIR).ob_cells.o.sk_form \
+$(BUILD_DIR).ob_cells.o.sk_slot \
+
+$(PROD_BUILD_DIR).o.Neutral.M10: $(OBJS_10_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_10_S)
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_cells.$(COUNTRY)-10/rc: $(T5).resource.zz-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 10 -common
+
+# RISC OS loaded messages
+# $(T5).resource.zz-msg
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_cells.o.$(COUNTRY)-B10: $(T5).resource.zz-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_cells.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_cells.o.$(COUNTRY)-B_tmp -symbol rb_cells_msg_weak
+
 OBJS_10_X=$(BUILD_DIR).ob_cells.o.$(COUNTRY)-B10
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M10: $(OBJS_10_X) $(OBJS_10_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M10: $(OBJS_10_X) $(OBJS_10_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_10_X) $(OBJS_10_S)
 
 # end of ob_cells.mkr ##############################################################################

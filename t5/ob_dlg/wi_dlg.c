@@ -465,7 +465,7 @@ dialog_ictls_subclass(
             SendMessage(hwnd, UDM_SETRANGE32, (WPARAM) -range, (LPARAM) range);
             SendMessage(hwnd, UDM_SETPOS32, 0, (LPARAM) 0);
             break;
-        }
+            }
         }
     }
 }
@@ -767,6 +767,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             }
             else
             {
+                assert(!IS_PTR_NULL_OR_NONE(p_dialog_control_data.groupbox));
                 pcd->diCaption = &p_dialog_ictl->caption;
                 pcd->di.style |= BS_GROUPBOX;
                 /* pcd->di.y += WINDOWS_GROUPBOX_TM; */
@@ -906,8 +907,11 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             pcd->di.style |= WS_BORDER;
             pcd->di.style |= ES_LEFT;
             assert(p_dialog_control_data.edit);
+            assert(FRAMED_BOX_EDIT == p_dialog_control_data.edit->edit_xx.bits.border_style);
             if(p_dialog_control_data.edit->edit_xx.bits.multiline)
+            {
                 pcd->di.style |= ES_MULTILINE | ES_AUTOVSCROLL;
+            }
             else
             {
                 pcd->di.style |= ES_AUTOHSCROLL;
@@ -918,6 +922,8 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             }
             if(p_dialog_control_data.edit->edit_xx.bits.read_only)
                 pcd->di.style |= ES_READONLY;
+            if(p_dialog_control_data.edit->edit_xx.bits.right_text)
+                pcd->di.style |= ES_RIGHT;
 
             if(pass == 2)
             trace_5(TRACE_APP_DIALOG, TEXT("EDIT id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
@@ -965,6 +971,12 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             /* it now lines up perfectly on XP @96dpi, still fraction out on Vista @120 dpi */
             pcd->di.y  += BUMP_EDIT_HEIGHT_HACK_WDU;
             pcd->di.cy -= BUMP_EDIT_HEIGHT_HACK_WDU;
+            assert(p_dialog_control_data.bump_xx);
+            assert(FRAMED_BOX_EDIT == p_dialog_control_data.bump_xx->edit_xx.bits.border_style);
+            if(p_dialog_control_data.bump_xx->edit_xx.bits.read_only)
+                pcd->di.style |= ES_READONLY;
+            if(p_dialog_control_data.bump_xx->edit_xx.bits.right_text)
+                pcd->di.style |= ES_RIGHT;
 
             if(pass == 2)
             trace_5(TRACE_APP_DIALOG, TEXT("EDIT id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (BUMP)"),
@@ -1009,7 +1021,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             WINDOWS_CTL_MAP windows_ctl_map;
             SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(windows_ctl_map), FALSE);
             for(j = 0; j < n_id; ++j)
-            { /* for each real Windows control that will be created, make a mapping entry (except for OK & Cancel) */
+            {   /* for each real Windows control that will be created, make a mapping entry (except for OK & Cancel) */
                 windows_ctl_map.dialog_control_id = p_dialog_ictl->dialog_control_id;
                 windows_ctl_map.hwnd = NULL;
                 status_break(status = al_array_add(&p_dh->p_dialog->windows.h_windows_ctl_map, WINDOWS_CTL_MAP, 1, &array_init_block, &windows_ctl_map));

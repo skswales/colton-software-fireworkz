@@ -452,7 +452,7 @@ save_template_style_list =
     SAVE_ID_STYLE_LIST, SAVE_ID_STYLE_GROUP,
     { SAVE_ID_STYLE_2, SAVE_ID_STYLE_2 },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 /*
@@ -465,7 +465,7 @@ save_foreign_type_list =
     SAVE_ID_FOREIGN_TYPE_LIST, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, SAVE_ID_SELECTION },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 /*
@@ -478,7 +478,7 @@ save_picture_type_list =
     SAVE_ID_PICTURE_TYPE_LIST, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, SAVE_ID_NAME },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static BOOL

@@ -40,7 +40,7 @@ for the 'Inside OLE 2' BTTNCUR sample.
 
 Then run
 
-Build\windows\Setup.cmd
+external/setup-windows.cmd
 
 to copy and patch those files as needed.
 

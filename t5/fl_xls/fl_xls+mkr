@@ -10,15 +10,6 @@ OBJID=26
 # Copyright (C) 1994-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Windows STRINGTABLE
-$(BUILD_DIR).fl_xls.$(COUNTRY)-26/rc: $(T5).fl_xls.resource.$(COUNTRY)-msg
- Basic -quit $(RCGen) -output $@ -from $? -object 26 -common
-
-# RISC OS bound messages
-$(BUILD_DIR).fl_xls.o.$(COUNTRY)-B26: $(T5).fl_xls.resource.$(COUNTRY)-msg
- $(MAKEMESS) -to $(BUILD_DIR).fl_xls.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_xls.o.$(COUNTRY)-B_tmp -symbol rb_fl_xls_msg_weak
-
 $(BUILD_DIR).fl_xls.o.fl_xls: $(T5).fl_xls.c.fl_xls
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).fl_xls.o.fl_xls_loadb: $(T5).fl_xls.c.fl_xls_loadb
@@ -28,14 +19,35 @@ OBJS_26_S=\
 $(BUILD_DIR).fl_xls.o.fl_xls \
 $(BUILD_DIR).fl_xls.o.fl_xls_loadb
 
+$(PROD_BUILD_DIR).o.Neutral.M26: $(OBJS_26_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_26_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).fl_xls.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob26: $(PROD_BUILD_DIR).o.Neutral.M26 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M26 -N26 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_xls
+
+# Windows STRINGTABLE
+$(BUILD_DIR).fl_xls.$(COUNTRY)-26/rc: $(T5).fl_xls.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 26 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob26: $(T5).fl_xls.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+
+# RISC OS bound messages
+$(BUILD_DIR).fl_xls.o.$(COUNTRY)-B26: $(T5).fl_xls.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).fl_xls.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_xls.o.$(COUNTRY)-B_tmp -symbol rb_fl_xls_msg_weak
+
 OBJS_26_X=$(BUILD_DIR).fl_xls.o.$(COUNTRY)-B26
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M26: $(OBJS_26_X) $(OBJS_26_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M26: $(OBJS_26_X) $(OBJS_26_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_26_X) $(OBJS_26_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).fl_xls.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob26: $(PROD_BUILD_DIR).o.$(COUNTRY)-M26 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M26 -N26 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_xls
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob26: $(PROD_BUILD_DIR).o.$(COUNTRY).M26 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M26 -N26 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_xls
 
 # end of fl_xls.mkr ################################################################################

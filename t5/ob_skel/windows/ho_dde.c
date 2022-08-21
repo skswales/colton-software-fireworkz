@@ -56,8 +56,8 @@ extern void
 host_dde_startup(void)
 {
     /* DDE stuff */
-    atom_Application = GlobalAddAtom(atom_program);
-    atom_Topic_System = GlobalAddAtom(TEXT("system"));
+    atom_Application = GlobalAddAtomW(atom_program_wstr);
+    atom_Topic_System = GlobalAddAtomW(L"system");
     reportf(TEXT("DDE created aApplication: ") U32_XTFMT TEXT(", aTopicSystem: ") U32_XTFMT, (U32) atom_Application, (U32) atom_Topic_System);
 
     host_create_window_for_dde_server();

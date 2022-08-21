@@ -84,8 +84,14 @@ typedef struct DRAW_SAVE_MAP
 DRAW_SAVE_MAP, * P_DRAW_SAVE_MAP;
 
 #if RISCOS
-#define MSG_WEAK &rb_draw_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_DRAW)
 extern PC_U8 rb_draw_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_DRAW &rb_draw_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_DRAW LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_DRAW DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_DRAW DONT_LOAD_RESOURCES
@@ -972,7 +978,7 @@ T5_MSG_PROTO(static, draw_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_DRAW, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_DRAW));
+        status_return(resource_init(OBJECT_ID_DRAW, P_BOUND_MESSAGES_OBJECT_ID_DRAW, P_BOUND_RESOURCES_OBJECT_ID_DRAW));
 
         return(register_object_construct_table(OBJECT_ID_DRAW, object_construct_table, TRUE));
 

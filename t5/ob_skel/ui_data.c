@@ -79,7 +79,7 @@ defbutton_ok =
 #else
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
 #endif
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -160,7 +160,7 @@ rgb_button =
     DIALOG_ID_RGB_BUTTON, DIALOG_ID_RGB_GROUP_INNER,
     { DIALOG_ID_RGB_PATCH, DIALOG_ID_RGB_PATCH, DIALOG_ID_RGB_PATCH },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON) }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 const DIALOG_CONTROL
@@ -194,7 +194,7 @@ rgb_transparent =
 };
 
 const DIALOG_CONTROL_DATA_GROUPBOX
-rgb_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_RGB_COLOUR), { 0, 0, 0, FRAMED_BOX_GROUP } };
+rgb_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_RGB_COLOUR), { FRAMED_BOX_GROUP } };
 
 const DIALOG_CONTROL_DATA_STATICTEXT
 rgb_tx_data[3] =
@@ -208,7 +208,7 @@ static const UI_CONTROL_S32
 rgb_bump_control = { 0, 255, 5 };
 
 const DIALOG_CONTROL_DATA_BUMP_S32
-rgb_bump_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &rgb_bump_control } /*BUMP_XX*/ };
+rgb_bump_data = { { { { FRAMED_BOX_EDIT, 0 /*read_only*/, 1 /*right_text*/ } } /*EDIT_XX*/, &rgb_bump_control } /*BUMP_XX*/ };
 
 const DIALOG_CONTROL_DATA_PUSHBUTTON
 rgb_button_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_RGB_BUTTON) };

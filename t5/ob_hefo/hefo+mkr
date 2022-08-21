@@ -10,15 +10,6 @@ OBJID=07
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Windows STRINGTABLE
-$(BUILD_DIR).ob_hefo.$(COUNTRY)-07/rc: $(T5).ob_hefo.resource.$(COUNTRY)-msg
- Basic -quit $(RCGen) -output $@ -from $? -object 07 -common
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B07: $(T5).ob_hefo.resource.$(COUNTRY)-msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B_tmp -symbol rb_hefo_msg_weak
-
 $(BUILD_DIR).ob_hefo.o.ob_hefo: $(T5).ob_hefo.c.ob_hefo
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_hefo.o.ui_hefo: $(T5).ob_hefo.c.ui_hefo
@@ -28,15 +19,35 @@ OBJS_07_S=\
 $(BUILD_DIR).ob_hefo.o.ob_hefo \
 $(BUILD_DIR).ob_hefo.o.ui_hefo \
 
+$(PROD_BUILD_DIR).o.Neutral.M07: $(OBJS_07_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_07_S)
+ $(OBJMUNGE) -Iu$(BUILD_DIR).ob_hefo.imports -O$@
+ $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
+
+$(PROD_BUILD_DIR).binaries.Neutral.Ob07: $(PROD_BUILD_DIR).o.Neutral.M07 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M07 -N07 $(OBJMUNGE_OBJFLAGS) -Eobject_hefo
+
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_hefo.$(COUNTRY)-07/rc: $(T5).ob_hefo.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 07 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob07: $(T5).ob_hefo.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B07: $(T5).ob_hefo.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B_tmp -symbol rb_hefo_msg_weak
+
 OBJS_07_X=$(BUILD_DIR).ob_hefo.o.$(COUNTRY)-B07
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M07: $(OBJS_07_X) $(OBJS_07_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M07: $(OBJS_07_X) $(OBJS_07_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_07_X) $(OBJS_07_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).ob_hefo.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@
 
-
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Ob07: $(PROD_BUILD_DIR).o.$(COUNTRY)-M07 $(PROD_BUILD_DIR).binaries.stubs
- $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY)-M07 -N07 $(OBJMUNGE_OBJFLAGS) -Eobject_hefo
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob07: $(PROD_BUILD_DIR).o.$(COUNTRY).M07 $(PROD_BUILD_DIR).binaries.Neutral.stubs
+ $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.$(COUNTRY).M07 -N07 $(OBJMUNGE_OBJFLAGS) -Eobject_hefo
 
 # end of ob_hefo.mkr ###############################################################################

@@ -11,7 +11,7 @@ call prefer-unix
 if exist "%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" call "%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 if exist "%ProgramFiles%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"      call "%ProgramFiles%\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
-set FIREWORKZ_TBT=fireworkz__2_21__branch
+set FIREWORKZ_TBT=fireworkz__2_22__branch
 @rem set FIREWORKZ_TBT=trunk
 
 set FIREWORKZ_ROOT=N:\fireworkz\%FIREWORKZ_TBT%

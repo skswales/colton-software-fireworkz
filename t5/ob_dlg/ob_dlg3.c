@@ -65,12 +65,14 @@ dialog_find_handler_in(
             if(NULL != (p_proc_client = dialog_find_handler_in(&p_dialog_ictl->data.groupbox.ictls, dialog_control_id, p_client_handle, p_this_branch)))
                 return(p_proc_client);
 
+#if defined(DIALOG_GROUPBOX_CAN_HAVE_HANDLER)
             /* if control just found in this branch of the tree but hasn't yet found a handler, try supplying this one */
             if(*p_this_branch)
             {
                 *p_client_handle = p_dialog_ictl->data.groupbox.client_handle;
                 return(p_dialog_ictl->data.groupbox.p_proc_client /*maybe NULL*/);
             }
+#endif
 
             break;
             }
@@ -329,11 +331,13 @@ dialog_ictls_create(
 
             if(p_dialog_control_data.groupbox)
             {
+#if defined(DIALOG_GROUPBOX_CAN_HAVE_HANDLER)
                 if(p_dialog_control_data.groupbox->bits.has_client)
                 {
                     p_dialog_ictl->data.groupbox.client_handle = p_dialog_control_data.groupboxx->client_handle;
                     p_dialog_ictl->data.groupbox.p_proc_client = p_dialog_control_data.groupboxx->p_proc_client;
                 }
+#endif
 
                 status_assert(status = ui_text_copy(&p_dialog_ictl->caption, &p_dialog_control_data.groupbox->caption));
 
@@ -481,7 +485,7 @@ dialog_ictls_create(
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
             {
-            const PC_DIALOG_CONTROL_DATA_BUMP_XX pcd_bump_xx = &p_dialog_control_data.bump_s32->bump_xx;
+            const PC_DIALOG_CONTROL_DATA_BUMP_XX pcd_bump_xx = p_dialog_control_data.bump_xx;
             P_BITMAP p_bitmap_validation_default;
 
             switch(p_dialog_ictl->dialog_control_type)

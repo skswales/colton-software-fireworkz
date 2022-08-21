@@ -14,6 +14,7 @@
 #endif
 
 #if RISCOS
+#define EXPOSE_RISCOS_SWIS 1
 #include "ob_skel/xp_skelr.h"
 #endif
 
@@ -107,7 +108,7 @@ startup_t5_application_1(void)
     {
     _kernel_swi_regs rs;
     rs.r[1] = (int) "ColourPicker_OpenDialogue" /*0x47702*/;
-    if(NULL != _kernel_swi(0x39 /*OS_SWINumberFromString*/, &rs, &rs))
+    if(NULL != _kernel_swi(OS_SWINumberFromString, &rs, &rs))
         g_has_colour_picker = FALSE;
     } /*block*/
 #endif /* RISCOS */
@@ -164,18 +165,5 @@ startup_t5_application_2(void)
 
     return(STATUS_OK);
 }
-
-#if RISCOS
-
-_Check_return_
-extern STATUS
-ensure_memory_froth(void)
-{
-    return(alloc_ensure_froth(0x6000));
-}
-
-#elif WINDOWS
-    /* STATUS_OK */
-#endif /* OS */
 
 /* end of startup.c */

@@ -15,8 +15,14 @@
 #include "fs_xls/fs_xls.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_fs_xls_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FS_XLS)
 extern PC_U8 rb_fs_xls_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_XLS &rb_fs_xls_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_XLS DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_XLS DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FS_XLS DONT_LOAD_RESOURCES
@@ -57,7 +63,7 @@ T5_MSG_PROTO(static, xls_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        /*return(resource_init(OBJECT_ID_FS_XLS, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FS_XLS));*/
+        /*return(resource_init(OBJECT_ID_FS_XLS, P_BOUND_MESSAGES_OBJECT_ID_FS_XLS, P_BOUND_RESOURCES_OBJECT_ID_FS_XLS));*/
 
     case T5_MSG_IC__EXIT1:
         /*return(resource_close(OBJECT_ID_FS_XLS));*/

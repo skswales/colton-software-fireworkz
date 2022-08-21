@@ -1668,16 +1668,16 @@ gr_riscdiag_sprite_recompute_bbox(
 
         sprite_mode_word.u.u32 = (U32) p_scb->mode;
 
-        rs.r[0] = 40 + 512;
+        rs.r[0] = 0x200 | 40; /* Read sprite information */
         rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
         rs.r[2] = (int) p_sprite;
 
-        void_WrapOsErrorChecking(_kernel_swi(/*OS_SpriteOp*/ 0x0000002E, &rs, &rs));
+        void_WrapOsErrorChecking(_kernel_swi(OS_SpriteOp, &rs, &rs));
 
         if((sprite_mode_word.u.u32 < 256U) || (0 == (sprite_mode_word.u.riscos_3_5.mode_word_bit)))
         {   /* Mode Number or Mode Specifier */
-            S32 XEigFactor, YEigFactor;
-            host_modevar_cache_query_eigs(p_scb->mode, &XEigFactor, &YEigFactor);
+            U32 XEigFactor, YEigFactor;
+            host_modevar_cache_query_eig_factors(p_scb->mode, &XEigFactor, &YEigFactor);
             x1 = (rs.r[3] << XEigFactor) * GR_RISCDRAW_PER_RISCOS;
             y1 = (rs.r[4] << YEigFactor) * GR_RISCDRAW_PER_RISCOS;
         }
@@ -1816,7 +1816,7 @@ gr_riscdiag_string_recompute_bbox(
         rs.r[4] = 0;
         rs.r[5] = 0;
 
-        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+        if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_FindFont, &rs, &rs))))
             host_font = (HOST_FONT) rs.r[0];
     }
 
@@ -1825,7 +1825,7 @@ gr_riscdiag_string_recompute_bbox(
         (void) font_SetFont(host_font);
 
         rs.r[1] = (int) sbstr;
-        void_WrapOsErrorChecking(_kernel_swi(/*Font_StringBBox*/ 0x40097, &rs, &rs));
+        void_WrapOsErrorChecking(_kernel_swi(Font_StringBBox, &rs, &rs));
         /* NB. result in mp */
 
         /* scale bbox to riscDraw units - imprecise, but slightly better than a gr_box_xform() */

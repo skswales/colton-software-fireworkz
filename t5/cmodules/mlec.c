@@ -514,7 +514,22 @@ mlec__point_from_colrow(
 
 _Check_return_
 static HOST_FONT
-mlec_find_font(
+mlec_get_desktop_font(void)
+{
+    HOST_FONT host_font = HOST_FONT_NONE;
+
+    WimpSysInfo wimp_sys_info;
+    _kernel_oserror * p_kernel_oserror;
+
+    if(NULL == (p_kernel_oserror = wimp_read_sys_info(8, &wimp_sys_info)))
+        host_font = wimp_sys_info.r0;
+
+    return(host_font);
+}
+
+_Check_return_
+static HOST_FONT
+mlec_host_font_find(
     const char * name,
     U32 x16_size_x,
     U32 x16_size_y)
@@ -551,25 +566,72 @@ mlec_get_host_font(void)
     /*U32 x16_size_x = 16 * 0;*/
     U32 x16_size_y = 16 * size_y;
 
+    /* Only use fonts if there is a Desktop font in use */
+    host_font = mlec_get_desktop_font();
+
+    if(HOST_FONT_NONE == host_font)
+        return(HOST_FONT_NONE);
+
     /* Only use DejaVuSans.Mono if we have a Unicode Font Manager */
-    host_font = mlec_find_font("\\F" "DejaVuSans.Mono" "\\E" "UTF8", x16_size_y, x16_size_y);
+    host_font = mlec_host_font_find("\\F" "DejaVuSans.Mono" "\\E" "UTF8", x16_size_y, x16_size_y);
 
     if(HOST_FONT_NONE != host_font)
     {
         (void) font_LoseFont(host_font);
         
-        host_font = mlec_find_font("\\F" "DejaVuSans.Mono" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
+        host_font = mlec_host_font_find("\\F" "DejaVuSans.Mono" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
 
         if(HOST_FONT_NONE != host_font)
             return(host_font);
     }
 
-    host_font = mlec_find_font("\\F" "Corpus.Medium" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
+    host_font = mlec_host_font_find("\\F" "Corpus.Medium" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
 
     if(HOST_FONT_NONE != host_font)
         return(host_font);
 
     return(HOST_FONT_NONE);
+}
+
+_Check_return_
+static GDI_COORD
+mlec_get_host_font_ascent(
+    _InVal_     HOST_FONT host_font,
+    _OutRef_    P_GDI_COORD p_descent)
+{
+    const char * str_sizing = "$y" "\xC2"; /* UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX is generally the tallest Latin-1 character */
+    GDI_COORD ascent  = 0;
+    GDI_COORD descent = 0;
+    struct fss_coord_block { GDI_POINT space_offset; GDI_POINT letter_offset; int split_ch; BBox bbox; } fss_coord_block;
+    _kernel_swi_regs rs;
+    _kernel_oserror * p_kernel_oserror;
+
+    zero_struct(fss_coord_block);
+    fss_coord_block.split_ch = -1; /* none */
+
+    rs.r[0] = host_font;
+    rs.r[1] = (int) str_sizing;
+    rs.r[2] = FONT_SCANSTRING_USE_HANDLE /*uses R0*/ | FONT_SCANSTRING_GET_BBOX /*uses R5*/;
+    rs.r[3] = INT_MAX;
+    rs.r[4] = INT_MAX;
+    rs.r[5] = (int) &fss_coord_block;
+
+    if(host_version_font_m_read(HOST_FONT_KERNING))
+        rs.r[2] |= FONT_SCANSTRING_KERNING;
+
+    if(NULL == (p_kernel_oserror = WrapOsErrorChecking(_kernel_swi(Font_ScanString, &rs, &rs))))
+    {   /* returns i,i,e,e bbox */
+        const U32 YEigFactor = host_modevar_cache_current.YEigFactor;
+        const S32 divisor = MILLIPOINTS_PER_RISCOS << YEigFactor;
+        const S32 bodge = MILLIPOINTS_PER_RISCOS * (host_modevar_cache_current.dy - 1);
+reportf("FSS: %d,%d, %d,%d", fss_coord_block.bbox.xmin, fss_coord_block.bbox.ymin, fss_coord_block.bbox.xmax, fss_coord_block.bbox.ymax);
+        ascent  = ( (fss_coord_block.bbox.ymax + bodge) / divisor) << YEigFactor;
+        descent = (-(fss_coord_block.bbox.ymin        ) / divisor) << YEigFactor;
+    }
+
+    *p_descent = descent;
+
+    return(ascent);
 }
 
 /******************************************************************************
@@ -613,13 +675,24 @@ mlec_create(
             mlec->host_font = mlec_get_host_font();
 
             if(HOST_FONT_NONE != mlec->host_font)
-                mlec->charwidth = 18; /* fixed pitch font */
+            {   /* fixed pitch font */
+                GDI_COORD descent;
+                GDI_COORD ascent = mlec_get_host_font_ascent(mlec->host_font, &descent);
+                mlec->charwidth = 18;
+                reportf("mlec: FSS ascent %d, descent %d OS", ascent, descent);
+                mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT] = ascent + descent;
+                mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT] = ascent;
+                reportf("mlec: charascent %d, charheight %d OS", mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT], mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT]);
+            }
             else
-                mlec->charwidth = 16; /* System font */
+            {   /* VDU 5 System font */
+                mlec->charwidth = 16;
+                mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT] = 32;
+                mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT] = mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT] - 4;
+            }
 
-            mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT]  = 32;
+            mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] = mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT];
 
-            mlec->attributes[MLEC_ATTRIBUTE_LINESPACE]      = mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT];
             mlec->attributes[MLEC_ATTRIBUTE_CARETHEIGHTPOS] = mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] + 4;
             mlec->attributes[MLEC_ATTRIBUTE_CARETHEIGHTNEG] = 4;
 
@@ -2694,17 +2767,17 @@ render_line(
         if(HOST_FONT_NONE != mlec->host_font)
         {
             STATUS status = STATUS_OK;
-            const int base_line_shift = -24;
+            const int base_line_shift = mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT];
             _kernel_swi_regs rs;
 
             rs.r[0] = mlec->host_font;
             rs.r[1] = (int) showptr;
             rs.r[2] = FONT_PAINT_USE_LENGTH /*r7*/ | FONT_PAINT_USE_HANDLE /*r0*/ | FONT_PAINT_OSCOORDS;
             rs.r[3] = x;
-            rs.r[4] = y + base_line_shift;
+            rs.r[4] = y - base_line_shift;
             rs.r[7] = showcnt;
 
-            if(NULL != WrapOsErrorChecking(_kernel_swi(/*Font_Paint*/ 0x40086, &rs, &rs)))
+            if(NULL != WrapOsErrorChecking(_kernel_swi(Font_Paint, &rs, &rs)))
                 status = create_error(ERR_FONT_PAINT);
         }
         else

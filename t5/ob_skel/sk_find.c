@@ -322,7 +322,7 @@ search_intro_from_top =
 {
     SEARCH_INTRO_ID_FROM_TOP, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, SEARCH_INTRO_ID_FROM_CARET, SEARCH_INTRO_ID_FROM_CARET, SEARCH_INTRO_ID_FROM_CARET },
-    { DIALOG_CONTENTS_CALC, 0, DIALOG_STDSPACING_H, 0 },
+    { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
@@ -356,9 +356,10 @@ search_intro_ctl_create[] =
     { &search_intro_replace_enable,  &search_intro_replace_enable_data },
     { &search_intro_replace,         &search_intro_replace_data },
     { &search_intro_copy_capitals,   &search_intro_copy_capitals_data },
-    { &search_intro_cancel, &stdbutton_cancel_data },
+
+    { &search_intro_from_caret, &search_intro_from_caret_data },
     { &search_intro_from_top, &search_intro_from_top_data },
-    { &search_intro_from_caret, &search_intro_from_caret_data }
+    { &search_intro_cancel, &stdbutton_cancel_data }
 };
 
 static void

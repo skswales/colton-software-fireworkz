@@ -24,8 +24,14 @@
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_fl_csv_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FL_CSV)
 extern PC_U8 rb_fl_csv_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_CSV &rb_fl_csv_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_CSV LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_CSV DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FL_CSV DONT_LOAD_RESOURCES
@@ -750,8 +756,6 @@ csv_msg_insert_foreign_normal(
     SLR first_slr = { 0, 0 }; /* keep dataflower happy */
     STATUS status = STATUS_OK;
 
-    status_return(ensure_memory_froth());
-
     if(load_type != CSV_LOAD_QUERY_ID_LABELS)
         labels_across = 0;
 
@@ -862,7 +866,7 @@ csv_load_query_overwrite_blank_cells =
     CSV_LOAD_QUERY_ID_OVERWRITE_BLANK_CELLS, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -919,7 +923,7 @@ static const UI_CONTROL_S32
 csv_load_query_labels_across_control = { 1, 1000 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-csv_load_query_labels_across_data = { { { { FRAMED_BOX_EDIT } }, &csv_load_query_labels_across_control } };
+csv_load_query_labels_across_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &csv_load_query_labels_across_control } };
 
 static S32
 csv_load_query_labels_across_data_state = 3;
@@ -1144,7 +1148,7 @@ T5_MSG_PROTO(static, csv_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        return(resource_init(OBJECT_ID_FL_CSV, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FL_CSV));
+        return(resource_init(OBJECT_ID_FL_CSV, P_BOUND_MESSAGES_OBJECT_ID_FL_CSV, P_BOUND_RESOURCES_OBJECT_ID_FL_CSV));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FL_CSV));

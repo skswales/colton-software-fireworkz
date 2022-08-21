@@ -443,7 +443,7 @@ view_control_zoom_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-view_control_zoom_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_ZOOM), { 0, 0, 0, FRAMED_BOX_GROUP } };
+view_control_zoom_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_ZOOM), { FRAMED_BOX_GROUP } };
 
 /*
 * zoom value
@@ -561,7 +561,7 @@ view_control_display_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-view_control_display_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY), { 0, 0, 0, FRAMED_BOX_GROUP } };
+view_control_display_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 view_control_display_1 =

@@ -57,49 +57,57 @@ bl_gallery_pict[8] =
     {
         BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_GROUP,
         { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
-        { 0, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ }
+        { 0, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ }
     },
 
     {
         BL_GALLERY_ID_PICT_1, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_0 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { 0, 0, BAR_GALLERY_PICT_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { 0, 0, 0, BAR_GALLERY_PICT_V },
+        { DRT(LBRT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_2 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { 0, 0, BAR_GALLERY_PICT_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { 0, 0, 0, BAR_GALLERY_PICT_V },
+        { DRT(LBRT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_5, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_4 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { 0, 0, BAR_GALLERY_PICT_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { 0, 0, 0, BAR_GALLERY_PICT_V },
+        { DRT(LBRT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_7, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_6, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_6 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { 0, 0, BAR_GALLERY_PICT_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     }
 };
 
@@ -281,7 +289,7 @@ bl_gallery_ok =
 #else
     { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
 #endif
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -663,7 +671,7 @@ pie_gallery_label_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-pie_gallery_label_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_LABEL), { 0, 0, 0, FRAMED_BOX_GROUP } };
+pie_gallery_label_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_LABEL), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 pie_gallery_label_none =
@@ -736,7 +744,7 @@ pie_gallery_explode_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-pie_gallery_explode_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_EXPLODE), { 0, 0, 0, FRAMED_BOX_GROUP } };
+pie_gallery_explode_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_EXPLODE), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 pie_gallery_explode_none =
@@ -800,7 +808,7 @@ static const UI_CONTROL_F64
 pie_gallery_explode_by_value_control = { 0.0, 100.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-pie_gallery_explode_by_value_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &pie_gallery_explode_by_value_control } /*BUMP_XX*/ };
+pie_gallery_explode_by_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &pie_gallery_explode_by_value_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 pie_gallery_explode_by_text =
@@ -828,7 +836,7 @@ pie_gallery_start_position_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-pie_gallery_start_position_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_START_POSITION), { 0, 0, 0, FRAMED_BOX_GROUP } };
+pie_gallery_start_position_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_START_POSITION), { FRAMED_BOX_GROUP } };
 
 #if 0
 
@@ -955,7 +963,7 @@ static const UI_CONTROL_F64
 pie_gallery_start_position_angle_value_control = { 0.0, 360.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-pie_gallery_start_position_angle_value_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &pie_gallery_start_position_angle_value_control } /*BUMP_XX*/ };
+pie_gallery_start_position_angle_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &pie_gallery_start_position_angle_value_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 pie_gallery_start_position_angle_text =
@@ -1006,7 +1014,7 @@ pie_gallery_ok =
 #else
     { DIALOG_DEFOK_H, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
 #endif
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -1133,7 +1141,7 @@ gen_axis_position_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-gen_axis_position_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION), { 0, 0, 0, FRAMED_BOX_GROUP } };
+gen_axis_position_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION), { FRAMED_BOX_GROUP } };
 
 /*
 left/zero/right (bottom/zero/top)
@@ -1247,7 +1255,7 @@ gen_axis_major_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-gen_axis_major_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR), { 0, 0, 0, FRAMED_BOX_GROUP } };
+gen_axis_major_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 gen_axis_major_auto =
@@ -1295,10 +1303,10 @@ static /*poked*/ UI_CONTROL_S32
 cat_axis_major_control = { 1, S32_MAX };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-cat_axis_major_spacing_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &cat_axis_major_control } /*BUMP_XX*/ };
+cat_axis_major_spacing_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &cat_axis_major_control } /*BUMP_XX*/ };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-val_axis_major_spacing_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ /*, &val_axis_major_control*//*poked*/ } /*BUMP_XX*/ };
+val_axis_major_spacing_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/ /*, &val_axis_major_control*//*poked*/ } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 gen_axis_major_grid =
@@ -1377,7 +1385,7 @@ gen_axis_minor_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-gen_axis_minor_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MINOR), { 0, 0, 0, FRAMED_BOX_GROUP } };
+gen_axis_minor_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MINOR), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 gen_axis_minor_auto =
@@ -1419,10 +1427,10 @@ static /*poked*/ UI_CONTROL_S32
 cat_axis_minor_control = { 1, S32_MAX };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-cat_axis_minor_spacing_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &cat_axis_minor_control } /*BUMP_XX*/ };
+cat_axis_minor_spacing_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &cat_axis_minor_control } /*BUMP_XX*/ };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-val_axis_minor_spacing_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ /*, &val_axis_minor_control*//*poked*/ } /*BUMP_XX*/ };
+val_axis_minor_spacing_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/ /*, &val_axis_minor_control*//*poked*/ } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 gen_axis_minor_grid =
@@ -1512,7 +1520,7 @@ cat_axis_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, GEN_AXIS_ID_MINOR_GROUP, GEN_AXIS_ID_MINOR_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -1570,7 +1578,7 @@ val_axis_scaling_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-val_axis_scaling_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING), { 0, 0, 0, FRAMED_BOX_GROUP } };
+val_axis_scaling_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 val_axis_scaling_auto =
@@ -1609,7 +1617,7 @@ static /*poked*/ UI_CONTROL_F64
 val_axis_scaling_minimum_control = { -DBL_MAX, +DBL_MAX };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-val_axis_scaling_minimum_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &val_axis_scaling_minimum_control } /*BUMP_XX*/ };
+val_axis_scaling_minimum_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &val_axis_scaling_minimum_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 val_axis_scaling_maximum_text =
@@ -1636,7 +1644,7 @@ static /*poked*/ UI_CONTROL_F64
 val_axis_scaling_maximum_control = { -DBL_MAX, +DBL_MAX };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-val_axis_scaling_maximum_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &val_axis_scaling_maximum_control } /*BUMP_XX*/ };
+val_axis_scaling_maximum_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &val_axis_scaling_maximum_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 val_axis_scaling_include_zero =
@@ -1688,7 +1696,7 @@ val_axis_series_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-val_axis_series_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SERIES), { 0, 0, 0, FRAMED_BOX_GROUP } };
+val_axis_series_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SERIES), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 val_axis_series_cumulative =
@@ -1756,7 +1764,7 @@ val_axis_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, VAL_AXIS_ID_SERIES_STACK, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, 0, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE

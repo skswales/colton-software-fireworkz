@@ -127,7 +127,7 @@ es_ok =
 #else
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
 #endif
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
@@ -159,7 +159,7 @@ es_name_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_name_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_STYLE_NAME), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_name_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_STYLE_NAME), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_name_edit_enable =
@@ -199,7 +199,7 @@ es_key_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_key_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_STYLE_KEY), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_key_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_STYLE_KEY), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_key_list_enable =
@@ -219,7 +219,7 @@ es_key_list =
     ES_KEY_ID_LIST, ES_KEY_ID_GROUP,
     { ES_KEY_ID_LIST_ENABLE, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, DIALOG_STDGROUP_TM, ES_KEY_LIST_H, ES_KEY_LIST_V },
-    { DRT(RTLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(RTLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 /*
@@ -257,7 +257,7 @@ es_fs_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_fs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_fs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS), { FRAMED_BOX_GROUP } };
 
 /*
 typeface 'group'
@@ -282,11 +282,11 @@ es_fs_typeface_list =
 #if RISCOS
     { ES_FS_ID_TYPEFACE_ENABLE, ES_FS_ID_TYPEFACE_ENABLE, DIALOG_CONTROL_SELF, ES_FS_ID_SUBSCRIPT },
     { 0, DIALOG_STDSPACING_V, ES_FS_TYPEFACE_H }, /* <<< unused ES_FS_TYPEFACE_V */
-    { DRT(LBLB, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLB, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 #else
     { ES_FS_ID_TYPEFACE_ENABLE, ES_FS_ID_TYPEFACE_ENABLE, ES_FS_ID_HEIGHT_UNITS, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, 0, ES_FS_TYPEFACE_V },
-    { DRT(LBRT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBRT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 #endif
 };
 
@@ -325,7 +325,7 @@ es_fs_height =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_fs_height_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_fs_height_points_control } /*BUMP_XX*/ };
+es_fs_height_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_fs_height_points_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_fs_height_units =
@@ -364,7 +364,7 @@ es_fs_width =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_fs_width_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_points_control } /*BUMP_XX*/ };
+es_fs_width_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_points_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_fs_width_units =
@@ -625,7 +625,7 @@ es_fs_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 #else
@@ -703,7 +703,7 @@ es_cs_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_cs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_CS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_cs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_CS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_cs_col_caption_group =
@@ -740,7 +740,7 @@ es_cs_width =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_cs_width_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_h_units_control } /*BUMP_XX*/ };
+es_cs_width_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_h_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_cs_width_units =
@@ -796,7 +796,7 @@ es_ps_horz_justify_group_main =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_horz_justify_group_main_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_HORZ_JUSTIFY), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_horz_justify_group_main_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_HORZ_JUSTIFY), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_horz_justify_group_enable =
@@ -906,7 +906,7 @@ es_ps_vert_justify_group_main =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_vert_justify_group_main_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_VERT_JUSTIFY), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_vert_justify_group_main_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_VERT_JUSTIFY), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_vert_justify_group_enable =
@@ -997,7 +997,7 @@ es_ps_margins_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_margins_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_MARGINS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_margins_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_MARGINS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_margins_caption_group =
@@ -1034,7 +1034,7 @@ es_ps_margin_left =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_ps_margin_left_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_h_units_control } /*BUMP_XX*/ };
+es_ps_margin_left_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_h_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_ps_margin_left_units =
@@ -1074,7 +1074,7 @@ es_ps_margin_para =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_ps_margin_para_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_ps_margin_para_control } /*BUMP_XX*/ };
+es_ps_margin_para_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_ps_margin_para_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_ps_margin_para_units =
@@ -1114,7 +1114,7 @@ es_ps_margin_right =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_ps_margin_right_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_h_units_control } /*BUMP_XX*/ };
+es_ps_margin_right_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_h_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_ps_margin_right_units =
@@ -1143,7 +1143,7 @@ es_ps_tab_list_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_tab_list_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_TAB_LIST), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_tab_list_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_TAB_LIST), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_tab_list_enable =
@@ -1255,7 +1255,7 @@ es_ps_border_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_border_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_BORDERS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_border_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_BORDERS), { FRAMED_BOX_GROUP } };
 
 /*
 border RGB group
@@ -1420,7 +1420,7 @@ es_ps_grid_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_grid_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_GRID), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_grid_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_GRID), { FRAMED_BOX_GROUP } };
 
 /*
 grid RGB group
@@ -1585,7 +1585,7 @@ es_ps_back_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_back_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_RGB_BACK), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_back_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_RGB_BACK), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_rgb_back_group_enable =
@@ -1711,11 +1711,11 @@ es_ps1_ok =
 #if RISCOS
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP /*bodge for pretty*/ },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 #else
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP /*bodge for pretty*/ },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 #endif
 };
 
@@ -1859,7 +1859,7 @@ es_ps_para_space_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_para_space_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_PARA), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_para_space_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_PARA), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_para_space_caption_group =
@@ -1896,7 +1896,7 @@ es_ps_para_start =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_ps_para_start_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_v_units_fine_control } /*BUMP_XX*/ };
+es_ps_para_start_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_v_units_fine_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_ps_para_start_units =
@@ -1936,7 +1936,7 @@ es_ps_para_end =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_ps_para_end_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_v_units_fine_control } /*BUMP_XX*/ };
+es_ps_para_end_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_v_units_fine_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_ps_para_end_units =
@@ -1964,7 +1964,7 @@ es_ps_line_space_group_main =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_line_space_group_main_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_LINE), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_line_space_group_main_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_LINE), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_line_space_group_enable =
@@ -2070,7 +2070,7 @@ es_ps_line_space_n_val =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_ps_line_space_n_val_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_points_control } /*BUMP_XX*/ };
+es_ps_line_space_n_val_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_points_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_ps_line_space_n_val_units =
@@ -2129,7 +2129,7 @@ es_ps_numform_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_numform_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_NUMFORM_GROUP), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_numform_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_NUMFORM_GROUP), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_ps_numform_list_nu_enable =
@@ -2268,7 +2268,7 @@ es_ps_new_object_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_ps_new_object_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_NEW_OBJECT), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_ps_new_object_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_NEW_OBJECT), { FRAMED_BOX_GROUP } };
 
 /*
 new object list 'group'
@@ -2295,7 +2295,7 @@ es_ps_new_object_list =
 #else
     { DIALOG_STDSPACING_H, 0, ES_PS_NEW_OBJECT_LIST_H, DIALOG_STDLISTOVH_V + 2 * DIALOG_STDLISTITEM_V },
 #endif
-    { DRT(RTLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(RTLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_LIST_TEXT
@@ -2411,7 +2411,7 @@ es_rs_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-es_rs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_RS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+es_rs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_RS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 es_rs_caption_group =
@@ -2448,7 +2448,7 @@ es_rs_height =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-es_rs_height_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &es_v_units_control } /*BUMP_XX*/ };
+es_rs_height_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &es_v_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 es_rs_height_units =

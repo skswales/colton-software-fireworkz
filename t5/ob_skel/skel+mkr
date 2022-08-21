@@ -10,27 +10,6 @@ OBJID=00
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY).msg
- Basic -quit $(RCGen) -output $@ -from $? -object 00
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00: $(T5).ob_skel.resource.$(COUNTRY).msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -symbol rb_skel_msg_weak
-
-# RISC OS loaded sprites
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob00: $(T5).ob_skel.resource.$(COUNTRY).spr22
- Copy $? $@ ~C FV
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob00: $(T5).ob_skel.resource.$(COUNTRY).spr24
- Copy $? $@ ~C FV
-
-OBJS_00_X=\
-$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00 \
-
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M00: $(OBJS_00_X)
- $(LD) $(LDflags_AOF) -o $@ $(OBJS_00_X)
-
 $(BUILD_DIR).ob_skel.o.arglist: $(T5).ob_skel.c.arglist
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.df_paint: $(T5).ob_skel.c.df_paint
@@ -375,5 +354,31 @@ $(BUILD_DIR).ob_skel.skelD: $(SKEL_SD)
 
 $(BUILD_DIR).ob_skel.skelM: $(SKEL_MS)
  $(LD) $(LDflags_AOF) -o $@ $(SKEL_MS)
+
+# Windows STRINGTABLE
+$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY).msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 00
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob00: $(T5).ob_skel.resource.$(COUNTRY).msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+# RISC OS loaded sprites
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob00: \
+ $(T5).ob_skel.resource.$(COUNTRY).spr22
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob00: \
+ $(T5).ob_skel.resource.$(COUNTRY).spr24
+ Copy $? $@ ~C FV
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00: $(T5).ob_skel.resource.$(COUNTRY).msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B_tmp -symbol rb_skel_msg_weak
+
+OBJS_00_X=$(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00 \
+
+$(PROD_BUILD_DIR).o.$(COUNTRY).M00: $(OBJS_00_X)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_00_X)
 
 # end of ob_skel.mkr ###############################################################################

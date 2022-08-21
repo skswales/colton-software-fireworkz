@@ -20,8 +20,14 @@
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_fl_xls_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FL_XLS)
 extern PC_U8 rb_fl_xls_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_XLS &rb_fl_xls_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_XLS LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_XLS DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FL_XLS DONT_LOAD_RESOURCES
@@ -106,7 +112,7 @@ T5_MSG_PROTO(static, xls_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose
     case T5_MSG_IC__STARTUP:
         xls_error_buffer_set(fl_xls_statics.error_buffer, elemof32(fl_xls_statics.error_buffer));
 
-        return(resource_init(OBJECT_ID_FL_XLS, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FL_XLS));
+        return(resource_init(OBJECT_ID_FL_XLS, P_BOUND_MESSAGES_OBJECT_ID_FL_XLS, P_BOUND_RESOURCES_OBJECT_ID_FL_XLS));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FL_XLS));

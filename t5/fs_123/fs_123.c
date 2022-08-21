@@ -26,8 +26,14 @@
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_fs_123_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FS_LOTUS123)
 extern PC_U8 rb_fs_123_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_LOTUS123 &rb_fs_123_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_LOTUS123 DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_LOTUS123 DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FS_LOTUS123 DONT_LOAD_RESOURCES
@@ -1746,7 +1752,7 @@ T5_MSG_PROTO(static, lotus123_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_init
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        return(resource_init(OBJECT_ID_FS_LOTUS123, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FS_LOTUS123));
+        return(resource_init(OBJECT_ID_FS_LOTUS123, P_BOUND_MESSAGES_OBJECT_ID_FS_LOTUS123, P_BOUND_RESOURCES_OBJECT_ID_FS_LOTUS123));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FS_LOTUS123));

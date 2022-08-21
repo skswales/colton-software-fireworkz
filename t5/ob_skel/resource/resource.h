@@ -13,8 +13,8 @@
 /* bitmap ids */
 #if RISCOS
 #define SKEL_ID_BM_TOOLBAR_VIEW             "view_ctrl"
-#define SKEL_ID_BM_TOOLBAR_SAVE             "save"
-#define SKEL_ID_BM_TOOLBAR_PRINT            "print"
+#define SKEL_ID_BM_TOOLBAR_SAVE             "doc_save"
+#define SKEL_ID_BM_TOOLBAR_PRINT            "doc_print"
 #define SKEL_ID_BM_TOOLBAR_CUT              "edit_cut"
 #define SKEL_ID_BM_TOOLBAR_COPY             "edit_copy"
 #define SKEL_ID_BM_TOOLBAR_PASTE            "edit_paste"
@@ -34,7 +34,7 @@
 #define SKEL_ID_BM_TOOLBAR_J_RIGHT          "j_r"
 #define SKEL_ID_BM_TOOLBAR_J_FULL           "j_b"
 
-#define SKEL_ID_BM_TOOLBAR_SEARCH           "search"
+#define SKEL_ID_BM_TOOLBAR_SEARCH           "edit_find"
 #define SKEL_ID_BM_TOOLBAR_TABLE            "table"
 #define SKEL_ID_BM_TOOLBAR_BOX              "box"
 #define SKEL_ID_BM_TOOLBAR_MARKER           "marker"
@@ -59,23 +59,23 @@
 #define SKEL_ID_BM_J_RIGHT                  SKEL_ID_BM_TOOLBAR_J_RIGHT
 #define SKEL_ID_BM_J_FULL                   SKEL_ID_BM_TOOLBAR_J_FULL
 
-#define SKEL_ID_BM_VJ_TOP           "v_t"
-#define SKEL_ID_BM_VJ_CENTRE        "v_c"
-#define SKEL_ID_BM_VJ_BOTTOM        "v_b"
+#define SKEL_ID_BM_VJ_TOP                   "v_t"
+#define SKEL_ID_BM_VJ_CENTRE                "v_c"
+#define SKEL_ID_BM_VJ_BOTTOM                "v_b"
 
-#define SKEL_ID_BM_PS_SINGLE        "spac1"
-#define SKEL_ID_BM_PS_ONEP5         "spac1p5"
-#define SKEL_ID_BM_PS_DOUBLE        "spac2"
-#define SKEL_ID_BM_PS_N             "spacn"
+#define SKEL_ID_BM_PS_SINGLE                "spac1"
+#define SKEL_ID_BM_PS_ONEP5                 "spac1p5"
+#define SKEL_ID_BM_PS_DOUBLE                "spac2"
+#define SKEL_ID_BM_PS_N                     "spacn"
 
-#define SKEL_ID_BM_LINE_NONE        "lnone"
-#define SKEL_ID_BM_LINE_THIN        "lthin"
-#define SKEL_ID_BM_LINE_STD         "lstd"
-#define SKEL_ID_BM_LINE_STDD        "lstdd"
-#define SKEL_ID_BM_LINE_THICK       "lthick"
+#define SKEL_ID_BM_LINE_NONE                "lnone"
+#define SKEL_ID_BM_LINE_THIN                "lthin"
+#define SKEL_ID_BM_LINE_STD                 "lstd"
+#define SKEL_ID_BM_LINE_STDD                "lstdd"
+#define SKEL_ID_BM_LINE_THICK               "lthick"
 
-#define SKEL_ID_BM_DEC              "down"
-#define SKEL_ID_BM_INC              "up"
+#define SKEL_ID_BM_DEC                      "down"
+#define SKEL_ID_BM_INC                      "up"
 #elif WINDOWS
 /* multi-bitmaps: 0x0n (+1 = high-dpi variant) */
 #define SKEL_ID_BM_TOOLBAR_COM_BTN_ID           T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 1)
@@ -605,6 +605,9 @@ long names for function keys
 #define MSG_NUMFORM_1_DP                        744
 #define MSG_NUMFORM_2_DP                        745
 #define MSG_NUMFORM_3_DP                        746
+#define MSG_NUMFORM_1_DP0                       747
+#define MSG_NUMFORM_2_DP0                       748
+#define MSG_NUMFORM_3_DP0                       749
 
 #define MSG_DIALOG_BACKDROP_CAPTION             750
 #define MSG_DIALOG_BACKDROP_PAGE_FIRST          751

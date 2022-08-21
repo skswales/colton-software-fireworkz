@@ -38,9 +38,9 @@ $(CCMATH_SO): $(CCMATH_SO_AOF) $(CCMATH_STUBS)
 # ensuring that this app exports all the necessary functions for the Library
 
 APP_AOF=$(PROD_BUILD_DIR).o.uk-sk_aof
-APP_SYM=$(PROD_BUILD_DIR).binaries.uk-SymIm
+APP_SYM=$(PROD_BUILD_DIR).binaries.uk.SymIm
 # NB APP_SYM not valid until APP_STUBS have been created so need extra dependency
-APP_STUBS=$(PROD_BUILD_DIR).binaries.stubs
+APP_STUBS=$(PROD_BUILD_DIR).binaries.Neutral.stubs
 
 $(CCMATH_STUBS): $(CCMATH_SO_AOF) $(APP_AOF) $(APP_STUBS)
  @Remove $(CCMATH_IMPORTS)

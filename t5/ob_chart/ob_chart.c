@@ -28,8 +28,14 @@ callback routines
 PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart);
 
 #if RISCOS
-#define MSG_WEAK &rb_chart_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_CHART)
 extern PC_U8 rb_chart_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_CHART &rb_chart_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_CHART LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_CHART DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_CHART LOAD_RESOURCES
@@ -1898,7 +1904,7 @@ _Check_return_
 static STATUS
 chart_msg_startup(void)
 {
-    status_return(resource_init(OBJECT_ID_CHART, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_CHART));
+    status_return(resource_init(OBJECT_ID_CHART, P_BOUND_MESSAGES_OBJECT_ID_CHART, P_BOUND_RESOURCES_OBJECT_ID_CHART));
 
 #if WINDOWS
     {

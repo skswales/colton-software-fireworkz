@@ -42,10 +42,6 @@ BOUND_RESOURCES, * P_BOUND_RESOURCES; typedef const BOUND_RESOURCES * PC_BOUND_R
 #define LOAD_MESSAGES_FILE ((P_PC_U8) (intptr_t) 1)
 #define DONT_LOAD_MESSAGES_FILE NULL
 
-#if !RISCOS
-#define MSG_WEAK NULL
-#endif
-
 typedef union RESOURCE_BITMAP_HANDLE
 {
 #if RISCOS
@@ -186,7 +182,7 @@ extern STATUS
 resource_init(
     _InVal_     OBJECT_ID object_id,
     _In_opt_    PC_U8 * const p_u8_bound_msg,
-    _InRef_opt_ PC_BOUND_RESOURCES p_bound);
+    _InRef_opt_ PC_BOUND_RESOURCES p_bound_resources);
 
 #if RISCOS
 

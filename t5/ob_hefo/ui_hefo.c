@@ -149,7 +149,7 @@ page_hefo_break_values_header_odd_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-page_hefo_break_values_header_odd_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_HEADER_ODD), { 0, 0, 0, FRAMED_BOX_GROUP } };
+page_hefo_break_values_header_odd_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_HEADER_ODD), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_odd_enable =
@@ -264,7 +264,7 @@ page_hefo_break_values_header_even_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-page_hefo_break_values_header_even_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_HEADER_EVEN), { 0, 0, 0, FRAMED_BOX_GROUP } };
+page_hefo_break_values_header_even_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_HEADER_EVEN), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_even_enable =
@@ -379,7 +379,7 @@ page_hefo_break_values_header_first_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-page_hefo_break_values_header_first_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_HEADER_FIRST), { 0, 0, 0, FRAMED_BOX_GROUP } };
+page_hefo_break_values_header_first_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_HEADER_FIRST), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_first_enable =
@@ -494,7 +494,7 @@ page_hefo_break_values_footer_odd_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-page_hefo_break_values_footer_odd_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_FOOTER_ODD), { 0, 0, 0, FRAMED_BOX_GROUP } };
+page_hefo_break_values_footer_odd_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_FOOTER_ODD), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_odd_enable =
@@ -609,7 +609,7 @@ page_hefo_break_values_footer_even_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-page_hefo_break_values_footer_even_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_FOOTER_EVEN), { 0, 0, 0, FRAMED_BOX_GROUP } };
+page_hefo_break_values_footer_even_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_FOOTER_EVEN), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_even_enable =
@@ -724,7 +724,7 @@ page_hefo_break_values_footer_first_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-page_hefo_break_values_footer_first_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_FOOTER_FIRST), { 0, 0, 0, FRAMED_BOX_GROUP } };
+page_hefo_break_values_footer_first_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_FOOTER_FIRST), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_first_enable =
@@ -882,7 +882,7 @@ page_hefo_break_values_ok =
 #else
     { DIALOG_DEFOK_H, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
 #endif
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_ID

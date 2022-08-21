@@ -19,11 +19,19 @@
 
     <p>Thanks to Richard Colton, Fireworkz is now open source and completely free to use!</p>
 
-    <p>Fireworkz is made available to you under the terms of the
-    <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.
-    This means you may use, copy and distribute Fireworkz to others.
-    You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
-    The Mozilla Public License also gives you the right to distribute your modified versions of Fireworkz.</p>
+    <p>
+        Fireworkz is made available to you under the terms of the
+        <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.
+        This means you may use, copy and distribute Fireworkz to others.
+        You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
+        The Mozilla Public License also gives you the right to distribute your modified versions of Fireworkz.
+    </p>
+
+    <p>
+        The Fireworkz source code may be freely downloaded from
+        <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>.
+    </p>
+
 
     <h1 id="CopyrightExtra">Additional Copyright Information</h1>
 

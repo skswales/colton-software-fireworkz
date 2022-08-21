@@ -9,23 +9,28 @@ OBJID=38
 
 # Copyright (C) 2014-2019 Stuart Swales
 
-# Windows STRINGTABLE
-$(BUILD_DIR).ob_recn.$(COUNTRY)-38/rc: $(T5).ob_recn.resource.$(COUNTRY)-msg
- Basic -quit $(RCGen) -output $@ -from $? -object 38 -common
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_recn.o.$(COUNTRY)-B38: $(T5).ob_recn.resource.$(COUNTRY)-msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_recn.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_recn.o.$(COUNTRY)-B_tmp -symbol rb_recn_msg_weak
-
 $(BUILD_DIR).ob_recn.o.ob_recn: $(T5).ob_recn.c.ob_recn
  $(CC) -o $@ $(ccflags) $?
 
 OBJS_38_S=$(BUILD_DIR).ob_recn.o.ob_recn
 
+$(PROD_BUILD_DIR).o.Neutral.M38: $(OBJS_38_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_38_S)
+# Windows STRINGTABLE
+$(BUILD_DIR).ob_recn.$(COUNTRY)-38/rc: $(T5).ob_recn.resource.$(COUNTRY)-msg
+ Basic -quit $(RCGen) -output $@ -from $? -object 38 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob38: $(T5).ob_recn.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+# RISC OS bound messages
+$(BUILD_DIR).ob_recn.o.$(COUNTRY)-B38: $(T5).ob_recn.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_recn.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_recn.o.$(COUNTRY)-B_tmp -symbol rb_recn_msg_weak
+
 OBJS_38_X=$(BUILD_DIR).ob_recn.o.$(COUNTRY)-B38
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M38: $(OBJS_38_X) $(OBJS_38_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M38: $(OBJS_38_X) $(OBJS_38_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_38_X) $(OBJS_38_S)
  $(OBJMUNGE) -Iu$(BUILD_DIR).ob_recn.imports -O$@
  $(OBJMUNGE) -Iu$(PROD_BUILD_DIR).imports -O$@

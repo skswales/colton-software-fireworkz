@@ -317,7 +317,7 @@ style_rgb_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-style_fill_colour_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_FILL_COLOUR), { 0, 0, 0, FRAMED_BOX_GROUP } };
+style_fill_colour_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_FILL_COLOUR), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 style_fill_group =
@@ -329,7 +329,7 @@ style_fill_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-style_fill_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_FILL), { 0, 0, 0, FRAMED_BOX_GROUP } };
+style_fill_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_FILL), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 style_fill_solid =
@@ -680,7 +680,7 @@ line style group
 */
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-style_line_colour_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_LINE_COLOUR), { 0, 0, 0, FRAMED_BOX_GROUP } };
+style_line_colour_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_LINE_COLOUR), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 style_line_group =
@@ -692,7 +692,7 @@ style_line_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-style_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { 0, 0, 0, FRAMED_BOX_GROUP } };
+style_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 style_line_line[7] =
@@ -743,7 +743,7 @@ static /*poked*/ UI_CONTROL_F64
 style_line_thickness_control;
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-style_line_thickness_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &style_line_thickness_control } /* BUMP_XX */ };
+style_line_thickness_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &style_line_thickness_control } /* BUMP_XX */ };
 
 static const DIALOG_CONTROL
 style_line_thickness_units =
@@ -947,7 +947,7 @@ style_text_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-style_text_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+style_text_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 style_text_typeface_text =
@@ -967,7 +967,7 @@ style_text_typeface_list =
     STYLE_ID_TEXT_TYPEFACE_LIST, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_TYPEFACE_TEXT, STYLE_ID_TEXT_TYPEFACE_TEXT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, TS_FS_TYPEFACE_H, TS_FS_TYPEFACE_V },
-    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 /*
@@ -999,7 +999,7 @@ static /*poked*/ UI_CONTROL_F64
 style_text_height_control = { 1.0, 255.0, 1.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-style_text_height_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &style_text_height_control } /*BUMP_XX*/ };
+style_text_height_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &style_text_height_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 style_text_height_units =
@@ -1041,7 +1041,7 @@ static /*poked*/ UI_CONTROL_F64
 style_text_width_control = { 0.0, 255.0, 1.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-style_text_width_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &style_text_width_control } /*BUMP_XX*/ };
+style_text_width_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &style_text_width_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 style_text_width_units =
@@ -1425,7 +1425,7 @@ chart_margin_top =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-chart_margin_top_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &chart_margin_control[IDX_VERT] } /*BUMP_XX*/ };
+chart_margin_top_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &chart_margin_control[IDX_VERT] } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 chart_margin_top_units =
@@ -1462,7 +1462,7 @@ chart_margin_bottom =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-chart_margin_bottom_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &chart_margin_control[IDX_VERT] } /*BUMP_XX*/ };
+chart_margin_bottom_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &chart_margin_control[IDX_VERT] } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 chart_margin_bottom_units =
@@ -1499,7 +1499,7 @@ chart_margin_left =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-chart_margin_left_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &chart_margin_control[IDX_HORZ] } /*BUMP_XX*/ };
+chart_margin_left_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &chart_margin_control[IDX_HORZ] } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 chart_margin_left_units =
@@ -1536,7 +1536,7 @@ chart_margin_right =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-chart_margin_right_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &chart_margin_control[IDX_HORZ] } /*BUMP_XX*/ };
+chart_margin_right_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &chart_margin_control[IDX_HORZ] } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 chart_margin_right_units =

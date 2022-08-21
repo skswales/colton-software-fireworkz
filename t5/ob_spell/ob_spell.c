@@ -20,8 +20,14 @@
 #define IMMEDIATE_UPDATE FALSE
 
 #if RISCOS
-#define MSG_WEAK &rb_spell_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_SPELL)
 extern PC_U8 rb_spell_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_SPELL &rb_spell_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SPELL LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SPELL DONT_LOAD_MESSAGES_FILE
 #endif
 
 /*
@@ -175,7 +181,7 @@ T5_MSG_PROTO(static, spell_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_SPELL, MSG_WEAK, NULL));
+        status_return(resource_init(OBJECT_ID_SPELL, P_BOUND_MESSAGES_OBJECT_ID_SPELL, NULL));
 
         /* SKS 03jan94 initialise statics for Windows restart */
         spell_startup();

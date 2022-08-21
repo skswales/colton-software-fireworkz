@@ -20,7 +20,7 @@ dir <Obey$Dir>
 |
 echo Checking out RISC_OSLib from ROOL
 time
-/<CVS$BinDir>.cvs -z9 co -D20130226 castle/RiscOS/Sources/Lib/RISC_OSLib/rlib/h
+/<CVS$BinDir>.cvs -z9 co -D20130226 apache/RiscOS/Sources/Lib/RISC_OSLib/rlib/h
 time
 |
 back

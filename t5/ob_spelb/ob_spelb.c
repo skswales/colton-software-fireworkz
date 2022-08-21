@@ -20,8 +20,14 @@
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_spelb_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_SPELB)
 extern PC_U8 rb_spelb_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_SPELB &rb_spelb_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SPELB LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SPELB DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_SPELB DONT_LOAD_RESOURCES
@@ -73,7 +79,7 @@ choices_spell_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-choices_spell_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_SPELB_GROUP), { 0, 0, 0, FRAMED_BOX_GROUP } };
+choices_spell_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_SPELB_GROUP), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 choices_spell_auto_check =
@@ -102,7 +108,7 @@ choices_spell_dict_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-choices_spell_dict_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_SPELB_DICT_GROUP), { 0, 0, 0, FRAMED_BOX_GROUP } };
+choices_spell_dict_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_SPELB_DICT_GROUP), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 choices_spell_load_master =
@@ -279,7 +285,7 @@ T5_MSG_PROTO(static, spelb_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_SPELB, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_SPELB));
+        status_return(resource_init(OBJECT_ID_SPELB, P_BOUND_MESSAGES_OBJECT_ID_SPELB, P_BOUND_RESOURCES_OBJECT_ID_SPELB));
 
         return(register_object_construct_table(OBJECT_ID_SPELB, object_construct_table, FALSE /* no inlines */));
 

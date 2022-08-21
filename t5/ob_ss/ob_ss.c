@@ -30,8 +30,14 @@
 #include "cmodules/mrofmun.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_ss_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_SS)
 extern PC_U8 rb_ss_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_SS &rb_ss_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SS LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SS DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_SS LOAD_RESOURCES
@@ -552,7 +558,7 @@ choices_ss_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-choices_ss_group_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_CHOICES_GROUP), { 0, 0, 0, FRAMED_BOX_GROUP } };
+choices_ss_group_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_CHOICES_GROUP), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 choices_ss_calc_auto =
@@ -637,7 +643,7 @@ choices_chart_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-choices_chart_group_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_CHOICES_CHART_GROUP), { 0, 0, 0, FRAMED_BOX_GROUP } };
+choices_chart_group_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_CHOICES_CHART_GROUP), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 choices_chart_update_auto =
@@ -923,7 +929,7 @@ ss_functions_list =
     SS_FUNCTIONS_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0 }, /* filled in at run-time */
-    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/ }
+    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -2867,7 +2873,7 @@ ss_msg_startup(void)
     } /*block*/
 #endif
 
-    status_return(resource_init(OBJECT_ID_SS, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_SS));
+    status_return(resource_init(OBJECT_ID_SS, P_BOUND_MESSAGES_OBJECT_ID_SS, P_BOUND_RESOURCES_OBJECT_ID_SS));
 
 #if WINDOWS
     {

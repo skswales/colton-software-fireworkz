@@ -16,8 +16,14 @@
 #include "ob_dlg/ui_dlgin.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_dlg_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_DIALOG)
 extern PC_U8 rb_dlg_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_DIALOG &rb_dlg_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_DIALOG LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_DIALOG DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_DIALOG DONT_LOAD_RESOURCES
@@ -2350,7 +2356,7 @@ T5_MSG_PROTO(static, dialog_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initcl
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP_SERVICES:
-        status_return(resource_init(OBJECT_ID_DIALOG, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_DIALOG));
+        status_return(resource_init(OBJECT_ID_DIALOG, P_BOUND_MESSAGES_OBJECT_ID_DIALOG, P_BOUND_RESOURCES_OBJECT_ID_DIALOG));
         return(dialog_init());
 
     case T5_MSG_IC__SERVICES_EXIT1:

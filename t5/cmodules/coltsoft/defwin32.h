@@ -277,6 +277,10 @@ Turn off various Level 4 warnings
 #endif
 #endif /* __cplusplus */
 
+#if _MSC_VER >= 1910 /* VS2017 or later */
+#pragma warning(disable:5045) /* Compiler will insert Spectre mitigation for memory load if / Qspectre switch specified */
+#endif
+
 /* Temporarily disable some VS2015 warnings */
 #if _MSC_VER >= 1900 /* VS2015 or later */
 #pragma warning(disable:4456) /* declaration of 'x' hides previous local declaration */

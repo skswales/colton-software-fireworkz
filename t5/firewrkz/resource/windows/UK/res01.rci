@@ -22,86 +22,6 @@ BEGIN
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
-// evaluator errors (see xp_ss.h, ob_ss.h)
-//
-	0xA000,	"Irr"
-//e1:ERROR_RQ
-	0xA002,	"Bad date"
-	0xA003,	"Lookup"
-	0xA004,	"Negative root"
-	0xA005,	"Propagated"
-	0xA006,	"Divide by zero"
-	0xA007,	"Bad index"
-	0xA008,	"FP error"
-	0xA009,	"Circular reference"
-//
-	0xA00A,	"File not loaded"
-	0xA00B,	"Array expected"
-	0xA00C,	"Bad compiled data"
-	0xA00D,	"Formula too long"
-	0xA00E,	"Internal evaluator error 14"
-	0xA00F,	"Mistake in formula"
-	0xA010,	"Number not expected"
-	0xA011,	"String not expected"
-	0xA012,	"Date not expected"
-	0xA013,	"Name not defined"
-//
-	0xA014,	"Range not expected"
-	0xA015,	"Internal evaluator error 21"
-	0xA016,	"Custom function not defined"
-	0xA017,	"Nested array"
-	0xA018,	"Array not expected"
-	0xA019,	"Parameter to custom function not declared"
-	0xA01A,	"No RESULT in custom function"
-	0xA01B,	"#N/A"
-	0xA01C,	"Not implemented"
-	0xA01D,	"Cell deleted"
-//
-	0xA01E,	"No time value"
-	0xA01F,	"No date value"
-	0xA020,	"Bad identifier"
-	0xA021,	"Bad complex number"
-	0xA022,	"Out of range"
-	0xA023,	"Array wrong size"
-	0xA024,	"Control function outside custom function"
-	0xA025,	"Bad target for GOTO"
-	0xA026,	"Wrongly nested loop"
-	0xA027,	"Parameter out of range"
-//
-	0xA028,	"Bad time"
-	0xA029,	"Wrongly nested IF ELSE ELSEIF ENDIF"
-	0xA02A,	"Mismatched matrices"
-	0xA02B,	"Matrix not numeric"
-	0xA02C,	"Matrix wrong size"
-	0xA02D,	"Mixed signs"
-	0xA02E,	"Accuracy lost"
-	0xA02F,	"Can't overwrite formula"
-	0xA030,	"Wrong number of parameters to function"
-	0xA031,	"Missing )"
-//
-	0xA032,	"Can't nest database functions"
-	0xA033,	"Parameter is wrong type"
-	0xA034,	"Custom function already defined"
-	0xA035,	"Type not recognised"
-	0xA036,	"Array size is set by first row"
-	0xA037,	"Missing }"
-	0xA038,	"Can't write beyond existing rows and columns"
-	0xA039,	"Bad logarithm"
-	0xA03A,	"Matrix is not square"
-	0xA03B,	"Matrix is singular"
-//
-	0xA03C,	"No valid data found"
-	0xA03D,	"Database access error"
-	0xA03E,	"#VALUE!"
-	0xA03F,	"#NUM!"
-//
-// ob_ss errors
-//
-	0xA064,	"Last column/row not blank"
-	0xA065,	"Spreadsheet function not available"
-	0xA066,	"You must give names a non-blank name"
-	0xA067,	"You must give names a non-blank value"
-//
 // ob_ss messages
 //
 // r90:Fill down (or ADJUST to Fill up)
@@ -1013,6 +933,86 @@ BEGIN
 	0x236A,	"eomonth"
 	0x21DB,	"Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0| (OpenDocument/Excel-compatible behaviour)"
 	0x236B,	"odf.mod"
+//
+// evaluator errors (see xp_ss.h, ob_ss.h)
+//
+	0xA000,	"Irr"
+//e1:ERROR_RQ
+	0xA002,	"Bad date"
+	0xA003,	"Lookup"
+	0xA004,	"Negative root"
+	0xA005,	"Propagated"
+	0xA006,	"Divide by zero"
+	0xA007,	"Bad index"
+	0xA008,	"FP error"
+	0xA009,	"Circular reference"
+//
+	0xA00A,	"File not loaded"
+	0xA00B,	"Array expected"
+	0xA00C,	"Bad compiled data"
+	0xA00D,	"Formula too long"
+	0xA00E,	"Internal evaluator error 14"
+	0xA00F,	"Mistake in formula"
+	0xA010,	"Number not expected"
+	0xA011,	"String not expected"
+	0xA012,	"Date not expected"
+	0xA013,	"Name not defined"
+//
+	0xA014,	"Range not expected"
+	0xA015,	"Internal evaluator error 21"
+	0xA016,	"Custom function not defined"
+	0xA017,	"Nested array"
+	0xA018,	"Array not expected"
+	0xA019,	"Parameter to custom function not declared"
+	0xA01A,	"No RESULT in custom function"
+	0xA01B,	"#N/A"
+	0xA01C,	"Not implemented"
+	0xA01D,	"Cell deleted"
+//
+	0xA01E,	"No time value"
+	0xA01F,	"No date value"
+	0xA020,	"Bad identifier"
+	0xA021,	"Bad complex number"
+	0xA022,	"Out of range"
+	0xA023,	"Array wrong size"
+	0xA024,	"Control function outside custom function"
+	0xA025,	"Bad target for GOTO"
+	0xA026,	"Wrongly nested loop"
+	0xA027,	"Parameter out of range"
+//
+	0xA028,	"Bad time"
+	0xA029,	"Wrongly nested IF ELSE ELSEIF ENDIF"
+	0xA02A,	"Mismatched matrices"
+	0xA02B,	"Matrix not numeric"
+	0xA02C,	"Matrix wrong size"
+	0xA02D,	"Mixed signs"
+	0xA02E,	"Accuracy lost"
+	0xA02F,	"Can't overwrite formula"
+	0xA030,	"Wrong number of parameters to function"
+	0xA031,	"Missing )"
+//
+	0xA032,	"Can't nest database functions"
+	0xA033,	"Parameter is wrong type"
+	0xA034,	"Custom function already defined"
+	0xA035,	"Type not recognised"
+	0xA036,	"Array size is set by first row"
+	0xA037,	"Missing }"
+	0xA038,	"Can't write beyond existing rows and columns"
+	0xA039,	"Bad logarithm"
+	0xA03A,	"Matrix is not square"
+	0xA03B,	"Matrix is singular"
+//
+	0xA03C,	"No valid data found"
+	0xA03D,	"Database access error"
+	0xA03E,	"#VALUE!"
+	0xA03F,	"#NUM!"
+//
+// ob_ss errors
+//
+	0xA064,	"Last column/row not blank"
+	0xA065,	"Spreadsheet function not available"
+	0xA066,	"You must give names a non-blank name"
+	0xA067,	"You must give names a non-blank value"
 //
 // end of msg (ob_ss)
 END

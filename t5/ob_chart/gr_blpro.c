@@ -70,7 +70,7 @@ static const UI_CONTROL_F64
 bl_process_bl_1_control = { 0.0, 100.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_bl_1_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_bl_1_control } /*BUMP_XX*/ };
+bl_process_bl_1_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &bl_process_bl_1_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 bl_process_bl_1_text =
@@ -94,7 +94,7 @@ static const UI_CONTROL_F64
 bl_process_bl_2_control = { 0.0, 100.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_bl_2_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_bl_2_control } /*BUMP_XX*/ };
+bl_process_bl_2_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &bl_process_bl_2_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 bl_process_bl_2_text =
@@ -118,7 +118,7 @@ static const UI_CONTROL_F64
 bl_process_bl_3_control = { 0.0, 100.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_bl_3_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_bl_3_control } /*BUMP_XX*/ };
+bl_process_bl_3_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &bl_process_bl_3_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 bl_process_bl_3_text =
@@ -143,7 +143,7 @@ bl_process_3d_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-bl_process_3d_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D), { 0, 0, 0, FRAMED_BOX_GROUP } };
+bl_process_3d_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 bl_process_3d_on =
@@ -179,7 +179,7 @@ static const UI_CONTROL_F64
 bl_process_3d_turn_control = { 0.0, 80.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_3d_turn_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_turn_control } /*BUMP_XX*/ };
+bl_process_3d_turn_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &bl_process_3d_turn_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 bl_process_3d_turn_label =
@@ -206,7 +206,7 @@ static const UI_CONTROL_F64
 bl_process_3d_droop_control = { 0.0, 80.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_3d_droop_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_droop_control } /*BUMP_XX*/ };
+bl_process_3d_droop_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &bl_process_3d_droop_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 bl_process_3d_droop_label =
@@ -221,7 +221,7 @@ static const DIALOG_CONTROL_DATA_STATICTEXT
 bl_process_3d_droop_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_DROOP), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-bar_process_bar_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BAR_PROCESS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+bar_process_bar_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BAR_PROCESS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
 bar_process_1_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BAR_PROCESS_1), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
@@ -238,7 +238,7 @@ bar_process_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, BL_ID_3D_GROUP, BL_ID_BL_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -421,7 +421,7 @@ gr_chart_bar_process(
 }
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-line_process_line_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_LINE_PROCESS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+line_process_line_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_LINE_PROCESS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
 line_process_1_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_LINE_PROCESS_1), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
@@ -438,7 +438,7 @@ line_process_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, BL_ID_3D_GROUP, BL_ID_BL_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -523,7 +523,7 @@ typedef struct SCAT_PROCESS_CALLBACK
 SCAT_PROCESS_CALLBACK, * P_SCAT_PROCESS_CALLBACK;
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-scat_process_point_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_SCAT_PROCESS), { 0, 0, 0, FRAMED_BOX_GROUP } };
+scat_process_point_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_SCAT_PROCESS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
 scat_process_1_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_SCAT_PROCESS_1), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
@@ -534,7 +534,7 @@ scat_process_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, BL_ID_BL_GROUP, BL_ID_BL_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, 0, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CTL_CREATE

@@ -39,9 +39,7 @@ T5_MSG_PROTO(static, skel_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     {
     case T5_MSG_IC__STARTUP_SERVICES:
         /* resource_startup been done early */
-#if RISCOS
-        host_fixup_system_sprites();
-#elif WINDOWS
+#if WINDOWS
         {
         static const RESOURCE_BITMAP_ID skel_toolbar_common_btn_16x16_4bpp  = { OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COM_BTN_ID + 0 }; /* 96 dpi buttons, 4 bpp */
         static const RESOURCE_BITMAP_ID skel_toolbar_common_btn_24x24_4bpp  = { OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COM_BTN_ID + 1 }; /* 120 dpi buttons, 4 bpp */

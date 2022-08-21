@@ -339,12 +339,6 @@ union wimp_window_state_open_window_block_u
 #define Wimp_MouseButtonTripleAdjust    0x1000
 #define Wimp_MouseButtonTripleSelect    0x4000
 
-/* other useful messages not defined by tboxlibs wimp.h */
-#ifndef Wimp_MFilerOpenDir
-#define Wimp_MFilerOpenDir  0x0400
-#define Wimp_MFilerCloseDir 0x0401
-#endif
-
 /*
 sizes of wimp controlled areas of screen - slightly mode dependent
 */
@@ -596,10 +590,16 @@ font_LoseFont(
 #define FONT_PAINT_KERNING          0x000200
 
 /* Font_ScanString options */
-#define FONT_SCANSTRING_USE_LENGTH  0x000080 /*r7*/
-#define FONT_SCANSTRING_USE_HANDLE  0x000100 /*r0*/
+#define FONT_SCANSTRING_USE_R5      0x000020 /*r5*/
+#define FONT_SCANSTRING_USE_R6      0x000040 /*r6*/
+#define FONT_SCANSTRING_USE_R7      0x000080 /*r7*/
+#define FONT_SCANSTRING_USE_R0      0x000100 /*r0*/
 #define FONT_SCANSTRING_KERNING     0x000200
 #define FONT_SCANSTRING_FIND        0x020000
+
+#define FONT_SCANSTRING_USE_HANDLE  FONT_SCANSTRING_USE_R0
+#define FONT_SCANSTRING_USE_LENGTH  FONT_SCANSTRING_USE_R7
+#define FONT_SCANSTRING_GET_BBOX    (FONT_SCANSTRING_USE_R5 | 0x040000)
 
 /*#include "font.h"*/ /* RISC_OSLib: */
 
@@ -1045,13 +1045,13 @@ host_modevar_cache_reset(void);
 extern void
 host_modevar_cache_query_bpp(
     _InVal_     U32 mode_specifier,
-    _OutRef_    P_S32 p_bpp);
+    _OutRef_    P_U32 p_bpp);
 
 extern void
-host_modevar_cache_query_eigs(
+host_modevar_cache_query_eig_factors(
     _InVal_     U32 mode_specifier,
-    _OutRef_    P_S32 p_XEigFactor,
-    _OutRef_    P_S32 p_YEigFactor);
+    _OutRef_    P_U32 p_XEigFactor,
+    _OutRef_    P_U32 p_YEigFactor);
 
 extern void
 host_disable_rgb(

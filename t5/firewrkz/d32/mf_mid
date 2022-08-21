@@ -25,14 +25,14 @@ OBJMUNGE=@| No 32-bit ObjMunge
 
 # just one product-specific file is built for each target product
 # NB this #include profinfo.c and t5_glue.c
-$(PROD_BUILD_DIR).o.firewrkz: $(PROD_SOURCE_DIR).c.firewrkz
- $(CC) -o $@ $(ccflags) $?
+$(PROD_BUILD_DIR).o.firewrkz: $(PROD_SOURCE_DIR).c.firewrkz $(T5).ob_skel.c.prodinfo $(T5).ob_skel.h.prodinfo
+ $(CC) -o $@ $(ccflags) $(PROD_SOURCE_DIR).c.firewrkz
 
-# objects to be bound into !RunImage
+# objects to be bound into !RunImage ($(COUNTRY))
 
 AOF_S0=\
 $(PROD_BUILD_DIR).o.$(PROD) \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M38 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M38 \
 
 AOF_S1=\
 $(BUILD_DIR).ob_skel.skelA \
@@ -40,16 +40,16 @@ $(BUILD_DIR).ob_skel.skelB \
 $(BUILD_DIR).ob_skel.skelC \
 $(BUILD_DIR).ob_skel.skelD \
 $(BUILD_DIR).ob_skel.skelM \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M00 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M01 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M03 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M10 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M15 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M16 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M18 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M29 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M30 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M31 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M00 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M01 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M03 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M10 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M15 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M16 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M18 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M29 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M30 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M31 \
 
 AOF_S=\
 $(AOF_S0) \
@@ -67,29 +67,29 @@ DYNLOAD_S2=\
 AOF_DYNLOAD_S0=\
 
 AOF_DYNLOAD_S1=\
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M04 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M06 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M07 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M08 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M09 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M12 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M17 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M19 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M04 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M06 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M07 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M08 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M09 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M12 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M17 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M19 \
 
 AOF_DYNLOAD_S2=\
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M20 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M21 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M22 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M23 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M24 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M25 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M26 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M27 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M28 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M33 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M35 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M40 \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M41 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M20 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M21 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M22 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M23 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M24 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M25 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M26 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M27 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M28 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M33 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M35 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M40 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M41 \
 
 # all code objects are bound rather than dynamically loaded
 
@@ -100,41 +100,41 @@ $(AOF_DYNLOAD_S2)
 
 # list of files to build into !RunImage
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-sk_via: \
+$(PROD_BUILD_DIR).o.$(COUNTRY).sk_via: \
 $(PROD_BUILD_DIR).Makefile
  $(MAKERESP) > $@ \
 $(AOF_S) \
 $(AOF_S_LOAD) \
 $(CCwimplib) $(CCflexlib) $(CCstubs)
 
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image: \
-$(PROD_BUILD_DIR).o.$(COUNTRY)-sk_via \
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Image: \
+$(PROD_BUILD_DIR).o.$(COUNTRY).sk_via \
 $(AOF_S) \
 $(AOF_S_LOAD) \
 $(CCwimplib) $(CCflexlib) $(CCstubs)
- $(LD) $(LDflags_AIF) -o $@ -via $(PROD_BUILD_DIR).o.$(COUNTRY)-sk_via -map -xref > $(PROD_BUILD_DIR).binaries.$(COUNTRY)-MapIm -S $(PROD_BUILD_DIR).binaries.$(COUNTRY)-SymIm
+ $(LD) $(LDflags_AIF) -o $@ -via $(PROD_BUILD_DIR).o.$(COUNTRY).sk_via -map -xref > $(PROD_BUILD_DIR).binaries.$(COUNTRY).MapIm -S $(PROD_BUILD_DIR).binaries.$(COUNTRY).SymIm
 
 # dyamically loaded bits
 
 # NB imports is built as a side-effect of building the AOF_DYNLOAD_Sn
-$(PROD_BUILD_DIR).binaries.stubs: \
+$(PROD_BUILD_DIR).binaries.Neutral.stubs: \
 $(AOF_DYNLOAD_S0) \
 $(AOF_DYNLOAD_S1) \
 $(AOF_DYNLOAD_S2) \
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Image
  @Remove $@
  $(OBJMUNGE) -Su$@ \
--O$(PROD_BUILD_DIR).o.$(COUNTRY)-sk_aof \
+-O$(PROD_BUILD_DIR).o.$(COUNTRY).sk_aof \
 -I$(PROD_BUILD_DIR).imports \
--L$(PROD_BUILD_DIR).binaries.$(COUNTRY)-SymIm
+-L$(PROD_BUILD_DIR).binaries.$(COUNTRY).SymIm
 
 # a test copy, with Info
 
 $(PROD_BUILD_DIR).!$(APPL).!RunImage: \
-$(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image \
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Image \
 $(DYNLOAD_S2) \
 $(PROD_BUILD_DIR).!$(APPL).Info
- Copy $(PROD_BUILD_DIR).binaries.$(COUNTRY)-Image $@ ~C FV
+ Copy $(PROD_BUILD_DIR).binaries.$(COUNTRY).Image $@ ~C FV
  @Time
 
 # end of mf_mid (z1.d32) ##########################################################

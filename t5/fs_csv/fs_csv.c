@@ -18,8 +18,14 @@
 #include "ob_skel/ff_io.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_fs_csv_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FS_CSV)
 extern PC_U8 rb_fs_csv_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_CSV &rb_fs_csv_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_CSV DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FS_CSV DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FS_CSV DONT_LOAD_RESOURCES
@@ -217,7 +223,7 @@ T5_MSG_PROTO(static, csv_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        return(resource_init(OBJECT_ID_FS_CSV, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FS_CSV));
+        return(resource_init(OBJECT_ID_FS_CSV, P_BOUND_MESSAGES_OBJECT_ID_FS_CSV, P_BOUND_RESOURCES_OBJECT_ID_FS_CSV));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FS_CSV));

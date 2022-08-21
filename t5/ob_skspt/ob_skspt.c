@@ -26,8 +26,14 @@
 #endif
 
 #if RISCOS
-#define MSG_WEAK &rb_skel_split_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_SKEL_SPLIT)
 extern PC_U8 rb_skel_split_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_SKEL_SPLIT &rb_skel_split_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SKEL_SPLIT LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_SKEL_SPLIT DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_SKEL_SPLIT DONT_LOAD_RESOURCES
@@ -48,8 +54,7 @@ extern PC_U8 rb_skel_split_msg_weak;
 
 enum ADD_CR_CONTROL_IDS
 {
-    ADD_CR_ID_STT = 32,
-    ADD_CR_ID_NUMBER_LABEL,
+    ADD_CR_ID_NUMBER_LABEL = 32,
     ADD_CR_ID_NUMBER
 };
 
@@ -57,12 +62,8 @@ static const DIALOG_CONTROL
 add_cols_number_label =
 {
     ADD_CR_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
-
-    { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER,
-      DIALOG_CONTROL_SELF,   ADD_CR_ID_NUMBER },
-
+    { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER, DIALOG_CONTROL_SELF, ADD_CR_ID_NUMBER },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-
     { DRT(LTLB, STATICTEXT) }
 };
 
@@ -73,22 +74,16 @@ static const DIALOG_CONTROL
 add_cr_number =
 {
     ADD_CR_ID_NUMBER, DIALOG_MAIN_GROUP,
-
     { ADD_CR_ID_NUMBER_LABEL, DIALOG_CONTROL_PARENT },
-
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
 add_cr_table_cols_bump_control = { 1, 1000 };
 
-static const UI_CONTROL_S32
-add_cr_table_rows_bump_control = { 1, 1000000 };
-
 static const DIALOG_CONTROL_DATA_BUMP_S32
-add_cols_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 1 };
+add_cols_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 1 };
 
 static const DIALOG_CONTROL_ID
 add_cr_ok_data_argmap[] = { ADD_CR_ID_NUMBER };
@@ -121,20 +116,19 @@ static const DIALOG_CONTROL
 add_rows_number_label =
 {
     ADD_CR_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
-
-    { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER,
-      DIALOG_CONTROL_SELF,   ADD_CR_ID_NUMBER },
-
+    { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER, DIALOG_CONTROL_SELF, ADD_CR_ID_NUMBER },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
 add_rows_number_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_ROWS_NUMBER) };
 
+static const UI_CONTROL_S32
+add_cr_table_rows_bump_control = { 1, 1000000 };
+
 static const DIALOG_CONTROL_DATA_BUMP_S32
-add_rows_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 1 };
+add_rows_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 1 };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 add_rows_ok_command = { T5_CMD_ADD_ROWS, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
@@ -196,9 +190,6 @@ insert_table_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_INSERT), &insert_tabl
 cols
 */
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-insert_table_cols_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_COLS) };
-
 static const DIALOG_CONTROL
 insert_table_cols_label =
 {
@@ -207,6 +198,9 @@ insert_table_cols_label =
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
+
+static const DIALOG_CONTROL_DATA_STATICTEXT
+insert_table_cols_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_COLS) };
 
 static const DIALOG_CONTROL
 insert_table_cols =
@@ -218,7 +212,7 @@ insert_table_cols =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-insert_table_cols_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 4 };
+insert_table_cols_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 4 };
 
 /*
 rows
@@ -246,7 +240,7 @@ insert_table_rows =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-insert_table_rows_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 9 };
+insert_table_rows_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 9 };
 
 static const DIALOG_CTL_CREATE
 insert_table_ctl_create[] =
@@ -1004,7 +998,7 @@ T5_MSG_PROTO(static, skel_split_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_in
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_SKEL_SPLIT, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_SKEL_SPLIT));
+        status_return(resource_init(OBJECT_ID_SKEL_SPLIT, P_BOUND_MESSAGES_OBJECT_ID_SKEL_SPLIT, P_BOUND_RESOURCES_OBJECT_ID_SKEL_SPLIT));
 
         return(ui_style_msg_startup());
 

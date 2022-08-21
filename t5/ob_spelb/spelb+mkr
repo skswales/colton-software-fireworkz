@@ -10,23 +10,30 @@ OBJID=29
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
+$(BUILD_DIR).ob_spelb.o.ob_spelb: $(T5).ob_spelb.c.ob_spelb
+ $(CC) -o $@ $(ccflags) $?
+
+OBJS_29_S=$(BUILD_DIR).ob_spelb.o.ob_spelb
+
+$(PROD_BUILD_DIR).o.Neutral.M29: $(OBJS_29_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_29_S)
+
 # Windows STRINGTABLE
 $(BUILD_DIR).ob_spelb.$(COUNTRY)-29/rc: $(T5).ob_spelb.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 29 -common
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob29: $(T5).ob_spelb.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages
 $(BUILD_DIR).ob_spelb.o.$(COUNTRY)-B29: $(T5).ob_spelb.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_spelb.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_spelb.o.$(COUNTRY)-B_tmp -symbol rb_spelb_msg_weak
 
-$(BUILD_DIR).ob_spelb.o.ob_spelb: $(T5).ob_spelb.c.ob_spelb
- $(CC) -o $@ $(ccflags) $?
-
-OBJS_29_S=$(BUILD_DIR).ob_spelb.o.ob_spelb
-
 OBJS_29_X=$(BUILD_DIR).ob_spelb.o.$(COUNTRY)-B29
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M29: $(OBJS_29_X) $(OBJS_29_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M29: $(OBJS_29_X) $(OBJS_29_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_29_X) $(OBJS_29_S)
 
 # end of ob_spelb.mkr ##############################################################################

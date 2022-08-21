@@ -20,8 +20,14 @@
 #include "ob_text/ob_text.h"
 
 #if RISCOS
-#define MSG_WEAK &rb_text_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_TEXT)
 extern PC_U8 rb_text_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_TEXT &rb_text_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_TEXT DONT_LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_TEXT DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_TEXT DONT_LOAD_RESOURCES
@@ -852,7 +858,7 @@ T5_MSG_PROTO(static, text_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
     case T5_MSG_IC__STARTUP:
-        status_return(resource_init(OBJECT_ID_TEXT, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_TEXT));
+        status_return(resource_init(OBJECT_ID_TEXT, P_BOUND_MESSAGES_OBJECT_ID_TEXT, P_BOUND_RESOURCES_OBJECT_ID_TEXT));
 
         status_return(maeve_services_event_handler_add(maeve_services_event_ob_text));
 

@@ -20,8 +20,14 @@
 #include "cmodules/unicode/u2000.h" /* 2000..206F General Punctuation */
 
 #if RISCOS
-#define MSG_WEAK &rb_fl_rtf_msg_weak
+#if defined(BOUND_MESSAGES_OBJECT_ID_FL_RTF)
 extern PC_U8 rb_fl_rtf_msg_weak;
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_RTF &rb_fl_rtf_msg_weak
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_RTF LOAD_MESSAGES_FILE
+#endif
+#else
+#define P_BOUND_MESSAGES_OBJECT_ID_FL_RTF DONT_LOAD_MESSAGES_FILE
 #endif
 
 #define P_BOUND_RESOURCES_OBJECT_ID_FL_RTF DONT_LOAD_RESOURCES
@@ -4398,7 +4404,7 @@ T5_MSG_PROTO(static, rtf_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose
     {
     case T5_MSG_IC__STARTUP:
         rtf_msg_startup_sort();
-        return(resource_init(OBJECT_ID_FL_RTF, MSG_WEAK, P_BOUND_RESOURCES_OBJECT_ID_FL_RTF));
+        return(resource_init(OBJECT_ID_FL_RTF, P_BOUND_MESSAGES_OBJECT_ID_FL_RTF, P_BOUND_RESOURCES_OBJECT_ID_FL_RTF));
 
     case T5_MSG_IC__EXIT1:
         return(resource_close(OBJECT_ID_FL_RTF));

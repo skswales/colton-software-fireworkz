@@ -120,7 +120,7 @@ static const UI_CONTROL_S32
 paper_scale_value_control = { 5, 1000, 5 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-paper_scale_value_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_scale_value_control } /*BUMP_XX*/ };
+paper_scale_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_scale_value_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_scale_units =
@@ -392,7 +392,7 @@ paper_paper_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-paper_paper_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_PAPER), { 0, 0, 0, FRAMED_BOX_GROUP } };
+paper_paper_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_PAPER), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 paper_paper_labels_group =
@@ -460,7 +460,7 @@ paper_height =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_height_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
+paper_height_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_height_units =
@@ -497,7 +497,7 @@ paper_width =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_width_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
+paper_width_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_width_units =
@@ -522,7 +522,7 @@ paper_paper_margin_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-paper_paper_margin_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_PAPER_MARGIN), { 0, 0, 0, FRAMED_BOX_GROUP } };
+paper_paper_margin_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_PAPER_MARGIN), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 paper_paper_margin_labels_group =
@@ -559,7 +559,7 @@ paper_margin_top =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_top_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
+paper_margin_top_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_top_units =
@@ -596,7 +596,7 @@ paper_margin_bottom =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_bottom_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
+paper_margin_bottom_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_bottom_units =
@@ -633,7 +633,7 @@ paper_margin_left =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_left_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
+paper_margin_left_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_left_units =
@@ -670,7 +670,7 @@ paper_margin_right =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_right_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
+paper_margin_right_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_fine_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_right_units =
@@ -804,7 +804,7 @@ paper_binding_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-paper_binding_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_BINDING), { 0, 0, 0, FRAMED_BOX_GROUP } };
+paper_binding_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_BINDING), { FRAMED_BOX_GROUP } };
 
 /*
 bind margin 'group'
@@ -832,7 +832,7 @@ paper_margin_bind =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_bind_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
+paper_margin_bind_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_bind_units =
@@ -881,7 +881,7 @@ paper_margin_col =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_col_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
+paper_margin_col_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_col_units =
@@ -918,7 +918,7 @@ paper_margin_row =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_margin_row_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
+paper_margin_row_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_margin_row_units =
@@ -957,7 +957,7 @@ static const UI_CONTROL_F64
 paper_grid_size_control = { 0.0, 1000.0, 0.1, (P_USTR) paper_grid_size_numform_ustr_buf, 10.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-paper_grid_size_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &paper_grid_size_control } /*BUMP_XX*/ };
+paper_grid_size_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &paper_grid_size_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 paper_grid_size_units =
@@ -1016,7 +1016,7 @@ paper_ok =
 #else
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
 #endif
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND

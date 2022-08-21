@@ -7,7 +7,8 @@
 /* Copyright (C) 1990-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
 
-/* Create a file containing bound messages suitable for MakeAOF
+/* Create a file containing pre-processed messages
+ * suitable for MakeAOF or Fireworkz resource.c
  *
  * Stuart K. Swales 17-Jul-1990
  *
@@ -17,12 +18,15 @@
  * 0.11 19-Sep-94 SKS made it not identify comments that don't start at start of line
  * 0.12 09-Jan-12 SKS default country string UK, fix comments
  * 0.13 13-Feb-14 SKS MPL-ed
+ * 0.14 17-Nov-16 SKS Allow LF separator
 */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+
+#include "kernel.h"
 
 #include <assert.h>
 
@@ -48,7 +52,7 @@ messages_init(FILE * fin);
 
 /* ----------------------------------------------------------------------- */
 
-#define VERSION "0.13"
+#define VERSION "0.14"
 
 #define ARG_STROP_CHAR '-'
 #define ARG_STROP_STR  "-"
@@ -66,6 +70,9 @@ messages_init(FILE * fin);
 #define ERR_INPUTTOOSMALL -5
 
 static char *messages_block = NULL;
+
+static int
+g_lf_sep = 0;
 
 static char
 country_string[16] = "(UK)";
@@ -225,19 +232,52 @@ messages_init(FILE * fin)
 
     new_length = out - messages_block;
     /* tracef2("[messages_init: new_length = %d, length = %d]\n", new_length, alloc_length);  */
-    /* don't realloc if just the one byte slop too much allocated */
-    if(new_length + 1 < alloc_length)
-        messages_block = realloc(messages_block, new_length);
-    else
-        assert(new_length <= alloc_length);
 
     return((int) new_length); /* length of all strings plus end marker */
 }
 
 static int
+messages_write(size_t msgs_length, FILE * fout)
+{
+    int res;
+
+    if(g_lf_sep)
+    {   /* write one at a time, separated by LF, no terminating NUL */
+        const char * tag_and_message = messages_block;
+
+        for(;;)
+        {
+            const size_t length = strlen(tag_and_message);
+
+            if(0 == length)
+                break;
+
+            res = fwrite(tag_and_message, 1, length, fout);
+
+            if(res < 0)
+                return(res);
+
+            res = fputc(LF, fout);
+
+            if(res < 0)
+                return(res);
+
+            tag_and_message += length + 1; /* skip tag:message and NUL */
+        }
+
+        res = 0;
+    }
+    else
+    {   /* write entire block, including terminating NUL */
+        res = fwrite(messages_block, 1, msgs_length, fout);
+    }
+
+    return(0);
+}
+
+static int
 make_file_from_messages(FILE * fin, FILE * fout)
 {
-    size_t msgs_length;
     int res;
     int res32;
 
@@ -246,11 +286,7 @@ make_file_from_messages(FILE * fin, FILE * fout)
     res32 = messages_init(fin);
 
     if(res32 > 0)
-    {
-        msgs_length = (size_t) res32;
-
-        res = fwrite(messages_block, 1, msgs_length, fout);
-    }
+        res = messages_write((size_t) res32, fout);
     else if(res32 == 0)
         res = ERR_INPUTTOOSMALL;
     else
@@ -275,7 +311,7 @@ static void
 give_help_on_app(void)
 {
     puts("Colton Software MakeMess vsn " VERSION " [" __DATE__ "]");
-    puts("\nMakeMess [-from] infile [-to] outfile");
+    puts("\nMakeMess [-from] infile [-to] outfile [-lf]");
 }
 
 extern int
@@ -304,6 +340,7 @@ main(int argc, char *argv[])
                 give_help_on_app();
                 return(EXIT_SUCCESS);
             }
+
             else if(argmatch(arg, "from"))
             {
                 infilename = argv[++argi];
@@ -312,6 +349,12 @@ main(int argc, char *argv[])
             else if(argmatch(arg, "o") || argmatch(arg, "to"))
             {
                 outfilename = argv[++argi];
+                continue;
+            }
+
+            else if(argmatch(arg, "lf"))
+            {
+                g_lf_sep = 1;
                 continue;
             }
 
@@ -372,9 +415,18 @@ res = EXIT_FAILURE ;
             if(res1 < 0)
                 res = res1;
             if(res >= 0)
-                /* (void) os_clif("settype %s text", outfilename) */ ;
+            {
+                if(g_lf_sep)
+                {
+                    char command_buffer[32 + 256];
+                    (void) sprintf(command_buffer, "SetType %s Text", outfilename);
+                    (void) _kernel_oscli(command_buffer);
+                }
+            }
             else
+            {
                 remove(outfilename);
+            }
             res = (res < 0) ? EXIT_FAILURE : EXIT_SUCCESS;
         }
         else

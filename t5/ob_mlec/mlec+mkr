@@ -10,13 +10,6 @@ OBJID=30
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 
-# Not present on Windows
-
-# RISC OS bound messages
-$(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B30: $(T5).ob_mlec.resource.$(COUNTRY)-msg
- $(MAKEMESS) -to $(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
- $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B_tmp -symbol rb_mlec_msg_weak
-
 $(BUILD_DIR).ob_mlec.o.ob_mlec: $(T5).ob_mlec.c.ob_mlec
  $(CC) -o $@ $(ccflags) $?
 
@@ -29,9 +22,23 @@ OBJS_30_S=\
 $(BUILD_DIR).ob_mlec.o.ob_mlec \
 $(BUILD_DIR).ob_mlec.o.mlec \
 
+$(PROD_BUILD_DIR).o.Neutral.M30: $(OBJS_30_S)
+ $(LD) $(LDflags_AOF) -o $@ $(OBJS_30_S)
+
+# Not present on Windows
+
+# RISC OS loaded messages
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob30: $(T5).ob_mlec.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
+
+# RISC OS bound messages
+$(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B30: $(T5).ob_mlec.resource.$(COUNTRY)-msg
+ $(MAKEMESS) -to $(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
+ $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B_tmp -symbol rb_mlec_msg_weak
+
 OBJS_30_X=$(BUILD_DIR).ob_mlec.o.$(COUNTRY)-B30
 
-$(PROD_BUILD_DIR).o.$(COUNTRY)-M30: $(OBJS_30_X) $(OBJS_30_S)
+$(PROD_BUILD_DIR).o.$(COUNTRY).M30: $(OBJS_30_X) $(OBJS_30_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_30_X) $(OBJS_30_S)
 
 # end of ob_mlec.mkr ###############################################################################

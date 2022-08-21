@@ -29,8 +29,8 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	"2.21.04"
-	0x2,	"06 Jan 2019"
+	0x1,	"2.22"
+	0x2,	"13 Feb 2019"
 //
 // update date and version in the corresponding RelNotes HTML files too
 //
@@ -395,10 +395,14 @@ BEGIN
 	0x402,	"Selection contains %d region"
 //
 // generic 1,2,3 dp numforms
-//
+// first set with optional trailing zeros
 	0x2E8,	"0.#"
 	0x2E9,	"0.##"
 	0x2EA,	"0.###"
+// second set with forced trailing zeros
+	0x2EB,	"0.0"
+	0x2EC,	"0.00"
+	0x2ED,	"0.000"
 //
 	0x2EE,	"Backdrop"
 	0x2EF,	"First page"

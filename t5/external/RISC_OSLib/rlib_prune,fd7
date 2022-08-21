@@ -6,7 +6,7 @@
 
 | Prune the checked-out copy of RISC_OSLib
 echo <Obey$Dir>
-Set rlib_tmp$Dir <Obey$Dir>.castle.RiscOS.Sources.Lib.RISC_OSLib.rlib
+Set rlib_tmp$Dir <Obey$Dir>.apache.RiscOS.Sources.Lib.RISC_OSLib.rlib
 cdir <Obey$Dir>.rlib
 |
 cdir <Obey$Dir>.rlib.h

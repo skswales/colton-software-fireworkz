@@ -241,7 +241,7 @@ static const UI_CONTROL_S32
 print_copies_data_control = { 1, 1000 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-print_copies_data = { { { { FRAMED_BOX_EDIT } }, &print_copies_data_control } };
+print_copies_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_copies_data_control } };
 
 static const DIALOG_CONTROL
 print_ar_group =
@@ -336,7 +336,7 @@ static /*poked*/ UI_CONTROL_S32
 print_range_y0_data_control = { 1, 1, 1 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-print_range_y0_data = { { { { FRAMED_BOX_EDIT } }, &print_range_y0_data_control } };
+print_range_y0_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_range_y0_data_control } };
 
 static const DIALOG_CONTROL
 print_range_y1_label =
@@ -363,7 +363,7 @@ static /*poked*/ UI_CONTROL_S32
 print_range_y1_data_control = { 1, 1, 1 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-print_range_y1_data = { { { { FRAMED_BOX_EDIT } }, &print_range_y1_data_control } };
+print_range_y1_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_range_y1_data_control } };
 
 static const DIALOG_CONTROL
 print_sides_group =
@@ -375,7 +375,7 @@ print_sides_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-print_sides_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_SIDES), { 0, 0, 0, FRAMED_BOX_GROUP } };
+print_sides_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_SIDES), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 print_both =
