@@ -29,8 +29,8 @@ BEGIN
 // definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	"2.01.RC2"
-	0x2,	"(16 Jun 2016)"
+	0x1,	"2.10"
+	0x2,	"(24 Jun 2016)"
 //
 // update date and version in the corresponding RelNotes HTML files too
 //

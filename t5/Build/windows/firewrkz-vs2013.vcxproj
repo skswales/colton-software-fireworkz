@@ -1791,6 +1791,34 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\MakeAll" />
+    <None Include="..\..\..\docs\GSGuide\windows\gsg1.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg2.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg3.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg4.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg5.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg6.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg7.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg8.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsgindex.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsguide.css" />
     <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc" />
     <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk" />
     <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp" />

@@ -251,6 +251,18 @@
     <Filter Include="Source Files\ob_chart\ob_chart_externals">
       <UniqueIdentifier>{c396c5f2-a8c4-4256-9700-d163275a5111}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Docs\Windows\GSGuide">
+      <UniqueIdentifier>{716cd26c-cdab-44f6-839c-e7430b5c682f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\RISC OS\GSGuide">
+      <UniqueIdentifier>{e43742f4-be4d-44b7-8a1b-9f2a4f9fce46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\RISC OS\RiscPkg">
+      <UniqueIdentifier>{8ae81000-6948-43c3-84f0-442bdc026431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\Windows\HTMLHelp">
+      <UniqueIdentifier>{c86fd575-e66f-46fe-89d7-34eac87ce040}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\fl_123\fl_123.c">
@@ -3434,27 +3446,6 @@
     <None Include="..\..\..\docs\LICENSE">
       <Filter>Docs</Filter>
     </None>
-    <None Include="..\..\..\docs\MakeRiscPkg,fd7">
-      <Filter>Docs\RISC OS</Filter>
-    </None>
-    <None Include="..\..\..\docs\RiscPkg\Control">
-      <Filter>Docs\RISC OS</Filter>
-    </None>
-    <None Include="..\..\..\docs\RiscPkg\Copyright">
-      <Filter>Docs\RISC OS</Filter>
-    </None>
-    <None Include="..\..\..\docs\RiscPkg\LICENSE">
-      <Filter>Docs\RISC OS</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc">
-      <Filter>Docs\Windows</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk">
-      <Filter>Docs\Windows</Filter>
-    </None>
-    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp">
-      <Filter>Docs\Windows</Filter>
-    </None>
     <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_EXC.htm">
       <Filter>Docs\html\sg\sg6</Filter>
     </None>
@@ -3473,6 +3464,57 @@
     </None>
     <None Include="..\..\firewrkz\RelNotesW.htm">
       <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg1.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg2.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg3.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg4.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg5.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg6.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg7.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsg8.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsgindex.htm">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\gsguide.css">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
+    <None Include="..\..\..\docs\RiscPkg\Control">
+      <Filter>Docs\RISC OS\RiscPkg</Filter>
+    </None>
+    <None Include="..\..\..\docs\RiscPkg\Copyright">
+      <Filter>Docs\RISC OS\RiscPkg</Filter>
+    </None>
+    <None Include="..\..\..\docs\RiscPkg\LICENSE">
+      <Filter>Docs\RISC OS\RiscPkg</Filter>
+    </None>
+    <None Include="..\..\..\docs\MakeRiscPkg,fd7">
+      <Filter>Docs\RISC OS\RiscPkg</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc">
+      <Filter>Docs\Windows\HTMLHelp</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk">
+      <Filter>Docs\Windows\HTMLHelp</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp">
+      <Filter>Docs\Windows\HTMLHelp</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

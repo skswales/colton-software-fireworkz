@@ -1,4 +1,4 @@
-{Version:1.36;03 Sep 2015;Resultz (UK);Colton Software}
+{Version:2.10;24 Jun 2016;Resultz (UK);Colton Software}
 {RowTable:0}
 {Flow:10}
 {Block:0;0;;32;7;41;;32;7;41}
@@ -8,11 +8,12 @@
 {BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
 {Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
 {StyleBase:BaseSheet}
-{Style:BaseHeadFoot;{ColWidth:11055}{MarginLeft:114}{MarginRight:114}{Tablist:C5414 R10828}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{Style:Header;{ColWidth:11055}{MarginLeft:114}{MarginRight:114}{Tablist:C5414 R10828}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{Style:Footer;{ColWidth:11055}{MarginLeft:114}{MarginRight:114}{Tablist:C5414 R10828}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
 {Style:Current cell;{Background:238;238;238}{GridLeftColour:85;85;85}{GridTopColour:85;85;85}{GridRightColour:85;85;85}{GridBottomColour:85;85;85}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {StyleCurrent:Current cell}
-{Style:Text}
-{Style:Number;{Justify:2}}
+{Style:Text;{NewObject:3}}
+{Style:Number;{Justify:2}{NewObject:1}}
 {Style:General;{StyleSearch:50}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
 {Style:Currency;{StyleSearch:60}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
 {Style:Percent;{StyleSearch:70}{Numform:0.##%\\\;-0.##%[Negative]}}
@@ -38,7 +39,11 @@
 {R:6;;;;7;;;;1;0;{ColWidth:1474}}
 {Imp:;;;;;;;;1;1;36;1001;0;40;{StyleHandle:Current cell}}
 {PageHefoBreakValues-H:0;0;0;;1;576;32;0;;;0;;;1;576;32;0;;;0}
-{HD-H:0;2}{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
-{HD-H:0;3}{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:Header}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:Footer}}
 {EndOfData}
 {CmdGroup:{ViewCreate:0;0;0;0}{ViewControl:100;2;0;0;1;1;0;2048;0;2048}{CurrentPosition:0;0}}

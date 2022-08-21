@@ -1,4 +1,4 @@
-{Version:1.36;03 Sep 2015;Wordz;Colton Software}
+{Version:2.10;24 Jun 2016;Wordz;Colton Software}
 {RowTable:0}
 {Flow:10}
 {Block:0;0;;32;1;1;;32;1;1}
@@ -8,9 +8,10 @@
 {BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
 {Typeface:Times}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
 {StyleBase:BaseLetter}
-{Style:BaseHeadFoot;{ColWidth:11055}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5244 R10488}}
-{Style:Text}
-{Style:Number;{Justify:2}}
+{Style:Header;{ColWidth:11055}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5244 R10488}}
+{Style:Footer;{ColWidth:11055}{MarginLeft:283}{MarginRight:283}{MarginPara:0}{Tablist:C5244 R10488}}
+{Style:Text;{NewObject:3}}
+{Style:Number;{Justify:2}{NewObject:1}}
 {Style:General;{StyleSearch:50}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
 {Style:Currency;{StyleSearch:60}{Numform:£#,##0.00\\\;£-#,##0.00[Negative]}}
 {Style:Percent;{StyleSearch:70}{Numform:0.##%\\\;-0.##%[Negative]}}
@@ -32,9 +33,9 @@
 {PageHefoBreakValues-H:0;0;0;;1;569;68;0;;;0;;;1;569;56;0;;;0}
 {HD-H:0;2;}
 {HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
-{HBR-H:0;2;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HBR-H:0;2;;32;;32;{StyleHandle:Header}}
 {HD-H:0;3;}
 {HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
-{HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
+{HBR-H:0;3;;32;;32;{StyleHandle:Footer}}
 {EndOfData}
 {CmdGroup:{ViewCreate:0;0;0;0}{ViewControl:100;0;1;1;0;0;0;2048;0;2048}{CurrentPosition:0;0}}

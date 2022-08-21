@@ -24,8 +24,8 @@ MinVersion=5.1sp3
 ; Require XP SP3
 ; AppVersion=2.xx.yy
 ; AppVerName=Colton Software Fireworkz 2.xx.yy
-AppVersion=2.01.00
-AppVerName=Colton Software Fireworkz 2.01
+AppVersion=2.10.00
+AppVerName=Colton Software Fireworkz 2.10
 AppCopyright=Copyright (C) 1992-2016 Colton Software
 AppId=Colton Fireworkz for Windows (32-bit)
 AppName=Colton Software Fireworkz for Windows (32-bit)
@@ -85,8 +85,8 @@ Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; Val
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ButtonStyle"; ValueData: "97"; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ReportEnable"; ValueData: "0"; Flags: uninsdeletekey createvalueifdoesntexist
 ; StandardTemplates set / DefaultTemplate may be forced to be updated for each user when program is run - change each file's version (ISO date)
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "StandardTemplates"; ValueData: "20150915:Letter.fwt;20150915:Sheet.fwt"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "DefaultTemplate"; ValueData: "20150915:firewrkz.fwt"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "StandardTemplates"; ValueData: "20160624:Letter.fwt;20160624:Sheet.fwt"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "DefaultTemplate"; ValueData: "20160624:firewrkz.fwt"; Flags: uninsdeletekey
 ;
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: none;   ValueName: "DialogStyle"; ValueData: "xx"; Flags: deletevalue
 ;

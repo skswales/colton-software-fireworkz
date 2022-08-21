@@ -11,10 +11,10 @@
 # Copyright (C) 1998-2015 R W Colton
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
-TEXTUAL_VERSION_NUMBER=2.01.RC2
+TEXTUAL_VERSION_NUMBER=2.10
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=20100
+STUBS_VERSION_NUMBER=21000
 # when changing version number for release, remember:
 #   common.gflags.h
 #   common.mf_mid
@@ -27,8 +27,10 @@ STUBS_VERSION_NUMBER=20100
 #   firewrkz\RelNotesW.htm
 #   firewrkz\resource\windows\uk\res00.rci (updated by RISC OS build)
 #   Build\windows\firewrkz.rc
-#   Build\windows\OUTx86\firewrkz-x86.iss
+#   Build\windows\OUTx64\BUILDCD2.BAT
 #   Build\windows\OUTx64\firewrkz-x64.iss
+#   Build\windows\OUTx86\BUILDCD2.BAT
+#   Build\windows\OUTx86\firewrkz-x86.iss
 
 # and for Fireworkz Pro:
 #   ^.fprowrkz.r32b.Make_TS
