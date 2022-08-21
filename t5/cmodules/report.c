@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2013-2017 Stuart Swales */
+/* Copyright (C) 2013-2018 Stuart Swales */
 
 /* SKS February 2013 */
 
@@ -176,7 +176,7 @@ vreportf(
         QueryPerformanceCounter(&now);
         seconds = (now.QuadPart - g_report_timing_startup.QuadPart) / /*F64*/ g_report_timing_frequency;
         /* report to microsecond precision */
-        len = _sntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, "[%12.6f] ", seconds);
+        len = _sntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, TEXT("[%12.6f] "), seconds);
         report_buffer_offset += len;
 #else /* C99 CRT */
         MONOTIMEDIFF delta = monotime_diff(g_report_timing_startup);

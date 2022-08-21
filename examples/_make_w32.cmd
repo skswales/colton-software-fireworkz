@@ -2,7 +2,7 @@
 @rem License, v. 2.0. If a copy of the MPL was not distributed with this
 @rem file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-@rem Copyright (C) 2014-2016 Stuart Swales
+@rem Copyright (C) 2014-2018 Stuart Swales
 
 @rem Assumes N: is mapped to the root of your development tree i.e. the dir containing \fireworkz
 @rem You can easily do this with a batch file dropped in your Startup folder

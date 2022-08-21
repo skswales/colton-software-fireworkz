@@ -1,4 +1,4 @@
-{Version:2.21.02;02 Mar 2018;Fireworkz for Windows (UK);Colton Software;Windows-1252}
+{Version:2.21.03;18 Sep 2018;Fireworkz for Windows (UK);Colton Software;Windows-1252}
 {RowTable:1}
 {#:ObjectBindConstruct:object-id;command-suffix-character}
 {ObjectBindConstruct:0;*}
@@ -332,10 +332,10 @@
 {MenuAdd:$.Edit.Insert}
 {MenuAdd:$.Edit.Insert;&Date...;^D;InsertFieldIntroDate}
 {MenuAdd:$.Edit.Insert;&Time...;^T;InsertFieldIntroTime}
-{MenuAdd:$.Edit.Insert;&Page number...;^!P;InsertFieldIntroPage;;16}
+{MenuAdd:$.Edit.Insert;&Page Number...;^!P;InsertFieldIntroPage;;16}
 {MenuAdd:$.Edit.Insert;&Filename;;InsertFieldLeafname;;16}
 {MenuAdd:$.Edit.Insert;Pat&hname;;InsertFieldWholename;;16}
-{MenuAdd:$.Edit.Insert;&Mail merge Field...;;InsertFieldIntroMailshot;;16}
+{MenuAdd:$.Edit.Insert;&Mail Merge Field...;;InsertFieldIntroMailMerge-M;;16}
 {MenuAdd:$.Edit.Insert;&Name...;^!N;NameIntro-S:0;;16}
 {MenuAdd:$.Edit.Insert}
 {MenuAdd:$.Edit.Insert;&Function}
@@ -422,7 +422,7 @@
 {MenuAdd:$.Extra.Text;Count &Words;;WordCount}
 {MenuAdd:$.Extra.Text;&Mail Merge}
 {MenuAdd:$.Extra.Text.Mail Merge;&Select Source...;;MailshotSelect-M}
-{MenuAdd:$.Extra.Text.Mail Merge;&Insert Field...;;InsertFieldIntroMailshot;;16}
+{MenuAdd:$.Extra.Text.Mail Merge;&Insert Field...;;InsertFieldIntroMailMerge-M;;16}
 {MenuAdd:$.Extra.Text;&Spell}
 {MenuAdd:$.Extra.Text.Spell;&Check;;Button:CHECK}
 {MenuAdd:$.Extra.Text.Spell;&Dictionary...;;Dictionary-W}

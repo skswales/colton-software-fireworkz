@@ -26,8 +26,8 @@ MinVersion=6.1
 ; Require Windows 7 for 64-bit version
 ; AppVersion=2.xx.yy
 ; AppVerName=Colton Software Fireworkz 2.xx.yy
-AppVersion=2.21.02
-AppVerName=Colton Software Fireworkz 2.21.02
+AppVersion=2.21.03
+AppVerName=Colton Software Fireworkz 2.21.03
 AppCopyright=Copyright (C) 1992-2018 Colton Software
 AppId=Colton Fireworkz for Windows (64-bit)
 AppName=Colton Software Fireworkz for Windows (64-bit)

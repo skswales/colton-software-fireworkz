@@ -89,6 +89,7 @@ static CONSTRUCT_TABLE
 object_construct_table[] =
 {                                                                                                   /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
+    { "InsertFieldIntroMailMerge", NULL,                    T5_CMD_INSERT_FIELD_INTRO_MS_FIELD,         { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "MailshotSelect",         NULL,                       T5_CMD_MAILSHOT_SELECT,                     { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "MailshotPrint",          NULL,                       T5_CMD_MAILSHOT_PRINT,                      { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
 

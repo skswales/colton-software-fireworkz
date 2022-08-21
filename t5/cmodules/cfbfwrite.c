@@ -6,7 +6,7 @@
 
 /* Compound File Binary Format (COM / OLE 2 Structured Storage) access functions */
 
-/* Copyright (C) 2014-2016 Stuart Swales */
+/* Copyright (C) 2014-2018 Stuart Swales */
 
 #include "common/gflags.h"
 
