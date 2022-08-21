@@ -1213,7 +1213,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
                             report_tstr(docu_name.path_name),
                             report_tstr(docu_name.leaf_name),
                             report_tstr(docu_name.extension));
-                        status = maeve_event(p_docu_from_docno(docno), T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, fullname));
+                        status = maeve_event(p_docu_from_docno(docno), T5_MSG_DOCU_RENAME, (P_ANY) &docu_name);
                     }
                 }
 

@@ -12598,6 +12598,12 @@ g_installed_save_objects_handle; /* [] of INSTALLED_SAVE_OBJECT */
 exports from ui_save.c
 */
 
+_Check_return_
+extern STATUS
+rename_document_as_filename(
+    _DocuRef_   P_DOCU p_docu,
+    _In_z_      PCTSTR fullname);
+
 extern void
 style_name_from_marked_area(
     _DocuRef_   P_DOCU p_docu,

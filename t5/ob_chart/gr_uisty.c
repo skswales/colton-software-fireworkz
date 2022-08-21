@@ -337,7 +337,7 @@ style_fill_solid =
     STYLE_ID_FILL_SOLID, STYLE_ID_FILL_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_STDCHECK_H + DIALOG_CHECKGAP_H + 2 * PIXITS_PER_INCH, DIALOG_STDCHECK_V },
-    { DRT(LTLT, CHECKBOX) }
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -349,7 +349,7 @@ style_fill_picture =
     STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_GROUP,
     { STYLE_ID_FILL_SOLID, STYLE_ID_FILL_SOLID, STYLE_ID_FILL_SOLID },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX) }
+    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -361,7 +361,7 @@ style_fill_aspect =
     STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_GROUP,
     { STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_PICTURE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX) }
+    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -373,7 +373,7 @@ style_fill_recolour =
     STYLE_ID_FILL_RECOLOUR, STYLE_ID_FILL_GROUP,
     { STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_ASPECT },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX) }
+    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -417,8 +417,8 @@ style_fill_ctl_create[] =
     { &style_fill_aspect, &style_fill_aspect_data },
     { &style_fill_recolour, &style_fill_recolour_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data }
+    { &defbutton_ok, &defbutton_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CTL_CREATE
@@ -453,8 +453,8 @@ style_fill_pie_ctl_create[] =
     { &rgb_patches[15], &rgb_patches_data[15] },
     { &rgb_transparent, &rgb_transparent_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data }
+    { &defbutton_ok, &defbutton_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -700,7 +700,7 @@ style_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { 0, 0,
 static const DIALOG_CONTROL
 style_line_line[7] =
 {
-    { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_PATTERN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },  { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE) } },
+    { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_PATTERN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },  { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ } },
     { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
     { STYLE_ID_LINE_LINE_2, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
     { STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF, STYLE_ID_LINE_LINE_0 },  { 0, 0, LINE_STYLE_H, 0 }, { DRT(RTLB, RADIOPICTURE) } },
@@ -739,7 +739,7 @@ style_line_thickness =
     STYLE_ID_LINE_THICKNESS, STYLE_ID_LINE_PATTERN_GROUP,
     { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_6 },
     { 0, DIALOG_STDSPACING_V, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(LBLT, BUMP_F64) }
+    { DRT(LBLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_F64
@@ -803,8 +803,8 @@ style_line_ctl_create[] =
     { &style_line_thickness, &style_line_thickness_data },
     { &style_line_thickness_units, &style_line_thickness_units_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data }
+    { &defbutton_ok, &defbutton_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -970,7 +970,7 @@ style_text_typeface_list =
     STYLE_ID_TEXT_TYPEFACE_LIST, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_TYPEFACE_TEXT, STYLE_ID_TEXT_TYPEFACE_TEXT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, TS_FS_TYPEFACE_H, TS_FS_TYPEFACE_V },
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 /*
@@ -995,7 +995,7 @@ style_text_height =
     STYLE_ID_TEXT_HEIGHT, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_HEIGHT_TEXT, STYLE_ID_TEXT_TYPEFACE_LIST },
     { DIALOG_SMALLSPACING_H, DIALOG_STDSPACING_V, TS_FS_SIZE_FIELDS_H, DIALOG_STDBUMP_V },
-    { DRT(RBLT, BUMP_F64), 1 }
+    { DRT(RBLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_F64
@@ -1037,7 +1037,7 @@ style_text_width =
     STYLE_ID_TEXT_WIDTH, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_HEIGHT, STYLE_ID_TEXT_HEIGHT, STYLE_ID_TEXT_HEIGHT },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64), 1 }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_F64
@@ -1067,7 +1067,7 @@ style_text_bold =
     STYLE_ID_TEXT_BOLD, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_TYPEFACE_LIST, STYLE_ID_TEXT_TYPEFACE_LIST },
     { DIALOG_STDSPACING_H, 0, TS_FS_TYPE_H, TS_FS_TYPE_V },
-    { DRT(RTLT, CHECKPICTURE) }
+    { DRT(RTLT, CHECKPICTURE), 1 /*tabstop*/ }
 };
 
 /*
@@ -1080,7 +1080,7 @@ style_text_italic =
     STYLE_ID_TEXT_ITALIC, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_BOLD, STYLE_ID_TEXT_BOLD, STYLE_ID_TEXT_BOLD },
     { 0, DIALOG_STDSPACING_V, 0, TS_FS_TYPE_V },
-    { DRT(LBRT, CHECKPICTURE) }
+    { DRT(LBRT, CHECKPICTURE), 1 /*tabstop*/ }
 };
 
 /*
@@ -1140,8 +1140,8 @@ style_text_ctl_create[] =
     { &rgb_patches[15], &rgb_patches_data[15] },
     { &rgb_transparent, &rgb_transparent_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data }
+    { &defbutton_ok, &defbutton_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static UI_SOURCE
@@ -1427,7 +1427,7 @@ chart_margin_top =
 
     { DIALOG_SMALLSPACING_H, 0, CHART_FIELDS_H, DIALOG_STDBUMP_V },
 
-    { DRT(RTLT, BUMP_F64), 1 }
+    { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
@@ -1464,7 +1464,7 @@ chart_margin_bottom =
     CHART_ID_MARGIN_BOTTOM, DIALOG_MAIN_GROUP,
     { CHART_ID_MARGIN_TOP, CHART_ID_MARGIN_TOP, CHART_ID_MARGIN_TOP },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64), 1 }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
@@ -1501,7 +1501,7 @@ chart_margin_left =
     CHART_ID_MARGIN_LEFT, DIALOG_MAIN_GROUP,
     { CHART_ID_MARGIN_BOTTOM, CHART_ID_MARGIN_BOTTOM, CHART_ID_MARGIN_BOTTOM },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64), 1 }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
@@ -1538,7 +1538,7 @@ chart_margin_right =
     CHART_ID_MARGIN_RIGHT, DIALOG_MAIN_GROUP,
     { CHART_ID_MARGIN_LEFT, CHART_ID_MARGIN_LEFT, CHART_ID_MARGIN_LEFT },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64), 1 }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
@@ -1571,8 +1571,8 @@ chart_margins_ctl_create[] =
     { &chart_margin_right,         &chart_margin_right_data },
     { &chart_margin_right_units,   &chart_margin_units_data[IDX_HORZ] },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_persist_data }
+    { &defbutton_ok, &defbutton_ok_persist_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static void
@@ -1776,7 +1776,7 @@ chart_legend_on =
     CHART_ID_LEGEND_ON, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LTLT, CHECKBOX) }
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -1788,7 +1788,7 @@ chart_legend_horz =
     CHART_ID_LEGEND_HORZ, DIALOG_MAIN_GROUP,
     { CHART_ID_LEGEND_ON, CHART_ID_LEGEND_ON },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX) }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -1802,8 +1802,8 @@ chart_legend_ctl_create[] =
     { &chart_legend_on, &chart_legend_on_data },
     { &chart_legend_horz, &chart_legend_horz_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_persist_data }
+    { &defbutton_ok, &defbutton_ok_persist_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 typedef struct CHART_LEGEND_CALLBACK

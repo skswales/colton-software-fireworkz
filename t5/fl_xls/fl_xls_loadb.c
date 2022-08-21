@@ -3086,7 +3086,7 @@ pswd_edit =
     PSWD_ID_EDIT, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_SYSCHARSL_H(40), DIALOG_STDEDIT_V },
-    { DRT(LTLT, EDIT), 1 }
+    { DRT(LTLT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -3096,9 +3096,12 @@ static const DIALOG_CTL_CREATE
 pswd_ctl_create[] =
 {
     { &dialog_main_group },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
+
+    { &pswd_edit,        &pswd_edit_data },
+
     { &defbutton_ok,     &defbutton_ok_data },
-    { &pswd_edit,        &pswd_edit_data }};
+    { &stdbutton_cancel, &stdbutton_cancel_data }
+};
 
 static UI_TEXT ui_text_edit;
 
@@ -3815,7 +3818,7 @@ xls_rename_document_as_per_BOUNDSHEET_record(
 
     /* suggest that this document be renamed */
     if(status_ok(status))
-        status = maeve_event(p_xls_load_info->p_docu, T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, quick_tblock_tstr(&quick_tblock)));
+        status = rename_document_as_filename(p_xls_load_info->p_docu, quick_tblock_tstr(&quick_tblock));
 
     quick_tblock_dispose(&quick_tblock);
 
@@ -3976,7 +3979,7 @@ xls_rename_document_as_per_SHEETHDR_record(
 
     /* suggest that this document be renamed */
     if(status_ok(status))
-        status = maeve_event(p_xls_load_info->p_docu, T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, quick_tblock_tstr(&quick_tblock)));
+        status = rename_document_as_filename(p_xls_load_info->p_docu, quick_tblock_tstr(&quick_tblock));
 
     quick_tblock_dispose(&quick_tblock);
 

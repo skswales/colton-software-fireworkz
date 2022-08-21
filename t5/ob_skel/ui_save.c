@@ -333,7 +333,7 @@ save_name_normal =
     SAVE_ID_NAME, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT },
     { 0, DIALOG_STDSPACING_V, SAVE_OWNFORM_TOTAL_H, DIALOG_STDEDIT_V },
-    { DRT(LBLT, EDIT), 1 }
+    { DRT(LBLT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
@@ -342,7 +342,7 @@ save_name_foreign =
     SAVE_ID_NAME, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT, SAVE_ID_FOREIGN_TYPE_LIST },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
@@ -351,7 +351,7 @@ save_name_picture =
     SAVE_ID_NAME, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT, SAVE_ID_PICTURE_TYPE_LIST },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 #endif /* OS */
@@ -364,11 +364,11 @@ save_name_template =
 #if RISCOS
     { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT },
     { 0, DIALOG_STDSPACING_V, SAVE_TEMPLATE_LIST_H, DIALOG_STDEDIT_V },
-    { DRT(LBLT, EDIT), 1 }
+    { DRT(LBLT, EDIT), 1 /*tabstop*/ }
 #else
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, SAVE_TEMPLATE_LIST_H, DIALOG_STDEDIT_V },
-    { DRT(LTLT, EDIT), 1 }
+    { DRT(LTLT, EDIT), 1 /*tabstop*/ }
 #endif
 };
 
@@ -391,7 +391,7 @@ save_selection =
     SAVE_ID_SELECTION, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, SAVE_ID_NAME, SAVE_ID_NAME },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX) }
+    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -412,7 +412,7 @@ save_template_style_0 =
     SAVE_ID_STYLE_0, SAVE_ID_STYLE_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON) }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -452,7 +452,7 @@ save_template_style_list =
     SAVE_ID_STYLE_LIST, SAVE_ID_STYLE_GROUP,
     { SAVE_ID_STYLE_2, SAVE_ID_STYLE_2 },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 /*
@@ -465,7 +465,7 @@ save_foreign_type_list =
     SAVE_ID_FOREIGN_TYPE_LIST, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, SAVE_ID_SELECTION },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 /*
@@ -478,7 +478,7 @@ save_picture_type_list =
     SAVE_ID_PICTURE_TYPE_LIST, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, SAVE_ID_NAME },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static BOOL
@@ -956,6 +956,29 @@ save_common_dialog_check(
     return(STATUS_OK);
 }
 
+/* rename this document to be filename */
+
+_Check_return_
+extern STATUS
+rename_document_as_filename(
+    _DocuRef_   P_DOCU p_docu,
+    _In_z_      PCTSTR fullname)
+{
+    STATUS status;
+    DOCU_NAME docu_name;
+
+    name_init(&docu_name);
+
+    if(status_ok(status = name_read_tstr(&docu_name, fullname)))
+    {
+        status = maeve_event(p_docu, T5_MSG_DOCU_RENAME, (P_ANY) &docu_name);
+
+        name_dispose(&docu_name);
+    }
+
+    return(status);
+}
+
 _Check_return_
 static STATUS
 save_ownform_save(
@@ -1003,6 +1026,9 @@ save_ownform_save(
 
         if(p_save_callback->rename_after_save)
         {
+            /* rename this document to be filename */
+            status_assert(rename_document_as_filename(p_docu, filename));
+
             p_docu->file_date = of_op_format.output.u.file.ev_date;
 
             if(p_docu->flags.read_only)
@@ -1010,9 +1036,6 @@ save_ownform_save(
                 p_docu->flags.read_only = FALSE;
                 status_assert(maeve_event(p_docu, T5_MSG_DOCU_READWRITE, P_DATA_NONE));
             }
-
-            /* rename this document to be filename */
-            status_assert(maeve_event(p_docu, T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, filename)));
         }
     }
 
@@ -1076,8 +1099,8 @@ save_ctl_create[] =
 ,   { &save_name_normal,    &save_name_data             }
 ,   { &save_selection,      &save_selection_data        }
 
-,   { &stdbutton_cancel, &stdbutton_cancel_data }
 ,   { &defbutton_ok, &save_ok_data }
+,   { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 #endif
@@ -1491,8 +1514,8 @@ save_foreign_ctl_create[] =
     { &save_selection,          &save_selection_data        },
     { &save_foreign_type_list,  &stdlisttext_data_dd        },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok,  &save_ok_data }
+    { &defbutton_ok,  &save_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 #endif
@@ -1671,8 +1694,8 @@ save_picture_ctl_create[] =
     { &save_name_picture,       &save_name_data             }, /*[2]*/
     { &save_picture_type_list,  &stdlisttext_data_dd        }, /*[3]*/
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &save_ok_data }
+    { &defbutton_ok, &save_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 #endif
@@ -1844,8 +1867,8 @@ save_template_ctl_create[] =
     { &save_template_style_1,     &save_template_style_1_data },
     { &save_template_style_2,     &save_template_style_2_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &save_ok_data }
+    { &defbutton_ok, &save_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static void
@@ -2372,8 +2395,6 @@ static const DIALOG_CTL_CREATE
 locate_ctl_create[] =
 {
     { &dialog_main_group },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &save_ok_data },
 
     { &locate_waffle_1, &locate_waffle_1_data },
     { &locate_waffle_2, &locate_waffle_2_data },
@@ -2381,7 +2402,10 @@ locate_ctl_create[] =
     { &locate_waffle_4, &locate_waffle_4_data },
 
     { &save_filetype_pict, &save_filetype_pict_data },
-    { &save_name_normal, &save_name_data }
+    { &save_name_normal, &save_name_data },
+
+    { &defbutton_ok, &save_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 #endif /* RISCOS */

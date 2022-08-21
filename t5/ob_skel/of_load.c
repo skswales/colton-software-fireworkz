@@ -1876,17 +1876,18 @@ select_template_list =
     SELECT_TEMPLATE_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0 },
-    { DRT(LTLT, LIST_TEXT), 1 }
+    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
 select_template_ctl_create[] =
 {
     { &dialog_main_group },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data },
 
-    { &select_template_list, &stdlisttext_data }
+    { &select_template_list, &stdlisttext_data },
+
+    { &defbutton_ok, &defbutton_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static S32 g_selected_template = 0;
@@ -2577,7 +2578,7 @@ load_all_files_from_dir(
                                 report_tstr(docu_name.path_name),
                                 report_tstr(docu_name.leaf_name),
                                 report_tstr(docu_name.extension));
-                            status = maeve_event(p_docu_from_docno(docno), T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, fullname));
+                            status = maeve_event(p_docu_from_docno(docno), T5_MSG_DOCU_RENAME, (P_ANY) &docu_name);
                         }
 
                         if(status_ok(status))
@@ -2712,12 +2713,15 @@ load_ownform_config_file(void)
 _Check_return_
 static STATUS
 load_fireworkz_file_core(
+    _OutRef_    P_DOCNO p_docno,
     _In_z_      PCTSTR filename,
     _InVal_     BOOL fReadOnly)
 {
     DOCU_NAME docu_name;
     DOCNO docno = DOCNO_NONE;
     STATUS status;
+
+    *p_docno = DOCNO_NONE;
 
     name_init(&docu_name);
 
@@ -2756,6 +2760,8 @@ load_fireworkz_file_core(
 
     name_dispose(&docu_name);
 
+    *p_docno = docno;
+
     return(status);
 }
 
@@ -2765,6 +2771,7 @@ T5_CMD_PROTO(extern, t5_cmd_load)
     PCTSTR filename = p_args[0].val.tstr;
     P_ARGLIST_ARG p_arg;
     BOOL fReadOnly = FALSE;
+    DOCNO docno;
     STATUS status;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
@@ -2773,7 +2780,7 @@ T5_CMD_PROTO(extern, t5_cmd_load)
     if(arg_present(&p_t5_cmd->arglist_handle, 1, &p_arg))
         fReadOnly = p_arg->val.fBool;
 
-    if(status_fail(status = load_fireworkz_file_core(filename, fReadOnly)))
+    if(status_fail(status = load_fireworkz_file_core(&docno, filename, fReadOnly)))
     {
         reperr(status, filename);
         status = STATUS_FAIL;
@@ -3032,6 +3039,43 @@ load_and_print_this_file_rl(
 *
 ******************************************************************************/
 
+static void
+load_template_set_date(
+    _InVal_     DOCNO docno)
+{
+    /* SKS 24jul06 needed for READER, sensible for normal */
+    const P_DOCU p_docu_reload = p_docu_from_docno(docno);
+    ss_local_time_as_ev_date(&p_docu_reload->file_date);
+}
+
+_Check_return_
+static STATUS
+load_this_template(
+    _In_z_      PCTSTR filename_template)
+{
+    DOCNO docno;
+    STATUS status;
+
+    status_return(status = load_fireworkz_file_core(&docno, filename_template, FALSE));
+
+    load_template_set_date(docno);
+
+    { /* rename document AFTER loading, so double-clicked template can load any supporting documents */
+    DOCU_NAME docu_name;
+
+    name_init(&docu_name);
+
+    if(status_ok(status = name_set_untitled_with(&docu_name, file_leafname(filename_template))))
+    {
+        status = maeve_event(p_docu_from_docno(docno), T5_MSG_DOCU_RENAME, (P_ANY) &docu_name);
+
+        name_dispose(&docu_name);
+    }
+    } /*block*/
+
+    return(status);
+}
+
 T5_CMD_PROTO(extern, t5_cmd_load_template)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
@@ -3048,7 +3092,17 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
     {
         filename_template = p_args[0].val.tstr;
 
-        if(!file_is_rooted(filename_template))
+        if(file_is_rooted(filename_template))
+        {
+            if(file_is_file(filename_template))
+            {
+                /*quick_tblock_dispose(&quick_tblock);*/
+                return(load_this_template(filename_template));
+            }
+            else
+                status = create_error(ERR_TEMPLATE_NOT_FOUND);
+        }
+        else
         {
             if(status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEMPLATES_SUBDIR FILE_DIR_SEP_TSTR)))
                 status = quick_tblock_tstr_add_n(&quick_tblock, filename_template, strlen_with_NULLCH);
@@ -3065,13 +3119,13 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
         filename_template = status_ok(status) ? quick_tblock_tstr(&quick_tblock) : NULL;
     }
 
-    /* if it's a directory, we need to make a copy of the stuff */
-    if(filename_template)
+    if(NULL != filename_template)
     {
         DOCU_NAME docu_name;
 
         name_init(&docu_name);
 
+        /* if it's a directory, we need to make a copy of the stuff */
         if(file_is_dir(filename_template))
         {
             TCHARZ dirname_buffer[BUF_MAX_PATHSTRING];
@@ -3083,15 +3137,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
         {
             if(status_ok(status = name_set_untitled_with(&docu_name, file_leafname(filename_template))))
                 if(status_ok(status = new_docno_using(&docno, filename_template, &docu_name, FALSE /*fReadOnly*/)))
-                {   /* SKS 21jan96 stop those wusses wingeing about file date in templates */
-#if 1
-                    /* SKS 24jul06 needed for READER, sensible for normal */
-                    const P_DOCU p_docu = p_docu_from_docno(docno);
-                    ss_local_time_as_ev_date(&p_docu->file_date);
-#else
-                    docu_modify(p_docu_from_docno(docno));
-#endif
-                }
+                    load_template_set_date(docno);
 
             if(FILE_ERR_NOTFOUND == status)
                 status = create_error(ERR_TEMPLATE_NOT_FOUND);

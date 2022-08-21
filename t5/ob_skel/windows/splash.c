@@ -149,11 +149,13 @@ splash_onPaint_text(
     tstr = NULL;
     if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_VERSION)))
     {
-        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, CH_SPACE)))
-        if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_DATE)))
 #if WINDOWS && defined(_M_X64)
         if(status_ok(quick_tblock_tstr_add(&version_quick_tblock, TEXT(" 64-bit"))))
 #endif
+        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, CH_SPACE)))
+        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, UCH_LEFT_PARENTHESIS)))
+        if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_DATE)))
+        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, UCH_RIGHT_PARENTHESIS)))
         if(status_ok(quick_tblock_nullch_add(&version_quick_tblock)))
             tstr = quick_tblock_tstr(&version_quick_tblock);
     }

@@ -70,7 +70,7 @@ insert_field_selector_0 =
     INSERT_FIELD_ID_SELECTOR_0, INSERT_FIELD_ID_SELECTOR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON) }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -100,7 +100,7 @@ insert_field_list =
     INSERT_FIELD_ID_LIST, DIALOG_MAIN_GROUP,
     { INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP },
     { 0, DIALOG_STDSPACING_V /*[2,3] set at runtime */},
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL
@@ -110,11 +110,11 @@ insert_field_list_dt =
 #if WINDOWS /* action buttons are so much wider */
     { INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP },
     { 0, DIALOG_STDSPACING_V /*[2,3] set at runtime */},
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 #else
     { INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP, INSERT_FIELD_ID_SELECTOR_GROUP },
     { 0, DIALOG_STDSPACING_V, 0 /*[3] set at runtime */},
-    { DRT(LBRT, LIST_TEXT), 1 }
+    { DRT(LBRT, LIST_TEXT), 1 /*tabstop*/ }
 #endif
 };
 
@@ -124,7 +124,7 @@ insert_field_live =
     INSERT_FIELD_ID_LIVE, DIALOG_MAIN_GROUP,
     { INSERT_FIELD_ID_LIST, INSERT_FIELD_ID_LIST, INSERT_FIELD_ID_LIST, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX), 1 }
+    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -146,8 +146,8 @@ insert_field_date_ctl_create[] =
 
     { &insert_field_live, &insert_field_live_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &insert_field_insert_data }
+    { &defbutton_ok, &insert_field_insert_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CTL_CREATE
@@ -161,8 +161,8 @@ insert_field_date_dead_only_ctl_create[] =
 
     { &insert_field_list_dt, &stdlisttext_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &insert_field_insert_data }
+    { &defbutton_ok, &insert_field_insert_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CTL_CREATE
@@ -176,8 +176,8 @@ insert_field_page_ctl_create[] =
 
     { &insert_field_list, &stdlisttext_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &insert_field_insert_data }
+    { &defbutton_ok, &insert_field_insert_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_

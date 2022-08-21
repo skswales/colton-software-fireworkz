@@ -376,11 +376,13 @@ t5_cmd_info(
 
     if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_VERSION)))
     {
-        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, CH_SPACE)))
-        if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_DATE)))
 #if WINDOWS && defined(_M_X64)
         if(status_ok(quick_tblock_tstr_add(&version_quick_tblock, TEXT(" 64-bit"))))
 #endif
+        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, CH_SPACE)))
+        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, UCH_LEFT_PARENTHESIS)))
+        if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_DATE)))
+        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, UCH_RIGHT_PARENTHESIS)))
         if(status_ok(quick_tblock_nullch_add(&version_quick_tblock)))
         {
             info_version_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
@@ -560,7 +562,7 @@ quit_query_save =
     QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_WINDOW,
     { QUIT_QUERY_ID_TEXT_3, QUIT_QUERY_ID_TEXT_3 },
     { 0, DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, QUIT_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -572,7 +574,7 @@ quit_query_discard =
     QUIT_QUERY_ID_DISCARD, DIALOG_CONTROL_WINDOW,
     { QUIT_QUERY_ID_SAVE, QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_SELF, QUIT_QUERY_ID_SAVE },
     { 0/*QUIT_QUERY_BUTTON_GAP_H*/, -DIALOG_DEFPUSHEXTRA_V, QUIT_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -584,7 +586,7 @@ quit_query_cancel =
     IDCANCEL, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, QUIT_QUERY_ID_DISCARD, QUIT_QUERY_ID_TEXT_2, QUIT_QUERY_ID_DISCARD },
     { QUIT_QUERY_BUTTON_H, 0, 0, 0 },
-    { DRT(RTRB, PUSHBUTTON), 1 }
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -593,6 +595,7 @@ quit_query_ctl_create[] =
     { &quit_query_text_1,  &quit_query_text_1_data  },
     { &quit_query_text_2,  &quit_query_text_2_data  },
     { &quit_query_text_3,  &quit_query_text_3_data  },
+
     { &quit_query_save,    &quit_query_save_data    },
     { &quit_query_discard, &quit_query_discard_data },
     { &quit_query_cancel,  &stdbutton_cancel_data   }
@@ -779,7 +782,7 @@ save_linked_query_save_all =
     SAVE_LINKED_QUERY_ID_SAVE_ALL, DIALOG_CONTROL_WINDOW,
     { SAVE_LINKED_QUERY_ID_TEXT_1, SAVE_LINKED_QUERY_ID_TEXT_1 },
     { 0, DIALOG_STDSPACING_V, SAVE_LINKED_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -791,7 +794,7 @@ save_linked_query_discard_all =
     SAVE_LINKED_QUERY_ID_DISCARD_ALL, DIALOG_CONTROL_WINDOW,
     { SAVE_LINKED_QUERY_ID_SAVE_ALL, SAVE_LINKED_QUERY_ID_SAVE_ALL, DIALOG_CONTROL_SELF, SAVE_LINKED_QUERY_ID_SAVE_ALL },
     { SAVE_LINKED_QUERY_BUTTON_GAP_H, -DIALOG_DEFPUSHEXTRA_V, SAVE_LINKED_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -803,13 +806,14 @@ save_linked_query_cancel =
     IDCANCEL, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, SAVE_LINKED_QUERY_ID_DISCARD_ALL, SAVE_LINKED_QUERY_ID_TEXT_1, SAVE_LINKED_QUERY_ID_DISCARD_ALL },
     { SAVE_LINKED_QUERY_BUTTON_H, 0, 0, 0 },
-    { DRT(RTRB, PUSHBUTTON), 1 }
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
 save_linked_query_ctl_create[] =
 {
     { &save_linked_query_text_1,      &save_linked_query_text_1_data },
+
     { &save_linked_query_save_all,    &save_linked_query_save_all_data },
     { &save_linked_query_discard_all, &save_linked_query_discard_all_data },
     { &save_linked_query_cancel,      &stdbutton_cancel_data }
@@ -892,7 +896,7 @@ close_query_save =
     QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_WINDOW,
     { QUIT_QUERY_ID_TEXT_2, QUIT_QUERY_ID_TEXT_2 },
     { 0, DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, CLOSE_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -904,7 +908,7 @@ close_query_discard =
     QUIT_QUERY_ID_DISCARD, DIALOG_CONTROL_WINDOW,
     { QUIT_QUERY_ID_SAVE, QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_SELF, QUIT_QUERY_ID_SAVE },
     { 0 /*CLOSE_QUERY_BUTTON_GAP_H*/, -DIALOG_DEFPUSHEXTRA_V, CLOSE_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -916,7 +920,7 @@ close_query_cancel =
     IDCANCEL, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, QUIT_QUERY_ID_DISCARD, QUIT_QUERY_ID_TEXT_2, QUIT_QUERY_ID_DISCARD },
     { CLOSE_QUERY_BUTTON_H, 0, 0, 0 },
-    { DRT(RTRB, PUSHBUTTON), 1 }
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -1284,7 +1288,7 @@ close_linked_query_close_all =
     CLOSE_LINKED_QUERY_ID_CLOSE_ALL, DIALOG_CONTROL_WINDOW,
     { CLOSE_LINKED_QUERY_ID_TEXT_1, CLOSE_LINKED_QUERY_ID_TEXT_1 },
     { 0, DIALOG_STDSPACING_V, CLOSE_LINKED_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBLT, PUSHBUTTON), 1 }
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1296,7 +1300,7 @@ close_linked_query_close_doc =
     CLOSE_LINKED_QUERY_ID_CLOSE_DOC, DIALOG_CONTROL_WINDOW,
     { CLOSE_LINKED_QUERY_ID_CLOSE_ALL, CLOSE_LINKED_QUERY_ID_CLOSE_ALL, DIALOG_CONTROL_SELF, CLOSE_LINKED_QUERY_ID_CLOSE_ALL },
     { CLOSE_LINKED_QUERY_BUTTON_GAP_H, -DIALOG_DEFPUSHEXTRA_V, CLOSE_LINKED_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1308,13 +1312,14 @@ close_linked_query_cancel =
     IDCANCEL, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, CLOSE_LINKED_QUERY_ID_CLOSE_DOC, CLOSE_LINKED_QUERY_ID_TEXT_1, CLOSE_LINKED_QUERY_ID_CLOSE_DOC },
     { CLOSE_LINKED_QUERY_BUTTON_H, 0, 0, 0 },
-    { DRT(RTRB, PUSHBUTTON), 1 }
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
 close_linked_query_ctl_create[] =
 {
     { &close_linked_query_text_1, &close_linked_query_text_1_data },
+
     { &close_linked_query_close_all, &close_linked_query_close_all_data },
     { &close_linked_query_close_doc, &close_linked_query_close_doc_data },
     { &close_linked_query_cancel, &stdbutton_cancel_data }

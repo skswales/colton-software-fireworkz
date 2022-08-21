@@ -1297,7 +1297,7 @@ backdrop_page_first =
 
     { 0, 0, BACKDROP_PAGES_H, DIALOG_STDRADIO_V },
 
-    { DRT(LTLT, RADIOBUTTON), 1 }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -1342,7 +1342,7 @@ backdrop_origin_work_area =
 
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, BACKDROP_ORIGINS_H, DIALOG_STDRADIO_V },
 
-    { DRT(LTLT, RADIOBUTTON), 1 }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -1387,7 +1387,7 @@ backdrop_does_print =
 
     { DIALOG_STDSPACING_H, 0, BACKDROP_RHS_FIELDS_H, DIALOG_STDCHECK_V },
 
-    { DRT(RTLT, CHECKBOX), 1 }
+    { DRT(RTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -1402,7 +1402,7 @@ backdrop_scale_fit =
 
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
 
-    { DRT(LBRT, CHECKBOX), 1 }
+    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -1417,7 +1417,7 @@ backdrop_ok =
 
     { DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V, BACKDROP_OK_H, 0 },
 
-    { DRT(RBLB, PUSHBUTTON), 1 }
+    { DRT(RBLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_ID
@@ -1444,7 +1444,7 @@ backdrop_cancel =
 
     { -DIALOG_DEFPUSHEXTRA_H, DIALOG_STDPUSHBUTTON_V, -DIALOG_DEFPUSHEXTRA_H, DIALOG_STDSPACING_V },
 
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -1462,8 +1462,8 @@ backdrop_ctl_create[] =
     { &backdrop_does_print,        &backdrop_does_print_data },
     { &backdrop_scale_fit,         &backdrop_scale_fit_data  },
 
-    { &backdrop_cancel,            &stdbutton_cancel_data },
-    { &backdrop_ok,                &backdrop_ok_data }
+    { &backdrop_ok,                &backdrop_ok_data },
+    { &backdrop_cancel,            &stdbutton_cancel_data }
 };
 
 typedef struct BACKDROP_CALLBACK

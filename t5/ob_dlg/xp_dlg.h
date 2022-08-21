@@ -341,7 +341,7 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_STDGROUP_BM      ( 7 * PIXITS_PER_WDU_V)
 
 #define DIALOG_SMALLSPACING_H   ( 2 * PIXITS_PER_WDU_H)
-#define DIALOG_SMALLSPACING_V   ( 1 * PIXITS_PER_WDU_V)
+#define DIALOG_SMALLSPACING_V   ( 2 * PIXITS_PER_WDU_V)
 
 #define DIALOG_STDSPACING_H     ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDSPACING_V     ( 4 * PIXITS_PER_WDU_V)

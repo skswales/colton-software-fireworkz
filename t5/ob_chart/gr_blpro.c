@@ -61,12 +61,9 @@ static const DIALOG_CONTROL
 bl_process_bl_1 =
 {
     BL_ID_BL_1, BL_ID_BL_GROUP,
-
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-
-    { DRT(LTLT, BUMP_F64) }
+    { DRT(LTLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_F64
@@ -90,7 +87,7 @@ bl_process_bl_2 =
     BL_ID_BL_2, BL_ID_BL_GROUP,
     { BL_ID_BL_1, BL_ID_BL_1, BL_ID_BL_1 },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64) }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_F64
@@ -114,7 +111,7 @@ bl_process_bl_3 =
     BL_ID_BL_3, BL_ID_BL_GROUP,
     { BL_ID_BL_2, BL_ID_BL_2, BL_ID_BL_2 },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64) }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_F64
@@ -154,7 +151,7 @@ bl_process_3d_on =
     BL_ID_3D_ON, BL_ID_3D_GROUP,
     { DIALOG_CONTROL_PARENT, BL_ID_3D_GROUP_I, DIALOG_CONTROL_SELF, BL_ID_3D_GROUP_I },
     { DIALOG_STDGROUP_LM, 0, DIALOG_STDCHECK_H, 0 },
-    { DRT(LTLB, CHECKBOX) }
+    { DRT(LTLB, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -175,7 +172,7 @@ bl_process_3d_turn =
     BL_ID_3D_TURN, BL_ID_3D_GROUP_I,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(LTLT, BUMP_F64) }
+    { DRT(LTLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_F64
@@ -202,7 +199,7 @@ bl_process_3d_droop =
     BL_ID_3D_DROOP, BL_ID_3D_GROUP_I,
     { BL_ID_3D_TURN, BL_ID_3D_TURN, BL_ID_3D_TURN },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_F64) }
+    { DRT(LBRT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_F64
@@ -241,7 +238,7 @@ bar_process_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, BL_ID_3D_GROUP, BL_ID_BL_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -265,8 +262,8 @@ bar_process_ctl_create[] =
     { &bl_process_3d_droop, &bl_process_3d_droop_data },
     { &bl_process_3d_droop_text, &bl_process_3d_droop_text_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &bar_process_ok, &defbutton_ok_persist_data }
+    { &bar_process_ok, &defbutton_ok_persist_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -441,7 +438,7 @@ line_process_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, BL_ID_3D_GROUP, BL_ID_BL_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -465,8 +462,8 @@ line_process_ctl_create[] =
     { &bl_process_3d_droop, &bl_process_3d_droop_data },
     { &bl_process_3d_droop_text, &bl_process_3d_droop_text_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &line_process_ok, &defbutton_ok_persist_data }
+    { &line_process_ok, &defbutton_ok_persist_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -537,7 +534,7 @@ scat_process_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, BL_ID_BL_GROUP, BL_ID_BL_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, 0, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -549,8 +546,8 @@ scat_process_ctl_create[] =
     { &bl_process_bl_1, &bl_process_bl_1_data },
     { &bl_process_bl_1_text, &scat_process_1_text_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &scat_process_ok, &defbutton_ok_persist_data }
+    { &scat_process_ok, &defbutton_ok_persist_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_

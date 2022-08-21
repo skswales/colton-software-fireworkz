@@ -560,7 +560,7 @@ choices_ss_calc_auto =
     CHOICES_SS_ID_CALC_AUTO, CHOICES_SS_ID_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LTLT, CHECKBOX), 1 }
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -572,7 +572,7 @@ choices_ss_calc_background =
     CHOICES_SS_ID_CALC_BACKGROUND, CHOICES_SS_ID_GROUP,
     { CHOICES_SS_ID_CALC_AUTO, CHOICES_SS_ID_CALC_AUTO },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -584,7 +584,7 @@ choices_ss_calc_on_load =
     CHOICES_SS_ID_CALC_ON_LOAD, CHOICES_SS_ID_GROUP,
     { CHOICES_SS_ID_CALC_BACKGROUND, CHOICES_SS_ID_CALC_BACKGROUND },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -596,7 +596,7 @@ choices_ss_calc_additional_rounding =
     CHOICES_SS_ID_CALC_ADDITIONAL_ROUNDING, CHOICES_SS_ID_GROUP,
     { CHOICES_SS_ID_CALC_ON_LOAD, CHOICES_SS_ID_CALC_ON_LOAD },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -608,7 +608,7 @@ choices_ss_edit_in_cell =
     CHOICES_SS_ID_EDIT_IN_CELL, CHOICES_SS_ID_GROUP,
     { CHOICES_SS_ID_CALC_ADDITIONAL_ROUNDING, CHOICES_SS_ID_CALC_ADDITIONAL_ROUNDING },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -620,7 +620,7 @@ choices_ss_alternate_formula_style =
     CHOICES_SS_ID_ALTERNATE_FORMULA_STYLE, CHOICES_SS_ID_GROUP,
     { CHOICES_SS_ID_EDIT_IN_CELL, CHOICES_SS_ID_EDIT_IN_CELL },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -645,7 +645,7 @@ choices_chart_update_auto =
     CHOICES_CHART_ID_UPDATE_AUTO, CHOICES_CHART_ID_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LTLT, CHECKBOX), 1 }
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -923,7 +923,7 @@ ss_functions_list =
     SS_FUNCTIONS_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0 }, /* filled in at run-time */
-    { DRT(LTLT, LIST_TEXT), 1 }
+    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -933,10 +933,11 @@ static const DIALOG_CTL_CREATE
 ss_functions_ctl_create[] =
 {
     { &dialog_main_group },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &ss_functions_insert_data },
 
-    { &ss_functions_list, &stdlisttext_data }
+    { &ss_functions_list, &stdlisttext_data },
+
+    { &defbutton_ok, &ss_functions_insert_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static UI_SOURCE
@@ -1913,7 +1914,7 @@ alert_query_but_1 =
     ALERT_QUERY_ID_BUT_1, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, ALERT_QUERY_ID_TEXT_1, ALERT_QUERY_ID_TEXT_1 },
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1925,7 +1926,7 @@ alert_query_but_2 =
     ALERT_QUERY_ID_BUT_2, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, ALERT_QUERY_ID_BUT_1, ALERT_QUERY_ID_BUT_1, ALERT_QUERY_ID_BUT_1 },
     { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -2032,7 +2033,7 @@ input_query_input =
 
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
 
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -2044,7 +2045,7 @@ input_query_but_1 =
     ALERT_QUERY_ID_BUT_1, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, INPUT_QUERY_INPUT, INPUT_QUERY_INPUT },
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE

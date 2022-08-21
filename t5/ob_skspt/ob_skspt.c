@@ -77,7 +77,7 @@ add_cr_number =
 
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
 
-    { DRT(RTLT, BUMP_S32), 1 }
+    { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -106,8 +106,8 @@ add_cols_ctl_create[] =
     { &add_cols_number_text, &add_cols_number_text_data },
     { &add_cr_number,        &add_cols_number_data      },
 
-    { &stdbutton_cancel,     &stdbutton_cancel_data },
-    { &defbutton_ok,         &add_cols_ok_data }
+    { &defbutton_ok,         &add_cols_ok_data },
+    { &stdbutton_cancel,     &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -149,8 +149,8 @@ add_rows_ctl_create[] =
     { &add_rows_number_text, &add_rows_number_text_data },
     { &add_cr_number,        &add_rows_number_data      },
 
-    { &stdbutton_cancel,     &stdbutton_cancel_data },
-    { &defbutton_ok,         &add_rows_ok_data }
+    { &defbutton_ok,         &add_rows_ok_data },
+    { &stdbutton_cancel,     &stdbutton_cancel_data }
 };
 
 T5_CMD_PROTO(static, t5_cmd_add_cr_intro)
@@ -213,7 +213,7 @@ insert_table_cols =
     INSERT_TABLE_ID_COLS, DIALOG_MAIN_GROUP,
     { INSERT_TABLE_ID_COLS_TEXT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(RTLT, BUMP_S32), 1 }
+    { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
@@ -241,7 +241,7 @@ insert_table_rows =
     INSERT_TABLE_ID_ROWS, DIALOG_MAIN_GROUP,
     { INSERT_TABLE_ID_COLS, INSERT_TABLE_ID_COLS, INSERT_TABLE_ID_COLS },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_S32), 1 }
+    { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
@@ -257,8 +257,8 @@ insert_table_ctl_create[] =
     { &insert_table_rows_text, &insert_table_rows_text_data },
     { &insert_table_rows,      &insert_table_rows_data      },
 
-    { &stdbutton_cancel,       &stdbutton_cancel_data },
-    { &defbutton_ok,           &insert_table_insert_data }
+    { &defbutton_ok,           &insert_table_insert_data },
+    { &stdbutton_cancel,       &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -646,51 +646,92 @@ sort_intro_argmap[] =
 static const DIALOG_CONTROL
 sort_intro_col[5] =
 {
-    { SORT_ID_COL_0, DIALOG_MAIN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-  { 0, 0, SORT_INTRO_COL_FIELDS_H, DIALOG_STDEDIT_V }, { DRT(LTLT, EDIT), 1 } },
-    { SORT_ID_COL_1, DIALOG_MAIN_GROUP, { SORT_ID_COL_0, SORT_ID_COL_0, SORT_ID_COL_0 },
-  { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 } },
-    { SORT_ID_COL_2, DIALOG_MAIN_GROUP, { SORT_ID_COL_1, SORT_ID_COL_1, SORT_ID_COL_1 },
-  { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 } },
-    { SORT_ID_COL_3, DIALOG_MAIN_GROUP, { SORT_ID_COL_2, SORT_ID_COL_2, SORT_ID_COL_2 },
-  { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 } },
-    { SORT_ID_COL_4, DIALOG_MAIN_GROUP, { SORT_ID_COL_3, SORT_ID_COL_3, SORT_ID_COL_3 },
-  { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 } }
+    {
+        SORT_ID_COL_0, DIALOG_MAIN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+        { 0, 0, SORT_INTRO_COL_FIELDS_H, DIALOG_STDEDIT_V }, { DRT(LTLT, EDIT), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_COL_1, DIALOG_MAIN_GROUP, { SORT_ID_COL_0, SORT_ID_COL_0, SORT_ID_COL_0 },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_COL_2, DIALOG_MAIN_GROUP, { SORT_ID_COL_1, SORT_ID_COL_1, SORT_ID_COL_1 },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_COL_3, DIALOG_MAIN_GROUP, { SORT_ID_COL_2, SORT_ID_COL_2, SORT_ID_COL_2 },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_COL_4, DIALOG_MAIN_GROUP, { SORT_ID_COL_3, SORT_ID_COL_3, SORT_ID_COL_3 },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V }, { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+    }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
 sort_intro_col_data[5] =
 {
-    { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ },
-    { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ },
-    { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ },
-    { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ },
-    { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ }
+    {
+        { { FRAMED_BOX_EDIT } } /*EDIT_XX*/
+    },
+    {
+        { { FRAMED_BOX_EDIT } } /*EDIT_XX*/
+    },
+    {
+        { { FRAMED_BOX_EDIT } } /*EDIT_XX*/
+    },
+    {
+        { { FRAMED_BOX_EDIT } } /*EDIT_XX*/
+    },
+    {
+        { { FRAMED_BOX_EDIT } } /*EDIT_XX*/
+    }
 };
 
 static const DIALOG_CONTROL
 sort_intro_order[5] =
 {
-    { SORT_ID_ORDER_0, DIALOG_MAIN_GROUP, { SORT_ID_COL_0, SORT_ID_COL_0, DIALOG_CONTROL_SELF, SORT_ID_COL_0 },
-  { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 }, { DRT(RTLB, CHECKBOX) } },
-    { SORT_ID_ORDER_1, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_0, SORT_ID_COL_1, SORT_ID_ORDER_0, SORT_ID_COL_1 },
-  { 0 }, { DRT(LTRB, CHECKBOX) } },
-    { SORT_ID_ORDER_2, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_1, SORT_ID_COL_2, SORT_ID_ORDER_1, SORT_ID_COL_2 },
-  { 0 }, { DRT(LTRB, CHECKBOX) } },
-    { SORT_ID_ORDER_3, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_2, SORT_ID_COL_3, SORT_ID_ORDER_2, SORT_ID_COL_3 },
-  { 0 }, { DRT(LTRB, CHECKBOX) } },
-    { SORT_ID_ORDER_4, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_3, SORT_ID_COL_4, SORT_ID_ORDER_3, SORT_ID_COL_4 },
-  { 0 }, { DRT(LTRB, CHECKBOX) } }
+    {
+        SORT_ID_ORDER_0, DIALOG_MAIN_GROUP, { SORT_ID_COL_0, SORT_ID_COL_0, DIALOG_CONTROL_SELF, SORT_ID_COL_0 },
+        { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 }, { DRT(RTLB, CHECKBOX), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_ORDER_1, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_0, SORT_ID_COL_1, SORT_ID_ORDER_0, SORT_ID_COL_1 },
+        { 0 }, { DRT(LTRB, CHECKBOX), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_ORDER_2, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_1, SORT_ID_COL_2, SORT_ID_ORDER_1, SORT_ID_COL_2 },
+        { 0 }, { DRT(LTRB, CHECKBOX), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_ORDER_3, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_2, SORT_ID_COL_3, SORT_ID_ORDER_2, SORT_ID_COL_3 },
+        { 0 }, { DRT(LTRB, CHECKBOX), 1 /*tabstop*/ }
+    },
+    {
+        SORT_ID_ORDER_4, DIALOG_MAIN_GROUP, { SORT_ID_ORDER_3, SORT_ID_COL_4, SORT_ID_ORDER_3, SORT_ID_COL_4 },
+        { 0 }, { DRT(LTRB, CHECKBOX), 1 /*tabstop*/ }
+    }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
 sort_intro_order_data[5] =
 {
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER) }
+    {
+        { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
+    },
+    {
+        { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
+    },
+    
+    {
+        { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
+    },
+    {
+        { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
+    },
+    {
+        { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SORT_ORDER)
+    }
 };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -703,6 +744,7 @@ static const DIALOG_CTL_CREATE
 sort_intro_ctl_create[] =
 {
     { &dialog_main_group },
+
     { &sort_intro_col[0],   &sort_intro_col_data[0] },
     { &sort_intro_order[0], &sort_intro_order_data[0] },
     { &sort_intro_col[1],   &sort_intro_col_data[1] },
@@ -713,8 +755,9 @@ sort_intro_ctl_create[] =
     { &sort_intro_order[3], &sort_intro_order_data[3] },
     { &sort_intro_col[4],   &sort_intro_col_data[4] },
     { &sort_intro_order[4], &sort_intro_order_data[4] },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &sort_intro_ok_data }
+
+    { &defbutton_ok, &sort_intro_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_

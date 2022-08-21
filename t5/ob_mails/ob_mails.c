@@ -140,7 +140,7 @@ insert_mailshot_field_number =
 
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
 
-    { DRT(RTLT, BUMP_S32), 1 }
+    { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -172,8 +172,8 @@ insert_mailshot_field_ctl_create[] =
     { &insert_mailshot_field_number_text, &insert_mailshot_field_number_text_data },
     { &insert_mailshot_field_number,      &insert_mailshot_field_number_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &insert_mailshot_field_insert_data }
+    { &defbutton_ok, &insert_mailshot_field_insert_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -381,8 +381,6 @@ mailshot_instance_data_dispose(
 
 enum MAILSHOT_SELECT_IDS
 {
-    MAILSHOT_SELECT_ID_OK = IDOK,
-
     MAILSHOT_SELECT_ID_LIST = 666,
     MAILSHOT_SELECT_ID_ROW_TEXT,
     MAILSHOT_SELECT_ID_ROW,
@@ -402,7 +400,7 @@ mailshot_select_list =
     MAILSHOT_SELECT_ID_LIST, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, MAILSHOT_SELECT_ID_BLANK_GROUP, DIALOG_CONTROL_SELF },
     { 0, 0, 0, MAILSHOT_SELECT_V },
-    { DRT(LTRT, LIST_TEXT), 1 }
+    { DRT(LTRT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
@@ -423,7 +421,7 @@ mailshot_select_row =
     MAILSHOT_SELECT_ID_ROW, DIALOG_MAIN_GROUP,
     { MAILSHOT_SELECT_ID_ROW_TEXT, MAILSHOT_SELECT_ID_LIST },
     { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
-    { DRT(RBLT, BUMP_S32), 1 }
+    { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -450,7 +448,7 @@ mailshot_select_blank_blank =
     MAILSHOT_SELECT_ID_BLANK_BLANK, MAILSHOT_SELECT_ID_BLANK_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LTLT, CHECKBOX) }
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -478,7 +476,7 @@ mailshot_select_blank_stt =
     MAILSHOT_SELECT_ID_BLANK_STT, MAILSHOT_SELECT_ID_BLANK_GROUP,
     { MAILSHOT_SELECT_ID_BLANK_STT_TEXT, MAILSHOT_SELECT_ID_BLANK_BLANK },
     { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(RBLT, BUMP_S32), 1 }
+    { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -509,7 +507,7 @@ mailshot_select_blank_end =
     MAILSHOT_SELECT_ID_BLANK_END, MAILSHOT_SELECT_ID_BLANK_GROUP,
     { MAILSHOT_SELECT_ID_BLANK_STT, MAILSHOT_SELECT_ID_BLANK_STT, MAILSHOT_SELECT_ID_BLANK_STT },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_S32), 1 }
+    { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32

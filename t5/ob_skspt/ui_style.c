@@ -133,8 +133,8 @@ remove_style_use_query_ctl_create[] =
 
     { &remove_style_use_query_text_1, &remove_style_use_query_text_1_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &remove_style_use_query_ok_data}
+    { &defbutton_ok, &remove_style_use_query_ok_data},
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -184,7 +184,7 @@ style_intro_list =
     STYLE_INTRO_ID_LIST, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { 0, 0, 0/*poked*/, 0/*poked*/ },
-    { DRT(LTLT, LIST_TEXT), 1 }
+    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
@@ -193,28 +193,19 @@ style_intro_change =
     STYLE_INTRO_ID_CHANGE, DIALOG_MAIN_GROUP,
     { STYLE_INTRO_ID_LIST, STYLE_INTRO_ID_LIST },
     { DIALOG_STDSPACING_H, 0, STYLE_INTRO_BUTTONS_H, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 }
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 style_intro_change_data = { { STYLE_INTRO_ID_CHANGE }, UI_TEXT_INIT_RESID(MSG_CHANGE) };
 
 static const DIALOG_CONTROL
-style_intro_cancel =
-{
-    IDCANCEL, DIALOG_MAIN_GROUP,
-    { STYLE_INTRO_ID_CHANGE, STYLE_INTRO_ID_CHANGE, STYLE_INTRO_ID_CHANGE },
-    { 0, DIALOG_BIGSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
-};
-
-static const DIALOG_CONTROL
 style_intro_apply =
 {
     STYLE_INTRO_ID_APPLY, DIALOG_MAIN_GROUP,
-    { IDCANCEL, IDCANCEL, IDCANCEL },
+    { STYLE_INTRO_ID_CHANGE, STYLE_INTRO_ID_CHANGE, STYLE_INTRO_ID_CHANGE },
     { 0, DIALOG_BIGSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
@@ -226,7 +217,7 @@ style_intro_delete =
     STYLE_INTRO_ID_DELETE, DIALOG_MAIN_GROUP,
     { STYLE_INTRO_ID_APPLY, STYLE_INTRO_ID_APPLY, STYLE_INTRO_ID_APPLY },
     { 0, DIALOG_BIGSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
@@ -238,22 +229,33 @@ style_intro_new =
     STYLE_INTRO_ID_NEW, DIALOG_MAIN_GROUP,
     { STYLE_INTRO_ID_DELETE, STYLE_INTRO_ID_DELETE, STYLE_INTRO_ID_DELETE },
     { 0, DIALOG_BIGSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 style_intro_new_data = { { STYLE_INTRO_ID_NEW }, UI_TEXT_INIT_RESID(MSG_NEW) };
 
+static const DIALOG_CONTROL
+style_intro_cancel =
+{
+    IDCANCEL, DIALOG_MAIN_GROUP,
+    { STYLE_INTRO_ID_NEW, STYLE_INTRO_ID_NEW, STYLE_INTRO_ID_NEW },
+    { 0, DIALOG_BIGSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
+};
+
 static const DIALOG_CTL_CREATE
 style_intro_ctl_create[] =
 {
     { &dialog_main_group },
+
     { &style_intro_list,   &stdlisttext_data },
+
     { &style_intro_change, &style_intro_change_data },
-    { &style_intro_cancel, &stdbutton_cancel_data },
     { &style_intro_apply,  &style_intro_apply_data },
     { &style_intro_delete, &style_intro_delete_data },
-    { &style_intro_new,    &style_intro_new_data }
+    { &style_intro_new,    &style_intro_new_data },
+    { &style_intro_cancel, &stdbutton_cancel_data }
 };
 
 /*
@@ -798,7 +800,7 @@ new_style_name =
     NEW_STYLE_ID_NAME, DIALOG_MAIN_GROUP,
     { NEW_STYLE_ID_NAME_ORNAMENT, NEW_STYLE_ID_NAME_ORNAMENT, NEW_STYLE_ID_LIST },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -831,7 +833,7 @@ new_style_use_style =
     NEW_STYLE_ID_USE_STYLE, NEW_STYLE_ID_USE_GROUP,
     { NEW_STYLE_ID_BASED_ON, NEW_STYLE_ID_BASED_ON },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 }
+    { DRT(LBLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -855,7 +857,7 @@ new_style_list =
     NEW_STYLE_ID_LIST, DIALOG_MAIN_GROUP,
     { NEW_STYLE_ID_USE_STYLE, NEW_STYLE_ID_USE_STYLE },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 #define NEW_STYLE_MINLIST_H (16 * PIXITS_PER_INCH / 8)
@@ -873,8 +875,8 @@ new_style_ctl_create[] =
     { &new_style_use_selection, &new_style_use_selection_data },
     { &new_style_list,          &stdlisttext_data_dd },
 
-    { &stdbutton_cancel,        &stdbutton_cancel_data },
-    { &defbutton_ok,            &defbutton_ok_data }
+    { &defbutton_ok,            &defbutton_ok_data },
+    { &stdbutton_cancel,        &stdbutton_cancel_data }
 };
 
 typedef struct NEW_STYLE_CALLBACK

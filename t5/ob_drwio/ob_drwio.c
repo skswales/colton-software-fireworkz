@@ -192,7 +192,7 @@ save_as_drawfile_name =
     CONTROL_ID_NAME, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, CONTROL_ID_PICT, CONTROL_ID_RANGE_GROUP },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static
@@ -226,7 +226,7 @@ save_as_drawfile_all =
     CONTROL_ID_ALL, CONTROL_ID_AR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -259,7 +259,7 @@ save_as_drawfile_range_edit =
     CONTROL_ID_RANGE_EDIT, CONTROL_ID_RANGE_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, PIXITS_PER_INCH + PIXITS_PER_HALF_INCH, PIXITS_PER_INCH },
-    { DRT(LTLT, EDIT), 1 }
+    { DRT(LTLT, EDIT), 1 /*tabstop*/ }
 };
 
 static BITMAP(save_as_drawfile_range_edit_validation, 256);
@@ -280,7 +280,7 @@ save_as_drawfile_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CTL_CREATE
@@ -302,8 +302,8 @@ save_as_drawfile_dialog_create[] =
     { &save_as_drawfile_range_edit, &save_as_drawfile_range_edit_data },
 #endif
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &save_as_drawfile_ok, &save_as_drawfile_ok_data }
+    { &save_as_drawfile_ok, &save_as_drawfile_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static S32 save_as_drawfile_range_y0, save_as_drawfile_range_y1;

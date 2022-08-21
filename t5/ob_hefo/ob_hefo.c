@@ -1271,27 +1271,18 @@ static const DIALOG_CONTROL
 page_hefo_break_intro_list =
 {
     PAGE_HEFO_BREAK_INTRO_ID_LIST, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_INTRO_ID_NEW },
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, IDCANCEL },
     { 0, 0, PAGE_HEFO_BREAK_INTRO_LIST_H },
-    { DRT(LTLB, LIST_TEXT), 1 }
-};
-
-static const DIALOG_CONTROL
-page_hefo_break_intro_cancel =
-{
-    IDCANCEL, DIALOG_CONTROL_WINDOW,
-    { PAGE_HEFO_BREAK_INTRO_ID_LIST, PAGE_HEFO_BREAK_INTRO_ID_LIST },
-    { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_INTRO_BUTTONS_H, DIALOG_STDPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 }
+    { DRT(LTLB, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
 page_hefo_break_intro_change =
 {
     PAGE_HEFO_BREAK_INTRO_ID_CHANGE, DIALOG_CONTROL_WINDOW,
-    { IDCANCEL, IDCANCEL, IDCANCEL },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { PAGE_HEFO_BREAK_INTRO_ID_LIST, PAGE_HEFO_BREAK_INTRO_ID_LIST },
+    { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_INTRO_BUTTONS_H, DIALOG_STDPUSHBUTTON_V },
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1303,7 +1294,7 @@ page_hefo_break_intro_delete =
     PAGE_HEFO_BREAK_INTRO_ID_DELETE, DIALOG_CONTROL_WINDOW,
     { PAGE_HEFO_BREAK_INTRO_ID_CHANGE, PAGE_HEFO_BREAK_INTRO_ID_CHANGE, PAGE_HEFO_BREAK_INTRO_ID_CHANGE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1315,11 +1306,20 @@ page_hefo_break_intro_new =
     PAGE_HEFO_BREAK_INTRO_ID_NEW, DIALOG_CONTROL_WINDOW,
     { PAGE_HEFO_BREAK_INTRO_ID_DELETE, PAGE_HEFO_BREAK_INTRO_ID_DELETE, PAGE_HEFO_BREAK_INTRO_ID_DELETE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 page_hefo_break_intro_new_data = { { PAGE_HEFO_BREAK_INTRO_ID_NEW }, UI_TEXT_INIT_RESID(MSG_NEW) };
+
+static const DIALOG_CONTROL
+page_hefo_break_intro_cancel =
+{
+    IDCANCEL, DIALOG_CONTROL_WINDOW,
+    { PAGE_HEFO_BREAK_INTRO_ID_NEW, PAGE_HEFO_BREAK_INTRO_ID_NEW, PAGE_HEFO_BREAK_INTRO_ID_NEW },
+    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
+};
 
 static const DIALOG_CTL_CREATE
 page_hefo_break_intro_ctl_create[] =
@@ -1327,10 +1327,11 @@ page_hefo_break_intro_ctl_create[] =
     { &dialog_main_group },
 
     { &page_hefo_break_intro_list,   &stdlisttext_data },
-    { &page_hefo_break_intro_cancel, &stdbutton_cancel_data },
+
     { &page_hefo_break_intro_change, &page_hefo_break_intro_change_data },
     { &page_hefo_break_intro_delete, &page_hefo_break_intro_delete_data },
-    { &page_hefo_break_intro_new,    &page_hefo_break_intro_new_data }
+    { &page_hefo_break_intro_new,    &page_hefo_break_intro_new_data },
+    { &page_hefo_break_intro_cancel, &stdbutton_cancel_data }
 };
 
 static UI_SOURCE

@@ -861,7 +861,7 @@ csv_load_query_overwrite_blank_cells =
     CSV_LOAD_QUERY_ID_OVERWRITE_BLANK_CELLS, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -873,7 +873,7 @@ csv_load_query_insert_as_table =
     CSV_LOAD_QUERY_ID_INSERT_AS_TABLE, DIALOG_MAIN_GROUP,
     { CSV_LOAD_QUERY_ID_OVERWRITE_BLANK_CELLS, CSV_LOAD_QUERY_ID_OVERWRITE_BLANK_CELLS },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 }
+    { DRT(LBLT, RADIOBUTTON) }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -885,7 +885,7 @@ csv_load_query_labels =
     CSV_LOAD_QUERY_ID_LABELS, DIALOG_MAIN_GROUP,
     { CSV_LOAD_QUERY_ID_INSERT_AS_TABLE, CSV_LOAD_QUERY_ID_INSERT_AS_TABLE },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 }
+    { DRT(LBLT, RADIOBUTTON) }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -910,8 +910,8 @@ csv_load_query_across =
 {
     CSV_LOAD_QUERY_ID_ACROSS, DIALOG_MAIN_GROUP,
     { CSV_LOAD_QUERY_ID_ACROSS_TEXT, CSV_LOAD_QUERY_ID_LABELS },
-    { DIALOG_STDSPACING_H, 0, BUMP_FIELDS_H, DIALOG_STDBUMP_V },
-    { DRT(RBLT, BUMP_S32), 1 }
+    { DIALOG_STDSPACING_H, DIALOG_SMALLSPACING_V, BUMP_FIELDS_H, DIALOG_STDBUMP_V },
+    { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -929,7 +929,7 @@ csv_load_query_database =
     CSV_LOAD_QUERY_ID_DATABASE, DIALOG_MAIN_GROUP,
     { CSV_LOAD_QUERY_ID_LABELS, CSV_LOAD_QUERY_ID_ACROSS },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 }
+    { DRT(LBLT, RADIOBUTTON) }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -939,8 +939,9 @@ static const DIALOG_CTL_CREATE
 csv_load_query_ctl_create[] =
 {
     { &dialog_main_group },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
+
     { &defbutton_ok, &defbutton_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data },
 
     { &csv_load_query_overwrite_blank_cells,    &csv_load_query_overwrite_blank_cells_data },
     { &csv_load_query_insert_as_table,          &csv_load_query_insert_as_table_data },

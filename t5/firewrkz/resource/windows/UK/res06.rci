@@ -80,7 +80,7 @@ BEGIN
 	0x3099,	"% depth"
 	0x30A0,	"sg04/sg4_customising_bar_charts.htm"
 //
-	0x30BE,	"3D"
+	0x30BE,	"3-D"
 	0x30BF,	"° droop"
 	0x30C0,	"° turn"
 //

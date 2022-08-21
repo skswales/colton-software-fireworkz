@@ -234,7 +234,7 @@ print_copies =
     CONTROL_ID_COPIES, DIALOG_MAIN_GROUP,
     { CONTROL_ID_COPIES_ORNAMENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
-    { DRT(RTLT, BUMP_S32), 1 }
+    { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -258,7 +258,7 @@ print_all =
     CONTROL_ID_ALL, CONTROL_ID_AR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -294,7 +294,7 @@ print_range_edit =
     CONTROL_ID_RANGE_EDIT, CONTROL_ID_RANGE_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, PIXITS_PER_INCH + PIXITS_PER_HALF_INCH, PIXITS_PER_INCH },
-    { DRT(LTLT, EDIT), 1 }
+    { DRT(LTLT, EDIT), 1 /*tabstop*/ }
 };
 
 static BITMAP(print_range_edit_validation, 256);
@@ -329,7 +329,7 @@ print_range_y0 =
     CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y_GROUP,
     { CONTROL_ID_RANGE_Y0_TEXT, DIALOG_CONTROL_PARENT },
     { DIALOG_SMALLSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
-    { DRT(RTLT, BUMP_S32), 1 }
+    { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_S32
@@ -356,7 +356,7 @@ print_range_y1 =
     CONTROL_ID_RANGE_Y1, CONTROL_ID_RANGE_Y_GROUP,
     { CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y0 },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
-    { DRT(LBRT, BUMP_S32), 1 }
+    { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_S32
@@ -383,7 +383,7 @@ print_both =
     CONTROL_ID_BOTH, CONTROL_ID_SIDES_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -419,7 +419,7 @@ print_reverse =
     CONTROL_ID_REVERSE, DIALOG_MAIN_GROUP,
     { CONTROL_ID_SIDES_GROUP, CONTROL_ID_SIDES_GROUP },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -431,7 +431,7 @@ print_collate =
     CONTROL_ID_COLLATE, DIALOG_MAIN_GROUP,
     { CONTROL_ID_REVERSE, CONTROL_ID_REVERSE },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -443,7 +443,7 @@ print_two_up =
     CONTROL_ID_TWO_UP, DIALOG_MAIN_GROUP,
     { CONTROL_ID_COLLATE, CONTROL_ID_COLLATE },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
@@ -459,7 +459,7 @@ print_pamphlet =
 #else
     { DIALOG_STDPUSHBUTTON_H, DIALOG_STDPUSHBUTTON_V, 0, 0 },
 #endif
-    { DRT(RBRB, PUSHBUTTON), 1 }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -475,7 +475,7 @@ print_mails =
 #else
     { DIALOG_STDPUSHBUTTON_H, 0, DIALOG_STDSPACING_H, 0 },
 #endif
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -494,7 +494,7 @@ print_extra =
 #else
     { DIALOG_STDPUSHBUTTON_H, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
 #endif
-    { DRT(RBRT, PUSHBUTTON), 1 }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -565,8 +565,8 @@ e_print_dialog_create[] =
     { &print_two_up         , &print_two_up_data          },
     { &print_pamphlet       , &print_pamphlet_data        },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &e_print_ok_data }
+    { &defbutton_ok, &e_print_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 static /*poked*/ DIALOG_CTL_CREATE
@@ -588,8 +588,8 @@ s_print_dialog_create[] =
     { &print_mails          , &print_mails_data }, /* this is the fourth last entry and must not move wrt end */
     { &print_extra          , &print_extra_data }, /* this is the third last entry and must not move wrt end */
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &s_print_ok_data }
+    { &defbutton_ok, &s_print_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -1037,7 +1037,7 @@ warning_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -1047,10 +1047,12 @@ static const DIALOG_CTL_CREATE
 warning_dialog_create[] =
 {
     { &dialog_main_group },
+
     { &warning_message1, &warning_message1_data },
     { &warning_message2, &warning_message2_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &warning_ok, &warning_ok_data }
+
+    { &warning_ok, &warning_ok_data },
+    { &stdbutton_cancel, &stdbutton_cancel_data }
 };
 
 _Check_return_

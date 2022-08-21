@@ -727,7 +727,7 @@ choices_main_auto_save_period_minutes =
     CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_WINDOW,
     { CHOICES_MAIN_ID_AUTO_SAVE_TEXT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(RTLT, BUMP_S32), 1 }
+    { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static const UI_CONTROL_S32
@@ -754,7 +754,7 @@ choices_main_display_pictures =
     CHOICES_MAIN_ID_DISPLAY_PICTURES, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_AUTO_SAVE_TEXT, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -766,7 +766,7 @@ choices_main_embed_inserted_files =
     CHOICES_MAIN_ID_EMBED_INSERTED_FILES, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_DISPLAY_PICTURES, CHOICES_MAIN_ID_DISPLAY_PICTURES },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -778,7 +778,7 @@ choices_main_update_styles_from_choices =
     CHOICES_MAIN_ID_UPDATE_STYLES_FROM_CHOICES, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_EMBED_INSERTED_FILES, CHOICES_MAIN_ID_EMBED_INSERTED_FILES },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -790,7 +790,7 @@ choices_main_ascii_load_as_delimited =
     CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_UPDATE_STYLES_FROM_CHOICES, CHOICES_MAIN_ID_UPDATE_STYLES_FROM_CHOICES, 0, CHOICES_MAIN_ID_ASCII_LOAD_DELIMITER },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC /*, DIALOG_STDCHECK_V*/ },
-    { DRT(LBLB, CHECKBOX), 1 }
+    { DRT(LBLB, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -799,10 +799,10 @@ choices_main_ascii_load_as_delimited_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIAL
 static const DIALOG_CONTROL
 choices_main_ascii_load_delimiter =
 {
-    CHOICES_MAIN_ID_ASCII_LOAD_DELIMITER, DIALOG_CONTROL_WINDOW,
+    CHOICES_MAIN_ID_ASCII_LOAD_DELIMITER, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED, CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED },
     { DIALOG_STDSPACING_H, 0, DIALOG_STDEDITOVH_H + DIALOG_NUMCHAR_H * (1), DIALOG_STDBUMP_V },
-    { DRT(RTLT, EDIT), 1 }
+    { DRT(RTLT, EDIT), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_EDIT
@@ -814,7 +814,7 @@ choices_main_ascii_load_as_paragraphs =
     CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED, CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -828,7 +828,7 @@ choices_main_kerning =
     CHOICES_MAIN_ID_KERNING, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS, CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -842,7 +842,7 @@ choices_main_dithering =
     CHOICES_MAIN_ID_DITHERING, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS, CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -860,7 +860,7 @@ choices_main_status_line =
     { CHOICES_MAIN_ID_DITHERING, CHOICES_MAIN_ID_DITHERING },
 #endif
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -872,7 +872,7 @@ choices_main_toolbar =
     CHOICES_MAIN_ID_TOOLBAR, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_STATUS_LINE, CHOICES_MAIN_ID_STATUS_LINE },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LBLT, CHECKBOX), 1 }
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static DIALOG_CONTROL_DATA_CHECKBOX
@@ -900,7 +900,7 @@ choices_main_rulers_ruler_combo =
 
     { 0 /*poked*/, DIALOG_STDSPACING_V, 0, DIALOG_STDCOMBO_V },
 
-    { DRT(RBRT, COMBO_TEXT), 1 }
+    { DRT(RBRT, COMBO_TEXT), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_COMBO_TEXT
@@ -947,6 +947,9 @@ choices_main_ctl_create[] =
     { &choices_main_rulers_ruler_combo,         &choices_main_rulers_ruler_combo_data }
 };
 
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+choices_apply_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_APPLY) };
+
 static const DIALOG_CONTROL
 choices_cancel =
 {
@@ -957,7 +960,7 @@ choices_cancel =
 #else
     { DIALOG_CONTENTS_CALC, 0, DIALOG_STDSPACING_H, 0 },
 #endif
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
@@ -970,7 +973,7 @@ choices_save =
 #else
     { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
 #endif
-    { DRT(RTLB, PUSHBUTTON), 1 }
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -979,9 +982,9 @@ choices_save_data = { { CHOICES_ID_SAVE }, UI_TEXT_INIT_RESID(MSG_QUERY_SAVE) };
 static const DIALOG_CTL_CREATE
 choices_ctl_create[] =
 {
-    { &choices_cancel, &stdbutton_cancel_data },
+    { &defbutton_ok,   &choices_apply_data },
     { &choices_save,   &choices_save_data },
-    { &defbutton_ok,   &defbutton_ok_data }
+    { &choices_cancel, &stdbutton_cancel_data }
 };
 
 typedef struct CHOICES_MAIN_CALLBACK

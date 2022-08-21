@@ -91,7 +91,7 @@ ss_name_intro_list =
     SS_NAME_INTRO_ID_LIST, DIALOG_MAIN_GROUP,
     { SS_NAME_INTRO_ID_LIST_CAPTION, SS_NAME_INTRO_ID_LIST_CAPTION },
     { 0, DIALOG_SMALLSPACING_V, DIALOG_SYSCHARS_H("QuiteLongNamesGetDisplayedHere"), DIALOG_STDLISTOVH_V + 10 * DIALOG_STDLISTITEM_V },
-    { DRT(LBLT, LIST_TEXT), 1 }
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
@@ -112,7 +112,7 @@ ss_name_intro_value =
     SS_NAME_INTRO_ID_VALUE, DIALOG_MAIN_GROUP,
     { SS_NAME_INTRO_ID_LIST_CAPTION, SS_NAME_INTRO_ID_VALUE_CAPTION, SS_NAME_INTRO_ID_LIST },
     { 0, DIALOG_SMALLSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT) }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -136,7 +136,7 @@ ss_name_intro_desc =
     SS_NAME_INTRO_ID_DESC, DIALOG_CONTROL_WINDOW,
     { SS_NAME_INTRO_ID_VALUE, SS_NAME_INTRO_ID_DESC_CAPTION, IDOK, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, 0, PIXITS_PER_INCH },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -148,56 +148,56 @@ ss_name_intro_insert =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { DIALOG_STDSPACING_H, 0, (3 * PIXITS_PER_INCH) / 4, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 }
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
 ss_name_intro_insert_data = { { IDOK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_INSERT), SS_NAME_INTRO_ID_INSERT_ADJUST };
 
 static const DIALOG_CONTROL
-ss_name_intro_cancel =
+ss_name_intro_edit =
 {
-    IDCANCEL, DIALOG_CONTROL_WINDOW,
+    SS_NAME_INTRO_ID_EDIT, DIALOG_CONTROL_WINDOW,
     { IDOK, IDOK, IDOK, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
-static const DIALOG_CONTROL
-ss_name_intro_delete =
-{
-    SS_NAME_INTRO_ID_DELETE, DIALOG_CONTROL_WINDOW,
-    { IDOK, IDCANCEL, IDOK, DIALOG_CONTROL_SELF },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
-};
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTONR
-ss_name_intro_delete_data = { { SS_NAME_INTRO_ID_DELETE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_DELETE), SS_NAME_INTRO_ID_DELETE_ADJUST };
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+ss_name_intro_edit_data = { { SS_NAME_INTRO_ID_EDIT }, UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_EDIT) };
 
 static const DIALOG_CONTROL
 ss_name_intro_add =
 {
     SS_NAME_INTRO_ID_ADD, DIALOG_CONTROL_WINDOW,
-    { IDOK, SS_NAME_INTRO_ID_DELETE, IDOK, DIALOG_CONTROL_SELF },
+    { SS_NAME_INTRO_ID_EDIT, SS_NAME_INTRO_ID_EDIT, SS_NAME_INTRO_ID_EDIT, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 ss_name_intro_add_data = { { SS_NAME_INTRO_ID_ADD }, UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_ADD) };
 
 static const DIALOG_CONTROL
-ss_name_intro_edit =
+ss_name_intro_delete =
 {
-    SS_NAME_INTRO_ID_EDIT, DIALOG_CONTROL_WINDOW,
-    { IDOK, SS_NAME_INTRO_ID_VALUE, IDOK, DIALOG_CONTROL_SELF },
-    { 0, 0,  0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LTRT, PUSHBUTTON), 1 }
+    SS_NAME_INTRO_ID_DELETE, DIALOG_CONTROL_WINDOW,
+    { SS_NAME_INTRO_ID_ADD, SS_NAME_INTRO_ID_ADD, SS_NAME_INTRO_ID_ADD, DIALOG_CONTROL_SELF },
+    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-ss_name_intro_edit_data = { { SS_NAME_INTRO_ID_EDIT }, UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_EDIT) };
+static const DIALOG_CONTROL_DATA_PUSHBUTTONR
+ss_name_intro_delete_data = { { SS_NAME_INTRO_ID_DELETE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_DELETE), SS_NAME_INTRO_ID_DELETE_ADJUST };
+
+static const DIALOG_CONTROL
+ss_name_intro_cancel =
+{
+    IDCANCEL, DIALOG_CONTROL_WINDOW,
+    { SS_NAME_INTRO_ID_DELETE, SS_NAME_INTRO_ID_DELETE, SS_NAME_INTRO_ID_DELETE, DIALOG_CONTROL_SELF },
+    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
+};
 
 static const DIALOG_CTL_CREATE
 ss_name_intro_ctl_create[] =
@@ -214,10 +214,10 @@ ss_name_intro_ctl_create[] =
     { &ss_name_intro_desc,          &ss_name_intro_desc_data },
 
     { &ss_name_intro_insert,        &ss_name_intro_insert_data },
-    { &ss_name_intro_cancel,        &stdbutton_cancel_data },
-    { &ss_name_intro_delete,        &ss_name_intro_delete_data },
+    { &ss_name_intro_edit,          &ss_name_intro_edit_data },
     { &ss_name_intro_add,           &ss_name_intro_add_data },
-    { &ss_name_intro_edit,          &ss_name_intro_edit_data }
+    { &ss_name_intro_delete,        &ss_name_intro_delete_data },
+    { &ss_name_intro_cancel,        &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -758,7 +758,7 @@ ss_name_edit_name =
     SS_NAME_EDIT_ID_NAME, DIALOG_MAIN_GROUP,
     { SS_NAME_EDIT_ID_NAME_CAPTION, SS_NAME_EDIT_ID_NAME_CAPTION },
     { 0, DIALOG_SMALLSPACING_V, DIALOG_STDEDITOVH_H + DIALOG_SYSCHARS_H("QuiteLongNamesTypedHere"), DIALOG_STDEDIT_V },
-    { DRT(LBLT, EDIT) }
+    { DRT(LBLT, EDIT), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_EDIT
@@ -782,7 +782,7 @@ ss_name_edit_value =
     SS_NAME_EDIT_ID_VALUE, DIALOG_MAIN_GROUP,
     { SS_NAME_EDIT_ID_VALUE_CAPTION, SS_NAME_EDIT_ID_VALUE_CAPTION, SS_NAME_EDIT_ID_NAME },
     { 0, DIALOG_SMALLSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -806,7 +806,7 @@ ss_name_edit_desc =
     SS_NAME_EDIT_ID_DESC, DIALOG_MAIN_GROUP,
     { SS_NAME_EDIT_ID_VALUE, SS_NAME_EDIT_ID_DESC_CAPTION, SS_NAME_EDIT_ID_VALUE, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, 0, PIXITS_PER_INCH },
-    { DRT(LBRT, EDIT), 1 }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT

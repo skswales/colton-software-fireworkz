@@ -788,19 +788,19 @@ _Check_return_
 static STATUS
 sk_docno_msg_docu_rename(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PCTSTR filename)
+    _InRef_     PC_DOCU_NAME p_docu_name_in)
 {
     STATUS status;
     DOCU_NAME docu_name;
 
     name_init(&docu_name);
 
-    if(status_ok(status = name_read_tstr(&docu_name, filename)))
+    if(status_ok(status = name_dup(&docu_name, p_docu_name_in)))
     {
         consume_bool(name_preprocess_docu_name_flags_for_rename(&docu_name));
 
         name_dispose(&p_docu->docu_name);
-        p_docu->docu_name = docu_name;
+        p_docu->docu_name = docu_name; /* donate */
 
         /* tell the world the name has changed */
         status_assert(maeve_event(p_docu, T5_MSG_DOCU_NAME, P_DATA_NONE));
@@ -819,7 +819,7 @@ MAEVE_EVENT_PROTO(static, maeve_event_sk_docno)
         return(sk_docno_msg_init_flow(p_docu, (P_OBJECT_ID) p_data));
 
     case T5_MSG_DOCU_RENAME:
-        return(sk_docno_msg_docu_rename(p_docu, (PCTSTR) p_data));
+        return(sk_docno_msg_docu_rename(p_docu, (PC_DOCU_NAME) p_data));
 
     case T5_CMD_OF_END_OF_DATA:
         /* load supporting documents at end of load */
