@@ -4,7 +4,7 @@ Priority: Optional
 Licence: Free
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
-Version: 2.30.1
+Version: 2.30.2
 Recommends: Fireworkz-Manuals,Fireworkz-Examples
 Description: Word Processor & Spreadsheet
  You can use Fireworkz as a word processor to write letters, reports, books, invitations, shopping lists, schedules and other documents.

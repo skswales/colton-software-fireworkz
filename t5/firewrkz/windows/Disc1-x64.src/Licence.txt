@@ -2,7 +2,7 @@ Fireworkz is open source software and completely free to use and.
 
 Fireworkz is made available to you under the terms of the Mozilla Public License 2.0 (MPL). This means you may use, copy and distribute Fireworkz to others. You are also welcome to modify the source code of Fireworkz as you want to meet your needs. The Mozilla Public License also gives you the right to distribute your modified versions.
 
-Copyright (C) 1992-2020 Colton Software
+Copyright (C) 1992-2021 Colton Software
 
 The Release Notes contain additional copyright information that pertains to certain portions of Fireworkz.
 

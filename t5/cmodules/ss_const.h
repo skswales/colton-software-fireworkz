@@ -780,6 +780,9 @@ ui_strtol(
     _Out_opt_   P_P_USTR p_ustr,
     _In_        int radix);
 
+extern const F64
+g_real_zero;
+
 extern const SS_DATA
 ss_data_real_zero;
 

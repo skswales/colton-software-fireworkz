@@ -220,7 +220,7 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_NUMCHAR_H        DIALOG_SYSCHAR_H
 #define DIALOG_FATCHAR_H        (24 * PIXITS_PER_RISCOS)
 
-#define DIALOG_SYSCHARS_H(string) (DIALOG_SYSCHAR_H * (sizeof32(string)-1))
+#define DIALOG_SYSCHARS_H(string)   DIALOG_SYSCHARSL_H((S32) sizeof(string) - 1) /* keep it signed, in line with all other PIXIT stuff */
 #define DIALOG_SYSCHARSL_H(len) (DIALOG_SYSCHAR_H * len)
 
 #define DIALOG_CAPTIONOVH_H     (32 * PIXITS_PER_RISCOS) /* no longer a close icon (and nowadays, an iconise button too, probably...) */
@@ -353,7 +353,7 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_NUMCHAR_H        ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_FATCHAR_H        (12 * PIXITS_PER_WDU_H)
 
-#define DIALOG_SYSCHARS_H(string)   (DIALOG_SYSCHAR_H * (sizeof32(string)-1))
+#define DIALOG_SYSCHARS_H(string)   DIALOG_SYSCHARSL_H((S32) sizeof(string) - 1) /* keep it signed, in line with all other PIXIT stuff */
 #define DIALOG_SYSCHARSL_H(len)     (DIALOG_SYSCHAR_H * (len))
 
 #define DIALOG_CAPTIONOVH_H     (24 * PIXITS_PER_WDU_H) /* a system menu and nowadays, a wide close button too */

@@ -319,7 +319,7 @@ gr_linestyle_riscos_dashes[] =
 
 _Check_return_
 _Ret_maybenull_
-static const PC_DRAW_DASH_HEADER
+static PC_DRAW_DASH_HEADER
 gr_linestyle_to_riscDraw(
     _InRef_opt_ PC_GR_LINESTYLE linestyle)
 {

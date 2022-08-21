@@ -1207,6 +1207,9 @@
     <ClCompile Include="..\..\ob_skel\ui_load.c">
       <Filter>Source Files\ob_skel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\cfbfnative.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\fl_123\fl_123.h">
@@ -1716,6 +1719,9 @@
     <ClInclude Include="..\..\ob_skel\version.h">
       <Filter>Source Files\ob_skel</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\cmodules\riscos\colourpick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\fl_123\resource\uk-msg">
@@ -1819,9 +1825,6 @@
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg\sg07_custom_functions.htm">
       <Filter>Docs\UserGuide\sg</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug\ug02_fireworkz_basics.htm">
-      <Filter>Docs\UserGuide\ug</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\ug\ug03_creating_new_documents.htm">
       <Filter>Docs\UserGuide\ug</Filter>
@@ -2558,12 +2561,6 @@
     <None Include="..\..\..\docs\UserGuide\content\ug\ug01_introduction.htm">
       <Filter>Docs\UserGuide\ug</Filter>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug\ug98_glossary.htm">
-      <Filter>Docs\UserGuide\ug</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug\ug99_addenda.htm">
-      <Filter>Docs\UserGuide\ug</Filter>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\ug\ug90_transferring_files_between_platforms.htm">
       <Filter>Docs\UserGuide\ug</Filter>
     </None>
@@ -3029,6 +3026,9 @@
     <None Include="..\..\..\docs\GSGuide\riscos\content\gsggl.html">
       <Filter>Docs\RISC OS\GSGuide</Filter>
     </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug02\ug2_fireworkz_basics.htm" />
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug98_glossary.htm" />
+    <None Include="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\firewrkz\Resources\Windows\Neutral\banner.bmp">
@@ -3185,9 +3185,6 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\fprowrkz\ob_recb\ob_recb.h">
       <Filter>Source Files\fprowrkz\ob_recb</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\cmodules\riscos\colourpick.h">
-      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\cmodules\alloc.h">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>

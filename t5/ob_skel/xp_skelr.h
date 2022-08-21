@@ -24,7 +24,9 @@
 #endif
 
 #ifndef __kernel_h
+__pragma(warning(push)) __pragma(warning(disable:4255)) /* no function prototype given: converting () to (void) */
 #include "kernel.h" /* C: */
+__pragma(warning(pop))
 #endif
 
 #ifndef __os_h
@@ -116,7 +118,7 @@ riscos_hourglass_start(
     _In_        int after_cs);
 
 #ifndef __wimp_h
-__pragma(warning(push)) __pragma(warning(disable: 4255)) /* C4255: 'function' : no function prototype given: converting '()' to '(void)' */
+__pragma(warning(push)) __pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void)' */
 #include "wimp.h" /* C: tboxlibs */
 __pragma(warning(pop))
 #endif /* __wimp_h */

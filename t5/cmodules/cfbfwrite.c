@@ -6,7 +6,7 @@
 
 /* Compound File Binary Format (COM / OLE 2 Structured Storage) access functions */
 
-/* Copyright (C) 2014-2020 Stuart Swales */
+/* Copyright (C) 2014-2021 Stuart Swales */
 
 #include "common/gflags.h"
 
@@ -217,19 +217,24 @@ cfbf_write_stream_in_storage(
 {
     STATUS status;
 
-#if WINDOWS && 0
+#if WINDOWS
+    static bool use_windows_structured_storage_api = RELEASED || true; /* set to false to debug homebrew access method */
 
-    if(NULL == storage_filename)
-        return(ERR_CFBF_SAVE_NEEDS_FILENAME);
+    if( (NULL != storage_filename) && use_windows_structured_storage_api )
+    {
+        if(NULL == storage_filename)
+            return(ERR_CFBF_SAVE_NEEDS_FILENAME);
 
-    { /* use Windows' native methods */
-    PCWSTR wstr_storage_filename = _wstr_from_tstr(storage_filename);
-    PCWSTR wstr_stream_name = _wstr_from_tstr(stream_name);
-    status = stg_cfbf_write_stream_in_storage(wstr_storage_filename, wstr_stream_name, p_data, n_bytes);
-    } /*block*/
+        { /* use Windows' native structured storage API */
+        PCWSTR wstr_storage_filename = _wstr_from_tstr(storage_filename);
+        PCWSTR wstr_stream_name = _wstr_from_tstr(stream_name);
+        return(stg_cfbf_write_stream_in_storage(wstr_storage_filename, wstr_stream_name, p_data, n_bytes));
+        } /*block*/
+    }
+#endif
 
-#else
-
+#if RISCOS || 1
+    {
     const BOOL use_mini_stream = (n_bytes < 4096);
     const U32 header_bytes = sizeof32(StructuredStorageHeader) + (use_mini_stream ? 3 : 2) * 512;
     P_StructuredStorageHeader p_structured_storage_header;
@@ -324,7 +329,7 @@ cfbf_write_stream_in_storage(
     }
 
     al_ptr_dispose(P_P_ANY_PEDANTIC(&p_structured_storage_header));
-
+    } /*block*/
 #endif
 
     return(status);

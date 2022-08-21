@@ -1318,6 +1318,9 @@
     <ClCompile Include="..\..\..\fprowrkz\fs_ole\fs_ole.c">
       <Filter>Source Files\foreign_formats\fs_ole</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\cfbfnative.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\fl_123\fl_123.h">
@@ -2964,7 +2967,6 @@
     <None Include="..\Tools\RCGenL">
       <Filter>Source Files\build_tools_riscos</Filter>
     </None>
-    <None Include="..\..\firewrkz\RelNoteNext.htm" />
     <None Include="..\..\..\fprowrkz\fprowrkz\docs\DBGuide\content\guide.css">
       <Filter>Docs\RISC OS\DBGuide</Filter>
     </None>

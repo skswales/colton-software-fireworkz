@@ -1,4 +1,4 @@
-{Version:2.30,01;15 Nov 2020;Fireworkz for Windows (France);Colton Software;Windows-1252}
+{Version:2.30.02;30 Aug 2021;Fireworkz for Windows (France);Colton Software;Windows-1252}
 {RowTable:1}
 {BindFileType:1;0;All files;(*.*);*.*}
 {BindFileType:1;0xBDF;Colton Software Fireworkz;(*.fwk,*.fwkh);*.fwk\\\;*.fwkh}

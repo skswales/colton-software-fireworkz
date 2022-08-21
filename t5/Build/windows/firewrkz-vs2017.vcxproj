@@ -433,6 +433,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\cfbfnative.c" />
     <ClCompile Include="..\..\cmodules\ev_arith.c" />
     <ClCompile Include="..\..\cmodules\mathxcpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

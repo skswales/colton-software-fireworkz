@@ -31,24 +31,26 @@ declare complex number type for internal usage
 #include <complex.h>
 
 typedef
-#ifdef _MSC_VER
-    _Dcomplex /* not C99 */
+#if defined(_MSC_VER)
+    _Dcomplex /* still not C99! */
 #else
     double _Complex
 #endif
 COMPLEX, * P_COMPLEX; typedef const COMPLEX * PC_COMPLEX;
 
-#ifdef _MSC_VER
+#if defined(CMPLX)
+#define COMPLEX_INIT(real_value, imag_value) CMPLX(real_value, imag_value)
+#elif defined(_MSC_VER)
 #define COMPLEX_INIT(real_value, imag_value) { (real_value), (imag_value) } /* yuk */
 #else
 #define COMPLEX_INIT(real_value, imag_value) ((real_value) + I*(imag_value))
 #endif
 
 #define complex_get(z) \
-    (*z)
+    (*(z))
 
 #define complex_set(z, complex_value) \
-    (*z) = (complex_value)
+    (*(z)) = (complex_value)
 
 _Check_return_
 static inline double
@@ -72,7 +74,9 @@ complex_set_ri(
     _InVal_ double real_value,
     _InVal_ double imag_value)
 {
-#ifdef _MSC_VER
+#if defined(CMPLX)
+    complex_set(z, CMPLX(real_value, imag_value));
+#elif defined(_MSC_VER)
     complex_set(z, _DCOMPLEX_(real_value, imag_value));
 #else
     complex_set(z, real_value + I*imag_value);

@@ -406,7 +406,7 @@ quick_wblock_vprintf(
 
         len = _vsnwprintf_s(buffer, elemof32(buffer), _TRUNCATE, buffer_format, args /* NOT updated - see below */);
         if(-1 == len)
-            len = wstrlen32(buffer); /* limit transfer to what actually was achieved */
+            len = (S32) wstrlen32(buffer); /* limit transfer to what actually was achieved */
 
         status_break(status = quick_wblock_wchars_add(p_quick_wblock, buffer, len));
 #elif 0
@@ -422,8 +422,8 @@ quick_wblock_vprintf(
         xstrnkpy(buffer_format, elemof32(buffer_format), _tstr_from_wstr(begin), PtrDiffElemU32(wstr, begin));
 
         len = vsnprintf(buffer, elemof32(buffer), buffer_format, args /* will be updated accordingly */);
-        if(len >= elemof32(buffer))
-            len = strlen32(buffer); /* limit transfer to what actually was achieved */
+        if( len >= (S32) elemof32(buffer) )
+            len =  (S32) strlen32(buffer); /* limit transfer to what actually was achieved */
 
         status_break(status = quick_wblock_sbchars_add(p_quick_wblock, buffer, len));
 #endif

@@ -79,7 +79,12 @@ typedef unsigned __int64 uint64_t;
 #define PRIx64 "llx"
 #endif
 
-__pragma(warning(push)) __pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void)' (VS2008) */
+__pragma(warning(push))
+#if WINDOWS && defined(_MSC_VER)
+#if _MSC_VER <= 1500 /* VC2008 */
+__pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void)' (VS2008) */
+#endif
+#endif
 #include <stdio.h>
 __pragma(warning(pop))
 

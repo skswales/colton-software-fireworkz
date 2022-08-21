@@ -170,7 +170,7 @@ list_createitem(
 
     /* check not past maximum conceivable size */
     assert(size >= 0);
-    if((OFF_TYPE) size >= MAX_ITEM)
+    if((OFF_TYPE) size >= (OFF_TYPE) MAX_ITEM)
         return(NULL);
 
     it = NULL;

@@ -5411,6 +5411,102 @@
 				Name="Norcroft_C"
 				>
 				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\assert.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\complex.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\ctype.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\errno.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\fenv.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\float.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\inttypes.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\iso646.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\kernel.h"
 					>
 					<FileConfiguration
@@ -5421,8 +5517,144 @@
 							Name="VCCustomBuildTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\limits.h"
+					>
 					<FileConfiguration
-						Name="Release XP ANSI|Win32"
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\locale.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\math.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\setjmp.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\signal.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\stdarg.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\stdbool.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\stddef.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\stdint.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\stdio.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\stdlib.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\string.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5441,8 +5673,60 @@
 							Name="VCCustomBuildTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\tgmath.h"
+					>
 					<FileConfiguration
-						Name="Release XP ANSI|Win32"
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\time.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\varargs.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\wchar.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\wctype.h"
+					>
+					<FileConfiguration
+						Name="Debug XP ANSI|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool

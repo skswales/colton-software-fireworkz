@@ -128,7 +128,7 @@ BEGIN
             VALUE "FileDescription", "Colton Fireworkz for Windows [France]\0"
             VALUE "FileVersion", VER_FILEVERSION_STR
             VALUE "InternalName", "firewrkz\0"
-            VALUE "LegalCopyright", "Copyright (C) 1992-2020 Colton Software. "
+            VALUE "LegalCopyright", "Copyright (C) 1992-2021 Colton Software. "
                                     "Veuillez consulter RelNotes.htm pour des informations supplémentaires sur les droits d'auteur\0"
             VALUE "LegalTrademarks", "Veuillez consulter RelNotes.htm pour toutes les informations sur les marques\0"
             VALUE "OriginalFilename", "1036.dll\0"

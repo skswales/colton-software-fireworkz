@@ -1020,7 +1020,7 @@ paper_ok_data_argmap[] =
     PAPER_ID_GRID_FAINT
 };
 
-#if RISCOS || 1
+#if RISCOS
 
 static const DIALOG_CONTROL
 paper_ok =

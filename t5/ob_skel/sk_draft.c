@@ -27,7 +27,7 @@ plain_text_is_page_break(
     _InVal_     ARRAY_HANDLE h_chars)
 {
     PC_UCHARS uchars;
-    if(array_elements(&h_chars) < INLINE_OVH)
+    if(array_elements32(&h_chars) < INLINE_OVH)
         return(FALSE);
     uchars = (PC_UCHARS) array_rangec(&h_chars, UCHARB, 0, INLINE_OVH);
     return(is_inline(uchars) && (inline_code(uchars) == IL_PAGE_BREAK));

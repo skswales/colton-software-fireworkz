@@ -976,7 +976,9 @@ mlec_area_update(
     _InRef_     PC_GDI_POINT p_origin,
     _InRef_     PC_GDI_BOX p_screen)
 {
+#if CHECKING
     assert(threaded_through_update);
+#endif
 
     show_selection(mlec, p_origin, p_screen, stashed_for_update_markstt, stashed_for_update_markend);
 }

@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2020 Stuart Swales */
+/* Copyright (C) 2014-2021 Stuart Swales */
 
 /* Excel spreadsheet BIFF saver */
 
@@ -2044,13 +2044,14 @@ xls_write_BLANK_record(
     _InRef_     PC_SLR p_slr)
 {
     const XLS_OPCODE opcode = X_BLANK_B3_B8;
-    static BYTE x[14] =             /* BIFF3-8 BLANK record */
+    static BYTE x[] =               /* BIFF3-8 BLANK record */
     {
         XLS_REC_U16(0),             /* zero-based index of this row */
         XLS_REC_U16(0),             /* zero-based index of this column */
         XLS_REC_U16(15 /*0x0F*/)    /* zero-based index of the XF record */
     };
     const U16 sizeof_x = sizeof32(x);
+    assert(6 == sizeof_x);
 
     assert(biff_version >= 3);
 
@@ -2113,7 +2114,7 @@ xls_write_NUMBER_record(
     _InRef_     PC_SLR p_slr)
 {
     const XLS_OPCODE opcode = X_NUMBER_B3_B8;
-    static BYTE x[14] =             /* BIFF3-8 NUMBER record */
+    static BYTE x[] =               /* BIFF3-8 NUMBER record */
     {
         XLS_REC_U16(0),             /* zero-based index of this row */
         XLS_REC_U16(0),             /* zero-based index of this column */
@@ -2121,6 +2122,7 @@ xls_write_NUMBER_record(
         0, 0, 0, 0, 0, 0, 0, 0      /* number */
     };
     const U16 sizeof_x = sizeof32(x);
+    assert(14 == sizeof_x);
 
     assert(biff_version >= 3);
 
@@ -2177,7 +2179,7 @@ xls_write_date(
     _InRef_     PC_SLR p_slr)
 {
     const XLS_OPCODE opcode = X_NUMBER_B3_B8;
-    static BYTE x[14] =         /* BIFF3-8 NUMBER record */
+    static BYTE x[] =               /* BIFF3-8 NUMBER record */
     {
         XLS_REC_U16(0),             /* zero-based index of this row */
         XLS_REC_U16(0),             /* zero-based index of this column */
@@ -2185,6 +2187,7 @@ xls_write_date(
         0, 0, 0, 0, 0, 0, 0, 0      /* date */
     };
     const U16 sizeof_x = sizeof32(x);
+    assert(14 == sizeof_x);
 
     writeval_U16_LE(&x[0], (U16) p_slr->row);
     writeval_U16_LE(&x[2], (U16) p_slr->col);

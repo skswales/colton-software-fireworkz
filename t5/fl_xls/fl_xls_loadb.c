@@ -746,8 +746,8 @@ try_grokking_compound_file_for_xls(
         directory_index++, decoded_directory++)
     {
         /* Do wide string match (can't use L"" as wchar_t is int on Norcroft) */
-        const WCHAR workbook_name[] = { 'W', 'o', 'r', 'k', 'b', 'o', 'o', 'k', CH_NULL }; /*L"Workbook"*/
-        const WCHAR book_name[]     = { 'B', 'o', 'o', 'k', CH_NULL }; /*L"Book"*/
+        static const WCHAR workbook_name[] = { 'W', 'o', 'r', 'k', 'b', 'o', 'o', 'k', CH_NULL }; /*L"Workbook"*/
+        static const WCHAR book_name[]     = { 'B', 'o', 'o', 'k', CH_NULL }; /*L"Book"*/
 
         if(0 == C_wcsicmp(decoded_directory->name.wchar, workbook_name))
         {
@@ -8296,8 +8296,13 @@ xls_insert_foreign(
         if(p_xls_load_info->s_col == p_xls_load_info->e_col) p_xls_load_info->e_col++;
         if(p_xls_load_info->s_row == p_xls_load_info->e_row) p_xls_load_info->e_row++;
 
+#if 0
         interior_size_slr.col = p_xls_load_info->e_col - p_xls_load_info->s_col;
         interior_size_slr.row = p_xls_load_info->e_row - p_xls_load_info->s_row;
+#else
+        interior_size_slr.col = p_xls_load_info->e_col; /* don't adjust start here - keep blank leading cols/rows from sheet */
+        interior_size_slr.row = p_xls_load_info->e_row;
+#endif
 
         docu_area_init(&p_xls_load_info->docu_area);
         p_xls_load_info->docu_area.br.slr = interior_size_slr;
@@ -8349,11 +8354,15 @@ xls_insert_foreign(
         /* remember the address of the tl cell in the Fireworkz document of the Excel worksheet area being inserted */
         p_xls_load_info->offset_slr = slr;
 
+#if 0
         /* offset by the tl of the area we are inserting from the Excel worksheet */
         /* NB the offset may be negative */
         /* consider: copy area from middle of Excel worksheet, paste at tl of Fireworkz document */
         p_xls_load_info->offset_slr.col -= p_xls_load_info->s_col;
         p_xls_load_info->offset_slr.row -= p_xls_load_info->s_row;
+#else
+        /* didn't trim off leading cols/rows so no further offset required */
+#endif
 
         {
         const COL docu_cols = n_cols_logical(p_docu);

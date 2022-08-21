@@ -367,11 +367,11 @@ quick_block_vprintf(
 #if WINDOWS
         len = _vsnprintf_s(buffer, elemof32(buffer), _TRUNCATE, buffer_format, args /* NOT updated - see below */);
         if(-1 == len)
-            len = strlen32(buffer); /* limit transfer to what actually was achieved */
+            len = (S32) strlen32(buffer); /* limit transfer to what actually was achieved */
 #else /* C99 CRT */
         len = vsnprintf(buffer, elemof32(buffer), buffer_format, args /* will be updated accordingly */);
-        if(len >= elemof32(buffer))
-            len = strlen32(buffer); /* limit transfer to what actually was achieved */
+        if( len >= (S32) elemof32(buffer) )
+            len =  (S32) strlen32(buffer); /* limit transfer to what actually was achieved */
 #endif
 
         status_break(status = quick_block_bytes_add(p_quick_block, buffer, len));

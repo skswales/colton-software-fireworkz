@@ -23,6 +23,9 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
+const F64
+g_real_zero = 0.0;
+
 const SS_DATA
 ss_data_real_zero =
 {

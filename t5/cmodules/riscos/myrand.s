@@ -10,6 +10,7 @@
         GET     as_flags_h
         GET     Hdr:ListOpts
         GET     Hdr:APCS.APCS-32
+        GET     Hdr:Macros
         GET     as_macro_h
 
         AREA    |C$$code|,CODE,READONLY

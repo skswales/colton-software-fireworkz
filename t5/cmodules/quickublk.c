@@ -403,11 +403,11 @@ quick_ublock_vprintf(
 #if WINDOWS
         len = _vsnprintf_s((char *) buffer, elemof32(buffer), _TRUNCATE, (const char *) buffer_format, args /* NOT updated - see below */);
         if(-1 == len)
-            len = ustrlen32(ustr_bptr(buffer)); /* limit transfer to what actually was achieved */
+            len = (S32) ustrlen32(ustr_bptr(buffer)); /* limit transfer to what actually was achieved */
 #else /* C99 CRT */
         len = vsnprintf((char *) buffer, elemof32(buffer), (const char *) buffer_format, args /* will be updated accordingly */);
-        if(len >= elemof32(buffer))
-            len = ustrlen32(ustr_bptr(buffer)); /* limit transfer to what actually was achieved */
+        if( len >= (S32) elemof32(buffer) )
+            len =  (S32) ustrlen32(ustr_bptr(buffer)); /* limit transfer to what actually was achieved */
 #endif
 
         status_break(status = quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(buffer), len));

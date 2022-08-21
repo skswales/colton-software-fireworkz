@@ -27,5 +27,5 @@ s/\$(URD)/_URD_/g
 s/\$(APPL)/Fireworkz/g
 s/\$(PROD)/firewrkz/g
 s/\$(NAME)/FIREWORKZ/g
-s/\$(DIR)/r32/g
-s/\$(COUNTRY)/France/g
+s/\$(DIR)/c32/g
+s/\$(COUNTRY)/UK/g

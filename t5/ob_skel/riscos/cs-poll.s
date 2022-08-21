@@ -14,6 +14,7 @@
         GET     as_flags_h
         GET     Hdr:ListOpts
         GET     Hdr:APCS.APCS-32
+        GET     Hdr:Macros
         GET     as_macro_h
 
 XOS_Bit                 * 1 :SHL: 17
@@ -68,10 +69,10 @@ REDRAW_DELAY_PERIOD * 200 ; /* default (cs) */
         MOV     v3, r3                      ; save event_code^
 
  [ PROFILING
-        SWI     XProfiler_Off
+        SVC     #XProfiler_Off
  ]
  [ POLL_HOURGLASS
-        SWI     XHourglass_Off
+        SVC     #XHourglass_Off
  ]
 
  [ MAINTAIN_OWN_FP
@@ -92,7 +93,7 @@ REDRAW_DELAY_PERIOD * 200 ; /* default (cs) */
 ;               r1 still block^
 ;               r2 unused
         MOV     r3, v2                      ; get pollword^ in correct register for SWI
-        SWI     XWimp_Poll
+        SVC     #XWimp_Poll
 
 wimp_poll_coltsoft_common_exit ; comes here from below too
 
@@ -111,10 +112,10 @@ wimp_poll_coltsoft_common_exit ; comes here from below too
         TEQ     r0, #Wimp_ERedrawWindow
         MOVEQ   r0, #REDRAW_DELAY_PERIOD
         MOVNE   r0, #NORMAL_DELAY_PERIOD
-        SWI     XHourglass_Start
+        SVC     #XHourglass_Start
  ]
  [ PROFILING
-        SWI     XProfiler_On
+        SVC     #XProfiler_On
  ]
 
         MOV     r0, v1                      ; restore error^ or zero
@@ -123,7 +124,7 @@ wimp_poll_coltsoft_common_exit ; comes here from below too
 
 wimp_poll_coltsoft_auto_pollidle ; branched here from null event mask case of above
 
-        SWI     XOS_ReadMonotonicTime
+        SVC     #XOS_ReadMonotonicTime
         ADD     r2, r0, #AUTO_POLLIDLE_TIME ; return nulls only every so often
 
  [ MAINTAIN_OWN_FP
@@ -134,7 +135,7 @@ wimp_poll_coltsoft_auto_pollidle ; branched here from null event mask case of ab
 ;               r1 still block^
 ;               r2 has just been set up
         MOV     r3, v2                      ; get pollword^ in correct register for SWI
-        SWI     XWimp_PollIdle
+        SVC     #XWimp_PollIdle
 
         B       wimp_poll_coltsoft_common_exit
 

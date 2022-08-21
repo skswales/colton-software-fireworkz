@@ -126,6 +126,9 @@ mx_lcm(
 #define PRAGMA_SIDE_EFFECTS
 #include "coltsoft/pragma.h"
 
+
+/* C99 has both erf and erfc; MSVC earlier than 2013 don't */
+
 #if defined(_MSC_VER)
 #if _MSC_VER < 1800 /* < VS2013 */
 
@@ -139,6 +142,7 @@ extern double FreeBSD_erfc(double);
 
 #endif
 #endif /* _MSC_VER */
+
 
 _Check_return_
 extern double FreeBSD_jn(int, double);
@@ -159,52 +163,12 @@ extern double FreeBSD_yn(int, double);
 
 #define hypot(x, y) mx_fhypot(x, y)
 
-_Check_return_
-static inline bool
-isunordered(_InVal_ double a, _InVal_ double b)
-{
-    return(isnan(a) || isnan(b));
-}
-
-_Check_return_
-static inline bool
-isgreater(_InVal_ double a, _InVal_ double b)
-{
-    if(isnan(a) || isnan(b))
-        return(!isnan(b));
-
-    return(a > b);
-}
-
-_Check_return_
-static inline bool
-isgreaterequal(_InVal_ double a, _InVal_ double b)
-{
-    if(isnan(a) || isnan(b))
-        return(!isnan(b));
-
-    return(a >= b);
-}
-
-_Check_return_
-static inline bool
-isless(_InVal_ double a, _InVal_ double b)
-{
-    if(isnan(a) || isnan(b))
-        return(!isnan(b));
-
-    return(a < b);
-}
-
-_Check_return_
-static inline bool
-islessequal(_InVal_ double a, _InVal_ double b)
-{
-    if(isnan(a) || isnan(b))
-        return(!isnan(b));
-
-    return(a <= b);
-}
+#define isgreater(x,y)      (!isunordered((x), (y)) && ((x) > (y)))
+#define isgreaterequal(x,y) (!isunordered((x), (y)) && ((x) >= (y)))
+#define isless(x,y)         (!isunordered((x), (y)) && ((x) < (y)))
+#define islessequal(x,y)    (!isunordered((x), (y)) && ((x) <= (y)))
+#define	islessgreater(x, y)	(!isunordered((x), (y)) && ((x) > (y) || (y) > (x)))
+#define isunordered(x,y)    (isnan(x) || isnan(y))
 
 _Check_return_
 static inline double

@@ -45,36 +45,68 @@
 
 _Check_return_
 static STATUS
-determinant(
+determinant_0(
     _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
     _InVal_     U32 m,
     _OutRef_    P_F64 dp)
 {
-    STATUS status = STATUS_OK;
+    UNREFERENCED_PARAMETER(ap);
+    UNREFERENCED_PARAMETER_InVal_(m);
+    assert(m == 0);
 
-    switch(m)
-    {
-    case 0:
-        *dp = 1.0;
-        break; /* not as silly a question as RJM first thought! (see Bloom, Linear Algebra and Geometry) */
+    *dp = 1.0; /* not as silly a question as RJM first thought! (see Bloom, Linear Algebra and Geometry) */
 
-    case 1:
-        *dp = *ap;
-        break;
+    return(STATUS_OK);
+}
 
-    case 2:
+_Check_return_
+static STATUS
+determinant_1(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    UNREFERENCED_PARAMETER_InVal_(m);
+    assert(m == 1);
+
+    *dp = *ap;
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+determinant_2(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    UNREFERENCED_PARAMETER_InVal_(m);
+    assert(m == 2);
+
 #define a11 (_Aij(ap, 2, 0, 0))
 #define a12 (_Aij(ap, 2, 0, 1))
 #define a21 (_Aij(ap, 2, 1, 0))
 #define a22 (_Aij(ap, 2, 1, 1))
-        *dp = (a11 * a22) - (a12 * a21);
+    *dp = (a11 * a22) - (a12 * a21);
 #undef a11
 #undef a12
 #undef a21
 #undef a22
-        break;
+ 
+    return(STATUS_OK);
+}
 
-    case 3:
+_Check_return_
+static STATUS
+determinant_3(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    UNREFERENCED_PARAMETER_InVal_(m);
+    assert(m == 3);
+
 #define a11 (_Aij(ap, 3, 0, 0))
 #define a12 (_Aij(ap, 3, 0, 1))
 #define a13 (_Aij(ap, 3, 0, 2))
@@ -84,9 +116,9 @@ determinant(
 #define a31 (_Aij(ap, 3, 2, 0))
 #define a32 (_Aij(ap, 3, 2, 1))
 #define a33 (_Aij(ap, 3, 2, 2))
-        *dp = + a11 * (a22 * a33 - a23 * a32)
-              - a12 * (a21 * a33 - a23 * a31)
-              + a13 * (a21 * a32 - a22 * a31);
+    *dp = + a11 * ((a22 * a33) - (a23 * a32))
+          - a12 * ((a21 * a33) - (a23 * a31))
+          + a13 * ((a21 * a32) - (a22 * a31));
 #undef a11
 #undef a12
 #undef a13
@@ -96,56 +128,397 @@ determinant(
 #undef a31
 #undef a32
 #undef a33
-        break;
+ 
+    return(STATUS_OK);
+}
 
-    default:
-        { /* recurse evaluating minors */
-        P_F64 minor;
-        const U32 minor_m = m - 1;
-        F64 minor_D;
-        U32 col_idx, i_col_idx, o_col_idx;
-        U32 i_row_idx, o_row_idx;
+#define DETERMINANT_GAUSS_ELIMINATION 1
 
-        *dp = 0.0;
+#if !defined(DETERMINANT_GAUSS_ELIMINATION)
 
-        if(NULL == (minor = al_ptr_alloc_elem(F64, minor_m * minor_m, &status)))
-            return(status); /* unable to determine */
+_Check_return_
+static STATUS
+determinant(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp);
 
-        for(col_idx = 0; col_idx < m; ++col_idx)
+_Check_return_
+static STATUS
+determinant_minors(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    /* recurse evaluating minors */
+    STATUS status = STATUS_OK;
+    P_F64 minor;
+    const U32 minor_m = m - 1;
+    F64 minor_D;
+    U32 col_idx, i_col_idx, o_col_idx;
+    U32 i_row_idx, o_row_idx;
+
+    *dp = 0.0;
+
+    if(NULL == (minor = al_ptr_alloc_elem(F64, minor_m * minor_m, &status)))
+        return(status); /* unable to determine */
+
+    for(col_idx = 0; col_idx < m; ++col_idx)
+    {
+        F64 a1j = _em(ap, m, 0, col_idx);
+
+        if(0.0 == a1j)
+            continue;
+
+        /* build minor by removing all of top row and current column */
+        for(i_col_idx = o_col_idx = 0; o_col_idx < minor_m; ++i_col_idx, ++o_col_idx)
         {
-            F64 a1j = _em(ap, m, 0, col_idx);
+            if(i_col_idx == col_idx)
+                ++i_col_idx;
 
-            if(0.0 == a1j)
-                continue;
-
-            /* build minor by removing all of top row and current column */
-            for(i_col_idx = o_col_idx = 0; o_col_idx < minor_m; ++i_col_idx, ++o_col_idx)
+            for(i_row_idx = 1, o_row_idx = 0; o_row_idx < minor_m; ++i_row_idx, ++o_row_idx)
             {
-                if(i_col_idx == col_idx)
-                    ++i_col_idx;
-
-                for(i_row_idx = 1, o_row_idx = 0; o_row_idx < minor_m; ++i_row_idx, ++o_row_idx)
-                {
-                    f64_copy(_em(minor, minor_m, o_row_idx, o_col_idx), _em(ap, m, i_row_idx, i_col_idx));
-                }
+                f64_copy(_em(minor, minor_m, o_row_idx, o_col_idx), _em(ap, m, i_row_idx, i_col_idx));
             }
-
-            status_break(status = determinant(minor, minor_m, &minor_D));
-
-            if(col_idx & 1) /* cofactor has alternating signs */
-                *dp -= (a1j * minor_D);
-            else
-                *dp += (a1j * minor_D);
         }
 
-        al_ptr_dispose(P_P_ANY_PEDANTIC(&minor));
+        status_break(status = determinant(minor, minor_m, &minor_D));
 
-        break;
-        }
+        if(col_idx & 1) /* cofactor has alternating signs */
+            *dp -= (a1j * minor_D);
+        else
+            *dp += (a1j * minor_D);
     }
+
+    al_ptr_dispose(P_P_ANY_PEDANTIC(&minor));
 
     return(status);
 }
+
+#endif /* DETERMINANT_GAUSS_ELIMINATION */
+
+#if defined(DETERMINANT_GAUSS_ELIMINATION)
+
+_Check_return_
+static STATUS
+determinant_gauss_elimination(
+    _In_reads_x_(m*m) PC_F64 ap_in /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    STATUS status = STATUS_OK;
+    U32 curr_row_idx, row_idx, col_idx;
+    P_F64 ap /*[m][m]*/;
+
+    *dp = 1.0;
+
+    /* take a copy as this routine trashes the array, which some callers don't want! */
+    if(NULL == (ap = al_ptr_alloc_elem(F64, m * m, &status)))
+        return(status); /* unable to determine */
+
+    memcpy32(ap, ap_in, (m * m) * sizeof32(F64));
+
+    /* for each row (i==curr_row_idx) */
+    for(curr_row_idx = 0; curr_row_idx < m; ++curr_row_idx)
+    {
+        /* scale the whole row such that the element on the diagonal (Aii) is one */
+        const F64 initial_Aii = _Aij(ap, m, curr_row_idx, curr_row_idx);
+        F64 reciprocal_Aii;
+
+        /* we are going to be dividing by Aii, so check validity */
+        if(!isgreater(fabs(initial_Aii), F64_MIN))
+        {
+            *dp = 0.0; /* this is kosher */
+            break;
+        }
+
+        *dp *= initial_Aii; /* determinant is scaled by this */
+
+        reciprocal_Aii = 1.0 / initial_Aii;
+
+        /* for each column in the current row, scale together */
+        _Aij(ap, m, curr_row_idx, curr_row_idx) = 1.0; /* Aii := one */
+
+        /* note that values to the left of the (i)th column in the current row (and those below) are already zero, so we can skip scaling */
+        for(col_idx = curr_row_idx + 1; col_idx < m; ++col_idx)
+        {
+            _Aij(ap, m, curr_row_idx, col_idx) *= reciprocal_Aii;
+        }
+
+        /* for all succeding rows, subtract a multiple of this scaled current row to make the ith column zero */
+        for(row_idx = curr_row_idx + 1; row_idx < m; ++row_idx)
+        {
+            F64 multiples;
+
+            if(0.0 == _Aij(ap, m, row_idx, curr_row_idx))
+                continue;
+
+            multiples = _Aij(ap, m, row_idx, curr_row_idx); /* as _Aij(ap, m, curr_row_idx, curr_row_idx) is now one */
+
+            _Aij(ap, m, row_idx, curr_row_idx) = 0.0; /* := zero */
+
+            /* note that values to the left of the (i)th column in the current row are zero */
+            for(col_idx = curr_row_idx + 1; col_idx < m; ++col_idx)
+            {
+                _Aij(ap, m, row_idx, col_idx) -= (multiples * _Aij(ap, m, curr_row_idx, col_idx));
+            }
+        }
+    }
+
+    /* should end up with row-echelon form array - lower triangle zero, all diagonal elements one */
+    al_ptr_dispose(P_P_ANY_PEDANTIC(&ap));
+
+    return(status);
+}
+
+#endif /* DETERMINANT_GAUSS_ELIMINATION */
+
+_Check_return_
+static STATUS
+determinant(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    switch(m)
+    {
+    case 0:
+        return(determinant_0(ap, m, dp));
+
+    case 1:
+        return(determinant_1(ap, m, dp));
+
+    case 2:
+        return(determinant_2(ap, m, dp));
+
+    case 3:
+        return(determinant_3(ap, m, dp));
+
+    default:
+#if defined(DETERMINANT_GAUSS_ELIMINATION)
+        return(determinant_gauss_elimination(ap, m, dp));
+#else
+        return(determinant_minors(ap, m, dp));
+#endif
+    }
+}
+
+#if RISCOS
+//#define POSSIBLE_VFP_SUPPORT 1
+#endif
+
+#if defined(POSSIBLE_VFP_SUPPORT)
+
+#include "cmodules/riscos/vfp_double.h"
+
+_Check_return_
+static STATUS
+determinant_3_vfp(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    UNREFERENCED_PARAMETER_InVal_(m);
+    assert(m == 3);
+
+#define a11 (_Aij(ap, 3, 0, 0))
+#define a12 (_Aij(ap, 3, 0, 1))
+#define a13 (_Aij(ap, 3, 0, 2))
+#define a21 (_Aij(ap, 3, 1, 0))
+#define a22 (_Aij(ap, 3, 1, 1))
+#define a23 (_Aij(ap, 3, 1, 2))
+#define a31 (_Aij(ap, 3, 2, 0))
+#define a32 (_Aij(ap, 3, 2, 1))
+#define a33 (_Aij(ap, 3, 2, 2))
+
+    VFP_DOUBLE nums[3][3];
+    VFP_DOUBLE determ, temp /*, product_l, product_r*/;
+#define n11 (nums[0][0])
+#define n12 (nums[0][1])
+#define n13 (nums[0][2])
+#define n21 (nums[1][0])
+#define n22 (nums[1][1])
+#define n23 (nums[1][2])
+#define n31 (nums[2][0])
+#define n32 (nums[2][1])
+#define n33 (nums[2][2])
+#if 1 /* simple flat copy loop */
+    PC_F64 p_f64_in = &a11;
+    P_VFP_DOUBLE p_vfp_double_out = &n11;
+    int i;
+
+    for(i = 0; i < 3*3; ++i)
+        vfp_double_copy_from_f64(p_vfp_double_out++, p_f64_in++);
+#else
+    vfp_double_copy_from_f64(&n11, &a11);
+    vfp_double_copy_from_f64(&n12, &a12);
+    vfp_double_copy_from_f64(&n13, &a13);
+    vfp_double_copy_from_f64(&n21, &a21);
+    vfp_double_copy_from_f64(&n22, &a22);
+    vfp_double_copy_from_f64(&n23, &a23);
+    vfp_double_copy_from_f64(&n31, &a31);
+    vfp_double_copy_from_f64(&n32, &a32);
+    vfp_double_copy_from_f64(&n33, &a33);
+#endif
+
+#undef a11
+#undef a12
+#undef a13
+#undef a21
+#undef a22
+#undef a23
+#undef a31
+#undef a32
+#undef a33
+
+    /* determinant := */
+
+    /* + [n11 * ((n22 * n33) - (n23 * n32))] */
+#if 1 /* product - product */
+    temp = vfp_double_mul_sub_mul(/*lhs*/ &n22, &n33,
+                                  /*rhs*/ &n23, &n32);
+#else
+    product_l /*22_33*/ = vfp_double_mul(&n22, &n33);
+    product_r /*23_32*/ = vfp_double_mul(&n23, &n32);
+    temp = vfp_double_sub(&product_l /*22_33*/, &product_r /*23_32*/);
+#endif
+    determ = vfp_double_mul(&n11, &temp);
+
+#if 1 /* turn this second term around for MLA */
+    /* + [n12 * ((n23 * n31) - (n21 * n33))] */
+#if 1 /* product - product */
+    temp = vfp_double_mul_sub_mul(/*lhs*/ &n23, &n31,
+                                  /*rhs*/ &n21, &n33);
+#else
+    product_l /*23_31*/ = vfp_double_mul(&n23, &n31);
+    product_r /*21_33*/ = vfp_double_mul(&n21, &n33);
+    temp = vfp_double_sub(&product_l /*23_31*/, &product_r /*21_33*/);
+#endif
+    determ = vfp_double_mla(&n12, &temp, &determ);
+#else
+    /* - [n12 * ((n21 * n33) - (n23 * n31))] */
+    product_l /*21_33*/ = vfp_double_mul(&n21, &n33);
+    product_r /*23_31*/ = vfp_double_mul(&n23, &n31);
+    temp = vfp_double_sub(&product_l /*21_33*/, &product_r /*23_31*/);
+    temp = vfp_double_mul(&n12, &temp);
+    determ = vfp_double_sub(&determ, &temp);
+#endif
+
+    /* + [n13 * ((n21 * n32) - (n22 * n31))] */
+#if 1 /* product - product */
+    temp = vfp_double_mul_sub_mul(/*lhs*/ &n21, &n32,
+                                  /*rhs*/ &n22, &n31);
+#else
+    product_l /*21_32*/ = vfp_double_mul(&n21, &n32);
+    product_r /*22_31*/ = vfp_double_mul(&n22, &n31);
+    temp = vfp_double_sub(&product_l /*21_32*/, &product_r /*22_31*/);
+#endif
+    determ = vfp_double_mla(&n13, &temp, &determ);
+
+#undef n11
+#undef n12
+#undef n13
+#undef n21
+#undef n22
+#undef n23
+#undef n31
+#undef n32
+#undef n33
+
+    vfp_double_copy_to_f64(dp, &determ);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+determinant_vfp(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp);
+
+_Check_return_
+static STATUS
+determinant_vfp_minors(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    /* recurse evaluating minors (VFP is active) */
+    VFP_DOUBLE vfp_determ;
+    STATUS status = STATUS_OK;
+    P_F64 minor;
+    const U32 minor_m = m - 1;
+    F64 minor_D;
+    U32 col_idx, i_col_idx, o_col_idx;
+    U32 i_row_idx, o_row_idx;
+    F64 nums[5*5]; /* don't really need to allocate for small ones */
+
+    f64_copy_words(dp, &g_real_zero); /* *dp = 0.0; saves a FPA MVFD in this VFP code */
+    vfp_determ = vfp_double_from_f64(dp);
+
+    if(minor_m <= 5)
+        minor = nums;
+    else if(NULL == (minor = al_ptr_alloc_elem(F64, minor_m * minor_m, &status)))
+        return(status); /* unable to determine */
+
+    for(col_idx = 0; col_idx < m; ++col_idx)
+    {
+        /* F64 a1j = _em(ap, m, 0, col_idx); */
+        const VFP_DOUBLE vfp_a1j = vfp_double_from_f64(&/*a1j*/_em(ap, m, 0, col_idx));
+
+        if(0 == vfp_double_compare_zero(&vfp_a1j)) /* -/0/+ */
+            continue;
+
+        /* build minor by removing all of top row and current column */
+        for(i_col_idx = o_col_idx = 0; o_col_idx < minor_m; ++i_col_idx, ++o_col_idx)
+        {
+            if(i_col_idx == col_idx)
+                ++i_col_idx;
+
+            for(i_row_idx = 1, o_row_idx = 0; o_row_idx < minor_m; ++i_row_idx, ++o_row_idx)
+            {
+                f64_copy(_em(minor, minor_m, o_row_idx, o_col_idx), _em(ap, m, i_row_idx, i_col_idx));
+            }
+        }
+
+        status_break(status = determinant_vfp(minor, minor_m, &minor_D));
+
+        {
+        const VFP_DOUBLE vfp_minor_D = vfp_double_from_f64(&minor_D);
+        const VFP_DOUBLE vfp_cofactor = vfp_double_mul(&vfp_a1j, &vfp_minor_D);
+
+        if(col_idx & 1) /* cofactor has alternating signs */
+            vfp_determ = vfp_double_sub(&vfp_determ, &vfp_cofactor);
+        else
+            vfp_determ = vfp_double_add(&vfp_determ, &vfp_cofactor);
+        } /*block*/
+    }
+
+    if(minor != nums)
+        al_ptr_dispose(P_P_ANY_PEDANTIC(&minor));
+
+    vfp_double_copy_to_f64(dp, &vfp_determ);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+determinant_vfp(
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _InVal_     U32 m,
+    _OutRef_    P_F64 dp)
+{
+    assert(m >= 3);
+
+    if(m == 3)
+        return(determinant_3_vfp(ap, m, dp));
+
+   return(determinant_vfp_minors(ap, m, dp));
+}
+
+#endif /* POSSIBLE_VFP_SUPPORT */
 
 /*
 * NUMBER m_determ(square-array)
@@ -185,6 +558,13 @@ PROC_EXEC_PROTO(c_m_determ)
     {
         S32 i, j;
 
+#if defined(POSSIBLE_VFP_SUPPORT)
+        bool f_using_vfp = false;
+
+        if(m >= 3)
+            f_using_vfp = vfp_context_ensure();
+#endif
+
         assert(&_Aij(a, m, m - 1, m - 1) + 1 == &a[m * m]);
 
         /* load up the matrix (a) */
@@ -201,13 +581,22 @@ PROC_EXEC_PROTO(c_m_determ)
             }
         }
 
+#if defined(POSSIBLE_VFP_SUPPORT)
+        if(status_ok(status = (f_using_vfp ? determinant_vfp : determinant)(a, m, &m_determ_result)))
+#else
         if(status_ok(status = determinant(a, m, &m_determ_result)))
+#endif
         {
-            ss_data_set_real_try_integer(p_ss_data_res, m_determ_result);
+            ss_data_set_real(p_ss_data_res, m_determ_result);
         }
 
         if(a != nums)
             al_ptr_dispose(P_P_ANY_PEDANTIC(&a));
+
+#if defined(POSSIBLE_VFP_SUPPORT)
+        if(f_using_vfp)
+            vfp_context_destroy();
+#endif
     }
 
     if(status_fail(status))
@@ -232,6 +621,9 @@ PROC_EXEC_PROTO(c_m_inverse)
     P_F64 minor /*[minor_m][minor_m]*/ = NULL;
     U32 i, j;
     F64 D, minor_D;
+#if defined(POSSIBLE_VFP_SUPPORT)
+    bool f_using_vfp = false;
+#endif
 
     exec_func_ignore_parms();
 
@@ -254,6 +646,11 @@ PROC_EXEC_PROTO(c_m_inverse)
     if(NULL == (adj = al_ptr_alloc_bytes(P_F64, m * (m * sizeof32(*adj)), &status)))
         goto endpoint;
 
+#if defined(POSSIBLE_VFP_SUPPORT)
+    if(m >= 3)
+        f_using_vfp = vfp_context_ensure();
+#endif
+
     /* load up the matrix (a) */
     for(i = 0; i < m; ++i)
     {
@@ -267,14 +664,19 @@ PROC_EXEC_PROTO(c_m_inverse)
                 goto endpoint;
             }
 
-            _Aij(a, m, i, j) = ss_data_get_real(&ss_data);
+            f64_copy(_Aij(a, m, i, j), ss_data.arg.fp);
         }
     }
 
+#if defined(POSSIBLE_VFP_SUPPORT)
+    if(status_fail(status = (f_using_vfp ? determinant_vfp : determinant)(a, m, &D)))
+#else
     if(status_fail(status = determinant(a, m, &D)))
+#endif
         goto endpoint;
 
-    if(0.0 == D)
+    /* we are going to be dividing by D, so check validity */
+    if(!isgreater(fabs(D), F64_MIN) /*0.0 == D*/)
     {
         status = EVAL_ERR_MATRIX_SINGULAR;
         goto endpoint;
@@ -311,14 +713,18 @@ PROC_EXEC_PROTO(c_m_inverse)
 
                     if(out_j > j) --out_j;
 
-                    _Aij(minor, minor_m, out_i, out_j) = _Aij(a, m, in_i, in_j);
+                    f64_copy(_Aij(minor, minor_m, out_i, out_j), _Aij(a, m, in_i, in_j));
                 }
             }
 
+#if defined(POSSIBLE_VFP_SUPPORT)
+            if(status_fail(status = (f_using_vfp ? determinant_vfp : determinant)(minor, minor_m, &minor_D)))
+#else
             if(status_fail(status = determinant(minor, minor_m, &minor_D)))
+#endif
                 goto endpoint;
 
-            _Aij(adj, m, i, j) = minor_D;
+            f64_copy(_Aij(adj, m, i, j), minor_D);
        }
     }
 
@@ -334,17 +740,37 @@ PROC_EXEC_PROTO(c_m_inverse)
 
     /* step 3 - transpose the matrix of cofactors => adjunct(A) (simple to do this in formation of result) */
 
-    /* copy out the inverse(A) == adjunct(A) / determinant(A) */
+    { /* copy out the inverse(A) == adjunct(A) / determinant(A) */
+#if defined(POSSIBLE_VFP_SUPPORT)
+    const VFP_DOUBLE vfp_D = vfp_double_from_f64(&D); /* copy once - trivial, so doesn't matter if VFP not being used! */
+#endif
+
     for(i = 0; i < m; ++i)
     {
         for(j = 0; j < m; ++j)
         {
-            P_SS_DATA p_ss_data = ss_array_element_index_wr(p_ss_data_res, j, i); /* NB j,i */
-            ss_data_set_real(p_ss_data, _Aij(adj, m, j, i) / D); /* NB j,i here too for transpose step 3 above */
+            const P_SS_DATA p_ss_data = ss_array_element_index_wr(p_ss_data_res, j, i); /* NB j,i */
+            const PC_F64 p_Aji = &_Aij(adj, m, j, i); /* NB j,i here too for transpose step 3 above */
+#if defined(POSSIBLE_VFP_SUPPORT)
+            if(f_using_vfp)
+            {
+                const VFP_DOUBLE vfp_Aji = vfp_double_from_f64(p_Aji);
+                const VFP_DOUBLE vfp_temp = vfp_double_div(&vfp_Aji, &vfp_D);
+                ss_data_set_real_from_vfp_double(p_ss_data, vfp_temp);
+                continue;
+            }
+#endif
+            ss_data_set_real(p_ss_data, *p_Aji / D);
         }
     }
+    } /*block*/
 
 endpoint:
+
+#if defined(POSSIBLE_VFP_SUPPORT)
+    if(f_using_vfp)
+        vfp_context_destroy();
+#endif
 
     al_ptr_dispose(P_P_ANY_PEDANTIC(&minor));
     al_ptr_dispose(P_P_ANY_PEDANTIC(&adj));
@@ -415,7 +841,7 @@ PROC_EXEC_PROTO(c_m_mult)
                 }
 
                 elep = ss_array_element_index_wr(p_ss_data_res, ix, iy);
-                ss_data_set_real_try_integer(elep, product);
+                ss_data_set_real(elep, product);
             }
         }
     }

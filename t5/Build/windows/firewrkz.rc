@@ -108,7 +108,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 
 #define VER_INTERNALNAME_STR        L"firewrkz"
 
-#define VER_LEGALCOPYRIGHT_STR      L"LegalCopyright", L"Copyright © 1992-2020 Colton Software. " \
+#define VER_LEGALCOPYRIGHT_STR      L"LegalCopyright", L"Copyright © 1992-2021 Colton Software. " \
                                     L"Please see RelNotes.htm for additional copyright information"
 
 #define VER_LEGALTRADEMARKS_STR     L"Please see RelNotes.htm for all trademark information"

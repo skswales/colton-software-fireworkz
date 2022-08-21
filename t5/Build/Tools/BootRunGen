@@ -37,7 +37,9 @@ IF profile% THEN info$ += "Profile "
 :
 REM Any kind of release?
 release% = release32%
+IF check_release32% THEN release% = TRUE
 IF release% THEN info$ += "Release "
+IF check_release32% THEN info$ += "(with checks) "
 REM IF bound_release32% THEN info$ += "(objects bound) "
 IF loadable_release32% THEN info$ += "(object modules loadable) "
 :
@@ -123,7 +125,7 @@ SYS "OS_GetEnv" TO env%
 buflen% = 511
 DIM buffer% LOCAL buflen%
 :
-SYS "XOS_ReadArgs","BASIC,quit/K,load/K,output/A,product/A,version/A,runimage/K,r32/S,d32/S,p32/S,r32m/S,boot/S,alternate/S",env%,buffer%,buflen% TO ;PSR%
+SYS "XOS_ReadArgs","BASIC,quit/K,load/K,output/A,product/A,version/A,runimage/K,r32/S,c32/S,d32/S,p32/S,r32m/S,boot/S,alternate/S",env%,buffer%,buflen% TO ;PSR%
 IF PSR% AND 1 THEN ERROR 0,"Bad parameters to BootRunGen"
 :
 ptr% = buffer%: ptr% += 3*4: REM Skip BASIC, optional -quit, -load filename
@@ -136,6 +138,9 @@ runimage$ = "": IF !ptr% THEN runimage$ = FNstringize(!ptr%)
 ptr% += 4
 :
 release32% = FALSE: IF !ptr% THEN release32% = TRUE
+ptr% += 4
+:
+check_release32% = FALSE: IF !ptr% THEN check_release32% = TRUE
 ptr% += 4
 :
 debug32% = FALSE: IF !ptr% THEN debug32% = TRUE

@@ -10,6 +10,7 @@
         GET     as_flags_h
         GET     Hdr:ListOpts
         GET     Hdr:APCS.APCS-32
+        GET     Hdr:Macros
         GET     as_macro_h
 
         GBLL    MULDIV_USE_UMULL
@@ -121,11 +122,11 @@ $label
         MOV     v5, #0
         MOV     r14, #1 ; used as 1 << v5
 
-02      CMPS    a2, #&80000000
+02      CMP     a2, #&80000000
         BCS     %FT03
 
-        CMPS    a2, a4
-        CMPEQS  a1, a3          ; compare of [a2,a1] against [a4,a3]
+        CMP     a2, a4
+        CMPEQ   a1, a3          ; compare of [a2,a1] against [a4,a3]
         BCS     %FT03
 
         MOVS    a1, a1, ASL #1  ; left shift the 64-bit shifted divisor
@@ -134,11 +135,11 @@ $label
         ADD     v5, v5, #1
         B       %BT02
 
-03      CMPS    a2, a4
-        CMPEQS  a1, a3
+03      CMP     a2, a4
+        CMPEQ   a1, a3
         BHI     %FT04
 
-        CMPS    v5, #32
+        CMP     v5, #32
         ADDCC   v6, v6, r14, ASL v5
         SUBCS   ip, v5, #32
         ADDCS   v4, v4, r14, ASL ip
@@ -161,11 +162,15 @@ $label
         MACRO
         MULDIV_FINISH
 
+ [ {TRUE} ; UAL - implicit S!
+        TEQ     v1, v2          ; v1 = sgn(a*b), v2 = sgn(divisor): if a*b and divisor have opposite signs,
+ |
         TEQS    v1, v2          ; v1 = sgn(a*b), v2 = sgn(divisor): if a*b and divisor have opposite signs,
+ ]
         RSBMI   v6, v6, #0      ; negate the quotient
         RSBMI   v4, v4, #0
 
-        CMPS    v1, #0          ; and if the dividend (a*b) was negative,
+        CMP     v1, #0          ; and if the dividend (a*b) was negative,
         RSBLT   a3, a3, #0      ; negate the remainder
 
         LDR     ip, =muldiv64__statics ; stash the remainder and overflow (quotient hi word)

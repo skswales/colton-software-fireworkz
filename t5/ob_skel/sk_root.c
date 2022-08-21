@@ -273,7 +273,7 @@ T5_CMD_PROTO(static, t5_cmd_numform_data)
 
     if(status_ok(status) && (NULL != ustr_arg_string))
     {
-        S32 day;
+        U32 day;
 
         for(day = 0; day < elemof32(p_numform_context->day_endings); ++day)
         {

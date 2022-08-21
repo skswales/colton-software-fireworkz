@@ -201,6 +201,9 @@ $(BUILD_DIR).ob_skel.riscos.o.muldivas: $(T5).cmodules.riscos.s.muldivas
 $(BUILD_DIR).ob_skel.riscos.o.myrand: $(T5).cmodules.riscos.s.myrand
  Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
  $(AS) -o $@ $(ASflags) $?
+$(BUILD_DIR).ob_skel.riscos.o.vfparith: $(T5).cmodules.riscos.s.vfparith
+ Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
+ $(AS) -o $@ $(ASflags) -cpu Cortex-A8 $?
 
 $(BUILD_DIR).ob_skel.riscos.o.cs-flex: $(T5).ob_skel.riscos.c.cs-flex
  $(CC) -o $@ $(ccflags) $?

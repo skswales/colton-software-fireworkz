@@ -238,7 +238,7 @@ docno_enum_docs(
 {
     DOCNO docno = (DOCNO) ((docno_in == DOCNO_NONE) ? DOCNO_FIRST : (docno_in + 1));
 
-    for(; docno < g_docu_table_limit; ++docno)
+    for(; (U32) docno < g_docu_table_limit; ++docno)
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
@@ -273,7 +273,7 @@ docno_enum_thunks(
 {
     DOCNO docno = (DOCNO) ((docno_in == DOCNO_NONE) ? DOCNO_FIRST : (docno_in + 1));
 
-    for(; docno < g_docu_table_limit; ++docno)
+    for(; (U32) docno < g_docu_table_limit; ++docno)
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
@@ -305,7 +305,7 @@ docno_allocate_scan_table(void)
     /* scan g_docu_table[] for a free slot */
     DOCNO docno;
 
-    for(docno = DOCNO_FIRST; docno < g_docu_table_limit; ++docno)
+    for(docno = DOCNO_FIRST; (U32) docno < g_docu_table_limit; ++docno)
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
@@ -451,7 +451,7 @@ docno_find_name(
 
     PTR_ASSERT(p_docu_name->leaf_name);
 
-    for(docno = DOCNO_FIRST; docno < g_docu_table_limit; ++docno)
+    for(docno = DOCNO_FIRST; (U32) docno < g_docu_table_limit; ++docno)
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
@@ -977,8 +977,8 @@ extern BOOL
 docno_is_valid(
     _InVal_     DOCNO docno)
 {
-    assert(docno < g_docu_table_limit);
-    if(docno >= g_docu_table_limit)
+    assert((U32) docno < g_docu_table_limit);
+    if((U32) docno >= g_docu_table_limit)
         return(FALSE);
 
     return(DOCU_NOT_NONE(g_docu_table[docno]));

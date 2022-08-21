@@ -172,11 +172,13 @@
 #endif
 
 #pragma warning(push)
+#if _WIN32_MAXVER <= 0x0601 /* Windows SDK 7.1A and earlier (still used for targetting Windows XP) */
 #pragma warning(disable:4115) /* named type definition in parentheses */
 #pragma warning(disable:4255) /* no function prototype given: converting '()' to '(void) */
 #pragma warning(disable:4668) /* not defined as a preprocessor macro */
-#pragma warning(disable:4820) /* padding added after data member */
 #pragma warning(disable:4826) /* conversion from 'const void *' to 'void *' is sign-extended */ /* for Windows Server 2003 R2 SDK */
+#endif
+#pragma warning(disable:4820) /* padding added after data member */
 #include "windows.h"
 #pragma warning(pop)
 
@@ -236,7 +238,9 @@ shellapi.h must be included before windowsx.h for relevant message crackers
 
 #pragma warning(push)
 #pragma warning(disable:4201) /* nonstandard extension used : nameless struct/union */
-#pragma warning(disable:4255) /* 'x' : no function prototype given: converting '()' to '(void)' */ /* for SDK v6.0A */
+#if _MSC_VER <= 1500 /* VC2008 */
+#pragma warning(disable:4255) /* no function prototype given: converting '()' to '(void)' */ /* for SDK v6.0A */
+#endif
 #pragma warning(disable:4668) /* not defined as a preprocessor macro */
 #pragma warning(disable:4820) /* padding added after data member */
 #include "shellapi.h"

@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 2013-2020 Stuart Swales
+# Copyright (C) 2013-2021 Stuart Swales
 
 CCflags = -c -throwback -DRELEASED  
 

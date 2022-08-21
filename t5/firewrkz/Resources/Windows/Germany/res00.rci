@@ -36,11 +36,11 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	L"2.30.01"
+	0x1,	L"2.30.02"
 // UK 2:dd mmm yyyy
-	0x2,	L"15 Nov. 2020"
+	0x2,	L"30 Aug. 2021"
 //
-	0x3,	L"© 1992-2020 Colton Software"
+	0x3,	L"© 1992-2021 Colton Software"
 // UK w1037:The product uses the following components
 	0x40D,	L"Das Produkt verwendet die folgenden Komponenten"
 // UK w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions

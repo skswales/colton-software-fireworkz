@@ -21,12 +21,14 @@
 #include "cderr.h"
 
 __pragma(warning(push))
-__pragma(warning(disable:4917)) /* a GUID can only be associated with a class, interface or namespace */
 __pragma(warning(disable:4820)) /* padding added after data member */
-__pragma(warning(disable:4668)) /* not defined as a preprocessor macro */
-__pragma(warning(disable:4115)) /* named type definition in parentheses */
 __pragma(warning(disable:4201)) /* nonstandard extension used : nameless struct/union */
+#if _WIN32_MAXVER <= 0x0600 /* Windows SDK 6.0A and earlier (VS2008) */
+__pragma(warning(disable:4115)) /* named type definition in parentheses */
 __pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void) (Windows SDK 6.0A) */
+__pragma(warning(disable:4668)) /* not defined as a preprocessor macro */
+__pragma(warning(disable:4917)) /* a GUID can only be associated with a class, interface or namespace */
+#endif
 //#define _WIN32_IE 0x0200        /* don't use new features requiring IE Web Desktop */
 #include "shlobj.h"
 __pragma(warning(pop))

@@ -30,7 +30,9 @@
 
 #if WINDOWS
 __pragma(warning(push))
-__pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void) (Windows SDK 6.0A) */
+#if (_WIN32_WINNT >= 0x0600) /* in later SDKs it is target-conditional */ || (_WIN32_MAXVER <= 0x0600) /* Windows SDK 6.0A and earlier (VS2008) */
+__pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void) */
+#endif
 #include "uxtheme.h"
 __pragma(warning(pop))
 #endif

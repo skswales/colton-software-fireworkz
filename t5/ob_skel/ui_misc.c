@@ -679,13 +679,13 @@ query_quit_do_query(
     width_1 = ui_width_from_tstr(quit_query_text_1_data.caption.text.tstr);
 
     /* but not so small as to have buttons crashing into each other */
-    if( width_1 < ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H)))
-        width_1 = ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H));
+    if( width_1 < (PIXIT) ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H)) )
+        width_1 = (PIXIT) ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H));
 
     quit_query_text_1.relative_offset[2] = width_1;
 
     /* centralise the middle button of the three */
-    buttongap_h = ((width_1 - ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H))) / 2);
+    buttongap_h = ((width_1 - (PIXIT) ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H))) / 2);
 #if RISCOS
     SDC_query_cancel.relative_offset[0] = buttongap_h;
 #else
@@ -1094,13 +1094,13 @@ query_save_modified(
     width_2 = ui_width_from_tstr(close_query_text_2_data.caption.text.tstr);
 
     /* but not so small as to have buttons crashing into each other */
-    if( width_2 < ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H)))
-        width_2 = ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H));
+    if( width_2 < (PIXIT) ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H)) )
+        width_2 = (PIXIT) ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H));
 
     close_query_text_2.relative_offset[2] = width_2;
 
     /* centralise the middle button of the three */
-    buttongap_h = ((width_2 - ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H))) / 2);
+    buttongap_h = ((width_2 - (PIXIT) ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H))) / 2);
 #if RISCOS
     SDC_query_cancel.relative_offset[0] = buttongap_h; 
 #else

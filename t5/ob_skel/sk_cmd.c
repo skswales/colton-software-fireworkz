@@ -1269,7 +1269,7 @@ static STATUS
 kmap_assoc_indexes_create(void)
 {
     STATUS status;
-    U32 n = elemof32(kmap_assoc_table);
+    const U32 n = elemof32(kmap_assoc_table);
 
     /* first sort table by code */
 #if WINDOWS
@@ -1284,9 +1284,9 @@ kmap_assoc_indexes_create(void)
         return(status);
 
     {
-    KMAP_ASSOC_INDEX i;
+    U32 i;
     for(i = 0; i < n; ++i)
-        kmap_assoc_index_text[i] = i;
+        kmap_assoc_index_text[i] = (KMAP_ASSOC_INDEX) i;
     } /*block*/
 
     qsort(kmap_assoc_index_text, n, sizeof(kmap_assoc_index_text[0]), kmap_assoc_index_text_compare);

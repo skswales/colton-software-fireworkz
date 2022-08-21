@@ -4,11 +4,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2019-2020 Stuart Swales */
+/* Copyright (C) 2019-2021 Stuart Swales */
 
 /* NB keep in step with other files (definitive list in common.mf_mid) */
 
-#define HEX_VERSION_NUMBER          0x23001
+#define HEX_VERSION_NUMBER          0x23002
 
 /* for Windows RC file */
 
