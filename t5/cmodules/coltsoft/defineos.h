@@ -76,6 +76,10 @@
 #define BIG_ENDIAN 4321
 #define LITTLE_ENDIAN 1234
 
+#if defined(__clang__)
+#include "cmodules/coltsoft/host_clang.h"
+#endif
+
 #if RISCOS
 
 #define BYTE_ORDER LITTLE_ENDIAN
@@ -103,6 +107,8 @@
 #endif /* CROSS_COMPILE */
 
 #define F64_IS_64_BIT_ALIGNED 0
+
+#define inline_when_fast_fp /*nothing*/
 
 #if CROSS_COMPILE && defined(HOST_GCCSDK) && defined(TARGET_RISCOS)
 /*__pragma(message("CROSS_COMPILE: HOST_GCCSDK & TARGET_RISCOS"))*/

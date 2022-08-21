@@ -17,8 +17,8 @@
 _Check_return_
 extern BOOL __cdecl
 __myasserted(
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _InVal_     U32 line_no,
     _In_z_ _Printf_format_string_ PCTSTR format,
     /**/        ...);
@@ -26,8 +26,8 @@ __myasserted(
 _Check_return_
 extern BOOL __cdecl
 __myasserted_msg(
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _InVal_     U32 line_no,
     _In_z_      PCTSTR message,
     _In_z_ _Printf_format_string_ PCTSTR format,
@@ -40,8 +40,8 @@ __myasserted_msg(
 _Check_return_
 extern BOOL
 __myasserted_EQ(
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _InVal_     U32 line_no,
     _InVal_     U32 val1,
     _InVal_     U32 val2);
@@ -49,8 +49,8 @@ __myasserted_EQ(
 _Check_return_
 extern BOOL
 __vmyasserted(
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _InVal_     U32 line_no,
     _In_opt_z_  PCTSTR message,
     _In_z_ _Printf_format_string_ PCTSTR format,
@@ -60,8 +60,8 @@ _Check_return_
 extern BOOL
 __bool_assert(
     _InVal_     BOOL bool_val,
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _InVal_     U32 line_no,
     _In_z_      PCTSTR str);
 
@@ -73,8 +73,8 @@ _Check_return_
 extern STATUS
 __status_assert(
     _InVal_     STATUS status,
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _InVal_     U32 line_no,
     _In_z_      PCTSTR str);
 
@@ -88,8 +88,8 @@ _Check_return_
 extern BOOL
 __WrapOsBoolChecking(
     _InVal_     BOOL res,
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _In_        int line_no,
     _In_z_      PCTSTR str);
 
@@ -312,15 +312,15 @@ _Check_return_
 static inline BOOL
 _bool_assert(
     _InVal_     BOOL bool_val,
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _In_        int line_no,
     _In_z_      PCTSTR tstr)
 {
     if(bool_val)
         return(bool_val);
 
-    return(__bool_assert(bool_val, p_function, p_file, line_no, tstr));
+    return(__bool_assert(bool_val, tstr_function, tstr_file, line_no, tstr));
 }
 #endif /* _bool_assert_function_declared */
 
@@ -336,15 +336,15 @@ _Check_return_
 static inline STATUS
 _status_assert(
     _InVal_     STATUS status,
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _In_        int line_no,
     _In_z_      PCTSTR tstr)
 {
     if(status_ok(status) || (STATUS_CANCEL == status))
         return(status);
 
-    return(__status_assert(status, p_function, p_file, line_no, tstr));
+    return(__status_assert(status, tstr_function, tstr_file, line_no, tstr));
 }
 #endif /* _status_assert_function_declared */
 

@@ -129,7 +129,7 @@ docu_caret_position_after_command_null(
 {
     UNREFERENCED_PARAMETER_InRef_(p_null_event_block);
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_caret_position_after_command_null(docno=%d): null_event"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_caret_position_after_command_null(docno=") DOCNO_TFMT TEXT("): null_event"), docno_from_p_docu(p_docu));
 
     assert(p_docu->flags.caret_position_after_command);
 
@@ -164,7 +164,7 @@ docu_flags_caret_position_after_command_clear(
     p_docu->flags.caret_position_after_command = 0;
 
 #if WINDOWS
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_clear(docno=%d) - *** null_events_stop()"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_clear(docno=") DOCNO_TFMT TEXT(") - *** null_events_stop()"), docno_from_p_docu(p_docu));
     null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_docu_caret_position_after_command, DCP_NULL_CLIENT_HANDLE);
 #endif
 }
@@ -179,7 +179,7 @@ docu_flags_caret_position_after_command_set(
     p_docu->flags.caret_position_after_command = 1;
 
 #if WINDOWS
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_set(docno=%d) - *** null_events_start()"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_set(docno=") DOCNO_TFMT TEXT(") - *** null_events_start()"), docno_from_p_docu(p_docu));
     status_assert(null_events_start(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_docu_caret_position_after_command, DCP_NULL_CLIENT_HANDLE));
 #endif
 }
@@ -3167,7 +3167,7 @@ T5_CMD_PROTO(static, cells_cmd_object_convert)
     { /* tell dependents about it */
     UREF_PARMS uref_parms;
     region_from_docu_area_max(&uref_parms.source.region, &docu_area);
-    uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
     } /*block*/
 #endif
 
@@ -3209,7 +3209,7 @@ T5_CMD_PROTO(static, cells_cmd_object_convert)
                         new_object_from_text.status = STATUS_OK;
                         new_object_from_text.please_redraw = FALSE;
                         new_object_from_text.please_uref_overwrite = TRUE;
-                        new_object_from_text.please_mrofmun = TRUE;
+                        new_object_from_text.try_autoformat = TRUE;
                         status = object_call_id(target_object, p_docu, T5_MSG_NEW_OBJECT_FROM_TEXT, &new_object_from_text);
                     }
                 }
@@ -3627,7 +3627,7 @@ T5_CMD_PROTO(static, cells_cmd_snapshot)
     { /* tell dependents about it */
     UREF_PARMS uref_parms;
     region_from_docu_area_max(&uref_parms.source.region, &docu_area);
-    uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
     } /*block*/
 #endif
 

@@ -400,7 +400,7 @@ paper_paper_labels_group =
     PAPER_ID_PAPER_LABELS_GROUP, PAPER_ID_PAPER_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { DIALOG_STDGROUP_LM },
-    { DRT(LTRB, GROUPBOX) }
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 /*
@@ -530,7 +530,7 @@ paper_paper_margin_labels_group =
     PAPER_ID_PAPER_MARGIN_LABELS_GROUP, PAPER_ID_PAPER_MARGIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { DIALOG_STDGROUP_LM },
-    { DRT(LTRB, GROUPBOX) }
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 /*
@@ -703,7 +703,7 @@ paper_orientation_p =
     PAPER_ID_ORIENTATION_P, PAPER_ID_ORIENTATION_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -759,7 +759,7 @@ paper_button[6] =
     },
 
     {
-        PAPER_ID_BUTTON_3, DIALOG_MAIN_GROUP,  { PAPER_ID_BUTTON_1, PAPER_ID_BUTTON_1, PAPER_ID_BUTTON_1 },
+        PAPER_ID_BUTTON_3, DIALOG_MAIN_GROUP, { PAPER_ID_BUTTON_1, PAPER_ID_BUTTON_1, PAPER_ID_BUTTON_1 },
         { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V }, { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
     },
 
@@ -1006,18 +1006,20 @@ paper_ok_data_argmap[] =
     PAPER_ID_GRID_FAINT
 };
 
+#if RISCOS
+
 static const DIALOG_CONTROL
 paper_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_ROW_UNITS, DIALOG_MAIN_GROUP },
-#if WINDOWS
-    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#else
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#endif
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
+
+#else
+#define paper_ok defbutton_ok
+#endif
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 paper_ok_command = { T5_CMD_PAPER, OBJECT_ID_SKEL, NULL, paper_ok_data_argmap, { 0 /*set_view*/, 0, 0, 1 /*lookup_arglist*/ } };
@@ -1144,28 +1146,28 @@ paper_precreate(
     case MSG_DIALOG_UNITS_CM:
 #endif
         paper_fp_pixits_per_user_unit = FP_PIXITS_PER_CM;
-        numform_resource_id = MSG_NUMFORM_3_DP;
+        numform_resource_id = MSG_NUMFORM_3_DP0;
         p_ui_control_f64->inc_dec_round = 10.0;
         p_ui_control_f64->max_val = (max_inches* PIXITS_PER_INCH) / PIXITS_PER_CM;
         break;
 
     case MSG_DIALOG_UNITS_MM:
         paper_fp_pixits_per_user_unit = FP_PIXITS_PER_MM;
-        numform_resource_id = MSG_NUMFORM_2_DP;
+        numform_resource_id = MSG_NUMFORM_2_DP0;
         p_ui_control_f64->inc_dec_round = 1.0;
         p_ui_control_f64->max_val = (max_inches* PIXITS_PER_INCH) / PIXITS_PER_MM;
         break;
 
     case MSG_DIALOG_UNITS_INCHES:
         paper_fp_pixits_per_user_unit = PIXITS_PER_INCH;
-        numform_resource_id = MSG_NUMFORM_3_DP;
+        numform_resource_id = MSG_NUMFORM_3_DP0;
         p_ui_control_f64->inc_dec_round = 10.0;
         p_ui_control_f64->max_val = max_inches;
         break;
 
     case MSG_DIALOG_UNITS_POINTS:
         paper_fp_pixits_per_user_unit = PIXITS_PER_POINT;
-        numform_resource_id = MSG_NUMFORM_1_DP;
+        numform_resource_id = MSG_NUMFORM_1_DP0;
         p_ui_control_f64->inc_dec_round = 1.0;
         p_ui_control_f64->max_val = (max_inches * PIXITS_PER_INCH) / PIXITS_PER_POINT;
         break;
@@ -1253,8 +1255,8 @@ paper_set_dlg_as_unit(
     _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     PIXIT value)
 {
-    F64 f64 = /*FP_USER_UNIT*/ ((FP_PIXIT) value / paper_fp_pixits_per_user_unit);
-    return(ui_dlg_set_f64(h_dialog, dialog_control_id, &f64));
+    const F64 f64 = /*FP_USER_UNIT*/ ((FP_PIXIT) value / paper_fp_pixits_per_user_unit);
+    return(ui_dlg_set_f64(h_dialog, dialog_control_id, f64));
 }
 
 static const DIALOG_CONTROL_ID
@@ -1294,8 +1296,7 @@ paper_read_vals(
 
     for(i = 0; i < 6; ++i)
     {
-        F64 f64;
-        ui_dlg_get_f64(h_dialog, button_control_id[i], &f64); /*FP_USER_UNIT*/
+        const F64 f64 = ui_dlg_get_f64(h_dialog, button_control_id[i]); /*FP_USER_UNIT*/
         *p[i] = f64 * paper_fp_pixits_per_user_unit;
     }
 }
@@ -1330,8 +1331,8 @@ paper_set_vals(
 
     for(i = 0; i < 6; ++i)
     {
-        F64 f64 = /*FP_USER_UNIT*/ (*p[i] / paper_fp_pixits_per_user_unit);
-        status_return(ui_dlg_set_f64(h_dialog, button_control_id[i], &f64));
+        const F64 f64 = /*FP_USER_UNIT*/ (*p[i] / paper_fp_pixits_per_user_unit);
+        status_return(ui_dlg_set_f64(h_dialog, button_control_id[i], f64));
     }
 
     return(STATUS_OK);
@@ -1406,8 +1407,8 @@ dialog_paper_intro_process_start(
     status_return(ui_dlg_set_check(h_dialog, PAPER_ID_MARGIN_OE_SWAP, p_docu->phys_page_def.margin_oe_swap));
 
     {
-    F64 f64 = /*FP_POINTS*/ ((FP_PIXIT) p_docu->page_def.grid_size / PIXITS_PER_POINT);
-    status_return(ui_dlg_set_f64(h_dialog, PAPER_ID_GRID_SIZE, &f64));
+    const F64 f64 = /*FP_POINTS*/ ((FP_PIXIT) p_docu->page_def.grid_size / PIXITS_PER_POINT);
+    status_return(ui_dlg_set_f64(h_dialog, PAPER_ID_GRID_SIZE, f64));
     } /*block*/
 
     return(ui_dlg_set_check(h_dialog, PAPER_ID_GRID_FAINT, p_docu->flags.faint_grid));

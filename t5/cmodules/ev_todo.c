@@ -199,7 +199,7 @@ ev_todo_add_custom_dependents(
                 if(p_custom_use->custom_to != h_custom)
                     break;
 
-                if(p_custom_use->flags.tobedel)
+                if(p_custom_use->flags.to_be_deleted)
                     continue;
 
                 if(ev_slr_docno(&p_custom_use->slr_by) != owner_docno)
@@ -233,21 +233,21 @@ todo_add_name_deps_of_slr(
     /* look for name references */
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
     {
-        if(p_ev_name->flags.tobedel)
+        if(p_ev_name->flags.to_be_deleted)
             continue;
 
         if(ev_slr_docno(&p_ev_name->owner) != ev_docno)
         {
             BOOL got_ref = FALSE;
 
-            switch(p_ev_name->def_data.did_num)
+            switch(ss_data_get_data_id(&p_ev_name->def_data))
             {
-            case RPN_DAT_SLR:
+            case DATA_ID_SLR:
                 if(ev_slr_equal(&p_ev_name->def_data.arg.slr, p_ev_slr))
                     got_ref = TRUE;
                 break;
 
-            case RPN_DAT_RANGE:
+            case DATA_ID_RANGE:
                 if(ev_slr_in_range(&p_ev_name->def_data.arg.range, p_ev_slr))
                     got_ref = TRUE;
                 break;
@@ -284,7 +284,7 @@ ev_todo_add_doc_dependents(
             range_ix < range_table_elements;
             ++range_ix, ++p_range_use)
         {
-            if(p_range_use->flags.tobedel)
+            if(p_range_use->flags.to_be_deleted)
                 continue;
 
             if(ev_slr_docno(&p_range_use->slr_by) != ev_docno)
@@ -301,7 +301,7 @@ ev_todo_add_doc_dependents(
             slr_ix < slr_table_elements;
             ++slr_ix, ++p_slr_use)
         {
-            if(p_slr_use->flags.tobedel)
+            if(p_slr_use->flags.to_be_deleted)
                 continue;
 
             if(ev_slr_docno(&p_slr_use->slr_by) != ev_docno)
@@ -325,7 +325,7 @@ ev_todo_add_doc_dependents(
         i < custom_table_elements;
         ++i, ++p_ev_custom)
     {
-        if(p_ev_custom->flags.tobedel)
+        if(p_ev_custom->flags.to_be_deleted)
             continue;
 
         if(p_ev_custom->flags.undefined)
@@ -361,7 +361,7 @@ ev_todo_add_name_dependents(
             if(p_name_use->name_to.h_name != h_name)
                 break;
 
-            if(p_name_use->flags.tobedel)
+            if(p_name_use->flags.to_be_deleted)
                 continue;
 
             ev_todo_add_slr(&p_name_use->slr_by);
@@ -759,18 +759,18 @@ dep_add_name(void)
         name_ix < n_elements;
         ++name_ix, ++p_ev_name)
     {
-        if(!p_ev_name->flags.tobedel)
+        if(!p_ev_name->flags.to_be_deleted)
         {
             BOOL got_ref = FALSE;
 
-            switch(p_ev_name->def_data.did_num)
+            switch(ss_data_get_data_id(&p_ev_name->def_data))
             {
-            case RPN_DAT_SLR:
+            case DATA_ID_SLR:
                 if(ev_slr_equal(&p_ev_name->def_data.arg.slr, &p_dep_add_stack->slr))
                     got_ref = TRUE;
                 break;
 
-            case RPN_DAT_RANGE:
+            case DATA_ID_RANGE:
                 if(ev_slr_in_range(&p_ev_name->def_data.arg.range, &p_dep_add_stack->slr))
                     got_ref = TRUE;
                 break;
@@ -830,7 +830,7 @@ dep_add_name_dep(void)
               &&
               p_name_use->name_to.h_name == p_dep_add_stack->arg.h_name)
         {
-            if(!p_name_use->flags.tobedel)
+            if(!p_name_use->flags.to_be_deleted)
             {
                 if(p_name_use->flags.circ)
                     dep_add_circ_unravel(&p_name_use->slr_by);

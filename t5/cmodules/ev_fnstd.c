@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2019 Stuart Swales */
+/* Copyright (C) 2014-2020 Stuart Swales */
 
 /* Statistical function routines (distributions etc) for evaluator */
 
@@ -28,7 +28,7 @@
 
 static void
 binom_dist_pmf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 n,
     _InVal_     F64 p,
     _InVal_     S32 k);
@@ -55,7 +55,7 @@ binom_dist_pmf_calc(
 
 static void
 binom_dist_cdf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 n,
     _InVal_     F64 p,
     _InVal_     S32 k)
@@ -65,13 +65,13 @@ binom_dist_cdf_calc(
     if( (n < 0) || (k < 0) || (k > n) ||
         (p < 0.0) || (p > 1.0) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
     if(k == n)
     {
-        ev_data_set_real(p_ev_data_out, 1.0);
+        ss_data_set_real(p_ss_data_out, 1.0);
         return;
     }
 
@@ -80,23 +80,23 @@ binom_dist_cdf_calc(
         const F64 one_minus_p = 1.0 - p;
         const S32 n_minus_k = n - k;
         const S32 k_plus_one = k + 1;
-        ev_data_set_real(p_ev_data_out, mx_Ix_beta(one_minus_p, n_minus_k, k_plus_one));
+        ss_data_set_real(p_ss_data_out, mx_Ix_beta(one_minus_p, n_minus_k, k_plus_one));
         return;
     }
 
-    *p_ev_data_out = ev_data_real_zero;
+    *p_ss_data_out = ss_data_real_zero;
 
     /* sum of PMF over [0..k] */
     for(j = 0; j <= k; ++j)
     {
-        EV_DATA term;
+        SS_DATA term;
 
         binom_dist_pmf_calc(&term, n, p, j); /* may return fp or error */
 
-        if(!two_nums_add_try(p_ev_data_out, p_ev_data_out, &term, TRUE /*propogate_errors*/))
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
 
-        if(ev_data_is_error(p_ev_data_out))
+        if(ss_data_is_error(p_ss_data_out))
             break;
     }
 }
@@ -109,7 +109,7 @@ binom_dist_cdf_calc(
 
 static void
 alternate_binom_dist_pmf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 n,
     _InVal_     F64 p,
     _InVal_     S32 k)
@@ -128,33 +128,33 @@ alternate_binom_dist_pmf_calc(
 
     ln_term = ln_binomial_term + ln_power_term_k + ln_power_term_n_minus_k;
 
-    ev_data_set_real(p_ev_data_out, exp(ln_term));
+    ss_data_set_real(p_ss_data_out, exp(ln_term));
 
     /* exp() overflowed? - don't test for underflow case */
-    if(p_ev_data_out->arg.fp == F64_HUGE_VAL)
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_OUTOFRANGE);
+    if(ss_data_get_real(p_ss_data_out) == F64_HUGE_VAL)
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_OUTOFRANGE);
 }
 
 static void
 binom_dist_pmf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 n,
     _InVal_     F64 p,
     _InVal_     S32 k)
 {
-    EV_DATA binomial_term, power_term_k, power_term_n_minus_k;
+    SS_DATA binomial_term, power_term_k, power_term_n_minus_k;
     const S32 n_minus_k = (n - k);
 
     if( (n < 0) || (k < 0) || (k > n) ||
         (p < 0.0) || (p > 1.0) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
     if(n > 1000)
     {   /* binomial term near to overflow and power term product near to underflow */
-        alternate_binom_dist_pmf_calc(p_ev_data_out, n, p, k); /* may return fp or error */
+        alternate_binom_dist_pmf_calc(p_ss_data_out, n, p, k); /* may return fp or error */
         return;
     }
 
@@ -162,26 +162,26 @@ binom_dist_pmf_calc(
 
     errno = 0;
 
-    ev_data_set_real(&power_term_k, pow(p, k));
-    ev_data_set_real(&power_term_n_minus_k, pow(1.0 - p, n_minus_k));
+    ss_data_set_real(&power_term_k, pow(p, k));
+    ss_data_set_real(&power_term_n_minus_k, pow(1.0 - p, n_minus_k));
 
     if(errno /* == EDOM */)
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
-    if( !two_nums_multiply_try(p_ev_data_out, &power_term_k, &power_term_n_minus_k, TRUE /*propogate_errors*/) ||
-        !two_nums_multiply_try(p_ev_data_out, p_ev_data_out, &binomial_term, TRUE /*propogate_errors*/) )
+    if( !two_nums_multiply_propagate_error(p_ss_data_out, &power_term_k, &power_term_n_minus_k) ||
+        !two_nums_multiply_propagate_error(p_ss_data_out, p_ss_data_out, &binomial_term) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
         return;
     }
 }
 
 static void
 binom_dist_range_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 n,
     _InVal_     F64 p,
     _InVal_     S32 S,
@@ -191,7 +191,7 @@ binom_dist_range_calc(
 
     if(S == 0)
     {   /* sum(PMF[0..S2]) is the CDF */
-        binom_dist_cdf_calc(p_ev_data_out, n, p, S2); /* may return fp or error */
+        binom_dist_cdf_calc(p_ss_data_out, n, p, S2); /* may return fp or error */
         return;
     }
 
@@ -199,7 +199,7 @@ binom_dist_range_calc(
         (S > S2) || (S2 > n) ||
         (p < 0.0) || (p > 1.0) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
@@ -208,58 +208,58 @@ binom_dist_range_calc(
         S32 n_minus_k_plus_one;
         k = S;
         n_minus_k_plus_one = n - k + 1;
-        ev_data_set_real(p_ev_data_out, mx_Ix_beta(p, k, n_minus_k_plus_one));
+        ss_data_set_real(p_ss_data_out, mx_Ix_beta(p, k, n_minus_k_plus_one));
         return;
     }
 
-    *p_ev_data_out = ev_data_real_zero;
+    *p_ss_data_out = ss_data_real_zero;
 
     /* sum of PMF over [S..S2] */
     for(k = S; k <= S2; ++k)
     {
-        EV_DATA term;
+        SS_DATA term;
 
         binom_dist_pmf_calc(&term, n, p, k); /* may return fp or error */
 
-        if(!two_nums_add_try(p_ev_data_out, p_ev_data_out, &term, TRUE /*propogate_errors*/))
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
 
-        if(ev_data_is_error(p_ev_data_out))
+        if(ss_data_is_error(p_ss_data_out))
             break;
     }
 }
 
 PROC_EXEC_PROTO(c_binom_dist)
 {
-    const S32 S = args[0]->arg.integer; /*number_success*/
-    const S32 n = args[1]->arg.integer; /*number_trials*/
-    const F64 p = args[2]->arg.fp; /*probability_success*/
-    const BOOL cumulative = args[3]->arg.boolean;
+    const S32 S = ss_data_get_integer(args[0]); /*number_success*/
+    const S32 n = ss_data_get_integer(args[1]); /*number_trials*/
+    const F64 p = ss_data_get_real(args[2]); /*probability_success*/
+    const bool cumulative = ss_data_get_logical(args[3]);
 
     exec_func_ignore_parms();
 
     if(cumulative)
-        binom_dist_cdf_calc(p_ev_data_res, n, p, S); /* may return fp or error */
+        binom_dist_cdf_calc(p_ss_data_res, n, p, S); /* may return fp or error */
     else
-        binom_dist_pmf_calc(p_ev_data_res, n, p, S); /* may return fp or error */
+        binom_dist_pmf_calc(p_ss_data_res, n, p, S); /* may return fp or error */
 }
 
 PROC_EXEC_PROTO(c_binom_dist_range)
 {
-    const S32 n = args[0]->arg.integer; /*number_trials*/
-    const F64 p = args[1]->arg.fp; /*probability_success*/
-    const S32 S = args[2]->arg.integer;
-    const S32 S2 = (n_args > 3) ? args[3]->arg.integer : S;
+    const S32 n = ss_data_get_integer(args[0]); /*number_trials*/
+    const F64 p = ss_data_get_real(args[1]); /*probability_success*/
+    const S32 S = ss_data_get_integer(args[2]);
+    const S32 S2 = (n_args > 3) ? ss_data_get_integer(args[3]) : S;
 
     exec_func_ignore_parms();
 
     if(S == S2)
     {   /* just PMF at S */
-        binom_dist_pmf_calc(p_ev_data_res, n, p, S); /* may return fp or error */
+        binom_dist_pmf_calc(p_ss_data_res, n, p, S); /* may return fp or error */
         return;
     }
 
-    binom_dist_range_calc(p_ev_data_res, n, p, S, S2); /* may return fp or error */
+    binom_dist_range_calc(p_ss_data_res, n, p, S, S2); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -270,7 +270,7 @@ PROC_EXEC_PROTO(c_binom_dist_range)
 
 static void
 binom_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 N, /*number_trials*/
     _InVal_     F64 P, /*probability_success*/
     _InVal_     F64 alpha)
@@ -283,41 +283,41 @@ binom_inv_calc(
     reportf(TEXT("binom_inv_calc(N=%d, P=%f, alpha=%f)"), N, P, alpha);
     for(k = 0; k <= N; ++k)
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         F64 CDF_k;
 
         /* could improve using bisection */
-        binom_dist_cdf_calc(&ev_data, N, P, k); /* may return fp or error */
+        binom_dist_cdf_calc(&ss_data, N, P, k); /* may return fp or error */
 
-        if(ev_data_is_error(&ev_data))
+        if(ss_data_is_error(&ss_data))
         {
-            *p_ev_data_out = ev_data;
+            *p_ss_data_out = ss_data;
             return;
         }
 
-        assert(RPN_DAT_REAL == ev_data.did_num);
-        CDF_k = ev_data.arg.fp;
+        assert(ss_data_is_real(&ss_data));
+        CDF_k = ss_data_get_real(&ss_data);
 
         if(CDF_k >= alpha)
         {
             reportf(TEXT("binom_inv_calc(N=%d, P=%f, alpha=%f) returns k=%d"), N, P, alpha, k);
-            ev_data_set_integer(p_ev_data_out, k);
+            ss_data_set_integer(p_ss_data_out, k);
             return;
         }
     }
 
-    ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+    ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
 }
 
 PROC_EXEC_PROTO(c_binom_inv)
 {
-    const S32 N = args[0]->arg.integer; /*number_trials*/
-    const F64 P = args[1]->arg.fp; /*probability_success*/
-    const F64 alpha = args[2]->arg.fp;
+    const S32 N = ss_data_get_integer(args[0]); /*number_trials*/
+    const F64 P = ss_data_get_real(args[1]); /*probability_success*/
+    const F64 alpha = ss_data_get_real(args[2]);
 
     exec_func_ignore_parms();
 
-    binom_inv_calc(p_ev_data_res, N, P, alpha); /* may return fp or error */
+    binom_inv_calc(p_ss_data_res, N, P, alpha); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -332,12 +332,12 @@ PROC_EXEC_PROTO(c_binom_inv)
 
 static void
 alternate_hypgeom_dist_pdf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 s,
     _InVal_     S32 n,
     _InVal_     S32 M,
     _InVal_     S32 N,
-    _InRef_     PC_F64 ln_denominator)
+    _InVal_     F64 ln_denominator)
 {
     F64 ln_numerator_lhs, ln_numerator_rhs, ln_numerator, ln_term;
 
@@ -346,23 +346,23 @@ alternate_hypgeom_dist_pdf_calc(
 
     ln_numerator = ln_numerator_lhs + ln_numerator_rhs;
 
-    ln_term = ln_numerator - *ln_denominator;
+    ln_term = ln_numerator - ln_denominator;
 
-    ev_data_set_real(p_ev_data_out, exp(ln_term));
+    ss_data_set_real(p_ss_data_out, exp(ln_term));
 
     /* exp() overflowed? - don't test for underflow case */
-    if(p_ev_data_out->arg.fp == F64_HUGE_VAL)
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_OUTOFRANGE);
+    if(ss_data_get_real(p_ss_data_out) == F64_HUGE_VAL)
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_OUTOFRANGE);
 }
 
 static void
 alternate_hypgeom_dist_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 x /*sample_successes*/,
     _InVal_     S32 n /*number_sample*/,
     _InVal_     S32 M /*population_successes*/,
     _InVal_     S32 N /*number_population*/,
-    _InVal_     BOOL cumulative)
+    _InVal_     bool cumulative)
 {
     F64 ln_denominator;
     S32 i;
@@ -371,19 +371,19 @@ alternate_hypgeom_dist_calc(
 
     ln_denominator = mx_ln_binomial_coefficient(N, n);
 
-    *p_ev_data_out = ev_data_real_zero;
+    *p_ss_data_out = ss_data_real_zero;
 
     /* CDF is the sum from the terms over [0..x]; PMF is just the single term at x  */
     for(i = cumulative ? 0 : x; i <= x; ++i)
     {
-        EV_DATA term;
+        SS_DATA term;
 
-        alternate_hypgeom_dist_pdf_calc(&term, i, n, M, N, &ln_denominator); /* may return fp or error */
+        alternate_hypgeom_dist_pdf_calc(&term, i, n, M, N, ln_denominator); /* may return fp or error */
 
-        if(!two_nums_add_try(p_ev_data_out, p_ev_data_out, &term, TRUE /*propogate_errors*/))
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
 
-        if(ev_data_is_error(p_ev_data_out))
+        if(ss_data_is_error(p_ss_data_out))
             break;
     }
 }
@@ -396,69 +396,69 @@ alternate_hypgeom_dist_calc(
 
 static void
 hypgeom_dist_pdf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
     _InVal_     S32 s,
     _InVal_     S32 n,
     _InVal_     S32 M,
     _InVal_     S32 N,
-    _InRef_     P_EV_DATA denominator)
+    _InRef_     P_SS_DATA denominator)
 {
-    EV_DATA numerator_lhs, numerator_rhs, numerator;
+    SS_DATA numerator_lhs, numerator_rhs, numerator;
 
     binomial_coefficient_calc(&numerator_lhs, M, s);            /* may return integer or fp or error */
     binomial_coefficient_calc(&numerator_rhs, N - M, n - s);    /* may return integer or fp or error */
 
-    if( !two_nums_multiply_try(&numerator, &numerator_lhs, &numerator_rhs, TRUE /*propogate_errors*/) ||
-        !two_nums_divide_try(p_ev_data_out, &numerator, denominator, TRUE /*propogate_errors*/) )
+    if( !two_nums_multiply_propagate_error(&numerator, &numerator_lhs, &numerator_rhs) ||
+        !two_nums_divide_propagate_error(p_ss_data_out, &numerator, denominator) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
     }
 }
 
 static void
 hypgeom_dist_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 x /*sample_successes*/,
     _InVal_     S32 n /*number_sample*/,
     _InVal_     S32 M /*population_successes*/,
     _InVal_     S32 N /*number_population*/,
-    _InVal_     BOOL cumulative)
+    _InVal_     bool cumulative)
 {
-    EV_DATA denominator;
+    SS_DATA denominator;
     S32 i;
 
     if(n > 170)
     {
-        alternate_hypgeom_dist_calc(p_ev_data_out, x, n, M, N, cumulative); /* may return fp or error */
+        alternate_hypgeom_dist_calc(p_ss_data_out, x, n, M, N, cumulative); /* may return fp or error */
         return;
     }
 
     binomial_coefficient_calc(&denominator, N, n); /* may return integer or fp or error */
 
-    *p_ev_data_out = ev_data_real_zero;
+    *p_ss_data_out = ss_data_real_zero;
 
     /* CDF is the sum from the terms over [0..x]; PMF is just the single term at x  */
     for(i = cumulative ? 0 : x; i <= x; ++i)
     {
-        EV_DATA term;
+        SS_DATA term;
 
         hypgeom_dist_pdf_calc(&term, i, n, M, N, &denominator); /* may return integer or fp or error */
 
-        if(!two_nums_add_try(p_ev_data_out, p_ev_data_out, &term, TRUE /*propogate_errors*/))
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
 
-        if(ev_data_is_error(p_ev_data_out))
+        if(ss_data_is_error(p_ss_data_out))
             break;
     }
 }
 
 PROC_EXEC_PROTO(c_hypgeom_dist)
 {
-    const S32 x = args[0]->arg.integer; /*sample_successes*/
-    const S32 n = args[1]->arg.integer; /*number_sample*/
-    const S32 M = args[2]->arg.integer; /*population_successes*/
-    const S32 N = args[3]->arg.integer; /*number_population*/
-    const BOOL cumulative = (n_args > 4) ? args[4]->arg.boolean : FALSE;
+    const S32 x = ss_data_get_integer(args[0]); /*sample_successes*/
+    const S32 n = ss_data_get_integer(args[1]); /*number_sample*/
+    const S32 M = ss_data_get_integer(args[2]); /*population_successes*/
+    const S32 N = ss_data_get_integer(args[3]); /*number_population*/
+    const bool cumulative = (n_args > 4) ? ss_data_get_logical(args[4]) : false;
 
     exec_func_ignore_parms();
 
@@ -468,11 +468,10 @@ PROC_EXEC_PROTO(c_hypgeom_dist)
         (x > MIN(n, M)) ||
         (x < MAX(0, n - N + M)) )
     {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }
 
-    hypgeom_dist_calc(p_ev_data_res, x, n, M, N, cumulative); /* may return fp or error */
+    hypgeom_dist_calc(p_ss_data_res, x, n, M, N, cumulative); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -493,83 +492,83 @@ PROC_EXEC_PROTO(c_hypgeom_dist)
 
 static void
 negbinom_dist_pdf_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 k,
     _InVal_     S32 r,
     _InVal_     F64 p)
 {
-    EV_DATA binomial_term, power_term_r, power_term_k;
+    SS_DATA binomial_term, power_term_r, power_term_k;
 
     binomial_coefficient_calc(&binomial_term, k + r - 1, k); /* may return integer or fp or error */
 
     errno = 0;
 
-    ev_data_set_real(&power_term_r, pow(p, r));
-    ev_data_set_real(&power_term_k, pow(1.0 - p, k));
+    ss_data_set_real(&power_term_r, pow(p, r));
+    ss_data_set_real(&power_term_k, pow(1.0 - p, k));
 
     if(errno /* == EDOM */)
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
-    if( !two_nums_multiply_try(p_ev_data_out, &power_term_r, &power_term_k, TRUE /*propogate_errors*/) ||
-        !two_nums_multiply_try(p_ev_data_out, p_ev_data_out, &binomial_term, TRUE /*propogate_errors*/) )
+    if( !two_nums_multiply_propagate_error(p_ss_data_out, &power_term_r, &power_term_k) ||
+        !two_nums_multiply_propagate_error(p_ss_data_out, p_ss_data_out, &binomial_term) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
         return;
     }
 }
 
 static void
 negbinom_dist_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 x,
     _InVal_     S32 r,
     _InVal_     F64 p,
-    _InVal_     BOOL cumulative)
+    _InVal_     bool cumulative)
 {
     S32 k;
 
     if( ((x + r - 1) <= 0) ||
         (p < 0.0) || (p > 1.0) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
-    *p_ev_data_out = ev_data_real_zero;
+    *p_ss_data_out = ss_data_real_zero;
 
     /* CDF is the sum from the terms over [0..x]; PMF is just the single term at x */
     for(k = cumulative ? 0 : x; k <= x; ++k)
     {
-        EV_DATA term;
+        SS_DATA term;
 
         negbinom_dist_pdf_calc(&term, k, r, p); /* may return fp or error */
 
-        if(!two_nums_add_try(p_ev_data_out, p_ev_data_out, &term, TRUE /*propogate_errors*/))
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
 
-        if(ev_data_is_error(p_ev_data_out))
+        if(ss_data_is_error(p_ss_data_out))
             break;
     }
 }
 
 PROC_EXEC_PROTO(c_negbinom_dist)
 {
-    const S32 x = args[0]->arg.integer; /*number of failures*/
-    const S32 r = args[1]->arg.integer /*threshold number of successes*/;
-    const F64 p = args[2]->arg.fp; /*probability of success*/
-    const BOOL cumulative = (n_args > 3) ? args[3]->arg.boolean : FALSE;
+    const S32 x = ss_data_get_integer(args[0]); /*number of failures*/
+    const S32 r = ss_data_get_integer(args[1]) /*threshold number of successes*/;
+    const F64 p = ss_data_get_real(args[2]); /*probability of success*/
+    const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : false;
 
     exec_func_ignore_parms();
 
-    negbinom_dist_calc(p_ev_data_res, x, r, p, cumulative); /* may return fp or error */
+    negbinom_dist_calc(p_ss_data_res, x, r, p, cumulative); /* may return fp or error */
 }
 
 /******************************************************************************
 *
-* NUMBER poisson.dist(x:number, lambda:number {, cumulative:Boolean=TRUE})
+* NUMBER poisson.dist(x:number, lambda:number {, cumulative:Logical=TRUE})
 *
 * See OpenDocument 1.2 definition of POISSON
 *
@@ -585,66 +584,62 @@ PROC_EXEC_PROTO(c_negbinom_dist)
 
 static void
 poisson_dist_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     S32 x,
     _InVal_     F64 lambda,
-    _InVal_     BOOL cumulative)
+    _InVal_     bool cumulative)
 {
     const F64 ln_exp_term = -lambda; /* this exp() won't overflow, ignore underflow */
-    const BOOL more_logs = (x > 20);
+    const bool more_logs = (x > 20);
     S32 k;
 
-    *p_ev_data_out = ev_data_real_zero;
+    *p_ss_data_out = ss_data_real_zero;
 
     /* CDF is the sum from the terms over [0..x]; PMF is just the single term at x */
     for(k = cumulative ? 0 : x; k <= x; ++k)
     {
         const F64 ln_power_term = log(lambda) * k;
         const F64 ln_numerator = ln_power_term + ln_exp_term;
-        EV_DATA term;
+        SS_DATA term;
 
         if(more_logs)
         {
             const F64 ln_denominator = mx_ln_factorial(k);
 
-            ev_data_set_real(&term, exp(ln_numerator - ln_denominator));
+            ss_data_set_real(&term, exp(ln_numerator - ln_denominator));
         }
         else
         {
-            EV_DATA numerator, denominator;
+            SS_DATA numerator, denominator;
 
-            ev_data_set_real(&numerator, exp(ln_numerator));
+            ss_data_set_real(&numerator, exp(ln_numerator));
 
             factorial_calc(&denominator, k); /* may return integer or fp or error */
 
-            if(!two_nums_divide_try(&term, &numerator, &denominator, TRUE /*propogate_errors*/))
-                ev_data_set_error(&term, EVAL_ERR_CALC_FAILURE);
+            if(!two_nums_divide_propagate_error(&term, &numerator, &denominator))
+                ss_data_set_error(&term, EVAL_ERR_CALC_FAILURE);
         }
 
-        if(!two_nums_add_try(p_ev_data_out, p_ev_data_out, &term, TRUE /*propogate_errors*/))
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_CALC_FAILURE);
+        if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
 
-        if(ev_data_is_error(p_ev_data_out))
+        if(ss_data_is_error(p_ss_data_out))
             break;
     }
 }
 
 PROC_EXEC_PROTO(c_poisson_dist)
 {
-    const S32 x = args[0]->arg.integer;
-    const F64 lambda = args[1]->arg.fp;
-    const BOOL cumulative = (n_args > 2) ? args[2]->arg.boolean : TRUE;
+    const S32 x = ss_data_get_integer(args[0]);
+    const F64 lambda = ss_data_get_real(args[1]);
+    const bool cumulative = (n_args > 2) ? ss_data_get_logical(args[2]) : true;
 
     exec_func_ignore_parms();
 
-    if( (x < 0) ||
-        (lambda <= 0.0) )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (x < 0) || (lambda <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    poisson_dist_calc(p_ev_data_res, x, lambda, cumulative); /* may return fp or error */
+    poisson_dist_calc(p_ss_data_res, x, lambda, cumulative); /* may return fp or error */
 }
 
 /* end of ev_fnstd.c */

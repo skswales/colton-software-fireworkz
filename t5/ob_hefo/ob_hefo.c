@@ -908,9 +908,9 @@ save_hefo_data(
 
     for(style_docu_area_idx = 0; style_docu_area_idx < array_elements(p_h_style_list); ++style_docu_area_idx)
     {
-        P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(p_h_style_list, STYLE_DOCU_AREA, style_docu_area_idx);
+        const P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(p_h_style_list, STYLE_DOCU_AREA, style_docu_area_idx);
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(!p_style_docu_area->internal)
@@ -3142,7 +3142,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         object_border(p_docu, &object_redraw, &style);
 
         trace_2(TRACE_APP_SKEL_DRAW,
-                TEXT("proc_hefo_common data_space: ") S32_TFMT TEXT(", row: ") ROW_TFMT,
+                TEXT("proc_hefo_common data_space: ") U32_TFMT TEXT(", row: ") ROW_TFMT,
                 p_hefo_block->object_data.data_ref.data_space,
                 p_hefo_block->object_data.data_ref.arg.row);
 

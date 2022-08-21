@@ -99,6 +99,8 @@ $(BUILD_DIR).ob_skel.o.ui_page: $(T5).ob_skel.c.ui_page
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.ui_save: $(T5).ob_skel.c.ui_save
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.version: $(T5).ob_skel.c.version
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.view: $(T5).ob_skel.c.view
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.vi_cmd: $(T5).ob_skel.c.vi_cmd
@@ -261,6 +263,7 @@ $(BUILD_DIR).ob_skel.o.ob_imps \
 $(BUILD_DIR).ob_skel.o.of_load \
 $(BUILD_DIR).ob_skel.o.of_save \
 $(BUILD_DIR).ob_skel.o.startup \
+$(BUILD_DIR).ob_skel.o.version \
 $(BUILD_DIR).ob_skel.o.view \
 $(BUILD_DIR).ob_skel.o.vi_cmd \
 $(BUILD_DIR).ob_skel.o.vi_edge \

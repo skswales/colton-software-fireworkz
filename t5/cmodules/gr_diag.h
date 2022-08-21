@@ -482,8 +482,8 @@ gr_diag_piesector_new(
     _InVal_     GR_DIAG_OBJID_T objid,
     _InRef_     PC_GR_POINT pPos,
     _InVal_     PIXIT radius,
-    _InRef_     PC_F64 alpha,
-    _InRef_     PC_F64 beta,
+    _InVal_     F64 alpha,
+    _InVal_     F64 beta,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec);
 

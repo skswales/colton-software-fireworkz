@@ -21,6 +21,8 @@
 #include "cmodules/xwstring.h"
 #endif
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 /******************************************************************************
 *
 * realloc an aligator WCHAR-based string

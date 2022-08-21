@@ -10,6 +10,8 @@
 //
 // Manually based at 0x2000
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -24,9 +26,9 @@ BEGIN
 //
 // ob_ss messages
 //
-// r90:Fill down (or ADJUST to Fill up)
+//r90:Fill down (or ADJUST to Fill up)
 	0x205A,	"Fill down (or Ctrl-click to Fill up)"
-// r91:Fill right (or ADJUST to Fill left)
+//r91:Fill right (or ADJUST to Fill left)
 	0x205B,	"Fill right (or Ctrl-click to Fill left)"
 	0x205C,	"Auto sum"
 	0x205D,	"Create chart"
@@ -294,7 +296,7 @@ BEGIN
 	0x2243,	"davg"
 	0x20B4,	"Day part of |date:Date in form dd.mm.yyyy|"
 	0x2244,	"day"
-	0x20B5,	"Day name given |weekday| number (1=Sunday, 2=MondayŒ)"
+	0x20B5,	"Day name given |weekday| number (1=Sunday, 2=Monday…)"
 	0x2245,	"dayname"
 	0x20B6,	"Returns integral number of days between |start_date:Date in form dd.mm.yyyy| and |1end_date:Date in form dd.mm.yyyy| according to a 360-day calendar"
 	0x2246,	"days_360"
@@ -331,13 +333,13 @@ BEGIN
 	0x20C6,	"Population variance of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark"""
 	0x2256,	"dvarp"
 //
-	0x20C7,	"IFŒTHENŒELSEIFŒELSEŒENDIF in custom functions"
+	0x20C7,	"IF…THEN…ELSEIF…ELSE…ENDIF in custom functions"
 	0x2257,	"else"
-	0x20C8,	"IFŒTHENŒELSEIF(|condition:Expression returning Boolean value|)ŒELSEŒENDIF in custom functions"
+	0x20C8,	"IF…THEN…ELSEIF(|condition:Expression returning Boolean value|)…ELSE…ENDIF in custom functions"
 	0x2258,	"elseif"
-	0x20C9,	"IFŒTHENŒELSEIFŒELSEŒENDIF in custom functions"
+	0x20C9,	"IF…THEN…ELSEIF…ELSE…ENDIF in custom functions"
 	0x2259,	"endif"
-	0x20CA,	"WHILE(condition)ŒENDWHILE in custom functions"
+	0x20CA,	"WHILE(condition)…ENDWHILE in custom functions"
 	0x225A,	"endwhile"
 	0x20CB,	"Rounds |number:Real number| up to the next even integer, away from zero"
 	0x225B,	"even"
@@ -389,7 +391,7 @@ BEGIN
 //
 	0x20E1,	"If |condition:Expression returning Boolean value that controls which parameter is returned| is TRUE, returns |1then:Returned if condition is TRUE| parameter, otherwise returns |2else:Returned if condition is FALSE| parameter"
 	0x2271,	"if"
-	0x20E2,	"First part of IF(|condition:Expression returning Boolean value|)ŒENDIF, use only in custom functions"
+	0x20E2,	"First part of IF(|condition:Expression returning Boolean value|)…ENDIF, use only in custom functions"
 	0x2272,	"if"
 	0x20E3,	"Element in |array| at position |1x:Column of array, starting 1|, |2y:Row of array, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|"
 	0x2273,	"index"
@@ -538,7 +540,7 @@ BEGIN
 	0x22B6,	"rank.eq"
 	0x2127,	"Interest rate given |future value|, |1present value| and |2term:Number of periods|"
 	0x22B7,	"rate"
-	0x2128,	"REPEATŒUNTIL in custom functions"
+	0x2128,	"REPEAT…UNTIL in custom functions"
 	0x22B8,	"repeat"
 	0x2129,	"Replace text at |1offset:Offset in text string string_1| of given |2length:Length of text to replace| in |source:Text string being changed| string with |3replacement:Text string being inserted| string"
 	0x22B9,	"replace"
@@ -637,7 +639,7 @@ BEGIN
 	0x2157,	"Type of |expression|. If expression is cell reference, you may wish to use deref() to find type of contents"
 	0x22E7,	"type"
 //
-	0x2158,	"REPEATŒUNTIL(|condition:Expression returning Boolean value|) in custom function"
+	0x2158,	"REPEAT…UNTIL(|condition:Expression returning Boolean value|) in custom function"
 	0x22E8,	"until"
 	0x2159,	"Converts |string:Text string or reference to text cell| to upper-case"
 	0x22E9,	"upper"
@@ -657,7 +659,7 @@ BEGIN
 	0x22EF,	"weekday"
 	0x2160,	"Week number of |date:Date in form dd.mm.yyyy|"
 	0x22F0,	"weeknumber"
-	0x2161,	"WHILE(|condition:Expression returning Boolean value|)ŒENDWHILE in custom function"
+	0x2161,	"WHILE(|condition:Expression returning Boolean value|)…ENDWHILE in custom function"
 	0x22F1,	"while"
 //
 	0x2162,	"Year part of |date:Date in form dd.mm.yyyy|"
@@ -737,7 +739,7 @@ BEGIN
 	0x2315,	"combina"
 	0x2186,	"Double factorial of |n:Positive integer|"
 	0x2316,	"factdouble"
-	0x2187,	"Sum of |3coefficients:Array| times |x:Number| to the power of |1n:Number|, n + |2m:Number| Œ"
+	0x2187,	"Sum of |3coefficients:Array| times |x:Number| to the power of |1n:Number|, n + |2m:Number| …"
 	0x2317,	"seriessum"
 	0x2188,	"Value of the PDF or CDF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PDF (default)"
 	0x2318,	"hypgeom.dist"
@@ -747,7 +749,7 @@ BEGIN
 	0x231A,	"poisson.dist"
 	0x218B,	"Value of the PMF or CDF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF"
 	0x231B,	"binom.dist"
-	0x218C,	"Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3S2:Integer|"
+	0x218C,	"Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|"
 	0x231C,	"binom.dist.range"
 	0x218D,	"Fisher transformation at |x:Number|"
 	0x231D,	"fisher"

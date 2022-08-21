@@ -10,6 +10,8 @@
 //
 // Manually based at 0x3000
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -61,7 +63,7 @@ BEGIN
 	0x307D,	"Category labels"
 	0x307E,	"Series label"
 //
-// r130:Click on a chart element to select it. ADJUST-click for finer selection
+//r130:Click on a chart element to select it. ADJUST-click for finer selection
 	0x3082,	"Click on a chart element to select it. Ctrl-click for finer selection"
 //
 	0x3096,	"Bar"

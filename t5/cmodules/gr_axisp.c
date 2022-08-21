@@ -121,18 +121,18 @@ static STATUS
 gr_numtopowstr(
     _Out_writes_z_(elemof_buffer) P_USTR buffer,
     _InVal_     U32 elemof_buffer,
-    _InRef_     PC_F64 evalue,
-    _InRef_     PC_F64 ebase,
+    _InVal_     F64 evalue,
+    _InVal_     F64 ebase,
     _InVal_     BOOL log_scale,
     _In_        BOOL log_label)
 {
-    F64 value = *evalue;
+    F64 value = evalue;
 
     if(value < 0.0)
     {
         F64 abs_value = fabs(value);
         PtrPutByte(buffer, CH_MINUS_SIGN__BASIC);
-        return(gr_numtopowstr(ustr_AddBytes_wr(buffer, 1), elemof_buffer - 1, &abs_value, ebase, log_scale, log_label));
+        return(gr_numtopowstr(ustr_AddBytes_wr(buffer, 1), elemof_buffer - 1, abs_value, ebase, log_scale, log_label));
     }
 
     if((value >= U32_MAX) || (value < 1E-4))
@@ -143,10 +143,10 @@ gr_numtopowstr(
 
     if(log_label)
     {
-        F64 base = *ebase;
+        const F64 base = ebase;
         F64 lnz = log(value) / log(base);
         F64 exponent;
-        F64 mantissa = splitlognum(&lnz, &exponent);
+        F64 mantissa = splitlognum(lnz, &exponent);
 
         if((mantissa == 0.0 /*log(1.0)*/) && log_scale)
             consume_int(ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT(S32_FMT "^" S32_FMT), (S32) base, (S32) exponent));
@@ -174,7 +174,7 @@ gr_numtopowstr(
         if(NULL != ustr_dp)
         {
 #if !USTR_IS_SBSTR
-            U32 bytes_of_char = uchars_bytes_of_char_encoding(g_ss_recog_context.decimal_point_char);
+            const U32 bytes_of_char = uchars_bytes_of_char_encoding(g_ss_recog_context.decimal_point_char);
             if(bytes_of_char > 1)
             {   /* make space for a longer replacement character */
                 PC_USTR ustr_tail = ustr_AddBytes(ustr_dp, 1);
@@ -197,30 +197,30 @@ _Check_return_
 static STATUS
 gr_numtonumstr(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended,terminated*/,
-    _InRef_     PC_F64 iter_val)
+    _InVal_     F64 iter_val)
 {
     NUMFORM_PARMS numform_parms;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
 
     zero_struct(numform_parms);
     numform_parms.ustr_numform_numeric = ustr_bptr(numform_numeric_ustr_buf);
 
-    ev_data_set_real(&ev_data, *iter_val);
+    ss_data_set_real(&ss_data, iter_val);
 
-    return(numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+    return(numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 }
 
 /* work out the numform format to use for this axis */
 
 static void
 gr_numtonumstr_init(
-    _InRef_     PC_F64 iter_val_min,
-    _InRef_     PC_F64 iter_val_max,
+    _InVal_     F64 iter_val_min,
+    _InVal_     F64 iter_val_max,
     _InVal_     unsigned int decimals)
 {
-    F64 fabs_iter_val_min = fabs(*iter_val_min);
-    F64 fabs_iter_val_max = fabs(*iter_val_max);
-    F64 max_abs = MAX(fabs_iter_val_min, fabs_iter_val_max);
+    const F64 fabs_iter_val_min = fabs(iter_val_min);
+    const F64 fabs_iter_val_max = fabs(iter_val_max);
+    const F64 max_abs = fmax(fabs_iter_val_min, fabs_iter_val_max);
 
     if((max_abs >= U32_MAX) || (decimals >= N_NUMFORM_DECIMALS))
     {
@@ -270,7 +270,7 @@ gr_axis_iterator_renormalise_log(
 
     lnz = lnz / lna;
 
-    lnz = splitlognum(&lnz, &p_iter->exponent);
+    lnz = splitlognum(lnz, &p_iter->exponent);
 
     p_iter->mantissa = pow(p_iter->base, lnz);
 
@@ -931,7 +931,7 @@ gr_axis_addin_value_grids_x(
         loop;
         loop = gr_axis_iterator_next( p_axis, &gr_axis_iterator, major_grids))
     {
-        GR_PIXIT x_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
+        const GR_PIXIT x_pos = gr_value_pos(cp, axes_idx, axis_idx, gr_axis_iterator.iter);
         GR_BOX line_box;
 
         /* vertical grid line across entire y span */
@@ -1038,7 +1038,7 @@ gr_axis_addin_value_grids_y(
         loop;
         loop = gr_axis_iterator_next( p_axis, &gr_axis_iterator, major_grids))
     {
-        GR_PIXIT y_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
+        const GR_PIXIT y_pos = gr_value_pos(cp, axes_idx, axis_idx, gr_axis_iterator.iter);
         GR_BOX line_box;
 
         if(draw_main)
@@ -1153,11 +1153,11 @@ gr_axis_addin_value_labels_x(
     maxval = gr_axis_iterator.iter;
 
     loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
-    gr_numtonumstr_init(&gr_axis_iterator.iter, &maxval, p_axis_ticks->bits.decimals);
+    gr_numtonumstr_init(gr_axis_iterator.iter, maxval, p_axis_ticks->bits.decimals);
 
     for(; loop && status_ok(status); loop = gr_axis_iterator_next(p_axis, &gr_axis_iterator, major_ticks))
     {
-        GR_PIXIT x_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
+        const GR_PIXIT x_pos = gr_value_pos(cp, axes_idx, axis_idx, gr_axis_iterator.iter);
         GR_BOX text_box;
         GR_CHART_VALUE cv;
         GR_MILLIPOINT swidth_mp;
@@ -1173,9 +1173,9 @@ gr_axis_addin_value_labels_x(
         text_box.y0 += cp->plotarea.posn.y;
 
         if(p_axis->bits.log_scale || p_axis->bits.log_label)
-            status = gr_numtopowstr(ustr_bptr(cv.data.text), elemof32(cv.data.text), &gr_axis_iterator.iter, &gr_axis_iterator.base, p_axis->bits.log_scale, p_axis->bits.log_label);
+            status = gr_numtopowstr(ustr_bptr(cv.data.text), elemof32(cv.data.text), gr_axis_iterator.iter, gr_axis_iterator.base, p_axis->bits.log_scale, p_axis->bits.log_label);
         else
-            status = gr_numtonumstr(&quick_ublock, &gr_axis_iterator.iter);
+            status = gr_numtonumstr(&quick_ublock, gr_axis_iterator.iter);
 
         if(status_ok(status))
         if(0 != (swidth_mp = gr_host_font_string_width(host_font, ustr_bptr(cv.data.text))))
@@ -1268,11 +1268,11 @@ gr_axis_addin_value_labels_y(
     maxval = gr_axis_iterator.iter;
 
     loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
-    gr_numtonumstr_init(&gr_axis_iterator.iter, &maxval, p_axis_ticks->bits.decimals);
+    gr_numtonumstr_init(gr_axis_iterator.iter, maxval, p_axis_ticks->bits.decimals);
 
     for(; loop && status_ok(status); loop = gr_axis_iterator_next(p_axis, &gr_axis_iterator, major_ticks))
     {
-        GR_PIXIT y_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
+        const GR_PIXIT y_pos = gr_value_pos(cp, axes_idx, axis_idx, gr_axis_iterator.iter);
         GR_BOX text_box;
         GR_CHART_VALUE cv;
         GR_MILLIPOINT swidth_mp;
@@ -1292,9 +1292,9 @@ gr_axis_addin_value_labels_y(
         if(text_box.y0 >= last_y1)
         {
             if(p_axis->bits.log_scale || p_axis->bits.log_label)
-                status = gr_numtopowstr(ustr_bptr(cv.data.text), sizeof32(cv.data.text), &gr_axis_iterator.iter, &gr_axis_iterator.base, p_axis->bits.log_scale, p_axis->bits.log_label);
+                status = gr_numtopowstr(ustr_bptr(cv.data.text), sizeof32(cv.data.text), gr_axis_iterator.iter, gr_axis_iterator.base, p_axis->bits.log_scale, p_axis->bits.log_label);
             else
-                status = gr_numtonumstr(&quick_ublock, &gr_axis_iterator.iter);
+                status = gr_numtonumstr(&quick_ublock, gr_axis_iterator.iter);
 
             if(status_ok(status))
             if(0 != (swidth_mp = gr_host_font_string_width(host_font, ustr_bptr(cv.data.text))))
@@ -1381,7 +1381,7 @@ gr_axis_addin_value_ticks(
         loop;
         loop = gr_axis_iterator_next( p_axis, &gr_axis_iterator, major_ticks))
     {
-        GR_PIXIT pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
+        const GR_PIXIT pos = gr_value_pos(cp, axes_idx, axis_idx, gr_axis_iterator.iter);
         GR_BOX line_box;
 
         line_box.x0  = doing_x ? pos         : axis_pos->x;

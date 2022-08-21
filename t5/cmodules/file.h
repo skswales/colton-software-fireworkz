@@ -299,7 +299,7 @@ _Check_return_
 extern STATUS
 file_close_date(
     _InoutRef_  P_FILE_HANDLE p_file_handle,
-    _OutRef_    P_EV_DATE p_ev_date);
+    _OutRef_    P_SS_DATE p_ss_date);
 
 _Check_return_
 extern STATUS
@@ -310,7 +310,7 @@ _Check_return_
 extern STATUS
 file_date(
     _InoutRef_opt_ FILE_HANDLE file_handle,
-    _OutRef_    P_EV_DATE p_ev_date);
+    _OutRef_    P_SS_DATE p_ss_date);
 
 _Check_return_
 extern STATUS

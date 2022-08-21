@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2013-2019 Stuart Swales */
+/* Copyright (C) 2013-2020 Stuart Swales */
 
 /* Remember to disable use of precompiled headers for this file */
 
@@ -15,6 +15,11 @@
 #pragma warning(disable:4263) /* 'x' : member function does not override any base class virtual member function */
 #pragma warning(disable:4264) /* 'x' : no override available for virtual member function from base 'y'; function is hidden */
 
+#if _MSC_VER >= 1910 /* VS2017 or later */
+#pragma warning(disable:5039) /* 'function' : pointer or reference to potentially throwing function passed to extern C function under -EHc. Undefined behavior may occur if this function throws an exception */
+#pragma warning(disable:4596) /* Illegal qualified name in member declaration */
+#endif
+
 #if _MSC_VER >= 1900 /* VS2015 or later */
 #pragma warning(disable:4458) /* declaration of 'x' hides class member */
 #endif
@@ -24,7 +29,7 @@
 #endif
 
 #include <gdiplus.h>
-using namespace Gdiplus;
+/* using namespace Gdiplus; prefer to be explict */
 
 #pragma comment(lib, "Gdiplus.lib")
 
@@ -33,11 +38,11 @@ static ULONG_PTR g_gdiplusToken;
 extern "C" void
 gdiplus_startup(void)
 {
-    GdiplusStartupInput gdiplusStartupInput;
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 
-    Status status = GdiplusStartup(&g_gdiplusToken, &gdiplusStartupInput, NULL);
+    const Gdiplus::Status status = Gdiplus::GdiplusStartup(&g_gdiplusToken, &gdiplusStartupInput, NULL);
 
-    if(Ok != status)
+    if(Gdiplus::Ok != status)
     {
     }
 }
@@ -45,7 +50,7 @@ gdiplus_startup(void)
 extern "C" void
 gdiplus_shutdown(void)
 {
-    GdiplusShutdown(g_gdiplusToken);
+    Gdiplus::GdiplusShutdown(g_gdiplusToken);
 }
 
 extern "C" HBITMAP
@@ -53,7 +58,7 @@ gdiplus_load_bitmap_from_file(
     _In_z_      PCTSTR filename)
 {
     PCWSTR wstr_filename = _wstr_from_tstr(filename);
-    Bitmap mBitmap(wstr_filename, false);
+    Gdiplus::Bitmap mBitmap(wstr_filename, false);
     HBITMAP result;
     mBitmap.GetHBITMAP(0x00000000, &result);
     return(result);
@@ -70,8 +75,8 @@ struct GdipImage_struct
     HGLOBAL hGlobal; /* GDI+ needs a copy to be available at all times */
     IStream * stream;
 
-    Bitmap * bitmap;
-    Metafile * metafile;
+    Gdiplus::Bitmap * bitmap;
+    Gdiplus::Metafile * metafile;
 };
 /* GdipImage_implementation */
 
@@ -163,18 +168,18 @@ GdipImage_Load_File(
     switch(t5_filetype)
     {
     default:
-        p_this->bitmap = new Bitmap(wstr_filename);
+        p_this->bitmap = new Gdiplus::Bitmap(wstr_filename);
         bRet = (NULL != p_this->bitmap);
         if(bRet)
-            bRet = (Ok == p_this->bitmap->GetLastStatus());
+            bRet = (Gdiplus::Ok == p_this->bitmap->GetLastStatus());
         break;
 
     case FILETYPE_WMF:
     case FILETYPE_WINDOWS_EMF:
-        p_this->metafile = new Metafile(wstr_filename);
+        p_this->metafile = new Gdiplus::Metafile(wstr_filename);
         bRet = (NULL != p_this->metafile);
         if(bRet)
-            bRet = (Ok == p_this->metafile->GetLastStatus());
+            bRet = (Gdiplus::Ok == p_this->metafile->GetLastStatus());
         break;
     }
 
@@ -198,7 +203,6 @@ GdipImage_Load_Memory(
     _InVal_     U32 n_bytes,
     _InVal_     T5_FILETYPE t5_filetype)
 {
-    HRESULT hr;
     BOOL bRet = FALSE;
 
     GdipImage_Dispose_data(p_this);
@@ -212,7 +216,7 @@ GdipImage_Load_Memory(
     ::CopyMemory(pBuffer, p_data, n_bytes);
 
     /* Create IStream* from global memory */
-    hr = ::CreateStreamOnHGlobal(p_this->hGlobal, FALSE, &p_this->stream);
+    HRESULT hr = ::CreateStreamOnHGlobal(p_this->hGlobal, FALSE, &p_this->stream);
     if(SUCCEEDED(hr))
     { /*EMPTY*/ }
     else
@@ -223,18 +227,18 @@ GdipImage_Load_Memory(
         switch(t5_filetype)
         {
         default:
-            p_this->bitmap = new Bitmap(p_this->stream);
+            p_this->bitmap = new Gdiplus::Bitmap(p_this->stream);
             bRet = (NULL != p_this->bitmap);
             if(bRet)
-                bRet = (Ok == p_this->bitmap->GetLastStatus());
+                bRet = (Gdiplus::Ok == p_this->bitmap->GetLastStatus());
             break;
 
         case FILETYPE_WMF:
         case FILETYPE_WINDOWS_EMF:
-            p_this->metafile = new Metafile(p_this->stream);
+            p_this->metafile = new Gdiplus::Metafile(p_this->stream);
             bRet = (NULL != p_this->metafile);
             if(bRet)
-                bRet = (Ok == p_this->metafile->GetLastStatus());
+                bRet = (Gdiplus::Ok == p_this->metafile->GetLastStatus());
             break;
         }
     }
@@ -256,7 +260,7 @@ GdipImage_GetImageSize(
     _InRef_     GdipImage p_this,
     _OutRef_    PSIZE p_size /* TWIPS */)
 {
-    Image * image = NULL;
+    Gdiplus::Image * image = NULL;
     
     if(NULL != p_this->bitmap)
         image = p_this->bitmap;
@@ -266,12 +270,12 @@ GdipImage_GetImageSize(
     p_size->cx = 0;
     p_size->cy = 0;
 
-    if((NULL != image) && (Ok == image->GetLastStatus()))
+    if((NULL != image) && (Gdiplus::Ok == image->GetLastStatus()))
     {
-        UINT x = image->GetWidth();
-        UINT y = image->GetHeight();
-        F64 h_dpi = image->GetHorizontalResolution();
-        F64 v_dpi = image->GetVerticalResolution();
+        const UINT x = image->GetWidth();
+        const UINT y = image->GetHeight();
+        const F64 h_dpi = image->GetHorizontalResolution();
+        const F64 v_dpi = image->GetVerticalResolution();
 
         p_size->cx = (LONG) ceil(((F64) x * PIXITS_PER_INCH) / h_dpi);
         p_size->cy = (LONG) ceil(((F64) y * PIXITS_PER_INCH) / v_dpi);
@@ -291,16 +295,16 @@ GdipImage_Render_bitmap(
     _HdcRef_    HDC hDC,
     _InRef_     PCRECT p_rect)
 {
-    Bitmap * bitmap = p_this->bitmap;
+    Gdiplus::Bitmap * bitmap = p_this->bitmap;
 
-    INT x = p_rect->left;
-    INT y = p_rect->top;
-    INT width  = p_rect->right - p_rect->left;
-    INT height = p_rect->bottom - p_rect->top;
+    const INT x = p_rect->left;
+    const INT y = p_rect->top;
+    const INT width  = p_rect->right - p_rect->left;
+    const INT height = p_rect->bottom - p_rect->top;
 
-    Graphics graphics(hDC);
-    Status status = graphics.DrawImage(bitmap, x, y, width, height);
-    return(Ok == status);
+    Gdiplus::Graphics graphics(hDC);
+    const Gdiplus::Status status = graphics.DrawImage(bitmap, x, y, width, height);
+    return(Gdiplus::Ok == status);
 }
 
 _Check_return_
@@ -310,16 +314,16 @@ GdipImage_Render_metafile(
     _HdcRef_    HDC hDC,
     _InRef_     PCRECT p_rect)
 {
-    Metafile * metafile = p_this->metafile;
+    Gdiplus::Metafile * metafile = p_this->metafile;
 
-    INT x = p_rect->left;
-    INT y = p_rect->top;
-    INT width  = p_rect->right - p_rect->left;
-    INT height = p_rect->bottom - p_rect->top;
+    const INT x = p_rect->left;
+    const INT y = p_rect->top;
+    const INT width  = p_rect->right - p_rect->left;
+    const INT height = p_rect->bottom - p_rect->top;
 
-    Graphics graphics(hDC);
-    Status status = graphics.DrawImage(metafile, x, y, width, height);
-    return(Ok == status);
+    Gdiplus::Graphics graphics(hDC);
+    const Gdiplus::Status status = graphics.DrawImage(metafile, x, y, width, height);
+    return(Gdiplus::Ok == status);
 }
 
 _Check_return_
@@ -340,32 +344,34 @@ GdipImage_Render(
 
 // This helper function from MSDN 'Retrieving the Class Identifier for an Encoder'
 
-static
-int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+static int
+GetEncoderClsid(
+    const WCHAR * format,
+    CLSID * pClsid)
 {
     UINT num = 0;   // number of image encoders
     UINT size = 0;  // size of the image encoder array in bytes
 
-    ImageCodecInfo* pImageCodecInfo = NULL;
+    Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
 
-    GetImageEncodersSize(&num, &size);
-    if(size == 0)
+    if((Gdiplus::Ok != Gdiplus::GetImageEncodersSize(&num, &size)) || (size == 0))
         return -1;  // Failure
 
-    pImageCodecInfo = (ImageCodecInfo*)(malloc(size));
-    if(pImageCodecInfo == NULL)
+    pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+    if(NULL == pImageCodecInfo)
         return -1;  // Failure
 
-    GetImageEncoders(num, size, pImageCodecInfo);
-
-    for(UINT j = 0; j < num; ++j)
+    if(Gdiplus::Ok == Gdiplus::GetImageEncoders(num, size, pImageCodecInfo))
     {
-        if( wcscmp(pImageCodecInfo[j].MimeType, format) == 0 )
+        for(UINT j = 0; j < num; ++j)
         {
-            *pClsid = pImageCodecInfo[j].Clsid;
-            free(pImageCodecInfo);
-            return j;   // Success
-        }    
+            if( wcscmp(pImageCodecInfo[j].MimeType, format) == 0 )
+            {
+                *pClsid = pImageCodecInfo[j].Clsid;
+                free(pImageCodecInfo);
+                return j;   // Success
+            }    
+        }
     }
 
     free(pImageCodecInfo);
@@ -379,7 +385,7 @@ GdipImage_SaveAs_BMP(
     _In_z_      PCWSTR wstr_filename)
 {
     BOOL bRet = FALSE;
-    Image * image = NULL;
+    Gdiplus::Image * image = NULL;
     
     if(NULL != p_this->bitmap)
         image = p_this->bitmap;
@@ -395,17 +401,17 @@ GdipImage_SaveAs_BMP(
         return(FALSE);
 
     /* bizarre workaround for some PNG files that gave Win32Error when saved directly */
-    Bitmap * dest = new Bitmap(image->GetWidth(), image->GetHeight(), PixelFormat32bppARGB);
+    Gdiplus::Bitmap * dest = new Gdiplus::Bitmap(image->GetWidth(), image->GetHeight(), PixelFormat32bppARGB);
 
     /* create a graphics from the dest image */
-    Graphics * g = Graphics::FromImage(dest);
+    Gdiplus::Graphics * g = Gdiplus::Graphics::FromImage(dest);
 
     /* draw the source image into the desired format dest image */
-    g->DrawImage(image, Point(0, 0));
+    g->DrawImage(image, Gdiplus::Point(0, 0));
 
-    Status status = dest->Save(wstr_filename, &clsidEncoder);
+    const Gdiplus::Status status = dest->Save(wstr_filename, &clsidEncoder);
 
-    if(Ok == status)
+    if(Gdiplus::Ok == status)
     {
         bRet = TRUE;
     }

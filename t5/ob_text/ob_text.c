@@ -96,7 +96,7 @@ p_ss_name_record_from_client_handle(
     {
         P_SS_NAME_RECORD p_ss_name_record = array_ptr(&p_text_instance->h_ss_name_record, SS_NAME_RECORD, i);
 
-        if(p_ss_name_record->deleted)
+        if(p_ss_name_record->is_deleted)
             continue;
 
         if(client_handle == p_ss_name_record->client_handle)
@@ -109,9 +109,9 @@ p_ss_name_record_from_client_handle(
     return(p_ss_name_record_out);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, ss_name_record_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, ss_name_record_deleted)
 {
-    return(((P_SS_NAME_RECORD) p_any)->deleted);
+    return(((P_SS_NAME_RECORD) p_any)->is_deleted);
 }
 
 static void
@@ -120,7 +120,7 @@ ss_name_record_delete(
     P_SS_NAME_RECORD p_ss_name_record)
 {
     uref_del_dependency(docno_from_p_docu(p_docu), p_ss_name_record->uref_handle);
-    p_ss_name_record->deleted = 1;
+    p_ss_name_record->is_deleted = 1;
 }
 
 /******************************************************************************
@@ -134,7 +134,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_ss)
     switch(p_uref_event_block->reason.code)
     {
     case DEP_DELETE: /* dependency must be deleted */
-        switch(t5_message)
+        switch(uref_message)
         {
         /* free a region */
         default:
@@ -156,13 +156,14 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_ss)
         const P_SS_NAME_RECORD p_ss_name_record = p_ss_name_record_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
 
         if(NULL != p_ss_name_record)
-            if(uref_match_slr(&p_ss_name_record->slr, t5_message, p_uref_event_block) == DEP_DELETE)
+            if(uref_match_slr(&p_ss_name_record->slr, uref_message, p_uref_event_block) == DEP_DELETE)
                 ss_name_record_delete(p_docu, p_ss_name_record);
 
         break;
         }
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(STATUS_OK);
@@ -186,7 +187,7 @@ ss_name_record_find(
     {
         P_SS_NAME_RECORD p_ss_name_record = array_ptr(&p_text_instance->h_ss_name_record, SS_NAME_RECORD, i);
 
-        if(p_ss_name_record->deleted)
+        if(p_ss_name_record->is_deleted)
             continue;
 
         if(p_ss_name_record->ev_handle == ev_handle)
@@ -737,7 +738,7 @@ ob_text_msg_docu_colrow(
         {
             UREF_PARMS uref_parms;
             region_from_two_slrs(&uref_parms.source.region, p_slr_old, p_slr_old, TRUE);
-            uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+            uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
         }
 
         p_docu->modified_text = p_docu->modified;
@@ -1023,7 +1024,7 @@ T5_MSG_PROTO(static, text_msg_object_data_read, _InoutRef_ P_OBJECT_DATA_READ p_
 
     if(P_DATA_NONE == p_object_data_read->object_data.u.p_object)
     {
-        ev_data_set_blank(&p_object_data_read->ev_data);
+        ss_data_set_blank(&p_object_data_read->ss_data);
         p_object_data_read->constant = 1;
     }
     else
@@ -1037,7 +1038,7 @@ T5_MSG_PROTO(static, text_msg_object_data_read, _InoutRef_ P_OBJECT_DATA_READ p_
         status_return(object_call_id(OBJECT_ID_STORY, p_docu, T5_MSG_OBJECT_READ_TEXT, &object_read_text));
         /* NB it comes unterminated */
 
-        if(status_ok(status = ss_string_make_uchars(&p_object_data_read->ev_data, quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock))))
+        if(status_ok(status = ss_string_make_uchars(&p_object_data_read->ss_data, quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock))))
             p_object_data_read->constant = 1;
 
         quick_ublock_dispose(&quick_ublock);
@@ -1333,7 +1334,7 @@ T5_MSG_PROTO(static, text_msg_new_object_from_text, _InRef_ P_NEW_OBJECT_FROM_TE
                                  &p_new_object_from_text->data_ref.arg.slr,
                                  &p_new_object_from_text->data_ref.arg.slr,
                                  TRUE);
-            uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+            uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
             status_consume(object_data_from_slr(p_docu, &object_data, &p_new_object_from_text->data_ref.arg.slr));
         }
         break;

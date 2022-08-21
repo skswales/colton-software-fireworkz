@@ -272,7 +272,6 @@ dialog positions and sizes specified in PIXITS
 
 #define DIALOG_STDBUMPOVH_H     DIALOG_STDEDITOVH_H
 #define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + (digits) * DIALOG_NUMCHAR_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
-#define DIALOG_STDBUMPSPACING_H DIALOG_SMALLSPACING_H
 
 #if 1
 #define DIALOG_STDEDIT_V        ((2 * 2 + 52) * PIXITS_PER_RISCOS) /* RO5SG - no fancy borders but extra space for fancy font */
@@ -386,7 +385,6 @@ dialog positions and sizes specified in PIXITS
 
 #define DIALOG_STDBUMPOVH_H     DIALOG_STDEDITOVH_H
 #define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + (digits) * DIALOG_NUMCHAR_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
-#define DIALOG_STDBUMPSPACING_H ( 2 * PIXITS_PER_WDU_H)
 
 #define DIALOG_STDEDIT_V        (12 * PIXITS_PER_WDU_V) /* 14 in style guide but that's crazy. 10 looks ok on Windows 7 but is too small on Windows XP */
 #define DIALOG_STDEDITOVH_H     ( 8 * PIXITS_PER_WDU_H)

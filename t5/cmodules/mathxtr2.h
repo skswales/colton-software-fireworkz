@@ -42,7 +42,7 @@ typedef /*_Check_return_*/ STATUS (* P_PROC_LINEST_DATA_PUT) (
     _InVal_     CLIENT_HANDLE client_handle,
     _In_        LINEST_COLOFF colID,
     _In_        LINEST_ROWOFF row,
-    _InRef_     PC_F64 value);
+    _InVal_     F64 value);
 
 #define PROC_LINEST_DATA_PUT_PROTO(_e_s, _proc_name, client_handle, colID, row, value) \
 _Check_return_ \
@@ -51,7 +51,7 @@ _proc_name( \
     _InVal_     CLIENT_HANDLE client_handle, \
     _In_        LINEST_COLOFF colID, \
     _In_        LINEST_ROWOFF row, \
-    _InRef_     PC_F64 value)
+    _InVal_     F64 value)
 
 /*
 exported functions

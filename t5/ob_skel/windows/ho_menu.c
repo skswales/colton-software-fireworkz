@@ -114,7 +114,6 @@ ho_create_docu_menus(
         return(status);
 
     {
-    STATUS status = STATUS_OK;
     UINT command = IDM_START; /* SKS 20mar95 was 0 but that's confusingly low c.f. IDOK */
     const MENU_ROOT_ID i_max = (MENU_ROOT_ID) array_elements(&p_docu_config->ho_menu_data);
     MENU_ROOT_ID i;
@@ -142,9 +141,9 @@ ho_create_docu_menus(
         status_break(status);
         command++;
     }
+    } /*block*/
 
     return(status);
-    } /*block*/
 }
 
 /* Given the index for a menu attempt to make a popup of it, this also

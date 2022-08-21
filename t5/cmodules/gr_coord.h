@@ -161,7 +161,7 @@ gr_box_rotate(
     _OutRef_    P_GR_BOX xbox,
     _InRef_     PC_GR_BOX abox,
     _InRef_     PC_GR_POINT spoint,
-    _InRef_     PC_F64 angle);
+    _InVal_     F64 angle);
 
 extern P_GR_BOX
 gr_box_scale(
@@ -241,7 +241,7 @@ gr_point_rotate(
     _OutRef_    P_GR_POINT xpoint,
     _InRef_     PC_GR_POINT apoint,
     _InRef_     PC_GR_POINT spoint,
-    _InRef_     PC_F64 angle);
+    _InVal_     F64 angle);
 
 extern P_GR_POINT
 gr_point_scale(
@@ -317,7 +317,7 @@ extern P_GR_XFORMMATRIX
 gr_xform_make_rotation(
     _OutRef_    P_GR_XFORMMATRIX xform,
     _InRef_     PC_GR_POINT spoint,
-    _InRef_     PC_F64 angle);
+    _InVal_     F64 angle);
 
 /*ncr*/
 extern P_GR_XFORMMATRIX

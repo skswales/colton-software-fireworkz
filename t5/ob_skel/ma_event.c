@@ -32,7 +32,7 @@ typedef struct MAEVE_ENTRY
     P_PROC_MAEVE_EVENT p_proc_maeve_event;
     MAEVE_HANDLE maeve_handle;
     CLIENT_HANDLE client_handle;
-    U8 deleted;
+    U8 is_deleted;
     U8 _spare[3];
 }
 MAEVE_ENTRY, * P_MAEVE_ENTRY; typedef const MAEVE_ENTRY * PC_MAEVE_ENTRY;
@@ -47,7 +47,7 @@ typedef struct MAEVE_SERVICES_ENTRY
 {
     P_PROC_MAEVE_SERVICES_EVENT p_proc_maeve_services_event;
     MAEVE_SERVICES_HANDLE maeve_services_handle;
-    U8 deleted;
+    U8 is_deleted;
     U8 _spare[3];
 }
 MAEVE_SERVICES_ENTRY, * P_MAEVE_SERVICES_ENTRY; typedef const MAEVE_SERVICES_ENTRY * PC_MAEVE_SERVICES_ENTRY;
@@ -81,10 +81,10 @@ maeve_event_handler_add(
     {
         const P_MAEVE_ENTRY p_maeve_entry_i = array_ptr(&p_docu->h_maeve_table, MAEVE_ENTRY, maeve_idx);
 
-        if(p_maeve_entry_i->deleted)
+        if(p_maeve_entry_i->is_deleted)
         {
             p_maeve_entry = p_maeve_entry_i;
-            p_maeve_entry->deleted = 0;
+            p_maeve_entry->is_deleted = 0;
             break;
         }
     }
@@ -101,7 +101,7 @@ maeve_event_handler_add(
     p_maeve_entry->maeve_handle = next_maeve_handle++;
     p_maeve_entry->client_handle = client_handle;
 
-    trace_4(TRACE_APP_MAEVE, TEXT("maeve_event_handler_add(docno=%d, %s, client_handle=") UINTPTR_XTFMT TEXT("): got maeve_handle ") STATUS_TFMT, p_docu->docno, report_procedure_name(report_proc_cast(p_proc_maeve_event)), client_handle, p_maeve_entry->maeve_handle);
+    trace_4(TRACE_APP_MAEVE, TEXT("maeve_event_handler_add(docno=") DOCNO_TFMT TEXT(", %s, client_handle=") UINTPTR_XTFMT TEXT("): got maeve_handle ") STATUS_TFMT, p_docu->docno, report_procedure_name(report_proc_cast(p_proc_maeve_event)), client_handle, p_maeve_entry->maeve_handle);
     return(p_maeve_entry->maeve_handle);
 }
 
@@ -125,7 +125,7 @@ maeve_event_handler_del(
     {
         const P_MAEVE_ENTRY p_maeve_entry = array_ptr(&p_docu->h_maeve_table, MAEVE_ENTRY, maeve_idx);
 
-        if(p_maeve_entry->deleted)
+        if(p_maeve_entry->is_deleted)
             continue;
 
         if(p_maeve_entry->p_proc_maeve_event != p_proc_maeve_event)
@@ -134,12 +134,12 @@ maeve_event_handler_del(
         if(p_maeve_entry->client_handle != client_handle)
             continue;
 
-        trace_4(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del(docno=%d, %s, client_handle") UINTPTR_XTFMT TEXT("): deleted maeve_handle ") STATUS_TFMT, p_docu->docno, report_procedure_name(report_proc_cast(p_proc_maeve_event)), client_handle, p_maeve_entry->maeve_handle);
-        p_maeve_entry->deleted = 1;
+        trace_4(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del(docno=") DOCNO_TFMT TEXT(", %s, client_handle") UINTPTR_XTFMT TEXT("): deleted maeve_handle ") STATUS_TFMT, p_docu->docno, report_procedure_name(report_proc_cast(p_proc_maeve_event)), client_handle, p_maeve_entry->maeve_handle);
+        p_maeve_entry->is_deleted = 1;
         return;
     }
 
-    trace_3(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del(docno=%d, %s, client_handle") UINTPTR_XTFMT TEXT("): FAILED"), p_docu->docno, report_procedure_name(report_proc_cast(p_proc_maeve_event)), client_handle);
+    trace_3(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del(docno=") DOCNO_TFMT TEXT(", %s, client_handle") UINTPTR_XTFMT TEXT("): FAILED"), p_docu->docno, report_procedure_name(report_proc_cast(p_proc_maeve_event)), client_handle);
     assert0();
 }
 
@@ -159,18 +159,18 @@ maeve_event_handler_del_handle(
     {
         const P_MAEVE_ENTRY p_maeve_entry = array_ptr(&p_docu->h_maeve_table, MAEVE_ENTRY, maeve_idx);
 
-        if(p_maeve_entry->deleted)
+        if(p_maeve_entry->is_deleted)
             continue;
 
         if(p_maeve_entry->maeve_handle != maeve_handle)
             continue;
 
-        trace_2(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del_handle(docno=%d, maeve_handle=%d): OK"), p_docu->docno, maeve_handle);
-        p_maeve_entry->deleted = 1;
+        trace_2(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del_handle(docno=") DOCNO_TFMT TEXT(", maeve_handle=%d): OK"), p_docu->docno, maeve_handle);
+        p_maeve_entry->is_deleted = 1;
         return;
     }
 
-    trace_2(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del_handle(docno=%d, maeve_handle=%d): FAILED"), p_docu->docno, maeve_handle);
+    trace_2(TRACE_APP_MAEVE, TEXT("maeve_event_handler_del_handle(docno=") DOCNO_TFMT TEXT(", maeve_handle=%d): FAILED"), p_docu->docno, maeve_handle);
     assert0();
 }
 
@@ -224,7 +224,7 @@ PROC_EVENT_PROTO(extern, maeve_event)
         /* must do inside loop as client procedures may add new handlers thereby reallocing the block */
         const PC_MAEVE_ENTRY p_maeve_entry = array_ptr(&p_docu->h_maeve_table, MAEVE_ENTRY, maeve_idx);
 
-        if(p_maeve_entry->deleted)
+        if(p_maeve_entry->is_deleted)
             continue;
 
         status_accumulate(status, maeve_event_call_handler(p_docu, t5_message, p_data, p_maeve_entry));
@@ -267,7 +267,7 @@ maeve_event_close_thunk(
 {
     DOCU_ASSERT(p_docu);
 
-    trace_1(TRACE_APP_MAEVE, TEXT("maeve_event_close_thunk(docno=%d): dispose of h_maeve_table"), p_docu->docno);
+    trace_1(TRACE_APP_MAEVE, TEXT("maeve_event_close_thunk(docno=") DOCNO_TFMT TEXT("): dispose of h_maeve_table"), p_docu->docno);
 
 #if CHECKING
     {
@@ -278,10 +278,10 @@ maeve_event_close_thunk(
         /* must do inside loop as client procedures may add new handlers thereby reallocing the block */
         const PC_MAEVE_ENTRY p_maeve_entry = array_ptr(&p_docu->h_maeve_table, MAEVE_ENTRY, maeve_idx);
 
-        if(p_maeve_entry->deleted)
+        if(p_maeve_entry->is_deleted)
             continue;
 
-        assert(p_maeve_entry->deleted);
+        assert(p_maeve_entry->is_deleted);
     }
     } /*block*/
 #endif /* CHECKING */
@@ -313,10 +313,10 @@ maeve_services_event_handler_add(
     {
         const P_MAEVE_SERVICES_ENTRY p_maeve_services_entry_i = array_ptr(&h_maeve_services_table, MAEVE_SERVICES_ENTRY, maeve_services_idx);
 
-        if(p_maeve_services_entry_i->deleted)
+        if(p_maeve_services_entry_i->is_deleted)
         {
             p_maeve_services_entry = p_maeve_services_entry_i;
-            p_maeve_services_entry->deleted = 0;
+            p_maeve_services_entry->is_deleted = 0;
             break;
         }
     }
@@ -355,14 +355,14 @@ maeve_services_event_handler_del_handle(
     {
         const P_MAEVE_SERVICES_ENTRY p_maeve_services_entry = array_ptr(&h_maeve_services_table, MAEVE_SERVICES_ENTRY, maeve_services_idx);
 
-        if(p_maeve_services_entry->deleted)
+        if(p_maeve_services_entry->is_deleted)
             continue;
 
         if(p_maeve_services_entry->maeve_services_handle != maeve_services_handle)
             continue;
 
         trace_1(TRACE_APP_MAEVE, TEXT("maeve_services_event_handler_del_handle(maeve_services_handle=%d): OK"), maeve_services_handle);
-        p_maeve_services_entry->deleted = 1;
+        p_maeve_services_entry->is_deleted = 1;
         return;
     }
 
@@ -421,7 +421,7 @@ PROC_EVENT_PROTO(extern, maeve_service_event)
         /* must do inside loop as client procedures may add new handlers thereby reallocing the block */
         const PC_MAEVE_SERVICES_ENTRY p_maeve_services_entry = array_ptr(&h_maeve_services_table, MAEVE_SERVICES_ENTRY, maeve_services_idx);
 
-        if(p_maeve_services_entry->deleted)
+        if(p_maeve_services_entry->is_deleted)
             continue;
 
         status_accumulate(status, maeve_service_event_call_handler(p_docu_from_docno(docno), t5_message, p_data, p_maeve_services_entry));

@@ -309,7 +309,7 @@ dialog_ictls_create(
         p_dialog_ictl->dialog_control_id = p_dialog_control->dialog_control_id;
         p_dialog_ictl->dialog_control_type = UBF_UNPACK(DIALOG_CONTROL_TYPE, p_dialog_control->bits.packed_dialog_control_type);
 
-        /* propogate enable suppression state at create time too */
+        /* propagate enable suppression state at create time too */
         p_dialog_ictl->bits.enabled = 1;
         p_dialog_ictl->bits.enable_suppressed = UBF_PACK(suppress);
 
@@ -321,7 +321,8 @@ dialog_ictls_create(
 
         switch(p_dialog_ictl->dialog_control_type)
         {
-        default: default_unhandled(); break;
+        default: default_unhandled();
+            break;
 
         case DIALOG_CONTROL_GROUPBOX:
             p_dialog_ictl->state.radiobutton = DIALOG_RADIOSTATE_NONE;

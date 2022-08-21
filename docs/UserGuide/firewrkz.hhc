@@ -1734,6 +1734,38 @@
 					<param name="Name" value="C_THETA">
 					<param name="Local" value="content/sg06/sg6_C_THETA.htm">
 					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BESSELI">
+					<param name="Local" value="content/sg06/sg6_BESSELI.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BESSELJ">
+					<param name="Local" value="content/sg06/sg6_BESSELJ.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BESSELK">
+					<param name="Local" value="content/sg06/sg6_BESSELK.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BESSELY">
+					<param name="Local" value="content/sg06/sg6_BESSELY.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="DELTA">
+					<param name="Local" value="content/sg06/sg6_DELTA.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="ERF">
+					<param name="Local" value="content/sg06/sg6_ERF.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="ERFC">
+					<param name="Local" value="content/sg06/sg6_ERFC.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="GESTEP">
+					<param name="Local" value="content/sg06/sg6_GESTEP.htm">
+					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Financial functions">

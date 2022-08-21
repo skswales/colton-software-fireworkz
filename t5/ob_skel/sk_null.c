@@ -83,7 +83,7 @@ do_this_null_event(
     const P_DOCU p_docu = p_docu_from_docno(null_funclist_entry.docno);
     NULL_EVENT_RETURN_CODE res = NULL_EVENT_COMPLETED;
 
-    trace_6(TRACE__NULL, TEXT("null_events_do_events --- calling item=%d, docno=%d/") PTR_XTFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
+    trace_6(TRACE__NULL, TEXT("null_events_do_events --- calling item=%d, docno=") DOCNO_TFMT TEXT("/") PTR_XTFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
             i, null_funclist_entry.docno, p_docu, null_funclist_entry.t5_message, null_funclist_entry.p_proc_event, null_funclist_entry.client_handle);
 
     /* have seen null events still going after associated document closure */
@@ -222,7 +222,7 @@ null_events_start(
             (t_p_null_funclist_entry->p_proc_event  == p_proc_event ) &&
             (t_p_null_funclist_entry->client_handle == client_handle) )
         {
-            trace_5(TRACE__NULL, TEXT("null_events_start --- updating docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", still %u null events"),
+            trace_5(TRACE__NULL, TEXT("null_events_start --- updating docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", still %u null events"),
                     docno, t5_message, p_proc_event, client_handle, array_elements32(&null_.event_list));
             p_null_funclist_entry = t_p_null_funclist_entry;
             break;
@@ -240,7 +240,7 @@ null_events_start(
     }
     else
     {
-        trace_5(TRACE__NULL, TEXT("null_events_start --- adding docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", now %u null events"),
+        trace_5(TRACE__NULL, TEXT("null_events_start --- adding docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", now %u null events"),
                 docno, t5_message, p_proc_event, client_handle, array_elements32(&null_.event_list));
     }
 
@@ -270,14 +270,14 @@ null_events_stop(
             (p_null_funclist_entry->p_proc_event  == p_proc_event ) &&
             (p_null_funclist_entry->client_handle == client_handle))
         {
-            trace_5(TRACE__NULL, TEXT("null_events_stop --- removing docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u null events"),
+            trace_5(TRACE__NULL, TEXT("null_events_stop --- removing docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u null events"),
                     docno, t5_message, p_proc_event, client_handle, array_elements32(&null_.event_list)-1);
             al_array_delete_at(&null_.event_list, -1, i);
             return;
         }
     }
 
-    trace_4(TRACE__NULL, TEXT("null_events_stop --- failed to remove docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
+    trace_4(TRACE__NULL, TEXT("null_events_stop --- failed to remove docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
             docno, t5_message, p_proc_event, client_handle);
 }
 
@@ -305,7 +305,7 @@ do_this_scheduled_event(
 
     p_docu = p_docu_from_docno(scheduled_funclist_entry.docno);
 
-    trace_8(TRACE__SCHEDULED, TEXT("do_this_scheduled_event, index %d (@ %+d) --- removing and calling docno=%d/") PTR_XTFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u scheduled events"),
+    trace_8(TRACE__SCHEDULED, TEXT("do_this_scheduled_event, index %d (@ %+d) --- removing and calling docno=") DOCNO_TFMT TEXT("/") PTR_XTFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u scheduled events"),
             *p_i, monotime_difftimes(scheduled_funclist_entry.event_time, initialTime), scheduled_funclist_entry.docno, p_docu, scheduled_funclist_entry.t5_message, scheduled_funclist_entry.p_proc_event, scheduled_funclist_entry.client_handle, array_elements32(&scheduled_.event_list)-1);
 
     al_array_delete_at(&scheduled_.event_list, -1, *p_i); /* remove event */
@@ -453,7 +453,7 @@ scheduled_event_at(
             (t_p_scheduled_funclist_entry->client_handle == client_handle) )
         {
             p_scheduled_funclist_entry = t_p_scheduled_funclist_entry;
-            trace_6(TRACE__SCHEDULED, TEXT("scheduled_event_at --- updating docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(" @ ") U32_XTFMT TEXT(", still %u scheduled events"),
+            trace_6(TRACE__SCHEDULED, TEXT("scheduled_event_at --- updating docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(" @ ") U32_XTFMT TEXT(", still %u scheduled events"),
                     docno, t5_message, p_proc_event, client_handle, event_time, array_elements32(&scheduled_.event_list));
             break;
         }
@@ -470,7 +470,7 @@ scheduled_event_at(
     }
     else
     {
-        trace_6(TRACE__SCHEDULED, TEXT("scheduled_event_at --- adding docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(" @ ") U32_XTFMT TEXT(", now %u scheduled events"),
+        trace_6(TRACE__SCHEDULED, TEXT("scheduled_event_at --- adding docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(" @ ") U32_XTFMT TEXT(", now %u scheduled events"),
                 docno, t5_message, p_proc_event, client_handle, event_time, array_elements32(&scheduled_.event_list));
     }
 
@@ -502,14 +502,14 @@ scheduled_event_remove(
             (p_scheduled_funclist_entry->p_proc_event  == p_proc_event ) &&
             (p_scheduled_funclist_entry->client_handle == client_handle) )
         {
-            trace_5(TRACE__SCHEDULED, TEXT("scheduled_event_remove --- removing docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u scheduled events"),
+            trace_5(TRACE__SCHEDULED, TEXT("scheduled_event_remove --- removing docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u scheduled events"),
                     docno, t5_message, p_proc_event, client_handle, array_elements32(&scheduled_.event_list)-1);
             al_array_delete_at(&scheduled_.event_list, -1, i);
             return;
         }
     }
 
-    trace_4(TRACE__SCHEDULED, TEXT("scheduled_event_remove --- failed to remove docno=%d message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
+    trace_4(TRACE__SCHEDULED, TEXT("scheduled_event_remove --- failed to remove docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
             docno, t5_message, p_proc_event, client_handle);
 }
 

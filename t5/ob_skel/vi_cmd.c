@@ -378,7 +378,7 @@ view_control_ruler_border_group =
     VIEW_CONTROL_ID_RULER_BORDER_GROUP, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, VIEW_CONTROL_ID_ZOOM_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBRB, GROUPBOX) }
+    { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
@@ -453,7 +453,7 @@ static const UI_CONTROL_S32
 view_control_zoom_value_control = { 10, 1600, 5 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-view_control_zoom_value_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &view_control_zoom_value_control } /* BUMP_XX */ };
+view_control_zoom_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &view_control_zoom_value_control } /* BUMP_XX */ };
 
 static const DIALOG_CONTROL
 view_control_zoom_value =

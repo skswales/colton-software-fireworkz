@@ -33,6 +33,8 @@ typedef U8 PACKED_DOCNO; /* packed version for critical structures */
 #define DOCNO_CONFIG        ((DOCNO) 1)
 #define DOCNO_SKIP_CONFIG   ((DOCNO) 1) /* start value for docno_enum_docs() to skip config */
 
+#define DOCNO_TFMT          U32_TFMT
+
 typedef struct VIEW VIEW, * P_VIEW, ** P_P_VIEW; typedef const VIEW * PC_VIEW; /* rare use */
 
 #if 1
@@ -52,6 +54,8 @@ typedef U8 PACKED_VIEWNO; /* packed version for critical structures */
 #define VIEWNO_MAX          ((VIEWNO) 255)
 #define VIEWNO_NONE         ((VIEWNO) 0)
 #define VIEWNO_FIRST        ((VIEWNO) 1)
+
+#define VIEWNO_TFMT         U32_TFMT
 
 typedef struct PANE PANE, * P_PANE, * P_P_PANE; typedef const PANE * PC_PANE; /* rare use */
 
@@ -1150,6 +1154,17 @@ t5_message_is_cmd(_InVal_ T5_MESSAGE t5_message)
 {
     return((t5_message >= T5_CMD__START) && (t5_message < T5_CMD__END));
 }
+
+typedef enum UREF_MESSAGE
+{
+    Uref_Msg_Uref = T5_MSG_UREF_UREF, /* transitional */
+    Uref_Msg_Delete = T5_MSG_UREF_DELETE,
+    Uref_Msg_Swap_Rows = T5_MSG_UREF_SWAP_ROWS,
+    Uref_Msg_Change = T5_MSG_UREF_CHANGE,
+    Uref_Msg_Overwrite = T5_MSG_UREF_OVERWRITE,
+    Uref_Msg_CLOSE1 = T5_MSG_UREF_CLOSE1,
+    Uref_Msg_CLOSE2 = T5_MSG_UREF_CLOSE2
+} UREF_MESSAGE;
 
 /*
 colour definition
@@ -5671,9 +5686,9 @@ ui_text_alloc_from_ustr(
 
 _Check_return_
 extern STATUS
-ui_text_alloc_from_p_ev_string(
+ui_text_alloc_from_ss_string(
     _OutRef_    P_UI_TEXT p_dst_ui_text,
-    _InRef_opt_ PC_EV_STRINGC p_ev_string);
+    _InRef_opt_ PC_SS_STRINGC p_ss_string);
 
 _Check_return_
 extern BOOL
@@ -6571,7 +6586,7 @@ typedef struct STYLE_DOCU_AREA
     S32 arg;                            /* argument for implied styles */
     DATA_SPACE data_space;              /* data space of docu_area */
     REGION_CLASS region_class;          /* class for region */
-    U8 deleted;                         /* area is deleted and useless */
+    U8 is_deleted;                      /* area is deleted and useless */
     U8 internal;                        /* area is internal; do not delete or save */
     U8 base;                            /* area is the base region; do not delete */
     U8 column_zero_width;               /* special bit to indicate the zero width column region in text documents */
@@ -7443,7 +7458,7 @@ typedef struct LOAD_CELL_OWNFORM
     PC_USTR_INLINE  ustr_inline_contents;
     PC_USTR         ustr_formula;
 
-    PCTSTR          tstr_mrofmun_style;
+    PCTSTR          tstr_autoformat_style;
     REGION          region_saved;
     BOOL            clip_data_from_cut_operation;
 }
@@ -8013,7 +8028,7 @@ typedef struct OP_FORMAT_OUTPUT
         {
             FILE_HANDLE file_handle;
             PTSTR filename;
-            EV_DATE ev_date;
+            SS_DATE ss_date;
             T5_FILETYPE t5_filetype;
         } file;
 
@@ -8128,7 +8143,7 @@ typedef struct SAVE_CELL_OWNFORM
     QUICK_UBLOCK        contents_data_quick_ublock;
     QUICK_UBLOCK        formula_data_quick_ublock;
 
-    PCTSTR              tstr_mrofmun_style;
+    PCTSTR              tstr_autoformat_style;
 }
 SAVE_CELL_OWNFORM, * P_SAVE_CELL_OWNFORM;
 
@@ -8476,8 +8491,8 @@ extern /*const-to-you*/ U32 t5__ctype_sbchar[256]; /* Latin-N locale */
 /*#define sbchar_isupper(c) \
     t5__ctype_isupper(t5__ctype_sbchar[c])*/
 
-/*#define sbchar_isxdigit(c) \
-    t5__ctype_isxdigit(t5__ctype_sbchar[c])*/
+#define sbchar_isxdigit(c) \
+    t5__ctype_isxdigit(t5__ctype_sbchar[c])
 
 #define sbchar_tolower(c) \
     t5__ctype_tolower(t5__ctype_sbchar[c])
@@ -8562,6 +8577,21 @@ t5_ucs4_is_decimal_digit(_InVal_ UCS4 ucs4)
 #else
 #define t5_ucs4_is_decimal_digit(ucs4) \
     ucs4_is_decimal_digit(ucs4)
+#endif
+
+#if USTR_IS_SBSTR
+_Check_return_
+static inline BOOL
+t5_ucs4_is_hexadecimal_digit(_InVal_ UCS4 ucs4)
+{
+    if(!ucs4_is_sbchar(ucs4))
+        return(FALSE);
+
+    return(sbchar_isxdigit((U8) ucs4));
+}
+#else
+#define t5_ucs4_is_hexadecimal_digit(ucs4) \
+    ucs4_is_hexadecimal_digit(ucs4)
 #endif
 
 #if USTR_IS_SBSTR
@@ -9235,7 +9265,8 @@ typedef struct PAGE_HEFO_BREAK
     CLIENT_HANDLE uref_client_handle;
     UREF_HANDLE uref_handle;
     REGION region;
-    U8 deleted;
+    U8 is_deleted;
+    U8 _spare[3];
 }
 PAGE_HEFO_BREAK, * P_PAGE_HEFO_BREAK;
 
@@ -9566,14 +9597,14 @@ uref event procedure prototypes
 
 typedef STATUS (* P_PROC_UREF_EVENT) (
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     _InoutRef_  P_UREF_EVENT_BLOCK p_uref_event_block);
 
 #define PROC_UREF_EVENT_PROTO(_e_s, _proc_name) \
 _e_s STATUS \
 _proc_name( \
     _DocuRef_   P_DOCU p_docu, \
-    _InVal_     T5_MESSAGE t5_message, \
+    _InVal_     UREF_MESSAGE uref_message, \
     _InoutRef_  P_UREF_EVENT_BLOCK p_uref_event_block)
 
 typedef P_PROC_UREF_EVENT * P_P_PROC_UREF_EVENT;
@@ -9612,24 +9643,29 @@ uref_del_dependency(
     _InVal_     DOCNO docno,
     _InVal_     UREF_HANDLE uref_handle);
 
-PROC_EVENT_PROTO(extern, uref_event);
+/*ncr*/
+extern STATUS
+uref_event(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     UREF_MESSAGE uref_message,
+    /*_Inout_*/ P_ANY p_data);
 
 extern S32 /* reason code out */
 uref_match_docu_area(
     _InoutRef_  P_DOCU_AREA p_docu_area,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
 extern S32 /* reason code out */
 uref_match_region(
     _InoutRef_  P_REGION p_region,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
 extern S32 /* reason code out */
 uref_match_slr(
     _InoutRef_  P_SLR p_slr,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
 #if TRACE_ALLOWED
@@ -11111,7 +11147,7 @@ typedef struct NEW_OBJECT_FROM_TEXT
     S32 pos;                                    /* error position */
     BOOL please_redraw;                         /* do redraw result (or not) */
     BOOL please_uref_overwrite;                 /* do call uref_overwrite (or not) */
-    BOOL please_mrofmun;                        /* attempt to autoformat the entry */
+    BOOL try_autoformat;                        /* attempt to autoformat() the entry */
 }
 NEW_OBJECT_FROM_TEXT, * P_NEW_OBJECT_FROM_TEXT;
 
@@ -11133,7 +11169,7 @@ read object data
 typedef struct OBJECT_DATA_READ
 {
     OBJECT_DATA object_data;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     BOOL constant;
 }
 OBJECT_DATA_READ, * P_OBJECT_DATA_READ;
@@ -11159,7 +11195,7 @@ or data for NAME_READ_DATA message
 typedef struct SS_NAME_READ
 {
     EV_HANDLE ev_handle;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     P_USTR ustr_description; /* NB only on loan to caller */
     U8 follow_indirection;
     U8 _spare[3];
@@ -11261,7 +11297,7 @@ typedef struct FIELD_DATA_QUERY
     P_U8 p_compound_name;
     S32 record_no;
     DOCNO docno;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
 }
 FIELD_DATA_QUERY, * P_FIELD_DATA_QUERY;
 
@@ -11288,7 +11324,7 @@ BOX_APPLY, * P_BOX_APPLY;
 typedef struct CSV_READ_RECORD
 {
     P_FF_IP_FORMAT p_ff_ip_format;
-    ARRAY_HANDLE array_handle; /* [] of EV_DATA */
+    ARRAY_HANDLE array_handle; /* [] of SS_DATA */
 
     QUICK_UBLOCK temp_contents_quick_ublock;
     ARRAY_HANDLE temp_contents_array_handle;
@@ -11521,7 +11557,7 @@ instance data for the spreadsheet object
 typedef struct DEF_FLAGS
 {
     UBF lock : 1; /* global only */
-    UBF tobedel : 1;
+    UBF to_be_deleted : 1;
     UBF blown : 1; /* global only */
     UBF delhold : 1; /* names/custom only */
     UBF undefined : 1; /* names/custom only */
@@ -11627,7 +11663,7 @@ struct DOCU
 
     DOCU_NAME docu_name;
 
-    EV_DATE file_date;
+    SS_DATE file_ss_date;
 
     DOCNO docno;
     VIEWNO viewno_caret;                /* the view that would like the caret and input focus */
@@ -11701,7 +11737,7 @@ struct DOCU
     P_NUMFORM_CONTEXT p_numform_context;
     ARRAY_HANDLE numforms;              /* for UI */
 
-    ARRAY_HANDLE h_mrofmun;             /* array of mrofmun strings */
+    ARRAY_HANDLE h_mrofmun;             /* array of mrofmun entries */
 
     SCALE_INFO scale_info;              /* ruler scale */
     SCALE_INFO vscale_info;
@@ -12425,7 +12461,8 @@ enum ARG_CELL
 
     ARG_CELL_CONTENTS,
     ARG_CELL_FORMULA,
-    ARG_CELL_MROFMUN,
+
+    ARG_CELL_AUTOFORMAT_STYLE,
 
     ARG_CELL_N_ARGS
 };

@@ -272,166 +272,7 @@ IF country_de% THEN
 ENDIF
 PROCco(f%,"SSContext:"+a1$+asp$+a2$+asp$+a3$)
 :
-PROCco(f%,"#:Insert field - date formats")
-PROCul(f%,0,"yyyy-mm-dd")
-PROCul(f%,0,"dd.mm.yy")
-PROCul(f%,0,"dd/mm/yy")
-PROCul(f%,0,"dd Mmm yy")
-PROCul(f%,0,"d Mmm yy")
-PROCul(f%,0,"d Mmmm yy")
-PROCul(f%,0,"d Mmmm yyyy")
-PROCul(f%,0,"Mmm dd, yyyy")
-PROCul(f%,0,"Mmmm d, yyyy")
-IF ending$ <> "" THEN
-  REM ddd only makes sense if you do have day number endings
-  PROCul(f%,0,"ddd Mmmm")
-  PROCul(f%,0,"Mmmm ddd")
-  PROCul(f%,0,"ddd Mmmm yy")
-  PROCul(f%,0,"Mmmm ddd, yy")
-  PROCul(f%,0,"ddd Mmmm yyyy")
-  PROCul(f%,0,"Mmmm ddd, yyyy")
-ENDIF
-PROCul(f%,0,"Mmm yy")
-PROCul(f%,0,"Mmmm yy")
-PROCul(f%,0,"Mmmm yyyy")
-:
-PROCco(f%,"#:Insert field - page number formats")
-PROCul(f%,1,"#")
-PROCul(f%,1,"r#")
-PROCul(f%,1,"R#")
-:
-PROCco(f%,"#:Ruler choices")
-inch_suffix$ = FNselect("in","Zoll")
-PROCul(f%,3,"0 2 1 1 0.5 cm")
-PROCul(f%,3,"0 5 1 1 0.2 cm")
-PROCul(f%,3,"0 2 5 1 0.1 cm")
-PROCul(f%,3,"1 2 1 10 5 mm")
-PROCul(f%,3,"1 5 1 10 2 mm")
-PROCul(f%,3,"1 10 1 10 1 mm")
-PROCul(f%,3,"2 4 1 1 1/4 "+inch_suffix$)
-PROCul(f%,3,"2 2 3 1 1/6 "+inch_suffix$)
-PROCul(f%,3,"2 4 2 1 1/8 "+inch_suffix$)
-PROCul(f%,3,"2 2 5 1 1/10 "+inch_suffix$)
-PROCul(f%,3,"2 4 4 1 1/16 "+inch_suffix$)
-PROCul(f%,3,"3 6 2 72 points")
-:
-PROCco(f%,"#:Number formats")
-negative$ = FNselect("[Negative]","[Negativ]")
-thousands_std$="#"+thousands_seq$+"##0"
-uk_thousands_std$="#"+uk_thousands_seq$+"##0"
-PROCuln(f%,4,thousands_std$+decimal_seq$+"#######",negative$)
-PROCuln(f%,4,thousands_std$+decimal_seq$+"00",negative$)
-PROCuln(f%,4,"0",negative$)
-PROCuln(f%,4,"0"+decimal_seq$+"##",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"##",negative$)
-ENDIF
-PROCuln(f%,4,"0"+decimal_seq$+"00",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"00",negative$)
-ENDIF
-PROCuln(f%,4,"0%",negative$)
-PROCuln(f%,4,"0"+decimal_seq$+"##%",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"##%",negative$)
-ENDIF
-PROCuln(f%,4,"0"+decimal_seq$+"00%",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"00%",negative$)
-ENDIF
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00"+semico$+negative$+"-£"+uk_thousands_std$+uk_decimal_seq$+"00")
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00"+semico$+negative$+"£-"+uk_thousands_std$+uk_decimal_seq$+"00")
-PROCul(f%,4,thousands_std$+decimal_seq$+"00_"+semico$+negative$+"("+thousands_std$+decimal_seq$+"00)")
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00_"+semico$+negative$+"£("+uk_thousands_std$+uk_decimal_seq$+"00)"+asp$)
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00_"+semico$+negative$+"(£"+uk_thousands_std$+uk_decimal_seq$+"00)"+asp$)
-PROCul(f%,4,"£____"+uk_thousands_seq$+"__0"+uk_decimal_seq$+"00_"+semico$+negative$+"(£___"+uk_thousands_seq$+"__0"+uk_decimal_seq$+"00)"+asp$)
-PROCul(f%,4,"£____"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00_"+semico$+negative$+"(£___"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00)"+asp$)
-REM RISC OS Latin-1 and Windows-1252 Euro symbol, 0x80, is not in standard 8859-1
-REM Just to make life more interesting, 0x80 is in the C1 CtrlChar range so needs escaping
-euro_sign$="\"+CHR$(&80)
-REM It is at a different place, 0xA4, in ISO 8859-15 (Latin-9)
-IF country_fr% THEN euro_sign$=CHR$(&A4)
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00"+semico$+negative$+"-"+euro_sign$+""+thousands_std$+decimal_seq$+"00")
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00"+semico$+negative$+""+euro_sign$+"-"+thousands_std$+decimal_seq$+"00")
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00_"+semico$+negative$+""+euro_sign$+"("+thousands_std$+decimal_seq$+"00)"+asp$)
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+""+thousands_std$+decimal_seq$+"00)"+asp$)
-PROCul(f%,4,euro_sign$+"____"+thousands_seq$+"__0"+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+"___"+thousands_seq$+"__0"+decimal_seq$+"00)"+asp$)
-PROCul(f%,4,euro_sign$+"____"+thousands_seq$+"__0>"+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+"___"+thousands_seq$+"__0>"+decimal_seq$+"00)"+asp$)
-PROCuln(f%,4,"0"+decimal_seq$+"00e+00",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"00e+00",negative$)
-ENDIF
-PROCuln(f%,4,"g0"+decimal_seq$+"##",negative$)
-PROCuln(f%,4,"g0"+decimal_seq$+"###",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"g0"+uk_decimal_seq$+"##",negative$)
-  PROCuln(f%,4,"g0"+uk_decimal_seq$+"###",negative$)
-ENDIF
-PROCul(f%,4,"r#")
-PROCul(f%,4,"R#")
-PROCul(f%,4,"x#")
-PROCul(f%,4,"X#")
-:
-PROCco(f%,"#:Date and time formats")
-PROCul(f%,5,"hh:mm:ss")
-PROCul(f%,5,"hh:mm")
-PROCul(f%,5,"h:mm ""am"""+semico$+"h:mm ""pm""")
-PROCul(f%,5,"hh:mm:ss dd.mm.yy")
-PROCul(f%,5,"hh:mm:ss dd.mm.yy"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
-PROCul(f%,5,"dd.mm.yy hh:mm:ss")
-PROCul(f%,5,"dd.mm.yy hh:mm:ss"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
-PROCul(f%,5,"dd.mm.yy")
-PROCul(f%,5,"dd/mm/yy")
-PROCul(f%,5,"dd Mmm yy")
-PROCul(f%,5,"Mmm dd, yy")
-PROCul(f%,5,"d Mmm yy")
-PROCul(f%,5,"d Mmmm yy")
-PROCul(f%,5,"Mmmm d, yy")
-PROCul(f%,5,"d Mmmm yyyy")
-IF ending$ <> "" THEN
-  REM ddd only makes sense if you do have day number endings
-  PROCul(f%,5,"ddd Mmmm")
-  PROCul(f%,5,"Mmmm ddd")
-  PROCul(f%,5,"ddd Mmmm yy")
-  PROCul(f%,5,"Mmmm ddd, yy")
-  PROCul(f%,5,"ddd Mmmm yyyy")
-  PROCul(f%,5,"Mmmm ddd, yyyy")
-ENDIF
-PROCul(f%,5,"Mmm yy")
-PROCul(f%,5,"Mmmm yy")
-PROCul(f%,5,"Mmmm yyyy")
-PROCul(f%,5,"yyyy-mm-dd")
-:
-PROCco(f%,"#:Text and error formats")
-PROCul(f%,6,"@")
-err$ = FNselect("ERR","FEHLER")
-PROCul(f%,6,"@"+semico$+err$+" @")
-:
-PROCco(f%,"#:Frequently used functions")
-PROCul(f%,7,"sum")
-PROCul(f%,7,"max")
-PROCul(f%,7,"min")
-PROCul(f%,7,"avg")
-PROCul(f%,7,"if")
-:
-PROCco(f%,"#:Template sort order")
-fwt_suffix$ = ""
-IF windows% THEN fwt_suffix$ = ".fwt"
-PROCul(f%,9,"default"+fwt_suffix$+asp$+"-1")
-PROCul(f%,9,"draft_rz"+fwt_suffix$+asp$+"1")
-PROCul(f%,9,"draft_wz"+fwt_suffix$+asp$+"1")
-IF is_y% THEN
-  PROCul(f%,9,"database"+asp$+"1")
-  PROCul(f%,9,"db_1card"+fwt_suffix$+asp$+"1")
-  PROCul(f%,9,"db_cards"+fwt_suffix$+asp$+"1")
-  PROCul(f%,9,"db_sheet"+fwt_suffix$+asp$+"1")
-  PROCul(f%,9,"draft_db"+fwt_suffix$+asp$+"1")
-ENDIF
-:
-PROCco(f%,"#:Insert field - time formats")
-PROCul(f%,10,"hh:mm")
-PROCul(f%,10,"hh:mm:ss")
-PROCul(f%,10,"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCui_things(f%)
 :
 PROCco(f%,"DefineKey:F2"+asp$+"EditFormula-s")
 IF windows% THEN
@@ -894,6 +735,172 @@ PROCmh(f%,extra_ruler_menu$,leaf$,";;"+command$+":2"+semico$+"2"+semico$+"5"+sem
   PROCma(f%,extra_ruler_sub_menu$,"1/10 "+inch_suffix$,";;"+command$+":2"+semico$+"2"+semico$+"5"+semico$+"1")
   PROCma(f%,extra_ruler_sub_menu$,"1/16 "+inch_suffix$,";;"+command$+":2"+semico$+"4"+semico$+"4"+semico$+"1")
 PROCma(f%,extra_ruler_menu$,"points",";;"+command$+":3"+semico$+"6"+semico$+"2"+semico$+"72")
+ENDPROC
+:
+:
+DEF PROCui_things(f%)
+PROCco(f%,"#:Insert field - date formats")
+PROCul(f%,0,"yyyy-mm-dd")
+PROCul(f%,0,"dd.mm.yy")
+PROCul(f%,0,"dd/mm/yy")
+PROCul(f%,0,"dd Mmm yy")
+PROCul(f%,0,"d Mmm yy")
+PROCul(f%,0,"d Mmmm yy")
+PROCul(f%,0,"d Mmmm yyyy")
+PROCul(f%,0,"Mmm dd, yyyy")
+PROCul(f%,0,"Mmmm d, yyyy")
+IF ending$ <> "" THEN
+  REM ddd only makes sense if you do have day number endings
+  PROCul(f%,0,"ddd Mmmm")
+  PROCul(f%,0,"Mmmm ddd")
+  PROCul(f%,0,"ddd Mmmm yy")
+  PROCul(f%,0,"Mmmm ddd, yy")
+  PROCul(f%,0,"ddd Mmmm yyyy")
+  PROCul(f%,0,"Mmmm ddd, yyyy")
+ENDIF
+PROCul(f%,0,"Mmm yy")
+PROCul(f%,0,"Mmmm yy")
+PROCul(f%,0,"Mmmm yyyy")
+:
+PROCco(f%,"#:Insert field - page number formats")
+PROCul(f%,1,"#")
+PROCul(f%,1,"r#")
+PROCul(f%,1,"R#")
+:
+PROCco(f%,"#:Ruler choices")
+inch_suffix$ = FNselect("in","Zoll")
+PROCul(f%,3,"0 2 1 1 0.5 cm")
+PROCul(f%,3,"0 5 1 1 0.2 cm")
+PROCul(f%,3,"0 2 5 1 0.1 cm")
+PROCul(f%,3,"1 2 1 10 5 mm")
+PROCul(f%,3,"1 5 1 10 2 mm")
+PROCul(f%,3,"1 10 1 10 1 mm")
+PROCul(f%,3,"2 4 1 1 1/4 "+inch_suffix$)
+PROCul(f%,3,"2 2 3 1 1/6 "+inch_suffix$)
+PROCul(f%,3,"2 4 2 1 1/8 "+inch_suffix$)
+PROCul(f%,3,"2 2 5 1 1/10 "+inch_suffix$)
+PROCul(f%,3,"2 4 4 1 1/16 "+inch_suffix$)
+PROCul(f%,3,"3 6 2 72 points")
+:
+PROCco(f%,"#:Number formats")
+negative$ = FNselect("[Negative]","[Negativ]")
+thousands_std$="#"+thousands_seq$+"##0"
+uk_thousands_std$="#"+uk_thousands_seq$+"##0"
+PROCuln(f%,4,thousands_std$+decimal_seq$+"#######",negative$)
+PROCuln(f%,4,thousands_std$+decimal_seq$+"00",negative$)
+PROCuln(f%,4,"0",negative$)
+PROCuln(f%,4,"0"+decimal_seq$+"##",negative$)
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"##",negative$)
+ENDIF
+PROCuln(f%,4,"0"+decimal_seq$+"00",negative$)
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"00",negative$)
+ENDIF
+PROCuln(f%,4,"0%",negative$)
+PROCuln(f%,4,"0"+decimal_seq$+"##%",negative$)
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"##%",negative$)
+ENDIF
+PROCuln(f%,4,"0"+decimal_seq$+"00%",negative$)
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"00%",negative$)
+ENDIF
+PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00"+semico$+negative$+"-£"+uk_thousands_std$+uk_decimal_seq$+"00")
+PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00"+semico$+negative$+"£-"+uk_thousands_std$+uk_decimal_seq$+"00")
+PROCul(f%,4,thousands_std$+decimal_seq$+"00_"+semico$+negative$+"("+thousands_std$+decimal_seq$+"00)")
+PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00_"+semico$+negative$+"£("+uk_thousands_std$+uk_decimal_seq$+"00)"+asp$)
+PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00_"+semico$+negative$+"(£"+uk_thousands_std$+uk_decimal_seq$+"00)"+asp$)
+PROCul(f%,4,"£____"+uk_thousands_seq$+"__0"+uk_decimal_seq$+"00_"+semico$+negative$+"(£___"+uk_thousands_seq$+"__0"+uk_decimal_seq$+"00)"+asp$)
+PROCul(f%,4,"£____"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00_"+semico$+negative$+"(£___"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00)"+asp$)
+REM RISC OS Latin-1 and Windows-1252 Euro symbol, 0x80, is not in standard 8859-1
+REM Just to make life more interesting, 0x80 is in the C1 CtrlChar range so needs escaping
+euro_sign$="\"+CHR$(&80)
+REM It is at a different place, 0xA4, in ISO 8859-15 (Latin-9)
+IF country_fr% THEN euro_sign$=CHR$(&A4)
+PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00"+semico$+negative$+"-"+euro_sign$+""+thousands_std$+decimal_seq$+"00")
+PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00"+semico$+negative$+""+euro_sign$+"-"+thousands_std$+decimal_seq$+"00")
+PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00_"+semico$+negative$+""+euro_sign$+"("+thousands_std$+decimal_seq$+"00)"+asp$)
+PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+""+thousands_std$+decimal_seq$+"00)"+asp$)
+PROCul(f%,4,euro_sign$+"____"+thousands_seq$+"__0"+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+"___"+thousands_seq$+"__0"+decimal_seq$+"00)"+asp$)
+PROCul(f%,4,euro_sign$+"____"+thousands_seq$+"__0>"+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+"___"+thousands_seq$+"__0>"+decimal_seq$+"00)"+asp$)
+PROCuln(f%,4,"0"+decimal_seq$+"00e+00",negative$)
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"00e+00",negative$)
+ENDIF
+PROCuln(f%,4,"g0"+decimal_seq$+"##",negative$)
+PROCuln(f%,4,"g0"+decimal_seq$+"###",negative$)
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"g0"+uk_decimal_seq$+"##",negative$)
+  PROCuln(f%,4,"g0"+uk_decimal_seq$+"###",negative$)
+ENDIF
+PROCul(f%,4,"r#")
+PROCul(f%,4,"R#")
+PROCul(f%,4,"x#")
+PROCul(f%,4,"X#")
+PROCul(f%,4,"#B2")
+PROCul(f%,4,"#B16")
+:
+PROCco(f%,"#:Date and time formats")
+PROCul(f%,5,"hh:mm:ss")
+PROCul(f%,5,"hh:mm")
+PROCul(f%,5,"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCul(f%,5,"hh:mm:ss dd.mm.yy")
+PROCul(f%,5,"hh:mm:ss dd.mm.yy"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCul(f%,5,"dd.mm.yy hh:mm:ss")
+PROCul(f%,5,"dd.mm.yy hh:mm:ss"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCul(f%,5,"dd.mm.yy")
+PROCul(f%,5,"dd/mm/yy")
+PROCul(f%,5,"dd Mmm yy")
+PROCul(f%,5,"Mmm dd, yy")
+PROCul(f%,5,"d Mmm yy")
+PROCul(f%,5,"d Mmmm yy")
+PROCul(f%,5,"Mmmm d, yy")
+PROCul(f%,5,"d Mmmm yyyy")
+IF ending$ <> "" THEN
+  REM ddd only makes sense if you do have day number endings
+  PROCul(f%,5,"ddd Mmmm")
+  PROCul(f%,5,"Mmmm ddd")
+  PROCul(f%,5,"ddd Mmmm yy")
+  PROCul(f%,5,"Mmmm ddd, yy")
+  PROCul(f%,5,"ddd Mmmm yyyy")
+  PROCul(f%,5,"Mmmm ddd, yyyy")
+ENDIF
+PROCul(f%,5,"Mmm yy")
+PROCul(f%,5,"Mmmm yy")
+PROCul(f%,5,"Mmmm yyyy")
+PROCul(f%,5,"yyyy-mm-dd")
+:
+PROCco(f%,"#:Text and error formats")
+PROCul(f%,6,"@")
+err$ = FNselect("ERR","FEHLER")
+PROCul(f%,6,"@"+semico$+err$+" @")
+:
+PROCco(f%,"#:Frequently used functions")
+PROCul(f%,7,"sum")
+PROCul(f%,7,"max")
+PROCul(f%,7,"min")
+PROCul(f%,7,"avg")
+PROCul(f%,7,"if")
+:
+PROCco(f%,"#:Template sort order")
+fwt_suffix$ = ""
+IF windows% THEN fwt_suffix$ = ".fwt"
+PROCul(f%,9,"default"+fwt_suffix$+asp$+"-1")
+PROCul(f%,9,"draft_rz"+fwt_suffix$+asp$+"1")
+PROCul(f%,9,"draft_wz"+fwt_suffix$+asp$+"1")
+IF is_y% THEN
+  PROCul(f%,9,"database"+asp$+"1")
+  PROCul(f%,9,"db_1card"+fwt_suffix$+asp$+"1")
+  PROCul(f%,9,"db_cards"+fwt_suffix$+asp$+"1")
+  PROCul(f%,9,"db_sheet"+fwt_suffix$+asp$+"1")
+  PROCul(f%,9,"draft_db"+fwt_suffix$+asp$+"1")
+ENDIF
+:
+PROCco(f%,"#:Insert field - time formats")
+PROCul(f%,10,"hh:mm")
+PROCul(f%,10,"hh:mm:ss")
+PROCul(f%,10,"h:mm ""am"""+semico$+"h:mm ""pm""")
 ENDPROC
 :
 :

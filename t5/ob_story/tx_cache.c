@@ -235,7 +235,7 @@ text_cache_init_entry(
 *
 ******************************************************************************/
 
-PROC_ELEMENT_DELETED_PROTO(static, text_cache_entry_free)
+PROC_ELEMENT_IS_DELETED_PROTO(static, text_cache_entry_free)
 {
     return(!((P_TEXT_CACHE) p_any)->used);
 }
@@ -372,13 +372,14 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_cache)
 
         /* find our entry */
         if(NULL != p_text_cache)
-            if(uref_match_slr(&p_text_cache->data_ref.arg.slr, t5_message, p_uref_event_block) != DEP_NONE)
+            if(uref_match_slr(&p_text_cache->data_ref.arg.slr, uref_message, p_uref_event_block) != DEP_NONE)
                 text_cache_dispose_entry(p_text_cache, TRUE);
 
         break;
         }
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(STATUS_OK);

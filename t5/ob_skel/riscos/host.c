@@ -809,6 +809,16 @@ generic_window_process_DataLoad(
     case FILETYPE_T5_COMMAND:
         break;
 
+    case FILETYPE_PIPEDREAM:
+        { /* SKS 30jul19 scan to see if it's a PD chart with the old filetype */
+        T5_FILETYPE t_t5_filetype = t5_filetype_from_file_header(filename);
+
+        if(FILETYPE_UNDETERMINED != t_t5_filetype)
+            t5_filetype = t_t5_filetype;
+
+        break;
+        }
+
     case FILETYPE_TEXT:
         { /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected - but does not scan these for recognisable headers */
         T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
@@ -2272,7 +2282,7 @@ send_pointer_enter_event_to_view(
 
     dragging_.deferred_leave.p_ctrl_host_view = NULL;
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_enter_event_to_view(docno=%d) - *** null_events_start()"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_enter_event_to_view(docno=") DOCNO_TFMT TEXT(") - *** null_events_start()"), docno_from_p_docu(p_docu));
     status_assert(null_events_start(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_host_drag, 0));
 
     host_set_pointer_shape(POINTER_DEFAULT);
@@ -2334,7 +2344,7 @@ send_pointer_leave_event_to_view(
 
     dragging_.deferred_leave.p_ctrl_host_view = NULL;
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_leave_event_to_view(docno=%d) - *** null_events_stop()"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_leave_event_to_view(docno=") DOCNO_TFMT TEXT(") - *** null_events_stop()"), docno_from_p_docu(p_docu));
     null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_host_drag, 0);
 
     host_set_pointer_shape(POINTER_DEFAULT);
@@ -3788,7 +3798,7 @@ host_acquire_global_clipboard(
     const DOCNO acquiring_docno = docno_from_p_docu(p_docu);
     const VIEWNO acquiring_viewno = viewno_from_p_view_fn(p_view);
 
-    trace_2(TRACE_RISCOS_HOST, TEXT("host_acquire_global_clipboard(docno=%d, viewno=%d)"), acquiring_docno, acquiring_viewno);
+    trace_2(TRACE_RISCOS_HOST, TEXT("host_acquire_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(")"), acquiring_docno, acquiring_viewno);
 
 #if CHECKING
     if(!IS_VIEW_NONE(p_view))
@@ -3811,7 +3821,7 @@ host_release_global_clipboard(
     _InVal_     BOOL render_if_acquired)
 {
     trace_1(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
-    trace_2(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_2(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     UNREFERENCED_PARAMETER_InVal_(render_if_acquired); /* no deferred rendering for close on RISC OS */
 

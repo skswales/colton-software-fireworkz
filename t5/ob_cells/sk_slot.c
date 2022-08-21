@@ -450,7 +450,8 @@ cells_scan_next(
                     p_scan_block->state.new_block = 1;
                 break;
 
-            default: default_unhandled(); break;
+            default: default_unhandled();
+                break;
             } /* switch */
         }
 
@@ -547,7 +548,7 @@ cells_blank_make(
     { /* tell dependents about overwrite */
     UREF_PARMS uref_parms;
     region_from_two_slrs(&uref_parms.source.region, p_slr, p_slr, TRUE);
-    uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
     } /*block*/
 
     status = slr_blank_make_no_uref(p_docu, p_slr);
@@ -614,7 +615,7 @@ cells_block_blank_make(
     uref_parms.source.region.br.row = row_s + (ROW) rows_n;
     uref_parms.source.region.whole_col =
     uref_parms.source.region.whole_row = 0;
-    uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
     } /*block*/
 
     {
@@ -706,7 +707,7 @@ cells_block_delete(
     uref_parms.source.region.whole_row = 0;
     if(col_s == 0 && col_e >= n_cols_logical(p_docu))
         uref_parms.source.region.whole_row = 1;
-    uref_event(p_docu, T5_MSG_UREF_DELETE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Delete, &uref_parms);
     } /*block*/
 
     {
@@ -743,7 +744,7 @@ cells_block_delete(
     uref_parms.add_col = 0;
     uref_parms.add_row = 0;
 
-    uref_event(p_docu, T5_MSG_UREF_UREF, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Uref, &uref_parms);
     } /*block*/
 
     /* lop off some rows */
@@ -840,7 +841,7 @@ cells_block_insert(
         uref_parms.add_col = 0;
         uref_parms.add_row = UBF_PACK(add);
 
-        uref_event(p_docu, T5_MSG_UREF_UREF, &uref_parms);
+        uref_event(p_docu, Uref_Msg_Uref, &uref_parms);
         } /*block*/
 
         reformat_from_row(p_docu, at_row, REFORMAT_Y);
@@ -915,7 +916,7 @@ cells_column_delete(
     if(row_s == 0 && row_e >= n_rows(p_docu))
         uref_parms.source.region.whole_col = 1;
 
-    uref_event(p_docu, T5_MSG_UREF_DELETE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Delete, &uref_parms);
     } /*block*/
 
     {
@@ -954,7 +955,7 @@ cells_column_delete(
     uref_parms.add_col = 0;
     uref_parms.add_row = 0;
 
-    uref_event(p_docu, T5_MSG_UREF_UREF, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Uref, &uref_parms);
     } /*block*/
 
     reformat_from_row(p_docu, row_s, REFORMAT_XY);
@@ -1022,7 +1023,7 @@ cells_column_insert(
     uref_parms.add_col = UBF_PACK(add);
     uref_parms.add_row = 0;
 
-    uref_event(p_docu, T5_MSG_UREF_UREF, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Uref, &uref_parms);
     } /*block*/
 
     reformat_from_row(p_docu, row_s, REFORMAT_XY);
@@ -1289,7 +1290,7 @@ cells_docu_area_insert(
                 uref_parms.source.region.whole_col =
                 uref_parms.source.region.whole_row = 0;
 
-                uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+                uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
                 } /*block*/
 
                 {
@@ -1641,7 +1642,7 @@ cells_swap_rows(
     {
     UREF_PARMS uref_parms;
     uref_parms.source.region = *p_region;
-    uref_event(p_docu, T5_MSG_UREF_SWAP_ROWS, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Swap_Rows, &uref_parms);
     } /*block*/
 
     return(status);

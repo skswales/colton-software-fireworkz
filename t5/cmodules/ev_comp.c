@@ -15,6 +15,8 @@
 
 #include "ob_ss/ob_ss.h"
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 /*
 internal functions
 */
@@ -107,7 +109,7 @@ typedef struct COMPILER_CONTEXT
     DOCU_NAME docu_name;                /* scanned external ref */
     UCHARZ ident[BUF_EV_INTNAMLEN];     /* scanned identifier */
 
-    EV_DATA data_cur;                   /* details of symbol scanned */
+    SS_DATA data_cur;                   /* details of symbol scanned */
     SYM_INF sym_inf;
     PC_USTR err_pos;                    /* position of error */
     S32 error;                          /* reason for non-compilation */
@@ -225,15 +227,15 @@ out_event(
 
 static inline void
 out_idno(
-    _InVal_     EV_IDNO idno)
+    _InVal_     EV_IDNO ev_idno)
 {
 #if defined(EV_IDNO_U32)
-    U16 u16 = (U16) idno;
+    U16 u16 = (U16) ev_idno;
     out_to_rpn(sizeof32(u16), &u16);
     u16 = 0xBEEFU;
     out_to_rpn(sizeof32(u16), &u16);
 #else
-    out_to_rpn(sizeof32(EV_IDNO), &idno);
+    out_to_rpn(sizeof32(EV_IDNO), &ev_idno);
 #endif
 }
 
@@ -263,7 +265,7 @@ out_idno_format(
         out_byte(p_sym_inf->sym_space);
     }
 
-    out_idno(p_sym_inf->did_num);
+    out_idno(p_sym_inf->sym_idno);
 }
 
 /******************************************************************************
@@ -411,20 +413,21 @@ out_slr(
 static void
 out_string_free(
     P_SYM_INF p_sym_inf,
-    P_EV_DATA p_ev_data)
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
-    p_sym_inf->did_num = RPN_DAT_STRING;
+    p_sym_inf->sym_idno = DATA_ID_STRING;
     out_idno_format(p_sym_inf);
 
-    assert(RPN_DAT_STRING == p_ev_data->did_num);
-    assert(NULL != p_ev_data->arg.string.uchars);
+    assert(ss_data_is_string(p_ss_data));
+    PTR_ASSERT(ss_data_get_string(p_ss_data));
 
-    out_to_rpn(p_ev_data->arg.string.size, p_ev_data->arg.string.uchars);
+    assert(NULL == memchr(ss_data_get_string(p_ss_data), CH_NULL, ss_data_get_string_size(p_ss_data)));
+    out_to_rpn(ss_data_get_string_size(p_ss_data), ss_data_get_string(p_ss_data));
     {
     U8 nullch = CH_NULL;
     out_to_rpn(1, &nullch);
     } /*block*/
-    ss_data_free_resources(p_ev_data);
+    ss_data_free_resources(p_ss_data);
 }
 
 /******************************************************************************
@@ -549,8 +552,8 @@ ev_compile(
 
     /* initialise parms for a constant */
     p_compiler_output->ev_parms.data_only = 1;
-    p_compiler_output->ev_parms.did_num = RPN_DAT_BLANK;
-    ev_data_set_blank(&p_compiler_output->ev_data);
+    p_compiler_output->ev_parms.data_id = UBF_PACK(DATA_ID_BLANK);
+    ss_data_set_blank(&p_compiler_output->ss_data);
 
     if((NULL != ustr_formula) && (CH_NULL != PtrGetByte(ustr_formula)))
     {
@@ -565,15 +568,15 @@ ev_compile(
             return(status);
         else if(status > 0)
         {
-            p_compiler_output->ev_data = compiler_context.data_cur;
-            p_compiler_output->ev_parms.did_num = compiler_context.data_cur.did_num;
+            p_compiler_output->ss_data = compiler_context.data_cur;
+            p_compiler_output->ev_parms.data_id = UBF_PACK(ss_data_get_data_id(&compiler_context.data_cur));
         }
         else
         {
             /* now try compiling the string */
             compiler_context.ev_slr = *p_ev_slr;
             compiler_context.ip_pos.ustr = ustr_formula;
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
             name_init(&compiler_context.docu_name);
 
@@ -585,7 +588,7 @@ ev_compile(
             /* set scanner position */
             p_compiler_output->chars_processed = PtrDiffBytesU32(compiler_context.ip_pos.ustr, ustr_formula);
 
-            if(compiler_context.sym_inf.did_num != RPN_FRM_END)
+            if(compiler_context.sym_inf.sym_idno != RPN_FRM_END)
             {
                 ev_compiler_output_dispose(p_compiler_output);
                 if(status_ok(status = compiler_context.error))
@@ -619,8 +622,8 @@ ev_compile(
         status = ss_recog_constant(&compiler_context.data_cur, ustr_result);
         if(status_done(status))
         {
-            p_compiler_output->ev_data = compiler_context.data_cur;
-            p_compiler_output->ev_parms.did_num = compiler_context.data_cur.did_num;
+            p_compiler_output->ss_data = compiler_context.data_cur;
+            p_compiler_output->ev_parms.data_id = UBF_PACK(ss_data_get_data_id(&compiler_context.data_cur));
         }
         else if(STATUS_OK == status)
         {   /* don't give up if it's just a case of not recognising a wonky result */
@@ -649,7 +652,7 @@ ev_compiler_output_dispose(
     al_array_dispose(&p_compiler_output->h_custom_defs);
     al_array_dispose(&p_compiler_output->h_events);
 
-    ss_data_free_resources(&p_compiler_output->ev_data);
+    ss_data_free_resources(&p_compiler_output->ss_data);
 }
 
 /******************************************************************************
@@ -730,12 +733,12 @@ ev_cell_from_compiler_output(
     STATUS status = STATUS_OK;
     P_U8 p_u8;
 
-    p_ev_cell->parms = p_compiler_output->ev_parms;
-    ev_cell_constant_from_data(p_ev_cell, &p_compiler_output->ev_data);
+    p_ev_cell->ev_parms = p_compiler_output->ev_parms;
+    ev_cell_constant_from_data(p_ev_cell, &p_compiler_output->ss_data);
 
     if((NULL != p_ev_slr_offset) && p_compiler_output->ev_parms.slr_n)
     {
-        const U32 n = p_ev_cell->parms.slr_n;
+        const U32 n = p_ev_cell->ev_parms.slr_n;
         P_EV_SLR p_ev_slr = array_range(&p_compiler_output->h_slrs, EV_SLR, 0, n);
         U32 i;
 
@@ -747,7 +750,7 @@ ev_cell_from_compiler_output(
 
     p_u8 = (P_U8) p_ev_cell->slrs;
 
-    if(p_ev_cell->parms.slr_n)
+    if(p_ev_cell->ev_parms.slr_n)
     {
         const U32 n = p_compiler_output->ev_parms.slr_n;
         const U32 n_bytes = n * sizeof32(EV_SLR);
@@ -757,7 +760,7 @@ ev_cell_from_compiler_output(
 
     if((NULL != p_ev_slr_offset) && p_compiler_output->ev_parms.range_n)
     {
-        const U32 n = p_ev_cell->parms.range_n;
+        const U32 n = p_ev_cell->ev_parms.range_n;
         P_EV_RANGE p_ev_range = array_range(&p_compiler_output->h_ranges, EV_RANGE, 0, n);
         U32 i;
 
@@ -768,7 +771,7 @@ ev_cell_from_compiler_output(
         }
     }
 
-    if(p_ev_cell->parms.range_n)
+    if(p_ev_cell->ev_parms.range_n)
     {
         const U32 n = p_compiler_output->ev_parms.range_n;
         const U32 n_bytes = n * sizeof32(EV_RANGE);
@@ -776,7 +779,7 @@ ev_cell_from_compiler_output(
         p_u8 += n_bytes;
     }
 
-    if(p_ev_cell->parms.name_n)
+    if(p_ev_cell->ev_parms.name_n)
     {
         const U32 n = p_compiler_output->ev_parms.name_n;
         const U32 n_bytes = n * sizeof32(EV_NAME_REF);
@@ -784,7 +787,7 @@ ev_cell_from_compiler_output(
         p_u8 += n_bytes;
     }
 
-    if(p_ev_cell->parms.custom_n)
+    if(p_ev_cell->ev_parms.custom_n)
     {
         const U32 n = p_compiler_output->ev_parms.custom_n;
         const U32 n_bytes = n * sizeof32(EV_HANDLE);
@@ -792,7 +795,7 @@ ev_cell_from_compiler_output(
         p_u8 += n_bytes;
     }
 
-    if(p_ev_cell->parms.event_n)
+    if(p_ev_cell->ev_parms.event_n)
     {
         const U32 n = p_compiler_output->ev_parms.event_n;
         const U32 n_bytes = n * sizeof32(EVENT_TYPE);
@@ -823,10 +826,10 @@ func_call(
 {
     PC_RPNDEF p_rpndef;
 
-    assert(p_sym_inf->did_num < ELEMOF_RPN_TABLE);
-    p_rpndef = &rpn_table[p_sym_inf->did_num];
+    assert(p_sym_inf->sym_idno < ELEMOF_RPN_TABLE);
+    p_rpndef = &rpn_table[p_sym_inf->sym_idno];
 
-    if(p_sym_inf->did_num == RPN_FNF_IF)
+    if(p_sym_inf->sym_idno == RPN_FNF_IF)
     {
         /* if() */
         EV_IDNO which_if;
@@ -834,7 +837,7 @@ func_call(
 
         if(narg >= 0)
         {
-            p_sym_inf->did_num = which_if;
+            p_sym_inf->sym_idno = which_if;
             out_idno_format(p_sym_inf);
         }
     }
@@ -850,7 +853,7 @@ func_call(
 
         compiler_context.dbs_nest -= 1;
     }
-    else if(p_sym_inf->did_num == RPN_FNM_FUNCTION)
+    else if(p_sym_inf->sym_idno == RPN_FNM_FUNCTION)
     {
         /* custom definitions */
         S32 narg;
@@ -879,7 +882,7 @@ func_call(
                 out_byte((U8) narg);
 
                 /* custom calls have their id tagged on t'end */
-                if(p_sym_inf->did_num == RPN_FNM_CUSTOMCALL)
+                if(p_sym_inf->sym_idno == RPN_FNM_CUSTOMCALL)
                     out_custom_call(h_custom);
             }
         }
@@ -905,9 +908,9 @@ func_call(
         }
     }
 
-    /* done at the end cos p_sym_inf->did_num may be adjusted */
-    assert(p_sym_inf->did_num < ELEMOF_RPN_TABLE);
-    p_rpndef = &rpn_table[p_sym_inf->did_num];
+    /* done at the end cos p_sym_inf->sym_idno may be adjusted */
+    assert(p_sym_inf->sym_idno < ELEMOF_RPN_TABLE);
+    p_rpndef = &rpn_table[p_sym_inf->sym_idno];
 
     /* output self dependencies when required */
     if(p_rpndef->fun_parms.self)
@@ -1025,7 +1028,7 @@ ident_validate(
 _Check_return_
 static STATUS
 proc_custom_argument(
-    _InRef_     P_EV_STRINGC text_in,
+    _InRef_     P_SS_STRINGC text_in,
     /*filled*/  P_USTR name_out,
     _OutRef_    P_EV_TYPE p_ev_type)
 {
@@ -1177,7 +1180,7 @@ proc_func(
         return(set_compile_error(EVAL_ERR_FUNARGS));
     }
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     narg = 0;
 
@@ -1198,14 +1201,14 @@ proc_func(
 
             if(scan_check_next(NULL) != SYM_COMMA)
                 break;
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
         }
     }
 
     if(scan_check_next(NULL) != SYM_CBRACKET)
         return(set_compile_error(EVAL_ERR_CBRACKETS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     /* functions with fixed number of arguments must have exactly the correct number of arguments */
     if(p_rpndef->n_args >= 0)
@@ -1233,10 +1236,10 @@ proc_func_arg_maybe_blank(void)
 
     (void) scan_check_next(&sym_inf);
 
-    if(sym_inf.did_num == SYM_COMMA ||
-       sym_inf.did_num == SYM_CBRACKET)
+    if(sym_inf.sym_idno == SYM_COMMA ||
+       sym_inf.sym_idno == SYM_CBRACKET)
     {
-        sym_inf.did_num = RPN_DAT_BLANK;
+        sym_inf.sym_idno = DATA_ID_BLANK;
         out_idno_format(&sym_inf);
     }
     else
@@ -1266,13 +1269,13 @@ proc_func_custom(
     if(scan_check_next(NULL) != SYM_OBRACKET)
         return(set_compile_error(EVAL_ERR_FUNARGS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     /* scan first argument which must be custom name */
-    if(RPN_DAT_STRING != scan_check_next(&sym_inf))
+    if(DATA_ID_STRING != scan_check_next(&sym_inf))
         return(set_compile_error(EVAL_ERR_ARGTYPE));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     /* extract custom name from first argument */
     if(status_fail(
@@ -1315,15 +1318,15 @@ proc_func_custom(
 
     while((scan_check_next(NULL) == SYM_COMMA) && (narg < EV_MAX_ARGS))
     {
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
-        if(RPN_DAT_STRING != scan_check_next(&sym_inf))
+        if(DATA_ID_STRING != scan_check_next(&sym_inf))
         {
             res = -1;
             break;
         }
         else
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
         /* extract argument names and types */
         if(status_fail(
@@ -1347,7 +1350,7 @@ proc_func_custom(
     if(scan_check_next(NULL) != SYM_CBRACKET)
         return(set_compile_error(EVAL_ERR_CBRACKETS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     /* return number of args to function() */
     return(narg + 1);
@@ -1368,7 +1371,7 @@ proc_func_dbs(void)
     if(scan_check_next(NULL) != SYM_OBRACKET)
         return(set_compile_error(EVAL_ERR_FUNARGS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     proc_func_arg_maybe_blank();
 
@@ -1376,7 +1379,7 @@ proc_func_dbs(void)
     if(scan_check_next(NULL) != SYM_COMMA)
         return(set_compile_error(EVAL_ERR_FUNARGS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     out_idno(RPN_FRM_COND);
     dbase_start = out_pos();
@@ -1395,7 +1398,7 @@ proc_func_dbs(void)
     if(scan_check_next(NULL) != SYM_CBRACKET)
         return(set_compile_error(EVAL_ERR_CBRACKETS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     return(0);
 }
@@ -1423,7 +1426,7 @@ proc_func_if(
     if(scan_check_next(NULL) != SYM_OBRACKET)
         return(set_compile_error(EVAL_ERR_FUNARGS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     proc_func_arg_maybe_blank();
 
@@ -1432,7 +1435,7 @@ proc_func_if(
         /* check for single argument if */
         if(scan_check_next(NULL) == SYM_CBRACKET)
         {
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             *which_if = RPN_FNF_IFC;
             return(1);
         }
@@ -1440,7 +1443,7 @@ proc_func_if(
             return(set_compile_error(EVAL_ERR_BADEXPR));
     }
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     skip_post = out_pos();
     out_idno(RPN_FRM_SKIPFALSE);
@@ -1462,7 +1465,7 @@ proc_func_if(
     if(scan_check_next(NULL) != SYM_COMMA)
         return(set_compile_error(EVAL_ERR_BADEXPR));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     /* next argument */
     proc_func_arg_maybe_blank();
@@ -1472,7 +1475,7 @@ proc_func_if(
     if(scan_check_next(NULL) != SYM_CBRACKET)
         return(set_compile_error(EVAL_ERR_CBRACKETS));
     else
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
     /* we did the full three arguments */
     return(3);
@@ -1495,7 +1498,7 @@ rec_array(
     *x_size = 0;
 
     do  {
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         rec_array_row(cur_y, x_size);
         ++cur_y;
     }
@@ -1522,14 +1525,14 @@ rec_array_row(
     do  {
         EV_IDNO next;
 
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
         next = scan_check_next(NULL);
 
         if(next == SYM_COMMA     ||
            next == SYM_SEMICOLON ||
            next == SYM_CARRAY)
-            out_idno(RPN_DAT_BLANK);
+            out_idno(DATA_ID_BLANK);
         else
             rec_expr();
         ++cur_x;
@@ -1550,7 +1553,7 @@ rec_array_row(
             S32 i;
 
             for(i = cur_x; i < *x_size; ++i)
-                out_idno(RPN_DAT_BLANK);
+                out_idno(DATA_ID_BLANK);
         }
     }
 }
@@ -1581,7 +1584,7 @@ rec_aterm(void)
 
         if(!compiler_context.error)
         {
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             rec_bterm();
             out_idno_format(&sym_inf);
 
@@ -1615,7 +1618,7 @@ rec_bterm(void)
         case RPN_REL_GT:
         case RPN_REL_LTEQUAL:
         case RPN_REL_GTEQUAL:
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             break;
 
         default:
@@ -1646,7 +1649,7 @@ rec_b2term(void)
         switch(scan_check_next(&sym_inf))
         {
         case RPN_BOP_CONCATENATE:
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             break;
 
         default:
@@ -1678,7 +1681,7 @@ rec_cterm(void)
         {
         case RPN_BOP_PLUS:
         case RPN_BOP_MINUS:
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             break;
 
         default:
@@ -1710,7 +1713,7 @@ rec_dterm(void)
         {
         case RPN_BOP_TIMES:
         case RPN_BOP_DIVIDE:
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             break;
 
         default:
@@ -1738,7 +1741,7 @@ rec_eterm(void)
 
     while(scan_check_next(&sym_inf) == RPN_BOP_POWER)
     {
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         rec_fterm();
         out_idno_format(&sym_inf);
     }
@@ -1774,7 +1777,7 @@ rec_expr(void)
 
         if(!compiler_context.error)
         {
-            compiler_context.sym_inf.did_num = SYM_BLANK;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
             rec_aterm();
             out_idno_format(&sym_inf);
 
@@ -1799,17 +1802,17 @@ rec_fterm(void)
     switch(scan_check_next(&sym_inf))
     {
     case RPN_BOP_PLUS:
-        sym_inf.did_num = RPN_UOP_UPLUS;
+        sym_inf.sym_idno = RPN_UOP_PLUS;
         goto proc_op;
 
     case RPN_BOP_MINUS:
-        sym_inf.did_num = RPN_UOP_UMINUS;
+        sym_inf.sym_idno = RPN_UOP_MINUS;
 
         /*FALLTHRU*/
 
     case RPN_UOP_NOT:
     proc_op:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         rec_fterm();
         out_idno_format(&sym_inf);
         return;
@@ -1833,14 +1836,14 @@ rec_gterm(void)
 
     if(scan_check_next(&sym_inf) == SYM_OBRACKET)
     {
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         rec_expr();
         if(scan_check_next(NULL) != SYM_CBRACKET)
             set_compile_error(EVAL_ERR_CBRACKETS);
         else
         {
-            compiler_context.sym_inf.did_num = SYM_BLANK;
-            sym_inf.did_num = RPN_FRM_BRACKETS;
+            compiler_context.sym_inf.sym_idno = SYM_BLANK;
+            sym_inf.sym_idno = RPN_FRM_BRACKETS;
             out_idno_format(&sym_inf);
         }
     }
@@ -1869,57 +1872,57 @@ rec_lterm(void)
 
     switch(scan_check_next(&sym_inf))
     {
-    case RPN_DAT_REAL:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_REAL:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
         out_to_rpn(sizeof32(F64), &compiler_context.data_cur.arg.fp);
         break;
 
-    case RPN_DAT_BOOL8:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_LOGICAL:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
         out_byte((U8) compiler_context.data_cur.arg.boolean);
         break;
 
-    case RPN_DAT_WORD8:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_WORD8:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
-        out_byte((U8) (S8) compiler_context.data_cur.arg.integer);
+        out_byte((U8) (S8) ss_data_get_integer(&compiler_context.data_cur));
         break;
 
-    case RPN_DAT_WORD16:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_WORD16:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
-        out_S16((S16) compiler_context.data_cur.arg.integer);
+        out_S16((S16) ss_data_get_integer(&compiler_context.data_cur));
         break;
 
-    case RPN_DAT_WORD32:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_WORD32:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
         out_to_rpn(sizeof32(S32), &compiler_context.data_cur.arg.integer);
         break;
 
-    case RPN_DAT_SLR:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_SLR:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
         out_slr(&compiler_context.data_cur.arg.slr, compiler_context.fun_parms.nodep, 0);
         break;
 
-    case RPN_DAT_RANGE:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_RANGE:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
         out_range(&compiler_context.data_cur.arg.range, compiler_context.fun_parms.nodep);
         break;
 
-    case RPN_DAT_STRING:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_STRING:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_string_free(&sym_inf, &compiler_context.data_cur);
         break;
 
-    case RPN_DAT_DATE:
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+    case DATA_ID_DATE:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
-        out_to_rpn(sizeof32(EV_DATE), &compiler_context.data_cur.arg.ev_date);
+        out_to_rpn(sizeof32(SS_DATE), ss_data_get_date(&compiler_context.data_cur));
         break;
 
     case SYM_OARRAY:
@@ -1946,10 +1949,10 @@ rec_lterm(void)
         }
 
         /* array has been scanned */
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
         /* output array details to compiled expression */
-        sym_inf.did_num = RPN_FNA_MAKEARRAY;
+        sym_inf.sym_idno = RPN_FNA_MAKEARRAY;
         out_idno_format(&sym_inf);
 
         /* output array sizes */
@@ -1970,7 +1973,7 @@ rec_lterm(void)
             out_byte(*ci);
         while(*ci++);
 
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
         break;
         }
 
@@ -1983,7 +1986,7 @@ rec_lterm(void)
         xstrkpy(ident, sizeof32(ident), compiler_context.ident);
 
         /* we scanned the tag */
-        compiler_context.sym_inf.did_num = SYM_BLANK;
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
         /* lookup id as internal function */
         if(name_is_blank(&compiler_context.docu_name))
@@ -1992,7 +1995,7 @@ rec_lterm(void)
 
             if(int_func >= 0)
             {
-                sym_inf.did_num = (EV_IDNO) int_func;
+                sym_inf.sym_idno = (EV_IDNO) int_func;
                 func_call(&sym_inf, 0);
                 break;
             }
@@ -2016,7 +2019,7 @@ rec_lterm(void)
             }
 
             p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
-            sym_inf.did_num = RPN_FNM_CUSTOMCALL;
+            sym_inf.sym_idno = RPN_FNM_CUSTOMCALL;
             func_call(&sym_inf, p_ev_custom->handle);
         }
         else
@@ -2045,7 +2048,7 @@ rec_lterm(void)
             }
 
             p_ev_name = array_ptrc(&name_def.h_table, EV_NAME, name_num);
-            sym_inf.did_num = RPN_DAT_NAME;
+            sym_inf.sym_idno = DATA_ID_NAME;
             out_idno_format(&sym_inf);
             out_name(p_ev_name->handle, compiler_context.fun_parms.nodep);
 
@@ -2237,7 +2240,7 @@ recog_slr(
 _Check_return_
 extern S32
 recog_slr_range(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InoutRef_  P_DOCU_NAME p_docu_name,
     _InVal_     EV_DOCNO ev_docno_from,
     _In_z_      PC_USTR in_str)
@@ -2308,9 +2311,9 @@ recog_slr_range(
 
             if((s_slr.col < e_slr.col) && (s_slr.row < e_slr.row))
             {
-                p_ev_data->arg.range.s = s_slr;
-                p_ev_data->arg.range.e = e_slr;
-                p_ev_data->did_num = RPN_DAT_RANGE;
+                p_ss_data->arg.range.s = s_slr;
+                p_ss_data->arg.range.e = e_slr;
+                ss_data_set_data_id(p_ss_data, DATA_ID_RANGE);
 
                 len = (len_ext_1 + len_slr_1) + len_colon + (len_ext_2 + len_slr_2); /* all components for range */
             }
@@ -2318,8 +2321,8 @@ recog_slr_range(
         }
         else
         {   /* stick with the SLR we obtained */
-            p_ev_data->arg.slr = s_slr;
-            p_ev_data->did_num = RPN_DAT_SLR;
+            p_ss_data->arg.slr = s_slr;
+            ss_data_set_data_id(p_ss_data, DATA_ID_SLR);
 
             len = len_ext_1 + len_slr_1; /* all components for SLR */
         } /*fi*/
@@ -2342,7 +2345,7 @@ static EV_IDNO
 scan_check_next(
     _Out_opt_   P_SYM_INF p_sym_inf)
 {
-    if(compiler_context.sym_inf.did_num == SYM_BLANK)
+    if(compiler_context.sym_inf.sym_idno == SYM_BLANK)
     {
         compiler_context.err_pos = compiler_context.ip_pos.ustr;
         scan_next_symbol();
@@ -2352,7 +2355,7 @@ scan_check_next(
     if(NULL != p_sym_inf)
         *p_sym_inf = compiler_context.sym_inf;
 
-    return(compiler_context.sym_inf.did_num);
+    return(compiler_context.sym_inf.sym_idno);
 }
 
 /******************************************************************************
@@ -2420,13 +2423,13 @@ scan_next_symbol(void)
         /* read a string ? */
         else if((res = ss_recog_string(&compiler_context.data_cur, compiler_context.ip_pos.ustr)) > 0)
             compiler_context.ip_pos.p_u8 += res;
-        /* check for Boolean */
-        else if((res = ss_recog_boolean(&compiler_context.data_cur, compiler_context.ip_pos.ustr)) > 0)
+        /* check for Logical */
+        else if((res = ss_recog_logical(&compiler_context.data_cur, compiler_context.ip_pos.ustr)) > 0)
             compiler_context.ip_pos.p_u8 += res;
 
         if(res > 0)
         {
-            compiler_context.sym_inf.did_num = compiler_context.data_cur.did_num;
+            compiler_context.sym_inf.sym_idno = ss_data_get_data_id(&compiler_context.data_cur);
             return;
         }
     }
@@ -2445,7 +2448,7 @@ scan_next_symbol(void)
     {
         compiler_context.ip_pos.p_u8 += res;
         compiler_context.fun_parms.var = 1;
-        compiler_context.sym_inf.did_num = compiler_context.data_cur.did_num;
+        compiler_context.sym_inf.sym_idno = ss_data_get_data_id(&compiler_context.data_cur);
         if(!name_is_blank(&compiler_context.docu_name))
             name_dispose(&compiler_context.docu_name);
         return;
@@ -2455,27 +2458,27 @@ scan_next_symbol(void)
     switch(*compiler_context.ip_pos.p_u8)
     {
     case CH_NULL:
-        compiler_context.sym_inf.did_num = RPN_FRM_END;
+        compiler_context.sym_inf.sym_idno = RPN_FRM_END;
         return;
 
     case CH_LEFT_PARENTHESIS:
         ++compiler_context.ip_pos.p_u8;
-        compiler_context.sym_inf.did_num = SYM_OBRACKET;
+        compiler_context.sym_inf.sym_idno = SYM_OBRACKET;
         return;
 
     case CH_RIGHT_PARENTHESIS:
         ++compiler_context.ip_pos.p_u8;
-        compiler_context.sym_inf.did_num = SYM_CBRACKET;
+        compiler_context.sym_inf.sym_idno = SYM_CBRACKET;
         return;
 
     case CH_LEFT_CURLY_BRACKET:
         ++compiler_context.ip_pos.p_u8;
-        compiler_context.sym_inf.did_num = SYM_OARRAY;
+        compiler_context.sym_inf.sym_idno = SYM_OARRAY;
         return;
 
     case CH_RIGHT_CURLY_BRACKET:
         ++compiler_context.ip_pos.p_u8;
-        compiler_context.sym_inf.did_num = SYM_CARRAY;
+        compiler_context.sym_inf.sym_idno = SYM_CARRAY;
         return;
 
     /* local name */
@@ -2488,7 +2491,7 @@ scan_next_symbol(void)
         }
 
         compiler_context.ip_pos.p_u8 += res;
-        compiler_context.sym_inf.did_num = RPN_LCL_ARGUMENT;
+        compiler_context.sym_inf.sym_idno = RPN_LCL_ARGUMENT;
         return;
 
     default:
@@ -2498,14 +2501,14 @@ scan_next_symbol(void)
     if(PtrGetByte(compiler_context.ip_pos.ustr) == g_ss_recog_context.function_arg_sep)
     {
         ++compiler_context.ip_pos.p_u8;
-        compiler_context.sym_inf.did_num = SYM_COMMA;
+        compiler_context.sym_inf.sym_idno = SYM_COMMA;
         return;
     }
 
     if(PtrGetByte(compiler_context.ip_pos.ustr) == g_ss_recog_context.array_row_sep)
     {
         ++compiler_context.ip_pos.p_u8;
-        compiler_context.sym_inf.did_num = SYM_SEMICOLON;
+        compiler_context.sym_inf.sym_idno = SYM_SEMICOLON;
         return;
     }
 
@@ -2524,7 +2527,7 @@ scan_next_symbol(void)
         }
 
         compiler_context.ip_pos.p_u8 += res;
-        compiler_context.sym_inf.did_num = SYM_TAG;
+        compiler_context.sym_inf.sym_idno = SYM_TAG;
         return;
     }
 
@@ -2560,7 +2563,7 @@ scan_next_symbol(void)
 
         {
         S32 i = ev_func_lookup((PC_USTR) compiler_context.ident);
-        compiler_context.sym_inf.did_num = (EV_IDNO) i;
+        compiler_context.sym_inf.sym_idno = (EV_IDNO) i;
         if(i >= 0)
             return;
         } /*block*/
@@ -2580,7 +2583,7 @@ static STATUS
 set_compile_error(
     _InVal_     STATUS status)
 {
-    compiler_context.sym_inf.did_num = SYM_BAD;
+    compiler_context.sym_inf.sym_idno = SYM_BAD;
 
     if(0 == compiler_context.error)
         compiler_context.error = status;

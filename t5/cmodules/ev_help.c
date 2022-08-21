@@ -21,7 +21,7 @@ internal functions
 
 static void
 data_ensure_constant_sub(
-    _InoutRef_  P_EV_DATA p_ev_data,
+    _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     S32 array);
 
 /******************************************************************************
@@ -39,207 +39,296 @@ data_ensure_constant_sub(
 ******************************************************************************/
 
 _Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_real(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_REA)
+        return(DATA_ID_REAL); /* preferred */
+
+    if(type_flags & EM_INT)
+    {   /* try to obtain integer value from this real arg */
+        if(status_done(ss_data_real_to_integer_force(p_ss_data)))
+            return(ss_data_get_data_id(p_ss_data));
+
+        return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
+    }
+
+    if(type_flags & EM_DAT)
+    {   /* try to obtain date value from this real arg */
+        if(status_ok(ss_serial_number_to_date(&p_ss_data->arg.ss_date, ss_data_get_real(p_ss_data))))
+            return(ss_data_get_data_id(p_ss_data));
+
+        return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
+    }
+
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXNUMBER));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_integer(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_INT)
+        return(ss_data_get_data_id(p_ss_data)); /* preferred */
+
+    if(type_flags & EM_REA)
+        /* promote this integer arg to real value */
+        return(ss_data_set_real_rid(p_ss_data, (F64) ss_data_get_integer(p_ss_data)));
+
+    if(type_flags & EM_DAT)
+    {   /* try to obtain date value from this integer arg */
+        if(status_ok(ss_serial_number_to_date(&p_ss_data->arg.ss_date, (F64) ss_data_get_integer(p_ss_data))))
+            return(ss_data_get_data_id(p_ss_data));
+
+        return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
+    }
+
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXNUMBER));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_date(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_DAT)
+        return(DATA_ID_DATE); /* preferred */
+
+    /* coerce dates to Excel-compatible serial number if a number is acceptable */
+    if(type_flags & EM_REA)
+        return(ss_data_set_real_rid(p_ss_data, ss_date_to_serial_number(&p_ss_data->arg.ss_date)));
+
+    if(type_flags & EM_INT)
+    {   /* for EM_INT args ignore any time component */
+        if(SS_DATE_NULL == ss_data_get_date(p_ss_data)->date)
+            return(ss_data_set_integer_rid(p_ss_data, 0)); /* this is a pure time value */
+
+        return(ss_data_set_integer_rid(p_ss_data, ss_dateval_to_serial_number(ss_data_get_date(p_ss_data)->date)));
+    }
+
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXDATE));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_string(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_STR)
+        return(DATA_ID_STRING); /* preferred */
+
+    /* can't do anything with this string arg, best free it */
+    ss_data_free_resources(p_ss_data);
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXSTRING));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_blank(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_BLK)
+        return(DATA_ID_BLANK); /* preferred */
+
+    if(type_flags & EM_STR)
+    {   /* map blank arg to empty string */
+        p_ss_data->arg.string.uchars = uchars_empty_string;
+        p_ss_data->arg.string.size = 0;
+        ss_data_set_data_id(p_ss_data, DATA_ID_STRING);
+        p_ss_data->local_data = 0;
+        return(DATA_ID_STRING);
+    }
+
+    /* map blank arg to zero and retry */
+    ss_data_set_integer(p_ss_data, 0);
+    return(arg_normalise_integer(p_ss_data, type_flags));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_error(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_ERR)
+        return(DATA_ID_ERROR); /* preferred */
+
+    return(p_ss_data->arg.ss_error.status);
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_a_r_f_stack_dbase( /* array or range or field */
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags,
+    _InoutRef_opt_ P_S32 p_max_x,
+    _InoutRef_opt_ P_S32 p_max_y,
+    P_STACK_DBASE p_stack_dbase)
+{
+    SS_DATA ss_data;
+    dbase_array_index(&ss_data, p_ss_data, p_stack_dbase, type_flags);
+    ss_data_free_resources(p_ss_data);
+    *p_ss_data = ss_data;
+    return(arg_normalise(p_ss_data, type_flags, p_max_x, p_max_y, NULL));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_array_range_field(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags,
+    _InoutRef_opt_ P_S32 p_max_x,
+    _InoutRef_opt_ P_S32 p_max_y,
+    P_STACK_DBASE p_stack_dbase)
+{
+    if(NULL != p_stack_dbase)
+        return(arg_normalise_a_r_f_stack_dbase(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+
+    if(type_flags & EM_ARY)
+        return(ss_data_get_data_id(p_ss_data)); /* preferred */ /* ARRAY/RANGE/FIELD */
+
+    if( (NULL != p_max_x) && (NULL != p_max_y) )
+    {
+        S32 x_size, y_size;
+        array_range_sizes(p_ss_data, &x_size, &y_size);
+        *p_max_x = MAX(*p_max_x, (S32) x_size);
+        *p_max_y = MAX(*p_max_y, (S32) y_size);
+        return(ss_data_get_data_id(p_ss_data));
+    }
+
+    ss_data_free_resources(p_ss_data);
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXARRAY));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_slr(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags,
+    _InoutRef_opt_ P_S32 p_max_x,
+    _InoutRef_opt_ P_S32 p_max_y,
+    P_STACK_DBASE p_stack_dbase)
+{
+    if(type_flags & EM_SLR)
+        return(DATA_ID_SLR); /* preferred */
+
+    /* function doesn't want SLRs, so dereference them and retry */
+    ev_slr_deref(p_ss_data, &p_ss_data->arg.slr);
+
+    return(arg_normalise(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_name(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags,
+    _InoutRef_opt_ P_S32 p_max_x,
+    _InoutRef_opt_ P_S32 p_max_y,
+    P_STACK_DBASE p_stack_dbase)
+{
+    /* no function handles NAME args, so dereference them and retry */
+    name_deref(p_ss_data, p_ss_data->arg.h_name);
+
+    return(arg_normalise(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_cond(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     EV_TYPE type_flags)
+{
+    if(type_flags & EM_CDX)
+        return(ss_data_get_data_id(p_ss_data)); /* preferred */
+
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_BADEXPR));
+}
+
+_Check_return_
 extern STATUS /* EV_IDNO or error */
 arg_normalise(
-    _InoutRef_  P_EV_DATA p_ev_data,
+    _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags,
     _InoutRef_opt_ P_S32 p_max_x,
     _InoutRef_opt_ P_S32 p_max_y,
     P_STACK_DBASE p_stack_dbase)
 {
     /* what have we currently got? */
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_REAL:
-        {
-        if(type_flags & EM_REA)
-            break; /* preferred */
+    case DATA_ID_REAL:
+        return(arg_normalise_real(p_ss_data, type_flags));
 
-        if(type_flags & EM_INT)
-        {   /* try to obtain integer value from this real arg */
-            if(status_done(real_to_integer_force(p_ev_data)))
-                break;
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
+        return(arg_normalise_integer(p_ss_data, type_flags));
 
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
-        }
+    case DATA_ID_STRING:
+        return(arg_normalise_string(p_ss_data, type_flags));
 
-        if(type_flags & EM_DAT)
-        {   /* try to obtain date value from this real arg */
-            if(status_ok(ss_serial_number_to_date(&p_ev_data->arg.ev_date, p_ev_data->arg.fp)))
-                break;
+    case DATA_ID_DATE:
+        return(arg_normalise_date(p_ss_data, type_flags));
 
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
-        }
+    case DATA_ID_BLANK:
+        return(arg_normalise_blank(p_ss_data, type_flags));
 
-        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXNUMBER));
-        }
+    case DATA_ID_ERROR:
+        return(arg_normalise_error(p_ss_data, type_flags));
 
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
-        {
-        if(type_flags & EM_INT)
-            break; /* preferred */
+    case DATA_ID_ARRAY:
+        return(arg_normalise_array_range_field(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
 
-        if(type_flags & EM_REA)
-        {   /* promote this integer arg to real value */
-            ev_data_set_real(p_ev_data, (F64) p_ev_data->arg.integer);
-            break;
-        }
+    case DATA_ID_SLR:
+        return(arg_normalise_slr(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
 
-        if(type_flags & EM_DAT)
-        {   /* try to obtain date value from this integer arg */
-            if(status_ok(ss_serial_number_to_date(&p_ev_data->arg.ev_date, (F64) p_ev_data->arg.integer)))
-                break;
+    case DATA_ID_RANGE:
+    case DATA_ID_FIELD:
+        return(arg_normalise_array_range_field(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
 
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
-        }
-
-        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXNUMBER));
-        }
-
-    case RPN_DAT_STRING:
-        {
-        if(type_flags & EM_STR)
-            break; /* preferred */
-
-        /* can't do anything with this string arg, best free it */
-        ss_data_free_resources(p_ev_data);
-        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXSTRING));
-        }
-
-    case RPN_DAT_ARRAY:
-    case RPN_DAT_RANGE:
-    case RPN_DAT_FIELD:
-        {
-        if(NULL != p_stack_dbase)
-        {
-            EV_DATA ev_data;
-            dbase_array_index(&ev_data, p_ev_data, p_stack_dbase, type_flags);
-            ss_data_free_resources(p_ev_data);
-            *p_ev_data = ev_data;
-            return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, NULL));
-        }
-
-        if(type_flags & EM_ARY)
-            break; /* preferred */
-
-        if((NULL != p_max_x) && (NULL != p_max_y))
-        {
-            S32 x_size, y_size;
-            array_range_sizes(p_ev_data, &x_size, &y_size);
-            *p_max_x = MAX(*p_max_x, (S32) x_size);
-            *p_max_y = MAX(*p_max_y, (S32) y_size);
-            break;
-        }
-
-        ss_data_free_resources(p_ev_data);
-        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXARRAY));
-        }
-
-    case RPN_DAT_DATE:
-        {
-        if(type_flags & EM_DAT)
-            break; /* preferred */
-
-        /* coerce dates to Excel-compatible serial number if a number is acceptable */
-        if(type_flags & EM_REA)
-        {
-            ev_data_set_real(p_ev_data, ss_date_to_serial_number(&p_ev_data->arg.ev_date));
-            break;
-        }
-
-        if(type_flags & EM_INT)
-        {   /* for EM_INT args ignore any time component */
-            if(EV_DATE_NULL != p_ev_data->arg.ev_date.date)
-                ev_data_set_integer(p_ev_data, ss_dateval_to_serial_number(&p_ev_data->arg.ev_date.date));
-            else
-                ev_data_set_integer(p_ev_data, 0); /* this is a pure time value */
-
-            break;
-        }
-
-        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXDATE));
-        }
-
-    case RPN_DAT_BLANK:
-        {
-        if(type_flags & EM_BLK)
-            break; /* preferred */
-
-        if(type_flags & EM_STR)
-        {   /* map blank arg to empty string */
-            p_ev_data->arg.string.uchars = uchars_empty_string;
-            p_ev_data->arg.string.size = 0;
-            p_ev_data->did_num = RPN_DAT_STRING;
-            p_ev_data->local_data = 0;
-            break;
-        }
-
-        /* map blank arg to zero and retry */
-        ev_data_set_integer(p_ev_data, 0);
-        return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
-        }
-
-    case RPN_DAT_ERROR:
-        {
-        if(type_flags & EM_ERR)
-            break; /* preferred */
-
-        return(p_ev_data->arg.ev_error.status);
-        }
-
-    case RPN_DAT_SLR:
-        {
-        if(type_flags & EM_SLR)
-            break; /* preferred */
-
-        /* function doesn't want SLRs, so dereference them and retry */
-        ev_slr_deref(p_ev_data, &p_ev_data->arg.slr);
-        return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
-        }
-
-    case RPN_DAT_NAME:
-        /* no function handles NAME args, so dereference them and retry */
-        name_deref(p_ev_data, p_ev_data->arg.h_name);
-        return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+    case DATA_ID_NAME:
+        return(arg_normalise_name(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
 
     case RPN_FRM_COND:
-        {
-        if(type_flags & EM_CDX)
-            break; /* preferred */
+        return(arg_normalise_cond(p_ss_data, type_flags));
 
-        return(ev_data_set_error(p_ev_data, EVAL_ERR_BADEXPR));
-        }
+    default:
+        return(ss_data_get_data_id(p_ss_data));
     }
-
-    return(p_ev_data->did_num);
 }
 
 /******************************************************************************
 *
-* copy data element at p_ev_data into array element given by ap, x, y
+* copy data element at p_ss_data into array element given by ap, x, y
 *
 ******************************************************************************/
 
 _Check_return_
 static STATUS
 array_element_copy(
-    P_EV_DATA p_ev_data_array,
+    P_SS_DATA p_ss_data_array,
     _InVal_     S32 ix,
     _InVal_     S32 iy,
-    _InRef_     PC_EV_DATA p_ev_data_from)
+    _InRef_     PC_SS_DATA p_ss_data_from)
 {
-    const P_EV_DATA p_ev_data = ss_array_element_index_wr(p_ev_data_array, ix, iy);
+    const P_SS_DATA p_ss_data = ss_array_element_index_wr(p_ss_data_array, ix, iy);
 
-    switch(p_ev_data_from->did_num)
+    switch(ss_data_get_data_id(p_ss_data_from))
     {
-    case RPN_DAT_STRING:
-        return(ss_string_dup(p_ev_data, p_ev_data_from));
+    case DATA_ID_STRING:
+        return(ss_string_dup(p_ss_data, p_ss_data_from));
 
     default:
-        *p_ev_data = *p_ev_data_from;
+        *p_ss_data = *p_ss_data_from;
         return(STATUS_OK);
     }
 }
@@ -256,19 +345,19 @@ array_element_copy(
 _Check_return_
 static STATUS
 array_copy(
-    P_EV_DATA p_ev_data_to,
-    P_EV_DATA p_ev_data_from)
+    P_SS_DATA p_ss_data_to,
+    P_SS_DATA p_ss_data_from)
 {
     STATUS status = STATUS_OK;
     S32 x_to, y_to, x_from, y_from, ix, iy;
 
-    array_range_sizes(p_ev_data_from, &x_from, &y_from);
+    array_range_sizes(p_ss_data_from, &x_from, &y_from);
 
-    x_to = p_ev_data_to->arg.ev_array.x_size;
-    y_to = p_ev_data_to->arg.ev_array.y_size;
+    x_to = p_ss_data_to->arg.ss_array.x_size;
+    y_to = p_ss_data_to->arg.ss_array.y_size;
 
-    if(x_to < x_from || y_to < y_from)
-        status = ss_array_element_make(p_ev_data_to, x_from - 1, y_from - 1);
+    if( (x_to < x_from) || (y_to < y_from) )
+        status = ss_array_element_make(p_ss_data_to, x_from - 1, y_from - 1);
 
     if(status_ok(status))
     {
@@ -276,13 +365,13 @@ array_copy(
         {
             for(ix = 0; ix < x_from; ++ix)
             {
-                EV_DATA ev_data;
+                SS_DATA ss_data;
 
-                (void) array_range_index(&ev_data, p_ev_data_from, ix, iy, EM_ANY);
+                (void) array_range_index(&ss_data, p_ss_data_from, ix, iy, EM_ANY);
 
-                status = array_element_copy(p_ev_data_to, ix, iy, &ev_data);
+                status = array_element_copy(p_ss_data_to, ix, iy, &ss_data);
 
-                ss_data_free_resources(&ev_data);
+                ss_data_free_resources(&ss_data);
 
                 status_break(status);
             }
@@ -292,8 +381,8 @@ array_copy(
     }
     else
     {
-        ss_data_free_resources(p_ev_data_to);
-        ev_data_set_error(p_ev_data_to, status);
+        ss_data_free_resources(p_ss_data_to);
+        ss_data_set_error(p_ss_data_to, status);
     }
 
     return(status);
@@ -310,19 +399,19 @@ array_copy(
 _Check_return_
 extern STATUS
 array_expand(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     S32 max_x,
     _InVal_     S32 max_y)
 {
     STATUS status = STATUS_OK;
     S32 old_x, old_y;
 
-    array_range_sizes(p_ev_data, &old_x, &old_y);
+    array_range_sizes(p_ss_data, &old_x, &old_y);
 
     /* if array/range is already big enough, give up */
     if(max_x > old_x || max_y > old_y)
     {
-        EV_DATA new_array;
+        SS_DATA new_array;
 
         for(;;)
         {
@@ -332,18 +421,18 @@ array_expand(
             status_break(status = ss_array_make(&new_array, max_x, max_y));
 
             /* copy in existing data */
-            if(data_is_array_range(p_ev_data))
-                status_break(status = array_copy(&new_array, p_ev_data));
+            if(data_is_array_range(p_ss_data))
+                status_break(status = array_copy(&new_array, p_ss_data));
 
             if( (old_x == 1 && old_y == 1) ||
                 (old_x == 0 && old_y == 0) )
             {
-                EV_DATA ev_data;
+                SS_DATA ss_data;
 
                 if(old_x)
-                    (void) array_range_index(&ev_data, p_ev_data, 0, 0, EM_ANY);
+                    (void) array_range_index(&ss_data, p_ss_data, 0, 0, EM_ANY);
                 else
-                    ev_data = *p_ev_data;
+                    ss_data = *p_ss_data;
 
                 /* replicate across and down */
                 for(iy = 0; iy < max_y && status_ok(status); ++iy)
@@ -353,25 +442,25 @@ array_expand(
                         if(old_x && (!ix && !iy))
                             continue;
 
-                        status_break(status = array_element_copy(&new_array, ix, iy, &ev_data));
+                        status_break(status = array_element_copy(&new_array, ix, iy, &ss_data));
                     }
                 }
 
-                ss_data_free_resources(&ev_data);
+                ss_data_free_resources(&ss_data);
             }
             else if((max_x > old_x) && (old_y == max_y))
             {
                 /* replicate across */
                 for(iy = 0; iy < max_y && status_ok(status); ++iy)
                 {
-                    EV_DATA ev_data;
+                    SS_DATA ss_data;
 
-                    (void) array_range_index(&ev_data, p_ev_data, old_x - 1, iy, EM_ANY);
+                    (void) array_range_index(&ss_data, p_ss_data, old_x - 1, iy, EM_ANY);
 
                     for(ix = 1; ix < max_x; ++ix)
-                        status_break(status = array_element_copy(&new_array, ix, iy, &ev_data));
+                        status_break(status = array_element_copy(&new_array, ix, iy, &ss_data));
 
-                    ss_data_free_resources(&ev_data);
+                    ss_data_free_resources(&ss_data);
                 }
             }
             else if((max_y > old_y) && (old_x == max_x))
@@ -379,38 +468,38 @@ array_expand(
                 /* replicate down */
                 for(ix = 0; ix < max_x && status_ok(status); ++ix)
                 {
-                    EV_DATA ev_data;
+                    SS_DATA ss_data;
 
-                    (void) array_range_index(&ev_data, p_ev_data, ix, old_y - 1, EM_ANY);
+                    (void) array_range_index(&ss_data, p_ss_data, ix, old_y - 1, EM_ANY);
 
                     for(iy = 1; iy < max_y && status_ok(status); ++iy)
-                        status_break(status = array_element_copy(&new_array, ix, iy, &ev_data));
+                        status_break(status = array_element_copy(&new_array, ix, iy, &ss_data));
 
-                    ss_data_free_resources(&ev_data);
+                    ss_data_free_resources(&ss_data);
                 }
             }
             else
             {
                 /* fill new elements with blanks */
-                EV_DATA ev_data;
+                SS_DATA ss_data;
 
-                ev_data_set_blank(&ev_data);
+                ss_data_set_blank(&ss_data);
 
                 for(iy = 0; iy < old_y && status_ok(status); ++iy)
                     for(ix = old_x; ix < max_x; ++ix)
-                        status_break(status = array_element_copy(&new_array, ix, iy, &ev_data));
+                        status_break(status = array_element_copy(&new_array, ix, iy, &ss_data));
 
                 for(iy = old_y; iy < max_y && status_ok(status); ++iy)
                     for(ix = 0; ix < max_x; ++ix)
-                        status_break(status = array_element_copy(&new_array, ix, iy, &ev_data));
+                        status_break(status = array_element_copy(&new_array, ix, iy, &ss_data));
             }
 
             break;
             /*NOTREACHED*/
         }
 
-        ss_data_free_resources(p_ev_data);
-        *p_ev_data = new_array;
+        ss_data_free_resources(p_ss_data);
+        *p_ss_data = new_array;
     }
 
     return(status);
@@ -430,86 +519,90 @@ array_expand(
 _Check_return_
 static EV_IDNO
 array_range_index_common(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 ix,
     _InVal_     S32 iy,
-    _InVal_     EV_TYPE types)
+    _InVal_     EV_TYPE type_flags)
 {
-    p_ev_data_out->local_data = 0;
+    p_ss_data_out->local_data = 0;
 
-    switch(p_ev_data_in->did_num)
+    switch(ss_data_get_data_id(p_ss_data_in))
     {
-    case RPN_DAT_ARRAY:
-        ss_array_element_read(p_ev_data_out, p_ev_data_in, ix, iy);
+    case DATA_ID_ARRAY:
+        ss_array_element_read(p_ss_data_out, p_ss_data_in, ix, iy);
         break;
 
-    case RPN_DAT_RANGE:
-        p_ev_data_out->arg.slr = p_ev_data_in->arg.range.s;
-        p_ev_data_out->arg.slr.col += EV_COL_PACK(ix);
-        p_ev_data_out->arg.slr.row += (EV_ROW)    iy;
-        p_ev_data_out->did_num = RPN_DAT_SLR;
+    case DATA_ID_RANGE:
+        p_ss_data_out->arg.slr = p_ss_data_in->arg.range.s;
+        p_ss_data_out->arg.slr.col += EV_COL_PACK(ix);
+        p_ss_data_out->arg.slr.row += (EV_ROW)    iy;
+        ss_data_set_data_id(p_ss_data_out, DATA_ID_SLR);
         break;
 
-    case RPN_DAT_FIELD:
+    case DATA_ID_FIELD:
         assert(ix == 0);
-        ev_field_data_read(p_ev_data_out, p_ev_data_in->arg.h_name, iy);
+        ev_field_data_read(p_ss_data_out, p_ss_data_in->arg.h_name, iy);
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_NO_VALID_DATA);
+        break;
     }
 
-    status_assert(arg_normalise(p_ev_data_out, types, NULL, NULL, NULL));
+    status_assert(arg_normalise(p_ss_data_out, type_flags, NULL, NULL, NULL));
 
-    return(p_ev_data_out->did_num);
+    return(ss_data_get_data_id(p_ss_data_out));
 }
 
 /*ncr*/
 extern EV_IDNO
 array_range_index(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 ix,
     _InVal_     S32 iy,
-    _InVal_     EV_TYPE types)
+    _InVal_     EV_TYPE type_flags)
 {
     S32 x_size, y_size;
 
-    array_range_sizes(p_ev_data_in, &x_size, &y_size);
+    array_range_sizes(p_ss_data_in, &x_size, &y_size);
 
     if( ((U32) ix >= (U32) x_size) ||
         ((U32) iy >= (U32) y_size) ) /* caters for negative indexing */
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_SUBSCRIPT);
-        return(p_ev_data_out->did_num);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_SUBSCRIPT);
+        return(ss_data_get_data_id(p_ss_data_out));
     }
 
-    p_ev_data_out->local_data = 0;
+    p_ss_data_out->local_data = 0;
 
-    switch(p_ev_data_in->did_num)
+    switch(ss_data_get_data_id(p_ss_data_in))
     {
-    case RPN_DAT_ARRAY:
-        ss_array_element_read(p_ev_data_out, p_ev_data_in, ix, iy);
+    case DATA_ID_ARRAY:
+        ss_array_element_read(p_ss_data_out, p_ss_data_in, ix, iy);
         break;
 
-    case RPN_DAT_RANGE:
-        p_ev_data_out->arg.slr = p_ev_data_in->arg.range.s;
-        p_ev_data_out->arg.slr.col += EV_COL_PACK(ix);
-        p_ev_data_out->arg.slr.row += (EV_ROW)    iy;
-        p_ev_data_out->did_num = RPN_DAT_SLR;
+    case DATA_ID_RANGE:
+        p_ss_data_out->arg.slr = p_ss_data_in->arg.range.s;
+        p_ss_data_out->arg.slr.col += EV_COL_PACK(ix);
+        p_ss_data_out->arg.slr.row += (EV_ROW)    iy;
+        ss_data_set_data_id(p_ss_data_out, DATA_ID_SLR);
         break;
 
-    case RPN_DAT_FIELD:
+    case DATA_ID_FIELD:
         assert(ix == 0);
-        ev_field_data_read(p_ev_data_out, p_ev_data_in->arg.h_name, iy);
+        ev_field_data_read(p_ss_data_out, p_ss_data_in->arg.h_name, iy);
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_NO_VALID_DATA);
+        break;
     }
 
-    status_assert(arg_normalise(p_ev_data_out, types, NULL, NULL, NULL));
+    status_assert(arg_normalise(p_ss_data_out, type_flags, NULL, NULL, NULL));
 
-    return(p_ev_data_out->did_num);
+    return(ss_data_get_data_id(p_ss_data_out));
 }
 
 /******************************************************************************
@@ -523,26 +616,26 @@ array_range_index(
 /*ncr*/
 extern EV_IDNO
 array_range_mono_index(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 mono_ix,
-    _InVal_     EV_TYPE types)
+    _InVal_     EV_TYPE type_flags)
 {
     S32 x_size, y_size;
 
-    array_range_sizes(p_ev_data_in, &x_size, &y_size);
+    array_range_sizes(p_ss_data_in, &x_size, &y_size);
 
-    if((0 == x_size) || (0 == y_size))
+    if( (0 == x_size) || (0 == y_size) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_SUBSCRIPT);
-        return(p_ev_data_out->did_num);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_SUBSCRIPT);
+        return(ss_data_get_data_id(p_ss_data_out));
     }
 
     {
     const S32 iy  =       mono_ix / x_size;
     const S32 ix  = mono_ix - (iy * x_size);
 
-    return(array_range_index_common(p_ev_data_out, p_ev_data_in, ix, iy, types));
+    return(array_range_index_common(p_ss_data_out, p_ss_data_in, ix, iy, type_flags));
     } /*block*/
 }
 
@@ -554,25 +647,25 @@ array_range_mono_index(
 
 extern void
 array_range_sizes(
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _OutRef_    P_S32 p_x_size,
     _OutRef_    P_S32 p_y_size)
 {
-    switch(p_ev_data_in->did_num)
+    switch(ss_data_get_data_id(p_ss_data_in))
     {
-    case RPN_DAT_ARRAY:
-        *p_x_size = p_ev_data_in->arg.ev_array.x_size;
-        *p_y_size = p_ev_data_in->arg.ev_array.y_size;
+    case DATA_ID_ARRAY:
+        *p_x_size = p_ss_data_in->arg.ss_array.x_size;
+        *p_y_size = p_ss_data_in->arg.ss_array.y_size;
         break;
 
-    case RPN_DAT_RANGE:
-        *p_x_size = (S32) ev_slr_col(&p_ev_data_in->arg.range.e) - (S32) ev_slr_col(&p_ev_data_in->arg.range.s);
-        *p_y_size = (S32) ev_slr_row(&p_ev_data_in->arg.range.e) - (S32) ev_slr_row(&p_ev_data_in->arg.range.s);
+    case DATA_ID_RANGE:
+        *p_x_size = (S32) ev_slr_col(&p_ss_data_in->arg.range.e) - (S32) ev_slr_col(&p_ss_data_in->arg.range.s);
+        *p_y_size = (S32) ev_slr_row(&p_ss_data_in->arg.range.e) - (S32) ev_slr_row(&p_ss_data_in->arg.range.s);
         break;
 
-    case RPN_DAT_FIELD:
+    case DATA_ID_FIELD:
         *p_x_size = 1;
-        status_consume(ev_field_n_records(p_ev_data_in->arg.h_name, p_y_size));
+        status_consume(ev_field_n_records(p_ss_data_in->arg.h_name, p_y_size));
         break;
 
     default:
@@ -583,12 +676,12 @@ array_range_sizes(
 
 extern void
 array_range_mono_size(
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _OutRef_    P_S32 p_mono_size)
 {
     S32 x_size, y_size;
 
-    array_range_sizes(p_ev_data_in, &x_size, &y_size);
+    array_range_sizes(p_ss_data_in, &x_size, &y_size);
 
     *p_mono_size = x_size * y_size;
 }
@@ -605,7 +698,7 @@ _Check_return_
 extern S32
 array_scan_element(
     _InoutRef_  P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags)
 {
     if(p_array_scan_block->x_pos >= p_array_scan_block->x_size)
@@ -615,16 +708,16 @@ array_scan_element(
 
         if(p_array_scan_block->y_pos >= p_array_scan_block->y_size)
         {
-            CODE_ANALYSIS_ONLY(ev_data_set_blank(p_ev_data));
+            CODE_ANALYSIS_ONLY(ss_data_set_blank(p_ss_data));
             return(RPN_FRM_END);
         }
     }
 
-    ss_array_element_read(p_ev_data, &p_array_scan_block->ev_data, p_array_scan_block->x_pos, p_array_scan_block->y_pos);
+    ss_array_element_read(p_ss_data, &p_array_scan_block->ss_data, p_array_scan_block->x_pos, p_array_scan_block->y_pos);
 
     p_array_scan_block->x_pos += 1;
 
-    return(arg_normalise(p_ev_data, type_flags, NULL, NULL, NULL));
+    return(arg_normalise(p_ss_data, type_flags, NULL, NULL, NULL));
 }
 
 /******************************************************************************
@@ -637,13 +730,13 @@ _Check_return_
 extern STATUS
 array_scan_init(
     _OutRef_    P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
-    assert_EQ(p_ev_data->did_num, RPN_DAT_ARRAY);
+    assert(ss_data_is_array(p_ss_data));
 
-    p_array_scan_block->ev_data = *p_ev_data;
-    p_array_scan_block->x_size = p_ev_data->arg.ev_array.x_size;
-    p_array_scan_block->y_size = p_ev_data->arg.ev_array.y_size;
+    p_array_scan_block->ss_data = *p_ss_data;
+    p_array_scan_block->x_size = p_ss_data->arg.ss_array.x_size;
+    p_array_scan_block->y_size = p_ss_data->arg.ss_array.y_size;
 
     p_array_scan_block->x_pos = p_array_scan_block->y_pos = 0;
 
@@ -658,7 +751,7 @@ array_scan_init(
 
 #if WINDOWS && 0
 
-PROC_QSORT_S_PROTO(static, proc_array_sort, U32, EV_DATA)
+PROC_QSORT_S_PROTO(static, proc_array_sort, U32, SS_DATA)
 {
     U32 x_index_context = * (PC_U32) context;
 
@@ -666,19 +759,19 @@ PROC_QSORT_S_PROTO(static, proc_array_sort, U32, EV_DATA)
 
 static U32 x_index_static; /* no qsort() context */
 
-PROC_QSORT_PROTO(static, proc_array_sort, EV_DATA)
+PROC_QSORT_PROTO(static, proc_array_sort, SS_DATA)
 {
     const U32 x_index_context = x_index_static;
 
 #endif /* OS */
 
-    QSORT_ARG1_VAR_DECL(PC_EV_DATA, p_ev_data_row_1);
-    QSORT_ARG2_VAR_DECL(PC_EV_DATA, p_ev_data_row_2);
+    QSORT_ARG1_VAR_DECL(PC_SS_DATA, p_ss_data_row_1);
+    QSORT_ARG2_VAR_DECL(PC_SS_DATA, p_ss_data_row_2);
 
-    const PC_EV_DATA p_ev_data_1 = p_ev_data_row_1 + x_index_context;
-    const PC_EV_DATA p_ev_data_2 = p_ev_data_row_2 + x_index_context;
+    const PC_SS_DATA p_ss_data_1 = p_ss_data_row_1 + x_index_context;
+    const PC_SS_DATA p_ss_data_2 = p_ss_data_row_2 + x_index_context;
 
-    return((int) ss_data_compare(p_ev_data_1, p_ev_data_2, FALSE, FALSE));
+    return((int) ss_data_compare(p_ss_data_1, p_ss_data_2, FALSE, FALSE));
 }
 
 /******************************************************************************
@@ -690,20 +783,20 @@ PROC_QSORT_PROTO(static, proc_array_sort, EV_DATA)
 _Check_return_
 extern STATUS
 array_sort(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     U32 x_index)
 {
     STATUS status = STATUS_OK;
 
-    assert(RPN_DAT_ARRAY == p_ev_data->did_num);
+    assert(ss_data_is_array(p_ss_data));
 
     {
-    const U32 row_size = (U32) p_ev_data->arg.ev_array.x_size * sizeof32(EV_DATA);
+    const U32 row_size = (U32) p_ss_data->arg.ss_array.x_size * sizeof32(SS_DATA);
 
-    if(x_index < (U32) p_ev_data->arg.ev_array.x_size)
+    if(x_index < (U32) p_ss_data->arg.ss_array.x_size)
     {
         x_index_static = x_index;
-        qsort(array_base(&p_ev_data->arg.ev_array.elements, EV_DATA), (U32) p_ev_data->arg.ev_array.y_size, row_size, proc_array_sort);
+        qsort(array_base(&p_ss_data->arg.ss_array.elements, SS_DATA), (U32) p_ss_data->arg.ss_array.y_size, row_size, proc_array_sort);
     }
     else
         status = create_error(EVAL_ERR_OUTOFRANGE);
@@ -720,14 +813,14 @@ array_sort(
 
 static void
 data_constant_array_from_field(
-    _InoutRef_  P_EV_DATA p_ev_data)
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
-    if(RPN_DAT_FIELD == p_ev_data->did_num)
+    if(DATA_ID_FIELD == ss_data_get_data_id(p_ss_data))
     {
-        EV_DATA array_out;
+        SS_DATA array_out;
         S32 x_size, y_size;
 
-        array_range_sizes(p_ev_data, &x_size, &y_size);
+        array_range_sizes(p_ss_data, &x_size, &y_size);
 
         assert(x_size == 1);
 
@@ -738,11 +831,11 @@ data_constant_array_from_field(
 
             for(iy = 0; iy < y_size; ++iy)
             {
-                P_EV_DATA p_ev_data_i = ss_array_element_index_wr(&array_out, 0, iy);
-                ev_field_data_read(p_ev_data_i, p_ev_data->arg.h_name, iy);
-                if(ev_data_is_error(p_ev_data_i))
+                P_SS_DATA p_ss_data_i = ss_array_element_index_wr(&array_out, 0, iy);
+                ev_field_data_read(p_ss_data_i, p_ss_data->arg.h_name, iy);
+                if(ss_data_is_error(p_ss_data_i))
                 {
-                    status = p_ev_data_i->arg.ev_error.status;
+                    status = p_ss_data_i->arg.ss_error.status;
                     break;
                 }
             }
@@ -750,11 +843,11 @@ data_constant_array_from_field(
             if(status_fail(status))
             {
                 ss_data_free_resources(&array_out);
-                ev_data_set_error(&array_out, status);
+                ss_data_set_error(&array_out, status);
             }
         }
 
-        *p_ev_data = array_out;
+        *p_ss_data = array_out;
     }
 }
 
@@ -766,14 +859,14 @@ data_constant_array_from_field(
 
 static void
 data_constant_array_from_range(
-    _InoutRef_  P_EV_DATA p_ev_data)
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
-    if(RPN_DAT_RANGE == p_ev_data->did_num)
+    if(DATA_ID_RANGE == ss_data_get_data_id(p_ss_data))
     {
-        EV_DATA array_out;
+        SS_DATA array_out;
         S32 x_size, y_size;
 
-        array_range_sizes(p_ev_data, &x_size, &y_size);
+        array_range_sizes(p_ss_data, &x_size, &y_size);
 
         if(status_ok(ss_array_make(&array_out, x_size, y_size)))
         {
@@ -782,20 +875,20 @@ data_constant_array_from_range(
             STATUS status = STATUS_OK;
 
             ev_slr_flags_init(&slr);
-            ev_slr_docno_set(&slr, p_ev_data->arg.range.s.docno);
+            ev_slr_docno_set(&slr, p_ss_data->arg.range.s.docno);
 
-            for(iy = 0, slr.row = p_ev_data->arg.range.s.row; iy < y_size; ++iy, ++slr.row)
+            for(iy = 0, slr.row = p_ss_data->arg.range.s.row; iy < y_size; ++iy, ++slr.row)
             {
-                for(ix = 0, slr.col = p_ev_data->arg.range.s.col; ix < x_size; ++ix, ++slr.col)
+                for(ix = 0, slr.col = p_ss_data->arg.range.s.col; ix < x_size; ++ix, ++slr.col)
                 {
-                    P_EV_DATA p_ev_data_i = ss_array_element_index_wr(&array_out, ix, iy);
-                    ev_slr_deref(p_ev_data_i, &slr);
-                    if(ev_data_is_error(p_ev_data_i)) /* may have a range containing error values */
+                    P_SS_DATA p_ss_data_i = ss_array_element_index_wr(&array_out, ix, iy);
+                    ev_slr_deref(p_ss_data_i, &slr);
+                    if(ss_data_is_error(p_ss_data_i)) /* may have a range containing error values */
                         continue;
-                    data_ensure_constant_sub(p_ev_data_i, TRUE);
-                    if(ev_data_is_error(p_ev_data_i))
+                    data_ensure_constant_sub(p_ss_data_i, TRUE);
+                    if(ss_data_is_error(p_ss_data_i))
                     {
-                        status = p_ev_data_i->arg.ev_error.status;
+                        status = p_ss_data_i->arg.ss_error.status;
                         break;
                     }
                 }
@@ -806,11 +899,11 @@ data_constant_array_from_range(
             if(status_fail(status))
             {
                 ss_data_free_resources(&array_out);
-                ev_data_set_error(&array_out, status);
+                ss_data_set_error(&array_out, status);
             }
         }
 
-        *p_ev_data = array_out;
+        *p_ss_data = array_out;
     }
 }
 
@@ -822,52 +915,52 @@ data_constant_array_from_range(
 
 extern void
 data_ensure_constant(
-    P_EV_DATA p_ev_data)
+    P_SS_DATA p_ss_data)
 {
-    data_ensure_constant_sub(p_ev_data, FALSE);
+    data_ensure_constant_sub(p_ss_data, FALSE);
 }
 
 static void
 data_ensure_constant_sub(
-    _InoutRef_  P_EV_DATA p_ev_data,
+    _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     S32 array)
 {
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
     /* these types need no attention */
-    case RPN_DAT_REAL:
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
-    case RPN_DAT_DATE:
-    case RPN_DAT_BLANK:
-    case RPN_DAT_ERROR:
-    case RPN_DAT_STRING:
+    case DATA_ID_REAL:
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
+    case DATA_ID_DATE:
+    case DATA_ID_BLANK:
+    case DATA_ID_ERROR:
+    case DATA_ID_STRING:
         break;
 
     /* scan array and remove embedded cockroaches */
-    case RPN_DAT_ARRAY:
+    case DATA_ID_ARRAY:
         if(array)
-            ev_data_set_error(p_ev_data, EVAL_ERR_NESTEDARRAY);
+            ss_data_set_error(p_ss_data, EVAL_ERR_NESTEDARRAY);
         else
         {
             S32 ix, iy;
             STATUS status = STATUS_OK;
 
-            assert(p_ev_data->local_data);
+            assert(p_ss_data->local_data);
 
-            for(iy = 0; iy < p_ev_data->arg.ev_array.y_size; ++iy)
+            for(iy = 0; iy < p_ss_data->arg.ss_array.y_size; ++iy)
             {
-                for(ix = 0; ix < p_ev_data->arg.ev_array.x_size; ++ix)
+                for(ix = 0; ix < p_ss_data->arg.ss_array.x_size; ++ix)
                 {
-                    P_EV_DATA p_ev_data_i = ss_array_element_index_wr(p_ev_data, ix, iy);
-                    if(ev_data_is_error(p_ev_data_i)) /* may have an array containing error values */
+                    P_SS_DATA p_ss_data_i = ss_array_element_index_wr(p_ss_data, ix, iy);
+                    if(ss_data_is_error(p_ss_data_i)) /* may have an array containing error values */
                         continue;
-                    data_ensure_constant_sub(p_ev_data_i, TRUE);
-                    if(ev_data_is_error(p_ev_data_i))
+                    data_ensure_constant_sub(p_ss_data_i, TRUE);
+                    if(ss_data_is_error(p_ss_data_i))
                     {
-                        status = p_ev_data_i->arg.ev_error.status;
+                        status = p_ss_data_i->arg.ss_error.status;
                         break;
                     }
                 }
@@ -877,41 +970,41 @@ data_ensure_constant_sub(
 
             if(status_fail(status)) /* we have broken this data item */
             {
-                ss_data_free_resources(p_ev_data);
-                ev_data_set_error(p_ev_data, status);
+                ss_data_free_resources(p_ss_data);
+                ss_data_set_error(p_ss_data, status);
             }
         }
         break;
 
-    case RPN_DAT_SLR:
-        ev_slr_deref(p_ev_data, &p_ev_data->arg.slr);
-        data_ensure_constant_sub(p_ev_data, array);
+    case DATA_ID_SLR:
+        ev_slr_deref(p_ss_data, &p_ss_data->arg.slr);
+        data_ensure_constant_sub(p_ss_data, array);
         break;
 
-    case RPN_DAT_NAME:
-        name_deref(p_ev_data, p_ev_data->arg.h_name);
-        data_ensure_constant_sub(p_ev_data, array);
+    case DATA_ID_NAME:
+        name_deref(p_ss_data, p_ss_data->arg.h_name);
+        data_ensure_constant_sub(p_ss_data, array);
         break;
 
     /* range is converted to array of constants */
-    case RPN_DAT_RANGE:
+    case DATA_ID_RANGE:
         if(array)
-            ev_data_set_error(p_ev_data, EVAL_ERR_UNEXRANGE);
+            ss_data_set_error(p_ss_data, EVAL_ERR_UNEXRANGE);
         else
-            data_constant_array_from_range(p_ev_data);
+            data_constant_array_from_range(p_ss_data);
         break;
 
     /* field is converted to array of constants */
-    case RPN_DAT_FIELD:
+    case DATA_ID_FIELD:
         if(array)
-            ev_data_set_error(p_ev_data, EVAL_ERR_UNEXARRAY);
+            ss_data_set_error(p_ss_data, EVAL_ERR_UNEXARRAY);
         else
-            data_constant_array_from_field(p_ev_data);
+            data_constant_array_from_field(p_ss_data);
         break;
 
     /* duff result types */
     default:
-        ev_data_set_error(p_ev_data, EVAL_ERR_INTERNAL);
+        ss_data_set_error(p_ss_data, EVAL_ERR_INTERNAL);
         break;
     }
 }
@@ -925,13 +1018,13 @@ data_ensure_constant_sub(
 _Check_return_
 extern BOOL
 data_is_array_range(
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_RANGE:
-    case RPN_DAT_ARRAY:
-    case RPN_DAT_FIELD:
+    case DATA_ID_RANGE:
+    case DATA_ID_ARRAY:
+    case DATA_ID_FIELD:
         return(TRUE);
 
     default:
@@ -955,14 +1048,14 @@ ev_exp_copy(
     _OutRef_    P_EV_CELL p_ev_cell_out,
     _InRef_     PC_EV_CELL p_ev_cell_in)
 {
-    EV_DATA ev_data;
+    SS_DATA ss_data;
 
     /* do binary copy */
     memcpy32(p_ev_cell_out, p_ev_cell_in, ev_len(p_ev_cell_in));
 
     /* copy cell results */
-    ev_data_from_ev_cell(&ev_data, p_ev_cell_in);
-    ev_cell_constant_from_data(p_ev_cell_out, &ev_data);
+    ss_data_from_ev_cell(&ss_data, p_ev_cell_in);
+    ev_cell_constant_from_data(p_ev_cell_out, &ss_data);
 }
 
 /******************************************************************************
@@ -983,22 +1076,22 @@ ev_exp_refs_adjust(
     _InRef_opt_ PC_EV_RANGE p_ev_range_scope /* source range */)
 {
     /* loop over slrs in cell */
-    if(p_ev_cell->parms.slr_n)
+    if(p_ev_cell->ev_parms.slr_n)
     {
         P_EV_SLR p_ev_slr = p_ev_slr_from_ev_cell(p_ev_cell, 0);
         UBF i;
 
-        for(i = 0; i < p_ev_cell->parms.slr_n; ++i, ++p_ev_slr)
+        for(i = 0; i < p_ev_cell->ev_parms.slr_n; ++i, ++p_ev_slr)
             slr_offset_add(p_ev_slr, p_ev_slr_offset, p_ev_range_scope, TRUE /* use_abs */, FALSE /* end_coord */);
     }
 
     /* loop over ranges in cell */
-    if(p_ev_cell->parms.range_n)
+    if(p_ev_cell->ev_parms.range_n)
     {
         P_EV_RANGE p_ev_range = p_ev_range_from_ev_cell(p_ev_cell, 0);
         UBF i;
 
-        for(i = 0; i < p_ev_cell->parms.range_n; ++i, ++p_ev_range)
+        for(i = 0; i < p_ev_cell->ev_parms.range_n; ++i, ++p_ev_range)
         {
             slr_offset_add(&p_ev_range->s, p_ev_slr_offset, p_ev_range_scope, TRUE /* use_abs */, FALSE /* end_coord */);
             slr_offset_add(&p_ev_range->e, p_ev_slr_offset, p_ev_range_scope, TRUE /* use_abs */, TRUE /* end_coord */);
@@ -1018,20 +1111,20 @@ _Check_return_
 extern S32
 field_scan_element(
     _InoutRef_  P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags)
 {
     if(p_array_scan_block->y_pos >= p_array_scan_block->y_size)
     {
-        CODE_ANALYSIS_ONLY(ev_data_set_blank(p_ev_data));
+        CODE_ANALYSIS_ONLY(ss_data_set_blank(p_ss_data));
         return(RPN_FRM_END);
     }
 
-    ev_field_data_read(p_ev_data, p_array_scan_block->ev_data.arg.h_name, p_array_scan_block->y_pos);
+    ev_field_data_read(p_ss_data, p_array_scan_block->ss_data.arg.h_name, p_array_scan_block->y_pos);
 
     p_array_scan_block->y_pos += 1;
 
-    return(arg_normalise(p_ev_data, type_flags, NULL, NULL, NULL));
+    return(arg_normalise(p_ss_data, type_flags, NULL, NULL, NULL));
 }
 
 /******************************************************************************
@@ -1044,12 +1137,12 @@ _Check_return_
 extern STATUS
 field_scan_init(
     _OutRef_    P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
-    assert(RPN_DAT_FIELD == p_ev_data->did_num);
+    assert(DATA_ID_FIELD == ss_data_get_data_id(p_ss_data));
 
-    p_array_scan_block->ev_data = *p_ev_data;
-    array_range_sizes(p_ev_data, &p_array_scan_block->x_size, &p_array_scan_block->y_size);
+    p_array_scan_block->ss_data = *p_ss_data;
+    array_range_sizes(p_ss_data, &p_array_scan_block->x_size, &p_array_scan_block->y_size);
     p_array_scan_block->x_pos = p_array_scan_block->y_pos = 0;
     return(STATUS_OK);
 }
@@ -1063,37 +1156,37 @@ field_scan_init(
 extern void
 ev_cell_constant_from_data(
     _OutRef_    P_EV_CELL p_ev_cell,
-    _InoutRef_  P_EV_DATA p_ev_data)
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
-    EV_DATA ev_data_temp1, ev_data_temp2;
+    SS_DATA ss_data_temp_1, ss_data_temp_2;
 
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_SLR:
-        ev_slr_deref(&ev_data_temp1, &p_ev_data->arg.slr);
+    case DATA_ID_SLR:
+        ev_slr_deref(&ss_data_temp_1, &p_ss_data->arg.slr);
         break;
 
-    case RPN_DAT_NAME:
-        name_deref(&ev_data_temp1, p_ev_data->arg.h_name);
-        ev_cell_constant_from_data(p_ev_cell, &ev_data_temp1);
+    case DATA_ID_NAME:
+        name_deref(&ss_data_temp_1, p_ss_data->arg.h_name);
+        ev_cell_constant_from_data(p_ev_cell, &ss_data_temp_1);
         return;
 
     default:
        /* claim ownership of input data */
-        ev_data_temp1 = *p_ev_data;
-        p_ev_data->local_data = 0;
+        ss_data_temp_1 = *p_ss_data;
+        p_ss_data->local_data = 0;
         break;
     }
 
-    if(!ev_data_temp1.local_data)
-        status_assert(ss_data_resource_copy(&ev_data_temp2, &ev_data_temp1));
+    if(!ss_data_temp_1.local_data)
+        status_assert(ss_data_resource_copy(&ss_data_temp_2, &ss_data_temp_1));
     else
-        ev_data_temp2 = ev_data_temp1;
+        ss_data_temp_2 = ss_data_temp_1;
 
-    data_ensure_constant(&ev_data_temp2);
+    data_ensure_constant(&ss_data_temp_2);
 
-    p_ev_cell->parms.did_num = ev_data_temp2.did_num;
-    p_ev_cell->ev_constant = ev_data_temp2.arg.ev_constant;
+    p_ev_cell->ev_parms.data_id = UBF_PACK(ss_data_get_data_id(&ss_data_temp_2));
+    p_ev_cell->ss_constant = ss_data_temp_2.arg.ss_constant;
 }
 
 /******************************************************************************
@@ -1106,22 +1199,22 @@ extern void
 ev_cell_free_resources(
     P_EV_CELL p_ev_cell)
 {
-    switch(p_ev_cell->parms.did_num)
+    switch(UBF_UNPACK(EV_IDNO, p_ev_cell->ev_parms.data_id))
     {
-    case RPN_DAT_STRING:
-        if(p_ev_cell->ev_constant.string.size)
-        /* SKS 18apr96 only free strings that really exist. Pity 'tis an EV_CONSTANT not an EV_DATA then we'd know for sure */
-            al_ptr_dispose(P_P_ANY_PEDANTIC(&p_ev_cell->ev_constant.string_wr.uchars));
-        p_ev_cell->parms.did_num = RPN_DAT_BLANK;
+    case DATA_ID_STRING:
+        if(p_ev_cell->ss_constant.string.size)
+        /* SKS 18apr96 only free strings that really exist. Pity 'tis an SS_CONSTANT not an SS_DATA then we'd know for sure */
+            al_ptr_dispose(P_P_ANY_PEDANTIC(&p_ev_cell->ss_constant.string_wr.uchars));
+        p_ev_cell->ev_parms.data_id = UBF_PACK(DATA_ID_BLANK);
         break;
 
-    case RPN_DAT_ARRAY:
+    case DATA_ID_ARRAY:
         {
-        EV_DATA ev_data;
-        ev_data_from_ev_cell(&ev_data, p_ev_cell);
-        ev_data.local_data = 1;
-        ss_data_free_resources(&ev_data);
-        p_ev_cell->parms.did_num = RPN_DAT_BLANK;
+        SS_DATA ss_data;
+        ss_data_from_ev_cell(&ss_data, p_ev_cell);
+        ss_data.local_data = 1;
+        ss_data_free_resources(&ss_data);
+        p_ev_cell->ev_parms.data_id = UBF_PACK(DATA_ID_BLANK);
         break;
         }
 
@@ -1137,62 +1230,62 @@ ev_cell_free_resources(
 ******************************************************************************/
 
 extern void
-ev_data_from_ev_cell(
-    _OutRef_    P_EV_DATA p_ev_data,
+ss_data_from_ev_cell(
+    _OutRef_    P_SS_DATA p_ss_data,
     _InRef_     PC_EV_CELL p_ev_cell)
 {
-    p_ev_data->did_num = (U8) p_ev_cell->parms.did_num;
-    p_ev_data->local_data = 0;
-    p_ev_data->arg.ev_constant = p_ev_cell->ev_constant;
+    ss_data_set_data_id(p_ss_data, UBF_UNPACK(EV_IDNO, p_ev_cell->ev_parms.data_id)); /* limited range stored in cell's bitfield */
+    p_ss_data->local_data = 0;
+    p_ss_data->arg.ss_constant = p_ev_cell->ss_constant;
 }
 
 /******************************************************************************
 *
 * dereference an slr
 *
-* p_ev_data can be the same data structure as contains the slr
+* p_ss_data can be the same data structure as contains the slr
 *
 ******************************************************************************/
 
 extern void
 ev_slr_deref(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InRef_     PC_EV_SLR p_ev_slr)
 {
     P_EV_CELL p_ev_cell;
     EV_SLR ev_slr = *p_ev_slr;
 
     if(ev_slr.ext_ref && ev_doc_error(ev_slr_docno(&ev_slr)))
-        ev_data_set_error(p_ev_data, ev_doc_error(ev_slr_docno(&ev_slr)));
+        ss_data_set_error(p_ss_data, ev_doc_error(ev_slr_docno(&ev_slr)));
     else
     {
         S32 res = ev_travel(&p_ev_cell, &ev_slr);
 
          /* it's external data */
         if(res <= 0)
-            ev_external_data(p_ev_data, &ev_slr);
+            ev_external_data(p_ss_data, &ev_slr);
         /* it's an evaluator cell */
         else
         {
-            ev_data_from_ev_cell(p_ev_data, p_ev_cell);
+            ss_data_from_ev_cell(p_ss_data, p_ev_cell);
 
-            switch(p_ev_data->did_num)
+            switch(ss_data_get_data_id(p_ss_data))
             {
-            case RPN_DAT_ERROR:
-                if(p_ev_data->arg.ev_error.type != ERROR_PROPAGATED)
+            case DATA_ID_STRING:
+                if(ss_string_is_blank(p_ss_data))
                 {
-                    p_ev_data->arg.ev_error.type = ERROR_PROPAGATED;
-                    p_ev_data->arg.ev_error.docno = ev_slr.docno; /* equivalent UBF */
-                    p_ev_data->arg.ev_error.col = ev_slr.col; /* equivalent SBF */
-                    p_ev_data->arg.ev_error.row = ev_slr.row;
+                    ss_data_free_resources(p_ss_data);
+                    ss_data_set_blank(p_ss_data);
                 }
                 break;
 
-            case RPN_DAT_STRING:
-                if(ss_string_is_blank(p_ev_data))
+            case DATA_ID_ERROR:
+                if(p_ss_data->arg.ss_error.type != ERROR_PROPAGATED)
                 {
-                    ss_data_free_resources(p_ev_data);
-                    ev_data_set_blank(p_ev_data);
+                    p_ss_data->arg.ss_error.type = ERROR_PROPAGATED;
+                    p_ss_data->arg.ss_error.docno = ev_slr.docno; /* equivalent UBF */
+                    p_ss_data->arg.ss_error.col = ev_slr.col; /* equivalent SBF */
+                    p_ss_data->arg.ss_error.row = ev_slr.row;
                 }
                 break;
             }
@@ -1244,7 +1337,7 @@ ev_trace_slr_tstr_buf(
 
 extern void
 name_deref(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     EV_HANDLE h_name)
 {
     ARRAY_INDEX name_num = name_def_find(h_name);
@@ -1257,12 +1350,12 @@ name_deref(
         if(!p_ev_name->flags.undefined)
         {
             got_def = TRUE;
-            status_assert(ss_data_resource_copy(p_ev_data, &p_ev_name->def_data));
+            status_assert(ss_data_resource_copy(p_ss_data, &p_ev_name->def_data));
         }
     }
 
     if(!got_def)
-        ev_data_set_error(p_ev_data, EVAL_ERR_NAMEUNDEF);
+        ss_data_set_error(p_ss_data, EVAL_ERR_NAMEUNDEF);
 }
 
 /******************************************************************************
@@ -1330,7 +1423,7 @@ _Check_return_
 extern S32
 range_scan_element(
     _InoutRef_  P_RANGE_SCAN_BLOCK p_range_scan_block,
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags)
 {
     if(ev_slr_col(&p_range_scan_block->pos) >= ev_slr_col(&p_range_scan_block->range.e))
@@ -1340,17 +1433,17 @@ range_scan_element(
 
         if(ev_slr_row(&p_range_scan_block->pos) >= ev_slr_row(&p_range_scan_block->range.e))
         {
-            CODE_ANALYSIS_ONLY(ev_data_set_blank(p_ev_data));
+            CODE_ANALYSIS_ONLY(ss_data_set_blank(p_ss_data));
             return(RPN_FRM_END);
         }
     }
 
-    ev_slr_deref(p_ev_data, &p_range_scan_block->pos);
+    ev_slr_deref(p_ss_data, &p_range_scan_block->pos);
     p_range_scan_block->slr_of_result = p_range_scan_block->pos;
 
     p_range_scan_block->pos.col += 1;
 
-    return(arg_normalise(p_ev_data, type_flags, NULL, NULL, NULL));
+    return(arg_normalise(p_ss_data, type_flags, NULL, NULL, NULL));
 }
 
 /******************************************************************************
@@ -1406,205 +1499,125 @@ slr_offset_add(
 
 /******************************************************************************
 *
-* p_ev_data_res = error iff either p_ev_data1 or p_ev_data2 are error
+* p_ss_data_res = p_ss_data_1 + p_ss_data_2
 *
 ******************************************************************************/
 
 _Check_return_ _Success_(return)
-static inline BOOL
-two_nums_propogate_errors(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2)
-{
-    if(ev_data_is_error(p_ev_data1))
-    {
-        *p_ev_data_res = *p_ev_data1;
-        return(TRUE);
-    }
-
-    if(ev_data_is_error(p_ev_data2))
-    {
-        *p_ev_data_res = *p_ev_data2;
-        return(TRUE);
-    }
-
-    return(FALSE);
-}
-
-/******************************************************************************
-*
-* p_ev_data_res = p_ev_data1 + p_ev_data2
-*
-******************************************************************************/
-
-_Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_add_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors)
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
 {
-    BOOL did_op = FALSE;
-
-    switch(two_nums_type_match(p_ev_data1, p_ev_data2, TRUE))
+    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, TRUE))
     {
-    case TWO_INTS:
-        ev_data_set_integer(p_ev_data_res, p_ev_data1->arg.integer + p_ev_data2->arg.integer);
-        did_op = TRUE;
-        break;
+    case TWO_INTEGERS:
+        ss_data_set_integer(p_ss_data_res, ss_data_get_integer(p_ss_data_1) + ss_data_get_integer(p_ss_data_2));
+        return(true);
 
     case TWO_REALS:
-        ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp + p_ev_data2->arg.fp);
-        did_op = TRUE;
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case TWO_MIXED:
-#endif
-        if(propogate_errors)
-            did_op = two_nums_propogate_errors(p_ev_data_res, p_ev_data1, p_ev_data2);
-        break;
+        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) + ss_data_get_real(p_ss_data_2));
+        return(true);
     }
 
-    return(did_op);
+    return(false);
 }
 
 /******************************************************************************
 *
-* p_ev_data_res = p_ev_data1 / p_ev_data2
+* p_ss_data_res = p_ss_data_1 / p_ss_data_2
 *
 ******************************************************************************/
 
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_divide_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors)
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
 {
-    BOOL did_op = FALSE;
-
-    switch(two_nums_type_match(p_ev_data1, p_ev_data2, FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
+    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
     {
-    case TWO_INTS:
-        if(0 == p_ev_data2->arg.integer)
-            ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
+    case TWO_INTEGERS:
+        if(0 == ss_data_get_integer(p_ss_data_2))
+            ss_data_set_error(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
         else
         {
-            const div_t d = div((int) p_ev_data1->arg.integer, (int) p_ev_data2->arg.integer);
+            const div_t d = div((int) ss_data_get_integer(p_ss_data_1), (int) ss_data_get_integer(p_ss_data_2));
 
             if(0 == d.rem)
-                ev_data_set_integer(p_ev_data_res, d.quot);
+                ss_data_set_integer(p_ss_data_res, d.quot);
             else
-                ev_data_set_real(p_ev_data_res, (F64) p_ev_data1->arg.integer / p_ev_data2->arg.integer);
+                ss_data_set_real(p_ss_data_res, (F64) ss_data_get_integer(p_ss_data_1) / ss_data_get_integer(p_ss_data_2));
         }
 
-        did_op = TRUE;
-        break;
+        return(true);
 
     case TWO_REALS:
-        if(0.0 == p_ev_data2->arg.fp)
-            ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
+        if(f64_is_divisor_too_small(ss_data_get_real(p_ss_data_2)))
+            ss_data_set_error(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
         else
-            ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp / p_ev_data2->arg.fp);
+            ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) / ss_data_get_real(p_ss_data_2));
 
-        did_op = TRUE;
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case TWO_MIXED:
-#endif
-        if(propogate_errors)
-            did_op = two_nums_propogate_errors(p_ev_data_res, p_ev_data1, p_ev_data2);
-        break;
+        return(true);
     }
 
-    return(did_op);
+    return(false);
 }
 
 /******************************************************************************
 *
-* p_ev_data_res = p_ev_data1 * p_ev_data2
+* p_ss_data_res = p_ss_data_1 * p_ss_data_2
 *
 ******************************************************************************/
 
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_multiply_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors)
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
 {
-    BOOL did_op = FALSE;
-
-    switch(two_nums_type_match(p_ev_data1, p_ev_data2, TRUE))
+    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, TRUE))
     {
-    case TWO_INTS:
-        ev_data_set_integer(p_ev_data_res, p_ev_data1->arg.integer * p_ev_data2->arg.integer);
-        did_op = TRUE;
-        break;
+    case TWO_INTEGERS:
+        ss_data_set_integer(p_ss_data_res, ss_data_get_integer(p_ss_data_1) * ss_data_get_integer(p_ss_data_2));
+        return(true);
 
     case TWO_REALS:
-        ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp * p_ev_data2->arg.fp);
-        did_op = TRUE;
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case TWO_MIXED:
-#endif
-        if(propogate_errors)
-            did_op = two_nums_propogate_errors(p_ev_data_res, p_ev_data1, p_ev_data2);
-        break;
+        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) * ss_data_get_real(p_ss_data_2));
+        return(true);
     }
 
-    return(did_op);
+    return(false);
 }
 
 /******************************************************************************
 *
-* p_ev_data_res = p_ev_data1 - p_ev_data2
+* p_ss_data_res = p_ss_data_1 - p_ss_data_2
 *
 ******************************************************************************/
 
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_subtract_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors)
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
 {
-    BOOL did_op = FALSE;
-
-    switch(two_nums_type_match(p_ev_data1, p_ev_data2, TRUE))
+    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, TRUE))
     {
-    case TWO_INTS:
-        ev_data_set_integer(p_ev_data_res, p_ev_data1->arg.integer - p_ev_data2->arg.integer);
-        did_op = TRUE;
-        break;
+    case TWO_INTEGERS:
+        ss_data_set_integer(p_ss_data_res, ss_data_get_integer(p_ss_data_1) - ss_data_get_integer(p_ss_data_2));
+        return(true);
 
     case TWO_REALS:
-        ev_data_set_real(p_ev_data_res, p_ev_data1->arg.fp - p_ev_data2->arg.fp);
-        did_op = TRUE;
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case TWO_MIXED:
-#endif
-        if(propogate_errors)
-            did_op = two_nums_propogate_errors(p_ev_data_res, p_ev_data1, p_ev_data2);
-        break;
+        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) - ss_data_get_real(p_ss_data_2));
+        return(true);
     }
 
-    return(did_op);
+    return(false);
 }
 
 /* end of ev_help.c */

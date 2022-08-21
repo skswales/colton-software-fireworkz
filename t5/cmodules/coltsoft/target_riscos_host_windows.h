@@ -4,9 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2019 Stuart Swales */
-
-/* SKS 2012 */
+/* Copyright (C) 2012-2020 Stuart Swales */
 
 #ifndef __target_riscos_host_windows_h
 #define __target_riscos_host_windows_h
@@ -102,6 +100,10 @@ __pragma(warning(disable:4820)) /* padding added after data member */
 
 #ifdef _WIN64
 #error Just don't even think about it!
+#endif
+
+#if _MSC_VER < 1800 /* < VS2013 */
+typedef unsigned int _Bool;
 #endif
 
 #endif /* __target_riscos_host_windows_h */

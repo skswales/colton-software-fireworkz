@@ -8,8 +8,8 @@
 ; Copyright (C) 1998-2015 R W Colton
 
         GET     as_flags_h
-
-        ;GET     as_regs_h
+        GET     Hdr:ListOpts
+        GET     Hdr:APCS.APCS-32
         GET     as_macro_h
 
         AREA    |C$$code|,CODE,READONLY
@@ -52,7 +52,7 @@
 
         ADD     a1, a4, a3              ; Final result (=a1) := bias (=a3) + rval (=a4)
 
-        FunctionReturn "v5,v6","fpbased"
+        Return "v5,v6","fpbased"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

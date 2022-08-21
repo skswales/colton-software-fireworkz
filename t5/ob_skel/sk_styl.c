@@ -179,7 +179,7 @@ p_style_docu_area_from_client_handle(
         style_docu_area_ix < n_regions;
         ++style_docu_area_ix, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(p_style_docu_area->client_handle == client_handle)
@@ -563,7 +563,7 @@ style_change_between_cols(
     {
         BOOL implied;
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         implied = (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id);
@@ -727,7 +727,7 @@ style_change_between_rows(
     {
         BOOL implied;
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         implied = (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id);
@@ -874,7 +874,7 @@ style_change_in_object(
         {
             STYLE_SELECTOR temp;
 
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(style_docu_area_selector_and(p_docu, &temp, p_style_docu_area, p_style_selector)
@@ -972,7 +972,7 @@ style_at_or_above_class(
         {
             --p_style_docu_area;
 
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(p_style_docu_area->region_class >= region_class)
@@ -1073,7 +1073,7 @@ style_docu_area_add(
         {
             --p_style_docu_area;
 
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(p_style_docu_area->region_class <= p_style_docu_area_add_parm->region_class)
@@ -1243,7 +1243,7 @@ style_docu_area_add(
             status_assert(maeve_event(p_docu, T5_MSG_REFORMAT, &docu_reformat));
     }
     else if(NULL != p_style_docu_area)
-        p_style_docu_area->deleted = 1;
+        p_style_docu_area->is_deleted = 1;
 
     return(status);
 }
@@ -1425,14 +1425,15 @@ style_docu_area_choose(
         style_docu_area_ix = index;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     while((style_docu_area_ix >= 0) && (style_docu_area_ix < array_elements(p_h_style_list)))
     {
         PC_STYLE_DOCU_AREA p_style_docu_area = array_ptrc(p_h_style_list, STYLE_DOCU_AREA, style_docu_area_ix);
 
-        if(!(p_style_docu_area->deleted || p_style_docu_area->internal || (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id)))
+        if(!(p_style_docu_area->is_deleted || p_style_docu_area->internal || (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id)))
         {
             if(NULL != p_docu_area)
             {
@@ -1454,7 +1455,8 @@ style_docu_area_choose(
             style_docu_area_ix += 1;
             break;
 
-        default: default_unhandled(); break;
+        default: default_unhandled();
+            break;
         }
     }
 
@@ -1480,7 +1482,7 @@ style_docu_area_clear(
 
     for(i = 0; i < n_regions; ++i, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(!p_style_docu_area->internal && !p_style_docu_area->base)
@@ -1517,7 +1519,7 @@ style_docu_area_count(
 
     for(i = 0; i < n_regions; ++i, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(!p_style_docu_area->internal && !p_style_docu_area->base)
@@ -1557,14 +1559,14 @@ style_docu_area_delete(
     if(p_style_docu_area->uref_handle)
         uref_del_dependency(docno_from_p_docu(p_docu), p_style_docu_area->uref_handle);
 
-    p_style_docu_area->deleted = 1;
+    p_style_docu_area->is_deleted = 1;
 
     status_assert(maeve_event(p_docu, T5_MSG_STYLE_DOCU_AREA_CHANGED, &style_docu_area_changed));
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, style_docu_area_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, style_docu_area_deleted)
 {
-    return(((P_STYLE_DOCU_AREA) p_any)->deleted);
+    return(((P_STYLE_DOCU_AREA) p_any)->is_deleted);
 }
 
 /******************************************************************************
@@ -1602,7 +1604,7 @@ style_docu_area_enum_implied(
 
         p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, *p_array_index);
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if( (p_style_docu_area->object_message.object_id == object_id)
@@ -1637,7 +1639,7 @@ style_docu_area_delete_list(
 
     for(i = 0; i < n_regions; ++i, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(all || !p_style_docu_area->internal)
@@ -1776,7 +1778,7 @@ style_docu_area_position_update(
         REGION region;
         P_REGION p_region = NULL;
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if((p_object_position_update->data_ref.data_space != DATA_SLOT)
@@ -1909,7 +1911,7 @@ style_docu_area_uref_hold(
     {
         REGION region;
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         region_from_docu_area_max(&region, &p_style_docu_area->docu_area);
@@ -2020,7 +2022,7 @@ style_docu_area_subsume(
 
             --p_style_docu_area; /* do NOT coalesce this into the comparison. SKS 03feb97 notes that this will therefore satisfy requirement that we ignore comparing with ourselves */
 
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(p_style_docu_area->internal)
@@ -2312,7 +2314,7 @@ style_effect_source_find(
         style_docu_area_ix >= 0;
         --style_docu_area_ix, --p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(position_in_docu_area(&p_style_docu_area->docu_area, p_position))
@@ -2668,7 +2670,7 @@ style_from_position(
         /* look through region list backwards for containing region */
         for(; style_docu_area_ix >= 0; --style_docu_area_ix, --p_style_docu_area)
         {
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(caret_check && p_style_docu_area->caret)
@@ -2869,7 +2871,7 @@ style_handle_base(
     /* base style is first base style region in list */
     for(i = 0; i < n_regions; ++i, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(p_style_docu_area->style_handle && (p_style_docu_area->region_class == REGION_BASE))
@@ -2905,7 +2907,7 @@ style_handle_current(
         i >= 0;
         --i, --p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if( (0 != p_style_docu_area->style_handle)
@@ -2949,7 +2951,7 @@ style_handle_find_in_docu_area_list(
 
     for(style_docu_area_ix = 0; style_docu_area_ix < n_regions; ++style_docu_area_ix, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(p_style_docu_area->style_handle == style_handle)
@@ -3086,7 +3088,7 @@ style_handle_use_find(
     {
         P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(p_h_style_list, STYLE_DOCU_AREA, style_docu_area_ix);
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(!p_style_docu_area->base
@@ -3233,7 +3235,7 @@ style_of_area(
         {
             P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, style_docu_area_ix);
 
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(docu_area_intersect_docu_area(&p_style_docu_area->docu_area, &docu_area) && !docu_area_in_docu_area(&p_style_docu_area->docu_area, &docu_area))
@@ -3335,7 +3337,7 @@ style_msg_style_changed(
             reformat_from_row(p_docu, row, REFORMAT_Y);
     }
 
-    /* need a whole redraw if a mrofmun style has been altered */
+    /* need a whole redraw if an autoformat style has been altered */
     if(mrofmun_style_handle_in_use(p_docu, p_style_changed->style_handle))
         view_update_all(p_docu, UPDATE_PANE_CELLS_AREA);
 
@@ -3455,7 +3457,7 @@ style_save_docu_area_save_from_index(
 {
     BOOL do_save = FALSE;
 
-    if(p_style_docu_area->deleted || p_style_docu_area->internal)
+    if(p_style_docu_area->is_deleted || p_style_docu_area->internal)
         return(FALSE);
 
     switch(save_index)
@@ -3601,14 +3603,14 @@ style_sub_changes(
 static BOOL
 style_uref_current_cell(
     P_STYLE_DOCU_AREA p_style_docu_area,
-    _InVal_     T5_MESSAGE t5_message)
+    _InVal_     UREF_MESSAGE uref_message)
 {
     /* MRJC: 27.4.95 check for current cell region which wants uref-ing only sometimes */
     if( (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id)
         &&
         (p_style_docu_area->object_message.t5_message == T5_EXT_STYLE_CELL_CURRENT)
         &&
-        (t5_message != T5_MSG_UREF_CLOSE1) )
+        (uref_message != Uref_Msg_CLOSE1) )
     {
         return(TRUE);
     }
@@ -3622,7 +3624,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
     {
     case DEP_DELETE: /* dependency must be deleted */
         {
-        switch(t5_message)
+        switch(uref_message)
         {
         /* free a region */
         default:
@@ -3645,7 +3647,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
 
                 if((NULL != (p_style_docu_area = p_style_docu_area_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle)))
                    &&
-                   !style_uref_current_cell(p_style_docu_area, t5_message))
+                   !style_uref_current_cell(p_style_docu_area, uref_message))
                     style_docu_area_delete(p_docu, p_style_docu_area);
                 else
                     assert0();
@@ -3655,7 +3657,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
             }
 
         /* free the resources owned by styles */
-        case T5_MSG_UREF_CLOSE2:
+        case Uref_Msg_CLOSE2:
             {
             P_STYLE p_style;
             STYLE_HANDLE style_handle = STYLE_HANDLE_ENUM_START;
@@ -3701,18 +3703,18 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
         /* find our entry */
         if(NULL != (p_style_docu_area = p_style_docu_area_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle)))
         {
-            if(!style_uref_current_cell(p_style_docu_area, t5_message))
+            if(!style_uref_current_cell(p_style_docu_area, uref_message))
             {
                 BOOL delete_it = FALSE;
                 S32 res;
 
-                res = uref_match_docu_area(&p_style_docu_area->docu_area, t5_message, p_uref_event_block);
+                res = uref_match_docu_area(&p_style_docu_area->docu_area, uref_message, p_uref_event_block);
 
                 if(res == DEP_DELETE)
                     delete_it = TRUE;
                 else if(res != DEP_NONE
                         &&
-                        t5_message == T5_MSG_UREF_OVERWRITE
+                        uref_message == Uref_Msg_Overwrite
                         &&
                         !p_style_docu_area->uref_hold
                         &&
@@ -3740,7 +3742,8 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
         break;
         }
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(STATUS_OK);
@@ -3773,7 +3776,7 @@ style_use_query(
 
             for(style_docu_area_ix = 0; style_docu_area_ix < n_regions; ++style_docu_area_ix, ++p_style_docu_area)
             {
-                if(p_style_docu_area->deleted)
+                if(p_style_docu_area->is_deleted)
                     continue;
 
                 if(p_style_docu_area->region_class >= p_style_use_query->region_class)
@@ -3814,7 +3817,7 @@ style_use_remove(
 
     for(i = 0; i < n_regions; ++i, ++p_style_docu_area)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(!p_style_docu_area->base

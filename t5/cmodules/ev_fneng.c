@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2019 Stuart Swales */
+/* Copyright (C) 2014-2020 Stuart Swales */
 
 /* Engineering function routines for evaluator */
 
@@ -22,7 +22,7 @@
 
 /******************************************************************************
 *
-* NUMBER besseli(x:number, n:number)
+* NUMBER besseli(x:number, n:number_as_INT)
 *
 ******************************************************************************/
 
@@ -220,39 +220,39 @@ bessel_in(
 
 PROC_EXEC_PROTO(c_besseli)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 n = floor(args[1]->arg.fp);
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 n = arg_get_real_INT(args[1]);
     F64 besseli_result;
 
     exec_func_ignore_parms();
 
     besseli_result = bessel_in((S32) n, x);
 
-    ev_data_set_real(p_ev_data_res, besseli_result);
+    ss_data_set_real(p_ss_data_res, besseli_result);
 }
 
 /******************************************************************************
 *
-* NUMBER besselj(x:number, n:number)
+* NUMBER besselj(x:number, n:number_as_INT)
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_besselj)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 n = floor(args[1]->arg.fp);
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 n = arg_get_real_INT(args[1]);
     F64 besselj_result;
 
     exec_func_ignore_parms();
 
     besselj_result = bessel_jn((S32) n, x);
 
-    ev_data_set_real(p_ev_data_res, besselj_result);
+    ss_data_set_real(p_ss_data_res, besselj_result);
 }
 
 /******************************************************************************
 *
-* NUMBER besselk(x:number, n:number)
+* NUMBER besselk(x:number, n:number_as_INT)
 *
 ******************************************************************************/
 
@@ -448,34 +448,34 @@ bessel_kn(
 
 PROC_EXEC_PROTO(c_besselk)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 n = floor(args[1]->arg.fp);
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 n = arg_get_real_INT(args[1]);
     F64 besselk_result;
 
     exec_func_ignore_parms();
 
     besselk_result = bessel_kn((S32) n, x);
 
-    ev_data_set_real(p_ev_data_res, besselk_result);
+    ss_data_set_real(p_ss_data_res, besselk_result);
 }
 
 /******************************************************************************
 *
-* NUMBER bessely(x:number, n:number)
+* NUMBER bessely(x:number, n:number_as_INT)
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_bessely)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 n = floor(args[1]->arg.fp);
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 n = arg_get_real_INT(args[1]);
     F64 bessely_result;
 
     exec_func_ignore_parms();
 
     bessely_result = bessel_yn((S32) n, x);
 
-    ev_data_set_real(p_ev_data_res, bessely_result);
+    ss_data_set_real(p_ss_data_res, bessely_result);
 }
 
 /******************************************************************************
@@ -486,15 +486,15 @@ PROC_EXEC_PROTO(c_bessely)
 
 PROC_EXEC_PROTO(c_delta)
 {
-    const F64 number_1 = args[0]->arg.fp;
-    const F64 number_2 = (n_args > 1) ? args[1]->arg.fp : 0.0;
+    const F64 number_1 = ss_data_get_real(args[0]);
+    const F64 number_2 = (n_args > 1) ? ss_data_get_real(args[1]) : 0.0;
     S32 delta_result;
 
     exec_func_ignore_parms();
 
     delta_result = (number_1 == number_2);
 
-    ev_data_set_integer(p_ev_data_res, delta_result);
+    ss_data_set_integer(p_ss_data_res, delta_result);
 }
 
 /******************************************************************************
@@ -505,7 +505,7 @@ PROC_EXEC_PROTO(c_delta)
 
 PROC_EXEC_PROTO(c_erf)
 {
-    const F64 lower_limit = args[0]->arg.fp;
+    const F64 lower_limit = ss_data_get_real(args[0]);
     F64 lower_erf;
     F64 erf_result;
 
@@ -516,14 +516,14 @@ PROC_EXEC_PROTO(c_erf)
 
     if(n_args > 1)
     {
-        const F64 upper_limit = args[1]->arg.fp;
+        const F64 upper_limit = ss_data_get_real(args[1]);
         F64 upper_erf;
 
         upper_erf = erf(upper_limit);
         erf_result = upper_erf - lower_erf;
     }
 
-    ev_data_set_real(p_ev_data_res, erf_result);
+    ss_data_set_real(p_ss_data_res, erf_result);
 }
 
 /******************************************************************************
@@ -534,7 +534,7 @@ PROC_EXEC_PROTO(c_erf)
 
 PROC_EXEC_PROTO(c_erfc)
 {
-    const F64 lower_limit = args[0]->arg.fp;
+    const F64 lower_limit = ss_data_get_real(args[0]);
     F64 lower_erf;
     F64 erfc_result;
 
@@ -543,7 +543,7 @@ PROC_EXEC_PROTO(c_erfc)
     lower_erf = erfc(lower_limit);
     erfc_result = lower_erf;
 
-    ev_data_set_real(p_ev_data_res, erfc_result);
+    ss_data_set_real(p_ss_data_res, erfc_result);
 }
 
 /******************************************************************************
@@ -554,15 +554,15 @@ PROC_EXEC_PROTO(c_erfc)
 
 PROC_EXEC_PROTO(c_gestep)
 {
-    const F64 number = args[0]->arg.fp;
-    const F64 step = (n_args > 1) ? args[1]->arg.fp : 0.0;
+    const F64 number = ss_data_get_real(args[0]);
+    const F64 step = (n_args > 1) ? ss_data_get_real(args[1]) : 0.0;
     S32 gestep_result;
 
     exec_func_ignore_parms();
 
     gestep_result = (number >= step);
 
-    ev_data_set_integer(p_ev_data_res, gestep_result);
+    ss_data_set_integer(p_ss_data_res, gestep_result);
 }
 
 /* end of ev_fneng.c */

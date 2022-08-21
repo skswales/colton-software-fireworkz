@@ -23,11 +23,18 @@
     <h1><a name="dayname" id="dayname"></a>DAYNAME</h1>
 
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">DAYNAME(<span class="csg-function-parameter">number</span>)</p>
+    <p class="csg-function-declaration">
+        DAYNAME(<span class="csg-function-parameter">value</span>:(<span class="csg-function-parameter-type">Number</span>|<span class="csg-function-parameter-type"><a href="sg6_date_formats.htm">Date</a></span>)
+    </p>
+
+    <p>Returns a text string of the day given by <span class="csg-function-parameter">value</span>.</p>
+
+    <p><span class="csg-function-parameter">value</span> must be either a number or <a href="sg6_date_formats.htm">date</a> value.</p>
 
     <p>
-        Returns a text string of the day given by <span class="csg-function-parameter">number</span>
-        with reduction of <span class="csg-function-parameter">number</span> into the range [1,7] (i.e. inclusive).
+        If <span class="csg-function-parameter">value</span> is a number,
+        usually number 1 represents Sunday, 2 being Monday through 7 being Saturday.
+        Numbers outside the range [1,7] are reduced into this range,
     </p>
 
     <p class="csg-function-subheading">Examples:</p>

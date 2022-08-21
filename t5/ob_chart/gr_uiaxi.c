@@ -160,9 +160,9 @@ gr_chart_axis_process_process_start(
     if(status_ok(status))
     {
         if(p_state->processing_cat)
-            status = ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MAJOR_SPACING,  p_state->major.cat_value);
+            status = ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MAJOR_SPACING, p_state->major.cat_value);
         else
-            status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MAJOR_SPACING, &p_state->major.val_value);
+            status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MAJOR_SPACING, p_state->major.val_value);
     }
 
     if(status_ok(status))
@@ -173,9 +173,9 @@ gr_chart_axis_process_process_start(
     if(status_ok(status))
     {
         if(p_state->processing_cat)
-            status = ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MINOR_SPACING,  p_state->minor.cat_value);
+            status = ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MINOR_SPACING, p_state->minor.cat_value);
         else
-            status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MINOR_SPACING, &p_state->minor.val_value);
+            status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, GEN_AXIS_ID_MINOR_SPACING, p_state->minor.val_value);
     }
 
     if(status_ok(status))
@@ -188,8 +188,8 @@ gr_chart_axis_process_process_start(
         if(!p_state->processing_cat)
         {
             /* scale */
-            if(status_ok(status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_MINIMUM, &p_state->val_axis.minimum)))
-            if(status_ok(status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_MAXIMUM, &p_state->val_axis.maximum)))
+            if(status_ok(status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_MINIMUM, p_state->val_axis.minimum)))
+            if(status_ok(status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_MAXIMUM, p_state->val_axis.maximum)))
             if(status_ok(status = ui_dlg_set_check(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_AUTO, p_state->val_axis.automatic)))
             if(status_ok(status = ui_dlg_set_check(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_INCLUDE_ZERO, p_state->val_axis.include_zero)))
             if(status_ok(status = ui_dlg_set_check(p_dialog_msg_process_start->h_dialog, VAL_AXIS_ID_SCALING_LOGARITHMIC, p_state->val_axis.logarithmic)))
@@ -314,7 +314,7 @@ gr_chart_axis_process_ctl_state_change(
             if(p_state->processing_cat)
                 status = ui_dlg_set_s32(p_dialog_msg_ctl_state_change->h_dialog, GEN_AXIS_ID_MAJOR_SPACING, (S32) p_axis->major.current);
             else
-                status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, GEN_AXIS_ID_MAJOR_SPACING,      &p_axis->major.current);
+                status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, GEN_AXIS_ID_MAJOR_SPACING,       p_axis->major.current);
             p_state->level -= 1;
         }
         break;
@@ -332,7 +332,7 @@ gr_chart_axis_process_ctl_state_change(
             if(p_state->processing_cat)
                 status = ui_dlg_set_s32(p_dialog_msg_ctl_state_change->h_dialog, GEN_AXIS_ID_MINOR_SPACING, (S32) p_axis->minor.current);
             else
-                status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, GEN_AXIS_ID_MINOR_SPACING,      &p_axis->minor.current);
+                status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, GEN_AXIS_ID_MINOR_SPACING,       p_axis->minor.current);
             p_state->level -= 1;
         }
         break;
@@ -415,8 +415,8 @@ gr_chart_axis_process_ctl_state_change(
             const P_GR_AXIS p_axis = &p_axes->axis[p_state->modifying_axis_idx];
 
             p_state->level += 1;
-            if(status_ok(status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, VAL_AXIS_ID_SCALING_MINIMUM, &p_axis->current.min)))
-                         status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, VAL_AXIS_ID_SCALING_MAXIMUM, &p_axis->current.max);
+            if(status_ok(status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, VAL_AXIS_ID_SCALING_MINIMUM, p_axis->current.min)))
+                         status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, VAL_AXIS_ID_SCALING_MAXIMUM, p_axis->current.max);
             p_state->level -= 1;
         }
         break;

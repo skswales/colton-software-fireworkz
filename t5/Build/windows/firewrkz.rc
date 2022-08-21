@@ -7,13 +7,7 @@
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 
-/*#define VER_FILEVERSION            2,xx,y,0*/
-/*#define VER_FILEVERSION            2,xx,0,0*/
-#define VER_FILEVERSION              2,22,0,0
-
-#define VER_FILEVERSION_STR         "2.22.00\0"
-/*#define VER_FILEVERSION_STR       "2.xx.yy\0"*/
-/*#define VER_FILEVERSION_STR       "2.xx\0"*/
+#include "../../ob_skel/version.h"
 
 // Language independent resources
 

@@ -625,7 +625,7 @@ chart_dispose(
     if(p_chart_header->recalc.state != CHART_UNMODIFIED)
     {
         p_chart_header->recalc.state = CHART_UNMODIFIED;
-        trace_1(TRACE__SCHEDULED, TEXT("chart_dispose - *** scheduled_event_remove(docno=%d)"), p_chart_header->docno);
+        trace_1(TRACE__SCHEDULED, TEXT("chart_dispose - *** scheduled_event_remove(docno=") DOCNO_TFMT TEXT(")"), p_chart_header->docno);
         scheduled_event_remove(p_chart_header->docno, T5_EVENT_SCHEDULED, scheduled_event_chart, (CLIENT_HANDLE) p_chart_header);
     }
 
@@ -725,7 +725,7 @@ chart_modify(
     {
     case CHART_UNMODIFIED:
         p_chart_header->recalc.state = CHART_MODIFIED_AWAITING_REBUILD;
-        trace_1(TRACE__SCHEDULED, TEXT("chart_modify - *** scheduled_event_after(docno=%d, 0)"), p_chart_header->docno);
+        trace_1(TRACE__SCHEDULED, TEXT("chart_modify - *** scheduled_event_after(docno=") DOCNO_TFMT TEXT(", 0)"), p_chart_header->docno);
         status_assert(scheduled_event_after(p_chart_header->docno, T5_EVENT_SCHEDULED, scheduled_event_chart, (CLIENT_HANDLE) p_chart_header, 0));
         break;
 
@@ -747,7 +747,7 @@ chart_modify_in_a_bit(
     {
     case CHART_UNMODIFIED:
         p_chart_header->recalc.state = CHART_MODIFIED_AWAITING_REBUILD;
-        trace_1(TRACE__SCHEDULED, TEXT("chart_modify_in_a_bit - *** scheduled_event_after(docno=%d, n)"), p_chart_header->docno);
+        trace_1(TRACE__SCHEDULED, TEXT("chart_modify_in_a_bit - *** scheduled_event_after(docno=") DOCNO_TFMT TEXT(", n)"), p_chart_header->docno);
         status_assert(scheduled_event_after(p_chart_header->docno, T5_EVENT_SCHEDULED, scheduled_event_chart, (CLIENT_HANDLE) p_chart_header, MONOTIMEDIFF_VALUE_FROM_MS(500)));
         break;
 
@@ -776,7 +776,7 @@ chart_rebuild_after_modify(
     if(p_chart_header->recalc.state != CHART_UNMODIFIED)
     {   /* clear any scheduled events for this chart */
         p_chart_header->recalc.state = CHART_UNMODIFIED;
-        trace_1(TRACE__SCHEDULED, TEXT("chart_rebuild_after_modify - *** scheduled_event_remove(docno=%d), clear pending rebuild"), p_chart_header->docno);
+        trace_1(TRACE__SCHEDULED, TEXT("chart_rebuild_after_modify - *** scheduled_event_remove(docno=") DOCNO_TFMT TEXT("), clear pending rebuild"), p_chart_header->docno);
         scheduled_event_remove(p_chart_header->docno, T5_EVENT_SCHEDULED, scheduled_event_chart, (CLIENT_HANDLE) p_chart_header);
     }
 
@@ -805,7 +805,7 @@ chart_event_scheduled(
     || global_preferences.chart_update_manual)
     {   /* reschedule until enough core or document has stabilised */
         p_chart_header->recalc.state = CHART_MODIFIED_AWAITING_REBUILD;
-        trace_1(TRACE__SCHEDULED, TEXT("chart_event_scheduled: needs another update - *** scheduled_event_after(docno=%d, n)"), p_chart_header->docno);
+        trace_1(TRACE__SCHEDULED, TEXT("chart_event_scheduled: needs another update - *** scheduled_event_after(docno=") DOCNO_TFMT TEXT(", n)"), p_chart_header->docno);
         return(status_wrap(scheduled_event_after(p_chart_header->docno, T5_EVENT_SCHEDULED, scheduled_event_chart, (CLIENT_HANDLE) p_chart_header, MONOTIMEDIFF_VALUE_FROM_MS(500))));
     }
 
@@ -1012,27 +1012,27 @@ determine_cell_type(
     EV_IDNO ev_idno;
 
     object_data_read.object_data = *p_object_data;
-    ev_data_set_blank(&object_data_read.ev_data);
+    ss_data_set_blank(&object_data_read.ss_data);
     status_consume(object_call_id(object_data_read.object_data.object_id, p_docu, T5_MSG_OBJECT_DATA_READ, &object_data_read));
-    if(RPN_DAT_ARRAY == (ev_idno = object_data_read.ev_data.did_num))
-        ev_idno = ss_array_element_index_wr(&object_data_read.ev_data, 0, 0)->did_num;
-    ss_data_free_resources(&object_data_read.ev_data);
+    if(DATA_ID_ARRAY == (ev_idno = ss_data_get_data_id(&object_data_read.ss_data)))
+        ev_idno = ss_data_get_data_id(ss_array_element_index_wr(&object_data_read.ss_data, 0, 0));
+    ss_data_free_resources(&object_data_read.ss_data);
 
     switch(ev_idno)
     {
     default:
-    case RPN_DAT_BLANK:
+    case DATA_ID_BLANK:
         return(CELL_TYPE_BLANK);
 
-    case RPN_DAT_REAL:
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
+    case DATA_ID_REAL:
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
         return(CELL_TYPE_NUMBER);
 
-    case RPN_DAT_DATE: /* SKS after 1.05 10oct93 */
-    case RPN_DAT_STRING:
+    case DATA_ID_DATE: /* SKS after 1.05 10oct93 */
+    case DATA_ID_STRING:
         return(CELL_TYPE_STRING);
     }
 }
@@ -1367,16 +1367,16 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
     {
         TCHARZ buffer[64];
         PCTSTR p_msg;
-        switch(t5_message)
+        switch(uref_message)
         {
-        default: assert0();         p_msg = TEXT("Unknown"); break;
-        case T5_MSG_UREF_CLOSE1:    p_msg = TEXT("CLOSE1"); break;
-        case T5_MSG_UREF_CLOSE2:    p_msg = TEXT("CLOSE2"); break;
-        case T5_MSG_UREF_UREF:      p_msg = TEXT("UREF"); break;
-        case T5_MSG_UREF_DELETE:    p_msg = TEXT("DELETE"); break;
-        case T5_MSG_UREF_SWAP_ROWS: p_msg = TEXT("SWAP_ROWS"); break;
-        case T5_MSG_UREF_CHANGE:    p_msg = TEXT("CHANGE"); break;
-        case T5_MSG_UREF_OVERWRITE: p_msg = TEXT("OVERWRITE"); break;
+        default: assert0();      p_msg = TEXT("Unknown"); break;
+        case Uref_Msg_CLOSE1:    p_msg = TEXT("CLOSE1"); break;
+        case Uref_Msg_CLOSE2:    p_msg = TEXT("CLOSE2"); break;
+        case Uref_Msg_Uref:      p_msg = TEXT("UREF"); break;
+        case Uref_Msg_Delete:    p_msg = TEXT("DELETE"); break;
+        case Uref_Msg_Swap_Rows: p_msg = TEXT("SWAP_ROWS"); break;
+        case Uref_Msg_Change:    p_msg = TEXT("CHANGE"); break;
+        case Uref_Msg_Overwrite: p_msg = TEXT("OVERWRITE"); break;
         }
         consume_int(tstr_xsnprintf(buffer, elemof32(buffer),
                                    TEXT("chart_uref(%s) tl ") COL_TFMT TEXT(",") ROW_TFMT TEXT("; br ") COL_TFMT TEXT(",") ROW_TFMT TEXT("; wh_col ") S32_TFMT TEXT("; wh_row ") S32_TFMT,
@@ -1415,7 +1415,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
         case CHART_RANGE_COL:
         case CHART_RANGE_ROW:
             {
-            switch(uref_match_region(&p_chart_element->region, t5_message, p_uref_event_block))
+            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
             {
             default:
 #if CHECKING
@@ -1461,7 +1461,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
             {
             REGION element_region = p_chart_element->region;
 
-            switch(uref_match_region(&p_chart_element->region, t5_message, p_uref_event_block))
+            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
             {
             default:
 #if CHECKING
@@ -1492,7 +1492,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
             {
             REGION element_region = p_chart_element->region;
 
-            switch(uref_match_region(&p_chart_element->region, t5_message, p_uref_event_block))
+            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
             {
             default:
 #if CHECKING
@@ -1531,7 +1531,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
         case CHART_RANGE_COL:
         case CHART_RANGE_ROW:
             {
-            switch(uref_match_region(&p_chart_element->region, t5_message, p_uref_event_block))
+            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
             {
             default:
 #if CHECKING
@@ -1546,13 +1546,13 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
                 break;
 
             case DEP_INFORM:
-                switch(t5_message)
+                switch(uref_message)
                 {
                 default:
                     break;
 
-                case T5_MSG_UREF_OVERWRITE:
-                case T5_MSG_UREF_CHANGE:
+                case Uref_Msg_Overwrite:
+                case Uref_Msg_Change:
                     gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
                     chart_modify_in_a_bit(p_chart_header);
                     break;
@@ -1716,37 +1716,37 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
     {
     const P_DOCU p_docu = p_docu_from_docno(docno);
     OBJECT_DATA_READ object_data_read;
-    P_EV_DATA p_ev_data;
+    P_SS_DATA p_ss_data;
     STYLE_BIT_NUMBER style_bit_number;
 
     status_consume(object_data_from_slr(p_docu, &object_data_read.object_data, &slr));
-    ev_data_set_blank(&object_data_read.ev_data);
+    ss_data_set_blank(&object_data_read.ss_data);
     status_consume(object_call_id(object_data_read.object_data.object_id, p_docu, T5_MSG_OBJECT_DATA_READ, &object_data_read));
-    p_ev_data = (RPN_DAT_ARRAY == object_data_read.ev_data.did_num)
-              ? ss_array_element_index_wr(&object_data_read.ev_data, 0, 0)
-              : &object_data_read.ev_data;
+    p_ss_data = (DATA_ID_ARRAY == ss_data_get_data_id(&object_data_read.ss_data))
+              ? ss_array_element_index_wr(&object_data_read.ss_data, 0, 0)
+              : &object_data_read.ss_data;
 
     /* SKS after 1.05 10oct93 speeds up numform lookup */
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
     default: default_unhandled();
 #if CHECKING
-    case RPN_DAT_REAL:
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
+    case DATA_ID_REAL:
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
 #endif
         style_bit_number = STYLE_SW_PS_NUMFORM_NU;
         break;
 
-    case RPN_DAT_DATE:
+    case DATA_ID_DATE:
         style_bit_number = STYLE_SW_PS_NUMFORM_DT;
         break;
 
-    case RPN_DAT_BLANK:
-    case RPN_DAT_STRING:
-    case RPN_DAT_ERROR:
+    case DATA_ID_BLANK:
+    case DATA_ID_STRING:
+    case DATA_ID_ERROR:
         style_bit_number = STYLE_SW_PS_NUMFORM_SE;
         break;
     }
@@ -1757,20 +1757,10 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
 #if CHECKING
     case GR_CHART_VALUE_REQ_NUMBER:
 #endif
-        if(RPN_DAT_REAL == p_ev_data->did_num)
+        if(ss_data_is_number(p_ss_data))
         {
             val->type = GR_CHART_VALUE_NUMBER;
-            val->data.number = object_data_read.ev_data.arg.fp;
-            break;
-        }
-
-        if( (RPN_DAT_BOOL8  == p_ev_data->did_num) ||
-            (RPN_DAT_WORD8  == p_ev_data->did_num) ||
-            (RPN_DAT_WORD16 == p_ev_data->did_num) ||
-            (RPN_DAT_WORD32 == p_ev_data->did_num) )
-        {
-            val->type = GR_CHART_VALUE_NUMBER;
-            val->data.number = (F64) object_data_read.ev_data.arg.integer;
+            val->data.number = ss_data_get_number(&object_data_read.ss_data);
             break;
         }
 
@@ -1799,7 +1789,7 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
         numform_parms.ustr_numform_texterror = array_ustr(&style.para_style.h_numform_se);
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        (void) numform(&quick_ublock, P_QUICK_TBLOCK_NONE, p_ev_data, &numform_parms);
+        (void) numform(&quick_ublock, P_QUICK_TBLOCK_NONE, p_ss_data, &numform_parms);
 
         quick_ublock_dispose_leaving_buffer_valid(&quick_ublock);
 
@@ -1809,7 +1799,7 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
         }
     }
 
-    ss_data_free_resources(&object_data_read.ev_data);
+    ss_data_free_resources(&object_data_read.ss_data);
     } /*block*/
 
     return(1);
@@ -1843,41 +1833,41 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart_text)
     const P_DOCU p_docu = p_docu_from_docno(p_chart_element->docno);
     SLR slr = p_chart_element->region.tl;
     OBJECT_DATA_READ object_data_read;
-    P_EV_DATA p_ev_data;
+    P_SS_DATA p_ss_data;
 
     if(STATUS_DONE != object_data_from_slr(p_docu, &object_data_read.object_data, &slr))
         return(0);
 
-    ev_data_set_blank(&object_data_read.ev_data);
+    ss_data_set_blank(&object_data_read.ss_data);
     status_consume(object_call_id(object_data_read.object_data.object_id, p_docu, T5_MSG_OBJECT_DATA_READ, &object_data_read));
-    p_ev_data = (RPN_DAT_ARRAY == object_data_read.ev_data.did_num)
-              ? ss_array_element_index_wr(&object_data_read.ev_data, 0, 0)
-              : &object_data_read.ev_data;
-    switch(p_ev_data->did_num)
+    p_ss_data = (DATA_ID_ARRAY == ss_data_get_data_id(&object_data_read.ss_data))
+              ? ss_array_element_index_wr(&object_data_read.ss_data, 0, 0)
+              : &object_data_read.ss_data;
+    switch(ss_data_get_data_id(p_ss_data))
     {
     default:
-    case RPN_DAT_BLANK:
+    case DATA_ID_BLANK:
         break;
 
-    case RPN_DAT_REAL:
+    case DATA_ID_REAL:
         val->type = GR_CHART_VALUE_NUMBER;
-        val->data.number = object_data_read.ev_data.arg.fp;
+        val->data.number = ss_data_get_real(&object_data_read.ss_data);
         break;
 
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
         val->type = GR_CHART_VALUE_NUMBER;
-        val->data.number = (F64) object_data_read.ev_data.arg.integer;
+        val->data.number = (F64) ss_data_get_integer(&object_data_read.ss_data);
         break;
 
-    case RPN_DAT_STRING:
+    case DATA_ID_STRING:
         val->type = GR_CHART_VALUE_TEXT;
-        ustr_xstrkpy(val->data.text, elemof32(val->data.text), object_data_read.ev_data.arg.p_string);
+        ustr_xstrkpy(val->data.text, elemof32(val->data.text), object_data_read.ss_data.arg.p_string);
         break;
     }
-    ss_data_free_resources(&object_data_read.ev_data);
+    ss_data_free_resources(&object_data_read.ss_data);
     } /*block*/
 
     return(1);

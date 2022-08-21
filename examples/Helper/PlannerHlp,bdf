@@ -1,0 +1,162 @@
+{Version:2.22.01;22 Dec 2019;FireworkzPro;Development copy - Colton Software;8032 2677 0041 8348;Alphabet-Latin1}
+{Flow:10}
+{Block:0;0;;32;7;41;;32;7;41}
+{Style:BaseSheet;{ColWidth:1474}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:1}{Numform:0}{NumformDT:dd.mm.yyyy hh:mm:ss\\\;dd.mm.yyyy\\\;hh:mm:ss}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
+{Style:Header;{ColWidth:11055}{MarginLeft:114}{MarginRight:114}{Tablist:C5414 R10828}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{Style:Footer;{ColWidth:11055}{MarginLeft:114}{MarginRight:114}{Tablist:C5414 R10828}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
+{Style:Current cell;{Background:238;238;238}{GridLeftColour:85;85;85}{GridTopColour:85;85;85}{GridRightColour:85;85;85}{GridBottomColour:85;85;85}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{StyleCurrent:Current cell}
+{Style:Text;{NewObject:3}}
+{Style:Number;{Justify:2}{NewObject:1}}
+{Style:Date;{StyleSearch:10}{NumformDT:dd.mm.yyyy}}
+{Paper:A4;0;16840;11906;460;460;397;397;0;0;0;0;32;;1}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:S;F;0;0;1;row}
+{S:S;F;0;1;2;row}
+{S:S;F;0;2;3;row}
+{S:S;F;0;3;4;row}
+{S:S;F;0;4;5;row}
+{S:S;F;0;5;6;row}
+{S:S;F;0;6;7;row}
+{S:S;F;0;7;8;row}
+{S:S;F;0;8;9;row}
+{S:S;F;0;9;10;row}
+{S:S;F;0;10;11;row}
+{S:S;F;0;11;12;row}
+{S:S;F;0;12;13;row}
+{S:S;F;0;13;14;row}
+{S:S;F;0;14;15;row}
+{S:S;F;0;15;16;row}
+{S:S;F;0;16;17;row}
+{S:S;F;0;17;18;row}
+{S:S;F;0;18;19;row}
+{S:S;F;0;19;20;row}
+{S:S;F;0;20;21;row}
+{S:S;F;0;21;22;row}
+{S:S;F;0;22;23;row}
+{S:S;F;0;23;24;row}
+{S:S;F;0;24;25;row}
+{S:S;F;0;25;26;row}
+{S:S;F;0;26;27;row}
+{S:S;F;0;27;28;row}
+{S:S;F;0;28;29;row}
+{S:S;F;0;29;30;row}
+{S:S;F;0;30;31;row}
+{S:S;C;1;0;12}
+{S:S;C;2;0;2020}
+{S:S;F;3;0;01.12.2020;date(c$1, b$1, a1)}
+{S:S;F;3;1;02.12.2020;date(c$1, b$1, a2)}
+{S:S;F;3;2;03.12.2020;date(c$1, b$1, a3)}
+{S:S;F;3;3;04.12.2020;date(c$1, b$1, a4)}
+{S:S;F;3;4;05.12.2020;date(c$1, b$1, a5)}
+{S:S;F;3;5;06.12.2020;date(c$1, b$1, a6)}
+{S:S;F;3;6;07.12.2020;date(c$1, b$1, a7)}
+{S:S;F;3;7;08.12.2020;date(c$1, b$1, a8)}
+{S:S;F;3;8;09.12.2020;date(c$1, b$1, a9)}
+{S:S;F;3;9;10.12.2020;date(c$1, b$1, a10)}
+{S:S;F;3;10;11.12.2020;date(c$1, b$1, a11)}
+{S:S;F;3;11;12.12.2020;date(c$1, b$1, a12)}
+{S:S;F;3;12;13.12.2020;date(c$1, b$1, a13)}
+{S:S;F;3;13;14.12.2020;date(c$1, b$1, a14)}
+{S:S;F;3;14;15.12.2020;date(c$1, b$1, a15)}
+{S:S;F;3;15;16.12.2020;date(c$1, b$1, a16)}
+{S:S;F;3;16;17.12.2020;date(c$1, b$1, a17)}
+{S:S;F;3;17;18.12.2020;date(c$1, b$1, a18)}
+{S:S;F;3;18;19.12.2020;date(c$1, b$1, a19)}
+{S:S;F;3;19;20.12.2020;date(c$1, b$1, a20)}
+{S:S;F;3;20;21.12.2020;date(c$1, b$1, a21)}
+{S:S;F;3;21;22.12.2020;date(c$1, b$1, a22)}
+{S:S;F;3;22;23.12.2020;date(c$1, b$1, a23)}
+{S:S;F;3;23;24.12.2020;date(c$1, b$1, a24)}
+{S:S;F;3;24;25.12.2020;date(c$1, b$1, a25)}
+{S:S;F;3;25;26.12.2020;date(c$1, b$1, a26)}
+{S:S;F;3;26;27.12.2020;date(c$1, b$1, a27)}
+{S:S;F;3;27;28.12.2020;date(c$1, b$1, a28)}
+{S:S;F;3;28;29.12.2020;date(c$1, b$1, a29)}
+{S:S;F;3;29;30.12.2020;date(c$1, b$1, a30)}
+{S:S;F;3;30;31.12.2020;date(c$1, b$1, a31)}
+{S:S;F;4;0;3;weekday(d1)}
+{S:S;F;4;1;4;weekday(d2)}
+{S:S;F;4;2;5;weekday(d3)}
+{S:S;F;4;3;6;weekday(d4)}
+{S:S;F;4;4;7;weekday(d5)}
+{S:S;F;4;5;1;weekday(d6)}
+{S:S;F;4;6;2;weekday(d7)}
+{S:S;F;4;7;3;weekday(d8)}
+{S:S;F;4;8;4;weekday(d9)}
+{S:S;F;4;9;5;weekday(d10)}
+{S:S;F;4;10;6;weekday(d11)}
+{S:S;F;4;11;7;weekday(d12)}
+{S:S;F;4;12;1;weekday(d13)}
+{S:S;F;4;13;2;weekday(d14)}
+{S:S;F;4;14;3;weekday(d15)}
+{S:S;F;4;15;4;weekday(d16)}
+{S:S;F;4;16;5;weekday(d17)}
+{S:S;F;4;17;6;weekday(d18)}
+{S:S;F;4;18;7;weekday(d19)}
+{S:S;F;4;19;1;weekday(d20)}
+{S:S;F;4;20;2;weekday(d21)}
+{S:S;F;4;21;3;weekday(d22)}
+{S:S;F;4;22;4;weekday(d23)}
+{S:S;F;4;23;5;weekday(d24)}
+{S:S;F;4;24;6;weekday(d25)}
+{S:S;F;4;25;7;weekday(d26)}
+{S:S;F;4;26;1;weekday(d27)}
+{S:S;F;4;27;2;weekday(d28)}
+{S:S;F;4;28;3;weekday(d29)}
+{S:S;F;4;29;4;weekday(d30)}
+{S:S;F;4;30;5;weekday(d31)}
+{S:S;F;5;0;"";if((e1=1)|(e1=7),dayname(d1),"")}
+{S:S;F;5;1;"";if((e2=1)|(e2=7),dayname(d2),"")}
+{S:S;F;5;2;"";if((e3=1)|(e3=7),dayname(d3),"")}
+{S:S;F;5;3;"";if((e4=1)|(e4=7),dayname(d4),"")}
+{S:S;F;5;4;"Saturday";if((e5=1)|(e5=7),dayname(d5),"")}
+{S:S;F;5;5;"Sunday";if((e6=1)|(e6=7),dayname(d6),"")}
+{S:S;F;5;6;"";if((e7=1)|(e7=7),dayname(d7),"")}
+{S:S;F;5;7;"";if((e8=1)|(e8=7),dayname(d8),"")}
+{S:S;F;5;8;"";if((e9=1)|(e9=7),dayname(d9),"")}
+{S:S;F;5;9;"";if((e10=1)|(e10=7),dayname(d10),"")}
+{S:S;F;5;10;"";if((e11=1)|(e11=7),dayname(d11),"")}
+{S:S;F;5;11;"Saturday";if((e12=1)|(e12=7),dayname(d12),"")}
+{S:S;F;5;12;"Sunday";if((e13=1)|(e13=7),dayname(d13),"")}
+{S:S;F;5;13;"";if((e14=1)|(e14=7),dayname(d14),"")}
+{S:S;F;5;14;"";if((e15=1)|(e15=7),dayname(d15),"")}
+{S:S;F;5;15;"";if((e16=1)|(e16=7),dayname(d16),"")}
+{S:S;F;5;16;"";if((e17=1)|(e17=7),dayname(d17),"")}
+{S:S;F;5;17;"";if((e18=1)|(e18=7),dayname(d18),"")}
+{S:S;F;5;18;"Saturday";if((e19=1)|(e19=7),dayname(d19),"")}
+{S:S;F;5;19;"Sunday";if((e20=1)|(e20=7),dayname(d20),"")}
+{S:S;F;5;20;"";if((e21=1)|(e21=7),dayname(d21),"")}
+{S:S;F;5;21;"";if((e22=1)|(e22=7),dayname(d22),"")}
+{S:S;F;5;22;"";if((e23=1)|(e23=7),dayname(d23),"")}
+{S:S;F;5;23;"";if((e24=1)|(e24=7),dayname(d24),"")}
+{S:S;F;5;24;"";if((e25=1)|(e25=7),dayname(d25),"")}
+{S:S;F;5;25;"Saturday";if((e26=1)|(e26=7),dayname(d26),"")}
+{S:S;F;5;26;"Sunday";if((e27=1)|(e27=7),dayname(d27),"")}
+{S:S;F;5;27;"";if((e28=1)|(e28=7),dayname(d28),"")}
+{S:S;F;5;28;"";if((e29=1)|(e29=7),dayname(d29),"")}
+{S:S;F;5;29;"";if((e30=1)|(e30=7),dayname(d30),"")}
+{S:S;F;5;30;"";if((e31=1)|(e31=7),dayname(d31),"")}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
+{Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
+{Imp:;;;;;;;;1;1;36;1000;1;20;{StyleHandle:Number}}
+{R:3;;;;4;;;;1;0;{ColWidth:1474}}
+{R:6;;;;7;;;;1;0;{ColWidth:1474}}
+{R:0;;;;1;;;;1;0;{ColWidth:510}}
+{R:1;;;;2;;;;1;0;{ColWidth:680}}
+{R:4;;;;5;;;;1;0;{ColWidth:396}}
+{R:5;;;;6;;;;1;0;{ColWidth:1190}}
+{R:2;;;;3;;;;1;0;{ColWidth:850}}
+{ImpR:1;0;;32;2;1;;32;0;0;36;1001;0;40;{StyleHandle:Current cell}}
+{PageHefoBreakValues-H:0;0;0;;1;576;32;0;;;0;;;1;576;32;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;2;;32;;32;{StyleHandle:Header}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
+{HBR-H:0;3;;32;;32;{StyleHandle:Footer}}
+{EndOfData}
+{CmdGroup:{ViewCreate:23824;13872;6864;12352}{ViewControl:100;2;0;0;1;1;0;2048;0;2048}{CurrentPosition:1;0;;;0}}

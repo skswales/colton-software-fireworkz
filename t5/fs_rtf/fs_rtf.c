@@ -395,7 +395,7 @@ rtf_output_colortbl(
     {
         P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, i);
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         status_return(ensure_style_colours_in_table(p_style_from_docu_area(p_docu, p_style_docu_area)));
@@ -1070,7 +1070,7 @@ style_enum_layers_from_slr(
 
         p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, i);
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(slr_in_docu_area(&p_style_docu_area->docu_area, p_slr)

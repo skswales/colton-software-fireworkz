@@ -80,8 +80,8 @@ ss_object_from_text(
     _InRef_opt_ PC_REGION p_region_saved,
     P_STATUS p_compile_error,
     P_S32 p_pos,
-    _In_opt_z_  PCTSTR tstr_mrofmun_style,
-    _InVal_     BOOL do_mrofmun,
+    _In_opt_z_  PCTSTR tstr_autoformat_style,
+    _InVal_     BOOL try_autoformat,
     _InVal_     BOOL please_uref_overwrite,
     _InVal_     BOOL force_recalc,
     _InVal_     BOOL clip_data_from_cut_operation);
@@ -178,25 +178,25 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_FUNC_NULL,               NULL),
 
     /* ones that were always built-in */
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_NOT,                c_not),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_UMINUS,             c_uminus),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_UPLUS,              c_uplus),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_UOP_NOT,            c_uop_not),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_UOP_MINUS,          c_uop_minus),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_UOP_PLUS,           c_uop_plus),
 
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_AND,                c_and),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_AND,            c_bop_and),
     SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_CONCATENATE,    c_bop_concatenate),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_DIV,                c_div),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_SUB,                c_sub),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_OR,                 c_or),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_ADD,                c_add),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_POWER,              c_power),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_MUL,                c_mul),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_DIV,            c_bop_div),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_SUB,            c_bop_sub),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_OR,             c_bop_or),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_ADD,            c_bop_add),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_POWER,          c_bop_power),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_BOP_MUL,            c_bop_mul),
 
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_EQ,                 c_eq),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_GT,                 c_gt),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_GTEQ,               c_gteq),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_LT,                 c_lt),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_LTEQ,               c_lteq),
-    SS_FUNC_TABLE_ENTRY(SS_FUNC_NEQ,                c_neq),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_REL_EQ,             c_rel_eq),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_REL_GT,             c_rel_gt),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_REL_GTEQ,           c_rel_gteq),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_REL_LT,             c_rel_lt),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_REL_LTEQ,           c_rel_lteq),
+    SS_FUNC_TABLE_ENTRY(SS_FUNC_REL_NEQ,            c_rel_neq),
 
     SS_FUNC_TABLE_ENTRY(SS_FUNC_IF,                 c_if),
 
@@ -448,7 +448,7 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PI,                c_pi),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PMT,               c_pmt),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_POISSON_DIST,      c_poisson_dist),
-    SS_FUNC_TABLE_ENTRY(SS_SPLIT_POWER,             c_power),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_POWER,             c_bop_power),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PROB,              c_prob),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PROPER,            c_proper),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PV,                c_pv),
@@ -683,15 +683,15 @@ ss_show_error(
 
     if(P_DATA_NONE != (p_ev_cell = p_ev_cell_object_from_slr(p_docu, p_slr)))
     {
-        if(RPN_DAT_ERROR == p_ev_cell->parms.did_num)
+        if(DATA_ID_ERROR == p_ev_cell->ev_parms.data_id)
         {
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
             quick_ublock_with_buffer_setup(quick_ublock);
 
-            status_assert(resource_lookup_quick_ublock(&quick_ublock, p_ev_cell->ev_constant.ev_error.status));
+            status_assert(resource_lookup_quick_ublock(&quick_ublock, p_ev_cell->ss_constant.ss_error.status));
             status_assert(quick_ublock_nullch_add(&quick_ublock));
 
-            switch(p_ev_cell->ev_constant.ev_error.type)
+            switch(p_ev_cell->ss_constant.ss_error.type)
             {
             case ERROR_NORMAL:
                 status_line_setf(p_docu, STATUS_LINE_LEVEL_SS_FORMULA_LINE, SS_MSG_STATUS_ERR, quick_ublock_ustr(&quick_ublock));
@@ -708,15 +708,15 @@ ss_show_error(
                 EV_SLR ev_slr;
 
                 zero_struct(ev_slr);
-                ev_slr.docno = p_ev_cell->ev_constant.ev_error.docno; /* equivalent UBF */
-                ev_slr.col = p_ev_cell->ev_constant.ev_error.col; /* equivalent SBF */
-                ev_slr.row = p_ev_cell->ev_constant.ev_error.row;
+                ev_slr.docno = p_ev_cell->ss_constant.ss_error.docno; /* equivalent UBF */
+                ev_slr.col = p_ev_cell->ss_constant.ss_error.col; /* equivalent SBF */
+                ev_slr.row = p_ev_cell->ss_constant.ss_error.row;
 
                 (void) ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf_slr), elemof32(ustr_buf_slr), ev_docno, &ev_slr);
 
                 status_line_setf(p_docu,
                                  STATUS_LINE_LEVEL_SS_FORMULA_LINE,
-                                 (p_ev_cell->ev_constant.ev_error.type == ERROR_CUSTOM) ? SS_MSG_STATUS_CUSTOM_ERR : SS_MSG_STATUS_PROPAGATED_ERR,
+                                 (p_ev_cell->ss_constant.ss_error.type == ERROR_CUSTOM) ? SS_MSG_STATUS_CUSTOM_ERR : SS_MSG_STATUS_PROPAGATED_ERR,
                                  quick_ublock_ustr(&quick_ublock),
                                  ustr_buf_slr);
                 break;
@@ -848,20 +848,20 @@ MAEVE_EVENT_PROTO(static, maeve_event_ob_ss)
 *
 ******************************************************************************/
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_ss)
+PROC_UREF_EVENT_PROTO(static, ob_ss_uref_event)
 {
     STATUS status = STATUS_OK;
 
     /* free resources that may be owned by cells going away */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_IC__CLOSE1:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_OVERWRITE:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Overwrite:
         {
         SCAN_BLOCK scan_block;
 
-        if(T5_MSG_IC__CLOSE1 == t5_message)
+        if(Uref_Msg_CLOSE1 == uref_message)
             status = cells_scan_init(p_docu, &scan_block, SCAN_MATRIX, SCAN_WHOLE, NULL, OBJECT_ID_SS);
         else
         {
@@ -889,7 +889,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_ss)
     }
 
     if(status_ok(status))
-        status = proc_uref_event_ev_uref(p_docu, t5_message, p_uref_event_block);
+        status = proc_uref_event_ev_uref(p_docu, uref_message, p_uref_event_block);
 
     return(status);
 }
@@ -1439,9 +1439,8 @@ ss_function_add_arg_inline(
 {
     if(in_line_wrap)
     {
-#if 1
-        /* data consists of msg token and the text to display for the inline */
         BYTE msg_token[4];
+        /* data consists of msg token and the text to display for the inline */
         MULTIPLE_DATA multiple_data[3];
 
         msg_token[0] = (BYTE) ((message - SS_MSG_BASE)     );
@@ -1459,37 +1458,6 @@ ss_function_add_arg_inline(
         multiple_data[2].n_bytes = 1;
 
         return(inline_quick_ublock_from_multiple_data(p_quick_ublock, IL_SLE_ARGUMENT, IL_TYPE_PRIVATE, multiple_data, elemof32(multiple_data)));
-#else
-        const U32 inline_bytes = INLINE_OVH + 4 + (arg_len + 1) /* terminating CH_NULL in inline arg */;
-        STATUS status;
-        P_U8 p_u8;
-
-        if(NULL == (p_u8 = (P_U8) quick_ublock_extend_by(p_quick_ublock, inline_bytes, &status)))
-            return(status);
-
-        *p_u8++ = CH_INLINE;
-#if defined(IL_OFF_NULL)
-        *p_u8++ = IL_OFF_NULL;
-#endif
-        *p_u8++ = (U8) inline_bytes;    /* count */
-        *p_u8++ = IL_SLE_ARGUMENT;      /* code */
-        *p_u8++ = IL_TYPE_PRIVATE;      /* type */
-
-        /* data consists of msg token and the text to display for the inline */
-        *p_u8++ = (U8) ((message - SS_MSG_BASE)     );
-        *p_u8++ = (U8) ((message - SS_MSG_BASE) >> 8);
-        *p_u8++ = (U8) (argument_index     );
-        *p_u8++ = (U8) (argument_index >> 8);
-
-        memcpy32(p_u8, message_string, arg_len);
-        p_u8 += arg_len;
-        *p_u8++ = CH_NULL; /* USTR arg has CH_NULL terminator */
-
-        *p_u8++ = (U8) inline_bytes; /* count */
-        *p_u8++ = CH_INLINE;
-
-        return(STATUS_OK);
-#endif
     }
 
     return(quick_ublock_uchars_add(p_quick_ublock, message_string, arg_len));
@@ -1854,34 +1822,36 @@ ss_function_get_help(
     _InVal_     STATUS message)
 {
     PC_USTR message_string = resource_lookup_ustr_no_default(message);
+    U32 offset = 0;
 
     if(NULL == message_string)
         return(STATUS_OK);
 
     for(;;)
     {
-        U8 ch = PtrGetByte(message_string);
+        U32 bytes_of_char;
+        UCS4 ucs4 = ustr_char_decode_off(message_string, offset, /*ref*/bytes_of_char);
 
-        if(CH_NULL == ch)
+        if(UCH_NULL == ucs4)
             break;
 
-        ustr_IncByte(message_string);
+        offset += bytes_of_char;
 
-        if(CH_VERTICAL_LINE == ch)
+        if(CH_VERTICAL_LINE == ucs4)
         {
-            STATUS status = ss_function_get_help_try(p_quick_ublock, message_string);
+            STATUS status = ss_function_get_help_try(p_quick_ublock, ustr_AddBytes(message_string, offset));
             U32 uchars_n;
 
             status_return(status);
 
             uchars_n = (U32) status;
 
-            ustr_IncBytes(message_string, uchars_n); /* skip over this delimited sequence - it may have output something */
+            offset += uchars_n; /* skip over this delimited sequence - it may have output something */
             continue;
         }
 
         /* add unescaped characters to output */
-        status_return(quick_ublock_a7char_add(p_quick_ublock, ch));
+        status_return(quick_ublock_ucs4_add(p_quick_ublock, ucs4));
     }
 
     return(STATUS_OK);
@@ -1998,9 +1968,9 @@ T5_MSG_PROTO(static, ss_msg_ss_alert_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
 
     alert_result = 0;
 
-    status_assert(ui_text_alloc_from_p_ev_string(&alert_query_text_1_data.caption, p_ss_input_exec->p_ev_string_message));
-    status_assert(ui_text_alloc_from_p_ev_string(&alert_query_but_1_data.caption,  p_ss_input_exec->p_ev_string_but_1));
-    status_assert(ui_text_alloc_from_p_ev_string(&alert_query_but_2_data.caption,  p_ss_input_exec->p_ev_string_but_2));
+    status_assert(ui_text_alloc_from_ss_string(&alert_query_text_1_data.caption, p_ss_input_exec->p_ss_string_message));
+    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_1_data.caption,  p_ss_input_exec->p_ss_string_but_1));
+    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_2_data.caption,  p_ss_input_exec->p_ss_string_but_2));
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
@@ -2010,7 +1980,7 @@ T5_MSG_PROTO(static, ss_msg_ss_alert_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
     dialog_cmd_process_dbox.bits.modeless = 1;
     dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
     dialog_cmd_process_dbox.p_proc_client = dialog_event_alert;
-    if(NULL == p_ss_input_exec->p_ev_string_but_2)
+    if(NULL == p_ss_input_exec->p_ss_string_but_2)
         dialog_cmd_process_dbox.n_ctls -= 1;
     status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     h_alert_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
@@ -2121,9 +2091,9 @@ T5_MSG_PROTO(static, ss_msg_ss_input_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
 
     ui_text_input.type = UI_TEXT_TYPE_NONE;
 
-    status_assert(ui_text_alloc_from_p_ev_string(&input_query_text_1_data.caption, p_ss_input_exec->p_ev_string_message));
-    status_assert(ui_text_alloc_from_p_ev_string(&alert_query_but_1_data.caption,  p_ss_input_exec->p_ev_string_but_1));
-    status_assert(ui_text_alloc_from_p_ev_string(&alert_query_but_2_data.caption,  p_ss_input_exec->p_ev_string_but_2));
+    status_assert(ui_text_alloc_from_ss_string(&input_query_text_1_data.caption, p_ss_input_exec->p_ss_string_message));
+    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_1_data.caption,  p_ss_input_exec->p_ss_string_but_1));
+    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_2_data.caption,  p_ss_input_exec->p_ss_string_but_2));
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
@@ -2133,7 +2103,7 @@ T5_MSG_PROTO(static, ss_msg_ss_input_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
     dialog_cmd_process_dbox.bits.modeless = 1;
     dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
     dialog_cmd_process_dbox.p_proc_client = dialog_event_input;
-    if(NULL == p_ss_input_exec->p_ev_string_but_2)
+    if(NULL == p_ss_input_exec->p_ss_string_but_2)
         dialog_cmd_process_dbox.n_ctls -= 1;
     status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     h_input_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
@@ -2273,7 +2243,7 @@ ss_cmd_force_recalc_for(
         {
             P_EV_CELL p_ev_cell = object_data.u.p_ev_cell;
 
-            if((P_DATA_NONE != p_ev_cell) && !p_ev_cell->parms.data_only)
+            if((P_DATA_NONE != p_ev_cell) && !p_ev_cell->ev_parms.data_only)
             {
                 EV_SLR ev_slr;
                 ev_slr_from_slr(p_docu, &ev_slr, &object_data.data_ref.arg.slr);
@@ -2339,11 +2309,14 @@ auto_sum_exp_add(
         EV_SLR ev_slr;
         UCHARZ another_ustr_buf[50];
 
-        status_break(status = quick_ublock_ustr_add(&quick_ublock, USTR_TEXT("sum(")));
+        status_break(status = quick_ublock_ustr_add(&quick_ublock, global_preferences.ss_alternate_formula_style ? USTR_TEXT("=SUM(") : USTR_TEXT("sum(")));
 
         ev_slr_from_slr(p_docu, &ev_slr, p_slr_s);
         len = ev_dec_slr_ustr_buf(ustr_bptr(another_ustr_buf), elemof32(another_ustr_buf), ev_slr_docno(&ev_slr), &ev_slr);
         status_break(status = quick_ublock_uchars_add(&quick_ublock, uchars_bptr(another_ustr_buf), len));
+
+        if(global_preferences.ss_alternate_formula_style)
+            status_break(status = quick_ublock_ucs4_add(&quick_ublock, UCH_COLON));
 
         ev_slr_from_slr(p_docu, &ev_slr, p_slr_e);
         len = ev_dec_slr_ustr_buf(ustr_bptr(another_ustr_buf), elemof32(another_ustr_buf), ev_slr_docno(&ev_slr), &ev_slr);
@@ -2380,66 +2353,51 @@ auto_sum_exp_add(
 *
 ******************************************************************************/
 
+static inline bool
+ss_convert_unknown_style_name_fs_colour(
+    _InoutRef_  P_STYLE p_style_in /* style in (updated) */,
+    _In_z_      PCTSTR tstr_style_name,
+    _In_z_      PCTSTR tstr_colour_name,
+    _InVal_     U8 r,
+    _InVal_     U8 g,
+    _InVal_     U8 b)
+{
+    if(0 != tstrcmp(tstr_style_name, tstr_colour_name))
+        return(false);
+
+    rgb_set(&p_style_in->font_spec.colour, r, g, b);
+    style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    return(true);
+}
+
 static void
 ss_convert_unknown_style_name(
     _InoutRef_  P_STYLE p_style_in /* style in (updated) */,
     _In_z_      PCTSTR tstr_style_name)
 {
-    if(0 == tstrcmp(tstr_style_name, TEXT("Red")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0xFF, 0x00, 0x00);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Red"), 0xFF, 0x00, 0x00))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("Green")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0x00, 0xFF, 0x00);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Green"), 0x00, 0xFF, 0x00))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("Blue")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0x00, 0x00, 0xFF);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Blue"), 0x00, 0x00, 0xFF))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("Cyan")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0x00, 0xFF, 0xFF);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Cyan"), 0x00, 0xFF, 0xFF))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("Magenta")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0xFF, 0x00, 0xFF);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Magenta"), 0xFF, 0x00, 0xFF))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("Yellow")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0xFF, 0xFF, 0x00);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Yellow"), 0xFF, 0xFF, 0x00))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("Black")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0x00, 0x00, 0x00);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("Black"), 0x00, 0x00, 0x00))
         return;
-    }
 
-    if(0 == tstrcmp(tstr_style_name, TEXT("White")))
-    {
-        rgb_set(&p_style_in->font_spec.colour, 0xFF, 0xFF, 0xFF);
-        style_bit_set(p_style_in, STYLE_SW_FS_COLOUR);
+    if(ss_convert_unknown_style_name_fs_colour(p_style_in, tstr_style_name, TEXT("White"), 0xFF, 0xFF, 0xFF))
         return;
-    }
 }
 
 /******************************************************************************
@@ -2478,11 +2436,11 @@ ss_object_convert_to_output_text(
     else
     {
         NUMFORM_PARMS numform_parms;
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         QUICK_TBLOCK_WITH_BUFFER(quick_tblock_style, 50);
         quick_tblock_with_buffer_setup(quick_tblock_style);
 
-        ev_data_from_ev_cell(&ev_data, p_ev_cell);
+        ss_data_from_ev_cell(&ss_data, p_ev_cell);
 
         /*zero_struct(numform_parms);*/
         numform_parms.ustr_numform_numeric = array_ustr(&p_style_in->para_style.h_numform_nu);
@@ -2490,7 +2448,7 @@ ss_object_convert_to_output_text(
         numform_parms.ustr_numform_texterror = array_ustr(&p_style_in->para_style.h_numform_se);
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        status = numform(p_quick_ublock, &quick_tblock_style, &ev_data, &numform_parms);
+        status = numform(p_quick_ublock, &quick_tblock_style, &ss_data, &numform_parms);
 
         if(status_ok(status) && (quick_tblock_chars(&quick_tblock_style) > 1) /* always CH_NULL-terminated*/)
         {   /* override pieces of supplied style with style from numform */
@@ -2566,8 +2524,8 @@ ss_object_from_text(
     _InRef_opt_ PC_REGION p_region_saved,
     P_STATUS p_compile_error,
     P_S32 p_pos,
-    _In_opt_z_  PCTSTR tstr_mrofmun_style,
-    _InVal_     BOOL do_mrofmun,
+    _In_opt_z_  PCTSTR tstr_autoformat_style,
+    _InVal_     BOOL try_autoformat,
     _InVal_     BOOL please_uref_overwrite,
     _InVal_     BOOL force_recalc,
     _InVal_     BOOL clip_data_from_cut_operation)
@@ -2579,7 +2537,7 @@ ss_object_from_text(
     BOOL use_ev_slr_offset = FALSE;
     BOOL make_ss_object = 1;
     P_DOCU p_docu = *p_p_docu;
-    EV_DATA ev_data_autoformat;
+    SS_DATA ss_data_autoformat;
     STYLE_HANDLE style_handle_autoformat = STYLE_HANDLE_NONE;
 
     /* compiler may move document table, so calculate docnos here ... */
@@ -2594,15 +2552,15 @@ ss_object_from_text(
     if(NULL != p_compile_error)
         *p_compile_error = STATUS_OK;
 
-    ev_data_set_blank(&ev_data_autoformat);
+    ss_data_set_blank(&ss_data_autoformat);
 
-    if(do_mrofmun)
+    if(try_autoformat)
     {
         if((NULL != ustr_formula) || (NULL != ustr_result))
         {
             ARRAY_HANDLE h_mrofmun;
             if(status_ok(mrofmun_get_list(p_docu, &h_mrofmun)))
-                status_assert(autoformat(&ev_data_autoformat, &style_handle_autoformat, (NULL != ustr_formula) ? ustr_formula : ustr_result, &h_mrofmun));
+                status_assert(autoformat(&ss_data_autoformat, &style_handle_autoformat, (NULL != ustr_formula) ? ustr_formula : ustr_result, &h_mrofmun));
         }
     }
 
@@ -2610,14 +2568,14 @@ ss_object_from_text(
     {
         /* squirt in de-formatted constant */
         zero_struct(compiler_output);
-        compiler_output.ev_data = ev_data_autoformat;
+        compiler_output.ss_data = ss_data_autoformat;
         compiler_output.ev_parms.data_only = 1;
-        compiler_output.ev_parms.did_num = compiler_output.ev_data.did_num;
-        compiler_output.ev_parms.style_handle_mrofmun = UBF_PACK(style_handle_autoformat);
+        compiler_output.ev_parms.data_id = ss_data_get_data_id(&compiler_output.ss_data);
+        compiler_output.ev_parms.style_handle_autoformat = UBF_PACK(style_handle_autoformat);
         status = STATUS_DONE;
         trace_1(TRACE_APP_SKEL,
-                TEXT("mrofmun found style: %s"),
-                array_tstr(&(p_style_from_handle(p_docu, (STYLE_HANDLE) compiler_output.ev_parms.style_handle_mrofmun)->h_style_name_tstr)));
+                TEXT("autoformat found style: %s"),
+                array_tstr(&(p_style_from_handle(p_docu, (STYLE_HANDLE) compiler_output.ev_parms.style_handle_autoformat)->h_style_name_tstr)));
     }
     else
     {
@@ -2639,14 +2597,14 @@ ss_object_from_text(
             }
         }
 
-        if(tstr_mrofmun_style)
+        if(tstr_autoformat_style)
         {
-            STYLE_HANDLE style_handle = style_handle_from_name(p_docu, tstr_mrofmun_style);
+            STYLE_HANDLE style_handle = style_handle_from_name(p_docu, tstr_autoformat_style);
 
             if(0 != style_handle)
             {
                 assert((U32) style_handle < 256);
-                compiler_output.ev_parms.style_handle_mrofmun = UBF_PACK(style_handle);
+                compiler_output.ev_parms.style_handle_autoformat = UBF_PACK(style_handle);
             }
         }
 
@@ -2661,7 +2619,7 @@ ss_object_from_text(
             /* tell dependents about it */
             UREF_PARMS uref_parms;
             region_from_two_slrs(&uref_parms.source.region, p_slr, p_slr, TRUE);
-            uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+            uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
         }
 
         if(!status)
@@ -2708,10 +2666,10 @@ ss_object_from_text(
                         if(use_ev_slr_offset)
                             add_todo = 1;
 
-                        switch(compiler_output.ev_parms.did_num)
+                        switch(compiler_output.ev_parms.data_id)
                         {
-                        case RPN_DAT_BLANK:
-                        case RPN_DAT_ERROR:
+                        case DATA_ID_BLANK:
+                        case DATA_ID_ERROR:
                             add_todo = 1;
                             break;
 
@@ -2835,7 +2793,7 @@ T5_MSG_PROTO(static, split_ev_call, _InRef_ P_EV_SPLIT_EXEC_DATA p_ev_split_exec
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    (*p_proc_exec) (p_ev_split_exec_data->args, p_ev_split_exec_data->n_args, p_ev_split_exec_data->p_ev_data_res, p_ev_split_exec_data->p_cur_slr);
+    (*p_proc_exec) (p_ev_split_exec_data->args, p_ev_split_exec_data->n_args, p_ev_split_exec_data->p_ss_data_res, p_ev_split_exec_data->p_cur_slr);
 
     return(STATUS_OK);
 }
@@ -2907,8 +2865,8 @@ ss_msg_startup(void)
     style_selector_bit_set(&style_selector_ob_ss_numform_all, STYLE_SW_PS_NUMFORM_DT);
     style_selector_bit_set(&style_selector_ob_ss_numform_all, STYLE_SW_PS_NUMFORM_SE);
 
-    trace_6(TRACE_OUT | TRACE_ANY, TEXT("ev_constant: ") U32_TFMT TEXT(", ev_data: ") U32_TFMT TEXT(", ev_slr: ") U32_TFMT TEXT(", LIST_ITEMOVH: ") S32_TFMT TEXT(", CELL_OVH: ") S32_TFMT TEXT(", OVH_EV_CELL: ") S32_TFMT,
-            sizeof32(EV_CONSTANT), sizeof32(EV_DATA), sizeof32(EV_SLR), (S32) LIST_ITEMOVH, (S32) CELL_OVH, (S32) OVH_EV_CELL);
+    trace_6(TRACE_OUT | TRACE_ANY, TEXT("ss_constant: ") U32_TFMT TEXT(", ss_data: ") U32_TFMT TEXT(", ev_slr: ") U32_TFMT TEXT(", LIST_ITEMOVH: ") S32_TFMT TEXT(", CELL_OVH: ") S32_TFMT TEXT(", OVH_EV_CELL: ") S32_TFMT,
+            sizeof32(SS_CONSTANT), sizeof32(SS_DATA), sizeof32(EV_SLR), (S32) LIST_ITEMOVH, (S32) CELL_OVH, (S32) OVH_EV_CELL);
 
     return(register_object_construct_table(OBJECT_ID_SS, object_construct_table, FALSE /* no inlines */));
 }
@@ -2937,7 +2895,7 @@ ss_msg_init_thunk(
     REGION region = REGION_INIT;
     region.whole_col = TRUE;
     region.whole_row = TRUE;
-    status_return(uref_add_dependency(p_docu, &region, proc_uref_event_ob_ss, 0, &p_ss_instance->ss_doc.uref_handle, FALSE));
+    status_return(uref_add_dependency(p_docu, &region, ob_ss_uref_event, 0, &p_ss_instance->ss_doc.uref_handle, FALSE));
     } /*block*/
 
     /* main event handler catches current col/row changes */
@@ -3199,12 +3157,12 @@ T5_MSG_PROTO(static, ss_msg_object_compare, _InoutRef_ P_OBJECT_COMPARE p_object
 
     if(p_object_compare->p_object_1 && p_object_compare->p_object_2)
     {
-        EV_DATA ev_data_1, ev_data_2;
+        SS_DATA ss_data_1, ss_data_2;
 
-        ev_data_from_ev_cell(&ev_data_1, (PC_EV_CELL) p_object_compare->p_object_1);
-        ev_data_from_ev_cell(&ev_data_2, (PC_EV_CELL) p_object_compare->p_object_2);
+        ss_data_from_ev_cell(&ss_data_1, (PC_EV_CELL) p_object_compare->p_object_1);
+        ss_data_from_ev_cell(&ss_data_2, (PC_EV_CELL) p_object_compare->p_object_2);
 
-        p_object_compare->res = ss_data_compare(&ev_data_1, &ev_data_2, FALSE, FALSE);
+        p_object_compare->res = ss_data_compare(&ss_data_1, &ss_data_2, FALSE, FALSE);
     }
 
     return(STATUS_OK);
@@ -3260,13 +3218,13 @@ T5_MSG_PROTO(static, ss_msg_object_data_read, _InoutRef_ P_OBJECT_DATA_READ p_ob
     {
         const PC_EV_CELL p_ev_cell = p_object_data_read->object_data.u.p_ev_cell;
 
-        ev_data_from_ev_cell(&p_object_data_read->ev_data, p_ev_cell);
+        ss_data_from_ev_cell(&p_object_data_read->ss_data, p_ev_cell);
 
-        p_object_data_read->constant = p_ev_cell->parms.data_only;
+        p_object_data_read->constant = p_ev_cell->ev_parms.data_only;
     }
     else
     {
-        ev_data_set_blank(&p_object_data_read->ev_data);
+        ss_data_set_blank(&p_object_data_read->ss_data);
 
         p_object_data_read->constant = 1;
     }
@@ -3288,7 +3246,7 @@ T5_MSG_PROTO(static, ss_msg_object_read_text, _InoutRef_ P_OBJECT_READ_TEXT p_ob
             return(ev_cell_decode(p_object_read_text->p_quick_ublock, p_ev_cell, ev_docno_from_p_docu(p_docu)));
 
         case OBJECT_READ_TEXT_EDIT:
-            if(!p_ev_cell->parms.data_only)
+            if(!p_ev_cell->ev_parms.data_only)
             { /* can only possibly in-cell edit constants */
                 return(STATUS_FAIL);
             }
@@ -3515,7 +3473,7 @@ T5_MSG_PROTO(static, ss_msg_load_cell_ownform, _InoutRef_ P_LOAD_CELL_OWNFORM p_
                                  &p_load_cell_ownform->region_saved,
                                  &compile_error,
                                  &pos,
-                                 p_load_cell_ownform->tstr_mrofmun_style,
+                                 p_load_cell_ownform->tstr_autoformat_style,
                                  FALSE,
                                  FALSE,
                                  global_preferences.ss_calc_on_load,
@@ -3554,35 +3512,35 @@ T5_MSG_PROTO(static, ss_msg_save_cell_ownform, _InoutRef_ P_SAVE_CELL_OWNFORM p_
         const EV_DOCNO ev_docno = ev_docno_from_p_docu(p_docu);
         BOOL save_data = TRUE;
 
-        if(p_ev_cell->parms.style_handle_mrofmun)
+        if(p_ev_cell->ev_parms.style_handle_autoformat)
         {
-            const PC_STYLE p_style = p_style_from_handle(p_docu, (STYLE_HANDLE) p_ev_cell->parms.style_handle_mrofmun);
+            const PC_STYLE p_style = p_style_from_handle(p_docu, UBF_UNPACK(STYLE_HANDLE, p_ev_cell->ev_parms.style_handle_autoformat));
 
             if(p_style && style_bit_test(p_style, STYLE_SW_NAME))
-                p_save_cell_ownform->tstr_mrofmun_style = array_tstr(&p_style->h_style_name_tstr);
+                p_save_cell_ownform->tstr_autoformat_style = array_tstr(&p_style->h_style_name_tstr);
         }
 
-        if(p_ev_cell->parms.data_only)
+        if(p_ev_cell->ev_parms.data_only)
         {
-        switch(p_ev_cell->parms.did_num)
+        switch(p_ev_cell->ev_parms.data_id)
         {
-        case RPN_DAT_REAL:
-        case RPN_DAT_BOOL8:
-        case RPN_DAT_WORD8:
-        case RPN_DAT_WORD16:
-        case RPN_DAT_WORD32:
+        case DATA_ID_REAL:
+        case DATA_ID_LOGICAL:
+        case DATA_ID_WORD8:
+        case DATA_ID_WORD16:
+        case DATA_ID_WORD32:
             p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_CONSTANT;
             break;
 
-        case RPN_DAT_STRING:
+        case DATA_ID_STRING:
             p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_TEXT;
             break;
 
-        case RPN_DAT_ARRAY:
+        case DATA_ID_ARRAY:
             p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_ARRAY;
             break;
 
-        case RPN_DAT_DATE:
+        case DATA_ID_DATE:
             p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_DATE;
             break;
 
@@ -3602,9 +3560,9 @@ T5_MSG_PROTO(static, ss_msg_save_cell_ownform, _InoutRef_ P_SAVE_CELL_OWNFORM p_
 
         if(status_ok(status) && save_data)
         {
-            EV_DATA ev_data;
-            ev_data_from_ev_cell(&ev_data, p_ev_cell);
-            status = ev_data_decode(&p_save_cell_ownform->contents_data_quick_ublock, &ev_data, ev_docno);
+            SS_DATA ss_data;
+            ss_data_from_ev_cell(&ss_data, p_ev_cell);
+            status = ss_data_decode(&p_save_cell_ownform->contents_data_quick_ublock, &ss_data, ev_docno);
         }
     }
 
@@ -3617,7 +3575,7 @@ T5_MSG_PROTO(static, ss_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN p_
     SLR slr_offset;
     PC_USTR ustr_result = NULL;
     PC_USTR ustr_formula = NULL;
-    BOOL do_mrofmun = TRUE;
+    BOOL try_autoformat = TRUE;
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
@@ -3644,9 +3602,9 @@ T5_MSG_PROTO(static, ss_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN p_
         return(STATUS_FAIL);
     }
 
-    /* if we will be setting any explicit number formatting style, don't mrofmun here */
+    /* if we will be setting any explicit number formatting style, don't autoformat here */
     if(style_selector_test(&p_load_cell_foreign->style.selector, &style_selector_ob_ss_numform_all))
-        do_mrofmun = FALSE;
+        try_autoformat = FALSE;
 
     /* adjust refs for load offset */
     slr_offset.col = p_load_cell_foreign->object_data.data_ref.arg.slr.col - p_load_cell_foreign->original_slr.col;
@@ -3664,7 +3622,7 @@ T5_MSG_PROTO(static, ss_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN p_
                                  &compile_error,
                                  &pos,
                                  NULL,
-                                 do_mrofmun,
+                                 try_autoformat,
                                  FALSE,
                                  global_preferences.ss_calc_on_load,
                                  FALSE /*clip_data_from_cut_operation*/);
@@ -3784,7 +3742,7 @@ T5_MSG_PROTO(static, ss_msg_new_object_from_text, _InoutRef_ P_NEW_OBJECT_FROM_T
                                  &p_new_object_from_text->status,
                                  &p_new_object_from_text->pos,
                                  NULL,
-                                 p_new_object_from_text->please_mrofmun,
+                                 p_new_object_from_text->try_autoformat,
                                  p_new_object_from_text->please_uref_overwrite,
                                  FALSE,
                                  FALSE);
@@ -3825,7 +3783,7 @@ T5_MSG_PROTO(static, t5_ext_style_mrofmun, _InoutRef_ P_IMPLIED_STYLE_QUERY p_im
 
     if(P_DATA_NONE != p_ev_cell)
     {
-        STYLE_HANDLE style_handle = (STYLE_HANDLE) p_ev_cell->parms.style_handle_mrofmun;
+        STYLE_HANDLE style_handle = UBF_UNPACK(STYLE_HANDLE, p_ev_cell->ev_parms.style_handle_autoformat);
 
         if(style_handle > 0)
         {
@@ -3910,7 +3868,7 @@ T5_CMD_PROTO(static, t5_cmd_replicate)
             uref_parms.source.region.br.row -= 1;
         else /*if(left)*/
             uref_parms.source.region.br.col -= 1;
-        uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+        uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
         } /*block*/
 
         slr_to = slr_from_s;
@@ -4108,6 +4066,7 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
 {
     STATUS status = STATUS_OK;
     PC_USTR ustr = ustr_empty_string;
+    U32 wss;
     NEW_OBJECT_FROM_TEXT new_object_from_text;
     QUICK_UBLOCK quick_ublock;
 
@@ -4120,6 +4079,8 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
             ustr = p_arg->val.ustr;
     }
 
+    wss = ss_string_skip_leading_whitespace_uchars(ustr, ustrlen32p1(ustr));
+
     quick_ublock_setup_fill_from_const_ubuf(&quick_ublock, ustr, ustrlen32p1(ustr));
 
     data_ref_from_slr(&new_object_from_text.data_ref, &p_docu->cur.slr);
@@ -4127,7 +4088,11 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
     new_object_from_text.status = STATUS_OK;
     new_object_from_text.please_redraw = TRUE;
     new_object_from_text.please_uref_overwrite = TRUE;
-    new_object_from_text.please_mrofmun = FALSE; /* SKS 17nov95 confirms */
+#if 1
+    new_object_from_text.try_autoformat = ('=' != PtrGetByteOff(ustr, wss)); /* don't bother if definitely a formula; NB preserve leading whitespace for formula esp. custom */
+#else
+    new_object_from_text.try_autoformat = FALSE; /* SKS 17nov95 confirms */
+#endif
 
     style_docu_area_uref_hold(p_docu, &p_docu->h_style_docu_area, &p_docu->cur.slr);
 
@@ -4161,11 +4126,11 @@ T5_MSG_PROTO(static, ss_msg_object_snapshot, _InRef_ P_OBJECT_SNAPSHOT p_object_
 
     if(P_DATA_NONE != p_ev_cell)
     {
-        if(!p_ev_cell->parms.data_only && (RPN_DAT_ERROR != p_ev_cell->parms.did_num))
+        if(!p_ev_cell->ev_parms.data_only && (DATA_ID_ERROR != p_ev_cell->ev_parms.data_id))
         {
-            EV_DATA ev_data, ev_data_copy;
-            ev_data_from_ev_cell(&ev_data, p_ev_cell);
-            status_assert(ss_data_resource_copy(&ev_data_copy, &ev_data));
+            SS_DATA ss_data, ss_data_copy;
+            ss_data_from_ev_cell(&ss_data, p_ev_cell);
+            status_assert(ss_data_resource_copy(&ss_data_copy, &ss_data));
 
             /* tell dependents about it */
             if(p_object_snapshot->do_uref_overwrite)
@@ -4175,15 +4140,15 @@ T5_MSG_PROTO(static, ss_msg_object_snapshot, _InRef_ P_OBJECT_SNAPSHOT p_object_
                                      &p_object_snapshot->object_data.data_ref.arg.slr,
                                      &p_object_snapshot->object_data.data_ref.arg.slr,
                                      TRUE);
-                uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+                uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
             }
 
             if(status_ok(status = object_realloc(p_docu, (P_P_ANY) &p_ev_cell, &p_object_snapshot->object_data.data_ref.arg.slr, OBJECT_ID_SS, OVH_EV_CELL)))
             {
-                zero_struct(p_ev_cell->parms);
-                p_ev_cell->parms.data_only = 1;
+                zero_struct(p_ev_cell->ev_parms);
+                p_ev_cell->ev_parms.data_only = 1;
 
-                ev_cell_constant_from_data(p_ev_cell, &ev_data_copy);
+                ev_cell_constant_from_data(p_ev_cell, &ss_data_copy);
             }
         }
     }
@@ -4307,7 +4272,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    ev_data_set_blank(&p_ss_name_read->ev_data);
+    ss_data_set_blank(&p_ss_name_read->ss_data);
 
     if(name_num >= 0)
     {
@@ -4317,21 +4282,33 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
             status = create_error(EVAL_ERR_NAMEUNDEF);
         else
         {
-            PC_EV_DATA p_ev_data;
-            EV_DATA ev_data;
+            PC_SS_DATA p_ss_data = &p_ev_name->def_data;
+            SS_DATA ss_data;
 
-            ev_data_set_blank(&ev_data);
+            ss_data_set_blank(&ss_data);
 
-            if((RPN_DAT_SLR == p_ss_name_read->follow_indirection) && p_ev_name->def_data.did_num)
+            if(p_ss_name_read->follow_indirection)
             {
-                ev_slr_deref(&ev_data, &p_ev_name->def_data.arg.slr);
-                p_ev_data = &ev_data;
-            }
-            else
-                p_ev_data = &p_ev_name->def_data;
+                switch(ss_data_get_data_id(&p_ev_name->def_data))
+                {
+                default:
+                    break;
 
-            status_assert(ss_data_resource_copy(&p_ss_name_read->ev_data, p_ev_data));
-            ss_data_free_resources(&ev_data);
+                case DATA_ID_SLR:
+                    ev_slr_deref(&ss_data, &p_ev_name->def_data.arg.slr);
+                    p_ss_data = &ss_data;
+                    break;
+
+                case DATA_ID_RANGE:
+                    ev_slr_deref(&ss_data, &p_ev_name->def_data.arg.range.s);
+                    p_ss_data = &ss_data;
+                    break;
+                }
+            }
+
+            status = ss_data_resource_copy(&p_ss_name_read->ss_data, p_ss_data);
+
+            ss_data_free_resources(&ss_data);
 
             p_ss_name_read->ustr_description = p_ev_name->ustr_description; /* NB loan to caller */
         }
@@ -4340,7 +4317,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
         status = create_error(EVAL_ERR_NAMEUNDEF);
 
     if(status_fail(status))
-        return(ev_data_set_error(&p_ss_name_read->ev_data, status));
+        return(ss_data_set_error(&p_ss_name_read->ss_data, status));
 
     return(STATUS_OK);
 }

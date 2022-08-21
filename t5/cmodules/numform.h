@@ -34,7 +34,7 @@ extern STATUS
 numform(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended,terminated*/,
     _InoutRef_opt_ P_QUICK_TBLOCK p_quick_tblock_style /*appended,terminated*/,
-    _InRef_     PC_EV_DATA p_ev_data,
+    _InRef_     PC_SS_DATA p_ss_data,
     _InRef_     PC_NUMFORM_PARMS p_numform_parms);
 
 #endif /* __numform_h */

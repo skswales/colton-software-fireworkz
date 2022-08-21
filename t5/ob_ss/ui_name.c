@@ -112,7 +112,7 @@ ss_name_intro_value =
     SS_NAME_INTRO_ID_VALUE, DIALOG_MAIN_GROUP,
     { SS_NAME_INTRO_ID_LIST_CAPTION, SS_NAME_INTRO_ID_VALUE_CAPTION, SS_NAME_INTRO_ID_LIST },
     { 0, DIALOG_SMALLSPACING_V, 0, DIALOG_STDEDIT_V },
-    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+    { DRT(LBRT, EDIT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -148,7 +148,7 @@ ss_name_intro_insert =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { DIALOG_STDSPACING_H, 0, (3 * PIXITS_PER_INCH) / 4, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+    { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
@@ -297,12 +297,12 @@ encode_from_selected_name(
             SS_RECOG_CONTEXT ss_recog_context;
             zero_struct(ss_name_read);
             ss_name_read.ev_handle = status;
-            ev_data_set_blank(&ss_name_read.ev_data);
+            ss_data_set_blank(&ss_name_read.ss_data);
             ss_name_read.follow_indirection = FALSE;
             ss_recog_context_push(&ss_recog_context);
             status = object_call_id(OBJECT_ID_SS, p_docu, T5_MSG_SS_NAME_READ, &ss_name_read);
             if(status_ok(status))
-                status = ev_data_decode(&quick_ublock, &ss_name_read.ev_data, ev_docno_from_p_docu(p_docu));
+                status = ss_data_decode(&quick_ublock, &ss_name_read.ss_data, ev_docno_from_p_docu(p_docu));
             ss_recog_context_pull(&ss_recog_context);
             ustr_description = ss_name_read.ustr_description; /* NOT owned by us */
             kosher_selection = TRUE;
@@ -450,11 +450,11 @@ ss_name_intro_edit_using_callback(
             SS_RECOG_CONTEXT ss_recog_context;
             zero_struct(ss_name_read);
             ss_name_read.ev_handle = status;
-            ev_data_set_blank(&ss_name_read.ev_data);
+            ss_data_set_blank(&ss_name_read.ss_data);
             ss_name_read.follow_indirection = FALSE;
             ss_recog_context_push(&ss_recog_context);
             if(status_ok(status = object_call_id(OBJECT_ID_SS, p_docu, T5_MSG_SS_NAME_READ, &ss_name_read)))
-                status = ev_data_decode(&quick_ublock, &ss_name_read.ev_data, ev_docno_from_p_docu(p_docu));
+                status = ss_data_decode(&quick_ublock, &ss_name_read.ss_data, ev_docno_from_p_docu(p_docu));
             ss_recog_context_pull(&ss_recog_context);
             ustr_description = ss_name_read.ustr_description; /* NOT owned by us */
             } /*block*/

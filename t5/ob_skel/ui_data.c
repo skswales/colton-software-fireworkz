@@ -48,7 +48,7 @@ dialog_main_group =
     DIALOG_MAIN_GROUP, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0 },
-    { DRT(LTRB, GROUPBOX) }
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 const DIALOG_CONTROL
@@ -57,7 +57,7 @@ dialog_col1_group =
     DIALOG_COL1_GROUP, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0 },
-    { DRT(LTRB, GROUPBOX) }
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 const DIALOG_CONTROL
@@ -66,7 +66,7 @@ dialog_col2_group =
     DIALOG_COL2_GROUP, DIALOG_MAIN_GROUP,
     { DIALOG_COL1_GROUP, DIALOG_COL1_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { DIALOG_GROUPSPACING_H, 0, 0, 0 },
-    { DRT(RTRB, GROUPBOX) }
+    { DRT(RTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 const DIALOG_CONTROL
@@ -126,23 +126,47 @@ rgb_group_inner =
     DIALOG_ID_RGB_GROUP_INNER, DIALOG_ID_RGB_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM },
-    { DRT(LTRB, GROUPBOX) }
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 const DIALOG_CONTROL
 rgb_tx[3] =
 {
-    { DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_GROUP_INNER, { DIALOG_CONTROL_PARENT, DIALOG_ID_RGB_R, DIALOG_CONTROL_SELF, DIALOG_ID_RGB_R },  { DIALOG_STDCHECK_H + DIALOG_SMALLSPACING_H, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) } },
-    { DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_GROUP_INNER, { DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_G, DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_G },  { 0 }, { DRT(LTRB, STATICTEXT) } },
-    { DIALOG_ID_RGB_TX_B, DIALOG_ID_RGB_GROUP_INNER, { DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_B, DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_B },  { 0 }, { DRT(LTRB, STATICTEXT) } }
+    {
+        DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_GROUP_INNER,
+        { DIALOG_CONTROL_PARENT, DIALOG_ID_RGB_R, DIALOG_CONTROL_SELF, DIALOG_ID_RGB_R },
+        { 0, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) }
+    },
+    {
+        DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_GROUP_INNER,
+        { DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_G, DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_G },
+        { 0 }, { DRT(LTRB, STATICTEXT) }
+    },
+    {
+        DIALOG_ID_RGB_TX_B, DIALOG_ID_RGB_GROUP_INNER,
+        { DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_B, DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_B },
+        { 0 }, { DRT(LTRB, STATICTEXT) }
+    }
 };
 
 const DIALOG_CONTROL
 rgb_bump[3] =
 {
-    { DIALOG_ID_RGB_R, DIALOG_ID_RGB_GROUP_INNER, { DIALOG_ID_RGB_TX_R, DIALOG_CONTROL_PARENT },  { DIALOG_SMALLSPACING_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ } },
-    { DIALOG_ID_RGB_G, DIALOG_ID_RGB_GROUP_INNER, { DIALOG_ID_RGB_R, DIALOG_ID_RGB_R, DIALOG_ID_RGB_R },  { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ } },
-    { DIALOG_ID_RGB_B, DIALOG_ID_RGB_GROUP_INNER, { DIALOG_ID_RGB_G, DIALOG_ID_RGB_G, DIALOG_ID_RGB_G },  { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ } }
+    {
+        DIALOG_ID_RGB_R, DIALOG_ID_RGB_GROUP_INNER,
+        { DIALOG_ID_RGB_TX_R, DIALOG_CONTROL_PARENT },
+        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+    },
+    {
+        DIALOG_ID_RGB_G, DIALOG_ID_RGB_GROUP_INNER,
+        { DIALOG_ID_RGB_R, DIALOG_ID_RGB_R, DIALOG_ID_RGB_R },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+    },
+    {
+        DIALOG_ID_RGB_B, DIALOG_ID_RGB_GROUP_INNER,
+        { DIALOG_ID_RGB_G, DIALOG_ID_RGB_G, DIALOG_ID_RGB_G },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+    }
 };
 
 const DIALOG_CONTROL
@@ -793,11 +817,11 @@ ui_dlg_ctl_size_estimate(
     status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_SIZE_ESTIMATE, p_dialog_cmd_ctl_size_estimate));
 }
 
-extern void
+_Check_return_
+extern F64
 ui_dlg_get_f64(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
-    /*out*/ P_F64 p_f64)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
@@ -805,7 +829,7 @@ ui_dlg_get_f64(
     dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
     status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
-    *p_f64 = dialog_cmd_ctl_state_query.state.bump_f64;
+    return(dialog_cmd_ctl_state_query.state.bump_f64);
 }
 
 _Check_return_
@@ -916,14 +940,14 @@ extern STATUS
 ui_dlg_set_f64(
     _InVal_     H_DIALOG h_dialog,
     _InVal_     DIALOG_CONTROL_ID dialog_control_id,
-    _InRef_     PC_F64 p_f64)
+    _InVal_     F64 f64)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
     dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
-    dialog_cmd_ctl_state_set.state.bump_f64 = *p_f64;
+    dialog_cmd_ctl_state_set.state.bump_f64 = f64;
     return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
@@ -1058,17 +1082,14 @@ ui_dlg_ctl_set_default(
 _Check_return_
 extern S32
 ui_dlg_s32_from_f64(
-    _InRef_     PC_F64 p_f64,
-    _InRef_opt_ PC_F64 p_multiplier,
+    _InVal_     F64 f64_in,
     _InVal_     S32 s32_min,
     _InVal_     S32 s32_max)
 {
-    F64 f64 = *p_f64;
+    F64 f64;
     S32 s32 = 0;
     errno = 0;
-    if(NULL != p_multiplier)
-        f64 *= *p_multiplier;
-    f64 += 0.5;
+    f64 = round(f64_in);
     if(f64 > (F64) s32_max)
     {
         errno = ERANGE;
@@ -1650,23 +1671,23 @@ ui_text_alloc_from_ustr(
 
 _Check_return_
 extern STATUS
-ui_text_alloc_from_p_ev_string(
+ui_text_alloc_from_ss_string(
     _OutRef_    P_UI_TEXT p_dst_ui_text,
-    _InRef_opt_ PC_EV_STRINGC p_ev_string)
+    _InRef_opt_ PC_SS_STRINGC p_ss_string)
 {
     p_dst_ui_text->type = UI_TEXT_TYPE_NONE;
 
-    if((NULL == p_ev_string) || (NULL == p_ev_string->uchars))
+    if((NULL == p_ss_string) || (NULL == p_ss_string->uchars))
         return(STATUS_OK);
 
-    if(0 == p_ev_string->size)
+    if(0 == p_ss_string->size)
     {
         p_dst_ui_text->type = UI_TEXT_TYPE_TSTR_PERM;
         p_dst_ui_text->text.tstr = tstr_empty_string;
         return(STATUS_OK);
     }
 
-    status_return(ustr_set_n(&p_dst_ui_text->text.ustr_wr, p_ev_string->uchars, p_ev_string->size));
+    status_return(ustr_set_n(&p_dst_ui_text->text.ustr_wr, p_ss_string->uchars, p_ss_string->size));
     p_dst_ui_text->type = UI_TEXT_TYPE_USTR_ALLOC;
     return(STATUS_OK);
 }
@@ -2014,14 +2035,14 @@ ui_text_from_data(
     case UI_DATA_TYPE_F64:
         {
         PC_UI_CONTROL_F64 p = (PC_UI_CONTROL_F64) p_ui_control;
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         NUMFORM_PARMS numform_parms;
         QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 1);
         quick_ublock_with_buffer_setup(quick_ublock);
 
         p_ui_text->text.array_handle_ustr = 0;
 
-        ev_data_set_real(&ev_data, p_ui_data->f64);
+        ss_data_set_real(&ss_data, p_ui_data->f64);
 
         zero_struct(numform_parms);
 
@@ -2038,7 +2059,7 @@ ui_text_from_data(
 
         numform_parms.p_numform_context = get_p_numform_context(P_DOCU_NONE);
 
-        status_return(numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+        status_return(numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
         if(quick_ublock_bytes(&quick_ublock) < 2)
         {

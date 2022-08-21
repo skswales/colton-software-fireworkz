@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2019 Stuart Swales */
+/* Copyright (C) 2012-2020 Stuart Swales */
 
 /* Additional math routines */
 
@@ -22,21 +22,23 @@ exported functions
 */
 
 _Check_return_
-extern F64
+extern double
 normal_distribution(void);
 
+/* Generates a random number on [0,1) */ 
+
 _Check_return_
-extern F64
+extern double
 uniform_distribution(void);
 
 extern void
 uniform_distribution_seed(
-    _InVal_     unsigned int seed);
+    _In_    const unsigned int seed);
 
 /*ncr*/
-extern BOOL
+extern bool
 uniform_distribution_test_seeded(
-    _InVal_     BOOL fEnsure);
+    _In_    const bool fEnsure);
 
 #endif /* __mathxtr3_h */
 

@@ -138,7 +138,7 @@ dict_add =
     CONTROL_ID_ADD, DIALOG_CONTROL_WINDOW,
     { CONTROL_ID_GUESS, CONTROL_ID_GUESS, CONTROL_ID_GUESS },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_ID

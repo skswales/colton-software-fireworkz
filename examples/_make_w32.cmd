@@ -2,7 +2,7 @@
 @rem License, v. 2.0. If a copy of the MPL was not distributed with this
 @rem file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-@rem Copyright (C) 2014-2019 Stuart Swales
+@rem Copyright (C) 2014-2020 Stuart Swales
 
 @rem Assumes N: is mapped to the root of your development tree i.e. the dir containing \fireworkz
 @rem You can easily do this with a batch file dropped in your Startup folder
@@ -21,7 +21,7 @@ copy /A "%SRC_DIR%\Chars,bdf"                %OUT_DIR%\Chars.fwk
 copy /A "%SRC_DIR%\Commands,bdf"             %OUT_DIR%\Commands.fwk
 copy /A "%SRC_DIR%\Keystrokes,bdf"           %OUT_DIR%\Keystrokes.fwk
 copy /A "%SRC_DIR%\Numforms,bdf"             %OUT_DIR%\Numforms.fwk
-copy /A "%SRC_DIR%\YearPlan14,bdf"           %OUT_DIR%\YearPlan14.fwk
+copy /A "%SRC_DIR%\YearPlan20,bdf"           %OUT_DIR%\YearPlan20.fwk
 @rem
 copy /A "%SRC_DIR%\Charts\Bar,bdf"           %OUT_DIR%\Charts\Bar.fwk
 copy /A "%SRC_DIR%\Charts\Bar_unempl,bdf"    %OUT_DIR%\Charts\Bar_unempl.fwk
@@ -61,6 +61,7 @@ copy /A "%SRC_DIR%\Functions\trig,bdf"       %OUT_DIR%\Functions\trig.fwk
 
 copy /A "%SRC_DIR%\Functions\Maths\Maths,bdf"            %OUT_DIR%\Functions\Maths\Maths.fwk
 copy /A "%SRC_DIR%\Functions\Maths\Quotient,bdf"         %OUT_DIR%\Functions\Maths\Quotient.fwk
+copy /A "%SRC_DIR%\Functions\Maths\SeriesSum,bdf"        %OUT_DIR%\Functions\Maths\SeriesSum.fwk
 
 copy /A "%SRC_DIR%\Functions\Statistics\Linest,bdf"      %OUT_DIR%\Functions\Statistics\Linest.fwk
 copy /A "%SRC_DIR%\Functions\Statistics\Linest_m,bdf"    %OUT_DIR%\Functions\Statistics\Linest_m.fwk

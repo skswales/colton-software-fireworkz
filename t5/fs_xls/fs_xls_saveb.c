@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2019 Stuart Swales */
+/* Copyright (C) 2014-2020 Stuart Swales */
 
 /* Excel spreadsheet BIFF saver */
 
@@ -23,6 +23,8 @@
 #ifndef          __typepack_h
 #include "cmodules/typepack.h"
 #endif
+
+#include <ctype.h> /* for "C"isalpha and friends */
 
 /******************************************************************************
 *
@@ -2101,7 +2103,7 @@ _Check_return_
 static STATUS
 xls_write_NUMBER_record(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
-    _InRef_     PC_F64 p_f64,
+    _InVal_     F64 f64,
     _InRef_     PC_SLR p_slr)
 {
     const XLS_OPCODE opcode = X_NUMBER_B3_B8;
@@ -2121,7 +2123,7 @@ xls_write_NUMBER_record(
 
     /* 4,5 are XF index (already set) */
 
-    writeval_F64_as_8087(&x[6], *p_f64);
+    writeval_F64_as_8087(&x[6], f64);
 
     return(xls_write_record(p_ff_op_format, opcode, sizeof_x, x));
 }
@@ -2135,13 +2137,13 @@ xls_write_NUMBER_record(
 _Check_return_
 static F64
 xls_get_f64_from_date(
-    _InRef_     PC_EV_DATE p_ev_date)
+    _InRef_     PC_SS_DATE p_ss_date)
 {
     F64 f64 = 0.0;
 
-    if(EV_DATE_NULL != p_ev_date->date)
+    if(SS_DATE_NULL != p_ss_date->date)
     {   /* Convert the date component to a largely Excel-compatible serial number */
-        S32 serial_number = ss_dateval_to_serial_number(&p_ev_date->date);
+        S32 serial_number = ss_dateval_to_serial_number(p_ss_date->date);
 
         /* Excel can't represent dates earlier than 1900 at all (and doesn't correctly handle 1900 as non-leap year) */
         if( (serial_number <      61) /* 1st March 1900 is first common OK date */ ||
@@ -2153,9 +2155,9 @@ xls_get_f64_from_date(
         f64 = (F64) serial_number;
     }
 
-    if(EV_TIME_NULL != p_ev_date->time)
+    if(SS_TIME_NULL != p_ss_date->time)
     {
-        f64 += ss_timeval_to_serial_fraction(&p_ev_date->time);
+        f64 += ss_timeval_to_serial_fraction(p_ss_date->time);
     }
 
     return(f64);
@@ -2165,7 +2167,7 @@ _Check_return_
 static STATUS
 xls_write_date(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
-    _InRef_     PC_EV_DATE p_ev_date,
+    _InRef_     PC_SS_DATE p_ss_date,
     _InRef_     PC_SLR p_slr)
 {
     const XLS_OPCODE opcode = X_NUMBER_B3_B8;
@@ -2183,7 +2185,7 @@ xls_write_date(
 
     /* 4,5 are XF index (already set) */
 
-    writeval_F64_as_8087(&x[6], xls_get_f64_from_date(p_ev_date));
+    writeval_F64_as_8087(&x[6], xls_get_f64_from_date(p_ss_date));
 
     return(xls_write_record(p_ff_op_format, opcode, sizeof_x, x));
 }
@@ -2342,43 +2344,43 @@ static STATUS
 xls_write_cell_ss_constant(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
     _InRef_     PC_SLR p_slr,
-    P_EV_DATA p_ev_data)
+    P_SS_DATA p_ss_data)
 {
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_REAL:
+    case DATA_ID_REAL:
         {
-        const F64 f64 = p_ev_data->arg.fp;
-        return(xls_write_NUMBER_record(p_ff_op_format, &f64, p_slr));
+        const F64 f64 = ss_data_get_real(p_ss_data);
+        return(xls_write_NUMBER_record(p_ff_op_format, f64, p_slr));
         }
 
-    case RPN_DAT_BOOL8:
-        return(xls_write_BOOLERR_record_boolean(p_ff_op_format, (U8) p_ev_data->arg.integer, p_slr));
+    case DATA_ID_LOGICAL:
+        return(xls_write_BOOLERR_record_boolean(p_ff_op_format, (U8) ss_data_get_integer(p_ss_data), p_slr));
 
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
         {
-        const F64 f64 = (F64) p_ev_data->arg.integer;
-        return(xls_write_NUMBER_record(p_ff_op_format, &f64, p_slr));
+        const F64 f64 = (F64) ss_data_get_integer(p_ss_data);
+        return(xls_write_NUMBER_record(p_ff_op_format, f64, p_slr));
         }
 
-    case RPN_DAT_STRING:
-        if(p_ev_data->arg.string.size > 255)
-            return(xls_write_LABEL_record(p_ff_op_format, p_ev_data->arg.string.uchars, p_ev_data->arg.string.size, p_slr));
+    case DATA_ID_STRING:
+        if(ss_data_get_string_size(p_ss_data) > 255)
+            return(xls_write_LABEL_record(p_ff_op_format, ss_data_get_string(p_ss_data), ss_data_get_string_size(p_ss_data), p_slr));
 
-        return(xls_write_string(p_ff_op_format, p_ev_data->arg.string.uchars, p_ev_data->arg.string.size, p_slr));
+        return(xls_write_string(p_ff_op_format, ss_data_get_string(p_ss_data), ss_data_get_string_size(p_ss_data), p_slr));
 
-    case RPN_DAT_DATE:
-        return(xls_write_date(p_ff_op_format, &p_ev_data->arg.ev_date, p_slr));
+    case DATA_ID_DATE:
+        return(xls_write_date(p_ff_op_format, ss_data_get_date(p_ss_data), p_slr));
 
-    case RPN_DAT_BLANK:
+    case DATA_ID_BLANK:
         return(xls_write_BLANK_record(p_ff_op_format, p_slr));
 
     default: default_unhandled();
 #if CHECKING
-    case RPN_DAT_ARRAY:
-    case RPN_DAT_ERROR:
+    case DATA_ID_ARRAY:
+    case DATA_ID_ERROR:
 #endif
         break;
     }
@@ -2431,7 +2433,7 @@ xls_write_cell_ss_normal(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
     _InRef_     PC_SLR p_slr,
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /* NOT CH_NULL-terminated */,
-    P_EV_DATA p_ev_data)
+    P_SS_DATA p_ss_data)
 {
     STATUS status = STATUS_OK;
     BYTE quick_block_rpn_buffer[200];
@@ -2458,18 +2460,18 @@ xls_write_cell_ss_normal(
         PC_UCHARS string_uchars = NULL;
         U32 string_size = 0;
 
-        switch(p_ev_data->did_num)
+        switch(ss_data_get_data_id(p_ss_data))
         {
         default: default_unhandled();
 #if CHECKING
-        case RPN_DAT_ARRAY:
-        case RPN_DAT_ERROR:
+        case DATA_ID_ARRAY:
+        case DATA_ID_ERROR:
 #endif
             break;
 
-        case RPN_DAT_REAL:
+        case DATA_ID_REAL:
             {
-            const F64 f64_result = p_ev_data->arg.fp;
+            const F64 f64_result = ss_data_get_real(p_ss_data);
             if(isfinite((double) f64_result))
                 writeval_F64_as_8087(&x[6], f64_result);
             else
@@ -2477,23 +2479,23 @@ xls_write_cell_ss_normal(
             break;
             }
 
-        case RPN_DAT_BOOL8:
-            encode_result_BOOLEAN(&x[6], p_ev_data->arg.boolean);
+        case DATA_ID_LOGICAL:
+            encode_result_BOOLEAN(&x[6], ss_data_get_logical(p_ss_data));
             break;
 
-        case RPN_DAT_WORD8:
-        case RPN_DAT_WORD16:
-        case RPN_DAT_WORD32:
+        case DATA_ID_WORD8:
+        case DATA_ID_WORD16:
+        case DATA_ID_WORD32:
             {
-            const F64 f64_result = (F64) p_ev_data->arg.integer;
+            const F64 f64_result = (F64) ss_data_get_integer(p_ss_data);
             writeval_F64_as_8087(&x[6], f64_result);
             break;
             }
 
-        case RPN_DAT_STRING:
+        case DATA_ID_STRING:
             if(biff_version == 8)
             {
-                if(0 == p_ev_data->arg.string.size)
+                if(0 == ss_data_get_string_size(p_ss_data))
                 {
                     encode_result_EMPTY(&x[6]);
                     break;
@@ -2501,13 +2503,13 @@ xls_write_cell_ss_normal(
             }
 
             encode_result_STRING(&x[6]);
-            string_uchars = p_ev_data->arg.string.uchars;
-            string_size = p_ev_data->arg.string.size;
+            string_uchars = ss_data_get_string(p_ss_data);
+            string_size = ss_data_get_string_size(p_ss_data);
             break;
 
-        case RPN_DAT_DATE:
+        case DATA_ID_DATE:
             {
-            const F64 f64_result = xls_get_f64_from_date(&p_ev_data->arg.ev_date);
+            const F64 f64_result = xls_get_f64_from_date(ss_data_get_date(p_ss_data));
             if(isfinite((double) f64_result))
                 writeval_F64_as_8087(&x[6], f64_result);
             else
@@ -2515,7 +2517,7 @@ xls_write_cell_ss_normal(
             break;
             }
 
-        case RPN_DAT_BLANK:
+        case DATA_ID_BLANK:
             if(biff_version == 8)
             {
                 encode_result_EMPTY(&x[6]);
@@ -2574,7 +2576,7 @@ xls_write_cell_ss(
 
     if(object_data_read.constant)
     {
-        status = xls_write_cell_ss_constant(p_ff_op_format, &object_data_read.object_data.data_ref.arg.slr, &object_data_read.ev_data);
+        status = xls_write_cell_ss_constant(p_ff_op_format, &object_data_read.object_data.data_ref.arg.slr, &object_data_read.ss_data);
     }
     else
     {
@@ -2604,12 +2606,12 @@ xls_write_cell_ss(
         } /*block*/
 
         if(status_ok(status))
-            status = xls_write_cell_ss_normal(p_ff_op_format, &object_data_read.object_data.data_ref.arg.slr, &quick_ublock, &object_data_read.ev_data);
+            status = xls_write_cell_ss_normal(p_ff_op_format, &object_data_read.object_data.data_ref.arg.slr, &quick_ublock, &object_data_read.ss_data);
 
         quick_ublock_dispose(&quick_ublock);
     }
 
-    ss_data_free_resources(&object_data_read.ev_data);
+    ss_data_free_resources(&object_data_read.ss_data);
 
     return(status);
 }

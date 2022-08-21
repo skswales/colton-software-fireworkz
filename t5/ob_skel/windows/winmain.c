@@ -17,6 +17,14 @@
 
 #include "ob_file/xp_file.h"
 
+#include <locale.h> /* for setlocale */
+
+#include <time.h> /* for _tzset */
+
+#if CHECKING
+#include <crtdbg.h>
+#endif
+
 /*
 Windows libraries (saves hacking link properties in project which seem to differ between releases of Visual Studio)
 */
@@ -1032,6 +1040,31 @@ host_longjmp_to_event_loop(int val)
         longjmp(event_loop_jmp_buf, val);
 }
 
+static void
+host_report_and_trace_enable(void)
+{
+    { /* allow application to run without any report info */
+    BOOL enable = FALSE;
+    TCHARZ env_value[BUF_MAX_PATHSTRING];
+    if(0 != MyGetProfileString(TEXT("ReportEnable"), tstr_empty_string, env_value, elemof32(env_value)))
+        enable = (0 != _tstoi(env_value)); /*atoi*/
+    report_enable(enable);
+    } /* block */
+
+#if TRACE_ALLOWED
+    { /* Allow a version built with TRACE_ALLOWED to run on an end-user's system without outputting any trace info */
+    BOOL enable = FALSE;
+    TCHARZ env_value[BUF_MAX_PATHSTRING];
+    if(0 != MyGetProfileString(TEXT("TraceEnable"), tstr_empty_string, env_value, elemof32(env_value)))
+        enable = (0 != _tstoi(env_value)); /*atoi*/
+    if(enable)
+        trace_on();
+    else
+        trace_disable();
+    } /* block */
+#endif /*TRACE_ALLOWED*/
+}
+
 extern int
 WINAPI
 _tWinMain(
@@ -1067,26 +1100,13 @@ _tWinMain(
     } /*block*/
 #endif /* OS */
 
-    { /* allow application to run without any report info */
-    BOOL enable = FALSE;
-    TCHARZ env_value[BUF_MAX_PATHSTRING];
-    if(0 != MyGetProfileString(TEXT("ReportEnable"), tstr_empty_string, env_value, elemof32(env_value)))
-        enable = (0 != _tstoi(env_value)); /*atoi*/
-    report_enable(enable);
-    } /* block */
+#if CHECKING && defined(_DEBUG) && 0
+    int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);// Get current flag
+    tmpFlag |= _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_DELAY_FREE_MEM_DF; // Turn on checking bits
+    _CrtSetDbgFlag(tmpFlag); // Set flag to the new value
+#endif
 
-#if TRACE_ALLOWED
-    { /* Allow a version built with TRACE_ALLOWED to run on an end-user's system without outputting any trace info */
-    BOOL enable = FALSE;
-    TCHARZ env_value[BUF_MAX_PATHSTRING];
-    if(0 != MyGetProfileString(TEXT("TraceEnable"), tstr_empty_string, env_value, elemof32(env_value)))
-        enable = (0 != _tstoi(env_value)); /*atoi*/
-    if(enable)
-        trace_on();
-    else
-        trace_disable();
-    } /* block */
-#endif /*TRACE_ALLOWED*/
+    host_report_and_trace_enable();
 
     /* set locale for isalpha etc. (ctype.h functions) */
     trace_1(TRACE_OUT | TRACE_ANY, TEXT("main: initial CTYPE locale is %hs"), setlocale(LC_CTYPE, NULL));
@@ -1152,21 +1172,26 @@ _tWinMain(
     }
 
 #if defined(__cplusplus)
+    while_constant(1)
+    {
     /* don't do this kind of shit!!! */
 #else
     /* set up a point we can longjmp back to on serious error */
-    if(setjmp(event_loop_jmp_buf))
-    {   /* returned here from exception - tidy up as necessary */
+    switch(setjmp(event_loop_jmp_buf))
+    {
+    default:
+        /* returned here from exception - tidy up as necessary */
         status_assert(maeve_service_event(P_DOCU_NONE, T5_MSG_HAD_SERIOUS_ERROR, P_DATA_NONE));
 
         trace_0(TRACE_APP_SKEL, TEXT("winmain: Starting to poll for messages again after serious error"));
-    }
-    else
-#endif /* __cplusplus */
-    {
+        break;
+
+    case 0:
         event_loop_jmp_set = TRUE;
+#endif /* __cplusplus */
 
         trace_0(TRACE_APP_SKEL, TEXT("winmain: Starting to poll for messages"));
+        break;
     }
 
     for(;;)

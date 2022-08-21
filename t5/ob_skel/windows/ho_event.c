@@ -127,7 +127,7 @@ events_set_accelerator(
 
 static void
 pause_for_thought(
-    __in DWORD dwMilliseconds)
+    _InVal_     DWORD dwMilliseconds)
 {
     HANDLE handles[1];
     DWORD dword;

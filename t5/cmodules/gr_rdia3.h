@@ -149,8 +149,8 @@ gr_riscdiag_piesector_new(
     _OutRef_    P_DRAW_DIAG_OFFSET pPieStart,
     _InRef_     PC_DRAW_POINT pPos,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 alpha,
-    _InRef_     PC_F64 beta,
+    _InVal_     F64 alpha,
+    _InVal_     F64 beta,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec);
 

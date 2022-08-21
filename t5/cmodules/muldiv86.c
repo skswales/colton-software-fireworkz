@@ -42,11 +42,11 @@ muldiv64_remainder(void)
 }
 
 /*
-* result = dividend * numerator / denominator with 64-bit intermediate calculation
+* result = (dividend * multiplier) / divisor with 64-bit intermediate calculation
 *
 * notes:
-*   1   Will give INT 0 trap if denominator == 0
-*   2   denominator must be +ve
+*   1   Will give INT 0 trap if divisor == 0
+*   2   divisor must be +ve
 *
 */
 
@@ -55,25 +55,28 @@ muldiv64_remainder(void)
 _Check_return_
 extern S32
 muldiv64(
-    _InRef_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator)
+    _InVal_     S32 dividend,
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor)
 {
-    __int64 product_s64;
-    __int64 quotient_s64;
+    int64_t product_s64;
+    int64_t quotient_s64;
     S32 quotient_s32;
 
     muldiv64_statics.remainder = 0;
     muldiv64_statics.overflow = 0;
 
 #if 1
-    product_s64 = __emul(dividend, numerator); /* __int64 mul of two 32-bit values wasteful */
+    product_s64 = __emul(dividend, multiplier); /* __int64 mul of two 32-bit values wasteful */
 #else
-    product_s64 = (S64) dividend * numerator;
+    product_s64 = (S64) dividend * multiplier;
 #endif
 
     /* like idiv_floor */
-    quotient_s64 = ((product_s64 >= 0) ? product_s64 : (product_s64 - denominator + 1)) / denominator;
+    if(product_s64 >= 0)
+        quotient_s64 = product_s64                   / divisor;
+    else
+        quotient_s64 = (product_s64 - (divisor - 1)) / divisor;
 
     if(quotient_s64 < S32_MIN)
     {
@@ -88,91 +91,132 @@ muldiv64(
     else
     {
         quotient_s32 = (S32) quotient_s64;
-        muldiv64_statics.remainder = (S32) (product_s64 - __emul(quotient_s32, denominator)); /* always +ve */
+#if 1
+        muldiv64_statics.remainder = (S32) (product_s64 - __emul(quotient_s32, divisor)); /* always +ve */
+#else
+        muldiv64_statics.remainder = (S32) (product_s64 - ((S64) quotient_s32 * divisor)); /* always +ve */
+#endif
         assert(muldiv64_statics.remainder >= 0);
     }
 
     return(quotient_s32);
 }
 
-/* round result towards +inf */
+/*
+  round result towards +inf as ceil()
+
+  result =
+    (sgn(a*b*divisor) -ve)
+      ?  (a*b)                / divisor
+      : ((a*b) + (divisor-1)) / divisor
+*/
 
 _Check_return_
 extern S32
 muldiv64_ceil(
-    _InRef_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator)
+    _InVal_     S32 dividend,
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor)
 {
-    S32 res = muldiv64(dividend, numerator, denominator);
+    S32 res = muldiv64(dividend, multiplier, divisor);
 
     if(muldiv64_statics.remainder != 0)
     {
-        assert(muldiv64_statics.remainder > 0);
+        const U32 sign_bit = (dividend ^ multiplier ^ divisor) & 0x80000000U;
         assert(0 == muldiv64_statics.overflow);
+        assert(muldiv64_statics.remainder > 0);
         muldiv64_statics.remainder = 0;
-        assert(res != S32_MAX);
-        res += 1;
+        if(sign_bit)
+        {   /*EMPTY*/
+        }
+        else
+        {
+            assert(res != S32_MAX);
+            res += 1;
+        }
     }
 
     return(res);
 }
 
-/* round result towards -inf */
+/*
+  round result towards -inf as floor()
+
+  result =
+    (sgn(a*b*divisor) +ve)
+      ?  (a*b)                / divisor
+      : ((a*b) - (divisor-1)) / divisor
+*/
 
 _Check_return_
 extern S32
 muldiv64_floor(
-    _InRef_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator)
+    _InVal_     S32 dividend,
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor)
 {
-    S32 res = muldiv64(dividend, numerator, denominator);
+    S32 res = muldiv64(dividend, multiplier, divisor);
 
     if(muldiv64_statics.remainder != 0)
     {
-        assert(muldiv64_statics.remainder > 0);
+        const U32 sign_bit = (dividend ^ multiplier ^ divisor) & 0x80000000U;
         assert(0 == muldiv64_statics.overflow);
+        assert(muldiv64_statics.remainder > 0);
         muldiv64_statics.remainder = 0;
+        if(sign_bit)
+        {
+            assert(res != S32_MIN);
+            res -= 1;
+        }
+        else
+        {   /*EMPTY*/
+        }
     }
 
     return(res);
 }
 
+/*
+  round result towards -inf
+
+  result =
+    (sgn(a*b*divisor) +ve)
+      ? ((a*b) + divisor/2) / divisor
+      : ((a*b) - divisor/2) / divisor
+*/
+
 _Check_return_
 extern S32
 muldiv64_round_floor(
-    _InRef_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator)
+    _InVal_     S32 dividend,
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor)
 {
-    S32 res = muldiv64(dividend, numerator, denominator);
+    S32 res = muldiv64(dividend, multiplier, divisor);
 
     if(muldiv64_statics.remainder != 0)
     {
-        const S32 threshold = denominator / 2;
-        assert(muldiv64_statics.remainder > 0);
+        const U32 sign_bit = (dividend ^ multiplier ^ divisor) & 0x80000000U;
+        const S32 threshold = divisor / 2;
         assert(0 == muldiv64_statics.overflow);
+        assert(muldiv64_statics.remainder > 0);
         if(muldiv64_statics.remainder >= threshold)
         {
-            assert(res != S32_MAX);
-            res += 1;
+            if(sign_bit)
+            {
+                assert(res != S32_MIN);
+                res -= 1;
+            }
+            else
+            {
+                assert(res != S32_MAX);
+                res += 1;
+            }
         }
         muldiv64_statics.remainder = 0;
     }
 
     return(res);
-}
-
-extern void
-umul64(
-    _InVal_     U32 a,
-    _InVal_     U32 b,
-    _OutRef_    P_UMUL64_RESULT result)
-{
-    U64 u64 = (U64) a * b;
-    result->LowPart  = (U32) ( u64        & 0xFFFFFFFFU);
-    result->HighPart = (U32) ((u64 >> 32) & 0xFFFFFFFFU);
 }
 
 #else

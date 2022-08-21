@@ -202,7 +202,7 @@ host_wm_dde_initiate(
     const LPARAM lParam_reply = MAKELPARAM(atom_Application, atom_Topic_System); /* reply with our allocated ATOMs */
     reportf(TEXT("DDE SendMessage(client: ") U32_XTFMT TEXT(", WM_DDE_ACK, wParam ") U32_XTFMT TEXT(", lParam ") U32_XTFMT TEXT(")"),
             (U32) (UINT_PTR) hwnd_client, (U32) wParam_reply, (U32) lParam_reply);
-    void_WrapOsBoolChecking(SendMessage(hwnd_client, WM_DDE_ACK, wParam_reply, lParam_reply));
+    consume(LRESULT, SendMessage(hwnd_client, WM_DDE_ACK, wParam_reply, lParam_reply));
     } /*block*/
 
     return(0);

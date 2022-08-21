@@ -3,10 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Colton Software Fireworkz Release Notes (Windows)</title>
+    <title>Colton Software Fireworkz Release Notes - Windows</title>
 </head>
 <body>
-    <h1>Colton Software Fireworkz Release Notes (Windows©)</h1>
+    <h1>Colton Software Fireworkz Release Notes - Windows©</h1>
 
     <ul style="list-style: none">
         <li><a href="#Copyright">Copyright</a></li>
@@ -107,6 +107,77 @@
         The full release history may be found <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/release_history">online</a>;
         just the last few revisions of Fireworkz are documented here.
     </p>
+
+
+    <h3>2.22.01 (24 Dec 2019)</h3>
+
+    <p>
+        Formatting a very large number with a small radix
+        (either with Style or the TEXT() spreadsheet function)
+        no longer overflows temporary buffer causing subsequent error.
+    </p>
+
+    <p>Fixed the DAYS_360() spreadsheet function (had inadvertently been forcing European method).</p>
+
+    <p>Fixed the SUM_X2PY2() spreadsheet function.</p>
+
+    <p>Fixed memory leak when closing spreadsheet documents.</p>
+
+    <p>Fixed inserting of names that are defined as cell references into text cells.</p>
+
+    <p>Allow inserting of names that are defined as ranges into text cells. Only the top left cell value is used</p>
+
+    <p>
+        Attempts to autoformat numeric data typed on the formula editing line (as occurs with Edit in Cell).
+        e.g. £1,234 will be recognised as a number and formatted with currency symbol and thousands separator.
+        Any text starting with an equals sign will not be autoformatted but immediately as a formula as before.
+    </p>
+
+    <p>Any error when loading a template for a foreign file is now referred to using the template filename, not the foreign filename.</p>
+
+    <p>RowTable construct only saved in document when different to default (zero).</p>
+
+    <p>
+        PipeDream charts saved in either the new (0xA77) or the old (0xDDE) file type
+        are recognised as Draw files and may be inserted into documents.
+    </p>
+
+    <p>Uses C library's inverse hyperbolic functions rather than own implementation.</p>
+
+    <p>Checks for integer overflow when adding to/subtracting from date/time components.</p>
+
+    <p>
+        Checks for attempt to divide by a denormalised (i.e. very very small) number;
+        this would previously have given FP error rather than Divide by zero error.
+    </p>
+
+    <p>Checks for rejection of non-numeric values in SPEARMAN() spreadsheet function improved.</p>
+
+    <p>
+        The logical spreadsheet functions and operators (such as AND() and &amp;)
+        would previously have given a 'Parameter out of range' error when passed large numbers
+        that were not representable in the largest (32-bit) integer type used internally,
+        rather than just checking whether the number was zero (false) or non-zero (true).
+        This also applies to logical values used in custom function control statements (IF/ELSEIF/WHILE/UNTIL)
+    </p>
+
+    <p>
+        Numbers may now be formatted using a date format in the Numbers style section.
+        If a date format is detected in that section, numbers are treated as
+        Microsoft Excel-compatible serial numbers and converted to dates for formatting.
+        This can help with importing files from Microsoft Excel.
+    </p>
+
+    <p>
+        Formatting now imported better from Microsoft Excel BIFF3 files.
+        This allows dates and/or times to be correctly detected.
+    </p>
+
+    <p>Increased accuracy of numbers loaded from Microsoft Excel and Lotus 1-2-3 files.</p>
+
+    <p>Windows: Some spreadsheet function status line help was not correctly encoded and appeared garbled.</p>
+
+    <p>Windows: When a desktop icon is created on installation, it is created in the common desktop directory, not just the installing user's.</p>
 
 
     <h3>2.22 (13 Feb 2019)</h3>
@@ -653,7 +724,7 @@
     </p>
 
     <p>
-        INT() spreadsheet function extended to return a (largely) Microsoft Excel-compatible serial number
+        INT() spreadsheet function extended to return an OpenDocument /  Microsoft Excel-compatible serial number
         when passed <i>date</i> parameter. Prevously this would have yielded an error.
         Given that Microsoft Excel incorrectly believes 1900 to be a leap year,
         the conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Excel.

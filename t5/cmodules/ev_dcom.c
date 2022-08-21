@@ -183,75 +183,96 @@ decompiler_stack_dispose(void)
 
 _Check_return_
 static STATUS
-decode_data(
+decode_data_slr(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    P_EV_DATA p_ev_data,
+    _InRef_     PC_EV_SLR p_ev_slr,
     _InVal_     EV_DOCNO ev_docno)
 {
+    UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
+    U32 len = ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, p_ev_slr);
+    return(quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(ustr_buf), len));
+}
+
+_Check_return_
+static STATUS
+decode_data_range(
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InRef_     PC_EV_RANGE p_ev_range,
+    _InVal_     EV_DOCNO ev_docno)
+{
+    UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
+    U32 len = ev_dec_range_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, p_ev_range);
+    return(quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(ustr_buf), len));
+}
+
+_Check_return_
+static STATUS
+decode_data_name(
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InRef_     PC_SS_DATA p_ss_data,
+    _InVal_     EV_DOCNO ev_docno)
+{
+    ARRAY_INDEX name_num = name_def_find(p_ss_data->arg.h_name);
     STATUS status = STATUS_OK;
 
-    switch(p_ev_data->did_num)
+    if(name_num >= 0)
     {
-    default: default_unhandled();
-#if CHECKING
-    case RPN_DAT_REAL:
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
-    case RPN_DAT_STRING:
-    case RPN_DAT_ARRAY:
-    case RPN_DAT_DATE:
-    case RPN_DAT_BLANK:
-    case RPN_DAT_ERROR:
-#endif
-        status = ss_decode_constant(p_quick_ublock, p_ev_data);
-        break;
+        const PC_EV_NAME p_ev_name = array_ptrc(&name_def.h_table, EV_NAME, name_num);
 
-    case RPN_DAT_SLR:
+        if(ev_slr_docno(&p_ev_name->owner) != ev_docno)
         {
-        UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
-        U32 len = ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, &p_ev_data->arg.slr);
-        status = quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(ustr_buf), len);
-        break;
+            UCHARZ buffer[BUF_EV_LONGNAMLEN];
+            const U32 len = ev_write_docname_ustr_buf(ustr_bptr(buffer), EV_LONGNAMLEN, ev_slr_docno(&p_ev_name->owner), ev_docno);
+            status = quick_ublock_uchars_add(p_quick_ublock, ustr_bptr(buffer), len);
         }
 
-    case RPN_DAT_RANGE:
-        {
-        UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
-        U32 len = ev_dec_range_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, &p_ev_data->arg.range);
-        status = quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(ustr_buf), len);
-        break;
-        }
-
-    case RPN_DAT_NAME:
-        {
-        ARRAY_INDEX name_num = name_def_find(p_ev_data->arg.h_name);
-
-        if(name_num >= 0)
-        {
-            const PC_EV_NAME p_ev_name = array_ptrc(&name_def.h_table, EV_NAME, name_num);
-
-            if(ev_slr_docno(&p_ev_name->owner) != ev_docno)
-            {
-                UCHARZ buffer[BUF_EV_LONGNAMLEN];
-                const U32 len = ev_write_docname_ustr_buf(ustr_bptr(buffer), EV_LONGNAMLEN, ev_slr_docno(&p_ev_name->owner), ev_docno);
-                status = quick_ublock_uchars_add(p_quick_ublock, ustr_bptr(buffer), len);
-            }
-
-            if(status_ok(status))
-                status = quick_ublock_ustr_add(p_quick_ublock, ustr_bptrc(p_ev_name->ustr_name_id));
-        }
-
-        break;
-        }
-
-    /* the data in fields is implied - they have no value */
-    case RPN_DAT_FIELD:
-        break;
+        if(status_ok(status))
+            status = quick_ublock_ustr_add(p_quick_ublock, ustr_bptrc(p_ev_name->ustr_name_id));
     }
 
     return(status);
+}
+
+_Check_return_
+static STATUS
+decode_data(
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    P_SS_DATA p_ss_data,
+    _InVal_     EV_DOCNO ev_docno)
+{
+
+    switch(ss_data_get_data_id(p_ss_data))
+    {
+    default:
+#if CHECKING
+        default_unhandled();
+        /*FALLTHRU*/
+    case DATA_ID_REAL:
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
+    case DATA_ID_STRING:
+    case DATA_ID_ARRAY:
+    case DATA_ID_DATE:
+    case DATA_ID_BLANK:
+    case DATA_ID_ERROR:
+#endif
+        return(ss_decode_constant(p_quick_ublock, p_ss_data));
+
+    case DATA_ID_SLR:
+        return(decode_data_slr(p_quick_ublock, &p_ss_data->arg.slr, ev_docno));
+
+    case DATA_ID_RANGE:
+        return(decode_data_range(p_quick_ublock, &p_ss_data->arg.range, ev_docno));
+
+    case DATA_ID_NAME:
+        return(decode_data_name(p_quick_ublock, p_ss_data, ev_docno));
+
+    /* the data in fields is implied - they have no value */
+    case DATA_ID_FIELD:
+        return(STATUS_OK);
+    }
 }
 
 /******************************************************************************
@@ -343,23 +364,24 @@ dec_rpn_token(
 
     switch(p_rpndef->rpn_type)
     {
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
 
     case RPN_DAT:
         {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
 
         /* read rpn argument */
-        read_cur_sym(&p_decompiler_context->rpnstate, &ev_data);
+        read_cur_sym(&p_decompiler_context->rpnstate, &ss_data);
         dec_format_space(p_quick_ublock);
-        if(status_ok(status = decode_data(p_quick_ublock, &ev_data, p_decompiler_context->docno)))
+        if(status_ok(status = decode_data(p_quick_ublock, &ss_data, p_decompiler_context->docno)))
             *p_arg_valid = 1;
         break;
         }
 
     case RPN_FRM:
         {
-        switch(p_decompiler_context->sym_inf.did_num)
+        switch(p_decompiler_context->sym_inf.sym_idno)
         {
         case RPN_FRM_BRACKETS: /* brackets must be added to top argument on stack */
             {
@@ -424,7 +446,7 @@ dec_rpn_token(
         PC_USTR ustr_fname;
 
         dec_format_space(p_quick_ublock);
-        ustr_fname = func_name(p_decompiler_context->sym_inf.did_num);
+        ustr_fname = func_name(p_decompiler_context->sym_inf.sym_idno);
         PTR_ASSERT(ustr_fname);
         status_assert(quick_ublock_func_name_add(p_quick_ublock, ustr_fname));
         if(status_ok(status = pop_str_out_to_buf(p_quick_ublock)))
@@ -442,7 +464,7 @@ dec_rpn_token(
             PC_USTR ustr_fname;
 
             dec_format_space(p_quick_ublock);
-            ustr_fname = func_name(p_decompiler_context->sym_inf.did_num);
+            ustr_fname = func_name(p_decompiler_context->sym_inf.sym_idno);
             PTR_ASSERT(ustr_fname);
             status_assert(quick_ublock_func_name_add(p_quick_ublock, ustr_fname));
             if(status_ok(status = popped_str_out_to_buf(p_quick_ublock, &decompiler_stack_entry)))
@@ -481,7 +503,7 @@ dec_rpn_token(
     case RPN_FNM:
         {
         S32 narg, i;
-        BOOL custom_call = (p_decompiler_context->sym_inf.did_num == RPN_FNM_CUSTOMCALL);
+        BOOL custom_call = (p_decompiler_context->sym_inf.sym_idno == RPN_FNM_CUSTOMCALL);
 
         dec_format_space(p_quick_ublock);
 
@@ -527,7 +549,7 @@ dec_rpn_token(
         }
         else
         {
-            PC_USTR ustr_fname = func_name(p_decompiler_context->sym_inf.did_num);
+            PC_USTR ustr_fname = func_name(p_decompiler_context->sym_inf.sym_idno);
             PTR_ASSERT(ustr_fname);
             status = quick_ublock_func_name_add(p_quick_ublock, ustr_fname);
         }
@@ -703,14 +725,14 @@ ev_dec_slr_ustr_buf(
 
 _Check_return_
 extern STATUS
-ev_data_decode(
+ss_data_decode(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     EV_DOCNO ev_docno)
 {
     STATUS status;
 
-    status = decode_data(p_quick_ublock, p_ev_data, ev_docno);
+    status = decode_data(p_quick_ublock, p_ss_data, ev_docno);
 
     return(status);
 }
@@ -730,11 +752,11 @@ ev_cell_decode(
 {
     STATUS status = STATUS_OK;
 
-    if(p_ev_cell->parms.data_only)
+    if(p_ev_cell->ev_parms.data_only)
     {
-        EV_DATA ev_data;
-        ev_data_from_ev_cell(&ev_data, p_ev_cell);
-        status = ev_data_decode(p_quick_ublock, &ev_data, ev_docno);
+        SS_DATA ss_data;
+        ss_data_from_ev_cell(&ss_data, p_ev_cell);
+        status = ss_data_decode(p_quick_ublock, &ss_data, ev_docno);
     }
     else
     {
@@ -826,7 +848,7 @@ ev_decompile(
     p_decompiler_context->sym_inf.sym_space = 0;
     p_decompiler_context->sym_inf.sym_cr = 0;
     p_decompiler_context->sym_inf.sym_equals = 0;
-    p_decompiler_context->sym_inf.did_num = p_decompiler_context->rpnstate.num;
+    p_decompiler_context->sym_inf.sym_idno = p_decompiler_context->rpnstate.num;
 
     while(status_ok(status))
     {
@@ -835,7 +857,7 @@ ev_decompile(
         if(status_fail(status = dec_rpn_token(p_quick_ublock, &arg_valid)))
             break;
 
-        if((p_decompiler_context->sym_inf.did_num = rpn_skip(&p_decompiler_context->rpnstate)) == RPN_FRM_END)
+        if((p_decompiler_context->sym_inf.sym_idno = rpn_skip(&p_decompiler_context->rpnstate)) == RPN_FRM_END)
             break;
 
         if(arg_valid)

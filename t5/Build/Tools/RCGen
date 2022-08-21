@@ -51,9 +51,12 @@ IF !ptr% THEN
   base% = EVAL(base$)
 ENDIF
 :
+utf8% = FALSE
+:
 mpl%=TRUE
 :
 quotes$ = """"
+quote% = ASC(quotes$)
 :
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ok here we go!
 :
@@ -61,7 +64,7 @@ s% = OPENIN(srcfile$)
 LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#s%: PROCraise
 :
 f% = OPENOUT(outfile$)
-LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#f%: PROCraise
+LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#f%: OSCLI("Delete "+outfile$): PROCraise
 :
 PROCcopy(s%, f%)
 :
@@ -79,7 +82,11 @@ ENDPROC
 :
 DEF PROCcopy(s%, f%)
 LOCAL offset%
-PROCo(f%, "//")
+IF utf8% THEN
+  PROCo(f%, CHR$(&EF)+CHR$(&BB)+CHR$(&BF)+"//"): REM UTF-8 BOM for Microsoft
+ELSE
+  PROCo(f%, "//")
+ENDIF
 PROCo(f%, "// RCGen created for Object "+STR$(object%))
 PROCo(f%, "//")
 IF mpl% THEN PROCmpl(f%)
@@ -87,6 +94,12 @@ IF base% THEN
   PROCo(f%, "// Manually based at 0x"+STR$~(base%))
   PROCo(f%, "//")
 ENDIF
+IF utf8% THEN
+  PROCo(f%, "#pragma code_page(65001) // UTF-8")
+ELSE
+  PROCo(f%, "#pragma code_page(1252) // ANSI")
+ENDIF
+PROCo(f%, "//")
 PROCo(f%, "STRINGTABLE PRELOAD MOVEABLE PURE")
 PROCo(f%, "BEGIN")
 :
@@ -120,11 +133,11 @@ WHEN ""
 :
 WHEN "#"
   REM modify comment character
-  PROCo(f%, "//" + MID$(line$, 2))
+  PROCo(f%, FNcommentline(MID$(line$, 2)))
 :
 WHEN "r"
   REM comment out RISC OS specific lines
-  PROCo(f%, "// " + line$)
+  PROCo(f%, FNcommentline(line$))
 :
 WHEN "w"
   REM strip off Windows specific prefix and process line
@@ -138,26 +151,165 @@ ENDCASE
 ENDPROC
 :
 :
+DEF FNcommentline(line$)
+LOCAL I%, local_line$
+I% = INSTR(line$, ":")
+IF I% THEN
+  left_line$ = LEFT$(line$, I%-1)+":"
+  line$ = MID$(line$, I%+1)
+ELSE
+  left_line$ = ""
+ENDIF
+IF line$ <> "" THEN line$ = FNtransform_line(line$)
+line$ = "//"+left_line$+line$
+=line$
+:
+:
 DEF FNdoline(line$, offset%)
 LOCAL I%, number%
 REM error number?
 IF LEFT$(line$, 1) = "e" THEN line$ = MID$(line$, 2): offset% += &8000
 I% = INSTR(line$, ":")
 number% = VAL(LEFT$(line$, I%-1))
-line$ = FNescape_quotes(MID$(line$, I%+1))
-line$ = CHR$(9)+"0x"+STR$~(offset%+number%)+","+CHR$(9)+quotes$+line$+quotes$
+line$ = MID$(line$, I%+1)
+line$ = quotes$+FNtransform_line(line$)+quotes$
+IF utf8% THEN line$ = "L"+line$
+line$ = CHR$(9)+"0x"+STR$~(offset%+number%)+","+CHR$(9)+line$
 =line$
 :
 :
-DEF FNescape_quotes(line$)
-LOCAL A$, C$
+REM escape quotes and process any top bit set characters encountered
+:
+DEF FNtransform_line(line$)
+LOCAL A$, C%, I%, L%
+L% = LEN(line$): IF L% = 0 THEN =""
 A$ = ""
-FOR I% = 1 TO LEN(line$)
-  C$ = MID$(line$, I%, 1)
-  IF C$ = quotes$ THEN C$ = C$+C$
-  A$ += C$
+FOR I% = 1 TO L%
+  C% = ASC(MID$(line$, I%, 1))
+  IF C% = quote% THEN
+    A$ += quotes$+quotes$
+  ELSE
+    IF C% AND &80 THEN
+      A$ += FNtransform_tbs_char(C%)
+    ELSE
+      A$ += CHR$(C%)
+    ENDIF
+  ENDIF
 NEXT
 =A$
+:
+:
+REM transform top bit set character (Acorn Extended Latin-1 assumed)
+:
+DEF FNtransform_tbs_char(C%)
+LOCAL C$
+IF utf8% THEN
+  REM convert to UTF-8
+  REM first convert the Acorn Extended range (all in C1) to UCS-4
+  CASE C% OF
+  WHEN &80: C% = &20A0: REM UCH_EURO_CURRENCY_SIGN
+  WHEN &81: C% = &0174: REM UCH_LATIN_CAPITAL_LETTER_W_WITH_CIRCUMFLEX
+  WHEN &82: C% = &0175: REM UCH_LATIN_SMALL_LETTER_W_WITH_CIRCUMFLEX
+  WHEN &83: C% = &203C: REM should not be present
+  WHEN &84: C% = &203C: REM should not be present
+  WHEN &85: C% = &0176: REM UCH_LATIN_CAPITAL_LETTER_Y_WITH_CIRCUMFLEX
+  WHEN &86: C% = &0177: REM UCH_LATIN_SMALL_LETTER_Y_WITH_CIRCUMFLEX
+  WHEN &87: C% = &203C: REM should not be present
+  WHEN &88: C% = &203C: REM should not be present
+  WHEN &89: C% = &203C: REM should not be present
+  WHEN &8A: C% = &203C: REM should not be present
+  WHEN &8B: C% = &203C: REM should not be present
+  WHEN &8C: C% = &2026: REM UCH_HORIZONTAL_ELLIPSIS
+  WHEN &8D: C% = &2122: REM UCH_TRADE_MARK_SIGN
+  WHEN &8E: C% = &2030: REM UCH_PER_MILLE_SIGN
+  WHEN &8F: C% = &2022: REM UCH_BULLET
+  WHEN &90: C% = &2018: REM UCH_LEFT_SINGLE_QUOTATION_MARK
+  WHEN &91: C% = &2019: REM UCH_RIGHT_SINGLE_QUOTATION_MARK
+  WHEN &92: C% = &2039: REM UCH_SINGLE_LEFT_POINTING_ANGLE_QUOTATION_MARK
+  WHEN &93: C% = &203A: REM UCH_SINGLE_RIGHT_POINTING_ANGLE_QUOTATION_MARK
+  WHEN &94: C% = &201C: REM UCH_LEFT_DOUBLE_QUOTATION_MARK
+  WHEN &95: C% = &201D: REM UCH_RIGHT_DOUBLE_QUOTATION_MARK
+  WHEN &96: C% = &201E: REM UCH_DOUBLE_LOW_9_QUOTATION_MARK
+  WHEN &97: C% = &2013: REM UCH_EN_DASH
+  WHEN &98: C% = &2014: REM UCH_EM_DASH
+  WHEN &99: C% = &2212: REM UCH_MINUS_SIGN__UNICODE
+  WHEN &9A: C% = &0152: REM UCH_LATIN_CAPITAL_LIGATURE_OE
+  WHEN &9B: C% = &0153: REM UCH_LATIN_SMALL_LIGATURE_OE
+  WHEN &9C: C% = &2020: REM UCH_DAGGER
+  WHEN &9D: C% = &2021: REM UCH_DOUBLE_DAGGER
+  WHEN &9E: C% = &FB01: REM UCH_LATIN_SMALL_LIGATURE_FI
+  WHEN &9F: C% = &FB02: REM UCH_LATIN_SMALL_LIGATURE_FL
+  OTHERWISE:
+  ENDCASE
+  REM then convert UCS-4 to UTF-8 representation
+  C$ = FNutf8_from_ucs4(C%)
+ELSE
+  REM convert to Windows-1252 ('ANSI')
+  CASE C% OF
+  WHEN &80: C$ = CHR$(&80): REM AEL1_EURO_CURRENCY_SIGN
+  WHEN &81: C$ = "W":       REM AEL1_LATIN_CAPITAL_LETTER_W_WITH_CIRCUMFLEX
+  WHEN &82: C$ = "w":       REM AEL1_LATIN_SMALL_LETTER_W_WITH_CIRCUMFLEX
+  WHEN &83: C$ = CHR$(&21): REM should not be present
+  WHEN &84: C$ = CHR$(&21): REM should not be present
+  WHEN &85: C$ = "Y":       REM AEL1_LATIN_CAPITAL_LETTER_Y_WITH_CIRCUMFLEX
+  WHEN &86: C$ = "y":       REM AEL1_LATIN_SMALL_LETTER_Y_WITH_CIRCUMFLEX
+  WHEN &87: C$ = CHR$(&21): REM should not be present
+  WHEN &88: C$ = CHR$(&21): REM should not be present
+  WHEN &89: C$ = CHR$(&21): REM should not be present
+  WHEN &8A: C$ = CHR$(&21): REM should not be present
+  WHEN &8B: C$ = CHR$(&21): REM should not be present
+  WHEN &8C: C$ = CHR$(&85): REM AEL1_HORIZONTAL_ELLIPSIS
+  WHEN &8D: C$ = CHR$(&99): REM AEL1_TRADE_MARK_SIGN
+  WHEN &8E: C$ = CHR$(&89): REM AEL1_PER_MILLE_SIGN
+  WHEN &8F: C$ = CHR$(&95): REM AEL1_BULLET
+  WHEN &90: C$ = CHR$(&91): REM AEL1_LEFT_SINGLE_QUOTATION_MARK
+  WHEN &91: C$ = CHR$(&92): REM AEL1_RIGHT_SINGLE_QUOTATION_MARK
+  WHEN &92: C$ = CHR$(&8B): REM AEL1_SINGLE_LEFT_POINTING_ANGLE_QUOTATION_MARK
+  WHEN &93: C$ = CHR$(&9B): REM AEL1_SINGLE_RIGHT_POINTING_ANGLE_QUOTATION_MARK
+  WHEN &94: C$ = CHR$(&93): REM AEL1_LEFT_DOUBLE_QUOTATION_MARK
+  WHEN &95: C$ = CHR$(&94): REM AEL1_RIGHT_DOUBLE_QUOTATION_MARK
+  WHEN &96: C$ = CHR$(&84): REM AEL1_DOUBLE_LOW_9_QUOTATION_MARK
+  WHEN &97: C$ = CHR$(&96): REM AEL1_EN_DASH
+  WHEN &98: C$ = CHR$(&97): REM AEL1_EM_DASH
+  WHEN &99: C$ = CHR$(&2D): REM AEL1_MINUS_SIGN__UNICODE
+  WHEN &9A: C$ = CHR$(&8C): REM AEL1_LATIN_CAPITAL_LIGATURE_OE
+  WHEN &9B: C$ = CHR$(&9C): REM AEL1_LATIN_SMALL_LIGATURE_OE
+  WHEN &9C: C$ = CHR$(&86): REM AEL1_DAGGER
+  WHEN &9D: C$ = CHR$(&87): REM AEL1_DOUBLE_DAGGER
+  WHEN &9E: C$ = "fi":      REM AEL1_LATIN_SMALL_LIGATURE_FI
+  WHEN &9F: C$ = "fl":      REM AEL1_LATIN_SMALL_LIGATURE_FL
+  OTHERWISE:C$ = CHR$(C%)
+  ENDCASE
+ENDIF
+=C$
+:
+:
+DEF FNutf8_from_ucs4(ucs4%)
+IF ucs4% < &80 THEN
+  REM U+0000 : U+007F (7 bits)
+  =CHR$(ucs4%)
+ENDIF
+:
+IF ucs4% < &800 THEN
+  REM U+0080 : U+07FF (11 bits)
+  REM      first 5 bits,                    then last 6 bits
+  =CHR$(&C0 + (&1F AND (ucs4% >> 6))) + CHR$(&80 + (&3F AND (ucs4% >> 0)))
+ENDIF
+:
+IF ucs4% < &10000 THEN
+  REM U+0800 : U+FFFF (16 bits)
+  REM      first 4 bits,                     then next 6 bits,                    then last 6 bits
+  =CHR$(&E0 + (&0F AND (ucs4% >> 12))) + CHR$(&80 + (&3F AND (ucs4% >> 6))) + CHR$(&80 + (&3F AND (ucs4% >> 0)))
+ENDIF
+:
+IF ucs4% < &200000 THEN
+  REM U+010000 : U+1FFFFF (21 bits, but range limited much further by the Unicode Standard to U+10FFFF)
+  REM      first 3 bits,                     then next 6 bits                      then next 6 bits,                    then last 6 bits
+  =CHR$(&F0 + (&07 AND (ucs4% >> 18))) + CHR$(&80 + (&3F AND (ucs4% >> 12))) + CHR$(&80 + (&3F AND (ucs4% >> 6))) + CHR$(&80 + (&3F AND (ucs4% >> 0)))
+ENDIF
+:
+REM invalid UCS-4
+=""
 :
 :
 DEF PROCmpl(f%)

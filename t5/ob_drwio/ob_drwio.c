@@ -233,7 +233,7 @@ save_as_drawfile_all =
     CONTROL_ID_ALL, CONTROL_ID_AR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -266,7 +266,7 @@ save_as_drawfile_range_edit =
     CONTROL_ID_RANGE_EDIT, CONTROL_ID_RANGE_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, PIXITS_PER_INCH + PIXITS_PER_HALF_INCH, PIXITS_PER_INCH },
-    { DRT(LTLT, EDIT), 1 /*tabstop*/ }
+    { DRT(LTLT, EDIT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static BITMAP(save_as_drawfile_range_edit_validation, 256);

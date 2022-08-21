@@ -175,7 +175,7 @@ void
 */
 
 typedef void * P_ANY, ** P_P_ANY; typedef const void * PC_ANY;
-#if defined(__cplusplus) || defined(__CC_NORCROFT) || defined(__GNUC__)
+#if defined(__cplusplus) || defined(__CC_NORCROFT) || defined(__GNUC__) || defined(__clang__)
 #define P_P_ANY_PEDANTIC(pp) ((P_P_ANY) (pp)) /* needs cast */
 #else
 #define P_P_ANY_PEDANTIC(pp) (pp)
@@ -671,6 +671,10 @@ buffer sizes for printf conversions
 #define BUF_MAX_U32_FMT (1+ 10) /* 4294967296*/
 #define BUF_MAX_F64_FMT (1+ 1 + 1 + 1 + 15 + 1 + 3 + 4) /*approx e.g. -1.2345678901234566e-128, 4 for good luck */
 
+/* stringize(THING_MAYBE_DEFINED_AS_MACRO) may be used to extract its value as a string at preprocessor time that can then be concatenated e.g. "%." stringize(DBL_DECIMAL_DIG) "g" */
+#define stringize_helper(value) #value
+#define stringize(value) stringize_helper(value)
+
 /* get byte from pointer (plus offset) / put byte at pointer (plus offset) */
 
 #define PtrGetByte(ptr) /*byte*/ \
@@ -709,23 +713,23 @@ buffer sizes for printf conversions
 
 /* 32-bit difference between two pointers in bytes */
 
-#define PtrDiffBytesU32(ptr, base) /*num*/ \
+#define PtrDiffBytesU32(ptr, base) /*U32 num*/ \
     ((U32) (((uintptr_t)(ptr)) - ((uintptr_t)(base))))
 
-#define PtrDiffBytesS32(ptr, base) /*num*/ \
+#define PtrDiffBytesS32(ptr, base) /*S32 num*/ \
     ((S32) (((uintptr_t)(ptr)) - ((uintptr_t)(base))))
 
 /* 32-bit difference between two pointers in elements */
 
-#define PtrDiffElemU32(ptr, base) /*num*/ \
+#define PtrDiffElemU32(ptr, base) /*U32 num*/ \
     ((U32) ((ptr) - (base)))
 
-#define PtrDiffElemS32(ptr, base) /*num*/ \
+#define PtrDiffElemS32(ptr, base) /*S32 num*/ \
     ((S32) ((ptr) - (base)))
 
 /* size_t difference between two pointers in elements */
 
-#define PtrDiffElem(ptr, base) /*num*/ \
+#define PtrDiffElem(ptr, base) /*size_t num*/ \
     ((size_t) ((ptr) - (base)))
 
 /*
@@ -999,8 +1003,8 @@ short_memcmp32(
 
     while(src_2 < end_src_2)
     {
-        int byte_a = *src_1++;
-        int byte_b = *src_2++;
+        const int byte_a = *src_1++;
+        const int byte_b = *src_2++;
         if(byte_a != byte_b)
             return(byte_a - byte_b);
     }
@@ -1256,6 +1260,8 @@ UCS-4 character definitions
 #define CH_FORWARDS_SLASH           CH_SOLIDUS
 
 #define CH_DIGIT_ZERO               0x30    /* 0 */
+#define CH_DIGIT_ONE                0x31    /* 1 */
+#define CH_DIGIT_SEVEN              0x37    /* 7 */
 #define CH_DIGIT_NINE               0x39    /* 9 */
 #define CH_COLON                    0x3A    /* : */
 #define CH_SEMICOLON                0x3B    /* ; */
@@ -1385,7 +1391,8 @@ idiv_floor_fn(
 
 #define consume(__base_type, expr) \
     do { \
-    __base_type __v = (expr); UNREFERENCED_LOCAL_VARIABLE(__v); \
+        const __base_type __consume_v = (expr); \
+        UNREFERENCED_LOCAL_VARIABLE(__consume_v); \
     } while_constant(0)
 
 #define consume_ptr(expr) consume(PC_ANY, expr)
@@ -1595,6 +1602,10 @@ extern void
 profile_ensure_frame(void); /* ensure procedure gets a stack frame we can trace out of at the cost of two branches */
 #else
 #define profile_ensure_frame() /* nothing */
+#endif
+
+#if __STDC_VERSION__ < 199901L
+#include "cmodules/mathxtra.h" /* for isless() etc when not C99 */
 #endif
 
 #endif /* __coltsoft_h */

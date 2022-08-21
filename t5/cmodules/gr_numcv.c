@@ -90,7 +90,7 @@ reportf(TEXT("gr_host_font_string_truncate(x:%u,len:%u,%s) returns x:%u,len:%u")
         if(WrapOsBoolChecking(GetTextExtentExPoint(hic_format_pixits, tstr, tchars_n, nMaxExtent, &nFit, NULL /*pDx*/, &size)))
         {
             swidth_mp = size.cx * MILLIPOINTS_PER_PIXIT;
-reportf(TEXT("gr_host_font_string_truncate(x:%u,len:%u,%s) returns x:%u,len:%u"), swidth_mp_truncate, ustrlen32(ustr), report_ustr(ustr), swidth_mp, nFit);
+reportf(TEXT("gr_host_font_string_truncate(x:%d,len:%u,%s) returns x:%d,len:%d"), swidth_mp_truncate, ustrlen32(ustr), report_ustr(ustr), swidth_mp, nFit);
             PtrPutByteOff(ustr, nFit, CH_NULL);
             consume(HFONT, SelectFont(hic_format_pixits, h_font_old));
             return(swidth_mp);
@@ -177,7 +177,7 @@ reportf(TEXT("gr_host_font_stringwidth(%s) returns x:%u mp"), report_ustr(ustr),
         if(status_ok(uchars_GetTextExtentPoint32(hic_format_pixits, ustr, ustrlen32(ustr), &size)))
         {
             swidth_mp = size.cx * MILLIPOINTS_PER_PIXIT;
-reportf(TEXT("gr_host_font_stringwidth(%s) returns x:%u mp"), report_ustr(ustr), swidth_mp);
+reportf(TEXT("gr_host_font_stringwidth(%s) returns x:%d mp"), report_ustr(ustr), swidth_mp);
             consume(HFONT, SelectFont(hic_format_pixits, h_font_old));
             return(swidth_mp);
         }

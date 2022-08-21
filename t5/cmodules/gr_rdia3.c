@@ -410,7 +410,7 @@ gr_riscdiag_path_query_guts(
 
     memcpy32(&path, pObject, sizeof32(path));
 
-    myassert2x(path.type == DRAW_OBJECT_TYPE_PATH, TEXT("gr_riscdiag_path_query_guts of a non-path object ") U32_XTFMT TEXT(" type ") S32_TFMT, pathStart, path.type);
+    myassert2x(path.type == DRAW_OBJECT_TYPE_PATH, TEXT("gr_riscdiag_path_query_guts of a non-path object ") U32_XTFMT TEXT(" type ") U32_TFMT, pathStart, path.type);
 
     /* always skip path header */
     extraBytes = sizeof32(DRAW_OBJECT_PATH);
@@ -560,8 +560,8 @@ gr_riscdiag_piesector_new(
     _OutRef_    P_DRAW_DIAG_OFFSET pPieStart,
     _InRef_     PC_DRAW_POINT pPos,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 alpha,
-    _InRef_     PC_F64 beta,
+    _InVal_     F64 alpha,
+    _InVal_     F64 beta,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec)
 {
@@ -1010,7 +1010,7 @@ gr_riscdiag_scaled_diagram_add(
     BOOL isotropic =  fillstyleb->bits.isotropic;
     BOOL recolour  = !fillstyleb->bits.norecolour;
 
-    trace_8(0, TEXT("gr_riscdiag_scaled_diagram_add(") PTR_XTFMT TEXT(", (") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT("), (") PTR_XTFMT TEXT(",") S32_TFMT TEXT("), iso=") S32_TFMT TEXT(")"),
+    trace_8(0, TEXT("gr_riscdiag_scaled_diagram_add(") PTR_XTFMT TEXT(", (") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT(",") S32_TFMT TEXT("), (") PTR_XTFMT TEXT(",") U32_TFMT TEXT("), iso=") S32_TFMT TEXT(")"),
         p_gr_riscdiag, pBox->x0, pBox->y0, pBox->x1, pBox->y1, p_diag, diag_len, isotropic);
 
     if(NULL == p_diag)

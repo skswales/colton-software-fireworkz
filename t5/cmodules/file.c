@@ -329,7 +329,7 @@ _Check_return_
 extern STATUS
 file_close_date(
     _InoutRef_  P_FILE_HANDLE p_file_handle,
-    _OutRef_    P_EV_DATE p_ev_date)
+    _OutRef_    P_SS_DATE p_ss_date)
 {
     FILE_HANDLE file_handle;
     STATUS status, status1;
@@ -339,13 +339,13 @@ file_close_date(
     /* if file already closed, whinge */
     if((NULL == p_file_handle) || (NULL == (file_handle = *p_file_handle)) || (file_handle->magic != _FILE_MAGIC_WORD))
     {
-        ev_date_init(p_ev_date);
+        ss_date_init(p_ss_date);
         return(create_error(FILE_ERR_BADHANDLE));
     }
 
     status = file__closefile(file_handle);
 
-    status_assert(file_date(file_handle, p_ev_date));
+    status_assert(file_date(file_handle, p_ss_date));
 
     status1 = t5_file_close(p_file_handle);
 
@@ -390,14 +390,14 @@ _Check_return_
 extern STATUS
 file_date(
     _InoutRef_opt_ FILE_HANDLE file_handle,
-    _OutRef_    P_EV_DATE p_ev_date)
+    _OutRef_    P_SS_DATE p_ss_date)
 {
     S32 year, month, day;
     S32 hours, minutes, seconds;
 
     if((NULL == file_handle) || (file_handle->magic != _FILE_MAGIC_WORD))
     {
-        ev_date_init(p_ev_date);
+        ss_date_init(p_ss_date);
         return(create_error(FILE_ERR_BADHANDLE));
     }
 
@@ -418,7 +418,7 @@ file_date(
     rs.r[3] = (int) "%CE%YR.%MN.%DY %24:%MI:%SE.%CS"; /* returns local time representation of the given UTC */
     if(NULL != WrapOsErrorChecking(_kernel_swi(OS_ConvertDateAndTime, &rs, &rs)))
     {
-        ev_date_init(p_ev_date);
+        ss_date_init(p_ss_date);
         return(create_error(FILE_ERR_BADTIMESTAMP));
     }
 
@@ -426,7 +426,7 @@ file_date(
     if(6 != sscanf_result)
     {
         assert(6 == sscanf_result);
-        ev_date_init(p_ev_date);
+        ss_date_init(p_ss_date);
         return(create_error(FILE_ERR_BADTIMESTAMP));
     }
 #elif WINDOWS
@@ -438,7 +438,7 @@ file_date(
 
     if(!WrapOsBoolChecking(FileTimeToSystemTime(&filetime, &systemtime)))
     {
-        ev_date_init(p_ev_date);
+        ss_date_init(p_ss_date);
         return(create_error(FILE_ERR_BADTIMESTAMP));
     }
 
@@ -455,7 +455,7 @@ file_date(
 
     if(_FILE_HANDLE_NULL == file_handle->handle)
     {
-        ev_date_init(p_ev_date);
+        ss_date_init(p_ss_date);
         return(create_error(FILE_ERR_BADTIMESTAMP));
     }
 
@@ -476,8 +476,8 @@ file_date(
 #endif
     } /*block*/
 
-    (void) ss_ymd_to_dateval(&p_ev_date->date, year, month, day);
-    (void) ss_hms_to_timeval(&p_ev_date->time, hours, minutes, seconds);
+    (void) ss_ymd_to_dateval(&p_ss_date->date, year, month, day);
+    (void) ss_hms_to_timeval(&p_ss_date->time, hours, minutes, seconds);
 
     return(STATUS_OK);
 }

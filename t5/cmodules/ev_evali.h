@@ -18,12 +18,6 @@
 #include "cmodules/ev_eval.h"
 #endif
 
-#define ev_docno_from_p_docu(p_docu) ( (EV_DOCNO) \
-    docno_from_p_docu(p_docu) )
-
-#define p_docu_from_ev_docno(ev_docno) \
-    p_docu_from_docno((DOCNO) ev_docno)
-
 /*
 named resources
 */
@@ -33,7 +27,7 @@ typedef struct EV_NAME
     EV_HANDLE handle;                   /* internal id allocated to name */
     UCHARZ ustr_name_id[BUF_EV_INTNAMLEN]; /* name of resource */
     EV_SLR owner;                       /* document that owns name definition */
-    EV_DATA def_data;                   /* data defined by name */
+    SS_DATA def_data;                   /* data defined by name */
     DEF_FLAGS flags;
     P_USTR ustr_description;            /* description of name data (owned by us) */
 }
@@ -66,16 +60,24 @@ types for exec routines
 */
 
 #define exec_func_ignore_parms() (void) ( \
-    UNREFERENCED_PARAMETER(args), \
     UNREFERENCED_PARAMETER_InVal_(n_args), \
-    UNREFERENCED_PARAMETER_InoutRef_(p_ev_data_res), \
     UNREFERENCED_PARAMETER_InRef_(p_cur_slr) )
+
+#define exec_func_status_return(p_ss_data_res, status) \
+    do  { \
+        const STATUS status_e = (status); \
+        if(status_fail(status_e)) \
+        { \
+            ss_data_set_error(p_ss_data_res, status_e); \
+            return; \
+        } \
+    } while_constant(false)
 
 /* symbol information */
 
 typedef struct SYM_INF
 {
-    EV_IDNO did_num;            /* id number of symbol */
+    EV_IDNO sym_idno;           /* id number of symbol */
     U8 sym_cr;                  /* accumulated CR/LFs before symbol */
     U8 sym_space;               /* accumulated spaces before symbol */
     U8 sym_equals;              /* = before symbol */
@@ -166,7 +168,12 @@ enum EXEC_LOOKUP
 
 enum EXEC_ARRAY_RANGE
 {
+    /*logical*/
     ARRAY_RANGE_AND = 1,
+    ARRAY_RANGE_OR,
+    ARRAY_RANGE_XOR,
+
+    /*numeric*/
     ARRAY_RANGE_AVEDEV,
     ARRAY_RANGE_AVERAGE,
     ARRAY_RANGE_AVERAGEA,
@@ -186,7 +193,6 @@ enum EXEC_ARRAY_RANGE
     ARRAY_RANGE_MIRR,
     ARRAY_RANGE_MULTINOMIAL,
     ARRAY_RANGE_NPV,
-    ARRAY_RANGE_OR,
     ARRAY_RANGE_PRODUCT,
     ARRAY_RANGE_SKEW,
     ARRAY_RANGE_SKEW_P,
@@ -199,8 +205,7 @@ enum EXEC_ARRAY_RANGE
     ARRAY_RANGE_VAR,
     ARRAY_RANGE_VARA,
     ARRAY_RANGE_VARP,
-    ARRAY_RANGE_VARPA,
-    ARRAY_RANGE_XOR
+    ARRAY_RANGE_VARPA
 };
 
 /*
@@ -211,7 +216,7 @@ typedef struct RPNDEF
 {
     EV_IDNO rpn_type;
     S8 n_args;
-    S8 max_nargs;
+    S8 max_additional_args;
     FUN_PARMS fun_parms;
     U8 category;
     U8 object_id;
@@ -392,7 +397,7 @@ array scanning data
 
 typedef struct ARRAY_SCAN_BLOCK
 {
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     S32 x_size;
     S32 y_size;
     S32 x_pos;
@@ -417,7 +422,7 @@ RANGE_SCAN_BLOCK, * P_RANGE_SCAN_BLOCK;
 typedef struct STAT_BLOCK
 {
     enum EXEC_ARRAY_RANGE exec_array_range_id;
-    EV_DATA running_data;
+    SS_DATA running_data;
     S32 count;
     S32 count_a;
     S32 count_blank;
@@ -427,17 +432,17 @@ typedef struct STAT_BLOCK
     S32 pass;
 
     /* DEVSQ/STD/STDP/VAR/VARP */
-    F64 sum_x2;
+    F64 sum_of_x_squared;
     F64 shift_value;
 
     /* MEDIAN (two pass - also uses pass in AVEDEV data) */
-    EV_DATA statistics_array;
+    SS_DATA statistics_array;
 
     /* KURT/SKEW (also uses mean in AVEDEV data) */
     F64 M2, M3, M4; /* running sums of powers of differences from the mean */
 
     /* MULTINOMIAL */
-    EV_DATA multinomial_product;
+    SS_DATA multinomial_product;
 
     /* NPV */
     F64 npv_rate;
@@ -450,7 +455,7 @@ typedef struct STAT_BLOCK
     S32 iteration_count;
 
     /* MIRR (also uses NPV data) */
-    EV_DATA running_data_positive;
+    SS_DATA running_data_positive;
     F64 last_npv_rate_positive;
     F64 npv_rate_positive;
 
@@ -461,12 +466,12 @@ typedef struct STAT_BLOCK
 #endif
 #endif
 }
-STAT_BLOCK, * P_STAT_BLOCK;
+STAT_BLOCK, * P_STAT_BLOCK; typedef const STAT_BLOCK * PC_STAT_BLOCK;
 
 typedef struct LOOKUP_BLOCK
 {
-    EV_DATA target_data;
-    EV_DATA result_data;
+    SS_DATA target_data;
+    SS_DATA result_data;
     S32 lookup_id;
     S32 match;
     S32 ix;
@@ -479,7 +484,7 @@ LOOKUP_BLOCK, * P_LOOKUP_BLOCK;
 
 typedef struct ARRAY_RANGE_BLOCK
 {
-    EV_DATA args[EV_MAX_ARGS];
+    SS_DATA args[EV_MAX_ARGS];
     S32 n_args;
     S32 arg_ix;
     STAT_BLOCK stat_block;
@@ -510,7 +515,7 @@ typedef struct STACK_IN_CALC
 {
     EVAL_BLOCK eval_block;
     S32 travel_res;
-    EV_DATA result_data;
+    SS_DATA result_data;
     BOOL did_calc;
 }
 STACK_IN_CALC, * P_STACK_IN_CALC;
@@ -523,7 +528,7 @@ STACK_IN_EVAL, * P_STACK_IN_EVAL;
 
 typedef struct STACK_DATA_ITEM
 {
-    EV_DATA data;
+    SS_DATA data;
 }
 STACK_DATA_ITEM;
 
@@ -540,7 +545,7 @@ STACK_CONTROL_LOOP, * P_STACK_CONTROL_LOOP;
 typedef struct STACK_DBASE
 {
     EV_SLR dbase_slot;
-    EV_DATA arg0;
+    SS_DATA arg0;
     S16 cond_pos;
     S32 ix;
     S32 iy;
@@ -550,8 +555,8 @@ STACK_DBASE, * P_STACK_DBASE;
 
 typedef struct STACK_LOOKUP
 {
-    EV_DATA arg1;
-    EV_DATA arg2;
+    SS_DATA arg1;
+    SS_DATA arg2;
     P_LOOKUP_BLOCK p_lookup_block;
 }
 STACK_LOOKUP, * P_STACK_LOOKUP;
@@ -593,8 +598,8 @@ STACK_ALERT_INPUT, * P_STACK_ALERT_INPUT;
 
 typedef struct STACK_SETVALUE
 {
-    EV_DATA ev_data_arg_0;
-    EV_DATA ev_data_arg_1;
+    SS_DATA ss_data_arg_0;
+    SS_DATA ss_data_arg_1;
     S32 n_args;
     S32 ix_x;
     S32 ix_y;
@@ -683,7 +688,7 @@ ident_validate(
 _Check_return_
 extern S32
 recog_slr_range(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InoutRef_  P_DOCU_NAME p_docu_name,
     _InVal_     EV_DOCNO ev_docno_from,
     _In_z_      PC_USTR in_str);
@@ -714,20 +719,20 @@ array_range_stat_block_init(
     _OutRef_opt_ P_S32 p_n_args,
     _OutRef_opt_ P_S32 p_arg_ix,
     _InVal_     EV_IDNO function_id,
-    P_EV_DATA p_args[],
+    P_SS_DATA p_args[],
     _InVal_     S32 arg_count);
 
 extern void
 dbase_array_index(
-    P_EV_DATA p_ev_data_out,
-    P_EV_DATA p_ev_data_in,
+    P_SS_DATA p_ss_data_out,
+    P_SS_DATA p_ss_data_in,
     P_STACK_DBASE p_stack_dbase,
-    _InVal_     EV_TYPE ev_type);
+    _InVal_     EV_TYPE type_flags);
 
 extern void
 lookup_block_init(
     _OutRef_    P_LOOKUP_BLOCK p_lookup_block,
-    _InRef_opt_ PC_EV_DATA p_ev_data_target,
+    _InRef_opt_ PC_SS_DATA p_ss_data_target,
     _InVal_     S32 lookup_id,
     _InVal_     S32 match,
     _InVal_     BOOL all_occs);
@@ -736,7 +741,7 @@ _Check_return_
 extern S32
 process_control(
     _InVal_     S32 action,
-    P_EV_DATA args[],
+    P_SS_DATA args[],
     _InVal_     S32 n_args,
     _InVal_     S32 eval_stack_base);
 
@@ -788,28 +793,54 @@ stack_zap(void);
 ev_exec.c external functions
 */
 
-PROC_EXEC_PROTO(c_uplus);
-PROC_EXEC_PROTO(c_uminus);
-PROC_EXEC_PROTO(c_not);
+PROC_EXEC_PROTO(c_uop_plus);
+PROC_EXEC_PROTO(c_uop_minus);
+PROC_EXEC_PROTO(c_uop_not);
 
-PROC_EXEC_PROTO(c_and);
-PROC_EXEC_PROTO(c_mul);
-PROC_EXEC_PROTO(c_add);
-PROC_EXEC_PROTO(c_sub);
-PROC_EXEC_PROTO(c_div);
-PROC_EXEC_PROTO(c_power);
-PROC_EXEC_PROTO(c_or);
+PROC_EXEC_PROTO(c_bop_and);
+PROC_EXEC_PROTO(c_bop_mul);
+PROC_EXEC_PROTO(c_bop_add);
+PROC_EXEC_PROTO(c_bop_sub);
+PROC_EXEC_PROTO(c_bop_div);
+PROC_EXEC_PROTO(c_bop_power);
+PROC_EXEC_PROTO(c_bop_or);
 
 PROC_EXEC_PROTO(c_bop_concatenate);
 
-PROC_EXEC_PROTO(c_eq);
-PROC_EXEC_PROTO(c_gt);
-PROC_EXEC_PROTO(c_gteq);
-PROC_EXEC_PROTO(c_lt);
-PROC_EXEC_PROTO(c_lteq);
-PROC_EXEC_PROTO(c_neq);
+PROC_EXEC_PROTO(c_rel_eq);
+PROC_EXEC_PROTO(c_rel_gt);
+PROC_EXEC_PROTO(c_rel_gteq);
+PROC_EXEC_PROTO(c_rel_lt);
+PROC_EXEC_PROTO(c_rel_lteq);
+PROC_EXEC_PROTO(c_rel_neq);
 
 PROC_EXEC_PROTO(c_if);
+
+/* these may mutate their inputs e.g. from integer to real */
+
+extern void
+ss_data_add(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_addend_a,
+    _InoutRef_  P_SS_DATA p_ss_data_addend_b);
+
+extern void
+ss_data_subtract(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_minuend,
+    _InoutRef_  P_SS_DATA p_ss_data_subtrahend);
+
+extern void
+ss_data_multiply(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_multiplicand_a,
+    _InoutRef_  P_SS_DATA p_ss_data_multiplicand_b);
+
+extern void
+ss_data_divide(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_dividend,
+    _InoutRef_  P_SS_DATA p_ss_data_divisor);
 
 /*
 ev_func.c external functions
@@ -909,7 +940,15 @@ NO ev_fndba.c (database)
 /* NO c_dvarp: ARRAY_RANGE_VARP */
 
 /*
-ev_fneng.c external functions (engineering)
+ev_fnenb.c external functions (engineering - bitwise operations)
+*/
+
+/*
+ev_fnenc.c external functions (engineering - conversion)
+*/
+
+/*
+ ev_fneng.c external functions (engineering)
 */
 
 PROC_EXEC_PROTO(c_besseli);
@@ -981,7 +1020,7 @@ PROC_EXEC_PROTO(c_spearman);
 
 extern void
 binomial_coefficient_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
     _InVal_     S32 n,
     _InVal_     S32 k);
 
@@ -1009,15 +1048,15 @@ PROC_EXEC_PROTO(c_trimmean);
 _Check_return_
 extern F64
 median_calc_span(
-    _InRef_     PC_EV_DATA p_ev_data,
+    _InRef_     PC_SS_DATA p_ss_data,
     _InVal_     S32 y_start /*incl*/,
     _InVal_     S32 y_end   /*excl*/);
 
 _Check_return_
 extern BOOL
 statistics_value_next(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InoutRef_  P_S32 p_ix,
     _InoutRef_  P_S32 p_iy,
     _InRef_     S32 x_size,
@@ -1101,10 +1140,10 @@ PROC_EXEC_PROTO(c_steyx);
 _Check_return_
 extern BOOL
 statistics_paired_values_next(
-    _OutRef_    P_EV_DATA p_ev_data_out_a,
-    _OutRef_    P_EV_DATA p_ev_data_out_b,
-    _InRef_     PC_EV_DATA p_ev_data_in_a,
-    _InRef_     PC_EV_DATA p_ev_data_in_b,
+    _OutRef_    P_SS_DATA p_ss_data_out_a,
+    _OutRef_    P_SS_DATA p_ss_data_out_b,
+    _InRef_     PC_SS_DATA p_ss_data_in_a,
+    _InRef_     PC_SS_DATA p_ss_data_in_b,
     _InoutRef_  P_S32 p_ix,
     _InoutRef_  P_S32 p_iy,
     _InRef_     S32 x_size,
@@ -1148,91 +1187,95 @@ ev_help.c
 _Check_return_
 extern STATUS /* EV_IDNO or error */
 arg_normalise(
-    _InoutRef_  P_EV_DATA p_ev_data,
+    _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags,
     _InoutRef_opt_ P_S32 p_max_x,
     _InoutRef_opt_ P_S32 p_max_y,
     P_STACK_DBASE p_stack_dbase);
 
+/* several spreadsheet functions define that they INT() their real arg (ODF INT() towards -inf for consistency) */
+#define arg_get_real_INT(p_ss_data) \
+    real_floor(ss_data_get_real(p_ss_data))
+
 _Check_return_
 extern STATUS
 array_expand(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     S32 max_x,
     _InVal_     S32 max_y);
 
 /*ncr*/
 extern EV_IDNO
 array_range_index(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 ix,
     _InVal_     S32 iy,
-    _InVal_     EV_TYPE types);
+    _InVal_     EV_TYPE type_flags);
 
 /*ncr*/
 extern EV_IDNO
 array_range_mono_index(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 mono_ix,
-    _InVal_     EV_TYPE types);
+    _InVal_     EV_TYPE type_flags);
 
 extern void
 array_range_sizes(
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _OutRef_    P_S32 p_x_size,
     _OutRef_    P_S32 p_y_size);
 
 extern void
 array_range_mono_size(
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _OutRef_    P_S32 p_mono_size);
 
 _Check_return_
 extern S32
 array_scan_element(
     _InoutRef_  P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags);
 
 _Check_return_
 extern STATUS
 array_scan_init(
     _OutRef_    P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _InRef_     PC_EV_DATA p_ev_data);
+    _InRef_     PC_SS_DATA p_ss_data);
 
 _Check_return_
 extern STATUS
 array_sort(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     U32 x_index);
 
 extern void
 data_ensure_constant(
-    P_EV_DATA p_ev_data);
+    P_SS_DATA p_ss_data);
 
 _Check_return_
 extern BOOL
 data_is_array_range(
-    _InRef_     PC_EV_DATA p_ev_data);
+    _InRef_     PC_SS_DATA p_ss_data);
 
 _Check_return_
 extern S32
 field_scan_element(
     _InoutRef_  P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags);
 
 _Check_return_
 extern STATUS
 field_scan_init(
     _OutRef_    P_ARRAY_SCAN_BLOCK p_array_scan_block,
-    _InRef_     PC_EV_DATA p_ev_data);
+    _InRef_     PC_SS_DATA p_ss_data);
 
 extern void
 name_deref(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     EV_HANDLE h_name);
 
 _Check_return_
@@ -1251,7 +1294,7 @@ _Check_return_
 extern S32
 range_scan_element(
     _InoutRef_  P_RANGE_SCAN_BLOCK p_range_scan_block,
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags);
 
 extern void
@@ -1273,37 +1316,77 @@ ev_trace_slr_tstr_buf(
 
 #endif
 
+/*
+ev_arith.c
+*/
+
+_Check_return_
+extern bool
+f64_is_divisor_too_small(
+    _InVal_     F64 divisor);
+
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
+two_nums_bop_propagate_errors(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
 two_nums_add_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors);
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
 
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_divide_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors);
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
 
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_multiply_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors);
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
 
 _Check_return_ _Success_(return)
-extern BOOL
+extern bool
 two_nums_subtract_try(
-    _OutRef_    P_EV_DATA p_ev_data_res,
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
-    _InVal_     BOOL propogate_errors);
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_add_propagate_error(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* propagate errors */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_divide_propagate_error(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* propagate errors */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_multiply_propagate_error(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* propagate errors */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_subtract_propagate_error(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* propagate errors */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
 
 /*
 ev_math.c external functions
@@ -1325,12 +1408,12 @@ PROC_EXEC_PROTO(c_sqr);
 
 extern void
 factorial_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
     _InVal_     S32 n);
 
 extern void
 product_between_calc(
-    _InoutRef_  P_EV_DATA p_ev_data_res, /* denotes integer or fp; may return integer or fp */
+    _InoutRef_  P_SS_DATA p_ss_data_res, /* denotes integer or fp; may return integer or fp */
     _InVal_     S32 start,
     _InVal_     S32 end);
 
@@ -1364,13 +1447,13 @@ PROC_EXEC_PROTO(c_trunc);
 
 extern void
 round_common(
-    P_EV_DATA args[EV_MAX_ARGS],
+    P_SS_DATA args[EV_MAX_ARGS],
     _InVal_     S32 n_args,
-    _InoutRef_  P_EV_DATA p_ev_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_res,
     _InVal_     U32 rpn_did_num);
 
 /*
-ev_matr.c external functions (matrix functions)
+ev_matr.c external functions (matrix)
 */
 
 PROC_EXEC_PROTO(c_m_determ);
@@ -1428,7 +1511,7 @@ PROC_EXEC_PROTO(c_c_theta);
 PROC_EXEC_PROTO(c_odf_complex);
 
 /*
-ev_fntri.c external functions (trigonometrical)
+ev_mtri.c external functions (trigonometrical)
 */
 
 PROC_EXEC_PROTO(c_acos);
@@ -1521,8 +1604,8 @@ extern S32
 name_make(
     P_EV_HANDLE p_ev_handle,
     _InVal_     EV_DOCNO ev_docno,
-    _InRef_     PC_EV_STRINGC p_name,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_STRINGC p_name,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _In_opt_z_  PC_USTR ustr_description);
 
 /*
@@ -1533,10 +1616,10 @@ _Check_return_
 extern S32
 args_check(
     _InVal_     S32 arg_count,
-    P_P_EV_DATA args,
+    P_P_SS_DATA args,
     _InVal_     S32 type_count,
     _In_reads_opt_(type_count) const PC_EV_TYPE p_arg_types,
-    _OutRef_    P_EV_DATA p_ev_data_res,
+    _OutRef_    P_SS_DATA p_ss_data_res,
     _OutRef_    P_S32 p_max_x,
     _OutRef_    P_S32 p_max_y,
     P_STACK_DBASE p_stack_dbase);
@@ -1549,7 +1632,7 @@ eval_rpn(
 extern void
 read_cur_sym(
     P_RPNSTATE p_rpnstate,
-    P_EV_DATA p_ev_data);
+    P_SS_DATA p_ss_data);
 
 #define read_from_rpn(to, from, size) \
     memcpy32((to), (from), (size))
@@ -1602,13 +1685,13 @@ _Check_return_
 _Ret_maybenull_z_
 extern PC_USTR
 func_name(
-    _InVal_     EV_IDNO did_num);
+    _InVal_     EV_IDNO ev_idno);
 
 _Check_return_
 _Ret_maybenull_z_
 extern PC_A7STR
 type_from_flags(
-    _InVal_     EV_TYPE type);
+    _InVal_     EV_TYPE type_flags);
 
 _Check_return_
 extern EV_TYPE
@@ -1682,7 +1765,7 @@ tree_get_supporting_docs(
 extern S32
 tree_sort(
     P_DEPTABLE p_deptable,
-    _InRef_     P_PROC_ELEMENT_DELETED p_proc_element_deleted,
+    _InRef_     P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted,
     _InRef_opt_ P_PROC_BSEARCH p_proc_bsearch);
 
 extern void

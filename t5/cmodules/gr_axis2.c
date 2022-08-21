@@ -24,10 +24,10 @@
 _Check_return_
 extern F64
 splitlognum(
-    _InRef_     PC_F64 logval,
+    _InVal_     F64 logval,
     _OutRef_    P_F64 exponent)
 {
-    F64 mantissa = modf(*logval, exponent);
+    F64 mantissa = modf(logval, exponent);
 
     /* NB. consider numbers such as log10(0.2) ~ -0.698 = (-1.0 exp) + (0.30103 man) */
     if(mantissa < 0.0)
@@ -122,25 +122,6 @@ gr_axis_form_category(
 *
 ******************************************************************************/
 
-#if __STDC_VERSION__ < 199901L
-
-#if WINDOWS
-
-#ifndef                   __mathnums_h
-#include "cmodules/coltsoft/mathnums.h" /* for _log2_e */
-#endif
-
-_Check_return_
-static double
-log2(_InVal_ double d)
-{
-    return(log(d) * _log2_e);
-}
-
-#endif /* OS */
-
-#endif /* __STDC_VERSION__ */
-
 static void
 gr_axis_form_value_log(
     P_GR_AXES p_axes,
@@ -198,14 +179,14 @@ gr_axis_form_value_log(
             /* first try and split punter value up as base 10 animacule */
             F64 test = log10(p_axis_ticks->punter);
             F64 exponent;
-            F64 mantissa = splitlognum(&test, &exponent);
+            F64 mantissa = splitlognum(test, &exponent);
 
             /* was number close enough to a power of the base? */
             if(mantissa < LOG_SIG_EPS)
             {
                 test = log10(p_axis_ticks->current);
 
-                consume(F64, splitlognum(&test, &exponent));
+                consume(F64, splitlognum(test, &exponent));
 
                 test = p_axis_ticks->punter / exponent;
 
@@ -217,7 +198,7 @@ gr_axis_form_value_log(
                 /* try base 2 */
                 test = log2(p_axis_ticks->punter);
 
-                mantissa = splitlognum(&test, &exponent);
+                mantissa = splitlognum(test, &exponent);
 
                 /* was number close enough to a power of the base? */
                 if(mantissa < LOG_SIG_EPS)
@@ -381,11 +362,11 @@ gr_axis_form_value_lin(
     } /*block*/
 
     { /* remember for decimal places rounding of values shown on axis */
-    F64 log10_major = log10(major_interval);
+    const F64 log10_major = log10(major_interval);
     F64 exponent;
-    F64 mantissa = splitlognum(&log10_major, &exponent);
-    int decimals = (int) floor(exponent);
-    UNREFERENCED_PARAMETER(mantissa);
+    const F64 mantissa = splitlognum(log10_major, &exponent);
+    const int decimals = (int) floor(exponent);
+    UNREFERENCED_LOCAL_VARIABLE(mantissa);
     p_axis->major.bits.decimals = (decimals < 0) ? -decimals : 0;
     } /*block*/
 
@@ -470,14 +451,14 @@ gr_axis_form_value(
 _Check_return_
 static BOOL
 gr_lin_major_test(
-    _InRef_     PC_F64 p_mantissa,
-    _InRef_     PC_F64 p_cutoff,
+    _InVal_     F64 mantissa,
+    _InVal_     F64 cutoff,
     _InoutRef_  P_F64 p_test,
-    _InRef_     PC_F64 p_divisor)
+    _InVal_     F64 divisor)
 {
-    if(*p_mantissa < *p_cutoff)
+    if(mantissa < cutoff)
     {
-        *p_test = *p_test / *p_divisor;
+        *p_test = *p_test / divisor;
         return(TRUE);
     }
 
@@ -513,17 +494,17 @@ gr_lin_major(
 
     test = log10(fabs(span));
 
-    mantissa = splitlognum(&test, &exponent);
+    mantissa = splitlognum(test, &exponent);
 
     test = pow(10.0, exponent);
 
-    if(gr_lin_major_test(&mantissa, &cutoff[0], &test, &divisor[0]))
+    if(gr_lin_major_test(mantissa, cutoff[0], &test, divisor[0]))
         return(test);
 
-    if(gr_lin_major_test(&mantissa, &cutoff[1], &test, &divisor[1]))
+    if(gr_lin_major_test(mantissa, cutoff[1], &test, divisor[1]))
         return(test);
 
-    if(gr_lin_major_test(&mantissa, &cutoff[2], &test, &divisor[2]))
+    if(gr_lin_major_test(mantissa, cutoff[2], &test, divisor[2]))
         return(test);
 
     return(test);

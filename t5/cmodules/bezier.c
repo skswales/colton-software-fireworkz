@@ -77,20 +77,17 @@ extern void
 bezier_arc_90(
     _InRef_     PC_DRAW_POINT centre,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 p_startAngle,
+    _InVal_     F64 start_angle,
     _OutRef_    P_DRAW_POINT start,
     _OutRef_    P_DRAW_POINT end,
     _OutRef_    P_DRAW_POINT control1,
     _OutRef_    P_DRAW_POINT control2)
 {
-    F64 x, y;
-    F64 kx, ky;
-
     /* Calculate X and Y, and multiples needed for Bezier */
-    x = radius * cos(*p_startAngle);
-    y = radius * sin(*p_startAngle);
-    kx = bezier_arc_k90 * x;
-    ky = bezier_arc_k90 * y;
+    const F64 x = radius * cos(start_angle);
+    const F64 y = radius * sin(start_angle);
+    const F64 kx = bezier_arc_k90 * x;
+    const F64 ky = bezier_arc_k90 * y;
 
     /* Find control points and end points, applying origin shift */
     start->x    = centre->x + (DRAW_COORD) +x;
@@ -127,13 +124,10 @@ bezier_arc_90_aligned(
     _OutRef_    P_DRAW_POINT control1,
     _OutRef_    P_DRAW_POINT control2)
 {
-    F64 x, kx;
-    DRAW_COORD ix;
-
     /* Calculate X, and multiple needed for Bezier */
-    x  = radius * bezier_arc_cos45;
-    kx = bezier_arc_k90 * x;
-    ix = (DRAW_COORD) x;
+    const F64 x  = radius * bezier_arc_cos45;
+    const F64 kx = bezier_arc_k90 * x;
+    const DRAW_COORD ix = (DRAW_COORD) x;
 
     /* Find control points and end points, applying origin shift */
     start->x = +ix;
@@ -229,21 +223,19 @@ static void
 bezier_arc_short(
     _InRef_     PC_DRAW_POINT centre,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 p_startAngle,
-    _InRef_     PC_F64 p_endAngle,
+    _InVal_     F64 start_angle,
+    _InVal_     F64 end_angle,
     _OutRef_    P_DRAW_POINT start,
     _OutRef_    P_DRAW_POINT end,
     _OutRef_    P_DRAW_POINT control1,
     _OutRef_    P_DRAW_POINT control2)
 {
-    F64 x1, y1, x2, y2;
-    F64 x1sq_plus_y1sq, sq_plus_x1x2_plus_y1y2, k;
-
     /* Calculate end points, based on (0,0) */
-    x1 = radius * cos(*p_startAngle);
-    y1 = radius * sin(*p_startAngle);
-    x2 = radius * cos(*p_endAngle);
-    y2 = radius * sin(*p_endAngle);
+    const F64 x1 = radius * cos(start_angle);
+    const F64 y1 = radius * sin(start_angle);
+    const F64 x2 = radius * cos(end_angle);
+    const F64 y2 = radius * sin(end_angle);
+    F64 x1sq_plus_y1sq, sq_plus_x1x2_plus_y1y2, k;
 
     /* Calculate k */
     x1sq_plus_y1sq = x1*x1 + y1*y1;
@@ -280,35 +272,35 @@ extern U32
 bezier_arc_start(
     _InRef_     PC_DRAW_POINT centre,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 p_startAngle,
-    _InRef_     PC_F64 p_endAngle,
+    _InVal_     F64 start_angle,
+    _InVal_     F64 end_angle_in,
     _OutRef_    P_DRAW_POINT start,
     _OutRef_    P_DRAW_POINT end,
     _OutRef_    P_DRAW_POINT control1,
     _OutRef_    P_DRAW_POINT control2)
 {
-    F64 endAngle = *p_endAngle;
+    F64 end_angle = end_angle_in;
 
-    bezier_arc_.segments = (U32) floor(((endAngle >= *p_startAngle)
-                                                ? (                    (endAngle - *p_startAngle))
-                                                : (bezier_arc_rad360 + (endAngle - *p_startAngle))
+    bezier_arc_.segments = (U32) floor(((end_angle >= start_angle)
+                                                ? (                    (end_angle - start_angle))
+                                                : (bezier_arc_rad360 + (end_angle - start_angle))
                                          ) / bezier_arc_rad90);
 
     /* Find end of short segment */
-    endAngle -= bezier_arc_.segments * bezier_arc_rad90;
+    end_angle -= bezier_arc_.segments * bezier_arc_rad90;
 
     /* Check for a zero length arc */
-    if(*p_startAngle == endAngle)
+    if(start_angle == end_angle)
     {
         /* Find arc points for first 90 degree chunk */
-        bezier_arc_90(centre, radius, p_startAngle,
+        bezier_arc_90(centre, radius, start_angle,
                       start, end, control1, control2);
-        endAngle += bezier_arc_rad90;
+        end_angle += bezier_arc_rad90;
     }
     else
     {
         /* Find arc points for first chunk of arc */
-        bezier_arc_short(centre, radius, p_startAngle, &endAngle,
+        bezier_arc_short(centre, radius, start_angle, end_angle,
                          start, end, control1, control2);
         bezier_arc_.segments += 1;
     }
@@ -316,7 +308,7 @@ bezier_arc_start(
     /* Record iterator globals */
     bezier_arc_.centre = *centre;
     bezier_arc_.radius = radius;
-    bezier_arc_.angle  = endAngle;
+    bezier_arc_.angle  = end_angle;
 
     return(bezier_arc_.segments);
 }
@@ -353,7 +345,7 @@ bezier_arc_segment(
     /* Calculate arc */
     bezier_arc_90(&bezier_arc_.centre,
                    bezier_arc_.radius,
-                  &bezier_arc_.angle,
+                   bezier_arc_.angle,
                   &start_dummy,
                    end, control1, control2);
 

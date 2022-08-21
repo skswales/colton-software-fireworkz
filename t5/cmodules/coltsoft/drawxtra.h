@@ -362,6 +362,10 @@ typedef struct DRAW_OBJECT_TAG
 }
 DRAW_OBJECT_TAG;
 
+#define DRAW_TAG_CS_RANGE_START     0x00001500U
+#define DRAW_TAG_CS_PD_CHART_CODE   0x00001500U
+#define DRAW_TAG_CS_RANGE_END       0x000015FFU
+
 /*
 A (RO3) options object
 */
@@ -536,6 +540,24 @@ BITMAPINFO;
 typedef BITMAPINFO * P_BITMAPINFO;
 
 /* DRAW_OBJECT_HEADER followed by BITMAPINFO and bitmap */
+
+#define DRAW_OBJECT_TYPE_CS_RANGE_START 0x00000480U
+#define DRAW_OBJECT_TYPE_CS_HYBRID      0x00000480U
+#define DRAW_OBJECT_TYPE_CS_RANGE_END   0x000004BFU
+
+/*
+A Colton Software hybrid object
+*/
+
+typedef struct DRAW_OBJECT_CS_HYBRID
+{
+    DRAW_OBJECT_HEADER_;            /* 6 words  */ /* NB bounding box should be ignored */
+
+    U32 data_filetype;              /* 1 word   */
+}                                   /* 7 words  */
+DRAW_OBJECT_CS_HYBRID, * P_DRAW_OBJECT_CS_HYBRID;
+
+/* the data follows */
 
 #ifdef __kernel_h
 #elif RISCOS

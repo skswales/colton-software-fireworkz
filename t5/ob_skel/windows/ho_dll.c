@@ -99,7 +99,10 @@ host_load_module(
     zero_struct_ptr(p_runtime_info);
 
     if(!IS_OBJECT_ID_VALID(object_id))
+    {
+        myassert1(TEXT("host_load_module(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
         return(status_check());
+    }
 
     p_runtime_info->object_id = object_id;
 

@@ -993,10 +993,10 @@ host_view_init(
             SetMenu(hwnd, ho_get_menu_bar(p_docu, p_view)));
 
         if(NULL != host_get_prog_icon_large())
-            (void) /*old HICON*/(SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) host_get_prog_icon_large()));
+            consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) host_get_prog_icon_large()));
 
         if(NULL != host_get_prog_icon_small())
-            (void) /*old HICON*/(SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) host_get_prog_icon_small()));
+            consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) host_get_prog_icon_small()));
     }
 
     if(status_fail(status))
@@ -1257,6 +1257,7 @@ view_pane_create(
         status = slave_window_create(p_docu, p_view, WIN_VSCROLL_SPLIT_VERT);
         break;
 
+    default: default_unhandled();
     case WIN_PANE:
         status_break(status = slave_window_create(p_docu, p_view, WIN_HSCROLL));
         status_break(status = slave_window_create(p_docu, p_view, WIN_VSCROLL));
@@ -1304,6 +1305,7 @@ view_pane_destroy(
         slave_window_destroy(p_view, WIN_VSCROLL_SPLIT_VERT);
         break;
 
+    default: default_unhandled();
     case WIN_PANE:
         slave_window_destroy(p_view, WIN_HSCROLL);
         slave_window_destroy(p_view, WIN_VSCROLL);
@@ -1454,7 +1456,7 @@ calc_pane_posn(
 
         switch(pane_id)
         {
-        default:
+        default: default_unhandled();
         case WIN_PANE:
             set_rect(&p_pane->rect, p_view->pane_posn.split.x, p_view->pane_posn.split.y, p_view->pane_posn.outer_size.x, p_view->pane_posn.outer_size.y);
 
@@ -2535,7 +2537,7 @@ host_acquire_global_clipboard(
     HWND hwndClipOwner = NULL;
     BOOL res;
 
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard(docno=%d, viewno=%d)"), acquiring_docno, acquiring_viewno);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(")"), acquiring_docno, acquiring_viewno);
 
     if(!IS_VIEW_NONE(p_view))
     {
@@ -2549,7 +2551,7 @@ host_acquire_global_clipboard(
     if(res)
     {
         trace_0(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: EmptyClipboard"));
-        EmptyClipboard();
+        EmptyClipboard(); /* we may immediately get WM_DESTROYCLIPBOARD if this window has owned clipboard even if it has already emptied it */
 
         g_global_clipboard_owning_docno  = acquiring_docno;
         g_global_clipboard_owning_viewno = acquiring_viewno;
@@ -2570,7 +2572,7 @@ host_release_global_clipboard(
     _InVal_     BOOL render_if_acquired)
 {
     trace_1(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     if(DOCNO_NONE != g_global_clipboard_owning_docno)
     {
@@ -2607,7 +2609,7 @@ host_open_global_clipboard(
     BOOL res;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard(docno=%d, viewno=%d)"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(")"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
 
     if(!IS_VIEW_NONE(p_view))
     {
@@ -2625,8 +2627,8 @@ host_onClose_process_clipboard(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: msg docno=%d, viewno=%d"), docno_from_p_docu(p_docu), viewno_from_p_view(p_view));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno_from_p_docu(p_docu), viewno_from_p_view(p_view));
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     if( (g_global_clipboard_owning_docno  != docno_from_p_docu(p_docu))  ||
         (g_global_clipboard_owning_viewno != viewno_from_p_view(p_view)) )
@@ -2795,11 +2797,11 @@ host_onButtonUp_dragging(
 
     ReleaseCapture();
 
-    trace_1(TRACE__NULL, TEXT("WM_xBUTTONUP - terminating drag monitor - *** null_events_stop(docno=%d)"), ho_win_state.drag.docno);
+    trace_1(TRACE__NULL, TEXT("WM_xBUTTONUP - terminating drag monitor - *** null_events_stop(docno=") DOCNO_TFMT TEXT(")"), ho_win_state.drag.docno);
     null_events_stop(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE);
 
     /* inform the current owner of the pending doom */
-    trace_1(TRACE_WINDOWS_HOST, TEXT("WM_xBUTTONUP: *** TERMINATING DRAG in docno=%d ***"), ho_win_state.drag.docno);
+    trace_1(TRACE_WINDOWS_HOST, TEXT("WM_xBUTTONUP: *** TERMINATING DRAG in docno=") DOCNO_TFMT TEXT(" ***"), ho_win_state.drag.docno);
     send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_FINISHED, ho_win_state.drag.hwnd, point.x, point.y, ctrl_pressed, shift_pressed, ho_win_state.drag.event_handler);
     ho_win_state.drag.enabled = FALSE;
 }
@@ -3753,7 +3755,7 @@ wndproc_host_onChar(
 
 #if defined(USE_GLOBAL_CLIPBOARD)
 
-/* someone is destroying the clipboard that this window allegedly owns */
+/* someone is emptying the clipboard that this window allegedly owns */
 
 static void
 wndproc_host_onDestroyClipboard(
@@ -3768,13 +3770,21 @@ wndproc_host_onDestroyClipboard(
         /*EMPTY*/ /* we no longer own the clipboard, regardless */
     }
 
-    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: msg docno=%d, viewno=%d"), docno, viewno_from_p_view_fn(p_view));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
-    assert(g_global_clipboard_owning_docno  == docno);
-    assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno, viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
-    assert(g_global_clipboard_owning_docno  != DOCNO_NONE);
-    assert(g_global_clipboard_owning_viewno != VIEWNO_NONE);
+    if(DOCNO_NONE == g_global_clipboard_owning_docno)
+    {   /* may already have been 'released' and emptied */
+        assert(g_global_clipboard_owning_viewno == VIEWNO_NONE);
+    }
+    else
+    {
+        assert(g_global_clipboard_owning_docno  == docno);
+        assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+
+        assert(g_global_clipboard_owning_docno  != DOCNO_NONE);
+        assert(g_global_clipboard_owning_viewno != VIEWNO_NONE);
+    }
 
     g_global_clipboard_owning_docno  = DOCNO_NONE;
     g_global_clipboard_owning_viewno = VIEWNO_NONE;
@@ -3794,19 +3804,21 @@ wndproc_host_onRenderFormat(
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
         trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: received, event handler %d, format ") U32_XTFMT, event_handler, (U32) uFormat);
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: msg docno=%d, viewno=%d"), docno, viewno_from_p_view_fn(p_view));
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
-        assert(g_global_clipboard_owning_docno  == docno);
-        assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno, viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
         if(DOCNO_NONE == g_global_clipboard_owning_docno)
-        {
+        {   /* may already have been 'released' and emptied */
+            assert(VIEWNO_NONE == g_global_clipboard_owning_viewno);
             trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: deny render request"));
             lresult = 1; /* deny render request */
         }
         else
         {
             const P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
+
+            assert(g_global_clipboard_owning_docno  == docno);
+            assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
 
             /* clipboard is already open ready to receive data */
 
@@ -3837,13 +3849,12 @@ wndproc_host_onRenderAllFormats(
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: received, event handler %d"), event_handler);
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: msg docno=%d, viewno=%d"), docno, viewno_from_p_view_fn(p_view));
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: cbo docno=%d, viewno=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
-        assert(g_global_clipboard_owning_docno  == docno);
-        assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno, viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
         if(DOCNO_NONE == g_global_clipboard_owning_docno)
-        {
+        {   /* may already have been 'released' and emptied */
+            assert(VIEWNO_NONE == g_global_clipboard_owning_viewno);
             trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: deny render request"));
             lresult = 1; /* deny render request */
         }
@@ -3851,6 +3862,9 @@ wndproc_host_onRenderAllFormats(
         {
             P_DOCU global_clipboard_owning_p_docu = p_docu_from_docno(g_global_clipboard_owning_docno);
             P_VIEW global_clipboard_owning_p_view = p_view_from_viewno(global_clipboard_owning_p_docu, g_global_clipboard_owning_viewno);
+
+            assert(g_global_clipboard_owning_docno  == docno);
+            assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
 
             if(host_open_global_clipboard(global_clipboard_owning_p_docu, global_clipboard_owning_p_view))
             {
@@ -4333,11 +4347,11 @@ preprocess_key_event_ESCAPE(
 
         ReleaseCapture();
 
-        trace_2(TRACE__NULL, TEXT("send_key_to_docu(docno=%d) - terminating drag monitor - *** null_events_stop(docno=%d)"), docno_from_p_docu(p_docu_for_key), ho_win_state.drag.docno);
+        trace_2(TRACE__NULL, TEXT("send_key_to_docu(docno=") DOCNO_TFMT TEXT(") - terminating drag monitor - *** null_events_stop(docno=") DOCNO_TFMT TEXT(")"), docno_from_p_docu(p_docu_for_key), ho_win_state.drag.docno);
         null_events_stop(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE);
 
         /* inform the current owner of the pending doom */
-        trace_2(TRACE_WINDOWS_HOST, TEXT("send_key_to_docu(docno=%d): *** ABORTING DRAG in docno=%d ***"), docno_from_p_docu(p_docu_for_key), ho_win_state.drag.docno);
+        trace_2(TRACE_WINDOWS_HOST, TEXT("send_key_to_docu(docno=") DOCNO_TFMT TEXT("): *** ABORTING DRAG in docno=") DOCNO_TFMT TEXT(" ***"), docno_from_p_docu(p_docu_for_key), ho_win_state.drag.docno);
         send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_ABORTED, ho_win_state.drag.hwnd, point.x, point.y, FALSE, FALSE, ho_win_state.drag.event_handler);
         ho_win_state.drag.enabled = FALSE;
 
@@ -4643,7 +4657,7 @@ host_drag_start(
     /* ensure we capture the mouse, ensures we get the mouse events */
     SetCapture(ho_win_state.drag.hwnd);
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("host_drag_start() - starting drag monitor - *** null_events_start(docno=%d)"), ho_win_state.drag.docno);
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("host_drag_start() - starting drag monitor - *** null_events_start(docno=") DOCNO_TFMT TEXT(")"), ho_win_state.drag.docno);
     if(status_fail(status_wrap(null_events_start(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE))))
     {
         ReleaseCapture();

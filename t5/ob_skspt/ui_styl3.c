@@ -998,7 +998,7 @@ es_tab_list_decompile(
         PC_TAB_INFO p_tab_list = array_ptrc(p_h_tab_list, TAB_INFO, i);
         PC_USTR ustr_type = es_tab_list_decompile_type(p_tab_list->type);
         const U32 l_type = ustrlen32(ustr_type);
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         NUMFORM_PARMS numform_parms;
         QUICK_UBLOCK quick_ublock;
 
@@ -1010,14 +1010,14 @@ es_tab_list_decompile(
 
         memcpy32(ustr, ustr_type, l_type);
 
-        ev_data_set_real(&ev_data, /*FP_USER_UNIT*/ ((FP_PIXIT) p_tab_list->offset / p_es_callback->info[IDX_HORZ].fp_pixits_per_user_unit));
+        ss_data_set_real(&ss_data, /*FP_USER_UNIT*/ ((FP_PIXIT) p_tab_list->offset / p_es_callback->info[IDX_HORZ].fp_pixits_per_user_unit));
 
         zero_struct(numform_parms);
         numform_parms.ustr_numform_numeric = (PC_USTR) (p_es_callback->info[IDX_HORZ].normal.user_unit_numform_ustr_buf);
 
         quick_ublock_setup_using_array(&quick_ublock, p_ui_text->text.array_handle_ustr);
 
-        if(status_fail(status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms)))
+        if(status_fail(status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
             break;
     }
 
@@ -1702,7 +1702,7 @@ new_using_es_wibble(
         {
             /* read what's currently set back in as we've only set one piece of the line_space structure */
             p_member = &p_es_callback->style.para_style.line_space.leading;
-            ui_dlg_get_f64(p_dialog_msg_ctl_state_change->h_dialog, ES_PS_ID_LINE_SPACE_N_VAL, &f64);
+            f64 = ui_dlg_get_f64(p_dialog_msg_ctl_state_change->h_dialog, ES_PS_ID_LINE_SPACE_N_VAL);
             f64 = f64 * PIXITS_PER_POINT + 0.5;
             * (P_S32) p_member = (fabs(f64) <= S32_MAX) ? (S32) f64 : 0;
         }

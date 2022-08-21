@@ -21,11 +21,11 @@ internal functions
 
 PROC_BSEARCH_PROTO(static, proc_compare_custom_def, EV_CUSTOM, EV_CUSTOM);
 
-PROC_ELEMENT_DELETED_PROTO(static, proc_deleted_custom_def);
+PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_custom_def);
 
 PROC_BSEARCH_PROTO(static, proc_compare_name_def, EV_NAME, EV_NAME);
 
-PROC_ELEMENT_DELETED_PROTO(static, proc_deleted_name_def);
+PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_name_def);
 
 /*
 resource lists
@@ -50,20 +50,20 @@ static EV_HANDLE next_custom_handle = 0;
 static void
 name_set_def(
     _InoutRef_  P_EV_NAME p_ev_name,
-    _InRef_     PC_EV_DATA p_ev_data,
+    _InRef_     PC_SS_DATA p_ss_data,
     _InVal_     BOOL undefined)
 {
     if(PtrGetByte(p_ev_name->ustr_name_id) == CH_QUESTION_MARK)
     {
-        p_ev_name->def_data.did_num = RPN_DAT_FIELD;
+        ss_data_set_data_id(&p_ev_name->def_data, DATA_ID_FIELD);
         p_ev_name->def_data.arg.h_name = p_ev_name->handle;
         p_ev_name->flags.undefined = 0;
     }
     else
     {
-        status_assert(ss_data_resource_copy(&p_ev_name->def_data, p_ev_data));
+        status_assert(ss_data_resource_copy(&p_ev_name->def_data, p_ss_data));
         p_ev_name->flags.undefined = undefined;
-        if(RPN_DAT_ARRAY == p_ev_name->def_data.did_num)
+        if(ss_data_is_array(&p_ev_name->def_data))
             data_ensure_constant(&p_ev_name->def_data);
     }
 
@@ -125,7 +125,7 @@ custom_list_sort(void)
 
         for(custom_num = 0; custom_num < custom_table_elements; ++custom_num, ++p_ev_custom)
         {
-            if(p_ev_custom->flags.tobedel)
+            if(p_ev_custom->flags.to_be_deleted)
                 continue;
 
             /* custom reference must be undefined before we can delete it */
@@ -141,8 +141,8 @@ custom_list_sort(void)
                     p_ss_doc->custom_ref_count -= 1;
                 } /*block*/
 
-                p_ev_custom->flags.tobedel = 1;
-                custom_def.flags.tobedel = 1;
+                p_ev_custom->flags.to_be_deleted = 1;
+                custom_def.flags.to_be_deleted = 1;
                 custom_def.mindel = MIN(custom_def.mindel, custom_num);
 
                 trace_1(TRACE_MODULE_EVAL, TEXT("custom_list_sort deleting custom: %s"), report_ustr(ustr_bptr(p_ev_custom->ustr_custom_id)));
@@ -254,9 +254,9 @@ ensure_name_in_list(
     ustr_xstrkpy(ustr_bptr(p_ev_name->ustr_name_id), sizeof32(p_ev_name->ustr_name_id), ustr_name);
 
     {
-    EV_DATA ev_data;
-    ev_data_set_blank(&ev_data);
-    name_set_def(p_ev_name, &ev_data, 1);
+    SS_DATA ss_data;
+    ss_data_set_blank(&ss_data);
+    name_set_def(p_ev_name, &ss_data, 1);
     } /*block*/
 
     {
@@ -340,19 +340,19 @@ ev_name_make(
     }
     else
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         DOCU_NAME docu_name;
 
         name_init(&docu_name);
-        ev_data_set_blank(&ev_data);
+        ss_data_set_blank(&ss_data);
 
         /* check name of name is OK */
         status_return(ident_validate(ustr_name_id));
 
         if(NULL != ustr_name_def)
         {
-            if((res = ss_recog_constant(&ev_data, ustr_name_def)) <= 0)
-            if((res = recog_slr_range(&ev_data, &docu_name, ev_docno, ustr_name_def)) == 0)
+            if((res = ss_recog_constant(&ss_data, ustr_name_def)) <= 0)
+            if((res = recog_slr_range(&ss_data, &docu_name, ev_docno, ustr_name_def)) == 0)
                 res = create_error(EVAL_ERR_ODF_NA);
         }
         else
@@ -362,14 +362,14 @@ ev_name_make(
         if(res > 0)
         {
             EV_HANDLE name_handle;
-            EV_STRINGC ev_stringc;
+            SS_STRINGC ss_stringc;
 
-            ev_stringc.uchars = ustr_name_id; /* loan */
-            ev_stringc.size = ustrlen32(ustr_name_id);
-            res = name_make(&name_handle, ev_docno, &ev_stringc, &ev_data, ustr_description);
+            ss_stringc.uchars = ustr_name_id; /* loan */
+            ss_stringc.size = ustrlen32(ustr_name_id);
+            res = name_make(&name_handle, ev_docno, &ss_stringc, &ss_data, ustr_description);
 
             /* name_make has copied resources */
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
         }
 
         name_dispose(&docu_name);
@@ -400,7 +400,7 @@ find_custom_in_list(
 
     for(i = 0; i < n_elements; ++i, ++p_ev_custom)
     {
-        if(p_ev_custom->flags.tobedel)
+        if(p_ev_custom->flags.to_be_deleted)
             continue;
 
         if(owner_ev_docno != ev_slr_docno(&p_ev_custom->owner))
@@ -435,7 +435,7 @@ find_name_in_list(
 
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
     {
-        if(p_ev_name->flags.tobedel)
+        if(p_ev_name->flags.to_be_deleted)
             continue;
 
         if(owner_ev_docno != ev_slr_docno(&p_ev_name->owner))
@@ -459,9 +459,9 @@ nam_ref_count_update(
     _InRef_     PC_EV_NAME p_ev_name,
     _InVal_     S32 update)
 {
-    switch(p_ev_name->def_data.did_num)
+    switch(ss_data_get_data_id(&p_ev_name->def_data))
     {
-    case RPN_DAT_SLR:
+    case DATA_ID_SLR:
         {
         P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->def_data.arg.slr));
 
@@ -476,7 +476,7 @@ nam_ref_count_update(
         break;
         }
 
-    case RPN_DAT_RANGE:
+    case DATA_ID_RANGE:
         {
         P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->def_data.arg.range.s));
 
@@ -540,7 +540,7 @@ name_free_resources(
     nam_ref_count_update(p_ev_name, -1);
     ss_data_free_resources(&p_ev_name->def_data);
     ustr_clr(&p_ev_name->ustr_description);
-    ev_data_set_blank(&p_ev_name->def_data);
+    ss_data_set_blank(&p_ev_name->def_data);
 }
 
 /******************************************************************************
@@ -565,7 +565,7 @@ name_list_sort(void)
         {
             const P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
 
-            if(p_ev_name->flags.tobedel)
+            if(p_ev_name->flags.to_be_deleted)
                 continue;
 
             /* reference must be undefined before we can delete it */
@@ -585,8 +585,8 @@ name_list_sort(void)
                     p_ss_doc->nam_ref_count -= 1;
                 } /*block*/
 
-                p_ev_name->flags.tobedel = 1;
-                name_def.flags.tobedel = 1;
+                p_ev_name->flags.to_be_deleted = 1;
+                name_def.flags.to_be_deleted = 1;
                 name_def.mindel = MIN(name_def.mindel, name_num);
 
                 trace_1(TRACE_MODULE_EVAL, TEXT("name_list_sort deleting name: %s"), report_ustr(ustr_bptr(p_ev_name->ustr_name_id)));
@@ -610,8 +610,8 @@ extern S32
 name_make(
     P_EV_HANDLE p_ev_handle,
     _InVal_     EV_DOCNO ev_docno,
-    _InRef_     PC_EV_STRINGC p_name,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_STRINGC p_name,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _In_opt_z_  PC_USTR ustr_description)
 {
     S32 res = 0;
@@ -633,7 +633,7 @@ name_make(
         const P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
 
         name_free_resources(p_ev_name);
-        name_set_def(p_ev_name, p_ev_data_in, 0);
+        name_set_def(p_ev_name, p_ss_data_in, 0);
         nam_ref_count_update(p_ev_name, 1);
 
         if(NULL != ustr_description)
@@ -671,9 +671,9 @@ PROC_BSEARCH_PROTO(static, proc_compare_custom_def, EV_CUSTOM, EV_CUSTOM)
 *
 ******************************************************************************/
 
-PROC_ELEMENT_DELETED_PROTO(static, proc_deleted_custom_def)
+PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_custom_def)
 {
-    return(((PC_EV_CUSTOM) p_any)->flags.tobedel);
+    return(((PC_EV_CUSTOM) p_any)->flags.to_be_deleted);
 }
 
 /******************************************************************************
@@ -699,9 +699,9 @@ PROC_BSEARCH_PROTO(static, proc_compare_name_def, EV_NAME, EV_NAME)
 *
 ******************************************************************************/
 
-PROC_ELEMENT_DELETED_PROTO(static, proc_deleted_name_def)
+PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_name_def)
 {
-    return(((PC_EV_NAME) p_any)->flags.tobedel);
+    return(((PC_EV_NAME) p_any)->flags.to_be_deleted);
 }
 
 /* end of ev_name.c */

@@ -21,6 +21,10 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
+#if !WINDOWS
+#include <time.h> /* for struct tm and friends */
+#endif
+
 #define SECS_IN_24 ((S32) 60 * (S32) 60 * (S32) 24)
 
 /*
@@ -55,10 +59,10 @@ ev_days_in_month_leap[12] =
 
 #define BASE_DATE_SERIAL_NUMBER 367 /* Excel serial number of 01-Jan-1901 */
 
-static EV_DATE_DATE
+static SS_DATE_DATE
 get_base_dateval(void)
 {
-    static EV_DATE_DATE g_base_dateval = 0;
+    static SS_DATE_DATE g_base_dateval = 0;
 
     if(0 == g_base_dateval)
     {
@@ -72,17 +76,17 @@ get_base_dateval(void)
 _Check_return_
 extern S32
 ss_dateval_to_serial_number(
-    _InRef_     PC_EV_DATE_DATE p_ev_date_date)
+    _InVal_     SS_DATE_DATE ss_date_date)
 {
-    const EV_DATE_DATE base_dateval = get_base_dateval();
+    const SS_DATE_DATE base_dateval = get_base_dateval();
     S32 days_from_base;
     S32 serial_number;
 
-    if(EV_DATE_NULL == *p_ev_date_date)
+    if(SS_DATE_NULL == ss_date_date)
         return(S32_MIN);
 
     /* there exists a small range of very large negative datevals that won't fit in an serial number */
-    days_from_base = *p_ev_date_date - base_dateval; /* Subtract Fireworkz dateval of base date */
+    days_from_base = ss_date_date - base_dateval; /* Subtract Fireworkz dateval of base date */
 
     serial_number = days_from_base + BASE_DATE_SERIAL_NUMBER; /* Add Excel serial number of base date */
 
@@ -94,26 +98,26 @@ ss_dateval_to_serial_number(
 _Check_return_ _Success_(return >= 0)
 extern STATUS
 ss_serial_number_to_dateval(
-    _OutRef_    P_EV_DATE_DATE p_ev_date_date,
+    _OutRef_    P_SS_DATE_DATE p_ss_date_date,
     _InRef_     F64 serial_number)
 {
-    const EV_DATE_DATE base_dateval = get_base_dateval();
+    const SS_DATE_DATE base_dateval = get_base_dateval();
     S32 days_from_base;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
 
-    ev_data_set_real(&ev_data, serial_number);
+    ss_data_set_real(&ss_data, serial_number);
 
-    if(!real_to_integer_try(&ev_data))
+    if(!ss_data_real_to_integer_try(&ss_data))
         return(EVAL_ERR_ARGRANGE);
 
     /* there exists a small (693960-367) range of very large serial numbers (>2146790054) that won't fit in a dateval */
     assert(base_dateval >= BASE_DATE_SERIAL_NUMBER);
-    if(ev_data.arg.integer > S32_MAX - (base_dateval - BASE_DATE_SERIAL_NUMBER))
+    if(ss_data_get_integer(&ss_data) > S32_MAX - (base_dateval - BASE_DATE_SERIAL_NUMBER))
         return(EVAL_ERR_ARGRANGE);
 
-    days_from_base = /*serial_number*/ ev_data.arg.integer - BASE_DATE_SERIAL_NUMBER; /* Subtract Excel serial number of base date */
+    days_from_base = /*serial_number*/ ss_data_get_integer(&ss_data) - BASE_DATE_SERIAL_NUMBER; /* Subtract Excel serial number of base date */
 
-    *p_ev_date_date = days_from_base + base_dateval; /* Add Fireworkz dateval of base date */
+    *p_ss_date_date = days_from_base + base_dateval; /* Add Fireworkz dateval of base date */
 
     return(STATUS_OK);
 }
@@ -132,18 +136,18 @@ ss_serial_number_to_dateval(
 _Check_return_
 extern STATUS
 ss_dateval_to_ymd(
-    _InRef_     PC_EV_DATE_DATE p_ev_date_date,
+    _InVal_     SS_DATE_DATE ss_date_date,
     _OutRef_    P_S32 p_year,
     _OutRef_    P_S32 p_month,
     _OutRef_    P_S32 p_day)
 {
-    S32 date = *p_ev_date_date;
+    S32 date = ss_date_date;
     S32 adjyear = 0;
 
     /* Fireworkz serial number zero == basis date 1.1.0001 */
     *p_year = 1;
 
-    if(EV_DATE_NULL == date)
+    if(SS_DATE_NULL == date)
     {
         *p_month = 1;
         *p_day = 1;
@@ -258,9 +262,9 @@ ss_dateval_to_ymd(
 
 #if CHECKING && 1 /* verify that the conversion is reversible */
     {
-    EV_DATE_DATE test_date;
+    SS_DATE_DATE test_date;
     ss_ymd_to_dateval(&test_date, *p_year, *p_month, *p_day);
-    assert(test_date == *p_ev_date_date);
+    assert(test_date == ss_date_date);
     } /*block*/
 #endif
 
@@ -278,7 +282,7 @@ ss_dateval_to_ymd(
 /*ncr*/
 extern S32
 ss_ymd_to_dateval(
-    _OutRef_    P_EV_DATE_DATE p_ev_date_date,
+    _OutRef_    P_SS_DATE_DATE p_ss_date_date,
     _In_        S32 year,
     _In_        S32 month,
     _In_        S32 day)
@@ -287,7 +291,7 @@ ss_ymd_to_dateval(
     S32 month_index = month - 1;
     S32 adjdate = 0;
 
-    *p_ev_date_date = 0;
+    *p_ss_date_date = 0;
 
     /* transfer excess months to the years component */
     if(month_index < 0)
@@ -323,7 +327,7 @@ ss_ymd_to_dateval(
 
         if(adjdate <= 0)
         {
-            *p_ev_date_date = EV_DATE_NULL;
+            *p_ss_date_date = SS_DATE_NULL;
             return(-1);
         }
 #else
@@ -333,7 +337,7 @@ ss_ymd_to_dateval(
 
         if(year <= 0)
         {
-            *p_ev_date_date = EV_DATE_NULL;
+            *p_ss_date_date = SS_DATE_NULL;
             return(-1);
         }
 #endif
@@ -344,14 +348,14 @@ ss_ymd_to_dateval(
     {
         const S32 year_minus_1 = year - 1;
 
-        *p_ev_date_date = (year_minus_1 * 365)
+        *p_ss_date_date = (year_minus_1 * 365)
                         + (year_minus_1 / 4)
                         - (year_minus_1 / 100)
                         + (year_minus_1 / 400);
 
-        if(*p_ev_date_date < 0)
+        if(*p_ss_date_date < 0)
         {
-            *p_ev_date_date = EV_DATE_NULL;
+            *p_ss_date_date = SS_DATE_NULL;
             return(-1);
         }
     }
@@ -363,15 +367,15 @@ ss_ymd_to_dateval(
 
     for(i = 0; i < month_index; ++i)
     {
-        *p_ev_date_date += p_days_in_month[i];
+        *p_ss_date_date += p_days_in_month[i];
     }
     } /*block*/
 
     /* get number of days between the start of this month and the start of this day - i.e. consider *previous* days */
-    *p_ev_date_date += (day - 1);
+    *p_ss_date_date += (day - 1);
 
     if(adjdate)
-        *p_ev_date_date -= adjdate;
+        *p_ss_date_date -= adjdate;
 
     return(0);
 }
@@ -391,22 +395,23 @@ ss_ymd_to_dateval(
 _Check_return_
 extern F64
 ss_timeval_to_serial_fraction(
-    _InRef_     PC_EV_DATE_TIME p_ev_date_time)
+    _InVal_     SS_DATE_TIME ss_date_time)
 {
-    if(EV_TIME_NULL == *p_ev_date_time)
+    if(SS_TIME_NULL == ss_date_time)
         return(0.0);
 
-    return((F64) *p_ev_date_time / SECS_IN_24);
+    return((F64) ss_date_time / FP_SECS_IN_24);
 }
 
 /* reverse conversion */
 
 extern void
 ss_serial_fraction_to_timeval(
-    _OutRef_    P_EV_DATE_TIME p_ev_date_time,
+    _OutRef_    P_SS_DATE_TIME p_ss_date_time,
     _InVal_     F64 serial_fraction)
 {
-    *p_ev_date_time = (EV_DATE_TIME) (serial_fraction * SECS_IN_24);
+    /* fractional part denotes hh:mm:ss bit (don't be tempted to round or you could add a day!) */
+    *p_ss_date_time = (SS_DATE_TIME) /*trunc*/ (serial_fraction * FP_SECS_IN_24);
 }
 
 /******************************************************************************
@@ -418,17 +423,17 @@ ss_serial_fraction_to_timeval(
 _Check_return_
 extern STATUS
 ss_timeval_to_hms(
-    _InRef_     PC_EV_DATE_TIME p_ev_date_time,
+    _InVal_     SS_DATE_TIME ss_date_time,
     _OutRef_    P_S32 p_hours,
     _OutRef_    P_S32 p_minutes,
     _OutRef_    P_S32 p_seconds)
 {
-    S32 time = *p_ev_date_time;
+    S32 time = ss_date_time;
 
-    if(EV_TIME_NULL == time)
+    if(SS_TIME_NULL == time)
     {
         *p_hours = *p_minutes = *p_seconds = 0;
-#if EV_TIME_NULL != 0
+#if SS_TIME_NULL != 0
         return(EVAL_ERR_NOTIME);
 #else
         return(STATUS_OK);
@@ -455,7 +460,7 @@ ss_timeval_to_hms(
 /*ncr*/
 extern S32
 ss_hms_to_timeval(
-    _OutRef_    P_EV_DATE_TIME p_ev_date_time,
+    _OutRef_    P_SS_DATE_TIME p_ss_date_time,
     _InVal_     S32 hours,
     _InVal_     S32 minutes,
     _InVal_     S32 seconds)
@@ -463,53 +468,96 @@ ss_hms_to_timeval(
     /* check hours is in range */
     if((S32) labs((long) hours) >= S32_MAX / 3600)
     {
-        *p_ev_date_time = EV_TIME_NULL;
+        *p_ss_date_time = SS_TIME_NULL;
         return(-1);
     }
 
     /* check minutes is in range */
     if((S32) labs((long) minutes) >= S32_MAX / 60)
     {
-        *p_ev_date_time = EV_TIME_NULL;
+        *p_ss_date_time = SS_TIME_NULL;
         return(-1);
     }
 
-    *p_ev_date_time = ((S32) hours * 3600) + (minutes * 60) + seconds;
+    *p_ss_date_time = ((S32) hours * 3600) + (minutes * 60) + seconds;
 
     return(0);
 }
 
 /******************************************************************************
 *
+* compare two date/time velues
+*
+* --out--
+* -1 p_ss_date_1 < p_ss_date_2
+*  0 p_ss_date_1 = p_ss_date_2
+* +1 p_ss_date_1 > p_ss_date_2
+*
+******************************************************************************/
+
+_Check_return_
+extern S32
+ss_date_compare(
+    _InRef_     PC_SS_DATE p_ss_date_1,
+    _InRef_     PC_SS_DATE p_ss_date_2)
+{
+    if(p_ss_date_1->date == p_ss_date_2->date)
+    {   /* both dates valid or invalid but equal - compare times */
+        /* here 31/12/2015 00:00:00 == 31/12/2015 */
+        const SS_DATE_TIME time_1 = (SS_TIME_NULL != p_ss_date_1->time) ? p_ss_date_1->time : 0;
+        const SS_DATE_TIME time_2 = (SS_TIME_NULL != p_ss_date_2->time) ? p_ss_date_2->time : 0;
+
+        if(time_1 < time_2)
+            return(-1);
+        else if(time_1 > time_2)
+            return(1);
+      /*else*/
+            return(0);
+    }
+
+    if(SS_DATE_NULL == p_ss_date_2->date)
+        return(-1); /* date 1 valid, date 2 invalid */
+
+    if(SS_DATE_NULL == p_ss_date_1->date)
+        return(1); /* date 1 valid, date 2 invalid */
+
+    if(p_ss_date_1->date < p_ss_date_2->date) /* both dates valid */
+        return(-1);
+  /*else*/
+        return(1);
+}
+
+/******************************************************************************
+*
 * given a date which may have a time field
-* past the number of seconds in a day, convert
-* spurious seconds into days
+* past the number of seconds in a day,
+* convert spurious seconds into days
 *
 ******************************************************************************/
 
 extern void
 ss_date_normalise(
-    _InoutRef_  P_EV_DATE p_ev_date)
+    _InoutRef_  P_SS_DATE p_ss_date)
 {
-    if(EV_DATE_NULL == p_ev_date->date)
+    if(SS_DATE_NULL == p_ss_date->date)
     {   /* allow hours >= 24 etc. */
         return;
     }
 
-    if(EV_TIME_NULL == p_ev_date->time)
+    if(SS_TIME_NULL == p_ss_date->time)
         return;
 
-    if((p_ev_date->time >= SECS_IN_24) || (p_ev_date->time < 0))
+    if((p_ss_date->time >= SECS_IN_24) || (p_ss_date->time < 0))
     {
-        S32 days = p_ev_date->time / SECS_IN_24;
+        S32 days = p_ss_date->time / SECS_IN_24;
 
-        p_ev_date->date += days;
-        p_ev_date->time -= days * SECS_IN_24;
+        p_ss_date->date += days;
+        p_ss_date->time -= days * SECS_IN_24;
 
-        if(p_ev_date->time < 0)
+        if(p_ss_date->time < 0)
         {
-            p_ev_date->date -= 1;
-            p_ev_date->time += SECS_IN_24;
+            p_ss_date->date -= 1;
+            p_ss_date->time += SECS_IN_24;
         }
     }
 }
@@ -523,21 +571,21 @@ ss_date_normalise(
 _Check_return_
 extern F64
 ss_date_to_serial_number(
-    _InRef_     PC_EV_DATE p_ev_date)
+    _InRef_     PC_SS_DATE p_ss_date)
 {
     F64 f64 = 0.0;
 
-    if(EV_DATE_NULL != p_ev_date->date)
+    if(SS_DATE_NULL != p_ss_date->date)
     {   /* Convert the date component to a largely Excel-compatible serial number */
-        S32 serial_number = ss_dateval_to_serial_number(&p_ev_date->date);
+        S32 serial_number = ss_dateval_to_serial_number(p_ss_date->date);
 
         /* Whilst Excel can't represent dates earlier than 1900 at all (and doesn't correctly handle 1900 as non-leap year), that doesn't stop us from handling them in Fireworkz */
         f64 = (F64) serial_number;
     }
 
-    if(EV_TIME_NULL != p_ev_date->time)
+    if(SS_TIME_NULL != p_ss_date->time)
     {
-        f64 += ss_timeval_to_serial_fraction(&p_ev_date->time);
+        f64 += ss_timeval_to_serial_fraction(p_ss_date->time);
     }
 
     return(f64);
@@ -548,20 +596,20 @@ ss_date_to_serial_number(
 _Check_return_
 extern STATUS
 ss_serial_number_to_date(
-    _OutRef_    P_EV_DATE p_ev_date,
+    _OutRef_    P_SS_DATE p_ss_date,
     _InVal_     F64 serial_number)
 {
     F64 serial_integer;
     F64 serial_fraction = modf(serial_number, &serial_integer);
 
-    ev_date_init(p_ev_date);
+    ss_date_init(p_ss_date);
 
     /* happy in Fireworkz to have time-only date values */
     if(0.0 != serial_integer)
-        status_return(ss_serial_number_to_dateval(&p_ev_date->date, serial_integer));
+        status_return(ss_serial_number_to_dateval(&p_ss_date->date, serial_integer));
 
     if(0.0 != serial_fraction)
-        ss_serial_fraction_to_timeval(&p_ev_date->time, serial_fraction);
+        ss_serial_fraction_to_timeval(&p_ss_date->time, serial_fraction);
 
     return(STATUS_OK);
 }
@@ -652,14 +700,14 @@ ss_local_time_as_ymd_hms(
 }
 
 extern void
-ss_local_time_as_ev_date(
-    _OutRef_    P_EV_DATE p_ev_date)
+ss_local_time_to_ss_date(
+    _OutRef_    P_SS_DATE p_ss_date)
 {
     S32 year, month, day;
     S32 hours, minutes, seconds;
     ss_local_time_as_ymd_hms(&year, &month, &day, &hours, &minutes, &seconds);
-    (void) ss_ymd_to_dateval(&p_ev_date->date, year, month, day);
-    (void) ss_hms_to_timeval(&p_ev_date->time, hours, minutes, seconds);
+    (void) ss_ymd_to_dateval(&p_ss_date->date, year, month, day);
+    (void) ss_hms_to_timeval(&p_ss_date->time, hours, minutes, seconds);
 }
 
 _Check_return_
@@ -701,18 +749,18 @@ _Check_return_
 extern STATUS
 ss_date_decode(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    _InRef_     PC_EV_DATE p_ev_date)
+    _InRef_     PC_SS_DATE p_ss_date)
 {
-    EV_DATE ev_date = *p_ev_date;
+    SS_DATE ss_date = *p_ss_date;
 
-    if((EV_DATE_NULL == ev_date.date) && (EV_TIME_NULL == ev_date.time))
+    if((SS_DATE_NULL == ss_date.date) && (SS_TIME_NULL == ss_date.time))
         return(ERR_DATE_TIME_INVALID);
 
-    if(EV_DATE_NULL != ev_date.date)
+    if(SS_DATE_NULL != ss_date.date)
     {
         S32 year, month, day;
 
-        if(status_ok(ss_dateval_to_ymd(&ev_date.date, &year, &month, &day))) /* year may come back -ve without any fiddling here */
+        if(status_ok(ss_dateval_to_ymd(ss_date.date, &year, &month, &day))) /* year may come back -ve without any fiddling here */
         {
             status_return(quick_ublock_printf(p_quick_ublock,
                             USTR_TEXT("%.2" S32_FMT_POSTFIX "%c"
@@ -733,22 +781,22 @@ ss_date_decode(
         }
 
         /* separate time from date */
-        if(EV_TIME_NULL != ev_date.time)
+        if(SS_TIME_NULL != ss_date.time)
             status_return(quick_ublock_a7char_add(p_quick_ublock, CH_SPACE));
     }
 
-    if(EV_TIME_NULL != ev_date.time)
+    if(SS_TIME_NULL != ss_date.time)
     {
         S32 hours, minutes, seconds;
         BOOL negative = FALSE;
 
-        if(ev_date.time < 0)
+        if(ss_date.time < 0)
         {
-            ev_date.time = -ev_date.time;
+            ss_date.time = -ss_date.time;
             negative = TRUE;
         }
 
-        status_assert(ss_timeval_to_hms(&ev_date.time, &hours, &minutes, &seconds));
+        status_assert(ss_timeval_to_hms(ss_date.time, &hours, &minutes, &seconds));
 
         if(negative)
             status_return(quick_ublock_a7char_add(p_quick_ublock, CH_MINUS_SIGN__BASIC)); /* apply minus sign in front of most significant part of output */
@@ -1006,17 +1054,18 @@ _Check_return_
 static U32
 recog_time(
     _In_z_      PC_USTR spos,
-    _OutRef_    P_S32 one,
-    _OutRef_    P_S32 two,
-    _OutRef_    P_S32 three)
+    _OutRef_    P_S32 p_hours,
+    _OutRef_    P_S32 p_minutes,
+    _OutRef_    P_S32 p_seconds)
 {
     PC_USTR pos = spos;
     PC_USTR epos;
     S32 scan_val;
     U32 scanned;
+    const U8 time_sep_char = g_ss_recog_context.time_sep_char;
     BOOL negative_hours = FALSE;
 
-    *one = *two = *three = 0;
+    *p_hours = *p_minutes = *p_seconds = 0;
 
     /* scan hours part */
     /* SKS 24apr95 try earliest possible rejection */
@@ -1039,14 +1088,14 @@ recog_time(
     if(scan_val < 0)
         return(0); /* overflow in number */
 
-    if(PtrGetByte(pos) != g_ss_recog_context.time_sep_char) /* must have minutes part to be recognisable as time */
+    if(PtrGetByte(pos) != time_sep_char) /* must have minutes part to be recognisable as time */
         return(0);
     ustr_IncByte(pos);
 
     if(negative_hours)
         scan_val = -scan_val;
 
-    *one = scan_val;
+    *p_hours = scan_val;
 
     /* scan minutes part */
     scan_val = (S32) fast_ustrtoul(pos, &epos);
@@ -1058,10 +1107,10 @@ recog_time(
     if(scan_val < 0)
         return(0); /* overflow in number */
 
-    *two = scan_val;
+    *p_minutes = scan_val;
 
     /* scan seconds part */
-    if(PtrGetByte(pos) == g_ss_recog_context.time_sep_char) /* seconds are optional */
+    if(PtrGetByte(pos) == time_sep_char) /* seconds are optional */
     {
         ustr_IncByte(pos);
 
@@ -1074,7 +1123,7 @@ recog_time(
         if(scan_val < 0)
             return(0); /* overflow in number */
 
-        *three = scan_val;
+        *p_seconds = scan_val;
     }
 
     return(PtrDiffBytesU32(pos, spos));
@@ -1093,7 +1142,7 @@ recog_time(
 _Check_return_ _Success_(return >= 0)
 extern STATUS
 ss_recog_date_time(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str)
 {
     S32 day, month, year;
@@ -1102,7 +1151,7 @@ ss_recog_date_time(
     U32 time_scanned;
     PC_USTR pos = in_str;
 
-    ev_date_init(&p_ev_data->arg.ev_date);
+    ss_date_init(&p_ss_data->arg.ss_date);
 
     /* check for a date */
     date_scanned = recog_dmy_date(pos, &day, &month, &year);
@@ -1112,13 +1161,13 @@ ss_recog_date_time(
 
     if(0 != date_scanned)
     {
-        S32 tres = ss_ymd_to_dateval(&p_ev_data->arg.ev_date.date, year, month, day);
+        S32 tres = ss_ymd_to_dateval(&p_ss_data->arg.ss_date.date, year, month, day);
 
         if(tres >= 0)
         {
             ustr_IncBytes(pos, date_scanned);
-            p_ev_data->did_num = RPN_DAT_DATE;
-            p_ev_data->local_data = 1;
+            ss_data_set_data_id(p_ss_data, DATA_ID_DATE);
+            p_ss_data->local_data = 1;
 
             if(CH_SPACE == PtrGetByte(pos))
             {
@@ -1133,7 +1182,7 @@ ss_recog_date_time(
             /* go on to consider a time part */
         }
         else
-            p_ev_data->arg.ev_date.date = EV_DATE_NULL;
+            p_ss_data->arg.ss_date.date = SS_DATE_NULL;
     }
 
     /* check for a time */
@@ -1141,16 +1190,16 @@ ss_recog_date_time(
 
     if(0 != time_scanned)
     {
-        if(ss_hms_to_timeval(&p_ev_data->arg.ev_date.time, hours, minutes, seconds) >= 0)
+        if(ss_hms_to_timeval(&p_ss_data->arg.ss_date.time, hours, minutes, seconds) >= 0)
         {
             ustr_IncBytes(pos, time_scanned);
-            p_ev_data->did_num = RPN_DAT_DATE;
-            p_ev_data->local_data = 1;
+            ss_data_set_data_id(p_ss_data, DATA_ID_DATE);
+            p_ss_data->local_data = 1;
         }
         else
-            p_ev_data->arg.ev_date.time = EV_TIME_NULL;
+            p_ss_data->arg.ss_date.time = SS_TIME_NULL;
 
-        ss_date_normalise(&p_ev_data->arg.ev_date);
+        ss_date_normalise(&p_ss_data->arg.ss_date);
     }
 
     return(PtrDiffBytesS32(pos, in_str));

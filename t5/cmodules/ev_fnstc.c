@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2019 Stuart Swales */
+/* Copyright (C) 2014-2020 Stuart Swales */
 
 /* Statistical function routines (distributions etc) for evaluator */
 
@@ -43,7 +43,7 @@ calc_gamma_pdf(
 
 static void
 gamma_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p,
     _InVal_     F64 shape,
     _InVal_     F64 scale);
@@ -74,12 +74,12 @@ calc_norm_std_pdf(
 
 static void
 norm_std_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p);
 
 static void
 t_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p,
     _InVal_     F64 k);
 
@@ -220,21 +220,19 @@ calc_beta_pdf(
 
 static void
 beta_dist_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 x,
     _InVal_     F64 alpha, /* alpha and beta are shape parameters */
     _InVal_     F64 beta,
-    _InVal_     BOOL cumulative,
+    _InVal_     bool cumulative,
     _InVal_     F64 a, /* a and b translate and scale from standard distribution on [0,1] with (alpha, beta) */
     _InVal_     F64 b)
 {
     F64 beta_dist_result;
 
-    if( (alpha <= 0.0) ||
-        (beta <= 0.0)  ||
-        (a >= b)       )
+    if( (alpha <= 0.0) || (beta <= 0.0) || (a >= b) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
@@ -247,42 +245,42 @@ beta_dist_calc(
         if( ((x == a) && (alpha < 1.0)) ||
             ((x == b) && (beta  < 1.0)) )
         {
-            ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+            ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
             return;
         }
 
         beta_dist_result = calc_beta_pdf(x, alpha, beta, a, b);
     }
 
-    ev_data_set_real(p_ev_data_out, beta_dist_result);
+    ss_data_set_real(p_ss_data_out, beta_dist_result);
 }
 
 PROC_EXEC_PROTO(c_beta_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 alpha = args[1]->arg.fp;
-    const F64 beta = args[2]->arg.fp;
-    const BOOL cumulative = (n_args > 3) ? args[3]->arg.boolean : TRUE;
-    const F64 a = (n_args > 4) ? args[4]->arg.fp : 0.0;
-    const F64 b = (n_args > 5) ? args[5]->arg.fp : 1.0;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 alpha = ss_data_get_real(args[1]);
+    const F64 beta = ss_data_get_real(args[2]);
+    const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
+    const F64 a = (n_args > 4) ? ss_data_get_real(args[4]) : 0.0;
+    const F64 b = (n_args > 5) ? ss_data_get_real(args[5]) : 1.0;
 
     exec_func_ignore_parms();
 
-    beta_dist_calc(p_ev_data_res, x, alpha, beta, cumulative, a, b); /* may return fp or error */
+    beta_dist_calc(p_ss_data_res, x, alpha, beta, cumulative, a, b); /* may return fp or error */
 }
 
 PROC_EXEC_PROTO(c_odf_betadist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 alpha = args[1]->arg.fp;
-    const F64 beta = args[2]->arg.fp;
-    const F64 a = (n_args > 3) ? args[3]->arg.fp : 0.0;
-    const F64 b = (n_args > 4) ? args[4]->arg.fp : 1.0;
-    const BOOL cumulative = (n_args > 5) ? args[5]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 alpha = ss_data_get_real(args[1]);
+    const F64 beta = ss_data_get_real(args[2]);
+    const F64 a = (n_args > 3) ? ss_data_get_real(args[3]) : 0.0;
+    const F64 b = (n_args > 4) ? ss_data_get_real(args[4]) : 1.0;
+    const bool cumulative = (n_args > 5) ? ss_data_get_logical(args[5]) : true;
 
     exec_func_ignore_parms();
 
-    beta_dist_calc(p_ev_data_res, x, alpha, beta, cumulative, a, b); /* may return fp or error */
+    beta_dist_calc(p_ss_data_res, x, alpha, beta, cumulative, a, b); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -295,7 +293,7 @@ PROC_EXEC_PROTO(c_odf_betadist)
 
 static void
 beta_std_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p,
     _InVal_     F64 alpha,
     _InVal_     F64 beta)
@@ -319,14 +317,14 @@ beta_std_inv_calc(
     if(p == 0.0)
     {
         x = lower_bracket;
-        ev_data_set_real(p_ev_data_out, x);
+        ss_data_set_real(p_ss_data_out, x);
         return;
     }
 
     if(p == 1.0)
     {
         x = upper_bracket;
-        ev_data_set_real(p_ev_data_out, x);
+        ss_data_set_real(p_ss_data_out, x);
         return;
     }
 
@@ -423,44 +421,37 @@ beta_std_inv_calc(
 
         if(fabs(delta_x) <= 3.0E-7)
         {
-            ev_data_set_real(p_ev_data_out, x);
+            ss_data_set_real(p_ss_data_out, x);
             return;
         }
     }
 
-    ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+    ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
 }
 
 PROC_EXEC_PROTO(c_beta_inv)
 {
-    const F64 p = args[0]->arg.fp;
-    const F64 alpha = args[1]->arg.fp;
-    const F64 beta = args[2]->arg.fp;
-    const F64 a = (n_args > 3) ? args[3]->arg.fp : 0.0;
-    const F64 b = (n_args > 4) ? args[4]->arg.fp : 1.0;
+    const F64 p = ss_data_get_real(args[0]);
+    const F64 alpha = ss_data_get_real(args[1]);
+    const F64 beta = ss_data_get_real(args[2]);
+    const F64 a = (n_args > 3) ? ss_data_get_real(args[3]) : 0.0;
+    const F64 b = (n_args > 4) ? ss_data_get_real(args[4]) : 1.0;
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if( (alpha <= 0.0) ||
-        (beta <= 0.0)  ||
-        (a >= b)       )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (alpha <= 0.0) || (beta <= 0.0) || (a >= b) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    beta_std_inv_calc(p_ev_data_res, p, alpha, beta); /* may return fp or error */
+    beta_std_inv_calc(p_ss_data_res, p, alpha, beta); /* may return fp or error */
 
-    if(!ev_data_is_error(p_ev_data_res) && ((a != 0.0) || (b != 1.0)))
+    if(!ss_data_is_error(p_ss_data_res) && ((a != 0.0) || (b != 1.0)))
     {   /* scale and shift standardized result from [0..1] into [a..b] */
         const F64 scale = b - a;
-        p_ev_data_res->arg.fp = (p_ev_data_res->arg.fp * scale) + a;
+        const F64 beta_inv_result = (ss_data_get_real(p_ss_data_res) * scale) + a;
+        ss_data_set_real(p_ss_data_res, beta_inv_result);
     }
 }
 
@@ -530,9 +521,9 @@ calc_chisq_pdf(
 
 PROC_EXEC_PROTO(c_chisq_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const S32 k = args[1]->arg.integer;
-    const BOOL cumulative = (n_args > 2) ? args[2]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const S32 k = ss_data_get_integer(args[1]);
+    const bool cumulative = (n_args > 2) ? ss_data_get_logical(args[2]) : true;
     const F64 shape = (k * 0.5);
     const F64 scale = 2.0;
     F64 chisq_dist_result;
@@ -540,17 +531,14 @@ PROC_EXEC_PROTO(c_chisq_dist)
     exec_func_ignore_parms();
 
     if(k <= 0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(cumulative)
         chisq_dist_result = calc_gamma_cdf(x, shape, scale);
     else
         chisq_dist_result = calc_gamma_pdf(x, shape, scale);
 
-    ev_data_set_real(p_ev_data_res, chisq_dist_result);
+    ss_data_set_real(p_ss_data_res, chisq_dist_result);
 }
 
 /******************************************************************************
@@ -563,8 +551,8 @@ PROC_EXEC_PROTO(c_chisq_dist)
 
 PROC_EXEC_PROTO(c_chisq_dist_rt)
 {
-    const F64 x = args[0]->arg.fp;
-    const S32 k = args[1]->arg.integer;
+    const F64 x = ss_data_get_real(args[0]);
+    const S32 k = ss_data_get_integer(args[1]);
     const F64 shape = (k * 0.5);
     const F64 scale = 2.0;
     F64 chisq_dist_rt_result;
@@ -572,14 +560,11 @@ PROC_EXEC_PROTO(c_chisq_dist_rt)
     exec_func_ignore_parms();
 
     if(k <= 0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     chisq_dist_rt_result = 1.0 - calc_gamma_cdf(x, shape, scale);
 
-    ev_data_set_real(p_ev_data_res, chisq_dist_rt_result);
+    ss_data_set_real(p_ss_data_res, chisq_dist_rt_result);
 }
 
 /******************************************************************************
@@ -590,27 +575,20 @@ PROC_EXEC_PROTO(c_chisq_dist_rt)
 
 PROC_EXEC_PROTO(c_chisq_inv)
 {
-    const F64 p = args[0]->arg.fp;
-    const S32 k = args[1]->arg.integer;
+    const F64 p = ss_data_get_real(args[0]);
+    const S32 k = ss_data_get_integer(args[1]);
     const F64 shape = (k * 0.5);
     const F64 scale = 2.0;
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if( (shape <= 0.0) ||
-        (scale <= 0.0) )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (shape <= 0.0) || (scale <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    gamma_inv_calc(p_ev_data_res, p, shape, scale); /* may return fp or error */
+    gamma_inv_calc(p_ss_data_res, p, shape, scale); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -621,27 +599,20 @@ PROC_EXEC_PROTO(c_chisq_inv)
 
 PROC_EXEC_PROTO(c_chisq_inv_rt)
 {
-    const F64 p = args[0]->arg.fp;
-    const S32 k = args[1]->arg.integer;
+    const F64 p = ss_data_get_real(args[0]);
+    const S32 k = ss_data_get_integer(args[1]);
     const F64 shape = (k * 0.5);
     const F64 scale = 2.0;
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if( (shape <= 0.0) ||
-        (scale <= 0.0) )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (shape <= 0.0) || (scale <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    gamma_inv_calc(p_ev_data_res, 1.0 - p, shape, scale); /* may return fp or error */
+    gamma_inv_calc(p_ss_data_res, 1.0 - p, shape, scale); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -654,58 +625,58 @@ PROC_EXEC_PROTO(c_chisq_inv_rt)
 
 static void
 chisq_test_calc(
-    _InoutRef_  P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA array_a,
-    _InRef_     PC_EV_DATA array_e)
+    _InoutRef_  P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA array_a,
+    _InRef_     PC_SS_DATA array_e)
 {
-    EV_DATA ev_data_a, ev_data_e;
+    SS_DATA ss_data_a, ss_data_e;
     S32 x_size[2];
     S32 y_size[2];
     S32 ix, iy;
-    EV_DATA chi_squared_statistic, degrees_of_freedom;
+    SS_DATA chi_squared_statistic, degrees_of_freedom;
 
     array_range_sizes(array_a, &x_size[0], &y_size[0]);
     array_range_sizes(array_e, &x_size[1], &y_size[1]);
 
     if((x_size[0] != x_size[1]) || (y_size[0] != y_size[1]))
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ODF_NA);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ODF_NA);
         return;
     }
 
-    chi_squared_statistic = ev_data_real_zero;
+    chi_squared_statistic = ss_data_real_zero;
 
     ix = -1; iy = 0;
 
-    while(statistics_paired_values_next(&ev_data_a, &ev_data_e, array_a, array_e, &ix, &iy, x_size[0], y_size[0]))
+    while(statistics_paired_values_next(&ss_data_a, &ss_data_e, array_a, array_e, &ix, &iy, x_size[0], y_size[0]))
     {
-        const F64 delta = ev_data_a.arg.fp - ev_data_e.arg.fp;
+        const F64 delta = ss_data_get_real(&ss_data_a) - ss_data_get_real(&ss_data_e);
 
-        chi_squared_statistic.arg.fp += mx_fsquare(delta) / ev_data_e.arg.fp;
+        chi_squared_statistic.arg.fp += mx_fsquare(delta) / ss_data_get_real(&ss_data_e);
     }
 
     if((y_size[0] > 1) && (x_size[0] > 1))
-        ev_data_set_integer(&degrees_of_freedom, (y_size[0] - 1) * (x_size[0] - 1));
+        ss_data_set_integer(&degrees_of_freedom, (y_size[0] - 1) * (x_size[0] - 1));
     else
-        ev_data_set_integer(&degrees_of_freedom, (y_size[0] * x_size[0]) - 1);
+        ss_data_set_integer(&degrees_of_freedom, (y_size[0] * x_size[0]) - 1);
 
     { /* call my friend to do the hard work */
     static const EV_SLR dummy_slr = EV_SLR_INIT;
-    P_EV_DATA args[2];
+    P_SS_DATA args[2];
     args[0] = &chi_squared_statistic;
     args[1] = &degrees_of_freedom;
-    c_chisq_dist_rt(args, 2, p_ev_data_out, &dummy_slr);
+    c_chisq_dist_rt(args, 2, p_ss_data_out, &dummy_slr);
     } /*block*/
 }
 
 PROC_EXEC_PROTO(c_chisq_test)
 {
-    const PC_EV_DATA array_actual = args[0];
-    const PC_EV_DATA array_expected = args[1];
+    const PC_SS_DATA array_actual = args[0];
+    const PC_SS_DATA array_expected = args[1];
 
     exec_func_ignore_parms();
 
-    chisq_test_calc(p_ev_data_res, array_actual, array_expected);
+    chisq_test_calc(p_ss_data_res, array_actual, array_expected);
 }
 
 /******************************************************************************
@@ -718,28 +689,24 @@ PROC_EXEC_PROTO(c_chisq_test)
 
 PROC_EXEC_PROTO(c_confidence_norm)
 {
-    const F64 alpha = args[0]->arg.fp;
-    const F64 sigma = args[1]->arg.fp;
-    const F64 size = floor(args[2]->arg.fp);
+    const F64 alpha = ss_data_get_real(args[0]);
+    const F64 sigma = ss_data_get_real(args[1]);
+    const F64 size = arg_get_real_INT(args[2]);
 
     exec_func_ignore_parms();
 
-    if( (sigma <= 0.0) ||
-        (size <= 0.0)  )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (sigma <= 0.0) || (size <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    norm_std_inv_calc(p_ev_data_res, 1.0 - (alpha * 0.5)); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, 1.0 - (alpha * 0.5)); /* may return fp or error */
 
-    if(!ev_data_is_error(p_ev_data_res))
+    if(!ss_data_is_error(p_ss_data_res))
     {
-        const F64 z = p_ev_data_res->arg.fp;
+        const F64 z = ss_data_get_real(p_ss_data_res);
         const F64 scale = sigma / sqrt(size);
         const F64 confidence_norm_result = z * scale;
 
-        ev_data_set_real(p_ev_data_res, confidence_norm_result);
+        ss_data_set_real(p_ss_data_res, confidence_norm_result);
     }
 }
 
@@ -751,34 +718,30 @@ PROC_EXEC_PROTO(c_confidence_norm)
 
 PROC_EXEC_PROTO(c_confidence_t)
 {
-    const F64 alpha = args[0]->arg.fp;
-    const F64 sigma = args[1]->arg.fp;
-    const F64 size = floor(args[2]->arg.fp);
+    const F64 alpha = ss_data_get_real(args[0]);
+    const F64 sigma = ss_data_get_real(args[1]);
+    const F64 size = arg_get_real_INT(args[2]);
 
     exec_func_ignore_parms();
 
-    if( (sigma <= 0.0) ||
-        (size <= 1.0)  )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (sigma <= 0.0) || (size <= 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    t_inv_calc(p_ev_data_res, 1.0 - (alpha * 0.5), size - 1.0); /* may return fp or error */
+    t_inv_calc(p_ss_data_res, 1.0 - (alpha * 0.5), size - 1.0); /* may return fp or error */
 
-    if(!ev_data_is_error(p_ev_data_res))
+    if(!ss_data_is_error(p_ss_data_res))
     {
-        const F64 t = p_ev_data_res->arg.fp;
+        const F64 t = ss_data_get_real(p_ss_data_res);
         const F64 scale = sigma / sqrt(size);
         const F64 confidence_t_result = t * scale;
 
-        ev_data_set_real(p_ev_data_res, confidence_t_result);
+        ss_data_set_real(p_ss_data_res, confidence_t_result);
     }
 }
 
 /******************************************************************************
 *
-* NUMBER expon.dist(x:number, lambda:number {, cumulative:Boolean=TRUE})
+* NUMBER expon.dist(x:number, lambda:number {, cumulative:Logical=TRUE})
 *
 * See OpenDocument 1.2 definition of EXPONDIST
 *
@@ -786,9 +749,9 @@ PROC_EXEC_PROTO(c_confidence_t)
 
 PROC_EXEC_PROTO(c_expon_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 lambda = args[1]->arg.fp;
-    const BOOL cumulative = (n_args > 2) ? args[2]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 lambda = ss_data_get_real(args[1]);
+    const bool cumulative = (n_args > 2) ? ss_data_get_logical(args[2]) : true;
     F64 expon_dist_result;
 
     exec_func_ignore_parms();
@@ -807,7 +770,7 @@ PROC_EXEC_PROTO(c_expon_dist)
             expon_dist_result = lambda * exp_term;
     }
 
-    ev_data_set_real(p_ev_data_res, expon_dist_result);
+    ss_data_set_real(p_ss_data_res, expon_dist_result);
 }
 
 /******************************************************************************
@@ -895,34 +858,28 @@ calc_F_pdf(
 
 PROC_EXEC_PROTO(c_F_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 d1 = floor(args[1]->arg.fp);
-    const F64 d2 = floor(args[2]->arg.fp);
-    const BOOL cumulative = (n_args > 3) ? args[3]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 d1 = arg_get_real_INT(args[1]);
+    const F64 d2 = arg_get_real_INT(args[2]);
+    const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
     F64 F_dist_result;
 
     exec_func_ignore_parms();
 
-    if((d1 <= 0.0) || (d2 <= 0.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (d1 <= 0.0) || (d2 <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(cumulative)
         F_dist_result = calc_F_cdf(x, d1, d2);
     else
     {
-        if((d1 == 1.0) && (x == 0.0))
-        {
-            ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-            return;
-        }
+        if( (d1 == 1.0) && (x == 0.0) )
+            exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
         F_dist_result = calc_F_pdf(x, d1, d2);
     }
 
-    ev_data_set_real(p_ev_data_res, F_dist_result);
+    ss_data_set_real(p_ss_data_res, F_dist_result);
 }
 
 /******************************************************************************
@@ -935,22 +892,19 @@ PROC_EXEC_PROTO(c_F_dist)
 
 PROC_EXEC_PROTO(c_F_dist_rt)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 d1 = floor(args[1]->arg.fp);
-    const F64 d2 = floor(args[2]->arg.fp);
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 d1 = arg_get_real_INT(args[1]);
+    const F64 d2 = arg_get_real_INT(args[2]);
     F64 F_dist_rt_result;
 
     exec_func_ignore_parms();
 
-    if((d1 <= 0) || (d2 <= 0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (d1 <= 0) || (d2 <= 0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     F_dist_rt_result = 1.0 - calc_F_cdf(x, d1, d2);
 
-    ev_data_set_real(p_ev_data_res, F_dist_rt_result);
+    ss_data_set_real(p_ss_data_res, F_dist_rt_result);
 }
 
 /******************************************************************************
@@ -961,7 +915,7 @@ PROC_EXEC_PROTO(c_F_dist_rt)
 
 static void
 F_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p,
     _InVal_     F64 d1,
     _InVal_     F64 d2)
@@ -982,7 +936,7 @@ F_inv_calc(
     if(p == 0.0)
     {
         x = lower_bracket;
-        ev_data_set_real(p_ev_data_out, x);
+        ss_data_set_real(p_ss_data_out, x);
         return;
     }
 
@@ -1049,35 +1003,29 @@ F_inv_calc(
 
         if(fabs(delta_x) <= 3.0E-7)
         {
-            ev_data_set_real(p_ev_data_out, x);
+            ss_data_set_real(p_ss_data_out, x);
             return;
         }
     }
 
-    ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+    ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
 }
 
 PROC_EXEC_PROTO(c_F_inv)
 {
-    const F64 p = args[0]->arg.fp;
-    const F64 d1 = floor(args[1]->arg.fp);
-    const F64 d2 = floor(args[2]->arg.fp);
+    const F64 p = ss_data_get_real(args[0]);
+    const F64 d1 = arg_get_real_INT(args[1]);
+    const F64 d2 = arg_get_real_INT(args[2]);
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if((d1 <= 0.0) || (d2 <= 0.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (d1 <= 0.0) || (d2 <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    F_inv_calc(p_ev_data_res, p, d1, d2); /* may return fp or error */
+    F_inv_calc(p_ss_data_res, p, d1, d2); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -1088,25 +1036,19 @@ PROC_EXEC_PROTO(c_F_inv)
 
 PROC_EXEC_PROTO(c_F_inv_rt)
 {
-    const F64 p = args[0]->arg.fp;
-    const F64 d1 = floor(args[1]->arg.fp);
-    const F64 d2 = floor(args[2]->arg.fp);
+    const F64 p = ss_data_get_real(args[0]);
+    const F64 d1 = arg_get_real_INT(args[1]);
+    const F64 d2 = arg_get_real_INT(args[2]);
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if((d1 <= 0.0) || (d2 <= 0.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (d1 <= 0.0) || (d2 <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    F_inv_calc(p_ev_data_res, 1.0 - p, d1, d2); /* may return fp or error */
+    F_inv_calc(p_ss_data_res, 1.0 - p, d1, d2); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -1119,8 +1061,8 @@ PROC_EXEC_PROTO(c_F_inv_rt)
 
 static void
 statistics_array_variance(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
-    _InRef_     PC_EV_DATA array_data,
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _InRef_     PC_SS_DATA array_data,
     _OutRef_    P_F64 p_mean,
     _OutRef_    P_S32 p_n)
 {
@@ -1140,24 +1082,24 @@ statistics_array_variance(
 
     for(idx = 0; idx < total_size; ++idx)
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
 
-        if(RPN_DAT_REAL != array_range_mono_index(&ev_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
+        if(DATA_ID_REAL != array_range_mono_index(&ss_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
         {   /* ignore non-numeric values */
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
             continue;
         }
 
-        sum += ev_data.arg.fp;
+        sum += ss_data_get_real(&ss_data);
 
         ++n;
 
-        ss_data_free_resources(&ev_data);
+        ss_data_free_resources(&ss_data);
     }
 
-    if(2 > n)
+    if(n < 2)
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ODF_DIV0);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ODF_DIV0);
         return;
     }
 
@@ -1173,45 +1115,45 @@ statistics_array_variance(
 
     for(idx = 0; idx < total_size; ++idx)
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         F64 delta;
 
-        if(RPN_DAT_REAL != array_range_mono_index(&ev_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
+        if(DATA_ID_REAL != array_range_mono_index(&ss_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
         {   /* ignore non-numeric values */
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
             continue;
         }
 
-        delta = (ev_data.arg.fp - sample_mean);
+        delta = (ss_data_get_real(&ss_data) - sample_mean);
 
         sum_delta2 += mx_fsquare(delta);
 
         ++n;
 
-        ss_data_free_resources(&ev_data);
+        ss_data_free_resources(&ss_data);
     }
 
     *p_n = n;
 
-    if(2 > n)
+    if(n < 2)
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ODF_DIV0);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ODF_DIV0);
         return;
     }
 
     sample_variance = (sum_delta2 / (n - 1.0));
 
-    ev_data_set_real(p_ev_data_out, sample_variance);
+    ss_data_set_real(p_ss_data_out, sample_variance);
     } /*block*/
 }
 
 static void
 F_test_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
-    _InRef_     PC_EV_DATA array_1,
-    _InRef_     PC_EV_DATA array_2)
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _InRef_     PC_SS_DATA array_1,
+    _InRef_     PC_SS_DATA array_2)
 {
-    EV_DATA variance_1, variance_2;
+    SS_DATA variance_1, variance_2;
     F64 mean_1, mean_2;
     S32 n1, n2;
     S32 d1, d2;
@@ -1219,49 +1161,49 @@ F_test_calc(
 
     statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_1))
+    if(ss_data_is_error(&variance_1))
     {
-        *p_ev_data_out = variance_1;
+        *p_ss_data_out = variance_1;
         return;
     }
 
     statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_2))
+    if(ss_data_is_error(&variance_2))
     {
-        *p_ev_data_out = variance_2;
+        *p_ss_data_out = variance_2;
         return;
     }
 
-    x = variance_1.arg.fp / variance_2.arg.fp;
+    x = ss_data_get_real(&variance_1) / ss_data_get_real(&variance_2);
     d1 = n1 - 1;
     d2 = n2 - 1;
 
-    if(variance_1.arg.fp > variance_2.arg.fp)
+    if(ss_data_get_real(&variance_1) > ss_data_get_real(&variance_2))
     {   /* twice the right-tail */
         F64 F_dist_rt_result = 1.0 - calc_F_cdf(x, d1, d2);
-        ev_data_set_real(p_ev_data_out, 2.0 * F_dist_rt_result);
+        ss_data_set_real(p_ss_data_out, 2.0 * F_dist_rt_result);
     }
     else
     {   /* twice the left-tail */
         F64 F_dist_result = calc_F_cdf(x, d1, d2);
-        ev_data_set_real(p_ev_data_out, 2.0 * F_dist_result);
+        ss_data_set_real(p_ss_data_out, 2.0 * F_dist_result);
     }
 }
 
 PROC_EXEC_PROTO(c_F_test)
 {
-    const PC_EV_DATA array_1 = args[0];
-    const PC_EV_DATA array_2 = args[1];
+    const PC_SS_DATA array_1 = args[0];
+    const PC_SS_DATA array_2 = args[1];
 
     exec_func_ignore_parms();
 
-    F_test_calc(p_ev_data_res, array_1, array_2); /* may return fp or error */
+    F_test_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
 }
 
 /******************************************************************************
 *
-* NUMBER gamma.dist(x, shape, scale {, cumulative:Boolean=TRUE})
+* NUMBER gamma.dist(x, shape, scale {, cumulative:Logical=TRUE})
 *
 * See OpenDocument 1.2 definition of GAMMADIST
 *
@@ -1315,28 +1257,23 @@ calc_gamma_pdf(
 
 PROC_EXEC_PROTO(c_gamma_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 shape = args[1]->arg.fp; /*XLS:alpha*/
-    const F64 scale = args[2]->arg.fp; /*XLS:beta*/
-    const BOOL cumulative = (n_args > 3) ? args[3]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 shape = ss_data_get_real(args[1]); /*XLS:alpha*/
+    const F64 scale = ss_data_get_real(args[2]); /*XLS:beta*/
+    const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
     F64 gamma_dist_result;
 
     exec_func_ignore_parms();
 
-    if( (x < 0.0)      ||
-        (shape <= 0.0) ||
-        (scale <= 0.0) )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (x < 0.0) || (shape <= 0.0) || (scale <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(cumulative)
         gamma_dist_result = calc_gamma_cdf(x, shape, scale);
     else
         gamma_dist_result = calc_gamma_pdf(x, shape, scale);
 
-    ev_data_set_real(p_ev_data_res, gamma_dist_result);
+    ss_data_set_real(p_ss_data_res, gamma_dist_result);
 }
 
 /******************************************************************************
@@ -1377,7 +1314,7 @@ gamma_inv_guess_initial_x(
 
 static void
 gamma_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p,
     _InVal_     F64 shape,
     _InVal_     F64 scale)
@@ -1394,7 +1331,7 @@ gamma_inv_calc(
     if(p == 0.0)
     {
         x = lower_bracket;
-        ev_data_set_real(p_ev_data_out, x);
+        ss_data_set_real(p_ss_data_out, x);
         return;
     }
 
@@ -1447,77 +1384,61 @@ gamma_inv_calc(
 
         if(fabs(delta_x) <= 3.0E-7)
         {
-            ev_data_set_real(p_ev_data_out, x);
+            ss_data_set_real(p_ss_data_out, x);
             return;
         }
     }
 
-    ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+    ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
 }
 
 PROC_EXEC_PROTO(c_gamma_inv)
 {
-    const F64 p = args[0]->arg.fp;
-    const F64 shape = args[1]->arg.fp; /*XLS:alpha*/
-    const F64 scale = args[2]->arg.fp; /*XLS:beta*/
+    const F64 p = ss_data_get_real(args[0]);
+    const F64 shape = ss_data_get_real(args[1]); /*XLS:alpha*/
+    const F64 scale = ss_data_get_real(args[2]); /*XLS:beta*/
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if( (shape <= 0.0) ||
-        (scale <= 0.0) )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (shape <= 0.0) || (scale <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    gamma_inv_calc(p_ev_data_res, p, shape, scale); /* may return fp or error */
+    gamma_inv_calc(p_ss_data_res, p, shape, scale); /* may return fp or error */
 }
 
 /******************************************************************************
 *
-* NUMBER lognorm.dist(x:number, mean:number, sigma:number {, cumulative:Boolean})
+* NUMBER lognorm.dist(x:number, mean:number, sigma:number {, cumulative:Logical=TRUE})
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_lognorm_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 mean = args[1]->arg.fp;
-    const F64 sigma = args[2]->arg.fp;
-    const BOOL cumulative = (n_args > 3) ? args[3]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 mean = ss_data_get_real(args[1]);
+    const F64 sigma = ss_data_get_real(args[2]);
+    const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
     F64 ln_x;
     F64 z;
     F64 lognorm_dist_result;
 
     exec_func_ignore_parms();
 
-    if(sigma == 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
-        return;
-    }
+    if(f64_is_divisor_too_small(sigma))
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
 
     if(x <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     errno = 0;
 
     ln_x = log(x);
 
     if(errno /* == EDOM, ERANGE */)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_BAD_LOG);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_BAD_LOG);
 
     z = (ln_x - mean) / sigma; /* standardize */
 
@@ -1526,7 +1447,7 @@ PROC_EXEC_PROTO(c_lognorm_dist)
     else
         lognorm_dist_result = calc_norm_std_pdf(z) / x;
 
-    ev_data_set_real(p_ev_data_res, lognorm_dist_result);
+    ss_data_set_real(p_ss_data_res, lognorm_dist_result);
 }
 
 /******************************************************************************
@@ -1537,46 +1458,40 @@ PROC_EXEC_PROTO(c_lognorm_dist)
 
 PROC_EXEC_PROTO(c_lognorm_inv)
 {
-    const F64 p = args[0]->arg.fp;
-  /*const F64 mean = args[1]->arg.fp;*/
-  /*const F64 sigma = args[2]->arg.fp;*/
+    const F64 p = ss_data_get_real(args[0]);
+  /*const F64 mean = ss_data_get_real(args[1]);*/
+  /*const F64 sigma = ss_data_get_real(args[2]);*/
     F64 x;
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    norm_std_inv_calc(p_ev_data_res, p); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, p); /* may return fp or error */
 
     /* scale and shift standardized result */
-    if( !two_nums_multiply_try(p_ev_data_res, p_ev_data_res, args[2] /*sigma*/, TRUE /*propogate_errors*/) ||
-        !two_nums_add_try(     p_ev_data_res, p_ev_data_res, args[1] /*mean*/,  TRUE /*propogate_errors*/) )
+    if( !two_nums_multiply_propagate_error(p_ss_data_res, p_ss_data_res, args[2] /*sigma*/) ||
+        !two_nums_add_propagate_error(     p_ss_data_res, p_ss_data_res, args[1] /*mean*/) )
     {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_CALC_FAILURE);
+        ss_data_set_error(p_ss_data_res, EVAL_ERR_CALC_FAILURE);
     }
 
-    if(ev_data_is_error(p_ev_data_res))
+    if(ss_data_is_error(p_ss_data_res))
         return;
 
-    x = exp(p_ev_data_res->arg.fp);
+    x = exp(ss_data_get_real(p_ss_data_res));
 
     /* exp() overflowed? - don't test for underflow case */
     if(F64_HUGE_VAL == x)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    ev_data_set_real(p_ev_data_res, x);
+    ss_data_set_real(p_ss_data_res, x);
 }
 
 /******************************************************************************
 *
-* NUMBER norm.s.dist(z:number, {, cumulative:Boolean})
+* NUMBER norm.s.dist(z:number, {, cumulative:Logical=TRUE})
 *
 * NUMBER phi(z:number)
 *
@@ -1584,8 +1499,8 @@ PROC_EXEC_PROTO(c_lognorm_inv)
 
 PROC_EXEC_PROTO(c_norm_s_dist)
 {
-    const F64 z = args[0]->arg.fp;
-    const BOOL cumulative = (n_args > 1) ? args[1]->arg.boolean : TRUE;
+    const F64 z = ss_data_get_real(args[0]);
+    const bool cumulative = (n_args > 1) ? ss_data_get_logical(args[1]) : true;
     F64 norm_s_dist_result;
 
     exec_func_ignore_parms();
@@ -1595,19 +1510,19 @@ PROC_EXEC_PROTO(c_norm_s_dist)
     else
         norm_s_dist_result = calc_norm_std_pdf(z);
 
-    ev_data_set_real(p_ev_data_res, norm_s_dist_result);
+    ss_data_set_real(p_ss_data_res, norm_s_dist_result);
 }
 
 PROC_EXEC_PROTO(c_phi)
 {
-    const F64 z = args[0]->arg.fp;
+    const F64 z = ss_data_get_real(args[0]);
     F64 phi_result;
 
     exec_func_ignore_parms();
 
     phi_result = calc_norm_std_pdf(z);
 
-    ev_data_set_real(p_ev_data_res, phi_result);
+    ss_data_set_real(p_ss_data_res, phi_result);
 }
 
 /******************************************************************************
@@ -1663,7 +1578,7 @@ norm_std_inv_guess_initial_x(
 
 static void
 norm_std_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p)
 {
     F64 x = norm_std_inv_guess_initial_x(p);
@@ -1689,32 +1604,29 @@ norm_std_inv_calc(
 
         if(fabs(delta_x) <= 3.0E-7)
         {
-            ev_data_set_real(p_ev_data_out, x);
+            ss_data_set_real(p_ss_data_out, x);
             return;
         }
     }
 
-    ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+    ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
 }
 
 PROC_EXEC_PROTO(c_norm_s_inv)
 {
-    const F64 p = args[0]->arg.fp;
+    const F64 p = ss_data_get_real(args[0]);
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    norm_std_inv_calc(p_ev_data_res, p); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, p); /* may return fp or error */
 }
 
 /******************************************************************************
 *
-* NUMBER norm.dist(x:number, mean:number, sigma:number {, cumulative:Boolean})
+* NUMBER norm.dist(x:number, mean:number, sigma:number {, cumulative:Logical=TRUE})
 *
 ******************************************************************************/
 
@@ -1747,26 +1659,23 @@ calc_norm_pdf(
 
 PROC_EXEC_PROTO(c_norm_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 mean = args[1]->arg.fp;
-    const F64 sigma = args[2]->arg.fp;
-    const BOOL cumulative = (n_args > 3) ? args[3]->arg.boolean : TRUE;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 mean = ss_data_get_real(args[1]);
+    const F64 sigma = ss_data_get_real(args[2]);
+    const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
     F64 norm_dist_result;
 
     exec_func_ignore_parms();
 
-    if(sigma == 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
-        return;
-    }
+    if(f64_is_divisor_too_small(sigma))
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
 
     if(cumulative)
         norm_dist_result = calc_norm_cdf(x, mean, sigma);
     else
         norm_dist_result = calc_norm_pdf(x, mean, sigma);
 
-    ev_data_set_real(p_ev_data_res, norm_dist_result);
+    ss_data_set_real(p_ss_data_res, norm_dist_result);
 }
 
 /******************************************************************************
@@ -1777,31 +1686,25 @@ PROC_EXEC_PROTO(c_norm_dist)
 
 PROC_EXEC_PROTO(c_norm_inv)
 {
-    const F64 p = args[0]->arg.fp;
-  /*const F64 mean = args[1]->arg.fp;*/
-    const F64 sigma = args[2]->arg.fp;
+    const F64 p = ss_data_get_real(args[0]);
+  /*const F64 mean = ss_data_get_real(args[1]);*/
+    const F64 sigma = ss_data_get_real(args[2]);
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if(sigma == 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
-        return;
-    }
+    if(f64_is_divisor_too_small(sigma))
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
 
-    norm_std_inv_calc(p_ev_data_res, p); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, p); /* may return fp or error */
 
     /* scale and shift standardized result */
-    if( !two_nums_multiply_try(p_ev_data_res, p_ev_data_res, args[2] /*sigma*/, TRUE /*propogate_errors*/) ||
-        !two_nums_add_try(     p_ev_data_res, p_ev_data_res, args[1] /*mean*/,  TRUE /*propogate_errors*/) )
+    if( !two_nums_multiply_propagate_error(p_ss_data_res, p_ss_data_res, args[2] /*sigma*/) ||
+        !two_nums_add_propagate_error(     p_ss_data_res, p_ss_data_res, args[1] /*mean*/) )
     {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_CALC_FAILURE);
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_CALC_FAILURE);
     }
 }
 
@@ -1869,25 +1772,22 @@ calc_t_pdf(
 
 PROC_EXEC_PROTO(c_t_dist)
 {
-    const F64 t = args[0]->arg.fp;
-    const F64 nu = floor(args[1]->arg.fp);
-    const BOOL cumulative = (n_args > 2) ? args[2]->arg.boolean : TRUE;
+    const F64 t = ss_data_get_real(args[0]);
+    const F64 nu = arg_get_real_INT(args[1]);
+    const bool cumulative = (n_args > 2) ? ss_data_get_logical(args[2]) : true;
     F64 t_dist_result;
 
     exec_func_ignore_parms();
 
     if(nu <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(cumulative)
         t_dist_result = calc_t_cdf(t, nu);
     else
         t_dist_result = calc_t_pdf(t, nu);
 
-    ev_data_set_real(p_ev_data_res, t_dist_result);
+    ss_data_set_real(p_ss_data_res, t_dist_result);
 }
 
 /******************************************************************************
@@ -1898,21 +1798,18 @@ PROC_EXEC_PROTO(c_t_dist)
 
 PROC_EXEC_PROTO(c_t_dist_2t)
 {
-    const F64 t = args[0]->arg.fp;
-    const F64 nu = floor(args[1]->arg.fp);
+    const F64 t = ss_data_get_real(args[0]);
+    const F64 nu = arg_get_real_INT(args[1]);
     F64 t_dist_2t_result;
 
     exec_func_ignore_parms();
 
     if(nu <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     t_dist_2t_result = 2.0 * (1.0 - calc_t_cdf(fabs(t), nu));
 
-    ev_data_set_real(p_ev_data_res, t_dist_2t_result);
+    ss_data_set_real(p_ss_data_res, t_dist_2t_result);
 }
 
 /******************************************************************************
@@ -1923,21 +1820,18 @@ PROC_EXEC_PROTO(c_t_dist_2t)
 
 PROC_EXEC_PROTO(c_t_dist_rt)
 {
-    const F64 t = args[0]->arg.fp;
-    const F64 nu = floor(args[1]->arg.fp);
+    const F64 t = ss_data_get_real(args[0]);
+    const F64 nu = arg_get_real_INT(args[1]);
     F64 t_dist_rt_result;
 
     exec_func_ignore_parms();
 
     if(nu <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     t_dist_rt_result = 1.0 - calc_t_cdf(t, nu);
 
-    ev_data_set_real(p_ev_data_res, t_dist_rt_result);
+    ss_data_set_real(p_ss_data_res, t_dist_rt_result);
 }
 
 /******************************************************************************
@@ -1948,28 +1842,22 @@ PROC_EXEC_PROTO(c_t_dist_rt)
 
 PROC_EXEC_PROTO(c_odf_tdist)
 {
-    const F64 t = args[0]->arg.fp;
-    const F64 nu = floor(args[1]->arg.fp);
-    const F64 n = floor(args[2]->arg.fp);
+    const F64 t = ss_data_get_real(args[0]);
+    const F64 nu = arg_get_real_INT(args[1]);
+    const F64 n = arg_get_real_INT(args[2]);
     F64 odf_tdist_result;
 
     exec_func_ignore_parms();
 
     if(nu <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if((n != 1.0) && (n != 2.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (n != 1.0) && (n != 2.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     odf_tdist_result = n * (1.0 - calc_t_cdf(fabs(t), nu));
 
-    ev_data_set_real(p_ev_data_res, odf_tdist_result);
+    ss_data_set_real(p_ss_data_res, odf_tdist_result);
 }
 
 /******************************************************************************
@@ -1980,7 +1868,7 @@ PROC_EXEC_PROTO(c_odf_tdist)
 
 static void
 t_inv_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
     _InVal_     F64 p,
     _InVal_     F64 k)
 {
@@ -2046,34 +1934,28 @@ t_inv_calc(
 
         if(fabs(delta_x) <= 3.0E-7)
         {
-            ev_data_set_real(p_ev_data_out, x);
+            ss_data_set_real(p_ss_data_out, x);
             return;
         }
     }
 
-    ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+    ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
 }
 
 PROC_EXEC_PROTO(c_t_inv)
 {
-    const F64 p = args[0]->arg.fp;
-    const F64 k = floor(args[1]->arg.fp);
+    const F64 p = ss_data_get_real(args[0]);
+    const F64 k = arg_get_real_INT(args[1]);
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(k <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    t_inv_calc(p_ev_data_res, p, k); /* may return fp or error */
+    t_inv_calc(p_ss_data_res, p, k); /* may return fp or error */
 }
 
 /******************************************************************************
@@ -2084,26 +1966,20 @@ PROC_EXEC_PROTO(c_t_inv)
 
 PROC_EXEC_PROTO(c_t_inv_2t)
 {
-    const F64 p = args[0]->arg.fp;
-    const F64 k = floor(args[1]->arg.fp);
+    const F64 p = ss_data_get_real(args[0]);
+    const F64 k = arg_get_real_INT(args[1]);
 
     exec_func_ignore_parms();
 
-    if((p < 0.0) || (p > 1.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (p < 0.0) || (p > 1.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(k <= 0.0)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     { /* NB t_dist_2t_result = 2.0 * (1.0 - calc_t_cdf(fabs(t), nu)); */
     const F64 lookup_p = 1.0 - (0.5 * p);
-    t_inv_calc(p_ev_data_res, lookup_p, k); /* may return fp or error */
+    t_inv_calc(p_ss_data_res, lookup_p, k); /* may return fp or error */
     } /*block*/
 }
 
@@ -2117,33 +1993,33 @@ PROC_EXEC_PROTO(c_t_inv_2t)
 
 static void
 t_test_paired_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
-    _InRef_     PC_EV_DATA array_1,
-    _InRef_     PC_EV_DATA array_2)
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _InRef_     PC_SS_DATA array_1,
+    _InRef_     PC_SS_DATA array_2)
 {
-    EV_DATA variance_1, variance_2;
+    SS_DATA variance_1, variance_2;
     F64 mean_1, mean_2;
     S32 n1, n2;
 
     statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_1))
+    if(ss_data_is_error(&variance_1))
     {
-        *p_ev_data_out = variance_1;
+        *p_ss_data_out = variance_1;
         return;
     }
 
     statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_2))
+    if(ss_data_is_error(&variance_2))
     {
-        *p_ev_data_out = variance_2;
+        *p_ss_data_out = variance_2;
         return;
     }
 
     if(n1 != n2)
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ODF_NA);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ODF_NA);
         return;
     }
 
@@ -2158,28 +2034,28 @@ t_test_paired_calc(
 
     for(idx = 0; idx < total_size; ++idx)
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         F64 delta_1, delta_2, paired_delta;
 
-        if(RPN_DAT_REAL != array_range_mono_index(&ev_data, array_1, idx, EM_REA | EM_STR | EM_BLK))
+        if(DATA_ID_REAL != array_range_mono_index(&ss_data, array_1, idx, EM_REA | EM_STR | EM_BLK))
         {   /* ignore non-numeric values */
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
             continue;
         }
 
-        delta_1 = (ev_data.arg.fp - mean_1);
+        delta_1 = (ss_data_get_real(&ss_data) - mean_1);
 
-        ss_data_free_resources(&ev_data);
+        ss_data_free_resources(&ss_data);
 
-        if(RPN_DAT_REAL != array_range_mono_index(&ev_data, array_2, idx, EM_REA | EM_STR | EM_BLK))
+        if(DATA_ID_REAL != array_range_mono_index(&ss_data, array_2, idx, EM_REA | EM_STR | EM_BLK))
         {   /* ignore non-numeric values */
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
             continue;
         }
 
-        ss_data_free_resources(&ev_data);
+        ss_data_free_resources(&ss_data);
 
-        delta_2 = (ev_data.arg.fp - mean_2);
+        delta_2 = (ss_data_get_real(&ss_data) - mean_2);
 
         paired_delta = delta_1 - delta_2;
 
@@ -2188,9 +2064,9 @@ t_test_paired_calc(
         ++n;
     }
 
-    if((2 > n) || (n1 != n))
+    if( (n < 2) || (n1 != n) )
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ODF_DIV0);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ODF_DIV0);
         return;
     }
 
@@ -2200,7 +2076,7 @@ t_test_paired_calc(
     const F64 t = fabs(mean_1 - mean_2) * sqrt(n) / sqrt(paired_variance);
     const F64 t_dist_rt_result = 1.0 - calc_t_cdf(t, n_minus_1);
 
-    ev_data_set_real(p_ev_data_out, t_dist_rt_result);
+    ss_data_set_real(p_ss_data_out, t_dist_rt_result);
     } /*block*/
     } /*block*/
 }
@@ -2209,27 +2085,27 @@ t_test_paired_calc(
 
 static void
 t_test_homoscedastic_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
-    _InRef_     PC_EV_DATA array_1,
-    _InRef_     PC_EV_DATA array_2)
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _InRef_     PC_SS_DATA array_1,
+    _InRef_     PC_SS_DATA array_2)
 {
-    EV_DATA variance_1, variance_2;
+    SS_DATA variance_1, variance_2;
     F64 mean_1, mean_2;
     S32 n1, n2;
 
     statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_1))
+    if(ss_data_is_error(&variance_1))
     {
-        *p_ev_data_out = variance_1;
+        *p_ss_data_out = variance_1;
         return;
     }
 
     statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_2))
+    if(ss_data_is_error(&variance_2))
     {
-        *p_ev_data_out = variance_2;
+        *p_ss_data_out = variance_2;
         return;
     }
 
@@ -2237,13 +2113,13 @@ t_test_homoscedastic_calc(
     const S32 n1_minus_1 = n1 - 1;
     const S32 n2_minus_1 = n2 - 1;
     const S32 equal_sample_n = (n1_minus_1 + n2_minus_1);
-    const F64 v1 = variance_1.arg.fp;
-    const F64 v2 = variance_2.arg.fp;
+    const F64 v1 = ss_data_get_real(&variance_1);
+    const F64 v2 = ss_data_get_real(&variance_2);
     const F64 equal_variance = ((n1_minus_1 * v1) + (n2_minus_1 * v2)) / equal_sample_n;
     const F64 t = fabs(mean_1 - mean_2) / sqrt(equal_variance * ((1.0 / n1) + (1.0 / n2)));
     const F64 t_dist_rt_result = 1.0 - calc_t_cdf(t, equal_sample_n);
 
-    ev_data_set_real(p_ev_data_out, t_dist_rt_result);
+    ss_data_set_real(p_ss_data_out, t_dist_rt_result);
     } /*block*/
 }
 
@@ -2251,35 +2127,35 @@ t_test_homoscedastic_calc(
 
 static void
 t_test_heteroscedastic_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return fp or error */
-    _InRef_     PC_EV_DATA array_1,
-    _InRef_     PC_EV_DATA array_2)
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _InRef_     PC_SS_DATA array_1,
+    _InRef_     PC_SS_DATA array_2)
 {
-    EV_DATA variance_1, variance_2;
+    SS_DATA variance_1, variance_2;
     F64 mean_1, mean_2;
     S32 n1, n2;
 
     statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_1))
+    if(ss_data_is_error(&variance_1))
     {
-        *p_ev_data_out = variance_1;
+        *p_ss_data_out = variance_1;
         return;
     }
 
     statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
 
-    if(ev_data_is_error(&variance_2))
+    if(ss_data_is_error(&variance_2))
     {
-        *p_ev_data_out = variance_2;
+        *p_ss_data_out = variance_2;
         return;
     }
 
     {
     const S32 n1_minus_1 = n1 - 1;
     const S32 n2_minus_1 = n2 - 1;
-    const F64 v1 = variance_1.arg.fp;
-    const F64 v2 = variance_2.arg.fp;
+    const F64 v1 = ss_data_get_real(&variance_1);
+    const F64 v2 = ss_data_get_real(&variance_2);
     const F64 v1_div_n1 = v1 / n1;
     const F64 v2_div_n2 = v2 / n2;
     const F64 t = fabs(mean_1 - mean_2) / sqrt(v1_div_n1 + v2_div_n2);
@@ -2288,51 +2164,47 @@ t_test_heteroscedastic_calc(
     const F64 nu = nu_numerator / nu_denominator;
     const F64 t_dist_rt_result = 1.0 - calc_t_cdf(t, nu);
 
-    ev_data_set_real(p_ev_data_out, t_dist_rt_result);
+    ss_data_set_real(p_ss_data_out, t_dist_rt_result);
     } /*block*/
 }
 
 PROC_EXEC_PROTO(c_t_test)
 {
-    const PC_EV_DATA array_1 = args[0];
-    const PC_EV_DATA array_2 = args[1];
-    const F64 tails = args[2]->arg.fp;
-    const S32 type = (S32) floor(args[3]->arg.fp);
+    const PC_SS_DATA array_1 = args[0];
+    const PC_SS_DATA array_2 = args[1];
+    const F64 tails = ss_data_get_real(args[2]);
+    const S32 type = (S32) arg_get_real_INT(args[3]);
 
     exec_func_ignore_parms();
 
-    if((tails != 1.0) && (tails != 2.0))
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NUM);
-        return;
-    }
+    if( (tails != 1.0) && (tails != 2.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ODF_NUM);
 
     switch(type)
     {
     default:
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NUM);
-        return;
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ODF_NUM);
 
     case 1:
-        t_test_paired_calc(p_ev_data_res, array_1, array_2); /* may return fp or error */
+        t_test_paired_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
         break;
 
     case 2:
-        t_test_homoscedastic_calc(p_ev_data_res, array_1, array_2); /* may return fp or error */
+        t_test_homoscedastic_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
         break;
 
     case 3:
-        t_test_heteroscedastic_calc(p_ev_data_res, array_1, array_2); /* may return fp or error */
+        t_test_heteroscedastic_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
         break;
     }
 
-    if(!ev_data_is_error(p_ev_data_res) && (2.0 == tails))
-        ev_data_set_real(p_ev_data_res, p_ev_data_res->arg.fp * 2.0);
+    if(!ss_data_is_error(p_ss_data_res) && (2.0 == tails))
+        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_res) * 2.0);
 }
 
 /******************************************************************************
 *
-* NUMBER weibull.dist(x:number, shape:number, scale:number, cumulative:Boolean)
+* NUMBER weibull.dist(x:number, shape:number, scale:number, cumulative:Logical)
 *
 * See OpenDocument 1.2 definition of WEIBULL
 *
@@ -2340,21 +2212,16 @@ PROC_EXEC_PROTO(c_t_test)
 
 PROC_EXEC_PROTO(c_weibull_dist)
 {
-    const F64 x = args[0]->arg.fp;
-    const F64 shape = args[1]->arg.fp;
-    const F64 scale = args[2]->arg.fp;
-    const BOOL cumulative = args[3]->arg.boolean;
+    const F64 x = ss_data_get_real(args[0]);
+    const F64 shape = ss_data_get_real(args[1]);
+    const F64 scale = ss_data_get_real(args[2]);
+    const bool cumulative = ss_data_get_logical(args[3]);
     F64 weibull_dist_result;
 
     exec_func_ignore_parms();
 
-    if( (x < 0) ||
-        (shape <= 0) ||
-        (scale <= 0) )
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ARGRANGE);
-        return;
-    }
+    if( (x < 0) || (shape <= 0) || (scale <= 0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     {
     const F64 exp_term = exp(-pow((x / scale), shape));
@@ -2365,7 +2232,7 @@ PROC_EXEC_PROTO(c_weibull_dist)
         weibull_dist_result = (shape / scale) * pow((x / scale), (shape - 1)) * exp_term;
     } /*block*/
 
-    ev_data_set_real(p_ev_data_res, weibull_dist_result);
+    ss_data_set_real(p_ss_data_res, weibull_dist_result);
 }
 
 /******************************************************************************
@@ -2376,8 +2243,8 @@ PROC_EXEC_PROTO(c_weibull_dist)
 
 PROC_EXEC_PROTO(c_z_test)
 {
-    const PC_EV_DATA array_data = args[0];
-    const F64 mean = args[1]->arg.fp;
+    const PC_SS_DATA array_data = args[0];
+    const F64 mean = ss_data_get_real(args[1]);
     F64 sample_mean, sample_variance;
     F64 sigma;
     F64 z;
@@ -2396,33 +2263,30 @@ PROC_EXEC_PROTO(c_z_test)
 
     for(idx = 0; idx < total_size; ++idx)
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
 
-        if(RPN_DAT_REAL != array_range_mono_index(&ev_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
+        if(DATA_ID_REAL != array_range_mono_index(&ss_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
         {   /* ignore non-numeric values */
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
             continue;
         }
 
-        sum += ev_data.arg.fp;
+        sum += ss_data_get_real(&ss_data);
 
         ++n;
 
-        ss_data_free_resources(&ev_data);
+        ss_data_free_resources(&ss_data);
     }
 
-    if(2 > n)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NA);
-        return;
-    }
+    if(n < 2)
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ODF_NA);
 
     sample_mean = sum / n;
     } /*block*/
 
     if(n_args > 2)
     {
-        sigma = args[2]->arg.fp;
+        sigma = ss_data_get_real(args[2]);
     }
     else
     {   /* calculate the variance of this sample */
@@ -2432,29 +2296,26 @@ PROC_EXEC_PROTO(c_z_test)
 
         for(idx = 0; idx < total_size; ++idx)
         {
-            EV_DATA ev_data;
+            SS_DATA ss_data;
             F64 delta;
 
-            if(RPN_DAT_REAL != array_range_mono_index(&ev_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
+            if(DATA_ID_REAL != array_range_mono_index(&ss_data, array_data, idx, EM_REA | EM_STR | EM_BLK))
             {   /* ignore non-numeric values */
-                ss_data_free_resources(&ev_data);
+                ss_data_free_resources(&ss_data);
                 continue;
             }
 
-            delta = (ev_data.arg.fp - sample_mean);
+            delta = (ss_data_get_real(&ss_data) - sample_mean);
 
             sum_delta2 += mx_fsquare(delta);
 
             ++n;
 
-            ss_data_free_resources(&ev_data);
+            ss_data_free_resources(&ss_data);
         }
 
-        if(2 > n)
-        {
-            ev_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NA);
-            return;
-        }
+        if(n < 2)
+            exec_func_status_return(p_ss_data_res, EVAL_ERR_ODF_NA);
 
         sample_variance = (sum_delta2 / (n - 1.0));
 
@@ -2465,7 +2326,7 @@ PROC_EXEC_PROTO(c_z_test)
 
     z_test_result = 1.0 - calc_norm_std_cdf(z);
 
-    ev_data_set_real(p_ev_data_res, z_test_result);
+    ss_data_set_real(p_ss_data_res, z_test_result);
 }
 
 /* end of ev_fnstc.c */

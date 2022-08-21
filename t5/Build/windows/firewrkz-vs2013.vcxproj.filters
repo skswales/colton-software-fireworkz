@@ -1165,6 +1165,15 @@
     <ClCompile Include="..\..\cmodules\riscos\myrand.s">
       <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ob_skel\version.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_arith.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mathxcpx.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\fl_123\fl_123.h">
@@ -1664,6 +1673,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\fprowrkz\ob_rec\resource\resource.h">
       <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\version.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mathxcpx.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3691,6 +3706,30 @@
     </None>
     <None Include="..\..\ob_chart\resource\Neutral\chart-li.rci">
       <Filter>Source Files\ob_chart\ob_chart_resource\Neutral</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELI.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELJ.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELK.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELY.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DELTA.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERF.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERFC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GESTEP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

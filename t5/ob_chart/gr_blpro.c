@@ -313,14 +313,14 @@ dialog_bl_process_msg_process_start(
 
     gr_chart_objid_barlinechstyle_query(cp, p_bl_process_callback->id, &p_bl_process_callback->gr_barlinechstyle);
 
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_BL_1, (p_bl_process_callback->line_chart ? &p_bl_process_callback->gr_linechstyle.slot_width_percentage : &p_bl_process_callback->gr_barchstyle.slot_width_percentage)));
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_BL_2, &cp->barch.slot_overlap_percentage));
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_BL_3, &p_bl_process_callback->gr_barlinechstyle.slot_depth_percentage));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_BL_1, (p_bl_process_callback->line_chart ? p_bl_process_callback->gr_linechstyle.slot_width_percentage : p_bl_process_callback->gr_barchstyle.slot_width_percentage)));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_BL_2, cp->barch.slot_overlap_percentage));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_BL_3, p_bl_process_callback->gr_barlinechstyle.slot_depth_percentage));
 
     status_return(ui_dlg_set_check_forcing(h_dialog, BL_ID_3D_ON, cp->d3.bits.on));
 
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_TURN, &cp->d3.turn));
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_DROOP, &cp->d3.droop));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_TURN, cp->d3.turn));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_DROOP, cp->d3.droop));
 
     p_bl_process_callback->slot_width_modified = TRUE; /* wot de fook are dese says SKS */
     p_bl_process_callback->slot_depth_modified = TRUE;
@@ -341,11 +341,11 @@ dialog_bl_process_process_end(
 
         chart_modify_docu(p_bl_process_callback->p_chart_header);
 
-        ui_dlg_get_f64(h_dialog, BL_ID_BL_1, &p_bl_process_callback->gr_linechstyle.slot_width_percentage);
+        p_bl_process_callback->gr_linechstyle.slot_width_percentage = ui_dlg_get_f64(h_dialog, BL_ID_BL_1);
 
-        ui_dlg_get_f64(h_dialog, BL_ID_BL_1, &p_bl_process_callback->gr_barchstyle.slot_width_percentage);
-        ui_dlg_get_f64(h_dialog, BL_ID_BL_2, &cp->barch.slot_overlap_percentage);
-        ui_dlg_get_f64(h_dialog, BL_ID_BL_3, &p_bl_process_callback->gr_barlinechstyle.slot_depth_percentage);
+        p_bl_process_callback->gr_barchstyle.slot_width_percentage = ui_dlg_get_f64(h_dialog, BL_ID_BL_1);
+        cp->barch.slot_overlap_percentage = ui_dlg_get_f64(h_dialog, BL_ID_BL_2);
+        p_bl_process_callback->gr_barlinechstyle.slot_depth_percentage = ui_dlg_get_f64(h_dialog, BL_ID_BL_3);
 
         if(p_bl_process_callback->slot_width_modified)
         {
@@ -361,8 +361,8 @@ dialog_bl_process_process_end(
 
         if((cp->d3.bits.on = ui_dlg_get_check(h_dialog, BL_ID_3D_ON)) != FALSE)
         {
-            ui_dlg_get_f64(h_dialog, BL_ID_3D_TURN, &cp->d3.turn);
-            ui_dlg_get_f64(h_dialog, BL_ID_3D_DROOP, &cp->d3.droop);
+            cp->d3.turn = ui_dlg_get_f64(h_dialog, BL_ID_3D_TURN);
+            cp->d3.droop = ui_dlg_get_f64(h_dialog, BL_ID_3D_DROOP);
         }
     }
 
@@ -558,7 +558,7 @@ dialog_scat_process_process_start(
     const P_SCAT_PROCESS_CALLBACK p_scat_process_callback = (P_SCAT_PROCESS_CALLBACK) p_dialog_msg_process_start->client_handle;
     const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_scat_process_callback->p_chart_header->ch);
     gr_chart_objid_scatchstyle_query(cp, p_scat_process_callback->id, &p_scat_process_callback->gr_scatchstyle);
-    return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, BL_ID_BL_1, &p_scat_process_callback->gr_scatchstyle.width_percentage));
+    return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, BL_ID_BL_1, p_scat_process_callback->gr_scatchstyle.width_percentage));
 }
 
 _Check_return_
@@ -575,7 +575,7 @@ dialog_scat_process_process_end(
 
         chart_modify_docu(p_scat_process_callback->p_chart_header);
 
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, BL_ID_BL_1, &p_scat_process_callback->gr_scatchstyle.width_percentage);
+        p_scat_process_callback->gr_scatchstyle.width_percentage = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, BL_ID_BL_1);
         p_scat_process_callback->gr_scatchstyle.bits.manual = 1;
         status = gr_chart_objid_scatchstyle_set(cp, p_scat_process_callback->id, &p_scat_process_callback->gr_scatchstyle);
     }

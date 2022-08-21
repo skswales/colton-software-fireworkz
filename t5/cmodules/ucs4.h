@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2019 Stuart Swales */
+/* Copyright (C) 2006-2020 Stuart Swales */
 
 #ifndef __ucs4_h
 #define __ucs4_h
@@ -39,6 +39,11 @@ ucs4_is_grapheme_extend(
 
 _Check_return_
 extern BOOL
+ucs4_is_hexadecimal_digit(
+    _InVal_     UCS4 ucs4);
+
+_Check_return_
+extern BOOL
 ucs4_is_lowercase(
     _InVal_     UCS4 ucs4);
 
@@ -63,8 +68,13 @@ ucs4_case_fold_simple(
     _InVal_     UCS4 ucs4);
 
 _Check_return_
-extern S32
+extern S32 /* -1 or 0..9 */
 ucs4_decimal_digit_value(
+    _InVal_     UCS4 ucs4);
+
+_Check_return_
+extern S32 /* -1 or 0..15 */
+ucs4_hexadecimal_digit_value(
     _InVal_     UCS4 ucs4);
 
 _Check_return_

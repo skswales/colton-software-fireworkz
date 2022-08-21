@@ -257,50 +257,50 @@ csv_load_decode_line(
             if(!sizing_up)
             {
                 PC_USTR_INLINE ustr_inline_elem = quick_ublock_ustr_inline(p_quick_ublock_temp_decode);  /* temp hack for U inlines */
-                EV_DATA ev_data;
+                SS_DATA ss_data;
 
-                ev_data_set_blank(&ev_data);
+                ss_data_set_blank(&ss_data);
 
                 if(!is_a_string && !labels_across)
                 {
 #if 1
                     assert(ustr_inline_elem);
-                    status_assert(ss_recog_constant(&ev_data, (PC_USTR) ustr_inline_elem /*, FALSE*/));
+                    status_assert(ss_recog_constant(&ss_data, (PC_USTR) ustr_inline_elem /*, FALSE*/));
 #else
                     ARRAY_HANDLE h_mrofmun;
                     STYLE_HANDLE style_handle_autoformat;
                     if(status_ok(mrofmun_get_list(p_docu, &h_mrofmun)))
-                        status_assert(autoformat(&ev_data, &style_handle_autoformat, ustr_elem, &h_mrofmun));
+                        status_assert(autoformat(&ss_data, &style_handle_autoformat, ustr_elem, &h_mrofmun));
 #endif
                 }
 
                 if(NULL != p_array_handle)
                 {
-                    EV_DATA ev_data_copy;
+                    SS_DATA ss_data_copy;
 
-                    switch(ev_data.did_num)
+                    switch(ss_data_get_data_id(&ss_data))
                     {
-                    case RPN_DAT_REAL:
-                    case RPN_DAT_BOOL8:
-                    case RPN_DAT_WORD8:
-                    case RPN_DAT_WORD16:
-                    case RPN_DAT_WORD32:
-                    case RPN_DAT_DATE:
+                    case DATA_ID_REAL:
+                    case DATA_ID_LOGICAL:
+                    case DATA_ID_WORD8:
+                    case DATA_ID_WORD16:
+                    case DATA_ID_WORD32:
+                    case DATA_ID_DATE:
                         break;
 
                     default:
-                        ev_data.did_num = RPN_DAT_STRING;
-                        ev_data.local_data = FALSE;
-                        ev_data.arg.string.uchars = (PC_UCHARS) ustr_inline_elem;
-                        ev_data.arg.string.size = ustr_inline_strlen32(ustr_inline_elem);
-                        assert(!contains_inline(ev_data.arg.string.uchars, ev_data.arg.string.size));
+                        ss_data_set_data_id(&ss_data, DATA_ID_STRING);
+                        ss_data.local_data = FALSE;
+                        ss_data.arg.string.uchars = (PC_UCHARS) ustr_inline_elem;
+                        ss_data.arg.string.size = ustr_inline_strlen32(ustr_inline_elem);
+                        assert(!contains_inline(ss_data.arg.string.uchars, ss_data_get_string_size(&ss_data)));
                         break;
                     }
 
-                    if(status_ok(status = ss_data_resource_copy(&ev_data_copy, &ev_data)))
+                    if(status_ok(status = ss_data_resource_copy(&ss_data_copy, &ss_data)))
                     {
-                        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(EV_DATA), TRUE);
-                        status = al_array_add(p_array_handle, EV_DATA, 1, &array_init_block, &ev_data_copy);
+                        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(SS_DATA), TRUE);
+                        status = al_array_add(p_array_handle, SS_DATA, 1, &array_init_block, &ss_data_copy);
                     }
                 }
                 else
@@ -312,17 +312,17 @@ csv_load_decode_line(
 
                     zero_struct(load_cell_foreign);
 
-                    switch(ev_data.did_num)
+                    switch(ss_data_get_data_id(&ss_data))
                     {
-                    case RPN_DAT_REAL:
-                    case RPN_DAT_BOOL8:
-                    case RPN_DAT_WORD8:
-                    case RPN_DAT_WORD16:
-                    case RPN_DAT_WORD32:
+                    case DATA_ID_REAL:
+                    case DATA_ID_LOGICAL:
+                    case DATA_ID_WORD8:
+                    case DATA_ID_WORD16:
+                    case DATA_ID_WORD32:
                         load_cell_foreign.data_type = OWNFORM_DATA_TYPE_CONSTANT;
                         break;
 
-                    case RPN_DAT_DATE:
+                    case DATA_ID_DATE:
                         load_cell_foreign.data_type = OWNFORM_DATA_TYPE_DATE;
                         break;
 
@@ -348,7 +348,7 @@ csv_load_decode_line(
                     ss_recog_context_pull(&ss_recog_context);
                 }
 
-                ss_data_free_resources(&ev_data);
+                ss_data_free_resources(&ss_data);
 
                 csv_quick_ublock_dispose(p_quick_ublock_temp_decode, p_array_handle_temp_decode);
             }

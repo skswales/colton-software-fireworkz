@@ -922,27 +922,27 @@ gr_travel_dsh_label(
     case GR_CHART_VALUE_NUMBER:
         {
         NUMFORM_PARMS numform_parms;
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         QUICK_UBLOCK quick_ublock;
         quick_ublock_setup(&quick_ublock, pValue->data.text);
 
         pValue->type = GR_CHART_VALUE_TEXT;
         pValue->data.text[0] = CH_NULL;
 
-        ev_data_set_real(&ev_data, pValue->data.number);
+        ss_data_set_real(&ss_data, pValue->data.number);
 
         zero_struct(numform_parms);
-        if(fabs(ev_data.arg.fp) >= S32_MAX)
+        if(fabs(ss_data_get_real(&ss_data)) >= S32_MAX)
             numform_parms.ustr_numform_numeric = USTR_TEXT("0.00e+00");
-        else if(fabs(ev_data.arg.fp) < 1.0)
+        else if(fabs(ss_data_get_real(&ss_data)) < 1.0)
             numform_parms.ustr_numform_numeric = USTR_TEXT("0.##");
         else
             numform_parms.ustr_numform_numeric =
-                (floor(ev_data.arg.fp) == ev_data.arg.fp)
+                (floor(ss_data_get_real(&ss_data)) == ss_data_get_real(&ss_data))
                     ? USTR_TEXT("#,##0")
                     : USTR_TEXT("#,##0.00");
 
-        status_assert(numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+        status_assert(numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
         quick_ublock_dispose_leaving_buffer_valid(&quick_ublock);
 

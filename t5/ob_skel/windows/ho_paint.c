@@ -2046,7 +2046,7 @@ host_paint_drawfile(
         SetWindowOrgEx(hdc, 0, 0, &old_origin); /* NB I believe the new DLLs do this correctly */
     }
 
-reportf(TEXT("hpd: Draw_RenderDiag(%p,%d)"), d.data, d.length);
+reportf(TEXT("hpd: Draw_RenderDiag(%p,") U32_TFMT TEXT(")"), d.data, d.length);
     consume_bool(Draw_RenderDiag(&d, hdc, de_const_cast(LPRECT, &p_redraw_context->windows.paintstruct.rcPaint), &t, &de));
 if(de.errmess[0]) reportf(TEXT("hpd:de %d,%s"), de.errnum, report_sbstr(de.errmess));
 
@@ -2412,7 +2412,7 @@ fonty_text_paint_rubout_wchars(
     void_WrapOsBoolChecking(CLR_INVALID !=
         SetTextColor(hdc, colorref_from_rgb(p_redraw_context, &p_font_context->font_spec.colour)));
 
-    status_assert(
+    void_WrapOsBoolChecking(
               ExtTextOutW(hdc,
                           gdi_point.x, gdi_point.y,
                           0, NULL,
@@ -2471,7 +2471,7 @@ fonty_text_paint_simple_wchars(
     void_WrapOsBoolChecking(CLR_INVALID !=
         SetTextColor(hdc, colorref_from_rgb(p_redraw_context, &p_font_context->font_spec.colour)));
 
-    status_assert(
+    void_WrapOsBoolChecking(
               ExtTextOutW(hdc,
                           gdi_point.x, gdi_point.y,
                           prect ? ETO_CLIPPED : 0, /* force to clip when output to metafile */
@@ -2501,7 +2501,7 @@ uchars_ExtTextOut(
     STATUS status = STATUS_OK;
     BOOL res;
 
-    res = WrapOsBoolChecking(ExtTextOut(hdc, x, y, options, pRect, pString, uchars_n, pDx));
+    res = WrapOsBoolChecking(ExtTextOutA(hdc, x, y, options, pRect, pString, uchars_n, pDx));
 
     if(!res)
         status = status_check();
@@ -2520,7 +2520,7 @@ uchars_GetTextExtentPoint32(
     STATUS status = STATUS_OK;
     BOOL res;
     
-    res = WrapOsBoolChecking(GetTextExtentPoint32(hdc, pString, uchars_n, pSize));
+    res = WrapOsBoolChecking(GetTextExtentPoint32A(hdc, pString, uchars_n, pSize));
 
     if(!res)
         status = status_check();
@@ -2569,17 +2569,17 @@ enum CURSOR_SOURCE
     CURSOR_SOURCE_BOUND
 };
 
-typedef struct POINTER_INFO
+typedef struct T5_POINTER_INFO
 {
     BOOL discard;
     enum CURSOR_SOURCE cursor_source;
     POINT offset;
     PCTSTR id; /* for LoadImage */
 }
-POINTER_INFO; typedef const POINTER_INFO * PC_POINTER_INFO;
+T5_POINTER_INFO; typedef const T5_POINTER_INFO * PC_T5_POINTER_INFO;
 
-static const POINTER_INFO
-pointer_table[POINTER_SHAPE_COUNT] =
+static const T5_POINTER_INFO
+t5_pointer_info_table[POINTER_SHAPE_COUNT] =
 {
     { 0, CURSOR_SOURCE_SYSTEM,  {  0,  0 }, IDC_ARROW },                                        /* pointer default */
     { 0, CURSOR_SOURCE_SYSTEM,  {  0,  0 }, IDC_IBEAM },                                        /* caret */
@@ -2653,41 +2653,41 @@ host_set_pointer_shape(
 
     if(cursor.pointer_shape != POINTER_UNINIT)
     {
-        if((U32) cursor.pointer_shape >= elemof32(pointer_table))
+        if((U32) cursor.pointer_shape >= elemof32(t5_pointer_info_table))
         {
-            assert((U32) cursor.pointer_shape < elemof32(pointer_table));
+            assert((U32) cursor.pointer_shape < elemof32(t5_pointer_info_table));
             return;
         }
 
-        if(pointer_table[cursor.pointer_shape].discard)
+        if(t5_pointer_info_table[cursor.pointer_shape].discard)
             cursor.hcursor_discard = cursor.hcursor;
     }
 
-    if((U32) pointer_shape >= elemof32(pointer_table))
+    if((U32) pointer_shape >= elemof32(t5_pointer_info_table))
     {
-        assert((U32) pointer_shape < elemof32(pointer_table));
+        assert((U32) pointer_shape < elemof32(t5_pointer_info_table));
         return;
     }
 
     cursor.pointer_shape = pointer_shape;
 
     {
-    const PC_POINTER_INFO p_pointer_info = &pointer_table[pointer_shape];
+    const PC_T5_POINTER_INFO p_t5_pointer_info = &t5_pointer_info_table[pointer_shape];
 
     /* Load from the required source */
-    switch(p_pointer_info->cursor_source)
+    switch(p_t5_pointer_info->cursor_source)
     {
     default: default_unhandled();
 #if CHECKING
     case CURSOR_SOURCE_SYSTEM:
 #endif
-        cursor.hcursor = LoadCursor(NULL, p_pointer_info->id); /* don't destroy these */
+        cursor.hcursor = LoadCursor(NULL, p_t5_pointer_info->id); /* don't destroy these */
         break;
 
     case CURSOR_SOURCE_BOUND:
         {
         HINSTANCE hInstance = resource_get_object_resources(OBJECT_ID_SKEL);
-        cursor.hcursor = (HCURSOR) LoadImage(hInstance, p_pointer_info->id, IMAGE_CURSOR, 0, 0, 0);
+        cursor.hcursor = (HCURSOR) LoadImage(hInstance, p_t5_pointer_info->id, IMAGE_CURSOR, 0, 0, 0);
         break;
         }
     }
@@ -2698,11 +2698,11 @@ extern void
 host_modify_click_point(
     _InoutRef_  P_GDI_POINT p_gdi_point)
 {
-    if((cursor.pointer_shape >= 0) && (cursor.pointer_shape < elemof32(pointer_table)))
+    if((cursor.pointer_shape >= 0) && (cursor.pointer_shape < elemof32(t5_pointer_info_table)))
     {
-        const PC_POINTER_INFO p_pointer_info = &pointer_table[cursor.pointer_shape];
-        p_gdi_point->x += p_pointer_info->offset.x;
-        p_gdi_point->y += p_pointer_info->offset.y;
+        const PC_T5_POINTER_INFO p_t5_pointer_info = &t5_pointer_info_table[cursor.pointer_shape];
+        p_gdi_point->x += p_t5_pointer_info->offset.x;
+        p_gdi_point->y += p_t5_pointer_info->offset.y;
     }
 }
 
@@ -2714,7 +2714,7 @@ ho_paint_msg_exit2(void)
     {
         const POINTER_SHAPE pointer_shape = (cursor.pointer_shape >= 0) ? cursor.pointer_shape : cursor.old_pointer_shape;
 
-        if((pointer_shape >= 0) && pointer_table[pointer_shape].discard)
+        if((pointer_shape >= 0) && t5_pointer_info_table[pointer_shape].discard)
             void_WrapOsBoolChecking(DestroyCursor(cursor.hcursor));
 
         cursor.hcursor = NULL;

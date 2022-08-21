@@ -34,15 +34,15 @@ _Check_return_
 extern STATUS
 ev_alert(
     _InVal_     EV_DOCNO ev_docno,
-    _InRef_     PC_EV_STRINGC p_ev_string_message,
-    _InRef_     PC_EV_STRINGC p_ev_string_but_1,
-    _InRef_     PC_EV_STRINGC p_ev_string_but_2)
+    _InRef_     PC_SS_STRINGC p_ss_string_message,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_2)
 {
     SS_INPUT_EXEC ss_input_exec;
     ss_input_exec.ev_docno = ev_docno;
-    ss_input_exec.p_ev_string_message = p_ev_string_message;
-    ss_input_exec.p_ev_string_but_1 = p_ev_string_but_1;
-    ss_input_exec.p_ev_string_but_2 = p_ev_string_but_2;
+    ss_input_exec.p_ss_string_message = p_ss_string_message;
+    ss_input_exec.p_ss_string_but_1 = p_ss_string_but_1;
+    ss_input_exec.p_ss_string_but_2 = p_ss_string_but_2;
     return(object_call_id_load(P_DOCU_NONE, T5_MSG_SS_ALERT_EXEC, &ss_input_exec, OBJECT_ID_SS_SPLIT));
 }
 
@@ -101,15 +101,15 @@ _Check_return_
 extern STATUS
 ev_input(
     _InVal_     EV_DOCNO ev_docno,
-    _InRef_     PC_EV_STRINGC p_ev_string_message,
-    _InRef_     PC_EV_STRINGC p_ev_string_but_1,
-    _InRef_     PC_EV_STRINGC p_ev_string_but_2)
+    _InRef_     PC_SS_STRINGC p_ss_string_message,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_2)
 {
     SS_INPUT_EXEC ss_input_exec;
     ss_input_exec.ev_docno = ev_docno;
-    ss_input_exec.p_ev_string_message = p_ev_string_message;
-    ss_input_exec.p_ev_string_but_1 = p_ev_string_but_1;
-    ss_input_exec.p_ev_string_but_2 = p_ev_string_but_2;
+    ss_input_exec.p_ss_string_message = p_ss_string_message;
+    ss_input_exec.p_ss_string_but_1 = p_ss_string_but_1;
+    ss_input_exec.p_ss_string_but_2 = p_ss_string_but_2;
     return(object_call_id_load(P_DOCU_NONE, T5_MSG_SS_INPUT_EXEC, &ss_input_exec, OBJECT_ID_SS_SPLIT));
 }
 
@@ -228,7 +228,7 @@ ev_event_occurred(
 
     for(event_idx = 0; event_idx < n_events; ++event_idx, ++p_event_use)
     {
-        if(p_event_use->flags.tobedel)
+        if(p_event_use->flags.to_be_deleted)
             continue;
 
         if(p_event_use->event_type != event_type)
@@ -294,12 +294,12 @@ ev_establish_docno_from_docu_name(
 
 extern void
 ev_external_data(
-    P_EV_DATA p_ev_data_out,
+    P_SS_DATA p_ss_data_out,
     _InRef_     PC_EV_SLR p_ev_slr)
 {
     const P_DOCU p_docu = p_docu_from_ev_docno(ev_slr_docno(p_ev_slr));
 
-    ev_data_set_blank(p_ev_data_out);
+    ss_data_set_blank(p_ss_data_out);
 
     if(p_docu->flags.has_data)
     {
@@ -313,16 +313,16 @@ ev_external_data(
                                     T5_MSG_OBJECT_DATA_READ,
                                     &object_data_read)))
         {
-            if(RPN_DAT_STRING == object_data_read.ev_data.did_num)
+            if(ss_data_is_string(&object_data_read.ss_data))
             {
-                if(ss_string_is_blank(&object_data_read.ev_data))
+                if(ss_string_is_blank(&object_data_read.ss_data))
                 {
-                    ss_data_free_resources(&object_data_read.ev_data);
-                    ev_data_set_blank(&object_data_read.ev_data);
+                    ss_data_free_resources(&object_data_read.ss_data);
+                    ss_data_set_blank(&object_data_read.ss_data);
                 }
             }
 
-            *p_ev_data_out = object_data_read.ev_data;
+            *p_ss_data_out = object_data_read.ss_data;
         }
     }
 }
@@ -344,12 +344,12 @@ field_data_query_init(
     p_field_data_query->p_compound_name = p_ev_name->ustr_name_id;
     p_field_data_query->record_no = record_no;
     p_field_data_query->docno = (DOCNO) ev_slr_docno(&p_ev_name->owner);
-    ev_data_set_blank(&p_field_data_query->ev_data);
+    ss_data_set_blank(&p_field_data_query->ss_data);
 }
 
 extern void
 ev_field_data_read(
-    _OutRef_    P_EV_DATA p_ev_data_out,
+    _OutRef_    P_SS_DATA p_ss_data_out,
     _InVal_     EV_HANDLE ev_handle,
     _InVal_     S32 iy)
 {
@@ -358,7 +358,7 @@ ev_field_data_read(
 
     if(name_num < 0)
     {
-        ev_data_set_error(p_ev_data_out, create_error(EVAL_ERR_DATABASE));
+        ss_data_set_error(p_ss_data_out, create_error(EVAL_ERR_DATABASE));
         return;
     }
 
@@ -366,11 +366,11 @@ ev_field_data_read(
 
     if(status_fail(object_call_id(OBJECT_ID_REC, P_DOCU_NONE, T5_MSG_FIELD_DATA_READ, &field_data_query)))
     {
-        ev_data_set_error(p_ev_data_out, create_error(EVAL_ERR_DATABASE));
+        ss_data_set_error(p_ss_data_out, create_error(EVAL_ERR_DATABASE));
         return;
     }
 
-    *p_ev_data_out = field_data_query.ev_data;
+    *p_ss_data_out = field_data_query.ss_data;
 }
 
 /******************************************************************************
@@ -419,7 +419,7 @@ ev_field_names_check(
 
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
     {
-        if(p_ev_name->flags.tobedel)
+        if(p_ev_name->flags.to_be_deleted)
             continue;
 
         if((PtrGetByte(p_ev_name->ustr_name_id) == CH_QUESTION_MARK)
@@ -447,7 +447,7 @@ _Check_return_
 extern STATUS
 ev_make_cell(
     _InRef_     PC_EV_SLR p_ev_slr,
-    P_EV_DATA p_ev_data)
+    P_SS_DATA p_ss_data)
 {
     STATUS status = STATUS_OK;
     const P_DOCU p_docu = p_docu_from_ev_docno(ev_slr_docno(p_ev_slr));
@@ -476,7 +476,7 @@ ev_make_cell(
     {
     UREF_PARMS uref_parms;
     region_from_two_slrs(&uref_parms.source.region, &slr, &slr, TRUE);
-    uref_event(p_docu, T5_MSG_UREF_OVERWRITE, &uref_parms);
+    uref_event(p_docu, Uref_Msg_Overwrite, &uref_parms);
     } /*block*/
 #endif
 
@@ -488,9 +488,9 @@ ev_make_cell(
     /* make the object non-null for now */
     if(status_ok(status = object_realloc(p_docu, (P_P_ANY) &p_ev_cell, &slr, OBJECT_ID_SS, OVH_EV_CELL)))
     {
-        zero_struct(p_ev_cell->parms);
-        ev_cell_constant_from_data(p_ev_cell, p_ev_data);
-        p_ev_cell->parms.data_only = 1;
+        zero_struct(p_ev_cell->ev_parms);
+        ev_cell_constant_from_data(p_ev_cell, p_ss_data);
+        p_ev_cell->ev_parms.data_only = 1;
         docu_modify(p_docu);
     }
     } /*block*/
@@ -550,7 +550,7 @@ extern STATUS
 ev_numform(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended,terminated*/,
     _In_z_      PC_USTR ustr_format,
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
     NUMFORM_PARMS numform_parms;
 
@@ -560,7 +560,7 @@ ev_numform(
     numform_parms.ustr_numform_texterror = ustr_format;
     numform_parms.p_numform_context = get_p_numform_context(P_DOCU_NONE);
 
-    return(numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, p_ev_data, &numform_parms));
+    return(numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, p_ss_data, &numform_parms));
 }
 
 /******************************************************************************
@@ -612,11 +612,11 @@ _Check_return_
 extern S32
 ev_page_last(
     _InVal_     EV_DOCNO ev_docno,
-    _InVal_     BOOL xy)
+    _InVal_     BOOL y_flag)
 {
     const P_DOCU p_docu = p_docu_from_ev_docno(ev_docno);
 
-    return(xy ? last_page_y(p_docu) : last_page_x(p_docu));
+    return(y_flag ? last_page_y(p_docu) : last_page_x(p_docu));
 }
 
 /******************************************************************************
@@ -629,7 +629,7 @@ _Check_return_
 extern STATUS
 ev_page_slr(
     _InRef_     PC_EV_SLR p_ev_slr,
-    _InVal_     BOOL xy)
+    _InVal_     BOOL y_flag)
 {
     const EV_DOCNO ev_docno = ev_slr_docno(p_ev_slr);
 
@@ -642,7 +642,7 @@ ev_page_slr(
 
         slr_from_ev_slr(&slr, p_ev_slr);
         skel_point_from_slr_tl(p_docu, &skel_point, &slr);
-        return(xy ? skel_point.page_num.y : skel_point.page_num.x);
+        return(y_flag ? skel_point.page_num.y : skel_point.page_num.x);
     }
 
     return(EVAL_ERR_OUTOFRANGE);
@@ -885,7 +885,7 @@ ev_uref_change_range(
         slr_from_ev_slr(&uref_parms.source.region.br, &p_ev_range->e);
         uref_parms.source.region.whole_col = uref_parms.source.region.whole_row = 0;
 
-        uref_event(p_docu, T5_MSG_UREF_CHANGE, &uref_parms);
+        uref_event(p_docu, Uref_Msg_Change, &uref_parms);
     }
 }
 
@@ -900,7 +900,7 @@ extern S32
 ev_uref_match_range(
     _InoutRef_  P_EV_RANGE p_ev_range,
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     S32 res = DEP_NONE;
@@ -917,7 +917,7 @@ ev_uref_match_range(
         region.br.row = p_ev_range->e.row;
         region.whole_col = region.whole_row = FALSE;
 
-        if((res = uref_match_region(&region, t5_message, p_uref_event_block)) != DEP_NONE)
+        if((res = uref_match_region(&region, uref_message, p_uref_event_block)) != DEP_NONE)
         {
             p_ev_range->s.col = EV_COL_PACK(region.tl.col);
             p_ev_range->s.row = (EV_ROW)    region.tl.row;
@@ -926,9 +926,9 @@ ev_uref_match_range(
 
             if( (res == DEP_DELETE)
                 &&
-                (t5_message != T5_MSG_UREF_CLOSE1)
+                (uref_message != Uref_Msg_CLOSE1)
                 &&
-                (t5_message != T5_MSG_UREF_CLOSE2) )
+                (uref_message != Uref_Msg_CLOSE2) )
             {
                 p_ev_range->s.bad_ref = p_ev_range->e.bad_ref = 1;
             }
@@ -949,7 +949,7 @@ extern S32
 ev_uref_match_slr(
     _InoutRef_  P_EV_SLR p_ev_slr,
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     S32 res = DEP_NONE;
@@ -963,16 +963,16 @@ ev_uref_match_slr(
         slr.col = ev_slr_col(p_ev_slr);
         slr.row = ev_slr_row(p_ev_slr);
 
-        if(DEP_NONE != (res = uref_match_slr(&slr, t5_message, p_uref_event_block)))
+        if(DEP_NONE != (res = uref_match_slr(&slr, uref_message, p_uref_event_block)))
         {
             p_ev_slr->col = EV_COL_PACK(slr.col);
             p_ev_slr->row = (EV_ROW)    slr.row;
 
             if( (res == DEP_DELETE)
                 &&
-                (t5_message != T5_MSG_UREF_CLOSE1)
+                (uref_message != Uref_Msg_CLOSE1)
                 &&
-                (t5_message != T5_MSG_UREF_CLOSE2) )
+                (uref_message != Uref_Msg_CLOSE2) )
             {
                 p_ev_slr->bad_ref = 1;
             }

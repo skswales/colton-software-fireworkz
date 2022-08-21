@@ -489,11 +489,11 @@ ARRAY_INIT_BLOCK; typedef const ARRAY_INIT_BLOCK * PC_ARRAY_INIT_BLOCK;
 remove deleted info
 */
 
-typedef S32 (* P_PROC_ELEMENT_DELETED) (
+typedef BOOL (* P_PROC_ELEMENT_IS_DELETED) (
     P_ANY p_any);
 
-#define PROC_ELEMENT_DELETED_PROTO(_e_s, _proc_name) \
-_e_s S32 \
+#define PROC_ELEMENT_IS_DELETED_PROTO(_e_s, _proc_name) \
+_e_s BOOL \
 _proc_name( \
     P_ANY p_any)
 
@@ -669,7 +669,7 @@ extern S32 /* number of elements remaining */
 al_array_garbage_collect(
     _InoutRef_  P_ARRAY_HANDLE p_array_handle,
     _InVal_     ARRAY_INDEX element_start,
-    _In_opt_    P_PROC_ELEMENT_DELETED p_proc_element_deleted,
+    _In_opt_    P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted,
     _InVal_     AL_GARBAGE_FLAGS al_garbage_flags);
 
 _Check_return_

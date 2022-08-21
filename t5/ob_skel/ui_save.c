@@ -403,7 +403,7 @@ save_template_style_group =
     SAVE_ID_STYLE_GROUP, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, SAVE_ID_NAME, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LBRB, GROUPBOX) }
+    { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 static DIALOG_CONTROL
@@ -412,7 +412,7 @@ save_template_style_0 =
     SAVE_ID_STYLE_0, SAVE_ID_STYLE_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -1029,7 +1029,7 @@ save_ownform_save(
             /* rename this document to be filename */
             status_assert(rename_document_as_filename(p_docu, filename));
 
-            p_docu->file_date = of_op_format.output.u.file.ev_date;
+            p_docu->file_ss_date = of_op_format.output.u.file.ss_date;
 
             if(p_docu->flags.read_only)
             {

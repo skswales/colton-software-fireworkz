@@ -379,12 +379,12 @@ compound_file_read_file_MSAT(
         const U32 msat_entries = msat_entry_bytes/sizeof32(*x);
         U32 list_index;
         BOOL needs_newline = TRUE;
-        trace_2(TRACE_MODULE_CFBF, TEXT("MSAT from file DIF (part %d, %u entries):"), i, msat_entries);
+        trace_2(TRACE_MODULE_CFBF, TEXT("MSAT from file DIF (part %d, %u entries):"), (S32) i, msat_entries);
         for(list_index = 0; list_index < msat_entries; list_index++, x++)
         {
             if(0 == (list_index % 8))
             {
-                trace_2(TRACE_MODULE_CFBF, TEXT("DIF %d entry %.3u |"), i, list_index);
+                trace_2(TRACE_MODULE_CFBF, TEXT("DIF %d entry %.3u |"), (S32) i, list_index);
                 needs_newline = FALSE;
             }
             else
@@ -470,7 +470,7 @@ compound_file_get_next_sector_id(
     {
     int SAT_block_list_index = sector_id % (p_compound_file->standard_sector_size/sizeof32(int));
     int next_sector_id = p_compound_file->current_SAT_block_list[SAT_block_list_index];
-    trace_2(TRACE_MODULE_CFBF, TEXT("sector_id %u -> next sector_id %u"), sector_id, next_sector_id);
+    trace_2(TRACE_MODULE_CFBF, TEXT("sector_id %d -> next sector_id %d"), sector_id, next_sector_id);
     return(next_sector_id);
     } /*block*/
 }
@@ -517,7 +517,7 @@ compound_file_dump_directory_entry(
     }
     } /*block*/
 
-    trace_2(TRACE_MODULE_CFBF, TEXT("  _mse=%d(%s) |"),
+    trace_2(TRACE_MODULE_CFBF, TEXT("  _mse=%u(%s) |"),
         file_dir->_mse,
         (CFBF_STGTY_ROOT == file_dir->_mse)
         ? TEXT("ROOT")
@@ -708,7 +708,7 @@ compound_file_dump_decoded_directory_list(
         else if(CFBF_STGTY_STORAGE == decoded_directory->_mse)
             consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("STORAGE ")));
 
-        consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("%8d %s"),
+        consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("%8u %s"),
                               decoded_directory->_ulSize,
                               (decoded_directory->_ulSize < p_compound_file->hdr._ulMiniSectorCutoff) ? "SSAT" : "SAT"));
 

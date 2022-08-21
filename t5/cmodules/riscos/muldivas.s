@@ -8,8 +8,8 @@
 ; Copyright (C) 1998-2015 R W Colton
 
         GET     as_flags_h
-
-        ;GET     as_regs_h
+        GET     Hdr:ListOpts
+        GET     Hdr:APCS.APCS-32
         GET     as_macro_h
 
         GBLL    MULDIV_USE_UMULL
@@ -37,7 +37,7 @@ MULDIV_OVERFLOW  * 1*4
         LDR     a1, =muldiv64__statics
         LDR     a1, [a1, #MULDIV_REMAINDER]
 
-        FunctionReturn "","LinkNotStacked"
+        Return "","LinkNotStacked"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern int32_t muldiv64_overflow(void);
@@ -49,7 +49,7 @@ MULDIV_OVERFLOW  * 1*4
         LDR     a1, =muldiv64__statics
         LDR     a1, [a1, #MULDIV_OVERFLOW]
 
-        FunctionReturn "","LinkNotStacked"
+        Return "","LinkNotStacked"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -76,9 +76,9 @@ $label
         BEQ     muldiv64_zero_result
         RSBMI   a2, a2, #0      ; a2 := abs(b)
 
-        MOVS    v2, a3          ; v2 := sgn(c)
+        MOVS    v2, a3          ; v2 := sgn(divisor)
         BEQ     muldiv64_divide_zero
-        MOVPL   v3, a3          ; v3 := abs(c)
+        MOVPL   v3, a3          ; v3 := abs(divisor)
         RSBMI   v3, a3, #0
         MEND
 
@@ -132,7 +132,7 @@ $label  MOVS    a4, a1, LSR #16     ; a4 is ms 16 bits of a1
         MACRO
 $label  MULDIV_DO_DIV
 $label
-        MOV     a1, v3 ; abs(c)
+        MOV     a1, v3 ; abs(divisor)
 
         MOV     a2, #0
 
@@ -182,7 +182,7 @@ $label
         MACRO
         MULDIV_FINISH
 
-        TEQS    v1, v2          ; v1 = sgn(a*b), v2 = sgn(c): if a*b and c have opposite signs,
+        TEQS    v1, v2          ; v1 = sgn(a*b), v2 = sgn(divisor): if a*b and divisor have opposite signs,
         RSBMI   v6, v6, #0      ; negate the quotient
         RSBMI   v4, v4, #0
 
@@ -216,16 +216,16 @@ muldiv64_zero_result
         STR     a1, [ip, #MULDIV_REMAINDER]
         STR     a1, [ip, #MULDIV_OVERFLOW]
 
-        FunctionReturn "v1-v6","fpbased"
+        Return "v1-v6","fpbased"
 
-; muldiv64(dividend, numerator, denominator)
-; result = (a*b)/c
-; result2 = (a*b)%c
+; muldiv64(dividend, multiplier, divisor)
+; result1 = (a*b) / divisor
+; result2 = (a*b) % divisor
 ; the intermediate product is 64 bits long
 ; do everything using moduluses, and sort out signs later
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64(int32_t dividend, int32_t numerator, int32_t denominator);
+; extern int32_t muldiv64(int32_t dividend, int32_t multiplier, int32_t divisor);
 
         BeginExternal muldiv64
 
@@ -239,10 +239,12 @@ md64_p1 MULDIV_DO_MUL
 
         MULDIV_FINISH
 
-        FunctionReturn "v1-v6","fpbased"
+        Return "v1-v6","fpbased"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_ceil(int32_t dividend, int32_t numerator, int32_t denominator);
+; extern int32_t muldiv64_ceil(int32_t dividend, int32_t multiplier, int32_t divisor);
+
+; round result towards +inf as ceil()
 
         BeginExternal muldiv64_ceil
 
@@ -252,7 +254,10 @@ md64_p1 MULDIV_DO_MUL
 
 md64_p2 MULDIV_DO_MUL
 
-; result = (sgn(a*b*c) -ve) ? (a*b) : ((a*b) + (c-1)) / c
+; result =
+;   (sgn(a*b*divisor) -ve)
+;     ?  (a*b)                / divisor
+;     : ((a*b) + (divisor-1)) / divisor
 
         TEQ    v1, v2
         BMI    muldiv64_ceil_continue
@@ -267,10 +272,12 @@ muldiv64_ceil_continue
 
         MULDIV_FINISH
 
-        FunctionReturn "v1-v6","fpbased"
+        Return "v1-v6","fpbased"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_floor(int32_t dividend, int32_t numerator, int32_t denominator);
+; extern int32_t muldiv64_floor(int32_t dividend, int32_t multiplier, int32_t divisor);
+
+; truncate result towards -inf as floor()
 
         BeginExternal muldiv64_floor
 
@@ -280,7 +287,10 @@ muldiv64_ceil_continue
 
 md64_p3 MULDIV_DO_MUL
 
-; result = ((sgn(a*b*c) +ve) ? (a*b) : ((a*b) - (c-1))) / c
+; result =
+;   (sgn(a*b*divisor) +ve)
+;     ?  (a*b)                / divisor
+;     : ((a*b) - (divisor-1)) / divisor
 
         TEQ    v1, v2
         BPL    muldiv64_floor_continue
@@ -295,10 +305,12 @@ muldiv64_floor_continue
 
         MULDIV_FINISH
 
-        FunctionReturn "v1-v6","fpbased"
+        Return "v1-v6","fpbased"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_round_floor(int32_t dividend, int32_t numerator, int32_t denominator);
+; extern int32_t muldiv64_round_floor(int32_t dividend, int32_t multiplier, int32_t divisor);
+
+; round result towards -inf
 
         BeginExternal muldiv64_round_floor
 
@@ -308,7 +320,10 @@ muldiv64_floor_continue
 
 md64_p4 MULDIV_DO_MUL
 
-; result = ((sgn(a*b*c) +ve) ? (a*b + c/2) : (a*b - c/2)) / c
+; result =
+;   (sgn(a*b*divisor) +ve)
+;     ? ((a*b) + divisor/2) / divisor
+;     : ((a*b) - divisor/2) / divisor
 
         MOV    ip, v3, LSR #1
 
@@ -327,10 +342,10 @@ muldiv64_round_floor_continue
 
         MULDIV_FINISH
 
-        FunctionReturn "v1-v6","fpbased"
+        Return "v1-v6","fpbased"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_limiting(int32_t dividend, int32_t numerator, int32_t denominator);
+; extern int32_t muldiv64_limiting(int32_t dividend, int32_t multiplier, int32_t divisor);
 
         BeginExternal muldiv64_limiting
 
@@ -345,41 +360,7 @@ muldiv64_round_floor_continue
         SUBGT   a1, a2, #1 ; -> +LONG_MAX (0x7FFFFFFF)
         ADDLT   a1, a2, #1 ; -> -LONG_MAX (0x80000001)
 
-        FunctionReturn "","fpbased"
-
-; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern void umul64(uint32_t a, uint32_t b, uint32_t * res_lo/hi);
-
-        BeginExternal umul64
-
-        FunctionEntry "v1","MakeFrame"
-
-        MOV     v1, a3              ; Save result pointer
-
- [ MULDIV_USE_UMULL
-md64_p5 MULDIV_UMULL
-        B       %FT20
- |
-md64_p5 MOVS    a4, a1, LSR #16     ; a4 is ms 16 bits of a1
-        BIC     a1, a1, a4, LSL #16 ; a1 is ls 16 bits
- ]
-        MOV     ip, a2, LSR #16     ; ip is ms 16 bits of a2
-        BIC     a2, a2, ip, LSL #16 ; a2 is ls 16 bits
-
-        MUL     a3, a1, a2          ; Low partial product
-        MUL     a2, a4, a2          ; First middle partial product
-        MUL     a1, ip, a1          ; Second middle partial product
-        MULNE   a4, ip, a4          ; High partial product (NE improves even further efficiency for a4 == 0)
-
-        ADDS    a1, a1, a2          ; Add middle partial products (can't use MLA cos we need carry)
-        ADDCS   a4, a4, #&00010000  ; Add carry into high partial product
-
-        ADDS    a3, a3, a1, LSL #16 ; Add middle partial product sum into low and high words of result
-        ADC     a4, a4, a1, LSR #16
-
-20      STMIA   v1, {a3, a4}        ; Store all 64 bits of result
-
-        FunctionReturn "v1","fpbased"
+        Return "","fpbased"
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern void muldiv64_init(void);
@@ -413,13 +394,10 @@ md64_p5 MOVS    a4, a1, LSR #16     ; a4 is ms 16 bits of a1
 
         ADR     ip, md64_p4
         STMIA   ip, {a2, a3}
-
-        ADR     ip, md64_p5
-        STMIA   ip, {a2, a3}
  ]
 
 99
-        FunctionReturn "","LinkNotStacked"
+        Return "","LinkNotStacked"
 
  [ MULDIV_USE_UMULL
  ; Code to be patched back in place of UMULL; BAL

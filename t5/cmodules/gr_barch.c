@@ -84,10 +84,8 @@ gr_point_partial_z_shift(
     _OutRef_    P_GR_POINT xpoint,
     _InRef_opt_ PC_GR_POINT apoint,
     _ChartRef_  P_GR_CHART cp,
-    _InRef_     PC_F64 z_frac_p)
+    _InVal_     F64 z_frac /* normally 0.0 <= z <= 1.0 */)
 {
-    F64 z_frac = *z_frac_p; /* normally 0.0 <= z <= 1.0 */
-
     assert(cp->d3.valid.vector);
 
     xpoint->x = (apoint ? apoint->x : 0) - (GR_PIXIT) (cp->d3.cache.vector.x /*-ve*/ * z_frac);
@@ -285,20 +283,18 @@ gr_value_pos(
     _InRef_     PC_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_AXIS_IDX axis_idx,
-    _InRef_     PC_F64 value)
+    _InVal_     F64 value)
 {
-    PC_GR_AXIS p_gr_axis = &cp->axes[axes_idx].axis[axis_idx];
-    F64 plotval = *value;
+    const PC_GR_AXIS p_gr_axis = &cp->axes[axes_idx].axis[axis_idx];
     GR_PIXIT pos = (axis_idx == Y_AXIS_IDX) ? cp->plotarea.size.y : cp->plotarea.size.x;
-    F64 plotmin;
-    F64 plotmax;
+    F64 plotval = value;
+    F64 plotmin = p_gr_axis->current.min;
+    F64 plotmax = p_gr_axis->current.max;
 
-    plotmin = p_gr_axis->current.min;
     if( plotval < plotmin)
         plotval = plotmin;
 
     /* SKS 15jan97 clip to top of plot as well */
-    plotmax = p_gr_axis->current.max;
     if( plotval > plotmax)
         plotval = plotmax;
 
@@ -311,6 +307,7 @@ gr_value_pos(
     plotval = plotval - plotmin;
 
     plotval = plotval / p_gr_axis->current_span;
+
     pos = (GR_PIXIT) (plotval * pos);
 
     return(pos);
@@ -322,13 +319,14 @@ gr_value_pos_rel(
     _InRef_     PC_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_AXIS_IDX axis_idx,
-    _InRef_     PC_F64 value)
+    _InVal_     F64 value)
 {
-    PC_GR_AXIS p_gr_axis = &cp->axes[axes_idx].axis[axis_idx];
-    F64 plotval = *value;
+    const PC_GR_AXIS p_gr_axis = &cp->axes[axes_idx].axis[axis_idx];
     GR_PIXIT pos = (axis_idx == Y_AXIS_IDX) ? cp->plotarea.size.y : cp->plotarea.size.x;
+    F64 plotval = value;
 
     plotval = plotval / p_gr_axis->current_span;
+
     pos = (GR_PIXIT) (plotval * pos);
 
     return(pos);
@@ -347,7 +345,7 @@ gr_barline_label_point(
     _InVal_     GR_SERIES_IDX series_idx,
     _InVal_     GR_POINT_NO point,
     _InVal_     GR_CHART_OBJID id,
-    _InRef_     PC_F64 value,
+    _InVal_     F64 label_value,
     _InRef_     PC_GR_BOX txt_boxp)
 {
     STATUS status = STATUS_OK;
@@ -357,26 +355,26 @@ gr_barline_label_point(
     GR_MILLIPOINT swidth_mp;
     GR_PIXIT swidth_px, halfwidth, halfheight;
     NUMFORM_PARMS numform_parms;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     QUICK_UBLOCK quick_ublock;
     quick_ublock_setup(&quick_ublock, cv.data.text);
 
     cv.data.text[0] = CH_NULL;
 
-    ev_data_set_real(&ev_data, *value);
-
     zero_struct(numform_parms);
-    if(fabs(ev_data.arg.fp) >= U32_MAX)
+    if(fabs(label_value) >= (F64) U32_MAX)
         numform_parms.ustr_numform_numeric = USTR_TEXT("0.00e+00");
-    else if(fabs(ev_data.arg.fp) < 1.0)
+    else if(fabs(label_value) < 1.0)
         numform_parms.ustr_numform_numeric = USTR_TEXT("0.##");
     else
         numform_parms.ustr_numform_numeric =
-            (floor(ev_data.arg.fp) == ev_data.arg.fp)
+            (floor(label_value) == label_value)
                 ? USTR_TEXT("#,##0")
                 : USTR_TEXT("#,##0.00");
 
-    status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms);
+    ss_data_set_real(&ss_data, label_value);
+
+    status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms);
 
     quick_ublock_dispose_leaving_buffer_valid(&quick_ublock);
 
@@ -691,11 +689,11 @@ gr_barchart_point_addin(
     gr_point_barchstyle_query(    cp, series_idx, point, &barchstyle);
     gr_point_barlinechstyle_query(cp, series_idx, point, &barlinechstyle);
 
-    bar_width = (GR_PIXIT) ((double) cp->barch.cache.slot_width * barchstyle.slot_width_percentage / 100.0);
+    bar_width = (GR_PIXIT) ((cp->barch.cache.slot_width * barchstyle.slot_width_percentage) / 100.0);
 
     labelling = 0; /* or +1 */
 
-    valpoint.y = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &value.y);
+    valpoint.y = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, value.y);
 
     /* create assuming simple origin - 3-D transformed using plotarea later */
 
@@ -764,11 +762,7 @@ gr_barchart_point_addin(
         err_box.y0 = 0;         /* move later */
 
         if(cp->d3.bits.use)
-        {
-            F64 z_frac = 0.5;
-
-            gr_point_partial_z_shift((P_GR_POINT) &err_box.x0, (P_GR_POINT) &err_box.x0, cp, &z_frac);
-        }
+            gr_point_partial_z_shift((P_GR_POINT) &err_box.x0, (P_GR_POINT) &err_box.x0, cp, 0.5);
 
         err_box.x1 = err_box.x0;
     }
@@ -779,7 +773,7 @@ gr_barchart_point_addin(
         GR_PIXIT errsize;
 
         /* show error -relative to value (no problem with logs as value -ve) */
-        errsize = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, &error.y);
+        errsize = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, error.y);
 
         /* move to bottom, flipping end down (but always shift same way) */
 
@@ -805,9 +799,9 @@ gr_barchart_point_addin(
 
         lcp->slot_depth_percentage = MAX(lcp->slot_depth_percentage, barlinechstyle.slot_depth_percentage);
 
-        z_frac = (100.0 - barlinechstyle.slot_depth_percentage) / 100.0 / 2.0; /* only half you twerp! */
+        z_frac = ((100.0 - barlinechstyle.slot_depth_percentage) / 100.0) / 2.0; /* only half you twerp! */
 
-        gr_point_partial_z_shift(&zsv, NULL, cp, &z_frac);
+        gr_point_partial_z_shift(&zsv, NULL, cp, z_frac);
 
         rect_box.x0 = pre_z_shift_box.x0 + zsv.x;
         rect_box.y0 = pre_z_shift_box.y0 + zsv.y;
@@ -836,7 +830,7 @@ gr_barchart_point_addin(
             origin.x = rect_box.x1;
             origin.y = rect_box.y0;
 
-            gr_point_partial_z_shift(&ps1, NULL, cp, &z_frac);
+            gr_point_partial_z_shift(&ps1, NULL, cp, z_frac);
 
             ps2.x = ps1.x;
             ps2.y = ps1.y + (toppoint.y - botpoint.y);
@@ -979,11 +973,11 @@ gr_barchart_point_addin(
         if(p_gr_axes->axis[Y_AXIS_IDX].bits.log_scale)
         {
             F64 valincerr = value.y + error.y;
-            errsize  = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &valincerr);
-            errsize -= gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &value.y);
+            errsize  = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, valincerr);
+            errsize -= gr_value_pos(cp, axes_idx, Y_AXIS_IDX, value.y);
         }
         else
-            errsize  = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, &error.y);
+            errsize  = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, error.y);
 
         /* move to top, right way up */
 
@@ -1011,7 +1005,7 @@ gr_barchart_point_addin(
 
         txt_box = err_box;
 
-        status_return(gr_barline_label_point(cp, series_idx, point, lcp->point_id, &value.y, &txt_box));
+        status_return(gr_barline_label_point(cp, series_idx, point, lcp->point_id, value.y, &txt_box));
     }
 
     gr_chart_group_end(cp, &point_group_start);
@@ -1139,7 +1133,7 @@ gr_linechart_point_addin(
 
     labelling = 0; /* or +1 */
 
-    valpoint.y = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &value.y);
+    valpoint.y = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, value.y);
 
     /* create assuming simple origin - 3-D transformed using plotarea later */
 
@@ -1199,7 +1193,7 @@ gr_linechart_point_addin(
     pre_z_shift_box.y1 = toppoint.y;
 
     pict_halfsize = cp->barlinech.cache.cat_group_width / 2;
-    pict_halfsize = (GR_PIXIT) ((double) pict_halfsize * linechstyle.slot_width_percentage / 100.0);
+    pict_halfsize = (GR_PIXIT) ((pict_halfsize * linechstyle.slot_width_percentage) / 100.0);
     tbar_halfsize = pict_halfsize / 2;
 
     if(error.y || (labelling != 0))
@@ -1209,11 +1203,7 @@ gr_linechart_point_addin(
         err_box.y0 = 0;         /* move later */
 
         if(cp->d3.bits.use)
-        {
-            F64 z_frac = 0.5;
-
-            gr_point_partial_z_shift((P_GR_POINT) &err_box.x0, (P_GR_POINT) &err_box.x0, cp, &z_frac);
-        }
+            gr_point_partial_z_shift((P_GR_POINT) &err_box.x0, (P_GR_POINT) &err_box.x0, cp,  0.5);
 
         err_box.x1 = err_box.x0;
     }
@@ -1221,13 +1211,13 @@ gr_linechart_point_addin(
     /* error tit on bottom? (no problem with logs) */
     if(error.y && (value.y < 0.0) && (pass == GR_BARLINECH_RIBBON_PASS))
     {
-        GR_PIXIT errsize = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, &error.y);
+        const GR_PIXIT err_size = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, error.y);
 
         /* move to bottom, flipping end down (but always shift same way) */
 
         /* vertical part of T at bottom */
         err_box.y1 = pre_z_shift_box.y0 + err_box.y0;
-        err_box.y0 = err_box.y1         - errsize;
+        err_box.y0 = err_box.y1         - err_size;
 
         status_return(gr_chart_line_new(cp, lcp->point_id, &err_box, &point_linestyle));
 
@@ -1252,9 +1242,9 @@ gr_linechart_point_addin(
 
         lcp->slot_depth_percentage = MAX(lcp->slot_depth_percentage, barlinechstyle.slot_depth_percentage);
 
-        z_frac = (100.0 - barlinechstyle.slot_depth_percentage) / 100.0 / 2.0; /* only half you twerp! */
+        z_frac = ((100.0 - barlinechstyle.slot_depth_percentage) / 100.0) / 2.0; /* only half you twerp! */
 
-        gr_point_partial_z_shift(&zsv, NULL, cp, &z_frac);
+        gr_point_partial_z_shift(&zsv, NULL, cp, z_frac);
 
         cur_valpoint.x += zsv.x;
         cur_valpoint.y += zsv.y;
@@ -1274,7 +1264,7 @@ gr_linechart_point_addin(
         /* find ribbon width 3-D shift and leave in zsv */
         z_frac = barlinechstyle.slot_depth_percentage / 100.0;
 
-        gr_point_partial_z_shift(&zsv, NULL, cp, &z_frac);
+        gr_point_partial_z_shift(&zsv, NULL, cp, z_frac);
     }
 
     intermediate.x = 0; /* 0 -> not used */
@@ -1515,11 +1505,11 @@ gr_linechart_point_addin(
         if(p_gr_axes->axis[Y_AXIS_IDX].bits.log_scale)
         {
             F64 valincerr = value.y + error.y;
-            errsize  = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &valincerr);
-            errsize -= gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &value.y);
+            errsize  = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, valincerr);
+            errsize -= gr_value_pos(cp, axes_idx, Y_AXIS_IDX, value.y);
         }
         else
-            errsize  = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, &error.y);
+            errsize  = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, error.y);
 
         /* move to top, right way up */
 
@@ -1547,7 +1537,7 @@ gr_linechart_point_addin(
 
         txt_box = err_box;
 
-        status_return(gr_barline_label_point(cp, series_idx, point, lcp->point_id, &value.y, &txt_box));
+        status_return(gr_barline_label_point(cp, series_idx, point, lcp->point_id, value.y, &txt_box));
     }
 
     gr_chart_group_end(cp, &point_group_start);

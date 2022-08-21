@@ -15,6 +15,7 @@
 #include "ob_skel/flags.h"
 #endif
 
+#define EXPOSE_RISCOS_SWIS 1
 #include "ob_skel/xp_skelr.h"
 
 #include "ob_skel/prodinfo.h"
@@ -47,15 +48,19 @@ extern _kernel_oserror *
 wimp_reporterror_rf(
     _In_        _kernel_oserror * e,
     _InVal_     int errflags,
-    _Out_       int * const errflags_out,
+    _Out_       int * const p_button_clicked,
     _In_opt_z_  const char * message,
     _InVal_     int error_level)
 {
     static _kernel_oserror g_e;
 
-    *errflags_out = Wimp_ReportError_OK;
+    *p_button_clicked = 1;
 
+#if 0
     g_e.errnum = 1 /* lie to over-knowledgeable RISC PC error handler - was e->errnum */;
+#else
+    g_e.errnum = e->errnum;
+#endif
 
     {
     const char * p_u8 = e->errmess;
@@ -80,20 +85,12 @@ wimp_reporterror_rf(
     }
 
     if(0 == len)
-    {
-        g_e.errnum = 1;
         strcpy(g_e.errmess, "No characters in error string");
-        e = &g_e;
-    }
-    else if(!non_blanks)
-    {
-        g_e.errnum = 1;
+    else if(0 == non_blanks)
         strcpy(g_e.errmess, "All characters in error string are blank");
-        e = &g_e;
-    }
-    else
-        e = &g_e;
     } /*block*/
+
+    e = &g_e;
 
     reportf(TEXT("OS error: %d:%s"), e->errnum, g_e.errmess);
 
@@ -110,21 +107,23 @@ wimp_reporterror_rf(
         rs.r[0] = (int) e;
         rs.r[1] =       errflags;
         rs.r[2] = (int) product_ui_id();
-        if(message)
-        {
-            rs.r[1] |= (1 << 4);
-            rs.r[2] = (int) message;
-        }
+
         if(host_os_version_query() >= RISCOS_3_5)
         {
-            rs.r[1] |= (1 << 8); /*new style*/
-            rs.r[1] |= (error_level << 9);
+            if(NULL != message)
+            {
+                rs.r[1] |= Wimp_ReportError_NoAppName;
+                rs.r[2] = (int) message;
+            }
+            rs.r[1] |= Wimp_ReportError_UseCategory; /*new style*/
+            rs.r[1] |= Wimp_ReportError_Category(error_level); /* 11..9 */
             rs.r[3] = (int) g_product_sprite_name;
             rs.r[4] = 1; /* Wimp Sprite Area */
-            rs.r[5] = NULL;
+            rs.r[5] = NULL; /* no additional buttons */
         }
-        if(NULL == (err = _kernel_swi(/*Wimp_ReportError*/ 0x000400DF, &rs, &rs)))
-            *errflags_out = rs.r[1];
+
+        if(NULL == (err = _kernel_swi(Wimp_ReportError, &rs, &rs)))
+            *p_button_clicked = rs.r[1];
 
         riscos_hourglass_on();
     }
@@ -138,9 +137,9 @@ extern _kernel_oserror *
 wimp_reporterror_simple(
     _In_        _kernel_oserror * e)
 {
-    int errflags_out;
+    int button_clicked;
 
-    return(wimp_reporterror_rf(e, Wimp_ReportError_OK, &errflags_out, NULL, 2));
+    return(wimp_reporterror_rf(e, Wimp_ReportError_OK, &button_clicked, NULL, 2 /*Warning*/));
 }
 
 static UINT g_host_os_version = RISCOS_3_1;
@@ -156,7 +155,7 @@ host_os_version_determine(void)
 
     rs.r[0] = 0; /* Read code features */
 
-    if(NULL == _kernel_swi(/*OS_PlatformFeatures*/ 0x6D, &rs, &rs))
+    if(NULL == _kernel_swi(OS_PlatformFeatures, &rs, &rs))
     {
         g_host_platform_features = rs.r[0];
     }

@@ -343,6 +343,9 @@ mx_sech(
 *
 ******************************************************************************/
 
+#if __STDC_VERSION__ >= 199901L
+/* Use C99 acosh() */
+#else
 /******************************************************************************
 *
 * computes the principal value of the inverse hyperbolic cosine of x.
@@ -389,6 +392,8 @@ mx_acosh(
 
     return(log(x + sqrt((x * x) - F64_ONE)));
 }
+
+#endif /* __STDC_VERSION__ */
 
 /******************************************************************************
 *
@@ -537,6 +542,9 @@ mx_asech(
     return(y);
 }
 
+#if __STDC_VERSION__ >= 199901L
+/* Use C99 asinh() */
+#else
 /******************************************************************************
 *
 * computes the value of the inverse hyperbolic sine of x.
@@ -577,6 +585,11 @@ mx_asinh(
     return(log(x + sqrt((x * x) + F64_ONE)));
 }
 
+#endif /* __STDC_VERSION__ */
+
+#if __STDC_VERSION__ >= 199901L
+/* Use C99 atanh() */
+#else
 /******************************************************************************
 *
 * computes the inverse hyperbolic tangent of x.
@@ -624,6 +637,11 @@ mx_atanh(
     return((negative) ? -y : +y);
 }
 
+#endif /* __STDC_VERSION__ */
+
+#if __STDC_VERSION__ >= 199901L
+/* Use C99 hypot() */
+#else
 /******************************************************************************
 *
 * carefully evaluate the hypotenuse of a triangle
@@ -649,6 +667,57 @@ mx_fhypot(
         return(abs_x * sqrt(F64_ONE + mx_fsquare(abs_y / abs_x)));
     else
         return(abs_y * sqrt(F64_ONE + mx_fsquare(abs_x / abs_y)));
+}
+
+#endif /* __STDC_VERSION__ */
+
+/******************************************************************************
+*
+* compute the greatest common divisor of two numbers - Euclid's algorithm
+*
+******************************************************************************/
+
+_Check_return_
+extern F64
+mx_gcd(
+    _InVal_     F64 a_in,
+    _InVal_     F64 b_in)
+{
+    F64 a = a_in;
+    F64 b = b_in;
+    F64 t;
+
+    assert(floor(fabs(a)) == a);
+    assert(floor(fabs(b)) == b);
+
+    while(0.0 != b)
+    {
+        t = b;
+        b = fmod(a, b);
+        a = t;
+    }
+
+    return(a);
+}
+
+/******************************************************************************
+*
+* compute the least common multiple of two numbers
+*
+******************************************************************************/
+
+_Check_return_
+extern F64
+mx_lcm(
+    _InVal_     F64 a,
+    _InVal_     F64 b)
+{
+    const F64 gcd_ab = mx_gcd(a, b);
+
+    if(0.0 == gcd_ab)
+        return(0.0);
+
+    return(fabs(a * b) / gcd_ab);
 }
 
 /* end of mathxtra.c */

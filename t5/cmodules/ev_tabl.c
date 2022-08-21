@@ -34,7 +34,7 @@ static const EV_TYPE arg_DAT[]  = { 1, EM_DAT };
 
 static const EV_TYPE arg_INT[]  = { 1, EM_INT };
 
-#define arg_BOO arg_INT
+static const EV_TYPE arg_BOO[]  = { 1, EM_LOGICAL };
 
 static const EV_TYPE arg_REA[]  = { 1, EM_REA };
 
@@ -164,7 +164,7 @@ static const EV_TYPE arg_hvl[]  = { 4, EM_REA | EM_STR | EM_DAT | EM_BLK | EM_IN
 static const EV_TYPE arg_idx[]  = { 2, EM_ARY,
                                        EM_INT };
 
-static const EV_TYPE arg_if[]   = { 2, EM_INT,
+static const EV_TYPE arg_if[]   = { 2, EM_LOGICAL,
                                        EM_ANY };
 
 static const EV_TYPE arg_llg[]  = { 4, EM_ARY,
@@ -199,7 +199,7 @@ static const EV_TYPE arg_ndp[]  = { 2, EM_REA | EM_INT, /* SKS 03may14 added EM_
 static const EV_TYPE arg_nls[]  = { 1, EM_REA | EM_ARY };
 
 static const EV_TYPE arg_pag[]  = { 2, EM_SLR,
-                                       EM_INT };
+                                       EM_LOGICAL };
 
 static const EV_TYPE arg_pct[]  = { 2, EM_ARY,
                                        EM_REA };
@@ -289,8 +289,8 @@ static const EV_TYPE arg_wei[]  = { 4, EM_REA,
     FP_AGG(EXEC_DBASE, (a), 0, 0, 0, 0, 0, 0, (rpn_alias))
 
 /* cater for members no longer being in original order and CHECKING_ONLY */
-#define rpn_table_entry(rpn_type, n_args, max_nargs, category, fun_parms, object_id, table_index, arg_types, did_num) \
-    { (rpn_type), (n_args), (max_nargs), fun_parms, (category), (object_id), (table_index), (arg_types) CHECKING_ONLY_ARG(did_num) }
+#define rpn_table_entry(rpn_type, n_args, max_additional_args, category, fun_parms, object_id, table_index, arg_types, ev_idno) \
+    { (rpn_type), (n_args), (max_additional_args), fun_parms, (category), (object_id), (table_index), (arg_types) CHECKING_ONLY_ARG(ev_idno) }
 
 #define rpn_table_entry_INV \
     rpn_table_entry( RPN_INV, 0, 0, EV_RESO_NOTME, NAP, NAS, NIX, NAA, 0 )
@@ -301,16 +301,16 @@ static const RPNDEF
 _rpn_table[] =
 {
     /* externally visible types */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_REAL ), /* real */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_BOOL8 ), /* bool8 */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_WORD8 ), /* word8 */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_WORD16 ), /* word16 */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_WORD32 ), /* word32 */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_STRING ), /* string */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_ARRAY ), /* array */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_DATE ), /* date */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_BLANK ), /* blank */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_ERROR ), /* error */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_REAL ), /* real */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_LOGICAL ), /* bool8 */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD8 ), /* word8 */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD16 ), /* word16 */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD32 ), /* word32 */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_STRING ), /* string */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_ARRAY ), /* array */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_DATE ), /* date */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_BLANK ), /* blank */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_ERROR ), /* error */
 
 #if defined(EV_IDNO_U16_FORCE)
     /* test 64 */
@@ -339,10 +339,10 @@ _rpn_table[] =
 #endif
 
     /* internal types start here */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_SLR ), /* slr */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_RANGE ), /* range */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_NAME ), /* name */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_DAT_FIELD ), /* field */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_SLR ), /* slr */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_RANGE ), /* range */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_NAME ), /* name */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_FIELD ), /* field */
 
     rpn_table_entry( RPN_LCL, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_LCL_ARGUMENT ), /* argument name */
 
@@ -355,25 +355,25 @@ _rpn_table[] =
     rpn_table_entry( RPN_FRM, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_FRM_SKIPFALSE ), /* skip rpn if false */
     rpn_table_entry( RPN_FRM, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_FRM_SKIPTRUE ), /* skip rpn if true */
 
-    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_NOT,            arg_BOO, RPN_UOP_NOT ),
-    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UMINUS,         arg_IoR, RPN_UOP_UMINUS ), /* unary - */ /* SKS 15may14 was arg_REA */
-    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UPLUS,          arg_IoR, RPN_UOP_UPLUS ), /* unary + */ /* ditto */
+    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_NOT,        arg_BOO, RPN_UOP_NOT ),
+    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_MINUS,      arg_IoR, RPN_UOP_MINUS ), /* unary - */ /* SKS 15may14 was arg_REA */
+    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_PLUS,       arg_IoR, RPN_UOP_PLUS ), /* unary + */ /* ditto */
 
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_AND,            arg_BOO, RPN_BOP_AND ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_DIV,            arg_IoR, RPN_BOP_DIVIDE ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_SUB,            arg_IoRoD, RPN_BOP_MINUS ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_OR,             arg_BOO, RPN_BOP_OR ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_ADD,            arg_IoRoD, RPN_BOP_PLUS ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_POWER,          arg_REA, RPN_BOP_POWER ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_MUL,            arg_IoR, RPN_BOP_TIMES ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_AND,        arg_BOO, RPN_BOP_AND ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_DIV,        arg_IoR, RPN_BOP_DIVIDE ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_SUB,        arg_IoRoD, RPN_BOP_MINUS ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_OR,         arg_BOO, RPN_BOP_OR ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_ADD,        arg_IoRoD, RPN_BOP_PLUS ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_POWER,      arg_REA, RPN_BOP_POWER ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_MUL,        arg_IoR, RPN_BOP_TIMES ),
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_CONCATENATE,arg_STR, RPN_BOP_CONCATENATE ),
 
-    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_EQ,             arg_rel, RPN_REL_EQUALS ),
-    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_GT,             arg_rel, RPN_REL_GT ),
-    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_GTEQ,           arg_rel, RPN_REL_GTEQUAL ),
-    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_LT,             arg_rel, RPN_REL_LT ),
-    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_LTEQ,           arg_rel, RPN_REL_LTEQUAL ),
-    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_NEQ,            arg_rel, RPN_REL_NOTEQUAL ),
+    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_EQ,         arg_rel, RPN_REL_EQUALS ),
+    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_GT,         arg_rel, RPN_REL_GT ),
+    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_GTEQ,       arg_rel, RPN_REL_GTEQUAL ),
+    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_LT,         arg_rel, RPN_REL_LT ),
+    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_LTEQ,       arg_rel, RPN_REL_LTEQUAL ),
+    rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_NEQ,        arg_rel, RPN_REL_NOTEQUAL ),
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ABS,           arg_IoR, RPN_FNF_ABS ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ACOS,          arg_REA, RPN_FNF_ACOS ),
@@ -606,7 +606,7 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_N,             arg_n,   RPN_FNF_N ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_NEXT, EVS_CNT_NEXT),
                                                               NAS,                    NIX,                    NAA,     RPN_FN0_NEXT ),
-    rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_LOGICAL,   NAP, OBJECT_ID_SS,           SS_FUNC_NOT,            arg_BOO, RPN_FNF_NOT ),
+    rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_LOGICAL,   NAP, OBJECT_ID_SS,           SS_FUNC_UOP_NOT,        arg_BOO, RPN_FNF_NOT ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_DATE,      FP_AGG(EXEC_EXEC, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_NOW,           NAA,     RPN_FN0_NOW ),
     rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NPER,          arg_REA, RPN_FNV_NPER ),
@@ -620,7 +620,7 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 1/*nodep*/, 1/*self*/, 1/*load_recalc*/, 0, 0), /* SKS 14jun95 added load_recalc bit as reformat on load might stuff it */
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_PAGE,          arg_pag, RPN_FNV_PAGE ),
     rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0), /* SKS 14jun95 added load_recalc bit as reformat on load might stuff it */
-                                                              OBJECT_ID_SS_SPLIT,     SS_SPLIT_PAGES,         arg_INT, RPN_FNV_PAGES ),
+                                                              OBJECT_ID_SS_SPLIT,     SS_SPLIT_PAGES,         arg_BOO, RPN_FNV_PAGES ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTILE_INC, arg_pct, RPN_FNF_PERCENTILE_INC ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERMUT,        arg_INT, RPN_FNF_PERMUT ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PI,            NAA,     RPN_FN0_PI ),
@@ -882,19 +882,19 @@ lowercase ASCII sorted compiler function lookup
 typedef struct LOOKDEF
 {
     PC_A7STR id;
-    EV_IDNO did_num;
-    EV_IDNO did_num_id;
+    EV_IDNO ev_idno;
+    EV_IDNO ev_idno_function_id;
 #if !defined(EV_IDNO_U16)
     U8 _padding[4-2*sizeof(EV_IDNO)]; /* to 8 */
 #endif
 }
 LOOKDEF; typedef const LOOKDEF * PC_LOOKDEF;
 
-#define look_table_entr0(id, did_num) \
-    { (id), (did_num), 0 }
+#define look_table_entr0(id, ev_idno) \
+    { (id), (ev_idno), 0 }
 
-#define look_table_entry(id, did_num_both) \
-    { (id), (did_num_both), (did_num_both) }
+#define look_table_entry(id, ev_idno_both) \
+    { (id), (ev_idno_both), (ev_idno_both) }
 
 static const LOOKDEF
 look_table[] = /* ordered by id for bsearch()*/
@@ -1329,8 +1329,8 @@ look_table[] = /* ordered by id for bsearch()*/
 
     /* extra out-of-sequence functions start here */
 
-    look_table_entr0("+",               RPN_UOP_UPLUS),
-    look_table_entr0("-",               RPN_UOP_UMINUS),
+    look_table_entr0("+",               RPN_UOP_PLUS),
+    look_table_entr0("-",               RPN_UOP_MINUS),
 
     look_table_entry("if",              RPN_FNF_IFC)
 };
@@ -1342,7 +1342,7 @@ definition of types available
 typedef struct TYPES
 {
     A7CHARZ a7str_id[10];
-    EV_TYPE types;
+    EV_TYPE type_flags;
 }
 TYPES; typedef const TYPES * PC_TYPES;
 
@@ -1451,7 +1451,7 @@ ev_enum_resource_get_custom(
         if((p_resource_spec->n_args = p_ev_custom->args->n) == 0)
             p_resource_spec->n_args = 1;
 
-        p_resource_spec->msg_argument = 0;
+        p_resource_spec->max_additional_args = 0;
 
         status = custom_num;
         p_ev_resource->item_no = custom_num + 1;
@@ -1497,7 +1497,7 @@ ev_enum_resource_get_names(
         U32 len;
         QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
         quick_ublock_with_buffer_setup(quick_ublock);
-        status_break(status = ev_data_decode(&quick_ublock, &p_ev_name->def_data, p_ev_resource->ev_docno_from));
+        status_break(status = ss_data_decode(&quick_ublock, &p_ev_name->def_data, p_ev_resource->ev_docno_from));
         len = quick_ublock_bytes(&quick_ublock);
         if(NULL != (ustr = al_array_alloc(&p_resource_spec->h_definition_ustr, UCHARZ, len + 1 /*CH_NULL*/, &array_init_block_uchars, &status)))
         {
@@ -1511,7 +1511,8 @@ ev_enum_resource_get_names(
         status_break(status = ustr_set(&p_resource_spec->ustr_description, p_ev_name->ustr_description));
 
         p_resource_spec->n_args = 0;
-        p_resource_spec->msg_argument = 0;
+
+        p_resource_spec->max_additional_args = 0;
 
         status = name_num;
         p_ev_resource->item_no = name_num + 1;
@@ -1685,7 +1686,7 @@ ev_func_lookup(
         for(i = 0; i < elemof32(look_table) - LOOK_TABLE_EXTRA; ++i)
         {
             PC_LOOKDEF look_2 = &look_table[i];
-            PC_USTR ustr_id_2 = look_2->did_num_id ? resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(look_2->did_num_id)) : NULL;
+            PC_USTR ustr_id_2 = look_2->ev_idno_function_id ? resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(look_2->ev_idno_function_id)) : NULL;
 
             if(NULL == ustr_id_2)
                 ustr_id_2 = (PC_USTR) look_2->id; /* U is superset of A7 */
@@ -1706,7 +1707,7 @@ ev_func_lookup(
     if(NULL == opr)
         return(-1);
 
-    return(opr->did_num);
+    return(opr->ev_idno);
 }
 
 /******************************************************************************
@@ -1719,20 +1720,20 @@ _Check_return_
 _Ret_maybenull_z_
 extern PC_USTR
 func_name(
-    _InVal_     EV_IDNO did_num)
+    _InVal_     EV_IDNO ev_idno)
 {
     U32 i;
     PC_LOOKDEF p_lookdef;
 
     for(i = 0, p_lookdef = look_table; i < elemof32(look_table); ++i, ++p_lookdef)
     {
-        if(p_lookdef->did_num == did_num)
+        if(p_lookdef->ev_idno == ev_idno)
         {
             if(g_ss_recog_context.alternate_function_flag)
             {
-                if(p_lookdef->did_num_id)
+                if(p_lookdef->ev_idno_function_id)
                 {
-                    PC_USTR ustr = resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(p_lookdef->did_num_id));
+                    PC_USTR ustr = resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(p_lookdef->ev_idno_function_id));
 
                     if(NULL != ustr)
                         return(ustr);
@@ -1756,14 +1757,14 @@ _Check_return_
 _Ret_maybenull_z_
 extern PC_A7STR
 type_from_flags(
-    _InVal_     EV_TYPE type)
+    _InVal_     EV_TYPE type_flags)
 {
     U32 i;
     PC_TYPES p_types;
 
     for(i = 0, p_types = type_table; i < elemof32(type_table); ++i, ++p_types)
     {
-        if(p_types->types == type)
+        if(p_types->type_flags == type_flags)
             return(p_types->a7str_id);
     }
 
@@ -1776,7 +1777,7 @@ type_from_flags(
 *
 ******************************************************************************/
 
-PROC_BSEARCH_PROTO_Z(static, type_lookcomp, A7CHARZ, TYPES)
+PROC_BSEARCH_PROTO_Z(static, type_lookup_compare, A7CHARZ, TYPES)
 {
     BSEARCH_KEY_VAR_DECL(PC_A7STR, a7str_key_id);
     BSEARCH_DATUM_VAR_DECL(PC_TYPES, datum);
@@ -1798,12 +1799,12 @@ type_lookup(
 {
     /* although we are searching using a USTR for caller convenience, type ids are all A7STR */
     PC_TYPES p_types = (PC_TYPES)
-        bsearch(ustr_id, type_table, elemof(type_table) - TYPE_TABLE_EXTRA, sizeof(type_table[0]), type_lookcomp);
+        bsearch(ustr_id, type_table, elemof(type_table) - TYPE_TABLE_EXTRA, sizeof(type_table[0]), type_lookup_compare);
 
     if(NULL == p_types)
         return(0);
 
-    return(p_types->types);
+    return(p_types->type_flags);
 }
 
 /* end of ev_tabl.c */

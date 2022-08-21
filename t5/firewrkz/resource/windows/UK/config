@@ -1,4 +1,4 @@
-{Version:2.22;06 Feb 2019;Fireworkz for Windows (UK);Colton Software;Windows-1252}
+{Version:2.22.01;24 Dec 2019;Fireworkz for Windows (UK);Colton Software;Windows-1252}
 {RowTable:1}
 {#:ObjectBindConstruct:object-id;command-suffix-character}
 {ObjectBindConstruct:0;*}
@@ -159,6 +159,8 @@
 {UILoad:4;R#}
 {UILoad:4;x#}
 {UILoad:4;X#}
+{UILoad:4;#B2}
+{UILoad:4;#B16}
 {#:Date and time formats}
 {UILoad:5;hh:mm:ss}
 {UILoad:5;hh:mm}

@@ -56,6 +56,10 @@
 #define isnan(X)                    _isnan(X)
 #endif /* _MSC_VER */
 
+#if _MSC_VER < 1800 /* < VS2013 */
+#define strtoull _strtoi64
+#endif /* _MSC_VER */
+
 #if defined(_PREFAST_)
 #ifndef CODE_ANALYSIS
 #define CODE_ANALYSIS 1
@@ -99,7 +103,10 @@
 #endif
 
 /*#if !defined(__INTELLISENSE__)*/ /* Google "Troubleshooting Tips for IntelliSense Slowness" */
-#include "sal.h"
+#define __SPECSTRINGS_STRICT_LEVEL 1
+#define _USE_SAL2_ONLY 1
+#include "specstrings.h"
+#include "specstrings_strict.h"
 /*#endif*/ /* __INTELLISENSE__ */ /* (VS2012 package manager crashes - does this help?) */
 
 #pragma warning(pop)
@@ -119,9 +126,7 @@
 
 /* Now include (a limited set of) Windows header files */
 
-#if _MSC_VER >= 1500 /* VS2008 or later */
-#include "WinSDKVer.h"
-#endif
+#include "WinSDKVer.h" /* VS2008 or later */
 
 #define STRICT 1
 
@@ -284,7 +289,6 @@ Turn off various Level 4 warnings
 /* Temporarily disable some VS2015 warnings */
 #if _MSC_VER >= 1900 /* VS2015 or later */
 #pragma warning(disable:4456) /* declaration of 'x' hides previous local declaration */
-#pragma warning(disable:4457) /* declaration of 'x' hides previous function parameter */
 #endif
 
 /* Temporarily disable some /analyze warnings */
@@ -292,8 +296,21 @@ Turn off various Level 4 warnings
 #pragma warning(disable:6385) /* Invalid data: accessing 'argument 2', the readable size is 'x' bytes, but 'y' bytes might be read */
 
 #if !defined(__cplusplus)
+
+#if _MSC_VER < 1800 /* < VS2013 */
+typedef unsigned int _Bool;
+#define bool    _Bool
+#define false   0
+#define true    1
+#endif /* _MSC_VER */
+
+#if _MSC_VER < 1900 /* < VS2015 */
 #define inline __inline /* for MSVC < C99 */
-#endif
+#endif /* _MSC_VER */
+
+#endif /* __cplusplus */
+
+#define inline_when_fast_fp inline
 
 #endif /* __def_win32_h */
 

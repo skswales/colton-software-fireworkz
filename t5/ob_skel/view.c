@@ -2245,7 +2245,6 @@ view_update_fast_start(
     _InVal_     LAYER layer)
 {
     VIEWNO viewno = VIEWNO_NONE;
-    P_VIEW p_view;
     REDRAW_FLAGS redraw_flags;
     S32 more;
 
@@ -2268,11 +2267,16 @@ view_update_fast_start(
     assert(!rect_flags.extend_right_window);
     assert(!rect_flags.extend_down_window);
 
-    /* mark all views except the caret view for update_later */
+    { /* mark all views except the caret view for update_later */
+    P_VIEW p_view;
     while(P_VIEW_NONE != (p_view = docu_enum_views(p_docu, &viewno)))
+    {
         if(p_view->viewno != p_docu->viewno_caret)
-            /* do a reverse bacon slicer on skel_rect, to turn pages into view space */
+        {   /* do a reverse bacon slicer on skel_rect, to turn pages into view space */
             upcall_slicer(p_docu, p_view, redraw_tag, p_skel_rect, rect_flags, redraw_flags);
+        }
+    }
+    } /*block*/
 
     /* do a fast update of the caret view (if any) */
     if(p_docu->viewno_caret)
@@ -2511,7 +2515,8 @@ view_install_edge_window_handler(
         ctrl_view_skel_ruler_vert.paper_above.p_proc_event = p_proc_event;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 }
 
@@ -2528,7 +2533,8 @@ view_install_main_window_handler(
         ctrl_view_skel_back_window.paper_above.p_proc_event = p_proc_event;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 }
 
@@ -2566,7 +2572,8 @@ view_install_pane_window_handler(
         p_docu->ctrl_view_skel_pane_window.paper_above.p_proc_event = p_proc_event;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 }
 

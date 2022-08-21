@@ -22,16 +22,16 @@ definition of expression parameters
 
 typedef struct EV_PARMS
 {
-    UBF data_only : 1;              /* cell contains no rpn */
-    UBF rpn_variable : 1;           /* rpn is variable */
-    UBF control : 4;                /* control statement ? */
-    UBF did_num : 4;                /* type of data in result constant */
-    UBF event_n : 6;                /* number of event uses in table */
-    UBF slr_n : 8;                  /* number of SLR uses in table */
-    UBF range_n : 8;                /* number of range uses in table */
-    UBF name_n : 8;                 /* number of name uses in table */
-    UBF custom_n : 8;               /* number of custom calls in table */
-    UBF style_handle_mrofmun : 8;   /* style handle applied by mrofmun */
+    UBF data_only : 1;                  /* cell contains no RPN */
+    UBF rpn_variable : 1;               /* RPN is variable */
+    UBF control : 4;                    /* control statement ? */
+    UBF data_id : 4;                    /* type of data in result constant */
+    UBF event_n : 6;                    /* number of event uses in table */
+    UBF slr_n : 8;                      /* number of SLR uses in table */
+    UBF range_n : 8;                    /* number of range uses in table */
+    UBF name_n : 8;                     /* number of name uses in table */
+    UBF custom_n : 8;                   /* number of custom calls in table */
+    UBF style_handle_autoformat : 8;    /* style handle applied by mrofmun autoformat */
     /*          = 56 */
 }
 EV_PARMS, * P_EV_PARMS;
@@ -69,17 +69,17 @@ JAD : ob_ss & ob_sspt want this, so now it's here
 */
 
 typedef void (* P_PROC_EXEC) (
-    P_EV_DATA args[EV_MAX_ARGS],
+    P_SS_DATA args[EV_MAX_ARGS],
     _InVal_     S32 n_args,
-    _InoutRef_  P_EV_DATA p_ev_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_res,
     _InRef_     PC_EV_SLR p_cur_slr);
 
 #define PROC_EXEC_PROTO(_proc_name) \
 extern void \
 _proc_name( \
-    P_EV_DATA args[EV_MAX_ARGS], \
+    P_SS_DATA args[EV_MAX_ARGS], \
     _InVal_     S32 n_args,      \
-    _InoutRef_  P_EV_DATA p_ev_data_res, \
+    _InoutRef_  P_SS_DATA p_ss_data_res, \
     _InRef_     PC_EV_SLR p_cur_slr)
 
 /*
@@ -88,8 +88,8 @@ evaluator's view of a cell
 
 typedef struct EV_CELL
 {
-    EV_PARMS parms;
-    EV_CONSTANT ev_constant;
+    EV_PARMS ev_parms;
+    SS_CONSTANT ss_constant;
 
 #define OVH_EV_CELL offsetof32(EV_CELL, slrs)
 
@@ -111,35 +111,35 @@ macros to extract addresses of things in cell
 #define p_ev_range_from_ev_cell(p_ev_cell, index) ( (P_EV_RANGE) \
     ((P_U8) (p_ev_cell) \
     + OVH_EV_CELL \
-    + sizeof32(EV_SLR) * (p_ev_cell)->parms.slr_n \
+    + sizeof32(EV_SLR) * (p_ev_cell)->ev_parms.slr_n \
     + sizeof32(EV_RANGE) * (index)))
 
 #define p_ev_name_from_ev_cell(p_ev_cell, index) ( (P_EV_NAME_REF) \
     ((P_U8) (p_ev_cell) \
     + OVH_EV_CELL \
-    + sizeof32(EV_SLR) * (p_ev_cell)->parms.slr_n \
-    + sizeof32(EV_RANGE) * (p_ev_cell)->parms.range_n \
+    + sizeof32(EV_SLR) * (p_ev_cell)->ev_parms.slr_n \
+    + sizeof32(EV_RANGE) * (p_ev_cell)->ev_parms.range_n \
     + sizeof32(EV_NAME_REF) * (index)))
 
 #define p_ev_custom_from_ev_cell(p_ev_cell, index) ( (P_EV_HANDLE) \
     ((P_U8) (p_ev_cell) \
     + OVH_EV_CELL \
-    + sizeof32(EV_SLR) * (p_ev_cell)->parms.slr_n \
-    + sizeof32(EV_RANGE) * (p_ev_cell)->parms.range_n \
-    + sizeof32(EV_NAME_REF) * (p_ev_cell)->parms.name_n \
+    + sizeof32(EV_SLR) * (p_ev_cell)->ev_parms.slr_n \
+    + sizeof32(EV_RANGE) * (p_ev_cell)->ev_parms.range_n \
+    + sizeof32(EV_NAME_REF) * (p_ev_cell)->ev_parms.name_n \
     + sizeof32(EV_HANDLE) * (index)))
 
 #define p_ev_event_from_ev_cell(p_ev_cell, index) ( (P_EV_HANDLE) \
     ((P_U8) (p_ev_cell) \
     + OVH_EV_CELL \
-    + sizeof32(EV_SLR) * (p_ev_cell)->parms.slr_n \
-    + sizeof32(EV_RANGE) * (p_ev_cell)->parms.range_n \
-    + sizeof32(EV_NAME_REF) * (p_ev_cell)->parms.name_n \
-    + sizeof32(EV_HANDLE) * (p_ev_cell)->parms.custom_n \
+    + sizeof32(EV_SLR) * (p_ev_cell)->ev_parms.slr_n \
+    + sizeof32(EV_RANGE) * (p_ev_cell)->ev_parms.range_n \
+    + sizeof32(EV_NAME_REF) * (p_ev_cell)->ev_parms.name_n \
+    + sizeof32(EV_HANDLE) * (p_ev_cell)->ev_parms.custom_n \
     + sizeof32(EVENT_TYPE) * (index)))
 
 #define p_rpn_from_ev_cell(p_ev_cell) ( (P_U8) \
-    ((p_ev_event_from_ev_cell((p_ev_cell), (p_ev_cell)->parms.event_n))) )
+    ((p_ev_event_from_ev_cell((p_ev_cell), (p_ev_cell)->ev_parms.event_n))) )
 
 /*
 event types
@@ -167,7 +167,7 @@ typedef struct COMPILER_OUTPUT
     ARRAY_HANDLE h_custom_calls;        /* custom functions referred to in RPN */
     ARRAY_HANDLE h_custom_defs;         /* custom functions defined in RPN */
     ARRAY_HANDLE h_events;              /* event uses in RPN */
-    EV_DATA ev_data;                    /* data to be stored in cell */
+    SS_DATA ss_data;                    /* data to be stored in cell */
     EV_PARMS ev_parms;                  /* things about rpn */
     S32 chars_processed;                /* number of characters processed from input string */
     UBF load_recalc : 1;                /* must recalc on load */
@@ -215,7 +215,7 @@ typedef struct RESOURCE_SPEC
     ARRAY_HANDLE_USTR h_id_ustr;
     ARRAY_HANDLE_USTR h_definition_ustr;
     S32 n_args;
-    S32 msg_argument;
+    U32 max_additional_args;
     P_USTR ustr_description; /* owned by us */
 }
 RESOURCE_SPEC, * P_RESOURCE_SPEC;
@@ -232,13 +232,13 @@ enum RPN_NUMBERS
 {
     /* start after externally visible numbers */
 #if defined(EV_IDNO_U16_FORCE)
-    RPN_DAT_SLR = RPN_DAT_NEXT_NUMBER + 4*64,
+    DATA_ID_SLR = RPN_DAT_NEXT_NUMBER + 4*64U,
 #else
-    RPN_DAT_SLR = RPN_DAT_NEXT_NUMBER,
+    DATA_ID_SLR = RPN_DAT_NEXT_NUMBER,
 #endif
-    RPN_DAT_RANGE       ,
-    RPN_DAT_NAME        ,
-    RPN_DAT_FIELD       ,
+    DATA_ID_RANGE       ,
+    DATA_ID_NAME        ,
+    DATA_ID_FIELD       ,
 
     /* local argument */
     RPN_LCL_ARGUMENT    ,
@@ -255,8 +255,8 @@ enum RPN_NUMBERS
 
     /* unary operators */
     RPN_UOP_NOT         ,
-    RPN_UOP_UMINUS      ,
-    RPN_UOP_UPLUS       ,
+    RPN_UOP_MINUS       ,
+    RPN_UOP_PLUS        ,
 
     /* binary operators */
     RPN_BOP_AND         ,
@@ -743,27 +743,31 @@ enum RPN_TYPES
 type mask bits
 */
 
-#define EM_REA      1
-#define EM_SLR      2       /* if not set, SLRs are dereferenced first */
-#define EM_STR      4
-#define EM_DAT      8
-#define EM_ARY      16      /* if not set, operator called for each element */
-#define EM_BLK      32      /* if not set, blanks converted to real 0 */
-#define EM_CDX      128     /* conditional subexpression */
-#define EM_ERR      256
-#define EM_INT      512     /* function wants integers */
+enum type_mask_bits
+{
+    EM_REA      = 1U,
+    EM_SLR      = 2U,      /* if not set, SLRs are dereferenced first */
+    EM_STR      = 4U,
+    EM_DAT      = 8U,
+    EM_ARY      = 16U,     /* if not set, operator called for each element */
+    EM_BLK      = 32U,     /* if not set, blanks converted to real 0 */
+    EM_CDX      = 128U,    /* conditional subexpression */
+    EM_ERR      = 256U,
+    EM_INT      = 512U,    /* function wants integers */
 
-#define EM_ANY      (EM_REA | EM_SLR | EM_STR | EM_DAT | EM_ARY | EM_BLK | EM_ERR | EM_INT)
-#define EM_CONST    (EM_REA          | EM_STR | EM_DAT          | EM_BLK | EM_ERR | EM_INT)
+    EM_LOGICAL  = (EM_REA                                                       | EM_INT),
+    EM_CONST    = (EM_REA          | EM_STR | EM_DAT          | EM_BLK | EM_ERR | EM_INT),
+    EM_ANY      = (EM_REA | EM_SLR | EM_STR | EM_DAT | EM_ARY | EM_BLK | EM_ERR | EM_INT)
+};
 
 typedef S16 EV_TYPE; typedef EV_TYPE * P_EV_TYPE; typedef const EV_TYPE * PC_EV_TYPE;
 
 typedef struct EV_SPLIT_EXEC_DATA
 {
     U32         object_table_index;  /* index into our table */
-    P_EV_DATA   args[EV_MAX_ARGS];
+    P_SS_DATA   args[EV_MAX_ARGS];
     S32         n_args;
-    P_EV_DATA   p_ev_data_res;
+    P_SS_DATA   p_ss_data_res;
     PC_EV_SLR   p_cur_slr;
 }
 EV_SPLIT_EXEC_DATA, * P_EV_SPLIT_EXEC_DATA;
@@ -771,6 +775,12 @@ EV_SPLIT_EXEC_DATA, * P_EV_SPLIT_EXEC_DATA;
 /*
 evaluator external routines
 */
+
+#define ev_docno_from_p_docu(p_docu) ( (EV_DOCNO) \
+    docno_from_p_docu(p_docu) )
+
+#define p_docu_from_ev_docno(ev_docno) \
+    p_docu_from_docno((DOCNO) ev_docno)
 
 /*
 ev_comp.c
@@ -829,9 +839,9 @@ ev_cell_decode_ui(
 
 _Check_return_
 extern STATUS
-ev_data_decode(
+ss_data_decode(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     EV_DOCNO ev_docno_from);
 
 _Check_return_
@@ -860,8 +870,8 @@ ev_help.c
 */
 
 extern void
-ev_data_from_ev_cell(
-    _OutRef_    P_EV_DATA p_ev_data,
+ss_data_from_ev_cell(
+    _OutRef_    P_SS_DATA p_ss_data,
     _InRef_     PC_EV_CELL p_ev_cell);
 
 extern void
@@ -875,13 +885,13 @@ ev_exp_refs_adjust(
     _InRef_     PC_EV_SLR p_ev_slr_offset    /* adjustment to slrs */,
     _InRef_opt_ PC_EV_RANGE p_ev_range_scope /* source range */);
 
-#define ev_is_formula(p_ev_cell) ( \
-    !(p_ev_cell)->parms.data_only )
+#define ev_cell_contains_formula(p_ev_cell) ( \
+    !(p_ev_cell)->ev_parms.data_only )
 
 extern void
 ev_cell_constant_from_data(
     _OutRef_    P_EV_CELL p_ev_cell,
-    _InoutRef_  P_EV_DATA p_ev_data);
+    _InoutRef_  P_SS_DATA p_ss_data);
 
 extern void
 ev_cell_free_resources(
@@ -889,7 +899,7 @@ ev_cell_free_resources(
 
 extern void
 ev_slr_deref(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InRef_     PC_EV_SLR p_ev_slr);
 
 /*
@@ -900,9 +910,9 @@ _Check_return_
 extern STATUS
 ev_alert(
     _InVal_     EV_DOCNO ev_docno,
-    _InRef_     PC_EV_STRINGC message,
-    _InRef_     PC_EV_STRINGC but1_text,
-    _InRef_     PC_EV_STRINGC but2_text);
+    _InRef_     PC_SS_STRINGC p_ss_string_message,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_2);
 
 extern void
 ev_alert_close(void);
@@ -915,9 +925,9 @@ _Check_return_
 extern STATUS
 ev_input(
     _InVal_     EV_DOCNO ev_docno,
-    _InRef_     PC_EV_STRINGC message,
-    _InRef_     PC_EV_STRINGC but1_text,
-    _InRef_     PC_EV_STRINGC but2_text);
+    _InRef_     PC_SS_STRINGC p_ss_string_message,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_but_2);
 
 extern void
 ev_input_close(void);
@@ -982,12 +992,12 @@ ev_exit(void);
 
 extern void
 ev_external_data(
-    P_EV_DATA p_ev_data_out,
+    P_SS_DATA p_ss_data_out,
     _InRef_     PC_EV_SLR p_ev_slr);
 
 extern void
 ev_field_data_read(
-    _OutRef_    P_EV_DATA p_ev_data_out,
+    _OutRef_    P_SS_DATA p_ss_data_out,
     _InVal_     EV_HANDLE h_name,
     _InVal_     S32 iy);
 
@@ -1005,7 +1015,7 @@ _Check_return_
 extern STATUS
 ev_make_cell(
     _InRef_     PC_EV_SLR p_ev_slr,
-    P_EV_DATA p_ev_data);
+    P_SS_DATA p_ss_data);
 
 _Check_return_
 extern EV_COL
@@ -1022,7 +1032,7 @@ extern STATUS
 ev_numform(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended,terminated*/,
     _In_z_      PC_USTR ustr_format,
-    _InRef_     PC_EV_DATA p_ev_data);
+    _InRef_     PC_SS_DATA p_ss_data);
 
 _Check_return_
 extern EV_ROW
@@ -1039,13 +1049,13 @@ _Check_return_
 extern S32
 ev_page_last(
     _InVal_     EV_DOCNO ev_docno,
-    _InVal_     BOOL xy);
+    _InVal_     BOOL y_flag);
 
 _Check_return_
 extern STATUS
 ev_page_slr(
     _InRef_     PC_EV_SLR p_ev_slr,
-    _InVal_     BOOL xy);
+    _InVal_     BOOL y_flag);
 
 extern void
 ev_recalc_start(
@@ -1103,7 +1113,7 @@ extern S32
 ev_uref_match_range(
     _InoutRef_  P_EV_RANGE p_ev_range,
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
 _Check_return_
@@ -1111,7 +1121,7 @@ extern S32
 ev_uref_match_slr(
     _InoutRef_  P_EV_SLR p_ev_slr,
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
 /*ncr*/

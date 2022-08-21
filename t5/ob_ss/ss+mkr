@@ -24,6 +24,8 @@ $(BUILD_DIR).ob_ss.o.sle_ss: $(T5).ob_ss.c.sle_ss
 
 $(BUILD_DIR).ob_ss.o.bins: $(T5).cmodules.c.bins
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_arith: $(T5).cmodules.c.ev_arith
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.ev_comp: $(T5).cmodules.c.ev_comp
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.ev_dcom: $(T5).cmodules.c.ev_dcom
@@ -87,6 +89,8 @@ $(BUILD_DIR).ob_ss.o.mathxtr3: $(T5).cmodules.c.mathxtr3
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.mathxtr4: $(T5).cmodules.c.mathxtr4
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.mathxcpx: $(T5).cmodules.c.mathxcpx
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.e_lgamma_r: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_lgamma_r
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.e_j0: $(T5).external.FreeBSD.srcp.lib.msun.src.c.e_j0
@@ -106,6 +110,7 @@ $(BUILD_DIR).ob_ss.o.link_ev \
 $(BUILD_DIR).ob_ss.o.sle_ss \
 $(BUILD_DIR).ob_ss.o.ui_name \
 $(BUILD_DIR).ob_ss.o.ui_ss \
+$(BUILD_DIR).ob_ss.o.ev_arith \
 $(BUILD_DIR).ob_ss.o.ev_comp \
 $(BUILD_DIR).ob_ss.o.ev_dcom \
 $(BUILD_DIR).ob_ss.o.ev_eval \
@@ -137,6 +142,7 @@ $(BUILD_DIR).ob_ss.o.mathxtra \
 $(BUILD_DIR).ob_ss.o.mathxtr2 \
 $(BUILD_DIR).ob_ss.o.mathxtr3 \
 $(BUILD_DIR).ob_ss.o.mathxtr4 \
+$(BUILD_DIR).ob_ss.o.mathxcpx \
 $(BUILD_DIR).ob_ss.o.e_j0 \
 $(BUILD_DIR).ob_ss.o.e_j1 \
 $(BUILD_DIR).ob_ss.o.e_jn \

@@ -162,14 +162,11 @@ PROC_EXEC_PROTO(c_m_determ)
     array_range_sizes(args[0], &x_size, &y_size);
 
     if(x_size != y_size)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_MATRIX_NOT_SQUARE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_MATRIX_NOT_SQUARE);
 
     if(x_size == 0)
     {
-        ev_data_set_integer(p_ev_data_res, 1); /* yes, really */
+        ss_data_set_integer(p_ss_data_res, 1); /* yes, really */
         return;
     }
 
@@ -195,18 +192,18 @@ PROC_EXEC_PROTO(c_m_determ)
         {
             for(j = 0; j < m; ++j)
             {
-                EV_DATA ev_data;
+                SS_DATA ss_data;
 
-                if(RPN_DAT_REAL != array_range_index(&ev_data, args[0], j, i, EM_REA)) /* NB j,i */
+                if(DATA_ID_REAL != array_range_index(&ss_data, args[0], j, i, EM_REA)) /* NB j,i */
                     status_break(status = EVAL_ERR_MATRIX_NOT_NUMERIC);
 
-                f64_copy(_Aij(a, m, i, j), ev_data.arg.fp);
+                f64_copy(_Aij(a, m, i, j), ss_data.arg.fp);
             }
         }
 
         if(status_ok(status = determinant(a, m, &m_determ_result)))
         {
-            ev_data_set_real_ti(p_ev_data_res, m_determ_result);
+            ss_data_set_real_try_integer(p_ss_data_res, m_determ_result);
         }
 
         if(a != nums)
@@ -215,8 +212,8 @@ PROC_EXEC_PROTO(c_m_determ)
 
     if(status_fail(status))
     {
-        ss_data_free_resources(p_ev_data_res);
-        ev_data_set_error(p_ev_data_res, status);
+        ss_data_free_resources(p_ss_data_res);
+        ss_data_set_error(p_ss_data_res, status);
     }
     } /*block*/
 }
@@ -242,14 +239,11 @@ PROC_EXEC_PROTO(c_m_inverse)
     array_range_sizes(args[0], &x_size, &y_size);
 
     if(x_size != y_size)
-    {
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_MATRIX_NOT_SQUARE);
-        return;
-    }
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_MATRIX_NOT_SQUARE);
 
     m = x_size;
 
-    if(status_fail(ss_array_make(p_ev_data_res, m, m)))
+    if(status_fail(ss_array_make(p_ss_data_res, m, m)))
         return;
 
     if(NULL == (a = al_ptr_alloc_bytes(P_F64, m * (m * sizeof32(*a)), &status)))
@@ -265,15 +259,15 @@ PROC_EXEC_PROTO(c_m_inverse)
     {
         for(j = 0; j < m; ++j)
         {
-            EV_DATA ev_data;
+            SS_DATA ss_data;
 
-            if(RPN_DAT_REAL != array_range_index(&ev_data, args[0], j, i, EM_REA)) /* NB j,i */
+            if(DATA_ID_REAL != array_range_index(&ss_data, args[0], j, i, EM_REA)) /* NB j,i */
             {
                 status = EVAL_ERR_MATRIX_NOT_NUMERIC;
                 goto endpoint;
             }
 
-            _Aij(a, m, i, j) = ev_data.arg.fp;
+            _Aij(a, m, i, j) = ss_data_get_real(&ss_data);
         }
     }
 
@@ -345,8 +339,8 @@ PROC_EXEC_PROTO(c_m_inverse)
     {
         for(j = 0; j < m; ++j)
         {
-            P_EV_DATA p_ev_data = ss_array_element_index_wr(p_ev_data_res, j, i); /* NB j,i */
-            ev_data_set_real(p_ev_data, _Aij(adj, m, j, i) / D); /* NB j,i here too for transpose step 3 above */
+            P_SS_DATA p_ss_data = ss_array_element_index_wr(p_ss_data_res, j, i); /* NB j,i */
+            ss_data_set_real(p_ss_data, _Aij(adj, m, j, i) / D); /* NB j,i here too for transpose step 3 above */
         }
     }
 
@@ -358,8 +352,8 @@ endpoint:
 
     if(status_fail(status))
     {
-        ss_data_free_resources(p_ev_data_res);
-        ev_data_set_error(p_ev_data_res, status);
+        ss_data_free_resources(p_ss_data_res);
+        ss_data_set_error(p_ss_data_res, status);
     }
 }
 
@@ -386,13 +380,10 @@ PROC_EXEC_PROTO(c_m_mult)
     array_range_sizes(args[0], &x_size[0], &y_size[0]);
     array_range_sizes(args[1], &x_size[1], &y_size[1]);
 
-    if(x_size[0] != y_size[1])
-    {   /* whinge about dimensions */
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_MISMATCHED_MATRICES);
-        return;
-    }
+    if(x_size[0] != y_size[1]) /* whinge about dimensions */
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_MISMATCHED_MATRICES);
 
-    if(status_ok(ss_array_make(p_ev_data_res, x_size[1], y_size[0])))
+    if(status_ok(ss_array_make(p_ss_data_res, x_size[1], y_size[0])))
     {
         S32 ix, iy;
 
@@ -402,29 +393,29 @@ PROC_EXEC_PROTO(c_m_mult)
             {
                 F64 product = 0.0;
                 S32 elem;
-                P_EV_DATA elep;
+                P_SS_DATA elep;
 
                 for(elem = 0; elem < x_size[0]; elem++)
                 {
-                    EV_DATA data[2];
+                    SS_DATA ss_data[2];
 
-                    (void) array_range_index(&data[0], args[0], elem, iy, EM_REA);
-                    (void) array_range_index(&data[1], args[1], ix, elem, EM_REA);
+                    (void) array_range_index(&ss_data[0], args[0], elem, iy, EM_REA);
+                    (void) array_range_index(&ss_data[1], args[1], ix, elem, EM_REA);
 
-                    if((RPN_DAT_REAL == data[0].did_num) && (RPN_DAT_REAL == data[1].did_num))
+                    if( ss_data_is_real(&ss_data[0]) && ss_data_is_real(&ss_data[1]) )
                     {
-                        product += data[0].arg.fp * data[1].arg.fp;
+                        product += ss_data_get_real(&ss_data[0]) * ss_data_get_real(&ss_data[1]);
                     }
                     else
                     {
-                        ss_data_free_resources(p_ev_data_res);
-                        ev_data_set_error(p_ev_data_res, EVAL_ERR_MATRIX_NOT_NUMERIC);
+                        ss_data_free_resources(p_ss_data_res);
+                        ss_data_set_error(p_ss_data_res, EVAL_ERR_MATRIX_NOT_NUMERIC);
                         return;
                     }
                 }
 
-                elep = ss_array_element_index_wr(p_ev_data_res, ix, iy);
-                ev_data_set_real_ti(elep, product);
+                elep = ss_array_element_index_wr(p_ss_data_res, ix, iy);
+                ss_data_set_real_try_integer(elep, product);
             }
         }
     }
@@ -440,11 +431,11 @@ PROC_EXEC_PROTO(c_m_mult)
 
 PROC_EXEC_PROTO(c_m_unit)
 {
-    const S32 n = args[0]->arg.integer;
+    const S32 n = ss_data_get_integer(args[0]);
 
     exec_func_ignore_parms();
 
-    if(status_ok(ss_array_make(p_ev_data_res, n, n)))
+    if(status_ok(ss_array_make(p_ss_data_res, n, n)))
     {
         S32 ix, iy;
 
@@ -452,9 +443,9 @@ PROC_EXEC_PROTO(c_m_unit)
         {
             for(iy = 0; iy < n; ++iy)
             {
-                const P_EV_DATA elep = ss_array_element_index_wr(p_ev_data_res, ix, iy);
+                const P_SS_DATA elep = ss_array_element_index_wr(p_ss_data_res, ix, iy);
 
-                ev_data_set_integer(elep, (ix == iy) ? 1 : 0);
+                ss_data_set_integer(elep, (ix == iy) ? 1 : 0);
             }
         }
     }
@@ -471,17 +462,17 @@ PROC_EXEC_PROTO(c_transpose)
     array_range_sizes(args[0], &x_size, &y_size);
 
     /* make a y-dimension by x-dimension result array and swap elements */
-    if(status_ok(ss_array_make(p_ev_data_res, y_size, x_size)))
+    if(status_ok(ss_array_make(p_ss_data_res, y_size, x_size)))
     {
         for(ix = 0; ix < x_size; ++ix)
         {
             for(iy = 0; iy < y_size; ++iy)
             {
-                EV_DATA temp_data;
+                SS_DATA temp_data;
 
                 (void) array_range_index(&temp_data, args[0], ix, iy, EM_ANY);
 
-                status_assert(ss_data_resource_copy(ss_array_element_index_wr(p_ev_data_res, iy, ix), &temp_data));
+                status_assert(ss_data_resource_copy(ss_array_element_index_wr(p_ss_data_res, iy, ix), &temp_data));
 
                 ss_data_free_resources(&temp_data);
             }

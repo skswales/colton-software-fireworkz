@@ -12,14 +12,15 @@
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
 TEXTUAL_VERSION_NUMBER=2.22.04
-TEXTUAL_VERSION_NUMBER=2.22
+TEXTUAL_VERSION_NUMBER=2.22.01
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=22200
+STUBS_VERSION_NUMBER=22201
 # when changing version number for release, remember:
 #   common.gflags.h
 #   common.mf_mid
 #   ob_skel.resource.xx.msg
+#   ob_skel.version.h
 # RISC OS
 #   firewrkz.RelNotes/htm
 #   firewrkz.r.RiscPkg.Control

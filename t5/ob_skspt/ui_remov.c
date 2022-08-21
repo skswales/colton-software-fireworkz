@@ -359,7 +359,7 @@ box_all =
     BOX_ID_ALL, DIALOG_COL1_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -507,7 +507,7 @@ box_line[5] =
 {
     {
         BOX_ID_LINE_0, BOX_ID_LINE_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-        { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ }
+        { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
     },
 
     {

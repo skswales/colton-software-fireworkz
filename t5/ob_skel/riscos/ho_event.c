@@ -936,7 +936,9 @@ iconbar_event_mouse_click_Select(void)
         filer_opendir(filename);
     }
     else
+    {
         status_consume(load_this_template_file_rl(P_DOCU_NONE, NULL));
+    }
 }
 
 static void
@@ -1020,6 +1022,16 @@ iconbar_message_DataLoad(
     case FILETYPE_T5_TEMPLATE:
     case FILETYPE_T5_COMMAND:
         break;
+
+    case FILETYPE_PIPEDREAM:
+        { /* SKS 30jul19 scan to see if it's a PD chart with the old filetype */
+        T5_FILETYPE t_t5_filetype = t5_filetype_from_file_header(filename);
+
+        if(FILETYPE_UNDETERMINED != t_t5_filetype)
+            t5_filetype = t_t5_filetype;
+
+        break;
+        }
 
     case FILETYPE_TEXT:
         { /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected - but does not scan these for recognisable headers */

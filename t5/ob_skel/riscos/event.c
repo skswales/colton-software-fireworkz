@@ -443,20 +443,15 @@ event_create_menu(
     int x,
     int y)
 {
-    _kernel_swi_regs rs;
     _kernel_oserror * e;
 
     event_.recreatepending = FALSE;
 
-    rs.r[0] = 0;
-    rs.r[1] = (int) m;
-    rs.r[2] = x;
-    rs.r[3] = y;
 #if 1
-    e = _kernel_swi(/*Wimp_CreateMenu*/ 0x000400D4, &rs, &rs);
+    e = wimp_create_menu(m, x, y);
     return(NULL);
 #else
-    return(_kernel_swi(/*Wimp_CreateMenu*/ 0x000400D4, &rs, &rs));
+    return(wimp_create_menu(m, x, y));
 #endif
 }
 
@@ -468,20 +463,15 @@ event_create_submenu(
     int x,
     int y)
 {
-    _kernel_swi_regs rs;
     _kernel_oserror * e;
 
     event_.recreatepending = FALSE;
 
-    rs.r[0] = 0;
-    rs.r[1] = (int) m;
-    rs.r[2] = x;
-    rs.r[3] = y;
 #if 1
-    e = _kernel_swi(/*Wimp_CreateSubMenu*/ 0x000400E8, &rs, &rs);
+    e = wimp_create_submenu(m, x, y);
     return(NULL);
 #else
-    return(_kernel_swi(/*Wimp_CreateSubMenu*/ 0x000400E8, &rs, &rs));
+    return(wimp_create_submenu(m, x, y));
 #endif
 }
 

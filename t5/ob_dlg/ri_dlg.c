@@ -1059,7 +1059,7 @@ dialog_riscos_event_pointer_enter(
         /* start tracking. won't ever occur if a drag is active */
         if(!p_dialog->has_nulls)
         {
-            trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter(docno=%d) - start tracking - *** null_events_start()"), p_dialog->docno);
+            trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter(docno=") DOCNO_TFMT TEXT(") - start tracking - *** null_events_start()"), p_dialog->docno);
             if(status_ok(status_wrap(null_events_start(p_dialog->docno, (T5_MESSAGE) DIALOG_CMD_CODE_NULL_EVENT, object_dialog, (CLIENT_HANDLE) h_dialog))))
                 p_dialog->has_nulls = 1;
         }
@@ -1083,7 +1083,7 @@ dialog_riscos_event_pointer_enter(
             if(p_dialog->has_nulls)
             {
                 p_dialog->has_nulls = 0;
-                trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter(docno=%d) - stop tracking - *** null_events_stop()"), p_dialog->docno);
+                trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter(docno=") DOCNO_TFMT TEXT(") - stop tracking - *** null_events_stop()"), p_dialog->docno);
                 null_events_stop(p_dialog->docno, (T5_MESSAGE) DIALOG_CMD_CODE_NULL_EVENT, object_dialog, (CLIENT_HANDLE) h_dialog);
             }
 

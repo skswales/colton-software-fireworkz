@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2019 Stuart Swales */
+/* Copyright (C) 2014-2020 Stuart Swales */
 
 /* Excel spreadsheet XML format saver */
 
@@ -283,7 +283,7 @@ xls_xml_write_cell_text(
 
     quick_ublock_dispose(&quick_ublock);
 
-    ss_data_free_resources(&object_data_read.ev_data);
+    ss_data_free_resources(&object_data_read.ss_data);
 
     return(status);
 }
@@ -312,7 +312,7 @@ xls_xml_write_cell_ss(
         quick_ublock_with_buffer_setup(contents_data_quick_ublock);
         quick_ublock_with_buffer_setup(formula_data_quick_ublock);
 
-        if(p_ev_cell->parms.data_only)
+        if(p_ev_cell->ev_parms.data_only)
         {
         }
         else
@@ -322,9 +322,9 @@ xls_xml_write_cell_ss(
 
         if(status_ok(status))
         {
-            EV_DATA ev_data;
-            ev_data_from_ev_cell(&ev_data, p_ev_cell);
-            status = ev_data_decode(&contents_data_quick_ublock, &ev_data, ev_docno);
+            SS_DATA ss_data;
+            ss_data_from_ev_cell(&ss_data, p_ev_cell);
+            status = ss_data_decode(&contents_data_quick_ublock, &ss_data, ev_docno);
         }
 
         if(0 != quick_ublock_bytes(&formula_data_quick_ublock))

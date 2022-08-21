@@ -15,8 +15,7 @@
 #define __gflags_h
 
 /* Define the version number of this release */
-#define VERSION_NUMBER 22200
-/* NB keep in step with other files (definitive list in common.mf_mid) */
+#include "ob_skel/version.h"
 
 #ifdef RELEASED
 #undef UNRELEASED
@@ -84,6 +83,14 @@
 
 #if (WINDOWS && 1) || (RISCOS && 1)
 #define USE_GLOBAL_CLIPBOARD 1
+#endif
+
+#if WINDOWS
+#if _MSC_VER >= 1910 /* VS2017 or later */
+#define USE_RNG_STD_MT19937 1
+#else /* earlier than VS2017 */
+#define USE_RNG_DSFMT 1
+#endif
 #endif
 
 /* -------------- new features, not in release version yet --------------- */

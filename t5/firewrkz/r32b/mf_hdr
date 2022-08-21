@@ -21,6 +21,7 @@ $(PROD_BUILD_DIR).!$(APPL).!Sprites \
 $(PROD_BUILD_DIR).!$(APPL).!Sprites22 \
 $(PROD_BUILD_DIR).!$(APPL).!SpritesR5 \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.!Sprite \
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.BuildVer \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.ImageSlot \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Loader \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.PicConvert \

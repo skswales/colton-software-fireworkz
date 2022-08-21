@@ -321,7 +321,7 @@ host_print_document_download_fonts_list(
         STYLE style;
         P_STYLE p_style;
 
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(p_style_docu_area->style_handle)

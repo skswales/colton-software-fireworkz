@@ -342,7 +342,7 @@ extern int trace__count; /* exported only for tracing() */
 #define TRACE_APP_STYLE         0x02000000U
 #define TRACE_APP_DIALOG        0x04000000U
 #define TRACE_APP_FOREIGN       0x08000000U
-#define TRACE_APP_spare_28      0x10000000U
+#define TRACE_APP_CLIPBOARD     0x10000000U
 #define TRACE_APP_MEMORY_USE    0x20000000U
 #define TRACE_APP_WM_EVENT      0x40000000U
 

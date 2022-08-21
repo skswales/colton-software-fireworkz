@@ -930,7 +930,8 @@ t5_cmd_of_cell(
 
     load_cell_ownform.ustr_inline_contents = p_args[ARG_CELL_CONTENTS].val.ustr_inline;
     load_cell_ownform.ustr_formula         = p_args[ARG_CELL_FORMULA ].val.ustr;
-    load_cell_ownform.tstr_mrofmun_style   = p_args[ARG_CELL_MROFMUN ].val.tstr;
+
+    load_cell_ownform.tstr_autoformat_style = p_args[ARG_CELL_AUTOFORMAT_STYLE].val.tstr;
 
     load_cell_ownform.clip_data_from_cut_operation = p_of_ip_format->clip_data_from_cut_operation;
 

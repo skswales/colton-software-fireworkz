@@ -672,7 +672,8 @@ style_compare(
             case IL_TYPE_NONE:
             case IL_TYPE_ANY:
 #endif
-            default: default_unhandled(); break;
+            default: default_unhandled();
+                break;
             }
         }
 
@@ -1203,7 +1204,7 @@ style_ruler_measurement(
 {
     SCALE_INFO scale_info;
     DISPLAY_UNIT_INFO display_unit_info;
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     STATUS status;
     QUICK_UBLOCK_WITH_BUFFER(numform_res_quick_ublock, 16);
     quick_ublock_with_buffer_setup(numform_res_quick_ublock);
@@ -1212,7 +1213,7 @@ style_ruler_measurement(
 
     display_unit_info_from_display_unit(&display_unit_info, scale_info.display_unit);
 
-    ev_data_set_real(&ev_data, /*FP_USER_UNIT*/ ((FP_PIXIT) value / display_unit_info.fp_pixits_per_unit));
+    ss_data_set_real(&ss_data, /*FP_USER_UNIT*/ ((FP_PIXIT) value / display_unit_info.fp_pixits_per_unit));
 
     {
     STATUS numform_resource_id;
@@ -1237,7 +1238,7 @@ style_ruler_measurement(
     numform_parms.ustr_numform_numeric = ustr_bptr(numform_unit_ustr_buf);
     numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-    status = numform(&numform_res_quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms);
+    status = numform(&numform_res_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms);
     } /*block*/
 
     if(status_ok(status))
@@ -1343,7 +1344,8 @@ style_text_convert(
             /* these are too hard */
             case IL_TYPE_ANY:
 #endif
-            default: default_unhandled(); break;
+            default: default_unhandled();
+                break;
             }
         }
 

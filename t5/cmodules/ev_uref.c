@@ -20,7 +20,7 @@
 static void
 ev_uref_process_needs_recalc(
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     _InoutRef_  P_UREF_EVENT_BLOCK p_uref_event_block,
     _InVal_     ARRAY_INDEX needs_recalc_n)
 {
@@ -34,7 +34,7 @@ ev_uref_process_needs_recalc(
         if(p_needs_recalc->ev_slr.bad_ref)
             continue;
 
-        res = ev_uref_match_slr(&p_needs_recalc->ev_slr, p_docu, t5_message, p_uref_event_block);
+        res = ev_uref_match_slr(&p_needs_recalc->ev_slr, p_docu, uref_message, p_uref_event_block);
 
         if(res == DEP_DELETE)
             p_needs_recalc->ev_slr.bad_ref = 1;
@@ -46,7 +46,7 @@ ev_uref_process_needs_recalc(
 static void
 ev_uref_process_todo(
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     _InoutRef_  P_UREF_EVENT_BLOCK p_uref_event_block,
     _InVal_     ARRAY_INDEX todo_n)
 {
@@ -60,7 +60,7 @@ ev_uref_process_todo(
         if(p_todo_entry->node_distance < 0)
             continue;
 
-        res = ev_uref_match_slr(&p_todo_entry->slr, p_docu, t5_message, p_uref_event_block);
+        res = ev_uref_match_slr(&p_todo_entry->slr, p_docu, uref_message, p_uref_event_block);
 
         if(res == DEP_DELETE)
             p_todo_entry->node_distance = -1;
@@ -74,83 +74,83 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     trace_0(TRACE_MODULE_UREF, TEXT("ev_uref_event in -- |"));
 
 #if TRACE_ALLOWED
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:    trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_CHANGE |")); break;
-    case T5_MSG_UREF_UREF:      trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_UREF |")); break;
-    case T5_MSG_UREF_DELETE:    trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_DELETE |")); break;
-    case T5_MSG_UREF_SWAP_ROWS: trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_SWAP_ROWS |")); break;
-    case T5_MSG_UREF_OVERWRITE: trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_OVERWRITE |")); break;
-    case T5_MSG_UREF_CLOSE1:    trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_CLOSE1 |")); break;
-    case T5_MSG_UREF_CLOSE2:    trace_0(TRACE_MODULE_UREF, TEXT("|T5_MSG_UREF_CLOSE2 |")); break;
+    case Uref_Msg_Change:    trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_Change |")); break;
+    case Uref_Msg_Uref:      trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_Uref |")); break;
+    case Uref_Msg_Delete:    trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_Delete |")); break;
+    case Uref_Msg_Swap_Rows: trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_Swap_Rows |")); break;
+    case Uref_Msg_Overwrite: trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_Overwrite |")); break;
+    case Uref_Msg_CLOSE1:    trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_CLOSE1 |")); break;
+    case Uref_Msg_CLOSE2:    trace_0(TRACE_MODULE_UREF, TEXT("|Uref_Msg_CLOSE2 |")); break;
     default: default_unhandled(); break;
     }
 #endif
 
     /* blow up the evaluator when things move under its feet */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Change:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         stack_zap();
         break;
     }
 
     /* look through the needs_recalc list */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
-    case T5_MSG_UREF_OVERWRITE:
+    case Uref_Msg_Change:
+    case Uref_Msg_Overwrite:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         const ARRAY_INDEX needs_recalc_n = array_elements(&h_needs_recalc);
 
         if(needs_recalc_n != 0)
-            ev_uref_process_needs_recalc(p_docu, t5_message, p_uref_event_block, needs_recalc_n);
+            ev_uref_process_needs_recalc(p_docu, uref_message, p_uref_event_block, needs_recalc_n);
 
         break;
         }
     }
 
     /* look through the todo list */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
-    case T5_MSG_UREF_OVERWRITE:
+    case Uref_Msg_Change:
+    case Uref_Msg_Overwrite:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         const ARRAY_INDEX todo_n = array_elements(&h_todo_list);
 
         if(todo_n != 0)
-            ev_uref_process_todo(p_docu, t5_message, p_uref_event_block, todo_n);
+            ev_uref_process_todo(p_docu, uref_message, p_uref_event_block, todo_n);
 
         break;
         }
@@ -166,19 +166,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
         if(P_DATA_NONE != p_ss_doc)
         {
             /* look through the range tree */
-            switch(t5_message)
+            switch(uref_message)
             {
-            case T5_MSG_UREF_CHANGE:
+            case Uref_Msg_Change:
                 break;
 
             default: default_unhandled();
 #if CHECKING
-            case T5_MSG_UREF_UREF:
-            case T5_MSG_UREF_DELETE:
-            case T5_MSG_UREF_SWAP_ROWS:
-            case T5_MSG_UREF_OVERWRITE:
-            case T5_MSG_UREF_CLOSE1:
-            case T5_MSG_UREF_CLOSE2:
+            case Uref_Msg_Uref:
+            case Uref_Msg_Delete:
+            case Uref_Msg_Swap_Rows:
+            case Uref_Msg_Overwrite:
+            case Uref_Msg_CLOSE1:
+            case Uref_Msg_CLOSE2:
 #endif
                 {
                 P_RANGE_USE p_range_use;
@@ -190,21 +190,21 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                 {
                     S32 res;
 
-                    if(p_range_use->flags.tobedel)
+                    if(p_range_use->flags.to_be_deleted)
                         continue;
 
                     /* refs contained by deleted area must be removed */
-                    if((res = ev_uref_match_slr(&p_range_use->slr_by, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
-                        if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                    if((res = ev_uref_match_slr(&p_range_use->slr_by, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
+                        if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                         {
-                            p_range_use->flags.tobedel = 1;
-                            p_ss_doc->range_table.flags.tobedel = 1;
+                            p_range_use->flags.to_be_deleted = 1;
+                            p_ss_doc->range_table.flags.to_be_deleted = 1;
                             p_ss_doc->range_table.mindel = MIN(p_ss_doc->range_table.mindel, range_ix);
                             continue;
                         }
 
                     /* if reference to matched, find the reference in the compiled string and update that */
-                    if((res = ev_uref_match_range(&p_range_use->range_to, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+                    if((res = ev_uref_match_range(&p_range_use->range_to, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
                     {
                         /* mark for recalc */
                         ev_todo_add_slr(&p_range_use->slr_by);
@@ -218,7 +218,7 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                                 (void) ev_uref_match_range(
                                             p_ev_range_from_ev_cell(p_ev_cell, p_range_use->by_index),
                                             p_docu,
-                                            t5_message,
+                                            uref_message,
                                             p_uref_event_block);
 
                                 if(res == DEP_UPDATE)
@@ -235,19 +235,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
             }
 
             /* look through slr tree */
-            switch(t5_message)
+            switch(uref_message)
             {
-            case T5_MSG_UREF_CHANGE:
+            case Uref_Msg_Change:
                 break;
 
             default: default_unhandled();
 #if CHECKING
-            case T5_MSG_UREF_UREF:
-            case T5_MSG_UREF_DELETE:
-            case T5_MSG_UREF_SWAP_ROWS:
-            case T5_MSG_UREF_OVERWRITE:
-            case T5_MSG_UREF_CLOSE1:
-            case T5_MSG_UREF_CLOSE2:
+            case Uref_Msg_Uref:
+            case Uref_Msg_Delete:
+            case Uref_Msg_Swap_Rows:
+            case Uref_Msg_Overwrite:
+            case Uref_Msg_CLOSE1:
+            case Uref_Msg_CLOSE2:
 #endif
                 {
                 P_SLR_USE p_slr_use;
@@ -259,23 +259,23 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                 {
                     S32 res;
 
-                    if(p_slr_use->flags.tobedel)
+                    if(p_slr_use->flags.to_be_deleted)
                         continue;
 
                     /* refs contained by deleted area must be removed */
-                    if((res = ev_uref_match_slr(&p_slr_use->slr_by, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+                    if((res = ev_uref_match_slr(&p_slr_use->slr_by, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
                     {
-                        if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                        if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                         {
-                            p_slr_use->flags.tobedel = 1;
-                            p_ss_doc->slr_table.flags.tobedel = 1;
+                            p_slr_use->flags.to_be_deleted = 1;
+                            p_ss_doc->slr_table.flags.to_be_deleted = 1;
                             p_ss_doc->slr_table.mindel = MIN(p_ss_doc->slr_table.mindel, slr_ix);
                             continue;
                         }
                     }
 
                     /* if ref_to matched, find the reference in the compiled string and update that */
-                    if((res = ev_uref_match_slr(&p_slr_use->slr_to, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+                    if((res = ev_uref_match_slr(&p_slr_use->slr_to, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
                     {
                         /* mark for recalc */
                         ev_todo_add_slr(&p_slr_use->slr_by);
@@ -289,7 +289,7 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                                 (void) ev_uref_match_slr(
                                             p_ev_slr_from_ev_cell(p_ev_cell, p_slr_use->by_index),
                                             p_docu,
-                                            t5_message,
+                                            uref_message,
                                             p_uref_event_block);
 
                                 if(res == DEP_UPDATE)
@@ -309,19 +309,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     } /*block*/
 
     /* look through the name use table */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Change:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         P_NAME_USE p_name_use;
@@ -336,16 +336,16 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
         {
             S32 res;
 
-            if(p_name_use->flags.tobedel)
+            if(p_name_use->flags.to_be_deleted)
                 continue;
 
             /* refs contained by deleted area must be removed */
-            if((res = ev_uref_match_slr(&p_name_use->slr_by, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+            if((res = ev_uref_match_slr(&p_name_use->slr_by, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
             {
-                if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                 {
-                    p_name_use->flags.tobedel = 1;
-                    name_use_deptable.flags.tobedel = 1;
+                    p_name_use->flags.to_be_deleted = 1;
+                    name_use_deptable.flags.to_be_deleted = 1;
                     name_use_deptable.mindel = MIN(name_use_deptable.mindel, name_ix);
                     check_use = 1;
                 }
@@ -365,19 +365,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     }
 
     /* look through name definition table */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Change:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         ARRAY_INDEX name_ix;
@@ -389,19 +389,17 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
         {
             S32 res = DEP_NONE;
 
-            if(p_ev_name->flags.tobedel)
+            if(p_ev_name->flags.to_be_deleted)
                 continue;
 
             /* check for name definition in the area */
-            if(t5_message != T5_MSG_UREF_CHANGE
-               &&
-               (res = ev_uref_match_slr(&p_ev_name->owner, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+            if( (uref_message != Uref_Msg_Change)
+                &&
+                ((res = ev_uref_match_slr(&p_ev_name->owner, p_docu, uref_message, p_uref_event_block)) != DEP_NONE) )
             {
-                if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                 {
-                    /* delete name definition
-                     * if there are no dependents
-                     */
+                    /* delete name definition if there are no dependents */
                     name_free_resources(p_ev_name);
 
                     if(!ev_todo_add_name_dependents(p_ev_name->handle))
@@ -411,8 +409,8 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                         if(P_DATA_NONE != p_ss_doc)
                             p_ss_doc->nam_ref_count -= 1;
 
-                        p_ev_name->flags.tobedel = 1;
-                        name_def.flags.tobedel = 1;
+                        p_ev_name->flags.to_be_deleted = 1;
+                        name_def.flags.to_be_deleted = 1;
                         name_def.mindel = MIN(name_def.mindel, name_ix);
 
                         trace_1(TRACE_MODULE_UREF, TEXT("uref deleting name: %s"), report_ustr(ustr_bptr(p_ev_name->ustr_name_id)));
@@ -428,12 +426,12 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
              */
             if(!p_ev_name->flags.undefined)
             {
-                switch(p_ev_name->def_data.did_num)
+                switch(ss_data_get_data_id(&p_ev_name->def_data))
                 {
-                case RPN_DAT_SLR:
-                    if(ev_uref_match_slr(&p_ev_name->def_data.arg.slr, p_docu, t5_message, p_uref_event_block) != DEP_NONE)
+                case DATA_ID_SLR:
+                    if(ev_uref_match_slr(&p_ev_name->def_data.arg.slr, p_docu, uref_message, p_uref_event_block) != DEP_NONE)
                     {
-                        if(t5_message != T5_MSG_UREF_CHANGE)
+                        if(uref_message != Uref_Msg_Change)
                         {
                             if(res == DEP_UPDATE)
                                 ev_doc_modify(ev_slr_docno(&p_ev_name->owner));
@@ -442,10 +440,10 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                     }
                     break;
 
-                case RPN_DAT_RANGE:
-                    if(ev_uref_match_range(&p_ev_name->def_data.arg.range, p_docu, t5_message, p_uref_event_block) != DEP_NONE)
+                case DATA_ID_RANGE:
+                    if(ev_uref_match_range(&p_ev_name->def_data.arg.range, p_docu, uref_message, p_uref_event_block) != DEP_NONE)
                     {
-                        if(t5_message != T5_MSG_UREF_CHANGE)
+                        if(uref_message != Uref_Msg_Change)
                         {
                             if(res == DEP_UPDATE)
                                 ev_doc_modify(ev_slr_docno(&p_ev_name->owner));
@@ -462,19 +460,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     }
 
     /* look through the event use table */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Change:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         P_EVENT_USE p_event_use;
@@ -488,16 +486,16 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
         {
             S32 res;
 
-            if(p_event_use->flags.tobedel)
+            if(p_event_use->flags.to_be_deleted)
                 continue;
 
             /* event uses contained by deleted area must be removed */
-            if((res = ev_uref_match_slr(&p_event_use->slr_by, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+            if((res = ev_uref_match_slr(&p_event_use->slr_by, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
             {
-                if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                 {
-                    p_event_use->flags.tobedel = 1;
-                    event_use_deptable.flags.tobedel = 1;
+                    p_event_use->flags.to_be_deleted = 1;
+                    event_use_deptable.flags.to_be_deleted = 1;
                     event_use_deptable.mindel = MIN(event_use_deptable.mindel, event_ix);
                 }
             }
@@ -508,19 +506,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     }
 
     /* look through the custom function use table */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Change:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         P_CUSTOM_USE p_custom_use;
@@ -535,16 +533,16 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
         {
             S32 res;
 
-            if(p_custom_use->flags.tobedel)
+            if(p_custom_use->flags.to_be_deleted)
                 continue;
 
             /* macro uses contained by deleted area must be removed */
-            if((res = ev_uref_match_slr(&p_custom_use->slr_by, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+            if((res = ev_uref_match_slr(&p_custom_use->slr_by, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
             {
-                if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                 {
-                    p_custom_use->flags.tobedel = 1;
-                    custom_use_deptable.flags.tobedel = 1;
+                    p_custom_use->flags.to_be_deleted = 1;
+                    custom_use_deptable.flags.to_be_deleted = 1;
                     custom_use_deptable.mindel = MIN(custom_use_deptable.mindel, custom_ix);
                     check_use = 1;
                 }
@@ -566,19 +564,19 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     }
 
     /* update custom function definition table */
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Change:
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_SWAP_ROWS:
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Swap_Rows:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
 #endif
         {
         ARRAY_INDEX custom_ix;
@@ -590,17 +588,15 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
         {
             S32 res;
 
-            if(p_ev_custom->flags.tobedel)
+            if(p_ev_custom->flags.to_be_deleted)
                 continue;
 
             /* check for macro definition in the area */
-            if((res = ev_uref_match_slr(&p_ev_custom->owner, p_docu, t5_message, p_uref_event_block)) != DEP_NONE)
+            if((res = ev_uref_match_slr(&p_ev_custom->owner, p_docu, uref_message, p_uref_event_block)) != DEP_NONE)
             {
-                if(res == DEP_DELETE || t5_message == T5_MSG_UREF_OVERWRITE)
+                if(res == DEP_DELETE || uref_message == Uref_Msg_Overwrite)
                 {
-                    /* delete macro table entry
-                     * if there are no dependents
-                    */
+                    /* delete macro table entry if there are no dependents */
                     if(!ev_todo_add_custom_dependents(p_ev_custom->handle))
                     {
                         P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
@@ -608,8 +604,8 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
                         if(P_DATA_NONE != p_ss_doc)
                             p_ss_doc->custom_ref_count -= 1;
 
-                        p_ev_custom->flags.tobedel = 1;
-                        custom_def.flags.tobedel = 1;
+                        p_ev_custom->flags.to_be_deleted = 1;
+                        custom_def.flags.to_be_deleted = 1;
                         custom_def.mindel = MIN(custom_def.mindel, custom_ix);
 
                         trace_1(TRACE_MODULE_UREF, TEXT("uref deleting custom: %s"), report_ustr(ustr_bptr(p_ev_custom->ustr_custom_id)));
@@ -628,7 +624,7 @@ PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref)
     }
 
     /* try clearing up documents */
-    if(T5_MSG_UREF_CLOSE2 == t5_message)
+    if(Uref_Msg_CLOSE2 == uref_message)
     {
         DOCNO docno = DOCNO_NONE;
 

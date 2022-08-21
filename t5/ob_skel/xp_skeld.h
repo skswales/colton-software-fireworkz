@@ -224,11 +224,11 @@ extern void
 ui_dlg_ctl_size_estimate(
     P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate);
 
-extern void
+_Check_return_
+extern F64
 ui_dlg_get_f64(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
-    /*out*/ P_F64 p_f64);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 extern S32
@@ -276,7 +276,7 @@ extern STATUS
 ui_dlg_set_f64(
     _InVal_     H_DIALOG h_dialog,
     _InVal_     DIALOG_CONTROL_ID dialog_control_id,
-    _InRef_     PC_F64 p_f64);
+    _InVal_     F64 f64);
 
 _Check_return_
 extern STATUS
@@ -336,8 +336,7 @@ ui_dlg_ctl_set_default(
 _Check_return_
 extern S32
 ui_dlg_s32_from_f64(
-    _InRef_     PC_F64 p_f64,
-    _InRef_opt_ PC_F64 p_multiplier,
+    _InVal_     F64 f64_in,
     _InVal_     S32 s32_min,
     _InVal_     S32 s32_max);
 

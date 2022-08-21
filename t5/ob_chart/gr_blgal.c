@@ -214,9 +214,9 @@ dialog_bl_gallery_ctl_state_change(
         {
         if(!p_chart_bl_gallery_callback->encode_level)
         {
-            F64 f64 = p_dialog_msg_ctl_state_change->new_state.radiobutton;
+            const F64 f64 = p_dialog_msg_ctl_state_change->new_state.radiobutton;
             p_chart_bl_gallery_callback->encode_level += 1;
-            status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE, &f64);
+            status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE, f64);
             p_chart_bl_gallery_callback->encode_level -= 1;
         }
 
@@ -227,15 +227,13 @@ dialog_bl_gallery_ctl_state_change(
         {
         if(p_dialog_msg_ctl_state_change->new_state.radiobutton != 1)
         {
-            F64 f64;
-
-            ui_dlg_get_f64(p_dialog_msg_ctl_state_change->h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE, &f64);
+            F64 f64 = ui_dlg_get_f64(p_dialog_msg_ctl_state_change->h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE);
 
             if(f64 == 0.0)
             {
                 f64 = 25.0;
 
-                status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE, &f64);
+                status = ui_dlg_set_f64(p_dialog_msg_ctl_state_change->h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE, f64);
             }
         }
 
@@ -322,8 +320,8 @@ dialog_bl_gallery_process_end(
 
         case GR_CHART_TYPE_PIE:
             pie_gallery_selected_explode_pict = ui_dlg_get_radio(h_dialog, PIE_GALLERY_ID_EXPLODE_GROUP);
-            ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE, &p_chart_bl_gallery_callback->pie_start_heading_degrees);
-            ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE, &p_chart_bl_gallery_callback->pie_explode_value);
+            p_chart_bl_gallery_callback->pie_start_heading_degrees = ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE);
+            p_chart_bl_gallery_callback->pie_explode_value = ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE);
             p_chart_bl_gallery_callback->pie_anticlockwise = ui_dlg_get_check(h_dialog, PIE_GALLERY_ID_ANTICLOCKWISE);
             break;
 
@@ -665,13 +663,15 @@ gr_chart_bl_gallery(
                     }
                 }
 
+#if RISCOS
                 /* round chart size out to worst case pixels */
-                cp->core.layout.margins.top    = muldiv64_ceil(cp->core.layout.margins.top,    1, 4 * PIXITS_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
-                cp->core.layout.margins.bottom = muldiv64_ceil(cp->core.layout.margins.bottom, 1, 4 * PIXITS_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
-                cp->core.layout.margins.left   = muldiv64_ceil(cp->core.layout.margins.left,   1, 2 * PIXITS_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
-                cp->core.layout.margins.right  = muldiv64_ceil(cp->core.layout.margins.right,  1, 2 * PIXITS_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
-                cp->core.layout.width          = muldiv64_ceil(cp->core.layout.width,          1, 2 * PIXITS_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
-                cp->core.layout.height         = muldiv64_ceil(cp->core.layout.height,         1, 4 * PIXITS_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
+                cp->core.layout.margins.top    = idiv_ceil(cp->core.layout.margins.top,    4 * PIXITS_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
+                cp->core.layout.margins.bottom = idiv_ceil(cp->core.layout.margins.bottom, 4 * PIXITS_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
+                cp->core.layout.margins.left   = idiv_ceil(cp->core.layout.margins.left,   2 * PIXITS_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
+                cp->core.layout.margins.right  = idiv_ceil(cp->core.layout.margins.right,  2 * PIXITS_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
+                cp->core.layout.width          = idiv_ceil(cp->core.layout.width,          2 * PIXITS_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
+                cp->core.layout.height         = idiv_ceil(cp->core.layout.height,         4 * PIXITS_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
+#endif
 
                 status = gr_chart_realloc_series(cp);
 

@@ -462,8 +462,8 @@ dialog_ictls_subclass(
             {
             const HWND hwnd = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->data.bump_xx.windows.spin_wid);
             const int range = 100000000;
-            SendMessage(hwnd, UDM_SETRANGE32, (WPARAM) -range, (LPARAM) range);
-            SendMessage(hwnd, UDM_SETPOS32, 0, (LPARAM) 0);
+            consume(LRESULT, SendMessage(hwnd, UDM_SETRANGE32, (WPARAM) -range, (LPARAM) range));
+            consume(LRESULT, SendMessage(hwnd, UDM_SETPOS32, 0, (LPARAM) 0));
             break;
             }
         }
@@ -528,9 +528,9 @@ dialog_onInitDialog(
     if(HOST_WND_NONE == p_dialog->windows.hwnd_parent)
     {
         if(NULL != host_get_prog_icon_large())
-            (void) /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) host_get_prog_icon_large());
+            consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) host_get_prog_icon_large()));
         if(NULL != host_get_prog_icon_small())
-            (void) /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) host_get_prog_icon_small());
+            consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) host_get_prog_icon_small()));
     }
 
     /* subclass all necessary buttons */
@@ -2139,31 +2139,31 @@ themed_dialog_UIToolButtonDraw(
 
     {
     RECT icon_rect;
-    LONG content_cx, content_cy;
-    DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL);
-    GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect);
-    /* centre icon in its slot */
-    content_cx = icon_rect.right - icon_rect.left;
-    content_cy = icon_rect.bottom - icon_rect.top;
-    if(bmx < content_cx)
-        icon_rect.left += (content_cx - bmx) / 2;
-    if(bmy < content_cy)
-        icon_rect.top  += (content_cy - bmy) / 2;
-    icon_rect.right  = icon_rect.left + bmx;
-    icon_rect.bottom = icon_rect.top  + bmy;
-    if(uStateIn & BUTTONGROUP_DISABLED)
-    {
-        HICON hIcon = ImageList_GetIcon(hImageList, iImageIndex, ILD_TRANSPARENT);
-        if(NULL != hIcon)
+    consume(HRESULT, DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL));
+    if(SUCCEEDED(GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect)))
+    {   /* centre icon in its slot */
+        LONG content_cx = icon_rect.right - icon_rect.left;
+        LONG content_cy = icon_rect.bottom - icon_rect.top;
+        if(bmx < content_cx)
+            icon_rect.left += (content_cx - bmx) / 2;
+        if(bmy < content_cy)
+            icon_rect.top  += (content_cy - bmy) / 2;
+        icon_rect.right  = icon_rect.left + bmx;
+        icon_rect.bottom = icon_rect.top  + bmy;
+        if(uStateIn & BUTTONGROUP_DISABLED)
         {
-            DrawState(hDC, GetStockBrush(WHITE_BRUSH), NULL, (LPARAM) hIcon, 0, icon_rect.left, icon_rect.top, bmx, bmy, DSS_DISABLED | DST_ICON);
-            DestroyIcon(hIcon);
+            HICON hIcon = ImageList_GetIcon(hImageList, iImageIndex, ILD_TRANSPARENT);
+            if(NULL != hIcon)
+            {
+                DrawState(hDC, GetStockBrush(WHITE_BRUSH), NULL, (LPARAM) hIcon, 0, icon_rect.left, icon_rect.top, bmx, bmy, DSS_DISABLED | DST_ICON);
+                DestroyIcon(hIcon);
+            }
         }
-    }
-    else
-    {
-        DrawThemeIcon(hTheme, hDC, iPartId, iStateId, &icon_rect, hImageList, iImageIndex);
-        //ImageList_Draw(hImageList, iImageIndex, hDC, icon_rect.left, icon_rect.top, ILD_TRANSPARENT);
+        else
+        {
+            DrawThemeIcon(hTheme, hDC, iPartId, iStateId, &icon_rect, hImageList, iImageIndex);
+            //ImageList_Draw(hImageList, iImageIndex, hDC, icon_rect.left, icon_rect.top, ILD_TRANSPARENT);
+        }
     }
     } /*block*/
 

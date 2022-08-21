@@ -93,7 +93,7 @@ _Check_return_
 static XF_INDEX inline
 xls_obtain_xf_index_B2(
     _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
-    _InRef_     PC_U8 p_cell_attributes)
+    _InRef_     PC_BYTE p_cell_attributes)
 {
     XF_INDEX xf_index = p_cell_attributes[0] & 0x3F;
 
@@ -784,7 +784,7 @@ try_grokking_compound_file_for_xls(
         {
             if(size < p_compound_file->hdr._ulMiniSectorCutoff)
             {   /* short sectors in the Ministream */
-                trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading Ministream chain starting at SSAT_sector_id=%d"), decoded_directory->_sectStart);
+                trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading Ministream chain starting at SSAT_sector_id=%d"), (int) decoded_directory->_sectStart);
 
                 for(sector_id = decoded_directory->_sectStart;
                     sector_id >= 0;
@@ -799,7 +799,7 @@ try_grokking_compound_file_for_xls(
             }
             else
             {   /* standard sectors */
-                trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading chain starting at sector_id=%d"), decoded_directory->_sectStart);
+                trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading chain starting at sector_id=%d"), (int) decoded_directory->_sectStart);
 
                 for(sector_id = decoded_directory->_sectStart;
                     sector_id >= 0;
@@ -2091,7 +2091,7 @@ xls_read_first_BOF(
         biff_version_opcode_XF = X_XF_B5_B8;
     else if(biff_version == 4)
         biff_version_opcode_XF = X_XF_B4;
-    else if(biff_version == 4)
+    else if(biff_version == 3)
         biff_version_opcode_XF = X_XF_B3;
     else /* (biff_version == 2) */
         biff_version_opcode_XF = X_XF_B2;
@@ -2974,7 +2974,7 @@ xls_dump_records(
 
         case X_DATEMODE:
             consume_int(ustr_xsnprintf(ustr_bptr(extra_data), elemof32(extra_data),
-                        USTR_TEXT(U32_FMT), (1 == xls_read_U16_LE(p_x) ? 1904 : 1900)));
+                        USTR_TEXT(U32_FMT), (1 == xls_read_U16_LE(p_x) ? 1904U : 1900U)));
             break;
 
         case X_DELTA:
@@ -3037,14 +3037,14 @@ xls_dump_records(
         if(!suppress)
         {
             if((minver <= biff_version) && (biff_version <= maxver))
-                tracef(TRACE__XLS_LOADB, TEXT("%6d@0x%.5X: op=0x%.3X len=%4d%s %s %s"),
-                       overall_record_idx, opcode_offset, opcode, record_length,
+                tracef(TRACE__XLS_LOADB, TEXT("%6u@0x%.5X: op=0x%.3X len=%4u%s %s %s"),
+                       overall_record_idx, opcode_offset, (U32) opcode, (U32) record_length,
                        extra_text ? report_tstr(extra_text) : tstr_empty_string,
                        report_tstr(opcode_name),
                        extra_data[0] ? report_ustr(ustr_bptr(extra_data)) : tstr_empty_string);
             else
-                tracef(TRACE__XLS_LOADB, TEXT("%6d@0x%.5X: op=0x%.3X len=%4d%s %s B%u-B%u %s"),
-                       overall_record_idx, opcode_offset, opcode, record_length,
+                tracef(TRACE__XLS_LOADB, TEXT("%6u@0x%.5X: op=0x%.3X len=%4u%s %s B%u-B%u %s"),
+                       overall_record_idx, opcode_offset, (U32) opcode, (U32) record_length,
                        extra_text ? report_tstr(extra_text) : tstr_empty_string,
                        report_tstr(opcode_name),
                        minver, maxver,
@@ -4555,7 +4555,7 @@ constant_convert(
     case tNum:
         {
         F64 f64 = xls_read_F64(p_byte);
-        *p_status = quick_ublock_printf(&quick_ublock, USTR_TEXT("%.15g"), f64);
+        *p_status = quick_ublock_printf(&quick_ublock, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
         break;
         }
 
@@ -4585,7 +4585,7 @@ constant_convert(
                 case 1: /* IEEE */
                     {
                     F64 f64 = xls_read_F64(&p_byte[1]);
-                    *p_status = quick_ublock_printf(&quick_ublock, USTR_TEXT("%.15g"), f64);
+                    *p_status = quick_ublock_printf(&quick_ublock, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
                     p_byte += 9;
                     break;
                     }
@@ -4600,7 +4600,8 @@ constant_convert(
                     break;
                     }
 
-                default: default_unhandled(); break;
+                default: default_unhandled();
+                    break;
                 }
 
                 status_break(*p_status);
@@ -4906,7 +4907,7 @@ operand_convert(
                     }
                 }
 
-                xstrnkpy(buffer, elemof32(buffer), p_name, name_len);
+                xstrnkpy(buffer, elemof32(buffer), (PC_U8) p_name, name_len);
             }
         }
 
@@ -5307,7 +5308,8 @@ xls_decode_formula_ptg_FUNC(void)
 #if CHECKING
     case tFuncCER:
 #endif
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     if(NULL == p_xls_func_entry)
@@ -5383,7 +5385,8 @@ xls_decode_formula_ptg_OTHER(
 
     switch(cursym)
     {
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
 
     case tExp:
     case tTbl:
@@ -5532,7 +5535,7 @@ xls_decode_formula_result(
 
     {
     F64 f64 = xls_read_F64(p_formula_result);
-    STATUS status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("%g"), f64);
+    STATUS status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
     return(status);
     } /*block*/
 }
@@ -6221,8 +6224,6 @@ xls_check_serial_range(
     return(FALSE);
 }
 
-#define SECS_IN_24 ((S32) 60 * (S32) 60 * (S32) 24)
-
 _Check_return_
 static STATUS
 xls_convert_serial_to_date(
@@ -6233,9 +6234,9 @@ xls_convert_serial_to_date(
     /* days in the month */
     static const S32 xls_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     /* integer part denotes date serial number (since 1.1.1900) */
-    S32 dateno = (S32) f64;
-    /* fractional part denotes hh:mm:ss bit */
-    S32 seconds = (S32) (SECS_IN_24 * (f64 - (F64) dateno));
+    S32 dateno = (S32) /*trunc*/ f64;
+    /* fractional part denotes hh:mm:ss bit (don't be tempted to round or you could add a day!) */
+    S32 seconds = (S32) /*trunc*/ ((f64 - (F64) dateno) * FP_SECS_IN_24);
     S32 month = 0, day = 0;
     S32 year = 1900 -1;
     STATUS status;
@@ -6688,7 +6689,7 @@ xls_cell_make_from_excel(
             if(is_date_format)
                 status = xls_convert_serial_to_date(&quick_ublock_result, f64, p_xls_load_info->datemode_1904);
             else
-                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%.15g"), f64);
+                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
         }
 
         break;
@@ -6718,7 +6719,7 @@ xls_cell_make_from_excel(
             if(is_date_format)
                 status = xls_convert_serial_to_date(&quick_ublock_result, f64, p_xls_load_info->datemode_1904);
             else
-                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%.15g"), f64);
+                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
         }
 
         break;
@@ -6779,7 +6780,7 @@ xls_cell_make_from_excel(
             if(is_date_format)
                 status = xls_convert_serial_to_date(&quick_ublock_result, n.f64, p_xls_load_info->datemode_1904);
             else
-                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%.15g"), n.f64);
+                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), n.f64);
         }
 
         break;
@@ -6849,7 +6850,7 @@ xls_cell_make_from_excel(
                 if(is_date_format)
                     status = xls_convert_serial_to_date(&quick_ublock_result, n.f64, p_xls_load_info->datemode_1904);
                 else
-                    status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%.15g"), n.f64);
+                    status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), n.f64);
             }
 
             if(status_ok(status) && (0 != quick_ublock_bytes(&quick_ublock_result)))
@@ -6982,7 +6983,8 @@ xls_cell_make_from_excel(
         break;
         }
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     if(status_ok(status) && (0 != quick_ublock_bytes(&quick_ublock_result)))
@@ -8099,14 +8101,14 @@ xls_insert_foreign(
         {
             if(status_done(status = try_grokking_potential_cf_array_for_xls(&p_msg_insert_foreign->array_handle, &g_h_data)))
             {
-                reportf(TEXT("*** Excel file loaded from handle (is a compound document) ") S32_TFMT TEXT(" ***"), g_h_data);
+                reportf(TEXT("*** Excel file loaded from handle ") U32_TFMT TEXT(" (is a compound document) ***"), g_h_data);
                 g_data_allocated = TRUE;
                 g_file_end_offset = (U32) status;
             }
             else
             {
                 g_h_data = p_msg_insert_foreign->array_handle;
-                reportf(TEXT("*** Excel file loaded from handle (is not a compound document) ") S32_TFMT TEXT(" ***"), g_h_data);
+                reportf(TEXT("*** Excel file loaded from handle ") U32_TFMT TEXT(" (is not a compound document) ***"), g_h_data);
                 g_file_end_offset = array_elements(&g_h_data);
             }
         }
@@ -8134,7 +8136,7 @@ xls_insert_foreign(
     }
     else
     {
-        trace_1(TRACE__XLS_LOADB, TEXT("*** Excel file load continuing from handle ") S32_TFMT TEXT(" ***"), g_h_data);
+        trace_1(TRACE__XLS_LOADB, TEXT("*** Excel file load continuing from handle ") U32_TFMT TEXT(" ***"), g_h_data);
     }
 
     /* If it's a Letter-derived document, insert (or load) as table */

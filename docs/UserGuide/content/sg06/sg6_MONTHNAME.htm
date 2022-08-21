@@ -23,17 +23,20 @@
     <h1><a name="monthname" id="monthname"></a>MONTHNAME</h1>
 
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">MONTHNAME(<span class="csg-function-parameter">number</span>)</p>
-
-    <p>
-        Returns a text string of the month given by <span class="csg-function-parameter">number</span>
-        with reduction of <span class="csg-function-parameter">number</span> into the range [1,12] (i.e. inclusive).
+    <p class="csg-function-declaration">
+        MONTHNAME(<span class="csg-function-parameter">value</span>:(<span class="csg-function-parameter-type">Number</span>|<span class="csg-function-parameter-type"><a href="sg6_date_formats.htm">Date</a></span>)
     </p>
+
+    <p>Returns a text string of the month given by <span class="csg-function-parameter">value</span>.</p>
+
+    <p><span class="csg-function-parameter">value</span> must be either a number or <a href="sg6_date_formats.htm">date</a> value.</p>
+
+    <p>If <span class="csg-function-parameter">value</span> is a number it is reduced into the range [1,12] (i.e. inclusive).</p>
 
     <p class="csg-function-subheading">Examples:</p>
     <pre class="csg-sample-indent">MONTHNAME(27)</pre>
     <p>returns the text string <code>&quot;March&quot;</code></p>
-    <pre class="csg-sample-indent">MONTHNAME(MONTH(TODAY))</pre>
+    <pre class="csg-sample-indent">MONTHNAME(MONTH(<a href="sg6_TODAY.htm">TODAY</a>))</pre>
     <p>returns the name of the current month as a text string.</p>
 
     <div class="navfooter">

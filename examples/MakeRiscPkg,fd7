@@ -1,6 +1,6 @@
 | MakeRiscPkg.oby - Fireworkz-Examples
 
-Set t5$Release 201607xx
+Set t5$Release 20191221
 | Remember to update RiscPkg.Control too
 
 Set t5$Disc $.Temp.Fire.FzExamples_<t5$Release>
@@ -22,6 +22,7 @@ time
 %delete <t5$Disc>.Apps.Document.FzExamples.Tutorial.names
 %delete <t5$Disc>.Apps.Document.FzExamples.Tutorial.names_b
 
+%Wipe   <t5$Disc>.Helper ~cfr~v
 delete <t5$Disc>._make_w32/cmd
 
 | The one in RiscPkg.Copyright is the useful one for the packaged examples

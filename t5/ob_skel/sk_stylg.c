@@ -57,7 +57,7 @@ style_grid_array_from_region(
         style_docu_area_ix >= 0;
         --style_docu_area_ix, --p_style_docu_area, stack_level += 1)
     {
-        if(p_style_docu_area->deleted)
+        if(p_style_docu_area->is_deleted)
             continue;
 
         if(region_intersect_docu_area(&p_style_docu_area->docu_area, p_region))

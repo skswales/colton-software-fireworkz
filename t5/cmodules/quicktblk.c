@@ -404,11 +404,11 @@ quick_tblock_vprintf(
         case 'G':
             if(preceding == 'L')
             {
-                volatile long double ld = va_arg(args, long double); ld=ld;
+                volatile long double ld = va_arg(args, long double); UNREFERENCED_LOCAL_VARIABLE(ld);
             }
             else /* NB floats are promoted to double when passed to variadic functions */
             {
-                volatile double d = va_arg(args, double); d=d;
+                volatile double d = va_arg(args, double); UNREFERENCED_LOCAL_VARIABLE(d);
             }
             break;
 
@@ -417,14 +417,14 @@ quick_tblock_vprintf(
         case 'p':
         case 'n':
             {
-            volatile char * p = va_arg(args, char *); p=p;
+            volatile char * p = va_arg(args, char *); UNREFERENCED_LOCAL_VARIABLE(p);
             break;
             }
 
         case 'c':
         case 'C':
             { /* chars are promoted to int when passed as parameters */
-            volatile int ci = va_arg(args, int); ci=ci;
+            volatile int ci = va_arg(args, int); UNREFERENCED_LOCAL_VARIABLE(ci);
             break;
             }
 
@@ -437,11 +437,11 @@ quick_tblock_vprintf(
         case 'X':
             if(preceding == 'l')
             {
-                volatile long li = va_arg(args, long); li=li;
+                volatile long li = va_arg(args, long); UNREFERENCED_LOCAL_VARIABLE(li);
             }
             else /* NB shorts are promoted to int when passed to variadic functions */
             {
-                volatile int i = va_arg(args, int); i=i;
+                volatile int i = va_arg(args, int); UNREFERENCED_LOCAL_VARIABLE(i);
             }
             break;
         }

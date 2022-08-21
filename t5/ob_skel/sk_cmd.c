@@ -136,7 +136,7 @@ docu_modify(
 
     if(p_docu->modified == 1)
         /* SKS 04apr95/13oct95 register time of *first* update as new time this session - will be updated on save */
-        ss_local_time_as_ev_date(&p_docu->file_date);
+        ss_local_time_to_ss_date(&p_docu->file_ss_date);
 
 #if 0
     status_assert(maeve_event(p_docu, T5_MSG_DOCU_MODCHANGE, P_DATA_NONE));

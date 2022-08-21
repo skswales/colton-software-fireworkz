@@ -39,7 +39,8 @@ typedef struct SS_NAME_RECORD
     SLR slr;                             /* cell containing reference */
     UREF_HANDLE uref_handle;             /* handle to uref dependency */
     CLIENT_HANDLE client_handle;         /* uref's handle to us */
-    U8 deleted;                          /* record deleted */
+    U8 is_deleted;                       /* record is deleted */
+    U8 _spare[3];
 }
 SS_NAME_RECORD, * P_SS_NAME_RECORD;
 

@@ -1,35 +1,27 @@
-{Version:1.34/11;(xx Jan 2013);FireworkzPro; - Colton Software;8032 2677 0041 8348}
-{BaseSingleCol:0}
-{RowTable:0}
+{Version:2.22.01;22 Dec 2019;FireworkzPro;Development copy - Colton Software;8032 2677 0041 8348;Alphabet-Latin1}
 {Flow:10}
 {Block:0;0;;32;15;39;;32;15;39}
-{Style:BaseSheet;{ColWidth:341}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}
-{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}
-{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
-{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseSheet;{ColWidth:341}{ColName:x#}{RowHeight:336}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:1}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
 {StyleBase:BaseSheet}
-{Style:Current cell;{BorderColour:221;0;0}{Border:4}}
+{Style:Current cell;{BorderColour:221;0;0}{Border:1}}
 {StyleCurrent:Current cell}
 {Style:.Table1;{ColWidth:1701}{MarginLeft:113}{MarginRight:116}{MarginPara:0}{Tablist}{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {Style:Rowheight;{RowHeight:283}{RowHeightFix:1}}
 {Style:Grey background;{Background:221;221;221}}
 {Style:Narrow column;{ColWidth:283}}
 {Style:Grid colour;{GridLeftColour:187;187;187}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{Style:Month;{RowHeightFix:0}{MarginLeft:0}{MarginRight:0}{ParaStart:113}{ParaEnd:113}
-{Justify:1}{Typeface:Helvetica}{Fonty:320}}
-{Style:Dayheight;{RowHeight:743}{RowHeightFix:1}{ParaStart:227}{ParaEnd:28}
-}
+{Style:Month;{RowHeightFix:0}{MarginLeft:0}{MarginRight:0}{ParaStart:113}{ParaEnd:113}{Justify:1}{Typeface:Helvetica}{Fonty:320}}
+{Style:Dayheight;{RowHeight:743}{RowHeightFix:1}{ParaStart:227}{ParaEnd:28}}
 {Style:Title;{ParaStart:227}{Typeface:Times}{Fonty:800}{Bold:1}}
 {Style:Bottom text;{ParaStart:510}{LineSpace:0;72}{Typeface:Times}{Fonty:360}}
-{Style:Bottom right;{ParaStart:0}{ParaEnd:0}
-{Justify:2}{JustifyV:1}{Typeface:Helvetica}{Fonty:160}}
-{Style:Bank holiday;{BorderColour:85;85;85}{Border:4}{Typeface:Times}{Fonty:120}}
-{Style:weekend;{StyleKey:^F1}{Background:221;221;221}}
+{Style:Bottom right;{ParaStart:0}{ParaEnd:0}{Justify:2}{JustifyV:1}{Typeface:Helvetica}{Fonty:160}}
+{Style:Bank holiday;{StyleKey:^F2}{Background:241;241;241}{Typeface:Times}{Fonty:120}}
+{Style:Weekend;{StyleKey:^F1}{Background:231;231;207}}
 {Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;32;;0}
 {PaperScale:100}
 {PrintQuality:0}
 {StartOfData}
-{S:X;X;2;3;2 0 1 4  Y e a r }
+{S:X;X;2;3;2 0 2 0  Y e a r }
 {S:X;X;2;4;January}
 {S:X;X;2;5;1{ITR-X}New Year's Day }
 {S:X;X;2;6;2{ITR-X}Bank Holiday (SCO)}
@@ -92,6 +84,7 @@
 {S:X;X;3;30;26}
 {S:X;X;3;31;27}
 {S:X;X;3;32;28}
+{S:X;X;3;33;29}
 {S:X;X;4;4;March}
 {S:X;X;4;5;1}
 {S:X;X;4;6;2}
@@ -135,18 +128,18 @@
 {S:X;X;5;11;7}
 {S:X;X;5;12;8}
 {S:X;X;5;13;9}
-{S:X;X;5;14;10}
+{S:X;X;5;14;10{ITR-X}Good Friday}
 {S:X;X;5;15;11}
 {S:X;X;5;16;12}
-{S:X;X;5;17;13}
+{S:X;X;5;17;13{ITR-X}Easter Monday (not SCO)}
 {S:X;X;5;18;14}
 {S:X;X;5;19;15}
 {S:X;X;5;20;16}
 {S:X;X;5;21;17}
-{S:X;X;5;22;18{ITR-X}Good Friday}
+{S:X;X;5;22;18}
 {S:X;X;5;23;19}
 {S:X;X;5;24;20}
-{S:X;X;5;25;21{ITR-X}Easter Monday (not SCO)}
+{S:X;X;5;25;21}
 {S:X;X;5;26;22}
 {S:X;X;5;27;23}
 {S:X;X;5;28;24}
@@ -162,10 +155,10 @@
 {S:X;X;6;6;2}
 {S:X;X;6;7;3}
 {S:X;X;6;8;4}
-{S:X;X;6;9;5{ITR-X}Early May Bank Holiday}
+{S:X;X;6;9;5}
 {S:X;X;6;10;6}
 {S:X;X;6;11;7}
-{S:X;X;6;12;8}
+{S:X;X;6;12;8{ITR-X}Early May Bank Holiday}
 {S:X;X;6;13;9}
 {S:X;X;6;14;10}
 {S:X;X;6;15;11}
@@ -182,8 +175,8 @@
 {S:X;X;6;26;22}
 {S:X;X;6;27;23}
 {S:X;X;6;28;24}
-{S:X;X;6;29;25}
-{S:X;X;6;30;26{ITR-X}Spring Bank Holiday}
+{S:X;X;6;29;25{ITR-X}Spring Bank Holiday}
+{S:X;X;6;30;26}
 {S:X;X;6;31;27}
 {S:X;X;6;32;28}
 {S:X;X;6;33;29}
@@ -234,8 +227,8 @@
 {S:X;X;8;14;10}
 {S:X;X;8;15;11}
 {S:X;X;8;16;12}
-{S:X;X;8;17;13}
-{S:X;X;8;18;14{ITR-X}Orangemen's Day (NI)}
+{S:X;X;8;17;13{ITR-X}Orangemen's Day (NI)}
+{S:X;X;8;18;14}
 {S:X;X;8;19;15}
 {S:X;X;8;20;16}
 {S:X;X;8;21;17}
@@ -253,12 +246,12 @@
 {S:X;X;8;33;29}
 {S:X;X;8;34;30}
 {S:X;X;8;35;31}
-{S:X;X;8;36;Colton Software{ITR-X}colton-software-fireworkz@googlegroups.com{ITR-X}http://groups.google.com/group/colton-software-fireworkz{ITR-X}http://croftnuisk.co.uk/coltsoft}
+{S:X;X;8;36;Colton Software{ITR-X}colton-software-fireworkz@googlegroups.com{ITR-X}https://groups.google.com/group/colton-software-fireworkz{ITR-X}https://croftnuisk.co.uk/coltsoft}
 {S:X;X;9;4;August}
 {S:X;X;9;5;1}
 {S:X;X;9;6;2}
-{S:X;X;9;7;3}
-{S:X;X;9;8;4{ITR-X}Summer Bank Holiday (SCO)}
+{S:X;X;9;7;3{ITR-X}Summer Bank Holiday (SCO)}
+{S:X;X;9;8;4}
 {S:X;X;9;9;5}
 {S:X;X;9;10;6}
 {S:X;X;9;11;7}
@@ -279,13 +272,13 @@
 {S:X;X;9;26;22}
 {S:X;X;9;27;23}
 {S:X;X;9;28;24}
-{S:X;X;9;29;25{ITR-X}Summer Bank Holiday (not SCO)}
+{S:X;X;9;29;25}
 {S:X;X;9;30;26}
 {S:X;X;9;31;27}
 {S:X;X;9;32;28}
 {S:X;X;9;33;29}
 {S:X;X;9;34;30}
-{S:X;X;9;35;31}
+{S:X;X;9;35;31{ITR-X}Summer Bank Holiday (not SCO)}
 {S:X;X;10;4;September}
 {S:X;X;10;5;1}
 {S:X;X;10;6;2}
@@ -379,9 +372,9 @@
 {S:X;X;12;31;27}
 {S:X;X;12;32;28}
 {S:X;X;12;33;29}
-{S:X;X;12;34;30}
+{S:X;X;12;34;30{ITR-X}St. Andrew's Day (SCO)}
 {S:X;X;13;4;December}
-{S:X;X;13;5;1{ITR-X}St. Andrew's Day (SCO)}
+{S:X;X;13;5;1}
 {S:X;X;13;6;2}
 {S:X;X;13;7;3}
 {S:X;X;13;8;4}
@@ -408,7 +401,7 @@
 {S:X;X;13;29;25{ITR-X}Christmas Day}
 {S:X;X;13;30;26{ITR-X}Boxing Day}
 {S:X;X;13;31;27}
-{S:X;X;13;32;28}
+{S:X;X;13;32;28{ITR-X}Bank Holiday}
 {S:X;X;13;33;29}
 {S:X;X;13;34;30}
 {S:X;X;13;35;31}
@@ -452,27 +445,82 @@
 {R:8;3;;32;9;4;;32;0;0;{ColWidth:10206}{Justify:0}}
 {R:;37;;;;38;;;0;1;{RowHeight:0}{RowHeightFix:1}}
 {R:8;36;;32;9;37;;32;0;0;{MarginRight:566}}
-{R:2;5;;32;3;6;;32;0;0;{StyleHandle:weekend}}
-{R:2;5;1;3;3;6;22;3;0;0;{StyleHandle:Bank holiday}}
-{R:2;6;7;3;3;7;25;3;0;0;{StyleHandle:Bank holiday}}
-{R:6;9;7;3;7;10;29;3;0;0;{StyleHandle:Bank holiday}}
-{R:4;21;8;3;5;22;30;3;0;0;{StyleHandle:Bank holiday}}
-{R:5;22;8;3;6;23;19;3;0;0;{StyleHandle:Bank holiday}}
-{R:5;25;8;3;6;26;31;3;0;0;{StyleHandle:Bank holiday}}
-{R:6;30;8;3;7;31;27;3;0;0;{StyleHandle:Bank holiday}}
-{R:13;29;8;3;14;30;21;3;0;0;{StyleHandle:Bank holiday}}
+{R:13;32;8;3;14;33;20;3;0;0;{StyleHandle:Bank holiday}}
 {R:13;30;8;3;14;31;18;3;0;0;{StyleHandle:Bank holiday}}
-{R:9;29;8;3;10;30;37;3;0;0;{StyleHandle:Bank holiday}}
-{R:8;18;8;3;9;19;28;3;0;0;{StyleHandle:Bank holiday}}
-{R:9;8;7;3;10;9;32;3;0;0;{StyleHandle:Bank holiday}}
-{R:13;5;7;3;14;6;29;3;0;0;{StyleHandle:Bank holiday}}
-{ImpR:3;5;;32;4;6;;32;0;0;36;1001;0;40;{StyleHandle:Current cell}}
+{R:13;29;8;3;14;30;21;3;0;0;{StyleHandle:Bank holiday}}
+{R:12;34;8;3;13;35;30;3;0;0;{StyleHandle:Bank holiday}}
+{R:6;29;8;3;7;30;27;3;0;0;{StyleHandle:Bank holiday}}
+{R:9;35;8;3;10;36;37;3;0;0;{StyleHandle:Bank holiday}}
+{R:9;35;27;3;10;36;37;3;0;0;{Fonty:80}}
+{R:4;21;8;3;5;22;30;3;0;0;{StyleHandle:Bank holiday}}
+{R:5;17;8;3;6;18;31;3;0;0;{StyleHandle:Bank holiday}}
+{R:5;14;8;3;6;15;19;3;0;0;{StyleHandle:Bank holiday}}
+{R:6;12;7;3;7;13;29;3;0;0;{StyleHandle:Bank holiday}}
+{R:9;7;7;3;10;8;32;3;0;0;{StyleHandle:Bank holiday}}
+{R:2;5;7;3;3;6;22;3;0;0;{StyleHandle:Bank holiday}}
+{R:2;6;7;3;3;7;25;3;0;0;{StyleHandle:Bank holiday}}
+{R:8;17;8;3;9;18;28;3;0;0;{StyleHandle:Bank holiday}}
+{R:2;8;;32;3;10;;32;0;0;{StyleHandle:Weekend}}
+{R:2;15;;32;3;17;;32;0;0;{StyleHandle:Weekend}}
+{R:2;22;;32;3;24;;32;0;0;{StyleHandle:Weekend}}
+{R:2;29;;32;3;31;;32;0;0;{StyleHandle:Weekend}}
+{R:3;5;;32;4;7;;32;0;0;{StyleHandle:Weekend}}
+{R:3;12;;32;4;14;;32;0;0;{StyleHandle:Weekend}}
+{R:3;19;;32;4;21;;32;0;0;{StyleHandle:Weekend}}
+{R:3;26;;32;4;28;;32;0;0;{StyleHandle:Weekend}}
+{R:3;33;;32;4;34;;32;0;0;{StyleHandle:Weekend}}
+{R:4;5;;32;5;6;;32;0;0;{StyleHandle:Weekend}}
+{R:4;11;;32;5;13;;32;0;0;{StyleHandle:Weekend}}
+{R:4;18;;32;5;20;;32;0;0;{StyleHandle:Weekend}}
+{R:4;25;;32;5;27;;32;0;0;{StyleHandle:Weekend}}
+{R:4;32;;32;5;34;;32;0;0;{StyleHandle:Weekend}}
+{R:5;8;;32;6;10;;32;0;0;{StyleHandle:Weekend}}
+{R:5;15;;32;6;17;;32;0;0;{StyleHandle:Weekend}}
+{R:5;22;;32;6;24;;32;0;0;{StyleHandle:Weekend}}
+{R:5;29;;32;6;31;;32;0;0;{StyleHandle:Weekend}}
+{R:6;6;;32;7;8;;32;0;0;{StyleHandle:Weekend}}
+{R:6;13;;32;7;15;;32;0;0;{StyleHandle:Weekend}}
+{R:6;20;;32;7;22;;32;0;0;{StyleHandle:Weekend}}
+{R:6;27;;32;7;29;;32;0;0;{StyleHandle:Weekend}}
+{R:6;34;;32;7;36;;32;0;0;{StyleHandle:Weekend}}
+{R:7;10;;32;8;12;;32;0;0;{StyleHandle:Weekend}}
+{R:7;17;;32;8;19;;32;0;0;{StyleHandle:Weekend}}
+{R:7;24;;32;8;26;;32;0;0;{StyleHandle:Weekend}}
+{R:7;31;;32;8;33;;32;0;0;{StyleHandle:Weekend}}
+{R:8;8;;32;9;10;;32;0;0;{StyleHandle:Weekend}}
+{R:8;15;;32;9;17;;32;0;0;{StyleHandle:Weekend}}
+{R:8;22;;32;9;24;;32;0;0;{StyleHandle:Weekend}}
+{R:8;29;;32;9;31;;32;0;0;{StyleHandle:Weekend}}
+{R:9;5;;32;10;7;;32;0;0;{StyleHandle:Weekend}}
+{R:9;12;;32;10;14;;32;0;0;{StyleHandle:Weekend}}
+{R:9;19;;32;10;21;;32;0;0;{StyleHandle:Weekend}}
+{R:9;26;;32;10;28;;32;0;0;{StyleHandle:Weekend}}
+{R:9;33;;32;10;35;;32;0;0;{StyleHandle:Weekend}}
+{R:10;9;;32;11;11;;32;0;0;{StyleHandle:Weekend}}
+{R:10;16;;32;11;18;;32;0;0;{StyleHandle:Weekend}}
+{R:10;23;;32;11;25;;32;0;0;{StyleHandle:Weekend}}
+{R:10;30;;32;11;32;;32;0;0;{StyleHandle:Weekend}}
+{R:11;7;;32;12;9;;32;0;0;{StyleHandle:Weekend}}
+{R:11;14;;32;12;16;;32;0;0;{StyleHandle:Weekend}}
+{R:11;21;;32;12;23;;32;0;0;{StyleHandle:Weekend}}
+{R:11;28;;32;12;30;;32;0;0;{StyleHandle:Weekend}}
+{R:11;35;;32;12;36;;32;0;0;{StyleHandle:Weekend}}
+{R:12;5;;32;13;6;;32;0;0;{StyleHandle:Weekend}}
+{R:12;11;;32;13;13;;32;0;0;{StyleHandle:Weekend}}
+{R:12;18;;32;13;20;;32;0;0;{StyleHandle:Weekend}}
+{R:12;25;;32;13;27;;32;0;0;{StyleHandle:Weekend}}
+{R:12;32;;32;13;34;;32;0;0;{StyleHandle:Weekend}}
+{R:13;9;;32;14;11;;32;0;0;{StyleHandle:Weekend}}
+{R:13;16;;32;14;18;;32;0;0;{StyleHandle:Weekend}}
+{R:13;23;;32;14;25;;32;0;0;{StyleHandle:Weekend}}
+{R:13;30;;32;14;32;;32;0;0;{StyleHandle:Weekend}}
+{ImpR:0;0;;32;1;1;;32;0;0;36;1001;0;40;{StyleHandle:Current cell}}
 {PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
 {HD-H:0;2}
 {HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
 {HD-H:0;3}
 {HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
 {DrawFileEmbedded-D:0;RISC OS;11300;DrawÉ€€€€€€€Draw        €6€€þ—€€\ÿs…€þ‚„€‹€€€X€€€€€€€€€€€€€€€€€€€€€€€€€€€ð?€€€€‚€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€\€€€€\ˆ“€€†€€€|ƒ€€€æ€€þ—€€ÿ8…€~Çƒ€            ‚€€€,€€€æ€€ÀD€€À…ƒ€€\…€€ÿ\}!ÿÿÿÿ€€€€@€€€‚€€€À+€\€„€ˆ€€€€k€ ç€€ˆ€€€ÀW€`ß€€ˆ€€€Àm€`É€€ˆ€€€À6€ ¥€€ˆ€€€€k€\€¡€€ˆ€€€€ç€€ÀF€€ˆ€€€ ¼€@¯€€ˆ€€€Àº€@\™€€ˆ€€€€Î€@¤€€ˆ€€€€ä€\€T€€ˆ€€€`ð€@¯€€ˆ€€€@.‚€€§€€ˆ€€€@÷€@Ð€€ˆ€€€À„ƒ€€\ƒ€ˆ€€€ è€Àë€€ˆ€€€€ä€ ™€ˆ€€€ Ò€Àö€€ˆ€€€à¨€@3€ˆ€€€`¹€@ñ€€ˆ€€€À+€\€„€…€€€€€€€‚€€€`€€€ÿ\„‚€þ³‚€ÿç‚€þ\}ƒ€€ÿ\}!ÿÿÿÿ€€€€@€€€‚€€€ÿ\…‚€þbƒ€ˆ€€€ÿæ‚€þµ‚€ˆ€€€ÿ\˜‚€þ\{ƒ€ˆ€€€ÿ\…‚€þbƒ€…€€€€€€€‚€€€Œ€€\ÿZƒ€þ—€€\ÿ\‹ƒ€þ¤€€ÿ\}!ÿÿÿÿ€€€€@€€€‚€€€\ÿpƒ€þ™€€ˆ€€€\ÿ\Šƒ€þ™€€†€€€ß\„ƒ€yN€€\}ƒ€!\‚€€ÿwƒ€þ¶€€†€€€9tƒ€€Þ€€Fmƒ€u†€\ÿiƒ€~-€†€€€®eƒ€óT€Ñ_ƒ€å\{€\ÿ[ƒ€þ¢€†€€€ŠZƒ€4\˜€\š\\ƒ€3\ˆ€ÿ\\ƒ€þ\{€†€€€Ë^ƒ€FD€:dƒ€ÖŒ€ÿeƒ€þÕ€€†€€€Ùfƒ€\•»€€¬iƒ€\Œ¡€€\ÿjƒ€þ\‡€€†€€€²kƒ€Ñb€€\†nƒ€v>€€\ÿpƒ€þ™€€…€€€€€€€‚€€€`€€€ÿÖƒ€~„ƒ€ÿ+„€~Çƒ€€ÿ\}!ÿÿÿÿ€€€€@€€€‚€€€ÿ×ƒ€~†ƒ€ˆ€€€ÿ*„€~¶ƒ€ˆ€€€\ÿ”„€~Åƒ€ˆ€€€ÿ×ƒ€~†ƒ€…€€€€€€€‚€€€`€€€ÿÃƒ€þû€ÿ8…€þÜ‚€€ÿ\}!ÿÿÿÿ€€€€@€€€‚€€€ÿÄƒ€þý€ˆ€€€ÿ7…€þ¼‚€ˆ€€€ÿ7…€þÚ‚€ˆ€€€ÿÄƒ€þý€…€€€€€€€†€€€Lˆ€€€6€€þ°€ÿ½ƒ€ky‚€            ‚€€€„€€€6€€þ´€\€l€€ky‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€™7€€þ0‚€ˆ€€€æA€€þ0‚€ˆ€€€ÿA€€þ¶€ˆ€€€ÿQ€€þ¶€ˆ€€€€R€€þ0‚€ˆ€€€\€k€€þ0‚€ˆ€€€\€k€€þ>‚€ˆ€€€\€R€€þ>‚€ˆ€€€\€R€€~[‚€†€€€$T€€8h‚€Õ]€€µj‚€\€k€€þg‚€ˆ€€€\€k€€þu‚€†€€€¢P€€b|‚€MB€€bp‚€\€A€€~W‚€ˆ€€€\€A€€þ>‚€ˆ€€€€7€€þ>‚€ˆ€€€™7€€þ0‚€…€€€€€€€‚€€€l€€€\€x€€þ´€€\Š€€þ@‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€\€y€€þ¶€ˆ€€€ÿ\ˆ€€þ¶€ˆ€€€€\‰€€þ>‚€ˆ€€€\€y€€þ>‚€ˆ€€€\€y€€þ¶€…€€€€€€€‚€€€l€€€\€x€€þY‚€€\Š€€þu‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€\€y€€þ[‚€ˆ€€€€\‰€€þ[‚€ˆ€€€€\‰€€þs‚€ˆ€€€\€y€€þs‚€ˆ€€€\€y€€þ[‚€…€€€€€€€‚€€€¼€€€€¦€€þ´€ÿâ€€þC‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€€§€€þ¶€ˆ€€€~¶€€þ¶€ˆ€€€~¶€€~‚€†€€€e·€€\‹‚€hÄ€€\”1‚€ÿá€€þ0‚€ˆ€€€ÿá€€þA‚€†€€€‰É€€QC‚€'¾€€ø6‚€~¶€€þ&‚€ˆ€€€~¶€€þ>‚€ˆ€€€€§€€þ>‚€ˆ€€€€§€€þ¶€…€€€€€€€‚€€€P€€ÿÝ€€þ°€ÿW€þC‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€ÿT€~à€ˆ€€€ÿD€~à€†€€€B?€yÌ€\Ž/€o¾€ÿ“€þÁ€†€€€¶þ€€½Ä€0ï€€ÍÜ€ÿï€€~ö€ˆ€€€ÿV€~ö€†€€€X€ƒ‚€dF€Â>‚€ÿ$€þA‚€†€€€û÷€€YF‚€ÿÞ€€H#‚€ÿÞ€€~ú€†€€€ÿÞ€€äÏ€Xõ€€z®€ÿ#€þ²€†€€€!?€\žµ€ËP€\ŠÈ€ÿT€~à€…€€€‚€€€ÿï€€þ„‚€†€€€Dó€€±‚€d€þ3‚€ÿœ€þ3‚€†€€€L5€þ3‚€¥F€— ‚€ÿE€þ„‚€ˆ€€€ÿï€€þ„‚€…€€€€€€€‚€€€Ø€€€ÿY€þ´€ÿŒ‚€þ@‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€ÿ\‚€þ¶€ˆ€€€\ÿ\•€þ¶€ˆ€€€ÿ²€þ&‚€ˆ€€€\ÿÑ€þ¶€ˆ€€€ÿá€þ¶€ˆ€€€ÿ‹‚€þ>‚€ˆ€€€\ÿü€þ>‚€ˆ€€€\ÿÚ€þÍ€ˆ€€€\ÿ¼€þ>‚€ˆ€€€ÿª€þ>‚€ˆ€€€\ÿ\Œ€þÌ€ˆ€€€ÿi€þ>‚€ˆ€€€ÿZ€þ>‚€ˆ€€€ÿ\‚€þ¶€…€€€€€€€‚€€€,€€\ÿ‰‚€þ°€ÿ\†‚€þC‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€\ÿŠ‚€~ü€†€€€\ÿŠ‚€ÜÏ€³Ÿ‚€\„±€\ÿM‚€þ²€†€€€>q‚€%´€ÿ\…‚€çÔ€ÿ\…‚€~ú€†€€€ÿ\…‚€„"‚€°p‚€þA‚€\ÿI‚€þA‚€†€€€² ‚€þA‚€\ÿŠ‚€5%‚€\ÿŠ‚€~ü€…€€€‚€€€ÿš‚€~ü€†€€€ÿš‚€Ÿœ‚€1*‚€þ2‚€\ÿJ‚€þ2‚€†€€€>h‚€þ2‚€ÿt‚€ ˜‚€ÿt‚€þù€†€€€ÿt‚€çÜ€Äg‚€‰Ä€\ÿM‚€~Á€†€€€x)‚€¾€ÿš‚€FÛ€ÿš‚€~ü€…€€€€€€€‚€€€¼€€€\ÿ\‚€þ´€ÿÍ‚€þC‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€ÿÌ‚€>2‚€ˆ€€€ÿÌ‚€þA‚€†€€€\\´‚€xB‚€p¨‚€·6‚€\ÿ ‚€~&‚€ˆ€€€\ÿ ‚€þ=‚€ˆ€€€\ÿ\‘‚€þ=‚€ˆ€€€\ÿ\‘‚€þ¶€ˆ€€€\ÿ ‚€þ¶€ˆ€€€\ÿ ‚€~€‚€†€€€À£‚€>‚€ÿ®‚€>1‚€ÿÌ‚€>2‚€…€€€€€€€‚€€€Ì€€€\ÿÙ‚€þ´€\ÿGƒ€þt‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€\ÿÚ‚€þ¶€ˆ€€€\ÿê‚€þ¶€ˆ€€€\ÿê‚€~é€ˆ€€€ÿƒƒ€þ€‚€ˆ€€€ÿ5ƒ€þ¶€ˆ€€€\ÿFƒ€þ¶€ˆ€€€ÿƒ€þ‹‚€ˆ€€€ÿ?ƒ€þ=‚€ˆ€€€\ÿ+ƒ€~=‚€ˆ€€€\ÿê‚€~ÿ€ˆ€€€\ÿê‚€þr‚€ˆ€€€\ÿÚ‚€þr‚€ˆ€€€\ÿÚ‚€þ¶€…€€€€€€€‚€€€´€€€ÿLƒ€þ´€ÿ½ƒ€þ?‚€€€€€ÿÿÿÿ€€€€@€€€‚€€€ÿMƒ€þ¶€ˆ€€€ÿ¼ƒ€þ¶€ˆ€€€ÿ¼ƒ€~Å€ˆ€€€\ÿcƒ€~Å€ˆ€€€\ÿ¹ƒ€~0‚€ˆ€€€\ÿ¹ƒ€þ=‚€ˆ€€€\ÿSƒ€þ=‚€ˆ€€€\ÿSƒ€~0‚€ˆ€€€ÿ£ƒ€~0‚€ˆ€€€ÿMƒ€~Å€ˆ€€€ÿMƒ€þ¶€…€€€€€€€‚€€€H€€€\ÿû‚€þ\‹€\ÿý‚€þ\€€€€€ÿÿÿÿ€€€€@€€€‚€€€\ÿü‚€þ\€ˆ€€€\ÿü‚€þ\€…€€€€€€€‚€€€T€€€\ÿÂƒ€þú€\ÿÅƒ€þÿ€€€€€ÿÿÿÿ€€€€@€€€‚€€€\ÿÃƒ€þü€ˆ€€€\ÿÄƒ€þý€ˆ€€€\ÿÃƒ€þü€…€€€€€€€†€€€xƒ€€ÿ¤ƒ€þ/‚€\ÿs…€þ‚„€            ‚€€€\€€€ÿËƒ€þ/‚€\ÿÜƒ€~D‚€€€ÿYÿÿÿÿ€€€€@€€€‚€€€ÿÌƒ€~B‚€†€€€rÑƒ€ö<‚€5Õƒ€¬6‚€\ÿÚƒ€þ1‚€†€€€ùÚƒ€d5‚€\‚Üƒ€°9‚€\ÿÛƒ€þ<‚€†€€€$Öƒ€â=‚€Òƒ€„C‚€ÿÌƒ€~B‚€…€€€€€€€‚€€€ð€€€\ÿ=…€þ³ƒ€\ÿs…€þ‚„€€€ÿYÿÿÿÿ€€€€@€€€‚€€€\ÿ>…€þÓƒ€†€€€ðD…€9Ôƒ€ÃI…€ŽÖƒ€ÿO…€~Öƒ€†€€€\˜P…€ëËƒ€\šP…€ÃÀƒ€ÿP…€þµƒ€ˆ€€€ÿQ…€þµƒ€†€€€ \\…€0Ïƒ€\h…€çƒ€\ÿr…€þ€„€†€€€Rn…€„ýƒ€èj…€>øƒ€ÿf…€þóƒ€†€€€\—e…€1óƒ€\‘h…€‘ùƒ€ÿe…€~öƒ€†€€€ÖX…€ÿêƒ€çJ…€<àƒ€\ÿ>…€þÓƒ€…€€€€€€€‚€€€\€€€ÿ¤ƒ€\\L‚€ÿ¯ƒ€~X‚€€€ÿYÿÿÿÿ€€€€@€€€‚€€€ÿ¥ƒ€þN‚€†€€€²¦ƒ€\…N‚€p¯ƒ€\M‚€ÿ®ƒ€~O‚€†€€€Ó«ƒ€oQ‚€uªƒ€ZU‚€\ÿ¦ƒ€~V‚€†€€€¡¦ƒ€©S‚€¢¥ƒ€R‚€ÿ¥ƒ€þN‚€…€€€€€€€‚€€€\€€€ÿ­ƒ€þZ‚€\ÿ¼ƒ€þ\‚€€€ÿYÿÿÿÿ€€€€@€€€‚€€€ÿ®ƒ€þk‚€†€€€¿³ƒ€\žg‚€G¶ƒ€á`‚€\ÿ»ƒ€þ\\‚€†€€€Ô¹ƒ€Òh‚€À·ƒ€>t‚€ÿµƒ€þ\ÿ‚€†€€€ª²ƒ€fz‚€á°ƒ€Œs‚€ÿ®ƒ€þk‚€…€€€€€€€‚€€€´€€€ÿÄƒ€þU‚€ÿ<…€þÃƒ€€€ÿYÿÿÿÿ€€€€@€€€‚€€€ÿÅƒ€þW‚€ˆ€€€ÿåƒ€þ\ˆ‚€ˆ€€€\ÿ%„€þx‚€ˆ€€€\ÿ!„€~ç‚€ˆ€€€ÿ\—„€þÏ‚€ˆ€€€ÿ;…€þÁƒ€ˆ€€€\ÿ\„€~ò‚€ˆ€€€\ÿ™„€þð‚€ˆ€€€\ÿ„€þ\‰‚€ˆ€€€ÿãƒ€~¢‚€ˆ€€€ÿÅƒ€þW‚€…€€€€€€€†€€€ð“€€L¢ƒ€þr€€\ÿo…€~Ý€            ‚€€€°€€€ÿÙƒ€~­€ÿäƒ€þÀ€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿÛƒ€~¯€ˆ€€€ÿãƒ€þ¯€ˆ€€€ÿãƒ€þ¶€ˆ€€€\ÿßƒ€þ¶€†€€€žàƒ€F¹€/áƒ€h»€\ÿãƒ€þ»€ˆ€€€\ÿãƒ€þ¾€†€€€¾ßƒ€\˜¿€°Ûƒ€°º€ÿÚƒ€~¶€ˆ€€€\ÿÛƒ€~¯€…€€€€€€€‚€€€d€€Þìƒ€~˜€\ÿƒ„€Ù5€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿðƒ€~š€†€€€Íöƒ€)–€¦ûƒ€"€ÿþƒ€þŸ€†€€€±‚„€¸&€¦„„€Í*€ÿþƒ€þ0€†€€€™úƒ€[6€ˆóƒ€Á4€\ÿòƒ€~,€†€€€œòƒ€\ÿ&€Xõƒ€ò#€\ÿ÷ƒ€~ €†€€€cõƒ€HŸ€Lôƒ€\ƒž€ÿñƒ€þŸ€†€€€Sñƒ€#"€´ðƒ€\#€\ÿñƒ€þ%€†€€€uðƒ€•'€8ðƒ€=+€ÿíƒ€~)€†€€€\{ìƒ€²#€-îƒ€\Œ€ÿðƒ€~š€…€€€‚€€€ÿöƒ€þ'€†€€€ëõƒ€–.€\Žûƒ€ä0€ÿýƒ€þ+€†€€€ñþƒ€Q&€Pùƒ€ü"€ÿöƒ€þ'€…€€€€€€€‚€€€°€€€\ÿèƒ€þ³€ÿóƒ€þÊ€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿéƒ€þµ€ˆ€€€\ÿòƒ€þµ€ˆ€€€ÿòƒ€þ½€ˆ€€€\ÿîƒ€þ½€†€€€5îƒ€ÚÁ€¾ðƒ€+Ã€ÿòƒ€~Ä€ˆ€€€ÿòƒ€þÈ€†€€€‹îƒ€ðÆ€Íêƒ€0Ã€\ÿéƒ€~½€ˆ€€€\ÿéƒ€þµ€…€€€€€€€‚€€€l€€€L¢ƒ€þa€\ÿõƒ€þ\˜€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿëƒ€þc€ˆ€€€\ÿôƒ€þq€ˆ€€€ÿ§ƒ€þ\–€ˆ€€€L£ƒ€ä\Ž€ˆ€€€ÿëƒ€þc€…€€€€€€€‚€€€€€€ÿæƒ€þ'€ÿøƒ€þA€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿêƒ€þ)€†€€€êîƒ€;/€–ôƒ€¿3€ÿ÷ƒ€~9€†€€€Þ÷ƒ€B;€×öƒ€÷<€ÿôƒ€þ<€†€€€)òƒ€È<€ ñƒ€|>€ÿïƒ€þ?€†€€€Gîƒ€›@€Sîƒ€G>€ÿìƒ€þ=€†€€€\“ìƒ€;€Üîƒ€Ý:€ÿîƒ€~8€†€€€\ÿíƒ€\ˆ4€eéƒ€Š3€ÿçƒ€þ.€†€€€Jèƒ€Þ,€œéƒ€+€\ÿêƒ€þ)€…€€€€€€€‚€€€H€€¢öƒ€ê‚€ÿ„€~$€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿúƒ€þ„€†€€€’ƒ„€3€€™„€ë€ÿ„€~–€†€€€û„€\”œ€;Œ„€©"€ÿ†„€~"€†€€€Äûƒ€!"€\üƒ€\…€\ÿ‚„€~Œ€†€€€Â€„€ÊŠ€Öýƒ€v‰€ÿûƒ€þ‹€†€€€ïûƒ€Ž€ïûƒ€‘€\ÿüƒ€~‘€†€€€\œûƒ€“€ýúƒ€ˆ•€\ÿùƒ€þ•€†€€€Öõƒ€w‘€³÷ƒ€\\ˆ€ÿúƒ€þ„€…€€€‚€€€\ÿ‚„€~•€†€€€\“‚„€sš€ˆˆ„€kŸ€ÿŠ„€þ™€†€€€õ‹„€¤“€\ÿ„„€\‡Ž€\ÿ‚„€~•€…€€€€€€€‚€€€¨€€·€„€þë€€\ÿž„€v’€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ‡„€þí€€†€€€\“Ž„€[í€€<“„€Ýõ€€ÿ“„€~û€€†€€€9™„€dü€€\ÿ„€ò€€\ÿ„€þ†€†€€€\ÿ„€G€ž“„€Û”€ÿŽ„€~Œ€†€€€k„€þŠ€>„€¥‰€\ÿ‘„€þˆ€†€€€5“„€O‰€Û”„€¯‹€ÿ–„€þ‰€†€€€Q™„€S‡€(—„€¯ƒ€\ÿ•„€þ€†€€€Â’„€ª€1‘„€A‚€\ÿ„€þƒ€†€€€\‘Ž„€×ƒ€(Ž„€ë€ÿŒ„€þ€€†€€€Z„€äþ€€ÜŽ„€Îý€€\ÿŽ„€þú€€†€€€ë„€\}ö€€;†„€¾ñ€€\ÿ†„€þù€€†€€€\•†„€\ü€€t‡„€qý€€\ÿˆ„€þþ€€†€€€.ˆ„€(€)‡„€2ƒ€\ÿ…„€þƒ€†€€€A€„€‹€€Óÿƒ€Èî€€ÿ‡„€þí€€…€€€€€€€‚€€€È€€€\Žµƒ€~A€Þ‹„€ô¤€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿÆƒ€þ\’€†€€€\‹áƒ€Q¥€‰„€Û\€ÿ÷ƒ€þj€†€€€¿åƒ€¯C€Ÿ»ƒ€\ˆN€ÿ·ƒ€~z€†€€€—±ƒ€%]€\¾ƒ€\ŸA€\ÿÛƒ€~C€†€€€%÷ƒ€FE€æ•„€\\p€\ÿ‡„€~\€†€€€Qûƒ€©«€\ŽÖƒ€º¥€\ÿÆƒ€þ\’€…€€€€€€€‚€€€¬€€€\ÿ‰„€þÝ€€\ÿ“„€þì€€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿŠ„€~å€€†€€€ÃŠ„€"ã€€è‹„€\…á€€ÿŒ„€þß€€†€€€\‹„€ýà€€\ˆ„€àã€€\ÿ’„€~å€€†€€€’„€¾ç€€r„€Æè€€ÿ„€þê€€†€€€`„€‡ê€€û‹„€\šç€€\ÿŠ„€~å€€…€€€€€€€‚€€€¬€€€ÿŽ„€þÒ€€ÿ˜„€þá€€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ‘„€þÔ€€†€€€Ò”„€'Ö€€Â–„€»Ø€€ÿ—„€~Û€€†€€€f—„€Ý€€Q–„€'Þ€€ÿ•„€þß€€†€€€¨’„€»ß€€\˜‘„€\ŒÜ€€ÿ„€~Ú€€†€€€×„€××€€_‘„€ÜÖ€€ÿ‘„€þÔ€€…€€€€€€€‚€€€¬€€€ÿ“„€þÇ€€\ÿž„€þ×€€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ”„€~Ï€€†€€€û”„€üÌ€€À–„€<Ì€€ÿ–„€þÉ€€†€€€¶™„€¸Ë€€ ›„€kÎ€€\ÿ„€þÐ€€†€€€«œ„€©Ò€€Ô›„€RÔ€€ÿš„€þÕ€€†€€€'˜„€ÍÔ€€¶–„€ØÑ€€ÿ”„€~Ï€€…€€€€€€€‚€€€\\€€ÿŽ„€~µ€I.„€~Ò€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ„€~·€ˆ€€€ÿ”„€~·€†€€€6—„€Ãº€×˜„€¬¾€\ÿ›„€~Á€†€€€aœ„€\‹¾€ß›„€0º€ÿœ„€~·€ˆ€€€ÿ!„€~·€†€€€'#„€^¸€`!„€l¿€ÿ!„€þÁ€†€€€s(„€˜Á€\ž3„€ýÎ€ÿ(„€~Ð€ˆ€€€\ÿž„€~Ð€†€€€Ú™„€þÇ€Ï“„€ÑÀ€ÿ„€~·€…€€€‚€€€\ÿž„€~Æ€†€€€Çž„€þÈ€k „€IÊ€\ÿ!„€þË€†€€€'#„€@Ì€Ï#„€¬Ë€ÿ$„€~Ë€†€€€ô)„€:Ë€ž%„€ÍÅ€\ÿ"„€~Æ€ˆ€€€\ÿž„€~Æ€…€€€€€€€‚€€€¬€€€\ÿ#„€~¨€€ÿ.„€þ¸€€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿ$„€þ¯€€†€€€\”$„€\}­€€\”%„€¤«€€ÿ&„€~ª€€†€€€ž*„€î«€€o+„€v¯€€ÿ-„€~±€€†€€€ƒ.„€ÿ³€€?,„€¿´€€ÿ+„€þ¶€€†€€€Y(„€øµ€€ '„€–²€€\ÿ$„€þ¯€€…€€€€€€€‚€€€¬€€€ÿ-„€þ\’€€ÿ9„€~¤€€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ0„€þ\”€€†€€€\‰4„€Ô\–€€ø6„€"\š€€ÿ8„€~\€€†€€€ó8„€Ã\Ÿ€€\—7„€Â €€ÿ6„€~¢€€†€€€Z3„€Ü €€Ê1„€ÿ\œ€€ÿ.„€~\š€€†€€€û.„€ü\—€€À0„€<\—€€ÿ0„€þ\”€€…€€€€€€€‚€€€Ø€€€\ÿƒ„€~ª€\Œ:„€~Ý€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿ„„€þ´€†€€€ó„„€P°€±‹„€õ¬€\ÿ„€~¬€†€€€p.„€\˜©€UG„€\œØ€ÿ0„€~Û€†€€€ÊŸ„€¶Ý€‰ƒ„€œÄ€\ÿ„„€þ´€…€€€‚€€€\ÿŒ„€þ¶€†€€€ñ‹„€*Æ€·"„€˜Ü€\ÿ1„€þÒ€†€€€>6„€\—Á€š„€š¨€\ÿŒ„€þ¶€…€€€€€€€‚€€€Ô€€\ÿ„€~´€€ÿB„€þâ€€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿž„€~»€€†€€€óž„€u¹€€† „€€¸€€ÿ „€~¶€€†€€€Ò#„€S¸€€•%„€½»€€ÿ'„€~½€€†€€€¶)„€‰¾€€ô(„€¼€€ÿ)„€þ»€€†€€€,,„€L½€€0-„€Ï¿€€ÿ.„€~Á€€†€€€\.„€dÂ€€6.„€ZÃ€€ÿ-„€~Ä€€†€€€%4„€ýÌ€€8<„€ Ó€€ÿA„€~Ü€€†€€€L@„€¼Ý€€þ?„€\‘à€€\ÿ=„€þà€€†€€€(6„€VÜ€€½-„€¾Ø€€ÿ%„€~Ô€€†€€€¦#„€ÚÒ€€ý!„€\}Ð€€ÿŸ„€~Î€€†€€€È „€ÏÉ€€I$„€ÁÇ€€ÿ$„€þÂ€€†€€€c"„€÷À€€\” „€Ž¾€€\ÿž„€~»€€…€€€‚€€€\ÿ'„€þÏ€€†€€€³,„€IÒ€€û0„€\ƒÕ€€\ÿ6„€~×€€†€€€\†2„€Ó€€N/„€\Í€€ÿ)„€~Ê€€†€€€q)„€\šÌ€€\ˆ'„€`Í€€\ÿ'„€þÏ€€…€€€€€€€‚€€€t€€€î=„€þr€€|J„€~\…€€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿ@„€þt€€†€€€VD„€Ix€€\ˆM„€ñ\}€€\ÿG„€~\ƒ€€†€€€lC„€‘\€€€\;„€\{\{€€\ÿ@„€þt€€…€€€€€€€‚€€€€€€ÿ,„€\™p€èY„€w\˜€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿQ„€~|€†€€€O„€\ÿ|€ÒK„€\’~€ÿI„€~\}€†€€€õF„€æz€ÁA„€Ãx€ÿ;„€~z€†€€€\“2„€Š\ƒ€\€C„€Í\’€ÿN„€~\€†€€€ŸP„€ü\‹€\žQ„€?\‹€ÿP„€þ\‡€†€€€¼R„€\’\†€0V„€Ù\†€\ÿX„€þ\…€†€€€õ`„€s¤€g)„€»\“€ÿ-„€þ\{€†€€€Ø0„€Km€ÆM„€|q€\ÿQ„€~|€…€€€€€€€‚€€€,€€ÿ˜„€þb€\ÿm„€~¥€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ™„€~w€†€€€ë›„€\“k€m*„€þd€ÿ8„€þd€†€€€íQ„€þd€\ÿl„€µv€\ÿl„€~\Ž€†€€€\ÿl„€Ž\€¤]„€ÿ£€ÿM„€~£€†€€€\†7„€Ä¢€˜–„€±\€ÿ™„€~w€…€€€‚€€€\ÿ%„€þx€†€€€–"„€\Ÿ\Š€ú;„€þ\›€ÿK„€þ\›€†€€€²V„€þ\›€ÿ`„€Ö\—€ÿ`„€þ\Œ€†€€€ÿ`„€y\{€‡L„€`l€ÿ8„€þl€†€€€ó/„€Hm€ï&„€\’q€\ÿ%„€þx€…€€€€€€€‚€€€\œ€€€\ÿH„€~ƒ€ÿv„€þ$€€€ðàÿÿÿÿ€€€€@€€€‚€€€\ÿI„€þ‹€ˆ€€€ÿO„€~…€ˆ€€€ÿb„€þ€ˆ€€€ÿn„€þ†€ˆ€€€ÿu„€þŠ€ˆ€€€ÿP„€þ"€ˆ€€€\ÿM„€þŸ€ˆ€€€ÿX„€þ–€ˆ€€€\ÿI„€þ‹€…€€€€€€€‚€€€Ø€€€ÿ]„€~Ò€€Lª„€þ‡€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿ^„€þö€€ˆ€€€\ÿe„€~ð€€ˆ€€€ÿ|„€~û€€ˆ€€€\ÿl„€þè€€ˆ€€€ÿr„€þá€€ˆ€€€\ÿ\’„€þç€€ˆ€€€\ÿz„€~Ú€€ˆ€€€ÿ\ÿ„€~Ô€€ˆ€€€L©„€~è€€ˆ€€€ÿ\›„€þñ€€ˆ€€€ÿy„€~ë€€ˆ€€€\ÿ\‰„€þý€€ˆ€€€\ÿ|„€þ…€ˆ€€€ÿ^„€þö€€…€€€€€€€‚€€€l€€€ÿ‰„€þ\†€€\ÿo…€þ`€€€ðàÿÿÿÿ€€€€@€€€‚€€€ÿŠ„€þT€ˆ€€€\ÿb…€þ\ˆ€€ˆ€€€\ÿn…€~\Ÿ€€ˆ€€€\ÿ„€þ^€ˆ€€€ÿŠ„€þT€…€€€€€€€†€€€Xƒ€€ n€à €€Šø€©í€€            ‚€€€L€€ n€à €€: €©í€€€€€€ÿÿÿÿ€€€€@€€€‚€€€7|€\ž½€€ˆ€€€7|€à¢€€ˆ€€€ o€à¢€€ˆ€€€ o€Ÿê€€ˆ€€€7|€Ÿê€€ˆ€€€7|€„ã€€†€€€s\€¬í€€Ù\€lî€€³\—€‚æ€€†€€€=¡€éÛ€€-¢€ØÅ€€ä\—€¾»€€†€€€º\Ž€\•²€€\„\€€t´€€7|€\ž½€€…€€€‚€€€Ù\€\‰Û€€†€€€œ\Œ€åá€€\\ƒ€µá€€\”\ÿ€xÜ€€†€€€—\{€LÖ€€—\{€”Ë€€$\€€¸Ä€€†€€€q\„€|¿€€«\Œ€Ü¿€€9\€\˜Æ€€†€€€7\“€\“Ì€€g\“€^Õ€€Ù\€\‰Û€€…€€€€€€€‚€€€¼€€€L¤€rµ€€éÂ€\Ÿí€€€€€€ÿÿÿÿ€€€€@€€€‚€€€éÁ€\˜Ý€€ˆ€€€éÁ€\Ÿë€€†€€€+¾€Îë€€Áµ€Ðè€€c²€%á€€ˆ€€€c²€Ÿê€€ˆ€€€L¥€Ÿê€€ˆ€€€L¥€r·€€ˆ€€€c²€r·€€ˆ€€€c²€0Ò€€†€€€\“²€hÝ€€¼€Fß€€éÁ€\˜Ý€€…€€€€€€€‚€€€,€€„Ä€É³€€Šø€\˜í€€€€€€ÿÿÿÿ€€€€@€€€‚€€€Ë€\ž½€€†€€€7Ô€õ²€€Ùç€U³€€ƒñ€Í½€€†€€€ù€øÆ€€ù€ÚÙ€€ƒñ€Äã€€†€€€Ùç€üî€€\‡Ò€\}í€€Ë€\“ã€€†€€€£Â€\ŒØ€€bÃ€ÇÆ€€Ë€\ž½€€…€€€‚€€€7Ô€ÇÆ€€†€€€Ä×€Ü¿€€Íâ€½¾€€©ç€\˜Æ€€†€€€wê€µÊ€€Çë€®Ó€€©ç€\™Ú€€†€€€\\ã€Eâ€€\”×€Uá€€gÔ€\™Ú€€†€€€©Ð€ïÒ€€‰Ñ€ÃÌ€€7Ô€ÇÆ€€…€€€€€€€†€€€\€„€€Bƒƒ€™$€\‚³ƒ€€Êƒ€            ‚€€€\œ€€€\œŠƒ€6\‹ƒ€ŠUƒ€€Êƒ€€—ÿÿÿÿÿ€€€€@€€€‚€€€µƒ€ÀÂƒ€ˆ€€€\œ‹ƒ€³ƒ€ˆ€€€\ŽŸƒ€6\ƒ€ˆ€€€4˜ƒ€Á­ƒ€ˆ€€€ŠTƒ€@¸ƒ€ˆ€€€ãPƒ€ÀÂƒ€ˆ€€€M/ƒ€\Œ¾ƒ€ˆ€€€Ú%ƒ€€Èƒ€ˆ€€€µƒ€ÀÂƒ€…€€€€€€€‚€€€¨€€€\–Iƒ€$5ƒ€+\—ƒ€O\‘ƒ€€—ÿÿÿÿÿ€€€€@€€€‚€€€Óyƒ€O\ƒ€ˆ€€€\‡sƒ€Ä\ƒƒ€ˆ€€€\–Jƒ€÷\‡ƒ€ˆ€€€\–Jƒ€x\}ƒ€ˆ€€€«\‹ƒ€’uƒ€ˆ€€€\…\ˆƒ€$7ƒ€ˆ€€€ž\•ƒ€+wƒ€ˆ€€€+\–ƒ€¸\‚ƒ€ˆ€€€ë\ƒ€6\ƒ€ˆ€€€Óyƒ€O\ƒ€…€€€€€€€‚€€€\œ€€€tœƒ€wç‚€Ózƒ€Š7ƒ€€—ÿÿÿÿÿ€€€€@€€€‚€€€Z0ƒ€Š5ƒ€ˆ€€€\ŽŸƒ€ý3ƒ€ˆ€€€tƒ€K%ƒ€ˆ€€€±7ƒ€wé‚€ˆ€€€š+ƒ€óƒ€ˆ€€€Óyƒ€%"ƒ€ˆ€€€Óyƒ€¥,ƒ€ˆ€€€1Bƒ€~)ƒ€ˆ€€€Z0ƒ€Š5ƒ€…€€€€€€€‚€€€\œ€€€¼aƒ€ü\‚€\‚³ƒ€Ìœƒ€€—ÿÿÿÿÿ€€€€@€€€‚€€€v\œƒ€Ìšƒ€ˆ€€€„\“ƒ€Lƒ€ˆ€€€¼bƒ€Y‘ƒ€ˆ€€€Écƒ€Í…ƒ€ˆ€€€ê¥ƒ€À„ƒ€ˆ€€€„\“ƒ€ü\Ÿ‚€ˆ€€€\‚²ƒ€4Žƒ€ˆ€€€B­ƒ€¿™ƒ€ˆ€€€v\œƒ€Ìšƒ€…€€€€€€€‚€€€¨€€€Bƒƒ€à\‹‚€\’\Šƒ€\\Ä‚€€—ÿÿÿÿÿ€€€€@€€€‚€€€B„ƒ€\\Â‚€ˆ€€€€†ƒ€\€·‚€ˆ€€€@.ƒ€`\˜‚€ˆ€€€\€!ƒ€€¬‚€ˆ€€€À\}ƒ€€¬‚€ˆ€€€\’\‰ƒ€à\‚€ˆ€€€l\†ƒ€ê¸‚€ˆ€€€À#ƒ€ê¸‚€ˆ€€€'—ƒ€\\Â‚€ˆ€€€B„ƒ€\\Â‚€…€€€€€€€‚€€€\œ€€€ÊMƒ€3c‚€¶¢ƒ€ý\Œ‚€€—ÿÿÿÿÿ€€€€@€€€‚€€€‘\”ƒ€ý\Š‚€ˆ€€€«\‹ƒ€\‹\‚€ˆ€€€ÊNƒ€\‹\‚€ˆ€€€"Vƒ€Œw‚€ˆ€€€„\“ƒ€Œw‚€ˆ€€€„\“ƒ€3e‚€ˆ€€€¶¡ƒ€~\€‚€ˆ€€€¶¡ƒ€ð\‰‚€ˆ€€€‘\”ƒ€ý\Š‚€…€€€€€€€‚€€€\œ€€€O„ƒ€™$€×;ƒ€;j€€—ÿÿÿÿÿ€€€€@€€€‚€€€O…ƒ€W@€ˆ€€€O…ƒ€\˜0€ˆ€€€Nšƒ€™&€ˆ€€€æ&ƒ€r-€ˆ€€€±7ƒ€™&€ˆ€€€×:ƒ€\ÿ.€ˆ€€€ô’ƒ€\‰D€ˆ€€€Í$ƒ€;h€ˆ€€€O…ƒ€W@€…€€€€€€€}
-{NoteSingle:D;O;1;1;3253;124;8;36;10720;8016;;;0;0;13369;13369}
+{NoteSingle:D;O;1;1;2664;130;8;36;10720;8016;;;0;0;13369;13369;10720;8016}
 {EndOfData}
-{CmdGroup:{ViewCreate:0;11200;13760;11184}{ViewControl:120;2;0;0;0;0;0;2048;0;2048}{CurrentPosition:3;5;1;3;0}}
+{CmdGroup:{ViewCreate:0;16944;27056;16416}{ViewControl:120;2;0;0;0;0;0;2048;0;2048}{CurrentPosition:0;0;;;0}}

@@ -635,7 +635,8 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
             status = STATUS_OK;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(status);

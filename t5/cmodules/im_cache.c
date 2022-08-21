@@ -197,6 +197,8 @@ image_cache_can_load(
 {
     switch(t5_filetype)
     {
+    case FILETYPE_PD_CHART:
+    case FILETYPE_T5_DRAW:
     case FILETYPE_DRAW:
     case FILETYPE_VECTOR:
     case FILETYPE_POSTER:
@@ -778,23 +780,23 @@ image_cache_ref(
     if(add_ref)
     {
         ++p_image_cache->refs;
-        trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs up to ") S32_TFMT, image_cache_handle, p_image_cache->refs);
+        trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs up to ") S32_TFMT, image_cache_handle, (S32) p_image_cache->refs);
     }
     else if(0 != p_image_cache->refs)
     {
         --p_image_cache->refs;
-        trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs down to ") S32_TFMT, image_cache_handle, p_image_cache->refs);
+        trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs down to ") S32_TFMT, image_cache_handle, (S32) p_image_cache->refs);
 
         if(0 == p_image_cache->refs)
         {
             if(!p_image_cache->no_autokill)
             {
-                trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs down to 0, so free diagram ") S32_TFMT TEXT(" (removing the entry)"), image_cache_handle, p_image_cache->h_data_draw);
+                trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs down to 0, so free diagram ") U32_TFMT TEXT(" (removing the entry)"), image_cache_handle, p_image_cache->h_data_draw);
                 image_cache_entry_remove(image_cache_handle);
             }
             else
             {
-                trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs down to 0, so free diagram ") S32_TFMT TEXT(" (leave the entry around)"), image_cache_handle, p_image_cache->h_data_draw);
+                trace_2(TRACE_MODULE_GR_CHART, TEXT("image_cache_ref: ") ENUM_XTFMT TEXT(" refs down to 0, so free diagram ") U32_TFMT TEXT(" (leave the entry around)"), image_cache_handle, p_image_cache->h_data_draw);
                 image_cache_entry_data_remove(p_image_cache);
             }
         }
@@ -846,7 +848,7 @@ image_cache_search(
     if(NULL != p_image_cache)
         h_data = fOriginal ? p_image_cache->h_data_original : p_image_cache->h_data_draw;
 
-    trace_1(TRACE_MODULE_GR_CHART, TEXT("image_cache_search yields %d"), h_data);
+    trace_1(TRACE_MODULE_GR_CHART, TEXT("image_cache_search yields handle " U32_TFMT), h_data);
     return(h_data);
 }
 
@@ -1034,13 +1036,15 @@ image_cache_process_loaded_or_embedded_data(
                 drawlength = n_bytes;
                 break;
 
+            case FILETYPE_PD_CHART:
+            case FILETYPE_T5_DRAW:
             case FILETYPE_DRAW:
             case FILETYPE_VECTOR:
             case FILETYPE_POSTER:
 #endif
                 /* round up size to be paranoid */
                 drawlength = round_up(n_bytes, 4);
-                assert(drawlength == n_bytes); /* should already be a multiple of 4 */ /* NB PipeDream chart files are not padded */
+                assert(drawlength == n_bytes); /* should already be a multiple of 4 */ /* NB older PipeDream chart files were not always padded */
                 break;
 
             case FILETYPE_BMP:
@@ -1080,7 +1084,7 @@ image_cache_process_loaded_or_embedded_data(
                 break;
             }
 
-            reportf(TEXT("image_cache_load: file length: ") U32_TFMT TEXT(", Draw file length: ") S32_TFMT, n_bytes, drawlength);
+            reportf(TEXT("image_cache_load: file length: ") U32_TFMT TEXT(", Draw file length: ") U32_TFMT, n_bytes, drawlength);
 
             if(NULL == (readp = al_array_alloc_BYTE(&p_image_cache->h_data_draw, drawlength, &array_init_block, &p_image_cache->error)))
                 break; /* out of loop */
@@ -1092,6 +1096,8 @@ image_cache_process_loaded_or_embedded_data(
             {
             default: default_unhandled();
 #if CHECKING
+            case FILETYPE_PD_CHART:
+            case FILETYPE_T5_DRAW:
             case FILETYPE_DRAW:
             case FILETYPE_VECTOR:
             case FILETYPE_POSTER:
@@ -1122,6 +1128,8 @@ image_cache_process_loaded_or_embedded_data(
             default:
                 break;
 
+            case FILETYPE_PD_CHART:
+            case FILETYPE_T5_DRAW:
             case FILETYPE_DRAW:
             case FILETYPE_VECTOR:
             case FILETYPE_POSTER:
@@ -1405,7 +1413,7 @@ image_cache_process_loaded_or_embedded_data(
                 { /* chuck away trailing sprites and reduce diagram size */
                 U32 required = object_offset + pSpriteObject->size;
                 S32 excess   = array_elements(&p_image_cache->h_data_draw) - (S32) required;
-                myassert2x(!excess, TEXT("about to strip ") S32_TFMT TEXT(" bytes after offset ") S32_TFMT TEXT(" in loaded sprite file"), excess, required);
+                myassert2x(!excess, TEXT("about to strip ") S32_TFMT TEXT(" bytes after offset ") U32_TFMT TEXT(" in loaded sprite file"), excess, required);
                 al_array_shrink_by(&p_image_cache->h_data_draw, -excess);
                 } /*block*/
 
@@ -1579,6 +1587,16 @@ image_cache_load_file_to_handle(
         /* what did we convert the file to? */
 #if RISCOS
         *p_t5_filetype = (T5_FILETYPE) file_get_risc_os_filetype(fin);
+
+        switch(*p_t5_filetype)
+        {   /* refine - side-effect is to mutate PipeDream chart to Draw file and then offers to save as such */
+        case FILETYPE_PIPEDREAM:
+            *p_t5_filetype = t5_filetype_from_data(array_basec(p_h_data, BYTE), n_bytes);
+            break;
+
+        default:
+            break;
+        }
 #endif
 
         break; /* end of loop for structure */

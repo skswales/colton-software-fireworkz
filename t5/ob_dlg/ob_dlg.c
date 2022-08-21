@@ -436,7 +436,8 @@ dialog_cmd_ctl_posn_query(
 
     switch(p_dialog_ictl->dialog_control_type)
     {
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
 
     /* add cases as required */
 
@@ -753,7 +754,8 @@ dialog_cmd_ctl_size_query(
 
     switch(p_dialog_ictl->dialog_control_type)
     {
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
 
     /* add cases as required */
 
@@ -822,7 +824,8 @@ dialog_cmd_ctl_state_query(
     {
         switch(p_dialog_ictl->dialog_control_type)
         {
-        default: default_unhandled(); break;
+        default: default_unhandled();
+            break;
 
         case DIALOG_CONTROL_LIST_S32:
         case DIALOG_CONTROL_LIST_TEXT:

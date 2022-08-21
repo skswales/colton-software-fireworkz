@@ -274,29 +274,29 @@ PROC_BSEARCH_PROTO(static, compare_slr, SLR_USE, SLR_USE)
 *
 ******************************************************************************/
 
-PROC_ELEMENT_DELETED_PROTO(static, deleted_custom)
+PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_custom)
 {
-    return(((PC_CUSTOM_USE) p_any)->flags.tobedel);
+    return(((PC_CUSTOM_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, deleted_event)
+PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_event)
 {
-    return(((PC_EVENT_USE) p_any)->flags.tobedel);
+    return(((PC_EVENT_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, deleted_name)
+PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_name)
 {
-    return(((PC_NAME_USE) p_any)->flags.tobedel);
+    return(((PC_NAME_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, deleted_range)
+PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_range)
 {
-    return(((PC_RANGE_USE) p_any)->flags.tobedel);
+    return(((PC_RANGE_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, deleted_slr)
+PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_slr)
 {
-    return(((PC_SLR_USE) p_any)->flags.tobedel);
+    return(((PC_SLR_USE) p_any)->flags.to_be_deleted);
 }
 
 /******************************************************************************
@@ -388,22 +388,22 @@ ev_add_ev_cell_to_tree(
     UBF by_index;
     UBF by_stop;
 
-    if(!p_ev_cell->parms.rpn_variable)
+    if(!p_ev_cell->ev_parms.rpn_variable)
         return(STATUS_OK);
 
-    for(by_index = 0, by_stop = p_ev_cell->parms.slr_n; status_ok(status) && by_index < by_stop; ++by_index)
+    for(by_index = 0, by_stop = p_ev_cell->ev_parms.slr_n; status_ok(status) && by_index < by_stop; ++by_index)
         status = add_slr_use((p_ev_slr_from_ev_cell(p_ev_cell, by_index)), p_ev_slr, by_index);
 
-    for(by_index = 0, by_stop = p_ev_cell->parms.range_n; status_ok(status) && by_index < by_stop; ++by_index)
+    for(by_index = 0, by_stop = p_ev_cell->ev_parms.range_n; status_ok(status) && by_index < by_stop; ++by_index)
         status = add_range_use((p_ev_range_from_ev_cell(p_ev_cell, by_index)), p_ev_slr, by_index);
 
-    for(by_index = 0, by_stop = p_ev_cell->parms.name_n; status_ok(status) && by_index < by_stop; ++by_index)
+    for(by_index = 0, by_stop = p_ev_cell->ev_parms.name_n; status_ok(status) && by_index < by_stop; ++by_index)
         status = add_name_use((p_ev_name_from_ev_cell(p_ev_cell, by_index)), p_ev_slr);
 
-    for(by_index = 0, by_stop = p_ev_cell->parms.custom_n; status_ok(status) && by_index < by_stop; ++by_index)
+    for(by_index = 0, by_stop = p_ev_cell->ev_parms.custom_n; status_ok(status) && by_index < by_stop; ++by_index)
         status = add_custom_use((p_ev_custom_from_ev_cell(p_ev_cell, by_index)), p_ev_slr);
 
-    for(by_index = 0, by_stop = p_ev_cell->parms.event_n; status_ok(status) && by_index < by_stop; ++by_index)
+    for(by_index = 0, by_stop = p_ev_cell->ev_parms.event_n; status_ok(status) && by_index < by_stop; ++by_index)
         status = add_event_use((p_ev_event_from_ev_cell(p_ev_cell, by_index)), p_ev_slr);
 
     if(status_ok(status))
@@ -613,7 +613,7 @@ tree_get_dependent_docs(
 
     for(i = 0; i < n_slrs; ++i, ++p_slr_use)
     {
-        if(!p_slr_use->flags.tobedel)
+        if(!p_slr_use->flags.to_be_deleted)
             (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_slr_use->slr_by));
     }
     } /*block*/
@@ -625,7 +625,7 @@ tree_get_dependent_docs(
 
     for(i = 0; i < n_ranges; ++i, ++p_range_use)
     {
-        if(!p_range_use->flags.tobedel)
+        if(!p_range_use->flags.to_be_deleted)
             (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_range_use->slr_by));
     }
     } /*block*/
@@ -640,17 +640,17 @@ tree_get_dependent_docs(
 
         for(i = 0; i < n_names; ++i, ++p_ev_name)
         {
-            if(!p_ev_name->flags.tobedel)
+            if(!p_ev_name->flags.to_be_deleted)
             {
-                switch(p_ev_name->def_data.did_num)
+                switch(ss_data_get_data_id(&p_ev_name->def_data))
                 {
-                case RPN_DAT_SLR:
+                case DATA_ID_SLR:
                     /* if name refers to this document */
                     if(ev_slr_docno(&p_ev_name->def_data.arg.slr) == ev_docno)
                         ensure_refs_to_name_in_list(p_docu_dep_sup, p_ev_name->handle);
                     break;
 
-                case RPN_DAT_RANGE:
+                case DATA_ID_RANGE:
                     /* if name refers to this document */
                     if(ev_slr_docno(&p_ev_name->def_data.arg.range.s) == ev_docno)
                         ensure_refs_to_name_in_list(p_docu_dep_sup, p_ev_name->handle);
@@ -672,7 +672,7 @@ tree_get_dependent_docs(
 
         for(i = 0; i < n_customs; ++i, ++p_custom_use)
         {
-            if(!p_custom_use->flags.tobedel)
+            if(!p_custom_use->flags.to_be_deleted)
             {
                 ARRAY_INDEX custom_num = custom_def_find(p_custom_use->custom_to);
 
@@ -720,7 +720,7 @@ tree_get_supporting_docs(
 
             for(i = 0; i < n_slrs; ++i, ++p_slr_use)
             {
-                if(p_slr_use->flags.tobedel)
+                if(p_slr_use->flags.to_be_deleted)
                     continue;
 
                 if(ev_slr_docno(&p_slr_use->slr_by) == ev_docno_in)
@@ -740,7 +740,7 @@ tree_get_supporting_docs(
 
                 for(i = 0; i < n_ranges; ++i, ++p_range_use)
                 {
-                    if(p_range_use->flags.tobedel)
+                    if(p_range_use->flags.to_be_deleted)
                         continue;
 
                     if(ev_slr_docno(&p_range_use->slr_by) == ev_docno_in)
@@ -768,7 +768,7 @@ tree_get_supporting_docs(
 
         for(i = 0; i < n_names; ++i, ++p_name_use)
         {
-            if(p_name_use->flags.tobedel)
+            if(p_name_use->flags.to_be_deleted)
                 continue;
 
             if(ev_slr_docno(&p_name_use->slr_by) == ev_docno_in)
@@ -779,13 +779,13 @@ tree_get_supporting_docs(
                 {
                     P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
 
-                    switch(p_ev_name->def_data.did_num)
+                    switch(ss_data_get_data_id(&p_ev_name->def_data))
                     {
-                    case RPN_DAT_SLR:
+                    case DATA_ID_SLR:
                         (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->def_data.arg.slr));
                         break;
 
-                    case RPN_DAT_RANGE:
+                    case DATA_ID_RANGE:
                         (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->def_data.arg.range.s));
                         break;
                     }
@@ -807,7 +807,7 @@ tree_get_supporting_docs(
 
         for(i = 0; i < n_customs; ++i, ++p_custom_use)
         {
-            if(p_custom_use->flags.tobedel)
+            if(p_custom_use->flags.to_be_deleted)
                 continue;
 
             if(ev_slr_docno(&p_custom_use->slr_by) == ev_docno_in)
@@ -834,13 +834,13 @@ tree_get_supporting_docs(
 ******************************************************************************/
 
 static S32 /* we delete any ? */
-tree_remove_tobedel(
+tree_remove_to_be_deleted(
     P_DEPTABLE p_deptable,
-    _InRef_     P_PROC_ELEMENT_DELETED p_proc_element_deleted)
+    _InRef_     P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted)
 {
     ARRAY_INDEX undeleted_elements;
 
-    if(p_deptable->flags.tobedel && (0 != (undeleted_elements = array_elements(&p_deptable->h_table))))
+    if(p_deptable->flags.to_be_deleted && (0 != (undeleted_elements = array_elements(&p_deptable->h_table))))
     {
         /* garbage collect deptable */
         AL_GARBAGE_FLAGS al_garbage_flags;
@@ -849,12 +849,12 @@ tree_remove_tobedel(
         al_garbage_flags.shrink = 1;
         al_garbage_flags.may_dispose = 1;
         al_array_auto_compact_set(&p_deptable->h_table);
-        consume(S32, al_array_garbage_collect(&p_deptable->h_table, p_deptable->mindel, p_proc_element_deleted, al_garbage_flags));
+        consume(S32, al_array_garbage_collect(&p_deptable->h_table, p_deptable->mindel, p_proc_element_is_deleted, al_garbage_flags));
 
         p_deptable->mindel = array_elements(&p_deptable->h_table);
         p_deptable->sorted -= undeleted_elements - array_elements(&p_deptable->h_table);
 
-        p_deptable->flags.tobedel = 0;
+        p_deptable->flags.to_be_deleted = 0;
         return(1);
     }
 
@@ -871,10 +871,10 @@ tree_remove_tobedel(
 extern S32 /* table was altered */
 tree_sort(
     P_DEPTABLE p_deptable,
-    _InRef_     P_PROC_ELEMENT_DELETED p_proc_element_deleted,
+    _InRef_     P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted,
     _InRef_opt_ P_PROC_BSEARCH p_proc_bsearch)
 {
-    S32 blown = tree_remove_tobedel(p_deptable, p_proc_element_deleted);
+    S32 blown = tree_remove_to_be_deleted(p_deptable, p_proc_element_is_deleted);
 
     if(p_deptable->sorted < array_elements(&p_deptable->h_table))
     {

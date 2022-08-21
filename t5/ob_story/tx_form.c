@@ -759,7 +759,8 @@ text_chunkify(
                     p_chunk->type = CHUNK_UTF8;
                     break;
 
-                default: default_unhandled(); break;
+                default: default_unhandled();
+                    break;
                 }
 
                 inline_advance(P_USTR_INLINE, ustr_inline);
@@ -1017,21 +1018,21 @@ text_from_field_uchars(
     case IL_DATE:
     case IL_FILE_DATE:
         {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         NUMFORM_PARMS numform_parms;
 
-        ev_data.did_num = RPN_DAT_DATE;
+        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
 
         if(IL_DATE == il_code)
-            ss_local_time_as_ev_date(&ev_data.arg.ev_date);
+            ss_local_time_to_ss_date(&ss_data.arg.ss_date);
         else
-            ev_data.arg.ev_date = p_docu->file_date;
+            ss_data.arg.ss_date = p_docu->file_ss_date;
 
         zero_struct(numform_parms);
         numform_parms.ustr_numform_datetime = inline_data_ptr(PC_USTR, uchars_inline);
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms)))
+        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
             quick_ublock_nullch_strip(p_quick_ublock);
         break;
         }
@@ -1039,21 +1040,21 @@ text_from_field_uchars(
     case IL_PAGE_X:
     case IL_PAGE_Y:
         {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         NUMFORM_PARMS numform_parms;
 
         if(IS_P_DATA_NONE(p_page_num))
-            ev_data_set_integer(&ev_data, 1);
+            ss_data_set_integer(&ss_data, 1);
         else if(IL_PAGE_Y == il_code)
-            ev_data_set_integer(&ev_data, page_number_from_page_y(p_docu, p_page_num->y) + 1);
+            ss_data_set_integer(&ss_data, page_number_from_page_y(p_docu, p_page_num->y) + 1);
         else /* IL_PAGE_X */
-            ev_data_set_integer(&ev_data, p_page_num->x + 1);
+            ss_data_set_integer(&ss_data, p_page_num->x + 1);
 
         zero_struct(numform_parms);
         numform_parms.ustr_numform_numeric = inline_data_ptr(PC_USTR, uchars_inline);
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms)))
+        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
             quick_ublock_nullch_strip(p_quick_ublock);
         break;
         }
@@ -1100,7 +1101,7 @@ text_from_field_uchars(
 
         ss_name_read.ev_handle = (EV_HANDLE) data_from_inline_s32(uchars_inline);
         ss_name_read.follow_indirection = 1;
-        ev_data_set_blank(&ss_name_read.ev_data);
+        ss_data_set_blank(&ss_name_read.ss_data);
 
         if(object_present(OBJECT_ID_SS)) /* SKS 27sep94 allow for no SS module but load file with duff fields */
             status = object_call_id(OBJECT_ID_SS, p_docu, T5_MSG_SS_NAME_READ, &ss_name_read);
@@ -1109,7 +1110,7 @@ text_from_field_uchars(
 
         if(status_fail(status))
         {
-            ev_data_set_error(&ss_name_read.ev_data, status);
+            ss_data_set_error(&ss_name_read.ss_data, status);
             status = STATUS_OK;
         }
 
@@ -1126,11 +1127,11 @@ text_from_field_uchars(
 
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_name_read.ev_data, &numform_parms)))
+        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_name_read.ss_data, &numform_parms)))
             quick_ublock_nullch_strip(p_quick_ublock);
         } /*block*/
 
-        ss_data_free_resources(&ss_name_read.ev_data);
+        ss_data_free_resources(&ss_name_read.ss_data);
 
         break;
         }
@@ -1154,7 +1155,8 @@ text_from_field_uchars(
         break;
         }
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     {
@@ -1427,7 +1429,8 @@ pending_tab_proc(
             break;
             }
 
-        default: default_unhandled(); break;
+        default: default_unhandled();
+            break;
         }
 
         /* now set width of original TAB chunk after calculation */
@@ -1565,7 +1568,8 @@ text_segment(
                                 pending_tab.chunk_type = p_chunk->type;
                                 break;
 
-                            default: default_unhandled(); break;
+                            default: default_unhandled();
+                                break;
                             }
                         }
 

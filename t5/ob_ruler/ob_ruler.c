@@ -3126,12 +3126,12 @@ ruler_show_status(
         status_break(status = quick_ublock_ustr_add(&quick_ublock, USTR_TEXT(": ")));
 
         {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         STATUS numform_resource_id;
         UCHARZ numform_unit_ustr_buf[elemof32("0.,####")];
         NUMFORM_PARMS numform_parms;
 
-        ev_data_set_real(&ev_data, /*FP_USER_UNIT*/ ((FP_PIXIT) value / p_drag_status->fp_pixits_per_unit));
+        ss_data_set_real(&ss_data, /*FP_USER_UNIT*/ ((FP_PIXIT) value / p_drag_status->fp_pixits_per_unit));
 
         switch(p_drag_status->unit_message)
         {
@@ -3151,7 +3151,7 @@ ruler_show_status(
         numform_parms.ustr_numform_numeric = ustr_bptr(numform_unit_ustr_buf);
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        status_break(status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+        status_break(status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
         } /*block*/
 
         PtrPutByteOff(quick_ublock_uchars_wr(&quick_ublock), quick_ublock_bytes(&quick_ublock)-1, CH_SPACE); /* replace CH_NULL */

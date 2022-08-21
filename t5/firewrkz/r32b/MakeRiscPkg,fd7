@@ -8,7 +8,7 @@
 | Copyright (C) 1998-2015 R W Colton
 
 Set t5$Release 2_22
-|Set t5$Release 2_22_04
+Set t5$Release 2_22_01
 
 Set t5$Disc $.Temp.Fire.Fireworkz_<t5$Release>
 Set t5$Zip  $.Temp.Fire.Fireworkz_<t5$Release>/zip
@@ -60,6 +60,7 @@ Set ap$Resource$Dir     <t5$Product$Dir>.resource.riscos
 | Language-independent
 %CDir                                               <t5$Disc>.Z.Resources.Neutral
 %Copy <t5$Resources$Dir>.Neutral.!Sprite            <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.BuildVer           <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
 %Copy <t5$Resources$Dir>.Neutral.ImageSlot          <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
 %Copy <t5$Resources$Dir>.Neutral.Loader             <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v
 %Copy <t5$Resources$Dir>.Neutral.PicConvert         <t5$Disc>.Z.Resources.Neutral.* ~rf~cln~v

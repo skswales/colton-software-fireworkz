@@ -110,7 +110,7 @@ ownform_finalise_save(
             status_assert(file_set_risc_os_filetype(p_of_op_format->output.u.file.file_handle, FILETYPE_DATA));
 #endif
 
-        status = file_close_date(&p_of_op_format->output.u.file.file_handle, &p_of_op_format->output.u.file.ev_date);
+        status = file_close_date(&p_of_op_format->output.u.file.file_handle, &p_of_op_format->output.u.file.ss_date);
     }
     else
     {
@@ -306,13 +306,13 @@ _Check_return_
 static STATUS
 ownform_save_string_f64(
     _InoutRef_  P_OF_OP_FORMAT p_of_op_format,
-    _InRef_     PC_F64 p_f64)
+    _InVal_     F64 f64)
 {
     char stringbuf[OF_DATA_MAX_BUF];
     int n;
 
 __pragma(warning(push)) __pragma(warning(disable:4996)) /* This function or variable may be unsafe */
-    n = sprintf(stringbuf, F64_FMT, *p_f64);
+    n = sprintf(stringbuf, F64_FMT, f64);
 __pragma(warning(pop))
 
     if(n <= 0)
@@ -734,7 +734,7 @@ ownform_save_arglist(
         switch(p_arg->type & ARG_TYPE_MASK)
         {
         default:
-            myassert2(TEXT("Unknown data type ") S32_TFMT TEXT(" in arglist for %s"), p_arg->type, report_sbstr(p_construct_table->a7str_construct_name));
+            myassert2(TEXT("Unknown data type ") S32_TFMT TEXT(" in arglist for %s"), (S32) p_arg->type, report_sbstr(p_construct_table->a7str_construct_name));
             status = STATUS_OK;
             break;
 
@@ -775,7 +775,7 @@ ownform_save_arglist(
             break;
 
         case ARG_TYPE_F64:
-            status = ownform_save_string_f64(p_of_op_format, &p_arg->val.f64);
+            status = ownform_save_string_f64(p_of_op_format, p_arg->val.f64);
             break;
 
         case ARG_TYPE_RAW:

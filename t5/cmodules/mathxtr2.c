@@ -267,7 +267,7 @@ linest(
 
         /* output the result vector */
         for(i = 0; i < m; ++i)
-            if(status_fail(put_status = (* p_proc_put) (client_handle, LINEST_A_COLOFF, i, &X[i])))
+            if(status_fail(put_status = (* p_proc_put) (client_handle, LINEST_A_COLOFF, i, X[i])))
                 if(status_ok(status))
                     status = put_status;
                 /* but keep looping anyway? */

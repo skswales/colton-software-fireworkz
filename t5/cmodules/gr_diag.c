@@ -158,7 +158,7 @@ gr_diag_create_riscdiag(
     ARRAY_HANDLE font_table_array_handleW;
     STATUS status;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_create_riscdiag has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_create_riscdiag has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     gr_riscdiag_diagram_dispose(&p_gr_diag->p_gr_riscdiag);
 
@@ -195,7 +195,7 @@ gr_diag_create_riscdiag_between(
     const GR_DIAG_OFFSET endObject = gr_diag_normalise_end(p_gr_diag, endObject_in);
     STATUS status = STATUS_OK;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_create_riscdiag_between has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_create_riscdiag_between has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     while(thisObject < endObject)
     {
@@ -378,7 +378,7 @@ gr_diag_create_riscdiag_between(
             draw_point_from_gr_point(&draw_point, &pie.pos);
             draw_radius = gr_riscDraw_from_pixit(pie.radius);
 
-            status = gr_riscdiag_piesector_new(p_gr_riscdiag, &objhdr.sys_off, &draw_point, draw_radius, &pie.alpha, &pie.beta, &pie.linestyle, &pie.fillstylec);
+            status = gr_riscdiag_piesector_new(p_gr_riscdiag, &objhdr.sys_off, &draw_point, draw_radius, pie.alpha, pie.beta, &pie.linestyle, &pie.fillstylec);
 
             break;
             }
@@ -693,7 +693,7 @@ gr_diag_create_riscdiag_font_tables_between(
     *p_array_handleR = 0;
     *p_array_handleW = 0;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_create_riscdiag_between has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_create_riscdiag_between has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     /* first add font table entries for all text objects */
     if(gr_diag_object_first(p_gr_diag, &thisObject, &endObject, &pObject))
@@ -803,7 +803,7 @@ gr_diag_diagram_end(
 {
     GR_DIAG_PROCESS_T process;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_diagram_end has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_diagram_end has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     /* kill old one */
     gr_riscdiag_diagram_dispose(&p_gr_diag->p_gr_riscdiag);
@@ -919,7 +919,7 @@ gr_diag_object_base_size(
         return(sizeof32(GR_DIAG_OBJPICTURE));
 
     default:
-        myassert1(TEXT("gr_diag_object_base_size of objectType ") S32_TFMT, objectType);
+        myassert1(TEXT("gr_diag_object_base_size of objectType ") U32_TFMT, objectType);
         return(sizeof32(GR_DIAG_OBJHDR));
     }
 }
@@ -951,7 +951,7 @@ gr_diag_object_correlate_between(
     /* always say nothing hit at this level so caller can scan hitObject list and find a terminator */
     pHitObject[0] = GR_DIAG_OBJECT_NONE;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_correlate_between has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_correlate_between has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     /* start with current object off end of range */
     thisObject = endObject;
@@ -1059,7 +1059,7 @@ gr_diag_object_end(
     P_BYTE pObject;
     U32 n_bytes;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_end has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_end has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     pObject = array_ptr(&p_gr_diag->handle, BYTE, *pObjectStart);
 
@@ -1146,7 +1146,7 @@ gr_diag_object_new(
     *DIAG_OBJHDR(U32, pObject_in, n_bytes) = allocBytes;
     gr_box_make_bad(PtrAddBytes(P_GR_BOX, pObject_in, offsetof32(GR_DIAG_OBJHDR, bbox))); /* everything has bbox */
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_new has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_new has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     if(NULL != pObjectStart)
         *pObjectStart = array_elements32(&p_gr_diag->handle);
@@ -1224,7 +1224,7 @@ gr_diag_object_reset_bbox_between(
     const GR_DIAG_OFFSET endObject = gr_diag_normalise_end(p_gr_diag, endObject_in);
     P_BYTE pObject;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_reset_bbox_between has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_reset_bbox_between has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     /* loop over constituent objects and extract bbox */
 
@@ -1334,7 +1334,7 @@ gr_diag_object_search_between(
     P_BYTE pObject;
     GR_DIAG_OFFSET hitObject = GR_DIAG_OBJECT_NONE;
 
-    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_search_between has no diagram ") PTR_XTFMT TEXT("->") S32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
+    myassert2x(p_gr_diag && p_gr_diag->handle, TEXT("gr_diag_object_search_between has no diagram ") PTR_XTFMT TEXT("->") U32_TFMT, p_gr_diag, p_gr_diag ? p_gr_diag->handle : 0);
 
     /* loop over constituent objects */
 
@@ -1606,8 +1606,8 @@ gr_diag_piesector_new(
     _InVal_     GR_DIAG_OBJID_T objid,
     _InRef_     PC_GR_POINT pPos,
     _InVal_     GR_PIXIT radius,
-    _InRef_     PC_F64 alpha,
-    _InRef_     PC_F64 beta,
+    _InVal_     F64 alpha,
+    _InVal_     F64 beta,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec)
 {
@@ -1619,8 +1619,8 @@ gr_diag_piesector_new(
     pie.pos = *pPos;
 
     pie.radius = radius;
-    pie.alpha = *alpha;
-    pie.beta = *beta;
+    pie.alpha = alpha;
+    pie.beta = beta;
 
     pie.linestyle = *linestyle;
     pie.fillstylec = *fillstylec;
@@ -1633,8 +1633,8 @@ static BOOL
 piesector_hit(
     _InRef_     PC_GR_POINT pPos,
     _InVal_     GR_PIXIT radius,
-    _InRef_     PC_F64 alpha,
-    _InRef_     PC_F64 beta,
+    _InVal_     F64 alpha,
+    _InVal_     F64 beta,
     _InRef_     PC_GR_POINT point)
 {
     const GR_PIXIT dx = point->x - pPos->x;
@@ -1649,10 +1649,10 @@ piesector_hit(
 
     {
     F64 theta = atan2(dy, dx);
-    assert(*alpha <= *beta);
+    assert(alpha <= beta);
 
-    /*reportf(TEXT("piesector_hit 1: test %g < %g < %g"), *alpha, theta, *beta);*/
-    if((theta >= *alpha) && (theta <= *beta))
+    /*reportf(TEXT("piesector_hit 1: test %g < %g < %g"), alpha, theta, beta);*/
+    if( (theta >= alpha) && (theta <= beta) )
         return(TRUE);
 
     if(theta < 0.0)
@@ -1664,8 +1664,8 @@ piesector_hit(
         theta -= _two_pi;
     }
 
-    /*reportf(TEXT("piesector_hit 2: test %g < %g < %g"), *alpha, theta, *beta);*/
-    if((theta >= *alpha) && (theta <= *beta))
+    /*reportf(TEXT("piesector_hit 2: test %g < %g < %g"), alpha, theta, beta);*/
+    if( (theta >= alpha) && (theta <= beta) )
         return(TRUE);
     } /*block*/
 
@@ -1681,7 +1681,7 @@ gr_diag_piesector_hit_refine(
 {
     UNREFERENCED_PARAMETER_InRef_(size);
 
-    return(piesector_hit(&pie->pos, pie->radius, &pie->alpha, &pie->beta, point));
+    return(piesector_hit(&pie->pos, pie->radius, pie->alpha, pie->beta, point));
 }
 
 _Check_return_

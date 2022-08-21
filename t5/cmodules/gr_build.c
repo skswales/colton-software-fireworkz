@@ -436,7 +436,7 @@ gr_chart_diagram(
 
 /******************************************************************************
 *
-* propogate damage from datasources and
+* propagate damage from datasources and
 * user modifications into chart, both in
 * editing window (if present) and to disc
 * (if present) for client reload

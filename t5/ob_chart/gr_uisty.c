@@ -697,7 +697,7 @@ style_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { FRAME
 static const DIALOG_CONTROL
 style_line_line[7] =
 {
-    { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_PATTERN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },  { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ } },
+    { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_PATTERN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },  { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ } },
     { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
     { STYLE_ID_LINE_LINE_2, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
     { STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF, STYLE_ID_LINE_LINE_0 },  { 0, 0, LINE_STYLE_H, 0 }, { DRT(RTLB, RADIOPICTURE) } },
@@ -736,7 +736,7 @@ style_line_thickness =
     STYLE_ID_LINE_THICKNESS, STYLE_ID_LINE_PATTERN_GROUP,
     { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_6 },
     { 0, DIALOG_STDSPACING_V, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(LBLT, BUMP_F64), 1 /*tabstop*/ }
+    { DRT(LBLT, BUMP_F64), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static /*poked*/ UI_CONTROL_F64
@@ -824,8 +824,8 @@ dialog_style_line_process_start(
     /*status_return(ui_dlg_set_check_forcing(p_dialog_msg_process_start->h_dialog, DIALOG_ID_RGB_AUTOMATIC, !gr_linestyle.fg.manual));*/
 
     { /* translate in UI to what punter expects to see, in this case points, not pixits or units */
-    F64 f64 = ((FP_PIXIT) p_flt_callback->gr_linestyle.width) / PIXITS_PER_POINT;
-    status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_LINE_THICKNESS, &f64));
+    const F64 f64 = ((FP_PIXIT) p_flt_callback->gr_linestyle.width) / PIXITS_PER_POINT;
+    status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_LINE_THICKNESS, f64));
     } /*block*/
 
     status_return(ui_dlg_set_radio(p_dialog_msg_process_start->h_dialog, STYLE_ID_LINE_PATTERN_GROUP, (S32) p_flt_callback->gr_linestyle.pattern));
@@ -856,10 +856,9 @@ dialog_style_line_process_end(
         p_flt_callback->gr_linestyle.fg.visible = !ui_dlg_get_check(p_dialog_msg_process_end->h_dialog, DIALOG_ID_RGB_T);
 
         { /* translate from what punter expects to see, in this case points, not pixits or units */
-        F64 multiplier = PIXITS_PER_POINT;
-        F64 f64;
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_LINE_THICKNESS, &f64);
-        p_flt_callback->gr_linestyle.width = ui_dlg_s32_from_f64(&f64, &multiplier, 0, LINE_THICKNESS_MAX_VAL * PIXITS_PER_POINT);
+        const F64 multiplier = PIXITS_PER_POINT;
+        const F64 f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_LINE_THICKNESS);
+        p_flt_callback->gr_linestyle.width = ui_dlg_s32_from_f64(f64 * multiplier, 0, LINE_THICKNESS_MAX_VAL * PIXITS_PER_POINT);
         } /*block*/
 
         p_flt_callback->gr_linestyle.pattern = (GR_LINE_PATTERN) ui_dlg_get_radio(p_dialog_msg_process_end->h_dialog, STYLE_ID_LINE_PATTERN_GROUP);
@@ -1202,9 +1201,9 @@ dialog_style_text_process_start(
     { /* translate in UI to what punter expects to see, in this case points, not pixits or units */
     F64 f64;
     f64 = ((FP_PIXIT) p_flt_callback->gr_textstyle.size_y) / PIXITS_PER_POINT;
-    status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_TEXT_HEIGHT, &f64));
+    status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_TEXT_HEIGHT, f64));
     f64 = ((FP_PIXIT) p_flt_callback->gr_textstyle.size_x) / PIXITS_PER_POINT;
-    status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_TEXT_WIDTH, &f64));
+    status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_TEXT_WIDTH, f64));
     }
 
     p_flt_callback->rgb_modified = 0;
@@ -1257,12 +1256,12 @@ dialog_style_text_process_end(
         p_flt_callback->gr_textstyle.italic = ui_dlg_get_check(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_ITALIC);
 
         { /* translate from what punter expects to see, in this case points, not pixits or units */
-        F64 multiplier = PIXITS_PER_POINT;
+        const F64 multiplier = PIXITS_PER_POINT;
         F64 f64;
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_HEIGHT, &f64);
-        p_flt_callback->gr_textstyle.size_y = (PIXIT) ui_dlg_s32_from_f64(&f64, &multiplier, 1 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_WIDTH, &f64);
-        p_flt_callback->gr_textstyle.size_x = (PIXIT) ui_dlg_s32_from_f64(&f64, &multiplier, 0 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
+        f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_HEIGHT);
+        p_flt_callback->gr_textstyle.size_y = (PIXIT) ui_dlg_s32_from_f64(f64 * multiplier, 1 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
+        f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_WIDTH);
+        p_flt_callback->gr_textstyle.size_x = (PIXIT) ui_dlg_s32_from_f64(f64 * multiplier, 0 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
         } /*block*/
 
         status_return(gr_chart_objid_textstyle_set(p_gr_chart_from_chart_handle(p_flt_callback->p_chart_header->ch), p_flt_callback->id, &p_flt_callback->gr_textstyle));
@@ -1661,26 +1660,26 @@ dialog_chart_margins_process_start(
 
     if(status_ok(status))
     {
-        F64 f64 = cp->core.layout.margins.top   / chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit;
-        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_TOP, &f64);
+        const F64 f64 = cp->core.layout.margins.top   / chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit;
+        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_TOP, f64);
     }
 
     if(status_ok(status))
     {
-        F64 f64 = cp->core.layout.margins.bottom / chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit;
-        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_BOTTOM, &f64);
+        const F64 f64 = cp->core.layout.margins.bottom / chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit;
+        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_BOTTOM, f64);
     }
 
     if(status_ok(status))
     {
-        F64 f64 = cp->core.layout.margins.left   / chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit;
-        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_LEFT, &f64);
+        const F64 f64 = cp->core.layout.margins.left   / chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit;
+        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_LEFT, f64);
     }
 
     if(status_ok(status))
     {
-        F64 f64 = cp->core.layout.margins.right  / chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit;
-        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_RIGHT, &f64);
+        const F64 f64 = cp->core.layout.margins.right  / chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit;
+        status = ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, CHART_ID_MARGIN_RIGHT, f64);
     }
 
     return(status);
@@ -1697,14 +1696,14 @@ dialog_chart_margins_process_end(
         const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_margins_callback->p_chart_header->ch); /* paranoia */
         F64 f64;
 
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_TOP, &f64);
-        cp->core.layout.margins.top    = ui_dlg_s32_from_f64(&f64, &chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_BOTTOM, &f64);
-        cp->core.layout.margins.bottom = ui_dlg_s32_from_f64(&f64, &chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_LEFT, &f64);
-        cp->core.layout.margins.left   = ui_dlg_s32_from_f64(&f64, &chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
-        ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_RIGHT, &f64);
-        cp->core.layout.margins.right  = ui_dlg_s32_from_f64(&f64, &chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
+        f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_TOP);
+        cp->core.layout.margins.top    = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
+        f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_BOTTOM);
+        cp->core.layout.margins.bottom = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
+        f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_LEFT);
+        cp->core.layout.margins.left   = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
+        f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_RIGHT);
+        cp->core.layout.margins.right  = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
 
         chart_modify_docu(p_chart_margins_callback->p_chart_header);
     }

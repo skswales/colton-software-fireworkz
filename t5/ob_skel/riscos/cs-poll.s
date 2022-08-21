@@ -12,8 +12,8 @@
 ; Automagically does hourglass off/on on entry/exit
 
         GET     as_flags_h
-
-        ;GET     as_regs_h
+        GET     Hdr:ListOpts
+        GET     Hdr:APCS.APCS-32
         GET     as_macro_h
 
 XOS_Bit                 * 1 :SHL: 17
@@ -119,7 +119,7 @@ wimp_poll_coltsoft_common_exit ; comes here from below too
 
         MOV     r0, v1                      ; restore error^ or zero
 
-        FunctionReturn "v1,v2,v3","fpbased"
+        Return "v1,v2,v3","fpbased"
 
 wimp_poll_coltsoft_auto_pollidle ; branched here from null event mask case of above
 

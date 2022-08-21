@@ -420,6 +420,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_arith.c" />
     <ClCompile Include="..\..\cmodules\riscos\myrand.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
@@ -430,6 +431,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\mathxcpx.c" />
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
@@ -1119,6 +1121,7 @@
     <ClCompile Include="..\..\ob_skel\ui_misc.c" />
     <ClCompile Include="..\..\ob_skel\ui_page.c" />
     <ClCompile Include="..\..\ob_skel\ui_save.c" />
+    <ClCompile Include="..\..\ob_skel\version.c" />
     <ClCompile Include="..\..\ob_skel\vi_cmd.c" />
     <ClCompile Include="..\..\ob_skel\view.c" />
     <ClCompile Include="..\..\cmodules\xstring.c" />
@@ -1349,6 +1352,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\fprowrkz\ob_rec\resource\resource.h" />
+    <ClInclude Include="..\..\cmodules\mathxcpx.h" />
     <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1704,6 +1708,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\ob_skel\version.h" />
     <ClInclude Include="..\..\ob_skel\vi_edge.h" />
     <ClInclude Include="..\..\ob_skel\xp_skel.h" />
     <ClInclude Include="..\..\ob_skel\xp_skeld.h" />
@@ -2292,6 +2297,18 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_AVG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELI.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELJ.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELK.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELY.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BETA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2523,6 +2540,9 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DEG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DELTA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DEREF.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2557,6 +2577,12 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DVARP.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERF.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERFC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_EVEN.htm">
@@ -2599,6 +2625,9 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GEOMEAN.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GESTEP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GRAND.htm">

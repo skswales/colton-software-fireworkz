@@ -476,7 +476,7 @@ extern _kernel_oserror *
 wimp_reporterror_rf(
     _In_        _kernel_oserror * e,
     _InVal_     int errflags_in,
-    _Out_       int * const errflags_out,
+    _Out_       int * const p_button_clicked,
     _In_opt_z_  const char * message,
     _InVal_     int error_level);
 

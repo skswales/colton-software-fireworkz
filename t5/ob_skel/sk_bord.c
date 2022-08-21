@@ -1135,15 +1135,15 @@ border_horz_redraw(
                 if(NULL != ustrchr(ustr_numform, CH_NUMBER_SIGN))
                 {
                     NUMFORM_PARMS numform_parms;
-                    EV_DATA ev_data;
+                    SS_DATA ss_data;
 
-                    ev_data_set_integer(&ev_data, (S32) p_col_info->col + 1);
+                    ss_data_set_integer(&ss_data, (S32) p_col_info->col + 1);
 
                     zero_struct(numform_parms);
                     numform_parms.ustr_numform_numeric = ustr_numform;
                     numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-                    status_assert(status = numform(&numform_res, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+                    status_assert(status = numform(&numform_res, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
                     ustr_numform_res = quick_ublock_ustr(&numform_res);
                 }
@@ -1997,7 +1997,7 @@ border_vert_redraw(
         STYLE style;
         STYLE_SELECTOR selector;
         SLR slr;
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         NUMFORM_PARMS numform_parms;
         PC_USTR ustr_numform;
         QUICK_UBLOCK_WITH_BUFFER(numform_res_quick_ublock, 16);
@@ -2011,7 +2011,7 @@ border_vert_redraw(
         slr.col = p_docu->cur.slr.col;
         style_from_slr(p_docu, &style, &selector, &slr);
 
-        ev_data_set_integer(&ev_data, (S32) row_index + 1);
+        ss_data_set_integer(&ss_data, (S32) row_index + 1);
 
         zero_struct(numform_parms);
 
@@ -2024,7 +2024,7 @@ border_vert_redraw(
 
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        status_assert(status = numform(&numform_res_quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+        status_assert(status = numform(&numform_res_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
         ustr_numform = quick_ublock_ustr(&numform_res_quick_ublock);
 
@@ -2774,12 +2774,12 @@ border_show_status(
         status_break(status = quick_ublock_ustr_add(&quick_ublock, USTR_TEXT(": ")));
 
         {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         STATUS numform_resource_id;
         UCHARZ numform_unit_ustr_buf[sizeof32("0.,####")];
         NUMFORM_PARMS numform_parms;
 
-        ev_data_set_real(&ev_data, /*FP_USER_UNIT*/ ((FP_PIXIT) value / p_drag_status->fp_pixits_per_unit));
+        ss_data_set_real(&ss_data, /*FP_USER_UNIT*/ ((FP_PIXIT) value / p_drag_status->fp_pixits_per_unit));
 
         switch(p_drag_status->unit_message)
         {
@@ -2799,7 +2799,7 @@ border_show_status(
         numform_parms.ustr_numform_numeric = ustr_bptr(numform_unit_ustr_buf);
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-        status_break(status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+        status_break(status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
         } /*block*/
 
         PtrPutByteOff(quick_ublock_uchars_wr(&quick_ublock), quick_ublock_bytes(&quick_ublock)-1, CH_SPACE); /* replace CH_NULL */

@@ -106,6 +106,9 @@ $(PROD_BUILD_DIR).!$(APPL).Info: $(T5).resource.TestInfo
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.!Sprite: $(PROD_SOURCE_DIR).resource.riscos.Neutral.!Sprite
  Copy $? $@ ~C FV
 
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.BuildVer: $(BUILD_DIR).ob_skel.o.version
+ DecAOF -a $? > $@
+ 
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.ImageSlot: $(T5).resource.riscos.Neutral.ImageSlot
  Copy $? $@ ~C FV
 
@@ -115,7 +118,7 @@ $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Loader: $(T5).resource.riscos.Neutr
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.PicConvert: $(T5).resource.riscos.Neutral.PicConvert
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Stubs: $(PROD_BUILD_DIR).binaries.Neutral.stubs
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Stubs: $(PROD_BUILD_DIR).binaries.Neutral.Stubs
  Copy $? $@ ~C FV
 
 $(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Help.Text: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Help.Text

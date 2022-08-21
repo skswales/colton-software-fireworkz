@@ -716,7 +716,7 @@ skel_col_enum_cache_check(
     return(0);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, col_enum_cache_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, col_enum_cache_deleted)
 {
     return(!((PC_COL_ENUM_CACHE) p_any)->used);
 }

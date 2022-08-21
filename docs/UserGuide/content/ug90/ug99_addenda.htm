@@ -39,7 +39,7 @@
         you may wish to set this option if you regularly modify spreadsheets on which other documents depend without having those dependent documents loaded.
         The default is off, which allows Fireworkz to simply use the recalculated values stored in the document when it was last saved.
         Certain spreadsheet functions always force recalculation of themselves (and their dependent cells)
-        on reload in any case (the GRAND(), INPUT(), NOW(), PAGE(), PAGES() and RAND() spreadsheet functions).
+        on reload in any case (the GRAND(), INPUT(), NOW(), PAGE(), PAGES(), RAND(), RANDBETWEEN(), TODAY() and VERSION() spreadsheet functions).
         Charts always recalculate in any case as the picture is not stored with the document.
     </p>
 
@@ -149,6 +149,12 @@
         may be completely suppressed by deselecting the option in the Choices dialogue box.
     </p>
 
+    <p>
+        Starting with 2.10, spreadsheet functions that take date parameters have been extended to accept numeric input.
+        If a number is supplied where a date is required, it is treated as an OpenDocument / Microsoft Excel-compatible serial number and converted to a date value.
+        This allows data sets containing such numeric values to be more easily processed in Fireworkz.
+    </p>
+
     <h3>Date and time functions</h3>
 
     <h4>TIMEVALUE</h4>
@@ -213,13 +219,13 @@
     <h4>INT</h4>
 
     <p>
-        Starting with 2.00, this function will return a (largely) Microsoft Excel-compatible serial number when passed a
+        Starting with 2.00, this function will return an OpenDocument / Microsoft Excel-compatible serial number when passed a
         <span class="csg-function-parameter">date</span> parameter. Previously this would have given an error.
     </p>
 
     <p>
-        The conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Excel.<br />
-        Earlier dates in 1900 do not match as Microsoft Excel incorrectly believes 1900 to be a leap year.<br />
+        The conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Microsoft Excel.<br />
+        Earlier dates in 1900 do not match in Microsoft Excel as that incorrectly believes 1900 to be a leap year.<br />
         Unlike Microsoft Excel, Fireworkz can also yield serial numbers for dates before 1900.
     </p>
 
@@ -350,9 +356,9 @@
     <h3>Engineering compatibility functions</h3>
 
     <h4>
-        ODF.COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">text</span>})
+        ODF.COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">Text</span>})
     </h4>
 
     <p>As Fireworkz C_COMPLEX() but always produces an OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</p>
@@ -534,9 +540,9 @@
     <h3>Financial compatibility functions</h3>
 
     <h4>
-        ODF.FV(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">nper</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">pmt</span>:<span class="csg-function-parameter-type">number</span>)
+        ODF.FV(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">nper</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">pmt</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>As Fireworkz FV() but with different parameter list order and sign of result.</p>
@@ -547,8 +553,8 @@
 
 
     <h4>
-        ODF.IRR(<span class="csg-function-parameter">cashflows</span>:<span class="csg-function-parameter-type">array</span>
-        {,&nbsp;<span class="csg-function-parameter">guess</span>:<span class="csg-function-parameter-type">number</span>})
+        ODF.IRR(<span class="csg-function-parameter">cashflows</span>:<span class="csg-function-parameter-type">Array</span>
+        {,&nbsp;<span class="csg-function-parameter">guess</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>As Fireworkz IRR() but with different parameter list order and optional guess parameter.</p>
@@ -559,9 +565,9 @@
 
 
     <h4>
-        ODF.PMT(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">nper</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">pv</span>:<span class="csg-function-parameter-type">number</span>)
+        ODF.PMT(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">nper</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">pv</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>As Fireworkz PMT() but with different parameter list order and sign of result.</p>
@@ -580,7 +586,7 @@
     <ul>
         <li>1 = Number (includes dates and blank cells)</li>
         <li>2 = Text</li>
-        <li>4 = Boolean value</li>
+        <li>4 = Logical value</li>
         <li>16 = Error</li>
         <li>64 = Array</li>
     </ul>
@@ -593,12 +599,12 @@
     <h3>Statistical compatibility functions</h3>
 
     <h4>
-        ODF.BETADIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>}}})
+        ODF.BETADIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>}}})
     </h4>
 
     <p>
@@ -639,16 +645,16 @@
     <h2>Date and time spreadsheet functions added since documentation printed</h2>
 
     <h4>
-        DAYS_360(<span class="csg-function-parameter">start:<span class="csg-function-parameter-type">date</span></span>,
-        <span class="csg-function-parameter">end:<span class="csg-function-parameter-type">date</span></span>
-        {,&nbsp;<span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">number</span>})
+        DAYS_360(<span class="csg-function-parameter">start:<span class="csg-function-parameter-type">Date</span></span>,
+        <span class="csg-function-parameter">end:<span class="csg-function-parameter-type">Date</span></span>
+        {,&nbsp;<span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>This function returns the number of days between the given dates according to the desired 360-day calendar method.</p>
 
     <ul>
-        <li><span class="csg-function-parameter">method</span> = 1 - European Method (recommended for consistent results)</li>
-        <li><span class="csg-function-parameter">method</span> = 0 - US/NASD Method (30US/360) (this is the default if omitted)</li>
+        <li><span class="csg-function-parameter">method</span> = TRUE - European Method (recommended for consistent results)</li>
+        <li><span class="csg-function-parameter">method</span> = FALSE - US/NASD Method (30US/360) (this is the default if omitted)</li>
     </ul>
 
     <p>See http://en.wikipedia.org/wiki/360-day_calendar.</p>
@@ -667,10 +673,12 @@
 
     <h2>Engineering spreadsheet functions added since documentation printed</h2>
 
+    <h3>Complex number functions</h3>
+
     <h4>
-        C_COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">text</span>})
+        C_COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">Text</span>})
     </h4>
 
     <p>
@@ -714,7 +722,7 @@
 
     <h4>
         C_ROUND(<span class="csg-function-parameter">complex_number</span>
-        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>})
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>Separately rounds the components of <span class="csg-function-parameter">complex_number</span> to <span class="csg-function-parameter">digits</span> decimal places.</p>
@@ -735,11 +743,125 @@
     <p>See <a href="sg06/sg6_C_SQRT.htm">C_SQRT</a>.</p>
 
 
+    <h3>Miscellaneous engineering functions</h3>
+
+    <h4>
+        BESSELI(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">n</span>-th order modified Bessel function of the first kind.
+        I<span class="csg-function-parameter">n</span>(<span class="csg-function-parameter">x</span>).
+    </p>
+
+    <p>This function was added in 2.00.</p>
+ 
+    <p>See <a href="sg06/sg6_BESSELI.htm">BESSELI</a>.</p>
+ 
+ 
+    <h4>
+        BESSELJ(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>)
+    </h4>
+ 
+    <p>
+        Returns the <span class="csg-function-parameter">n</span>-th order Bessel function of the first kind.
+        J<span class="csg-function-parameter">n</span>(<span class="csg-function-parameter">x</span>).
+    </p>
+ 
+    <p>This function was added in 2.00.</p>
+ 
+    <p>See <a href="sg06/sg6_BESSELJ.htm">BESSELJ</a>.</p>
+ 
+    <h4>
+        BESSELK(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">n</span>-th order modified Bessel function of the second kind.
+        K<span class="csg-function-parameter">n</span>(<span class="csg-function-parameter">x</span>).
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_BESSELK.htm">BESSELK</a>.</p>
+
+
+    <h4>
+        BESSELY(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>)
+    </h4>
+
+    <p>
+        Returns the <span class="csg-function-parameter">n</span>-th order Bessel function of the second kind.
+        Y<span class="csg-function-parameter">n</span>(<span class="csg-function-parameter">x</span>).
+    </p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_BESSELY.htm">BESSELY</a>.</p>
+
+
+    <h4>
+        DELTA(<span class="csg-function-parameter">number_1</span>
+        {,&nbsp;<span class="csg-function-parameter">number_2</span>})
+    </h4>
+
+    <p>Returns the value 1 if <span class="csg-function-parameter">number_1</span> == <span class="csg-function-parameter">number_2</span>, else 0.</p>
+
+    <p>If <span class="csg-function-parameter">number_2</span> is omitted, 0 is used.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_DELTA.htm">DELTA</a>.</p>
+
+
+    <h4>
+        ERF(<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">Number</span>,
+        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Returns the error function integrated between zero and a limit value, or between a lower limit and an optional upper limit.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ERF.htm">ERF</a>.</p>
+
+
+    <h4>
+        ERFC(<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">Number</span>)
+    </h4>
+
+    <p>Returns the complementary error function integrated between a lower limit and +infinity.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_ERFC.htm">ERFC</a>.</p>
+
+
+    <h4>
+        GESTEP(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">step</span>:<span class="csg-function-parameter-type">Number</span>)
+    </h4>
+
+    <p>
+        Returns the value 1 if a <span class="csg-function-parameter">number</span> is greater than, or equal to, the <span class="csg-function-parameter">step</span> value, else 0.
+    </p>
+
+    <p>If <span class="csg-function-parameter">step</span> is omitted, 0 is used.</p>
+
+    <p>This function was added in 2.00.</p>
+
+    <p>See <a href="sg06/sg6_GESTEP.htm">GESTEP</a>.</p>
+
+
     <h2>Financial spreadsheet functions added since documentation printed</h2>
 
     <h4>
-        FVSCHEDULE(<span class="csg-function-parameter">principal</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">rates</span>:<span class="csg-function-parameter-type">array</span>)
+        FVSCHEDULE(<span class="csg-function-parameter">principal</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">rates</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>Calculates the future value of <span class="csg-function-parameter">principal</span> given the series of compounded interest <span class="csg-function-parameter">rates</span>.</p>
@@ -750,9 +872,9 @@
 
 
     <h4>
-        NPER(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">pmt</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">pv</span>:<span class="csg-function-parameter-type">number</span>)
+        NPER(<span class="csg-function-parameter">rate</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">pmt</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">pv</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Microsoft Excel compatible function. As Fireworkz TERM() but with different parameter list order and sign of result.</p>
@@ -766,7 +888,7 @@
 
     <h4>AND(<span class="csg-function-parameter">list</span>)</h4>
 
-    <p>Returns the logical AND of all the Boolean values in <span class="csg-function-parameter">list</span>.</p>
+    <p>Returns the logical AND of all the Logical values in <span class="csg-function-parameter">list</span>.</p>
 
     <p>Unlike the corresponding AND logical operator, &amp;, all parameters of the AND() function are always evaluated.</p>
 
@@ -777,16 +899,16 @@
 
     <h4>FALSE</h4>
 
-    <p>Returns the Boolean constant FALSE (numeric value zero).</p>
+    <p>Returns the Logical constant FALSE (numeric value zero).</p>
 
     <p>This function was added in 2.00.</p>
 
     <p>See <a href="sg06/sg6_FALSE.htm">FALSE</a>.</p>
 
 
-    <h4>NOT(<span class="csg-function-parameter">boolean_value</span>)</h4>
+    <h4>NOT(<span class="csg-function-parameter">value</span>:<span class="csg-function-parameter-type">Logical</span>)</h4>
 
-    <p>Returns the logical negation of <span class="csg-function-parameter">boolean_value</span> (as per the ! operator).</p>
+    <p>Returns the logical negation of <span class="csg-function-parameter">value</span> as per the corresponding ! operator.</p>
 
     <p>This function was added in 2.00.</p>
 
@@ -795,7 +917,7 @@
 
     <h4>OR(<span class="csg-function-parameter">list</span>)</h4>
 
-    <p>Returns the logical OR of all the Boolean values in <span class="csg-function-parameter">list</span>.</p>
+    <p>Returns the logical OR of all the Logical values in <span class="csg-function-parameter">list</span>.</p>
 
     <p>Unlike the corresponding OR logical operator, |, all parameters of the OR() function are always evaluated.</p>
 
@@ -806,7 +928,7 @@
 
     <h4>TRUE</h4>
 
-    <p>Returns the Boolean constant TRUE (numeric value one).</p>
+    <p>Returns the Logical constant TRUE (numeric value one).</p>
 
     <p>This function was added in 2.00.</p>
 
@@ -815,7 +937,7 @@
 
     <h4>XOR(<span class="csg-function-parameter">list</span>)</h4>
 
-    <p>Returns the logical exclusive-OR of all the Boolean values in <span class="csg-function-parameter">list</span>.</p>
+    <p>Returns the logical exclusive-OR of all the Logical values in <span class="csg-function-parameter">list</span>.</p>
 
     <p>This function was added in 2.00.</p>
 
@@ -826,7 +948,7 @@
 
     <h4>
         CEILING(<span class="csg-function-parameter">number</span>
-        {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">number</span>})
+        {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>
@@ -848,7 +970,7 @@
     <p>See <a href="sg06/sg6_EVEN.htm">EVEN</a>.</p>
 
 
-    <h4>FACT(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+    <h4>FACT(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>)</h4>
 
     <p>This function yields the factorial of <span class="csg-function-parameter">n</span> (most commonly shortened to <span class="csg-function-parameter">n</span>!).</p>
 
@@ -859,7 +981,7 @@
 
     <h4>
         FLOOR(<span class="csg-function-parameter">number</span>
-        {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">number</span>})
+        {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>
@@ -874,7 +996,7 @@
 
     <h4>
         MROUND(<span class="csg-function-parameter">number</span>,
-        <span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Rounds <span class="csg-function-parameter">number</span> to the given <span class="csg-function-parameter">multiple</span>.</p>
@@ -903,8 +1025,8 @@
 
 
     <h4>
-        POWER(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">number</span>)
+        POWER(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Returns the number <span class="csg-function-parameter">a</span> raised to the power of <span class="csg-function-parameter">b</span>.</p>
@@ -924,8 +1046,8 @@
 
 
     <h4>
-        QUOTIENT(<span class="csg-function-parameter">numerator</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">denominator</span>:<span class="csg-function-parameter-type">number</span>)
+        QUOTIENT(<span class="csg-function-parameter">numerator</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">denominator</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Truncates the result of <span class="csg-function-parameter">numerator</span> &divide; <span class="csg-function-parameter">denominator</span> to an integer, always towards zero.</p>
@@ -936,8 +1058,8 @@
 
 
     <h4>
-        RANDBETWEEN(<span class="csg-function-parameter">lower</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">upper</span>:<span class="csg-function-parameter-type">number</span>)
+        RANDBETWEEN(<span class="csg-function-parameter">lower</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">upper</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Returns a random integer in the interval [<span class="csg-function-parameter">lower</span>,<span class="csg-function-parameter">upper</span>].</p>
@@ -949,7 +1071,7 @@
 
     <h4>
         ROUNDDOWN(<span class="csg-function-parameter">number</span>,
-        <span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Rounds <span class="csg-function-parameter">number</span> down to <span class="csg-function-parameter">digits</span> decimal places, towards zero.</p>
@@ -963,7 +1085,7 @@
 
     <h4>
         ROUNDUP(<span class="csg-function-parameter">number</span>,
-        <span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Rounds <span class="csg-function-parameter">number</span> up to <span class="csg-function-parameter">digits</span> decimal places, away from zero.</p>
@@ -976,10 +1098,10 @@
 
 
     <h4>
-        SERIESSUM(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">m</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">coefficients</span>:<span class="csg-function-parameter-type">array</span>)
+        SERIESSUM(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">m</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">coefficients</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>Returns the sum of the given power series for <span class="csg-function-parameter">x</span>.</p>
@@ -1014,8 +1136,8 @@
 
 
     <h4>
-        SUM_X2MY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+        SUM_X2MY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1030,8 +1152,8 @@
 
 
     <h4>
-        SUM_X2PY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+        SUM_X2PY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1046,8 +1168,8 @@
 
 
     <h4>
-        SUM_XMY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+        SUM_XMY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1063,7 +1185,7 @@
 
     <h4>
         TRUNC(<span class="csg-function-parameter">number</span>
-        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>})
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>Truncates <span class="csg-function-parameter">number</span> to <span class="csg-function-parameter">digits</span> decimal places, always towards zero.</p>
@@ -1082,7 +1204,7 @@
     <h4>ISEVEN(<span class="csg-function-parameter">number</span>)</h4>
 
     <p>
-        Returns the Boolean value <code>TRUE</code> if <span class="csg-function-parameter">number</span> is an even integer, otherwise returns <code>FALSE</code>.
+        Returns the Logical value <code>TRUE</code> if <span class="csg-function-parameter">number</span> is an even integer, otherwise returns <code>FALSE</code>.
         Non-integral values are first truncated.
     </p>
 
@@ -1094,7 +1216,7 @@
     <h4>ISODD(<span class="csg-function-parameter">number</span>)</h4>
 
     <p>
-        Returns the Boolean value <code>TRUE</code> if <span class="csg-function-parameter">number</span> is an odd integer, otherwise returns <code>FALSE</code>.
+        Returns the Logical value <code>TRUE</code> if <span class="csg-function-parameter">number</span> is an odd integer, otherwise returns <code>FALSE</code>.
         Non-integral values are first truncated.
     </p>
 
@@ -1124,20 +1246,20 @@
 
 
     <h4>
-        BETA(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">number</span>)
+        BETA(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>See <a href="sg06/sg6_BETA.htm">BETA</a>.</p>
 
 
     <h4>
-        BETA.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>
-        {,&nbsp;<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">number</span>}}})
+        BETA.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>
+        {,&nbsp;<span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">Number</span>}}})
     </h4>
 
     <p>
@@ -1160,8 +1282,8 @@
 
 
     <h4>
-        COMBIN(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+        COMBIN(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p><span class="csg-function-parameter">n</span>C<span class="csg-function-parameter">k</span> = <span class="csg-function-parameter">n</span>! / ((<span class="csg-function-parameter">n</span>-<span class="csg-function-parameter">k</span>)! <span class="csg-function-parameter">k</span>!)</p>
@@ -1183,8 +1305,8 @@
 
 
     <h4>
-        COVARIANCE.P(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+        COVARIANCE.P(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>Returns the population covariance of the two arrays.
@@ -1197,8 +1319,8 @@
 
 
     <h4>
-        COVARIANCE.S(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>)
+        COVARIANCE.S(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>Returns the sample covariance of the two arrays.
@@ -1222,9 +1344,9 @@
 
 
     <h4>
-        EXPON.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">lambda</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+        EXPON.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">lambda</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>
@@ -1242,9 +1364,9 @@
 
 
     <h4>
-        FORECAST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+        FORECAST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1272,7 +1394,7 @@
 
     <p>See <a href="sg06/sg6_.htm"></a>.</p>
 
-    <h4>GAMMA(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+    <h4>GAMMA(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>)</h4>
 
     <p>This special function yields the value of the gamma function of x, &Gamma;(x).</p>
 
@@ -1282,10 +1404,10 @@
 
 
     <h4>
-        GAMMA.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">shape</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">scale</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+        GAMMA.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">shape</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">scale</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>
@@ -1303,7 +1425,7 @@
     <p>See <a href="sg06/sg6_GAMMA_DIST.htm">GAMMA.DIST</a>.</p>
 
 
-    <h4>GAMMALN(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+    <h4>GAMMALN(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>)</h4>
 
     <p>This special function yields the natural logarithm of the absolute value of the gamma function of x.</p>
 
@@ -1326,11 +1448,11 @@
 
 
     <h4>
-        HYPGEOM.DIST(<span class="csg-function-parameter">sample_successes</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">number_sample</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">population_successes</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">number_population</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+        HYPGEOM.DIST(<span class="csg-function-parameter">sample_successes</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">number_sample</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">population_successes</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">number_population</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>
@@ -1349,8 +1471,8 @@
 
 
     <h4>
-        INTERCEPT(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+        INTERCEPT(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1366,7 +1488,7 @@
 
     <h4>
         LARGE(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Returns the <span class="csg-function-parameter">k</span>-th largest value in <span class="csg-function-parameter">array</span>.</p>
@@ -1377,10 +1499,10 @@
 
 
     <h4>
-        LOGNORM.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+        LOGNORM.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>
@@ -1411,7 +1533,7 @@
 
     <h4>
         PERCENTILE.EXC(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>
@@ -1426,7 +1548,7 @@
 
     <h4>
         PERCENTILE.INC(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>
@@ -1440,8 +1562,8 @@
 
 
     <h4>
-        PERMUT(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+        PERMUT(<span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p><span class="csg-function-parameter">n</span>P<span class="csg-function-parameter">k</span> = <span class="csg-function-parameter">n</span>! / (<span class="csg-function-parameter">n</span>-<span class="csg-function-parameter">k</span>)!</p>
@@ -1454,10 +1576,10 @@
 
 
     <h4>
-        NORM.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+        NORM.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>
@@ -1475,8 +1597,8 @@
 
 
     <h4>
-        NORM.S.DIST(<span class="csg-function-parameter">z</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>})
+        NORM.S.DIST(<span class="csg-function-parameter">z</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
     <p>
@@ -1493,7 +1615,7 @@
     <p>See <a href="sg06/sg6_NORM_S_DIST.htm">NORM.S.DIST</a>.</p>
 
 
-    <h4>PHI(<span class="csg-function-parameter">z</span>:<span class="csg-function-parameter-type">number</span>)</h4>
+    <h4>PHI(<span class="csg-function-parameter">z</span>:<span class="csg-function-parameter-type">Number</span>)</h4>
 
     <p>
         Returns the value of the probability density function for the
@@ -1506,9 +1628,9 @@
 
 
     <h4>
-        POISSON.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">lambda</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>)
+        POISSON.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">lambda</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>)
     </h4>
 
     <p>
@@ -1527,7 +1649,7 @@
 
     <h4>
         QUARTILE.EXC(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">q</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">q</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>
@@ -1546,7 +1668,7 @@
 
     <h4>
         QUARTILE.INC(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">q</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">q</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>
@@ -1568,7 +1690,7 @@
     <h4>
         RANK.EQ(<span class="csg-function-parameter">number</span>,
         <span class="csg-function-parameter">array</span>
-        {,&nbsp;<span class="csg-function-parameter">order</span>:<span class="csg-function-parameter-type">number</span>})
+        {,&nbsp;<span class="csg-function-parameter">order</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>Returns the rank of <span class="csg-function-parameter">number</span> in the given <span class="csg-function-parameter">array</span>.</p>
@@ -1589,8 +1711,8 @@
 
 
     <h4>
-        SLOPE(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+        SLOPE(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1606,7 +1728,7 @@
 
     <h4>
         SMALL(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">k</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>Returns the <span class="csg-function-parameter">k</span>-th smallest value in <span class="csg-function-parameter">array</span>.</p>
@@ -1618,8 +1740,8 @@
 
     <h4>
         STANDARDIZE(<span class="csg-function-parameter">x</span>,
-        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">mean</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">standard deviation</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>
@@ -1633,8 +1755,8 @@
 
 
     <h4>
-        STEYX(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">array</span>,
-        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">array</span>)
+        STEYX(<span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>,
+        <span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
     <p>
@@ -1650,7 +1772,7 @@
 
     <h4>
         TRIMMEAN(<span class="csg-function-parameter">array</span>,
-        <span class="csg-function-parameter">percent</span>:<span class="csg-function-parameter-type">number</span>)
+        <span class="csg-function-parameter">percent</span>:<span class="csg-function-parameter-type">Number</span>)
     </h4>
 
     <p>
@@ -1667,10 +1789,10 @@
 
 
     <h4>
-        WEIBULL.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">shape</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">scale</span>:<span class="csg-function-parameter-type">number</span>,
-        <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>)
+        WEIBULL.DIST(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">shape</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">scale</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Logical</span>)
     </h4>
 
     <p>
@@ -1701,7 +1823,7 @@
 
     <h4>
         DOLLAR(<span class="csg-function-parameter">number</span>
-        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>})
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>Converts <span class="csg-function-parameter">number</span> into a string with a currency symbol, thousands commas, <span class="csg-function-parameter">digits</span> decimal places and with negative numbers in parentheses.</p>
@@ -1717,8 +1839,8 @@
 
     <h4>
         FIXED(<span class="csg-function-parameter">number</span>
-        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">number</span>
-        {,&nbsp;<span class="csg-function-parameter">no_commas</span>:<span class="csg-function-parameter-type">number</span>}})
+        {,&nbsp;<span class="csg-function-parameter">digits</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">no_commas</span>:<span class="csg-function-parameter-type">Number</span>}})
     </h4>
 
     <p>Converts <span class="csg-function-parameter">number</span> into a string with <span class="csg-function-parameter">digits</span> decimal places.</p>
@@ -1734,9 +1856,9 @@
 
     <h4>
         SUBSTITUTE(<span class="csg-function-parameter">text</span>,
-        <span class="csg-function-parameter">old</span>:<span class="csg-function-parameter-type">text</span>,
-        <span class="csg-function-parameter">new</span>:<span class="csg-function-parameter-type">text</span>
-        {,&nbsp;<span class="csg-function-parameter">instance</span>:<span class="csg-function-parameter-type">number</span>})
+        <span class="csg-function-parameter">old</span>:<span class="csg-function-parameter-type">Text</span>,
+        <span class="csg-function-parameter">new</span>:<span class="csg-function-parameter-type">Text</span>
+        {,&nbsp;<span class="csg-function-parameter">instance</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
 
     <p>
@@ -1782,6 +1904,12 @@
     <p>
         Please note that the automatic detection of number styles on numeric entry
         only operates when the Edit in cell option is switched on.
+    </p>
+
+    <p>
+        The printed <em>Spreadsheet Guide</em> omits the ability of the
+        DAYNAME() and MONTHNAME() spreadsheet functions to convert from a date parameter.
+        See <a href="sg06/sg6_DAYNAME.htm">DAYNAME</a> and <a href="sg06/sg6_MONTHNAME.htm">MONTHNAME</a>.
     </p>
 
     <div class="navfooter">

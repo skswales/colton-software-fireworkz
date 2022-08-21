@@ -69,7 +69,7 @@ docno_close_issue_close(
     p_docu->flags.document_active = 0;
 
     /* tell all the hangers on */
-    status_assert(uref_event(p_docu, T5_MSG_UREF_CLOSE1, P_DATA_NONE));
+    status_assert(uref_event(p_docu, Uref_Msg_CLOSE1, P_DATA_NONE));
     {
     MSG_INITCLOSE msg_initclose;
     msg_initclose.t5_msg_initclose_message = T5_MSG_IC__CLOSE1;
@@ -77,7 +77,7 @@ docno_close_issue_close(
     status_assert(maeve_service_event(p_docu, T5_MSG_INITCLOSE, &msg_initclose));
     } /*block*/
 
-    status_assert(uref_event(p_docu, T5_MSG_UREF_CLOSE2, P_DATA_NONE));
+    status_assert(uref_event(p_docu, Uref_Msg_CLOSE2, P_DATA_NONE));
     {
     MSG_INITCLOSE msg_initclose;
     msg_initclose.t5_msg_initclose_message = T5_MSG_IC__CLOSE2;

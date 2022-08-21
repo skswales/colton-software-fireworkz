@@ -23,6 +23,8 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 /*
 internal functions
 */

@@ -12,7 +12,7 @@
     <!-- This Source Code Form is subject to the terms of the Mozilla Public
        - License, v. 2.0. If a copy of the MPL was not distributed with this
        - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 2014-2019 Stuart Swales -->
+    <!-- Copyright (C) 2014-2020 Stuart Swales -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
         <param name="Keyword" value="NOT" />
         <param name="Keyword" value="Functions, Logical, NOT" />
@@ -21,18 +21,18 @@
 
     <h1><a name="not" id="not"></a>NOT</h1>
 
-    <p>Calculates the logical negation of a Boolean value.</p>
+    <p>Calculates the logical negation of a Logical value.</p>
 
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">NOT(<span class="csg-function-parameter">boolean_value</span>)</p>
+    <p class="csg-function-declaration">NOT(<span class="csg-function-parameter">value</span>:<span class="csg-function-parameter-type">Logical</span>)</p>
     <p>
-        Returns the logical negation of <span class="csg-function-parameter">boolean_value</span>
+        Returns the logical negation of <span class="csg-function-parameter">value</span>
         as per the corresponding NOT <a href="../sg02/sg2_logical_operators.htm">logical operator</a>, <code>!</code>.
     </p>
 
     <p class="csg-function-subheading">Example:</p>
     <pre class="csg-sample-indent">NOT(A1)</pre>
-    <p>where the cell value is <code>TRUE</code> will return the Boolean value <code>FALSE</code>.</p>
+    <p>where the cell value is <code>TRUE</code> (or any non-zero number) will return the Logical value <code>FALSE</code>.</p>
 
     <p class="csg-function-subheading">Revisions:</p>
     <p>This function was added in 2.00.</p>

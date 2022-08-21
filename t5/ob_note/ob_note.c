@@ -383,11 +383,11 @@ notelayer_drag_status_show(
 
     for(i = 0; i < 4; i++)
     {
-        EV_DATA ev_data;
+        SS_DATA ss_data;
 
-        ev_data_set_real(&ev_data, (F64) p_note_drag_status->param[i] / p_note_drag_status->fp_pixits_per_unit);
+        ss_data_set_real(&ss_data, (F64) p_note_drag_status->param[i] / p_note_drag_status->fp_pixits_per_unit);
 
-        status_assert(status = numform(&numform_res_quick_ublock[i], P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+        status_assert(status = numform(&numform_res_quick_ublock[i], P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
         status_break(status);
     }

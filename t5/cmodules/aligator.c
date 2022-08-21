@@ -162,7 +162,7 @@ aligator_init(void)
     array_root.parms.packed_element_size = UBF_PACK(sizeof32(ARRAY_BLOCK));
 #endif
     array_root.parms.packed_size_increment = 256;
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("sizeof32(ARRAY_BLOCK) == %d"), sizeof32(ARRAY_BLOCK));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("sizeof32(ARRAY_BLOCK) == %u"), sizeof32(ARRAY_BLOCK));
 
 #ifdef ALIGATOR_USE_ALLOC
     status_return(alloc_init());
@@ -551,7 +551,7 @@ _al_array_alloc(
 
     p_byte = PtrAddBytes(P_BYTE, p_array_block->p_data, (array_index * array_block_element_size(p_array_block)));
 
-    trace_4(TRACE_MODULE_ALLOC, TEXT("al_array_alloc(n:") U32_TFMT TEXT(" es:") U32_TFMT TEXT(") yields *h:") S32_TFMT TEXT(" -> ") PTR_XTFMT,
+    trace_4(TRACE_MODULE_ALLOC, TEXT("al_array_alloc(n:") U32_TFMT TEXT(" es:") U32_TFMT TEXT(") yields *h:") U32_TFMT TEXT(" -> ") PTR_XTFMT,
             num_elements, p_array_init_block->element_size, *p_array_handle, p_byte);
 
     return(p_byte);
@@ -602,7 +602,7 @@ al_array_auto_compact_set(
 {
     if(!array_handle_is_valid(p_array_handle))
     {
-        myassert3(TEXT("al_array_auto_compact_set(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_auto_compact_set(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return;
     }
 
@@ -777,7 +777,7 @@ al_array_duplicate(
 
     if(!array_handle_is_valid(pc_src_array_handle))
     {
-        myassert4(TEXT("al_array_duplicate(") PTR_XTFMT TEXT(", ") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_dup_array_handle, pc_src_array_handle, *pc_src_array_handle, array_root.free);
+        myassert4(TEXT("al_array_duplicate(") PTR_XTFMT TEXT(", ") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_dup_array_handle, pc_src_array_handle, *pc_src_array_handle, array_root.free);
         return(status_check());
     }
 
@@ -856,7 +856,7 @@ __al_array_free(
 
     if((U32) array_handle >= (U32) array_root.free)
     {
-        myassert2(TEXT("al_array_free(h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, array_handle, array_root.free);
+        myassert2(TEXT("al_array_free(h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, array_handle, array_root.free);
         return;
     }
 
@@ -865,7 +865,7 @@ __al_array_free(
 #if CHECKING
     if(p_array_block->parms.entry_free)
     {
-        myassert1(TEXT("al_array_free(h:") S32_TFMT TEXT(" --- handle has already been freed"), array_handle);
+        myassert1(TEXT("al_array_free(h:") U32_TFMT TEXT(" --- handle has already been freed"), array_handle);
         return;
     }
 #endif
@@ -915,7 +915,7 @@ __al_array_free(
     next_free_block = array_handle;
 #endif
 
-    trace_1(TRACE_MODULE_ALLOC, TEXT("al_array_free(h:") S32_TFMT TEXT(") freed"), array_handle);
+    trace_1(TRACE_MODULE_ALLOC, TEXT("al_array_free(h:") U32_TFMT TEXT(") freed"), array_handle);
 }
 
 /******************************************************************************
@@ -932,12 +932,12 @@ extern S32 /* number of elements remaining */
 al_array_garbage_collect(
     _InoutRef_  P_ARRAY_HANDLE p_array_handle,
     _InVal_     ARRAY_INDEX element_start,
-    _In_opt_    P_PROC_ELEMENT_DELETED p_proc_element_deleted,
+    _In_opt_    P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted,
     _InVal_     AL_GARBAGE_FLAGS al_garbage_flags)
 {
     if(!array_handle_is_valid(p_array_handle))
     {
-        myassert3(TEXT("al_array_garbage_collect(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_garbage_collect(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return(0);
     }
 
@@ -945,7 +945,7 @@ al_array_garbage_collect(
     {
         P_ARRAY_BLOCK p_array_block = array_block_wr_no_checks(p_array_handle);
 
-        if(p_proc_element_deleted && al_garbage_flags.remove_deleted)
+        if((NULL != p_proc_element_is_deleted) && al_garbage_flags.remove_deleted)
         {
             U32 element_size = array_block_element_size(p_array_block);
             ARRAY_INDEX new_free = element_start; /* size we'd be if all after element_start got trimmed off */
@@ -958,7 +958,7 @@ al_array_garbage_collect(
             /* move all non-deleted elements towards the start of the array */
             for(i = new_free; i < p_array_block->free; ++i)
             {
-                if(0 == (* p_proc_element_deleted) (p_in))
+                if(FALSE == (* p_proc_element_is_deleted) (p_in))
                 {
                     if(p_out != p_in)
                         memcpy32(p_out, p_in, element_size);
@@ -1015,7 +1015,7 @@ extern S32 /* number of allocated handles */
 al_array_handle_check(
     _InVal_     S32 whinge /* whinge about allocated handles */)
 {
-    ARRAY_INDEX count = 0;
+    U32 count = 0;
     UINT pass;
 
     UNREFERENCED_PARAMETER_InVal_(whinge);
@@ -1038,7 +1038,7 @@ al_array_handle_check(
                     break;
 
             case S32_MAX:
-                trace_1(TRACE_OUT | TRACE_ANY, TEXT("handle ") S32_TFMT TEXT(" not freed (but known about)"), i);
+                trace_1(TRACE_OUT | TRACE_ANY, TEXT("handle ") U32_TFMT TEXT(" not freed (but known about)"), i);
                 continue;
 
             default:
@@ -1050,8 +1050,8 @@ al_array_handle_check(
                 count += 1;
             else
             {
-                trace_1(TRACE_OUT | TRACE_ANY, TEXT("handle ") S32_TFMT TEXT(" not freed"), i);
-                /*myassert1x(!whinge, TEXT("al_array_handle_check handle ") S32_TFMT TEXT(" not freed"), i);*/
+                trace_1(TRACE_OUT | TRACE_ANY, TEXT("handle ") U32_TFMT TEXT(" not freed"), i);
+                /*myassert1x(!whinge, TEXT("al_array_handle_check handle ") U32_TFMT TEXT(" not freed"), i);*/
             }
         }
 
@@ -1060,10 +1060,10 @@ al_array_handle_check(
 
         if(pass == 1)
         {
-            trace_1(TRACE_OUT | TRACE_ANY, S32_TFMT TEXT(" handles not freed"), count);
+            trace_1(TRACE_OUT | TRACE_ANY, U32_TFMT TEXT(" handles not freed"), count);
 
 #if 0 /* <<< enable this to debug which handles have gone walkabout */
-            if(!__myasserted_msg(TEXT("al_array_handle_check"), __TFILE__, __LINE__, TEXT("OK to list, Cancel to continue."), S32_TFMT TEXT(" handles not freed"), count))
+            if(!__myasserted_msg(TEXT("al_array_handle_check"), __TFILE__, __LINE__, TEXT("OK to list, Cancel to continue."), U32_TFMT TEXT(" handles not freed"), count))
                 break;
 #endif
         }
@@ -1086,7 +1086,7 @@ al_array_delete_at(
 #if CHECKING
     if(!array_handle_is_valid(p_array_handle) && (0 != *p_array_handle))
     {
-        myassert3(TEXT("al_array_delete_at(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_delete_at(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return;
     }
 #endif
@@ -1102,7 +1102,7 @@ al_array_delete_at(
 #if CHECKING
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("al_array_delete_at(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
+        myassert2(TEXT("al_array_delete_at(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
         return;
     }
 #endif
@@ -1157,7 +1157,7 @@ _al_array_insert_before(
 #if CHECKING
     if(!array_handle_is_valid(p_array_handle) && (0 != *p_array_handle))
     {
-        myassert3(TEXT("al_array_insert_before(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_insert_before(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         *p_status = status_check();
         return(NULL);
     }
@@ -1172,7 +1172,7 @@ _al_array_insert_before(
 #if CHECKING
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("al_array_insert_before(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
+        myassert2(TEXT("al_array_insert_before(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
         *p_status = status_check();
         return(NULL);
     }
@@ -1282,7 +1282,7 @@ _al_array_extend_by(
     {
         if(!array_handle_is_valid(p_array_handle))
         {
-            myassert3(TEXT("al_array_extend_by(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+            myassert3(TEXT("al_array_extend_by(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
             *p_status = status_check();
             return(NULL);
         }
@@ -1299,7 +1299,7 @@ _al_array_extend_by(
 #if CHECKING
     if(!array_handle_is_valid(p_array_handle) && (0 != *p_array_handle))
     {
-        myassert3(TEXT("al_array_extend_by(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_extend_by(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         *p_status = status_check();
         return(NULL);
     }
@@ -1310,7 +1310,7 @@ _al_array_extend_by(
 #if CHECKING
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("al_array_extend_by(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
+        myassert2(TEXT("al_array_extend_by(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
         *p_status = status_check();
         return(NULL);
     }
@@ -1342,7 +1342,7 @@ al_array_shrink_by(
 #if CHECKING
     if(!array_handle_is_valid(p_array_handle))
     {
-        myassert3(TEXT("al_array_shrink_by(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_shrink_by(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return;
     }
 #endif
@@ -1352,7 +1352,7 @@ al_array_shrink_by(
 #if CHECKING
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("al_array_shrink_by(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
+        myassert2(TEXT("al_array_shrink_by(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle has been freed"), p_array_handle, *p_array_handle);
         return;
     }
 #endif
@@ -1383,7 +1383,7 @@ al_array_resized_hglobal(
 
     if(!array_handle_is_valid(p_array_handle))
     {
-        myassert3(TEXT("al_array_resized_hglobal(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_resized_hglobal(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return;
     }
 
@@ -1404,7 +1404,7 @@ al_array_resized_ptr(
 
     if(!array_handle_is_valid(p_array_handle))
     {
-        myassert3(TEXT("al_array_resized_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_resized_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return;
     }
 
@@ -1433,7 +1433,7 @@ al_array_steal_hglobal(
 
         if(!array_handle_is_valid(p_array_handle))
         {
-            myassert3(TEXT("al_array_steal_hglobal(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+            myassert3(TEXT("al_array_steal_hglobal(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
             return(0);
         }
 
@@ -1442,7 +1442,7 @@ al_array_steal_hglobal(
 #if CHECKING
         if(p_array_block->parms.entry_free)
         {
-            myassert2(TEXT("al_array_steal_hglobal(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle has already been freed"), p_array_handle, *p_array_handle);
+            myassert2(TEXT("al_array_steal_hglobal(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle has already been freed"), p_array_handle, *p_array_handle);
             return(0);
         }
 #endif
@@ -1465,7 +1465,7 @@ al_array_steal_hglobal(
         /* free the array itself */
         __al_array_free(*p_array_handle);
 
-        trace_2(TRACE_MODULE_ALLOC, TEXT("al_array_steal_hglobal hglobal:") PTR_XTFMT TEXT(" stolen, handle:") S32_TFMT TEXT(" freed"), hglobal, *p_array_handle);
+        trace_2(TRACE_MODULE_ALLOC, TEXT("al_array_steal_hglobal hglobal:") PTR_XTFMT TEXT(" stolen, handle:") U32_TFMT TEXT(" freed"), hglobal, *p_array_handle);
 
         *p_array_handle = 0;
     }
@@ -1538,7 +1538,7 @@ al_array_trim(
 
     if(!array_handle_is_valid(p_array_handle))
     {
-        myassert3(TEXT("al_array_trim(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, p_array_handle, *p_array_handle, array_root.free);
+        myassert3(TEXT("al_array_trim(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, p_array_handle, *p_array_handle, array_root.free);
         return;
     }
 
@@ -1635,7 +1635,7 @@ al_list_big_handles(
             continue;
 
         trace_4(TRACE_APP_MEMORY_USE | TRACE_MODULE_ALLOC,
-                TEXT("handle:") S32_TFMT TEXT(", ") S32_TFMT TEXT(" entries, used bytes: ") S32_TFMT TEXT(", total_bytes: ") S32_TFMT,
+                TEXT("handle:") U32_TFMT TEXT(", ") S32_TFMT TEXT(" entries, used bytes: ") U32_TFMT TEXT(", total_bytes: ") U32_TFMT,
                 i,
                 p_array_block->free,
                 p_array_block->free * array_block_element_size(p_array_block),
@@ -1852,7 +1852,7 @@ tell_full_event_clients_client_phase(
         assert(p_full_event_client);
         it_freed = (*p_full_event_client->proc) (bytes_needed - freed);
 
-        trace_3(TRACE_MODULE_ALLOC, TEXT("******* called full event client ") S32_TFMT TEXT(" to release: ") U32_TFMT TEXT(" bytes, ") U32_TFMT TEXT(" bytes freed"), next_client, bytes_needed, it_freed);
+        trace_3(TRACE_MODULE_ALLOC, TEXT("******* called full event client ") U32_TFMT TEXT(" to release: ") U32_TFMT TEXT(" bytes, ") S32_TFMT TEXT(" bytes freed"), next_client, bytes_needed, it_freed);
 
         freed += it_freed;
 
@@ -1940,7 +1940,7 @@ array_base_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_base(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_base(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(P_BYTE_NONE);
     }
 
@@ -1948,25 +1948,25 @@ array_base_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_base(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_base(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_base(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_base(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_base(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_base(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_base(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" and/or size ") S32_TFMT TEXT(" fields"),
+        myassert4(TEXT("array_base(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" and/or size ") S32_TFMT TEXT(" fields"),
                   pc_array_handle, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(P_BYTE_NONE);
     }
@@ -1984,7 +1984,7 @@ array_block_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_block(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(" --- handle >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_block(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(" --- handle >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(P_ARRAY_BLOCK_NONE);
     }
 
@@ -1992,25 +1992,25 @@ array_block_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_block(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_block(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(P_ARRAY_BLOCK_NONE);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_block(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_block(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(P_ARRAY_BLOCK_NONE);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_block(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_block(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(P_ARRAY_BLOCK_NONE);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_block(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" and/or size ") S32_TFMT TEXT(" fields"),
+        myassert4(TEXT("array_block(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" and/or size ") S32_TFMT TEXT(" fields"),
                   pc_array_handle, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(P_ARRAY_BLOCK_NONE);
     }
@@ -2029,7 +2029,7 @@ array_elements_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(0);
     }
 
@@ -2037,25 +2037,25 @@ array_elements_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(0);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(0);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(0);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" and/or size ") S32_TFMT TEXT(" fields"),
+        myassert4(TEXT("array_elements(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" and/or size ") S32_TFMT TEXT(" fields"),
                   pc_array_handle, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(0);
     }
@@ -2077,7 +2077,7 @@ array_ptr_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(P_BYTE_NONE);
     }
 
@@ -2085,39 +2085,39 @@ array_ptr_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free ") S32_TFMT TEXT(" fields"),
+        myassert4(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free ") S32_TFMT TEXT(" fields"),
                   P_ARRAY_BLOCK_NONE, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((0 != *pc_array_handle) && (ele_size != array_block_element_size(p_array_block)))
     {
-        myassert4(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- index ele_size ") S32_TFMT TEXT(" != handle info block ele_size " S32_TFMT),
+        myassert4(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- index ele_size ") U32_TFMT TEXT(" != handle info block ele_size " U32_TFMT),
                   pc_array_handle, *pc_array_handle, ele_size, array_block_element_size(p_array_block));
         return(P_BYTE_NONE);
     }
 
     if((U32) ele_index > (U32) p_array_block->free)
         /*if(((U32) ele_index > 1U) || (p_array_block->free != 0))*/
-            myassert4(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- index ") S32_TFMT TEXT(" >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, ele_index, p_array_block->free);
+            myassert4(TEXT("array_ptr(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- index ") S32_TFMT TEXT(" >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, ele_index, p_array_block->free);
 
     return(PtrAddBytes(P_BYTE, p_array_block->p_data, (ele_index * ele_size)));
 }
@@ -2134,7 +2134,7 @@ array_ptr32_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(P_BYTE_NONE);
     }
 
@@ -2142,39 +2142,39 @@ array_ptr32_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free ") S32_TFMT TEXT(" fields"),
+        myassert4(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free ") S32_TFMT TEXT(" fields"),
                   P_ARRAY_BLOCK_NONE, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((0 != *pc_array_handle) && (ele_size != array_block_element_size(p_array_block)))
     {
-        myassert4(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- index ele_size ") S32_TFMT TEXT(" != handle info block ele_size " S32_TFMT),
+        myassert4(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- index ele_size ") U32_TFMT TEXT(" != handle info block ele_size " U32_TFMT),
                   pc_array_handle, *pc_array_handle, ele_size, array_block_element_size(p_array_block));
         return(P_BYTE_NONE);
     }
 
     if(ele_offset > (U32) p_array_block->free)
         /*if((ele_offset > 1U) || (p_array_block->free != 0))*/
-            myassert4(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- offset ") U32_TFMT TEXT(" >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, ele_offset, (U32) p_array_block->free);
+            myassert4(TEXT("array_ptr32(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- offset ") U32_TFMT TEXT(" >= free ") U32_TFMT, pc_array_handle, *pc_array_handle, ele_offset, (U32) p_array_block->free);
 
     return(PtrAddBytes(P_BYTE, p_array_block->p_data, (ele_offset * ele_size)));
 }
@@ -2192,7 +2192,7 @@ array_range_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_range(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle >= free 0x") U32_XTFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_range(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle >= free 0x") U32_XTFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(P_BYTE_NONE);
     }
 
@@ -2200,39 +2200,39 @@ array_range_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_range(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_range(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_range_check(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_range_check(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_range(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_range(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_range(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free " S32_TFMT TEXT(" fields")),
+        myassert4(TEXT("array_range(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free " S32_TFMT TEXT(" fields")),
                   pc_array_handle, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((0 != *pc_array_handle) && (ele_size != array_block_element_size(p_array_block)))
     {
-        myassert4(TEXT("array_range(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- index ele_size ") S32_TFMT TEXT(" != handle info block ele_size " S32_TFMT),
+        myassert4(TEXT("array_range(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- index ele_size ") U32_TFMT TEXT(" != handle info block ele_size " U32_TFMT),
                   pc_array_handle, *pc_array_handle, ele_size, array_block_element_size(p_array_block));
         return(P_BYTE_NONE);
     }
 
     if((U32) ele_index > (U32) p_array_block->free)
     {
-        myassert4(TEXT("array_range(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- index ") S32_TFMT TEXT(" >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, ele_index, p_array_block->free);
+        myassert4(TEXT("array_range(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- index ") S32_TFMT TEXT(" >= free ") S32_TFMT, pc_array_handle, *pc_array_handle, ele_index, p_array_block->free);
         return(P_BYTE_NONE);
     }
 
@@ -2265,7 +2265,7 @@ array_range_bytes_check(
 
     if(!array_handle_is_valid(pc_array_handle))
     {
-        myassert3(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle >= free 0x") U32_XTFMT, pc_array_handle, *pc_array_handle, array_root.free);
+        myassert3(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle >= free 0x") U32_XTFMT, pc_array_handle, *pc_array_handle, array_root.free);
         return(P_BYTE_NONE);
     }
 
@@ -2273,32 +2273,32 @@ array_range_bytes_check(
 
     if(p_array_block->parms.entry_free)
     {
-        myassert2(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
+        myassert2(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle has been freed"), pc_array_handle, *pc_array_handle);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
+        myassert3(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt free ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->free);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->size >= ALLOC_SIZE_LIMIT)
     {
-        myassert3(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
+        myassert3(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" field"), pc_array_handle, *pc_array_handle, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if((U32) p_array_block->free > (U32) p_array_block->size)
     {
-        myassert4(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free " S32_TFMT TEXT(" fields")),
+        myassert4(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- handle info block has corrupt size ") S32_TFMT TEXT(" and/or free " S32_TFMT TEXT(" fields")),
                   pc_array_handle, *pc_array_handle, p_array_block->free, p_array_block->size);
         return(P_BYTE_NONE);
     }
 
     if(byte_offset > (U32) p_array_block->free * array_block_element_size(p_array_block))
     {
-        myassert5(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") S32_TFMT TEXT(") --- index ") S32_TFMT TEXT(" >= free ") S32_TFMT TEXT(" * ele_size ") S32_TFMT, pc_array_handle, *pc_array_handle, byte_offset, p_array_block->free, array_block_element_size(p_array_block));
+        myassert5(TEXT("array_range_bytes(") PTR_XTFMT TEXT("->h:") U32_TFMT TEXT(") --- index ") U32_TFMT TEXT(" >= free ") S32_TFMT TEXT(" * ele_size ") U32_TFMT, pc_array_handle, *pc_array_handle, byte_offset, p_array_block->free, array_block_element_size(p_array_block));
         return(P_BYTE_NONE);
     }
 

@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2019 Stuart Swales */
+/* Copyright (C) 2006-2020 Stuart Swales */
 
 #ifndef __utf8_h
 #define __utf8_h
@@ -209,7 +209,7 @@ encode UCS-4 character as UTF-8 character encoding
 _Check_return_
 extern U32 /* number of bytes */
 utf8__char_encode_off(
-    _Out_cap_(elemof_buffer) P_UTF8 utf8_buf /*filled at encode_offset*/,
+    _Out_writes_(elemof_buffer) P_UTF8 utf8_buf /*filled at encode_offset*/,
     _InVal_     U32 elemof_buffer,
     _InVal_     U32 encode_offset,
     _In_        UCS4 ucs4);
@@ -439,7 +439,7 @@ utf8_validate(
 /*ncr*/
 extern U32
 utf8_from_tchars(
-    _Out_opt_cap_(elemof_buffer) P_UTF8 uchars_buf, /*NULL->count*/
+    _Out_writes_opt_(elemof_buffer) P_UTF8 uchars_buf, /*NULL->count*/
     _InVal_     U32 elemof_buffer,
     _In_reads_(tchars_n) PCTCH tchars,
     _InVal_     U32 tchars_n);

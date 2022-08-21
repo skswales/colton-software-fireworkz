@@ -21,11 +21,11 @@
 
 for copying into things:
 
-case T5_MSG_UREF_UREF:
-case T5_MSG_UREF_DELETE:
-case T5_MSG_UREF_OVERWRITE:
-case T5_MSG_UREF_CHANGE:
-case T5_MSG_UREF_SWAP_ROWS:
+case Uref_Msg_Uref:
+case Uref_Msg_Delete:
+case Uref_Msg_Overwrite:
+case Uref_Msg_Change:
+case Uref_Msg_Swap_Rows:
 case T5_MSG_CLOSE1:
 case T5_MSG_CLOSE2:
 
@@ -37,7 +37,7 @@ case T5_MSG_CLOSE2:
 *
 * the uref helper routines in here are configured for
 * updating dependent references (i.e. refto, not refby) - thus
-* a T5_MSG_UREF_OVERWRITE will never generate a DEP_DELETE even
+* a Uref_Msg_Overwrite will never generate a DEP_DELETE even
 * if the entire range / cell is spanned, since the dependent is
 * not deleted; Old ev_uref muddled the by/to cases for deleting
 * references contained by a REPLACEd area; an extra flag or
@@ -49,30 +49,30 @@ case T5_MSG_CLOSE2:
 *
 * UREF messages:
 *
-*    T5_MSG_UREF_UREF
+*    Uref_Msg_Uref
 *       issued when part of a document is moved: all refs
 *       pointing to the moved part of the document are updated
 *       by the move distance; issued after physical operation
 *
-*    T5_MSG_UREF_DELETE
+*    Uref_Msg_Delete
 *       issued when part of a document is deleted: all refs
 *       pointing to the deleted part of the document are
 *       marked bad; all refs from the deleted part are removed
 *       from the tree; issued before physical operation
 *
-*    T5_MSG_UREF_OVERWRITE
+*    Uref_Msg_Overwrite
 *       issued when part of a document is deleted: all refs from
 *       the deleted part are removed from the tree; same as DELETE
 *       but refs to the block are not marked bad; issued before
 *       physical operation
 *
-*    T5_MSG_UREF_CHANGE
+*    Uref_Msg_Change
 *       issued when part of a document has changed; typically follows
 *       a REPLACE, but is issued after the physical operation is complete;
 *       dependents use the CHANGE message to read the up-to-date data
 *       e.g. after a cell has been recalced
 *
-*    T5_MSG_UREF_SWAP_ROWS
+*    Uref_Msg_Swap_Rows
 *       issued when two rows are swapped in a sort; refs pointing
 *       two the two rows are updated for the swap
 *
@@ -93,7 +93,7 @@ typedef struct UREF_ENTRY
 {
     UREF_ID uref_id;
     P_PROC_UREF_EVENT p_proc_uref_event;
-    U8 deleted;
+    U8 is_deleted;
     U8 _spare[3];
 }
 UREF_ENTRY, * P_UREF_ENTRY;
@@ -118,7 +118,7 @@ static S32 /* reason code out */
 uref_region_ends(
     _InoutRef_  P_REGION p_region,
     _InVal_     enum START_END_FLAGS start_end_flags,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_PARMS p_uref_parms,
     _InVal_     BOOL add_col,
     _InVal_     BOOL add_row)
@@ -144,9 +144,9 @@ uref_region_ends(
     default: default_unhandled(); return(DEP_NONE);
     }
 
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_UREF:
+    case Uref_Msg_Uref:
         if((p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
            &&
            (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)))
@@ -167,22 +167,22 @@ uref_region_ends(
         }
         break;
 
-    case T5_MSG_UREF_DELETE:
+    case Uref_Msg_Delete:
         if((p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
            &&
            (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)))
              res = DEP_DELETE;
          break;
 
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_Change:
          if((p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
            &&
            (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)))
              res = DEP_INFORM;
          break;
 
-    case T5_MSG_UREF_SWAP_ROWS:
+    case Uref_Msg_Swap_Rows:
         if(col_in_region(&p_uref_parms->source.region, p_slr->col))
         {
             if(p_slr->row == p_uref_parms->source.region.tl.row)
@@ -198,12 +198,13 @@ uref_region_ends(
         }
         break;
 
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
         res = DEP_DELETE;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     switch(start_end_flags)
@@ -253,10 +254,10 @@ uref_add_dependency(
 
         for(uref_ix = 0; uref_ix < n_regions; ++uref_ix, ++p_uref_entry_i)
         {
-            if(p_uref_entry_i->deleted)
+            if(p_uref_entry_i->is_deleted)
             {
                 p_uref_entry = p_uref_entry_i;
-                p_uref_entry->deleted = 0;
+                p_uref_entry->is_deleted = 0;
                 break;
             }
         }
@@ -302,7 +303,7 @@ uref_change_handle(
 
     for(region_ix = 0; region_ix < n_regions; ++region_ix, ++p_uref_entry)
     {
-        if(p_uref_entry->deleted)
+        if(p_uref_entry->is_deleted)
             continue;
 
         if(p_uref_entry->uref_id.uref_handle == uref_handle)
@@ -335,12 +336,12 @@ uref_del_dependency(
 
     for(region_ix = 0; region_ix < n_regions; ++region_ix, ++p_uref_entry)
     {
-        if(p_uref_entry->deleted)
+        if(p_uref_entry->is_deleted)
             continue;
 
         if(p_uref_entry->uref_id.uref_handle == uref_handle)
         {
-            p_uref_entry->deleted = 1;
+            p_uref_entry->is_deleted = 1;
             found_it = TRUE;
             break;
         }
@@ -355,9 +356,9 @@ uref_del_dependency(
 *
 ******************************************************************************/
 
-PROC_ELEMENT_DELETED_PROTO(static, uref_element_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, uref_element_deleted)
 {
-    return((S32) ((P_UREF_ENTRY) p_any)->deleted);
+    return((S32) ((P_UREF_ENTRY) p_any)->is_deleted);
 }
 
 static void
@@ -390,20 +391,24 @@ uref_event_after_msg_close2(
 *
 ******************************************************************************/
 
-PROC_EVENT_PROTO(extern, uref_event)
+extern STATUS
+uref_event(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     UREF_MESSAGE uref_message,
+    /*_Inout_*/ P_ANY p_data)
 {
     UREF_EVENT_BLOCK uref_event_block;
 
     if(IS_DOCU_NONE(p_docu))
         return(STATUS_OK);
 
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_CHANGE:
-    case T5_MSG_UREF_DELETE:
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_UREF:
-    case T5_MSG_UREF_SWAP_ROWS:
+    case Uref_Msg_Change:
+    case Uref_Msg_Delete:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_Uref:
+    case Uref_Msg_Swap_Rows:
         {
         P_UREF_PARMS p_uref_parms = (P_UREF_PARMS) p_data;
 
@@ -412,8 +417,8 @@ PROC_EVENT_PROTO(extern, uref_event)
 
         /*FALLTHRU*/
 
-    case T5_MSG_UREF_CLOSE1: /* document being closed */
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_CLOSE1: /* document being closed */
+    case Uref_Msg_CLOSE2:
         {
         const ARRAY_INDEX n_regions = array_elements(&p_docu->h_uref_table);
         ARRAY_INDEX region_ix;
@@ -422,20 +427,20 @@ PROC_EVENT_PROTO(extern, uref_event)
         /* call hangers on */
         for(region_ix = 0; region_ix < n_regions; ++region_ix, ++p_uref_entry)
         {
-            if(p_uref_entry->deleted)
+            if(p_uref_entry->is_deleted)
                 continue;
 
             if((uref_event_block.reason.code =
                     UBF_PACK(uref_match_region(&p_uref_entry->uref_id.region,
-                                               t5_message,
+                                               uref_message,
                                                &uref_event_block))) != DEP_NONE)
             {
                 uref_event_block.uref_id = p_uref_entry->uref_id;
-                (*p_uref_entry->p_proc_uref_event)(p_docu, t5_message, &uref_event_block);
+                (*p_uref_entry->p_proc_uref_event)(p_docu, uref_message, &uref_event_block);
             }
         }
 
-        if(T5_MSG_UREF_CLOSE2 == t5_message)
+        if(Uref_Msg_CLOSE2 == uref_message)
             uref_event_after_msg_close2(p_docu);
 
         return(STATUS_OK);
@@ -456,14 +461,14 @@ PROC_EVENT_PROTO(extern, uref_event)
 extern S32 /* reason code out */
 uref_match_region(
     _InoutRef_  P_REGION p_region,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     S32 res = DEP_NONE;
 
-    switch(t5_message)
+    switch(uref_message)
     {
-    case T5_MSG_UREF_UREF:
+    case Uref_Msg_Uref:
         {
         BOOL colspan, rowspan, do_uref = 0;
         S32 res_s = DEP_NONE, res_e = DEP_NONE;
@@ -494,8 +499,8 @@ uref_match_region(
 
         if(do_uref)
         {
-            res_s = uref_region_ends(p_region, REGION_TL, t5_message, &p_uref_event_block->uref_parms, add_col, add_row);
-            res_e = uref_region_ends(p_region, REGION_BR, t5_message, &p_uref_event_block->uref_parms, add_col, add_row);
+            res_s = uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, add_col, add_row);
+            res_e = uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, add_col, add_row);
         }
 
         if(res_s == DEP_DELETE || res_e == DEP_DELETE)
@@ -512,7 +517,7 @@ uref_match_region(
         break;
         }
 
-    case T5_MSG_UREF_DELETE:
+    case Uref_Msg_Delete:
         {
         BOOL colspan, rowspan;
 
@@ -524,12 +529,12 @@ uref_match_region(
         else if(colspan && !p_region->whole_col)
         {
             /* lop off some rows of the dependency */
-            if(uref_region_ends(p_region, REGION_TL, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            if(uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
             {
                 p_region->tl.row = p_uref_event_block->uref_parms.source.region.br.row;
                 res = DEP_UPDATE;
             }
-            else if(uref_region_ends(p_region, REGION_BR, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            else if(uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
             {
                 p_region->br.row = p_uref_event_block->uref_parms.source.region.tl.row;
                 res = DEP_UPDATE;
@@ -538,12 +543,12 @@ uref_match_region(
         else if(rowspan && !p_region->whole_row)
         {
             /* lop off some columns of the dependency */
-            if(uref_region_ends(p_region, REGION_TL, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            if(uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
             {
                 p_region->tl.col = p_uref_event_block->uref_parms.source.region.br.col;
                 res = DEP_UPDATE;
             }
-            else if(uref_region_ends(p_region, REGION_BR, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            else if(uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
             {
                 p_region->br.col = p_uref_event_block->uref_parms.source.region.tl.col;
                 res = DEP_UPDATE;
@@ -559,13 +564,13 @@ uref_match_region(
         }
 
     /* inform if regions intersect */
-    case T5_MSG_UREF_OVERWRITE:
-    case T5_MSG_UREF_CHANGE:
+    case Uref_Msg_Overwrite:
+    case Uref_Msg_Change:
         if(region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region))
             res = DEP_INFORM;
         break;
 
-    case T5_MSG_UREF_SWAP_ROWS:
+    case Uref_Msg_Swap_Rows:
         {
         BOOL colspan_1, rowspan_1, colspan_2, rowspan_2;
         REGION region_1, region_2;
@@ -583,8 +588,8 @@ uref_match_region(
          */
         if(colspan_1 && colspan_2 && (rowspan_1 || rowspan_2))
         {
-            uref_region_ends(p_region, REGION_TL, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
-            uref_region_ends(p_region, REGION_BR, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
+            uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
+            uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
             res = DEP_UPDATE;
         }
         else if(region_intersect_region(p_region, &region_1))
@@ -594,12 +599,13 @@ uref_match_region(
         break;
         }
 
-    case T5_MSG_UREF_CLOSE1:
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_CLOSE1:
+    case Uref_Msg_CLOSE2:
         res = DEP_DELETE;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(res);
@@ -607,15 +613,14 @@ uref_match_region(
 
 /******************************************************************************
 *
-* perform uref on a docu_area
-* (ignores sub-object positions)
+* perform uref on a docu_area (ignores sub-object positions)
 *
 ******************************************************************************/
 
 extern S32 /* reason code out */
 uref_match_docu_area(
     _InoutRef_  P_DOCU_AREA p_docu_area,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     REGION region;
@@ -625,7 +630,7 @@ uref_match_docu_area(
 
     trace_0(TRACE_APP_UREF, TEXT("uref_match_docu_area 0"));
 
-    if((res = uref_match_region(&region, t5_message, p_uref_event_block)) != DEP_NONE)
+    if((res = uref_match_region(&region, uref_message, p_uref_event_block)) != DEP_NONE)
     {
         p_docu_area->tl.slr = region.tl;
         p_docu_area->br.slr = region.br;
@@ -636,15 +641,14 @@ uref_match_docu_area(
 
 /******************************************************************************
 *
-* check a uref event against an slr and derive
-* a reason code for hangers on
+* check a uref event against an slr and derive a reason code for hangers on
 *
 ******************************************************************************/
 
 extern S32 /* reason code out */
 uref_match_slr(
     _InoutRef_  P_SLR p_slr,
-    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     REGION region;
@@ -652,7 +656,7 @@ uref_match_slr(
 
     region_from_two_slrs(&region, p_slr, p_slr, FALSE);
 
-    res = uref_region_ends(&region, REGION_TL, t5_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
+    res = uref_region_ends(&region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
 
     *p_slr = region.tl;
 

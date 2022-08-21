@@ -21,7 +21,7 @@ MROFMUN_ENTRY, * P_MROFMUN_ENTRY; typedef const MROFMUN_ENTRY * PC_MROFMUN_ENTRY
 _Check_return_
 extern STATUS
 autoformat(
-    _OutRef_    P_EV_DATA p_ev_data_out,
+    _OutRef_    P_SS_DATA p_ss_data_out,
     _OutRef_    P_STYLE_HANDLE p_style_handle_out,
     _In_z_      PC_USTR ustr,
     _InRef_     PC_ARRAY_HANDLE p_array_handle_mrofmuns_in);

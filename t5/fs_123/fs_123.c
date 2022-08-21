@@ -25,6 +25,8 @@
 #include "cmodules/typepack.h"
 #endif
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 #if RISCOS
 #if defined(BOUND_MESSAGES_OBJECT_ID_FS_LOTUS123)
 extern PC_U8 rb_fs_123_msg_weak;
@@ -526,7 +528,8 @@ scan_next_symbol(void)
             case RECOG_REAL:
                 return(lotus123_symbol.symno = LF_CONST);
 
-            default: default_unhandled(); break;
+            default: default_unhandled();
+                break;
             }
         }
     }
@@ -645,18 +648,18 @@ lotus123_rpn_out_S16(
 
 /******************************************************************************
 *
-* output floating point value to rpn (8087-format)
+* output floating point value to rpn (8087-format double)
 *
 ******************************************************************************/
 
 _Check_return_
 static STATUS
 lotus123_rpn_out_F64(
-    _InRef_     PC_F64 p_f64)
+    _InVal_     F64 f64)
 {
     BYTE fp_8087[8];
 
-    writeval_F64_as_8087(fp_8087, *p_f64);
+    writeval_F64_as_8087(fp_8087, f64);
 
     return(lotus123_rpn_out_bytes(&quick_block_rpn, fp_8087, sizeof32(fp_8087)));
 }
@@ -771,7 +774,7 @@ lotus123_lterm(void)
 
         status = lotus123_rpn_out_U8(LF_CONST);
         if(status_ok(status))
-             status = lotus123_rpn_out_F64(&lotus123_symbol.arg.f64);
+             status = lotus123_rpn_out_F64(lotus123_symbol.arg.f64);
         break;
 
     case LF_SLR:
@@ -1153,11 +1156,11 @@ _Check_return_
 static STATUS
 lotus123_write_F64(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
-    _InRef_     PC_F64 p_f64)
+    _InVal_     F64 f64)
 {
     BYTE fp_8087[sizeof32(F64)];
 
-    writeval_F64_as_8087(fp_8087, *p_f64);
+    writeval_F64_as_8087(fp_8087, f64);
 
     return(lotus123_write_bytes(p_ff_op_format, fp_8087, sizeof32(fp_8087)));
 }
@@ -1338,7 +1341,7 @@ lotus123_write_cell(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
     _InRef_     PC_SLR p_slr,
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock  /*appended,NOT terminated*/,
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _InVal_     S32 data_constant,
     _InVal_     OBJECT_ID object_id)
 {
@@ -1358,43 +1361,43 @@ lotus123_write_cell(
         {
         if(data_constant)
         {
-            switch(p_ev_data->did_num)
+            switch(ss_data_get_data_id(p_ss_data))
             {
-            case RPN_DAT_REAL:
+            case DATA_ID_REAL:
                 {
-                const F64 f64 = p_ev_data->arg.fp;
+                const F64 f64 = ss_data_get_real(p_ss_data);
                 status_break(status = lotus123_write_cell_start(p_ff_op_format, L_NUMBER, 13, p_slr));
-                status_break(status = lotus123_write_F64(p_ff_op_format, &f64));
+                status_break(status = lotus123_write_F64(p_ff_op_format, f64));
                 break;
                 }
 
-            case RPN_DAT_BOOL8:
-            case RPN_DAT_WORD8:
-            case RPN_DAT_WORD16:
+            case DATA_ID_LOGICAL:
+            case DATA_ID_WORD8:
+            case DATA_ID_WORD16:
                 status_break(status = lotus123_write_cell_start(p_ff_op_format, L_INTEGER, 7, p_slr));
-                status_break(status = lotus123_write_S16(p_ff_op_format, (S16) p_ev_data->arg.integer));
+                status_break(status = lotus123_write_S16(p_ff_op_format, (S16) ss_data_get_integer(p_ss_data)));
                 break;
 
-            case RPN_DAT_WORD32:
+            case DATA_ID_WORD32:
                 {
-                const F64 f64 = (F64) p_ev_data->arg.integer;
+                const F64 f64 = (F64) ss_data_get_integer(p_ss_data);
                 status_break(status = lotus123_write_cell_start(p_ff_op_format, L_NUMBER, 13, p_slr));
-                status_break(status = lotus123_write_F64(p_ff_op_format, &f64));
+                status_break(status = lotus123_write_F64(p_ff_op_format, f64));
                 break;
                 }
 
-            case RPN_DAT_DATE:
+            case DATA_ID_DATE:
                 {
                 S32 year, month, day;
-                if(status_ok(ss_dateval_to_ymd(&p_ev_data->arg.ev_date.date, &year, &month, &day)))
+                if(status_ok(ss_dateval_to_ymd(ss_data_get_date(p_ss_data)->date, &year, &month, &day)))
                     status = lotus123_write_date(p_ff_op_format, day, month, year, p_slr);
                 break;
                 }
 
-            case RPN_DAT_STRING:
-            case RPN_DAT_ARRAY:
-            case RPN_DAT_BLANK:
-            case RPN_DAT_ERROR:
+            case DATA_ID_STRING:
+            case DATA_ID_BLANK:
+            case DATA_ID_ERROR:
+            case DATA_ID_ARRAY:
                 break;
             }
         }
@@ -1412,38 +1415,15 @@ lotus123_write_cell(
 
                 if(status_ok(status))
                 {
-                    switch(p_ev_data->did_num)
+                    if(ss_data_is_number(p_ss_data))
                     {
-                    case RPN_DAT_REAL:
-                        {
-                        const F64 f64 = p_ev_data->arg.fp;
-                        status_break(status = lotus123_write_F64(p_ff_op_format, &f64));
-                        break;
-                        }
-
-                    case RPN_DAT_BOOL8:
-                    case RPN_DAT_WORD8:
-                    case RPN_DAT_WORD16:
-                    case RPN_DAT_WORD32:
-                        {
-                        const F64 f64 = (F64) p_ev_data->arg.integer;
-                        status_break(status = lotus123_write_F64(p_ff_op_format, &f64));
-                        break;
-                        }
-
-                    default: default_unhandled();
-#if CHECKING
-                    case RPN_DAT_DATE:
-                    case RPN_DAT_STRING:
-                    case RPN_DAT_ARRAY:
-                    case RPN_DAT_BLANK:
-                    case RPN_DAT_ERROR:
-#endif
-                        {
+                        const F64 f64 = ss_data_get_number(p_ss_data);
+                        status = lotus123_write_F64(p_ff_op_format, f64);
+                    }
+                    else
+                    {
                         const F64 f64 = 0.0;
-                        status_break(status = lotus123_write_F64(p_ff_op_format, &f64));
-                        break;
-                        }
+                        status = lotus123_write_F64(p_ff_op_format, f64);
                     }
                 }
 
@@ -1521,13 +1501,13 @@ PROC_WRITE_PROTO(proc_write_cols)
                     status = lotus123_write_cell(p_ff_op_format,
                                                  &object_data.data_ref.arg.slr,
                                                  &quick_ublock,
-                                                 &object_data_read.ev_data,
+                                                 &object_data_read.ss_data,
                                                  object_data_read.constant,
                                                  object_data_read.object_data.object_id);
 
                 quick_ublock_dispose(&quick_ublock);
 
-                ss_data_free_resources(&object_data_read.ev_data);
+                ss_data_free_resources(&object_data_read.ss_data);
 
                 break;
                 }

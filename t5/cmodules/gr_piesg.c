@@ -20,10 +20,8 @@
 _Check_return_
 static F64 /*radians*/
 reduce_into_range(
-    _InRef_     PC_F64 p_alpha /*radians*/)
+    _In_        F64 alpha /*radians*/)
 {
-    F64 alpha = *p_alpha;
-
     while(alpha > _pi)
         alpha -= _two_pi;
 
@@ -36,9 +34,9 @@ reduce_into_range(
 _Check_return_
 static F64 /*radians*/
 conv_heading_to_angle(
-    _InRef_     PC_F64 p_heading_degrees)
+    _InVal_     F64 heading_degrees_in)
 {
-    F64 heading_degrees = *p_heading_degrees;
+    F64 heading_degrees = heading_degrees_in;
     F64 heading_radians, alpha;
 
     /* sanitise input degrees into [0,360) */
@@ -49,13 +47,13 @@ conv_heading_to_angle(
 
     heading_radians = heading_degrees * _radians_per_degree;
 
-    /* if heading <= 90 or >= 270 it's +ve between 0 and pi */
-    /* if heading > 90 and < 270 it's -ve between 0 and pi */
+    /* if heading <= 90 or  >= 270 it's +ve between 0 and pi */
+    /* if heading >  90 and <  270 it's -ve between 0 and pi */
     alpha = _pi_div_two - heading_radians;
 
-    alpha = reduce_into_range(&alpha);
+    alpha = reduce_into_range(alpha);
 
-    trace_2(TRACE_MODULE_GR_CHART, TEXT("conv_heading_to_angle(%g degrees) yields %g radians"), *p_heading_degrees, alpha);
+    trace_2(TRACE_MODULE_GR_CHART, TEXT("conv_heading_to_angle(%g degrees) yields %g radians"), heading_degrees_in, alpha);
 
     return(alpha);
 }
@@ -163,7 +161,7 @@ gr_pie_addin(
 
     for(pass = 1; pass <= 2; ++pass)
     {
-        alpha = conv_heading_to_angle(&serp->style.pie_start_heading_degrees);
+        alpha = conv_heading_to_angle(serp->style.pie_start_heading_degrees);
 
         for(point = 0; point < n_points; ++point)
         {
@@ -222,8 +220,8 @@ gr_pie_addin(
                         status_break(status = gr_chart_group_new(cp, &pointStart, id));
 
                     status_break(status = gr_diag_piesector_new(p_gr_diag, NULL, id, &thisOrigin, radius,
-                                                                (alpha < beta) ? &alpha : &beta,
-                                                                (alpha < beta) ? &beta  : &alpha, &linestyle, &fillstylec));
+                                                                fmin(alpha, beta), fmax(alpha, beta),
+                                                                &linestyle, &fillstylec));
 
                     if(labelling)
                     {
@@ -236,25 +234,25 @@ gr_pie_addin(
                         else if(piechlabelstyle.bits.label_pct)
                         {
                             NUMFORM_PARMS numform_parms;
-                            EV_DATA ev_data;
+                            SS_DATA ss_data;
                             QUICK_UBLOCK quick_ublock;
                             quick_ublock_setup(&quick_ublock, cv.data.text);
 
                             cv.data.text[0] = CH_NULL;
 
-                            ev_data_set_real(&ev_data, value);
+                            ss_data_set_real(&ss_data, value);
 
                             /* convert value into %ge value */
-                            ev_data.arg.fp *= 100.0; /* care with order else 14.0 -> 0.14 -> ~14.0 */
-                            ev_data.arg.fp /= total; /* ALWAYS in 0.0 - 100.0 */
+                            ss_data.arg.fp *= 100.0; /* care with order else 14.0 -> 0.14 -> ~14.0 */
+                            ss_data.arg.fp /= total; /* ALWAYS in 0.0 - 100.0 */
 
                             zero_struct(numform_parms);
                             numform_parms.ustr_numform_numeric =
-                                (floor(ev_data.arg.fp) == ev_data.arg.fp)
+                                (floor(ss_data_get_real(&ss_data)) == ss_data_get_real(&ss_data))
                                     ? USTR_TEXT("0\\%")
                                     : USTR_TEXT("0.00\\%");
 
-                            status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms);
+                            status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms);
 
                             quick_ublock_dispose_leaving_buffer_valid(&quick_ublock);
                         }
@@ -287,7 +285,7 @@ gr_pie_addin(
                             text_box.y0 -= height / 4;
 
                             /* place differently according to whether on right or left of centre vertical */
-                            if(fabs(reduce_into_range(&bisector)) <= _pi_div_two)
+                            if(fabs(reduce_into_range(bisector)) <= _pi_div_two)
                             {
                                 text_box.x1 = text_box.x0 + width;
                             }
@@ -309,7 +307,7 @@ gr_pie_addin(
                 }
 
                 /* use this angle as the next segment's start angle */
-                alpha = reduce_into_range(&beta);
+                alpha = reduce_into_range(beta);
             }
         }
     }

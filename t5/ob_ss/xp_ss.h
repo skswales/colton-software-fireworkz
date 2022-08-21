@@ -43,25 +43,25 @@ enum __ss_function_indices
 {
     SS_FUNC_NULL = 0,
 
-    SS_FUNC_NOT,
-    SS_FUNC_UMINUS,
-    SS_FUNC_UPLUS,
+    SS_FUNC_UOP_NOT,
+    SS_FUNC_UOP_MINUS,
+    SS_FUNC_UOP_PLUS,
 
-    SS_FUNC_AND,
+    SS_FUNC_BOP_AND,
     SS_FUNC_BOP_CONCATENATE,
-    SS_FUNC_DIV,
-    SS_FUNC_SUB,
-    SS_FUNC_OR,
-    SS_FUNC_ADD,
-    SS_FUNC_POWER,
-    SS_FUNC_MUL,
+    SS_FUNC_BOP_DIV,
+    SS_FUNC_BOP_SUB,
+    SS_FUNC_BOP_OR,
+    SS_FUNC_BOP_ADD,
+    SS_FUNC_BOP_POWER,
+    SS_FUNC_BOP_MUL,
 
-    SS_FUNC_EQ,
-    SS_FUNC_GT,
-    SS_FUNC_GTEQ,
-    SS_FUNC_LT,
-    SS_FUNC_LTEQ,
-    SS_FUNC_NEQ,
+    SS_FUNC_REL_EQ,
+    SS_FUNC_REL_GT,
+    SS_FUNC_REL_GTEQ,
+    SS_FUNC_REL_LT,
+    SS_FUNC_REL_LTEQ,
+    SS_FUNC_REL_NEQ,
 
     SS_FUNC_IF,
 
@@ -437,9 +437,9 @@ enum ALERT_RESULT_CODES
 
 typedef struct SS_INPUT_EXEC
 {
-    PC_EV_STRINGC p_ev_string_message;
-    PC_EV_STRINGC p_ev_string_but_1;
-    PC_EV_STRINGC p_ev_string_but_2;
+    PC_SS_STRINGC p_ss_string_message;
+    PC_SS_STRINGC p_ss_string_but_1;
+    PC_SS_STRINGC p_ss_string_but_2;
     EV_DOCNO ev_docno;
 }
 SS_INPUT_EXEC, * P_SS_INPUT_EXEC;

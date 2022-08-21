@@ -18,7 +18,7 @@ extern void
 bezier_arc_90(
     _InRef_     PC_DRAW_POINT centre,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 p_startAngle,
+    _InVal_     F64 start_angle,
     _OutRef_    P_DRAW_POINT start,
     _OutRef_    P_DRAW_POINT end,
     _OutRef_    P_DRAW_POINT control1,
@@ -49,8 +49,8 @@ extern U32
 bezier_arc_start(
     _InRef_     PC_DRAW_POINT centre,
     _InVal_     DRAW_COORD radius,
-    _InRef_     PC_F64 p_startAngle,
-    _InRef_     PC_F64 p_endAngle,
+    _InVal_     F64 start_angle,
+    _InVal_     F64 end_angle,
     _OutRef_    P_DRAW_POINT start,
     _OutRef_    P_DRAW_POINT end,
     _OutRef_    P_DRAW_POINT control1,

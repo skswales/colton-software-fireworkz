@@ -38,10 +38,4 @@ PROFILING SETL {FALSE}
 No26bitCode SETL {FALSE}
 No32bitCode SETL {TRUE}
 
-; Is CONFIG set by new ObjAsm?
-; Certainly is by old one!!!
-
-    GBLA   CONFIG_ASM
-CONFIG_ASM SETA 32
-
     END

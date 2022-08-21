@@ -70,7 +70,7 @@ insert_field_selector_0 =
     INSERT_FIELD_ID_SELECTOR_0, INSERT_FIELD_ID_SELECTOR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -189,13 +189,13 @@ insert_field_intro_setup_entry_date(
     PC_ANY p_setup_data,
     _InoutRef_  P_PIXIT p_max_width)
 {
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     NUMFORM_PARMS numform_parms;
     STATUS status;
 
     UNREFERENCED_PARAMETER(p_setup_data);
 
-    zero_struct(ev_data);
+    zero_struct(ss_data);
     zero_struct(numform_parms);
 
     /* each ***entry*** has a quick buf! */
@@ -204,23 +204,23 @@ insert_field_intro_setup_entry_date(
     switch(selector_idx)
     {
     case 1:
-        ev_data.did_num = RPN_DAT_DATE;
-        ss_local_time_as_ev_date(&ev_data.arg.ev_date);
+        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
+        ss_local_time_to_ss_date(&ss_data.arg.ss_date);
         break;
 
     default: default_unhandled();
 #if CHECKING
     case 0:
 #endif
-        ev_data.did_num = RPN_DAT_DATE;
-        ev_data.arg.ev_date = p_docu->file_date;
+        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
+        ss_data.arg.ss_date = p_docu->file_ss_date;
         break;
     }
 
     numform_parms.ustr_numform_datetime = p_field_list_entry->ustr_numform;
     numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-    status_assert(status = numform(&p_field_list_entry->quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+    status_assert(status = numform(&p_field_list_entry->quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
     {
     PIXIT width = ui_width_from_ustr(quick_ublock_ustr(&p_field_list_entry->quick_ublock));
@@ -240,7 +240,7 @@ insert_field_intro_setup_entry_page(
     PC_ANY p_setup_data,
     _InoutRef_  P_PIXIT p_max_width)
 {
-    EV_DATA ev_data;
+    SS_DATA ss_data;
     NUMFORM_PARMS numform_parms;
     STATUS status;
 
@@ -252,21 +252,21 @@ insert_field_intro_setup_entry_page(
     switch(selector_idx)
     {
     case 1:
-        ev_data_set_integer(&ev_data, ((PC_PAGE_NUM) p_setup_data)->x + 1);
+        ss_data_set_integer(&ss_data, ((PC_PAGE_NUM) p_setup_data)->x + 1);
         break;
 
     default: default_unhandled();
 #if CHECKING
     case 0:
 #endif
-        ev_data_set_integer(&ev_data, page_number_from_page_y(p_docu, ((PC_PAGE_NUM) p_setup_data)->y) + 1);
+        ss_data_set_integer(&ss_data, page_number_from_page_y(p_docu, ((PC_PAGE_NUM) p_setup_data)->y) + 1);
         break;
     }
 
     numform_parms.ustr_numform_numeric = p_field_list_entry->ustr_numform;
     numform_parms.p_numform_context = get_p_numform_context(p_docu);
 
-    status_assert(status = numform(&p_field_list_entry->quick_ublock, P_QUICK_TBLOCK_NONE, &ev_data, &numform_parms));
+    status_assert(status = numform(&p_field_list_entry->quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
     {
     PIXIT width = ui_width_from_ustr(quick_ublock_ustr(&p_field_list_entry->quick_ublock));

@@ -565,13 +565,15 @@ _Check_return_
 static STATUS
 save_as_drawfile_drawfile_initialise(
     _OutRef_    P_P_GR_RISCDIAG p_p_gr_riscdiag_saving,
-    _OutRef_    P_P_GR_RISCDIAG p_p_gr_riscdiag_lookup)
+    _OutRef_    P_P_GR_RISCDIAG p_p_gr_riscdiag_lookup,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
+    const PC_SBSTR creator_name = (FILETYPE_T5_DRAW == t5_filetype) ? "FwkzHybrid" : "FwkzExport";
     STATUS status = STATUS_OK;
 
     *p_p_gr_riscdiag_lookup = NULL; /* well done code analysis! */
 
-    status_return(status = gr_riscdiag_diagram_new(p_p_gr_riscdiag_saving, "FwkzExport", 0, 0, TRUE /*options*/));
+    status_return(status = gr_riscdiag_diagram_new(p_p_gr_riscdiag_saving, creator_name, 0, 0, TRUE /*options*/));
     status_return(status = gr_riscdiag_diagram_new(p_p_gr_riscdiag_lookup, "FwkzLookup", 0, 0, FALSE /*options*/));
 
     PTR_ASSERT(*p_p_gr_riscdiag_lookup);
@@ -691,7 +693,7 @@ save_as_drawfile_host_print_document(
     STATUS status = STATUS_OK;
     P_GR_RISCDIAG p_gr_riscdiag_saving, p_gr_riscdiag_lookup;
 
-    status_return(status = save_as_drawfile_drawfile_initialise(&p_gr_riscdiag_saving, &p_gr_riscdiag_lookup));
+    status_return(status = save_as_drawfile_drawfile_initialise(&p_gr_riscdiag_saving, &p_gr_riscdiag_lookup, t5_filetype));
 
     status = save_as_drawfile_host_print_document_core(p_docu, p_print_ctrl, p_gr_riscdiag_saving, p_gr_riscdiag_lookup);
 

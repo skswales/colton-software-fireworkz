@@ -215,7 +215,7 @@ text_to_cell(
                 new_object_from_text.p_quick_ublock = &quick_ublock;
                 new_object_from_text.please_redraw = TRUE;
                 new_object_from_text.please_uref_overwrite = TRUE;
-                new_object_from_text.please_mrofmun = TRUE;
+                new_object_from_text.try_autoformat = TRUE;
 
                 status = object_call_id(p_cells_instance->object_id, p_docu, T5_MSG_NEW_OBJECT_FROM_TEXT, &new_object_from_text);
                 /* NB no quick_ublock_dispose */

@@ -75,14 +75,14 @@ auto_save(
         p_docu->auto_save_period_minutes = auto_save_period_minutes;
 
         /* cancel any outstanding autosaves for this document */
-        trace_1(TRACE__SCHEDULED, TEXT("auto_save - *** scheduled_event_remove(docno=%d), cancel pending auto save"), docno_from_p_docu(p_docu));
+        trace_1(TRACE__SCHEDULED, TEXT("auto_save - *** scheduled_event_remove(docno=") DOCNO_TFMT TEXT("), cancel pending auto save"), docno_from_p_docu(p_docu));
         scheduled_event_remove(docno_from_p_docu(p_docu), T5_EVENT_TRY_AUTO_SAVE, scheduled_event_auto_save, 0);
     }
 
     if(auto_save_period_minutes || once_only)
     {   /* schedule me an AutoSave event for sometime in the future */
         const MONOTIMEDIFF after = MONOTIMEDIFF_VALUE_FROM_SECONDS(auto_save_period_minutes * (MONOTIMEDIFF) 60);
-        trace_1(TRACE__SCHEDULED, TEXT("auto_save - *** do scheduled_event_after(docno=%d, n)"), docno_from_p_docu(p_docu));
+        trace_1(TRACE__SCHEDULED, TEXT("auto_save - *** do scheduled_event_after(docno=") DOCNO_TFMT TEXT(", n)"), docno_from_p_docu(p_docu));
         status = status_wrap(scheduled_event_after(docno_from_p_docu(p_docu), T5_EVENT_TRY_AUTO_SAVE, scheduled_event_auto_save, 0, after));
     }
 
@@ -103,7 +103,7 @@ do_auto_save(
     if(p_docu->auto_save_period_minutes)
     {   /* schedule me an AutoSave event for sometime in the future */
         const MONOTIMEDIFF after = MONOTIMEDIFF_VALUE_FROM_SECONDS(p_docu->auto_save_period_minutes * (MONOTIMEDIFF) 60);
-        trace_1(TRACE__SCHEDULED, TEXT("do_auto_save - *** do scheduled_event_after(docno=%d, n)"), docno_from_p_docu(p_docu));
+        trace_1(TRACE__SCHEDULED, TEXT("do_auto_save - *** do scheduled_event_after(docno=") DOCNO_TFMT TEXT(", n)"), docno_from_p_docu(p_docu));
         status = status_wrap(scheduled_event_after(docno_from_p_docu(p_docu), T5_EVENT_TRY_AUTO_SAVE, scheduled_event_auto_save, 0, after));
     }
 
@@ -390,7 +390,7 @@ save_data_save_2(
         {
             PC_STYLE_DOCU_AREA p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, style_docu_area_ix);
 
-            if(p_style_docu_area->deleted)
+            if(p_style_docu_area->is_deleted)
                 continue;
 
             if(p_style_docu_area->region_class >= region_class)
@@ -819,7 +819,8 @@ save_rowtable(
         PC_CONSTRUCT_TABLE p_construct_table;
         ARGLIST_HANDLE arglist_handle;
 
-        if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_OF_ROWTABLE, &p_construct_table)))
+        if( p_docu->flags.virtual_row_table &&
+            status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_OF_ROWTABLE, &p_construct_table)) )
         {
             const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
             p_args[0].val.fBool = p_docu->flags.virtual_row_table;
@@ -886,7 +887,8 @@ save_cell(
 
         p_args[ARG_CELL_CONTENTS].val.ustr_inline = ustr_inline_contents;
         p_args[ARG_CELL_FORMULA ].val.ustr = ustr_formula;
-        p_args[ARG_CELL_MROFMUN ].val.tstr = save_cell_ownform.tstr_mrofmun_style;
+
+        p_args[ARG_CELL_AUTOFORMAT_STYLE].val.tstr = save_cell_ownform.tstr_autoformat_style;
 
         status = ownform_save_arglist(p_skel_save_cell->arglist_handle, OBJECT_ID_SKEL, p_skel_save_cell->p_construct, p_of_op_format);
     }

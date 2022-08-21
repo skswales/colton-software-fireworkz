@@ -24,6 +24,10 @@
 #define EXPOSE_RISCOS_SWIS
 #include "ob_skel/xp_skelr.h"
 
+#include <ctype.h> /* for tolower - only use is here before started fully */
+
+#include <locale.h> /* for setlocale */
+
 #ifndef ROOT_STACK_SIZE
 #define ROOT_STACK_SIZE 16384
 #endif
@@ -117,6 +121,17 @@ get_user_info(void)
         /*EMPTY*//*__registration_number[0] = CH_NULL*/;
 }
 
+_Check_return_
+static STATUS
+import_this_foreign_file(
+    _DocuRef_   P_DOCU cur_p_docu,
+    _In_z_      PCTSTR filename)
+{
+    const T5_FILETYPE t5_filetype = t5_filetype_from_filename(filename);
+
+    return(load_foreign_file_rl(cur_p_docu, filename, t5_filetype));
+}
+
 /*
 no longer does anything on pass 1
 */
@@ -146,6 +161,13 @@ decode_command_line_options(
                 arg = argv[++argi];
                 if(pass == 2)
                     status = load_this_command_file_rl(P_DOCU_NONE, arg);
+                break;
+
+            case 'i':
+                /* Import */
+                arg = argv[++argi];
+                if(pass == 2)
+                    status = import_this_foreign_file(P_DOCU_NONE, arg);
                 break;
 
             case 't':
@@ -255,6 +277,10 @@ past_arg:;
 static BOOL event_loop_jmp_set = FALSE;
 static jmp_buf event_loop_jmp_buf;
 
+#if defined(__CC_NORCROFT)
+#pragma no_check_stack
+#endif
+
 extern void
 host_longjmp_to_event_loop(int val)
 {
@@ -262,16 +288,17 @@ host_longjmp_to_event_loop(int val)
         longjmp(event_loop_jmp_buf, val);
 }
 
-/* keep defaults for these in case of msgs death */
+static void
+t5_internal_stack_overflow_handler(int sig)
+{
+    host_longjmp_to_event_loop(sig);
 
-static const U8Z
-error_fatal_str[] =
-    "error_fatal:%s has suffered a fatal internal error (%s) and must exit immediately";
+    exit(EXIT_FAILURE);
+}
 
-static const U8Z
-error_serious_str[] =
-    "error_serious:%s has suffered a serious internal error (%s). "
-    "Click Continue to exit immediately, losing data, Cancel to attempt to resume execution.";
+#if defined(__CC_NORCROFT)
+#pragma check_stack
+#endif
 
 /* Escape events may happen while printing is happening; the printer driver should handle it, and the application simply deals with the returned error. */
 
@@ -292,72 +319,18 @@ t5_escape_handler(int sig)
     (void) signal(sig, &t5_escape_handler);
 }
 
+static BOOL
+t5_signal_handler_common(int sig);
+
 static void
 t5_signal_handler(int sig)
 {
-    _kernel_oserror err;
-    char causebuffer[32];
-    const char * cause;
-    int must_die;
-    int jump_back = FALSE;
-    int errflags_out;
-
-    must_die = host_must_die_query() || (host_task_handle() == 0);
-    host_must_die_set(TRUE); /* trap errors in lookup/sprintf etc. */
-
-    consume_int(snprintf(causebuffer, elemof32(causebuffer), "sig%d", sig));
-    cause = string_for_object(causebuffer, OBJECT_ID_SKEL);
-
-    err.errnum = sig;
-    consume_int(snprintf(err.errmess, elemof32(err.errmess),
-                         string_for_object(must_die ? error_fatal_str : error_serious_str, OBJECT_ID_SKEL),
-                         product_ui_id(),
-                         cause));
-
-    if(host_task_handle() == 0)
-    {
-        _kernel_swi_regs rs;
-        report_output(err.errmess);
-        rs.r[0] = (int) &err;
-        consume(_kernel_oserror *, _kernel_swi(/*OS_GenerateError*/ 0x0002B, &rs, &rs));
-    }
-    else
-    {
-        consume(_kernel_oserror *, wimp_reporterror_rf(&err, must_die ? Wimp_ReportError_OK : Wimp_ReportError_OK | Wimp_ReportError_Cancel, &errflags_out, NULL, 3));
-        jump_back = ((errflags_out & Wimp_ReportError_Cancel) != 0);
-    }
-
-    if(jump_back)
-    {
-        /* reinstall ourselves, as SIG_DFL will have been restored (as defined by the ANSI spec) */
-        (void) signal(sig, &t5_signal_handler);
-
+    if(t5_signal_handler_common(sig))
         /* give it your best shot else we come back and die soon */
         host_longjmp_to_event_loop(sig);
-    }
 
     exit(EXIT_FAILURE);
 }
-
-#if !RELEASED && defined(__CC_NORCROFT)
-#pragma no_check_stack
-#endif
-
-static void
-t5_stack_overflow_handler(int sig)
-{
-    UNREFERENCED_PARAMETER(sig);
-
-    report_output("*** Stack overflow ***");
-
-    host_longjmp_to_event_loop(sig);
-
-    exit(EXIT_FAILURE);
-}
-
-#if !RELEASED && defined(__CC_NORCROFT)
-#pragma check_stack
-#endif
 
 static void
 install_t5_signal_handlers(void)
@@ -368,10 +341,135 @@ install_t5_signal_handlers(void)
     (void) signal(SIGINT,     &t5_escape_handler);
     (void) signal(SIGSEGV,    &t5_signal_handler);
     (void) signal(SIGTERM,    &t5_signal_handler);
-    (void) signal(SIGSTAK,    &t5_stack_overflow_handler);
+    (void) signal(SIGSTAK,    &t5_internal_stack_overflow_handler);
     (void) signal(SIGUSR1,    &t5_signal_handler);
     (void) signal(SIGUSR2,    &t5_signal_handler);
     (void) signal(SIGOSERROR, &t5_signal_handler);
+}
+
+/* keep defaults for these in case of msgs death */
+
+static const U8Z
+error_fatal_str[] =
+    "error_fatal:%s has gone wrong (%s). "
+    "Click Continue to quit, losing data";
+
+static const U8Z
+error_serious_str[] =
+    "error_serious:%s has gone wrong (%s). "
+    "Click Continue to try to resume or Cancel to quit, losing data.";
+
+static PC_U8Z
+tag_from_signal_number(int sig)
+{
+    static const PC_U8Z
+    tag_table[] =
+    {
+        "signal0:Unknown",
+        "signal1:Abnormal termination",
+        "signal2:Arithmetic exception",
+        "signal3:Illegal instruction",
+        "signal4:Escape",
+        "signal5:Address exception",
+        "signal6:Termination request",
+        "signal7:Stack overflow"
+    };
+
+    if(SIGOSERROR == sig)
+        return("signal10:OS error");
+
+    if((U32) sig >= elemof32(tag_table))
+        sig = 0;
+
+    return(tag_table[sig]);
+}
+
+static BOOL
+t5_signal_handler_common(int sig)
+{
+    _kernel_oserror * e;
+    _kernel_oserror err;
+    const char * cause = NULL;
+    BOOL must_die;
+    BOOL jump_back = FALSE;
+    int button_clicked;
+
+    must_die = host_must_die_query() || (host_task_handle() == 0);
+    host_must_die_set(TRUE); /* trap errors in lookup/sprintf etc. */
+
+    // reportf("t5_signal_handler_common(sig=%d)", sig);
+
+    switch(sig)
+    {
+    case SIGOSERROR:
+        e = _kernel_last_oserror();
+        if(NULL != e)
+        {
+            err.errnum = e->errnum;
+            cause = e->errmess;
+        }
+        break;
+
+    case SIGSTAK:
+        /* I prefer my message... */
+        break;
+
+    default:
+        e = _kernel_last_oserror();
+        // reportf("t5_signal_handler_common: e=&%.8X, &%.8X", (uintptr_t) e, e ? e->errnum : 0);
+        if( (NULL != e) && (0 != (e->errnum & (1U << 31))) )
+        {   /* Only use the error if its already got top bit set */
+            err.errnum = e->errnum;
+            cause = e->errmess;
+        }
+        break;
+    }
+
+    if(NULL == cause)
+    {
+        err.errnum = sig;
+        cause = string_for_object(tag_from_signal_number(sig), OBJECT_ID_SKEL);
+    }
+
+    err.errnum |= (1U << 31); /* Force a helpful Quit button for the users on RISC OS 3.5+ */
+    consume_int(snprintf(err.errmess, elemof32(err.errmess),
+                         string_for_object(must_die ? error_fatal_str : error_serious_str, OBJECT_ID_SKEL),
+                         product_ui_id(),
+                         cause));
+
+    if(0 == host_task_handle())
+    {
+        _kernel_swi_regs rs;
+        report_output(err.errmess);
+        rs.r[0] = (int) &err;
+        consume(_kernel_oserror *, _kernel_swi(OS_GenerateError, &rs, &rs));
+    }
+    else if(must_die)
+    {
+        consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK, &button_clicked, NULL, 3 /*STOP*/));
+        /* ignore button_clicked - we must die */
+    }
+    else
+    {
+        consume(_kernel_oserror *, wimp_reporterror_rf(&err, Wimp_ReportError_OK | Wimp_ReportError_Cancel, &button_clicked, NULL, 3 /*STOP*/));
+        jump_back = (1 == button_clicked);
+        if(jump_back)
+            host_must_die_set(must_die); /* only time this is restored */
+    }
+
+    /* reinstall ourselves, as SIG_DFL will have been restored (as defined by the ANSI spec) */
+    /* helps to trap any further errors during closedown rather than giving postmortem dump */
+    switch(sig)
+    {
+    case SIGSTAK:
+        break;
+
+    default:
+        (void) signal(sig, &t5_signal_handler);
+        break;
+    }
+
+    return(jump_back);
 }
 
 /******************************************************************************
@@ -438,6 +536,21 @@ host_report_and_trace_enable(void)
     }
 #endif /* TRACE_ALLOWED */
 }
+
+#if defined(UNUSED) || 0
+
+static int
+t5_stack_overflow_test(int i)
+{
+    unsigned char buf[256];
+    unsigned int j;
+    // *(int*)1 = i;
+    for(j = 0; j < 256; ++j)
+        buf[j] = i & 0xFF;
+    return(buf[i & 0xFF] + t5_stack_overflow_test(i + 1));
+}
+
+#endif
 
 /******************************************************************************
 *
@@ -595,17 +708,30 @@ main(
 #endif /* XXM_LGPL_DYNAMIC_LINKING */
 
     /* Set up a point we can longjmp back to on serious error */
-    if(setjmp(event_loop_jmp_buf))
-    {   /* returned here from exception - tidy up as necessary */
+    switch(setjmp(event_loop_jmp_buf))
+    {
+    case SIGSTAK:
+        report_output("*** Stack overflow ***");
+
+        if(!t5_signal_handler_common(SIGSTAK))
+            return(EXIT_FAILURE);
+
+        /*FALLTHRU*/
+
+    default:
+        /* returned here from exception - tidy up as necessary */
         status_assert(maeve_service_event(P_DOCU_NONE, T5_MSG_HAD_SERIOUS_ERROR, P_DATA_NONE));
 
         trace_0(TRACE_APP_SKEL, TEXT("main: Starting to poll for messages again after serious error"));
-    }
-    else
-    {
+        break;
+
+    case 0:
         event_loop_jmp_set = TRUE;
 
         trace_0(TRACE_APP_SKEL, TEXT("main: Starting to poll for messages"));
+        /* __crash_and_burn_here(); */
+        /* t5_stack_overflow_test(0); */
+        break;
     }
 
     for(;;)

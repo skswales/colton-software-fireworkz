@@ -19,12 +19,14 @@
  * 0.12 09-Jan-12 SKS default country string UK, fix comments
  * 0.13 13-Feb-14 SKS MPL-ed
  * 0.14 17-Nov-16 SKS Allow LF separator
+ * 0.15 21-Aug-19 SKS fprintf(stderr)
 */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include "kernel.h"
 
@@ -52,7 +54,7 @@ messages_init(FILE * fin);
 
 /* ----------------------------------------------------------------------- */
 
-#define VERSION "0.14"
+#define VERSION "0.15"
 
 #define ARG_STROP_CHAR '-'
 #define ARG_STROP_STR  "-"
@@ -364,7 +366,7 @@ main(int argc, char *argv[])
                 continue;
             }
 
-            /* tracef1("unrecognized arg " ARG_STROP_STR "%s --- ignored\n", arg); */
+            fprintf(stderr, "%s: unrecognized arg " ARG_STROP_STR "%s --- ignored\n", argv[0], arg);
         }
         else
         {
@@ -382,20 +384,20 @@ main(int argc, char *argv[])
                 continue;
             }
 
-            puts("extra args --- ignored");
+            fprintf(stderr, "%s: extra args --- ignored\n", argv[0]);
             break;
         }
     }
 
     if(!infilename)
     {
-        /* reperr_null(ERR_NOINPUT);*/
+        fprintf(stderr, "%s: no input file specified\n", argv[0]);
         return(EXIT_FAILURE);
     }
 
     if(!outfilename)
     {
-        /* reperr_null(ERR_NOOUTPUT);  */
+        fprintf(stderr, "%s: no output file specified\n", argv[0]);
         return(EXIT_FAILURE);
     }
 
@@ -431,7 +433,7 @@ res = EXIT_FAILURE ;
         }
         else
         {
-            /* reperr(ERR_CANTOPENOUTPUT, outfilename, reperr_getstr(res)); */
+            fprintf(stderr, "%s: can't open output file %s: %s\n", argv[0], outfilename, strerror(errno));
             res = EXIT_FAILURE;
         }
 
@@ -439,7 +441,7 @@ res = EXIT_FAILURE ;
     }
     else
     {
-        /* reperr(ERR_CANTOPENINPUT, infilename, reperr_getstr(res)); */
+        fprintf(stderr, "%s: can't open input file %s: %s\n", argv[0], infilename, strerror(errno));
         res = EXIT_FAILURE;
     }
 

@@ -546,8 +546,8 @@ gr_scatterchart_series_addin(
 
             gr_point_scatchstyle_query(cp, series_idx, point, &scatchstyle);
 
-            valpoint.x = gr_value_pos(cp, axes_idx, X_AXIS_IDX, &value.x);
-            valpoint.y = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &value.y);
+            valpoint.x = gr_value_pos(cp, axes_idx, X_AXIS_IDX, value.x);
+            valpoint.y = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, value.y);
 
             /* map into absolute plot area */
             valpoint.x += cp->plotarea.posn.x;
@@ -569,9 +569,9 @@ gr_scatterchart_series_addin(
                     F64 valincerr;
 
                     valincerr = value.x - error.x;
-                    err_box.x0 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, &valincerr);
+                    err_box.x0 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, valincerr);
                     valincerr = value.x + error.x;
-                    err_box.x1 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, &valincerr);
+                    err_box.x1 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, valincerr);
 
                     /* map into absolute plot area */
                     err_box.x0 += cp->plotarea.posn.x;
@@ -579,7 +579,7 @@ gr_scatterchart_series_addin(
                 }
                 else
                 {
-                    GR_PIXIT errsize = gr_value_pos_rel(cp, axes_idx, X_AXIS_IDX, &error.x);
+                    GR_PIXIT errsize = gr_value_pos_rel(cp, axes_idx, X_AXIS_IDX, error.x);
 
                     err_box.x0 = valpoint.x - errsize;
                     err_box.x1 = valpoint.x + errsize;
@@ -618,9 +618,9 @@ gr_scatterchart_series_addin(
                     F64 valincerr;
 
                     valincerr = value.y - error.y;
-                    err_box.y0 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &valincerr);
+                    err_box.y0 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, valincerr);
                     valincerr = value.y + error.y;
-                    err_box.y1 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &valincerr);
+                    err_box.y1 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, valincerr);
 
                     /* map into absolute plot area */
                     err_box.y0 += cp->plotarea.posn.y;
@@ -628,7 +628,7 @@ gr_scatterchart_series_addin(
                 }
                 else
                 {
-                    GR_PIXIT errsize = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, &error.y);
+                    GR_PIXIT errsize = gr_value_pos_rel(cp, axes_idx, Y_AXIS_IDX, error.y);
 
                     err_box.y0 = valpoint.y - errsize;
                     err_box.y1 = valpoint.y + errsize;
@@ -900,10 +900,11 @@ PROC_LINEST_DATA_PUT_PROTO(extern, gr_barlinescatch_linest_putproc, handle, colI
     switch(colID)
     {
     case LINEST_A_COLOFF:
-        state->a[row] = *value;
+        state->a[row] = value;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(1);
@@ -1023,8 +1024,8 @@ gr_barlinescatch_best_fit_addin(
     else
     {
         /* must do after converting values back */
-        line_box.x0 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, &fpx0);
-        line_box.x1 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, &fpx1);
+        line_box.x0 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, fpx0);
+        line_box.x1 = gr_value_pos(cp, axes_idx, X_AXIS_IDX, fpx1);
     }
 
     switch(chart_type)
@@ -1053,8 +1054,8 @@ gr_barlinescatch_best_fit_addin(
         break;
     }
 
-    line_box.y0 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &fpy0);
-    line_box.y1 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, &fpy1);
+    line_box.y0 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, fpy0);
+    line_box.y1 = gr_value_pos(cp, axes_idx, Y_AXIS_IDX, fpy1);
 
     /* map together into 3-D world */
     if(cp->d3.bits.use)
@@ -1070,9 +1071,9 @@ gr_barlinescatch_best_fit_addin(
     line_box.y1 += cp->plotarea.posn.y;
 
     /* introduce (small) z shift for non-100% depth centring */
-    z_frac = (100.0 - lcp->slot_depth_percentage) / 100.0 / 2.0; /* only half you twerp! */
+    z_frac = ((100.0 - lcp->slot_depth_percentage) / 100.0) / 2.0; /* only half you twerp! */
 
-    gr_point_partial_z_shift(&zsv, NULL, cp, &z_frac);
+    gr_point_partial_z_shift(&zsv, NULL, cp, z_frac);
 
     line_box.x0 += zsv.x;
     line_box.y0 += zsv.y;

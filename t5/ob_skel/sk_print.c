@@ -23,6 +23,8 @@
 #include "ob_skel/xp_skeld.h"
 #endif
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 /*
 internal routines
 */
@@ -258,7 +260,7 @@ print_all =
     CONTROL_ID_ALL, CONTROL_ID_AR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -328,7 +330,7 @@ print_range_y0 =
 {
     CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y_GROUP,
     { CONTROL_ID_RANGE_Y0_LABEL, DIALOG_CONTROL_PARENT },
-    { DIALOG_SMALLSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
+    { DIALOG_LABELGAP_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 

@@ -15,6 +15,8 @@
 
 #include "fl_pdtx/fl_pdtx.h"
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 #if RISCOS
 #if defined(BOUND_MESSAGES_OBJECT_ID_FL_PDTX)
 extern PC_U8 rb_fl_pdtx_msg_weak;
@@ -905,7 +907,8 @@ pdtx_regions_add(
         style.font_spec.superscript = 1;
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style);

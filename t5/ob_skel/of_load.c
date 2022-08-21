@@ -795,7 +795,7 @@ new_docno_using_core(
 
     if(status_ok(status = ownform_initialise_load(p_docu, &position, &of_ip_format, filename, NULL)))
     {
-        status_assert(file_date(of_ip_format.input.file.file_handle, &p_docu->file_date));
+        status_assert(file_date(of_ip_format.input.file.file_handle, &p_docu->file_ss_date));
 
         status = load_ownform_file(&of_ip_format);
 
@@ -939,7 +939,7 @@ load_into_thunk_using_array_handle(
         {
             p_docu->flags.init_close = 1;
 
-            /*&p_docu->file_date >>>  obtained already from IStorage */
+            /*&p_docu->file_ss_date >>>  obtained already from IStorage */
 
             status = load_ownform_file(&of_ip_format);
         }
@@ -3045,7 +3045,7 @@ load_template_set_date(
 {
     /* SKS 24jul06 needed for READER, sensible for normal */
     const P_DOCU p_docu_reload = p_docu_from_docno(docno);
-    ss_local_time_as_ev_date(&p_docu_reload->file_date);
+    ss_local_time_to_ss_date(&p_docu_reload->file_ss_date);
 }
 
 _Check_return_

@@ -182,7 +182,7 @@ hefod_margins_min(
 
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(page_hefo_selector_bit_test(&p_page_hefo_break->selector, PAGE_HEFO_HEADER_ODD))
@@ -225,7 +225,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
     {
     case DEP_DELETE: /* dependency must be deleted */
         {
-        switch(t5_message)
+        switch(uref_message)
         {
         /* free a region */
         default:
@@ -257,7 +257,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
             break;
             }
 
-        case T5_MSG_UREF_CLOSE1:
+        case Uref_Msg_CLOSE1:
             if(p_uref_event_block->uref_id.client_handle > HEFOD_LIST_DEP)
             {
                 p_page_hefo_break = p_page_hefo_break_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
@@ -270,7 +270,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
             break;
 
         /* free the whole header/footer stuff */
-        case T5_MSG_UREF_CLOSE2:
+        case Uref_Msg_CLOSE2:
             /* can only be freeing whole by now */
             assert(p_uref_event_block->uref_id.client_handle == HEFOD_LIST_DEP);
 
@@ -292,7 +292,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
 
         region_old = p_page_hefo_break->region;
 
-        uref_match_region(&p_page_hefo_break->region, t5_message, p_uref_event_block);
+        uref_match_region(&p_page_hefo_break->region, uref_message, p_uref_event_block);
         if(region_old.tl.row != p_page_hefo_break->region.tl.row)
         {
             DOCU_REFORMAT docu_reformat;
@@ -309,7 +309,8 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
     case DEP_INFORM:
         break;
 
-    default: default_unhandled(); break;
+    default: default_unhandled();
+        break;
     }
 
     return(STATUS_OK);
@@ -334,7 +335,7 @@ p_page_hefo_break_from_client_handle(
 
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->uref_client_handle == client_handle)
@@ -406,7 +407,7 @@ p_headfoot_def_from_row_and_page_y(
     /* search forward to find closest entry */
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->region.tl.row > *p_row)
@@ -513,7 +514,7 @@ p_page_hefo_break_from_row_below(
 
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->region.tl.row > row)
@@ -539,7 +540,7 @@ p_page_hefo_break_from_row_exact(
 
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->region.tl.row > row)
@@ -580,7 +581,7 @@ p_page_hefo_break_new_for_row(
     /* search forward to find closest entry */
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->region.tl.row >= row)
@@ -636,7 +637,7 @@ p_page_hefo_break_new_for_row(
                 p_page_hefo_break->uref_client_handle = next_uref_client_handle++;
 
             if(status_fail(*p_status))
-                p_page_hefo_break->deleted = 1;
+                p_page_hefo_break->is_deleted = 1;
             else
                 p_page_hefo_break_out = p_page_hefo_break;
         }
@@ -684,13 +685,13 @@ page_hefo_break_delete(
     headfoot_dispose(p_docu, &p_page_hefo_break->header_first, TRUE);
     headfoot_dispose(p_docu, &p_page_hefo_break->footer_first, TRUE);
 
-    p_page_hefo_break->deleted = 1;
+    p_page_hefo_break->is_deleted = 1;
     uref_del_dependency(docno_from_p_docu(p_docu), p_page_hefo_break->uref_handle);
 }
 
-PROC_ELEMENT_DELETED_PROTO(static, page_hefo_break_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, page_hefo_break_deleted)
 {
-    return(((P_PAGE_HEFO_BREAK) p_any)->deleted);
+    return(((P_PAGE_HEFO_BREAK) p_any)->is_deleted);
 }
 
 /******************************************************************************
@@ -753,7 +754,7 @@ page_hefo_break_enum(
 
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->region.tl.row <= *p_row)
@@ -789,7 +790,7 @@ page_number_from_page_y(
     /* search forward to find closest entry */
     for(i = 0; i < n_elements; ++i, ++p_page_hefo_break)
     {
-        if(p_page_hefo_break->deleted)
+        if(p_page_hefo_break->is_deleted)
             continue;
 
         if(p_page_hefo_break->region.tl.row > row)

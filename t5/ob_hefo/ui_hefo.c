@@ -204,7 +204,7 @@ page_hefo_break_values_header_odd_margin =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_header_odd_margin_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_header_odd_margin_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_odd_margin_units =
@@ -238,7 +238,7 @@ page_hefo_break_values_header_odd_offset =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_header_odd_offset_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_header_odd_offset_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_odd_offset_units =
@@ -319,7 +319,7 @@ page_hefo_break_values_header_even_margin =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_header_even_margin_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_header_even_margin_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_even_margin_units =
@@ -353,7 +353,7 @@ page_hefo_break_values_header_even_offset =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_header_even_offset_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_header_even_offset_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_even_offset_units =
@@ -434,7 +434,7 @@ page_hefo_break_values_header_first_margin =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_header_first_margin_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_header_first_margin_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_first_margin_units =
@@ -468,7 +468,7 @@ page_hefo_break_values_header_first_offset =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_header_first_offset_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_header_first_offset_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_header_first_offset_units =
@@ -549,7 +549,7 @@ page_hefo_break_values_footer_odd_margin =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_footer_odd_margin_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_footer_odd_margin_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_odd_margin_units =
@@ -583,7 +583,7 @@ page_hefo_break_values_footer_odd_offset =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_footer_odd_offset_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_footer_odd_offset_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_odd_offset_units =
@@ -664,7 +664,7 @@ page_hefo_break_values_footer_even_margin =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_footer_even_margin_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_footer_even_margin_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_even_margin_units =
@@ -698,7 +698,7 @@ page_hefo_break_values_footer_even_offset =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_footer_even_offset_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_footer_even_offset_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_even_offset_units =
@@ -779,7 +779,7 @@ page_hefo_break_values_footer_first_margin =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_footer_first_margin_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_footer_first_margin_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_first_margin_units =
@@ -813,7 +813,7 @@ page_hefo_break_values_footer_first_offset =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_F64
-page_hefo_break_values_footer_first_offset_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
+page_hefo_break_values_footer_first_offset_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_units_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_first_offset_units =
@@ -832,7 +832,7 @@ page break
 static const DIALOG_CONTROL
 page_hefo_break_values_page_break =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_PAGE_BREAK, DIALOG_CONTROL_WINDOW,
+    PAGE_HEFO_BREAK_VALUES_ID_PAGE_BREAK, DIALOG_MAIN_GROUP,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_GROUP, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_GROUP },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
@@ -844,7 +844,7 @@ page_hefo_break_values_page_break_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_
 static const DIALOG_CONTROL
 page_hefo_break_values_page_number_enable =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER_ENABLE, DIALOG_CONTROL_WINDOW,
+    PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER_ENABLE, DIALOG_MAIN_GROUP,
     { PAGE_HEFO_BREAK_VALUES_ID_PAGE_BREAK, PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, CHECKBOX), 1 /*tabstop*/ }
@@ -856,7 +856,7 @@ page_hefo_break_values_page_number_enable_data = { { { 0, 1 /*move_focus*/ }, UI
 static const DIALOG_CONTROL
 page_hefo_break_values_page_number =
 {
-    PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER, DIALOG_CONTROL_WINDOW,
+    PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER, DIALOG_MAIN_GROUP,
     { PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER_ENABLE, PAGE_HEFO_BREAK_VALUES_ID_PAGE_BREAK },
     { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, PAGE_HEFO_BREAK_VALUES_FIELDS_H, DIALOG_STDBUMP_V },
     { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
@@ -866,24 +866,26 @@ static const UI_CONTROL_S32
 page_hefo_break_values_page_number_control = { 0, S32_MAX };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-page_hefo_break_values_page_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &page_hefo_break_values_page_number_control } /*BUMP_XX*/ };
+page_hefo_break_values_page_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &page_hefo_break_values_page_number_control } /*BUMP_XX*/ };
 
 /*
 ok
 */
+
+#if RISCOS
 
 static const DIALOG_CONTROL
 page_hefo_break_values_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_GROUP, PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER },
-#if RISCOS
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-#else
-    { DIALOG_DEFOK_H, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-#endif
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
+
+#else
+#define page_hefo_break_values_ok defbutton_ok
+#endif
 
 static const DIALOG_CONTROL_ID
 argmap_cmd_page_hefo_break_values[] =

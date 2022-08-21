@@ -1344,7 +1344,7 @@ gr_lin_major(
 _Check_return_
 extern F64
 splitlognum(
-    _InRef_     PC_F64 logval,
+    _InVal_     F64 logval,
     _OutRef_    P_F64 exponent);
 
 /*
@@ -1392,7 +1392,7 @@ gr_point_partial_z_shift(
     _OutRef_    P_GR_POINT xpoint,
     _InRef_opt_ PC_GR_POINT apoint,
     _ChartRef_  P_GR_CHART cp,
-    _InRef_     PC_F64 z_frac_p);
+    _InVal_     F64 z_frac);
 
 _Check_return_
 extern GR_PIXIT
@@ -1400,7 +1400,7 @@ gr_value_pos(
     _InRef_     PC_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_AXIS_IDX axis_idx,
-    _InRef_     PC_F64 value);
+    _InVal_     F64 value);
 
 _Check_return_
 extern GR_PIXIT
@@ -1408,7 +1408,7 @@ gr_value_pos_rel(
     _InRef_     PC_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_AXIS_IDX axis_idx,
-    _InRef_     PC_F64 value);
+    _InVal_     F64 value);
 
 /*
 end of internal exports from gr_barch.c

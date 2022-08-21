@@ -23,7 +23,16 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
-#define SECS_IN_24 ((S32) 60 * (S32) 60 * (S32) 24)
+const SS_DATA
+ss_data_real_zero =
+{
+#if defined(SS_DATA_HAS_EV_IDNO_IN_TOP_16_BITS)
+    0, 0, DATA_ID_REAL,
+#else
+    DATA_ID_REAL, 0, 0,
+#endif
+    { 0.0 }
+};
 
 /******************************************************************************
 *
@@ -33,21 +42,21 @@
 
 static void
 array_free(
-    _InoutRef_  P_EV_DATA p_ev_data)
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
     S32 ix, iy;
 
-    trace_2(TRACE_MODULE_EVAL, TEXT("ss_array_free x: ") S32_TFMT TEXT(", y: ") S32_TFMT, p_ev_data->arg.ev_array.x_size, p_ev_data->arg.ev_array.y_size);
+    trace_2(TRACE_MODULE_EVAL, TEXT("ss_array_free x: ") S32_TFMT TEXT(", y: ") S32_TFMT, p_ss_data->arg.ss_array.x_size, p_ss_data->arg.ss_array.y_size);
 
-    for(iy = 0; iy < p_ev_data->arg.ev_array.y_size; ++iy)
-        for(ix = 0; ix < p_ev_data->arg.ev_array.x_size; ++ix)
-            ss_data_free_resources(ss_array_element_index_wr(p_ev_data, ix, iy));
+    for(iy = 0; iy < p_ss_data->arg.ss_array.y_size; ++iy)
+        for(ix = 0; ix < p_ss_data->arg.ss_array.x_size; ++ix)
+            ss_data_free_resources(ss_array_element_index_wr(p_ss_data, ix, iy));
 
-    al_array_dispose(&p_ev_data->arg.ev_array.elements);
+    al_array_dispose(&p_ss_data->arg.ss_array.elements);
 
-    p_ev_data->local_data = 0;
+    p_ss_data->local_data = 0;
 
-    ev_data_set_blank(p_ev_data);
+    ss_data_set_blank(p_ss_data);
 }
 
 /******************************************************************************
@@ -141,7 +150,7 @@ decode_fp(
 _Check_return_ _Success_(return > 0)
 static S32
 recog_error(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_ustr)
 {
     PC_USTR ustr = in_ustr;
@@ -161,8 +170,8 @@ recog_error(
     if(err >= 0)
         err = STATUS_FAIL;
 
-    ev_data_set_error(p_ev_data, err);
-    p_ev_data->local_data = 1;
+    ss_data_set_error(p_ss_data, err);
+    p_ss_data->local_data = 1;
 
     return(PtrDiffBytesS32(ustr_end, in_ustr));
 }
@@ -176,25 +185,25 @@ recog_error(
 _Check_return_ _Success_(return > 0)
 static STATUS
 recog_date_number_string_error(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str)
 {
     STATUS status;
 
     /* SKS 11apr95 moved to before ss_recog_number for foreign UI also for 1/2/96 recognition */
-    if(0 != (status = ss_recog_date_time(p_ev_data, in_str)))
+    if(0 != (status = ss_recog_date_time(p_ss_data, in_str)))
         return(status);
 
-    if(0 != (status = ss_recog_number(p_ev_data, in_str)))
+    if(0 != (status = ss_recog_number(p_ss_data, in_str)))
         return(status);
 
-    if(0 != (status = ss_recog_string(p_ev_data, in_str)))
+    if(0 != (status = ss_recog_string(p_ss_data, in_str)))
         return(status);
 
-    if(0 != (status = ss_recog_boolean(p_ev_data, in_str)))
+    if(0 != (status = ss_recog_logical(p_ss_data, in_str)))
         return(status);
 
-    return(recog_error(p_ev_data, in_str));
+    return(recog_error(p_ss_data, in_str));
 }
 
 /******************************************************************************
@@ -206,7 +215,7 @@ recog_date_number_string_error(
 _Check_return_
 static STATUS
 recog_array_row(
-    P_EV_DATA p_ev_data_out,
+    P_SS_DATA p_ss_data_out,
     _In_z_      PC_USTR in_str,
     _InoutRef_  P_S32 p_ix,
     _InoutRef_  P_S32 p_iy)
@@ -216,9 +225,9 @@ recog_array_row(
 
     do  {
         S32 len;
-        EV_DATA ev_data;
+        SS_DATA ss_data;
 
-        ev_data_set_blank(&ev_data);
+        ss_data_set_blank(&ss_data);
 
         /* skip separator */
         ustr_IncByte(in_pos);
@@ -227,7 +236,7 @@ recog_array_row(
         while(CH_SPACE == PtrGetByte(in_pos))
             ustr_IncByte(in_pos);
 
-        if((len = recog_date_number_string_error(&ev_data, in_pos)) <= 0)
+        if((len = recog_date_number_string_error(&ss_data, in_pos)) <= 0)
         {
             status = len;
             break;
@@ -238,7 +247,7 @@ recog_array_row(
         if(*p_iy)
         {
             /* can't expand array on subsequent rows */
-            if(*p_ix >= p_ev_data_out->arg.ev_array.x_size)
+            if(*p_ix >= p_ss_data_out->arg.ss_array.x_size)
             {
                 status = 0;
                 break;
@@ -246,8 +255,8 @@ recog_array_row(
         }
 
         /* put this data into array */
-        if(status_ok(ss_array_element_make(p_ev_data_out, *p_ix, *p_iy)))
-            *ss_array_element_index_wr(p_ev_data_out, *p_ix, *p_iy) = ev_data;
+        if(status_ok(ss_array_element_make(p_ss_data_out, *p_ix, *p_iy)))
+            *ss_array_element_index_wr(p_ss_data_out, *p_ix, *p_iy) = ss_data;
         else
         {
             status = status_nomem();
@@ -277,7 +286,7 @@ recog_array_row(
 _Check_return_
 static STATUS
 recog_array(
-    P_EV_DATA p_ev_data,
+    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str)
 {
     PC_USTR in_pos = in_str;
@@ -287,19 +296,19 @@ recog_array(
     if(CH_LEFT_CURLY_BRACKET != PtrGetByte(in_pos))
         return(STATUS_OK);
 
-    status_return(status = ss_array_make(p_ev_data, 0, 0));
+    status_return(status = ss_array_make(p_ss_data, 0, 0));
 
     iy = 0;
     do  {
         ix = 0;
-        if(status_done(status = recog_array_row(p_ev_data, in_pos, &ix, &iy))) /* SKS 22nov94 was status_ok so that {1;2,3} stuffed up big time */
+        if(status_done(status = recog_array_row(p_ss_data, in_pos, &ix, &iy))) /* SKS 22nov94 was status_ok so that {1;2,3} stuffed up big time */
         {
             ustr_IncBytes(in_pos, (U32) status);
             iy += 1;
         }
         else
         {
-            ss_data_free_resources(p_ev_data);
+            ss_data_free_resources(p_ss_data);
             break;
         }
     }
@@ -325,14 +334,14 @@ recog_array(
 
 /*ncr*/
 extern STATUS
-ev_data_set_error(
-    _OutRef_    P_EV_DATA p_ev_data,
+ss_data_set_error(
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     STATUS error)
 {
-    zero_struct_ptr(p_ev_data);
-    p_ev_data->did_num = RPN_DAT_ERROR;
-    p_ev_data->arg.ev_error.status = error;
-    p_ev_data->arg.ev_error.type = ERROR_NORMAL;
+    zero_struct_ptr(p_ss_data);
+    ss_data_set_data_id(p_ss_data, DATA_ID_ERROR);
+    p_ss_data->arg.ss_error.status = error;
+    p_ss_data->arg.ss_error.type = ERROR_NORMAL;
     return(error);
 }
 
@@ -421,9 +430,7 @@ real_floor(
 *
 ******************************************************************************/
 
-#if 1
-
-/* this one rounds at the given significant place before truncating */
+/* rounds at the given significant place before truncating */
 
 _Check_return_
 extern F64
@@ -455,33 +462,6 @@ real_trunc(
     return(trunc_value);
 }
 
-#else
-
-/* this one rounds at the given number of decimals before truncating which is not the same as at the significant place */
-
-_Check_return_
-extern F64
-real_trunc(
-    _InVal_     F64 f64)
-{
-    /* first do the naive desired step */
-    F64 trunc_value;
-    F64 fractional_part = modf(f64, &trunc_value);
-
-    if(global_preferences.ss_calc_additional_rounding && (trunc_value != f64))
-    {   /* if not already an integer, and allowed, then do the more expensive bit */
-        if(fabs(fractional_part) > (+1.0 - 1E-14))
-        {   /* close enough to an integer */
-            trunc_value += copysign(1.0, trunc_value);
-            /* adjusted result */
-        }
-    }
-
-    return(trunc_value);
-}
-
-#endif
-
 _Check_return_
 static inline F64
 real_adjust_if_near_power_of_2(
@@ -511,46 +491,39 @@ real_adjust_if_near_power_of_2(
 *
 * force conversion of real to integer
 *
-* NB real_to_integer_force uses real_floor() NOT real_trunc()
+* NB ss_data_real_to_integer_force uses real_floor() NOT real_trunc()
 *
 ******************************************************************************/
 
 _Check_return_
 extern STATUS /* DONE iff converted in range */
-real_to_integer_force(
-    _InoutRef_  P_EV_DATA p_ev_data)
+ss_data_real_to_integer_force(
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
     F64 floor_value;
     S32 s32;
 
-    assert(RPN_DAT_REAL == p_ev_data->did_num);
-    if(RPN_DAT_REAL != p_ev_data->did_num)
+    assert(ss_data_is_real(p_ss_data));
+    if(DATA_ID_REAL != ss_data_get_data_id(p_ss_data))
         return(STATUS_OK); /* no conversion */
 
-    if(p_ev_data->arg.fp > (F64) S32_MAX)
+    floor_value = real_floor(ss_data_get_real(p_ss_data));
+
+    if(fabs(floor_value) > (F64) S32_MAX)
     {
-        ev_data_set_integer(p_ev_data, S32_MAX);
+        ss_data_set_integer(p_ss_data, (floor_value < 0.0) ? -S32_MAX /* NB NOT S32_MIN */ : S32_MAX);
         return(STATUS_OK); /* out of range */
     }
-    else if(p_ev_data->arg.fp < (F64) -S32_MAX) /* NB NOT S32_MIN */
+
+    s32 = (S32) floor_value;
+
+    if(s32 == S32_MIN)
     {
-        ev_data_set_integer(p_ev_data, -S32_MAX);
+        ss_data_set_integer(p_ss_data, -S32_MAX);
         return(STATUS_OK); /* out of range */
     }
-    else
-    {
-        floor_value = real_floor(p_ev_data->arg.fp);
 
-        s32 = (S32) floor_value;
-
-        if(s32 == S32_MIN)
-        {
-            ev_data_set_integer(p_ev_data, -S32_MAX);
-            return(STATUS_OK); /* out of range */
-        }
-    }
-
-    ev_data_set_integer(p_ev_data, s32);
+    ss_data_set_integer(p_ss_data, s32);
     return(STATUS_DONE); /* converted OK */
 }
 
@@ -566,35 +539,33 @@ real_to_integer_force(
 
 /*ncr*/
 extern BOOL
-real_to_integer_try(
-    _InoutRef_  P_EV_DATA p_ev_data)
+ss_data_real_to_integer_try(
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
     F64 f64;
     F64 floor_value;
     S32 s32;
 
-    if(RPN_DAT_REAL != p_ev_data->did_num)
+    if(DATA_ID_REAL != ss_data_get_data_id(p_ss_data))
         return(FALSE);
 
-    f64 = p_ev_data->arg.fp;
+    f64 = ss_data_get_real(p_ss_data);
 
     /* first do the cheap step to see if we're already at an integer */
     floor_value = floor(f64);
 
     if(floor_value == f64)
     {
-        if( (floor_value > (F64)  S32_MAX) ||
-            (floor_value < (F64) -S32_MAX) ) /* NB NOT S32_MIN */
+        if(fabs(floor_value) > (F64) S32_MAX) /* NB NOT S32_MIN */
             return(FALSE);
 
         s32 = (S32) floor_value;
-        ev_data_set_integer(p_ev_data, s32);
+        ss_data_set_integer(p_ss_data, s32);
         return(TRUE);
     }
 
     if(global_preferences.ss_calc_additional_rounding)
     {   /* if not already an integer, and allowed, then do the more expensive bit */
-#if 1
         int exponent;
         F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
         const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
@@ -609,38 +580,17 @@ real_to_integer_try(
 
             if(floor_value == adjusted_value)
             {
-                if( (floor_value > (F64)  S32_MAX) ||
-                    (floor_value < (F64) -S32_MAX) ) /* NB NOT S32_MIN */
+                if(fabs(floor_value) > (F64) S32_MAX) /* NB NOT S32_MIN */
                 {   /* won't fit in S32 but we should hang on to this adjusted value */
-                    p_ev_data->arg.fp = adjusted_value;
+                    ss_data_set_real(p_ss_data, adjusted_value);
                     return(FALSE);
                 }
 
                 s32 = (S32) floor_value;
-                ev_data_set_integer(p_ev_data, s32);
+                ss_data_set_integer(p_ss_data, s32);
                 return(TRUE); /* converted OK */
             }
         }
-#else
-        F64 trunc_value;
-        F64 fractional_part = modf(f64, &trunc_value);
-
-        if(fabs(fractional_part) > (+1.0 - 1E-14))
-        {   /* close enough to an integer */
-            trunc_value += copysign(1.0, trunc_value);
-
-            if( (trunc_value > (F64)  S32_MAX) ||
-                (trunc_value < (F64) -S32_MAX) ) /* NB NOT S32_MIN */
-            {   /* won't fit in S32 but we should hang on to this adjusted value */
-                p_ev_data->arg.fp = trunc_value;
-                return(FALSE);
-            }
-
-            s32 = (S32) trunc_value;
-            ev_data_set_integer(p_ev_data, s32);
-            return(TRUE); /* converted OK */
-        }
-#endif
     }
 
     return(FALSE); /* unmodified */
@@ -655,15 +605,15 @@ real_to_integer_try(
 _Check_return_
 extern STATUS
 ss_array_dup(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in)
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in)
 {
-    S32 x_size = p_ev_data_in->arg.ev_array.x_size;
-    S32 y_size = p_ev_data_in->arg.ev_array.y_size;
+    S32 x_size = p_ss_data_in->arg.ss_array.x_size;
+    S32 y_size = p_ss_data_in->arg.ss_array.y_size;
 
-    assert(RPN_DAT_ARRAY == p_ev_data_in->did_num);
+    assert(ss_data_is_array(p_ss_data_in));
 
-    status_return(ss_array_make(p_ev_data_out, x_size, y_size));
+    status_return(ss_array_make(p_ss_data_out, x_size, y_size));
 
     {
     S32 iy;
@@ -674,13 +624,13 @@ ss_array_dup(
 
         for(ix = 0; ix < x_size; ++ix)
         {
-            STATUS status = ss_data_resource_copy(ss_array_element_index_wr(p_ev_data_out, ix, iy),
-                                                  ss_array_element_index_borrow(p_ev_data_in, ix, iy));
+            STATUS status = ss_data_resource_copy(ss_array_element_index_wr(p_ss_data_out, ix, iy),
+                                                  ss_array_element_index_borrow(p_ss_data_in, ix, iy));
 
             if(status_fail(status))
             {
-                ss_data_free_resources(p_ev_data_out);
-                ev_data_set_error(p_ev_data_out, status);
+                ss_data_free_resources(p_ss_data_out);
+                ss_data_set_error(p_ss_data_out, status);
                 return(status);
             }
         }
@@ -698,19 +648,19 @@ ss_array_dup(
 
 _Check_return_
 _Ret_notnull_
-extern P_EV_DATA
+extern P_SS_DATA
 ss_array_element_index_wr(
-    _InRef_     P_EV_DATA p_ev_data_in,
+    _InRef_     P_SS_DATA p_ss_data_in,
     _InVal_     S32 ix,
     _InVal_     S32 iy)
 {
-    const S32 element = (iy * p_ev_data_in->arg.ev_array.x_size) + ix;
+    const S32 element = (iy * p_ss_data_in->arg.ss_array.x_size) + ix;
 
-    assert(RPN_DAT_ARRAY == p_ev_data_in->did_num);
-    assert(p_ev_data_in->local_data == 1);
-    assert(((U32) ix < (U32) p_ev_data_in->arg.ev_array.x_size) && ((U32) iy < (U32) p_ev_data_in->arg.ev_array.y_size));
+    assert(ss_data_is_array(p_ss_data_in));
+    assert(p_ss_data_in->local_data == 1);
+    assert(((U32) ix < (U32) p_ss_data_in->arg.ss_array.x_size) && ((U32) iy < (U32) p_ss_data_in->arg.ss_array.y_size));
 
-    return(array_ptr(&p_ev_data_in->arg.ev_array.elements, EV_DATA, element));
+    return(array_ptr(&p_ss_data_in->arg.ss_array.elements, SS_DATA, element));
 }
 
 /******************************************************************************
@@ -722,18 +672,18 @@ ss_array_element_index_wr(
 
 _Check_return_
 _Ret_valid_
-extern PC_EV_DATA
+extern PC_SS_DATA
 ss_array_element_index_borrow(
-    _InRef_     PC_EV_DATA p_ev_data_in,
+    _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 ix,
     _InVal_     S32 iy)
 {
-    const S32 element = (iy * p_ev_data_in->arg.ev_array.x_size) + ix;
+    const S32 element = (iy * p_ss_data_in->arg.ss_array.x_size) + ix;
 
-    assert(RPN_DAT_ARRAY == p_ev_data_in->did_num);
-    assert(((U32) ix < (U32) p_ev_data_in->arg.ev_array.x_size) && ((U32) iy < (U32) p_ev_data_in->arg.ev_array.y_size));
+    assert(ss_data_is_array(p_ss_data_in));
+    assert(((U32) ix < (U32) p_ss_data_in->arg.ss_array.x_size) && ((U32) iy < (U32) p_ss_data_in->arg.ss_array.y_size));
 
-    return(array_ptrc(&p_ev_data_in->arg.ev_array.elements, EV_DATA, element));
+    return(array_ptrc(&p_ss_data_in->arg.ss_array.elements, SS_DATA, element));
 }
 
 /******************************************************************************
@@ -745,13 +695,13 @@ ss_array_element_index_borrow(
 _Check_return_
 extern STATUS
 ss_array_element_make(
-    _InoutRef_  P_EV_DATA p_ev_data,
+    _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     S32 ix,
     _InVal_     S32 iy)
 {
-    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(EV_DATA), TRUE);
-    const S32 old_xs = p_ev_data->arg.ev_array.x_size;
-    const S32 old_ys = p_ev_data->arg.ev_array.y_size;
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(SS_DATA), TRUE);
+    const S32 old_xs = p_ss_data->arg.ss_array.x_size;
+    const S32 old_ys = p_ss_data->arg.ss_array.y_size;
     S32 new_xs;
     S32 new_ys;
     S32 old_size, new_size;
@@ -777,32 +727,32 @@ ss_array_element_make(
     if(new_size >= EV_MAX_ARRAY_ELES)
         return(STATUS_FAIL);
 
-    if(NULL == al_array_extend_by(&p_ev_data->arg.ev_array.elements, EV_DATA, (new_size - old_size), &array_init_block, &status))
+    if(NULL == al_array_extend_by(&p_ss_data->arg.ss_array.elements, SS_DATA, (new_size - old_size), &array_init_block, &status))
         return(status);
 
     trace_2(TRACE_MODULE_EVAL,
             TEXT("array realloced, now: ") S32_TFMT TEXT(" entries, ") S32_TFMT TEXT(" bytes"),
             new_xs * new_ys,
-            new_size * sizeof32(EV_DATA));
+            new_size * sizeof32(SS_DATA));
 
     { /* set all new array elements to blank */
-    P_EV_DATA p_ev_data_s, p_ev_data_e, p_ev_data_t;
+    P_SS_DATA p_ss_data_s, p_ss_data_e, p_ss_data_t;
 
     /* use old stored sizes to get pointer to end of old data */
-    if(old_xs < 1 || old_ys < 1)
-        p_ev_data_s = array_base(&p_ev_data->arg.ev_array.elements, EV_DATA);
+    if( (old_xs < 1) || (old_ys < 1) )
+        p_ss_data_s = array_base(&p_ss_data->arg.ss_array.elements, SS_DATA);
     else
-        p_ev_data_s = ss_array_element_index_wr(p_ev_data, old_xs - 1, old_ys - 1) + 1;
+        p_ss_data_s = ss_array_element_index_wr(p_ss_data, old_xs - 1, old_ys - 1) + 1;
 
     /* set up new sizes */
-    p_ev_data->arg.ev_array.x_size = new_xs;
-    p_ev_data->arg.ev_array.y_size = new_ys;
+    p_ss_data->arg.ss_array.x_size = new_xs;
+    p_ss_data->arg.ss_array.y_size = new_ys;
 
     /* use new stored size to get pointer to end of new array */
-    p_ev_data_e = ss_array_element_index_wr(p_ev_data, new_xs - 1, new_ys - 1);
+    p_ss_data_e = ss_array_element_index_wr(p_ss_data, new_xs - 1, new_ys - 1);
 
-    for(p_ev_data_t = p_ev_data_s; p_ev_data_t <= p_ev_data_e; ++p_ev_data_t)
-        ev_data_set_blank(p_ev_data_t);
+    for(p_ss_data_t = p_ss_data_s; p_ss_data_t <= p_ss_data_e; ++p_ss_data_t)
+        ss_data_set_blank(p_ss_data_t);
 
     return(STATUS_OK);
     } /*block*/
@@ -816,13 +766,13 @@ ss_array_element_make(
 
 extern void
 ss_array_element_read(
-    _OutRef_    P_EV_DATA p_ev_data,
-    _InRef_     PC_EV_DATA p_ev_data_src,
+    _OutRef_    P_SS_DATA p_ss_data,
+    _InRef_     PC_SS_DATA p_ss_data_src,
     _InVal_     S32 ix,
     _InVal_     S32 iy)
 {
-    *p_ev_data = *ss_array_element_index_borrow(p_ev_data_src, ix, iy);
-    p_ev_data->local_data = 0;
+    *p_ss_data = *ss_array_element_index_borrow(p_ss_data_src, ix, iy);
+    p_ss_data->local_data = 0;
 }
 
 /******************************************************************************
@@ -834,24 +784,24 @@ ss_array_element_read(
 _Check_return_
 extern STATUS
 ss_array_make(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _InVal_     S32 x_size,
     _InVal_     S32 y_size)
 {
     STATUS status = STATUS_OK;
 
-    p_ev_data->did_num = RPN_DAT_ARRAY;
-    p_ev_data->local_data = 1;
-    p_ev_data->arg.ev_array.x_size = 0;
-    p_ev_data->arg.ev_array.y_size = 0;
-    p_ev_data->arg.ev_array.elements = 0;
+    ss_data_set_data_id(p_ss_data, DATA_ID_ARRAY);
+    p_ss_data->local_data = 1;
+    p_ss_data->arg.ss_array.x_size = 0;
+    p_ss_data->arg.ss_array.y_size = 0;
+    p_ss_data->arg.ss_array.elements = 0;
 
     if(x_size && y_size)
-        if(status_fail(status = ss_array_element_make(p_ev_data, x_size - 1, y_size - 1)))
-            ss_data_free_resources(p_ev_data);
+        if(status_fail(status = ss_array_element_make(p_ss_data, x_size - 1, y_size - 1)))
+            ss_data_free_resources(p_ss_data);
 
     if(status_fail(status))
-        ev_data_set_error(p_ev_data, status);
+        ss_data_set_error(p_ss_data, status);
 
     return(status);
 }
@@ -863,173 +813,244 @@ ss_array_make(
 ******************************************************************************/
 
 static void
-type_equate(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in,
+type_equate_non_number(
+    _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     BOOL blanks_equal_zero)
 {
-    *p_ev_data_out = *p_ev_data_in;
+    p_ss_data->local_data = 0;
 
-    p_ev_data_out->local_data = 0;
-
-    switch(p_ev_data_out->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_BOOL8:
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
-        p_ev_data_out->did_num = RPN_DAT_WORD32; /* NB all integers returned from type_equate() are promoted to widest type */
-        break;
+    case DATA_ID_STRING:
+        if(!ss_string_is_blank(p_ss_data))
+            return;
 
-    case RPN_DAT_STRING:
-        if(ss_string_is_blank(p_ev_data_out))
-        {
-            if(blanks_equal_zero)
-                ev_data_set_WORD32(p_ev_data_out, 0);
-            else
-                ev_data_set_blank(p_ev_data_out);
-        }
-        break;
+        ss_data_set_blank(p_ss_data);
+        /*FALLTHRU*/
 
-    case RPN_DAT_BLANK:
+    case DATA_ID_BLANK:
         if(blanks_equal_zero)
-            ev_data_set_WORD32(p_ev_data_out, 0);
-        break;
+            ss_data_set_WORD32(p_ss_data, 0);
+        return;
+    }
+}
+
+static inline void
+type_equate(
+    _InoutRef_  P_SS_DATA p_ss_data,
+    _InVal_     BOOL blanks_equal_zero)
+{
+    /* deal with number cases quickest (NB look at ARM DecAOF output in context) */
+    switch(ss_data_get_data_id(p_ss_data))
+    {
+    case DATA_ID_REAL:
+        return;
+
+    case DATA_ID_WORD32:
+        return;
+    }
+
+    switch(ss_data_get_data_id(p_ss_data))
+    {
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+        ss_data_set_data_id(p_ss_data, DATA_ID_WORD32); /* NB all integers returned from type_equate() are promoted to widest type */
+        return;
+
+    default:
+        type_equate_non_number(p_ss_data, blanks_equal_zero);
+        return;
     }
 }
 
 /******************************************************************************
 *
-* compare two results
+* compare two data items
 *
-* NB string compare return -ve, 0, +ve not -1, 0, +1
+* NB string compare returns [-ve, 0, +ve] not [-1, 0, +1]
 *
 * --out--
-* <0 p_ev_data1 < p_ev_data2
-* =0 p_ev_data1 = p_ev_data2
-* >0 p_ev_data1 > p_ev_data2
+* -1 p_ss_data_1 < p_ss_data_2
+*  0 p_ss_data_1 = p_ss_data_2
+* +1 p_ss_data_1 > p_ss_data_2
 *
 ******************************************************************************/
+
+static S32
+ss_data_compare_data_ids(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2)
+{
+    S32 res;
+
+    if(ss_data_get_data_id(p_ss_data_1) < ss_data_get_data_id(p_ss_data_2))
+        res = -1;
+    else if(ss_data_get_data_id(p_ss_data_1) > ss_data_get_data_id(p_ss_data_2))
+        res = 1;
+    else
+        res = 0;
+
+    return(res);
+}
+
+_Check_return_
+static inline_when_fast_fp S32
+ss_data_compare_reals(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2)
+{
+    if(p_ss_data_1->arg.fp == p_ss_data_2->arg.fp)
+        return(0);
+
+    if(p_ss_data_1->arg.fp < p_ss_data_2->arg.fp)
+        return(-1);
+  /*else*/
+        return(1);
+}
+
+_Check_return_
+static inline S32
+ss_data_compare_integers(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2)
+{
+    if(p_ss_data_1->arg.integer == p_ss_data_2->arg.integer)
+        return(0);
+
+    if(p_ss_data_1->arg.integer < p_ss_data_2->arg.integer)
+        return(-1);
+  /*else*/
+        return(1);
+}
+
+_Check_return_
+static inline S32
+ss_data_compare_dates(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2)
+{
+    return(ss_date_compare(ss_data_get_date(p_ss_data_1), ss_data_get_date(p_ss_data_2)));
+}
+
+_Check_return_
+static S32
+ss_data_compare_strings(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2,
+    _InVal_     BOOL allow_wild_match)
+{
+    S32 res = 0;
+
+    if(allow_wild_match)
+        res = uchars_compare_t5_nocase_wild(ss_data_get_string(p_ss_data_1), ss_data_get_string_size(p_ss_data_1), ss_data_get_string(p_ss_data_2), ss_data_get_string_size(p_ss_data_2));
+    else
+        res = uchars_compare_t5_nocase(ss_data_get_string(p_ss_data_1), ss_data_get_string_size(p_ss_data_1), ss_data_get_string(p_ss_data_2), ss_data_get_string_size(p_ss_data_2));
+
+    if(res < 0)
+        res = -1;
+    else if(res > 0)
+        res = 1;
+
+    return(res);
+}
+
+_Check_return_
+static inline S32
+ss_data_compare_errors(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2)
+{
+    S32 res = 0;
+
+    if(p_ss_data_1->arg.ss_error.status == p_ss_data_2->arg.ss_error.status)
+        res = 0;
+    else if(-(p_ss_data_1->arg.ss_error.status) < -(p_ss_data_2->arg.ss_error.status))
+        res = -1;
+    else
+        res = 1;
+
+    return(res);
+}
+
+_Check_return_
+static S32
+ss_data_compare_arrays(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2,
+    _InVal_     BOOL blanks_equal_zero,
+    _InVal_     BOOL allow_wild_match)
+{
+    S32 res = 0;
+
+    if(     p_ss_data_1->arg.ss_array.y_size < p_ss_data_2->arg.ss_array.y_size)
+        res = -1;
+    else if(p_ss_data_1->arg.ss_array.y_size > p_ss_data_2->arg.ss_array.y_size)
+        res = 1;
+    else if(p_ss_data_1->arg.ss_array.x_size < p_ss_data_2->arg.ss_array.x_size)
+        res = -1;
+    else if(p_ss_data_1->arg.ss_array.x_size > p_ss_data_2->arg.ss_array.x_size)
+        res = 1;
+    else /* same sizes */
+    {
+        S32 ix, iy;
+        for(iy = 0; !res && iy < p_ss_data_1->arg.ss_array.y_size; ++iy)
+            for(ix = 0; !res && ix < p_ss_data_1->arg.ss_array.x_size; ++ix)
+                res = ss_data_compare(ss_array_element_index_borrow(p_ss_data_1, ix, iy),
+                                      ss_array_element_index_borrow(p_ss_data_2, ix, iy),
+                                      blanks_equal_zero, allow_wild_match);
+    }
+
+    return(res);
+}
 
 _Check_return_
 extern S32
 ss_data_compare(
-    _InRef_     PC_EV_DATA p_ev_data1,
-    _InRef_     PC_EV_DATA p_ev_data2,
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2,
     _InVal_     BOOL blanks_equal_zero,
     _InVal_     BOOL allow_wild_match)
 {
-    EV_DATA ev_data1;
-    EV_DATA ev_data2;
+    /* take copies and then eliminate equivalent types */
+    SS_DATA ss_data_1 = *p_ss_data_1;
+    SS_DATA ss_data_2 = *p_ss_data_2;
     S32 res = 0;
 
-    /* eliminate equivalent types */
-    type_equate(&ev_data1, p_ev_data1, blanks_equal_zero);
-    type_equate(&ev_data2, p_ev_data2, blanks_equal_zero);
+    type_equate(&ss_data_1, blanks_equal_zero);
+    type_equate(&ss_data_2, blanks_equal_zero);
 
-    consume(S32, two_nums_type_match(&ev_data1, &ev_data2, FALSE));
+    consume(enum two_nums_type_match_result, two_nums_type_match(&ss_data_1, &ss_data_2, FALSE));
 
-    if(ev_data1.did_num != ev_data2.did_num)
+    if(ss_data_get_data_id(&ss_data_1) != ss_data_get_data_id(&ss_data_2))
+        return(ss_data_compare_data_ids(&ss_data_1, &ss_data_2));
+
+    switch(ss_data_get_data_id(&ss_data_1))
     {
-        if(ev_data1.did_num < ev_data2.did_num)
-            res = -1;
-        else
-            res = 1;
-    }
-    else
-    {
-        switch(ev_data1.did_num)
-        {
-        case RPN_DAT_REAL:
-            if(ev_data1.arg.fp == ev_data2.arg.fp)
-                res = 0;
-            else if(ev_data1.arg.fp < ev_data2.arg.fp)
-                res = -1;
-            else
-                res = 1;
-            break;
+    case DATA_ID_REAL:
+        return(ss_data_compare_reals(&ss_data_1, &ss_data_2));
 
-        case RPN_DAT_BOOL8:
-        case RPN_DAT_WORD8:
-        case RPN_DAT_WORD16:
-        case RPN_DAT_WORD32:
-            if(ev_data1.arg.integer == ev_data2.arg.integer)
-                res = 0;
-            else if(ev_data1.arg.integer < ev_data2.arg.integer)
-                res = -1;
-            else
-                res = 1;
-            break;
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
+        return(ss_data_compare_integers(&ss_data_1, &ss_data_2));
 
-        case RPN_DAT_STRING:
-            if(allow_wild_match)
-                res = uchars_compare_t5_nocase_wild(ev_data1.arg.string.uchars, ev_data1.arg.string.size, ev_data2.arg.string.uchars, ev_data2.arg.string.size);
-            else
-                res = uchars_compare_t5_nocase(ev_data1.arg.string.uchars, ev_data1.arg.string.size, ev_data2.arg.string.uchars, ev_data2.arg.string.size);
-            if(res < 0)
-                res = -1;
-            else if(res > 0)
-                res = 1;
-            break;
+    case DATA_ID_STRING:
+        return(ss_data_compare_strings(&ss_data_1, &ss_data_2, allow_wild_match));
 
-        case RPN_DAT_ARRAY:
-            {
-            if(     ev_data1.arg.ev_array.y_size < ev_data2.arg.ev_array.y_size)
-                res = -1;
-            else if(ev_data1.arg.ev_array.y_size > ev_data2.arg.ev_array.y_size)
-                res = 1;
-            else if(ev_data1.arg.ev_array.x_size < ev_data2.arg.ev_array.x_size)
-                res = -1;
-            else if(ev_data1.arg.ev_array.x_size > ev_data2.arg.ev_array.x_size)
-                res = 1;
-            else /* same sizes */
-            {
-                S32 ix, iy;
-                for(iy = 0; !res && iy < ev_data1.arg.ev_array.y_size; ++iy)
-                    for(ix = 0; !res && ix < ev_data1.arg.ev_array.x_size; ++ix)
-                        res = ss_data_compare(ss_array_element_index_borrow(&ev_data1, ix, iy),
-                                              ss_array_element_index_borrow(&ev_data2, ix, iy),
-                                              blanks_equal_zero, allow_wild_match);
-            }
-            break;
-            }
+    case DATA_ID_DATE:
+        return(ss_data_compare_dates(&ss_data_1, &ss_data_2));
 
-        case RPN_DAT_DATE:
-            if(ev_data1.arg.ev_date.date == ev_data2.arg.ev_date.date)
-            {   /* both dates valid or invalid but equal - compare times */
-                /* here 31/12/2015 00:00:00 == 31/12/2015 */
-                EV_DATE_TIME time_1 = (EV_TIME_NULL != ev_data1.arg.ev_date.time) ? ev_data1.arg.ev_date.time : 0;
-                EV_DATE_TIME time_2 = (EV_TIME_NULL != ev_data2.arg.ev_date.time) ? ev_data2.arg.ev_date.time : 0;
-                if(time_1 == time_2)
-                    res = 0;
-                else if(time_1 < time_2)
-                    res = -1;
-                else
-                    res = 1;
-            }
-            else if(EV_DATE_NULL == ev_data2.arg.ev_date.date)
-                res = -1; /* date 1 valid, date 2 invalid */
-            else if(EV_DATE_NULL == ev_data1.arg.ev_date.date)
-                res = 1; /* date 1 valid, date 2 invalid */
-            else if(ev_data1.arg.ev_date.date < ev_data2.arg.ev_date.date) /* both dates valid */
-                res = -1;
-            else
-                res = 1;
-            break;
+    case DATA_ID_ERROR:
+        return(ss_data_compare_errors(&ss_data_1, &ss_data_2));
 
-        case RPN_DAT_ERROR:
-            if(ev_data1.arg.ev_error.status == ev_data2.arg.ev_error.status)
-                res = 0;
-            else if(-(ev_data1.arg.ev_error.status) < -(ev_data2.arg.ev_error.status))
-                res = -1;
-            else
-                res = 1;
-            break;
+    case DATA_ID_ARRAY:
+        return(ss_data_compare_arrays(&ss_data_1, &ss_data_2, blanks_equal_zero, allow_wild_match));
 
-        case RPN_DAT_BLANK:
-            res = 0;
-            break;
-        }
+    case DATA_ID_BLANK:
+        res = 0;
+        break;
     }
 
     return(res);
@@ -1043,53 +1064,98 @@ ss_data_compare(
 
 extern void
 ss_data_free_resources(
-    _InoutRef_  P_EV_DATA p_ev_data)
+    _InoutRef_  P_SS_DATA p_ss_data)
 {
-    if(!p_ev_data->local_data)
-        return;
+    /* NB p_ss_data->local_data might be uninitialised in all but cases that care about it */
 
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_STRING:
-        al_ptr_dispose(P_P_ANY_PEDANTIC(&p_ev_data->arg.string_wr.uchars));
-        ev_data_set_blank(p_ev_data);
+    default:
         break;
 
-    case RPN_DAT_ARRAY:
-        array_free(p_ev_data);
+    case DATA_ID_STRING:
+        if(p_ss_data->local_data)
+        {
+            al_ptr_dispose(P_P_ANY_PEDANTIC(&p_ss_data->arg.string_wr.uchars));
+            ss_data_set_blank(p_ss_data);
+        }
+        break;
+
+    case DATA_ID_ARRAY:
+        if(p_ss_data->local_data)
+            array_free(p_ss_data);
         break;
     }
 
     /* SKS 05oct95 it's important for the above array_free that this is still set! */
-    p_ev_data->local_data = 0;
+    p_ss_data->local_data = 0;
 }
 
 /******************************************************************************
 *
-* given a data item, make a copy of
-* it so we can be sure we own it
+* given a data item, make a copy of it so we can be sure we own it
 *
 ******************************************************************************/
 
 _Check_return_
 extern STATUS
 ss_data_resource_copy(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_in)
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_in)
 {
     /* we get our own copy of handle based resources */
-    switch(p_ev_data_in->did_num)
+    switch(ss_data_get_data_id(p_ss_data_in))
     {
-    case RPN_DAT_STRING:
-        return(ss_string_dup(p_ev_data_out, p_ev_data_in));
+    case DATA_ID_STRING:
+        return(ss_string_dup(p_ss_data_out, p_ss_data_in));
 
-    case RPN_DAT_ARRAY:
-        return(ss_array_dup(p_ev_data_out, p_ev_data_in));
+    case DATA_ID_ARRAY:
+        return(ss_array_dup(p_ss_data_out, p_ss_data_in));
 
     default:
-        *p_ev_data_out = *p_ev_data_in;
+        *p_ss_data_out = *p_ss_data_in;
         return(STATUS_OK);
     }
+}
+
+/******************************************************************************
+*
+* decode data (which must be a number type) as a Logical value
+*
+******************************************************************************/
+
+_Check_return_
+extern bool
+ss_data_get_logical(
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    switch(ss_data_get_data_id(p_ss_data))
+    {
+    case DATA_ID_REAL:
+        return(0.0 != ss_data_get_real(p_ss_data));
+
+    case DATA_ID_LOGICAL:
+        return(0 != p_ss_data->arg.boolean); /* 2.22 transitional */
+
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
+        return(0 != ss_data_get_integer(p_ss_data));
+
+    default: default_unhandled();
+        assert(ss_data_is_number(p_ss_data));
+        return(FALSE);
+    }
+}
+
+extern void
+ss_data_set_logical(
+    _OutRef_    P_SS_DATA p_ss_data,
+    _InVal_     bool logical)
+{
+    ss_data_set_data_id(p_ss_data, DATA_ID_LOGICAL);
+    p_ss_data->arg.boolean = logical; /* 2.22 transitional */
+    assert((p_ss_data->arg.boolean == 0U /*false*/) || (p_ss_data->arg.boolean == 1U /*true*/)); /* verify full width */
 }
 
 /******************************************************************************
@@ -1104,38 +1170,38 @@ _Check_return_
 extern STATUS
 ss_decode_constant(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
     STATUS status = STATUS_OK;
 
-    switch(p_ev_data->did_num)
+    switch(ss_data_get_data_id(p_ss_data))
     {
-    case RPN_DAT_REAL:
-        status = decode_fp(p_quick_ublock, p_ev_data->arg.fp);
+    case DATA_ID_REAL:
+        status = decode_fp(p_quick_ublock, ss_data_get_real(p_ss_data));
         break;
 
-    case RPN_DAT_BOOL8:
-        status = quick_ublock_ustr_add(p_quick_ublock, (p_ev_data->arg.integer != 0) ? USTR_TEXT("TRUE") : USTR_TEXT("FALSE"));
+    case DATA_ID_LOGICAL:
+        status = quick_ublock_ustr_add(p_quick_ublock, (ss_data_get_integer(p_ss_data) != 0) ? USTR_TEXT("TRUE") : USTR_TEXT("FALSE"));
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case RPN_DAT_WORD8:
-    case RPN_DAT_WORD16:
-    case RPN_DAT_WORD32:
+    case DATA_ID_WORD8:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
 #endif
-        status = quick_ublock_printf(p_quick_ublock, USTR_TEXT(S32_FMT), p_ev_data->arg.integer);
+        status = quick_ublock_printf(p_quick_ublock, USTR_TEXT(S32_FMT), ss_data_get_integer(p_ss_data));
         break;
 
-    case RPN_DAT_STRING:
+    case DATA_ID_STRING:
         {
-        PC_UCHARS uchars = p_ev_data->arg.string.uchars;
+        PC_UCHARS uchars = ss_data_get_string(p_ss_data);
 
         status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK);
 
         if(status_ok(status))
         {
-            const U32 len = p_ev_data->arg.string.size;
+            const U32 len = ss_data_get_string_size(p_ss_data);
 
             if(NULL == memchr(uchars, CH_QUOTATION_MARK, len))
             {   /* no escaping needed - stuff it in the result */
@@ -1164,27 +1230,27 @@ ss_decode_constant(
         break;
         }
 
-    case RPN_DAT_ARRAY:
+    case DATA_ID_ARRAY:
         {
         if(status_ok(status = quick_ublock_a7char_add(p_quick_ublock, CH_LEFT_CURLY_BRACKET)))
         {
             S32 iy;
 
-            for(iy = 0; iy < p_ev_data->arg.ev_array.y_size; ++iy)
+            for(iy = 0; iy < p_ss_data->arg.ss_array.y_size; ++iy)
             {
                 S32 ix;
 
                 if(iy)
                     status_break(status = quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context.array_row_sep));
 
-                for(ix = 0; ix < p_ev_data->arg.ev_array.x_size; ++ix)
+                for(ix = 0; ix < p_ss_data->arg.ss_array.x_size; ++ix)
                 {
-                    EV_DATA ev_data;
+                    SS_DATA ss_data;
                     if(ix)
                         status_break(status = quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context.array_col_sep));
-                    ss_array_element_read(&ev_data, p_ev_data, ix, iy);
-                    status_break(status = ss_decode_constant(p_quick_ublock, &ev_data));
-                    ss_data_free_resources(&ev_data);
+                    ss_array_element_read(&ss_data, p_ss_data, ix, iy);
+                    status_break(status = ss_decode_constant(p_quick_ublock, &ss_data));
+                    ss_data_free_resources(&ss_data);
                 }
 
                 status_break(status);
@@ -1197,15 +1263,15 @@ ss_decode_constant(
         break;
         }
 
-    case RPN_DAT_DATE:
-        status = ss_date_decode(p_quick_ublock, &p_ev_data->arg.ev_date);
+    case DATA_ID_DATE:
+        status = ss_date_decode(p_quick_ublock, ss_data_get_date(p_ss_data));
         break;
 
-    case RPN_DAT_BLANK:
+    case DATA_ID_BLANK:
         break;
 
-    case RPN_DAT_ERROR:
-        status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("#" S32_FMT), -(p_ev_data->arg.ev_error.status));
+    case DATA_ID_ERROR:
+        status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("#" S32_FMT), -(p_ss_data->arg.ss_error.status));
         break;
     }
 
@@ -1214,7 +1280,7 @@ ss_decode_constant(
 
 /******************************************************************************
 *
-* read a Boolean constant value (here ignoring true(), false() function calls)
+* read a Logical constant value (here ignoring true(), false() function calls)
 *
 * --out--
 * =0 no constant found
@@ -1224,8 +1290,8 @@ ss_decode_constant(
 
 _Check_return_ _Success_(return > 0)
 extern STATUS
-ss_recog_boolean(
-    _OutRef_    P_EV_DATA p_ev_data,
+ss_recog_logical(
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str)
 {
     PC_USTR pos = in_str;
@@ -1238,7 +1304,7 @@ ss_recog_boolean(
             (CH_LEFT_PARENTHESIS != PtrGetByteOff(pos, expected)) &&
             !sbchar_isalnum(PtrGetByteOff(pos, expected)) )
         {
-            ev_data_set_boolean(p_ev_data, FALSE);
+            ss_data_set_logical(p_ss_data, false);
             return((STATUS) expected);
         }
 
@@ -1253,7 +1319,7 @@ ss_recog_boolean(
             (CH_LEFT_PARENTHESIS != PtrGetByteOff(pos, expected)) &&
             !sbchar_isalnum(PtrGetByteOff(pos, expected)) )
         {
-            ev_data_set_boolean(p_ev_data, TRUE);
+            ss_data_set_logical(p_ss_data, true);
             return((STATUS) expected);
         }
 
@@ -1278,14 +1344,14 @@ ss_recog_boolean(
 _Check_return_
 extern STATUS
 ss_recog_constant(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str)
 {
     STATUS status = STATUS_OK;
     PC_USTR in_pos = in_str;
     S32 len;
 
-    ev_data_set_blank(p_ev_data);
+    ss_data_set_blank(p_ss_data);
 
     ustr_SkipSpaces(in_pos);
 
@@ -1296,9 +1362,9 @@ ss_recog_constant(
     if(CH_NULL == PtrGetByte(in_pos)) /* SKS 19apr95 check for early exit */
         return(STATUS_OK);
 
-    if(((len = recog_date_number_string_error(p_ev_data, in_pos)) > 0)
+    if(((len = recog_date_number_string_error(p_ss_data, in_pos)) > 0)
        ||
-       ((len = recog_array(p_ev_data, in_pos)) > 0)
+       ((len = recog_array(p_ss_data, in_pos)) > 0)
       ) {
         ustr_IncBytes(in_pos, len);
 
@@ -1313,7 +1379,7 @@ ss_recog_constant(
         if(CH_NULL == PtrGetByte(in_pos))
             status = STATUS_DONE;
         else
-            ss_data_free_resources(p_ev_data);
+            ss_data_free_resources(p_ss_data);
     }
     else
         status = len;
@@ -1334,7 +1400,7 @@ ss_recog_constant(
 _Check_return_ _Success_(return > 0)
 extern STATUS
 ss_recog_number(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str_in)
 {
     /* SKS 15apr93 reworked to recognise .1 and 1E2 */
@@ -1364,7 +1430,7 @@ ss_recog_number(
 
             if(!try_fp)
             {
-                ev_data_set_integer(p_ev_data, (negative ? - (S32) u32 : (S32) u32));
+                ss_data_set_integer(p_ss_data, (negative ? - (S32) u32 : (S32) u32));
                 res = PtrDiffBytesS32(epos, in_str_in);
             }
         }
@@ -1379,14 +1445,14 @@ ss_recog_number(
         /* must have scanned something and not be a date */
         if((epos != in_str) && (PtrGetByte(epos) != CH_FULL_STOP) && (PtrGetByte(epos) != g_ss_recog_context.time_sep_char))
         {
-            ev_data_set_real(p_ev_data, negative ? -f64 : f64);
-            /*real_to_integer_try(p_ev_data);*//*SKS for 1.30 why the hell did it bother? means you can't preserve 1.0 typed in */
+            ss_data_set_real(p_ss_data, negative ? -f64 : f64);
+            /*ss_data_real_to_integer_try(p_ss_data);*//*SKS for 1.30 why the hell did it bother? means you can't preserve 1.0 typed in */
             res = PtrDiffBytesS32(epos, in_str_in);
         }
     }
 
     if(res)
-        p_ev_data->local_data = 1;
+        p_ss_data->local_data = 1;
 
     return(res);
 }
@@ -1404,7 +1470,7 @@ ss_recog_number(
 _Check_return_ _Success_(return > 0)
 extern STATUS
 ss_recog_string(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str)
 {
     STATUS status = STATUS_OK;
@@ -1434,22 +1500,22 @@ ss_recog_string(
     /* allocate memory for string */
     if(0 != len)
     {
-        if(NULL == (p_ev_data->arg.string_wr.uchars = al_ptr_alloc_bytes(P_UCHARS, len, &status)))
+        if(NULL == (p_ss_data->arg.string_wr.uchars = al_ptr_alloc_bytes(P_UCHARS, len, &status)))
             return(status);
-        p_ev_data->local_data = 1;
+        p_ss_data->local_data = 1;
     }
     else
     {
-        p_ev_data->arg.string.uchars = uchars_empty_string;
-        p_ev_data->local_data = 0;
+        p_ss_data->arg.string.uchars = uchars_empty_string;
+        p_ss_data->local_data = 0;
     }
 
-    p_ev_data->did_num = RPN_DAT_STRING;
-    p_ev_data->arg.string_wr.size = len;
+    ss_data_set_data_id(p_ss_data, DATA_ID_STRING);
+    p_ss_data->arg.string_wr.size = len;
     } /*block*/
 
     {
-    P_U8 co = (P_U8) p_ev_data->arg.string_wr.uchars;
+    P_U8 co = (P_U8) p_ss_data->arg.string_wr.uchars;
     PC_U8Z ci = (PC_U8Z) in_str + 1;
 
     while(CH_NULL != *ci)
@@ -1479,16 +1545,17 @@ ss_recog_string(
 _Check_return_
 extern BOOL
 ss_string_is_blank(
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
-    assert(RPN_DAT_STRING == p_ev_data->did_num);
+    PTR_ASSERT(p_ss_data);
+    assert(ss_data_is_string(p_ss_data));
 
-    if(0 == p_ev_data->arg.string.size)
+    if(0 == ss_data_get_string_size(p_ss_data))
         return(TRUE);
 
-    PTR_ASSERT(p_ev_data->arg.string.uchars);
+    PTR_ASSERT(ss_data_get_string(p_ss_data));
 
-    return(p_ev_data->arg.string.size == ss_string_skip_leading_whitespace(p_ev_data));
+    return(ss_data_get_string_size(p_ss_data) == ss_string_skip_leading_whitespace(p_ss_data));
 }
 
 /******************************************************************************
@@ -1500,14 +1567,13 @@ ss_string_is_blank(
 _Check_return_
 extern STATUS
 ss_string_dup(
-    _OutRef_    P_EV_DATA p_ev_data_out,
-    _InRef_     PC_EV_DATA p_ev_data_src)
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_src)
 {
-    PTR_ASSERT(p_ev_data_src);
-    assert(RPN_DAT_STRING == p_ev_data_src->did_num);
-    PTR_ASSERT(p_ev_data_out);
+    PTR_ASSERT(p_ss_data_src);
+    assert(ss_data_is_string(p_ss_data_src));
 
-    return(ss_string_make_uchars(p_ev_data_out, p_ev_data_src->arg.string.uchars, p_ev_data_src->arg.string.size));
+    return(ss_string_make_uchars(p_ss_data_out, ss_data_get_string(p_ss_data_src), ss_data_get_string_size(p_ss_data_src)));
 }
 
 /******************************************************************************
@@ -1519,38 +1585,38 @@ ss_string_dup(
 _Check_return_
 extern STATUS
 ss_string_make_uchars(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_reads_opt_(uchars_n) PC_UCHARS uchars,
     _InVal_     U32 uchars_n)
 {
     const U32 actual_len = uchars_n;
 
-    PTR_ASSERT(p_ev_data);
+    PTR_ASSERT(p_ss_data);
     assert((S32) uchars_n >= 0);
 
     if(0 != actual_len)
     {
         STATUS status;
-        if(NULL == (p_ev_data->arg.string_wr.uchars = al_ptr_alloc_bytes(P_UCHARS, actual_len, &status)))
+        if(NULL == (p_ss_data->arg.string_wr.uchars = al_ptr_alloc_bytes(P_UCHARS, actual_len, &status)))
         {
-            ev_data_set_error(p_ev_data, status);
+            ss_data_set_error(p_ss_data, status);
             return(status);
         }
         assert(actual_len <= EV_MAX_STRING_LEN); /* sometimes we get copied willy-nilly into buffers! */
         if(NULL == uchars)
-            PtrPutByte(p_ev_data->arg.string_wr.uchars, CH_NULL); /* allows append (like ustr_set_n()) */
+            PtrPutByte(p_ss_data->arg.string_wr.uchars, CH_NULL); /* allows append (like ustr_set_n()) */
         else
-            memcpy32(p_ev_data->arg.string_wr.uchars, uchars, actual_len);
-        p_ev_data->local_data = 1;
+            memcpy32(p_ss_data->arg.string_wr.uchars, uchars, actual_len);
+        p_ss_data->local_data = 1;
     }
     else
     {
-        p_ev_data->arg.string.uchars = uchars_empty_string;
-        p_ev_data->local_data = 0;
+        p_ss_data->arg.string.uchars = uchars_empty_string;
+        p_ss_data->local_data = 0;
     }
 
-    p_ev_data->did_num = RPN_DAT_STRING;
-    p_ev_data->arg.string_wr.size = actual_len;
+    ss_data_set_data_id(p_ss_data, DATA_ID_STRING);
+    p_ss_data->arg.string_wr.size = actual_len;
 
     return(STATUS_OK);
 }
@@ -1558,20 +1624,20 @@ ss_string_make_uchars(
 _Check_return_
 extern STATUS
 ss_string_make_ustr(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR ustr)
 {
-    return(ss_string_make_uchars(p_ev_data, ustr, ustrlen32(ustr)));
+    return(ss_string_make_uchars(p_ss_data, ustr, ustrlen32(ustr)));
 }
 
 _Check_return_
 extern U32
 ss_string_skip_leading_whitespace(
-    _InRef_     PC_EV_DATA p_ev_data)
+    _InRef_     PC_SS_DATA p_ss_data)
 {
-    assert(RPN_DAT_STRING == p_ev_data->did_num);
+    assert(ss_data_is_string(p_ss_data));
 
-    return(ss_string_skip_leading_whitespace_uchars(p_ev_data->arg.string.uchars, p_ev_data->arg.string.size));
+    return(ss_string_skip_leading_whitespace_uchars(ss_data_get_string(p_ss_data), ss_data_get_string_size(p_ss_data)));
 }
 
 _Check_return_
@@ -1615,9 +1681,9 @@ ss_string_skip_leading_whitespace_uchars(
 enum two_num_action
 {
     TN_NOP,
-    TN_R1, /* convert ev_data1 to REAL */
-    TN_R2, /* convert ev_data2 to REAL */
-    TN_RB, /* convert both ev_data1 and ev_data2 to REAL */
+    TN_R1, /* convert ss_data_1 to REAL */
+    TN_R2, /* convert ss_data_2 to REAL */
+    TN_RB, /* convert both ss_data_1 and ss_data_2 to REAL */
     TN_I,
     TN_MIX
 };
@@ -1634,7 +1700,7 @@ enum two_num_index
 
 static const U8
 tn_worry[6][6] =
-{   /*   REA     B8      W8      W16     W32     OTH */
+{ /*  REA     B8      W8      W16     W32     OTH */
     { TN_NOP, TN_R1,  TN_R1,  TN_R1,  TN_R1,  TN_MIX }, /*REA*/
     { TN_R2,  TN_I,   TN_I,   TN_I,   TN_RB,  TN_MIX }, /*B8*/
     { TN_R2,  TN_I,   TN_I,   TN_I,   TN_RB,  TN_MIX }, /*W8*/
@@ -1645,7 +1711,7 @@ tn_worry[6][6] =
 
 static const U8
 tn_no_worry[6][6] =
-{   /*   REA     B8      W8      W16     W32     OTH */
+{ /*  REA     B8      W8      W16     W32     OTH */
     { TN_NOP, TN_R1,  TN_R1,  TN_R1,  TN_R1,  TN_MIX }, /*REA*/
     { TN_R2,  TN_I,   TN_I,   TN_I,   TN_I,   TN_MIX }, /*B8*/
     { TN_R2,  TN_I,   TN_I,   TN_I,   TN_I,   TN_MIX }, /*W8*/
@@ -1661,11 +1727,11 @@ check_tn(
     _InVal_     S32 did1,
     _InVal_     S32 did2)
 {
-    assert(RPN_DAT_REAL == TN_REAL);
-    assert(RPN_DAT_BOOL8 == TN_BOOL8);
-    assert(RPN_DAT_WORD8 == TN_WORD8);
-    assert(RPN_DAT_WORD16 == TN_WORD16);
-    assert(RPN_DAT_WORD32 == TN_WORD32);
+    assert(DATA_ID_REAL == TN_REAL);
+    assert(DATA_ID_LOGICAL == TN_BOOL8);
+    assert(DATA_ID_WORD8 == TN_WORD8);
+    assert(DATA_ID_WORD16 == TN_WORD16);
+    assert(DATA_ID_WORD32 == TN_WORD32);
     assert((did1 >= TN_REAL) && ((U32) did1 <= (U32) TN_OTHER));
     assert((did2 >= TN_REAL) && ((U32) did2 <= (U32) TN_OTHER));
 }
@@ -1673,14 +1739,14 @@ check_tn(
 #endif /* CHECKING */
 
 /*ncr*/
-extern S32
+extern enum two_nums_type_match_result
 two_nums_type_match(
-    _InoutRef_  P_EV_DATA p_ev_data1,
-    _InoutRef_  P_EV_DATA p_ev_data2,
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2,
     _InVal_     BOOL size_worry)
 {
-    const U32 did1 = MIN((U32) TN_OTHER, (U32) p_ev_data1->did_num); /* collapse all higher (non-number and invalid) RPN values onto TN_OTHER */
-    const U32 did2 = MIN((U32) TN_OTHER, (U32) p_ev_data2->did_num);
+    const U32 did1 = MIN((U32) TN_OTHER, (U32) ss_data_get_data_id(p_ss_data_1)); /* collapse all higher (non-number and invalid) RPN values onto TN_OTHER */
+    const U32 did2 = MIN((U32) TN_OTHER, (U32) ss_data_get_data_id(p_ss_data_2));
     const U8 (*p_tn_array)[6] = (size_worry) ? tn_worry : tn_no_worry;
 
     CHECKING_ONLY(check_tn(did1, did2));
@@ -1690,24 +1756,31 @@ two_nums_type_match(
     case TN_NOP:
         return(TWO_REALS);
 
+    case TN_I:
+        return(TWO_INTEGERS);
+    }
+
+    switch(p_tn_array[did2][did1])
+    {
     case TN_R1:
-        ev_data_set_real(p_ev_data1, (F64) p_ev_data1->arg.integer);
+        ss_data_set_real(p_ss_data_1, (F64) ss_data_get_integer(p_ss_data_1));
         return(TWO_REALS);
 
     case TN_R2:
-        ev_data_set_real(p_ev_data2, (F64) p_ev_data2->arg.integer);
+        ss_data_set_real(p_ss_data_2, (F64) ss_data_get_integer(p_ss_data_2));
         return(TWO_REALS);
 
     case TN_RB:
-        ev_data_set_real(p_ev_data1, (F64) p_ev_data1->arg.integer);
-        ev_data_set_real(p_ev_data2, (F64) p_ev_data2->arg.integer);
+        ss_data_set_real(p_ss_data_1, (F64) ss_data_get_integer(p_ss_data_1));
+        ss_data_set_real(p_ss_data_2, (F64) ss_data_get_integer(p_ss_data_2));
         return(TWO_REALS);
 
-    case TN_I:
-        return(TWO_INTS);
-
     default:
+#if CHECKING
+        default_unhandled();
+        /*FALLTHRU*/
     case TN_MIX:
+#endif
         return(TWO_MIXED);
     }
 }
@@ -1818,8 +1891,99 @@ ui_strtol(
     return((S32) strtol((const char *) ustr, (char **) p_ustr, radix));
 }
 
-const EV_DATA
-ev_data_real_zero =
-{ RPN_DAT_REAL, 0, 0, { 0.0 } };
+/******************************************************************************
+*
+* add, subtract or multiply two 32-bit signed integers, 
+* checking for overflow and also returning
+* a signed 64-bit result that the caller may consult
+* e.g. to promote to fp
+*
+******************************************************************************/
+
+_Check_return_
+static inline int32_t
+int32_from_int64_possible_overflow(
+    _In_        const int64_t int64,
+    _OutRef_    P_INT64_WITH_INT32_OVERFLOW p_int64_with_int32_overflow)
+{
+    p_int64_with_int32_overflow->int64_result = int64;
+
+    /* if both the top word and the MSB of the low word of the result
+     * are all zeros (+ve) or all ones (-ve) then
+     * the result still fits in 32-bit integer
+     */
+
+#if WINDOWS && (BYTE_ORDER == LITTLE_ENDIAN)
+    /* try to stop Microsoft compiler generating a redundant generic shift by 32 call */
+    if(false == (p_int64_with_int32_overflow->f_overflow = (
+                (((const int32_t *) &int64)[1])  -  (((int32_t) int64) >> 31)
+                ) ) )
+    {
+        return((int32_t) int64);
+    }
+
+    return((int64 < 0) ? INT32_MIN : INT32_MAX);
+#elif RISCOS
+    /* two instructions on ARM Norcroft - SUBS r0, r0, r1 ASR #31; MOVNE r0, #1 */
+    if(false == (p_int64_with_int32_overflow->f_overflow = (
+                ((int32_t) (int64 >> 32))  -  (((int32_t) int64) >> 31)
+                ) ) )
+    {
+        return((int32_t) int64);
+    }
+  
+    /* just test sign bit of 64-bit result - single instruction TST r1 on ARM Norcroft (compare does full subtraction) */
+    return(((uint32_t) (int64 >> 32) & 0x80000000U) ? INT32_MIN : INT32_MAX);
+#else
+    /* portable version */
+    if(false == (p_int64_with_int32_overflow->f_overflow = (
+                ((int32_t) (int64 >> 32))  !=  (((int32_t) int64) >> 31)
+                ) ) )
+    {
+        return((int32_t) int64);
+    }
+
+    return((int64 < 0) ? INT32_MIN : INT32_MAX);
+#endif
+}
+
+_Check_return_
+extern int32_t
+int32_add_check_overflow(
+    _In_        const int32_t addend_a,
+    _In_        const int32_t addend_b,
+    _OutRef_    P_INT64_WITH_INT32_OVERFLOW p_int64_with_int32_overflow)
+{
+    /* NB contorted order to save register juggling on ARM Norcroft */
+    const int64_t int64 = (int64_t) addend_b + addend_a;
+
+    return(int32_from_int64_possible_overflow(int64, p_int64_with_int32_overflow));
+}
+
+_Check_return_
+extern int32_t
+int32_subtract_check_overflow(
+    _In_        const int32_t minuend,
+    _In_        const int32_t subtrahend,
+    _OutRef_    P_INT64_WITH_INT32_OVERFLOW p_int64_with_int32_overflow)
+{
+    const int64_t int64 = (int64_t) minuend - subtrahend;
+
+    return(int32_from_int64_possible_overflow(int64, p_int64_with_int32_overflow));
+}
+
+_Check_return_
+extern int32_t
+int32_multiply_check_overflow(
+    _In_        const int32_t multiplicand_a,
+    _In_        const int32_t multiplicand_b,
+    _OutRef_    P_INT64_WITH_INT32_OVERFLOW p_int64_with_int32_overflow)
+{
+    /* NB contorted order to save register juggling on ARM Norcroft */
+    /* ARM Norcroft should generate a call to _ll_mullss: "Create a 64-bit number by multiplying two int32_t numbers" */
+    const int64_t int64 = (int64_t) multiplicand_b * multiplicand_a;
+
+    return(int32_from_int64_possible_overflow(int64, p_int64_with_int32_overflow));
+}
 
 /* end of ss_const.c */

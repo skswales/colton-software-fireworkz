@@ -19,6 +19,8 @@
 
 #include "cmodules/unicode/u2000.h" /* 2000..206F General Punctuation */
 
+#include <ctype.h> /* for "C"isalpha and friends */
+
 #if RISCOS
 #if defined(BOUND_MESSAGES_OBJECT_ID_FL_RTF)
 extern PC_U8 rb_fl_rtf_msg_weak;
@@ -3655,7 +3657,7 @@ PROC_RTF_CONTROL_PROTO(rtf_control_style)
         case 'c': parameter = SF_JUSTIFY_CENTRE; break;
         case 'r': parameter = SF_JUSTIFY_RIGHT;  break;
         case 'j': parameter = SF_JUSTIFY_BOTH;   break;
-        default: default_unhandled(); break;
+        default:  default_unhandled();           break;
         }
     }
 
@@ -3667,7 +3669,7 @@ PROC_RTF_CONTROL_PROTO(rtf_control_style)
         case 'c':     parameter = SF_JUSTIFY_V_CENTRE; break;
         case CH_NULL: parameter = SF_JUSTIFY_V_BOTTOM; break;
       /*case 'j':*/
-        default: default_unhandled(); break;
+        default:      default_unhandled();             break;
         }
     }
 

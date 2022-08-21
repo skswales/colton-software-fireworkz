@@ -752,7 +752,7 @@ PROC_UREF_EVENT_PROTO(static, sk_note_ref_dep_delete) /* dependency must be dele
 {
     const P_NOTE_INFO p_note_info = p_note_info_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
 
-    switch(t5_message)
+    switch(uref_message)
     {
     default:
         /* free a region */
@@ -760,7 +760,7 @@ PROC_UREF_EVENT_PROTO(static, sk_note_ref_dep_delete) /* dependency must be dele
             note_delete(p_docu, p_note_info);
         break;
 
-    case T5_MSG_UREF_CLOSE2:
+    case Uref_Msg_CLOSE2:
         /* remove uref dependency */
         if(NULL != p_note_info)
             note_uref_unlink(p_docu, p_note_info);
@@ -783,12 +783,12 @@ PROC_UREF_EVENT_PROTO(static, sk_note_ref_dep_update) /* dependency region must 
 
         case NOTE_PIN_CELLS_SINGLE:
             /* simple update if ok */
-            if(uref_match_slr(&p_note_info->region.tl, t5_message, p_uref_event_block) == DEP_DELETE)
+            if(uref_match_slr(&p_note_info->region.tl, uref_message, p_uref_event_block) == DEP_DELETE)
                 note_delete(p_docu, p_note_info);
             break;
 
         case NOTE_PIN_CELLS_TWIN:
-            if(uref_match_region(&p_note_info->region, t5_message, p_uref_event_block) == DEP_DELETE)
+            if(uref_match_region(&p_note_info->region, uref_message, p_uref_event_block) == DEP_DELETE)
                 note_delete(p_docu, p_note_info);
             break;
         }
@@ -802,13 +802,13 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_note)
     switch(p_uref_event_block->reason.code)
     {
     case DEP_DELETE: /* dependency must be deleted */
-        return(sk_note_ref_dep_delete(p_docu, t5_message, p_uref_event_block));
+        return(sk_note_ref_dep_delete(p_docu, uref_message, p_uref_event_block));
 
     case DEP_INFORM:
         return(STATUS_OK);
 
     case DEP_UPDATE: /* dependency region must be updated */
-        return(sk_note_ref_dep_update(p_docu, t5_message, p_uref_event_block));
+        return(sk_note_ref_dep_update(p_docu, uref_message, p_uref_event_block));
 
     default: default_unhandled();
         return(STATUS_OK);
@@ -1280,11 +1280,8 @@ static const DIALOG_CONTROL
 backdrop_page_group =
 {
     BACKDROP_ID_PAGE_GROUP, DIALOG_CONTROL_WINDOW,
-
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-
     { 0 },
-
     { DRT(LTRB, GROUPBOX), 0, 1 /* logical_group*/ }
 };
 
@@ -1292,12 +1289,9 @@ static const DIALOG_CONTROL
 backdrop_page_first =
 {
     BACKDROP_ID_PAGE_FIRST, BACKDROP_ID_PAGE_GROUP,
-
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-
     { 0, 0, BACKDROP_PAGES_H, DIALOG_STDRADIO_V },
-
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -1307,11 +1301,8 @@ static const DIALOG_CONTROL
 backdrop_page_all =
 {
     BACKDROP_ID_PAGE_ALL, BACKDROP_ID_PAGE_GROUP,
-
     { BACKDROP_ID_PAGE_FIRST, BACKDROP_ID_PAGE_FIRST, BACKDROP_ID_PAGE_FIRST },
-
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDRADIO_V },
-
     { DRT(LBRT, RADIOBUTTON) }
 };
 
@@ -1322,11 +1313,8 @@ static const DIALOG_CONTROL
 backdrop_origin_group =
 {
     BACKDROP_ID_ORIGIN_GROUP, DIALOG_CONTROL_WINDOW,
-
     { BACKDROP_ID_PAGE_GROUP, BACKDROP_ID_PAGE_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-
     { 0, DIALOG_STDSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
-
     { DRT(LBRB, GROUPBOX) }
 };
 
@@ -1337,11 +1325,8 @@ static const DIALOG_CONTROL
 backdrop_origin_work_area =
 {
     BACKDROP_ID_ORIGIN_WORK_AREA, BACKDROP_ID_ORIGIN_GROUP,
-
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, BACKDROP_ORIGINS_H, DIALOG_STDRADIO_V },
-
     { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
@@ -1352,11 +1337,8 @@ static const DIALOG_CONTROL
 backdrop_origin_print_area =
 {
     BACKDROP_ID_ORIGIN_PRINT_AREA, BACKDROP_ID_ORIGIN_GROUP,
-
     { BACKDROP_ID_ORIGIN_WORK_AREA, BACKDROP_ID_ORIGIN_WORK_AREA, BACKDROP_ID_ORIGIN_WORK_AREA },
-
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDRADIO_V },
-
     { DRT(LBRT, RADIOBUTTON) }
 };
 
@@ -1367,11 +1349,8 @@ static const DIALOG_CONTROL
 backdrop_origin_paper =
 {
     BACKDROP_ID_ORIGIN_PAPER, BACKDROP_ID_ORIGIN_GROUP,
-
     { BACKDROP_ID_ORIGIN_PRINT_AREA, BACKDROP_ID_ORIGIN_PRINT_AREA, BACKDROP_ID_ORIGIN_PRINT_AREA },
-
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDRADIO_V },
-
     { DRT(LBRT, RADIOBUTTON) }
 };
 
@@ -1379,29 +1358,11 @@ static DIALOG_CONTROL_DATA_RADIOBUTTON
 backdrop_origin_paper_data = { { 0 }, EXT_ID_NOTE_PIN_PAPER /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_BACKDROP_ORIGIN_PAPER) };
 
 static const DIALOG_CONTROL
-backdrop_does_print =
-{
-    BACKDROP_ID_DOES_PRINT, DIALOG_CONTROL_WINDOW,
-
-    { BACKDROP_ID_PAGE_GROUP, BACKDROP_ID_PAGE_GROUP },
-
-    { DIALOG_STDSPACING_H, 0, BACKDROP_RHS_FIELDS_H, DIALOG_STDCHECK_V },
-
-    { DRT(RTLT, CHECKBOX), 1 /*tabstop*/ }
-};
-
-static DIALOG_CONTROL_DATA_CHECKBOX
-backdrop_does_print_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BACKDROP_PRINT) };
-
-static const DIALOG_CONTROL
 backdrop_scale_fit =
 {
     BACKDROP_ID_SCALE_FIT, DIALOG_CONTROL_WINDOW,
-
     { BACKDROP_ID_DOES_PRINT, BACKDROP_ID_DOES_PRINT, BACKDROP_ID_DOES_PRINT },
-
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-
     { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
 
@@ -1412,13 +1373,22 @@ static const DIALOG_CONTROL
 backdrop_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
-
     { BACKDROP_ID_ORIGIN_GROUP, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, BACKDROP_ID_ORIGIN_GROUP },
-
     { DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V, BACKDROP_OK_H, 0 },
-
     { DRT(RBLB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
+
+static const DIALOG_CONTROL
+backdrop_does_print =
+{
+    BACKDROP_ID_DOES_PRINT, DIALOG_CONTROL_WINDOW,
+    { BACKDROP_ID_PAGE_GROUP, BACKDROP_ID_PAGE_GROUP },
+    { DIALOG_STDSPACING_H, 0, BACKDROP_RHS_FIELDS_H, DIALOG_STDCHECK_V },
+    { DRT(RTLT, CHECKBOX), 1 /*tabstop*/ }
+};
+
+static DIALOG_CONTROL_DATA_CHECKBOX
+backdrop_does_print_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BACKDROP_PRINT) };
 
 static const DIALOG_CONTROL_ID
 backdrop_ok_data_argmap[] =
@@ -1439,11 +1409,8 @@ static const DIALOG_CONTROL
 backdrop_cancel =
 {
     IDCANCEL, DIALOG_CONTROL_WINDOW,
-
     { IDOK, DIALOG_CONTROL_SELF, IDOK, IDOK },
-
     { -DIALOG_DEFPUSHEXTRA_H, DIALOG_STDPUSHBUTTON_V, -DIALOG_DEFPUSHEXTRA_H, DIALOG_STDSPACING_V },
-
     { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
@@ -1459,8 +1426,8 @@ backdrop_ctl_create[] =
     { &backdrop_origin_print_area, &backdrop_origin_print_area_data },
     { &backdrop_origin_paper,      &backdrop_origin_paper_data      },
 
-    { &backdrop_does_print,        &backdrop_does_print_data },
     { &backdrop_scale_fit,         &backdrop_scale_fit_data  },
+    { &backdrop_does_print,        &backdrop_does_print_data },
 
     { &backdrop_ok,                &backdrop_ok_data },
     { &backdrop_cancel,            &stdbutton_cancel_data }

@@ -170,7 +170,7 @@ mrofmun_formats_compare(
 _Check_return_
 static S32
 mrofmun_recog_constant(
-    _OutRef_    P_EV_DATA p_ev_data,
+    _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_U8Z p_u8_in,
     _InVal_     BOOL date_pass)
 {
@@ -186,7 +186,7 @@ mrofmun_recog_constant(
 
     trace_1(TRACE_APP_SKEL, TEXT("mrofmun_recog_constant: %s"), report_ustr((PC_USTR) p_u8_in));
 
-    CODE_ANALYSIS_ONLY(ev_data_set_blank(p_ev_data));
+    CODE_ANALYSIS_ONLY(ss_data_set_blank(p_ss_data));
 
     while(status_ok(status) && (CH_NULL != PtrGetByte(p_u8)))
     {
@@ -283,7 +283,8 @@ mrofmun_recog_constant(
                 status = quick_block_byte_add(&quick_block, u8);
                 break;
 
-            default: default_unhandled(); break;
+            default: default_unhandled();
+                break;
             }
         }
 
@@ -295,51 +296,51 @@ mrofmun_recog_constant(
 
     if(status_ok(status))
     {
-        res = ss_recog_constant(p_ev_data, (PC_USTR) quick_block_str(&quick_block) /*, FALSE*/);
+        res = ss_recog_constant(p_ss_data, (PC_USTR) quick_block_str(&quick_block) /*, FALSE*/);
 
         if(negative)
         {
-            switch(p_ev_data->did_num)
+            switch(ss_data_get_data_id(p_ss_data))
             {
             default:
                 break;
 
-            /*case RPN_DAT_BOOL8:*/
-            case RPN_DAT_WORD8:
-            case RPN_DAT_WORD16:
-            case RPN_DAT_WORD32:
-                ev_data_set_integer(p_ev_data, -p_ev_data->arg.integer);
+            /*case DATA_ID_LOGICAL:*/
+            case DATA_ID_WORD8:
+            case DATA_ID_WORD16:
+            case DATA_ID_WORD32:
+                ss_data_set_integer(p_ss_data, -ss_data_get_integer(p_ss_data));
                 break;
 
-            case RPN_DAT_REAL:
-                ev_data_set_real(p_ev_data, -p_ev_data->arg.fp);
+            case DATA_ID_REAL:
+                ss_data_set_real(p_ss_data, -ss_data_get_real(p_ss_data));
                 break;
             }
         }
 
         if(percent)
         {
-            switch(p_ev_data->did_num)
+            switch(ss_data_get_data_id(p_ss_data))
             {
             default:
                 break;
 
-            /*case RPN_DAT_BOOL8:*/
-            case RPN_DAT_WORD8:
-            case RPN_DAT_WORD16:
-            case RPN_DAT_WORD32:
-                ev_data_set_real(p_ev_data, (F64) p_ev_data->arg.integer);
+            /*case DATA_ID_LOGICAL:*/
+            case DATA_ID_WORD8:
+            case DATA_ID_WORD16:
+            case DATA_ID_WORD32:
+                ss_data_set_real(p_ss_data, (F64) ss_data_get_integer(p_ss_data));
 
                 /*FALLTHRU*/
 
-            case RPN_DAT_REAL:
-                ev_data_set_real(p_ev_data, p_ev_data->arg.fp / 100.0);
+            case DATA_ID_REAL:
+                ss_data_set_real(p_ss_data, ss_data_get_real(p_ss_data) / 100.0);
                 break;
             }
         }
 
         /* check we got a date when necessary */
-        if(must_be_date && (RPN_DAT_DATE != p_ev_data->did_num))
+        if(must_be_date && (DATA_ID_DATE != ss_data_get_data_id(p_ss_data)))
             res = 0;
     }
 
@@ -351,7 +352,7 @@ mrofmun_recog_constant(
 _Check_return_
 extern STATUS
 autoformat(
-    _OutRef_    P_EV_DATA p_ev_data_out,
+    _OutRef_    P_SS_DATA p_ss_data_out,
     _OutRef_    P_STYLE_HANDLE p_style_handle_out,
     _In_z_      PC_USTR ustr,
     _InRef_     PC_ARRAY_HANDLE p_array_handle_mrofmuns_in) /* array of mrofmun_entries */
@@ -360,12 +361,12 @@ autoformat(
     UINT pass;
 
     *p_style_handle_out = STYLE_HANDLE_NONE;
-    ev_data_set_blank(p_ev_data_out);
+    ss_data_set_blank(p_ss_data_out);
 
     for(pass = 1; pass <= 2; ++pass)
     {
         BOOL date_pass = (1 == pass); /* SKS 29apr95 make it do date detection! */
-        EV_DATA ev_data;
+        SS_DATA ss_data;
         QUICK_BLOCK_WITH_BUFFER(quick_block_data, 20);
         QUICK_BLOCK_WITH_BUFFER(quick_block_format, 20);
         quick_block_with_buffer_setup(quick_block_data);
@@ -373,8 +374,8 @@ autoformat(
 
         status_break(status = mrofmun_split_string(&quick_block_data, &quick_block_format, (PC_U8Z) ustr, date_pass));
 
-        if(mrofmun_recog_constant(&ev_data, quick_block_str(&quick_block_data), date_pass) <= 0)
-            ev_data_set_error(&ev_data, STATUS_FAIL);
+        if(mrofmun_recog_constant(&ss_data, quick_block_str(&quick_block_data), date_pass) <= 0)
+            ss_data_set_error(&ss_data, STATUS_FAIL);
         else
         {
             ARRAY_INDEX i;
@@ -398,7 +399,7 @@ autoformat(
                 }
 
                 /* pass value to numform & compare with ustr */
-                status = numform(&quick_ublock_numform, P_QUICK_TBLOCK_NONE, &ev_data, &p_mrofmun_entry->numform_parms);
+                status = numform(&quick_ublock_numform, P_QUICK_TBLOCK_NONE, &ss_data, &p_mrofmun_entry->numform_parms);
 
                 if(status_ok(status))
                 {
@@ -415,11 +416,11 @@ autoformat(
 
                         if(status_ok(status))
                         {
-                            EV_DATA ev_data_n;
+                            SS_DATA ss_data_n;
 
-                            if(mrofmun_recog_constant(&ev_data_n, quick_block_str(&quick_block_data_n), date_pass) > 0)
+                            if(mrofmun_recog_constant(&ss_data_n, quick_block_str(&quick_block_data_n), date_pass) > 0)
                             {
-                                if(0 == ss_data_compare(&ev_data, &ev_data_n, TRUE, TRUE))
+                                if(0 == ss_data_compare(&ss_data, &ss_data_n, TRUE, TRUE))
                                 {
                                     S32 match_count = mrofmun_formats_compare(quick_block_str(&quick_block_format),
                                                                               quick_block_str(&quick_block_format_n));
@@ -446,7 +447,7 @@ autoformat(
 
         if(STYLE_HANDLE_NONE != *p_style_handle_out)
         {
-            *p_ev_data_out = ev_data;
+            *p_ss_data_out = ss_data;
             break;
         }
     }

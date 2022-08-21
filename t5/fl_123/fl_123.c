@@ -47,7 +47,7 @@ static STATUS
 lotus123_check_date(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     _InRef_     PC_BYTE p_format,
-    _InRef_     PC_F64 p_f64);
+    _InVal_     F64 f64);
 
 _Check_return_
 static STATUS
@@ -67,7 +67,7 @@ static U32 /* length out */
 text_from_f64(
     _Out_writes_z_(elemof_buffer) P_USTR buffer,
     _InVal_     U32 elemof_buffer,
-    _InRef_     PC_F64 p_f64);
+    _InVal_     F64 f64);
 
 enum SEARCH_TYPES
 {
@@ -130,6 +130,8 @@ v3_map_opcode(
     }
 }
 
+#if defined(UNUSED_KEEP_ALIVE)
+
 _Check_return_
 static inline U16
 v123_map_opcode(
@@ -145,6 +147,8 @@ v123_map_opcode(
     case L123_FORMULA:      return(L_FORMULA);
     }
 }
+
+#endif /* UNUSED */
 
 /******************************************************************************
 *
@@ -495,7 +499,7 @@ lotus123_load_all_cells_wk1(
             status = lotus123_decode_format(&quick_ublock_format, p_format);
 
             if(status_ok(status))
-                status = lotus123_check_date(&quick_ublock_result, p_format, &f64);
+                status = lotus123_check_date(&quick_ublock_result, p_format, f64);
 
             if(status == 1)
                 is_date_format = TRUE;
@@ -513,14 +517,14 @@ lotus123_load_all_cells_wk1(
             status = lotus123_decode_format(&quick_ublock_format, p_format);
 
             if(status_ok(status))
-                status = lotus123_check_date(&quick_ublock_result, p_format, &f64);
+                status = lotus123_check_date(&quick_ublock_result, p_format, f64);
 
             if(status == 1)
                 is_date_format = TRUE;
             else if(status == 0)
             {
                 UCHARZ buffer[50];
-                const U32 len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), &f64);
+                const U32 len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), f64);
                 status = quick_ublock_uchars_add(&quick_ublock_result, ustr_bptr(buffer), len);
             }
 
@@ -714,7 +718,7 @@ lotus123_load_all_cells_wk3(
 
             case LWK3_LABEL:
                 {
-                static const U8 format = L_SPECL | L_GENFMT;
+                static const BYTE format = L_SPECL | L_GENFMT;
                 p_format = &format;
 
                 slr.row = (ROW) lotus123_read_U16(p_data);
@@ -734,7 +738,7 @@ lotus123_load_all_cells_wk3(
             case LWK3_NUMBER:
             case LWK3_FORMULA:
                 {
-                static const U8 format = L_SPECL | L_GENFMT;
+                static const BYTE format = L_SPECL | L_GENFMT;
                 p_format = &format;
 
                 slr.row = (ROW) lotus123_read_U16(p_data);
@@ -773,14 +777,14 @@ lotus123_load_all_cells_wk3(
             status = lotus123_decode_format(&quick_ublock_format, p_format);
 
             if(status_ok(status))
-                status = lotus123_check_date(&quick_ublock_result, p_format, &f64);
+                status = lotus123_check_date(&quick_ublock_result, p_format, f64);
 
             if(status == 1)
                 is_date_format = TRUE;
             else if(status == 0)
             {
                 UCHARZ buffer[50];
-                const U32 len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), &f64);
+                const U32 len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), f64);
                 status = quick_ublock_uchars_add(&quick_ublock_result, ustr_bptr(buffer), len);
             }
 
@@ -1293,9 +1297,9 @@ static U32 /* length out */
 text_from_f64(
     _Out_writes_z_(elemof_buffer) P_USTR buffer,
     _InVal_     U32 elemof_buffer,
-    _InRef_     PC_F64 p_f64)
+    _InVal_     F64 f64)
 {
-    U32 len = ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT("%.15g"), *p_f64);
+    U32 len = ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
     PC_USTR ustr_exp;
 
     /* search for exponent and remove leading zeros because
@@ -1355,7 +1359,7 @@ const_convert(
     case LF_CONST:
         {
         F64 f64 = lotus123_read_F64(p_u8_const);
-        len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), &f64);
+        len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), f64);
         break;
         }
 
@@ -1802,7 +1806,8 @@ lotus123_find_record(
             }
             break;
 
-        default: default_unhandled(); break;
+        default: default_unhandled();
+            break;
         }
 
         opcode_offset += length + 4;
@@ -1999,9 +2004,9 @@ lotus123_read_file_limits(
         p_data += 2;
 
         if(lf_version == 3)
-            reportf(TEXT("%.4X: OP=0x%.2X len=%2d %s %s"), opcode_offset, opcode, length, (opcode < elemof32(opcodes_3)) ? opcodes_3[opcode] : TEXT(""), (v3_map_opcode(opcode) != L_BOF) ? TEXT("***") : TEXT(""));
+            reportf(TEXT("%.4X: OP=0x%.2X len=%2u %s %s"), opcode_offset, (U32) opcode, (U32) length, (opcode < elemof32(opcodes_3)) ? opcodes_3[opcode] : TEXT(""), (v3_map_opcode(opcode) != L_BOF) ? TEXT("***") : TEXT(""));
         else
-            reportf(TEXT("%.4X: OP=0x%.2X len=%2d %s"),    opcode_offset, opcode, length, (opcode < elemof32(opcodes_1)) ? opcodes_1[opcode] : TEXT(""));
+            reportf(TEXT("%.4X: OP=0x%.2X len=%2u %s"),    opcode_offset, (U32) opcode, (U32) length, (opcode < elemof32(opcodes_1)) ? opcodes_1[opcode] : TEXT(""));
 
         opcode_offset += length + 4;
 
@@ -2093,14 +2098,12 @@ lotus123_read_file_limits(
 *
 ******************************************************************************/
 
-#define SECS_IN_24 ((S32) 60 * (S32) 60 * (S32) 24)
-
 _Check_return_
 static STATUS
 lotus123_check_date(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     _InRef_     PC_BYTE p_format,
-    _InRef_     PC_F64 p_f64)
+    _InVal_     F64 f64)
 {
     /* days in the month */
     static const S32 lotus123_days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -2147,13 +2150,13 @@ lotus123_check_date(
             S32 minutes = 0;
             S32 seconds;
 
-            if((*p_f64 > (F64) S32_MAX) || (*p_f64 < 0.0))
+            if( (f64 < 0.0) || (f64 > (F64) S32_MAX) )
                 break;
 
-            dateno = (S32) (*p_f64);
+            dateno = (S32) /*trunc*/ f64;
 
-            /* fractional part denotes hh:mm:ss bit */
-            seconds = (S32) (SECS_IN_24 * (*p_f64 - (F64) dateno));
+            /* fractional part denotes hh:mm:ss bit (don't be tempted to round or you could add a day!) */
+            seconds = (S32) /*trunc*/ ((f64 - (F64) dateno) * FP_SECS_IN_24);
 
             if(0 != seconds)
             {

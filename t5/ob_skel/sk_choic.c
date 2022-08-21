@@ -701,11 +701,8 @@ static /*poked*/ DIALOG_CONTROL
 choices_main_group =
 {
     CHOICES_MAIN_ID_GROUP, DIALOG_MAIN_GROUP,
-
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_RULERS_RULER_COMBO },
-
     { 0 },
-
     { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
@@ -734,14 +731,14 @@ static const UI_CONTROL_S32
 choices_main_auto_save_period_minutes_control = { 0, 10000, 1 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-choices_main_auto_save_period_minutes_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &choices_main_auto_save_period_minutes_control } /*BUMP_XX*/ };
+choices_main_auto_save_period_minutes_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &choices_main_auto_save_period_minutes_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
 choices_main_auto_save_units =
 {
     CHOICES_MAIN_ID_AUTO_SAVE_UNITS, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_SELF, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
-    { DIALOG_STDBUMPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -894,13 +891,10 @@ static /*poked*/ DIALOG_CONTROL
 choices_main_rulers_ruler_combo =
 {
     CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_GROUP,
-
     /* SKS 26sep93 overlap previous item to save space */
     { DIALOG_CONTROL_SELF, CHOICES_MAIN_ID_TOOLBAR, CHOICES_MAIN_ID_AUTO_SAVE_UNITS },
-
     { 0 /*poked*/, DIALOG_STDSPACING_V, 0, DIALOG_STDCOMBO_V },
-
-    { DRT(RBRT, COMBO_TEXT), 1 /*tabstop*/ }
+    { DRT(RBRT, COMBO_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_COMBO_TEXT

@@ -432,7 +432,7 @@ CreateToolTip(
         ti.lpszText = LPSTR_TEXTCALLBACK;
         /* NB in this case, the "tool" is the entire parent window */
         SetRectEmpty(&ti.rect);
-        SendMessage(hwndTT, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti);
+        consume(LRESULT, SendMessage(hwndTT, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti));
     }
 
     return(hwndTT);
@@ -451,7 +451,7 @@ toolbar_set_tooltip_text(
     {
         ui_text_dispose(&p_view->toolbar.ui_text);
         status_assert(ui_text_copy(&p_view->toolbar.ui_text, p_ui_text));
-        SendMessage(p_view->toolbar.hwndTT, TTM_POP, 0, 0);
+        consume(LRESULT, SendMessage(p_view->toolbar.hwndTT, TTM_POP, 0, 0));
     }
 }
 
@@ -546,7 +546,7 @@ toolbar_onSize(
         ti.hwnd = hwnd;
         ti.uId = 0;
         GetClientRect(hwnd, &ti.rect);
-        SendMessage(p_view->toolbar.hwndTT, TTM_NEWTOOLRECT, 0, (LPARAM) &ti);
+        consume(LRESULT, SendMessage(p_view->toolbar.hwndTT, TTM_NEWTOOLRECT, 0, (LPARAM) &ti));
     }
 }
 
@@ -1011,7 +1011,7 @@ RelayMouseEvent(
             msg.message = uiMsg;
             msg.wParam = wParam;
             msg.lParam = lParam;
-            SendMessage(p_view->toolbar.hwndTT, TTM_RELAYEVENT, 0, (LPARAM) &msg);
+            consume(LRESULT, SendMessage(p_view->toolbar.hwndTT, TTM_RELAYEVENT, 0, (LPARAM) &msg));
         }
     }
 }

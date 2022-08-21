@@ -23,17 +23,13 @@
 
 extern void
 product_between_calc(
-    _InoutRef_  P_EV_DATA p_ev_data_res, /* denotes integer or fp; may return integer or fp */
+    _InoutRef_  P_SS_DATA p_ss_data_res, /* denotes integer or fp; may return integer or fp */
     _InVal_     S32 start,
     _InVal_     S32 end)
 {
     S32 i = start + 1;
 
-    if(RPN_DAT_REAL == p_ev_data_res->did_num)
-    {
-        p_ev_data_res->arg.fp = start;
-    }
-    else
+    if(ss_data_is_integer(p_ss_data_res))
     {
         /* a small lookup table saves some time for stats functions and handles the exceptions anyway */
         static const S32 factorial_n[] =
@@ -53,49 +49,54 @@ product_between_calc(
         /*12!*/ 2*3*4*5*6*7*8*9*10*11*12
         };
 
-        p_ev_data_res->arg.integer = start;
+        ss_data_set_WORD32(p_ss_data_res, start);
 
         if(1 == start) /*even for end==0*/
         {
             if((U32) end < elemof32(factorial_n))
             {
                 assert(end >= 0);
-                p_ev_data_res->arg.integer = factorial_n[end];
+                p_ss_data_res->arg.integer = factorial_n[end];
                 return;
             }
 
             i = elemof32(factorial_n) - 1; /* last element is useful to save many multiplications */
-            p_ev_data_res->arg.integer = factorial_n[i];
+            p_ss_data_res->arg.integer = factorial_n[i];
             ++i;
         }
 
         /* keep product in integer where possible */
-        for(; i <= end; ++i)
-        {
-            UMUL64_RESULT result;
+        while(i <= end)
+        {   /* yes, the casts are important */
+            /* ARM Norcroft should generate a call to _ll_mulluu: "Create a 64-bit number by multiplying two uint32_t numbers" */
+            const uint64_t u64 = (uint64_t) (uint32_t) p_ss_data_res->arg.integer * (uint32_t) i;
 
-            umul64(p_ev_data_res->arg.integer, i, &result);
-
-            if((0 == result.HighPart) && (0 == (result.LowPart & 0x80000000U)))
-            {   /* result still fits in integer */
-                p_ev_data_res->arg.integer = (S32) result.LowPart;
+            if(((uint64_t) (int32_t) u64) == u64)
+            {   /* want top word and MSB of low word to both be zero - if so, result still fits in signed integer */
+                p_ss_data_res->arg.integer = (S32) (U32) u64;
+                ++i;
                 continue;
             }
 
             /* have to go to fp now result has outgrown integer and retry the multiply */
-            ev_data_set_real(p_ev_data_res, (F64) p_ev_data_res->arg.integer);
+            ss_data_set_real(p_ss_data_res, (F64) ss_data_get_integer(p_ss_data_res));
             break;
         }
+
+        /* NB leave p_ss_data_res' data_id undisturbed if not DATA_ID_REAL for caller to sort out */
+        if(DATA_ID_REAL != ss_data_get_data_id(p_ss_data_res))
+            return;
+    }
+    else
+    {
+        ss_data_set_real(p_ss_data_res, start);
     }
 
-    /* NB leave p_ev_data_res->did_num undisturbed if not RPN_DAT_REAL for caller to sort out */
-    if(RPN_DAT_REAL != p_ev_data_res->did_num)
-        return;
-
     /* finish off in fp if needed */
-    for(; i <= end; ++i)
+    while(i <= end)
     {
-        p_ev_data_res->arg.fp *= i;
+        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_res) * i);
+        ++i;
     }
 }
 
@@ -127,10 +128,10 @@ PROC_EXEC_PROTO(c_abs)
 {
     exec_func_ignore_parms();
 
-    if(RPN_DAT_REAL == args[0]->did_num)
-        ev_data_set_real(p_ev_data_res, fabs(args[0]->arg.fp));
+    if(ss_data_is_real(args[0]))
+        ss_data_set_real(p_ss_data_res, fabs(ss_data_get_real(args[0])));
     else
-        ev_data_set_integer(p_ev_data_res, abs(args[0]->arg.integer));
+        ss_data_set_integer(p_ss_data_res, abs(ss_data_get_integer(args[0])));
 }
 
 /******************************************************************************
@@ -141,15 +142,15 @@ PROC_EXEC_PROTO(c_abs)
 
 PROC_EXEC_PROTO(c_exp)
 {
-    const F64 number = args[0]->arg.fp;
+    const F64 number = ss_data_get_real(args[0]);
 
     exec_func_ignore_parms();
 
-    ev_data_set_real(p_ev_data_res, exp(number));
+    ss_data_set_real(p_ss_data_res, exp(number));
 
     /* exp() overflowed? - don't test for underflow case */
-    if(p_ev_data_res->arg.fp == HUGE_VAL)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_OUTOFRANGE);
+    if(ss_data_get_real(p_ss_data_res) == HUGE_VAL)
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_OUTOFRANGE);
 }
 
 /******************************************************************************
@@ -160,32 +161,32 @@ PROC_EXEC_PROTO(c_exp)
 
 extern void
 factorial_calc(
-    _OutRef_    P_EV_DATA p_ev_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
     _InVal_     S32 n)
 {
-    if((n < 0) || (n > 170)) /* SKS maximum factorial that will fit in F64 */
+    if( (n < 0) || (n > 170) ) /* SKS maximum factorial that will fit in F64 */
     {
-        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
     }
 
     /* assume result will be integer to start with */
-    p_ev_data_out->did_num = RPN_DAT_WORD32;
+    ss_data_set_WORD32(p_ss_data_out, 1);
 
     /* function will go to fp as necessary */
-    product_between_calc(p_ev_data_out, 1, n); /* n==0 is handled by that */ /* may return integer or fp */
+    product_between_calc(p_ss_data_out, 1, n); /* n==0 is handled by that */ /* may return integer or fp */
 }
 
 PROC_EXEC_PROTO(c_fact)
 {
-    const S32 n = args[0]->arg.integer;
+    const S32 n = ss_data_get_integer(args[0]);
 
     exec_func_ignore_parms();
 
-    factorial_calc(p_ev_data_res, n); /* may return integer or fp or error */
+    factorial_calc(p_ss_data_res, n); /* may return integer or fp or error */
 
-    if(RPN_DAT_WORD32 == p_ev_data_res->did_num)
-        p_ev_data_res->did_num = ev_integer_size(p_ev_data_res->arg.integer);
+    if(DATA_ID_WORD32 == ss_data_get_data_id(p_ss_data_res))
+        ss_data_set_data_id(p_ss_data_res, ev_integer_size(ss_data_get_integer(p_ss_data_res)));
 }
 
 /******************************************************************************
@@ -207,22 +208,22 @@ PROC_EXEC_PROTO(c_int)
 {
     exec_func_ignore_parms();
 
-    switch(args[0]->did_num)
+    switch(ss_data_get_data_id(args[0]))
     {
-    case RPN_DAT_REAL:
-        ev_data_set_real_ti(p_ev_data_res, real_trunc(args[0]->arg.fp));
+    case DATA_ID_REAL:
+        ss_data_set_real_try_integer(p_ss_data_res, real_trunc(ss_data_get_real(args[0])));
         return;
 
-    case RPN_DAT_DATE:
+    case DATA_ID_DATE:
         /* Convert just the date component to a largely Excel-compatible serial number */
-        if(EV_DATE_NULL != args[0]->arg.ev_date.date)
-            ev_data_set_integer(p_ev_data_res, ss_dateval_to_serial_number(&args[0]->arg.ev_date.date)); /* ignore any time component */
+        if(SS_DATE_NULL != ss_data_get_date(args[0])->date)
+            ss_data_set_integer(p_ss_data_res, ss_dateval_to_serial_number(ss_data_get_date(args[0])->date)); /* ignore any time component */
         else
-            ev_data_set_integer(p_ev_data_res, 0); /* ignore any time component, and this is a pure time value */
+            ss_data_set_integer(p_ss_data_res, 0); /* ignore any time component, and this is a pure time value */
         return;
 
     default:
-        *p_ev_data_res = *(args[0]); /*NOP*/
+        *p_ss_data_res = *(args[0]); /*NOP*/
         return;
     }
 }
@@ -235,16 +236,16 @@ PROC_EXEC_PROTO(c_int)
 
 PROC_EXEC_PROTO(c_ln)
 {
-    const F64 number = args[0]->arg.fp;
+    const F64 number = ss_data_get_real(args[0]);
 
     exec_func_ignore_parms();
 
     errno = 0;
 
-    ev_data_set_real(p_ev_data_res, log(number));
+    ss_data_set_real(p_ss_data_res, log(number));
 
     if(errno /* == EDOM, ERANGE */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_BAD_LOG);
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_BAD_LOG);
 }
 
 /******************************************************************************
@@ -253,52 +254,72 @@ PROC_EXEC_PROTO(c_ln)
 *
 ******************************************************************************/
 
+static void
+calc_mod_two_reals(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InVal_     F64 f64_a,
+    _InVal_     F64 f64_b)
+{
+    F64 f64_mod_result;
+
+    errno = 0;
+
+    f64_mod_result = fmod(f64_a, f64_b); /* remainder has the same sign as the dividend */
+
+    ss_data_set_real_try_integer(p_ss_data_res, f64_mod_result);
+
+    /* would have divided by zero? */
+    /*if(!global_preferences.ss_calc_try_IEEE_maths)*/
+        if(errno /* == EDOM */)
+            ss_data_set_error(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
+}
+
+static void
+c_mod_two_integers(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InRef_     PC_SS_DATA arg0,
+    _InRef_     PC_SS_DATA arg1)
+{
+    const S32 s32_a = ss_data_get_integer(arg0);
+    const S32 s32_b = ss_data_get_integer(arg1);
+    S32 s32_mod_result;
+
+    if(0 != s32_b)
+    {
+        s32_mod_result = (s32_a % s32_b); /* remainder has the same sign as the dividend (C99) */
+
+        ss_data_set_integer(p_ss_data_res, s32_mod_result);
+        return;
+    }
+
+    calc_mod_two_reals(p_ss_data_res, (F64) s32_a, (F64) s32_b);
+}
+
+static void
+c_mod_two_reals(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InRef_     PC_SS_DATA arg0,
+    _InRef_     PC_SS_DATA arg1)
+{
+    const F64 f64_a = ss_data_get_real(arg0);
+    const F64 f64_b = ss_data_get_real(arg1);
+
+    calc_mod_two_reals(p_ss_data_res, f64_a, f64_b);
+}
+
 PROC_EXEC_PROTO(c_mod)
 {
     exec_func_ignore_parms();
 
     switch(two_nums_type_match(args[0], args[1], FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
     {
-    case TWO_INTS:
-        {
-        const S32 s32_a = args[0]->arg.integer;
-        const S32 s32_b = args[1]->arg.integer;
-        div_t d;
-        S32 s32_mod_result;
-
-        /* SKS after PD 4.11 03feb92 - gave FP error not zero if trap taken */
-        if(0 == s32_b)
-        {
-            ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
-            return;
-        }
-
-        d = div((int) s32_a, (int) s32_b);
-
-        s32_mod_result = d.rem; /* remainder has the same sign as the dividend */
-
-        ev_data_set_integer(p_ev_data_res, s32_mod_result);
+    case TWO_INTEGERS:
+        c_mod_two_integers(p_ss_data_res, args[0], args[1]);
         break;
-        }
 
     case TWO_REALS:
-        {
-        const F64 f64_a = args[0]->arg.fp;
-        const F64 f64_b = args[1]->arg.fp;
-        F64 f64_mod_result;
-
-        errno = 0;
-
-        f64_mod_result = fmod(f64_a, f64_b); /* remainder has the same sign as the dividend */
-
-        ev_data_set_real_ti(p_ev_data_res, f64_mod_result);
-
-        /* would have divided by zero? */
-        if(errno /* == EDOM */)
-            ev_data_set_error(p_ev_data_res, EVAL_ERR_DIVIDEBY0);
-
+        c_mod_two_reals(p_ss_data_res, args[0], args[1]);
         break;
-        }
     }
 }
 
@@ -317,7 +338,7 @@ PROC_EXEC_PROTO(c_mod)
 
 PROC_EXEC_PROTO(c_sgn)
 {
-    const F64 number = args[0]->arg.fp;
+    const F64 number = ss_data_get_real(args[0]);
     S32 sgn_result;
 
     exec_func_ignore_parms();
@@ -329,7 +350,7 @@ PROC_EXEC_PROTO(c_sgn)
     else
         sgn_result = 0;
 
-    ev_data_set_integer(p_ev_data_res, sgn_result);
+    ss_data_set_integer(p_ss_data_res, sgn_result);
 }
 
 /******************************************************************************
@@ -340,16 +361,16 @@ PROC_EXEC_PROTO(c_sgn)
 
 PROC_EXEC_PROTO(c_sqr)
 {
-    const F64 number = args[0]->arg.fp;
+    const F64 number = ss_data_get_real(args[0]);
 
     exec_func_ignore_parms();
 
     errno = 0;
 
-    ev_data_set_real(p_ev_data_res, sqrt(number));
+    ss_data_set_real(p_ss_data_res, sqrt(number));
 
     if(errno /* == EDOM */)
-        ev_data_set_error(p_ev_data_res, EVAL_ERR_NEG_ROOT);
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_NEG_ROOT);
 }
 
 /* end of ev_math.c */

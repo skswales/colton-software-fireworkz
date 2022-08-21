@@ -210,7 +210,7 @@ read_ucs4_character_UTF_8(
         {
             if((EOF_READ == status) && (0 != i))
                 /* insufficient UTF-8 trail bytes read */
-                reportf(TEXT("UTF-8: EOF when only %u bytes read when %u were needed"), i, bytes_of_char);
+                reportf(TEXT("UTF-8: EOF when only %u bytes read when %u were needed"), (U32) i, bytes_of_char);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -228,15 +228,30 @@ read_ucs4_character_UTF_8(
 
         if(0 == i)
         {   /* should only encounter top-bit-clear or UTF-8 lead bytes */
-            if((0 != (0x80 & byte_read[0])) && !u8_is_utf8_lead_byte(byte_read[0]))
-            {   /* simply treat as Latin-1 */
-                reportf(TEXT("UTF-8: 0x%.2X is a top-bit-set byte that's not a UTF-8 lead byte: treating as Latin-N"), byte_read[i]);
-                ucs4 = ucs4_from_sbchar_with_codepage(byte_read[0], get_system_codepage());
-                *p_char_read = ucs4;
-                return(STATUS_OK);
+            if(0 == (0x80 & byte_read[0]))
+            {
+                bytes_of_char = 1;
             }
+            else
+            {
+                if(!u8_is_utf8_lead_byte(byte_read[0]))
+                {   /* simply treat as Latin-N */
+                    reportf(TEXT("UTF-8: 0x%.2X is a top-bit-set byte that's not a UTF-8 lead byte: treating as Latin-N"), byte_read[i]);
+                    ucs4 = ucs4_from_sbchar_with_codepage(byte_read[0], get_system_codepage());
+                    *p_char_read = ucs4;
+                    return(STATUS_OK);
+                }
 
-            bytes_of_char = utf8_bytes_of_char(utf8_bptr(byte_read));
+                bytes_of_char = utf8_bytes_of_char(utf8_bptr(byte_read));
+
+                if(bytes_of_char > 4)
+                {
+                    reportf(TEXT("UTF-8: 0x%.2X is a UTF-8 lead byte but for an overlong sequence: treating as Latin-N"), byte_read[i]);
+                    ucs4 = ucs4_from_sbchar_with_codepage(byte_read[0], get_system_codepage());
+                    *p_char_read = ucs4;
+                    return(STATUS_OK);
+                }
+            }
         }
 
         if((U32) (i + 1) == bytes_of_char)
@@ -278,7 +293,7 @@ read_ucs4_character_UTF_16LE(
         if(status_fail(status) || (EOF_READ == status))
         {
             if((EOF_READ == status) && (0 != i))
-                reportf(TEXT("UTF-16LE: EOF when only %u bytes read when %u were needed"), 2*i + 0, 2*i + 2);
+                reportf(TEXT("UTF-16LE: EOF when only %u bytes read when %u were needed"), 2U*i + 0U, 2U*i + 2U);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -288,7 +303,7 @@ read_ucs4_character_UTF_16LE(
         if(status_fail(status) || (EOF_READ == status))
         {
             if(EOF_READ == status)
-                reportf(TEXT("UTF-16LE: EOF when only %u bytes read when %u were needed"), 2*i + 1, 2*i + 2);
+                reportf(TEXT("UTF-16LE: EOF when only %u bytes read when %u were needed"), 2U*i + 1U, 2U*i + 2U);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -358,7 +373,7 @@ read_ucs4_character_UTF_16BE(
         if(status_fail(status) || (EOF_READ == status))
         {
             if((EOF_READ == status) && (0 != i))
-                reportf(TEXT("UTF-16BE: EOF when only %u bytes read when %u were needed"), 2*i + 0, 2*i + 2);
+                reportf(TEXT("UTF-16BE: EOF when only %u bytes read when %u were needed"), 2U*i + 0U, 2U*i + 2U);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -368,7 +383,7 @@ read_ucs4_character_UTF_16BE(
         if(status_fail(status) || (EOF_READ == status))
         {
             if(EOF_READ == status)
-                reportf(TEXT("UTF-16BE: EOF when only %u bytes read when %u were needed"), 2*i + 1, 2*i + 2);
+                reportf(TEXT("UTF-16BE: EOF when only %u bytes read when %u were needed"), 2U*i + 1U, 2U*i + 2U);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -437,7 +452,7 @@ read_ucs4_character_UTF_32LE(
         if(status_fail(status) || (EOF_READ == status))
         {
             if((EOF_READ == status) && (0 != i))
-                reportf(TEXT("UTF-32LE: EOF when only %u bytes read when 4 were needed"), i);
+                reportf(TEXT("UTF-32LE: EOF when only %u bytes read when 4 were needed"), (U32) i);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -479,7 +494,7 @@ read_ucs4_character_UTF_32BE(
         if(status_fail(status) || (EOF_READ == status))
         {
             if((EOF_READ == status) && (0 != i))
-                reportf(TEXT("UTF-32BE: EOF when only %u bytes read when 4 were needed"), i);
+                reportf(TEXT("UTF-32BE: EOF when only %u bytes read when 4 were needed"), (U32) i);
             *p_char_read = EOF_READ;
             return(status);
         }
@@ -867,6 +882,14 @@ t5_filetype_from_data(
 {
     /* compare longest first */
     static const BYTE buffer_fireworkz[]    = { '{',    'V',    'e',    'r',    's',    'i',    'o',    'n',   ':' };
+    static const BYTE buffer_acorn_draw[]   = { 'D',    'r',    'a',    'w',
+                                                '\xC9', '\x00', '\x00', '\x00' };
+    static const BYTE buffer_t5_draw_0C[]   = { 'F',    'w',    'k',    'z',
+                                                'H',    'y',    'b',    'r',
+                                                'i',    'd',    ' ',    ' ' };
+    static const BYTE buffer_pd_chart_0C[]  = { 'P',    'D',    'r',    'e',
+                                                'a',    'm',    'C',    'h',
+                                                'a',    'r',    't',    's' };
     static const BYTE buffer_jfif_00[]      = { '\xFF', '\xD8', /*SOI*/ '\xFF', '\xE0' /*APP0*/ };
     static const BYTE buffer_jfif_06[]      = { 'J',    'F',    'I',    'F',    '\x00' /*JFIF*/ };
     static const BYTE buffer_dib_00[]       = { 'B',    'M' };
@@ -882,7 +905,6 @@ t5_filetype_from_data(
     static const BYTE buffer_gif87a[]       = { 'G',    'I',    'F',    '8',    '7',    'a' };
     static const BYTE buffer_gif89a[]       = { 'G',    'I',    'F',    '8',    '9',    'a' };
     static const BYTE buffer_rtf[]          = { '{',    '\\',   'r',    't',    'f' };
-    static const BYTE buffer_acorn_draw[]   = { 'D',    'r',    'a',    'w',    '\xC9' };
     static const BYTE buffer_pipedream[]    = { '%',    'O',    'P',    '%' };
     static const BYTE buffer_pipedream_2[]  = { '%',    'C',    'O',    ':' };
     static const BYTE buffer_tiff_LE[]      = { 'I',    'I',    '*',    '\x00' };
@@ -894,24 +916,42 @@ t5_filetype_from_data(
     T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
     
     if(0 == try_memcmp32(p_data, n_bytes, buffer_fireworkz, sizeof32(buffer_fireworkz)))
-        t5_filetype = FILETYPE_T5_FIREWORKZ;
-    else if( (n_bytes > (0x06 + sizeof32(buffer_jfif_06))) &&
-             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_jfif_00, sizeof32(buffer_jfif_00))) &&
-             (0 == try_memcmp32(&p_data[0x06], n_bytes - 0x06, buffer_jfif_06, sizeof32(buffer_jfif_06))) )
-        t5_filetype = FILETYPE_JPEG;
-    else if( (n_bytes > (0x0E + sizeof32(buffer_dib_0E))) &&
-             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00, sizeof32(buffer_dib_00))) &&
-             (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dib_0E, sizeof32(buffer_dib_0E))) )
-        t5_filetype = FILETYPE_BMP;
-    else if( (n_bytes > (0x0E + sizeof32(buffer_dibv4_0E))) &&
-             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00,   sizeof32(buffer_dib_00)))   &&
-             (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dibv4_0E, sizeof32(buffer_dibv4_0E))) )
-        t5_filetype = FILETYPE_BMP;
-    else if( (n_bytes > (0x0E + sizeof32(buffer_dibv5_0E))) &&
-             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00,   sizeof32(buffer_dib_00)))   &&
-             (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dibv5_0E, sizeof32(buffer_dibv5_0E))) )
-        t5_filetype = FILETYPE_BMP;
-    else if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_sprite, sizeof32(buffer_acorn_sprite)))
+        return(FILETYPE_T5_FIREWORKZ);
+
+    if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_draw, sizeof32(buffer_acorn_draw)))
+    {
+        if( (n_bytes > (0x0C + sizeof32(buffer_t5_draw_0C))) &&
+            (0 == try_memcmp32(&p_data[0x0C], n_bytes - 0x0C, buffer_t5_draw_0C, sizeof32(buffer_t5_draw_0C))) )
+            return(FILETYPE_T5_DRAW);
+
+        if( (n_bytes > (0x0C + sizeof32(buffer_pd_chart_0C))) &&
+            (0 == try_memcmp32(&p_data[0x0C], n_bytes - 0x0C, buffer_pd_chart_0C, sizeof32(buffer_pd_chart_0C))) )
+            return(FILETYPE_PD_CHART);
+
+        return(FILETYPE_DRAW);
+    }
+
+    if( (n_bytes > (0x06 + sizeof32(buffer_jfif_06))) &&
+        (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_jfif_00, sizeof32(buffer_jfif_00))) &&
+        (0 == try_memcmp32(&p_data[0x06], n_bytes - 0x06, buffer_jfif_06, sizeof32(buffer_jfif_06))) )
+        return(FILETYPE_JPEG);
+
+    if( (n_bytes > (0x0E + sizeof32(buffer_dib_0E))) &&
+        (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00, sizeof32(buffer_dib_00))) &&
+        (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dib_0E, sizeof32(buffer_dib_0E))) )
+        return(FILETYPE_BMP);
+
+    if( (n_bytes > (0x0E + sizeof32(buffer_dibv4_0E))) &&
+        (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00,   sizeof32(buffer_dib_00)))   &&
+        (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dibv4_0E, sizeof32(buffer_dibv4_0E))) )
+        return(FILETYPE_BMP);
+
+    if( (n_bytes > (0x0E + sizeof32(buffer_dibv5_0E))) &&
+        (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00,   sizeof32(buffer_dib_00)))   &&
+        (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dibv5_0E, sizeof32(buffer_dibv5_0E))) )
+        return(FILETYPE_BMP);
+
+    if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_sprite, sizeof32(buffer_acorn_sprite)))
         t5_filetype = FILETYPE_SPRITE;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_excel_biff4w, sizeof32(buffer_excel_biff4w)))
         t5_filetype = FILETYPE_MS_XLS;
@@ -929,8 +969,6 @@ t5_filetype_from_data(
         t5_filetype = FILETYPE_GIF;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_rtf, sizeof32(buffer_rtf)))
         t5_filetype = FILETYPE_RTF;
-    else if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_draw, sizeof32(buffer_acorn_draw)))
-        t5_filetype = FILETYPE_DRAW;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_pipedream, sizeof32(buffer_pipedream)))
         t5_filetype = FILETYPE_PIPEDREAM;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_pipedream_2, sizeof32(buffer_pipedream_2)))
@@ -1184,7 +1222,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
             else
             {
                 consume_int(tstr_xsnprintf(suffix_buffer, elemof32(suffix_buffer),
-                                           TEXT("f%d") FILE_EXT_SEP_TSTR TEXT("%s"),
+                                           TEXT("f") U32_TFMT FILE_EXT_SEP_TSTR TEXT("%s"),
                                            retry_with_this_arg,
                                            extension_document_tstr));
             }
@@ -1227,7 +1265,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
 
         if(status_fail(status))
         {
-            reperr(status, filename_foreign);
+            reperr(status, filename_template);
             status = STATUS_FAIL;
         }
 
@@ -1632,53 +1670,49 @@ load_foreign_file_core(
     _In_z_      PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype)
 {
-    STATUS status = ensure_memory_froth();
+    T5_MESSAGE t5_message = T5_CMD_LOAD_FOREIGN;
+    const OBJECT_ID object_id = OBJECT_ID_SKEL;
+    PC_CONSTRUCT_TABLE p_construct_table;
+    ARGLIST_HANDLE arglist_handle;
+    STATUS status;
 
-    if(status_ok(status))
+    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
     {
-        T5_MESSAGE t5_message = T5_CMD_LOAD_FOREIGN;
-        const OBJECT_ID object_id = OBJECT_ID_SKEL;
-        PC_CONSTRUCT_TABLE p_construct_table;
-        ARGLIST_HANDLE arglist_handle;
+        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 2);
+        QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
+        quick_tblock_with_buffer_setup(quick_tblock);
 
-        if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
+        if(NULL == filename)
         {
-            const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 2);
-            QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
-            quick_tblock_with_buffer_setup(quick_tblock);
-
-            if(NULL == filename)
-            {
-                arg_dispose(&arglist_handle, 0);
-            }
-            else if(status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, filename, strlen_with_NULLCH)))
-            {
-                p_args[0].val.tstr = quick_tblock_tstr(&quick_tblock);
-            }
-
-            p_args[1].val.t5_filetype = t5_filetype;
-
-            if(status_ok(status))
-            {
-                PCTSTR tstr_foreign_template = foreign_template_from_t5_filetype(t5_filetype);
-
-                if(NULL != tstr_foreign_template)
-                    if(!status_done(status = foreign_template_check(tstr_foreign_template)))
-                        tstr_foreign_template = NULL;
-
-                if(NULL != tstr_foreign_template)
-                    p_args[2].val.tstr = tstr_foreign_template;
-                else
-                    arg_dispose(&arglist_handle, 2);
-            }
-
-            if(status_ok(status))
-                status = execute_command(cur_p_docu, t5_message, &arglist_handle, object_id);
-
-            quick_tblock_dispose(&quick_tblock);
-
-            arglist_dispose(&arglist_handle);
+            arg_dispose(&arglist_handle, 0);
         }
+        else if(status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, filename, strlen_with_NULLCH)))
+        {
+            p_args[0].val.tstr = quick_tblock_tstr(&quick_tblock);
+        }
+
+        p_args[1].val.t5_filetype = t5_filetype;
+
+        if(status_ok(status))
+        {
+            PCTSTR tstr_foreign_template = foreign_template_from_t5_filetype(t5_filetype);
+
+            if(NULL != tstr_foreign_template)
+                if(!status_done(status = foreign_template_check(tstr_foreign_template)))
+                    tstr_foreign_template = NULL;
+
+            if(NULL != tstr_foreign_template)
+                p_args[2].val.tstr = tstr_foreign_template;
+            else
+                arg_dispose(&arglist_handle, 2);
+        }
+
+        if(status_ok(status))
+            status = execute_command(cur_p_docu, t5_message, &arglist_handle, object_id);
+
+        quick_tblock_dispose(&quick_tblock);
+
+        arglist_dispose(&arglist_handle);
     }
 
     return(status);

@@ -18,7 +18,9 @@
 
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 
-#include <inttypes.h> /* C99 header */
+/* C99 headers */
+#include <inttypes.h> /* includes <stdint.h> */
+#include <stdbool.h>
 
 #elif defined(_MSC_VER)
 
@@ -63,29 +65,33 @@ typedef unsigned __int64 uint64_t;
 #define PRIx64 "llx"
 #endif
 
-__pragma(warning(push)) __pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void)' */
+__pragma(warning(push)) __pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void)' (VS2008) */
 #include <stdio.h>
 __pragma(warning(pop))
 
 #include <string.h>
 
 #if WINDOWS
-__pragma(warning(push)) __pragma(warning(disable:4820)) /* padding added after data member */
 #include <tchar.h>
-__pragma(warning(pop))
 #endif /* OS */
 
-#include <ctype.h>
+/* #include <ctype.h> - Fireworkz uses replacement functions */
+
 #include <limits.h>
 
 #include <float.h>
+#if !defined(DBL_DECIMAL_DIG)
+#if defined(_MSC_VER)
+#define DBL_DECIMAL_DIG 17 /* MS float.h gives too short DECIMAL_DIG for < VS2015 */
+#elif defined(DECIMAL_DIG)
+#define DBL_DECIMAL_DIG DECIMAL_DIG
+#else
+#error Need a definition of DBL_DECIMAL_DIG for this platform
+#endif
+#endif
 
-__pragma(warning(push)) __pragma(warning(disable:4514)) /* unreferenced inline function has been removed (for VC2010 headers) */
 #include <math.h>
-__pragma(warning(pop))
 
-#include <time.h>
-#include <locale.h>
 #include <errno.h>
 
 #endif /* __ansi_h */

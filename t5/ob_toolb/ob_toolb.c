@@ -248,21 +248,21 @@ themed_toolbar_UIToolButtonDraw(
     {
         const HDC hdcMem = CreateCompatibleDC(hDC);
         HBITMAP hbmOld = SelectBitmap(hdcMem, hBitmap);
-        BLENDFUNCTION bf = { AC_SRC_OVER, 0, 96 /*alpha*/, AC_SRC_ALPHA };
         RECT icon_rect;
-        LONG content_cx, content_cy;
-        DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL);
-        GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect);
-        /* centre icon in its slot */
-        content_cx = icon_rect.right - icon_rect.left;
-        content_cy = icon_rect.bottom - icon_rect.top;
-        if(bmx < content_cx)
-            icon_rect.left += (content_cx - bmx) / 2;
-        if(bmy < content_cy)
-            icon_rect.top  += (content_cy - bmy) / 2;
-        icon_rect.right  = icon_rect.left + bmx;
-        icon_rect.bottom = icon_rect.top  + bmy;
-        void_WrapOsBoolChecking(AlphaBlend(hDC, icon_rect.left, icon_rect.top, icon_rect.right - icon_rect.left, icon_rect.bottom - icon_rect.top, hdcMem, iImageIndex * bmx, 0, bmx, bmy, bf));
+        consume(HRESULT, DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL));
+        if(SUCCEEDED(GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect)))
+        {   /* centre icon in its slot */
+            LONG content_cx = icon_rect.right - icon_rect.left;
+            LONG content_cy = icon_rect.bottom - icon_rect.top;
+            BLENDFUNCTION bf = { AC_SRC_OVER, 0, 96 /*alpha*/, AC_SRC_ALPHA };
+            if(bmx < content_cx)
+                icon_rect.left += (content_cx - bmx) / 2;
+            if(bmy < content_cy)
+                icon_rect.top  += (content_cy - bmy) / 2;
+            icon_rect.right  = icon_rect.left + bmx;
+            icon_rect.bottom = icon_rect.top  + bmy;
+            void_WrapOsBoolChecking(AlphaBlend(hDC, icon_rect.left, icon_rect.top, icon_rect.right - icon_rect.left, icon_rect.bottom - icon_rect.top, hdcMem, iImageIndex * bmx, 0, bmx, bmy, bf));
+        }
         SelectBitmap(hdcMem, hbmOld);
         DeleteDC(hdcMem);
         return(TRUE);
@@ -302,31 +302,31 @@ themed_toolbar_UIToolButtonDraw(
 
     {
     RECT icon_rect;
-    LONG content_cx, content_cy;
-    DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL);
-    GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect);
-    /* centre icon in its slot */
-    content_cx = icon_rect.right - icon_rect.left;
-    content_cy = icon_rect.bottom - icon_rect.top;
-    if(bmx < content_cx)
-        icon_rect.left += (content_cx - bmx) / 2;
-    if(bmy < content_cy)
-        icon_rect.top  += (content_cy - bmy) / 2;
-    icon_rect.right  = icon_rect.left + bmx;
-    icon_rect.bottom = icon_rect.top  + bmy;
-    if(uStateIn & BUTTONGROUP_DISABLED)
-    {
-        HICON hIcon = ImageList_GetIcon(hImageList, iImageIndex, ILD_TRANSPARENT);
-        if(NULL != hIcon)
+    consume(HRESULT, DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL));
+    if(SUCCEEDED(GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect)))
+    {   /* centre icon in its slot */
+        LONG content_cx = icon_rect.right - icon_rect.left;
+        LONG content_cy = icon_rect.bottom - icon_rect.top;
+        if(bmx < content_cx)
+            icon_rect.left += (content_cx - bmx) / 2;
+        if(bmy < content_cy)
+            icon_rect.top  += (content_cy - bmy) / 2;
+        icon_rect.right  = icon_rect.left + bmx;
+        icon_rect.bottom = icon_rect.top  + bmy;
+        if(uStateIn & BUTTONGROUP_DISABLED)
         {
-            DrawState(hDC, GetStockBrush(WHITE_BRUSH), NULL, (LPARAM) hIcon, 0, icon_rect.left, icon_rect.top, bmx, bmy, DSS_DISABLED | DST_ICON);
-            DestroyIcon(hIcon);
+            HICON hIcon = ImageList_GetIcon(hImageList, iImageIndex, ILD_TRANSPARENT);
+            if(NULL != hIcon)
+            {
+                DrawState(hDC, GetStockBrush(WHITE_BRUSH), NULL, (LPARAM) hIcon, 0, icon_rect.left, icon_rect.top, bmx, bmy, DSS_DISABLED | DST_ICON);
+                DestroyIcon(hIcon);
+            }
         }
-    }
-    else
-    {
-        DrawThemeIcon(hTheme, hDC, iPartId, iStateId, &icon_rect, hImageList, iImageIndex);
-        //ImageList_Draw(hImageList, iImageIndex, hDC, icon_rect.left, icon_rect.top, ILD_TRANSPARENT);
+        else
+        {
+            DrawThemeIcon(hTheme, hDC, iPartId, iStateId, &icon_rect, hImageList, iImageIndex);
+            //ImageList_Draw(hImageList, iImageIndex, hDC, icon_rect.left, icon_rect.top, ILD_TRANSPARENT);
+        }
     }
     } /*block*/
 
@@ -369,7 +369,7 @@ fill_pixit_rect(
 
     if(g_hTheme)
     {
-        DrawThemeBackground(g_hTheme, p_redraw_context->windows.paintstruct.hdc, 0, 0, &rect, NULL);
+        consume(HRESULT, DrawThemeBackground(g_hTheme, p_redraw_context->windows.paintstruct.hdc, 0, 0, &rect, NULL));
         return;
     }
 
@@ -396,7 +396,7 @@ do_paint_separator(
     {
         FillRect(p_redraw_context->windows.paintstruct.hdc, &rect, toolbar_hBrush);
         rect.left = ((rect.right + rect.left) / 2) - 1; /* centre the separator */
-        DrawThemeBackground(g_hTheme, p_redraw_context->windows.paintstruct.hdc, TP_SEPARATOR, 0, &rect, NULL);
+        consume(HRESULT, DrawThemeBackground(g_hTheme, p_redraw_context->windows.paintstruct.hdc, TP_SEPARATOR, 0, &rect, NULL));
         return;
     }
 
@@ -655,7 +655,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_nobble, _InRef_ PC_T5_TOOLBAR_TOOL_NOBBLE 
 
         p_view->toolbar.nobble_scheduled_event_id = viewid_pack(p_docu, p_view, 0xFFFFU);
 
-        trace_1(TRACE__SCHEDULED, TEXT("msg_toolbar_tool_nobble - *** scheduled_event_after(docno=%d, n)"), docno_from_p_docu(p_docu));
+        trace_1(TRACE__SCHEDULED, TEXT("msg_toolbar_tool_nobble - *** scheduled_event_after(docno=") DOCNO_TFMT TEXT(", n)"), docno_from_p_docu(p_docu));
         status_assert(scheduled_event_after(docno_from_p_docu(p_docu), T5_EVENT_SCHEDULED, object_toolbar, p_view->toolbar.nobble_scheduled_event_id, MONOTIMEDIFF_VALUE_FROM_MS(250)));
     }
     } /*block*/
@@ -1831,7 +1831,7 @@ schedule_toolbar_redraw(
 
     p_t5_toolbar_view_row_desc->scheduled_event_id = viewid_pack(p_docu, p_view, (U16) view_row_idx);
 
-    trace_1(TRACE__SCHEDULED, TEXT("schedule_toolbar_redraw - *** scheduled_event_after(docno=%d, n)"), docno_from_p_docu(p_docu));
+    trace_1(TRACE__SCHEDULED, TEXT("schedule_toolbar_redraw - *** scheduled_event_after(docno=") DOCNO_TFMT TEXT(", n)"), docno_from_p_docu(p_docu));
     status_assert(scheduled_event_after(docno_from_p_docu(p_docu), T5_EVENT_SCHEDULED, object_toolbar, p_t5_toolbar_view_row_desc->scheduled_event_id, MONOTIMEDIFF_VALUE_FROM_MS(100)));
 }
 
@@ -2228,7 +2228,7 @@ toolbar_view_dispose_toolbar_handles(
     {
         if(p_t5_toolbar_view_row_desc->scheduled_event_id)
         {
-            trace_1(TRACE__SCHEDULED, TEXT("toolbar_view_dispose_toolbar_handles - scheduled_event_remove(docno=%d)"), docno_from_p_docu(p_docu));
+            trace_1(TRACE__SCHEDULED, TEXT("toolbar_view_dispose_toolbar_handles - scheduled_event_remove(docno=") DOCNO_TFMT TEXT(")"), docno_from_p_docu(p_docu));
             scheduled_event_remove(docno_from_p_docu(p_docu), T5_EVENT_SCHEDULED, object_toolbar, p_t5_toolbar_view_row_desc->scheduled_event_id);
             p_t5_toolbar_view_row_desc->scheduled_event_id = 0;
         }

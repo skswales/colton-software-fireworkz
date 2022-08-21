@@ -733,7 +733,7 @@ w793:weibull.dist
 w794:poisson.dist
 395:Value of the PMF or CDF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF
 w795:binom.dist
-396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3S2:Integer|
+396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|
 w796:binom.dist.range
 397:Fisher transformation at |x:Number|
 w797:fisher

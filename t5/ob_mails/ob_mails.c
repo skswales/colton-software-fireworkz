@@ -155,7 +155,7 @@ static const UI_CONTROL_S32
 insert_mailshot_field_number_control = { 1, 1000 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-insert_mailshot_field_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &insert_mailshot_field_number_control } /* BUMP_XX */ };
+insert_mailshot_field_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &insert_mailshot_field_number_control } /* BUMP_XX */ };
 
 static S32
 insert_mailshot_field_number_data_state = 1;
@@ -436,7 +436,7 @@ static const UI_CONTROL_S32
 mailshot_select_row_control = { 1, S32_MAX };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-mailshot_select_row_data = { { { { FRAMED_BOX_EDIT } }, &mailshot_select_row_control } };
+mailshot_select_row_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &mailshot_select_row_control } };
 
 static const DIALOG_CONTROL
 mailshot_select_blank_group =
@@ -491,7 +491,7 @@ static const UI_CONTROL_S32
 mailshot_select_blank_sttend_control = { 1, S32_MAX };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-mailshot_select_blank_stt_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &mailshot_select_blank_sttend_control } /* BUMP_XX */ };
+mailshot_select_blank_stt_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &mailshot_select_blank_sttend_control } /* BUMP_XX */ };
 
 /*
 blank end
@@ -519,7 +519,7 @@ mailshot_select_blank_end =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-mailshot_select_blank_end_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &mailshot_select_blank_sttend_control } /* BUMP_XX */ };
+mailshot_select_blank_end_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &mailshot_select_blank_sttend_control } /* BUMP_XX */ };
 
 static const DIALOG_CTL_CREATE
 mailshot_select_ctl_create[] =
@@ -799,19 +799,19 @@ mailshot_cmd_mailshot_select(
 
     {
     P_MAILSHOT_INSTANCE_DATA p_mailshot_instance_data = p_object_instance_data_MAILSHOT_valid(p_docu_dependent);
-    /*reportf(TEXT("mailshot_cmd_mailshot_select: p_mailshot_instance_data ") PTR_XTFMT TEXT(" with source_docno=%d"), p_mailshot_instance_data, selected_docno);*/
+    /*reportf(TEXT("mailshot_cmd_mailshot_select: p_mailshot_instance_data ") PTR_XTFMT TEXT(" with source_docno=") DOCNO_TFMT, p_mailshot_instance_data, selected_docno);*/
 
     p_mailshot_instance_data->source_docno = selected_docno;
-    p_mailshot_instance_data->maeve_handle = maeve_event_handler_add(p_docu_from_docno(p_mailshot_instance_data->source_docno), maeve_event_ob_mails, (U32) docno_dependent);
 
-    if(status_fail(p_mailshot_instance_data->maeve_handle))
+    if(status_fail(status = maeve_event_handler_add(p_docu_from_docno(p_mailshot_instance_data->source_docno), maeve_event_ob_mails, (U32) docno_dependent)))
     {
-        STATUS status = (STATUS) p_mailshot_instance_data->maeve_handle;
         p_mailshot_instance_data->source_docno = DOCNO_NONE;
         p_mailshot_instance_data->maeve_handle = 0;
         status_consume(mailshot_instance_data_dispose(p_docu_dependent));
         return(status);
     }
+
+    p_mailshot_instance_data->maeve_handle = (MAEVE_HANDLE) status;
 
     p_docu_src = p_docu_from_docno(p_mailshot_instance_data->source_docno);
 
@@ -952,7 +952,7 @@ mailshot_msg_close1(
     P_MAILSHOT_INSTANCE_DATA p_mailshot_instance_data = p_object_instance_data_MAILSHOT_valid(p_docu_dependent);
 
     UNREFERENCED_PARAMETER_InVal_(source_docno);
-    /*reportf(TEXT("mailshot_msg_close1(source_docno=%d): dependent_docno=%d (maeve_handle was %d)"), source_docno, dependent_docno, p_mailshot_instance_data->maeve_handle);*/
+    /*reportf(TEXT("mailshot_msg_close1(source_docno=") DOCNO_TFMT TEXT("): dependent_docno=") DOCNO_TFMT TEXT(" (maeve_handle was %d)"), source_docno, dependent_docno, p_mailshot_instance_data->maeve_handle);*/
 
     p_mailshot_instance_data->source_docno = DOCNO_NONE;
     p_mailshot_instance_data->maeve_handle = 0;
@@ -979,7 +979,7 @@ maeve_mailshot_msg_initclose(
     case T5_MSG_IC__CLOSE1:
         {
         const DOCNO dependent_docno = (DOCNO) p_maeve_block->client_handle;
-        /*reportf(TEXT("maeve_mailshot_msg_initclose__close1(docno=%d): this maeve_handle=%d"), docno_from_p_docu(p_docu), p_maeve_block->maeve_handle);*/
+        /*reportf(TEXT("maeve_mailshot_msg_initclose__close1(docno=") DOCNO_TFMT TEXT("): this maeve_handle=%d"), docno_from_p_docu(p_docu), p_maeve_block->maeve_handle);*/
         maeve_event_handler_del_handle(p_docu, p_maeve_block->maeve_handle);
         return(mailshot_msg_close1(docno_from_p_docu(p_docu), dependent_docno));
         }
@@ -1024,7 +1024,7 @@ T5_MSG_PROTO(static, mailshot_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_init
         return(resource_close(OBJECT_ID_MAILSHOT));
 
     case T5_MSG_IC__CLOSE1:
-        /*reportf(TEXT("mailshot_msg_initclose__close1: docno=%d"), docno_from_p_docu(p_docu));*/
+        /*reportf(TEXT("mailshot_msg_initclose__close1: docno=") DOCNO_TFMT, docno_from_p_docu(p_docu));*/
         return(mailshot_instance_data_dispose(p_docu));
 
     default:

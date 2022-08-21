@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2019 Stuart Swales */
+/* Copyright (C) 2006-2020 Stuart Swales */
 
 /* Library module for UTF-8 character & characters handling */
 
@@ -29,9 +29,9 @@
 _Check_return_
 extern U32
 utf8__bytes_of_char(
-    _In_        PC_UTF8 uchars)
+    _In_reads_(1) PC_UTF8 uchars)
 {
-    U8 u8 = PtrGetByte(uchars);
+    const U8 u8 = PtrGetByte(uchars);
     U8 mask;
 
     mask = 0x80;
@@ -51,6 +51,16 @@ utf8__bytes_of_char(
         return(4); /* U+010000 : U+1FFFFF (21 bits) */
 
     myassert1(TEXT("byte 0x%.2X is not a valid UTF-8 encoding"), u8);
+
+    /* these last two are invalid UTF-8 but we may still find them */
+    mask = 0xFC;
+    if(0xF8 == (u8 & mask))
+        return(5); /* U+200000 : U+3FFFFFF (26 bits) */
+
+    mask = 0xFE;
+    if(0xFC == (u8 & mask))
+        return(6); /* U+4000000 : U+7FFFFFFF (31 bits) */
+
     return(1); /* so that caller doesn't get stuck... */
 }
 
@@ -95,6 +105,7 @@ utf8__bytes_prev_of_char(
     /* if we've had UTF-8 trail chars we must now be on a UTF-8 lead byte */
     assert((trail_bytes == 0) || u8_is_utf8_lead_byte(PtrGetByte(uchars_prev)));
 
+    assert(bytes_of_char <= 4); /* for valid UTF-8 encoding */
     return(bytes_of_char);
 }
 
@@ -133,6 +144,7 @@ utf8__bytes_prev_of_char_NS(
     /* if we've had UTF-8 trail chars we must now be on a UTF-8 lead byte */
     assert((trail_bytes == 0) || u8_is_utf8_lead_byte(PtrGetByte(uchars_prev)));
 
+    assert(bytes_of_char <= 4); /* for valid UTF-8 encoding */
     return(bytes_of_char);
 }
 
@@ -221,6 +233,22 @@ utf8__char_decode(
         }
 
         myassert1(TEXT("byte 0x%.2X is not valid UTF-8 encoding"), u8);
+
+        /* these last two are invalid UTF-8 but we may still find them */
+        mask = 0xFC;
+        if(0xF8 == (u8 & mask))
+        {   /* U+200000 : U+3FFFFFF (26 bits) */
+            bytes_of_char = 5;
+            break;
+        }
+
+        mask = 0xFE;
+        if(0xFC == (u8 & mask))
+        {   /* U+4000000 : U+7FFFFFFF (31 bits) */
+            bytes_of_char = 6;
+            break;
+        }
+
         bytes_of_char = 1; /* so that caller doesn't get stuck... */
         break; /* end of loop for structure */ /*NOTREACHED*/
     }
@@ -234,8 +262,16 @@ utf8__char_decode(
         do  {
             shift -= 6;
             u8 = *p_u8++;
-            assert(u8_is_utf8_trail_byte(u8));
             ucs4 |= ((UCS4) (u8 & ~0xC0)) << shift; /* 6 bits */
+
+            if(!u8_is_utf8_trail_byte(u8))
+            {   /* invalid UTF-8 sequence - abort and just take first byte as Latin-1 */
+                assert(u8_is_utf8_trail_byte(u8));
+                myassert3(TEXT("Invalid UCS-4 U+%.4X decoded from %p:%u bytes"), ucs4, uchars, bytes_of_char);
+                ucs4 = PtrGetByte(uchars);
+                bytes_of_char = 1;
+                break;
+            }
         }
         while(shift != 0);
 
@@ -265,7 +301,7 @@ utf8__char_decode(
 _Check_return_
 extern U32 /* number of bytes */
 utf8__char_encode_off(
-    _Out_cap_(elemof_buffer) P_UTF8 utf8_buf /*filled*/,
+    _Out_writes_(elemof_buffer) P_UTF8 utf8_buf /*filled*/,
     _InVal_     U32 elemof_buffer,
     _InVal_     U32 encode_offset,
     _In_        UCS4 ucs4)
@@ -777,8 +813,16 @@ utf8__grapheme_cluster_decode(
         do  {
             shift -= 6;
             u8 = *p_u8++;
-            assert(u8_is_utf8_trail_byte(u8));
             ucs4 |= ((UCS4) (u8 & ~0xC0)) << shift; /* 6 bits */
+
+            if(!u8_is_utf8_trail_byte(u8))
+            {   /* invalid UTF-8 sequence - abort and just take first byte as Latin-1 */
+                assert(u8_is_utf8_trail_byte(u8));
+                myassert3(TEXT("Invalid UCS-4 U+%.4X decoded from %p:%u bytes"), ucs4, uchars, bytes_of_char);
+                ucs4 = PtrGetByte(uchars);
+                bytes_of_char = 1;
+                break;
+            }
         }
         while(shift != 0);
     }
@@ -1755,7 +1799,7 @@ utf8_case_fold(
 /*ncr*/
 extern U32
 utf8_from_tchars(
-    _Out_opt_cap_(elemof_buffer) P_UTF8 uchars_buf,
+    _Out_writes_opt_(elemof_buffer) P_UTF8 uchars_buf,
     _InVal_     U32 elemof_buffer,
     _In_reads_(tchars_n) PCTCH tchars,
     _InVal_     U32 tchars_n)

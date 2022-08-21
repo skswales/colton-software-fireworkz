@@ -15,6 +15,8 @@
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -47,6 +49,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -73,6 +77,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -117,6 +123,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -143,6 +151,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -171,6 +181,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -197,6 +209,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -227,6 +241,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -269,6 +285,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -295,6 +313,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -323,6 +343,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -349,6 +371,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -377,6 +401,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -403,6 +429,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -437,6 +465,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -468,6 +498,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -498,6 +530,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -639,6 +673,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -687,6 +723,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -732,6 +770,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -759,6 +799,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -768,11 +810,11 @@ BEGIN
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 2014-2019 Stuart Swales
+// Copyright (C) 2014-2020 Stuart Swales
 //
 // errors
 //
-// re2:No database module present. You can purchase Fireworkz Pro from R-Comp
+//re2:No database module present. You can purchase Fireworkz Pro from R-Comp
 	0xF302,	"No database module present. You can purchase Fireworkz Pro from R-Comp for RISC OS systems"
 //
 // end of msg (ob_recn)
@@ -788,6 +830,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -812,7 +856,7 @@ BEGIN
 	0x6A94,	"Centre tab"
 	0x6A95,	"Right tab"
 	0x6A96,	"Decimal tab"
-// r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+//r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
 	0x6A97,	"Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type"
 //
 	0x6A9D,	"Left margin"
@@ -842,6 +886,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 //
@@ -864,9 +910,9 @@ BEGIN
 	0x6484,	"New style name"
 	0x6485,	"Based on"
 	0x6486,	"Defining new style - %s"
-// r6:Defining new style: %s
+//r6:Defining new style: %s
 	0x6487,	"Editing style - %s"
-// r7:Editing style: %s
+//r7:Editing style: %s
 	0x6488,	"Apply effects"
 	0x6489,	"Style in use in this document. Remove all uses?"
 	0x648C,	"Type"
@@ -900,6 +946,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -935,6 +983,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
@@ -1001,6 +1051,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -1028,6 +1080,8 @@ END
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
 //
+#pragma code_page(1252) // ANSI
+//
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN
 // this is an empty messages file
@@ -1054,6 +1108,8 @@ END
 //
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(1252) // ANSI
 //
 STRINGTABLE PRELOAD MOVEABLE PURE
 BEGIN

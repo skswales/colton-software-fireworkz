@@ -5,12 +5,12 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-Copyright (C) 2013-2019 Stuart Swales
+Copyright (C) 2013-2020 Stuart Swales
 
 Prerequisites
 -------------
 
-Acorn C/C++ Release 25 or later (!Amu, C compiler, headers, libraries, linker).
+ROOL DDE Release 25 or later (!Amu, C compiler, headers, libraries, linker).
 
 GNU Sed to generate the Makefiles (you will need the Colton Software build as
 the one provided by PackMan doesn't work for this).

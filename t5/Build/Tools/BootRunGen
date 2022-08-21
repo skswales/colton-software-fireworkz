@@ -201,7 +201,7 @@ REM IF boot% THEN
   IF fy_or_fz% THEN PROCo(f%,"|")
   REM Never override any other definition of file types we do not actually own
   IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE)
-  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_BA6",  "Run <"+product$+"$Dir>.!Run %%*0",TRUE)
+  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_BA6",  "Run <"+product$+"$Dir>.!Run -import %%*0",TRUE)
   :
   IF fy_or_fz% THEN PROCo(f%,"|")
   REM Never override any other definition...
@@ -214,12 +214,12 @@ REM IF boot% THEN
   IF fy_or_fz% THEN PROCo(f%,"|")
   REM Never override any other definition...
   IF fy_or_fz% THEN PROCs(f%,"File$Type_DB0","LotusWK1",TRUE)
-  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_DB0",  "Run <"+product$+"$Dir>.!Run %%*0",TRUE)
+  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_DB0",  "Run <"+product$+"$Dir>.!Run -import %%*0",TRUE)
   :
   IF fy_or_fz% THEN PROCo(f%,"|")
   REM Never override any other definition...
   IF fy_or_fz% THEN PROCs(f%,"File$Type_DFE","CSV",TRUE)
-  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_DFE",  "Run <"+product$+"$Dir>.!Run %%*0",TRUE)
+  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_DFE",  "Run <"+product$+"$Dir>.!Run -import %%*0",TRUE)
   :
   PROCo(f%,"|")
   PROCo(f%,"DOSMap BMP &69C")

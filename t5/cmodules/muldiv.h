@@ -20,13 +20,6 @@ extern "C" {
 exported structure
 */
 
-typedef struct UMUL64_RESULT
-{
-    U32 LowPart;
-    U32 HighPart;
-}
-UMUL64_RESULT, * P_UMUL64_RESULT;
-
 typedef struct MYRAND_SEED
 {
     U32 seed_word;
@@ -91,12 +84,6 @@ muldiv64_overflow(void);
 _Check_return_
 extern S32
 muldiv64_remainder(void);
-
-extern void
-umul64(
-    _InVal_     U32 a,
-    _InVal_     U32 b,
-    _OutRef_    P_UMUL64_RESULT result);
 
 #if defined(__cplusplus)
 }
