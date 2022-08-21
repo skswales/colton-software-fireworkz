@@ -218,6 +218,7 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ATAN_2,            c_atan_2),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ATANH,             c_atanh),
 
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BASE,              c_base),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BESSELI,           c_besseli),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BESSELJ,           c_besselj),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BESSELK,           c_besselk),
@@ -226,9 +227,17 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BETA_DIST,         c_beta_dist),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BETA_INV,          c_beta_inv),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BIN,               c_bin),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BIN2DEC,           c_bin2dec),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BIN2HEX,           c_bin2hex),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BIN2OCT,           c_bin2oct),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BINOM_DIST,        c_binom_dist),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BINOM_DIST_RANGE,  c_binom_dist_range),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BINOM_INV,         c_binom_inv),
+	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITAND,            c_bitand),
+	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITLSHIFT,         c_bitlshift),
+	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITOR,             c_bitor),
+	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITRSHIFT,         c_bitrshift),
+	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITXOR,            c_bitxor),
 
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_C_ACOS,            c_c_acos),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_C_ACOSEC,          c_c_acosec),
@@ -303,9 +312,14 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DATEVALUE,         c_datevalue),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DAY,               c_day),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DAYNAME,           c_dayname),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_DAYS,              c_days),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DAYS_360,          c_days_360),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DB,                c_db),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DDB,               c_ddb),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_DEC2BIN,           c_dec2bin),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_DEC2HEX,           c_dec2hex),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_DEC2OCT,           c_dec2oct),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_DECIMAL,           c_decimal),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DEG,               c_deg),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DELTA,             c_delta),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DEREF,             c_deref),
@@ -349,6 +363,9 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_GRAND,             c_grand),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_GROWTH,            c_growth),
 
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_HEX2BIN,           c_hex2bin),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_HEX2DEC,           c_hex2dec),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_HEX2OCT,           c_hex2oct),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_HOUR,              c_hour),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_HYPGEOM_DIST,      c_hypgeom_dist),
 
@@ -364,6 +381,7 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ISNONTEXT,         c_isnontext),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ISNUMBER,          c_isnumber),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ISODD,             c_isodd),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_ISOWEEKNUM,        c_isoweeknum),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ISREF,             c_isref),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ISTEXT,            c_istext),
 
@@ -405,6 +423,9 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NOW,               c_now),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NPER,              c_nper),
 
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_OCT2BIN,           c_oct2bin),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_OCT2DEC,           c_oct2dec),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_OCT2HEX,           c_oct2hex),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODD,               c_odd),
 
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ODF_BETADIST,      c_odf_betadist),

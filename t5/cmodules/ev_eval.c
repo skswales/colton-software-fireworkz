@@ -379,6 +379,14 @@ array_range_stat_block_init(
         p_stat_block->exec_array_range_id = ARRAY_RANGE_DEVSQ;
         break;
 
+    case RPN_FNV_GCD:
+        p_stat_block->exec_array_range_id = ARRAY_RANGE_GCD;
+        break;
+
+    case RPN_FNV_LCM:
+        p_stat_block->exec_array_range_id = ARRAY_RANGE_LCM;
+        break;
+
     case RPN_FNV_STD:
         p_stat_block->exec_array_range_id = ARRAY_RANGE_STD;
         break;
@@ -583,6 +591,19 @@ array_range_proc_number_AVEDEV(
 }
 
 static void
+array_range_proc_number_GCD(
+    _InoutRef_  P_STAT_BLOCK p_stat_block,
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    const F64 x = fabs(arg_get_real_INT(p_ss_data));
+
+    if(0 == p_stat_block->count)
+        ss_data_set_real(&p_stat_block->running_data, x);
+    else
+        ss_data_set_real(&p_stat_block->running_data, mx_gcd(x, ss_data_get_real(&p_stat_block->running_data)));
+}
+
+static void
 array_range_proc_number_GEOMEAN(
     _InoutRef_  P_STAT_BLOCK p_stat_block,
     _InoutRef_  P_SS_DATA p_ss_data)
@@ -598,6 +619,19 @@ array_range_proc_number_HARMEAN(
 {
     const F64 x = 1.0 / ss_data_get_real(p_ss_data);
     p_stat_block->running_data.arg.fp += x; /* uniform processing for sum of values */
+}
+
+static void
+array_range_proc_number_LCM(
+    _InoutRef_  P_STAT_BLOCK p_stat_block,
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    const F64 x = fabs(arg_get_real_INT(p_ss_data));
+
+    if(0 == p_stat_block->count)
+        ss_data_set_real(&p_stat_block->running_data, x);
+    else
+        ss_data_set_real(&p_stat_block->running_data, mx_lcm(x, ss_data_get_real(&p_stat_block->running_data)));
 }
 
 static void
@@ -928,12 +962,20 @@ array_range_proc_number(
         array_range_proc_number_AVEDEV(p_stat_block, p_ss_data);
         break;
 
+    case ARRAY_RANGE_GCD:
+        array_range_proc_number_GCD(p_stat_block, p_ss_data);
+        break;
+
     case ARRAY_RANGE_GEOMEAN:
         array_range_proc_number_GEOMEAN(p_stat_block, p_ss_data);
         break;
 
     case ARRAY_RANGE_HARMEAN:
         array_range_proc_number_HARMEAN(p_stat_block, p_ss_data);
+        break;
+
+    case ARRAY_RANGE_LCM:
+        array_range_proc_number_LCM(p_stat_block, p_ss_data);
         break;
 
     case ARRAY_RANGE_MEDIAN:
@@ -1123,9 +1165,12 @@ array_range_proc_finish_running_data(
         default: default_unhandled();
 #if CHECKING
         case DATA_ID_DATE:
-        case DATA_ID_REAL:
 #endif
             *p_ss_data = p_stat_block->running_data;
+            break;
+
+        case DATA_ID_REAL:
+            ss_data_set_real_try_integer(p_ss_data, ss_data_get_real(&p_stat_block->running_data));
             break;
 
         /*case DATA_ID_LOGICAL:*/ /* really shouldn't occur */
@@ -1784,6 +1829,8 @@ array_range_proc_finish(
     case ARRAY_RANGE_MINA:
     case ARRAY_RANGE_SUM:
     case ARRAY_RANGE_SUMSQ:
+    case ARRAY_RANGE_GCD:
+    case ARRAY_RANGE_LCM:
         return(array_range_proc_finish_running_data(p_ss_data, p_stat_block));
 
     case ARRAY_RANGE_AVERAGE:

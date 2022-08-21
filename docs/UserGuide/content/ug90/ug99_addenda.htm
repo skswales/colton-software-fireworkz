@@ -157,6 +157,14 @@
 
     <h3>Date and time functions</h3>
 
+    <h4>DAYNAME</h4>
+
+    <p>
+        Starting with 2.24, this function will accept a parameter to set which day to base the calculation on.
+    </p>
+
+    <p>See <a href="sg06/sg6_DAYNAME.htm">DAYNAME</a>.</p>
+
     <h4>TIMEVALUE</h4>
 
     <p>
@@ -165,6 +173,14 @@
     </p>
 
     <p>See <a href="sg06/sg6_TIMEVALUE.htm">TIMEVALUE</a>.</p>
+
+    <h4>WEEKDAY</h4>
+
+    <p>
+        Starting with 2.24, this function will accept a parameter to set which day to base the calculation on.
+    </p>
+
+    <p>See <a href="sg06/sg6_WEEKDAY.htm">WEEKDAY</a>.</p>
 
     <h3>Engineering functions</h3>
 
@@ -179,6 +195,10 @@
         both numbers need not use the same suffix (Microsoft Excel would require both to be the same) and 'i' will dominate.
     </p>
 
+    <h4>C_COMPLEX</h4>
+
+    <p>Starting with 2.24, this function may take a single parameter as the real part of the resulting complex number with imaginary part zero.</p>
+
     <p>See <a href="sg05/sg5_engineering_functions.htm">Engineering functions</a>.</p>
 
     <h3>Financial functions</h3>
@@ -186,6 +206,7 @@
     <h4>DDB</h4>
 
     <p>Starting with 2.00, this function will accept an extra optional parameter, <span class="csg-function-parameter">factor</span>.</p>
+    <p>Starting with 2.24, this function will accept a non-integer <span class="csg-function-parameter">period</span>.</p>
 
     <p>See <a href="sg06/sg6_DDB.htm">DDB</a>.</p>
 
@@ -291,14 +312,14 @@
     <p>See <a href="sg06/sg6_MEDIAN.htm">MEDIAN</a>.</p>
 
     <h3>String functions</h3>
-    
+
     <h4>CODE</h4>
-    
+
     <p>
         Starting with 2.20, this function will return zero if supplied with an empty string
         (compatible with LibreOffice Calc behaviour).
     </p>
-    
+
     <h4>CHAR</h4>
 
     <p>
@@ -349,6 +370,18 @@
     </p>
 
     <p>See <a href="sg06/sg6_RIGHT.htm">RIGHT</a>.</p>
+
+    <h4>TRIM</h4>
+
+    <p>Starting with 2.24, this function can accept text strings longer than 200 characters as input.</p>
+
+    <p>See <a href="sg06/sg6_TRIM.htm">TRIM</a>.</p>
+
+    <h4>VALUE</h4>
+
+    <p>Starting with 2.24, this function can accept text strings longer than 200 characters as input.</p>
+
+    <p>See <a href="sg06/sg6_VALUE.htm">VALUE</a>.</p>
 
 
     <h2>Compatibility spreadsheet functions added since documentation printed</h2>
@@ -645,8 +678,20 @@
     <h2>Date and time spreadsheet functions added since documentation printed</h2>
 
     <h4>
-        DAYS_360(<span class="csg-function-parameter">start:<span class="csg-function-parameter-type">Date</span></span>,
-        <span class="csg-function-parameter">end:<span class="csg-function-parameter-type">Date</span></span>
+        DAYS(<span class="csg-function-parameter">end:<span class="csg-function-parameter-type"><a href="sg6_date_formats.htm">Date</a></span></span>,
+        <span class="csg-function-parameter">start:<span class="csg-function-parameter-type"><a href="sg6_date_formats.htm">Date</a></span></span>)
+    </h4>
+
+    <p>This function returns the number of days between the given dates.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_DAYS.htm">DAYS</a>.</p>
+
+
+    <h4>
+        DAYS_360(<span class="csg-function-parameter">start:<span class="csg-function-parameter-type"><a href="sg6_date_formats.htm">Date</a></span></span>,
+        <span class="csg-function-parameter">end:<span class="csg-function-parameter-type"><a href="sg6_date_formats.htm">Date</a></span></span>
         {,&nbsp;<span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">Logical</span>})
     </h4>
 
@@ -654,7 +699,7 @@
 
     <ul>
         <li><span class="csg-function-parameter">method</span> = TRUE - European Method (recommended for consistent results)</li>
-        <li><span class="csg-function-parameter">method</span> = FALSE - US/NASD Method (30US/360) (this is the default if omitted)</li>
+        <li><span class="csg-function-parameter">method</span> = FALSE - NASD ('US') Method (30US/360) (this is the default if omitted)</li>
     </ul>
 
     <p>See http://en.wikipedia.org/wiki/360-day_calendar.</p>
@@ -664,11 +709,13 @@
     <p>See <a href="sg06/sg6_DAYS_360.htm">DAYS_360</a>.</p>
 
 
-    <h4>WEEKNUMBER(<span class="csg-function-parameter">date</span>)</h4>
+    <h4>ISOWEEKNUM(<span class="csg-function-parameter">date</span>)</h4>
 
-    <p>This function returns the week number corresponding to the date.</p>
+    <p>This function returns the week number corresponding to the date as specified by ISO 8601.</p>
 
-    <p>See <a href="sg06/sg6_WEEKNUMBER.htm">WEEKNUMBER</a>.</p>
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_ISOWEEKNUM.htm">ISOWEEKNUM</a>.</p>
 
 
     <h2>Engineering spreadsheet functions added since documentation printed</h2>
@@ -677,18 +724,23 @@
 
     <h4>
         C_COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">Number</span>}
         {,&nbsp;<span class="csg-function-parameter">suffix</span>:<span class="csg-function-parameter-type">Text</span>})
     </h4>
 
     <p>
         Returns the <a href="../sg06/sg6_complex_numbers.htm">complex number</a> array formed from the given
-        <span class="csg-function-parameter">real part</span> and <span class="csg-function-parameter">imaginary part</span>.
+        <span class="csg-function-parameter">real part</span> and optional <span class="csg-function-parameter">imaginary part</span>.
         An optional imaginary number <span class="csg-function-parameter">suffix</span> may be supplied,
         in which case a <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a> is returned.
     </p>
 
     <p>This function was added in 2.00.</p>
+
+    <p>
+        Starting with 2.24, this function may take a single parameter as
+        the real part of the resulting complex number with imaginary part zero.
+    </p>
 
     <p>See <a href="sg06/sg6_C_COMPLEX.htm">C_COMPLEX</a>.</p>
 
@@ -773,6 +825,7 @@
     <p>This function was added in 2.00.</p>
  
     <p>See <a href="sg06/sg6_BESSELJ.htm">BESSELJ</a>.</p>
+
  
     <h4>
         BESSELK(<span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
@@ -802,6 +855,163 @@
     <p>This function was added in 2.00.</p>
 
     <p>See <a href="sg06/sg6_BESSELY.htm">BESSELY</a>.</p>
+
+
+    <h4>
+        BIN2DEC(<span class="csg-function-parameter">number</span>)
+    </h4>
+
+    <p>Converts the binary <span class="csg-function-parameter">number</span> to its decimal value.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string, or a number, of up to ten binary digits.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BIN2DEC.htm">BIN2DEC</a>.</p>
+
+
+    <h4>
+        BIN2HEX(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the binary <span class="csg-function-parameter">number</span> to a hexadecimal representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string, or a number, of up to ten binary digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BIN2HEX.htm">BIN2HEX</a>.</p>
+
+
+    <h4>
+        BIN2OCT(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the binary <span class="csg-function-parameter">number</span> to an octal representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string, or a number, of up to ten binary digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BIN2OCT.htm">BIN2OCT</a>.</p>
+
+
+    <h4>BITAND(<span class="csg-function-parameter">number_1</span>, <span class="csg-function-parameter">number_2</span>)</h4>
+
+    <p>Returns the bit-wise AND of <span class="csg-function-parameter">number_1</span> and <span class="csg-function-parameter">number_2</span>.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BITAND.htm">BITAND</a>.</p>
+
+
+    <h4>BITLSHIFT(<span class="csg-function-parameter">number</span>, <span class="csg-function-parameter">shift</span>:<span class="csg-function-parameter-type">Number</span>)</h4>
+
+    <p>Returns <span class="csg-function-parameter">number</span> shifted left bit-wise by <span class="csg-function-parameter">shift</span> bits.</p>
+
+    <p>If <span class="csg-function-parameter">shift</span> is negative, a right shift is performed.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BITLSHIFT.htm">BITLSHIFT</a>.</p>
+
+
+    <h4>BITOR(<span class="csg-function-parameter">number_1</span>, <span class="csg-function-parameter">number_2</span>)</h4>
+
+    <p>Returns the bit-wise OR of <span class="csg-function-parameter">number_1</span> and <span class="csg-function-parameter">number_2</span>.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BITOR.htm">BITOR</a>.</p>
+
+
+    <h4>BITRSHIFT(<span class="csg-function-parameter">number</span>, <span class="csg-function-parameter">shift</span>:<span class="csg-function-parameter-type">Number</span>)</h4>
+
+    <p>Returns <span class="csg-function-parameter">number</span> shifted right bit-wise by <span class="csg-function-parameter">shift</span> bits.</p>
+
+    <p>If <span class="csg-function-parameter">shift</span> is negative, a left shift is performed.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BITRSHIFT.htm">BITRSHIFT</a>.</p>
+
+
+    <h4>BITXOR(<span class="csg-function-parameter">number_1</span>, <span class="csg-function-parameter">number_2</span>)</h4>
+
+    <p>Returns the bit-wise exclusive-OR of <span class="csg-function-parameter">number_1</span> and <span class="csg-function-parameter">number_2</span>.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BITXOR.htm">BITXOR</a>.</p>
+
+
+    <h4>
+        DEC2BIN(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the decimal <span class="csg-function-parameter">number</span> to a binary representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a positive number or a string of decimal digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BIN2HEX.htm">BIN2HEX</a>.</p>
+
+
+    <h4>
+        DEC2HEX(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the decimal <span class="csg-function-parameter">number</span> to a hexadecimal representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a positive number or a string of decimal digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BIN2HEX.htm">BIN2HEX</a>.</p>
+
+
+    <h4>
+        DEC2OCT(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the decimal <span class="csg-function-parameter">number</span> to an octal representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a positive number or a string of decimal digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_DEC2OCT.htm">DEC2OCT</a>.</p>
 
 
     <h4>
@@ -855,6 +1065,108 @@
     <p>This function was added in 2.00.</p>
 
     <p>See <a href="sg06/sg6_GESTEP.htm">GESTEP</a>.</p>
+
+
+    <h4>
+        HEX2BIN(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the hexadecimal <span class="csg-function-parameter">number</span> to a binary representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string of up to ten hexadecimal digits or a number of up to ten digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_HEX2BIN.htm">HEX2BIN</a>.</p>
+
+
+    <h4>
+        HEX2DEC(<span class="csg-function-parameter">number</span>)
+    </h4>
+
+    <p>Converts the hexadecimal <span class="csg-function-parameter">number</span> to its decimal value.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string of up to ten hexadecimal digits or a number of up to ten digits.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_HEX2DEC.htm">HEX2DEC</a>.</p>
+
+
+    <h4>
+        HEX2OCT(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the hexadecimal <span class="csg-function-parameter">number</span> to an octal representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string of up to ten hexadecimal digits or a number of up to ten digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_HEX2OCT.htm">HEX2OCT</a>.</p>
+
+
+    <h4>
+        OCT2BIN(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the octal <span class="csg-function-parameter">number</span> to a binary representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string, or a number, of up to ten octal digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_OCT2BIN.htm">OCT2BIN</a>.</p>
+
+
+    <h4>
+        OCT2DEC(<span class="csg-function-parameter">number</span>)
+    </h4>
+
+    <p>Converts the octal <span class="csg-function-parameter">number</span> to its decimal value.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string, or a number, of up to ten octal digits.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_OCT2DEC.htm">OCT2DEC</a>.</p>
+
+
+    <h4>
+        OCT2HEX(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts the octal <span class="csg-function-parameter">number</span> to a hexadecimal representation with <span class="csg-function-parameter">places</span> digits.</p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string, or a number, of up to ten octal digits.</p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_OCT2HEX.htm">OCT2HEX</a>.</p>
 
 
     <h2>Financial spreadsheet functions added since documentation printed</h2>
@@ -947,6 +1259,22 @@
     <h2>Mathematical spreadsheet functions added since documentation printed</h2>
 
     <h4>
+        BASE(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">radix</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">minimum_length</span>:<span class="csg-function-parameter-type">Number</span>})
+    </h4>
+
+    <p>Converts <span class="csg-function-parameter">number</span> using the given <span class="csg-function-parameter">radix</span>.</p>
+    <p>If <span class="csg-function-parameter">radix</span> is greater than ten, letters in the range A to Z are used to represent ten upwards.</p>
+    <p>If <span class="csg-function-parameter">minimum_length</span> is specified, zeros are used to pad the conversion at the left.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_BASE.htm">BASE</a>.</p>
+
+
+    <h4>
         CEILING(<span class="csg-function-parameter">number</span>
         {,&nbsp;<span class="csg-function-parameter">multiple</span>:<span class="csg-function-parameter-type">Number</span>})
     </h4>
@@ -959,6 +1287,18 @@
     <p>This function was added in 2.00.</p>
 
     <p>See <a href="sg06/sg6_CEILING.htm">CEILING</a>.</p>
+
+
+    <h4>
+        DECIMAL(<span class="csg-function-parameter">number</span>,
+        <span class="csg-function-parameter">radix</span>:<span class="csg-function-parameter-type">Number</span>
+    </h4>
+
+    <p>Converts a <span class="csg-function-parameter">number</span> in a given base to its corresponding decimal value.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_DECIMAL.htm">DECIMAL</a>.</p>
 
 
     <h4>EVEN(<span class="csg-function-parameter">number</span>)</h4>
@@ -992,6 +1332,28 @@
     <p>This function was added in 2.00.</p>
 
     <p>See <a href="sg06/sg6_FLOOR.htm">FLOOR</a>.</p>
+
+
+    <h4>
+        GCD(<span class="csg-function-parameter">list</span>)
+    </h4>
+
+    <p>Returns the greatest common denominator of all the values in the <span class="csg-function-parameter">list</span>.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_GCD.htm">GCD</a>.</p>
+
+
+    <h4>
+        LCM(<span class="csg-function-parameter">list</span>)
+    </h4>
+
+    <p>Returns the least common multiple of all the values in the <span class="csg-function-parameter">list</span>.</p>
+
+    <p>This function was added in 2.24.</p>
+
+    <p>See <a href="sg06/sg6_LCM.htm">LCM</a>.</p>
 
 
     <h4>
@@ -1309,7 +1671,8 @@
         <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
-    <p>Returns the population covariance of the two arrays.
+    <p>
+        Returns the population covariance of the two arrays.
 
     </p>
 
@@ -1323,7 +1686,8 @@
         <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type">Array</span>)
     </h4>
 
-    <p>Returns the sample covariance of the two arrays.
+    <p>
+        Returns the sample covariance of the two arrays.
 
     </p>
 
@@ -1334,7 +1698,8 @@
 
     <h4>DEVSQ(<span class="csg-function-parameter">list</span>)</h4>
 
-    <p>Returns the sum of the squares of the deviations of the values in the <span class="csg-function-parameter">list</span> from their arithmetic mean.
+    <p>
+        Returns the sum of the squares of the deviations of the values in the <span class="csg-function-parameter">list</span> from their arithmetic mean.
 
     </p>
 
@@ -1381,7 +1746,8 @@
 
     <h4>GEOMEAN(<span class="csg-function-parameter">list</span>)</h4>
 
-    <p>Returns the geometric mean of the values in the <span class="csg-function-parameter">list</span>.
+    <p>
+        Returns the geometric mean of the values in the <span class="csg-function-parameter">list</span>.
 
     </p>
 
@@ -1434,7 +1800,8 @@
 
     <h4>HARMEAN(<span class="csg-function-parameter">list</span>)</h4>
 
-    <p>Returns the harmonic mean of the values in the <span class="csg-function-parameter">list</span>.
+    <p>
+        Returns the harmonic mean of the values in the <span class="csg-function-parameter">list</span>.
 
     </p>
 

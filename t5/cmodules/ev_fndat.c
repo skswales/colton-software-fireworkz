@@ -160,7 +160,7 @@ PROC_EXEC_PROTO(c_day)
 
 /******************************************************************************
 *
-* STRING dayname(n | date)
+* STRING dayname(n | date {, mode})
 *
 ******************************************************************************/
 
@@ -183,7 +183,8 @@ ss_string_ini_cap(
 PROC_EXEC_PROTO(c_dayname)
 {
     PC_USTR ustr_dayname;
-    S32 day = 1;
+    S32 day;
+    S32 day_idx = 0;
 
     exec_func_ignore_parms();
 
@@ -193,25 +194,68 @@ PROC_EXEC_PROTO(c_dayname)
         if(SS_DATE_NULL == ss_data_get_date_date(args[0]))
             exec_func_status_return(p_ss_data_res, EVAL_ERR_NODATE);
 
-        day = ((ss_data_get_date_date(args[0]) + 1) % 7) + 1;
+        day = ((ss_data_get_date_date(args[0]) + 1) % 7) + 1; /* [1 (Sunday),7 (Saturday)] - obviously can NOT be modified */
+
+        day_idx = day - 1; /* [0,6] */
+
+        if(n_args > 1)
+            exec_func_status_return(p_ss_data_res, EVAL_ERR_FUNARGS);
         break;
 
-    default:
-#if CHECKING
-        default_unhandled();
-        /*FALLTHRU*/
     case DATA_ID_LOGICAL:
     case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
-#endif
-        day = MAX(1, ss_data_get_integer(args[0]));
+        day = ss_data_get_integer(args[0]); /* usually  [1 (Sunday),7 (Saturday)] - may be modified - will range reduce in any case at the end */
+
+        if(n_args > 1)
+        {
+            const S32 mode = ss_data_get_integer(args[1]);
+
+            switch(mode)
+            {
+            case 1: /* Sunday is day one, system 1 */
+                /* normal */
+                break;
+
+            case 2: /* Monday is day one, system 1 */
+                day += 1;
+                break;
+
+            case 3: /* Monday is day zero */
+                day += 2;
+                break;
+
+            case 11: /* Monday is day one, system 1 */
+            case 12: /* Tuesday is day one, system 1 */
+            case 13: /* Wednesday is day one, system 1 */
+            case 14: /* Thursday is day one, system 1 */
+            case 15: /* Friday is day one, system 1 */
+            case 16: /* Saturday is day one, system 1 */
+            case 17: /* Sunday is day one, system 1 */
+                day += (mode - 10);
+                break;
+
+            case 21: /* Monday is day one, system 2 (ISO 8601) */
+            case 150: /* Monday is day one, system 2 (ISO 8601 - as LibreOffice WEEKNUM() for interoperability with Gnumeric) */
+                day += 1;
+                break;
+
+            default:
+                ss_data_set_error(p_ss_data_res, EVAL_ERR_ODF_NUM);
+                return;
+            }
+        }
+
+        div_t d = div(day - 1, 7);
+        if(d.rem < 0)
+            day_idx = d.rem + 7; /* -> [0,6] */
+        else
+            day_idx = d.rem; /* [0,6] */
         break;
     }
 
-    day = (day - 1) % 7;
-
-    ustr_dayname = p_docu_from_config()->p_numform_context->day_names[day];
+    ustr_dayname = p_docu_from_config()->p_numform_context->day_names[day_idx]; /* [0 (Sunday),6 (Saturday)] */
 
     if(status_ok(ss_string_make_ustr(p_ss_data_res, ustr_dayname)))
         ss_string_ini_cap(p_ss_data_res);
@@ -219,7 +263,28 @@ PROC_EXEC_PROTO(c_dayname)
 
 /******************************************************************************
 *
-* INTEGER days_360(start_date, end_date {, method:Logical=FALSE})
+* INTEGER days(end_date, start_end)
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_days)
+{
+    S32 days_result;
+
+    exec_func_ignore_parms();
+
+    if( (SS_DATE_NULL == ss_data_get_date_date(args[0])) || (SS_DATE_NULL == ss_data_get_date_date(args[1])) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_NODATE);
+
+    /* return number of days between two dates */
+    days_result = ss_data_get_date_date(args[0]) /* end_date */ - ss_data_get_date_date(args[1]) /* start_date */;
+
+    ss_data_set_integer(p_ss_data_res, days_result);
+}
+
+/******************************************************************************
+*
+* INTEGER days_360(start_date, end_date {, method})
 *
 ******************************************************************************/
 
@@ -424,6 +489,54 @@ PROC_EXEC_PROTO(c_hour)
     hour_result = hours;
 
     ss_data_set_integer(p_ss_data_res, hour_result);
+}
+
+/******************************************************************************
+*
+* INTEGER return the week number for a date (ISO 8601)
+*
+******************************************************************************/
+
+_Check_return_
+static S32
+calc_isoweeknum(
+    _InVal_     S32 year,
+    _InVal_     S32 month,
+    _InVal_     S32 day)
+{
+    S32 weeknum;
+    U8Z buffer[32];
+    struct tm tm;
+
+    zero_struct(tm);
+    tm.tm_year = (int) (year - 1900);
+    tm.tm_mon  = (int) (month - 1);
+    tm.tm_mday = (int) (day);
+
+    /* actually needs wday and yday setting up! */
+    consume(time_t, mktime(&tm)); /* normalise */
+
+    consume(size_t, strftime(buffer, elemof32(buffer), "%V", &tm)); /* result in [01,53], as we want */
+
+    weeknum = fast_strtoul(buffer, NULL);
+
+    return(weeknum);
+}
+
+PROC_EXEC_PROTO(c_isoweeknum)
+{
+    S32 isoweeknum_result;
+    STATUS status;
+    S32 year, month, day;
+
+    exec_func_ignore_parms();
+
+    status = ss_dateval_to_ymd(args[0]->arg.ss_date.date, &year, &month, &day);
+    exec_func_status_return(p_ss_data_res, status); /* bad/missing date? */
+
+    isoweeknum_result = calc_isoweeknum(year, month, day);
+
+    ss_data_set_integer(p_ss_data_res, isoweeknum_result);
 }
 
 /******************************************************************************
@@ -653,12 +766,65 @@ PROC_EXEC_PROTO(c_weekday)
 
     exec_func_ignore_parms();
 
+    if(n_args > 2)
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_FUNARGS);
+
     if(SS_DATE_NULL == ss_data_get_date_date(args[0]))
         exec_func_status_return(p_ss_data_res, EVAL_ERR_NODATE);
 
     weekday = (ss_data_get_date_date(args[0]) + 1) % 7;
 
-    ss_data_set_integer(p_ss_data_res, weekday + 1);
+    if(n_args > 1)
+    {
+        const S32 mode = args[1]->arg.integer;
+        S32 remainder;
+
+        switch(mode)
+        {
+        case 1: /* Sunday is day one, system 1 */
+            /* normal */
+            break;
+
+        case 2: /* Monday is day one, system 1 */
+            weekday -= 1;
+            break;
+
+        case 3: /* Monday is day zero */
+            weekday -= 2;
+            break;
+
+        case 11: /* Monday is day one, system 1 */
+        case 12: /* Tuesday is day one, system 1 */
+        case 13: /* Wednesday is day one, system 1 */
+        case 14: /* Thursday is day one, system 1 */
+        case 15: /* Friday is day one, system 1 */
+        case 16: /* Saturday is day one, system 1 */
+        case 17: /* Sunday is day one, system 1 */
+            weekday -= (mode - 10);
+            break;
+
+        case 21: /* Monday is day one, system 2 (ISO 8601) */
+        case 150: /* Monday is day one, system 2 (ISO 8601 - as LibreOffice WEEKNUM() for interoperability with Gnumeric) */
+            weekday -= 1;
+            break;
+
+        default:
+            ss_data_set_error(p_ss_data_res, EVAL_ERR_ODF_NUM);
+            return;
+        }
+
+        remainder = (weekday - 1) % 7; /* deal with implementation-defined negative behaviour */
+        if(remainder < 0)
+            remainder = remainder + 7; /* -> [0,6] */
+
+        weekday = remainder + 1; /* back to [1,7] */
+
+        if(3 == mode) /* remap to [0,6] for this peculiar mode */
+            if(/*Monday*/ 7 == weekday)
+                weekday = 0;
+    }
+
+    ss_data_set_integer(p_ss_data_res, weekday);
 }
 
 /******************************************************************************

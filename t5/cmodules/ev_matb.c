@@ -22,6 +22,243 @@
 
 /******************************************************************************
 *
+* STRING base(n, radix {, minimum_length})
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_base)
+{
+    STATUS status = STATUS_OK;
+    const S32 radix = ss_data_get_integer(args[1]);
+    const S32 minimum_length = (n_args > 2) ? ss_data_get_integer(args[2]) : 1;
+    S32 i;
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 64);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
+    quick_ublock_with_buffer_setup(quick_ublock_format);
+    quick_ublock_with_buffer_setup(quick_ublock_result);
+
+    exec_func_ignore_parms();
+
+    if(n_args > 3)
+    {
+        ss_data_set_error(p_ss_data_res, EVAL_ERR_FUNARGS);
+        return;
+    }
+
+    if( (radix < 2) || (radix > 36) )
+    {
+        ss_data_set_error(p_ss_data_res, EVAL_ERR_ARGRANGE);
+        return;
+    }
+
+    if( (minimum_length < 1) || (minimum_length > 256) )
+    {
+        ss_data_set_error(p_ss_data_res, EVAL_ERR_ARGRANGE);
+        return;
+    }
+
+    for(i = 0; (i < minimum_length) && status_ok(status); ++i)
+        status = quick_ublock_a7char_add(&quick_ublock_format, CH_DIGIT_ZERO);
+
+    if(status_ok(status))
+        status = quick_ublock_printf(&quick_ublock_format, "B%d", radix);
+
+    if(status_ok(status))
+        status = quick_ublock_nullch_add(&quick_ublock_format);
+
+    if(status_ok(status))
+        status = ev_numform(&quick_ublock_result, quick_ublock_ustr(&quick_ublock_format), args[0]);
+
+    if(status_ok(status))
+        status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
+
+    quick_ublock_dispose(&quick_ublock_format);
+    quick_ublock_dispose(&quick_ublock_result);
+
+    exec_func_status_return(p_ss_data_res, status);
+}
+
+/******************************************************************************
+*
+* decimal() helper functions
+*
+******************************************************************************/
+
+_Check_return_
+static STATUS
+from_base_decode_string(
+    _InoutRef_  P_SS_DATA p_ss_data_res,
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n,
+    _InVal_     U32 radix,
+    _OutRef_    P_F64 p_f64);
+
+_Check_return_
+static STATUS
+from_base_decode_real(
+    _InoutRef_  P_SS_DATA p_ss_data_res,
+    _In_        F64 f64,
+    _InVal_     U32 radix,
+    _OutRef_    P_F64 p_f64)
+{
+    char buffer[64];
+
+    f64 = real_floor(f64);
+
+    *p_f64 = 0.0;
+
+    if((f64 < 0.0) /*|| (f64 > 9999999999.0)*/) /* range check input, decimal digits (can't have A-Z) */
+        return(ss_data_set_error(p_ss_data_res, EVAL_ERR_ARGRANGE));
+
+    consume_int(xsnprintf(buffer, sizeof(buffer), "%.0f", f64));
+
+    return(from_base_decode_string(p_ss_data_res, buffer, ustrlen32(buffer), radix, p_f64));
+}
+
+_Check_return_
+static STATUS
+from_base_decode_string(
+    _InoutRef_  P_SS_DATA p_ev_data_res,
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n,
+    _InVal_     U32 radix,
+    _OutRef_    P_F64 p_f64)
+{
+    U32 wss;
+    U32 initial_buf_idx;
+    U32 buf_idx;
+    F64 f64 = 0.0;
+
+    *p_f64 = 0.0;
+
+    wss = ss_string_skip_leading_whitespace_uchars(uchars, uchars_n);
+    buf_idx = wss;
+
+    if(16 == radix)
+    {   /* test for hex prefixes */
+        if( ((uchars_n - buf_idx) >= 2) &&
+            (('x' == PtrGetByteOff(uchars, buf_idx + 0)) || ('X' == PtrGetByteOff(uchars, buf_idx + 0))) &&
+            ucs4_is_hexadecimal_digit(PtrGetByteOff(uchars, buf_idx + 1)) )
+        {
+            buf_idx += 1; /* skip that prefix */
+        }
+        else
+        if( ((uchars_n - buf_idx) >= 3) &&
+            ('0' == PtrGetByteOff(uchars, buf_idx + 0)) &&
+            (('x' == PtrGetByteOff(uchars, buf_idx + 1)) || ('X' == PtrGetByteOff(uchars, buf_idx + 1))) &&
+            ucs4_is_hexadecimal_digit(PtrGetByteOff(uchars, buf_idx + 2)) )
+        {
+            buf_idx += 2; /* skip that prefix */
+        }
+    }
+
+    initial_buf_idx = buf_idx;
+
+    while(buf_idx < uchars_n)
+    {
+        U32 bytes_of_char = uchars_bytes_of_char_off(uchars, buf_idx);
+        UCS4 ucs4;
+        U32 digit;
+
+        assert((buf_idx + bytes_of_char) <= uchars_n);
+        if((buf_idx + bytes_of_char) > uchars_n)
+            break;
+
+        ucs4 = uchars_char_decode_off_NULL(uchars, buf_idx);
+
+        if(ucs4_is_hexadecimal_digit(ucs4))
+        {
+            digit = ucs4_hexadecimal_digit_value(ucs4);
+        }
+        else if(ucs4_is_ascii7(ucs4) && sbchar_isalpha(ucs4))
+        {   /* g..z, G..Z */
+            digit = (((U32) sbchar_toupper(ucs4) - UCH_LATIN_CAPITAL_LETTER_A) + 10);
+        }
+        else
+        {
+            break;
+        }
+
+        if(digit >= radix)
+        {
+            if((16 == radix) && (18 == digit)) /* read 'H' or 'h' as suffix? */
+                buf_idx += bytes_of_char; /* skip that optional suffix */
+            else if((2 == radix) && (11 == digit)) /* read 'B' or 'b' as suffix? */
+                buf_idx += bytes_of_char; /* skip that optional suffix */
+            break;
+        }
+
+        f64 = (f64 * radix) + digit;
+
+        buf_idx += bytes_of_char;
+    }
+
+    if(buf_idx == initial_buf_idx) /* nothing read? */
+        return(ss_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NUM));
+
+    wss = ss_string_skip_internal_whitespace_uchars(uchars, uchars_n, buf_idx);
+    buf_idx += wss;
+
+    if(buf_idx < uchars_n) /* trailing garbage? */
+        return(ss_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NUM));
+
+    *p_f64 = f64;
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+from_base(
+    _InoutRef_  P_SS_DATA p_ss_data_res,
+    _InRef_     PC_SS_DATA p_ss_data,
+    _InVal_     U32 radix,
+    _OutRef_    P_F64 p_f64)
+{
+    switch(ss_data_get_data_id(p_ss_data))
+    {
+    default: default_unhandled();
+#if CHECKING
+    case DATA_ID_REAL:
+#endif
+        status_return(from_base_decode_real(p_ss_data_res, ss_data_get_real(p_ss_data), radix, p_f64));
+        break;
+
+    case DATA_ID_STRING:
+        status_return(from_base_decode_string(p_ss_data_res, ss_data_get_string(p_ss_data), ss_data_get_string_size(p_ss_data), radix, p_f64));
+        break;
+    }
+
+    return(STATUS_OK);
+}
+
+/******************************************************************************
+*
+* NUMBER decimal(number_string)
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_decimal)
+{
+    const S32 radix = ss_data_get_integer(args[1]);
+    F64 f64;
+
+    exec_func_ignore_parms();
+
+    if( (radix < 2) || (radix > 36) )
+    {
+        ss_data_set_error(p_ss_data_res, EVAL_ERR_ARGRANGE);
+        return;
+    }
+
+    if(status_fail(from_base(p_ss_data_res, args[0], radix, &f64)))
+        return;
+
+    ss_data_set_real_try_integer(p_ss_data_res, f64);
+}
+
+/******************************************************************************
+*
 * NUMBER factdouble(n)
 *
 ******************************************************************************/

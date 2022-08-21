@@ -11,11 +11,11 @@
 # Copyright (C) 1998-2015 R W Colton
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
-TEXTUAL_VERSION_NUMBER=2.22.04
-TEXTUAL_VERSION_NUMBER=2.22.01
+TEXTUAL_VERSION_NUMBER=2.24
+#TEXTUAL_VERSION_NUMBER=2.24.01
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=22201
+STUBS_VERSION_NUMBER=22400
 # when changing version number for release, remember:
 #   common.gflags.h
 #   common.mf_mid

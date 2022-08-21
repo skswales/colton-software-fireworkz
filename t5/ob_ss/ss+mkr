@@ -53,6 +53,10 @@ $(BUILD_DIR).ob_ss.o.ev_func: $(T5).cmodules.c.ev_func
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.ev_fndat: $(T5).cmodules.c.ev_fndat
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnenb: $(T5).cmodules.c.ev_fnenb
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_ss.o.ev_fnenc: $(T5).cmodules.c.ev_fnenc
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.ev_fneng: $(T5).cmodules.c.ev_fneng
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_ss.o.ev_fnfin: $(T5).cmodules.c.ev_fnfin
@@ -124,6 +128,8 @@ $(BUILD_DIR).ob_ss.o.ev_tree \
 $(BUILD_DIR).ob_ss.o.ev_uref \
 $(BUILD_DIR).ob_ss.o.ev_func \
 $(BUILD_DIR).ob_ss.o.ev_fndat \
+$(BUILD_DIR).ob_ss.o.ev_fnenb \
+$(BUILD_DIR).ob_ss.o.ev_fnenc \
 $(BUILD_DIR).ob_ss.o.ev_fneng \
 $(BUILD_DIR).ob_ss.o.ev_fnfin \
 $(BUILD_DIR).ob_ss.o.ev_fnsta \

@@ -553,6 +553,7 @@ BIFF8_compiler_functions[] = /* ordered as Fireworkz */
 /*coth*/
 /*cterm*/ /* XLS:NPV-ish */
 /*current_cell*/
+/*days*/
 /*dayname*/
 /*dcount*/
 /*dcounta*/
@@ -581,6 +582,7 @@ BIFF8_compiler_functions[] = /* ordered as Fireworkz */
 /*index*/ /* Fireworkz INDEX has different parameter order to XLS */
 /*input*/
 /*irr*/ /* Fireworkz IRR has different parameter order & result to XLS */
+/*isoweeknum*/
 /*listcount*/
 /*monthdays*/
 /*monthname*/

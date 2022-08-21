@@ -639,7 +639,7 @@ w749:version
 350:Look for |key:Key value| in vertical |1target:Vertically-arranged array (or range of cells e.g. B1:D20)| data set (sorted in ascending order) and return corresponding element from |2column index:Integer|-th column in target array
 w750:vlookup
 #
-351:Weekday of |date:Date in form dd.mm.yyyy|. Sunday is 1
+351:Weekday of |date:Date in form dd.mm.yyyy|. Sunday is 1, 2=Mondayå, controlled by optional |1{mode}|
 w751:weekday
 352:Week number of |date:Date in form dd.mm.yyyy|
 w752:weeknumber
@@ -919,6 +919,54 @@ w873:edate
 w874:eomonth
 475:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0| (OpenDocument/Excel-compatible behaviour)
 w875:odf.mod
+476:Converts binary |number:Text string| to decimal
+w876:bin2dec
+477:Converts binary |number:Text string| to string of hexadecimal digits with optional number of |1{places}:number|
+w877:bin2hex
+478:Converts binary |number:Text string| to string of octal digits with optional number of |1{places}:number|
+w878:bin2oct
+479:Convert |number| to string of binary digits with optional number of |1{places}:number|
+w879:dec2bin
+#
+480:Convert |number| to string of hexadecimal digits with optional number of |1{places}:number|
+w880:dec2hex
+481:Convert |number| to string of octal digits with optional number of |1{places}:number|
+w881:dec2oct
+482:Converts hexadecimal |number:Text string| to string of binary digits with optional number of |1{places}:number|
+w882:hex2bin
+483:Converts hexadecimal |number:Text string| to decimal
+w883:hex2dec
+484:Converts hexadecimal |number:Text string| to string of octal digits with optional number of |1{places}:number|
+w884:hex2oct
+485:Converts octal |number:Text string| to string of binary digits with optional number of |1{places}:number|
+w885:oct2bin
+486:Converts octal |number:Text string| to decimal
+w886:oct2dec
+487:Converts octal |number:Text string| to string of hexadecimal digits with optional number of |1{places}:number|
+w887:oct2hex
+488:Returns the bit-wise AND of |number_1:Number| and |1number_2:Number|
+w888:bitand
+489:Returns |number:Number| shifted left bit-wise by |1shift:Number| bits
+w889:bitlshift
+#
+490:Returns the bit-wise OR of |number_1:Number| and |1number_2:Number|
+w890:bitor
+491:Returns |number:Number| shifted right bit-wise by |1shift:Number| bits
+w891:bitrshift
+492:Returns the bit-wise exclusive-OR of |number_1:Number| and |1number_2:Number|
+w892:bitxor
+493:Converts |number:Positive integer| using the given |1radix:Positive integer| and optional minimum number of |2{digits}:number|
+w893:base
+494:Converts |number:Text string| from the given |1radix:Positive integer| to its corresponding decimal value
+w894:decimal
+495:Returns the greatest common denominator of all the values in |list:List of numbers (or array, or range of cells)|
+w895:gcd
+496:Returns the least common multiple of all the values in |list:List of numbers (or array, or range of cells)|
+w896:lcm
+497:Week number of |date:Date in form dd.mm.yyyy| (ISO 8601)
+w897:isoweeknum
+498:Returns integral number of days between |1start_date:Date in form dd.mm.yyyy| and |end_date:Date in form dd.mm.yyyy|
+w898:days
 #
 # evaluator errors (see xp_ss.h, ob_ss.h)
 #

@@ -224,6 +224,7 @@ $(PROD_BUILD_DIR).binaries.Neutral.Image \
 $(DYNLOAD_S2) \
 $(PROD_BUILD_DIR).!$(APPL).Info
  Copy $(PROD_BUILD_DIR).binaries.Neutral.Image $@ ~C FV
+ @Squeeze -v $@
  @Time
 
 $(PROD_BUILD_DIR).!$(APPL).!RunImage: \
@@ -231,6 +232,7 @@ $(PROD_BUILD_DIR).binaries.$(COUNTRY).Image \
 $(DYNLOAD_SX2) \
 $(PROD_BUILD_DIR).!$(APPL).Info
  Copy $(PROD_BUILD_DIR).binaries.$(COUNTRY).Image $@ ~C FV
+ @Squeeze -v $@
  @Time
 
 # Windows STRINGTABLE

@@ -347,7 +347,7 @@ ev_name_make(
         ss_data_set_blank(&ss_data);
 
         /* check name of name is OK */
-        status_return(ident_validate(ustr_name_id));
+        status_return(ident_validate(ustr_name_id, FALSE));
 
         if(NULL != ustr_name_def)
         {
@@ -623,7 +623,7 @@ name_make(
     memcpy32(name_ustr_buf, p_name->uchars, p_name->size);
     name_ustr_buf[p_name->size] = CH_NULL;
 
-    status_return(ident_validate(ustr_bptr(name_ustr_buf)));
+    status_return(ident_validate(ustr_bptr(name_ustr_buf), FALSE));
 
     {
     EV_HANDLE name_num = ensure_name_in_list(ev_docno, ustr_bptr(name_ustr_buf));

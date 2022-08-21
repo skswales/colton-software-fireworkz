@@ -1,13 +1,15 @@
 Package: Fireworkz-Manuals
-Version: 20191220
 Section: Manuals
 Priority: Optional
+Licence: Free
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
-Licence: Free
+Version: 20200322
+Recommends: Fireworkz
 Description: Fireworkz Getting Started Guide and User Guide
  The Getting Started Guide for RISC OS is designed to help you get to know the basic word processing and spreadsheet capabilities of Fireworkz. You can find the accompanying files for the Getting Started Guide in the Fireworkz-Examples package.
  .
  The User Guide provides a complete reference for all the menu commands, toolbar buttons and spreadsheet functions in Fireworkz, so that if you have any questions while you are doing your work you will quickly be able to find the answer. Separate chapters cover each subject in detail.
 Components: Manuals.Fireworkz (Movable LookAt)
-Recommends: Fireworkz
+Homepage: http://www.croftnuisk.co.uk/coltsoft/fireworkz/
+Environment: any

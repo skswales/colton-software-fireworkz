@@ -85,6 +85,7 @@ enum __ss_function_indices
     /* NO    AVEDEV */
     /* NO    AVG */
 
+    SS_SPLIT_BASE,
     SS_SPLIT_BESSELI,
     SS_SPLIT_BESSELJ,
     SS_SPLIT_BESSELK,
@@ -93,9 +94,17 @@ enum __ss_function_indices
     SS_SPLIT_BETA_DIST,
     SS_SPLIT_BETA_INV,
     SS_SPLIT_BIN,
+    SS_SPLIT_BIN2DEC,
+    SS_SPLIT_BIN2HEX,
+    SS_SPLIT_BIN2OCT,
     SS_SPLIT_BINOM_DIST,
     SS_SPLIT_BINOM_DIST_RANGE,
     SS_SPLIT_BINOM_INV,
+	SS_SPLIT_BITAND,
+	SS_SPLIT_BITLSHIFT,
+	SS_SPLIT_BITOR,
+	SS_SPLIT_BITRSHIFT,
+	SS_SPLIT_BITXOR,
 
     SS_SPLIT_C_ACOS,
     SS_SPLIT_C_ACOSEC,
@@ -173,10 +182,15 @@ enum __ss_function_indices
     SS_SPLIT_DATEVALUE,
     SS_SPLIT_DAY,
     SS_SPLIT_DAYNAME,
+    SS_SPLIT_DAYS,
     SS_SPLIT_DAYS_360,
     SS_SPLIT_DB,
     /* NO    DCOUNT etc. */
     SS_SPLIT_DDB,
+    SS_SPLIT_DEC2BIN,
+    SS_SPLIT_DEC2HEX,
+    SS_SPLIT_DEC2OCT,
+    SS_SPLIT_DECIMAL,
     SS_SPLIT_DEG,
     SS_SPLIT_DELTA,
     SS_SPLIT_DEREF,
@@ -216,12 +230,16 @@ enum __ss_function_indices
     SS_SPLIT_GAMMA_DIST,
     SS_SPLIT_GAMMA_INV,
     SS_SPLIT_GAMMALN,
+    /* NO    GCD */
     /* NO    GEOMEAN */
     SS_SPLIT_GESTEP,
     SS_SPLIT_GRAND,
     SS_SPLIT_GROWTH,
 
     /* NO    HARMEAN */
+    SS_SPLIT_HEX2BIN,
+    SS_SPLIT_HEX2DEC,
+    SS_SPLIT_HEX2OCT,
     SS_SPLIT_HOUR,
     SS_SPLIT_HYPGEOM_DIST,
 
@@ -238,6 +256,7 @@ enum __ss_function_indices
     SS_SPLIT_ISNONTEXT,
     SS_SPLIT_ISNUMBER,
     SS_SPLIT_ISODD,
+    SS_SPLIT_ISOWEEKNUM,
     SS_SPLIT_ISREF,
     SS_SPLIT_ISTEXT,
 
@@ -246,6 +265,7 @@ enum __ss_function_indices
     /* NO    KURT */
 
     SS_SPLIT_LARGE,
+    /* NO    LCM */
     SS_SPLIT_LEFT,
     SS_SPLIT_LENGTH,
     SS_SPLIT_LINEST,
@@ -286,6 +306,9 @@ enum __ss_function_indices
     SS_SPLIT_NPER,
     /* NO    NPV */
 
+    SS_SPLIT_OCT2BIN,
+    SS_SPLIT_OCT2DEC,
+    SS_SPLIT_OCT2HEX,
     SS_SPLIT_ODD,
 
     SS_SPLIT_ODF_BETADIST,

@@ -1513,6 +1513,10 @@
 					<param name="Local" value="content/sg06/sg6_DAY.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="DAYS">
+					<param name="Local" value="content/sg06/sg6_DAYS.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="DAYS_360">
 					<param name="Local" value="content/sg06/sg6_DAYS_360.htm">
 					</OBJECT>
@@ -1523,6 +1527,10 @@
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="HOUR">
 					<param name="Local" value="content/sg06/sg6_HOUR.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="ISOWEEKNUM">
+					<param name="Local" value="content/sg06/sg6_ISOWEEKNUM.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="MINUTE">
@@ -1751,6 +1759,50 @@
 					<param name="Local" value="content/sg06/sg6_BESSELY.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BIN2DEC">
+					<param name="Local" value="content/sg06/sg6_BIN2DEC.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BIN2HEX">
+					<param name="Local" value="content/sg06/sg6_BIN2HEX.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BIN2OCT">
+					<param name="Local" value="content/sg06/sg6_BIN2OCT.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BITAND">
+					<param name="Local" value="content/sg06/sg6_BITAND.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BITLSHIFT">
+					<param name="Local" value="content/sg06/sg6_BITLSHIFT.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BITOR">
+					<param name="Local" value="content/sg06/sg6_BITOR.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BITRSHIFT">
+					<param name="Local" value="content/sg06/sg6_BITRSHIFT.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BITXOR">
+					<param name="Local" value="content/sg06/sg6_BITXOR.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="DEC2BIN">
+					<param name="Local" value="content/sg06/sg6_DEC2BIN.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="DEC2HEX">
+					<param name="Local" value="content/sg06/sg6_DEC2HEX.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="DEC2OCT">
+					<param name="Local" value="content/sg06/sg6_DEC2OCT.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="DELTA">
 					<param name="Local" value="content/sg06/sg6_DELTA.htm">
 					</OBJECT>
@@ -1765,6 +1817,30 @@
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="GESTEP">
 					<param name="Local" value="content/sg06/sg6_GESTEP.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="HEX2BIN">
+					<param name="Local" value="content/sg06/sg6_HEX2BIN.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="HEX2DEC">
+					<param name="Local" value="content/sg06/sg6_HEX2DEC.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="HEX2OCT">
+					<param name="Local" value="content/sg06/sg6_HEX2OCT.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="OCT2BIN">
+					<param name="Local" value="content/sg06/sg6_OCT2BIN.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="OCT2DEC">
+					<param name="Local" value="content/sg06/sg6_OCT2BIN.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="OCT2HEX">
+					<param name="Local" value="content/sg06/sg6_OCT2HEX.htm">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
@@ -1895,8 +1971,16 @@
 					<param name="Local" value="content/sg06/sg6_ABS.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BASE">
+					<param name="Local" value="content/sg06/sg6_BASE.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="CEILING">
 					<param name="Local" value="content/sg06/sg6_CEILING.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="DECIMAL">
+					<param name="Local" value="content/sg06/sg6_DECIMAL.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="EVEN">
@@ -1915,8 +1999,16 @@
 					<param name="Local" value="content/sg06/sg6_FLOOR.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="GCD">
+					<param name="Local" value="content/sg06/sg6_GCD.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="INT">
 					<param name="Local" value="content/sg06/sg6_INT.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="LCM">
+					<param name="Local" value="content/sg06/sg6_LCM.htm">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="LN">

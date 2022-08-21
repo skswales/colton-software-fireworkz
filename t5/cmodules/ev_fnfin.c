@@ -84,13 +84,14 @@ PROC_EXEC_PROTO(c_db)
 
     exec_func_ignore_parms();
 
-    if(cost < 0.0     ||
-       salvage > cost ||
-       life < 1       ||
-       month < 1.0    ||
-       month > 12.0   ||
-       period < 1     ||
-       (period > life + (12.0 != month)) )
+    if( cost < 0.0     ||
+        salvage < 0.0  ||
+        salvage > cost ||
+        life < 1       ||
+        month < 1.0    ||
+        month > 12.0   ||
+        period < 1     ||
+        (period > life + (12.0 != month)) )
     {
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }
@@ -140,35 +141,69 @@ PROC_EXEC_PROTO(c_db)
 
 PROC_EXEC_PROTO(c_ddb)
 {
+    F64 ddb_result;
     F64 cost = ss_data_get_real(args[0]);
     F64 value = cost;
     F64 salvage = ss_data_get_real(args[1]);
-    S32 life = (S32) ss_data_get_real(args[2]);
-    S32 period = (S32) ss_data_get_real(args[3]);
+    F64 life = ss_data_get_real(args[2]);
+    F64 period = ss_data_get_real(args[3]);
     F64 factor = (n_args > 4) ? ss_data_get_real(args[4]) : 2.0;
-    F64 cur_period = 0.0; /* ddb_result */
+    F64 rate;
     S32 i;
 
     exec_func_ignore_parms();
 
-    if(cost < 0.0     ||
-       salvage > cost ||
-       life < 1       ||
-       period < 1     ||
-       period > life)
+    if( cost < 0.0     ||
+        salvage < 0.0  ||
+        salvage > cost ||
+        life < 1.0     ||
+        period < 1.0   ||
+        period > life  )
     {
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }
 
-    for(i = 0; i < period; ++i)
-    {
-        cur_period = (value * factor) / life;
-        if(value - cur_period < salvage)
-            cur_period = value - salvage;
-        value -= cur_period;
+    rate = factor / life;
+
+    if(floor(period) == period)
+    {   /* integer period */
+        F64 depreciation_of_period = 0.0;
+        S32 i_period = (S32) period;
+
+        for(i = 0; i < i_period; ++i)
+        {
+            depreciation_of_period = value * rate;
+            if(depreciation_of_period > value - salvage)
+                depreciation_of_period = value - salvage;
+            value -= depreciation_of_period;
+        }
+
+        ddb_result = depreciation_of_period;
+    }
+    else
+    {   /* non-integer period */
+        F64 old_value, new_value;
+
+        if(rate >= 1.0)
+        {
+            rate = 1.0;
+
+            old_value = (period == 1.0) ? cost : 0.0;
+        }
+        else
+        {
+            old_value = cost * pow(1.0 - rate, period - 1.0);
+        }
+
+        new_value = cost * pow(1.0 - rate, period);
+
+        ddb_result = old_value - ((new_value > salvage) ? new_value : salvage);
+
+        if(ddb_result < 0.0)
+            ddb_result = 0.0;
     }
 
-    ss_data_set_real(p_ss_data_res, cur_period);
+    ss_data_set_real(p_ss_data_res, ddb_result);
 }
 
 /******************************************************************************

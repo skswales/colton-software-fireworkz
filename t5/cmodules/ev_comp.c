@@ -939,7 +939,8 @@ func_call(
 _Check_return_
 extern STATUS
 ident_validate(
-    _In_z_      PC_USTR ident)
+    _In_z_      PC_USTR ident,
+    _InVal_     BOOL relaxed)
 {
     PC_USTR pos = ident;
     U32 used_in;
@@ -986,6 +987,9 @@ ident_validate(
             else if(sbchar_isdigit(ident_ch))
             {
                 had_digit = TRUE;
+
+                if(relaxed && !digit_ok && (2 < used_in))
+                    digit_ok = TRUE;
             }
             else if(CH_UNDERSCORE == ident_ch)
             {
@@ -1083,7 +1087,7 @@ proc_custom_argument(
 
     ustr_IncBytes(ci, used_in);
 
-    status_return(ident_validate(name_out));
+    status_return(ident_validate(name_out, FALSE));
 
     /* is there a type following ? */
     if(CH_COLON == PtrGetByte(ci))
@@ -2156,7 +2160,7 @@ recog_ident(
 
    id_out[outidx] = CH_NULL;
 
-   status_return(ident_validate((PC_USTR) id_out));
+   status_return(ident_validate((PC_USTR) id_out, TRUE));
 
    return(used_in);
 }
@@ -2320,11 +2324,18 @@ recog_slr_range(
             /* else bad range - ignore everything here */
         }
         else
-        {   /* stick with the SLR we obtained */
-            p_ss_data->arg.slr = s_slr;
-            ss_data_set_data_id(p_ss_data, DATA_ID_SLR);
+        {
+            if((CH_LEFT_PARENTHESIS == PtrGetByte(pos)) || (sbchar_isalpha(PtrGetByte(pos))))
+            {   /* probably a function name now we are more relaxed */
+                /* treat as bad SLR - ignore everything here */
+            }
+            else
+            {   /* stick with the SLR we obtained */
+                p_ss_data->arg.slr = s_slr;
+                ss_data_set_data_id(p_ss_data, DATA_ID_SLR);
 
-            len = len_ext_1 + len_slr_1; /* all components for SLR */
+                len = len_ext_1 + len_slr_1; /* all components for SLR */
+            }
         } /*fi*/
 
     }

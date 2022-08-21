@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+    <link href="../common/usguide.css" rel="stylesheet" type="text/css" />
+    <title>HEX2DEC</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 2019-2020 Stuart Swales -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="HEX2DEC" />
+        <param name="Keyword" value="Functions, Engineering, HEX2DEC" />
+        <param name="Keyword" value="Base conversion function, hexadecimal to decimal" />
+    </object>
+
+    <h1><a name="hex2dec" id="hex2dec"></a>HEX2DEC</h1>
+
+    <p>Converts a hexadecimal number to its corresponding decimal value.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        HEX2DEC(<span class="csg-function-parameter">number</span>)
+    </p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string of up to ten hexadecimal digits or a number of up to ten digits.</p>
+
+    <p>
+        Two's complement representation is used:
+        the highest (fortieth) bit is the sign bit of the hexadecimal number.
+    </p>
+
+    <p class="csg-function-subheading">Examples:</p>
+    <pre class="csg-sample-indent">HEX2DEC(&quot;00001000&quot;)</pre>
+    <p>returns the number <code>4096</code>.</p>
+    <pre class="csg-sample-indent">HEX2DEC(&quot;FFFFFFFFFF&quot;)</pre>
+    <p>returns the number <code>-1</code>.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.24.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td id="navfooter_PUN_L"><a accesskey="p" href="sg6_HEX2BIN.htm">Prev</a> </td>
+                <td id="navfooter_PUN_C"><a accesskey="u" href="../sg05/sg5_engineering_functions.htm">Up</a></td>
+                <td id="navfooter_PUN_R"> <a accesskey="n" href="sg6_HEX2OCT.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

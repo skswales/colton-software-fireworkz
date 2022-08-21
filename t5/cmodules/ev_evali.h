@@ -181,10 +181,12 @@ enum EXEC_ARRAY_RANGE
     ARRAY_RANGE_COUNTA,
     ARRAY_RANGE_COUNTBLANK,
     ARRAY_RANGE_DEVSQ,
+    ARRAY_RANGE_GCD,
     ARRAY_RANGE_GEOMEAN,
     ARRAY_RANGE_HARMEAN,
     ARRAY_RANGE_IRR,
     ARRAY_RANGE_KURT,
+    ARRAY_RANGE_LCM,
     ARRAY_RANGE_MAX,
     ARRAY_RANGE_MAXA,
     ARRAY_RANGE_MEDIAN,
@@ -683,7 +685,8 @@ ev_comp.c external functions
 _Check_return_
 extern STATUS
 ident_validate(
-    _In_z_      PC_USTR ident);
+    _In_z_      PC_USTR ident,
+    _InVal_     BOOL relaxed);
 
 _Check_return_
 extern S32
@@ -906,10 +909,12 @@ PROC_EXEC_PROTO(c_date);
 PROC_EXEC_PROTO(c_datevalue);
 PROC_EXEC_PROTO(c_day);
 PROC_EXEC_PROTO(c_dayname);
+PROC_EXEC_PROTO(c_days);
 PROC_EXEC_PROTO(c_days_360);
 PROC_EXEC_PROTO(c_edate);
 PROC_EXEC_PROTO(c_eomonth);
 PROC_EXEC_PROTO(c_hour);
+PROC_EXEC_PROTO(c_isoweeknum);
 PROC_EXEC_PROTO(c_minute);
 PROC_EXEC_PROTO(c_month);
 PROC_EXEC_PROTO(c_monthdays);
@@ -942,6 +947,12 @@ NO ev_fndba.c (database)
 /*
 ev_fnenb.c external functions (engineering - bitwise operations)
 */
+
+PROC_EXEC_PROTO(c_bitand);
+PROC_EXEC_PROTO(c_bitlshift);
+PROC_EXEC_PROTO(c_bitor);
+PROC_EXEC_PROTO(c_bitrshift);
+PROC_EXEC_PROTO(c_bitxor);
 
 /*
 ev_fnenc.c external functions (engineering - conversion)
@@ -1179,6 +1190,23 @@ PROC_EXEC_PROTO(c_text);
 PROC_EXEC_PROTO(c_trim);
 PROC_EXEC_PROTO(c_upper);
 PROC_EXEC_PROTO(c_value);
+
+/*
+ev_fncnv.c external functions (conversion)
+*/
+
+PROC_EXEC_PROTO(c_bin2dec);
+PROC_EXEC_PROTO(c_bin2hex);
+PROC_EXEC_PROTO(c_bin2oct);
+PROC_EXEC_PROTO(c_dec2bin);
+PROC_EXEC_PROTO(c_dec2hex);
+PROC_EXEC_PROTO(c_dec2oct);
+PROC_EXEC_PROTO(c_hex2bin);
+PROC_EXEC_PROTO(c_hex2dec);
+PROC_EXEC_PROTO(c_hex2oct);
+PROC_EXEC_PROTO(c_oct2bin);
+PROC_EXEC_PROTO(c_oct2dec);
+PROC_EXEC_PROTO(c_oct2hex);
 
 /*
 ev_help.c
@@ -1425,9 +1453,13 @@ status_from_errno(void);
 ev_matb.c external functions (mathematical)
 */
 
+PROC_EXEC_PROTO(c_base);
 PROC_EXEC_PROTO(c_ceiling);
+PROC_EXEC_PROTO(c_decimal);
 PROC_EXEC_PROTO(c_factdouble);
 PROC_EXEC_PROTO(c_floor);
+/* NO c_gcd: ARRAY_RANGE_GCD */
+/* NO c_lcm: ARRAY_RANGE_LCM */
 PROC_EXEC_PROTO(c_log);
 PROC_EXEC_PROTO(c_mround);
 PROC_EXEC_PROTO(c_odf_int);

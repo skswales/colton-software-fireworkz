@@ -1,13 +1,15 @@
 Package: Fireworkz-Examples
-Version: 20191221
 Section: Document
 Priority: Optional
+Licence: Free
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
-Licence: Free
+Version: 20200322
+Depends: Fireworkz
 Description: Example files for Fireworkz
  Example files to demonstrate, and help with using, various Fireworkz facilities.
  .
  Also files that can be used when working through the Fireworkz Getting Started Guide for RISC OS.
 Components: Apps.Document.FzExamples (Movable)
-Depends: Fireworkz
+Homepage: http://www.croftnuisk.co.uk/coltsoft/fireworkz/
+Environment: any

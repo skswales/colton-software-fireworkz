@@ -26,13 +26,13 @@
     <p class="csg-function-subheading">Syntax #1:</p>
 
     <p class="csg-function-declaration">
-        C_COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">Number</span>)
+        C_COMPLEX(<span class="csg-function-parameter">real part</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">imaginary part</span>:<span class="csg-function-parameter-type">Number</span>})
     </p>
 
     <p>
         Returns the <a href="sg6_complex_numbers.htm">complex number</a> formed from the given
-        <span class="csg-function-parameter">real part</span> and
+        <span class="csg-function-parameter">real part</span> and optional
         <span class="csg-function-parameter">imaginary part</span>.
     </p>
 
@@ -54,6 +54,11 @@
     <p class="csg-function-subheading">Revisions:</p>
 
     <p>This function was added in 2.00.</p>
+
+    <p>
+        Starting with 2.24, this function may take a single parameter as
+        the real part of the resulting complex number with imaginary part zero.
+    </p>
 
     <div class="csg-line"><!-- ... --> </div>
     <ol class="references">

@@ -8,15 +8,15 @@
 
 /* NB keep in step with other files (definitive list in common.mf_mid) */
 
-#define HEX_VERSION_NUMBER          0x22201
+#define HEX_VERSION_NUMBER          0x22400
 
 /* for Windows RC file */
 
 /*#define VER_FILEVERSION           2,xx,y,0*/
 /*#define VER_FILEVERSION           2,xx,0,0*/
-#define VER_FILEVERSION             2,22,01,0
+#define VER_FILEVERSION             2,24,00,0
 
-#define VER_FILEVERSION_STR        "2.22.01"
+#define VER_FILEVERSION_STR        "2.24.00"
 /*#define VER_FILEVERSION_STR      "2.xx.00"*/
 /*#define VER_FILEVERSION_STR      "2.xx.yy"*/
 

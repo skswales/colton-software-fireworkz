@@ -638,6 +638,12 @@ ss_recog_string(
     _In_z_      PC_USTR in_str);
 
 _Check_return_
+extern STATUS
+ss_string_allocate(
+    _OutRef_    P_SS_DATA p_ss_data,
+    _InVal_     U32 len);
+
+_Check_return_
 extern BOOL
 ss_string_is_blank(
     _InRef_     PC_SS_DATA p_ss_data);
@@ -671,6 +677,13 @@ extern U32
 ss_string_skip_leading_whitespace_uchars(
     _In_reads_(uchars_n) PC_UCHARS uchars,
     _InRef_     U32 uchars_n);
+
+_Check_return_
+extern U32
+ss_string_skip_internal_whitespace_uchars(
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InRef_     U32 uchars_n,
+    _InVal_     U32 uchars_idx);
 
 /*
 two_nums_type_match result values

@@ -17,13 +17,13 @@
 # The definitive list of files is in common.mf_mid
 #1:2.xx.yy
 #1:2.xx
-1:2.22.01
-2:24 Dec 2019
+1:2.24
+2:22 Mar 2020
 #
 # update date and version in the corresponding RelNotes HTML files too
 #
-1033:© 1992-2019 Colton Software
-r1034:Portions © 1994-2019 R-Comp
+1033:© 1992-2020 Colton Software
+r1034:Portions © 1994-2020 R-Comp
 w1037:The product uses the following components
 w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
 #

@@ -15,7 +15,7 @@
 #   trunk or
 #   branch (e.g. for branches/fireworkz__2_10__branch use the leaf, fireworkz__2_10__branch) or
 #   tag (e.g. for tags/fireworkz__2016_06_26__2_10_00 use the leaf, fireworkz__2016_06_26__2_10_00).
-$(FIREWORKZ_TBT)=fireworkz__2_22__branch
+$(FIREWORKZ_TBT)=fireworkz__2_24__branch
 # $(FIREWORKZ_TBT)=trunk
 
 # NB Substitute URD location as necessary

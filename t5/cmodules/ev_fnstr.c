@@ -323,10 +323,10 @@ PROC_EXEC_PROTO(c_join)
         len += arg_len;
     }
 
-    if(0 == len)
+    if(status_fail(ss_string_make_uchars(p_ss_data_res, NULL, len)))
         return;
 
-    if(status_fail(ss_string_make_uchars(p_ss_data_res, NULL, len)))
+    if(0 == len)
         return;
 
     uchars = p_ss_data_res->arg.string_wr.uchars;
@@ -585,6 +585,9 @@ PROC_EXEC_PROTO(c_rept)
     if(status_fail(ss_string_make_uchars(p_ss_data_res, NULL, (U32) n * len)))
         return;
 
+    if(0 == n * len)
+        return;
+
     uchars = p_ss_data_res->arg.string_wr.uchars;
 
     for(x = 0; x < n; ++x)
@@ -806,12 +809,10 @@ PROC_EXEC_PROTO(c_text)
 
 PROC_EXEC_PROTO(c_trim)
 {
-    U8Z buffer[BUF_EV_MAX_STRING_LEN];
-    U32 o_idx = 0;
     PC_UCHARS s_ptr;
     PC_UCHARS e_ptr;
-    PC_UCHARS i_ptr;
-    BOOL gap = FALSE;
+    P_UCHARS o_buf = P_UCHARS_NONE;
+    int pass = 1;
 
     exec_func_ignore_parms();
 
@@ -824,28 +825,40 @@ PROC_EXEC_PROTO(c_trim)
     while((e_ptr > s_ptr) && (PtrGetByteOff(e_ptr, -1) == CH_SPACE)) /* skip trailing spaces */
         uchars_DecByte(e_ptr);
 
-    /* crunge runs of multiple spaces to a single space during transfer */
-    for(i_ptr = s_ptr; i_ptr < e_ptr; uchars_IncByte(i_ptr))
-    {
-        if(CH_SPACE == PtrGetByte(i_ptr))
+    do  {
+        PC_UCHARS i_ptr;
+        U32 o_idx = 0;
+        BOOL gap = FALSE;
+
+        /* crunge runs of multiple spaces to a single space during transfer */
+        for(i_ptr = s_ptr; i_ptr < e_ptr; uchars_IncByte(i_ptr))
         {
-            if(gap)
-                continue;
+            if(CH_SPACE == PtrGetByte(i_ptr))
+            {
+                if(gap)
+                    continue;
+                else
+                    gap = TRUE;
+            }
             else
-                gap = TRUE;
+            {
+                gap = FALSE;
+            }
+
+            if(1 == pass)
+                ++o_idx; /* sizing pass */
+            else
+                o_buf[o_idx++] = PtrGetByte(i_ptr);
         }
-        else
+
+        if(1 == pass)
         {
-            gap = FALSE;
+            status_break(ss_string_allocate(p_ss_data_res, o_idx));
+
+            o_buf = p_ss_data_res->arg.string_wr.uchars;
         }
-
-        buffer[o_idx++] = PtrGetByte(i_ptr);
-
-        if(o_idx >= elemof32(buffer))
-            break;
     }
-
-    status_assert(ss_string_make_uchars(p_ss_data_res, uchars_bptr(buffer), o_idx));
+    while(++pass <= 2);
 }
 
 /******************************************************************************
@@ -910,7 +923,9 @@ PROC_EXEC_PROTO(c_value)
     else
     {
         PC_UCHARS e_ptr = uchars_AddBytes(s_ptr, len);
-        UCHARZ buffer[256];
+        STATUS status;
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+        quick_ublock_with_buffer_setup(quick_ublock);
         PC_USTR ptr;
 
         /* we are guaranteed here to have at least one byte to transfer */
@@ -920,12 +935,25 @@ PROC_EXEC_PROTO(c_value)
             --len;
         }
 
-        ustr_xstrnkpy(ustr_bptr(buffer), sizeof32(buffer), s_ptr, len);
+        /* just copy the trimmed string and CH_NULL-terminate */
+        if(status_ok(status = quick_ublock_uchars_add(&quick_ublock, s_ptr, len)))
+        if(status_ok(status = quick_ublock_nullch_add(&quick_ublock)))
+        {
+#if 0
+            ev_recog_constant_using_autoformat(p_ss_data_res, ev_slr_docno(p_cur_slr), quick_ublock_ustr(&quick_ublock));
+#else
+            PC_USTR buffer = quick_ublock_ustr(&quick_ublock);
 
-        ss_data_set_real_try_integer(p_ss_data_res, ui_strtod(ustr_bptr(buffer), &ptr));
+            ss_data_set_real_try_integer(p_ss_data_res, ui_strtod(ustr_bptr(buffer), &ptr));
 
-        if(0 == PtrDiffBytesU32(ptr, buffer))
-            ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
+            if(0 == PtrDiffBytesU32(ptr, buffer))
+                ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
+#endif
+        }
+
+        quick_ublock_dispose(&quick_ublock);
+
+        exec_func_status_return(p_ss_data_res, status);
     }
 }
 

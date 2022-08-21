@@ -361,7 +361,7 @@ enum RPN_NUMBERS
     RPN_FNF_DATEVALUE   ,
     RPN_FNF_DAVG        ,
     RPN_FNF_DAY         ,
-    RPN_FNF_DAYNAME     ,
+    RPN_FNV_DAYNAME     ,
     RPN_FNV_DAYS_360    ,
     RPN_FNF_DCOUNT      ,
     RPN_FNF_DCOUNTA     ,
@@ -551,7 +551,7 @@ enum RPN_NUMBERS
     RPN_FN0_VERSION     ,
     RPN_FNV_VLOOKUP     ,
 
-    RPN_FNF_WEEKDAY     ,
+    RPN_FNV_WEEKDAY     ,
     RPN_FNF_WEEKNUMBER  ,
     RPN_FNF_WHILE       ,
 
@@ -685,6 +685,33 @@ enum RPN_NUMBERS
     RPN_FNF_EOMONTH, /* 2.01 */
 
     RPN_FNF_ODF_MOD, /* 2.20 */
+
+    RPN_FNF_BIN2DEC, /* 2.24 */
+    RPN_FNV_BIN2HEX, /* 2.24 */
+    RPN_FNV_BIN2OCT, /* 2.24 */
+    RPN_FNV_DEC2BIN, /* 2.24 */
+    RPN_FNV_DEC2HEX, /* 2.24 */
+    RPN_FNV_DEC2OCT, /* 2.24 */
+    RPN_FNV_HEX2BIN, /* 2.24 */
+    RPN_FNF_HEX2DEC, /* 2.24 */
+    RPN_FNV_HEX2OCT, /* 2.24 */
+    RPN_FNV_OCT2BIN, /* 2.24 */
+    RPN_FNF_OCT2DEC, /* 2.24 */
+    RPN_FNV_OCT2HEX, /* 2.24 */
+
+    RPN_FNF_BITAND, /* 2.24 */
+    RPN_FNF_BITLSHIFT, /* 2.24 */
+    RPN_FNF_BITOR, /* 2.24 */
+    RPN_FNF_BITRSHIFT, /* 2.24 */
+    RPN_FNF_BITXOR, /* 2.24 */
+
+    RPN_FNV_BASE, /* 2.24 */
+    RPN_FNF_DECIMAL, /* 2.24 */
+    RPN_FNV_GCD, /* 2.24 */
+    RPN_FNV_LCM, /* 2.24 */
+
+    RPN_FNF_ISOWEEKNUM, /* 2.24 */
+    RPN_FNF_DAYS, /* 2.24 */
 
 #endif /* end of any new functions */
 
