@@ -110,6 +110,7 @@ quick_tblock_extend_by(
         return((PTCH) (uintptr_t) 1);
 
     assert(extend_by < 0xF0000000U); /* real world use always +ve; check possible -ve client */
+    assert(extend_by < 0x80000000U); /* sanity for debug */
 
 #if 0
     if((S32) extend_by < 0)

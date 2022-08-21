@@ -106,6 +106,7 @@ quick_block_extend_by(
         return((P_BYTE) (uintptr_t) 1);
 
     assert(extend_by < 0xF0000000U); /* real world use always +ve; check possible -ve client */
+    assert(extend_by < 0x80000000U); /* sanity for debug */
 
 #if 0
     if((S32) extend_by < 0)
@@ -232,6 +233,7 @@ quick_block_bytes_add(
         P_BYTE p_byte;
 
         assert(n_bytes < 0xF0000000U); /* check possible -ve client */
+        assert(n_bytes < 0x80000000U); /* sanity for debug */
 
         if(NULL == (p_byte = quick_block_extend_by(p_quick_block, n_bytes, &status)))
             return(status);

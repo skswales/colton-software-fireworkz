@@ -12,10 +12,10 @@
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
 TEXTUAL_VERSION_NUMBER=2.24
-TEXTUAL_VERSION_NUMBER=2.24.01
+TEXTUAL_VERSION_NUMBER=2.24.02
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=22400
+STUBS_VERSION_NUMBER=22402
 # when changing version number for release, remember:
 #   common.gflags.h
 #   common.mf_mid

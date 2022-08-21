@@ -542,6 +542,7 @@ _al_array_alloc(
         return((P_BYTE) (uintptr_t) 1); /* handle allocated, but pointer unusable */
 
     assert(num_elements < 0xF0000000U); /* check possible -ve client */
+    assert(num_elements < 0x80000000U); /* sanity for debug */
 
     if(status_fail(*p_status = realloc_array(p_array_block, num_elements, &array_index /*filled*/)))
     {
@@ -1276,6 +1277,7 @@ _al_array_extend_by(
     *p_status = STATUS_OK;
 
     assert(add_elements < 0xF0000000U); /* check possible -ve client */
+    assert(add_elements < 0x80000000U); /* sanity for debug */
 
     /* NB. don't use realloc with 0 elements to allocate a handle without memory - use alloc. this realloc simply returns the current pointer, if any */
     if(0 == add_elements)

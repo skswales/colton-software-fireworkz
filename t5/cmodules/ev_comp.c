@@ -1078,11 +1078,11 @@ proc_custom_argument(
         }
 
         outidx += uchars_char_encode_off(name_out, EV_INTNAMLEN, outidx, ident_ch);
-        assert(outidx < EV_INTNAMLEN);
 
         used_in += bytes_of_char;
     }
 
+    assert(outidx < BUF_EV_INTNAMLEN);
     PtrPutByteOff(name_out, outidx, CH_NULL);
 
     ustr_IncBytes(ci, used_in);

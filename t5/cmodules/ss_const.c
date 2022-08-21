@@ -359,33 +359,52 @@ ss_data_set_error(
 /* this one rounds at the given significant place before floor-ing */
 
 _Check_return_
+static F64
+adjust_value_for_additional_rounding(
+    _InVal_     F64 f64)
+{
+    int exponent;
+    F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
+    const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
+    const int exponent_minus_mdmn = exponent - mantissa_digits_minus_n;
+
+    if(exponent >= 0) /* no need to do more for negative exponents here */
+    {
+        const F64 rounding_value = copysign(pow(2.0, exponent_minus_mdmn), mantissa);
+        const F64 adjusted_value = f64 + rounding_value;
+
+        /* adjusted result */
+        return(adjusted_value);
+    }
+
+    /* standard result */
+    return(f64);
+}
+
+_Check_return_
+static inline_when_fast_fp F64
+real_floor_try_additional_rounding(
+    _In_        F64 f64)
+{
+    return(floor(adjust_value_for_additional_rounding(f64)));
+}
+
+_Check_return_
 extern F64
 real_floor(
     _InVal_     F64 f64)
 {
-    F64 floor_value;
+    const F64 floor_value = floor(f64);
 
-    if(global_preferences.ss_calc_additional_rounding)
-    {
-        int exponent;
-        F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
-        const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
-        const int exponent_minus_mdmn = exponent - mantissa_digits_minus_n;
+    /* first do the cheap step to see if we're already at an integer (or ±inf) */
+    if(floor_value == f64)
+        return(f64);
 
-        if(exponent >= 0) /* no need to do more for negative exponents here */
-        {
-            const F64 rounding_value = copysign(pow(2.0, exponent_minus_mdmn), mantissa);
-            const F64 adjusted_value = f64 + rounding_value;
+    if(!global_preferences.ss_calc_additional_rounding)
+        return(floor_value); /* standard result */
 
-            /* adjusted result */
-            floor_value = floor(adjusted_value);
-            return(floor_value);
-        }
-    }
-
-    /* standard result */
-    floor_value = floor(f64);
-    return(floor_value);
+    /* if not already an integer, and allowed, then do the more expensive bit */
+    return(real_floor_try_additional_rounding(f64));
 }
 
 #else

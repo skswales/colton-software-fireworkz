@@ -996,6 +996,9 @@ numform(
             numform_section_extract_numeric(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_numeric, ustr_bptr(num_ustr_buf), sizeof32(num_ustr_buf));
         break;
 
+    case DATA_ID_LOGICAL:
+        /*break;*/
+
     case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
