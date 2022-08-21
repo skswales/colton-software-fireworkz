@@ -1,6 +1,6 @@
 | MakeRiscPkg.oby - Fireworkz-Examples
 
-Set t5$Release 20200611
+Set t5$Release 20210910
 | Remember to update RiscPkg.Control too
 
 Set t5$Disc $.Temp.Fire.FzExamples_<t5$Release>

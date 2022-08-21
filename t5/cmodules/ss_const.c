@@ -498,7 +498,7 @@ ss_data_real_to_integer_force(
         return(ss_data_get_data_id(p_ss_data)); /* no conversion */
     }
 
-    f64 = ss_data_get_real(p_ss_data);
+    ss_data_copy_real(&f64, p_ss_data);
 
     floor_value = real_floor(f64);
 
@@ -575,7 +575,7 @@ ss_data_real_to_integer_try(
         return(FALSE);
     }
 
-    f64 = ss_data_get_real(p_ss_data);
+    ss_data_copy_real(&f64, p_ss_data);
 
     /*if(!isfinite(f64))*/ /* test for NaN and infinity */ /* not needed */
     /*    return(FALSE);*/ /* unmodified */

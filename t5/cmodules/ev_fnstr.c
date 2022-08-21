@@ -1001,6 +1001,55 @@ PROC_EXEC_PROTO(c_value)
         {
 #if 0
             ev_recog_constant_using_autoformat(p_ss_data_res, ev_slr_docno(p_cur_slr), quick_ublock_ustr(&quick_ublock));
+#elif 1
+            PC_USTR ustr = quick_ublock_ustr(&quick_ublock);
+            SS_RECOG_CONTEXT ss_recog_context;
+
+            ss_recog_context_push(&ss_recog_context); /* recognise constants from cells as if typed by user with current UI settings */
+
+            { /* quick hack removing leading common currency symbols, thousands separators before a decimal point */
+            PC_USTR ustr_in = ustr;
+            P_USTR ustr_out = de_const_cast(P_USTR, ustr);
+            U8 ch = *ustr_in;
+            bool had_decimal_point = false;
+
+            for( ; CH_NULL != ch; ustr_IncByte(ustr_in))
+            {
+                ch = PtrGetByte(ustr_in);
+
+                switch(ch)
+                {
+                case UCH_POUND_SIGN:
+                case UCH_DOLLAR_SIGN:
+#if RISCOS || WINDOWS
+                case 0x80: /* UCH_EURO_CURRENCY_SIGN in both Acorn Extended Latin-1 and Windows-1252 */
+#endif
+                // case UCH_EURO_CURRENCY_SIGN:
+                    if(ustr_in == ustr)
+                        continue;
+                    break;
+
+                default:
+                    if(ss_recog_context.decimal_point_char == ch)
+                        had_decimal_point = true;
+
+                    if( (ss_recog_context.thousands_char == ch) && !had_decimal_point )
+                        continue;
+
+                    break;
+                }
+
+                PtrPutByte(ustr_out, ch); ustr_IncByte_wr(ustr_out);
+            }
+            } /*block */
+
+            if( !status_done(ss_recog_constant(p_ss_data_res, ustr)) ||
+                ss_data_is_string(p_ss_data_res) )
+            {
+                ss_data_set_blank(p_ss_data_res); /* don't leave half-recognised things lying around, or strings (numbers, dates, errors, arrays OK) */
+            }
+
+            ss_recog_context_pull(&ss_recog_context);
 #else
             PC_USTR ptr;
             PC_USTR buffer = quick_ublock_ustr(&quick_ublock);

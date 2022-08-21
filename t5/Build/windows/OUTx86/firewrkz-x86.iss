@@ -24,8 +24,8 @@ MinVersion=5.1sp3
 ; Require XP SP3
 ; AppVersion=2.xx.yy
 ; AppVerName=Colton Software Fireworkz 2.xx.yy
-AppVersion=2.30.02
-AppVerName=Colton Software Fireworkz 2.30.02
+AppVersion=2.31.00
+AppVerName=Colton Software Fireworkz 2.31.00
 AppCopyright=Copyright (C) 1992-2021 Colton Software
 AppId=Colton Fireworkz for Windows (32-bit)
 AppName=Colton Software Fireworkz for Windows (32-bit)

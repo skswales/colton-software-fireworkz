@@ -40,7 +40,7 @@
     <RootNamespace>firewrkz</RootNamespace>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <XPDeprecationWarning>false</XPDeprecationWarning>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'" Label="Configuration">
@@ -1646,6 +1646,7 @@
     <ClInclude Include="..\..\ob_chart\resource\resource.h" />
     <ClInclude Include="..\..\fl_csv\fl_csv.h" />
     <ClInclude Include="..\..\fs_csv\fs_csv.h" />
+    <ClInclude Include="resource_x_save.h" />
     <CustomBuild Include="..\..\ob_dlg\ri_lbox.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2072,7 +2073,16 @@
     <None Include="..\..\..\docs\UserGuide\content\ug\ug01_introduction.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug\ug02_fireworkz_basics.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="..\..\..\docs\UserGuide\content\ug\ug90_transferring_files_between_platforms.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug\ug98_glossary.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug\ug99_addenda.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\indexR.htm" />
@@ -2927,9 +2937,6 @@
     <None Include="..\..\..\docs\UserGuide\content\ug\ug11_printing.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug02\ug2_fireworkz_basics.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\ug\ug03_creating_new_documents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2949,12 +2956,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\ug\ug09_advanced_features.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug98_glossary.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\MakeRiscPkg,fd7" />
@@ -3165,6 +3166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="firewrkz.rc" />
+    <ResourceCompile Include="firewrkz_x_save.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\external\Unicode\UCD\CaseFolding.txt" />

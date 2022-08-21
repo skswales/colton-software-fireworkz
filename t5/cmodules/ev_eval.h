@@ -784,7 +784,11 @@ enum type_mask_bits
     EM_ANY      = (EM_REA | EM_SLR | EM_STR | EM_DAT | EM_ARY | EM_BLK | EM_ERR | EM_INT)
 };
 
-typedef S16 EV_TYPE; typedef EV_TYPE * P_EV_TYPE; typedef const EV_TYPE * PC_EV_TYPE;
+#if 1
+typedef U32 EV_TYPE; typedef EV_TYPE * P_EV_TYPE; typedef const EV_TYPE * PC_EV_TYPE; /* could be U16 but we don't build huge arrays of them or structures containing them so stop masking */
+#else
+typedef S16 EV_TYPE; typedef EV_TYPE * P_EV_TYPE; typedef const EV_TYPE * PC_EV_TYPE; /* 2.30 and earlier */
+#endif
 
 typedef struct EV_SPLIT_EXEC_DATA
 {

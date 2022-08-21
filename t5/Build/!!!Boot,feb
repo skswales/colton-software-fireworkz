@@ -27,13 +27,13 @@ If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
 | and not the svn:riscosfiletype property
 Set svn$filetypeext ""
 |
-Set FIREWORKZ_TBT fireworkz__2_30__branch
+Set FIREWORKZ_TBT fireworkz__2_31__branch
 |et FIREWORKZ_TBT trunk
 Set fireworkz_root <disc_root>.fireworkz.<FIREWORKZ_TBT>
 |
 URD <fireworkz_root>
 |Lib &.arm.Library
-Dir &.t5
+Dir &
 |
 | Fireworkz Pro can only be built if R-Comp components are present
 IfThere <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.

@@ -3,13 +3,17 @@
 /* Compound File Binary Format (COM / OLE 2 Structured Storage) structures & access functions */
 
 /*
-see
+see [MS-CFB]
+https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-cfb/53989ce4-7b05-4f8d-829b-d08d6148375b
+and the earlier
 http://download.microsoft.com/download/0/B/E/0BE8BDD7-E5E8-422A-ABFD-4342ED7AD886/WindowsCompoundBinaryFileFormatSpecification.pdf
 and
 http://sc.openoffice.org/compdocfileformat.pdf
 */
 
 typedef U32 CFBF_SECT;
+
+#define /*CFBF_SECT*/ CFBF_MAXREGSECT   0xFFFFFFFAU /* regular sector numbers in [0..MAXREGSECT] */
 
 /* Streams of a compound file are composed of
  * (zero-based sector_id) sector data blocks.
@@ -22,7 +26,10 @@ typedef U32 CFBF_SECT;
 
 typedef U32 CFBF_FSINDEX;
 
-typedef U32 CFBF_SID;
+typedef U32 CFBF_STREAM_ID;
+
+#define /*CFBF_STREAM_ID*/ CFBF_STREAM_ID_MAXREGSID 0xFFFFFFFAU /* regular stream IDs in [0..MAXREGSID] */
+#define /*CFBF_STREAM_ID*/ CFBF_STREAM_ID_NOSTREAM  0xFFFFFFFFU /* terminator or empty pointer */
 
 typedef struct CFBF_TIME_T
 {
@@ -36,6 +43,7 @@ CFBF_TIME_T; /* a Windows FILETIME */
 /*
 Each compound file always begins with this 512-byte header
 See WindowsCompoundBinaryFileFormatSpecification.pdf
+If >512 byte sector size is specified, the StructuredStorageHeader is followed by zero padding (_sectFat[] isn't extended)
 */
 
 typedef struct StructuredStorageHeader      /* [offset from start in bytes, length in bytes] */
@@ -71,7 +79,7 @@ typedef struct StructuredStorageHeader      /* [offset from start in bytes, leng
 }                                           /*[200H]*/ /*512d*/
 StructuredStorageHeader, * P_StructuredStorageHeader;
 
-/* NB sector_id zero follows immediately after compound file header (file offset 512) */
+/* NB sector_id zero follows immediately after sector containing compound file header (file offset 512 or 4096) */
 
 enum CFBF_STGTY
 {
@@ -94,9 +102,9 @@ typedef struct StructuredStorageDirectoryEntry  /* [offset from start in bytes, 
 #define CFBF_DECOLOR_RED        0 /* enum DECOLOR */
 #define CFBF_DECOLOR_BLACK      1
 
-    CFBF_SID _sidLeftSib;                       /*[044H,04]*/ /*68d*/ /* SID of the left-sibling of this entry in the directory tree */
-    CFBF_SID _sidRightSib;                      /*[048H,04]*/ /*72d*/ /* SID of the right-sibling of this entry in the directory tree */
-    CFBF_SID _sidChild;                         /*[04CH,04]*/ /*76d*/ /* SID of the child acting as the root of all the children of this element (if _mse=STGTY_STORAGE) */
+    CFBF_STREAM_ID _sidLeftSib;                 /*[044H,04]*/ /*68d*/ /* SID of the left-sibling of this entry in the directory tree */
+    CFBF_STREAM_ID _sidRightSib;                /*[048H,04]*/ /*72d*/ /* SID of the right-sibling of this entry in the directory tree */
+    CFBF_STREAM_ID _sidChild;                   /*[04CH,04]*/ /*76d*/ /* SID of the child acting as the root of all the children of this element (if _mse=STGTY_STORAGE) */
 
     BYTE _clsId[16]; /*GUID*/                   /*[050H,16]*/ /*80d..95d*/ /* CLSID of this storage (if _mse=STGTY_STORAGE) */
 
@@ -137,7 +145,9 @@ typedef struct COMPOUND_FILE_DECODED_DIRECTORY
 }
 COMPOUND_FILE_DECODED_DIRECTORY;
 
-#define COMPOUND_FILE_MAX_SECTOR_SIZE   4096
+#define COMPOUND_FILE_STANDARD_SECTOR_SIZE  512
+#define COMPOUND_FILE_LARGE_SECTOR_SIZE     4096
+#define COMPOUND_FILE_MAX_SECTOR_SIZE       4096
 
 typedef struct COMPOUND_FILE
 {
@@ -152,19 +162,19 @@ typedef struct COMPOUND_FILE
     U32 data_size;
     FILE_HANDLE file_handle;
 
-    U32 standard_sector_size; /* derived from file header _uSectorShift */
-    P_BYTE p_standard_sector_buffer; /* -> BYTE[standard_sector_size] for reading */
+    U32 sector_size; /* derived from file header _uSectorShift */
+    P_BYTE p_sector_buffer; /* -> BYTE[sector_size] for reading */
 
-    U32 ministream_sector_size; /* derived from file header _uMiniSectorShift */
-    CFBF_SECT ministream_chain_first_sector_id; /* derived from Root Entry */
+    U32 mini_stream_sector_size; /* derived from file header _uMiniSectorShift */
+    CFBF_SECT mini_stream_chain_first_sector_id; /* derived from Root Entry */
 
-    CFBF_SECT * full_MSAT; /* the full set of MSAT entries */
+    CFBF_SECT * full_DIFAT; /* the full set of DIFAT entries (with sector links removed) */
 
-    int current_SAT_block_list[COMPOUND_FILE_MAX_SECTOR_SIZE/sizeof32(int)]; /* pertains to current_SAT_block */
-    int current_SAT_block;
+    CFBF_SECT cached_FAT_block[COMPOUND_FILE_MAX_SECTOR_SIZE/sizeof32(CFBF_SECT)]; /* pertains to cached_FAT_sector_id */
+    CFBF_SECT cached_FAT_sector_id;
 
-    int current_SSAT_block_list[COMPOUND_FILE_MAX_SECTOR_SIZE/sizeof32(int)]; /* pertains to current_SSAT_block */
-    int current_SSAT_block;
+    CFBF_SECT cached_mini_stream_FAT_block[COMPOUND_FILE_MAX_SECTOR_SIZE/sizeof32(CFBF_SECT)]; /* pertains to cached_mini_stream_FAT_sector_id */
+    CFBF_SECT cached_mini_stream_FAT_sector_id;
 }
 COMPOUND_FILE, * P_COMPOUND_FILE, ** P_P_COMPOUND_FILE; /* no const as almost all calls modify */
 
@@ -195,7 +205,7 @@ compound_file_file_header_id_test(
 
 _Check_return_
 extern STATUS
-compound_file_read_file_sector(
+compound_file_read_sector(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
     _InVal_     CFBF_SECT sector_id,
     P_ANY dest,
@@ -203,22 +213,22 @@ compound_file_read_file_sector(
 
 _Check_return_
 extern STATUS
-compound_file_read_SSAT_sector(
+compound_file_read_mini_stream_sector(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int SSAT_sector_id,
+    _InVal_     CFBF_SECT mini_stream_sector_id,
     P_ANY dest);
 
 _Check_return_
-extern int /* zero-based sector_id or CFBF_ENDOFCHAIN */
+extern CFBF_SECT /* zero-based sector_id or CFBF_ENDOFCHAIN */
 compound_file_get_next_sector_id(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int sector_id);
+    _InVal_     CFBF_SECT sector_id);
 
 _Check_return_
-extern int /* zero-based sector_id or CFBF_ENDOFCHAIN */
-compound_file_get_next_SSAT_sector_id(
+extern CFBF_SECT /* zero-based sector_id or CFBF_ENDOFCHAIN */
+compound_file_get_next_mini_stream_sector_id(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int SSAT_sector_id);
+    _InVal_     CFBF_SECT mini_stream_sector_id);
 
 /*
 cfbfwrite.c

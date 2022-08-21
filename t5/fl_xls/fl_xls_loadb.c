@@ -84,10 +84,14 @@ typedef struct XLS_LOAD_INFO
     BOOL process_multiple_worksheets;
     U32 num_sst_strings;
 
+    /* BIFF-variable values */
+    U32 biff_version;
+    XLS_OPCODE biff_version_opcode_XF;
+
     /* BIFF2 */
     XF_INDEX biff2_xf_index;
 }
-XLS_LOAD_INFO, * P_XLS_LOAD_INFO;
+XLS_LOAD_INFO, * P_XLS_LOAD_INFO; typedef const XLS_LOAD_INFO * PC_XLS_LOAD_INFO;
 
 _Check_return_
 static XF_INDEX inline
@@ -122,9 +126,6 @@ xls_data_types
 
 #define XLS_DATA_TEXT   0
 #define XLS_DATA_SS     1
-
-static U32 biff_version = 0;
-static XLS_OPCODE biff_version_opcode_XF = 0;
 
 static BOOL g_data_allocated = FALSE;
 static ARRAY_HANDLE g_h_data = 0;
@@ -736,7 +737,6 @@ try_grokking_compound_file_for_xls(
     U32 directory_index;
     COMPOUND_FILE_DECODED_DIRECTORY * decoded_directory;
     U32 size = 0;
-    int sector_id;
     P_BYTE p_byte;
 
     *p_h_data = 0;
@@ -769,45 +769,45 @@ try_grokking_compound_file_for_xls(
         status = STATUS_OK; /* no Excel stream found in this compound file */
     }
     else
-    {
-        U32 rounded_up_size;
+    {   /* short streams are always stored in the mini stream */
+        const U32 sector_size = (size < p_compound_file->hdr._ulMiniSectorCutoff) ? p_compound_file->mini_stream_sector_size : p_compound_file->sector_size;
+        const U32 rounded_up_size = round_up(size, sector_size);
         U32 total_bytes_read = 0;
-
-        if(size < p_compound_file->hdr._ulMiniSectorCutoff)
-            rounded_up_size = round_up(size, p_compound_file->ministream_sector_size);
-        else
-            rounded_up_size = round_up(size, p_compound_file->standard_sector_size);
 
         trace_2(TRACE_MODULE_CFBF, TEXT("*** Excel allocating rounded_up_size=") U32_XTFMT TEXT(" for size=") U32_XTFMT, rounded_up_size, size);
 
         if(NULL != (p_byte = al_array_extend_by_BYTE(p_h_data, rounded_up_size, &array_init_block_u8, &status)))
         {
             if(size < p_compound_file->hdr._ulMiniSectorCutoff)
-            {   /* short sectors in the Ministream */
-                trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading Ministream chain starting at SSAT_sector_id=%d"), (int) decoded_directory->_sectStart);
+            {   /* short sectors in the mini stream */
+                CFBF_SECT mini_stream_sector_id;
 
-                for(sector_id = decoded_directory->_sectStart;
-                    sector_id >= 0;
-                    sector_id = compound_file_get_next_SSAT_sector_id(p_compound_file, sector_id))
+                trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading mini stream chain starting at mini_stream_sector_id=%d"), (int) decoded_directory->_sectStart);
+
+                for(mini_stream_sector_id = decoded_directory->_sectStart;
+                    mini_stream_sector_id <= CFBF_MAXREGSECT;
+                    mini_stream_sector_id = compound_file_get_next_mini_stream_sector_id(p_compound_file, mini_stream_sector_id))
                 {
-                    status_break(status = compound_file_read_SSAT_sector(p_compound_file, sector_id, p_byte));
+                    status_break(status = compound_file_read_mini_stream_sector(p_compound_file, mini_stream_sector_id, p_byte));
 
-                    p_byte += p_compound_file->ministream_sector_size;
+                    p_byte += p_compound_file->mini_stream_sector_size;
 
-                    total_bytes_read += p_compound_file->ministream_sector_size;
+                    total_bytes_read += p_compound_file->mini_stream_sector_size;
                 }
             }
             else
             {   /* standard sectors */
+                CFBF_SECT sector_id;
+
                 trace_1(TRACE_MODULE_CFBF, TEXT("*** Excel reading chain starting at sector_id=%d"), (int) decoded_directory->_sectStart);
 
                 for(sector_id = decoded_directory->_sectStart;
-                    sector_id >= 0;
+                    sector_id <= CFBF_MAXREGSECT;
                     sector_id = compound_file_get_next_sector_id(p_compound_file, sector_id))
                 {
                     U32 bytes_read;
                     
-                    status_break(status = compound_file_read_file_sector(p_compound_file, sector_id, p_byte, &bytes_read));
+                    status_break(status = compound_file_read_sector(p_compound_file, sector_id, p_byte, &bytes_read));
 
                     p_byte += bytes_read;
 
@@ -1058,17 +1058,18 @@ xls_read_cell_address_r2_c2(
 
 static void
 xls_read_cell_address_formula(
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _In_reads_bytes_c_(4) PC_BYTE p_byte,
     _OutRef_    P_U16 p_row,
     _OutRef_    P_U16 p_col)
 {
     *p_row = xls_read_U16_LE(p_byte);
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {
         *p_col = xls_read_U16_LE(p_byte + 2);
     }
-    else /* (biff_version < 8) */
+    else /* (p_xls_load_info->biff_version < 8) */
     {
         *p_col = p_byte[2];
     }
@@ -1076,6 +1077,7 @@ xls_read_cell_address_formula(
 
 static void
 xls_read_cell_range_formula(
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _In_reads_bytes_c_(8) PC_BYTE p_byte,
     _OutRef_    P_U16 p_row_s,
     _OutRef_    P_U16 p_row_e,
@@ -1085,12 +1087,12 @@ xls_read_cell_range_formula(
     *p_row_s = xls_read_U16_LE(p_byte);
     *p_row_e = xls_read_U16_LE(p_byte + 2);
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {
         *p_col_s = xls_read_U16_LE(p_byte + 4);
         *p_col_e = xls_read_U16_LE(p_byte + 6);
     }
-    else /* (biff_version < 8) */
+    else /* (p_xls_load_info->biff_version < 8) */
     {
         *p_col_s = p_byte[4];
         *p_col_e = p_byte[5];
@@ -1107,7 +1109,7 @@ _Check_return_
 _Ret_writes_(record_length)
 static inline PC_BYTE
 p_xls_record(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 opcode_offset,
     _InVal_     U32 record_length)
 {
@@ -1121,7 +1123,7 @@ p_xls_record(
 _Check_return_
 static inline XLS_OPCODE
 xls_read_record_header(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 opcode_offset,
     _OutRef_    P_U16 p_record_length)
 {
@@ -1137,7 +1139,7 @@ xls_read_record_header(
 _Check_return_
 static inline U16
 xls_read_record_length(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 opcode_offset)
 {
     PC_BYTE p_data;
@@ -1155,7 +1157,7 @@ xls_read_record_length(
 _Check_return_
 static U32 /* offset of opcode of record */
 xls_first_record(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 opcode_offset,
     _OutRef_    P_XLS_OPCODE p_opcode,
     _OutRef_    P_U16 p_record_length)
@@ -1193,7 +1195,7 @@ xls_first_record(
 _Check_return_
 static U32 /* offset of opcode of record */
 xls_next_record(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 this_opcode_offset,
     _OutRef_    P_XLS_OPCODE p_opcode,
     _InoutRef_  P_U16 p_record_length)
@@ -1234,7 +1236,7 @@ xls_next_record(
 _Check_return_
 static U32 /* offset of opcode of found record */
 xls_find_record_first(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 start_offset,
     _InVal_     XLS_OPCODE opcode_find,
     _OutRef_    P_U16 p_record_length)
@@ -1264,7 +1266,7 @@ xls_find_record_first(
 _Check_return_
 static U32 /* offset of opcode of found record */
 xls_find_record_next(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     U32 start_offset,
     _InVal_     XLS_OPCODE opcode_find,
     _InoutRef_  P_U16 p_record_length)
@@ -1324,13 +1326,13 @@ xls_find_record_index(
 _Check_return_
 static U32 /* offset of found record */
 xls_find_record_XF_INDEX(
-    P_XLS_LOAD_INFO p_xls_load_info,
+    _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
     _OutRef_    P_U16 p_record_length,
     _InVal_     XF_INDEX xf_index,
     _InVal_     XLS_OPCODE opcode_find)
 {
     U16 record_length = 0;
-    U32 opcode_offset = (biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
+    U32 opcode_offset = (p_xls_load_info->biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
     XF_INDEX xf_index_found = 0; /*based*/
 
     /* NB all XF records occur in a block - use cache */
@@ -1359,13 +1361,13 @@ xls_find_record_XF_INDEX(
 _Check_return_
 static U32 /* offset of found record */
 xls_find_record_FONT_INDEX(
-    P_XLS_LOAD_INFO p_xls_load_info,
+    _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
     _OutRef_    P_U16 p_record_length,
     _InVal_     FONT_INDEX font_index,
     _InVal_     XLS_OPCODE opcode_find)
 {
     U16 record_length = 0;
-    U32 opcode_offset = (biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
+    U32 opcode_offset = (p_xls_load_info->biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
     FONT_INDEX font_index_found = 0 /*based*/;
 
     /* NB all FONT records occur in a block - use cache */
@@ -1397,13 +1399,13 @@ xls_find_record_FONT_INDEX(
 _Check_return_
 static U32 /* offset of found record */
 xls_find_record_FORMAT_INDEX(
-    P_XLS_LOAD_INFO p_xls_load_info,
+    _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
     _OutRef_    P_U16 p_record_length,
     _InVal_     FORMAT_INDEX format_index,
     _InVal_     XLS_OPCODE opcode_find)
 {
     U16 record_length = 0;
-    U32 opcode_offset = (biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
+    U32 opcode_offset = (p_xls_load_info->biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
     FORMAT_INDEX format_index_found = 0; /*based*/
 
     /* NB all FORMAT records occur in a block - use cache */
@@ -1415,7 +1417,7 @@ xls_find_record_FORMAT_INDEX(
         XLS_NO_RECORD_FOUND != opcode_offset;
         opcode_offset = xls_find_record_next( p_xls_load_info, opcode_offset, opcode_find, &record_length))
     {
-        if(biff_version >= 5)
+        if(p_xls_load_info->biff_version >= 5)
         {   /* no longer stored as a sequentially indexed array - must search the FORMAT record itself for a match */
             PC_BYTE p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
             FORMAT_INDEX record_format_index = xls_read_U16_LE(p_x);
@@ -1452,7 +1454,7 @@ xls_find_record_FORMAT_INDEX(
 #define XF_USED_ATTRIB_FORMAT       0x04
 
 static void
-xls_slurp_xf_data_from_XF_INDEX(
+xls_slurp_xf_data_from_XF_INDEX_using(
     P_XLS_LOAD_INFO p_xls_load_info,
     _Out_writes_c_(20) P_BYTE p_xf_data, /* always as BIFF8 format data */ /*writes[20]*/
     _InVal_     XF_INDEX xf_index_find,
@@ -1477,25 +1479,25 @@ xls_slurp_xf_data_from_XF_INDEX(
         p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
 
         /* which attributes are valid in this record? */
-        if(biff_version >= 8)
+        if(p_xls_load_info->biff_version >= 8)
             xf_used_attrib = p_x[9];
-        else if(biff_version == 5)
+        else if(p_xls_load_info->biff_version == 5)
             xf_used_attrib = p_x[7];
-        else if(biff_version == 4)
+        else if(p_xls_load_info->biff_version == 4)
             xf_used_attrib = p_x[5];
-        else if(biff_version == 3)
+        else if(p_xls_load_info->biff_version == 3)
             xf_used_attrib = p_x[3];
-        else /* (biff_version == 2) */
+        else /* (p_xls_load_info->biff_version == 2) */
             xf_used_attrib = XF_USED_ATTRIB_FORMAT | XF_USED_ATTRIB_FONT | XF_USED_ATTRIB_PROTECTION;
 
         xf_used_attrib &= XF_USED_ATTRIB;
 
         /* XF_TYPE_PROT */
-        if(biff_version >= 5)
+        if(p_xls_load_info->biff_version >= 5)
             xf_type_protection = p_x[4] & 0x07;
-        else if(biff_version >= 3)
+        else if(p_xls_load_info->biff_version >= 3)
             xf_type_protection = p_x[2] & 0x07;
-        else /* (biff_version == 2) */
+        else /* (p_xls_load_info->biff_version == 2) */
             xf_type_protection = (p_x[2] >> 6) & 0x03;
 
         if(0 != (0x04 & xf_type_protection))
@@ -1508,11 +1510,11 @@ xls_slurp_xf_data_from_XF_INDEX(
         {
             FORMAT_INDEX format_index;
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
                 format_index = xls_read_U16_LE(p_x + 2);
-            else if(biff_version >= 3)
+            else if(p_xls_load_info->biff_version >= 3)
                 format_index = (FORMAT_INDEX) p_x[1];
-            else /* (biff_version == 2) */
+            else /* (p_xls_load_info->biff_version == 2) */
                 format_index = (FORMAT_INDEX) (p_x[2] & 0x3F);
 
             writeval_U16_LE(&p_xf_data[2], format_index);
@@ -1525,7 +1527,7 @@ xls_slurp_xf_data_from_XF_INDEX(
         {
             FONT_INDEX font_index;
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
                 font_index = xls_read_U16_LE(p_x);
             else /* BIFF4,BIFF3,BIFF2 */
                 font_index = (FONT_INDEX) p_x[0];
@@ -1541,30 +1543,30 @@ xls_slurp_xf_data_from_XF_INDEX(
             /* XF_HOR_ALIGN */
             BYTE xf_horizontal_alignment;
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
                 xf_horizontal_alignment = p_x[6] & 0x07;
-            else if(biff_version >= 3)
+            else if(p_xls_load_info->biff_version >= 3)
                 xf_horizontal_alignment = p_x[4] & 0x07;
-            else /* (biff_version == 2) */
+            else /* (p_xls_load_info->biff_version == 2) */
                 xf_horizontal_alignment = p_x[3] & 0x07;
 
             p_xf_data[6] = (p_xf_data[6] & ~0x07) | (xf_horizontal_alignment);
 
             /* XF_VERT_ALIGN */
-            if(biff_version >= 4)
+            if(p_xls_load_info->biff_version >= 4)
             {
                 BYTE xf_vertical_alignment;
 
-                if(biff_version >= 5)
+                if(p_xls_load_info->biff_version >= 5)
                     xf_vertical_alignment = (p_x[6] >> 4) & 0x07;
-                else /* (biff_version == 4) */
+                else /* (p_xls_load_info->biff_version == 4) */
                     xf_vertical_alignment = (p_x[4] >> 4) & 0x03;
 
                 p_xf_data[6] = (p_xf_data[6] & ~0x70) | (xf_vertical_alignment << 4);
             }
 
             /* XF_ROTATION */
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
                 p_xf_data[7] = p_x[7];
 
             p_xf_data[9] |= XF_USED_ATTRIB_ALIGNMENT;
@@ -1579,19 +1581,19 @@ xls_slurp_xf_data_from_XF_INDEX(
         if( (0 == (XF_USED_ATTRIB_BACKGROUND & p_xf_data[9]  )) &&
             (0 != (XF_USED_ATTRIB_BACKGROUND & xf_used_attrib)) )
         {
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 /* nothing in top bits */
                 writeval_U16_LE(&p_xf_data[18], readval_U16_LE(&p_x[18]));
 
                 p_xf_data[9] |= XF_USED_ATTRIB_BACKGROUND;
             }
-            else if(biff_version >= 3)
+            else if(p_xls_load_info->biff_version >= 3)
             {
                 BYTE pattern_colour;
                 BYTE pattern_background_colour;
 
-                if(biff_version == 5)
+                if(p_xls_load_info->biff_version == 5)
                 {
                     pattern_colour            =        ((                p_x[8]       ) & 0x007F); /* [6..0] */
                     pattern_background_colour = (BYTE) ((readval_U16_LE(&p_x[8]) >>  7) & 0x007F); /* [13..7] */
@@ -1626,13 +1628,13 @@ xls_slurp_xf_data_from_XF_INDEX(
         { /* get our parent style to fill in the blanks */
         XF_INDEX parent_xf_index;
 
-        if(biff_version >= 5)
+        if(p_xls_load_info->biff_version >= 5)
             parent_xf_index = xls_read_U16_LE(p_x + 4) >> 4;
-        else if(biff_version == 4)
+        else if(p_xls_load_info->biff_version == 4)
             parent_xf_index = xls_read_U16_LE(p_x + 2) >> 4;
-        else if(biff_version == 3)
+        else if(p_xls_load_info->biff_version == 3)
             parent_xf_index = xls_read_U16_LE(p_x + 4) >> 4;
-        else /* (biff_version == 2) */
+        else /* (p_xls_load_info->biff_version == 2) */
             return;
 
         if(0xFFF == parent_xf_index)
@@ -1647,6 +1649,15 @@ xls_slurp_xf_data_from_XF_INDEX(
         xf_index = parent_xf_index;
         } /*block*/
     }
+}
+
+static void
+xls_slurp_xf_data_from_XF_INDEX(
+    P_XLS_LOAD_INFO p_xls_load_info,
+    _Out_writes_c_(20) P_BYTE p_xf_data, /* always as BIFF8 format data */ /*writes[20]*/
+    _InVal_     XF_INDEX xf_index_find)
+{
+    xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, p_xf_data, xf_index_find, p_xls_load_info->biff_version_opcode_XF);
 }
 
 _Check_return_
@@ -1793,14 +1804,14 @@ xls_quick_ublock_xls_string_add(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     PC_BYTE xls_string,
     _In_        U32 n_chars,
-    _InVal_     SBCHAR_CODEPAGE sbchar_codepage,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InVal_     BOOL allow_il_unicode)
 {
     STATUS status;
     BYTE string_flags;
 
-    if(biff_version < 8)
-        return(xls_quick_ublock_sbchars_add(p_quick_ublock, (PC_SBCHARS) xls_string, n_chars, sbchar_codepage, allow_il_unicode));
+    if(p_xls_load_info->biff_version < 8)
+        return(xls_quick_ublock_sbchars_add(p_quick_ublock, (PC_SBCHARS) xls_string, n_chars, p_xls_load_info->sbchar_codepage, allow_il_unicode));
 
     string_flags = *xls_string++;
 
@@ -1816,7 +1827,7 @@ xls_quick_ublock_xls_string_add(
     }
     else
     {   /* 'Compressed' BYTE string (high bytes of WCHAR all zero) */
-        status = xls_quick_ublock_sbchars_add(p_quick_ublock, (PC_SBCHARS) xls_string, n_chars, sbchar_codepage, allow_il_unicode);
+        status = xls_quick_ublock_sbchars_add(p_quick_ublock, (PC_SBCHARS) xls_string, n_chars, p_xls_load_info->sbchar_codepage, allow_il_unicode);
     }
 
     UNREFERENCED_PARAMETER_InVal_(allow_il_unicode); /* on UNICODE builds this is ignored as no inlines are generated */
@@ -2044,12 +2055,12 @@ xls_read_first_BOF(
         return(create_error(XLS_ERR_BADFILE_BAD_BOF));
 
     /* generate a BIFF version from the binary in the BOF record */
-    case X_BOF_B2:    biff_version = 2; assert(record_length == 4); break;
-    case X_BOF_B3:    biff_version = 3; assert(record_length == 6); break;
+    case X_BOF_B2:    p_xls_load_info->biff_version = 2; assert(record_length == 4); break;
+    case X_BOF_B3:    p_xls_load_info->biff_version = 3; assert(record_length == 6); break;
 
     case X_BOF_B4:
         {
-        biff_version = 4;
+        p_xls_load_info->biff_version = 4;
 
         assert(record_length == 6);
 
@@ -2064,18 +2075,18 @@ xls_read_first_BOF(
 
         /*if(0 == opcode_offset)*/ /* see OpenOffice.org documentation regarding incorrect subsequent BOF records */
         {
-            assert(record_length == (biff_version == 8) ? 16 : 8);
+            assert(record_length == (p_xls_load_info->biff_version == 8) ? 16 : 8);
 
             switch(biff_version_code)
             {
                 case 0x0000:
                 case 0x0007:
-                case 0x0200:    biff_version = 2; break; /* see OpenOffice Excel File Format doc for BOF */
-                case 0x0300:    biff_version = 3; break;
-                case 0x0400:    biff_version = 4; break;
-                case 0x0500:    biff_version = 5; break; /* BIFF5/BIFF7 very similar */
+                case 0x0200:    p_xls_load_info->biff_version = 2; break; /* see OpenOffice Excel File Format doc for BOF */
+                case 0x0300:    p_xls_load_info->biff_version = 3; break;
+                case 0x0400:    p_xls_load_info->biff_version = 4; break;
+                case 0x0500:    p_xls_load_info->biff_version = 5; break; /* BIFF5/BIFF7 very similar */
                 default:
-                case 0x0600:    biff_version = 8; break;
+                case 0x0600:    p_xls_load_info->biff_version = 8; break;
             }
         }
 
@@ -2087,17 +2098,17 @@ xls_read_first_BOF(
     following_data_type = xls_read_U16_LE(p_x + 2);
 
     /* set the XF opcode to look for unless we get a deviant record */
-    if(biff_version >= 5)
-        biff_version_opcode_XF = X_XF_B5_B8;
-    else if(biff_version == 4)
-        biff_version_opcode_XF = X_XF_B4;
-    else if(biff_version == 3)
-        biff_version_opcode_XF = X_XF_B3;
-    else /* (biff_version == 2) */
-        biff_version_opcode_XF = X_XF_B2;
+    if(p_xls_load_info->biff_version >= 5)
+        p_xls_load_info->biff_version_opcode_XF = X_XF_B5_B8;
+    else if(p_xls_load_info->biff_version == 4)
+        p_xls_load_info->biff_version_opcode_XF = X_XF_B4;
+    else if(p_xls_load_info->biff_version == 3)
+        p_xls_load_info->biff_version_opcode_XF = X_XF_B3;
+    else /* (p_xls_load_info->biff_version == 2) */
+        p_xls_load_info->biff_version_opcode_XF = X_XF_B2;
 
-    trace_4(TRACE__XLS_LOADB, TEXT("*** Excel file BOF=") U32_XTFMT TEXT(" @ ") U32_XTFMT TEXT(", biff_version=") U32_TFMT TEXT(", FDT=") U32_XTFMT TEXT(" ***"),
-            (U32) opcode, opcode_offset, biff_version, (U32) following_data_type);
+    trace_4(TRACE__XLS_LOADB, TEXT("*** Excel file BOF=") U32_XTFMT TEXT(" @ ") U32_XTFMT TEXT(", FDT=") U32_XTFMT TEXT(", biff_version=") U32_TFMT TEXT(" ***"),
+            (U32) opcode, opcode_offset, (U32) following_data_type, p_xls_load_info->biff_version);
     return(STATUS_OK);
 }
 
@@ -2134,14 +2145,6 @@ xls_check_BOF_is_worksheet(
 
 /* Dump all the BIFF records */
 
-#if 0
-#define BIFF_VERSION_ASSERT(rhs) assert(biff_version rhs)
-#define BIFF_VERSION_ASSERT_BINOP(rhs1, op, rhs2) assert((biff_version rhs1) op (biff_version rhs2))
-#else
-#define BIFF_VERSION_ASSERT(rhs) /*EMPTY*/
-#define BIFF_VERSION_ASSERT_BINOP(rhs1, op, rhs2) /*EMPTY*/
-#endif
-
 #if TRACE_ALLOWED && 1
 
 static void
@@ -2162,10 +2165,10 @@ xls_dump_records(
         PC_BYTE p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
 
         PCTSTR opcode_name;
-        U32 maxbytes = (biff_version >= 8) ? 8224U : 2080U; /* MS Excel doc */
+        U32 maxbytes = (p_xls_load_info->biff_version >= 8) ? 8224U : 2080U; /* MS Excel doc */
         U32 minbytes = 0;
-        U32 minver = biff_version;
-        U32 maxver = biff_version;
+        U32 minver = p_xls_load_info->biff_version;
+        U32 maxver = p_xls_load_info->biff_version;
         BOOL suppress = FALSE;
         BOOL unhandled = TRUE;
         PCTSTR extra_text = NULL;
@@ -2191,38 +2194,33 @@ xls_dump_records(
 
         switch(opcode)
         {
-        case X_BOF_B2:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 4; break;
+        case X_BOF_B2:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 4; break;
         case X_EOF:                     opcode_name = TEXT("EOF"); unhandled = FALSE; minbytes = maxbytes = 0; break;
-        case X_BOF_B3:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 3); minbytes = maxbytes = 6; break;
-        case X_BOF_B4:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 4; BIFF_VERSION_ASSERT(== 4); minbytes = maxbytes = 6; break;
-        case X_BOF_B5_B8:               opcode_name = TEXT("BOF"); unhandled = FALSE; minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); if(biff_version >= 8) minbytes = maxbytes = 16; else minbytes = maxbytes = 8; break;
-        case X_SST_B8:                  opcode_name = TEXT("SST"); unhandled = FALSE; minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 8; break;
+        case X_BOF_B3:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 6; break;
+        case X_BOF_B4:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 4; minbytes = maxbytes = 6; break;
+        case X_BOF_B5_B8:               opcode_name = TEXT("BOF"); unhandled = FALSE; minver = 5; maxver = 8; minbytes = maxbytes = 8; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 16; break;
+        case X_SST_B8:                  opcode_name = TEXT("SST"); unhandled = FALSE; minver = maxver = 8; minbytes = 8; break;
         default:                        opcode_name = TEXT("UNHANDLED"); unhandled = TRUE; suppress = TRUE; minbytes = 0; break;
         }
 #else
         switch(opcode)
         {
-        case X_DIMENSIONS_B2:           opcode_name = TEXT("DIMENSIONS"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 8; break;
-        case X_BLANK_B2:                opcode_name = TEXT("BLANK"); suppress = TRUE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 7; break;
-        case X_INTEGER_B2:              opcode_name = TEXT("INTEGER"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 9; break;
-        case X_NUMBER_B2:               opcode_name = TEXT("NUMBER"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 15; break;
-        case X_LABEL_B2:                opcode_name = TEXT("LABEL"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = 7+1+1; maxbytes = 7+1+255; break;
-        case X_BOOLERR_B2:              opcode_name = TEXT("BOOLERR"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 9; break;
+        case X_DIMENSIONS_B2:           opcode_name = TEXT("DIMENSIONS"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 8; break;
+        case X_BLANK_B2:                opcode_name = TEXT("BLANK"); suppress = TRUE; minver = maxver = 2; minbytes = maxbytes = 7; break;
+        case X_INTEGER_B2:              opcode_name = TEXT("INTEGER"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 9; break;
+        case X_NUMBER_B2:               opcode_name = TEXT("NUMBER"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 15; break;
+        case X_LABEL_B2:                opcode_name = TEXT("LABEL"); unhandled = FALSE; minver = maxver = 2; minbytes = 7+1+1; maxbytes = 7+1+255; break;
+        case X_BOOLERR_B2:              opcode_name = TEXT("BOOLERR"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 9; break;
 
-        case X_FORMULA_B2_B5_B8:
-            unhandled = FALSE;
-            if(biff_version >= 5)
-            { opcode_name = TEXT("FORMULA"); minver = 5; maxver = 8; minbytes = 21; }
-            else
-            { opcode_name = TEXT("FORMULA"); minver = maxver = 2; minbytes = 17; }
-            BIFF_VERSION_ASSERT_BINOP(== 2, ||, >= 5);
+        case X_FORMULA_B2_B5_B8:        opcode_name = TEXT("FORMULA"); unhandled = FALSE; minver = maxver = 2; minbytes = 17;
+            if(p_xls_load_info->biff_version >= 5) { minver = 5; maxver = 8; minbytes = 21; }
             break;
 
-        case X_STRING_B2:               opcode_name = TEXT("STRING"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = 1+0; maxbytes = 1+255; break;
-        case X_ROW_B2:                  opcode_name = TEXT("ROW"); suppress = TRUE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = 13; maxbytes = 18; break;
-        case X_BOF_B2:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 4; break;
+        case X_STRING_B2:               opcode_name = TEXT("STRING"); minver = maxver = 2; minbytes = 1+0; maxbytes = 1+255; break;
+        case X_ROW_B2:                  opcode_name = TEXT("ROW"); suppress = TRUE; minver = maxver = 2; minbytes = 13; maxbytes = 18; break;
+        case X_BOF_B2:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 4; break;
         case X_EOF:                     opcode_name = TEXT("EOF"); unhandled = FALSE; minbytes = maxbytes = 0; break;
-        case X_INDEX_B2:                opcode_name = TEXT("INDEX"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = 12; break;
+        case X_INDEX_B2:                opcode_name = TEXT("INDEX"); minver = maxver = 2; minbytes = 12; break;
         case X_CALCCOUNT:               opcode_name = TEXT("CALCCOUNT"); minbytes = maxbytes = 2; break;
         case X_CALCMODE:                opcode_name = TEXT("CALCMODE"); minbytes = maxbytes = 2; break;
         case X_PRECISION:               opcode_name = TEXT("PRECISION"); minbytes = maxbytes = 2; break;
@@ -2234,16 +2232,11 @@ xls_dump_records(
         case X_PASSWORD:                opcode_name = TEXT("PASSWORD"); minbytes = maxbytes = 2; break;
         case X_HEADER:                  opcode_name = TEXT("HEADER"); minbytes = 0; break;
         case X_FOOTER:                  opcode_name = TEXT("FOOTER"); minbytes = 0; break;
-        case X_EXTERNCOUNT_B2_B7:       opcode_name = TEXT("EXTERNCOUNT"); minver = 2; maxver = 7; BIFF_VERSION_ASSERT(< 8); minbytes = maxbytes = 2; break;
-        case X_EXTERNSHEET:             opcode_name = TEXT("EXTERNSHEET"); unhandled = FALSE; if(biff_version >= 8) minbytes = 8; else minbytes = 0+1+1; break;
+        case X_EXTERNCOUNT_B2_B7:       opcode_name = TEXT("EXTERNCOUNT"); minver = 2; maxver = 7; minbytes = maxbytes = 2; break;
+        case X_EXTERNSHEET:             opcode_name = TEXT("EXTERNSHEET"); unhandled = FALSE; minbytes = 0+1+1; if(p_xls_load_info->biff_version >= 8) minbytes = 8; break;
 
-        case X_DEFINEDNAME_B2_B5_B8:
-            unhandled = FALSE;
-            if(biff_version >= 5)
-            { opcode_name = TEXT("DEFINEDNAME"); minver = 5; maxver = 8; if(biff_version >= 8) minbytes = 14+1+1+1+1; else minbytes = 14+1+1+1; }
-            else
-            { opcode_name = TEXT("DEFINEDNAME"); minver = maxver = 2; minbytes = 5+1+1+1; }
-            BIFF_VERSION_ASSERT_BINOP(== 2, ||, >= 5);
+        case X_DEFINEDNAME_B2_B5_B8:    opcode_name = TEXT("DEFINEDNAME"); unhandled = FALSE; minver = maxver = 2; minbytes = 5+1+1+1;
+            if(p_xls_load_info->biff_version >= 5) { minver = 5; maxver = 8; minbytes = 14+1+1+1; if(p_xls_load_info->biff_version >= 8) minbytes = 14+1+1+1+1; }
             break;
 
         case X_WINDOWPROTECT:           opcode_name = TEXT("WINDOWPROTECT"); minbytes = maxbytes = 2;  break;
@@ -2251,167 +2244,158 @@ xls_dump_records(
         case X_HORIZONTALPAGEBREAKS:    opcode_name = TEXT("HORIZONTALPAGEBREAKS"); minbytes = 2; break;
         case X_NOTE:                    opcode_name = TEXT("NOTE"); minbytes = 6+1; maxbytes = 6+2048; break;
         case X_SELECTION:               opcode_name = TEXT("SELECTION"); minbytes = 7; break;
-        case X_FORMAT_B2_B3:            opcode_name = TEXT("FORMAT"); unhandled = FALSE; minver = 2; maxver = 3; BIFF_VERSION_ASSERT_BINOP(== 2, ||, == 3); minbytes = 0+1+1; break;
-        case X_BUILTINFMTCOUNT_B2:      opcode_name = TEXT("BUILTINFMTCOUNT"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 2; break;
+        case X_FORMAT_B2_B3:            opcode_name = TEXT("FORMAT"); unhandled = FALSE; minver = 2; maxver = 3; minbytes = 0+1+1; break;
+        case X_BUILTINFMTCOUNT_B2:      opcode_name = TEXT("BUILTINFMTCOUNT"); minver = maxver = 2; minbytes = maxbytes = 2; break;
 
-        case X_COLUMNDEFAULT_B2:        opcode_name = TEXT("COLUMNDEFAULT"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = 9; break;
-        case X_ARRAY_B2:                opcode_name = TEXT("ARRAY"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = 8; break;
+        case X_COLUMNDEFAULT_B2:        opcode_name = TEXT("COLUMNDEFAULT"); minver = maxver = 2; minbytes = 9; break;
+        case X_ARRAY_B2:                opcode_name = TEXT("ARRAY"); minver = maxver = 2; minbytes = 8; break;
         case X_DATEMODE:                opcode_name = TEXT("DATEMODE"); minbytes = maxbytes = 2; break;
 
-        case X_EXTERNNAME_B2_B5_B8:
-            unhandled = FALSE;
-            if(biff_version >= 5)
-            { opcode_name = TEXT("EXTERNNAME"); minver = 5; maxver = 8; }
-            else
-            { opcode_name = TEXT("EXTERNNAME"); minver = maxver = 2; }
-            BIFF_VERSION_ASSERT_BINOP(== 2, ||, >= 5);
+        case X_EXTERNNAME_B2_B5_B8:     opcode_name = TEXT("EXTERNNAME"); unhandled = FALSE; minver = maxver = 2;
+            if(p_xls_load_info->biff_version >= 5) { minver = 5; maxver = 8; }
             break;
 
-        case X_COLWIDTH_B2:             opcode_name = TEXT("COLWIDTH"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 4; break;
-        case X_DEFAULTROWHEIGHT_B2:     opcode_name = TEXT("DEFAULTROWHEIGHT"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 2; break;
+        case X_COLWIDTH_B2:             opcode_name = TEXT("COLWIDTH"); minver = maxver = 2; minbytes = maxbytes = 4; break;
+        case X_DEFAULTROWHEIGHT_B2:     opcode_name = TEXT("DEFAULTROWHEIGHT"); minver = maxver = 2; minbytes = maxbytes = 2; break;
         case X_LEFTMARGIN:              opcode_name = TEXT("LEFTMARGIN"); minbytes = maxbytes = 8; break;
         case X_RIGHTMARGIN:             opcode_name = TEXT("RIGHTMARGIN"); minbytes = maxbytes = 8; break;
         case X_TOPMARGIN:               opcode_name = TEXT("TOPMARGIN"); minbytes = maxbytes = 8; break;
         case X_BOTTOMMARGIN:            opcode_name = TEXT("BOTTOMMARGIN"); minbytes = maxbytes = 8; break;
         case X_PRINTHEADERS:            opcode_name = TEXT("PRINTHEADERS"); minbytes = maxbytes = 2; break;
         case X_PRINTGRIDLINES:          opcode_name = TEXT("PRINTGRIDLINES"); minbytes = maxbytes = 2; break;
-        case X_FILEPASS:                opcode_name = TEXT("FILEPASS"); if(biff_version >= 8) minbytes = 6; else minbytes = 4; break;
+        case X_FILEPASS:                opcode_name = TEXT("FILEPASS"); minbytes = 4; if(p_xls_load_info->biff_version >= 8) minbytes = 6; break;
 
-        case X_FONT_B2_B5_B8:
-            if(biff_version >= 5)
-            { opcode_name = TEXT("FONT"); minver = 5; maxver = 8; if(biff_version >= 8) minbytes = 14+1+1+1; else minbytes = 14+1+1; }
-            else
-            { opcode_name = TEXT("FONT"); minver = maxver = 2; minbytes = 4+1+1; }
-            BIFF_VERSION_ASSERT_BINOP(== 2, || , >= 5);
+        case X_FONT_B2_B5_B8:           opcode_name = TEXT("FONT"); minver = maxver = 2; minbytes = 4+1+1;
+            if(p_xls_load_info->biff_version >= 5) { minver = 5; maxver = 8; minbytes = 14+1+1; if(p_xls_load_info->biff_version >= 8) minbytes = 14+1+1+1; }
             break;
 
-        case X_TABLEOP_B2:              opcode_name = TEXT("TABLEOP"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 12; break;
-        case X_TABLEOP2_B2:             opcode_name = TEXT("TABLEOP2"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 16; break;
-        case X_CONTINUE:                opcode_name = TEXT("CONTINUE"); minbytes = 0; if(biff_version >= 8) maxbytes = 8224; else maxbytes = 2080; break;
-        case X_WINDOW1:                 opcode_name = TEXT("WINDOW1"); if(biff_version >= 5) minbytes = maxbytes = 18; else  minbytes = maxbytes = 10; break;
-        case X_WINDOW2_B2:              opcode_name = TEXT("WINDOW2"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 14; break;
+        case X_TABLEOP_B2:              opcode_name = TEXT("TABLEOP"); minver = maxver = 2; minbytes = maxbytes = 12; break;
+        case X_TABLEOP2_B2:             opcode_name = TEXT("TABLEOP2"); minver = maxver = 2; minbytes = maxbytes = 16; break;
+        case X_CONTINUE:                opcode_name = TEXT("CONTINUE"); minbytes = 0; maxbytes = 2080; if(p_xls_load_info->biff_version >= 8) maxbytes = 8224; break;
+        case X_WINDOW1:                 opcode_name = TEXT("WINDOW1"); minbytes = maxbytes = 10; if(p_xls_load_info->biff_version >= 5) minbytes = maxbytes = 18; break;
+        case X_WINDOW2_B2:              opcode_name = TEXT("WINDOW2"); minver = maxver = 2; minbytes = maxbytes = 14; break;
 
         case X_BACKUP:                  opcode_name = TEXT("BACKUP"); minbytes = maxbytes = 2; break;
         case X_PANE:                    opcode_name = TEXT("PANE"); minbytes = maxbytes = 10; break;
         case X_CODEPAGE:                opcode_name = TEXT("CODEPAGE"); minbytes = maxbytes = 2; break;
-        case X_XF_B2:                   opcode_name = TEXT("XF"); unhandled = FALSE; minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 4; break;
-        case X_IXFE_B2:                 opcode_name = TEXT("IXFE"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 2; break;
-        case X_EFONT_B2:                opcode_name = TEXT("EFONT"); minver = maxver = 2; BIFF_VERSION_ASSERT(== 2); minbytes = maxbytes = 2; break;
+        case X_XF_B2:                   opcode_name = TEXT("XF"); unhandled = FALSE; minver = maxver = 2; minbytes = maxbytes = 4; break;
+        case X_IXFE_B2:                 opcode_name = TEXT("IXFE"); minver = maxver = 2; minbytes = maxbytes = 2; break;
+        case X_EFONT_B2:                opcode_name = TEXT("EFONT"); minver = maxver = 2; minbytes = maxbytes = 2; break;
         case X_PLS:                     opcode_name = TEXT("PLS"); suppress = TRUE; minbytes = 2; break;
 
         case X_DCONREF:                 opcode_name = TEXT("DCONREF"); minbytes = maxbytes = 8; break;
         case X_DEFCOLWIDTH:             opcode_name = TEXT("DEFCOLWIDTH"); minbytes = maxbytes = 2; break;
-        case X_BUILTINFMTCOUNT_B3_B4:   opcode_name = TEXT("BUILTINFMTCOUNT"); minver = 3; maxver = 4; BIFF_VERSION_ASSERT_BINOP(>= 3, &&, <= 4); minbytes = maxbytes = 2; break;
-        case X_XCT_B3_B8:               opcode_name = TEXT("XCT"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) minbytes = maxbytes = 4; else minbytes = maxbytes = 2; break;
-        case X_CRN_B3_B8:               opcode_name = TEXT("CRN"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = 5; break;
-        case X_FILESHARING_B3_B8:       opcode_name = TEXT("FILESHARING"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) minbytes = 4+2+1; else minbytes = 4+1; break;
-        case X_WRITEACCESS_B3_B8:       opcode_name = TEXT("WRITEACCESS"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) { minbytes = 2+1+109; } else { if(biff_version >= 5) { minbytes = 32/*seen in files, 54 from OOo doc*/; } else { minbytes = 32; } }break;
-        case X_UNCALCED_B3_B8:          opcode_name = TEXT("UNCALCED"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
-        case X_SAVERECALC_B3_B8:        opcode_name = TEXT("SAVERECALC"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
+        case X_BUILTINFMTCOUNT_B3_B4:   opcode_name = TEXT("BUILTINFMTCOUNT"); minver = 3; maxver = 4; minbytes = maxbytes = 2; break;
+        case X_XCT_B3_B8:               opcode_name = TEXT("XCT"); minver = 3; maxver = 8; minbytes = maxbytes = 2; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 4; break;
+        case X_CRN_B3_B8:               opcode_name = TEXT("CRN"); minver = 3; maxver = 8; minbytes = 5; break;
+        case X_FILESHARING_B3_B8:       opcode_name = TEXT("FILESHARING"); minver = 3; maxver = 8; minbytes = 4+1; if(p_xls_load_info->biff_version >= 8) minbytes = 4+2+1; break;
+        case X_WRITEACCESS_B3_B8:       opcode_name = TEXT("WRITEACCESS"); minver = 3; maxver = 8; minbytes = 32; if(p_xls_load_info->biff_version >= 5) minbytes = 32 /*seen in files, 54 from OOo doc*/; if(p_xls_load_info->biff_version >= 8) minbytes = 2+1+109; break;
+        case X_UNCALCED_B3_B8:          opcode_name = TEXT("UNCALCED"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_SAVERECALC_B3_B8:        opcode_name = TEXT("SAVERECALC"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
 
-        case X_OBJECTPROTECT_B3_B8:     opcode_name = TEXT("OBJECTPROTECT"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
+        case X_OBJECTPROTECT_B3_B8:     opcode_name = TEXT("OBJECTPROTECT"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
 
-        case X_COLINFO_B3_B8:           opcode_name = TEXT("COLINFO"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 12; break;
+        case X_COLINFO_B3_B8:           opcode_name = TEXT("COLINFO"); minver = 3; maxver = 8; minbytes = maxbytes = 12; break;
 
-        case X_GUTS_B3_B8:              opcode_name = TEXT("GUTS"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 8; break;
-        case X_WSBOOL_B3_B8:            opcode_name = TEXT("WSBOOL"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
-        case X_GRIDSET_B3_B8:           opcode_name = TEXT("GRIDSET"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
-        case X_HCENTER_B3_B8:           opcode_name = TEXT("HCENTER"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
-        case X_VCENTER_B3_B8:           opcode_name = TEXT("VCENTER"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
-        case X_BOUNDSHEET_B5_B8:        opcode_name = TEXT("BOUNDSHEET"); unhandled = FALSE; minver = 4; maxver = 8; BIFF_VERSION_ASSERT(>= 4); if(biff_version >= 8) { minbytes = 6+1+1+1; } else { if(biff_version >= 5) minbytes = 6+1+1; else minbytes = 1; } break;
-        case X_WRITEPROT_B3_B8:         opcode_name = TEXT("WRITEPROT"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 0; break;
-        case X_COUNTRY_B3_B8:           opcode_name = TEXT("COUNTRY"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 4; break;
-        case X_HIDEOBJ_B3_B8:           opcode_name = TEXT("HIDEOBJ"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 2; break;
-        case X_SHEETSOFFSET_B4:         opcode_name = TEXT("SHEETSOFFSET"); minver = maxver = 4; BIFF_VERSION_ASSERT(== 4); minbytes = maxbytes = 4; break;
-        case X_SHEETHDR_B4:             opcode_name = TEXT("SHEETHDR"); minver = maxver = 4; BIFF_VERSION_ASSERT(== 4); minbytes = 4+1+1; maxbytes = 4+1+255; break;
+        case X_GUTS_B3_B8:              opcode_name = TEXT("GUTS"); minver = 3; maxver = 8; minbytes = maxbytes = 8; break;
+        case X_WSBOOL_B3_B8:            opcode_name = TEXT("WSBOOL"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_GRIDSET_B3_B8:           opcode_name = TEXT("GRIDSET"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_HCENTER_B3_B8:           opcode_name = TEXT("HCENTER"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_VCENTER_B3_B8:           opcode_name = TEXT("VCENTER"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_BOUNDSHEET_B5_B8:        opcode_name = TEXT("BOUNDSHEET"); unhandled = FALSE; minver = 4; maxver = 8; minbytes = 1; if(p_xls_load_info->biff_version >= 5) minbytes = 6+1+1; if(p_xls_load_info->biff_version >= 8) minbytes = 6+1+1+1; break;
+        case X_WRITEPROT_B3_B8:         opcode_name = TEXT("WRITEPROT"); minver = 3; maxver = 8; minbytes = maxbytes = 0; break;
+        case X_COUNTRY_B3_B8:           opcode_name = TEXT("COUNTRY"); minver = 3; maxver = 8; minbytes = maxbytes = 4; break;
+        case X_HIDEOBJ_B3_B8:           opcode_name = TEXT("HIDEOBJ"); minver = 3; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_SHEETSOFFSET_B4:         opcode_name = TEXT("SHEETSOFFSET"); minver = maxver = 4; minbytes = maxbytes = 4; break;
+        case X_SHEETHDR_B4:             opcode_name = TEXT("SHEETHDR"); minver = maxver = 4; minbytes = 4+1+1; maxbytes = 4+1+255; break;
 
-        case X_SORT_B5_B8:              opcode_name = TEXT("SORT"); minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); if(biff_version >= 8) { minbytes = 5+1+1+1; } else { minbytes = 5+1+1; maxbytes = 5+3*255+1; } break;
-        case X_PALETTE_B3_B8:           opcode_name = TEXT("PALETTE"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = 2; break;
-        case X_STANDARDWIDTH_B4_B8:     opcode_name = TEXT("STANDARDWIDTH"); minver = 4; maxver = 8; BIFF_VERSION_ASSERT(>= 4); minbytes = maxbytes = 2; break;
+        case X_SORT_B5_B8:              opcode_name = TEXT("SORT"); minver = 5; maxver = 8; minbytes = 5+1+1; if(p_xls_load_info->biff_version >= 8) { minbytes = 5+1+1+1; } else { maxbytes = 5+3*255+1; } break;
+        case X_PALETTE_B3_B8:           opcode_name = TEXT("PALETTE"); minver = 3; maxver = 8; minbytes = 2; break;
+        case X_STANDARDWIDTH_B4_B8:     opcode_name = TEXT("STANDARDWIDTH"); minver = 4; maxver = 8; minbytes = maxbytes = 2; break;
         case X_FNGROUPCOUNT:            opcode_name = TEXT("FNGROUPCOUNT"); minbytes = maxbytes = 2; break;
 
-        case X_SCL_B4_B8:               opcode_name = TEXT("SCL"); minver = 4; maxver = 8; BIFF_VERSION_ASSERT(>= 4); minbytes = maxbytes = 4; break;
-        case X_PAGESETUP_B4_B8:         opcode_name = TEXT("PAGESETUP"); minver = 4; maxver = 8; BIFF_VERSION_ASSERT(>= 4); if(biff_version >= 5) minbytes = maxbytes = 34; else minbytes = 12; break; /* Excel sometimes gives the 34 byte version for BIFF4 */
-        case X_GCW_B4_B7:               opcode_name = TEXT("GCW"); minver = 4; maxver = 7; BIFF_VERSION_ASSERT_BINOP(>= 4, &&, <= 7); minbytes = maxbytes = 34; break;
+        case X_SCL_B4_B8:               opcode_name = TEXT("SCL"); minver = 4; maxver = 8; minbytes = maxbytes = 4; break;
+        case X_PAGESETUP_B4_B8:         opcode_name = TEXT("PAGESETUP"); minver = 4; maxver = 8; minbytes = 12; if(p_xls_load_info->biff_version >= 5) minbytes = maxbytes = 34; break; /* Excel sometimes gives the 34 byte version for BIFF4 */
+        case X_GCW_B4_B7:               opcode_name = TEXT("GCW"); minver = 4; maxver = 7; minbytes = maxbytes = 34; break;
 
-        case X_MULRK_B5_B8:             opcode_name = TEXT("MULRK"); unhandled = FALSE; minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = 6+1*6; maxbytes = 6+256*6; break;
-        case X_MULBLANK_B5_B8:          opcode_name = TEXT("MULBLANK"); suppress = TRUE; minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = 6+1*2; maxbytes = 6+256*2; break;
+        case X_MULRK_B5_B8:             opcode_name = TEXT("MULRK"); unhandled = FALSE; minver = 5; maxver = 8; minbytes = 6+1*6; maxbytes = 6+256*6; break;
+        case X_MULBLANK_B5_B8:          opcode_name = TEXT("MULBLANK"); suppress = TRUE; minver = 5; maxver = 8; minbytes = 6+1*2; maxbytes = 6+256*2; break;
 
         case X_MMS:                     opcode_name = TEXT("MMS"); minbytes = maxbytes = 2; break;
 
-        case X_RSTRING_B5_B7:           opcode_name = TEXT("RSTRING"); minver = 5; maxver = 8; BIFF_VERSION_ASSERT_BINOP(>= 5, &&, <= 8); if(biff_version >= 8) minbytes = 6+2+1+1+2; else minbytes = 6+2+1+1; break; /* NB 8 for clipboard */
-        case X_DBCELL_B5_B8:            opcode_name = TEXT("DBCELL"); minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = 6; break;
-        case X_BOOKBOOL_B5_B8:          opcode_name = TEXT("BOOKBOOL"); minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = maxbytes = 2; break;
-        case X_SCENPROTECT_B5_B8:       opcode_name = TEXT("SCENPROTECT"); minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = maxbytes = 2; break;break;
+        case X_RSTRING_B5_B7:           opcode_name = TEXT("RSTRING"); minver = 5; maxver = 8; minbytes = 6+2+1+1; if(p_xls_load_info->biff_version >= 8) minbytes = 6+2+1+1+2; break; /* NB 8 for clipboard */
+        case X_DBCELL_B5_B8:            opcode_name = TEXT("DBCELL"); minver = 5; maxver = 8; minbytes = 6; break;
+        case X_BOOKBOOL_B5_B8:          opcode_name = TEXT("BOOKBOOL"); minver = 5; maxver = 8; minbytes = maxbytes = 2; break;
+        case X_SCENPROTECT_B5_B8:       opcode_name = TEXT("SCENPROTECT"); minver = 5; maxver = 8; minbytes = maxbytes = 2; break;break;
 
-        case X_XF_B5_B8:                opcode_name = TEXT("XF"); unhandled = FALSE; minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); if(biff_version >= 8) minbytes = maxbytes = 20; else minbytes = maxbytes = 16; break;
-        case X_INTERFACEHDR:            opcode_name = TEXT("INTERFACEHDR"); if(biff_version >= 8) minbytes = maxbytes = 2; else minbytes = maxbytes = 0; break;
+        case X_XF_B5_B8:                opcode_name = TEXT("XF"); unhandled = FALSE; minver = 5; maxver = 8; minbytes = maxbytes = 16; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 20; break;
+        case X_INTERFACEHDR:            opcode_name = TEXT("INTERFACEHDR"); minbytes = maxbytes = 0; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 2; break;
         case X_INTERFACEEND:            opcode_name = TEXT("INTERFACEEND"); minbytes = maxbytes = 0; break;
-        case X_MERGEDCELLS_B8:          opcode_name = TEXT("MERGEDCELLS"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 0; maxbytes = 8224; break;
-        case X_BITMAP:                  opcode_name = TEXT("BITMAP"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 21; break;
+        case X_MERGEDCELLS_B8:          opcode_name = TEXT("MERGEDCELLS"); minver = maxver = 8; minbytes = 0; maxbytes = 8224; break;
+        case X_BITMAP:                  opcode_name = TEXT("BITMAP"); minver = maxver = 8; minbytes = 21; break;
         case X_MSODRAWINGGROUP:         opcode_name = TEXT("MSODRAWINGGROUP"); minbytes = 0; break;
         case X_MSODRAWING:              opcode_name = TEXT("MSODRAWING"); minbytes = 0; break;
         case X_MSODRAWINGSELECTION:     opcode_name = TEXT("MSODRAWINGSELECTION"); minbytes = 0; break;
-        case X_PHONETIC_B8:             opcode_name = TEXT("PHONETIC"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 4; break;
+        case X_PHONETIC_B8:             opcode_name = TEXT("PHONETIC"); minver = maxver = 8; minbytes = 4; break;
 
-        case X_SST_B8:                  opcode_name = TEXT("SST"); unhandled = FALSE; minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 8; break;
-        case X_LABELSST_B8:             opcode_name = TEXT("LABELSST"); unhandled = FALSE; minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = maxbytes = 10; break;
-        case X_EXTSST_B8:               opcode_name = TEXT("EXTSST"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 2; break;
+        case X_SST_B8:                  opcode_name = TEXT("SST"); unhandled = FALSE; minver = maxver = 8; minbytes = 8; break;
+        case X_LABELSST_B8:             opcode_name = TEXT("LABELSST"); unhandled = FALSE; minver = maxver = 8; minbytes = maxbytes = 10; break;
+        case X_EXTSST_B8:               opcode_name = TEXT("EXTSST"); minver = maxver = 8; minbytes = 2; break;
 
         case X_TABID:                   opcode_name = TEXT("TABID"); minbytes = 2; break;
 
-        case X_LABELRANGES:             opcode_name = TEXT("LABELRANGES"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 0; break;
+        case X_LABELRANGES:             opcode_name = TEXT("LABELRANGES"); minver = maxver = 8; minbytes = 0; break;
 
-        case X_USESELFS_B8:             opcode_name = TEXT("USESELFS"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = maxbytes = 2; break;
-        case X_DSF:                     opcode_name = TEXT("DSF B8"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 2; break;
+        case X_USESELFS_B8:             opcode_name = TEXT("USESELFS"); minver = maxver = 8; minbytes = maxbytes = 2; break;
+        case X_DSF:                     opcode_name = TEXT("DSF B8"); minver = maxver = 8; minbytes = 2; break;
 
-        case X_SUPBOOK_B8:              opcode_name = TEXT("SUPBOOK"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 4; break;
+        case X_SUPBOOK_B8:              opcode_name = TEXT("SUPBOOK"); minver = maxver = 8; minbytes = 4; break;
         case X_PROT4REV:                opcode_name = TEXT("PROT4REV"); minbytes = maxbytes = 2; break;
 
-        case X_CONDFMT:                 opcode_name = TEXT("CONDFMT"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 10; break;
-        case X_CF:                      opcode_name = TEXT("CF B8"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 12; break;
-        case X_DVAL:                    opcode_name = TEXT("DVAL"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 18; break;
+        case X_CONDFMT:                 opcode_name = TEXT("CONDFMT"); minver = maxver = 8; minbytes = 10; break;
+        case X_CF:                      opcode_name = TEXT("CF B8"); minver = maxver = 8; minbytes = 12; break;
+        case X_DVAL:                    opcode_name = TEXT("DVAL"); minver = maxver = 8; minbytes = 18; break;
         case X_REFRESHALL:              opcode_name = TEXT("REFRESHALL"); minbytes = maxbytes = 2; break;
-        case X_HLINK:                   opcode_name = TEXT("HLINK"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 32; break;
+        case X_HLINK:                   opcode_name = TEXT("HLINK"); minver = maxver = 8; minbytes = 32; break;
         case X_PROT4REVPASS:            opcode_name = TEXT("PROT4REVPASS"); minbytes = maxbytes = 2; break;
-        case X_DV:                      opcode_name = TEXT("DV"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 12; break;
+        case X_DV:                      opcode_name = TEXT("DV"); minver = maxver = 8; minbytes = 12; break;
 
         case X_EXCEL9FILE:              opcode_name = TEXT("EXCEL9FILE"); minbytes = maxbytes = 0; break;
         case X_RECALCID:                opcode_name = TEXT("RECALCID"); minbytes = maxbytes = 8; break;
 
-        case X_DIMENSIONS_B3_B8:        opcode_name = TEXT("DIMENSIONS"); unhandled = FALSE; minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) { minbytes = maxbytes = 14; } else { minbytes = maxbytes = 10; } break;
-        case X_BLANK_B3_B8:             opcode_name = TEXT("BLANK"); suppress = TRUE; minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 6; break;
-        case X_NUMBER_B3_B8:            opcode_name = TEXT("NUMBER"); unhandled = FALSE; minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 14; break;
-        case X_LABEL_B3_B8:             opcode_name = TEXT("LABEL"); unhandled = FALSE; minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) minbytes = 6+2+1+1; else minbytes = 6+2+1; break;
-        case X_BOOLERR_B3_B8:           opcode_name = TEXT("BOOLERR"); unhandled = FALSE; minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 8; break;
-        case X_FORMULA_B3:              opcode_name = TEXT("FORMULA"); unhandled = FALSE; minver = 3; maxver = 3; BIFF_VERSION_ASSERT(>= 3); minbytes = 17; break;
-        case X_STRING_B3_B8:            opcode_name = TEXT("STRING"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) minbytes = 2+1+1; else minbytes = 2+0; break;
-        case X_ROW_B3_B8:               opcode_name = TEXT("ROW"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 16; break;
-        case X_BOF_B3:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 3; BIFF_VERSION_ASSERT(== 3); minbytes = maxbytes = 6; break;
-        case X_INDEX_B3_B8:             opcode_name = TEXT("INDEX"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) minbytes = 16; else minbytes = 12; break;
-        case X_DEFINEDNAME_B3_B4:       opcode_name = TEXT("DEFINEDNAME"); unhandled = FALSE; minver = 3; maxver = 4; BIFF_VERSION_ASSERT_BINOP(>= 3, &&, <= 4); minbytes = 6+1+1; break;
-        case X_ARRAY_B3_B8:             opcode_name = TEXT("ARRAY"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 5) minbytes = 13; else minbytes = 9; break;
-        case X_EXTERNNAME_B3_B4:        opcode_name = TEXT("EXTERNNAME"); unhandled = FALSE; minver = 3; maxver = 4; BIFF_VERSION_ASSERT_BINOP(>= 3, &&, <= 4); break;
-        case X_DEFAULTROWHEIGHT_B3_B8:  opcode_name = TEXT("DEFAULTROWHEIGHT"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 4; break;
-        case X_FONT_B3_B4:              opcode_name = TEXT("FONT"); minver = 3; maxver = 4; BIFF_VERSION_ASSERT_BINOP(>= 3, &&, <= 4); minbytes = 6+1+1; break;
-        case X_TABLEOP_B3_B8:           opcode_name = TEXT("TABLEOP"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 16; break;
-        case X_WINDOW2_B3_B8:           opcode_name = TEXT("WINDOW2"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); if(biff_version >= 8) minbytes = maxbytes = 18; else minbytes = maxbytes = 10; break;
-        case X_XF_B3:                   opcode_name = TEXT("XF"); unhandled = FALSE; minver = maxver = 3; BIFF_VERSION_ASSERT(== 3); minbytes = maxbytes = 12; break;
-        case X_RK_B3_B8:                opcode_name = TEXT("RK"); unhandled = FALSE; minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = maxbytes = 10; break;
-        case X_STYLE_B3_B8:             opcode_name = TEXT("STYLE"); minver = 3; maxver = 8; BIFF_VERSION_ASSERT(>= 3); minbytes = 2+1+1; if(biff_version < 8) maxbytes = 2+1+255; break;
+        case X_DIMENSIONS_B3_B8:        opcode_name = TEXT("DIMENSIONS"); unhandled = FALSE; minver = 3; maxver = 8; minbytes = maxbytes = 10; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 14; break;
+        case X_BLANK_B3_B8:             opcode_name = TEXT("BLANK"); suppress = TRUE; minver = 3; maxver = 8; minbytes = maxbytes = 6; break;
+        case X_NUMBER_B3_B8:            opcode_name = TEXT("NUMBER"); unhandled = FALSE; minver = 3; maxver = 8; minbytes = maxbytes = 14; break;
+        case X_LABEL_B3_B8:             opcode_name = TEXT("LABEL"); unhandled = FALSE; minver = 3; maxver = 8; minbytes = 6+2+1; if(p_xls_load_info->biff_version >= 8) minbytes = 6+2+1+1; break;
+        case X_BOOLERR_B3_B8:           opcode_name = TEXT("BOOLERR"); unhandled = FALSE; minver = 3; maxver = 8; minbytes = maxbytes = 8; break;
+        case X_FORMULA_B3:              opcode_name = TEXT("FORMULA"); unhandled = FALSE; minver = 3; maxver = 3; minbytes = 17; break;
+        case X_STRING_B3_B8:            opcode_name = TEXT("STRING"); minver = 3; maxver = 8; minbytes = 2+0; if(p_xls_load_info->biff_version >= 8) minbytes = 2+1+1; break;
+        case X_ROW_B3_B8:               opcode_name = TEXT("ROW"); minver = 3; maxver = 8; minbytes = maxbytes = 16; break;
+        case X_BOF_B3:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 3; minbytes = maxbytes = 6; break;
+        case X_INDEX_B3_B8:             opcode_name = TEXT("INDEX"); minver = 3; maxver = 8; minbytes = 12; if(p_xls_load_info->biff_version >= 8) minbytes = 16; break;
+        case X_DEFINEDNAME_B3_B4:       opcode_name = TEXT("DEFINEDNAME"); unhandled = FALSE; minver = 3; maxver = 4; minbytes = 6+1+1; break;
+        case X_ARRAY_B3_B8:             opcode_name = TEXT("ARRAY"); minver = 3; maxver = 8; minbytes = 9; if(p_xls_load_info->biff_version >= 5) minbytes = 13; break;
+        case X_EXTERNNAME_B3_B4:        opcode_name = TEXT("EXTERNNAME"); unhandled = FALSE; minver = 3; maxver = 4; break;
+        case X_DEFAULTROWHEIGHT_B3_B8:  opcode_name = TEXT("DEFAULTROWHEIGHT"); minver = 3; maxver = 8; minbytes = maxbytes = 4; break;
+        case X_FONT_B3_B4:              opcode_name = TEXT("FONT"); minver = 3; maxver = 4; minbytes = 6+1+1; break;
+        case X_TABLEOP_B3_B8:           opcode_name = TEXT("TABLEOP"); minver = 3; maxver = 8; minbytes = maxbytes = 16; break;
+        case X_WINDOW2_B3_B8:           opcode_name = TEXT("WINDOW2"); minver = 3; maxver = 8; minbytes = maxbytes = 10; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 18; break;
+        case X_XF_B3:                   opcode_name = TEXT("XF"); unhandled = FALSE; minver = maxver = 3; minbytes = maxbytes = 12; break;
+        case X_RK_B3_B8:                opcode_name = TEXT("RK"); unhandled = FALSE; minver = 3; maxver = 8; minbytes = maxbytes = 10; break;
+        case X_STYLE_B3_B8:             opcode_name = TEXT("STYLE"); minver = 3; maxver = 8; minbytes = 2+1+1; if(p_xls_load_info->biff_version < 8) maxbytes = 2+1+255; break;
 
-        case X_FORMULA_B4:              opcode_name = TEXT("FORMULA"); unhandled = FALSE; minver = maxver = 4; BIFF_VERSION_ASSERT(== 4); minbytes = 17; break;
-        case X_BOF_B4:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 4; BIFF_VERSION_ASSERT(== 4); minbytes = maxbytes = 6; break;
-        case X_FORMAT_B4_B8:            opcode_name = TEXT("FORMAT"); unhandled = FALSE; minver = 4; maxver = 8; BIFF_VERSION_ASSERT(>= 4); if(biff_version >= 8) minbytes = 2+2+1+1; else minbytes = 2+1+1; break;
-        case X_XF_B4:                   opcode_name = TEXT("XF"); unhandled = FALSE; minver = maxver = 4; BIFF_VERSION_ASSERT(== 4); minbytes = maxbytes = 12; break;
-        case X_SHRFMLA_B5_B8:           opcode_name = TEXT("SHRFMLA"); unhandled = FALSE; minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = 8+1; break;
+        case X_FORMULA_B4:              opcode_name = TEXT("FORMULA"); unhandled = FALSE; minver = maxver = 4; minbytes = 17; break;
+        case X_BOF_B4:                  opcode_name = TEXT("BOF"); unhandled = FALSE; minver = maxver = 4; minbytes = maxbytes = 6; break;
+        case X_FORMAT_B4_B8:            opcode_name = TEXT("FORMAT"); unhandled = FALSE; minver = 4; maxver = 8; minbytes = 2+1+1; if(p_xls_load_info->biff_version >= 8) minbytes = 2+2+1+1; break;
+        case X_XF_B4:                   opcode_name = TEXT("XF"); unhandled = FALSE; minver = maxver = 4; minbytes = maxbytes = 12; break;
+        case X_SHRFMLA_B5_B8:           opcode_name = TEXT("SHRFMLA"); unhandled = FALSE; minver = 5; maxver = 8; minbytes = 8+1; break;
 
-        case X_QUICKTIP_B8:             opcode_name = TEXT("QUICKTIP"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = 10+2; break;
-        case X_BOF_B5_B8:               opcode_name = TEXT("BOF"); unhandled = FALSE; minver = 5; maxver = 8; BIFF_VERSION_ASSERT(>= 5); if(biff_version >= 8) minbytes = maxbytes = 16; else minbytes = maxbytes = 8; break;
-        case X_SHEETLAYOUT_B8:          opcode_name = TEXT("SHEETLAYOUT"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 5); minbytes = maxbytes = 20; break;
+        case X_QUICKTIP_B8:             opcode_name = TEXT("QUICKTIP"); minver = maxver = 8; minbytes = 10+2; break;
+        case X_BOF_B5_B8:               opcode_name = TEXT("BOF"); unhandled = FALSE; minver = 5; maxver = 8; minbytes = maxbytes = 8; if(p_xls_load_info->biff_version >= 8) minbytes = maxbytes = 16; break;
+        case X_SHEETLAYOUT_B8:          opcode_name = TEXT("SHEETLAYOUT"); minver = maxver = 8; minbytes = maxbytes = 20; break;
         case X_BOOKEXT:                 opcode_name = TEXT("BOOKEXT"); minbytes = 20; maxbytes = 22; break;
-        case X_SHEETPROTECTION_B8:      opcode_name = TEXT("SHEETPROTECTION"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); minbytes = maxbytes = 23; break;
-        case X_RANGEPROTECTION:         opcode_name = TEXT("RANGEPROTECTION"); minver = maxver = 8; BIFF_VERSION_ASSERT(>= 8); /*minbytes???*/ break;
+        case X_SHEETPROTECTION_B8:      opcode_name = TEXT("SHEETPROTECTION"); minver = maxver = 8; minbytes = maxbytes = 23; break;
+        case X_RANGEPROTECTION:         opcode_name = TEXT("RANGEPROTECTION"); minver = maxver = 8; /*minbytes???*/ break;
         case X_XFCRC:                   opcode_name = TEXT("XFCRC"); minbytes = maxbytes = 20; break;
         case X_XFEXT:                   opcode_name = TEXT("XFEXT"); minbytes = 20; break;
         case X_PLV12:                   opcode_name = TEXT("PLV12"); minbytes = maxbytes = 16; break;
@@ -2456,7 +2440,7 @@ xls_dump_records(
             XF_INDEX xf_index;
             UCHARZ col_ustr_buf[16];
             xls_read_cell_address_r2_c2(p_x, &row, &col);
-            if(biff_version == 2)
+            if(p_xls_load_info->biff_version == 2)
                 xf_index = xls_obtain_xf_index_B2(p_xls_load_info, p_x + 4); /* cell attributes */
             else
                 xf_index = xls_read_U16_LE(p_x + 4); /* XF index */
@@ -2521,7 +2505,7 @@ xls_dump_records(
 
         case X_EXTERNSHEET:
             {
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 U32 nm = xls_read_U16_LE(p_x);
                 PC_BYTE p_ref = p_x + 2;
@@ -2574,17 +2558,17 @@ xls_dump_records(
             }
             else /* (X_DEFINEDNAME_B2_B5_B8 == opcode) */
             {
-                if(biff_version >= 5)
+                if(p_xls_load_info->biff_version >= 5)
                 {
                     p_name = p_x + 14;
                 }
-                else /* (biff_version == 2) */
+                else /* (p_xls_load_info->biff_version == 2) */
                 {
                     p_name = p_x + 5;
                 }
             }
 
-            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
             ustr_xstrnkpy(ustr_bptr(extra_data), elemof32(extra_data), quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock));
 
@@ -2599,18 +2583,18 @@ xls_dump_records(
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
             quick_ublock_with_buffer_setup(quick_ublock);
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
             {
                 name_len = PtrGetByteOff(p_x, 6); /* chars */
                 p_name = p_x + 7;
             }
-            else /* (biff_version == 2) */
+            else /* (p_xls_load_info->biff_version == 2) */
             {
                 name_len = PtrGetByteOff(p_x, 0);
                 p_name = p_x + 1;
             }
 
-            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
             ustr_xstrnkpy(ustr_bptr(extra_data), elemof32(extra_data), quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock));
 
@@ -2623,14 +2607,14 @@ xls_dump_records(
             {
             XLS_COL s_col, e_col;
             XLS_ROW s_row, e_row;
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 s_row = (XLS_ROW) xls_read_U32_LE(p_x);
                 e_row = (XLS_ROW) xls_read_U32_LE(p_x + 4);
                 s_col = (XLS_COL) xls_read_U16_LE(p_x + 8);
                 e_col = (XLS_COL) xls_read_U16_LE(p_x + 10);
             }
-            else /* (biff_version < 8) */
+            else /* (p_xls_load_info->biff_version < 8) */
             {
                 s_row = (XLS_ROW) xls_read_U16_LE(p_x);
                 e_row = (XLS_ROW) xls_read_U16_LE(p_x + 2);
@@ -2649,18 +2633,18 @@ xls_dump_records(
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
             quick_ublock_with_buffer_setup(quick_ublock);
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
             {
                 name_len = p_x[6];
                 p_name = p_x + 7;
             }
-            else /* (biff_version == 4) */ /* Seen in BIFF4W created by Excel */
+            else /* (p_xls_load_info->biff_version == 4) */ /* Seen in BIFF4W created by Excel */
             {
                 name_len = p_x[0];
                 p_name = p_x + 1;
             }
 
-            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
             ustr_xstrnkpy(ustr_bptr(extra_data), elemof32(extra_data), quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock));
 
@@ -2701,17 +2685,17 @@ xls_dump_records(
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
             quick_ublock_with_buffer_setup(quick_ublock);
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
             {
                 font_len = p_x[14];
                 p_font = p_x + 15;
             }
-            else if(biff_version >= 3)
+            else if(p_xls_load_info->biff_version >= 3)
             {
                 font_len = p_x[6];
                 p_font = p_x + 7;
             }
-            else /* (biff_version < 3) */
+            else /* (p_xls_load_info->biff_version < 3) */
             {
                 font_len = p_x[4];
                 p_font = p_x + 5;
@@ -2721,7 +2705,7 @@ xls_dump_records(
                                        USTR_TEXT("[" U32_FMT "] "),
                                        (U32) (this_record_idx >= 4) ? (this_record_idx + 1) : this_record_idx));
 
-            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_font, font_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_font, font_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
             status_assert(quick_ublock_printf(&quick_ublock,
                                               USTR_TEXT(", height=" F64_FMT ", option=" U32_XFMT ", colour=" U32_FMT),
@@ -2750,7 +2734,7 @@ xls_dump_records(
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
             quick_ublock_with_buffer_setup(quick_ublock);
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
             {
                 consume_int(ustr_xsnprintf(ustr_bptr(extra_data), elemof32(extra_data),
                                            USTR_TEXT("[" U32_FMT "] "),
@@ -2763,23 +2747,23 @@ xls_dump_records(
                                            (U32) this_record_idx));
             }
 
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 format_len = xls_read_U16_LE(p_x + 2);
                 p_format = p_x + 4;
             }
-            else if(biff_version >= 4)
+            else if(p_xls_load_info->biff_version >= 4)
             {
                 format_len = p_x[2];
                 p_format = p_x + 3;
             }
-            else /* (biff_version < 4) */
+            else /* (p_xls_load_info->biff_version < 4) */
             {
                 format_len = p_x[0];
                 p_format = p_x + 1;
             }
 
-            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_format, format_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_format, format_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
             ustr_xstrnkat(ustr_bptr(extra_data), elemof32(extra_data), quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock));
 
@@ -2817,24 +2801,24 @@ xls_dump_records(
             XF_INDEX parent_xf_index;
             U8 xf_attrib; /* which attributes are valid in this record? */
 
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
             {
                 font_index      = xls_read_U16_LE(p_x);
                 format_index    = xls_read_U16_LE(p_x + 2);
                 parent_xf_index = xls_read_U16_LE(p_x + 4) >> 4;
-                if(biff_version >= 8)
+                if(p_xls_load_info->biff_version >= 8)
                     xf_attrib = p_x[9];
-                else /*if(biff_version == 5)*/
+                else /*if(p_xls_load_info->biff_version == 5)*/
                     xf_attrib = p_x[7];
             }
-            else if(biff_version == 4)
+            else if(p_xls_load_info->biff_version == 4)
             {
                 font_index      = (FONT_INDEX) p_x[0];
                 format_index    = (FORMAT_INDEX) p_x[1];
                 parent_xf_index = xls_read_U16_LE(p_x + 2) >> 4;
                 xf_attrib = p_x[5];
             }
-            else /* (biff_version == 3) */
+            else /* (p_xls_load_info->biff_version == 3) */
             {
                 font_index      = (FONT_INDEX) p_x[0];
                 format_index    = (FORMAT_INDEX) p_x[1];
@@ -2860,18 +2844,18 @@ xls_dump_records(
 
             if(0 == (0x8000 & xf_index))
             {
-                if(biff_version >= 8)
+                if(p_xls_load_info->biff_version >= 8)
                 {
                     name_len = xls_read_U16_LE(p_x + 2); /* chars */
                     p_name = p_x + 4;
                 }
-                else /* (biff_version >= 3) */
+                else /* (p_xls_load_info->biff_version >= 3) */
                 {
                     name_len = PtrGetByteOff(p_x, 2);
                     p_name = p_x + 3;
                 }
 
-                status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+                status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
                 ustr_xstrnkat(ustr_bptr(extra_data), elemof32(extra_data), quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock));
             }
@@ -3001,18 +2985,18 @@ xls_dump_records(
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
             quick_ublock_with_buffer_setup(quick_ublock);
 
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 name_len = xls_read_U16_LE(p_x); /* chars */
                 p_name = p_x + 2;
             }
-            else /* (biff_version >= 3) */
+            else /* (p_xls_load_info->biff_version >= 3) */
             {
                 name_len = PtrGetByteOff(p_x, 0);
                 p_name = p_x + 1;
             }
 
-            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+            status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_name, name_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
             ustr_xstrnkat(ustr_bptr(extra_data), elemof32(extra_data), quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock));
 
@@ -3036,7 +3020,7 @@ xls_dump_records(
 
         if(!suppress)
         {
-            if((minver <= biff_version) && (biff_version <= maxver))
+            if( (minver <= p_xls_load_info->biff_version) && (p_xls_load_info->biff_version <= maxver) )
                 tracef(TRACE__XLS_LOADB, TEXT("%6u@0x%.5X: op=0x%.3X len=%4u%s %s %s"),
                        overall_record_idx, opcode_offset, (U32) opcode, (U32) record_length,
                        extra_text ? report_tstr(extra_text) : tstr_empty_string,
@@ -3291,12 +3275,12 @@ xls_decrypt_file(
 
     p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
 
-    if(biff_version < 8)
+    if(p_xls_load_info->biff_version < 8)
     {
         key = xls_read_U16_LE(p_x + 0);
         filepass_hash = xls_read_U16_LE(p_x + 2);
     }
-    else
+    else /* (p_xls_load_info->biff_version >= 8) */
     {
         if(0 == xls_read_U16_LE(p_x + 0))
         {
@@ -3412,10 +3396,11 @@ System window background colour for pattern background (used in records XF, and 
 _Check_return_
 static BOOL
 rgb_from_colour_index(
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _OutRef_    P_RGB p_rgb,
     _InVal_     U16 colour_index)
 {
-    if(biff_version >= 5)
+    if(p_xls_load_info->biff_version >= 5)
     {
         if(colour_index < 0x40)
         {
@@ -3579,7 +3564,7 @@ xls_read_PALETTE(
     P_XLS_LOAD_INFO p_xls_load_info)
 {
     U16 record_length;
-    U32 opcode_offset = (biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
+    U32 opcode_offset = (p_xls_load_info->biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
     PC_BYTE p_x;
     U16 nm;
     P_RGB p_rgb = &xls_colour_table[8];
@@ -3589,7 +3574,7 @@ xls_read_PALETTE(
     if(XLS_NO_RECORD_FOUND == opcode_offset)
     {
         /* set colour table to default set */
-        memcpy32(p_rgb, (biff_version >= 8) ? xls_colour_table_BIFF8 : xls_colour_table_BIFF5, 4 * (0x40 - 0x08));
+        memcpy32(p_rgb, (p_xls_load_info->biff_version >= 8) ? xls_colour_table_BIFF8 : xls_colour_table_BIFF5, 4 * (0x40 - 0x08));
         return;
     }
 
@@ -3610,7 +3595,7 @@ xls_read_CODEPAGE(
     P_XLS_LOAD_INFO p_xls_load_info)
 {
     U16 record_length;
-    U32 opcode_offset = (biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
+    U32 opcode_offset = (p_xls_load_info->biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
     PC_BYTE p_x;
     U16 codepage;
 
@@ -3652,7 +3637,7 @@ xls_read_DATEMODE(
     P_XLS_LOAD_INFO p_xls_load_info)
 {
     U16 record_length;
-    U32 opcode_offset = (biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
+    U32 opcode_offset = (p_xls_load_info->biff_version == 4) ? p_xls_load_info->worksheet_substream_offset : 0; /* for BIFF4W worksheets */
     PC_BYTE p_x;
 
     opcode_offset = xls_find_record_first(p_xls_load_info, opcode_offset, X_DATEMODE, &record_length);
@@ -3699,14 +3684,14 @@ xls_read_DIMENSIONS(
         return(/*create_error*/(XLS_ERR_BADFILE_NO_DIMENSIONS));
 
     p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
-    if(biff_version >= 8) /* SKS 04.11.98 for Excel 97, fixed 08.09.02 */
+    if(p_xls_load_info->biff_version >= 8) /* SKS 04.11.98 for Excel 97, fixed 08.09.02 */
     {
         *p_s_row = (XLS_ROW) xls_read_U32_LE(p_x);
         *p_e_row = (XLS_ROW) xls_read_U32_LE(p_x + 4);
         *p_s_col = (XLS_COL) xls_read_U16_LE(p_x + 8);
         *p_e_col = (XLS_COL) xls_read_U16_LE(p_x + 10);
     }
-    else /* (biff_version < 8) */
+    else /* (p_xls_load_info->biff_version < 8) */
     {
         *p_s_row = (XLS_ROW) xls_read_U16_LE(p_x);
         *p_e_row = (XLS_ROW) xls_read_U16_LE(p_x + 2);
@@ -3883,7 +3868,7 @@ xls_rename_document_as_per_BOUNDSHEET_record(
     if(status_ok(status))
         status = quick_tblock_tchar_add(&quick_tblock, (TCHAR) CH_UNDERSCORE);
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {
         string_flags = *p_name++;
 
@@ -4231,15 +4216,20 @@ xls_find_SHEETHDR(
 *
 ******************************************************************************/
 
-static S32 cursym;
+static struct EXCEL_DECOMPILER_STATICS
+{
+    PC_XLS_LOAD_INFO p_xls_load_info;
 
-static PC_BYTE p_scan;
+    S32 cursym;
 
-static PC_PTG_ENTRY p_ptg_entry;
+    PC_BYTE p_scan;
 
-static S32 arg_stack_n;
+    PC_PTG_ENTRY p_ptg_entry;
 
-static U32 extern_opcode_offset = 0;
+    S32 arg_stack_n;
+
+    U32 extern_opcode_offset;
+} g;
 
 PROC_BSEARCH_PROTO(static, xls_proc_func_compare, U16, XLS_FUNC_ENTRY)
 {
@@ -4263,6 +4253,7 @@ static PC_XLS_FUNC_ENTRY
 xls_func_lookup(
     _InVal_     U16 biff_function_number)
 {
+    const U32 biff_version = g.p_xls_load_info->biff_version;
     PC_XLS_FUNC_ENTRY p_xls_func_entry = NULL;
 
     /* NB some parameter counts change between versions */
@@ -4309,10 +4300,10 @@ xls_func_lookup(
 static inline void
 token_check(void)
 {
-    assert(0 == (0x80 & *p_scan)); /* top bit should be clear */
-    cursym = *p_scan & 0x7F;
+    assert(0 == (0x80 & *g.p_scan)); /* top bit should be clear */
+    g.cursym = *g.p_scan & 0x7F;
 
-    p_ptg_entry = &token_table[cursym];
+    g.p_ptg_entry = &token_table[g.cursym];
 }
 
 /******************************************************************************
@@ -4324,23 +4315,25 @@ token_check(void)
 static void
 token_skip(void)
 {
-    if(cursym != -1)
+    if(g.cursym != -1)
     {
-        p_scan += p_ptg_entry->biff_bytes;
+        const U32 biff_version = g.p_xls_load_info->biff_version;
+
+        g.p_scan += g.p_ptg_entry->biff_bytes;
 
         /* deal with variable-size ones and those that change size between BIFF versions */
-        if(cursym < 0x20)
+        if(g.cursym < 0x20)
         {   /* Base Tokens */
-            switch(cursym)
+            switch(g.cursym)
             {
             default:
-                assert(0 != p_ptg_entry->biff_bytes);
+                assert(0 != g.p_ptg_entry->biff_bytes);
                 break;
 
             case tExp:
             case tTbl:
                 if(biff_version >= 3)
-                    p_scan += (5 - 4);
+                    g.p_scan += (5 - 4);
                 break;
 
             case tStr:
@@ -4348,25 +4341,25 @@ token_skip(void)
                 U32 n_chars;
                 BYTE string_flags = 0;
 
-                assert(1 == p_ptg_entry->biff_bytes);
+                assert(1 == g.p_ptg_entry->biff_bytes);
                 /* tStr token already skipped */
 
-                n_chars = *p_scan++; /* NB 8-bit length byte - even in BIFF8 */
+                n_chars = *g.p_scan++; /* NB 8-bit length byte - even in BIFF8 */
 
                 if(biff_version >= 8) /* BIFF8 always has option flags byte */
                 {
-                    string_flags = *p_scan++;
+                    string_flags = *g.p_scan++;
 
                     if(string_flags & 0x08) /* rich-text */
-                        p_scan += 2;
+                        g.p_scan += 2;
                     if(string_flags & 0x04) /* phonetic */
-                        p_scan += 4;
+                        g.p_scan += 4;
                 }
 
                 if(string_flags & 0x01)
-                    p_scan += n_chars * 2; /* Unicode UTF-16LE string */
+                    g.p_scan += n_chars * 2; /* Unicode UTF-16LE string */
                 else
-                    p_scan += n_chars; /* 'Compressed' BYTE string (high bytes of WCHAR all zero) */
+                    g.p_scan += n_chars; /* 'Compressed' BYTE string (high bytes of WCHAR all zero) */
 
                 break;
                 }
@@ -4375,131 +4368,131 @@ token_skip(void)
                 {
                 U8 grbit;
 
-                assert(1 == p_ptg_entry->biff_bytes);
+                assert(1 == g.p_ptg_entry->biff_bytes);
                 /* tAttr token already skipped */
 
-                grbit = p_scan[0];
+                grbit = g.p_scan[0];
 
                 if(biff_version >= 3)
                 {
                     if(grbit & 0x04)
                     {   /* optimised choose function */
-                        U16 cases = xls_read_U16_LE(p_scan + 1);
-                        p_scan += (cases + 1) * 2;
+                        U16 cases = xls_read_U16_LE(g.p_scan + 1);
+                        g.p_scan += (cases + 1) * 2;
                     }
-                    p_scan += 3;
+                    g.p_scan += 3;
                 }
                 else /* (biff_version == 2) */
                 {
                     if(grbit & 0x04)
                     {   /* optimised choose function */
-                        U8 cases = p_scan[1];
-                        p_scan += (cases + 1);
+                        U8 cases = g.p_scan[1];
+                        g.p_scan += (cases + 1);
                     }
-                    p_scan += 2;
+                    g.p_scan += 2;
                 }
 
                 break;
                 }
 
             case tSheet:
-                BIFF_VERSION_ASSERT(<= 4);
+                // BIFF_VERSION_ASSERT(<= 4);
                 if(biff_version >= 3)
-                    p_scan += (11 - 8);
+                    g.p_scan += (11 - 8);
                 break;
 
             case tEndSheet:
-                BIFF_VERSION_ASSERT(<= 4);
+                // BIFF_VERSION_ASSERT(<= 4);
                 if(biff_version >= 3)
-                    p_scan += (5 - 4);
+                    g.p_scan += (5 - 4);
                 break;
             }
         }
         else
         {   /* Classified Tokens */
-            const S32 symR = (cursym & ~0x60) | 0x20; /* convert V and A to corresponding R token */
+            const S32 symR = (g.cursym & ~0x60) | 0x20; /* convert V and A to corresponding R token */
 
             switch(symR)
             {
             case tArrayR:
                 if(biff_version >= 3)
-                    p_scan += (8 - 7);
+                    g.p_scan += (8 - 7);
                 break;
 
             case tFuncR:
                 if(biff_version >= 4)
-                    p_scan += (3 - 2);
+                    g.p_scan += (3 - 2);
                 break;
 
             case tFuncVarR:
                 if(biff_version >= 4)
-                    p_scan += (4 - 3);
+                    g.p_scan += (4 - 3);
                 break;
 
             case tNameR:
-                assert(0 == p_ptg_entry->biff_bytes);
+                assert(0 == g.p_ptg_entry->biff_bytes);
                 if(biff_version >= 8)
-                    p_scan += 5;
+                    g.p_scan += 5;
                 else if(biff_version >= 5)
-                    p_scan += 15;
+                    g.p_scan += 15;
                 else if(biff_version >= 3)
-                    p_scan += 11;
+                    g.p_scan += 11;
                 else /* (biff_version == 2) */
-                    p_scan += 8;
+                    g.p_scan += 8;
                 break;
 
             case tRefR:
             case tRefErrR:
             case tRefNR:
                 if(biff_version >= 8)
-                    p_scan += (5 - 4);
+                    g.p_scan += (5 - 4);
                 break;
 
             case tAreaR:
             case tAreaErrR:
             case tAreaNR:
                 if(biff_version >= 8)
-                    p_scan += (9 - 7);
+                    g.p_scan += (9 - 7);
                 break;
 
             case tMemAreaR:
             case tMemErrR:
             case tMemNoMemR:
                 if(biff_version >= 3)
-                    p_scan += (7 - 5);
+                    g.p_scan += (7 - 5);
                 break;
 
             case tMemFuncR:
             case tMemAreaNR:
             case tMemNoMemNR:
                 if(biff_version >= 3)
-                    p_scan += (3 - 2);
+                    g.p_scan += (3 - 2);
                 break;
 
             case tNameXR:
-                assert(0 == p_ptg_entry->biff_bytes);
+                assert(0 == g.p_ptg_entry->biff_bytes);
                 if(biff_version >= 8)
-                    p_scan += 7;
+                    g.p_scan += 7;
                 else /* (biff_version < 8) */
-                    p_scan += 25;
+                    g.p_scan += 25;
                 break;
 
             case tRef3dR:
             case tRefErr3dR:
-                assert(0 == p_ptg_entry->biff_bytes);
+                assert(0 == g.p_ptg_entry->biff_bytes);
                 if(biff_version >= 8)
-                    p_scan += 7;
+                    g.p_scan += 7;
                 else /* (biff_version < 8) */
-                    p_scan += 18;
+                    g.p_scan += 18;
                 break;
 
             case tArea3dR:
             case tAreaErr3dR:
-                assert(0 == p_ptg_entry->biff_bytes);
+                assert(0 == g.p_ptg_entry->biff_bytes);
                 if(biff_version >= 8)
-                    p_scan += 11;
+                    g.p_scan += 11;
                 else /* (biff_version < 8) */
-                    p_scan += 21;
+                    g.p_scan += 21;
                 break;
             }
         }
@@ -4515,8 +4508,8 @@ token_skip(void)
 static void
 stack_free(void)
 {
-    while(arg_stack_n)
-        al_ptr_dispose(P_P_ANY_PEDANTIC(&arg_stack[--arg_stack_n]));
+    while(g.arg_stack_n)
+        al_ptr_dispose(P_P_ANY_PEDANTIC(&arg_stack[--g.arg_stack_n]));
 }
 
 /******************************************************************************
@@ -4551,16 +4544,16 @@ extern_ref_out(
     _InVal_     U32 elemof_buffer,
     _InoutRef_  P_U32 p_len)
 {
-    if(0 != extern_opcode_offset)
+    if(0 != g.extern_opcode_offset)
     {
-        PC_BYTE p_x = PtrAddBytes(PC_BYTE, p_xls_load_info->p_file_start, extern_opcode_offset);
+        PC_BYTE p_x = PtrAddBytes(PC_BYTE, p_xls_load_info->p_file_start, g.extern_opcode_offset);
         p_x += 4  /*opcode,record_length*/;
 
         assert(p_x[0] <= 0x04);
 
         if(p_x[0] == 0x00)
         {   /* reference is relative to the current worksheet (nothing will follow), used e.g. in defined names */
-            assert(biff_version >= 5);
+            assert(p_xls_load_info->biff_version >= 5);
             return;
         }
 
@@ -4576,7 +4569,7 @@ extern_ref_out(
 
         if(p_x[0] == 0x02)
         {
-            if(biff_version < 8)
+            if(p_xls_load_info->biff_version < 8)
                 /* it is a self-reference to the current worksheet (nothing will follow) */
                 return;
 
@@ -4587,14 +4580,14 @@ extern_ref_out(
 
         if(p_x[0] == 0x03)
         {   /* reference to a worksheet in the own document (worksheet name follows) */
-            assert(biff_version == 5);
+            assert(p_xls_load_info->biff_version == 5);
             extern_ref_sheet_name_out(p_x, uchars_buf /*filled at *p_len*/, elemof_buffer, p_len);
             return;
         }
 
         if(p_x[0] == 0x04)
         {   /* it is a self-reference to the current workbook (nothing will follow) */
-            assert(biff_version == 5);
+            assert(p_xls_load_info->biff_version == 5);
         }
     }
 }
@@ -4628,7 +4621,7 @@ constant_convert(
 
         status_break(*p_status = quick_ublock_a7char_add(&quick_ublock, CH_QUOTATION_MARK));
 
-        *p_status = xls_quick_ublock_xls_string_add(&quick_ublock, p_byte, n_chars, p_xls_load_info->sbchar_codepage, FALSE); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+        *p_status = xls_quick_ublock_xls_string_add(&quick_ublock, p_byte, n_chars, p_xls_load_info, FALSE); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
         if(status_ok(*p_status))
             *p_status = quick_ublock_a7char_add(&quick_ublock, CH_QUOTATION_MARK);
@@ -4760,6 +4753,7 @@ constant_convert(
 
 static void
 slr_convert_method_A(
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _Out_writes_z_(elemof_buffer) P_USTR ustr_buf /*filled at *p_len*/,
     _InVal_     U32 elemof_buffer,
     _InoutRef_  P_U32 p_len,
@@ -4772,14 +4766,14 @@ slr_convert_method_A(
     assert((elemof_buffer - *p_len) > 1);
     PtrPutByteOff(ustr_buf, *p_len, CH_NULL);
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {   /* 16-bit row */
         absolute_col = (0 == (col_in & 0x4000));
         absolute_row = (0 == (col_in & 0x8000));
         col = col_in & 0x00FF;
         row = row_in;
     }
-    else /* (biff_version < 8) */
+    else /* (p_xls_load_info->biff_version < 8) */
     {   /* 14-bit row */
         col = col_in & 0x00FF; /* paranoia */
         absolute_col = (0 == (row_in & 0x4000));
@@ -4804,6 +4798,7 @@ slr_convert_method_A(
 
 static void
 slr_convert_method_B(
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _Out_writes_z_(elemof_buffer) P_USTR ustr_buf /*filled at *p_len*/,
     _InVal_     U32 elemof_buffer,
     _InoutRef_  P_U32 p_len,
@@ -4818,14 +4813,14 @@ slr_convert_method_B(
     assert((elemof_buffer - *p_len) > 1);
     PtrPutByteOff(ustr_buf, *p_len, CH_NULL);
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {   /* 16-bit row */
         absolute_col = (0 == (col_in & 0x4000));
         absolute_row = (0 == (col_in & 0x8000));
         col = col_in & 0x00FF;
         row = row_in;
     }
-    else /* (biff_version < 8) */
+    else /* (p_xls_load_info->biff_version < 8) */
     {   /* 14-bit row */
         col = col_in & 0x00FF; /* paranoia */
         absolute_col = (0 == (row_in & 0x4000));
@@ -4890,9 +4885,9 @@ operand_convert(
         {
         U32 len = 0;
         U16 row, col;
-        xls_read_cell_address_formula(p_byte, &row, &col);
+        xls_read_cell_address_formula(p_xls_load_info, p_byte, &row, &col);
         extern_ref_out(p_xls_load_info, uchars_bptr(buffer), elemof32(buffer), &len);
-        slr_convert_method_A(ustr_bptr(buffer), elemof32(buffer), &len, col, row);
+        slr_convert_method_A(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col, row);
         break;
         }
 
@@ -4900,9 +4895,9 @@ operand_convert(
         {
         U32 len = 0;
         U16 row, col;
-        xls_read_cell_address_formula(p_byte, &row, &col);
+        xls_read_cell_address_formula(p_xls_load_info, p_byte, &row, &col);
         extern_ref_out(p_xls_load_info, uchars_bptr(buffer), elemof32(buffer), &len);
-        slr_convert_method_B(ustr_bptr(buffer), elemof32(buffer), &len, col, row, &p_xls_load_info->current_slr);
+        slr_convert_method_B(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col, row, &p_xls_load_info->current_slr);
         break;
         }
 
@@ -4910,10 +4905,10 @@ operand_convert(
         {
         U32 len = 0;
         U16 row_s, row_e, col_s, col_e;
-        xls_read_cell_range_formula(p_byte, &row_s, &row_e, &col_s, &col_e);
+        xls_read_cell_range_formula(p_xls_load_info, p_byte, &row_s, &row_e, &col_s, &col_e);
         extern_ref_out(p_xls_load_info, uchars_bptr(buffer), elemof32(buffer), &len);
-        slr_convert_method_A(ustr_bptr(buffer), elemof32(buffer), &len, col_s, row_s);
-        slr_convert_method_A(ustr_bptr(buffer), elemof32(buffer), &len, col_e, row_e);
+        slr_convert_method_A(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col_s, row_s);
+        slr_convert_method_A(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col_e, row_e);
         break;
         }
 
@@ -4921,10 +4916,10 @@ operand_convert(
         {
         U32 len = 0;
         U16 row_s, row_e, col_s, col_e;
-        xls_read_cell_range_formula(p_byte, &row_s, &row_e, &col_s, &col_e);
+        xls_read_cell_range_formula(p_xls_load_info, p_byte, &row_s, &row_e, &col_s, &col_e);
         extern_ref_out(p_xls_load_info, uchars_bptr(buffer), elemof32(buffer), &len);
-        slr_convert_method_B(ustr_bptr(buffer), elemof32(buffer), &len, col_s, row_s, &p_xls_load_info->current_slr);
-        slr_convert_method_B(ustr_bptr(buffer), elemof32(buffer), &len, col_e, row_e, &p_xls_load_info->current_slr);
+        slr_convert_method_B(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col_s, row_s, &p_xls_load_info->current_slr);
+        slr_convert_method_B(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col_e, row_e, &p_xls_load_info->current_slr);
         break;
         }
 
@@ -4932,10 +4927,10 @@ operand_convert(
         {
         U32 len = 0;
         U16 row_s, row_e, col_s, col_e;
-        xls_read_cell_range_formula(p_byte + 2, &row_s, &row_e, &col_s, &col_e);
+        xls_read_cell_range_formula(p_xls_load_info, p_byte + 2, &row_s, &row_e, &col_s, &col_e);
         extern_ref_out(p_xls_load_info, uchars_bptr(buffer), elemof32(buffer), &len);
-        slr_convert_method_A(ustr_bptr(buffer), elemof32(buffer), &len, col_s, row_s);
-        slr_convert_method_A(ustr_bptr(buffer), elemof32(buffer), &len, col_e, row_e);
+        slr_convert_method_A(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col_s, row_s);
+        slr_convert_method_A(p_xls_load_info, ustr_bptr(buffer), elemof32(buffer), &len, col_e, row_e);
         break;
         }
 
@@ -4951,7 +4946,7 @@ operand_convert(
 
         buffer[0] = CH_NULL;
 
-        if(0 != extern_opcode_offset)
+        if(0 != g.extern_opcode_offset)
         {
             U16 record_length;
             U32 opcode_offset = xls_find_record_index(p_xls_load_info, &record_length, ilbl, X_EXTERNNAME_B2_B5_B8, 1);
@@ -4966,11 +4961,11 @@ operand_convert(
                 PC_U8 p_name;
                 U8 name_len;
 
-                if(biff_version >= 3)
+                if(p_xls_load_info->biff_version >= 3)
                 {
                     offset_len = 2; /* argue about which version <<< */
                 }
-                else /* (biff_version == 2) */
+                else /* (p_xls_load_info->biff_version == 2) */
                 {
                     offset_len = 0;
                 }
@@ -5010,12 +5005,12 @@ operand_convert(
                 }
                 else /* (X_DEFINEDNAME_B2_B5_B8 == name_opcode) */
                 {
-                    if(biff_version >= 5)
+                    if(p_xls_load_info->biff_version >= 5)
                     {
                         p_name = p_x + 14;
                         p_name += 1; /* skip grbit - assume non-Unicode string for now */
                     }
-                    else /* (biff_version == 2) */
+                    else /* (p_xls_load_info->biff_version == 2) */
                     {
                         p_name = p_x + 5;
                     }
@@ -5032,7 +5027,7 @@ operand_convert(
         {
         U16 ref_idx = xls_read_U16_LE(p_byte);
 
-        if(biff_version >= 8)
+        if(p_xls_load_info->biff_version >= 8)
         {
             U16 other_idx = xls_read_U16_LE(p_byte + 2);
             U16 record_length;
@@ -5048,15 +5043,15 @@ operand_convert(
                 PC_BYTE p_name;
                 U8 name_len;
 
-                if(biff_version >= 5)
+                if(p_xls_load_info->biff_version >= 5)
                 {
                     offset_len  = 6;
                 }
-                else if(biff_version >= 3)
+                else if(p_xls_load_info->biff_version >= 3)
                 {
                     offset_len  = 2; /* argue about which version <<< */
                 }
-                else /* (biff_version == 2) */
+                else /* (p_xls_load_info->biff_version == 2) */
                 {
                     offset_len  = 0;
                 }
@@ -5066,12 +5061,12 @@ operand_convert(
                 name_len = p_x[offset_len];
                 p_name = p_x + offset_text;
 
-                if(biff_version >= 8)
+                if(p_xls_load_info->biff_version >= 8)
                 {
                     QUICK_UBLOCK_WITH_BUFFER(quick_ublock_name, 64);
                     quick_ublock_with_buffer_setup(quick_ublock_name);
 
-                    status_assert(xls_quick_ublock_xls_string_add(&quick_ublock_name, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE));
+                    status_assert(xls_quick_ublock_xls_string_add(&quick_ublock_name, p_name, name_len, p_xls_load_info, FALSE));
 
                     ustr_xstrnkpy(ustr_bptr(buffer), elemof32(buffer), quick_ublock_uchars(&quick_ublock_name), quick_ublock_bytes(&quick_ublock_name));
 
@@ -5129,8 +5124,8 @@ stack_element_peek(
 {
     P_USTR ret;
     PTR_ASSERT(arg_stack);
-    assert(arg_stack_n >= (S32) (1 + element_idx));
-    ret = arg_stack[arg_stack_n - (1 + element_idx)];
+    assert(g.arg_stack_n >= (S32) (1 + element_idx));
+    ret = arg_stack[g.arg_stack_n - (1 + element_idx)];
     PTR_ASSERT(ret);
     return(ret);
 }
@@ -5142,10 +5137,10 @@ stack_element_pop(void)
 {
     P_USTR ret;
     PTR_ASSERT(arg_stack);
-    assert(arg_stack_n >= 1);
-    ret = arg_stack[--arg_stack_n];
+    assert(g.arg_stack_n >= 1);
+    ret = arg_stack[--g.arg_stack_n];
 #if CHECKING
-    arg_stack[arg_stack_n] = NULL;
+    arg_stack[g.arg_stack_n] = NULL;
 #endif
     PTR_ASSERT(ret);
     return(ret);
@@ -5157,10 +5152,10 @@ stack_element_push(
     _In_z_      P_USTR p_new_element)
 {
     PTR_ASSERT(p_new_element);
-    assert(arg_stack_n < MAXSTACK);
-    if(arg_stack_n >= MAXSTACK)
+    assert(g.arg_stack_n < MAXSTACK);
+    if(g.arg_stack_n >= MAXSTACK)
         return(XLS_ERR_EXP);
-    arg_stack[arg_stack_n++] = p_new_element;
+    arg_stack[g.arg_stack_n++] = p_new_element;
     return(STATUS_OK);
 }
 
@@ -5183,17 +5178,17 @@ func_decode(
     U32 len_tot = 1; /*CH_NULL*/
     P_USTR p_ele_new;
 
-    if( n_args > (U8) arg_stack_n)
-        n_args = (U8) arg_stack_n; /* limit, and see what we can make of it */
+    if( n_args > (U8) g.arg_stack_n)
+        n_args = (U8) g.arg_stack_n; /* limit, and see what we can make of it */
 
     if(BIFF_FN_ExternCall == p_xls_func_entry->biff_function_number)
     {
         /* permute EXTERN.CALL args such that function name moves to TOS and all actual function args move down one */
-        P_USTR function_arg = arg_stack[(arg_stack_n - n_args) + 0];
-        memmove32(&arg_stack[(arg_stack_n - n_args) + 0],
-                  &arg_stack[(arg_stack_n - n_args) + 1],
+        P_USTR function_arg = arg_stack[(g.arg_stack_n - n_args) + 0];
+        memmove32(&arg_stack[(g.arg_stack_n - n_args) + 0],
+                  &arg_stack[(g.arg_stack_n - n_args) + 1],
                   sizeof32(arg_stack[0]) * (n_args - 1));
-        arg_stack[arg_stack_n - 1] = function_arg; /* TOS */
+        arg_stack[g.arg_stack_n - 1] = function_arg; /* TOS */
         ustr_extern = stack_element_pop();
         n_args -= 1;
         reportf(TEXT("EXTERN.CALL %s"), report_ustr(ustr_extern));
@@ -5220,8 +5215,8 @@ func_decode(
         /* SKS swap arg order for IRR() */
         assert(n_args == 2);
         if(n_args == 2)
-            memswap32(&arg_stack[(arg_stack_n - n_args) + 0],
-                      &arg_stack[(arg_stack_n - n_args) + 1],
+            memswap32(&arg_stack[(g.arg_stack_n - n_args) + 0],
+                      &arg_stack[(g.arg_stack_n - n_args) + 1],
                       sizeof32(arg_stack[0]) * 1);
     }
 #endif
@@ -5270,7 +5265,7 @@ func_decode(
 
     ustr_xstrkat(p_ele_new, len_tot, USTR_TEXT(")"));
 
-    arg_stack_n -= n_args;
+    g.arg_stack_n -= n_args;
 
     ustr_clr(&ustr_extern);
 
@@ -5317,12 +5312,12 @@ _Check_return_
 static STATUS
 xls_decode_formula_ptg_UNARY(void)
 {
-    const PC_USTR p_text_t5 = (PC_USTR) operator_text[cursym].p_text_t5;
+    const PC_USTR p_text_t5 = (PC_USTR) operator_text[g.cursym].p_text_t5;
     P_USTR p_ele_stack;
     U32 len_add, len_tot;
     P_USTR p_ele_new;
 
-    if(arg_stack_n < 1)
+    if(g.arg_stack_n < 1)
         status_return(create_error(XLS_ERR_EXP));
 
     p_ele_stack = stack_element_pop();
@@ -5347,12 +5342,12 @@ _Check_return_
 static STATUS
 xls_decode_formula_ptg_BINARY(void)
 {
-    const PC_USTR p_text_t5 = (PC_USTR) operator_text[cursym].p_text_t5;
+    const PC_USTR p_text_t5 = (PC_USTR) operator_text[g.cursym].p_text_t5;
     P_USTR p_ele_1, p_ele_2;
     U32 len_add, ele_1_len, ele_2_len, len_tot;
     P_USTR p_ele_new;
 
-    if(arg_stack_n < 2)
+    if(g.arg_stack_n < 2)
         status_return(create_error(XLS_ERR_EXP));
 
     p_ele_2 = stack_element_pop();
@@ -5384,7 +5379,7 @@ _Check_return_
 static STATUS
 xls_decode_formula_ptg_FUNC(void)
 {
-    const S32 symR = (cursym & ~0x60) | 0x20; /* convert V and A to corresponding R token */
+    const S32 symR = (g.cursym & ~0x60) | 0x20; /* convert V and A to corresponding R token */
     U16 biff_function_number;
     U8 n_args = 0; /* keep dataflower happy */
     PC_XLS_FUNC_ENTRY p_xls_func_entry = NULL;
@@ -5392,28 +5387,28 @@ xls_decode_formula_ptg_FUNC(void)
     switch(symR)
     {
     case tFuncR:
-        if(biff_version >= 4)
-            biff_function_number = xls_read_U16_LE(p_scan + 1);
+        if(g.p_xls_load_info->biff_version >= 4)
+            biff_function_number = xls_read_U16_LE(g.p_scan + 1);
         else /* (biff_version < 4) */
-            biff_function_number = (U16) p_scan[1];
+            biff_function_number = (U16) g.p_scan[1];
 
         if(NULL != (p_xls_func_entry = xls_func_lookup(biff_function_number)))
             n_args = p_xls_func_entry->n_args;
         break;
 
     case tFuncVarR:
-        if(biff_version >= 4)
+        if(g.p_xls_load_info->biff_version >= 4)
         {
-            const U16 func_number_word = xls_read_U16_LE(p_scan + 2);
-            n_args = (U8) (p_scan[1] & 0x7F);
+            const U16 func_number_word = xls_read_U16_LE(g.p_scan + 2);
+            n_args = (U8) (g.p_scan[1] & 0x7F);
             if(func_number_word & 0x8000U)
                 break;
             biff_function_number = (U16) (func_number_word & 0x7FFFU);
         }
         else /* (biff_version < 4) */
         {
-            n_args = (U8) p_scan[1];
-            biff_function_number = (U16) p_scan[2];
+            n_args = (U8) g.p_scan[1];
+            biff_function_number = (U16) g.p_scan[2];
         }
 
         p_xls_func_entry = xls_func_lookup(biff_function_number);
@@ -5441,7 +5436,7 @@ xls_decode_formula_ptg_CONSTANT(
     STATUS status;
     P_USTR p_ele_new;
 
-    if(NULL == (p_ele_new = constant_convert(p_xls_load_info, cursym, p_scan, p_p_formula_end, &status)))
+    if(NULL == (p_ele_new = constant_convert(p_xls_load_info, g.cursym, g.p_scan, p_p_formula_end, &status)))
         return(status);
 
     return(stack_element_push(p_ele_new));
@@ -5456,7 +5451,7 @@ xls_decode_formula_ptg_OPERAND(
     STATUS status;
     P_USTR p_ele_new;
 
-    if(NULL == (p_ele_new = operand_convert(p_xls_load_info, cursym, p_scan, p_p_formula_end, &status)))
+    if(NULL == (p_ele_new = operand_convert(p_xls_load_info, g.cursym, g.p_scan, p_p_formula_end, &status)))
         return(status);
 
     return(stack_element_push(p_ele_new));
@@ -5470,7 +5465,7 @@ xls_decode_formula_ptg_tParen(void)
     U32 len_tot;
     P_USTR p_ele_new;
 
-    if(arg_stack_n < 1)
+    if(g.arg_stack_n < 1)
         status_return(create_error(XLS_ERR_EXP));
 
     p_ele_stack = stack_element_pop();
@@ -5497,7 +5492,7 @@ xls_decode_formula_ptg_OTHER(
 {
     STATUS status = STATUS_OK;
 
-    switch(cursym)
+    switch(g.cursym)
     {
     default: default_unhandled();
         break;
@@ -5516,7 +5511,7 @@ xls_decode_formula_ptg_OTHER(
 
     case tAttr:
         {
-        U8 grbit = p_scan[1];
+        U8 grbit = g.p_scan[1];
         if(grbit & 0x10)
         {   /* optimised SUM function */
             PC_XLS_FUNC_ENTRY p_xls_func_entry = xls_func_lookup(BIFF_FN_Sum);
@@ -5528,18 +5523,18 @@ xls_decode_formula_ptg_OTHER(
 
     case tSheet:
         {
-        U16 ixals = xls_read_U16_LE(p_scan + 5);
+        U16 ixals = xls_read_U16_LE(g.p_scan + 5);
         U16 record_length;
         U32 opcode_offset = xls_find_record_index(p_xls_load_info, &record_length, ixals, X_EXTERNSHEET, 1);
 
         if(XLS_NO_RECORD_FOUND != opcode_offset)
-            extern_opcode_offset = opcode_offset;
+            g.extern_opcode_offset = opcode_offset;
 
         break;
         }
 
     case tEndSheet:
-        extern_opcode_offset = 0;
+        g.extern_opcode_offset = 0;
         break;
     }
 
@@ -5557,15 +5552,15 @@ xls_decode_formula(
     STATUS status = STATUS_OK;
     PC_BYTE p_formula_end = p_formula + formula_len;
 
-    arg_stack_n = 0;
-
-    p_scan = p_formula;
+    g.p_xls_load_info = p_xls_load_info;
+    g.p_scan = p_formula;
+    g.arg_stack_n = 0;
 
     for(;;)
     {
         token_check();
 
-        switch(p_ptg_entry->type)
+        switch(g.p_ptg_entry->type)
         {
         default: default_unhandled();
         case NOTUSED:
@@ -5600,21 +5595,23 @@ xls_decode_formula(
 
         token_skip();
 
-        if(PtrDiffBytesU32(p_scan, p_formula) >= (U32) formula_len)
+        if(PtrDiffBytesU32(g.p_scan, p_formula) >= (U32) formula_len)
         {   /* ended formula */
-            assert(PtrDiffBytesU32(p_scan, p_formula) == (U32) formula_len);
+            assert(PtrDiffBytesU32(g.p_scan, p_formula) == (U32) formula_len);
             break;
         }
     }
 
     if(status_ok(status))
-        if(arg_stack_n != 1)
+        if(g.arg_stack_n != 1)
             status = /*create_error*/(XLS_ERR_EXP);
 
     if(status_ok(status))
         status = quick_ublock_ustr_add(p_quick_ublock, stack_element_peek(0));
 
     stack_free();
+
+    g.p_xls_load_info = NULL;
 
     return(status);
 }
@@ -5700,9 +5697,9 @@ xls_get_shared_formula(
 
     tl_row = (XLS_ROW) xls_read_U16_LE(p_formula + 1);
 
-    if(biff_version >= 3)
+    if(p_xls_load_info->biff_version >= 3)
         tl_col = (XLS_COL) xls_read_U16_LE(p_formula + 3);
-    else /* (biff_version == 2) */
+    else /* (p_xls_load_info->biff_version == 2) */
         tl_col = (XLS_COL) p_formula[3];
 
     UNREFERENCED_PARAMETER_InVal_(formula_len);
@@ -5808,12 +5805,12 @@ xls_names_make(
         }
         else /* (X_DEFINEDNAME_B2_B5_B8 == name_opcode) */
         {
-            if(biff_version >= 5)
+            if(p_xls_load_info->biff_version >= 5)
             {
                 formula_len = xls_read_U16_LE(p_x + 4);
                 p_name = p_x + 14;
             }
-            else /* (biff_version == 2) */
+            else /* (p_xls_load_info->biff_version == 2) */
             {
                 formula_len = p_x[4];
                 p_name = p_x + 5;
@@ -5824,9 +5821,9 @@ xls_names_make(
         {   /* built-in name */
             U16 name_idx;
             
-            BIFF_VERSION_ASSERT(>= 3);
+            // BIFF_VERSION_ASSERT(>= 3);
 
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 string_flags = *p_name++;
 
@@ -5858,12 +5855,12 @@ xls_names_make(
         }
         else
         {   /* full name */
-            if(biff_version >= 8)
+            if(p_xls_load_info->biff_version >= 8)
             {
                 U16 rt = 0;
                 U32 sz = 0;
 
-                status = xls_quick_ublock_xls_string_add(&quick_ublock_name, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE); /* NB may be unaligned */
+                status = xls_quick_ublock_xls_string_add(&quick_ublock_name, p_name, name_len, p_xls_load_info, FALSE); /* NB may be unaligned */
 
                 string_flags = *p_name++;
 
@@ -5933,6 +5930,7 @@ xls_names_make(
 _Check_return_
 static BOOL
 xls_may_be_date_format(
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     PC_BYTE p_format,
     _InVal_     U32 format_len)
 {
@@ -5940,7 +5938,7 @@ xls_may_be_date_format(
     BYTE string_flags = 0;
     U32 i;
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {
         string_flags = *p_format++;
 
@@ -6072,7 +6070,7 @@ xls_check_format(
     U32 opcode_offset;
     PC_BYTE p_x;
     FORMAT_INDEX format_index = format_index_encoded;
-    const XLS_OPCODE format_opcode = (biff_version >= 4) ? X_FORMAT_B4_B8 : X_FORMAT_B2_B3;
+    const XLS_OPCODE format_opcode = (p_xls_load_info->biff_version >= 4) ? X_FORMAT_B4_B8 : X_FORMAT_B2_B3;
     U32 format_len = 0;
     PC_BYTE p_format = NULL;
 
@@ -6085,23 +6083,23 @@ xls_check_format(
     {
         p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
 
-        if(biff_version >= 8)
+        if(p_xls_load_info->biff_version >= 8)
         {
             format_len = xls_read_U16_LE(p_x + 2);
             p_format = p_x + 4;
         }
-        else if(biff_version >= 4)
+        else if(p_xls_load_info->biff_version >= 4)
         {
             format_len = p_x[2];
             p_format = p_x + 3;
         }
-        else /* (biff_version < 4) */
+        else /* (p_xls_load_info->biff_version < 4) */
         {
             format_len = p_x[0];
             p_format = p_x + 1;
         }
     }
-    else if((biff_version >= 5) && (format_index < 164))
+    else if( (p_xls_load_info->biff_version >= 5) && (format_index < 164) )
     {   /* only if not found in file consider the hardwired built-in formats */
         PC_SBSTR sbstr_format = empty_string;
         if(14 == format_index)
@@ -6128,7 +6126,7 @@ xls_check_format(
     if((NULL == p_format) || (0 == format_len))
         return(STATUS_OK);
 
-    *p_is_date_format = xls_may_be_date_format(p_format, format_len);
+    *p_is_date_format = xls_may_be_date_format(p_xls_load_info, p_format, format_len);
 
     {
     P_UCHARS uchars;
@@ -6137,7 +6135,7 @@ xls_check_format(
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_format, format_len, p_xls_load_info->sbchar_codepage, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+    status_assert(xls_quick_ublock_xls_string_add(&quick_ublock, p_format, format_len, p_xls_load_info, FALSE)); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
     status_assert(quick_ublock_nullch_add(&quick_ublock)); /* terminate for ease of copying */
 
@@ -6601,7 +6599,7 @@ xls_cell_make_from_excel(
         {
         xf_index = xls_obtain_xf_index_B2(p_xls_load_info, p_x + 4); /* cell attributes */
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, X_XF_B2);
+        xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, xf_data, xf_index, X_XF_B2);
 
         break;
         }
@@ -6610,7 +6608,7 @@ xls_cell_make_from_excel(
         {
         xf_index = xls_read_U16_LE(p_x + 4); /* XF index */
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
         break;
         }
@@ -6622,7 +6620,7 @@ xls_cell_make_from_excel(
 
         xf_index = xls_obtain_xf_index_B2(p_xls_load_info, p_x + 4); /* cell attributes */
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, X_XF_B2);
+        xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, xf_data, xf_index, X_XF_B2);
 
         /* do we have FORMAT defined? */
         if(0 != (xf_data[9] & XF_USED_ATTRIB_FORMAT))
@@ -6649,19 +6647,19 @@ xls_cell_make_from_excel(
     case X_FORMULA_B3:
     case X_FORMULA_B4:
         {
-        if(biff_version >= 5)
+        if(p_xls_load_info->biff_version >= 5)
         {
             /* What is going on here?! BIFF3/BIFF4 record numbers present in newer BIFF version file (seen in one of R-Comp test files) */
             assert0();
         }
-        else if(biff_version >= 3)
+        else if(p_xls_load_info->biff_version >= 3)
         {
             U16 formula_len = (U16) xls_read_U16_LE(p_x + 16);
             PC_BYTE p_formula = p_x + 18;
 
             xf_index = xls_read_U16_LE(p_x + 4); /* XF index */
 
-            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, (X_FORMULA_B3 == opcode) ? X_XF_B3 : X_XF_B4);
+            xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, xf_data, xf_index, (X_FORMULA_B3 == opcode) ? X_XF_B3 : X_XF_B4);
 
             status = xls_decode_formula_result(p_xls_load_info, &quick_ublock_result, p_x + 6);
 
@@ -6690,7 +6688,7 @@ xls_cell_make_from_excel(
 
             break;
         }
-        else /* (biff_version == 2) - surely not ... */
+        else /* (p_xls_load_info->biff_version == 2) - surely not ... */
         {
             /* What is going on here?! BIFF3/BIFF4 record numbers present in older BIFF version file */
             assert0();
@@ -6701,7 +6699,7 @@ xls_cell_make_from_excel(
 
     case X_FORMULA_B2_B5_B8:
         {
-        if(biff_version >= 5) /* SKS 04.11.98 */
+        if(p_xls_load_info->biff_version >= 5) /* SKS 04.11.98 */
         {
             BOOL shared_formula = (0 != (xls_read_U16_LE(p_x + 14) & 0x08));
             U16 formula_len = (U16) xls_read_U16_LE(p_x + 20);
@@ -6709,7 +6707,7 @@ xls_cell_make_from_excel(
 
             xf_index = xls_read_U16_LE(p_x + 4); /* XF index */
 
-            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
             status = xls_decode_formula_result(p_xls_load_info, &quick_ublock_result, p_x + 6);
 
@@ -6732,19 +6730,19 @@ xls_cell_make_from_excel(
                 }
             }
         }
-        else if(biff_version >= 3)
+        else if(p_xls_load_info->biff_version >= 3)
         {
             status = status_check();
             break;
         }
-        else /* (biff_version == 2) */
+        else /* (p_xls_load_info->biff_version == 2) */
         {
             U16 formula_len = (U16) p_x[16];
             PC_BYTE p_formula = p_x + 17;
 
             xf_index = xls_obtain_xf_index_B2(p_xls_load_info, p_x + 4); /* cell attributes */
 
-            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, X_XF_B2);
+            xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, xf_data, xf_index, X_XF_B2);
 
             status = xls_decode_formula_result(p_xls_load_info, &quick_ublock_result, p_x + 7);
 
@@ -6771,7 +6769,7 @@ xls_cell_make_from_excel(
                         ? USTR_TEXT("XLS FORMULA B3' FAIL")
                         : (X_FORMULA_B4 == opcode)
                         ? USTR_TEXT("XLS FORMULA B4' FAIL")
-                        : (2 == biff_version)
+                        : (p_xls_load_info->biff_version == 2)
                         ? USTR_TEXT("XLS FORMULA B2 FAIL")
                         : USTR_TEXT("XLS FORMULA B5-B8 FAIL"));
         }
@@ -6785,7 +6783,7 @@ xls_cell_make_from_excel(
 
         xf_index = xls_obtain_xf_index_B2(p_xls_load_info, p_x + 4); /* cell attributes */
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, X_XF_B2);
+        xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, xf_data, xf_index, X_XF_B2);
 
         /* do we have FORMAT defined? */
         if(0 != (xf_data[9] & XF_USED_ATTRIB_FORMAT))
@@ -6815,7 +6813,7 @@ xls_cell_make_from_excel(
 
         xf_index = xls_read_U16_LE(p_x + 4); /* XF index */
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
         /* do we have FORMAT defined? */
         if(0 != (xf_data[9] & XF_USED_ATTRIB_FORMAT))
@@ -6861,7 +6859,7 @@ xls_cell_make_from_excel(
 
         xf_index = xls_read_U16_LE(p_rk);
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
         if(rk & 0x02)
         {   /* (NB signed) integer in top 30 bits */
@@ -6931,7 +6929,7 @@ xls_cell_make_from_excel(
 
             xf_index = xls_read_U16_LE(p_rk);
 
-            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
             if(rk & 0x02)
             {   /* (NB signed) integer in top 30 bits */
@@ -7015,11 +7013,11 @@ xls_cell_make_from_excel(
             xf_index = xls_read_U16_LE(p_x + 4);
         }
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
         data_type = XLS_DATA_TEXT;
 
-        status = xls_quick_ublock_xls_string_add(&quick_ublock_result, p_label, label_len, p_xls_load_info->sbchar_codepage, TRUE); /* NB may be unaligned */
+        status = xls_quick_ublock_xls_string_add(&quick_ublock_result, p_label, label_len, p_xls_load_info, TRUE); /* NB may be unaligned */
 
         break;
         }
@@ -7041,7 +7039,7 @@ xls_cell_make_from_excel(
 
             xf_index = xls_read_U16_LE(p_x + 4);
 
-            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+            xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
         }
 
         if(0 == type) /* Boolean value */
@@ -7077,7 +7075,7 @@ xls_cell_make_from_excel(
 
         xf_index = xls_read_U16_LE(p_x + 4);
 
-        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, biff_version_opcode_XF);
+        xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index);
 
         data_type = XLS_DATA_TEXT;
 
@@ -7229,7 +7227,7 @@ xls_get_standard_column_width(
 {
     S32 standard_column_width = 0;
 
-    if(biff_version >= 4)
+    if(p_xls_load_info->biff_version >= 4)
     {
         U16 record_length;
         U32 opcode_offset = xls_find_record_first(p_xls_load_info, p_xls_load_info->worksheet_substream_offset, X_STANDARDWIDTH_B4_B8, &record_length);
@@ -7311,10 +7309,10 @@ xls_get_column_width(
     PC_BYTE p_x;
     S32 column_width = -1;
 
-    if(biff_version >= 8)
+    if(p_xls_load_info->biff_version >= 8)
     {   /* Look for a COLINFO record that contains this column */
     }
-    else if(biff_version >= 4)
+    else if(p_xls_load_info->biff_version >= 4)
     {   /* Look in the GCW record */
         const U32 byte_index = ((U32) col) >> 3;
         const U32 bit_mask = ((U32) 1) << (((U32) col) & 0x07); 
@@ -7337,7 +7335,7 @@ xls_get_column_width(
 
         /* GCW bit clear: Look for a COLINFO record that contains this column */
     }
-    else if(biff_version == 3)
+    else if(p_xls_load_info->biff_version == 3)
     {   /* Look for a COLINFO record that contains this column */
     }
     else
@@ -7390,7 +7388,7 @@ xls_get_default_row_height_twips(
     _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info)
 {
     U16 default_row_height_twips = U16_MAX;
-    const XLS_OPCODE defaultrowheight_opcode = (biff_version == 2) ? X_DEFAULTROWHEIGHT_B2 : X_DEFAULTROWHEIGHT_B3_B8;
+    const XLS_OPCODE defaultrowheight_opcode = (p_xls_load_info->biff_version == 2) ? X_DEFAULTROWHEIGHT_B2 : X_DEFAULTROWHEIGHT_B3_B8;
     U16 record_length;
     U32 opcode_offset = p_xls_load_info->worksheet_substream_offset;
 
@@ -7401,7 +7399,7 @@ xls_get_default_row_height_twips(
     {
         PC_BYTE p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
 
-        if(biff_version == 2)
+        if(p_xls_load_info->biff_version == 2)
         {
             default_row_height_twips = xls_read_U16_LE(p_x);
 
@@ -7455,7 +7453,7 @@ font_spec_name_from_xls_FONT_record_name(
 _Check_return_
 static STATUS
 font_spec_from_xls_FONT_record(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _OutRef_    P_FONT_SPEC p_font_spec,
     _InVal_     U32 opcode_offset,
     _InVal_     U16 record_length)
@@ -7478,7 +7476,7 @@ font_spec_from_xls_FONT_record(
     p_font_spec->italic    = (U8) (0 != (option_flags & 0x02));
     p_font_spec->underline = (U8) (0 != (option_flags & 0x04));
 
-    if(biff_version >= 5)
+    if(p_xls_load_info->biff_version >= 5)
     {
         const U16 weight = xls_read_U16_LE(p_x + 6);
         const U8 underline = p_x[10];
@@ -7486,23 +7484,23 @@ font_spec_from_xls_FONT_record(
         p_font_spec->underline = (U8) (0 != underline);
     }
 
-    if(biff_version >= 5)
+    if(p_xls_load_info->biff_version >= 5)
     {
         font_len = p_x[14];
         p_font = p_x + 15;
     }
-    else if(biff_version >= 3)
+    else if(p_xls_load_info->biff_version >= 3)
     {
         font_len = p_x[6];
         p_font = p_x + 7;
     }
-    else /* (biff_version < 3) */
+    else /* (p_xls_load_info->biff_version < 3) */
     {
         font_len = p_x[4];
         p_font = p_x + 5;
     }
 
-    status = xls_quick_ublock_xls_string_add(&quick_ublock, p_font, font_len, p_xls_load_info->sbchar_codepage, FALSE); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
+    status = xls_quick_ublock_xls_string_add(&quick_ublock, p_font, font_len, p_xls_load_info, FALSE); /* for USTR_IS_SBSTR this may substitute a replacement character for any non-Latin-1 */
 
     if(status_ok(status))
         status = quick_ublock_nullch_add(&quick_ublock);
@@ -7518,7 +7516,7 @@ font_spec_from_xls_FONT_record(
 _Check_return_
 static STATUS
 style_from_xls_FONT_record(
-    _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
+    _InRef_     PC_XLS_LOAD_INFO p_xls_load_info,
     _InoutRef_  P_STYLE p_style,
     _InVal_     U32 opcode_offset,
     _InVal_     U16 record_length)
@@ -7540,12 +7538,12 @@ style_from_xls_FONT_record(
     style_bit_set(p_style, STYLE_SW_FS_ITALIC);
     style_bit_set(p_style, STYLE_SW_FS_UNDERLINE);
 
-    if(biff_version >= 3)
+    if(p_xls_load_info->biff_version >= 3)
     {
         PC_BYTE p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
         const U16 colour_index = xls_read_U16_LE(p_x + 4);
 
-        if(rgb_from_colour_index(&p_style->font_spec.colour, colour_index))
+        if(rgb_from_colour_index(p_xls_load_info, &p_style->font_spec.colour, colour_index))
         {
             style_bit_set(p_style, STYLE_SW_FS_COLOUR);
 
@@ -7570,7 +7568,7 @@ xls_style_from_xf_data(
         const BYTE pattern_colour            = (BYTE) ((readval_U16_LE(&p_xf_data[18])      ) & 0x007F); /* [6..0] */
      /* const BYTE pattern_background_colour = (BYTE) ((readval_U16_LE(&p_xf_data[18]) >>  7) & 0x007F); */ /* [13..7] */
 
-        if(rgb_from_colour_index(&p_style->para_style.rgb_back, pattern_colour))
+        if(rgb_from_colour_index(p_xls_load_info, &p_style->para_style.rgb_back, pattern_colour))
             style_bit_set(p_style, STYLE_SW_PS_RGB_BACK);
     }
 
@@ -7638,7 +7636,7 @@ xls_style_from_xf_data(
     if(0 != (p_xf_data[9] & XF_USED_ATTRIB_FONT))
     {
         const FONT_INDEX font_index = xls_read_U16_LE(p_xf_data + 0);
-        const XLS_OPCODE font_opcode = ((biff_version == 3) || (biff_version == 4)) ? X_FONT_B3_B4 : X_FONT_B2_B5_B8;
+        const XLS_OPCODE font_opcode = ((p_xls_load_info->biff_version == 3) || (p_xls_load_info->biff_version == 4)) ? X_FONT_B3_B4 : X_FONT_B2_B5_B8;
         U16 record_length;
         U32 opcode_offset = xls_find_record_FONT_INDEX(p_xls_load_info, &record_length, font_index, font_opcode);
 
@@ -7714,7 +7712,7 @@ xls_slurp_from_XF_INDEX_as_style(
 {
     BYTE xf_data[20]; /* BIFF8 format */
 
-    xls_slurp_xf_data_from_XF_INDEX(p_xls_load_info, xf_data, xf_index, xf_opcode);
+    xls_slurp_xf_data_from_XF_INDEX_using(p_xls_load_info, xf_data, xf_index, xf_opcode);
 
     return(xls_style_from_xf_data(p_xls_load_info, p_style, xf_data));
 }
@@ -7831,7 +7829,7 @@ xls_get_pixit_with_of_zero_in_default_font(
 {
     /* get width of character '0' in the default font */
     PIXIT pixit_width_of_zero = PIXITS_PER_INCH / 10;
-    const XLS_OPCODE font_opcode = ((biff_version == 3) || (biff_version == 4)) ? X_FONT_B3_B4 : X_FONT_B2_B5_B8;
+    const XLS_OPCODE font_opcode = ((p_xls_load_info->biff_version == 3) || (p_xls_load_info->biff_version == 4)) ? X_FONT_B3_B4 : X_FONT_B2_B5_B8;
     U16 record_length;
     U32 opcode_offset = xls_find_record_FONT_INDEX(p_xls_load_info, &record_length, (FONT_INDEX) 0, font_opcode);
 
@@ -7869,7 +7867,7 @@ xls_apply_structure_style_default_cell(
     style_init(&style);
 
     /* get the default cell style (XF_INDEX 15) */
-    status_return(xls_slurp_from_XF_INDEX_as_style(p_xls_load_info, &style, (XF_INDEX) 15, biff_version_opcode_XF));
+    status_return(xls_slurp_from_XF_INDEX_as_style(p_xls_load_info, &style, (XF_INDEX) 15, p_xls_load_info->biff_version_opcode_XF));
 
     /* Deal with General */
     xls_promote_general_from_style_to_style_handle(p_xls_load_info, &style, &style_handle);
@@ -7953,7 +7951,7 @@ xls_apply_structure_style_column_others_for_column(
 
         style_init(&style);
 
-        status_return(xls_slurp_from_XF_INDEX_as_style(p_xls_load_info, &style, xf_index, biff_version_opcode_XF));
+        status_return(xls_slurp_from_XF_INDEX_as_style(p_xls_load_info, &style, xf_index, p_xls_load_info->biff_version_opcode_XF));
 
         { /* Deal with General (by ignoring it here - has likely been brought up from base style) */
         STYLE_HANDLE style_handle = STYLE_HANDLE_NONE;
@@ -8052,7 +8050,7 @@ xls_apply_structure_style_row_heights(
 {
     U16 default_row_height_twips;
     STYLE style;
-    const XLS_OPCODE row_opcode = (biff_version == 2) ? X_ROW_B2 : X_ROW_B3_B8;
+    const XLS_OPCODE row_opcode = (p_xls_load_info->biff_version == 2) ? X_ROW_B2 : X_ROW_B3_B8;
     U16 record_length;
     U32 opcode_offset = p_xls_load_info->worksheet_substream_offset;
 
@@ -8177,7 +8175,7 @@ xls_workbook_once(
     /* process any workbook globals */
 
     /* retain SST between worksheets */
-    if(status_ok(status) && (biff_version >= 8))
+    if( status_ok(status) && (p_xls_load_info->biff_version >= 8) )
         status_assert(xls_read_SST(p_xls_load_info));
 
     return(status);
@@ -8280,10 +8278,10 @@ xls_insert_foreign(
 
     if(status_ok(status) && p_xls_load_info->process_multiple_worksheets)
     {
-        if(biff_version >= 5)
+        if(p_xls_load_info->biff_version >= 5)
             status = xls_find_BOUNDSHEET(p_xls_load_info, &p_msg_insert_foreign->retry_with_this_arg);
 
-        if(biff_version == 4)
+        if(p_xls_load_info->biff_version == 4)
             status = xls_find_SHEETHDR(p_xls_load_info, &p_msg_insert_foreign->retry_with_this_arg);
     }
 

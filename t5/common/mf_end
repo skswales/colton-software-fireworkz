@@ -122,6 +122,9 @@ $(PROD_BUILD_DIR).!$(APPL).Resources.!ReadMe: $(PROD_SOURCE_DIR).Resources.RISC_
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf: $(T5).Resources.Neutral.Support.cfbf
  Copy $? $@ ~C FV
 
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf-4096: $(T5).Resources.Neutral.Support.cfbf-4096
+ Copy $? $@ ~C FV
+
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf-mini: $(T5).Resources.Neutral.Support.cfbf-mini
  Copy $? $@ ~C FV
 

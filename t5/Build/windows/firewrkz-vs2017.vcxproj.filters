@@ -1722,6 +1722,9 @@
     <ClInclude Include="..\..\cmodules\riscos\colourpick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource_x_save.h">
+      <Filter>Resource Files\UK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\fl_123\resource\uk-msg">
@@ -3026,9 +3029,15 @@
     <None Include="..\..\..\docs\GSGuide\riscos\content\gsggl.html">
       <Filter>Docs\RISC OS\GSGuide</Filter>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug02\ug2_fireworkz_basics.htm" />
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug98_glossary.htm" />
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug99_addenda.htm" />
+    <None Include="..\..\..\docs\UserGuide\content\ug\ug02_fireworkz_basics.htm">
+      <Filter>Docs\UserGuide\ug</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug\ug98_glossary.htm">
+      <Filter>Docs\UserGuide\ug</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\ug\ug99_addenda.htm">
+      <Filter>Docs\UserGuide\ug</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\firewrkz\Resources\Windows\Neutral\banner.bmp">
@@ -3198,6 +3207,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="firewrkz.rc">
+      <Filter>Resource Files\UK</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="firewrkz_x_save.rc">
       <Filter>Resource Files\UK</Filter>
     </ResourceCompile>
   </ItemGroup>

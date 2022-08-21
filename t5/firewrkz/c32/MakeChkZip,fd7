@@ -7,8 +7,8 @@
 | Copyright (C) 1993-1998 Colton Software Limited
 | Copyright (C) 1998-2015 R W Colton
 
-Set t5$Release 2_30
-Set t5$Release 2_30_01
+Set t5$Release 2_31
+|Set t5$Release 2_31_01
 
 Set t5$Disc $.Temp.FireChk.Fireworkz_<t5$Release>
 IfThere     $.Temp         Then Else %CDir $.Temp
@@ -77,6 +77,7 @@ t5_access_read                                              <t5$Disc>.Z.*
 | [Pro]
 |*Pro*                                                      <t5$Disc>.Z.Resources.Neutral.Support
 |*Pro*<t5$Resources$Dir>.Neutral.Support.cfbf               <t5$Disc>.Z.Resources.Neutral.Support.* ~rf~cln~v
+|*Pro*<t5$Resources$Dir>.Neutral.Support.cfbf-4096          <t5$Disc>.Z.Resources.Neutral.Support.* ~rf~cln~v
 |*Pro*<t5$Resources$Dir>.Neutral.Support.cfbf-mini          <t5$Disc>.Z.Resources.Neutral.Support.* ~rf~cln~v
 |
 %CDir                                                       <t5$Disc>.Z.Resources.Neutral.RISC_OS

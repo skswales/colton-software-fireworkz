@@ -565,17 +565,21 @@ ss_data_divide(
 
 PROC_EXEC_PROTO(c_bop_power)
 {
+#if RISCOS
+    F64 a, b;
+
+    ss_data_copy_real(&a, args[0]);
+    ss_data_copy_real(&b, args[1]);
+#else
     const F64 a = ss_data_get_real(args[0]);
     const F64 b = ss_data_get_real(args[1]);
+#endif
 
     exec_func_ignore_parms();
 
     errno = 0;
 
-    if(0.5 == b)
-        ss_data_set_real_try_integer(p_ss_data_res, sqrt(a));
-    else
-        ss_data_set_real_try_integer(p_ss_data_res, pow(a, b));
+    ss_data_set_real_try_integer(p_ss_data_res, (0.5 == b) ? sqrt(a) : pow(a, b));
 
     if(errno /* == EDOM */)
     {

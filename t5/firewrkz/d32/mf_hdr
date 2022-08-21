@@ -26,6 +26,7 @@ $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S6 \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Pictures.S1 \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Pictures.S2 \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf \
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf-4096 \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf-mini \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.!Sprite \
 $(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.ImageSlot \

@@ -47,6 +47,8 @@ complex_result_reals_string(
 /******************************************************************************
 *
 * check that arg is a 2 by 1 array of two real numbers (or one real)
+* complex functions use arg_CPX which specifes EM_REA | EM_ARY
+* but see also COMPLEX_STRING
 *
 * --out--
 * <0  arg data was unsuitable
@@ -61,13 +63,17 @@ complex_check_arg_array(
     _OutRef_    P_COMPLEX z,
     _InRef_     P_SS_DATA p_ss_data_in)
 {
+    S32 x_size, y_size;
+
     if(ss_data_is_real(p_ss_data_in))
     {
         complex_set_ri(z, ss_data_get_real(p_ss_data_in), 0.0);
         return(STATUS_OK);
     }
 
-    if(ss_data_is_array(p_ss_data_in))
+    array_range_sizes(p_ss_data_in, &x_size, &y_size);
+
+    if( (x_size == 2) && (y_size == 1) )
     {   /* extract elements from the array */
         SS_DATA ss_data_1, ss_data_2;
         const EV_IDNO t1 = array_range_index(&ss_data_1, p_ss_data_in, 0, 0, EM_REA);

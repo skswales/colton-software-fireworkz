@@ -60,6 +60,8 @@ mkdir                                                              CD\Resources\
 mkdir                                                              CD\Resources\Neutral\Support\
 @echo F | xcopy /f ..\..\..\Resources\Neutral\Support\cfbf?ffd     CD\Resources\Neutral\Support\cfbf
 @if errorlevel 1 goto failed
+@echo F | xcopy /f ..\..\..\Resources\Neutral\Support\cfbf-4096?ffd CD\Resources\Neutral\Support\cfbf-4096
+@if errorlevel 1 goto failed
 @echo F | xcopy /f ..\..\..\Resources\Neutral\Support\cfbf-mini?ffd CD\Resources\Neutral\Support\cfbf-mini
 @if errorlevel 1 goto failed
 @

@@ -2359,7 +2359,8 @@ xls_write_cell_ss_constant(
     {
     case DATA_ID_REAL:
         {
-        const F64 f64 = ss_data_get_real(p_ss_data);
+        F64 f64;
+        ss_data_copy_real(&f64, p_ss_data);
         return(xls_write_NUMBER_record(p_ff_op_format, f64, p_slr));
         }
 
@@ -5398,7 +5399,21 @@ xls_save_biff_cfbf(
         status_ok(status = xls_write_workbook_sheet_substream(p_docu, p_ff_op_format)) )
     { /*EMPTY*/ }
 
-    /* now write the memory containing the workbook data to the desired file as a CFBF storage with 'Book' stream */
+#if 0
+    if(status_ok(status))
+    {   /* write a copy to a temp file for debug */
+        FILE_HANDLE file_handle;
+        if(status_ok(status = t5_file_open("C:\\Temp\\clipdump.xls", file_open_write, &file_handle, TRUE)))
+        {
+            const U32 n_stream_bytes = array_elements32(&array_handle);
+            const PC_BYTE stream_data = array_rangec(&array_handle, BYTE, 0, n_stream_bytes);
+            status = file_write_bytes(stream_data, n_stream_bytes, file_handle);
+            status_accumulate(status, t5_file_close(&file_handle));
+        }
+    }
+#endif
+
+    /* now write the memory containing the workbook data to the desired file as a CFBF storage with 'Workbook'/'Book' stream */
     if(status_ok(status))
     {
         const U32 n_stream_bytes = array_elements32(&array_handle);
@@ -5411,21 +5426,7 @@ xls_save_biff_cfbf(
         if(NULL != caller_p_array_handle)
             al_array_empty(caller_p_array_handle);
 
-        status = cfbf_write_stream_in_storage(caller_p_array_handle, storage_filename, storage_filetype, TEXT("Book"), stream_data, n_stream_bytes);
-
-#if 0
-        if(status_ok(status)
-        { /* write a copy to a temp file for debug */
-            FILE_HANDLE file_handle;
-            if(status_ok(status = t5_file_open("C:\\Temp\\clipdump.xls", file_open_write, &file_handle, TRUE)))
-            {
-                const U32 n_storage_bytes = array_elements32(caller_p_array_handle);
-                const PC_BYTE storage_data = array_rangec(caller_p_array_handle, BYTE, 0, n_storage_bytes);
-                status = file_write_bytes(storage_data, n_storage_bytes, file_handle);
-                status_accumulate(status, t5_file_close(&file_handle));
-            }
-        }
-#endif
+        status = cfbf_write_stream_in_storage(caller_p_array_handle, storage_filename, storage_filetype, (biff_version >= 8) ? TEXT("Workbook") : TEXT("Book"), stream_data, n_stream_bytes);
     }
 
     al_array_dispose(&array_handle);

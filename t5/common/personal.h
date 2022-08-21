@@ -50,6 +50,7 @@ Master list is always in debug.h
 #define PERSONAL_TRACE_FLAGS ( TRACE_OUT | \
     TRACE_APP_CLIPBOARD     | \
     TRACE_APP_FOREIGN       | \
+    TRACE_MODULE_CFBF       | \
     0 )
 
 #define STUART 1

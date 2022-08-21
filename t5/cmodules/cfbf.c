@@ -21,29 +21,29 @@ compound_file_read_file_header(
 
 _Check_return_
 static STATUS
-compound_file_read_file_MSAT(
+compound_file_read_DIFAT(
     _InoutRef_  P_COMPOUND_FILE p_compound_file);
 
 _Check_return_
 static STATUS
 compound_file_create_directory_list(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int first_sector_id);
+    _InVal_     CFBF_SECT first_sector_id);
 
 _Check_return_
 static STATUS
 compound_file_create_common(
     _InoutRef_  P_COMPOUND_FILE p_compound_file)
 {
-    p_compound_file->current_SAT_block = -1;
+    p_compound_file->cached_FAT_sector_id = CFBF_ENDOFCHAIN;
 
-    p_compound_file->current_SSAT_block = -1;
+    p_compound_file->cached_mini_stream_FAT_sector_id = CFBF_ENDOFCHAIN;
 
-    p_compound_file->ministream_chain_first_sector_id = CFBF_ENDOFCHAIN;
+    p_compound_file->mini_stream_chain_first_sector_id = CFBF_ENDOFCHAIN;
 
     status_return(compound_file_read_file_header(p_compound_file));
 
-    status_return(compound_file_read_file_MSAT(p_compound_file));
+    status_return(compound_file_read_DIFAT(p_compound_file));
 
     return(compound_file_create_directory_list(p_compound_file, p_compound_file->hdr._sectDirStart));
 }
@@ -107,11 +107,11 @@ compound_file_dispose(
     {
         *p_p_compound_file = NULL;
 
-        if(NULL != p_compound_file->p_standard_sector_buffer)
-            al_ptr_free(p_compound_file->p_standard_sector_buffer);
+        if(NULL != p_compound_file->p_sector_buffer)
+            al_ptr_free(p_compound_file->p_sector_buffer);
 
-        if(NULL != p_compound_file->full_MSAT)
-            al_ptr_free(p_compound_file->full_MSAT);
+        if(NULL != p_compound_file->full_DIFAT)
+            al_ptr_free(p_compound_file->full_DIFAT);
 
         if(NULL != p_compound_file->decoded_directory_list)
             al_ptr_free(p_compound_file->decoded_directory_list);
@@ -134,6 +134,8 @@ compound_file_file_header_id_test(
 
     return(0 == memcmp32(p_data, buffer_compound_file_file_id, CFBF_FILE_HEADER_ID_BYTES));
 }
+
+/* only reads 0x200 bytes from file even for 4096 byte sector - rest is zero padding */
 
 _Check_return_
 static STATUS
@@ -180,8 +182,8 @@ compound_file_read_file_header(
     for(i = 0; i < limit/sizeof32(int); i++)
     {
         if(0 == (i % 4))
-            trace_1(TRACE_MODULE_CFBF, TEXT("  offset 0x%.2X |"), i * sizeof32(U32));
-        trace_1(TRACE_MODULE_CFBF, TEXT("|%.8X |"), ((PC_U32) hdr)[i]);
+            trace_1(TRACE_MODULE_CFBF, TEXT("  offset 0x%.2X|"), i * sizeof32(U32));
+        trace_1(TRACE_MODULE_CFBF, TEXT("| %.8X|"), ((PC_U32) hdr)[i]);
     }
     } /*block*/
 #endif
@@ -192,13 +194,11 @@ compound_file_read_file_header(
     trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageHeader: _csectFat=" U32_TFMT), hdr->_csectFat);
     trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageHeader: _sectDirStart=" U32_TFMT), hdr->_sectDirStart);
 
-    p_compound_file->standard_sector_size = (U32) 1 << hdr->_uSectorShift;
-    trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageHeader: standard_sector_size=" U32_TFMT), p_compound_file->standard_sector_size);
+    p_compound_file->sector_size = (U32) 1 << hdr->_uSectorShift;
+    trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageHeader: sector_size=" U32_TFMT), p_compound_file->sector_size);
 
-    p_compound_file->ministream_sector_size = (U32) 1 << hdr->_uMiniSectorShift;
-    trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageHeader: ministream_sector_size=" U32_TFMT), p_compound_file->ministream_sector_size);
-
-    assert(p_compound_file->standard_sector_size <= COMPOUND_FILE_MAX_SECTOR_SIZE); /* for fixed block arrays at the moment */
+    p_compound_file->mini_stream_sector_size = (U32) 1 << hdr->_uMiniSectorShift;
+    trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageHeader: mini_stream_sector_size=" U32_TFMT), p_compound_file->mini_stream_sector_size);
 
     if(hdr->_uSectorShift > (9+3))
     {   /* failed plausibility check (_uSectorShift typically 9) */
@@ -211,7 +211,9 @@ compound_file_read_file_header(
         return(status_check());
     }
 
-    if(NULL == (p_compound_file->p_standard_sector_buffer = al_ptr_alloc_bytes(P_BYTE, p_compound_file->standard_sector_size, &status)))
+    assert(p_compound_file->sector_size <= COMPOUND_FILE_MAX_SECTOR_SIZE); /* for fixed block arrays at the moment */
+
+    if(NULL == (p_compound_file->p_sector_buffer = al_ptr_alloc_bytes(P_BYTE, p_compound_file->sector_size, &status)))
         return(status);
 
     return(STATUS_OK);
@@ -219,25 +221,25 @@ compound_file_read_file_header(
 
 _Check_return_
 extern STATUS
-compound_file_read_file_sector(
+compound_file_read_sector(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
     _InVal_     CFBF_SECT sector_id,
     P_ANY dest,
     _OutRef_    P_U32 p_bytesread)
 {
-    const U32 virtual_filepos = sector_id * p_compound_file->standard_sector_size;
-    const U32 actual_filepos = sizeof32(StructuredStorageHeader) + virtual_filepos;
-    const U32 bytes_to_read = p_compound_file->standard_sector_size;
+    const U32 actual_sector = (1 /*StructuredStorageHeader*/ + sector_id);
+    const U32 actual_filepos_lo = actual_sector * p_compound_file->sector_size; /* might overflow! use uint32_multiply_check_overflow() */
+    const U32 bytes_to_read = p_compound_file->sector_size;
     U32 bytes_read = 0;
 
-    trace_2(TRACE_MODULE_CFBF, TEXT("compound_file_read_file_sector(sector_id %u, filepos ") U32_XTFMT TEXT(")"), sector_id, actual_filepos);
-    assert((S32) sector_id >= 0);
+    trace_2(TRACE_MODULE_CFBF, TEXT("compound_file_read_sector(sector_id %u, filepos ") U32_XTFMT TEXT(")"), sector_id, actual_filepos_lo);
+    assert(sector_id <= CFBF_MAXREGSECT);
 
     if(NULL != p_compound_file->file_handle)
     {
         STATUS status;
 
-        status = file_seek(p_compound_file->file_handle, actual_filepos, NULL /*hi*/, SEEK_SET);
+        status = file_seek(p_compound_file->file_handle, actual_filepos_lo, NULL /*hi*/, SEEK_SET);
 
         if(status_ok(status))
             status = file_read_bytes(dest, bytes_to_read, &bytes_read, p_compound_file->file_handle);
@@ -251,27 +253,27 @@ compound_file_read_file_sector(
 
     if(0 != p_compound_file->data_size)
     {
-        if(actual_filepos <= p_compound_file->data_size) /* starting read within the data? */
+        if(actual_filepos_lo <= p_compound_file->data_size) /* starting read within the data? */
         {
-            U32 end_filepos = actual_filepos + bytes_to_read; /* oh for access to CPU flags... */
+            U32 end_filepos = actual_filepos_lo + bytes_to_read; /* oh for access to CPU flags... */
 
-            if((end_filepos >= actual_filepos) && (end_filepos >= bytes_to_read)) /* check overflow */
+            if( (end_filepos >= actual_filepos_lo) && (end_filepos >= bytes_to_read) ) /* check overflow */
             {
                 if(end_filepos <= p_compound_file->data_size) /* ending read within the data? */
                     bytes_read = bytes_to_read; /* can satisfy whole request */
                 else
                 {
-                    bytes_read = (p_compound_file->data_size - actual_filepos); /* limit request to what we have */
-                    trace_3(TRACE_MODULE_CFBF, TEXT("compound_file_read_file_sector(sector_id %u, filepos ") U32_XTFMT TEXT(") - *** limit to " U32_XTFMT), sector_id, actual_filepos, bytes_read);
+                    bytes_read = (p_compound_file->data_size - actual_filepos_lo); /* limit request to what we have */
+                    trace_3(TRACE_MODULE_CFBF, TEXT("compound_file_read_sector(sector_id %u, filepos ") U32_XTFMT TEXT(") - *** limit to " U32_XTFMT), sector_id, actual_filepos_lo, bytes_read);
                 }
 
                 *p_bytesread = bytes_read;
-                memcpy32(dest, p_compound_file->p_data + actual_filepos, bytes_read);
+                memcpy32(dest, p_compound_file->p_data + actual_filepos_lo, bytes_read);
                 return(STATUS_OK);
             }
         }
-        assert(actual_filepos <= p_compound_file->data_size);
-        assert(actual_filepos + bytes_to_read <= p_compound_file->data_size);
+        assert(actual_filepos_lo <= p_compound_file->data_size);
+        assert(actual_filepos_lo + bytes_to_read <= p_compound_file->data_size);
     }
 
     *p_bytesread = 0;
@@ -280,82 +282,162 @@ compound_file_read_file_sector(
 
 _Check_return_
 extern STATUS
-compound_file_read_SSAT_sector(
+compound_file_read_mini_stream_sector(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int SSAT_sector_id,
+    _InVal_     CFBF_SECT mini_stream_sector_id,
     P_ANY dest)
 {
-    U32 ministream_filepos = (U32) SSAT_sector_id * p_compound_file->ministream_sector_size;
-    U32 this_ministream_filepos = 0;
-    int ministream_chain_sector_id;
+    U32 mini_stream_filepos = (U32) mini_stream_sector_id * p_compound_file->mini_stream_sector_size; /* mini stream limited in size so this won't overflow */
+    U32 this_mini_stream_filepos = 0;
+    CFBF_SECT mini_stream_chain_sector_id;
 
-    trace_2(TRACE_MODULE_CFBF, TEXT("compound_file_read_SSAT_sector(SSAT_sector_id %d): short_stream_filepos ") U32_XTFMT, SSAT_sector_id, ministream_filepos);
-    assert(SSAT_sector_id >= 0);
+    trace_2(TRACE_MODULE_CFBF, TEXT("compound_file_read_mini_stream_sector(mini_stream_sector_id %d): mini_stream_filepos ") U32_XTFMT, mini_stream_sector_id, mini_stream_filepos);
+    assert(mini_stream_sector_id <= CFBF_MAXREGSECT);
 
-    for(ministream_chain_sector_id = p_compound_file->ministream_chain_first_sector_id;
-        ministream_chain_sector_id >= 0;
-        ministream_chain_sector_id = compound_file_get_next_sector_id(p_compound_file, ministream_chain_sector_id))
+    for(mini_stream_chain_sector_id = p_compound_file->mini_stream_chain_first_sector_id;
+        mini_stream_chain_sector_id <= CFBF_MAXREGSECT;
+        mini_stream_chain_sector_id = compound_file_get_next_sector_id(p_compound_file, mini_stream_chain_sector_id))
     {
-        if(ministream_filepos < (this_ministream_filepos + p_compound_file->standard_sector_size))
+        if(mini_stream_filepos < (this_mini_stream_filepos + p_compound_file->sector_size))
         {
             U32 bytes_read;
 
-            trace_2(TRACE_MODULE_CFBF, TEXT("compound_file_read_SSAT_sector(SSAT_sector_id %d): this_short_stream_filepos ") U32_XTFMT, SSAT_sector_id, this_ministream_filepos);
-            status_return(compound_file_read_file_sector(p_compound_file, ministream_chain_sector_id, p_compound_file->p_standard_sector_buffer, &bytes_read));
+            trace_2(TRACE_MODULE_CFBF, TEXT("compound_file_read_mini_stream_sector(mini_stream_sector_id %d): this_mini_stream_filepos ") U32_XTFMT, mini_stream_sector_id, this_mini_stream_filepos);
+            status_return(compound_file_read_sector(p_compound_file, mini_stream_chain_sector_id, p_compound_file->p_sector_buffer, &bytes_read));
 
-            memcpy32(dest, p_compound_file->p_standard_sector_buffer + (ministream_filepos - this_ministream_filepos), p_compound_file->ministream_sector_size);
+            memcpy32(dest, p_compound_file->p_sector_buffer + (mini_stream_filepos - this_mini_stream_filepos), p_compound_file->mini_stream_sector_size);
 
             return(STATUS_DONE);
         }
 
-        this_ministream_filepos += p_compound_file->standard_sector_size;
+        this_mini_stream_filepos += p_compound_file->sector_size;
     }
 
     return(STATUS_OK);
 }
 
-_Check_return_
-static STATUS
-compound_file_read_file_MSAT(
+#if TRACE_ALLOWED
+
+static void
+compound_file_dump_DIFAT_file_header(
     _InoutRef_  P_COMPOUND_FILE p_compound_file)
 {
-    STATUS status;
-    U32 msat_entry_bytes;
-
-    if(NULL == (p_compound_file->full_MSAT =
-                al_ptr_calloc_bytes(CFBF_SECT *, sizeof32(p_compound_file->hdr._sectFat) + (p_compound_file->standard_sector_size * (U32) p_compound_file->hdr._csectDif), &status)))
-        return(status);
-
-    /* load the first 109 MSAT entries from the file header */
-    msat_entry_bytes = sizeof32(p_compound_file->hdr._sectFat);
-    memcpy32(p_compound_file->full_MSAT, p_compound_file->hdr._sectFat, msat_entry_bytes);
-
-#if TRACE_ALLOWED
-    {
-    const CFBF_SECT * x = p_compound_file->full_MSAT;
-    const U32 msat_entries = msat_entry_bytes/sizeof32(*x);
+    const CFBF_SECT * x = p_compound_file->full_DIFAT;
+    const U32 DIFAT_entries = elemof32(p_compound_file->hdr._sectFat); /* 109 */
     U32 list_index;
     BOOL needs_newline = TRUE;
     PTR_ASSERT(x);
-    trace_1(TRACE_MODULE_CFBF, TEXT("MSAT from file header (%u entries):|"), msat_entries);
-    for(list_index = 0; list_index < msat_entries; list_index++, x++)
+    trace_1(TRACE_MODULE_CFBF, TEXT("DIFAT from file header (%u entries):|"), DIFAT_entries);
+    for(list_index = 0; list_index < DIFAT_entries; list_index++, x++)
     {
         if(0 == (list_index % 8))
         {
-            trace_1(TRACE_MODULE_CFBF, TEXT("  entry %.3u |"), list_index);
+            trace_1(TRACE_MODULE_CFBF, TEXT("  entry %.3u|"), list_index);
             needs_newline = FALSE;
         }
         else
             needs_newline = TRUE;
-        trace_1(TRACE_MODULE_CFBF, TEXT("|%.8X |"), *x);
+        trace_1(TRACE_MODULE_CFBF, TEXT("| %.8X|"), *x);
     }
     if(needs_newline)
         trace_0(TRACE_MODULE_CFBF, TEXT(""));
-    } /*block*/
+
+#if 1
+    /* dump each of the referenced DIFAT sectors */
+    for(list_index = 0; list_index < DIFAT_entries; list_index++)
+    {
+        const CFBF_SECT sector_id = p_compound_file->full_DIFAT[list_index];
+        U32 bytes_read;
+        U32 data_index;
+
+        if(sector_id > CFBF_MAXREGSECT)
+            break;
+
+        trace_2(TRACE_MODULE_CFBF, TEXT("DIFAT entry %.3u, sector_id %d\n"), list_index, sector_id);
+        status_assert(compound_file_read_sector(p_compound_file, sector_id, p_compound_file->p_sector_buffer, &bytes_read));
+        assert(bytes_read == p_compound_file->sector_size);
+
+        x = (const CFBF_SECT *) p_compound_file->p_sector_buffer;
+        needs_newline = TRUE;
+        for(data_index = 0; data_index < p_compound_file->sector_size/sizeof(CFBF_SECT); data_index++, x++)
+        {
+            if(0 == (data_index % 8))
+            {
+                trace_1(TRACE_MODULE_CFBF, TEXT("  entry %.3u|"), data_index);
+                needs_newline = FALSE;
+            }
+            else
+                needs_newline = TRUE;
+            trace_1(TRACE_MODULE_CFBF, TEXT("| %.8X|"), *x);
+        }
+        if(needs_newline)
+            trace_0(TRACE_MODULE_CFBF, TEXT(""));
+
+#if 1 /* just dump the first FAT sector unless deep debugging! (which we will do for files with additional DIF blocks) */
+        if(0 == p_compound_file->hdr._csectDif)
+        {
+            if(list_index + 1 < DIFAT_entries)
+                trace_2(TRACE_MODULE_CFBF, TEXT("DIFAT entries %.3u..%.3u not dumped\n"), list_index + 1, DIFAT_entries - 1);
+
+            break;
+        }
+#endif
+    }
+#endif
+}
+
+static void
+compound_file_dump_file_DIFAT_DIF(
+    _InoutRef_  P_COMPOUND_FILE p_compound_file,
+    _InVal_     CFBF_FSINDEX i,
+                PC_BYTE p)
+{
+    const CFBF_SECT * x = (const CFBF_SECT *) p;
+    const U32 DIFAT_entry_bytes = p_compound_file->sector_size - sizeof32(CFBF_SECT); /* didn't copy the sector link word */
+    const U32 DIFAT_entries = DIFAT_entry_bytes/sizeof32(*x);
+    U32 list_index;
+    BOOL needs_newline = TRUE;
+    trace_2(TRACE_MODULE_CFBF, TEXT("DIFAT from file DIF (part %u, %u entries):"), i, DIFAT_entries);
+    for(list_index = 0; list_index < DIFAT_entries; list_index++, x++)
+    {
+        if(0 == (list_index % 8))
+        {
+            trace_2(TRACE_MODULE_CFBF, TEXT("DIF %u entry %.3u|"), i, list_index);
+            needs_newline = FALSE;
+        }
+        else
+            needs_newline = TRUE;
+        trace_1(TRACE_MODULE_CFBF, TEXT("| %.8X|"), *x);
+    }
+    if(needs_newline)
+        trace_0(TRACE_MODULE_CFBF, TEXT(""));
+}
+
+#endif /*TRACE_ALLOWED*/
+
+_Check_return_
+static STATUS
+compound_file_read_DIFAT(
+    _InoutRef_  P_COMPOUND_FILE p_compound_file)
+{
+    STATUS status;
+    U32 DIFAT_entry_bytes;
+
+    if(NULL == (p_compound_file->full_DIFAT =
+                al_ptr_calloc_bytes(CFBF_SECT *, sizeof32(p_compound_file->hdr._sectFat) + (p_compound_file->sector_size * (U32) p_compound_file->hdr._csectDif), &status)))
+        return(status);
+
+    /* load the first 109 DIFAT entries from the file header */
+    DIFAT_entry_bytes = sizeof32(p_compound_file->hdr._sectFat);
+    memcpy32(p_compound_file->full_DIFAT, p_compound_file->hdr._sectFat, DIFAT_entry_bytes);
+
+#if TRACE_ALLOWED
+    if(tracing(TRACE_MODULE_CFBF))
+        compound_file_dump_DIFAT_file_header(p_compound_file);
 #endif
 
-    { /* load the rest of the MSAT entries from the file (a FAT chain) */
-    P_BYTE p = PtrAddBytes(P_BYTE, p_compound_file->full_MSAT, msat_entry_bytes);
+    { /* append the rest of the DIFAT entries from the file (a FAT chain) */
+    P_BYTE p = PtrAddBytes(P_BYTE, p_compound_file->full_DIFAT, DIFAT_entry_bytes);
     CFBF_FSINDEX i;
     CFBF_SECT sector_id = p_compound_file->hdr._sectDifStart;
 
@@ -363,42 +445,24 @@ compound_file_read_file_MSAT(
     {
         U32 bytes_read;
 
-        if((CFBF_ENDOFCHAIN != sector_id) || (CFBF_FREESECT == sector_id))
+        if( (CFBF_ENDOFCHAIN == sector_id) || (CFBF_FREESECT == sector_id) )
             break; /* NB some writers use CFBF_FREESECT - naughty! This is how LibreOffice handles them */
 
-        assert((S32) sector_id >= 0);
-        status_assert(compound_file_read_file_sector(p_compound_file, sector_id, p_compound_file->p_standard_sector_buffer, &bytes_read));
-        assert(bytes_read == p_compound_file->standard_sector_size);
+        assert(sector_id <= CFBF_MAXREGSECT);
+        status_assert(compound_file_read_sector(p_compound_file, sector_id, p_compound_file->p_sector_buffer, &bytes_read));
+        assert(bytes_read == p_compound_file->sector_size);
 
-        msat_entry_bytes = p_compound_file->standard_sector_size - sizeof32(int); /* don't copy the link word */
-        memcpy32(p, p_compound_file->p_standard_sector_buffer, msat_entry_bytes);
+        DIFAT_entry_bytes = p_compound_file->sector_size - sizeof32(int); /* don't copy the sector link word */
+        memcpy32(p, p_compound_file->p_sector_buffer, DIFAT_entry_bytes);
 
 #if TRACE_ALLOWED
-        {
-        const CFBF_SECT * x = (const CFBF_SECT *) p;
-        const U32 msat_entries = msat_entry_bytes/sizeof32(*x);
-        U32 list_index;
-        BOOL needs_newline = TRUE;
-        trace_2(TRACE_MODULE_CFBF, TEXT("MSAT from file DIF (part %d, %u entries):"), (S32) i, msat_entries);
-        for(list_index = 0; list_index < msat_entries; list_index++, x++)
-        {
-            if(0 == (list_index % 8))
-            {
-                trace_2(TRACE_MODULE_CFBF, TEXT("DIF %d entry %.3u |"), (S32) i, list_index);
-                needs_newline = FALSE;
-            }
-            else
-                needs_newline = TRUE;
-            trace_1(TRACE_MODULE_CFBF, TEXT("|%.8X |"), *x);
-        }
-        if(needs_newline)
-            trace_0(TRACE_MODULE_CFBF, TEXT(""));
-        } /*block*/
+        if(tracing(TRACE_MODULE_CFBF))
+            compound_file_dump_file_DIFAT_DIF(p_compound_file, i, p);
 #endif
 
-        p += msat_entry_bytes;
+        p += DIFAT_entry_bytes;
 
-        sector_id = * (const CFBF_SECT *) (p_compound_file->p_standard_sector_buffer + msat_entry_bytes); /* chain using the link word */
+        sector_id = * (const CFBF_SECT *) (p_compound_file->p_sector_buffer + DIFAT_entry_bytes); /* chain using the sector link word */
     }
 
     assert((CFBF_ENDOFCHAIN == sector_id) || (CFBF_FREESECT == sector_id));
@@ -407,88 +471,84 @@ compound_file_read_file_MSAT(
     return(status);
 }
 
-static void
-compound_file_ensure_SAT_block(
-    _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int sector_id)
-{
-    U32 sat_index = (U32) sector_id / (p_compound_file->standard_sector_size/sizeof32(int));
-    int SAT_block = p_compound_file->full_MSAT[sat_index];
-
-    if(p_compound_file->current_SAT_block != SAT_block)
-    {   /* not currently cached, so must reset and load */
-        U32 bytes_read;
-        p_compound_file->current_SAT_block = -1;
-
-        if(status_ok(compound_file_read_file_sector(p_compound_file, SAT_block, p_compound_file->current_SAT_block_list, &bytes_read)))
-        {
-            assert(bytes_read == p_compound_file->standard_sector_size);
-            p_compound_file->current_SAT_block = SAT_block;
-        }
-    }
-}
-
-static void
-compound_file_ensure_SSAT_block(
-    _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int SSAT_sector_id)
-{
-    U32 ssat_index = (U32) SSAT_sector_id / (p_compound_file->standard_sector_size/sizeof32(int)); /* NB SSAT is stored in standard sectors */
-    int SSAT_block = p_compound_file->hdr._sectMiniFatStart;
-
-    consume(U32, ssat_index);
-    assert(ssat_index == 0);
-    assert(p_compound_file->hdr._csectMiniFat == 1);
-
-    if(p_compound_file->current_SSAT_block != SSAT_block)
-    {   /* not currently cached, so must reset and load */
-        U32 bytes_read;
-
-        p_compound_file->current_SSAT_block = -1;
-
-        if(status_ok(compound_file_read_file_sector(p_compound_file, SSAT_block, p_compound_file->current_SSAT_block_list, &bytes_read)))
-        {
-            assert(bytes_read == p_compound_file->standard_sector_size);
-            p_compound_file->current_SSAT_block = SSAT_block;
-        }
-    }
-}
-
 /*
 get the next sector_id in this object's chain
 */
 
 _Check_return_
-extern int /* zero-based sector_id or CFBF_ENDOFCHAIN */
+extern CFBF_SECT /* zero-based sector_id or CFBF_ENDOFCHAIN */
 compound_file_get_next_sector_id(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int sector_id)
+    _InVal_     CFBF_SECT sector_id)
 {
-    /* ensure that the block list containing this sector_id is loaded */
-    compound_file_ensure_SAT_block(p_compound_file, sector_id);
+    const U32 FAT_index       = sector_id / (p_compound_file->sector_size/sizeof32(CFBF_SECT));
+    const U32 FAT_block_index = sector_id % (p_compound_file->sector_size/sizeof32(CFBF_SECT));
+
+    { /* ensure that the FAT sector containing this sector_id is loaded */
+    const CFBF_SECT FAT_sector_id = p_compound_file->full_DIFAT[FAT_index];
+
+    if(p_compound_file->cached_FAT_sector_id != FAT_sector_id)
+    {   /* not currently cached, so must reset and load */
+        U32 bytes_read;
+
+        p_compound_file->cached_FAT_sector_id = CFBF_ENDOFCHAIN;
+
+        if(status_ok(compound_file_read_sector(p_compound_file, FAT_sector_id, p_compound_file->cached_FAT_block, &bytes_read)))
+        {
+            assert(bytes_read == p_compound_file->sector_size);
+            p_compound_file->cached_FAT_sector_id = FAT_sector_id;
+        }
+
+        if(CFBF_ENDOFCHAIN == p_compound_file->cached_FAT_sector_id)
+            return(CFBF_ENDOFCHAIN);
+    }
+    } /*block*/
 
     {
-    int SAT_block_list_index = sector_id % (p_compound_file->standard_sector_size/sizeof32(int));
-    int next_sector_id = p_compound_file->current_SAT_block_list[SAT_block_list_index];
+    const CFBF_SECT next_sector_id = p_compound_file->cached_FAT_block[FAT_block_index];
     trace_2(TRACE_MODULE_CFBF, TEXT("sector_id %d -> next sector_id %d"), sector_id, next_sector_id);
     return(next_sector_id);
     } /*block*/
 }
 
 _Check_return_
-extern int /* zero-based sector_id or CFBF_ENDOFCHAIN */
-compound_file_get_next_SSAT_sector_id(
+extern CFBF_SECT /* zero-based sector_id or CFBF_ENDOFCHAIN */
+compound_file_get_next_mini_stream_sector_id(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int SSAT_sector_id)
+    _InVal_     CFBF_SECT mini_stream_sector_id)
 {
-    /* ensure that the block list containing this sector_id is loaded */
-    compound_file_ensure_SSAT_block(p_compound_file, SSAT_sector_id);
+    /* NB mini stream FAT is stored in standard sectors */
+    const U32 mini_stream_FAT_index       = mini_stream_sector_id / (p_compound_file->sector_size/sizeof32(CFBF_SECT));
+    const U32 mini_stream_FAT_block_index = mini_stream_sector_id % (p_compound_file->sector_size/sizeof32(CFBF_SECT));
+
+    consume(U32, mini_stream_FAT_index);
+    assert(mini_stream_FAT_index == 0);
+    assert(p_compound_file->hdr._csectMiniFat == 1);
+
+    { /* ensure that the mini stream FAT sector containing this sector_id is loaded */
+    const CFBF_SECT mini_stream_FAT_sector_id = p_compound_file->hdr._sectMiniFatStart;
+
+    if(p_compound_file->cached_mini_stream_FAT_sector_id != mini_stream_FAT_sector_id)
+    {   /* not currently cached, so must reset and load */
+        U32 bytes_read;
+
+        p_compound_file->cached_mini_stream_FAT_sector_id = CFBF_ENDOFCHAIN;
+
+        if(status_ok(compound_file_read_sector(p_compound_file, mini_stream_FAT_sector_id, p_compound_file->cached_mini_stream_FAT_block, &bytes_read)))
+        {
+            assert(bytes_read == p_compound_file->sector_size);
+            p_compound_file->cached_mini_stream_FAT_sector_id = mini_stream_FAT_sector_id;
+        }
+
+        if(CFBF_ENDOFCHAIN == p_compound_file->cached_mini_stream_FAT_sector_id)
+            return(CFBF_ENDOFCHAIN);
+    }
+    } /*block*/
 
     {
-    int SSAT_block_list_index = SSAT_sector_id % (p_compound_file->standard_sector_size/sizeof32(int)); /* NB SSAT is stored in standard sectors */
-    int next_SSAT_sector_id = p_compound_file->current_SSAT_block_list[SSAT_block_list_index];
-    trace_2(TRACE_MODULE_CFBF, TEXT("SSAT_sector_id %d -> next SSAT_sector_id %d"), SSAT_sector_id, next_SSAT_sector_id);
-    return(next_SSAT_sector_id);
+    const CFBF_SECT next_mini_stream_sector_id = p_compound_file->cached_mini_stream_FAT_block[mini_stream_FAT_block_index];
+    trace_2(TRACE_MODULE_CFBF, TEXT("mini_stream_sector_id %d -> next mini_stream_sector_id %d"), mini_stream_sector_id, next_mini_stream_sector_id);
+    return(next_mini_stream_sector_id);
     } /*block*/
 }
 
@@ -498,22 +558,22 @@ static void
 compound_file_dump_directory_entry(
     _InRef_     P_COMPOUND_FILE p_compound_file,
     _InRef_     PC_StructuredStorageDirectoryEntry file_dir,
-    _In_        int dirnum)
+    _InVal_     U32 dirnum)
 {
     UNREFERENCED_PARAMETER_InRef_(p_compound_file);
 
     if(CFBF_STGTY_INVALID == file_dir->_mse)
         return;
 
-    trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageDirectoryEntry #%d |"), dirnum);
+    trace_1(TRACE_MODULE_CFBF, TEXT("StructuredStorageDirectoryEntry #%u |"), dirnum);
 
     { /* dump this SSDE */
-    int i;
+    U32 i;
     for(i = 0; i < sizeof32(StructuredStorageDirectoryEntry)/sizeof32(int); i++)
     {
-        if(0 == (i % 4))
-            trace_1(TRACE_MODULE_CFBF, TEXT("  offset 0x%.2X |"), i * sizeof32(int));
-        trace_1(TRACE_MODULE_CFBF, TEXT("|%.8X |"), ((const int *) file_dir)[i]);
+        if(0 == (i & (4-1)))
+            trace_1(TRACE_MODULE_CFBF, TEXT("  offset 0x%.2X|"), i * sizeof32(int));
+        trace_1(TRACE_MODULE_CFBF, TEXT("| %.8X|"), ((const int *) file_dir)[i]);
     }
     } /*block*/
 
@@ -704,13 +764,14 @@ compound_file_dump_decoded_directory_list(
         offset = 60; /* print the object size at fixed offset */
 
         if(CFBF_STGTY_STREAM == decoded_directory->_mse)
-            consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("STREAM ")));
+        {
+            consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("STREAM  %8u @%4u %s"),
+                                  decoded_directory->_ulSize,
+                                  decoded_directory->_sectStart,
+                                  (decoded_directory->_ulSize < p_compound_file->hdr._ulMiniSectorCutoff) ? "Mini stream" : "FAT"));
+        }
         else if(CFBF_STGTY_STORAGE == decoded_directory->_mse)
             consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("STORAGE ")));
-
-        consume_int(xsnprintf(&buffer[offset], elemof32(buffer) - offset, ("%8u %s"),
-                              decoded_directory->_ulSize,
-                              (decoded_directory->_ulSize < p_compound_file->hdr._ulMiniSectorCutoff) ? "SSAT" : "SAT"));
 
         trace_0(TRACE_MODULE_CFBF, report_sbstr(buffer));
     }
@@ -722,27 +783,27 @@ _Check_return_
 static STATUS
 compound_file_create_directory_list(
     _InoutRef_  P_COMPOUND_FILE p_compound_file,
-    _In_        int first_sector_id)
+    _InVal_     CFBF_SECT first_sector_id)
 {
     STATUS status;
-    P_StructuredStorageDirectoryEntry file_dirs = (P_StructuredStorageDirectoryEntry) p_compound_file->p_standard_sector_buffer; /* always read via this sector-size buffer*/
-    const U32 dirs_per_sector = p_compound_file->standard_sector_size / sizeof32(StructuredStorageDirectoryEntry);
+    P_StructuredStorageDirectoryEntry file_dirs = (P_StructuredStorageDirectoryEntry) p_compound_file->p_sector_buffer; /* always read via this sector-size buffer*/
+    const U32 dirs_per_sector = p_compound_file->sector_size / sizeof32(StructuredStorageDirectoryEntry);
     U32 n_directory_entries = 0;
-    int sector_id;
+    CFBF_SECT sector_id;
     U32 i;
 
     /* first get the size of the entries */
     for(sector_id = first_sector_id;
-        sector_id >= 0;
+        sector_id <= CFBF_MAXREGSECT;
         sector_id = compound_file_get_next_sector_id(p_compound_file, sector_id))
     {
         U32 bytes_read;
 
-        status_assert(compound_file_read_file_sector(p_compound_file, sector_id, file_dirs, &bytes_read));
+        status_assert(compound_file_read_sector(p_compound_file, sector_id, file_dirs, &bytes_read));
 
-        /* Root Entry gives sector_id chain of the Ministream storage */
-        if((sector_id == first_sector_id) && (0 != p_compound_file->hdr._csectMiniFat))
-            p_compound_file->ministream_chain_first_sector_id = file_dirs->_sectStart;
+        /* Root Entry gives sector_id chain of the mini stream storage */
+        if( (sector_id == first_sector_id) && (0 != p_compound_file->hdr._csectMiniFat) )
+            p_compound_file->mini_stream_chain_first_sector_id = file_dirs->_sectStart;
 
         for(i = 0; i < dirs_per_sector; i++)
         {
@@ -759,12 +820,12 @@ compound_file_create_directory_list(
 
     /* now get all the entries */
     for(sector_id = first_sector_id;
-        sector_id >= 0;
+        sector_id <= CFBF_MAXREGSECT;
         sector_id = compound_file_get_next_sector_id(p_compound_file, sector_id))
     {
         U32 bytes_read;
 
-        status_assert(compound_file_read_file_sector(p_compound_file, sector_id, file_dirs, &bytes_read));
+        status_assert(compound_file_read_sector(p_compound_file, sector_id, file_dirs, &bytes_read));
 
         for(i = 0; i < dirs_per_sector; i++)
         {

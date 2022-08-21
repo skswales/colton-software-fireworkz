@@ -39,6 +39,44 @@ data_ensure_constant_sub(
 ******************************************************************************/
 
 _Check_return_
+static STATUS /* error */
+arg_normalise_set_error_ARGRANGE(
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_real_as_integer( /* try to obtain integer value from this real arg */
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    const EV_IDNO data_id = ss_data_real_to_integer_force(p_ss_data);
+
+    if(DATA_ID_CONVERSION_FAILED != data_id)
+        return(data_id);
+
+    return(arg_normalise_set_error_ARGRANGE(p_ss_data));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_real_as_date( /* try to obtain date value from this real arg */
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    SS_DATE ss_date;
+
+    if(status_ok(ss_serial_number_to_date(&ss_date, ss_data_get_real(p_ss_data))))
+    {
+        ss_data_set_date(p_ss_data, ss_date.date, ss_date.time);
+        assert(ss_data_is_date(p_ss_data));
+        return(DATA_ID_DATE);
+    }
+
+    return(arg_normalise_set_error_ARGRANGE(p_ss_data));
+}
+
+_Check_return_
 static STATUS /* EV_IDNO or error */
 arg_normalise_real(
     _InoutRef_  P_SS_DATA p_ss_data,
@@ -48,30 +86,39 @@ arg_normalise_real(
         return(DATA_ID_REAL); /* preferred */
 
     if(type_flags & EM_INT)
-    {   /* try to obtain integer value from this real arg */
-        const EV_IDNO data_id = ss_data_real_to_integer_force(p_ss_data);
-
-        if(DATA_ID_CONVERSION_FAILED != data_id)
-            return(data_id);
-
-        return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
-    }
+        /* try to obtain integer value from this real arg */
+        return(arg_normalise_real_as_integer(p_ss_data));
 
     if(type_flags & EM_DAT)
-    {   /* try to obtain date value from this real arg */
-        SS_DATE ss_date;
-
-        if(status_ok(ss_serial_number_to_date(&ss_date, ss_data_get_real(p_ss_data))))
-        {
-            ss_data_set_date(p_ss_data, ss_date.date, ss_date.time);
-            assert(ss_data_is_date(p_ss_data));
-            return(DATA_ID_DATE);
-        }
-
-        return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
-    }
+        /* try to obtain date value from this real arg */
+        return(arg_normalise_real_as_date(p_ss_data));
 
     return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXNUMBER));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_integer_as_real( /* promote this integer arg to real value */
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    return(ss_data_set_real_rid(p_ss_data, (F64) ss_data_get_integer(p_ss_data)));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_integer_as_date( /* try to obtain date value from this integer arg */
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    SS_DATE ss_date;
+
+    if(status_ok(ss_serial_number_to_date(&ss_date, (F64) ss_data_get_integer(p_ss_data))))
+    {
+        ss_data_set_date(p_ss_data, ss_date.date, ss_date.time);
+        assert(ss_data_is_date(p_ss_data));
+        return(DATA_ID_DATE);
+    }
+
+    return(arg_normalise_set_error_ARGRANGE(p_ss_data));
 }
 
 _Check_return_
@@ -84,25 +131,36 @@ arg_normalise_integer(
         return(ss_data_get_data_id(p_ss_data)); /* preferred */
 
     if(type_flags & EM_REA)
-    {   /* promote this integer arg to real value */
-        return(ss_data_set_real_rid(p_ss_data, (F64) ss_data_get_integer(p_ss_data)));
-    }
+        /* promote this integer arg to real value */
+        return(arg_normalise_integer_as_real(p_ss_data));
 
     if(type_flags & EM_DAT)
-    {   /* try to obtain date value from this integer arg */
-        SS_DATE ss_date;
-
-        if(status_ok(ss_serial_number_to_date(&ss_date, (F64) ss_data_get_integer(p_ss_data))))
-        {
-            ss_data_set_date(p_ss_data, ss_date.date, ss_date.time);
-            assert(ss_data_is_date(p_ss_data));
-            return(DATA_ID_DATE);
-        }
-
-        return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
-    }
+        /* try to obtain date value from this integer arg */
+        return(arg_normalise_integer_as_date(p_ss_data));
 
     return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXNUMBER));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_date_as_real(
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    return(ss_data_set_real_rid(p_ss_data, ss_date_to_serial_number(ss_data_get_date(p_ss_data))));
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
+arg_normalise_date_as_integer( /* for EM_INT args ignore any time component */
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    if(SS_DATE_NULL == ss_data_get_date(p_ss_data)->date)
+    {   /* this is a pure time value */
+        assert(SS_TIME_NULL != ss_data_get_date(p_ss_data)->time);
+        return(ss_data_set_integer_rid(p_ss_data, 0));
+    }
+
+    return(ss_data_set_integer_rid(p_ss_data, ss_dateval_to_serial_number(ss_data_get_date(p_ss_data)->date)));
 }
 
 _Check_return_
@@ -116,18 +174,11 @@ arg_normalise_date(
 
     /* coerce dates to Excel-compatible serial number if a number is acceptable */
     if(type_flags & EM_REA)
-        return(ss_data_set_real_rid(p_ss_data, ss_date_to_serial_number(ss_data_get_date(p_ss_data))));
+        return(arg_normalise_date_as_real(p_ss_data));
 
     if(type_flags & EM_INT)
-    {   /* for EM_INT args ignore any time component */
-        if(SS_DATE_NULL == ss_data_get_date(p_ss_data)->date)
-        {   /* this is a pure time value */
-            assert(SS_TIME_NULL != ss_data_get_date(p_ss_data)->time);
-            return(ss_data_set_integer_rid(p_ss_data, 0));
-        }
-
-        return(ss_data_set_integer_rid(p_ss_data, ss_dateval_to_serial_number(ss_data_get_date(p_ss_data)->date)));
-    }
+        /* for EM_INT args ignore any time component */
+        return(arg_normalise_date_as_integer(p_ss_data));
 
     return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXDATE));
 }
@@ -148,6 +199,18 @@ arg_normalise_string(
 
 _Check_return_
 static STATUS /* EV_IDNO or error */
+arg_normalise_blank_as_string( /* map blank arg to empty string */
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    p_ss_data->arg.string.uchars = uchars_empty_string;
+    p_ss_data->arg.string.size = 0;
+    ss_data_set_data_id(p_ss_data, DATA_ID_STRING);
+    p_ss_data->local_data = 0;
+    return(DATA_ID_STRING);
+}
+
+_Check_return_
+static STATUS /* EV_IDNO or error */
 arg_normalise_blank(
     _InoutRef_  P_SS_DATA p_ss_data,
     _InVal_     EV_TYPE type_flags)
@@ -156,15 +219,10 @@ arg_normalise_blank(
         return(DATA_ID_BLANK); /* preferred */
 
     if(type_flags & EM_STR)
-    {   /* map blank arg to empty string */
-        p_ss_data->arg.string.uchars = uchars_empty_string;
-        p_ss_data->arg.string.size = 0;
-        ss_data_set_data_id(p_ss_data, DATA_ID_STRING);
-        p_ss_data->local_data = 0;
-        return(DATA_ID_STRING);
-    }
+        /* map blank arg to empty string */
+        return(arg_normalise_blank_as_string(p_ss_data));
 
-    /* map blank arg to zero and retry */
+    /* otherwise map blank arg to zero and retry */
     ss_data_set_integer(p_ss_data, 0);
     return(arg_normalise_integer(p_ss_data, type_flags));
 }

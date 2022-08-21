@@ -1365,7 +1365,8 @@ lotus123_write_cell(
             {
             case DATA_ID_REAL:
                 {
-                const F64 f64 = ss_data_get_real(p_ss_data);
+                F64 f64;
+                ss_data_copy_real(&f64, p_ss_data);
                 status_break(status = lotus123_write_cell_start(p_ff_op_format, L_NUMBER, 13, p_slr));
                 status_break(status = lotus123_write_F64(p_ff_op_format, f64));
                 break;

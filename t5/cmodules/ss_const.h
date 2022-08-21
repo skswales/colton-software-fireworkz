@@ -508,15 +508,27 @@ error definition
     : 0 )
 
 #if RISCOS || 0
+
+#if 0
+struct _F64_AS_WORDS
+{
+    U32 u32[2];
+};
+#endif
+
 static inline void
 f64_copy_words(
     _OutRef_    P_F64 p_f64_out,
     _InRef_     PC_F64 p_f64_in)
 {
+#if 0 /* causes compiler fault in ev_matr.c */
+    * (struct _F64_AS_WORDS *) p_f64_out = * (const struct _F64_AS_WORDS *) p_f64_in;
+#else
     P_U32 p_u32_out = (P_U32) p_f64_out;
     PC_U32 p_u32_in = (PC_U32) p_f64_in;
     p_u32_out[0] = p_u32_in[0];
     p_u32_out[1] = p_u32_in[1];
+#endif
 }
 
 #define f64_copy(lval, f64) f64_copy_words(&(lval), &(f64))
@@ -961,6 +973,19 @@ ss_data_get_integer(
 {
     assert(ss_data_is_integer(p_ss_data));
     return(p_ss_data->arg.integer);
+}
+
+static __forceinline void
+ss_data_copy_real(
+    _OutRef_    P_F64 p_f64,
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    assert(ss_data_is_real(p_ss_data));
+#if RISCOS
+    f64_copy_words(p_f64, &p_ss_data->arg.fp);
+#else
+    *p_f64 = p_ss_data->arg.fp;
+#endif
 }
 
 _Check_return_
