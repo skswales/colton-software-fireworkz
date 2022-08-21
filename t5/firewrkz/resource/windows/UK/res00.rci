@@ -29,13 +29,13 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	"2.20.01"
-	0x2,	"12 Dec 2016"
+	0x1,	"2.21.02"
+	0x2,	"02 Mar 2018"
 //
 // update date and version in the corresponding RelNotes HTML files too
 //
-	0x409,	"© 1992-2016 Colton Software"
-// r1034:Portions © 1994-2016 R-Comp
+	0x409,	"© 1992-2018 Colton Software"
+// r1034:Portions © 1994-2018 R-Comp
 	0x40D,	"The product uses the following components"
 	0x407,	"Drawfile rendering DLLs © 1994-2005 Dial Solutions"
 //

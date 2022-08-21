@@ -462,34 +462,10 @@ ho_dde.c
 extern BOOL g_started_for_dde;
 
 extern void
-host_create_dde_window(void);
-
-extern void
 ho_dde_msg_exit2(void);
 
 extern void
-ho_dde_msg_startup(void);
-
-extern LRESULT
-host_wm_dde_initiate(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     WPARAM wParam,
-    _InVal_     LPARAM lParam);
-
-extern LRESULT
-host_wm_dde_terminate(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     WPARAM wParam,
-    _InVal_     LPARAM lParam);
-
-extern LRESULT
-host_wm_dde_execute(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     WPARAM wParam,
-    _InVal_     LPARAM lParam);
+host_dde_startup(void);
 
 /*
 ho_dial.c

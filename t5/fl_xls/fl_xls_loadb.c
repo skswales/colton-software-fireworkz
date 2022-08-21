@@ -6331,6 +6331,13 @@ xls_cell_make(
     load_cell_foreign.style = *p_style;
     load_cell_foreign.style_handle = style_handle;
 
+#if 0
+    if( style_bit_test(p_style, STYLE_SW_PS_NUMFORM_NU) &&
+        (0 != p_style->para_style.h_numform_nu) &&
+        (0 == strcmp("General", array_ustr(&p_style->para_style.h_numform_nu))) )
+        DebugBreak();
+#endif
+
     if(quick_ublock_bytes(p_quick_ublock_result) || quick_ublock_bytes(p_quick_ublock_formula))
     {
         OBJECT_ID object_id;
@@ -6803,6 +6810,7 @@ xls_cell_make_from_excel(
 
             U32 rk = xls_read_U32_LE(p_rk + 2);
 
+            style_handle = STYLE_HANDLE_NONE;
             style_init(&style);
             zero_struct(xf_data);
 
@@ -6861,6 +6869,8 @@ xls_cell_make_from_excel(
 
             if(status_fail(status))
                 style_dispose(&style); /* handles normally donated to style system */
+
+            /* style data reset near loop start */
 
             quick_ublock_empty(&quick_ublock_result);
             quick_ublock_empty(&quick_ublock_format);

@@ -484,6 +484,23 @@ error definition
     ? 1 \
     : 0 )
 
+static inline void
+f64_copy_words(
+    _OutRef_    P_F64 p_f64_out,
+    _InRef_     PC_F64 p_f64_in)
+{
+    P_U32 p_u32_out = (P_U32) p_f64_out;
+    PC_U32 p_u32_in = (PC_U32) p_f64_in;
+    p_u32_out[0] = p_u32_in[0];
+    p_u32_out[1] = p_u32_in[1];
+}
+
+#if RISCOS || 0
+#define f64_copy(lval, f64) f64_copy_words(&(lval), &(f64))
+#else
+#define f64_copy(lval, f64) (lval) = (f64)
+#endif
+
 _Check_return_
 extern F64
 real_floor( /* as OpenDocument / Microsoft Excel INT() */

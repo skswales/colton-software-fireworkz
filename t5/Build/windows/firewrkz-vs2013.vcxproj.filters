@@ -3653,6 +3653,15 @@
     <None Include="..\..\ob_skel\resource\Neutral\CUR\tank.cur">
       <Filter>Source Files\ob_skel\ob_skel_resource\cursors</Filter>
     </None>
+    <None Include="..\..\firewrkz\r\RiscPkg\Control">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="..\..\firewrkz\r\RiscPkg\Copyright">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="..\..\..\docs\GSGuide\windows\index.html">
+      <Filter>Docs\Windows\GSGuide</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\firewrkz\resource\windows\PROG.BMP">

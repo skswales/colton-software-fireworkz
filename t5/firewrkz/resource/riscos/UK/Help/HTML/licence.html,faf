@@ -10,11 +10,11 @@
     <!-- This Source Code Form is subject to the terms of the Mozilla Public
        - License, v. 2.0. If a copy of the MPL was not distributed with this
        - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 2016 Stuart Swales -->
+    <!-- Copyright (C) 2016-2017 Stuart Swales -->
 
     <h1>Fireworkz - Copyright and Licence</h1>
 
-    <p>Copyright © 1992-2016 Colton Software<br />
+    <p>Copyright © 1992-2017 Colton Software<br />
     <a href="#CopyrightExtra">Additional copyright information</a>.</p>
 
     <p>Thanks to Richard Colton, Fireworkz is now open source and completely free to use!</p>
@@ -27,10 +27,10 @@
 
     <h1 id="CopyrightExtra">Additional Copyright Information</h1>
 
-    <h4>Portions Copyright © 2012-2016 Stuart Swales</h4>
+    <h4>Portions Copyright © 2012-2017 Stuart Swales</h4>
     <p>Reporter interface code.</p>
 
-    <h4>Portions Copyright © 2014-2016 Stuart Swales</h4>
+    <h4>Portions Copyright © 2014-2017 Stuart Swales</h4>
     <p>
         Logical spreadsheet functions;<br />
         Paired statistics spreadsheet functions;<br />

@@ -2,7 +2,7 @@
 @rem License, v. 2.0. If a copy of the MPL was not distributed with this
 @rem file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-@rem Copyright (C) 2013-2016 Stuart Swales
+@rem Copyright (C) 2013-2017 Stuart Swales
 
 chcp 1252
 
@@ -12,7 +12,7 @@ call "C:\Program Files\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
 
 @rem call "C:\Program Files\Microsoft SDKs\Windows\v6.0\bin\setenv.cmd" /XP /x86 /Debug
 
-set FIREWORKZ_TBT=fireworkz__2_20__branch
+set FIREWORKZ_TBT=fireworkz__2_21__branch
 @rem set FIREWORKZ_TBT=trunk
 
 set FIREWORKZ_ROOT=N:\fireworkz\%FIREWORKZ_TBT%

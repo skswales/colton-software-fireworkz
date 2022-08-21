@@ -101,7 +101,7 @@ determinant(
     default:
         { /* recurse evaluating minors */
         P_F64 minor;
-        U32 minor_m = m - 1;
+        const U32 minor_m = m - 1;
         F64 minor_D;
         U32 col_idx, i_col_idx, o_col_idx;
         U32 i_row_idx, o_row_idx;
@@ -113,6 +113,11 @@ determinant(
 
         for(col_idx = 0; col_idx < m; ++col_idx)
         {
+            F64 a1j = _em(ap, m, 0, col_idx);
+
+            if(0.0 == a1j)
+                continue;
+
             /* build minor by removing all of top row and current column */
             for(i_col_idx = o_col_idx = 0; o_col_idx < minor_m; ++i_col_idx, ++o_col_idx)
             {
@@ -121,16 +126,16 @@ determinant(
 
                 for(i_row_idx = 1, o_row_idx = 0; o_row_idx < minor_m; ++i_row_idx, ++o_row_idx)
                 {
-                    _em(minor, minor_m, o_row_idx, o_col_idx) = _em(ap, m, i_row_idx, i_col_idx);
+                    f64_copy(_em(minor, minor_m, o_row_idx, o_col_idx), _em(ap, m, i_row_idx, i_col_idx));
                 }
             }
 
             status_break(status = determinant(minor, minor_m, &minor_D));
 
-            if(col_idx & 1)
-                minor_D = -minor_D; /* make into cofactor */
-
-            *dp += (_em(ap, m, 0, col_idx) * minor_D);
+            if(col_idx & 1) /* cofactor has alternating signs */
+                *dp -= (a1j * minor_D);
+            else
+                *dp += (a1j * minor_D);
         }
 
         al_ptr_dispose(P_P_ANY_PEDANTIC(&minor));
@@ -195,7 +200,7 @@ PROC_EXEC_PROTO(c_m_determ)
                 if(RPN_DAT_REAL != array_range_index(&ev_data, args[0], j, i, EM_REA)) /* NB j,i */
                     status_break(status = EVAL_ERR_MATRIX_NOT_NUMERIC);
 
-                _Aij(a, m, i, j) = ev_data.arg.fp;
+                f64_copy(_Aij(a, m, i, j), ev_data.arg.fp);
             }
         }
 

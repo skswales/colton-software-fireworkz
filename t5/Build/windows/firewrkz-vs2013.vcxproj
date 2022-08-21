@@ -161,7 +161,6 @@
       <PrecompiledHeaderFile>common/gflags.h</PrecompiledHeaderFile>
       <WarningLevel>EnableAllWarnings</WarningLevel>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <EnablePREfast>false</EnablePREfast>
@@ -175,6 +174,7 @@
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <Profile>true</Profile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>.\dpi_aware.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -421,10 +421,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\cmodules\riscos\myrand.s">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1907,6 +1911,7 @@
     <None Include="..\..\..\docs\GSGuide\windows\content\gsg_glossary.html">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="..\..\..\docs\GSGuide\windows\index.html" />
     <None Include="..\..\..\docs\UserGuide\content\common\usguide.css" />
     <None Include="..\..\..\docs\UserGuide\content\sg01\sg1_absolute_references.htm">
       <DeploymentContent>true</DeploymentContent>
@@ -3701,6 +3706,8 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</DeploymentContent>
     </None>
+    <None Include="..\..\firewrkz\r\RiscPkg\Control" />
+    <None Include="..\..\firewrkz\r\RiscPkg\Copyright" />
     <None Include="..\..\fl_123\resource\uk-msg" />
     <None Include="..\..\fl_csv\resource\uk-msg" />
     <None Include="..\..\ob_chart\resource\UK\msg" />

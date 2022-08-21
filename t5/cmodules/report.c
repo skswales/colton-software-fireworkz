@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2013-2016 Stuart Swales */
+/* Copyright (C) 2013-2017 Stuart Swales */
 
 /* SKS February 2013 */
 
@@ -19,16 +19,31 @@
 #endif
 
 #if RISCOS
-#define LOW_MEMORY_LIMIT  0x00008000U /* Don't look at data in zero page on RISC OS*/
+#define LOW_MEMORY_LIMIT  0x00008000U /* Don't look at data in zero page on RISC OS */
 #define HIGH_MEMORY_LIMIT 0xFFFFFFFCU /* 32-bit RISC OS 5 */
 #endif
 
 static BOOL
 g_report_enabled = TRUE;
 
+static BOOL
+g_report_timing_enabled = FALSE;
+
 #if RISCOS
 static int try_reporter = TRUE;
 static int try_rpcemu_report = TRUE;
+#endif
+
+#if WINDOWS
+#define REPORT_USE_PERFORMANCE_COUNTER 1
+#endif
+
+#if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
+static LARGE_INTEGER g_report_timing_startup;
+static F64 g_report_timing_frequency;
+#else
+static MONOTIME g_report_timing_startup;
+static S32 g_report_timing_frequency;
 #endif
 
 extern void
@@ -62,6 +77,33 @@ reporting_is_enabled(void)
 #endif
 
     return(TRUE);
+}
+
+extern void
+report_timing_enable(
+    _InVal_     BOOL enable)
+{
+    g_report_timing_enabled = enable;
+
+    if(enable && (0 == g_report_timing_frequency))
+    {
+#if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
+        LARGE_INTEGER frequency;
+        QueryPerformanceFrequency(&frequency);
+        g_report_timing_frequency = (F64) frequency.QuadPart;
+        QueryPerformanceCounter(&g_report_timing_startup);
+#else
+        g_report_timing_frequency = MONOTIME_TICKS_PER_SECOND;
+        g_report_timing_startup = monotime();
+#endif
+    }
+}
+
+_Check_return_
+extern BOOL
+report_timing_enabled(void)
+{
+    return(g_report_timing_enabled);
 }
 
 /******************************************************************************
@@ -99,7 +141,7 @@ vreportf(
     /**/        va_list args)
 {
     PCTSTR tail;
-    BOOL wants_continuation;
+    BOOL wants_continuation, needs_newline;
     int len;
 
     if(!g_report_enabled) return;
@@ -108,14 +150,53 @@ vreportf(
     {   /* this one is a continuation - doesn't matter if it's already been flushed */
         format++;
     }
-    else if(0 != report_buffer_offset)
+    else
     {   /* this one is a not a continuation - flush anything pending */
-        report_buffer_offset = 0;
-        report_output(report_buffer);
+        if(0 != report_buffer_offset)
+        {
+            report_buffer_offset = 0;
+            report_output(report_buffer);
+        }
     }
 
     tail = format + tstrlen32(format);
-    wants_continuation = (tail != format) && (tail[-1] == CH_VERTICAL_LINE);
+
+    if(tail == format)
+        return;
+
+    wants_continuation = (tail[-1] == CH_VERTICAL_LINE);
+
+    needs_newline = (tail[-1] != '\n');
+
+    if((0 == report_buffer_offset) && g_report_timing_enabled)
+    {   /* prefix new report with number of milliseconds since timing turned on */
+#if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
+        LARGE_INTEGER now;
+        F64 seconds;
+        QueryPerformanceCounter(&now);
+        seconds = (now.QuadPart - g_report_timing_startup.QuadPart) / /*F64*/ g_report_timing_frequency;
+        /* report to microsecond precision */
+        len = _sntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, "[%12.6f] ", seconds);
+        report_buffer_offset += len;
+#else /* C99 CRT */
+        MONOTIMEDIFF delta = monotime_diff(g_report_timing_startup);
+        div_t d = div(delta, g_report_timing_frequency);
+        const int seconds = d.quot;
+        const int frac_seconds = d.rem;
+#if MONOTIME_TICKS_PER_SECOND == 100
+        /* report to centisecond precision */
+        PCTSTR format = "[%5d.%.02d] ";
+#elif MONOTIME_TICKS_PER_SECOND == 1000
+        /* report to millisecond precision */
+        PCTSTR format = "[%5d.%.03d] ";
+#endif
+
+        len = snprintf(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, format, seconds, frac_seconds);
+        if(len < 0)
+            len = 0;
+        report_buffer_offset += len;
+#endif
+    }
 
 #if WINDOWS
     len = _vsntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, format, args);
@@ -129,19 +210,28 @@ vreportf(
         len = strlen32(report_buffer); /* limit to what actually was achieved */
 #endif
 
+    if(0 == len)
+        return;
+
     if(wants_continuation)
     {
-        const U32 original_report_buffer_offset = report_buffer_offset;
+        if(CH_VERTICAL_LINE == report_buffer[report_buffer_offset + (len - 1)]) /* may have been truncated losing trailing chars - if so, just output */
+        {
+            report_buffer_offset += len;
 
+            report_buffer[--report_buffer_offset] = CH_NULL; /* otherwise retract back over the terminal continuation char and leave for next time */
+            return;
+        }
+    }
+
+    if(needs_newline)
+    {   /* this saves the overhead of an extra OutputDebugString on Windows */
         report_buffer_offset += len;
 
-        if(0 != original_report_buffer_offset)
+        if(report_buffer_offset < elemof32(report_buffer))
         {
-            if(report_buffer[report_buffer_offset - 1] == CH_VERTICAL_LINE) /* may have been truncated - if so, just output */
-            {
-                report_buffer[--report_buffer_offset] = CH_NULL; /* otherwise retract back over the terminal continuation char */
-                return;
-            }
+            report_buffer[report_buffer_offset++] = '\n';
+            report_buffer[report_buffer_offset] = CH_NULL;
         }
     }
 
@@ -167,9 +257,12 @@ vreportf(
 
 extern int __swi(XReport_Text0) __swi_XReport_Text0(const char * s);
 extern int __swi(XRPCEmu_Debug) __swi_XRPCEmu_Debug(const char * s);
+
 #else
+
 extern int /*__swi(XReport_Text0)*/ __swi_XReport_Text0(const char * s);
 extern int /*__swi(XRPCEmu_Debug)*/ __swi_XRPCEmu_Debug(const char * s);
+
 #endif
 
 #endif /* RISCOS */
@@ -179,15 +272,18 @@ report_output(
     _In_z_      PCTSTR buffer)
 {
     PCTSTR tail;
-    BOOL may_need_newline;
+    BOOL needs_newline;
     static const TCHARZ newline_buffer[2] = TEXT("\n");
-
-#if RISCOS
-    PCTSTR ptr;
-    U8 ch;
 
     if(!g_report_enabled) return;
 
+    tail = buffer + tstrlen32(buffer);
+    if(tail == buffer)
+        return;
+
+    needs_newline = (tail[-1] != '\n');
+
+#if RISCOS
     if(try_reporter)
     {
         if(__swi_XReport_Text0(buffer) == (int) buffer)
@@ -197,14 +293,11 @@ report_output(
         try_reporter = FALSE;
     }
 
-    tail = buffer + tstrlen32(buffer);
-    may_need_newline = (tail == buffer) || (tail[-1] != '\n');
-
     if(try_rpcemu_report)
     {
         if(__swi_XRPCEmu_Debug(buffer) == (int) buffer)
         {
-            if(!may_need_newline)
+            if(!needs_newline)
                 return;
 
             if(__swi_XRPCEmu_Debug(newline_buffer) == (int) newline_buffer)
@@ -221,7 +314,9 @@ report_output(
     }
 #endif
 
-    ptr = buffer;
+    {
+    PCTSTR ptr = buffer;
+    U8 ch;
 
     while((ch = *ptr++) != CH_NULL)
         switch(ch)
@@ -247,17 +342,13 @@ report_output(
             break;
         }
 
-    if(may_need_newline)
+    if(needs_newline)
         fputc(0x0A, stderr);
+    } /*block*/
 #elif WINDOWS
-    if(!g_report_enabled) return;
-
-    tail = buffer + tstrlen32(buffer);
-    may_need_newline = (tail == buffer) || (tail[-1] != '\n');
-
     OutputDebugString(buffer);
 
-    if(may_need_newline)
+    if(needs_newline)
         OutputDebugString(newline_buffer);
 #endif /* OS */
 }
@@ -519,7 +610,7 @@ report_wimp_event(
     _InVal_     int event_code,
     _In_        const void * const p_event_data)
 {
-    const WimpPollBlock * const ed = (const WimpPollBlock * const) p_event_data;
+    const WimpPollBlock * const event_data = (const WimpPollBlock * const) p_event_data;
     char tempbuffer[256];
 
     static TCHARZ messagebuffer[512];
@@ -531,12 +622,12 @@ report_wimp_event(
     case Wimp_EOpenWindow:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
-                     TEXT(": window " UINTPTR_XTFMT "; coords (") INT_TFMT TEXT(", ") INT_TFMT TEXT(", ") INT_TFMT TEXT(", ") INT_TFMT TEXT("); scroll (") INT_TFMT TEXT(", ") INT_TFMT TEXT("); behind ") UINTPTR_XTFMT,
-                     ed->open_window_request.window_handle,
-                     ed->open_window_request.visible_area.xmin, ed->open_window_request.visible_area.ymin,
-                     ed->open_window_request.visible_area.xmax, ed->open_window_request.visible_area.ymax,
-                     ed->open_window_request.xscroll,           ed->open_window_request.yscroll,
-                     ed->open_window_request.behind));
+                     TEXT(": window ") UINTPTR_XTFMT TEXT("; coords (") INT_TFMT TEXT(", ") INT_TFMT TEXT(", ") INT_TFMT TEXT(", ") INT_TFMT TEXT("); scroll (") INT_TFMT TEXT(", ") INT_TFMT TEXT("); behind ") UINTPTR_XTFMT,
+                     (uintptr_t) event_data->open_window_request.window_handle,
+                     event_data->open_window_request.visible_area.xmin, event_data->open_window_request.visible_area.ymin,
+                     event_data->open_window_request.visible_area.xmax, event_data->open_window_request.visible_area.ymax,
+                     event_data->open_window_request.xscroll,           event_data->open_window_request.yscroll,
+                     (uintptr_t) event_data->open_window_request.behind));
         break;
 
     case Wimp_ERedrawWindow:
@@ -546,39 +637,39 @@ report_wimp_event(
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": window ") UINTPTR_XTFMT,
-                     ed->close_window_request.window_handle));
+                     (uintptr_t) event_data->close_window_request.window_handle));
         break;
 
     case Wimp_EMouseClick:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
-                     TEXT(": window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; mouse x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; buttons ") INT_TFMT,
-                     ed->mouse_click.window_handle,
-                     ed->mouse_click.icon_handle,
-                     ed->mouse_click.mouse_x, ed->mouse_click.mouse_y,
-                     ed->mouse_click.buttons));
+                     TEXT(": window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; mouse x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; buttons ") U32_XTFMT,
+                     (uintptr_t) event_data->mouse_click.window_handle,
+                     event_data->mouse_click.icon_handle,
+                     event_data->mouse_click.mouse_x, event_data->mouse_click.mouse_y,
+                     event_data->mouse_click.buttons));
         break;
 
     case Wimp_EKeyPressed:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
-                     TEXT(": window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; height ") U32_XTFMT TEXT(" index ") INT_TFMT TEXT("; key_code ") INT_TFMT,
-                     ed->key_pressed.caret.window_handle,
-                     ed->key_pressed.caret.icon_handle,
-                     ed->key_pressed.caret.xoffset, ed->key_pressed.caret.yoffset,
-                     ed->key_pressed.caret.height,  ed->key_pressed.caret.index,
-                     ed->key_pressed.key_code));
+                     TEXT(": window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; height ") U32_XTFMT TEXT(" index ") INT_TFMT TEXT("; key_code ") U32_XTFMT,
+                     (uintptr_t) event_data->key_pressed.caret.window_handle,
+                     event_data->key_pressed.caret.icon_handle,
+                     event_data->key_pressed.caret.xoffset, event_data->key_pressed.caret.yoffset,
+                     event_data->key_pressed.caret.height,  event_data->key_pressed.caret.index,
+                     (U32) event_data->key_pressed.key_code));
         break;
 
     case Wimp_EScrollRequest:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": window ") UINTPTR_XTFMT TEXT("; coords (") INT_TFMT TEXT(", ") INT_TFMT TEXT(", ") INT_TFMT TEXT(", ") INT_TFMT TEXT("); scroll (") INT_TFMT TEXT(", ") INT_TFMT TEXT("); dir'n (") INT_TFMT TEXT(", ") INT_TFMT TEXT(")"),
-                     ed->scroll_request.open.window_handle,
-                     ed->scroll_request.open.visible_area.xmin, ed->scroll_request.open.visible_area.ymin,
-                     ed->scroll_request.open.visible_area.xmax, ed->scroll_request.open.visible_area.ymax,
-                     ed->scroll_request.open.xscroll,           ed->scroll_request.open.yscroll,
-                     ed->scroll_request.xscroll,                ed->scroll_request.yscroll));
+                     (uintptr_t) event_data->scroll_request.open.window_handle,
+                     event_data->scroll_request.open.visible_area.xmin, event_data->scroll_request.open.visible_area.ymin,
+                     event_data->scroll_request.open.visible_area.xmax, event_data->scroll_request.open.visible_area.ymax,
+                     event_data->scroll_request.open.xscroll,           event_data->scroll_request.open.yscroll,
+                     event_data->scroll_request.xscroll,                event_data->scroll_request.yscroll));
         break;
 
     case Wimp_ELoseCaret:
@@ -586,11 +677,10 @@ report_wimp_event(
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT(" x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; height ") U32_XTFMT TEXT(" index ") INT_TFMT,
-                     ed->lose_caret.window_handle,
-                     ed->lose_caret.icon_handle,
-                     ed->lose_caret.xoffset, ed->lose_caret.yoffset,
-                     ed->lose_caret.height,  ed->lose_caret.index));
-
+                     (uintptr_t) event_data->lose_caret.window_handle,
+                     event_data->lose_caret.icon_handle,
+                     event_data->lose_caret.xoffset, event_data->lose_caret.yoffset,
+                     event_data->lose_caret.height,  event_data->lose_caret.index));
         break;
 
     case Wimp_EUserMessage:
@@ -598,7 +688,7 @@ report_wimp_event(
     case Wimp_EUserMessageAcknowledge:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
-                     TEXT(": %s"), report_wimp_message(&ed->user_message, FALSE)));
+                     TEXT(": %s"), report_wimp_message(&event_data->user_message, FALSE)));
         break;
 
     case Wimp_ENull:
@@ -647,6 +737,9 @@ report_wimp_message_action(
     /*Wimp_MDragClaim*/
     case Wimp_MAppControl:      return(TEXT("Message_AppControl"));
 
+    case Wimp_MFilerOpenDir:    return(TEXT("Message_FilerOpenDir"));
+    case Wimp_MFilerCloseDir:   return(TEXT("Message_FilerCloseDir"));
+
     case Wimp_MHelpRequest:     return(TEXT("Message_HelpRequest"));
     case Wimp_MHelpReply:       return(TEXT("Message_HelpReply"));
 
@@ -689,25 +782,25 @@ report_wimp_message(
     _In_        const void * const p_wimp_message,
     _InVal_     BOOL sending)
 {
-    const WimpMessage * const m = (const WimpMessage * const) p_wimp_message;
+    const WimpMessage * const user_message = (const WimpMessage * const) p_wimp_message;
     PCTSTR format =
         sending
-            ? TEXT("%s, size ") INT_TFMT TEXT(", your_ref ") U32_XTFMT
-            : TEXT("%s, size ") INT_TFMT TEXT(", your_ref ") U32_XTFMT TEXT(" from task " U32_XTFMT ", my(his)_ref ") U32_XTFMT;
+            ? TEXT("%s, size ") INT_TFMT TEXT(", your_ref ") U32_XTFMT TEXT(" ")
+            : TEXT("%s, size ") INT_TFMT TEXT(", your_ref ") U32_XTFMT TEXT(" from task " U32_XTFMT ", my(his)_ref ") U32_XTFMT TEXT(" ");
     TCHARZ tempbuffer[256];
 
     static TCHARZ messagebuffer[512];
 
     consume_int(
         snprintf(messagebuffer, elemof32(messagebuffer), format,
-                 report_wimp_message_action(m->hdr.action_code),
-                 m->hdr.size, m->hdr.your_ref,
-                 m->hdr.sender, m->hdr.my_ref));
+                 report_wimp_message_action(user_message->hdr.action_code),
+                 user_message->hdr.size, user_message->hdr.your_ref,
+                 user_message->hdr.sender, user_message->hdr.my_ref));
 
-    switch(m->hdr.action_code)
+    switch(user_message->hdr.action_code)
     {
     case Wimp_MDataLoadAck:
-        if(m->hdr.size <= 44)
+        if(user_message->hdr.size <= 44)
         {
             xstrkpy(tempbuffer, elemof32(tempbuffer), TEXT(": runt")); /* e.g. SrcEdit, Draw */
             break;
@@ -723,61 +816,61 @@ report_wimp_message(
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": dest window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; estimated_size ") U32_XTFMT TEXT("; type: 0x%.3X; file: %s"),
-                     m->data.data_load.destination_window,
-                     m->data.data_load.destination_icon,
-                     m->data.data_load.destination_x, m->data.data_load.destination_y,
-                     m->data.data_load.estimated_size,
-                     m->data.data_load.file_type,
-                     m->data.data_load.leaf_name));
+                     user_message->data.data_load.destination_window,
+                     user_message->data.data_load.destination_icon,
+                     user_message->data.data_load.destination_x, user_message->data.data_load.destination_y,
+                     user_message->data.data_load.estimated_size,
+                     user_message->data.data_load.file_type,
+                     user_message->data.data_load.leaf_name));
         break;
 
     case Wimp_MRAMFetch:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": buffer ") PTR_XTFMT TEXT("; size ") U32_XTFMT,
-                     m->data.ram_fetch.buffer,
-                     m->data.ram_fetch.buffer_size));
+                     user_message->data.ram_fetch.buffer,
+                     user_message->data.ram_fetch.buffer_size));
         break;
 
     case Wimp_MRAMTransmit:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": buffer ") PTR_XTFMT TEXT("; nbytes ") U32_XTFMT,
-                     m->data.ram_transmit.buffer,
-                     m->data.ram_transmit.nbytes));
+                     user_message->data.ram_transmit.buffer,
+                     user_message->data.ram_transmit.nbytes));
         break;
 
     case Wimp_MClaimEntity:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": ") U32_XTFMT,
-                     m->data.words[0]));
+                     user_message->data.words[0]));
         break;
 
     case Wimp_MDataRequest:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": dest window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; flags ") U32_XTFMT TEXT("; type[0]: 0x%.3X"),
-                     m->data.data_load.destination_window,
-                     m->data.data_load.destination_icon,
-                     m->data.data_load.destination_x, m->data.data_load.destination_y,
-                     ((const WimpDataRequestMessage *) (&m->data))->flags,
-                     ((const WimpDataRequestMessage *) (&m->data))->type[0]));
+                     user_message->data.data_load.destination_window,
+                     user_message->data.data_load.destination_icon,
+                     user_message->data.data_load.destination_x, user_message->data.data_load.destination_y,
+                     ((const WimpDataRequestMessage *) (&user_message->data))->flags,
+                     ((const WimpDataRequestMessage *) (&user_message->data))->type[0]));
         break;
 
     case Wimp_MHelpRequest:
         consume_int(
             snprintf(tempbuffer, elemof32(tempbuffer),
                      TEXT(": window ") UINTPTR_XTFMT TEXT("; icon ") INT_TFMT TEXT("; mouse x ") INT_TFMT TEXT(" y ") INT_TFMT TEXT("; buttons ") INT_TFMT,
-                     m->data.help_request.window_handle,
-                     m->data.help_request.icon_handle,
-                     m->data.help_request.mouse_x, m->data.help_request.mouse_y,
-                     m->data.help_request.buttons));
+                     user_message->data.help_request.window_handle,
+                     user_message->data.help_request.icon_handle,
+                     user_message->data.help_request.mouse_x, user_message->data.help_request.mouse_y,
+                     user_message->data.help_request.buttons));
         break;
 
     case Wimp_MHelpReply:
         xstrkpy(tempbuffer, elemof32(tempbuffer), ": ");
-        xstrkat(tempbuffer, elemof32(tempbuffer), m->data.help_reply.text);
+        xstrkat(tempbuffer, elemof32(tempbuffer), user_message->data.help_reply.text);
         break;
 
     default:

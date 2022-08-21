@@ -25,13 +25,16 @@
 internal routines
 */
 
-static HWND hwnd_dde; /* needed for window-less DDE in any case */
+static HWND hwnd_dde_server; /* needed for window-less DDE in any case */
 
 static ATOM atom_Application;
 
 static ATOM atom_Topic_System;
 
 BOOL g_started_for_dde = FALSE;
+
+static void
+host_create_window_for_dde_server(void);
 
 extern void
 ho_dde_msg_exit2(void)
@@ -50,11 +53,14 @@ ho_dde_msg_exit2(void)
 }
 
 extern void
-ho_dde_msg_startup(void)
+host_dde_startup(void)
 {
     /* DDE stuff */
     atom_Application = GlobalAddAtom(atom_program);
-    atom_Topic_System = GlobalAddAtom(TEXT("System"));
+    atom_Topic_System = GlobalAddAtom(TEXT("system"));
+    reportf(TEXT("DDE created aApplication: ") U32_XTFMT TEXT(", aTopicSystem: ") U32_XTFMT, (U32) atom_Application, (U32) atom_Topic_System);
+
+    host_create_window_for_dde_server();
 }
 
 static BOOL
@@ -169,6 +175,111 @@ host_dde_execute(
     return(FALSE);
 }
 
+static LRESULT
+host_wm_dde_initiate(
+    _HwndRef_   HWND hwnd_server,
+    _InVal_     UINT uiMsg,
+    _InVal_     WPARAM wParam,
+    _InVal_     LPARAM lParam)
+{
+    const HWND hwnd_client = (HWND) wParam;
+    const ATOM aApplication = LOWORD(lParam);
+    const ATOM aTopic = HIWORD(lParam);
+
+    UNREFERENCED_PARAMETER_InVal_(uiMsg);
+
+    if((aApplication != atom_Application) && ((ATOM) 0 != aApplication))
+        return(0);
+
+    if((aTopic != atom_Topic_System) && ((ATOM) 0 != aTopic))
+        return(0);
+
+    reportf(TEXT("WM_DDE_INITIATE(server: ") U32_XTFMT TEXT(") [client=") U32_XTFMT TEXT("; aApplication=") U32_XTFMT TEXT("; aTopic=") U32_XTFMT TEXT("] matched"),
+            (U32) (UINT_PTR) hwnd_server, (U32) (UINT_PTR) hwnd_client, (U32) aApplication, (U32) aTopic);
+
+    {
+    const WPARAM wParam_reply = (WPARAM) hwnd_server;
+    const LPARAM lParam_reply = MAKELPARAM(atom_Application, atom_Topic_System); /* reply with our allocated ATOMs */
+    reportf(TEXT("DDE SendMessage(client: ") U32_XTFMT TEXT(", WM_DDE_ACK, wParam ") U32_XTFMT TEXT(", lParam ") U32_XTFMT TEXT(")"),
+            (U32) (UINT_PTR) hwnd_client, (U32) wParam_reply, (U32) lParam_reply);
+    void_WrapOsBoolChecking(SendMessage(hwnd_client, WM_DDE_ACK, wParam_reply, lParam_reply));
+    } /*block*/
+
+    return(0);
+}
+
+static LRESULT
+host_wm_dde_terminate(
+    _HwndRef_   HWND hwnd_server,
+    _InVal_     UINT uiMsg,
+    _InVal_     WPARAM wParam,
+    _InVal_     LPARAM lParam)
+{
+    const HWND hwnd_client = (HWND) wParam;
+
+    UNREFERENCED_PARAMETER_InVal_(uiMsg);
+    UNREFERENCED_PARAMETER_InVal_(lParam);
+
+    reportf(TEXT("WM_DDE_TERMINATE(server: ") U32_XTFMT TEXT(") [client=") U32_XTFMT TEXT("]"),
+            (U32) (UINT_PTR) hwnd_server, (U32) (UINT_PTR) hwnd_client);
+
+    { /* Respond with another WM_DDE_TERMINATE */
+    const WPARAM wParam_reply = (WPARAM) hwnd_server;
+    const LPARAM lParam_reply = 0L;
+    reportf(TEXT("DDE PostMessage(client: ") U32_XTFMT TEXT(", WM_DDE_TERMINATE, wParam ") U32_XTFMT TEXT(", lParam ") U32_XTFMT TEXT(")"),
+            (U32) (UINT_PTR) hwnd_client, (U32) wParam_reply, (U32) lParam_reply);
+    void_WrapOsBoolChecking(PostMessage(hwnd_client, WM_DDE_TERMINATE, wParam_reply, lParam_reply));
+    } /*block*/
+
+    return(0);
+}
+
+static LRESULT
+host_wm_dde_execute(
+    _HwndRef_   HWND hwnd_server,
+    _InVal_     UINT uiMsg,
+    _InVal_     WPARAM wParam,
+    _InVal_     LPARAM lParam)
+{
+    const HWND hwnd_client = (HWND) wParam;
+    HGLOBAL hCommands = (HGLOBAL) lParam;
+    DDEACK ddeack;
+
+    UNREFERENCED_PARAMETER_InVal_(uiMsg);
+
+    ddeack.bAppReturnCode = 0;
+    ddeack.reserved = 0;
+    ddeack.fBusy = 0;
+    ddeack.fAck = 0;
+
+    {
+    PCTSTR tstr = (PCTSTR) GlobalLock(hCommands);
+    reportf(TEXT("WM_DDE_EXECUTE(server: ") U32_XTFMT TEXT(") [client=") U32_XTFMT TEXT("; hCommands=") U32_XTFMT TEXT("] %s"),
+            (U32) (UINT_PTR) hwnd_server, (U32) (UINT_PTR) hwnd_client, (U32) (UINT_PTR) hCommands, report_tstr(tstr));
+    if((NULL != tstr) && host_dde_execute(tstr))
+    {
+        ddeack.fAck = 1;
+    }
+    GlobalUnlock(hCommands);
+    } /*block*/
+
+    hard_assert(TRUE);
+
+    {
+    const WORD wStatus = * (const WORD *) &ddeack;
+    const WPARAM wParam_reply = (WPARAM) hwnd_server;
+    const LPARAM lParam_reply = ReuseDDElParam(lParam, uiMsg, WM_DDE_ACK, wStatus, (UINT_PTR) hCommands);
+    reportf(TEXT("DDE PostMessage(client: ") U32_XTFMT TEXT(", WM_DDE_ACK, wParam ") U32_XTFMT TEXT(", lParam ") U32_XTFMT TEXT(")"),
+            (U32) (UINT_PTR) hwnd_client, (U32) wParam_reply, (U32) lParam_reply);
+    if(!WrapOsBoolChecking(PostMessage(hwnd_client, WM_DDE_ACK, wParam_reply, lParam_reply)))
+        GlobalFree(hCommands);
+    } /*block*/
+
+    hard_assert(FALSE);
+
+    return(0);
+}
+
 static LRESULT CALLBACK
 host_dde_window_event_handler(
     _HwndRef_   HWND hwnd,
@@ -196,8 +307,8 @@ host_dde_window_event_handler(
 create DDE application window - should be kept invisible
 */
 
-extern void
-host_create_dde_window(void)
+static void
+host_create_window_for_dde_server(void)
 {
     if(NULL == g_hInstancePrev)
     {   /* register DDE window class */
@@ -217,101 +328,14 @@ host_create_dde_window(void)
             return;
     }
 
-    /* caller can test for hwnd_dde */
-    hwnd_dde =
-        CreateWindow(window_class[APP_WINDOW_CLASS_DDE], product_ui_id(),
-                     WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX,
-                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                     NULL, NULL, GetInstanceHandle(), NULL);
-}
+    /* caller can test for hwnd_dde_server */
+    hwnd_dde_server =
+        CreateWindowEx(0L, window_class[APP_WINDOW_CLASS_DDE], product_ui_id(),
+                       WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX,
+                       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                       NULL, NULL, GetInstanceHandle(), NULL);
 
-extern LRESULT
-host_wm_dde_initiate(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     WPARAM wParam,
-    _InVal_     LPARAM lParam)
-{
-    HWND hwnd_sender = (HWND) wParam;
-    ATOM aApplication = LOWORD(lParam);
-    ATOM aTopic = HIWORD(lParam);
-
-    UNREFERENCED_PARAMETER_InVal_(uiMsg);
-
-    if(aApplication == atom_Application || !aApplication)
-    if(aTopic == atom_Topic_System || !aTopic)
-    {
-        trace_1(TRACE__DDE, TEXT("DDE_INITIATE matched (sender=") U32_XTFMT TEXT(")"), (UINT) (UINT_PTR) hwnd_sender);
-        (void)
-            SendMessage(hwnd_sender,
-                        WM_DDE_ACK,
-                        (WPARAM) hwnd,
-                        MAKELPARAM(atom_Application, atom_Topic_System));
-        return(0);
-    }
-
-    return(0);
-}
-
-extern LRESULT
-host_wm_dde_terminate(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     WPARAM wParam,
-    _InVal_     LPARAM lParam)
-{
-    HWND hwnd_sender = (HWND) wParam;
-
-    UNREFERENCED_PARAMETER_InVal_(uiMsg);
-    UNREFERENCED_PARAMETER_InVal_(lParam);
-
-    trace_1(TRACE__DDE, TEXT("DDE_TERMINATE (sender=") U32_XTFMT TEXT(")"), (UINT) (UINT_PTR) hwnd_sender);
-
-    /* Respond with another WM_DDE_TERMINATE */
-    void_WrapOsBoolChecking(PostMessage(hwnd_sender, WM_DDE_TERMINATE, (WPARAM) hwnd, 0L));
-
-    return(0);
-}
-
-extern LRESULT
-host_wm_dde_execute(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     WPARAM wParam,
-    _InVal_     LPARAM lParam)
-{
-    HWND hwnd_sender = (HWND) wParam;
-    HGLOBAL hCommands = (HGLOBAL) lParam;
-    DDEACK ddeack;
-    WORD wStatus;
-
-    UNREFERENCED_PARAMETER_InVal_(uiMsg);
-
-    ddeack.bAppReturnCode = 0;
-    ddeack.reserved = 0;
-    ddeack.fBusy = 0;
-    ddeack.fAck = 0;
-
-    {
-    PCTSTR tstr = (PCTSTR) GlobalLock(hCommands);
-    trace_2(TRACE__DDE, TEXT("DDE_EXECUTE: (sender=") U32_XTFMT TEXT(") %s"), (UINT) (UINT_PTR) hwnd_sender, report_tstr(tstr));
-    if((NULL != tstr) && host_dde_execute(tstr))
-    {
-        ddeack.fAck = 1;
-    }
-    GlobalUnlock(hCommands);
-    } /*block*/
-
-    wStatus = * (WORD *) &ddeack;
-
-    hard_assert(TRUE);
-
-    if(!WrapOsBoolChecking(PostMessage(hwnd_sender, WM_DDE_ACK, (WPARAM) hwnd, MAKELPARAM(wStatus, hCommands))))
-        GlobalFree(hCommands);
-
-    hard_assert(FALSE);
-
-    return(0);
+    reportf(TEXT("DDE created server: ") U32_XTFMT, (U32) (UINT_PTR) hwnd_dde_server);
 }
 
 /* end of windows/ho_icon.c */

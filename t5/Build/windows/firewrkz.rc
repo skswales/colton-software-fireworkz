@@ -9,9 +9,9 @@
 
 /*#define VER_FILEVERSION            2,xx,y,0*/
 /*#define VER_FILEVERSION            2,xx,0,0*/
-#define VER_FILEVERSION              2,20,1,0
+#define VER_FILEVERSION              2,21,2,0
 
-#define VER_FILEVERSION_STR         "2.20.01\0"
+#define VER_FILEVERSION_STR         "2.21.02\0"
 /*#define VER_FILEVERSION_STR       "2.xx.yy\0"*/
 /*#define VER_FILEVERSION_STR       "2.xx\0"*/
 

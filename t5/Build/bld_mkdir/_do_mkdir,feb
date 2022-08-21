@@ -63,12 +63,12 @@ Copy <MkDir$Archive>._app1 <t5$Build$Dir>.firewrkz
 Copy <MkDir$Archive>._app2 <t5$Build$Dir>.firewrkz.!Fireworkz
 
 | Fireworkz Pro can only be built if corresponding R-Comp components are present
-IfThere $.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_rec
-IfThere $.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_recb
-IfThere $.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_xls
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_rec
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_recb
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_xls
 
-IfThere $.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app1 <t5$Build$Dir>.fprowrkz
-IfThere $.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app2 <t5$Build$Dir>.fprowrkz.!Fireworkz
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app1 <t5$Build$Dir>.fprowrkz
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app2 <t5$Build$Dir>.fprowrkz.!Fireworkz
 
 |IfThere <t5$Build$Dir>.firewrkz Then Filer_OpenDir <t5$Build$Dir>.firewrkz
 |IfThere <t5$Build$Dir>.fprowrkz Then Filer_OpenDir <t5$Build$Dir>.fprowrkz

@@ -58,6 +58,14 @@ extern BOOL
 report_enabled(void);
 
 extern void
+report_timing_enable(
+    _InVal_     BOOL enable);
+
+_Check_return_
+extern BOOL
+report_timing_enabled(void);
+
+extern void
 report_output(
     _In_z_      PCTSTR buffer);
 

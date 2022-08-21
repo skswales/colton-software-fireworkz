@@ -2,24 +2,24 @@
 @rem License, v. 2.0. If a copy of the MPL was not distributed with this
 @rem file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-@rem Copyright (C) 2013-2016 Stuart Swales
+@rem Copyright (C) 2013-2018 Stuart Swales
 
 pushd %~dp0
 IF NOT EXIST BLDCD2.BAT EXIT
 
-rmdir /s /q                                            fwin-22001
-mkdir                                                  fwin-22001\
+rmdir /s /q                                            fwin-22102
+mkdir                                                  fwin-22102\
 @if errorlevel 1 goto failed
 @
 @rem copy newly built stuff ie. the Setup EXE
-xcopy .\InnoSetup\*.exe                                fwin-22001\
+xcopy .\InnoSetup\*.exe                                fwin-22102\
 @if errorlevel 1 goto failed
 @
-@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm        fwin-22001\RelNotes.htm
+@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm        fwin-22102\RelNotes.htm
 @if errorlevel 1 goto failed
 @
-mkdir                                                  fwin-22001\GSGuide\
-@echo D | xcopy /s ..\..\..\..\docs\GSGuide\windows    fwin-22001\GSGuide\Windows
+mkdir                                                  fwin-22102\GSGuide\
+@echo D | xcopy /s ..\..\..\..\docs\GSGuide\windows    fwin-22102\GSGuide\Windows
 @if errorlevel 1 goto failed
 @
 @explorer .

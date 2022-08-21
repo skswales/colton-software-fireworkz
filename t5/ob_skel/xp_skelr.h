@@ -339,6 +339,12 @@ union wimp_window_state_open_window_block_u
 #define Wimp_MouseButtonTripleAdjust    0x1000
 #define Wimp_MouseButtonTripleSelect    0x4000
 
+/* other useful messages not defined by tboxlibs wimp.h */
+#ifndef Wimp_MFilerOpenDir
+#define Wimp_MFilerOpenDir  0x0400
+#define Wimp_MFilerCloseDir 0x0401
+#endif
+
 /*
 sizes of wimp controlled areas of screen - slightly mode dependent
 */

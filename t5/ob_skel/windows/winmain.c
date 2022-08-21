@@ -1056,10 +1056,11 @@ _tWinMain(
 
     /* determine which platform we are running on */
     /*host_os_version_determine();*/ /* very early indeed */
+    report_timing_enable(TRUE);
 
-#if 1
     (void) HeapSetInformation(GetProcessHeap(), HeapEnableTerminationOnCorruption, NULL, 0);
 
+#if 1
     { /* Use the Low-Fragmentation Heap - even on Windows XP (LFH is default on Vista) */
     DWORD Frag = 2;
     (void) HeapSetInformation(GetProcessHeap(), HeapCompatibilityInformation, &Frag, sizeof(Frag));
@@ -1121,6 +1122,8 @@ _tWinMain(
 
     get_user_info();
 
+    host_dde_startup();
+
     if(!g_started_for_dde)
         splash_window_create(HWND_DESKTOP, 0);
 
@@ -1131,22 +1134,21 @@ _tWinMain(
     if(!decode_command_line_options(ptzCmdLine_in, 2))
         goto fallout;
 
-    /* If nothing has been loaded (even via DDE) then open a template - or the template selector */
-    if(!some_document_windows())
+    /* If nothing has been loaded (except when started as DDE server) then open a template - or the template selector */
+    if(!some_document_windows() && !g_started_for_dde)
     {
-        if(g_started_for_dde)
-        {
-            host_create_dde_window();
-        }
-        else
-        {
-            /* try open existing first, if cancelled, try create from template */
-            if(status_fail(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE)))
-                status_assert(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT, P_DATA_NONE));
+#if CHECKING && 1
+        /* try open existing first, if cancelled, try create from template - leave this way for SKS testing */
+        if(status_fail(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE)))
+            status_assert(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT, P_DATA_NONE));
+#else
+        /* try create from template first, if cancelled, try open existing */
+        if(status_fail(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT, P_DATA_NONE)))
+            status_assert(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE));
+#endif
 
-            if(!some_document_windows())
-                goto fallout;
-        }
+        if(!some_document_windows())
+            goto fallout;
     }
 
 #if defined(__cplusplus)

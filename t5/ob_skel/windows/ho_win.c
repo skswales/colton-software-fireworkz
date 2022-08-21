@@ -824,8 +824,6 @@ ho_win_msg_startup(void)
     (void) bttncur_LibMain(GetInstanceHandle());
     (void) UIToolConfigureForDisplay(&tdd);
 
-    ho_dde_msg_startup();
-
     return(STATUS_OK);
 }
 

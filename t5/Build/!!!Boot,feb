@@ -23,17 +23,21 @@ If "<disc_root>"="" Then IfThere SDFS::RISCOSpi.$.!Boot Then Set disc_root SDFS:
 | RPCEmu
 If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
 |
-set fireworkz_tbt fireworkz__2_20__branch
-|et fireworkz_tbt trunk
-Set fireworkz_root <disc_root>.fireworkz.<fireworkz_tbt>
+| RISC OS filetypes are stored using ,xyz suffixes for this project
+| and not the svn:riscosfiletype property
+Set svn$filetypeext ""
+|
+set FIREWORKZ_TBT fireworkz__2_21__branch
+|et FIREWORKZ_TBT trunk
+Set fireworkz_root <disc_root>.fireworkz.<FIREWORKZ_TBT>
 |
 URD <fireworkz_root>
 |Lib &.arm.Library
 |Dir &.t5
 |
 | Fireworkz Pro can only be built if R-Comp components are present
-IfThere <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.
-IfThere <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.WindLibC.<C$Mode>.
+IfThere <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.
+IfThere <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.WindLibC.<C$Mode>.
 |
 Set Fireworkz$ReportEnable 1
 Set Fireworkz$TraceEnable 1
