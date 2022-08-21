@@ -268,7 +268,7 @@ t5_file_close(
 
     trace_2(TRACE_MODULE_FILE, TEXT("t5_file_close(") PTR_XTFMT TEXT(" -> ") PTR_XTFMT TEXT(")"), p_file_handle, p_file_handle ? *p_file_handle : NULL);
 
-    if(IS_PTR_NULL_OR_NONE(p_file_handle))
+    if(PTR_IS_NULL_OR_NONE(p_file_handle))
     {
         PTR_ASSERT(p_file_handle);
         return(create_error(FILE_ERR_BADHANDLE));
@@ -282,7 +282,7 @@ t5_file_close(
     if(!file_handle)
         return(STATUS_OK);
 
-    if(!file_handle || (file_handle->magic != _FILE_MAGIC_WORD))
+    if( /*!file_handle ||*/ (file_handle->magic != _FILE_MAGIC_WORD) )
         return(create_error(FILE_ERR_BADHANDLE));
 
     { /* search for file and delink from list - first time round always awkward */
@@ -317,6 +317,8 @@ t5_file_close(
     /* free buffer if any and we allocated it */
     if(!(file_handle->flags & _FILE_USERBUFFER))
         al_ptr_dispose(&file_handle->bufbase);
+
+    tstr_clr(&file_handle->tstr_filename);
 
     /* free file descriptor */
     al_ptr_dispose(P_P_ANY_PEDANTIC(&file_handle));
@@ -368,16 +370,14 @@ file_create_directory(
     if(_kernel_ERROR == _kernel_osfile(OSFile_CreateDir, dirname, &osfile_block))
     {
         _kernel_oserror * e = _kernel_last_oserror();
-        if(NULL != e)
-            return(file_error_set(e->errmess));
-        return(FILE_ERR_MKDIR_FAILED);
+        return((NULL != e) ? file_error_set(e->errmess) : status_check());
     }
 #elif WINDOWS
     if(!CreateDirectory(dirname, NULL))
     {
         DWORD dwLastError = GetLastError();
         if(dwLastError != ERROR_ALREADY_EXISTS)
-            return(FILE_ERR_MKDIR_FAILED);
+            return(file_error_set_from_last_error(dwLastError, FILE_ERR_FRAG_CREATE_DIRECTORY, dirname));
     }
 #else
     _mkdir(dirname);
@@ -558,6 +558,72 @@ file_error_set(
     return(create_error(FILE_ERR_ERROR_RQ));
 }
 
+#if WINDOWS
+
+_Check_return_
+extern STATUS
+file_error_set_from_last_error(
+    _InVal_     DWORD dwLastError,
+    _InVal_     STATUS status_message,
+    _In_z_      PCTSTR tstr_filename)
+{
+    PCTSTR tstr_message = resource_lookup_tstr_no_default(status_message);
+
+    if(0 == dwLastError)
+        return(STATUS_OK);
+
+    if(!file__errorptr  &&  file__errorbuffer)
+    {
+        DWORD n_chars;
+
+        if(0 == (n_chars =
+            FormatMessage(
+                FORMAT_MESSAGE_FROM_SYSTEM,
+                NULL,
+                dwLastError,
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                file__errorbuffer,
+                file__errorbufelem,
+                NULL)))
+        {
+            tstr_xstrkpy(file__errorbuffer, file__errorbufelem, TEXT("FILE ERR: "));
+        }
+        else
+        {   /* strip any trailing whitespace etc. */
+            while(  n_chars-- &&
+                    ( ('\r' == file__errorbuffer[n_chars]) ||
+                      ('\n' == file__errorbuffer[n_chars]) ||
+                      ('.'  == file__errorbuffer[n_chars]) ) )
+            {
+                file__errorbuffer[n_chars] = CH_NULL;
+            }
+            /*++n_chars;*/
+        }
+
+        if(NULL != tstr_message)
+        {
+            tstr_xstrkat(file__errorbuffer, file__errorbufelem, TEXT(" "));
+            tstr_xstrkat(file__errorbuffer, file__errorbufelem, tstr_message);
+        }
+
+        if(NULL != tstr_filename)
+        {
+            tstr_xstrkat(file__errorbuffer, file__errorbufelem, TEXT(" "));
+            tstr_xstrkat(file__errorbuffer, file__errorbufelem, tstr_filename);
+        }
+
+        file__errorptr = file__errorbuffer;
+    }
+#if TRACE_ALLOWED
+    else if(file__errorptr)
+        trace_0(TRACE_MODULE_FILE, TEXT("*** ERROR LOST ***"));
+#endif
+
+    return(create_error(FILE_ERR_ERROR_RQ));
+}
+
+#endif /* WINDOWS */
+
 extern void
 file_finalise(void)
 {
@@ -600,7 +666,8 @@ t5_file_flush(
         rs.r[0] = OSArgs_Flush;
         rs.r[1] = file_handle->handle;
 
-        status = file__obtain_error_string(_kernel_swi(OS_Args, &rs, &rs));
+        if(status_fail(status = file__obtain_error_string(_kernel_swi(OS_Args, &rs, &rs))))
+            file__set_error(file_handle, status);
 #elif WINDOWS
         /* no flushing to be done */
 #else
@@ -666,7 +733,7 @@ file_gets(
     _InVal_     U32 bufsize,
     _InoutRef_opt_ FILE_HANDLE file_handle)
 {
-    U32 usable_bufsize;
+    const U32 usable_bufsize = bufsize - 1; /* always CH_NULL-terminated, so leave space */
     U32 count = 0;
 
     if(bufsize < 2)
@@ -675,12 +742,12 @@ file_gets(
         return(STATUS_OK);
     }
 
-    usable_bufsize = bufsize - 1; /* always CH_NULL-terminated, so leave space */
-
     *buffer = CH_NULL;
 
     if(!file_handle || (file_handle->magic != _FILE_MAGIC_WORD))
         return(create_error(FILE_ERR_BADHANDLE));
+
+    _Analysis_assume_(usable_bufsize >= 1);
 
     do  {
         U8 res, newres;
@@ -778,12 +845,18 @@ file_length(
     rs.r[0] = OSArgs_ReadEXT;
     rs.r[1] = file_handle->handle;
 
-    if(status_ok(status = file__obtain_error_string(_kernel_swi(OS_Args, &rs, &rs))))
+    if(status_fail(status = file__obtain_error_string(_kernel_swi(OS_Args, &rs, &rs))))
+        file__set_error(file_handle, status);
+    else
         p_file_length->u.words.lo = rs.r[2];
 #elif WINDOWS
     BY_HANDLE_FILE_INFORMATION info;
 
-    if(WrapOsBoolChecking(GetFileInformationByHandle(file_handle->handle, &info)))
+    if(!WrapOsBoolChecking(GetFileInformationByHandle(file_handle->handle, &info)))
+    {
+        status = file__set_error(file_handle, file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_WHILE_READING, file_handle->tstr_filename));
+    }
+    else
     {
         p_file_length->u.words.lo = info.nFileSizeLow;
         p_file_length->u.words.hi = info.nFileSizeHigh;
@@ -882,14 +955,14 @@ t5_file_open(
 
     trace_3(TRACE_MODULE_FILE, TEXT("t5_file_open(%s, ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), filename, openmode, p_file_handle);
 
-    /* would the name be too long to put in the allocated structure? */
-#if RISCOS
-    if(tstrlen32(filename) >= sizeof32(file_handle->riscos.filename))
-        return(create_error(FILE_ERR_NAMETOOLONG));
-#endif
-
     if(NULL == (*p_file_handle = file_handle = al_ptr_calloc_elem(_FILE_HANDLE, 1, &status)))
         return(status);
+
+    if(status_fail(status = tstr_set(&file_handle->tstr_filename, filename)))
+    {
+        al_ptr_dispose(P_P_ANY_PEDANTIC(p_file_handle));
+        return(status);
+    }
 
     status = STATUS_DONE; /* not STATUS_OK */
 
@@ -904,64 +977,68 @@ t5_file_open(
 
 #if RISCOS
     {
-    _kernel_swi_regs rs;
-
-    (void) strcpy(file_handle->riscos.filename, filename);
+    _kernel_osfile_block osfile_block;
+    int osfile_result;
+    /*zero_struct(osfile_block);*/
 
     file_handle->riscos.t5_filetype = FILETYPE_UNTYPED;
 
-    rs.r[0] = OSFile_ReadNoPath; /* SKS after 1.05 25oct93 - see if this works better than OSFile_ReadInfo wrt disc swaps on A3000/RISC OS 3.10 */
-    rs.r[1] = (int) filename;
+    osfile_result = _kernel_osfile(OSFile_ReadNoPath, filename, &osfile_block);
 
-    if(0 == _kernel_swi(OS_File, &rs, &rs)) /* ignore errors (especially for device streams) */
+    switch(osfile_result)
     {
-        switch(rs.r[0])
+    case _kernel_ERROR: /* ignore errors (especially for device streams) */
+        (void) _kernel_last_oserror();
+        break;
+
+    case OSFile_ObjectType_None:
+        if(openmode != file_open_write)
+            status = 0;
+        break;
+
+    case OSFile_ObjectType_File:
         {
-        case OSFile_ObjectType_None:
-            if(openmode != file_open_write)
-                status = 0;
-            break;
+        const U32 file_attributes = osfile_block.end /*R5*/;
 
-        case OSFile_ObjectType_File:
-            {
-            if(openmode == file_open_read)
-            {
-                if((rs.r[5] & OSFile_ObjectAttribute_read) == 0)
-                    status = create_error(FILE_ERR_NO_ACCESS_READ);
-            }
-            else
-            {
-                if((rs.r[5] & OSFile_ObjectAttribute_locked) != 0)
-                    status = create_error(FILE_ERR_LOCKED);
-                else if((rs.r[5] & OSFile_ObjectAttribute_write) == 0)
-                    status = create_error(FILE_ERR_NO_ACCESS_WRITE);
-            }
-
-            if(status_ok(status))
-            {
-                file_handle->riscos.t5_filetype = (T5_FILETYPE) (((U32) rs.r[2] >> 8) & 0xFFFU);
-
-                file_handle->riscos.file_date_loword = rs.r[3];
-                file_handle->riscos.file_date_hiword = rs.r[2] & 0xFF;
-            }
-
-            break;
-            }
-
-        default: default_unhandled();
-#if CHECKING
-        case OSFile_ObjectType_Dir:
-        case OSFile_ObjectType_Image:
-#endif
-            rs.r[2] = rs.r[0];
-            rs.r[0] = OSFile_MakeError;
-            status = file__obtain_error_string(_kernel_swi(OS_File, &rs, &rs));
-            break;
+        if(openmode == file_open_read)
+        {
+            if((file_attributes & OSFile_ObjectAttribute_read) == 0)
+                status = create_error(FILE_ERR_NO_ACCESS_READ);
         }
+        else
+        {
+            if((file_attributes & OSFile_ObjectAttribute_locked) != 0)
+                status = create_error(FILE_ERR_LOCKED);
+            else if((file_attributes & OSFile_ObjectAttribute_write) == 0)
+                status = create_error(FILE_ERR_NO_ACCESS_WRITE);
+        }
+
+        if(status_ok(status))
+        {
+            file_handle->riscos.file_date_loword = osfile_block.exec /*R3*/;
+            file_handle->riscos.file_date_hiword = osfile_block.load /*R2*/ & 0xFF;
+
+            file_handle->riscos.t5_filetype = (T5_FILETYPE) (((U32) osfile_block.load /*R2*/ >> 8) & 0xFFFU);
+        }
+
+        break;
+        }
+
+    default: default_unhandled();
+#if CHECKING
+    case OSFile_ObjectType_Dir:
+    case OSFile_ObjectType_Image:
+#endif
+        osfile_block.load /*R2*/ = osfile_result;
+        (void) _kernel_osfile(OSFile_MakeError, filename, &osfile_block);
+        status = file__obtain_error_string(_kernel_last_oserror());
+        break;
     }
 
-    if(status == 1)
+    if(status == STATUS_DONE)
     {
+        _kernel_swi_regs rs;
+
         rs.r[0] = openatts[openmode];
         rs.r[1] = (int) filename;
 
@@ -985,6 +1062,12 @@ t5_file_open(
 
         file_handle->windows.file_date = info.ftLastWriteTime;
     }
+    else
+    {
+        const DWORD dwLastError = GetLastError();
+        if(ERROR_FILE_NOT_FOUND != dwLastError)
+            status = file_error_set_from_last_error(dwLastError, FILE_ERR_FRAG_WHEN_OPENING, filename);
+    }
 #else
     file_handle->handle = fopen(filename, openatts[openmode]);
 
@@ -995,7 +1078,11 @@ t5_file_open(
         status = create_error(FILE_ERR_CANTOPEN);
 
     if(status <= 0)
+    {
+        tstr_clr(&file_handle->tstr_filename);
+
         al_ptr_dispose(P_P_ANY_PEDANTIC(p_file_handle));
+    }
     else
     {
         if(!file__initialised)
@@ -1020,7 +1107,8 @@ _Check_return_
 extern STATUS
 file_pad(
     _InoutRef_opt_ FILE_HANDLE file_handle,
-    _InVal_     U32 alignpower)
+    _InVal_     U32 alignpower,
+    _InVal_     U8 pad_byte)
 {
     U32 alignment, alignmask, res32;
     filepos_t cur_pos;
@@ -1047,8 +1135,8 @@ file_pad(
     {
         alignment = alignment - (res32 & alignmask);
         do  {
-            trace_0(TRACE_MODULE_FILE, TEXT("file_pad outputting CH_NULL"));
-            status_return(file_putc(CH_NULL, file_handle));
+            trace_1(TRACE_MODULE_FILE, TEXT("file_pad outputting pad_byte ") U32_XTFMT, pad_byte);
+            status_return(file_putc(pad_byte, file_handle));
         }
         while(--alignment != 0);
     }
@@ -1164,16 +1252,19 @@ file_remove(
     _In_z_      PCTSTR filename)
 {
 #if RISCOS
-    _kernel_swi_regs rs;
-    rs.r[0] = OSFile_Delete;
-    rs.r[1] = (int) filename;
-    return(file__obtain_error_string(_kernel_swi(OS_File, &rs, &rs)));
+    _kernel_osfile_block osfile_block;
+    /*zero_struct(osfile_block);*/
+
+    if(_kernel_ERROR == _kernel_osfile(OSFile_Delete, filename, &osfile_block))
+        return(file__obtain_error_string(_kernel_last_oserror()));
 #elif WINDOWS
     if(!WrapOsBoolChecking(DeleteFile(filename)))
-        return(FILE_ERR_REMOVE_FAILED);
+    {
+        return(file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_REMOVING, filename));
+    }
+#endif /*OS */
 
     return(STATUS_OK);
-#endif /*OS */
 }
 
 _Check_return_
@@ -1190,7 +1281,9 @@ file_rename(
     return(file__obtain_error_string(_kernel_swi(OS_FSControl, &rs, &rs)));
 #elif WINDOWS
     if(!WrapOsBoolChecking(MoveFile(filename_from, filename_to)))
-        return(FILE_ERR_RENAME_FAILED);
+    {
+        return(file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_RENAMING, filename_from));
+    }
 
     return(STATUS_OK);
 #endif /*OS */
@@ -1548,7 +1641,10 @@ file__closefile(
     {
         if(file_handle->written_to)
         {
-            /* read current time UTC (really does work!) */
+            _kernel_osfile_block osfile_block;
+            /*zero_struct(osfile_block);*/
+
+            { /* read current time UTC (really does work!) */
             int buffer[2];
             rs.r[0] = 14;
             rs.r[1] = (int) buffer;
@@ -1556,19 +1652,19 @@ file__closefile(
             void_WrapOsErrorChecking(_kernel_swi(OS_Word, &rs, &rs));
             file_handle->riscos.file_date_loword = buffer[0];
             file_handle->riscos.file_date_hiword = buffer[1] & 0xFF;
+            } /*block*/
 
-            rs.r[0] = OSFile_WriteLoad;
-            rs.r[1] = (int) file_handle->riscos.filename;
-            rs.r[2] = 0xFFF00000 | ((int) file_handle->riscos.t5_filetype << 8) | file_handle->riscos.file_date_hiword;
-            status1 = file__obtain_error_string(_kernel_swi(OS_File, &rs, &rs));
+            osfile_block.load /*R2*/ = 0xFFF00000 | ((int) file_handle->riscos.t5_filetype << 8) | file_handle->riscos.file_date_hiword;
+
+            if(_kernel_ERROR == _kernel_osfile(OSFile_WriteLoad, file_handle->tstr_filename, &osfile_block))
+                status1 = file__obtain_error_string(_kernel_last_oserror());
 
             if(status_ok(status1))
             {
-                rs.r[0] = OSFile_WriteExec;
-                rs.r[1] = (int) file_handle->riscos.filename;
-                /* not r[2] */
-                rs.r[3] = file_handle->riscos.file_date_loword;
-                status1 = file__obtain_error_string(_kernel_swi(OS_File, &rs, &rs));
+                osfile_block.exec /*R3*/ = file_handle->riscos.file_date_loword;
+
+                if(_kernel_ERROR == _kernel_osfile(OSFile_WriteExec, file_handle->tstr_filename, &osfile_block))
+                    status1 = file__obtain_error_string(_kernel_last_oserror());
             }
         }
     }
@@ -1584,7 +1680,9 @@ file__closefile(
     file_handle->windows.file_date = info.ftLastWriteTime;
 
     if(!CloseHandle(file_handle->handle))
-        status = create_error(FILE_ERR_CANTCLOSE);
+    {
+        status = file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_WHEN_CLOSING, file_handle->tstr_filename);
+    }
 #else
     if(fclose(file_handle->handle))
         status = create_error(FILE_ERR_CANTCLOSE);
@@ -1769,7 +1867,9 @@ file__getpos(
     LARGE_INTEGER liCurrentFilePointer = { 0 };
 
     if(!WrapOsBoolChecking(SetFilePointerEx(file_handle->handle, liDistanceToMove, &liCurrentFilePointer, FILE_CURRENT)))
-        return(file__set_error(file_handle, create_error(FILE_ERR_CANTREAD)));
+    {
+        return(file__set_error(file_handle, file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_WHILE_READING, file_handle->tstr_filename)));
+    }
 
     cur_pos.u.u64 = (U64) liCurrentFilePointer.QuadPart;
 #else
@@ -1793,7 +1893,7 @@ file__make_output_buffer(
 {
     /* writeable file? */
     if(!(file_handle->flags & _FILE_WRITE))
-        return(file__set_error(file_handle, create_error(FILE_ERR_ACCESSDENIED)));
+        return(file__set_error(file_handle, create_error(FILE_ERR_NO_ACCESS_WRITE)));
 
     /* no buffer present? */
     if(!file_handle->bufbase)
@@ -1879,13 +1979,15 @@ file__read(
 
     if(_kernel_ERROR == _kernel_osgbpb(OSGBPB_ReadFromPTR, file_handle->handle, &blk))
     {
-        return(file__obtain_error_string(_kernel_last_oserror()));
+        return(file__set_error(file_handle, file__obtain_error_string(_kernel_last_oserror())));
     }
 
     *p_bytesread = bytestoread - blk.nbytes;
 #elif WINDOWS
     if(!ReadFile(file_handle->handle, ptr, bytestoread, (LPDWORD) p_bytesread, NULL))
-        return(file__set_error(file_handle, create_error(FILE_ERR_CANTREAD)));
+    {
+        return(file__set_error(file_handle, file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_WHILE_READING, file_handle->tstr_filename)));
+    }
 #else
     *p_bytesread = fread(ptr, 1, bytestoread, file_handle->handle);
 #endif
@@ -1985,7 +2087,8 @@ file__seek(
     rs.r[1] = file_handle->handle;
     rs.r[2] = (int) new_pos.u.words.lo;
 
-    status = file__obtain_error_string(_kernel_swi(OS_Args, &rs, &rs));
+    if(status_fail(status = file__obtain_error_string(_kernel_swi(OS_Args, &rs, &rs))))
+        file__set_error(file_handle, status);
 #elif WINDOWS
     LARGE_INTEGER liDistanceToMove;
     LARGE_INTEGER liNewFilePointer;
@@ -2013,14 +2116,7 @@ file__seek(
 
     if(!SetFilePointerEx(file_handle->handle, liDistanceToMove, &liNewFilePointer, dwMoveMethod))
     {
-        switch(GetLastError())
-        {
-        default:
-            return(file__set_error(file_handle, create_error(FILE_ERR_CANTREAD)));
-
-        case ERROR_NEGATIVE_SEEK:
-            return(file__set_error(file_handle, create_error(FILE_ERR_INVALIDPOSITION)));
-        }
+        return(file__set_error(file_handle, file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_WHILE_SEEKING, file_handle->tstr_filename)));
     }
 
     new_pos.u.u64 = (U64) liNewFilePointer.QuadPart;
@@ -2094,34 +2190,24 @@ file__write(
     }
 
     byteswritten = bytestowrite - (U32) blk.nbytes;
+
+    /* this case should never happen with a RISC OS filing system */
+    if(byteswritten != bytestowrite)
+        return(file__set_error(file_handle, create_error(FILE_ERR_DEVICEFULL)));
 #elif WINDOWS
     errno = 0;
 
     if(!WriteFile(file_handle->handle, ptr, bytestowrite, (LPDWORD) &byteswritten, NULL))
     {
-        switch(GetLastError())
-        {
-        /*case ENOSPC:
-            return(file__set_error(file_handle, create_error(FILE_ERR_DEVICEFULL)));*/
-
-        default:
-            return(file__set_error(file_handle, create_error(FILE_ERR_CANTWRITE)));
-        }
+        return(file__set_error(file_handle, file_error_set_from_last_error(GetLastError(), FILE_ERR_FRAG_WHILE_WRITING, file_handle->tstr_filename)));
     }
 #else
-    size_t memberswritten;
+    byteswritten = fwrite(ptr, 1, bytestowrite, file_handle->handle);
 
-    nmemb = fwrite(ptr, 1, bytestowrite, file_handle->handle);
-
-    if(memberswritten != nmemb)
+    if(byteswritten != bytestowrite)
         return(file__set_error(file_handle, create_error(FILE_ERR_DEVICEFULL)));
 #endif
     } /*block*/
-
-    /* this case should never happen with a RISC OS filing system */
-    /* pretty well defined to be the error we should get on MS-DOS */
-    if(byteswritten != bytestowrite)
-        return(file__set_error(file_handle, create_error(FILE_ERR_DEVICEFULL)));
 
     return(STATUS_OK);
 }

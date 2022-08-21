@@ -1,0 +1,18 @@
+﻿3 First steps
+This chapter will show you how to perfonn the most essential
+database tasks with Recordz. It takes you through the basic steps
+you need to become familiar with the fundamental operations and
+mentions other, more sophisticated features, so you gain an
+understanding of the whole system.
+It includes sections on:
+' Running the application.
+' Creating a new database.
+- Entering and editing records.
+' Changing the layout.
+' Searching.
+' Sorting.
+Fireworkz Pro 27
+
+
+
+

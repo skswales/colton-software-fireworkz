@@ -1,0 +1,16 @@
+﻿Database Guide 171
+
+13 Expression syntax
+DataPower governs the rules on what expressions can be held
+within the database. The rules apply to:
+. The contents of Formula fields.
+. The contents of Check formulae.
+. Search pattems.
+This chapter briefly covers:
+. The format of expressions.
+. The functions available for use within expressions.
+Note that the functions in this chapter are not available in
+spreadsheets.
+
+
+

@@ -1,0 +1,51 @@
+﻿Effect on your database
+The layout information is held within the Recordz document and
+not the database itself. Therefore, none of the options available in
+the Layout dialogue box will in any way alter the contents of your
+database. So, if you decide to hide a field, the field will still
+remain in the database and you can reveal it later or display it in a
+different document if you wish.
+Note that the database only stores the data that you enter. If you
+leave a field empty then no storage space is required for it.
+Similarly, if you set the layout so that a particular field is large
+enough to hold, say, 60 characters, but is normally used to hold
+just 10 characters then the database will store just the 10 characters
+you enter and will not store fifty spaces after them. This means
+you do not have to worry about wasting disc space when you set
+up your layout - Recordz will ensure that your database occupies
+only the amount of space required for your actual data.
+
+Moving through the records
+If you have chosen to set the Auto option in the Layout dialogue
+box, then all your records will be visible in your document.
+If you have chosen to clear the Auto option, then only a certain
+number will be visible at once. To display the others, you need to
+use the controls on the button bar:
+. Forward moves forwards through the database one row at a
+time. Thus, if you have a sheet layout, Forward moves you
+on to the next record. If you have a card layout with c
+columns, Forward moves you on by c records.
+. Rewind moves backwards through the database one row at a
+time. Thus, if you have a sheet layout, Rewind moves you
+back to the previous record. If you have a card layout with c
+columns, Rewind moves you back by c records.
+. Fast Forward moves forwards through the database one
+display's worth at a time. Thus, if you a have a spreadsheet
+layout with r rows, Fast Forward moves you on by r records.
+If you have a card layout with r rows and c columns, Fast
+Forward moves you on by r * c records.
+. Fast Rewind moves backwards through the database one
+display's worth at a time. Thus, if you a have a spreadsheet
+layout with r rows, Fast Rewind moves you back by r
+records. If you have a card layout with r rows and c columns,
+Fast Rewind moves you back by r * c records.
+. End moves forwards through the database so that the final
+row in the display contains the final record.
+. Start moves backwards through the database so that the first
+row in the display contains the first record.
+
+Pro 83
+
+
+
+

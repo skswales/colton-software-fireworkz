@@ -268,6 +268,80 @@ dialog_cmd_ctl_nobble(
     return(STATUS_OK);
 }
 
+static inline void
+dialog_cmd_ctl_ui_control_BUMP_S32(
+    P_DIALOG_CMD_CTL_UI_CONTROL p_dialog_cmd_ctl_ui_control,
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl)
+{
+    PC_UI_CONTROL_S32 p_ui_control_s32 = (PC_UI_CONTROL_S32) p_dialog_ictl->p_dialog_control_data.bump_s32->bump_xx.p_uic;
+    UI_CONTROL_S32 * p_ui_control_s32_wr;
+
+    if(PTR_IS_NONE(p_ui_control_s32))
+        return;
+
+    p_ui_control_s32_wr = de_const_cast(UI_CONTROL_S32 *, p_ui_control_s32);
+
+    switch(p_dialog_cmd_ctl_ui_control->what)
+    {
+    case DIALOG_CMD_CTL_UI_CONTROL_UIC:
+        de_const_cast(DIALOG_CONTROL_DATA_BUMP_S32 *, p_dialog_ictl->p_dialog_control_data.bump_s32)->bump_xx.p_uic =
+            p_dialog_cmd_ctl_ui_control->data.p_ui_control_s32;
+        break;
+
+    case DIALOG_CMD_CTL_UI_CONTROL_MAX:
+        p_ui_control_s32_wr->max_val = p_dialog_cmd_ctl_ui_control->data.s32;
+        break;
+
+    case DIALOG_CMD_CTL_UI_CONTROL_MIN:
+        p_ui_control_s32_wr->min_val = p_dialog_cmd_ctl_ui_control->data.s32;
+        break;
+
+    case DIALOG_CMD_CTL_UI_CONTROL_BUMP:
+        p_ui_control_s32_wr->bump_val = p_dialog_cmd_ctl_ui_control->data.s32;
+        break;
+
+    default:
+        break;
+    }
+}
+
+static inline void
+dialog_cmd_ctl_ui_control_BUMP_F64(
+    P_DIALOG_CMD_CTL_UI_CONTROL p_dialog_cmd_ctl_ui_control,
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl)
+{
+    const PC_UI_CONTROL_F64 p_ui_control_f64 = (PC_UI_CONTROL_F64) p_dialog_ictl->p_dialog_control_data.bump_f64->bump_xx.p_uic;
+    UI_CONTROL_F64 * p_ui_control_f64_wr;
+
+    if(PTR_IS_NONE(p_ui_control_f64))
+        return;
+
+    p_ui_control_f64_wr = de_const_cast(UI_CONTROL_F64 *, p_ui_control_f64);
+
+    switch(p_dialog_cmd_ctl_ui_control->what)
+    {
+    case DIALOG_CMD_CTL_UI_CONTROL_UIC:
+        de_const_cast(DIALOG_CONTROL_DATA_BUMP_F64 *, p_dialog_ictl->p_dialog_control_data.bump_f64)->bump_xx.p_uic =
+            p_dialog_cmd_ctl_ui_control->data.p_ui_control_f64;
+        break;
+
+    case DIALOG_CMD_CTL_UI_CONTROL_MAX:
+        p_ui_control_f64_wr->max_val = p_dialog_cmd_ctl_ui_control->data.f64;
+        break;
+
+    case DIALOG_CMD_CTL_UI_CONTROL_MIN:
+        p_ui_control_f64_wr->min_val = p_dialog_cmd_ctl_ui_control->data.f64;
+        break;
+
+    case DIALOG_CMD_CTL_UI_CONTROL_BUMP:
+        p_ui_control_f64_wr->bump_val = p_dialog_cmd_ctl_ui_control->data.f64;
+        break;
+
+    default:
+        break;
+    }
+}
+
 _Check_return_
 static STATUS
 dialog_cmd_ctl_ui_control(
@@ -291,74 +365,12 @@ dialog_cmd_ctl_ui_control(
         return(create_error(DIALOG_ERR_CANT_UI_CONTROL));
 
     case DIALOG_CONTROL_BUMP_S32:
-        {
-        PC_UI_CONTROL_S32 p_ui_control_s32 = (PC_UI_CONTROL_S32) p_dialog_ictl->p_dialog_control_data.bump_s32->bump_xx.p_uic;
-
-        if(P_DATA_NONE != p_ui_control_s32)
-        {
-            UI_CONTROL_S32 * p_ui_control_s32_wr = de_const_cast(UI_CONTROL_S32 *, p_ui_control_s32);
-
-            switch(p_dialog_cmd_ctl_ui_control->what)
-            {
-            case DIALOG_CMD_CTL_UI_CONTROL_UIC:
-                de_const_cast(DIALOG_CONTROL_DATA_BUMP_S32 *, p_dialog_ictl->p_dialog_control_data.bump_s32)->bump_xx.p_uic =
-                    p_dialog_cmd_ctl_ui_control->data.p_ui_control_s32;
-                break;
-
-            case DIALOG_CMD_CTL_UI_CONTROL_MAX:
-                p_ui_control_s32_wr->max_val = p_dialog_cmd_ctl_ui_control->data.s32;
-                break;
-
-            case DIALOG_CMD_CTL_UI_CONTROL_MIN:
-                p_ui_control_s32_wr->min_val = p_dialog_cmd_ctl_ui_control->data.s32;
-                break;
-
-            case DIALOG_CMD_CTL_UI_CONTROL_BUMP:
-                p_ui_control_s32_wr->bump_val = p_dialog_cmd_ctl_ui_control->data.s32;
-                break;
-
-            default:
-                break;
-            }
-        }
-
+        dialog_cmd_ctl_ui_control_BUMP_S32(p_dialog_cmd_ctl_ui_control, p_dialog_ictl);
         break;
-        }
 
     case DIALOG_CONTROL_BUMP_F64:
-        {
-        PC_UI_CONTROL_F64 p_ui_control_f64 = (PC_UI_CONTROL_F64) p_dialog_ictl->p_dialog_control_data.bump_f64->bump_xx.p_uic;
-
-        if(P_DATA_NONE != p_ui_control_f64)
-        {
-            UI_CONTROL_F64 * p_ui_control_f64_wr = de_const_cast(UI_CONTROL_F64 *, p_ui_control_f64);
-
-            switch(p_dialog_cmd_ctl_ui_control->what)
-            {
-            case DIALOG_CMD_CTL_UI_CONTROL_UIC:
-                de_const_cast(DIALOG_CONTROL_DATA_BUMP_F64 *, p_dialog_ictl->p_dialog_control_data.bump_f64)->bump_xx.p_uic =
-                    p_dialog_cmd_ctl_ui_control->data.p_ui_control_f64;
-                break;
-
-            case DIALOG_CMD_CTL_UI_CONTROL_MAX:
-                p_ui_control_f64_wr->max_val = p_dialog_cmd_ctl_ui_control->data.f64;
-                break;
-
-            case DIALOG_CMD_CTL_UI_CONTROL_MIN:
-                p_ui_control_f64_wr->min_val = p_dialog_cmd_ctl_ui_control->data.f64;
-                break;
-
-            case DIALOG_CMD_CTL_UI_CONTROL_BUMP:
-                p_ui_control_f64_wr->bump_val = p_dialog_cmd_ctl_ui_control->data.f64;
-                break;
-
-            default:
-                break;
-            }
-        }
-
+        dialog_cmd_ctl_ui_control_BUMP_F64(p_dialog_cmd_ctl_ui_control, p_dialog_ictl);
         break;
-        }
     }
 
     /* no state to reflect, this only takes effect later */
@@ -516,200 +528,279 @@ dialog_cmd_ctl_set_default(
 *
 ******************************************************************************/
 
+static inline void
+dialog_cmd_ctl_size_estimate_GROUPBOX(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+
+    if(p_dialog_cmd_ctl_size_estimate->p_dialog_control->bits.logical_group)
+    {   /* no intrinsic size */
+        return;
+    }
+
+    p_est_size->x = DIALOG_STDGROUP_LM + DIALOG_STDGROUP_RM;
+    p_est_size->y = DIALOG_STDGROUP_TM + DIALOG_STDGROUP_BM;
+#if RISCOS
+    p_est_size->y = 120 * PIXITS_PER_RISCOS;
+#endif /* OS */
+
+    if(NULL != p_dialog_control_data.groupbox)
+    {
+        PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.groupbox->caption);
+
+        if(FRAMED_BOX_GROUP == p_dialog_control_data.groupbox->bits.border_style)
+        {
+#if RISCOS
+            width += 8 * PIXITS_PER_RISCOS;
+#elif WINDOWS
+            width += 6 * PIXITS_PER_WDU_H;
+#endif /* OS */
+        }
+
+        p_est_size->x = MAX(p_est_size->x, width);
+    }
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_TEXTxx(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+    PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.statictext->caption);
+
+    assert_EQ(offsetof32(DIALOG_CONTROL_DATA_STATICTEXT, caption), offsetof32(DIALOG_CONTROL_DATA_TEXTLABEL, caption));
+    assert_EQ(offsetof32(DIALOG_CONTROL_DATA_STATICTEXT, caption), offsetof32(DIALOG_CONTROL_DATA_TEXTFRAME, caption));
+
+    if(0 != width)
+    {
+#if RISCOS
+        width += (4 * PIXITS_PER_RISCOS);
+#elif WINDOWS
+        width += (4 * PIXITS_PER_WDU_H); /* needs some bodging too */
+
+        if(DIALOG_CONTROL_TEXTLABEL == UBF_UNPACK(DIALOG_CONTROL_TYPE, p_dialog_cmd_ctl_size_estimate->p_dialog_control->bits.packed_dialog_control_type))
+        {
+            static PIXIT colon_width = 0;
+            if(0 == colon_width)
+                colon_width = ui_width_from_tstr(TEXT(":"));
+            if(!p_dialog_control_data.textlabel->bits.windows_no_colon)
+                width += colon_width;
+        }
+#endif
+    }
+
+    p_est_size->x = width;
+    p_est_size->y = DIALOG_STDTEXT_V;
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_RADIOBUTTON(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+    PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.radiobutton->caption);
+
+    if(0 != width)
+        width += DIALOG_RADIOGAP_H; /* small gap between button and label */
+
+    p_est_size->x = DIALOG_STDRADIO_H + width;
+    p_est_size->y = DIALOG_STDRADIO_V;
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_CHECKBOX(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+    PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.checkbox->caption);
+
+#ifdef DIALOG_HAS_TRISTATE
+    assert(offsetof32(DIALOG_CONTROL_DATA_CHECKBOX, caption) == offsetof32(DIALOG_CONTROL_DATA_TRISTATE, caption));
+#endif
+
+    if(0 != width)
+        width += DIALOG_CHECKGAP_H; /* small gap between button and label */
+
+    p_est_size->x = DIALOG_STDCHECK_H + width;
+    p_est_size->y = DIALOG_STDCHECK_V;
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_RADIOPICTURE(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    UNREFERENCED_PARAMETER_InoutRef_(p_dialog_cmd_ctl_size_estimate);
+
+    p_est_size->x = DIALOG_STDRADIO_H;
+    p_est_size->y = DIALOG_STDRADIO_V;
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_PUSHBUTTON(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+    PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.pushbutton->caption);
+
+    p_est_size->x = DIALOG_PUSHBUTTONOVH_H + width;
+    p_est_size->y = DIALOG_STDPUSHBUTTON_V;
+
+    if( (IDOK == p_dialog_cmd_ctl_size_estimate->p_dialog_control->dialog_control_id) || (p_dialog_control_data.pushbutton->push_xx.def_pushbutton) )
+    {
+        p_est_size->x += 2 * DIALOG_DEFPUSHEXTRA_H;
+        p_est_size->y += 2 * DIALOG_DEFPUSHEXTRA_V;
+    }
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_EDIT(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    UNREFERENCED_PARAMETER_InoutRef_(p_dialog_cmd_ctl_size_estimate);
+
+    p_est_size->x = 180 * PIXITS_PER_RISCOS;
+    p_est_size->y = DIALOG_STDEDIT_V;
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_BUMP_XX(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    PIXIT width = 120 * PIXITS_PER_RISCOS; /* edit_xx */
+
+    if(DIALOG_CONTROL_BUMP_F64 == UBF_UNPACK(DIALOG_CONTROL_TYPE, p_dialog_cmd_ctl_size_estimate->p_dialog_control->bits.packed_dialog_control_type))
+        width += 60 * PIXITS_PER_RISCOS;
+
+    p_est_size->x = width + (60 * PIXITS_PER_RISCOS) /* inc */ + (60 * PIXITS_PER_RISCOS) /* dec */;
+    p_est_size->y = DIALOG_STDBUMP_V;
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_LIST_XX(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+
+    p_est_size->x = DIALOG_STDLISTOVH_H;
+    p_est_size->y = DIALOG_STDLISTOVH_V;
+
+    if( (NULL != p_dialog_control_data.list_text) && !p_dialog_control_data.list_text->list_xx.bits.force_v_scroll )
+        p_est_size->x = DIALOG_MINLISTOVH_H;
+
+#if RISCOS
+    p_est_size->x += (PIXITS_PER_RISCOS * 2) << host_modevar_cache_current.XEigFactor; /* thin border left and right */
+    p_est_size->y += (PIXITS_PER_RISCOS * 2) << host_modevar_cache_current.YEigFactor; /* thin border top and bottom */
+#endif
+}
+
+static inline void
+dialog_cmd_ctl_size_estimate_COMBO_XX(
+    _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate,
+    _InoutRef_  P_PIXIT_POINT p_est_size)
+{
+    PIXIT add_width;
+
+#if RISCOS
+    add_width = (PIXITS_PER_RISCOS * 2) << host_modevar_cache_current.XEigFactor; /* thin border either side */
+
+    if(p_dialog_cmd_ctl_size_estimate->p_dialog_control_data.combo_text->combo_xx.edit_xx.bits.read_only)
+        add_width = (4 * PIXITS_PER_RISCOS) * 2; /* fixed sized border either side */
+#elif WINDOWS
+    UNREFERENCED_PARAMETER_InoutRef_(p_dialog_cmd_ctl_size_estimate);
+
+    {
+    const int vscroll_pixels_cx = GetSystemMetrics(SM_CXVSCROLL);
+    const int edge_pixels_cx = GetSystemMetrics(SM_CXEDGE);
+    GDI_SIZE PixelsPerInch;
+
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, NULL /*cy*/); /* Get current pixel size for a dialog e.g. 96 or 120 */
+
+    /* +2 is a bit hacky for Windows Classic theme on XP */ /* DPI-aware */
+    add_width = idiv_ceil_u((vscroll_pixels_cx + 2 * edge_pixels_cx + 2) * PIXITS_PER_PIXEL * 96, PixelsPerInch.cx);
+    } /*block*/
+#endif
+
+    p_est_size->x = DIALOG_STDCOMBOOVH_H + add_width;
+    p_est_size->y = DIALOG_STDCOMBO_V;
+}
+
 _Check_return_
 static STATUS
 dialog_cmd_ctl_size_estimate(
     _InoutRef_  P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate)
 {
-    PC_DIALOG_CONTROL p_dialog_control = p_dialog_cmd_ctl_size_estimate->p_dialog_control;
-    PC_DIALOG_CONTROL_DATA p_dialog_control_data;
     PIXIT_POINT est_size;
 
-    p_dialog_control_data.p_any = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
+    est_size.x = 0;
+    est_size.y = 0;
 
-    est_size.x = est_size.y = 0;
+    PTR_ASSERT(p_dialog_cmd_ctl_size_estimate->p_dialog_control);
 
-    switch(p_dialog_control->bits.packed_dialog_control_type)
+    switch(UBF_UNPACK(DIALOG_CONTROL_TYPE, p_dialog_cmd_ctl_size_estimate->p_dialog_control->bits.packed_dialog_control_type))
     {
     default:
         break;
 
     case DIALOG_CONTROL_GROUPBOX:
-        {
-        PIXIT width = 0;
-
-        est_size.x = DIALOG_STDGROUP_LM + DIALOG_STDGROUP_RM;
-        est_size.y = DIALOG_STDGROUP_TM + DIALOG_STDGROUP_BM;
-#if RISCOS
-        est_size.y = 120 * PIXITS_PER_RISCOS;
-#endif /* OS */
-
-        if(NULL != p_dialog_control_data.groupbox)
-        {
-            width = ui_width_from_p_ui_text(&p_dialog_control_data.groupbox->caption);
-
-            if(FRAMED_BOX_GROUP == p_dialog_control_data.groupbox->bits.border_style)
-            {
-#if RISCOS
-                width += 8 * PIXITS_PER_RISCOS;
-#elif WINDOWS
-                width += 6 * PIXITS_PER_WDU_H;
-#endif /* OS */
-            }
-        }
-
-        if( est_size.x < width)
-            est_size.x = width;
-
+        dialog_cmd_ctl_size_estimate_GROUPBOX(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
-        }
 
     case DIALOG_CONTROL_STATICTEXT:
-    case DIALOG_CONTROL_STATICFRAME:
-        {
-        PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.statictext->caption);
-
-        assert_EQ(offsetof32(DIALOG_CONTROL_DATA_STATICTEXT, caption), offsetof32(DIALOG_CONTROL_DATA_STATICFRAME, caption));
-
-        est_size.x = width;
-        if(0 != est_size.x)
-        {
-#if RISCOS
-            est_size.x += (4 * PIXITS_PER_RISCOS);
-#elif WINDOWS
-            if(!p_dialog_control_data.statictext->bits.windows_no_colon)
-            {
-                static PIXIT colon_width = 0;
-                if(!colon_width)
-                    colon_width = ui_width_from_tstr(TEXT(":"));
-                est_size.x += colon_width;
-            }
-            est_size.x += (4 * PIXITS_PER_WDU_H); /* needs some bodging too */
-#endif
-        }
-        est_size.y = DIALOG_STDTEXT_V;
-
+    case DIALOG_CONTROL_TEXTLABEL:
+    case DIALOG_CONTROL_TEXTFRAME:
+        dialog_cmd_ctl_size_estimate_TEXTxx(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
-        }
 
     case DIALOG_CONTROL_RADIOBUTTON:
-        {
-        PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.radiobutton->caption);
-
-        est_size.x = DIALOG_STDRADIO_H;
-        est_size.y = DIALOG_STDRADIO_V;
-
-        if(width)
-            est_size.x += DIALOG_RADIOGAP_H; /* small gap */
-
-        est_size.x += width;
-
+        dialog_cmd_ctl_size_estimate_RADIOBUTTON(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
-        }
 
     case DIALOG_CONTROL_CHECKBOX:
 #ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRISTATE:
 #endif
-        {
-        PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.checkbox->caption);
-
-        est_size.x = DIALOG_STDCHECK_H;
-        est_size.y = DIALOG_STDCHECK_V;
-
-#ifdef DIALOG_HAS_TRISTATE
-        assert(offsetof32(DIALOG_CONTROL_DATA_CHECKBOX, caption) == offsetof32(DIALOG_CONTROL_DATA_TRISTATE, caption));
-#endif
-
-        if(width)
-            est_size.x += DIALOG_CHECKGAP_H; /* small gap */
-
-        est_size.x += width;
-
+        dialog_cmd_ctl_size_estimate_CHECKBOX(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
-        }
 
     case DIALOG_CONTROL_RADIOPICTURE:
     case DIALOG_CONTROL_CHECKPICTURE:
 #ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRIPICTURE:
 #endif
-        est_size.x = DIALOG_STDRADIO_H;
-        est_size.y = DIALOG_STDRADIO_V;
+        dialog_cmd_ctl_size_estimate_RADIOPICTURE(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
 
     case DIALOG_CONTROL_PUSHBUTTON:
-        {
-        PIXIT width = ui_width_from_p_ui_text(&p_dialog_control_data.pushbutton->caption);
-
-        est_size.x = DIALOG_PUSHBUTTONOVH_H;
-        est_size.y = DIALOG_STDPUSHBUTTON_V;
-
-        est_size.x += width;
-
-        if((IDOK == p_dialog_control->dialog_control_id) || (p_dialog_control_data.pushbutton->push_xx.def_pushbutton))
-        {
-            est_size.x += 2 * DIALOG_DEFPUSHEXTRA_H;
-            est_size.y += 2 * DIALOG_DEFPUSHEXTRA_V;
-        }
-
-        break;
-        }
-
-    case DIALOG_CONTROL_COMBO_TEXT:
-    case DIALOG_CONTROL_COMBO_S32:
-        est_size.x = DIALOG_STDCOMBOOVH_H;
-        est_size.y = DIALOG_STDCOMBO_V;
-
-#if RISCOS
-        est_size.x += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.XEigFactor;
-#elif WINDOWS
-        {
-        const int vscroll_pixels_cx = GetSystemMetrics(SM_CXVSCROLL);
-        const int edge_pixels_cx = GetSystemMetrics(SM_CXEDGE);
-        SIZE PixelsPerInch;
-
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for a dialog e.g. 96 or 120 */
-
-        /* +2 is a bit hacky for Windows Classic theme on XP */ /* DPI-aware */
-        est_size.x = idiv_ceil_u((vscroll_pixels_cx + 2 * edge_pixels_cx + 2) * PIXITS_PER_PIXEL * 96, PixelsPerInch.cx);
-        } /*block*/
-#endif
+        dialog_cmd_ctl_size_estimate_PUSHBUTTON(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
 
     case DIALOG_CONTROL_EDIT:
-        est_size.x = 180 * PIXITS_PER_RISCOS;
-        est_size.y = DIALOG_STDEDIT_V;
+        dialog_cmd_ctl_size_estimate_EDIT(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
 
     case DIALOG_CONTROL_BUMP_S32:
-        est_size.x = 120 * PIXITS_PER_RISCOS;
-        est_size.y = DIALOG_STDBUMP_V;
-
-        est_size.x += 60 * PIXITS_PER_RISCOS; /* inc */
-        est_size.x += 60 * PIXITS_PER_RISCOS; /* dec */
-        break;
-
     case DIALOG_CONTROL_BUMP_F64:
-        est_size.x = 180 * PIXITS_PER_RISCOS;
-        est_size.y = DIALOG_STDBUMP_V;
-
-        est_size.x += 60 * PIXITS_PER_RISCOS; /* inc */
-        est_size.x += 60 * PIXITS_PER_RISCOS; /* dec */
+        dialog_cmd_ctl_size_estimate_BUMP_XX(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
 
     case DIALOG_CONTROL_LIST_S32:
     case DIALOG_CONTROL_LIST_TEXT:
-        est_size.x = DIALOG_STDLISTOVH_H;
-        est_size.y = DIALOG_STDLISTOVH_V;
+        dialog_cmd_ctl_size_estimate_LIST_XX(p_dialog_cmd_ctl_size_estimate, &est_size);
+        break;
 
-        if(p_dialog_control_data.list_text && !p_dialog_control_data.list_text->list_xx.bits.force_v_scroll)
-            est_size.x = DIALOG_MINLISTOVH_H;
-
-#if RISCOS
-        est_size.x += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.XEigFactor;
-        est_size.y += ((S32) 2 * PIXITS_PER_RISCOS) << host_modevar_cache_current.YEigFactor;
-#endif
+    case DIALOG_CONTROL_COMBO_TEXT:
+    case DIALOG_CONTROL_COMBO_S32:
+        dialog_cmd_ctl_size_estimate_COMBO_XX(p_dialog_cmd_ctl_size_estimate, &est_size);
         break;
     }
 
@@ -859,21 +950,22 @@ dialog_cmd_ctl_state_query(
         case DIALOG_CONTROL_GROUPBOX:
         case DIALOG_CONTROL_CHECKBOX:
         case DIALOG_CONTROL_CHECKPICTURE:
-#ifdef DIALOG_HAS_TRISTATE
-        case DIALOG_CONTROL_TRISTATE:
-        case DIALOG_CONTROL_TRIPICTURE:
-#endif
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
         case DIALOG_CONTROL_LIST_S32:
         case DIALOG_CONTROL_COMBO_S32:
         case DIALOG_CONTROL_USER:
+#ifdef DIALOG_HAS_TRISTATE
+        case DIALOG_CONTROL_TRISTATE:
+        case DIALOG_CONTROL_TRIPICTURE:
+#endif
 #endif
             p_dialog_cmd_ctl_state_query->state = p_dialog_ictl->state;
             break;
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
         case DIALOG_CONTROL_PUSHBUTTON:
             status = ui_text_copy(&p_dialog_cmd_ctl_state_query->state.pushbutton, &p_dialog_ictl->state.pushbutton);
             break;
@@ -908,11 +1000,13 @@ dialog_cmd_ctl_state_query_dispose(
 
     if(p_dialog_cmd_ctl_state_query_dispose->bits & DIALOG_STATE_QUERY_ALTERNATE)
     {
+#if 0
         switch(p_dialog_cmd_ctl_state_query_dispose->dialog_control_type)
         {
         default:
             break;
         }
+#endif
     }
     else
     {
@@ -932,20 +1026,21 @@ dialog_cmd_ctl_state_query_dispose(
         case DIALOG_CONTROL_GROUPBOX:
         case DIALOG_CONTROL_CHECKBOX:
         case DIALOG_CONTROL_CHECKPICTURE:
-#ifdef DIALOG_HAS_TRISTATE
-        case DIALOG_CONTROL_TRISTATE:
-        case DIALOG_CONTROL_TRIPICTURE:
-#endif
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
         case DIALOG_CONTROL_LIST_S32:
         case DIALOG_CONTROL_COMBO_S32:
         case DIALOG_CONTROL_USER:
+#ifdef DIALOG_HAS_TRISTATE
+        case DIALOG_CONTROL_TRISTATE:
+        case DIALOG_CONTROL_TRIPICTURE:
+#endif
 #endif
             break;
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
         case DIALOG_CONTROL_PUSHBUTTON:
             ui_text_dispose(&p_dialog_cmd_ctl_state_query_dispose->state.pushbutton);
             break;
@@ -968,6 +1063,234 @@ dialog_cmd_ctl_state_query_dispose(
 * dialog always copies state
 *
 ******************************************************************************/
+
+static void
+dialog_cmd_ctl_state_set_list_s32(
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl,
+    _InRef_     P_DIALOG_CMD_CTL_STATE_SET p_dialog_cmd_ctl_state_set,
+    _InoutRef_  P_BOOL p_changed)
+{
+    const UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_S32;
+    S32 n_items, itemno;
+
+    *p_changed = (p_dialog_ictl->state.list_s32.s32 != p_dialog_cmd_ctl_state_set->state.list_s32.s32);
+
+    if(!*p_changed)
+        return;
+
+    n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source);
+
+    p_dialog_ictl->state.list_s32.s32 = p_dialog_cmd_ctl_state_set->state.list_s32.s32;
+
+    /* lookup this new state in source to find selected item */
+    p_dialog_ictl->state.list_s32.itemno = DIALOG_CTL_STATE_LIST_ITEM_NONE;
+
+    for(itemno = 0; itemno < n_items; ++itemno)
+    {
+        UI_DATA_TYPE this_ui_data_type = ui_data_type;
+        UI_DATA ui_data;
+
+        status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, itemno, &ui_data));
+        assert(this_ui_data_type == ui_data_type);
+
+        if(ui_data.s32 == p_dialog_ictl->state.list_s32.s32)
+        {
+            p_dialog_ictl->state.list_s32.itemno = itemno;
+            break;
+        }
+    }
+}
+
+_Check_return_
+static STATUS
+dialog_cmd_ctl_state_set_list_text(
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl,
+    _InRef_     P_DIALOG_CMD_CTL_STATE_SET p_dialog_cmd_ctl_state_set,
+    _InoutRef_  P_BOOL p_changed)
+{
+    const UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_TEXT;
+    S32 n_items, itemno;
+
+    status_return(ui_text_state_change(&p_dialog_ictl->state.list_text.ui_text, &p_dialog_cmd_ctl_state_set->state.list_text.ui_text, p_changed));
+
+    if(!*p_changed)
+        return(STATUS_OK);
+
+    n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source);
+
+    /* lookup this new state in source to find selected item */
+    p_dialog_ictl->state.list_text.itemno = DIALOG_CTL_STATE_LIST_ITEM_NONE;
+
+    for(itemno = 0; itemno < n_items; ++itemno)
+    {
+        UI_DATA_TYPE this_ui_data_type = ui_data_type;
+        UI_DATA ui_data;
+
+        status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, itemno, &ui_data));
+        assert(this_ui_data_type == ui_data_type);
+
+        if(0 == ui_text_compare(&ui_data.text, &p_dialog_ictl->state.list_text.ui_text, 0, 0))
+        {
+            p_dialog_ictl->state.list_text.itemno = itemno;
+            break;
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+static void
+dialog_cmd_ctl_state_set_combo_s32(
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl,
+    _InRef_     P_DIALOG_CMD_CTL_STATE_SET p_dialog_cmd_ctl_state_set,
+    _InoutRef_  P_BOOL p_changed)
+{
+    const UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_S32;
+    S32 n_items, itemno;
+
+    *p_changed = (p_dialog_ictl->state.combo_s32.s32 != p_dialog_cmd_ctl_state_set->state.combo_s32.s32);
+
+    if(!*p_changed)
+        return;
+
+    n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source);
+
+    p_dialog_ictl->state.combo_s32.s32 = p_dialog_cmd_ctl_state_set->state.combo_s32.s32;
+
+    /* lookup this new state in source to find selected item */
+    p_dialog_ictl->state.combo_s32.itemno = DIALOG_CTL_STATE_LIST_ITEM_OTHER;
+
+    for(itemno = 0; itemno < n_items; ++itemno)
+    {
+        UI_DATA_TYPE this_ui_data_type = ui_data_type;
+        UI_DATA ui_data;
+
+        status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, itemno, &ui_data));
+        assert(this_ui_data_type == ui_data_type);
+
+        if(ui_data.s32 == p_dialog_ictl->state.combo_s32.s32)
+        {
+            p_dialog_ictl->state.combo_s32.itemno = itemno;
+            break;
+        }
+    }
+}
+
+_Check_return_
+static STATUS
+dialog_cmd_ctl_state_set_combo_text(
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl,
+    _InRef_     P_DIALOG_CMD_CTL_STATE_SET p_dialog_cmd_ctl_state_set,
+    _InoutRef_  P_BOOL p_changed)
+{
+    const UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_TEXT;
+    S32 n_items, itemno;
+
+    status_return(ui_text_state_change(&p_dialog_ictl->state.combo_text.ui_text, &p_dialog_cmd_ctl_state_set->state.combo_text.ui_text, p_changed));
+
+    if(!*p_changed)
+        return(STATUS_OK);
+
+    n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source);
+
+    /* lookup this new state in source to find selected item */
+    p_dialog_ictl->state.combo_text.itemno = DIALOG_CTL_STATE_LIST_ITEM_OTHER;
+
+    for(itemno = 0; itemno < n_items; ++itemno)
+    {
+        UI_DATA_TYPE this_ui_data_type = ui_data_type;
+        UI_DATA ui_data;
+
+        status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, itemno, &ui_data));
+        assert(this_ui_data_type == ui_data_type);
+
+        if(0 == ui_text_compare(&ui_data.text, &p_dialog_ictl->state.combo_text.ui_text, 0, 0))
+        {
+            p_dialog_ictl->state.combo_text.itemno = itemno;
+            break;
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+static void
+dialog_cmd_ctl_state_set_list_xx_alternate(
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl,
+    _InRef_     P_DIALOG_CMD_CTL_STATE_SET p_dialog_cmd_ctl_state_set,
+    _InoutRef_  P_BOOL p_changed)
+{
+    /* setting by selected_item */
+    *p_changed = (p_dialog_ictl->state.list_text.itemno != p_dialog_cmd_ctl_state_set->state.list_text.itemno);
+
+    if(!*p_changed)
+        return;
+
+    /* lookup 'normal' state using this itemno iff it's kosher */
+    p_dialog_ictl->state.list_text.itemno = p_dialog_cmd_ctl_state_set->state.list_text.itemno;
+
+    if(p_dialog_ictl->state.list_text.itemno >= 0)
+    {
+        UI_DATA ui_data;
+        UI_DATA_TYPE ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
+                                    ? UI_DATA_TYPE_S32
+                                    : UI_DATA_TYPE_TEXT;
+        UI_DATA_TYPE this_ui_data_type = ui_data_type;
+
+        status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, p_dialog_ictl->state.list_text.itemno, &ui_data));
+
+        if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
+        {
+            /* this_ui_data_type == ui_data_type fails if item doesn't exist */
+            if(this_ui_data_type == ui_data_type)
+                p_dialog_ictl->state.list_s32.s32 = ui_data.s32;
+        }
+        else
+        {
+            /* steal this */
+            ui_text_dispose(&p_dialog_ictl->state.list_text.ui_text);
+
+            /* this_ui_data_type == ui_data_type fails if item doesn't exist */
+            if(this_ui_data_type == ui_data_type)
+                p_dialog_ictl->state.list_text.ui_text = ui_data.text;
+        }
+    }
+}
+
+static void
+dialog_cmd_ctl_state_set_combo_xx_alternate(
+    _InoutRef_  P_DIALOG_ICTL p_dialog_ictl,
+    _InRef_     P_DIALOG_CMD_CTL_STATE_SET p_dialog_cmd_ctl_state_set,
+    _InoutRef_  P_BOOL p_changed)
+{
+    /* setting by selected_item */
+    *p_changed = (p_dialog_ictl->state.combo_text.itemno != p_dialog_cmd_ctl_state_set->state.combo_text.itemno);
+
+    if(!*p_changed)
+        return;
+
+    /* lookup 'normal' state using this itemno iff it's kosher */
+    if((p_dialog_ictl->state.combo_text.itemno = p_dialog_cmd_ctl_state_set->state.combo_text.itemno) >= 0)
+    {
+        UI_DATA ui_data;
+        UI_DATA_TYPE ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32)
+                                    ? UI_DATA_TYPE_S32
+                                    : UI_DATA_TYPE_TEXT;
+        UI_DATA_TYPE this_ui_data_type = ui_data_type;
+
+        status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, p_dialog_ictl->state.combo_text.itemno, &ui_data));
+        assert(this_ui_data_type == ui_data_type);
+
+        if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32)
+            p_dialog_ictl->state.combo_s32.s32 = ui_data.s32;
+        else
+        {
+            /* steal this */
+            ui_text_dispose(&p_dialog_ictl->state.combo_text.ui_text);
+            p_dialog_ictl->state.combo_text.ui_text = ui_data.text;
+        }
+    }
+}
 
 _Check_return_
 static STATUS
@@ -999,93 +1322,30 @@ dialog_cmd_ctl_state_set(
     {
         switch(p_dialog_ictl->dialog_control_type)
         {
-        default: default_unhandled(); return(STATUS_OK);
+        default: default_unhandled();
+            return(STATUS_OK);
 
         case DIALOG_CONTROL_LIST_S32:
         case DIALOG_CONTROL_LIST_TEXT:
-            {
-            /* setting by selected_item */
-            changed = (p_dialog_ictl->state.list_text.itemno != p_dialog_cmd_ctl_state_set->state.list_text.itemno);
-
-            if(changed)
-            {
-                /* lookup 'normal' state using this itemno iff it's kosher */
-                p_dialog_ictl->state.list_text.itemno = p_dialog_cmd_ctl_state_set->state.list_text.itemno;
-
-                if(p_dialog_ictl->state.list_text.itemno >= 0)
-                {
-                    UI_DATA ui_data;
-                    UI_DATA_TYPE ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
-                                              ? UI_DATA_TYPE_S32
-                                              : UI_DATA_TYPE_TEXT;
-                    UI_DATA_TYPE this_ui_data_type = ui_data_type;
-
-                    status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, p_dialog_ictl->state.list_text.itemno, &ui_data));
-
-                    if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
-                    {
-                        /* this_ui_data_type == ui_data_type fails if item doesn't exist */
-                        if(this_ui_data_type == ui_data_type)
-                            p_dialog_ictl->state.list_s32.s32 = ui_data.s32;
-                    }
-                    else
-                    {
-                        /* steal this */
-                        ui_text_dispose(&p_dialog_ictl->state.list_text.ui_text);
-
-                        /* this_ui_data_type == ui_data_type fails if item doesn't exist */
-                        if(this_ui_data_type == ui_data_type)
-                            p_dialog_ictl->state.list_text.ui_text = ui_data.text;
-                    }
-                }
-            }
-
+            dialog_cmd_ctl_state_set_list_xx_alternate(p_dialog_ictl, p_dialog_cmd_ctl_state_set, &changed);
             break;
-            }
 
         case DIALOG_CONTROL_COMBO_S32:
         case DIALOG_CONTROL_COMBO_TEXT:
-            {
-            /* setting by selected_item */
-            changed = (p_dialog_ictl->state.combo_text.itemno != p_dialog_cmd_ctl_state_set->state.combo_text.itemno);
-
-            if(changed)
-            {
-                /* lookup 'normal' state using this itemno iff it's kosher */
-                if((p_dialog_ictl->state.combo_text.itemno = p_dialog_cmd_ctl_state_set->state.combo_text.itemno) >= 0)
-                {
-                    UI_DATA ui_data;
-                    UI_DATA_TYPE ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32)
-                                              ? UI_DATA_TYPE_S32
-                                              : UI_DATA_TYPE_TEXT;
-                    UI_DATA_TYPE this_ui_data_type = ui_data_type;
-
-                    status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, p_dialog_ictl->state.combo_text.itemno, &ui_data));
-                    assert(this_ui_data_type == ui_data_type);
-
-                    if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32)
-                        p_dialog_ictl->state.combo_s32.s32 = ui_data.s32;
-                    else
-                    {
-                        /* steal this */
-                        ui_text_dispose(&p_dialog_ictl->state.combo_text.ui_text);
-                        p_dialog_ictl->state.combo_text.ui_text = ui_data.text;
-                    }
-                }
-            }
-
+            dialog_cmd_ctl_state_set_combo_xx_alternate(p_dialog_ictl, p_dialog_cmd_ctl_state_set, &changed);
             break;
-            }
         }
     }
     else
     {
         switch(p_dialog_ictl->dialog_control_type)
         {
-        default: default_unhandled(); return(STATUS_OK);
+        default: default_unhandled();
+            return(STATUS_OK);
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
             status_return(ui_text_state_change(&p_dialog_ictl->state.statictext, &p_dialog_cmd_ctl_state_set->state.statictext, &changed));
 
             if(changed)
@@ -1227,140 +1487,25 @@ dialog_cmd_ctl_state_set(
             break;
 
         case DIALOG_CONTROL_LIST_S32:
-            {
-            changed = (p_dialog_ictl->state.list_s32.s32 != p_dialog_cmd_ctl_state_set->state.list_s32.s32);
-
-            if(changed)
-            {
-                UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_S32;
-                S32 n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source);
-                S32 itemno;
-
-                p_dialog_ictl->state.list_s32.s32 = p_dialog_cmd_ctl_state_set->state.list_s32.s32;
-
-                /* lookup this new state in source to find selected item */
-                p_dialog_ictl->state.list_s32.itemno = DIALOG_CTL_STATE_LIST_ITEM_NONE;
-
-                for(itemno = 0; itemno < n_items; ++itemno)
-                {
-                    UI_DATA_TYPE this_ui_data_type = ui_data_type;
-                    UI_DATA ui_data;
-
-                    status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, itemno, &ui_data));
-                    assert(this_ui_data_type == ui_data_type);
-
-                    if(ui_data.s32 == p_dialog_ictl->state.list_s32.s32)
-                    {
-                        p_dialog_ictl->state.list_s32.itemno = itemno;
-                        break;
-                    }
-                }
-            }
-
+            dialog_cmd_ctl_state_set_list_s32(p_dialog_ictl, p_dialog_cmd_ctl_state_set, &changed);
             break;
-            }
 
         case DIALOG_CONTROL_LIST_TEXT:
-            {
-            status_return(ui_text_state_change(&p_dialog_ictl->state.list_text.ui_text, &p_dialog_cmd_ctl_state_set->state.list_text.ui_text, &changed));
-
-            if(changed)
-            {
-                UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_TEXT;
-                S32 n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source);
-                S32 itemno;
-
-                /* lookup this new state in source to find selected item */
-                p_dialog_ictl->state.list_text.itemno = DIALOG_CTL_STATE_LIST_ITEM_NONE;
-
-                for(itemno = 0; itemno < n_items; ++itemno)
-                {
-                    UI_DATA_TYPE this_ui_data_type = ui_data_type;
-                    UI_DATA ui_data;
-
-                    status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, itemno, &ui_data));
-                    assert(this_ui_data_type == ui_data_type);
-
-                    if(0 == ui_text_compare(&ui_data.text, &p_dialog_ictl->state.list_text.ui_text, 0, 0))
-                    {
-                        p_dialog_ictl->state.list_text.itemno = itemno;
-                        break;
-                    }
-                }
-            }
-
+            status_return(dialog_cmd_ctl_state_set_list_text(p_dialog_ictl, p_dialog_cmd_ctl_state_set, &changed));
             break;
-            }
 
         case DIALOG_CONTROL_COMBO_S32:
-            {
-            changed = (p_dialog_ictl->state.combo_s32.s32 != p_dialog_cmd_ctl_state_set->state.combo_s32.s32);
-
-            if(changed)
-            {
-                UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_S32;
-                S32 n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source);
-                S32 itemno;
-
-                p_dialog_ictl->state.combo_s32.s32 = p_dialog_cmd_ctl_state_set->state.combo_s32.s32;
-
-                /* lookup this new state in source to find selected item */
-                p_dialog_ictl->state.combo_s32.itemno = DIALOG_CTL_STATE_LIST_ITEM_OTHER;
-
-                for(itemno = 0; itemno < n_items; ++itemno)
-                {
-                    UI_DATA_TYPE this_ui_data_type = ui_data_type;
-                    UI_DATA ui_data;
-
-                    status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, itemno, &ui_data));
-                    assert(this_ui_data_type == ui_data_type);
-
-                    if(ui_data.s32 == p_dialog_ictl->state.combo_s32.s32)
-                    {
-                        p_dialog_ictl->state.combo_s32.itemno = itemno;
-                        break;
-                    }
-                }
-            }
-
+            dialog_cmd_ctl_state_set_combo_s32(p_dialog_ictl, p_dialog_cmd_ctl_state_set, &changed);
             break;
-            }
 
         case DIALOG_CONTROL_COMBO_TEXT:
-            {
-            status_return(ui_text_state_change(&p_dialog_ictl->state.combo_text.ui_text, &p_dialog_cmd_ctl_state_set->state.combo_text.ui_text, &changed));
-
-            if(changed)
-            {
-                UI_DATA_TYPE ui_data_type = UI_DATA_TYPE_TEXT;
-                S32 n_items = ui_data_n_items_query(ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source);
-                S32 itemno;
-
-                /* lookup this new state in source to find selected item */
-                p_dialog_ictl->state.combo_text.itemno = DIALOG_CTL_STATE_LIST_ITEM_OTHER;
-
-                for(itemno = 0; itemno < n_items; ++itemno)
-                {
-                    UI_DATA_TYPE this_ui_data_type = ui_data_type;
-                    UI_DATA ui_data;
-
-                    status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, itemno, &ui_data));
-                    assert(this_ui_data_type == ui_data_type);
-
-                    if(0 == ui_text_compare(&ui_data.text, &p_dialog_ictl->state.combo_text.ui_text, 0, 0))
-                    {
-                        p_dialog_ictl->state.combo_text.itemno = itemno;
-                        break;
-                    }
-                }
-            }
-
+            status_return(dialog_cmd_ctl_state_set_combo_text(p_dialog_ictl, p_dialog_cmd_ctl_state_set, &changed));
             break;
-            }
         }
     }
 
     if(changed || force_update)
+    {
         if(encode_control_id)
         {
             /* common exit reflects new state into all views of control */
@@ -1371,6 +1516,7 @@ dialog_cmd_ctl_state_set(
             dialog_cmd_ctl_encode.bits = p_dialog_cmd_ctl_state_set->bits & DIALOG_STATE_SET_UPDATE_NOW;
             status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
         }
+    }
 
     if(p_dialog_cmd_ctl_state_set->bits & DIALOG_STATE_SET_DONT_MSG)
         message_p_dialog_ictl = NULL;
@@ -1682,8 +1828,109 @@ dialog_ictl_enable_suppressed_changes_in(
 
 _Check_return_
 static STATUS
+dialog_ictl_edit_xx_encode_here_SetText(
+    _InoutRef_  P_DIALOG p_dialog,
+    P_DIALOG_ICTL p_dialog_ictl,
+    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    _InRef_     PC_UI_TEXT p_ui_text)
+{
+    STATUS status = STATUS_OK;
+
+#if RISCOS
+
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
+    if(0 != p_dialog_ictl_edit_xx->riscos.slec_buffer_size)
+    {
+        const P_DIALOG_WIMP_I p_i = &p_dialog_ictl->riscos.dwi[0];
+        /*WimpIconBlockWithBitset icon;*/
+
+/* >>> More work on moving carets - see PipeDream! */
+
+        ui_text_copy_as_sbstr_buf(p_dialog_ictl_edit_xx->riscos.slec_buffer, p_dialog_ictl_edit_xx->riscos.slec_buffer_size, p_ui_text);
+
+        /*status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));*/
+        /*dialog_riscos_icon_text_setup(&icon, p_dialog_ictl_edit_xx->riscos.slec_buffer);*/
+        /*status_assert(dialog_riscos_icon_recreate(p_dialog, &icon, p_i));*/
+#if 1
+    {
+    WimpSetIconStateBlock set_icon_state_block;
+    set_icon_state_block.window_handle = p_dialog->hwnd;
+    set_icon_state_block.icon_handle = p_i->icon_handle;
+    set_icon_state_block.EOR_word = 0; /* poke it for redraw */
+    set_icon_state_block.clear_word = 0;
+    (void) (wimp_set_icon_state(&set_icon_state_block));
+    } /*block*/
+#else
+        dialog_riscos_icon_redraw_for_encode(p_dialog, p_i, FRAMED_BOX_EDIT, 0);
+#endif
+    }
+#endif
+
+    if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
+        status_assert(status = mlec_SetText(p_dialog_ictl_edit_xx->riscos.mlec, ui_text_ustr(p_ui_text)));
+
+    UNREFERENCED_PARAMETER_InRef_(p_dialog);
+
+#elif WINDOWS
+
+    BOOL combo_type = FALSE;
+
+    switch(p_dialog_ictl->dialog_control_type)
+    {
+    default:
+        break;
+
+    case DIALOG_CONTROL_COMBO_S32:
+    case DIALOG_CONTROL_COMBO_TEXT:
+        combo_type = TRUE;
+        break;
+    }
+
+    if(HOST_WND_NONE != p_dialog->hwnd)
+    {
+        const HWND hwnd = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid);
+        const PCTSTR tstr = ui_text_tstr(p_ui_text);
+
+        if(combo_type)
+        {
+            ComboBox_SetText(hwnd, tstr);
+        }
+        else
+        {
+            if( p_dialog_ictl_edit_xx->multiline && (NULL != tstrchr(tstr, LF)) )
+            {
+                PCTSTR tstr_here = tstr;
+                PCTSTR tstr_test;
+                QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 32);
+                quick_tblock_with_buffer_setup(quick_tblock);
+                while(NULL != (tstr_test = tstrchr(tstr_here, LF)))
+                {
+                    static const TCHAR cr_lf[]  = { CR, LF };
+                    status_break(status = quick_tblock_tchars_add(&quick_tblock, tstr_here, PtrDiffElemU32(tstr_test, tstr_here)));
+                    status_break(status = quick_tblock_tchars_add(&quick_tblock, cr_lf, elemof32(cr_lf)));
+                    tstr_here = tstr_test + 1; /* point past the LF */
+                }
+                if(status_ok(status))
+                if(status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, tstr_here, strlen_with_NULLCH)))
+                    Edit_SetText(hwnd, quick_tblock_tstr(&quick_tblock));
+                quick_tblock_dispose(&quick_tblock);
+            }
+            else
+            {
+                Edit_SetText(hwnd, tstr);
+            }
+        }
+    }
+
+#endif /* OS */
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
 dialog_ictl_edit_xx_encode_here(
-    _InRef_     PC_DIALOG p_dialog,
+    _InoutRef_  P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl,
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx)
 {
@@ -1693,8 +1940,8 @@ dialog_ictl_edit_xx_encode_here(
     UI_DATA ui_data;
     UI_TEXT ui_text;
     BOOL kill_ui_text = FALSE;
-    BOOL combo_type = FALSE;
 
+    /* obtain the text to be set into the control */
     switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
@@ -1720,12 +1967,10 @@ dialog_ictl_edit_xx_encode_here(
         p_ui_control= p_dialog_ictl->data.combo_xx.list_xx.p_ui_control_s32;
         ui_data.s32 = p_dialog_ictl->state.combo_s32.s32;
         ui_data_type = UI_DATA_TYPE_S32;
-        combo_type = TRUE;
         break;
 
     case DIALOG_CONTROL_COMBO_TEXT:
         ui_text = p_dialog_ictl->state.combo_text.ui_text;
-        combo_type = TRUE;
         break;
     }
 
@@ -1739,65 +1984,9 @@ dialog_ictl_edit_xx_encode_here(
         status_return(status);
     }
 
+    /* set the text into the control, with guards */
     p_dialog_ictl->bits.in_update += 1;
-
-    {
-#if RISCOS
-    PC_USTR ustr = ui_text_ustr(&ui_text);
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
-    if(0 != p_dialog_ictl_edit_xx->riscos.slec_buffer_size)
-    {
-        const P_DIALOG_WIMP_I p_i = &p_dialog_ictl->riscos.dwi[0];
-        WimpIconBlockWithBitset icon;
-
-        ui_text_copy_as_sbstr_buf(p_dialog_ictl_edit_xx->riscos.slec_buffer, p_dialog_ictl_edit_xx->riscos.slec_buffer_size, &ui_text);
-
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        /*dialog_riscos_icon_text_setup(&icon, p_dialog_ictl_edit_xx->riscos.slec_buffer);*/
-        status_assert(dialog_riscos_icon_recreate(p_dialog, &icon, p_i));
-        dialog_riscos_icon_redraw_for_encode(p_dialog, p_i, FRAMED_BOX_EDIT, bits);
-    }
-    else
-#endif
-    if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
-        status_assert(status = mlec_SetText(p_dialog_ictl_edit_xx->riscos.mlec, ustr));
-    UNREFERENCED_PARAMETER_InRef_(p_dialog);
-    UNREFERENCED_PARAMETER(combo_type);
-#elif WINDOWS
-    if(HOST_WND_NONE != p_dialog->hwnd)
-    {
-        const HWND hwnd = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid);
-        PCTSTR tstr = ui_text_tstr(&ui_text);
-
-        if(combo_type)
-            ComboBox_SetText(hwnd, tstr);
-        else
-        {
-            if(p_dialog_ictl_edit_xx->multiline && tstrchr(tstr, LF))
-            {
-                PCTSTR tstr_here = tstr;
-                PCTSTR tstr_test;
-                QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 32);
-                quick_tblock_with_buffer_setup(quick_tblock);
-                while(NULL != (tstr_test = tstrchr(tstr_here, LF)))
-                {
-                    static const TCHAR cr_lf[]  = { CR, LF };
-                    status_break(status = quick_tblock_tchars_add(&quick_tblock, tstr_here, PtrDiffElemU32(tstr_test, tstr_here)));
-                    status_break(status = quick_tblock_tchars_add(&quick_tblock, cr_lf, elemof32(cr_lf)));
-                    tstr_here = tstr_test + 1; /* point past the LF */
-                }
-                if(status_ok(status))
-                if(status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, tstr_here, strlen_with_NULLCH)))
-                    Edit_SetText(hwnd, quick_tblock_tstr(&quick_tblock));
-                quick_tblock_dispose(&quick_tblock);
-            }
-            else
-                Edit_SetText(hwnd, tstr);
-        }
-    }
-#endif
-    } /*block*/
-
+    dialog_ictl_edit_xx_encode_here_SetText(p_dialog, p_dialog_ictl, p_dialog_ictl_edit_xx, &ui_text);
     p_dialog_ictl->bits.in_update -= 1;
 
     if(kill_ui_text)
@@ -1807,6 +1996,36 @@ dialog_ictl_edit_xx_encode_here(
 
     return(STATUS_OK);
 }
+
+#if RISCOS
+
+static inline void
+dialog_riscos_icon_change_bitmap(
+    _InRef_     PC_DIALOG p_dialog,
+    _InoutRef_  P_DIALOG_WIMP_I p_i,
+    _InVal_     RESOURCE_BITMAP_HANDLE resource_bitmap_handle)
+{
+    WimpIconBlockWithBitset icon;
+    status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
+    status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+}
+
+static inline void
+dialog_riscos_icon_set_text_from_caption(
+    _InRef_     P_DIALOG p_dialog,
+    _InRef_     PC_DIALOG_ICTL p_dialog_ictl,
+    _InVal_     S32 bits,
+    _InoutRef_  P_DIALOG_WIMP_I p_i,
+    _InVal_     FRAMED_BOX_STYLE b)
+{
+    WimpIconBlockWithBitset icon;
+    status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
+    dialog_riscos_icon_text_setup(&icon, p_dialog_ictl->riscos.caption);
+    status_assert(dialog_riscos_icon_recreate(p_dialog, &icon, p_i));
+    dialog_riscos_icon_redraw_for_encode(p_dialog, p_i, b, bits);
+}
+
+#endif /* OS */
 
 _Check_return_
 static STATUS
@@ -1849,52 +2068,52 @@ dialog_ictl_encode_here(
 #endif
         break;
 
+#if RISCOS
+    case DIALOG_CONTROL_STATICTEXT:
+    case DIALOG_CONTROL_TEXTLABEL:
+        {
+        dialog_riscos_icon_set_text_from_caption(p_dialog, p_dialog_ictl, bits, p_i, FRAMED_BOX_NONE);
+        break;
+        }
+#elif WINDOWS
     case DIALOG_CONTROL_STATICTEXT:
         {
-#if RISCOS
-        WimpIconBlockWithBitset icon;
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        dialog_riscos_icon_text_setup(&icon, p_dialog_ictl->riscos.caption);
-        status_assert(dialog_riscos_icon_recreate(p_dialog, &icon, p_i));
-        dialog_riscos_icon_redraw_for_encode(p_dialog, p_i, FRAMED_BOX_NONE, bits);
-#elif WINDOWS
+        if(HOST_WND_NONE != hwnd)
+            Static_SetText(hwnd, ui_text_tstr(&p_dialog_ictl->state.statictext));
+        break;
+        }
+
+    case DIALOG_CONTROL_TEXTLABEL:
+        {
         if(HOST_WND_NONE != hwnd)
         {
-            if(p_dialog_ictl->p_dialog_control_data.statictext->bits.windows_no_colon)
-                Static_SetText(hwnd, ui_text_tstr(&p_dialog_ictl->state.statictext));
+            if(p_dialog_ictl->p_dialog_control_data.textlabel->bits.windows_no_colon)
+                Static_SetText(hwnd, ui_text_tstr(&p_dialog_ictl->state.textlabel));
             else
             {
-                QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 80);
+                QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
                 quick_tblock_with_buffer_setup(quick_tblock);
 
-                status_assert(ui_text_read(&quick_tblock, &p_dialog_ictl->state.statictext));
-                if(0 == quick_tblock_chars(&quick_tblock))
-                    Static_SetText(hwnd, tstr_empty_string);
-                else
-                {
+                status_assert(ui_text_read(&quick_tblock, &p_dialog_ictl->state.textlabel));
+                if(0 != quick_tblock_chars(&quick_tblock))
                     status_assert(quick_tblock_tchar_add(&quick_tblock, CH_COLON));
-                    status_assert(quick_tblock_nullch_add(&quick_tblock));
-                    Static_SetText(hwnd, quick_tblock_tstr(&quick_tblock));
-                }
+                status_assert(quick_tblock_nullch_add(&quick_tblock));
+                Static_SetText(hwnd, quick_tblock_tstr(&quick_tblock));
 
                 quick_tblock_dispose(&quick_tblock);
             }
         }
-#endif
         break;
         }
+#endif
 
-    case DIALOG_CONTROL_STATICFRAME:
+    case DIALOG_CONTROL_TEXTFRAME:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        dialog_riscos_icon_text_setup(&icon, p_dialog_ictl->riscos.caption);
-        status_assert(dialog_riscos_icon_recreate(p_dialog, &icon, p_i));
-        dialog_riscos_icon_redraw_for_encode(p_dialog, p_i, p_dialog_ictl->p_dialog_control_data.staticframe->bits.border_style, bits);
+        dialog_riscos_icon_set_text_from_caption(p_dialog, p_dialog_ictl, bits, p_i, p_dialog_ictl->p_dialog_control_data.textframe->bits.border_style);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
-            Static_SetText(hwnd, ui_text_tstr(&p_dialog_ictl->state.staticframe));
+            Static_SetText(hwnd, ui_text_tstr(&p_dialog_ictl->state.textframe));
 #endif
         break;
         }
@@ -1902,11 +2121,7 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_PUSHBUTTON:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        dialog_riscos_icon_text_setup(&icon, p_dialog_ictl->riscos.caption);
-        status_assert(dialog_riscos_icon_recreate(p_dialog, &icon, p_i));
-        dialog_riscos_icon_redraw_for_encode(p_dialog, p_i, FRAMED_BOX_NONE, bits);
+        dialog_riscos_icon_set_text_from_caption(p_dialog, p_dialog_ictl, bits, p_i, FRAMED_BOX_NONE);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetText(hwnd, ui_text_tstr(&p_dialog_ictl->state.pushbutton));
@@ -1917,13 +2132,10 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_RADIOBUTTON:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE resource_bitmap_handle =
+        dialog_riscos_icon_change_bitmap(p_dialog, p_i,
             p_dialog_ictl->bits.radiobutton_active
                 ? p_dialog->riscos.bitmap_radio_on.resource_bitmap_handle
-                : p_dialog->riscos.bitmap_radio_off.resource_bitmap_handle;
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+                : p_dialog->riscos.bitmap_radio_off.resource_bitmap_handle);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetCheck(hwnd, p_dialog_ictl->bits.radiobutton_active);
@@ -1934,13 +2146,10 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_RADIOPICTURE:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
-        RESOURCE_BITMAP_HANDLE resource_bitmap_handle =
+        dialog_riscos_icon_change_bitmap(p_dialog, p_i,
             p_dialog_ictl->bits.radiobutton_active
                 ? p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_on
-                : p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_off;
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+                : p_dialog_ictl->data.radiopicture.riscos.resource_bitmap_handle_off);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             InvalidateRect(hwnd, NULL, FALSE);
@@ -1951,7 +2160,6 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_CHECKBOX:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
         RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.checkbox)
@@ -1968,8 +2176,7 @@ dialog_ictl_encode_here(
             break;
             }
 
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+        dialog_riscos_icon_change_bitmap(p_dialog, p_i, resource_bitmap_handle);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetCheck(hwnd, (p_dialog_ictl->state.checkbox != DIALOG_BUTTONSTATE_OFF));
@@ -1980,7 +2187,6 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_CHECKPICTURE:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
         RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.checkbox)
@@ -1997,8 +2203,7 @@ dialog_ictl_encode_here(
             break;
             }
 
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+        dialog_riscos_icon_change_bitmap(p_dialog, p_i, resource_bitmap_handle);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             InvalidateRect(hwnd, NULL, FALSE);
@@ -2010,7 +2215,6 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_TRISTATE:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
         RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.tristate)
@@ -2031,8 +2235,7 @@ dialog_ictl_encode_here(
             break;
         }
 
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+        dialog_riscos_icon_change_bitmap(p_dialog, p_i, resource_bitmap_handle);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             Button_SetCheck(hwnd, p_dialog_ictl->state.tristate);
@@ -2043,7 +2246,6 @@ dialog_ictl_encode_here(
     case DIALOG_CONTROL_TRIPICTURE:
         {
 #if RISCOS
-        WimpIconBlockWithBitset icon;
         RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
 
         switch(p_dialog_ictl->state.tristate)
@@ -2064,8 +2266,7 @@ dialog_ictl_encode_here(
             break;
         }
 
-        status_assert(dialog_riscos_icon_recreate_prepare(p_dialog, &icon, p_i));
-        status_assert(dialog_riscos_icon_recreate_with(p_dialog, &icon, p_i, resource_bitmap_handle));
+        dialog_riscos_icon_change_bitmap(p_dialog, p_i, resource_bitmap_handle);
 #elif WINDOWS
         if(HOST_WND_NONE != hwnd)
             InvalidateRect(hwnd, NULL, FALSE);
@@ -2223,12 +2424,7 @@ dialog_init(void)
     bitmap_bit_set(dialog_statics.bitmap_validation_f64, 'e', N_BITS_ARG(256));
     bitmap_bit_set(dialog_statics.bitmap_validation_f64, 'E', N_BITS_ARG(256));
     bitmap_bit_set(dialog_statics.bitmap_validation_f64, CH_FULL_STOP, N_BITS_ARG(256)); /* always accept dot for punters who know what the real world is all about */
-    {
-    SS_RECOG_CONTEXT ss_recog_context;
-    ss_recog_context_push(&ss_recog_context);
-    bitmap_bit_set(dialog_statics.bitmap_validation_f64, g_ss_recog_context.decimal_point_char, N_BITS_ARG(256));
-    ss_recog_context_pull(&ss_recog_context);
-    } /*block*/
+    bitmap_bit_set(dialog_statics.bitmap_validation_f64, get_ss_recog_context_alt(decimal_point_char), N_BITS_ARG(256));
 
     /* general edit accepts all bar control chars */
     bitmap_set(dialog_statics.bitmap_validation_edit, N_BITS_ARG(256));

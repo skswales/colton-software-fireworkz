@@ -33,7 +33,7 @@ typedef enum T5_FILETYPE
     FILETYPE_CUR         = 0x6A5,
     FILETYPE_TSTEP_800S  = 0x7A0,
     FILETYPE_PD_CHART    = 0xA77,
-    FILETYPE_T5_DRAW     = 0xA78,
+    FILETYPE_T5_HYBRID_DRAW = 0xA78,
     FILETYPE_FWP         = 0xAF8,
     FILETYPE_DRAW        = 0xAFF,
     FILETYPE_PNG         = 0xB60,

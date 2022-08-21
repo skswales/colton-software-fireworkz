@@ -36,6 +36,7 @@ gr_diag_normalise_stt(
 
     if(sttObject == GR_DIAG_OBJECT_FIRST)
         sttObject = sizeof32(GR_DIAG_DIAGHEADER);
+    assert(sttObject != GR_DIAG_OBJECT_LAST);
 
     myassert1x(sttObject >= sizeof32(GR_DIAG_DIAGHEADER), TEXT("gr_diag_normalise_stt has sttObject ") U32_XTFMT TEXT(" < sizeof-gr_diag_diagheader"), sttObject);
     myassert2x(sttObject <= array_elements32(&p_gr_diag->handle), TEXT("gr_diag_normalise_stt has sttObject ") U32_XTFMT TEXT(" > array_elements() ") U32_XTFMT, sttObject, array_elements32(&p_gr_diag->handle));
@@ -56,6 +57,7 @@ gr_diag_normalise_end(
 
     if(endObject == GR_DIAG_OBJECT_LAST)
         endObject = array_elements32(&p_gr_diag->handle);
+    assert(endObject != GR_DIAG_OBJECT_FIRST);
 
     myassert1x(endObject >= sizeof32(GR_DIAG_DIAGHEADER), TEXT("gr_diag_normalise_end has endObject ") U32_XTFMT TEXT(" < sizeof-gr_diag_diagheader"), endObject);
     myassert2x(endObject <= array_elements32(&p_gr_diag->handle), TEXT("gr_diag_normalise_end has endObject ") U32_XTFMT TEXT(" > array_elements() ") U32_XTFMT, endObject, array_elements32(&p_gr_diag->handle));
@@ -406,7 +408,7 @@ gr_diag_create_riscdiag_between(
             if(array_elements(&array_handle))
             {
                 const U32 n_bytes = array_elements(&array_handle);
-                status = gr_riscdiag_scaled_diagram_add(p_gr_riscdiag, &objhdr.sys_off, &draw_box, array_rangec(&array_handle, BYTE, 0, n_bytes), n_bytes, &pict.fillstyleb, &pict.fillstylec);
+                status = gr_riscdiag_scaled_diagram_add(p_gr_riscdiag, &objhdr.sys_off, &draw_box, array_rangec(&array_handle, BYTE, 0, n_bytes), n_bytes, &pict.fillstyleb, &pict.fillstylec, NULL);
             }
 
             break;
@@ -468,7 +470,7 @@ gr_diag_ensure_riscdiag_font_tableR_entry_for_TEXT(
         const PC_SBSTR szHostFontName = _sbstr_from_tstr(array_tstr(&host_font_spec.h_host_name_tstr));
         GR_RISCDIAG_RISCOS_FONTLIST_ENTRY f;
 
-        zero_struct(f);
+        zero_struct_fn(f);
         xstrkpy(f.szHostFontName, sizeof32(f.szHostFontName), szHostFontName);
 
         host_font_spec_dispose(&host_font_spec);
@@ -509,7 +511,7 @@ gr_diag_ensure_riscdiag_font_tableR_entries_for_PICTURE(
             const DRAW_DIAG_OFFSET thislen = offsetof32(DRAW_FONTLIST_ELEM, szHostFontName) + strlen32p1(pFontListElemR->szHostFontName); /*CH_NULL*/
             GR_RISCDIAG_RISCOS_FONTLIST_ENTRY f;
 
-            zero_struct(f);
+            zero_struct_fn(f);
             xstrkpy(f.szHostFontName, sizeof32(f.szHostFontName), pFontListElemR->szHostFontName);
 
             status_break(status = gr_diag_ensure_riscdiag_font_tableR_entry(&f, p_array_handleR));
@@ -688,7 +690,7 @@ gr_diag_create_riscdiag_font_tables_between(
     GR_DIAG_OFFSET thisObject = sttObject_in;
     GR_DIAG_OFFSET endObject = endObject_in;
     STATUS status = STATUS_OK;
-    P_BYTE pObject;
+    P_GR_DIAG_OBJHDR pObject;
 
     *p_array_handleR = 0;
     *p_array_handleW = 0;
@@ -699,7 +701,7 @@ gr_diag_create_riscdiag_font_tables_between(
     if(gr_diag_object_first(p_gr_diag, &thisObject, &endObject, &pObject))
     {
         do  {
-            switch(*DIAG_OBJHDR(GR_DIAG_OBJTYPE, pObject, type))
+            switch(pObject->type)
             {
             case GR_DIAG_OBJTYPE_TEXT:
                 {
@@ -731,7 +733,7 @@ gr_diag_create_riscdiag_font_tables_between(
     if(gr_diag_object_first(p_gr_diag, &thisObject, &endObject, &pObject))
     {
         do  {
-            switch(*DIAG_OBJHDR(GR_DIAG_OBJTYPE, pObject, type))
+            switch(pObject->type)
             {
             case GR_DIAG_OBJTYPE_PICTURE:
                 {
@@ -1091,35 +1093,47 @@ gr_diag_object_first(
     _InRef_     P_GR_DIAG p_gr_diag,
     _InoutRef_  P_GR_DIAG_OFFSET pSttObject,
     _InoutRef_  P_GR_DIAG_OFFSET pEndObject,
-    _OutRef_    P_P_BYTE ppObject)
+    _OutRef_    P_P_GR_DIAG_OBJHDR ppObject)
 {
-    P_BYTE pObject;
-
     *pSttObject = gr_diag_normalise_stt(p_gr_diag, *pSttObject);
     *pEndObject = gr_diag_normalise_end(p_gr_diag, *pEndObject);
 
-    pObject = array_ptr(&p_gr_diag->handle, BYTE, *pSttObject);
-
-#if CHECKING
+    for(;;) /* loop for structure */
     {
-    const U32 n_bytes = *DIAG_OBJHDR(U32, pObject, n_bytes); /* even if group */
-    myassert2x(n_bytes >= sizeof32(GR_DIAG_OBJHDR),
-              TEXT("gr_diag_object_first object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" < sizeof-GR_DIAG_OBJHDR"), *pSttObject, n_bytes);
-    myassert3x(*pSttObject + n_bytes <= *pEndObject,
-              TEXT("gr_diag_object_first object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" goes beyond end ") U32_XTFMT, *pSttObject, n_bytes, *pEndObject);
-    } /*block*/
-#endif /* CHECKING */
+        P_GR_DIAG_OBJHDR pObject;
+        U32 n_bytes;
 
-    if(*pSttObject >= *pEndObject)
-    {
-        *pSttObject = GR_DIAG_OBJECT_FIRST;
-        pObject = NULL;
+        /* check the first object */
+        if(*pSttObject >= *pEndObject)
+            /* trying to start at, or beyond, the end */
+            break;
+
+        assert(array_handle_is_valid(&p_gr_diag->handle));
+        assert(array_index_is_valid(&p_gr_diag->handle, *pSttObject));
+        assert(array_index_is_valid(&p_gr_diag->handle, *pSttObject + sizeof32(GR_DIAG_OBJHDR))); /* will all of first header be readable? */
+
+        pObject = (P_GR_DIAG_OBJHDR) array_ptr(&p_gr_diag->handle, BYTE, *pSttObject);
+        n_bytes = pObject->n_bytes; /* even if group */
+
+        myassert2x(n_bytes >= sizeof32(GR_DIAG_OBJHDR),
+                  TEXT("gr_diag_object_first object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" < sizeof-GR_DIAG_OBJHDR"), *pSttObject, n_bytes);
+        myassert3x(*pSttObject + n_bytes <= *pEndObject,
+                  TEXT("gr_diag_object_first object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" goes beyond end ") U32_XTFMT, *pSttObject, n_bytes, *pEndObject);
+        assert(pObject->type < GR_DIAG_OBJTYPE_LIMIT);
+
+        if(*pSttObject + n_bytes > *pEndObject)
+            /* first object extends beyond the end */
+            break;
+
+        *ppObject = pObject;
+        return(true); /* end of loop for structure */
+        /*NOTREACHED*/
     }
 
-    /* maintain current lock as initial, now caller's responsibility */
-    *ppObject = pObject;
-
-    return(*pSttObject != GR_DIAG_OBJECT_FIRST); /* note above repoke^^^ on end */
+    /* no valid first object - don't start looping */
+    *pSttObject = *pEndObject;
+    *ppObject = NULL;
+    return(false);
 }
 
 /******************************************************************************
@@ -1173,37 +1187,66 @@ _Check_return_
 extern BOOL
 gr_diag_object_next(
     _InRef_     P_GR_DIAG p_gr_diag,
-    _InoutRef_  P_GR_DIAG_OFFSET pSttObject,
+    _InoutRef_  P_GR_DIAG_OFFSET pCurObject,
     _InVal_     GR_DIAG_OFFSET endObject,
-    _OutRef_    P_P_BYTE ppObject)
+    _OutRef_    P_P_GR_DIAG_OBJHDR ppObject)
 {
-    P_BYTE pObject;
-    U32 n_bytes;
-
-    assert(array_index_is_valid(&p_gr_diag->handle, *pSttObject));
-    pObject = array_ptr(&p_gr_diag->handle, BYTE, *pSttObject);
-    n_bytes = *DIAG_OBJHDR(U32, pObject, n_bytes);
-
-    myassert2x(n_bytes >= sizeof32(GR_DIAG_OBJHDR),
-               TEXT("gr_diag_object_next object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" < sizeof-GR_DIAG_OBJHDR"), *pSttObject, n_bytes);
-    myassert3x(*pSttObject + n_bytes <= endObject,
-               TEXT("gr_diag_object_next object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" goes beyond end ") U32_XTFMT, *pSttObject, n_bytes, endObject);
-
-    /* force gr_diag scans to be linear, not recursive */
-    if(*DIAG_OBJHDR(GR_DIAG_OBJTYPE, pObject, type) == GR_DIAG_OBJTYPE_GROUP)
-        n_bytes = sizeof32(GR_DIAG_OBJGROUP);
-
-    *pSttObject += n_bytes;
-
-    if(*pSttObject >= endObject)
+    for(;;) /* loop for structure */
     {
-        *pSttObject = GR_DIAG_OBJECT_FIRST;
-        pObject = NULL;
+        P_GR_DIAG_OBJHDR pObject;
+        U32 n_bytes;
+
+        /* check the current object */
+        if(*pCurObject >= endObject)
+            /* already at, or beyond, the end */
+            break;
+
+        assert(array_handle_is_valid(&p_gr_diag->handle));
+        assert(array_index_is_valid(&p_gr_diag->handle, *pCurObject));
+        assert(array_index_is_valid(&p_gr_diag->handle, *pCurObject + sizeof32(GR_DIAG_OBJHDR))); /* will all of current header be readable? */
+
+        pObject = (P_GR_DIAG_OBJHDR) array_ptr(&p_gr_diag->handle, BYTE, *pCurObject);
+        n_bytes = pObject->n_bytes;
+
+        myassert2x(n_bytes >= sizeof32(GR_DIAG_OBJHDR),
+                   TEXT("gr_diag_object_next current object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" < sizeof-GR_DIAG_OBJHDR"), *pCurObject, n_bytes);
+        myassert3x(*pCurObject + n_bytes <= endObject,
+                   TEXT("gr_diag_object_next current object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" goes beyond end ") U32_XTFMT, *pCurObject, n_bytes, endObject);
+        assert(pObject->type < GR_DIAG_OBJTYPE_LIMIT);
+
+        /* force gr_diag scans to be linear, not recursive */
+        if(pObject->type == GR_DIAG_OBJTYPE_GROUP)
+            n_bytes = sizeof32(GR_DIAG_OBJGROUP);
+
+        if(*pCurObject + n_bytes >= endObject)
+            /* current object ends at, or extends beyond, the end (NB different test) */
+            break;
+
+        /* advance to the next object and check that object */
+        *pCurObject += n_bytes;
+
+        pObject = (P_GR_DIAG_OBJHDR) array_ptr(&p_gr_diag->handle, BYTE, *pCurObject);
+        n_bytes = pObject->n_bytes; /* even if group */
+
+        myassert2x(n_bytes >= sizeof32(GR_DIAG_OBJHDR),
+                  TEXT("gr_diag_object_next next object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" < sizeof-GR_DIAG_OBJHDR"), *pCurObject, n_bytes);
+        myassert3x(*pCurObject + n_bytes <= endObject,
+                  TEXT("gr_diag_object_next next object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" goes beyond end ") U32_XTFMT, *pCurObject, n_bytes, endObject);
+        assert(pObject->type < GR_DIAG_OBJTYPE_LIMIT);
+
+        if(*pCurObject + n_bytes > endObject)
+            /* next object extends beyond the end */
+            break;
+
+        *ppObject = pObject;
+        return(true); /* end of loop for structure */
+        /*NOTREACHED*/
     }
 
-    *ppObject = pObject;
-
-    return(*pSttObject != GR_DIAG_OBJECT_FIRST); /* note above repoke^^^ on end */
+    /* no valid next object - stop looping */
+    *pCurObject = endObject;
+    *ppObject = NULL;
+    return(false);
 }
 
 /******************************************************************************
@@ -1863,7 +1906,7 @@ gr_diag_scaled_picture_add(
     if(fillstylec)
         pict.fillstylec = *fillstylec;
     else
-        zero_struct(pict.fillstylec);
+        zero_struct_fn(pict.fillstylec);
 
     return(gr_diag_object_new(p_gr_diag, pObjectStart, NULL, &pict, 0));
 }

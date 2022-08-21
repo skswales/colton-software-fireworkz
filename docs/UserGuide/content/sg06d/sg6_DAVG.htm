@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>DAVG</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="DAVG" />
+        <param name="Keyword" value="Functions, Database, DAVG" />
+        <param name="Keyword" value="Database functions, arithmetic mean of corresponding values matching condition" />
+    </object>
+
+    <h1><a name="davg" id="davg"></a>DAVG</h1>
+
+    <p>Calculates the arithmetic mean of the values in a data set created from a condition.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        DAVG(<span class="csg-function-parameter"><a href="../sg06/sg6_ranges.htm">range</a></span>,
+        <span class="csg-function-parameter">condition</span>)
+    </p>
+    <p>
+        Returns the arithmetic mean (average) of all the values in the <span class="csg-function-parameter"><a href="../sg06/sg6_ranges.htm">range</a></span>
+        for which the corresponding <span class="csg-function-parameter">condition</span> is satisfied.
+    </p>
+    <p>The <span class="csg-function-parameter">condition</span> will normally compare a range against a value or another corresponding range.</p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        DAVG =
+        ( <span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span> <em>x</em><em><sub>i</sub></em> )
+        &divide;
+        <em>n</em>
+    </p>
+    <p>where <em>n</em> is the number of selected values and <em>x</em><em><sub>i</sub></em> is the <em>i</em>-th value from the selection.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">DAVG(B2:B11, C2:C11&gt;=50)</pre>
+    <p>returns the average of those values in cells <code>B2:B11</code> where the corresponding values in cells <code>C2:C11</code> are greater than or equal to <code>50</code>.</p>
+
+    <p class="csg-function-subheading" id="Example_conditions">Example conditions:</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+
+                <tr>
+                    <td><code>C2:C11&lt;D23</code></td>
+                    <td>compares each element of the range <code>C2:C11</code> against the value in cell <code>D23</code></td>
+                </tr>
+
+                <tr>
+                    <td><code>C1:C100=&quot;^#Acorn^#&quot; </code></td>
+                    <td>will return <code>TRUE</code> for any cell in the range <code>C1:C100</code> which contains the word <code>Acorn</code>.</td>
+                </tr>
+
+                <tr>
+                    <td><code>D1:D10&gt;E1:E10</code></td>
+                    <td>compares each cell in the range <code>D1:D10</code> with the corresponding cell in the range <code>E1:E10</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg05_function_reference.htm#database_functions">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#database_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06d/sg6_DCOUNT.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -84,6 +84,86 @@ PROC_EXEC_PROTO(c_beta)
 *
 ******************************************************************************/
 
+_Check_return_
+static STATUS
+bin_and_frequency_calc_init(
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InVal_     S32 y_size_bins)
+{
+    /* make result array */
+    status_return(ss_array_make(p_ss_data_out, 1, y_size_bins + 1));
+
+    { /* clear result array to zero as widest integers */
+    S32 iy;
+
+    for(iy = 0; iy < y_size_bins + 1; ++iy)
+    {
+        P_SS_DATA p_ss_data = ss_array_element_index_wr(p_ss_data_out, 0, iy);
+        ss_data_set_WORD32(p_ss_data, 0);
+    }
+    } /*block*/
+
+    return(STATUS_OK);
+}
+
+static void
+bin_and_frequency_calc_process_element(
+    _InoutRef_  P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA array_bins,
+    _InVal_     S32 y_size_bins,
+    _InVal_     BOOL ignore_blanks_and_strings,
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    switch(ss_data_get_data_id(p_ss_data))
+    {
+    case DATA_ID_STRING:
+        if(ignore_blanks_and_strings)
+        {   /* ignore this data item */
+            break;
+        }
+
+        /*FALLTHRU*/
+
+    case DATA_ID_REAL:
+    case DATA_ID_LOGICAL:
+    case DATA_ID_WORD16:
+    case DATA_ID_WORD32:
+    case DATA_ID_DATE:
+        {
+        S32 bin_iy, bin_out_iy = y_size_bins;
+
+        for(bin_iy = 0; bin_iy < y_size_bins; ++bin_iy)
+        {
+            SS_DATA ss_data_bin;
+            const EV_IDNO bin_id = array_range_index(&ss_data_bin, array_bins, 0, bin_iy, EM_REA | EM_INT | EM_DAT | EM_STR);
+            S32 res;
+
+            if(ignore_blanks_and_strings && (DATA_ID_STRING == bin_id))
+            {   /* can't match anything against this bin - skip */
+                ss_data_free_resources(&ss_data_bin);
+                continue;
+            }
+
+            res = ss_data_compare(p_ss_data, &ss_data_bin, FALSE, FALSE);
+
+            ss_data_free_resources(&ss_data_bin);
+
+            if(res <= 0)
+            {
+                bin_out_iy = bin_iy;
+                break;
+            }
+        }
+
+        ss_array_element_index_wr(p_ss_data_out, 0, bin_out_iy)->arg.integer += 1;
+        break;
+        }
+
+    default:
+        break;
+    }
+}
+
 static void
 bin_and_frequency_calc(
     _OutRef_    P_SS_DATA p_ss_data_out,
@@ -91,90 +171,33 @@ bin_and_frequency_calc(
     _InRef_     PC_SS_DATA array_bins,
     _InVal_     BOOL ignore_blanks_and_strings)
 {
-    S32 x_size[2];
-    S32 y_size[2];
+    S32 x_size_data, x_size_bins;
+    S32 y_size_data, y_size_bins;
 
-    array_range_sizes(array_data, &x_size[0], &y_size[0]);
-    array_range_sizes(array_bins, &x_size[1], &y_size[1]);
+    array_range_sizes(array_data, &x_size_data, &y_size_data);
+    array_range_sizes(array_bins, &x_size_bins, &y_size_bins);
 
-    /* make result array */
-    if(status_ok(ss_array_make(p_ss_data_out, 1, y_size[1] + 1)))
+    /* make result array and then clear to zero as widest integers */
+    if(status_fail(bin_and_frequency_calc_init(p_ss_data_out, y_size_bins)))
+        return;
+
+    { /* put each item from array_data into a bin in array_bins */
+    S32 ix, iy;
+
+    for(ix = 0; ix < x_size_data; ++ix)
     {
-        { /* clear result array to zero as widest integers */
-        S32 iy;
-
-        for(iy = 0; iy < y_size[1] + 1; ++iy)
+        for(iy = 0; iy < y_size_data; ++iy)
         {
-            P_SS_DATA p_ss_data = ss_array_element_index_wr(p_ss_data_out, 0, iy);
-            ss_data_set_WORD32(p_ss_data, 0);
+            SS_DATA ss_data;
+
+            (void) array_range_index(&ss_data, array_data, ix, iy, EM_REA | EM_INT | EM_DAT | EM_STR); /* no need for EM_BLK */
+            
+            bin_and_frequency_calc_process_element(p_ss_data_out, array_bins, y_size_bins, ignore_blanks_and_strings, &ss_data);
+
+            ss_data_free_resources(&ss_data);
         }
-        } /*block*/
-
-        { /* put each item into a bin */
-        S32 ix, iy;
-
-        for(ix = 0; ix < x_size[0]; ++ix)
-        {
-            for(iy = 0; iy < y_size[0]; ++iy)
-            {
-                SS_DATA ss_data;
-                const EV_IDNO data_id = array_range_index(&ss_data, array_data, ix, iy, EM_REA | EM_INT | EM_DAT | EM_STR); /* no need for EM_BLK */
-
-                switch(data_id)
-                {
-                case DATA_ID_STRING:
-                    if(ignore_blanks_and_strings)
-                    {   /* ignore this data item */
-                        break;
-                    }
-
-                    /*FALLTHRU*/
-
-                case DATA_ID_REAL:
-                case DATA_ID_LOGICAL:
-                case DATA_ID_WORD8:
-                case DATA_ID_WORD16:
-                case DATA_ID_WORD32:
-                case DATA_ID_DATE:
-                    {
-                    S32 bin_iy, bin_out_iy = y_size[1];
-
-                    for(bin_iy = 0; bin_iy < y_size[1]; ++bin_iy)
-                    {
-                        SS_DATA ss_data_bin;
-                        const EV_IDNO bin_id = array_range_index(&ss_data_bin, array_bins, 0, bin_iy, EM_REA | EM_INT | EM_DAT | EM_STR);
-                        S32 res;
-
-                        if(ignore_blanks_and_strings && (DATA_ID_STRING == bin_id))
-                        {   /* can't match anything against this bin - skip */
-                            ss_data_free_resources(&ss_data_bin);
-                            continue;
-                        }
-
-                        res = ss_data_compare(&ss_data, &ss_data_bin, FALSE, FALSE);
-
-                        ss_data_free_resources(&ss_data_bin);
-
-                        if(res <= 0)
-                        {
-                            bin_out_iy = bin_iy;
-                            break;
-                        }
-                    }
-
-                    ss_array_element_index_wr(p_ss_data_out, 0, bin_out_iy)->arg.integer += 1;
-                    break;
-                    }
-
-                default:
-                    break;
-                }
-
-                ss_data_free_resources(&ss_data);
-            }
-        }
-        } /*block*/
     }
+    } /*block*/
 }
 
 PROC_EXEC_PROTO(c_bin)
@@ -211,7 +234,7 @@ PROC_EXEC_PROTO(c_frequency)
 
 extern void
 binomial_coefficient_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InVal_     S32 n,
     _InVal_     S32 k)
 {
@@ -233,22 +256,23 @@ binomial_coefficient_calc(
     {
         SS_DATA ss_data_divisor;
 
-        /* assume result will be integer to start with */
-        ss_data_set_data_id(p_ss_data_out, DATA_ID_WORD32);
-
-        /* function will go to fp as necessary */
-        product_between_calc(p_ss_data_out, (n - k) + 1, n); /* may return integer or fp */
+        /* assume result will be (widest) integer to start with; function will go to fp as necessary */
+        ss_data_set_WORD32(p_ss_data_out, (n - k) + 1); /* start */
+        product_between_calc(p_ss_data_out, /*(n - k) + 1,*/ n); /* may return integer or real */
 
         /* calculate divisor in same format as dividend (either still WORD32 or REAL)
          * NB divisor is always smaller than dividend so this is OK
          */
-        ss_data_set_data_id(&ss_data_divisor, ss_data_get_data_id(p_ss_data_out));
-        product_between_calc(&ss_data_divisor, 1, k); /* may return integer or fp */
-        assert(ss_data_get_data_id(&ss_data_divisor) == ss_data_get_data_id(p_ss_data_out));
+        ss_data_set_WORD32(&ss_data_divisor, 1); /* start */
+        if(ss_data_is_real(p_ss_data_out))
+            ss_data_set_real(&ss_data_divisor, 1.0); /* start */
+        assert_EQ(ss_data_get_data_id(&ss_data_divisor), ss_data_get_data_id(p_ss_data_out));
+        product_between_calc(&ss_data_divisor, /*1,*/ k); /* may return integer or real */
+        assert_EQ(ss_data_get_data_id(&ss_data_divisor), ss_data_get_data_id(p_ss_data_out));
 
         if(ss_data_is_real(p_ss_data_out))
         {
-            /* binomial coefficient always integer result - see if we can get one! */
+            /* binomial coefficient always integer result - see if we can get one! (may be out of integer range) */
             F64 binomial_coefficient_result = floor((ss_data_get_real(p_ss_data_out) / ss_data_get_real(&ss_data_divisor)) + 0.5);
 
             ss_data_set_real_try_integer(p_ss_data_out, binomial_coefficient_result);
@@ -290,7 +314,7 @@ PROC_EXEC_PROTO(c_combin)
 
     exec_func_ignore_parms();
 
-    binomial_coefficient_calc(p_ss_data_res, n, k); /* may return integer or fp or error */
+    binomial_coefficient_calc(p_ss_data_res, n, k); /* may return integer or real or error */
 }
 
 /******************************************************************************
@@ -313,7 +337,7 @@ PROC_EXEC_PROTO(c_gammaln)
     ss_data_set_real(p_ss_data_res, gammaln_result);
 
     if(errno)
-        ss_data_set_error(p_ss_data_res, status_from_errno());
+        exec_func_status_return(p_ss_data_res, status_from_errno());
 }
 
 /******************************************************************************
@@ -466,13 +490,13 @@ PROC_EXEC_PROTO(c_listcount)
 
 static void
 permut_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InVal_     S32 n,
     _InVal_     S32 k)
 {
     STATUS err = STATUS_OK;
 
-    if((n < 0) || (k < 0) /*|| ((n - k) < 0)*/)
+    if( (n < 0) || (k < 0) /*|| ((n - k) < 0)*/ )
     {
         err = EVAL_ERR_ARGRANGE;
     }
@@ -486,14 +510,12 @@ permut_calc(
     }
     else if(n <= 170) /* SKS maximum factorial that will fit in F64 */
     {
-        /* assume result will be integer to start with */
-        ss_data_set_data_id(p_ss_data_out, DATA_ID_WORD32);
+        /* assume result will be (widest) integer to start with; function will go to fp as necessary */
+        ss_data_set_WORD32(p_ss_data_out, (n - k) + 1); /* start */
+        product_between_calc(p_ss_data_out, /*(n - k) + 1,*/ n); /* may return integer or real */
 
-        /* function will go to fp as necessary */
-        product_between_calc(p_ss_data_out, (n - k) + 1, n); /* may return integer or fp */
-
-        if(DATA_ID_WORD32 == ss_data_get_data_id(p_ss_data_out))
-            ss_data_set_data_id(p_ss_data_out, ev_integer_size(p_ss_data_out->arg.integer));
+        if(ss_data_is_integer(p_ss_data_out))
+            ss_data_set_integer_size(p_ss_data_out);
     }
     else
     {
@@ -525,7 +547,7 @@ PROC_EXEC_PROTO(c_permut)
 
     exec_func_ignore_parms();
 
-    permut_calc(p_ss_data_res, n, k); /* may return integer or fp or error */
+    permut_calc(p_ss_data_res, n, k); /* may return integer or real or error */
 }
 
 /******************************************************************************
@@ -540,8 +562,8 @@ PROC_EXEC_PROTO(c_rand)
 
     if(!uniform_distribution_test_seeded(false /*test*/))
     {
-        if((0 != n_args) && (ss_data_get_real(args[0]) != 0.0))
-            uniform_distribution_seed((unsigned int) ss_data_get_real(args[0]));
+        if((0 != n_args) && (arg_get_real_INT(args[0]) != 0.0))
+            uniform_distribution_seed((unsigned int) arg_get_real_INT(args[0]));
         else
             uniform_distribution_test_seeded(true /*ensure*/);
     }

@@ -81,29 +81,34 @@ do_this_null_event(
 {
     NULL_FUNCLIST_ENTRY null_funclist_entry = *array_ptr(&null_.event_list, NULL_FUNCLIST_ENTRY, i);
     const P_DOCU p_docu = p_docu_from_docno(null_funclist_entry.docno);
-    NULL_EVENT_RETURN_CODE res = NULL_EVENT_COMPLETED;
 
     trace_6(TRACE__NULL, TEXT("null_events_do_events --- calling item=%d, docno=") DOCNO_TFMT TEXT("/") PTR_XTFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT,
             i, null_funclist_entry.docno, p_docu, null_funclist_entry.t5_message, null_funclist_entry.p_proc_event, null_funclist_entry.client_handle);
 
     /* have seen null events still going after associated document closure */
-    assert((DOCNO_NONE == null_funclist_entry.docno) || !IS_DOCU_NONE(p_docu));
-    if((DOCNO_NONE == null_funclist_entry.docno) || !IS_DOCU_NONE(p_docu))
+    /* e.g. forever, in the case of loading of malformed documents */
+    if( (DOCNO_NONE != null_funclist_entry.docno) && IS_DOCU_NONE(p_docu) )
     {
-        NULL_EVENT_BLOCK null_event_block;
-
-        null_event_block.rc = NULL_EVENT_COMPLETED;
-
-        null_event_block.client_handle = null_funclist_entry.client_handle;
-        null_event_block.initial_time = initialTime;
-        null_event_block.max_slice = null_.max_slice;
-
-        status_assert((* null_funclist_entry.p_proc_event) (p_docu, null_funclist_entry.t5_message, &null_event_block));
-
-        res = null_event_block.rc;
+        assert((DOCNO_NONE == null_funclist_entry.docno) || DOCU_NOT_NONE(p_docu));
+        trace_5(TRACE__NULL, TEXT("do_this_null_event --- removing bad docno=") DOCNO_TFMT TEXT(" message=%d ") PTR_XTFMT TEXT(" handle=") UINTPTR_TFMT TEXT(", leaving %u null events"),
+                null_funclist_entry.docno, null_funclist_entry.t5_message, null_funclist_entry.p_proc_event, null_funclist_entry.client_handle, array_elements32(&null_.event_list)-1);
+        al_array_delete_at(&null_.event_list, -1, i);
+        return(NULL_EVENT_COMPLETED);
     }
 
-    return(res);
+    {
+    NULL_EVENT_BLOCK null_event_block;
+
+    null_event_block.rc = NULL_EVENT_COMPLETED;
+
+    null_event_block.client_handle = null_funclist_entry.client_handle;
+    null_event_block.initial_time = initialTime;
+    null_event_block.max_slice = null_.max_slice;
+
+    status_assert((* null_funclist_entry.p_proc_event) (p_docu, null_funclist_entry.t5_message, &null_event_block));
+
+    return(null_event_block.rc);
+    } /*block*/
 }
 
 #if CHECKING && 0
@@ -313,7 +318,7 @@ do_this_scheduled_event(
 
     /* ensure that we dont try to deliver scheduled events after associated document closure */
     DOCU_ASSERT(p_docu);
-    if(!IS_DOCU_NONE(p_docu))
+    if(DOCU_NOT_NONE(p_docu))
     {
         SCHEDULED_EVENT_BLOCK scheduled_event_block;
 

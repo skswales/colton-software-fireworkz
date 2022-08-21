@@ -1,0 +1,6 @@
+IconSprites <Obey$Dir>.!Sprites
+
+If "<Strings$Dir>"=""  Then Set Strings$Dir  <Obey$Dir>
+If "<Strings$Path>"="" Then Set Strings$Path <Obey$Dir>.
+
+|Copy Strings:Documents.StrongHelp.Strings <StrongHelp$Dir>.Strings ~CLN~V

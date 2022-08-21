@@ -1,0 +1,66 @@
+﻿
+Changing the displayed precision
+Recordz rounds numbers for display according to the values
+specified in the Number format. However, the full number is kept
+and used internally for calculations so no precision is lost.
+
+Decimal places
+If you want to see more (or fewer) decimal places, type in or
+remove # or 0 characters following the decimal point. For
+example:
+#.00 displays two decimal places, with the numbers
+always shown whether you enter digits to fill them or
+not. So if you typed 4, it would appear as 4.00.
+#.#### displays four decimal places, which only appear
+when there are digits to fill them. So 4 would appear
+as 4, 2.25 as 2.25, and 5.123456 as 5.1235.
+
+Rounding large numbers
+You can also reduce the number of digits shown, for example
+showing millions as thousands (as you would in a balance sheet or
+financial report). To do this, use as the definition:
+># to truncate numbers by three digits.
+>># to truncate numbers by six digits.
+
+Including text strings in number formats
+You can include text strings as part of a number format. This is
+especially important if you want to use a character which the
+number format system interprets as a special character, such as r
+and e. Simply enclose text strings in quote marks, or precede a
+single character with \.
+Use text strings to enter abbreviations for foreign currencies, or
+any other text you want to include with numbers.
+
+Number formats summary
+Definition Entered Appears as Description
+No decimal places; numbers will be rounded up or
+down to the nearest integer
+Up to two decimal places are available
+but trailing zeros will be dropped.
+Trailing zeros to two decimal places will be
+displayed; multiples of 1000 separated by commas
+Lower-case Roman numerals
+Displays number as a percentage
+Displays percentage with no multiplication
+Scientific format
+Engineering format
+Displays number as a letter of the alphabet
+Currency format; negative numbers are
+displayed in brackets rather than with a
+minus sign
+Format for displaying zero appears after second
+semi-colon; here nothing is shown
+Leaves the number of character spaces specified by
+underline characters between the currency symbol
+and decimal point
+Shifts to the right by three decimal places (i.e.
+displays thousands)
+Shifts to the left by three decimal places
+Shifts to the right by six decimal places (i.e.
+displays millions)
+
+Fireworkz Pro 109
+
+
+
+

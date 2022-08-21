@@ -18,6 +18,8 @@
 exported functions
 */
 
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 _Check_return_
 extern STATUS
 al_wstr_realloc(
@@ -34,6 +36,10 @@ al_wstr_alloc(
 
     return(al_wstr_realloc(p_array_handle_wstr, wstr));
 }
+
+#endif /* OS */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 static inline void
 wstr_clr(
@@ -55,11 +61,9 @@ wstr_set_n(
     _In_reads_opt_(wchars_n) PCWCH wchars,
     _InVal_     U32 wchars_n);
 
-_Check_return_
-extern STATUS
-wstr_set_from_ustr(
-    _OutRef_    P_PWSTR aa,
-    _In_opt_z_  PC_USTR ustr);
+#endif /* OS */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 _Check_return_
 extern int /* 0:EQ, +ve:arg1>arg2, -ve:arg1<arg2 */
@@ -101,9 +105,13 @@ wstr_compare_n2_nocase(
     _In_/*wchars_n_b*/ PCWSTR wstr_b,
     _InVal_     U32 wchars_n_b /*strlen_with,without_NULLCH*/);
 
+#endif /* OS */
+
 /*
 strcpy / _s() etc. replacements that ensure CH_NULL-termination
 */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 /*ncr*/
 extern U32 /* WCHARs currently in output */
@@ -151,6 +159,8 @@ wstr_xvsnprintf(
     _In_z_ _Printf_format_string_ PCWSTR format,
     /**/        va_list args);
 
+#endif /* OS */
+
 #if WINDOWS && 0
 
 /* preferably our own controlled string copy fns: safe_wstr{kpy,nkpy,kat,nkat} etc. */
@@ -173,6 +183,8 @@ wstr_xvsnprintf(
 
 #else /* OS */
 
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 _Check_return_
 extern size_t
 wstrlen(
@@ -190,6 +202,8 @@ wstrpbrk(
     _In_z_      PCWSTR wstr,
     _In_z_      PCWSTR wstr_control);
 
+#endif /* OS */
+
 /*#define wstrchr(s, c)               strchr(s, c)*/
 /*#define wstrrchr(s, c)              strrchr(s, c)*/
 /*#define wstrstr(s1, s2)             strstr(s1, s2)*/
@@ -200,6 +214,8 @@ wstrpbrk(
 /*#define wstrtoul(p, pp, r)          strtoul(p, pp, r)*/
 
 #endif /* OS */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 #define wstrcmp(s1, s2)             wstr_compare(s1, s2)
 #define wstrncmp(s1, s2, n)         wstr_compare_n2(s1, n, s2, n)
@@ -227,6 +243,8 @@ wstrlen32_n(
 
     return(wchars_n);
 }
+
+#endif /* OS */
 
 #if WINDOWS && 0
 

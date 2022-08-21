@@ -75,9 +75,7 @@ PROC_EXEC_PROTO(c_growth)
                                   0, /* NB!*/
                                   0,
                                   EM_REA))
-            {
                 status_break(err = EVAL_ERR_MATRIX_NOT_NUMERIC);
-            }
 
             /* if initial y data was all -ve then this is a possibility ... */
             negative = (ss_data_get_real(&a_data) < 0);
@@ -99,18 +97,14 @@ PROC_EXEC_PROTO(c_growth)
                                           ci + 1, /* NB. skip constant! */
                                           0,
                                           EM_REA))
-                    {
                         status_break(err = EVAL_ERR_MATRIX_NOT_NUMERIC);
-                    }
 
                     if(DATA_ID_REAL !=
                         array_range_index(&x_data, array_known_x,
                                           across_rows ? ci : col, /* NB. extract from ci'th col (if across_rows) */
                                           across_rows ? row : ci, /* NB. extract from ci'th row (if down_columns) */
                                           EM_REA))
-                    {
                         status_break(err = EVAL_ERR_MATRIX_NOT_NUMERIC);
-                    }
 
                     product += log(ss_data_get_real(&a_data)) * ss_data_get_real(&x_data);
                 }
@@ -616,8 +610,7 @@ endlabel2:;
 
     ss_data_free_resources(&a_data);
 
-    if(err)
-        ss_data_set_error(p_ss_data_res, err);
+    exec_func_status_return(p_ss_data_res, err);
 }
 
 /******************************************************************************

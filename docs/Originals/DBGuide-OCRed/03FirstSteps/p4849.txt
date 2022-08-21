@@ -1,0 +1,51 @@
+﻿
+In this example, you could define the search in one go. However,
+this isn't always possible and often it makes things clearer if you
+search one step at a time.
+So, you are going to start by looking for all your relatives. This
+means people whose names are Smith:
+1 Click on the menu icon next to the Name field and the
+following list will appear:
+is
+is not
+contains
+does not contain
+is greater than
+is fess than
+dent care
+is empty
+is not empty
+expression
+This specifies the search actions which you can use.
+2 Choose contains and type Smith in the box to the right.
+This means that you are searching for everyone whose name
+field contains ‘Smith’, eg ‘Ida Smith‘ etc. Note that the case of
+the letters is not important so 'Smith' will match SMITH,
+smith etc.
+3 Click OK and the search will be performed.
+Your document will now display just the records of those people
+called Smith and the status bar will say:
+Record 1 in Subset - 5 records
+
+48 Recordz
+
+Active queries
+Each time you perform a search, the details of what you searched
+for are added to an ‘active queries‘ list. This means that if you wish
+to repeat a search which you performed earlier, you don't have to
+re-enter all the details, you can simply select it from the list. In
+addition, if you perform a search and it doesn't give you the subset
+of records which you required, you can amend the search pattem
+to take you nearer to the result you want.
+To display the Active Queries dialogue box either:
+. Click Adjust on the Search button.
+or
+. Choose Queries from the Database menu.
+or
+. Press Ctrl-F4.
+The dialogue box will appear as follows:
+
+You can see the search you perfonned in the list box.
+
+Fireworkz Pro 49
+

@@ -1,0 +1,747 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Number formats and styles</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Number formats and styles" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../sg/sg02_entering_and_editing_formulae.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../sg/sg05_function_reference.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Entering formulae </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Function reference</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="number_formats_and_styles" id="number_formats_and_styles"></a><span class="csg-chapter-number">13 </span>Number formats and styles</h1>
+
+    <p>
+        This chapter describes how to work with the Number section of the Style dialogue box to define number, date and time formats.
+    </p>
+    <p>
+        It also contains a general introduction to using styles in spreadsheet documents,
+        showing how you can use styles to apply formatting to text and numbers within the document,
+        and to customise spreadsheet features such as the style used to show the current cell.
+    </p>
+    <p>
+        The Number section of the <a href="../ug/ug06_the_style_editor.htm">Style editor</a> also contains other functions,
+        such as marking cells as protected, so that they are locked against future editing.
+    </p>
+    <p>This chapter contains information on:</p>
+    <ul>
+        <li><a href="#styles_in_spreadsheet_documents.">Styles in spreadsheet documents</a></li>
+        <li><a href="#constructing_number_formats">Number formats</a></li>
+        <li><a href="#constructing_date_formats">Date and time formats</a></li>
+        <li><a href="#error_and_string_formats">Error and string formats</a></li>
+        <li><a href="#new_object">New object</a></li>
+        <li><a href="#protecting_cells">Protecting cells</a></li>
+    </ul>
+
+    <h2><a name="styles_in_spreadsheet_documents" id="styles_in_spreadsheet_documents"></a>Styles in spreadsheet documents</h2>
+
+    <p>
+        You will be familiar with the way in which Fireworkz uses styles to
+        make text and numbers appear at a particular size, or in a particular font or style.
+    </p>
+    <p>
+        The style system is also used to apply formatting information to numbers,
+        such as whether they are shown as currency, in continental format,
+        as a percentage or a scientific or engineering format.
+    </p>
+    <p>The Style editor is also used to define how the current cell is shown, and can be used to add borders to cells.</p>
+    <p>
+        As a general rule, you should define styles containing number formatting information
+        independently of styles containing font or paragraph layout information,
+        to increase the flexibility with which styles can be used.
+        You can apply as many styles as necessary to a cell or to text within a cell.
+    </p>
+
+    <h3>Predefined styles</h3>
+    <p>
+        The Sheet template supplied with Fireworkz contains several predefined number formats built in.
+        These are automatically available in any document based on the Sheet template,
+        simply by choosing them from the style list and applying them to selected cells.
+    </p>
+
+    <h2><a name="number_formats" id="number_formats"></a>Number formats</h2>
+
+    <p>
+        Fireworkz contains a number of standard number formats which are easily applied to any numbers in spreadsheets.
+        Because number formats are an aspect of style, number formats are manipulated through the Style editor.
+    </p>
+    <p>
+        These formats are stored in the Number section of the Style editor.
+        You can access them to create the styles you need which can be stored in the style list.
+        You can also create your own completely custom number formats.
+    </p>
+    <p>
+        For example, the list contains a ready-made option for producing continental format numbers
+        (where the decimal point is represented by a comma, and a full stop is used as a thousands separator).
+        By adding the character &quot;&euro;&quot; after the number as part of the format,
+        your numbers will automatically appear as Euro amounts.
+    </p>
+    <p>
+        As well as adding characters to show currency,
+        you can also use the style system to specify the precision to which numbers are shown.
+        When you do this, the number displayed on screen is rounded to the number of decimal places which you requested,
+        even though Fireworkz keeps the full number and uses it internally for calculations.
+    </p>
+
+    <h4><a name="base_number_format" id="base_number_format"></a>Base number format</h4>
+    <p>
+        All worksheets have a number format specified as part of their base style.
+        To see this:
+    </p>
+    <p>
+        <img class="csg-lhs-img" src="../common/images/toolbar/style.png" alt="Style tool button" />
+        Click the <span class="csg-toolbar-button">Style</span> button on the toolbar.
+    </p>
+    <p>Choose <span class="csg-list-option">BaseSheet</span> from the style list and click <span class="csg-dbox-button">Change</span>.</p>
+    <p>Click the <span class="csg-dbox-option">Number</span> button to look at the <span class="csg-dbox-option">Number</span> section of the Style editor.</p>
+    <p>The <span class="csg-dbox-option">Number format</span> writable field will contain the base number format of the worksheet.</p>
+    <p>
+        This is the way in which any numbers entered into number cells will be displayed.
+        In this case, all numbers will appear with a decimal point and two decimal places; thousands will have a comma separator.
+    </p>
+    <p>
+        It is recommended that you do not change the number style in the base sheet style,
+        but create new styles for each type of number format you want to use in your worksheet.
+    </p>
+
+    <h3><a name="constructing_number_formats" id="constructing_number_formats"></a>How number formats are constructed</h3>
+    <p>
+        Number formats are built up out of hash signs (#), zero characters, punctuation marks and alphanumerical characters.
+        Click the button to the right of the Number format definition box,
+        which will display a pop-up menu showing a list of pre-defined number formats.
+    </p>
+    <ul>
+        <li>The characters used in the definitions have the following effect in the worksheet:</li>
+    </ul>
+
+    <h4><a name="hashes_and_zeroes" id="hashes_and_zeroes"></a>Hashes and zeroes</h4>
+    <p>
+        Hashes which appear in the format definition are replaced by numerals (i.e. any of zero to nine) in your worksheet.
+        Zeros will always appear, unless replaced by actual parts of the number.
+        For example, in a number style 0,000 10 will appear as 0,010
+        whereas if the style is defined as #,##0 it will appear as 10 .
+    </p>
+    <p>
+        Where characters after the decimal point are represented by hash signs, trailing zeros will not be displayed.
+        For example, the format 0.## will cause 54.00 to be displayed as 54.
+        If figures after the decimal point are displayed as zeroes, trailing zeros will be displayed.
+        So for currency formats, where you want decimal places always to be displayed, you need to ensure that the format ends with .00 .
+    </p>
+    <p>
+        Enter the unit number format character as a zero character, especially if it is followed by a decimal point and places.
+        This will ensure that numbers between zero and one have 0. in front of them.
+    </p>
+
+    <h4><a name="positive_and_negative_numbers" id="positive_and_negative_numbers"></a>Positive and negative numbers</h4>
+    <p>
+        A number format can have up to three different definitions, for positive and negative numbers and for zero.
+        If you do not define a separate way of formatting negative numbers,
+        they will be displayed in the same format as positive numbers but with a minus sign in front.
+        In practice you need only specify a second format if you want negative numbers to be formatted differently from positive numbers.
+        For example, in a financial worksheets number format it may be useful if negative numbers appear enclosed by brackets.
+    </p>
+    <p>
+        To create separate number formats, enter each format in the number format box separated by a semi-colon.
+        The negative format appears after the semi-colon.
+        So a format for currency with negatives in brackets would be:
+    </p>
+    <pre class="csg-sample-indent">&pound;#,##0.00;(&pound;#,##0.00)</pre>
+    <p>
+        Enter a second semi-colon after the first two formats and a third format can be entered to format the number zero.
+        If you enter a second semi-colon and no format, zero will not be displayed.
+        Equally, if you enter a semi-colon after the first number format,
+        but no special format for negative numbers, negative numbers will not be displayed on the worksheet.
+    </p>
+
+    <h4><a name="percentage" id="percentage"></a>Percentage</h4>
+    <p>
+        This format expresses a number as a percentage.
+        For example, 0.75 will appear as 75%.
+    </p>
+
+    <h4><a name="scientific_number_formats" id="scientific_number_formats"></a>Scientific number formats</h4>
+    <p>
+        You can choose to have numbers expressed as powers of 10, a standard scientific format.
+        To do this, choose the definition
+    </p>
+    <p class="csg-sample-indent csg-dbox-option-value">0.00e+00</p>
+    <p>from the predefined list in the Number formats pop-up menu.</p>
+
+    <h4><a name="engineering_format" id="engineering_format"></a>Engineering format</h4>
+    <p>
+        This format expresses numbers so that they are always expressed in the neatest possible format
+        with the standard SI abbreviations giving you the size of the number.
+        To do this, choose the definition
+    </p>
+    <p class="csg-sample-indent csg-dbox-option-value">g0.##</p>
+    <p>from the predefined list in the Number formats pop-up menu.</p>
+    <p>
+        It will probably be useful to add the appropriate suffix for the measurement.
+        For example, "m" for distance in metres.
+    </p>
+
+    <h4><a name="expressing_roman_numerals" id="expressing_roman_numerals"></a>Expressing Roman numerals</h4>
+    <p>
+        You can specify that numbers are displayed as Roman numerals in upper- or lower-case.
+        Enter <code>R#</code> for upper-case Roman numerals or <code>r#</code> for lower-case.
+        Roman numerals can only be displayed up to 3,999 and of course you can only display whole positive numbers.
+    </p>
+
+    <h1><a name="foreign_formats" id="foreign_formats"></a>Foreign formats</h1>
+    <p>
+        You can use different characters to represent the decimal point and thousands separator.
+        To do this, in the number format box enter the comma or full stop in the UK position,
+        and follow it with the character you want to appear in your document; for example:
+    </p>
+    <pre class="csg-sample-indent">1,.000.,00</pre>
+    <p>which effectively swaps the full stop and comma.</p>
+    <p>
+        Although this is what you are most likely to do with this facility,
+        you can in face use any character as the thousands separator or decimal point.
+    </p>
+
+    <h3><a name="precision" id="precision"></a>Precision</h3>
+    <p>Fireworkz rounds numbers for display (but not calculation) according to the values specified in the Number format.</p>
+
+    <h4>Decimal places</h4>
+    <p>
+        If you want to see more (or fewer) decimal places, type in additional (or remove unwanted) # or 0 characters following the decimal point.
+        For example:
+    </p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <td style="width: 6em;">#.00</td>
+                    <td>
+                        displays two decimal places, with the numbers always shown
+                        whether you enter digits to fill them or not.<br />
+                        So if you typed 4, it would appear as 4.00.
+                    </td>
+                </tr>
+                <tr>
+                    <td>#.#### </td>
+                    <td>
+                        displays four decimal places, which only appear
+                        when there are digits to fill them.<br />
+                        So 4 would appear as 4, 2.25 as 2.25, and 5.123456 as 5.1235.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h4>Rounding large numbers</h4>
+    <p>
+        You can also reduce the value shown, for example showing millions as thousands (as you would in a financial report).
+        To do this, prefix the usual definition with:
+    </p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr><td style="width: 6em;">&gt;</td><td>to truncate numbers by three digits.</td></tr>
+                <tr><td>&gt;&gt;</td><td>to truncate numbers by six digits.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h4><a name="including_text_strings_in_number_formats" id="including_text_strings_in_number_formats"></a>Including text strings in number formats</h4>
+    <p>
+        You can include text strings as part of a number format.
+        This is especially important if you want to use a character which the number format system interprets as a special character, such as r and e.
+        Simply enclose text strings in quote marks (&quot;)
+        or precede a single character with a backslash (\).
+    </p>
+    <p>Use text strings to enter abbreviations for foreign currencies, or any other text you need.</p>
+
+    <h4>Number formats summary</h4>
+    <p>The following table includes examples of some of the possible number format configuations:</p>
+    <div class="csg-page-padding-left">
+        <table border="1" style="border-collapse: collapse;">
+            <colgroup>
+                <col style="width: 7em;" />
+                <col style="width: 6em;" />
+                <col style="width: 7em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <th style="width: 7em;">Definition</th>
+                    <th style="width: 6em;">Entered</th>
+                    <th style="width: 7em;">Appears as</th>
+                    <th>Description</th></tr>
+                <tr>
+                    <td>0</td>
+                    <td>23.2</td>
+                    <td>23</td>
+                    <td>No decimal places; numbers will be rounded up or down to the nearest integer</td>
+                </tr>
+                <tr>
+                    <td>0.##</td>
+                    <td>34.5<br />34</td>
+                    <td>34.5<br />34</td>
+                    <td>Up to two decimal places are available but trailing zeros will be dropped.</td>
+                </tr>
+                <tr>
+                    <td>#,##0.00</td>
+                    <td>34000</td>
+                    <td>34,000.00</td>
+                    <td>Trailing zeros to two decimal places will be displayed; multiples of 1000 separated by commas</td>
+                </tr>
+                <tr>
+                    <td>0.##%</td>
+                    <td>0.756</td>
+                    <td>75.6%</td>
+                    <td>Displays number as a percentage</td>
+                </tr>
+                <tr>
+                    <td>0"%"</td>
+                    <td>75</td>
+                    <td>75%</td>
+                    <td>Displays percentage with no multiplication</td>
+                </tr>
+                <tr>
+                    <td>0.00e+00</td>
+                    <td>150</td>
+                    <td>1.5e+02</td>
+                    <td>Scientific format</td>
+                </tr>
+                <tr>
+                    <td>g0.##</td>
+                    <td>1234</td>
+                    <td>1.23k</td>
+                    <td>Engineering format</td>
+                </tr>
+                <tr>
+                    <td>r#</td>
+                    <td>4</td>
+                    <td>iv</td>
+                    <td>Lower-case Roman numerals</td>
+                </tr>
+                <tr>
+                    <td>x#</td>
+                    <td>10</td>
+                    <td>j</td>
+                    <td>Displays number as a letter of the alphabet</td>
+                </tr>
+                <tr>
+                    <td>£#,###.00;<br />(£#,###.00;); </td>
+                    <td>23.446<br />-23.5<br />0</td>
+                    <td>£24.45<br />(£23.50)<br />blank</td>
+                    <td>Currency format; negative numbers are displayed in brackets rather than with a minus sign</td>
+                </tr>
+                <tr>
+                    <td>#.00;(#.00);</td>
+                    <td>0</td>
+                    <td></td>
+                    <td>Format for displaying zero appears after second semi-colon; here nothing is shown</td>
+                </tr>
+                <tr>
+                    <td>£__0.00</td>
+                    <td>5</td>
+                    <td>£  5.00</td>
+                    <td>Leaves the number of character spaces specified by underline characters between the currency symbol and decimal point</td>
+                </tr>
+                <tr>
+                    <td>&lt;#</td>
+                    <td>1</td>
+                    <td>1000</td>
+                    <td>Shifts number to the left by three decimal places</td>
+                </tr>
+                <tr>
+                    <td>&gt;#</td>
+                    <td>1000</td>
+                    <td>1</td>
+                    <td>
+                        Shifts number to the right by three decimal places<br />
+                        (i.e. displays thousands)
+                    </td>
+                </tr>
+                <tr>
+                    <td>&gt;&gt;#</td>
+                    <td>1000000</td>
+                    <td>1</td>
+                    <td>
+                        Shifts number to the right by six decimal places<br />
+                        (i.e. displays millions)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3><a name="saving_a_number_format_as_a_style" id="saving_a_number_format_as_a_style"></a>Saving a number format as a style</h3>
+    <p>To change the number format defined in a style:</p>
+    <ol>
+        <li>
+            Choose the style you want to edit and click the <span class="csg-dbox-button">Change</span> button.
+            Or create a new style, giving it an appropriate name
+            (such as <span class="csg-user-text">Roman numbers</span>, or <span class="csg-user-text">Percentage</span>),
+            and then click the <span class="csg-dbox-button">New</span> button.
+        </li>
+        <li>Display the <span class="csg-dbox-option">Number</span> section of the Changing style/Define style dialogue box.</li>
+        <li>
+            There will be a number format already shown in the writable field.
+            This is the current number format.
+            Click the button to the right of this field to display a pop-up menu of other predefined number formats.
+            If one of these is what you want, or is closer to what you want,
+            click on it and it will appear in the <span class="csg-dbox-option">Number format</span> writable field.
+        </li>
+        <li>
+            Edit the number format to your requirements.
+            Type in hashes to represent numbers, and any punctuation marks or currency symbols you wish to appear.
+            Remember to specify the precision required after the decimal place.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            The style will be changed as specified and any numbers entered in that style will be reformatted.
+        </li>
+    </ol>
+
+    <h3>Creating your own custom number format</h3>
+    <p>
+        You may find that the alternatives within the list don't quite match your requirements.
+        For example you may want to work in a currency format other than pounds sterling.
+    </p>
+    <p>To do this you should:</p>
+    <ol>
+        <li>Display the <span class="csg-dbox-option">Number</span> section of the Style editor as described above.</li>
+        <li>Select the standard number format which most closely relates to what you want to create.</li>
+        <li>Edit the format in the Number format writable field, adding or removing the necessary characters.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>
+            to save the new number format as part of the style you were editing.
+        </li>
+    </ol>
+
+    <h2><a name="date_and_time_formats" id="date_and_time_formats"></a>Date and time formats</h2>
+
+    <p>
+        Date and time formats are managed via the Number section of the Style editor as well.
+        They can be entered separately, or as part of the same combined date and time format:
+    </p>
+    <p>Your base style contains a date and time format which will be applied to dates and times which Fireworkz recognises.</p>
+    <p>Fireworkz can interpret some sequences of numbers and separator characters as times and dates automatically.</p>
+    <ul>
+        <li>If you enter numbers in the format</li>
+        <li class="csg-list-style-none csg-user-text"> nn.nn.nn</li>
+        <li class="csg-list-style-none">Fireworkz assumes that it is a date.</li>
+    </ul>
+    <ul>
+        <li>If you enter numbers in the format</li>
+        <li class="csg-list-style-none csg-user-text"> nn:nn:nn</li>
+        <li class="csg-list-style-none">Fireworkz assumes that it is a time.</li>
+    </ul>
+    <p>
+        For other numbers, you will need to apply a style to them to format them as times or numbers.
+        Define a style which displays times and numbers in the format you want.
+        As with number formats, several predefined formats are available,
+        or you can use one of the building blocks to design your own custom time and date formats.
+    </p>
+
+    <h3>Date format options</h3>
+    <p>The following table includes examples of some of the possible date and time format configuations:</p>
+    <div class="csg-page-padding-left">
+        <table border="1" style="border-collapse: collapse;">
+            <colgroup>
+                <col style="width: 7em;" />
+                <col style="width: 6em;" />
+                <col style="width: 7em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <th style="width: 7em;">Definition</th>
+                    <th style="width: 6em;">Entered</th>
+                    <th style="width: 7em;">Appears as</th>
+                    <th>Description</th></tr>
+                <tr>
+                    <td>d.m.yyyy</td>
+                    <td>1.1.93</td>
+                    <td>1.1.1993</td>
+                    <td>
+                        No leading zero on single-digit days and months;<br />
+                        four digits of year
+                    </td>
+                </tr>
+                <tr>
+                    <td>dd.mm.yy</td>
+                    <td>1.1.93</td>
+                    <td>01.01.93</td>
+                    <td>
+                        Leading zero on single-digit days and months;<br />
+                        two digits of year
+                    </td>
+                </tr>
+                <tr>
+                    <td>ddd m.yy</td>
+                    <td>1.1.93</td>
+                    <td>1st 1.93</td>
+                    <td>Day appears as cardinal number</td>
+                </tr>
+                <tr>
+                    <td>d Mmm yy</td>
+                    <td>1.2.93</td>
+                    <td>1 Feb 93</td>
+                    <td>Three-letter abbreviated month name with capitalisation</td>
+                </tr>
+                <tr>
+                    <td>d Mmmm yy </td>
+                    <td>1.2.93</td>
+                    <td>1 February 93</td>
+                    <td>Full month name displayed as text</td>
+                </tr>
+                <tr>
+                    <td>d MMM yy</td>
+                    <td>1.2.93</td>
+                    <td>1 FEB 93</td>
+                    <td>Abbreviated text in capitals</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Time format options</h3>
+    <div class="csg-page-padding-left">
+        <table border="1" style="border-collapse: collapse;">
+            <colgroup>
+                <col style="width: 7em;" />
+                <col style="width: 6em;" />
+                <col style="width: 7em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <th style="width: 7em;">Definition</th>
+                    <th style="width: 6em;">Entered</th>
+                    <th style="width: 7em;">Appears as</th>
+                    <th>Description</th></tr>
+                <tr>
+                    <td>hh:mm:ss</td>
+                    <td>13:03:04</td>
+                    <td>13:03:04</td>
+                    <td>24-hour clock; hours, minutes and seconds have leading zeros where required</td>
+                </tr>
+                <tr>
+                    <td>H:mm</td>
+                    <td>18:03:04</td>
+                    <td>18:03</td>
+                    <td>24-hour clock; seconds not displayed; hours do not have leading zero</td>
+                </tr>
+                <tr>
+                    <td>h:mm "am"; <br />h:mm "pm"</td>
+                    <td>17:39:25</td>
+                    <td>5:39 pm</td>
+                    <td>
+                        12-hour clock with no leading zeros and 'am' or 'pm' expressed by text strings -
+                        the semi-colon distinguishes between morning and afternoon
+                    </td>
+                </tr>
+                <tr>
+                    <td>nn:ss</td>
+                    <td>17:39:25</td>
+                    <td>39:25</td>
+                    <td>Minutes and seconds only</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h4><a name="displaying_parts_of_a_time" id="displaying_parts_of_a_time"></a>Displaying parts of a time</h4>
+    <p>
+        You do not have to display all of the time.
+        You may choose only to show hours and minutes, or minutes and seconds.
+        Build the format you want using
+    </p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr><td style="width: 4em;"><code>hh</code></td><td>represents hours;</td></tr>
+                <tr><td><code>mm</code></td><td>represents minutes except that</td></tr>
+                <tr><td><code>nn</code></td><td>is used to represent minutes when these are the first part of the time displayed;</td></tr>
+                <tr><td><code>ss</code></td><td>represents seconds.</td></tr>
+                <tr>
+                    <td><code>:</code></td>
+                    <td>
+                        must be used to separate the components of the time.<br />
+                        This is the character which enables Fireworkz to know that it is dealing with a time.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h4><a name="12_and_24_hour_clocks" id="_12_and_24_hour_clocks"></a>12 hour and 24 hour clock</h4>
+    <p>
+        You can specify 12 hour or 24 hour clocks in your time formats.
+        If you enter a single time format, times will be shown as the 24 hour clock.
+        If you enter two formats, separated by a semi-colon (and no spaces) the 12 hour clock will be used.
+        So
+    </p>
+    <pre class="csg-sample-indent">hh:mm:ss</pre>
+    <p>will produce 24 hour numbers and</p>
+    <pre class="csg-sample-indent">hh:mm:ss;hh:mm:ss</pre>
+    <p>
+        will produce 12 hour numbers.
+        If you create 12 hour clocks, you should also use a text string in the format to indicate whether times are am or pm.
+    </p>
+
+    <h4><a name="text_strings" id="text_strings"></a>Text strings</h4>
+    <p>
+        You can enter text strings, for text to distinguish between am and pm.
+        Remember to enclose the text string in double quotes.
+    </p>
+
+    <h3><a name="creating_date_and_time_formats" id="creating_date_and_time_formats"></a>Creating date and time formats</h3>
+    <p>
+        You can edit date and time formats just like number formats.
+        When you enter a date into a number cell, it is formatted according to the date style defined in the Base style,
+        but you can apply a different format to it by applying a different style to the cell.
+    </p>
+    <ul>
+        <li>
+            Within the <span class="csg-dbox-option">Number</span> section of the <span class="csg-dbox">Style</span> dialogue box,
+            click the button to the right of the date format definition box.
+            A pop-up menu will appear, containing a large selection of pre-defined date and time formats.
+        </li>
+        <li>
+            Pick one of these formats by clicking on it.
+            It will be entered in the date and time definition writable field.
+            If it matches your requirements, that is all you need do;
+            however, just like number formats, you can edit date and time formats
+            to your precise requirements as long as you obey the general rules outlined above.
+        </li>
+    </ul>
+
+    <h3>Saving a date format as part of a style</h3>
+    <p>
+        You can save date formats in exactly the same way as number formats.
+        Define a number format within a style, or create a new style specially for the
+        time or date format you want to apply to certain cells in your worksheet.
+    </p>
+
+    <h2><a name="error_and_string_formats" id="error_and_string_formats"></a>Error and string formats</h2>
+
+    <p>Beneath the section for Number and Date and time formats in the Number section of the Style editor is a section marked Text.</p>
+    <p>
+        This section governs the way strings and Error messages are displayed in number cells.
+        It does not affect the general display of text in your document.
+    </p>
+    <p>There are two standard options:</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <td style="width: 6em;">@</td>
+                    <td>
+                        displays the error message text,
+                        e.g. Circular reference
+                    </td>
+                </tr>
+                <tr>
+                    <td>@;"ERR "@</td>
+                    <td>
+                        displays the error message text prefixed by ERR,
+                        e.g. ERR Circular reference;
+                        strings you enter will not have a prefix
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        You could also edit the message which appears, adding any other text string enclosed by double quotes.
+        The @ character must appear for the precise error message to be displayed in the cell.
+    </p>
+    <p>Note that error messages also appear in the status line when you click on the affected cell.</p>
+
+    <h2><a name="new_object" id="new_object"></a>New object</h2>
+
+    <p>This option governs the way in which blank cells are treated in the document.</p>
+    <ul>
+        <li>
+            If it is set to <span class="csg-dbox-option-value">Number</span>,
+            blank cells are assumed to be number cells and data entry automatically begins in the formula line.
+        </li>
+        <li>
+            If it is set to <span class="csg-dbox-option-value">Text</span>,
+            blank cells are assumed to be text cells and data entry begins on the worksheet.
+        </li>
+    </ul>
+    <p>
+        For spreadsheet documents this option is usually set to Number in the BaseSheet style.
+        However, you may wish to create a style with New object set to Text,
+        so that you can mark columns or rows to be used as headings to make it easier to type text into them.
+    </p>
+
+    <h2><a name="protecting_cells" id="protecting_cells"></a>Protecting cells</h2>
+
+    <p>
+        You will sometimes want to protect cells in your worksheet so that they cannot be edited.
+        New data cannot be entered into protected cells and any formulae contained in them cannot be edited or replaced.
+    </p>
+    <p>
+        Protection is turned on using the Number section of the Style editor.
+        You are advised to set up a style whose only attribute is protection,
+        so that you can apply protection to cells as flexibly as possible.
+        Or you may like to add a background colour to the number protection style,
+        so that you can see on screen which cells have been protected.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg02_entering_and_editing_formulae.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg05_function_reference.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Entering formulae </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Function reference</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

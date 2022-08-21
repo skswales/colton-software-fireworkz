@@ -1,0 +1,60 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "shell: clang build active file",
+            "command": "/usr/bin/clang",
+            "args": [
+                "-c",
+                "${file}",
+                "-o",
+                "${workspaceFolder}/Build/vscode/${fileBasenameNoExtension}.o",
+                "-target",
+                "arm-none-eabi",
+                "-funsigned-char",
+                "-fno-builtin",
+                "-DCROSS_COMPILE",
+                "-DHOST_CLANG",
+                "-DTARGET_RISCOS",
+                "-DRELEASED",
+                "-I${workspaceFolder}",
+                "-I/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/tboxlibs",
+                "-I/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/RISC_OSLib",
+                "-I/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/CLib/clanghack",
+                "-I/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/CLib/msvchack",
+                "-I/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/CLib",
+                "-Wall",
+                "-Wextra",
+                "-Wno-missing-field-initializers"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "clang build active file",
+            "command": "/usr/bin/clang",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-target",
+                "arm-none-eabi",
+                "-funsigned-char"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            }
+        }
+    ]
+}

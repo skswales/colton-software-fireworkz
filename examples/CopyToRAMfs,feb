@@ -1,0 +1,2 @@
+Copy <Obey$Dir>.Apps.Document.FzExamples  RAM:$.FzExamples  ~c f~nr~v
+Filer_OpenDir                             RAM:$.FzExamples

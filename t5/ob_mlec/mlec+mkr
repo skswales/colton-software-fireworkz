@@ -28,7 +28,7 @@ $(PROD_BUILD_DIR).o.Neutral.M30: $(OBJS_30_S)
 # Not present on Windows
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob30: $(T5).ob_mlec.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob30: $(T5).ob_mlec.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

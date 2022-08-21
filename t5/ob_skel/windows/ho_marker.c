@@ -67,8 +67,13 @@ cache_bitmap_size(
     _OutRef_    P_GDI_SIZE p_size)
 {
     const PC_MARKER_BITMAP_TABLE p_marker_bitmap = &marker_bitmap_table[ruler_marker];
-    HBITMAP hBitmap = (HBITMAP) LoadImage(resource_get_object_resources(OBJECT_ID_SKEL), p_marker_bitmap->id, IMAGE_BITMAP, 0, 0, 0);
+    HINSTANCE hInstance_fallback;
+    const HINSTANCE hInstance = resource_get_object_resources(OBJECT_ID_SKEL, &hInstance_fallback);
+    HBITMAP hBitmap;
     BITMAP bitmap;
+
+    if(NULL == (hBitmap = (HBITMAP) LoadImage(hInstance, p_marker_bitmap->id, IMAGE_BITMAP, 0, 0, 0)))
+        hBitmap = (HBITMAP) LoadImage(hInstance_fallback, p_marker_bitmap->id, IMAGE_BITMAP, 0, 0, 0);
 
     if(NULL == hBitmap)
     {
@@ -203,11 +208,16 @@ host_paint_marker(
 {
     const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
     const PC_MARKER_BITMAP_TABLE p_marker_bitmap = &marker_bitmap_table[ruler_marker];
-    HBITMAP hBitmap = (HBITMAP) LoadImage(resource_get_object_resources(OBJECT_ID_SKEL), p_marker_bitmap->id, IMAGE_BITMAP, 0, 0, 0);
+    HINSTANCE hInstance_fallback;
+    const HINSTANCE hInstance = resource_get_object_resources(OBJECT_ID_SKEL, &hInstance_fallback);
+    HBITMAP hBitmap;
     GDI_POINT gdi_point;
     BITMAP bm;
     POINT ptSize;
     HDC hdcTemp;
+
+    if(NULL == (hBitmap = (HBITMAP) LoadImage(hInstance, p_marker_bitmap->id, IMAGE_BITMAP, 0, 0, 0)))
+        hBitmap = (HBITMAP) LoadImage(hInstance_fallback, p_marker_bitmap->id, IMAGE_BITMAP, 0, 0, 0);
 
     assert(ruler_marker > RULER_NO_MARK);
     assert(ruler_marker < RULER_MARKER_COUNT);

@@ -1,0 +1,149 @@
+// 1036.rc (French fr-fr)
+
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+
+#include "../../../../ob_skel/version.h"
+
+// Language independent resources (exclude most with //-lang comment)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+100                     ICON    "../../../../firewrkz/Resources/Windows/Neutral/prog.ico"
+
+// Unused by application source, but IS used on installation as doc icon
+//-lang 101                     ICON    "../../../../firewrkz/Resources/Windows/Neutral/doc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+//-lang 80                      BITMAP  "../../../../firewrkz/Resources/Windows/Neutral/banner.bmp"
+
+#if !defined(NOT_ALL_IN_ONE)
+
+// from object 00
+
+// language independent resources
+//-lang #include "../../../../ob_skel/resource/Neutral/skel-li.rci"
+
+// from object 01
+
+// language independent resources
+//-lang #include "../../../../ob_ss/resource/Neutral/ss-li.rci"
+
+// from object 06
+
+// language independent resources
+//-lang #include "../../../../ob_chart/resource/Neutral/chart-li.rci"
+
+#endif /* NOT_ALL_IN_ONE */
+
+/////////////////////////////////////////////////////////////////////////////
+#define APSTUDIO_READONLY_SYMBOLS
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#undef APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Germany) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(65001) // UTF-8
+#endif //_WIN32
+
+#if !defined(NOT_ALL_IN_ONE)
+
+// from object 00
+
+// language dependent resources
+#include "../../../../ob_skel/resource/France/skel-ld.rci"
+
+// normal STRINGTABLE
+#include "../../../../firewrkz/Resources/Windows/France/res00.rci"
+
+// from object 01
+
+// language dependent resources
+#include "../../../../ob_ss/resource/France/ss-ld.rci"
+
+// normal STRINGTABLE
+#include "../../../../firewrkz/Resources/Windows/France/res01.rci"
+
+// from object 06
+
+// language dependent resources
+#include "../../../../ob_chart/resource/France/chart-ld.rci"
+
+// normal STRINGTABLE
+#include "../../../../firewrkz/Resources/Windows/France/res06.rci"
+
+// from all other objects
+
+#include "../../../../firewrkz/Resources/Windows/France/resXX.rci"
+
+#endif /* NOT_ALL_IN_ONE */
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+#define VER_PRODUCTVERSION          VER_FILEVERSION
+#define VER_PRODUCTVERSION_STR      VER_FILEVERSION_STR
+
+#ifdef _DEBUG
+#define VER_DEBUG                   VS_FF_DEBUG
+#else
+#define VER_DEBUG                   0
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION VER_FILEVERSION
+ PRODUCTVERSION VER_PRODUCTVERSION
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS VER_DEBUG
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040C04b0"
+        BEGIN
+            VALUE "CompanyName", "Colton Software\0"
+            VALUE "FileDescription", "Colton Fireworkz for Windows [France]\0"
+            VALUE "FileVersion", VER_FILEVERSION_STR
+            VALUE "InternalName", "firewrkz\0"
+            VALUE "LegalCopyright", "Copyright (C) 1992-2020 Colton Software. "
+                                    "Veuillez consulter RelNotes.htm pour des informations supplémentaires sur les droits d'auteur\0"
+            VALUE "LegalTrademarks", "Veuillez consulter RelNotes.htm pour toutes les informations sur les marques\0"
+            VALUE "OriginalFilename", "1036.dll\0"
+            VALUE "ProductName", "Colton Fireworkz for Windows\0"
+            VALUE "ProductVersion", VER_PRODUCTVERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x40C, 1200
+    END
+END
+
+#endif    // !_MAC
+
+#endif    // French (France) resources
+
+// end of firewrkz.rc

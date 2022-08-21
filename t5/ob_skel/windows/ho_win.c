@@ -918,11 +918,12 @@ host_show_caret(
 extern void
 host_get_pixel_size(
     _HwndRef_opt_ HWND hwnd /* NULL for screen */,
-    _OutRef_    PSIZE p_size)
+    _OutRef_opt_  P_GDI_COORD p_size_cx,
+    _OutRef_opt_  P_GDI_COORD p_size_cy)
 {
     const HDC hDC = GetDC(hwnd);
-    p_size->cx = GetDeviceCaps(hDC, LOGPIXELSX);
-    p_size->cy = GetDeviceCaps(hDC, LOGPIXELSY);
+    if(NULL != p_size_cx) *p_size_cx = GetDeviceCaps(hDC, LOGPIXELSX);
+    if(NULL != p_size_cy) *p_size_cy = GetDeviceCaps(hDC, LOGPIXELSY);
     void_WrapOsBoolChecking(1 == ReleaseDC(hwnd, hDC));
 }
 
@@ -963,8 +964,8 @@ host_view_init(
     else
     {
 #if 1
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+        GDI_SIZE PixelsPerInch;
+        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
         size.cx = (89 * PixelsPerInch.cx) / 10;
         size.cy =   7 * PixelsPerInch.cy;
 #else
@@ -1757,7 +1758,7 @@ scroll_pane(
     offset.x = p_pane->scroll.x - point.x;
     offset.y = p_pane->scroll.y - point.y;
 
-    trace_2(TRACE_WINDOWS_HOST, TEXT("scroll_pane: event_handler %d, new scroll posn ") S32_TFMT, event_handler, new_scroll);
+    trace_2(TRACE_WINDOWS_HOST, TEXT("scroll_pane: event_handler ") U32_TFMT TEXT(", new scroll posn ") S32_TFMT, (U32) event_handler, new_scroll);
     trace_1(TRACE_WINDOWS_HOST, TEXT("scroll_pane: event handler yields slave id %d"), p_host_event_desc->slave_id);
     trace_1(TRACE_WINDOWS_HOST, TEXT("scroll_pane: event handler yields HWND ") HOST_WND_XTFMT, p_view->edge[p_host_event_desc->slave_id].hwnd);
 
@@ -2255,7 +2256,7 @@ host_onPaint_pane_window(
 
     zero_struct_ptr(p_viewevent_redraw);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     // define the redraw flags from the pending update
@@ -2279,7 +2280,6 @@ host_onPaint_pane_window(
     p_redraw_context->display_mode = p_view->display_mode;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     host_redraw_context_set_host_xform(p_redraw_context, &p_view->host_xform[p_host_event_desc->xform_index]);
 
@@ -2537,31 +2537,31 @@ host_acquire_global_clipboard(
     HWND hwndClipOwner = NULL;
     BOOL res;
 
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(")"), acquiring_docno, acquiring_viewno);
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT TEXT(")"), acquiring_docno, acquiring_viewno);
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         hwndClipOwner = p_view->main[WIN_BACK].hwnd;
         assert(p_view->docno == acquiring_docno);
     }
 
     res = WrapOsBoolChecking(OpenClipboard(hwndClipOwner)); /* NULL -> this task will own */
-    trace_1(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: OpenClipboard res=%s"), report_boolstring(res));
+    trace_1(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard: OpenClipboard res=%s"), report_boolstring(res));
 
     if(res)
     {
-        trace_0(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: EmptyClipboard"));
+        trace_0(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard: EmptyClipboard"));
         EmptyClipboard(); /* we may immediately get WM_DESTROYCLIPBOARD if this window has owned clipboard even if it has already emptied it */
 
         g_global_clipboard_owning_docno  = acquiring_docno;
         g_global_clipboard_owning_viewno = acquiring_viewno;
-        trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=%d, viewno:=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+        trace_2(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard: cbo docno:=") DOCNO_TFMT TEXT(", viewno:=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
     }
     else
     {
         g_global_clipboard_owning_docno  = DOCNO_NONE;
         g_global_clipboard_owning_viewno = VIEWNO_NONE;
-        trace_0(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
+        trace_0(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
     }
 
     return(res);
@@ -2571,8 +2571,8 @@ extern void
 host_release_global_clipboard(
     _InVal_     BOOL render_if_acquired)
 {
-    trace_1(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_1(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard: cbo docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     if(DOCNO_NONE != g_global_clipboard_owning_docno)
     {
@@ -2583,20 +2583,22 @@ host_release_global_clipboard(
         {
             if(render_if_acquired)
             {
-                trace_0(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: clip_render_all_formats"));
+                trace_0(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard: clip_render_all_formats"));
                 status_assert(clip_render_all_formats(global_clipboard_owning_p_docu));
             }
             else
             {
-                trace_0(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: EmptyClipboard"));
+                trace_0(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard: EmptyClipboard"));
                 EmptyClipboard(); /* we will immediately get WM_DESTROYCLIPBOARD */
             }
+
+            host_close_global_clipboard(); /* SKS 13nov2019 */
         }
     }
 
     g_global_clipboard_owning_docno  = DOCNO_NONE;
     g_global_clipboard_owning_viewno = VIEWNO_NONE;
-    trace_0(TRACE_WINDOWS_HOST, TEXT("host_release_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
 }
 
 _Check_return_
@@ -2609,17 +2611,28 @@ host_open_global_clipboard(
     BOOL res;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(")"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_open_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT TEXT(")"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         hwndClipOwner = p_view->main[WIN_BACK].hwnd;
         assert(p_view->docno == docno_from_p_docu(p_docu));
     }
 
     res = WrapOsBoolChecking(OpenClipboard(hwndClipOwner));
-    trace_1(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard: OpenClipboard res=%s"), report_boolstring(res));
+    trace_1(TRACE_APP_CLIPBOARD, TEXT("host_open_global_clipboard: OpenClipboard res=%s"), report_boolstring(res));
     return(res);
+}
+
+extern void
+host_close_global_clipboard(void)
+{
+    BOOL res;
+
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("host_close_global_clipboard"));
+
+    res = WrapOsBoolChecking(CloseClipboard());
+    trace_1(TRACE_APP_CLIPBOARD, TEXT("host_close_global_clipboard: CloseClipboard res=%s"), report_boolstring(res));
 }
 
 static void
@@ -2627,8 +2640,8 @@ host_onClose_process_clipboard(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno_from_p_docu(p_docu), viewno_from_p_view(p_view));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_onClose: msg docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, docno_from_p_docu(p_docu), viewno_from_p_view(p_view));
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_onClose: cbo docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     if( (g_global_clipboard_owning_docno  != docno_from_p_docu(p_docu))  ||
         (g_global_clipboard_owning_viewno != viewno_from_p_view(p_view)) )
@@ -2646,13 +2659,13 @@ host_onClose_process_clipboard(
     /* render all we can before it goes awry */
     if(host_open_global_clipboard(p_docu, p_view))
     {
-        trace_0(TRACE_WINDOWS_HOST, TEXT("host_onClose: clip_render_all_formats"));
+        trace_0(TRACE_APP_CLIPBOARD, TEXT("host_onClose: clip_render_all_formats"));
         status_assert(clip_render_all_formats(p_docu));
     }
 
     g_global_clipboard_owning_docno  = DOCNO_NONE;
     g_global_clipboard_owning_viewno = VIEWNO_NONE;
-    trace_0(TRACE_WINDOWS_HOST, TEXT("host_onClose: cbo docno:=NONE, viewno:=NONE"));
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("host_onClose: cbo docno:=NONE, viewno:=NONE"));
 #endif
 }
 
@@ -3003,15 +3016,10 @@ host_onCommand(
 {
     UNREFERENCED_PARAMETER_InVal_(codeNotify);
 
-    switch(id)
+    if(id >= IDM_START)
     {
-    default:
-        if(id >= IDM_START)
-        {
-            status_line_auto_clear(p_docu);
-            consume_bool(ho_execute_menu_command(p_docu, p_view, id, FALSE));
-        }
-        break;
+        status_line_auto_clear(p_docu);
+        consume_bool(ho_execute_menu_command(p_docu, p_view, id, FALSE));
     }
 }
 
@@ -3367,6 +3375,26 @@ wndproc_host_onMouseMove(
 }
 
 static void
+host_view_scroll_wheel_v(
+    _DocuRef_   P_DOCU p_docu,
+    _ViewRef_   P_VIEW p_view,
+    _InVal_     EVENT_HANDLER event_handler,
+    _InVal_     int zDelta)
+{
+    const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
+    const PC_HOST_PANE_DESC p_host_pane_desc = &host_pane_desc_table[p_host_event_desc->pane_id];
+    const P_PANE p_pane = &p_view->pane[p_host_event_desc->pane_id];
+    EVENT_HANDLER event_handler_scroll = p_host_pane_desc->vscroll_event_handler;
+    S32 new_scroll, inc_scroll;
+
+    inc_scroll = (ho_win_state.metrics.scroll.y * zDelta) / WHEEL_DELTA;
+
+    new_scroll = p_pane->scroll.y - inc_scroll;
+
+    scroll_pane(p_docu, p_view, event_handler_scroll, new_scroll);
+}
+
+static void
 host_onMouseWheel(
     _InVal_     int xPos,
     _InVal_     int yPos,
@@ -3391,22 +3419,12 @@ host_onMouseWheel(
 #endif
 
     if(fwKeys & MK_CONTROL)
-    {   /* Zoom the whole view (button towards screen -> negative delta -> smaller text, i.e. lower zoom factor) */
-        view_set_zoom_from_wheel_delta(p_docu, p_view, (-zDelta * 10) / WHEEL_DELTA);
+    {   /* Zoom the whole view (button away from screen -> negative delta -> smaller text, i.e. lower scale factor) */
+        view_set_scale_from_wheel_delta(p_docu, p_view, (zDelta * 10) / WHEEL_DELTA);
     }
     else
     {   /* Scroll the corresponding vertical scroll bar */
-        const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
-        const PC_HOST_PANE_DESC p_host_pane_desc = &host_pane_desc_table[p_host_event_desc->pane_id];
-        const P_PANE p_pane = &p_view->pane[p_host_event_desc->pane_id];
-        EVENT_HANDLER event_handler_scroll = p_host_pane_desc->vscroll_event_handler;
-        S32 new_scroll, inc_scroll;
-
-        inc_scroll = (ho_win_state.metrics.scroll.y * zDelta) / WHEEL_DELTA;
-
-        new_scroll = p_pane->scroll.y - inc_scroll;
-
-        scroll_pane(p_docu, p_view, event_handler_scroll, new_scroll);
+        host_view_scroll_wheel_v(p_docu, p_view, event_handler, zDelta);
     }
 }
 
@@ -3438,6 +3456,28 @@ wndproc_host_onMouseWheel(
     FORWARD_WM_MOUSEWHEEL(hwnd_msg, xPos, yPos, zDelta, fwKeys, DefWindowProc);
 }
 
+static void
+host_view_scroll_wheel_h(
+    _DocuRef_   P_DOCU p_docu,
+    _ViewRef_   P_VIEW p_view,
+    _InVal_     EVENT_HANDLER event_handler,
+    _InVal_     int zDelta)
+{
+    const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
+    const PC_HOST_PANE_DESC p_host_pane_desc = &host_pane_desc_table[p_host_event_desc->pane_id];
+    const P_PANE p_pane = &p_view->pane[p_host_event_desc->pane_id];
+    EVENT_HANDLER event_handler_scroll = p_host_pane_desc->hscroll_event_handler;
+    S32 new_scroll, inc_scroll;
+
+    new_scroll = p_pane->scroll.x;
+
+    inc_scroll = (ho_win_state.metrics.scroll.x * zDelta) / WHEEL_DELTA;
+
+    new_scroll -= inc_scroll;
+
+    scroll_pane(p_docu, p_view, event_handler_scroll, new_scroll);
+}
+
 _Check_return_
 static BOOL
 host_onMouseHWheel(
@@ -3458,24 +3498,12 @@ host_onMouseHWheel(
         return(FALSE);
 
     if(fwKeys & MK_CONTROL)
-    {   /* Zoom the whole view (button towards screen -> negative delta -> smaller text, i.e. lower zoom factor) */
-        view_set_zoom_from_wheel_delta(p_docu, p_view, (-zDelta * 10) / WHEEL_DELTA);
+    {   /* Zoom the whole view (button away from screen -> negative delta -> smaller text, i.e. lower scale factor) */
+        view_set_scale_from_wheel_delta(p_docu, p_view, (zDelta * 10) / WHEEL_DELTA);
     }
     else
     {   /* Scroll the corresponding horizontal scroll bar */
-        const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
-        const PC_HOST_PANE_DESC p_host_pane_desc = &host_pane_desc_table[p_host_event_desc->pane_id];
-        const P_PANE p_pane = &p_view->pane[p_host_event_desc->pane_id];
-        EVENT_HANDLER event_handler_scroll = p_host_pane_desc->hscroll_event_handler;
-        S32 new_scroll, inc_scroll;
-
-        new_scroll = p_pane->scroll.x;
-
-        inc_scroll = (ho_win_state.metrics.scroll.x * zDelta) / WHEEL_DELTA;
-
-        new_scroll -= inc_scroll;
-
-        scroll_pane(p_docu, p_view, event_handler_scroll, new_scroll);
+        host_view_scroll_wheel_h(p_docu, p_view, event_handler, zDelta);
     }
 
     return(TRUE); /* MUST indicate this to stop OS doing emulation */
@@ -3545,7 +3573,7 @@ wndproc_host_onSetFocus(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        trace_1(TRACE_WINDOWS_HOST, TEXT("WM_SETFOCUS: received, event handler %d"), event_handler);
+        trace_1(TRACE_WINDOWS_HOST, TEXT("WM_SETFOCUS: received, event handler %u"), (U32) event_handler);
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_SETFOCUS: cached hwnd ") HOST_WND_XTFMT, ho_win_state.caret.visible.hwnd);
         host_onSetFocus(p_docu_from_docno_valid(docno));
         return;
@@ -3576,7 +3604,7 @@ wndproc_host_onKillFocus(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        trace_1(TRACE_WINDOWS_HOST, TEXT("WM_KILLFOCUS: received, event handler %d"), event_handler);
+        trace_1(TRACE_WINDOWS_HOST, TEXT("WM_KILLFOCUS: received, event handler %u"), (U32) event_handler);
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_KILLFOCUS: cached hwnd ") HOST_WND_XTFMT, ho_win_state.caret.visible.hwnd);
         host_onKillFocus(p_docu_from_docno_valid(docno));
         return;
@@ -3770,8 +3798,8 @@ wndproc_host_onDestroyClipboard(
         /*EMPTY*/ /* we no longer own the clipboard, regardless */
     }
 
-    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno, viewno_from_p_view_fn(p_view));
-    trace_2(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_DESTROYCLIPBOARD: msg docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, docno, viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_DESTROYCLIPBOARD: cbo docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     if(DOCNO_NONE == g_global_clipboard_owning_docno)
     {   /* may already have been 'released' and emptied */
@@ -3788,8 +3816,12 @@ wndproc_host_onDestroyClipboard(
 
     g_global_clipboard_owning_docno  = DOCNO_NONE;
     g_global_clipboard_owning_viewno = VIEWNO_NONE;
-    trace_0(TRACE_WINDOWS_HOST, TEXT("WM_DESTROYCLIPBOARD: cbo docno:=NONE, viewno:=NONE"));
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_DESTROYCLIPBOARD: cbo docno:=NONE, viewno:=NONE"));
 }
+
+/* MSDN notes: When responding to the WM_RENDERFORMAT and WM_RENDERALLFORMATS messages, the clipboard owner must not call OpenClipboard before calling SetClipboardData */
+
+/* It is wrong - see 'The Old New Thing' blog 'What is the proper handling of WM_RENDERFORMAT and WM_RENDERALLFORMATS?' */
 
 static HANDLE /* surely wrong */
 wndproc_host_onRenderFormat(
@@ -3803,14 +3835,14 @@ wndproc_host_onRenderFormat(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: received, event handler %d, format ") U32_XTFMT, event_handler, (U32) uFormat);
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno, viewno_from_p_view_fn(p_view));
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+        trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERFORMAT: received, event handler %u, format ") U32_XTFMT, (U32) event_handler, (U32) uFormat);
+        trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERFORMAT: msg docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, docno, viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERFORMAT: cbo docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
         if(DOCNO_NONE == g_global_clipboard_owning_docno)
         {   /* may already have been 'released' and emptied */
             assert(VIEWNO_NONE == g_global_clipboard_owning_viewno);
-            trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: deny render request"));
+            trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERFORMAT: deny render request"));
             lresult = 1; /* deny render request */
         }
         else
@@ -3820,11 +3852,11 @@ wndproc_host_onRenderFormat(
             assert(g_global_clipboard_owning_docno  == docno);
             assert(g_global_clipboard_owning_viewno == viewno_from_p_view_fn(p_view));
 
-            /* clipboard is already open ready to receive data */
+            /* NB the clipboard is already open ready to receive data */
 
             if(status_fail(clip_render_format(global_clipboard_owning_p_docu, uFormat)))
             {
-                trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERFORMAT: clip_render_format failed"));
+                trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERFORMAT: clip_render_format failed"));
                 lresult = 1; /* didn't work */
             }
         }
@@ -3834,6 +3866,10 @@ wndproc_host_onRenderFormat(
 
     return(FORWARD_WM_RENDERFORMAT(hwnd, uFormat, DefWindowProc));
 }
+
+/* MSDN notes contradicting above: When responding to a WM_RENDERALLFORMATS message, the clipboard owner must call the OpenClipboard and EmptyClipboard functions before calling SetClipboardData */
+
+/* It too is wrong - see 'The Old New Thing' blog 'What is the proper handling of WM_RENDERFORMAT and WM_RENDERALLFORMATS?' */
 
 /* message sent to window that owns the clipboard */
 
@@ -3848,14 +3884,14 @@ wndproc_host_onRenderAllFormats(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        trace_1(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: received, event handler %d"), event_handler);
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: msg docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), docno, viewno_from_p_view_fn(p_view));
-        trace_2(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+        trace_1(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: received, event handler ") U32_TFMT, (U32) event_handler);
+        trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: msg docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, docno, viewno_from_p_view_fn(p_view));
+        trace_2(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: cbo docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
         if(DOCNO_NONE == g_global_clipboard_owning_docno)
         {   /* may already have been 'released' and emptied */
             assert(VIEWNO_NONE == g_global_clipboard_owning_viewno);
-            trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: deny render request"));
+            trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: deny render request"));
             lresult = 1; /* deny render request */
         }
         else
@@ -3870,13 +3906,16 @@ wndproc_host_onRenderAllFormats(
             {
                 if(status_fail(clip_render_all_formats(global_clipboard_owning_p_docu)))
                 {
-                    trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: clip_render_all_formats failed"));
+                    trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: clip_render_all_formats failed"));
                     lresult = 1; /* didn't work */
                 }
+
+                trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: CloseClipboard"));
+                host_close_global_clipboard();
             }
             else
             {
-                trace_0(TRACE_WINDOWS_HOST, TEXT("WM_RENDERALLFORMATS: can't lock clipboard for our use"));
+                trace_0(TRACE_APP_CLIPBOARD, TEXT("WM_RENDERALLFORMATS: can't lock clipboard for our use"));
                 lresult = 1; /* can't lock clipboard for our use */
             }
         }
@@ -4561,7 +4600,7 @@ send_mouse_event(
     hard_assert(TRUE);
 
     /* pass the event down to the event handler */
-    (*p_host_event_desc->p_proc_event) (p_docu, t5_message, &viewevent_click);
+    (* p_host_event_desc->p_proc_event) (p_docu, t5_message, &viewevent_click);
 
     hard_assert(FALSE);
 
@@ -5183,7 +5222,7 @@ host_update_fast_start(
 
             {
             static REDRAW_CONTEXT_CACHE redraw_context_cache; /* can't get caller to give us one sensibly */
-            zero_struct(redraw_context_cache);
+            zero_struct_fn(redraw_context_cache);
             p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
             } /*block*/
 
@@ -5204,7 +5243,6 @@ host_update_fast_start(
             p_redraw_context->display_mode = p_view->display_mode;
 
             p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-            p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
             host_redraw_context_set_host_xform(p_redraw_context, &p_view->host_xform[p_host_event_desc->xform_index]);
 

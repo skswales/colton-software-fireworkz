@@ -189,7 +189,7 @@ extern P_NUMFORM_CONTEXT
 get_p_numform_context(
     _DocuRef_   PC_DOCU p_docu)
 {
-    if(!IS_DOCU_NONE(p_docu) && (NULL != p_docu->p_numform_context))
+    if(DOCU_NOT_NONE(p_docu) && (NULL != p_docu->p_numform_context))
         return(p_docu->p_numform_context);
 
     return(p_docu_from_config()->p_numform_context);
@@ -378,6 +378,9 @@ T5_MSG_PROTO(static, t5_msg_insert_ownform, P_MSG_INSERT_OWNFORM p_msg_insert_ow
     case FILETYPE_T5_COMMAND:
         of_ip_format.flags.is_template = 1;
         break;
+
+    case FILETYPE_T5_HYBRID_DRAW:
+        return(status_check());
     }
 
     of_ip_format.flags.insert = p_msg_insert_ownform->insert;
@@ -548,15 +551,387 @@ T5_MSG_PROTO(static, skel_msg_caret_show_claim, P_CARET_SHOW_CLAIM p_caret_show_
     return(status);
 }
 
+T5_CMD_PROTO(static, object_skel_cmd)
+{
+    switch(T5_MESSAGE_CMD_OFFSET(t5_message))
+    {
+    /* many commands are vectored to flow object */
+    default:
+        return(docu_flow_object_call(p_docu, t5_message, de_const_cast(P_T5_CMD, p_t5_cmd)));
+
+    /* many commands are vectored to input focus object */
+#if 0
+    /* these commands are handled with fo dispatch - see sk_table */
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECT_WORD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECT_CELL):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECT_DOCUMENT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_TOGGLE_MARKS):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECTION_CLEAR):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECTION_COPY):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECTION_CUT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECTION_DELETE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PASTE_AT_CURSOR):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SETC_UPPER):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SETC_LOWER):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SETC_INICAP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SETC_SWAP):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DELETE_CHARACTER_LEFT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DELETE_CHARACTER_RIGHT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DELETE_LINE):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURSOR_LEFT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURSOR_RIGHT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURSOR_UP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURSOR_DOWN):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_CURSOR_LEFT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_CURSOR_RIGHT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_CURSOR_UP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_CURSOR_DOWN):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_WORD_LEFT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_WORD_RIGHT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_WORD_LEFT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_WORD_RIGHT):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PAGE_UP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PAGE_DOWN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_PAGE_UP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_PAGE_DOWN):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_LINE_START):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_LINE_END):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_LINE_START):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_LINE_END):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DOCUMENT_BOTTOM):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DOCUMENT_TOP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_DOCUMENT_BOTTOM):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SHIFT_DOCUMENT_TOP):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_TAB_LEFT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_TAB_RIGHT):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_RETURN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ESCAPE):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_BOX):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_STYLE_APPLY):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_STYLE_APPLY_SOURCE):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FORCE_RECALC):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SEARCH):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SNAPSHOT):
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_FILE_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_X):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_Y):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_MS_FIELD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SS_NAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_WHOLENAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_LEAFNAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_RETURN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SOFT_HYPHEN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_WORD_COUNT):
+        return(docu_focus_owner_object_call(p_docu, t5_message, de_const_cast(P_T5_CMD, p_t5_cmd)));
+#endif
+
+    /* many commands are vectored to specific other objects */
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_BOX_INTRO):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_STYLE_BUTTON):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_STYLE_FOR_CONFIG):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_EFFECTS_BUTTON):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_STYLE_REGION_EDIT):
+        return(object_call_id_load(p_docu, t5_message, de_const_cast(P_T5_CMD, p_t5_cmd), OBJECT_ID_SKEL_SPLIT));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_BACKDROP):       /* make/adjust backdrop */
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_BACKDROP_INTRO): /* make/adjust backdrop */
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_TWIN):      /* compatibility with older readers */
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_BACKDROP):  /* different so that backdrops can be rejected on file insert 'cos they aren't cell relative */
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_BACK):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_SWAP):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_EMBED):
+        return(object_call_id_load(p_docu, t5_message, de_const_cast(P_T5_CMD, p_t5_cmd), OBJECT_ID_NOTE));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_BUTTON):
+        return(object_call_id_load(p_docu, t5_message, de_const_cast(P_T5_CMD, p_t5_cmd), OBJECT_ID_TOOLBAR));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INFO):
+        return(t5_cmd_info(p_docu));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_QUIT):
+        return(t5_cmd_quit(p_docu));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_OBJECT_ENSURE):
+        return(t5_cmd_object_ensure(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SELECTION_MAKE):
+        return(t5_cmd_selection_make(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CTYPETABLE):
+        return(t5_cmd_ctypetable(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NUMFORM_LOAD):
+        return(t5_cmd_numform_load(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NUMFORM_DATA):
+        return(t5_cmd_numform_data(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_CONTEXT):
+        return(t5_cmd_ss_context(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SET_INTERACTIVE):
+        return(t5_cmd_set_interactive(/*p_docu, p_data*/));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_INTRO_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_INTRO_TIME):
+        return(t5_cmd_insert_field_intro_date(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_INTRO_PAGE):
+        return(t5_cmd_insert_field_intro_page(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURRENT_DOCUMENT):
+        return(t5_cmd_current_document(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURRENT_POSITION):
+        return(t5_cmd_current_position(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_AUTO_SAVE):
+        return(t5_cmd_auto_save(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_AUTO_SAVE):
+        return(t5_cmd_choices_auto_save(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_DISPLAY_PICTURES):
+        return(t5_cmd_choices_display_pictures(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_EMBED_INSERTED_FILES):
+        return(t5_cmd_choices_embed_inserted_files(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_KERNING):
+        return(t5_cmd_choices_kerning(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_DITHERING):
+        return(t5_cmd_choices_dithering(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_STATUS_LINE):
+        return(t5_cmd_choices_status_line(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_TOOLBAR):
+        return(t5_cmd_choices_toolbar(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_UPDATE_STYLES_FROM_CHOICES):
+        return(t5_cmd_choices_update_styles_from_choices(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_ASCII_LOAD_AS_DELIMITED):
+        return(t5_cmd_choices_ascii_load_as_delimited(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_ASCII_LOAD_DELIMITER):
+        return(t5_cmd_choices_ascii_load_delimiter(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_ASCII_LOAD_AS_PARAGRAPHS):
+        return(t5_cmd_choices_ascii_load_as_paragraphs(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES):
+        return(t5_cmd_choices(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FONTMAP):
+        return(t5_cmd_fontmap(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FONTMAP_END):
+        return(t5_cmd_fontmap_end(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FONTMAP_REMAP):
+        return(t5_cmd_fontmap_remap(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_MENU_ADD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_MENU_ADD_RAW):
+        return(t5_cmd_menu_add(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_MENU_DELETE):
+        return(t5_cmd_menu_delete(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_MENU_NAME):
+        return(t5_cmd_menu_name(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DEFINE_KEY):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DEFINE_KEY_RAW):
+        return(t5_cmd_define_key(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PAPER):
+        return(t5_cmd_paper(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PAPER_INTRO):
+        return(t5_cmd_paper_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PAPER_SCALE):
+        return(t5_cmd_paper_scale(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PAPER_SCALE_INTRO):
+        return(t5_cmd_paper_scale_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PRINT_INTRO):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PRINT_EXTRA_INTRO):
+        return(t5_cmd_print_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PRINT):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PRINT_EXTRA):
+        return(t5_cmd_print(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PRINT_QUALITY):
+        return(t5_cmd_print_quality(p_docu, t5_message, p_t5_cmd));
+
+#if WINDOWS
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_PRINT_SETUP):
+        return(t5_cmd_print_setup(p_docu, t5_message, p_t5_cmd));
+#endif
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NEW_DOCUMENT_INTRO):
+        return(t5_cmd_new_document_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NEW_DOCUMENT_DEFAULT):
+        return(t5_cmd_new_document_default(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_LOAD):
+        return(t5_cmd_load(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_LOAD_TEMPLATE):
+        return(t5_cmd_load_template(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_LOAD_FOREIGN):
+        return(t5_cmd_load_foreign(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_BIND_FILE_TYPE):
+        return(t5_cmd_bind_file_type(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_OBJECT_BIND_CONSTRUCT):
+        return(t5_cmd_object_bind_construct(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_OBJECT_BIND_LOADER):
+        return(t5_cmd_object_bind_loader(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_OBJECT_BIND_SAVER):
+        return(t5_cmd_object_bind_saver(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE):
+        return(t5_cmd_save(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS):
+        return(t5_cmd_save_as(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_INTRO):
+        return(t5_cmd_save_as_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_TEMPLATE):
+        return(t5_cmd_save_as_template(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_TEMPLATE_INTRO):
+        return(t5_cmd_save_as_template_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_FOREIGN):
+        return(t5_cmd_save_as_foreign(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_FOREIGN_INTRO):
+        return(t5_cmd_save_as_foreign_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_DRAWFILE):
+        return(t5_cmd_save_as_drawfile(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_AS_DRAWFILE_INTRO):
+        return(t5_cmd_save_as_drawfile_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_PICTURE):
+        return(t5_cmd_save_picture(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_PICTURE_INTRO):
+        return(t5_cmd_save_picture_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SAVE_CLIPBOARD):
+        return(t5_cmd_save_clipboard(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_NEW):
+        return(t5_cmd_view_new(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_CONTROL_INTRO):
+        return(t5_cmd_view_control_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_CONTROL):
+        return(t5_cmd_view_control(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_SCALE_INTRO):
+        return(t5_cmd_view_scale_intro(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_SCALE):
+        return(t5_cmd_view_scale(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_CREATE):
+        return(t5_cmd_view_create(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_SIZE):
+        return(t5_cmd_view_size(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_POSN):
+        return(t5_cmd_view_posn(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_MAXIMIZE):
+        return(t5_cmd_view_maximize(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_MINIMIZE):
+        return(t5_cmd_view_minimize(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_SCROLL):
+        return(t5_cmd_view_scroll(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_VIEW_CLOSE_REQ):
+        return(t5_cmd_view_close_req(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURRENT_VIEW):
+        return(t5_cmd_current_view(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_CURRENT_PANE):
+        return(t5_cmd_current_pane(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_RULER_SCALE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_RULER_SCALE_V):
+        return(t5_cmd_ruler_scale(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_PAGE_BREAK):
+        return(t5_cmd_insert_page_break(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_HELP_CONTENTS):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_HELP_SEARCH_KEYWORD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_HELP_URL):
+        return(t5_cmd_help(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NYI):
+        return(t5_cmd_nyi(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_TRACE):
+        return(t5_cmd_trace(p_docu, t5_message, p_t5_cmd));
+
+#if defined(UNUSED) || 0
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_TEST):
+        return(t5_cmd_test(p_docu, t5_message, p_t5_cmd));
+#endif /* UNUSED */
+    }
+}
+
 OBJECT_PROTO(extern, object_skel)
 {
+    if(T5_MESSAGE_IS_CMD(t5_message))
+        return(object_skel_cmd(p_docu, t5_message, (PC_T5_CMD) p_data));
+
     switch(t5_message)
     {
+    /* many messages are vectored to flow object */
     default:
         return(docu_flow_object_call(p_docu, t5_message, p_data));
 
-    /* many events are vectored to input focus object */
-
+    /* many messages are vectored to input focus object */
     case T5_EVENT_KEYS:
     case T5_EVENT_CLICK_DRAG_ABORTED:
 
@@ -571,86 +946,6 @@ OBJECT_PROTO(extern, object_skel)
     case T5_MSG_RULER_INFO:
     case T5_MSG_SELECTION_STYLE:
     case T5_MSG_SELECTION_MAKE:
-
-#if 0 /* commands handled with fo dispatch */
-    case T5_CMD_SELECT_WORD:
-    case T5_CMD_SELECT_CELL:
-    case T5_CMD_SELECT_DOCUMENT:
-    case T5_CMD_TOGGLE_MARKS:
-    case T5_CMD_SELECTION_CLEAR:
-    case T5_CMD_SELECTION_COPY:
-    case T5_CMD_SELECTION_CUT:
-    case T5_CMD_SELECTION_DELETE:
-    case T5_CMD_PASTE_AT_CURSOR:
-
-    case T5_CMD_SETC_UPPER:
-    case T5_CMD_SETC_LOWER:
-    case T5_CMD_SETC_INICAP:
-    case T5_CMD_SETC_SWAP:
-
-    case T5_CMD_DELETE_CHARACTER_LEFT:
-    case T5_CMD_DELETE_CHARACTER_RIGHT:
-    case T5_CMD_DELETE_LINE:
-
-    case T5_CMD_CURSOR_LEFT:
-    case T5_CMD_CURSOR_RIGHT:
-    case T5_CMD_CURSOR_UP:
-    case T5_CMD_CURSOR_DOWN:
-
-    case T5_CMD_SHIFT_CURSOR_LEFT:
-    case T5_CMD_SHIFT_CURSOR_RIGHT:
-    case T5_CMD_SHIFT_CURSOR_UP:
-    case T5_CMD_SHIFT_CURSOR_DOWN:
-
-    case T5_CMD_WORD_LEFT:
-    case T5_CMD_WORD_RIGHT:
-    case T5_CMD_SHIFT_WORD_LEFT:
-    case T5_CMD_SHIFT_WORD_RIGHT:
-
-    case T5_CMD_PAGE_UP:
-    case T5_CMD_PAGE_DOWN:
-    case T5_CMD_SHIFT_PAGE_UP:
-    case T5_CMD_SHIFT_PAGE_DOWN:
-
-    case T5_CMD_LINE_START:
-    case T5_CMD_LINE_END:
-    case T5_CMD_SHIFT_LINE_START:
-    case T5_CMD_SHIFT_LINE_END:
-
-    case T5_CMD_DOCUMENT_BOTTOM:
-    case T5_CMD_DOCUMENT_TOP:
-    case T5_CMD_SHIFT_DOCUMENT_BOTTOM:
-    case T5_CMD_SHIFT_DOCUMENT_TOP:
-
-    case T5_CMD_TAB_LEFT:
-    case T5_CMD_TAB_RIGHT:
-
-    case T5_CMD_RETURN:
-    case T5_CMD_ESCAPE:
-
-    case T5_CMD_BOX:
-    case T5_CMD_STYLE_APPLY:
-    case T5_CMD_STYLE_APPLY_SOURCE:
-
-    case T5_CMD_FORCE_RECALC:
-    case T5_CMD_SEARCH:
-    case T5_CMD_SNAPSHOT:
-
-    case T5_CMD_INSERT_FIELD_DATE:
-    case T5_CMD_INSERT_FIELD_FILE_DATE:
-    case T5_CMD_INSERT_FIELD_PAGE_X:
-    case T5_CMD_INSERT_FIELD_PAGE_Y:
-    case T5_CMD_INSERT_FIELD_MS_FIELD:
-    case T5_CMD_INSERT_FIELD_SS_NAME:
-    case T5_CMD_INSERT_FIELD_WHOLENAME:
-    case T5_CMD_INSERT_FIELD_LEAFNAME:
-    case T5_CMD_INSERT_FIELD_RETURN:
-    case T5_CMD_INSERT_FIELD_SOFT_HYPHEN:
-#endif
-
-    /*case T5_CMD_INSERT_FIELD_HARD_HYPHEN:*/
-
-    case T5_CMD_WORD_COUNT:
         return(docu_focus_owner_object_call(p_docu, t5_message, p_data));
 
     case T5_MSG_INITCLOSE:
@@ -683,12 +978,6 @@ OBJECT_PROTO(extern, object_skel)
     case T5_MSG_DRAFT_PRINT_TO_FILE:
         return(t5_msg_draft_print_to_file(p_docu, t5_message, (P_DRAFT_PRINT_TO_FILE) p_data));
 
-    case T5_CMD_OBJECT_ENSURE:
-        return(t5_cmd_object_ensure(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SELECTION_MAKE:
-        return(t5_cmd_selection_make(p_docu, t5_message, (PC_T5_CMD) p_data));
-
     case T5_MSG_STYLE_CHANGE_BOLD:
     case T5_MSG_STYLE_CHANGE_ITALIC:
     case T5_MSG_STYLE_CHANGE_UNDERLINE:
@@ -707,259 +996,8 @@ OBJECT_PROTO(extern, object_skel)
     case T5_MSG_SET_TAB_DECIMAL:
         return(t5_msg_set_tab(p_docu, t5_message));
 
-    /*********************************************************************************************/
-
-    case T5_CMD_QUIT:
-        return(t5_cmd_quit(p_docu));
-
-    case T5_CMD_INFO:
-        return(t5_cmd_info(p_docu));
-
-    case T5_CMD_CTYPETABLE:
-        return(t5_cmd_ctypetable(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_NUMFORM_LOAD:
-        return(t5_cmd_numform_load(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_NUMFORM_DATA:
-        return(t5_cmd_numform_data(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SS_CONTEXT:
-        return(t5_cmd_ss_context(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SET_INTERACTIVE:
-        return(t5_cmd_set_interactive(/*p_docu, p_data*/));
-
-    case T5_CMD_INSERT_FIELD_INTRO_DATE:
-    case T5_CMD_INSERT_FIELD_INTRO_TIME:
-        return(t5_cmd_insert_field_intro_date(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_INSERT_FIELD_INTRO_PAGE:
-        return(t5_cmd_insert_field_intro_page(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_BACKDROP: /* make/adjust backdrop */
-    case T5_CMD_BACKDROP_INTRO: /* make/adjust backdrop */
-    case T5_CMD_NOTE:
-    case T5_CMD_NOTE_TWIN:      /* compatibility with older readers */
-    case T5_CMD_NOTE_BACKDROP:  /* different so that backdrops can be rejected on file insert 'cos they aren't cell relative */
-    case T5_CMD_NOTE_BACK:
-    case T5_CMD_NOTE_SWAP:
-    case T5_CMD_NOTE_EMBED:
-        return(object_call_id_load(p_docu, t5_message, p_data, OBJECT_ID_NOTE));
-
-    case T5_CMD_BOX_INTRO:
-    case T5_CMD_STYLE_BUTTON:
-    case T5_CMD_STYLE_FOR_CONFIG:
-    case T5_CMD_EFFECTS_BUTTON:
-    case T5_CMD_STYLE_REGION_EDIT:
     case T5_MSG_BOX_APPLY:
         return(object_call_id_load(p_docu, t5_message, p_data, OBJECT_ID_SKEL_SPLIT));
-
-    case T5_CMD_BUTTON:
-        return(object_call_id(OBJECT_ID_TOOLBAR, p_docu, t5_message, p_data));
-
-    case T5_CMD_CURRENT_DOCUMENT:
-        return(t5_cmd_current_document(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CURRENT_POSITION:
-        return(t5_cmd_current_position(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_AUTO_SAVE:
-        return(t5_cmd_auto_save(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_AUTO_SAVE:
-        return(t5_cmd_choices_auto_save(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_DISPLAY_PICTURES:
-        return(t5_cmd_choices_display_pictures(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_EMBED_INSERTED_FILES:
-        return(t5_cmd_choices_embed_inserted_files(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_KERNING:
-        return(t5_cmd_choices_kerning(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_DITHERING:
-        return(t5_cmd_choices_dithering(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_STATUS_LINE:
-        return(t5_cmd_choices_status_line(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_TOOLBAR:
-        return(t5_cmd_choices_toolbar(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_UPDATE_STYLES_FROM_CHOICES:
-        return(t5_cmd_choices_update_styles_from_choices(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_ASCII_LOAD_AS_DELIMITED:
-        return(t5_cmd_choices_ascii_load_as_delimited(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_ASCII_LOAD_DELIMITER:
-        return(t5_cmd_choices_ascii_load_delimiter(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES_ASCII_LOAD_AS_PARAGRAPHS:
-        return(t5_cmd_choices_ascii_load_as_paragraphs(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CHOICES:
-        return(t5_cmd_choices(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_FONTMAP:
-        return(t5_cmd_fontmap(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_FONTMAP_END:
-        return(t5_cmd_fontmap_end(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_FONTMAP_REMAP:
-        return(t5_cmd_fontmap_remap(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_MENU_ADD:
-    case T5_CMD_MENU_ADD_RAW:
-        return(t5_cmd_menu_add(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_MENU_DELETE:
-        return(t5_cmd_menu_delete(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_MENU_NAME:
-        return(t5_cmd_menu_name(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_DEFINE_KEY:
-    case T5_CMD_DEFINE_KEY_RAW:
-        return(t5_cmd_define_key(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PAPER:
-        return(t5_cmd_paper(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PAPER_INTRO:
-        return(t5_cmd_paper_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PAPER_SCALE:
-        return(t5_cmd_paper_scale(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PAPER_SCALE_INTRO:
-        return(t5_cmd_paper_scale_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PRINT_INTRO:
-    case T5_CMD_PRINT_EXTRA_INTRO:
-        return(t5_cmd_print_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PRINT:
-    case T5_CMD_PRINT_EXTRA:
-        return(t5_cmd_print(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_PRINT_QUALITY:
-        return(t5_cmd_print_quality(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-#if WINDOWS
-    case T5_CMD_PRINT_SETUP:
-        return(t5_cmd_print_setup(p_docu, t5_message, (PC_T5_CMD) p_data));
-#endif
-
-    case T5_CMD_OBJECT_BIND_SAVER:
-        return(t5_cmd_object_bind_saver(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_OWNFORM:
-        return(t5_cmd_save_ownform(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_OWNFORM_AS_INTRO:
-        return(t5_cmd_save_ownform_as_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_OWNFORM_AS:
-        return(t5_cmd_save_ownform_as(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_TEMPLATE_INTRO:
-        return(t5_cmd_save_template_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_TEMPLATE:
-        return(t5_cmd_save_template(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_FOREIGN_INTRO:
-        return(t5_cmd_save_foreign_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_FOREIGN:
-        return(t5_cmd_save_foreign(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_PICTURE_INTRO:
-        return(t5_cmd_save_picture_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_SAVE_CLIPBOARD:
-        return(t5_cmd_save_clipboard(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_LOAD:
-        return(t5_cmd_load(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_LOAD_TEMPLATE:
-        return(t5_cmd_load_template(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_LOAD_FOREIGN:
-        return(t5_cmd_load_foreign(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_BIND_FILE_TYPE:
-        return(t5_cmd_bind_file_type(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_OBJECT_BIND_CONSTRUCT:
-        return(t5_cmd_object_bind_construct(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_OBJECT_BIND_LOADER:
-        return(t5_cmd_object_bind_loader(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_NEW:
-        return(t5_cmd_view_new(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_CONTROL_INTRO:
-        return(t5_cmd_view_control_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_CONTROL:
-        return(t5_cmd_view_control(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_CREATE:
-        return(t5_cmd_view_create(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_SIZE:
-        return(t5_cmd_view_size(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_POSN:
-        return(t5_cmd_view_posn(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_MAXIMIZE:
-        return(t5_cmd_view_maximize(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_MINIMIZE:
-        return(t5_cmd_view_minimize(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_SCROLL:
-        return(t5_cmd_view_scroll(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_VIEW_CLOSE_REQ:
-        return(t5_cmd_view_close_req(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CURRENT_VIEW:
-        return(t5_cmd_current_view(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_CURRENT_PANE:
-        return(t5_cmd_current_pane(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_RULER_SCALE:
-    case T5_CMD_RULER_SCALE_V:
-        return(t5_cmd_ruler_scale(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_INSERT_PAGE_BREAK:
-        return(t5_cmd_insert_page_break(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_HELP_CONTENTS:
-    case T5_CMD_HELP_SEARCH_KEYWORD:
-    case T5_CMD_HELP_URL:
-        return(t5_cmd_help(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_NYI:
-        return(t5_cmd_nyi(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-    case T5_CMD_TRACE:
-        return(t5_cmd_trace(p_docu, t5_message, (PC_T5_CMD) p_data));
-
-#if defined(UNUSED) || 0
-    case T5_CMD_TEST:
-        return(t5_cmd_test(p_docu, t5_message, (PC_T5_CMD) p_data));
-#endif /* UNUSED */
     }
 }
 
@@ -1032,13 +1070,13 @@ reperr(
 
     if(status == ERR_OUTPUT_STRING)
     {
-        assert(!IS_PTR_NULL_OR_NONE(text));
+        PTR_ASSERT(text);
 
         tstr_xstrkpy(output, elemof32(output), text);
     }
     else if(status == ERR_OUTPUT_SPRINTF)
     {
-        assert(!IS_PTR_NULL_OR_NONE(text));
+        PTR_ASSERT(text);
 
         va_start(args, text);
 
@@ -1053,7 +1091,7 @@ reperr(
 
         consume_bool(resource_split_status(status, &status_offset, &object_id));
 
-        assert(IS_OBJECT_ID_VALID(object_id));
+        myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("reperr(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
 
         lookup[0] = CH_NULL;
         output[0] = CH_NULL;
@@ -1084,7 +1122,7 @@ reperr(
                 return(status);
             }
 
-            if(!IS_PTR_NULL_OR_NONE(text))
+            if(PTR_NOT_NULL_OR_NONE(text))
             {
                 if((NULL == tstrstr(output, text)) || !file_is_rooted(text)) /* don't repeat ourselves on looked-up filing system errors */
                 {
@@ -1102,7 +1140,7 @@ reperr(
                 tstr_xstrkpy(output, elemof32(output), lookup);
 
                 /* if we have an arg then append it if not a %s error */
-                if(!IS_PTR_NULL_OR_NONE(text))
+                if(PTR_NOT_NULL_OR_NONE(text))
                 {
                     tstr_xstrkat(output, elemof32(output), TEXT(" "));
                     tstr_xstrkat(output, elemof32(output), text);
@@ -1111,7 +1149,7 @@ reperr(
             else
             {
                 /* ensure %s error messages don't look too bad */
-                if(IS_PTR_NULL_OR_NONE(text))
+                if(PTR_IS_NULL_OR_NONE(text))
                     text = tstr_empty_string;
 
                 /* unusual start due to text being passed too */
@@ -1162,7 +1200,7 @@ messagef(
 #endif
     va_list args;
 
-    assert(!IS_PTR_NULL_OR_NONE(text));
+    PTR_ASSERT(text);
 
     va_start(args, text);
 

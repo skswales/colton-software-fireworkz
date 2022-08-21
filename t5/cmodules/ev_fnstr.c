@@ -13,6 +13,8 @@
 
 #include "ob_ss/ob_ss.h"
 
+#include "cmodules/unicode/u20A0.h" /* for UCH_EURO_CURRENCY_SIGN */
+
 /******************************************************************************
 *
 * String functions
@@ -55,6 +57,8 @@ PROC_EXEC_PROTO(c_char)
 PROC_EXEC_PROTO(c_clean)
 {
     U32 bytes_of_buffer = 0;
+    const PC_UCHARS uchars = ss_data_get_string(args[0]);
+    const U32 uchars_n = ss_data_get_string_size(args[0]);
     int pass = 1;
 
     exec_func_ignore_parms();
@@ -63,11 +67,11 @@ PROC_EXEC_PROTO(c_clean)
         U32 o_idx = 0;
         U32 i_idx = 0;
 
-        /* clean the string of unprintable chracters during transfer */
-        while(i_idx < ss_data_get_string_size(args[0]))
+        /* clean the string of unprintable characters during transfer */
+        while(i_idx < uchars_n)
         {
             U32 bytes_of_char;
-            UCS4 ucs4 = uchars_char_decode_off(ss_data_get_string(args[0]), i_idx, /*ref*/bytes_of_char);
+            UCS4 ucs4 = uchars_char_decode_off(uchars, i_idx, /*ref*/bytes_of_char);
 
             i_idx += bytes_of_char;
 
@@ -92,7 +96,7 @@ PROC_EXEC_PROTO(c_clean)
         {
             bytes_of_buffer = o_idx;
 
-            if(status_fail(ss_string_make_uchars(p_ss_data_res, NULL, bytes_of_buffer)))
+            if(status_fail(ss_string_allocate(p_ss_data_res, bytes_of_buffer)))
                 return;
         }
     }
@@ -108,11 +112,13 @@ PROC_EXEC_PROTO(c_clean)
 PROC_EXEC_PROTO(c_code)
 {
     S32 code_result = 0; /* SKS 20160801 allow empty string */
+    const PC_UCHARS uchars = ss_data_get_string(args[0]);
+    const U32 uchars_n = ss_data_get_string_size(args[0]);
 
     exec_func_ignore_parms();
 
-    if(0 != ss_data_get_string_size(args[0]))
-        code_result = (S32) PtrGetByte(ss_data_get_string(args[0]));
+    if(0 != uchars_n)
+        code_result = (S32) PtrGetByte(uchars);
 
     ss_data_set_integer(p_ss_data_res, code_result);
 }
@@ -125,36 +131,93 @@ PROC_EXEC_PROTO(c_code)
 *
 ******************************************************************************/
 
+_Check_return_
+static inline S32
+get_decimal_places(
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    S32 decimal_places = ss_data_get_integer(p_ss_data);
+    decimal_places = MIN(127, decimal_places); /* can be large for formatting */
+    decimal_places = MAX(  0, decimal_places);
+    return(decimal_places);
+}
+
+_Check_return_
+static STATUS
+dollar_number_format_string(
+    _InRef_     P_QUICK_UBLOCK p_quick_ublock,
+    _InVal_     S32 decimal_places,
+    _InVal_     bool euro_suffix)
+{
+    STATUS status = STATUS_OK;
+    S32 i;
+
+    if(!euro_suffix)
+        status = quick_ublock_ucs4_add(p_quick_ublock, UCH_POUND_SIGN); /* FIXME */
+
+    if(status_ok(status))
+        status = quick_ublock_ustr_add(p_quick_ublock, USTR_TEXT("#,"));
+
+    if(status_ok(status))
+        status = quick_ublock_a7char_add(p_quick_ublock, get_ss_recog_context_alt(thousands_char));
+
+    if(status_ok(status))
+        status = quick_ublock_ustr_add(p_quick_ublock, USTR_TEXT("###0"));
+
+    if(decimal_places > 0)
+    {
+        if(status_ok(status))
+            status = quick_ublock_a7char_add(p_quick_ublock, get_ss_recog_context_alt(decimal_point_char));
+
+        for(i = 0; (i < decimal_places) && status_ok(status); ++i)
+            status = quick_ublock_a7char_add(p_quick_ublock, CH_DIGIT_ZERO);
+    }
+
+    if(euro_suffix)
+    {
+        if(status_ok(status))
+            status = quick_ublock_a7char_add(p_quick_ublock, CH_SPACE);
+
+#if USTR_IS_SBSTR
+        if(status_ok(status))
+            status = quick_ublock_ucs4_add(p_quick_ublock, ucs4_to_sbchar_force_with_codepage(UCH_EURO_CURRENCY_SIGN, get_system_codepage(), UCH_SPACE));
+#else
+        if(status_ok(status))
+            status = quick_ublock_ucs4_add(p_quick_ublock, UCH_EURO_CURRENCY_SIGN);
+#endif
+    }
+
+    return(status);
+}
+
 PROC_EXEC_PROTO(c_dollar)
 {
-    STATUS status;
-    S32 decimal_places = 2;
-    S32 i;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 50);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 50);
+    STATUS status = STATUS_OK;
+    const S32 decimal_places = (n_args > 1) ? get_decimal_places(args[1]) : 2; /* keep signed - can use negative decimal_places to round before decimal point */
+    bool euro_suffix = false;
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 64);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
     quick_ublock_with_buffer_setup(quick_ublock_format);
     quick_ublock_with_buffer_setup(quick_ublock_result);
 
     exec_func_ignore_parms();
 
-    if(n_args > 1)
-    {
-        decimal_places = MIN(127, ss_data_get_integer(args[1])); /* can be larger for formatting */
-        decimal_places = MAX(  0, decimal_places);
-    }
-
     round_common(args, n_args, p_ss_data_res, RPN_FNV_ROUND); /* ROUND: uses n_args, args[0] and {args[1]}, yields DATA_ID_REAL (or an integer type) */
 
-    status = quick_ublock_ucs4_add(&quick_ublock_format, UCH_POUND_SIGN); /* FIXME */
+    euro_suffix = (CH_COMMA == get_ss_recog_context_alt(decimal_point_char)); /* FIXME */
+
+    /* positive format */
+    status = dollar_number_format_string(&quick_ublock_format, decimal_places, euro_suffix);
+
+    /* followed by negative format (in parentheses) */
+    if(status_ok(status))
+        status = quick_ublock_sbstr_add(&quick_ublock_format, "_;(");
 
     if(status_ok(status))
-        status = quick_ublock_ustr_add(&quick_ublock_format, USTR_TEXT("#,,###0"));
+        status = dollar_number_format_string(&quick_ublock_format, decimal_places, euro_suffix);
 
-    if((decimal_places > 0) && status_ok(status))
-        status = quick_ublock_a7char_add(&quick_ublock_format, CH_FULL_STOP);
-
-    for(i = 0; (i < decimal_places) && status_ok(status); ++i)
-        status = quick_ublock_a7char_add(&quick_ublock_format, CH_NUMBER_SIGN);
+    if(status_ok(status))
+        status = quick_ublock_a7char_add(&quick_ublock_format, CH_RIGHT_PARENTHESIS);
 
     if(status_ok(status))
         status = quick_ublock_nullch_add(&quick_ublock_format);
@@ -162,12 +225,13 @@ PROC_EXEC_PROTO(c_dollar)
     if(status_ok(status)) /* ev_numform() is happy with anything from round_common() */
         status = ev_numform(&quick_ublock_result, quick_ublock_ustr(&quick_ublock_format), p_ss_data_res);
 
-    exec_func_status_return(p_ss_data_res, status);
-
-    status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
+    if(status_ok(status))
+        status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
 
     quick_ublock_dispose(&quick_ublock_format);
     quick_ublock_dispose(&quick_ublock_result);
+
+    exec_func_status_return(p_ss_data_res, status);
 }
 
 /******************************************************************************
@@ -182,7 +246,7 @@ PROC_EXEC_PROTO(c_exact)
 
     exec_func_ignore_parms();
 
-    if(ss_data_get_string_size(args[0]) == ss_data_get_string_size(args[1]))
+    if( ss_data_get_string_size(args[0]) == ss_data_get_string_size(args[1]) )
         if(0 == memcmp32(ss_data_get_string(args[0]), ss_data_get_string(args[1]), ss_data_get_string_size(args[0])))
             exact_result = true;
 
@@ -198,14 +262,11 @@ PROC_EXEC_PROTO(c_exact)
 PROC_EXEC_PROTO(c_find)
 {
     S32 find_result = 0;
-    S32 find_len = ss_data_get_string_size(args[1]);
-    S32 start_n = 1;
+    const S32 find_len = (S32) ss_data_get_string_size(args[1]);
+    S32 start_n = (n_args > 2) ? ss_data_get_integer(args[2]) : 1;
     PC_UCHARS uchars;
 
     exec_func_ignore_parms();
-
-    if(n_args > 2)
-        start_n = ss_data_get_integer(args[2]);
 
     if(start_n <= 0)
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
@@ -232,24 +293,15 @@ PROC_EXEC_PROTO(c_find)
 PROC_EXEC_PROTO(c_fixed)
 {
     STATUS status;
-    S32 decimal_places = 2;
-    BOOL no_commas = FALSE;
+    const S32 decimal_places = (n_args > 1) ? get_decimal_places(args[1]) : 2; /* keep signed - can use negative decimal_places to round before decimal point */
+    const bool no_commas = (n_args > 2) ? ss_data_get_logical(args[2]) : false;
     S32 i;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 50);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 64);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
     quick_ublock_with_buffer_setup(quick_ublock_format);
     quick_ublock_with_buffer_setup(quick_ublock_result);
 
     exec_func_ignore_parms();
-
-    if(n_args > 1)
-    {
-        decimal_places = MIN(127, ss_data_get_integer(args[1])); /* can be larger for formatting */
-        decimal_places = MAX(  0, decimal_places);
-    }
-
-    if(n_args > 2)
-        no_commas = (0 != ss_data_get_integer(args[2]));
 
     round_common(args, n_args, p_ss_data_res, RPN_FNV_ROUND); /* ROUND: uses n_args, args[0] and {args[1]}, yields DATA_ID_REAL (or an integer type) */
 
@@ -259,7 +311,7 @@ PROC_EXEC_PROTO(c_fixed)
         status = quick_ublock_a7char_add(&quick_ublock_format, CH_FULL_STOP);
 
     for(i = 0; (i < decimal_places) && status_ok(status); ++i)
-        status = quick_ublock_a7char_add(&quick_ublock_format, CH_NUMBER_SIGN);
+        status = quick_ublock_a7char_add(&quick_ublock_format, CH_DIGIT_ZERO);
 
     if(status_ok(status))
         status = quick_ublock_nullch_add(&quick_ublock_format);
@@ -267,12 +319,13 @@ PROC_EXEC_PROTO(c_fixed)
     if(status_ok(status)) /* ev_numform() is happy with anything from round_common() */
         status = ev_numform(&quick_ublock_result, quick_ublock_ustr(&quick_ublock_format), p_ss_data_res);
 
-    exec_func_status_return(p_ss_data_res, status);
-
-    status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
+    if(status_ok(status))
+        status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
 
     quick_ublock_dispose(&quick_ublock_format);
     quick_ublock_dispose(&quick_ublock_result);
+
+    exec_func_status_return(p_ss_data_res, status);
 }
 
 /******************************************************************************
@@ -290,16 +343,18 @@ PROC_EXEC_PROTO(c_formula_text)
     if(ev_travel(&p_ev_cell, &args[0]->arg.slr) > 0)
     {
         STATUS status;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
         quick_ublock_with_buffer_setup(quick_ublock);
 
         /* decode cell contents as it would appear in the formula line i.e. with alternate / foreign UI if wanted */
         status = ev_cell_decode_ui(&quick_ublock, p_ev_cell, ev_slr_docno(&args[0]->arg.slr));
-        exec_func_status_return(p_ss_data_res, status);
 
-        status_assert(ss_string_make_uchars(p_ss_data_res, quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock)));
+        if(status_ok(status))
+            status_assert(ss_string_make_uchars(p_ss_data_res, quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock)));
 
         quick_ublock_dispose(&quick_ublock);
+
+        exec_func_status_return(p_ss_data_res, status);
     }
 }
 
@@ -312,18 +367,20 @@ PROC_EXEC_PROTO(c_formula_text)
 PROC_EXEC_PROTO(c_join)
 {
     S32 arg_idx;
-    U32 len = 0;
+    uint64_t len = 0;
     P_UCHARS uchars;
 
     exec_func_ignore_parms();
 
     for(arg_idx = 0; arg_idx < n_args; ++arg_idx)
     {
-        const U32 arg_len = ss_data_get_string_size(args[arg_idx]);
-        len += arg_len;
+        const U32 arg_uchars_n = ss_data_get_string_size(args[arg_idx]);
+        len += arg_uchars_n;
+        if(len > SS_STRING_BYTE_LIMIT)
+            exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }
 
-    if(status_fail(ss_string_make_uchars(p_ss_data_res, NULL, len)))
+    if(status_fail(ss_string_allocate(p_ss_data_res, (U32) len)))
         return;
 
     if(0 == len)
@@ -333,9 +390,10 @@ PROC_EXEC_PROTO(c_join)
 
     for(arg_idx = 0; arg_idx < n_args; ++arg_idx)
     {
-        const U32 arg_len = ss_data_get_string_size(args[arg_idx]);
-        memcpy32(uchars, ss_data_get_string(args[arg_idx]), arg_len);
-        uchars_IncBytes_wr(uchars, arg_len);
+        const PC_UCHARS arg_uchars = ss_data_get_string(args[arg_idx]);
+        const U32 arg_uchars_n = ss_data_get_string_size(args[arg_idx]);
+        memcpy32(uchars, arg_uchars, arg_uchars_n);
+        uchars_IncBytes_wr(uchars, arg_uchars_n);
     }
 }
 
@@ -347,19 +405,21 @@ PROC_EXEC_PROTO(c_join)
 
 PROC_EXEC_PROTO(c_left)
 {
-    const S32 len = ss_data_get_string_size(args[0]);
+    const PC_UCHARS uchars = ss_data_get_string(args[0]);
+    const U32 uchars_n = ss_data_get_string_size(args[0]);
     S32 n = 1;
 
     exec_func_ignore_parms();
 
     if(n_args > 1)
     {
-        if((n = ss_data_get_integer(args[1])) < 0)
+        n = ss_data_get_integer(args[1]);
+
+        if(n < 0)
             exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }
 
-    n = MIN(n, len);
-    status_assert(ss_string_make_uchars(p_ss_data_res, ss_data_get_string(args[0]), n));
+    status_assert(ss_string_make_uchars(p_ss_data_res, uchars, MIN((U32) n, uchars_n)));
 }
 
 /******************************************************************************
@@ -421,18 +481,20 @@ PROC_EXEC_PROTO(c_lower)
 
 PROC_EXEC_PROTO(c_mid)
 {
-    S32 len = ss_data_get_string_size(args[0]);
-    S32 start = ss_data_get_integer(args[1]) - 1; /* ensure that this will not go -ve */
+    const PC_UCHARS uchars = ss_data_get_string(args[0]);
+    const S32 len = (S32) ss_data_get_string_size(args[0]);
     S32 n = ss_data_get_integer(args[2]);
+    S32 start;
 
     exec_func_ignore_parms();
 
     if( (ss_data_get_integer(args[1]) <= 0) || (n < 0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
+    start = ss_data_get_integer(args[1]) - 1; /* one-based API: ensured that this will not go -ve */
     start = MIN(start, len);
     n = MIN(n, len - start);
-    status_assert(ss_string_make_uchars(p_ss_data_res, uchars_AddBytes(ss_data_get_string(args[0]), start), n));
+    status_assert(ss_string_make_uchars(p_ss_data_res, uchars_AddBytes(uchars, start), n));
 }
 
 /******************************************************************************
@@ -448,7 +510,7 @@ PROC_EXEC_PROTO(c_n)
     switch(ss_data_get_data_id(args[0]))
     {
     case DATA_ID_LOGICAL:
-        ss_data_set_integer(p_ss_data_res, ss_data_get_logical(args[0]));
+        ss_data_set_integer(p_ss_data_res, (S32) ss_data_get_logical(args[0]));
         break;
 
     case DATA_ID_DATE:
@@ -527,17 +589,19 @@ PROC_EXEC_PROTO(c_replace)
 {
     STATUS status = STATUS_OK;
     const S32 len = ss_data_get_string_size(args[0]);
-    S32 start_n_chars = ss_data_get_integer(args[1]) - 1; /* one-based API */
+    S32 start_n_chars;
     S32 excise_n_chars = ss_data_get_integer(args[2]);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, BUF_EV_MAX_STRING_LEN);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
     quick_ublock_with_buffer_setup(quick_ublock_result);
 
     exec_func_ignore_parms();
 
-    if((start_n_chars < 0) || (excise_n_chars < 0))
+    if((ss_data_get_integer(args[1]) <= 0) || (excise_n_chars < 0))
         status = EVAL_ERR_ARGRANGE;
     else
     {
+        start_n_chars = ss_data_get_integer(args[1]) - 1; /* one-based API */
+
         if( start_n_chars > len)
             start_n_chars = len;
 
@@ -559,9 +623,9 @@ PROC_EXEC_PROTO(c_replace)
             status_assert(ss_string_make_uchars(p_ss_data_res, quick_ublock_uchars(&quick_ublock_result), quick_ublock_bytes(&quick_ublock_result)));
     }
 
-    exec_func_status_return(p_ss_data_res, status);
-
     quick_ublock_dispose(&quick_ublock_result);
+
+    exec_func_status_return(p_ss_data_res, status);
 }
 
 /******************************************************************************
@@ -572,28 +636,33 @@ PROC_EXEC_PROTO(c_replace)
 
 PROC_EXEC_PROTO(c_rept)
 {
+    const PC_UCHARS uchars_in = ss_data_get_string(args[0]);
     const U32 len = ss_data_get_string_size(args[0]);
     S32 n = ss_data_get_integer(args[1]);
-    P_UCHARS uchars;
+    P_UCHARS uchars_out;
+    S32 uchars_n;
+    INT64_WITH_INT32_OVERFLOW int64_with_int32_overflow;
     S32 x;
 
     exec_func_ignore_parms();
 
-    if(n < 0)
+    uchars_n = int32_multiply_check_overflow(n, len, &int64_with_int32_overflow);
+
+    if( (uchars_n < 0) || int64_with_int32_overflow.f_overflow )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    if(status_fail(ss_string_make_uchars(p_ss_data_res, NULL, (U32) n * len)))
+    if(status_fail(ss_string_allocate(p_ss_data_res, (U32) uchars_n)))
         return;
 
-    if(0 == n * len)
+    if(0 == uchars_n)
         return;
 
-    uchars = p_ss_data_res->arg.string_wr.uchars;
+    uchars_out = p_ss_data_res->arg.string_wr.uchars;
 
     for(x = 0; x < n; ++x)
     {
-        memcpy32(uchars, ss_data_get_string(args[0]), len);
-        uchars_IncBytes_wr(uchars, len);
+        memcpy32(uchars_out, uchars_in, len);
+        uchars_IncBytes_wr(uchars_out, len);
     }
 }
 
@@ -631,19 +700,22 @@ PROC_EXEC_PROTO(c_reverse)
 
 PROC_EXEC_PROTO(c_right)
 {
-    const S32 len = ss_data_get_string_size(args[0]);
+    const PC_UCHARS uchars = ss_data_get_string(args[0]);
+    const S32 len = (S32) ss_data_get_string_size(args[0]);
     S32 n = 1;
 
     exec_func_ignore_parms();
 
     if(n_args > 1)
     {
-        if((n = ss_data_get_integer(args[1])) < 0)
+        n = ss_data_get_integer(args[1]);
+
+        if(n < 0)
             exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }
 
     n = MIN(n, len);
-    status_assert(ss_string_make_uchars(p_ss_data_res, uchars_AddBytes(ss_data_get_string(args[0]), (len - n)), n));
+    status_assert(ss_string_make_uchars(p_ss_data_res, uchars_AddBytes(uchars, (len - n)), n));
 }
 
 /******************************************************************************
@@ -654,17 +726,11 @@ PROC_EXEC_PROTO(c_right)
 
 PROC_EXEC_PROTO(c_string)
 {
-    S32 decimal_places = 2;
+    const S32 decimal_places = (n_args > 1) ? get_decimal_places(args[1]) : 2; /* keep signed - can use negative decimal_places to round before decimal point */
     F64 rounded_value;
-    U8Z buffer[BUF_EV_MAX_STRING_LEN];
+    U8Z buffer[127 + 1 + 32]; /* somewhat bigger than the MAX in get_decimal_places() */
 
     exec_func_ignore_parms();
-
-    if(n_args > 1)
-    {
-        decimal_places = MIN(127, ss_data_get_integer(args[1])); /* can be large for formatting */
-        decimal_places = MAX(  0, decimal_places);
-    }
 
     round_common(args, n_args, p_ss_data_res, RPN_FNV_ROUND); /* ROUND: uses n_args, args[0] and {args[1]}, yields DATA_ID_REAL (or an integer type) */
 
@@ -690,12 +756,9 @@ PROC_EXEC_PROTO(c_substitute)
     PC_UCHARS old_text_uchars = ss_data_get_string(args[1]);
     U32 new_text_size = ss_data_get_string_size(args[2]);
     PC_UCHARS new_text_uchars = ss_data_get_string(args[2]);
-    U32 instance_to_replace = 0;
+    U32 instance_to_replace = (n_args > 3) ? ss_data_get_integer(args[3]) : 0;
 
     exec_func_ignore_parms();
-
-    if(n_args > 3)
-        instance_to_replace = ss_data_get_integer(args[3]);
 
     if(0 == old_text_size)
     {   /* nothing to be matched for substitution - just copy all the current text over to the result */
@@ -705,7 +768,7 @@ PROC_EXEC_PROTO(c_substitute)
     {
         U32 instance = 1;
         U32 text_i = 0;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, BUF_EV_MAX_STRING_LEN);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
         quick_ublock_with_buffer_setup(quick_ublock_result);
 
         while(text_i < text_size)
@@ -764,7 +827,7 @@ PROC_EXEC_PROTO(c_t)
     switch(ss_data_get_data_id(args[0]))
     {
     default:
-        status_consume(ss_string_make_uchars(p_ss_data_res, NULL, 0));
+        status_consume(ss_string_allocate(p_ss_data_res, 0));
         break;
 
     case DATA_ID_STRING:
@@ -782,8 +845,8 @@ PROC_EXEC_PROTO(c_t)
 PROC_EXEC_PROTO(c_text)
 {
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 50);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 64);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
     quick_ublock_with_buffer_setup(quick_ublock_format);
     quick_ublock_with_buffer_setup(quick_ublock_result);
 
@@ -793,12 +856,13 @@ PROC_EXEC_PROTO(c_text)
         if(status_ok(status = quick_ublock_nullch_add(&quick_ublock_format)))
             status = ev_numform(&quick_ublock_result, quick_ublock_ustr(&quick_ublock_format), args[0]);
 
-    exec_func_status_return(p_ss_data_res, status);
-
-    status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
+    if(status_ok(status))
+        status_assert(ss_string_make_ustr(p_ss_data_res, quick_ublock_ustr(&quick_ublock_result)));
 
     quick_ublock_dispose(&quick_ublock_format);
     quick_ublock_dispose(&quick_ublock_result);
+
+    exec_func_status_return(p_ss_data_res, status);
 }
 
 /******************************************************************************
@@ -809,15 +873,12 @@ PROC_EXEC_PROTO(c_text)
 
 PROC_EXEC_PROTO(c_trim)
 {
-    PC_UCHARS s_ptr;
-    PC_UCHARS e_ptr;
+    PC_UCHARS s_ptr = ss_data_get_string(args[0]);
+    PC_UCHARS e_ptr = uchars_AddBytes(s_ptr, ss_data_get_string_size(args[0]));
     P_UCHARS o_buf = P_UCHARS_NONE;
     int pass = 1;
 
     exec_func_ignore_parms();
-
-    s_ptr = ss_data_get_string(args[0]);
-    e_ptr = uchars_AddBytes(s_ptr, ss_data_get_string_size(args[0]));
 
     while((s_ptr < e_ptr) && (PtrGetByte(s_ptr) == CH_SPACE)) /* skip leading spaces */
         uchars_IncByte(s_ptr);
@@ -924,9 +985,8 @@ PROC_EXEC_PROTO(c_value)
     {
         PC_UCHARS e_ptr = uchars_AddBytes(s_ptr, len);
         STATUS status;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
         quick_ublock_with_buffer_setup(quick_ublock);
-        PC_USTR ptr;
 
         /* we are guaranteed here to have at least one byte to transfer */
         while(/*(e_ptr > s_ptr) &&*/ (PtrGetByteOff(e_ptr, -1) == CH_SPACE)) /* skip trailing spaces prior to copy */
@@ -942,14 +1002,17 @@ PROC_EXEC_PROTO(c_value)
 #if 0
             ev_recog_constant_using_autoformat(p_ss_data_res, ev_slr_docno(p_cur_slr), quick_ublock_ustr(&quick_ublock));
 #else
+            PC_USTR ptr;
             PC_USTR buffer = quick_ublock_ustr(&quick_ublock);
+            F64 f64 = ui_strtod(ustr_bptrc(buffer), &ptr);
 
-            ss_data_set_real_try_integer(p_ss_data_res, ui_strtod(ustr_bptr(buffer), &ptr));
-
-            if(0 == PtrDiffBytesU32(ptr, buffer))
-                ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
+            if(0 != PtrDiffBytesU32(ptr, buffer))
+                ss_data_set_real_try_integer(p_ss_data_res, f64);
 #endif
         }
+
+        if(ss_data_is_blank(p_ss_data_res))
+            ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
 
         quick_ublock_dispose(&quick_ublock);
 

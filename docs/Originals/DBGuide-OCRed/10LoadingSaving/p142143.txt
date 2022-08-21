@@ -1,0 +1,40 @@
+﻿
+2 Click on the Datapower option.
+3 Enter the name you wish to give to your file in the box below
+the file icon.
+4 Drag the file icon and drop it in a directory viewer.
+
+Saving CSV files
+Recordz also provides the option to save a subset of records and
+fields separately as a CSV file. This is a standard format which is
+accepted by many applications on different platforms. Thus
+exporting a database as a CSV file allows you to take it across to a
+PC.
+To do this:
+1 Choose Export from the Database menu.
+2 Click on the CSV option.
+3 Enter the name you wish to give to your file in the box below
+the file icon.
+4 Drag the file icon and drop it in a directory viewer.
+Saving the Recordz document
+The Recordz document holds all the information about how the
+database is displayed:
+. Whether a card or sheet layout is being used.
+. Which fields are displayed and which are hidden.
+. Whether a variable or fixed number of records is being shown
+(i.e. the Auto option is set or clear).
+. Which order the fields are displayed in.
+. How card layouts are to appear.
+
+Fireworkz Pro 143
+
+If you make changes to any of these then you need to save your
+Recordz document in order not to lose them:
+1 Click on the Save button or choose Save from the File
+submenu or press F3.
+2 Enter a name for the document.
+3 Drag the file icon to a directory where it can be saved.
+
+
+
+

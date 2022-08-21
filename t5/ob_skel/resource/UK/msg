@@ -8,31 +8,31 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_skel/resource/resource.h
 #
-# NB Use Title Caps on Windows for:
+# NB Keep Style Guide in mind
+# Use Select / Adjust for mouse buttons on RISC OS
+# Use Title Caps on Windows for:
 # Title Bar / Action Buttons
 #
-# When changing version number for release, remember other files
+# Ampersand signifies the 'hot-key' character
+#
+# Version number and date
+# When changing for release, remember other files
 # The definitive list of files is in common.mf_mid
 #1:2.xx.yy
 #1:2.xx
-1:2.24.07
-2:05 May 2020
+1:2.30
+2:10 Nov 2020
 #
-# update date and version in the corresponding RelNotes HTML files too
-#
-1033:© 1992-2020 Colton Software
-r1034:Portions © 1994-2020 R-Comp
+3:© 1992-2020 Colton Software
 w1037:The product uses the following components
 w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
 #
-3:Unregistered copy
+# Dialogue box buttons
 #
-# SKS debug
-#
-1060:%d null events
-#
+90:&Add
+91:&Create
 92:&Remove
 93:&Insert
 94:&Help
@@ -42,31 +42,29 @@ w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
 98:&Delete
 99:&Replace
 #
+# Window title bar text
+#
 100:Untitled
-w101:%L - %P
 r101:%P: %W
+w101:%L - %P
 w1032:%L [Read-only] - %P
 r1032:%P: %W [Read-only]
 102: *
 103: at %g%%
+#
 104:%
 105:&Embed
-106:Sorting
 107:Selection
-108:Revert
+108:Close
 109:Cancel
 110:OK
-111:Converting
-112:Loading
-113:Inserting
-114:Saving
-115:Reformatting document
-116:Pasting
-117:Cutting
 118:&Save
-119:&Discard
+r119:&Discard
+w119:&Don't save
 #
-120:Print
+# Long names for function keys
+# 
+r120:PRINT
 121:F1
 122:F2
 123:F3
@@ -113,6 +111,8 @@ w160:Page Down
 r161:Page Up
 w161:Page Up
 #
+# MSG_DIALOG_INSERT_FIELD_xxx
+#
 r168:Insert time
 w168:Insert Time
 # spare 169
@@ -123,15 +123,23 @@ r171:Insert page number
 w171:Insert Page Number
 172:&Live
 # spare 173
-r174:Insert date (or ADJUST to insert time). Inserts either when this file was last changed or today
-w174:Insert date (or Ctrl-click to insert time). Inserts either when this file was last changed or today
+r174:Click Select to insert date. Click Adjust to insert time. Inserts either when this document was last changed or today
+w174:Click to insert date. Ctrl-click to insert time. Inserts either when this document was last changed or today
 #
-180:Name
-181:Shortcut
+1038:Y page number
+1039:X page number
 #
-250:Scale view
+1044:Current date
+1045:File modification date
+1046:Current time
+1047:File modification time
 #
-# %ge values corresponding to buttons in view zoom dialog
+# MSG_DIALOG_VIEW_xxx
+#
+250:Scale
+#
+# %ge values corresponding to buttons in the View scale dialogue box
+# These numeric values are read by the button processing code
 #
 251:50%
 252:75%
@@ -141,8 +149,13 @@ w174:Insert date (or Ctrl-click to insert time). Inserts either when this file w
 #
 r256:View control
 w256:View Control
-1239:ug02/ug2_accessing_the_view_control_dialogue_box.htm
-257:Scale
+r257:Scale view
+w257:Scale View
+1239:ug/ug02_fireworkz_basics.htm#accessing_the_view_control_dialogue_box
+1240:ug/ug02_fireworkz_basics.htm#accessing_the_view_scale_dialogue_box
+r702:Click Select for View control dialogue box. Click Adjust for View scale dialogue box
+w702:Click for View Control dialogue box. Ctrl-click for View Scale dialogue box
+#
 258:C&olumn border
 259:&Row border
 262:&Top ruler
@@ -158,37 +171,38 @@ w264:&New View
 272:&Horizontal split
 273:V&ertical split
 #
-1054:Save selection
-1055:Copy template
-1056:This template is a set of files
-1057:contained in a directory. You must
-1058:drag this directory to a directory
-1059:display in order to make a copy of it.
-r260:Export as other format
-w260:Export as Other Format
-261:Other
-#
-283:Column %d, width
-284:Row %d, height
-#
 r290:Select template
 w290:Select Template
-291:ug03/ug3_creating_a_new_document.htm
+291:ug/ug03_creating_a_new_document.htm
 r292:New document
 w292:New Document
 #
-300:ug11/ug11_basic_print_options.htm
-301:Copies
-302:&All pages
-303:&Range
+1055:Copy template
+1056:This template is a set of files
+1057:contained in a directory.
+1058:You must drag this directory
+1059:to a directory display in order
+1060:to make a copy of it.
+#
+# MSG_DIALOG_PRINT_xxx
+#
+#r306 - On RISC OS, the dialogue box title is the printer name
+w306:Print
+300:ug/ug11_printing.htm#basic_print_options
+301:&Copies
+1048:Page range
+302:&All
+303:Pa&ges
+1035:from
+1036:to
 304:&Two up
-305:ug11/ug11_extra_print_options.htm
+305:ug/ug11_printing.htm#extra_print_options
 r307:No RISC OS printer installed
 w307:No Printer Selected
 321:Revers&e
 322:Co&llated
 323:Acros&s
-324:&Pamphlet
+324:Pa&mphlet
 343:&Extra
 344:Sides
 345:&Both
@@ -196,18 +210,23 @@ w307:No Printer Selected
 347:Eve&n
 348:Draft print
 1000:Mailshot
-1035:from page
-1036:to page
+#
+# MSG_DIALOG_PAPER_SCALE_xxx
 #
 r1020:Print scale
 w1020:Print Scale
 r1021:Fit one page
 w1021:Fit One Page
-r1022:Fit one page X
-w1022:Fit One Page X
+r1022:Fit one page across
+w1022:Fit One Page Across
 1023:Scale
 1024:100%
-1025:ug11/ug11_print_scale.htm
+1025:ug/ug11_printing.htm#print_scale
+#
+# MSG_DIALOG_ES_STYLE_xxx
+#
+180:Name
+181:Shortcut
 #
 309:Paragraph
 310:St&yle
@@ -243,6 +262,7 @@ w1022:Fit One Page X
 333:&Tabs
 334:&Width
 335:Heading
+#
 336:cm
 337:mm
 338:in
@@ -250,7 +270,8 @@ w1022:Fit One Page X
 #
 352:Protection
 #
-# UI of left/centre/right/decimal tabs - spaces following LCRD are intentional
+# UI of left/centre/right/decimal tabs
+# NB the spaces following L/C/R/D are intentional
 #
 339:L 
 340:C 
@@ -262,8 +283,10 @@ w1022:Fit One Page X
 452:Unbreakable
 453:Heading
 #
+# MSG_DIALOG_PAPER_xxx
+#
 455:Paper
-456:ug07/ug7_setting_paper_size.htm
+456:ug/ug07_page_design.htm#setting_paper_size
 457:Paper
 458:Paper margin
 459:Binding
@@ -284,8 +307,11 @@ w469:Read Pr&inter
 473:Lan&dscape
 474:C&olumn margin
 475:Row margin
-476:&Grid size
+476:W&idth
 477:&Faint grid
+480:Grid
+#
+# MSG_DIALOG_RGB_xxx
 #
 490:Colour
 491:Background
@@ -294,6 +320,8 @@ w469:Read Pr&inter
 494:B
 495:Transparent
 1028:Colour...
+#
+# MSG_DIALOG_ES_PS_xxx
 #
 500:&Above paragraph
 501:&Below paragraph
@@ -313,65 +341,94 @@ w469:Read Pr&inter
 #
 524:Page number
 #
-534:ug08/ug8_adding_extra_rows_and_columns.htm
-r535:Add columns
-w535:Add Columns
-536:Number of columns to add
-r540:Add rows
-w540:Add Rows
-541:Number of rows to add
+# MSG_DIALOG_SETC_xxx
 #
 550:Case
-551:ug04/ug4_upper_and_lower_case.htm
+551:ug/ug04_editing_text.htm#upper_and_lower_case
+#
+# MSG_PRINT_WARNING_xxx
 #
 600:Warning
 601:Printable area larger than printer driver settings;
 602:click Read Printer in Paper dialogue box for best settings.
 603:Print
 #
+# MSG_STATUS_xxx
+#
+106:Sorting
+111:Converting
+112:Loading
+113:Inserting
+114:Saving
+115:Reformatting document
+116:Pasting
+117:Cutting
+#
+283:Column %d, width
+284:Row %d, height
+#
 700:Page %d
 701:Page x %d, y %d
-702:View control dialogue box
 1016:Create a new document
 1017:Open an existing document
-703:Apply left justification to the selection or at caret
-704:Apply centre justification to the selection or at caret
-705:Apply right justification to the selection or at caret
-706:Apply full justification to the selection or at caret
-707:Apply, change, create and delete styles
-708:Apply effects to the selection or at caret
-709:Apply bold to the selection or at caret
-710:Apply italic to the selection or at caret
-1012:Apply underline to the selection or at caret
-1018:Apply superscript to the selection or at caret
-1019:Apply subscript to the selection or at caret
+r703:Click Select to apply left justification to the selection or at caret
+w703:Apply left justification to the selection or at caret
+r704:Click Select to apply centre justification to the selection or at caret
+w704:Apply centre justification to the selection or at caret
+r705:Click Select to apply right justification to the selection or at caret
+w705:Apply right justification to the selection or at caret
+r706:Click Select to apply full justification to the selection or at caret
+w706:Apply full justification to the selection or at caret
+r707:Click Select for Style dialogue box, where you can apply a style to the selection, and also change, create and delete styles
+w707:Apply, change, create and delete styles
+r708:Click Select for Effects dialogue box, where you can apply various effects to the selection or at the caret
+w708:Apply effects to the selection or at caret
+r709:Click Select to apply bold to the selection or at caret
+w709:Apply bold to the selection or at caret
+r710:Click Select to apply italic to the selection or at caret
+w710:Apply italic to the selection or at caret
+r1012:Click Select to apply underline to the selection or at caret
+w1012:Apply underline to the selection or at caret
+r1018:Click Select to apply superscript to the selection or at caret
+w1018:Apply superscript to the selection or at caret
+r1019:Click Select to apply subscript to the selection or at caret
+w1019:Apply subscript to the selection or at caret
 711:Use left tab stop; click in ruler to place new tab
 712:Use centre tab stop; click in ruler to place new tab
 713:Use right tab stop; click in ruler to place new tab
 714:Use decimal tab stop; click in ruler to place new tab
-715:Clear selection/select document
-716:Copy the selection to the clipboard
-717:Cut the selection to the clipboard
-718:Paste from the clipboard
+r715:Click Select to select all if no selection is present, otherwise to clear the selection
+w715:Clear selection/select document
+r716:Click Select to copy the selection to the clipboard
+w716:Copy the selection to the clipboard
+r717:Click Select to cut the selection to the clipboard. Click Adjust to delete the selection without altering the clipboard
+w717:Click to cut the selection to the clipboard. Ctrl-click to delete the selection without altering the clipboard
+r718:Click Select to paste from the clipboard
+w718:Paste from the clipboard
 719:This is the status line
-r720:Save document. SELECT for dialogue box, ADJUST to save immediately
+r720:Click Select for Save dialogue box. Click Adjust to save document immediately
 w720:Save document
-r721:Print document. SELECT for dialogue box, ADJUST for Print Extra dialogue box
+r721:Click Select for Print dialogue box. Click Adjust for Print Extra dialogue box
 w721:Print document
-1013:Apply box to the selection
-1014:Insert table at caret
-1015:Search dialogue box
-1030:Sort dialogue box
-1051:Spell check
+r1013:Click Select to apply box effects to the selection
+w1013:Apply box effects to the selection
+r1014:Click Select to insert a table at the caret
+w1014:Insert table at caret
+r1015:Click Select for Search dialogue box. Click Adjust to find the next match
+w1015:Click for Search dialogue box. Ctrl-click to find the next match
+r1030:Click Select for Sort dialogue box
+w1030:Sort dialogue box
+r1051:Click Select to spell check. Click Adjust for dictionary management
+w1051:Click to spell check. Ctrl-Click for dictionary management
 1052:Thesaurus
 722:Can't delete as selection spans more than one row
 726:%d words counted
 730:Not found
 731:%d replaced
-r732:Drag to resize. Double-click for auto-width. ADJUST-drag to reposition
+r732:Drag to resize. Double-click for auto-width. Drag Adjust to reposition
 w732:Drag to resize. Double-click for auto-width. Ctrl+drag to reposition
 733:Drag to resize. Double-click for auto-height
-r734:ADJUST-drag to reposition
+r734:Drag Adjust to reposition
 w734:Ctrl+drag to reposition
 738:Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%
 739:Picture at (%s,%s) mm : w=%s h=%s mm %d%%,%d%%
@@ -382,7 +439,9 @@ w734:Ctrl+drag to reposition
 743:Selection contains %d regions
 1026:Selection contains %d region
 #
-# generic 1,2,3 dp numforms
+# MSG_NUMFORM_xxx
+#
+# generic 1,2,3 decimal places numforms
 # first set with optional trailing zeros
 744:0.#
 745:0.##
@@ -391,6 +450,8 @@ w734:Ctrl+drag to reposition
 747:0.0
 748:0.00
 749:0.000
+#
+# MSG_DIALOG_BACKDROP_xxx
 #
 750:Backdrop
 751:First page
@@ -404,7 +465,9 @@ w734:Ctrl+drag to reposition
 759:Paper
 760:Embed
 761:Delete
-762:ug10/ug10_backdrop_pictures.htm
+762:ug/ug10_pictures.htm#backdrop_pictures
+#
+# Close / Quit dialogue box messages
 #
 790:One or more documents in the group have been modified
 r791:Save group
@@ -430,6 +493,8 @@ w806:Close Group
 r807:Close doc
 w807:Close Doc
 #
+# MSG_DIALOG_INFO_xxx
+#
 #w810:
 #w811:
 w812:Version
@@ -448,45 +513,46 @@ w818:http://groups.google.com/group/colton-software-fireworkz
 r817:Web...
 r818:http://www.croftnuisk.co.uk/coltsoft/fireworkz
 #
-r819:Insert table
-w819:Insert Table
-820:ug08/ug8_adding_tables.htm
-821:Number of c&olumns
-822:Number of &rows
+# Table style name
 823:.Table%d
+# BaseTable style name
+824:BaseTable
 #
 830:Page break
 831:Page number
 #
-839:Box
-840:ug08/ug8_boxes.htm
-841:&Outside
-843:Vertical lines
-844:Horizontal lines
-845:All
-846:&Left
-847:&Right
-848:&Top
-849:&Bottom
-850:Line style
-851:Colour
+# MSG_DIALOG_SAVE
 #
-857:Save
+857:Save as
 #858:to-do.htm
+1054:Save selection
+#
+# MSG_DIALOG_SAVE_AS_TEMPLATE
 #
 r859:Save as template
 w859:Save as Template
-860:ug03/ug3_creating_templates.htm
+860:ug/ug03_creating_a_new_document.htm#saving_a_template
 r861:Template
 w861:template.fwt
 862:&All
 863:All styl&es
 864:&Style
 #
+# MSG_DIALOG_SAVE_AS_FOREIGN
+#
+r260:Export as
+w260:Export as
+261:Other
+1061:Drawfile
+#
+# MSG_DIALOG_SAVE_PICTURE
+#
 r865:Save picture
 w865:Save Picture
 #866:to-do.htm
 867:Picture
+#
+# MSG_DIALOG_SEARCH_xxx
 #
 870:Search
 871:&Find
@@ -499,17 +565,28 @@ r876:From &top
 w876:From &Top
 877:&Whole words
 w878:From Text &Cursor
-879:ug04/ug4_find_and_replace.htm
+879:ug/ug04_editing_text.htm#find_and_replace
 #
 880:Found
-881:ug04/ug4_find_and_replace.htm
+881:ug/ug04_editing_text.htm#find_and_replace
 882:&Next
 883:Replace &all
 #
 890:<Field %d>
 #
+# MSG_DIALOG_GOTO_xxx
+#
+r891:Go to
+w891:Go To
+892:Cell, row or column
+r893:Go to
+w893:Go To
+894:sg/sg01_entering_and_editing_numerical_data.htm#moving_from_cell_to_cell
+#
+# MSG_DIALOG_CHOICES_xxx
+#
 909:Choices
-910:ug02/ug2_choices_dialogue_box.htm
+910:ug/ug02_fireworkz_basics.htm#choices_dialogue_box
 911:Auto save
 912:(mins)
 913:Display pictures
@@ -523,16 +600,19 @@ w878:From Text &Cursor
 919:Load text as paragraphs
 922:Update styles from choices
 #
-# Style text conversion
-# order matches style bit numbering order
+# Style Region editor
 #
 930:&In
 931:&Out
 933:No more regions
 934:Region
 #
+# Style text conversion
+#
 938: on
 939: off
+#
+# SF_JUSTIFY_LEFT/CENTRE/RIGHT/BOTH
 #
 941: left
 942: centre
@@ -541,6 +621,8 @@ w878:From Text &Cursor
 945: %s
 #
 947:Region: %s
+#
+# NB order matches style bit numbering order
 #
 948:Style
 949:Key shortcut
@@ -587,27 +669,28 @@ w878:From Text &Cursor
 990:Subscript
 991:Font colour
 #
+# SF_JUSTIFY_V_TOP/BOTTOM
+#
 995: top
 996: bottom
+#
+# MSG_CUSTOM_LIBRARY - directory that is searched for custom function sheets
+#
 997:Library
 #
+# MSG_DIALOG_SORT_xxx
+#
 998:Sort
-1043:sg01/sg1_sorting_your_data.htm
+1043:sg/sg01_entering_and_editing_numerical_data.htm#sorting_your_data
 999:Descending order
 #
-r1011:This is the %s application.|MClick SELECT to create a new document.
+r1011:This is the %s application.|MClick Select to create a new document.
+#
+# MSG_OBJECT_TYPE_xxx
 #
 1040:Text
 1041:* DB data
 1042:Number
-#
-1038:Y page number
-1039:X page number
-#
-1044:Current date
-1045:File modification date
-1046:Current time
-1047:File modification time
 #
 # Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
 #
@@ -656,6 +739,8 @@ re79:No thesaurus loaded
 #
 e80:No data found in file
 re81:Unable to locate Stubs file
+e83:No alternate command for this toolbar button
+e84:This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format
 e85:Unable to load referenced picture %s because file not found; reference retained
 e86:Area is protected
 e87:Supporting file %s not found
@@ -670,6 +755,7 @@ we94:Failed to load Dial Solutions Drawfile DLL
 e95:%s has bad raw arg %u, size %u, sep '%c'
 e96:Unable to locate compound file template for save
 re97:To save, drag the icon to a directory display
+we97:Full path name must be specified for save
 re98:Can't transfer file (Scrap directory not set)
 e99:Invalid date/time
 #
@@ -686,6 +772,7 @@ e124:This file is too small to be correct
 e125:This file is too large to be loaded into memory
 e126:Bad UTF-8 encoding
 e127:UCS-4 NONCHARACTER
+e128:Clipboard data is too large to be loaded into memory
 #
 re202:Not a module file
 re203:Bad chunk within module file
@@ -695,12 +782,13 @@ re206:Stub binding failed
 re207:Stub entry referenced that is no longer available
 re208:Attempt to relocate unknown instruction sequence
 #
-we201:Not enough disk space currently available for spooling
-we202:Not enough memory is available for spooling
-we203:Print cancelled
-we204:Print cancelled - error from printing system
-we205:Print cancelled
-we206:Native compound file write needs filename
+we211:Print cancelled - unknown error from printing system
+we212:Print cancelled
+we213:Print cancelled
+we214:Not enough disk space currently available for spooling
+we215:Not enough memory is available for spooling
+#
+we216:Native compound file write needs filename
 #
 # RISC OS specific messages looked up by name
 #

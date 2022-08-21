@@ -1,0 +1,47 @@
+#
+# this is the messages file for ob_mails (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_mails/ob_mails.h
+#
+# MAILSHOT_MSG_DIALOG_SELECT_xxx
+#
+# UK 1:Document
+1:Document
+# UK 2:ug/ug09_setting_up_your_letter.htm
+2:ug/ug09_setting_up_your_letter.htm
+# UK 3:Row
+3:Row
+# UK 4:Blank fields
+4:Blank fields
+# UK 5:Shuffle
+5:Shuffle
+# UK 6:Start
+6:Start
+# UK 7:End
+7:End
+#
+# MAILSHOT_MSG_DIALOG_INSERT_FIELD_xxx
+#
+# UK 10:Insert mailshot field
+10:Insert mailshot field
+# UK 11:ug/ug09_setting_up_your_letter.htm
+11:ug/ug09_setting_up_your_letter.htm
+# UK 12:Field number
+12:Field number
+#
+# errors: keep consistent with ob_mails/ob_mails.h
+# see MAILSHOT_ERR(n)
+#
+# UK e0:No document selected for mailshot
+e0:No document selected for mailshot
+# UK e2:No documents with tables for mailshot
+e2:No documents with tables for mailshot
+#
+# end of msg (ob_mails)

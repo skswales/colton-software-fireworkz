@@ -26,8 +26,8 @@ case Uref_Msg_Delete:
 case Uref_Msg_Overwrite:
 case Uref_Msg_Change:
 case Uref_Msg_Swap_Rows:
-case T5_MSG_CLOSE1:
-case T5_MSG_CLOSE2:
+case Uref_Msg_CLOSE1:
+case Uref_Msg_CLOSE2:
 
 ******************************************************************************/
 
@@ -172,7 +172,7 @@ uref_region_ends(
         if( (p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
             &&
             (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)) )
-            res = Uref_Dep_Delete;
+             res = Uref_Dep_Delete;
          break;
 
     case Uref_Msg_Overwrite:
@@ -357,9 +357,11 @@ uref_del_dependency(
 *
 ******************************************************************************/
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, uref_element_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, uref_element_is_deleted)
 {
-    return((S32) ((P_UREF_ENTRY) p_any)->is_deleted);
+    const P_UREF_ENTRY p_uref_entry = (P_UREF_ENTRY) p_any;
+
+    return(p_uref_entry->is_deleted);
 }
 
 static void
@@ -379,7 +381,7 @@ uref_event_after_msg_close2(
         al_garbage_flags.remove_deleted = 1;
         al_garbage_flags.shrink = 1;
         al_garbage_flags.may_dispose = 1; /* and hopefully does so if it is this document being closed... */
-        consume(S32, al_array_garbage_collect(&this_p_docu->h_uref_table, 0, uref_element_deleted, al_garbage_flags));
+        consume(S32, al_array_garbage_collect(&this_p_docu->h_uref_table, 0, uref_element_is_deleted, al_garbage_flags));
         assert((0 == this_p_docu->h_uref_table) || (this_p_docu != closing_p_docu));
     }
 }
@@ -392,6 +394,7 @@ uref_event_after_msg_close2(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern STATUS
 uref_event(
     _DocuRef_   P_DOCU p_docu,
@@ -428,16 +431,18 @@ uref_event(
         /* call hangers on */
         for(region_ix = 0; region_ix < n_regions; ++region_ix, ++p_uref_entry)
         {
+            UREF_COMMS res;
+
             if(p_uref_entry->is_deleted)
                 continue;
 
-            if((uref_event_block.reason.code =
-                    UBF_PACK(uref_match_region(&p_uref_entry->uref_id.region,
-                                               uref_message,
-                                               &uref_event_block))) != Uref_Dep_None)
+            res = uref_match_region(&p_uref_entry->uref_id.region, uref_message, &uref_event_block);
+
+            if(Uref_Dep_None != res)
             {
+                uref_event_block.reason.code = UBF_PACK(res);
                 uref_event_block.uref_id = p_uref_entry->uref_id;
-                (*p_uref_entry->p_proc_uref_event)(p_docu, uref_message, &uref_event_block);
+                (* p_uref_entry->p_proc_uref_event) (p_docu, uref_message, &uref_event_block);
             }
         }
 
@@ -471,7 +476,7 @@ uref_match_region(
     {
     case Uref_Msg_Uref:
         {
-        BOOL colspan, rowspan, do_uref = 0;
+        BOOL colspan, rowspan, do_uref = FALSE;
         UREF_COMMS res_s = Uref_Dep_None, res_e = Uref_Dep_None;
         BOOL add_col = FALSE, add_row = FALSE;
 
@@ -482,20 +487,18 @@ uref_match_region(
          * if all rows spanned and only moving left or right, OK
          */
         if(colspan && rowspan)
-            do_uref = 1;
-        else if(colspan && p_uref_event_block->uref_parms.target.slr.row &&
-                          !p_uref_event_block->uref_parms.target.slr.col)
-            do_uref = 1;
-        else if(rowspan && p_uref_event_block->uref_parms.target.slr.col &&
-                          !p_uref_event_block->uref_parms.target.slr.row)
-            do_uref = 1;
+            do_uref = TRUE;
+        else if(colspan && p_uref_event_block->uref_parms.target.slr.row && !p_uref_event_block->uref_parms.target.slr.col)
+            do_uref = TRUE;
+        else if(rowspan && p_uref_event_block->uref_parms.target.slr.col && !p_uref_event_block->uref_parms.target.slr.row)
+            do_uref = TRUE;
 
         /* when doing an add operation and region is greater than
          * a single unit in size, then stretch the region
          */
-        if(p_uref_event_block->uref_parms.add_col && (p_region->whole_row || p_region->br.col - p_region->tl.col > 1))
+        if(p_uref_event_block->uref_parms.add_col && (p_region->whole_row || ((p_region->br.col - p_region->tl.col) > 1)))
             add_col = TRUE;
-        if(p_uref_event_block->uref_parms.add_row && (p_region->whole_col || p_region->br.row - p_region->tl.row > 1))
+        if(p_uref_event_block->uref_parms.add_row && (p_region->whole_col || ((p_region->br.row - p_region->tl.row) > 1)))
             add_row = TRUE;
 
         if(do_uref)
@@ -504,9 +507,9 @@ uref_match_region(
             res_e = uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, add_col, add_row);
         }
 
-        if(res_s == Uref_Dep_Delete || res_e == Uref_Dep_Delete)
+        if( (Uref_Dep_Delete == res_s) || (Uref_Dep_Delete == res_e) )
             res = Uref_Dep_Delete;
-        else if(res_s == Uref_Dep_Update || res_e == Uref_Dep_Update)
+        else if( (Uref_Dep_Update == res_s) || (Uref_Dep_Update == res_e) )
         {
             if(region_empty(p_region))
                 res = Uref_Dep_Delete;
@@ -559,7 +562,7 @@ uref_match_region(
         /* if the area affected and the range intersect
          * at all, then the dependents must be told
          */
-        if(res == Uref_Dep_None && region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region))
+        if( (Uref_Dep_None == res) && region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region) )
             res = Uref_Dep_Inform;
         break;
         }
@@ -614,7 +617,8 @@ uref_match_region(
 
 /******************************************************************************
 *
-* perform uref on a docu_area (ignores sub-object positions)
+* perform uref on a docu_area
+* (ignores sub-object positions)
 *
 ******************************************************************************/
 
@@ -631,20 +635,19 @@ uref_match_docu_area(
 
     trace_0(TRACE_APP_UREF, TEXT("uref_match_docu_area 0"));
 
-    res = uref_match_region(&region, uref_message, p_uref_event_block);
+    if(Uref_Dep_None == (res = uref_match_region(&region, uref_message, p_uref_event_block)))
+        return(Uref_Dep_None);
 
-    if(Uref_Dep_None != res)
-    {
-        p_docu_area->tl.slr = region.tl;
-        p_docu_area->br.slr = region.br;
-    }
+    p_docu_area->tl.slr = region.tl;
+    p_docu_area->br.slr = region.br;
 
     return(res);
 }
 
 /******************************************************************************
 *
-* check a uref event against an slr and derive a reason code for hangers on
+* check a uref event against an slr and derive
+* a reason code for hangers on
 *
 ******************************************************************************/
 
@@ -666,6 +669,25 @@ uref_match_slr(
     return(res);
 }
 
+_Check_return_
+_Ret_z_
+extern PCTSTR
+uref_report_message(
+    _InVal_     UREF_MESSAGE uref_message)
+{
+    switch(uref_message)
+    {
+    case Uref_Msg_Uref:      return(TEXT("Uref_Msg_Uref"));
+    case Uref_Msg_Delete:    return(TEXT("Uref_Msg_Delete"));
+    case Uref_Msg_Swap_Rows: return(TEXT("Uref_Msg_Swap_Rows"));
+    case Uref_Msg_Change:    return(TEXT("Uref_Msg_Change"));
+    case Uref_Msg_Overwrite: return(TEXT("Uref_Msg_Overwrite"));
+    case Uref_Msg_CLOSE1:    return(TEXT("Uref_Msg_CLOSE1"));
+    case Uref_Msg_CLOSE2:    return(TEXT("Uref_Msg_CLOSE2"));
+    default:                 return(TEXT("Uref_Msg_Unknown"));
+    }
+}
+
 #if TRACE_ALLOWED
 
 /******************************************************************************
@@ -681,11 +703,84 @@ uref_trace_reason(
 {
     switch(reason_code)
     {
-    case Uref_Dep_Delete: trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_Delete"), tstr); break;
-    case Uref_Dep_Update: trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_Update"), tstr); break;
-    case Uref_Dep_Inform: trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_Inform"), tstr); break;
-    case Uref_Dep_None:   trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_None"), tstr); break;
+    case Uref_Dep_Delete: trace_1(TRACE_APP_UREF, TEXT("%s UREF Uref_Dep_Delete"), tstr); break;
+    case Uref_Dep_Update: trace_1(TRACE_APP_UREF, TEXT("%s UREF Uref_Dep_Update"), tstr); break;
+    case Uref_Dep_Inform: trace_1(TRACE_APP_UREF, TEXT("%s UREF Uref_Dep_Inform"), tstr); break;
+    case Uref_Dep_None:   trace_1(TRACE_APP_UREF, TEXT("%s UREF Uref_Dep_None"), tstr); break;
     }
+}
+
+#endif
+
+/*
+old swap cell code
+*/
+
+#if 0
+
+/*
+from uref_region_ends
+*/
+
+case Uref_Msg_SWAPSLOT:
+    if(slr_equal(ref, &p_uref_parms->source.region.tl))
+        res = uref_swapslot(ref, &p_uref_parms->source.region.br);
+    else if(slr_equal(ref, &p_uref_parms->source.region.br))
+        res = uref_swapslot(ref, &p_uref_parms->source.region.tl);
+    break;
+
+/*
+from uref_match_region
+*/
+
+        /* (range may be a cell after all) */
+        case Uref_Msg_SWAPSLOT:
+            if(!(p_region->tl.flags & SLR_ALL_REF))
+            {
+                /* check if the whole range can be moved */
+                if(p_region->br.col == p_region->tl.col + 1 &&
+                   p_region->br.row == p_region->tl.row + 1)
+                {
+                    if(slr_equal(&p_region->s, &p_uref_event_block->uref_parms.slr_source1))
+                    {
+                        p_region->s = p_uref_event_block->uref_parms.slr_source2;
+                        res = Uref_Dep_Update;
+                    }
+                    else if(slr_equal(&p_region->s, &p_uref_event_block->uref_parms.slr_source2))
+                    {
+                        p_region->s = p_uref_event_block->uref_parms.slr_source1;
+                        res = Uref_Dep_Update;
+                    }
+
+                    if(Uref_Dep_Update == res)
+                    {
+                        p_region->e = p_region->s;
+                        p_region->br.col += 1;
+                        p_region->br.row += 1;
+                    }
+                }
+            }
+
+            /* tell people who have ranges affected */
+            if(Uref_Dep_Update != res &&
+                (slr_in_range(p_region, &p_uref_event_block->uref_parms.slr_source1) ||
+                 slr_in_range(p_region, &p_uref_event_block->uref_parms.slr_source2)))
+                res = Uref_Dep_Inform;
+            break;
+
+/******************************************************************************
+*
+* update reference when cells are swapped
+*
+******************************************************************************/
+
+static int
+uref_swapslot(
+    ev_slrp ref,
+    ev_slrp slrp)
+{
+    *ref = *slrp;
+    return(Uref_Dep_Update);
 }
 
 #endif

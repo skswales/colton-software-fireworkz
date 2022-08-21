@@ -1,0 +1,279 @@
+| MakeRiscPkg.oby - Fireworkz (objects bound)
+
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+| Copyright (C) 1993-1998 Colton Software Limited
+| Copyright (C) 1998-2015 R W Colton
+
+Set t5$Release 2_30
+|et t5$Release 2_30_01
+
+Set t5$Disc $.Temp.Fire.Fireworkz_<t5$Release>
+IfThere     $.Temp      Then Else %CDir $.Temp
+IfThere     $.Temp.Fire Then Else %CDir $.Temp.Fire
+
+Set t5$Zip <t5$Disc>/zip
+%Remove <t5$Zip>
+
+Set t5$Product firewrkz
+
+Set t5$Dir              <Obey$Dir>.^.^.^.t5
+
+Set t5$Build$Dir        <t5$Dir>.Build.r32.<t5$Product>.!Fireworkz
+
+Set t5$Resources$Dir    <t5$Build$Dir>.Resources
+
+Set t5$Product$Dir      <Obey$Dir>.^.^.<t5$Product>
+
+Set ap$Resource$Dir     <t5$Product$Dir>.Resources
+
+Set Alias$t5_access_read  %Access %%0 r/r
+Set Alias$t5_access_write %Access %%0 wr/r
+
+%CDir                                                       <t5$Disc>
+
+X %Wipe                                                     <t5$Disc>.* ~cfr~v
+
+| Top level, contains just Apps and RiscPkg
+
+| Directory is renamed to Apps.Document.!Fireworkz at the end
+%CDir                                                       <t5$Disc>.Z
+
+%Copy <t5$Build$Dir>.!Boot                                  <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Help                                  <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Run                                   <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!RunImage                              <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Sprites                               <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!Sprites22                             <t5$Disc>.Z.* ~rf~cln~v
+| RISC OS 5 has different orientation pin in ic_xxx
+%Copy <t5$Build$Dir>.!SpritesR5                             <t5$Disc>.Z.* ~rf~cln~v
+%Copy <t5$Build$Dir>.!SpritesR511                           <t5$Disc>.Z.* ~rf~cln~v
+
+| Use the same licence in the distributed package
+|%Copy <t5$Product$Dir>.r.RiscPkg.Copyright                  <t5$Disc>.Z.LICENCE ~rf~cln~v
+| Nah, use the HTML one
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Help.HTML.licen/html     <t5$Disc>.Z.Licence ~rf~cln~v
+%SetType                                                    <t5$Disc>.Z.Licence &FAF
+
+%Copy <t5$Product$Dir>.Relnotes/htm                         <t5$Disc>.Z.Relnotes ~rf~cln~v
+%SetType                                                    <t5$Disc>.Z.Relnotes &FAF
+
+t5_access_read                                              <t5$Disc>.Z.*
+
+|
+| Resources (mostly RISC OS specific)
+|
+| Fireworkz$Path is used to locate resources needed to run Fireworkz e.g. messages and sprite files
+|
+%CDir                                                       <t5$Disc>.Z.Resources
+
+%Copy <t5$Resources$Dir>.!ReadMe                            <t5$Disc>.Z.Resources.* ~rf~cln~v
+
+| Language-independent
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral
+|
+| [Pro]
+|*Pro*                                                      <t5$Disc>.Z.Resources.Neutral.Support
+|*Pro*<t5$Resources$Dir>.Neutral.Support.cfbf               <t5$Disc>.Z.Resources.Neutral.Support.* ~rf~cln~v
+|*Pro*<t5$Resources$Dir>.Neutral.Support.cfbf-mini          <t5$Disc>.Z.Resources.Neutral.Support.* ~rf~cln~v
+|
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral.RISC_OS
+|
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.!Sprite            <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.BuildVer           <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.ImageSlot          <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.ImgConvert         <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.Loader             <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.PicConvert         <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.Splash             <t5$Disc>.Z.Resources.Neutral.RISC_OS.* ~rf~cln~v
+|
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral.RISC_OS.Sprites22
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.Sprites22.Ob06     <t5$Disc>.Z.Resources.Neutral.RISC_OS.Sprites22.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.RISC_OS.Sprites22.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral.RISC_OS.Sprites24
+%Copy <t5$Resources$Dir>.Neutral.RISC_OS.Sprites24.Ob06     <t5$Disc>.Z.Resources.Neutral.RISC_OS.Sprites24.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.RISC_OS.Sprites24.*
+|
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.RISC_OS.*
+|
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.*
+| Language-independent [end]
+
+| Language-dependent (UK) NB used as fallbacks in case of incomplete translations
+%CDir                                                       <t5$Disc>.Z.Resources.UK
+|
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Config                   <t5$Disc>.Z.Resources.UK.* ~rf~cln~v
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS.Help
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Help.Text                <t5$Disc>.Z.Resources.UK.RISC_OS.Help.* ~rf~cln~v
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS.Help.HTML
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Help.HTML.*              <t5$Disc>.Z.Resources.UK.RISC_OS.Help.HTML.* ~rf~cln~v
+| HTML files
+SetMacro Alias$t5_SetType_HTM SetType %%0 &FAF
+Repeat         t5_SetType_HTM                               <t5$Disc>.Z.Resources.UK.RISC_OS.Help.HTML -files -verbose
+Unset    Alias$t5_SetType_HTM
+| CSS files
+SetMacro Alias$t5_SetType_CSS SetType %%0 &F79
+               t5_SetType_CSS                               <t5$Disc>.Z.Resources.UK.RISC_OS.Help.HTML.help/css
+Unset    Alias$t5_SetType_CSS
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.Help.HTML.*
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.Help.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS.Messages
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob00           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob01           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+|*Pro*<t5$Resources$Dir>.UK.RISC_OS.Messages.Ob02           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob04           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob06           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob07           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob08           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob09           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob15           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob17           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob18           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob19           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob21           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob24           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob26           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob27           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob28           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob29           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob30           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob31           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+|*Pro*<t5$Resources$Dir>.UK.RISC_OS.Messages.Ob37           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Messages.Ob38           <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.Messages.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites11
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Sprites11.Ob00          <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites11.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Sprites11.Ob01          <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites11.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites11.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites22
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Sprites22.Ob00          <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites22.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Sprites22.Ob01          <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites22.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites22.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites24
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Sprites24.Ob00          <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites24.* ~rf~cln~v
+%Copy <t5$Resources$Dir>.UK.RISC_OS.Sprites24.Ob01          <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites24.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.Sprites24.*
+|
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.RISC_OS.*
+|
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.*
+| Language-dependent (UK) [end]
+
+t5_access_read                                              <t5$Disc>.Z.Resources.*
+t5_access_read                                              <t5$Disc>.Z.Resources
+
+|
+| Fireworkz$Path is used to locate data presented to the Fireworkz user e.g. document templates, dictionaries, chart markers
+|
+%CDir                                                       <t5$Disc>.Z.Resources
+
+| Language-independent
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral
+|
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral.Markers
+%Copy <t5$Resources$Dir>.Neutral.Markers.*                  <t5$Disc>.Z.Resources.Neutral.Markers.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.Markers.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.Neutral.Pictures
+%Copy <t5$Resources$Dir>.Neutral.Pictures.*                 <t5$Disc>.Z.Resources.Neutral.Pictures.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.Pictures.*
+|
+t5_access_read                                              <t5$Disc>.Z.Resources.Neutral.*
+| Language-independent [end]
+
+| Language-dependent (UK) NB used as fallbacks in case of incomplete translations
+%CDir                                                       <t5$Disc>.Z.Resources.UK
+|
+||| NB See uChoices section below
+%CDir                                                       <t5$Disc>.Z.Resources.UK.Choices
+|||py <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice00         <t5$Disc>.Z.Resources.UK.Choices.* ~rf~cln~v
+|||py <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice01         <t5$Disc>.Z.Resources.UK.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice18         <t5$Disc>.Z.Resources.UK.Choices.* ~rf~cln~v
+|||py <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice29         <t5$Disc>.Z.Resources.UK.Choices.* ~rf~cln~v
+|||py <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice37         <t5$Disc>.Z.Resources.UK.Choices.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.Choices.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.Dicts
+%Copy <t5$Dir>.ob_spell.resource.UK.Dicts.MasterAsz         <t5$Disc>.Z.Resources.UK.Dicts.Master  ~rf~cln~v
+%Copy <t5$Dir>.ob_spell.resource.UK.Dicts.MasterCsz         <t5$Disc>.Z.Resources.UK.Dicts.MasterC ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.Dicts.*
+|
+%CDir                                                       <t5$Disc>.Z.Resources.UK.Templates
+%Copy <t5$Resources$Dir>.UK.Templates.*                     <t5$Disc>.Z.Resources.UK.Templates.* ~rf~cln~v
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.Templates.*
+|
+| [Pro]
+|*Pro*<t5$Resources$Dir>.UK.DateFormat                      <t5$Disc>.Z.Resources.UK.* ~rf~cln~v
+|*Pro*<t5$Resources$Dir>.UK.Holidays                        <t5$Disc>.Z.Resources.UK.* ~rf~cln~v
+|
+t5_access_read                                              <t5$Disc>.Z.Resources.UK.*
+| Language-dependent (UK) [end]
+
+t5_access_read                                              <t5$Disc>.Z.Resources.*
+t5_access_read                                              <t5$Disc>.Z.Resources
+
+| User Choices (destined for Choices$Write on target system - these are writeable)
+|
+%CDir                                                       <t5$Disc>.Z.uChoices
+
+%Copy <ap$Resource$Dir>.RISC_OS.UK.uChoices.DoCopy          <t5$Disc>.Z.uChoices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.RISC_OS.UK.uChoices.ReadMe          <t5$Disc>.Z.uChoices.* ~rf~cln~v
+
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz
+
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz.Choices
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice00         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice01         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+| Choice18 is not saved so don't put it here
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Choices.Choice29         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+|*Pro*<ap$Resource$Dir>.RISC_OS.UK.Choices.Choice37         <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+%Copy <ap$Resource$Dir>.RISC_OS.UK.Choices.ChoicesDoc       <t5$Disc>.Z.uChoices.Fireworkz.Choices.* ~rf~cln~v
+t5_access_write                                             <t5$Disc>.Z.uChoices.Fireworkz.Choices.*
+
+| These are the big dicts, later datestamps
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz.Dicts
+%Copy <t5$Dir>.ob_spell.resource.UK.Dicts.User              <t5$Disc>.Z.uChoices.Fireworkz.Dicts.User  ~rf~cln~v
+%Copy <t5$Dir>.ob_spell.resource.UK.Dicts.UserC             <t5$Disc>.Z.uChoices.Fireworkz.Dicts.UserC ~rf~cln~v
+t5_access_write                                             <t5$Disc>.Z.uChoices.Fireworkz.Dicts.*
+
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz.Library
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz.Markers
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz.Pictures
+%CDir                                                       <t5$Disc>.Z.uChoices.Fireworkz.Template
+
+t5_access_write                                             <t5$Disc>.Z.uChoices.Fireworkz.*
+t5_access_write                                             <t5$Disc>.Z.uChoices.Fireworkz
+t5_access_write                                             <t5$Disc>.Z.uChoices
+
+
+%CDir                                                       <t5$Disc>.Apps
+%CDir                                                       <t5$Disc>.Apps.Document
+%Rename <t5$Disc>.Z                                         <t5$Disc>.Apps.Document.!Fireworkz
+t5_access_read                                              <t5$Disc>.Apps.Document.!Fireworkz
+
+%CDir                                                       <t5$Disc>.RiscPkg
+%Copy <t5$Product$Dir>.r.RiscPkg.Control                    <t5$Disc>.RiscPkg.* ~rf~cln~v
+%Copy <t5$Product$Dir>.r.RiscPkg.Copyright                  <t5$Disc>.RiscPkg.* ~rf~cln~v
+
+
+Unset Alias$t5_access_read
+Unset Alias$t5_access_write
+
+
+%Dir <t5$Disc>
+zip -r <t5$Zip> RiscPkg Apps
+SetType <t5$Zip> &A91
+Info <t5$Zip>
+%Back
+
+Filer_OpenDir <t5$Disc>

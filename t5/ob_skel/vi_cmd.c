@@ -51,7 +51,7 @@ calc_paneextent(
     _ViewRef_   P_VIEW p_view);
 
 static void
-view_set_zoomfactor(
+view_set_scale_factor(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     S32 scalet,
@@ -118,7 +118,7 @@ T5_CMD_PROTO(extern, t5_cmd_current_pane)
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
         p_view->cur_pane = ENUM_PACK(PANE_ID, p_args[0].val.s32);
 
     return(STATUS_OK);
@@ -138,7 +138,7 @@ T5_CMD_PROTO(extern, t5_cmd_current_view)
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
         p_view = p_view_from_viewno_caret(p_docu);
 
     return(command_set_current_view(p_docu, p_view)); /* in case we're recording a replayed sequence */
@@ -198,13 +198,13 @@ viewno_find_entry(
             if(!view_void_entry(p_view))
                 continue;
 
-            zero_struct_ptr(p_view);
+            zero_struct_ptr_fn(p_view);
             *p_viewno = p_view->viewno = (VIEWNO) (array_indexof_element(&p_docu->h_view_table, VIEW, p_view) + VIEWNO_FIRST);
             return(STATUS_OK);
         }
     }
 
-    if(array_elements(&p_docu->h_view_table) >= VIEWNO_MAX - VIEWNO_FIRST)
+    if(array_elements32(&p_docu->h_view_table) >= VIEWNO_MAX - VIEWNO_FIRST)
         return(status_nomem());
 
     {
@@ -321,32 +321,30 @@ view_return_extid(
 
 /******************************************************************************
 *
-* view control dialog
+* view control and view scale dialogue boxes
 *
 ******************************************************************************/
 
+//#define VIEW_CONTROL_SCALE 1
+
 enum VIEW_CONTROL_IDS
 {
-    VIEW_CONTROL_ID_STT = 30,
+    VIEW_SCALE_ID_GROUP = 30,
+    VIEW_SCALE_ID_VALUE,
+    VIEW_SCALE_ID_UNITS,
+    VIEW_SCALE_ID_FIT_H,
+    VIEW_SCALE_ID_FIT_V,
+    VIEW_SCALE_ID_BUTTON_1,
+    VIEW_SCALE_ID_BUTTON_2,
+    VIEW_SCALE_ID_BUTTON_3,
+    VIEW_SCALE_ID_BUTTON_4,
+    VIEW_SCALE_ID_BUTTON_5,
 
-    VIEW_CONTROL_ID_NEW_VIEW,
-
-    VIEW_CONTROL_ID_RULER_BORDER_GROUP = 40,
+    VIEW_CONTROL_ID_RULER_BORDER_GROUP = 50,
     VIEW_CONTROL_ID_BORDER_HORZ,
     VIEW_CONTROL_ID_BORDER_VERT,
     VIEW_CONTROL_ID_RULER_HORZ,
     VIEW_CONTROL_ID_RULER_VERT,
-
-    VIEW_CONTROL_ID_ZOOM_GROUP = 50,
-    VIEW_CONTROL_ID_ZOOM_VALUE,
-    VIEW_CONTROL_ID_ZOOM_UNITS,
-    VIEW_CONTROL_ID_ZOOM_FIT_H,
-    VIEW_CONTROL_ID_ZOOM_FIT_V,
-    VIEW_CONTROL_ID_ZOOM_1,
-    VIEW_CONTROL_ID_ZOOM_2,
-    VIEW_CONTROL_ID_ZOOM_3,
-    VIEW_CONTROL_ID_ZOOM_4,
-    VIEW_CONTROL_ID_ZOOM_5,
 
     VIEW_CONTROL_ID_DISPLAY_GROUP = 60,
     VIEW_CONTROL_ID_DISPLAY_1,
@@ -356,29 +354,214 @@ enum VIEW_CONTROL_IDS
     VIEW_CONTROL_ID_SPLIT_H = 70,
     VIEW_CONTROL_ID_SPLIT_V,
 
+    VIEW_CONTROL_ID_NEW_VIEW,
+
     VIEW_CONTROL_ID_END
 };
 
 #if RISCOS
-#define VIEW_CONTROL_ZOOM_BUTTONS_H ((16 * 60 * PIXITS_PER_RISCOS) / 8)
+#define VIEW_SCALE_BUTTONS_H ((16 * 60 * PIXITS_PER_RISCOS) / 8)
 #elif WINDOWS
-#define VIEW_CONTROL_ZOOM_BUTTONS_H ((18 * 14 * PIXITS_PER_WDU_H) / 8)
+#define VIEW_SCALE_BUTTONS_H (DIALOG_PUSHBUTTONOVH_H + ((    192 * PIXITS_PER_WDU_H) / 8))
 #endif
-#define VIEW_CONTROL_ZOOM_BUTTONS_V DIALOG_STDPUSHBUTTON_V
+#define VIEW_SCALE_BUTTONS_V DIALOG_STDPUSHBUTTON_V
 
 #if RISCOS
-#define VIEW_CONTROL_ZOOM_BUTTONS_FIT_H DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARSL_H(6)
+#define VIEW_SCALE_BUTTONS_FIT_H DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARSL_H(8)
 #elif WINDOWS
-#define VIEW_CONTROL_ZOOM_BUTTONS_FIT_H VIEW_CONTROL_ZOOM_BUTTONS_H
+#define VIEW_SCALE_BUTTONS_FIT_H (((3 * VIEW_SCALE_BUTTONS_H - DIALOG_STDSPACING_H) / 2))
 #endif
+
+/*
+* scale group
+*/
+
+static const DIALOG_CONTROL
+view_scale_group =
+{
+    VIEW_SCALE_ID_GROUP, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0, 0, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    { DRT(LTRB, GROUPBOX) }
+};
+
+static const DIALOG_CONTROL_DATA_GROUPBOX
+view_scale_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_GROUP), { FRAMED_BOX_GROUP } };
+
+/*
+* scale value
+*/
+
+static const UI_CONTROL_S32
+view_scale_value_control = { 10, 1600, 5 };
+
+static const DIALOG_CONTROL_DATA_BUMP_S32
+view_scale_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &view_scale_value_control } /* BUMP_XX */ };
+
+static const DIALOG_CONTROL
+view_scale_value =
+{
+    VIEW_SCALE_ID_VALUE, VIEW_SCALE_ID_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
+    { DRT(LTLT, BUMP_S32), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CONTROL
+view_scale_units =
+{
+    VIEW_SCALE_ID_UNITS, VIEW_SCALE_ID_GROUP,
+    { VIEW_SCALE_ID_VALUE, VIEW_SCALE_ID_VALUE, DIALOG_CONTROL_SELF, VIEW_SCALE_ID_VALUE },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(RTLB, STATICTEXT) }
+};
+
+static const DIALOG_CONTROL_DATA_STATICTEXT
+view_scale_units_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/ } };
+
+/*
+* scale fit h/v
+*/
+
+static const DIALOG_CONTROL
+view_scale_fit_h =
+{
+    VIEW_SCALE_ID_FIT_H, VIEW_SCALE_ID_GROUP,
+    { VIEW_SCALE_ID_BUTTON_3, DIALOG_CONTROL_SELF, VIEW_SCALE_ID_FIT_V, VIEW_SCALE_ID_VALUE },
+    { 0, DIALOG_STDPUSHBUTTON_V, 0, 0 },
+    { DRT(LBLB, PUSHBUTTON), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+view_scale_fit_h_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_FIT_H) };
+
+static const DIALOG_CONTROL
+view_scale_fit_v =
+{
+    VIEW_SCALE_ID_FIT_V, VIEW_SCALE_ID_GROUP,
+    { DIALOG_CONTROL_SELF, VIEW_SCALE_ID_FIT_H, VIEW_SCALE_ID_BUTTON_5, VIEW_SCALE_ID_FIT_H },
+    { VIEW_SCALE_BUTTONS_FIT_H, 0, 0, 0 },
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+view_scale_fit_v_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_FIT_V) };
+
+
+/*
+* scale buttons
+*/
+
+static const DIALOG_CONTROL
+view_scale_button_n[5] =
+{
+    {
+        VIEW_SCALE_ID_BUTTON_1, VIEW_SCALE_ID_GROUP,
+        { VIEW_SCALE_ID_VALUE, VIEW_SCALE_ID_VALUE },
+        { 0, DIALOG_STDSPACING_V, VIEW_SCALE_BUTTONS_H, VIEW_SCALE_BUTTONS_V },
+        { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
+    },
+    {
+        VIEW_SCALE_ID_BUTTON_2, VIEW_SCALE_ID_GROUP,
+        { VIEW_SCALE_ID_BUTTON_1, VIEW_SCALE_ID_BUTTON_1, DIALOG_CONTROL_SELF, VIEW_SCALE_ID_BUTTON_1 },
+        { 0, 0, VIEW_SCALE_BUTTONS_H, 0 },
+        { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    },
+    {
+        VIEW_SCALE_ID_BUTTON_3, VIEW_SCALE_ID_GROUP,
+        { VIEW_SCALE_ID_BUTTON_2, VIEW_SCALE_ID_BUTTON_2, DIALOG_CONTROL_SELF, VIEW_SCALE_ID_BUTTON_2 },
+        { 0, 0, VIEW_SCALE_BUTTONS_H, 0 },
+        { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    },
+    {
+        VIEW_SCALE_ID_BUTTON_4, VIEW_SCALE_ID_GROUP,
+        { VIEW_SCALE_ID_BUTTON_3, VIEW_SCALE_ID_BUTTON_3, DIALOG_CONTROL_SELF, VIEW_SCALE_ID_BUTTON_3 },
+        { 0, 0, VIEW_SCALE_BUTTONS_H, 0 },
+        { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    },
+    {
+        VIEW_SCALE_ID_BUTTON_5, VIEW_SCALE_ID_GROUP,
+        { VIEW_SCALE_ID_BUTTON_4, VIEW_SCALE_ID_BUTTON_4, DIALOG_CONTROL_SELF, VIEW_SCALE_ID_BUTTON_4 },
+        { 0, 0, VIEW_SCALE_BUTTONS_H, 0 },
+        { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+    }
+};
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+view_scale_button_n_data[5] =
+{
+    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_1) },
+    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_2) },
+    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_3) },
+    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_4) },
+    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_5) }
+};
+
+/*
+* display group
+*/
+
+static const DIALOG_CONTROL
+view_control_display_group =
+{
+    VIEW_CONTROL_ID_DISPLAY_GROUP, DIALOG_MAIN_GROUP,
+#if defined(VIEW_CONTROL_SCALE)
+    { VIEW_SCALE_ID_GROUP, VIEW_SCALE_ID_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0, DIALOG_STDSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    { DRT(LBRB, GROUPBOX) }
+#else
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0, 0, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    { DRT(LTRB, GROUPBOX) }
+#endif
+};
+
+static const DIALOG_CONTROL_DATA_GROUPBOX
+view_control_display_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY), { FRAMED_BOX_GROUP } };
+
+static const DIALOG_CONTROL
+view_control_display_1 =
+{
+    VIEW_CONTROL_ID_DISPLAY_1, VIEW_CONTROL_ID_DISPLAY_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CONTROL_DATA_RADIOBUTTON
+view_control_display_1_data = { { 0 }, DISPLAY_DESK_AREA, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY_1) };
+
+static const DIALOG_CONTROL
+view_control_display_2 =
+{
+    VIEW_CONTROL_ID_DISPLAY_2, VIEW_CONTROL_ID_DISPLAY_GROUP,
+    { VIEW_CONTROL_ID_DISPLAY_1, VIEW_CONTROL_ID_DISPLAY_1 },
+    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LBLT, RADIOBUTTON) }
+};
+
+static const DIALOG_CONTROL_DATA_RADIOBUTTON
+view_control_display_2_data = { { 0 }, DISPLAY_PRINT_AREA, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY_2) };
+
+static const DIALOG_CONTROL
+view_control_display_3 =
+{
+    VIEW_CONTROL_ID_DISPLAY_3, VIEW_CONTROL_ID_DISPLAY_GROUP,
+    { VIEW_CONTROL_ID_DISPLAY_2, VIEW_CONTROL_ID_DISPLAY_2 },
+    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LBLT, RADIOBUTTON) }
+};
+
+static const DIALOG_CONTROL_DATA_RADIOBUTTON
+view_control_display_3_data = { { 0 }, DISPLAY_WORK_AREA, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY_3) };
 
 static const DIALOG_CONTROL
 view_control_ruler_border_group =
 {
     VIEW_CONTROL_ID_RULER_BORDER_GROUP, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, VIEW_CONTROL_ID_ZOOM_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_STDSPACING_V },
-    { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
+    { VIEW_CONTROL_ID_DISPLAY_GROUP, VIEW_CONTROL_ID_DISPLAY_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { DIALOG_GROUPSPACING_H, 0 },
+    { DRT(RTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
@@ -429,181 +612,11 @@ view_control_ruler_vert =
 static const DIALOG_CONTROL_DATA_CHECKBOX
 view_control_ruler_vert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_RULER_VERT) };
 
-/*
-* ZOOM group
-*/
-
-static const DIALOG_CONTROL
-view_control_zoom_group =
-{
-    VIEW_CONTROL_ID_ZOOM_GROUP, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, 0, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
-    { DRT(LTRB, GROUPBOX) }
-};
-
-static const DIALOG_CONTROL_DATA_GROUPBOX
-view_control_zoom_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_ZOOM), { FRAMED_BOX_GROUP } };
-
-/*
-* zoom value
-*/
-
-static const UI_CONTROL_S32
-view_control_zoom_value_control = { 10, 1600, 5 };
-
-static const DIALOG_CONTROL_DATA_BUMP_S32
-view_control_zoom_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &view_control_zoom_value_control } /* BUMP_XX */ };
-
-static const DIALOG_CONTROL
-view_control_zoom_value =
-{
-    VIEW_CONTROL_ID_ZOOM_VALUE, VIEW_CONTROL_ID_ZOOM_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(LTLT, BUMP_S32), 1 /*tabstop*/ }
-};
-
-static const DIALOG_CONTROL
-view_control_zoom_units =
-{
-    VIEW_CONTROL_ID_ZOOM_UNITS, VIEW_CONTROL_ID_ZOOM_GROUP,
-    { VIEW_CONTROL_ID_ZOOM_VALUE, VIEW_CONTROL_ID_ZOOM_VALUE, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_VALUE },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(RTLB, STATICTEXT) }
-};
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-view_control_zoom_units_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
-
-/*
-* zoom fit
-*/
-
-static const DIALOG_CONTROL
-view_control_zoom_fit_h =
-{
-    VIEW_CONTROL_ID_ZOOM_FIT_H, VIEW_CONTROL_ID_ZOOM_GROUP,
-    { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_FIT_V, VIEW_CONTROL_ID_ZOOM_VALUE },
-    { VIEW_CONTROL_ZOOM_BUTTONS_FIT_H, DIALOG_STDPUSHBUTTON_V, 0, 0 },
-    { DRT(RBLB, PUSHBUTTON), 1 /*tabstop*/ }
-};
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-view_control_zoom_fit_h_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_FIT_H) };
-
-static const DIALOG_CONTROL
-view_control_zoom_fit_v =
-{
-    VIEW_CONTROL_ID_ZOOM_FIT_V, VIEW_CONTROL_ID_ZOOM_GROUP,
-    { DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_FIT_H, VIEW_CONTROL_ID_ZOOM_5, VIEW_CONTROL_ID_ZOOM_FIT_H },
-    { VIEW_CONTROL_ZOOM_BUTTONS_FIT_H, 0, 0, 0 },
-    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
-};
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-view_control_zoom_fit_v_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_FIT_V) };
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-view_control_zoom_n_data[5] =
-{
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_1) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_2) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_3) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_4) },
-    { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SCALE_5) }
-};
-
-/*
-* zoom buttons
-*/
-
-static const DIALOG_CONTROL
-view_control_zoom_n[5] =
-{
-    {
-        VIEW_CONTROL_ID_ZOOM_1, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_VALUE, VIEW_CONTROL_ID_ZOOM_VALUE },
-        { 0, DIALOG_STDSPACING_V, VIEW_CONTROL_ZOOM_BUTTONS_H, VIEW_CONTROL_ZOOM_BUTTONS_V }, { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
-    },
-
-    {
-        VIEW_CONTROL_ID_ZOOM_2, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_1, VIEW_CONTROL_ID_ZOOM_1, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_1 },
-        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
-    },
-
-    {
-        VIEW_CONTROL_ID_ZOOM_3, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_2, VIEW_CONTROL_ID_ZOOM_2, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_2 },
-        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
-    },
-
-    {
-        VIEW_CONTROL_ID_ZOOM_4, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_3, VIEW_CONTROL_ID_ZOOM_3, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_3 },
-        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
-    },
-
-    {
-        VIEW_CONTROL_ID_ZOOM_5, VIEW_CONTROL_ID_ZOOM_GROUP, { VIEW_CONTROL_ID_ZOOM_4, VIEW_CONTROL_ID_ZOOM_4, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_ZOOM_4 },
-        { 0, 0, VIEW_CONTROL_ZOOM_BUTTONS_H, 0 }, { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
-    }
-};
-
-/*
-* display group
-*/
-
-static const DIALOG_CONTROL
-view_control_display_group =
-{
-    VIEW_CONTROL_ID_DISPLAY_GROUP, DIALOG_MAIN_GROUP,
-    { VIEW_CONTROL_ID_RULER_BORDER_GROUP, VIEW_CONTROL_ID_RULER_BORDER_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_STDSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
-    { DRT(LBRB, GROUPBOX) }
-};
-
-static const DIALOG_CONTROL_DATA_GROUPBOX
-view_control_display_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY), { FRAMED_BOX_GROUP } };
-
-static const DIALOG_CONTROL
-view_control_display_1 =
-{
-    VIEW_CONTROL_ID_DISPLAY_1, VIEW_CONTROL_ID_DISPLAY_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
-};
-
-static const DIALOG_CONTROL_DATA_RADIOBUTTON
-view_control_display_1_data = { { 0 }, DISPLAY_DESK_AREA, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY_1) };
-
-static const DIALOG_CONTROL
-view_control_display_2 =
-{
-    VIEW_CONTROL_ID_DISPLAY_2, VIEW_CONTROL_ID_DISPLAY_GROUP,
-    { VIEW_CONTROL_ID_DISPLAY_1, VIEW_CONTROL_ID_DISPLAY_1, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_DISPLAY_1 },
-    { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(RTLB, RADIOBUTTON) }
-};
-
-static const DIALOG_CONTROL_DATA_RADIOBUTTON
-view_control_display_2_data = { { 0 }, DISPLAY_PRINT_AREA, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY_2) };
-
-static const DIALOG_CONTROL
-view_control_display_3 =
-{
-    VIEW_CONTROL_ID_DISPLAY_3, VIEW_CONTROL_ID_DISPLAY_GROUP,
-    { VIEW_CONTROL_ID_DISPLAY_2, VIEW_CONTROL_ID_DISPLAY_2, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_DISPLAY_2 },
-    { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(RTLB, RADIOBUTTON) }
-};
-
-static const DIALOG_CONTROL_DATA_RADIOBUTTON
-view_control_display_3_data = { { 0 }, DISPLAY_WORK_AREA, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_DISPLAY_3) };
-
 static const DIALOG_CONTROL
 view_control_split_h =
 {
     VIEW_CONTROL_ID_SPLIT_H, DIALOG_MAIN_GROUP,
-    { VIEW_CONTROL_ID_DISPLAY_GROUP, VIEW_CONTROL_ID_DISPLAY_GROUP },
+    { VIEW_CONTROL_ID_DISPLAY_1, VIEW_CONTROL_ID_DISPLAY_GROUP },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
@@ -615,9 +628,9 @@ static const DIALOG_CONTROL
 view_control_split_v =
 {
     VIEW_CONTROL_ID_SPLIT_V, DIALOG_MAIN_GROUP,
-    { VIEW_CONTROL_ID_SPLIT_H, VIEW_CONTROL_ID_SPLIT_H, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_SPLIT_H },
-    { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(RTLB, CHECKBOX), 1 /*tabstop*/ }
+    { VIEW_CONTROL_ID_BORDER_VERT, VIEW_CONTROL_ID_SPLIT_H, DIALOG_CONTROL_SELF, VIEW_CONTROL_ID_SPLIT_H },
+    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(LTLB, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -626,8 +639,12 @@ view_control_split_v_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SPLIT_V)
 static const DIALOG_CONTROL_ID
 view_control_ok_data_argmap[] =
 {
-#define ARG_VIEW_CONTROL_ZOOM           0
-    VIEW_CONTROL_ID_ZOOM_VALUE,
+#define ARG_VIEW_CONTROL_SCALE          0
+#if defined(VIEW_CONTROL_SCALE)
+    VIEW_SCALE_ID_VALUE,
+#else
+    0,
+#endif
 #define ARG_VIEW_CONTROL_DISPLAY        1
     VIEW_CONTROL_ID_DISPLAY_GROUP,
 #define ARG_VIEW_CONTROL_RULER_HORZ     2
@@ -653,13 +670,15 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 view_control_ok_command = { T5_CMD_VIEW_CONTROL, OBJECT_ID_SKEL, NULL, view_control_ok_data_argmap, { 0 /*set_view*/, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-view_control_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &view_control_ok_command };
+view_control_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &view_control_ok_command };
+
+#if defined(VIEW_CONTROL_SCALE)
 
 static const DIALOG_CONTROL
 view_control_new_view =
 {
     VIEW_CONTROL_ID_NEW_VIEW, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, IDCANCEL, IDCANCEL, IDCANCEL },
+    { DIALOG_CONTROL_SELF, IDCANCEL, ID_LEFT_OKCANCEL, IDCANCEL },
 #if WINDOWS
     { DIALOG_STDPUSHBUTTON_H, 0, DIALOG_STDSPACING_H, 0 },
 #else
@@ -671,44 +690,86 @@ view_control_new_view =
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 view_control_new_view_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_NEW_VIEW), &view_control_ok_command };
 
+#endif
+
 static const DIALOG_CTL_CREATE
 view_control_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &view_control_zoom_group,     &view_control_zoom_group_data },
-    { &view_control_zoom_value,     &view_control_zoom_value_data },
-    { &view_control_zoom_units,     &view_control_zoom_units_data },
-    { &view_control_zoom_fit_h,     &view_control_zoom_fit_h_data },
-    { &view_control_zoom_fit_v,     &view_control_zoom_fit_v_data },
-    { &view_control_zoom_n[1-1],    &view_control_zoom_n_data[1-1] },
-    { &view_control_zoom_n[2-1],    &view_control_zoom_n_data[2-1] },
-    { &view_control_zoom_n[3-1],    &view_control_zoom_n_data[3-1] },
-    { &view_control_zoom_n[4-1],    &view_control_zoom_n_data[4-1] },
-    { &view_control_zoom_n[5-1],    &view_control_zoom_n_data[5-1] },
+#if defined(VIEW_CONTROL_SCALE)
+    { { &view_scale_group },            &view_scale_group_data },
+    { { &view_scale_value },            &view_scale_value_data },
+    { { &view_scale_units },            &view_scale_units_data },
+    { { &view_scale_fit_h },            &view_scale_fit_h_data },
+    { { &view_scale_fit_v },            &view_scale_fit_v_data },
+    { { &view_scale_button_n[1-1] },    &view_scale_button_n_data[1-1] },
+    { { &view_scale_button_n[2-1] },    &view_scale_button_n_data[2-1] },
+    { { &view_scale_button_n[3-1] },    &view_scale_button_n_data[3-1] },
+    { { &view_scale_button_n[4-1] },    &view_scale_button_n_data[4-1] },
+    { { &view_scale_button_n[5-1] },    &view_scale_button_n_data[5-1] },
+#endif
 
-    { &view_control_ruler_border_group },
-    { &view_control_border_horz,    &view_control_border_horz_data },
-    { &view_control_border_vert,    &view_control_border_vert_data },
-    { &view_control_ruler_horz,     &view_control_ruler_horz_data },
-    { &view_control_ruler_vert,     &view_control_ruler_vert_data },
+    { { &view_control_ruler_border_group }, NULL },
+    { { &view_control_border_horz },    &view_control_border_horz_data },
+    { { &view_control_border_vert },    &view_control_border_vert_data },
+    { { &view_control_ruler_horz },     &view_control_ruler_horz_data },
+    { { &view_control_ruler_vert },     &view_control_ruler_vert_data },
 
-    { &view_control_display_group,  &view_control_display_group_data },
-    { &view_control_display_1,      &view_control_display_1_data },
-    { &view_control_display_2,      &view_control_display_2_data },
-    { &view_control_display_3,      &view_control_display_3_data },
+    { { &view_control_display_group },  &view_control_display_group_data },
+    { { &view_control_display_1 },      &view_control_display_1_data },
+    { { &view_control_display_2 },      &view_control_display_2_data },
+    { { &view_control_display_3 },      &view_control_display_3_data },
 
-    { &view_control_split_h,        &view_control_split_h_data },
-    { &view_control_split_v,        &view_control_split_v_data },
+    { { &view_control_split_h },        &view_control_split_h_data },
+    { { &view_control_split_v },        &view_control_split_v_data },
 
-    { &defbutton_ok,                &view_control_ok_data },
-    { &stdbutton_cancel,            &stdbutton_cancel_data },
-    { &view_control_new_view,       &view_control_new_view_data }
+#if defined(VIEW_CONTROL_SCALE)
+    { { &view_control_new_view },       &view_control_new_view_data },
+#endif
+    { { &defbutton_ok },                &view_control_ok_data },
+    { { &stdbutton_cancel },            &stdbutton_cancel_data }
+};
+
+static const DIALOG_CONTROL_ID
+view_scale_ok_data_argmap[] =
+{
+#define ARG_VIEW_SCALE_SCALE            0
+    VIEW_SCALE_ID_VALUE
+#define ARG_VIEW_SCALE_N_ARGS           1
+};
+
+static const DIALOG_CONTROL_DATA_PUSH_COMMAND
+view_scale_ok_command = { T5_CMD_VIEW_SCALE, OBJECT_ID_SKEL, NULL, view_scale_ok_data_argmap, { 0 /*set_view*/, 0, 0, 1 /*lookup_arglist*/ } };
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+view_scale_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &view_scale_ok_command };
+
+static const DIALOG_CTL_CREATE
+view_scale_ctl_create[] =
+{
+    { { &dialog_main_group }, NULL },
+
+    { { &view_scale_group },            &view_scale_group_data },
+    { { &view_scale_value },            &view_scale_value_data },
+    { { &view_scale_units },            &view_scale_units_data },
+    { { &view_scale_fit_h },            &view_scale_fit_h_data },
+    { { &view_scale_fit_v },            &view_scale_fit_v_data },
+    { { &view_scale_button_n[1-1] },    &view_scale_button_n_data[1-1] },
+    { { &view_scale_button_n[2-1] },    &view_scale_button_n_data[2-1] },
+    { { &view_scale_button_n[3-1] },    &view_scale_button_n_data[3-1] },
+    { { &view_scale_button_n[4-1] },    &view_scale_button_n_data[4-1] },
+    { { &view_scale_button_n[5-1] },    &view_scale_button_n_data[5-1] },
+
+    { { &defbutton_ok },                &view_scale_ok_data },
+    { { &stdbutton_cancel },            &stdbutton_cancel_data }
 };
 
 typedef struct VIEW_CONTROL_CALLBACK
 {
-    S32 zoom_value_state;
+#if defined(VIEW_CONTROL_SCALE)
+    S32 scale_pct;
+#endif
     S32 display_mode;
     BOOL horz_ruler_on;
     BOOL vert_ruler_on;
@@ -727,7 +788,9 @@ dialog_view_control_process_start(
     const P_VIEW_CONTROL_CALLBACK p_view_control_callback = (P_VIEW_CONTROL_CALLBACK) p_dialog_msg_process_start->client_handle;
     const H_DIALOG h_dialog = p_dialog_msg_process_start->h_dialog;
 
-    status_return(ui_dlg_set_s32(h_dialog, VIEW_CONTROL_ID_ZOOM_VALUE, p_view_control_callback->zoom_value_state));
+#if defined(VIEW_CONTROL_SCALE)
+    status_return(ui_dlg_set_s32(h_dialog, VIEW_SCALE_ID_VALUE, p_view_control_callback->scale_pct));
+#endif
     status_return(ui_dlg_set_radio(h_dialog, VIEW_CONTROL_ID_DISPLAY_GROUP, p_view_control_callback->display_mode));
     status_return(ui_dlg_set_check(h_dialog, VIEW_CONTROL_ID_BORDER_HORZ, p_view_control_callback->horz_border_on));
     status_return(ui_dlg_set_check(h_dialog, VIEW_CONTROL_ID_BORDER_VERT, p_view_control_callback->vert_border_on));
@@ -739,29 +802,35 @@ dialog_view_control_process_start(
     return(STATUS_OK);
 }
 
-/* calculates a scale factor such that a view with one pane at full size
- * covering the screen would have a page's horz. printable area visible
-*/
+typedef struct VIEW_SCALE_CALLBACK
+{
+    S32 scale_pct;
+}
+VIEW_SCALE_CALLBACK, * P_VIEW_SCALE_CALLBACK;
 
 _Check_return_
-static S32 /* new zoom factor */
-process_zoom_fit(
-    _DocuRef_   P_DOCU p_docu,
-    _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
+static STATUS
+dialog_view_scale_process_start(
+    _InRef_     PC_DIALOG_MSG_PROCESS_START p_dialog_msg_process_start)
 {
-    const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    DISPLAY_MODE display_mode = (DISPLAY_MODE) ui_dlg_get_radio(h_dialog, VIEW_CONTROL_ID_DISPLAY_GROUP);
-    BOOL horz_ruler_on  = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_RULER_HORZ);
-    BOOL horz_border_on = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_BORDER_HORZ);
-    BOOL vert_ruler_on  = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_RULER_VERT);
-    BOOL vert_border_on = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_BORDER_VERT);
-    PIXIT_POINT page_size;
-    GDI_SIZE screen_gdi_size;
-    PIXIT_POINT screen_pixit_size;
-    S32 new_zoom_factor;
+    const P_VIEW_SCALE_CALLBACK p_view_scale_callback = (P_VIEW_SCALE_CALLBACK) p_dialog_msg_process_start->client_handle;
+    const H_DIALOG h_dialog = p_dialog_msg_process_start->h_dialog;
 
-    view_one_page_display_size_query(p_docu, display_mode, &page_size);
+    status_return(ui_dlg_set_s32(h_dialog, VIEW_SCALE_ID_VALUE, p_view_scale_callback->scale_pct));
+
+    return(STATUS_OK);
+}
+
+/* calculates a scale factor (returned as %ge value) such that a view with one pane
+ * at full size covering the screen would have a page's horz. printable area visible
+*/
+
+static void
+adjusted_work_area_gdi_size_query(
+    _ViewRef_   P_VIEW p_view,
+    _OutRef_    P_GDI_SIZE p_screen_gdi_size)
+{
+    GDI_SIZE screen_gdi_size;
 
     host_work_area_gdi_size_query(&screen_gdi_size); /* NB pixels */
 
@@ -811,19 +880,63 @@ process_zoom_fit(
     screen_gdi_size.cy -= wimp_iconbar_height;
 #endif
 
+    *p_screen_gdi_size = screen_gdi_size;
+}
 
-    { /* now go into pixits: this we do using a rectangle transform to ensure that the co-ordinates are correctly rounded. */
+static void
+screen_pixit_size_from_gdi_size(
+    _ViewRef_   P_VIEW p_view,
+    _InRef_     PC_GDI_SIZE p_screen_gdi_size,
+    _OutRef_    P_PIXIT_POINT p_screen_pixit_size)
+{
+    /* go into pixits: this we do using a rectangle transform to ensure that the co-ordinates are correctly rounded. */
     GDI_POINT screen_gdi_br;
     HOST_XFORM host_xform;
     set_host_xform_for_view(&host_xform, p_view, FALSE, FALSE);
-    screen_gdi_br.x = screen_gdi_size.cx;
+
+    screen_gdi_br.x = p_screen_gdi_size->cx;
 #if RISCOS
-    screen_gdi_br.y = - screen_gdi_size.cy; /* flip as size != point */
+    screen_gdi_br.y = - p_screen_gdi_size->cy; /* flip as size != point */
 #else
-    screen_gdi_br.y = screen_gdi_size.cy;
+    screen_gdi_br.y = p_screen_gdi_size->cy;
 #endif
-    pixit_point_from_window_point(&screen_pixit_size, &screen_gdi_br, &host_xform);
-    } /*block*/
+
+    pixit_point_from_window_point(p_screen_pixit_size, &screen_gdi_br, &host_xform);
+}
+
+_Check_return_
+static S32 /* new view scale percentage */
+view_scale_generate_fit(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     H_DIALOG h_dialog,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
+    _InVal_     BOOL fViewControl)
+{
+    const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
+    DISPLAY_MODE display_mode = p_view->display_mode;
+    BOOL horz_ruler_on  = p_view->flags.horz_ruler_on;
+    BOOL horz_border_on = p_view->flags.horz_border_on;
+    BOOL vert_ruler_on  = p_view->flags.vert_ruler_on;
+    BOOL vert_border_on = p_view->flags.vert_border_on;
+    PIXIT_POINT page_size;
+    GDI_SIZE screen_gdi_size;
+    PIXIT_POINT screen_pixit_size;
+    S32 new_scale_pct;
+
+    if(fViewControl)
+    {
+        display_mode   = (DISPLAY_MODE) ui_dlg_get_radio(h_dialog, VIEW_CONTROL_ID_DISPLAY_GROUP);
+        horz_ruler_on  = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_RULER_HORZ);
+        horz_border_on = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_BORDER_HORZ);
+        vert_ruler_on  = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_RULER_VERT);
+        vert_border_on = ui_dlg_get_check(h_dialog, VIEW_CONTROL_ID_BORDER_VERT);
+    }
+
+    view_one_page_display_size_query(p_docu, display_mode, &page_size);
+
+    adjusted_work_area_gdi_size_query(p_view, &screen_gdi_size); /* NB pixels */
+
+    screen_pixit_size_from_gdi_size(p_view, &screen_gdi_size, &screen_pixit_size);
 
     if(horz_ruler_on || vert_ruler_on)
     {
@@ -843,17 +956,16 @@ process_zoom_fit(
     if(horz_border_on)
         screen_pixit_size.y -= view_border_pixit_size(p_view, TRUE);
 
-    if(VIEW_CONTROL_ID_ZOOM_FIT_H == dialog_control_id)
-    {
-        new_zoom_factor = 5 * muldiv64_round_floor(screen_pixit_size.x, 100, 5 * page_size.x); /* round down to nearest 5% */
+    if(VIEW_SCALE_ID_FIT_H == dialog_control_id)
+    {   /* round down to nearest 5% */
+        new_scale_pct = 5 * muldiv64_round_floor(screen_pixit_size.x, 100, 5 * page_size.x);
     }
-    else /* (VIEW_CONTROL_ID_ZOOM_FIT_V == dialog_control_id) */
-    {
-        /*reportf(TEXT("sps.y = %d; ps.y = %d"), screen_pixit_size.y, page_size.y);*/
-        new_zoom_factor = 5 * muldiv64_round_floor(screen_pixit_size.y, 100, 5 * page_size.y); /* round down to nearest 5% */
+    else /* (VIEW_SCALE_ID_FIT_V == dialog_control_id) */
+    {   /* round down to nearest 5% */
+        new_scale_pct = 5 * muldiv64_round_floor(screen_pixit_size.y, 100, 5 * page_size.y);
     }
 
-    return(new_zoom_factor);
+    return(MAX(5, new_scale_pct));
 }
 
 _Check_return_
@@ -870,30 +982,75 @@ dialog_view_control_ctl_pushbutton(
         /* first of all, fire off a New View command, then apply commands to it just like OK does */
         return(execute_command(p_docu, T5_CMD_VIEW_NEW, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
-    case VIEW_CONTROL_ID_ZOOM_FIT_H:
-    case VIEW_CONTROL_ID_ZOOM_FIT_V:
-    case VIEW_CONTROL_ID_ZOOM_1:
-    case VIEW_CONTROL_ID_ZOOM_2:
-    case VIEW_CONTROL_ID_ZOOM_3:
-    case VIEW_CONTROL_ID_ZOOM_4:
-    case VIEW_CONTROL_ID_ZOOM_5:
+#if defined(VIEW_CONTROL_SCALE)
+    case VIEW_SCALE_ID_FIT_H:
+    case VIEW_SCALE_ID_FIT_V:
+    case VIEW_SCALE_ID_BUTTON_1:
+    case VIEW_SCALE_ID_BUTTON_2:
+    case VIEW_SCALE_ID_BUTTON_3:
+    case VIEW_SCALE_ID_BUTTON_4:
+    case VIEW_SCALE_ID_BUTTON_5:
         {
-        S32 new_zoom_factor;
+        S32 new_scale_pct;
 
-        if((dialog_control_id == VIEW_CONTROL_ID_ZOOM_FIT_H) || (dialog_control_id == VIEW_CONTROL_ID_ZOOM_FIT_V))
+        if( (dialog_control_id == VIEW_SCALE_ID_FIT_H) || (dialog_control_id == VIEW_SCALE_ID_FIT_V) )
         {
-            new_zoom_factor = process_zoom_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id);
+            new_scale_pct = view_scale_generate_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id, true /*fViewControl*/);
         }
         else
         {
-            /* read new zoom factor from messages file; up to us, and then punter, to keep icons & messages file in step */
-            PC_USTR ustr = resource_lookup_ustr(((S32) dialog_control_id - VIEW_CONTROL_ID_ZOOM_1) + MSG_DIALOG_VIEW_SCALE_1);
-            new_zoom_factor = (S32) fast_ustrtoul(ustr, NULL);
-            assert(new_zoom_factor > 0);
+            /* read new scale factor from messages file */
+            /* up to us, and then punter, to keep messages file in step */
+            PC_USTR ustr = resource_lookup_ustr(((S32) dialog_control_id - VIEW_SCALE_ID_BUTTON_1) + MSG_DIALOG_VIEW_SCALE_1);
+            new_scale_pct = (S32) fast_ustrtoul(ustr, NULL);
+            assert(new_scale_pct > 0);
         }
 
         /* reflect into dialog */
-        return(ui_dlg_set_s32(p_dialog_msg_ctl_pushbutton->h_dialog, VIEW_CONTROL_ID_ZOOM_VALUE, new_zoom_factor));
+        return(ui_dlg_set_s32(p_dialog_msg_ctl_pushbutton->h_dialog, VIEW_SCALE_ID_VALUE, new_scale_pct));
+        }
+#endif
+
+    default:
+        return(STATUS_OK);
+    }
+}
+
+_Check_return_
+static STATUS
+dialog_view_scale_ctl_pushbutton(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
+{
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+
+    switch(dialog_control_id)
+    {
+    case VIEW_SCALE_ID_FIT_H:
+    case VIEW_SCALE_ID_FIT_V:
+    case VIEW_SCALE_ID_BUTTON_1:
+    case VIEW_SCALE_ID_BUTTON_2:
+    case VIEW_SCALE_ID_BUTTON_3:
+    case VIEW_SCALE_ID_BUTTON_4:
+    case VIEW_SCALE_ID_BUTTON_5:
+        {
+        S32 new_scale_pct;
+
+        if( (dialog_control_id == VIEW_SCALE_ID_FIT_H) || (dialog_control_id == VIEW_SCALE_ID_FIT_V) )
+        {
+            new_scale_pct = view_scale_generate_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id, false /*fViewControl*/);
+        }
+        else
+        {
+            /* read new zoom factor from messages file */
+            /* up to us, and then punter, to keep messages file in step */
+            PC_USTR ustr = resource_lookup_ustr(((S32) dialog_control_id - VIEW_SCALE_ID_BUTTON_1) + MSG_DIALOG_VIEW_SCALE_1);
+            new_scale_pct = (S32) fast_ustrtoul(ustr, NULL);
+            assert(new_scale_pct > 0);
+        }
+
+        /* reflect into dialog */
+        return(ui_dlg_set_s32(p_dialog_msg_ctl_pushbutton->h_dialog, VIEW_SCALE_ID_VALUE, new_scale_pct));
         }
 
     default:
@@ -916,42 +1073,151 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_view_control)
     }
 }
 
-T5_CMD_PROTO(extern, t5_cmd_view_control_intro)
+PROC_DIALOG_EVENT_PROTO(static, dialog_event_view_scale)
+{
+    switch(dialog_message)
+    {
+    case DIALOG_MSG_CODE_PROCESS_START:
+        return(dialog_view_scale_process_start((PC_DIALOG_MSG_PROCESS_START) p_data));
+
+    case DIALOG_MSG_CODE_CTL_PUSHBUTTON:
+        return(dialog_view_scale_ctl_pushbutton(p_docu, (P_DIALOG_MSG_CTL_PUSHBUTTON) p_data));
+
+    default:
+        return(STATUS_OK);
+    }
+}
+
+/* encode initial state of control(s) */
+
+static inline void
+cmd_view_control_intro_init(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_VIEW_CONTROL_CALLBACK p_view_control_callback)
 {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
+#if defined(VIEW_CONTROL_SCALE)
+    p_view_control_callback->scale_pct = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
+#endif
+    p_view_control_callback->display_mode = p_view->display_mode;
+    p_view_control_callback->horz_ruler_on = p_view->flags.horz_ruler_on;
+    p_view_control_callback->vert_ruler_on = p_view->flags.vert_ruler_on;
+    p_view_control_callback->horz_border_on = p_view->flags.horz_border_on;
+    p_view_control_callback->vert_border_on = p_view->flags.vert_border_on;
+    p_view_control_callback->split_h = p_view->flags.vert_split_on;
+    p_view_control_callback->split_v = p_view->flags.horz_split_on;
+}
+
+static inline void
+cmd_view_scale_intro_init(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_VIEW_SCALE_CALLBACK p_view_scale_callback)
+{
+    const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
+    p_view_scale_callback->scale_pct = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
+}
+
+/* put up a dialog box and get the punter to choose something */
+
+_Check_return_
+static inline STATUS
+cmd_view_control_intro(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_VIEW_CONTROL_CALLBACK p_view_control_callback)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, view_control_ctl_create, elemof32(view_control_ctl_create), MSG_DIALOG_VIEW_CONTROL_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_VIEW_CONTROL_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_view_control;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_view_control_callback;
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+_Check_return_
+static inline STATUS
+cmd_view_scale_intro(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_VIEW_SCALE_CALLBACK p_view_scale_callback)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, view_scale_ctl_create, elemof32(view_scale_ctl_create), MSG_DIALOG_VIEW_SCALE_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_VIEW_SCALE_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_view_scale;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_view_scale_callback;
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+T5_CMD_PROTO(extern, t5_cmd_view_control_intro)
+{
     VIEW_CONTROL_CALLBACK view_control_callback;
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* encode initial state of control(s) */
-    view_control_callback.zoom_value_state = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
-    view_control_callback.display_mode = p_view->display_mode;
-    view_control_callback.horz_ruler_on = p_view->flags.horz_ruler_on;
-    view_control_callback.vert_ruler_on = p_view->flags.vert_ruler_on;
-    view_control_callback.horz_border_on = p_view->flags.horz_border_on;
-    view_control_callback.vert_border_on = p_view->flags.vert_border_on;
-    view_control_callback.split_h = p_view->flags.vert_split_on;
-    view_control_callback.split_v = p_view->flags.horz_split_on;
+    cmd_view_control_intro_init(p_docu, &view_control_callback);
 
-    { /* put up a dialog box and get the punter to choose something */
-    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, view_control_ctl_create, elemof32(view_control_ctl_create), MSG_DIALOG_VIEW_CONTROL_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_VIEW_CONTROL;
-    dialog_cmd_process_dbox.p_proc_client = dialog_event_view_control;
-    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &view_control_callback;
-    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
-    } /*block*/
+    /* put up a dialog box and get the punter to choose something */
+    return(cmd_view_control_intro(p_docu, &view_control_callback));
+}
+
+T5_CMD_PROTO(extern, t5_cmd_view_scale_intro)
+{
+    VIEW_SCALE_CALLBACK view_scale_callback;
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+
+    /* encode initial state of control(s) */
+    cmd_view_scale_intro_init(p_docu, &view_scale_callback);
+
+    /* put up a dialog box and get the punter to choose something */
+    return(cmd_view_scale_intro(p_docu, &view_scale_callback));
+}
+
+_Check_return_
+static STATUS
+cmd_view_control_reflect(
+    _DocuRef_   P_DOCU p_docu,
+    _ViewRef_   P_VIEW p_view,
+    _InVal_     BOOL fReopen,
+    _InVal_     BOOL fSetExtent,
+    _InVal_     BOOL fRedisplay)
+{
+    if(fSetExtent)
+    {
+        calc_paneextent(p_docu, p_view);
+
+        host_set_extent_this_view(p_docu, p_view);
+    }
+
+    if(fReopen)
+    {
+        if(p_view->horz_split_pos <= 0)
+            p_view->horz_split_pos = PIXITS_PER_INCH;
+
+        if(p_view->vert_split_pos <= 0)
+            p_view->vert_split_pos = PIXITS_PER_INCH;
+
+        host_view_reopen(p_docu, p_view);
+    }
+
+    if(fRedisplay)
+    {
+        view__update__later(p_docu, p_view);
+        caret_show_claim(p_docu, p_docu->focus_owner, TRUE);
+    }
+
+    return(STATUS_OK);
 }
 
 T5_CMD_PROTO(extern, t5_cmd_view_control)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, ARG_VIEW_CONTROL_N_ARGS);
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    BOOL reopen = 0;
-    BOOL set_extent = 0;
-    BOOL redisplay = 0;
+    BOOL fReopen = false;
+    BOOL fSetExtent = false;
+    BOOL fRedisplay = false;
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
@@ -966,16 +1232,16 @@ T5_CMD_PROTO(extern, t5_cmd_view_control)
     }
 #endif
 
-    if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_ZOOM].type)
+    if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_SCALE].type)
     {
-        /* zoom to this value */
-        S32 zoom = p_args[ARG_VIEW_CONTROL_ZOOM].val.s32;
-        S32 zoomt = MIN(3200, MAX(5, zoom));
-        S32 zoomb = 100;
+        /* scale to this percentage value */
+        S32 scale_pct = p_args[ARG_VIEW_CONTROL_SCALE].val.s32;
+        S32 scalet = MIN(3200, MAX(5, scale_pct));
+        S32 scaleb = 100;
 
-        view_set_zoomfactor(p_docu, p_view, zoomt, zoomb);
+        view_set_scale_factor(p_docu, p_view, scalet, scaleb);
 
-        reopen = set_extent = redisplay = 1;
+        fReopen = fSetExtent = fRedisplay = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_DISPLAY].type)
@@ -985,89 +1251,93 @@ T5_CMD_PROTO(extern, t5_cmd_view_control)
         if( display_mode > limit)
             display_mode = limit;
         p_view->display_mode = display_mode;
-        redisplay = reopen = set_extent = 1;
+        fRedisplay = fReopen = fSetExtent = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_RULER_HORZ].type)
     {
         p_view->flags.horz_ruler_on = p_args[ARG_VIEW_CONTROL_RULER_HORZ].val.fBool;
-        reopen = set_extent = 1;
+        fReopen = fSetExtent = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_RULER_VERT].type)
     {
         p_view->flags.vert_ruler_on = p_args[ARG_VIEW_CONTROL_RULER_VERT].val.fBool;
-        reopen = set_extent = 1;
+        fReopen = fSetExtent = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_BORDER_HORZ].type)
     {
         p_view->flags.horz_border_on = p_args[ARG_VIEW_CONTROL_BORDER_HORZ].val.fBool;
-        reopen = set_extent = 1;
+        fReopen = fSetExtent = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_BORDER_VERT].type)
     {
         p_view->flags.vert_border_on = p_args[ARG_VIEW_CONTROL_BORDER_VERT].val.fBool;
-        reopen = set_extent = 1;
+        fReopen = fSetExtent = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_SPLIT_H].type)
     {
         p_view->flags.vert_split_on = p_args[ARG_VIEW_CONTROL_SPLIT_H].val.fBool;
-        reopen = 1;
+        fReopen = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_SPLIT_H_POS].type)
     {
         p_view->vert_split_pos = p_args[ARG_VIEW_CONTROL_SPLIT_H_POS].val.s32;
-        reopen = 1;
+        fReopen = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_SPLIT_V].type)
     {
         p_view->flags.horz_split_on = p_args[ARG_VIEW_CONTROL_SPLIT_V].val.fBool;
-        reopen = 1;
+        fReopen = true;
     }
 
     if(ARG_TYPE_NONE != p_args[ARG_VIEW_CONTROL_SPLIT_V_POS].type)
     {
         p_view->horz_split_pos = p_args[ARG_VIEW_CONTROL_SPLIT_V_POS].val.s32;
-        reopen = 1;
+        fReopen = true;
     }
 
     if(p_view->flags.horz_ruler_on || p_view->flags.vert_ruler_on)
+    {
         if(status_fail(object_load(OBJECT_ID_RULER)))
         {
             p_view->flags.horz_ruler_on = p_view->flags.vert_ruler_on = 0;
-            reopen = set_extent = 1;
+            fReopen = fSetExtent = true;
         }
-
-    if(set_extent)
-    {
-        calc_paneextent(p_docu, p_view);
-
-        host_set_extent_this_view(p_docu, p_view);
     }
 
-    if(reopen)
+    return(cmd_view_control_reflect(p_docu, p_view, fReopen, fSetExtent, fRedisplay));
+}
+
+T5_CMD_PROTO(extern, t5_cmd_view_scale)
+{
+    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, ARG_VIEW_SCALE_N_ARGS);
+    const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
+    BOOL fReopen = false;
+    BOOL fSetExtent = false;
+    BOOL fRedisplay = false;
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+
+    if(ARG_TYPE_NONE != p_args[ARG_VIEW_SCALE_SCALE].type)
     {
-        if(p_view->horz_split_pos <= 0)
-            p_view->horz_split_pos = PIXITS_PER_INCH;
+        /* scale to this percentage value */
+        S32 scale_pct = p_args[ARG_VIEW_SCALE_SCALE].val.s32;
+        S32 scalet = MIN(3200, MAX(5, scale_pct));
+        S32 scaleb = 100;
 
-        if(p_view->vert_split_pos <= 0)
-            p_view->vert_split_pos = PIXITS_PER_INCH;
+        view_set_scale_factor(p_docu, p_view, scalet, scaleb);
 
-        host_view_reopen(p_docu, p_view);
+        fReopen = fSetExtent = fRedisplay = true;
     }
 
-    if(redisplay)
-    {
-        view__update__later(p_docu, p_view);
-        caret_show_claim(p_docu, p_docu->focus_owner, TRUE);
-    }
-
-    return(STATUS_OK);
+    return(cmd_view_control_reflect(p_docu, p_view, fReopen, fSetExtent, fRedisplay));
 }
 
 /******************************************************************************
@@ -1121,7 +1391,7 @@ save_this_view(
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_VIEW_CONTROL, &p_construct_table)))
     {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, ARG_VIEW_CONTROL_N_ARGS);
-        p_args[ARG_VIEW_CONTROL_ZOOM].val.s32           = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
+        p_args[ARG_VIEW_CONTROL_SCALE].val.s32          = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
         p_args[ARG_VIEW_CONTROL_DISPLAY].val.s32        = p_view->display_mode;
         p_args[ARG_VIEW_CONTROL_RULER_HORZ].val.fBool   = p_view->flags.horz_ruler_on;
         p_args[ARG_VIEW_CONTROL_RULER_VERT].val.fBool   = p_view->flags.vert_ruler_on;
@@ -1247,7 +1517,7 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
 
     view_create.docno = docno_from_p_docu(p_docu);
 
-    if(!IS_VIEW_NONE(p_sourceview))
+    if(VIEW_NOT_NONE(p_sourceview))
     {
         host_view_query_posn(p_docu, p_sourceview, &view_create.tl, &view_create.size);
 
@@ -1265,22 +1535,16 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
 
     p_view = view_create.p_view;
 
-    if(!IS_VIEW_NONE(p_sourceview))
+    if(VIEW_NOT_NONE(p_sourceview))
         p_sourceview = p_view_from_viewno_caret(p_docu); /* cos view table may move */
 
     p_docu->viewno_caret = viewno_from_p_view(p_view);
 
-    /* zoom factor */
-    if(!IS_VIEW_NONE(p_sourceview))
+    /* clone view scale factor etc */
+    if(VIEW_NOT_NONE(p_sourceview))
     {
-        __analysis_assume(p_sourceview);
-        view_set_zoomfactor(p_docu, p_view, p_sourceview->scalet, p_sourceview->scaleb);
-
-        p_view->flags.horz_split_on = p_sourceview->flags.horz_split_on;
-        p_view->horz_split_pos      = p_sourceview->horz_split_pos;
-
-        p_view->flags.vert_split_on = p_sourceview->flags.vert_split_on;
-        p_view->vert_split_pos      = p_sourceview->vert_split_pos;
+        _Analysis_assume_(p_sourceview);
+        view_set_scale_factor(p_docu, p_view, p_sourceview->scalet, p_sourceview->scaleb);
 
         p_view->display_mode = p_sourceview->display_mode;
 
@@ -1288,16 +1552,16 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
         p_view->flags.vert_border_on = p_sourceview->flags.vert_border_on;
         p_view->flags.horz_ruler_on  = p_sourceview->flags.horz_ruler_on;
         p_view->flags.vert_ruler_on  = p_sourceview->flags.vert_ruler_on;
+
+        p_view->flags.horz_split_on = p_sourceview->flags.horz_split_on;
+        p_view->horz_split_pos      = p_sourceview->horz_split_pos;
+
+        p_view->flags.vert_split_on = p_sourceview->flags.vert_split_on;
+        p_view->vert_split_pos      = p_sourceview->vert_split_pos;
     }
     else
     {
-        view_set_zoomfactor(p_docu, p_view, 1, 1);
-
-        p_view->flags.horz_split_on = 0;
-        p_view->horz_split_pos = 1440;
-
-        p_view->flags.vert_split_on = 0;
-        p_view->vert_split_pos = 1440;
+        view_set_scale_factor(p_docu, p_view, 1, 1);
 
         p_view->display_mode = DISPLAY_DESK_AREA;
 
@@ -1305,6 +1569,12 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
         p_view->flags.vert_border_on = 1;
         p_view->flags.horz_ruler_on  = 0;
         p_view->flags.vert_ruler_on  = 0;
+
+        p_view->flags.horz_split_on = 0;
+        p_view->horz_split_pos = 1440;
+
+        p_view->flags.vert_split_on = 0;
+        p_view->vert_split_pos = 1440;
     }
 
     host_set_extent_this_view(p_docu, p_view);
@@ -1371,12 +1641,12 @@ T5_CMD_PROTO(extern, t5_cmd_view_close_req)
 
     {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
 #if RISCOS
         winx_send_close_window_request(p_view->main[WIN_BACK].hwnd, TRUE /*immediate*/);
 #elif WINDOWS
-        SendMessage(p_view->main[WIN_BACK].hwnd, WM_CLOSE, 0, 0L);
+        consume(LRESULT, SendMessage(p_view->main[WIN_BACK].hwnd, WM_CLOSE, 0, 0L));
 #endif
     }
     } /*block*/
@@ -1385,7 +1655,7 @@ T5_CMD_PROTO(extern, t5_cmd_view_close_req)
 }
 
 static void
-view_set_zoomfactor(
+view_set_scale_factor(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     S32 scalet,
@@ -1422,19 +1692,75 @@ view_set_zoomfactor(
     status_assert(maeve_event(p_docu, T5_MSG_VIEW_ZOOMFACTOR, p_view));
 }
 
+static const S32
+scale_pct_stops[] = { 5, 10, 15, 25, 33, 50, 66, 75, 100, 125, 150, 200, 250, 300 };
+
+_Check_return_
+static S32
+new_scale_pct_from_wheel_delta(
+    _ViewRef_   P_VIEW p_view,
+    _InVal_     S32 delta)
+{
+    const S32 current_scale_pct = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
+    S32 scale_pct = current_scale_pct;
+    U32 i;
+    S32 rounded;
+
+    if(delta < 0)
+    {   /* decrease scale */
+        if(delta > -10)
+        {   /* [1..9] -> fine adjust */
+            return(scale_pct - 1);
+        }
+
+        /* coarse adjust down to the the stop below */
+        for(i = 1; i < elemof(scale_pct_stops); ++i)
+            if(scale_pct <= scale_pct_stops[i])
+            {
+                //reportf("- scale_pct %d <= scale_pct_stops %d: return %d", scale_pct, scale_pct_stops[i], scale_pct_stops[i-1]);
+                return(scale_pct_stops[i-1]);
+            }
+
+        /* 100 granularity then */
+        rounded = scale_pct / 100;
+        --rounded;
+        scale_pct = rounded * 100;
+    }
+    else if(delta > 0)
+    {   /* increase scale */
+        if(delta < 10)
+        {   /* [1..9] -> fine adjust */
+            return(scale_pct + 1);
+        }
+
+        /* coarse adjust up to the stop above */
+        for(i = 0; i < elemof(scale_pct_stops); ++i)
+            if(scale_pct < scale_pct_stops[i])
+            {
+                //reportf("+ scale_pct %d < scale_pct_stops %d: return %d", scale_pct, scale_pct_stops[i], scale_pct_stops[i]);
+                return(scale_pct_stops[i]);
+            }
+
+        /* 100 granularity then */
+        rounded = scale_pct / 100;
+        ++rounded;
+        scale_pct = rounded * 100;
+    }
+
+    return(scale_pct);
+}
+
 extern void
-view_set_zoom_from_wheel_delta(
+view_set_scale_from_wheel_delta(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     S32 delta)
 {
-    S32 current_zoom = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
-    S32 divisor = (current_zoom >= 500) ? 1 : (current_zoom >= 250) ? 2 : (current_zoom >= 120) ? 5 : 10;
-    S32 zoom = current_zoom + (delta / divisor);
-    S32 zoomt = MIN(3200, MAX(5, zoom));
-    S32 zoomb = 100;
+    S32 scale_pct = new_scale_pct_from_wheel_delta(p_view, delta);
+    S32 scalet = MIN(3200, MAX(5, scale_pct));
+    S32 scaleb = 100;
 
-    view_set_zoomfactor(p_docu, p_view, zoomt, zoomb);
+    view_set_scale_factor(p_docu, p_view, scalet, scaleb);
 
     /*(set_extent)*/
     {
@@ -1588,7 +1914,7 @@ vi_cmd_msg_post_save_2(
                 status_return(save_this_view(p_docu, p_view, p_of_op_format));
 
         /* save current view */
-        if(!IS_VIEW_NONE(p_view_caret))
+        if(VIEW_NOT_NONE(p_view_caret))
             status_return(save_this_view(p_docu, p_view_caret, p_of_op_format));
     }
 

@@ -175,17 +175,28 @@ typedef U16 PACKED_DIALOG_CTL_ID;
 
 typedef U32 DIALOG_CONTROL_ID; typedef DIALOG_CONTROL_ID * P_DIALOG_CTL_ID; typedef const DIALOG_CONTROL_ID * PC_DIALOG_CTL_ID;
 
+#define DIALOG_CONTROL_MAX      ((DIALOG_CONTROL_ID) 0x7F00U) /* need to leave room for shifting up by WINDOWS_CTL_ID_STT */
+
+#define DIALOG_CONTROL_INVALID  ((DIALOG_CONTROL_ID) 0xBCBCU)
+
 #if RISCOS /* Windows control ids are defined in WinUser.h - define compatible set for use on RISC OS */
-#define IDOK 1U
-#define IDCANCEL 2
-#define IDHELP 9
+#define IDOK                1U
+#define IDCANCEL            2U
+#define IDHELP              9U
 #endif /* OS */
 
-#define DIALOG_MAIN_GROUP 16 /* bigger than any Windows-defined id */
-#define DIALOG_COL1_GROUP 17
-#define DIALOG_COL2_GROUP 18
+#define DIALOG_MAIN_GROUP   ((DIALOG_CONTROL_ID) 16U) /* bigger than any Windows-defined id */
+#define DIALOG_COL1_GROUP   ((DIALOG_CONTROL_ID) 17U)
+#define DIALOG_COL2_GROUP   ((DIALOG_CONTROL_ID) 18U)
 
 /* I reserve up to 32 for myself here */
+#define DIALOG_ID_START     ((DIALOG_CONTROL_ID) 32U)
+
+/* 'specials' for relative_dialog_control_id */
+#define DIALOG_CONTROL_SELF     ((DIALOG_CONTROL_ID) 0U)
+#define DIALOG_CONTROL_PARENT   ((DIALOG_CONTROL_ID) 0xFFFFU)
+#define DIALOG_CONTROL_WINDOW   ((DIALOG_CONTROL_ID) 0xFFFEU)
+#define DIALOG_CONTROL_CONTENTS ((DIALOG_CONTROL_ID) 0xFFFDU)
 
 #define DIALOG_COMPLETION_CANCEL     STATUS_CANCEL
 #define DIALOG_COMPLETION_OK         STATUS_DONE
@@ -205,9 +216,9 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_BOX_TM           (16 * PIXITS_PER_RISCOS)
 #define DIALOG_BOX_BM           (16 * PIXITS_PER_RISCOS)
 
-#define DIALOG_SYSCHAR_H        (20 * PIXITS_PER_RISCOS) /* 20 is now wider for Corpus.Medium, was 16 for System Font */
+#define DIALOG_SYSCHAR_H        (18 * PIXITS_PER_RISCOS) /* 18 for Corpus.Medium, originally 16 for System Font */
 #define DIALOG_NUMCHAR_H        DIALOG_SYSCHAR_H
-#define DIALOG_FATCHAR_H        (28 * PIXITS_PER_RISCOS)
+#define DIALOG_FATCHAR_H        (24 * PIXITS_PER_RISCOS)
 
 #define DIALOG_SYSCHARS_H(string) (DIALOG_SYSCHAR_H * (sizeof32(string)-1))
 #define DIALOG_SYSCHARSL_H(len) (DIALOG_SYSCHAR_H * len)
@@ -235,8 +246,10 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_SMALLSPACING_H   ( 8 * PIXITS_PER_RISCOS)
 #define DIALOG_SMALLSPACING_V   ( 4 * PIXITS_PER_RISCOS)
 
-#define DIALOG_LABELGAP_H       DIALOG_SMALLSPACING_H
+#define DIALOG_LABELGAP_H       DIALOG_SMALLSPACING_H   /* Style Guide for bump - label gap */
 #define DIALOG_LABELGAP_V       DIALOG_SMALLSPACING_V
+
+#define DIALOG_BUMPUNITSGAP_H   ( 8 * PIXITS_PER_RISCOS) /* RO5SG defined for bump arrows - units label gap */
 
 #define DIALOG_STDSPACING_H     (16 * PIXITS_PER_RISCOS)
 #define DIALOG_STDSPACING_V     ( 8 * PIXITS_PER_RISCOS)
@@ -246,8 +259,8 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_GROUPSPACING_H   (24 * PIXITS_PER_RISCOS)
 #define DIALOG_GROUPSPACING_V   DIALOG_STDSPACING_V
 
-#define DIALOG_PUSHPICTUREOVH_H ( 4 * PIXITS_PER_RISCOS)
-#define DIALOG_PUSHPICTUREOVH_V ( 4 * PIXITS_PER_RISCOS)
+#define DIALOG_PUSHPICTUREOVH_H ( 8 * PIXITS_PER_RISCOS) /* non-thin button border these days */
+#define DIALOG_PUSHPICTUREOVH_V ( 8 * PIXITS_PER_RISCOS)
 
 /* default pushbuttons should be similar in size to the analogous pushbuttons but are this much bigger per edge) */
 #define DIALOG_DEFPUSHEXTRA_H   ( 8 * PIXITS_PER_RISCOS)
@@ -266,15 +279,16 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_CHECKGAP_H       (12 * PIXITS_PER_RISCOS) /* PRM - was 8 */
 #define DIALOG_STDCHECK_V       (44 * PIXITS_PER_RISCOS)
 
-#define DIALOG_STDBUMP_H        (2 * 2 * 16 * PIXITS_PER_RISCOS)
 #define DIALOG_BUMPGAP_H        ( 8 * PIXITS_PER_RISCOS)
+#define DIALOG_STDBUMP_H        (2 * 2 * 16 * PIXITS_PER_RISCOS)
 #define DIALOG_STDBUMP_V        DIALOG_STDEDIT_V
 
-#define DIALOG_STDBUMPOVH_H     DIALOG_STDEDITOVH_H
-#define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + (digits) * DIALOG_NUMCHAR_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
+#define DIALOG_STDBUMPOVH_H     (DIALOG_STDEDITOVH_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
+#define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + DIALOG_NUMCHAR_H * (digits))
 
 #if 1
-#define DIALOG_STDEDIT_V        ((2 * 2 + 52) * PIXITS_PER_RISCOS) /* RO5SG - no fancy borders but extra space for fancy font */
+#define DIALOG_STDEDIT_V        (52 * PIXITS_PER_RISCOS) /* RO5SG - no fancy borders but extra space for fancy font */
+#define DIALOG_MULEDIT_V(n)     ((2 * 2 + 2 * 4 + 34 * (n)) * PIXITS_PER_RISCOS) /* thin borders, small margins */
 #else
 #define DIALOG_STDEDIT_V        ((2 * 4 + 52) * PIXITS_PER_RISCOS) /* i.e. 60 once again: RO3SG says 68 but that contradicts the description */
 #endif
@@ -287,11 +301,12 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_STDLISTITEM_V    (40 * PIXITS_PER_RISCOS)
 
 #define DIALOG_STDCOMBO_V       DIALOG_STDEDIT_V
-#define DIALOG_STDCOMBOOVH_H    (44 * PIXITS_PER_RISCOS)
+#define DIALOG_STDCOMBOOVH_H    (DIALOG_STDEDITOVH_H + (44 * PIXITS_PER_RISCOS) /*gright*/)
 
 #define DIALOG_PUSHBUTTONOVH_H  (2 * DIALOG_SYSCHAR_H)
 #define DIALOG_DEFOK_H          (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("OK") + (2 * DIALOG_DEFPUSHEXTRA_H))
 #define DIALOG_STDCANCEL_H      (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Cancel"))
+#define DIALOG_FATCANCEL_H      (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Abbrechen"))
 #elif WINDOWS
 /* the book says that these should be determined from the parent
  * window's system font metrics but that's a little hopeful!
@@ -304,19 +319,27 @@ dialog positions and sizes specified in PIXITS
  * and hence 1440/48=30 pixits per h-DU and v-DU
  *
  * whereas on Windows XP with the standard theme's message font as 8, Tahoma @96dpi
- * average width calculation yields 6 as 4x pixels/h-DU (and 13 as 8x pixels/v-DU)
- * as confirmed by MapDialogRect()
+ * average width calculation yields 6 as 4x pixels/h-DU (and 13 as 8x pixels/v-DU) from MapDialogRect()
  * there are therefore (96*4)/6=64 h-DU per inch and (96*8)/13~=60 v-DU per inch
  * and hence 1440/64=22.5 pixits per h-DU and 1440/~60=24.4 pixits per v-DU
  *
  * a typical Windows Vista with 9, Segoe UI @120dpi
- * average width calculation yields 8 as 4x pixels/h-DU (and 20 as 8x pixels/v-DU)
- * as confirmed by MapDialogRect()
+ * average width calculation yields 8 as 4x pixels/h-DU (and 20 as 8x pixels/v-DU) from MapDialogRect()
  * there are therefore (120*4)/8=60 h-DU per inch and (120*8)/20=48 v-DU per inch
  * and hence 1440/60=24 pixits per h-DU and 1440/48=30 pixits per v-DU
+ *
+ * a typical Windows 7 with 9, Segoe UI @96dpi
+ * average width calculation yields 7 as 4x pixels/h-DU (and 15 as 8x pixels/v-DU) from MapDialogRect()
+ * there are therefore (96*4)/7=54.9 h-DU per inch and (96*8)/15=51.2 v-DU per inch
+ * and hence 1440/54.9=26.25 pixits per h-DU and 1440/51.2=28.1 pixits per v-DU
 */
+#if 1 /* experiment here */
 #define PIXITS_PER_WDU_H 24
 #define PIXITS_PER_WDU_V 30
+#else
+#define PIXITS_PER_WDU_H 24
+#define PIXITS_PER_WDU_V 30
+#endif
 
 #define PIXITS_PER_WDFONT_V     ( 8 * PIXITS_PER_WDU_V)
 #define __INTERNAL_WD_PER_FONT_V 7
@@ -337,7 +360,7 @@ dialog positions and sizes specified in PIXITS
 
 /* bttncur sized standard tools */
 #define PIXITS_PER_STDTOOL_H    (15 * PIXITS_PER_WDU_H) /* now bigger but I don't know why they need to be so big given 16x16 pixel core bitmap! */
-#define PIXITS_PER_STDTOOL_V    (15 * PIXITS_PER_WDU_V)
+#define PIXITS_PER_STDTOOL_V    (14 * PIXITS_PER_WDU_V)
 
 #define DIALOG_STDGROUP_LM      ( 6 * PIXITS_PER_WDU_H)
 #define DIALOG_STDGROUP_RM      ( 6 * PIXITS_PER_WDU_H)
@@ -347,8 +370,10 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_SMALLSPACING_H   ( 2 * PIXITS_PER_WDU_H)
 #define DIALOG_SMALLSPACING_V   ( 2 * PIXITS_PER_WDU_V)
 
-#define DIALOG_LABELGAP_H       DIALOG_SMALLSPACING_H
+#define DIALOG_LABELGAP_H       ( 3 * PIXITS_PER_WDU_H)
 #define DIALOG_LABELGAP_V       ( 3 * PIXITS_PER_WDU_V)
+
+#define DIALOG_BUMPUNITSGAP_H   DIALOG_LABELGAP_H
 
 #define DIALOG_STDSPACING_H     ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDSPACING_V     ( 4 * PIXITS_PER_WDU_V)
@@ -358,8 +383,13 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_GROUPSPACING_H   ( 7 * PIXITS_PER_WDU_H)
 #define DIALOG_GROUPSPACING_V   DIALOG_STDSPACING_V
 
+#if 1 /* Now we are using Themed controls */
+#define DIALOG_PUSHPICTUREOVH_H ( 6 * PIXITS_PER_WDU_H)
+#define DIALOG_PUSHPICTUREOVH_V ( 6 * PIXITS_PER_WDU_V)
+#else
 #define DIALOG_PUSHPICTUREOVH_H ( 2 * PIXITS_PER_WDU_H)
 #define DIALOG_PUSHPICTUREOVH_V ( 2 * PIXITS_PER_WDU_V)
+#endif
 
 /* default pushbuttons should be similar in size to the analogous pushbuttons but are this much bigger per edge) */
 #define DIALOG_DEFPUSHEXTRA_H   ( 0 * PIXITS_PER_WDU_H)
@@ -379,28 +409,30 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_CHECKGAP_H       ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDCHECK_V       (10 * PIXITS_PER_WDU_V)
 
-#define DIALOG_STDBUMP_H        (12 * PIXITS_PER_WDU_H) /* was 8 */
 #define DIALOG_BUMPGAP_H        ( 2 * PIXITS_PER_WDU_V)
+#define DIALOG_STDBUMP_H        (12 * PIXITS_PER_WDU_H) /* was 8 */
 #define DIALOG_STDBUMP_V        DIALOG_STDEDIT_V
 
-#define DIALOG_STDBUMPOVH_H     DIALOG_STDEDITOVH_H
-#define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + (digits) * DIALOG_NUMCHAR_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
+#define DIALOG_STDBUMPOVH_H     (DIALOG_STDEDITOVH_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
+#define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + DIALOG_NUMCHAR_H * (digits))
 
 #define DIALOG_STDEDIT_V        (12 * PIXITS_PER_WDU_V) /* 14 in style guide but that's crazy. 10 looks ok on Windows 7 but is too small on Windows XP */
+#define DIALOG_MULEDIT_V(n)     ((2 * PIXITS_PER_WDU_V) + (10 * PIXITS_PER_WDU_V) * (n))
 #define DIALOG_STDEDITOVH_H     ( 8 * PIXITS_PER_WDU_H)
 
 #define DIALOG_MINLISTOVH_H     ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDLISTEXTRA_H   (10 * PIXITS_PER_WDU_H)
 #define DIALOG_STDLISTOVH_H     (DIALOG_MINLISTOVH_H + DIALOG_STDLISTEXTRA_H)
-#define DIALOG_STDLISTOVH_V     ( 4 * PIXITS_PER_WDU_V)
+#define DIALOG_STDLISTOVH_V     ( 3 * PIXITS_PER_WDU_V) /* was 4 but this is better on W7 */
 #define DIALOG_STDLISTITEM_V    ( 8 * PIXITS_PER_WDU_V)
 
 #define DIALOG_STDCOMBO_V       DIALOG_STDEDIT_V
-#define DIALOG_STDCOMBOOVH_H    (12 * PIXITS_PER_WDU_H)
+#define DIALOG_STDCOMBOOVH_H    (DIALOG_STDEDITOVH_H + (12 * PIXITS_PER_WDU_H) /*dropdown*/)
 
 #define DIALOG_PUSHBUTTONOVH_H  ( 2 * PIXITS_PER_WDU_H + 6 * PIXITS_PER_WDU_H)
 #define DIALOG_DEFOK_H          DIALOG_STDPUSHBUTTON_H
 #define DIALOG_STDCANCEL_H      DIALOG_STDPUSHBUTTON_H
+#define DIALOG_FATCANCEL_H      DIALOG_STDPUSHBUTTON_H
 #endif /* OS */
 
 #define DIALOG_STDWIDTH_MIN     (DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_STDCANCEL_H)
@@ -440,27 +472,31 @@ types of control in an on-screen dialog
 typedef enum DIALOG_CONTROL_TYPE
 {
     DIALOG_CONTROL_GROUPBOX         = 128,
-    DIALOG_CONTROL_STATICTEXT       = 129,
-    DIALOG_CONTROL_STATICPICTURE    = 130,
-    DIALOG_CONTROL_STATICFRAME      = 131,
-    DIALOG_CONTROL_PUSHBUTTON       = 132,
-    DIALOG_CONTROL_PUSHPICTURE      = 133,
-    DIALOG_CONTROL_RADIOBUTTON      = 134,
-    DIALOG_CONTROL_RADIOPICTURE     = 135,
-    DIALOG_CONTROL_CHECKBOX         = 136,
-    DIALOG_CONTROL_CHECKPICTURE     = 137,
+    DIALOG_CONTROL_STATICPICTURE    = 129,
+    DIALOG_CONTROL_STATICTEXT       = 130,
+#define DIALOG_CONTROL_STATICTEXTw DIALOG_CONTROL_STATICTEXT /* transitional, indicating windows_no_colon removed */
+    DIALOG_CONTROL_TEXTLABEL        = 131,
+    DIALOG_CONTROL_TEXTFRAME        = 132,
+    DIALOG_CONTROL_PUSHBUTTON       = 133,
+    DIALOG_CONTROL_PUSHPICTURE      = 134,
+    DIALOG_CONTROL_RADIOBUTTON      = 135,
+    DIALOG_CONTROL_RADIOPICTURE     = 136,
+    DIALOG_CONTROL_CHECKBOX         = 137,
+    DIALOG_CONTROL_CHECKPICTURE     = 138,
+    DIALOG_CONTROL_EDIT             = 139,
+    DIALOG_CONTROL_BUMP_S32         = 140,
+    DIALOG_CONTROL_BUMP_F64         = 141,
+    DIALOG_CONTROL_LIST_TEXT        = 142,
+    DIALOG_CONTROL_LIST_S32         = 143,
+    DIALOG_CONTROL_COMBO_TEXT       = 144,
+    DIALOG_CONTROL_COMBO_S32        = 145,
+    DIALOG_CONTROL_USER             = 146
+
 #ifdef DIALOG_HAS_TRISTATE
-    DIALOG_CONTROL_TRISTATE         = 138,
-    DIALOG_CONTROL_TRIPICTURE       = 139,
+    ,
+    DIALOG_CONTROL_TRISTATE         = 147,
+    DIALOG_CONTROL_TRIPICTURE       = 148
 #endif
-    DIALOG_CONTROL_EDIT             = 140,
-    DIALOG_CONTROL_BUMP_S32         = 141,
-    DIALOG_CONTROL_BUMP_F64         = 142,
-    DIALOG_CONTROL_LIST_TEXT        = 143,
-    DIALOG_CONTROL_LIST_S32         = 144,
-    DIALOG_CONTROL_COMBO_TEXT       = 145,
-    DIALOG_CONTROL_COMBO_S32        = 146,
-    DIALOG_CONTROL_USER             = 147
 
 #if RISCOS
     ,
@@ -501,23 +537,13 @@ useful shorthand for filling in the bit pairs in a DIALOG_CONTROL_BITS
 /* token pasting to the rescue! */
 #define DRT(LBRT, TYPE) DIALOG_RELATIVE_BIT_ ## LBRT, DIALOG_CONTROL_ ## TYPE
 
-#define DIALOG_CONTROL_MAX      ((DIALOG_CONTROL_ID) 0x7F00U) /* need to leave room for shifting up by WINDOWS_CTL_ID_STT */
-
-#define DIALOG_CONTROL_INVALID  ((DIALOG_CONTROL_ID) 0xBCBCU)
-
-/* 'specials' for relative_dialog_control_id */
-#define DIALOG_CONTROL_CONTENTS ((DIALOG_CONTROL_ID) 0xFFFDU)
-#define DIALOG_CONTROL_WINDOW   ((DIALOG_CONTROL_ID) 0xFFFEU)
-#define DIALOG_CONTROL_PARENT   ((DIALOG_CONTROL_ID) 0xFFFFU)
-#define DIALOG_CONTROL_SELF     ((DIALOG_CONTROL_ID) 0U)
-
 typedef struct DIALOG_CONTROL
 {
-    DIALOG_CONTROL_ID   dialog_control_id;              /* id for this control */
-    DIALOG_CONTROL_ID   parent_dialog_control_id;       /* either DIALOG_CONTROL_WINDOW or real group id */
+    PACKED_DIALOG_CTL_ID    dialog_control_id;              /* id for this control */
+    PACKED_DIALOG_CTL_ID    parent_dialog_control_id;       /* either DIALOG_CONTROL_WINDOW or real group id */
 
-    DIALOG_CONTROL_ID   relative_dialog_control_id[4];  /* '<0' special, 0 for self relative, >0 for other control relative */
-    PIXIT               relative_offset[4];             /* edge offset */
+    PACKED_DIALOG_CTL_ID    relative_dialog_control_id[4];  /* '<0' special, 0 for self relative, >0 for other control relative */
+    PIXIT                   relative_offset[4];             /* edge offset */
 
     struct DIALOG_CONTROL_BITS
     {
@@ -531,7 +557,7 @@ typedef struct DIALOG_CONTROL
 
         UBF tabstop       : 1;
 
-        UBF logical_group : 1; /* GROUPBOX: can have logical group with no data for shorter defs */
+        UBF logical_group : 1; /* GROUPBOX: can have logical group with no data for shorter defs; OTHER: this control should have WS_GROUP on Windows */
 
         UBF has_help      : 1;
 
@@ -564,7 +590,7 @@ typedef struct DIALOG_CONTROL_DATA_GROUPBOX
     struct DIALOG_CONTROL_DATA_GROUPBOX_BITS
     {
         UBF border_style  : 8;
-        UBF logical_group : 1;
+        UBF _spare_was_logical_group : 1;
 #if defined(DIALOG_GROUPBOX_CAN_HAVE_HANDLER)
         UBF has_client : 1;
 #else
@@ -587,26 +613,50 @@ typedef struct DIALOG_CONTROL_DATA_STATICTEXT
     {
         UBF left_text    : 1; /* optional text goes on left (default is right) */
         UBF centre_text  : 1;
-        UBF windows_no_colon : 1;
+        UBF __windows_no_colon : 1; /* TODO: remove */
+      /*UBF _spare       : sizeof(int)*8 - 2*1;*/
     } bits;
 }
 DIALOG_CONTROL_DATA_STATICTEXT; typedef const DIALOG_CONTROL_DATA_STATICTEXT * PC_DIALOG_CONTROL_DATA_STATICTEXT;
 
-typedef struct DIALOG_CONTROL_DATA_STATICFRAME
+/*
+a text label (associated with another control, labelling it)
+*/
+
+typedef struct DIALOG_CONTROL_DATA_TEXTLABEL
 {
     UI_TEXT caption;
 
-    struct DIALOG_CONTROL_DATA_STATICFRAME_BITS
+    struct DIALOG_CONTROL_DATA_TEXTLABEL_BITS
+    {
+        UBF left_text    : 1; /* optional text goes on left (default is right) */
+        UBF centre_text  : 1;
+        UBF windows_no_colon : 1;
+      /*UBF _spare       : sizeof(int)*8 - 3*1;*/
+    } bits;
+}
+DIALOG_CONTROL_DATA_TEXTLABEL; typedef const DIALOG_CONTROL_DATA_TEXTLABEL * PC_DIALOG_CONTROL_DATA_TEXTLABEL;
+
+/*
+a text frame
+*/
+
+typedef struct DIALOG_CONTROL_DATA_TEXTFRAME
+{
+    UI_TEXT caption;
+
+    struct DIALOG_CONTROL_DATA_TEXTFRAME_BITS
     {
         UBF left_text    : 1; /* optional text goes on left (default is right) */
         UBF centre_text  : 1;
         UBF reserved     : 8-1-1;
         UBF border_style : 8;
+      /*UBF _spare       : sizeof(int)*8 - 16;*/
     } bits;
 
     P_RGB p_back_colour; /* NULL->none */
 }
-DIALOG_CONTROL_DATA_STATICFRAME; typedef const DIALOG_CONTROL_DATA_STATICFRAME * PC_DIALOG_CONTROL_DATA_STATICFRAME;
+DIALOG_CONTROL_DATA_TEXTFRAME; typedef const DIALOG_CONTROL_DATA_TEXTFRAME * PC_DIALOG_CONTROL_DATA_TEXTFRAME;
 
 /*
 a static picture
@@ -970,9 +1020,10 @@ typedef union PC_DIALOG_CONTROL_DATA
 
     PC_DIALOG_CONTROL_DATA_GROUPBOX         groupbox;
 
-    PC_DIALOG_CONTROL_DATA_STATICTEXT       statictext;
     PC_DIALOG_CONTROL_DATA_STATICPICTURE    staticpicture;
-    PC_DIALOG_CONTROL_DATA_STATICFRAME      staticframe;
+    PC_DIALOG_CONTROL_DATA_STATICTEXT       statictext;
+    PC_DIALOG_CONTROL_DATA_TEXTLABEL        textlabel;
+    PC_DIALOG_CONTROL_DATA_TEXTFRAME        textframe;
 
     PC_DIALOG_CONTROL_DATA_PUSHBUTTON       pushbutton;
     PC_DIALOG_CONTROL_DATA_PUSHBUTTONR      pushbuttonr;
@@ -1025,7 +1076,7 @@ typedef struct DIALOG_CTL_CREATE
 {
     P_DIALOG_CTL_CREATE_CONTROL p_dialog_control;
 
-    const void * p_dialog_control_data;
+    PC_DIALOG_CONTROL_DATA p_dialog_control_data;
 }
 DIALOG_CTL_CREATE, * P_DIALOG_CTL_CREATE_RW; typedef const DIALOG_CTL_CREATE * P_DIALOG_CTL_CREATE;
 
@@ -1051,7 +1102,8 @@ typedef enum DIALOG_POSITION_TYPE
     DIALOG_POSITION_DEFAULT = 0, /* system-dependent */
     DIALOG_POSITION_NEAR_MOUSE,
     DIALOG_POSITION_CENTRE_SCREEN,
-    DIALOG_POSITION_CENTRE_WINDOW
+    DIALOG_POSITION_CENTRE_WINDOW,
+    DIALOG_POSITION_CENTRE_MOUSE
 }
 DIALOG_POSITION_TYPE;
 
@@ -1297,7 +1349,7 @@ ask dialog to guess suitable dimensions for this control
 typedef struct DIALOG_CMD_CTL_SIZE_ESTIMATE
 {
     PC_DIALOG_CONTROL   p_dialog_control;
-    const void *        p_dialog_control_data;
+    PC_DIALOG_CONTROL_DATA p_dialog_control_data;
 
     /*OUT*/
     PIXIT_POINT         size;
@@ -1314,12 +1366,15 @@ typedef union DIALOG_CTL_STATE
     U8                 generic_u8n; /* covers checkbox,tristate,bump_u8 */
 
     UI_TEXT            statictext;
-    UI_TEXT            staticframe;
+    UI_TEXT            textlabel;
+    UI_TEXT            textframe;
     UI_TEXT            pushbutton;
+
 #define DIALOG_RADIOSTATE_NONE ((DIALOG_RADIOSTATE) 0x80000000)
     DIALOG_RADIOSTATE  radiobutton;
     U8                 checkbox;
     U8                 tristate;
+
     U8                 bump_u8;
     S32                bump_s32;
     F64                bump_f64;
@@ -1508,7 +1563,7 @@ all DIALOG_MSG_xxx events start like this
     CLIENT_HANDLE client_handle; \
     DIALOG_CONTROL_ID dialog_control_id; \
     PC_DIALOG_CONTROL p_dialog_control; \
-    const void * p_dialog_control_data; \
+    PC_DIALOG_CONTROL_DATA p_dialog_control_data; \
 
 typedef struct DIALOG_MSG_HDR
 {

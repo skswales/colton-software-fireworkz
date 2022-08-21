@@ -994,7 +994,8 @@ gr_riscdiag_scaled_diagram_add(
     _In_reads_(diag_len) PC_BYTE p_diag,
     _InVal_     U32 diag_len,
     _InRef_     PC_GR_FILLSTYLEB fillstyleb,
-    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec)
+    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec,
+    _InRef_opt_ PC_GR_RISCDIAG p_gr_riscdiag_lookup)
 {
     GR_RISCDIAG source_gr_riscdiag;
     U32 diagLength = diag_len;
@@ -1185,20 +1186,30 @@ gr_riscdiag_scaled_diagram_add(
 
                 memcpy32(&text, pObject, sizeof32(text));
 
+                if(0 != text.textstyle.fontref16)
+                {
 /*reportf(TEXT("sda: old fr %d"), text.textstyle.fontref16);*/
                 gr_riscdiag_fontlist_lookup_fontref(&source_gr_riscdiag, source_gr_riscdiag.dd_fontListR, source_gr_riscdiag.dd_fontListW, &foundOffsetR, &foundOffsetW, text.textstyle.fontref16);
 /*reportf(TEXT("sda: old fr %d got %d,%d"), text.textstyle.fontref16, foundOffsetR, foundOffsetW);*/
 
                 {
-                PC_DRAW_FONTLIST_ELEM pFontListElemR_lookup = foundOffsetR ? gr_riscdiag_getoffptr(DRAW_FONTLIST_ELEM, &source_gr_riscdiag, foundOffsetR) : NULL;
-                PC_DRAW_DS_WINFONTLIST_ELEM pFontListElemW_lookup = foundOffsetW ? gr_riscdiag_getoffptr(DRAW_DS_WINFONTLIST_ELEM, &source_gr_riscdiag, foundOffsetR) : NULL;
-                text.textstyle.fontref16 = gr_riscdiag_fontlist_lookup_direct(p_gr_riscdiag, p_gr_riscdiag->dd_fontListR, p_gr_riscdiag->dd_fontListW, pFontListElemR_lookup, pFontListElemW_lookup);
+                PC_DRAW_FONTLIST_ELEM pFontListElemR_source = foundOffsetR ? gr_riscdiag_getoffptr(DRAW_FONTLIST_ELEM, &source_gr_riscdiag, foundOffsetR) : NULL;
+                PC_DRAW_DS_WINFONTLIST_ELEM pFontListElemW_source = foundOffsetW ? gr_riscdiag_getoffptr(DRAW_DS_WINFONTLIST_ELEM, &source_gr_riscdiag, foundOffsetW) : NULL;
+                if(NULL != p_gr_riscdiag_lookup)
+                    text.textstyle.fontref16 = gr_riscdiag_fontlist_lookup_direct(p_gr_riscdiag_lookup, p_gr_riscdiag_lookup->dd_fontListR, p_gr_riscdiag_lookup->dd_fontListW, pFontListElemR_source, pFontListElemW_source);
+                else
+                    text.textstyle.fontref16 = gr_riscdiag_fontlist_lookup_direct(p_gr_riscdiag, p_gr_riscdiag->dd_fontListR, p_gr_riscdiag->dd_fontListW, pFontListElemR_source, pFontListElemW_source);
 /*reportf(TEXT("sda: new fr %d"), text.textstyle.fontref16);*/
+                if(0 == text.textstyle.fontref16)
+                    text.textstyle.fontref16 = 1; /* bodge if not mapped */
                 } /*block*/
+                }
 
-                /* note that we can't cope here with the main diagram's font table growing as
+                /* note that we can't cope here with the destination diagram's font table growing as
                  * that'd bugger up all the sys_offs we've placed in the diagram! so if it uses
                  * a font that ain't used in any real text object then they've had it. so there.
+                 * it's up to the caller to pre-populate the destination diagram's font table
+                 * or supply a lookup font table that'll be inserted before export.
                 */
 
                 /* shift and scale and shift baseline origin */

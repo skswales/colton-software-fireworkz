@@ -1073,25 +1073,27 @@ chart_construct_save(
     case T5_CMD_CHART_IO_SERIES_CHART_TYPE:
         {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
-        PC_S32 p_s32 = (PC_S32) p0;
         assert(n_arglist_args(&arglist_handle) == 1);
         assert(p_args[0].type == (ARG_TYPE_S32 | ARG_MANDATORY));
-        PTR_ASSERT(p_s32);
-        if(NULL != p_s32)
-            p_args[0].val.s32 = * p_s32;
+        PTR_ASSERT(p0);
+        if(NULL != p0)
+        {
+            const PC_S32 p_s32 = (PC_S32) p0;
+            p_args[0].val.s32 = p_s32[0];
+        }
         break;
         }
 
     case T5_CMD_CHART_IO_CORE_LAYOUT:
         {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 2);
-        PC_S32 p_s32 = (PC_S32) p0;
         assert(n_arglist_args(&arglist_handle) == 2);
         assert(p_args[0].type == (ARG_TYPE_S32 | ARG_MANDATORY));
         assert(p_args[1].type == (ARG_TYPE_S32 | ARG_MANDATORY));
-        PTR_ASSERT(p_s32);
-        if(NULL != p_s32)
+        PTR_ASSERT(p0);
+        if(NULL != p0)
         {
+            const PC_S32 p_s32 = (PC_S32) p0;
             p_args[0].val.s32 = p_s32[0];
             p_args[1].val.s32 = p_s32[1];
         }
@@ -1102,15 +1104,15 @@ chart_construct_save(
     case T5_CMD_CHART_IO_LEGEND_POSN:
         {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 4);
-        PC_S32 p_s32 = (PC_S32) p0;
         assert(n_arglist_args(&arglist_handle) == 4);
         assert(p_args[0].type == (ARG_TYPE_S32 | ARG_MANDATORY));
         assert(p_args[1].type == (ARG_TYPE_S32 | ARG_MANDATORY));
         assert(p_args[2].type == (ARG_TYPE_S32 | ARG_MANDATORY));
         assert(p_args[3].type == (ARG_TYPE_S32 | ARG_MANDATORY));
-        PTR_ASSERT(p_s32);
-        if(NULL != p_s32)
+        PTR_ASSERT(p0);
+        if(NULL != p0)
         {
+            const PC_S32 p_s32 = (PC_S32) p0;
             p_args[0].val.s32 = p_s32[0];
             p_args[1].val.s32 = p_s32[1];
             p_args[2].val.s32 = p_s32[2];
@@ -1128,12 +1130,14 @@ chart_construct_save(
     case T5_CMD_CHART_IO_SERIES_PIE_HEADING:
         {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
-        PC_F64 p_f64 = (PC_F64) p0;
         assert(n_arglist_args(&arglist_handle) == 1);
         assert(p_args[0].type == (ARG_TYPE_F64 | ARG_MANDATORY));
-        PTR_ASSERT(p_f64);
-        if(NULL != p_f64)
-            p_args[0].val.f64 = * p_f64;
+        PTR_ASSERT(p0);
+        if(NULL != p0)
+        {
+            const PC_F64 p_f64 = (PC_F64) p0;
+            p_args[0].val.f64 = p_f64[0];
+        }
         break;
         }
 
@@ -1425,7 +1429,7 @@ T5_MSG_PROTO(static, chart_note_ensure_saved, _InoutRef_ P_NOTE_ENSURE_SAVED p_n
         if(NULL == (p_chart_save_instance = collect_add_entry_elem(CHART_SAVE_INSTANCE, &p_of_op_format->object_data_list, P_DATA_NONE, object_id, &status)))
             return(status);
 
-        zero_struct_ptr(p_chart_save_instance); /* SKS 23feb2012 this was missing! */
+        zero_struct_ptr_fn(p_chart_save_instance); /* SKS 23feb2012 this was missing! */
 
         p_chart_save_instance->h_mapping_list = 0;
     }
@@ -2423,7 +2427,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_2)
 
     p_chart_header = p_chart_load_instance->this_p_chart_header;
 
-    zero_struct(chart_shapedesc);
+    zero_struct_fn(chart_shapedesc);
     chart_shapedesc.docno = docno_from_p_docu(p_docu);
     chart_shapedesc.bits.label_first_range = 1;
     chart_shapedesc.bits.label_first_item = p_args[0].val.u8n;
@@ -2452,7 +2456,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_3)
 
     p_chart_header = p_chart_load_instance->this_p_chart_header;
 
-    zero_struct(chart_shapedesc);
+    zero_struct_fn(chart_shapedesc);
     chart_shapedesc.docno = docno_from_p_docu(p_docu);
     chart_shapedesc.bits.label_first_range = 0;
     chart_shapedesc.bits.label_first_item = p_args[0].val.u8n;

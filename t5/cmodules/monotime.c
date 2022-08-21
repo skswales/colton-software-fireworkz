@@ -17,6 +17,8 @@
 #error You require assembler implementation s.monotasm
 #endif
 
+#include <time.h>
+
 /******************************************************************************
 *
 * return the current monotonic time

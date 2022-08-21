@@ -1,0 +1,24 @@
+#
+# this is the messages file for ob_dlg (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages (none)
+#
+# errors: keep consistent with ob_dlg/xp_dlg.h
+# see DIALOG_ERR(n)
+#
+# UK e0:ERR_UNKNOWN_DIALOG
+e0:ERR_UNKNOWN_DIALOG
+# e1: ERROR_RQ
+# UK e2:ERR_UNKNOWN_DIALOG_VIEW
+e2:ERR_UNKNOWN_DIALOG_VIEW
+# UK e3:ERR_UNKNOWN_DIALOG_CONTROL
+e3:ERR_UNKNOWN_DIALOG_CONTROL
+#
+# end of msg (ob_dlg)

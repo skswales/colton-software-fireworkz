@@ -1,0 +1,49 @@
+Fireworkz is subject to the terms of the Mozilla Public License, v. 2.0
+(MPL).
+
+If a copy of the MPL was not distributed with this file, You can obtain one
+at http://mozilla.org/MPL/2.0/.
+
+Copyright (C) 1992-1998 Colton Software Limited
+Copyright (C) 1998-2015 R W Colton
+
+This licence also applies to the following files in this directory and in
+the given subdirectories that do not contain the above licence:
+
+!Boot
+!Help
+!Run
+!RunImage
+!Sprites
+!Sprites11
+!Sprites22
+!SpritesR5
+!SpritesR511
+Resources.Neutral.!Sprite
+Resources.Neutral.ImageSlot
+Resources.Neutral.Loader
+Resources.Neutral.Sprites22.Ob06
+Resources.Neutral.Sprites24.Ob06
+Resources.Neutral.Markers.S1
+Resources.Neutral.Markers.S2
+Resources.Neutral.Markers.S3
+Resources.Neutral.Markers.S4
+Resources.Neutral.Markers.S5
+Resources.Neutral.Markers.S6
+Resources.Neutral.Pictures.S1
+Resources.Neutral.Pictures.S2
+Resources.Neutral.Support.cfbf
+Resources.Neutral.Support.cfbf-mini
+Resources.UK.Config
+Resources.UK.Choices.Choice18
+Resources.UK.Dicts.Master
+Resources.UK.Dicts.MasterC
+Resources.UK.Template.Letter
+Resources.UK.Template.Sheet
+uChoices.DoCopy
+uChoices.ReadMe
+uChoices.Fireworkz.Choices.Choice00
+uChoices.Fireworkz.Choices.Choice01
+uChoices.Fireworkz.Choices.Choice29
+uChoices.Fireworkz.Dicts.User
+uChoices.Fireworkz.Dicts.UserC

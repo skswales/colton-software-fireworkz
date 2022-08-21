@@ -1097,8 +1097,8 @@ fonty_handle_from_font_spec(
         }
 
         trace_2(TRACE_APP_MEMORY_USE,
-                TEXT("font_context table now ") S32_TFMT TEXT(" entries, ") S32_TFMT TEXT(" bytes"),
-                array_elements(&h_font_cache), array_elements(&h_font_cache) * sizeof32(FONT_CONTEXT));
+                TEXT("font_context table now ") U32_TFMT TEXT(" entries, ") U32_TFMT TEXT(" bytes"),
+                array_elements32(&h_font_cache), array_elements32(&h_font_cache) * sizeof32(FONT_CONTEXT));
     }
     else
         p_font_context = p_font_context_from_fonty_handle_wr(spare_index);
@@ -1773,11 +1773,15 @@ fontmap_host_font_spec_from_font_spec(
         return(al_tstr_append(&p_host_font_spec->h_host_name_tstr, tstr));
     }
 
+#if 0 /* <<< Bodge for Draw export - old Draw interpreters don't like font identifiers */
     /* NO!!! protect against evil-doers who might set UTF8 alphabet before we are ready for it! */
     /* \ELatin1\Ffontname */
     status_return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, /*TEXT("\\E") TEXT("Latin1")*/ TEXT("\\F")));
 
     return(al_tstr_append(&p_host_font_spec->h_host_name_tstr, tstr));
+#else
+    return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, tstr));
+#endif
     } /*block*/
 #elif WINDOWS
     /* caller wants info to fill a LOGFONT */
@@ -1852,13 +1856,13 @@ fontmap_enum_fonts_add_font(
     ARRAY_INDEX insert_before;
     STATUS status;
 
-    trace_4(TRACE_APP_FONTS, TEXT("enum facename '%s' weight=%d italic=%d charset=%d"),
+    trace_4(TRACE_APP_FONTS, TEXT("enum facename '%s' weight=%d italic=%u charset=%u"),
             lpelf->elfLogFont.lfFaceName, lpelf->elfLogFont.lfWeight, lpelf->elfLogFont.lfItalic, lpelf->elfLogFont.lfCharSet);
 
     if(CH_COMMERCIAL_AT == lpelf->elfLogFont.lfFaceName[0])
     {   /* why do we get these wacky entries??? */
         /* "The one with the @ prefix is known as a vertical version of the same font" */
-        trace_4(TRACE_APP_FONTS, TEXT("enum facename '%s' weight=%d italic=%d charsets=%d NOT ADDED (@)"),
+        trace_4(TRACE_APP_FONTS, TEXT("enum facename '%s' weight=%d italic=%u charset=%u NOT ADDED (@)"),
                 lpelf->elfLogFont.lfFaceName, lpelf->elfLogFont.lfWeight, lpelf->elfLogFont.lfItalic, lpelf->elfLogFont.lfCharSet);
         return(1);
     }
@@ -1869,7 +1873,7 @@ fontmap_enum_fonts_add_font(
 
     if(hit)
     {   /* hit existing entry */
-        trace_4(TRACE_APP_FONTS, TEXT("enum facename '%s' weight=%d italic=%d charsets=%d NOT ADDED (hit)"),
+        trace_4(TRACE_APP_FONTS, TEXT("enum facename '%s' weight=%d italic=%u charset=%u NOT ADDED (hit)"),
                 lpelf->elfLogFont.lfFaceName, lpelf->elfLogFont.lfWeight, lpelf->elfLogFont.lfItalic, lpelf->elfLogFont.lfCharSet);
         return(1);
     }
@@ -2088,9 +2092,9 @@ fontmap_invent_app_font_entry_for_host(
     if(0 != p_host_font_tab->uses)
     {
 #if RISCOS
-        trace_2(TRACE_APP_FONTS, TEXT("host font '%s' already used (%d times)"), report_tstr(p_host_font_tab->fullname), p_host_font_tab->uses);
+        trace_2(TRACE_APP_FONTS, TEXT("host font '%s' already used (%u times)"), report_tstr(p_host_font_tab->fullname), p_host_font_tab->uses);
 #elif WINDOWS
-        trace_4(TRACE_APP_FONTS, TEXT("host font '%s' weight:%d italic:%d already used (%d times)"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, p_host_font_tab->uses);
+        trace_4(TRACE_APP_FONTS, TEXT("host font '%s' weight:%d italic:%u already used (%u times)"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, p_host_font_tab->uses);
 #endif
         return(status);
     }
@@ -2112,7 +2116,7 @@ fontmap_invent_app_font_entry_for_host(
 #if RISCOS
             trace_3(TRACE_APP_FONTS, TEXT("entry set for host font '%s' in Fireworkz '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->fullname), report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
 #elif WINDOWS
-            trace_5(TRACE_APP_FONTS, TEXT("entry set for host font '%s' weight:%d italic:%d in Fireworkz '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
+            trace_5(TRACE_APP_FONTS, TEXT("entry set for host font '%s' weight:%d italic:%u in Fireworkz '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
 #endif
 
             p_host_font_tab->uses++;
@@ -2124,7 +2128,7 @@ fontmap_invent_app_font_entry_for_host(
             trace_3(TRACE_APP_FONTS, TEXT("entry NOT set for host font '%s' in Fireworkz '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->fullname), report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
 #elif WINDOWS && TRACE_ALLOWED
         else
-            trace_5(TRACE_APP_FONTS, TEXT("entry NOT set for host font '%s' weight:%d italic:%d in Fireworkz '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
+            trace_5(TRACE_APP_FONTS, TEXT("entry NOT set for host font '%s' weight:%d italic:%u in Fireworkz '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
 #endif
 
         return(STATUS_OK);
@@ -2173,7 +2177,7 @@ fontmap_invent_app_font_entry_for_host(
 #if RISCOS
         trace_3(TRACE_APP_FONTS, TEXT("host font '%s' created new Fireworkz entry '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->fullname), report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
 #elif WINDOWS
-        trace_5(TRACE_APP_FONTS, TEXT("host font '%s' weight:%d italic:%d created new Fireworkz entry '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
+        trace_5(TRACE_APP_FONTS, TEXT("host font '%s' weight:%d italic:%u created new Fireworkz entry '%s' fontmap_bits=%d"), report_tstr(p_host_font_tab->logfont.lfFaceName), p_host_font_tab->logfont.lfWeight, p_host_font_tab->logfont.lfItalic, report_tstr(p_app_font_tab->tstr_app_font_name), fontmap_bits);
 #endif
     }
 
@@ -2766,7 +2770,7 @@ T5_CMD_PROTO(extern, t5_cmd_fontmap)
     if(status_ok(status))
         status = alloc_block_tstr_set(&p_app_font_tab->tstr_host_base_name, p_args[3].val.tstr, &global_string_alloc_block);
 
-    trace_3(TRACE_APP_FONTS, TEXT("config host base name '%s', rtf_class=%s, rtf_master=%d"), p_args[3].val.tstr, rtf_class_name[p_app_font_tab->rtf_class], p_app_font_tab->rtf_master);
+    trace_3(TRACE_APP_FONTS, TEXT("config host base name '%s', rtf_class=%s, rtf_master=%u"), p_args[3].val.tstr, rtf_class_name[p_app_font_tab->rtf_class], p_app_font_tab->rtf_master);
 
     for(fontmap_bits = FONTMAP_BASIC; fontmap_bits < FONTMAP_N_BITS; ENUM_INCR(FONTMAP_BITS, fontmap_bits))
     {
@@ -2774,7 +2778,7 @@ T5_CMD_PROTO(extern, t5_cmd_fontmap)
 
         if(arg_is_present(p_args, arg_idx))
         {
-            trace_3(TRACE_APP_FONTS, TEXT("arg[%d] present for fontmap_bits=") U32_TFMT TEXT(", full_name='%s'"), arg_idx, fontmap_bits, p_args[arg_idx].val.tstr);
+            trace_3(TRACE_APP_FONTS, TEXT("arg[") U32_TFMT TEXT("] present for fontmap_bits=") U32_TFMT TEXT(", full_name='%s'"), arg_idx, (U32) fontmap_bits, p_args[arg_idx].val.tstr);
             status_break(status = alloc_block_tstr_set(&p_app_font_tab->host_font[fontmap_bits].tstr_config, p_args[arg_idx].val.tstr, &global_string_alloc_block));
         }
     }
@@ -2787,7 +2791,7 @@ T5_CMD_PROTO(extern, t5_cmd_fontmap)
 
         if(arg_is_present(p_args, arg_idx))
         {
-            trace_3(TRACE_APP_FONTS, TEXT("arg[%d] present for fontmap_bits=") U32_TFMT TEXT(", riscos_name='%s'"), arg_idx, fontmap_bits, p_args[arg_idx].val.tstr);
+            trace_3(TRACE_APP_FONTS, TEXT("arg[") U32_TFMT TEXT("] present for fontmap_bits=") U32_TFMT TEXT(", riscos_name='%s'"), arg_idx, (U32) fontmap_bits, p_args[arg_idx].val.tstr);
             status_break(status = alloc_block_tstr_set(&p_app_font_tab->riscos_font[fontmap_bits].tstr_config, p_args[arg_idx].val.tstr, &global_string_alloc_block));
         }
     }

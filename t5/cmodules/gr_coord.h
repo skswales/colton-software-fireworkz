@@ -156,6 +156,7 @@ gdi_rect_clip_mesh(
     _InRef_     PC_GDI_RECT p_clip_rect,
     _InRef_     PC_GDI_SIZE meshsize);
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_rotate(
     _OutRef_    P_GR_BOX xbox,
@@ -163,6 +164,7 @@ gr_box_rotate(
     _InRef_     PC_GR_POINT spoint,
     _InVal_     F64 angle);
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_scale(
     _OutRef_    P_GR_BOX xbox,
@@ -170,23 +172,27 @@ gr_box_scale(
     _InRef_     PC_GR_POINT spoint,
     _InRef_     PC_GR_SCALE_PAIR scale);
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_sort(
     _OutRef_    P_GR_BOX sbox,
     _InRef_     PC_GR_BOX abox);
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_translate(
     _OutRef_    P_GR_BOX xbox,
     _InRef_     PC_GR_BOX abox,
     _InRef_     PC_GR_POINT spoint);
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_union(
     _OutRef_    P_GR_BOX ubox,
     _InRef_     PC_GR_BOX abox,
     _InRef_     PC_GR_BOX bbox);
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_xform(
     _OutRef_    P_GR_BOX xbox,
@@ -236,6 +242,7 @@ gdi_point_mesh_hit(
     _InRef_     PC_GDI_POINT testpoint,
     _InRef_     PC_GDI_SIZE meshsize);
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_rotate(
     _OutRef_    P_GR_POINT xpoint,
@@ -243,6 +250,7 @@ gr_point_rotate(
     _InRef_     PC_GR_POINT spoint,
     _InVal_     F64 angle);
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_scale(
     _OutRef_    P_GR_POINT xpoint,
@@ -250,12 +258,14 @@ gr_point_scale(
     _InRef_     PC_GR_POINT spoint,
     _InRef_     PC_GR_SCALE_PAIR scale);
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_translate(
     _OutRef_    P_GR_POINT xpoint,
     _InRef_     PC_GR_POINT apoint,
     _InRef_     PC_GR_POINT spoint);
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_xform(
     _OutRef_    P_GR_POINT xpoint,

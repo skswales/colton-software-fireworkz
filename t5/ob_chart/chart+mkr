@@ -89,17 +89,17 @@ $(PROD_BUILD_DIR).binaries.Neutral.Ob06: $(PROD_BUILD_DIR).o.Neutral.M06 $(PROD_
  $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M06 -N06 $(OBJMUNGE_OBJFLAGS) -Eobject_chart
 
 # Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res06/rci: $(T5).ob_chart.resource.$(COUNTRY).msg
+$(T5).$(PROD).Resources.Windows.$(COUNTRY).res06/rci: $(T5).ob_chart.resource.$(COUNTRY).msg
  Basic -quit $(RCGen) -output $@ -from $? -object 06 -base &3000
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob06: $(T5).ob_chart.resource.$(COUNTRY).msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob06: $(T5).ob_chart.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS loaded sprites
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Sprites22.Ob06: $(T5).ob_chart.resource.Neutral.spr22
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.Sprites22.Ob06: $(T5).ob_chart.resource.Neutral.spr22
  Copy $? $@ ~C FV
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Sprites24.Ob06: $(T5).ob_chart.resource.Neutral.spr24
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.Sprites24.Ob06: $(T5).ob_chart.resource.Neutral.spr24
  Copy $? $@ ~C FV
 
 # RISC OS bound messages (leave as example)

@@ -158,7 +158,7 @@ ascii_msg_insert_foreign_core(
     LOAD_CELL_FOREIGN load_cell_foreign;
     STATUS status = STATUS_OK;
 
-    zero_struct(load_cell_foreign);
+    zero_struct_fn(load_cell_foreign);
 
     for(;;)
     {
@@ -216,7 +216,7 @@ ascii_msg_insert_foreign_core(
                         slr.row = i_slr.row = position.slr.row;
                     }
                     else
-                        status = cells_block_insert(p_docu, 0, all_cols(p_docu), slr.row, n_rows_increment, 0);
+                        status = cells_block_insert(p_docu, 0, all_cols(p_docu), slr.row, n_rows_increment);
 
                     if(status_ok(status))
                     {

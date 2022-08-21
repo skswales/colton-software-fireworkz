@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Printing</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Printing" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug07_page_design.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../sg/sg01_entering_and_editing_numerical_data.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Page design </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Entering data in cells</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="printing" id="printing"></a><span class="csg-chapter-number">10 </span>Printing</h1>
+
+    <p>
+        The end result of most of your work with Fireworkz will be a printed document.
+        It is therefore worth spending some time exploring the various printing options available,
+        and making sure that your computer and printer are set up to get the best possible results.
+    </p>
+    <p>This chapter describes:</p>
+    <ul>
+        <li><a href="#before_printing">What you need to do to get ready to print</a></li>
+
+        <li><a href="#basic_print_options">Basic printing options available from Fireworkz</a></li>
+
+        <li><a href="#extra_print_options">Additional printing options</a></li>
+
+        <li><a href="#print_scale">Scale printing</a></li>
+
+        <li><a href="#printing_labels">Printing labels</a></li>
+
+        <li><a href="#printing_problems">Common printing problems and their solutions</a></li>
+    </ul>
+
+    <h2><a name="before_printing" id="before_printing"></a>Before printing</h2>
+
+    <p>Before trying to print, ensure that your printer is correctly set up, loaded with paper and cartridge or ribbon, and is switched on and set on-line.</p>
+    <p>
+        Fireworkz uses the standard RISC OS or Windows printer drivers for printing.
+        You should make sure that you have loaded the printer driver that you want to use.
+        If you have more than one printer driver installed make sure that you have selected the one that you want to use.
+    </p>
+    <p>
+        You should also make sure that your printer driver is correctly configured.
+        To do this:
+    </p>
+    <ul>
+        <li>
+            On RISC OS, load the printer manager by double-clicking on the !Printers icon in Apps.
+            Then double-click on your printer's entry in the <span class="csg-dbox">Printer control</span> window
+            which is available from the <span class="csg-menu">Printer</span> icon bar menu.
+            The <span class="csg-dbox">Printer configuration</span> dialogue box will be displayed;
+            refer to the <em>RISC OS User Guide</em>, in conjunction with the documentation for your printer,
+            for full details of this process and what to do to fine-tune your printer driver.
+        </li>
+        <li>
+            On Windows, you can use the <span class="csg-menu-option">Print Setup</span> dialogue box from the
+            <span class="csg-menu">File</span> menu to help set up the printer driver to print the document as you want.
+            Consult your operating system and your printer documentation for further details.
+        </li>
+    </ul>
+
+    <h2><a name="printing" id="printing"></a>Printing</h2>
+
+    <h3><a name="choosing_to_print" id="choosing_to_print"></a>Choosing to print</h3>
+    <p>
+        <img class="csg-lhs-img" src="../common/images/toolbar/print.png" alt="Print tool button" />
+        Once you are ready to print, display the <span class="csg-dbox">Print</span> dialogue box
+        by clicking on the <span class="csg-toolbar-button">Print</span> tool button on the toolbar
+        (or by choosing <span class="csg-menu-option">Print</span> from the <span class="csg-menu">File</span> menu).
+    </p>
+    <p>
+        The <span class="csg-dbox">Print</span> dialogue box is
+        where you make important choices about your printing job,
+        such as how many copies of the document you want to print,
+        or what selection of pages from the document you want to print.
+    </p>
+
+    <h3><a name="basic_print_options" id="basic_print_options"></a>Basic printing options</h3>
+    <p>
+        When you choose <span class="csg-menu-option">Print</span> from a menu or the toolbar,
+        the basic <span class="csg-dbox">Print</span> dialogue box will appear.
+        It will show you the type of printer driver you have loaded (e.g. PostScript):
+        on RISC OS this will be shown at the top of the dialogue box, whereas
+        on Windows this will be shown in the title bar.
+    </p>
+    <ol>
+        <li>Enter the number of copies of your document that you want to print.</li>
+        <li>
+            If you only want to print some of the pages in your document,
+            select the <span class="csg-dbox-option-value">Range</span> radio button.
+            You will then be able to type in the number of the page you want to start printing from,
+            and the number of the last page in the range you want to print.
+            The basic <span class="csg-dbox">Print</span> dialogue box allows you
+            to select pages going down the document (Y - where one is the topmost page)
+            and pages going across the document (X - where one is the leftmost page).
+            If the <span class="csg-dbox-option-value">Range</span> radio button is not selected, the Range options will be greyed out.
+        </li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Print</span></span> to print.</li>
+    </ol>
+
+    <h3><a name="extra_print_options" id="extra_print_options"></a>Additional printing options</h3>
+    <p>
+        Several extra options are available for more advanced printing requirements.
+        To access them, click the <span class="csg-dbox-button">Extra</span> button in the <span class="csg-dbox">Print</span> dialogue box.
+        A larger dialogue box containing a wider range of options will appear.
+    </p>
+
+    <h4><a name="range_of_pages" id="range_of_pages"></a>Range of pages</h4>
+    <p>
+        You will see that the range numbers in the large <span class="csg-dbox">Print</span> dialogue box dialogue box run from 1.1 onwards.
+        This is because Fireworkz can handle documents which are more than one page wide, such as large tables.
+    </p>
+    <p>
+        Page number x.y means the x-th page across and the y-th page down.
+        Normally you will only have one page across and so the first number will always be one.
+        In this case you can miss out the 1. when editing range information.
+    </p>
+    <p>You can specify a list, a range or a combination of the two.</p>
+    <p>Examples:</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="min-width: 8em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <td class="csg-user-text" style="width: 8em;">2 4 7</td>
+                    <td>Prints pages 2, 4 and 7</td>
+                </tr>
+                <tr>
+                    <td class="csg-user-text">1 3-5 8</td>
+                    <td>Prints pages 1, 3, 4, 5 and 8</td>
+                </tr>
+                <tr>
+                    <td class="csg-user-text">2.1-2.7</td>
+                    <td>Prints the first seven pages of the second column</td>
+                </tr>
+                <tr>
+                    <td class="csg-user-text">B 1</td>
+                    <td>Prints a blank page and then the first page (pamphlet printing)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        Your list can be several lines long.
+        To add more lines press <span class="csg-key">Ctrl-Return&crarr;</span>.
+    </p>
+
+    <h4><a name="pamphlet_printing" id="pamphlet_printing"></a>Pamphlet printing</h4>
+    <p>
+        The pamphlet printing option enables you to print documents which will be folded and stapled to produce an A5 pamphlet.
+        For example in an eight page document page one will be printed next to page eight, page two next to page seven, and so on.
+    </p>
+    <p>
+        To switch on pamphlet printing, click the <span class="csg-dbox-button">Pamphlet</span> button.
+        You will see that the <span class="csg-dbox-option">Two up</span> option button has been switched on as well,
+        and that the Range list box contains a list of pages showing you the pairs of pages that will appear on each printed page.
+        <code>B</code> means a blank page.
+    </p>
+    <p>
+        Pamphlet printing assumes that you have a duplex printer,
+        i.e. one which automatically feeds the pages back through to print on the reverse side.
+        If this is not the case:
+    </p>
+    <ol>
+        <li>
+            Delete every alternate line (representing a pair of pages) from the Range list box,
+            by selecting the entries and pressing <span class="csg-key">Delete</span>.
+        </li>
+        <li>Print the remaining pages.</li>
+        <li>Reload the paper into the printer the correct way round.</li>
+        <li>Choose Pamphlet printing again and delete the pages you have already printed.</li>
+        <li>
+            If necessary, switch on <span class="csg-dbox-option">Reverse</span> printing as well.
+            The aim is to get page two to appear on the back of page one.
+            You may need to experiment to get your pages in the right order and the correct orientation.
+        </li>
+    </ol>
+
+    <h4><a name="sides" id="sides"></a>Sides</h4>
+    <p>Click on:</p>
+    <ul>
+        <li><span class="csg-dbox-option-value">Both</span> to print all pages;</li>
+        <li><span class="csg-dbox-option-value">Odd</span> to print odd pages;</li>
+        <li><span class="csg-dbox-option-value">Even</span> to print even pages.</li>
+    </ul>
+    <p>The first page in a document is always an odd page.</p>
+
+    <h4><a name="reverse_printing" id="reverse_printing"></a>Reverse</h4>
+    <p>This option prints pages in reverse order, i.e. last page first.</p>
+
+    <h4><a name="collated" id="collated"></a>Collated</h4>
+    <p>
+        If you are printing more than one copy of a document this option will collate them
+        so that the pages appear as complete documents rather than all the page ones then all the page twos.
+        However it can add considerably to printing time, as some printers, particularly laser printers,
+        can print multiple copies of a single page much more quickly than a single copy of several different pages.
+    </p>
+
+    <h4><a name="two_up" id="two_up"></a>Two up</h4>
+    <p>
+        This option prints two reduced size pages side-by-side on an A4 page.
+        This will be page 1 and page 2 of the document, and subsequent pairs of pages.
+    </p>
+    <ul>
+        <li>
+            If you want to print two-up copies of a single page document,
+            simply copy the whole document and paste the copy on to a second page
+            (force a page break using the <span class="csg-dbox">Pages</span> dialogue box if necessary).
+            Then when you print two-up you will print two copies of the same page.
+        </li>
+    </ul>
+
+    <h3><a name="print_scale" id="print_scale"></a>Print scale</h3>
+    <p>
+        This option lets you set the size of your printed output in terms of
+        a percentage of the actual size of the document (i.e. you can print reduced or enlarged document content),
+        or so that the printed output will fit on the selected size of paper.
+        To set this:
+    </p>
+    <ol>
+        <li>
+            Choose <span class="csg-menu-option">Scale</span> from the <span class="csg-menu">Page</span> menu.
+            The <span class="csg-menu-option">Print scale</span> dialogue box will be displayed.
+        </li>
+        <li>
+            Select the options required from the <span class="csg-dbox">Print scale</span> dialogue box.
+            <ul style="list-style: disc;">
+                <li>
+                    The <span class="csg-dbox-button">Fit one page</span> button will fit all of your document on to one page of paper,
+                    reducing or enlarging as necessary.
+                    The <span class="csg-dbox-option">Scale</span> option will show the scale that will be applied.
+                </li>
+                <li>
+                    The <span class="csg-dbox-button">Fit one page across</span> button will do the same, but only across the paper:
+                    the document will have as many Y pages as are needed.
+                    The <span class="csg-dbox-option">Scale</span> option will show the scale that will be applied.
+                </li>
+                <li>
+                    The <span class="csg-dbox-button">100%</span> button will set the document to print at its true size.
+                    You can also enter a custom percentage.
+                </li>
+                <li>
+                    The <span class="csg-dbox-option">Scale</span> field allows you to enter a custom percentage:
+                    values under 100% will reduce the size of the printed output and
+                    values over 100% will increase the size of the printed output.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            Until you change this setting, this is how the current document will be printed.
+        </li>
+    </ol>
+
+    <h2><a name="printing_labels" id="printing_labels"></a>Printing labels</h2>
+
+    <p>
+        Fireworkz includes special facilities to make it easy for you to print labels.
+        To do this you will need your name and address list stored as a CSV, Fireworkz or other data file.
+    </p>
+    <ol>
+        <li>Open a new document based on a label template.</li>
+        <li>RISC OS: Drop the CSV file icon on to this document.</li>
+        <li>Windows: Choose <span class="csg-menu-option">Insert File</span> from the <span class="csg-menu">File</span> menu.</li>
+        <li>
+            You will see a dialogue box asking you whether you want to load the file as labels or as text.
+            Select <span class="csg-dbox-option">Labels</span> and specify how many columns across the labels should be.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Insert</span></span>.<br />
+            Fireworkz will create sheets of labels for you in this document.
+        </li>
+        <li>
+            You may wish to fine-tune the label sheets before printing them.
+            The top, left and bottom paper margins may need resetting to match your label sheets.
+            You may want to reduce the type size if some of the addresses are too long to fit on a label.
+        </li>
+        <li>
+            You should expect to have to experiment with the paper definition and the other settings
+            by printing out a page or two till you succeed in printing out a page of perfect labels.
+        </li>
+        <li>
+            The label style has the grid switched on to help you with your fine-tuning.
+            When you are happy with the format you should switch this off.
+        </li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/print.png" alt="Print tool button" />
+            Click the <span class="csg-toolbar-button">Print</span> tool button on the toolbar.
+            Once you have got your page and labels set up correctly,
+            you may wish to save the document as a template for future use.
+        </li>
+    </ol>
+
+    <h2><a name="printing_problems" id="printing_problems"></a>Solving printing problems</h2>
+
+    <p>
+        While printing is usually as simple as clicking on the <span class="csg-toolbar-button">Print</span> toolbar button, there are times when problems occur.
+        Most of these are due to a failure of communication between your printer and the OS printer drivers, or to incorrect information being used by one of them.
+    </p>
+    <h4>Nothing happens when I try to print</h4>
+    <p>Check the following things:</p>
+    <ul>
+        <li>The printer is connected to its power supply, switched on and switched on-line.</li>
+        <li>The connection between the printer and your computer has not been broken, and the connectors at both ends of the cable are firmly seated in their sockets.</li>
+        <li>If you are using a networked printer, check that you are properly logged on to the network.</li>
+        <li>The printer is ready to use, i.e. is loaded with paper and has a ribbon or cartridge correctly inserted.</li>
+        <li>The printer driver is directing its output to the correct port on your computer.</li>
+    </ul>
+    <p>Before concluding that the problem lies with Fireworkz, see if it is possible to print from another program.</p>
+    <h4>Edges of the page are missing, although the rest prints normally</h4>
+    <p>
+        This problem is usually caused by trying to print on a larger area
+        of the paper than the printer is physically capable of printing on.
+        Many types of printers are not able to print edge-to-edge on a sheet of paper,
+        so if your page design has not taken this into account your document can often not be printed as intended.
+    </p>
+    <p>The problem is usually caused by a slight mismatch between your printer driver and printer.</p>
+    <ul>
+        <li>
+            Check that the paper size selected in the printer driver
+            is the same as the paper you are actually using,
+            and the same size as your Fireworkz document is expecting.
+            For the best results, the sizes used by all three should be the same.
+            <br />
+            Check the page size in the Fireworkz <span class="csg-dbox">Paper</span> dialogue box
+            (from the <span class="csg-dbox">Page</span> menu).
+            Check the printer driver page size definition using !Printers (RISC OS).
+            If necessary reformat your document using the new information,
+            using the <span class="csg-dbox-button">Read printer</span> button in the <span class="csg-dbox">Paper</span> dialogue box.
+        </li>
+        <li>
+            If you are using RISC OS, make sure that you have installed the correct
+            printer driver from those supplied on the RISC OS applications disc.
+            Refer to the <em>RISC OS User Guide</em> for further details.
+            Also see the details of page setup in the chapter Page Design.
+        </li>
+    </ul>
+    <p>
+        With PostScript laser printers, the standard PostScript printer driver leaves a small margin around the edge of pages.
+        If you are still losing information from the edge of your pages,
+        you will have to ensure that you leave sufficient margins for your printer to cope.
+    </p>
+    <ul>
+        <li>Check that you have selected the correct paper size from the PostScript printer driver.</li>
+    </ul>
+    <p>
+        If you are using a direct drive laser printer, such as ArcLaser or LaserDirect,
+        make sure that you are using the printer drivers
+        supplied with it and not the standard Acorn one.
+    </p>
+    <h4>The printer produces blank pages between each page of my document</h4>
+    <p>
+        One or more blank pages inserted between each page of the document usually indicates
+        that Fireworkz or the printer driver are using a page length which is too long.
+    </p>
+    <ul>
+        <li>
+            Check the page length of your printer by referring to its documentation.
+            You may find that the problem is due to you using the correct page length
+            for a smaller piece of paper than you are actually trying to print on.
+        </li>
+        <li>
+            Check that Fireworkz is using the correct information.
+            Once you are sure that your printer driver is set up correctly,
+            you can ensure that Fireworkz gets the right page size by using the
+            <span class="csg-dbox-button">Read printer</span> button
+            in the <span class="csg-dbox-option">Paper</span> dialogue box.
+        </li>
+    </ul>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug07_page_design.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg01_entering_and_editing_numerical_data.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Page design </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Entering data in cells</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

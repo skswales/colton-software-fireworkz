@@ -18,6 +18,7 @@
 #include "ob_skel/ff_io.h"
 
 #include "cmodules/unicode/u2000.h" /* 2000..206F General Punctuation */
+#include "cmodules/utf16.h"
 
 #include <ctype.h> /* for "C"isalpha and friends */
 
@@ -713,7 +714,7 @@ load_cell_foreign_init(
     _In_z_      PC_USTR_INLINE ustr_inline_contents)
 {
     const P_DOCU p_docu = p_docu_from_docno(p_rtf_load_info->docno);
-    zero_struct_ptr(p_load_cell_foreign);
+    zero_struct_ptr_fn(p_load_cell_foreign);
     consume_bool(object_data_from_position(p_docu, &p_load_cell_foreign->object_data, &p_rtf_load_info->position, P_OBJECT_POSITION_NONE));
     /* turns out this is abused */
     if(OBJECT_ID_TEXT == p_load_cell_foreign->object_data.object_position_start.object_id)
@@ -756,6 +757,7 @@ rtf_load_load_file(
     p_rtf_load_info->grid_colour = 1;
     p_rtf_load_info->tab_type = TAB_LEFT;
     p_rtf_load_info->_trleft = DEFAULT_TABLE_INDENT;
+    p_rtf_load_info->_uc = 1;
 
     p_rtf_load_info->destination = RTF_DESTINATION_NORMAL;
 
@@ -1753,6 +1755,58 @@ rtf_load_find_document_dimensions(
 
 _Check_return_
 static STATUS
+rtf_load_obtain_control_word_hex_character(
+    _InoutRef_  P_RTF_LOAD_INFO p_rtf_load_info,
+    _InoutRef_  P_QUICK_BLOCK p_quick_block /*appended,terminated*/,
+    _OutRef_    P_U32 p_parameter_offset)
+{
+    U8Z u8z[8];
+    U8 rtf_char;
+
+    u8z[0] = CH_APOSTROPHE;
+
+    u8z[1] = CH_NULL; /* terminate the RTF control word */
+
+    /* hex character => only two more chars (hex digits) required */
+
+    /* unless we are mucking about with DBCS or get t.b.s. in \loch <<< */
+
+    *p_parameter_offset = 2; /* parameter is appended after that terminator */
+
+    rtf_char = rtf_get_char(p_rtf_load_info);
+    u8z[2] = rtf_char; /*MSN*/
+
+    assert(!/*"C"*/iscntrl(rtf_char));
+    if(CH_SPACE > rtf_char)
+    {
+        rtf_advance_char(p_rtf_load_info, -1);
+        return(STATUS_FAIL);
+    }
+
+    rtf_char = rtf_get_char(p_rtf_load_info);
+    u8z[3] = rtf_char; /*LSN*/
+
+    assert(!/*"C"*/iscntrl(rtf_char));
+    if(CH_SPACE > rtf_char)
+    {
+        rtf_advance_char(p_rtf_load_info, -1);
+        return(STATUS_FAIL);
+    }
+
+    rtf_char = rtf_peek_char_off(p_rtf_load_info, 0);
+    u8z[4] = CH_NULL; /* terminate the parameter */
+
+    if(CH_SPACE > rtf_char)
+    {   /* consume an optional line sep (NB NOT space) as part of the control word (but not added to it) */
+        if(CH_NULL != rtf_char)
+            rtf_advance_char(p_rtf_load_info, 1);
+    }
+
+    return(quick_block_bytes_add(p_quick_block, u8z, 5));
+}
+
+_Check_return_
+static STATUS
 rtf_load_obtain_control_word_special(
     _InoutRef_  P_RTF_LOAD_INFO p_rtf_load_info,
     _InoutRef_  P_QUICK_BLOCK p_quick_block /*appended,terminated*/,
@@ -1761,45 +1815,12 @@ rtf_load_obtain_control_word_special(
     U8Z u8z[8];
     U8 rtf_char = rtf_get_char(p_rtf_load_info);
 
+    if(CH_APOSTROPHE == rtf_char) /* hex character */
+        return(rtf_load_obtain_control_word_hex_character(p_rtf_load_info, p_quick_block, p_parameter_offset));
+
     u8z[0] = rtf_char;
 
     u8z[1] = CH_NULL; /* terminate the RTF control word */
-
-    if(CH_APOSTROPHE == rtf_char) /* hex character => only two more chars (hex digits) required */
-    {
-        *p_parameter_offset = 2; /* parameter is appended after that terminator */
-
-        rtf_char = rtf_get_char(p_rtf_load_info);
-        u8z[2] = rtf_char; /*MSN*/
-
-        assert(!/*"C"*/iscntrl(rtf_char));
-        if(CH_SPACE > rtf_char)
-        {
-            rtf_advance_char(p_rtf_load_info, -1);
-            return(STATUS_FAIL);
-        }
-
-        rtf_char = rtf_get_char(p_rtf_load_info);
-        u8z[3] = rtf_char; /*LSN*/
-
-        assert(!/*"C"*/iscntrl(rtf_char));
-        if(CH_SPACE > rtf_char)
-        {
-            rtf_advance_char(p_rtf_load_info, -1);
-            return(STATUS_FAIL);
-        }
-
-        rtf_char = rtf_peek_char_off(p_rtf_load_info, 0);
-        u8z[4] = CH_NULL; /* terminate the parameter */
-
-        if(CH_SPACE >= rtf_char)
-        {   /* consume an optional single space (or line sep) as part of the control word (but not added to it) */
-            if(CH_NULL != rtf_char)
-                rtf_advance_char(p_rtf_load_info, 1);
-        }
-
-        return(quick_block_bytes_add(p_quick_block, u8z, 5));
-    }
 
     *p_parameter_offset = 0;
 
@@ -3269,6 +3290,19 @@ rtf_insert_ucs4(
 {
     STATUS status;
 
+    static WCHAR high_surrogate;
+
+    if(0 != high_surrogate)
+    {   /* compose a full UCS-4 character from a surrogate pair */
+        assert( (ucs4 >= UCH_SURROGATE_LOW) && (ucs4 <= UCH_SURROGATE_LOW_END) );
+        if( (ucs4 >= UCH_SURROGATE_LOW) && (ucs4 <= UCH_SURROGATE_LOW_END) )
+        {
+            WCHAR low_surrogate = (WCHAR) ucs4;
+            ucs4 = utf16_char_decode_surrogates(high_surrogate, low_surrogate);
+        }
+        high_surrogate = 0;
+    }
+
 #if USTR_IS_SBSTR /* try hard not to make inlines - convert to native */
     if(!ucs4_is_sbchar(ucs4))
         ucs4 = ucs4_to_sbchar_try_with_codepage(ucs4, get_system_codepage());
@@ -3282,6 +3316,12 @@ rtf_insert_ucs4(
     }
     else
     {
+        if( (ucs4 >= UCH_SURROGATE_HIGH) && (ucs4 <= UCH_SURROGATE_HIGH_END) )
+        {   /* save this away to use in conjunction with the next ucs4, which should be a low surrogate */
+            high_surrogate = (WCHAR) ucs4;
+            return(STATUS_OK);
+        }
+
         status_return(ucs4_validate(ucs4));
 
         {
@@ -3422,9 +3462,9 @@ PROC_RTF_CONTROL_PROTO(rtf_control_hex_char)
 
     func_ignore_parms();
 
-#if CHECKING
     assert(u32 < 256);
 
+#if CHECKING && 0
     switch(p_rtf_load_info->_loch_hich_dbch)
     {
     default:
@@ -3471,9 +3511,15 @@ PROC_RTF_CONTROL_PROTO(rtf_control_u)
 
     ucs4 = (UCS4) parameter;
 
-    status_return(ucs4_validate(ucs4));
+    if( (ucs4 >= UCH_SURROGATE_HIGH) && (ucs4 <= UCH_SURROGATE_LOW_END) )
+    {   /* don't validate these! */
+    }
+    else
+    {
+        status_return(ucs4_validate(ucs4));
 
-    assert(!ucs4_is_C1(ucs4)); /* hopefully no C1 to complicate things */
+        assert(!ucs4_is_C1(ucs4)); /* hopefully no C1 to complicate things */
+    }
 
     return(rtf_insert_ucs4(p_rtf_load_info, p_h_dest_contents, ucs4));
 }
@@ -3490,8 +3536,8 @@ PROC_RTF_CONTROL_PROTO(rtf_control_uc)
 
     func_ignore_parms();
 
-    assert((1 == parameter) || (2 == parameter));
-    if((1 == parameter) || (2 == parameter))
+    assert((0 <= parameter) || (2 >= parameter));
+    if((0 <= parameter) || (2 >= parameter))
         p_rtf_load_info->_uc = (U32) parameter;
     else
         p_rtf_load_info->_uc = 0;
@@ -4274,7 +4320,7 @@ T5_MSG_PROTO(static, rtf_msg_insert_foreign, _InRef_ P_MSG_INSERT_FOREIGN p_msg_
 
     docu_area_init(&docu_area_to_insert);
 
-    zero_struct(rtf_load_info);
+    zero_struct_fn(rtf_load_info);
 
     p_rtf_load_info = &rtf_load_info;
 

@@ -1,0 +1,11 @@
+IconSprites <Obey$Dir>.!Sprites
+
+Set Strings$Dir  <Obey$Dir>
+Set Strings$Path <Obey$Dir>.
+
+|Set Alias$@RunType_111 Run Strings:Trans %0
+
+|Copy Strings:Documents.StrongHelp.Strings <StrongHelp$Dir>.Strings ~CLN~V
+
+Filer_OpenDir Strings:Libraries
+Filer_OpenDir Strings:Tests

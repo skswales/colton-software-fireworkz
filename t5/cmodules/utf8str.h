@@ -41,10 +41,10 @@ number of bytes of UTF-8 encoding of the first character in this USTR
 
 /* NL variant is not required as total length is encoded in the first byte */
 
-#define utf8str_bytes_of_char(ustr) /*num*/ (   \
-    u8_is_ascii7(PtrGetByte(ustr))              \
-    ? 1                                         \
-    : utf8str__bytes_of_char(ustr)              )
+#define utf8str_bytes_of_char(ustr) /*U32 num*/ (   \
+    u8_is_ascii7(PtrGetByte(ustr))                  \
+    ? 1U                                            \
+    : utf8str__bytes_of_char(ustr)                  )
 
 _Check_return_
 static inline U32
@@ -54,10 +54,10 @@ utf8str__bytes_of_char(
     return(utf8__bytes_of_char(ustr));
 }
 
-#define utf8str_bytes_of_char_off(ustr, off) /*num*/ (  \
-    u8_is_ascii7(PtrGetByteOff(ustr, off))              \
-    ? 1                                                 \
-    : utf8str__bytes_of_char_off(ustr, off)             )
+#define utf8str_bytes_of_char_off(ustr, off) /*U32 num*/ (  \
+    u8_is_ascii7(PtrGetByteOff(ustr, off))                  \
+    ? 1U                                                    \
+    : utf8str__bytes_of_char_off(ustr, off)                 )
 
 _Check_return_
 static inline U32
@@ -69,11 +69,11 @@ utf8str__bytes_of_char_off(
 }
 
 /* single ASCII-7 bytes retrieved without function call overhead */
-#define utf8str_bytes_prev_of_char(ustr_start, ustr) /*num*/ (  \
-    (   (ustr_start != ustr)                    &&              \
-        u8_is_ascii7(PtrGetByteOff(ustr, -1))   )               \
-        ? 1                                                     \
-        : utf8str__bytes_prev_of_char(ustr_start, ustr)         )
+#define utf8str_bytes_prev_of_char(ustr_start, ustr) /*U32 num*/ (  \
+    (   (ustr_start != ustr)                    &&                  \
+        u8_is_ascii7(PtrGetByteOff(ustr, -1))   )                   \
+        ? 1U                                                        \
+        : utf8str__bytes_prev_of_char(ustr_start, ustr)             )
 
 _Check_return_
 static inline U32
@@ -91,12 +91,12 @@ decode UCS-4 character from the first character in this USTR, with number of byt
 /* single ASCII-7 bytes retrieved without function call overhead */
 #define utf8str_char_decode(ustr, bytes_of_char__ref) /*UCS4*/ (    \
     u8_is_ascii7(PtrGetByte(ustr))                                  \
-        ? ( (bytes_of_char__ref) = 1, (UCS4) PtrGetByte(ustr) )     \
+        ? ( (bytes_of_char__ref) = 1U, (UCS4) PtrGetByte(ustr) )    \
         : utf8str__char_decode(ustr, &(bytes_of_char__ref))         )
 
 #define utf8str_char_decode_off(ustr, off, bytes_of_char__ref) /*UCS4*/ (   \
     u8_is_ascii7(PtrGetByteOff(ustr, off))                                  \
-        ? ( (bytes_of_char__ref) = 1, (UCS4) PtrGetByteOff(ustr, off) )     \
+        ? ( (bytes_of_char__ref) = 1U, (UCS4) PtrGetByteOff(ustr, off) )    \
         : utf8str__char_decode_off(ustr, off, &(bytes_of_char__ref))        )
 
 #define utf8str_char_decode_NULL(ustr) /*UCS4*/ (   \
@@ -423,30 +423,30 @@ number of bytes of USTR encoding of the character pointed to
 
 #if USTR_IS_SBSTR
 
-#define ustr_bytes_of_char(ustr) /*num*/ \
-    1
+#define ustr_bytes_of_char(ustr) /*U32 num*/ \
+    1U
 
-#define ustr_bytes_of_char_off(ustr, off) /*num*/ \
-    1
+#define ustr_bytes_of_char_off(ustr, off) /*U32 num*/ \
+    1U
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define ustr_bytes_of_char(ustr) /*num*/ \
+#define ustr_bytes_of_char(ustr) /*U32 num*/ \
     utf8str_bytes_of_char(ustr)
 
-#define ustr_bytes_of_char_off(uchars, off) /*num*/ \
+#define ustr_bytes_of_char_off(uchars, off) /*U32 num*/ \
     utf8str_bytes_of_char_off(uchars, off)
 
 #endif /* USTR_IS_SBSTR */
 
 #if USTR_IS_SBSTR
 
-#define ustr_bytes_prev_of_char(ustr_start, ustr) /*num*/ \
-    ( (ustr_start != ustr) ? 1 : 0 )
+#define ustr_bytes_prev_of_char(ustr_start, ustr) /*U32 num*/ \
+    ( (ustr_start != ustr) ? 1U : 0U )
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define ustr_bytes_prev_of_char(ustr_start, ustr) /*num*/ \
+#define ustr_bytes_prev_of_char(ustr_start, ustr) /*U32 num*/ \
     utf8str_bytes_prev_of_char(ustr_start, ustr)
 
 #endif /* USTR_IS_SBSTR */
@@ -458,11 +458,11 @@ decode UCS-4 character from USTR character encoding, with number of bytes
 #if USTR_IS_SBSTR
 
 #define ustr_char_decode(ustr, bytes_of_char__ref) /*UCS4*/ ( \
-    (bytes_of_char__ref) = 1, \
+    (bytes_of_char__ref) = 1U, \
     (UCS4) PtrGetByte(ustr) )
 
 #define ustr_char_decode_off(ustr, off, bytes_of_char__ref) /*UCS4*/ ( \
-    (bytes_of_char__ref) = 1, \
+    (bytes_of_char__ref) = 1U, \
     (UCS4) PtrGetByteOff(ustr, off) )
 
 #define ustr_char_decode_NULL(ustr) /*UCS4*/ \

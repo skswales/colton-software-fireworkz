@@ -1,0 +1,45 @@
+﻿Database Guide 190
+
+
+WORKDAYADD
+WORKDAYADD(date, integer)
+Returns a date obtained by adding a number of working days,
+integer, to date. For example:
+WORKDAYADD('Date1', 2)
+returns a date obtained by adding 2 working days to the date in the
+field Date1, e.g. if date is a Friday adding two working days gives
+the date of the following Tuesday, provided that neither the
+Monday nor Tuesday are bank holidays.
+
+WORKDAYSUB
+WORKDAYSUB(date, date)
+Returns an integer representing the number of working days which
+fall between the two dates. For example:
+WORKDAYSUB(‘Date1',‘Date2‘ )
+returns the number of working days between the dates in the fields
+Date1 and Date2. The result is positive if the first date is later than
+the second.
+
+YEARDAYS
+YEARDAYS(integer)
+Retums the number of days in the specified year. 365 is returned
+for a non leap year, 366 for a leap year and 355 for the year 1582.
+For example:
+YEARDAYS(1996)
+retums 366.
+
+YEAROF
+YEAROF(date/interval)
+Returns an integer for the year value of a date or interval. For
+example:
+
+
+
+Database Guide 191
+
+YEAROF( 'Date1' )
+retums the year component of the date in the field Date1.
+
+
+
+

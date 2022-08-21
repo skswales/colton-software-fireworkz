@@ -23,14 +23,14 @@ $(PROD_BUILD_DIR).binaries.Neutral.Ob40: $(PROD_BUILD_DIR).o.Neutral.M40 $(PROD_
  $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M40 -N40 $(OBJMUNGE_OBJFLAGS) -Eobject_fs_lotus123
 
 # Windows STRINGTABLE
-$(BUILD_DIR).fs_123.$(COUNTRY)-40/rc: $(T5).resource.zz-msg
+$(BUILD_DIR).fs_123.$(COUNTRY)-40/rc: $(T5).Resources.Neutral.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 40 -common
 
 # RISC OS loaded messages
-# $(T5).resource.zz-msg
+# $(T5).Resources.Neutral.zz-msg
 
 # RISC OS bound messages
-$(BUILD_DIR).fs_123.o.$(COUNTRY)-B40: $(T5).resource.zz-msg
+$(BUILD_DIR).fs_123.o.$(COUNTRY)-B40: $(T5).Resources.Neutral.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).fs_123.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fs_123.o.$(COUNTRY)-B_tmp -symbol rb_fs_123_msg_weak
 

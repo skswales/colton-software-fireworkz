@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Using pictures</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Using pictures" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug08_tables.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug07_page_design.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Tables </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Page design</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="using_pictures" id="using_pictures"></a><span class="csg-chapter-number">8 </span>Using pictures</h1>
+
+    <p>
+        Many documents benefit from the addition of pictures. You may
+        want to add a logo to a report, or place a graph or chart in a report.
+        Charts which you have created within Fireworkz are
+        treated as pictures, so all the information about repositioning and
+        resizing pictures applies to charts as well.
+    </p>
+    <p>
+        Adding pictures to Fireworkz is a simple process.
+        This chapter describes the ways you can use pictures within Fireworkz documents:
+    </p>
+    <ul>
+        <li><a href="#picture_file_formats">Picture file formats</a></li>
+        <li><a href="#how_fireworkz_handles_pictures.htm">How Fireworkz handles pictures</a></li>
+        <li><a href="#adding_pictures_to_your_document.htm">How to add pictures to your document</a></li>
+        <li><a href="#storing_pictures_in_documents.htm">Storing pictures in documents</a></li>
+        <li><a href="#positioning_pictures_on_the_page.htm">Positioning pictures on the page</a></li>
+        <li><a href="#backdrop_pictures.htm">Using backdrop pictures as stationery</a></li>
+    </ul>
+
+    <h2><a name="picture_file_formats" id="picture_file_formats"></a>Picture file formats</h2>
+
+    <p>
+        Pictures in a variety of formats can be added to your documents.
+        Fireworkz can also create pictures in the form of <a href="../sg/sg04_charts.htm">charts</a>.
+        These can be saved as RISC OS Draw files.
+    </p>
+    <p>Fireworkz supports the following picture formats:</p>
+    <ul>
+        <li>JPEG/JFIF (.JPG,.JPEG)</li>
+        <li>RISC OS Draw (.AFF)</li>
+        <li>RISC OS sprite (.FF9)</li>
+        <li>Windows bitmap (.BMP)</li>
+    </ul>
+    <p>Fireworkz on RISC OS supports the automatic import of many other picture formats using ChangeFSI (if it is available).</p>
+    <p>
+        Pictures in these formats can be added to a document or transferred between RISC OS and Windows computers
+        as files embedded in or referenced by a Fireworkz document.
+    </p>
+    <p>
+        Windows uses the file extensions .AFF for RISC OS Draw files and .FF9 for RISC OS sprites.
+        Adding these extensions to file names will make it easier for the Windows computer
+        to recognise files as suitable graphics and allow them to be inserted into your document.
+        You should make sure that your sprites and Draw files do not have any other extension
+        added to their name as they will then not be correctly read by Fireworkz.
+    </p>
+    <p>You can use the (now free) OakDraw package to create and edit RISC OS Draw files on Windows.</p>
+
+    <h2><a name="using_pictures_in_your_document" id="using_pictures_in_your_document"></a>Using pictures in your document</h2>
+
+    <p>
+        Fireworkz lets you add pictures to your documents, move them around the page, resize them,
+        and also to pin them to the text so that they always stay with their associated text even if the document is reformatted.
+        You can also add pictures as the background to a page.
+    </p>
+
+    <h3><a name="how_fireworkz_handles_pictures" id="how_fireworkz_handles_pictures"></a>How Fireworkz handles pictures</h3>
+    <p>
+        Fireworkz stores pictures on two invisible layers of your document, the front layer and the back layer.
+        This gives you additional flexibility in using pictures,
+        and means that when you are working with pictures you need not worry about moving your text around.
+    </p>
+    <p>Pictures can be either in front of or behind the text layer.</p>
+    <ul>
+        <li>If the picture layer is in front, pictures could obscure any text in the same place on the page.</li>
+        <li>If it is behind the text layer, the picture will appear behind any text in the same place on the page.</li>
+    </ul>
+    <p>You can use the commands on the <span class="csg-menu">Pictures</span> menu to swap the layers over to get the effect you want.</p>
+
+    <h3><a name="adding_pictures_to_your_document" id="adding_pictures_to_your_document"></a>Adding pictures to your document</h3>
+    <p>To add a picture file to a document:</p>
+    <ol>
+        <li>
+            Select the picture file (which may be a JPEG, Draw file or Sprite file) from the directory
+            in which it is stored using the Filer (RISC OS) or File Explorer (Windows).
+        </li>
+        <li>Drag the picture's file icon into the window of the document.</li>
+        <li>
+            Release the mouse button.
+            The picture will be added to the document.
+        </li>
+    </ol>
+
+    <h4><a name="adding_pictures_insert_file" id="adding_pictures_insert_file"></a>Using the Insert File command</h4>
+    <p>In Windows you can also add files to documents by using the Insert File command.</p>
+    <ol>
+        <li>Place the caret at the point in the document where you want the picture adding.</li>
+        <li>Choose <span class="csg-menu-option">Insert File</span> from the <span class="csg-menu">File</span> menu.</li>
+        <li>Choose the document you want from the dialogue box which appears.</li>
+        <li>The picture will be added to the document.</li>
+    </ol>
+
+    <h3><a name="storing_pictures_in_documents" id="storing_pictures_in_documents"></a>Storing pictures in documents</h3>
+    <p>There are two ways in which pictures can be stored in the document:</p>
+    <ul>
+        <li>
+            <b>Embedded</b> pictures are saved as part of your document file.
+            This means that your complete document is just one file,
+            which makes it much easier to move from computer to computer,
+            and you don't have to worry about losing picture files.
+            Embedded pictures can easily be transferred between platforms.
+        </li>
+        <li>
+            <b>Referenced</b> pictures are not saved as part of your document file;
+            instead, the document notes where Fireworkz should look for the picture next time you open the file.
+            This method makes your document file smaller,
+            but you will need to keep the picture file in the same place,
+            and also to remember to give a copy of the picture file to anyone you give the document file to.
+            It is harder to transfer referenced pictures between platforms.
+        </li>
+    </ul>
+    <p>
+        The default setting is that all pictures are embedded.
+        However, you can change this in the
+        <span class="csg-dbox">Choices</span> dialogue box by switching the
+        <span class="csg-dbox-option">Embed pictures</span> option off.
+    </p>
+    <p>
+        If you reference a picture, you can still embed it in your document by selecting it and then choosing
+        <span class="csg-dbox-option">Embed</span> from the <span class="csg-menu">Pictures</span> menu.
+    </p>
+    <p>To turn an embedded picture into a referenced picture:</p>
+    <ol>
+        <li>Select the picture</li>
+        <li>Choose <span class="csg-dbox-option">Save as</span> from the <span class="csg-menu">Save</span> menu and save the picture outside the document.</li>
+        <li>Delete the picture from the document.</li>
+        <li>Switch off the <span class="csg-dbox-option">Embed pictures</span> option in the <span class="csg-dbox">Choices</span> dialogue box.</li>
+        <li>
+            Drop the saved picture's file icon back on the document.
+            It will be referenced in the document.
+        </li>
+    </ol>
+    <p>If, when you try to open a document containing a referenced picture, Fireworkz cannot find the picture, you will see an error message.</p>
+
+    <h3><a name="positioning_pictures_on_the_page" id="positioning_pictures_on_the_page"></a>Positioning pictures on the page</h3>
+    <p>
+        Once you have added your picture to the document you may want to
+        move it to a new place, fix it in the place it is in, or make it bigger or smaller.
+        These actions can all be done on screen with the mouse so you can always see what is happening.
+    </p>
+    <p>To move a picture around the page:</p>
+    <ol>
+        <li>Click the left mouse button within the picture so that its selection box is displayed.</li>
+        <li>Move the pointer to inside the picture's selection box. The pointer will change into a hand.</li>
+        <li>Click and hold the left mouse button down and drag to where you want to move the picture.</li>
+        <li>When you release the left mouse button the picture will appear in its new location.</li>
+    </ol>
+
+    <h4><a name="positioning_pictures_fixing" id="positioning_pictures_fixing"></a>Fixing the position of pictures on the page</h4>
+    <p>
+        Pictures can be pinned to the cell/text layer of the document,
+        so that they move if rows and columns are inserted or deleted.
+        You can tell that the picture is pinned because the top left selection handle appears solid red, and the others are in outline.
+    </p>
+    <p>
+        You may want to pin the bottom of the picture as well,
+        for example if you are adding a border to an area of document and
+        think you may want to insert some more rows in the middle of the section.
+    </p>
+    <p>To pin pictures:</p>
+    <ol>
+        <li>Click the left mouse button within the picture so that its selection box is displayed.</li>
+        <li>Double-click in the bottom right selection handle.</li>
+        <li>The selection handle will appear solid to show that the picture has been pinned to the cell.</li>
+    </ol>
+    <p>If the cell to which the bottom of the picture has been pinned moves, the picture will resize to take account of it.</p>
+
+    <h4><a name="positioning_pictures_unpinning" id="positioning_pictures_unpinning"></a>Unpinning pictures</h4>
+    <p>
+        You may want to unpin pictures so that they stay in the same position on the page,
+        rather than floating with the paragraph or cell to which they have been pinned.
+    </p>
+    <p>
+        To unpin pictures, double-click the top left selection handle
+        so that it is an outline rather than a solid square.
+        If the bottom right selection handle is solid (and therefore pinned)
+        you should double-click that as well.
+    </p>
+
+    <h4><a name="resizing_pictures" id="resizing_pictures"></a>Resizing pictures</h4>
+    <p>
+        You may find that pictures do not appear in your document at exactly the required size.
+        To change the size:
+    </p>
+    <ol>
+        <li>Click the left mouse button within the picture so that its selection box is displayed.</li>
+        <li>Point at the bottom right-hand selection handle.</li>
+        <li>The pointer will change into a four way arrow.</li>
+        <li>
+            Drag the picture to the new size using the left mouse button.
+            This will resize the picture while preserving its aspect ratio,
+            i.e. it will not be distorted by this process.
+        </li>
+        <li>
+            If you do not want to preserve the aspect ratio of the picture,
+            drag and resize using <span class="csg-mouse-button">Adjust</span> (RISC OS) or Ctrl-left mouse button (Windows).
+        </li>
+    </ol>
+
+    <h4><a name="stretching_pictures" id="stretching_pictures"></a>Stretching or shrinking the picture</h4>
+    <p>You may stretch or shrink the picture along one axis by:</p>
+    <ol>
+        <li>Display the selection box by clicking in the picture.</li>
+        <li>Point at the selection handle in the middle of the top or bottom to change the vertical dimension or the left or right to change the horizontal.</li>
+        <li>The pointer will change into a two way arrow.</li>
+        <li>Drag away from the picture to stretch it or into the picture to shrink it.</li>
+        <li>When you release the mouse button the picture will appear in its new size and shape.</li>
+    </ol>
+
+    <h4><a name="showing_and_hiding_pictures" id="showing_and_hiding_pictures"></a>Showing and hiding pictures</h4>
+    <p>If your document contains a lot of pictures scrolling through it can become slow.</p>
+    <p>
+        You may prefer to turn the display of pictures off,
+        in the <a href="../ug/ug02_fireworkz_basics.htm#choices_dialogue_box"><span class="csg-dbox">Choices</span> dialogue box</a>
+        accessed via the icon bar menu (RISC OS)
+        or the <span class="csg-menu">File</span> menu (Windows).
+    </p>
+    <p>If you then want to see the pictures, change the option in the <span class="csg-dbox">Choices</span> dialogue box.</p>
+
+    <h2><a name="backdrop_pictures" id="backdrop_pictures"></a>Backdrop pictures</h2>
+
+    <p>
+        A backdrop is a picture which appears behind the text and does not move when the text changes.
+        You would usually use backdrops to help you create stationery.
+    </p>
+    <p>You will probably use one of two strategies with backdrops:</p>
+    <ul>
+        <li>Create stationery by printing the backdrop with your document on to plain paper</li>
+        <li>
+            If you have pre-printed stationery, use the backdrop to help you line your document up to match the stationery.
+            In this case you will need to create a Draw file or sprite file which matches your pre-printed stationery, perhaps by scanning the stationery.
+            When you print the document, you do not print the backdrop.
+        </li>
+    </ul>
+
+    <h3><a name="creating_backdrops" id="creating_backdrops"></a>Creating backdrops</h3>
+    <p>To create a backdrop within a document:</p>
+    <ol>
+        <li>Drag the picture file into your Fireworkz document window, and click to select it.</li>
+        <li>
+            Choose <span class="csg-dbox-option">Backdrop</span> from the <span class="csg-menu">Pictures</span> menu.
+            The <span class="csg-dbox">Backdrop</span> dialogue box will be displayed.
+        </li>
+        <li>Choose one of the first two options in the dialogue box.
+            <ul class="csg-list-style-none">
+                <li><span class="csg-dbox-option">All pages</span> prints the backdrop on all pages of the document.</li>
+                <li><span class="csg-dbox-option">First page only</span> prints the backdrop on only the first page of the document.</li>
+            </ul>
+        </li>
+        <li>You should then choose an option to tell Fireworkz where to position the backdrop on the page.
+            <ul class="csg-list-style-none">
+                <li>
+                    <span class="csg-dbox-option">Work area</span> moves the backdrop so that
+                    its top left appears immediately after the header.
+                </li>
+                <li>
+                    <span class="csg-dbox-option">Printable area</span> places the backdrop
+                    at the top left of the printable area, at the top of the header.
+                </li>
+                <li>
+                    <span class="csg-dbox-option">Paper</span> places the backdrop at the top left of the paper;
+                    you would normally only use this for backdrops representing your pre-printed stationery
+                    in documents where you do not want to print the backdrop.
+                </li>
+            </ul>
+        </li>
+        <li>
+            The final options in the Backdrop dialogue box are:
+            <ul class="csg-list-style-none">
+                <li>
+                    <span class="csg-dbox-option">Print</span>,
+                    which determines whether the backdrop is printed with the document or not.
+                    You might use this option to display a backdrop on screen (such as your company letterhead)
+                    to help you position text which will be printed on pre-printed stationery.
+                </li>
+                <li>
+                    <span class="csg-dbox-option">Scale to fit</span>,
+                    which scales the backdrop to fit the Paper region.
+                    This is most useful for placing decorative borders around the page.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">OK</span></span>.
+            The backdrop will be displayed as requested.
+        </li>
+    </ol>
+
+    <h3><a name="repositioning_backdrops" id="repositioning_backdrops"></a>Repositioning backdrops</h3>
+    <p>To reposition a backdrop:</p>
+    <ol>
+        <li>
+            Choose <span class="csg-menu-option">Swap front/back</span> from the
+            <span class="csg-menu">Pictures</span> sub-menu on the
+            <span class="csg-menu">Extra</span> menu.
+        </li>
+        <li>Drag the picture to the new position.</li>
+        <li>Choose <span class="csg-menu-option">Swap front/back</span> again.</li>
+    </ol>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug08_tables.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug07_page_design.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Tables </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Page design</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+﻿Database Guide 184
+
+MONTHNAME (2 )
+retums Feb.
+
+MONTHOF
+MONTHOF(date/interval)
+Returns an integer for the month value of a date or interval. For
+example:
+MONTHOF('Date1' )
+returns the month component of the date in the field Date1.
+
+NOW
+NOW
+Returns the current date/time. For example 5th Oct 1995 10:21:00.
+
+RAD
+RAD(angle)
+Converts angle from degrees to radians.
+
+RANDOM
+RANDOM(number)
+Returns a random integer between 1 and number. If number is less
+than 1, RANDOM retums NULL. For example:
+RANDOM(3)
+retums a random number in the range 1 to 3.
+
+RlGHT$
+RIGHT$(text, number)
+Retums the rightmost number characters of text. For example:
+RIGHT$(“abcdefgh",3)
+returns the string fgh.
+
+
+Database Guide 185
+
+ROTATE
+ROTATE(graphic, angle, x-centre, y-centre)
+Returns a drawfile graphic rotated anti-clockwise through angle
+radians, centred on the position (x-centre,y-centre). For example:
+ROTATE(FILE(Draw1) ,RAD(180) , 30, 40)
+retums the drawfile Draw1 rotated by a half tum about (30,40).
+
+SCALE
+SCALE(graphic, x-factor, y-factor, x-centre, y-centre)
+Retums a drawfile graphic scaled by x-factor horizontally and y-
+factor vertically centred on the position (x-centre,y-centre). For
+example:
+SCALE (FILE(Draw1) , 1, 2 , 30, 40)
+returns the drawfile Draw1 doubled in width, centred at (30,40).
+
+SECONDOF
+SECONDOF(date/interval)
+Retums an integer for the second value of a date or interval. For
+example:
+SECONDOF( 'Date1' )
+returns the second component of the date in the field Date1.
+
+SERIAL
+SERIAL
+Retums a unique integer for each record in a database. New
+records do not reclaim numbers from deleted records. For
+example:
+
+
+
+

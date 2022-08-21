@@ -41,13 +41,14 @@ Master list is always in debug.h
     TRACE_APP_STYLE         | \
     TRACE_APP_DIALOG        | \
     TRACE_APP_FOREIGN       | \
-    TRACE_APP_spare_28      | \
+    TRACE_APP_CLIPBOARD     | \
     TRACE_APP_MEMORY_USE    | \
     TRACE_APP_WM_EVENT      | \
     0 )
 
 /* always set TRACE_OUT to get past first check of tracing() macro */
 #define PERSONAL_TRACE_FLAGS ( TRACE_OUT | \
+    TRACE_APP_CLIPBOARD     | \
     TRACE_APP_FOREIGN       | \
     0 )
 

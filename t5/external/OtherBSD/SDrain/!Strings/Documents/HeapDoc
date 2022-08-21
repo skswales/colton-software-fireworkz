@@ -1,0 +1,14 @@
+HeapLib
+
+A library to manage a heap above HIMEM
+
+FN_DIM : one function to control it all!
+
+new_addr%=FN_DIM(old_addr%,new_size%)
+
+The heap is created automatically.
+The heap and wimpslot expand and contract for the current contents.
+If old_addr%=0 then a new block is allocated.
+If new_size%=0 then the block is released, and it returns TRUE/-1.
+If the operation was not successful it returns FALSE/0
+The block address may change when re-sizing.

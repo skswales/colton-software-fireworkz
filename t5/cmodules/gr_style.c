@@ -1755,7 +1755,7 @@ gr_point_list_delete(
     const P_GR_SERIES serp = getserp(cp, series_idx);
     const P_LIST_BLOCK p_list_block = gr_point_list_get_p_list_block(serp, cbp);
 
-    trace_3(TRACE_MODULE_GR_CHART, TEXT("gr_point_list_delete series_idx ") U32_TFMT TEXT(" %s list ") PTR_XTFMT, series_idx, cbp->list_name, p_list_block);
+    trace_3(TRACE_MODULE_GR_CHART, TEXT("gr_point_list_delete series_idx ") S32_TFMT TEXT(" %s list ") PTR_XTFMT, series_idx, cbp->list_name, p_list_block);
 
     /* remove refs before delete */
     if(cbp->rerefproc)
@@ -1777,7 +1777,7 @@ gr_point_list_duplic(
     LIST_BLOCK lb;
     STATUS status;
 
-    trace_3(TRACE_MODULE_GR_CHART, TEXT("gr_point_list_duplic series_idx ") U32_TFMT TEXT(" %s list ") PTR_XTFMT, series_idx, cbp->list_name, p_list_block);
+    trace_3(TRACE_MODULE_GR_CHART, TEXT("gr_point_list_duplic series_idx ") S32_TFMT TEXT(" %s list ") PTR_XTFMT, series_idx, cbp->list_name, p_list_block);
 
     zero_struct(lb);
 
@@ -1807,7 +1807,7 @@ gr_point_list_fillstyleb_enum_for_save(
     LIST_ITEMNO key;
     P_GR_FILLSTYLEB pt;
 
-    trace_3(TRACE_MODULE_GR_CHART, TEXT("gr_point_list_fillstyleb_enum_for_save series_idx ") U32_TFMT TEXT(" %s list ") PTR_XTFMT, series_idx, cbp->list_name, p_list_block);
+    trace_3(TRACE_MODULE_GR_CHART, TEXT("gr_point_list_fillstyleb_enum_for_save series_idx ") S32_TFMT TEXT(" %s list ") PTR_XTFMT, series_idx, cbp->list_name, p_list_block);
 
     for(pt = collect_first(GR_FILLSTYLEB, p_list_block, &key);
         pt;

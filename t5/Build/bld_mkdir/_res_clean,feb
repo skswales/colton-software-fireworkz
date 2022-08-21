@@ -1,0 +1,20 @@
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+| Copyright (C) 2020 Stuart Swales
+
+Set Saved$Wipe$Options <Wipe$Options>
+
+Set Wipe$Options "~C F R ~V"
+
+Set t5$Wipe$Dir <Obey$Dir>.^.^.firewrkz.Resources.Windows.%0
+
+X %Wipe <t5$Wipe$Dir>.config/txt
+
+X %Wipe <t5$Wipe$Dir>.res00/rci
+X %Wipe <t5$Wipe$Dir>.res01/rci
+X %Wipe <t5$Wipe$Dir>.res06/rci
+X %Wipe <t5$Wipe$Dir>.resXX/rci
+
+Set Wipe$Options <Saved$Wipe$Options>

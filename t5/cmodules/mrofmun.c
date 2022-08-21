@@ -181,7 +181,7 @@ mrofmun_recog_constant(
     BOOL percent = FALSE;
     BOOL must_be_date = FALSE;
     BOOL had_digit = FALSE;
-    QUICK_BLOCK_WITH_BUFFER(quick_block, 20);
+    QUICK_BLOCK_WITH_BUFFER(quick_block, 32);
     quick_block_with_buffer_setup(quick_block);
 
     trace_1(TRACE_APP_SKEL, TEXT("mrofmun_recog_constant: %s"), report_ustr((PC_USTR) p_u8_in));
@@ -306,7 +306,6 @@ mrofmun_recog_constant(
                 break;
 
             /*case DATA_ID_LOGICAL:*/
-            case DATA_ID_WORD8:
             case DATA_ID_WORD16:
             case DATA_ID_WORD32:
                 ss_data_set_integer(p_ss_data, -ss_data_get_integer(p_ss_data));
@@ -326,7 +325,6 @@ mrofmun_recog_constant(
                 break;
 
             /*case DATA_ID_LOGICAL:*/
-            case DATA_ID_WORD8:
             case DATA_ID_WORD16:
             case DATA_ID_WORD32:
                 ss_data_set_real(p_ss_data, (F64) ss_data_get_integer(p_ss_data));
@@ -340,7 +338,7 @@ mrofmun_recog_constant(
         }
 
         /* check we got a date when necessary */
-        if(must_be_date && (DATA_ID_DATE != ss_data_get_data_id(p_ss_data)))
+        if(must_be_date && !ss_data_is_date(p_ss_data))
             res = 0;
     }
 
@@ -367,15 +365,18 @@ autoformat(
     {
         BOOL date_pass = (1 == pass); /* SKS 29apr95 make it do date detection! */
         SS_DATA ss_data;
-        QUICK_BLOCK_WITH_BUFFER(quick_block_data, 20);
-        QUICK_BLOCK_WITH_BUFFER(quick_block_format, 20);
+        QUICK_BLOCK_WITH_BUFFER(quick_block_data, 32);
+        QUICK_BLOCK_WITH_BUFFER(quick_block_format, 32);
         quick_block_with_buffer_setup(quick_block_data);
         quick_block_with_buffer_setup(quick_block_format);
 
         status_break(status = mrofmun_split_string(&quick_block_data, &quick_block_format, (PC_U8Z) ustr, date_pass));
 
-        if(mrofmun_recog_constant(&ss_data, quick_block_str(&quick_block_data), date_pass) <= 0)
+        if( (quick_block_bytes(&quick_block_format) <= 1) /* empty format? */ ||
+            (mrofmun_recog_constant(&ss_data, quick_block_str(&quick_block_data), date_pass) <= 0) )
+        {
             ss_data_set_error(&ss_data, STATUS_FAIL);
+        }
         else
         {
             ARRAY_INDEX i;
@@ -384,7 +385,7 @@ autoformat(
             for(i = 0; i < array_elements(p_array_handle_mrofmuns_in); ++i)
             {
                 const PC_MROFMUN_ENTRY p_mrofmun_entry = array_ptrc(p_array_handle_mrofmuns_in, MROFMUN_ENTRY, i);
-                QUICK_UBLOCK_WITH_BUFFER(quick_ublock_numform, 40);
+                QUICK_UBLOCK_WITH_BUFFER(quick_ublock_numform, 48);
                 quick_ublock_with_buffer_setup(quick_ublock_numform);
 
                 if(date_pass)

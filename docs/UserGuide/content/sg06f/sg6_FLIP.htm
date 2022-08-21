@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>FLIP</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="FLIP" />
+        <param name="Keyword" value="Functions, Miscellaneous, FLIP" />
+        <param name="Keyword" value="Miscellaneous functions, swap rows of array around middle row" />
+    </object>
+
+    <h1><a name="flip" id="flip"></a>FLIP</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">FLIP(<span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">array</a></span>)</p>
+    <p>Swaps rows around the middle row of an <a href="../sg06/sg6_arrays.htm">array</a> or range of cells.</p>
+
+    <p class="csg-function-subheading">Examples:</p>
+    <pre class="csg-sample-indent">FLIP({1;2;3})</pre>
+    <p>returns the array <code>{3;2;1}</code></p>
+    <pre class="csg-sample-indent">FLIP(A1:C2)</pre>
+    <p>returns the array <code>{A3,B3;A2,B2;A1,B1}</code>.</p>
+    <pre class="csg-sample-indent">SET_VALUE(D1:E5, FLIP(A1:B5))</pre>
+    <p>would turn (a copy of) the cells <code>A1:B5</code> upside down and write them into the cells <code>D1:E5</code>.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06d/sg6_DOUBLECLICK.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#miscellaneous_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06i/sg6_IF.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

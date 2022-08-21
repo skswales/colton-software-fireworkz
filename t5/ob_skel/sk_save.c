@@ -97,7 +97,7 @@ do_auto_save(
     STATUS status = STATUS_OK;
 
     if(p_docu->modified)
-        status_consume(execute_command_reperr(p_docu, T5_CMD_SAVE_OWNFORM, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
+        status_consume(execute_command_reperr(p_docu, T5_CMD_SAVE, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
     /* and rechedule for another one sometime */
     if(p_docu->auto_save_period_minutes)
@@ -207,8 +207,8 @@ save_block(
         COL col_s, col_e;
         ROW row_s, row_e;
 
-        zero_struct(save_cell_ownform_stt_frag);
-        zero_struct(save_cell_ownform_end_frag);
+        zero_struct_fn(save_cell_ownform_stt_frag);
+        zero_struct_fn(save_cell_ownform_end_frag);
 
         status_return(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_OF_BLOCK, &p_construct_table));
 
@@ -388,7 +388,7 @@ save_data_save_2(
         /* look through region list forwards */
         for(style_docu_area_ix = 0; style_docu_area_ix < array_elements(&p_docu->h_style_docu_area); ++style_docu_area_ix)
         {
-            PC_STYLE_DOCU_AREA p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, style_docu_area_ix);
+            const PC_STYLE_DOCU_AREA p_style_docu_area = array_ptrc(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, style_docu_area_ix);
 
             if(p_style_docu_area->is_deleted)
                 continue;
@@ -424,7 +424,7 @@ save_style_docu_area(
     P_ARGLIST_ARG p_args;
     T5_MESSAGE t5_message;
     S32 style_arg_no;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(OBJECT_ID_NONE != p_style_docu_area->object_message.object_id)
@@ -851,7 +851,7 @@ save_cell(
     PC_USTR ustr_formula = NULL;
     STATUS status;
 
-    zero_struct(save_cell_ownform);
+    zero_struct(save_cell_ownform); /* leave this one as fast */
 
     save_cell_ownform.object_data = p_skel_save_cell->object_data;
     save_cell_ownform.p_of_op_format = p_of_op_format;
@@ -920,29 +920,20 @@ skel_save_version(
             TCHARZ encoding_buffer[64];
             PCTSTR tstr;
 
-            tstr = user_id();
-            if(CH_NULL != tstr[0])
-                tstr_xstrkpy(user_buffer, elemof32(user_buffer), tstr);
-            else
-                resource_lookup_tstr_buffer(user_buffer, elemof32(user_buffer), MSG_SKEL_NO_USER_ID);
+            tstr = user_id(); /* may be empty */
+            tstr_xstrkpy(user_buffer, elemof32(user_buffer), tstr);
 
             tstr = user_organ_id();
             if(CH_NULL != tstr[0])
             {
-                tstr_xstrkat(user_buffer, elemof32(user_buffer), TEXT(" - "));
+                if(CH_NULL != user_buffer[0])
+                    tstr_xstrkat(user_buffer, elemof32(user_buffer), TEXT(" - "));
                 tstr_xstrkat(user_buffer, elemof32(user_buffer), tstr);
             }
 
             resource_lookup_tstr_buffer(version_buffer, elemof32(version_buffer), MSG_SKEL_VERSION);
 
             encoding_buffer[0] = CH_NULL;
-
-            p_args[0].val.tstr = version_buffer;
-            p_args[1].val.tstr = resource_lookup_tstr(MSG_SKEL_DATE);
-            p_args[2].val.tstr = product_id();
-            p_args[3].val.tstr = user_buffer;
-            p_args[4].val.tstr = registration_number();
-            p_args[5].val.tstr = encoding_buffer;
 
 #if WINDOWS
             consume_int(tstr_xsnprintf(encoding_buffer, elemof(encoding_buffer), TEXT("Windows-") U32_TFMT, get_system_codepage())); /* e.g. Windows-1252 */
@@ -973,6 +964,13 @@ skel_save_version(
                 break;
             }
 #endif
+
+            p_args[0].val.tstr = version_buffer;
+            p_args[1].val.tstr = resource_lookup_tstr(MSG_SKEL_DATE);
+            p_args[2].val.tstr = product_id();
+            p_args[3].val.tstr = user_buffer;
+            p_args[4].val.tstr = registration_number();
+            p_args[5].val.tstr = encoding_buffer;
 
             status = ownform_save_arglist(arglist_handle, object_id, p_construct_table, p_of_op_format);
 
@@ -1267,7 +1265,7 @@ skeleton_save_style_handle(
     style_selector_bit_clear(&style.selector, STYLE_SW_NAME);
 
     {
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_OF_STYLE, &p_construct_table)))
@@ -1303,6 +1301,7 @@ skeleton_save_style_handle(
                 p_args[0].val.tstr = NULL; /* reclaim */
                 arglist_dispose(&arglist_handle);
             }
+            return(status);
         }
 
         /* save out current style construct */
@@ -1316,6 +1315,7 @@ skeleton_save_style_handle(
                 p_args[0].val.tstr = NULL; /* reclaim */
                 arglist_dispose(&arglist_handle);
             }
+            return(status); /* don't save the associated implied region */
         }
 
         /* ********************* save implied regions with a style ********************* */
@@ -1329,9 +1329,13 @@ skeleton_save_style_handle(
             {
                 const PC_STYLE_DOCU_AREA p_style_docu_area = array_ptrc(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, style_docu_area_ix);
 
-                if( (style_handle == p_style_docu_area->style_handle)
-                    &&
-                    (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id))
+                if(p_style_docu_area->is_deleted)
+                    continue;
+
+                if(style_handle != p_style_docu_area->style_handle)
+                    continue;
+
+                if(OBJECT_ID_NONE != p_style_docu_area->object_message.object_id)
                     status_break(status = save_style_docu_area(p_of_op_format, p_style_docu_area));
             }
         }

@@ -15,6 +15,8 @@
 
 #include "ob_dlg/ui_dlgin.h"
 
+#if RISCOS
+
 /*
 callback routines
 */
@@ -123,7 +125,7 @@ static inline _kernel_oserror *
 wimp_get_icon_state_with_bitset(
     _InVal_     wimp_w window_handle,
     _InVal_     wimp_i icon_handle,
-    _Out_       WimpIconBlockWithBitset * const p_icon_block)
+    _OutRef_    P_WimpIconBlockWithBitset p_icon_block)
 {
     _kernel_oserror * e;
     WimpGetIconStateBlock get_icon_state_block;
@@ -133,7 +135,7 @@ wimp_get_icon_state_with_bitset(
 
     e = wimp_get_icon_state(&get_icon_state_block);
 
-    *p_icon_block = * (WimpIconBlockWithBitset *) &get_icon_state_block.icon;
+    *p_icon_block = * (PC_WimpIconBlockWithBitset) &get_icon_state_block.icon;
 
     return(e);
 }
@@ -240,6 +242,7 @@ dialog_riscos_cache_common_bitmap(
 {
     p->resource_bitmap_handle = resource_bitmap_find_defaulting(pc);
     resource_bitmap_gdi_size_query(p->resource_bitmap_handle, &p->size);
+  /*reportf("common bitmap %12s %dx%d", pc->bitmap_name, p->size.cx, p->size.cy);*/
 }
 
 extern void
@@ -324,7 +327,7 @@ dialog_riscos_combobox_dropdown(
     {
         RI_LBOX_NEW _ri_lbox_new;
 
-        zero_struct(_ri_lbox_new);
+        zero_struct_fn(_ri_lbox_new);
 
         _ri_lbox_new.bbox = abs_bbox;
 
@@ -670,7 +673,7 @@ _Check_return_
 extern STATUS
 dialog_riscos_file_icon_drag(
     _InVal_     H_DIALOG h_dialog,
-    _In_        WimpIconBlockWithBitset * const p_icon)
+    _InRef_     PC_WimpIconBlockWithBitset p_icon)
 {
     P_DIALOG p_dialog;
     WimpDragBox dr;
@@ -701,15 +704,16 @@ dialog_riscos_file_icon_drag(
     {
         assert(!(p_icon->flags.bits.indirect));
 
-        void_WrapOsErrorReporting(winx_drag_a_sprite_start(
-                                (1 << 0) |
-                                (1 << 2) |
-                                (0 << 4) /*box is whole screen*/ |
-                                (1 << 6) /*box applies to pointer*/ |
-                                (1 << 7) /*drop shadow*/,
-                                1 /*wimp sprite pool*/,
-                                p_icon->data.s,
-                                &dr));
+        void_WrapOsErrorReporting(
+            winx_drag_a_sprite_start(
+                (1 << 0) |
+                (1 << 2) |
+                (0 << 4) /*box is whole screen*/ |
+                (1 << 6) /*box applies to pointer*/ |
+                (1 << 7) /*drop shadow*/,
+                1 /*wimp sprite pool*/,
+                p_icon->data.s,
+                &dr));
     }
     else
     {
@@ -737,7 +741,7 @@ dialog_riscos_file_icon_drag(
 
 extern void
 dialog_riscos_file_icon_setup(
-    _Inout_     WimpIconBlockWithBitset * const p_icon,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _InVal_     T5_FILETYPE t5_filetype)
 {
     /* fills in sprite_name with name of a sprite representing the filetype from the Window Manager Sprite Pool */
@@ -752,20 +756,18 @@ dialog_riscos_file_icon_setup(
 
 static void
 dialog_riscos_dbox_modify_open_type_in(
-    P_DIALOG_ICTL_GROUP p_ictl_group,
+    _InRef_     PC_DIALOG_ICTL_GROUP p_ictl_group,
     _InoutRef_  P_S32 p_type)
 {
     ARRAY_INDEX i;
 
     for(i = 0; i < n_ictls_from_group(p_ictl_group); ++i)
     {
-        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
+        const PC_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
         switch(p_dialog_ictl->dialog_control_type)
         {
-#ifdef MRJC_SWITCHED_OFF
-            default:
-#endif
+            /* at some point post-1.07, Mark made this the default and I will never know why! */
             case DIALOG_CONTROL_LIST_TEXT:
             case DIALOG_CONTROL_LIST_S32:
             case DIALOG_CONTROL_COMBO_TEXT:
@@ -778,18 +780,16 @@ dialog_riscos_dbox_modify_open_type_in(
                 dialog_riscos_dbox_modify_open_type_in(&p_dialog_ictl->data.groupbox.ictls, p_type);
                 break;
 
-#ifndef MRJC_SWITCHED_OFF
             default:
-                *p_type = DIALOG_RISCOS_NOT_MENU;
+                /* leave *p_type unmolested */
                 break;
-#endif
         }
     }
 }
 
 extern void
 dialog_riscos_dbox_modify_open_type(
-    P_DIALOG p_dialog,
+    _InRef_     P_DIALOG p_dialog,
     _InoutRef_  P_S32 p_type)
 {
     dialog_riscos_dbox_modify_open_type_in(&p_dialog->ictls, p_type);
@@ -842,7 +842,8 @@ dialog_riscos_event_mouse_click_core(
 
             case DIALOG_CONTROL_STATICPICTURE:
             case DIALOG_CONTROL_STATICTEXT:
-            case DIALOG_CONTROL_STATICFRAME:
+            case DIALOG_CONTROL_TEXTLABEL:
+            case DIALOG_CONTROL_TEXTFRAME:
 #endif
                 break;
 
@@ -979,6 +980,7 @@ dialog_riscos_event_mouse_click_core(
 
                     dialog_msg_ctl_user_mouse.riscos.window_handle = p_dialog->hwnd;
                     void_WrapOsErrorReporting(wimp_get_icon_state_with_bitset(dialog_msg_ctl_user_mouse.riscos.window_handle, hit_icon_handle, &dialog_msg_ctl_user_mouse.riscos.icon));
+                    dialog_msg_ctl_user_mouse.riscos.p_mouse_click = p_mouse_click;
 
                     status = dialog_call_client(p_dialog, DIALOG_MSG_CODE_CTL_USER_MOUSE, &dialog_msg_ctl_user_mouse, p_proc_client);
                 }
@@ -1592,8 +1594,8 @@ dialog_riscos_event(
 _Check_return_
 static STATUS
 dialog_riscos_icon_create(
-    P_DIALOG p_dialog,
-    _In_        const WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _InRef_     PC_WimpIconBlockWithBitset p_icon,
     _OutRef_    P_DIALOG_WIMP_I p_i)
 {
     WimpCreateIconBlockWithBitset icreate;
@@ -1637,7 +1639,7 @@ dialog_riscos_icon_delete_redraw(
 
 static void
 dialog_riscos_icon_delete(
-    P_DIALOG p_dialog,
+    _InRef_     PC_DIALOG p_dialog,
     _InoutRef_  P_DIALOG_WIMP_I p_i)
 {
     /* don't blow Window Manager's little brain with lots of rectangles on view creation/deletion */
@@ -1650,18 +1652,9 @@ dialog_riscos_icon_delete(
     void_WrapOsErrorReporting(dialog_riscos_icon_delete_redraw(p_dialog->hwnd, &p_i->icon_handle)); /* itself copes with BAD_WIMP_I */
 }
 
-typedef struct wimp__handles_and_flags
-{
-    wimp_w window_handle;
-    wimp_i icon_handle;
-    WimpIconFlagsWithBitset flags_v;
-    WimpIconFlagsWithBitset flags_m;
-}
-wimp__handles_and_flags;
-
 static void
 dialog_riscos_icon_enable(
-    P_DIALOG p_dialog,
+    _InRef_     PC_DIALOG p_dialog,
     _InRef_     PC_DIALOG_WIMP_I p_i,
     _InVal_     BOOL disabled)
 {
@@ -1671,21 +1664,16 @@ dialog_riscos_icon_enable(
 
     if((disabled && !info.flags.bits.disabled) || (!disabled && info.flags.bits.disabled))
     {
-        wimp__handles_and_flags b;
-        _kernel_swi_regs rs;
+        WimpSetIconStateBlock set_icon_state_block;
 
-        b.window_handle = p_dialog->hwnd;
-        b.icon_handle = p_i->icon_handle;
+        set_icon_state_block.window_handle = p_dialog->hwnd;
+        set_icon_state_block.icon_handle = p_i->icon_handle;
 
-        b.flags_v.u32 = 0; /*eor*/
-        b.flags_v.bits.disabled = 1; /*eor*/
+        set_icon_state_block.EOR_word = WimpIcon_Shaded; /*eor*/
 
-        b.flags_m.u32 = 0; /*bic*/
+        set_icon_state_block.clear_word = 0; /*bic*/
 
-        rs.r[0] = 0;
-        rs.r[1] = (int) &b;
-
-        void_WrapOsErrorReporting(_kernel_swi(/*Wimp_SetIconState*/ 0x000400CD, &rs, &rs));
+        void_WrapOsErrorReporting(wimp_set_icon_state(&set_icon_state_block));
     }
 }
 
@@ -1698,8 +1686,8 @@ dialog_riscos_icon_enable(
 _Check_return_
 extern STATUS
 dialog_riscos_icon_recreate(
-    P_DIALOG p_dialog,
-    _In_        const WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _InRef_     PC_WimpIconBlockWithBitset p_icon,
     _InoutRef_  P_DIALOG_WIMP_I p_i)
 {
     if(p_i->icon_handle == BAD_WIMP_I)
@@ -1725,8 +1713,8 @@ dialog_riscos_icon_recreate(
 _Check_return_ _Success_(status_ok(return))
 extern STATUS
 dialog_riscos_icon_recreate_prepare(
-    P_DIALOG p_dialog,
-    _Out_       WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _OutRef_    P_WimpIconBlockWithBitset p_icon,
     _InRef_     PC_DIALOG_WIMP_I p_i)
 {
     if(p_i->icon_handle != BAD_WIMP_I)
@@ -1738,8 +1726,8 @@ dialog_riscos_icon_recreate_prepare(
 _Check_return_
 extern STATUS
 dialog_riscos_icon_recreate_with(
-    P_DIALOG p_dialog,
-    _Inout_     WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _InoutRef_  P_DIALOG_WIMP_I p_i,
     RESOURCE_BITMAP_HANDLE resource_bitmap_handle)
 {
@@ -1764,7 +1752,7 @@ dialog_riscos_icon_recreate_with(
 
 static void
 dialog_riscos_icon_redraw_for_enable(
-    P_DIALOG p_dialog,
+    _InoutRef_  P_DIALOG p_dialog,
     _InRef_     PC_DIALOG_WIMP_I p_i)
 {
     WimpIconBlockWithBitset icon;
@@ -1773,13 +1761,13 @@ dialog_riscos_icon_redraw_for_enable(
 
     if(p_dialog->riscos.accumulate_box)
     {
-        if( p_dialog->riscos.invalid_bbox.xmin > icon.bbox.xmin)
+        if( p_dialog->riscos.invalid_bbox.xmin > icon.bbox.xmin )
             p_dialog->riscos.invalid_bbox.xmin = icon.bbox.xmin;
-        if( p_dialog->riscos.invalid_bbox.ymin > icon.bbox.ymin)
+        if( p_dialog->riscos.invalid_bbox.ymin > icon.bbox.ymin )
             p_dialog->riscos.invalid_bbox.ymin = icon.bbox.ymin;
-        if( p_dialog->riscos.invalid_bbox.xmax < icon.bbox.xmax)
+        if( p_dialog->riscos.invalid_bbox.xmax < icon.bbox.xmax )
             p_dialog->riscos.invalid_bbox.xmax = icon.bbox.xmax;
-        if( p_dialog->riscos.invalid_bbox.ymax < icon.bbox.ymax)
+        if( p_dialog->riscos.invalid_bbox.ymax < icon.bbox.ymax )
             p_dialog->riscos.invalid_bbox.ymax = icon.bbox.ymax;
     }
     else
@@ -1790,7 +1778,7 @@ dialog_riscos_icon_redraw_for_enable(
 
 extern void
 dialog_riscos_icon_redraw_for_encode(
-    P_DIALOG p_dialog,
+    _InoutRef_  P_DIALOG p_dialog,
     _InRef_     PC_DIALOG_WIMP_I p_i,
     _In_        FRAMED_BOX_STYLE border_style,
     _InVal_     S32 encode_bits)
@@ -1827,13 +1815,13 @@ dialog_riscos_icon_redraw_for_encode(
         }
         else if(p_dialog->riscos.accumulate_box)
         {
-            if( p_dialog->riscos.invalid_bbox.xmin > redraw_window_block.visible_area.xmin)
+            if( p_dialog->riscos.invalid_bbox.xmin > redraw_window_block.visible_area.xmin )
                 p_dialog->riscos.invalid_bbox.xmin = redraw_window_block.visible_area.xmin;
-            if( p_dialog->riscos.invalid_bbox.ymin > redraw_window_block.visible_area.ymin)
+            if( p_dialog->riscos.invalid_bbox.ymin > redraw_window_block.visible_area.ymin )
                 p_dialog->riscos.invalid_bbox.ymin = redraw_window_block.visible_area.ymin;
-            if( p_dialog->riscos.invalid_bbox.xmax < redraw_window_block.visible_area.xmax)
+            if( p_dialog->riscos.invalid_bbox.xmax < redraw_window_block.visible_area.xmax )
                 p_dialog->riscos.invalid_bbox.xmax = redraw_window_block.visible_area.xmax;
-            if( p_dialog->riscos.invalid_bbox.ymax < redraw_window_block.visible_area.ymax)
+            if( p_dialog->riscos.invalid_bbox.ymax < redraw_window_block.visible_area.ymax )
                 p_dialog->riscos.invalid_bbox.ymax = redraw_window_block.visible_area.ymax;
         }
         else
@@ -1843,13 +1831,14 @@ dialog_riscos_icon_redraw_for_encode(
     }
 }
 
-static BOOL
+/*ncr*/
+static bool
 dialog_riscos_icon_sprite_setup(
-    WimpIconBlockWithBitset * p_icon,
-    RESOURCE_BITMAP_HANDLE resource_bitmap_handle)
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
+    _InVal_     RESOURCE_BITMAP_HANDLE resource_bitmap_handle)
 {
     if(0 == resource_bitmap_handle.i)
-        return(0);
+        return(false);
 
     p_icon->flags.bits.indirect = 1;
 
@@ -1866,13 +1855,13 @@ dialog_riscos_icon_sprite_setup(
         p_icon->data.is.sprite_name_length = 0;
     }
 
-    return(1);
+    return(true);
 }
 
 /*ncr*/
 extern BOOL
 dialog_riscos_icon_text_setup(
-    WimpIconBlockWithBitset * p_icon,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _In_opt_z_  PC_U8Z p_u8)
 {
     BOOL not_null = (NULL != p_u8);
@@ -1888,7 +1877,7 @@ dialog_riscos_icon_text_setup(
 
 static void
 dialog_riscos_icon_text_position_adjust(
-    _Inout_     WimpIconBlockWithBitset * p_icon)
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon)
 {
     if(p_icon->flags.bits.horz_centre)
         return;
@@ -1925,13 +1914,13 @@ dialog_riscos_ictl_create_here(
     P_DIALOG_WIMP_I p_i_c = NULL; /* receives icon 3 */
     BOOL captioned;
 
-    zero_struct(a_icon);
+    zero_struct_fn(a_icon);
 
     /* use same back colour as work area (remember to clear this out if changing colour) */
     a_icon.flags.bits.bg_colour = '\x01';
     a_icon.flags.bits.fg_colour = '\x07';
 
-    a_icon.flags.bits.horz_centre = 1;
+    /* zero default more sensible for horz_centre */
     a_icon.flags.bits.vert_centre = 1;
 
     a_icon.flags.bits.button_type = ButtonType_Click;
@@ -1956,22 +1945,30 @@ dialog_riscos_ictl_create_here(
     case DIALOG_CONTROL_GROUPBOX:
 #endif
         {
-        BOOL logical_group = !p_dialog_ictl->p_dialog_control || p_dialog_ictl->p_dialog_control->bits.logical_group || !p_dialog_control_data.groupbox || p_dialog_control_data.groupbox->bits.logical_group;
+        const BOOL logical_group = !p_dialog_ictl->p_dialog_control || p_dialog_ictl->p_dialog_control->bits.logical_group;
 
         if(!logical_group)
         {
+            const BOOL framed_group = (FRAMED_BOX_GROUP == p_dialog_control_data.groupbox->bits.border_style);
+
             /* first icon is the clickless group border */
             p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
             a_icon.flags.bits.button_type = ButtonType_Never;
 
-            a_icon.flags.bits.border = 1;
+            if(framed_group)
+            {   /* background is Window Manager rendered Channel */
+                a_icon.flags.bits.border = 1;
 
-            a_icon.flags.bits.indirect = 1;
-            a_icon.flags.bits.text = 1;
-            a_icon.data.it.buffer = "";
-            a_icon.data.it.validation = "R4"; /* Channel */
-            a_icon.data.it.buffer_size = 1;
+                a_icon.flags.bits.indirect = 1;
+                a_icon.flags.bits.text = 1;
+                a_icon.data.it.buffer = "";
+                a_icon.data.it.validation = "R4"; /* Channel */
+                a_icon.data.it.buffer_size = 1;
+            }
+            else
+            {   /* leave as clickless empty icon */
+            }
 
             /* second icon is the (optional) clickless group name as a title to the group */
             captioned = dialog_riscos_icon_text_setup(&b_icon, p_dialog_ictl->riscos.caption);
@@ -1987,12 +1984,19 @@ dialog_riscos_ictl_create_here(
                 b_icon.flags.bits.text = 1;
                 b_icon.flags.bits.sprite = 1; /* T,S,I -> Window Manager sorts out nicely with patterned backgrounds */ /* Bug: Sprite also drawn if in WM SA */
 
-                b_icon.flags.bits.horz_centre = 0;
+                if(framed_group)
+                {
+                    b_icon.bbox.xmin += 16;
+                    b_icon.bbox.xmax -= 16;
 
-                b_icon.bbox.xmin += 16;
-                b_icon.bbox.xmax -= 16;
+                    size.x = 8 + (GDI_COORD) (ui_width_from_tstr(p_dialog_ictl->riscos.caption) / PIXITS_PER_RISCOS);
+                }
+                else
+                {   /* like STATICTEXT */
+                    dialog_riscos_icon_text_position_adjust(&b_icon);
+                    size.x = T5_GDI_MAX_X; /* clipped below */
+                }
 
-                size.x = 8 + (GDI_COORD) (ui_width_from_tstr(p_dialog_ictl->riscos.caption) / PIXITS_PER_RISCOS);
                 {
                 const GDI_COORD icon_width = BBox_width(&b_icon.bbox);
                 if( size.x > icon_width)
@@ -2019,33 +2023,34 @@ dialog_riscos_ictl_create_here(
         }
 
     case DIALOG_CONTROL_STATICTEXT:
+    case DIALOG_CONTROL_TEXTLABEL:
         {
-        /* icon is the clickless static text */
+        /* icon is the clickless text */
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
         a_icon.flags.bits.button_type = ButtonType_Never;
 
+#if 1
+        a_icon.flags.bits.text = 1;
+#else
         a_icon.flags.bits.needs_help = 1;
+#endif
 
-        if(!p_dialog_control_data.statictext->bits.centre_text)
-        {
-            a_icon.flags.bits.horz_centre = 0;
-
-            if(!p_dialog_control_data.statictext->bits.left_text)
-                a_icon.flags.bits.right_justify = 1;
-        }
+        if(p_dialog_control_data.statictext->bits.centre_text)
+            a_icon.flags.bits.horz_centre = 1;
+        if(!p_dialog_control_data.statictext->bits.left_text)
+            a_icon.flags.bits.right_justify = 1;
 
         dialog_riscos_icon_text_position_adjust(&a_icon);
 
-        /* always create so we can put in initial null text */
         consume_bool(dialog_riscos_icon_text_setup(&a_icon, p_dialog_ictl->riscos.caption));
 
         break;
         }
 
-    case DIALOG_CONTROL_STATICFRAME:
+    case DIALOG_CONTROL_TEXTFRAME:
         {
-        /* icon is the clickless static frame */
+        /* icon is the clickless text frame */
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
         /* framed border clickless icon */
@@ -2060,15 +2065,11 @@ dialog_riscos_ictl_create_here(
         a_icon.data.it.validation = "R2"; /* Slab in */
         a_icon.data.it.buffer_size = 1;
 
-        if(!p_dialog_control_data.statictext->bits.centre_text)
-        {
-            a_icon.flags.bits.horz_centre = 0;
+        if(p_dialog_control_data.statictext->bits.centre_text)
+            a_icon.flags.bits.horz_centre = 1;
+        if(!p_dialog_control_data.statictext->bits.left_text)
+            a_icon.flags.bits.right_justify = 1;
 
-            if(!p_dialog_control_data.statictext->bits.left_text)
-                a_icon.flags.bits.right_justify = 1;
-        }
-
-        /* always create so we can put in initial null text */
         consume_bool(dialog_riscos_icon_text_setup(&a_icon, p_dialog_ictl->riscos.caption));
 
         break;
@@ -2083,6 +2084,8 @@ dialog_riscos_ictl_create_here(
 
         a_icon.flags.bits.sprite = 1;
 
+        a_icon.flags.bits.horz_centre = 1;
+
         dialog_riscos_icon_sprite_setup(&a_icon, p_dialog_ictl->data.staticpicture.riscos.resource_bitmap_handle);
 
         break;
@@ -2092,12 +2095,16 @@ dialog_riscos_ictl_create_here(
         {
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
-        a_icon.flags.bits.needs_help = 1;
+        a_icon.flags.bits.horz_centre = 1;
 
         consume_bool(dialog_riscos_icon_text_setup(&a_icon, p_dialog_ictl->riscos.caption));
 
         if(p_dialog_control_data.pushbutton->push_xx.auto_repeat)
+        {
             a_icon.flags.bits.button_type = ButtonType_Repeat;
+
+            a_icon.flags.bits.needs_help = 1;
+        }
         else
         {
             a_icon.flags.bits.text = 1;
@@ -2118,6 +2125,8 @@ dialog_riscos_ictl_create_here(
     case DIALOG_CONTROL_PUSHPICTURE:
         {
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
+
+        a_icon.flags.bits.horz_centre = 1;
 
         a_icon.flags.bits.needs_help = 1;
 
@@ -2153,9 +2162,11 @@ dialog_riscos_ictl_create_here(
         {
             p_i_b = &p_dialog_ictl->riscos.dwi[1];
 
+#if 1
+            b_icon.flags.bits.text = 1;
+#else
             b_icon.flags.bits.needs_help = 1; /* you might well think you should use the wimp but don't 'cos it looks shite */
-
-            b_icon.flags.bits.horz_centre = 0;
+#endif
 
             if(p_dialog_control_data.radiobutton->bits.left_text)
                 b_icon.bbox.xmax = a_icon.bbox.xmin;
@@ -2170,6 +2181,8 @@ dialog_riscos_ictl_create_here(
         {
         /* icon is state indicator */
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
+
+        a_icon.flags.bits.horz_centre = 1;
 
         a_icon.flags.bits.needs_help = 1;
 
@@ -2205,9 +2218,11 @@ dialog_riscos_ictl_create_here(
         {
             p_i_b = &p_dialog_ictl->riscos.dwi[1];
 
+#if 1
+            b_icon.flags.bits.text = 1;
+#else
             b_icon.flags.bits.needs_help = 1; /* you might well think you should use the wimp but don't 'cos it looks shite */
-
-            b_icon.flags.bits.horz_centre = 0;
+#endif
 
             if(p_dialog_control_data.checkbox->bits.left_text)
                 b_icon.bbox.xmax = a_icon.bbox.xmin;
@@ -2223,6 +2238,8 @@ dialog_riscos_ictl_create_here(
         /* icon is state indicator */
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
+        a_icon.flags.bits.horz_centre = 1;
+
         a_icon.flags.bits.needs_help = 1;
 
         assert(p_dialog_ictl->data.checkpicture.riscos.resource_bitmap_handle_off.i);
@@ -2237,7 +2254,7 @@ dialog_riscos_ictl_create_here(
     case DIALOG_CONTROL_TRISTATE:
         {
         /* first icon is state indicator */
-        p_i_a = &p_dialog_ictl->riscos.i;
+        p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
         a_icon.flags.bits.sprite = 1;
 
@@ -2260,8 +2277,6 @@ dialog_riscos_ictl_create_here(
 
             b_icon.flags.needs_help = 1; /* you might well think you should use the wimp but don't 'cos it looks shite */
 
-            b_icon.flags.horz_centre = 0;
-
             if(p_dialog_control_data.tristate->bits.left_text)
                 b_icon.bbox.xmax = a_icon.bbox.xmin;
             else
@@ -2274,7 +2289,9 @@ dialog_riscos_ictl_create_here(
     case DIALOG_CONTROL_TRIPICTURE:
         {
         /* icon is state indicator */
-        p_i_a = &p_dialog_ictl->riscos.i;
+        p_i_a = &p_dialog_ictl->riscos.dwi[0];
+
+        a_icon.flags.bits.horz_centre = 1;
 
         a_icon.flags.bits.needs_help = 1;
 
@@ -2292,35 +2309,37 @@ dialog_riscos_ictl_create_here(
         {
         p_i_a = &p_dialog_ictl->riscos.dwi[0];
 
-        a_icon.flags.bits.needs_help = 1;
+        a_icon.flags.bits.button_type = ButtonType_DoubleClickDrag; /* for mlec */
 
         if(p_dialog_ictl->data.edit.edit_xx.read_only)
             a_icon.flags.bits.button_type = ButtonType_Never;
-        else
-            a_icon.flags.bits.button_type = ButtonType_DoubleClickDrag;
 
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
         if(0 != p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size)
         {
+            a_icon.flags.bits.bg_colour = p_dialog_ictl->data.edit.edit_xx.read_only ? '\x01' : '\x00';
+
             a_icon.flags.bits.needs_help = 0;
 
-            a_icon.flags.bits.horz_centre = 0;
-
             a_icon.flags.bits.border = 1;
+            a_icon.flags.bits.vert_centre = 1;
             a_icon.flags.bits.filled = 1;
-
-            a_icon.flags.bits.bg_colour = '\x00';
 
             a_icon.flags.bits.indirect = 1;
             a_icon.flags.bits.text = 1;
             a_icon.data.it.buffer = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer;
-            a_icon.data.it.validation = NULL;
-            a_icon.data.it.buffer_length = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
+            a_icon.data.it.validation = "R2";
+            a_icon.data.it.buffer_size = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
 
             if(!p_dialog_ictl->data.edit.edit_xx.read_only)
-                a_icon.flags.button_type = ButtonType_Writable;
+            {
+                a_icon.flags.bits.button_type = ButtonType_Writable;
+                a_icon.data.it.validation = "Kat;Pptr_write";
+            }
         }
+        else
 #endif
+        a_icon.flags.bits.needs_help = 1;
 
         break;
         }
@@ -2365,37 +2384,42 @@ dialog_riscos_ictl_create_here(
         /* third icon is editable field (to the left of the bump pair) */
         p_i_c = &p_dialog_ictl->riscos.dwi[0];
 
-        c_icon.flags.bits.needs_help = 1;
-
         c_icon.bbox.xmax = b_icon.bbox.xmin - (int) (DIALOG_BUMPGAP_H / PIXITS_PER_RISCOS); /* small gap from icons to field */
+
+        c_icon.flags.bits.button_type = ButtonType_DoubleClickDrag; /* for mlec */
 
         if(p_dialog_ictl->data.bump_xx.edit_xx.read_only)
             c_icon.flags.bits.button_type = ButtonType_Never;
-        else
-            c_icon.flags.bits.button_type = ButtonType_DoubleClickDrag;
 
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
         if(0 != p_dialog_ictl->data.bump_xx.edit_xx.riscos.slec_buffer_size)
         {
+            c_icon.flags.bits.bg_colour = p_dialog_ictl->data.edit.edit_xx.read_only ? '\x01' : '\x00';
+
             c_icon.flags.bits.needs_help = 0;
 
-            c_icon.flags.bits.horz_centre = 0;
-
             c_icon.flags.bits.border = 1;
+            c_icon.flags.bits.vert_centre = 1;
             c_icon.flags.bits.filled = 1;
-
-            c_icon.flags.bits.bg_colour = '\x00';
 
             c_icon.flags.bits.indirect = 1;
             c_icon.flags.bits.text = 1;
             c_icon.data.it.buffer = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer;
-            c_icon.data.it.validation = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_BUMP_S32) ? "A0-9+-" : "A0-9.E+-";
-            c_icon.data.it.buffer_length = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
+            c_icon.data.it.validation = "R2";
+            c_icon.data.it.buffer_size = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
 
             if(!p_dialog_ictl->data.bump_xx.edit_xx.read_only)
-                c_icon.flags.button_type = ButtonType_Writable;
+            {
+                c_icon.flags.bits.button_type = ButtonType_Writable;
+                c_icon.data.it.validation =
+                    (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_BUMP_S32)
+                        ? "A0-9"      "+-" ";" "Kat;Pptr_write"
+                        : "A0-9" ".E" "+-" ";" "Kat;Pptr_write";
+            }
         }
+        else
 #endif
+        c_icon.flags.bits.needs_help = 1;
 
         break;
         }
@@ -2419,7 +2443,7 @@ dialog_riscos_ictl_create_here(
 
         status_return(dialog_riscos_icon_create(p_dialog, &a_icon, &p_dialog_ictl->riscos.dwi[0]));
 
-        zero_struct(_ri_lbox_new);
+        zero_struct_fn(_ri_lbox_new);
 
         assert_EQ((RI_LBOX_ITEM_HEIGHT * PIXITS_PER_RISCOS), DIALOG_STDLISTITEM_V);
 
@@ -2492,37 +2516,39 @@ dialog_riscos_ictl_create_here(
         /* second icon is state indicator to the left of the dropdown button */
         p_i_b = &p_dialog_ictl->riscos.dwi[0];
 
-        b_icon.flags.bits.needs_help = 1;
-
         b_icon.bbox.xmax = a_icon.bbox.xmin;
+
+        b_icon.flags.bits.button_type = ButtonType_DoubleClickDrag; /* for mlec */
 
         if(p_dialog_ictl->data.combo_xx.edit_xx.read_only)
             b_icon.flags.bits.button_type = ButtonType_Never;
-        else
-            b_icon.flags.bits.button_type = ButtonType_DoubleClickDrag;
 
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
         if(0 != p_dialog_ictl->data.combo_xx.edit_xx.riscos.slec_buffer_size)
         {
+            b_icon.flags.bits.bg_colour = p_dialog_ictl->data.edit.edit_xx.read_only ? '\x01' : '\x00';
+
             b_icon.flags.bits.needs_help = 0;
 
-            b_icon.flags.bits.horz_centre = 0;
-
             b_icon.flags.bits.border = 1;
+            b_icon.flags.bits.vert_centre = 1;
             b_icon.flags.bits.filled = 1;
-
-            b_icon.flags.bits.bg_colour = '\x00';
 
             b_icon.flags.bits.indirect = 1;
             b_icon.flags.bits.text = 1;
             b_icon.data.it.buffer = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer;
-            b_icon.data.it.validation = NULL;
-            b_icon.data.it.buffer_length = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
+            b_icon.data.it.validation = "R2";
+            b_icon.data.it.buffer_size = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
 
-            if(p_dialog_ictl->data.combo_xx.edit_xx.read_only)
+            if(!p_dialog_ictl->data.combo_xx.edit_xx.read_only)
+            {
                 b_icon.flags.bits.button_type = ButtonType_Writable;
+                b_icon.data.it.validation = "Kat;Pptr_write";
+            }
         }
+        else
 #endif
+        b_icon.flags.bits.needs_help = 1;
 
         break;
         }
@@ -2555,7 +2581,8 @@ dialog_riscos_ictl_create_here(
 
     if((NULL != p_dialog_ictl_edit_xx) && (NULL != p_dialog_ictl_edit_xx->riscos.mlec))
     {
-        S32 caretheightpos, caretheightneg, charheight, topmargin;
+        S32 topmargin = 4;
+        S32 charheight;
         WimpIconBlockWithBitset icon;
 
         PTR_ASSERT(p_dialog_ictl_edit_xx);
@@ -2576,12 +2603,12 @@ dialog_riscos_ictl_create_here(
             if( topmargin < 0)
                 topmargin = 0;
         }
-        else
-            topmargin = 4;
 
         mlec_attribute_set(p_dialog_ictl_edit_xx->riscos.mlec, MLEC_ATTRIBUTE_MARGIN_TOP, topmargin);
 
+#if 0 /* mlec good enough? seems so now */
         /* set up an appropriate caret height if needs be */
+        S32 caretheightpos, caretheightneg;
         if(!p_dialog_ictl_edit_xx->read_only)
         {
             caretheightpos = (7 * charheight / 8);
@@ -2598,6 +2625,7 @@ dialog_riscos_ictl_create_here(
             mlec_attribute_set(p_dialog_ictl_edit_xx->riscos.mlec, MLEC_ATTRIBUTE_CARETHEIGHTPOS, caretheightpos);
             mlec_attribute_set(p_dialog_ictl_edit_xx->riscos.mlec, MLEC_ATTRIBUTE_CARETHEIGHTNEG, caretheightneg);
         }
+#endif
     }
     } /*block*/
 
@@ -2610,18 +2638,23 @@ dialog_riscos_ictl_edit_xx_create(
     P_DIALOG_ICTL p_dialog_ictl)
 {
     STATUS status = STATUS_OK;
-    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx;
+    const P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
 
-    if(NULL != (p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl)))
+    if(NULL != p_dialog_ictl_edit_xx)
     {
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
+#if defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
+        if( !p_dialog_ictl_edit_xx->multiline && p_dialog_ictl_edit_xx->read_only )
+#else
         if(!p_dialog_ictl_edit_xx->multiline)
+#endif
         {
             p_dialog_ictl_edit_xx->riscos.slec_buffer_size = 256; /* could tune down for BUMP_XXs */
             if(NULL == (p_dialog_ictl_edit_xx->riscos.slec_buffer = al_ptr_alloc_bytes(P_U8, p_dialog_ictl_edit_xx->riscos.slec_buffer_size, &status)))
                 p_dialog_ictl_edit_xx->riscos.slec_buffer_size = 0;
         }
-        else
+
+        if(0 == p_dialog_ictl_edit_xx->riscos.slec_buffer_size)
 #endif
         {
             status_return(mlec_create(&p_dialog_ictl_edit_xx->riscos.mlec));
@@ -2637,11 +2670,11 @@ dialog_riscos_ictl_edit_xx_destroy(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl)
 {
-    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx;
+    const P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
 
-    if(NULL != (p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl)))
+    if(NULL != p_dialog_ictl_edit_xx)
     {
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
         if(0 != p_dialog_ictl_edit_xx->riscos.slec_buffer_size)
         {
             /* remove the buffer from the associated writeable icon first! */
@@ -2703,7 +2736,8 @@ dialog_riscos_ictl_enable_here(
 #if CHECKING
     case DIALOG_CONTROL_GROUPBOX:
     case DIALOG_CONTROL_STATICTEXT:
-    case DIALOG_CONTROL_STATICFRAME:
+    case DIALOG_CONTROL_TEXTLABEL:
+    case DIALOG_CONTROL_TEXTFRAME:
     case DIALOG_CONTROL_STATICPICTURE:
     case DIALOG_CONTROL_PUSHBUTTON:
     case DIALOG_CONTROL_PUSHPICTURE:
@@ -3010,13 +3044,6 @@ dialog_riscos_Key_Pressed(
         break;
         }
 
-    case KMAP_FUNC_SRETURN:
-    case KMAP_FUNC_CRETURN:
-    case KMAP_FUNC_CSRETURN:
-        if((NULL != p_dialog_ictl_edit_xx) && (NULL != p_dialog_ictl_edit_xx->riscos.mlec) && p_dialog_ictl_edit_xx->multiline)
-            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
-        break;
-
     case KMAP_FUNC_RETURN:
         {
         DIALOG_CMD_DEFPUSHBUTTON dialog_cmd_defpushbutton;
@@ -3026,36 +3053,34 @@ dialog_riscos_Key_Pressed(
         break;
         }
 
-    case KMAP_FUNC_TAB:
-        /* move input focus along to next item with a tabstop set */
-        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, +1);
+    case KMAP_FUNC_SRETURN:
+    case KMAP_FUNC_CRETURN:
+    case KMAP_FUNC_CSRETURN:
+        if( (NULL != p_dialog_ictl_edit_xx) && (NULL != p_dialog_ictl_edit_xx->riscos.mlec) && p_dialog_ictl_edit_xx->multiline )
+        {
+            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
+        }
         break;
 
-    case KMAP_FUNC_STAB:
-        /* move input focus along to prev item with a tabstop set */
-        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, -1);
+    case KMAP_FUNC_ARROW_LEFT:
+    case KMAP_FUNC_ARROW_RIGHT:
+        if( (NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec )
+        {
+            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
+        }
         break;
 
     case KMAP_FUNC_ARROW_DOWN:
     case KMAP_FUNC_ARROW_UP:
-#if 1
-        if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec && p_dialog_ictl_edit_xx->multiline)
+        if( (NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec && p_dialog_ictl_edit_xx->multiline )
         {
             status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
-            break;
-        }
-#else
-        if(NULL != p_dialog_ictl_edit_xx)
-        {
-            if(!p_dialog_ictl_edit_xx->multiline)
-                kmap_code = (kmap_code == KMAP_FUNC_ARROW_UP)
-                   ? KMAP_FUNC_ARROW_LEFT
-                   : KMAP_FUNC_ARROW_RIGHT;
 
-            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
-            break;
+            if(STATUS_OK != status)
+                break; /* processed or error */
+
+            /* unprocessed, so fall into general arrow up/down code */
         }
-#endif
 
         switch(p_dialog_ictl->dialog_control_type)
         {
@@ -3072,33 +3097,44 @@ dialog_riscos_Key_Pressed(
 
         break;
 
-    case KMAP_FUNC_ARROW_LEFT:
-    case KMAP_FUNC_ARROW_RIGHT:
-        if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec)
-        {
-            status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
-        }
+    case KMAP_FUNC_TAB:
+        /* move input focus along to next item with a tabstop set */
+        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, +1);
+        break;
+
+    case KMAP_FUNC_STAB:
+        /* move input focus along to prev item with a tabstop set */
+        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, -1);
         break;
 
     case (KMAP_BASE_FUNC    + 0x01): /* F1 */
         status_break(status = dialog_riscos_help(p_dialog));
-        status = STATUS_DONE;
+        status = STATUS_DONE; /* processed */
         break;
 
     default:
-        if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec)
+        if( (NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec )
         {
-            /* early validation prevents much state thrash */
+            status = STATUS_OK;
+
             if(kmap_code < 0x100)
-            {
+            {   /* early validation prevents much state thrash */
                 if(p_dialog_ictl_edit_xx->p_bitmap_validation)
                     if(bitmap_bit_test((PC_BITMAP) p_dialog_ictl_edit_xx->p_bitmap_validation, kmap_code, N_BITS_ARG(256)))
+                    {
                         status_break(status = mlec__insert_char(p_dialog_ictl_edit_xx->riscos.mlec, (U8) kmap_code));
-
-                return(STATUS_DONE /*processed*/);
+                        status = STATUS_DONE; /* processed */
+                    }
             }
-            else if(status_ok(status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code)))
-                return(STATUS_DONE /*processed*/);
+            else
+            {
+                status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
+
+                if(STATUS_OK != status)
+                    break; /* processed or error */
+            }
+
+            /* unprocessed, so fall into general key code */
         }
 
         if(0 != (kmap_code & KMAP_CODE_ADDED_ALT))
@@ -3109,7 +3145,7 @@ dialog_riscos_Key_Pressed(
             break;
         }
 
-        if((kmap_code < 0x100) && sbchar_isalpha(kmap_code))
+        if( (kmap_code < 0x100) && sbchar_isalpha(kmap_code) )
         {
             status = dialog_riscos_Key_Pressed_hot_key(p_dialog, sbchar_toupper(kmap_code));
             break;
@@ -3178,7 +3214,8 @@ dialog_riscos_null_event_status(
 
             case DIALOG_CONTROL_STATICPICTURE:
             case DIALOG_CONTROL_STATICTEXT:
-            case DIALOG_CONTROL_STATICFRAME:
+            case DIALOG_CONTROL_TEXTLABEL:
+            case DIALOG_CONTROL_TEXTFRAME:
             case DIALOG_CONTROL_PUSHBUTTON:
             case DIALOG_CONTROL_PUSHPICTURE:
             case DIALOG_CONTROL_RADIOBUTTON:
@@ -3348,13 +3385,14 @@ dialog_riscos_redraw_control(
     default: default_unhandled();
 #if CHECKING
     case DIALOG_CONTROL_GROUPBOX:
-    case DIALOG_CONTROL_STATICFRAME:
+    case DIALOG_CONTROL_TEXTFRAME:
     case DIALOG_CONTROL_LIST_S32:
     case DIALOG_CONTROL_LIST_TEXT:
 #endif
         break;
 
     case DIALOG_CONTROL_STATICTEXT:
+    case DIALOG_CONTROL_TEXTLABEL:
         part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 
@@ -3492,9 +3530,9 @@ dialog_riscos_redraw_core(
     REDRAW_CONTEXT_CACHE redraw_context_cache;
     const P_REDRAW_CONTEXT p_redraw_context = &dialog_riscos_event_redraw_window.redraw_context;
 
-    zero_struct(dialog_riscos_event_redraw_window);
+    zero_struct_fn(dialog_riscos_event_redraw_window);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     host_invalidate_cache(HIC_REDRAW_LOOP_START);
@@ -3515,8 +3553,6 @@ dialog_riscos_redraw_core(
 
     p_redraw_context->border_width.x = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.XEigFactor;
     p_redraw_context->border_width.y = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.YEigFactor;
-    p_redraw_context->border_width_2.x = 2 * p_redraw_context->border_width.x;
-    p_redraw_context->border_width_2.y = 2 * p_redraw_context->border_width.y;
 
     dialog_host_redraw_context_set_host_xform(&p_redraw_context->host_xform);
 
@@ -3569,7 +3605,8 @@ dialog_riscos_scan_controls_in(
         default: default_unhandled();
 #if CHECKING
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
         case DIALOG_CONTROL_PUSHBUTTON:
         case DIALOG_CONTROL_PUSHPICTURE:
         case DIALOG_CONTROL_RADIOPICTURE:
@@ -3761,9 +3798,9 @@ _Check_return_
 _Ret_valid_
 static P_DIALOG
 dialog_riscos_mlec_event_common(
-    P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
-    /*out*/ P_P_DIALOG_ICTL p_p_dialog_ictl,
-    /*out*/ WimpIconBlockWithBitset * p_icon)
+    _InRef_     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
+    _OutRef_    P_P_DIALOG_ICTL p_p_dialog_ictl,
+    _OutRef_    P_WimpIconBlockWithBitset p_icon)
 {
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(p_dialog_ictl_edit_xx->h_dialog);
     const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_ictl_edit_xx->dialog_control_id);
@@ -3778,16 +3815,16 @@ dialog_riscos_mlec_event_common(
 static STATUS
 dialog_riscos_mlec_CODE_KEY(
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
-    P_KMAP_CODE p_kmap_code)
+    _InoutRef_  P_KMAP_CODE p_kmap_code)
 {
     UNREFERENCED_PARAMETER(p_dialog_ictl_edit_xx);
 
+#if 1
+    /* no need to mutate here now */
+    UNREFERENCED_PARAMETER_InoutRef_(p_kmap_code);
+#else
     switch(*p_kmap_code)
     {
-    case KMAP_CODE_ADDED_ALT | 'U':
-        *p_kmap_code = KMAP_FUNC_CEND;    /* delete line */
-        break;
-
     case KMAP_CODE_ADDED_ALT | 'X':
         *p_kmap_code = KMAP_FUNC_SDELETE; /* cut to clipboard */
         break;
@@ -3803,6 +3840,7 @@ dialog_riscos_mlec_CODE_KEY(
     default:
         break;
     }
+#endif
 
     return(STATUS_OK);
 }
@@ -4458,7 +4496,9 @@ part_control_redraw(
 
     switch(dialog_control_type)
     {
-    default: default_unhandled(); return(STATUS_OK);
+    default: default_unhandled();
+        return(STATUS_OK);
+
 #if CHECKING
     case DIALOG_CONTROL_LIST_S32:
     case DIALOG_CONTROL_COMBO_S32:
@@ -4477,7 +4517,7 @@ part_control_redraw(
     case DIALOG_CONTROL_COMBO_TEXT:
         plot_edit = 1;
         text_colour = 0x07;
-        fill_colour = 0x00;
+        fill_colour = p_dialog_control_redraw->p_dialog_ictl_edit_xx->read_only ? 0x01 : 0x00;
         break;
 
     case DIALOG_CONTROL_BUMP_S32_PX100:
@@ -4491,12 +4531,13 @@ part_control_redraw(
         break;
 
     case DIALOG_CONTROL_STATICTEXT:
+    case DIALOG_CONTROL_TEXTLABEL:
         plot_text = 1;
         break;
 
-    case DIALOG_CONTROL_STATICFRAME:
+    case DIALOG_CONTROL_TEXTFRAME:
         plot_text = 1;
-        p_fill_colour = p_dialog_control_redraw->p_dialog_control_data.staticframe->p_back_colour;
+        p_fill_colour = p_dialog_control_redraw->p_dialog_control_data.textframe->p_back_colour;
         break;
 
     case DIALOG_CONTROL_PUSHBUTTON:
@@ -4516,7 +4557,6 @@ part_control_redraw(
             icon.bbox.xmin += (int) (6 /*DIALOG_RADIOGAP_H / PIXITS_PER_RISCOS*/);
 
         plot_text = 1;
-        /*fill_colour = normal_fill_colour;*/
         break;
 
     case DIALOG_CONTROL_RADIOPICTURE:
@@ -4530,7 +4570,6 @@ part_control_redraw(
             icon.bbox.xmin += (int) (6 /*DIALOG_CHECKGAP_H / PIXITS_PER_RISCOS*/);
 
         plot_text = 1;
-        /*fill_colour = normal_fill_colour;*/
         break;
 
     case DIALOG_CONTROL_CHECKPICTURE:
@@ -4545,11 +4584,8 @@ part_control_redraw(
             icon.box.x0 += DIALOG_CHECKGAP_H / PIXITS_PER_RISCOS;
 
         plot_text = 1;
-        /*fill_colour = normal_fill_colour;*/
         break;
-#endif
 
-#ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRIPICTURE:
         plot_sprite = 1;
 
@@ -4692,6 +4728,7 @@ part_control_redraw(
 
         if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
         {
+            mlec_attribute_set(p_dialog_ictl_edit_xx->riscos.mlec, MLEC_ATTRIBUTE_BG_RGB, * (PC_S32) &rgb_stash[fill_colour]);
             mlec_attribute_set(p_dialog_ictl_edit_xx->riscos.mlec, MLEC_ATTRIBUTE_FG_RGB, * (PC_S32) &rgb_stash[text_colour]);
 
             mlec__redraw_core(p_dialog_ictl_edit_xx->riscos.mlec, &mlec_origin_abs, &control_screen_clipped); /* <<< can't produce an error!? */
@@ -4749,7 +4786,10 @@ ui_width_from_tstr_host(
     const U32 tchars_n = tstrlen32(tstr);
     PIXIT width;
 
-    if((0 != tchars_n) && use_wimp_text_op)
+    if(0 == tchars_n)
+        return(0);
+
+    if(0 != use_wimp_text_op)
     {
         _kernel_oserror * e;
         _kernel_swi_regs rs;
@@ -4757,21 +4797,26 @@ ui_width_from_tstr_host(
         rs.r[1] = (int) tstr;
         rs.r[2] = (int) tchars_n;
 
+        e = wimp_text_op(&rs);
+
         if(use_wimp_text_op < 2)
-            consume(_kernel_oserror *, e = wimp_text_op(&rs)); /* allow silent failure first time */
+        {   /* allow silent failure first time */
+            if(NULL == e)
+                if(use_wimp_text_op == 1)
+                    use_wimp_text_op = 2;
+        }
         else
-            void_WrapOsErrorChecking(e = wimp_text_op(&rs)); /* but report any subsequent failure */
+            void_WrapOsErrorChecking(e); /* report any subsequent failure */
 
         if(NULL == e)
         {
-            if(use_wimp_text_op == 1) use_wimp_text_op = 2;
             width = rs.r[0]; /* OS units */
             width += 4; /* just a little bodge */
             width *= PIXITS_PER_RISCOS;
             return(width);
         }
 
-        use_wimp_text_op = 0;
+        use_wimp_text_op = 0; /* and just use System Font from now on */
     }
 
     width = DIALOG_SYSCHARSL_H(tchars_n);
@@ -4808,5 +4853,7 @@ ui_list_size_estimate(
 
     p_pixit_size->cy = show_elements * DIALOG_STDLISTITEM_V;
 }
+
+#endif /* RISCOS */
 
 /* end of ri_dlg.c */

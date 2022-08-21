@@ -58,20 +58,24 @@ FLT_CALLBACK, * P_FLT_CALLBACK;
 enum TS_FS_ID
 {
     STYLE_ID_TEXT_GROUP = 500,
+    STYLE_ID_TEXT_TYPEFACE_LABEL,
     STYLE_ID_TEXT_TYPEFACE_LIST,
-    STYLE_ID_TEXT_TYPEFACE_TEXT,
+    STYLE_ID_TEXT_HEIGHT_LABEL,
     STYLE_ID_TEXT_HEIGHT,
-    STYLE_ID_TEXT_HEIGHT_TEXT,
     STYLE_ID_TEXT_HEIGHT_UNITS,
+    STYLE_ID_TEXT_WIDTH_LABEL,
     STYLE_ID_TEXT_WIDTH,
-    STYLE_ID_TEXT_WIDTH_TEXT,
     STYLE_ID_TEXT_WIDTH_UNITS,
 #if RISCOS
 #define TS_FS_TYPEFACE_H    (420 * PIXITS_PER_RISCOS)
 #else
 #define TS_FS_TYPEFACE_H    ((20 * PIXITS_PER_INCH) / 10)
 #endif
+#if RISCOS
+#define TS_FS_TYPEFACE_V    (DIALOG_STDLISTOVH_V + 7 * DIALOG_STDLISTITEM_V) /* save as Style dialogue box */
+#else
 #define TS_FS_TYPEFACE_V    ((8 + 2) * PIXITS_PER_INCH / 8)
+#endif
 #define TS_FS_SIZE_TEXT_H   (/*DIALOG_STDCHECK_H + DIALOG_CHECKGAP_H +*/ DIALOG_SYSCHARS_H("Height"))
 #define TS_FS_SIZE_FIELDS_H DIALOG_BUMP_H(4)
 
@@ -336,7 +340,11 @@ style_fill_solid =
 {
     STYLE_ID_FILL_SOLID, STYLE_ID_FILL_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+#if 1
+    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+#else
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_STDCHECK_H + DIALOG_CHECKGAP_H + 2 * PIXITS_PER_INCH, DIALOG_STDCHECK_V },
+#endif
     { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
@@ -347,9 +355,9 @@ static const DIALOG_CONTROL
 style_fill_picture =
 {
     STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_GROUP,
-    { STYLE_ID_FILL_SOLID, STYLE_ID_FILL_SOLID, STYLE_ID_FILL_SOLID },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
+    { STYLE_ID_FILL_SOLID, STYLE_ID_FILL_SOLID },
+    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -359,9 +367,9 @@ static const DIALOG_CONTROL
 style_fill_aspect =
 {
     STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_GROUP,
-    { STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_PICTURE },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
+    { STYLE_ID_FILL_PICTURE, STYLE_ID_FILL_PICTURE },
+    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -371,9 +379,9 @@ static const DIALOG_CONTROL
 style_fill_recolour =
 {
     STYLE_ID_FILL_RECOLOUR, STYLE_ID_FILL_GROUP,
-    { STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_ASPECT },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDCHECK_V },
-    { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
+    { STYLE_ID_FILL_ASPECT, STYLE_ID_FILL_ASPECT },
+    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -382,79 +390,79 @@ style_fill_recolour_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_FI
 static const DIALOG_CTL_CREATE
 style_fill_ctl_create[] =
 {
-    { &dialog_main_group },
-    { &style_rgb_group, &style_fill_colour_group_data },
-    { &rgb_group_inner },
-    { &rgb_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] },
-    { &rgb_bump[RGB_TX_IX_R], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] },
-    { &rgb_bump[RGB_TX_IX_G], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] },
-    { &rgb_bump[RGB_TX_IX_B], &rgb_bump_data },
-    { &rgb_patch, &rgb_patch_data },
-    { &rgb_button, &rgb_button_data },
-    { &rgb_patches[0], &rgb_patches_data[0] },
-    { &rgb_patches[1], &rgb_patches_data[1] },
-    { &rgb_patches[2], &rgb_patches_data[2] },
-    { &rgb_patches[3], &rgb_patches_data[3] },
-    { &rgb_patches[4], &rgb_patches_data[4] },
-    { &rgb_patches[5], &rgb_patches_data[5] },
-    { &rgb_patches[6], &rgb_patches_data[6] },
-    { &rgb_patches[7], &rgb_patches_data[7] },
-    { &rgb_patches[8], &rgb_patches_data[8] },
-    { &rgb_patches[9], &rgb_patches_data[9] },
-    { &rgb_patches[10], &rgb_patches_data[10] },
-    { &rgb_patches[11], &rgb_patches_data[11] },
-    { &rgb_patches[12], &rgb_patches_data[12] },
-    { &rgb_patches[13], &rgb_patches_data[13] },
-    { &rgb_patches[14], &rgb_patches_data[14] },
-    { &rgb_patches[15], &rgb_patches_data[15] },
-    { &rgb_transparent, &rgb_transparent_data },
+    { { &dialog_main_group }, NULL },
+    { { &style_rgb_group }, &style_fill_colour_group_data },
+    { { &rgb_group_inner }, NULL },
+    { { &rgb_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] },
+    { { &rgb_bump[RGB_TX_IX_R] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] },
+    { { &rgb_bump[RGB_TX_IX_G] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] },
+    { { &rgb_bump[RGB_TX_IX_B] }, &rgb_bump_data },
+    { { &rgb_patch }, &rgb_patch_data },
+    { { &rgb_button }, &rgb_button_data },
+    { { &rgb_patches[0] }, &rgb_patches_data[0] },
+    { { &rgb_patches[1] }, &rgb_patches_data[1] },
+    { { &rgb_patches[2] }, &rgb_patches_data[2] },
+    { { &rgb_patches[3] }, &rgb_patches_data[3] },
+    { { &rgb_patches[4] }, &rgb_patches_data[4] },
+    { { &rgb_patches[5] }, &rgb_patches_data[5] },
+    { { &rgb_patches[6] }, &rgb_patches_data[6] },
+    { { &rgb_patches[7] }, &rgb_patches_data[7] },
+    { { &rgb_patches[8] }, &rgb_patches_data[8] },
+    { { &rgb_patches[9] }, &rgb_patches_data[9] },
+    { { &rgb_patches[10] }, &rgb_patches_data[10] },
+    { { &rgb_patches[11] }, &rgb_patches_data[11] },
+    { { &rgb_patches[12] }, &rgb_patches_data[12] },
+    { { &rgb_patches[13] }, &rgb_patches_data[13] },
+    { { &rgb_patches[14] }, &rgb_patches_data[14] },
+    { { &rgb_patches[15] }, &rgb_patches_data[15] },
+    { { &rgb_transparent }, &rgb_transparent_data },
 
-    { &style_fill_group, &style_fill_group_data },
-    { &style_fill_solid, &style_fill_solid_data },
-    { &style_fill_picture, &style_fill_picture_data },
-    { &style_fill_aspect, &style_fill_aspect_data },
-    { &style_fill_recolour, &style_fill_recolour_data },
+    { { &style_fill_group }, &style_fill_group_data },
+    { { &style_fill_solid }, &style_fill_solid_data },
+    { { &style_fill_picture }, &style_fill_picture_data },
+    { { &style_fill_aspect }, &style_fill_aspect_data },
+    { { &style_fill_recolour }, &style_fill_recolour_data },
 
-    { &defbutton_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CTL_CREATE
 style_fill_pie_ctl_create[] =
 {
-    { &dialog_main_group },
-    { &style_rgb_group, &style_fill_colour_group_data },
-    { &rgb_group_inner },
-    { &rgb_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] },
-    { &rgb_bump[RGB_TX_IX_R], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] },
-    { &rgb_bump[RGB_TX_IX_G], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] },
-    { &rgb_bump[RGB_TX_IX_B], &rgb_bump_data },
-    { &rgb_patch, &rgb_patch_data },
-    { &rgb_button, &rgb_button_data },
-    { &rgb_patches[0], &rgb_patches_data[0] },
-    { &rgb_patches[1], &rgb_patches_data[1] },
-    { &rgb_patches[2], &rgb_patches_data[2] },
-    { &rgb_patches[3], &rgb_patches_data[3] },
-    { &rgb_patches[4], &rgb_patches_data[4] },
-    { &rgb_patches[5], &rgb_patches_data[5] },
-    { &rgb_patches[6], &rgb_patches_data[6] },
-    { &rgb_patches[7], &rgb_patches_data[7] },
-    { &rgb_patches[8], &rgb_patches_data[8] },
-    { &rgb_patches[9], &rgb_patches_data[9] },
-    { &rgb_patches[10], &rgb_patches_data[10] },
-    { &rgb_patches[11], &rgb_patches_data[11] },
-    { &rgb_patches[12], &rgb_patches_data[12] },
-    { &rgb_patches[13], &rgb_patches_data[13] },
-    { &rgb_patches[14], &rgb_patches_data[14] },
-    { &rgb_patches[15], &rgb_patches_data[15] },
-    { &rgb_transparent, &rgb_transparent_data },
+    { { &dialog_main_group }, NULL },
+    { { &style_rgb_group }, &style_fill_colour_group_data },
+    { { &rgb_group_inner }, NULL },
+    { { &rgb_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] },
+    { { &rgb_bump[RGB_TX_IX_R] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] },
+    { { &rgb_bump[RGB_TX_IX_G] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] },
+    { { &rgb_bump[RGB_TX_IX_B] }, &rgb_bump_data },
+    { { &rgb_patch }, &rgb_patch_data },
+    { { &rgb_button }, &rgb_button_data },
+    { { &rgb_patches[0] }, &rgb_patches_data[0] },
+    { { &rgb_patches[1] }, &rgb_patches_data[1] },
+    { { &rgb_patches[2] }, &rgb_patches_data[2] },
+    { { &rgb_patches[3] }, &rgb_patches_data[3] },
+    { { &rgb_patches[4] }, &rgb_patches_data[4] },
+    { { &rgb_patches[5] }, &rgb_patches_data[5] },
+    { { &rgb_patches[6] }, &rgb_patches_data[6] },
+    { { &rgb_patches[7] }, &rgb_patches_data[7] },
+    { { &rgb_patches[8] }, &rgb_patches_data[8] },
+    { { &rgb_patches[9] }, &rgb_patches_data[9] },
+    { { &rgb_patches[10] }, &rgb_patches_data[10] },
+    { { &rgb_patches[11] }, &rgb_patches_data[11] },
+    { { &rgb_patches[12] }, &rgb_patches_data[12] },
+    { { &rgb_patches[13] }, &rgb_patches_data[13] },
+    { { &rgb_patches[14] }, &rgb_patches_data[14] },
+    { { &rgb_patches[15] }, &rgb_patches_data[15] },
+    { { &rgb_transparent }, &rgb_transparent_data },
 
-    { &defbutton_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -629,6 +637,52 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_fill)
     }
 }
 
+static inline void
+gr_chart_style_fill_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InVal_     GR_CHART_OBJID id,
+    _OutRef_    P_FLT_CALLBACK p_flt_callback)
+{
+    zero_struct_ptr_fn(p_flt_callback);
+
+    p_flt_callback->p_chart_header = p_chart_header;
+    p_flt_callback->id = id;
+
+    {
+    const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
+    if(cp->axes[0].chart_type != GR_CHART_TYPE_PIE)
+        p_flt_callback->has_fillstyleb = TRUE;
+    } /*block*/
+}
+
+_Check_return_
+static STATUS
+gr_chart_style_fill_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_FLT_CALLBACK p_flt_callback)
+{
+    static UI_TEXT caption = { UI_TEXT_TYPE_USTR_TEMP };
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
+    gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), p_flt_callback->id, ustr_bptr(buffer), elemof32(buffer));
+    caption.text.ustr = ustr_bptr(buffer);
+    if(p_flt_callback->has_fillstyleb)
+        dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, style_fill_ctl_create, elemof32(style_fill_ctl_create), &caption);
+    else
+        dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, style_fill_pie_ctl_create, elemof32(style_fill_pie_ctl_create), &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = CHART_MSG_DIALOG_STYLE_FILL_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_style_fill;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_flt_callback;
+#if RISCOS
+    if(g_has_colour_picker)
+    {   /* this needs to be addressed */
+        dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
+        dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_NOT_MENU;
+    }
+#endif
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
 _Check_return_
 extern STATUS
 gr_chart_style_fill_process(
@@ -638,33 +692,17 @@ gr_chart_style_fill_process(
     FLT_CALLBACK flt_callback;
     STATUS status;
 
-    zero_struct(flt_callback);
-    flt_callback.p_chart_header = p_chart_header;
-    flt_callback.id = id;
-
-    {
-    const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
-    if(cp->axes[0].chart_type != GR_CHART_TYPE_PIE)
-        flt_callback.has_fillstyleb = TRUE;
-    } /*block*/
+    gr_chart_style_fill_process_init(p_chart_header, id, &flt_callback);
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
-        gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), id, ustr_bptr(buffer), elemof32(buffer));
-        if(flt_callback.has_fillstyleb)
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, style_fill_ctl_create, elemof32(style_fill_ctl_create), CHART_MSG_DIALOG_STYLE_FILL_HELP_TOPIC);
-        else
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, style_fill_pie_ctl_create, elemof32(style_fill_pie_ctl_create), CHART_MSG_DIALOG_STYLE_FILL_HELP_TOPIC);
-        dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_USTR_TEMP;
-        dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_style_fill;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &flt_callback;
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_style_fill_process_dialog(p_chart_header, &flt_callback);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
+
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -692,18 +730,59 @@ style_line_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-style_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { FRAMED_BOX_GROUP } };
+style_line_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_STYLE_LINE_STYLE), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 style_line_line[7] =
 {
-    { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_PATTERN_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },  { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ } },
-    { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
-    { STYLE_ID_LINE_LINE_2, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
-    { STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF, STYLE_ID_LINE_LINE_0 },  { 0, 0, LINE_STYLE_H, 0 }, { DRT(RTLB, RADIOPICTURE) } },
-    { STYLE_ID_LINE_LINE_4, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_LINE_3, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
-    { STYLE_ID_LINE_LINE_5, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_4, STYLE_ID_LINE_LINE_4, STYLE_ID_LINE_LINE_4, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } },
-    { STYLE_ID_LINE_LINE_6, STYLE_ID_LINE_PATTERN_GROUP, { STYLE_ID_LINE_LINE_5, STYLE_ID_LINE_LINE_5, STYLE_ID_LINE_LINE_5, DIALOG_CONTROL_SELF },  { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) } }
+    {
+        STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_PATTERN_GROUP,
+        { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+        { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V },
+        { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
+    },
+
+    {
+        STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_PATTERN_GROUP,
+        { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF },
+        { 0, 0, 0, LINE_STYLE_V },
+        { DRT(LBRT, RADIOPICTURE) }
+    },
+
+    {
+        STYLE_ID_LINE_LINE_2, STYLE_ID_LINE_PATTERN_GROUP,
+        { STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, STYLE_ID_LINE_LINE_1, DIALOG_CONTROL_SELF },
+        { 0, 0, 0, LINE_STYLE_V },
+        { DRT(LBRT, RADIOPICTURE) }
+    },
+
+    {
+        STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_PATTERN_GROUP,
+        { STYLE_ID_LINE_LINE_0, STYLE_ID_LINE_LINE_0, DIALOG_CONTROL_SELF, STYLE_ID_LINE_LINE_0 },
+        { 0, 0, LINE_STYLE_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
+    },
+
+    {
+        STYLE_ID_LINE_LINE_4, STYLE_ID_LINE_PATTERN_GROUP,
+        { STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_LINE_3, STYLE_ID_LINE_LINE_3, DIALOG_CONTROL_SELF },
+        { 0, 0, 0, LINE_STYLE_V },
+        { DRT(LBRT, RADIOPICTURE) }
+    },
+
+    {
+        STYLE_ID_LINE_LINE_5, STYLE_ID_LINE_PATTERN_GROUP,
+        { STYLE_ID_LINE_LINE_4, STYLE_ID_LINE_LINE_4, STYLE_ID_LINE_LINE_4, DIALOG_CONTROL_SELF },
+        { 0, 0, 0, LINE_STYLE_V },
+        { DRT(LBRT, RADIOPICTURE) }
+    },
+
+    {
+        STYLE_ID_LINE_LINE_6, STYLE_ID_LINE_PATTERN_GROUP,
+        { STYLE_ID_LINE_LINE_5, STYLE_ID_LINE_LINE_5, STYLE_ID_LINE_LINE_5, DIALOG_CONTROL_SELF },
+        { 0, 0, 0, LINE_STYLE_V },
+        { DRT(LBRT, RADIOPICTURE) }
+    }
 };
 
 static const RESOURCE_BITMAP_ID
@@ -750,7 +829,7 @@ style_line_thickness_units =
 {
     STYLE_ID_LINE_THICKNESS_UNITS, STYLE_ID_LINE_PATTERN_GROUP,
     { STYLE_ID_LINE_THICKNESS, STYLE_ID_LINE_THICKNESS, DIALOG_CONTROL_SELF, STYLE_ID_LINE_THICKNESS },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -759,49 +838,49 @@ style_line_thickness_units =
 static const DIALOG_CTL_CREATE
 style_line_ctl_create[] =
 {
-    { &dialog_main_group },
-    { &style_rgb_group, &style_line_colour_group_data },
-    { &rgb_group_inner },
-    { &rgb_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] },
-    { &rgb_bump[RGB_TX_IX_R], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] },
-    { &rgb_bump[RGB_TX_IX_G], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] },
-    { &rgb_bump[RGB_TX_IX_B], &rgb_bump_data },
-    { &rgb_patch, &rgb_patch_data },
-    { &rgb_button, &rgb_button_data },
-    { &rgb_patches[0], &rgb_patches_data[0] },
-    { &rgb_patches[1], &rgb_patches_data[1] },
-    { &rgb_patches[2], &rgb_patches_data[2] },
-    { &rgb_patches[3], &rgb_patches_data[3] },
-    { &rgb_patches[4], &rgb_patches_data[4] },
-    { &rgb_patches[5], &rgb_patches_data[5] },
-    { &rgb_patches[6], &rgb_patches_data[6] },
-    { &rgb_patches[7], &rgb_patches_data[7] },
-    { &rgb_patches[8], &rgb_patches_data[8] },
-    { &rgb_patches[9], &rgb_patches_data[9] },
-    { &rgb_patches[10], &rgb_patches_data[10] },
-    { &rgb_patches[11], &rgb_patches_data[11] },
-    { &rgb_patches[12], &rgb_patches_data[12] },
-    { &rgb_patches[13], &rgb_patches_data[13] },
-    { &rgb_patches[14], &rgb_patches_data[14] },
-    { &rgb_patches[15], &rgb_patches_data[15] },
-    { &rgb_transparent, &rgb_transparent_data },
+    { { &dialog_main_group }, NULL },
+    { { &style_rgb_group }, &style_line_colour_group_data },
+    { { &rgb_group_inner }, NULL },
+    { { &rgb_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] },
+    { { &rgb_bump[RGB_TX_IX_R] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] },
+    { { &rgb_bump[RGB_TX_IX_G] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] },
+    { { &rgb_bump[RGB_TX_IX_B] }, &rgb_bump_data },
+    { { &rgb_patch }, &rgb_patch_data },
+    { { &rgb_button }, &rgb_button_data },
+    { { &rgb_patches[0] }, &rgb_patches_data[0] },
+    { { &rgb_patches[1] }, &rgb_patches_data[1] },
+    { { &rgb_patches[2] }, &rgb_patches_data[2] },
+    { { &rgb_patches[3] }, &rgb_patches_data[3] },
+    { { &rgb_patches[4] }, &rgb_patches_data[4] },
+    { { &rgb_patches[5] }, &rgb_patches_data[5] },
+    { { &rgb_patches[6] }, &rgb_patches_data[6] },
+    { { &rgb_patches[7] }, &rgb_patches_data[7] },
+    { { &rgb_patches[8] }, &rgb_patches_data[8] },
+    { { &rgb_patches[9] }, &rgb_patches_data[9] },
+    { { &rgb_patches[10] }, &rgb_patches_data[10] },
+    { { &rgb_patches[11] }, &rgb_patches_data[11] },
+    { { &rgb_patches[12] }, &rgb_patches_data[12] },
+    { { &rgb_patches[13] }, &rgb_patches_data[13] },
+    { { &rgb_patches[14] }, &rgb_patches_data[14] },
+    { { &rgb_patches[15] }, &rgb_patches_data[15] },
+    { { &rgb_transparent }, &rgb_transparent_data },
 
-    { &style_line_group, &style_line_group_data },
-    { &style_line_line[0], &chart_line_style_data[0] },
-    { &style_line_line[1], &chart_line_style_data[1] },
-    { &style_line_line[2], &chart_line_style_data[2] },
-    { &style_line_line[3], &chart_line_style_data[3] },
-    { &style_line_line[4], &chart_line_style_data[4] },
-    { &style_line_line[5], &chart_line_style_data[5] },
-    { &style_line_line[6], &chart_line_style_data[6] },
+    { { &style_line_group }, &style_line_group_data },
+    { { &style_line_line[0] }, &chart_line_style_data[0] },
+    { { &style_line_line[1] }, &chart_line_style_data[1] },
+    { { &style_line_line[2] }, &chart_line_style_data[2] },
+    { { &style_line_line[3] }, &chart_line_style_data[3] },
+    { { &style_line_line[4] }, &chart_line_style_data[4] },
+    { { &style_line_line[5] }, &chart_line_style_data[5] },
+    { { &style_line_line[6] }, &chart_line_style_data[6] },
 
-    { &style_line_thickness, &style_line_thickness_data },
-    { &style_line_thickness_units, &style_line_thickness_units_data },
+    { { &style_line_thickness }, &style_line_thickness_data },
+    { { &style_line_thickness_units }, &style_line_thickness_units_data },
 
-    { &defbutton_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -856,9 +935,8 @@ dialog_style_line_process_end(
         p_flt_callback->gr_linestyle.fg.visible = !ui_dlg_get_check(p_dialog_msg_process_end->h_dialog, DIALOG_ID_RGB_T);
 
         { /* translate from what punter expects to see, in this case points, not pixits or units */
-        const F64 multiplier = PIXITS_PER_POINT;
         const F64 f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_LINE_THICKNESS);
-        p_flt_callback->gr_linestyle.width = ui_dlg_s32_from_f64(f64 * multiplier, 0, LINE_THICKNESS_MAX_VAL * PIXITS_PER_POINT);
+        p_flt_callback->gr_linestyle.width = ui_dlg_s32_from_f64(f64, PIXITS_PER_POINT, 0, LINE_THICKNESS_MAX_VAL * PIXITS_PER_POINT);
         } /*block*/
 
         p_flt_callback->gr_linestyle.pattern = (GR_LINE_PATTERN) ui_dlg_get_radio(p_dialog_msg_process_end->h_dialog, STYLE_ID_LINE_PATTERN_GROUP);
@@ -882,6 +960,9 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_line)
     case DIALOG_MSG_CODE_CTL_USER_REDRAW:
         return(rgb_class_handler(dialog_message, p_data));
 
+    case DIALOG_MSG_CODE_CTL_PUSHBUTTON:
+        return(dialog_style_fill_ctl_pushbutton((P_DIALOG_MSG_CTL_PUSHBUTTON) p_data));
+
     case DIALOG_MSG_CODE_PROCESS_START:
         return(dialog_style_line_process_start((PC_DIALOG_MSG_PROCESS_START) p_data));
 
@@ -893,6 +974,45 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_line)
     }
 }
 
+static inline void
+gr_chart_style_line_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InVal_     GR_CHART_OBJID id,
+    _OutRef_    P_FLT_CALLBACK p_flt_callback)
+{
+    zero_struct_ptr_fn(p_flt_callback);
+
+    p_flt_callback->p_chart_header = p_chart_header;
+    p_flt_callback->id = id;
+
+    control_data_setup(STYLE_ID_LINE_THICKNESS, (UI_CONTROL_F64 *) style_line_thickness_data.bump_xx.p_uic);
+}
+
+_Check_return_
+static STATUS
+gr_chart_style_line_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_FLT_CALLBACK p_flt_callback)
+{
+    static UI_TEXT caption = { UI_TEXT_TYPE_USTR_TEMP };
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
+    gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), p_flt_callback->id, ustr_bptr(buffer), elemof32(buffer));
+    caption.text.ustr = ustr_bptr(buffer);
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, style_line_ctl_create, elemof32(style_line_ctl_create), &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = CHART_MSG_DIALOG_STYLE_LINE_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_style_line;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_flt_callback;
+#if RISCOS
+    if(g_has_colour_picker)
+    {   /* this needs to be addressed */
+        dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
+        dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_NOT_MENU;
+    }
+#endif
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
 _Check_return_
 extern STATUS
 gr_chart_style_line_process(
@@ -902,26 +1022,17 @@ gr_chart_style_line_process(
     FLT_CALLBACK flt_callback;
     STATUS status;
 
-    zero_struct(flt_callback);
-    flt_callback.p_chart_header = p_chart_header;
-    flt_callback.id = id;
-
-    control_data_setup(STYLE_ID_LINE_THICKNESS, (UI_CONTROL_F64 *) style_line_thickness_data.bump_xx.p_uic);
+    gr_chart_style_line_process_init(p_chart_header, id, &flt_callback);
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
-        gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), id, ustr_bptr(buffer), elemof32(buffer));
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, style_line_ctl_create, elemof32(style_line_ctl_create), CHART_MSG_DIALOG_STYLE_LINE_HELP_TOPIC);
-        dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_USTR_TEMP;
-        dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_style_line;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &flt_callback;
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_style_line_process_dialog(p_chart_header, &flt_callback);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
+
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -949,47 +1060,47 @@ static const DIALOG_CONTROL_DATA_GROUPBOX
 style_text_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
-style_text_typeface_text =
+style_text_typeface_label =
 {
-    STYLE_ID_TEXT_TYPEFACE_TEXT, STYLE_ID_TEXT_GROUP,
+    STYLE_ID_TEXT_TYPEFACE_LABEL, STYLE_ID_TEXT_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, STYLE_ID_TEXT_TYPEFACE_LIST },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, 0, DIALOG_STDCHECK_V },
-    { DRT(LTRT, STATICTEXT) }
+    { DRT(LTRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-style_text_typeface_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS_TYPEFACE), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+style_text_typeface_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS_TYPEFACE), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 style_text_typeface_list =
 {
     STYLE_ID_TEXT_TYPEFACE_LIST, STYLE_ID_TEXT_GROUP,
-    { STYLE_ID_TEXT_TYPEFACE_TEXT, STYLE_ID_TEXT_TYPEFACE_TEXT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
+    { STYLE_ID_TEXT_TYPEFACE_LABEL, STYLE_ID_TEXT_TYPEFACE_LABEL, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
     { 0, DIALOG_STDSPACING_V, TS_FS_TYPEFACE_H, TS_FS_TYPEFACE_V },
     { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 /*
-height 'group'
+height 'buddies'
 */
 
 static const DIALOG_CONTROL
-style_text_height_text =
+style_text_height_label =
 {
-    STYLE_ID_TEXT_HEIGHT_TEXT, STYLE_ID_TEXT_GROUP,
+    STYLE_ID_TEXT_HEIGHT_LABEL, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_TYPEFACE_LIST, STYLE_ID_TEXT_HEIGHT, DIALOG_CONTROL_SELF, STYLE_ID_TEXT_HEIGHT },
     { 0, 0, TS_FS_SIZE_TEXT_H },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-style_text_height_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS_HEIGHT), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+style_text_height_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS_HEIGHT), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 style_text_height =
 {
     STYLE_ID_TEXT_HEIGHT, STYLE_ID_TEXT_GROUP,
-    { STYLE_ID_TEXT_HEIGHT_TEXT, STYLE_ID_TEXT_TYPEFACE_LIST },
+    { STYLE_ID_TEXT_HEIGHT_LABEL, STYLE_ID_TEXT_TYPEFACE_LIST },
     { DIALOG_LABELGAP_H, DIALOG_STDSPACING_V, TS_FS_SIZE_FIELDS_H, DIALOG_STDBUMP_V },
     { DRT(RBLT, BUMP_F64), 1 /*tabstop*/ }
 };
@@ -1005,27 +1116,27 @@ style_text_height_units =
 {
     STYLE_ID_TEXT_HEIGHT_UNITS, STYLE_ID_TEXT_GROUP,
     { STYLE_ID_TEXT_HEIGHT, STYLE_ID_TEXT_HEIGHT, DIALOG_CONTROL_SELF, STYLE_ID_TEXT_HEIGHT },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC },
     { DRT(RTLB, STATICTEXT) }
 };
 
 #define style_text_height_units_data measurement_points_data
 
 /*
-width 'group'
+width 'buddies'
 */
 
 static const DIALOG_CONTROL
-style_text_width_text =
+style_text_width_label =
 {
-    STYLE_ID_TEXT_WIDTH_TEXT, STYLE_ID_TEXT_GROUP,
-    { STYLE_ID_TEXT_HEIGHT_TEXT, STYLE_ID_TEXT_WIDTH, STYLE_ID_TEXT_HEIGHT_TEXT, STYLE_ID_TEXT_WIDTH },
+    STYLE_ID_TEXT_WIDTH_LABEL, STYLE_ID_TEXT_GROUP,
+    { STYLE_ID_TEXT_HEIGHT_LABEL, STYLE_ID_TEXT_WIDTH, STYLE_ID_TEXT_HEIGHT_LABEL, STYLE_ID_TEXT_WIDTH },
     { 0, DIALOG_STDSPACING_V },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-style_text_width_text_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS_WIDTH), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+style_text_width_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS_WIDTH), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 style_text_width =
@@ -1054,7 +1165,7 @@ style_text_width_units =
 #define style_text_width_units_data measurement_points_data
 
 /*
-bold 'group'
+bold
 */
 
 static const DIALOG_CONTROL
@@ -1067,7 +1178,7 @@ style_text_bold =
 };
 
 /*
-italic 'group'
+italic
 */
 
 static const DIALOG_CONTROL
@@ -1095,50 +1206,53 @@ style_text_colour_group =
 static const DIALOG_CTL_CREATE
 style_text_ctl_create[] =
 {
-    { &dialog_main_group },
-    { &style_text_group, &style_text_group_data },
-    { &style_text_typeface_text, &style_text_typeface_text_data },
-    { &style_text_typeface_list, &stdlisttext_data },
-    { &style_text_height_text, &style_text_height_text_data },
-    { &style_text_height, &style_text_height_data },
-    { &style_text_height_units, &style_text_height_units_data },
-    { &style_text_width_text, &style_text_width_text_data },
-    { &style_text_width, &style_text_width_data },
-    { &style_text_width_units, &style_text_width_units_data },
-    { &style_text_bold, &style_text_bold_data },
-    { &style_text_italic, &style_text_italic_data },
+    { { &dialog_main_group }, NULL },
+    { { &style_text_group }, &style_text_group_data },
+    { { &style_text_typeface_label }, &style_text_typeface_label_data },
+    { { &style_text_typeface_list }, &stdlisttext_data },
+    { { &style_text_height_label }, &style_text_height_label_data },
+    { { &style_text_height }, &style_text_height_data },
+    { { &style_text_height_units }, &style_text_height_units_data },
+    { { &style_text_width_label }, &style_text_width_label_data },
+    { { &style_text_width }, &style_text_width_data },
+    { { &style_text_width_units }, &style_text_width_units_data },
+    { { &style_text_bold }, &style_text_bold_data },
+    { { &style_text_italic }, &style_text_italic_data },
 
-    { &style_text_colour_group, &rgb_group_data },
-    { &rgb_group_inner },
-    { &rgb_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] },
-    { &rgb_bump[RGB_TX_IX_R], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] },
-    { &rgb_bump[RGB_TX_IX_G], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] },
-    { &rgb_bump[RGB_TX_IX_B], &rgb_bump_data },
-    { &rgb_patch, &rgb_patch_data },
-    { &rgb_button, &rgb_button_data },
-    { &rgb_patches[0], &rgb_patches_data[0] },
-    { &rgb_patches[1], &rgb_patches_data[1] },
-    { &rgb_patches[2], &rgb_patches_data[2] },
-    { &rgb_patches[3], &rgb_patches_data[3] },
-    { &rgb_patches[4], &rgb_patches_data[4] },
-    { &rgb_patches[5], &rgb_patches_data[5] },
-    { &rgb_patches[6], &rgb_patches_data[6] },
-    { &rgb_patches[7], &rgb_patches_data[7] },
-    { &rgb_patches[8], &rgb_patches_data[8] },
-    { &rgb_patches[9], &rgb_patches_data[9] },
-    { &rgb_patches[10], &rgb_patches_data[10] },
-    { &rgb_patches[11], &rgb_patches_data[11] },
-    { &rgb_patches[12], &rgb_patches_data[12] },
-    { &rgb_patches[13], &rgb_patches_data[13] },
-    { &rgb_patches[14], &rgb_patches_data[14] },
-    { &rgb_patches[15], &rgb_patches_data[15] },
-    { &rgb_transparent, &rgb_transparent_data },
+    { { &style_text_colour_group }, &rgb_group_data },
+    { { &rgb_group_inner }, NULL },
+    { { &rgb_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] },
+    { { &rgb_bump[RGB_TX_IX_R] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] },
+    { { &rgb_bump[RGB_TX_IX_G] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] },
+    { { &rgb_bump[RGB_TX_IX_B] }, &rgb_bump_data },
+    { { &rgb_patch }, &rgb_patch_data },
+    { { &rgb_button }, &rgb_button_data },
+    { { &rgb_patches[0] }, &rgb_patches_data[0] },
+    { { &rgb_patches[1] }, &rgb_patches_data[1] },
+    { { &rgb_patches[2] }, &rgb_patches_data[2] },
+    { { &rgb_patches[3] }, &rgb_patches_data[3] },
+    { { &rgb_patches[4] }, &rgb_patches_data[4] },
+    { { &rgb_patches[5] }, &rgb_patches_data[5] },
+    { { &rgb_patches[6] }, &rgb_patches_data[6] },
+    { { &rgb_patches[7] }, &rgb_patches_data[7] },
+    { { &rgb_patches[8] }, &rgb_patches_data[8] },
+    { { &rgb_patches[9] }, &rgb_patches_data[9] },
+    { { &rgb_patches[10] }, &rgb_patches_data[10] },
+    { { &rgb_patches[11] }, &rgb_patches_data[11] },
+    { { &rgb_patches[12] }, &rgb_patches_data[12] },
+    { { &rgb_patches[13] }, &rgb_patches_data[13] },
+    { { &rgb_patches[14] }, &rgb_patches_data[14] },
+    { { &rgb_patches[15] }, &rgb_patches_data[15] },
+    { { &rgb_transparent }, &rgb_transparent_data },
 
-    { &defbutton_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
+
+static ARRAY_HANDLE
+typeface_handle;
 
 static UI_SOURCE
 typeface_source;
@@ -1256,12 +1370,11 @@ dialog_style_text_process_end(
         p_flt_callback->gr_textstyle.italic = ui_dlg_get_check(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_ITALIC);
 
         { /* translate from what punter expects to see, in this case points, not pixits or units */
-        const F64 multiplier = PIXITS_PER_POINT;
         F64 f64;
         f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_HEIGHT);
-        p_flt_callback->gr_textstyle.size_y = (PIXIT) ui_dlg_s32_from_f64(f64 * multiplier, 1 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
+        p_flt_callback->gr_textstyle.size_y = (PIXIT) ui_dlg_s32_from_f64(f64, PIXITS_PER_POINT, 1 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
         f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_WIDTH);
-        p_flt_callback->gr_textstyle.size_x = (PIXIT) ui_dlg_s32_from_f64(f64 * multiplier, 0 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
+        p_flt_callback->gr_textstyle.size_x = (PIXIT) ui_dlg_s32_from_f64(f64, PIXITS_PER_POINT, 0 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
         } /*block*/
 
         status_return(gr_chart_objid_textstyle_set(p_gr_chart_from_chart_handle(p_flt_callback->p_chart_header->ch), p_flt_callback->id, &p_flt_callback->gr_textstyle));
@@ -1284,6 +1397,9 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_text)
     case DIALOG_MSG_CODE_CTL_USER_REDRAW:
         return(rgb_class_handler(dialog_message, p_data));
 
+    case DIALOG_MSG_CODE_CTL_PUSHBUTTON:
+        return(dialog_style_fill_ctl_pushbutton((P_DIALOG_MSG_CTL_PUSHBUTTON) p_data));
+
     case DIALOG_MSG_CODE_PROCESS_START:
         return(dialog_style_text_process_start((PC_DIALOG_MSG_PROCESS_START) p_data));
 
@@ -1296,6 +1412,55 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_text)
 }
 
 _Check_return_
+static inline STATUS
+gr_chart_style_text_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InVal_     GR_CHART_OBJID id,
+    _OutRef_    P_FLT_CALLBACK p_flt_callback)
+{
+    zero_struct_ptr_fn(p_flt_callback);
+
+    p_flt_callback->p_chart_header = p_chart_header;
+    p_flt_callback->id = id;
+
+    control_data_setup(STYLE_ID_TEXT_HEIGHT, (UI_CONTROL_F64 *) style_text_height_data.bump_xx.p_uic);
+    control_data_setup(STYLE_ID_TEXT_WIDTH,  (UI_CONTROL_F64 *) style_text_width_data.bump_xx.p_uic);
+
+    return(ui_list_create_typeface(&typeface_handle, &typeface_source));
+}
+
+_Check_return_
+static STATUS
+gr_chart_style_text_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_FLT_CALLBACK p_flt_callback)
+{
+    static UI_TEXT caption = { UI_TEXT_TYPE_USTR_TEMP };
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
+    gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), p_flt_callback->id, ustr_bptr(buffer), elemof32(buffer));
+    caption.text.ustr = ustr_bptr(buffer);
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, style_text_ctl_create, elemof32(style_text_ctl_create), &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = CHART_MSG_DIALOG_CHART_LEGEND_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_style_text;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_flt_callback;
+#if RISCOS && 0 /* bodge not needed here as LIST_TEXT will prevent menu creation */
+    if(g_has_colour_picker)
+    {   /* this needs to be addressed */
+        dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
+        dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_NOT_MENU;
+    }
+#endif
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+static inline void
+gr_chart_style_text_process_finalise(void)
+{
+    ui_lists_dispose_tb(&typeface_handle, &typeface_source, offsetof32(UI_LIST_ENTRY_TYPEFACE, quick_tblock));
+}
+
+_Check_return_
 extern STATUS
 gr_chart_style_text_process(
     P_CHART_HEADER p_chart_header,
@@ -1303,33 +1468,20 @@ gr_chart_style_text_process(
 {
     FLT_CALLBACK flt_callback;
     STATUS status;
-    ARRAY_HANDLE typeface_handle;
 
-    status_return(ui_list_create_typeface(&typeface_handle, &typeface_source));
-
-    zero_struct(flt_callback);
-    flt_callback.p_chart_header = p_chart_header;
-    flt_callback.id = id;
-
-    control_data_setup(STYLE_ID_TEXT_HEIGHT, (UI_CONTROL_F64 *) style_text_height_data.bump_xx.p_uic);
-    control_data_setup(STYLE_ID_TEXT_WIDTH,  (UI_CONTROL_F64 *) style_text_width_data.bump_xx.p_uic);
+    status_return(gr_chart_style_text_process_init(p_chart_header, id, &flt_callback));
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
-        gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), id, ustr_bptr(buffer), elemof32(buffer));
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, style_text_ctl_create, elemof32(style_text_ctl_create), CHART_MSG_DIALOG_CHART_LEGEND_HELP_TOPIC);
-        dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_USTR_TEMP;
-        dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_style_text;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &flt_callback;
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_style_text_process_dialog(p_chart_header, &flt_callback);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
 
-    ui_lists_dispose_tb(&typeface_handle, &typeface_source, offsetof32(UI_LIST_ENTRY_TYPEFACE, quick_tblock));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+
+    gr_chart_style_text_process_finalise();
 
     return(status);
 }
@@ -1362,23 +1514,23 @@ chart_margins_;
 
 enum CHART_CONTROL_IDS
 {
-#define CHART_TEXTS1_H DIALOG_SYSCHARS_H("Height")
-#define CHART_FIELDS_H DIALOG_BUMP_H(7)
+#define CHART_LABELS_H DIALOG_SYSCHARS_H("Height+")
+#define CHART_FIELDS_H DIALOG_BUMP_H(5)
 
-    CHART_ID_MARGIN_LEFT = 130,
-    CHART_ID_MARGIN_LEFT_TEXT,
+    CHART_ID_MARGIN_LEFT_LABEL = 130,
+    CHART_ID_MARGIN_LEFT,
     CHART_ID_MARGIN_LEFT_UNITS,
 
+    CHART_ID_MARGIN_RIGHT_LABEL,
     CHART_ID_MARGIN_RIGHT,
-    CHART_ID_MARGIN_RIGHT_TEXT,
     CHART_ID_MARGIN_RIGHT_UNITS,
 
+    CHART_ID_MARGIN_TOP_LABEL,
     CHART_ID_MARGIN_TOP,
-    CHART_ID_MARGIN_TOP_TEXT,
     CHART_ID_MARGIN_TOP_UNITS,
 
+    CHART_ID_MARGIN_BOTTOM_LABEL,
     CHART_ID_MARGIN_BOTTOM,
-    CHART_ID_MARGIN_BOTTOM_TEXT,
     CHART_ID_MARGIN_BOTTOM_UNITS,
 
     CHART_ID_MAX
@@ -1391,34 +1543,34 @@ paper margin group
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
 chart_margin_units_data[2] =
 {
-    { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } },
-    { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } }
+    { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } },
+    { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } }
 };
 
 static /*poked*/ UI_CONTROL_F64
 chart_margin_control[2];
 
 /*
-top margin 'group'
+top margin 'buddies'
 */
 
 static const DIALOG_CONTROL
-chart_margin_top_text =
+chart_margin_top_label =
 {
-    CHART_ID_MARGIN_TOP_TEXT, DIALOG_MAIN_GROUP,
+    CHART_ID_MARGIN_TOP_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, CHART_ID_MARGIN_TOP, DIALOG_CONTROL_SELF, CHART_ID_MARGIN_TOP },
-    { 0, 0, CHART_TEXTS1_H, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { 0, 0, CHART_LABELS_H, 0 },
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-chart_margin_top_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_TOP), { 1/*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+chart_margin_top_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_TOP), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 chart_margin_top =
 {
     CHART_ID_MARGIN_TOP, DIALOG_MAIN_GROUP,
-    { CHART_ID_MARGIN_TOP_TEXT, DIALOG_CONTROL_PARENT },
+    { CHART_ID_MARGIN_TOP_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_LABELGAP_H, 0, CHART_FIELDS_H, DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
 };
@@ -1431,25 +1583,25 @@ chart_margin_top_units =
 {
     CHART_ID_MARGIN_TOP_UNITS, DIALOG_MAIN_GROUP,
     { CHART_ID_MARGIN_TOP, CHART_ID_MARGIN_TOP, DIALOG_CONTROL_SELF, CHART_ID_MARGIN_TOP },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 /*
-bottom margin 'group'
+bottom margin 'buddies'
 */
 
 static const DIALOG_CONTROL
-chart_margin_bottom_text =
+chart_margin_bottom_label =
 {
-    CHART_ID_MARGIN_BOTTOM_TEXT, DIALOG_MAIN_GROUP,
-    { CHART_ID_MARGIN_TOP_TEXT, CHART_ID_MARGIN_BOTTOM, CHART_ID_MARGIN_TOP_TEXT, CHART_ID_MARGIN_BOTTOM },
+    CHART_ID_MARGIN_BOTTOM_LABEL, DIALOG_MAIN_GROUP,
+    { CHART_ID_MARGIN_TOP_LABEL, CHART_ID_MARGIN_BOTTOM, CHART_ID_MARGIN_TOP_LABEL, CHART_ID_MARGIN_BOTTOM },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-chart_margin_bottom_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_BOTTOM), { 1/*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+chart_margin_bottom_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_BOTTOM), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 chart_margin_bottom =
@@ -1473,20 +1625,20 @@ chart_margin_bottom_units =
 };
 
 /*
-left margin 'group'
+left margin 'buddies'
 */
 
 static const DIALOG_CONTROL
-chart_margin_left_text =
+chart_margin_left_label =
 {
-    CHART_ID_MARGIN_LEFT_TEXT, DIALOG_MAIN_GROUP,
-    { CHART_ID_MARGIN_BOTTOM_TEXT, CHART_ID_MARGIN_LEFT, CHART_ID_MARGIN_BOTTOM_TEXT, CHART_ID_MARGIN_LEFT },
+    CHART_ID_MARGIN_LEFT_LABEL, DIALOG_MAIN_GROUP,
+    { CHART_ID_MARGIN_BOTTOM_LABEL, CHART_ID_MARGIN_LEFT, CHART_ID_MARGIN_BOTTOM_LABEL, CHART_ID_MARGIN_LEFT },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-chart_margin_left_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_LEFT), { 1/*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+chart_margin_left_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_LEFT), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 chart_margin_left =
@@ -1510,20 +1662,20 @@ chart_margin_left_units =
 };
 
 /*
-right margin 'group'
+right margin 'buddies'
 */
 
 static const DIALOG_CONTROL
-chart_margin_right_text =
+chart_margin_right_label =
 {
-    CHART_ID_MARGIN_RIGHT_TEXT, DIALOG_MAIN_GROUP,
-    { CHART_ID_MARGIN_LEFT_TEXT, CHART_ID_MARGIN_RIGHT, CHART_ID_MARGIN_LEFT_TEXT, CHART_ID_MARGIN_RIGHT },
+    CHART_ID_MARGIN_RIGHT_LABEL, DIALOG_MAIN_GROUP,
+    { CHART_ID_MARGIN_LEFT_LABEL, CHART_ID_MARGIN_RIGHT, CHART_ID_MARGIN_LEFT_LABEL, CHART_ID_MARGIN_RIGHT },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-chart_margin_right_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_RIGHT), { 1/*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+chart_margin_right_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_MARGIN_RIGHT), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 chart_margin_right =
@@ -1549,23 +1701,23 @@ chart_margin_right_units =
 static const DIALOG_CTL_CREATE
 chart_margins_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &chart_margin_top_text,      &chart_margin_top_text_data },
-    { &chart_margin_top,           &chart_margin_top_data },
-    { &chart_margin_top_units,     &chart_margin_units_data[IDX_VERT] },
-    { &chart_margin_bottom_text,   &chart_margin_bottom_text_data },
-    { &chart_margin_bottom,        &chart_margin_bottom_data },
-    { &chart_margin_bottom_units,  &chart_margin_units_data[IDX_VERT] },
-    { &chart_margin_left_text,     &chart_margin_left_text_data },
-    { &chart_margin_left,          &chart_margin_left_data },
-    { &chart_margin_left_units,    &chart_margin_units_data[IDX_HORZ] },
-    { &chart_margin_right_text,    &chart_margin_right_text_data },
-    { &chart_margin_right,         &chart_margin_right_data },
-    { &chart_margin_right_units,   &chart_margin_units_data[IDX_HORZ] },
+    { { &chart_margin_top_label },      &chart_margin_top_label_data },
+    { { &chart_margin_top },            &chart_margin_top_data },
+    { { &chart_margin_top_units },      &chart_margin_units_data[IDX_VERT] },
+    { { &chart_margin_bottom_label },   &chart_margin_bottom_label_data },
+    { { &chart_margin_bottom },         &chart_margin_bottom_data },
+    { { &chart_margin_bottom_units },   &chart_margin_units_data[IDX_VERT] },
+    { { &chart_margin_left_label },     &chart_margin_left_label_data },
+    { { &chart_margin_left },           &chart_margin_left_data },
+    { { &chart_margin_left_units },     &chart_margin_units_data[IDX_HORZ] },
+    { { &chart_margin_right_label },    &chart_margin_right_label_data },
+    { { &chart_margin_right },          &chart_margin_right_data },
+    { { &chart_margin_right_units },    &chart_margin_units_data[IDX_HORZ] },
 
-    { &defbutton_ok, &defbutton_ok_persist_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static void
@@ -1697,13 +1849,13 @@ dialog_chart_margins_process_end(
         F64 f64;
 
         f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_TOP);
-        cp->core.layout.margins.top    = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
+        cp->core.layout.margins.top    = ui_dlg_s32_from_f64(f64, chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
         f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_BOTTOM);
-        cp->core.layout.margins.bottom = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
+        cp->core.layout.margins.bottom = ui_dlg_s32_from_f64(f64, chart_margins_.info[IDX_VERT].fp_pixits_per_user_unit, 0, S32_MAX);
         f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_LEFT);
-        cp->core.layout.margins.left   = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
+        cp->core.layout.margins.left   = ui_dlg_s32_from_f64(f64, chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
         f64 = ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, CHART_ID_MARGIN_RIGHT);
-        cp->core.layout.margins.right  = ui_dlg_s32_from_f64(f64 * chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
+        cp->core.layout.margins.right  = ui_dlg_s32_from_f64(f64, chart_margins_.info[IDX_HORZ].fp_pixits_per_user_unit, 0, S32_MAX);
 
         chart_modify_docu(p_chart_margins_callback->p_chart_header);
     }
@@ -1728,6 +1880,29 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_chart_margins)
     }
 }
 
+static inline void
+gr_chart_margins_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _OutRef_    P_CHART_MARGINS_CALLBACK p_chart_margins_callback)
+{
+    p_chart_margins_callback->p_chart_header = p_chart_header;
+}
+
+_Check_return_
+static STATUS
+gr_chart_margins_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_CHART_MARGINS_CALLBACK p_chart_margins_callback)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, chart_margins_ctl_create, elemof32(chart_margins_ctl_create), CHART_MSG_DIALOG_CHART_MARGINS_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = CHART_MSG_DIALOG_CHART_MARGINS_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_chart_margins;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_chart_margins_callback;
+    chart_margins_precreate(p_chart_header->docno);
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
 _Check_return_
 extern STATUS
 gr_chart_margins_process(
@@ -1736,24 +1911,26 @@ gr_chart_margins_process(
     CHART_MARGINS_CALLBACK chart_margins_callback;
     STATUS status;
 
-    chart_margins_callback.p_chart_header = p_chart_header;
+    gr_chart_margins_process_init(p_chart_header, &chart_margins_callback);
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, chart_margins_ctl_create, elemof32(chart_margins_ctl_create), CHART_MSG_DIALOG_CHART_MARGINS_HELP_TOPIC);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = CHART_MSG_DIALOG_CHART_MARGINS_CAPTION;
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_chart_margins;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &chart_margins_callback;
-        chart_margins_precreate(p_chart_header->docno);
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_margins_process_dialog(p_chart_header, &chart_margins_callback);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
 
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+
     return(status);
 }
+
+/******************************************************************************
+*
+* chart legend
+*
+******************************************************************************/
 
 enum CHART_LEGEND_IDS
 {
@@ -1794,13 +1971,13 @@ chart_legend_horz_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_CHART_LEGE
 static const DIALOG_CTL_CREATE
 chart_legend_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &chart_legend_on, &chart_legend_on_data },
-    { &chart_legend_horz, &chart_legend_horz_data },
+    { { &chart_legend_on }, &chart_legend_on_data },
+    { { &chart_legend_horz }, &chart_legend_horz_data },
 
-    { &defbutton_ok, &defbutton_ok_persist_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 typedef struct CHART_LEGEND_CALLBACK
@@ -1857,6 +2034,28 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_chart_legend)
     }
 }
 
+static inline void
+gr_chart_legend_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _OutRef_    P_CHART_LEGEND_CALLBACK p_chart_legend_callback)
+{
+    p_chart_legend_callback->p_chart_header = p_chart_header;
+}
+
+_Check_return_
+static STATUS
+gr_chart_legend_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_CHART_LEGEND_CALLBACK p_chart_legend_callback)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, chart_legend_ctl_create, elemof32(chart_legend_ctl_create), CHART_MSG_DIALOG_CHART_LEGEND_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = CHART_MSG_DIALOG_CHART_LEGEND_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_chart_legend;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_chart_legend_callback;
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
 _Check_return_
 extern STATUS
 gr_chart_legend_process(
@@ -1865,20 +2064,17 @@ gr_chart_legend_process(
     CHART_LEGEND_CALLBACK chart_legend_callback;
     STATUS status;
 
-    chart_legend_callback.p_chart_header = p_chart_header;
+    gr_chart_legend_process_init(p_chart_header, &chart_legend_callback);
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, chart_legend_ctl_create, elemof32(chart_legend_ctl_create), CHART_MSG_DIALOG_CHART_LEGEND_HELP_TOPIC);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = CHART_MSG_DIALOG_CHART_LEGEND_CAPTION;
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_chart_legend;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &chart_legend_callback;
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_legend_process_dialog(p_chart_header, &chart_legend_callback);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
+
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }

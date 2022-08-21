@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Colton Software Fireworkz Release Notes - RISC OS</title>
@@ -16,13 +16,13 @@
 
     <ul style="list-style: none">
         <li><a href="#Copyright">Copyright</a></li>
-        <li><a href="#Licence">Licence</a></li>
         <li><a href="#GettingStarted">Getting Started</a></li>
         <li><a href="#OnlineResources">Online Resources</a></li>
         <li><a href="#Support">Support</a></li>
         <li><a href="#ReleaseHistory">Release History</a></li>
         <li><a href="#KnownProblems">Known Problems</a></li>
         <li><a href="#FireworkzPro">Fireworkz Pro</a></li>
+        <li><a href="file:///Fireworkz:Help/HTML/licen.html">Licence</a></li>
     </ul>
 
 
@@ -31,19 +31,7 @@
     <p>Copyright &copy; 1992-2020 Colton Software</p>
 
     <p>
-        <a href="file:/FireworkzRes:Help/HTML/licence.html#CopyrightExtra">Additional copyright information</a>
-    </p>
-
-
-    <h2 id="Licence">Licence</h2>
-
-    <p>Thanks to Richard Colton, Fireworkz is now open source and completely free to use!</p>
-
-    <p>
-        Fireworkz is made available to you under the terms of the
-        <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.<br />
-        This means you may use, copy and distribute Fireworkz to others.<br />
-        <a href="file:/FireworkzRes:Help/HTML/licence.html">Additional licence information</a>.
+        <a href="file:///Fireworkz:Help/HTML/licen.html#CopyrightExtra">Additional copyright information</a>
     </p>
 
 
@@ -65,16 +53,16 @@
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">Getting Started Guide</a>;</li>
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/user_guide/">User Guide</a>;</li>
         <li>
-            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>
-            - updates since the documentation was printed, and errata therein;
-        </li>
-        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints and Tips</a>;</li>
-        <li>
             <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>
-            - updated packages for RISC OS and example files, including those used in the <em>Getting Started Guide</em>;
+            - updated Fireworkz packages for RISC OS and example files, including those used in the <em>Getting Started Guide</em>;
             also Fireworkz for Windows and Fireworkz source code ZIP archive sets.
             You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
             The Mozilla Public License also gives you the right to distribute your modified versions.
+        </li>
+        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints and Tips</a>;</li>
+        <li>
+            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>
+            - updates since the documentation was printed, and errata therein;
         </li>
     </ul>
 
@@ -96,6 +84,209 @@
         The full release history may be found <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/release_history/">online</a>;
         just the last few revisions of Fireworkz are documented here.
     </p>
+
+    <p>Please refer to the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a> for details of changes to functionality.</p>
+
+
+    <h3>2.30 (10 Nov 2020)</h3>
+
+    <p>
+        Fireworkz: Save as Embedded (OLE) - Notes.
+    </p>
+    <ul>
+        <li>
+            Fireworkz Pro can now save a document as a file (of file type FzDraw, 0xA78) containing both
+            a Draw representation of the document and the underlying Fireworkz format document encapsulated in a Draw object.
+            This is very useful for OLE-supporting applications which can import Draw files.
+        </li>
+        <li>
+            Fireworkz can not save documents in this format, so it will not load these files when they are double-clicked in a directory display.
+        </li>
+        <li>
+            They may be dragged to the Fireworkz icon on the icon bar so that the
+            underlying Fireworkz format document may be viewed, but a warning is given when they are being saved.
+        </li>
+        <li>
+            'Embedded (OLE)' files dragged into Fireworkz document windows are inserted as Draw files.
+        </li>
+    </ul>
+
+    <p>The Save as template command has been moved into the new Save as sub-menu.</p>
+
+    <p>The Export menu option has been transformed into an Export sub-menu, explicity listing the available formats.</p>
+
+    <p>The Export as Drawfile command has been moved into the new Export sub-menu.</p>
+
+    <p>The style that is created and applied to tables that are inserted into Letter-based documents now contains Heading x# so that cell references make sense.</p>
+
+    <p>CSV import as table and Microsoft Excel import attempt to add a BaseTable style area if said style exists (Insert Table already does this).</p>
+
+    <p>
+        If style elements that are normally added to a table area on insertion (paragraphs margins, grid style)
+        are present in an added BaseTable style, they are no longer added.
+        Separate column width regions are still added to table columns.
+    </p>
+
+    <p>
+        There is now a Go to command (F5).
+        A dialogue box will appear in which you can specify where you want to go to.<br>
+        You can type a cell reference here or specify a named cell (or range).<br>
+        If you type a number, it will be interpreted as a row number.
+        The current cell will stay in the same column as before, but move to the specified row.
+        If you type plus (or minus) before the number, it will be interpreted as a row offet.
+        The current cell will move down (or up) by that number of rows.<br>
+        If you type one or more letters, it will be interpreted as a column specifier.
+        The current cell will stay on the same row as before, but move to the specified column.
+        If you type C followed by plus (or minus) then a number, it will be interpreted as a column offet.
+        The current cell will move right (or left) by that number of columns.
+    </p>
+
+    <p>
+        Autoformat is no longer applied to numeric data typed in without any additional format characters,
+        so the resulting cell will be displayed using an existing base or cell style.
+    </p>
+
+    <p>The Auto Sum button has been changed to popup a short menu of useful aggregate functions.</p>
+
+    <p>The Auto Sum button now fills in the bottom right cell (being the sum of the sums of each row) if both the bottom row and rightmost column of the selection are empty.</p>
+
+    <p>The MATCH() spreadsheet function now behaves as documented, returning a cell reference when successfully searching a range (this had always been broken in Fireworkz and Resultz).</p>
+
+    <p>The DOLLAR() spreadsheet function now formats negative numbers in parentheses.</p>
+
+    <p>The first button to the ALERT() and INPUT() spreadsheet functions is mandatory; if it is empty, the button is labelled "OK".</p>
+
+    <p>The second button to the ALERT() and INPUT() spreadsheet functions is optional; if it is present, but empty, the button is labelled "Cancel".</p>
+
+    <p>The JOIN() and REPT() spreadsheet functions now check for 32-bit overflow when calculating how much space to allocate for the result text string.</p>
+
+    <p>Empty arrays returned from spreadsheet functions now reliably render as blank.</p>
+
+    <p>The Edit &ndash; Chart dialogue box for bar and line charts now displays a sensible caption when a non-axis or non-series chart item is selected.</p>
+
+    <p>Failed loading of malformed documents no longer leaves null events running continually.</p>
+
+    <p>Faint grid now renders correctly again (broken in 2.10.01).</p>
+
+    <p>The C library's complex number functions are used where possible in the complex number spreadsheet functions rather than our own implementation of these.</p>
+
+    <p>RTF import: trailing space after an escaped hex character is no longer consumed.</p>
+
+    <p>RTF import: default \uc value is one.</p>
+
+    <p>RTF import: now handles surrogate pairs for non-BMP UNICODE characters.</p>
+
+    <p>RTF export: non-BMP UNICODE characters are now saved as a surrogate pair.</p>
+
+    <p>Fixes for Microsoft Excel import where the Excel "General" cell style is applied.</p>
+
+    <p>Added Microsoft Word / OpenOffice-compatible keyboard shortcuts Ctrl-L/E/R/J for Justify Left/Centre/Right/Full.</p>
+
+    <p>If a document only has a single page, only that single page number is displayed in the Print (Extra) dialogue box.</p>
+
+    <p>When saving a document that uses a CurrentCell style, an associated redundant implied region is no longer saved.</p>
+
+    <p>The Save as template dialogue box presents the Style list using a drop-down menu for compactness.</p>
+
+    <p>Scaling removed from the View control dialogue box to a separate View scale dialogue box.</p>
+
+    <p>More numeric formats are presented in the Style &ndash; Numbers drop-down menu.</p>
+
+    <p>
+        Uses 32-bit to 64-bit intermediate calculation for spreadsheet
+        integer addition/subtraction/multiplication where necessary
+        so that potential overflow checks with larger integers
+        don't force calculations to be done in floating point.
+    </p>
+
+    <p>Reject plus and minus in dialogue box writable fields which have an integer minimum value greater than or equal to zero.</p>
+
+    <p>The function selector dialogue box now shows all optional parameters for each spreadsheet function, not just the first one.</p>
+
+    <p>Use standard OK and Cancel button placement for Backdrop dialogue box.</p>
+
+    <p>Attempting to load a document which is already loaded no longer stops with an error.</p>
+
+    <p>RISC OS: Font table object in charts might not have been generated if the only text was the last object in the chart.</p>
+
+    <p>RISC OS: Thin lines are rendered as such in Draw files, rather than as a fairly thin line.</p>
+
+    <p>RISC OS: Lines that should only be one pixel thick are rendered as Thin lines in Draw files, rather than being fattened by Draw_Stroke.</p>
+
+    <p>
+        RISC OS: Length of text passed to Font Manager is now limited (to 32K characters) to avoid
+        millipoint space wrapping back to the origin of the same cell and so overwriting
+        current content when very long spreadsheet text strings are generated.
+    </p>
+
+    <p>RISC OS: Chart style dialogue boxes no longer drift towards the bottom right of the screen with Adjust-click.</p>
+
+    <p>RISC OS: Fixed the rendering of the pseudo-selection in the formula editing line.</p>
+
+    <p>RISC OS: Fixed the rendering of up and down arrow icons in Dictionary dialogue box.</p>
+
+    <p>RISC OS: Added Ctrl-A keyboard shortcut for Select All in dialogue box writable fields.</p>
+
+    <p>
+        RISC OS: Font identifiers in Draw file output (including Hybrid Draw)
+        no longer explicitly contain a leading '\F' string (which is implied)
+        before the RISC OS font name as this can confuse some older applications
+        which could otherwise import these Draw files successfully.
+    </p>
+
+    <p>
+        RISC OS: If a non-rooted file has been *Filer_Run and about to be claimed by Fireworkz via the DataOpen message, its filename is canonicalised.
+        This would have previously just given an error as it tried, and failed, to look for the file on the path.
+        Non-rooted filenames are also canonicalised when received via DataLoad and PrintTypeOdd messages.
+    </p>
+
+    <p>
+        RISC OS: Behaviour when files are double-clicked in the Filer (or *Filer_Run)
+        when the Shift key is pressed changed to allow these files to pass through to
+        a Text editor even if they have an file extension recognised by Fireworkz.
+    </p>
+
+    <p>
+        RISC OS: MimeMap module is now used to map file extensions to RISC OS file types.
+        This takes precedence over the existing, limited, mappings in the Config file.
+    </p>
+
+    <p>RISC OS: Adjust-click on the 'Spectacles' icon opens the View scale dialogue box.</p>
+
+    <p>RISC OS: Adjust-click on the Cut icon performs the Delete selection command (i.e. does not copy the selection to the clipboard).</p>
+
+    <p>RISC OS: Clicking on Columns (or Rows) &ndash; Add after adds a single column (or row) without going via the dialogue box.</p>
+
+    <p>
+        RISC OS: Added Columns (or Rows) &ndash; Insert before dialogue box.
+        As before, clicking on the menu option adds a single column (or row) without going via the dialogue box.
+    </p>
+
+    <p>RISC OS: Query dialogue boxes for Quit / Close with modified document(s) have the default Save button at the bottom right.</p>
+
+    <p>RISC OS: Colour... buttons in the chart line and text style dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
+
+    <p>RISC OS: Changed writable field height to more be consistent with RISC OS Style Guide Issue 3.</p>
+
+    <p>RISC OS: Dialogue box button labels are now somewhat more Style Guide compliant.</p>
+
+    <p>RISC OS: Read-only edit fields in dialogue boxes are now rendered on a light grey background and with a trough border.</p>
+
+    <p>RISC OS: Improved formatting and content of messages returned from Fireworkz to interactive Help.</p>
+
+    <p>RISC OS: You can now use Adjust on the Sum toolbar button to access the short functions list.</p>
+
+    <p>RISC OS: Unhandled function key presses in edit controls and combo box controls are passed on.</p>
+
+    <p>RISC OS: Loader now invokes the Splash program to display the splash screen in a separate task, reducing the delay in starting Fireworkz.</p>
+
+    <p>RISC OS: Loader now terminates gracefully if the Squash module is not present.</p>
+
+    <p>RISC OS: sm!firewrkz sprites made square so that small directory displays are not mis-aligned.</p>
+
+    <p>RISC OS: High resolution (180dpi) Sprites11 are supported and supplied.</p>
+
+    <p>RISC OS: ROOL DDE 29c build environment used.</p>
 
 
     <h3>2.24.06 (28 Apr 2020)</h3>
@@ -173,8 +364,6 @@
     <p>The DDB() spreadsheet function may now use a non-integer period for calculation.</p>
 
     <p>The TRIM() and VALUE() spreadsheet functions can accept text strings longer than 200 characters as input.</p>
-
-    <p>Please refer to the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a> for details.</p>
 
     <p>RISC OS: !RunImage is squeezed for faster loading from slow devices.</p>
 
@@ -309,7 +498,7 @@
 
     <h3>2.21 (04 May 2017)</h3>
 
-    <p>Fix for importing Microsoft Excel worksheets using MULRK records with General cell style.</p>
+    <p>Fix for importing Microsoft Excel worksheets using MULRK records with Excel "General" cell style.</p>
 
     <p>
         Allow template files that are loaded by double-clicking,
@@ -803,7 +992,7 @@
     <p>Complex number functions reclassified as Engineering functions to assist new users transitioning from other software.</p>
 
     <p>
-        DDB() spreadsheet function accepts an extra parameter, <i>factor</i> (optional).
+        DDB() spreadsheet function accepts an extra parameter, <em>factor</em> (optional).
     </p>
 
     <p>FORMULA_TEXT() spreadsheet function will now decode referenced formula as it would appear on the formula line (would have differed with alternate SSContext).</p>
@@ -825,13 +1014,13 @@
     </p>
 
     <p>
-        If the <i>length</i> parameter is omitted for LEFT() or RIGHT() spreadsheet functions, a <i>length</i> of one is assumed.
-        A <i>length</i> of zero is now allowed (consistency with MID()).
+        If the <em>length</em> parameter is omitted for LEFT() or RIGHT() spreadsheet functions, a <em>length</em> of one is assumed.
+        A <em>length</em> of zero is now allowed (consistency with MID()).
     </p>
 
     <p>
         INT() spreadsheet function extended to return an OpenDocument / Microsoft Excel-compatible serial number
-        when passed <i>date</i> parameter. Prevously this would have yielded an error.
+        when passed <em>date</em> parameter. Prevously this would have yielded an error.
         Given that Microsoft Excel incorrectly believes 1900 to be a leap year,
         the conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Excel.
         Fireworkz can also yield serial numbers for dates before 1900, unlike Microsoft Excel.
@@ -901,7 +1090,7 @@
 
     <h4>Menus</h4>
 
-    <p>Edit &gt; Change case sub-menu has UPPER-CASE, lower-case, Initial Caps and Swap Case entries. These replace the Case dialogue box.</p>
+    <p>Edit &ndash; Change case sub-menu has UPPER-CASE, lower-case, Initial Caps and Swap Case entries. These replace the Case dialogue box.</p>
 
     <p>Inserts sub-menu moved from the Extra menu to the (more logical) Edit menu and renamed as Insert field.</p>
 
@@ -928,7 +1117,7 @@
 
     <p>RISC OS: Use DejaVuSans.Mono for edit and combo box controls if it is available.</p>
 
-    <p>RISC OS: Colour... buttons in style / chart dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
+    <p>RISC OS: Colour buttons in style / chart dialogue boxes now use the RISC OS Colour Picker dialogue box.</p>
 
     <p>RISC OS: Radio buttons and check box sizing and positioning adjusted to avoid truncation of text at right-hand side of icons.</p>
 
@@ -942,7 +1131,7 @@
 
     <p>RISC OS: Changed writable field height to 60 OS units - the RISC OS Style Guide's suggested 68 OS units is way too tall.</p>
 
-    <p>RISC OS: Writable field validation for Save dialogue boxes allows all C1 control characters (&amp;80..&amp;9F).</p>
+    <p>RISC OS: Writable field validation for Save dialogue boxes allows all C1 control characters (0x80..0x9F).</p>
 
     <p>RISC OS: Error handling uses newer Window Manager styles on RISC OS 3.5 and later.</p>
 
@@ -991,7 +1180,7 @@
     <p>More responsive toolbar updates.</p>
 
     <p>
-        &lt;Field<i>N</i>&gt; is displayed in documents with mailshot fields when no source document is selected.
+        &lt;Field<em>N</em>&gt; is displayed in documents with mailshot fields when no source document is selected.
     </p>
 
     <p>RISC OS: You can now use Adjust on Fill down / Fill right toolbar buttons to Fill up / Fill left.</p>
@@ -1332,7 +1521,7 @@
     </p>
 
     <p>
-        NB Do <strong>NOT</strong> use the merge dialogue in <code>!Boot &gt; Configuration &gt; System Merge</code>
+        NB Do <strong>NOT</strong> use the merge dialogue in <code>!Boot &ndash; Configuration &ndash; System Merge</code>
         because part of the update must refresh files in a directory that the merge dialogue cannot reach.
         Instead, a simple obey file is included called !SysMerge.
         Just double click on !SysMerge.
@@ -1371,77 +1560,12 @@
     <p>This module is not yet available in Fireworkz.</p>
 
 
-    <h2 id="CopyrightExtra">Additional Copyright Information</h2>
-
-    <h4>Portions Copyright &copy; 2012-2020 Stuart Swales</h4>
-    <p>Reporter interface code.</p>
-
-    <h4>Portions Copyright &copy; 2014-2020 Stuart Swales</h4>
-    <p>
-        Logical spreadsheet functions;<br />
-        Paired statistics spreadsheet functions;<br />
-        Continuous and Discrete distributions spreadsheet functions;<br />
-        Regularized and Incomplete beta and gamma functions (and variants thereof);<br />
-        Bessel In, Kn functions.
-    </p>
-
-    <hr />
-
-    <h4>Portions Copyright &copy; 1993 by Sun Microsystems, Inc. All rights reserved</h4>
-    <p>
-        Bessel Jn, Yn functions;<br />
-        error function;<br />
-        log-gamma function.
-    </p>
-    <p>
-<pre>
-  "Developed at SunSoft, a Sun Microsystems, Inc. business. Permission to use,
-  copy, modify, and distribute this software is freely granted, provided that
-  this notice is preserved."
-</pre>
-    </p>
-
-    <hr />
-
-    <h4>Dictionaries</h4>
-    <p>Master and MasterC are derived from Colton Software word lists and SCOWL word lists:</p>
-
-    <p>Copyright 2000-2014 by Kevin Atkinson</p>
-    <p>
-<pre>
-  "Permission to use, copy, modify, distribute and sell these word
-  lists, the associated scripts, the output created from the scripts,
-  and its documentation for any purpose is hereby granted without fee,
-  provided that the above copyright notice appears in all copies and
-  that both that copyright notice and this permission notice appear in
-  supporting documentation. Kevin Atkinson makes no representations
-  about the suitability of this array for any purpose. It is provided
-  "as is" without express or implied warranty."
-</pre>
-    </p>
-
-    <p>Copyright (c) J Ross Beresford 1993-1999. All Rights Reserved.</p>
-    <p>
-<pre>
-  "The following restriction is placed on the use of this publication:
-  if The UK Advanced Cryptics Dictionary is used in a software package
-  or redistributed in any form, the copyright notice must be
-  prominently displayed and the text of this document must be included
-  verbatim.
-  There are no other restrictions: I would like to see the list
-  distributed as widely as possible."
-</pre>
-    </p>
-
-    <hr />
-
-    <h3>Trademarks</h3>
+    <h2>Trademarks</h2>
 
     <p>Microsoft and Windows are either registered trademarks or trademarks of Microsoft Corporation in the United States and/or other countries.</p>
 
     <p>The Unicode Word Mark is a trademark of Unicode, Inc.</p>
 
-    <hr />
 
     <p>End of Fireworkz Release Notes (RISC OS)</p>
 </body>

@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Transferring files between platforms</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Transferring files between platforms" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug09_advanced_features.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="ug98_glossary.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Advanced features </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Glossary</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="transferring_files_between_platforms" id="transferring_files_between_platforms"></a><span class="csg-chapter-number">17 </span>Transferring files between platforms</h1>
+
+    <p>
+        You may wish to transfer documents between RISC OS and Windows.
+        Fireworkz documents can easily be transferred between the two platforms,
+        but there are some potential problems which you should watch out for.
+    </p>
+    <p>Before copying the file to another system, you should check for the following:</p>
+    <ul>
+        <li><a href="#transferring_files_between_platforms_fonts">Fonts (transferring)</a></li>
+        <li><a href="#transferring_files_between_platforms_pictures">Pictures and charts (transferring)</a></li>
+    </ul>
+    <p>Then proceed to transfer the files:</p>
+    <ul>
+        <li><a href="#transferring_files_from_risc_os_to_windows">Transferring files from RISC OS to Windows</a></li>
+
+        <li><a href="#transferring_files_from_windows_to_risc_os.htm">Transferring files from Windows to RISC OS</a></li>
+
+        <li><a href="#transferring_files_with_emulated_risc_os">Transferring files to and from RISC OS under emulation</a></li>
+    </ul>
+
+    <h2><a name="transferring_files_between_platforms_fonts" id="transferring_files_between_platforms_fonts"></a>Fonts (transferring)</h2>
+
+    <h3>Names</h3>
+    <p>
+        Fireworkz stores the fonts used in documents internally by their PostScript name,
+        if one is known, rather than any platform- or other vendor-specific name.
+        If most of the fonts you use on both platforms are standard fonts with standard PostScript names,
+        you should find that the correct fonts are used.
+    </p>
+    <p>
+        For example, documents which use the RISC OS fonts Trinity and Homerton
+        will be displayed in Times and Helvetica respectively if those fonts are installed,
+        or Times New Roman and Arial if only the minimum Windows fonts are present.
+    </p>
+    <p>
+        If your documents use non-standard fonts which do not have a direct equivalent on your other systems,
+        another font will be used. Inevitably, this will mean that your text is reformatted.
+    </p>
+
+    <h3>Height and width</h3>
+    <p>
+        Fireworkz allows you to stretch and shrink type using the Width option in the Text section of the Style editor.
+        Unfortunately, if this option has been set in RISC OS, it will mean that Windows may not display the text at the correct height or width.
+    </p>
+    <p>
+        Ideally, you should turn this option off in all text before transferring files.
+        If you do not, you may find that text is displayed at the height which matches the width which has been entered.
+    </p>
+
+    <h2><a name="transferring_files_between_platforms_pictures" id="transferring_files_between_platforms_pictures"></a>Pictures and charts (transferring)</h2>
+
+    <p>
+        Charts and pictures which are embedded within documents will be
+        transferred along with the text and the rest of the document.
+        Fireworkz will interpret and display most embedded picture files,
+        and also more complex pictures such as pictogram charts which are effectively
+        a Draw file containing embedded sprites or further Draw files.
+    </p>
+    <p>
+        Referenced pictures will usually be transferred or translated.
+        However, you must first make sure that the file names of referenced pictures can be understood by both systems.
+        You will also need to make sure that in both the original and the copy that all the files are in the same directory:
+        this makes it much easier for Fireworkz to find the files.
+    </p>
+
+    <h2><a name="transferring_files_from_risc_os_to_windows" id="transferring_files_from_risc_os_to_windows"></a>Transferring files from RISC OS to Windows</h2>
+
+    <p>
+        The process of transferring files to Windows is quite simple.
+        The work needs to be done at the RISC OS end,
+        so if you are going to be sent files and do not have access to an RISC OS computer,
+        make sure that the person sending the files has a copy of this chapter and follows the instructions.
+    </p>
+    <ol>
+        <li>Check the document for any of the pitfalls outlined above.</li>
+
+        <li>
+            Save the file in a location which your Windows computer can access
+            (for example on a DOS format floppy disc, or on a network server accessible to both types of machine).
+        </li>
+
+        <li>
+            You will need to rename the file and change its type.
+            Select the file in the directory display on the RISC OS desktop.
+            Press <span class="csg-mouse-button">Menu</span> (the middle mouse button) and choose <span class="csg-menu-option">Set Type</span> from the menu which appears.
+        </li>
+
+        <li>
+            Add the extension <code>/FWK</code>, for example <code>FILENAME/FWK</code>.
+            This will be interpreted by Windows as <code>FILENAME.FWK</code>.
+        </li>
+    </ol>
+    <p>You can now take the file to a Windows computer.</p>
+
+    <h2><a name="transferring_files_from_windows_to_risc_os" id="transferring_files_from_windows_to_risc_os"></a>Transferring files from Windows to RISC OS</h2>
+
+    <p>To transfer files from Windows to RISC OS:</p>
+    <ol>
+        <li>
+            Save the file in a location which your RISC OS computer can access
+            (for example on a DOS format floppy disc, or on a network server accessible to both types of machine).
+        </li>
+
+        <li>Select the file in the directory display on the RISC OS desktop.</li>
+
+        <li>Press <span class="csg-mouse-button">Menu</span> (the middle mouse button) and choose <span class="csg-menu-option">Set Type</span> from the menu which appears.</li>
+
+        <li>Change the file type to <code>Firewrkz</code>.</li>
+    </ol>
+    <p>You will now be able to use the file in RISC OS.</p>
+    <p>Note that the same issues with font transfer affect Windows to RISC OS file transfers.</p>
+
+    <h2><a name="transferring_files_with_emulated_risc_os" id="transferring_files_with_emulated_risc_os"></a>Transferring files to and from RISC OS under emulation</h2>
+
+    <p>
+        If you use VirtualRPC you can ease the filename mapping process somewhat.
+        In Windowed mode, go to Tools &ndash; Options and alter the list of HostFS Extensions.
+        Add a mapping between RISC OS file type "BDF" (Fireworkz) and DOS extension "fwk".
+        To transfer Fireworkz template files,
+        add a mapping between RISC OS file type "C1D" (Fireworkz templates) and DOS extension "fwt".
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug09_advanced_features.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="ug98_glossary.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Advanced features </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Glossary</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

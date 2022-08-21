@@ -278,23 +278,21 @@ csv_load_decode_line(
                 {
                     SS_DATA ss_data_copy;
 
-                    switch(ss_data_get_data_id(&ss_data))
+                    if(!ss_data_is_number(&ss_data))
                     {
-                    case DATA_ID_REAL:
-                    case DATA_ID_LOGICAL:
-                    case DATA_ID_WORD8:
-                    case DATA_ID_WORD16:
-                    case DATA_ID_WORD32:
-                    case DATA_ID_DATE:
-                        break;
+                        switch(ss_data_get_data_id(&ss_data))
+                        {
+                        case DATA_ID_DATE:
+                            break;
 
-                    default:
-                        ss_data_set_data_id(&ss_data, DATA_ID_STRING);
-                        ss_data.local_data = FALSE;
-                        ss_data.arg.string.uchars = (PC_UCHARS) ustr_inline_elem;
-                        ss_data.arg.string.size = ustr_inline_strlen32(ustr_inline_elem);
-                        assert(!contains_inline(ss_data.arg.string.uchars, ss_data_get_string_size(&ss_data)));
-                        break;
+                        default:
+                            ss_data_set_data_id(&ss_data, DATA_ID_STRING);
+                            ss_data.local_data = 0;
+                            ss_data.arg.string.uchars = (PC_UCHARS) ustr_inline_elem;
+                            ss_data.arg.string.size = ustr_inline_strlen32(ustr_inline_elem);
+                            assert(!contains_inline(ss_data_get_string(&ss_data), ss_data_get_string_size(&ss_data)));
+                            break;
+                        }
                     }
 
                     if(status_ok(status = ss_data_resource_copy(&ss_data_copy, &ss_data)))
@@ -310,18 +308,13 @@ csv_load_decode_line(
 
                     ss_recog_context_push(&ss_recog_context); /* recognise numbers from file as if typed by user with current UI settings */
 
-                    zero_struct(load_cell_foreign);
+                    zero_struct_fn(load_cell_foreign);
 
+                    if(ss_data_is_number(&ss_data))
+                        load_cell_foreign.data_type = OWNFORM_DATA_TYPE_CONSTANT;
+                    else
                     switch(ss_data_get_data_id(&ss_data))
                     {
-                    case DATA_ID_REAL:
-                    case DATA_ID_LOGICAL:
-                    case DATA_ID_WORD8:
-                    case DATA_ID_WORD16:
-                    case DATA_ID_WORD32:
-                        load_cell_foreign.data_type = OWNFORM_DATA_TYPE_CONSTANT;
-                        break;
-
                     case DATA_ID_DATE:
                         load_cell_foreign.data_type = OWNFORM_DATA_TYPE_DATE;
                         break;
@@ -904,11 +897,11 @@ csv_load_query_labels_across_label =
     CSV_LOAD_QUERY_ID_LABELS_ACROSS_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, CSV_LOAD_QUERY_ID_LABELS_ACROSS, DIALOG_CONTROL_SELF, CSV_LOAD_QUERY_ID_LABELS_ACROSS },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-csv_load_query_labels_across_label_data = { UI_TEXT_INIT_RESID(CSV_MSG_LOAD_QUERY_LABELS_ACROSS), { 0 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+csv_load_query_labels_across_label_data = { UI_TEXT_INIT_RESID(CSV_MSG_LOAD_QUERY_LABELS_ACROSS) };
 
 static const DIALOG_CONTROL
 csv_load_query_labels_across =
@@ -940,21 +933,24 @@ csv_load_query_database =
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
 csv_load_query_database_data = { { 0 }, CSV_LOAD_QUERY_ID_DATABASE, UI_TEXT_INIT_RESID(CSV_MSG_LOAD_QUERY_DATABASE) };
 
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+csv_load_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT) };
+
 static const DIALOG_CTL_CREATE
 csv_load_query_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &defbutton_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data },
+    { { &defbutton_ok }, &csv_load_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
 
-    { &csv_load_query_overwrite_blank_cells,    &csv_load_query_overwrite_blank_cells_data },
-    { &csv_load_query_insert_as_table,          &csv_load_query_insert_as_table_data },
-    { &csv_load_query_labels,                   &csv_load_query_labels_data },
-    { &csv_load_query_labels_across_label,      &csv_load_query_labels_across_label_data },
-    { &csv_load_query_labels_across,            &csv_load_query_labels_across_data },
+    { { &csv_load_query_overwrite_blank_cells },    &csv_load_query_overwrite_blank_cells_data },
+    { { &csv_load_query_insert_as_table },          &csv_load_query_insert_as_table_data },
+    { { &csv_load_query_labels },                   &csv_load_query_labels_data },
+    { { &csv_load_query_labels_across_label },      &csv_load_query_labels_across_label_data },
+    { { &csv_load_query_labels_across },            &csv_load_query_labels_across_data },
 
-    { &csv_load_query_database, &csv_load_query_database_data } /* optional ... */
+    { { &csv_load_query_database }, &csv_load_query_database_data } /* optional ... */
 };
 
 _Check_return_
@@ -1052,10 +1048,10 @@ csv_load_query(
     }
 
     {
+    const STATUS caption_resource_id = ((CH_COMMA == g_field_sep_ch) || (CH_NULL == g_field_sep_ch)) ? CSV_MSG_LOAD_QUERY_CAPTION : CSV_MSG_LOAD_QUERY_DELIMITED_TEXT_CAPTION;
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, csv_load_query_ctl_create, elemof32(csv_load_query_ctl_create), CSV_MSG_LOAD_QUERY_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = ((CH_COMMA == g_field_sep_ch) || (CH_NULL == g_field_sep_ch)) ? CSV_MSG_LOAD_QUERY_CAPTION : CSV_MSG_LOAD_QUERY_DELIMITED_TEXT_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, csv_load_query_ctl_create, elemof32(csv_load_query_ctl_create), caption_resource_id);
+    dialog_cmd_process_dbox.help_topic_resource_id = CSV_MSG_LOAD_QUERY_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_csv_load_query;
     if(!has_real_database)
         dialog_cmd_process_dbox.n_ctls -= 1; /* strip end radiobutton off */

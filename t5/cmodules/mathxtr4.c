@@ -386,7 +386,7 @@ mx_y_gamma(
 
         if(!isfinite(term))
         {
-            reportf(TEXT("non-finite term in mx_y_gamma(s=%f,x=%f): k=%d"), s, x, k);
+            //reportf(TEXT("non-finite term in mx_y_gamma(s=%f,x=%f): k=%d"), s, x, k);
             break;
         }
     }

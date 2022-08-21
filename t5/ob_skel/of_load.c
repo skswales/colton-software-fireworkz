@@ -70,7 +70,7 @@ typedef struct REGISTERED_CONSTRUCT_TABLE
 {
     PC_CONSTRUCT_TABLE p_construct_table;
     U32 construct_table_entries;
-    U32 short_construct_table_entries;
+    U8 short_construct_table_entries;
     U8 construct_id;
     U8 needs_help;
 }
@@ -85,14 +85,6 @@ typedef struct OF_LOAD_STATICS
 OF_LOAD_STATICS;
 
 static OF_LOAD_STATICS of_load_statics;
-
-static BOOL first_time_through = 0;
-
-extern void
-of_load_prepare_first_template(void)
-{
-    first_time_through = 1;
-}
 
 #ifndef LOAD_QB_SIZE
 #define LOAD_QB_SIZE 512
@@ -426,6 +418,8 @@ ownform_finalise_load(
     else
     {
         p_of_ip_format->input.mem.p_array_handle = NULL;
+
+        al_array_dispose(&p_of_ip_format->input.mem.owned_array_handle);
     }
 
     tstr_clr(&p_of_ip_format->input_filename);
@@ -555,7 +549,7 @@ ownform_initialise_load(
         process_status_begin(p_docu, &p_of_ip_format->process_status, PROCESS_STATUS_PERCENT);
 
         /* call all the objects to say a load has started */
-        status = object_call_between(&p_of_ip_format->stopped_object_id, OBJECT_ID_MAX, p_docu, T5_MSG_LOAD_STARTED, P_DATA_NONE);
+        status = object_call_between(&p_of_ip_format->stopped_object_id, OBJECT_ID_MAX, p_docu, T5_MSG_LOAD_STARTED, p_of_ip_format);
     }
 
     if(status_fail(status))
@@ -579,7 +573,7 @@ load_is_file_loaded(
 
         /* test for exact match */
         if(0 == name_compare(&p_docu->docu_name, p_docu_name, TRUE))
-            return(create_error(ERR_DUPLICATE_FILE));
+            return(ERR_DUPLICATE_FILE);
 
         return(create_error(ERR_DUPLICATE_LEAFNAME));
     }
@@ -627,6 +621,60 @@ load_object_config_file(
     return(status);
 }
 
+/* bit like binary_read_byte but for the very first byte to spot oddballs */
+
+_Check_return_
+static U8
+load_ownform_file_check_header(
+    _InoutRef_  P_OF_IP_FORMAT p_of_ip_format,
+    _OutRef_    P_STATUS p_status)
+{
+    U8 buffer[0x1C]; /* need to read the next word to spot Hybrid Draw otherwise it appears too short to be valid */
+    U32 i;
+    U8 byte_read = binary_read_byte(&p_of_ip_format->input, p_status);
+
+    if(OF_CONSTRUCT_START == byte_read)
+        /* probably a Fireworkz file - just go for it */
+        return(byte_read);
+
+    if( status_fail(*p_status) || (EOF_READ == *p_status) )
+        return(byte_read);
+
+    /* might not be a straightforward Fireworkz file - have a gander at its header */
+    buffer[0] = byte_read;
+
+    for(i = 1; i < elemof32(buffer); ++i)
+    {
+        byte_read = binary_read_byte(&p_of_ip_format->input, p_status);
+
+        if(status_fail(*p_status))
+            return(byte_read);
+
+        if(EOF_READ == *p_status)
+            break;
+
+        buffer[i] = byte_read;
+    }
+
+    /* need to rewind in any case for next level detection */
+    if(status_fail(*p_status = input_rewind(&p_of_ip_format->input)))
+        return(CH_NULL);
+
+    switch(t5_filetype_from_data(buffer, i))
+    {
+    case FILETYPE_T5_HYBRID_DRAW:
+        if(status_fail(*p_status = object_call_id_load(p_docu_from_docno(p_of_ip_format->docno), T5_MSG_SETUP_FOR_INPUT_FROM_HYBRID_DRAW, p_of_ip_format, OBJECT_ID_DRAW_IO)))
+            return(CH_NULL);
+        break;
+
+    default:
+        /*reportf("load_ownform_file_check_header: %03X", t5_filetype_from_data(buffer, i));*/
+        break;
+    }
+
+    return(binary_read_byte(&p_of_ip_format->input, p_status));
+}
+
 _Check_return_
 extern STATUS
 load_ownform_file(
@@ -637,14 +685,12 @@ load_ownform_file(
     QUICK_BLOCK_WITH_BUFFER(top_quick_block, 16); /* this only needs to be microscopic to account for file junk */
     quick_block_with_buffer_setup(top_quick_block);
 
+    byte_read = load_ownform_file_check_header(p_of_ip_format, &status);
+
     for(;;)
     {
-        byte_read = binary_read_byte(&p_of_ip_format->input, &status);
-
         if(OF_CONSTRUCT_START == byte_read)
         {
-            /*status_break(status = ensure_memory_froth());*/
-
             /* do prior to loading construct so that last construct loaded won't have another after it;
              * an aesthetic decision so that views come up nicely as opposed to any specific code need
             */
@@ -656,14 +702,18 @@ load_ownform_file(
             quick_block_dispose(&top_quick_block);
 
             status_break(status);
+        }
+        else
+        {
+            status_break(status);
 
-            continue;
+            if(EOF_READ == status)
+                break;
+
+            /* discard all other bytes read at top-level (e.g. any whitespace that we may add to prettify output) */
         }
 
-        if(status_fail(status) || (EOF_READ == status))
-            break;
-
-        /* discard all other bytes read at top-level (e.g. any whitespace that we may add to prettify output) */
+        byte_read = binary_read_byte(&p_of_ip_format->input, &status);
     }
 
     return(status);
@@ -787,7 +837,7 @@ new_docno_using_core(
     POSITION position;
     OF_IP_FORMAT of_ip_format;
 
-    zero_struct(of_ip_format);
+    zero_struct_fn(of_ip_format);
     of_ip_format.flags.full_file_load = 1;
     of_ip_format.process_status.flags.foreground = 1;
 
@@ -1848,413 +1898,12 @@ register_object_construct_table(
 
     p->p_construct_table = p_construct_table;
     p->construct_table_entries = construct_table_entries;
-    p->short_construct_table_entries = short_construct_table_entries;
+    assert(short_construct_table_entries <= U8_MAX);
+    p->short_construct_table_entries = (U8) short_construct_table_entries;
     /* do not set p->construct_id = CH_NULL; 'cos construct_id binding comes out of config file */
     p->needs_help = (U8) needs_help;
 
     return(STATUS_OK); /* simply for most object handlers switch() efficiency on T5_MSG_IC__STARTUP */
-}
-
-typedef struct TEMPLATE_LIST_ENTRY
-{
-    QUICK_TBLOCK_WITH_BUFFER(fullname_quick_tblock, 64); /* NB buffer adjacent for fixup */
-
-    QUICK_TBLOCK_WITH_BUFFER(leafname_quick_tblock, elemof32("doseight.fwk")); /* NB buffer adjacent for fixup */
-
-    int sort_order; /* 0 by default */
-}
-TEMPLATE_LIST_ENTRY, * P_TEMPLATE_LIST_ENTRY;
-
-enum SELECT_TEMPLATE_CONTROL_IDS
-{
-    SELECT_TEMPLATE_ID_LIST = 333
-};
-
-static /*poked*/ DIALOG_CONTROL
-select_template_list =
-{
-    SELECT_TEMPLATE_ID_LIST, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0 },
-    { DRT(LTLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
-};
-
-static const DIALOG_CTL_CREATE
-select_template_ctl_create[] =
-{
-    { &dialog_main_group },
-
-    { &select_template_list, &stdlisttext_data },
-
-    { &defbutton_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
-};
-
-static S32 g_selected_template = 0;
-
-static UI_SOURCE
-select_template_list_source;
-
-_Check_return_
-static STATUS
-dialog_select_template_ctl_fill_source(
-    _InoutRef_  P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source)
-{
-    switch(p_dialog_msg_ctl_fill_source->dialog_control_id)
-    {
-    case SELECT_TEMPLATE_ID_LIST:
-        p_dialog_msg_ctl_fill_source->p_ui_source = &select_template_list_source;
-        break;
-
-    default:
-        break;
-    }
-
-    return(STATUS_OK);
-}
-
-_Check_return_
-static STATUS
-dialog_select_template_ctl_create_state(P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state)
-{
-    switch(p_dialog_msg_ctl_create_state->dialog_control_id)
-    {
-    case SELECT_TEMPLATE_ID_LIST:
-        {
-        const PC_S32 p_selected_template = (PC_S32) p_dialog_msg_ctl_create_state->client_handle;
-        p_dialog_msg_ctl_create_state->state_set.bits |= DIALOG_STATE_SET_ALTERNATE;
-        p_dialog_msg_ctl_create_state->state_set.state.list_text.itemno = *p_selected_template;
-        break;
-        }
-
-    default:
-        break;
-    }
-
-    return(STATUS_OK);
-}
-
-_Check_return_
-static STATUS
-dialog_select_template_process_end(
-    _InRef_     PC_DIALOG_MSG_PROCESS_END p_dialog_msg_process_end)
-{
-    const P_S32 p_selected_template = (P_S32) p_dialog_msg_process_end->client_handle;
-    *p_selected_template = ui_dlg_get_list_idx(p_dialog_msg_process_end->h_dialog, SELECT_TEMPLATE_ID_LIST);
-
-    return(STATUS_OK);
-}
-
-PROC_DIALOG_EVENT_PROTO(static, dialog_event_select_template)
-{
-    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
-
-    switch(dialog_message)
-    {
-    case DIALOG_MSG_CODE_CTL_FILL_SOURCE:
-        return(dialog_select_template_ctl_fill_source((P_DIALOG_MSG_CTL_FILL_SOURCE) p_data));
-
-    case DIALOG_MSG_CODE_CTL_CREATE_STATE:
-        return(dialog_select_template_ctl_create_state((P_DIALOG_MSG_CTL_CREATE_STATE) p_data));
-
-    case DIALOG_MSG_CODE_PROCESS_END:
-        return(dialog_select_template_process_end((PC_DIALOG_MSG_PROCESS_END) p_data));
-
-    default:
-        return(STATUS_OK);
-    }
-}
-
-/******************************************************************************
-*
-* oh, the joys of sorting ARRAY_QUICK_BLOCKs...
-*
-******************************************************************************/
-
-/* no context needed for qsort() */
-
-PROC_QSORT_PROTO(static, template_list_sort, TEMPLATE_LIST_ENTRY)
-{
-    QSORT_ARG1_VAR_DECL(P_TEMPLATE_LIST_ENTRY, p_template_list_entry_1);
-    QSORT_ARG2_VAR_DECL(P_TEMPLATE_LIST_ENTRY, p_template_list_entry_2);
-
-    const S32 res_so = p_template_list_entry_1->sort_order - p_template_list_entry_2->sort_order;
-
-    if(0 == res_so)
-    {
-        P_QUICK_TBLOCK p_quick_tblock_1 = &p_template_list_entry_1->leafname_quick_tblock;
-        P_QUICK_TBLOCK p_quick_tblock_2 = &p_template_list_entry_2->leafname_quick_tblock;
-
-        PCTSTR tstr_1 = (0 != quick_tblock_array_handle_ref(p_quick_tblock_1)) ? array_tstr(&quick_tblock_array_handle_ref(p_quick_tblock_1)) : (PCTSTR) (p_quick_tblock_1 + 1);
-        PCTSTR tstr_2 = (0 != quick_tblock_array_handle_ref(p_quick_tblock_2)) ? array_tstr(&quick_tblock_array_handle_ref(p_quick_tblock_2)) : (PCTSTR) (p_quick_tblock_2 + 1);
-
-        int res_cmp = tstr_compare_nocase(tstr_1, tstr_2);
-
-        return(res_cmp);
-    }
-
-    return((res_so > 0) ? 1 : -1);
-}
-
-_Check_return_
-static int
-template_sort_order(
-    _In_z_      PCTSTR leafname)
-{
-    const PC_DOCU p_docu_config = p_docu_from_config();
-    const PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_config->numforms;
-    const ARRAY_INDEX n_elements = array_elements(p_ui_numform_handle);
-    ARRAY_INDEX i;
-    const UI_NUMFORM_CLASS ui_numform_class = UI_NUMFORM_CLASS_LOAD_TEMPLATE;
-
-    for(i = 0; i < n_elements; ++i)
-    {
-        const PC_UI_NUMFORM p_ui_numform = array_ptrc(p_ui_numform_handle, UI_NUMFORM, i);
-        PC_USTR numform_leafname;
-        PC_A7STR numform_sort_order;
-
-        if(p_ui_numform->numform_class != ui_numform_class)
-            continue;
-
-        numform_leafname = p_ui_numform->ustr_numform;
-        PTR_ASSERT(numform_leafname);
-
-        if(0 != tstr_compare_nocase(leafname, _tstr_from_ustr(numform_leafname)))
-            continue;
-
-        numform_sort_order = (PC_A7STR) p_ui_numform->ustr_opt;
-
-        return(atoi(numform_sort_order));
-    }
-
-    return(0);
-}
-
-_Check_return_
-static STATUS
-list_templates_from(
-    P_ARRAY_HANDLE p_template_list_handle,
-    /*inout*/ P_P_FILE_OBJENUM p_p_file_objenum,
-    P_FILE_OBJINFO p_file_objinfo,
-    _InVal_     BOOL allow_dirs,
-    _InoutRef_  P_PIXIT p_max_width)
-{
-    P_TEMPLATE_LIST_ENTRY p_template_list_entry;
-    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(8, sizeof32(*p_template_list_entry), 1);
-    STATUS status = STATUS_OK;
-
-    for(; p_file_objinfo; p_file_objinfo = file_find_next(p_p_file_objenum))
-    {
-        BOOL is_file = (file_objinfo_type(p_file_objinfo) == FILE_OBJECT_FILE);
-
-        if(is_file || allow_dirs)
-        {
-            if(NULL != (p_template_list_entry = al_array_extend_by(p_template_list_handle, TEMPLATE_LIST_ENTRY, 1, &array_init_block, &status)))
-            {
-                quick_tblock_with_buffer_setup(p_template_list_entry->fullname_quick_tblock);
-                quick_tblock_with_buffer_setup(p_template_list_entry->leafname_quick_tblock);
-
-                if(status_ok(status = file_objinfo_name(p_file_objinfo, &p_template_list_entry->leafname_quick_tblock)))
-                if(status_ok(status = file_objenum_fullname(p_p_file_objenum, p_file_objinfo, &p_template_list_entry->fullname_quick_tblock)))
-                {
-                    PCTSTR tstr = quick_tblock_tstr(&p_template_list_entry->leafname_quick_tblock);
-                    const PIXIT width = ui_width_from_tstr(tstr);
-                    *p_max_width = MAX(*p_max_width, width);
-                    p_template_list_entry->sort_order = template_sort_order(tstr);
-                }
-            }
-        }
-
-        status_break(status);
-    }
-
-    return(status);
-}
-
-_Check_return_
-extern /*for ff_load*/ STATUS
-select_a_template(
-    _DocuRef_   P_DOCU cur_p_docu,
-    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/,
-    /*out*/ P_BOOL p_just_the_one,
-    _InVal_     BOOL allow_dirs,
-    _InRef_     PC_UI_TEXT p_ui_text_caption)
-{
-    ARRAY_HANDLE template_list_handle = 0;
-    PCTSTR p_template_name;
-    PIXIT max_width = DIALOG_SYSCHARSL_H(8); /* arbitrary minimum */
-    STATUS status = STATUS_OK;
-
-    select_template_list_source.type = UI_SOURCE_TYPE_NONE;
-
-    {
-    P_FILE_OBJENUM p_file_objenum;
-    P_FILE_OBJINFO p_file_objinfo;
-    TCHARZ wildcard_buffer[8];
-
-#if WINDOWS
-
-    /* Start with All Users Application Data / Templates directory */
-    {
-    TCHARZ templates_directory[BUF_MAX_PATHSTRING];
-
-    if(GetCommonAppDataDirectoryName(templates_directory, elemof32(templates_directory)))
-    {
-        tstr_xstrkat(templates_directory, elemof32(templates_directory),
-                       FILE_DIR_SEP_TSTR TEXT("Colton Software")
-                       FILE_DIR_SEP_TSTR TEXT("Fireworkz"));
-
-        tstr_xstrkpy(wildcard_buffer, elemof32(wildcard_buffer), FILE_WILD_MULTIPLE_ALL_TSTR);
-
-        p_file_objinfo = file_find_first_subdir(&p_file_objenum, templates_directory, wildcard_buffer, TEMPLATES_SUBDIR);
-
-        if(NULL != p_file_objenum)
-        {
-            status = list_templates_from(&template_list_handle, &p_file_objenum, p_file_objinfo, allow_dirs, &max_width);
-
-            file_find_close(&p_file_objenum);
-        }
-    }
-    } /*block*/
-
-#if 0
-    { /* Start with All Users Templates directory */
-    TCHARZ templates_directory[BUF_MAX_PATHSTRING];
-
-    if(GetCommonTemplatesDirectoryName(templates_directory))
-    {
-        /* Only enumerate the Fireworkz templates as there are loads of others in there */
-        tstr_xstrkpy(wildcard_buffer, elemof32(wildcard_buffer), TEXT("*.fwt"));
-
-        p_file_objinfo = file_find_first(&p_file_objenum, templates_directory, wildcard_buffer);
-
-        if(NULL != p_file_objenum)
-        {
-            status = list_templates_from(&template_list_handle, &p_file_objenum, p_file_objinfo, allow_dirs, &max_width);
-
-            file_find_close(&p_file_objenum);
-        }
-    }
-    } /*block*/
-
-    { /* Then add from User's Templates directory */
-    TCHARZ templates_directory[BUF_MAX_PATHSTRING];
-
-    if(GetUserTemplatesDirectoryName(templates_directory))
-    {
-        /* Only enumerate the Fireworkz templates as there are loads of others in there */
-        tstr_xstrkpy(wildcard_buffer, elemof32(wildcard_buffer), TEXT("*.fwt"));
-
-        p_file_objinfo = file_find_first(&p_file_objenum, templates_directory, wildcard_buffer);
-
-        if(NULL != p_file_objenum)
-        {
-            status = list_templates_from(&template_list_handle, &p_file_objenum, p_file_objinfo, allow_dirs, &max_width);
-
-            file_find_close(&p_file_objenum);
-        }
-    }
-    } /*block*/
-#endif
-
-#endif /* WINDOWS */
-
-    /* Add all from Fireworkz User & System directories, Templates subdir */
-    tstr_xstrkpy(wildcard_buffer, elemof32(wildcard_buffer), FILE_WILD_MULTIPLE_ALL_TSTR);
-
-    p_file_objinfo = file_find_first_subdir(&p_file_objenum, file_get_search_path(), wildcard_buffer, TEMPLATES_SUBDIR);
-
-    if(NULL != p_file_objenum)
-    {
-        status = list_templates_from(&template_list_handle, &p_file_objenum, p_file_objinfo, allow_dirs, &max_width);
-
-        file_find_close(&p_file_objenum);
-    }
-    } /*block*/
-
-    /* sort the array we built */
-    ui_source_list_fixup_tb(&template_list_handle, offsetof32(TEMPLATE_LIST_ENTRY, fullname_quick_tblock)); /* fixup both the sets of quick blocks prior to sort */
-    ui_source_list_fixup_tb(&template_list_handle, offsetof32(TEMPLATE_LIST_ENTRY, leafname_quick_tblock));
-    al_array_qsort(&template_list_handle, template_list_sort);
-    ui_source_list_fixup_tb(&template_list_handle, offsetof32(TEMPLATE_LIST_ENTRY, fullname_quick_tblock)); /* fixup both the sets of quick blocks after the sort */
-    ui_source_list_fixup_tb(&template_list_handle, offsetof32(TEMPLATE_LIST_ENTRY, leafname_quick_tblock));
-
-    p_template_name = NULL;
-
-    *p_just_the_one = (array_elements(&template_list_handle) == 1);
-
-    if(*p_just_the_one)
-        p_template_name = quick_tblock_tstr(&(array_ptr(&template_list_handle, TEMPLATE_LIST_ENTRY, 0))->fullname_quick_tblock);
-
-    if(status_ok(status) && !p_template_name)
-        /* make a source of text pointers to these elements for list box processing */
-        status = ui_source_create_tb(&template_list_handle, &select_template_list_source, UI_TEXT_TYPE_TSTR_PERM, offsetof32(TEMPLATE_LIST_ENTRY, leafname_quick_tblock));
-
-    if(status_ok(status) && !p_template_name)
-    {
-#if WINDOWS && 0
-        splash_window_remove();
-#endif
-
-        { /* make appropriate size box */
-        const PIXIT buttons_width = DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_STDCANCEL_H;
-        const PIXIT caption_width = ui_width_from_p_ui_text(p_ui_text_caption) + DIALOG_CAPTIONOVH_H;
-        PIXIT_SIZE list_size;
-        DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
-        dialog_cmd_ctl_size_estimate.p_dialog_control = &select_template_list;
-        dialog_cmd_ctl_size_estimate.p_dialog_control_data = &stdlisttext_data;
-        ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
-        dialog_cmd_ctl_size_estimate.size.x += max_width;
-        ui_list_size_estimate(array_elements(&template_list_handle), &list_size);
-        dialog_cmd_ctl_size_estimate.size.x += list_size.cx;
-        dialog_cmd_ctl_size_estimate.size.y += list_size.cy;
-        dialog_cmd_ctl_size_estimate.size.x = MAX(dialog_cmd_ctl_size_estimate.size.x, buttons_width);
-        dialog_cmd_ctl_size_estimate.size.x = MAX(dialog_cmd_ctl_size_estimate.size.x, caption_width);
-        select_template_list.relative_offset[2] = dialog_cmd_ctl_size_estimate.size.x;
-        select_template_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y;
-        } /*block*/
-
-        if(first_time_through) /* just popup the first one we think of from the sorted list */
-        {
-            first_time_through = 0;
-
-            g_selected_template = 0;
-        }
-        else
-        {
-            DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, select_template_ctl_create, elemof32(select_template_ctl_create), MSG_DIALOG_SELECT_TEMPLATE_HELP_TOPIC);
-            dialog_cmd_process_dbox.caption = *p_ui_text_caption;
-            dialog_cmd_process_dbox.p_proc_client = dialog_event_select_template;
-            dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) (&g_selected_template);
-            status = object_call_DIALOG_with_docu(cur_p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
-        }
-
-        if(status_ok(status))
-        {   /* selected template to be copied back to caller */
-            const S32 selected_template = g_selected_template;
-
-            if(array_index_is_valid(&template_list_handle, selected_template))
-                p_template_name = quick_tblock_tstr(&(array_ptr(&template_list_handle, TEMPLATE_LIST_ENTRY, selected_template))->fullname_quick_tblock);
-        }
-    }
-
-    if(status_ok(status) && (NULL != p_template_name))
-        /* selected template gets copied back to caller */
-        status = quick_tblock_tchars_add(p_quick_tblock, p_template_name, tstrlen32p1(p_template_name) /*CH_NULL*/);
-
-    {
-    ARRAY_INDEX i = array_elements(&template_list_handle);
-    while(--i >= 0)
-    {
-        P_TEMPLATE_LIST_ENTRY p_template_list_entry = array_ptr(&template_list_handle, TEMPLATE_LIST_ENTRY, i);
-        quick_tblock_dispose(&p_template_list_entry->fullname_quick_tblock);
-    }
-    } /*block*/
-
-    ui_lists_dispose_tb(&template_list_handle, &select_template_list_source, offsetof32(TEMPLATE_LIST_ENTRY, leafname_quick_tblock));
-
-    return(status);
 }
 
 /*
@@ -2314,7 +1963,7 @@ load_one_found_supporting_document(
 {
     STATUS status = STATUS_OK;
     T5_FILETYPE t5_filetype = t5_filetype_from_filename(wholename);
-    OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype);
+    OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype, FALSE);
     DOCNO docno;
 
     if(OBJECT_ID_NONE == object_id)
@@ -2346,7 +1995,7 @@ load_one_found_supporting_document(
     else
     {
         MSG_INSERT_FOREIGN msg_insert_foreign;
-        zero_struct(msg_insert_foreign);
+        zero_struct_fn(msg_insert_foreign);
 
         p_docu->flags.allow_modified_change = 0;
 
@@ -2392,7 +2041,7 @@ load_one_supporting_document(
         wholename = quick_tblock_tstr(&quick_tblock);
 
         found = file_is_file(wholename);
-        reportf(TEXT("load_one_supporting_document.1: docno: %d name(%s) found=%s"), docno, wholename, report_boolstring(found));
+        reportf(TEXT("load_one_supporting_document.1: docno=") DOCNO_TFMT TEXT(" name(%s) found=%s"), docno, wholename, report_boolstring(found));
         if(found)
             break;
 
@@ -2419,7 +2068,7 @@ load_one_supporting_document(
         }
 
         found = file_is_file(wholename);
-        reportf(TEXT("load_one_supporting_document.2: docno: %d name(%s) found=%s"), docno, wholename, report_boolstring(found));
+        reportf(TEXT("load_one_supporting_document.2: docno=") DOCNO_TFMT TEXT(" name(%s) found=%s"), docno, wholename, report_boolstring(found));
         if(found)
         {   /* note the extension we used to find it */
             status = tstr_set(&p_docu->docu_name.extension, (NULL == tstr_extension) ? extension_document_tstr : NULL);
@@ -2546,6 +2195,7 @@ load_all_files_from_dir(
         case FILETYPE_T5_WORDZ:
         case FILETYPE_T5_RESULTZ:
         case FILETYPE_T5_RECORDZ:
+        case FILETYPE_T5_HYBRID_DRAW:
             {
             QUICK_TBLOCK_WITH_BUFFER(quick_tblock, BUF_MAX_PATHSTRING);
             quick_tblock_with_buffer_setup(quick_tblock);
@@ -2717,9 +2367,10 @@ load_fireworkz_file_core(
     _In_z_      PCTSTR filename,
     _InVal_     BOOL fReadOnly)
 {
+    STATUS status;
+    BOOL need_to_load = TRUE;
     DOCU_NAME docu_name;
     DOCNO docno = DOCNO_NONE;
-    STATUS status;
 
     *p_docno = DOCNO_NONE;
 
@@ -2735,6 +2386,11 @@ load_fireworkz_file_core(
 
         status = load_is_file_loaded(&docno, &docu_name);
 
+        if(ERR_DUPLICATE_FILE == status)
+        {   /* already loaded this file */
+            need_to_load = FALSE;
+            status = STATUS_OK; /* allow caller to continue with this, muting error */
+        }
         if(STATUS_DONE == status)
         {   /* SKS 15jun95 we've found the corresponding thunk for this document, which is probably not correctly formed name-wise */
             DOCU_NAME docu_name_copy;
@@ -2749,11 +2405,14 @@ load_fireworkz_file_core(
         }
     }
 
-    if(status_ok(status))
-        status = new_docno_using(&docno, filename, &docu_name, fReadOnly);
+    if(need_to_load)
+    {
+        if(status_ok(status))
+            status = new_docno_using(&docno, filename, &docu_name, fReadOnly);
 
-    if(status_ok(status))
-        status_assert(maeve_event(p_docu_from_docno(docno), T5_MSG_SUPPORTER_LOADED, P_DATA_NONE));
+        if(status_ok(status))
+            status_assert(maeve_event(p_docu_from_docno(docno), T5_MSG_SUPPORTER_LOADED, P_DATA_NONE));
+    }
 
     if(status_ok(status))
         status = command_set_current_docu(p_docu_from_docno(docno));
@@ -2799,43 +2458,39 @@ load_this_file_core(
     _In_opt_z_  PCTSTR filename,
     _InVal_     BOOL fReadOnly)
 {
-    STATUS status = ensure_memory_froth();
+    const OBJECT_ID object_id = OBJECT_ID_SKEL;
+    PC_CONSTRUCT_TABLE p_construct_table;
+    ARGLIST_HANDLE arglist_handle;
+    STATUS status;
 
-    if(status_ok(status))
+    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
     {
-        const OBJECT_ID object_id = OBJECT_ID_SKEL;
-        PC_CONSTRUCT_TABLE p_construct_table;
-        ARGLIST_HANDLE arglist_handle;
+        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
+        P_ARGLIST_ARG p_arg;
+        QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
+        quick_tblock_with_buffer_setup(quick_tblock);
 
-        if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
+        if(NULL == filename)
         {
-            const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
-            P_ARGLIST_ARG p_arg;
-            QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
-            quick_tblock_with_buffer_setup(quick_tblock);
-
-            if(NULL == filename)
-            {
-                arg_dispose(&arglist_handle, 0);
-            }
-            else if(status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, filename, strlen_with_NULLCH)))
-            {
-                 p_args[0].val.tstr = quick_tblock_tstr(&quick_tblock);
-            }
-
-            if(fReadOnly && arg_present(&arglist_handle, 1, &p_arg))
-            {
-                assert(T5_CMD_LOAD == t5_message);
-                p_arg->val.fBool = fReadOnly;
-            }
-
-            if(status_ok(status))
-                status = execute_command(cur_p_docu, t5_message, &arglist_handle, object_id);
-
-            quick_tblock_dispose(&quick_tblock);
-
-            arglist_dispose(&arglist_handle);
+            arg_dispose(&arglist_handle, 0);
         }
+        else if(status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, filename, strlen_with_NULLCH)))
+        {
+            p_args[0].val.tstr = quick_tblock_tstr(&quick_tblock);
+        }
+
+        if(fReadOnly && arg_present(&arglist_handle, 1, &p_arg))
+        {
+            assert(T5_CMD_LOAD == t5_message);
+            p_arg->val.fBool = fReadOnly;
+        }
+
+        if(status_ok(status))
+            status = execute_command(cur_p_docu, t5_message, &arglist_handle, object_id);
+
+        quick_tblock_dispose(&quick_tblock);
+
+        arglist_dispose(&arglist_handle);
     }
 
     return(status);
@@ -2902,6 +2557,8 @@ load_file_for_windows_startup_rl(
     switch(t5_filetype)
     {
     case FILETYPE_T5_FIREWORKZ:
+    case FILETYPE_T5_HYBRID_DRAW:
+        /* Windows doesn't discriminate Wordz/Resultz/Recordz */
         status_return(load_this_fireworkz_file_rl(P_DOCU_NONE, filename, FALSE /*fReadOnly*/));
         break;
 
@@ -3039,7 +2696,7 @@ load_and_print_this_file_rl(
 *
 ******************************************************************************/
 
-static void
+static inline void
 load_template_set_date(
     _InVal_     DOCNO docno)
 {
@@ -3078,20 +2735,25 @@ load_this_template(
 
 T5_CMD_PROTO(extern, t5_cmd_load_template)
 {
-    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
-    PCTSTR filename_template;
+    PCTSTR filename_template = NULL;
     DOCNO docno = DOCNO_NONE;
     STATUS status = STATUS_OK;
     BOOL just_the_one = FALSE;
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 100);
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 256);
     quick_tblock_with_buffer_setup(quick_tblock);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    if(arg_is_present(p_args, 0))
+    if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {
-        filename_template = p_args[0].val.tstr;
+        const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
+        if(arg_is_present(p_args, 0))
+            filename_template = p_args[0].val.tstr;
+    }
+
+    if(NULL != filename_template)
+    {
         if(file_is_rooted(filename_template))
         {
             if(file_is_file(filename_template))
@@ -3114,7 +2776,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
     {
         static const UI_TEXT caption = UI_TEXT_INIT_RESID(MSG_DIALOG_NEW_DOCUMENT_CAPTION);
 
-        status = select_a_template(p_docu, &quick_tblock, &just_the_one, RISCOS ? TRUE : FALSE, &caption);
+        status = select_a_template(p_docu, &quick_tblock, &just_the_one, RISCOS_OR_WINDOWS(TRUE, FALSE), &caption);
 
         filename_template = status_ok(status) ? quick_tblock_tstr(&quick_tblock) : NULL;
     }
@@ -3137,6 +2799,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
         {
             if(status_ok(status = name_set_untitled_with(&docu_name, file_leafname(filename_template))))
                 if(status_ok(status = new_docno_using(&docno, filename_template, &docu_name, FALSE /*fReadOnly*/)))
+                    /* SKS 21jan96 stop those wusses wingeing about file date in templates */
                     load_template_set_date(docno);
 
             if(FILE_ERR_NOTFOUND == status)

@@ -10,13 +10,16 @@
 
 #define CPLUSPLUSINTERFACE
 
+#if _MSC_VER >= 1910 /* VS2017 or later */
+#pragma warning(disable:5039) /* 'function' : pointer or reference to potentially throwing function passed to extern C function under -EHc. Undefined behavior may occur if this function throws an exception */
+#endif
+
 #include "common/gflags.h"
 
 #pragma warning(disable:4263) /* 'x' : member function does not override any base class virtual member function */
 #pragma warning(disable:4264) /* 'x' : no override available for virtual member function from base 'y'; function is hidden */
 
 #if _MSC_VER >= 1910 /* VS2017 or later */
-#pragma warning(disable:5039) /* 'function' : pointer or reference to potentially throwing function passed to extern C function under -EHc. Undefined behavior may occur if this function throws an exception */
 #pragma warning(disable:4596) /* Illegal qualified name in member declaration */
 #endif
 

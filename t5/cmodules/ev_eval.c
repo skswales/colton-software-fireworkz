@@ -545,8 +545,10 @@ array_range_proc_number_MAX(
 {
     const F64 x = ss_data_get_real(p_ss_data);
     assert(ss_data_is_real(&p_stat_block->running_data));
-    if((0 == p_stat_block->count) || (x > ss_data_get_real(&p_stat_block->running_data)))
+    if(0 == p_stat_block->count)
         ss_data_set_real(&p_stat_block->running_data, x);
+    else
+        ss_data_set_real(&p_stat_block->running_data, fmax(x, ss_data_get_real(&p_stat_block->running_data)));
 }
 
 static void
@@ -556,8 +558,10 @@ array_range_proc_number_MIN(
 {
     const F64 x = ss_data_get_real(p_ss_data);
     assert(ss_data_is_real(&p_stat_block->running_data));
-    if((0 == p_stat_block->count) || (x < ss_data_get_real(&p_stat_block->running_data)))
+    if(0 == p_stat_block->count)
         ss_data_set_real(&p_stat_block->running_data, x);
+    else
+        ss_data_set_real(&p_stat_block->running_data, fmin(x, ss_data_get_real(&p_stat_block->running_data)));
 }
 
 static void
@@ -566,10 +570,11 @@ array_range_proc_number_running_data_add(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
     const F64 x = ss_data_get_real(p_ss_data);
+    assert(ss_data_is_real(&p_stat_block->running_data));
     if(0 == p_stat_block->count)
         ss_data_set_real(&p_stat_block->running_data, x);
     else
-        p_stat_block->running_data.arg.fp += x;
+        stat_block_running_data_add_real(p_stat_block, x);
 }
 
 static void
@@ -580,13 +585,13 @@ array_range_proc_number_AVEDEV(
     if(1 == p_stat_block->pass)
     {   /* first pass adds up all values to calculate the mean */
         const F64 x = ss_data_get_real(p_ss_data);
-        p_stat_block->running_data.arg.fp += x; /* uniform processing for sum of values */
+        stat_block_running_data_add_real(p_stat_block, x); /* uniform processing for sum of values */
     }
     else/* 2 == p_stat_block->pass */
     {   /* second pass adds up all |(values - mean)| to calculate the mean absolute deviation */
         const F64 dx = ss_data_get_real(p_ss_data) - p_stat_block->mean;
         const F64 x = fabs(dx);
-        p_stat_block->running_data.arg.fp += x; /* uniform processing for sum of values */
+        stat_block_running_data_add_real(p_stat_block, x); /* uniform processing for sum of values */
     }
 }
 
@@ -609,7 +614,7 @@ array_range_proc_number_GEOMEAN(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
     const F64 x = log(ss_data_get_real(p_ss_data));
-    p_stat_block->running_data.arg.fp += x; /* uniform processing for sum of values */
+    stat_block_running_data_add_real(p_stat_block, x);
 }
 
 static void
@@ -618,7 +623,7 @@ array_range_proc_number_HARMEAN(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
     const F64 x = 1.0 / ss_data_get_real(p_ss_data);
-    p_stat_block->running_data.arg.fp += x; /* uniform processing for sum of values */
+    stat_block_running_data_add_real(p_stat_block, x);
 }
 
 static void
@@ -661,9 +666,9 @@ array_range_proc_number_MULTINOMIAL(
     const F64 x = floor(ss_data_get_real(p_ss_data));
     SS_DATA fact_term;
 
-    p_stat_block->running_data.arg.fp += x; /* uniform processing for sum of values */
+    stat_block_running_data_add_real(p_stat_block, x); /* uniform processing for sum of values */
 
-    factorial_calc(&fact_term, (S32) x); /* may return integer or fp or error */
+    factorial_calc(&fact_term, (S32) x); /* may return integer or real or error */
 
     if(!two_nums_multiply_propagate_error(&p_stat_block->multinomial_product, &p_stat_block->multinomial_product, &fact_term)) /* uniform processing for product of values */
         ss_data_set_error(&p_stat_block->multinomial_product, EVAL_ERR_ARGRANGE);
@@ -694,7 +699,7 @@ array_range_proc_number_simple_statistics(
         F64 x = ss_data_get_real(p_ss_data) - p_stat_block->shift_value;
         F64 x_squared = mx_fsquare(x);
         p_stat_block->sum_of_x_squared += x_squared;
-        p_stat_block->running_data.arg.fp += x;
+        stat_block_running_data_add_real(p_stat_block, x);
     }
 }
 
@@ -748,7 +753,7 @@ array_range_proc_number_KURT_or_SKEW(
             F64 x = ss_data_get_real(p_ss_data) - p_stat_block->shift_value;
             F64 x_squared = mx_fsquare(x);
             p_stat_block->sum_of_x_squared += x_squared;
-            p_stat_block->running_data.arg.fp += x;
+            stat_block_running_data_add_real(p_stat_block, x);
         }
     }
     else /* 2 == p_stat_block->pass */
@@ -779,7 +784,7 @@ array_range_proc_number_SUMSQ(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
     const F64 x_squared = mx_fsquare(ss_data_get_real(p_ss_data));
-    p_stat_block->running_data.arg.fp += x_squared; /* uniform processing for sum of values */
+    stat_block_running_data_add_real(p_stat_block, x_squared); /* uniform processing for sum of values */
 }
 
 static void
@@ -861,32 +866,41 @@ array_range_proc_number_try_integer(
 {
     BOOL int_done = FALSE;
 
-    switch(p_stat_block->exec_array_range_id)
-    {
-    default:
+    if(!ss_data_is_integer(&p_stat_block->running_data))
         return(FALSE);
 
+    switch(p_stat_block->exec_array_range_id)
+    {
     case ARRAY_RANGE_MAX:
     case ARRAY_RANGE_MAXA:
-        if((0 == p_stat_block->count) || (ss_data_get_integer(p_ss_data) > ss_data_get_integer(&p_stat_block->running_data)))
-            ss_data_set_integer(&p_stat_block->running_data, ss_data_get_integer(p_ss_data));
-        int_done = 1;
+        if(ss_data_is_integer(p_ss_data))
+        {
+            if( (0 == p_stat_block->count) || (ss_data_get_integer(p_ss_data) > ss_data_get_integer(&p_stat_block->running_data)) )
+                ss_data_set_integer(&p_stat_block->running_data, ss_data_get_integer(p_ss_data));
+            int_done = 1;
+        }
         break;
 
     case ARRAY_RANGE_MIN:
     case ARRAY_RANGE_MINA:
-        if((0 == p_stat_block->count) || (ss_data_get_integer(p_ss_data) < ss_data_get_integer(&p_stat_block->running_data)))
-            ss_data_set_integer(&p_stat_block->running_data, ss_data_get_integer(p_ss_data));
-        int_done = 1;
+        if(ss_data_is_integer(p_ss_data))
+        {
+            if( (0 == p_stat_block->count) || (ss_data_get_integer(p_ss_data) < ss_data_get_integer(&p_stat_block->running_data)) )
+                ss_data_set_integer(&p_stat_block->running_data, ss_data_get_integer(p_ss_data));
+            int_done = 1;
+        }
         break;
 
     case ARRAY_RANGE_SUM:
     case ARRAY_RANGE_AVERAGE:
     case ARRAY_RANGE_AVERAGEA:
         /* only dealing with individual narrower integer types here but SKS shows this may eventually overflow WORD16 */
-        ss_data_set_integer(&p_stat_block->running_data, ss_data_get_integer(p_ss_data) + ss_data_get_integer(&p_stat_block->running_data));
+        ss_data_add(&p_stat_block->running_data, p_ss_data, &p_stat_block->running_data);
         int_done = 1;
         break;
+
+    default:
+        return(FALSE);
     }
 
     if(!int_done)
@@ -902,10 +916,6 @@ array_range_proc_number(
     _InoutRef_  P_STAT_BLOCK p_stat_block,
     _InoutRef_  P_SS_DATA p_ss_data)
 {
-    BOOL size_worry = FALSE;
-
-    assert(0 != p_stat_block->exec_array_range_id);
-
     switch(p_stat_block->exec_array_range_id)
     {
     case ARRAY_RANGE_AND:
@@ -914,19 +924,13 @@ array_range_proc_number(
         array_range_proc_number_do_logical(p_stat_block, p_ss_data);
         return;
 
-    case ARRAY_RANGE_SUM:
-    case ARRAY_RANGE_AVERAGE:
-    case ARRAY_RANGE_AVERAGEA:
-        size_worry = TRUE; /* need to worry about adding >16-bit integers and overflowing */
-        break;
-
     default:
+        assert(0 != p_stat_block->exec_array_range_id);
         break;
     }
 
-    if(TWO_INTEGERS == two_nums_type_match(p_ss_data, &p_stat_block->running_data, size_worry))
-        if(array_range_proc_number_try_integer(p_stat_block, p_ss_data))
-            return;
+    if(array_range_proc_number_try_integer(p_stat_block, p_ss_data))
+        return;
 
     /* can't be done in integer, so ensure promoted to real */
     if(!ss_data_is_real(p_ss_data))
@@ -1026,15 +1030,14 @@ array_range_proc_number(
     case ARRAY_RANGE_OR:
     case ARRAY_RANGE_XOR:
         assert0();
+        break;
 
-        /*FALLTHRU*/
-#endif
-
-#if CHECKING
     case ARRAY_RANGE_COUNT:
     case ARRAY_RANGE_COUNTA:
     case ARRAY_RANGE_COUNTBLANK:
-#endif
+        break;
+#endif /*CHECKING*/
+
     default:
         break;
     }
@@ -1118,7 +1121,6 @@ array_range_proc_item(
     {
     case DATA_ID_REAL:
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         array_range_proc_number(p_stat_block, p_ss_data);
@@ -1162,22 +1164,21 @@ array_range_proc_finish_running_data(
     {
         switch(ss_data_get_data_id(&p_stat_block->running_data))
         {
-        default: default_unhandled();
-#if CHECKING
-        case DATA_ID_DATE:
-#endif
-            *p_ss_data = p_stat_block->running_data;
-            break;
-
         case DATA_ID_REAL:
             ss_data_set_real_try_integer(p_ss_data, ss_data_get_real(&p_stat_block->running_data));
             break;
 
         /*case DATA_ID_LOGICAL:*/ /* really shouldn't occur */
-        case DATA_ID_WORD8:
         case DATA_ID_WORD16:
         case DATA_ID_WORD32:
             ss_data_set_integer(p_ss_data, ss_data_get_integer(&p_stat_block->running_data)); /* sets appropriate integer size */
+            break;
+
+        default: default_unhandled();
+#if CHECKING
+        case DATA_ID_DATE:
+#endif
+            *p_ss_data = p_stat_block->running_data;
             break;
         }
     }
@@ -1379,7 +1380,7 @@ array_range_proc_finish_MULTINOMIAL(
     assert(ss_data_is_real(&p_stat_block->multinomial_product));
 
     /* calculate the factorial of the sum of the values */
-    factorial_calc(&fact_term, (S32) ss_data_get_real(&p_stat_block->running_data)); /* may return integer or fp or error */
+    factorial_calc(&fact_term, (S32) ss_data_get_real(&p_stat_block->running_data)); /* may return integer or real or error */
 
     /* divide by the product of the factorial of the values */
     if(!two_nums_divide_propagate_error(p_ss_data, &fact_term, &p_stat_block->multinomial_product)) /* uniform processing for product of values */
@@ -1721,7 +1722,7 @@ array_range_proc_finish_IRR(
         F64 this_npv = ss_data_get_real(&p_stat_block->running_data);
         F64 this_r = p_stat_block->r;
 
-        reportf(TEXT("IRR loop %d: this_npv=%g, this_r=%g"), p_stat_block->iteration_count, this_npv, this_r);
+        //reportf(TEXT("IRR loop %d: this_npv=%g, this_r=%g"), p_stat_block->iteration_count, this_npv, this_r);
         /* finish condition is target of npv ~= 0 */
         if(fabs(this_npv) < 0.0000001)
         {
@@ -1736,7 +1737,7 @@ array_range_proc_finish_IRR(
         else
         {   /* new trial rate calculated using secant method */
             F64 step_r = this_npv * (this_r - p_stat_block->last_r) / (this_npv - p_stat_block->last_npv);
-            reportf(TEXT("IRR loop %d: this_npv=%g, last_npv=%g, this_r=%g, last_r=%g -> step_r=%g"), p_stat_block->iteration_count, this_npv, p_stat_block->last_npv, this_r, p_stat_block->last_r, step_r);
+            //reportf(TEXT("IRR loop %d: this_npv=%g, last_npv=%g, this_r=%g, last_r=%g -> step_r=%g"), p_stat_block->iteration_count, this_npv, p_stat_block->last_npv, this_r, p_stat_block->last_r, step_r);
             p_stat_block->r -= step_r;
         }
 
@@ -1942,24 +1943,21 @@ custom_jmp(
         stack_base[stack_offset].stack_flags.type = INTERNAL_ERROR;
     else
     {
-        P_EV_CUSTOM p_ev_custom;
-        S32 res;
+        S32 res = 0;
+        const PC_EV_CUSTOM p_ev_custom = array_ptrc(&custom_def_deptable.h_table, EV_CUSTOM, p_stack_entry->data.stack_executing_custom.custom_num);
         EV_ROW first_row, last_row;
         EV_SLR slr;
 
-        res = 0;
-
-        p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, p_stack_entry->data.stack_executing_custom.custom_num);
-
         last_row  = ev_numrow(ev_slr_docno(p_ev_slr));
         first_row = p_ev_custom->owner.row;
-        slr       = *p_ev_slr;
-        slr.row  += offset;
 
-        if(slr.docno != stack_base[stack_offset].slr.docno || /* equivalent UBF */
-             slr.col != stack_base[stack_offset].slr.col   || /* equivalent UBF */
-             slr.row >= last_row             ||
-             slr.row <= first_row)
+        slr = *p_ev_slr;
+        slr.row += offset;
+
+        if( (slr.docno != stack_base[stack_offset].slr.docno /* equivalent UBF */) ||
+              (slr.col != stack_base[stack_offset].slr.col   /* equivalent UBF */) ||
+              (slr.row >= last_row)     ||
+              (slr.row <= first_row)    )
             res = create_error(EVAL_ERR_BADGOTO);
         else
             p_stack_entry->data.stack_executing_custom.next_slot = slr;
@@ -1983,7 +1981,7 @@ static void
 custom_result_slr_deref(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
-    if((DATA_ID_SLR == ss_data_get_data_id(p_ss_data)) && ev_doc_check_is_custom(ev_slr_docno(&p_ss_data->arg.slr)))
+    if( (DATA_ID_SLR == ss_data_get_data_id(p_ss_data)) && ev_doc_check_is_custom(ev_slr_docno(&p_ss_data->arg.slr)) )
         ev_slr_deref(p_ss_data, &p_ss_data->arg.slr);
 }
 
@@ -2237,13 +2235,20 @@ lookup_block_init(
 
 static S32
 hvlookup_using_bfind(
-    P_STACK_LOOKUP p_stack_lookup,
-    _InVal_     S32 n_entries)
+    _InRef_     P_STACK_LOOKUP p_stack_lookup)
 {
-    P_LOOKUP_BLOCK p_lookup_block = p_stack_lookup->p_lookup_block;
+    const P_LOOKUP_BLOCK p_lookup_block = p_stack_lookup->p_lookup_block;
     S32 lookup_res = 0; /* item not found */
+    S32 x_size, y_size;
+    S32 n_entries;
 
-    if(n_entries)
+    p_lookup_block->lookup_horz = (LOOKUP_HLOOKUP == p_lookup_block->lookup_id);
+
+    array_range_sizes(&p_stack_lookup->arg1, &x_size, &y_size);
+
+    n_entries = p_lookup_block->lookup_horz ? x_size : y_size;
+
+    if(0 != n_entries)
     {
         S32 e = n_entries;
         S32 s = 0;
@@ -2332,11 +2337,21 @@ lookup_process(
     P_STACK_LOOKUP p_stack_lookup,
     _InVal_     MONOTIME time_started)
 {
-    P_LOOKUP_BLOCK p_lookup_block = p_stack_lookup->p_lookup_block;
+    const P_LOOKUP_BLOCK p_lookup_block = p_stack_lookup->p_lookup_block;
     S32 lookup_res = 0;
     S32 x_size, y_size;
     S32 limit;
     BOOL allow_wild_match = FALSE;
+
+    switch(p_lookup_block->lookup_id)
+    {
+    case LOOKUP_HLOOKUP:
+    case LOOKUP_VLOOKUP:
+        return(hvlookup_using_bfind(p_stack_lookup));
+
+    default:
+        break;
+    }
 
     array_range_sizes(&p_stack_lookup->arg1, &x_size, &y_size);
 
@@ -2344,15 +2359,10 @@ lookup_process(
     {
     default: default_unhandled();
 #if CHECKING
-    case LOOKUP_HLOOKUP:
-    case LOOKUP_VLOOKUP:
-#endif
-        p_lookup_block->lookup_horz = (LOOKUP_HLOOKUP == p_lookup_block->lookup_id);
-        return(hvlookup_using_bfind(p_stack_lookup, p_lookup_block->lookup_horz ? x_size : y_size));
-
     case LOOKUP_LOOKUP:
-        p_lookup_block->lookup_horz = (y_size == 1);
+#endif
         allow_wild_match = TRUE; /* SKS 24apr96 - I think I'd changed this around 1.23 time, but then h/vlookup would have been wrong before too */
+        p_lookup_block->lookup_horz = (y_size == 1);
         break;
 
     case LOOKUP_MATCH:
@@ -2439,6 +2449,9 @@ lookup_process(
 
         p_lookup_block->ix += 1;
 
+        if(ev_doc_foreground())
+            continue;
+
         /* check the time */
         if(monotime_diff(time_started) > BACKGROUND_SLICE)
         {
@@ -2480,10 +2493,11 @@ lookup_finish(
 #endif
             {
             SS_DATA ss_data;
+            const S32 arg2_index = ss_data_get_integer(&p_stack_lookup->arg2) - 1;
             (void) array_range_index(&ss_data,
                                      &p_stack_lookup->arg1,
-                                     p_lookup_block->lookup_horz ? p_lookup_block->ix_match : ss_data_get_integer(&p_stack_lookup->arg2) - 1,
-                                     p_lookup_block->lookup_horz ? ss_data_get_integer(&p_stack_lookup->arg2) - 1 : p_lookup_block->ix_match,
+                                     p_lookup_block->lookup_horz ? p_lookup_block->ix_match : arg2_index,
+                                     p_lookup_block->lookup_horz ? arg2_index : p_lookup_block->ix_match,
                                      EM_ANY);
             status_assert(ss_data_resource_copy(p_ss_data_res, &ss_data));
             ss_data_free_resources(&ss_data);
@@ -2504,6 +2518,20 @@ lookup_finish(
             }
 
         case LOOKUP_MATCH:
+            if( (p_lookup_block->ix_match >= 0) && (DATA_ID_RANGE == ss_data_get_data_id(&p_stack_lookup->arg1)) )
+            {   /* return a cell reference corresponding to the matched index in the lookup_data */
+                (void) array_range_index(p_ss_data_res,
+                                         &p_stack_lookup->arg1,
+                                         p_lookup_block->lookup_horz ? p_lookup_block->ix_match : 0,
+                                         p_lookup_block->lookup_horz ? 0 : p_lookup_block->ix_match,
+                                         EM_SLR);
+                if(DATA_ID_SLR == ss_data_get_data_id(p_ss_data_res))
+                    break;
+                assert(DATA_ID_SLR == ss_data_get_data_id(p_ss_data_res));
+                ss_data_free_resources(p_ss_data_res);
+            }
+
+            /* return one-based position in the lookup_data */
             ss_data_set_integer(p_ss_data_res, p_lookup_block->ix_match + 1);
             break;
         }
@@ -2562,6 +2590,34 @@ poke_output(
 
     switch(ss_data_get_data_id(p_ss_data_out))
     {
+    case DATA_ID_ARRAY:
+        {
+        const P_SS_DATA p_ss_data = (P_SS_DATA) ss_array_element_index_borrow_check(p_ss_data_out, ix, iy);
+
+        if(PTR_IS_NONE(p_ss_data))
+        {
+            status = create_error(EVAL_ERR_SUBSCRIPT);
+            break;
+        }
+
+        switch(ss_data_get_data_id(p_ss_data))
+        {
+        case DATA_ID_SLR:
+            /* SKS 04sep95 allows set_value to poke arrays e.g. set_value({a1,b1,c1,d1},{1,2,3,4}) */
+            /* the important case is obviously when using index as l-value e.g. set_value(index(a11d16,1,1,4,row),a2d2) */
+            status = poke_cell(&p_ss_data->arg.slr, p_ss_data_in, p_ev_slr_cur);
+            break;
+
+        default:
+            /* the case where we get here normally is when doing set_value(a1,value,ix,iy) - see SETVALUE */
+            ss_data_free_resources(p_ss_data);
+            status_assert(ss_data_resource_copy(p_ss_data, p_ss_data_in));
+            break;
+        }
+
+        break;
+        }
+
     case DATA_ID_SLR:
         status = poke_cell(&p_ss_data_out->arg.slr, p_ss_data_in, p_ev_slr_cur);
         break;
@@ -2577,32 +2633,6 @@ poke_output(
             (ev_slr_col(&ev_slr) < ev_slr_col(&p_ss_data_out->arg.range.e)) &&
             (ev_slr_row(&ev_slr) < ev_slr_row(&p_ss_data_out->arg.range.e)) )
             status = poke_cell(&ev_slr, p_ss_data_in, p_ev_slr_cur);
-        else
-            status = create_error(EVAL_ERR_SUBSCRIPT);
-        break;
-        }
-
-    case DATA_ID_ARRAY:
-        {
-        if((ix >= 0) && (iy >= 0) && (ix < p_ss_data_out->arg.ss_array.x_size) && (iy < p_ss_data_out->arg.ss_array.y_size))
-        {
-            P_SS_DATA p_ss_data = (P_SS_DATA) ss_array_element_index_borrow(p_ss_data_out, ix, iy);
-
-            switch(ss_data_get_data_id(p_ss_data))
-            {
-            case DATA_ID_SLR:
-                /* SKS 04sep95 allows set_value to poke arrays e.g. set_value({a1,b1,c1,d1},{1,2,3,4}) */
-                /* the important case is obviously when using index as l-value e.g. set_value(index(a11d16,1,1,4,row),a2d2) */
-                status = poke_cell(&p_ss_data->arg.slr, p_ss_data_in, p_ev_slr_cur);
-                break;
-
-            default:
-                /* the case where we get here normally is when doing set_value(a1,value,ix,iy) - see SETVALUE */
-                ss_data_free_resources(p_ss_data);
-                status_assert(ss_data_resource_copy(p_ss_data, p_ss_data_in));
-                break;
-            }
-        }
         else
             status = create_error(EVAL_ERR_SUBSCRIPT);
         break;
@@ -2716,7 +2746,9 @@ process_control(
 
         /* if true, skip to next statement */
         if(ss_data_get_logical(args[0]))
+        {
             custom_jmp(&current_slot, 1, eval_stack_base - 1);
+        }
         else
         {
             /* after if(FALSE), look for:
@@ -2844,15 +2876,8 @@ process_control(
 
     case CONTROL_BREAK:
         {
-        S32 loop_count;
+        S32 loop_count = n_args ? MAX(1, ss_data_get_integer(args[0])) : 1;
         P_STACK_ENTRY p_stack_entry;
-
-        if(n_args)
-            loop_count = (S32) ss_data_get_integer(args[0]);
-        else
-            loop_count = 1;
-
-        loop_count = MAX(1, loop_count);
 
         p_stack_entry = &stack_base[stack_offset];
         while(loop_count--)
@@ -3026,8 +3051,8 @@ process_control_search(
             }
             else if(!nest)
             {
-                if(p_ev_cell->ev_parms.control == (unsigned) block_end_maybe1 ||
-                   p_ev_cell->ev_parms.control == (unsigned) block_end_maybe2)
+                if( (p_ev_cell->ev_parms.control == (unsigned) block_end_maybe1) ||
+                    (p_ev_cell->ev_parms.control == (unsigned) block_end_maybe2) )
                 {
                     found_type = p_ev_cell->ev_parms.control;
                     found = 1;
@@ -3652,7 +3677,7 @@ ev_recalc_pass_setvalue(void)
     ss_data_set_blank(&ss_data_result);
 
     /* special array indirection mode with first parm == SLR and extra indices supplied */
-    if(sub_array_mode && (DATA_ID_SLR == ss_data_get_data_id(&p_stack_setvalue->ss_data_arg_0)))
+    if( sub_array_mode && (DATA_ID_SLR == ss_data_get_data_id(&p_stack_setvalue->ss_data_arg_0)) )
     {
         P_EV_CELL p_ev_cell;
         S32 res;
@@ -3672,7 +3697,7 @@ ev_recalc_pass_setvalue(void)
                 ss_data_temp.local_data = 1;
                 if(DATA_ID_ARRAY != ss_data_get_data_id(&ss_data_temp))
                     ss_data_free_resources(&ss_data_temp);
-                p_ev_cell->ev_parms.data_id = DATA_ID_BLANK;
+                p_ev_cell->ev_parms.data_id = UBF_PACK(DATA_ID_BLANK);
             }
 
             array_range_sizes(&p_stack_setvalue->ss_data_arg_1, &x_size, &y_size);
@@ -3695,8 +3720,8 @@ ev_recalc_pass_setvalue(void)
     {
         switch(ss_data_get_data_id(&p_stack_setvalue->ss_data_arg_0))
         {
-        case DATA_ID_RANGE:
         case DATA_ID_ARRAY:
+        case DATA_ID_RANGE:
             {
             BOOL first = 1;
             S32 x_size, y_size, ix_x, ix_y, x_size_in, y_size_in, ix_s = 0, iy_s = 0;
@@ -3723,8 +3748,8 @@ ev_recalc_pass_setvalue(void)
 
                     switch(ss_data_get_data_id(&p_stack_setvalue->ss_data_arg_1))
                     {
-                    case DATA_ID_RANGE:
                     case DATA_ID_ARRAY:
+                    case DATA_ID_RANGE:
                         {
                         S32 ix_x_in = ix_x - ix_s;
                         S32 ix_y_in = ix_y - iy_s;
@@ -3802,7 +3827,7 @@ ev_recalc_pass_array_range_arg(void)
 
     while(p_array_range_block->arg_ix < p_array_range_block->n_args)
     {
-        P_SS_DATA p_ss_data_arg = &p_array_range_block->args[p_array_range_block->arg_ix];
+        const P_SS_DATA p_ss_data_arg = &p_array_range_block->args[p_array_range_block->arg_ix];
 
         switch(p_array_range_block->type = ss_data_get_data_id(p_ss_data_arg))
         {
@@ -3876,6 +3901,11 @@ ev_recalc_pass_array_range(
 
         switch(p_array_range_block->type)
         {
+        case DATA_ID_ARRAY:
+            if(array_scan_element(&p_array_range_block->array_scan_block, &element_data, EM_CONST) == RPN_FRM_END)
+                at_end = TRUE;
+            break;
+
         case DATA_ID_RANGE:
             if(range_scan_element(&p_array_range_block->range_scan_block, &element_data, EM_CONST) == RPN_FRM_END)
                 at_end = TRUE;
@@ -3883,11 +3913,6 @@ ev_recalc_pass_array_range(
 
         case DATA_ID_FIELD:
             if(field_scan_element(&p_array_range_block->array_scan_block, &element_data, EM_CONST) == RPN_FRM_END)
-                at_end = TRUE;
-            break;
-
-        case DATA_ID_ARRAY:
-            if(array_scan_element(&p_array_range_block->array_scan_block, &element_data, EM_CONST) == RPN_FRM_END)
                 at_end = TRUE;
             break;
 
@@ -3901,6 +3926,9 @@ ev_recalc_pass_array_range(
 
         array_range_proc_item(&p_array_range_block->stat_block, &element_data);
         ss_data_free_resources(&element_data);
+
+        if(ev_doc_foreground())
+            continue;
 
 #if TRACE_ALLOWED
         if(monotime_diff(time_started) > (trace_is_on()
@@ -4026,41 +4054,18 @@ ev_recalc_pass_end(void)
     global_flags.lock = 0;
 }
 
-extern void
-ev_recalc(void)
+static void
+ev_recalc_pass_internal_error(void)
 {
-    MONOTIME time_started;
-#ifndef __cplusplus
-    P_PROC_SIGNAL oldfpe = NULL;
-    int jmpval;
-#endif
+    stack_zap();
 
-    if(!ev_recalc_pass_start())
-        return;
+    cell_set_error(&stack_base[stack_offset].slr, /*create_error*/(EVAL_ERR_INTERNAL));
+}
 
-    time_started = monotime();
-
-#ifndef __cplusplus
-
-    oldfpe = signal(SIGFPE, (P_PROC_SIGNAL) ev_recalc_signal_handler);
-
-    /* catch FP errors etc. */
-    if((jmpval = setjmp(ev_recalc_jmp_buf)) != 0)
-    {
-        reportf(TEXT("*** ev_recalc setjmp returned from signal handler ***"));
-#ifndef __cplusplus
-        signal(SIGFPE, oldfpe); /* restore old handler */
-#endif /* __cplusplus */
-        assert(eval_rpn_stack_at >= 0);
-        stack_set(eval_rpn_stack_at);
-        ss_data_set_error(&stack_base[eval_rpn_stack_at].data.stack_in_calc.result_data,
-            (jmpval == JMPVAL_FPERROR) ? EVAL_ERR_FPERROR : jmpval);
-        /*ev_recalc_pass_end();*/
-        global_flags.lock = 0; /* only the essentials */
-        return;
-    }
-
-#endif /* __cplusplus */
+static void
+ev_recalc_pass_loop(void)
+{
+    const MONOTIME time_started = monotime();
 
     for(;;)
     {
@@ -4068,7 +4073,8 @@ ev_recalc(void)
         switch(stack_base[stack_offset].stack_flags.type)
         {
         case NEXT_SLOT:
-            if(ev_recalc_pass_next_slot()) goto break_loop;
+            if(ev_recalc_pass_next_slot())
+                goto break_loop;
             break;
 
         case CALC_SLOT:
@@ -4104,9 +4110,7 @@ ev_recalc(void)
             break;
 
         case EXECUTING_MACRO:
-            /* whilst executing macro, select
-             * next sequential cell for evaluation
-             */
+            /* whilst executing macro, select next sequential cell for evaluation */
             custom_sequence(&stack_base[stack_offset]);
             break;
 
@@ -4131,10 +4135,9 @@ ev_recalc(void)
             break;
 
         /* all other states are treated as an error condition */
+        default: default_unhandled();
         case INTERNAL_ERROR:
-        default:
-            stack_zap();
-            cell_set_error(&stack_base[stack_offset].slr, /*create_error*/(EVAL_ERR_INTERNAL));
+            ev_recalc_pass_internal_error();
             goto break_loop;
         }
 
@@ -4153,12 +4156,63 @@ ev_recalc(void)
     }
 
 break_loop:;
+}
+
+static void
+ev_recalc_tidy_after_exception(
+    _InVal_     int jmpval,
+    _In_        P_PROC_SIGNAL old_fpe)
+{
+#ifndef __cplusplus
+    signal(SIGFPE, old_fpe); /* restore old handler */
+#endif /* __cplusplus */
+
+    reportf(TEXT("*** ev_recalc setjmp returned from signal handler ***"));
+
+    assert(eval_rpn_stack_at >= 0);
+    stack_set(eval_rpn_stack_at);
+
+    ss_data_set_error(&stack_base[eval_rpn_stack_at].data.stack_in_calc.result_data,
+        (jmpval == JMPVAL_FPERROR) ? EVAL_ERR_FPERROR : jmpval);
+
+    /*ev_recalc_pass_end();*/
+    global_flags.lock = 0; /* only the essentials */
+}
+
+extern void
+ev_recalc(void)
+{
+#ifndef __cplusplus
+    P_PROC_SIGNAL old_fpe = NULL;
+#endif
+
+    if(!ev_recalc_pass_start())
+        return;
+
+#ifndef __cplusplus
+
+    old_fpe = signal(SIGFPE, (P_PROC_SIGNAL) ev_recalc_signal_handler);
+
+    { /* catch FP errors etc. */
+    int jmpval;
+
+    if(0 != (jmpval = setjmp(ev_recalc_jmp_buf)))
+    {
+        ev_recalc_tidy_after_exception(jmpval, old_fpe);
+        return;
+    }
+    } /*block*/
+
+#endif /* __cplusplus */
+
+    /* run for a wee while */
+    ev_recalc_pass_loop();
 
     /* exit code */
     ev_recalc_pass_end();
 
 #ifndef __cplusplus
-    signal(SIGFPE, oldfpe);
+    signal(SIGFPE, old_fpe);
 #endif /* __cplusplus */
 }
 
@@ -4242,7 +4296,7 @@ cell_set_error(
     {
         ev_cell_free_resources(p_ev_cell);
 
-        p_ev_cell->ev_parms.data_id = DATA_ID_ERROR;
+        p_ev_cell->ev_parms.data_id = UBF_PACK(DATA_ID_ERROR);
 
         zero_struct(p_ev_cell->ss_constant.ss_error);
         p_ev_cell->ss_constant.ss_error.status = error;
@@ -4445,11 +4499,11 @@ stack_set(
 {
 #if CHECKING
     if((S32) stack_level < 0)
-        if(__myasserted(TEXT("stack_set"), __TFILE__, stack_level, TEXT("stack_level req ") S32_TFMT TEXT(" < 0"), stack_level))
+        if(__myasserted(TEXT("stack_set"), __TFILE__, stack_level, TEXT("stack_level req ") S32_TFMT TEXT(" < 0"), (S32) stack_level))
             __crash_and_burn_here();
 
     if((S32) stack_offset < 0)
-        if(__myasserted(TEXT("stack_set"), __TFILE__, stack_offset, TEXT("stack_offset req ") S32_TFMT TEXT(" < 0"), stack_offset))
+        if(__myasserted(TEXT("stack_set"), __TFILE__, stack_offset, TEXT("stack_offset req ") S32_TFMT TEXT(" < 0"), (S32) stack_offset))
             __crash_and_burn_here();
 #endif
 

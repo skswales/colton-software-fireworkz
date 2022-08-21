@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>LOGEST</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="LOGEST" />
+        <param name="Keyword" value="Statistical functions, LOGEST" />
+        <param name="Keyword" value="Statistical functions, exponential curve best fit" />
+    </object>
+
+    <h1><a name="logest" id="logest"></a>LOGEST</h1>
+
+    <p>Calculates an exponential curve which best fits your data and returns an <a href="../sg06/sg6_arrays.htm">array</a> which describes that curve.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        LOGEST(<span class="csg-function-parameter">known-ys</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
+        <span class="csg-function-parameter">known-xs</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+    </p>
+
+    <p>The equation for the curve is:</p>
+    <p class="csg-function-formula"><em>y</em> = <em>b</em>&sdot;<em>m</em><em><sup>x</sup></em></p>
+    <p>or</p>
+    <p class="csg-function-formula"><em>y</em> = <em>b</em>&sdot;<span class="csg-math-symbol-prod">&prod;</span><em><sup>i=m</sup></em> <em>m<sub>i</sub><sup>x<sub>i</sub></sup></em></p>
+
+    <p>This function is a logarithmic version of the <a href="../sg06l/sg6_LINEST.htm">LINEST</a> function.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06l/sg6_LISTCOUNT.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06m/sg6_MAX.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

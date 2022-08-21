@@ -8,33 +8,47 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# ob_ss messages
+# ob_ss messages: keep consistent with ob_ss/resource/resource.h
 #
-r90:Fill down (or ADJUST to Fill up)
-w90:Fill down (or Ctrl-click to Fill up)
-r91:Fill right (or ADJUST to Fill left)
-w91:Fill right (or Ctrl-click to Fill left)
-92:Auto sum
-93:Create chart
-94:Function selector
-95:Cancel formula line editing
-96:Enter formula as new cell contents
-97:This is the formula line
+# SS_MSG_STATUS_xxx
 #
 28:Recalc: %d
 29:Error: %s
 30:Error: %s, from custom function, cell %s
 31:Error: %s, from cell %s
 #
+# Toolbar button help
+#
+r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
+w90:Fill down (or Ctrl-click to Fill up)
+r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
+w91:Fill right (or Ctrl-click to Fill left)
+r92:Click Select to insert an Auto sum. Click Adjust for short function list
+w92:Auto sum. Ctrl-click for short function list
+r93:Click Select for the Chart menu
+w93:Create chart
+r94:Click Select for the Function selector menu
+w94:Function selector
+r95:Click Select to cancel editing in the formula line
+w95:Cancel formula line editing
+r96:Click Select to enter the formula as new cell contents
+w96:Enter formula as new cell contents
+97:This is the formula line
+#
 951:Plus
 952:Minus
 953:Times
 954:Divide
-955:Force cell to text
-956:Attempt to force cell to number
-957:Force cell to constant
+r955:Click Select to force cell to text
+w955:Force cell to text
+r956:Click Select to attempt to force cell to number
+w956:Attempt to force cell to number
+r957:Click Select to force cell to constant
+w957:Force cell to constant
 958:Insert date
 959:Insert name
+#
+# SS_MSG_DIALOG_CHOICES_xxx
 #
 935:Spreadsheet
 936:Background recalc
@@ -46,6 +60,8 @@ w91:Fill right (or Ctrl-click to Fill left)
 #
 960:Chart
 961:Automatic update
+#
+# SS_MSG_DIALOG_FUNCTIONS_xxx
 #
 1:Engineering
 2:Database
@@ -66,24 +82,26 @@ w91:Fill right (or Ctrl-click to Fill left)
 17:All
 18:Quick
 #
-65:sg05/sg5_engineering_functions.htm
-66:sg05/sg5_database_functions.htm
-67:sg05/sg5_date_time_functions.htm
-68:sg05/sg5_financial_functions.htm
-69:sg05/sg5_mathematical_functions.htm
-70:sg05/sg5_matrix_functions.htm
-71:sg05/sg5_miscellaneous_functions.htm
-72:sg05/sg5_statistical_functions.htm
-73:sg05/sg5_string_functions.htm
-74:sg05/sg5_trigonometrical_functions.htm
-75:sg07/sg7_custom_function_control_statements.htm
-76:sg05/sg5_lookup_functions.htm
-77:sg07/sg7_custom_functions.htm
-78:sg05/sg5_logical_functions.htm
-79:sg05/sg5_compatibility_functions.htm
-80:ug09/ug9_adding_a_name_to_a_number_cell.htm
-81:sg05/sg5_function_reference.htm
-82:sg05/sg5_function_reference.htm
+# SS_MSG_DLG_HT_FUNCTIONS_xxx
+#
+65:sg/sg05_function_reference.htm#engineering_functions
+66:sg/sg05_function_reference.htm#database_functions
+67:sg/sg05_function_reference.htm#date_time_functions
+68:sg/sg05_function_reference.htm#financial_functions
+69:sg/sg05_function_reference.htm#mathematical_functions
+70:sg/sg05_function_reference.htm#matrix_functions
+71:sg/sg05_function_reference.htm#miscellaneous_functions
+72:sg/sg05_function_reference.htm#statistical_functions
+73:sg/sg05_function_reference.htm#string_functions
+74:sg/sg05_function_reference.htm#trigonometrical_functions.htm
+75:sg/sg07_custom_functions.htm#custom_function_control_statements
+76:sg/sg05_function_reference.htm#lookup_functions
+77:sg/sg07_custom_functions.htm
+78:sg/sg05_function_reference.htm#logical_functions
+79:sg/sg05_function_reference.htm#compatibility_functions
+80:ug/ug09_advanced_features.htm#adding_a_name_to_a_number_cell
+81:sg/sg05_function_reference.htm
+82:sg/sg05_function_reference.htm
 #
 # This text is used to define the default text and help message for undefined parameters (i.e. ones which do not have an entry down below)
 # These must be blank otherwise custom functions display invalid parameter descriptions
@@ -93,25 +111,31 @@ w91:Fill right (or Ctrl-click to Fill left)
 # This token is used for pasting in the dynamic strings made when showing info about functions and their parameters
 34:%s
 #
+# SS_MSG_DIALOG_NAME_xxx
+#
 38:Names
-39:ug09/ug9_using_names_in_fireworkz.htm
-53:ug09/ug9_adding_a_name_to_a_text_cell.htm
+39:ug/ug09_advanced_features.htm#using_names_in_fireworkz
+53:ug/ug09_advanced_features.htm#adding_a_name_to_a_text_cell
 40:&Name
 41:&Value
 42:Descrip&tion
-43:&Add...
-44:&Edit...
+43:&New
+44:&Change
 45:&Insert
 52:&Delete
 #
-50:Edit name
-51:Add name
+50:Editing name
+51:Define new name
+#
+# SS_MSG_DIALOG_ALERT_xxx
 #
 55:ALERT
-56:sg06/sg6_ALERT.htm
+56:sg06a/sg6_ALERT.htm
+#
+# SS_MSG_DIALOG_INPUT_xxx
 #
 57:INPUT
-58:sg06/sg6_INPUT.htm
+58:sg06i/sg6_INPUT.htm
 #
 # 101... referenced by macro SS_MSG_STATUS_GET_NUMBER_FROM_RPN in ob_ss.h
 # 501... referenced by macro SS_MSG_FUNCTION_FROM_RPN in ob_ss.h (these are required on all platforms if translated, just Windows if not)
@@ -132,7 +156,7 @@ w506:acot
 w507:acoth
 108:Subtracts |1birthdate:Earlier date| from |date:Later date| to give age
 w508:age
-109:Dialogue box giving |message:Text string displayed in dialogue box| and one or more |1button:Label on first button|s
+109:Dialogue box displaying a |message:Text string displayed in dialogue box| and at least one |1button:Label| with an optional |2{second button}:Label|
 w509:alert
 110:Logical AND of |list:List of Boolean values (or array, or range of cells)| of Boolean values
 w510:and
@@ -159,7 +183,7 @@ w519:avg
 w520:beta
 121:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bin array:Array of bin limit values (or range of cells)|. Useful for histogram
 w521:bin
-122:Break out of |n:Optional number of loops| loops in custom function
+122:Break out of |{n}:Optional number of loops| loops in custom function
 w522:break
 #
 123:Inverse cosine of |complex number:1*2 array or range|
@@ -169,7 +193,7 @@ w524:c_acosec
 125:Inverse hyperbolic cosecant of |complex number:1*2 array or range|
 w525:c_acosech
 126:Inverse hyperbolic cosine of |complex number:1*2 array or range|
-w526:c_acos
+w526:c_acosh
 127:Inverse cotangent of |complex number:1*2 array or range|
 w527:c_acot
 128:Inverse hyperbolic cotangent of |complex number:1*2 array or range|
@@ -235,7 +259,7 @@ w556:c_theta
 w557:ceiling
 158:Convert ASCII |value:ASCII number| to character
 w558:char
-159:Choose |n:Index of element in list|th item from |1list:List to be selected from|
+159:Choose |n:Index of element in list|-th item from |1list:List to be selected from|
 w559:choose
 160:Cleans |string:Text string or reference to text cell| by removing non-printing characters
 w560:clean
@@ -280,7 +304,7 @@ w578:datevalue
 w579:davg
 180:Day part of |date:Date in form dd.mm.yyyy|
 w580:day
-181:Day name given |weekday| number (1=Sunday, 2=MondayŒ)
+181:Day name given |weekday| number (1=Sunday, 2=MondayŒ, controlled by optional |1{mode}|)
 w581:dayname
 182:Returns integral number of days between |start_date:Date in form dd.mm.yyyy| and |1end_date:Date in form dd.mm.yyyy| according to a 360-day calendar
 w582:days_360
@@ -352,7 +376,7 @@ w613:formula_text
 w614:function
 215:Future value given |payment:Payment each term|, |1rate:Interest rate per period| and |2term:Number of payments|
 w615:fv
-216:Future value given |rate:Interest rate per period|, |1term:Number of payments| and |2payment:Payment each term| (OpenDocument/Excel-compatible behaviour)
+216:Future value given |rate:Interest rate per period|, |1term:Number of payments|, |2payment:Payment each term| and optional |3{present value}| (OpenDocument/Excel-compatible behaviour)
 w616:odf.fv
 #
 217:Natural logarithm of the gamma function for |n:Real number|
@@ -379,7 +403,7 @@ w625:if
 w626:if
 227:Element in |array| at position |1x:Column of array, starting 1|, |2y:Row of array, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|
 w627:index
-228:Dialogue box giving |text:Text string displayed in dialogue box|, |1"name":Name to be written back to|, |2button_1:Label on first button|, optional button_2
+228:Dialogue box displaying a |caption:Text string| requesting input for |1"name":Name to be written back to|, with at least one |2button:Label| and an optional |3{second button}:Label|
 w628:input
 229:Integer part of |number:Real number|
 w629:int
@@ -439,7 +463,7 @@ w653:lower
 w654:m_determ
 255:Inverse of |matrix:Square array (or range of cells)|
 w655:m_inverse
-256:Multiply |matrix_1:Array (or range of cells)| by |1matrix_2:Array (or range of cells)|
+256:Multiply |matrix 1:Array (or range of cells)| by |1matrix 2:Array (or range of cells)|
 w656:m_mul
 257:Looks up |key:Key - any value| in |1array:Target array (or range of cells)| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
 w657:match
@@ -447,7 +471,7 @@ w657:match
 w658:max
 259:Median value of |list:List of values (or array, or range of cells)|
 w659:median
-260:Middle part of |string:Text tring or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string requird|
+260:Middle part of |string:Text tring or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string required|
 w660:mid
 261:Minimum value in |list:List of values (or array, or range of cells)|
 w661:min
@@ -514,7 +538,7 @@ w689:quartile.inc
 #
 290:Convert |angle:Angle in degrees| from degrees to radians
 w690:rad
-291:Random number from 0 to 1 with optional |seed:Real number to be used as seed|
+291:Random number from 0 to 1 with optional |{seed}:Real number to be used as seed|
 w691:rand
 292:Random integer in the interval |lower:Integer|..|1upper:Integer|
 w692:randbetween
@@ -571,7 +595,7 @@ w716:sln
 w717:small
 318:Sort |array:Array of data to be sorted (or range of cells)| in ascending order, with optional |1{column number:1 if omitted}|
 w718:sort
-319:Spearman's rank correlation coefficient for |array_1:First array, can be output from rank() | and |1array_2:Second array, can be output from rank()|
+319:Spearman's rank correlation coefficient for |First array:can be output from rank() | and |1Second array:can be output from rank()|
 w719:spearman
 320:Square root of |number:Real number|. Number must be >= 0
 w720:sqr
@@ -651,7 +675,7 @@ w754:year
 #
 # New functions should go here (in the order they appear in ev_eval.h and in RPNDEF) until we have another big sort-out
 #
-355:Sum of the product of each of the corresponding values from all the |array_1| .. |1array_n| parameters
+355:Sum of the product of each of the corresponding values from all the |array 1| .. |1array n| parameters
 w755:sumproduct
 356:Sum of the difference of the squares of corresponding values from |x-data:Array| and |1y-data:Array|
 w756:sum_x2my2
@@ -725,7 +749,7 @@ w789:combina
 w790:factdouble
 391:Sum of |3coefficients:Array| times |x:Number| to the power of |1n:Number|, n + |2m:Number| Œ
 w791:seriessum
-392:Value of the PDF or CDF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PDF (default)
+392:Value of the PMF or CDF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PMF (default)
 w792:hypgeom.dist
 393:Value of the PDF or CDF for the Weibull distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3cumulative:Boolean|=TRUE selects CDF, else PDF
 w793:weibull.dist
@@ -749,13 +773,13 @@ w801:besselk
 w802:norm.dist
 403:Value of the PDF or CDF for the standard normal distribution for the (standardized) value |z:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w803:norm.s.dist
-404:Value of the PDF or CDF for the log-normal distribution with given |1mean:Number| and |2standard deviation:Number| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+404:Value of the PDF or CDF for the log-normal distribution with given |1{mean}:Number, default zero| and |2{standard deviation}:Number, default one| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w804:lognorm.dist
 405:Value of the PDF for the standard normal distribution for the (standardized) value |z:Number|
 w805:phi
 406:Returns the value 1 if |number_1:Number| == |1{number_2}:Number, default zero|, else 0
 w806:delta
-407:Returns the value 1 if |number| == |1{step}:Number, default zero|, else 0
+407:Returns the value 1 if |number| >= |1{step}:Number, default zero|, else 0
 w807:gestep
 408:Rounds |number| down to the nearest integer, towards -infinity (OpenDocument/Excel-compatible behaviour)
 w808:odf.int
@@ -835,9 +859,9 @@ w844:z.test
 w845:prob
 446:Chi-squared value of corresponding values from |actual data:Array| and |1expected data:Array|
 w846:chisq.test
-447:F-test for data from |array_1:Array| and |1array_2:Array|
+447:F-test for data from |array 1:Array| and |1array 2:Array|
 w847:f.test
-448:t-test for data from |array_1:Array| and |1array_2:Array| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
+448:t-test for data from |array 1:Array| and |1array 2:Array| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
 w848:t.test
 #
 449:Absolute value (modulus) of |complex number|
@@ -957,7 +981,7 @@ w891:bitrshift
 w892:bitxor
 493:Converts |number:Positive integer| using the given |1radix:Positive integer| and optional minimum number of |2{digits}:number|
 w893:base
-494:Converts |number:Text string| from the given |1radix:Positive integer| to its corresponding decimal value
+494:Converts |number:Positive integer| from the given |1radix:Positive integer| to its corresponding decimal value
 w894:decimal
 495:Returns the greatest common denominator of all the values in |list:List of numbers (or array, or range of cells)|
 w895:gcd
@@ -969,6 +993,7 @@ w897:isoweeknum
 w898:days
 #
 # evaluator errors (see xp_ss.h, ob_ss.h)
+# see SS_ERR(n)
 #
 e0:Irr
 #e1:ERROR_RQ
@@ -999,7 +1024,7 @@ e23:Nested array
 e24:Array not expected
 e25:Parameter to custom function not declared
 e26:No RESULT in custom function
-e27:#N/A
+e27:Too many parameters given to function
 e28:Not implemented
 e29:Cell deleted
 #
@@ -1040,6 +1065,7 @@ e60:No valid data found
 e61:Database access error
 e62:#VALUE!
 e63:#NUM!
+e64:#N/A
 #
 # ob_ss errors
 #

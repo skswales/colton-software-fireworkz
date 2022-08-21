@@ -8,7 +8,10 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
+# messages (none)
+#
+# errors: keep consistent with fl_123/fl_123.h
+# see LOTUS123_ERR(n)
 #
 e0:Bad Lotus file
 #e1:ERROR_RQ

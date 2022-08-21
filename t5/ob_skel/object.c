@@ -116,7 +116,7 @@ PROC_ATEXIT_PROTO(static, atexit_services2)
 
     host_shutdown();
 
-    alloc_block_dispose(&global_string_alloc_block);
+    alloc_block_dispose_block(&global_string_alloc_block);
 
     aligator_exit();
 }
@@ -388,7 +388,7 @@ object_call_between(
 
     if(!IS_OBJECT_ID_VALID(max_object_id) && (OBJECT_ID_MAX != max_object_id))
     {
-        myassert4(TEXT("object_call_between(max_object_id ") S32_TFMT TEXT(" out of range, docno ") S32_TFMT TEXT(", ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), (S32) max_object_id, (S32) docno_from_p_docu(p_docu), t5_message, p_data);
+        myassert4(TEXT("object_call_between(max_object_id ") S32_TFMT TEXT(" out of range, docno ") DOCNO_TFMT TEXT(", ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), (S32) max_object_id, docno_from_p_docu(p_docu), t5_message, p_data);
         return(status_check());
     }
 
@@ -426,7 +426,7 @@ object_call_id_reordered(
 
     if(!IS_OBJECT_ID_VALID(object_id))
     {
-        myassert4(TEXT("object_call_id(object_id ") S32_TFMT TEXT(" out of range, docno ") S32_TFMT TEXT(", ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), (S32) object_id, (S32) docno_from_p_docu(p_docu), t5_message, p_data);
+        myassert4(TEXT("object_call_id(object_id ") S32_TFMT TEXT(" out of range, docno ") DOCNO_TFMT TEXT(", ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), (S32) object_id, docno_from_p_docu(p_docu), t5_message, p_data);
         return(status_check());
     }
 
@@ -448,7 +448,7 @@ object_call_id_load(
 
     if(!IS_OBJECT_ID_VALID(object_id))
     {
-        myassert4(TEXT("object_call_id_load(object_id ") S32_TFMT TEXT(" out of range, docno ") S32_TFMT TEXT(", ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), (S32) object_id, (S32) docno_from_p_docu(p_docu), t5_message, p_data);
+        myassert4(TEXT("object_call_id_load(object_id ") S32_TFMT TEXT(" out of range, docno ") DOCNO_TFMT TEXT(", ") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(")"), (S32) object_id, docno_from_p_docu(p_docu), t5_message, p_data);
         return(status_check());
     }
 
@@ -532,7 +532,7 @@ object_data_from_docu_area_tl(
     if(slr_last_in_docu_area(p_docu_area, &p_docu_area->tl.slr))
         p_object_position_end = &p_docu_area->br.object_position;
     else
-        p_object_position_end = NULL;
+        p_object_position_end = _P_DATA_NONE(PC_OBJECT_POSITION);
 
     return(object_data_from_position(p_docu, p_object_data, &p_docu_area->tl, p_object_position_end));
 }
@@ -630,10 +630,11 @@ object_install(
     _InVal_     OBJECT_ID object_id,
     _InRef_     P_PROC_OBJECT p_proc_object)
 {
-    myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("object_install(object_id ") S32_TFMT TEXT(" out of range)"), (S32) object_id);
-
     if(!IS_OBJECT_ID_VALID(object_id))
+    {
+        myassert1(TEXT("object_install(object_id ") S32_TFMT TEXT(" out of range)"), (S32) object_id);
         return;
+    }
 
     g_proc_object[object_id] = p_proc_object;
 }
@@ -874,7 +875,7 @@ object_load_internal(
     STATUS status;
 #if defined(LOADS_CODE_MODULES)
     RUNTIME_INFO runtime_info;
-    zero_struct(runtime_info);
+    zero_struct_fn(runtime_info);
 #endif
 
     if(NULL == p_proc_object)
@@ -894,7 +895,7 @@ object_load_internal(
         }
 
 #if RISCOS
-        status_return(host_load_module(filename, &runtime_info, VERSION_NUMBER, NULL /* force to use global stubs */));
+        status_return(host_load_module(filename, &runtime_info, HEX_VERSION_NUMBER, NULL /* force to use global stubs */));
 #elif WINDOWS
         status_return(host_load_module(filename, &runtime_info, object_id));
 #endif

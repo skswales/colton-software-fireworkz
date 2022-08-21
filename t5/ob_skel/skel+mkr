@@ -93,6 +93,8 @@ $(BUILD_DIR).ob_skel.o.ui_data: $(T5).ob_skel.c.ui_data
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.ui_field: $(T5).ob_skel.c.ui_field
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.o.ui_load: $(T5).ob_skel.c.ui_load
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.ui_misc: $(T5).ob_skel.c.ui_misc
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.o.ui_page: $(T5).ob_skel.c.ui_page
@@ -187,6 +189,8 @@ $(BUILD_DIR).ob_skel.modules.o.xustring: $(T5).cmodules.c.xustring
 $(BUILD_DIR).ob_skel.modules.o.xwstring: $(T5).cmodules.c.xwstring
  $(CC) -o $@ $(ccflags) $?
 
+$(BUILD_DIR).ob_skel.riscos.o.colourpick: $(T5).cmodules.riscos.c.colourpick
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.ho_dll: $(T5).cmodules.riscos.c.ho_dll
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.ho_sqush: $(T5).cmodules.riscos.c.ho_sqush
@@ -198,8 +202,6 @@ $(BUILD_DIR).ob_skel.riscos.o.myrand: $(T5).cmodules.riscos.s.myrand
  Copy $(PROD_SOURCE_DIR).$(DIR).s.h_flags $(PROD_BUILD_DIR).as_flags_h ~C FNV
  $(AS) -o $@ $(ASflags) $?
 
-$(BUILD_DIR).ob_skel.riscos.o.colourpick: $(T5).ob_skel.riscos.c.colourpick
- $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.cs-flex: $(T5).ob_skel.riscos.c.cs-flex
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.riscos.o.cs-poll: $(T5).ob_skel.riscos.s.cs-poll
@@ -299,6 +301,7 @@ $(BUILD_DIR).ob_skel.o.sk_table \
 $(BUILD_DIR).ob_skel.o.sk_uref \
 $(BUILD_DIR).ob_skel.o.ui_data \
 $(BUILD_DIR).ob_skel.o.ui_field \
+$(BUILD_DIR).ob_skel.o.ui_load \
 $(BUILD_DIR).ob_skel.o.ui_misc \
 $(BUILD_DIR).ob_skel.o.ui_page \
 $(BUILD_DIR).ob_skel.o.ui_save \
@@ -359,20 +362,62 @@ $(BUILD_DIR).ob_skel.skelM: $(SKEL_MS)
  $(LD) $(LDflags_AOF) -o $@ $(SKEL_MS)
 
 # Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY).msg
+$(T5).$(PROD).Resources.Windows.$(COUNTRY).res00/rci: $(T5).ob_skel.resource.$(COUNTRY).msg
  Basic -quit $(RCGen) -output $@ -from $? -object 00
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob00: $(T5).ob_skel.resource.$(COUNTRY).msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob00: $(T5).ob_skel.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
-# RISC OS loaded sprites
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob00: \
- $(T5).ob_skel.resource.$(COUNTRY).spr22
- Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob00: \
+# RISC OS loaded sprites
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Sprites11.Ob00: \
+ $(T5).ob_skel.resource.Neutral.spr24 \
+ $(T5).ob_skel.resource.$(COUNTRY).spr24 \
+ $(T5).ob_skel.resource.Neutral.spr22 \
+ $(T5).ob_skel.resource.$(COUNTRY).spr22 \
+ $(T5).ob_skel.resource.Neutral.spr11 \
+ $(T5).ob_skel.resource.$(COUNTRY).spr11 \
+ $(T5).ob_skel.resource.Neutral.tangod.spr_tg11
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_skel.resource.Neutral.spr24
+ SMerge $(T5).ob_skel.resource.$(COUNTRY).spr24
+ SMerge $(T5).ob_skel.resource.Neutral.spr22
+ SMerge $(T5).ob_skel.resource.$(COUNTRY).spr22
+ SMerge $(T5).ob_skel.resource.Neutral.spr11
+ SMerge $(T5).ob_skel.resource.$(COUNTRY).spr11
+ SMerge $(T5).ob_skel.resource.Neutral.tangod.spr_tg11
+ SDelete delete_me
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Sprites22.Ob00: \
+ $(T5).ob_skel.resource.Neutral.spr24 \
+ $(T5).ob_skel.resource.$(COUNTRY).spr24 \
+ $(T5).ob_skel.resource.Neutral.spr22 \
+ $(T5).ob_skel.resource.$(COUNTRY).spr22 \
+ $(T5).ob_skel.resource.Neutral.tangod.spr_tg22
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_skel.resource.Neutral.spr24
+ SMerge $(T5).ob_skel.resource.$(COUNTRY).spr24
+ SMerge $(T5).ob_skel.resource.Neutral.spr22
+ SMerge $(T5).ob_skel.resource.$(COUNTRY).spr22
+ SMerge $(T5).ob_skel.resource.Neutral.tangod.spr_tg22
+ SDelete delete_me
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Sprites24.Ob00: \
+ $(T5).ob_skel.resource.Neutral.spr24 \
  $(T5).ob_skel.resource.$(COUNTRY).spr24
- Copy $? $@ ~C FV
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_skel.resource.Neutral.spr24
+ SMerge $(T5).ob_skel.resource.$(COUNTRY).spr24
+ SDelete delete_me
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
 
 # RISC OS bound messages
 $(BUILD_DIR).ob_skel.riscos.o.$(COUNTRY)-B00: $(T5).ob_skel.resource.$(COUNTRY).msg

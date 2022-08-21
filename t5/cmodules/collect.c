@@ -36,7 +36,7 @@ _Ret_writes_maybenull_(size)
 extern P_BYTE
 _collect_add_entry(
     _InoutRef_  P_LIST_BLOCK p_list_block,
-    _In_reads_bytes_opt_(size) PC_ANY p_data,
+    _In_reads_bytes_maybenone_(size) PC_ANY p_data,
     _InVal_     S32 size,
     _InVal_     LIST_ITEMNO key,
     _OutRef_    P_STATUS p_status)

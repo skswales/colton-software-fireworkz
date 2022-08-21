@@ -154,7 +154,7 @@ __vmyasserted(
     err.errnum = 0;
 
     /* test output string for overrun of wimp error box */
-    if(!IS_PTR_NULL_OR_NONE(format))
+    if(PTR_NOT_NULL_OR_NONE(format))
     {
         consume_int(vsnprintf(p, elemof32(err.errmess), format, va));
 
@@ -183,7 +183,7 @@ __vmyasserted(
 
     p += xsnprintf(p, elemof32(err.errmess) - (p - err.errmess), TEXT("%s"), message ? message : ASSERTION_FAILURE_YN);
 
-    if(!IS_PTR_NULL_OR_NONE(format))
+    if(PTR_NOT_NULL_OR_NONE(format))
     {
         *p++ = CH_SPACE;
         consume_int(vsnprintf(p, elemof32(err.errmess) - (p - err.errmess), format, va));
@@ -216,7 +216,7 @@ __vmyasserted(
                        tstr_function, tstr_file, line_no, message ? message : ASSERTION_FAILURE_YN);
     assert(len != (size_t) -1);
 
-    if(!IS_PTR_NULL_OR_NONE(format))
+    if(PTR_NOT_NULL_OR_NONE(format))
     {
         if(len < elemof32(szBuffer) - 3)
         {
@@ -279,7 +279,7 @@ __vmyasserted(
 
     fprintf(stderr, ASSERTION_FAILURE_PREFIX, tstr_file, line_no);
 
-    if(!IS_PTR_NULL_OR_NONE(format))
+    if(PTR_NOT_NULL_OR_NONE(format))
     {
         fputc(CH_SPACE, stderr);
         vfprintf(stderr, format, va_in);

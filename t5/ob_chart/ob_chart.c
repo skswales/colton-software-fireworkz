@@ -25,7 +25,7 @@
 callback routines
 */
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart);
+PROC_UREF_EVENT_PROTO(static, ob_chart_uref_event);
 
 #if RISCOS
 #if defined(BOUND_MESSAGES_OBJECT_ID_CHART)
@@ -530,7 +530,7 @@ chart_element(
         p_chart_element->bits.label_first_range = p_chart_shapedesc->bits.label_first_range;
         p_chart_element->bits.label_first_item  = p_chart_shapedesc->bits.label_first_item;
 
-        if(status_ok(status = uref_add_dependency(p_docu_from_docno(p_chart_element->docno), &p_chart_element->region, proc_uref_event_ob_chart, (CLIENT_HANDLE) p_chart_element, &p_chart_element->uref_handle, FALSE)))
+        if(status_ok(status = uref_add_dependency(p_docu_from_docno(p_chart_element->docno), &p_chart_element->region, ob_chart_uref_event, (CLIENT_HANDLE) p_chart_element, &p_chart_element->uref_handle, FALSE)))
         {
             if(p_chart_element->bits.label_first_range)
                 status = gr_chart_add_labels(&p_chart_header->ch, proc_travel_chart, p_chart_element, &p_chart_element->gr_int_handle);
@@ -1018,22 +1018,18 @@ determine_cell_type(
         ev_idno = ss_data_get_data_id(ss_array_element_index_wr(&object_data_read.ss_data, 0, 0));
     ss_data_free_resources(&object_data_read.ss_data);
 
-    switch(ev_idno)
-    {
-    default:
-    case DATA_ID_BLANK:
-        return(CELL_TYPE_BLANK);
-
-    case DATA_ID_REAL:
-    case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
-    case DATA_ID_WORD16:
-    case DATA_ID_WORD32:
+    if(ss_data_is_number(&object_data_read.ss_data))
         return(CELL_TYPE_NUMBER);
 
+    switch(ev_idno)
+    {
     case DATA_ID_DATE: /* SKS after 1.05 10oct93 */
     case DATA_ID_STRING:
         return(CELL_TYPE_STRING);
+
+    default:
+    case DATA_ID_BLANK:
+        return(CELL_TYPE_BLANK);
     }
 }
 
@@ -1355,32 +1351,202 @@ MAEVE_SERVICES_EVENT_PROTO(static, maeve_services_event_ob_chart)
 *
 ******************************************************************************/
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
+PROC_UREF_EVENT_PROTO(static, ob_chart_uref_event_dep_delete)
+{
+    const P_CHART_ELEMENT p_chart_element = (P_CHART_ELEMENT) p_uref_event_block->uref_id.client_handle;
+
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+
+    switch(p_chart_element->bits.type)
+    {
+    default:
+#if CHECKING
+        myassert1(TEXT("chart element type ") U32_TFMT TEXT(" not COL or ROW or NONE"), p_chart_element->bits.type);
+
+        /*FALLTHRU*/
+
+    case CHART_RANGE_NONE:
+#endif
+        break;
+
+    case CHART_RANGE_COL:
+    case CHART_RANGE_ROW:
+        {
+        switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
+        {
+        case Uref_Dep_Delete:
+            chart_element_subtract(p_chart_element);
+            chart_modify_in_a_bit(p_chart_element->p_chart_header);
+            break;
+
+        default:
+#if CHECKING
+        case Uref_Dep_Update:
+            assert0();
+            break;
+
+        case Uref_Dep_Inform:
+            /* cell contents in our range are being deleted; we will get a uref */
+        case Uref_Dep_None:
+#endif
+            break;
+        }
+
+        break;
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, ob_chart_uref_event_dep_update)
 {
     const P_CHART_ELEMENT p_chart_element = (P_CHART_ELEMENT) p_uref_event_block->uref_id.client_handle;
     const P_CHART_HEADER p_chart_header = p_chart_element->p_chart_header;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
+    /* simple motion of elements harmless; just update structures
+     * if rows(columns) have been inserted/added into a col(row)-based element then recalc chart
+     */
+    switch(p_chart_element->bits.type)
+    {
+    default:
+#if CHECKING
+        myassert1(TEXT("chart element type ") U32_TFMT TEXT(" not COL or ROW or NONE"), p_chart_element->bits.type);
+
+        /*FALLTHRU*/
+
+    case CHART_RANGE_NONE:
+#endif
+        break;
+
+    case CHART_RANGE_COL:
+        {
+        REGION element_region = p_chart_element->region;
+
+        switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
+        {
+        default:
+#if CHECKING
+        case Uref_Dep_Delete:
+        case Uref_Dep_Inform:
+            assert0();
+
+            /*FALLTHRU*/
+
+        case Uref_Dep_None:
+#endif
+            break;
+
+        case Uref_Dep_Update:
+            if((p_chart_element->region.br.row - p_chart_element->region.tl.row) != (element_region.br.row - element_region.tl.row))
+            {
+                /* col-based live range has had row insertion/deletion: recalc */
+                gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
+                chart_modify_in_a_bit(p_chart_header);
+            }
+            break;
+        }
+
+        break;
+        }
+
+    case CHART_RANGE_ROW:
+        {
+        REGION element_region = p_chart_element->region;
+
+        switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
+        {
+        default:
+#if CHECKING
+        case Uref_Dep_Delete:
+        case Uref_Dep_Inform:
+            assert0();
+
+            /*FALLTHRU*/
+
+        case Uref_Dep_None:
+#endif
+            break;
+
+        case Uref_Dep_Update:
+            if((p_chart_element->region.br.col - p_chart_element->region.tl.col) != (element_region.br.col - element_region.tl.col))
+            {
+                /* row-based live range has had col insertion/deletion: recalc */
+                gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
+                chart_modify_in_a_bit(p_chart_header);
+            }
+            break;
+        }
+
+        break;
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, ob_chart_uref_event_dep_inform)
+{
+    const P_CHART_ELEMENT p_chart_element = (P_CHART_ELEMENT) p_uref_event_block->uref_id.client_handle;
+    const P_CHART_HEADER p_chart_header = p_chart_element->p_chart_header;
+
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+
+    switch(p_chart_element->bits.type)
+    {
+    default:
+        break;
+
+    case CHART_RANGE_COL:
+    case CHART_RANGE_ROW:
+        {
+        switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
+        {
+        default:
+#if CHECKING
+        case Uref_Dep_Delete:
+        case Uref_Dep_Update:
+            assert0();
+
+            /*FALLTHRU*/
+
+        case Uref_Dep_None:
+#endif
+            break;
+
+        case Uref_Dep_Inform:
+            switch(uref_message)
+            {
+            default:
+                break;
+
+            case Uref_Msg_Overwrite:
+            case Uref_Msg_Change:
+                gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
+                chart_modify_in_a_bit(p_chart_header);
+                break;
+            }
+            break;
+        }
+
+        break;
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, ob_chart_uref_event)
+{
 #if TRACE_ALLOWED && 1
     if_constant(tracing(TRACE_APP_UREF))
     {
         TCHARZ buffer[64];
-        PCTSTR p_msg;
-        switch(uref_message)
-        {
-        default: assert0();      p_msg = TEXT("Unknown"); break;
-        case Uref_Msg_CLOSE1:    p_msg = TEXT("CLOSE1"); break;
-        case Uref_Msg_CLOSE2:    p_msg = TEXT("CLOSE2"); break;
-        case Uref_Msg_Uref:      p_msg = TEXT("UREF"); break;
-        case Uref_Msg_Delete:    p_msg = TEXT("DELETE"); break;
-        case Uref_Msg_Swap_Rows: p_msg = TEXT("SWAP_ROWS"); break;
-        case Uref_Msg_Change:    p_msg = TEXT("CHANGE"); break;
-        case Uref_Msg_Overwrite: p_msg = TEXT("OVERWRITE"); break;
-        }
         consume_int(tstr_xsnprintf(buffer, elemof32(buffer),
                                    TEXT("chart_uref(%s) tl ") COL_TFMT TEXT(",") ROW_TFMT TEXT("; br ") COL_TFMT TEXT(",") ROW_TFMT TEXT("; wh_col ") S32_TFMT TEXT("; wh_row ") S32_TFMT,
-                                   p_msg,
+                                   uref_report_message(uref_message),
                                    p_uref_event_block->uref_id.region.tl.col,
                                    p_uref_event_block->uref_id.region.tl.row,
                                    p_uref_event_block->uref_id.region.br.col,
@@ -1391,182 +1557,20 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
     }
 #endif
 
-    switch(p_uref_event_block->reason.code)
+    switch(UBF_UNPACK(UREF_COMMS, p_uref_event_block->reason.code))
     {
-    default: default_unhandled();
-#if CHECKING
-    case Uref_Dep_None:
-#endif
-        break;
-
     case Uref_Dep_Delete:
-        switch(p_chart_element->bits.type)
-        {
-        default:
-#if CHECKING
-            myassert1(TEXT("chart element type ") S32_TFMT TEXT(" not COL or ROW or NONE"), p_chart_element->bits.type);
-
-            /*FALLTHRU*/
-
-        case CHART_RANGE_NONE:
-#endif
-            break;
-
-        case CHART_RANGE_COL:
-        case CHART_RANGE_ROW:
-            {
-            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
-            {
-            default:
-#if CHECKING
-            case Uref_Dep_Update:
-                assert0();
-                break;
-
-            case Uref_Dep_Inform:
-                /* cell contents in our range are being deleted; we will get a uref */
-            case Uref_Dep_None:
-#endif
-                break;
-
-            case Uref_Dep_Delete:
-                chart_element_subtract(p_chart_element);
-                chart_modify_in_a_bit(p_chart_element->p_chart_header);
-                break;
-            }
-
-            break;
-            }
-        }
-
-        break;
+        return(ob_chart_uref_event_dep_delete(p_docu, uref_message, p_uref_event_block));
 
     case Uref_Dep_Update:
-        /* simple motion of elements harmless; just update structures
-         * if rows(columns) have been inserted/added into a col(row)-based element then recalc chart
-        */
-        switch(p_chart_element->bits.type)
-        {
-        default:
-#if CHECKING
-            myassert1(TEXT("chart element type ") S32_TFMT TEXT(" not COL or ROW or NONE"), p_chart_element->bits.type);
-
-            /*FALLTHRU*/
-
-        case CHART_RANGE_NONE:
-#endif
-            break;
-
-        case CHART_RANGE_COL:
-            {
-            REGION element_region = p_chart_element->region;
-
-            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
-            {
-            default:
-#if CHECKING
-            case Uref_Dep_Delete:
-            case Uref_Dep_Inform:
-                assert0();
-
-                /*FALLTHRU*/
-
-            case Uref_Dep_None:
-#endif
-                break;
-
-            case Uref_Dep_Update:
-                if((p_chart_element->region.br.row - p_chart_element->region.tl.row) != (element_region.br.row - element_region.tl.row))
-                {
-                    /* col-based live range has had row insertion/deletion: recalc */
-                    gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
-                    chart_modify_in_a_bit(p_chart_header);
-                }
-                break;
-            }
-
-            break;
-            }
-
-        case CHART_RANGE_ROW:
-            {
-            REGION element_region = p_chart_element->region;
-
-            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
-            {
-            default:
-#if CHECKING
-            case Uref_Dep_Delete:
-            case Uref_Dep_Inform:
-                assert0();
-
-                /*FALLTHRU*/
-
-            case Uref_Dep_None:
-#endif
-                break;
-
-            case Uref_Dep_Update:
-                if((p_chart_element->region.br.col - p_chart_element->region.tl.col) != (element_region.br.col - element_region.tl.col))
-                {
-                    /* row-based live range has had col insertion/deletion: recalc */
-                    gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
-                    chart_modify_in_a_bit(p_chart_header);
-                }
-                break;
-            }
-
-            break;
-            }
-        }
-
-        break;
+        return(ob_chart_uref_event_dep_update(p_docu, uref_message, p_uref_event_block));
 
     case Uref_Dep_Inform:
-        switch(p_chart_element->bits.type)
-        {
-        default:
-            break;
+        return(ob_chart_uref_event_dep_inform(p_docu, uref_message, p_uref_event_block));
 
-        case CHART_RANGE_COL:
-        case CHART_RANGE_ROW:
-            {
-            switch(uref_match_region(&p_chart_element->region, uref_message, p_uref_event_block))
-            {
-            default:
-#if CHECKING
-            case Uref_Dep_Update:
-            case Uref_Dep_Delete:
-                assert0();
-
-                /*FALLTHRU*/
-
-            case Uref_Dep_None:
-#endif
-                break;
-
-            case Uref_Dep_Inform:
-                switch(uref_message)
-                {
-                default:
-                    break;
-
-                case Uref_Msg_Overwrite:
-                case Uref_Msg_Change:
-                    gr_chart_damage(p_chart_header->ch, p_chart_element->gr_int_handle);
-                    chart_modify_in_a_bit(p_chart_header);
-                    break;
-                }
-                break;
-            }
-
-            break;
-            }
-        }
-        break;
+    default: default_unhandled();
+        return(STATUS_OK);
     }
-
-    return(STATUS_OK);
 }
 
 /******************************************************************************
@@ -1647,7 +1651,7 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
         }
 
     default:
-        myassert1x(p_chart_element->bits.type == CHART_RANGE_NONE, TEXT("chart element type ") S32_TFMT TEXT(" not COL or ROW or NONE"), p_chart_element->bits.type);
+        myassert1x(p_chart_element->bits.type == CHART_RANGE_NONE, TEXT("chart element type ") U32_TFMT TEXT(" not COL or ROW or NONE"), p_chart_element->bits.type);
 
         /*FALLTHRU*/
 
@@ -1722,21 +1726,15 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
     status_consume(object_data_from_slr(p_docu, &object_data_read.object_data, &slr));
     ss_data_set_blank(&object_data_read.ss_data);
     status_consume(object_call_id(object_data_read.object_data.object_id, p_docu, T5_MSG_OBJECT_DATA_READ, &object_data_read));
-    p_ss_data = (DATA_ID_ARRAY == ss_data_get_data_id(&object_data_read.ss_data))
+    p_ss_data = ss_data_is_array(&object_data_read.ss_data)
               ? ss_array_element_index_wr(&object_data_read.ss_data, 0, 0)
               : &object_data_read.ss_data;
 
     /* SKS after 1.05 10oct93 speeds up numform lookup */
     switch(ss_data_get_data_id(p_ss_data))
     {
-    default: default_unhandled();
-#if CHECKING
-    case DATA_ID_REAL:
-    case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
-    case DATA_ID_WORD16:
-    case DATA_ID_WORD32:
-#endif
+    default:
+        assert(ss_data_is_number(p_ss_data));
         style_bit_number = STYLE_SW_PS_NUMFORM_NU;
         break;
 
@@ -1744,8 +1742,8 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart)
         style_bit_number = STYLE_SW_PS_NUMFORM_DT;
         break;
 
-    case DATA_ID_BLANK:
     case DATA_ID_STRING:
+    case DATA_ID_BLANK:
     case DATA_ID_ERROR:
         style_bit_number = STYLE_SW_PS_NUMFORM_SE;
         break;
@@ -1840,7 +1838,7 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart_text)
 
     ss_data_set_blank(&object_data_read.ss_data);
     status_consume(object_call_id(object_data_read.object_data.object_id, p_docu, T5_MSG_OBJECT_DATA_READ, &object_data_read));
-    p_ss_data = (DATA_ID_ARRAY == ss_data_get_data_id(&object_data_read.ss_data))
+    p_ss_data = ss_data_is_array(&object_data_read.ss_data)
               ? ss_array_element_index_wr(&object_data_read.ss_data, 0, 0)
               : &object_data_read.ss_data;
     switch(ss_data_get_data_id(p_ss_data))
@@ -1855,7 +1853,6 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart_text)
         break;
 
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         val->type = GR_CHART_VALUE_NUMBER;

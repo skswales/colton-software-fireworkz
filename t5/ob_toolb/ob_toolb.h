@@ -102,7 +102,7 @@ execute_tool(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_maybenone_ P_VIEW p_view,
     _InRef_     PC_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc,
-    _InVal_     BOOL alternate);
+    _InVal_     S32 alternate);
 
 #if WINDOWS
 

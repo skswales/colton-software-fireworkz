@@ -29,9 +29,7 @@
 internal structure
 */
 
-#if !RISCOS
 #define DRAWFILE_EXTENSION_TSTR FILE_EXT_SEP_TSTR TEXT("aff")
-#endif
 
 enum DRAWING_INFO_TAG
 {
@@ -878,7 +876,7 @@ notelayer_insert_image_file(
             RECT_FLAGS rect_flags;
             RECT_FLAGS_CLEAR(rect_flags);
 
-            zero_struct(note_info);
+            zero_struct_fn(note_info);
 
             note_info.layer = LAYER_CELLS_AREA_ABOVE; /* always insert into front layer */
 
@@ -1075,63 +1073,58 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
         {
         /* swift bit of reprocessing needed to load document relative references */
         PCTSTR input_filename = p_construct_convert->p_of_ip_format->input_filename;
-        PCTSTR filename = pc_arglist_arg(&p_construct_convert->arglist_handle, 2)->val.tstr;
+        PCTSTR draw_filename = pc_arglist_arg(&p_construct_convert->arglist_handle, 2)->val.tstr;
 
-        /*if(!file_is_rooted(filename))*/ /* SKS 21may96 Dave Woods hack */
+        /*if(!file_is_rooted(draw_filename))*/ /* SKS 21may96 Dave Woods hack */
         {
             TCHARZ tstr_buf[BUF_MAX_PATHSTRING];
 
             STATUS status = 0;
 
-#if RISCOS
-            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), filename, input_filename);
+            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), draw_filename, input_filename);
 
-            /* try removing any pseudo-extension */
             if(status == 0)
-                if(file_extension(filename))
-                {
-                    TCHARZ tstr_buf_f[BUF_MAX_PATHSTRING];
-                    PTSTR tstr_extension;
-                    tstr_xstrkpy(tstr_buf_f, elemof32(tstr_buf_f), filename);
-                    tstr_extension = file_extension(tstr_buf_f);
+            {   /* if not found using supplied name, retry with/without an extension */
+                TCHARZ tstr_buf_f[BUF_MAX_PATHSTRING];
+
+                tstr_xstrkpy(tstr_buf_f, elemof32(tstr_buf_f), draw_filename);
+
+                if(file_extension(draw_filename))
+                {   /* strip existing extension for retry */
+                    PTSTR tstr_extension = file_extension(tstr_buf_f);
                     PTR_ASSERT(tstr_extension);
                     *--tstr_extension = CH_NULL;
-                    status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), tstr_buf_f, input_filename);
                 }
-#elif WINDOWS
-            status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), filename, input_filename);
-
-            /* try with Drawfile extension */
-            if(status == 0)
-                if(!file_extension(filename))
-                {
-                    TCHARZ f[BUF_MAX_PATHSTRING];
-                    tstr_xstrkpy(f, elemof32(f), filename);
-                    tstr_xstrkat(f, elemof32(f), DRAWFILE_EXTENSION_TSTR); /* just have to assume this. sorry */
-                    status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), f, input_filename);
+                else
+                {   /* add an extension for retry */
+                    tstr_xstrkat(tstr_buf_f, elemof32(tstr_buf_f), DRAWFILE_EXTENSION_TSTR); /* just have to assume this. sorry */
                 }
 
-            /* try swapping sep chars from RISC OS */
+                status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), tstr_buf_f, input_filename);
+            }
+
+#if WINDOWS
+            /* if still not found, try swapping sep chars from RISC OS */
             if(status == 0)
             {
-                TCHARZ f[BUF_MAX_PATHSTRING];
+                TCHARZ tstr_buf_f[BUF_MAX_PATHSTRING];
                 UINT f_idx = 0;
-                PCTSTR i = filename;
+                PCTSTR i = draw_filename;
                 TCHAR c;
 
                 do  {
                     c = *i++;
-                    f[f_idx++] = c;
+                    tstr_buf_f[f_idx++] = c;
 
                     if(c == RISCOS_FILE_DIR_SEP_CH) /* Swap RISC OS dir sep char for Windows? */
-                        f[f_idx-1] = WINDOWS_FILE_DIR_SEP_CH;
+                        tstr_buf_f[f_idx-1] = WINDOWS_FILE_DIR_SEP_CH;
                     else
                     if(c == RISCOS_FILE_EXT_SEP_CH) /* Swap RISC OS 'ext' sep char for Windows? */
-                        f[f_idx-1] = WINDOWS_FILE_EXT_SEP_CH;
+                        tstr_buf_f[f_idx-1] = WINDOWS_FILE_EXT_SEP_CH;
                 }
                 while(c != CH_NULL);
 
-                status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), f, input_filename);
+                status = file_find_on_path_or_relative(tstr_buf, elemof32(tstr_buf), file_get_search_path(), tstr_buf_f, input_filename);
             }
 #endif /* OS */
 
@@ -1242,8 +1235,7 @@ T5_MSG_PROTO(static, draw_msg_save_picture_filetypes_request, _InoutRef_ P_MSG_S
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
     const P_DRAWING_INFO p_drawing_info = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, (ARRAY_INDEX) p_msg_save_picture_filetypes_request->extra);
     STATUS status;
-    SAVE_FILETYPE save_filetype;
-    zero_struct(save_filetype);
+    SAVE_FILETYPE save_filetype; zero_struct_fn(save_filetype);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
@@ -1264,7 +1256,7 @@ T5_MSG_PROTO(static, draw_msg_save_picture_filetypes_request, _InoutRef_ P_MSG_S
             return(status);
         }
 
-        zero_struct(save_filetype);
+        zero_struct_fn(save_filetype);
     }
 
     /* Indicate that we can save pictures as Drawfiles */

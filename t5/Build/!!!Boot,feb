@@ -27,13 +27,13 @@ If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
 | and not the svn:riscosfiletype property
 Set svn$filetypeext ""
 |
-set FIREWORKZ_TBT fireworkz__2_24__branch
+Set FIREWORKZ_TBT fireworkz__2_30__branch
 |et FIREWORKZ_TBT trunk
 Set fireworkz_root <disc_root>.fireworkz.<FIREWORKZ_TBT>
 |
 URD <fireworkz_root>
 |Lib &.arm.Library
-|Dir &.t5
+Dir &.t5
 |
 | Fireworkz Pro can only be built if R-Comp components are present
 IfThere <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.
@@ -44,11 +44,15 @@ Set Fireworkz$TraceEnable 1
 |
 | 32-bit C: and RISC_OSLib: paths from AcornC/C++ are kosher
 |
-Set Fireworkz$DefaultBuild r<C$Mode>b
-IfThere <Obey$Dir>.<Fireworkz$DefaultBuild> Then Filer_OpenDir <Obey$Dir>.<Fireworkz$DefaultBuild>
+Set Fireworkz$DefaultBuild r<C$Mode>
+IfThere <Obey$Dir>.<Fireworkz$DefaultBuild> Then Filer_OpenDir <fireworkz_root>.t5.Build.<Fireworkz$DefaultBuild>
 |
-IfThere <Obey$Dir>.<Fireworkz$DefaultBuild>.fprowrkz Then Filer_OpenDir <Obey$Dir>.<Fireworkz$DefaultBuild>.fprowrkz
+IfThere <Obey$Dir>.<Fireworkz$DefaultBuild>.fprowrkz Then Filer_OpenDir <fireworkz_root>.t5.Build.<Fireworkz$DefaultBuild>.fprowrkz
 |
-IfThere <Obey$Dir>.<Fireworkz$DefaultBuild>.firewrkz Then Filer_OpenDir <Obey$Dir>.<Fireworkz$DefaultBuild>.firewrkz
+IfThere <Obey$Dir>.<Fireworkz$DefaultBuild>.firewrkz Then Filer_OpenDir <fireworkz_root>.t5.Build.<Fireworkz$DefaultBuild>.firewrkz
+|
+| Need !Strings for resource building (RCGenL)
+IfThere <fireworkz_root>.t5.external.OtherBSD.SDrain Then Unset Strings$*
+IfThere <fireworkz_root>.t5.external.OtherBSD.SDrain Then Run <fireworkz_root>.t5.external.OtherBSD.SDrain.!Strings.!Boot
 |
 | end of !!!Boot

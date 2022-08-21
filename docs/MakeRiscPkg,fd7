@@ -8,7 +8,7 @@
 
 | !!! ENSURE EVERYTHING IS CHECKED IN FIRST !!!
 
-Set t5$Release 20200503
+Set t5$Release 20200807
 | Remember to update RiscPkg.Control too
 
 Set t5$Disc $.Temp.Fire.FzManuals_<t5$Release>
@@ -29,70 +29,126 @@ time
 | Enable only for script debugging
 | Filer_OpenDir <t5$Disc>
 
-cdir <t5$Disc>.Manuals
-cdir <t5$Disc>.Manuals.Fireworkz
-cdir <t5$Disc>.Manuals.Fireworkz.UK
+%CDir <t5$Disc>.Manuals
+%CDir <t5$Disc>.Manuals.Fireworkz
+%CDir <t5$Disc>.Manuals.Fireworkz.UK
 
-| Move the Getting Started Guide docs to where they are expected in the package (NB These HTML files are suffixed /html)
-rename <t5$Disc>.GSGuide.riscos         <t5$Disc>.Manuals.Fireworkz.UK.StartGuide
+| Move the Getting Started Guide docs
+| to where they are expected in this package
+| (NB These HTML files are suffixed /html)
+Set t5$StartGuide                       <t5$Disc>.Manuals.Fireworkz.UK.StartGuide
+%Rename <t5$Disc>.GSGuide.riscos        <t5$StartGuide>
 
-| Move the User Guide docs to where they are expected in the package (NB These HTML files are suffixed /htm)
-cdir <t5$Disc>.Manuals.Fireworkz.UK.UserGuide
-rename <t5$Disc>.UserGuide.content      <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content
+| Move the User Guide docs
+| to where they are expected in this package
+| (NB These HTML files are suffixed /htm)
+Set t5$UserGuide                        <t5$Disc>.Manuals.Fireworkz.UK.UserGuide
+%CDir                                   <t5$UserGuide>
+%Rename <t5$Disc>.UserGuide.content     <t5$UserGuide>.content
 
 | Fireworkz has extra top-level index in the User Guide
-rename <t5$Disc>.UserGuide.indexR/htm   <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.index/htm
+%Rename <t5$Disc>.UserGuide.indexR/htm  <t5$UserGuide>.index/htm
 
-| Get rid of everything else (Windows StartGuide, Windows compiled Help framework)
+| Get rid of everything else we exported above
+| (Windows StartGuide, Windows compiled Help framework)
 X %Wipe <t5$Disc>.GSGuide ~cfr~v
 X %Wipe <t5$Disc>.UserGuide ~cfr~v
 X %Wipe <t5$Disc>.Originals ~cfr~v
 
-| This one is really just for Windows compiled Help
-delete <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.usindex/htm
+|
+| Prep the Getting Started Guide
+|
+
+| These are only for the website
+Delete                        <t5$StartGuide>./htaccess
 
 | HTML files
-SetMacro Alias$t5_settype SetType %%0 &FAF
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide.content -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg01 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg02 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg03 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg04 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg05 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg06 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.sg07 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug00 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug02 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug03 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug04 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug05 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug06 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug07 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug08 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug09 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug10 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug11 -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.ug90 -files -verbose
+SetMacro Alias$t5_SetType_HTM SetType %%0 &FAF
+Repeat         t5_SetType_HTM <t5$StartGuide> -files -verbose
+Repeat         t5_SetType_HTM <t5$StartGuide>.content -files -verbose
+Unset    Alias$t5_SetType_HTM
 
 | CSS files
-SetMacro Alias$t5_settype SetType %%0 &F79
-t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide.content.gsguide/css
-t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.common.usguide/css
+SetMacro Alias$t5_SetType_CSS SetType %%0 &F79
+               t5_SetType_CSS <t5$StartGuide>.content.guide/css
+Unset    Alias$t5_SetType_CSS
 
 | PNG files
-SetMacro Alias$t5_settype SetType %%0 &B60
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.StartGuide.content.images -files -verbose
-Repeat t5_settype <t5$Disc>.Manuals.Fireworkz.UK.UserGuide.content.common.images -files -verbose
+SetMacro Alias$t5_SetType_PNG SetType %%0 &B60
+Repeat         t5_SetType_PNG <t5$StartGuide>.content.images -files -verbose
+Repeat         t5_SetType_PNG <t5$StartGuide>.content.images.toolbar -files -verbose
+Unset    Alias$t5_SetType_PNG
 
-Unset Alias$t5_settype
+| TEXT files
+SetMacro Alias$t5_SetType_TXT SetType %%0 &FFF
+               t5_SetType_TXT <t5$StartGuide>.content.images.LICENCE
+Unset    Alias$t5_SetType_TXT
+
+|
+| Prep the User Guide
+|
+
+| HTML files
+SetMacro Alias$t5_SetType_HTM SetType %%0 &FAF
+Repeat         t5_SetType_HTM <t5$UserGuide> -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg01 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg02 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg03 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg04 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg05 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06a -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06b -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06c -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06cn -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06d -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06e -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06f -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06g -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06h -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06i -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06j -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06k -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06l -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06m -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06n -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06o -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06odf -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06p -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06q -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06r -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06s -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06t -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06u -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06v -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06w -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06x -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06y -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg07 -files -verbose
+Repeat         t5_SetType_HTM <t5$UserGuide>.content.ug -files -verbose
+Unset    Alias$t5_SetType_HTM
+
+| CSS files
+SetMacro Alias$t5_SetType_CSS SetType %%0 &F79
+               t5_SetType_CSS <t5$UserGuide>.content.common.guide/css
+Unset    Alias$t5_SetType_CSS
+
+| PNG files
+SetMacro Alias$t5_SetType_PNG SetType %%0 &B60
+Repeat         t5_SetType_PNG <t5$UserGuide>.content.common.images -files -verbose
+Repeat         t5_SetType_PNG <t5$UserGuide>.content.common.images.toolbar -files -verbose
+Unset    Alias$t5_SetType_PNG
+
+| TEXT files
+SetMacro Alias$t5_SetType_TXT SetType %%0 &FFF
+               t5_SetType_TXT <t5$UserGuide>.content.common.images.LICENCE
+Unset    Alias$t5_SetType_TXT
 
 | The one in RiscPkg.Copyright is the useful one for the packaged docs
-delete <t5$Disc>.RiscPkg.LICENCE
-delete <t5$Disc>.LICENCE
-delete <t5$Disc>.MakeRiscPkg
+Delete <t5$Disc>.RiscPkg.LICENCE
+Delete <t5$Disc>.LICENCE
+Delete <t5$Disc>.MakeRiscPkg
 
 %Dir <t5$Disc>
 %Remove <t5$Zip>

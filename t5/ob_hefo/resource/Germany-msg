@@ -1,0 +1,53 @@
+#
+# this is the messages file for ob_hefo (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_hefo/ob_hefo.h
+#
+# MSG_DIALOG_PAGE_HEFO_BREAK_xxx
+#
+# UK 0:Page
+0:Seite
+# UK 1:Page break
+1:Seitenumbruch
+# UK 2:Page number
+2:Seitenzahl
+# UK 3:Margin
+3:Rand
+# UK 4:Offset
+4:Versatz
+# UK 5:Page %d
+5:Seite %d
+# UK 6:Row %d
+6:Zeile %d
+# UK 7:Header
+7:Kopfzeilen
+# UK 8:Even header
+8:Kopfzeilen auf geraden Seiten
+# UK 9:First header
+9:Kopfzeilen auf der ersten Seite
+# UK 10:Footer
+10:Fuﬂzeilen
+# UK 11:Even footer
+11:Fuﬂzeilen auf geraden Seiten
+# UK 12:First footer
+12:Fuﬂzeilen auf der ersten Seite
+# UK 15:ug/ug07_headers_and_footers.htm
+15:ug/ug07_headers_and_footers.htm
+#
+# MSG_STATUS_HEFO_xxx
+#
+# UK 20:Header
+20:Kopfzeilen
+# UK 21:Footer
+21:Fuﬂzeilen
+#
+# errors (none)
+#
+# end of msg (ob_hefo)

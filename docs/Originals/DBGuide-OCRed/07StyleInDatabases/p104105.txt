@@ -1,0 +1,50 @@
+﻿Number formats
+Number formats are accessed from the Number section of the
+style editor.
+You can specify a number fonnat to be used, for example, by the
+whole database as follows:
+1 Click on the Style button.
+2 Choose Database from the style list and click Change.
+3 Click the Number button to look at the Number section of the
+style editor.
+4 Click on the Number option. The default number format of
+the database will be displayed in the adjacent box:
+
+This is the way in which any numbers entered into number fields
+will be displayed. In this case, all numbers will appear with a
+decimal point and two decimal places; thousands will have a
+comma separator and negative numbers will use the negative style
+which sets them to red.
+
+Generally, you should not change the number style in the base
+database style, but create new styles for each type of number
+fonnat you want to use in your individual fields.
+
+How number formats are constructed
+Number formats are built up out of hash signs (#), punctuation
+marks, zero characters and alphanumerical characters. Click on the
+arrow at the right of the Number format definition box, and you’ll
+see a list of pre-defined number formats:
+
+The characters used in the definitions have the following effect in
+the worksheet:
+
+Hashes and zeros
+Hashes which appear in the format definition are replaced by
+numerals (that is, any of nought to nine) in your worksheet. Zeros
+will always appear, unless replaced by actual parts of the number.
+For example, in a number style 0,000 the value 10 will appear as
+0,010 whereas if the style is defined as #,##0 it will appear as 10.
+Where characters after the decimal point are represented by hash
+signs, trailing zeros will not be displayed. For example, the format
+0.## will cause 54.00 to be displayed as 54. If figures after the
+decimal point are represented as zeros, trailing zeros will be
+displayed. So for currency formats, where you want two decimal
+places always to be displayed, you need to ensure that the format
+ends with .00.
+
+Fireworkz Pro 105
+
+
+
+

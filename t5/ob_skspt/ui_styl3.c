@@ -50,16 +50,16 @@ internal routines
 _Check_return_
 static STATUS
 create_using_es_wibble(
-    P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback);
+    _InoutRef_  P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback);
 
 _Check_return_
 static STATUS
 create_using_es_wibble_enabler(
-    P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback);
+    _InoutRef_  P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback);
 
 PROC_QSORT_PROTO(static, es_tab_list_compile_qsort, TAB_INFO);
 
@@ -72,44 +72,44 @@ es_wibble_search(
 _Check_return_
 static STATUS
 fill_using_es_wibble(
-    P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback);
+    _InoutRef_  P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source,
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InRef_     PC_ES_CALLBACK p_es_callback);
 
 _Check_return_
 static STATUS
 new_using_es_wibble(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback);
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback);
 
 _Check_return_
 static STATUS
 new_using_es_wibble_enabler(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback);
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback);
 
 _Check_return_
 static STATUS
 ui_list_create_new_object(
-    /*inout*/ P_ARRAY_HANDLE p_array_handle,
-    /*inout*/ P_UI_SOURCE p_ui_source);
+    _OutRef_    P_ARRAY_HANDLE p_array_handle,
+    _OutRef_    P_UI_SOURCE p_ui_source);
 
 _Check_return_
 static STATUS
 ui_list_create_numform(
     _DocuRef_   P_DOCU p_docu,
-    /*inout*/ P_ARRAY_HANDLE p_array_handle,
-    /*inout*/ P_UI_SOURCE p_ui_source,
-    _InVal_     BIT_NUMBER bit_number);
+    _OutRef_    P_ARRAY_HANDLE p_array_handle,
+    _OutRef_    P_UI_SOURCE p_ui_source,
+    _InVal_     STYLE_BIT_NUMBER style_bit_number);
 
 _Check_return_
 static STATUS
 ui_list_create_style_key(
     _DocuRef_   P_DOCU p_docu,
-    /*inout*/ P_ARRAY_HANDLE p_array_handle,
-    /*inout*/ P_UI_SOURCE p_ui_source,
+    _OutRef_    P_ARRAY_HANDLE p_array_handle,
+    _OutRef_    P_UI_SOURCE p_ui_source,
     _InVal_     STYLE_HANDLE style_handle_being_modified);
 
 /*
@@ -203,7 +203,7 @@ es_subdialog_style_selector_test(
 _Check_return_
 static U32
 es_light_on_for(
-    P_ES_CALLBACK p_es_callback,
+    _InRef_     P_ES_CALLBACK p_es_callback,
     _InVal_     U32 subdialog)
 {
     STYLE_SELECTOR selector;
@@ -329,9 +329,9 @@ tweak_style_ctl_fill_source(
     _InoutRef_  P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source)
 {
     const P_ES_CALLBACK p_es_callback = (P_ES_CALLBACK) p_dialog_msg_ctl_fill_source->client_handle;
-    const P_ES_WIBBLE p_es_wibble = es_wibble_search(p_dialog_msg_ctl_fill_source->dialog_control_id);
+    const PC_ES_WIBBLE p_es_wibble = es_wibble_search(p_dialog_msg_ctl_fill_source->dialog_control_id);
 
-    if((P_ES_WIBBLE_NONE != p_es_wibble) && !p_es_wibble->enabler)
+    if( (P_ES_WIBBLE_NONE != p_es_wibble) && !p_es_wibble->enabler )
         return(fill_using_es_wibble(p_dialog_msg_ctl_fill_source, p_es_wibble, p_es_callback));
 
     return(STATUS_OK);
@@ -343,10 +343,11 @@ tweak_style_ctl_create_state(
     _InoutRef_  P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state)
 {
     const P_ES_CALLBACK p_es_callback = (P_ES_CALLBACK) p_dialog_msg_ctl_create_state->client_handle;
-    const P_ES_WIBBLE p_es_wibble = es_wibble_search(p_dialog_msg_ctl_create_state->dialog_control_id);
+    const PC_ES_WIBBLE p_es_wibble = es_wibble_search(p_dialog_msg_ctl_create_state->dialog_control_id);
 
     if(P_ES_WIBBLE_NONE != p_es_wibble)
-        return((p_es_wibble->enabler ? create_using_es_wibble_enabler : create_using_es_wibble) (p_dialog_msg_ctl_create_state, p_es_wibble, p_es_callback));
+        return((p_es_wibble->enabler ? create_using_es_wibble_enabler : create_using_es_wibble)
+                    (p_dialog_msg_ctl_create_state, p_es_wibble, p_es_callback));
 
     return(STATUS_OK);
 }
@@ -887,7 +888,7 @@ es_tab_list_compile_type(
 _Check_return_
 static inline PC_USTR
 es_tab_list_decompile_type(
-    TAB_TYPE tab_type)
+    _InVal_     TAB_TYPE tab_type)
 {
     assert((U32) tab_type < elemof32(es_tab_list_types));
     return(resource_lookup_ustr(es_tab_list_types[tab_type]));
@@ -1033,16 +1034,17 @@ es_tab_list_decompile(
 
 static void
 es_tab_list_validation_setup(
-    /*out*/ P_BITMAP p_bitmap_validation)
+    _OutRef_    P_BITMAP p_bitmap_validation,
+    _InVal_     BIT_NUMBER bitmap_bits)
 {
     PC_SBSTR sbstr = " .+-0123456789\n";
     SBCHAR sbchar;
     TAB_TYPE tab_type;
 
-    bitmap_clear(p_bitmap_validation, N_BITS_ARG(256));
+    bitmap_clear(p_bitmap_validation, N_BITS_ARG(bitmap_bits));
 
     while((sbchar = *sbstr++) != CH_NULL)
-        bitmap_bit_set(p_bitmap_validation, sbchar, N_BITS_ARG(256));
+        bitmap_bit_set(p_bitmap_validation, sbchar, N_BITS_ARG(bitmap_bits));
 
     for(tab_type = 0; tab_type < (TAB_TYPE) elemof32(es_tab_list_types); ++tab_type)
     {
@@ -1053,8 +1055,8 @@ es_tab_list_validation_setup(
         {
             sbchar = (SBCHAR) tchar;
 
-            bitmap_bit_set(p_bitmap_validation, sbchar_toupper(sbchar), N_BITS_ARG(256));
-            bitmap_bit_set(p_bitmap_validation, sbchar_tolower(sbchar), N_BITS_ARG(256));
+            bitmap_bit_set(p_bitmap_validation, sbchar_toupper(sbchar), N_BITS_ARG(bitmap_bits));
+            bitmap_bit_set(p_bitmap_validation, sbchar_tolower(sbchar), N_BITS_ARG(bitmap_bits));
         }
     }
 }
@@ -1062,9 +1064,9 @@ es_tab_list_validation_setup(
 _Check_return_
 static STATUS
 create_using_es_wibble(
-    P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback)
+    _InoutRef_  P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback)
 {
     const DIALOG_CONTROL_ID dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, p_es_wibble->packed_dialog_control_id);
     P_ANY p_member = PtrAddBytes(P_ANY, &p_es_callback->style, p_es_wibble->member_offset);
@@ -1220,8 +1222,8 @@ create_using_es_wibble(
     case ES_PS_ID_TAB_LIST:
         {
         PC_ARRAY_HANDLE p_array_handle = (PC_ARRAY_HANDLE) p_member;
-        PC_DIALOG_CONTROL_DATA_EDIT p_dialog_control_data_edit = (PC_DIALOG_CONTROL_DATA_EDIT) p_dialog_msg_ctl_create_state->p_dialog_control_data;
-        es_tab_list_validation_setup((P_BITMAP) p_dialog_control_data_edit->edit_xx.p_bitmap_validation);
+        PC_DIALOG_CONTROL_DATA_EDIT p_dialog_control_data_edit = p_dialog_msg_ctl_create_state->p_dialog_control_data.edit;
+        es_tab_list_validation_setup((P_BITMAP) p_dialog_control_data_edit->edit_xx.p_bitmap_validation, 256);
         status_return(es_tab_list_decompile(p_es_callback, p_array_handle, &p_dialog_msg_ctl_create_state->state_set.state.edit.ui_text));
         discard_edit = 1;
         break;
@@ -1302,22 +1304,23 @@ create_using_es_wibble(
 _Check_return_
 static STATUS
 create_using_es_wibble_enabler(
-    P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback)
+    _InoutRef_  P_DIALOG_MSG_CTL_CREATE_STATE p_dialog_msg_ctl_create_state,
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback)
 {
-    STYLE_BIT_NUMBER style_bit_number = ENUM_UNPACK(STYLE_BIT_NUMBER, p_es_wibble->style_bit_number);
+    const STYLE_BIT_NUMBER style_bit_number = ENUM_UNPACK(STYLE_BIT_NUMBER, p_es_wibble->style_bit_number);
     BOOL enabled = style_selector_bit_test(&p_es_callback->style_selector, style_bit_number);
 
-    if((p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
+    if( (p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) ||
+        (p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE) )
     {
         /* get our friends opinions too (enabled iff unanimous) */
         if(!style_selector_bit_test(&p_es_callback->style_selector, style_bit_number + 1))
-            enabled = 0;
+            enabled = FALSE;
         if(!style_selector_bit_test(&p_es_callback->style_selector, style_bit_number + 2))
-            enabled = 0;
+            enabled = FALSE;
         if(!style_selector_bit_test(&p_es_callback->style_selector, style_bit_number + 3))
-            enabled = 0;
+            enabled = FALSE;
     }
 
     if(style_selector_bit_test(&p_es_callback->prohibited_enabler, style_bit_number))
@@ -1367,11 +1370,11 @@ create_using_es_wibble_enabler(
 _Check_return_
 static STATUS
 fill_using_es_wibble(
-    P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback)
+    _InoutRef_  P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source,
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InRef_     PC_ES_CALLBACK p_es_callback)
 {
-    UNREFERENCED_PARAMETER(p_es_callback);
+    UNREFERENCED_PARAMETER_InRef_(p_es_callback);
 
     switch(p_es_wibble->packed_dialog_control_id)
     {
@@ -1416,8 +1419,8 @@ _Check_return_
 static STATUS
 new_using_es_wibble(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback)
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback)
 {
     DIALOG_CONTROL_ID dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, p_es_wibble->packed_dialog_control_id);
     P_ANY p_member = PtrAddBytes(P_ANY, &p_es_callback->style, p_es_wibble->member_offset);
@@ -1703,7 +1706,7 @@ new_using_es_wibble(
             /* read what's currently set back in as we've only set one piece of the line_space structure */
             p_member = &p_es_callback->style.para_style.line_space.leading;
             f64 = ui_dlg_get_f64(p_dialog_msg_ctl_state_change->h_dialog, ES_PS_ID_LINE_SPACE_N_VAL);
-            f64 = f64 * PIXITS_PER_POINT + 0.5;
+            f64 = (f64 * PIXITS_PER_POINT) + 0.5;
             * (P_S32) p_member = (fabs(f64) <= S32_MAX) ? (S32) f64 : 0;
         }
         break;
@@ -1729,8 +1732,8 @@ _Check_return_
 static STATUS
 new_using_es_wibble_enabler(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change,
-    P_ES_WIBBLE p_es_wibble,
-    P_ES_CALLBACK p_es_callback)
+    _InRef_     PC_ES_WIBBLE p_es_wibble,
+    _InoutRef_  P_ES_CALLBACK p_es_callback)
 {
     BOOL enabled = (p_dialog_msg_ctl_state_change->new_state.checkbox == DIALOG_BUTTONSTATE_ON);
     STYLE_BIT_NUMBER style_bit_number = ENUM_UNPACK(STYLE_BIT_NUMBER, p_es_wibble->style_bit_number);
@@ -1960,7 +1963,7 @@ es_tweak_style_precreate(
         const P_DIALOG_CTL_CREATE p_dialog_ctl_create = &p_dialog_cmd_process_dbox->p_ctl_create[i];
         const PC_DIALOG_CONTROL p_dialog_control = p_dialog_ctl_create->p_dialog_control.p_dialog_control;
         const DIALOG_CONTROL_ID dialog_control_id = p_dialog_control->dialog_control_id;
-        const P_ES_WIBBLE p_es_wibble = es_wibble_search(dialog_control_id);
+        const PC_ES_WIBBLE p_es_wibble = es_wibble_search(dialog_control_id);
 
         if(P_ES_WIBBLE_NONE != p_es_wibble)
         {
@@ -1975,7 +1978,7 @@ es_tweak_style_precreate(
                         ? &p_es_callback->info[IDX_HORZ]
                         : &p_es_callback->info[IDX_VERT];
 
-                const PC_DIALOG_CONTROL_DATA_BUMP_F64 p_dialog_control_data_bump_f64 = (PC_DIALOG_CONTROL_DATA_BUMP_F64) p_dialog_ctl_create->p_dialog_control_data;
+                const PC_DIALOG_CONTROL_DATA_BUMP_F64 p_dialog_control_data_bump_f64 = p_dialog_ctl_create->p_dialog_control_data.bump_f64;
                 UI_CONTROL_F64 * const p_ui_control_f64 = (UI_CONTROL_F64 *) p_dialog_control_data_bump_f64->bump_xx.p_uic;
                 p_ui_control_f64->ustr_numform  = ustr_bptr(p_es_user_unit_info->normal.user_unit_numform_ustr_buf);
                 p_ui_control_f64->inc_dec_round = p_es_user_unit_info->normal.user_unit_multiple;
@@ -2006,7 +2009,7 @@ es_tweak_style_precreate(
             case ES_PS_ID_PARA_START_UNITS:
             case ES_PS_ID_PARA_END_UNITS:
                 {
-                const PC_DIALOG_CONTROL_DATA_STATICTEXT p_dialog_control_data_statictext = (PC_DIALOG_CONTROL_DATA_STATICTEXT) p_dialog_ctl_create->p_dialog_control_data;
+                const PC_DIALOG_CONTROL_DATA_STATICTEXT p_dialog_control_data_statictext = p_dialog_ctl_create->p_dialog_control_data.statictext;
                 const P_UI_TEXT p_ui_text = (P_UI_TEXT) &p_dialog_control_data_statictext->caption;
                 p_ui_text->type = UI_TEXT_TYPE_RESID;
                 p_ui_text->text.resource_id = p_es_callback->info[IDX_VERT].user_unit_resource_id;
@@ -2019,7 +2022,7 @@ es_tweak_style_precreate(
             case ES_PS_ID_MARGIN_RIGHT_UNITS:
             case ES_PS_ID_TAB_LIST_UNITS:
                 {
-                const PC_DIALOG_CONTROL_DATA_STATICTEXT p_dialog_control_data_statictext = (PC_DIALOG_CONTROL_DATA_STATICTEXT) p_dialog_ctl_create->p_dialog_control_data;
+                const PC_DIALOG_CONTROL_DATA_STATICTEXT p_dialog_control_data_statictext = p_dialog_ctl_create->p_dialog_control_data.statictext;
                 const P_UI_TEXT p_ui_text = (P_UI_TEXT) &p_dialog_control_data_statictext->caption;
                 p_ui_text->type = UI_TEXT_TYPE_RESID;
                 p_ui_text->text.resource_id = p_es_callback->info[IDX_HORZ].user_unit_resource_id;
@@ -2040,8 +2043,8 @@ build a list of new objects to choose from in style editor
 _Check_return_
 static STATUS
 ui_list_create_new_object(
-    /*out*/ P_ARRAY_HANDLE p_array_handle,
-    /*inout*/ P_UI_SOURCE p_ui_source)
+    _OutRef_    P_ARRAY_HANDLE p_array_handle,
+    _OutRef_    P_UI_SOURCE p_ui_source)
 {
     P_UI_LIST_ENTRY_NEW_OBJECT p_ui_list_entry_new_object;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(*p_ui_list_entry_new_object), TRUE);
@@ -2049,6 +2052,7 @@ ui_list_create_new_object(
     OBJECT_ID object_id;
 
     *p_array_handle = 0;
+    p_ui_source->type = UI_SOURCE_TYPE_NONE;
 
     /* use new_object from all loaded new_objects */
     object_id = OBJECT_ID_ENUM_START;
@@ -2098,7 +2102,7 @@ build one of a list of numforms to choose from in style editor
 _Check_return_
 static STATUS
 numform_list_add(
-    /*inout*/ P_ARRAY_HANDLE p_array_handle,
+    _InoutRef_  P_ARRAY_HANDLE p_array_handle,
     _In_z_      PC_USTR ustr_numform)
 {
     P_UI_LIST_ENTRY_NUMFORM p_ui_list_entry_numform;
@@ -2130,13 +2134,14 @@ _Check_return_
 static STATUS
 ui_list_create_numform(
     _DocuRef_   P_DOCU p_docu,
-    /*out*/ P_ARRAY_HANDLE p_array_handle,
-    /*out*/ P_UI_SOURCE p_ui_source,
-    _InVal_     BIT_NUMBER bit_number)
+    _OutRef_    P_ARRAY_HANDLE p_array_handle,
+    _OutRef_    P_UI_SOURCE p_ui_source,
+    _InVal_     STYLE_BIT_NUMBER style_bit_number)
 {
     STATUS status = STATUS_OK;
 
     *p_array_handle = 0;
+    p_ui_source->type = UI_SOURCE_TYPE_NONE;
 
     { /* use numform from all loaded numforms */
     const PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_from_config()->numforms;
@@ -2147,7 +2152,7 @@ ui_list_create_numform(
         PC_UI_NUMFORM p_ui_numform = array_ptrc(p_ui_numform_handle, UI_NUMFORM, i);
         PC_USTR ustr_numform = p_ui_numform->ustr_numform;
 
-        if(p_ui_numform->numform_class != UI_NUMFORM_CLASS_NUMFORM_NU + (bit_number - STYLE_SW_PS_NUMFORM_NU))
+        if(p_ui_numform->numform_class != UI_NUMFORM_CLASS_NUMFORM_NU + (UI_NUMFORM_CLASS) (style_bit_number - STYLE_SW_PS_NUMFORM_NU))
             continue;
 
         status_break(status = numform_list_add(p_array_handle, ustr_numform));
@@ -2162,11 +2167,11 @@ ui_list_create_numform(
 
         while(style_enum_styles(p_docu, &p_style, &style_handle) >= 0)
         {
-            if(style_bit_test(p_style, bit_number))
+            if(style_bit_test(p_style, style_bit_number))
             {
                 PC_USTR ustr_numform;
 
-                switch(bit_number)
+                switch(style_bit_number)
                 {
                 default: default_unhandled();
 #if CHECKING
@@ -2211,8 +2216,8 @@ _Check_return_
 static STATUS
 ui_list_create_style_key(
     _DocuRef_   P_DOCU p_docu,
-    /*out*/ P_ARRAY_HANDLE p_array_handle,
-    /*out*/ P_UI_SOURCE p_ui_source,
+    _OutRef_    P_ARRAY_HANDLE p_array_handle,
+    _OutRef_    P_UI_SOURCE p_ui_source,
     _InVal_     STYLE_HANDLE style_handle_being_modified)
 {
     P_UI_LIST_ENTRY_STYLE_KEY p_ui_list_entry_style_key;
@@ -2222,6 +2227,7 @@ ui_list_create_style_key(
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     *p_array_handle = 0;
+    p_ui_source->type = UI_SOURCE_TYPE_NONE;
 
     { /* present a wee selection of keys that aren't already in use (SKS 07sep95) */
     static const KMAP_CODE base_code[] = { KMAP_BASE_CFUNC, KMAP_BASE_SFUNC, KMAP_BASE_CSFUNC, KMAP_BASE_FUNC };

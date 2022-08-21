@@ -19,7 +19,7 @@
 callback routines
 */
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_cache);
+PROC_UREF_EVENT_PROTO(static, text_cache_uref_event);
 
 /*
 internal routines
@@ -100,7 +100,7 @@ p_text_cache_from_data_ref(
             {
                 if(p_inline_object->object_data.data_ref.data_space == DATA_SLOT)
                     trace_3(TRACE_APP_FORMAT,
-                            TEXT("*** text cache hit *** col: ") COL_TFMT TEXT(", row: ") ROW_TFMT TEXT(", h_chunks: ") S32_TFMT,
+                            TEXT("*** text cache hit *** col: ") COL_TFMT TEXT(", row: ") ROW_TFMT TEXT(", h_chunks: ") U32_TFMT,
                             p_text_cache->data_ref.arg.slr.col, p_text_cache->data_ref.arg.slr.row,
                             p_text_cache->formatted_text.h_chunks);
                 else
@@ -144,7 +144,7 @@ p_text_cache_from_data_ref(
 
             region_from_two_slrs(&region, &p_inline_object->object_data.data_ref.arg.slr, &p_inline_object->object_data.data_ref.arg.slr, TRUE);
 
-            if(status_ok(status = uref_add_dependency(p_docu, &region, proc_uref_event_text_cache, next_client_handle, &p_text_cache->uref_handle, FALSE)))
+            if(status_ok(status = uref_add_dependency(p_docu, &region, text_cache_uref_event, next_client_handle, &p_text_cache->uref_handle, FALSE)))
                 p_text_cache->client_handle = next_client_handle++;
         }
 
@@ -231,13 +231,15 @@ text_cache_init_entry(
 
 /******************************************************************************
 *
-* free free entries in the text cache
+* free unused entries in the text cache
 *
 ******************************************************************************/
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, text_cache_entry_free)
+PROC_ELEMENT_IS_DELETED_PROTO(static, text_cache_entry_is_unused)
 {
-    return(!((P_TEXT_CACHE) p_any)->used);
+    const P_TEXT_CACHE p_text_cache = (P_TEXT_CACHE) p_any;
+
+    return(!p_text_cache->used);
 }
 
 static void
@@ -250,7 +252,7 @@ text_cache_garbage_collect(
     al_garbage_flags.remove_deleted = 1;
     al_garbage_flags.shrink = 1;
     al_array_auto_compact_set(&p_docu->h_text_cache);
-    consume(S32, al_array_garbage_collect(&p_docu->h_text_cache, 0, text_cache_entry_free, al_garbage_flags));
+    consume(S32, al_array_garbage_collect(&p_docu->h_text_cache, 0, text_cache_entry_is_unused, al_garbage_flags));
 }
 
 /******************************************************************************
@@ -347,42 +349,52 @@ text_cache_size(
 *
 ******************************************************************************/
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_cache)
+PROC_UREF_EVENT_PROTO(static, text_cache_uref_event_dep_delete)
+{
+    /* dependency must be deleted */
+    P_TEXT_CACHE p_text_cache = p_text_cache_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
+
+    UNREFERENCED_PARAMETER_InVal_(uref_message);
+
+    PTR_ASSERT(p_text_cache);
+    if(NULL != p_text_cache)
+        text_cache_dispose_entry(p_text_cache, TRUE);
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, text_cache_uref_event_dep_update)
+{
+    /* dependency region must be updated */
+    P_TEXT_CACHE p_text_cache = p_text_cache_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
+
+    /* find our entry */
+    PTR_ASSERT(p_text_cache);
+    if(NULL != p_text_cache)
+        if(Uref_Dep_None != uref_match_slr(&p_text_cache->data_ref.arg.slr, uref_message, p_uref_event_block))
+            text_cache_dispose_entry(p_text_cache, TRUE);
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, text_cache_uref_event)
 {
 #if TRACE_ALLOWED && 0
-    uref_trace_reason(p_uref_event_block->reason.code, TEXT("TEXT_CACHE_UREF"));
+    uref_trace_reason(UBF_UNPACK(UREF_COMMS, p_uref_event_block->reason.code), TEXT("TEXT_CACHE_UREF"));
 #endif
 
-    switch(p_uref_event_block->reason.code)
+    switch(UBF_UNPACK(UREF_COMMS, p_uref_event_block->reason.code))
     {
     case Uref_Dep_Delete: /* dependency must be deleted */
-        {
-        P_TEXT_CACHE p_text_cache = p_text_cache_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
-
-        PTR_ASSERT(p_text_cache);
-        if(NULL != p_text_cache)
-            text_cache_dispose_entry(p_text_cache, TRUE);
-        break;
-        }
+        return(text_cache_uref_event_dep_delete(p_docu, uref_message, p_uref_event_block));
 
     case Uref_Dep_Update: /* dependency region must be updated */
     case Uref_Dep_Inform:
-        {
-        P_TEXT_CACHE p_text_cache = p_text_cache_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
-
-        /* find our entry */
-        if(NULL != p_text_cache)
-            if(uref_match_slr(&p_text_cache->data_ref.arg.slr, uref_message, p_uref_event_block) != Uref_Dep_None)
-                text_cache_dispose_entry(p_text_cache, TRUE);
-
-        break;
-        }
+        return(text_cache_uref_event_dep_update(p_docu, uref_message, p_uref_event_block));
 
     default: default_unhandled();
-        break;
+        return(STATUS_OK);
     }
-
-    return(STATUS_OK);
 }
 
 /*

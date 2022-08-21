@@ -8,10 +8,12 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with fl_csv/fl_csv.h
+#
+# CSV_MSG_LOAD_QUERY_xxx
 #
 1:Loading CSV
-2:ug08/ug8_importing_data_into_tables.htm
+2:ug/ug08_importing_data_into_tables.htm
 3:Insert as table
 4:Insert as labels
 5:Labels across
@@ -19,7 +21,8 @@
 8:Insert as database
 10:Loading delimited text
 #
-# errors
+# errors: keep consistent with fl_csv/fl_csv.h
+# see CSV_ERR(n)
 #
 e0:Cannot import CSV as database when the destination document has not been saved
 #e1:ERROR_RQ

@@ -17,15 +17,18 @@ private data visible through prodinfo.c functions, set by winmain.c/main.c - do 
 #define REG_NAME_LENGTH 29 /* forever value */
 #define REG_NUMB_LENGTH 16 /* forever value */
 
-extern const PCTSTR __product_name;
-extern const PCTSTR __product_family_name;
-extern const PCTSTR __product_ui_name;
 extern TCHARZ __user_name[64];
 extern TCHARZ __organisation_name[64];
 extern TCHARZ __registration_number[REG_NUMB_LENGTH + 1]; /* NB no spaces */
 
+extern const PCTSTR __product_name;
+extern const PCTSTR __product_family_name;
+extern const PCTSTR __product_ui_name;
+
 #if RISCOS
-extern const PC_U8Z g_product_sprite_name;
+extern const PC_U8Z g_product_riscos_app_dynamic_area;
+extern const PC_U8Z g_product_riscos_app_directory;
+extern const PC_U8Z g_product_riscos_app_sprite;
 #endif
 
 #endif /* __prodinfo_h */

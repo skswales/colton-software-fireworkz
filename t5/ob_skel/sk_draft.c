@@ -694,7 +694,7 @@ T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
     printing.p_print_ctrl   = p_print_ctrl;
     printing.printing_state = PRINTING_START;
 
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = offsetof32(WimpMessage, data.data_save.leaf_name);
   /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = Wimp_MPrintSave;
@@ -754,10 +754,10 @@ T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
     } /*block*/
 
     {
-    const HOST_WND hwnd = /*!IS_VIEW_NONE(p_view) ? p_view->main[WIN_BACK].hwnd :*/ HOST_WND_NONE;
+    const HOST_WND hwnd = /*VIEW_NOT_NONE(p_view) ? p_view->main[WIN_BACK].hwnd :*/ HOST_WND_NONE;
     SHELLEXECUTEINFO sei;
 
-    zero_struct(sei);
+    zero_struct_fn(sei);
     sei.cbSize = sizeof32(sei);
     sei.hwnd = hwnd;
     sei.lpVerb = TEXT("Open");

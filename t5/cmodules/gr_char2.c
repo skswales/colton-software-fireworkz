@@ -850,7 +850,7 @@ gr_travel_categ_label(
     {
         /* invent a category label, based on item number */
         pValue->type = GR_CHART_VALUE_TEXT;
-        consume_int(xsnprintf(pValue->data.text, sizeof32(pValue->data.text), U32_FMT, item + 1));
+        consume_int(xsnprintf(pValue->data.text, sizeof32(pValue->data.text), U32_FMT, (U32) item + 1U));
     }
 }
 
@@ -921,6 +921,7 @@ gr_travel_dsh_label(
 
     case GR_CHART_VALUE_NUMBER:
         {
+        F64 label_value = pValue->data.number;
         NUMFORM_PARMS numform_parms;
         SS_DATA ss_data;
         QUICK_UBLOCK quick_ublock;
@@ -929,18 +930,18 @@ gr_travel_dsh_label(
         pValue->type = GR_CHART_VALUE_TEXT;
         pValue->data.text[0] = CH_NULL;
 
-        ss_data_set_real(&ss_data, pValue->data.number);
-
         zero_struct(numform_parms);
-        if(fabs(ss_data_get_real(&ss_data)) >= S32_MAX)
+        if(fabs(label_value) >= (F64) S32_MAX)
             numform_parms.ustr_numform_numeric = USTR_TEXT("0.00e+00");
-        else if(fabs(ss_data_get_real(&ss_data)) < 1.0)
+        else if(fabs(label_value) < 1.0)
             numform_parms.ustr_numform_numeric = USTR_TEXT("0.##");
         else
             numform_parms.ustr_numform_numeric =
-                (floor(ss_data_get_real(&ss_data)) == ss_data_get_real(&ss_data))
+                (floor(label_value) == label_value)
                     ? USTR_TEXT("#,##0")
                     : USTR_TEXT("#,##0.00");
+
+        ss_data_set_real(&ss_data, label_value);
 
         status_assert(numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms));
 
@@ -1116,7 +1117,7 @@ gr_travel_series_label(
     {
         /* invent a label, based on series number */
         pValue->type = GR_CHART_VALUE_TEXT;
-        consume_int(xsnprintf(pValue->data.text, sizeof32(pValue->data.text), "S" U32_FMT, gr_series_external_from_idx(cp, series_idx)));
+        consume_int(xsnprintf(pValue->data.text, sizeof32(pValue->data.text), "S" U32_FMT, (U32) gr_series_external_from_idx(cp, series_idx)));
     }
 }
 

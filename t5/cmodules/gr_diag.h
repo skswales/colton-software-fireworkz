@@ -242,6 +242,7 @@ object 'names'
 #define GR_DIAG_OBJTYPE_PIESECTOR     5U
 #define GR_DIAG_OBJTYPE_QUADRILATERAL 6U
 #define GR_DIAG_OBJTYPE_PICTURE       7U
+#define GR_DIAG_OBJTYPE_LIMIT         8U
 
 typedef U32 GR_DIAG_OBJTYPE;
 
@@ -262,7 +263,7 @@ typedef struct GR_DIAG_OBJHDR
 {
     GR_DIAG_OBJHDR_DEF;
 }
-GR_DIAG_OBJHDR;
+GR_DIAG_OBJHDR, * P_GR_DIAG_OBJHDR, ** P_P_GR_DIAG_OBJHDR;
 
 /*
 groups are simply encapulators
@@ -427,7 +428,7 @@ gr_diag_object_first(
     _InRef_     P_GR_DIAG p_gr_diag,
     _InoutRef_  P_GR_DIAG_OFFSET pSttObject,
     _InoutRef_  P_GR_DIAG_OFFSET pEndObject,
-    _OutRef_    P_P_BYTE ppObjHdr);
+    _OutRef_    P_P_GR_DIAG_OBJHDR ppObjHdr);
 
 _Check_return_
 extern STATUS
@@ -442,9 +443,9 @@ _Check_return_
 extern BOOL
 gr_diag_object_next(
     _InRef_     P_GR_DIAG p_gr_diag,
-    _InoutRef_  P_GR_DIAG_OFFSET pSttObject,
+    _InoutRef_  P_GR_DIAG_OFFSET pCurObject,
     _InVal_     GR_DIAG_OFFSET endObject,
-    _OutRef_    P_P_BYTE ppObjHdr);
+    _OutRef_    P_P_GR_DIAG_OBJHDR ppObjHdr);
 
 extern void
 gr_diag_object_reset_bbox_between(

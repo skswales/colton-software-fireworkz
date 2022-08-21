@@ -18,7 +18,7 @@
 declare complex number type for internal usage
 */
 
-#if (__STDC_VERSION__ < 199901L) || defined(__STDC_NO_COMPLEX__) || 1 /* for 2.22 transitional */
+#if (__STDC_VERSION__ < 199901L) || defined(__STDC_NO_COMPLEX__) || 0
 
 #if !defined(__STDC_NO_COMPLEX__)
 #define __STDC_NO_COMPLEX__ 1 /* for subsequent testing */
@@ -171,7 +171,7 @@ complex_multiply( /* z1 * z2 */
     _InRef_     PC_COMPLEX z2,
     _OutRef_    P_COMPLEX z_out);
 
-_Check_return_ _Success_(return)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 complex_divide( /* z1 / z2 */
     _InRef_     PC_COMPLEX z1,

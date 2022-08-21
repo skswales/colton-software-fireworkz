@@ -1,0 +1,786 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <title>The Style editor</title>
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        p.c3 {
+            font-family: sans-serif;
+            padding: 0px 0px 0px 6em;
+        }
+
+        p.c2 {
+            font-family: serif;
+            padding: 0px 0px 0px 6em;
+        }
+
+        p.c1 {
+            font-family: monospace;
+            padding: 0px 0px 0px 6em;
+        }
+    </style>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Style editor" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug05_working_with_styles_and_effects.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug08_tables.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Styles and effects </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Tables</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="the_style_editor" id="the_style_editor"></a><span class="csg-chapter-number">6 </span>The Style editor</h1>
+
+    <p>
+        One of the most powerful features of
+        Fireworkz is its ability to store the layout of paragraphs and the
+        design of type styles as named styles. This is done using the Style editor.
+    </p>
+    <p>
+        This chapter provides a comprehensive reference guide to the Style editor in Fireworkz.
+        It explains how to set up and use styles:
+    </p>
+    <ul>
+        <li><a href="#setting_up_styles">Setting up styles</a></li>
+
+        <li><a href="#the_style_dialogue_box">The style dialogue box</a></li>
+
+        <li><a href="#style">Style</a></li>
+
+        <li><a href="#text">Text</a></li>
+
+        <li><a href="#ruler">Ruler</a></li>
+
+        <li><a href="#colour_editing">Colours</a></li>
+
+        <li><a href="#spacing">Spacing</a></li>
+
+        <li><a href="#row">Row</a></li>
+
+        <li><a href="#number_formats">Number, date and time formats</a></li>
+    </ul>
+
+    <h3><a name="setting_up_styles" id="setting_up_styles"></a>Setting up styles</h3>
+    <p>
+        Each worksheet starts out with several styles in its style list,
+        depending on the number of styles defined in the template used.
+        Any number of styles can then be added.
+    </p>
+    <p>
+        There are several ways in which you can change the appearance or type of cells.
+        You can either:
+    </p>
+    <ul>
+        <li>Alter the existing style so that all the cells in that style in the worksheet are changed.</li>
+        <li>Add a new style to the list, and apply it to the selected parts of the worksheet, layering the new style over the original one.</li>
+        <li>Apply an existing style or styles to the text or numbers.</li>
+        <li>Use <a href="../ug/ug05_working_with_styles_and_effects.htm#effects">Effects</a> to make one-off changes.</li>
+    </ul>
+
+    <h3><a name="editing_styles" id="editing_styles"></a>Editing styles</h3>
+    <p>All attributes can be changed by using the Style editor.</p>
+    <p>To change an existing style via the Style editor:</p>
+    <ol>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/style.png" alt="Style tool button" />
+            Click the <span class="csg-toolbar-button">Style</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Style</span> from the <span class="csg-menu">Style</span> menu).
+        </li>
+        <li>
+            The list of styles is displayed.
+            Select the one you want from the list and click the <span class="csg-dbox-button">Change</span> button.
+        </li>
+        <li>
+            The <span class="csg-dbox">Style editor</span> dialogue box will appear,
+            with the name of the style being changed shown in its title bar.
+            See the following sections for full details on how to set each attribute.
+        </li>
+    </ol>
+
+    <h4><a name="adding_a_new_style" id="adding_a_new_style"></a>Adding a new style</h4>
+    <p>To add a new style to the list:</p>
+    <ol>
+        <li>Choose <span class="csg-menu-option">Styles</span> from the <span class="csg-menu">Style</span> menu.</li>
+        <li>
+            Click the <span class="csg-dbox-button">New</span> button.
+            The <span class="csg-dbox">Define new style</span> dialogue box will appear.
+        </li>
+        <li>Enter the name for the new style in the first writable field.</li>
+        <li>If the style is to be based on a selected area, select the <span class="csg-dbox-option">Selection</span> radio button.</li>
+        <li>If the style is to be based on an existing style, select the <span class="csg-dbox-option">Style</span> radio button and select the style you want from the list.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Create</span></span>.
+            The <span class="csg-dbox">New style</span> dialogue box will appear.
+        </li>
+    </ol>
+    <p>
+        You should go to each section of the dialogue box which contains an attribute used in the selection and
+        deliberately switch on the attribute for it to be stored as part of the style.
+    </p>
+
+    <h4><a name="the_style_dialogue_box" id="the_style_dialogue_box"></a>Setting choices in the style dialogue box</h4>
+    <p>
+        The Style editor appears when you choose New style or Change style.
+        Because it includes too many options to put on the screen at once,
+        it is split into several sections which contain items which can be considered together.
+        (Historical note: this design precedes the introduction of tabbed dialogs in Windows!)
+    </p>
+    <p>
+        These options are listed on the left of the dialogue box.
+        Click the radio button to display the section of dialogue box associated with it.
+    </p>
+    <ul>
+        <li>
+            A small indicator box can be seen adjacent to each radio button.
+            This will be illuminated green for any sections of the dialogue box which include options that have been explicitly set.
+            This helps you find your way around the dialogue box,
+            so that you don't waste time looking at irrelevant options when you edit a style.
+        </li>
+        <li>
+            Many options within the Style editor, such as Bold, have two buttons associated with them.
+            The first button decides whether or not the style affects that aspect of any text it is applied to.
+            So, if you wanted to create a style which made text and numbers bold, you would make sure that the Bold option was switched on.
+            This means that when the style is applied to text or numbers, it changes the setting of that style attribute.
+        </li>
+        <li>
+            The second button decides what change to make.
+            In a style which makes text bold, the second button is switched on as well,
+            making it look as though it was pressed in, to change all text to which the style is applied to bold.
+            If the second button were turned off, the style would have the reverse effect;
+            it would look at all text it was applied to and turn any bold text it found to plain text.
+        </li>
+    </ul>
+
+    <h2><a name="style" id="style"></a>Style</h2>
+
+    <p>
+        The first section of the Style dialogue box contains the style name and so is set for every style.
+        It is also used to assign control key shortcuts to styles.
+    </p>
+
+    <h3><a name="style_names" id="style_names"></a>About style names</h3>
+    <p>
+        You may give a style any length of name you like,
+        although in practice you will want to see the name clearly in the style list,
+        which means that 25 characters is the practical limit.
+    </p>
+    <p>
+        You may use any alphanumeric characters (i.e. letters of the alphabet and the ten numerals 0-9) in style names.
+        Style names are not case-sensitive, so you cannot create different styles called heading and Heading.
+    </p>
+    <p>You may use spaces and the underscore character (_) in style names, but no other punctuation marks or symbols.</p>
+    <p>
+        When you create a new style, Fireworkz will suggest the style name <code>NewStyle1</code>.
+        However, it is always a good idea to give a style a name which reminds you of the purpose of the style, or the attributes set in it.
+    </p>
+
+    <a name="style_keys" id="style_keys"></a>
+    <h4>Control key shortcuts</h4>
+    <p>
+        You can assign control key shortcuts to frequently used styles.
+        To do this go to the <strong>Style</strong> section of the Style editor and choose one of the key short cuts available.
+        You can use Ctrl-F1 to Ctrl-F11, Shift-F1 to Shift-F11, and Ctrl-Shift-F1 to Ctrl-Shift-F11.
+    </p>
+    <p>
+        Control key shortcuts can be used instead of the <span class="csg-toolbar-button">Style</span> tool button and selector dialogue box.
+        So to change style at the caret you would press <span class="csg-key">Ctrl-F2</span> (or whichever number was needed)
+        rather than clicking the <span class="csg-toolbar-button">Style</span> button and then choosing a style from the list.
+    </p>
+
+    <h2><a name="text" id="text"></a>Text</h2>
+
+    <p>
+        The Text section of the Style editor is one of the most used sections.
+        It defines the typeface used, the size and colour of text and other attributes
+        such as bold, italic, underline, superscript and subscript.
+    </p>
+    <ul>
+        <li><a href="#fonts_and_typefaces">Fonts and typefaces</a></li>
+        <li><a href="#text_attributes">Attributes</a></li>
+        <li><a href="#text_height_and_width">Height and width</a></li>
+        <li><a href="#text_colour">Colour</a></li>
+    </ul>
+
+    <h3><a name="fonts_and_typefaces" id="fonts_and_typefaces"></a>Fonts and typefaces</h3>
+    <p>
+        The font is an aspect of style which you will often want to change.
+        It is made up of a combination of typeface, height, width, and attribute.
+        You can also use colour.
+        A font is a particular instance of a typeface, in a particular size and style.
+    </p>
+    <p>All of these are set in the <strong>Text</strong> section of the Style editor.</p>
+
+    <a name="typeface" id="typeface"></a>
+    <h4>Typeface</h4>
+    <p>
+        Each typeface has a particular feel to it, making it more appropriate for some types of document than others.
+        However, there are very few hard and fast rules in typography with most choice coming down to subjective preferences.
+    </p>
+    <p>
+        Typefaces can be grouped in several ways.
+        The most obvious is the split between typefaces consisting of letters and numbers, and typefaces which contain symbols and ornaments.
+        These typefaces are often known as Dingbats.
+    </p>
+    <p>
+        Alphanumeric typefaces are divided into monospaced and proportionally spaced type.
+        Numbers are traditionally monospaced in all typefaces, but you should check this with any unusual typefaces you plan to use.
+    </p>
+    <ul>
+        <li>
+            Monospaced typefaces allocate the same width to each letter, like an old-fashioned typewriter,
+            so that a narrow letter such as i takes up the same space as m or w.
+            Corpus (RISC OS) and Courier (Windows) are monospaced typefaces:
+        </li>
+    </ul>
+    <p class="c1">This is monospaced text</p>
+    <ul>
+        <li>
+            Proportionally spaced typefaces allocate space to each character in proportion to its actual width.
+            This text is proportionally spaced; notice how all the letters are different widths.
+            Homerton and Trinity (RISC OS) and Arial and Times New Roman (Windows) are all proportionally spaced.
+            Proportionally spaced type is much easier to read.
+        </li>
+    </ul>
+    <p>Alphanumeric typefaces can also be divided into serif and sans serif type.</p>
+    <ul>
+        <li>
+            Serif faces, such as Trinity (RISC OS) or Times New Roman (Windows), have small feet or brackets at the edges of letters.
+            These lead the eye from letter to letter and make it easier for readers to find their way through solid pages of text.
+        </li>
+    </ul>
+    <p class="c2">This is a serif font; the letters have brackets and feet</p>
+    <ul>
+        <li>
+            Sans serif faces, such as Homerton (RISC OS) or Arial (Windows), do not have these brackets and look cleaner and more modern.
+            They are useful for numbers and smaller sections of text, for younger readers, and for eye-catching headings.
+            Their numerals are usually simple and clean looking.
+        </li>
+    </ul>
+    <p class="c3">This is a sans serif font whose letters have plain ends</p>
+    <ul>
+        <li>
+            Watch out for typefaces with old-style or non-lining numerals.
+            These are numerals with ascenders and descenders, and while they look good as occasional numerals in text,
+            can be very hard to read in a page full of figures, and you should probably avoid using them as the main typeface in a worksheet.
+        </li>
+        <li>
+            Special fonts are available which feature letter forms more suitable for young children,
+            such as a rounded &lsquo;a&rsquo; character.
+        </li>
+    </ul>
+
+    <a name="setting" id="setting"></a>
+    <h4>Setting the typeface</h4>
+    <p>Changing the typeface can have a major effect on the look of a document.</p>
+    <p>To choose a typeface to use within the style:</p>
+    <ol>
+        <li>Click the <span class="csg-dbox-option">Text</span> button to display the Text section of the Style dialogue box, and then on the Typeface button.</li>
+        <li>
+            The list of available typefaces will be illuminated.
+            Note that the typefaces will depend on what you have installed in your particular system.
+        </li>
+        <li>Select the typeface you want from the list.</li>
+    </ol>
+
+    <h4><a name="style_hints" id="style_hints"></a>Style hints</h4>
+    <p>
+        Try not to go overboard with type and add too many typefaces to your worksheet; it will just make it harder to read.
+        Stick to a consistent plan for both text and numbers.
+    </p>
+
+    <h4><a name="text_attributes" id="text_attributes"></a>Attributes</h4>
+    <p>There are five different attributes which you can apply to your typeface singly or in combination. They are:</p>
+    <ul>
+        <li>Bold</li>
+        <li>Italic</li>
+        <li>Underline</li>
+        <li>Superscript</li>
+        <li>Subscript</li>
+    </ul>
+    <p>To add any of these to a style:</p>
+    <ol>
+        <li>Click the option button to the left of the attribute's icon.</li>
+        <li>The attribute button will be illuminated and appear to have been pressed.</li>
+        <li>The attribute is now turned on.</li>
+    </ol>
+    <p>
+        If an attribute is set in one style, you may want to create another style which turns this off, allowing you to remove the attribute.
+        For example, if your main text style is italic, you may want to use plain text for emphasis,
+        and should create a style called <code>Plain</code>, with italics turned off.
+    </p>
+    <p>To create a style turning off an attribute set in another style, you should:</p>
+    <ol>
+        <li>Add a new style.</li>
+        <li>Click the option button to the left of the attribute's button.</li>
+        <li>Click the attribute button so that it is not pressed in.</li>
+        <li>This style will now turn off the chosen attribute in any text it is applied to.</li>
+    </ol>
+
+    <h4><a name="text_height_and_width" id="text_height_and_width"></a>Height and width</h4>
+    <p>This sets the size of the font.</p>
+    <p>Height and width are measured in points, the traditional printing industry unit of measurement, which is 1/72nd of an inch.</p>
+    <p>
+        Usually, you will only be interested in setting the height of the font.
+        To set the height:
+    </p>
+    <ol>
+        <li>Click the <span class="csg-dbox-option">Height</span> option button in the <span class="csg-dbox-option">Text</span> section of the Style dialogue box.</li>
+        <li>Click the up or down arrow buttons to increase or decrease the number shown to reach the point size you require.</li>
+    </ol>
+    <p>
+        The width of the font will be its correct width proportional to its height, if you leave the width set to zero.
+        You may wish to alter the width of the font to create a special effect.
+        This can result in unpleasantly distorted type if taken to extremes.
+        There are two things you can do with the width option:
+    </p>
+    <ul>
+        <li>Setting a width smaller than the height of the type condenses it, so that it takes up less space and appears squashed.</li>
+        <li>Setting a width greater than the height of the type expands it, so that it takes up more space and appears stretched.</li>
+    </ul>
+    <p>As a rule, you will only get usable results condensing serif fonts 10 per cent or less, and expanding or condensing sans-serif fonts by up to a third.</p>
+
+    <h4><a name="text_colour" id="text_colour"></a>Colour</h4>
+    <p>
+        If you will be using a colour printer, or will be using your document mainly on screen,
+        you can set the colour option and use a colour other than black for your text.
+    </p>
+    <ol>
+        <li>
+            Click the colour switch to on.
+            The colour section of the dialogue box will become illuminated.
+        </li>
+        <li>
+            Choose the colour you want.
+            There are several ways to do this:
+            click the <span class="csg-dbox-button">Colour</span> button in this group to use the standard colour selector,
+            or by clicking on one of the pre-defined colour buttons in the palette,
+            or by typing in RGB values,
+            or use the arrows to enter RGB values.
+        </li>
+        <li>The colour you have chosen is shown in the bar at the bottom of the colour section.</li>
+    </ol>
+
+    <h2><a name="ruler" id="ruler"></a>Ruler</h2>
+
+    <p>The Ruler section of the Style editor lets you set the values of tabs, margins and other spacing options normally set using the ruler.</p>
+
+    <h3><a name="margins" id="margins"></a>Margins</h3>
+    <p>
+        Margins are one of the major attributes governing the way your text is laid out on the page.
+        Each style can have different margins set, as you may want to make your document easier to read by having some sections of text indented.
+    </p>
+
+    <h4><a name="about_margins" id="about_margins"></a>About margins</h4>
+    <p>
+        Margins are the space between the edge of the printable area and the edge of the text.
+        In the Style dialogue box you are concerned with the margins at the left and right of pages;
+        if you want to set the top and bottom margins you should go to the Paper and Header/Footer dialogue boxes.
+    </p>
+    <p>
+        There are three margin settings in the Style dialogue box,
+        corresponding to the margin markers displayed on the ruler:
+    </p>
+    <ul>
+        <li>
+            The Paragraph margin determines the positioning of the left of the first line of the paragraph.
+            Set it to a higher value than the left margin to <b>indent</b> the first line,
+            or to a lower value to create a <b>hanging indent</b>.
+        </li>
+        <li>The Left margin determines the position of the left edge of subsequent lines in the paragraph.</li>
+        <li>The Right margin determines the position of the right edge of the paragraph.</li>
+    </ul>
+    <p>Of course, your text will not necessarily sit flush against every margin, unless you have chosen full justification.</p>
+    <p>You can check the margin settings in a style by looking at the Ruler section of the Style dialogue box.</p>
+
+    <h4><a name="setting_margins" id="setting_margins"></a>Setting margins</h4>
+    <p>You should set margins using the ruler, which gives you immediate feedback on screen about the results of your choices.</p>
+    <ol>
+        <li>Click in an area using the style you want to change.</li>
+        <li>
+            Drag the margin markers to the new positions.
+            Dragging the left margin will move the paragraph margin too,
+            and the tab markers which are expressed as offsets of the left margin.
+        </li>
+        <li>The style underlying the margins in that area is automatically updated.</li>
+    </ol>
+    <p>
+        You can check which style sets the margins at a given point using the
+        <span class="csg-menu-option">Regions</span> command on the
+        <span class="csg-menu">Style</span> menu and moving in or out till you see the margin settings in the status line.
+    </p>
+
+    <h3><a name="tabs" id="tabs"></a>Tabs</h3>
+    <p>
+        Tabs, like margins, can be set using either the Style editor (Ruler section) or the ruler.
+        It is easier to set tabs using the tab icons on the toolbar and the ruler,
+        but you may want to edit tab settings in the Style editor for precision.
+    </p>
+
+    <h4><a name="about_tabs" id="about_tabs"></a>About tabs</h4>
+    <p>Four types of tab marker are available in Fireworkz; their names relate to the way tabbed text is formatted by them:</p>
+    <ul>
+        <li>Left - the left edge of text following a Tab is aligned with the left tab marker.</li>
+        <li>Centre - text following a Tab is centred on the centre tab marker.</li>
+        <li>Right - the right edge of text following a Tab is aligned with the right tab marker.</li>
+        <li>Decimal - text following a Tab is positioned so that any decimal point is aligned with the decimal tab marker.</li>
+    </ul>
+    <p>
+        The default setting for tabs in Fireworkz letter documents is that left tab markers are positioned every 2cm along the ruler.
+        These tabs can be repositioned by dragging; they will also move if the left margin is moved,
+        but they will always stay at the same place in relation to the left margin when this happens.
+    </p>
+    <p>In the <span class="csg-dbox">Style</span> dialogue box, tab markers are presented as a list, and their type and position on the ruler is shown.</p>
+
+    <h4><a name="adding_tabs" id="adding_tabs"></a>Adding tabs with the ruler</h4>
+    <p>NB This section only applies if the Tab well is displayed &mdash; modern config files have it commented out.</p>
+    <p>To add a tab to a style using the ruler:</p>
+    <ol>
+        <li>
+            Place the caret in an area of text which uses the style.
+            If the area has more than one style set, the style in which tabs are set will be the one changed.
+            If you select an area of text, any changes you make will only be applied to that area.
+        </li>
+        <li>
+            Click on the type of tab marker you want in the tab well in the toolbar.
+            The selected type of tab will appear in blue in the tab well.
+        </li>
+        <li>Point at the ruler and click the mouse in the place where you want the tab.</li>
+    </ol>
+
+    <h4><a name="repositioning_tabs" id="repositioning_tabs"></a>Repositioning tabs</h4>
+    <p>To reposition tabs:</p>
+    <ol>
+        <li>Place the caret in an area of text using the style you want to change.</li>
+        <li>Point at the tab you want to move.</li>
+        <li>
+            When the pointer turns into a two way arrow, press and hold down the left mouse button and drag the tab marker to the new position.
+            The status line will help you to position tabs accurately.
+            All the tabs to the right will move by the same amount.
+            If you only want to move one tab, without changing those to the right,
+            use <span class="csg-mouse-button">Adjust</span> (RISC OS) or press the <span class="csg-key">Ctrl</span> key and the left mouse button.
+        </li>
+    </ol>
+
+    <h4><a name="removing_tabs" id="removing_tabs"></a>Removing tabs</h4>
+    <p>To remove tab markers point at them in the ruler and double-click with the left mouse button.</p>
+
+    <h4><a name="editing_tabs" id="editing_tabs"></a>Adding and editing tabs in the Style editor</h4>
+    <p>
+        It is much easier to set tabs directly on the page, and by ensuring that you have placed the caret
+        in an area of text to which a style has been applied, your changes will be saved as part of the style.
+        However, you may prefer to set tabs within the Style editor itself.
+        To do this:
+    </p>
+    <ol>
+        <li>Move to the Tabs section of the Ruler section of the Style editor for the style to which you wish to add tabs.</li>
+        <li>
+            Type in the values for the tabs you want in the current ruler unit of measurement.
+            Type in the number for the tabs position, and a letter to show what type of tab is required:
+            <table>
+                <tr>
+                    <td style="width: 2em;">L</td>
+                    <td>Left</td>
+                </tr>
+                <tr>
+                    <td>C</td>
+                    <td>Centre</td>
+                </tr>
+                <tr>
+                    <td>R</td>
+                    <td>Right</td>
+                </tr>
+                <tr>
+                    <td>D</td>
+                    <td>Decimal</td>
+                </tr>
+            </table>
+        </li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> or move to another part of the Style editor.</li>
+    </ol>
+
+    <h4><a name="alignment" id="alignment"></a>Alignment</h4>
+    <p>
+        Alignment is also set using either the toolbar or the Ruler section of the Style dialogue box.
+        Justification is the alignment of text with the margins.
+    </p>
+
+    <h4><a name="alignment_options" id="alignment_options"></a>Justification options</h4>
+    <p>There are four justification options:</p>
+    <ul>
+        <li>Left justified - text flush against the left margin with a ragged right edge</li>
+        <li>Centred - text is placed so that its centre is on a point halfway between the two margins; both edges will appear ragged</li>
+        <li>Right justified - text flush against the right margin with a ragged left edge</li>
+        <li>Fully justified - text that is flush against both margins</li>
+    </ul>
+    <table style="font-family: serif; border-spacing: 2em; border-collapse: separate; width: 75%; vertical-align: top;">
+        <colgroup><col style="width: 25%;" /><col style="width: 25%;" /><col style="width: 25%;" /><col style="width: 25%;" /></colgroup>
+        <tbody>
+            <tr>
+                <td style="width: 8em; border: 1px solid black; padding: 1em 0.5em; vertical-align: top; text-align: left;">
+                    This text has been set with left justification turned on.
+                    The right edges are ragged and the left edges are smooth.
+                </td>
+                <td style="width: 8em; border: 1px solid black; padding: 1em 0.5em;  vertical-align: top; text-align: center;">
+                    This text has been centred.
+                    The lines are evenly balanced but both edges are ragged.
+                </td>
+                <td style="width: 8em; border: 1px solid black; padding: 1em 0.5em; vertical-align: top; text-align: right;">
+                    This text has been set with right justification turned on.
+                    The left edges are ragged and the right edges are smooth.
+                </td>
+                <td style="width: 8em; border: 1px solid black; padding: 1em 0.5em; vertical-align: top; text-align: justify;">
+                    This text has been fully justified.
+                    Both edges are smooth but gaps appear within short lines.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4><a name="choosing_alignment" id="choosing_alignment"></a>Choosing an alignment option</h4>
+    <p>To turn justification on in a style:</p>
+    <ol>
+        <li>Display the ruler section of the Style dialogue box.</li>
+        <li>Click the Justification switch so that it is on.</li>
+        <li>Click the image button representing the justification option you want to use.</li>
+    </ol>
+
+    <h4><a name="toolbar_alignment" id="toolbar_alignment"></a>Using the toolbar to set alignment</h4>
+    <p>
+        Setting an alignment by clicking on a button in the toolbar will not change the style but set an effect;
+        either on all paragraphs in the selection, or on just the paragraph containing the caret if there is no selection.
+    </p>
+
+    <h4><a name="vertical_justification" id="vertical_justification"></a>Vertical justification</h4>
+    <p>
+        You can also set vertical justification within paragraphs and cells.
+        This aligns the contents of the paragraph/cell with the top, centre or bottom of the cell.
+        This is useful for headings and titles within tables.
+    </p>
+
+    <h3><a name="column" id="column"></a>Column</h3>
+    <p>
+        The default column width is set in this section of the Style dialogue box, in the worksheet's base style.
+        However, you should not try to change column widths by changing the setting here.
+        Each column in your worksheet has its width applied to it as an effect,
+        so that you can change the width of each column individually by dragging its column heading.
+    </p>
+
+    <h4><a name="column_heading" id="column_heading"></a>Column heading</h4>
+    <p>
+        The column heading is set in this section of the dialogue box.
+        The default entry is that lower-case letters are used as column headings, so the writable field reads x#.
+        The format description has the same syntax as the number formats in the Number part of the Style editor.
+    </p>
+
+    <ul>
+        <li>To set column headings in upper-case letters, you should enter <span class="csg-user-text">X#</span>.</li>
+        <li>To set column headings in numbers, enter <span class="csg-user-text">#</span></li>
+        <li>
+            To set column headings in Roman numerals, enter either<br />
+            <span class="csg-user-text">r#</span> (for lower-case) or
+            <span class="csg-user-text">R#</span> (for upper-case).
+        </li>
+        <li>
+            You can also set column headings to be text.
+            This is useful for large spreadsheets, database type documents or even for individual tables.
+            Enter the text in double quotes, for example <span class="csg-user-text">"Student Name"</span>.
+        </li>
+    </ul>
+    <p>
+        If you change the column headings, check that they are still different from the row headings,
+        or you could create a worksheet that was very confusing to use.
+        Remember that you will still need to enter cell references in their standard form using letters.
+    </p>
+
+    <h2><a name="colour" id="colour"></a>Colour</h2>
+
+    <p>In addition to text and data there are three items to which you can attach colour:</p>
+    <ul>
+        <li>the background - this is the whole area of the cell;</li>
+        <li>the border - this marks all the inside edges of each cell;</li>
+        <li>the grid - this marks the boundary between cells.</li>
+    </ul>
+    <p>The background is usually set to be transparent.</p>
+    <p>
+        In most styles both the border and grid will usually be turned off.
+        If you want a coloured, printing grid across a whole worksheet, outlining every cell,
+        you should turn the grid on in the BaseSheet style.
+    </p>
+
+    <h3><a name="background_colour_and_borders" id="background_colour_and_borders"></a>Background colour and borders</h3>
+    <p>
+        Background colour can be applied to any area of text using the Style editor.
+        When using colour you should consider defining the colour as a separate style,
+        so that you can add and remove it without reformatting cells.
+    </p>
+
+    <h4><a name="adding_colour_to_a_style" id="adding_colour_to_a_style"></a>Adding colour to a style</h4>
+    <p>To add colour to a style:</p>
+    <ol>
+        <li>Display the <span class="csg-dbox-option">Colours</span> section of the Style editor.</li>
+        <li>Click the option button for background, border or grid as required.</li>
+        <li>Choose the colour you want, as described above for text colour.</li>
+        <li>
+            To turn on grid and borders you must also pick a line style,
+            by switching on the <span class="csg-dbox-option">Line style</span> option button and then clicking on a line button.
+            There are four to choose from, including thin, standard and thick solid lines and dotted lines.
+            The fifth, blank, button turns off any lines which are already there.
+        </li>
+    </ol>
+
+    <h2><a name="spacing" id="spacing"></a>Spacing</h2>
+
+    <p>
+        The spacing between lines and paragraphs is important to the look of your document.
+        If you don't leave enough space, your document will look cramped and be hard to read.
+        If you leave too much space your document will be equally hard to read.
+    </p>
+
+    <h3><a name="line_spacing" id="line_spacing"></a>Line spacing</h3>
+    <p>Line spacing is the space between the top of two lines of text which are in the same paragraph.</p>
+    <p>
+        The standard line space provided by Fireworkz is 120% of the height of the largest text in the line.
+        There are four main line spacing options you can use:
+    </p>
+    <ul>
+        <li>Single line spacing: 120% of the text size;</li>
+        <li>1.5 line spacing: one and a half times the single line space;</li>
+        <li>Double line spacing: twice the single line space;</li>
+        <li>Custom line spacing: whatever value you enter into the writable field provided, in points.</li>
+    </ul>
+    <p>To set line spacing in a style:</p>
+    <ol>
+        <li>Display the Spacing section of the Style dialogue box.</li>
+        <li>Set the Line spacing option button to on if it is not on already.</li>
+        <li>Click the image button that represents the spacing you want.</li>
+        <li>
+            If you have chosen the custom spacing option, type in a number into the writable field or
+            click the arrow buttons to get to the number you want as the line spacing in points.
+            The number you specify is the height of each line, not the gap between lines.
+        </li>
+    </ol>
+    <ul>
+        <li>
+            Lines are made when wrap occurs at the right margins or
+            when you insert an interal return with <span class="csg-key">Ctrl-Return&crarr;</span>.
+        </li>
+    </ul>
+
+    <h3><a name="paragraph_spacing" id="paragraph_spacing"></a>Paragraph spacing</h3>
+    <p>
+        Whatever line spacing you choose, you may want to add extra space between paragraphs.
+        This is especially useful in long documents.
+        A space of around half a line between paragraphs usually works well.
+    </p>
+    <p>
+        You can specify that paragraph spacing is placed before or after a paragraph.
+        For headings, you should usually specify space above; for the main body of text you should specify space below.
+        When two paragraphs, one with extra space above and one with extra space below,
+        meet, the two spacing values are added together,
+        so you should check your document to see that no gaps larger than you want have been added.
+    </p>
+    <h2>To add or change paragraph spacing:</h2>
+    <ol>
+        <li>Display the spacing section of the Style dialogue box.</li>
+        <li>Click the option button for <span class="csg-dbox-option">Above paragraph</span> or <span class="csg-dbox-option">Below paragraph</span> spacing.</li>
+        <li>Enter the value you want &mdash; in the given units &mdash; either by typing it into the writable field or clicking the arrow buttons to change the number.</li>
+        <li>Set the other spacing option, or turn it off, as required.</li>
+    </ol>
+    <ul>
+        <li>Paragraphs are made when you press <span class="csg-key">Return&crarr;</span>.</li>
+    </ul>
+
+    <h2><a name="row" id="row"></a>Row</h2>
+
+    <p>
+        The Row section of the Style editor governs the behaviour of rows.
+        Rows contain either paragraphs or cells.
+    </p>
+
+    <h3><a name="row_height" id="row_height"></a>Setting row height</h3>
+    <p>
+        You can set the height of rows using the <span class="csg-dbox-option">Height</span> option.
+        This governs the height of new rows created in a style, but remember that,
+        if <span class="csg-dbox-option">Fixed height</span> is switched off,
+        rows resize automatically to fit their contents, and that you can drag row borders to resize rows.
+    </p>
+    <ol>
+        <li>Display the row section of the <span class="csg-dbox">Change style</span> dialogue box for the style you want to change.</li>
+        <li>Enter the height you want by typing it into the writable field or clicking the arrow keys to increase or decrease the size already entered.</li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.</li>
+    </ol>
+    <p>Two further options governing the behaviour of rows are also set in this section of the <span class="csg-dbox">Style</span> dialogue box.</p>
+    <ul>
+        <li>
+            Select the right-hand <span class="csg-dbox-option">Fixed height</span> option to force all cells to stay the same height.
+            If you have a fixed height set the row will not deepen automatically when more is typed in.
+        </li>
+        <li>
+            Select the right-hand <span class="csg-dbox-option">Unbreakable</span> option
+            to ensure that lines within cells in the style are never split over a page break.
+        </li>
+    </ul>
+
+    <h3><a name="row_heading" id="row_heading"></a>Changing row heading</h3>
+    <p>
+        The row headings are also set in this section of the <span class="csg-dbox">Style</span> dialogue box.
+        Usually this is a number, so the <span class="csg-dbox-option">Heading</span> box contains #.
+        You may, however, substitute letters or Roman numerals.
+        The format description has the same syntax as the number formats in the
+        <span class="csg-dbox-option">Number</span> section of the Style editor.
+    </p>
+    <ul>
+        <li>Enter <span class="csg-user-text">r#</span> for Roman numeral row headings</li>
+        <li>Enter <span class="csg-user-text">x#</span> for alphabetical row headings.</li>
+        <li>
+            Enter text for use as a row heading.<br />
+            This must be entered in double quotes, for example <span class="csg-user-text">&quot;Subtotal&quot;</span>.
+        </li>
+    </ul>
+    <p>If you change the row headings, make sure that the row headings are not the same as the column headings, as this could result in a very confusing worksheet.</p>
+
+    <h2><a name="number" id="number"></a>Number</h2>
+
+    <p>
+        The Number section of the Style editor governs conversion of numbers, dates and times for display.
+        It also controls cell protection and new cell type.
+    </p>
+
+    <h3><a name="number_formats" id="number_formats"></a>Number, date and time formats</h3>
+    <p>These are described fully in the chapter <a href="../sg/sg03_number_formats_and_styles.htm">Number, date and time formats</a></p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug05_working_with_styles_and_effects.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug08_tables.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Styles and effects </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Tables</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

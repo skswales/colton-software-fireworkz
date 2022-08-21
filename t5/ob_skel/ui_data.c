@@ -70,51 +70,86 @@ dialog_col2_group =
 };
 
 const DIALOG_CONTROL
-defbutton_ok =
+defbutton_close =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
+    /* Close is the bottom rightmost button */
     { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
-#if WINDOWS
-    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#else
+#if RISCOS
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
+#else
+    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
 #endif
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 const DIALOG_CONTROL_DATA_PUSHBUTTON
-defbutton_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_OK) };
+defbutton_close_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_CLOSE) };
+
+const DIALOG_CONTROL
+defbutton_ok =
+{
+    IDOK, DIALOG_CONTROL_WINDOW,
+#if RISCOS /* OK is the bottom rightmost button */
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
+    { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+#elif WINDOWS /* OK is to the left of Cancel */
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, IDCANCEL, DIALOG_CONTROL_SELF },
+    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+#endif
+};
+
+const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_OK) };
 
 const DIALOG_CONTROL_DATA_PUSHBUTTONR
-defbutton_ok_persist_data = { { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_OK), DIALOG_COMPLETION_OK_PERSIST };
+defbutton_ok_persist_data = { { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_OK), DIALOG_COMPLETION_OK_PERSIST };
 
 const DIALOG_CONTROL
 stdbutton_cancel =
 {
     IDCANCEL, DIALOG_CONTROL_WINDOW,
+#if RISCOS /* Cancel is to the left of OK */
     { DIALOG_CONTROL_SELF, IDOK, IDOK, IDOK },
-#if WINDOWS
-    { DIALOG_STDCANCEL_H, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
-#else
     { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
-#endif
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#elif WINDOWS /* Cancel is the bottom rightmost button */
+    { DIALOG_CONTROL_SELF, IDOK, DIALOG_MAIN_GROUP, IDOK },
+    { DIALOG_STDCANCEL_H, DIALOG_DEFPUSHEXTRA_V, 0, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 const DIALOG_CONTROL_DATA_PUSHBUTTON
-stdbutton_cancel_data = { { DIALOG_COMPLETION_CANCEL }, UI_TEXT_INIT_RESID(MSG_CANCEL) };
+stdbutton_cancel_data = { { DIALOG_COMPLETION_CANCEL }, UI_TEXT_INIT_RESID(MSG_BUTTON_CANCEL) };
+
+const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_apply_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY) };
+
+const DIALOG_CONTROL_DATA_PUSHBUTTONR
+defbutton_apply_persist_data = { { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), DIALOG_COMPLETION_OK_PERSIST };
+
+const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_create_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_CREATE) };
+
+const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_save_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_SAVE) };
 
 const DIALOG_CONTROL_DATA_LIST_TEXT
 stdlisttext_data = { { 0 /*force_v_scroll*/, 0 /*disable_double*/,  2 /*tab_position - irrelevant for most clients*/ } };
 
+#if defined(UNUSED_KEEP_ALIVE)
 const DIALOG_CONTROL_DATA_LIST_TEXT
-stdlisttext_data_vsc = { { 1 /*force_v_scroll*/, 0 /*disable_double*/,  2 /*tab_position - irrelevant for most clients*/ } };
+stdlisttext_data_vscroll = { { 1 /*force_v_scroll*/, 0 /*disable_double*/,  2 /*tab_position - irrelevant for most clients*/ } };
+#endif
 
 const DIALOG_CONTROL_DATA_LIST_TEXT
 stdlisttext_data_dd = { { 0 /*force_v_scroll*/, 1 /*disable_double*/,  2 /*tab_position - irrelevant for most clients*/ } };
 
 const DIALOG_CONTROL_DATA_LIST_TEXT
-stdlisttext_data_dd_vsc = { { 1 /*force_v_scroll*/, 1 /*disable_double*/,  2 /*tab_position - irrelevant for most clients*/ } };
+stdlisttext_data_dd_vscroll = { { 1 /*force_v_scroll*/, 1 /*disable_double*/,  2 /*tab_position - irrelevant for most clients*/ } };
 
 /*
 standard RGB group
@@ -135,17 +170,20 @@ rgb_tx[3] =
     {
         DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_GROUP_INNER,
         { DIALOG_CONTROL_PARENT, DIALOG_ID_RGB_R, DIALOG_CONTROL_SELF, DIALOG_ID_RGB_R },
-        { 0, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) }
+        { 0, 0, RGB_TX_H },
+        { DRT(LTLB, TEXTLABEL) }
     },
     {
         DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_GROUP_INNER,
         { DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_G, DIALOG_ID_RGB_TX_R, DIALOG_ID_RGB_G },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     },
     {
         DIALOG_ID_RGB_TX_B, DIALOG_ID_RGB_GROUP_INNER,
         { DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_B, DIALOG_ID_RGB_TX_G, DIALOG_ID_RGB_B },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     }
 };
 
@@ -155,17 +193,20 @@ rgb_bump[3] =
     {
         DIALOG_ID_RGB_R, DIALOG_ID_RGB_GROUP_INNER,
         { DIALOG_ID_RGB_TX_R, DIALOG_CONTROL_PARENT },
-        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V },
+        { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         DIALOG_ID_RGB_G, DIALOG_ID_RGB_GROUP_INNER,
         { DIALOG_ID_RGB_R, DIALOG_ID_RGB_R, DIALOG_ID_RGB_R },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         DIALOG_ID_RGB_B, DIALOG_ID_RGB_GROUP_INNER,
         { DIALOG_ID_RGB_G, DIALOG_ID_RGB_G, DIALOG_ID_RGB_G },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     }
 };
 
@@ -220,7 +261,7 @@ rgb_transparent =
 const DIALOG_CONTROL_DATA_GROUPBOX
 rgb_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_RGB_COLOUR), { FRAMED_BOX_GROUP } };
 
-const DIALOG_CONTROL_DATA_STATICTEXT
+const DIALOG_CONTROL_DATA_TEXTLABEL
 rgb_tx_data[3] =
 {
     { UI_TEXT_INIT_RESID(MSG_DIALOG_RGB_TX_R), { 0 /*1 left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } },
@@ -243,16 +284,16 @@ rgb_patch_data = { 0, { FRAMED_BOX_BUTTON_OUT, 1 /*state_is_rgb*/ }, NULL };
 const DIALOG_CONTROL_DATA_USER
 rgb_patches_data[16] =
 {
-    {  0, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  1, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  2, { FRAMED_BOX_BUTTON_OUT, 0, 1}  },
-    {  3, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  4, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  5, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  6, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  7, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  8, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
-    {  9, { FRAMED_BOX_BUTTON_OUT, 0, 1 }  },
+    {  0, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  1, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  2, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  3, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  4, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  5, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  6, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  7, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  8, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
+    {  9, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
     { 10, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
     { 11, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
     { 12, { FRAMED_BOX_BUTTON_OUT, 0, 1 } },
@@ -277,11 +318,11 @@ line_style_bitmap[5] =
 const DIALOG_CONTROL_DATA_RADIOPICTURE
 line_style_data[5] =
 {
-    { { 0 }, SF_BORDER_NONE , &line_style_bitmap[0] },
-    { { 0 }, SF_BORDER_THIN, &line_style_bitmap[1] },
+    { { 0 }, SF_BORDER_NONE,     &line_style_bitmap[0] },
+    { { 0 }, SF_BORDER_THIN,     &line_style_bitmap[1] },
     { { 0 }, SF_BORDER_STANDARD, &line_style_bitmap[2] },
-    { { 0 }, SF_BORDER_BROKEN, &line_style_bitmap[3] },
-    { { 0 } , SF_BORDER_THICK, &line_style_bitmap[4] }
+    { { 0 }, SF_BORDER_BROKEN,   &line_style_bitmap[3] },
+    { { 0 }, SF_BORDER_THICK,    &line_style_bitmap[4] }
 };
 
 static const RESOURCE_BITMAP_ID
@@ -297,7 +338,7 @@ const DIALOG_CONTROL_DATA_CHECKPICTURE
 style_text_italic_data = { { 0 }, &style_text_italic_bitmap };
 
 const DIALOG_CONTROL_DATA_STATICTEXT
-measurement_points_data = { UI_TEXT_INIT_RESID(MSG_MEASUREMENT_POINTS), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+measurement_points_data = { UI_TEXT_INIT_RESID(MSG_MEASUREMENT_POINTS), { 1 /*left_text*/ } };
 
 #if RISCOS
 
@@ -314,14 +355,14 @@ ui_text_copy_as_sbstr(
     _OutRef_    P_P_SBSTR p_sbstr,
     _InRef_     PC_UI_TEXT p_src_ui_text)
 {
-    PCTSTR src_tstr = ui_text_tstr_no_default(p_src_ui_text);
+    const PCTSTR src_tstr = ui_text_tstr_no_default(p_src_ui_text);
     PC_SBSTR src;
     U32 len;
     STATUS status;
 
     *p_sbstr = NULL;
 
-    if(!src_tstr)
+    if(NULL == src_tstr)
         return(STATUS_OK);
 
     src = _sbstr_from_tstr(src_tstr);
@@ -334,7 +375,7 @@ ui_text_copy_as_sbstr(
     return(status);
 }
 
-#if defined(UNUSED_KEEP_ALIVE)
+#if defined(UNUSED_KEEP_ALIVE) /* needed for EDIT_XX slec */ || defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
 
 extern void
 ui_text_copy_as_sbstr_buf(
@@ -342,13 +383,13 @@ ui_text_copy_as_sbstr_buf(
     _InVal_     U32 buflen,
     _InRef_     PC_UI_TEXT p_src_ui_text)
 {
-    PCTSTR src_tstr = ui_text_tstr_no_default(p_src_ui_text);
+    const PCTSTR src_tstr = ui_text_tstr_no_default(p_src_ui_text);
     PC_SBSTR src;
     U32 len;
 
     *sbstr_buf = CH_NULL;
 
-    if(!src_tstr)
+    if(NULL == src_tstr)
         return;
 
     src = _sbstr_from_tstr(src_tstr);
@@ -772,15 +813,28 @@ dialog_cmd_process_dbox_setup(
     _OutRef_    P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd_process_dbox,
     _In_reads_opt_(n_ctls) P_DIALOG_CTL_CREATE p_ctl_create,
     _InVal_     U32 n_ctls,
-    _InVal_     STATUS help_topic_resource_id)
+    _InVal_     STATUS caption_resource_id)
 {
-    zero_struct_ptr(p_dialog_cmd_process_dbox);
+    static UI_TEXT ui_text = { UI_TEXT_TYPE_RESID };
+
+    ui_text.text.resource_id = caption_resource_id;
+
+    dialog_cmd_process_dbox_setup_ui_text(p_dialog_cmd_process_dbox, p_ctl_create, n_ctls, &ui_text);
+}
+
+extern void
+dialog_cmd_process_dbox_setup_ui_text(
+    _OutRef_    P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd_process_dbox,
+    _In_reads_opt_(n_ctls) P_DIALOG_CTL_CREATE p_ctl_create,
+    _InVal_     U32 n_ctls,
+    _InRef_     PC_UI_TEXT p_ui_text)
+{
+    zero_struct_ptr_fn(p_dialog_cmd_process_dbox);
 
     p_dialog_cmd_process_dbox->p_ctl_create = p_ctl_create;
     p_dialog_cmd_process_dbox->n_ctls = n_ctls;
-    p_dialog_cmd_process_dbox->help_topic_resource_id = help_topic_resource_id;
 
-    p_dialog_cmd_process_dbox->caption.type = UI_TEXT_TYPE_RESID; /* most generally useful */
+    p_dialog_cmd_process_dbox->caption = *p_ui_text;
 }
 
 extern void
@@ -1083,25 +1137,41 @@ _Check_return_
 extern S32
 ui_dlg_s32_from_f64(
     _InVal_     F64 f64_in,
+    _InVal_     F64 f64_multiplier,
     _InVal_     S32 s32_min,
     _InVal_     S32 s32_max)
 {
-    F64 f64;
+    const F64 f64 = f64_in * f64_multiplier;
     S32 s32 = 0;
+
     errno = 0;
-    f64 = round(f64_in);
-    if(f64 > (F64) s32_max)
+
+    if(f64 > (F64) S32_MAX)
     {
         errno = ERANGE;
-        s32 = s32_max;
+        return(s32_max);
     }
-    else if(f64 < (F64) s32_min)
+
+    if(f64 < (F64) S32_MIN)
     {
         errno = ERANGE;
-        s32 = s32_min;
+        return(s32_min);
     }
-    else
-        s32 = (S32) f64;
+
+    s32 = (S32) (f64 + 0.5);
+
+    if(s32 > s32_max)
+    {
+        errno = ERANGE;
+        return(s32_max);
+    }
+
+    if(s32 < s32_min)
+    {
+        errno = ERANGE;
+        return(s32_min);
+    }
+
     return(s32);
 }
 

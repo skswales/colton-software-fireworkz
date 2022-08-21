@@ -77,7 +77,7 @@
 
 #define SS_MSG_DIALOG_FUNCTIONS_NAMES           SS_MSG(16)
 #define SS_MSG_DIALOG_FUNCTIONS_ALL             SS_MSG(17)
-#define SS_MSG_DIALOG_FUNCTIONS_SOME            SS_MSG(18)
+#define SS_MSG_DIALOG_FUNCTIONS_SHORT           SS_MSG(18)
 
 /* NB these also need to be in the same order as EV_RESO_ENGINEER etc. */
 #define SS_MSG_DLG_HT_FUNCTIONS_ENGINEER        SS_MSG(65)
@@ -98,7 +98,7 @@
 
 #define SS_MSG_DLG_HT_FUNCTIONS_NAMES           SS_MSG(80)
 #define SS_MSG_DLG_HT_FUNCTIONS_ALL             SS_MSG(81)
-#define SS_MSG_DLG_HT_FUNCTIONS_SOME            SS_MSG(82)
+#define SS_MSG_DLG_HT_FUNCTIONS_SHORT           SS_MSG(82)
 
 #define SS_MSG_STATUS_ARG_DEFAULT_STRING        SS_MSG(32)
 #define SS_MSG_STATUS_ARG_DEFAULT_HELP          SS_MSG(33)

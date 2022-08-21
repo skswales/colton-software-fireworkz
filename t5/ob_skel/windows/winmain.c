@@ -673,10 +673,14 @@ upgrade_Templates(
 
 _Check_return_
 static STATUS
-ensure_templates_installed(
-    HKEY hkey /* not HKEY_CURRENT_USER but our subkey */)
+ensure_templates_installed(void)
 {
     STATUS status = STATUS_OK;
+    HKEY hkey;
+    DWORD err;
+
+    if(ERROR_SUCCESS != (err = RegOpenKeyExW(HKEY_CURRENT_USER, key_program_wstr, 0, KEY_SET_VALUE, &hkey)))
+        return(STATUS_FAIL);
 
     if(status_ok(status))
     {
@@ -738,20 +742,23 @@ ensure_templates_installed(
         }
     }
 
+    (void) RegCloseKey(hkey);
+
+    if(status_fail(status))
+        reperr_null(status);
+
     return(status);
 }
 
 _Check_return_
 static STATUS
-ensure_user_path(
-    _Out_writes_z_(elemof_user_path) PTSTR user_path,
-    _InVal_     U32 elemof_user_path)
+host_initialise_user_path_ensure(void)
 {
+    TCHARZ user_path[BUF_MAX_PATHSTRING];
     STATUS status = STATUS_OK;
     HKEY hkey;
     DWORD err;
 
-    assert(0 != elemof_user_path);
     user_path[0] = CH_NULL;
 
     /* Ensure the program's key is present */
@@ -772,14 +779,8 @@ ensure_user_path(
         }
     }
 
-    /* Copy some default values over from HKEY_LOCAL_MACHINE
-     * to HKEY_CURRENT_USER subkey for ease of modification.
-     */
-    ensure_key_in_current_user(hkey, TEXT("ButtonStyle"));
-    ensure_key_in_current_user(hkey, TEXT("ReportEnable"));
-
     /* If UserPath registry entry is not set or is empty, ensure that it is created. */
-    if( (0 == MyGetProfileString(TEXT("UserPath"), tstr_empty_string, user_path, elemof_user_path)) ||
+    if( (0 == MyGetProfileString(TEXT("UserPath"), tstr_empty_string, user_path, elemof(user_path))) ||
         (0 == tstrlen32(user_path)) )
     {
         TCHARZ user_directory[BUF_MAX_PATHSTRING];
@@ -791,7 +792,7 @@ ensure_user_path(
     }
 
     /* Normalise returned user_path *with* trailing FILE_DIR_SEP_CH */
-    if( (0 == MyGetProfileString(TEXT("UserPath"), tstr_empty_string, user_path, elemof_user_path)) ||
+    if( (0 == MyGetProfileString(TEXT("UserPath"), tstr_empty_string, user_path, elemof(user_path))) ||
         (0 == tstrlen32(user_path)) )
     {
         user_path[0] = CH_NULL;
@@ -809,150 +810,289 @@ ensure_user_path(
         }
     }
 
-    if(status_ok(status))
-        status = ensure_templates_installed(hkey);
+    status_assert(file_path_set(user_path, FILE_PATH_USER));
+
+    /* Copy some default values over from HKEY_LOCAL_MACHINE
+     * to HKEY_CURRENT_USER subkey for ease of modification.
+     */
+    ensure_key_in_current_user(hkey, TEXT("ReportEnable"));
 
     (void) RegCloseKey(hkey);
 
     return(status);
 }
 
-static void
-host_initialise_resources_path(
-    _In_z_      PCTSTR module_path)
-{
-    TCHARZ resources_path[BUF_MAX_PATHSTRING*2];
+/* GetUserDefaultLocaleName only available on Vista and later */
 
-    if(0 != MyGetProfileString(TEXT("ResourcesPath"), tstr_empty_string, resources_path, elemof32(resources_path)))
+static int
+(WINAPI * proc_GetUserDefaultLocaleName) (
+    /*_Out_writes_(cchLocaleName)*/ LPWSTR /*lpLocaleName*/,
+    /*_In_*/ int /*cchLocaleName*/
+) = NULL;
+
+_Check_return_ _Success_(return)
+static BOOL
+host_get_ui_country_vista(
+    _Out_writes_z_(cchReturnBuffer) PTSTR ptzReturnBuffer,
+    _InVal_     U32 cchReturnBuffer)
+{
+    WCHARZ wstr_LocaleName[LOCALE_NAME_MAX_LENGTH];
+
+    if(NULL == proc_GetUserDefaultLocaleName)
     {
-        PTSTR tstr = resources_path;
+        HMODULE hModule = LoadLibrary(TEXT("kernel32.dll"));
+        assert(NULL != hModule);
+        if(NULL != hModule)
+            * (FARPROC *) &proc_GetUserDefaultLocaleName = GetProcAddress(hModule, "GetUserDefaultLocaleName");
+    }
+
+    if(NULL == proc_GetUserDefaultLocaleName)
+        return(FALSE);
+
+    if(0 == (* proc_GetUserDefaultLocaleName) (wstr_LocaleName, elemof32(wstr_LocaleName)))
+        return(FALSE);
+
+    if(0 == wstrncmp(wstr_LocaleName, L"de", 2))
+    {
+        if( (CH_NULL == wstr_LocaleName[2]) || ('-' == wstr_LocaleName[2]) )
+        {
+            tstr_xstrkpy(ptzReturnBuffer, cchReturnBuffer, TEXT("Germany"));
+            return(TRUE);
+        }
+    }
+
+    if(0 == wcsncmp(wstr_LocaleName, L"fr", 2))
+    {
+        if( (CH_NULL == wstr_LocaleName[2]) || ('-' == wstr_LocaleName[2]) )
+        {
+            tstr_xstrkpy(ptzReturnBuffer, cchReturnBuffer, TEXT("France"));
+            return(TRUE);
+        }
+    }
+
+    return(FALSE);
+}
+
+/* XP-compatible fallback */
+
+_Check_return_ _Success_(return)
+static BOOL
+host_get_ui_country_xp(
+    _Out_writes_z_(cchReturnBuffer) PTSTR ptzReturnBuffer,
+    _InVal_     U32 cchReturnBuffer)
+{
+    const LANGID langid = GetUserDefaultUILanguage();
+    const WORD primary_langid = PRIMARYLANGID(langid);
+
+    if(LANG_GERMAN == primary_langid)
+    {
+        tstr_xstrkpy(ptzReturnBuffer, cchReturnBuffer, TEXT("Germany"));
+        return(TRUE);
+    }
+
+    if(LANG_FRENCH == primary_langid)
+    {
+        tstr_xstrkpy(ptzReturnBuffer, cchReturnBuffer, TEXT("France"));
+        return(TRUE);
+    }
+
+    return(FALSE);
+}
+
+static void
+host_get_ui_country(
+    _Out_writes_z_(cchReturnBuffer) PTSTR ptzReturnBuffer,
+    _InVal_     U32 cchReturnBuffer,
+    _In_z_      PCTSTR ptzDefault)
+{
+    /* this takes priority if set */
+    consume(U32, MyGetProfileString(TEXT("Country"), tstr_empty_string, ptzReturnBuffer, cchReturnBuffer));
+
+    if(CH_NULL != ptzReturnBuffer[0])
+        return;
+
+    if(host_get_ui_country_vista(ptzReturnBuffer, cchReturnBuffer))
+        return;
+
+    if(host_get_ui_country_xp(ptzReturnBuffer, cchReturnBuffer))
+        return;
+
+    tstr_xstrkpy(ptzReturnBuffer, cchReturnBuffer, ptzDefault);
+}
+
+static void
+host_initialise_admin_path(void)
+{
+    TCHARZ admin_path[BUF_MAX_PATHSTRING];
+
+    if(0 != MyGetProfileString(TEXT("AdminPath"), tstr_empty_string, admin_path, elemof32(admin_path)))
+    {
+        PTSTR tstr = admin_path;
 
         tstr += tstrlen32(tstr);
 
-        if((tstr != resources_path) && (tstr[-1] != FILE_DIR_SEP_CH))
+        if((tstr != admin_path) && (tstr[-1] != FILE_DIR_SEP_CH))
         {   /* append to non-empty path if needed */
             *tstr++ = FILE_DIR_SEP_CH;
             *tstr = CH_NULL;
         }
     }
     else
-        resources_path[0] = CH_NULL;
+        admin_path[0] = CH_NULL;
 
-    if(CH_NULL == resources_path[0])
+    if(CH_NULL != admin_path[0])
     {
-        TCHARZ resources_path_country[BUF_MAX_PATHSTRING];
-        TCHARZ resources_path_neutral[BUF_MAX_PATHSTRING];
-        PCTSTR default_country = TEXT("UK");
+        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_ADMIN, report_tstr(admin_path));
+        status_assert(file_path_set(admin_path, FILE_PATH_ADMIN));
+    }
+}
+
+static void
+host_initialise_resources_path(
+    _In_z_      PCTSTR module_path)
+{
+    TCHARZ path_buffer[BUF_MAX_PATHSTRING * 4];
+
+    if(0 != MyGetProfileString(TEXT("ResourcesPath"), tstr_empty_string, path_buffer, elemof32(path_buffer)))
+    {
+        PTSTR tstr = path_buffer;
+
+        tstr += tstrlen32(tstr);
+
+        if( (tstr != path_buffer) && (tstr[-1] != FILE_DIR_SEP_CH) )
+        {   /* append to non-empty path if needed */
+            *tstr++ = FILE_DIR_SEP_CH;
+            *tstr = CH_NULL;
+        }
+    }
+    else
+        path_buffer[0] = CH_NULL;
+
+    if(CH_NULL == path_buffer[0])
+    {
+        /* resources path is specified country first, then default country, then neutral */
+        TCHARZ resources_path_common[BUF_MAX_PATHSTRING];
+        const PCTSTR default_country = TEXT("UK");
         TCHARZ country[BUF_MAX_PATHSTRING];
-        tstr_xstrkpy(resources_path_neutral, elemof32(resources_path_neutral), module_path);
-        tstr_xstrkat(resources_path_neutral, elemof32(resources_path_neutral), TEXT("Resources") FILE_DIR_SEP_TSTR);
 
-        tstr_xstrkpy(resources_path_country, elemof32(resources_path_country), resources_path_neutral);
-        tstr_xstrkat(resources_path_neutral, elemof32(resources_path_neutral), TEXT("Neutral") FILE_DIR_SEP_TSTR);
+        tstr_xstrkpy(resources_path_common, elemof32(resources_path_common), module_path);
+        tstr_xstrkat(resources_path_common, elemof32(resources_path_common), TEXT("Resources") FILE_DIR_SEP_TSTR);
 
-        consume(U32, MyGetProfileString(TEXT("Country"), default_country, country, elemof32(country)));
+        host_get_ui_country(country, elemof32(country), default_country);
+
+        {
+        TCHARZ resources_path_country[BUF_MAX_PATHSTRING];
+        tstr_xstrkpy(resources_path_country, elemof32(resources_path_country), resources_path_common);
         tstr_xstrkat(resources_path_country, elemof32(resources_path_country), country);
         tstr_xstrkat(resources_path_country, elemof32(resources_path_country), FILE_DIR_SEP_TSTR);
 
-        /* res path is country first, then neutral */
-        tstr_xstrkpy(resources_path, elemof32(resources_path), resources_path_country);
-        tstr_xstrkat(resources_path, elemof32(resources_path), FILE_PATH_SEP_TSTR);
-        tstr_xstrkat(resources_path, elemof32(resources_path), resources_path_neutral);
+        tstr_xstrkpy(path_buffer, elemof32(path_buffer), resources_path_country);
+        tstr_xstrkat(path_buffer, elemof32(path_buffer), FILE_PATH_SEP_TSTR);
+        } /*block*/
+
+        /* ensure that default country is used as fallback for language-dependent resources iff different */
+        if(0 != _tcscmp(country, default_country))
+        {
+            TCHARZ resources_path_default_country[BUF_MAX_PATHSTRING];
+            tstr_xstrkpy(resources_path_default_country, elemof32(resources_path_default_country), resources_path_common);
+            tstr_xstrkat(resources_path_default_country, elemof32(resources_path_default_country), default_country);
+            tstr_xstrkat(resources_path_default_country, elemof32(resources_path_default_country), FILE_DIR_SEP_TSTR);
+
+            tstr_xstrkat(path_buffer, elemof32(path_buffer), resources_path_default_country);
+            tstr_xstrkat(path_buffer, elemof32(path_buffer), FILE_PATH_SEP_TSTR);
+        }
+
+        {
+        TCHARZ resources_path_neutral[BUF_MAX_PATHSTRING];
+        tstr_xstrkpy(resources_path_neutral, elemof32(resources_path_neutral), resources_path_common);
+        tstr_xstrkat(resources_path_neutral, elemof32(resources_path_neutral), TEXT("Neutral") FILE_DIR_SEP_TSTR);
+
+        tstr_xstrkat(path_buffer, elemof32(path_buffer), resources_path_neutral);
+        } /*block*/
     }
 
-    trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_RESOURCES, report_tstr(resources_path));
-    status_assert(file_path_set(resources_path, FILE_PATH_RESOURCES));
+    status_assert(file_path_set(path_buffer, FILE_PATH_RESOURCES));
+}
+
+static void
+host_initialise_templates_path(void)
+{
+    TCHARZ full_path_buffer[BUF_MAX_PATHSTRING * 4];
+    TCHARZ path_buffer[BUF_MAX_PATHSTRING];
+    U32 full_path_buffer_len;
+
+    full_path_buffer[0] = CH_NULL;
+
+    /* First add All Users Application Data / <App> / Templates directory */
+    /* We don't install anything here, but consider it anyway as an Admin may have added data */
+    if(GetCommonAppDataDirectoryName(path_buffer, elemof32(path_buffer)))
+    {
+        tstr_xstrkat(path_buffer, elemof32(path_buffer),
+                        FILE_DIR_SEP_TSTR TEXT("Colton Software")
+                        FILE_DIR_SEP_TSTR TEXT("Fireworkz")
+                        FILE_DIR_SEP_TSTR TEMPLATES_SUBDIR);
+
+        tstr_xstrkat(full_path_buffer, elemof32(path_buffer), path_buffer);
+        tstr_xstrkat(full_path_buffer, elemof32(path_buffer), FILE_PATH_SEP_TSTR);
+    }
+
+    /* Then add All Users Templates directory */
+    /* Ditto regarding install */
+    if(GetCommonTemplatesDirectoryName(path_buffer, elemof32(path_buffer)))
+    {
+        tstr_xstrkat(full_path_buffer, elemof32(path_buffer), path_buffer);
+        tstr_xstrkat(full_path_buffer, elemof32(path_buffer), FILE_PATH_SEP_TSTR);
+    }
+
+    /* Then add User's Templates directory */
+    /* We do install a single Fireworkz template here to allow New in an Explorer menu, but User may have added more */
+    if(GetUserTemplatesDirectoryName(path_buffer, elemof32(path_buffer)))
+    {
+        tstr_xstrkat(full_path_buffer, elemof32(path_buffer), path_buffer);
+        tstr_xstrkat(full_path_buffer, elemof32(path_buffer), FILE_PATH_SEP_TSTR);
+    }
+
+    full_path_buffer_len = tstrlen32(full_path_buffer);
+
+    if( (0 != full_path_buffer_len) && (FILE_PATH_SEP_CH == full_path_buffer[full_path_buffer_len-1]) )
+        full_path_buffer[full_path_buffer_len-1] = CH_NULL;
+
+    status_assert(file_path_set(full_path_buffer, FILE_PATH_TEMPLATES));
 }
 
 extern void
 host_initialise_file_paths(void)
 {
-    { /* code that belongs in ob_file.c unfortunately has to be here */
     TCHARZ module_path[BUF_MAX_PATHSTRING];
-    TCHARZ system_path[BUF_MAX_PATHSTRING];
-    TCHARZ network_path[BUF_MAX_PATHSTRING];
-    TCHARZ user_path[BUF_MAX_PATHSTRING];
 
-    GetModuleFileName(GetInstanceHandle(), module_path, elemof32(module_path));
-    file_dirname(module_path, module_path); /* has trailing DIR_SEP */
+    status_assert(host_initialise_user_path_ensure());
+
+    host_initialise_admin_path();
+
+    if(0 != MyGetProfileString(TEXT("Directory"), tstr_empty_string, module_path, elemof32(module_path)))
+    {
+        PTSTR tstr = module_path;
+
+        tstr += tstrlen32(tstr);
+
+        if( (tstr != module_path) && (tstr[-1] != FILE_DIR_SEP_CH) )
+        {   /* append to non-empty path if needed */
+            *tstr++ = FILE_DIR_SEP_CH;
+            *tstr = CH_NULL;
+        }
+    }
+    else
+    {
+        TCHARZ module_file_name[BUF_MAX_PATHSTRING];
+        GetModuleFileName(GetInstanceHandle(), module_file_name, elemof32(module_file_name));
+        file_dirname(module_path, module_file_name); /* has trailing DIR_SEP */
+    }
 
     host_initialise_resources_path(module_path);
 
-    /* contents are like RISC OS AppData */
-    if(0 != MyGetProfileString(TEXT("SystemPath"), tstr_empty_string, system_path, elemof32(system_path)))
-    {
-        PTSTR tstr = system_path;
+    host_initialise_templates_path();
 
-        tstr += tstrlen32(tstr);
-
-        if((tstr != system_path) && (tstr[-1] != FILE_DIR_SEP_CH))
-        {   /* append to non-empty path if needed */
-            *tstr++ = FILE_DIR_SEP_CH;
-            *tstr = CH_NULL;
-        }
-    }
-    else
-        system_path[0] = CH_NULL;
-
-    if(CH_NULL == system_path[0])
-    {
-        PCTSTR default_country = TEXT("UK");
-        TCHARZ country[BUF_MAX_PATHSTRING];
-        tstr_xstrkpy(system_path, elemof32(system_path), module_path);
-        tstr_xstrkat(system_path, elemof32(system_path), TEXT("System") FILE_DIR_SEP_TSTR);
-        consume(U32, MyGetProfileString(TEXT("Country"), default_country, country, elemof32(country)));
-        tstr_xstrkat(system_path, elemof32(system_path), country);
-        tstr_xstrkat(system_path, elemof32(system_path), FILE_DIR_SEP_TSTR);
-    }
-
-    if(CH_NULL != system_path[0]) /* TRUE */
-    {
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_SYSTEM, report_tstr(system_path));
-        status_assert(file_path_set(system_path, FILE_PATH_SYSTEM));
-    }
-
-    if(0 != MyGetProfileString(TEXT("NetworkPath"), tstr_empty_string, network_path, elemof32(network_path)))
-    {
-        PTSTR tstr = network_path;
-
-        tstr += tstrlen32(tstr);
-
-        if((tstr != network_path) && (tstr[-1] != FILE_DIR_SEP_CH))
-        {   /* append to non-empty path if needed */
-            *tstr++ = FILE_DIR_SEP_CH;
-            *tstr = CH_NULL;
-        }
-    }
-    else
-        network_path[0] = CH_NULL;
-
-    if(CH_NULL != network_path[0])
-    {
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_NETWORK, report_tstr(network_path));
-        status_assert(file_path_set(network_path, FILE_PATH_NETWORK));
-    }
-
-    status_assert(ensure_user_path(user_path, elemof32(user_path)));
-
-    if(CH_NULL == user_path[0])
-    {
-        tstr_xstrkpy(user_path, elemof32(user_path), module_path);
-        tstr_xstrkat(user_path, elemof32(user_path), TEXT("User") FILE_DIR_SEP_TSTR);
-    }
-
-    /* if no explicit network path set up, treat system path as shared area iff someone's been bothered enough to set up User Path */
-    if((CH_NULL != user_path[0]) && (CH_NULL == network_path[0]))
-    {
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_NETWORK, report_tstr(system_path));
-        status_assert(file_path_set(system_path, FILE_PATH_NETWORK));
-    }
-
-    {
-    PTSTR standard_path = (CH_NULL != user_path[0]) ? user_path : system_path;
-    trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_STANDARD, report_tstr(standard_path));
-    status_assert(file_path_set(standard_path, FILE_PATH_STANDARD));
-    } /*block*/
-    } /*block*/
+    file_build_paths();
 }
 
 /*ncr*/
@@ -1065,40 +1205,16 @@ host_report_and_trace_enable(void)
 #endif /*TRACE_ALLOWED*/
 }
 
-extern int
-WINAPI
-_tWinMain(
-#if !defined(WINVER_MAXVER) || (WINVER_MAXVER < 0x0603)
-    /* old SAL */
-    __in        HINSTANCE hInstance_in,
-    __in_opt    HINSTANCE hInstance_previous_in,
-    __in_opt    PTSTR ptzCmdLine_in,
-    __in        int nCmdShow_in
-#else
-    /* new SAL */
-    _In_        HINSTANCE hInstance_in,
-    _In_opt_    HINSTANCE hInstance_previous_in,
-    _In_        PTSTR ptzCmdLine_in,
-    _In_        int nCmdShow_in
-#endif
-    )
+_Check_return_
+static BOOL
+main_init(
+    _In_z_      PTSTR ptzCmdLine_in)
 {
-    _g_hInstance = hInstance_in;
-    g_hInstancePrev = hInstance_previous_in;
-    g_nCmdShow = nCmdShow_in;
-
     /* determine which platform we are running on */
     /*host_os_version_determine();*/ /* very early indeed */
     report_timing_enable(TRUE);
 
     (void) HeapSetInformation(GetProcessHeap(), HeapEnableTerminationOnCorruption, NULL, 0);
-
-#if 1
-    { /* Use the Low-Fragmentation Heap - even on Windows XP (LFH is default on Vista) */
-    DWORD Frag = 2;
-    (void) HeapSetInformation(GetProcessHeap(), HeapCompatibilityInformation, &Frag, sizeof(Frag));
-    } /*block*/
-#endif /* OS */
 
 #if CHECKING && defined(_DEBUG) && 0
     int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);// Get current flag
@@ -1117,22 +1233,20 @@ _tWinMain(
     _tzset();
 
     if(status_fail(startup_t5_application_1()))
-        goto fallout;
+        return(FALSE);
 
     status_consume(aligator_init());
 
     /* parse initial set of options */
     (void) decode_command_line_options(ptzCmdLine_in, 1);
 
+    file_startup();
+
     /* first off, allow punter to place resources elsewhere. Installation will have inserted our path */
     host_initialise_file_paths();
 
-    file_startup();
-
-    file_build_paths();
-
     /* Make error messages available for startup */
-    resource_startup(dll_store);
+    resource_startup();
 
     status_assert(resource_init(OBJECT_ID_SKEL, NULL, LOAD_RESOURCES));
 
@@ -1149,27 +1263,57 @@ _tWinMain(
 
     /* Startup the application. Any errors will have been reported */
     if(status_fail(startup_t5_application_2()))
-        goto fallout;
+        return(FALSE);
 
     if(!decode_command_line_options(ptzCmdLine_in, 2))
-        goto fallout;
+        return(FALSE);
 
     /* If nothing has been loaded (except when started as DDE server) then open a template - or the template selector */
-    if(!some_document_windows() && !g_started_for_dde)
-    {
+    if(some_document_windows() || g_started_for_dde)
+        return(TRUE);
+
+    if(status_fail(ensure_templates_installed()))
+        return(FALSE);
+
 #if CHECKING && 1
-        /* try open existing first, if cancelled, try create from template - leave this way for SKS testing */
-        if(status_fail(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE)))
-            status_assert(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT, P_DATA_NONE));
+    /* try open existing first, if cancelled, try create from template - leave this way for SKS testing */
+    if(status_fail(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE)))
+        status_assert(object_call_id(OBJECT_ID_SKEL, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT_INTRO, P_DATA_NONE));
 #else
-        /* try create from template first, if cancelled, try open existing */
-        if(status_fail(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT, P_DATA_NONE)))
-            status_assert(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE));
+    /* try create from template first, if cancelled, try open existing */
+    if(status_fail(object_call_id(OBJECT_ID_SKEL, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT_INTRO, P_DATA_NONE)))
+        status_assert(object_call_id(OBJECT_ID_FILE, P_DOCU_NONE, T5_CMD_OPEN_DOCUMENT, P_DATA_NONE));
 #endif
 
-        if(!some_document_windows())
-            goto fallout;
-    }
+    return(TRUE);
+}
+
+extern int
+WINAPI
+_tWinMain(
+#if !defined(WINVER_MAXVER) || (WINVER_MAXVER < 0x0603)
+    /* old SAL */
+    __in        HINSTANCE hInstance_in,
+    __in_opt    HINSTANCE hInstance_previous_in,
+    __in_opt    PTSTR ptzCmdLine_in,
+    __in        int nCmdShow_in
+#else
+    /* new SAL */
+    _In_        HINSTANCE hInstance_in,
+    _In_opt_    HINSTANCE hInstance_previous_in,
+    _In_        PTSTR ptzCmdLine_in,
+    _In_        int nCmdShow_in
+#endif
+    )
+{
+    BOOL looping = TRUE;
+
+    _g_hInstance = hInstance_in;
+    g_hInstancePrev = hInstance_previous_in;
+    g_nCmdShow = nCmdShow_in;
+
+    if(!main_init(ptzCmdLine_in))
+        goto fallout;
 
 #if defined(__cplusplus)
     while_constant(1)
@@ -1194,17 +1338,20 @@ _tWinMain(
         break;
     }
 
-    for(;;)
+    if(!some_document_windows() && !g_started_for_dde)
+        goto fallout;
+
+    while(looping)
     {
         WM_EVENT res = wm_event_get(FALSE /*fgNullEventsWanted*/);
 
-        if(res == WM_EVENT_PROCESSED)
-            continue;
-
-        break;
+        if(WM_EVENT_PROCESSED != res)
+            break;
     }
 
 fallout:
+    looping = FALSE; /* don't run the event loop if we get a longjmp() back above during closedown */
+
     docno_close_all();
 
     t5_do_exit();

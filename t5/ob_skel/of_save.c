@@ -211,6 +211,8 @@ ownform_initialise_save(
 
     p_of_op_format->docno = docno_from_p_docu(p_docu);
 
+    p_of_op_format->t5_filetype = t5_filetype;
+
     if(NULL != p_docu_area)
         p_of_op_format->save_docu_area = *p_docu_area;
     else
@@ -225,6 +227,12 @@ ownform_initialise_save(
     p_of_op_format->stopped_object_id = OBJECT_ID_ENUM_START;
 
     p_of_op_format->save_docu_area_no_frags = p_of_op_format->save_docu_area;
+
+    if(status_ok(status))
+    {   /* get other objects ready for involvement if needed */
+        if(FILETYPE_T5_HYBRID_DRAW == p_of_op_format->t5_filetype)
+            status = object_load(OBJECT_ID_FS_OLE);
+    }
 
     if(status_ok(status))
     {
@@ -949,6 +957,9 @@ save_ownform_file(
 
     msg_save.p_of_op_format = p_of_op_format;
 
+    msg_save.t5_msg_save_message = T5_MSG_SAVE__PRE_SAVE_0;
+    status_return(maeve_event(p_docu, T5_MSG_SAVE, &msg_save));
+
     msg_save.t5_msg_save_message = T5_MSG_SAVE__PRE_SAVE_1;
     status_return(maeve_event(p_docu, T5_MSG_SAVE, &msg_save));
 
@@ -977,8 +988,8 @@ save_ownform_file(
     msg_save.t5_msg_save_message = T5_MSG_SAVE__POST_SAVE_2;
     status_return(maeve_event(p_docu, T5_MSG_SAVE, &msg_save));
 
-    /*msg_save.t5_msg_save_message = T5_MSG_SAVE__POST_SAVE_3; as yet unused */
-    /*status_return(maeve_event(p_docu, T5_MSG_SAVE, &msg_save));*/
+    msg_save.t5_msg_save_message = T5_MSG_SAVE__POST_SAVE_3; /* no further data must be output - only to allow patching at the end */
+    status_return(maeve_event(p_docu, T5_MSG_SAVE, &msg_save));
 
     return(STATUS_OK);
 }

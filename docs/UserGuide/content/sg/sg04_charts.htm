@@ -1,0 +1,648 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Charts</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Charts" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../sg/sg05_function_reference.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug09_advanced_features.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L"> Function reference</td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Advanced features</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="charts" id="charts"></a><span class="csg-chapter-number">15 </span>Charts</h1>
+
+    <p>This chapter explains how to create charts from data that you have entered in your worksheet.</p>
+    <p>It includes sections on:</p>
+    <ul>
+        <li><a href="#creating_a_chart">Creating a chart</a></li>
+        <li><a href="#bar_charts">Bar charts</a></li>
+        <li><a href="#line_charts">Line charts</a></li>
+        <li><a href="#pie_charts">Pie charts</a></li>
+        <li><a href="#x_y_scatter_graphs">X-Y scatter graphs</a></li>
+        <li><a href="#overlays">Overlays - mixing chart types</a></li>
+        <li><a href="#editing_charts">Editing your chart</a></li>
+    </ul>
+
+    <h2><a name="creating_a_chart" id="creating_a_chart"></a>Creating a chart</h2>
+
+    <p>The first step in creating a chart is to enter or compute your data within a worksheet.</p>
+
+    <h3>Preparing your data</h3>
+    <p>There are ways to organise your data to make it easier to build a chart.</p>
+    <ul>
+        <li>
+            Charts are initially constructed out of contiguous ranges of cells.
+            So it is easier if your data can be selected in this way.
+            Once a chart has been created, extra data can be added to it from other parts of the worksheet.
+        </li>
+        <li>
+            Charts use row and column headings which have been entered in text cells as labels for the legend and data series within the chart.
+            If your data is clearly labelled on the worksheet it will make it much easier to set up your chart and understand it on the page.
+        </li>
+        <li>
+            Most of the chart dialogue boxes enable you to specify that the
+            first row or column in the range is used as the legend or as labels rather than as data.
+            Usually, Fireworkz will detect text and treat it as a label automatically,
+            but if you want numeric labels for data in your chart you will need to specify this.
+        </li>
+    </ul>
+
+    <h3>Making the chart</h3>
+    <p>Follow this process to make your chart:</p>
+    <ol>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/chart.png" alt="Chart tool button" />
+            Select the range of data you want to include in the chart, and click the <span class="csg-toolbar-button">Chart</span> tool button on the toolbar.
+            The data must include some number cells.
+        </li>
+        <li>The chart menu will appear, from which you should choose the type of chart you want.</li>
+        <li>
+            A dialogue box for that type of chart will appear.
+            Choose the type you want by clicking on the icons, and enter any other details necessary in the dialogue box.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Create</span></span>.
+            Your chart will be generated and appear on the worksheet in its own frame, just beneath the data on which it was based.
+            In some cases (such as low-resolution screen modes) this may be off the screen.
+        </li>
+    </ol>
+
+    <h2>Types of chart</h2>
+
+    <p>
+        Fireworkz provides several different types of chart for you to use in your documents.
+        The following options are available:
+    </p>
+    <ul>
+        <li>Bar charts</li>
+        <li>Line charts</li>
+        <li>Pie charts</li>
+        <li>X-Y scatter graphs</li>
+        <li>Overlays (mixing bar and line charts)</li>
+    </ul>
+    <p>
+        Each type is described in turn in the next few sections.
+        Each basic option contains several different versions of the chart type,
+        so that a wide variety of charts can be generated.
+    </p>
+
+    <h2><a name="bar_charts" id="bar_charts"></a>Bar charts</h2>
+    <p>
+        Bar charts display data as a series of bars measured against an axis.
+        A variety of types of bars are available in Fireworkz, including pictograms and three-dimensional bars.
+        When you choose the <span class="csg-dbox-option">Bar</span> option on the <span class="csg-menu">Chart</span> menu,
+        the <span class="csg-dbox">Bar chart</span> dialogue box will appear.
+    </p>
+    <ol>
+        <li>Click the image button representing the type of chart you want.</li>
+        <li>Select the <span class="csg-dbox-option">3-D</span> option if you want a three-dimensional chart.</li>
+        <li>Specify whether the data series are in columns or rows.</li>
+        <li>Specify whether the first points in each series are labels or data.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Create</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            Your chart will be generated ready for further editing if required.
+        </li>
+    </ol>
+
+    <h3><a name="types_of_bar_chart" id="types_of_bar_chart"></a>Types of bar chart</h3>
+    <p>There are eight types of bar chart available in Fireworkz, which can be further customised using the options available.</p>
+
+    <h4>Bar</h4>
+    <p>The first two buttons draw simple bar charts.</p>
+    <ul>
+        <li>The first button draws a chart where each series has a different colour.</li>
+        <li>The second button draws a chart where each category has a different colour.</li>
+    </ul>
+
+    <h4>Stacked bar</h4>
+    <p>The third button produces a stacked bar chart in which all data series within each category are combined into a single bar.</p>
+
+    <h4>Percentage stacked bar</h4>
+    <p>The fourth button gives a percentage stacked bar chart, where the data series within each category are expressed as percentages.</p>
+
+    <h4>Pictograms</h4>
+    <p>
+        The buttons in the third row produce <a href="#pictograms">pictograms</a>, in which the bars of the chart are made up out of pictures.
+        Any Draw file or sprite file can be used as the basis of a pictogram.
+    </p>
+    <ul>
+        <li>
+            The first button creates a pictogram where the original image is stacked up as many times as necessary to create the correct height of bar.
+            The number of pictures that appear is dependent on the tick positions on the Y axis.
+            If the number is between two tick positions, it is always rounded to the nearest tick.
+        </li>
+        <li>The second button stretches the image to create a bar of the correct height.</li>
+    </ul>
+    <p>The following tips apply for successful use of pictograms:</p>
+    <ul>
+        <li>Use only one data series to reduce clutter.</li>
+        <li>Don't have too many points on it.</li>
+        <li>
+            Use simple (fast-drawing), colourful, meaningful pictures for best effect,
+            such as company logos or the flags from the Example directory.
+        </li>
+    </ul>
+
+    <h4>Error bars</h4>
+    <p>
+        This type of chart includes extension to the bars showing the potential error margin.
+        Two consecutive data series are used to construct each bar;
+        the first is used for the solid bar and the second for the error bar.
+    </p>
+
+    <h4>Cumulative bar chart</h4>
+    <p>
+        This option creates a bar chart where each new data point is added to the previous one,
+        so the size of the bars will normally increase along the x-axis.
+    </p>
+
+    <h2><a name="line_charts" id="line_charts"></a>Line charts</h2>
+
+    <p>Line charts are ideal for showing changes in a series of data over time.</p>
+    <p>
+        When you choose the <span class="csg-menu-option">Line chart</span> option from the
+        <span class="csg-menu">Chart</span> menu the <span class="csg-dbox">Line chart</span> dialogue box will appear.
+    </p>
+    <ol>
+        <li>Click the image button representing the type of chart you want.</li>
+        <li>Select the <span class="csg-dbox-option">3-D</span> option if you want a three-dimensional ribbon chart.</li>
+        <li>Specify whether the data series are in columns or rows.</li>
+        <li>Specify whether the first points in each series are labels or data.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Create</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            Your chart will be generated ready for further editing if required.
+        </li>
+    </ol>
+
+    <h3><a name="types_of_line_chart" id="types_of_line_chart"></a>Types of line chart</h3>
+    <p>There are eight line chart options available, consisting of four main types drawn with and without data points:</p>
+
+    <h4>Simple line chart</h4>
+    <p>This chart draws a line between the data points in each series.</p>
+
+    <h4>Area chart</h4>
+    <p>
+        This chart draws a line between the data points, and then shades the area between this line and the axes of the chart.
+        A further line is drawn from the x-axis to each data point.
+    </p>
+
+    <h4>Stacked area chart</h4>
+    <p>This chart stacks data series, drawing a line between the points in each and shading the area between each line and the line below it.</p>
+
+    <h4>Line chart with error bars</h4>
+    <p>
+        This chart draws a line with error bars extending from each data point.
+        Each line in the chart requires two series of data; the first is used for the line data point and the second to place the error bar.
+    </p>
+
+    <h2><a name="pie_charts" id="pie_charts"></a>Pie charts</h2>
+
+    <p>Pie charts are good for showing the relationships between a group of figures in proportion to the total.</p>
+    <p>Several different types of chart are available from the <span class="csg-dbox">Pie chart</span> dialogue box.</p>
+    <ol>
+        <li>Click the image button representing the type of pie chart <a href="pie_labelling_options">labels</a> you want.</li>
+        <li>Click the segment layout image button you want, and set the distance for <a href="#pie_exploding_segments">exploded segments</a> if required.</li>
+        <li>Click any options you require for custom <a href="#pie_start_position">starting points</a> or <a href="#pie_direction">direction</a>.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Create</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            Your pie chart will be generated and placed in the worksheet.
+        </li>
+    </ol>
+
+    <h4><a name="pie_labelling_options" id="pie_labelling_options"></a>Labelling options</h4>
+    <p>
+        The four image buttons in the top row represent labelling options.
+        Click the appropriate button to produce a pie with:
+    </p>
+    <ul>
+        <li>No labels</li>
+        <li>Letters as labels</li>
+        <li>Values as labels</li>
+        <li>Percentages as labels</li>
+    </ul>
+
+    <h4><a name="pie_exploding_segments" id="pie_exploding_segments"></a>Exploding segments</h4>
+    <p>
+        The three image buttons in the next row represent explosion options.
+        Exploding one or more segments of the pie can draw attention to that segment.
+        Click the appropriate button for:
+    </p>
+    <ul>
+        <li>No segments exploded</li>
+        <li>The first segment exploded</li>
+        <li>All segments exploded</li>
+    </ul>
+    <p>
+        You should also specify the distance you want the segment(s) to be exploded.
+        This is expressed as the percentage of the radius of the segment which falls outside the pie itself.
+        Click the arrow buttons to increase or decrease the number, or type one in directly.
+    </p>
+    <ul>
+        <li>If you specify exploded segments you must specify a percentage greater than 0%, or the segments will not appear exploded.</li>
+    </ul>
+
+    <h4><a name="pie_start_position" id="pie_start_position"></a>Start position</h4>
+    <p>
+        You can also specify whereabouts on the circle you want the pie to begin.
+        Either click on one of the eight radio buttons, or type in a number in degrees (0 to 359).
+    </p>
+
+    <h4><a name="pie_direction" id="pie_direction"></a>Direction</h4>
+    <p>
+        The chart can proceed either clockwise (the default) or anti-clockwise.
+        Click the option button if you want an anti-clockwise chart.
+    </p>
+
+    <h2><a name="x_y_scatter_graphs" id="x_y_scatter_graphs"></a>X-Y Scatter plots</h2>
+
+    <p>Scatter plots display data as discrete points and with or without lines between them.</p>
+    <p>
+        <img class="csg-lhs-img" src="../common/images/toolbar/chart.png" alt="Chart tool button" />
+        To create a scatter plot, select your data in the worksheet and click the <span class="csg-toolbar-button">Chart</span> tool button on the toolbar.
+        Choose <span class="csg-menu-option">X-Y</span> from the <span class="csg-menu">Chart</span> menu and a dialogue box will appear.
+    </p>
+    <ol>
+        <li>Click the image button for the type of scatter plot you want.</li>
+        <li>Specify whether the data series are in columns or rows.</li>
+        <li>
+            Specify how the data series are arranged.<br />
+            <span class="csg-dbox-option">X, Y, Y</span> means that you want to plot more than one y-series against a single x-series.<br />
+            <span class="csg-dbox-option">X, Y, X, Y</span> means that for each y-series you are supplying an x-series.
+        </li>
+        <li>Specify whether the first points in each series are labels or data.</li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Create</span></span> and your scatter plot will be drawn.</li>
+    </ol>
+
+    <h3><a name="types_of_scatter_graph" id="types_of_scatter_graph"></a>Types of scatter graph</h3>
+    <p>
+        There are nine types of scatter graph, based on three types of graph
+        to which vertical error bars or vertical and horizontal error bars can be added.
+    </p>
+    <p>
+        Two sets of data are required for each point, to provide the x- and y-coordinates respectively.
+        Vertical error bars are taken from the third set of data, and horizontal error bars from the fourth.
+    </p>
+
+    <h4>Line</h4>
+    <p>
+        A line is drawn from point to point.
+        Note that Fireworkz does not automatically sort data for charts,
+        and you should therefore sort the x-coordinates in ascending order
+        or your line could travel both forwards and backwards across the chart.
+    </p>
+
+    <h4>Point</h4>
+    <p>Each data point is represented by a blob at its x,y coordinate.</p>
+
+    <h4>Line and point</h4>
+    <p>Each data point is represented by a blob, and a line is drawn between the data points.</p>
+
+    <h2><a name="overlays" id="overlays"></a>Overlays</h2>
+
+    <p>
+        Overlays place two y-axes on the same chart, one of which is placed at the left of the chart and one at the right.
+        Each axis can be scaled differently and your data series can be plotted against either of the axes.
+        To work with overlays:
+    </p>
+    <ol>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/chart.png" alt="Chart tool button" />
+            Choose <span class="csg-menu-option">Overlay</span> from the menu which appears
+            when you click the <span class="csg-toolbar-button">Chart</span> tool button on the toolbar.
+        </li>
+        <li>
+            Select the option you require from the <span class="csg-dbox">Overlay</span> dialogue box.
+            Choose one of <span class="csg-dbox-option">Bar-bar</span>,
+            <span class="csg-dbox-option">Bar-line</span>,
+            <span class="csg-dbox-option">Line-Line</span> or
+            <span class="csg-dbox-option">Scatter-Scatter</span>.
+        </li>
+        <li>
+            Fireworkz automatically divides the data series into two and plots
+            the first half on the left axis and the second half on the right axis.
+        </li>
+        <li>
+            If a series appears on the wrong half of the chart, select it and change its status
+            in the <span class="csg-dbox-option">Overlay</span> section of the <span class="csg-dbox">Series</span> dialogue box.
+        </li>
+    </ol>
+
+    <h2><a name="editing_charts" id="editing_charts"></a>Editing your chart</h2>
+
+    <p>Once you have created a chart, you can:</p>
+    <ul>
+        <li>Resize it</li>
+        <li>Reposition it on the page</li>
+        <li>Use <span class="csg-menu-option">Make constant</span> to turn it into a Draw file</li>
+        <li>Save it as a Draw file</li>
+    </ul>
+    <p>
+        Most of these actions are the same as those which apply to pictures.
+        See the earlier chapter,
+        <em><a href="../ug/ug10_pictures.htm#adding_pictures_to_your_document">Pictures</a></em>,
+        for details of how to perform them.
+    </p>
+    <p>Depending on the type of chart which you have created, you can also use specific chart commands to:</p>
+    <ul>
+        <li>Change the labelling on the axes</li>
+        <li>Change the colours used in the charts</li>
+        <li>Add extra series of data to a chart</li>
+        <li>Change the angle of viewing of a 3-D chart</li>
+    </ul>
+    <p>The following sections on each type of chart outline the editing possibilities for each type.</p>
+    <p>
+        You cannot change the type of a chart once you have created it.
+        For example, if you have made a bar chart you cannot turn it into a pie chart.
+        If you decide that you have made the wrong kind of chart,
+        you should simply delete the chart by selecting it and pressing the Delete key,
+        select the data again, and create a new chart.
+    </p>
+
+    <h3><a name="updating_chart_data" id="updating_chart_data"></a>Updating chart data</h3>
+    <p>
+        The data in your chart is taken live from your spreadsheet.
+        If this data changes, either because you have edited it or because of a recalculation, the chart will automatically be redrawn and updated.
+        This happens until you turn the chart into a Draw file using <span class="csg-menu-option">Make constant</span>.
+    </p>
+
+    <h3>&lsquo;Live&rsquo; charts vs. &lsquo;dead&rsquo; charts</h3>
+    <p>
+        When you create a chart, you may have one of two intentions.
+        You will probably want your chart to continue to reflect your data and any changes in it, to help you to analyse your data as you work.
+        Or you may want your chart to present a snapshot of the data at that time.
+        Fireworkz allows you to choose which of these options you prefer.
+    </p>
+    <ul>
+        <li>Charts that change if the data in the range of cells from which they were created changes are called &lsquo;live&rsquo; or dynamic charts.</li>
+        <li>Charts which will not be updated if the data changes are &lsquo;dead&rsquo; charts, and can be saved as Draw files.</li>
+    </ul>
+
+    <h3>Accessing the chart menus</h3>
+    <p>
+        To edit charts, you need to use the chart menus and dialogue boxes.
+        To access these, the chart must be selected for editing.
+    </p>
+    <ol>
+        <li>
+            Double-click within the chart frame, and you will see that a double red border appears around the chart area.
+            The chart is now selected for editing.
+        </li>
+        <li>
+            If you want to edit or change the appearance of a particular section of the chart
+            (such as the y-axis, or a single data point), you need to select it as well.<br />
+            <em>Data points</em><br />
+            For a single data point click <span class="csg-mouse-button">Adjust</span> (RISC OS) or Ctrl-click on the part of the chart required.<br />
+            <em>Data series</em><br />
+            For a series, click on a point within the series.
+        </li>
+        <li>
+            You will see a dotted line appear around the selected part of the chart.
+            The selected area will also be described in the status line for example <em>Series 1</em> or <em>Series 2, point 1</em>.
+        </li>
+        <li>
+            Once you have selected the chart frame and the part of the chart you want to change, you will be able to access the chart menus.
+            On RISC OS, the chart menus appear if you click <span class="csg-mouse-button">Menu</span> within the chart area.
+            On Windows, the chart menu bar replaces the standard menu bar at the top of the Fireworkz window.
+        </li>
+        <li>You can choose the option you want and edit the chart.</li>
+    </ol>
+
+    <h3><a name="customising_bar_charts" id="customising_bar_charts"></a>Customising bar charts</h3>
+    <p>There are several options for customising bar charts:</p>
+
+    <h4>Bar positioning</h4>
+    <p>
+        You can customise the position of bars in the chart using the
+        <span class="csg-dbox">Chart</span> dialogue box from the <span class="csg-menu">Edit</span> menu accessed from the <span class="csg-menu">Chart</span> menu.
+    </p>
+    <ul>
+        <li>The first option sets the percentage of the space per data point taken up by the bar.</li>
+        <li>The second sets the overlap for bars</li>
+        <li>The third sets the depth for 3-D bars.</li>
+    </ul>
+
+    <h4>Three-dimensional charts</h4>
+    <p>
+        All bar charts can be made three-dimensional by selecting the <span class="csg-dbox-option">3-D</span> option when you create the chart
+        or by setting the option button in the <span class="csg-dbox-option">3-D</span> section of this dialogue box.
+        They may be made two-dimensional by unsetting this option button.
+    </p>
+    <p>You can also edit the pitch and roll of 3-D charts using the <span class="csg-dbox">Chart</span> dialogue box.</p>
+    <ul>
+        <li>
+            Enter the pitch and roll in degrees.
+            This will change the viewing angle of the 3-D chart.
+        </li>
+    </ul>
+
+    <h3><a name="editing_axes" id="editing_axes"></a>Editing axes</h3>
+    <p>
+        When Fireworkz draws your chart it will endeavour to produce the most acceptable divisions on the axes.
+        However, you may want more or less precise numerical divisions, or a different type of tick mark.
+    </p>
+    <p>To edit an axis:</p>
+    <ol>
+        <li>
+            Double-click on the chart to select it.
+            A double line will appear around the entire chart.
+        </li>
+        <li>
+            Click <span class="csg-mouse-button">Select</span> (the left mouse button) on the axis you want to edit.
+            A border will appear to show that it has been selected.
+        </li>
+        <li>
+            Choose <span class="csg-menu-option">Axis</span> from the <span class="csg-menu">Edit</span> menu.
+            The <span class="csg-dbox">Axis</span> dialogue box will appear.
+        </li>
+        <li>
+            Edit the axis as necessary.
+            Options available here include setting the numerical divisions on the axis, the position of the axis on the chart, grid lines and tick marks, and scaling.
+            You can also opt to stack data series here, changing your bar or line chart into a stacked chart.
+        </li>
+        <li>
+            When you have set all the options you require, click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+            Your chart will be redrawn.
+        </li>
+    </ol>
+
+    <h3><a name="using_colour_in_charts" id="using_colour_in_charts"></a>Using colour in charts</h3>
+    <p>
+        Charts are created using a default set of colours for each item.
+        However, you may want to edit these, either for the whole chart or for individual items.
+    </p>
+    <p>You may edit both the fill colours used for areas, bars and pies, and the line colours used for other objects.</p>
+    <p>To edit colour in charts:</p>
+    <ol>
+        <li>
+            Double-click on the chart to select it.
+            A double line will appear around the entire chart.
+        </li>
+        <li>
+            Click <span class="csg-mouse-button">Select</span> (the left mouse button) on the chart element that you want to edit.
+            If this is a data series, <span class="csg-mouse-button">Select</span> will select the whole data series for editing.
+            If you want to edit a single data point, <span class="csg-key">Ctrl</span>-click <span class="csg-mouse-button">Select</span> on that point.
+            A selection border will appear to show the extent of the area which will be changed.
+            The status line will confirm which chart element is selected.
+        </li>
+        <li>Choose <span class="csg-menu-option">Fill</span> from the <span class="csg-menu">Chart &ndash; Style</span> sub-menu.</li>
+        <li>
+            The <span class="csg-dbox">Fill colour</span> dialogue box will appear,
+            captioned with the name of the chart element that you are editing.
+            Choose the colour you want, or select <span class="csg-dbox-option">Automatic</span> for Fireworkz to choose a colour for you.
+        </li>
+        <li>
+            Select the fill style.
+            <span class="csg-dbox-option">Solid</span> fills with a solid colour.
+            <span class="csg-dbox-option">Picture</span> enables you to import a picture which you can choose from the pop-up menu.
+            Further options maintain the imported picture's aspect ratio or allow it to be recoloured.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> to confirm your changes.
+            The chart will be updated.
+        </li>
+    </ol>
+
+    <h3><a name="editing_lines" id="editing_lines"></a>Editing lines</h3>
+    <p>Lines in charts appear in default colours and line styles. However you may edit these.</p>
+    <p>To edit lines:</p>
+    <ol>
+        <li>
+            Double-click on the chart to select it.
+            A double line will appear around the entire chart.
+        </li>
+        <li>
+            Click <span class="csg-mouse-button">Select</span> (the left mouse button) on the chart element that you want to edit.
+            If this is a data series, <span class="csg-mouse-button">Select</span> will select the whole data series for editing.
+            If you want to edit a line associated with a data point, <span class="csg-key">Ctrl</span>-click <span class="csg-mouse-button">Select</span> on that point.
+            A selection border will appear to show the extent of the area which will be changed.
+            The status line will confirm which chart element is selected.
+        </li>
+        <li>Choose <span class="csg-menu-option">Line style</span> from the <span class="csg-menu">Chart &ndash; Style</span> sub-menu.</li>
+        <li>
+            The <span class="csg-dbox">Line style</span> dialogue box will appear.
+            Choose a colour for the line or select <span class="csg-dbox-option">Automatic</span> for Fireworkz to choose the colour.
+        </li>
+        <li>Click on a button for a line style.</li>
+        <li>
+            Type in a width in points.
+            If the width is set to zero, no line is displayed.
+        </li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> to confirm your changes.</li>
+    </ol>
+
+    <h3><a name="editing_data_series" id="editing_data_series"></a>Editing data series</h3>
+    <p>You can edit aspects of each data series:</p>
+    <ol>
+        <li>Select the required data series.</li>
+        <li>Choose <span class="csg-menu-option">Series</span> from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>Make your choices and click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.</li>
+    </ol>
+    <p>Possible options are:</p>
+    <ul>
+        <li><span class="csg-dbox-option">Cumulative</span> displays the series in cumulative form, adding each data point to the previous one.</li>
+        <li><span class="csg-dbox-option">Vary by point</span> changes the colour of each point in the series.</li>
+        <li><span class="csg-dbox-option">Line of best fit</span> draws a straight line between the data points.</li>
+        <li><span class="csg-dbox-option">Fill to axis</span> adds a colour fill.</li>
+        <li><span class="csg-dbox-option">Overlay</span> switches the series to the overlay side of the chart, or back.</li>
+    </ul>
+
+    <h3><a name="positioning_the_chart" id="positioning_the_chart"></a>Positioning the chart</h3>
+    <p>The margins around the edge of chart can be edited - these are the gaps between the edge of the chart itself and the border of its frame.</p>
+    <ol>
+        <li>
+            Select the chart by double-clicking it and choose <span class="csg-menu-option">Margins</span> from the <span class="csg-menu">Edit</span> menu.
+            The <span class="csg-dbox">Chart margins</span> dialogue box will appear.
+        </li>
+        <li>Enter the required margins in the current unit of measurement.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+            Your chart will be repositioned as required.
+        </li>
+    </ol>
+
+    <h2><a name="editing_text_in_charts" id="editing_text_in_charts"></a>Editing text in charts</h2>
+
+    <p>
+        You cannot type text directly into your charts.
+        Any text must be selected in the worksheet when the chart is created, or added later using the <span class="csg-menu-option">Add</span> command.
+    </p>
+
+    <h3>Arranging the legend</h3>
+    <p>You can reposition the legend on the page, or change the way it is displayed:</p>
+    <ol>
+        <li>Select the chart by double-clicking it and choose <span class="csg-menu-option">Legend</span> from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>Select <span class="csg-dbox-option">On</span> to display the legend.</li>
+        <li>Select <span class="csg-dbox-option">Arrange horizontally</span> to display the legend horizontally.</li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> to confirm your changes.</li>
+    </ol>
+    <p>
+        If the chart does not have enough space to display the legend correctly,
+        edit the margins as above to increase the space available.
+    </p>
+
+    <h3>Changing the style of text</h3>
+    <p>
+        You may change the style and colour of text directly in the chart.
+        To do this:
+    </p>
+    <ol>
+        <li>Select the text you want to change.</li>
+        <li>Choose <span class="csg-menu-option">Text</span> from the <span class="csg-menu">Style</span> menu.</li>
+        <li>The <span class="csg-dbox">Text style</span> dialogue box will appear.</li>
+        <li>
+            Choose the typeface you want from the list, and if required select the
+            <span class="csg-dbox-option">Bold</span> and/or <span class="csg-dbox-option">Italic</span> option buttons.
+        </li>
+        <li>
+            Enter a height for the text (i.e. its point size).
+            If you do not specify a width, the natural width of the type will be used.
+        </li>
+        <li>Specify a colour for the text.</li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> to confirm your changes.</li>
+    </ol>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg05_function_reference.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug09_advanced_features.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Function reference </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Advanced features</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

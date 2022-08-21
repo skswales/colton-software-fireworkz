@@ -554,7 +554,7 @@ gr_scatterchart_series_addin(
             valpoint.y += cp->plotarea.posn.y;
 
             pict_halfsize = MAX(cp->plotarea.size.x, cp->plotarea.size.y) / 8; /* arbitrary constant */
-            pict_halfsize = (GR_PIXIT) ((double) pict_halfsize * scatchstyle.width_percentage / 100.0 / 2.0);
+            pict_halfsize = (GR_PIXIT) (((pict_halfsize * scatchstyle.width_percentage) / 100.0) / 2.0);
             tbar_halfsize = pict_halfsize / 2;
 
             /* x error tits plotted below point? */

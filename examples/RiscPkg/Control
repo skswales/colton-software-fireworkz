@@ -4,7 +4,7 @@ Priority: Optional
 Licence: Free
 Maintainer: Colton Software <colton-software-fireworkz@googlegroups.com>
 Standards-Version: 0.4.0
-Version: 20200322
+Version: 20200611
 Recommends: Fireworkz
 Description: Example files for Fireworkz
  Example files to demonstrate, and help with using, various Fireworkz facilities.

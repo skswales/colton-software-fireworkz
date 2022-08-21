@@ -1003,7 +1003,7 @@ ri_lbox_new(
             return(status);
         }
 
-    zero_struct(wind_defn);
+    zero_struct_fn(wind_defn);
 
     wind_defn.behind = (wimp_w) -1; /* open at the top of the window stack */
 

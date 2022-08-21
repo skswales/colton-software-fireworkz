@@ -1,0 +1,63 @@
+﻿
+The db_temp|ates
+The other templates provided, db_cards, db_1card and db_sheet
+can be used for creating new databases, as shown in the First Steps
+chapter. However, you need to do more of the work yourself with
+these than with the database template. Therefore, you may prefer
+to use these for importing existing databases.
+Before you can create a database using these templates, you must
+have saved your current document on disc, because Recordz needs
+to know where the database is to be created.
+If you have loaded an existing document, then you have nothing
+further to do.
+If you have created a new document then you need to:
+1 Click on the Save button or choose Save from the File menu.
+A Save dialogue box will appear:
+2 Enter the name you wish to give your document in the box
+provided.
+3 Drag the file icon and drop it in a directory viewer. Note that
+the file icon will be different for Recordz and Fireworkz Pro.
+When you create the database file, as described later in this
+chapter, it will be stored in the same directory as your document,
+so that they are kept alongside each other.
+
+File names
+The name of a new database will be created by taking the name of
+the document (or first eight characters of the name if the name is
+more than eight characters long) and appending the suffix '_b‘. For
+example, the database for the document AddrBook created in the
+First Steps chapter was named AddrBook_b. (If a file of this name
+already exists, you will not be allowed to create a new database
+from your document.)
+When the database template is used, both the files will take their
+names from the directory. The suffixes appended will be '_b' for
+the database file and '_f for the document file.
+
+How Recordz uses the database file
+In order to be able to handle large databases, Recordz works
+directly on the database file on disc, rather than taking a copy in
+memory. This means that the size of your database is limited by
+your disc storage capacity rather than the amount of RAM you
+have available.
+A consequence of this is that many of the operations which you
+carry out in Recordz will make immediate changes to the database
+which cannot be undone.
+Quitting Recordz and discarding any changes you have made only
+affects updates to the Recordz document and not the database
+itself. Thus if you have added or deleted fields, added or deleted
+records, edited any data or sorted your records, these changes will
+not be discarded. Only layout and style changes can be discarded
+since these details are held within the document itself.
+
+Open databases
+If your machine ‘crashes’ for any reason, the database file may
+remain open. If you attempt to run the document file, you will get
+a message such as ‘Database already open’. If this occurs, you must
+reset the machine or enter the operating command:
+* SHUT
+
+Fireworkz Pro 59
+
+
+
+

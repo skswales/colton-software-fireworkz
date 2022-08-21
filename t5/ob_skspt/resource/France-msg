@@ -1,0 +1,136 @@
+#
+# this is the messages file for ob_skspt (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1995-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_skspt/ob_skspt.h
+#
+# SKEL_SPLIT_MSG_DIALOG_STYLE_xxx
+#
+# UK 1:Styles
+1:Styles
+# UK 10:ug/ug06_the_style_editor.htm
+10:ug/ug06_the_style_editor.htm
+# UK 2:Define new style
+2:Define new style
+# UK 11:ug/ug06_adding_a_new_style.htm
+11:ug/ug06_adding_a_new_style.htm
+# UK 3:NewStyle%ld
+3:NewStyle%ld
+# UK 4:New style name
+4:New style name
+# UK 5:Based on
+5:Based on
+# UK w6:Defining new style - %s
+w6:Defining new style - %s
+# UK r6:Defining new style: %s
+r6:Defining new style: %s
+# UK w7:Editing style - %s
+w7:Editing style - %s
+# UK r7:Editing style: %s
+r7:Editing style: %s
+# UK 8:Apply effects
+8:Apply effects
+# UK 9:Style in use in this document. Remove all uses?
+9:Style in use in this document. Remove all uses?
+# UK 12:Type
+12:Type
+# UK 13:Region
+13:Region
+# UK 14:ug5_removing_styles_and_effects.htm
+14:ug5_removing_styles_and_effects.htm
+# UK 15:Style
+15:Style
+# UK 16:ug/ug05_deleting_styles.htm
+16:ug/ug05_deleting_styles.htm
+#
+# SKEL_SPLIT_MSG_DIALOG_xxx_HELP_TOPIC
+#
+# UK 20:ug/ug06_style.htm
+20:ug/ug06_style.htm
+# UK 21:ug/ug06_text.htm
+21:ug/ug06_text.htm
+# UK 22:ug/ug06_ruler.htm
+22:ug/ug06_ruler.htm
+# UK 23:ug/ug06_colour.htm
+23:ug/ug06_colour.htm
+# UK 24:ug/ug06_spacing.htm
+24:ug/ug06_spacing.htm
+# UK 25:sg/sg03_styles_in_spreadsheet_documents.htm
+25:sg/sg03_styles_in_spreadsheet_documents.htm
+# UK 26:ug/ug06_row.htm
+26:ug/ug06_row.htm
+#
+# MSG_DIALOG_BOX_xxx
+#
+# UK 39:Box
+39:Box
+# UK 40:ug/ug08_boxes.htm
+40:ug/ug08_boxes.htm
+# UK 41:&Outside
+41:&Outside
+# UK 43:Vertical lines
+43:Vertical lines
+# UK 44:Horizontal lines
+44:Horizontal lines
+# UK 45:All
+45:All
+# UK 46:&Left
+46:&Left
+# UK 47:&Right
+47:&Right
+# UK 48:&Top
+48:&Top
+# UK 49:&Bottom
+49:&Bottom
+# UK 50:Line style
+50:Line style
+# UK 51:Colour
+51:Colour
+#
+# MSG_DIALOG_INSERT_TABLE_xxx
+#
+# UK r59:Insert table
+r59:Insérer table
+# UK w59:Insert Table
+w59:Insérer Table
+# UK 60:ug/ug08_adding_tables.htm
+60:ug/ug08_adding_tables.htm
+# UK 61:Number of c&olumns
+61:Collones
+# UK 62:Number of &rows
+62:Lignes
+#
+# MSG_DIALOG_ADD_CR_xxx
+#
+# UK 64:ug/ug08_adding_extra_rows_and_columns.htm
+64:ug/ug08_adding_extra_rows_and_columns.htm
+# UK r65:Add columns
+r65:Collones après
+# UK w65:Add Columns
+w65:Collones après
+# UK r66:Insert columns
+r66:Collones avant
+# UK w66:Insert Columns
+w66:Collones avant
+# UK r67:Add rows
+r67:Lignes au-dessous
+# UK w67:Add Rows
+w67:Lignes au-dessous
+# UK r68:Insert rows
+r68:Lignes en dessus
+# UK w68:Insert Rows
+w68:Lignes en dessus
+#
+# errors: keep consistent with ob_skspt/ob_skspt.h
+# see SKEL_SPLIT_ERR(n)
+#
+# UK e0:Can't delete the base style
+e0:Can't delete the base style
+#
+# end of msg (ob_skspt)

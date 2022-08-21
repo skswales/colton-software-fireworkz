@@ -49,16 +49,24 @@ arg_normalise_real(
 
     if(type_flags & EM_INT)
     {   /* try to obtain integer value from this real arg */
-        if(status_done(ss_data_real_to_integer_force(p_ss_data)))
-            return(ss_data_get_data_id(p_ss_data));
+        const EV_IDNO data_id = ss_data_real_to_integer_force(p_ss_data);
+
+        if(DATA_ID_CONVERSION_FAILED != data_id)
+            return(data_id);
 
         return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
     }
 
     if(type_flags & EM_DAT)
     {   /* try to obtain date value from this real arg */
-        if(status_ok(ss_serial_number_to_date(&p_ss_data->arg.ss_date, ss_data_get_real(p_ss_data))))
-            return(ss_data_get_data_id(p_ss_data));
+        SS_DATE ss_date;
+
+        if(status_ok(ss_serial_number_to_date(&ss_date, ss_data_get_real(p_ss_data))))
+        {
+            ss_data_set_date(p_ss_data, ss_date.date, ss_date.time);
+            assert(ss_data_is_date(p_ss_data));
+            return(DATA_ID_DATE);
+        }
 
         return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
     }
@@ -76,13 +84,20 @@ arg_normalise_integer(
         return(ss_data_get_data_id(p_ss_data)); /* preferred */
 
     if(type_flags & EM_REA)
-        /* promote this integer arg to real value */
+    {   /* promote this integer arg to real value */
         return(ss_data_set_real_rid(p_ss_data, (F64) ss_data_get_integer(p_ss_data)));
+    }
 
     if(type_flags & EM_DAT)
     {   /* try to obtain date value from this integer arg */
-        if(status_ok(ss_serial_number_to_date(&p_ss_data->arg.ss_date, (F64) ss_data_get_integer(p_ss_data))))
-            return(ss_data_get_data_id(p_ss_data));
+        SS_DATE ss_date;
+
+        if(status_ok(ss_serial_number_to_date(&ss_date, (F64) ss_data_get_integer(p_ss_data))))
+        {
+            ss_data_set_date(p_ss_data, ss_date.date, ss_date.time);
+            assert(ss_data_is_date(p_ss_data));
+            return(DATA_ID_DATE);
+        }
 
         return(ss_data_set_error(p_ss_data, EVAL_ERR_ARGRANGE));
     }
@@ -101,12 +116,15 @@ arg_normalise_date(
 
     /* coerce dates to Excel-compatible serial number if a number is acceptable */
     if(type_flags & EM_REA)
-        return(ss_data_set_real_rid(p_ss_data, ss_date_to_serial_number(&p_ss_data->arg.ss_date)));
+        return(ss_data_set_real_rid(p_ss_data, ss_date_to_serial_number(ss_data_get_date(p_ss_data))));
 
     if(type_flags & EM_INT)
     {   /* for EM_INT args ignore any time component */
         if(SS_DATE_NULL == ss_data_get_date(p_ss_data)->date)
-            return(ss_data_set_integer_rid(p_ss_data, 0)); /* this is a pure time value */
+        {   /* this is a pure time value */
+            assert(SS_TIME_NULL != ss_data_get_date(p_ss_data)->time);
+            return(ss_data_set_integer_rid(p_ss_data, 0));
+        }
 
         return(ss_data_set_integer_rid(p_ss_data, ss_dateval_to_serial_number(ss_data_get_date(p_ss_data)->date)));
     }
@@ -204,6 +222,7 @@ arg_normalise_array_range_field(
     }
 
     ss_data_free_resources(p_ss_data);
+
     return(ss_data_set_error(p_ss_data, EVAL_ERR_UNEXARRAY));
 }
 
@@ -220,9 +239,7 @@ arg_normalise_slr(
         return(DATA_ID_SLR); /* preferred */
 
     /* function doesn't want SLRs, so dereference them and retry */
-    ev_slr_deref(p_ss_data, &p_ss_data->arg.slr);
-
-    return(arg_normalise(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+    return(arg_normalise(ev_slr_deref(p_ss_data, &p_ss_data->arg.slr), type_flags, p_max_x, p_max_y, p_stack_dbase));
 }
 
 _Check_return_
@@ -235,9 +252,7 @@ arg_normalise_name(
     P_STACK_DBASE p_stack_dbase)
 {
     /* no function handles NAME args, so dereference them and retry */
-    name_deref(p_ss_data, p_ss_data->arg.h_name);
-
-    return(arg_normalise(p_ss_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+    return(arg_normalise(name_deref(p_ss_data, p_ss_data->arg.h_name), type_flags, p_max_x, p_max_y, p_stack_dbase));
 }
 
 _Check_return_
@@ -268,16 +283,15 @@ arg_normalise(
         return(arg_normalise_real(p_ss_data, type_flags));
 
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         return(arg_normalise_integer(p_ss_data, type_flags));
 
-    case DATA_ID_STRING:
-        return(arg_normalise_string(p_ss_data, type_flags));
-
     case DATA_ID_DATE:
         return(arg_normalise_date(p_ss_data, type_flags));
+
+    case DATA_ID_STRING:
+        return(arg_normalise_string(p_ss_data, type_flags));
 
     case DATA_ID_BLANK:
         return(arg_normalise_blank(p_ss_data, type_flags));
@@ -930,13 +944,12 @@ data_ensure_constant_sub(
     /* these types need no attention */
     case DATA_ID_REAL:
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
     case DATA_ID_DATE:
+    case DATA_ID_STRING:
     case DATA_ID_BLANK:
     case DATA_ID_ERROR:
-    case DATA_ID_STRING:
         break;
 
     /* scan array and remove embedded cockroaches */
@@ -977,13 +990,7 @@ data_ensure_constant_sub(
         break;
 
     case DATA_ID_SLR:
-        ev_slr_deref(p_ss_data, &p_ss_data->arg.slr);
-        data_ensure_constant_sub(p_ss_data, array);
-        break;
-
-    case DATA_ID_NAME:
-        name_deref(p_ss_data, p_ss_data->arg.h_name);
-        data_ensure_constant_sub(p_ss_data, array);
+        data_ensure_constant_sub(ev_slr_deref(p_ss_data, &p_ss_data->arg.slr), array);
         break;
 
     /* range is converted to array of constants */
@@ -1000,6 +1007,10 @@ data_ensure_constant_sub(
             ss_data_set_error(p_ss_data, EVAL_ERR_UNEXARRAY);
         else
             data_constant_array_from_field(p_ss_data);
+        break;
+
+    case DATA_ID_NAME:
+        data_ensure_constant_sub(name_deref(p_ss_data, p_ss_data->arg.h_name), array);
         break;
 
     /* duff result types */
@@ -1022,8 +1033,8 @@ data_is_array_range(
 {
     switch(ss_data_get_data_id(p_ss_data))
     {
-    case DATA_ID_RANGE:
     case DATA_ID_ARRAY:
+    case DATA_ID_RANGE:
     case DATA_ID_FIELD:
         return(TRUE);
 
@@ -1060,9 +1071,8 @@ ev_exp_copy(
 
 /******************************************************************************
 *
-* adjust the refs and ranges in an expression
-* when the expression is copied
-* cell refs/ranges are updated:
+* adjust the refs and ranges in an expression when the expression is copied
+* cell/range refs are updated:
 *   p_ev_slr_offset->col/row contain offset
 *   p_ev_slr_offset->doc contains target document
 *   docno_from contains target document
@@ -1071,9 +1081,8 @@ ev_exp_copy(
 
 extern void
 ev_exp_refs_adjust(
-    P_EV_CELL p_ev_cell,
-    _InRef_     PC_EV_SLR p_ev_slr_offset    /* adjustment to slrs */,
-    _InRef_opt_ PC_EV_RANGE p_ev_range_scope /* source range */)
+    _InoutRef_  P_EV_CELL p_ev_cell,
+    _InRef_     PC_EV_SLR p_ev_slr_offset /* adjustment to slrs */)
 {
     /* loop over slrs in cell */
     if(p_ev_cell->ev_parms.slr_n)
@@ -1082,7 +1091,7 @@ ev_exp_refs_adjust(
         UBF i;
 
         for(i = 0; i < p_ev_cell->ev_parms.slr_n; ++i, ++p_ev_slr)
-            slr_offset_add(p_ev_slr, p_ev_slr_offset, p_ev_range_scope, TRUE /* use_abs */, FALSE /* end_coord */);
+            slr_offset_add(p_ev_slr, p_ev_slr_offset, NULL, TRUE /* use_abs */, FALSE /* end_coord */);
     }
 
     /* loop over ranges in cell */
@@ -1093,8 +1102,8 @@ ev_exp_refs_adjust(
 
         for(i = 0; i < p_ev_cell->ev_parms.range_n; ++i, ++p_ev_range)
         {
-            slr_offset_add(&p_ev_range->s, p_ev_slr_offset, p_ev_range_scope, TRUE /* use_abs */, FALSE /* end_coord */);
-            slr_offset_add(&p_ev_range->e, p_ev_slr_offset, p_ev_range_scope, TRUE /* use_abs */, TRUE /* end_coord */);
+            slr_offset_add(&p_ev_range->s, p_ev_slr_offset, NULL, TRUE /* use_abs */, FALSE /* end_coord */);
+            slr_offset_add(&p_ev_range->e, p_ev_slr_offset, NULL, TRUE /* use_abs */, TRUE /* end_coord */);
         }
     }
 }
@@ -1167,8 +1176,7 @@ ev_cell_constant_from_data(
         break;
 
     case DATA_ID_NAME:
-        name_deref(&ss_data_temp_1, p_ss_data->arg.h_name);
-        ev_cell_constant_from_data(p_ev_cell, &ss_data_temp_1);
+        ev_cell_constant_from_data(p_ev_cell, name_deref(&ss_data_temp_1, p_ss_data->arg.h_name));
         return;
 
     default:
@@ -1186,6 +1194,7 @@ ev_cell_constant_from_data(
     data_ensure_constant(&ss_data_temp_2);
 
     p_ev_cell->ev_parms.data_id = UBF_PACK(ss_data_get_data_id(&ss_data_temp_2));
+
     p_ev_cell->ss_constant = ss_data_temp_2.arg.ss_constant;
 }
 
@@ -1247,7 +1256,8 @@ ss_data_from_ev_cell(
 *
 ******************************************************************************/
 
-extern void
+/*ncr*/ _Ret_notnull_
+extern P_SS_DATA
 ev_slr_deref(
     _OutRef_    P_SS_DATA p_ss_data,
     _InRef_     PC_EV_SLR p_ev_slr)
@@ -1291,6 +1301,8 @@ ev_slr_deref(
             }
         }
     }
+
+    return(p_ss_data);
 }
 
 #if TRACE_ALLOWED
@@ -1335,12 +1347,13 @@ ev_trace_slr_tstr_buf(
 *
 ******************************************************************************/
 
-extern void
+/*ncr*/ _Ret_notnull_
+extern P_SS_DATA
 name_deref(
     P_SS_DATA p_ss_data,
     _InVal_     EV_HANDLE h_name)
 {
-    ARRAY_INDEX name_num = name_def_from_handle(h_name);
+    const ARRAY_INDEX name_num = name_def_from_handle(h_name);
     BOOL got_def = FALSE;
 
     if(name_num >= 0)
@@ -1356,6 +1369,8 @@ name_deref(
 
     if(!got_def)
         ss_data_set_error(p_ss_data, EVAL_ERR_NAMEUNDEF);
+
+    return(p_ss_data);
 }
 
 /******************************************************************************
@@ -1448,7 +1463,7 @@ range_scan_element(
 
 /******************************************************************************
 *
-* add an offset to an slr when the slr is moved (maybe take account of abs bits)
+* add an offset to an EV_SLR when it is moved (maybe take account of abs bits)
 *
 ******************************************************************************/
 
@@ -1497,127 +1512,100 @@ slr_offset_add(
     }
 }
 
-/******************************************************************************
-*
-* p_ss_data_res = p_ss_data_1 + p_ss_data_2
-*
-******************************************************************************/
-
-_Check_return_ _Success_(return)
-extern bool
-two_nums_add_try(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2)
+extern void
+slr_offset_add_simple(
+    _InoutRef_  P_EV_SLR p_ev_slr,
+    _InRef_     PC_EV_SLR p_ev_slr_offset)
 {
-    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, TRUE))
+    /* adjust column reference if it is relative */
+    if(!p_ev_slr->abs_col)
     {
-    case TWO_INTEGERS:
-        ss_data_set_integer(p_ss_data_res, ss_data_get_integer(p_ss_data_1) + ss_data_get_integer(p_ss_data_2));
-        return(true);
+        p_ev_slr->col += p_ev_slr_offset->col;
 
-    case TWO_REALS:
-        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) + ss_data_get_real(p_ss_data_2));
-        return(true);
-    }
-
-    return(false);
-}
-
-/******************************************************************************
-*
-* p_ss_data_res = p_ss_data_1 / p_ss_data_2
-*
-******************************************************************************/
-
-_Check_return_ _Success_(return)
-extern bool
-two_nums_divide_try(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2)
-{
-    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
-    {
-    case TWO_INTEGERS:
-        if(0 == ss_data_get_integer(p_ss_data_2))
-            ss_data_set_error(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
-        else
+        /* has adjustment made it overflow? */
+        if((U32) p_ev_slr->col >= (U32) EV_MAX_COL)
         {
-            const div_t d = div((int) ss_data_get_integer(p_ss_data_1), (int) ss_data_get_integer(p_ss_data_2));
-
-            if(0 == d.rem)
-                ss_data_set_integer(p_ss_data_res, d.quot);
-            else
-                ss_data_set_real(p_ss_data_res, (F64) ss_data_get_integer(p_ss_data_1) / ss_data_get_integer(p_ss_data_2));
+            p_ev_slr->col = 0;
+            p_ev_slr->bad_ref = 1;
         }
-
-        return(true);
-
-    case TWO_REALS:
-        if(f64_is_divisor_too_small(ss_data_get_real(p_ss_data_2)))
-            ss_data_set_error(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
-        else
-            ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) / ss_data_get_real(p_ss_data_2));
-
-        return(true);
     }
 
-    return(false);
+    /* adjust row reference if it is relative */
+    if(!p_ev_slr->abs_row)
+    {
+        p_ev_slr->row += p_ev_slr_offset->row;
+
+        /* has adjustment made it overflow? */
+        if((U32) p_ev_slr->row >= (U32) EV_MAX_ROW)
+        {
+            p_ev_slr->row = 0;
+            p_ev_slr->bad_ref = 1;
+        }
+    }
 }
 
-/******************************************************************************
-*
-* p_ss_data_res = p_ss_data_1 * p_ss_data_2
-*
-******************************************************************************/
-
-_Check_return_ _Success_(return)
-extern bool
-two_nums_multiply_try(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2)
+extern void
+slr_offset_add_harder(
+    _InoutRef_  P_EV_SLR p_ev_slr,
+    _InRef_     PC_EV_SLR p_ev_slr_offset,
+    _InRef_opt_ PC_EV_RANGE p_ev_range_scope,
+    _InVal_     BOOL end_coord)
 {
-    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, TRUE))
-    {
-    case TWO_INTEGERS:
-        ss_data_set_integer(p_ss_data_res, ss_data_get_integer(p_ss_data_1) * ss_data_get_integer(p_ss_data_2));
-        return(true);
+    BOOL adjust_col, adjust_row;
 
-    case TWO_REALS:
-        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) * ss_data_get_real(p_ss_data_2));
-        return(true);
+    if(end_coord)
+    {
+        p_ev_slr->col -= 1;
+        p_ev_slr->row -= 1;
     }
 
-    return(false);
-}
+    /* adjust column reference if it is relative */
+    if(!p_ev_slr->abs_col)
+        adjust_col = TRUE;
+    /* column reference is fixed. adjust only if there is a source block and the reference was in that block ('move') */
+    else if((NULL != p_ev_range_scope) && ev_slr_in_range(p_ev_range_scope, p_ev_slr))
+        adjust_col = TRUE;
+    else
+        adjust_col = FALSE;
 
-/******************************************************************************
-*
-* p_ss_data_res = p_ss_data_1 - p_ss_data_2
-*
-******************************************************************************/
+    if(adjust_col)
+        p_ev_slr->col += p_ev_slr_offset->col;
 
-_Check_return_ _Success_(return)
-extern bool
-two_nums_subtract_try(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2)
-{
-    switch(two_nums_type_match(p_ss_data_1, p_ss_data_2, TRUE))
+    /* adjust row reference if it is relative */
+    if(!p_ev_slr->abs_row)
+        adjust_row = TRUE;
+    /* row reference is fixed. adjust only if there is a source block and the reference was in that block ('move') */
+    else if((NULL != p_ev_range_scope) && ev_slr_in_range(p_ev_range_scope, p_ev_slr))
+        adjust_row = TRUE;
+    else
+        adjust_row = FALSE;
+
+    if(adjust_row)
+        p_ev_slr->row += p_ev_slr_offset->row;
+
+    /* adjust_docno */
+    if((NULL != p_ev_range_scope) && (ev_slr_docno(p_ev_slr) == ev_slr_docno(&p_ev_range_scope->s)))
+        p_ev_slr->docno = p_ev_slr_offset->docno;
+
+    if(end_coord)
     {
-    case TWO_INTEGERS:
-        ss_data_set_integer(p_ss_data_res, ss_data_get_integer(p_ss_data_1) - ss_data_get_integer(p_ss_data_2));
-        return(true);
-
-    case TWO_REALS:
-        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_1) - ss_data_get_real(p_ss_data_2));
-        return(true);
+        p_ev_slr->col += 1;
+        p_ev_slr->row += 1;
     }
 
-    return(false);
+    /* has adjustment made it overflow? */
+    if((U32) p_ev_slr->col >= (U32) EV_MAX_COL)
+    {
+        p_ev_slr->col = 0;
+        p_ev_slr->bad_ref = 1;
+    }
+
+    /* has adjustment made it overflow? */
+    if((U32) p_ev_slr->row >= (U32) EV_MAX_ROW)
+    {
+        p_ev_slr->row = 0;
+        p_ev_slr->bad_ref = 1;
+    }
 }
 
 /* end of ev_help.c */

@@ -1,0 +1,473 @@
+{Version:2.30;10 Nov 2020;Fireworkz for Windows (France);Colton Software;Windows-1252}
+{RowTable:1}
+{BindFileType:1;0;All files;(*.*);*.*}
+{BindFileType:1;0xBDF;Colton Software Fireworkz;(*.fwk,*.fwkh);*.fwk\\\;*.fwkh}
+{BindFileType:2;0xBDF;Colton Software Fireworkz;(*.fwk);*.fwk}
+{BindFileType:3;0xC1D;Colton Software Fireworkz template;(*.fwt);*.fwt}
+{#:Foreign file formats}
+{BindFileType:3;0xFFF;Plain text;(*.txt);*.txt}
+{BindFileType:3;0xC32;Rich text format;(*.rtf);*.rtf}
+{BindFileType:3;0xDFE;Comma separated values;(*.csv);*.csv}
+{BindFileType:3;0xBA6;Microsoft Excel;(*.xls);*.xls}
+{BindFileType:1;0xDB0;Lotus 1-2-3;(*.wk1,*.wk3.*.wks);*.wk1\\\;*.wk3\\\;*.wks}
+{BindFileType:2;0xDB0;Lotus 1-2-3;(*.wk1);*.wk1}
+{BindFileType:1;0xDDE;Colton Software PipeDream;(*.pd);*.pd}
+{BindFileType:1;0xAF8;GST 1st Word Plus;(*.fwp);*.fwp}
+{BindFileType:1;0xC7D;SID;(*.sid);*.sid}
+{#:Image file formats}
+{BindFileType:4;0;All pictures;;*.jpg\\\;*.jpeg\\\;*.png\\\;*.tif\\\;*.tiff\\\;*.gif\\\;*.pcd\\\;*.bmp\\\;*.dib\\\;*.ico\\\;*.emf\\\;*.wmf\\\;*.aff\\\;*.ff9\\\;*.fwkh}
+{BindFileType:12;0xC85;JPEG/JFIF;(*.jpg,*.jpeg);*.jpg\\\;*.jpeg}
+{BindFileType:12;0xB60;PNG;(*.png);*.png}
+{BindFileType:12;0xFF0;TIFF;(*.tif,*.tiff);*.tif\\\;*.tiff}
+{BindFileType:12;0x695;Graphics Interchange Format;(*.gif);*.gif}
+{BindFileType:12;0xBE8;Kodak Photo CD;(*.pcd);*.pcd}
+{BindFileType:12;0x69C;Windows Bitmap;(*.bmp,*.dib);*.bmp\\\;*.dib}
+{BindFileType:12;0x132;Windows Icon;(*.ico);*.ico}
+{BindFileType:12;0xB2F;Windows Metafile;(*.emf,*.wmf);*.emf\\\;*.wmf}
+{BindFileType:12;0xFF9;RISC OS Sprite;(*.ff9);*.ff9}
+{BindFileType:14;0xAFF;RISC OS Draw;(*.aff);*.aff}
+{BindFileType:12;0xA78;Embedded (OLE);(*.fwkh);*.fwkh}
+{DefineKey:F2;EditFormula-s}
+{DefineKey:!F9;SelectCell}
+{DefineKey:^F;Button:SEARCH}
+{DefineKey:^U;DeleteLine}
+{DefineKey:^W;SelectWord}
+{DefineKey:^!L;Button:JUSTIFY_LEFT}
+{DefineKey:^!C;Button:JUSTIFY_CENTRE}
+{DefineKey:^!R;Button:JUSTIFY_RIGHT}
+{DefineKey:^!F;Button:JUSTIFY_FULL}
+{DefineKey:^!Z;Button:CHART}
+{#:Fontmap:portable-name;RTF-class;RTF-class-master;host-base-name;host-normal;host-bold;host-italic;host-bold-italic;riscos-normal;riscos-bold;riscos-italic;riscos-bold-italic}
+{#:portable-name is used in files}
+{#:host-base-name appears in user interface}
+{#:host-normal and variants are only needed on RISC OS where a full font name cannot always be deduced}
+{#:riscos-normal and variants are only needed on non-RISC OS platforms for Draw files (including charts)}
+{Fontmap:AvantGarde;swiss;;Century Gothic;;;;;Clare.Medium;Clare.Demi;Clare.Medium.Oblique;Clare.Demi.Oblique}
+{Fontmap:Bookman;roman;;Bookman Old Style;;;;;Robinson.Light;Robinson.Demi;Robinson.Light.Italic;Robinson.Demi.Italic}
+{Fontmap:Courier;modern;1;Courier New;;;;;Corpus.Medium;Corpus.Bold;Corpus.Medium.Oblique;Corpus.Bold.Oblique}
+{Fontmap:Helvetica;swiss;1;Arial;;;;;Homerton.Medium;Homerton.Bold;Homerton.Medium.Oblique;Homerton.Bold.Oblique}
+{Fontmap:Helvetica-Narrow;swiss;;Arial Narrow;;;;;Homerton.Narrow;Homerton.Narrow.Bold;Homerton.Narrow.Oblique;Homerton.Narrow.Bold.Oblique}
+{Fontmap:NewCenturySchlbk;roman;;Century Schoolbook;;;;;NewHall.Medium;NewHall.Bold;NewHall.Medium.Italic;NewHall.Bold.Italic}
+{Fontmap:Palatino;roman;;Palatino Linotype;;;;;Pembroke.Medium;Pembroke.Bold;Pembroke.Medium.Italic;Pembroke.Bold.Italic}
+{Fontmap:Symbol;tech;1;Symbol;;;;;Sidney}
+{Fontmap:Times;roman;1;Times New Roman;;;;;Trinity.Medium;Trinity.Bold;Trinity.Medium.Italic;Trinity.Bold.Italic}
+{Fontmap:ZapfChancery;modern;;Monotype Corsiva;;;;;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic}
+{Fontmap:ZapfDingbats;decor;1;Monotype Sorts;;;;;Selwyn}
+{FontmapEnd}
+{#:Fix earlier Windows font mapping error}
+{FontmapRemap:Helvetica-Narrow;HelveticaNarrow}
+{#:Fix earlier Windows font mapping}
+{FontmapRemap:Palatino;Palatino Linotype}
+{MenuName:AutoFunction;Auto Fns}
+{MenuAdd:AutoFunction;Sum;;AutoFunction:SUM}
+{MenuAdd:AutoFunction;Average;;AutoFunction:AVG}
+{MenuAdd:AutoFunction;Minimum;;AutoFunction:MIN}
+{MenuAdd:AutoFunction;Maximum;;AutoFunction:MAX}
+{MenuAdd:AutoFunction;Count;;AutoFunction:COUNT}
+{MenuName:Function;Functions}
+{MenuAdd:Function;&Quick...;;Functions-S:-1}
+{MenuAdd:Function;&Catégorie}
+{MenuAdd:Function.Catégorie;Toutes...;;Functions-S}
+{MenuAdd:Function.Catégorie;&Custom control...;;Functions-S:10}
+{MenuAdd:Function.Catégorie;&Database...;;Functions-S:1}
+{MenuAdd:Function.Catégorie;Date et Heure...;;Functions-S:2}
+{MenuAdd:Function.Catégorie;Eng&ineering...;;Functions-S:0}
+{MenuAdd:Function.Catégorie;&Financière...;;Functions-S:3}
+{MenuAdd:Function.Catégorie;L&ogique...;;Functions-S:13}
+{MenuAdd:Function.Catégorie;&Lookup...;;Functions-S:11}
+{MenuAdd:Function.Catégorie;&Mathématique...;;Functions-S:4}
+{MenuAdd:Function.Catégorie;Mat&rice...;;Functions-S:5}
+{MenuAdd:Function.Catégorie;Miscellane&ous...;;Functions-S:6}
+{MenuAdd:Function.Catégorie;Statistique...;;Functions-S:7}
+{MenuAdd:Function.Catégorie;Texte...;;Functions-S:8}
+{MenuAdd:Function.Catégorie;&Trigonométrique...;;Functions-S:9}
+{MenuAdd:Function.Catégorie;Compatibilit&y...;;Functions-S:14}
+{MenuAdd:Function}
+{MenuAdd:Function;C&ustom...;;Functions-S:12}
+{MenuAdd:Function}
+{MenuAdd:Function;&Names...;;NameIntro-S:1}
+{MenuName:Chart;Chart}
+{MenuAdd:Chart;Colonne...;;Gallery-C:0;6}
+{MenuAdd:Chart;Ligne...;;Gallery-C:1;6}
+{MenuAdd:Chart;Secteur...;;Gallery-C:2;6}
+{MenuAdd:Chart;&X-Y...;;Gallery-C:3;6}
+{MenuAdd:Chart;&Overlay...;;Gallery-C:4;6}
+{MenuAdd:Chart;Insérer;;Gallery-C:5;;6}
+{MenuName:ChartEdit;Chart}
+{MenuAdd:ChartEdit;&Edit}
+{MenuAdd:ChartEdit.Edit;&Insérer image...;;InsertPicture-f:6}
+{MenuAdd:ChartEdit.Edit}
+{MenuAdd:ChartEdit.Edit;&Diagramme...;;ChartEdit-C:2}
+{MenuAdd:ChartEdit.Edit;&Axe...;;ChartEdit-C:0}
+{MenuAdd:ChartEdit.Edit;&Séries...;;ChartEdit-C:1}
+{MenuAdd:ChartEdit.Edit;&Légende...;;ChartEditX-C:0}
+{MenuAdd:ChartEdit;&Style}
+{MenuAdd:ChartEdit.Style;&Fill...;;ChartStyle-C:2}
+{MenuAdd:ChartEdit.Style;&Ligne...;;ChartStyle-C:1}
+{MenuAdd:ChartEdit.Style;&Texte...;;ChartStyle-C:0}
+{MenuAdd:ChartEdit;&Margins...;;ChartEditX-C:1}
+{MenuAdd:$;&Fichier}
+{MenuAdd:$.Fichier;&Nouveau...;^N;Button:NEW}
+{MenuAdd:$.Fichier;&Ouvrir...;^O;Button:OPEN}
+{MenuAdd:$.Fichier;&Insert File...;;Button:OPEN\\\;1}
+{MenuAdd:$.Fichier}
+{MenuAdd:$.Fichier;Enregister;^S;Button:SAVE}
+{MenuAdd:$.Fichier;Enregister sous...;;Button:SAVE\\\;1}
+{MenuAdd:$.Fichier;Enregister sous Template...;;SaveAsTemplateIntro}
+{MenuAdd:$.Fichier}
+{MenuAdd:$.Fichier;Imprimer...;^P;Button:PRINT}
+{MenuAdd:$.Fichier;Print Set&up...;;PrintSetup}
+{MenuAdd:$.Fichier}
+{MenuAdd:$.Fichier;Options...;;Choices}
+{MenuAdd:$.Fichier;&Quitter;;Quit}
+{MenuAdd:$;&View}
+{MenuAdd:$.View;&Nouveau;^!V;ViewNew}
+{MenuAdd:$.View;Scale...;;ViewScaleIntro}
+{MenuAdd:$.View;Control...;^!O;Button:VIEW}
+{MenuAdd:$.View;Fermer;^F4;ViewCloseReq}
+{MenuAdd:$.View}
+{MenuAdd:$.View;&Ruler}
+{MenuAdd:$.View.Ruler;cm}
+{MenuAdd:$.View.Ruler.cm;0.5 cm;;RulerScale:0\\\;2\\\;1\\\;1}
+{MenuAdd:$.View.Ruler.cm;0.2 cm;;RulerScale:0\\\;5\\\;1\\\;1}
+{MenuAdd:$.View.Ruler.cm;0.1 cm;;RulerScale:0\\\;2\\\;5\\\;1}
+{MenuAdd:$.View.Ruler;mm}
+{MenuAdd:$.View.Ruler.mm;5 mm;;RulerScale:1\\\;2\\\;1\\\;10}
+{MenuAdd:$.View.Ruler.mm;2 mm;;RulerScale:1\\\;5\\\;1\\\;10}
+{MenuAdd:$.View.Ruler.mm;1 mm;;RulerScale:1\\\;10\\\;1\\\;10}
+{MenuAdd:$.View.Ruler;inches}
+{MenuAdd:$.View.Ruler.inches;1/4 in;;RulerScale:2\\\;4\\\;1\\\;1}
+{MenuAdd:$.View.Ruler.inches;1/6 in;;RulerScale:2\\\;2\\\;3\\\;1}
+{MenuAdd:$.View.Ruler.inches;1/8 in;;RulerScale:2\\\;4\\\;2\\\;1}
+{MenuAdd:$.View.Ruler.inches;1/10 in;;RulerScale:2\\\;2\\\;5\\\;1}
+{MenuAdd:$.View.Ruler.inches;1/16 in;;RulerScale:2\\\;4\\\;4\\\;1}
+{MenuAdd:$.View.Ruler;points;;RulerScale:3\\\;6\\\;2\\\;72}
+{MenuAdd:$.View;&Side Ruler}
+{MenuAdd:$.View.Side Ruler;cm}
+{MenuAdd:$.View.Side Ruler.cm;0.5 cm;;VRulerScale:0\\\;2\\\;1\\\;1}
+{MenuAdd:$.View.Side Ruler.cm;0.2 cm;;VRulerScale:0\\\;5\\\;1\\\;1}
+{MenuAdd:$.View.Side Ruler.cm;0.1 cm;;VRulerScale:0\\\;2\\\;5\\\;1}
+{MenuAdd:$.View.Side Ruler;mm}
+{MenuAdd:$.View.Side Ruler.mm;5 mm;;VRulerScale:1\\\;2\\\;1\\\;10}
+{MenuAdd:$.View.Side Ruler.mm;2 mm;;VRulerScale:1\\\;5\\\;1\\\;10}
+{MenuAdd:$.View.Side Ruler.mm;1 mm;;VRulerScale:1\\\;10\\\;1\\\;10}
+{MenuAdd:$.View.Side Ruler;inches}
+{MenuAdd:$.View.Side Ruler.inches;1/4 in;;VRulerScale:2\\\;4\\\;1\\\;1}
+{MenuAdd:$.View.Side Ruler.inches;1/6 in;;VRulerScale:2\\\;2\\\;3\\\;1}
+{MenuAdd:$.View.Side Ruler.inches;1/8 in;;VRulerScale:2\\\;4\\\;2\\\;1}
+{MenuAdd:$.View.Side Ruler.inches;1/10 in;;VRulerScale:2\\\;2\\\;5\\\;1}
+{MenuAdd:$.View.Side Ruler.inches;1/16 in;;VRulerScale:2\\\;4\\\;4\\\;1}
+{MenuAdd:$.View.Side Ruler;points;;VRulerScale:3\\\;6\\\;2\\\;72}
+{MenuAdd:$;&Edit}
+{MenuAdd:$.Edit;Couper;^X;Button:CUT}
+{MenuAdd:$.Edit;Copier;^C;Button:COPY}
+{MenuAdd:$.Edit;Coller;^V;Button:PASTE}
+{MenuAdd:$.Edit;Supprimer;;Button:CUT\\\;1}
+{MenuAdd:$.Edit}
+{MenuAdd:$.Edit;Tout sélectionner;^A;SelectDocument}
+{MenuAdd:$.Edit;Effacer la sélection;^Z;SelectionClear;;2}
+{MenuAdd:$.Edit}
+{MenuAdd:$.Edit;Rechercher...;F4;Button:SEARCH}
+{MenuAdd:$.Edit;Rechercher le suivant;F3;Button:SEARCH\\\;1}
+{MenuAdd:$.Edit;Change Cas&e}
+{MenuAdd:$.Edit.Change Case;MAJ&USCULE;;CaseUpper}
+{MenuAdd:$.Edit.Change Case;&Capitaliser Chaque Mot;;CaseIniCap}
+{MenuAdd:$.Edit.Change Case;Majusc. <> minusc.;F9;CaseSwap}
+{MenuAdd:$.Edit.Change Case;minuscu&le;;CaseLower}
+{MenuAdd:$.Edit;&Insérer}
+{MenuAdd:$.Edit.Insérer;Saut de page;^!K;InsertPageBreak;;4}
+{MenuAdd:$.Edit.Insérer}
+{MenuAdd:$.Edit.Insérer;&Image...;;InsertPicture-f}
+{MenuAdd:$.Edit.Insérer}
+{MenuAdd:$.Edit.Insérer;&Date...;^D;Button:INSERT_DATE}
+{MenuAdd:$.Edit.Insérer;&Heure...;^T;Button:INSERT_DATE\\\;1}
+{MenuAdd:$.Edit.Insérer;Numéro de page...;^!P;InsertFieldIntroPage;;16}
+{MenuAdd:$.Edit.Insérer;&Filename;;InsertFieldLeafname;;16}
+{MenuAdd:$.Edit.Insérer;Pat&hname;;InsertFieldWholename;;16}
+{MenuAdd:$.Edit.Insérer;&Mail Merge Field...;;InsertFieldIntroMailMerge-M;16}
+{MenuAdd:$.Edit.Insérer;&Name...;;NameIntro-S:0;;16}
+{MenuAdd:$.Edit.Insérer}
+{MenuAdd:$.Edit.Insérer;Tableau...;^!T;Button:TABLE}
+{MenuAdd:$.Edit.Insérer}
+{MenuAdd:$.Edit.Insérer;&Fonction}
+{MenuAdd:$.Edit.Insérer.Fonction;&Quick...;;Functions-S:-1}
+{MenuAdd:$.Edit.Insérer.Fonction;Toutes...;;Functions-S}
+{MenuAdd:$.Edit.Insérer.Fonction;&Custom control...;;Functions-S:10}
+{MenuAdd:$.Edit.Insérer.Fonction;&Database...;;Functions-S:1}
+{MenuAdd:$.Edit.Insérer.Fonction;Date et Heure...;;Functions-S:2}
+{MenuAdd:$.Edit.Insérer.Fonction;Eng&ineering...;;Functions-S:0}
+{MenuAdd:$.Edit.Insérer.Fonction;&Financière...;;Functions-S:3}
+{MenuAdd:$.Edit.Insérer.Fonction;L&ogique...;;Functions-S:13}
+{MenuAdd:$.Edit.Insérer.Fonction;&Lookup...;;Functions-S:11}
+{MenuAdd:$.Edit.Insérer.Fonction;&Mathématique...;;Functions-S:4}
+{MenuAdd:$.Edit.Insérer.Fonction;Mat&rice...;;Functions-S:5}
+{MenuAdd:$.Edit.Insérer.Fonction;Miscellane&ous...;;Functions-S:6}
+{MenuAdd:$.Edit.Insérer.Fonction;Statistique...;;Functions-S:7}
+{MenuAdd:$.Edit.Insérer.Fonction;Texte...;;Functions-S:8}
+{MenuAdd:$.Edit.Insérer.Fonction;&Trigonométrique...;;Functions-S:9}
+{MenuAdd:$.Edit.Insérer.Fonction;Compatibilit&y...;;Functions-S:14}
+{MenuAdd:$.Edit.Insérer.Fonction}
+{MenuAdd:$.Edit.Insérer.Fonction;C&ustom...;;Functions-S:12}
+{MenuAdd:$.Edit}
+{MenuAdd:$.Edit;Lignes}
+{MenuAdd:$.Edit.Lignes;Insérer ligne au-dessus;^F7;InsertRows;;4}
+{MenuAdd:$.Edit.Lignes;Insérer ligne en dessous;;AddRows;;4}
+{MenuAdd:$.Edit.Lignes;&Supprimer;^F8;DeleteRow;;4}
+{MenuAdd:$.Edit.Lignes}
+{MenuAdd:$.Edit.Lignes;Insérer au-dessus...;;InsertRowsIntro;4}
+{MenuAdd:$.Edit.Lignes;Insérer en dessous...;;AddRowsIntro;4}
+{MenuAdd:$.Edit;C&ollones}
+{MenuAdd:$.Edit.Collones;Insérer collone avant;!F7;InsertColumns;;4}
+{MenuAdd:$.Edit.Collones;Insérer collone après;;AddColumns;;4}
+{MenuAdd:$.Edit.Collones;&Supprimer;!F8;DeleteColumn;;4}
+{MenuAdd:$.Edit.Collones}
+{MenuAdd:$.Edit.Collones;Insérer avant...;;InsertColumnsIntro;4}
+{MenuAdd:$.Edit.Collones;Insérer après...;;AddColumnsIntro;4}
+{MenuAdd:$.Edit;Fill Cell&s}
+{MenuAdd:$.Edit.Fill Cells;Down;;Button:FILL_DOWN}
+{MenuAdd:$.Edit.Fill Cells;Right;;Button:FILL_RIGHT}
+{MenuAdd:$.Edit.Fill Cells;Up;;Button:FILL_DOWN\\\;1}
+{MenuAdd:$.Edit.Fill Cells;Left;;Button:FILL_RIGHT\\\;1}
+{MenuAdd:$.Edit;&Make Cells}
+{MenuAdd:$.Edit.Make Cells;&Blank;;BlockClear;;4}
+{MenuAdd:$.Edit.Make Cells;&Constant;;Button:MAKE_CONSTANT}
+{MenuAdd:$.Edit.Make Cells;&Number;;Button:MAKE_NUMBER}
+{MenuAdd:$.Edit.Make Cells;&Texte;;Button:MAKE_TEXT}
+{MenuAdd:$.Edit;&Go to...;F5;GoToIntro;4}
+{MenuAdd:$.Edit;&Trier...;F6;Button:SORT}
+{MenuAdd:$;&Style}
+{MenuAdd:$.Style;&Styles...;^!S;Button:STYLE}
+{MenuAdd:$.Style;&Effects}
+{MenuAdd:$.Style.Effects;&Effects...;^!E;Button:EFFECTS}
+{MenuAdd:$.Style.Effects;Gras;^B;Button:BOLD}
+{MenuAdd:$.Style.Effects;Italique;^I;Button:ITALIC}
+{MenuAdd:$.Style.Effects;Soulineage;^!U;Button:UNDERLINE}
+{MenuAdd:$.Style.Effects;Exposant;^!Q;Button:SUPERSCRIPT}
+{MenuAdd:$.Style.Effects;Indice;^!W;Button:SUBSCRIPT}
+{MenuAdd:$.Style.Effects;Aligner}
+{MenuAdd:$.Style.Effects.Aligner;Aligner à gauche;^L;Button:JUSTIFY_LEFT}
+{MenuAdd:$.Style.Effects.Aligner;Centrer;^E;Button:JUSTIFY_CENTRE}
+{MenuAdd:$.Style.Effects.Aligner;Aligner à droite;^R;Button:JUSTIFY_RIGHT}
+{MenuAdd:$.Style.Effects.Aligner;Justifié;^J;Button:JUSTIFY_FULL}
+{MenuAdd:$.Style;&Regions}
+{MenuAdd:$.Style.Regions;C&ount;;StyleRegionCount;;2}
+{MenuAdd:$.Style.Regions;&Clear;;StyleRegionClear;;2}
+{MenuAdd:$.Style.Regions;&Edit...;^Q;StyleRegionEdit;;16}
+{MenuAdd:$.Style;&Box...;^!X;Button:BOX}
+{MenuAdd:$;&Page}
+{MenuAdd:$.Page;&Pages...;;PageHefoBreakIntro-H}
+{MenuAdd:$.Page;P&aper...;;PaperIntro}
+{MenuAdd:$.Page;Print &Scale...;;PaperScaleIntro}
+{MenuAdd:$;Outils}
+{MenuAdd:$.Outils;Diagramme}
+{MenuAdd:$.Outils.Diagramme;Colonne...;;Gallery-C:0;6}
+{MenuAdd:$.Outils.Diagramme;Ligne...;;Gallery-C:1;6}
+{MenuAdd:$.Outils.Diagramme;Secteur...;;Gallery-C:2;6}
+{MenuAdd:$.Outils.Diagramme;&X-Y...;;Gallery-C:3;6}
+{MenuAdd:$.Outils.Diagramme;&Overlay...;;Gallery-C:4;6}
+{MenuAdd:$.Outils.Diagramme;Insérer;;Gallery-C:5;;6}
+{MenuAdd:$.Outils;&Images}
+{MenuAdd:$.Outils.Images;Insérer image;;NoteEmbed;;11}
+{MenuAdd:$.Outils.Images;Enregister image...;;SavePictureIntro;;11}
+{MenuAdd:$.Outils.Images}
+{MenuAdd:$.Outils.Images;Vers la arrière;;NoteBack;;11}
+{MenuAdd:$.Outils.Images;S&wap Front/Back;;NoteSwap;;10}
+{MenuAdd:$.Outils.Images;B&ackdrop...;;BackdropIntro;12}
+{MenuAdd:$.Outils;&Sheet}
+{MenuAdd:$.Outils.Sheet;&Names...;;NameIntro-S:1}
+{MenuAdd:$.Outils.Sheet;&Recalculate;;ForceRecalc}
+{MenuAdd:$.Outils.Sheet;Recalculate &All;;ForceRecalc:*}
+{MenuAdd:$.Outils;&Texte}
+{MenuAdd:$.Outils.Texte;Count &Words;;WordCount}
+{MenuAdd:$.Outils.Texte;&Mail Merge}
+{MenuAdd:$.Outils.Texte.Mail Merge;&Select Source...;;MailshotSelect-M;;16}
+{MenuAdd:$.Outils.Texte.Mail Merge;&Insert Field...;;InsertFieldIntroMailMerge-M;;16}
+{MenuAdd:$.Outils.Texte;&Othographe}
+{MenuAdd:$.Outils.Texte.Othographe;&Check;;Button:CHECK}
+{MenuAdd:$.Outils.Texte.Othographe;&Dictonnaire...;;Button:CHECK\\\;1}
+{MenuAdd:$;&Aide}
+{MenuAdd:$.Aide;Aide;F1;HelpContents:firewrkz.chm}
+{MenuAdd:$.Aide;Aide rechercher...;;HelpSearchKeyword:firewrkz.chm}
+{MenuAdd:$.Aide}
+{MenuAdd:$.Aide;Fireworkz en ligne...;;HelpURL:http://groups.google.com/group/colton-software-fireworkz}
+{MenuAdd:$.Aide}
+{MenuAdd:$.Aide;À propos de Fireworkz...;;Info}
+{NumformData:janvier février mars avril mai juin juillet août septembre octobre novembre décembre dimanche lundi mardi mercredi jeudi vendredi samedi}
+{#:ObjectBindConstruct:object-id;command-suffix-character}
+{ObjectBindConstruct:0;*}
+{ObjectBindConstruct:1;S}
+{ObjectBindConstruct:3;X}
+{ObjectBindConstruct:4;D}
+{ObjectBindConstruct:6;C}
+{ObjectBindConstruct:7;H}
+{ObjectBindConstruct:8;W}
+{ObjectBindConstruct:14;s}
+{ObjectBindConstruct:17;d}
+{ObjectBindConstruct:18;t}
+{ObjectBindConstruct:21;M}
+{ObjectBindConstruct:29;w}
+{ObjectBindConstruct:31;f}
+{ObjectBindConstruct:34;E}
+{ObjectBindConstruct:38;B}
+{#:ObjectBindLoader:object-id;file-type;extension-suffix;foreign-template}
+{ObjectBindLoader:0;0xBDF;fwk}
+{ObjectBindLoader:0;0xA78;fwkh}
+{ObjectBindLoader:0;0xC1D;fwt}
+{#:Foreign file formats}
+{ObjectBindLoader:20;0xDDE;pd}
+{ObjectBindLoader:23;0xFFF;txt}
+{ObjectBindLoader:24;0xDFE;csv}
+{ObjectBindLoader:24;0xC7D;sid}
+{ObjectBindLoader:25;0xAF8;fwp}
+{ObjectBindLoader:26;0xBA6;xls}
+{ObjectBindLoader:27;0xDB0;wk1}
+{ObjectBindLoader:27;0xDB0;wk3}
+{ObjectBindLoader:27;0xDB0;wks}
+{ObjectBindLoader:28;0xC32;rtf}
+{#:Image file formats}
+{ObjectBindLoader:4;0xAFF;aff}
+{ObjectBindLoader:4;0xFF9;ff9}
+{ObjectBindLoader:4;0xC85;jpg,jpeg}
+{ObjectBindLoader:4;0x69C;bmp,dib}
+{ObjectBindLoader:4;0xB2F;wmf}
+{ObjectBindLoader:4;0xA77;pdc}
+{ObjectBindLoader:4;0x695;gif}
+{ObjectBindLoader:4;0xB60;png}
+{ObjectBindLoader:4;0xBE8;pcd}
+{ObjectBindLoader:4;0xFF0;tif,tiff}
+{#:ObjectBindSaver:object-id;file-type;clipboard-identifier}
+{ObjectBindSaver:33;0xFFF}
+{ObjectBindSaver:35;0xDFE;Csv}
+{ObjectBindSaver:40;0xDB0;Wk1}
+{ObjectBindSaver:41;0xC32}
+{ObjectBindSaver:42;0xBA6;Biff5}
+{Paper:A4;0;16840;11906;460;460;397;397;0;0;0;0;0;1}
+{Paper:A3;0;23810;16840;460;460;397;397;0;0;0;0;0;1}
+{Paper:A5;0;11906;8420;460;460;397;397;0;0;0;0;0;1}
+{Paper:Letter;0;15840;12240;360;380;360;380;0;0;0;0;0;1}
+{PrintQuality:0}
+{RulerScale:0;2;5;1}
+{VRulerScale:0;2;5;1}
+{SSContext:.;,;.;:;\\\;;,;\\\;;\\\;;1}
+{#:Insert field - date formats}
+{UILoad:0;yyyy-mm-dd}
+{UILoad:0;dd.mm.yy}
+{UILoad:0;dd/mm/yy}
+{UILoad:0;dd mmm yy}
+{UILoad:0;d mmm yy}
+{UILoad:0;d mmmm yy}
+{UILoad:0;d mmmm yyyy}
+{UILoad:0;Mmm dd, yyyy}
+{UILoad:0;Mmmm d, yyyy}
+{UILoad:0;Mmm yy}
+{UILoad:0;Mmmm yy}
+{UILoad:0;Mmmm yyyy}
+{#:Insert field - page number formats}
+{UILoad:1;#}
+{UILoad:1;r#}
+{UILoad:1;R#}
+{#:Ruler choices}
+{UILoad:3;0 2 1 1 0.5 cm}
+{UILoad:3;0 5 1 1 0.2 cm}
+{UILoad:3;0 2 5 1 0.1 cm}
+{UILoad:3;1 2 1 10 5 mm}
+{UILoad:3;1 5 1 10 2 mm}
+{UILoad:3;1 10 1 10 1 mm}
+{UILoad:3;2 4 1 1 1/4 in}
+{UILoad:3;2 2 3 1 1/6 in}
+{UILoad:3;2 4 2 1 1/8 in}
+{UILoad:3;2 2 5 1 1/10 in}
+{UILoad:3;2 4 4 1 1/16 in}
+{UILoad:3;3 6 2 72 points}
+{#:Style formats - Number}
+{UILoad:4;#,.##0..#######\\\;-#,.##0..#######[Négatif]}
+{UILoad:4;#,.##0..00\\\;-#,.##0..00[Négatif]}
+{UILoad:4;0.,##\\\;-0.,##[Négatif]}
+{UILoad:4;0.,00\\\;-0.,00[Négatif]}
+{UILoad:4;0\\\;-0[Négatif]}
+{UILoad:4;£#,,##0..00\\\;-£#,,##0..00[Négatif]}
+{UILoad:4;£#,,##0..00\\\;£-#,,##0..00[Négatif]}
+{UILoad:4;£#,,##0..00_\\\;£(#,,##0..00)[Négatif]\\\;}
+{UILoad:4;£#,,##0..00_\\\;(£#,,##0..00)[Négatif]\\\;}
+{UILoad:4;£____,,__0..00_\\\;(£___,,__0..00)[Négatif]\\\;}
+{UILoad:4;£____,,__0>..00_\\\;(£___,,__0>..00)[Négatif]\\\;}
+{UILoad:4;#,.##0..00_\\\;(#,.##0..00)[Négatif]}
+{UILoad:4;#,.##0..00 \€\\\;-#,.##0..00 \€[Négatif]}
+{UILoad:4;#,.##0..00 \€\\\;-#,.##0..00 \€[Négatif]}
+{UILoad:4;#,.##0..00 \€_\\\;(#,.##0..00 \€)[Négatif]\\\;}
+{UILoad:4;____,.__0.,00_\\\;(___,.__0.,00 \€)[Négatif]\\\;}
+{UILoad:4;____,.__0>.,00_\\\;(___,.__0>.,00 \€)[Négatif]\\\;}
+{UILoad:4;0.,##%\\\;-0.,##%[Négatif]}
+{UILoad:4;0.,00%\\\;-0.,00%[Négatif]}
+{UILoad:4;0%\\\;-0%[Négatif]}
+{UILoad:4;0.,00e+00\\\;-0.,00e+00[Négatif]}
+{UILoad:4;g0.,##\\\;-g0.,##[Négatif]}
+{UILoad:4;g0.,###\\\;-g0.,###[Négatif]}
+{UILoad:4;#,.##0..#######}
+{UILoad:4;#,.##0..00}
+{UILoad:4;0.,##}
+{UILoad:4;0.,00}
+{UILoad:4;0}
+{UILoad:4;0.,##%}
+{UILoad:4;0.,00%}
+{UILoad:4;0%}
+{UILoad:4;0.,00e+00}
+{UILoad:4;g0.,##}
+{UILoad:4;g0.,###}
+{UILoad:4;r#}
+{UILoad:4;R#}
+{UILoad:4;x#}
+{UILoad:4;X#}
+{UILoad:4;#B2}
+{UILoad:4;#B16}
+{UILoad:4;0..##\\\;-0..##[Négatif]}
+{UILoad:4;0..00\\\;-0..00[Négatif]}
+{UILoad:4;0..##%\\\;-0..##%[Négatif]}
+{UILoad:4;0..00%\\\;-0..00%[Négatif]}
+{UILoad:4;0..00e+00\\\;-0..00e+00[Négatif]}
+{UILoad:4;g0..##\\\;-g0..##[Négatif]}
+{UILoad:4;g0..###\\\;-g0..###[Négatif]}
+{UILoad:4;0..##}
+{UILoad:4;0..00}
+{UILoad:4;0..##%}
+{UILoad:4;0..00%}
+{UILoad:4;0..00e+00}
+{UILoad:4;g0..##}
+{UILoad:4;g0..###}
+{#:Style formats - Date and time}
+{UILoad:5;hh:mm:ss}
+{UILoad:5;hh:mm}
+{UILoad:5;h:mm "am"\\\;h:mm "pm"}
+{UILoad:5;hh:mm:ss dd.mm.yy}
+{UILoad:5;hh:mm:ss dd.mm.yy\\\;dd.mm.yy\\\;h:mm "am"\\\;h:mm "pm"}
+{UILoad:5;dd.mm.yy hh:mm:ss}
+{UILoad:5;dd.mm.yy hh:mm:ss\\\;dd.mm.yy\\\;h:mm "am"\\\;h:mm "pm"}
+{UILoad:5;dd.mm.yy}
+{UILoad:5;dd/mm/yy}
+{UILoad:5;dd mmm yy}
+{UILoad:5;Mmm dd, yy}
+{UILoad:5;d mmm yy}
+{UILoad:5;d mmmm yy}
+{UILoad:5;Mmmm d, yy}
+{UILoad:5;d mmmm yyyy}
+{UILoad:5;Mmm yy}
+{UILoad:5;Mmmm yy}
+{UILoad:5;Mmmm yyyy}
+{UILoad:5;yyyy-mm-dd}
+{#:Style formats - Text and error}
+{UILoad:6;@}
+{UILoad:6;@\\\;ERR @}
+{#:Frequently used functions}
+{UILoad:7;sum}
+{UILoad:7;max}
+{UILoad:7;min}
+{UILoad:7;avg}
+{UILoad:7;if}
+{#:Template sort order}
+{UILoad:9;default.fwt;-1}
+{UILoad:9;draft_rz.fwt;1}
+{UILoad:9;draft_wz.fwt;1}
+{#:Insert field - time formats}
+{UILoad:10;hh:mm}
+{UILoad:10;hh:mm:ss}
+{UILoad:10;h:mm "am"\\\;h:mm "pm"}

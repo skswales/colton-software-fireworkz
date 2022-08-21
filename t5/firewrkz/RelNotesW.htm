@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Colton Software Fireworkz Release Notes - Windows</title>
@@ -16,13 +16,13 @@
 
     <ul style="list-style: none">
         <li><a href="#Copyright">Copyright</a></li>
-        <li><a href="#Licence">Licence</a></li>
         <li><a href="#Installation">Installation</a></li>
         <li><a href="#GettingStarted">Getting Started</a></li>
         <li><a href="#OnlineResources">Online Resources</a></li>
         <li><a href="#Support">Support</a></li>
         <li><a href="#ReleaseHistory">Release History</a></li>
         <li><a href="#KnownProblems">Known Problems</a></li>
+        <li><a href="#Licence">Licence</a></li>
     </ul>
 
 
@@ -30,27 +30,14 @@
 
     <p>Copyright &copy; 1992-2020 Colton Software</p>
 
-    <p>
-        <a href="#CopyrightExtra">Additional copyright information</a>
-    </p>
-
-
-    <h2 id="Licence">Licence</h2>
-
-    <p>Thanks to Richard Colton, Fireworkz is now open source and completely free to use!</p>
-
-    <p>
-        Fireworkz is made available to you under the terms of the
-        <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.<br />
-        This means you may use, copy and distribute Fireworkz to others.
-    </p>
+    <p><a href="#CopyrightExtra">Additional copyright information</a></p>
 
 
     <h2 id="Installation">Installation</h2>
 
     <p>Fireworkz may be installed on Windows&copy; 10, Windows&copy; 8.1, Windows&copy; 7, Windows Vista&copy; or Windows&copy; XP (SP3)</p>
 
-    <p>To install Fireworkz, simply double-click on the firewrkz-<i>&lt;version&gt;</i>-windows-<i>&lt;arch&gt;</i>.exe file and follow the instructions in the dialogue boxes that follow.</p>
+    <p>To install Fireworkz, simply double-click on the firewrkz-<em>&lt;version&gt;</em>-windows-<em>&lt;arch&gt;</em>.exe file and follow the instructions in the dialogue boxes that follow.</p>
 
     <p>Please note that you will need to have Administrator (or Power User) permissions to install Fireworkz.</p>
 
@@ -60,7 +47,12 @@
 
     <h3>Uninstallation</h3>
 
-    <p>You can uninstall Fireworkz using Control Panel -&gt; Programs and features (Windows XP: Settings -&gt; Control Panel -&gt; Add / Remove Programs).</p>
+    <p>You can uninstall Fireworkz using the appropriate method:</p>
+    <ul>
+        <li>Windows 10: Settings &ndash; System &ndash; Apps</li>
+        <li>Windows 7 and 8.1: Control Panel &ndash; Programs and features</li>
+        <li>Windows XP: Settings &ndash; Control Panel &ndash; Add / Remove Programs</li>
+    </ul>
 
 
     <h2 id="GettingStarted">Getting Started</h2>
@@ -79,16 +71,16 @@
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/getting_started/">Getting Started Guide</a>;</li>
         <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/user_guide/">User Guide</a>;</li>
         <li>
-            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>
-            - updates since the documentation was printed, and errata therein;
-        </li>
-        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints and Tips</a>;</li>
-        <li>
             <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/">Downloads</a>
             - updated program and example files, including those used in the <em>Getting Started Guide</em>;
             also Fireworkz for RISC OS and Fireworkz source code ZIP archive sets.
             You are also welcome to modify the source code of Fireworkz as you want to meet your needs.
             The Mozilla Public License also gives you the right to distribute your modified versions.
+        </li>
+        <li><a href="http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/">Hints and Tips</a>;</li>
+        <li>
+            <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a>
+            - updates since the documentation was printed, and errata therein;
         </li>
     </ul>
 
@@ -110,6 +102,159 @@
         The full release history may be found <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/release_history/">online</a>;
         just the last few revisions of Fireworkz are documented here.
     </p>
+
+    <p>Please refer to the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a> for details of changes to functionality.</p>
+
+
+    <h3>2.30 (10 Nov 2020)</h3>
+
+    <p>The Save as template command has been moved into the new Save as sub-menu.</p>
+
+    <p>The Export menu option has been transformed into an Export sub-menu, explicity listing the available formats.</p>
+
+    <p>The Export as Drawfile command has been moved into the new Export sub-menu.</p>
+
+    <p>The style that is created and applied to tables that are inserted into Letter-based documents now contains Heading x# so that cell references make sense.</p>
+
+    <p>CSV import as table and Microsoft Excel import attempt to add a BaseTable style area if said style exists (Insert Table already does this).</p>
+
+    <p>
+        If style elements that are normally added to a table area on insertion (paragraphs margins, grid style)
+        are present in an added BaseTable style, they are no longer added.
+        Separate column width regions are still added to table columns.
+    </p>
+
+    <p>
+        There is now a Go to command (F5).
+        A dialogue box will appear in which you can specify where you want to go to.<br>
+        You can type a cell reference here or specify a named cell (or range).<br>
+        If you type a number, it will be interpreted as a row number.
+        The current cell will stay in the same column as before, but move to the specified row.
+        If you type plus (or minus) before the number, it will be interpreted as a row offet.
+        The current cell will move down (or up) by that number of rows.<br>
+        If you type one or more letters, it will be interpreted as a column specifier.
+        The current cell will stay on the same row as before, but move to the specified column.
+        If you type C followed by plus (or minus) then a number, it will be interpreted as a column offet.
+        The current cell will move right (or left) by that number of columns.
+    </p>
+
+    <p>
+        Autoformat is no longer applied to numeric data typed in without any additional format characters,
+        so the resulting cell will be displayed using an existing base or cell style.
+    </p>
+
+    <p>The Auto Sum button has been changed to popup a short menu of useful aggregate functions.</p>
+
+    <p>The Auto Sum button now fills in the bottom right cell (being the sum of the sums of each row) if both the bottom row and rightmost column of the selection are empty.</p>
+
+    <p>The MATCH() spreadsheet function now behaves as documented, returning a cell reference when successfully searching a range (this had always been broken in Fireworkz and Resultz).</p>
+
+    <p>The DOLLAR() spreadsheet function now formats negative numbers in parentheses.</p>
+
+    <p>The first button to the ALERT() and INPUT() spreadsheet functions is mandatory; if it is empty, the button is labelled "OK".</p>
+
+    <p>The second button to the ALERT() and INPUT() spreadsheet functions is optional; if it is present, but empty, the button is labelled "Cancel".</p>
+
+    <p>The JOIN() and REPT() spreadsheet functions now check for 32-bit overflow when calculating how much space to allocate for the result text string.</p>
+
+    <p>Empty arrays returned from spreadsheet functions now reliably render as blank.</p>
+
+    <p>The Edit &ndash; Chart dialogue box for bar and line charts now displays a sensible caption when a non-axis or non-series chart item is selected.</p>
+
+    <p>Failed loading of malformed documents no longer leaves null events running continually.</p>
+
+    <p>Faint grid now renders correctly again (broken in 2.10.01).</p>
+
+    <p>The C library's complex number functions are used where possible in the complex number spreadsheet functions rather than our own implementation of these.</p>
+
+    <p>RTF import: trailing space after an escaped hex character is no longer consumed.</p>
+
+    <p>RTF import: default \uc value is one.</p>
+
+    <p>RTF import: now handles surrogate pairs for non-BMP UNICODE characters.</p>
+
+    <p>RTF export: non-BMP UNICODE characters are now saved as a surrogate pair.</p>
+
+    <p>Fixes for Microsoft Excel import where the Excel "General" cell style is applied.</p>
+
+    <p>Added Microsoft Word / OpenOffice-compatible keyboard shortcuts Ctrl-L/E/R/J for Justify Left/Centre/Right/Full.</p>
+
+    <p>If a document only has a single page, only that single page number is displayed in the Print (Extra) dialogue box.</p>
+
+    <p>When saving a document that uses a CurrentCell style, an associated redundant implied region is no longer saved.</p>
+
+    <p>The Save as template dialogue box presents the Style list using a drop-down menu for compactness.</p>
+
+    <p>Scaling removed from the View control dialogue box to a separate View scale dialogue box.</p>
+
+    <p>More numeric formats are presented in the Style &ndash; Numbers drop-down menu.</p>
+
+    <p>
+        Uses 32-bit to 64-bit intermediate calculation for spreadsheet
+        integer addition/subtraction/multiplication where necessary
+        so that potential overflow checks with larger integers
+        don't force calculations to be done in floating point.
+    </p>
+
+    <p>Reject plus and minus in dialogue box writable fields which have an integer minimum value greater than or equal to zero.</p>
+
+    <p>The function selector dialogue box now shows all optional parameters for each spreadsheet function, not just the first one.</p>
+
+    <p>Use standard OK and Cancel button placement for Backdrop dialogue box.</p>
+
+    <p>
+        Attempting to load a document which is already loaded no longer stops with an error.
+        On Windows, this allows a multiple file selection which contains an already-loaded document to be loaded from the File Open dialogue box without stopping on that error.
+    </p>
+
+    <p>Windows: Fixed error messages from printing system.</p>
+
+    <p>
+        Windows: Length of text passed to individual ExtTextOut() calls is now limited (to 3.5K characters).
+        This avoids silent error returns and associated rendering failures when very long spreadsheet text strings are generated.
+    </p>
+
+    <p>Windows: Updated HLP file.</p>
+
+    <p>Windows: Ctrl-Mouse wheel now zooms in/out like other programs, rather than the reverse.</p>
+
+    <p>Windows: Ctrl-Mouse wheel now zooms in/out to a set of useful preset values, rather than in tiny increments.</p>
+
+    <p>Windows: Ctrl-click on the 'Spectacles' icon opens the View Scale dialogue box.</p>
+
+    <p>Windows: Ctrl-click on the 'New' icon opens the Insert File dialogue box.</p>
+
+    <p>Windows: Ctrl-click on the Cut icon performs the Delete selection command (i.e. does not copy the selection to the clipboard).</p>
+
+    <p>Windows: You can now Ctrl-click the Sum toolbar button to access the short functions list.</p>
+
+    <p>Windows: Style dialogue boxes no longer drift towards the top left of the window.</p>
+
+    <p>Windows: Dialogue box placement improved.</p>
+
+    <p>Windows: OK button (and other default action buttons) placed to the left of the Cancel button in dialogue boxes to conform to current Windows Style Guidelines.</p>
+
+    <p>Windows: Return can be used in multi-line edit controls in dialogue boxes.</p>
+
+    <p>Windows: Removed Ctrl-Shift-N shortcut for File &ndash; New; it was already Ctrl-N on the menu.</p>
+
+    <p>Windows: Drawfile option added to the main Save As dialogue box. Export as Drawfile command removed from File menu.</p>
+
+    <p>Windows: Save As dialogue box extended to support Selection option.</p>
+
+    <p>Windows: Save As dialogue box extended to support Pages option for saving as Hybrid Draw or as Drawfile.</p>
+
+    <p>Windows: Spaces in the leafname of a loaded Microsoft Excel spreadsheet are converted to underscore for consistency with those in the worksheet name to help RISC OS interoperability.</p>
+    
+    <p>Windows: Handle multi-line toolbar tooltip messages.</p>
+
+    <p>Windows: Handle toolbar tooltip messages longer than 80 characters.</p>
+
+    <p>Windows: Some improvements to 32-bpp high-DPI toolbar icons.</p>
+
+    <p>Windows: Standard release build is now done on Windows 7 using Visual Studio 2019 with the v141_xp platform toolset.</p>
+
+    <p>Windows: Use std::mt19937_64 (Mersenne Twister pseudo-random generator of 64-bit numbers) engine in random number generator code rather than imported one.</p>
 
 
     <h3>2.24.07 (05 May 2020)</h3>
@@ -199,8 +344,6 @@
     <p>The DDB() spreadsheet function may now use a non-integer period for calculation.</p>
 
     <p>The TRIM() and VALUE() spreadsheet functions can accept text strings longer than 200 characters as input.</p>
-
-    <p>Please refer to the <a href="http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/">Addenda and Errata</a> for details.</p>
 
 
     <h3>2.23 (not released)</h3>
@@ -327,7 +470,7 @@
 
     <h3>2.21 (04 May 2017)</h3>
 
-    <p>Fix for importing Microsoft Excel worksheets using MULRK records with General cell style.</p>
+    <p>Fix for importing Microsoft Excel worksheets using MULRK records with Excel "General" cell style.</p>
 
     <p>
         Allow template files that are loaded by double-clicking,
@@ -801,7 +944,7 @@
     <p>Complex number functions reclassified as Engineering functions to assist new users transitioning from other software.</p>
 
     <p>
-        DDB() spreadsheet function accepts an extra parameter, <i>factor</i> (optional).
+        DDB() spreadsheet function accepts an extra parameter, <em>factor</em> (optional).
     </p>
 
     <p>FORMULA_TEXT() spreadsheet function will now decode referenced formula as it would appear on the formula line (would have differed with alternate SSContext).</p>
@@ -823,13 +966,13 @@
     </p>
 
     <p>
-        If the <i>length</i> parameter is omitted for LEFT() or RIGHT() spreadsheet functions, a <i>length</i> of one is assumed.
-        A <i>length</i> of zero is now allowed (consistency with MID()).
+        If the <em>length</em> parameter is omitted for LEFT() or RIGHT() spreadsheet functions, a <em>length</em> of one is assumed.
+        A <em>length</em> of zero is now allowed (consistency with MID()).
     </p>
 
     <p>
         INT() spreadsheet function extended to return an OpenDocument / Microsoft Excel-compatible serial number
-        when passed <i>date</i> parameter. Prevously this would have yielded an error.
+        when passed <em>date</em> parameter. Prevously this would have yielded an error.
         Given that Microsoft Excel incorrectly believes 1900 to be a leap year,
         the conversion is performed such that all dates starting from 01-Mar-1900 yield the same number as Excel.
         Fireworkz can also yield serial numbers for dates before 1900, unlike Microsoft Excel.
@@ -899,7 +1042,7 @@
 
     <h4>Menus</h4>
 
-    <p>Edit &gt; Change case sub-menu has UPPER-CASE, lower-case, Initial Caps and Swap Case entries. These replace the Case dialogue box.</p>
+    <p>Edit &ndash; Change case sub-menu has UPPER-CASE, lower-case, Initial Caps and Swap Case entries. These replace the Case dialogue box.</p>
 
     <p>Inserts sub-menu moved from the Extra menu to the (more logical) Edit menu and renamed as Insert field.</p>
 
@@ -976,7 +1119,7 @@
     <p>More responsive toolbar updates.</p>
 
     <p>
-        &lt;Field<i>N</i>&gt; is displayed in documents with mailshot fields when no source document is selected.
+        &lt;Field<em>N</em>&gt; is displayed in documents with mailshot fields when no source document is selected.
     </p>
 
     <p>Windows: Toolbar buttons show info using Windows tool tips.</p>
@@ -1347,6 +1490,13 @@
     </p>
 
 
+    <h2>Trademarks</h2>
+
+    <p>Microsoft, Windows and Windows Vista are either registered trademarks or trademarks of Microsoft Corporation in the United States and/or other countries.</p>
+
+    <p>The Unicode Word Mark is a trademark of Unicode, Inc.</p>
+
+
     <h2 id="CopyrightExtra">Additional Copyright Information</h2>
 
     <h4>Portions Copyright &copy; 1994-2005 Dial Solutions. All rights reserved.</h4>
@@ -1384,45 +1534,6 @@
 
     <hr />
 
-    <h4>
-        Portions Copyright &copy; 2007, 2008, 2009 Mutsuo Saito, Makoto Matsumoto and Hiroshima University.<br />
-        Copyright &copy; 2011, 2002 Mutsuo Saito, Makoto Matsumoto, Hiroshima University and The University of Tokyo.<br />
-        All rights reserved.
-    </h4>
-    <p>Double precision Fast Mersenne Twister (random number generator code).</p>
-    <p>
-<pre>
-  "Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-  
-      * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-      * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-      * Neither the name of the Hiroshima University nor the names of
-      its contributors may be used to endorse or promote products
-      derived from this software without specific prior written
-      permission.
-      
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-</pre>
-    </p>
-
-    <hr />
-
     <h4>Dictionaries</h4>
     <p>Master and MasterC are derived from Colton Software word lists and SCOWL word lists:</p>
 
@@ -1453,15 +1564,17 @@
 </pre>
     </p>
 
-    <hr />
 
-    <h3>Trademarks</h3>
+    <h2 id="Licence">Licence</h2>
 
-    <p>Microsoft, Windows and Windows Vista are either registered trademarks or trademarks of Microsoft Corporation in the United States and/or other countries.</p>
+    <p>Thanks to Richard Colton, Fireworkz is now open source and completely free to use!</p>
 
-    <p>The Unicode Word Mark is a trademark of Unicode, Inc.</p>
+    <p>
+        Fireworkz is made available to you under the terms of the
+        <a title="MPL 2.0" href="http://mozilla.org/MPL/2.0/">Mozilla Public License, v. 2.0</a>.<br />
+        This means you may use, copy and distribute Fireworkz to others.
+    </p>
 
-    <hr />
 
     <p>End of Fireworkz Release Notes (Windows)</p>
 </body>

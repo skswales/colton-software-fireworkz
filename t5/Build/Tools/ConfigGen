@@ -1,5 +1,5 @@
 REM ConfigGen - config file generator for Fireworkz family
-:
+REM
 REM This Source Code Form is subject to the terms of the Mozilla Public
 REM License, v. 2.0. If a copy of the MPL was not distributed with this
 REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -8,46 +8,22 @@ REM Copyright (C) 1993-1998 Colton Software Limited
 REM Copyright (C) 1998-2015 R W Colton
 :
 REM TRACE TO "&.cfg_out": TRACE ON
-PROCmain(FNreadargs)
+PROCmain
 END
 :
 :
-DEF PROCmain(args$)
-LOCAL ptr%
+DEF PROCraise
+IF NOT raised% THEN raised% = TRUE: ERROR ERR,REPORT$+" at line "+STR$ERL+" in ConfigGen"
+ERROR ERR,REPORT$
+ENDPROC
 :
+:
+DEF PROCmain
 raised% = FALSE
 LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: PROCraise
+REM ERROR 1,"Here": REM Move this about for debugging line numbers
 :
-buflen% = 255
-DIM buffer% buflen%
-:
-REM read & decode command line args
-SYS "OS_ReadArgs","BASIC,quit/K,load/K,output/A/G,product/A,version/A,country/A,windows/S",args$,buffer%,buflen%
-:
-ptr% = buffer%
-:
-REM Skip BASIC, optional -quit, -load filename
-ptr% += 4
-ptr% += 4
-ptr% += 4
-:
-outfile$ = FNstringizeGS(!ptr%)
-ptr% += 4
-:
-raw_product$ = FNstringize(!ptr%)
-ptr% += 4
-:
-version$ = FNstringize(!ptr%)
-ptr% += 4
-:
-country$ = FNstringize(!ptr%)
-ptr% += 4
-:
-windows% = FALSE
-IF !ptr% THEN windows% = TRUE
-ptr% += 4
-:
-riscos% = NOT windows%
+PROCread_args
 :
 t5_dir$ = raw_product$
 :
@@ -89,8 +65,8 @@ IF country$ = "France" THEN country_fr% = TRUE
 IF country$ = "UK" THEN country_uk% = TRUE
 :
 REM sequence for numform
-thousands_seq$ = FNselect(",",",.")
-decimal_seq$   = FNselect(".",".,")
+thousands_seq$ = FNselect(",",",.",",.")
+decimal_seq$   = FNselect(".",".,",".,")
 :
 REM sequence for numform forcing UK output
 IF country_uk% THEN
@@ -101,830 +77,21 @@ ELSE
   uk_decimal_seq$   = ".."
 ENDIF
 :
-REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ok here we go!
+cm_suffix$ = FNselect("cm","","Zentimeter")
+mm_suffix$ = FNselect("mm","","Millimeter")
+inch_suffix$ = FNselect("in","","Zoll")
 :
 f% = OPENOUT(outfile$)
 LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#f%: PROCraise
 :
-REM We have C1 characters in format strings
-IF windows% THEN
-  codepage$="Windows-1252"
-ELSE
-  codepage$="Alphabet-Latin1"
-  IF country_fr% THEN codepage$="Alphabet-Latin9"
-ENDIF
-PROCco(f%,"Version:"+version$+asp$+MID$(TIME$,5,11)+asp$+true_product$+" ("+country$+")"+asp$+"Colton Software"+asp$+codepage$)
+PROCgenerate(f%)
 :
-IF mpl% THEN PROCmpl(f%)
-:
-PROCco(f%,"RowTable:1"): REM stop it making a row table
-:
-PROCco(f%,"#:ObjectBindConstruct:object-id"+asp$+"command-suffix-character")
-PROCco(f%,"ObjectBindConstruct:0"+asp$+"*")
-PROCco(f%,"ObjectBindConstruct:1"+asp$+"S"): REM ob_ss
-IF is_y% THEN
-  PROCco(f%,"ObjectBindConstruct:2"+asp$+"B"): REM ob_rec
-ENDIF
-PROCco(f%,"ObjectBindConstruct:3"+asp$+"X"): REM ob_text
-PROCco(f%,"ObjectBindConstruct:4"+asp$+"D"): REM ob_draw
-PROCco(f%,"ObjectBindConstruct:6"+asp$+"C"): REM ob_chart
-PROCco(f%,"ObjectBindConstruct:7"+asp$+"H"): REM ob_hefo
-PROCco(f%,"ObjectBindConstruct:8"+asp$+"W"): REM ob_spell
-PROCco(f%,"ObjectBindConstruct:14"+asp$+"s"): REM ob_sle
-PROCco(f%,"ObjectBindConstruct:17"+asp$+"d"): REM ob_drwio
-PROCco(f%,"ObjectBindConstruct:18"+asp$+"t"): REM ob_toolb
-PROCco(f%,"ObjectBindConstruct:21"+asp$+"M"): REM ob_mails
-PROCco(f%,"ObjectBindConstruct:29"+asp$+"w"): REM ob_spelb
-PROCco(f%,"ObjectBindConstruct:31"+asp$+"f"): REM ob_file
-PROCco(f%,"ObjectBindConstruct:34"+asp$+"E"): REM ob_ce_edit
-IF is_y% THEN
-  PROCco(f%,"ObjectBindConstruct:37"+asp$+"b"): REM ob_recb
-ELSE
-  PROCco(f%,"ObjectBindConstruct:38"+asp$+"B"): REM ob_recn
-ENDIF
-:
-fwt_suffix$ = ""
-IF windows% THEN fwt_suffix$ = ".fwt"
-PROCco(f%,"#:ObjectBindLoader:object-id"+asp$+"file-type"+asp$+"extension-suffix"+asp$+"foreign-template")
-PROCco(f%,"ObjectBindLoader:0"+asp$+"0xBDF"+asp$+"fwk")
-PROCco(f%,"ObjectBindLoader:0"+asp$+"0xC1D"+asp$+"fwt")
-IF is_y% THEN
-  PROCco(f%,"ObjectBindLoader:2"+asp$+"0xC27"+asp$+"dpf")
-  PROCco(f%,"ObjectBindLoader:2"+asp$+"0xC28"+asp$+"dpq")
-ENDIF
-PROCco(f%,"ObjectBindLoader:4"+asp$+"0xAFF"+asp$+"aff")
-PROCco(f%,"ObjectBindLoader:4"+asp$+"0xFF9"+asp$+"ff9")
-PROCco(f%,"ObjectBindLoader:4"+asp$+"0xC85"+asp$+"jpg")
-PROCco(f%,"ObjectBindLoader:4"+asp$+"0x69C"+asp$+"bmp")
-PROCco(f%,"ObjectBindLoader:4"+asp$+"0x69C"+asp$+"dib")
-PROCco(f%,"ObjectBindLoader:20"+asp$+"0xDDE"+asp$+"pd")
-PROCco(f%,"ObjectBindLoader:23"+asp$+"0xFFF"+asp$+"txt")
-PROCco(f%,"ObjectBindLoader:24"+asp$+"0xDFE"+asp$+"csv")
-PROCco(f%,"ObjectBindLoader:24"+asp$+"0xC7D"+asp$+"sid")
-PROCco(f%,"ObjectBindLoader:25"+asp$+"0xAF8"+asp$+"fwp")
-PROCco(f%,"ObjectBindLoader:26"+asp$+"0xBA6"+asp$+"xls")
-PROCco(f%,"ObjectBindLoader:27"+asp$+"0xDB0"+asp$+"wk1")
-PROCco(f%,"ObjectBindLoader:27"+asp$+"0xDB0"+asp$+"wk3")
-PROCco(f%,"ObjectBindLoader:27"+asp$+"0xDB0"+asp$+"wks")
-PROCco(f%,"ObjectBindLoader:28"+asp$+"0xC32"+asp$+"rtf")
-PROCco(f%,"#:ChangeFSI may handle these on RISC OS")
-cfsi$="4"
-IF windows% THEN cfsi$="32"
-PROCco(f%,"ObjectBindLoader:"+cfsi$+asp$+"0x695"+asp$+"gif"): REM +asp$+"-")
-PROCco(f%,"ObjectBindLoader:"+cfsi$+asp$+"0xB60"+asp$+"png"): REM +asp$+"-")
-PROCco(f%,"ObjectBindLoader:"+cfsi$+asp$+"0xBE8"+asp$+"pcd"): REM +asp$+"-")
-PROCco(f%,"ObjectBindLoader:"+cfsi$+asp$+"0xFF0"+asp$+"tif"): REM +asp$+"-")
-:
-PROCco(f%,"#:ObjectBindSaver:object-id"+asp$+"file-type"+FNwindows(asp$+"clipboard-identifier"))
-PROCco(f%,"ObjectBindSaver:33"+asp$+"0xFFF"+FNwindows("")): REM CF_TEXT doesn't need textual representation
-PROCco(f%,"ObjectBindSaver:35"+asp$+"0xDFE"+FNwindows(asp$+"Csv"))
-PROCco(f%,"ObjectBindSaver:40"+asp$+"0xDB0"+FNwindows(asp$+"Wk1"))
-PROCco(f%,"ObjectBindSaver:41"+asp$+"0xC32"+FNwindows("")): REM RTF still poor - don't use clipboard "+asp$+"Rich Text Format
-IF is_y% OR windows% THEN
-PROCco(f%,"ObjectBindSaver:42"+asp$+"0xBA6"+FNwindows(+asp$+"Biff5"))
-ENDIF
-:
-IF windows% THEN
-PROCbind_file_type(f%,"1"+asp$+"0"+asp$+"All files","*.*","*.*")
-ENDIF
-colton_prefix$ = ""
-IF windows% THEN colton_prefix$ = "Colton Software "
-PROCbind_file_type(f%,"3"+asp$+"0xBDF"+asp$+colton_prefix$+"Fireworkz","*.fwk","*.fwk")
-PROCbind_file_type(f%,"3"+asp$+"0xC1D"+asp$+colton_prefix$+"Fireworkz template","*.fwt","*.fwt")
-PROCbind_file_type(f%,"3"+asp$+"0xFFF"+asp$+"Plain text","*.txt","*.txt")
-PROCbind_file_type(f%,"3"+asp$+"0xDFE"+asp$+"Comma separated values","*.csv","*.csv")
-PROCbind_file_type(f%,"1"+asp$+"0xDDE"+asp$+colton_prefix$+"PipeDream","*.pd","*.pd")
-IF is_y% OR windows% THEN
-PROCbind_file_type(f%,"3"+asp$+"0xBA6"+asp$+"Microsoft Excel","*.xls","*.xls")
-ELSE
-PROCbind_file_type(f%,"1"+asp$+"0xBA6"+asp$+"Microsoft Excel","*.xls","*.xls")
-ENDIF
-PROCbind_file_type(f%,"3"+asp$+"0xC32"+asp$+"Rich text format","*.rtf","*.rtf")
-PROCbind_file_type(f%,"13"+asp$+"0xC85"+asp$+"JPEG/JFIF","*.jpg","*.jpg")
-PROCbind_file_type(f%,"13"+asp$+"0x69C"+asp$+"Windows Bitmap","*.bmp,*.dib","*.bmp"+semico$+"*.dib")
-PROCbind_file_type(f%,"13"+asp$+"0xAFF"+asp$+"RISC OS Draw","*.aff","*.aff")
-PROCbind_file_type(f%,"13"+asp$+"0xFF9"+asp$+"RISC OS Sprite","*.ff9","*.ff9")
-PROCbind_file_type(f%,"3"+asp$+"0xDB0"+asp$+"Lotus 1-2-3","*.wks,*.wk1,*.wk3","*.wks"+semico$+"*.wk1"+semico$+"*.wk3")
-IF is_y% THEN
-  PROCbind_file_type(f%,"1"+asp$+"0xC27"+asp$+"R-Comp Datapower","*.dpf","*.dpf")
-  PROCbind_file_type(f%,"1"+asp$+"0xC28"+asp$+"R-Comp DatapowerQ","*.dpq","*.dpq")
-ENDIF
-PROCbind_file_type(f%,"1"+asp$+"0xAF8"+asp$+"GST 1st Word Plus","*.fwp","*.fwp")
-PROCbind_file_type(f%,"1"+asp$+"0xC7D"+asp$+"SID","*.sid","*.sid")
-:
-PROCco(f%,"#:Fontmap:portable-name;RTF-class;RTF-class-master;host-base-name;host-normal;host-bold;host-italic;host-bold-italic;riscos-normal;riscos-bold;riscos-italic;riscos-bold-italic")
-PROCco(f%,"#:portable-name is used in files"): REM and most data structures
-PROCco(f%,"#:host-base-name appears in user interface")
-PROCco(f%,"#:host-normal and variants are only needed on RISC OS where a full font name cannot always be deduced")
-PROCco(f%,"#:riscos-normal and variants are only needed on non-RISC OS platforms for Draw files (including charts)")
-IF windows% THEN
-  PROCco(f%,"Fontmap:AvantGarde;swiss;;Century Gothic;;;;;Clare.Medium;Clare.Demi;Clare.Medium.Oblique;Clare.Demi.Oblique")
-  PROCco(f%,"Fontmap:Bookman;roman;;Bookman Old Style;;;;;Robinson.Light;Robinson.Demi;Robinson.Light.Italic;Robinson.Demi.Italic")
-  PROCco(f%,"Fontmap:Courier;modern;1;Courier New;;;;;Corpus.Medium;Corpus.Bold;Corpus.Medium.Oblique;Corpus.Bold.Oblique")
-  PROCco(f%,"Fontmap:Helvetica;swiss;1;Arial;;;;;Homerton.Medium;Homerton.Bold;Homerton.Medium.Oblique;Homerton.Bold.Oblique")
-  PROCco(f%,"Fontmap:Helvetica-Narrow;swiss;;Arial Narrow;;;;;Homerton.Narrow;Homerton.Narrow.Bold;Homerton.Narrow.Oblique;Homerton.Narrow.Bold.Oblique")
-  PROCco(f%,"Fontmap:NewCenturySchlbk;roman;;Century Schoolbook;;;;;NewHall.Medium;NewHall.Bold;NewHall.Medium.Italic;NewHall.Bold.Italic")
-  PROCco(f%,"Fontmap:Palatino;roman;;Palatino Linotype;;;;;Pembroke.Medium;Pembroke.Bold;Pembroke.Medium.Italic;Pembroke.Bold.Italic"): REM family was Book Antiqua
-  PROCco(f%,"Fontmap:Symbol;tech;1;Symbol;;;;;Sidney")
-  PROCco(f%,"Fontmap:Times;roman;1;Times New Roman;;;;;Trinity.Medium;Trinity.Bold;Trinity.Medium.Italic;Trinity.Bold.Italic")
-  PROCco(f%,"Fontmap:ZapfChancery;modern;;Monotype Corsiva;;;;;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic")
-  PROCco(f%,"Fontmap:ZapfDingbats;decor;1;Monotype Sorts;;;;;Selwyn")
-ELSE
-  PROCco(f%,"Fontmap:AvantGarde;swiss;;Clare;Clare.Medium;Clare.Demi;Clare.Medium.Oblique;Clare.Demi.Oblique")
-  PROCco(f%,"Fontmap:Bookman;roman;;Robinson;Robinson.Light;Robinson.Demi;Robinson.Light.Italic;Robinson.Demi.Italic")
-  PROCco(f%,"Fontmap:Courier;modern;1;Corpus;Corpus.Medium;Corpus.Bold;Corpus.Medium.Oblique;Corpus.Bold.Oblique")
-  PROCco(f%,"Fontmap:Helvetica;swiss;1;Homerton;Homerton.Medium;Homerton.Bold;Homerton.Medium.Oblique;Homerton.Bold.Oblique")
-  PROCco(f%,"Fontmap:Helvetica-Narrow;swiss;;Homerton.Narrow;Homerton.Narrow;Homerton.Narrow.Bold;Homerton.Narrow.Oblique;Homerton.Narrow.Bold.Oblique")
-  PROCco(f%,"Fontmap:NewCenturySchlbk;roman;;NewHall;NewHall.Medium;NewHall.Bold;NewHall.Medium.Italic;NewHall.Bold.Italic")
-  PROCco(f%,"Fontmap:Palatino;roman;;Pembroke;Pembroke.Medium;Pembroke.Bold;Pembroke.Medium.Italic;Pembroke.Bold.Italic")
-  PROCco(f%,"Fontmap:Symbol;tech;1;Sidney;Sidney")
-  PROCco(f%,"Fontmap:Times;roman;1;Trinity;Trinity.Medium;Trinity.Bold;Trinity.Medium.Italic;Trinity.Bold.Italic")
-  PROCco(f%,"Fontmap:ZapfChancery;script;1;Churchill;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic")
-  PROCco(f%,"Fontmap:ZapfDingbats;decor;1;Selwyn;Selwyn")
-ENDIF
-PROCco(f%,"FontmapEnd")
-:
-PROCco(f%,"#:Fix earlier Windows font mapping error")
-PROCco(f%,"FontmapRemap:Helvetica-Narrow"+asp$+"HelveticaNarrow")
-PROCco(f%,"#:Fix earlier Windows font mapping")
-PROCco(f%,"FontmapRemap:Palatino"+asp$+"Palatino Linotype")
-:
-months$ = "january february march april may june july august september october november december"
-days$   = " " + "sunday monday tuesday wednesday thursday friday saturday"
-ending$ = " " + "st nd rd th th th th th th th th th th th th th th th th th st nd rd th th th th th th th st"
-IF country_de% THEN
-  months$ = "januar februar märz april mai juni juli august september oktober november dezember"
-  days$   = " " + "sonntag montag dienstag mittwoch donnerstag freitag samstag"
-  ending$ = ""
-ENDIF
-PROCco(f%,"NumformData:"+months$+days$+ending$)
-:
-REM thousands char, decimal point char, date sep char, time sep char
-REM array col sep, array row sep
-REM list sep char, function arg sep, ui flag
-a1$ = ","+asp$+"."+asp$+"."+asp$+":"
-a2$ = ","+asp$+semico$
-a3$ = ","+asp$+","+asp$+"0"
-IF country_de% THEN
-  a1$ = "."+asp$+","+asp$+"."+asp$+":"
-  a2$ = semico$+asp$+","
-  a3$ = semico$+asp$+semico$+asp$+"0"
-ENDIF
-PROCco(f%,"SSContext:"+a1$+asp$+a2$+asp$+a3$)
-:
-PROCui_things(f%)
-:
-PROCco(f%,"DefineKey:F2"+asp$+"EditFormula-s")
-IF windows% THEN
-  PROCco(f%,"DefineKey:F3"+asp$+"Search")
-ENDIF
-PROCco(f%,"DefineKey:F9"+asp$+"CaseSwap")
-PROCco(f%,"DefineKey:!F9"+asp$+"SelectCell")
-PROCco(f%,"DefineKey:^A"+asp$+"SelectDocument")
-IF country_uk% THEN
-  PROCco(f%,"DefineKey:^F"+asp$+"Button:SEARCH")
-ENDIF
-IF riscos% THEN
-  PROCco(f%,"DefineKey:^N"+asp$+"Search")
-  PROCco(f%,"DefineKey:^P"+asp$+"SelectCell")
-  PROCco(f%,"DefineKey:^S"+asp$+"CaseSwap")
-ENDIF
-PROCco(f%,"DefineKey:^U"+asp$+"DeleteLine")
-PROCco(f%,"DefineKey:^W"+asp$+"SelectWord")
-PROCco(f%,"DefineKey:^Z"+asp$+"Clear")
-REM PROCco(f%,"DefineKey:^!C"+asp$+"Button:JUSTIFY_CENTRE")
-REM PROCco(f%,"DefineKey:^!F"+asp$+"Button:JUSTIFY_FULL")
-REM PROCco(f%,"DefineKey:^!L"+asp$+"Button:JUSTIFY_LEFT")
-REM PROCco(f%,"DefineKey:^!R"+asp$+"Button:JUSTIFY_RIGHT")
-PROCco(f%,"DefineKey:^!D"+asp$+"InsertFieldIntroDate")
-PROCco(f%,"DefineKey:^!V"+asp$+"Button:VIEW")
-PROCco(f%,"DefineKey:^!X"+asp$+"Button:BOX"): REM ^!X as alias for ^!B
-PROCco(f%,"DefineKey:^!Z"+asp$+"Button:CHART")
-:
-PROCco(f%,"PrintQuality:0")
-:
-PROCco(f%,"Paper:A4"+asp$+"0"+asp$+"16840"+asp$+"11906"+asp$+"460"+asp$+"460"+asp$+"397"+asp$+"397"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"1")
-PROCco(f%,"Paper:A3"+asp$+"0"+asp$+"23810"+asp$+"16840"+asp$+"460"+asp$+"460"+asp$+"397"+asp$+"397"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"1")
-PROCco(f%,"Paper:A5"+asp$+"0"+asp$+"11906"+asp$+"8420"+asp$+"460"+asp$+"460"+asp$+"397"+asp$+"397"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"1")
-PROCco(f%,"Paper:Letter"+asp$+"0"+asp$+"15840"+asp$+"12240"+asp$+"360"+asp$+"380"+asp$+"360"+asp$+"380"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"1")
-IF (NOT windows%) AND FALSE THEN
-  REM buttons are bigger on Windows so don't give silly option!
-  PROCco(f%,"Paper:Legal"+asp$+"0"+asp$+"20160"+asp$+"12240"+asp$+"840"+asp$+"840"+asp$+"1300"+asp$+"1300"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"0"+asp$+"1")
-ENDIF
-:
-IF is_y% THEN
-  PROCco(f%,"Layout-b:Sheet"+asp$+"0"+asp$+"0"+asp$+"5")
-ENDIF
-:
-root_menu$ = "IconBar"
-IF windows% THEN
-  REM leaf$ = FNselect("&File","&Datei")
-  REM PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-  REM PROCma(f%,top_menu$,FNselect("&New","&Neu")+ellipsis$,";;NewDocument-f")
-  REM PROCma(f%,top_menu$,FNselect("&Open","&Open")+ellipsis$,";;OpenDocument-f")
-  REM PROCms(f%,top_menu$)
-  REM PROCma(f%,top_menu$,FNselect("C&hoices","Einstellungen")+ellipsis$,";;Choices")
-  REM PROCma(f%,top_menu$,FNselect("E&xit","Beenden"),";;Quit")
-  :
-  REM PROChelp_menu(f%,root_menu$,FALSE)
-ELSE
-  PROCma(f%,root_menu$,FNselect("Info","Info"),";;;Info")
-  PROChelp_menu(f%,root_menu$,FALSE)
-  PROCma(f%,root_menu$,FNselect("Choices","Einstellungen")+ellipsis$,";;Choices")
-  PROCma(f%,root_menu$,FNselect("Quit","Beenden"),";;Quit")
-ENDIF
-:
-PROCco(f%,"MenuName:Function;Functions"): root_menu$ = "Function"
-PROCfunctions_menu(f%,root_menu$,TRUE)
-:
-PROCco(f%,"MenuName:Chart;Chart"): root_menu$ = "Chart"
-PROCchart_menu(f%,root_menu$)
-:
-PROCco(f%,"MenuName:ChartEdit;Chart"): root_menu$ = "ChartEdit"
-leaf$ = FNselect("&Edit","&Bearbeiten")
-PROCmh(f%,root_menu$,leaf$,";;ChartEdit-C:-1"): chartedit_edit_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-  IF windows% THEN
-    PROCma(f%,chartedit_edit_menu$,FNselect("&Insert picture","Bild einfügen")+ellipsis$,";;InsertPicture-f")
-    PROCms(f%,chartedit_edit_menu$)
-  ENDIF
-  PROCma(f%,chartedit_edit_menu$,FNselect("&Chart","&Chart")+ellipsis$,";;ChartEdit-C:2")
-  PROCma(f%,chartedit_edit_menu$,FNselect("&Axis","&Axen")+ellipsis$,";;ChartEdit-C:0")
-  PROCma(f%,chartedit_edit_menu$,FNselect("&Series","&Serien")+ellipsis$,";;ChartEdit-C:1")
-  PROCma(f%,chartedit_edit_menu$,FNselect("&Legend","&Legend")+ellipsis$,";;ChartEditX-C:0")
-leaf$ = FNselect("&Style","&Stil")
-PROCmh(f%,root_menu$,leaf$,";;ChartStyle-C:-1"): chartedit_style_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,chartedit_style_menu$,FNselect("&Fill","&Füll")+ellipsis$,";;ChartStyle-C:2")
-  PROCma(f%,chartedit_style_menu$,FNselect("&Line","&Linie")+ellipsis$,";;ChartStyle-C:1")
-  PROCma(f%,chartedit_style_menu$,FNselect("&Text","&Text")+ellipsis$,";;ChartStyle-C:0")
-PROCma(f%,root_menu$,FNselect("&Margins","&Ränder")+ellipsis$,";;ChartEditX-C:1")
-:
-root_menu$ = "$"
-leaf$ = FNselect("&File","&Datei")
-PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-IF windows% THEN
-  PROCma(f%,top_menu$,FNselect("&New","&Neu")+ellipsis$,";^N;NewDocument-f")
-  PROCma(f%,top_menu$,FNselect("&Open","&Open")+ellipsis$,";^O;OpenDocument-f")
-  PROCma(f%,top_menu$,FNselect("&Insert File","Datei &Einfügen")+ellipsis$,";;InsertFile-f")
-  PROCms(f%,top_menu$)
-  PROCma(f%,top_menu$,FNselect("&Save","&Speichern"),";^S;Save")
-  PROCma(f%,top_menu$,FNselect("Save &As","Speichern &Als")+ellipsis$,";;SaveAsIntro")
-  PROCma(f%,top_menu$,FNselect("Export as &Drawfile","Speichern als &Draw datei")+ellipsis$,";;SaveAsDrawfileIntro-d")
-  PROCma(f%,top_menu$,FNselect("Save &Template","&Template Speichern")+ellipsis$,";;SaveTemplateIntro")
-  PROCms(f%,top_menu$)
-  PROCma(f%,top_menu$,FNselect("&Print","Drucken")+ellipsis$,";^P;Button:PRINT")
-  PROCma(f%,top_menu$,FNselect("Print Set&up","Drucker Set&up")+ellipsis$,";;PrintSetup")
-  PROCms(f%,top_menu$)
-  PROCma(f%,top_menu$,FNselect("C&hoices","Einstellungen")+ellipsis$,";;Choices")
-  PROCma(f%,top_menu$,FNselect("E&xit","Beenden"),";;Quit")
-ELSE
-  PROCma(f%,top_menu$,FNselect("Save","Speichern"),";F3;Save;Button:SAVE")
-  PROCma(f%,top_menu$,FNselect("Export","Exportieren")+ellipsis$,";!F3;SaveForeignIntro")
-  PROCma(f%,top_menu$,FNselect("Export as Drawfile","Speichern als Draw datei")+ellipsis$,";;SaveAsDrawfileIntro-d")
-  PROCma(f%,top_menu$,FNselect("Save template","Template speichern")+ellipsis$,";;SaveTemplateIntro")
-  PROCms(f%,top_menu$)
-  PROCma(f%,top_menu$,FNselect("Print","Drucken")+ellipsis$,";Print;Button:PRINT")
-ENDIF
-IF FALSE THEN PROCma(f%,top_menu$,FNselect("&Test","Test"),";;Test")
-:
-leaf$ = FNselect("&View","&View")
-PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-PROCma(f%,top_menu$,FNselect("&New","&Neu"),";;ViewNew")
-PROCma(f%,top_menu$,FNselect("&Close","&Close"),";;ViewCloseReq")
-PROCma(f%,top_menu$,FNselect("Control","Control")+ellipsis$,";;Button:VIEW")
-leaf$ = FNselect("&Ruler","&Lineal")
-PROCmh(f%,top_menu$,leaf$,";;RulerScale:0"+semico$+"2"+semico$+"5"+semico$+"1"): view_ruler_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCruler(f%,view_ruler_menu$,"RulerScale")
-  PROCms(f%,view_ruler_menu$)
-  leaf$ = FNselect("Si&de "+FNwinicap("ruler"),"Seiten Lineal")
-  PROCmh(f%,view_ruler_menu$,leaf$,";;VRulerScale:0"+semico$+"2"+semico$+"5"+semico$+"1"): view_side_ruler_menu$ = view_ruler_menu$+"."+FNeat_escape(leaf$)
-    PROCruler(f%,view_side_ruler_menu$,"VRulerScale")
-:
-leaf$ = FNselect("&Edit","&Bearbeiten")
-PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-PROCma(f%,top_menu$,FNselect("Cu&t","&Ausschneiden"),";^X;Button:CUT")
-PROCma(f%,top_menu$,FNselect("&Copy","&Kopieren"),";^C;Button:COPY")
-PROCma(f%,top_menu$,FNselect("&Paste","&Einfügen"),";^V;Button:PASTE")
-PROCma(f%,top_menu$,FNselect("&Delete","&Löschen"),";"+FNriscos("^K")+";SelectionDelete;;2")
-PROCms(f%,top_menu$)
-PROCma(f%,top_menu$,FNselect("&Find","Suchen")+ellipsis$,";F4;SearchIntro")
-leaf$ = FNselect("Change "+FNwinicap("cas&e"),"&Groß/klein")
-PROCmh(f%,top_menu$,leaf$,""): edit_case_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,edit_case_menu$,FNselect("&lower-case","&klein"),";;CaseLower")
-  PROCma(f%,edit_case_menu$,FNselect("&UPPER-CASE","&Groß"),";;CaseUpper")
-  PROCma(f%,edit_case_menu$,FNselect("&Capitalise Every Word",""),";;CaseIniCap")
-  PROCma(f%,edit_case_menu$,FNselect("&Toggle "+FNwinicap("case"),""),";;CaseSwap")
-leaf$ = FNselect("&Insert","&Einfügen")
-PROCmh(f%,top_menu$,leaf$,""): edit_inserts_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,edit_inserts_menu$,FNselect("Page &"+FNwinicap("break"),""),";;InsertPageBreak")
-  PROCms(f%,edit_inserts_menu$)
-  PROCma(f%,edit_inserts_menu$,FNselect("T&able","T&afel")+ellipsis$,";^!T;Button:TABLE")
-  PROCms(f%,edit_inserts_menu$)
-  PROCma(f%,edit_inserts_menu$,FNselect("&Date","&Datum")+ellipsis$,";^D;InsertFieldIntroDate")
-  PROCma(f%,edit_inserts_menu$,FNselect("&Time","&Zeit")+ellipsis$,";^T;InsertFieldIntroTime")
-  PROCma(f%,edit_inserts_menu$,FNselect("&Page "+FNwinicap("number"),"&Seitenzahl")+ellipsis$,";^!P;InsertFieldIntroPage;;16")
-  PROCma(f%,edit_inserts_menu$,FNselect("&Filename","Dateina&me"),";;InsertFieldLeafname;;16")
-  PROCma(f%,edit_inserts_menu$,FNselect("Pat&hname","&Pfad"),";;InsertFieldWholename;;16")
-  PROCma(f%,edit_inserts_menu$,FNselect("&Mail "+FNwinicap("merge ")+FNwinicap("field"),"Mail merge feld &"+FNwinicap("einfügen"))+ellipsis$,";;InsertFieldIntroMailMerge-M;;16")
-  PROCma(f%,edit_inserts_menu$,FNselect("&Name","&Name")+ellipsis$,";^!N;NameIntro-S:0;;16")
-  PROCms(f%,edit_inserts_menu$)
-  leaf$ = FNselect("&Function","&Funktion")
-  PROCmh(f%,edit_inserts_menu$,leaf$,";;Functions-S"): edit_inserts_function_menu$ = edit_inserts_menu$+"."+FNeat_escape(leaf$)
-  PROCfunctions_menu(f%,edit_inserts_function_menu$,FALSE)
-PROCms(f%,top_menu$)
-leaf$ = FNselect("C&olumns","&Spalten")
-PROCmh(f%,top_menu$,leaf$,""): edit_cols_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,edit_cols_menu$,FNselect("&Add "+FNwinicap("after"),"&hinzufügen")+ellipsis$,";;AddColumnsIntro;;4")
-  PROCma(f%,edit_cols_menu$,FNselect("&Insert "+FNwinicap("before"),"&einfügen"),";!F7;InsertCol;;4")
-  PROCma(f%,edit_cols_menu$,FNselect("&Delete","&löschen"),";!F8;DeleteCol;;4")
-leaf$ = FNselect("&Rows","&Reihen")
-PROCmh(f%,top_menu$,leaf$,""): edit_rows_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,edit_rows_menu$,FNselect("&Add "+FNwinicap("after"),"&hinzufügen")+ellipsis$,";;AddRowsIntro;;4")
-  PROCma(f%,edit_rows_menu$,FNselect("&Insert "+FNwinicap("before"),"&einfügen"),";^F7;InsertRow;;4")
-  PROCma(f%,edit_rows_menu$,FNselect("&Delete","&löschen"),";^F8;DeleteRow;;4")
-leaf$ = FNselect("Fill "+FNwinicap("cells"),"")
-PROCmh(f%,top_menu$,leaf$,""): edit_fill_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,edit_fill_menu$,FNselect("Down",""),";;Button:FILL_DOWN")
-  PROCma(f%,edit_fill_menu$,FNselect("Right",""),";;Button:FILL_RIGHT")
-  PROCma(f%,edit_fill_menu$,FNselect("Up",""),";;ReplicateUp-S;;2")
-  PROCma(f%,edit_fill_menu$,FNselect("Left",""),";;ReplicateLeft-S;;2")
-leaf$ = FNselect("&Make "+FNwinicap("cells"),"&Machen")
-PROCmh(f%,top_menu$,leaf$,""): edit_make_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,edit_make_menu$,FNselect("&Blank","&leeren"),";;BlockClear;;4")
-  PROCma(f%,edit_make_menu$,FNselect("&Constant","&Konstante"),";;Button:MAKE_CONSTANT")
-  PROCma(f%,edit_make_menu$,FNselect("&Number","&Zahl"),";;Button:MAKE_NUMBER")
-  PROCma(f%,edit_make_menu$,FNselect("&Text","&Text"),";;Button:MAKE_TEXT")
-PROCma(f%,top_menu$,FNselect("Sor&t","Sor&t")+ellipsis$,";F6;Button:SORT")
-:
-leaf$ = FNselect("&Style","&Stil")
-PROCmh(f%,root_menu$,leaf$,";;Button:STYLE"): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-PROCma(f%,top_menu$,FNselect("&Styles","&Styles")+ellipsis$,";^!S;Button:STYLE")
-leaf$ = FNselect("&Effects","&Effekte")
-PROCmh(f%,top_menu$,leaf$,""): style_effects_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,style_effects_menu$,FNselect("&Effects","&Effekte")+ellipsis$,";^!E;Button:EFFECTS")
-  PROCma(f%,style_effects_menu$,FNselect("&Bold;^B","&Fett;^F"),";Button:BOLD")
-  PROCma(f%,style_effects_menu$,FNselect("&Italic;^I","Kurs&iv;^I"),";Button:ITALIC")
-  PROCma(f%,style_effects_menu$,FNselect("&Underline;^!U","&Unterstreichen;^!U"),";Button:UNDERLINE")
-  PROCma(f%,style_effects_menu$,FNselect("&Superscript;^!Q","&Superscript;^!Q"),";Button:SUPERSCRIPT")
-  PROCma(f%,style_effects_menu$,FNselect("Subs&cript;^!W","Subs&cript;^!W"),";Button:SUBSCRIPT")
-  leaf$ = FNselect("&Justify","")
-  PROCmh(f%,style_effects_menu$,leaf$,""): style_effects_justify_menu$ = style_effects_menu$+"."+FNeat_escape(leaf$)
-    PROCma(f%,style_effects_justify_menu$,FNselect("Left;^!L","Links;^!L"),";Button:JUSTIFY_LEFT")
-    PROCma(f%,style_effects_justify_menu$,FNselect("Centre;^!C","Mittel;^!C"),";Button:JUSTIFY_CENTRE")
-    PROCma(f%,style_effects_justify_menu$,FNselect("Right;^!R","Rechts;^!R"),";Button:JUSTIFY_RIGHT")
-    PROCma(f%,style_effects_justify_menu$,FNselect("Full (L-R);^!F","Voll (L-R);^!F"),";Button:JUSTIFY_FULL")
-leaf$ = FNselect("&Regions","&Regionen")
-PROCmh(f%,top_menu$,leaf$,""): style_regions_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,style_regions_menu$,FNselect("C&ount","&Zählen"),";;StyleRegionCount;;2")
-  PROCma(f%,style_regions_menu$,FNselect("&Clear","&Leeren"),";;StyleRegionClear;;2")
-  PROCma(f%,style_regions_menu$,FNselect("&Edit;^R","&Edit;^R")+ellipsis$,";StyleRegionEdit;;16")
-PROCma(f%,top_menu$,FNselect("&Box;^!B","R&ahmen;^!B")+ellipsis$,";Button:BOX")
-:
-leaf$ = FNselect("&Page","&Seite")
-PROCmh(f%,root_menu$,leaf$,";;PageHefoBreakIntro-H"): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-PROCma(f%,top_menu$,FNselect("&Pages","&Seiten")+ellipsis$,";;PageHefoBreakIntro-H")
-PROCma(f%,top_menu$,FNselect("P&aper","&Papier")+ellipsis$,";;PaperIntro")
-PROCma(f%,top_menu$,FNselect("&Scale","&Größe")+ellipsis$,";;PaperScaleIntro")
-:
-IF is_y% THEN
-  leaf$ = FNselect("&Database","&Datenbank")
-  PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,top_menu$,FNselect("Create","Create")+ellipsis$,";;DBCreate-B;;15")
-  PROCma(f%,top_menu$,FNselect("Layout","Layout")+ellipsis$,";;Button:DB_LAYOUT")
-  PROCma(f%,top_menu$,FNselect("Properties","Properties")+ellipsis$,";;Button:DB_PROP")
-  PROCma(f%,top_menu$,FNselect("Search","Suchen")+ellipsis$,";!F4;Button:DB_SEARCH")
-  PROCma(f%,top_menu$,FNselect("Queries","Queries")+ellipsis$,";^F4;DBView-B;;14")
-  PROCma(f%,top_menu$,FNselect("Sort","Sort")+ellipsis$,";!F6;Button:DB_SORT")
-  PROCma(f%,top_menu$,FNselect("Close","Close"),";;DBClose-B;;14")
-  PROCma(f%,top_menu$,FNselect("Export","Exportieren")+ellipsis$,";;DBExport-B;;14")
-  leaf$ = FNselect("Record","Record")
-  PROCmh(f%,top_menu$,leaf$,";;Button:DB_GOTO"): database_record_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-    PROCma(f%,database_record_menu$,FNselect("Goto","Goto")+ellipsis$,";;Button:DB_GOTO")
-    PROCma(f%,database_record_menu$,FNselect("Copy","kopieren"),";;Button:DB_COPY")
-    PROCma(f%,database_record_menu$,FNselect("Add","hinzufügen"),";;Button:DB_ADD")
-    PROCma(f%,database_record_menu$,FNselect("Delete","löschen")+ellipsis$,";;Button:DB_DEL")
-ENDIF
-:
-leaf$ = FNselect("E&xtra","E&xtra")
-PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-leaf$ = FNselect("&Chart","&Chart")
-PROCmh(f%,top_menu$,leaf$,""): extra_chart_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCchart_menu(f%,extra_chart_menu$)
-leaf$ = FNselect("&Pictures","&Bilder")
-PROCmh(f%,top_menu$,leaf$,""): extra_pictures_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,extra_pictures_menu$,FNselect("&Embed "+FNwinicap("picture"),"Bilder &einbetten"),";;NoteEmbed;;11")
-  PROCma(f%,extra_pictures_menu$,FNselect("Send to &"+FNwinicap("back"),"Nach &hinten"),";;NoteBack;;11")
-  PROCma(f%,extra_pictures_menu$,FNselect("S&wap "+FNwinicap("front")+"/"+FNwinicap("back"),"&Tauschen"),";;NoteSwap;;10")
-  PROCma(f%,extra_pictures_menu$,FNselect("B&ackdrop","B&ackdrop")+ellipsis$,";;BackdropIntro;;12")
-  PROCma(f%,extra_pictures_menu$,FNselect("&Save "+FNwinicap("picture"),"&Sichern bild")+ellipsis$,";;SavePictureIntro;;11")
-leaf$ = FNselect("&Sheet","&Sheet")
-PROCmh(f%,top_menu$,leaf$,";;"): extra_sheet_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  REM leaf$ = FNselect("&Functions","&Funktion")
-  REM PROCmh(f%,extra_sheet_menu$,leaf$,";;Functions-S"): extra_sheet_functions_menu$ = extra_sheet_menu$+"."+FNeat_escape(leaf$)
-  REM PROCfunctions_menu(f%,extra_sheet_functions_menu$,FALSE)
-  PROCma(f%,extra_sheet_menu$,FNselect("&Names","&Namen")+ellipsis$,";;NameIntro-S:1")
-  PROCma(f%,extra_sheet_menu$,FNselect("&Recalculate","Neube&rechnen"),";;ForceRecalc"): REM was ;;2
-  PROCma(f%,extra_sheet_menu$,FNselect("Recalculate &"+FNwinicap("all"),"Neuberechnen &"+FNwinicap("alle")),";;ForceRecalc:*"): REM was ;;2
-leaf$ = FNselect("&Text","&Text")
-PROCmh(f%,top_menu$,leaf$,";;"): extra_text_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,extra_text_menu$,FNselect("Count &"+FNwinicap("words"),"Wörter &"+FNwinicap("zählen")),";;WordCount")
-  leaf$ = FNselect("&Mail "+FNwinicap("merge"),"&Mail merge")
-  PROCmh(f%,extra_text_menu$,leaf$,";;MailshotField-M"): extra_text_mail_merge_menu$ = extra_text_menu$+"."+FNeat_escape(leaf$)
-    PROCma(f%,extra_text_mail_merge_menu$,FNselect("&Select "+FNwinicap("source"),"&Auswählen")+ellipsis$,";;MailshotSelect-M")
-    PROCma(f%,extra_text_mail_merge_menu$,FNselect("&Insert "+FNwinicap("field"),"Feld &"+FNwinicap("einfügen"))+ellipsis$,";;InsertFieldIntroMailMerge-M;;16")
-  leaf$ = FNselect("&Spell","Recht&schreibung")
-  PROCmh(f%,extra_text_menu$,leaf$,";;SpellCheck-W"): extra_text_spell_menu$ = extra_text_menu$+"."+FNeat_escape(leaf$)
-    PROCma(f%,extra_text_spell_menu$,FNselect("&Check","&Check"),";;Button:CHECK")
-    PROCma(f%,extra_text_spell_menu$,FNselect("&Dictionary","&Wörterbuch")+ellipsis$,";;Dictionary-W")
-  IF riscos% THEN
-    PROCma(f%,extra_text_menu$,FNselect("Thesaurus;^Q","Thesaurus;^Q"),";Button:THESAURUS")
-  ENDIF
-:
-IF windows% OR TRUE THEN
-  PROChelp_menu(f%,root_menu$,TRUE)
-ENDIF
-:
-PROCco(f%,"RulerScale:0;2;5;1")
-PROCco(f%,"VRulerScale:0;2;5;1")
-:
-RESTORE ERROR
-CLOSE#f%
+RESTORE ERROR: CLOSE#f%
 :
 OSCLI("SetType "+outfile$+" Text")
 :
 RESTORE ERROR
 ENDPROC
-:
-:
-DEF PROCnl(f%)
-REM Let SVN take care of expansion to CRLF on WINDOWS
-REM IF windows% THEN BPUT#f%,13
-BPUT#f%,10
-ENDPROC
-:
-:
-DEF PROCo(f%, A$)
-BPUT#f%,A$;
-PROCnl(f%)
-ENDPROC
-:
-:
-DEF PROCco(f%, A$)
-BPUT#f%,"{"+A$+"}";
-PROCnl(f%)
-ENDPROC
-:
-:
-DEF PROCmpl(f%)
-PROCco(f%, "#:" + "This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.")
-PROCco(f%, "#:" + "Copyright (C) 1993-1998 Colton Software Limited, Copyright (C) 1998-2015 R W Colton")
-ENDPROC
-:
-:
-DEF PROCul(f%, class%, A$)
-PROCco(f%,"UILoad:"+(STR$class%)+";"+A$)
-ENDPROC
-:
-:
-REM output pairs of numforms with/without negative style
-:
-DEF PROCuln(f%,class%,A$,negative$)
-IF negative$ <> "" THEN
-  PROCul(f%,class%,A$+semico$+negative$+"-"+A$)
-ENDIF
-PROCul(f%,class%,A$)
-ENDPROC
-:
-:
-DEF PROCma(f%,M$,C$,A$)
-PROCco(f%,"MenuAdd:"+M$+";"+C$+A$)
-ENDPROC
-:
-:
-DEF PROCmh(f%,M$,C$,A$)
-IF windows% THEN
-  PROCco(f%,"MenuAdd:"+M$+";"+C$): REM Windows can't execute clicks on submenu holders so don't put commands on them
-ELSE
-  PROCma(f%,M$,C$,A$)
-ENDIF
-ENDPROC
-:
-:
-DEF PROCms(f%, M$)
-PROCco(f%,"MenuAdd:"+M$)
-ENDPROC
-:
-:
-DEF PROCbind_file_type(f%, A$, E$, W$)
-IF windows% THEN
-  PROCco(f%,"BindFileType:"+A$+";("+E$+");"+W$)
-ELSE
-  PROCco(f%,"BindFileType:"+A$)
-ENDIF
-ENDPROC
-:
-:
-DEF FNriscos(A$)
-LOCAL O$
-IF riscos% THEN
-  O$=A$
-ELSE
-  O$=""
-ENDIF
-=O$
-:
-:
-DEF FNwindows(A$)
-LOCAL O$
-IF windows% THEN
-  O$=A$
-ELSE
-  O$=""
-ENDIF
-=O$
-:
-:
-DEF FNwinicap(A$)
-LOCAL O$
-IF windows% THEN
-  O$=CHR$(ASC(A$) AND NOT &20)+MID$(A$,2)
-ELSE
-  O$=A$
-ENDIF
-=O$
-:
-:
-DEF PROChelp_menu(f%, root_menu$, main_window%)
-LOCAL leaf$, top_menu$
-IF windows% THEN
-  leaf$ = FNselect("&Help","&Hilfe")
-  PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-  help_key$ = "": IF main_window% THEN help_key$ = "F1"
-  PROCma(f%,top_menu$,FNselect("Contents",""),";"+help_key$+";HelpContents:firewrkz.chm")
-  PROCma(f%,top_menu$,FNselect("Search for Help On","")+ellipsis$,";;HelpSearchKeyword:firewrkz.chm")
-  PROCms(f%,top_menu$)
-  PROCma(f%,top_menu$,FNselect("Fireworkz on the Web","")+ellipsis$,";;HelpURL:http://groups.google.com/group/colton-software-fireworkz")
-  PROCms(f%,top_menu$)
-  PROCma(f%,top_menu$,FNselect("About Fireworkz","")+ellipsis$,";;Info")
-ELSE
-  help_key$ = "": IF main_window% THEN help_key$ = "F1"
-  PROCma(f%,root_menu$,FNselect("&Help","&Hilfe")+ellipsis$,";"+help_key$+";HelpContents"): REM :<"+product$+"$Dir>.!Help")
-ENDIF
-ENDPROC
-:
-:
-DEF PROCchart_menu(f%, root_menu$)
-PROCma(f%,root_menu$,FNselect("&Bar","&Bar")+ellipsis$,";;Gallery-C:0;;6")
-PROCma(f%,root_menu$,FNselect("&Line","&Linie")+ellipsis$,";;Gallery-C:1;;6")
-PROCma(f%,root_menu$,FNselect("&Pie","&Kuchen")+ellipsis$,";;Gallery-C:2;;6")
-PROCma(f%,root_menu$,FNselect("&X-Y","&X-Y")+ellipsis$,";;Gallery-C:3;;6")
-PROCma(f%,root_menu$,FNselect("&Overlay","&Overlay")+ellipsis$,";;Gallery-C:4;;6")
-PROCma(f%,root_menu$,FNselect("&Add","&Hinzu"),";;Gallery-C:5;;6")
-ENDPROC
-:
-:
-DEF PROCfunctions_menu(f%, root_menu$, submenu%)
-LOCAL leaf$, top_menu$
-PROCma(f%,root_menu$,FNselect("&Quick","Schnell")+ellipsis$,";;Functions-S:-1")
-IF submenu% THEN
-  leaf$ = FNselect("&Categories","&Kategorien")
-  PROCmh(f%,root_menu$,leaf$,";;Functions-S"): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
-ELSE
-  top_menu$ = root_menu$
-ENDIF
-PROCma(f%,top_menu$,FNselect("&All","&Alle")+ellipsis$,";;Functions-S")
-PROCma(f%,top_menu$,FNselect("&Custom control","Allgemeine Ctrl")+ellipsis$,";;Functions-S:10")
-PROCma(f%,top_menu$,FNselect("&Database","&Datenbank")+ellipsis$,";;Functions-S:1")
-PROCma(f%,top_menu$,FNselect("Dat&e and time","Datum / &Zeit")+ellipsis$,";;Functions-S:2")
-PROCma(f%,top_menu$,FNselect("Eng&ineering","Techni&k")+ellipsis$,";;Functions-S:0")
-PROCma(f%,top_menu$,FNselect("&Financial","&Finanziel")+ellipsis$,";;Functions-S:3")
-PROCma(f%,top_menu$,FNselect("L&ogical","L&ogisch")+ellipsis$,";;Functions-S:13")
-PROCma(f%,top_menu$,FNselect("&Lookup","&Lookup")+ellipsis$,";;Functions-S:11")
-PROCma(f%,top_menu$,FNselect("&Mathematical","&Mathematisch")+ellipsis$,";;Functions-S:4")
-PROCma(f%,top_menu$,FNselect("Mat&rix","Mat&rix")+ellipsis$,";;Functions-S:5")
-PROCma(f%,top_menu$,FNselect("Miscellane&ous","&Oberflächen")+ellipsis$,";;Functions-S:6")
-PROCma(f%,top_menu$,FNselect("&Statistical","&Statistisch")+ellipsis$,";;Functions-S:7")
-PROCma(f%,top_menu$,FNselect("Strin&g","Strin&g")+ellipsis$,";;Functions-S:8")
-PROCma(f%,top_menu$,FNselect("&Trigonometrical","Trigonometrisch")+ellipsis$,";;Functions-S:9")
-PROCma(f%,top_menu$,FNselect("Compatibilit&y","")+ellipsis$,";;Functions-S:14")
-PROCms(f%,root_menu$)
-PROCma(f%,root_menu$,FNselect("C&ustom","Selbstdefiniert")+ellipsis$,";;Functions-S:12")
-IF submenu% THEN
-  PROCms(f%,root_menu$)
-  PROCma(f%,root_menu$,FNselect("&Names","&Namen")+ellipsis$,";;NameIntro-S:1")
-ENDIF
-ENDPROC
-:
-:
-DEF PROCruler(f%, extra_ruler_menu$, command$)
-LOCAL leaf$, extra_ruler_sub_menu$
-leaf$ = "cm"
-PROCmh(f%,extra_ruler_menu$,leaf$,";;"+command$+":0"+semico$+"2"+semico$+"5"+semico$+"1"): extra_ruler_sub_menu$ = extra_ruler_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,extra_ruler_sub_menu$,"0.5 cm",";;"+command$+":0"+semico$+"2"+semico$+"1"+semico$+"1")
-  PROCma(f%,extra_ruler_sub_menu$,"0.2 cm",";;"+command$+":0"+semico$+"5"+semico$+"1"+semico$+"1")
-  PROCma(f%,extra_ruler_sub_menu$,"0.1 cm",";;"+command$+":0"+semico$+"2"+semico$+"5"+semico$+"1")
-leaf$ = "mm"
-PROCmh(f%,extra_ruler_menu$,leaf$,";;"+command$+":1"+semico$+"10"+semico$+"1"+semico$+"10"): extra_ruler_sub_menu$ = extra_ruler_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,extra_ruler_sub_menu$,"5 mm",";;"+command$+":1"+semico$+"2"+semico$+"1"+semico$+"10")
-  PROCma(f%,extra_ruler_sub_menu$,"2 mm",";;"+command$+":1"+semico$+"5"+semico$+"1"+semico$+"10")
-  PROCma(f%,extra_ruler_sub_menu$,"1 mm",";;"+command$+":1"+semico$+"10"+semico$+"1"+semico$+"10")
-leaf$ = "inches"
-PROCmh(f%,extra_ruler_menu$,leaf$,";;"+command$+":2"+semico$+"2"+semico$+"5"+semico$+"1"): extra_ruler_sub_menu$ = extra_ruler_menu$+"."+FNeat_escape(leaf$)
-  PROCma(f%,extra_ruler_sub_menu$,"1/4 "+inch_suffix$,";;"+command$+":2"+semico$+"4"+semico$+"1"+semico$+"1")
-  PROCma(f%,extra_ruler_sub_menu$,"1/6 "+inch_suffix$,";;"+command$+":2"+semico$+"2"+semico$+"3"+semico$+"1")
-  PROCma(f%,extra_ruler_sub_menu$,"1/8 "+inch_suffix$,";;"+command$+":2"+semico$+"4"+semico$+"2"+semico$+"1")
-  PROCma(f%,extra_ruler_sub_menu$,"1/10 "+inch_suffix$,";;"+command$+":2"+semico$+"2"+semico$+"5"+semico$+"1")
-  PROCma(f%,extra_ruler_sub_menu$,"1/16 "+inch_suffix$,";;"+command$+":2"+semico$+"4"+semico$+"4"+semico$+"1")
-PROCma(f%,extra_ruler_menu$,"points",";;"+command$+":3"+semico$+"6"+semico$+"2"+semico$+"72")
-ENDPROC
-:
-:
-DEF PROCui_things(f%)
-PROCco(f%,"#:Insert field - date formats")
-PROCul(f%,0,"yyyy-mm-dd")
-PROCul(f%,0,"dd.mm.yy")
-PROCul(f%,0,"dd/mm/yy")
-PROCul(f%,0,"dd Mmm yy")
-PROCul(f%,0,"d Mmm yy")
-PROCul(f%,0,"d Mmmm yy")
-PROCul(f%,0,"d Mmmm yyyy")
-PROCul(f%,0,"Mmm dd, yyyy")
-PROCul(f%,0,"Mmmm d, yyyy")
-IF ending$ <> "" THEN
-  REM ddd only makes sense if you do have day number endings
-  PROCul(f%,0,"ddd Mmmm")
-  PROCul(f%,0,"Mmmm ddd")
-  PROCul(f%,0,"ddd Mmmm yy")
-  PROCul(f%,0,"Mmmm ddd, yy")
-  PROCul(f%,0,"ddd Mmmm yyyy")
-  PROCul(f%,0,"Mmmm ddd, yyyy")
-ENDIF
-PROCul(f%,0,"Mmm yy")
-PROCul(f%,0,"Mmmm yy")
-PROCul(f%,0,"Mmmm yyyy")
-:
-PROCco(f%,"#:Insert field - page number formats")
-PROCul(f%,1,"#")
-PROCul(f%,1,"r#")
-PROCul(f%,1,"R#")
-:
-PROCco(f%,"#:Ruler choices")
-inch_suffix$ = FNselect("in","Zoll")
-PROCul(f%,3,"0 2 1 1 0.5 cm")
-PROCul(f%,3,"0 5 1 1 0.2 cm")
-PROCul(f%,3,"0 2 5 1 0.1 cm")
-PROCul(f%,3,"1 2 1 10 5 mm")
-PROCul(f%,3,"1 5 1 10 2 mm")
-PROCul(f%,3,"1 10 1 10 1 mm")
-PROCul(f%,3,"2 4 1 1 1/4 "+inch_suffix$)
-PROCul(f%,3,"2 2 3 1 1/6 "+inch_suffix$)
-PROCul(f%,3,"2 4 2 1 1/8 "+inch_suffix$)
-PROCul(f%,3,"2 2 5 1 1/10 "+inch_suffix$)
-PROCul(f%,3,"2 4 4 1 1/16 "+inch_suffix$)
-PROCul(f%,3,"3 6 2 72 points")
-:
-PROCco(f%,"#:Number formats")
-negative$ = FNselect("[Negative]","[Negativ]")
-thousands_std$="#"+thousands_seq$+"##0"
-uk_thousands_std$="#"+uk_thousands_seq$+"##0"
-PROCuln(f%,4,thousands_std$+decimal_seq$+"#######",negative$)
-PROCuln(f%,4,thousands_std$+decimal_seq$+"00",negative$)
-PROCuln(f%,4,"0",negative$)
-PROCuln(f%,4,"0"+decimal_seq$+"##",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"##",negative$)
-ENDIF
-PROCuln(f%,4,"0"+decimal_seq$+"00",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"00",negative$)
-ENDIF
-PROCuln(f%,4,"0%",negative$)
-PROCuln(f%,4,"0"+decimal_seq$+"##%",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"##%",negative$)
-ENDIF
-PROCuln(f%,4,"0"+decimal_seq$+"00%",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"00%",negative$)
-ENDIF
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00"+semico$+negative$+"-£"+uk_thousands_std$+uk_decimal_seq$+"00")
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00"+semico$+negative$+"£-"+uk_thousands_std$+uk_decimal_seq$+"00")
-PROCul(f%,4,thousands_std$+decimal_seq$+"00_"+semico$+negative$+"("+thousands_std$+decimal_seq$+"00)")
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00_"+semico$+negative$+"£("+uk_thousands_std$+uk_decimal_seq$+"00)"+asp$)
-PROCul(f%,4,"£"+uk_thousands_std$+uk_decimal_seq$+"00_"+semico$+negative$+"(£"+uk_thousands_std$+uk_decimal_seq$+"00)"+asp$)
-PROCul(f%,4,"£____"+uk_thousands_seq$+"__0"+uk_decimal_seq$+"00_"+semico$+negative$+"(£___"+uk_thousands_seq$+"__0"+uk_decimal_seq$+"00)"+asp$)
-PROCul(f%,4,"£____"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00_"+semico$+negative$+"(£___"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00)"+asp$)
-REM RISC OS Latin-1 and Windows-1252 Euro symbol, 0x80, is not in standard 8859-1
-REM Just to make life more interesting, 0x80 is in the C1 CtrlChar range so needs escaping
-euro_sign$="\"+CHR$(&80)
-REM It is at a different place, 0xA4, in ISO 8859-15 (Latin-9)
-IF country_fr% THEN euro_sign$=CHR$(&A4)
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00"+semico$+negative$+"-"+euro_sign$+""+thousands_std$+decimal_seq$+"00")
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00"+semico$+negative$+""+euro_sign$+"-"+thousands_std$+decimal_seq$+"00")
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00_"+semico$+negative$+""+euro_sign$+"("+thousands_std$+decimal_seq$+"00)"+asp$)
-PROCul(f%,4,euro_sign$+thousands_std$+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+""+thousands_std$+decimal_seq$+"00)"+asp$)
-PROCul(f%,4,euro_sign$+"____"+thousands_seq$+"__0"+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+"___"+thousands_seq$+"__0"+decimal_seq$+"00)"+asp$)
-PROCul(f%,4,euro_sign$+"____"+thousands_seq$+"__0>"+decimal_seq$+"00_"+semico$+negative$+"("+euro_sign$+"___"+thousands_seq$+"__0>"+decimal_seq$+"00)"+asp$)
-PROCuln(f%,4,"0"+decimal_seq$+"00e+00",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"0"+uk_decimal_seq$+"00e+00",negative$)
-ENDIF
-PROCuln(f%,4,"g0"+decimal_seq$+"##",negative$)
-PROCuln(f%,4,"g0"+decimal_seq$+"###",negative$)
-IF decimal_seq$ <> uk_decimal_seq$ THEN
-  PROCuln(f%,4,"g0"+uk_decimal_seq$+"##",negative$)
-  PROCuln(f%,4,"g0"+uk_decimal_seq$+"###",negative$)
-ENDIF
-PROCul(f%,4,"r#")
-PROCul(f%,4,"R#")
-PROCul(f%,4,"x#")
-PROCul(f%,4,"X#")
-PROCul(f%,4,"#B2")
-PROCul(f%,4,"#B16")
-:
-PROCco(f%,"#:Date and time formats")
-PROCul(f%,5,"hh:mm:ss")
-PROCul(f%,5,"hh:mm")
-PROCul(f%,5,"h:mm ""am"""+semico$+"h:mm ""pm""")
-PROCul(f%,5,"hh:mm:ss dd.mm.yy")
-PROCul(f%,5,"hh:mm:ss dd.mm.yy"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
-PROCul(f%,5,"dd.mm.yy hh:mm:ss")
-PROCul(f%,5,"dd.mm.yy hh:mm:ss"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
-PROCul(f%,5,"dd.mm.yy")
-PROCul(f%,5,"dd/mm/yy")
-PROCul(f%,5,"dd Mmm yy")
-PROCul(f%,5,"Mmm dd, yy")
-PROCul(f%,5,"d Mmm yy")
-PROCul(f%,5,"d Mmmm yy")
-PROCul(f%,5,"Mmmm d, yy")
-PROCul(f%,5,"d Mmmm yyyy")
-IF ending$ <> "" THEN
-  REM ddd only makes sense if you do have day number endings
-  PROCul(f%,5,"ddd Mmmm")
-  PROCul(f%,5,"Mmmm ddd")
-  PROCul(f%,5,"ddd Mmmm yy")
-  PROCul(f%,5,"Mmmm ddd, yy")
-  PROCul(f%,5,"ddd Mmmm yyyy")
-  PROCul(f%,5,"Mmmm ddd, yyyy")
-ENDIF
-PROCul(f%,5,"Mmm yy")
-PROCul(f%,5,"Mmmm yy")
-PROCul(f%,5,"Mmmm yyyy")
-PROCul(f%,5,"yyyy-mm-dd")
-:
-PROCco(f%,"#:Text and error formats")
-PROCul(f%,6,"@")
-err$ = FNselect("ERR","FEHLER")
-PROCul(f%,6,"@"+semico$+err$+" @")
-:
-PROCco(f%,"#:Frequently used functions")
-PROCul(f%,7,"sum")
-PROCul(f%,7,"max")
-PROCul(f%,7,"min")
-PROCul(f%,7,"avg")
-PROCul(f%,7,"if")
-:
-PROCco(f%,"#:Template sort order")
-fwt_suffix$ = ""
-IF windows% THEN fwt_suffix$ = ".fwt"
-PROCul(f%,9,"default"+fwt_suffix$+asp$+"-1")
-PROCul(f%,9,"draft_rz"+fwt_suffix$+asp$+"1")
-PROCul(f%,9,"draft_wz"+fwt_suffix$+asp$+"1")
-IF is_y% THEN
-  PROCul(f%,9,"database"+asp$+"1")
-  PROCul(f%,9,"db_1card"+fwt_suffix$+asp$+"1")
-  PROCul(f%,9,"db_cards"+fwt_suffix$+asp$+"1")
-  PROCul(f%,9,"db_sheet"+fwt_suffix$+asp$+"1")
-  PROCul(f%,9,"draft_db"+fwt_suffix$+asp$+"1")
-ENDIF
-:
-PROCco(f%,"#:Insert field - time formats")
-PROCul(f%,10,"hh:mm")
-PROCul(f%,10,"hh:mm:ss")
-PROCul(f%,10,"h:mm ""am"""+semico$+"h:mm ""pm""")
-ENDPROC
-:
-:
-DEF PROCc(f%, A$, C%)
-IF C% THEN PROCo(f%,A$)
-ENDPROC
-:
-:
-DEF PROCno(f%, A$)
-BPUT#f%,A$;
-ENDPROC
-:
-:
-DEF FNselect(uk$, de$)
-IF country_de% THEN =de$
-=uk$
-:
-:
-REM eat one & if present
-DEF FNeat_escape(A$)
-LOCAL I%
-I% = INSTR(A$, "&")
-IF I% THEN =LEFT$(A$, I%-1) + MID$(A$, I%+1)
-=A$
 :
 :
 DEF FNstringize(ptr%)
@@ -949,14 +116,1227 @@ ptr%?A% = 13
 = $ptr%
 :
 :
-DEF FNreadargs
-LOCAL A$
-SYS "OS_GetEnv" TO A$
-= A$
+REM read & decode command line args
+DEF PROCread_args
+LOCAL env%, ptr%, buflen%
+SYS "OS_GetEnv" TO env%
 :
-DEF PROCraise
-IF NOT raised% THEN raised% = TRUE: ERROR ERR,REPORT$+" at line "+STR$ERL
-ERROR ERR,REPORT$
+buflen% = 511
+DIM buffer% buflen%
+:
+SYS "XOS_ReadArgs","BASIC,quit/K,load/K,output/A/G,product/A,version/A,country/A,windows/S",env%,buffer%,buflen% TO ;PSR%
+IF PSR% AND 1 THEN ERROR 0,"Bad parameters to ConfigGen"
+:
+ptr% = buffer%: ptr% += 3*4: REM Skip BASIC, optional -quit, -load filename
+:
+outfile$ = FNstringizeGS(!ptr%): ptr% += 4
+raw_product$ = FNstringize(!ptr%): ptr% += 4
+version$ = FNstringize(!ptr%): ptr% += 4
+country$ = FNstringize(!ptr%): ptr% += 4
+:
+windows% = FALSE: IF !ptr% THEN windows% = TRUE
+ptr% += 4
+:
+riscos% = NOT windows%
+ENDPROC
+:
+REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ok here we go!
+:
+DEF PROCgenerate(f%)
+:
+PROCVersion(f%)
+:
+IF mpl% THEN PROCmpl(f%)
+:
+PROCco(f%,FNcj("RowTable","1")): REM prevent Config document making a row table
+:
+PROCbind_file_types(f%)
+:
+PROCDefineKey(f%)
+:
+PROCFontmap(f%)
+:
+IF is_y% THEN PROCco(f%,FNcj("Layout-b",FNaj("Sheet",FNaj("0",FNaj("0","5")))))
+:
+root_menu$ = "IconBar": REM root menu names are not translatable
+PROCiconbar_menu(f%,root_menu$)
+:
+root_menu$ = "AutoFunction": REM root menu names are not translatable
+PROCco(f%,FNcj("MenuName",FNaj(root_menu$,"Auto Fns")))
+PROCauto_functions_menu(f%,root_menu$)
+:
+root_menu$ = "Function": REM root menu names are not translatable
+PROCco(f%,FNcj("MenuName",FNaj(root_menu$,"Functions")))
+PROCfunctions_menu(f%,root_menu$,TRUE)
+:
+root_menu$ = "Chart": REM root menu names are not translatable
+PROCco(f%,FNcj("MenuName",FNaj(root_menu$,"Chart")))
+PROCchart_menu(f%,root_menu$)
+:
+root_menu$ = "ChartEdit": REM root menu names are not translatable
+PROCco(f%,FNcj("MenuName",FNaj(root_menu$,"Chart")))
+PROCchartedit_menu(f%,root_menu$)
+:
+root_menu$ = "$": REM root menu names are not translatable
+PROCmain_menu(f%,root_menu$)
+:
+PROCNumformData(f%)
+:
+PROCObjectBindConstruct(f%)
+PROCObjectBindLoader(f%)
+PROCObjectBindSaver(f%)
+:
+PROCPaper(f%)
+:
+PROCco(f%,FNcj("PrintQuality","0"))
+:
+PROCco(f%,FNcj("RulerScale","0"+asp$+"2"+asp$+"5"+asp$+"1"))
+PROCco(f%,FNcj("VRulerScale","0"+asp$+"2"+asp$+"5"+asp$+"1"))
+:
+PROCSSContext(f%)
+:
+PROCui_things(f%)
+:
+ENDPROC
+:
+:
+DEF FNselect(uk$, fr$, de$)
+IF country_de% AND de$<>"" THEN =de$
+IF country_fr% AND fr$<>"" THEN =fr$
+=uk$
+:
+:
+DEF FNriscos(A$)
+LOCAL O$
+IF riscos% THEN
+  O$=A$
+ELSE
+  O$=""
+ENDIF
+=O$
+:
+:
+DEF FNwindows(A$)
+LOCAL O$
+IF windows% THEN
+  O$=A$
+ELSE
+  O$=""
+ENDIF
+=O$
+:
+:
+DEF PROCnl(f%)
+REM Let SVN take care of expansion to CRLF when checked out on Windows
+REM IF windows% THEN BPUT#f%,13
+BPUT#f%,10
+ENDPROC
+:
+:
+DEF PROCno(f%, A$)
+BPUT#f%,A$;
+ENDPROC
+:
+:
+DEF PROCo(f%, A$)
+BPUT#f%,A$;
+PROCnl(f%)
+ENDPROC
+:
+:
+DEF PROCco(f%, A$)
+BPUT#f%,"{"+A$+"}";
+PROCnl(f%)
+ENDPROC
+:
+:
+REM join a command with its args using a semicolon
+DEF FNcj(C$,A$)
+=C$+":"+A$
+:
+:
+REM join two args with an semicolon
+DEF FNaj(L$,R$)
+=L$+asp$+R$
+:
+:
+REM join two strings with an escaped semicolon
+DEF FNsj(L$,R$)
+=L$+semico$+R$
+:
+:
+REM eat one & if present
+DEF FNeat_escape(A$)
+LOCAL I%
+I% = INSTR(A$, "&")
+IF I% THEN =LEFT$(A$, I%-1) + MID$(A$, I%+1)
+=A$
+:
+:
+REM MenuAdd: menu ; text ; key ; command { ; command2 }
+DEF PROCma(f%,M$,T$,K$,C$)
+PROCco(f%,FNcj("MenuAdd",FNaj(M$,FNaj(T$,FNaj(K$,C$)))))
+ENDPROC
+:
+:
+REM Menu > Dialogue Box
+REM Adds ellipsis to the menu text and uses the first command slot
+DEF PROCmD(f%,M$,T$,K$,C$)
+PROCma(f%,M$,T$+ellipsis$,K$,C$)
+ENDPROC
+:
+:
+REM Menu > Dialogue Box (submenu option)
+REM On RISC OS, puts the command in the second command slot to slide off and open as submenu
+DEF PROCmd(f%,M$,T$,K$,C$)
+IF windows% THEN
+  PROCmD(f%,M$,T$,K$,C$)
+ELSE
+  PROCma(f%,M$,T$,K$,asp$+C$)
+ENDIF
+ENDPROC
+:
+:
+DEF PROCmh(f%,M$,T$,A$)
+IF windows% THEN
+  PROCco(f%,FNcj("MenuAdd",FNaj(M$,T$))): REM Windows can't execute clicks on submenu holders so don't put commands on them
+ELSE
+  PROCma(f%,M$,T$,"",A$): REM Don't think that any RISC OS ones have shortcut keys
+ENDIF
+ENDPROC
+:
+:
+REM Menu separator
+DEF PROCms(f%,M$)
+PROCco(f%,FNcj("MenuAdd",M$))
+ENDPROC
+:
+:
+DEF FNwinicap(A$)
+LOCAL O$
+IF windows% THEN
+  O$=CHR$(ASC(A$) AND NOT &20)+MID$(A$,2)
+ELSE
+  O$=A$
+ENDIF
+=O$
+:
+:
+DEF PROCmain_menu(f%, root_menu$)
+btn_alt$ = semico$+"1"
+PROCmain_file_menu(f%,root_menu$)
+PROCmain_view_menu(f%,root_menu$)
+PROCmain_edit_menu(f%,root_menu$)
+PROCmain_style_menu(f%,root_menu$)
+PROCmain_page_menu(f%,root_menu$)
+IF is_y% THEN PROCmain_database_menu(f%,root_menu$)
+PROCmain_extra_menu(f%,root_menu$)
+IF windows% OR TRUE THEN PROChelp_menu(f%,root_menu$,TRUE)
+ENDPROC
+:
+:
+DEF PROCmain_file_menu(f%, root_menu$)
+leaf$ = FNselect("&File","&Fichier","&Datei")
+PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+IF windows% THEN
+  PROCmd(f%,top_menu$,FNselect("&New","&Nouveau","&Neu"),"^N","Button:NEW")
+  PROCmd(f%,top_menu$,FNselect("&Open","&Ouvrir","&Open"),"^O","Button:OPEN")
+  PROCmd(f%,top_menu$,FNselect("&Insert File","","Datei &Einfügen"),"","Button:OPEN"+btn_alt$)
+  PROCms(f%,top_menu$)
+  PROCma(f%,top_menu$,FNselect("&Save","Enregister","&Speichern"),"^S","Button:SAVE")
+  PROCmd(f%,top_menu$,FNselect("Save &As","Enregister sous","Speichern &Als"),"","Button:SAVE"+btn_alt$)
+  PROCmd(f%,top_menu$,FNselect("Save As &Template","Enregister sous Template","Speichern als &Template"),"","SaveAsTemplateIntro")
+  PROCms(f%,top_menu$)
+  PROCmd(f%,top_menu$,FNselect("&Print","Imprimer","Drucken"),"^P","Button:PRINT")
+  PROCmd(f%,top_menu$,FNselect("Print Set&up","","Drucker Set&up"),"","PrintSetup")
+  PROCms(f%,top_menu$)
+  PROCmd(f%,top_menu$,FNselect("C&hoices","Options","Einstellungen"),"","Choices")
+  PROCma(f%,top_menu$,FNselect("E&xit","&Quitter","Beenden"),"","Quit")
+ELSE
+  PROCma(f%,top_menu$,FNselect("Save","Enregister","Speichern"),"F3","Button:SAVE"+btn_alt$+asp$+"Button:SAVE"): REM Uses both command slots
+  leaf$ = FNselect("Save as","Enregister sous","Speichern als")
+  PROCmh(f%,top_menu$,leaf$,""): file_save_as_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+    PROCmd(f%,file_save_as_menu$,FNselect("Document","",""),"",FNcj("SaveAsIntro","0xBDF"))
+    IF is_y% THEN
+    PROCmd(f%,file_save_as_menu$,FNselect("Embedded (OLE)","",""),"",FNcj("SaveAsIntro","0xA78"))
+    ENDIF
+    PROCmD(f%,file_save_as_menu$,FNselect("Template","Template","Template"),"","SaveAsTemplateIntro")
+  leaf$ = FNselect("Export as","Exporter","Exportieren")
+  PROCmh(f%,top_menu$,leaf$,""): file_export_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+    PROCmd(f%,file_export_menu$,FNselect("Plain text","Texte",""),"",FNcj("SaveAsForeignIntro",FNsj("0xFFF",FNselect("TextFile","","TextDatei"))))
+    PROCmd(f%,file_export_menu$,FNselect("Rich text","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xC32","RTF")))
+    PROCmd(f%,file_export_menu$,FNselect("Comma separated","Texte CSV",""),"",FNcj("SaveAsForeignIntro",FNsj("0xDFE","CSV")))
+    IF is_y% THEN
+    PROCmd(f%,file_export_menu$,FNselect("Microsoft Excel","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xBA6","Excel")))
+    ENDIF
+    PROCmd(f%,file_export_menu$,FNselect("Lotus 1-2-3","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xDB0","Lotus123")))
+    PROCms(f%,file_export_menu$)
+    PROCmd(f%,file_export_menu$,FNselect("Drawfile","Draw","Draw"),"",FNcj("SaveAsDrawfileIntro",FNselect("DrawFile","","DrawDatei")))
+  PROCms(f%,top_menu$)
+  PROCmD(f%,top_menu$,FNselect("Print","Imprimer","Drucken"),"Print","Button:PRINT")
+ENDIF
+ENDPROC
+:
+:
+DEF PROCmain_view_menu(f%, root_menu$)
+leaf$ = FNselect("&View","","&Ansicht")
+PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+PROCma(f%,top_menu$,FNselect("&New","&Nouveau","&Neue Ansicht"),"^!V","ViewNew")
+PROCmd(f%,top_menu$,FNselect("&Scale","Scale","Scale"),"","ViewScaleIntro")
+PROCmd(f%,top_menu$,FNselect("C&ontrol","Control","Control"),"^!O","Button:VIEW")
+PROCma(f%,top_menu$,FNselect("&Close","Fermer","&Schließen"),FNriscos("^F2")+FNwindows("^F4"),"ViewCloseReq")
+PROCms(f%,top_menu$)
+leaf$ = FNselect("&Ruler","","&Lineal")
+PROCmh(f%,top_menu$,leaf$,asp$+asp$+FNcj("RulerScale","0"+semico$+"2"+semico$+"5"+semico$+"1")): view_ruler_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCruler(f%,view_ruler_menu$,"RulerScale")
+IF TRUE THEN
+  view_ruler_menu$ = top_menu$
+ELSE
+  PROCms(f%,view_ruler_menu$)
+ENDIF
+  leaf$ = FNselect("&Side "+FNwinicap("ruler"),"","Seiten Lineal")
+  PROCmh(f%,view_ruler_menu$,leaf$,asp$+asp$+FNcj("VRulerScale","0"+semico$+"2"+semico$+"5"+semico$+"1")): view_side_ruler_menu$ = view_ruler_menu$+"."+FNeat_escape(leaf$)
+    PROCruler(f%,view_side_ruler_menu$,"VRulerScale")
+ENDPROC
+:
+:
+DEF PROCmain_edit_menu(f%, root_menu$)
+leaf$ = FNselect("&Edit","","&Bearbeiten")
+PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+PROCma(f%,top_menu$,FNselect("Cu&t","Couper","&Ausschneiden"),"^X","Button:CUT")
+PROCma(f%,top_menu$,FNselect("&Copy","Copier","&Kopieren"),"^C","Button:COPY")
+PROCma(f%,top_menu$,FNselect("&Paste","Coller","Ei&nfügen Zw'ge"),"^V","Button:PASTE")
+PROCma(f%,top_menu$,FNselect("&Delete","Supprimer","&Löschen"),FNriscos("^K"),"Button:CUT"+btn_alt$)
+IF windows% THEN PROCms(f%,top_menu$)
+PROCma(f%,top_menu$,FNselect("Select &"+FNwinicap("all"),"Tout sélectionner",""),"^A","SelectDocument")
+PROCma(f%,top_menu$,FNselect("C&lear "+FNwinicap("selection"),"Effacer la sélection",""),"^Z","SelectionClear"+asp$+asp$+"2")
+PROCms(f%,top_menu$)
+PROCmd(f%,top_menu$,FNselect("&Find","Rechercher","Suchen"),"F4","Button:SEARCH")
+PROCma(f%,top_menu$,FNselect("&Next match","Rechercher le suivant","Nächsten"+FNwinicap("suchen")),FNriscos("^N")+FNwindows("F3"),"Button:SEARCH"+btn_alt$)
+leaf$ = FNselect("Change "+FNwinicap("cas&e"),"","&Groß/klein")
+PROCmh(f%,top_menu$,leaf$,""): edit_case_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,edit_case_menu$,FNselect("&UPPER-CASE","MAJ&USCULE","&Groß"),"","CaseUpper")
+  PROCma(f%,edit_case_menu$,FNselect("&Capitalise Every Word","&Capitaliser Chaque Mot","Jedes Wort Groß"),"","CaseIniCap")
+  PROCma(f%,edit_case_menu$,FNselect("&Toggle "+FNwinicap("case"),"Majusc. <> minusc.","Groß <> klein"),"F9","CaseSwap")
+  PROCma(f%,edit_case_menu$,FNselect("&lower-case","minuscu&le","&klein"),"","CaseLower")
+leaf$ = FNselect("&Insert","&Insérer","&Einfügen")
+PROCmh(f%,top_menu$,leaf$,""): edit_inserts_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,edit_inserts_menu$,FNselect("Page &"+FNwinicap("break"),"Saut de page","Seitenumbruch"),"^!K","InsertPageBreak"+asp$+asp$+"4")
+  PROCms(f%,edit_inserts_menu$)
+  IF windows% THEN
+    PROCmD(f%,edit_inserts_menu$,FNselect("&Picture","&Image","Bild"),"","InsertPicture-f")
+    PROCms(f%,edit_inserts_menu$)
+  ENDIF
+  PROCmD(f%,edit_inserts_menu$,FNselect("&Date","&Date","&Datum"),"^D","Button:INSERT_DATE")
+  PROCmD(f%,edit_inserts_menu$,FNselect("&Time","&Heure","&Zeit"),"^T","Button:INSERT_DATE"+btn_alt$)
+  PROCmD(f%,edit_inserts_menu$,FNselect("&Page "+FNwinicap("number"),"Numéro de page","&Seitenzahl"),"^!P","InsertFieldIntroPage"+asp$+asp$+"16")
+  PROCma(f%,edit_inserts_menu$,FNselect("&Filename","","Dateina&me"),"","InsertFieldLeafname"+asp$+asp$+"16")
+  PROCma(f%,edit_inserts_menu$,FNselect("Pat&hname","","&Pfad"),"","InsertFieldWholename"+asp$+asp$+"16")
+  PROCmd(f%,edit_inserts_menu$,FNselect("&Mail "+FNwinicap("merge ")+FNwinicap("field"),"","Seriendruckfeld"),"","InsertFieldIntroMailMerge-M"+asp$+"16")
+  PROCmD(f%,edit_inserts_menu$,FNselect("&Name","","&Name"),"","NameIntro-S:0"+asp$+asp$+"16")
+  PROCms(f%,edit_inserts_menu$)
+  PROCmd(f%,edit_inserts_menu$,FNselect("T&able","Tableau","T&abelle"),"^!T","Button:TABLE")
+  PROCms(f%,edit_inserts_menu$)
+  leaf$ = FNselect("&Function","&Fonction","&Funktion")
+  PROCmh(f%,edit_inserts_menu$,leaf$,asp$+asp$+"Functions-S"): edit_inserts_function_menu$ = edit_inserts_menu$+"."+FNeat_escape(leaf$)
+  PROCfunctions_menu(f%,edit_inserts_function_menu$,FALSE)
+PROCms(f%,top_menu$)
+leaf$ = FNselect("&Rows","Lignes","&Zeilen")
+PROCmh(f%,top_menu$,leaf$,""): edit_rows_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  REM Don't add explicit number of rows for immediate command as it may operate on selection
+  insert_before$ = FNselect("&Insert "+FNwinicap("before"),"Insérer au-dessus","&Einfügen")
+  add_after$ = FNselect("&Add "+FNwinicap("after"),"Insérer en dessous","&Hinzufügen")
+  IF riscos% THEN
+    PROCma(f%,edit_rows_menu$,insert_before$,"^F7","InsertRows"+asp$+"InsertRowsIntro"+asp$+"4"): REM both command slots
+    PROCma(f%,edit_rows_menu$,add_after$,"","AddRows"+asp$+"AddRowsIntro"+asp$+"4"): REM both command slots
+    PROCma(f%,edit_rows_menu$,FNselect("&Delete","&Supprimer","&Löschen"),"^F8","DeleteRow"+asp$+asp$+"4")
+  ELSE
+    PROCma(f%,edit_rows_menu$,FNselect("&Insert "+FNwinicap("row")+" "+FNwinicap("before"),"Insérer ligne au-dessus","Zeile &Einfügen"),"^F7","InsertRows"+asp$+asp$+"4")
+    PROCma(f%,edit_rows_menu$,FNselect("&Add "+FNwinicap("row")+" "+FNwinicap("after"),"Insérer ligne en dessous","Zeile &Hinzufügen"),"","AddRows"+asp$+asp$+"4")
+    PROCma(f%,edit_rows_menu$,FNselect("&Delete","&Supprimer","&Löschen"),"^F8","DeleteRow"+asp$+asp$+"4")
+    PROCms(f%,edit_rows_menu$)
+    PROCmd(f%,edit_rows_menu$,insert_before$,"","InsertRowsIntro"+asp$+"4")
+    PROCmd(f%,edit_rows_menu$,add_after$,"","AddRowsIntro"+asp$+"4")
+  ENDIF
+leaf$ = FNselect("C&olumns","C&ollones","&Spalten")
+PROCmh(f%,top_menu$,leaf$,""): edit_cols_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  REM Don't add explicit number of columns for immediate command as it may operate on selection
+  insert_before$ = FNselect("&Insert "+FNwinicap("before"),"Insérer avant","&Einfügen")
+  add_after$ = FNselect("&Add "+FNwinicap("after"),"Insérer après","&Hinzufügen")
+  IF riscos% THEN
+    PROCma(f%,edit_cols_menu$,insert_before$,"!F7","InsertColumns"+asp$+"InsertColumnsIntro"+asp$+"4"): REM both command slots
+    PROCma(f%,edit_cols_menu$,add_after$,"","AddColumns"+asp$+"AddColumnsIntro"+asp$+"4"): REM both command slots
+    PROCma(f%,edit_cols_menu$,FNselect("&Delete","&Supprimer","&Löschen"),"!F8","DeleteColumn"+asp$+asp$+"4")
+  ELSE
+    PROCma(f%,edit_cols_menu$,FNselect("&Insert "+FNwinicap("column")+" "+FNwinicap("before"),"Insérer collone avant","Spalte &Einfügen"),"!F7","InsertColumns"+asp$+asp$+"4")
+    PROCma(f%,edit_cols_menu$,FNselect("&Add "+FNwinicap("column")+" "+FNwinicap("after"),"Insérer collone après","Spalte &Hinzufügen"),"","AddColumns"+asp$+asp$+"4")
+    PROCma(f%,edit_cols_menu$,FNselect("&Delete","&Supprimer","&Löschen"),"!F8","DeleteColumn"+asp$+asp$+"4")
+    PROCms(f%,edit_cols_menu$)
+    PROCmd(f%,edit_cols_menu$,insert_before$,"","InsertColumnsIntro"+asp$+"4")
+    PROCmd(f%,edit_cols_menu$,add_after$,"","AddColumnsIntro"+asp$+"4")
+  ENDIF
+leaf$ = FNselect("Fill "+FNwinicap("cell&s"),"","Replizieren Zelle")
+PROCmh(f%,top_menu$,leaf$,""): edit_fill_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,edit_fill_menu$,FNselect("Down","","nach unten"),"","Button:FILL_DOWN")
+  PROCma(f%,edit_fill_menu$,FNselect("Right","","nach rechts"),"","Button:FILL_RIGHT")
+  PROCma(f%,edit_fill_menu$,FNselect("Up","","nach oben"),"","Button:FILL_DOWN"+btn_alt$)
+  PROCma(f%,edit_fill_menu$,FNselect("Left","","nach links"),"","Button:FILL_RIGHT"+btn_alt$)
+leaf$ = FNselect("&Make "+FNwinicap("cells"),"","&Machen")
+PROCmh(f%,top_menu$,leaf$,""): edit_make_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,edit_make_menu$,FNselect("&Blank","","&leeren"),"","BlockClear"+asp$+asp$+"4")
+  PROCma(f%,edit_make_menu$,FNselect("&Constant","","&Konstante"),"","Button:MAKE_CONSTANT")
+  PROCma(f%,edit_make_menu$,FNselect("&Number","","&Zahl"),"","Button:MAKE_NUMBER")
+  PROCma(f%,edit_make_menu$,FNselect("&Text","&Texte","&Text"),"","Button:MAKE_TEXT")
+PROCmd(f%,top_menu$,FNselect("&Go to","",""),"F5","GoToIntro"+asp$+"4")
+PROCmd(f%,top_menu$,FNselect("Sor&t","&Trier","Sor&t"),"F6","Button:SORT")
+ENDPROC
+:
+:
+DEF PROCmain_style_menu(f%, root_menu$)
+leaf$ = FNselect("&Style","","&Stil")
+PROCmh(f%,root_menu$,leaf$,asp$+asp$+"Button:STYLE"): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+PROCmD(f%,top_menu$,FNselect("&Styles","&Styles","&Stile"),"^!S","Button:STYLE")
+leaf$ = FNselect("&Effects","","&Effekte")
+PROCmh(f%,top_menu$,leaf$,""): style_effects_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCmD(f%,style_effects_menu$,FNselect("&Effects","","&Effekte"),"^!E","Button:EFFECTS")
+  PROCma(f%,style_effects_menu$,FNselect("&Bold","Gras","&Fett"),FNselect("^B","^B","^F"),"Button:BOLD")
+  PROCma(f%,style_effects_menu$,FNselect("&Italic","Italique","Kurs&iv"),FNselect("^I","^I","^I"),"Button:ITALIC")
+  PROCma(f%,style_effects_menu$,FNselect("&Underline","Soulineage","&Unterstreichen"),FNselect("^!U","","^!U"),"Button:UNDERLINE")
+  PROCma(f%,style_effects_menu$,FNselect("&Superscript","Exposant","Hochstellen"),FNselect("^!Q","",""),"Button:SUPERSCRIPT")
+  PROCma(f%,style_effects_menu$,FNselect("Subs&cript","Indice","Tiefstellen"),FNselect("^!W","",""),"Button:SUBSCRIPT")
+  leaf$ = FNselect("&Justify","Aligner","")
+  PROCmh(f%,style_effects_menu$,leaf$,""): style_effects_justify_menu$ = style_effects_menu$+"."+FNeat_escape(leaf$)
+    PROCma(f%,style_effects_justify_menu$,FNselect("Left","Aligner à gauche","Links"),FNselect("^L","^L","^L"),"Button:JUSTIFY_LEFT")
+    PROCma(f%,style_effects_justify_menu$,FNselect("Centre","Centrer","Mittel"),FNselect("^E","^E","^E"),"Button:JUSTIFY_CENTRE")
+    PROCma(f%,style_effects_justify_menu$,FNselect("Right","Aligner à droite","Rechts"),FNselect("^R","^R","^R"),"Button:JUSTIFY_RIGHT")
+    PROCma(f%,style_effects_justify_menu$,FNselect("Full","Justifié","Voll"),FNselect("^J","^J","^J"),"Button:JUSTIFY_FULL")
+leaf$ = FNselect("&Regions","","&Regionen")
+PROCmh(f%,top_menu$,leaf$,""): style_regions_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,style_regions_menu$,FNselect("C&ount","","&Zählen"),"","StyleRegionCount"+asp$+asp$+"2")
+  PROCma(f%,style_regions_menu$,FNselect("&Clear","","&Leeren"),"","StyleRegionClear"+asp$+asp$+"2")
+  PROCmD(f%,style_regions_menu$,FNselect("&Edit","","&Bearbeiten"),FNselect("^Q","",""),"StyleRegionEdit"+asp$+asp$+"16")
+PROCmD(f%,top_menu$,FNselect("&Box","","R&ahmen"),"^!X","Button:BOX")
+ENDPROC
+:
+:
+DEF PROCmain_page_menu(f%, root_menu$)
+leaf$ = FNselect("&Page","","&Seite")
+PROCmh(f%,root_menu$,leaf$,asp$+asp$+"PageHefoBreakIntro-H"): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+PROCmD(f%,top_menu$,FNselect("&Pages","","&Seiten"),"","PageHefoBreakIntro-H")
+PROCmd(f%,top_menu$,FNselect("P&aper","","&Papier"),"","PaperIntro")
+PROCmd(f%,top_menu$,FNselect("Print &"+FNwinicap("scale"),"","&Größe"),"","PaperScaleIntro")
+ENDPROC
+:
+:
+DEF PROCmain_database_menu(f%, root_menu$)
+leaf$ = FNselect("&Database","","&Datenbank")
+PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+PROCmD(f%,top_menu$,FNselect("Create","","Erstellen"),"","DBCreate-B"+asp$+asp$+"15")
+PROCmD(f%,top_menu$,FNselect("Layout","",""),"","Button:DB_LAYOUT")
+PROCmD(f%,top_menu$,FNselect("Properties","","Eigenschaften"),"","Button:DB_PROP")
+PROCmD(f%,top_menu$,FNselect("Search","Rechercher","Suchen"),"!F4","Button:DB_SEARCH")
+PROCmD(f%,top_menu$,FNselect("Queries","","")+ellipsis$,"^F4","DBView-B"+asp$+asp$+"14")
+PROCmD(f%,top_menu$,FNselect("Sort","Trier","Sortieren"),"!F6","Button:DB_SORT")
+PROCma(f%,top_menu$,FNselect("Close","","Schließen"),"","DBClose-B"+asp$+asp$+"14")
+PROCmD(f%,top_menu$,FNselect("Export","","Exportieren"),"","DBExport-B"+asp$+asp$+"14")
+leaf$ = FNselect("Record","","")
+PROCmh(f%,top_menu$,leaf$,asp$+asp$+"Button:DB_GOTO"): database_record_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,database_record_menu$,FNselect("Goto","Aller","Goto"),"","Button:DB_GOTO")
+  PROCma(f%,database_record_menu$,FNselect("Copy","Copier","Kopieren"),"","Button:DB_COPY")
+  PROCma(f%,database_record_menu$,FNselect("Add","","Hinzufügen"),"","Button:DB_ADD")
+  PROCmD(f%,database_record_menu$,FNselect("Delete","Supprimer","Löschen"),"","Button:DB_DEL")
+ENDPROC
+:
+:
+DEF PROCmain_extra_menu(f%, root_menu$)
+leaf$ = FNselect("E&xtra","Outils","E&xtra")
+PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+leaf$ = FNselect("&Chart","Diagramme","&Chart")
+PROCmh(f%,top_menu$,leaf$,""): extra_chart_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCchart_menu(f%,extra_chart_menu$)
+leaf$ = FNselect("&Pictures","&Images","&Bilder")
+PROCmh(f%,top_menu$,leaf$,""): extra_pictures_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,extra_pictures_menu$,FNselect("&Embed "+FNwinicap("picture"),"Insérer image","Bilder &einbetten"),"","NoteEmbed"+asp$+asp$+"11")
+  PROCmD(f%,extra_pictures_menu$,FNselect("&Save "+FNwinicap("picture"),"Enregister image","&Sichern bild"),"","SavePictureIntro"+asp$+asp$+"11")
+  PROCms(f%,extra_pictures_menu$)
+  PROCma(f%,extra_pictures_menu$,FNselect("Send to &"+FNwinicap("back"),"Vers la arrière","Nach &hinten"),"","NoteBack"+asp$+asp$+"11")
+  PROCma(f%,extra_pictures_menu$,FNselect("S&wap "+FNwinicap("front")+"/"+FNwinicap("back"),"","&Tauschen"),"","NoteSwap"+asp$+asp$+"10")
+  PROCmd(f%,extra_pictures_menu$,FNselect("B&ackdrop","",""),"","BackdropIntro"+asp$+"12")
+leaf$ = FNselect("&Sheet","","&Sheet")
+PROCmh(f%,top_menu$,leaf$,asp$+asp$+""): extra_sheet_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  REM leaf$ = FNselect("&Functions","&Fonction","&Funktion")
+  REM PROCmh(f%,extra_sheet_menu$,leaf$,asp$+asp$+"Functions-S"): extra_sheet_functions_menu$ = extra_sheet_menu$+"."+FNeat_escape(leaf$)
+  REM PROCfunctions_menu(f%,extra_sheet_functions_menu$,FALSE)
+  PROCmD(f%,extra_sheet_menu$,FNselect("&Names","","&Namen"),"",FNcj("NameIntro-S","1"))
+  PROCma(f%,extra_sheet_menu$,FNselect("&Recalculate","","Neube&rechnen"),"","ForceRecalc"): REM was ;;2
+  PROCma(f%,extra_sheet_menu$,FNselect("Recalculate &"+FNwinicap("all"),"","Neuberechnen &"+FNwinicap("alle")),"",FNcj("ForceRecalc","*")): REM was ;;2
+leaf$ = FNselect("&Text","&Texte","&Text")
+PROCmh(f%,top_menu$,leaf$,asp$+asp$+""): extra_text_menu$ = top_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,extra_text_menu$,FNselect("Count &"+FNwinicap("words"),"","Wörter &"+FNwinicap("zählen")),"","WordCount")
+  leaf$ = FNselect("&Mail "+FNwinicap("merge"),"","Seriendruck")
+  PROCmh(f%,extra_text_menu$,leaf$,asp$+asp$+"MailshotField-M"): extra_text_mail_merge_menu$ = extra_text_menu$+"."+FNeat_escape(leaf$)
+    PROCmD(f%,extra_text_mail_merge_menu$,FNselect("&Select "+FNwinicap("source"),"","&Auswählen"),"","MailshotSelect-M"+asp$+asp$+"16")
+    PROCmd(f%,extra_text_mail_merge_menu$,FNselect("&Insert "+FNwinicap("field"),"","Feld &"+FNwinicap("einfügen")),"","InsertFieldIntroMailMerge-M"+asp$+asp$+"16")
+  leaf$ = FNselect("&Spell","&Othographe","Recht&schreibung")
+  PROCmh(f%,extra_text_menu$,leaf$,asp$+asp$+"SpellCheck-W"): extra_text_spell_menu$ = extra_text_menu$+"."+FNeat_escape(leaf$)
+    PROCma(f%,extra_text_spell_menu$,FNselect("&Check","","&Check"),"","Button:CHECK")
+    PROCmD(f%,extra_text_spell_menu$,FNselect("&Dictionary","&Dictonnaire","&Wörterbuch"),"","Button:CHECK"+btn_alt$)
+  IF riscos% THEN
+    PROCma(f%,extra_text_menu$,FNselect("Thesaurus","","Thesaurus"),FNselect("","",""),"Button:THESAURUS")
+  ENDIF
+IF FALSE THEN PROCma(f%,top_menu$,FNselect("&Test","Test","Test"),asp$+asp$+"Test")
+ENDPROC
+:
+:
+DEF PROChelp_menu(f%, root_menu$, main_window%)
+LOCAL leaf$, top_menu$
+IF windows% THEN
+  leaf$ = FNselect("&Help","&Aide","&Hilfe")
+  PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+  help_key$ = "": IF main_window% THEN help_key$ = "F1"
+  PROCma(f%,top_menu$,FNselect("Contents","Aide","Hilfe"),help_key$,FNcj("HelpContents","firewrkz.chm"))
+  PROCmd(f%,top_menu$,FNselect("Search for Help On","Aide rechercher","Hilfe suchen"),"",FNcj("HelpSearchKeyword","firewrkz.chm"))
+  PROCms(f%,top_menu$)
+  PROCmd(f%,top_menu$,FNselect("Fireworkz on the Web","Fireworkz en ligne","Fireworkz Webseite"),"",FNcj("HelpURL","http://groups.google.com/group/colton-software-fireworkz"))
+  PROCms(f%,top_menu$)
+  PROCmd(f%,top_menu$,FNselect("About Fireworkz","À propos de Fireworkz","Über Fireworkz"),"","Info")
+ELSE
+  help_key$ = "": IF main_window% THEN help_key$ = "F1"
+  PROCmD(f%,root_menu$,FNselect("&Help","&Aide","&Hilfe"),help_key$,"HelpContents")
+ENDIF
+ENDPROC
+:
+:
+DEF PROCiconbar_menu(f%, root_menu$)
+IF windows% THEN
+  REM leaf$ = FNselect("&File","&Fichier","&Datei")
+  REM PROCmh(f%,root_menu$,leaf$,""): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+  REM PROCmd(f%,top_menu$,FNselect("&New","&Nouveau","&Neu"),"","Button:NEW")
+  REM PROCmd(f%,top_menu$,FNselect("&Open","&Ouvrir","&Open"),"","Button:OPEN")
+  REM PROCms(f%,top_menu$)
+  REM PROCmd(f%,top_menu$,FNselect("C&hoices","Options","Einstellungen"),"","Choices")
+  REM PROCma(f%,top_menu$,FNselect("E&xit","&Quitter","Beenden"),asp$+asp$+"Quit")
+  :
+  REM PROChelp_menu(f%,root_menu$,FALSE)
+ELSE
+  PROCmd(f%,root_menu$,FNselect("Info","À propos","Info"),"","Info")
+  PROChelp_menu(f%,root_menu$,FALSE)
+  PROCmD(f%,root_menu$,FNselect("Choices","Options","Einstellungen"),"","Choices")
+  PROCma(f%,root_menu$,FNselect("Quit","&Quitter","Beenden"),"","Quit")
+ENDIF
+ENDPROC
+:
+:
+DEF PROCchart_menu(f%, root_menu$)
+PROCmd(f%,root_menu$,FNselect("&Bar","Colonne","&Säule"),"",FNcj("Gallery-C","0")+asp$+"6")
+PROCmd(f%,root_menu$,FNselect("&Line","Ligne","&Linie"),"",FNcj("Gallery-C","1")+asp$+"6")
+PROCmd(f%,root_menu$,FNselect("&Pie","Secteur","&Kuchen"),"",FNcj("Gallery-C","2")+asp$+"6")
+PROCmd(f%,root_menu$,FNselect("&X-Y","&X-Y","&X-Y"),"",FNcj("Gallery-C","3")+asp$+"6")
+PROCmd(f%,root_menu$,FNselect("&Overlay","","&Overlay"),"",FNcj("Gallery-C","4")+asp$+"6")
+PROCma(f%,root_menu$,FNselect("&Add","Insérer","&Hinzuf."),"",FNcj("Gallery-C","5")+asp$+asp$+"6")
+ENDPROC
+:
+:
+DEF PROCchartedit_menu(f%, root_menu$)
+leaf$ = FNselect("&Edit","","&Bearbeiten")
+PROCmh(f%,root_menu$,leaf$,asp$+asp$+FNcj("ChartEdit-C","-1")): chartedit_edit_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+  IF windows% THEN
+    PROCmd(f%,chartedit_edit_menu$,FNselect("&Insert picture","&Insérer image","Bild einfügen"),"",FNcj("InsertPicture-f","6"))
+    PROCms(f%,chartedit_edit_menu$)
+  ENDIF
+  PROCmD(f%,chartedit_edit_menu$,FNselect("&Chart","&Diagramme","&Chart"),"",FNcj("ChartEdit-C","2"))
+  PROCmD(f%,chartedit_edit_menu$,FNselect("&Axis","&Axe","&Axen"),"",FNcj("ChartEdit-C","0"))
+  PROCmD(f%,chartedit_edit_menu$,FNselect("&Series","&Séries","&Serien"),"",FNcj("ChartEdit-C","1"))
+  PROCmD(f%,chartedit_edit_menu$,FNselect("&Legend","&Légende","&Legend"),"",FNcj("ChartEditX-C","0"))
+leaf$ = FNselect("&Style","&Style","&Stil")
+PROCmh(f%,root_menu$,leaf$,asp$+asp$+FNcj("ChartStyle-C","-1")): chartedit_style_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+  PROCmD(f%,chartedit_style_menu$,FNselect("&Fill","","&Füll"),"",FNcj("ChartStyle-C","2"))
+  PROCmD(f%,chartedit_style_menu$,FNselect("&Line","&Ligne","&Linie"),"",FNcj("ChartStyle-C","1"))
+  PROCmD(f%,chartedit_style_menu$,FNselect("&Text","&Texte","&Text"),"",FNcj("ChartStyle-C","0"))
+PROCmD(f%,root_menu$,FNselect("&Margins","","&Ränder"),"",FNcj("ChartEditX-C","1"))
+ENDPROC
+:
+:
+DEF PROCauto_functions_menu(f%, root_menu$)
+LOCAL leaf$, top_menu$
+top_menu$ = root_menu$
+PROCma(f%,top_menu$,FNselect("Sum","",""),"","AutoFunction:SUM")
+PROCma(f%,top_menu$,FNselect("Average","","Mittlewert"),"","AutoFunction:AVG")
+PROCma(f%,top_menu$,FNselect("Minimum","",""),"","AutoFunction:MIN")
+PROCma(f%,top_menu$,FNselect("Maximum","",""),"","AutoFunction:MAX")
+PROCma(f%,top_menu$,FNselect("Count","","Anzahl"),"","AutoFunction:COUNT")
+ENDPROC
+:
+:
+DEF PROCfunctions_menu(f%, root_menu$, submenu%)
+LOCAL leaf$, top_menu$
+PROCmD(f%,root_menu$,FNselect("&Quick","","Schnell"),"",FNcj("Functions-S","-1"))
+IF submenu% THEN
+  leaf$ = FNselect("&Categories","&Catégorie","&Kategorien")
+  PROCmh(f%,root_menu$,leaf$,asp$+asp$+"Functions-S"): top_menu$ = root_menu$+"."+FNeat_escape(leaf$)
+ELSE
+  top_menu$ = root_menu$
+ENDIF
+PROCmD(f%,top_menu$,FNselect("&All","Toutes","&Alle"),"","Functions-S")
+PROCmD(f%,top_menu$,FNselect("&Custom control","","Allgemeine Ctrl"),"",FNcj("Functions-S","10"))
+PROCmD(f%,top_menu$,FNselect("&Database","","&Datenbank"),"",FNcj("Functions-S","1"))
+PROCmD(f%,top_menu$,FNselect("Dat&e and time","Date et Heure","Datum / &Zeit"),"",FNcj("Functions-S","2"))
+PROCmD(f%,top_menu$,FNselect("Eng&ineering","","Techni&k"),"",FNcj("Functions-S","0"))
+PROCmD(f%,top_menu$,FNselect("&Financial","&Financière","&Finanziel"),"",FNcj("Functions-S","3"))
+PROCmD(f%,top_menu$,FNselect("L&ogical","L&ogique","L&ogisch"),"",FNcj("Functions-S","13"))
+PROCmD(f%,top_menu$,FNselect("&Lookup","","&Lookup"),"",FNcj("Functions-S","11"))
+PROCmD(f%,top_menu$,FNselect("&Mathematical","&Mathématique","&Mathematik"),"",FNcj("Functions-S","4"))
+PROCmD(f%,top_menu$,FNselect("Mat&rix","Mat&rice","Mat&rix"),"",FNcj("Functions-S","5"))
+PROCmD(f%,top_menu$,FNselect("Miscellane&ous","","&Oberflächen"),"",FNcj("Functions-S","6"))
+PROCmD(f%,top_menu$,FNselect("&Statistical","Statistique","&Statistik"),"",FNcj("Functions-S","7"))
+PROCmD(f%,top_menu$,FNselect("Strin&g","Texte","Strin&g"),"",FNcj("Functions-S","8"))
+PROCmD(f%,top_menu$,FNselect("&Trigonometrical","&Trigonométrique","&Trigonometrisch"),"",FNcj("Functions-S","9"))
+PROCmD(f%,top_menu$,FNselect("Compatibilit&y","",""),"",FNcj("Functions-S","14"))
+PROCms(f%,root_menu$)
+PROCmD(f%,root_menu$,FNselect("C&ustom","","Benutzerdefinierte"),"",FNcj("Functions-S","12"))
+IF submenu% THEN
+  PROCms(f%,root_menu$)
+  PROCmD(f%,root_menu$,FNselect("&Names","","&Namen"),"",FNcj("NameIntro-S","1"))
+ENDIF
+ENDPROC
+:
+:
+REM mask, filetype, description, Windows extension(s) suffix, Windows filter wildcard
+DEF PROCbind_file_type(f%, A$, T$, D$, E$, F$)
+IF windows% THEN
+  IF E$ <> "" THEN E$ = "("+E$+")"
+  PROCco(f%,FNcj("BindFileType",A$+asp$+T$+asp$+D$+asp$+E$+asp$+F$))
+ELSE
+  PROCco(f%,FNcj("BindFileType",A$+asp$+T$+asp$+D$))
+ENDIF
+ENDPROC
+:
+:
+DEF PROCbind_file_types(f%)
+colton_prefix$ = ""
+IF windows% THEN colton_prefix$ = "Colton Software "
+IF windows% THEN PROCbind_file_type(f%,"1","0","All files","*.*","*.*")
+PROCbind_file_type(f%,"1","0xBDF",colton_prefix$+"Fireworkz","*.fwk,*.fwkh","*.fwk"+semico$+"*.fwkh")
+PROCbind_file_type(f%,"2","0xBDF",colton_prefix$+"Fireworkz","*.fwk","*.fwk")
+IF is_y% THEN
+PROCbind_file_type(f%,"2","0xA78","Embedded (OLE)","*.fwkh","*.fwkh")
+ENDIF
+PROCbind_file_type(f%,"3","0xC1D",colton_prefix$+"Fireworkz template","*.fwt","*.fwt")
+PROCco(f%,"#:Foreign file formats")
+PROCbind_file_type(f%,"3","0xFFF","Plain text","*.txt","*.txt")
+PROCbind_file_type(f%,"3","0xC32","Rich text format","*.rtf","*.rtf")
+PROCbind_file_type(f%,"3","0xDFE","Comma separated values","*.csv","*.csv")
+IF is_y% OR windows% THEN
+PROCbind_file_type(f%,"3","0xBA6","Microsoft Excel","*.xls","*.xls")
+ELSE
+PROCbind_file_type(f%,"1","0xBA6","Microsoft Excel","*.xls","*.xls")
+ENDIF
+PROCbind_file_type(f%,"1","0xDB0","Lotus 1-2-3","*.wk1,*.wk3.*.wks","*.wk1"+semico$+"*.wk3"+semico$+"*.wks")
+PROCbind_file_type(f%,"2","0xDB0","Lotus 1-2-3","*.wk1","*.wk1")
+PROCbind_file_type(f%,"1","0xDDE",colton_prefix$+"PipeDream","*.pd","*.pd")
+IF is_y% THEN
+  PROCbind_file_type(f%,"1","0xC27","R-Comp Datapower","*.dpf","*.dpf")
+  PROCbind_file_type(f%,"1","0xC28","R-Comp DatapowerQ","*.dpq","*.dpq")
+ENDIF
+PROCbind_file_type(f%,"1","0xAF8","GST 1st Word Plus","*.fwp","*.fwp")
+PROCbind_file_type(f%,"1","0xC7D","SID","*.sid","*.sid")
+PROCco(f%,"#:Image file formats")
+IF windows% THEN
+  all_pictures_filter$ =                              "*.jpg"+semico$+"*.jpeg"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.png"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.tif"+semico$+"*.tiff"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.gif"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.pcd"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.bmp"+semico$+"*.dib"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.ico"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.emf"+semico$+"*.wmf"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.aff"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.ff9"
+  all_pictures_filter$ = all_pictures_filter$+semico$+"*.fwkh"
+  PROCbind_file_type(f%,"4","0","All pictures","",all_pictures_filter$)
+ENDIF
+PROCbind_file_type(f%,"12","0xC85","JPEG/JFIF","*.jpg,*.jpeg","*.jpg"+semico$+"*.jpeg")
+PROCbind_file_type(f%,"12","0xB60","PNG","*.png","*.png")
+PROCbind_file_type(f%,"12","0xFF0","TIFF","*.tif,*.tiff","*.tif"+semico$+"*.tiff")
+PROCbind_file_type(f%,"12","0x695","Graphics Interchange Format","*.gif","*.gif")
+PROCbind_file_type(f%,"12","0xBE8","Kodak Photo CD","*.pcd","*.pcd")
+PROCbind_file_type(f%,"12","0x69C","Windows Bitmap","*.bmp,*.dib","*.bmp"+semico$+"*.dib")
+PROCbind_file_type(f%,"12","0x132","Windows Icon","*.ico","*.ico")
+PROCbind_file_type(f%,"12","0xB2F","Windows Metafile","*.emf,*.wmf","*.emf"+semico$+"*.wmf")
+PROCbind_file_type(f%,"12","0xFF9","RISC OS Sprite","*.ff9","*.ff9")
+PROCbind_file_type(f%,"14","0xAFF","RISC OS Draw","*.aff","*.aff")
+PROCbind_file_type(f%,"12","0xA78","Embedded (OLE)","*.fwkh","*.fwkh")
+ENDPROC
+:
+:
+DEF PROCdk(f%,K$,C$)
+IF K$ <> "" PROCco(f%,FNcj("DefineKey",FNaj(K$,C$)))
+ENDPROC
+:
+:
+DEF PROCDefineKey(f%)
+REM Many keys are defined on menu entries
+LOCAL K$
+REM Function keys
+K$ = "F2": PROCdk(f%,K$,"EditFormula-s")
+K$ = "!F9": PROCdk(f%,K$,"SelectCell")
+:
+REM Ctrl-Letter
+K$ = FNselect("^F","",""): PROCdk(f%,K$,"Button:SEARCH")
+ENDIF
+IF riscos% THEN
+  K$ = FNselect("^P","",""): PROCdk(f%,K$,"SelectCell")
+  K$ = FNselect("^S","",""): PROCdk(f%,K$,"CaseSwap")
+ENDIF
+K$ = FNselect("^U","",""): PROCdk(f%,K$,"DeleteLine")
+K$ = FNselect("^W","",""): PROCdk(f%,K$,"SelectWord")
+:
+REM Ctrl-Shift-Letter
+IF riscos% THEN
+  K$ = FNselect("^!N","",""): PROCdk(f%,K$,"Button:NEW"): REM ^N in Windows File menu
+ENDIF
+K$ = FNselect("^!L","",""): PROCdk(f%,K$,"Button:JUSTIFY_LEFT"): REM Old key mappings for justify
+K$ = FNselect("^!C","",""): PROCdk(f%,K$,"Button:JUSTIFY_CENTRE")
+K$ = FNselect("^!R","",""): PROCdk(f%,K$,"Button:JUSTIFY_RIGHT")
+K$ = FNselect("^!F","",""): PROCdk(f%,K$,"Button:JUSTIFY_FULL")
+K$ = FNselect("^!Z","",""): PROCdk(f%,K$,"Button:CHART")
+ENDPROC
+:
+:
+DEF FNriscos_fontset(base$,normal$,bold$,italic$)
+REM generates riscos-normal;riscos-bold;riscos-italic;riscos-bold-italic set
+=FNaj(base$+"."+normal$,FNaj(base$+"."+bold$,FNaj(base$+"."+normal$+"."+italic$,base$+"."+bold$+"."+italic$)))
+:
+:
+DEF PROCFontmap(f%)
+PROCco(f%,FNcj("#",FNcj("Fontmap","portable-name;RTF-class;RTF-class-master;host-base-name;host-normal;host-bold;host-italic;host-bold-italic;riscos-normal;riscos-bold;riscos-italic;riscos-bold-italic")))
+PROCco(f%,FNcj("#","portable-name is used in files")): REM and most data structures
+PROCco(f%,FNcj("#","host-base-name appears in user interface"))
+PROCco(f%,FNcj("#","host-normal and variants are only needed on RISC OS where a full font name cannot always be deduced"))
+PROCco(f%,FNcj("#","riscos-normal and variants are only needed on non-RISC OS platforms for Draw files (including charts)"))
+IF windows% THEN
+  PROCco(f%,FNcj("Fontmap",FNaj("AvantGarde",FNaj(FNaj("swiss",""),FNaj("Century Gothic",";;;;"+FNriscos_fontset("Clare","Medium","Demi","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Bookman",FNaj(FNaj("roman",""),FNaj("Bookman Old Style",";;;;"+FNriscos_fontset("Robinson","Light","Demi","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Courier",FNaj(FNaj("modern","1"),FNaj("Courier New",";;;;"+FNriscos_fontset("Corpus","Medium","Bold","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Helvetica",FNaj(FNaj("swiss","1"),FNaj("Arial",";;;;"+FNriscos_fontset("Homerton","Medium","Bold","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Helvetica-Narrow",FNaj(FNaj("swiss",""),FNaj("Arial Narrow",";;;;"+FNriscos_fontset("Homerton","Narrow","Narrow.Bold","Oblique")))))): REM Oddball
+  PROCco(f%,FNcj("Fontmap",FNaj("NewCenturySchlbk",FNaj(FNaj("roman",""),FNaj("Century Schoolbook",";;;;"+FNriscos_fontset("NewHall","Medium","Bold","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Palatino",FNaj(FNaj("roman",""),FNaj("Palatino Linotype",";;;;"+FNriscos_fontset("Pembroke","Medium","Bold","Italic")))))): REM family was Book Antiqua
+  PROCco(f%,FNcj("Fontmap",FNaj("Symbol",FNaj(FNaj("tech","1"),FNaj("Symbol",";;;;"+"Sidney")))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Times",FNaj(FNaj("roman","1"),FNaj("Times New Roman",";;;;"+FNriscos_fontset("Trinity","Medium","Bold","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("ZapfChancery",FNaj(FNaj("modern",""),FNaj("Monotype Corsiva",";;;;"+"Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic")))))
+  PROCco(f%,FNcj("Fontmap",FNaj("ZapfDingbats",FNaj(FNaj("decor","1"),FNaj("Monotype Sorts",";;;;"+"Selwyn")))))
+ELSE
+  PROCco(f%,FNcj("Fontmap",FNaj("AvantGarde",FNaj(FNaj("swiss",""),FNaj("Clare",FNriscos_fontset("Clare","Medium","Demi","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Bookman",FNaj(FNaj("roman",""),FNaj("Robinson",FNriscos_fontset("Robinson","Light","Demi","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Courier",FNaj(FNaj("modern","1"),FNaj("Corpus",FNriscos_fontset("Corpus","Medium","Bold","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Helvetica",FNaj(FNaj("swiss","1"),FNaj("Homerton",FNriscos_fontset("Homerton","Medium","Bold","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Helvetica-Narrow",FNaj(FNaj("swiss",""),FNaj("Homerton.Narrow",FNriscos_fontset("Homerton","Narrow","Narrow.Bold","Oblique"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("NewCenturySchlbk",FNaj(FNaj("roman",""),FNaj("NewHall",FNriscos_fontset("NewHall","Medium","Bold","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Palatino",FNaj(FNaj("roman",""),FNaj("Pembroke",FNriscos_fontset("Pembroke","Medium","Bold","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Symbol",FNaj(FNaj("tech","1"),FNaj("Sidney","Sidney")))))
+  PROCco(f%,FNcj("Fontmap",FNaj("Times",FNaj(FNaj("roman","1"),FNaj("Trinity",FNriscos_fontset("Trinity","Medium","Bold","Italic"))))))
+  PROCco(f%,FNcj("Fontmap",FNaj("ZapfChancery",FNaj(FNaj("script","1"),FNaj("Churchill","Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic;Churchill.Medium.Italic")))))
+  PROCco(f%,FNcj("Fontmap",FNaj("ZapfDingbats",FNaj(FNaj("decor","1"),FNaj("Selwyn","Selwyn")))))
+ENDIF
+PROCco(f%,"FontmapEnd")
+:
+PROCco(f%,FNcj("#","Fix earlier Windows font mapping error"))
+PROCco(f%,FNcj("FontmapRemap",FNaj("Helvetica-Narrow","HelveticaNarrow")))
+PROCco(f%,FNcj("#","Fix earlier Windows font mapping"))
+PROCco(f%,FNcj("FontmapRemap",FNaj("Palatino","Palatino Linotype")))
+ENDPROC
+:
+:
+DEF PROCmpl(f%)
+PROCco(f%, FNcj("#","This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/."))
+PROCco(f%, FNcj("#","Copyright (C) 1993-1998 Colton Software Limited, Copyright (C) 1998-2015 R W Colton"))
+ENDPROC
+:
+:
+DEF PROCNumformData(f%)
+months$ = "january february march april may june july august september october november december"
+days$   = "sunday monday tuesday wednesday thursday friday saturday"
+ending$ = " " + "st nd rd th th th th th th th th th th th th th th th th th st nd rd th th th th th th th st"
+IF country_de% THEN
+  months$ = "januar februar märz april mai juni juli august september oktober november dezember"
+  days$   = "sonntag montag dienstag mittwoch donnerstag freitag samstag"
+  ending$ = ""
+ENDIF
+IF country_fr% THEN
+  months$ = "janvier février mars avril mai juin juillet août septembre octobre novembre décembre"
+  days$   = "dimanche lundi mardi mercredi jeudi vendredi samedi"
+  ending$ = ""
+ENDIF
+PROCco(f%,FNcj("NumformData",months$+" "+days$+ending$))
+ENDPROC
+:
+:
+DEF PROCObjectBindConstruct(f%)
+PROCco(f%,FNcj("#",FNcj("ObjectBindConstruct",FNaj("object-id","command-suffix-character"))))
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("0","*")))
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("1","S"))):  REM ob_ss
+IF is_y% THEN
+  PROCco(f%,FNcj("ObjectBindConstruct",FNaj("2","B"))): REM ob_rec
+ENDIF
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("3","X"))):  REM ob_text
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("4","D"))):  REM ob_draw
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("6","C"))):  REM ob_chart
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("7","H"))):  REM ob_hefo
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("8","W"))):  REM ob_spell
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("14","s"))): REM ob_sle
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("17","d"))): REM ob_drwio
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("18","t"))): REM ob_toolb
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("21","M"))): REM ob_mails
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("29","w"))): REM ob_spelb
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("31","f"))): REM ob_file
+PROCco(f%,FNcj("ObjectBindConstruct",FNaj("34","E"))): REM ob_ce_edit
+IF is_y% THEN
+  PROCco(f%,FNcj("ObjectBindConstruct",FNaj("37","b"))): REM ob_recb
+ELSE
+  PROCco(f%,FNcj("ObjectBindConstruct",FNaj("38","B"))): REM ob_recn
+ENDIF
+ENDPROC
+:
+:
+DEF PROCObjectBindLoader(f%)
+PROCco(f%,FNcj("#",FNcj("ObjectBindLoader",FNaj("object-id",FNaj("file-type",FNaj("extension-suffix","foreign-template"))))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xBDF","fwk"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xA78","fwkh")))): REM FzDraw
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xC1D","fwt"))))
+IF is_y% THEN
+  PROCco(f%,FNcj("ObjectBindLoader",FNaj("2",FNaj("0xC27","dpf"))))
+  PROCco(f%,FNcj("ObjectBindLoader",FNaj("2",FNaj("0xC28","dpq"))))
+ENDIF
+PROCco(f%,FNcj("#","Foreign file formats"))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("20",FNaj("0xDDE","pd"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("23",FNaj("0xFFF","txt"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xDFE","csv"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xC7D","sid"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("25",FNaj("0xAF8","fwp"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("26",FNaj("0xBA6","xls"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wk1"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wk3"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wks"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("28",FNaj("0xC32","rtf"))))
+PROCco(f%,FNcj("#","Image file formats"))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xAFF","aff"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xFF9","ff9"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xC85","jpg,jpeg"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0x69C","bmp,dib"))))
+IF windows% THEN
+  PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xB2F","wmf"))))
+ENDIF
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xA77","pdc")))): REM PDChart
+IF riscos% THEN PROCco(f%,FNcj("#","ChangeFSI may handle these on RISC OS"))
+cfsi$="4"
+REM wtf??? IF windows% THEN cfsi$="32"
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0x695","gif"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xB60","png"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xBE8","pcd"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xFF0","tif,tiff"))))
+ENDPROC
+:
+:
+DEF PROCObjectBindSaver(f%)
+PROCco(f%,FNcj("#",FNcj("ObjectBindSaver",FNaj("object-id","file-type"+FNwindows(asp$+"clipboard-identifier")))))
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("33","0xFFF"+FNwindows("")))): REM CF_TEXT doesn't need textual representation
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("35","0xDFE"+FNwindows(asp$+"Csv"))))
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("40","0xDB0"+FNwindows(asp$+"Wk1"))))
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("41","0xC32"+FNwindows("")))): REM RTF still poor - don't use clipboard - Rich Text Format
+IF is_y% OR windows% THEN
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("42","0xBA6"+FNwindows(+asp$+"Biff5"))))
+ENDIF
+ENDPROC
+:
+:
+DEF PROCPaper(f%)
+PROCco(f%,FNcj("Paper",FNaj("A4",FNaj("0",FNaj("16840","11906")+asp$+"460"+asp$+"460"+asp$+"397"+asp$+"397"+asp$+FNaj("0",FNaj("0",FNaj("0",FNaj("0",FNaj("0","1")))))))))
+PROCco(f%,FNcj("Paper",FNaj("A3",FNaj("0",FNaj("23810","16840")+asp$+"460"+asp$+"460"+asp$+"397"+asp$+"397"+asp$+FNaj("0",FNaj("0",FNaj("0",FNaj("0",FNaj("0","1")))))))))
+PROCco(f%,FNcj("Paper",FNaj("A5",FNaj("0",FNaj("11906","8420")+asp$+"460"+asp$+"460"+asp$+"397"+asp$+"397"+asp$+FNaj("0",FNaj("0",FNaj("0",FNaj("0",FNaj("0","1")))))))))
+PROCco(f%,FNcj("Paper",FNaj("Letter",FNaj("0",FNaj("15840","12240")+asp$+"360"+asp$+"380"+asp$+"360"+asp$+"380"+asp$+FNaj("0",FNaj("0",FNaj("0",FNaj("0",FNaj("0","1")))))))))
+IF (NOT windows%) AND FALSE THEN
+  REM buttons are bigger on Windows so don't give silly option!
+  PROCco(f%,FNcj("Paper",FNaj("Legal",FNaj("0",FNaj("20160","12240")+asp$+"840"+asp$+"840"+asp$+"1300"+asp$+"1300"+asp$+FNaj("0",FNaj("0",FNaj("0",FNaj("0",FNaj("0","1")))))))))
+ENDIF
+ENDPROC
+:
+:
+DEF PROCruler(f%, extra_ruler_menu$, command$)
+LOCAL leaf$, extra_ruler_sub_menu$
+leaf$ = FNselect("cm","cm","Zentimeter")
+PROCmh(f%,extra_ruler_menu$,leaf$,asp$+asp$+FNcj(command$,FNsj("0",FNsj("2",FNsj("5","1"))))): extra_ruler_sub_menu$ = extra_ruler_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,extra_ruler_sub_menu$,"0.5 "+cm_suffix$,"",FNcj(command$,FNsj("0",FNsj("2",FNsj("1","1")))))
+  PROCma(f%,extra_ruler_sub_menu$,"0.2 "+cm_suffix$,"",FNcj(command$,FNsj("0",FNsj("5",FNsj("1","1")))))
+  PROCma(f%,extra_ruler_sub_menu$,"0.1 "+cm_suffix$,"",FNcj(command$,FNsj("0",FNsj("2",FNsj("5","1")))))
+leaf$ = FNselect("mm","mm","Millimeter")
+PROCmh(f%,extra_ruler_menu$,leaf$,asp$+asp$+FNcj(command$,FNsj("1",FNsj("10",FNsj("1","10"))))): extra_ruler_sub_menu$ = extra_ruler_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,extra_ruler_sub_menu$,"5 "+mm_suffix$,"",FNcj(command$,FNsj("1",FNsj("2",FNsj("1","10")))))
+  PROCma(f%,extra_ruler_sub_menu$,"2 "+mm_suffix$,"",FNcj(command$,FNsj("1",FNsj("5",FNsj("1","10")))))
+  PROCma(f%,extra_ruler_sub_menu$,"1 "+mm_suffix$,"",FNcj(command$,FNsj("1",FNsj("10",FNsj("1","10")))))
+leaf$ = FNselect("inches","","Zoll")
+PROCmh(f%,extra_ruler_menu$,leaf$,asp$+asp$+FNcj(command$,FNsj("2",FNsj("2",FNsj("5","1"))))): extra_ruler_sub_menu$ = extra_ruler_menu$+"."+FNeat_escape(leaf$)
+  PROCma(f%,extra_ruler_sub_menu$,"1/4 "+inch_suffix$,"",FNcj(command$,FNsj("2",FNsj("4",FNsj("1","1")))))
+  PROCma(f%,extra_ruler_sub_menu$,"1/6 "+inch_suffix$,"",FNcj(command$,FNsj("2",FNsj("2",FNsj("3","1")))))
+  PROCma(f%,extra_ruler_sub_menu$,"1/8 "+inch_suffix$,"",FNcj(command$,FNsj("2",FNsj("4",FNsj("2","1")))))
+  PROCma(f%,extra_ruler_sub_menu$,"1/10 "+inch_suffix$,"",FNcj(command$,FNsj("2",FNsj("2",FNsj("5","1")))))
+  PROCma(f%,extra_ruler_sub_menu$,"1/16 "+inch_suffix$,"",FNcj(command$,FNsj("2",FNsj("4",FNsj("4","1")))))
+PROCma(f%,extra_ruler_menu$,"points","",FNcj(command$,FNsj("3",FNsj("6",FNsj("2","72")))))
+ENDPROC
+:
+:
+DEF PROCSSContext(f%)
+REM thousands char, decimal point char, date sep char, time sep char
+REM array col sep, array row sep
+REM list sep char, function arg sep, ui flag
+a1$ = ","+asp$+"."+asp$+"."+asp$+":"
+a2$ = ","+asp$+semico$
+a3$ = ","+asp$+","+asp$+"0"
+IF country_de% OR country_fr% THEN
+  a1$ = "."+asp$+","+asp$+"."+asp$+":"
+  a2$ = semico$+asp$+","
+  a3$ = semico$+asp$+semico$+asp$+"1"
+ENDIF
+PROCco(f%,FNcj("SSContext",FNaj(a1$,FNaj(a2$,a3$))))
+ENDPROC
+:
+:
+DEF PROCul(f%,class%,A$)
+PROCco(f%,FNcj("UILoad",FNaj(STR$class%,A$)))
+ENDPROC
+:
+:
+DEF PROCui_things(f%)
+PROCui_things_insert_date_formats(f%)
+PROCui_things_insert_page_number_formats(f%)
+PROCui_things_ruler_options(f%)
+PROCui_things_style_formats_number(f%)
+PROCui_things_style_formats_date_and_time(f%)
+PROCui_things_style_formats_text_and_error(f%)
+PROCui_things_quick_functions(f%)
+PROCui_things_template_sort_order(f%)
+PROCui_things_insert_time_formats(f%)
+ENDPROC
+:
+:
+DEF PROCui_things_insert_date_formats(f%)
+PROCco(f%,FNcj("#","Insert field - date formats"))
+PROCul(f%,0,"yyyy-mm-dd")
+PROCul(f%,0,"dd.mm.yy")
+PROCul(f%,0,"dd/mm/yy")
+IF country_fr% THEN
+  REM lower-case month name
+  PROCul(f%,0,"dd mmm yy")
+  PROCul(f%,0,"d mmm yy")
+  PROCul(f%,0,"d mmmm yy")
+  PROCul(f%,0,"d mmmm yyyy")
+  PROCul(f%,0,"Mmm dd, yyyy")
+  PROCul(f%,0,"Mmmm d, yyyy")
+  IF ending$ <> "" THEN
+    REM ddd only makes sense if you do have day number endings
+    PROCul(f%,0,"ddd mmmm")
+    PROCul(f%,0,"Mmmm ddd")
+    PROCul(f%,0,"ddd mmmm yy")
+    PROCul(f%,0,"Mmmm ddd, yy")
+    PROCul(f%,0,"ddd mmmm yyyy")
+    PROCul(f%,0,"Mmmm ddd, yyyy")
+  ENDIF
+  PROCul(f%,0,"Mmm yy")
+  PROCul(f%,0,"Mmmm yy")
+  PROCul(f%,0,"Mmmm yyyy")
+ELSE
+  PROCul(f%,0,"dd Mmm yy")
+  PROCul(f%,0,"d Mmm yy")
+  PROCul(f%,0,"d Mmmm yy")
+  PROCul(f%,0,"d Mmmm yyyy")
+  PROCul(f%,0,"Mmm dd, yyyy")
+  PROCul(f%,0,"Mmmm d, yyyy")
+  IF ending$ <> "" THEN
+    REM ddd only makes sense if you do have day number endings
+    PROCul(f%,0,"ddd Mmmm")
+    PROCul(f%,0,"Mmmm ddd")
+    PROCul(f%,0,"ddd Mmmm yy")
+    PROCul(f%,0,"Mmmm ddd, yy")
+    PROCul(f%,0,"ddd Mmmm yyyy")
+    PROCul(f%,0,"Mmmm ddd, yyyy")
+  ENDIF
+  PROCul(f%,0,"Mmm yy")
+  PROCul(f%,0,"Mmmm yy")
+  PROCul(f%,0,"Mmmm yyyy")
+ENDIF
+ENDPROC
+:
+:
+DEF PROCui_things_insert_page_number_formats(f%)
+PROCco(f%,FNcj("#","Insert field - page number formats"))
+PROCul(f%,1,"#")
+PROCul(f%,1,"r#")
+PROCul(f%,1,"R#")
+ENDPROC
+:
+:
+DEF PROCui_things_ruler_options(f%)
+PROCco(f%,FNcj("#","Ruler choices"))
+PROCul(f%,3,"0 2 1 1 0.5 "+cm_suffix$)
+PROCul(f%,3,"0 5 1 1 0.2 "+cm_suffix$)
+PROCul(f%,3,"0 2 5 1 0.1 "+cm_suffix$)
+PROCul(f%,3,"1 2 1 10 5 "+mm_suffix$)
+PROCul(f%,3,"1 5 1 10 2 "+mm_suffix$)
+PROCul(f%,3,"1 10 1 10 1 "+mm_suffix$)
+PROCul(f%,3,"2 4 1 1 1/4 "+inch_suffix$)
+PROCul(f%,3,"2 2 3 1 1/6 "+inch_suffix$)
+PROCul(f%,3,"2 4 2 1 1/8 "+inch_suffix$)
+PROCul(f%,3,"2 2 5 1 1/10 "+inch_suffix$)
+PROCul(f%,3,"2 4 4 1 1/16 "+inch_suffix$)
+PROCul(f%,3,"3 6 2 72 points")
+ENDPROC
+:
+:
+REM numforms with a negative section
+DEF PROCul2(f%,class%,P$,N$)
+PROCul(f%,class%,FNsj(P$,N$))
+ENDPROC
+:
+:
+REM numforms with a zero section
+DEF PROCul3(f%,class%,P$,N$,Z$)
+PROCul(f%,class%,FNsj(P$,FNsj(N$,Z$)))
+ENDPROC
+:
+:
+REM numforms with a [Negative] style on the negative section
+DEF PROCuln(f%,class%,A$,negative$)
+IF negative$ <> "" THEN
+  REM append [Negative] otherwise numeric formats used in existing documents appear down the end of the list
+  PROCul2(f%,class%,A$,"-"+A$+negative$)
+ELSE
+  PROCul(f%,class%,A$)
+ENDIF
+ENDPROC
+:
+:
+DEF PROCui_things_style_formats_number(f%)
+PROCco(f%,FNcj("#","Style formats - Number"))
+negative$ = FNselect("[Negative]","[Négatif]","[Negativ]")
+thousands_std$="#"+thousands_seq$+"##0": thousands_w_dec$=thousands_std$+uk_decimal_seq$
+uk_thousands_std$="#"+uk_thousands_seq$+"##0": uk_thousands_w_dec$=uk_thousands_std$+uk_decimal_seq$
+:
+REM first, ones with a negative style
+:
+PROCuln(f%,4,thousands_w_dec$+"#######",negative$)
+PROCuln(f%,4,thousands_w_dec$+"00",negative$)
+:
+PROCuln(f%,4,"0"+decimal_seq$+"##",negative$)
+PROCuln(f%,4,"0"+decimal_seq$+"00",negative$)
+PROCuln(f%,4,"0",negative$)
+:
+pound_sign$="£"
+PROCul2(f%,4,pound_sign$+uk_thousands_w_dec$+"00","-"+pound_sign$+uk_thousands_w_dec$+"00"+negative$)
+PROCul2(f%,4,pound_sign$+uk_thousands_w_dec$+"00",pound_sign$+"-"+uk_thousands_w_dec$+"00"+negative$)
+PROCul3(f%,4,pound_sign$+uk_thousands_w_dec$+"00_",pound_sign$+"("+uk_thousands_w_dec$+"00)"+negative$,""): REM blank if zero
+PROCul3(f%,4,pound_sign$+uk_thousands_w_dec$+"00_","("+pound_sign$+uk_thousands_w_dec$+"00)"+negative$,"")
+PROCul3(f%,4,pound_sign$+"____"+uk_thousands_seq$+"__0" +uk_decimal_seq$+"00_","("+pound_sign$+"___"+uk_thousands_seq$+"__0" +uk_decimal_seq$+"00)"+negative$,"")
+PROCul3(f%,4,pound_sign$+"____"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00_","("+pound_sign$+"___"+uk_thousands_seq$+"__0>"+uk_decimal_seq$+"00)"+negative$,"")
+:
+PROCul2(f%,4,thousands_w_dec$+"00_","("+thousands_w_dec$+"00)"+negative$): REM brackets, but no currency
+:
+REM The Euro symbol is not in standard ISO 8859-1, but is present (at 0x80) in RISC OS (Acorn Extended) Latin-1 and Windows-1252
+REM Just to make life more interesting, 0x80 is in the C1 CtrlChar range so needs escaping
+euro_sign$="\"+CHR$(&80)
+REM The Euro symbol is at a different place (at 0xA4) in ISO 8859-15 (Latin-9)
+REM IF iso_8859_15% THEN euro_sign$=CHR$(&A4)
+REM EC recommends <Euro><number> for English and <number><space><Euro> otherwise
+IF country_uk% THEN
+PROCul2(f%,4,euro_sign$+thousands_w_dec$+"00","-"+euro_sign$+thousands_w_dec$+"00"+negative$)
+PROCul2(f%,4,euro_sign$+thousands_w_dec$+"00",euro_sign$+"-"+thousands_w_dec$+"00"+negative$)
+PROCul3(f%,4,euro_sign$+thousands_w_dec$+"00_",euro_sign$+"("+thousands_w_dec$+"00)"+negative$,""): REM blank if zero
+PROCul3(f%,4,euro_sign$+thousands_w_dec$+"00_","("+euro_sign$+thousands_w_dec$+"00)"+negative$,"")
+PROCul3(f%,4,euro_sign$+"____"+thousands_seq$+"__0" +decimal_seq$+"00_","("+euro_sign$+"___"+thousands_seq$+"__0" +decimal_seq$+"00)"+negative$,"")
+PROCul3(f%,4,euro_sign$+"____"+thousands_seq$+"__0>"+decimal_seq$+"00_","("+euro_sign$+"___"+thousands_seq$+"__0>"+decimal_seq$+"00)"+negative$,"")
+ELSE
+PROCul2(f%,4,thousands_w_dec$+"00"+" "+euro_sign$,"-"+thousands_w_dec$+"00"+" "+euro_sign$+negative$)
+PROCul2(f%,4,thousands_w_dec$+"00"+" "+euro_sign$,"-"+thousands_w_dec$+"00"+" "+euro_sign$+negative$)
+PROCul3(f%,4,thousands_w_dec$+"00"+" "+euro_sign$+"_","("+thousands_w_dec$+"00"+" "+euro_sign$+")"+negative$,""): REM blank if zero
+PROCul3(f%,4,"____"+thousands_seq$+"__0" +decimal_seq$+"00_","("+"___"+thousands_seq$+"__0" +decimal_seq$+"00"+" "+euro_sign$+")"+negative$,"")
+PROCul3(f%,4,"____"+thousands_seq$+"__0>"+decimal_seq$+"00_","("+"___"+thousands_seq$+"__0>"+decimal_seq$+"00"+" "+euro_sign$+")"+negative$,"")
+ENDIF
+:
+REM Percentages
+PROCuln(f%,4,"0"+decimal_seq$+"##%",negative$)
+PROCuln(f%,4,"0"+decimal_seq$+"00%",negative$)
+PROCuln(f%,4,"0%",negative$)
+:
+REM Scientific format
+PROCuln(f%,4,"0"+decimal_seq$+"00e+00",negative$)
+:
+REM Engineering format
+PROCuln(f%,4,"g0"+decimal_seq$+"##",negative$)
+PROCuln(f%,4,"g0"+decimal_seq$+"###",negative$)
+:
+REM next, ones with no negative style
+:
+PROCul(f%,4,thousands_w_dec$+"#######")
+PROCul(f%,4,thousands_w_dec$+"00")
+:
+PROCul(f%,4,"0"+decimal_seq$+"##")
+PROCul(f%,4,"0"+decimal_seq$+"00")
+PROCul(f%,4,"0")
+:
+REM Percentages
+PROCul(f%,4,"0"+decimal_seq$+"##%")
+PROCul(f%,4,"0"+decimal_seq$+"00%")
+PROCul(f%,4,"0%")
+:
+REM Scientific format
+PROCul(f%,4,"0"+decimal_seq$+"00e+00")
+:
+REM Engineering format
+PROCul(f%,4,"g0"+decimal_seq$+"##")
+PROCul(f%,4,"g0"+decimal_seq$+"###")
+:
+REM Roman numerals
+PROCul(f%,4,"r#")
+PROCul(f%,4,"R#")
+:
+REM Column numbering
+PROCul(f%,4,"x#")
+PROCul(f%,4,"X#")
+:
+REM Base n
+PROCul(f%,4,"#B2")
+PROCul(f%,4,"#B16")
+:
+REM Even abroad, users may like to select English formats
+IF decimal_seq$ <> uk_decimal_seq$ THEN
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"##",negative$)
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"00",negative$)
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"##%",negative$)
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"00%",negative$)
+  PROCuln(f%,4,"0"+uk_decimal_seq$+"00e+00",negative$)
+  PROCuln(f%,4,"g0"+uk_decimal_seq$+"##",negative$)
+  PROCuln(f%,4,"g0"+uk_decimal_seq$+"###",negative$)
+:
+  PROCul(f%,4,"0"+uk_decimal_seq$+"##")
+  PROCul(f%,4,"0"+uk_decimal_seq$+"00")
+  PROCul(f%,4,"0"+uk_decimal_seq$+"##%")
+  PROCul(f%,4,"0"+uk_decimal_seq$+"00%")
+  PROCul(f%,4,"0"+uk_decimal_seq$+"00e+00")
+  PROCul(f%,4,"g0"+uk_decimal_seq$+"##")
+  PROCul(f%,4,"g0"+uk_decimal_seq$+"###")
+ENDIF
+ENDPROC
+:
+:
+DEF PROCui_things_style_formats_date_and_time(f%)
+PROCco(f%,FNcj("#","Style formats - Date and time"))
+PROCul(f%,5,"hh:mm:ss")
+PROCul(f%,5,"hh:mm")
+PROCul(f%,5,"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCul(f%,5,"hh:mm:ss dd.mm.yy")
+PROCul(f%,5,"hh:mm:ss dd.mm.yy"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCul(f%,5,"dd.mm.yy hh:mm:ss")
+PROCul(f%,5,"dd.mm.yy hh:mm:ss"+semico$+"dd.mm.yy"+semico$+"h:mm ""am"""+semico$+"h:mm ""pm""")
+PROCul(f%,5,"dd.mm.yy")
+PROCul(f%,5,"dd/mm/yy")
+IF country_fr% THEN
+  REM lower-case month name
+  PROCul(f%,5,"dd mmm yy")
+  PROCul(f%,5,"Mmm dd, yy")
+  PROCul(f%,5,"d mmm yy")
+  PROCul(f%,5,"d mmmm yy")
+  PROCul(f%,5,"Mmmm d, yy")
+  PROCul(f%,5,"d mmmm yyyy")
+  IF ending$ <> "" THEN
+    REM ddd only makes sense if you do have day number endings
+    PROCul(f%,5,"ddd mmmm")
+    PROCul(f%,5,"Mmmm ddd")
+    PROCul(f%,5,"ddd mmmm yy")
+    PROCul(f%,5,"Mmmm ddd, yy")
+    PROCul(f%,5,"ddd mmmm yyyy")
+    PROCul(f%,5,"Mmmm ddd, yyyy")
+  ENDIF
+  PROCul(f%,5,"Mmm yy")
+  PROCul(f%,5,"Mmmm yy")
+  PROCul(f%,5,"Mmmm yyyy")
+ELSE
+  PROCul(f%,5,"dd Mmm yy")
+  PROCul(f%,5,"Mmm dd, yy")
+  PROCul(f%,5,"d Mmm yy")
+  PROCul(f%,5,"d Mmmm yy")
+  PROCul(f%,5,"Mmmm d, yy")
+  PROCul(f%,5,"d Mmmm yyyy")
+  IF ending$ <> "" THEN
+    REM ddd only makes sense if you do have day number endings
+    PROCul(f%,5,"ddd Mmmm")
+    PROCul(f%,5,"Mmmm ddd")
+    PROCul(f%,5,"ddd Mmmm yy")
+    PROCul(f%,5,"Mmmm ddd, yy")
+    PROCul(f%,5,"ddd Mmmm yyyy")
+    PROCul(f%,5,"Mmmm ddd, yyyy")
+  ENDIF
+  PROCul(f%,5,"Mmm yy")
+  PROCul(f%,5,"Mmmm yy")
+  PROCul(f%,5,"Mmmm yyyy")
+ENDIF
+PROCul(f%,5,"yyyy-mm-dd")
+ENDPROC
+:
+:
+DEF PROCui_things_style_formats_text_and_error(f%)
+PROCco(f%,FNcj("#","Style formats - Text and error"))
+PROCul(f%,6,"@")
+err$ = FNselect("ERR","","FEHLER")
+PROCul(f%,6,"@"+semico$+err$+" @")
+ENDPROC
+:
+:
+DEF PROCui_things_quick_functions(f%)
+PROCco(f%,FNcj("#","Frequently used functions"))
+PROCul(f%,7,"sum")
+PROCul(f%,7,"max")
+PROCul(f%,7,"min")
+PROCul(f%,7,"avg")
+PROCul(f%,7,"if")
+ENDPROC
+:
+:
+REM 8 was reserved for autoformat
+:
+:
+DEF PROCui_things_template_sort_order(f%)
+PROCco(f%,FNcj("#","Template sort order"))
+fwt_suffix$ = ""
+IF windows% THEN fwt_suffix$ = ".fwt"
+PROCul(f%,9,"default"+fwt_suffix$+asp$+"-1")
+PROCul(f%,9,"draft_rz"+fwt_suffix$+asp$+"1")
+PROCul(f%,9,"draft_wz"+fwt_suffix$+asp$+"1")
+IF is_y% THEN
+  PROCul(f%,9,"database"+asp$+"1")
+  PROCul(f%,9,"db_1card"+fwt_suffix$+asp$+"1")
+  PROCul(f%,9,"db_cards"+fwt_suffix$+asp$+"1")
+  PROCul(f%,9,"db_sheet"+fwt_suffix$+asp$+"1")
+  PROCul(f%,9,"draft_db"+fwt_suffix$+asp$+"1")
+ENDIF
+ENDPROC
+:
+:
+DEF PROCui_things_insert_time_formats(f%)
+PROCco(f%,FNcj("#","Insert field - time formats"))
+PROCul(f%,10,"hh:mm")
+PROCul(f%,10,"hh:mm:ss")
+PROCul(f%,10,"h:mm ""am"""+semico$+"h:mm ""pm""")
+ENDPROC
+:
+:
+DEF PROCVersion(f%)
+REM We have C1 characters in format strings
+IF windows% THEN
+  codepage$="Windows-1252"
+ELSE
+  codepage$="Alphabet-Latin1"
+  REM IF country_fr% THEN codepage$="Alphabet-Latin9": REM Euro symbol at 0xA4
+ENDIF
+PROCco(f%,FNcj("Version",FNaj(version$,FNaj(MID$(TIME$,5,11),FNaj(true_product$+" ("+country$+")",FNaj("Colton Software",codepage$))))))
 ENDPROC
 :
 :

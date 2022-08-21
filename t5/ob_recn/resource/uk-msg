@@ -7,7 +7,10 @@
 #
 # Copyright (C) 2014-2020 Stuart Swales
 #
-# errors
+# messages (none)
+#
+# errors: keep consistent with ob_recn/ob_recn.h
+# see RECN_ERR(n)
 #
 re2:No database module present. You can purchase Fireworkz Pro from R-Comp
 we2:No database module present. You can purchase Fireworkz Pro from R-Comp for RISC OS systems

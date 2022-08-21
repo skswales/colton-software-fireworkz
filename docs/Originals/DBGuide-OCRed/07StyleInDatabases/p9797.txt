@@ -1,0 +1,12 @@
+﻿7 The Style editor in
+databases
+This chapter describes how styles can be applied to databases
+using the Style editor.
+It includes sections on:
+. Database styles.
+. Altering the appearance of text.
+. Number formats.
+. Date formats.
+
+
+

@@ -59,7 +59,7 @@ static inline void
 state_style_init(
     _OutRef_    P_STATE_STYLE p_state_style)
 {
-    zero_struct_ptr(p_state_style);
+    zero_struct_ptr_fn(p_state_style);
 }
 
 typedef struct RTF_REGION

@@ -543,7 +543,7 @@ ss_formula_eval_then_msg(
     U32 uchars_n;
     P_USTR ustr;
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("function(and....some....very....parpy....arguments)"));
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     /* copy into a quick buf removing any inlines present in the string */
@@ -1001,7 +1001,7 @@ sle_tool_user_posn_set(
     {
     int width = (int) ((p_sle_info_block->pixit_rect.br.x - p_sle_info_block->pixit_rect.tl.x) / PIXITS_PER_RISCOS);
     WimpCreateIconBlockWithBitset icreate;
-    zero_struct(icreate);
+    zero_struct_fn(icreate);
     icreate.window_handle = p_view->main[WIN_BACK].hwnd;
     icreate.icon.bbox.xmin = + (int) (p_sle_info_block->pixit_rect.tl.x / PIXITS_PER_RISCOS);
     icreate.icon.bbox.ymax = - (int) (p_sle_info_block->pixit_rect.tl.y / PIXITS_PER_RISCOS);
@@ -1020,8 +1020,8 @@ sle_tool_user_posn_set(
     GetClientRect(p_view->main[WIN_SLE].hwnd, &client_rect);
 
     { /* convert to dpi-dependent pixels */
-    SIZE PixelsPerInch;
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+    GDI_SIZE PixelsPerInch;
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
     new_pos_rect.left   = (int) idiv_floor_fn(p_sle_info_block->pixit_rect.tl.x * PixelsPerInch.cx, PIXITS_PER_INCH);
     new_pos_rect.top    = (int) idiv_floor_fn(p_sle_info_block->pixit_rect.tl.y * PixelsPerInch.cy, PIXITS_PER_INCH);
@@ -1144,8 +1144,8 @@ sle_select_font(
     status_assert(fontmap_host_font_spec_from_font_spec(&host_font_spec, &p_sle_style->font_spec, FALSE));
 
     { /* Em = dpiY * point_size / 72 from MSDN */ /* convert to dpi-dependent pixels */ /* DPI-aware */
-    SIZE PixelsPerInch;
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+    GDI_SIZE PixelsPerInch;
+    host_get_pixel_size(NULL /*screen*/, NULL /*cx*/, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
     host_font_spec.size_y = idiv_floor_u(host_font_spec.size_y * PixelsPerInch.cy, PIXITS_PER_INCH);
     } /*block*/
@@ -1662,7 +1662,7 @@ sle_register_wndclass(void)
     if(NULL == g_hInstancePrev)
     {   /* register SLE window class */
         WNDCLASS wndclass;
-        zero_struct(wndclass);
+        zero_struct_fn(wndclass);
         wndclass.style = CS_DBLCLKS;
         wndclass.lpfnWndProc = (WNDPROC) wndproc_sle;
       /*wndclass.cbClsExtra = 0;*/
@@ -1696,7 +1696,7 @@ sle_index_from_pixel_x(
     if(array_elements(&p_sle_info_block->h_ustr_inline) > 1 /*CH_NULL*/)
     {
         STATUS status = STATUS_OK;
-        QUICK_TBLOCK_WITH_BUFFER(quick_tblock, elemof32("a.quick.buf.to.hold.text"));
+        QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 64);
         quick_tblock_with_buffer_setup(quick_tblock);
 
         { /* copy to on-screen representation: failure mostly irrelevant */
@@ -2002,7 +2002,7 @@ sle_refresh_status_line_for_selected_argument(
     const P_DOCU p_docu = p_docu_from_docno(p_sle_info_block->docno);
     PC_BYTE p_data = il_sle_argument_data_off(PC_BYTE, ustr_inline, p_sle_info_block->caret_index, 0);
     SS_FUNCTION_ARGUMENT_HELP ss_function_argument_help;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("a.quick.buf.to.hold.some.text"));
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     ss_function_argument_help.help_id   = ((STATUS) p_data[0]) | ((STATUS) p_data[1] << 8);
@@ -2049,7 +2049,7 @@ sle_index_compile(
 
 #if RISCOS
 
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("a.quick.buf.to.hold.some.text"));
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     for(;;)
@@ -2175,7 +2175,7 @@ sle_index_compile(
 
 #elif WINDOWS
 
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, elemof32("a.quick.buf.to.hold.some.text"));
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 64);
     quick_tblock_with_buffer_setup(quick_tblock);
 
     for(;;)
@@ -2732,6 +2732,8 @@ sle_tool_user_mouse(
 #endif
 }
 
+#if RISCOS && defined(RISCOS_FONTY_SLE)
+
 _Check_return_
 _Ret_valid_
 static inline PC_RGB
@@ -2743,6 +2745,8 @@ colour_of_sle_back(
             ? &p_sle_style->para_style.rgb_back
             : &rgb_stash[0]);
 }
+
+#endif /* RISCOS && defined(RISCOS_FONTY_SLE) */
 
 #if RISCOS && defined(RISCOS_FONTY_SLE)
 
@@ -2822,6 +2826,36 @@ riscos_fonty_sle(
 
 #endif /* RISCOS && defined(RISCOS_FONTY_SLE) */
 
+#if RISCOS
+
+static void
+sle_tool_user_redraw_invert_selection(
+    _InRef_     P_T5_TOOLBAR_TOOL_USER_REDRAW p_t5_toolbar_tool_user_redraw,
+    _InRef_     P_SLE_INFO_BLOCK p_sle_info_block,
+    _InRef_     PC_RGB p_rgb_sle_back)
+{
+    static const RGB rgb_invert        = { 0x00, 0x00, 0x00, 0 };
+    static const RGB rgb_pseudo_invert = { 0xDD, 0xDD, 0xDD, 0 };
+
+    const PC_REDRAW_CONTEXT p_redraw_context = &p_t5_toolbar_tool_user_redraw->redraw_context;
+    PIXIT plot_x_pixits = p_t5_toolbar_tool_user_redraw->control_outer_pixit_rect.tl.x + X_OFFSET_PIXITS;
+    PIXIT_RECT region_box;
+    PIXIT stt_pixits = MIN(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
+    PIXIT end_pixits = MAX(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
+
+    if(stt_pixits == 0)
+        stt_pixits -= X_OFFSET_PIXITS * PIXITS_PER_RISCOS; /* SKS 15apr93 stops little white bit at lhs showing */
+
+    region_box.tl.x = plot_x_pixits + stt_pixits;
+    region_box.tl.y = p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect.tl.y;
+    region_box.br.x = plot_x_pixits + end_pixits;
+    region_box.br.y = p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect.br.y;
+
+    host_invert_rectangle_filled(p_redraw_context, &region_box, p_sle_info_block->pseudo_selection ? &rgb_pseudo_invert : &rgb_invert, p_rgb_sle_back);
+}
+
+#endif /* RISCOS */
+
 _Check_return_
 extern STATUS
 sle_tool_user_redraw(
@@ -2846,6 +2880,10 @@ sle_tool_user_redraw(
     plot_x_pixits -= p_sle_info_block->display.scroll_offset_pixits;
 
     host_paint_rectangle_filled(p_redraw_context, &p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect, p_rgb_sle_back);
+
+    /* Is there a pseudo-selection? if so then highlight that particular area of the string BEFORE painting the text. */
+    if(p_sle_info_block->selection && p_sle_info_block->pseudo_selection)
+        sle_tool_user_redraw_invert_selection(p_t5_toolbar_tool_user_redraw, p_sle_info_block, p_rgb_sle_back);
 
     if(array_elements(&p_sle_info_block->h_ustr_inline) > 1 /*CH_NULL*/)
     {
@@ -2973,24 +3011,9 @@ sle_tool_user_redraw(
         }
     }
 
-    /* Is there a selection? if so then highlight that particular area of the string. */
-    if(p_sle_info_block->selection)
-    {
-        static const RGB rgb_invert        = { 0x00, 0x00, 0x00, 0 };
-        static const RGB rgb_pseudo_invert = { 0xDD, 0xDD, 0xDD, 0 };
-
-        PIXIT_RECT region_box = p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect;
-        PIXIT stt_pixits = MIN(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
-        PIXIT end_pixits = MAX(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
-
-        if(stt_pixits == 0)
-            stt_pixits -= X_OFFSET_PIXITS * PIXITS_PER_RISCOS; /* SKS 15apr93 stops little white bit at lhs showing */
-
-        region_box.tl.x = plot_x_pixits + stt_pixits;
-        region_box.br.x = plot_x_pixits + end_pixits;
-
-        host_invert_rectangle_filled(p_redraw_context, &region_box, p_sle_info_block->pseudo_selection ? &rgb_pseudo_invert : &rgb_invert, p_rgb_sle_back);
-    }
+    /* Is there a real selection? if so then highlight that particular area of the string AFTER painting the text. */
+    if(p_sle_info_block->selection && !p_sle_info_block->pseudo_selection)
+        sle_tool_user_redraw_invert_selection(p_t5_toolbar_tool_user_redraw, p_sle_info_block, p_rgb_sle_back);
 
     /* host font handles belong to fonty session (upper redraw layers) */
 
@@ -3085,22 +3108,7 @@ sle_tool_user_redraw(
 
     /* Is there a selection? if so then highlight that particular area of the string. */
     if(p_sle_info_block->selection)
-    {
-        static const RGB rgb_invert        = { 0x00, 0x00, 0x00, 0 };
-        static const RGB rgb_pseudo_invert = { 0xDD, 0xDD, 0xDD, 0 };
-
-        PIXIT_RECT region_box = p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect;
-        PIXIT stt_pixits = MIN(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
-        PIXIT end_pixits = MAX(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
-
-        if(stt_pixits == 0)
-            stt_pixits -= X_OFFSET_PIXITS * PIXITS_PER_RISCOS; /* SKS 15apr93 stops little white bit at lhs showing */
-
-        region_box.tl.x = plot_x_pixits + stt_pixits;
-        region_box.br.x = plot_x_pixits + end_pixits;
-
-        host_invert_rectangle_filled(p_redraw_context, &region_box, p_sle_info_block->pseudo_selection ? &rgb_pseudo_invert : &rgb_invert, &rgb_fill);
-    }
+        sle_tool_user_redraw_invert_selection(p_t5_toolbar_tool_user_redraw, p_sle_info_block, p_rgb_sle_back);
 #else
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER(p_data);
@@ -3316,10 +3324,10 @@ T5_CMD_PROTO(static, sle_cmd_ss_edit_formula)
     {
     POSITION position = p_docu->cur;
     OBJECT_READ_TEXT object_read_text;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    zero_struct(object_read_text);
+    zero_struct_fn(object_read_text);
     object_read_text.p_quick_ublock = &quick_ublock;
     object_read_text.type = OBJECT_READ_TEXT_PLAIN;
 

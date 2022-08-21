@@ -50,9 +50,20 @@ OBJECT_PROTO(extern, object_toolbar);
 _Check_return_
 _Ret_maybenull_
 static P_T5_TOOLBAR_DOCU_TOOL_DESC
+find_docu_tool_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _In_reads_(name_len) PC_UCHARS name,
+    _InVal_     U32 name_len);
+
+_Check_return_
+_Ret_maybenull_
+static P_T5_TOOLBAR_DOCU_TOOL_DESC
 find_docu_tool(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PC_USTR name);
+    _In_z_      PC_USTR name)
+{
+    return(find_docu_tool_uchars(p_docu, name, ustrlen32(name)));
+}
 
 static void
 schedule_tool_redraw(
@@ -130,13 +141,13 @@ static PIXIT status_line_font_height_pixits;
 #elif WINDOWS
 static GDI_COORD status_line_font_height_pixels;
 
-extern GDI_COORD status_line_height_pixels = 0; /* ideal value for open, don't reset to zero */
+       GDI_COORD status_line_height_pixels = 0; /* ideal value for open, don't reset to zero */
 #endif
 
 #if RISCOS
 static GDI_COORD toolbar_height_riscos = 0; /* ideal value for open, don't reset to zero */
 #else
-extern GDI_COORD toolbar_height_pixels = 0; /* ideal value for open, don't reset to zero */
+       GDI_COORD toolbar_height_pixels = 0; /* ideal value for open, don't reset to zero */
 #endif
 
 /*
@@ -211,6 +222,36 @@ __pragma(warning(pop))
 static HTHEME g_hTheme;
 
 static BOOL
+themed_toolbar_UIToolButtonDraw_32bpp_DISABLED(
+    HTHEME hTheme,
+    HDC hDC, PCRECT pRect,
+    HBITMAP hBitmap, int bmx, int bmy, int iImageIndex,
+    UINT iStateId)
+{
+    const int iPartId = TP_BUTTON;
+    const HDC hdcMem = CreateCompatibleDC(hDC);
+    HBITMAP hbmOld = SelectBitmap(hdcMem, hBitmap);
+    RECT icon_rect;
+    consume(HRESULT, DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL));
+    if(SUCCEEDED(GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect)))
+    {   /* centre icon in its slot */
+        LONG content_cx = icon_rect.right - icon_rect.left;
+        LONG content_cy = icon_rect.bottom - icon_rect.top;
+        static BLENDFUNCTION bf = { AC_SRC_OVER, 0, 96 /*alpha*/, AC_SRC_ALPHA };
+        if(bmx < content_cx)
+            icon_rect.left += (content_cx - bmx) / 2;
+        if(bmy < content_cy)
+            icon_rect.top  += (content_cy - bmy) / 2;
+        icon_rect.right  = icon_rect.left + bmx;
+        icon_rect.bottom = icon_rect.top  + bmy;
+        void_WrapOsBoolChecking(AlphaBlend(hDC, icon_rect.left, icon_rect.top, icon_rect.right - icon_rect.left, icon_rect.bottom - icon_rect.top, hdcMem, iImageIndex * bmx, 0, bmx, bmy, bf));
+    }
+    SelectBitmap(hdcMem, hbmOld);
+    DeleteDC(hdcMem);
+    return(TRUE);
+}
+
+static BOOL
 themed_toolbar_UIToolButtonDraw(
     HTHEME hTheme, BOOL f32bpp,
     HDC hDC, PCRECT pRect,
@@ -244,29 +285,8 @@ themed_toolbar_UIToolButtonDraw(
             iStateId = TS_NORMAL;
     }
 
-    if(f32bpp && (uStateIn & BUTTONGROUP_DISABLED))
-    {
-        const HDC hdcMem = CreateCompatibleDC(hDC);
-        HBITMAP hbmOld = SelectBitmap(hdcMem, hBitmap);
-        RECT icon_rect;
-        consume(HRESULT, DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL));
-        if(SUCCEEDED(GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect)))
-        {   /* centre icon in its slot */
-            LONG content_cx = icon_rect.right - icon_rect.left;
-            LONG content_cy = icon_rect.bottom - icon_rect.top;
-            BLENDFUNCTION bf = { AC_SRC_OVER, 0, 96 /*alpha*/, AC_SRC_ALPHA };
-            if(bmx < content_cx)
-                icon_rect.left += (content_cx - bmx) / 2;
-            if(bmy < content_cy)
-                icon_rect.top  += (content_cy - bmy) / 2;
-            icon_rect.right  = icon_rect.left + bmx;
-            icon_rect.bottom = icon_rect.top  + bmy;
-            void_WrapOsBoolChecking(AlphaBlend(hDC, icon_rect.left, icon_rect.top, icon_rect.right - icon_rect.left, icon_rect.bottom - icon_rect.top, hdcMem, iImageIndex * bmx, 0, bmx, bmy, bf));
-        }
-        SelectBitmap(hdcMem, hbmOld);
-        DeleteDC(hdcMem);
-        return(TRUE);
-    }
+    if( f32bpp && (uStateIn & BUTTONGROUP_DISABLED) )
+        return(themed_toolbar_UIToolButtonDraw_32bpp_DISABLED(hTheme, hDC, pRect, hBitmap, bmx, bmy, iImageIndex, iStateId));
 
     if(NULL == (hImageList = ImageList_Create(bmx, bmy, f32bpp ? ILC_COLOR32 : (ILC_COLOR | ILC_MASK), 20, 20)))
         return(FALSE);
@@ -344,9 +364,8 @@ toolbar_UIToolButtonDrawTDD(
 {
     UINT uState;
 
-    if(hTheme)
-        if(themed_toolbar_UIToolButtonDraw(hTheme, f32bpp, hDC, pRect, hBmp, bmx, bmy, iImageIndex, uStateIn))
-            return(TRUE);
+    if( (NULL != hTheme) && themed_toolbar_UIToolButtonDraw(hTheme, f32bpp, hDC, pRect, hBmp, bmx, bmy, iImageIndex, uStateIn) )
+        return(TRUE);
 
     /* fallback is old implementation */
     //assert(!f32bpp);
@@ -463,7 +482,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_enable, _InRef_ PC_T5_TOOLBAR_TOOL_ENABLE 
 
 T5_MSG_PROTO(static, msg_toolbar_tool_enable_query, _InoutRef_ P_T5_TOOLBAR_TOOL_ENABLE_QUERY p_t5_toolbar_tool_enable_query)
 {
-    const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, p_t5_toolbar_tool_enable_query->name);
+    const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool_uchars(p_docu, p_t5_toolbar_tool_enable_query->name, p_t5_toolbar_tool_enable_query->name_len);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
@@ -484,15 +503,23 @@ execute_tool(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_maybenone_ P_VIEW p_view,
     _InRef_     PC_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc,
-    _InVal_     BOOL alternate)
+    _InVal_     S32 alternate /* expanded from BOOL */)
 {
     STATUS status;
-    PC_T5_TOOLBAR_TOOL_DESC p_t5_toolbar_tool_desc = p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc;
+    const PC_T5_TOOLBAR_TOOL_DESC p_t5_toolbar_tool_desc = p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc;
     T5_MESSAGE t5_message = p_t5_toolbar_tool_desc->t5_message;
     OBJECT_ID object_id = p_t5_toolbar_tool_desc->command_object_id;
 
-    if(alternate && p_t5_toolbar_tool_desc->t5_message_alternate)
+    if(alternate)
+    {
+        if(0 == p_t5_toolbar_tool_desc->t5_message_alternate)
+        {
+            reperr_null(ERR_NO_ALTERNATE_COMMAND);
+            return;
+        }
+
         t5_message = p_t5_toolbar_tool_desc->t5_message_alternate;
+    }
 
     switch(ENUM_UNPACK(T5_TOOLBAR_TOOL_TYPE, p_t5_toolbar_tool_desc->bits.type))
     {
@@ -503,7 +530,7 @@ execute_tool(
         {
         const ARGLIST_HANDLE arglist_handle = 0; /* toolbar commands can't have any args! */
 
-        if(p_t5_toolbar_tool_desc->bits.set_view && !IS_VIEW_NONE(p_view))
+        if(p_t5_toolbar_tool_desc->bits.set_view && VIEW_NOT_NONE(p_view))
             status_assert(command_set_current_view(p_docu, p_view));
 
         /*if(p_t5_toolbar_tool_desc->bits.set_interactive)
@@ -557,11 +584,11 @@ trivial_name_hash(
 _Check_return_
 _Ret_maybenull_
 static P_T5_TOOLBAR_DOCU_TOOL_DESC
-find_docu_tool(
+find_docu_tool_uchars(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PC_USTR name)
+    _In_reads_(name_len) PC_UCHARS name,
+    _InVal_     U32 name_len)
 {
-    const U32 name_len = ustrlen32(name);
     const U32 name_hash = trivial_name_hash(name, name_len);
     const ARRAY_INDEX n_elements = array_elements(&p_docu->h_toolbar);
     ARRAY_INDEX i;
@@ -707,6 +734,431 @@ intersect_pixit_rect(
 
 static BOOL g_Win31 = FALSE;
 
+static const U32 desktop_default_palette_16[16*2] =
+{   /*BBGGRR00*/
+    0xFFFFFF00U,0xFFFFFF00U,
+    0xDDDDDD00U,0xDDDDDD00U,
+    0xBBBBBB00U,0xBBBBBB00U,
+    0x99999900U,0x99999900U,
+    0x77777700U,0x77777700U,
+    0x55555500U,0x55555500U,
+    0x33333300U,0x33333300U,
+    0x00000000U,0x00000000U,
+
+    0x88440000U,0x88440000U,
+    0xEEEE0000u,0xEEEE0000U,
+    0x00DD0000U,0x00DD0000U,
+    0x0000DD00u,0x0000DD00U,
+    0xCCEEEE00U,0xCCEEEE00U,
+    0x00884400U,0x00884400U,
+    0x00CCFF00U,0x00CCFF00U,
+    0xFFCC0000U,0xFFCC0000U
+};
+
+static const U32 desktop_greyed_palette_16[16*2] =
+{   /*BBGGRR00*/
+    0xFFFFFF00U,0xFFFFFF00U,
+    0xEEEEEE00U,0xEEEEEE00U,
+    0xDDDDDD00U,0xDDDDDD00U,
+    0xCCCCCC00U,0xCCCCCC00U,
+    0xBBBBBB00U,0xBBBBBB00U,
+    0xAAAAAA00U,0xAAAAAA00U,
+    0x99999900U,0x99999900U,
+    0x88888800U,0x88888800U,
+
+    0xCC995500U,0xCC995500U,
+    0xF6F64400U,0xF6F64400U,
+    0xCCEECC00U,0xCCEECC00U,
+    0xCCCCEE00U,0xCCCCEE00U,
+    0xE4F6F600U,0xE4F6F600U,
+    0x88CC8800U,0x88CC8800U,
+    0xCCE4FF00U,0xCCE4FF00U,
+    0xFFE44400U,0xFFE44400U
+};
+
+static const U32 desktop_default_palette_256[256*2] =
+{   /*BBGGRR00*/
+    0x00000000U,0x00000000U,
+    0x11111100U,0x11111100U,
+    0x22222200U,0x22222200U,
+    0x33333300U,0x33333300U,
+
+    0x00004400U,0x00004400U,
+    0x11115500U,0x11115500U,
+    0x22226600U,0x22226600U,
+    0x33337700U,0x33337700U,
+
+    0x44000000U,0x44000000U,
+    0x55111100U,0x55111100U,
+    0x66222200U,0x66222200U,
+    0x77333300U,0x77333300U,
+
+    0x44004400U,0x44004400U,
+    0x55115500U,0x55115500U,
+    0x66226600U,0x66226600U,
+    0x77337700U,0x77337700U,
+
+    0x00008800U,0x00008800U,
+    0x11119900U,0x11119900U,
+    0x2222AA00U,0x2222AA00U,
+    0x3333BB00U,0x3333BB00U,
+
+    0x0000CC00U,0x0000CC00U,
+    0x1111DD00U,0x1111DD00U,
+    0x2222EE00U,0x2222EE00U,
+    0x3333FF00U,0x3333FF00U,
+
+    0x44008800U,0x44008800U,
+    0x55119900U,0x55119900U,
+    0x6622AA00U,0x6622AA00U,
+    0x7733BB00U,0x7733BB00U,
+
+    0x4400CC00U,0x4400CC00U,
+    0x5511DD00U,0x5511DD00U,
+    0x6622EE00U,0x6622EE00U,
+    0x7733FF00U,0x7733FF00U,
+
+    0x00440000U,0x00440000U,
+    0x11551100U,0x11551100U,
+    0x22662200U,0x22662200U,
+    0x33773300U,0x33773300U,
+
+    0x00444400U,0x00444400U,
+    0x11555500U,0x11555500U,
+    0x22666600U,0x22666600U,
+    0x33777700U,0x33777700U,
+
+    0x44440000U,0x44440000U,
+    0x55551100U,0x55551100U,
+    0x66662200U,0x66662200U,
+    0x77773300U,0x77773300U,
+
+    0x44444400U,0x44444400U,
+    0x55555500U,0x55555500U,
+    0x66666600U,0x66666600U,
+    0x77777700U,0x77777700U,
+
+    0x00448800U,0x00448800U,
+    0x11559900U,0x11559900U,
+    0x2266AA00U,0x2266AA00U,
+    0x3377BB00U,0x3377BB00U,
+
+    0x0044CC00U,0x0044CC00U,
+    0x1155DD00U,0x1155DD00U,
+    0x2266EE00U,0x2266EE00U,
+    0x3377FF00U,0x3377FF00U,
+
+    0x44448800U,0x44448800U,
+    0x55559900U,0x55559900U,
+    0x6666AA00U,0x6666AA00U,
+    0x7777BB00U,0x7777BB00U,
+
+    0x4444CC00U,0x4444CC00U,
+    0x5555DD00U,0x5555DD00U,
+    0x6666EE00U,0x6666EE00U,
+    0x7777FF00U,0x7777FF00U,
+
+    0x00880000U,0x00880000U,
+    0x11991100U,0x11991100U,
+    0x22AA2200U,0x22AA2200U,
+    0x33BB3300U,0x33BB3300U,
+
+    0x00884400U,0x00884400U,
+    0x11995500U,0x11995500U,
+    0x22AA6600U,0x22AA6600U,
+    0x33BB7700U,0x33BB7700U,
+
+    0x44880000U,0x44880000U,
+    0x55991100U,0x55991100U,
+    0x66AA2200U,0x66AA2200U,
+    0x77BB3300U,0x77BB3300U,
+
+    0x44884400U,0x44884400U,
+    0x55995500U,0x55995500U,
+    0x66AA6600U,0x66AA6600U,
+    0x77BB7700U,0x77BB7700U,
+
+    0x00888800U,0x00888800U,
+    0x11999900U,0x11999900U,
+    0x22AAAA00U,0x22AAAA00U,
+    0x33BBBB00U,0x33BBBB00U,
+
+    0x0088CC00U,0x0088CC00U,
+    0x1199DD00U,0x1199DD00U,
+    0x22AAEE00U,0x22AAEE00U,
+    0x33BBFF00U,0x33BBFF00U,
+
+    0x44888800U,0x44888800U,
+    0x55999900U,0x55999900U,
+    0x66AAAA00U,0x66AAAA00U,
+    0x77BBBB00U,0x77BBBB00U,
+
+    0x4488CC00U,0x4488CC00U,
+    0x5599DD00U,0x5599DD00U,
+    0x66AAEE00U,0x66AAEE00U,
+    0x77BBFF00U,0x77BBFF00U,
+
+    0x00CC0000U,0x00CC0000U,
+    0x11DD1100U,0x11DD1100U,
+    0x22EE2200U,0x22EE2200U,
+    0x33FF3300U,0x33FF3300U,
+
+    0x00CC4400U,0x00CC4400U,
+    0x11DD5500U,0x11DD5500U,
+    0x22EE6600U,0x22EE6600U,
+    0x33FF7700U,0x33FF7700U,
+
+    0x44CC0000U,0x44CC0000U,
+    0x55DD1100U,0x55DD1100U,
+    0x66EE2200U,0x66EE2200U,
+    0x77FF3300U,0x77FF3300U,
+
+    0x44CC4400U,0x44CC4400U,
+    0x55DD5500U,0x55DD5500U,
+    0x66EE6600U,0x66EE6600U,
+    0x77FF7700U,0x77FF7700U,
+
+    0x00CC8800U,0x00CC8800U,
+    0x11DD9900U,0x11DD9900U,
+    0x22EEAA00U,0x22EEAA00U,
+    0x33FFBB00U,0x33FFBB00U,
+
+    0x00CCCC00U,0x00CCCC00U,
+    0x11DDDD00U,0x11DDDD00U,
+    0x22EEEE00U,0x22EEEE00U,
+    0x33FFFF00U,0x33FFFF00U,
+
+    0x44CC8800U,0x44CC8800U,
+    0x55DD9900U,0x55DD9900U,
+    0x66EEAA00U,0x66EEAA00U,
+    0x77FFBB00U,0x77FFBB00U,
+
+    0x44CCCC00U,0x44CCCC00U,
+    0x55DDDD00U,0x55DDDD00U,
+    0x66EEEE00U,0x66EEEE00U,
+    0x77FFFF00U,0x77FFFF00U,
+
+    0x88000000U,0x88000000U,
+    0x99111100U,0x99111100U,
+    0xAA222200U,0xAA222200U,
+    0xBB333300U,0xBB333300U,
+
+    0x88004400U,0x88004400U,
+    0x99115500U,0x99115500U,
+    0xAA226600U,0xAA226600U,
+    0xBB337700U,0xBB337700U,
+
+    0xCC000000U,0xCC000000U,
+    0xDD111100U,0xDD111100U,
+    0xEE222200U,0xEE222200U,
+    0xFF333300U,0xFF333300U,
+
+    0xCC004400U,0xCC004400U,
+    0xDD115500U,0xDD115500U,
+    0xEE226600U,0xEE226600U,
+    0xFF337700U,0xFF337700U,
+
+    0x88008800U,0x88008800U,
+    0x99119900U,0x99119900U,
+    0xAA22AA00U,0xAA22AA00U,
+    0xBB33BB00U,0xBB33BB00U,
+
+    0x8800CC00U,0x8800CC00U,
+    0x9911DD00U,0x9911DD00U,
+    0xAA22EE00U,0xAA22EE00U,
+    0xBB33FF00U,0xBB33FF00U,
+
+    0xCC008800U,0xCC008800U,
+    0xDD119900U,0xDD119900U,
+    0xEE22AA00U,0xEE22AA00U,
+    0xFF33BB00U,0xFF33BB00U,
+
+    0xCC00CC00U,0xCC00CC00U,
+    0xDD11DD00U,0xDD11DD00U,
+    0xEE22EE00U,0xEE22EE00U,
+    0xFF33FF00U,0xFF33FF00U,
+
+    0x88440000U,0x88440000U,
+    0x99551100U,0x99551100U,
+    0xAA662200U,0xAA662200U,
+    0xBB773300U,0xBB773300U,
+
+    0x88444400U,0x88444400U,
+    0x99555500U,0x99555500U,
+    0xAA666600U,0xAA666600U,
+    0xBB777700U,0xBB777700U,
+
+    0xCC440000U,0xCC440000U,
+    0xDD551100U,0xDD551100U,
+    0xEE662200U,0xEE662200U,
+    0xFF773300U,0xFF773300U,
+
+    0xCC444400U,0xCC444400U,
+    0xDD555500U,0xDD555500U,
+    0xEE666600U,0xEE666600U,
+    0xFF777700U,0xFF777700U,
+
+    0x88448800U,0x88448800U,
+    0x99559900U,0x99559900U,
+    0xAA66AA00U,0xAA66AA00U,
+    0xBB77BB00U,0xBB77BB00U,
+
+    0x8844CC00U,0x8844CC00U,
+    0x9955DD00U,0x9955DD00U,
+    0xAA66EE00U,0xAA66EE00U,
+    0xBB77FF00U,0xBB77FF00U,
+
+    0xCC448800U,0xCC448800U,
+    0xDD559900U,0xDD559900U,
+    0xEE66AA00U,0xEE66AA00U,
+    0xFF77BB00U,0xFF77BB00U,
+
+    0xCC44CC00U,0xCC44CC00U,
+    0xDD55DD00U,0xDD55DD00U,
+    0xEE66EE00U,0xEE66EE00U,
+    0xFF77FF00U,0xFF77FF00U,
+
+    0x88880000U,0x88880000U,
+    0x99991100U,0x99991100U,
+    0xAAAA2200U,0xAAAA2200U,
+    0xBBBB3300U,0xBBBB3300U,
+
+    0x88884400U,0x88884400U,
+    0x99995500U,0x99995500U,
+    0xAAAA6600U,0xAAAA6600U,
+    0xBBBB7700U,0xBBBB7700U,
+
+    0xCC880000U,0xCC880000U,
+    0xDD991100U,0xDD991100U,
+    0xEEAA2200U,0xEEAA2200U,
+    0xFFBB3300U,0xFFBB3300U,
+
+    0xCC884400U,0xCC884400U,
+    0xDD995500U,0xDD995500U,
+    0xEEAA6600U,0xEEAA6600U,
+    0xFFBB7700U,0xFFBB7700U,
+
+    0x88888800U,0x88888800U,
+    0x99999900U,0x99999900U,
+    0xAAAAAA00U,0xAAAAAA00U,
+    0xBBBBBB00U,0xBBBBBB00U,
+
+    0x8888CC00U,0x8888CC00U,
+    0x9999DD00U,0x9999DD00U,
+    0xAAAAEE00U,0xAAAAEE00U,
+    0xBBBBFF00U,0xBBBBFF00U,
+
+    0xCC888800U,0xCC888800U,
+    0xDD999900U,0xDD999900U,
+    0xEEAAAA00U,0xEEAAAA00U,
+    0xFFBBBB00U,0xFFBBBB00U,
+
+    0xCC88CC00U,0xCC88CC00U,
+    0xDD99DD00U,0xDD99DD00U,
+    0xEEAAEE00U,0xEEAAEE00U,
+    0xFFBBFF00U,0xFFBBFF00U,
+
+    0x88CC0000U,0x88CC0000U,
+    0x99DD1100U,0x99DD1100U,
+    0xAAEE2200U,0xAAEE2200U,
+    0xBBFF3300U,0xBBFF3300U,
+
+    0x88CC4400U,0x88CC4400U,
+    0x99DD5500U,0x99DD5500U,
+    0xAAEE6600U,0xAAEE6600U,
+    0xBBFF7700U,0xBBFF7700U,
+
+    0xCCCC0000U,0xCCCC0000U,
+    0xDDDD1100U,0xDDDD1100U,
+    0xEEEE2200U,0xEEEE2200U,
+    0xFFFF3300U,0xFFFF3300U,
+
+    0xCCCC4400U,0xCCCC4400U,
+    0xDDDD5500U,0xDDDD5500U,
+    0xEEEE6600U,0xEEEE6600U,
+    0xFFFF7700U,0xFFFF7700U,
+
+    0x88CC8800U,0x88CC8800U,
+    0x99DD9900U,0x99DD9900U,
+    0xAAEEAA00U,0xAAEEAA00U,
+    0xBBFFBB00U,0xBBFFBB00U,
+
+    0x88CCCC00U,0x88CCCC00U,
+    0x99DDDD00U,0x99DDDD00U,
+    0xAAEEEE00U,0xAAEEEE00U,
+    0xBBFFFF00U,0xBBFFFF00U,
+
+    0xCCCC8800U,0xCCCC8800U,
+    0xDDDD9900U,0xDDDD9900U,
+    0xEEEEAA00U,0xEEEEAA00U,
+    0xFFFFBB00U,0xFFFFBB00U,
+
+    0xCCCCCC00U,0xCCCCCC00U,
+    0xDDDDDD00U,0xDDDDDD00U,
+    0xEEEEEE00U,0xEEEEEE00U,
+    0xFFFFFF00U,0xFFFFFF00U
+};
+
+static U32 desktop_greyed_palette_256[256*2];
+
+static void
+host_disable_bbggrrxx(
+    _InoutRef_  P_U32 p_bbggrrxx)
+{
+    static const RGB rgb_d = RGB_INIT(221, 221, 221);
+    U32 bbggrrxx = *p_bbggrrxx;
+    RGB rgb;
+
+    rgb_set(&rgb,
+        (bbggrrxx >>  8) & 0xFF,
+        (bbggrrxx >> 16) & 0xFF,
+        (bbggrrxx >> 24) & 0xFF);
+
+    host_disable_rgb(&rgb, &rgb_d, 3);
+
+    bbggrrxx =
+        (rgb.b << 24) |
+        (rgb.g << 16) |
+        (rgb.r <<  8) ;
+
+  /*reportf("%.08X -> %.08X", *p_bbggrrxx, bbggrrxx);*/
+
+    *p_bbggrrxx = bbggrrxx;
+}
+
+static void
+generate_greyed_tool_palette(void)
+{
+    U32 i;
+    U32 bbggrrxx;
+
+#if 0
+    for(i = 0; i < 16; ++i)
+    {
+        const U32 p_idx = i << 1;
+
+        bbggrrxx = desktop_default_palette_16[p_idx];
+
+        host_disable_bbggrrxx(&bbggrrxx);
+
+        desktop_greyed_palette_16[p_idx + 0] = bbggrrxx;
+        desktop_greyed_palette_16[p_idx + 1] = bbggrrxx; /* second is just a copy of first */
+    }
+#endif
+
+    for(i = 0; i < 256; ++i)
+    {
+        const U32 p_idx = i << 1;
+
+        bbggrrxx = desktop_default_palette_256[p_idx];
+
+        host_disable_bbggrrxx(&bbggrrxx);
+
+        desktop_greyed_palette_256[p_idx + 0] = bbggrrxx;
+        desktop_greyed_palette_256[p_idx + 1] = bbggrrxx; /* second is just a copy of first */
+    }
+}
+
 static void
 do_paint_tool(
     _DocuRef_   P_DOCU p_docu,
@@ -837,101 +1289,86 @@ do_paint_tool(
 
         resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
 
-        if(!resource_bitmap_handle.i)
+        if(0 == resource_bitmap_handle.i)
             resource_bitmap_handle = resource_bitmap_find_system(&resource_bitmap_id);
 
-        if(resource_bitmap_handle.i)
+        if(0 != resource_bitmap_handle.i)
         {
             P_SCB p_scb = resource_bitmap_handle.p_scb;
-            BOOL has_palette = p_scb->offset_to_data > sizeof32(*p_scb);
             BOOL has_mask = (p_scb->offset_to_mask != p_scb->offset_to_data);
             union SCB_BUFFER_U
             {
                 SCB scb;
-                U8 buffer[1024];
+                U8 buffer[sizeof(SCB) + 2048 + 6*256];
             } fish;
 
-            /*if(has_mask)
-            {
-                P_RGB p_rgb = &rgb_stash[1];
-                GDI_RECT gdi_rect;
-                PIXIT_RECT pixit_rect;
-                gdi_rect.tl.x = control_screen_inner.x0;
-                gdi_rect.br.y = control_screen_inner.y0;
-                gdi_rect.br.x = control_screen_inner.x1;
-                gdi_rect.tl.y = control_screen_inner.y1;
-                pixit_rect_from_screen_rect_and_context(&pixit_rect, &gdi_rect, p_redraw_context);
-                if(needs_depression)
-                    p_rgb = &rgb_stash[2];
-                if(!enabled)
-                    p_rgb = &rgb_stash[0];
-                host_paint_rectangle_filled(p_redraw_context, &pixit_rect, p_rgb);
-            }*/
+           /* all toolbar buttons with sprite contents get small margin applied inside the frame */
+           control_screen_inner.x0 += 4;
+           control_screen_inner.y0 += 4;
+           control_screen_inner.x1 -= 4;
+           control_screen_inner.y1 -= 4;
 
             if(!enabled || (needs_depression && !has_mask))
             {
-                static const U32 desktop_default_palette[16*2] =
+                const U32 source_palette_bytes = p_scb->offset_to_data - sizeof32(*p_scb);
+                const U32 * replacement_palette = NULL;
+                U32 replacement_palette_bytes = 0;
+                U32 bpp;
+
+                host_modevar_cache_query_bpp(p_scb->mode, &bpp);
+
+                switch(bpp)
                 {
-                    0xFFFFFF00U,0xFFFFFF00U,0xDDDDDD00U,0xDDDDDD00U,
-                    0xBBBBBB00U,0xBBBBBB00U,0x99999900U,0x99999900U,
-                    0x77777700U,0x77777700U,0x55555500U,0x55555500U,
-                    0x33333300U,0x33333300U,0x00000000U,0x00000000U,
+                case 8:
+                    replacement_palette = enabled ? desktop_default_palette_256 : desktop_greyed_palette_256;
+                    replacement_palette_bytes = sizeof(desktop_greyed_palette_256);
+                    break;
 
-                    0x88440000U,0x88440000U,0xEEEE0000u,0xEEEE0000U,
-                    0x00DD0000U,0x00DD0000U,0x0000DD00u,0x0000DD00U,
-                    0xCCEEEE00U,0xCCEEEE00U,0x00884400U,0x00884400U,
-                    0x00CCFF00U,0x00CCFF00U,0xFFCC0000U,0xFFCC0000U
-                };
+                case 4:
+                    replacement_palette = enabled ? desktop_default_palette_16 : desktop_greyed_palette_16;
+                    replacement_palette_bytes = sizeof(desktop_greyed_palette_16);
+                    break;
 
-                static const U32 desktop_greyed_palette[16*2] =
+                default:
+                    break;
+                }
+
+                if(0 != replacement_palette_bytes)
                 {
-                    0xFFFFFF00U,0xFFFFFF00U,0xEEEEEE00U,0xEEEEEE00U,
-                    0xDDDDDD00U,0xDDDDDD00U,0xCCCCCC00U,0xCCCCCC00U,
-                    0xBBBBBB00U,0xBBBBBB00U,0xAAAAAA00U,0xAAAAAA00U,
-                    0x99999900U,0x99999900U,0x88888800U,0x88888800U,
+                    assert(p_scb->offset_to_next + (replacement_palette_bytes - source_palette_bytes) <= sizeof32(fish.buffer));
+                    if(p_scb->offset_to_next + (replacement_palette_bytes - source_palette_bytes) > sizeof32(fish.buffer))
+                        replacement_palette_bytes = 0;
+                }
 
-                    0xCC995500U,0xCC995500U,0xF6F64400U,0xF6F64400U,
-                    0xCCEECC00U,0xCCEECC00U,0xCCCCEE00U,0xCCCCEE00U,
-                    0xE4F6F600U,0xE4F6F600U,0x88CC8800U,0x88CC8800U,
-                    0xCCE4FF00U,0xCCE4FF00U,0xFFE44400U,0xFFE44400U
-                };
-
-                assert(p_scb->offset_to_next + (has_palette ? 0 : sizeof32(desktop_greyed_palette)) < sizeof32(fish.buffer));
-                if(p_scb->offset_to_next + (has_palette ? 0 : sizeof32(desktop_greyed_palette)) < sizeof32(fish.buffer))
+                if(0 != replacement_palette_bytes)
                 {
-                    const U32 * cp;
                     U32 * p;
-                    U32 c2;
+                    U32 c2 = replacement_palette[(2)*2]; /* colour 2 in whichever palette */
 
-                    cp = enabled ? desktop_default_palette : desktop_greyed_palette;
-                    c2 = cp[(2)*2]; /* colour 2 in whichever palette */
+                    /* copy header */
+                    memcpy32(&fish.scb, p_scb, sizeof32(*p_scb));
 
-                    if(has_palette)
-                    {
-                        assert(p_scb->offset_to_data == sizeof32(*p_scb) + sizeof32(desktop_greyed_palette));
-                        memcpy32(&fish.scb, p_scb, p_scb->offset_to_next);
-                        memcpy32(&fish.buffer[0] + sizeof32(*p_scb), cp, sizeof32(desktop_greyed_palette)); /* override the palette anyway */
-                        p_scb = &fish.scb;
-                    }
-                    else
-                    {
-                        memcpy32(&fish.scb, p_scb, sizeof32(*p_scb));
-                        memcpy32(&fish.buffer[0] + sizeof32(*p_scb), cp, sizeof32(desktop_greyed_palette));
-                        memcpy32(&fish.buffer[0] + sizeof32(*p_scb) + sizeof32(desktop_greyed_palette), p_scb + 1, p_scb->offset_to_next - sizeof32(*p_scb));
-                        p_scb = &fish.scb;
-                        p_scb->offset_to_next += sizeof32(desktop_greyed_palette);
-                        p_scb->offset_to_data += sizeof32(desktop_greyed_palette);
-                        p_scb->offset_to_mask += sizeof32(desktop_greyed_palette);
-                    }
+                    /* insert new palette */
+                    memcpy32(&fish.buffer[sizeof32(*p_scb)], replacement_palette, replacement_palette_bytes);
 
-                    p = (U32 *) (p_scb + 1);
+                    /* copy image data (and mask) */
+                    memcpy32(&fish.buffer[sizeof32(*p_scb) + replacement_palette_bytes],
+                             (p_scb + 1) + source_palette_bytes,
+                             p_scb->offset_to_next - (sizeof32(*p_scb) + source_palette_bytes));
+
+                    p_scb = &fish.scb;
+                    p_scb->offset_to_next += (replacement_palette_bytes - source_palette_bytes);
+                    p_scb->offset_to_data += (replacement_palette_bytes - source_palette_bytes);
+                    assert((U32) p_scb->offset_to_data == sizeof32(*p_scb) + replacement_palette_bytes);
+                    p_scb->offset_to_mask += (replacement_palette_bytes - source_palette_bytes);
 
                     if(needs_depression)
                     {
+                        p = (U32 *) (p_scb + 1);
+
                         /* simply map colour 1 to colour 2 for depressed button effect */
-                        p = &p[(1)*2];
-                        *p++ = c2;
-                        *p++ = c2; /* copy 1st colour to 2nd colour */
+                        p[(1)*2] = c2;
+                        p[(2)*2] = c2; /* copy 1st colour to 2nd colour */
                     }
                 }
             }
@@ -952,7 +1389,7 @@ do_paint_tool(
             {
             T5_TOOLBAR_TOOL_USER_REDRAW t5_toolbar_tool_user_redraw;
             RECT_FLAGS rect_flags;
-            zero_struct(t5_toolbar_tool_user_redraw);
+            zero_struct_fn(t5_toolbar_tool_user_redraw);
             t5_toolbar_tool_user_redraw.client_handle = p_t5_toolbar_view_tool_desc->client_handle;
             t5_toolbar_tool_user_redraw.p_t5_toolbar_tool_desc = p_t5_toolbar_tool_desc;
             t5_toolbar_tool_user_redraw.viewno = p_view->viewno;
@@ -1060,8 +1497,10 @@ do_paint_tool(
         resource_bitmap_id.object_id = p_t5_toolbar_tool_desc->resource_object_id;
         resource_bitmap_id.bitmap_id = resource_id;
 
-        if(g_hTheme && (g_nColours > 256)) /* still prefer 4-bit icons for 8-bit modes */
-        {
+        if(g_hTheme && (g_nColours > 256)) /* still prefer 4-bit icons for 8-bit modes even if themed */
+        if(resource_bitmap_id.bitmap_id & T5_RESOURCE_COMMON_BMP_BIT)
+        {   /* Promote to using 32-bpp low/high-dpi icon set */
+            /* NB this only applies to multi-image stores, which the toolbar buttons currently are */
             resource_bitmap_id.bitmap_id += 2;
             f32bpp = TRUE;
         }
@@ -1474,9 +1913,9 @@ paint_status_line_windows(
     RECT core_rect;
     int core_height;
 
-    zero_struct_ptr(p_redraw_context);
+    zero_struct_ptr_fn(p_redraw_context);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     p_redraw_context->p_docu = p_docu;
@@ -1587,9 +2026,9 @@ paint_toolbar_windows(
     PIXIT_RECT clip_rect;
     BOOL first_time = TRUE;
 
-    zero_struct_ptr(p_redraw_context);
+    zero_struct_ptr_fn(p_redraw_context);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     p_redraw_context->p_docu = p_docu;
@@ -1612,7 +2051,6 @@ paint_toolbar_windows(
     p_redraw_context->display_mode = p_view->display_mode;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     host_redraw_context_set_host_xform(p_redraw_context, &p_view->host_xform[XFORM_TOOLBAR]);
 
@@ -1867,8 +2305,8 @@ T5_MSG_PROTO(static, scheduled_toolbar_redraw, P_SCHEDULED_EVENT_BLOCK p_schedul
         const P_T5_TOOLBAR_VIEW_ROW_DESC p_t5_toolbar_view_row_desc = array_ptr(&p_view->toolbar.h_toolbar_view_row_desc, T5_TOOLBAR_VIEW_ROW_DESC, u16_row);
 
         myassert3x(p_t5_toolbar_view_row_desc->scheduled_event_id == p_scheduled_event_block->client_handle,
-            TEXT("row %d scheduled_event_id ") UINTPTR_XTFMT TEXT(" != client_handle ") UINTPTR_XTFMT,
-            u16_row, (uintptr_t) p_t5_toolbar_view_row_desc->scheduled_event_id, p_scheduled_event_block->client_handle);
+            TEXT("row ") U32_TFMT TEXT(" scheduled_event_id ") UINTPTR_XTFMT TEXT(" != client_handle ") UINTPTR_XTFMT,
+            (U32) u16_row, (uintptr_t) p_t5_toolbar_view_row_desc->scheduled_event_id, p_scheduled_event_block->client_handle);
 
         p_t5_toolbar_view_row_desc->scheduled_event_id = 0;
 
@@ -2098,8 +2536,8 @@ status_line_view_new(
         status_assert(fontmap_host_font_spec_from_font_spec(&host_font_spec, &p_status_line_style->font_spec, FALSE));
 
         { /* Em = dpiY * point_size / 72 from MSDN */ /* convert to dpi-dependent pixels */ /* DPI-aware */
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+        GDI_SIZE PixelsPerInch;
+        host_get_pixel_size(NULL /*screen*/, NULL /*cx*/, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
         host_font_spec.size_y = idiv_floor_u(host_font_spec.size_y * PixelsPerInch.cy, PIXITS_PER_INCH);
         } /*block*/
@@ -2486,6 +2924,10 @@ toolbar_view_new(
 
                 if(p_t5_toolbar_tool_desc->bits.thin)
                     this_size.cx /= 2;
+
+                /* a little more internal padding from button border to the button image these days, especially now we have themed buttons */
+                this_size.cx += 2 * PIXITS_PER_PIXEL;
+                this_size.cy += 2 * PIXITS_PER_PIXEL;
 #else
                 this_size.cx = p_t5_toolbar_tool_desc->bits.thin ? TOOL_BUTTON_THIN_WIDTH : TOOL_BUTTON_STD_WIDTH;
                 this_size.cy = TOOL_BUTTON_STD_HEIGHT;
@@ -2567,8 +3009,8 @@ toolbar_view_new(
     toolbar_height_riscos = cur_point.y / PIXITS_PER_RISCOS;
 #elif WINDOWS
     { /* convert to dpi-dependent pixels */ /* DPI-aware */
-    SIZE PixelsPerInch;
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+    GDI_SIZE PixelsPerInch;
+    host_get_pixel_size(NULL /*screen*/, NULL /*cx*/, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
     toolbar_height_pixels = idiv_ceil_u(cur_point.y * PixelsPerInch.cy, PIXITS_PER_INCH);
     } /*block*/
@@ -2776,12 +3218,12 @@ T5_CMD_PROTO(static, t5_cmd_button)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 2);
     const PC_USTR name = p_args[0].val.ustr;
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, name);
-    BOOL alternate = FALSE;
+    S32 alternate = 0; /* expanded from BOOL */
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, 1))
-        alternate = p_args[1].val.fBool;
+        alternate = p_args[1].val.s32;
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
         return(create_error(TOOLB_ERR_UNKNOWN_CONTROL));
@@ -2866,7 +3308,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click, _InoutRef_ P_BACK_WINDOW_EV
 
             default:
                 {
-                const BOOL alternate = (T5_EVENT_CLICK_RIGHT_SINGLE == t5_message) || (T5_EVENT_CLICK_RIGHT_DOUBLE == t5_message);
+                const S32 alternate = (T5_EVENT_CLICK_RIGHT_SINGLE == t5_message) || (T5_EVENT_CLICK_RIGHT_DOUBLE == t5_message);
                 execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
                 break;
                 }
@@ -2898,7 +3340,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click_drag, _InoutRef_ P_BACK_WIND
 
             if(p_t5_toolbar_tool_desc->bits.auto_repeat)
             {
-                const BOOL alternate = (T5_EVENT_CLICK_RIGHT_DRAG == t5_message);
+                const S32 alternate = (T5_EVENT_CLICK_RIGHT_DRAG == t5_message);
                 execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
             }
         }
@@ -3100,6 +3542,10 @@ static STATUS
 toolbar_msg_startup(void)
 {
     status_return(resource_init(OBJECT_ID_TOOLBAR, P_BOUND_MESSAGES_OBJECT_ID_TOOLB, P_BOUND_RESOURCES_OBJECT_ID_TOOLB));
+
+#if RISCOS
+    generate_greyed_tool_palette();
+#endif
 
     status_line_style_startup();
 

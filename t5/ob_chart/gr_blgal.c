@@ -24,7 +24,7 @@ chart_add_note(
     const P_DOCU p_docu = p_docu_from_docno(p_chart_header->docno);
     NOTE_INFO note_info;
 
-    zero_struct(note_info);
+    zero_struct_fn(note_info);
 
     note_info.layer = LAYER_CELLS_AREA_ABOVE; /* always insert into front layer */
 
@@ -395,9 +395,8 @@ gr_chart_bl_gallery(
         t5_msg_chart_gallery_data.chart_type = chart_type;
         status_break(status = object_call_id(OBJECT_ID_CHART, P_DOCU_NONE, T5_MSG_CHART_GALLERY, &t5_msg_chart_gallery_data));
         chart_bl_gallery_callback.p_selected_pict = t5_msg_chart_gallery_data.p_selected_pict;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, t5_msg_chart_gallery_data.p_ctl_create, t5_msg_chart_gallery_data.n_ctls, t5_msg_chart_gallery_data.help_topic_resource_id);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = t5_msg_chart_gallery_data.resource_id;
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, t5_msg_chart_gallery_data.p_ctl_create, t5_msg_chart_gallery_data.n_ctls, t5_msg_chart_gallery_data.resource_id);
+        dialog_cmd_process_dbox.help_topic_resource_id = t5_msg_chart_gallery_data.help_topic_resource_id;
         } /*block*/
 
         dialog_cmd_process_dbox.p_proc_client = dialog_event_bl_gallery;

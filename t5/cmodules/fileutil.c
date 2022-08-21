@@ -23,7 +23,7 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
-#include <ctype.h> /* for "C"isalpha and friends */
+#include <ctype.h> /* for tolower() */
 
 /*
 internal functions
@@ -39,10 +39,9 @@ file__make_usable_dir(
 
 typedef struct FILEUTIL_STATICS
 {
-#define N_SPECIAL_PATHS 4 /*std,net,exe,res*/
-    PTSTR path[N_SPECIAL_PATHS]; /* alloc_block_tstr_set() */
+    PTSTR path[FILE_PATH_N_PATHS]; /* alloc_block_tstr_set() */
 
-    PTSTR search_path; /* alloc_block_tstr_set() */
+    PTSTR search_path; /* alloc_block_tstr_set() */ /* composite path */
 }
 FILEUTIL_STATICS;
 
@@ -579,15 +578,23 @@ file_objinfo_name(
     _InRef_     PC_FILE_OBJINFO oip,
     _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/)
 {
-    PCTSTR name;
-
-#if RISCOS
-    name = oip->fileinfo.name;
-#elif WINDOWS
-    name = oip->win32_find_data.cFileName;
-#endif
+    const PCTSTR name = file_objinfo_name_ll(oip);
 
     return(quick_tblock_tchars_add(p_quick_tblock, name, tstrlen32p1(name) /*CH_NULL*/));
+}
+
+_Check_return_
+_Ret_z_
+extern PCTSTR /* low-lifetime*/
+file_objinfo_name_ll(
+    _InRef_     PC_FILE_OBJINFO oip)
+
+{
+#if RISCOS
+    return(oip->fileinfo.name);
+#elif WINDOWS
+    return(oip->win32_find_data.cFileName);
+#endif
 }
 
 _Check_return_
@@ -916,7 +923,7 @@ file_get_prefix(
 *
 * --out--
 *
-*   current path being used for resources
+*   current path being used for program resources
 *
 ******************************************************************************/
 
@@ -930,7 +937,7 @@ file_get_resources_path(void)
 *
 * --out--
 *
-*   current path being used for searches
+*   current path being used for searches (User, then Admin, then Program)
 *
 ******************************************************************************/
 
@@ -938,6 +945,20 @@ extern PCTSTR
 file_get_search_path(void)
 {
     return(fileutil_statics.search_path);
+}
+
+/******************************************************************************
+*
+* --out--
+*
+*   current path being used for templates
+*
+******************************************************************************/
+
+extern PCTSTR
+file_get_templates_path(void)
+{
+    return(fileutil_statics.path[FILE_PATH_TEMPLATES]);
 }
 
 /******************************************************************************
@@ -955,16 +976,28 @@ file_is_dir(
 
     dirname = file__make_usable_dir(de_const_cast(PTSTR /*broken promise*/, dirname), buffer, elemof32(buffer));
 
-    {
 #if RISCOS
-    _kernel_swi_regs rs;
-    rs.r[0] = OSFile_ReadNoPath;
-    rs.r[1] = (int) dirname;
-    if(NULL != _kernel_swi(OS_File, &rs, &rs))
+    {
+    _kernel_osfile_block osfile_block;
+    /*zero_struct(osfile_block);*/
+    switch(_kernel_osfile(OSFile_ReadNoPath, dirname, &osfile_block))
+    {
+    default: default_unhandled();
+#if CHECKING
+    case _kernel_ERROR:
+    case OSFile_ObjectType_None:
+    case OSFile_ObjectType_File:
+#endif
         return(FALSE);
-    return((rs.r[0] == OSFile_ObjectType_Dir) || (rs.r[0] == OSFile_ObjectType_Image));
+
+    case OSFile_ObjectType_Dir:
+    case OSFile_ObjectType_Image:
+        return(TRUE);
+    }
+    } /*block*/
 #elif WINDOWS
-    DWORD dword = GetFileAttributes(dirname);
+    {
+    const DWORD dword = GetFileAttributes(dirname);
     if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
@@ -972,10 +1005,10 @@ file_is_dir(
         return(FALSE);
     }
     return((dword & FILE_ATTRIBUTE_DIRECTORY) != 0);
+    } /*block*/
 #else
     return(FALSE);
 #endif
-    } /*block*/
 }
 
 /******************************************************************************
@@ -990,14 +1023,24 @@ file_is_file(
     _In_z_      PCTSTR filename)
 {
 #if RISCOS
-    _kernel_swi_regs rs;
-    rs.r[0] = OSFile_ReadNoPath;
-    rs.r[1] = (int) filename;
-    if(NULL != _kernel_swi(OS_File, &rs, &rs))
+    _kernel_osfile_block osfile_block;
+    /*zero_struct(osfile_block);*/
+    switch(_kernel_osfile(OSFile_ReadNoPath, filename, &osfile_block))
+    {
+    default: default_unhandled();
+#if CHECKING
+    case _kernel_ERROR:
+    case OSFile_ObjectType_None:
+    case OSFile_ObjectType_Dir:
+    case OSFile_ObjectType_Image:
+#endif
         return(FALSE);
-    return(rs.r[0] == OSFile_ObjectType_File);
+
+    case OSFile_ObjectType_File:
+        return(TRUE);
+    }
 #elif WINDOWS
-    DWORD dword = GetFileAttributes(filename);
+    const DWORD dword = GetFileAttributes(filename);
     if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
@@ -1022,18 +1065,26 @@ file_is_read_only(
     _In_z_      PCTSTR filename)
 {
 #if RISCOS
-    _kernel_swi_regs rs;
-    rs.r[0] = OSFile_ReadNoPath;
-    rs.r[1] = (int) filename;
-    if(NULL != _kernel_swi(OS_File, &rs, &rs))
+    _kernel_osfile_block osfile_block;
+    /*zero_struct(osfile_block);*/
+    switch(_kernel_osfile(OSFile_ReadNoPath, filename, &osfile_block))
+    {
+    default: default_unhandled();
+#if CHECKING
+    case _kernel_ERROR:
+    case OSFile_ObjectType_None:
+    case OSFile_ObjectType_Dir:
+    case OSFile_ObjectType_Image:
+#endif
         return(FALSE);
-    if(rs.r[0] != OSFile_ObjectType_File)
+
+    case OSFile_ObjectType_File:
+        if((osfile_block.end /*R5*/ & OSFile_ObjectAttribute_write) == 0) /* writable bit clear? */
+            return(TRUE);
         return(FALSE);
-    if((rs.r[5] & OSFile_ObjectAttribute_write) != 0) /* writable bit set? */
-        return(FALSE);
-    return(TRUE);
+    }
 #elif WINDOWS
-    DWORD dword = GetFileAttributes(filename);
+    const DWORD dword = GetFileAttributes(filename);
     if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
@@ -1276,9 +1327,8 @@ file_path_element_next(
         *tstr_res = CH_NULL;
 
         /* strip off leading spaces */
-        while((ch = *tstr++) == CH_SPACE)
-        { /*EMPTY*/ }
-        --tstr;
+        while((ch = *tstr) == CH_SPACE)
+            ++tstr;
 
         /* path ended? */
         if(CH_NULL == *tstr)
@@ -1678,7 +1728,7 @@ extern PCTSTR
 file_path_query(
     _In_        UINT i)
 {
-    assert(i < N_SPECIAL_PATHS);
+    assert(i < FILE_PATH_N_PATHS);
     return(fileutil_statics.path[i]);
 }
 
@@ -1688,7 +1738,9 @@ file_path_set(
     PCTSTR tstr,
     _In_        UINT i)
 {
-    assert(i < N_SPECIAL_PATHS);
+    trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%u): %s"), i, report_tstr(tstr));
+
+    assert(i < FILE_PATH_N_PATHS);
     /*tstr_clr(&fileutil_statics.path[i]);*/
     fileutil_statics.path[i] = NULL;
 
@@ -1708,17 +1760,18 @@ file_build_paths(void)
 
     full_path[0] = CH_NULL;
 
-    for(i = FILE_PATH_STANDARD; i <= FILE_PATH_SYSTEM; ++i)
+    for(i = FILE_PATH_USER; i <= FILE_PATH_RESOURCES; ++i) /* User data, Admin data, Program resources */
     {
         PCTSTR tstr_path = file_path_query(i);
 
-        if(NULL == tstr_path)
+        if( (NULL == tstr_path) || (CH_NULL == tstr_path[0]) )
             continue;
 
+        /* no duplicates */
         if(NULL != tstrstr(full_path, tstr_path))
             continue;
 
-        if(full_path[0])
+        if(CH_NULL != full_path[0])
             tstr_xstrkat(full_path, elemof32(full_path), FILE_PATH_SEP_TSTR);
 
         tstr_xstrkat(full_path, elemof32(full_path), tstr_path);

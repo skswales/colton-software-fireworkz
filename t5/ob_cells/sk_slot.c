@@ -759,23 +759,23 @@ cells_block_delete(
 
 /******************************************************************************
 *
-* insert a block of cells
+* add/insert a block of cells
 *
 ******************************************************************************/
 
 _Check_return_
 extern STATUS
-cells_block_insert(
+cells_block_add_ins(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     COL col_s,
     _InVal_     COL col_e,
     _InVal_     ROW at_row,
     _InVal_     S32 rows_n,
-    _InVal_     S32 add)
+    _InVal_     bool add)
 {
+    const ROW row_add_shift = add ? 1 : 0;
     STATUS status = STATUS_OK;
     SLR slr;
-    ROW row_add_shift = add ? 1 : 0;
 
     for(slr.col = col_s, slr.row = at_row;
         (slr.col < col_e) && (slr.col < n_cols_physical(p_docu));
@@ -965,22 +965,22 @@ cells_column_delete(
 
 /******************************************************************************
 *
-* insert columns in a block
+* add/insert columns in a block
 *
 ******************************************************************************/
 
 _Check_return_
 extern STATUS
-cells_column_insert(
+cells_column_add_ins(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     COL at_col,
     _InVal_     COL cols_n,
     _InVal_     ROW row_s,
     _InVal_     ROW row_e,
-    _InVal_     S32 add)
+    _InVal_     bool add)
 {
+    const COL col_add_shift = add ? 1 : 0;
     STATUS status = STATUS_OK;
-    COL col_add_shift = add ? 1 : 0;
 
     {
     OBJECT_COPY object_copy;
@@ -1173,7 +1173,7 @@ cells_docu_area_delete(
                 {
                     cells_block_delete(p_docu, col_s, col_e, row_s, rows_n);
 
-                    status = cells_block_insert(p_docu, col_s, col_e, row_s, rows_n, FALSE);
+                    status = cells_block_insert(p_docu, col_s, col_e, row_s, rows_n);
                 }
             }
 
@@ -1193,7 +1193,7 @@ cells_docu_area_delete(
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return >= 0)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 cells_docu_area_insert(
     _DocuRef_   P_DOCU p_docu,
@@ -1276,7 +1276,7 @@ cells_docu_area_insert(
         {
             if(!cells_block_is_blank(p_docu, p_position->slr.col, p_position->slr.col + (COL) cols_n, p_position->slr.row, rows_n))
             {
-                status = cells_block_insert(p_docu, 0, all_cols(p_docu), at_row, rows_n, FALSE);
+                status = cells_block_insert(p_docu, 0, all_cols(p_docu), at_row, rows_n);
             }
             else
             {
@@ -1374,8 +1374,7 @@ cells_object_split(
                                      all_cols(p_docu),
                                      start_frag ? p_position->slr.row + 1
                                                 : p_position->slr.row,
-                                     1,
-                                     FALSE));
+                                     1));
 
     if(start_frag)
     {
@@ -1488,9 +1487,9 @@ slr_realloc(
     {
         const P_LIST_BLOCK p_list_block = p_list_block_from_col_in_range(p_docu, p_slr->col);
 
-        if(NULL == (p_list_item = list_createitem(p_list_block, (LIST_ITEMNO) p_slr->row, CELL_OVH + object_size, FALSE)))
+        if(NULL == (p_list_item = list_createitem(p_list_block, (LIST_ITEMNO) p_slr->row, (S32) CELL_OVH + object_size, FALSE)))
         {
-            myassert1(TEXT("slr_realloc failed to create cell of size ") S32_TFMT, CELL_OVH + object_size);
+            myassert1(TEXT("slr_realloc failed to create cell of size ") S32_TFMT, (S32) CELL_OVH + object_size);
             status = status_nomem();
         }
         else
@@ -1547,7 +1546,7 @@ cell_swap(
 {
     STATUS status = STATUS_OK;
     P_BYTE p_byte;
-    QUICK_BLOCK_WITH_BUFFER(quick_block, 500);
+    QUICK_BLOCK_WITH_BUFFER(quick_block, 512);
     quick_block_with_buffer_setup(quick_block);
 
     if(NULL != (p_byte = quick_block_extend_by(&quick_block, p_cell_swap_2->object_size, &status)))
@@ -1592,7 +1591,7 @@ cells_swap_rows(
     STATUS status = STATUS_OK;
     COL col, col_s, col_e;
     CELL_SWAP cell_swap_1, cell_swap_2;
-    QUICK_BLOCK_WITH_BUFFER(quick_block, 500);
+    QUICK_BLOCK_WITH_BUFFER(quick_block, 512);
     quick_block_with_buffer_setup(quick_block);
 
     limits_from_region(p_docu, &col_s, &col_e, &cell_swap_1.slr.row, &cell_swap_2.slr.row, p_region);

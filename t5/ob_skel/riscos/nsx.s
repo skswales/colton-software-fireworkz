@@ -1,7 +1,5 @@
 ; riscos/nsx.s (ARM assembler)
 
-        ;GET     as_regs_h
-
         AREA    |C$$code|, CODE, READONLY
 
         EXPORT  |_kernel_stkovf_split_0frame|
@@ -22,7 +20,7 @@ SIGSTAK * 7
         STMFD   sp!, {fp, ip, lr, pc}
         SUB     fp, ip, #4
 
-        STR     r0, [r0, -r0]
+        ;STR     r0, [r0, -r0]
 
         MOV     r0, #SIGSTAK
         BL      raise

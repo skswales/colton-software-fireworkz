@@ -1,0 +1,43 @@
+﻿
+Adding records
+To add a new record to your database, you need to start by
+identifying the database you wish to work on. To do this:
+. Click on any record in the database display.
+Then either:
+. Click on the Add record button on the button bar.
+or
+- Slide off the Record option of the Database menu and choose
+Add.
+The new record will be added to the end of your database.
+
+Adding records to Auto layouts
+If you have set the Auto option in the Layout dialogue box so that
+all the database is always visible, then an extra row will be added
+to your document if necessary:
+. If you are using a sheet layout, a row will always be added.
+. If you are using a card layout, then the extra row will only be
+added if all the columns of the bottom row were previously
+full.
+
+Adding records to non-Auto layouts
+If you have chosen to clear the Auto option in order to display a
+fixed number of records, then the number of rows in the display
+will remain unchanged:
+. If your layout is displaying any blank records (for example if
+your layout is trying to display more records than your
+database currently contains) then the first of these will be
+replaced by the new record.
+
+88 Recordz
+
+. If your layout is full, then the new record will not immediately
+be visible and you will need to move to the end of the
+database to see it.
+
+Adding rows to a database
+Note that you cannot use the Rows option from the Edit menu to
+add records to your database.
+
+Fireworkz Pro 89
+
+

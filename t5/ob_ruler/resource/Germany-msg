@@ -1,0 +1,66 @@
+#
+# this is the messages file for ob_ruler (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_ruler/ob_ruler.h
+#
+# RULER_MSG_STATUS_RULER_xxx_NO_MARK
+#
+# UK 1:Ruler
+1:Horizontales Lineal
+# UK 2:Side ruler
+2:Vertikales Lineal
+# UK 3:Ruler. Click to place a new tab
+3:Horizontales Lineal. Klicken Sie hier, um einen neuen Tabulator zu platzieren
+#
+# RULER_MSG_STATUS_RULER_HORZ_xxx
+#
+# UK 274:Click to place a new tab
+274:Klicken Sie hier, um einen neuen Tabulator zu platzieren
+# UK 275:Left tab
+275:Linker Tabulator
+# UK 276:Centre tab
+276:Text um Tabulator zentrieren
+# UK 277:Right tab
+277:Rechter Tabulator
+# UK 278:Decimal tab
+278:Dezimaler Tabulator
+# UK r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST-double-click to change type
+r279:Ziehen/ADJUST-Ziehen zur Neupositionierung. Doppelklicken Sie zum Löschen. ADJUST-Doppelklicken Sie, um den Typ zu ändern
+# UK w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
+w279:Ziehen/Strg-Ziehen zum Neupositionieren. Doppelklicken Sie zum Löschen. Strg+Doppelklick, um den Typ zu ändern
+#
+# UK 285:Left margin
+285:Linker Rand
+# UK 286:Paragraph margin
+286:Absatzrand
+# UK 287:Right margin
+287:Rechter Rand
+# UK 288:Drag to reposition
+288:Zum Neupositionieren ziehen
+#
+# UK 729:Column width
+729:Spaltenbreite
+#
+# RULER_MSG_STATUS_RULER_VERT_xxx
+#
+# UK 723:Header margin
+723:Kopfzeilenrand
+# UK 724:Footer margin
+724:Fußzeilenrand
+# UK 725:Row height
+725:Zeilenhöhe
+# UK 727:Header offset
+727:Kopfzeilenversatz
+# UK 728:Footer offset
+728:Fußzeilenversatz 
+#
+# errors (none)
+#
+# end of msg (ob_ruler)

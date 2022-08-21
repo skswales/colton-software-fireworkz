@@ -1,0 +1,69 @@
+﻿Database Guide 178
+
+DAYOF
+DAYOF(date/interval)
+Retums an integer for the day value of a date or interval. For
+example:
+DAYOF('Date1‘)
+returns the day component of the date in the field Date1.
+
+DEG
+DEG(angle)
+Converts angle from radians to degrees.
+
+EXP
+EXP(number)
+Retums the constant e (2.718..) raised to the power number.
+
+FILE
+FILE(filename)
+Retums a result which is dependant on the file type of the file:
+File type Result
+Text String
+Draw Graphic
+Sprite Graphic
+Other File
+If the filename contains any of the following characters:
+: < $ & %
+FILE will assume that a full pathname has been supplied otherwise
+it will be prefixed by the pathname of the directory containing the
+relevant database file.
+
+
+Database Guide 179
+
+The contents of the file are not parsed, so they can only contain a
+literal string, graphic or file. They therefore cannot contain an
+integer, real, boolean or date. If an integer or real is needed from a
+file, then string to numeric conversion may be obtained by the use
+of the VAL function.
+
+HOUROF
+HOUROF(date/interval)
+Returns an integer for the hour value of a date or interval. For
+example:
+HOUROF( 'Date1' )
+returns the hour component of the date in the field Date1.
+
+INCOUNT
+INCOUNT(string1, string2)
+Returns the number of times string2 occurs within string1 . For
+example:
+INCOUNT ( "MISSISSIPPI " , "S" )
+returns the number 4.
+
+INSTR
+INSTR(source_txt, search_txt {, number})
+Searches for search_ txt within source_txt, and returns the
+number of the character in source_txt where search_txt
+begins. If search_txt is not found 0 is retumed. The optional
+number specifies the point in the source text where the search
+should begin. For example:
+INSTR("Saturday and Sunday","day")
+retums the value 6 and:
+INSTR("Saturday and Sunday","day",7)
+returns the value 17.
+
+
+
+

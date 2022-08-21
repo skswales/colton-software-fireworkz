@@ -31,7 +31,7 @@ $(BUILD_DIR).ob_drwio.$(COUNTRY)-17/rc: $(T5).ob_drwio.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 17 -common
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob17: $(T5).ob_drwio.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob17: $(T5).ob_drwio.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

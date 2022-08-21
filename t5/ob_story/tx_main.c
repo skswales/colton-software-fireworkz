@@ -545,7 +545,7 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    offsets_from_object_data(&start, &end, p_object_data, !IS_PTR_NONE(p_object_data->u.ustr_inline) ? ustr_inline_strlen(p_object_data->u.ustr_inline) : 0);
+    offsets_from_object_data(&start, &end, p_object_data, PTR_NOT_NONE(p_object_data->u.ustr_inline) ? ustr_inline_strlen(p_object_data->u.ustr_inline) : 0);
 
     switch(action)
     {
@@ -976,7 +976,7 @@ text_segment_paint_drawfile(
             const PC_UCHARS_INLINE uchars_inline = uchars_inline_AddBytes(ustr_inline, p_chunk->input_ix);
             PC_UTF8 utf8 = inline_data_ptr(PC_UTF8, uchars_inline);
             const U32 il_data_size = inline_data_size(uchars_inline);
-            QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 50);
+            QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 64);
             quick_wblock_with_buffer_setup(quick_wblock);
 
             status = quick_wblock_utf8_add(&quick_wblock, utf8, il_data_size);
@@ -1014,7 +1014,7 @@ text_segment_paint_drawfile(
 #endif
             {
             STATUS status;
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
             quick_ublock_with_buffer_setup(quick_ublock);
 
             status_assert(status = text_from_field_uchars(p_docu, &quick_ublock,
@@ -1371,7 +1371,7 @@ text_segment_paint(
             const PC_UCHARS_INLINE uchars_inline = uchars_inline_AddBytes(ustr_inline, p_chunk->input_ix);
             PC_UTF8 utf8 = inline_data_ptr(PC_UTF8, uchars_inline);
             const U32 il_data_size = inline_data_size(uchars_inline);
-            QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 50);
+            QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 64);
             quick_wblock_with_buffer_setup(quick_wblock);
 
             status = quick_wblock_utf8_add(&quick_wblock, utf8, il_data_size);
@@ -1425,7 +1425,7 @@ text_segment_paint(
 #endif
             {
             STATUS status;
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
             quick_ublock_with_buffer_setup(quick_ublock);
 
             status_assert(status = text_from_field_uchars(p_docu, &quick_ublock,

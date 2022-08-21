@@ -189,7 +189,8 @@ gr_riscdiag_scaled_diagram_add(
     _In_reads_(diag_len) PC_BYTE p_diag,
     _InVal_     U32 diag_len,
     _InRef_     PC_GR_FILLSTYLEB fillstyleb,
-    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec);
+    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec,
+    _InRef_opt_ PC_GR_RISCDIAG p_gr_riscdiag_lookup);
 
 _Check_return_
 extern STATUS

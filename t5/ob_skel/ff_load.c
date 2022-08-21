@@ -29,6 +29,14 @@
 #include "ob_skel/xp_skeld.h"
 #endif
 
+#if RISCOS
+#ifndef         __xp_skelr_h
+#include "ob_skel/xp_skelr.h"
+#endif
+
+#include "cmodules/riscos/mimemap.h"
+#endif
+
 #ifndef          __utf8_h
 #include "cmodules/utf8.h"
 #endif
@@ -523,27 +531,34 @@ bound filetype handing
 
 typedef struct BOUND_FILETYPE
 {
-    QUICK_UBLOCK description_quick_ublock;    /* NB Can't have associated static_buffer as we will get realloc()ed */
-    QUICK_UBLOCK extension_srch_quick_ublock; /* ditto */
+#if WINDOWS
+    QUICK_TBLOCK filter_text_quick_tblock;  /* NB Can't have associated static_buffer as we will get realloc()ed */
+    PTSTR tstr_filter_wildcard;             /* alloc_block_tstr_set() */ /* surely language-independent? */
+#endif
 
     S32 mask;
     T5_FILETYPE t5_filetype;
+    P_USTR ustr_description;                /* alloc_block_ustr_set() */
 }
 BOUND_FILETYPE, * P_BOUND_FILETYPE; typedef const BOUND_FILETYPE * PC_BOUND_FILETYPE;
 
 extern void
 ff_load_msg_exit2(void)
 {
-    /* Ensure we dispose of all the quick_tblocks in the list */
+#if WINDOWS
+    /* Ensure we dispose of all the data in the list */
     ARRAY_INDEX i;
 
     for(i = 0; i < array_elements(&g_bound_filetype_handle); i++)
     {
-        P_BOUND_FILETYPE p_bound_filetype = array_ptr(&g_bound_filetype_handle, BOUND_FILETYPE, i);
+        const P_BOUND_FILETYPE p_bound_filetype = array_ptr(&g_bound_filetype_handle, BOUND_FILETYPE, i);
 
-        quick_ublock_dispose(&p_bound_filetype->description_quick_ublock);
-        quick_ublock_dispose(&p_bound_filetype->extension_srch_quick_ublock);
+        WINDOWS_ONLY( quick_tblock_dispose(&p_bound_filetype->filter_text_quick_tblock) );
+      /*WINDOWS_ONLY( alloc_block_tstr_clr(&p_bound_filetype->filter_wildcard_tstr) );*/
+
+      /*alloc_block_ustr_clr(&p_bound_filetype->description_ustr));*/
     }
+#endif
 
     al_array_dispose(&g_bound_filetype_handle);
 
@@ -575,34 +590,36 @@ enumerate_bound_filetypes(
 
         *p_array_index += 1;
 
-        if((p_bound_filetype->mask & mask) == mask)
-            return(p_bound_filetype->t5_filetype);
+        if((p_bound_filetype->mask & mask) != mask)
+            continue;
+
+        return(p_bound_filetype->t5_filetype);
     }
 
     *p_array_index = ENUMERATE_BOUND_FILETYPES_START;
     return(FILETYPE_UNDETERMINED);
 }
 
-_Check_return_
-_Ret_z_
+_Ret_z_ _Check_return_
 extern PC_USTR
 description_ustr_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype,
     _OutRef_    P_BOOL p_found)
 {
     static UCHARZ description_buffer[32];
-    ARRAY_INDEX i = array_elements(&g_bound_filetype_handle);
+    const ARRAY_INDEX n_elements = array_elements(&g_bound_filetype_handle);
+    ARRAY_INDEX i;
 
-    while(--i >= 0)
+    for(i = 0; i < n_elements; ++i)
     {
-        PC_BOUND_FILETYPE p_bound_filetype = array_ptrc(&g_bound_filetype_handle, BOUND_FILETYPE, i);
+        const PC_BOUND_FILETYPE p_bound_filetype = array_ptrc(&g_bound_filetype_handle, BOUND_FILETYPE, i);
 
-        if(p_bound_filetype->t5_filetype == t5_filetype)
-        {
-            assert(0 != quick_ublock_array_handle_ref(&p_bound_filetype->description_quick_ublock));
-            *p_found = TRUE;
-            return(quick_ublock_ustr(&p_bound_filetype->description_quick_ublock));
-        }
+        if(p_bound_filetype->t5_filetype != t5_filetype)
+            continue;
+
+        PTR_ASSERT(p_bound_filetype->ustr_description);
+        *p_found = TRUE;
+        return(p_bound_filetype->ustr_description);
     }
 
     *p_found = FALSE;
@@ -619,42 +636,81 @@ description_ustr_from_t5_filetype(
     return(ustr_bptr(description_buffer));
 }
 
-_Check_return_
-_Ret_z_
-extern PC_USTR
-extension_srch_ustr_from_t5_filetype(
+#if WINDOWS
+
+_Ret_z_ _Check_return_
+extern PCTSTR
+filter_text_tstr_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     S32 mask,
     _OutRef_    P_BOOL p_found)
 {
-    static UCHARZ extension_buffer[8];
-    ARRAY_INDEX i = array_elements(&g_bound_filetype_handle);
+    static TCHARZ filter_text_buffer[48];
+    const ARRAY_INDEX n_elements = array_elements(&g_bound_filetype_handle);
+    ARRAY_INDEX i;
 
-    while(--i >= 0)
+    for(i = 0; i < n_elements; ++i)
     {
-        PC_BOUND_FILETYPE p_bound_filetype = array_ptrc(&g_bound_filetype_handle, BOUND_FILETYPE, i);
+        const PC_BOUND_FILETYPE p_bound_filetype = array_ptrc(&g_bound_filetype_handle, BOUND_FILETYPE, i);
 
-        if(p_bound_filetype->t5_filetype == t5_filetype)
-        {
-            assert(0 != quick_ublock_array_handle_ref(&p_bound_filetype->extension_srch_quick_ublock));
-            *p_found = TRUE;
-            return(quick_ublock_ustr(&p_bound_filetype->extension_srch_quick_ublock));
-        }
+        if(p_bound_filetype->t5_filetype != t5_filetype)
+            continue;
+
+        if((p_bound_filetype->mask & mask) != mask)
+            continue;
+
+        assert(0 != quick_tblock_array_handle_ref(&p_bound_filetype->filter_text_quick_tblock));
+        *p_found = TRUE;
+        return(quick_tblock_tstr(&p_bound_filetype->filter_text_quick_tblock));
     }
 
     *p_found = FALSE;
-    consume_int(ustr_xsnprintf(ustr_bptr(extension_buffer), elemof32(extension_buffer), RISCOS ? USTR_TEXT("/x%03x") : USTR_TEXT("*.%03x"), t5_filetype));
-    return(ustr_bptr(extension_buffer));
+    consume_int(tstr_xsnprintf(filter_text_buffer, elemof32(filter_text_buffer), TEXT("Unknown [RISC OS &%03X] (*.%3x)"), t5_filetype, t5_filetype));
+    return(filter_text_buffer);
 }
+
+_Ret_z_ _Check_return_
+extern PCTSTR
+filter_wildcard_tstr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     S32 mask,
+    _OutRef_    P_BOOL p_found)
+{
+    static TCHARZ filter_text_buffer[48];
+    const ARRAY_INDEX n_elements = array_elements(&g_bound_filetype_handle);
+    ARRAY_INDEX i;
+
+    for(i = 0; i < n_elements; ++i)
+    {
+        const PC_BOUND_FILETYPE p_bound_filetype = array_ptrc(&g_bound_filetype_handle, BOUND_FILETYPE, i);
+
+        if(p_bound_filetype->t5_filetype != t5_filetype)
+            continue;
+
+        if((p_bound_filetype->mask & mask) != mask)
+            continue;
+
+        PTR_ASSERT(p_bound_filetype->tstr_filter_wildcard);
+        *p_found = TRUE;
+        return(p_bound_filetype->tstr_filter_wildcard);
+    }
+
+    *p_found = FALSE;
+    return(TEXT("*.*")); /* just in case it is used */
+}
+
+#endif /* WINDOWS */
 
 /* Bind a file type to its textual description.
  * This is used internally when displaying save boxes
  * and all that goo to map a RISC OS 12-bit file type
  * onto something that can be displayed to the user.
+ * Windows: additional args are used for the Open/Save dialogue box filters.
  */
 
 T5_CMD_PROTO(extern, t5_cmd_bind_file_type)
 {
-    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 5);
+    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, RISCOS_OR_WINDOWS(3, 5));
     P_BOUND_FILETYPE p_bound_filetype;
     SC_ARRAY_INIT_BLOCK type_binding_init_block = aib_init(1, sizeof32(*p_bound_filetype), TRUE);
     STATUS status;
@@ -664,42 +720,39 @@ T5_CMD_PROTO(extern, t5_cmd_bind_file_type)
 
     if(NULL != (p_bound_filetype = al_array_extend_by(&g_bound_filetype_handle, BOUND_FILETYPE, 1, &type_binding_init_block, &status)))
     {
-        PC_USTR ustr_filetype_name = p_args[2].val.ustr;
-        PC_USTR ustr_file_extension_desc = NULL;
-        PC_USTR ustr_file_extension_srch = NULL;
-
-        if(arg_is_present(p_args, 3))
-            ustr_file_extension_desc = p_args[3].val.ustr;
-
-        if(arg_is_present(p_args, 4))
-            ustr_file_extension_srch = p_args[4].val.ustr;
-
-        quick_ublock_setup_using_array(&p_bound_filetype->description_quick_ublock, 0); /* force it to use array as it will move */
-        quick_ublock_setup_using_array(&p_bound_filetype->extension_srch_quick_ublock, 0); /* ditto */
+        const PC_USTR ustr_description = p_args[2].val.ustr;
+        WINDOWS_ONLY( PCTSTR tstr_filter_text_suffix = NULL );
+        WINDOWS_ONLY( PCTSTR tstr_filter_wildcard = NULL );
 
         p_bound_filetype->mask = p_args[0].val.s32;
         p_bound_filetype->t5_filetype = p_args[1].val.t5_filetype;
 
-        status = quick_ublock_ustr_add(&p_bound_filetype->description_quick_ublock, ustr_filetype_name);
+        PTR_ASSERT(ustr_description);
+        status = alloc_block_ustr_set(&p_bound_filetype->ustr_description, ustr_description, &p_docu->general_string_alloc_block);
 
 #if WINDOWS
-        if(status_ok(status) && (NULL != ustr_file_extension_desc))
-        {
-            if(status_ok(status = quick_ublock_a7char_add(&p_bound_filetype->description_quick_ublock, CH_SPACE)))
-                status = quick_ublock_ustr_add(&p_bound_filetype->description_quick_ublock, ustr_file_extension_desc);
-        }
-#else
-        UNREFERENCED_PARAMETER(ustr_file_extension_desc);
-#endif
+        if(arg_is_present(p_args, 3))
+            tstr_filter_text_suffix = p_args[3].val.tstr;
+
+        quick_tblock_setup_using_array(&p_bound_filetype->filter_text_quick_tblock, 0); /* force it to use array as it will move */
 
         if(status_ok(status))
-            status = quick_ublock_nullch_add(&p_bound_filetype->description_quick_ublock);
+            status = quick_tblock_ustr_add(&p_bound_filetype->filter_text_quick_tblock, ustr_description);
 
-#if WINDOWS
-        if(status_ok(status) && (NULL != ustr_file_extension_srch))
-            status = quick_ublock_ustr_add_n(&p_bound_filetype->extension_srch_quick_ublock, ustr_file_extension_srch, strlen_with_NULLCH);
-#else
-        UNREFERENCED_PARAMETER(ustr_file_extension_srch);
+        if( status_ok(status) && (NULL != tstr_filter_text_suffix) )
+        {
+            if(status_ok(status = quick_tblock_tchar_add(&p_bound_filetype->filter_text_quick_tblock, CH_SPACE)))
+                status = quick_tblock_tstr_add(&p_bound_filetype->filter_text_quick_tblock, tstr_filter_text_suffix);
+        }
+
+        if(status_ok(status))
+            status = quick_tblock_nullch_add(&p_bound_filetype->filter_text_quick_tblock);
+
+        if(arg_is_present(p_args, 4))
+            tstr_filter_wildcard = p_args[4].val.tstr;
+
+        if( status_ok(status) && (NULL != tstr_filter_wildcard) )
+            status = alloc_block_tstr_set(&p_bound_filetype->tstr_filter_wildcard, tstr_filter_wildcard, &p_docu->general_string_alloc_block);
 #endif
 
         if(status_fail(status))
@@ -717,13 +770,60 @@ typedef struct INSTALLED_LOAD_OBJECT
 {
     OBJECT_ID object_id;
     T5_FILETYPE t5_filetype;
-    TCHARZ tstr_buf_extension[3 + 1 /*for CH_NULL*/];
+    TCHARZ tstr_buf_extension_primary[7 + 1 /*for CH_NULL*/];
+    TCHARZ tstr_buf_extension_secondary[7 + 1 /*for CH_NULL*/];
     PTSTR tstr_template;
 }
 INSTALLED_LOAD_OBJECT, * P_INSTALLED_LOAD_OBJECT; typedef const INSTALLED_LOAD_OBJECT * PC_INSTALLED_LOAD_OBJECT;
 
-_Check_return_
-_Ret_maybenull_
+#if RISCOS || defined(UNUSED_KEEP_ALIVE)
+
+_Ret_z_ _Check_return_
+extern PCTSTR
+extension_tstr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _OutRef_    P_BOOL p_found)
+{
+    static TCHARZ extension_buffer[8];
+
+#if RISCOS
+    /* MimeMap takes precedence on RISC OS */
+    U8Z mimemap_buffer[128]; /* hopefully language-independent */
+
+    if(riscos_mimemap_extension_from_t5_filetype(mimemap_buffer, t5_filetype))
+    {
+        reportf(TEXT("RISC OS MimeMap %s from 0x%03X"), mimemap_buffer, t5_filetype);
+        *p_found = TRUE;
+        tstr_xstrkpy(extension_buffer, elemof32(extension_buffer), mimemap_buffer);
+        return(extension_buffer);
+    }
+#endif
+
+    {
+    const ARRAY_INDEX n_elements = array_elements(&g_installed_load_objects_handle);
+    ARRAY_INDEX i;
+
+    for(i = 0; i < n_elements; ++i)
+    {
+        const PC_INSTALLED_LOAD_OBJECT p_installed_load_object = array_ptrc(&g_installed_load_objects_handle, INSTALLED_LOAD_OBJECT, i);
+
+        if(p_installed_load_object->t5_filetype == t5_filetype)
+        {
+            reportf(TEXT("Own MimeMap %s from 0x%03X"), p_installed_load_object->tstr_buf_extension_primary, t5_filetype);
+            *p_found = TRUE;
+            return(p_installed_load_object->tstr_buf_extension_primary);
+        }
+    }
+    } /*block*/
+
+    *p_found = FALSE;
+    consume_int(tstr_xsnprintf(extension_buffer, elemof32(extension_buffer), RISCOS_OR_WINDOWS(TEXT("/x%03x"), TEXT("*.%03x")), t5_filetype));
+    return(extension_buffer);
+}
+
+#endif /* OS */
+
+_Ret_maybenull_ _Check_return_
 extern PCTSTR
 foreign_template_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype)
@@ -744,7 +844,8 @@ foreign_template_from_t5_filetype(
 _Check_return_
 extern OBJECT_ID
 object_id_from_t5_filetype(
-    _InVal_     T5_FILETYPE t5_filetype)
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     BOOL fInserting)
 {
     /* Can we load this filetype? */
     ARRAY_INDEX i;
@@ -758,6 +859,9 @@ object_id_from_t5_filetype(
     case FILETYPE_T5_TEMPLATE:
     case FILETYPE_T5_COMMAND:
         return(OBJECT_ID_SKEL);
+
+    case FILETYPE_T5_HYBRID_DRAW:
+        return(fInserting ? OBJECT_ID_DRAW : OBJECT_ID_SKEL);
 
     default:
         break;
@@ -783,6 +887,19 @@ extern T5_FILETYPE
 t5_filetype_from_extension(
     _In_opt_z_  PCTSTR tstr)
 {
+    T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
+
+#if RISCOS
+    /* MimeMap takes precedence on RISC OS */
+    t5_filetype = riscos_mimemap_t5_filetype_from_extension(tstr);
+
+    if(FILETYPE_UNDETERMINED != t5_filetype)
+    {
+        /*reportf(TEXT("RISC OS MimeMap 0x%03X from %s"), t5_filetype, tstr);*/
+        return(t5_filetype);
+    }
+#endif
+
     if(tstr)
     {
         ARRAY_INDEX i = array_elements(&g_installed_load_objects_handle);
@@ -791,12 +908,18 @@ t5_filetype_from_extension(
         {
             PC_INSTALLED_LOAD_OBJECT p_installed_load_object = array_ptrc(&g_installed_load_objects_handle, INSTALLED_LOAD_OBJECT, i);
 
-            if(0 == tstricmp(p_installed_load_object->tstr_buf_extension, tstr))
+            if(0 == tstricmp(p_installed_load_object->tstr_buf_extension_primary, tstr))
+                return(p_installed_load_object->t5_filetype);
+
+            if(CH_NULL == p_installed_load_object->tstr_buf_extension_secondary[0])
+                continue;
+
+            if(0 == tstricmp(p_installed_load_object->tstr_buf_extension_secondary, tstr))
                 return(p_installed_load_object->t5_filetype);
         }
     }
 
-    return(FILETYPE_UNDETERMINED);
+    return(t5_filetype);
 }
 
 T5_CMD_PROTO(extern, t5_cmd_object_bind_loader)
@@ -804,13 +927,24 @@ T5_CMD_PROTO(extern, t5_cmd_object_bind_loader)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 4);
     INSTALLED_LOAD_OBJECT installed_load_object;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(installed_load_object), 0);
+    PCTSTR tstr_extension;
+    PCTSTR tstr_comma;
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     installed_load_object.object_id = p_args[0].val.object_id;
     installed_load_object.t5_filetype = p_args[1].val.t5_filetype;
-    tstr_xstrkpy(installed_load_object.tstr_buf_extension, elemof32(installed_load_object.tstr_buf_extension), p_args[2].val.tstr);
+    tstr_extension = p_args[2].val.tstr;
+    tstr_xstrkpy(installed_load_object.tstr_buf_extension_primary, elemof32(installed_load_object.tstr_buf_extension_primary), tstr_extension);
+    installed_load_object.tstr_buf_extension_secondary[0] = CH_NULL;
+    if(NULL != (tstr_comma = tstrchr(tstr_extension, CH_COMMA)))
+    {
+        const U32 primary_extension_n_chars = tstr_comma - tstr_extension;
+        installed_load_object.tstr_buf_extension_primary[primary_extension_n_chars] = CH_NULL;
+        tstr_extension = tstr_comma + 1;
+        tstr_xstrkpy(installed_load_object.tstr_buf_extension_secondary, elemof32(installed_load_object.tstr_buf_extension_secondary), tstr_extension);
+    }
 
     if(NULL == p_args[3].val.tstr)
         installed_load_object.tstr_template = NULL;
@@ -922,7 +1056,7 @@ t5_filetype_from_data(
     {
         if( (n_bytes > (0x0C + sizeof32(buffer_t5_draw_0C))) &&
             (0 == try_memcmp32(&p_data[0x0C], n_bytes - 0x0C, buffer_t5_draw_0C, sizeof32(buffer_t5_draw_0C))) )
-            return(FILETYPE_T5_DRAW);
+            return(FILETYPE_T5_HYBRID_DRAW);
 
         if( (n_bytes > (0x0C + sizeof32(buffer_pd_chart_0C))) &&
             (0 == try_memcmp32(&p_data[0x0C], n_bytes - 0x0C, buffer_pd_chart_0C, sizeof32(buffer_pd_chart_0C))) )
@@ -997,7 +1131,7 @@ t5_filetype_from_file_header_test(
     T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
     U32 bytesread;
     BYTE buffer[0x20]; /* >= MAX(CFBF_FILE_HEADER_ID_BYTES, all-the-above) */
-    zero_struct(buffer);
+    zero_struct_fn(buffer);
 
     if(status_ok(file_read_bytes(buffer, sizeof32(buffer), &bytesread, file_handle)))
     {   /* NB Not an error if not all bytes read! */
@@ -1049,6 +1183,8 @@ t5_filetype_from_filename(
 
     if(status_done(status))
     {
+        T5_FILETYPE t_t5_filetype = FILETYPE_UNDETERMINED;
+
         status = status_wrap(file_get_risc_os_filetype(file_handle));
 
         t5_filetype = (T5_FILETYPE) status;
@@ -1058,7 +1194,7 @@ t5_filetype_from_filename(
             switch(t5_filetype)
             {
             case FILETYPE_TEXT:
-                t5_filetype = t5_filetype_from_extension(file_extension(filename));
+                t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
                 break;
 
             case FILETYPE_DOS:
@@ -1066,10 +1202,11 @@ t5_filetype_from_filename(
             case FILETYPE_UNTYPED:
             case FILETYPE_UNDETERMINED:
                 /* if wooly, look for any known extension then grok file content while file is still open */
-                t5_filetype = t5_filetype_from_extension(file_extension(filename));
+                t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
 
-                if(FILETYPE_UNDETERMINED == t5_filetype)
-                    t5_filetype = t5_filetype_from_file_header_test(file_handle);
+                if(FILETYPE_UNDETERMINED == t_t5_filetype)
+                    t_t5_filetype = t5_filetype_from_file_header_test(file_handle);
+
                 break;
 
             default:
@@ -1078,12 +1215,15 @@ t5_filetype_from_filename(
         }
 
         status_assert(t5_file_close(&file_handle));
+
+        if(FILETYPE_UNDETERMINED != t_t5_filetype)
+            t5_filetype = t_t5_filetype;
     }
 
     return(t5_filetype);
 }
 
-#elif WINDOWS
+#else
 
 _Check_return_
 extern T5_FILETYPE
@@ -1118,7 +1258,7 @@ load_foreign_core(
     STATUS status;
     P_DOCU p_docu = p_docu_from_docno(docno);
     MSG_INSERT_FOREIGN msg_insert_foreign;
-    zero_struct(msg_insert_foreign);
+    zero_struct_fn(msg_insert_foreign);
 
     msg_insert_foreign.old_virtual_row_table = p_docu->flags.virtual_row_table;
     status_assert(virtual_row_table_set(p_docu, TRUE)); /* NB loading speed bodge */
@@ -1153,10 +1293,10 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
     DOCNO docno = DOCNO_NONE; /* Keep dataflower happy */
     STATUS status = STATUS_OK;
     BOOL just_the_one = FALSE;
-    const OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype);
+    const OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype, FALSE);
     U32 retry_with_this_arg = 0;
     BOOL looping = FALSE;
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 100);
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 256);
     quick_tblock_with_buffer_setup(quick_tblock);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
@@ -1278,7 +1418,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
     if(status_ok(status))
         status = load_foreign_core(docno, t5_filetype, filename_foreign, object_id, &retry_with_this_arg);
 
-    looping = (0 != retry_with_this_arg);
+    looping = (status_ok(status) && (0 != retry_with_this_arg));
     }
     while(looping);
 
@@ -1645,7 +1785,7 @@ foreign_template_check(
     _In_z_      PCTSTR tstr_foreign_template)
 {
     STATUS status = STATUS_OK;
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 100);
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 256);
     quick_tblock_with_buffer_setup(quick_tblock);
 
     if(status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEMPLATES_SUBDIR FILE_DIR_SEP_TSTR)))
@@ -1742,48 +1882,13 @@ load_foreign_file_rl(
 
 _Check_return_
 extern STATUS
-foreign_load_file_apply_style_table(
+table_invent_style_name(
     _DocuRef_   P_DOCU p_docu,
-    _InRef_     PC_DOCU_AREA p_docu_area_table,
-    _InVal_     COL lhs_extra_cols,
-    _InVal_     ROW top_extra_rows,
-    _InVal_     ROW bot_extra_rows)
+    _InoutRef_  P_STYLE p_style_table)
 {
-    STATUS status = STATUS_OK;
-
-    {
-    STYLE style_table;
-    STYLE_HANDLE style_table_handle = 0;
-
-    style_init(&style_table);
-
-    style_table.para_style.para_start = style_default_measurement(p_docu, STYLE_SW_PS_PARA_START);
-    style_bit_set(&style_table, STYLE_SW_PS_PARA_START);
-
-    style_table.para_style.para_end = style_default_measurement(p_docu, STYLE_SW_PS_PARA_END);
-    style_bit_set(&style_table, STYLE_SW_PS_PARA_END);
-
-    style_table.para_style.grid_left =
-    style_table.para_style.grid_top =
-    style_table.para_style.grid_right =
-    style_table.para_style.grid_bottom = SF_BORDER_STANDARD;
-    style_bit_set(&style_table, STYLE_SW_PS_GRID_LEFT);
-    style_bit_set(&style_table, STYLE_SW_PS_GRID_TOP);
-    style_bit_set(&style_table, STYLE_SW_PS_GRID_RIGHT);
-    style_bit_set(&style_table, STYLE_SW_PS_GRID_BOTTOM);
-
-    rgb_set(&style_table.para_style.rgb_grid_left, 0, 0, 0); /* true black */
-    style_table.para_style.rgb_grid_top =
-    style_table.para_style.rgb_grid_right =
-    style_table.para_style.rgb_grid_bottom =
-    style_table.para_style.rgb_grid_left;
-    style_bit_set(&style_table, STYLE_SW_PS_RGB_GRID_LEFT);
-    style_bit_set(&style_table, STYLE_SW_PS_RGB_GRID_TOP);
-    style_bit_set(&style_table, STYLE_SW_PS_RGB_GRID_RIGHT);
-    style_bit_set(&style_table, STYLE_SW_PS_RGB_GRID_BOTTOM);
-
-    { /* invent a new, appropriately named, style for this table (which will be 'renumbered' on file insertion) */
-    PCTSTR tstr_format = resource_lookup_tstr(MSG_DIALOG_INSERT_TABLE_TABLE);
+    /* invent a new, appropriately named, style for this table (which will be 'renumbered' on file insertion) */
+    STATUS status;
+    const PCTSTR tstr_format = resource_lookup_tstr(MSG_DIALOG_INSERT_TABLE_TABLE);
     S32 i = 1;
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 16);
     quick_tblock_with_buffer_setup(quick_tblock);
@@ -1797,7 +1902,8 @@ foreign_load_file_apply_style_table(
 
         if(0 == style_handle_from_name(p_docu, quick_tblock_tstr(&quick_tblock)))
         {
-            status = al_tstr_set(&style_table.h_style_name_tstr, quick_tblock_tstr(&quick_tblock));
+            if(status_ok(status = al_tstr_set(&p_style_table->h_style_name_tstr, quick_tblock_tstr(&quick_tblock))))
+                style_bit_set(p_style_table, STYLE_SW_NAME);
             do_break = TRUE;
         }
 
@@ -1808,17 +1914,159 @@ foreign_load_file_apply_style_table(
 
         ++i;
     }
+
+    return(status);
+}
+
+/* Attempt to add a BaseTable style area if said style exists */
+
+_Check_return_
+extern STATUS
+table_apply_style_basetable(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     PC_DOCU_AREA p_docu_area_table)
+{
+    PCTSTR tstr_style_name = resource_lookup_tstr(MSG_DIALOG_INSERT_TABLE_BASETABLE);
+    STYLE_HANDLE style_handle_table;
+
+    if(status_done(style_handle_table = style_handle_from_name(p_docu, tstr_style_name)))
+    {
+        STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
+        DOCU_AREA docu_area_table;
+
+        STYLE_DOCU_AREA_ADD_HANDLE(&style_docu_area_add_parm, style_handle_table);
+
+        docu_area_table = *p_docu_area_table;
+
+        status_return(style_docu_area_add(p_docu, &docu_area_table, &style_docu_area_add_parm));
+
+        return(style_handle_table); /* non-zero */
+    }
+
+    return(STATUS_OK);
+}
+
+extern void
+table_add_some_style_elements(
+    _DocuRef_   PC_DOCU p_docu,
+    _InoutRef_  P_STYLE p_style_table,
+    _InRef_     PC_STYLE p_style_base_table)
+{
+    /* only apply style elements that are not already defined in the base table style */
+    p_style_table->para_style.grid_left =
+    p_style_table->para_style.grid_top =
+    p_style_table->para_style.grid_right =
+    p_style_table->para_style.grid_bottom = SF_BORDER_STANDARD;
+
+    rgb_set(&p_style_table->para_style.rgb_grid_left, 0, 0, 0); /* true black */
+    p_style_table->para_style.rgb_grid_top =
+    p_style_table->para_style.rgb_grid_right =
+    p_style_table->para_style.rgb_grid_bottom =
+    p_style_table->para_style.rgb_grid_left;
+    if(NULL == p_style_base_table)
+        void_style_selector_or(&p_style_table->selector, &p_style_table->selector, &style_selector_para_grid);
+    else
+        void_style_selector_bic(&p_style_table->selector, &style_selector_para_grid, &p_style_base_table->selector);
+
+    if( (NULL == p_style_base_table) || !style_bit_test(p_style_base_table, STYLE_SW_PS_PARA_START) )
+    {
+        p_style_table->para_style.para_start = style_default_measurement(p_docu, STYLE_SW_PS_PARA_START);
+        style_bit_set(p_style_table, STYLE_SW_PS_PARA_START);
+    }
+
+    if( (NULL == p_style_base_table) || !style_bit_test(p_style_base_table, STYLE_SW_PS_PARA_END) )
+    {
+        p_style_table->para_style.para_end = style_default_measurement(p_docu, STYLE_SW_PS_PARA_END);
+        style_bit_set(p_style_table, STYLE_SW_PS_PARA_END);
+    }
+
+    if(p_docu->flags.base_single_col)
+    {   /* Letter-type templates traditionally don't have column letters. Tables ought to. */
+        if( (NULL == p_style_base_table) || !style_bit_test(p_style_base_table, STYLE_SW_CS_COL_NAME) )
+        {
+            if(status_ok(al_ustr_set(&p_style_table->col_style.h_numform, USTR_TEXT("x#"))))
+                style_bit_set(p_style_table, STYLE_SW_CS_COL_NAME);
+        }
+    }
+}
+
+extern void
+table_cols_add_some_style_elements(
+    _DocuRef_   PC_DOCU p_docu,
+    _InoutRef_  P_STYLE p_style_cols,
+    _InRef_     PC_STYLE p_style_base_table)
+{
+    p_style_cols->para_style.margin_para =
+        ( (NULL != p_style_base_table) && style_bit_test(p_style_base_table, STYLE_SW_PS_MARGIN_PARA) )
+        ? p_style_base_table->para_style.margin_para
+        : style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_PARA);
+    style_bit_set(p_style_cols, STYLE_SW_PS_MARGIN_PARA);
+
+    p_style_cols->para_style.margin_left =
+        ( (NULL != p_style_base_table) && style_bit_test(p_style_base_table, STYLE_SW_PS_MARGIN_LEFT) )
+        ? p_style_base_table->para_style.margin_left
+        :  style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_LEFT);
+    style_bit_set(p_style_cols, STYLE_SW_PS_MARGIN_LEFT);
+
+    p_style_cols->para_style.margin_right =
+        ( (NULL != p_style_base_table) && style_bit_test(p_style_base_table, STYLE_SW_PS_MARGIN_RIGHT) )
+        ? p_style_base_table->para_style.margin_right
+        : style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_RIGHT);
+    style_bit_set(p_style_cols, STYLE_SW_PS_MARGIN_RIGHT);
+
+    p_style_cols->para_style.h_tab_list = 0;
+    style_bit_set(p_style_cols, STYLE_SW_PS_TAB_LIST);
+
+    p_style_cols->col_style.width =
+        ( (NULL != p_style_base_table) && style_bit_test(p_style_base_table, STYLE_SW_CS_WIDTH) )
+        ? p_style_base_table->col_style.width
+        : style_default_measurement(p_docu, STYLE_SW_CS_WIDTH);
+    style_bit_set(p_style_cols, STYLE_SW_CS_WIDTH);
+}
+
+_Check_return_
+extern STATUS
+foreign_load_file_apply_style_table(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     PC_DOCU_AREA p_docu_area_table,
+    _InVal_     COL lhs_extra_cols,
+    _InVal_     ROW top_extra_rows,
+    _InVal_     ROW bot_extra_rows)
+{
+    STATUS status = STATUS_OK;
+    S32 style_handle_base_table = 0;
+    PC_STYLE p_style_base_table = NULL;
+
+    { /* attempt to add a BaseTable style area if said style exists */
+    DOCU_AREA docu_area_interior = *p_docu_area_table;
+    docu_area_interior.tl.slr.col += lhs_extra_cols;
+    docu_area_interior.tl.slr.row += top_extra_rows;
+    docu_area_interior.br.slr.row -= bot_extra_rows;
+    status_return(status = table_apply_style_basetable(p_docu, &docu_area_interior));
+    style_handle_base_table = (S32) (status);
+    if(0 != style_handle_base_table)
+        p_style_base_table = p_style_from_handle(p_docu, style_handle_base_table);
     } /*block*/
 
-    status_return(status);
+    {
+    STYLE style_table;
+    STYLE_HANDLE style_handle_table = 0;
 
-    style_bit_set(&style_table, STYLE_SW_NAME);
-    status_return(style_table_handle = style_handle_add(p_docu, &style_table));
+    style_init(&style_table);
+
+    /* invent a new, appropriately named, style for this table (which will be 'renumbered' on file insertion) */
+    status_return(table_invent_style_name(p_docu, &style_table));
+
+    /* only apply style elements that are not already defined in the base table style */
+    table_add_some_style_elements(p_docu, &style_table, p_style_base_table);
+
+    status_return(status = style_handle_add(p_docu, &style_table));
+    style_handle_table = (STYLE_HANDLE) status;
 
     {
     DOCU_AREA docu_area_interior = *p_docu_area_table;
     STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
-    STYLE_DOCU_AREA_ADD_HANDLE(&style_docu_area_add_parm, style_table_handle);
+    STYLE_DOCU_AREA_ADD_HANDLE(&style_docu_area_add_parm, style_handle_table);
     docu_area_interior.tl.slr.col += lhs_extra_cols;
     docu_area_interior.tl.slr.row += top_extra_rows;
     docu_area_interior.br.slr.row -= bot_extra_rows;
@@ -1832,21 +2080,10 @@ foreign_load_file_apply_style_table(
 
     style_init(&style_cols);
 
-    style_cols.para_style.margin_para = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_PARA);
-    style_bit_set(&style_cols, STYLE_SW_PS_MARGIN_PARA);
+    /* derive initial state from BaseTable style if possible */
+    table_cols_add_some_style_elements(p_docu, &style_cols, p_style_base_table);
 
-    style_cols.para_style.margin_left = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_LEFT);
-    style_bit_set(&style_cols, STYLE_SW_PS_MARGIN_LEFT);
-
-    style_cols.para_style.margin_right = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_RIGHT);
-    style_bit_set(&style_cols, STYLE_SW_PS_MARGIN_RIGHT);
-
-    style_cols.para_style.h_tab_list = 0;
-    style_bit_set(&style_cols, STYLE_SW_PS_TAB_LIST);
-
-    style_cols.col_style.width = style_default_measurement(p_docu, STYLE_SW_CS_WIDTH);
-    style_bit_set(&style_cols, STYLE_SW_CS_WIDTH);
-
+    /* empty column(s) at left to move table about as well as independent width regions for columns in table */
     while(docu_area_cols.tl.slr.col < docu_area_cols.br.slr.col)
     {
         DOCU_AREA docu_area_inner = docu_area_cols;

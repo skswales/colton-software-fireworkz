@@ -23,53 +23,78 @@
 #define HIGH_MEMORY_LIMIT 0xFFFFFFFCU /* 32-bit RISC OS 5 */
 #endif
 
-static BOOL
-g_report_enabled = TRUE;
-
-static BOOL
-g_report_timing_enabled = FALSE;
-
-#if RISCOS
-static int try_reporter = TRUE;
-static int try_rpcemu_report = TRUE;
-#endif
-
 #if WINDOWS
 #define REPORT_USE_PERFORMANCE_COUNTER 1
 #endif
 
-#if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
-static LARGE_INTEGER g_report_timing_startup;
-static F64 g_report_timing_frequency;
-#else
-static MONOTIME g_report_timing_startup;
-static S32 g_report_timing_frequency;
+static struct REPORT_STATICS
+{
+    BOOL enabled;
+
+#if RISCOS
+    BOOL try_reporter;
+    BOOL try_rpcemu_report;
 #endif
+
+    PTSTR buffer;
+    U32 buffer_offset;
+    U32 elemof_buffer;
+
+    BOOL timing_enabled;
+
+#if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
+    LARGE_INTEGER timing_startup;
+    F64 timing_frequency;
+#else
+    MONOTIME timing_startup;
+    S32 timing_frequency;
+#endif
+}
+g_report =
+{
+    FALSE
+
+#if RISCOS
+,   TRUE
+,   TRUE
+#endif
+};
 
 extern void
 report_enable(
     _InVal_     BOOL enable)
 {
-    g_report_enabled = enable;
+    if( enable && (NULL == g_report.buffer) )
+    {
+        const U32 elemof_buffer = 1024; /* limit for PipeDream */ /*4096;*/
+#if RISCOS /* avoid our own redirection */
+#undef malloc
+#endif
+        if(NULL == (g_report.buffer = malloc(elemof_buffer * sizeof(TCHAR))))
+            return;
+        g_report.elemof_buffer = elemof_buffer;
+    }
+
+    g_report.enabled = enable;
 }
 
 _Check_return_
 extern BOOL
 report_enabled(void)
 {
-    return(g_report_enabled);
+    return(g_report.enabled);
 }
 
 _Check_return_
 extern BOOL
 reporting_is_enabled(void)
 {
-    if(!g_report_enabled)
+    if(!g_report.enabled)
         return(FALSE);
 
 #if RISCOS
-    if( !try_reporter &&
-        !try_rpcemu_report &&
+    if( !g_report.try_reporter &&
+        !g_report.try_rpcemu_report &&
         (0 == stderr->__file) /* not redirected? */ )
     {
         return(FALSE);
@@ -83,18 +108,18 @@ extern void
 report_timing_enable(
     _InVal_     BOOL enable)
 {
-    g_report_timing_enabled = enable;
+    g_report.timing_enabled = enable;
 
-    if(enable && (0 == g_report_timing_frequency))
+    if( enable && (0 == g_report.timing_frequency) )
     {
 #if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
         LARGE_INTEGER frequency;
         QueryPerformanceFrequency(&frequency);
-        g_report_timing_frequency = (F64) frequency.QuadPart;
-        QueryPerformanceCounter(&g_report_timing_startup);
+        g_report.timing_frequency = (F64) frequency.QuadPart;
+        QueryPerformanceCounter(&g_report.timing_startup);
 #else
-        g_report_timing_frequency = MONOTIME_TICKS_PER_SECOND;
-        g_report_timing_startup = monotime();
+        g_report.timing_frequency = MONOTIME_TICKS_PER_SECOND;
+        g_report.timing_startup = monotime();
 #endif
     }
 }
@@ -103,7 +128,7 @@ _Check_return_
 extern BOOL
 report_timing_enabled(void)
 {
-    return(g_report_timing_enabled);
+    return(g_report.timing_enabled);
 }
 
 /******************************************************************************
@@ -119,7 +144,7 @@ reportf(
 {
     va_list args;
 
-    if(!g_report_enabled) return;
+    if(!g_report.enabled) return;
 
     va_start(args, format);
     vreportf(format, args);
@@ -132,31 +157,28 @@ reportf(
 *
 ******************************************************************************/
 
-static TCHARZ report_buffer[4096];
-static U32    report_buffer_offset = 0;
-
 extern void
 vreportf(
     _In_z_ _Printf_format_string_ PCTSTR format,
     /**/        va_list args)
 {
+    const U32 elemof_report_buffer = g_report.elemof_buffer;
     PCTSTR tail;
     BOOL wants_continuation, needs_newline;
     int len;
 
-    if(!g_report_enabled) return;
+    if(!g_report.enabled) return;
+
+    if(NULL == g_report.buffer) return;
 
     if(format[0] == CH_VERTICAL_LINE)
     {   /* this one is a continuation - doesn't matter if it's already been flushed */
         format++;
     }
-    else
+    else if(0 != g_report.buffer_offset)
     {   /* this one is a not a continuation - flush anything pending */
-        if(0 != report_buffer_offset)
-        {
-            report_buffer_offset = 0;
-            report_output(report_buffer);
-        }
+        g_report.buffer_offset = 0;
+        report_output(g_report.buffer);
     }
 
     tail = format + tstrlen32(format);
@@ -168,19 +190,19 @@ vreportf(
 
     needs_newline = (tail[-1] != '\n');
 
-    if((0 == report_buffer_offset) && g_report_timing_enabled)
+    if( (0 == g_report.buffer_offset) && g_report.timing_enabled )
     {   /* prefix new report with number of milliseconds since timing turned on */
 #if WINDOWS && defined(REPORT_USE_PERFORMANCE_COUNTER)
         LARGE_INTEGER now;
         F64 seconds;
         QueryPerformanceCounter(&now);
-        seconds = (now.QuadPart - g_report_timing_startup.QuadPart) / /*F64*/ g_report_timing_frequency;
+        seconds = (now.QuadPart - g_report.timing_startup.QuadPart) / /*F64*/ g_report.timing_frequency;
         /* report to microsecond precision */
-        len = _sntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, TEXT("[%12.6f] "), seconds);
-        report_buffer_offset += len;
+        len = _sntprintf_s(g_report.buffer + g_report.buffer_offset, elemof_report_buffer - g_report.buffer_offset, _TRUNCATE, TEXT("[%12.6f] "), seconds);
+        g_report.buffer_offset += len;
 #else /* C99 CRT */
-        MONOTIMEDIFF delta = monotime_diff(g_report_timing_startup);
-        div_t d = div(delta, g_report_timing_frequency);
+        MONOTIMEDIFF delta = monotime_diff(g_report.timing_startup);
+        div_t d = div(delta, g_report.timing_frequency);
         const int seconds = d.quot;
         const int frac_seconds = d.rem;
 #if MONOTIME_TICKS_PER_SECOND == 100
@@ -191,23 +213,23 @@ vreportf(
         PCTSTR format = "[%5d.%.03d] ";
 #endif
 
-        len = snprintf(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, format, seconds, frac_seconds);
+        len = snprintf(g_report.buffer + g_report.buffer_offset, elemof_report_buffer - g_report.buffer_offset, format, seconds, frac_seconds);
         if(len < 0)
             len = 0;
-        report_buffer_offset += len;
+        g_report.buffer_offset += len;
 #endif
     }
 
 #if WINDOWS
-    len = _vsntprintf_s(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, _TRUNCATE, format, args);
+    len = _vsntprintf_s(g_report.buffer + g_report.buffer_offset, elemof_report_buffer - g_report.buffer_offset, _TRUNCATE, format, args);
     if(-1 == len)
-        len = tstrlen32(report_buffer); /* limit to what actually was achieved */
+        len = tstrlen32(g_report.buffer); /* limit to what actually was achieved */
 #else /* C99 CRT */
-    len = vsnprintf(report_buffer + report_buffer_offset, elemof32(report_buffer) - report_buffer_offset, format, args);
+    len = vsnprintf(g_report.buffer + g_report.buffer_offset, elemof_report_buffer - g_report.buffer_offset, format, args);
     if(len < 0)
         len = 0;
-    else if((U32) len >= elemof32(report_buffer))
-        len = strlen32(report_buffer); /* limit to what actually was achieved */
+    else if((U32) len >= elemof_report_buffer)
+        len = strlen32(g_report.buffer); /* limit to what actually was achieved */
 #endif
 
     if(0 == len)
@@ -215,28 +237,28 @@ vreportf(
 
     if(wants_continuation)
     {
-        if(CH_VERTICAL_LINE == report_buffer[report_buffer_offset + (len - 1)]) /* may have been truncated losing trailing chars - if so, just output */
+        if(CH_VERTICAL_LINE == g_report.buffer[g_report.buffer_offset + (len - 1)]) /* may have been truncated losing trailing chars - if so, just output */
         {
-            report_buffer_offset += len;
+            g_report.buffer_offset += len;
 
-            report_buffer[--report_buffer_offset] = CH_NULL; /* otherwise retract back over the terminal continuation char and leave for next time */
+            g_report.buffer[--g_report.buffer_offset] = CH_NULL; /* otherwise retract back over the terminal continuation char and leave for next time */
             return;
         }
     }
 
     if(needs_newline)
     {   /* this saves the overhead of an extra OutputDebugString on Windows */
-        report_buffer_offset += len;
+        g_report.buffer_offset += len;
 
-        if(report_buffer_offset < elemof32(report_buffer))
+        if(g_report.buffer_offset+1 < elemof_report_buffer)
         {
-            report_buffer[report_buffer_offset++] = '\n';
-            report_buffer[report_buffer_offset] = CH_NULL;
+            g_report.buffer[g_report.buffer_offset+0] = '\n';
+            g_report.buffer[g_report.buffer_offset+1] = CH_NULL;
         }
     }
 
-    report_buffer_offset = 0;
-    report_output(report_buffer);
+    g_report.buffer_offset = 0;
+    report_output(g_report.buffer);
 }
 
 /******************************************************************************
@@ -275,7 +297,7 @@ report_output(
     BOOL needs_newline;
     static const TCHARZ newline_buffer[2] = TEXT("\n");
 
-    if(!g_report_enabled) return;
+    if(!g_report.enabled) return;
 
     tail = buffer + tstrlen32(buffer);
     if(tail == buffer)
@@ -284,16 +306,16 @@ report_output(
     needs_newline = (tail[-1] != '\n');
 
 #if RISCOS
-    if(try_reporter)
+    if(g_report.try_reporter)
     {
         if(__swi_XReport_Text0(buffer) == (int) buffer)
         {   /* Reporter module always sticks a newline on all output */
             return;
         }
-        try_reporter = FALSE;
+        g_report.try_reporter = FALSE;
     }
 
-    if(try_rpcemu_report)
+    if(g_report.try_rpcemu_report)
     {
         if(__swi_XRPCEmu_Debug(buffer) == (int) buffer)
         {
@@ -303,7 +325,7 @@ report_output(
             if(__swi_XRPCEmu_Debug(newline_buffer) == (int) newline_buffer)
                 return;
         }
-        try_rpcemu_report = FALSE;
+        g_report.try_rpcemu_report = FALSE;
     }
 
 #if defined(__CC_NORCROFT)
@@ -346,6 +368,10 @@ report_output(
         fputc(0x0A, stderr);
     } /*block*/
 #elif WINDOWS
+    /* Don't get too excited about debugging Unicode - I quote ...
+     * OutputDebugStringW converts the specified string based on the current system locale information and
+     * passes it to OutputDebugStringA to be displayed. As a result, some Unicode characters may not be displayed correctly.
+     */
     OutputDebugString(buffer);
 
     if(needs_newline)
@@ -407,6 +433,21 @@ report_procedure_name(
 
 _Check_return_
 _Ret_z_
+static PCTSTR
+report_bad_pointer(
+    PC_ANY p_any)
+{
+    static TCHARZ bad_pointer_buffer[16];
+#if WINDOWS
+    consume_int(_sntprintf_s(bad_pointer_buffer, elemof32(bad_pointer_buffer), _TRUNCATE, TEXT("<<") PTR_XTFMT TEXT(">>"), p_any));
+#else /* C99 CRT */
+    consume_int(snprintf(bad_pointer_buffer, elemof32(bad_pointer_buffer), TEXT("<<") PTR_XTFMT TEXT(">>"), p_any));
+#endif
+    return(bad_pointer_buffer);
+}
+
+_Check_return_
+_Ret_z_
 extern PCTSTR
 report_tstr(
     _In_opt_z_  PCTSTR tstr)
@@ -415,7 +456,7 @@ report_tstr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE(tstr))
+    if(PTR_IS_NONE(tstr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -424,15 +465,9 @@ report_tstr(
         ((uintptr_t) tstr < (uintptr_t) LOW_MEMORY_LIMIT ) ||
         ((uintptr_t) tstr > (uintptr_t) HIGH_MEMORY_LIMIT) ||
 #endif
-        IS_BAD_POINTER(tstr) )
+        PTR_IS_BAD_POINTER(tstr) )
     {
-        static TCHARZ stringbuffer[16];
-#if WINDOWS
-        consume_int(_sntprintf_s(stringbuffer, elemof32(stringbuffer), _TRUNCATE, TEXT("<<") PTR_XTFMT TEXT(">>"), tstr));
-#else /* C99 CRT */
-        consume_int(snprintf(stringbuffer, elemof32(stringbuffer), TEXT("<<") PTR_XTFMT TEXT(">>"), tstr));
-#endif
-        return(stringbuffer);
+        return(report_bad_pointer(tstr));
     }
 
 #if !TSTR_IS_SBSTR
@@ -457,7 +492,7 @@ report_ustr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE(ustr))
+    if(PTR_IS_NONE(ustr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -466,15 +501,9 @@ report_ustr(
         ((uintptr_t) ustr < (uintptr_t) LOW_MEMORY_LIMIT ) ||
         ((uintptr_t) ustr > (uintptr_t) HIGH_MEMORY_LIMIT) ||
 #endif
-        IS_BAD_POINTER(ustr) )
+        PTR_IS_BAD_POINTER(ustr) )
     {
-        static TCHARZ stringbuffer[16];
-#if WINDOWS
-        consume_int(_sntprintf_s(stringbuffer, elemof32(stringbuffer), _TRUNCATE, TEXT("<<") PTR_XTFMT TEXT(">>"), ustr));
-#else /* C99 CRT */
-        consume_int(snprintf(stringbuffer, elemof32(stringbuffer), TEXT("<<") PTR_XTFMT TEXT(">>"), ustr));
-#endif
-        return(stringbuffer);
+        return(report_bad_pointer(ustr));
     }
 
     /* Always watch out for inlines in USTRs! */
@@ -487,6 +516,8 @@ report_ustr(
     return(_tstr_from_ustr(ustr));
 }
 
+#if WINDOWS
+
 _Check_return_
 _Ret_z_
 extern PCTSTR
@@ -497,7 +528,7 @@ report_wstr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE(wstr))
+    if(PTR_IS_NONE(wstr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -506,19 +537,15 @@ report_wstr(
         ((uintptr_t) wstr < (uintptr_t) LOW_MEMORY_LIMIT ) ||
         ((uintptr_t) wstr > (uintptr_t) HIGH_MEMORY_LIMIT) ||
 #endif
-        IS_BAD_POINTER(wstr) )
+        PTR_IS_BAD_POINTER(wstr) )
     {
-        static TCHARZ stringbuffer[16];
-#if WINDOWS
-        consume_int(_sntprintf_s(stringbuffer, elemof32(stringbuffer), _TRUNCATE, TEXT("<<") PTR_XTFMT TEXT(">>"), wstr));
-#else /* C99 CRT */
-        consume_int(snprintf(stringbuffer, elemof32(stringbuffer), TEXT("<<") PTR_XTFMT TEXT(">>"), report_ptr_cast(wstr)));
-#endif
-        return(stringbuffer);
+        return(report_bad_pointer(wstr));
     }
 
     return(_tstr_from_wstr(wstr));
 }
+
+#endif
 
 _Check_return_
 _Ret_z_
@@ -530,7 +557,7 @@ report_sbstr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE(sbstr))
+    if(PTR_IS_NONE(sbstr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -539,15 +566,9 @@ report_sbstr(
         ((uintptr_t) sbstr < (uintptr_t) LOW_MEMORY_LIMIT ) ||
         ((uintptr_t) sbstr > (uintptr_t) HIGH_MEMORY_LIMIT) ||
 #endif
-        IS_BAD_POINTER(sbstr) )
+        PTR_IS_BAD_POINTER(sbstr) )
     {
-        static TCHARZ stringbuffer[16];
-#if WINDOWS
-        consume_int(_sntprintf_s(stringbuffer, elemof32(stringbuffer), _TRUNCATE, TEXT("<<") PTR_XTFMT TEXT(">>"), sbstr));
-#else /* C99 CRT */
-        consume_int(snprintf(stringbuffer, elemof32(stringbuffer), TEXT("<<") PTR_XTFMT TEXT(">>"), sbstr));
-#endif
-        return(stringbuffer);
+        return(report_bad_pointer(sbstr));
     }
 
     /* Always watch out for inlines in SBSTR! */
@@ -604,6 +625,22 @@ report_wimp_event_code(
 }
 
 _Check_return_
+_Ret_opt_z_
+static PTSTR
+report_wimp_get_buffer(
+    _InoutRef_  P_PTSTR p_buffer,
+    _InVal_     U32 elemof_buffer)
+{
+    if(NULL == *p_buffer)
+    {
+        STATUS status;
+        *p_buffer = al_ptr_alloc_elem(TCHAR, elemof_buffer, &status);
+    }
+
+    return(*p_buffer);
+}
+
+_Check_return_
 _Ret_z_
 extern PCTSTR
 report_wimp_event(
@@ -613,9 +650,13 @@ report_wimp_event(
     const WimpPollBlock * const event_data = (const WimpPollBlock * const) p_event_data;
     char tempbuffer[256];
 
-    static TCHARZ messagebuffer[512];
+    const U32 elemof_messagebuffer = 512;
+    static PTSTR messagebuffer;
 
-    tstr_xstrkpy(messagebuffer, elemof32(messagebuffer), report_wimp_event_code(event_code));
+    if(NULL == report_wimp_get_buffer(&messagebuffer, elemof_messagebuffer))
+        return(report_tstr(NULL));
+
+    tstr_xstrkpy(messagebuffer, elemof_messagebuffer, report_wimp_event_code(event_code));
 
     switch(event_code)
     {
@@ -701,7 +742,7 @@ report_wimp_event(
     }
 
     if(*tempbuffer)
-        tstr_xstrkat(messagebuffer, elemof32(messagebuffer), tempbuffer);
+        tstr_xstrkat(messagebuffer, elemof_messagebuffer, tempbuffer);
 
     return(messagebuffer);
 }
@@ -789,10 +830,14 @@ report_wimp_message(
             : TEXT("%s, size ") INT_TFMT TEXT(", your_ref ") U32_XTFMT TEXT(" from task " U32_XTFMT ", my(his)_ref ") U32_XTFMT TEXT(" ");
     TCHARZ tempbuffer[256];
 
-    static TCHARZ messagebuffer[512];
+    const U32 elemof_messagebuffer = 512;
+    static PTSTR messagebuffer;
+
+    if(NULL == report_wimp_get_buffer(&messagebuffer, elemof_messagebuffer))
+        return(report_tstr(NULL));
 
     consume_int(
-        snprintf(messagebuffer, elemof32(messagebuffer), format,
+        snprintf(messagebuffer, elemof_messagebuffer, format,
                  report_wimp_message_action(user_message->hdr.action_code),
                  user_message->hdr.size, user_message->hdr.your_ref,
                  user_message->hdr.sender, user_message->hdr.my_ref));
@@ -879,7 +924,7 @@ report_wimp_message(
     }
 
     if(*tempbuffer)
-        tstr_xstrkat(messagebuffer, elemof32(messagebuffer), tempbuffer);
+        tstr_xstrkat(messagebuffer, elemof_messagebuffer, tempbuffer);
 
     return(messagebuffer);
 }

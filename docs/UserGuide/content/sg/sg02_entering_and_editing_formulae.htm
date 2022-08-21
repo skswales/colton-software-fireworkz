@@ -1,0 +1,702 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Entering and editing formulae</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Entering and editing formulae" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../sg/sg01_entering_and_editing_numerical_data.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../sg/sg03_number_formats_and_styles.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Entering data in cells </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Number formats</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="entering_and_editing_formulae" id="entering_and_editing_formulae"></a><span class="csg-chapter-number">12 </span>Entering and editing formulae</h1>
+
+    <p>
+        This chapter describes how to enter formulae in your worksheet, using the functions and operators offered by Fireworkz.
+        It includes sections on:
+    </p>
+    <ul>
+        <li><a href="#formula_building_blocks">Formula building blocks</a></li>
+        <li><a href="#using_operators_in_a_formula">Using operators in a formula</a></li>
+        <li><a href="#the_function_selector">Using functions in a formula</a></li>
+        <li><a href="#autosum">Autosum</a></li>
+        <li><a href="#arrays">Arrays</a></li>
+        <li><a href="#names">Names</a></li>
+    </ul>
+    <p>Each section describes how you can use these items to build formulae which perform the operations you require.</p>
+
+    <h2><a name="formula_building_blocks" id="formula_building_blocks"></a>Formula building blocks</h2>
+
+    <p>
+        A formula is anything you enter into a number cell.
+        <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+        You create and edit it in the formula line,
+        and then enter it into the cell by clicking on the <span class="csg-toolbar-button">Tick</span> tool button on the toolbar
+        (or pressing <span class="csg-key">Return&crarr;</span>).
+        A formula can be as simple as just a number, or it can be very complex and built using
+        operators, functions, cell references, ranges, arrays, and other types of data.
+    </p>
+    <p>Here are some examples of formulae:</p>
+    <pre class="csg-sample-indent">7+6</pre>
+    <pre class="csg-sample-indent">B8</pre>
+    <pre class="csg-sample-indent">A7*15</pre>
+    <pre class="csg-sample-indent">D20*VAT</pre>
+    <pre class="csg-sample-indent">SUM(B2:B11)</pre>
+    <pre class="csg-sample-indent">LOOKUP(A2:A11,MAX(A2:A11))</pre>
+    <pre class="csg-sample-indent">IF(D12&gt;50,&quot;Yes&quot;,&quot;No&quot;)</pre>
+    <p>
+        Some of these formulae perform quite simple operations, using the standard mathematical symbols for addition, multiplication and so on.
+        These symbols, when used in a formula, are called <a href="#using_operators_in_a_formulae">operators</a>,
+        because they represent an operation which is carried out on the data.
+    </p>
+    <p>
+        Other formulae include functions.
+        These are more complex operations, which perform an operation which is often well described by their name.
+    </p>
+
+    <p>
+        Other elements which can appear in formulae are
+        numbers,
+        <a href="../sg/sg01_entering_and_editing_numerical_data.htm#cell_references">cell references</a>,
+        <a href="sg1_external_references.htm">external references</a>,
+        <a href="#arrays">arrays</a>,
+        and <a href="#names">names</a>.
+    </p>
+
+    <h2><a name="using_operators_in_a_formula" id="using_operators_in_a_formula"></a>Using operators in a formula</h2>
+
+    <p>
+        To use an operator within a formula, you simply type it into the formula line along with the data it is to operate on
+        (remember that this can be actual data or references to cells containing data).
+    </p>
+    <p>Fireworkz contains three types of operators;</p>
+    <ul>
+        <li><a href="#arithmetic_operators">Arithmetic operators</a></li>
+        <li><a href="#relational_operators">Relational operators</a></li>
+        <li><a href="#logical_operators">Logical operators</a></li>
+    </ul>
+    <p>See also the section <a href="#operator_precedence">Operator precedence</a>.</p>
+
+    <h3><a name="arithmetic_operators" id="arithmetic_operators"></a>Arithmetic operators</h3>
+    <p>There are five arithmetic operators available:</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr><td style="width: 4em;">+</td><td>Add both sides</td></tr>
+                <tr><td>-</td><td>Subtract the right-hand side from the left-hand side</td></tr>
+                <tr><td>*</td><td>Multiply both sides</td></tr>
+                <tr><td>/</td><td>Divide the left-hand side by the right-hand side</td></tr>
+                <tr><td>^</td><td>Raise the left-hand side to the power of the right-hand side</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="csg-function-subheading">Example:</p>
+    <p>Entering the formula</p>
+    <pre class="csg-sample-indent">=A1*C1</pre>
+    <p>multiplies the contents of cells <code>A1</code> and <code>C1</code> and places the result in the current cell.</p>
+
+    <h3><a name="relational_operators" id="relational_operators"></a>Relational operators</h3>
+    <p>The relational operators compare dates, strings and numbers, comparing the left-hand operand with the right-hand operand.</p>
+    <p>The result is a Logical value, <code>TRUE</code> or <code>FALSE</code> as appropriate.</p>
+    <p>Note that both operands must be of the same type (e.g. both numbers) to gain a useful result.</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr><td style="width: 4em;">&lt;</td><td>Less than</td></tr>
+                <tr><td>&lt;=</td><td>Less than or equal to</td></tr>
+                <tr><td>&lt;&gt;</td><td>Not equal to</td></tr>
+                <tr><td>=</td><td>Equal to</td></tr>
+                <tr><td>&gt;</td><td>Greater than</td></tr>
+                <tr><td>&gt;=</td><td>Greater than or equal to</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">B8&gt;10</pre>
+    <p>
+        will compare the contents of cell <code>B8</code> with the number 10.
+        If <code>B8</code> contains a number greater than 10, the result will be the Logical value <code>TRUE</code>.
+        If <code>B8</code> contains a number which is 10 or less, the result will be <code>FALSE</code>.
+        If <code>B8</code> contains text or a date, the result will also be <code>FALSE</code>.
+    </p>
+    <p>
+        Relational operators are useful for establishing the condition for the
+        <a href="../sg06i/sg6_IF.htm"><code>IF</code></a> function,
+        and in <a href="../sg/sg05_function_reference.htm#database_functions">database functions</a>.
+    </p>
+    <p class="csg-function-subheading">Example:</p>
+    <p>The following function displays the first text message in the cell if the condition is true, and the second if it is not true:</p>
+    <pre class="csg-sample-indent">IF(A1&lt;B1, &quot;A1 less than B1&quot;, &quot;A1 not less than B1&quot;)</pre>
+
+    <h4>Comparing strings using wildcards</h4>
+    <p>When comparing text strings there are three wildcards you can use in the right-hand side of the comparison.</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr><td style="width: 4em;">^?</td><td>Matches any single character not including space</td></tr>
+                <tr><td>^#</td><td>Matches any number of characters including spaces</td></tr>
+                <tr><td>^^</td><td>Matches the character ^</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">&quot;Venice&quot;=&quot;^#nice&quot;</pre>
+    <p>will return the Logical value <code>TRUE</code>.</p>
+
+    <h3><a name="logical_operators" id="logical_operators"></a>Logical operators</h3>
+    <p>The logical operators operate on Logical (Boolean) values.</p>
+    <p class="csg-function-declaration"><span style="float: left; min-width: 3em;">&amp; </span>AND</p>
+    <p>If both sides of an AND operator are <code>TRUE</code>, the Logical value <code>TRUE</code> is returned; otherwise <code>FALSE</code> is returned.</p>
+    <p>Note that if the left-hand side of an AND operator in an expression is <code>FALSE</code>, the right-hand side is not evaluated.</p>
+    <p class="csg-function-declaration"><span style="float: left; min-width: 3em;">!</span>unary NOT</p>
+    <p>The NOT operator returns the logical negation of the following expression.</p>
+    <p class="csg-function-declaration"><span style="float: left; min-width: 3em;">|</span>OR</p>
+    <p>If either side of an OR operator is <code>TRUE</code>, the Logical value <code>TRUE</code> is returned; otherwise <code>FALSE</code> is returned.</p>
+    <p>Note that if the left-hand side of an OR operator in an expression is <code>TRUE</code>, the right-hand side is not evaluated.</p>
+    <p>In Fireworkz, Logical values and numeric values are freely convertible:</p>
+    <p>
+        When numeric values are used in operations that require Logical values,
+        Fireworkz always maps the number zero to the Logical value <code>FALSE</code>
+        and any non-zero number to the Logical value <code>TRUE</code>.
+    </p>
+    <p>
+        When Logical values are used in operations or calculations that require numeric values,
+        Fireworkz always maps the Logical value <code>FALSE</code> to the number zero
+        and <code>TRUE</code> to the number one.
+    </p>
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        Logical operators are often used to construct the condition required by the <code>IF</code> function.
+        The following function adds the contents of cells <code>A2</code> and <code>B2</code>
+        only if the contents of both cells <code>A1</code> and <code>B1</code> match the specified criteria:
+    </p>
+    <pre class="csg-sample-indent">IF(A1=6 &amp; B1=4,SUM(A2, B2),0)</pre>
+    <p>This example shows that it may be a good idea to use spaces in your formulae for clarity!</p>
+
+    <h3><a name="operator_precedence" id="operator_precedence"></a>Operator precedence</h3>
+    <p>
+        Operators are often used together to build up complex formulae.
+        In order to do this, you need to know which operator is used first in evaluating the expression.
+        Rather than use layers of brackets to describe the order in which the expression should be evaluated, each operator is awarded a precedence rating.
+        Those at the top of the list are evaluated first, working down towards those at the bottom.
+        If a formula contains two operators of equal precedence, evaluation will be carried out from left to right.
+    </p>
+
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;" />
+                <col style="width: 4em;" />
+                <col />
+            </colgroup>
+            <tbody class="csg-table-align-top">
+                <tr>
+                    <td style="width: 4em;">1</td>
+                    <td style="width: 4em;">-</td>
+                    <td>Unary minus</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>( )</td>
+                    <td>Brackets</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>!</td>
+                    <td>Unary NOT</td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>^</td>
+                    <td>Raise to the power</td>
+                </tr>
+
+                <tr>
+                    <td>3</td>
+                    <td>*</td>
+                    <td>Multiply</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>/</td>
+                    <td>Divide</td>
+                </tr>
+
+                <tr>
+                    <td>4</td>
+                    <td>+</td>
+                    <td>Plus</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>-</td>
+                    <td>Minus</td>
+                </tr>
+
+                <tr>
+                    <td>5</td>
+                    <td>=</td>
+                    <td>Equals</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>&lt;&gt;</td>
+                    <td>Not equal to</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>&lt;</td>
+                    <td>Less than</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>&gt;</td>
+                    <td>Greater than</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>&lt;=</td>
+                    <td>Not greater than</td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>&gt;=</td>
+                    <td>Not less than</td>
+                </tr>
+
+                <tr>
+                    <td>6</td>
+                    <td>&amp;</td>
+                    <td>AND</td>
+                </tr>
+
+                <tr>
+                    <td>7</td>
+                    <td>|</td>
+                    <td>OR</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="csg-function-subheading">Examples:</p>
+    <p>
+        The following formula shows how operator precedence affects an arithmetic formula using numeric constants;
+        in practice the formula would be more likely to contain cell references than constants:
+    </p>
+    <pre class="csg-sample-indent">-3*2-2</pre>
+    <p>evaluates as</p>
+    <pre class="csg-sample-indent">((-3)*2)-2</pre>
+    <p>The answer is -8.</p>
+    <p>The following example shows how operator precedence affects relational and logical operators:</p>
+    <pre class="csg-sample-indent">IF(A1=3 &amp; B1=4,SUM(A1:A10),0)</pre>
+    <p>
+        The formula first evaluates the expression <code>A1=3</code>;
+        if it is <code>TRUE</code>, the formula then evaluates <code>B1=4</code>.
+        If this is also <code>TRUE</code>, the <code>SUM()</code> operation is carried out.
+    </p>
+
+    <h2>Using functions in formulae</h2>
+
+    <p>
+        Spreadsheet functions are commands which tell Fireworkz to perform a particular operation on the data in a formula.
+        For example, the function <code>SUM()</code> adds all the numbers enclosed in brackets,
+        while the function <code>AVG()</code> works out the arithmetic mean of all the numbers enclosed in brackets.
+    </p>
+    <p>You have a choice of methods in entering functions when preparing formulae.</p>
+    <ul>
+        <li>
+            If you are familiar with the function and the parameters it expects,
+            you can just type it into the formula line as part of your formula,
+            and supply the necessary parameters enclosed in brackets.
+        </li>
+        <li>
+            If you are less sure about the function and the parameters it expects,
+            you can use the Function selector to enter the function in the formula line.
+            This will provide you with information  on the status line,
+            prompting to help you enter the expected parameters and supply the required form of data.
+        </li>
+    </ul>
+
+    <h3><a name="the_function_selector" id="the_function_selector"></a>The function selector</h3>
+    <p>The easiest way to enter functions is to use the function selector.</p>
+    <ol>
+        <li>Click on the cell in which you want to use the function.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/selfnc.png" alt="Function selector tool button" />
+            Click the <span class="csg-toolbar-button">Function</span> tool button on the toolbar to the left of the formula line.
+            The <span class="csg-menu">Function</span> menu will appear.
+        </li>
+        <li>
+            Choose <span class="csg-menu-option">Quick</span> for a shorter list of commonly used functions or
+            <span class="csg-menu-option">All</span> for the full list of functions.
+            A list of functions will appear.
+            Each function is followed by its parameters which are described to help you enter the right kind of data.
+        </li>
+        <li>
+            Scroll through the list if necessary.
+            As you move from function to function the status line will give you information on each function.
+            Double-click on the function you want to enter it.
+            You can reach a function more quickly by typing in the first letter of its name.
+        </li>
+        <li>
+            The function will appear on the formula line followed by a set of brackets and text describing the parameters needed.
+            Further details of the function will be shown as text in the status line.
+        </li>
+        <li>
+            Enter the parameters required.
+            You will see that as you move from parameter to parameter, the parameter description is selected.
+            You can type over this or click on cells to insert cell references.
+        </li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            When you have finished, click the <span class="csg-toolbar-button">Tick</span> button to enter your formula.
+            The result will be displayed in the cell, and whenever you select the cell you will see the formula on the formula line.
+        </li>
+        <li class="csg-list-style-none">
+            If for any reason the formula you created does not produce a sensible result, or Fireworkz can not interpret your formula,
+            the word <strong>Error</strong> will appear in the cell, and the status line will describe the error.
+        </li>
+    </ol>
+
+    <h2><a name="autosum" id="autosum"></a>Autosum</h2>
+
+    <p>The Autosum button automatically builds a formula which adds up all the figures in a range on a per column or per row basis.</p>
+    <p>To add figures automatically:</p>
+    <ol>
+        <li>
+            Select a range with either a blank row at the end or a blank column at the right.
+            If the blank cells are at the bottom of the range, the numbers in the columns will be added;
+            if the blank cells are at the right, the numbers in the rows will be added.
+        </li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/sum.png" alt="Autosum tool button" />
+            Click the <span class="csg-toolbar-button">Autosum</span> tool button on the toolbar.
+        </li>
+        <li>
+            A formula will be created in the blank row or column at the end of the range,
+            which adds all the numbers in the column or row and displays the result.
+            If you click on one of the cells, you will see the formula on the formula line.
+        </li>
+    </ol>
+    <p>
+        If you click the <span class="csg-toolbar-button">Autosum</span> tool button without making a selection first,
+        it simply enters the formula in the formula line, ready for you to supply its parameters.
+    </p>
+
+    <h2><a name="building_and_editing_a_formula" id="building_and_editing_a_formula"></a>Building and editing a formula</h2>
+
+    <p>
+        Each formula needs to be carefully considered and written to ensure that
+        it can be interpreted by Fireworkz and that it provides the correct answer.
+        You can, for example, write a formula which Fireworkz understands and processes,
+        but produces a result different to that which you intended.
+    </p>
+
+    <h3>Building complex formulae</h3>
+    <p>
+        If you are performing an operation which requires more than one function, split the work across several cells.
+        This ultimately gives you more control over your work, and makes it easier to avoid mistakes.
+    </p>
+
+    <h3><a name="troubleshooting" id="troubleshooting"></a>Troubleshooting</h3>
+    <p>There are some common problems to avoid when writing formulae and building up your worksheet:</p>
+
+    <h4>Punctuation</h4>
+    <p>Using the wrong punctuation, or missing out significant symbols, can mean that your formula will not work.</p>
+    <p>The most important things to watch out for are:</p>
+    <ul>
+        <li>
+            Commas must separate all the parameters of a formula.
+            For example, in the formula
+        </li>
+        <li class="csg-list-style-none">
+            <span class="csg-user-text">IF(A1=2, SUM(B1:B20), SUM(C1:C20))</span>
+        </li>
+        <li class="csg-list-style-none">
+            the commas tell Fireworkz that the first section is the condition which must be tested;
+            the second is the action to take if the condition is <code>TRUE</code>,
+            and the third is the action to take if the condition is <code>FALSE</code>.
+        </li>
+        <li>
+            Missing brackets mean that Fireworkz cannot calculate the formula because it does not know that it is complete.
+            If you omit brackets you will usually see an error message on the status line.
+        </li>
+        <li>
+            If you omit or mismatch brackets from a complex formula it may mean that
+            the formula is calculated differently from the way you intended and returns an incorrect result.
+            Refer back to the section <a href="#operator_precedence">Operator precedence</a>.
+        </li>
+    </ul>
+
+    <h4>Order of parameters</h4>
+    <p>
+        It is vital for many functions that parameters are supplied in the correct order.
+        Information about the correct parameters is given in the function when it is pasted from the function selector,
+        and further information appears in the status line.
+    </p>
+
+    <h4>Cell types</h4>
+    <p>
+        If you attempt to perform a numerical calculation on text cells,
+        you will not get a result but instead see an error message.
+        This will probably be <strong>String not expected</strong>.
+        If you have put numbers into text cells you can convert them into number cells
+        either by editing them individually or by selecting them and using
+        <span class="csg-menu-option">Make number</span> from the <span class="csg-menu-option">Edit &ndash; Make</span> menu.
+    </p>
+
+    <h4>Circular references</h4>
+    <p>
+        A circular reference is formed when a formula attempts to
+        operate on the contents of a cell which is itself dependent on the results of the same formula.
+        For example, if cell <code>B5</code> contains the formula <code>SUM(B1:B4)</code> and cell <code>B1</code> contains the cell reference <code>B5</code>.
+        This creates an insoluble problem; the formula cannot calculate because its data is dependent on its result.
+    </p>
+    <p>
+        If you create a circular reference, you will see the word
+        <strong>Error</strong> in the cells which refer to each other, and a warning message in the status line.
+        You will then need to go to the cells and see what the problem is, and solve it.
+    </p>
+
+    <h1><a name="arrays" id="arrays"></a>Arrays</h1>
+
+    <p>An array is a one- or two-dimensional table of data stored in a single cell.</p>
+    <p>Arrays are a facility which enable you to write formulae which process a lot of data at once.</p>
+
+    <h2>Entering arrays</h2>
+    <p>The simplest way to create an array is to enter a reference to a range.</p>
+    <p>To create an array containing the contents of cells A1 to B3, you would do the following:</p>
+    <ol>
+        <li>Type some numbers into the cells A1 to B3. These cells should be number cells.</li>
+        <li>Select the cell which is to contain the array.</li>
+        <li>Click in the formula line.</li>
+        <li>Enter the range A1:B3 either by typing in the reference or by pointing at cell A1 and then dragging to B3 to select the range.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-toolbar-button">Tick</span> button
+            (or press <span class="csg-key">Return&crarr;</span>).
+        </li>
+    </ol>
+
+    <h4><a name="typing_arrays_directly_into_cells" id="typing_arrays_directly_into_cells"></a>Typing arrays directly into cells</h4>
+    <p>It is also possible to type an array directly into a cell as an array constant.</p>
+    <ol>
+        <li>Begin the array with an opening brace (curly bracket).</li>
+        <li>Enter the numbers on the first row of the array, separated by commas.</li>
+        <li>
+            If the array has more than one row, enter a semi-colon to indicate the end of the row.
+            For example:
+            <pre class="csg-sample-indent">{1,2,3;11,12,13}</pre>
+        </li>
+        <li>Enter further numbers as required.</li>
+        <li>Enter a closing brace to indicate the end of the array.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-toolbar-button">Tick</span> button
+            (or press <span class="csg-key">Return&crarr;</span>)
+            to enter the finished array constant in the cell.
+        </li>
+    </ol>
+
+    <h3><a name="displaying_arrays" id="displaying_arrays"></a>Displaying arrays</h3>
+    <p>If the result of a formula is an array, you only see the top left entry in the array displayed on the worksheet.</p>
+
+    <h4>Displaying the whole array</h4>
+    <p>If you want to expand an array over a block of cells you can use the SET_VALUE function to see the array on the worksheet in full:</p>
+    <ol>
+        <li>Select a cell.</li>
+        <li>
+            Enter a formula using the SET_VALUE function, for example:
+            <pre class="csg-sample-indent">SET_VALUE(E1:F5, A1)</pre>
+            This writes the contents of an array held in cell A1 into cells E1 to F5
+        </li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-toolbar-button">Tick</span> button
+            (or press <span class="csg-key">Return&crarr;</span>).
+        </li>
+        <li class="csg-list-style-none">
+            The array named in the second parameter will be written into the range of cells defined in the first parameter.
+        </li>
+    </ol>
+
+    <h4>Accessing a sub-array or a single array component</h4>
+    <p>You can use the INDEX function to extract a section of an array or a single component from it.</p>
+    <p class="csg-function-subheading">Examples:</p>
+    <pre class="csg-sample-indent">INDEX(A1, 2, 3)</pre>
+    <p>will return the component of the array held in cell A1 in the second column and third row of the array.</p>
+    <pre class="csg-sample-indent">INDEX(A1, 1, 2, 2, 3)</pre>
+    <p>will return a sub-array of two columns and three rows starting with the first column and second row.</p>
+    <p>If you extract a sub-array, you would still need to use SET_VALUE to display it, for example:</p>
+    <pre class="csg-sample-indent">SET_VALUE(C3:D5, INDEX(A1, 1, 2, 2, 3))</pre>
+
+    <h3><a name="using_arrays" id="using_arrays"></a>Using arrays</h3>
+    <p>You can use arrays for a number of different purposes.</p>
+
+    <h4>Matrices and complex numbers</h4>
+    <p>
+        Arrays may be used for entering <a href="../sg06/sg6_complex_numbers.htm">complex numbers</a> and matrices in your worksheet.
+        For example the matrix
+    </p>
+    <table style="margin-left: 6em; border-collapse: collapse;">
+        <colgroup>
+            <col style="width: 2.2em;" />
+            <col style="width: 2.2em;" />
+            <col style="width: 2.2em;" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <td style="width: 2.2em; border-left: 1px solid black; padding-left: 0.8em;">5</td>
+                <td style="width: 2.2em; text-align: center;">4</td>
+                <td style="width: 2.2em; text-align: right; border-right: 1px solid black; padding-right: 0.8em;">2</td>
+            </tr>
+            <tr>
+                <td style="width: 2.2em; border-left: 1px solid black; padding-left: 0.8em;">3</td>
+                <td style="width: 2.2em; text-align: center;">4</td>
+                <td style="width: 2.2em; text-align: right; border-right: 1px solid black; padding-right: 0.8em;">8</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>would be expressed as an array:</p>
+    <pre class="csg-sample-indent">{5,4,2;3,4,8}</pre>
+    <p>or if the values were entered in cells A1 to C2 you could express it as A1:C2.</p>
+    <p>Note that the cell containing it would just display the top-left-most element:</p>
+    <pre class="csg-sample-indent">5</pre>
+    <p>Many matrix and complex number functions return an array as their result.</p>
+
+    <h2>Batch processing</h2>
+    <p>
+        Arrays can be used to automate data processing and reduce the number of formulae which you have to create.
+        For example, if a worksheet consists of three columns of numbers, and each row needs to be totalled,
+        you could write a SUM formula in each row, or you could use arrays to simplify the process.
+    </p>
+    <p>If you used arrays you could write the following formula:</p>
+    <pre class="csg-sample-indent">A1:A10+B1:B10+C1:C10</pre>
+    <p>
+        This would create an array of ten rows and one column.
+        Each element would be the result of the formula A1+B1+C1, A2+B2+C2, etc.
+        Again you would need to use SET_VALUE to display the results on the worksheet, so your actual formula would look like:
+    </p>
+    <pre class="csg-sample-indent">SET_VALUE(D1:D10, A1:A10+B1:B10+C1:C10)</pre>
+    <p>
+        The advantages of this approach are that you save on the memory required to store all the separate SUM functions which you could have used,
+        and all the individual cell references involved.
+        If you inserted a new row between, say, rows 5 and 6, it would automatically be included in the calculation.
+    </p>
+    <p>
+        The disadvantage is that if you change any element of the data, the whole block has to recalculate rather than just one row.
+        This slows down recalculation.
+    </p>
+
+    <h4>Arrays as parameters to functions</h4>
+    <p>Arrays can be used as the parameters to a wide range of functions.</p>
+    <p>
+        Some functions understand arrays and automatically process them.
+        These are the same functions which can process ranges.
+        For example, if cell A1 holds an array, then:
+    </p>
+    <pre class="csg-sample-indent">SUM(A1)</pre>
+    <p>adds all the elements in the array stored in cell A1.</p>
+    <p>
+        If an array is passed as a parameter to a function which does not expect to receive arrays,
+        Fireworkz calls the function for each array element individually
+        and returns an array of the same size as that passed to the function containing those set of results.
+        For example:
+    </p>
+    <pre class="csg-sample-indent">SIN(A1:A10)</pre>
+    <p>
+        returns the array {SIN(A1), SIN(A2) &hellip; SIN(A10)}.
+        This is referred to as automatic array processing.
+    </p>
+
+    <h2><a name="names" id="names"></a>Names</h2>
+
+    <p>
+        You can use a name to refer to a piece of data, a cell reference, or a range.
+        You can use the name in a formula so that the formula is easier to understand.
+    </p>
+    <p>You can define a name in one of two ways:</p>
+    <ul>
+        <li>Use the <span class="csg-dbox">Names</span> dialogue box on the function selector menu.</li>
+        <li>
+            Use the <code>SET_NAME</code> function, e.g.:
+            <pre class="csg-sample-indent">SET_NAME(&quot;VAT&quot;, 0.175)</pre>
+            <creates a=a name=name <code>VAT</code> and sets its value to 0.175.
+        </li>
+    </ul>
+    <p>In your formulae you can now use your name. For example:</p>
+    <pre class="csg-sample-indent">A1*VAT</pre>
+    <p>
+        multiplies the contents of A1 by the value of VAT.
+        This is useful because if you need to change the value of VAT any formulae including the name VAT will automatically be updated to use the new value.
+    </p>
+    <p>Names must conform to the following rules:</p>
+    <ul>
+        <li>They can be up to 24 characters long;</li>
+        <li>They can contain letters, numerals and underscore characters;</li>
+        <li>There must be an underscore character before any numerals are used (so that Fireworkz does not interpret the name as a cell reference);</li>
+        <li>They are not case-sensitive, so VAT and vat are identical.</li>
+    </ul>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg01_entering_and_editing_numerical_data.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg03_number_formats_and_styles.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Entering data in cells </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Number formats</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

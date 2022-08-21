@@ -128,18 +128,19 @@ gr_numtopowstr(
 {
     F64 value = evalue;
 
+    if(0 == elemof_buffer)
+        return(status_check());
+
     if(value < 0.0)
     {
-        F64 abs_value = fabs(value);
         PtrPutByte(buffer, CH_MINUS_SIGN__BASIC);
-        return(gr_numtopowstr(ustr_AddBytes_wr(buffer, 1), elemof_buffer - 1, abs_value, ebase, log_scale, log_label));
+        return(gr_numtopowstr(ustr_AddBytes_wr(buffer, 1), elemof_buffer - 1, fabs(value), ebase, log_scale, log_label));
     }
-
-    if((value >= U32_MAX) || (value < 1E-4))
-        log_label = TRUE;
 
     if(value == 0.0)
         log_label = FALSE;
+    else if( (value >= U32_MAX) || (value < 1E-4) )
+        log_label = TRUE;
 
     if(log_label)
     {
@@ -148,7 +149,7 @@ gr_numtopowstr(
         F64 exponent;
         F64 mantissa = splitlognum(lnz, &exponent);
 
-        if((mantissa == 0.0 /*log(1.0)*/) && log_scale)
+        if( log_scale && (mantissa == 0.0 /*log(1.0)*/) )
             consume_int(ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT(S32_FMT "^" S32_FMT), (S32) base, (S32) exponent));
         else
         {
@@ -167,14 +168,14 @@ gr_numtopowstr(
         consume_int(ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT("%g"), value));
 
     /* convert output iff necessary */
-    if(CH_FULL_STOP != g_ss_recog_context.decimal_point_char)
+    if(CH_FULL_STOP != get_ss_recog_context_alt(decimal_point_char))
     {
         P_USTR ustr_dp = ustrchr(buffer, CH_FULL_STOP);
 
         if(NULL != ustr_dp)
         {
 #if !USTR_IS_SBSTR
-            const U32 bytes_of_char = uchars_bytes_of_char_encoding(g_ss_recog_context.decimal_point_char);
+            const U32 bytes_of_char = uchars_bytes_of_char_encoding(get_ss_recog_context_alt(decimal_point_char));
             if(bytes_of_char > 1)
             {   /* make space for a longer replacement character */
                 PC_USTR ustr_tail = ustr_AddBytes(ustr_dp, 1);
@@ -182,14 +183,14 @@ gr_numtopowstr(
                 memmove32(ustr_AddBytes_wr(ustr_dp, bytes_of_char), ustr_tail, tail_bytes);
             }
 #endif
-            (void) uchars_char_encode(ustr_dp, elemof_buffer - PtrDiffBytesU32(ustr_dp, buffer), g_ss_recog_context.decimal_point_char);
+            (void) uchars_char_encode(ustr_dp, elemof_buffer - PtrDiffBytesU32(ustr_dp, buffer), get_ss_recog_context_alt(decimal_point_char));
         }
     }
 
     return(STATUS_OK);
 }
 
-#define N_NUMFORM_DECIMALS 12
+#define GR_N_NUMFORM_DECIMALS 12
 
 static UCHARZ numform_numeric_ustr_buf[32]; /* must use persistent format along axis! */
 
@@ -222,26 +223,29 @@ gr_numtonumstr_init(
     const F64 fabs_iter_val_max = fabs(iter_val_max);
     const F64 max_abs = fmax(fabs_iter_val_min, fabs_iter_val_max);
 
-    if((max_abs >= U32_MAX) || (decimals >= N_NUMFORM_DECIMALS))
+    if( (max_abs >= U32_MAX) || (decimals >= GR_N_NUMFORM_DECIMALS) )
     {
-        /*                       0123456789 */
-        ustr_xstrkpy(ustr_bptr(numform_numeric_ustr_buf), sizeof32(numform_numeric_ustr_buf), USTR_TEXT("0.x00e+00"));
-        numform_numeric_ustr_buf[2] = g_ss_recog_context.decimal_point_char;
+        /*                      0123456789 */
+        ustr_xstrkpy(ustr_bptr(numform_numeric_ustr_buf), sizeof32(numform_numeric_ustr_buf),
+                     USTR_TEXT("0.D00e+00"));
+        numform_numeric_ustr_buf[2] = get_ss_recog_context_alt(decimal_point_char);
     }
     else if(decimals > 0)
     {
-        /*                       01234567890123456789 */
-        ustr_xstrkpy(ustr_bptr(numform_numeric_ustr_buf), sizeof32(numform_numeric_ustr_buf), USTR_TEXT("#,x##0.x000000000000"));
-        assert(strlen(numform_numeric_ustr_buf) == 8+N_NUMFORM_DECIMALS);
-        numform_numeric_ustr_buf[2] = g_ss_recog_context.thousands_char;
-        numform_numeric_ustr_buf[7] = g_ss_recog_context.decimal_point_char;
+        /*                      01234567890123456789 */
+        ustr_xstrkpy(ustr_bptr(numform_numeric_ustr_buf), sizeof32(numform_numeric_ustr_buf),
+                     USTR_TEXT("#,T##0.D000000000000"));
+        assert(strlen(numform_numeric_ustr_buf) == 8+GR_N_NUMFORM_DECIMALS);
+        numform_numeric_ustr_buf[2] = get_ss_recog_context_alt(thousands_char);
+        numform_numeric_ustr_buf[7] = get_ss_recog_context_alt(decimal_point_char);
         numform_numeric_ustr_buf[8+decimals] = CH_NULL;
     }
     else
     {
-        /*                       0123456789 */
-        ustr_xstrkpy(ustr_bptr(numform_numeric_ustr_buf), sizeof32(numform_numeric_ustr_buf), USTR_TEXT("#,x##0"));
-        numform_numeric_ustr_buf[2] = g_ss_recog_context.thousands_char;
+        /*                      0123456789 */
+        ustr_xstrkpy(ustr_bptr(numform_numeric_ustr_buf), sizeof32(numform_numeric_ustr_buf),
+                     USTR_TEXT("#,T##0"));
+        numform_numeric_ustr_buf[2] = get_ss_recog_context_alt(thousands_char);
     }
 }
 

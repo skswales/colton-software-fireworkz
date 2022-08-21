@@ -76,9 +76,9 @@ p_menu_root_from_si_handle(
     switch(menu_root_id)
     {
     default:
-        {
+        { /* allow note layer to mutate menu_root_id */
         NOTE_MENU_QUERY note_menu_query;
-        note_menu_query.menu_root_id = MENU_ROOT_DOCU;
+        note_menu_query.menu_root_id = menu_root_id;
         status_consume(object_call_id(OBJECT_ID_NOTE, p_docu, T5_MSG_NOTE_MENU_QUERY, &note_menu_query));
         menu_root_id = note_menu_query.menu_root_id;
         } /*block*/
@@ -98,6 +98,7 @@ p_menu_root_from_si_handle(
         /*FALLTHRU*/
 
     case MENU_ROOT_ICON_BAR:
+    case MENU_ROOT_AUTO_FUNCTION:
     case MENU_ROOT_FUNCTION_SELECTOR:
     case MENU_ROOT_CHART:
         return(sk_menu_root(p_docu_from_config_wr(), menu_root_id));
@@ -169,7 +170,7 @@ ho_menu_event_maker_core(
 
     disable[MENU_ACTIVE_NEVER] = TRUE;
 
-    if(!IS_DOCU_NONE(p_docu))
+    if(DOCU_NOT_NONE(p_docu))
     {
         ho_menu_init_for_docu(p_docu);
     }
@@ -213,7 +214,7 @@ ho_menu_event_maker(
     P_VIEW p_view;
     const P_DOCU p_docu = viewid_unpack((U32) handle, &p_view, &si_handle);
 
-    if(!IS_DOCU_NONE(p_docu) && !IS_VIEW_NONE(p_view))
+    if(DOCU_NOT_NONE(p_docu) && VIEW_NOT_NONE(p_view))
         command_set_current_view(p_docu, p_view);
 
     return(ho_menu_event_maker_core(p_docu, p_menu_root_from_si_handle(p_docu, &si_handle)));
@@ -286,7 +287,7 @@ ho_menu_event_proc(
     P_VIEW p_view;
     const P_DOCU p_docu = viewid_unpack((U32) handle, &p_view, &si_handle);
 
-    if(!IS_DOCU_NONE(p_docu) && !IS_VIEW_NONE(p_view))
+    if(DOCU_NOT_NONE(p_docu) && VIEW_NOT_NONE(p_view))
         command_set_current_view(p_docu, p_view);
 
     return(ho_menu_event_core(p_docu, p_menu_root_from_si_handle(p_docu, &si_handle), hit, submenurequest));
@@ -381,13 +382,20 @@ menu_build_disable_query(
     PC_U8Z p_command = array_basec(&p_menu_entry->h_command, U8Z);
     BOOL disabled = disable[p_menu_entry->flags.active_state];
 
+    if(P_DATA_NONE == p_command)
+        p_command = array_basec(&p_menu_entry->h_command2, U8Z);
+
     if(P_DATA_NONE != p_command)
     {
-        const U32 n_bytes = sizeof32("Button:")-1;
-        if(0 == /*"C"*/strncmp("Button:", p_command, n_bytes))
+        const U32 n_bytes_test = sizeof32("Button:")-1;
+        if(0 == /*"C"*/strncmp("Button:", p_command, n_bytes_test))
         {
+            const PC_U8Z p_button_name = PtrAddBytes(PC_USTR, p_command, n_bytes_test);
+            const PC_U8Z p_button_optional_args = strchr(p_button_name, CH_SEMICOLON);
+            const U32 button_name_len = (NULL != p_button_optional_args) ? PtrDiffBytesU32(p_button_optional_args, p_button_name) : ustrlen32(p_button_name);
             T5_TOOLBAR_TOOL_ENABLE_QUERY t5_toolbar_tool_enable_query;
-            t5_toolbar_tool_enable_query.name = p_command + n_bytes;
+            t5_toolbar_tool_enable_query.name = p_button_name;
+            t5_toolbar_tool_enable_query.name_len = button_name_len;
             status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY, &t5_toolbar_tool_enable_query));
             disabled = !t5_toolbar_tool_enable_query.enabled;
         }

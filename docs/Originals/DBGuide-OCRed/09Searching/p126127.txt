@@ -1,0 +1,66 @@
+﻿
+Search actions
+
+is
+The search actions detemiine how the search pattem is to be used.
+This specifies that the field value has to be the same as the search
+pattem. In the case of text fields, upper and lower case are ignored
+so Fred will match fred, FRED etc. You should not try to use is on
+number fields as rounding errors may occur which prevent two
+numbers from being identical.
+
+is not
+This specifies that the field value has to be different from the
+search pattern. It is the opposite of is.
+
+contains
+This specifies that the field value has to have the search pattern
+within it. For example, a search pattern of RED within a text field
+will match Fred, Red Rum, Alfred, Alfreda etc. In addition, a
+search pattem of JAN within a date field will match all dates in
+January, regardless of the format used to enter or display those
+dates.
+
+does not contain
+This specifies that the field value must not contain the search
+pattern. It is the opposite of contains.
+
+is greater than
+This specifies that the field value must be:
+. Greater than the search value for numeric fields.
+. Later than the search value for date fields.
+. Later in the alphabet than the search value for text fields.
+
+is less than
+This specifies that the field value must be:
+. Less than the search value for numeric fields.
+. Earlier than the search value for date fields.
+. Earlier in the alphabet than the search value for text fields.
+
+don't care
+This matches any field values. No search pattern is required in this
+case. This is the default.
+
+is empty
+This specifies that the field must be empty. No search pattern is
+required. This is particularly useful for identifying records which
+you didn't complete when you created them.
+
+is not empty
+This specifies that the field must not be empty. No search pattern
+is required.
+
+expression
+This allows you to enter more complex expressions for the search
+pattern using a number of operators and special characters.
+The operators available depend on the field type but in all cases
+AND and OR can be used to combine expressions and specify if
+one or both must apply:
+AND specifies that both conditions must be met.
+OR specifies that either condition (or both) can be met.
+
+Fireworkz Pro 127
+
+
+
+

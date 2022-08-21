@@ -1,0 +1,297 @@
+# z1.r32.mf_mid ####################### R e l e a s e ####################################
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+
+# Release compilation options
+
+# CCflags=$(CCflags_BASE) -Dxxx
+# -DDEBUG_RELEASE to allow assertions in release image
+# -DTRACE_RELEASE to output trace information from release image
+
+OBJMUNGE=@| No 32-bit ObjMunge
+
+# just one product-specific file is built for each target product
+# NB this #include profinfo.c and t5_glue.c
+$(PROD_BUILD_DIR).o.firewrkz: $(PROD_SOURCE_DIR).c.firewrkz $(T5).ob_skel.c.prodinfo $(T5).ob_skel.h.prodinfo
+ $(CC) -o $@ $(ccflags) $(PROD_SOURCE_DIR).c.firewrkz
+
+# objects to be bound into !RunImage (Neutral)
+
+AOF_S0=\
+$(PROD_BUILD_DIR).o.$(PROD) \
+$(PROD_BUILD_DIR).o.Neutral.M38 \
+
+AOF_S1=\
+$(BUILD_DIR).ob_skel.skelA \
+$(BUILD_DIR).ob_skel.skelB \
+$(BUILD_DIR).ob_skel.skelC \
+$(BUILD_DIR).ob_skel.skelD \
+$(BUILD_DIR).ob_skel.skelM \
+$(PROD_BUILD_DIR).o.Neutral.M01 \
+$(PROD_BUILD_DIR).o.Neutral.M03 \
+$(PROD_BUILD_DIR).o.Neutral.M10 \
+$(PROD_BUILD_DIR).o.Neutral.M15 \
+$(PROD_BUILD_DIR).o.Neutral.M16 \
+$(PROD_BUILD_DIR).o.Neutral.M18 \
+$(PROD_BUILD_DIR).o.Neutral.M29 \
+$(PROD_BUILD_DIR).o.Neutral.M30 \
+$(PROD_BUILD_DIR).o.Neutral.M31 \
+
+#$(PROD_BUILD_DIR).o.Neutral.M00 \
+
+AOF_S=\
+$(AOF_S0) \
+$(AOF_S1) \
+
+# objects to be bound into !RunImage ($(COUNTRY))
+
+AOF_SX0=\
+$(PROD_BUILD_DIR).o.$(PROD) \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M38 \
+
+AOF_SX1=\
+$(BUILD_DIR).ob_skel.skelA \
+$(BUILD_DIR).ob_skel.skelB \
+$(BUILD_DIR).ob_skel.skelC \
+$(BUILD_DIR).ob_skel.skelD \
+$(BUILD_DIR).ob_skel.skelM \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M00 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M01 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M03 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M10 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M15 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M16 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M18 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M29 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M30 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M31 \
+
+AOF_SX=\
+$(AOF_SX0) \
+$(AOF_SX1) \
+
+# modules that are dynamically loaded (Neutral)
+
+DYNLOAD_S0=\
+
+DYNLOAD_S1=\
+
+# NB only sprites were dynamically loaded, as all code objects are bound
+DYNLOAD_S2=\
+
+AOF_DYNLOAD_S0=\
+
+AOF_DYNLOAD_S1=\
+$(PROD_BUILD_DIR).o.Neutral.M04 \
+$(PROD_BUILD_DIR).o.Neutral.M06 \
+$(PROD_BUILD_DIR).o.Neutral.M07 \
+$(PROD_BUILD_DIR).o.Neutral.M08 \
+$(PROD_BUILD_DIR).o.Neutral.M09 \
+$(PROD_BUILD_DIR).o.Neutral.M12 \
+$(PROD_BUILD_DIR).o.Neutral.M17 \
+$(PROD_BUILD_DIR).o.Neutral.M19 \
+
+AOF_DYNLOAD_S2=\
+$(PROD_BUILD_DIR).o.Neutral.M20 \
+$(PROD_BUILD_DIR).o.Neutral.M21 \
+$(PROD_BUILD_DIR).o.Neutral.M22 \
+$(PROD_BUILD_DIR).o.Neutral.M23 \
+$(PROD_BUILD_DIR).o.Neutral.M24 \
+$(PROD_BUILD_DIR).o.Neutral.M25 \
+$(PROD_BUILD_DIR).o.Neutral.M26 \
+$(PROD_BUILD_DIR).o.Neutral.M27 \
+$(PROD_BUILD_DIR).o.Neutral.M28 \
+$(PROD_BUILD_DIR).o.Neutral.M33 \
+$(PROD_BUILD_DIR).o.Neutral.M35 \
+$(PROD_BUILD_DIR).o.Neutral.M40 \
+$(PROD_BUILD_DIR).o.Neutral.M41 \
+
+# modules that are dynamically loaded ($(COUNTRY))
+
+DYNLOAD_SX0=\
+
+DYNLOAD_SX1=\
+
+# NB only sprites were dynamically loaded, as all code objects are bound
+DYNLOAD_SX2=\
+
+AOF_DYNLOAD_SX0=\
+
+AOF_DYNLOAD_SX1=\
+$(PROD_BUILD_DIR).o.$(COUNTRY).M04 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M06 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M07 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M08 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M09 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M12 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M17 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M19 \
+
+AOF_DYNLOAD_SX2=\
+$(PROD_BUILD_DIR).o.$(COUNTRY).M20 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M21 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M22 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M23 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M24 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M25 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M26 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M27 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M28 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M33 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M35 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M40 \
+$(PROD_BUILD_DIR).o.$(COUNTRY).M41 \
+
+# all code objects are bound rather than dynamically loaded
+
+AOF_S_LOAD=\
+$(AOF_DYNLOAD_S0) \
+$(AOF_DYNLOAD_S1) \
+$(AOF_DYNLOAD_S2)
+
+AOF_SX_LOAD=\
+$(AOF_DYNLOAD_SX0) \
+$(AOF_DYNLOAD_SX1) \
+$(AOF_DYNLOAD_SX2)
+
+# list of files to build into !RunImage (Neutral)
+
+$(PROD_BUILD_DIR).o.Neutral.sk_via: \
+$(PROD_BUILD_DIR).Makefile
+ $(MAKERESP) > $@ \
+$(AOF_S) \
+$(AOF_S_LOAD) \
+$(CCwimplib) $(CCstubs)
+
+$(PROD_BUILD_DIR).binaries.Neutral.Image: \
+$(PROD_BUILD_DIR).o.Neutral.sk_via \
+$(AOF_S) \
+$(AOF_S_LOAD) \
+$(CCwimplib) $(CCstubs)
+ $(LD) $(LDflags_AIF) -o $@ -via $(PROD_BUILD_DIR).o.Neutral.sk_via -map -xref > $(PROD_BUILD_DIR).binaries.Neutral.MapIm -S $(PROD_BUILD_DIR).binaries.Neutral.SymIm
+
+# list of files to build into !RunImage ($(COUNTRY))
+
+$(PROD_BUILD_DIR).o.$(COUNTRY).sk_via: \
+$(PROD_BUILD_DIR).Makefile
+ $(MAKERESP) > $@ \
+$(AOF_SX) \
+$(AOF_SX_LOAD) \
+$(CCwimplib) $(CCstubs)
+
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Image: \
+$(PROD_BUILD_DIR).o.$(COUNTRY).sk_via \
+$(AOF_SX) \
+$(AOF_SX_LOAD) \
+$(CCwimplib) $(CCstubs)
+ $(LD) $(LDflags_AIF) -o $@ -via $(PROD_BUILD_DIR).o.$(COUNTRY).sk_via -map -xref > $(PROD_BUILD_DIR).binaries.$(COUNTRY).MapIm -S $(PROD_BUILD_DIR).binaries.$(COUNTRY).SymIm
+
+# dyamically loaded bits (Neutral)
+
+# NB imports is built as a side-effect of building the AOF_DYNLOAD_Sn
+$(PROD_BUILD_DIR).binaries.Neutral.stubs: \
+$(AOF_DYNLOAD_S1) \
+$(AOF_DYNLOAD_S2) \
+$(PROD_BUILD_DIR).binaries.Neutral.Image
+ @Remove $@
+ $(OBJMUNGE) -Su$@ \
+-O$(PROD_BUILD_DIR).o.Neutral.sk_aof \
+-I$(PROD_BUILD_DIR).imports \
+-L$(PROD_BUILD_DIR).binaries.Neutral.SymIm
+
+# dyamically loaded bits ($(COUNTRY))
+
+# NB imports is built as a side-effect of building the AOF_DYNLOAD_SXn
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).stubs: \
+$(AOF_DYNLOAD_SX1) \
+$(AOF_DYNLOAD_SX2) \
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Image
+ @Remove $@
+ $(OBJMUNGE) -Su$@ \
+-O$(PROD_BUILD_DIR).o.$(COUNTRY).sk_aof \
+-I$(PROD_BUILD_DIR).imports \
+-L$(PROD_BUILD_DIR).binaries.$(COUNTRY).SymIm
+
+# a test copy, with Info
+
+$(PROD_BUILD_DIR).!$(APPL).!RunImage: \
+$(PROD_BUILD_DIR).binaries.Neutral.Image \
+$(DYNLOAD_S2) \
+$(PROD_BUILD_DIR).!$(APPL).Info
+ Squeeze -v $(PROD_BUILD_DIR).binaries.Neutral.Image $@
+ @Time
+
+$(PROD_BUILD_DIR).!$(APPL).!RunImage-$(COUNTRY): \
+$(PROD_BUILD_DIR).binaries.$(COUNTRY).Image \
+$(DYNLOAD_SX2) \
+$(PROD_BUILD_DIR).!$(APPL).Info
+ Squeeze -v $(PROD_BUILD_DIR).binaries.$(COUNTRY).Image $@
+ @Time
+
+# Windows STRINGTABLE
+$(T5).$(PROD).Resources.Windows.$(COUNTRY).resXX/rci: \
+$(BUILD_DIR).fl_123.$(COUNTRY)-27/rc \
+$(BUILD_DIR).fl_ascii.$(COUNTRY)-23/rc \
+$(BUILD_DIR).fl_csv.$(COUNTRY)-24/rc \
+$(BUILD_DIR).fl_fwp.$(COUNTRY)-25/rc \
+$(BUILD_DIR).fl_pdss.$(COUNTRY)-20/rc \
+$(BUILD_DIR).fl_pdtx.$(COUNTRY)-22/rc \
+$(BUILD_DIR).fl_rtf.$(COUNTRY)-28/rc \
+$(BUILD_DIR).fl_xls.$(COUNTRY)-26/rc \
+$(BUILD_DIR).fs_123.$(COUNTRY)-40/rc \
+$(BUILD_DIR).fs_ascii.$(COUNTRY)-33/rc \
+$(BUILD_DIR).fs_csv.$(COUNTRY)-35/rc \
+$(BUILD_DIR).fs_rtf.$(COUNTRY)-41/rc \
+$(BUILD_DIR).ob_cells.$(COUNTRY)-10/rc \
+$(BUILD_DIR).ob_dlg.$(COUNTRY)-15/rc \
+$(BUILD_DIR).ob_draw.$(COUNTRY)-04/rc \
+$(BUILD_DIR).ob_drwio.$(COUNTRY)-17/rc \
+$(BUILD_DIR).ob_file.$(COUNTRY)-31/rc \
+$(BUILD_DIR).ob_hefo.$(COUNTRY)-07/rc \
+$(BUILD_DIR).ob_mails.$(COUNTRY)-21/rc \
+$(BUILD_DIR).ob_note.$(COUNTRY)-12/rc \
+$(BUILD_DIR).ob_recn.$(COUNTRY)-38/rc \
+$(BUILD_DIR).ob_ruler.$(COUNTRY)-19/rc \
+$(BUILD_DIR).ob_skspt.$(COUNTRY)-09/rc \
+$(BUILD_DIR).ob_spelb.$(COUNTRY)-29/rc \
+$(BUILD_DIR).ob_spell.$(COUNTRY)-08/rc \
+$(BUILD_DIR).ob_story.$(COUNTRY)-16/rc \
+$(BUILD_DIR).ob_text.$(COUNTRY)-03/rc \
+$(BUILD_DIR).ob_toolb.$(COUNTRY)-18/rc
+ Print {  > $@ } $(T5).$(PROD).Resources.Windows.Neutral.mplhdr/rci
+ Print { >> $@ } $(BUILD_DIR).fl_123.$(COUNTRY)-27/rc
+ Print { >> $@ } $(BUILD_DIR).fl_ascii.$(COUNTRY)-23/rc
+ Print { >> $@ } $(BUILD_DIR).fl_csv.$(COUNTRY)-24/rc
+ Print { >> $@ } $(BUILD_DIR).fl_fwp.$(COUNTRY)-25/rc
+ Print { >> $@ } $(BUILD_DIR).fl_pdss.$(COUNTRY)-20/rc
+ Print { >> $@ } $(BUILD_DIR).fl_pdtx.$(COUNTRY)-22/rc
+ Print { >> $@ } $(BUILD_DIR).fl_rtf.$(COUNTRY)-28/rc
+ Print { >> $@ } $(BUILD_DIR).fl_xls.$(COUNTRY)-26/rc
+ Print { >> $@ } $(BUILD_DIR).fs_123.$(COUNTRY)-40/rc
+ Print { >> $@ } $(BUILD_DIR).fs_ascii.$(COUNTRY)-33/rc
+ Print { >> $@ } $(BUILD_DIR).fs_csv.$(COUNTRY)-35/rc
+ Print { >> $@ } $(BUILD_DIR).fs_rtf.$(COUNTRY)-41/rc
+ Print { >> $@ } $(BUILD_DIR).ob_cells.$(COUNTRY)-10/rc
+ Print { >> $@ } $(BUILD_DIR).ob_dlg.$(COUNTRY)-15/rc
+ Print { >> $@ } $(BUILD_DIR).ob_draw.$(COUNTRY)-04/rc
+ Print { >> $@ } $(BUILD_DIR).ob_drwio.$(COUNTRY)-17/rc
+ Print { >> $@ } $(BUILD_DIR).ob_file.$(COUNTRY)-31/rc
+ Print { >> $@ } $(BUILD_DIR).ob_hefo.$(COUNTRY)-07/rc
+ Print { >> $@ } $(BUILD_DIR).ob_mails.$(COUNTRY)-21/rc
+ Print { >> $@ } $(BUILD_DIR).ob_note.$(COUNTRY)-12/rc
+ Print { >> $@ } $(BUILD_DIR).ob_recn.$(COUNTRY)-38/rc
+ Print { >> $@ } $(BUILD_DIR).ob_ruler.$(COUNTRY)-19/rc
+ Print { >> $@ } $(BUILD_DIR).ob_skspt.$(COUNTRY)-09/rc
+ Print { >> $@ } $(BUILD_DIR).ob_spelb.$(COUNTRY)-29/rc
+ Print { >> $@ } $(BUILD_DIR).ob_spell.$(COUNTRY)-08/rc
+ Print { >> $@ } $(BUILD_DIR).ob_story.$(COUNTRY)-16/rc
+ Print { >> $@ } $(BUILD_DIR).ob_text.$(COUNTRY)-03/rc
+ Print { >> $@ } $(BUILD_DIR).ob_toolb.$(COUNTRY)-18/rc
+ SetType $@ Text
+
+# end of mf_mid (z1.r32) ###########################################################

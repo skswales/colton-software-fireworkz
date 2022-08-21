@@ -54,32 +54,34 @@ skel_tools[] =
         OBJECT_ID_SKEL, T5_CMD_VIEW_CONTROL_INTRO,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_VIEW, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0/*im*/, 1/*sv*/ },
-        UI_TEXT_INIT_RESID(MSG_STATUS_VIEW_CONTROL) },
+        UI_TEXT_INIT_RESID(MSG_STATUS_VIEW_CONTROL), T5_CMD_VIEW_SCALE_INTRO },
 
-#if WINDOWS
     { USTR_TEXT("NEW"),
-        OBJECT_ID_FILE, T5_CMD_NEW_DOCUMENT,
+        OBJECT_ID_SKEL, T5_CMD_NEW_DOCUMENT_INTRO,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_NEW, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_NEW_DOCUMENT) },
 
+#if !RISCOS
     { USTR_TEXT("OPEN"),
         OBJECT_ID_FILE, T5_CMD_OPEN_DOCUMENT,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_OPEN, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(MSG_STATUS_OPEN_DOCUMENT) },
+        UI_TEXT_INIT_RESID(MSG_STATUS_OPEN_DOCUMENT), T5_CMD_INSERT_FILE_WINDOWS },
+#endif
 
+#if RISCOS /* swap the alternate and normal commands */
     { USTR_TEXT("SAVE"),
-        OBJECT_ID_SKEL, T5_CMD_SAVE_OWNFORM,
+        OBJECT_ID_SKEL, T5_CMD_SAVE_AS_INTRO,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SAVE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(MSG_STATUS_SAVE), T5_CMD_SAVE_OWNFORM_AS_INTRO },
+        UI_TEXT_INIT_RESID(MSG_STATUS_SAVE), T5_CMD_SAVE },
 #else
     { USTR_TEXT("SAVE"),
-        OBJECT_ID_SKEL, T5_CMD_SAVE_OWNFORM_AS_INTRO,
+        OBJECT_ID_SKEL, T5_CMD_SAVE,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SAVE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(MSG_STATUS_SAVE), T5_CMD_SAVE_OWNFORM },
+        UI_TEXT_INIT_RESID(MSG_STATUS_SAVE), T5_CMD_SAVE_AS_INTRO },
 #endif
 
     { USTR_TEXT("PRINT"),
@@ -92,7 +94,7 @@ skel_tools[] =
         OBJECT_ID_SKEL, T5_CMD_SELECTION_CUT,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_CUT, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(MSG_STATUS_CUT) },
+        UI_TEXT_INIT_RESID(MSG_STATUS_CUT), T5_CMD_SELECTION_DELETE },
 
     { USTR_TEXT("COPY"),
         OBJECT_ID_SKEL, T5_CMD_SELECTION_COPY,
@@ -113,10 +115,10 @@ skel_tools[] =
         UI_TEXT_INIT_RESID(MSG_STATUS_TOGGLE_MARKS) },
 
     { USTR_TEXT("SEARCH"),
-        OBJECT_ID_SKEL, T5_CMD_SEARCH_BUTTON_POSS_DB_QUERY,
+        OBJECT_ID_SKEL, T5_CMD_SEARCH_BUTTON,
         OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SEARCH, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(MSG_STATUS_SEARCH), T5_CMD_SEARCH_BUTTON_POSS_DB_QUERIES },
+        UI_TEXT_INIT_RESID(MSG_STATUS_SEARCH), T5_CMD_SEARCH_BUTTON_ALTERNATE },
 
     { USTR_TEXT("SORT"),
         OBJECT_ID_SKEL, T5_CMD_SORT_INTRO,
@@ -380,8 +382,8 @@ skel_controls_msg_init2(
     static const PC_USTR tools[] = /* some tools ought to be enabled all the time */
     {
         USTR_TEXT("VIEW"),
-#if WINDOWS
         USTR_TEXT("NEW"),
+#if WINDOWS
         USTR_TEXT("OPEN"),
 #endif
         USTR_TEXT("SAVE"),
@@ -584,7 +586,7 @@ skel_style_set(
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_STYLE_APPLY, &p_construct_table)))
     {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
         quick_ublock_with_buffer_setup(quick_ublock);
 #if 1
         if(attr) /* turn other style attribute off if one is going on */

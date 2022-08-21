@@ -1,0 +1,53 @@
+﻿Database Guide 152
+
+Altering the database structure
+The structure of a database can be altered at any time using the
+Field properties dialogue box. To display this:
+. Choose Properties from the Database menu.
+
+This can be used to:
+. Add new fields.
+. Delete fields.
+. Change the order of fields.
+. Change the type of a field.
+. Set up or alter a default value for a field.
+. Set up or alter a value list for a field.
+. Set up or alter a check formula for a field.
+
+Fireworkz Pro 153
+
+General details
+These operations were described earlier in Chapter 4 - Creating a
+database. They are reviewed briefly below and the implications of
+carrying them out when your database already contains data are
+discussed.
+Note that to prevent your database being left in an inconsistent
+state, for example if a power cut were to occur in the middle of an
+operation which changes the database contents, the following
+operations are carried out on a copy of the data. Only when the
+operation has been successfully completed is the original copy
+removed. This means that you need sufficient free disc space to
+allow a copy of the data to be made before perfonning any of these
+operations. If there is insufficient free space then the operation will
+be aborted and you will be retumed to the original data.
+
+Adding fields
+To add a field to your database structure:
+1 Type the name of the field into the box at the top left.
+2 Click Add to add the field name to the bottom of the list.
+
+Deleting fields
+To delete a field from your database structure:
+1 Highlight the field by clicking on it or using the up and down
+arrow keys to move the highlight bar onto it.
+2 Click Remove to remove the field from the list.
+Note that if you delete a field from your database structure, that
+field will be deleted from every record and you will lose all the
+data which you have entered into it. Recordz acts on the database
+directly, so even if you quit your document without saving your
+changes, the database itself will have been altered.
+
+
+
+
+

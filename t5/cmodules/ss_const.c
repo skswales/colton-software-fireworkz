@@ -354,31 +354,26 @@ ss_data_set_error(
 *
 ******************************************************************************/
 
-#if 1
-
-/* this one rounds at the given significant place before floor-ing */
+/* rounds at the given significant place before floor-ing */
 
 _Check_return_
-static F64
+static inline_when_fast_fp F64
 adjust_value_for_additional_rounding(
     _InVal_     F64 f64)
 {
     int exponent;
-    F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
+    const F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
+
+    if(exponent < 0) /* no need to do more for negative exponents here */
+        return(f64);
+
+    {
     const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
     const int exponent_minus_mdmn = exponent - mantissa_digits_minus_n;
-
-    if(exponent >= 0) /* no need to do more for negative exponents here */
-    {
-        const F64 rounding_value = copysign(pow(2.0, exponent_minus_mdmn), mantissa);
-        const F64 adjusted_value = f64 + rounding_value;
-
-        /* adjusted result */
-        return(adjusted_value);
-    }
-
-    /* standard result */
-    return(f64);
+    const F64 rounding_value = ldexp(copysign(1.0, mantissa), exponent_minus_mdmn);
+    const F64 adjusted_value = f64 + rounding_value; /* adjusted result */
+    return(adjusted_value);
+    } /*block*/
 }
 
 _Check_return_
@@ -386,7 +381,10 @@ static inline_when_fast_fp F64
 real_floor_try_additional_rounding(
     _In_        F64 f64)
 {
-    return(floor(adjust_value_for_additional_rounding(f64)));
+    if(isfinite(f64))
+        return(floor(adjust_value_for_additional_rounding(f64)));
+
+    return(f64);
 }
 
 _Check_return_
@@ -407,103 +405,71 @@ real_floor(
     return(real_floor_try_additional_rounding(f64));
 }
 
-#else
-
-/* this one rounds at the given number of decimals before floor-ing which is not the same as at the significant place */
-
-_Check_return_
-extern F64
-real_floor(
-    _InVal_     F64 f64)
-{
-    /* first do the naive desired step */
-    F64 floor_value = floor(f64);
-
-    if(global_preferences.ss_calc_additional_rounding && (floor_value != f64))
-    {   /* if not already an integer, and allowed, then do the more expensive bit */
-        F64 trunc_value;
-        F64 fractional_part = modf(f64, &trunc_value);
-
-        if(fabs(fractional_part) > (+1.0 - 1E-14))
-        {   /* close enough to an integer */
-            trunc_value += copysign(1.0, trunc_value);
-
-            /* adjusted result */
-            floor_value = trunc_value;
-        }
-    }
-
-    return(floor_value);
-}
-
-#endif
-
 /******************************************************************************
 *
 * trunc() of real with possible ickle rounding
 *
 * SKS 06oct97 for INT() function try rounding an ickle bit
 * so INT((0.06-0.04)/0.01) is 2 not 1
-* and now dec14 INT((0.06-0.02)/1E-6) is 20000 not 19999
+* and INT((0.06-0.04)/1E-6) is 20000 not 19999
 * which is different to naive real_trunc()
 *
 ******************************************************************************/
 
+#if __STDC_VERSION__ < 199901L
+
+static inline double
+trunc(const double d)
+{
+    double trunc_result;
+    (void) modf(d, &trunc_result);
+    return(trunc_result);
+}
+
+#endif /* __STDC_VERSION__ */
+
 /* rounds at the given significant place before truncating */
+
+_Check_return_
+static inline_when_fast_fp F64
+real_trunc_try_additional_rounding(
+    _In_        F64 f64)
+{
+    if(isfinite(f64))
+        return(trunc(adjust_value_for_additional_rounding(f64)));
+
+    return(f64);
+}
 
 _Check_return_
 extern F64
 real_trunc(
     _InVal_     F64 f64)
 {
-    F64 trunc_value;
+    const F64 trunc_value = trunc(f64);
 
-    if(global_preferences.ss_calc_additional_rounding)
-    {
-        int exponent;
-        F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
-        const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
-        const int exponent_minus_mdmn = exponent - mantissa_digits_minus_n;
+    /* first do the cheap step to see if we're already at an integer (or ±inf) */
+    if(trunc_value == f64)
+        return(f64);
 
-        if(exponent >= 0) /* no need to do more for negative exponents here */
-        {
-            const F64 rounding_value = copysign(pow(2.0, exponent_minus_mdmn), mantissa);
-            const F64 adjusted_value = f64 + rounding_value;
+    if(!global_preferences.ss_calc_additional_rounding)
+        return(trunc_value); /* standard result */
 
-            /* adjusted result */
-            (void) modf(adjusted_value, &trunc_value);
-            return(trunc_value);
-        }
-    }
-
-    /* standard result */
-    (void) modf(f64, &trunc_value);
-    return(trunc_value);
+    /* if not already an integer, and allowed, then do the more expensive bit */
+    return(real_trunc_try_additional_rounding(f64));
 }
 
 _Check_return_
-static inline F64
-real_adjust_if_near_power_of_2(
-    _InVal_     F64 f64_in,
-    _OutRef_    P_BOOL p_adjusted)
+extern F64
+real_round(
+    _InVal_     F64 f64)
 {
-    int exponent;
-    F64 mantissa = frexp(f64_in, &exponent); /* yields mantissa in ±[0.5,1.0) */
-
-    if(fabs(mantissa) > (+1.0 - 1E-14))
-    {
-        F64 f64;
-
-        *p_adjusted = TRUE;
-
-        f64 = ldexp(copysign(1.0, mantissa), exponent);
-
+    /* first do the cheap step to see if we're already at an integer (or ±inf) */
+    if(floor(f64) == f64)
         return(f64);
-    }
 
-    *p_adjusted = FALSE;
-
-    return(f64_in);
+    /* round away from zero */
+    return(real_trunc(f64 + copysign(0.5, f64)));
 }
 
 /******************************************************************************
@@ -515,35 +481,33 @@ real_adjust_if_near_power_of_2(
 ******************************************************************************/
 
 _Check_return_
-extern STATUS /* DONE iff converted in range */
+extern EV_IDNO /* DATA_ID_CONVERSION_FAILED iff not converted in range */
 ss_data_real_to_integer_force(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
+    F64 f64;
     F64 floor_value;
     S32 s32;
 
-    assert(ss_data_is_real(p_ss_data));
-    if(DATA_ID_REAL != ss_data_get_data_id(p_ss_data))
-        return(STATUS_OK); /* no conversion */
-
-    floor_value = real_floor(ss_data_get_real(p_ss_data));
-
-    if(fabs(floor_value) > (F64) S32_MAX)
+    if(!ss_data_is_real(p_ss_data))
     {
-        ss_data_set_integer(p_ss_data, (floor_value < 0.0) ? -S32_MAX /* NB NOT S32_MIN */ : S32_MAX);
-        return(STATUS_OK); /* out of range */
+        assert(ss_data_is_real(p_ss_data));
+        return(ss_data_get_data_id(p_ss_data)); /* no conversion */
+    }
+
+    f64 = ss_data_get_real(p_ss_data);
+
+    floor_value = real_floor(f64);
+
+    if( isgreater(fabs(floor_value), (F64) S32_MAX) || isnan(floor_value) ) /* test for NaN */
+    {
+        ss_data_set_integer(p_ss_data, isless(floor_value, 0.0) ? -S32_MAX : S32_MAX);
+        return(DATA_ID_CONVERSION_FAILED); /* out of range */
     }
 
     s32 = (S32) floor_value;
 
-    if(s32 == S32_MIN)
-    {
-        ss_data_set_integer(p_ss_data, -S32_MAX);
-        return(STATUS_OK); /* out of range */
-    }
-
-    ss_data_set_integer(p_ss_data, s32);
-    return(STATUS_DONE); /* converted OK */
+    return(ss_data_set_integer_rid(p_ss_data, s32)); /* converted OK */
 }
 
 /******************************************************************************
@@ -557,6 +521,43 @@ ss_data_real_to_integer_force(
 ******************************************************************************/
 
 /*ncr*/
+static BOOL
+ss_data_real_to_integer_try_additional_rounding(
+    _InoutRef_  P_SS_DATA p_ss_data)
+{
+    F64 f64 = ss_data_get_real(p_ss_data);
+    F64 floor_value;
+    S32 s32;
+    int exponent;
+    const F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
+
+    if(exponent < 0) /* no need to do more for negative exponents here */
+        return(FALSE); /* unmodified */
+
+    {
+    const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
+    const int exponent_minus_mdmn = exponent - mantissa_digits_minus_n;
+    const F64 rounding_value = ldexp(copysign(1.0, mantissa), exponent_minus_mdmn);
+    const F64 adjusted_value = f64 + rounding_value;
+
+    floor_value = floor(adjusted_value);
+
+    if(floor_value != adjusted_value)
+        return(FALSE); /* unmodified */
+
+    if(isgreater(fabs(floor_value), (F64) S32_MAX))
+    {   /* won't fit in S32 but we should hang on to this adjusted value */
+        ss_data_set_real(p_ss_data, adjusted_value);
+        return(FALSE); /* unmodified */
+    }
+    } /*block*/
+
+    s32 = (S32) floor_value;
+    ss_data_set_integer(p_ss_data, s32);
+    return(TRUE); /* converted OK */
+}
+
+/*ncr*/
 extern BOOL
 ss_data_real_to_integer_try(
     _InoutRef_  P_SS_DATA p_ss_data)
@@ -565,54 +566,35 @@ ss_data_real_to_integer_try(
     F64 floor_value;
     S32 s32;
 
-    if(DATA_ID_REAL != ss_data_get_data_id(p_ss_data))
+    if(!ss_data_is_real(p_ss_data))
+    {
+        assert(ss_data_is_real(p_ss_data));
         return(FALSE);
+    }
 
     f64 = ss_data_get_real(p_ss_data);
+
+    /*if(!isfinite(f64))*/ /* test for NaN and infinity */ /* not needed */
+    /*    return(FALSE);*/ /* unmodified */
 
     /* first do the cheap step to see if we're already at an integer */
     floor_value = floor(f64);
 
-    if(floor_value == f64)
+    if(floor_value != f64)
     {
-        if(fabs(floor_value) > (F64) S32_MAX) /* NB NOT S32_MIN */
-            return(FALSE);
+        if(!global_preferences.ss_calc_additional_rounding)
+            return(FALSE); /* unmodified */
 
-        s32 = (S32) floor_value;
-        ss_data_set_integer(p_ss_data, s32);
-        return(TRUE);
+        /* if not already an integer, and allowed, then do the more expensive bit */
+        return(ss_data_real_to_integer_try_additional_rounding(p_ss_data));
     }
 
-    if(global_preferences.ss_calc_additional_rounding)
-    {   /* if not already an integer, and allowed, then do the more expensive bit */
-        int exponent;
-        F64 mantissa = frexp(f64, &exponent); /* yields mantissa in ±[0.5,1.0) */
-        const int mantissa_digits_minus_n = DBL_MANT_DIG - 3;
-        const int exponent_minus_mdmn = exponent - mantissa_digits_minus_n;
+    if(isgreater(fabs(floor_value), (F64) S32_MAX))
+        return(FALSE); /* unmodified */
 
-        if(exponent >= 0) /* no need to do more for negative exponents here */
-        {
-            const F64 rounding_value = copysign(pow(2.0, exponent_minus_mdmn), mantissa);
-            const F64 adjusted_value = f64 + rounding_value;
-
-            floor_value = floor(adjusted_value);
-
-            if(floor_value == adjusted_value)
-            {
-                if(fabs(floor_value) > (F64) S32_MAX) /* NB NOT S32_MIN */
-                {   /* won't fit in S32 but we should hang on to this adjusted value */
-                    ss_data_set_real(p_ss_data, adjusted_value);
-                    return(FALSE);
-                }
-
-                s32 = (S32) floor_value;
-                ss_data_set_integer(p_ss_data, s32);
-                return(TRUE); /* converted OK */
-            }
-        }
-    }
-
-    return(FALSE); /* unmodified */
+    s32 = (S32) floor_value;
+    ss_data_set_integer(p_ss_data, s32);
+    return(TRUE); /* converted OK */
 }
 
 /******************************************************************************
@@ -700,7 +682,28 @@ ss_array_element_index_borrow(
     const S32 element = (iy * p_ss_data_in->arg.ss_array.x_size) + ix;
 
     assert(ss_data_is_array(p_ss_data_in));
-    assert(((U32) ix < (U32) p_ss_data_in->arg.ss_array.x_size) && ((U32) iy < (U32) p_ss_data_in->arg.ss_array.y_size));
+    assert( ((U32) ix < (U32) p_ss_data_in->arg.ss_array.x_size) && ((U32) iy < (U32) p_ss_data_in->arg.ss_array.y_size) );
+    assert(element >= 0);
+
+    return(array_ptrc(&p_ss_data_in->arg.ss_array.elements, SS_DATA, element));
+}
+
+_Check_return_
+_Ret_maybenone_
+extern PC_SS_DATA
+ss_array_element_index_borrow_check(
+    _InRef_     PC_SS_DATA p_ss_data_in,
+    _InVal_     S32 ix,
+    _InVal_     S32 iy)
+{
+    const S32 element = (iy * p_ss_data_in->arg.ss_array.x_size) + ix;
+
+    assert(ss_data_is_array(p_ss_data_in));
+    assert( ((U32) ix < (U32) p_ss_data_in->arg.ss_array.x_size) && ((U32) iy < (U32) p_ss_data_in->arg.ss_array.y_size) );
+    assert(element >= 0);
+
+    if( ((U32) ix >= (U32) p_ss_data_in->arg.ss_array.x_size) || ((U32) iy >= (U32) p_ss_data_in->arg.ss_array.y_size) )
+        return(_P_DATA_NONE(P_SS_DATA));
 
     return(array_ptrc(&p_ss_data_in->arg.ss_array.elements, SS_DATA, element));
 }
@@ -752,7 +755,7 @@ ss_array_element_make(
     trace_2(TRACE_MODULE_EVAL,
             TEXT("array realloced, now: ") S32_TFMT TEXT(" entries, ") S32_TFMT TEXT(" bytes"),
             new_xs * new_ys,
-            new_size * sizeof32(SS_DATA));
+            new_size * (S32) sizeof32(SS_DATA));
 
     { /* set all new array elements to blank */
     P_SS_DATA p_ss_data_s, p_ss_data_e, p_ss_data_t;
@@ -790,7 +793,14 @@ ss_array_element_read(
     _InVal_     S32 ix,
     _InVal_     S32 iy)
 {
-    *p_ss_data = *ss_array_element_index_borrow(p_ss_data_src, ix, iy);
+    const PC_SS_DATA p_ss_data_element = ss_array_element_index_borrow_check(p_ss_data_src, ix, iy);
+    PTR_ASSERT(p_ss_data_element);
+    if(PTR_IS_NONE(p_ss_data_element))
+    {
+        ss_data_set_blank(p_ss_data);
+        return;
+    }
+    *p_ss_data = *p_ss_data_element;
     p_ss_data->local_data = 0;
 }
 
@@ -872,7 +882,6 @@ type_equate(
     switch(ss_data_get_data_id(p_ss_data))
     {
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
         ss_data_set_data_id(p_ss_data, DATA_ID_WORD32); /* NB all integers returned from type_equate() are promoted to widest type */
         return;
@@ -896,6 +905,7 @@ type_equate(
 *
 ******************************************************************************/
 
+_Check_return_
 static S32
 ss_data_compare_data_ids(
     _InRef_     PC_SS_DATA p_ss_data_1,
@@ -914,18 +924,53 @@ ss_data_compare_data_ids(
 }
 
 _Check_return_
+static S32
+ss_data_compare_reals_unordered(
+    _InRef_     PC_SS_DATA p_ss_data_1,
+    _InRef_     PC_SS_DATA p_ss_data_2)
+{
+    F64 f64_1;
+    F64 f64_2 = ss_data_get_real(p_ss_data_2);
+
+    /* This will stick NaNs up at the top of a sort ("To +infinity and beyond...") */
+    if(isnan(f64_2))
+    {
+        f64_1 = ss_data_get_real(p_ss_data_1);
+
+        if(isnan(f64_1))
+            return(0); /* f1(NaN) '==' f2(NaN) */
+
+     /* else */
+            return(-1); /* f1 '<' f2(NaN) */
+    }
+
+ /* if(isnan(f64_1)) */
+        return(1); /* f1(NaN) '>' f2 */
+}
+
+_Check_return_
 static inline_when_fast_fp S32
 ss_data_compare_reals(
     _InRef_     PC_SS_DATA p_ss_data_1,
     _InRef_     PC_SS_DATA p_ss_data_2)
 {
-    if(p_ss_data_1->arg.fp == p_ss_data_2->arg.fp)
-        return(0);
+    /* NB Do not muck about with this without watching the generated code ... */
 
-    if(p_ss_data_1->arg.fp < p_ss_data_2->arg.fp)
-        return(-1);
-  /*else*/
-        return(1);
+    /* NaNs, being unordered, are never equal to each other or anything else */
+    if(!isunordered(ss_data_get_real(p_ss_data_1), ss_data_get_real(p_ss_data_2)))
+    {
+        if(ss_data_get_real(p_ss_data_1) == ss_data_get_real(p_ss_data_2))
+            return(0);
+
+        /* Handle +/-inf */
+        if(isless(ss_data_get_real(p_ss_data_1), ss_data_get_real(p_ss_data_2)))
+            return(-1);
+
+     /* if(isgreater(ss_data_get_real(p_ss_data_1), ss_data_get_real(p_ss_data_2))) */
+            return(1);
+    }
+
+    return(ss_data_compare_reals_unordered(p_ss_data_1, p_ss_data_2));
 }
 
 _Check_return_
@@ -939,7 +984,8 @@ ss_data_compare_integers(
 
     if(p_ss_data_1->arg.integer < p_ss_data_2->arg.integer)
         return(-1);
-  /*else*/
+
+ /* if(p_ss_data_1->arg.integer > p_ss_data_2->arg.integer) */
         return(1);
 }
 
@@ -975,21 +1021,19 @@ ss_data_compare_strings(
 }
 
 _Check_return_
-static inline S32
+static S32
 ss_data_compare_errors(
     _InRef_     PC_SS_DATA p_ss_data_1,
     _InRef_     PC_SS_DATA p_ss_data_2)
 {
-    S32 res = 0;
-
     if(p_ss_data_1->arg.ss_error.status == p_ss_data_2->arg.ss_error.status)
-        res = 0;
-    else if(-(p_ss_data_1->arg.ss_error.status) < -(p_ss_data_2->arg.ss_error.status))
-        res = -1;
-    else
-        res = 1;
+        return(0);
 
-    return(res);
+    if(-(p_ss_data_1->arg.ss_error.status) < -(p_ss_data_2->arg.ss_error.status))
+        return(-1);
+
+ /* else */
+        return(1);
 }
 
 _Check_return_
@@ -1001,23 +1045,32 @@ ss_data_compare_arrays(
     _InVal_     BOOL allow_wild_match)
 {
     S32 res = 0;
+    S32 ix, iy;
 
-    if(     p_ss_data_1->arg.ss_array.y_size < p_ss_data_2->arg.ss_array.y_size)
-        res = -1;
-    else if(p_ss_data_1->arg.ss_array.y_size > p_ss_data_2->arg.ss_array.y_size)
-        res = 1;
-    else if(p_ss_data_1->arg.ss_array.x_size < p_ss_data_2->arg.ss_array.x_size)
-        res = -1;
-    else if(p_ss_data_1->arg.ss_array.x_size > p_ss_data_2->arg.ss_array.x_size)
-        res = 1;
-    else /* same sizes */
+    if(p_ss_data_1->arg.ss_array.y_size < p_ss_data_2->arg.ss_array.y_size)
+        return(-1);
+
+    if(p_ss_data_1->arg.ss_array.y_size > p_ss_data_2->arg.ss_array.y_size)
+        return(1);
+
+    if(p_ss_data_1->arg.ss_array.x_size < p_ss_data_2->arg.ss_array.x_size)
+        return(-1);
+
+    if(p_ss_data_1->arg.ss_array.x_size > p_ss_data_2->arg.ss_array.x_size)
+        return(1);
+
+    /* arrays are both the same size */
+    for(iy = 0; iy < p_ss_data_1->arg.ss_array.y_size; ++iy)
     {
-        S32 ix, iy;
-        for(iy = 0; !res && iy < p_ss_data_1->arg.ss_array.y_size; ++iy)
-            for(ix = 0; !res && ix < p_ss_data_1->arg.ss_array.x_size; ++ix)
-                res = ss_data_compare(ss_array_element_index_borrow(p_ss_data_1, ix, iy),
-                                      ss_array_element_index_borrow(p_ss_data_2, ix, iy),
-                                      blanks_equal_zero, allow_wild_match);
+        for(ix = 0; ix < p_ss_data_1->arg.ss_array.x_size; ++ix)
+        {
+            res = ss_data_compare(ss_array_element_index_borrow(p_ss_data_1, ix, iy),
+                                  ss_array_element_index_borrow(p_ss_data_2, ix, iy),
+                                  blanks_equal_zero, allow_wild_match);
+
+            if(0 != res)
+                return(res);
+        }
     }
 
     return(res);
@@ -1034,12 +1087,11 @@ ss_data_compare(
     /* take copies and then eliminate equivalent types */
     SS_DATA ss_data_1 = *p_ss_data_1;
     SS_DATA ss_data_2 = *p_ss_data_2;
-    S32 res = 0;
 
     type_equate(&ss_data_1, blanks_equal_zero);
     type_equate(&ss_data_2, blanks_equal_zero);
 
-    consume(enum two_nums_type_match_result, two_nums_type_match(&ss_data_1, &ss_data_2, FALSE));
+    consume(enum two_nums_type_match_result, two_nums_type_match(&ss_data_1, &ss_data_2));
 
     if(ss_data_get_data_id(&ss_data_1) != ss_data_get_data_id(&ss_data_2))
         return(ss_data_compare_data_ids(&ss_data_1, &ss_data_2));
@@ -1050,16 +1102,15 @@ ss_data_compare(
         return(ss_data_compare_reals(&ss_data_1, &ss_data_2));
 
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         return(ss_data_compare_integers(&ss_data_1, &ss_data_2));
 
-    case DATA_ID_STRING:
-        return(ss_data_compare_strings(&ss_data_1, &ss_data_2, allow_wild_match));
-
     case DATA_ID_DATE:
         return(ss_data_compare_dates(&ss_data_1, &ss_data_2));
+
+    case DATA_ID_STRING:
+        return(ss_data_compare_strings(&ss_data_1, &ss_data_2, allow_wild_match));
 
     case DATA_ID_ERROR:
         return(ss_data_compare_errors(&ss_data_1, &ss_data_2));
@@ -1067,12 +1118,12 @@ ss_data_compare(
     case DATA_ID_ARRAY:
         return(ss_data_compare_arrays(&ss_data_1, &ss_data_2, blanks_equal_zero, allow_wild_match));
 
+    default: default_unhandled();
+#if CHECKING
     case DATA_ID_BLANK:
-        res = 0;
-        break;
+#endif
+        return(0);
     }
-
-    return(res);
 }
 
 /******************************************************************************
@@ -1154,9 +1205,9 @@ ss_data_get_logical(
         return(0.0 != ss_data_get_real(p_ss_data));
 
     case DATA_ID_LOGICAL:
-        return(0 != p_ss_data->arg.boolean); /* 2.22 transitional */
+        assert((p_ss_data->arg.logical_integer == 0U /*false*/) || (p_ss_data->arg.logical_integer == 1U /*true*/)); /* verify full width */
+        return(p_ss_data->arg.logical_bool);
 
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         return(0 != ss_data_get_integer(p_ss_data));
@@ -1173,8 +1224,9 @@ ss_data_set_logical(
     _InVal_     bool logical)
 {
     ss_data_set_data_id(p_ss_data, DATA_ID_LOGICAL);
-    p_ss_data->arg.boolean = logical; /* 2.22 transitional */
-    assert((p_ss_data->arg.boolean == 0U /*false*/) || (p_ss_data->arg.boolean == 1U /*true*/)); /* verify full width */
+    p_ss_data->arg.logical_integer = 0U; /* set a full width integer in case bool is smaller */
+    p_ss_data->arg.logical_bool = logical;
+    assert((p_ss_data->arg.logical_integer == 0U /*false*/) || (p_ss_data->arg.logical_integer == 1U /*true*/)); /* verify full width */
 }
 
 /******************************************************************************
@@ -1184,6 +1236,89 @@ ss_data_set_logical(
 * NOTE: CH_NULL not added to output
 *
 ******************************************************************************/
+
+_Check_return_
+static STATUS
+ss_decode_constant_string(
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    STATUS status;
+    PC_UCHARS uchars = ss_data_get_string(p_ss_data);
+    const U32 len = ss_data_get_string_size(p_ss_data);
+
+    status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK);
+
+    if(status_ok(status))
+    {
+        if(NULL == memchr(uchars, CH_QUOTATION_MARK, len))
+        {   /* no escaping needed - stuff it in the result */
+            status = quick_ublock_uchars_add(p_quick_ublock, uchars, len);
+        }
+        else
+        {
+            U32 offset = 0;
+
+            while(offset < len)
+            {
+                const U32 bytes_of_char = uchars_bytes_of_char_off(uchars, offset);
+
+                if(CH_QUOTATION_MARK == PtrGetByteOff(uchars, offset))
+                    status_break(status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK));
+
+                status_break(status = quick_ublock_uchars_add(p_quick_ublock, uchars_AddBytes(uchars, offset), bytes_of_char));
+
+                offset += bytes_of_char;
+            }
+        }
+    }
+
+    if(status_ok(status))
+        status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+ss_decode_constant_array(
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    STATUS status;
+
+    status = quick_ublock_a7char_add(p_quick_ublock, CH_LEFT_CURLY_BRACKET);
+
+    if(status_ok(status))
+    {
+        S32 iy;
+
+        for(iy = 0; iy < p_ss_data->arg.ss_array.y_size; ++iy)
+        {
+            S32 ix;
+
+            if(iy)
+                status_break(status = quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context.array_row_sep));
+
+            for(ix = 0; ix < p_ss_data->arg.ss_array.x_size; ++ix)
+            {
+                SS_DATA ss_data;
+                if(ix)
+                    status_break(status = quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context.array_col_sep));
+                ss_array_element_read(&ss_data, p_ss_data, ix, iy);
+                status_break(status = ss_decode_constant(p_quick_ublock, &ss_data));
+                ss_data_free_resources(&ss_data);
+            }
+
+            status_break(status);
+        }
+    }
+
+    if(status_ok(status))
+        status = quick_ublock_a7char_add(p_quick_ublock, CH_RIGHT_CURLY_BRACKET);
+
+    return(status);
+}
 
 _Check_return_
 extern STATUS
@@ -1200,97 +1335,34 @@ ss_decode_constant(
         break;
 
     case DATA_ID_LOGICAL:
-        status = quick_ublock_ustr_add(p_quick_ublock, (ss_data_get_integer(p_ss_data) != 0) ? USTR_TEXT("TRUE") : USTR_TEXT("FALSE"));
+        status = quick_ublock_ustr_add(p_quick_ublock, ss_data_get_logical(p_ss_data) ? USTR_TEXT("TRUE") : USTR_TEXT("FALSE"));
         break;
 
-    default: default_unhandled();
-#if CHECKING
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
-#endif
         status = quick_ublock_printf(p_quick_ublock, USTR_TEXT(S32_FMT), ss_data_get_integer(p_ss_data));
         break;
-
-    case DATA_ID_STRING:
-        {
-        PC_UCHARS uchars = ss_data_get_string(p_ss_data);
-
-        status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK);
-
-        if(status_ok(status))
-        {
-            const U32 len = ss_data_get_string_size(p_ss_data);
-
-            if(NULL == memchr(uchars, CH_QUOTATION_MARK, len))
-            {   /* no escaping needed - stuff it in the result */
-                status = quick_ublock_uchars_add(p_quick_ublock, uchars, len);
-            }
-            else
-            {
-                U32 offset = 0;
-
-                while(offset < len)
-                {
-                    const U32 bytes_of_char = uchars_bytes_of_char_off(uchars, offset);
-
-                    if(CH_QUOTATION_MARK == PtrGetByteOff(uchars, offset))
-                        status_break(status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK));
-
-                    status_break(status = quick_ublock_uchars_add(p_quick_ublock, uchars_AddBytes(uchars, offset), bytes_of_char));
-
-                    offset += bytes_of_char;
-                }
-            }
-        }
-
-        if(status_ok(status))
-            status = quick_ublock_a7char_add(p_quick_ublock, CH_QUOTATION_MARK);
-        break;
-        }
-
-    case DATA_ID_ARRAY:
-        {
-        if(status_ok(status = quick_ublock_a7char_add(p_quick_ublock, CH_LEFT_CURLY_BRACKET)))
-        {
-            S32 iy;
-
-            for(iy = 0; iy < p_ss_data->arg.ss_array.y_size; ++iy)
-            {
-                S32 ix;
-
-                if(iy)
-                    status_break(status = quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context.array_row_sep));
-
-                for(ix = 0; ix < p_ss_data->arg.ss_array.x_size; ++ix)
-                {
-                    SS_DATA ss_data;
-                    if(ix)
-                        status_break(status = quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context.array_col_sep));
-                    ss_array_element_read(&ss_data, p_ss_data, ix, iy);
-                    status_break(status = ss_decode_constant(p_quick_ublock, &ss_data));
-                    ss_data_free_resources(&ss_data);
-                }
-
-                status_break(status);
-            }
-
-            if(status_ok(status))
-                status = quick_ublock_a7char_add(p_quick_ublock, CH_RIGHT_CURLY_BRACKET);
-        }
-
-        break;
-        }
 
     case DATA_ID_DATE:
         status = ss_date_decode(p_quick_ublock, ss_data_get_date(p_ss_data));
         break;
 
+    case DATA_ID_STRING:
+        status = ss_decode_constant_string(p_quick_ublock, p_ss_data);
+        break;
+
+    default: default_unhandled();
+#if CHECKING
     case DATA_ID_BLANK:
+#endif
         break;
 
     case DATA_ID_ERROR:
         status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("#" S32_FMT), -(p_ss_data->arg.ss_error.status));
+        break;
+
+    case DATA_ID_ARRAY:
+        status = ss_decode_constant_array(p_quick_ublock, p_ss_data);
         break;
     }
 
@@ -1629,6 +1701,7 @@ ss_string_dup(
 {
     PTR_ASSERT(p_ss_data_src);
     assert(ss_data_is_string(p_ss_data_src));
+    PTR_ASSERT(p_ss_data_out);
 
     return(ss_string_make_uchars(p_ss_data_out, ss_data_get_string(p_ss_data_src), ss_data_get_string_size(p_ss_data_src)));
 }
@@ -1650,7 +1723,7 @@ ss_string_make_uchars(
     assert((S32) uchars_n >= 0);
     assert(uchars_n <= EV_MAX_STRING_LEN); /* sometimes we get copied willy-nilly into buffers! */
 
-    status_return(ss_string_allocate(p_ss_data, uchars_n)); /* NB includes zero-length strings */
+    status_return(ss_string_allocate(p_ss_data, uchars_n)); /* NB caters for zero-length strings */
 
     if(0 != uchars_n)
     {
@@ -1724,7 +1797,7 @@ ss_string_skip_internal_whitespace_uchars(
     U32 buf_idx = uchars_idx;
     U32 wss;
 
-    assert((0 == uchars_n) || (!IS_PTR_NULL_OR_NONE(uchars)));
+    assert( (0 == uchars_n) || PTR_NOT_NULL_OR_NONE(uchars) );
 
     while(buf_idx < uchars_n)
     {
@@ -1749,7 +1822,7 @@ ss_string_skip_trailing_whitespace_uchars(
     U32 buf_idx = uchars_n;
     U32 wss;
 
-    assert((0 == uchars_n) || (!IS_PTR_NULL_OR_NONE(uchars)));
+    assert ((0 == uchars_n) || PTR_NOT_NULL_OR_NONE(uchars) );
 
     while(0 != buf_idx)
     {
@@ -1774,44 +1847,42 @@ ss_string_skip_trailing_whitespace_uchars(
 
 enum two_num_action
 {
-    TN_NOP,
+    TN_I,  /* both are integer */
+    TN_IW, /* at least one is widest integer, take care with potential overflow */
+    TN_RR, /* both are REAL */
     TN_R1, /* convert ss_data_1 to REAL */
     TN_R2, /* convert ss_data_2 to REAL */
     TN_RB, /* convert both ss_data_1 and ss_data_2 to REAL */
-    TN_I,
     TN_MIX
 };
 
 enum two_num_index
 {
     TN_REAL,
-    TN_BOOL8,
-    TN_WORD8,
+    TN_LOGICAL,
     TN_WORD16,
     TN_WORD32,
     TN_OTHER
 };
 
 static const U8
-tn_worry[6][6] =
-{ /*  REA     B8      W8      W16     W32     OTH */
-    { TN_NOP, TN_R1,  TN_R1,  TN_R1,  TN_R1,  TN_MIX }, /*REA*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_RB,  TN_MIX }, /*B8*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_RB,  TN_MIX }, /*W8*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_RB,  TN_MIX }, /*W16*/
-    { TN_R2,  TN_RB,  TN_RB,  TN_RB,  TN_RB,  TN_MIX }, /*W32*/
-    { TN_MIX, TN_MIX, TN_MIX, TN_MIX, TN_MIX, TN_MIX }, /*OTH*/
+tn_worry[5][5] =
+{ /*  REA     L8      W16     W32     OTH */
+    { TN_RR,  TN_R1,  TN_R1,  TN_R1,  TN_MIX }, /*REA*/
+    { TN_R2,  TN_I,   TN_I,   TN_RB,  TN_MIX }, /*L8*/
+    { TN_R2,  TN_I,   TN_I,   TN_RB,  TN_MIX }, /*W16*/
+    { TN_R2,  TN_RB,  TN_RB,  TN_RB,  TN_MIX }, /*W32*/
+    { TN_MIX, TN_MIX, TN_MIX, TN_MIX, TN_MIX }, /*OTH*/
 };
 
 static const U8
-tn_no_worry[6][6] =
-{ /*  REA     B8      W8      W16     W32     OTH */
-    { TN_NOP, TN_R1,  TN_R1,  TN_R1,  TN_R1,  TN_MIX }, /*REA*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_I,   TN_MIX }, /*B8*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_I,   TN_MIX }, /*W8*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_I,   TN_MIX }, /*W16*/
-    { TN_R2,  TN_I,   TN_I,   TN_I,   TN_I,   TN_MIX }, /*W32*/
-    { TN_MIX, TN_MIX, TN_MIX, TN_MIX, TN_MIX, TN_MIX }, /*OTH*/
+tn_no_worry[5][5] =
+{ /*  REA     L8      W16     W32     OTH */
+    { TN_RR,  TN_R1,  TN_R1,  TN_R1,  TN_MIX }, /*REA*/
+    { TN_R2,  TN_I,   TN_I,   TN_IW,  TN_MIX }, /*L8*/
+    { TN_R2,  TN_I,   TN_I,   TN_IW,  TN_MIX }, /*W16*/
+    { TN_R2,  TN_IW,  TN_IW,  TN_IW,  TN_MIX }, /*W32*/
+    { TN_MIX, TN_MIX, TN_MIX, TN_MIX, TN_MIX }, /*OTH*/
 };
 
 #if CHECKING
@@ -1822,57 +1893,124 @@ check_tn(
     _InVal_     S32 did2)
 {
     assert(DATA_ID_REAL == TN_REAL);
-    assert(DATA_ID_LOGICAL == TN_BOOL8);
-    assert(DATA_ID_WORD8 == TN_WORD8);
+    assert(DATA_ID_LOGICAL == TN_LOGICAL);
     assert(DATA_ID_WORD16 == TN_WORD16);
     assert(DATA_ID_WORD32 == TN_WORD32);
-    assert((did1 >= TN_REAL) && ((U32) did1 <= (U32) TN_OTHER));
-    assert((did2 >= TN_REAL) && ((U32) did2 <= (U32) TN_OTHER));
+    assert( (did1 >= TN_REAL) && ((U32) did1 <= (U32) TN_OTHER) );
+    assert( (did2 >= TN_REAL) && ((U32) did2 <= (U32) TN_OTHER) );
 }
 
 #endif /* CHECKING */
 
 /*ncr*/
+static enum two_nums_type_match_result
+two_nums_type_match_R1(
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
+{
+    UNREFERENCED_PARAMETER_InoutRef_(p_ss_data_2);
+    ss_data_set_real(p_ss_data_1, (F64) ss_data_get_integer(p_ss_data_1));
+    return(TWO_REALS);
+}
+
+/*ncr*/
+static enum two_nums_type_match_result
+two_nums_type_match_R2(
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
+{
+    UNREFERENCED_PARAMETER_InoutRef_(p_ss_data_1);
+    ss_data_set_real(p_ss_data_2, (F64) ss_data_get_integer(p_ss_data_2));
+    return(TWO_REALS);
+}
+
+/*ncr*/
+static enum two_nums_type_match_result
+two_nums_type_match_RB(
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
+{
+    ss_data_set_real(p_ss_data_1, (F64) ss_data_get_integer(p_ss_data_1));
+    ss_data_set_real(p_ss_data_2, (F64) ss_data_get_integer(p_ss_data_2));
+    return(TWO_REALS);
+}
+
+/*ncr*/
 extern enum two_nums_type_match_result
 two_nums_type_match(
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2)
+{
+    const U32 did1 = MIN((U32) TN_OTHER, (U32) ss_data_get_data_id(p_ss_data_1)); /* collapse all higher (non-number and invalid) RPN values onto TN_OTHER */
+    const U32 did2 = MIN((U32) TN_OTHER, (U32) ss_data_get_data_id(p_ss_data_2));
+
+    CHECKING_ONLY(check_tn(did1, did2));
+
+    switch(tn_no_worry[did2][did1])
+    {
+    case TN_I:
+        return(TWO_INTEGERS);
+
+    case TN_IW:
+        return(TWO_INTEGERS_WORD32);
+
+    case TN_RR:
+        return(TWO_REALS);
+
+    case TN_R1:
+        return(two_nums_type_match_R1(p_ss_data_1, p_ss_data_2));
+
+    case TN_R2:
+        return(two_nums_type_match_R2(p_ss_data_1, p_ss_data_2));
+
+    case TN_RB:
+        return(two_nums_type_match_RB(p_ss_data_1, p_ss_data_2));
+
+    default: default_unhandled();
+#if CHECKING
+    case TN_MIX:
+#endif
+        return(TWO_MIXED);
+    }
+}
+
+
+/*ncr*/
+extern enum two_nums_type_match_result
+two_nums_type_match_maybe_worry(
     _InoutRef_  P_SS_DATA p_ss_data_1,
     _InoutRef_  P_SS_DATA p_ss_data_2,
     _InVal_     BOOL size_worry)
 {
     const U32 did1 = MIN((U32) TN_OTHER, (U32) ss_data_get_data_id(p_ss_data_1)); /* collapse all higher (non-number and invalid) RPN values onto TN_OTHER */
     const U32 did2 = MIN((U32) TN_OTHER, (U32) ss_data_get_data_id(p_ss_data_2));
-    const U8 (*p_tn_array)[6] = (size_worry) ? tn_worry : tn_no_worry;
+    const U8 (*p_tn_array)[5] = (size_worry) ? tn_worry : tn_no_worry;
 
     CHECKING_ONLY(check_tn(did1, did2));
 
     switch(p_tn_array[did2][did1])
     {
-    case TN_NOP:
-        return(TWO_REALS);
-
     case TN_I:
         return(TWO_INTEGERS);
-    }
 
-    switch(p_tn_array[did2][did1])
-    {
-    case TN_R1:
-        ss_data_set_real(p_ss_data_1, (F64) ss_data_get_integer(p_ss_data_1));
+    case TN_IW:
+        assert(!size_worry);
+        return(TWO_INTEGERS_WORD32);
+
+    case TN_RR:
         return(TWO_REALS);
+
+    case TN_R1:
+        return(two_nums_type_match_R1(p_ss_data_1, p_ss_data_2));
 
     case TN_R2:
-        ss_data_set_real(p_ss_data_2, (F64) ss_data_get_integer(p_ss_data_2));
-        return(TWO_REALS);
+        return(two_nums_type_match_R2(p_ss_data_1, p_ss_data_2));
 
     case TN_RB:
-        ss_data_set_real(p_ss_data_1, (F64) ss_data_get_integer(p_ss_data_1));
-        ss_data_set_real(p_ss_data_2, (F64) ss_data_get_integer(p_ss_data_2));
-        return(TWO_REALS);
+        return(two_nums_type_match_RB(p_ss_data_1, p_ss_data_2));
 
-    default:
+    default: default_unhandled();
 #if CHECKING
-        default_unhandled();
-        /*FALLTHRU*/
     case TN_MIX:
 #endif
         return(TWO_MIXED);
@@ -1943,36 +2081,44 @@ ss_recog_context_push(
 }
 
 _Check_return_
+static F64
+ui_strtod_harder(
+    _In_z_      PC_USTR ustr,
+    _Out_opt_   P_PC_USTR p_ustr)
+{
+    /* avoid poking source string like before! */
+    P_USTR ustr_dp;
+    UCHARZ ustr_buf[256];
+    ustr_xstrkpy(ustr_bptr(ustr_buf), elemof32(ustr_buf), ustr);
+    ustr_dp = ustrchr(ustr_bptr(ustr_buf), g_ss_recog_context.decimal_point_char);
+    assert(NULL != ustr_dp);
+    if(NULL != ustr_dp)
+    {
+        F64 f64;
+        PtrPutByte(ustr_dp, CH_FULL_STOP);
+        f64 = strtod((const char *) ustr_buf, (char **) p_ustr);
+        if(NULL != p_ustr)
+        {   /* adjust */
+            U32 chars_read = PtrDiffBytesU32(*p_ustr, ustr_buf);
+            *p_ustr = ustr_AddBytes(ustr, chars_read);
+        }
+        return(f64);
+    }
+
+    return(strtod((const char *) ustr, (char **) p_ustr));
+}
+
+_Check_return_
 extern F64
 ui_strtod(
     _In_z_      PC_USTR ustr,
     _Out_opt_   P_PC_USTR p_ustr)
 {
-    if(CH_FULL_STOP == g_ss_recog_context.decimal_point_char)
+    if( (CH_FULL_STOP == g_ss_recog_context.decimal_point_char) ||
+        (NULL == ustrchr(ustr, g_ss_recog_context.decimal_point_char)) )
         return(strtod((const char *) ustr, (char **) p_ustr));
 
-    if(NULL != ustrchr(ustr, g_ss_recog_context.decimal_point_char))
-    {   /* avoid poking source string like before! */
-        P_USTR ustr_dp;
-        UCHARZ ustr_buf[256];
-        ustr_xstrkpy(ustr_bptr(ustr_buf), elemof32(ustr_buf), ustr);
-        ustr_dp = ustrchr(ustr_bptr(ustr_buf), g_ss_recog_context.decimal_point_char);
-        assert(NULL != ustr_dp);
-        if(NULL != ustr_dp)
-        {
-            F64 f64;
-            PtrPutByte(ustr_dp, CH_FULL_STOP);
-            f64 = strtod((const char *) ustr_buf, (char **) p_ustr);
-            if(NULL != p_ustr)
-            {   /* adjust */
-                U32 chars_read = PtrDiffBytesU32(*p_ustr, ustr_buf);
-                *p_ustr = ustr_AddBytes(ustr, chars_read);
-            }
-            return(f64);
-        }
-    }
-
-    return(strtod((const char *) ustr, (char **) p_ustr));
+    return(ui_strtod_harder(ustr, p_ustr));
 }
 
 _Check_return_
@@ -1987,7 +2133,7 @@ ui_strtol(
 
 /******************************************************************************
 *
-* add, subtract or multiply two 32-bit signed integers, 
+* add, subtract or multiply two 32-bit signed integers,
 * checking for overflow and also returning
 * a signed 64-bit result that the caller may consult
 * e.g. to promote to fp
@@ -2004,7 +2150,7 @@ int32_from_int64_possible_overflow(
 
     /* if both the top word and the MSB of the low word of the result
      * are all zeros (+ve) or all ones (-ve) then
-     * the result still fits in 32-bit integer
+     * the result still fits in a 32-bit signed integer
      */
 
 #if WINDOWS && (BYTE_ORDER == LITTLE_ENDIAN)
@@ -2078,6 +2224,73 @@ int32_multiply_check_overflow(
     const int64_t int64 = (int64_t) multiplicand_b * multiplicand_a;
 
     return(int32_from_int64_possible_overflow(int64, p_int64_with_int32_overflow));
+}
+
+/******************************************************************************
+*
+* add, subtract or multiply two 32-bit unsigned integers,
+* checking for overflow and also returning
+* an unsigned 64-bit result that the caller may consult
+* e.g. to promote to fp
+*
+******************************************************************************/
+
+_Check_return_
+static inline uint32_t
+uint32_from_uint64_possible_overflow(
+    _In_        const uint64_t uint64,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow)
+{
+    p_uint64_with_uint32_overflow->uint64_result = uint64;
+
+    /* if the top word is all zeros (+ve) then
+     * the result still fits in a 32-bit unsigned integer
+     */
+
+    if(false == (p_uint64_with_uint32_overflow->f_overflow = (
+                (0 != (uint64 >> 32))
+                ) ) )
+    {
+        return((uint32_t) uint64);
+    }
+
+    return(UINT32_MAX);
+}
+
+_Check_return_
+extern uint32_t
+uint32_add_check_overflow(
+    _In_        const uint32_t addend_a,
+    _In_        const uint32_t addend_b,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow)
+{
+    const uint64_t uint64 = (uint64_t) addend_b + addend_a;
+
+    return(uint32_from_uint64_possible_overflow(uint64, p_uint64_with_uint32_overflow));
+}
+
+_Check_return_
+extern uint32_t
+uint32_subtract_check_overflow(
+    _In_        const uint32_t minuend,
+    _In_        const uint32_t subtrahend,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow)
+{
+    const uint64_t uint64 = (uint64_t) minuend - subtrahend;
+
+    return(uint32_from_uint64_possible_overflow(uint64, p_uint64_with_uint32_overflow));
+}
+
+_Check_return_
+extern uint32_t
+uint32_multiply_check_overflow(
+    _In_        const uint32_t multiplicand_a,
+    _In_        const uint32_t multiplicand_b,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow)
+{
+    const uint64_t uint64 = (uint64_t) multiplicand_b * multiplicand_a;
+
+    return(uint32_from_uint64_possible_overflow(uint64, p_uint64_with_uint32_overflow));
 }
 
 /* end of ss_const.c */

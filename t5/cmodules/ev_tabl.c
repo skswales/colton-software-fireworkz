@@ -34,13 +34,14 @@ static const EV_TYPE arg_DAT[]  = { 1, EM_DAT };
 
 static const EV_TYPE arg_INT[]  = { 1, EM_INT };
 
-static const EV_TYPE arg_BOO[]  = { 1, EM_LOGICAL };
-
 static const EV_TYPE arg_REA[]  = { 1, EM_REA };
 
 static const EV_TYPE arg_SLR[]  = { 1, EM_SLR };
 
 static const EV_TYPE arg_STR[]  = { 1, EM_STR };
+
+/* Logical: not primitive, actually integer (which includes logical) or real */
+static const EV_TYPE arg_BOO[]  = { 1, EM_LOGICAL };
 
 /* IoD: integer or date */
 static const EV_TYPE arg_IoD[]  = { 1, EM_INT | EM_DAT };
@@ -212,7 +213,7 @@ static const EV_TYPE arg_ndp[]  = { 2, EM_REA | EM_INT, /* SKS 03may14 added EM_
 static const EV_TYPE arg_nls[]  = { 1, EM_REA | EM_ARY };
 
 static const EV_TYPE arg_pag[]  = { 2, EM_SLR,
-                                       EM_LOGICAL };
+                                       EM_INT };
 
 static const EV_TYPE arg_pct[]  = { 2, EM_ARY,
                                        EM_REA };
@@ -267,7 +268,7 @@ static const EV_TYPE arg_trd[]  = { 2, EM_ARY,
 static const EV_TYPE arg_trm[]  = { 2, EM_ARY,
                                        EM_REA };
 
-static const EV_TYPE arg_txt[]  = { 2, EM_REA | EM_STR | EM_DAT,
+static const EV_TYPE arg_txt[]  = { 2, EM_REA | EM_STR | EM_DAT | EM_INT,
                                        EM_STR };
 
 static const EV_TYPE arg_typ[]  = { 1, EM_REA | EM_SLR | EM_STR | EM_DAT | EM_ARY | EM_BLK | EM_ERR | EM_INT };
@@ -313,17 +314,23 @@ static const EV_TYPE arg_wei[]  = { 4, EM_REA,
 static const RPNDEF
 _rpn_table[] =
 {
-    /* externally visible types */
+    /* externally visible types (SS_CONSTANT) */
     rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_REAL ), /* real */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_LOGICAL ), /* bool8 */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD8 ), /* word8 */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_LOGICAL ), /* logical */
     rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD16 ), /* word16 */
     rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD32 ), /* word32 */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_STRING ), /* string */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_ARRAY ), /* array */
     rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_DATE ), /* date */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_STRING ), /* string */
     rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_BLANK ), /* blank */
     rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_ERROR ), /* error */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_ARRAY ), /* array */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_WORD8_UNUSED ), /* word8 */ /* NB no longer used */
+
+    /* internal types start here (SS_DATA) */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_SLR ), /* slr */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_RANGE ), /* range */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_FIELD ), /* field */
+    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_NAME ), /* name */
 
 #if defined(EV_IDNO_U16_FORCE)
     /* test 64 */
@@ -351,12 +358,7 @@ _rpn_table[] =
     rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV, rpn_table_entry_INV,
 #endif
 
-    /* internal types start here */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_SLR ), /* slr */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_RANGE ), /* range */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_NAME ), /* name */
-    rpn_table_entry( RPN_DAT, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     DATA_ID_FIELD ), /* field */
-
+    /* general RPN starts here */
     rpn_table_entry( RPN_LCL, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_LCL_ARGUMENT ), /* argument name */
 
     rpn_table_entry( RPN_FRM, NAI, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_FRM_BRACKETS ), /* brackets */
@@ -370,15 +372,15 @@ _rpn_table[] =
 
     rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_NOT,        arg_BOO, RPN_UOP_NOT ),
     rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_MINUS,      arg_IoR, RPN_UOP_MINUS ), /* unary - */ /* SKS 15may14 was arg_REA */
-    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_PLUS,       arg_IoR, RPN_UOP_PLUS ), /* unary + */ /* ditto */
+    rpn_table_entry( RPN_UOP,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_UOP_PLUS,       arg_IoRoD, RPN_UOP_PLUS ), /* unary + */ /* ditto */
 
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_AND,        arg_BOO, RPN_BOP_AND ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_DIV,        arg_IoR, RPN_BOP_DIVIDE ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_DIV,        arg_IoRoD, RPN_BOP_DIVIDE ),
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_SUB,        arg_IoRoD, RPN_BOP_MINUS ),
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_OR,         arg_BOO, RPN_BOP_OR ),
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_ADD,        arg_IoRoD, RPN_BOP_PLUS ),
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_POWER,      arg_REA, RPN_BOP_POWER ),
-    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_MUL,        arg_IoR, RPN_BOP_TIMES ),
+    rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_MUL,        arg_IoRoD, RPN_BOP_TIMES ),
     rpn_table_entry( RPN_BOP,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_BOP_CONCATENATE,arg_STR, RPN_BOP_CONCATENATE ),
 
     rpn_table_entry( RPN_REL,   2, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS,           SS_FUNC_REL_EQ,         arg_rel, RPN_REL_EQUALS ),
@@ -396,7 +398,7 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ACOT,          arg_REA, RPN_FNF_ACOT ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ACOTH,         arg_REA, RPN_FNF_ACOTH ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_AGE,           arg_DAT, RPN_FNF_AGE ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_MISC,      FP_AGG(EXEC_ALERT, 0, 0, 0, 0, 0, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_MISC,      FP_AGG(EXEC_ALERT, 0, 0, 0, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_STR, RPN_FNV_ALERT ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_LOGICAL,   FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_mix, RPN_FNV_AND ),
@@ -414,7 +416,7 @@ _rpn_table[] =
 
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BETA,          arg_REA, RPN_FNF_BETA ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BIN,           arg_ARY, RPN_FNF_BIN ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_BREAK, 0),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_CONTROL,   EXCTRL(CONTROL_BREAK, 0),
                                                               NAS,                    NIX,                    arg_INT, RPN_FNV_BREAK ),
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_ACOS,        arg_CPX, RPN_FNF_C_ACOS ),
@@ -452,14 +454,14 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_TANH,        arg_CPX, RPN_FNF_C_TANH ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_THETA,       arg_CPX, RPN_FNF_C_THETA ),
 
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CEILING,       arg_REA, RPN_FNV_CEILING ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CEILING,       arg_REA, RPN_FNV_CEILING ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHAR,          arg_INT, RPN_FNF_CHAR ),
     rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_LOOKUP,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHOOSE,        arg_cho, RPN_FNV_CHOOSE ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CLEAN,         arg_STR, RPN_FNF_CLEAN ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CODE,          arg_STR, RPN_FNF_CODE ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_COL,           arg_rco, RPN_FNV_COL ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_COLS,          arg_ARY, RPN_FNV_COLS ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_COMBIN,        arg_INT, RPN_FNF_COMBIN ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_NOTME,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_COMMAND,       arg_STR, RPN_FNF_COMMAND ),
@@ -484,13 +486,13 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATABASE,  EXDBASE(DBASE_DAVG, RPN_FNV_AVG),
                                                               NAS,                    NIX,                    arg_dbs, RPN_FNF_DAVG ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DAY,           arg_DAT, RPN_FNF_DAY ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DAYNAME,       arg_dan, RPN_FNV_DAYNAME ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DAYS_360,      arg_ddi, RPN_FNV_DAYS_360 ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DAYNAME,       arg_dan, RPN_FNV_DAYNAME ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DAYS_360,      arg_ddi, RPN_FNV_DAYS_360 ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATABASE,  EXDBASE(DBASE_DCOUNT, RPN_FNV_COUNT),
                                                               NAS,                    NIX,                    arg_dbs, RPN_FNF_DCOUNT ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATABASE,  EXDBASE(DBASE_DCOUNTA, RPN_FNV_COUNTA),
                                                               NAS,                    NIX,                    arg_dbs, RPN_FNF_DCOUNTA ),
-    rpn_table_entry( RPN_FNV,  -5, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DDB,           arg_REA, RPN_FNV_DDB ),
+    rpn_table_entry( RPN_FNV,  -5, 1, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DDB,           arg_REA, RPN_FNV_DDB ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DEG,           arg_REA, RPN_FNF_DEG ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DEREF,         arg_drf, RPN_FNF_DEREF ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
@@ -499,7 +501,7 @@ _rpn_table[] =
                                                               NAS,                    NIX,                    arg_dbs, RPN_FNF_DMAX ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATABASE,  EXDBASE(DBASE_DMIN, RPN_FNV_MIN),
                                                               NAS,                    NIX,                    arg_dbs, RPN_FNF_DMIN ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DOLLAR,        arg_ndp, RPN_FNV_DOLLAR ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DOLLAR,        arg_ndp, RPN_FNV_DOLLAR ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 0, 0, 0, EV_EVENT_DOUBLECLICK/*event_type*/, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_DOUBLECLICK,   NAA,     RPN_FN0_DOUBLECLICK ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATABASE,  EXDBASE(DBASE_DPRODUCT, RPN_FNV_PRODUCT),
@@ -529,37 +531,37 @@ _rpn_table[] =
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FACT,          arg_INT, RPN_FNF_FACT ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_LOGICAL,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FALSE,         NAA,     RPN_FN0_FALSE ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FIND,          arg_fnd, RPN_FNV_FIND ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FIXED,         arg_RII, RPN_FNV_FIXED ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FIND,          arg_fnd, RPN_FNV_FIND ),
+    rpn_table_entry( RPN_FNV,  -2, 2, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FIXED,         arg_RII, RPN_FNV_FIXED ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FLIP,          arg_ARY, RPN_FNF_FLIP ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FLOOR,         arg_REA, RPN_FNV_FLOOR ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_FOR, EVS_CNT_FOR),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FLOOR,         arg_REA, RPN_FNV_FLOOR ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_CONTROL,   EXCTRL(CONTROL_FOR, EVS_CNT_FOR),
                                                               NAS,                    NIX,                    arg_for, RPN_FNV_FOR ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FORMULA_TEXT,  arg_SLR, RPN_FNF_FORMULA_TEXT ),
     rpn_table_entry( RPN_FNM,  -1, 0, EV_RESO_CONTROL,   NAP, NAS,                    0,                      NAA,     RPN_FNM_FUNCTION ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FV,            arg_REA, RPN_FNF_FV ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_FV,        arg_REA, RPN_FNV_ODF_FV ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_FV,        arg_REA, RPN_FNV_ODF_FV ),
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GAMMALN,       arg_REA, RPN_FNF_GAMMALN ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_GEOMEAN ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_GOTO, 0),
                                                               NAS,                    NIX,                    arg_SLR, RPN_FNF_GOTO ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_STATS,     FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 0, 0, 1/*load_recalc*/, 0, 0), /* SKS 29apr14 added load_recalc bit */
+    rpn_table_entry( RPN_FNV,  -1, 2, EV_RESO_STATS,     FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 0, 0, 1/*load_recalc*/, 0, 0), /* SKS 29apr14 added load_recalc bit */
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_GRAND,         arg_REA, RPN_FNV_GRAND ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GROWTH,        arg_trd, RPN_FNF_GROWTH ),
 
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_HARMEAN ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_LOOKUP, LOOKUP_HLOOKUP, 0, 0, 0, 0, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_LOOKUP, LOOKUP_HLOOKUP, 0, 0, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_hvl, RPN_FNV_HLOOKUP ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_HOUR,          arg_DAT, RPN_FNF_HOUR ),
 
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS,           SS_FUNC_IF,             arg_if,  RPN_FNF_IF ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_IF, EVS_CNT_IFC),
                                                               NAS,                    NIX,                    arg_BOO, RPN_FNF_IFC ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_INDEX,         arg_idx, RPN_FNV_INDEX ), /* SKS 11apr93 was 0, EV_RESO_LOOKUP */
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_MISC,      FP_AGG(EXEC_ALERT, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0),
+    rpn_table_entry( RPN_FNV,  -4, 2, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_INDEX,         arg_idx, RPN_FNV_INDEX ), /* SKS 11apr93 was 0, EV_RESO_LOOKUP */
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_MISC,      FP_AGG(EXEC_ALERT, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0),
                                                               NAS,                    NIX,                    arg_STR, RPN_FNV_INPUT ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_INT,           arg_IoRoD, RPN_FNF_INT ), /* SKS 08apr14 was arg_IoR */
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_FINANCE,   FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
@@ -582,14 +584,14 @@ _rpn_table[] =
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_KURT ),
 
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LARGE,         arg_idx, RPN_FNF_LARGE ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LEFT,          arg_S_I, RPN_FNV_LEFT ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LEFT,          arg_S_I, RPN_FNV_LEFT ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LENGTH,        arg_STR, RPN_FNF_LENGTH ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LINEST,        arg_llg, RPN_FNV_LINEST ),
+    rpn_table_entry( RPN_FNV,  -2, 4, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LINEST,        arg_llg, RPN_FNV_LINEST ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LISTCOUNT,     arg_ARY, RPN_FNF_LISTCOUNT ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LN,            arg_REA, RPN_FNF_LN ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOG,           arg_REA, RPN_FNV_LOG ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOGEST,        arg_llg, RPN_FNV_LOGEST ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_LOOKUP, LOOKUP_LOOKUP, 0, 0, 0, 0, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOG,           arg_REA, RPN_FNV_LOG ),
+    rpn_table_entry( RPN_FNV,  -2, 3, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOGEST,        arg_llg, RPN_FNV_LOGEST ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_LOOKUP, LOOKUP_LOOKUP, 0, 0, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_lkp, RPN_FNV_LOOKUP ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOWER,         arg_STR, RPN_FNF_LOWER ),
 
@@ -619,10 +621,10 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_N,             arg_n,   RPN_FNF_N ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_NEXT, EVS_CNT_NEXT),
                                                               NAS,                    NIX,                    NAA,     RPN_FN0_NEXT ),
-    rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_LOGICAL,   NAP, OBJECT_ID_SS,           SS_FUNC_UOP_NOT,        arg_BOO, RPN_FNF_NOT ),
+    rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_LOGICAL,   NAP, OBJECT_ID_SS,           SS_SPLIT_NOT,           arg_BOO, RPN_FNF_NOT ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_DATE,      FP_AGG(EXEC_EXEC, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_NOW,           NAA,     RPN_FN0_NOW ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NPER,          arg_REA, RPN_FNV_NPER ),
+    rpn_table_entry( RPN_FNV,  -4, 2, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NPER,          arg_REA, RPN_FNV_NPER ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_FINANCE,   FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_R_A, RPN_FNF_NPV ),
 
@@ -630,10 +632,10 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_LOGICAL,   FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_mix, RPN_FNV_OR ),
 
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 1/*nodep*/, 1/*self*/, 1/*load_recalc*/, 0, 0), /* SKS 14jun95 added load_recalc bit as reformat on load might stuff it */
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 1/*nodep*/, 1/*self*/, 1/*load_recalc*/, 0, 0), /* SKS 14jun95 added load_recalc bit as reformat on load might stuff it */
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_PAGE,          arg_pag, RPN_FNV_PAGE ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0), /* SKS 14jun95 added load_recalc bit as reformat on load might stuff it */
-                                                              OBJECT_ID_SS_SPLIT,     SS_SPLIT_PAGES,         arg_BOO, RPN_FNV_PAGES ),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0), /* SKS 14jun95 added load_recalc bit as reformat on load might stuff it */
+                                                              OBJECT_ID_SS_SPLIT,     SS_SPLIT_PAGES,         arg_INT, RPN_FNV_PAGES ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTILE_INC, arg_pct, RPN_FNF_PERCENTILE_INC ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERMUT,        arg_INT, RPN_FNF_PERMUT ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PI,            NAA,     RPN_FN0_PI ),
@@ -648,12 +650,12 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_QUARTILE_INC,  arg_idx, RPN_FNF_QUARTILE_INC ),
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RAD,           arg_REA, RPN_FNF_RAD ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_STATS,     FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 0, 0, 1/*load_recalc*/, 0, 0),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_STATS,     FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 0, 0, 1/*load_recalc*/, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_RAND,          arg_REA, RPN_FNV_RAND ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 0, 0, 1/*load_recalc*/, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_RANDBETWEEN,   arg_REA, RPN_FNF_RANDBETWEEN ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RANK,          arg_rnk, RPN_FNV_RANK ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RANK_EQ,       arg_req, RPN_FNV_RANK_EQ ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RANK,          arg_rnk, RPN_FNV_RANK ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RANK_EQ,       arg_req, RPN_FNV_RANK_EQ ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RATE,          arg_REA, RPN_FNF_RATE ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_REPEAT, EVS_CNT_REPEAT),
                                                               NAS,                    NIX,                    NAA,     RPN_FN0_REPEAT ),
@@ -662,13 +664,13 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_RESULT, 0),
                                                               NAS,                    NIX,                    arg_res, RPN_FNF_RESULT ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_REVERSE,       arg_STR, RPN_FNF_REVERSE ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RIGHT,         arg_S_I, RPN_FNV_RIGHT ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ROUND,         arg_ndp, RPN_FNV_ROUND ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_RIGHT,         arg_S_I, RPN_FNV_RIGHT ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ROUND,         arg_ndp, RPN_FNV_ROUND ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ROUNDDOWN,     arg_ndp, RPN_FNF_ROUNDDOWN ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ROUNDUP,       arg_ndp, RPN_FNF_ROUNDUP ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_ROW,           arg_rco, RPN_FNV_ROW ),
-    rpn_table_entry( RPN_FNV,  -1, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -1, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_EXEC, 0, 0, 1/*var*/, 1/*nodep*/, 1/*self*/, 0, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_ROWS,          arg_ARY, RPN_FNV_ROWS ),
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SEC,           arg_REA, RPN_FNF_SEC ),
@@ -676,7 +678,7 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SECOND,        arg_DAT, RPN_FNF_SECOND ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 2/*nodep*/, 0, 0, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_SET_NAME,      arg_setn, RPN_FNF_SET_NAME ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_MISC,      FP_AGG(EXEC_SETVALUE, 0, 0, 0, 1/*nodep*/, 0, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -3, 2, EV_RESO_MISC,      FP_AGG(EXEC_SETVALUE, 0, 0, 0, 1/*nodep*/, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_setv, RPN_FNV_SET_VALUE ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SGN,           arg_REA, RPN_FNF_SGN ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_TRIG,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SIN,           arg_REA, RPN_FNF_SIN ),
@@ -685,7 +687,7 @@ _rpn_table[] =
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_SKEW ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SLN,           arg_REA, RPN_FNF_SLN ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SMALL,         arg_idx, RPN_FNF_SMALL ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SORT,          arg_idx, RPN_FNV_SORT ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SORT,          arg_idx, RPN_FNV_SORT ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SPEARMAN,      arg_ARY, RPN_FNF_SPEARMAN ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SQR,           arg_REA, RPN_FNF_SQR ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_STANDARDIZE,   arg_REA, RPN_FNF_STANDARDIZE ),
@@ -693,8 +695,8 @@ _rpn_table[] =
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_STD ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_STDP ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_STRING,        arg_ndp, RPN_FNV_STRING ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SUBSTITUTE,    arg_sub, RPN_FNV_SUBSTITUTE ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_STRING,        arg_ndp, RPN_FNV_STRING ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SUBSTITUTE,    arg_sub, RPN_FNV_SUBSTITUTE ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MATHS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_mix, RPN_FNV_SUM ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MATHS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
@@ -715,7 +717,7 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STRING,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_TRIM,          arg_STR, RPN_FNF_TRIM ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_TRIMMEAN,      arg_trm, RPN_FNF_TRIMMEAN ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_LOGICAL,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_TRUE,          NAA,     RPN_FN0_TRUE ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_TRUNC,         arg_ndp, RPN_FNV_TRUNC ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_TRUNC,         arg_ndp, RPN_FNV_TRUNC ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_TYPE,          arg_typ, RPN_FNF_TYPE ),
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_UNTIL, EVS_CNT_UNTIL),
@@ -729,10 +731,10 @@ _rpn_table[] =
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_VARP ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_MISC,      FP_AGG(EXEC_EXEC, 0, 0, 0, 0, 0, 1/*load_recalc*/, 0, 0),
                                                               OBJECT_ID_SS_SPLIT,     SS_SPLIT_VERSION,       NAA,     RPN_FN0_VERSION ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_LOOKUP,    FP_AGG(EXEC_LOOKUP, LOOKUP_VLOOKUP, 0, 0, 0, 0, 0, 0, 0),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_LOOKUP,    FP_AGG(EXEC_LOOKUP, LOOKUP_VLOOKUP, 0, 0, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_hvl, RPN_FNV_VLOOKUP ),
 
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_WEEKDAY,       arg_D_I, RPN_FNV_WEEKDAY ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_WEEKDAY,       arg_D_I, RPN_FNV_WEEKDAY ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_WEEKNUMBER,    arg_DAT, RPN_FNF_WEEKNUMBER ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_CONTROL,   EXCTRL(CONTROL_WHILE, EVS_CNT_WHILE),
                                                               NAS,                    NIX,                    arg_BOO, RPN_FNF_WHILE ),
@@ -773,64 +775,64 @@ _rpn_table[] =
                                                               NAS,                    NIX,                    arg_mix, RPN_FNV_VARA ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_mix, RPN_FNV_VARPA ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTRANK_INC, arg_prk, RPN_FNV_PERCENTRANK_INC ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ERF,           arg_REA, RPN_FNV_ERF ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTRANK_INC, arg_prk, RPN_FNV_PERCENTRANK_INC ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ERF,           arg_REA, RPN_FNV_ERF ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ERFC,          arg_REA, RPN_FNF_ERFC ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_COVARIANCE_S,  arg_ARY, RPN_FNF_COVARIANCE_S ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_LOGICAL,   FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_mix, RPN_FNV_XOR ),
     rpn_table_entry( RPN_FNV,  -2, 2, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_COMPLEX,     arg_RRS, RPN_FNV_C_COMPLEX ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_LOOKUP,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ADDRESS,       arg_adr, RPN_FNV_ADDRESS ),
-    rpn_table_entry( RPN_FNV,  -5, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DB,            arg_REA, RPN_FNV_DB ),
+    rpn_table_entry( RPN_FNV,  -3, 3, EV_RESO_LOOKUP,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ADDRESS,       arg_adr, RPN_FNV_ADDRESS ),
+    rpn_table_entry( RPN_FNV,  -5, 1, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DB,            arg_REA, RPN_FNV_DB ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_FINANCE,   NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FVSCHEDULE,    arg_R_A, RPN_FNF_FVSCHEDULE ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_QUOTIENT,      arg_REA, RPN_FNF_QUOTIENT ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EXPON_DIST,    arg_RRI, RPN_FNV_EXPON_DIST ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EXPON_DIST,    arg_RRI, RPN_FNV_EXPON_DIST ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_COMBINA,       arg_INT, RPN_FNF_COMBINA ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FACTDOUBLE,    arg_INT, RPN_FNF_FACTDOUBLE ),
     rpn_table_entry( RPN_FNF,   4, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_SERIESSUM,     arg_ssm, RPN_FNF_SERIESSUM ),
-    rpn_table_entry( RPN_FNV,  -5, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_HYPGEOM_DIST,  arg_INT, RPN_FNV_HYPGEOM_DIST ),
+    rpn_table_entry( RPN_FNV,  -5, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_HYPGEOM_DIST,  arg_INT, RPN_FNV_HYPGEOM_DIST ),
     rpn_table_entry( RPN_FNF,   4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_WEIBULL_DIST,  arg_wei, RPN_FNF_WEIBULL_DIST ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_POISSON_DIST,  arg_poi, RPN_FNV_POISSON_DIST ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_POISSON_DIST,  arg_poi, RPN_FNV_POISSON_DIST ),
     rpn_table_entry( RPN_FNF,   4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BINOM_DIST,    arg_bdi, RPN_FNF_BINOM_DIST ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BINOM_DIST_RANGE, arg_bdr, RPN_FNV_BINOM_DIST_RANGE ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BINOM_DIST_RANGE, arg_bdr, RPN_FNV_BINOM_DIST_RANGE ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FISHER,        arg_REA, RPN_FNF_FISHER ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FISHERINV,     arg_REA, RPN_FNF_FISHERINV ),
     rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     FP_AGG(EXEC_ARRAY_RANGE, 0, 0, 1/*var*/, 0, 0, 0, 0, 0),
                                                               NAS,                    NIX,                    arg_nls, RPN_FNV_MULTINOMIAL ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BESSELI,       arg_REA, RPN_FNF_BESSELI ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BESSELK,       arg_REA, RPN_FNF_BESSELK ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NORM_DIST,     arg_ndi, RPN_FNV_NORM_DIST ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NORM_S_DIST,   arg_RII, RPN_FNV_NORM_S_DIST ), /* doesn't matter that arg is overlong */
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOGNORM_DIST,  arg_ndi, RPN_FNV_LOGNORM_DIST ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NORM_DIST,     arg_ndi, RPN_FNV_NORM_DIST ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NORM_S_DIST,   arg_RII, RPN_FNV_NORM_S_DIST ), /* doesn't matter that arg is overlong */
+    rpn_table_entry( RPN_FNV,  -2, 3, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOGNORM_DIST,  arg_ndi, RPN_FNV_LOGNORM_DIST ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PHI,           arg_REA, RPN_FNF_PHI ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DELTA,         arg_REA, RPN_FNV_DELTA ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GESTEP,        arg_REA, RPN_FNV_GESTEP ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DELTA,         arg_REA, RPN_FNV_DELTA ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GESTEP,        arg_REA, RPN_FNV_GESTEP ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_INT,       arg_IoRoD, RPN_FNF_ODF_INT ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_FREQUENCY,     arg_ARY, RPN_FNF_FREQUENCY ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_MATRIX,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_M_UNIT,        arg_INT, RPN_FNF_M_UNIT ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_IRR,       arg_iro, RPN_FNV_ODF_IRR ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_IRR,       arg_iro, RPN_FNV_ODF_IRR ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NORM_INV,      arg_REA, RPN_FNF_NORM_INV ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NORM_S_INV,    arg_REA, RPN_FNF_NORM_S_INV ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_LOG10,     arg_REA, RPN_FNF_ODF_LOG10 ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GAMMA,         arg_REA, RPN_FNF_GAMMA ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NEGBINOM_DIST, arg_bdi, RPN_FNV_NEGBINOM_DIST ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_INDEX,     arg_idx, RPN_FNV_ODF_INDEX ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GAMMA_DIST,    arg_wei, RPN_FNV_GAMMA_DIST ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NEGBINOM_DIST, arg_bdi, RPN_FNV_NEGBINOM_DIST ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_INDEX,     arg_idx, RPN_FNV_ODF_INDEX ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GAMMA_DIST,    arg_wei, RPN_FNV_GAMMA_DIST ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_GAMMA_INV,     arg_REA, RPN_FNF_GAMMA_INV ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BETA_DIST,     arg_bti, RPN_FNV_BETA_DIST ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_BETADIST,  arg_bto, RPN_FNV_ODF_BETADIST ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BETA_INV,      arg_REA, RPN_FNV_BETA_INV ),
+    rpn_table_entry( RPN_FNV,  -4, 3, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BETA_DIST,     arg_bti, RPN_FNV_BETA_DIST ),
+    rpn_table_entry( RPN_FNV,  -4, 3, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_BETADIST,  arg_bto, RPN_FNV_ODF_BETADIST ),
+    rpn_table_entry( RPN_FNV,  -4, 2, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BETA_INV,      arg_REA, RPN_FNV_BETA_INV ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CORREL,        arg_ARY, RPN_FNF_CORREL ),
     rpn_table_entry( RPN_FN0,   0, 0, EV_RESO_MISC,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_NA,            NAA,     RPN_FN0_NA ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHISQ_DIST,    arg_RII, RPN_FNV_CHISQ_DIST ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHISQ_DIST,    arg_RII, RPN_FNV_CHISQ_DIST ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHISQ_INV,     arg_RII, RPN_FNF_CHISQ_INV ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHISQ_DIST_RT, arg_RII, RPN_FNF_CHISQ_DIST_RT ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHISQ_INV_RT,  arg_RII, RPN_FNF_CHISQ_INV_RT ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_F_DIST,        arg_ndi, RPN_FNV_F_DIST ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_F_DIST,        arg_ndi, RPN_FNV_F_DIST ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_F_INV,         arg_REA, RPN_FNF_F_INV ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_F_DIST_RT,     arg_REA, RPN_FNF_F_DIST_RT ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_F_INV_RT,      arg_REA, RPN_FNF_F_INV_RT ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_T_DIST,        arg_RRI, RPN_FNV_T_DIST ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_T_DIST,        arg_RRI, RPN_FNV_T_DIST ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_T_INV,         arg_REA, RPN_FNF_T_INV ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_T_DIST_2T,     arg_REA, RPN_FNF_T_DIST_2T ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_T_INV_2T,      arg_REA, RPN_FNF_T_INV_2T ),
@@ -841,8 +843,8 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTILE_EXC, arg_pct, RPN_FNF_PERCENTILE_EXC ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_QUARTILE_EXC,  arg_idx, RPN_FNF_QUARTILE_EXC ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BINOM_INV,     arg_bdv, RPN_FNF_BINOM_INV ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_Z_TEST,        arg_A_R, RPN_FNV_Z_TEST ),
-    rpn_table_entry( RPN_FNV,  -4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PROB,          arg_AAR, RPN_FNV_PROB ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_Z_TEST,        arg_A_R, RPN_FNV_Z_TEST ),
+    rpn_table_entry( RPN_FNV,  -4, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PROB,          arg_AAR, RPN_FNV_PROB ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_CHISQ_TEST,    arg_ARY, RPN_FNF_CHISQ_TEST ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_F_TEST,        arg_ARY, RPN_FNF_F_TEST ),
     rpn_table_entry( RPN_FNF,   4, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_T_TEST,        arg_AAR, RPN_FNF_T_TEST ),
@@ -867,12 +869,12 @@ _rpn_table[] =
 
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_IMAGINARY,   arg_CPX, RPN_FNF_C_IMAGINARY ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_REAL,        arg_CPX, RPN_FNF_C_REAL ),
-    rpn_table_entry( RPN_FNV,  -2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_ROUND,       arg_C_I, RPN_FNV_C_ROUND ),
+    rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_ROUND,       arg_C_I, RPN_FNV_C_ROUND ),
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_C_SQRT,        arg_CPX, RPN_FNF_C_SQRT ),
 
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_COMPLEX,   arg_RRS, RPN_FNV_ODF_COMPLEX ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_COMPAT,    NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_ODF_COMPLEX,   arg_RRS, RPN_FNV_ODF_COMPLEX ),
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOGNORM_INV,   arg_REA, RPN_FNF_LOGNORM_INV ),
-    rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTRANK_EXC, arg_prk, RPN_FNV_PERCENTRANK_EXC ),
+    rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTRANK_EXC, arg_prk, RPN_FNV_PERCENTRANK_EXC ),
 
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EDATE,         arg_D_I, RPN_FNF_EDATE ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EOMONTH,       arg_D_I, RPN_FNF_EOMONTH ),
@@ -892,11 +894,11 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   1, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_OCT2DEC,       arg_cvr, RPN_FNF_OCT2DEC ),
     rpn_table_entry( RPN_FNV,  -2, 1, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_OCT2HEX,       arg_cvr, RPN_FNV_OCT2HEX ),
 
-    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITAND,        arg_REA, RPN_FNF_BITAND),
-    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITLSHIFT,     arg_R_I, RPN_FNF_BITLSHIFT),
-    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITOR,         arg_REA, RPN_FNF_BITOR),
-    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITRSHIFT,     arg_R_I, RPN_FNF_BITRSHIFT),
-    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITXOR,        arg_REA, RPN_FNF_BITXOR),
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITAND,        arg_REA, RPN_FNF_BITAND ),
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITLSHIFT,     arg_R_I, RPN_FNF_BITLSHIFT ),
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITOR,         arg_REA, RPN_FNF_BITOR ),
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITRSHIFT,     arg_R_I, RPN_FNF_BITRSHIFT ),
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_ENGINEER,  NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BITXOR,        arg_REA, RPN_FNF_BITXOR ),
 
     rpn_table_entry( RPN_FNV,  -3, 1, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_BASE,          arg_bse, RPN_FNV_BASE ),
     rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_MATHS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_DECIMAL,       arg_cvr, RPN_FNF_DECIMAL ),
@@ -1498,6 +1500,9 @@ ev_enum_resource_get_custom(
         custom_num < custom_table_entries;
         ++custom_num, ++p_ev_custom)
     {
+        if(p_ev_custom->flags.to_be_deleted)
+            continue;
+
         if(p_ev_custom->flags.undefined)
             continue;
 
@@ -1542,6 +1547,9 @@ ev_enum_resource_get_names(
         name_num < name_table_entries;
         ++name_num, ++p_ev_name)
     {
+        if(p_ev_name->flags.to_be_deleted)
+            continue;
+
         if(p_ev_name->flags.undefined)
             continue;
 
@@ -1561,7 +1569,7 @@ ev_enum_resource_get_names(
         {
         UCHARZ * ustr;
         U32 len;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
         quick_ublock_with_buffer_setup(quick_ublock);
         status_break(status = ss_data_decode(&quick_ublock, &p_ev_name->def_data, p_ev_resource->ev_docno_from));
         len = quick_ublock_bytes(&quick_ublock);
@@ -1577,7 +1585,6 @@ ev_enum_resource_get_names(
         status_break(status = ustr_set(&p_resource_spec->ustr_description, p_ev_name->ustr_description));
 
         p_resource_spec->n_args = 0;
-
         p_resource_spec->max_additional_args = 0;
 
         status = name_num;
@@ -1609,12 +1616,16 @@ ev_enum_resource_get_builtin_functions(
             PTR_ASSERT(ustr_name);
             status_break(status = al_ustr_append(&p_resource_spec->h_id_ustr, ustr_name));
 
-            if(p_rpndef->n_args >= 0)
-                p_resource_spec->n_args = p_rpndef->n_args;
-            else if(p_rpndef->n_args == -1)
-                p_resource_spec->n_args = 1;
-            else
-                p_resource_spec->n_args = -((S32) p_rpndef->n_args /*+ 1*/); /* commenting that out makes one optional parameter visible in the function list */
+            p_resource_spec->n_args = p_rpndef->n_args;
+            p_resource_spec->max_additional_args = p_rpndef->max_additional_args;
+
+            if(p_rpndef->n_args < 0)
+            {
+                p_resource_spec->n_args = (- (S32) p_rpndef->n_args) - 1;
+
+                if(0 == p_resource_spec->max_additional_args)
+                    p_resource_spec->max_additional_args = 1; /* show just the first optional parameter in the function list */
+            }
 
             status = rpn_num;
             p_ev_resource->item_no = (S32) rpn_num + 1;
@@ -1699,6 +1710,60 @@ PROC_QSORT_PROTO(static, func_lookcomp_qsort, LOOKDEF)
 
 #if CHECKING
 
+static bool
+ev_func_lookup_check_fnv_zero_ok(
+    _InVal_     EV_IDNO i)
+{
+    switch(i)
+    {
+    case RPN_FNV_AND:
+    case RPN_FNV_AVEDEV:
+    case RPN_FNV_AVG:
+    case RPN_FNV_COUNT:
+    case RPN_FNV_COUNTA:
+    case RPN_FNV_DEVSQ:
+    case RPN_FNV_GEOMEAN:
+    case RPN_FNV_HARMEAN:
+    case RPN_FNV_KURT:
+    case RPN_FNV_MAX:
+    case RPN_FNV_MEDIAN:
+    case RPN_FNV_MIN:
+    case RPN_FNV_OR:
+    case RPN_FNV_PRODUCT:
+    case RPN_FNV_SKEW:
+    case RPN_FNV_STD:
+    case RPN_FNV_STDP:
+    case RPN_FNV_SUM:
+    case RPN_FNV_SUMSQ:
+    case RPN_FNV_VAR:
+    case RPN_FNV_VARP:
+        /* new ones */
+    case RPN_FNV_SUMPRODUCT:
+    case RPN_FNV_SKEW_P:
+    case RPN_FNV_AVERAGEA:
+    case RPN_FNV_MAXA:
+    case RPN_FNV_MINA:
+    case RPN_FNV_STDEVA:
+    case RPN_FNV_STDEVPA:
+    case RPN_FNV_VARA:
+    case RPN_FNV_VARPA:
+    case RPN_FNV_XOR:
+    case RPN_FNV_MULTINOMIAL:
+    case RPN_FNV_GCD:
+    case RPN_FNV_LCM:
+        /* unlimited ARRAY_RANGE_XXX */
+        return(true);
+
+    case RPN_FNV_CHOOSE:
+    case RPN_FNV_JOIN:
+        /* unlimited other */
+        return(true);
+
+    default:
+        return(false);
+    }
+}
+
 static void
 ev_func_lookup_check(void)
 {
@@ -1714,17 +1779,26 @@ ev_func_lookup_check(void)
     for(i = 0; i < elemof32(_rpn_table); ++i)
     {
         assert((i == _rpn_table[i].own_did_num) || (0 == _rpn_table[i].own_did_num));
-        if(_rpn_table[i].rpn_type == RPN_FNF)
+        if(_rpn_table[i].rpn_type == RPN_FN0)
+        {
+            assert(_rpn_table[i].n_args == 0);
+            assert(_rpn_table[i].max_additional_args == 0);
+        }
+        else if(_rpn_table[i].rpn_type == RPN_FNF)
         {
             assert(_rpn_table[i].n_args >= 0);
+            assert(_rpn_table[i].max_additional_args == 0);
         }
         else if(_rpn_table[i].rpn_type == RPN_FNV)
         {
             assert(_rpn_table[i].n_args < 0);
+            assert(_rpn_table[i].max_additional_args >= 0);
+            assert((_rpn_table[i].max_additional_args != 0) || ev_func_lookup_check_fnv_zero_ok(i)); /* some are unlimited */
         }
-        else if(_rpn_table[i].rpn_type == RPN_FN0)
+        else if(_rpn_table[i].rpn_type == RPN_FNM)
         {
-            assert(_rpn_table[i].n_args == 0);
+            assert(_rpn_table[i].n_args < 0);
+            assert(_rpn_table[i].max_additional_args == 0); /* all are unlimited */
         }
     }
     }/*block*/

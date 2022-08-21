@@ -660,86 +660,98 @@ object_border(
     {
         PC_RGB p_rgb = &p_style->para_style.rgb_border;
         const PC_REDRAW_CONTEXT p_redraw_context = &p_object_redraw->redraw_context;
-        PIXIT_RECT pixit_rect;
-        PIXIT_LINE pixit_line;
+        BORDER_LINE_FLAGS border_line_flags_template;
         BORDER_LINE_FLAGS border_line_flags;
+        PIXIT_LINE pixit_line_template;
+        PIXIT_LINE pixit_line;
 
-        /* adjust to border rectangle */
-        pixit_rect = p_object_redraw->pixit_rect_object;
+        /* adjust to object's border rectangle */
+        pixit_line_template.tl = p_object_redraw->pixit_rect_object.tl;
+        pixit_line_template.br = p_object_redraw->pixit_rect_object.br;
+        pixit_line_template.horizontal = 1;
 
-        /* left border */
-        pixit_line.tl = pixit_rect.tl;
-        pixit_line.br = pixit_rect.br;
-        pixit_line.br.x = pixit_line.tl.x;
-        pixit_line.horizontal = 0;
-
-        CLEAR_BORDER_LINE_FLAGS(border_line_flags);
-        border_line_flags.add_gw_to_l = 1;
-        border_line_flags.add_gw_to_r = 1;
-        border_line_flags.add_gw_to_t = 1;
-        border_line_flags.sub_gw_from_b = 1;
-        border_line_flags.add_lw_to_b = 1;
-        border_line_flags.border_style = p_style->para_style.border;
-
-#ifdef SKS_BORDER_DEBUG
-        p_rgb = &rgb_stash[8];
-#endif
-        host_paint_border_line(p_redraw_context, &pixit_line, p_rgb, border_line_flags);
+        CLEAR_BORDER_LINE_FLAGS(border_line_flags_template);
+        border_line_flags_template.border_style = p_style->para_style.border;
 
         /* top border */
-        pixit_line.tl = pixit_rect.tl;
-        pixit_line.br = pixit_rect.br;
-        pixit_line.br.y = pixit_line.tl.y;
-        pixit_line.horizontal = 1;
+        pixit_line.tl.x = pixit_line_template.tl.x + p_redraw_context->border_width.x; /* move right from this grid */
+        pixit_line.tl.y = pixit_line_template.tl.y + p_redraw_context->border_width.y; /* move down from this grid */
+        pixit_line.br.x = pixit_line_template.br.x - p_redraw_context->border_width.x; /* move left from next grid */
+        pixit_line.br.y = pixit_line.tl.y          + p_redraw_context->border_width.y; /* max line depth */
 
-        CLEAR_BORDER_LINE_FLAGS(border_line_flags);
-        border_line_flags.add_gw_to_t = 1;
-        border_line_flags.add_gw_to_b = 1;
-        border_line_flags.add_gw_to_l = 1;
-        border_line_flags.add_lw_to_l = 1;
-        border_line_flags.sub_gw_from_r = 1;
-        border_line_flags.border_style = p_style->para_style.border;
+        border_line_flags = border_line_flags_template;
+        border_line_flags.add_lw_to_r = 1; /* grow line to right as its styled width increases */
 
 #ifdef SKS_BORDER_DEBUG
+#ifdef SKS_BORDER_RECTS_DEBUG
+        { PIXIT_RECT pixit_rect; pixit_rect.tl = pixit_line.tl; pixit_rect.br = pixit_line.br;
+        p_rgb = &rgb_stash[9+4];
+        host_paint_rectangle_filled(p_redraw_context, &pixit_rect, p_rgb);
+        } /*block*/
+#endif
         p_rgb = &rgb_stash[9];
 #endif
         host_paint_border_line(p_redraw_context, &pixit_line, p_rgb, border_line_flags);
 
-        /* right border */
-        pixit_line.tl = pixit_rect.tl;
-        pixit_line.br = pixit_rect.br;
-        pixit_line.tl.x = pixit_line.br.x;
-        pixit_line.horizontal = 0;
+        /* bottom border */
+        pixit_line.tl.x = pixit_line_template.tl.x + p_redraw_context->border_width.x; /* move right from this grid */
+        pixit_line.tl.y = pixit_line_template.br.y - p_redraw_context->border_width.y; /* move up from next grid */
+        pixit_line.br.x = pixit_line_template.br.x - p_redraw_context->border_width.x; /* move left from next grid */
+        pixit_line.br.y = pixit_line.tl.y          + p_redraw_context->border_width.y; /* max line depth */
 
-        CLEAR_BORDER_LINE_FLAGS(border_line_flags);
-        border_line_flags.sub_gw_from_l = 1;
-        border_line_flags.sub_gw_from_r = 1;
-        border_line_flags.add_gw_to_t = 1;
-        border_line_flags.sub_gw_from_b = 1;
-        border_line_flags.add_lw_to_b = 1;
-        border_line_flags.border_style = p_style->para_style.border;
+        border_line_flags = border_line_flags_template;
+        border_line_flags.add_lw_to_r = 1; /* grow line to right as its styled width increases */
 
 #ifdef SKS_BORDER_DEBUG
-        p_rgb = &rgb_stash[10];
+#ifdef SKS_BORDER_RECTS_DEBUG
+        { PIXIT_RECT pixit_rect; pixit_rect.tl = pixit_line.tl; pixit_rect.br = pixit_line.br;
+        p_rgb = &rgb_stash[11+4];
+        host_paint_rectangle_filled(p_redraw_context, &pixit_rect, p_rgb);
+        } /*block*/
+#endif
+        p_rgb = &rgb_stash[11];
 #endif
         host_paint_border_line(p_redraw_context, &pixit_line, p_rgb, border_line_flags);
 
-        /* bottom border */
-        pixit_line.tl = pixit_rect.tl;
-        pixit_line.br = pixit_rect.br;
-        pixit_line.tl.y = pixit_line.br.y;
-        pixit_line.horizontal = 1;
+        /* left border */
+        pixit_line.tl.x = pixit_line_template.tl.x + p_redraw_context->border_width.x; /* move right from this grid */
+        pixit_line.tl.y = pixit_line_template.tl.y + p_redraw_context->border_width.y; /* move down from this grid */
+        pixit_line.br.x = pixit_line.tl.x          + p_redraw_context->border_width.x; /* max line width */
+        pixit_line.br.y = pixit_line_template.br.y - p_redraw_context->border_width.y; /* move up from next grid */
+        pixit_line.horizontal = 0;
 
-        CLEAR_BORDER_LINE_FLAGS(border_line_flags);
-        border_line_flags.sub_gw_from_t = 1;
-        border_line_flags.sub_gw_from_b = 1;
-        border_line_flags.add_gw_to_l = 1;
-        border_line_flags.add_lw_to_l = 1;
-        border_line_flags.sub_gw_from_r = 1;
-        border_line_flags.border_style = p_style->para_style.border;
+        border_line_flags = border_line_flags_template;
+        border_line_flags.add_lw_to_t = 1; /* shorten line downwards as its styled width increases */
 
 #ifdef SKS_BORDER_DEBUG
-        p_rgb = &rgb_stash[11];
+#ifdef SKS_BORDER_RECTS_DEBUG
+        { PIXIT_RECT pixit_rect; pixit_rect.tl = pixit_line.tl; pixit_rect.br = pixit_line.br;
+        p_rgb = &rgb_stash[8+4];
+        host_paint_rectangle_filled(p_redraw_context, &pixit_rect, p_rgb);
+        } /*block*/
+#endif
+        p_rgb = &rgb_stash[8];
+#endif
+        host_paint_border_line(p_redraw_context, &pixit_line, p_rgb, border_line_flags);
+
+        /* right border */
+        pixit_line.tl.x = pixit_line_template.br.x - p_redraw_context->border_width.x; /* move left from next grid */
+        pixit_line.tl.y = pixit_line_template.tl.y + p_redraw_context->border_width.y; /* move down from this grid */
+        pixit_line.br.x = pixit_line.tl.x          + p_redraw_context->border_width.x; /* max line width */
+        pixit_line.br.y = pixit_line_template.br.y - p_redraw_context->border_width.y; /* move up from next grid */
+        pixit_line.horizontal = 0;
+
+        border_line_flags = border_line_flags_template;
+        border_line_flags.add_lw_to_t = 1; /* shorten line downwards as its styled width increases */
+
+#ifdef SKS_BORDER_DEBUG
+#ifdef SKS_BORDER_RECTS_DEBUG
+        { PIXIT_RECT pixit_rect; pixit_rect.tl = pixit_line.tl; pixit_rect.br = pixit_line.br;
+        p_rgb = &rgb_stash[10+4];
+        host_paint_rectangle_filled(p_redraw_context, &pixit_rect, p_rgb);
+        } /*block*/
+#endif
+        p_rgb = &rgb_stash[10];
 #endif
         host_paint_border_line(p_redraw_context, &pixit_line, p_rgb, border_line_flags);
     }

@@ -76,8 +76,8 @@ PROC_EXEC_PROTO(c_db)
 {
     const F64 cost = ss_data_get_real(args[0]);
     const F64 salvage = ss_data_get_real(args[1]);
-    const S32 life = (S32) ss_data_get_real(args[2]);
-    const S32 period = (S32) ss_data_get_real(args[3]);
+    const S32 life = (S32) arg_get_real_INT(args[2]);
+    const S32 period = (S32) arg_get_real_INT(args[3]); /* ODF has as Number, but how??? */
     const F64 month = (n_args > 4) ? ss_data_get_real(args[4]) : 12.0;
     F64 rate;
     F64 db_result;
@@ -90,10 +90,15 @@ PROC_EXEC_PROTO(c_db)
         life < 1        ||
         month < 1.0     ||
         month > 12.0    ||
-        period < 1      ||
-        (period > life + (12.0 != month)) )
+        period < 1      )
     {
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
+    }
+
+    if(period > life + (12.0 != month))
+    {   /* subsequent periods have a depreciation allowance of zero */
+        *p_ss_data_res = ss_data_real_zero;
+        return;
     }
 
     /* rate = 1 - ((salvage / cost) ^ (1 / life)), rounded to three decimal places */
@@ -104,15 +109,12 @@ PROC_EXEC_PROTO(c_db)
 
     /* depreciation during a period = (cost - total depreciation from prior periods) * rate */
     if(1 == period)
-    {   /* depreciation during first period */
-        db_result = cost * rate;
-
-        if(12.0 != month)
-            db_result *= month / 12.0; /* adjust for month */
+    {   /* depreciation during first period (adjusted for month) */
+        db_result = ((cost * rate) * month) / 12.0;
     }
     else
     {
-        F64 total_depreciation = (cost * rate) * month / 12.0; /* depreciation during first period, adjust for month */
+        F64 total_depreciation = ((cost * rate) * month) / 12.0; /* depreciation during first period, adjust for month */
         S32 prev_period;
 
         /* depreciation during subsequent periods */
@@ -126,7 +128,7 @@ PROC_EXEC_PROTO(c_db)
         /* depreciation during this period */
         db_result = (cost - total_depreciation) * rate;
 
-        if((12.0 != month) && (period > life))
+        if((period > life) && (12.0 != month))
             db_result *= (12.0 - month) / 12.0; /* adjust for month */
     }
 
@@ -230,11 +232,14 @@ PROC_EXEC_PROTO(c_fv)
     const F64 payment = ss_data_get_real(args[0]);
     const F64 interest = ss_data_get_real(args[1]);
     const F64 term = ss_data_get_real(args[2]);
+    F64 fv_result;
 
     exec_func_ignore_parms();
 
     /* fv(payment, interest, term) = payment * ((1 + interest) ^ term - 1) / interest */
-    ss_data_set_real(p_ss_data_res, calc_fv(payment, interest, term));
+    fv_result = calc_fv(payment, interest, term);
+
+    ss_data_set_real(p_ss_data_res, fv_result);
 }
 
 PROC_EXEC_PROTO(c_odf_fv)
@@ -549,7 +554,7 @@ PROC_EXEC_PROTO(c_nper)
 PROC_EXEC_PROTO(c_term)
 {
     F64 payment = ss_data_get_real(args[0]);
-    F64 interest = ss_data_get_real(args[1]) ;
+    F64 interest = ss_data_get_real(args[1]);
     F64 fv = ss_data_get_real(args[2]);
 
     exec_func_ignore_parms();

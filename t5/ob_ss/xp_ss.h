@@ -100,11 +100,11 @@ enum __ss_function_indices
     SS_SPLIT_BINOM_DIST,
     SS_SPLIT_BINOM_DIST_RANGE,
     SS_SPLIT_BINOM_INV,
-	SS_SPLIT_BITAND,
-	SS_SPLIT_BITLSHIFT,
-	SS_SPLIT_BITOR,
-	SS_SPLIT_BITRSHIFT,
-	SS_SPLIT_BITXOR,
+    SS_SPLIT_BITAND,
+    SS_SPLIT_BITLSHIFT,
+    SS_SPLIT_BITOR,
+    SS_SPLIT_BITRSHIFT,
+    SS_SPLIT_BITXOR,
 
     SS_SPLIT_C_ACOS,
     SS_SPLIT_C_ACOSEC,
@@ -302,6 +302,7 @@ enum __ss_function_indices
     SS_SPLIT_NORM_S_DIST,
     SS_SPLIT_NORM_INV,
     SS_SPLIT_NORM_S_INV,
+    SS_SPLIT_NOT,
     SS_SPLIT_NOW,
     SS_SPLIT_NPER,
     /* NO    NPV */
@@ -454,15 +455,15 @@ enum ALERT_RESULT_CODES
 {
     ALERT_RESULT_NONE = 0,
     ALERT_RESULT_CLOSE,
-    ALERT_RESULT_BUT_1,
-    ALERT_RESULT_BUT_2
+    ALERT_RESULT_BUTTON_1,
+    ALERT_RESULT_BUTTON_2
 };
 
 typedef struct SS_INPUT_EXEC
 {
     PC_SS_STRINGC p_ss_string_message;
-    PC_SS_STRINGC p_ss_string_but_1;
-    PC_SS_STRINGC p_ss_string_but_2;
+    PC_SS_STRINGC p_ss_string_button_1;
+    PC_SS_STRINGC p_ss_string_button_2;
     EV_DOCNO ev_docno;
 }
 SS_INPUT_EXEC, * P_SS_INPUT_EXEC;

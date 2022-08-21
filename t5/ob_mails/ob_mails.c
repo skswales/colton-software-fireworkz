@@ -119,35 +119,28 @@ mailshot_change(
 
 enum MAILSHOT_FIELD_INSERT_IDS
 {
-    MAILSHOT_FIELD_INSERT_ID_NUMBER_TEXT = 32,
+    MAILSHOT_FIELD_INSERT_ID_NUMBER_LABEL = 32,
     MAILSHOT_FIELD_INSERT_ID_NUMBER
 };
 
 static const DIALOG_CONTROL
-insert_mailshot_field_number_text =
+insert_mailshot_field_number_label =
 {
-    MAILSHOT_FIELD_INSERT_ID_NUMBER_TEXT, DIALOG_MAIN_GROUP,
-
-    { DIALOG_CONTROL_PARENT, MAILSHOT_FIELD_INSERT_ID_NUMBER,
-      DIALOG_CONTROL_SELF,   MAILSHOT_FIELD_INSERT_ID_NUMBER },
-
+    MAILSHOT_FIELD_INSERT_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, MAILSHOT_FIELD_INSERT_ID_NUMBER, DIALOG_CONTROL_SELF, MAILSHOT_FIELD_INSERT_ID_NUMBER },
     { 0, 0, DIALOG_SYSCHARSL_H(12), 0 },
-
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-insert_mailshot_field_number_text_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_INSERT_FIELD_NUMBER) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+insert_mailshot_field_number_label_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_INSERT_FIELD_NUMBER) };
 
 static const DIALOG_CONTROL
 insert_mailshot_field_number =
 {
     MAILSHOT_FIELD_INSERT_ID_NUMBER, DIALOG_MAIN_GROUP,
-
-    { MAILSHOT_FIELD_INSERT_ID_NUMBER_TEXT, DIALOG_CONTROL_PARENT },
-
+    { MAILSHOT_FIELD_INSERT_ID_NUMBER_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
-
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
@@ -170,18 +163,18 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 insert_mailshot_field_insert_command = { T5_CMD_INSERT_FIELD_MS_FIELD, OBJECT_ID_SKEL, insert_mailshot_field_insert_data_args, insert_mailshot_field_insert_data_argmap };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-insert_mailshot_field_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_INSERT), &insert_mailshot_field_insert_command };
+insert_mailshot_field_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT), &insert_mailshot_field_insert_command };
 
 static const DIALOG_CTL_CREATE
 insert_mailshot_field_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &insert_mailshot_field_number_text, &insert_mailshot_field_number_text_data },
-    { &insert_mailshot_field_number,      &insert_mailshot_field_number_data },
+    { { &insert_mailshot_field_number_label },  &insert_mailshot_field_number_label_data },
+    { { &insert_mailshot_field_number },        &insert_mailshot_field_number_data },
 
-    { &defbutton_ok, &insert_mailshot_field_insert_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &insert_mailshot_field_insert_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -238,9 +231,8 @@ mailshot_cmd_insert_field_intro_ms_field(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_mailshot_field_ctl_create, elemof32(insert_mailshot_field_ctl_create), MAILSHOT_MSG_DIALOG_INSERT_FIELD_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MAILSHOT_MSG_DIALOG_INSERT_FIELD_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_mailshot_field_ctl_create, elemof32(insert_mailshot_field_ctl_create), MAILSHOT_MSG_DIALOG_INSERT_FIELD_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MAILSHOT_MSG_DIALOG_INSERT_FIELD_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_insert_mailshot_field_intro;
     if((status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox)) == STATUS_FAIL)
         status = STATUS_OK;
@@ -372,7 +364,7 @@ mailshot_instance_data_dispose(
         {
             P_DOCU p_docu_source = p_docu_from_docno(p_mailshot_instance_data->source_docno);
 
-            if(!IS_DOCU_NONE(p_docu_source))
+            if(DOCU_NOT_NONE(p_docu_source))
             {
                 maeve_event_handler_del_handle(p_docu_source, p_mailshot_instance_data->maeve_handle);
                 p_mailshot_instance_data->maeve_handle = 0;
@@ -394,9 +386,9 @@ enum MAILSHOT_SELECT_IDS
     MAILSHOT_SELECT_ID_ROW,
     MAILSHOT_SELECT_ID_BLANK_GROUP,
     MAILSHOT_SELECT_ID_BLANK_BLANK,
-    MAILSHOT_SELECT_ID_BLANK_STT_TEXT,
+    MAILSHOT_SELECT_ID_BLANK_STT_LABEL,
     MAILSHOT_SELECT_ID_BLANK_STT,
-    MAILSHOT_SELECT_ID_BLANK_END_TEXT,
+    MAILSHOT_SELECT_ID_BLANK_END_LABEL,
     MAILSHOT_SELECT_ID_BLANK_END
 };
 
@@ -412,16 +404,16 @@ mailshot_select_list =
 };
 
 static const DIALOG_CONTROL
-mailshot_select_row_text =
+mailshot_select_row_label =
 {
     MAILSHOT_SELECT_ID_ROW_TEXT, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, MAILSHOT_SELECT_ID_ROW, DIALOG_CONTROL_SELF, MAILSHOT_SELECT_ID_ROW },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-mailshot_select_row_text_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_ROW), { 0 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+mailshot_select_row_label_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_ROW) };
 
 static const DIALOG_CONTROL
 mailshot_select_row =
@@ -467,22 +459,22 @@ blank start
 */
 
 static const DIALOG_CONTROL
-mailshot_select_blank_stt_text =
+mailshot_select_blank_stt_label =
 {
-    MAILSHOT_SELECT_ID_BLANK_STT_TEXT, MAILSHOT_SELECT_ID_BLANK_GROUP,
+    MAILSHOT_SELECT_ID_BLANK_STT_LABEL, MAILSHOT_SELECT_ID_BLANK_GROUP,
     { MAILSHOT_SELECT_ID_BLANK_BLANK, MAILSHOT_SELECT_ID_BLANK_STT, DIALOG_CONTROL_SELF, MAILSHOT_SELECT_ID_BLANK_STT },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-mailshot_select_blank_stt_text_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_BLANK_STT) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+mailshot_select_blank_stt_label_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_BLANK_STT) };
 
 static const DIALOG_CONTROL
 mailshot_select_blank_stt =
 {
     MAILSHOT_SELECT_ID_BLANK_STT, MAILSHOT_SELECT_ID_BLANK_GROUP,
-    { MAILSHOT_SELECT_ID_BLANK_STT_TEXT, MAILSHOT_SELECT_ID_BLANK_BLANK },
+    { MAILSHOT_SELECT_ID_BLANK_STT_LABEL, MAILSHOT_SELECT_ID_BLANK_BLANK },
     { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
 };
@@ -498,16 +490,16 @@ blank end
 */
 
 static const DIALOG_CONTROL
-mailshot_select_blank_end_text =
+mailshot_select_blank_end_label =
 {
-    MAILSHOT_SELECT_ID_BLANK_END_TEXT, MAILSHOT_SELECT_ID_BLANK_GROUP,
-    { MAILSHOT_SELECT_ID_BLANK_STT_TEXT, MAILSHOT_SELECT_ID_BLANK_END, MAILSHOT_SELECT_ID_BLANK_STT_TEXT, MAILSHOT_SELECT_ID_BLANK_END },
+    MAILSHOT_SELECT_ID_BLANK_END_LABEL, MAILSHOT_SELECT_ID_BLANK_GROUP,
+    { MAILSHOT_SELECT_ID_BLANK_STT_LABEL, MAILSHOT_SELECT_ID_BLANK_END, MAILSHOT_SELECT_ID_BLANK_STT_LABEL, MAILSHOT_SELECT_ID_BLANK_END },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-mailshot_select_blank_end_text_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_BLANK_END) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+mailshot_select_blank_end_label_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_SELECT_BLANK_END) };
 
 static const DIALOG_CONTROL
 mailshot_select_blank_end =
@@ -524,26 +516,26 @@ mailshot_select_blank_end_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } 
 static const DIALOG_CTL_CREATE
 mailshot_select_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &mailshot_select_list, &stdlisttext_data_dd },
-    { &mailshot_select_row_text,       &mailshot_select_row_text_data },
-    { &mailshot_select_row,            &mailshot_select_row_data },
+    { { &mailshot_select_list }, &stdlisttext_data_dd },
+    { { &mailshot_select_row_label },       &mailshot_select_row_label_data },
+    { { &mailshot_select_row },             &mailshot_select_row_data },
 
-    { &mailshot_select_blank_group,    &mailshot_select_blank_group_data },
-    { &mailshot_select_blank_blank,    &mailshot_select_blank_blank_data },
-    { &mailshot_select_blank_stt_text, &mailshot_select_blank_stt_text_data },
-    { &mailshot_select_blank_stt,      &mailshot_select_blank_stt_data },
-    { &mailshot_select_blank_end_text, &mailshot_select_blank_end_text_data },
-    { &mailshot_select_blank_end,      &mailshot_select_blank_end_data },
+    { { &mailshot_select_blank_group },     &mailshot_select_blank_group_data },
+    { { &mailshot_select_blank_blank },     &mailshot_select_blank_blank_data },
+    { { &mailshot_select_blank_stt_label }, &mailshot_select_blank_stt_label_data },
+    { { &mailshot_select_blank_stt },       &mailshot_select_blank_stt_data },
+    { { &mailshot_select_blank_end_label }, &mailshot_select_blank_end_label_data },
+    { { &mailshot_select_blank_end },       &mailshot_select_blank_end_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data }
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
+    { { &defbutton_ok }, &defbutton_ok_data }
 };
 
 typedef struct MAILSHOT_SELECT_LIST_ENTRY
 {
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, elemof32("doseight.fwk")); /* NB buffer adjacent for fixup */
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 16); /* NB buffer adjacent for fixup */
 
     DOCNO docno;
 }
@@ -763,8 +755,7 @@ mailshot_cmd_mailshot_select(
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
         dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, mailshot_select_ctl_create, elemof32(mailshot_select_ctl_create), MAILSHOT_MSG_DIALOG_SELECT_CAPTION);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = MAILSHOT_MSG_DIALOG_SELECT_CAPTION;
+        dialog_cmd_process_dbox.help_topic_resource_id = MAILSHOT_MSG_DIALOG_SELECT_CAPTION;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_mailshot_select;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &mailshot_select_callback;
         status = object_call_DIALOG_with_docu(p_docu_dependent, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);

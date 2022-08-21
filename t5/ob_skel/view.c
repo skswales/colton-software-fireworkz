@@ -1950,7 +1950,7 @@ view_show_caret(
 
     p_view = p_view_from_viewno_caret(p_docu);
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         VIEW_POINT view_point;
 
@@ -1990,7 +1990,7 @@ view_scroll_caret(
 
     p_view = p_view_from_viewno_caret(p_docu);
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         VIEW_POINT view_point;
 
@@ -2011,7 +2011,7 @@ view_scroll_pane(
 
     assert((t5_message == T5_CMD_PAGE_DOWN) || (t5_message == T5_CMD_PAGE_UP) || (t5_message == T5_CMD_SHIFT_PAGE_DOWN) || (t5_message == T5_CMD_SHIFT_PAGE_UP));
 
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         REDRAW_TAG redraw_tag = UPDATE_PANE_CELLS_AREA;
         VIEW_POINT view_point;
@@ -2603,7 +2603,7 @@ viewid_pack(
 {
     const DOCNO docno = docno_from_p_docu(p_docu);
     VIEWNO viewno = VIEWNO_NONE;
-    if((docno != DOCNO_NONE) && !IS_VIEW_NONE(p_view))
+    if((docno != DOCNO_NONE) && VIEW_NOT_NONE(p_view))
         viewno = viewno_from_p_view(p_view);
     return((U32) (((U32) event_handler_id << 16) | ((U32) viewno << 8) | docno));
 }
@@ -2642,7 +2642,7 @@ p_view_from_viewno(
     _DocuRef_   PC_DOCU p_docu,
     _InVal_     VIEWNO viewno)
 {
-    if(!IS_DOCU_NONE(p_docu))
+    if(DOCU_NOT_NONE(p_docu))
     {
         ARRAY_INDEX view_table_index = viewno - VIEWNO_FIRST; /* handle 0 avoidance */
 

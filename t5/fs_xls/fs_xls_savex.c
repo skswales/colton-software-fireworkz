@@ -260,7 +260,7 @@ xls_xml_write_cell_text(
 {
     STATUS status = STATUS_OK;
     OBJECT_DATA_READ object_data_read;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     object_data_read.object_data = *p_object_data;

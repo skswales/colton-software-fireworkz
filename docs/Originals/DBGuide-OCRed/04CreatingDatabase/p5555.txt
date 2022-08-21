@@ -1,0 +1,14 @@
+﻿
+4 Creating a database
+This chapter explains how to create a new database.
+It includes sections on:
+. Adding and deleting fields.
+. Field types.
+. Data entry short cuts.
+. Data entry checking.
+
+Fireworkz Pro55
+
+
+
+

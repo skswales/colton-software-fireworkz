@@ -290,7 +290,7 @@ fillstyle_event_handler(dbox d, P_ANY event, P_ANY handle)
     wimp_eventstr * e = event;
     LIST_ITEMNO * keyp = handle;
 
-    IGNOREPARM(d);
+    UNREFERENCED_PARAMETER(d);
 
     switch(e->e)
     {
@@ -822,7 +822,7 @@ gr_chart_edit_selected_object_drag_start(P_GR_CHART_EDIT cep, P_GR_POINT /*const
     P_GR_CHART cp = gr_chart_cp_from_ch(cep->ch);
     GR_POINT resize_patch;
 
-    IGNOREPARM(workareaoff);
+    UNREFERENCED_PARAMETER(workareaoff);
 
     assert(cp);
 
@@ -874,7 +874,7 @@ gr_chart_edit_selected_object_drag_complete(P_GR_CHART_EDIT cep, const wimp_box 
     P_GR_CHART cp = gr_chart_cp_from_ch(cep->ch);
     GR_POINT moveby;
 
-    IGNOREPARM(dragboxp);
+    UNREFERENCED_PARAMETER(dragboxp);
 
     trace_0(TRACE_MODULE_GR_CHART, "[gr_chart_edit_selected_object_drag_complete]\n");
 

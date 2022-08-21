@@ -1,0 +1,59 @@
+﻿Display type
+To change the display type click on either:
+. Card to display the database using a card layout.
+or
+. Sheet to display the database using a sheet layout.
+
+Number of records displayed
+You can choose how many records you have displayed. This can
+be either:
+. A fixed number, regardless of the size of the database. The
+number of rows which the database occupies in the document
+will remain constant. If there are insufficient records to
+occupy the slots allocated, blank records will be displayed.
+. A variable number, which alters depending on the number of
+records in the database. If records are added, the number of
+rows which the database occupies in the document will
+increase to accommodate them. If records are removed, the
+number of rows will decrease.
+To specify the number of records to be displayed, start by:
+. Setting the Auto option to have the number displayed change
+automatically according to how many records there are in the
+database you are working on.
+or
+. Clearing the Auto option to have a fixed number displayed at
+all times.
+
+Rows
+If you have cleared the Auto option in order to have a fixed
+number displayed, you should then specify the number of rows
+which the database is to occupy, either by:
+. Typing the number directly into the Rows box.
+or
+. Clicking on the up and down arrows adjacent to the Rows box
+to adjust the number already there.
+
+Columns
+For sheet layouts, the number of columns used will be determined
+by the number of fields being displayed.
+For card layouts, you can specify the number of cards to be placed
+side by side by entering a number in the Colunms box, either by:
+. Typing the number directly into the Columns box.
+or
+. Clicking on the up and down arrows adjacent to the Columns
+box to adjust the number already there.
+If you have chosen to clear the Auto option in order to display a
+fixed number of records, the number of cards displayed will be
+given by:
+the number of columns * the number of rows deep
+If you have chosen to set the Auto option in order to display a
+variable number of records, the number of rows used will be given
+by:
+the number of records / the number of columns
+rounded up to the nearest whole number.
+
+Fireworkz Pro 79
+
+
+
+

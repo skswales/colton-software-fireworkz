@@ -57,6 +57,31 @@ messages
 #define SKEL_SPLIT_MSG_DIALOG_ES_PS4_HELP_TOPIC                 SKEL_SPLIT_MSG(25)
 #define SKEL_SPLIT_MSG_DIALOG_ES_RS_HELP_TOPIC                  SKEL_SPLIT_MSG(26)
 
+#define SKEL_SPLIT_MSG_DIALOG_BOX_CAPTION                       SKEL_SPLIT_MSG(39)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_HELP_TOPIC                    SKEL_SPLIT_MSG(40)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_OUTSIDE                       SKEL_SPLIT_MSG(41)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_INSIDE                        SKEL_SPLIT_MSG(42)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_V                             SKEL_SPLIT_MSG(43)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_H                             SKEL_SPLIT_MSG(44)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_ALL                           SKEL_SPLIT_MSG(45)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_L                             SKEL_SPLIT_MSG(46)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_R                             SKEL_SPLIT_MSG(47)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_T                             SKEL_SPLIT_MSG(48)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_B                             SKEL_SPLIT_MSG(49)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_LINE_STYLE                    SKEL_SPLIT_MSG(50)
+#define SKEL_SPLIT_MSG_DIALOG_BOX_COLOUR                        SKEL_SPLIT_MSG(51)
+
+#define SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_CAPTION              SKEL_SPLIT_MSG(59)
+#define SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_HELP_TOPIC           SKEL_SPLIT_MSG(60)
+#define SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_COLS                 SKEL_SPLIT_MSG(61)
+#define SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_ROWS                 SKEL_SPLIT_MSG(62)
+
+#define SKEL_SPLIT_MSG_DIALOG_ADD_CR_HELP_TOPIC                 SKEL_SPLIT_MSG(64)
+#define SKEL_SPLIT_MSG_DIALOG_COLS_ADD                          SKEL_SPLIT_MSG(65)
+#define SKEL_SPLIT_MSG_DIALOG_COLS_INSERT                       SKEL_SPLIT_MSG(66)
+#define SKEL_SPLIT_MSG_DIALOG_ROWS_ADD                          SKEL_SPLIT_MSG(67)
+#define SKEL_SPLIT_MSG_DIALOG_ROWS_INSERT                       SKEL_SPLIT_MSG(68)
+
 #endif /* __ob_skspt_h */
 
 /* end of ob_skspt.h */

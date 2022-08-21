@@ -59,16 +59,31 @@ X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_toolb
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_skel.modules
 X Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_skel.riscos
 
-Copy <MkDir$Archive>._app1 <t5$Build$Dir>.firewrkz
-Copy <MkDir$Archive>._app2 <t5$Build$Dir>.firewrkz.!Fireworkz
+Copy <MkDir$Archive>._app1     <t5$Build$Dir>.firewrkz
+Copy <MkDir$Archive>._app2     <t5$Build$Dir>.firewrkz.!Fireworkz
+Copy <MkDir$Archive>._app_lang <t5$Build$Dir>.firewrkz.!Fireworkz
+| Language variants derived from UK structure
+X Rename <t5$Build$Dir>.firewrkz.!Fireworkz.Resources.UK <t5$Build$Dir>.firewrkz.!Fireworkz.Resources.France
+Copy <MkDir$Archive>._app_lang <t5$Build$Dir>.firewrkz.!Fireworkz
+X Rename <t5$Build$Dir>.firewrkz.!Fireworkz.Resources.UK <t5$Build$Dir>.firewrkz.!Fireworkz.Resources.Germany
+Copy <MkDir$Archive>._app_lang <t5$Build$Dir>.firewrkz.!Fireworkz
+| Leave UK as the last language
 
 | Fireworkz Pro can only be built if corresponding R-Comp components are present
 IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_rec
 IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.ob_recb
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_ole
 IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._std <t5$Build$Dir>.fs_xls
 
 IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app1 <t5$Build$Dir>.fprowrkz
 IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app2 <t5$Build$Dir>.fprowrkz.!Fireworkz
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app_lang <t5$Build$Dir>.fprowrkz.!Fireworkz
+| Pro: Language variants derived from UK structure
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then X Rename <t5$Build$Dir>.fprowrkz.!Fireworkz.Resources.UK <t5$Build$Dir>.fprowrkz.!Fireworkz.Resources.France
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app_lang <t5$Build$Dir>.fprowrkz.!Fireworkz
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then X Rename <t5$Build$Dir>.fprowrkz.!Fireworkz.Resources.UK <t5$Build$Dir>.fprowrkz.!Fireworkz.Resources.Germany
+IfThere $.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib Then Copy <MkDir$Archive>._app_lang <t5$Build$Dir>.fprowrkz.!Fireworkz
+| Pro: Leave UK as the last language
 
 |IfThere <t5$Build$Dir>.firewrkz Then Filer_OpenDir <t5$Build$Dir>.firewrkz
 |IfThere <t5$Build$Dir>.fprowrkz Then Filer_OpenDir <t5$Build$Dir>.fprowrkz

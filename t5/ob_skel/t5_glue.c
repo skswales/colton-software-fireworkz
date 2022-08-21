@@ -55,6 +55,7 @@ OBJECT_PROTO(extern, object_fl_xls);
 OBJECT_PROTO(extern, object_fs_ascii);
 OBJECT_PROTO(extern, object_fs_csv);
 OBJECT_PROTO(extern, object_fs_lotus123);
+OBJECT_PROTO(extern, object_fs_ole);
 OBJECT_PROTO(extern, object_fs_rtf);
 OBJECT_PROTO(extern, object_fs_xls);
 
@@ -203,6 +204,10 @@ t5_glue_objects(void)
     object_install(OBJECT_ID_FS_LOTUS123, object_fs_lotus123);
 #endif
 
+#if          defined(BIND_FS_OLE)
+    object_install(OBJECT_ID_FS_OLE, object_fs_ole);
+#endif
+
 #if          defined(BIND_FS_RTF)
     object_install(OBJECT_ID_FS_RTF, object_fs_rtf);
 #endif
@@ -220,6 +225,8 @@ t5_glued_object(
     _InVal_     OBJECT_ID object_id)
 {
     UNREFERENCED_PARAMETER_InVal_(object_id); /* there are times when this is really never used */
+
+    myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("t5_glued_object(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
 
     switch(object_id)
     {
@@ -365,6 +372,10 @@ t5_glued_object(
         case OBJECT_ID_FS_LOTUS123: return(object_fs_lotus123);
 #endif
 
+#if  defined(LOADED_FS_OLE)
+        case OBJECT_ID_FS_OLE: return(object_fs_ole);
+#endif
+
 #if  defined(LOADED_FS_RTF)
         case OBJECT_ID_FS_RTF: return(object_fs_rtf);
 #endif
@@ -379,7 +390,6 @@ t5_glued_object(
             break;
     }
 
-    assert(IS_OBJECT_ID_VALID(object_id));
     return(NULL);
 }
 
@@ -392,6 +402,8 @@ extern BOOL
 object_available(
     _InVal_     OBJECT_ID object_id)
 {
+    myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("object_available(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
+
     if(object_present(object_id))
         return(TRUE);
 
@@ -529,6 +541,10 @@ object_available(
         case OBJECT_ID_FS_CSV:
 #endif
 
+#if  defined(LOADED_FS_OLE) || defined(BIND_FS_OLE)
+        case OBJECT_ID_FS_OLE:
+#endif
+
 #if  defined(LOADED_FS_RTF) || defined(BIND_FS_RTF)
         case OBJECT_ID_FS_RTF:
 #endif
@@ -546,7 +562,6 @@ object_available(
             break;
     }
 
-    assert(IS_OBJECT_ID_VALID(object_id));
     return(FALSE);
 }
 

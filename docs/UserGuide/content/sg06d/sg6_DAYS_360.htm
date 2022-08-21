@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>DAYS_360</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 2014-2020 Stuart Swales -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="DAYS_360" />
+        <param name="Keyword" value="Functions, Date and time, DAYS_360" />
+        <param name="Keyword" value="Date and time functions, number of days between dates" />
+    </object>
+
+    <h1><a name="days_360" id="days_360"></a>DAYS_360</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        DAYS_360(<span class="csg-function-parameter">start</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_date_formats.htm">Date</a></span>,
+        <span class="csg-function-parameter">end</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_date_formats.htm">Date</a></span>
+        {,&nbsp;<span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">Logical</span>})
+    </p>
+
+    <p>This function returns the number of days between the given dates according to the desired 360-day calendar method.</p>
+
+    <p>A duration is calculated as an integral number of days between two dates A and B (where by convention A is earlier than B).</p>
+
+    <p>There are two methods commonly available which differ in the way that they handle the cases where the months are not 30 days long:</p>
+
+    <ul>
+        <li>
+            The European Method (30E/360) (<span class="csg-function-parameter">method</span>=<code>TRUE</code>)<br />
+            If either date A or B falls on the 31st of the month, that date will be changed to the 30th;<br />
+            Where date B falls on the last day of February, the actual date B will be used.
+        </li>
+
+        <li>
+            The National Association of Securities Dealers (NASD) 'US' Method (30US/360) (<span class="csg-function-parameter">method</span>=<code>FALSE</code> or omitted)<br />
+            If both date A and B fall on the last day of February, then date B will be changed to the 30th.<br />
+            If date A falls on the 31st of a month or last day of February, then date A will be changed to the 30th.<br />
+            If date A falls on the 30th of a month after applying (2) above and date B falls on the 31st of a month, then date B will be changed to the 30th.
+        </li>
+    </ul>
+
+    <p>In both cases the difference between the possibly-adjusted dates is then computed by treating all intervening months as being 30 days long.</p>
+
+    <p>Credit:</p>
+    <p><a href="http://en.wikipedia.org/wiki/360-day_calendar">http://en.wikipedia.org/wiki/360-day_calendar</a></p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.00.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06d/sg6_DAYS.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#date_time_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06h/sg6_HOUR.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

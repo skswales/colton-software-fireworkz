@@ -42,6 +42,16 @@ extern PC_U8 rb_ss_msg_weak;
 
 #define P_BOUND_RESOURCES_OBJECT_ID_SS LOAD_RESOURCES
 
+typedef struct SS_FUNCTION_ADD_ARGUMENTS
+{
+    P_QUICK_UBLOCK p_quick_ublock /*appended*/;
+
+    BOOL f_inline_wrap; /*in*/
+
+    U32 n_trailing_curly_brackets; /*out*/
+}
+SS_FUNCTION_ADD_ARGUMENTS, * P_SS_FUNCTION_ADD_ARGUMENTS;
+
 /*
 internal functions
 */
@@ -51,10 +61,10 @@ OBJECT_PROTO(extern, object_ss);
 _Check_return_
 static STATUS
 ss_function_add_argument(
-    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InoutRef_  P_SS_FUNCTION_ADD_ARGUMENTS p_ss_function_add_arguments,
     _In_        STATUS message,
     _InVal_     U32 argument_index,
-    _InVal_     BOOL in_line_wrap);
+    _InVal_     BOOL f_argument_is_optional);
 
 _Check_return_
 static STATUS
@@ -64,7 +74,7 @@ ss_function_get_help(
 
 _Check_return_
 static STATUS
-ss_function_paste_to_editing_line(
+ss_ui_function_paste_to_editing_line(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     S32 category,
     _InVal_     S32 item_number);
@@ -155,13 +165,15 @@ object_construct_table[] =
     { "ReplicateLeft",          NULL,                       T5_CMD_REPLICATE_LEFT,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
     { "MakeText",               NULL,                       T5_CMD_SS_MAKE_TEXT,                        { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1 } },
     { "MakeNumber",             NULL,                       T5_CMD_SS_MAKE_NUMBER,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1 } },
-    { "AutoSum",                NULL,                       T5_CMD_AUTO_SUM,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
+    { "ActivateMenuAutoFn",     NULL,                       T5_CMD_ACTIVATE_MENU_AUTO_FUNCTION,         { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
+    { "ActivateMenuFunc",       NULL,                       T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR,     { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
+    { "AutoFunction",           ss_args_ustr,               T5_CMD_AUTO_FUNCTION,                       { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
     { "InsertOperatorPlus",     NULL,                       T5_CMD_INSERT_OPERATOR_PLUS,                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
     { "InsertOperatorMinus",    NULL,                       T5_CMD_INSERT_OPERATOR_MINUS,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
     { "InsertOperatorTimes",    NULL,                       T5_CMD_INSERT_OPERATOR_TIMES,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
     { "InsertOperatorDivide",   NULL,                       T5_CMD_INSERT_OPERATOR_DIVIDE,              { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
     { "Functions",              ss_args_s32,                T5_CMD_SS_FUNCTIONS,                        { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
-    { "ActivateMenuFunc",       NULL,                       T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR,     { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
+    { "FunctionsShort",         NULL,                       T5_CMD_SS_FUNCTIONS_SHORT,                  { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "NameIntro",              ss_args_s32,                T5_CMD_SS_NAME_INTRO,                       { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "Name",                   ss_args_name,               T5_CMD_SS_NAME,                             { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
 
@@ -233,11 +245,11 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BINOM_DIST,        c_binom_dist),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BINOM_DIST_RANGE,  c_binom_dist_range),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_BINOM_INV,         c_binom_inv),
-	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITAND,            c_bitand),
-	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITLSHIFT,         c_bitlshift),
-	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITOR,             c_bitor),
-	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITRSHIFT,         c_bitrshift),
-	SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITXOR,            c_bitxor),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITAND,            c_bitand),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITLSHIFT,         c_bitlshift),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITOR,             c_bitor),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITRSHIFT,         c_bitrshift),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_BITXOR,            c_bitxor),
 
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_C_ACOS,            c_c_acos),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_C_ACOSEC,          c_c_acosec),
@@ -420,6 +432,7 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NORM_S_DIST,       c_norm_s_dist),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NORM_INV,          c_norm_inv),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NORM_S_INV,        c_norm_s_inv),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_NOT,               c_not),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NOW,               c_now),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_NPER,              c_nper),
 
@@ -469,7 +482,7 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PI,                c_pi),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PMT,               c_pmt),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_POISSON_DIST,      c_poisson_dist),
-    SS_FUNC_TABLE_ENTRY(SS_SPLIT_POWER,             c_bop_power),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_POWER,             c_power),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PROB,              c_prob),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PROPER,            c_proper),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_PV,                c_pv),
@@ -681,16 +694,16 @@ choices_chart_update_auto_data = { { 0 }, UI_TEXT_INIT_RESID(SS_MSG_DIALOG_CHOIC
 static const DIALOG_CTL_CREATE
 choices_ss_ctl_create[] =
 {
-    { &choices_ss_group, &choices_ss_group_data },
-    { &choices_ss_calc_auto, &choices_ss_calc_auto_data },
-    { &choices_ss_calc_background, &choices_ss_calc_background_data },
-    { &choices_ss_calc_on_load, &choices_ss_calc_on_load_data },
-    { &choices_ss_calc_additional_rounding, &choices_ss_calc_additional_rounding_data },
-    { &choices_ss_edit_in_cell, &choices_ss_edit_in_cell_data },
-    { &choices_ss_alternate_formula_style, &choices_ss_alternate_formula_style_data },
+    { { &choices_ss_group }, &choices_ss_group_data },
+    { { &choices_ss_calc_auto }, &choices_ss_calc_auto_data },
+    { { &choices_ss_calc_background }, &choices_ss_calc_background_data },
+    { { &choices_ss_calc_on_load }, &choices_ss_calc_on_load_data },
+    { { &choices_ss_calc_additional_rounding }, &choices_ss_calc_additional_rounding_data },
+    { { &choices_ss_edit_in_cell }, &choices_ss_edit_in_cell_data },
+    { { &choices_ss_alternate_formula_style }, &choices_ss_alternate_formula_style_data },
 
-    { &choices_chart_group, &choices_chart_group_data },
-    { &choices_chart_update_auto, &choices_chart_update_auto_data }
+    { { &choices_chart_group }, &choices_chart_group_data },
+    { { &choices_chart_update_auto }, &choices_chart_update_auto_data }
 };
 
 static void
@@ -698,55 +711,54 @@ ss_show_error(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_SLR p_slr)
 {
-    P_EV_CELL p_ev_cell;
+    const P_EV_CELL p_ev_cell = p_ev_cell_object_from_slr(p_docu, p_slr);
 
     status_line_clear(p_docu, STATUS_LINE_LEVEL_SS_FORMULA_LINE);
 
-    if(P_DATA_NONE != (p_ev_cell = p_ev_cell_object_from_slr(p_docu, p_slr)))
+    if( (P_DATA_NONE == p_ev_cell) || (DATA_ID_ERROR != UBF_UNPACK(EV_IDNO, p_ev_cell->ev_parms.data_id)) )
+        return;
+
     {
-        if(DATA_ID_ERROR == p_ev_cell->ev_parms.data_id)
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
+    quick_ublock_with_buffer_setup(quick_ublock);
+
+    if( status_ok(status_wrap(resource_lookup_quick_ublock(&quick_ublock, p_ev_cell->ss_constant.ss_error.status))) &&
+        status_ok(status_wrap(quick_ublock_nullch_add(&quick_ublock))) )
+    {
+        switch(p_ev_cell->ss_constant.ss_error.type)
         {
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
-            quick_ublock_with_buffer_setup(quick_ublock);
+        case ERROR_NORMAL:
+            status_line_setf(p_docu, STATUS_LINE_LEVEL_SS_FORMULA_LINE, SS_MSG_STATUS_ERR, quick_ublock_ustr(&quick_ublock));
+            break;
 
-            status_assert(resource_lookup_quick_ublock(&quick_ublock, p_ev_cell->ss_constant.ss_error.status));
-            status_assert(quick_ublock_nullch_add(&quick_ublock));
-
-            switch(p_ev_cell->ss_constant.ss_error.type)
-            {
-            case ERROR_NORMAL:
-                status_line_setf(p_docu, STATUS_LINE_LEVEL_SS_FORMULA_LINE, SS_MSG_STATUS_ERR, quick_ublock_ustr(&quick_ublock));
-                break;
-
-            default: default_unhandled();
+        default: default_unhandled();
 #if CHECKING
-            case ERROR_CUSTOM:
-            case ERROR_PROPAGATED:
+        case ERROR_CUSTOM:
+        case ERROR_PROPAGATED:
 #endif
-                {
-                UCHARZ ustr_buf_slr[BUF_EV_LONGNAMLEN];
-                EV_DOCNO ev_docno = ev_docno_from_p_docu(p_docu);
-                EV_SLR ev_slr;
+            {
+            UCHARZ ustr_buf_slr[BUF_EV_LONGNAMLEN];
+            EV_SLR ev_slr;
 
-                zero_struct(ev_slr);
-                ev_slr.docno = p_ev_cell->ss_constant.ss_error.docno; /* equivalent UBF */
-                ev_slr.col = p_ev_cell->ss_constant.ss_error.col; /* equivalent SBF */
-                ev_slr.row = p_ev_cell->ss_constant.ss_error.row;
+            zero_struct(ev_slr);
+            ev_slr.docno = p_ev_cell->ss_constant.ss_error.docno; /* equivalent UBF */
+            ev_slr.col = p_ev_cell->ss_constant.ss_error.col; /* equivalent SBF */
+            ev_slr.row = p_ev_cell->ss_constant.ss_error.row;
 
-                (void) ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf_slr), elemof32(ustr_buf_slr), ev_docno, &ev_slr);
+            (void) ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf_slr), elemof32(ustr_buf_slr), ev_docno_from_p_docu(p_docu), &ev_slr);
 
-                status_line_setf(p_docu,
-                                 STATUS_LINE_LEVEL_SS_FORMULA_LINE,
-                                 (p_ev_cell->ss_constant.ss_error.type == ERROR_CUSTOM) ? SS_MSG_STATUS_CUSTOM_ERR : SS_MSG_STATUS_PROPAGATED_ERR,
-                                 quick_ublock_ustr(&quick_ublock),
-                                 ustr_buf_slr);
-                break;
-                }
+            status_line_setf(p_docu,
+                                STATUS_LINE_LEVEL_SS_FORMULA_LINE,
+                                (p_ev_cell->ss_constant.ss_error.type == ERROR_CUSTOM) ? SS_MSG_STATUS_CUSTOM_ERR : SS_MSG_STATUS_PROPAGATED_ERR,
+                                quick_ublock_ustr(&quick_ublock),
+                                ustr_buf_slr);
+            break;
             }
-
-            quick_ublock_dispose(&quick_ublock);
         }
     }
+
+    quick_ublock_dispose(&quick_ublock);
+    } /*block*/
 }
 
 /*
@@ -871,8 +883,6 @@ MAEVE_EVENT_PROTO(static, maeve_event_ob_ss)
 
 PROC_UREF_EVENT_PROTO(static, ob_ss_uref_event)
 {
-    STATUS status = STATUS_OK;
-
     /* free resources that may be owned by cells going away */
     switch(uref_message)
     {
@@ -881,6 +891,7 @@ PROC_UREF_EVENT_PROTO(static, ob_ss_uref_event)
     case Uref_Msg_Overwrite:
         {
         SCAN_BLOCK scan_block;
+        STATUS status;
 
         if(Uref_Msg_CLOSE1 == uref_message)
             status = cells_scan_init(p_docu, &scan_block, SCAN_MATRIX, SCAN_WHOLE, NULL, OBJECT_ID_SS);
@@ -902,6 +913,7 @@ PROC_UREF_EVENT_PROTO(static, ob_ss_uref_event)
             }
         }
 
+        /* this status is not an error return here */
         break;
         }
 
@@ -909,10 +921,7 @@ PROC_UREF_EVENT_PROTO(static, ob_ss_uref_event)
         break;
     }
 
-    if(status_ok(status))
-        status = ev_uref_uref_event(p_docu, uref_message, p_uref_event_block);
-
-    return(status);
+    return(ev_uref_uref_event(p_docu, uref_message, p_uref_event_block));
 }
 
 /******************************************************************************
@@ -954,17 +963,17 @@ ss_functions_list =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-ss_functions_insert_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_INSERT) };
+ss_functions_insert_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT) };
 
 static const DIALOG_CTL_CREATE
 ss_functions_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &ss_functions_list, &stdlisttext_data },
+    { { &ss_functions_list }, &stdlisttext_data },
 
-    { &defbutton_ok, &ss_functions_insert_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &ss_functions_insert_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static UI_SOURCE
@@ -1073,9 +1082,55 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_ss_functions)
 
 _Check_return_
 static STATUS
-ss_ui_quick_ublock_func_name_add(
-    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    _In_z_      PC_USTR ustr)
+_ss_function_textual_representation_from( /* call via wrapper */
+    P_FUNCTION_LIST_ENTRY p_function_list_entry,
+    _InRef_     P_RESOURCE_SPEC p_resource_spec)
+{
+    const U32 min_n_args = p_resource_spec->n_args;
+    const U32 max_n_args = min_n_args + p_resource_spec->max_additional_args;
+    const bool emit_parentheses = (max_n_args != 0) || g_ss_decompiler_options.zero_args_function_parentheses;
+    SS_FUNCTION_ADD_ARGUMENTS ss_function_add_arguments;
+    zero_struct_fn(ss_function_add_arguments);
+
+    ss_function_add_arguments.p_quick_ublock = &p_function_list_entry->quick_ublock;
+    ss_function_add_arguments.f_inline_wrap = FALSE;
+
+    status_return(quick_ublock_func_name_add(ss_function_add_arguments.p_quick_ublock, array_ustr(&p_resource_spec->h_id_ustr)));
+
+    if(emit_parentheses)
+        status_return(quick_ublock_a7char_add(ss_function_add_arguments.p_quick_ublock, CH_LEFT_PARENTHESIS));
+
+    if(max_n_args != 0)
+    {
+        U32 argument_index = 0;
+
+        for(;;)
+        {
+            status_return(ss_function_add_argument(&ss_function_add_arguments, p_function_list_entry->ev_status_line_number, argument_index, argument_index >= min_n_args));
+
+            if(++argument_index >= max_n_args)
+            {
+                U32 i;
+
+                for(i = 0; i < ss_function_add_arguments.n_trailing_curly_brackets; ++i)
+                    status_return(quick_ublock_a7char_add(ss_function_add_arguments.p_quick_ublock, CH_RIGHT_CURLY_BRACKET));
+
+                break;
+            }
+        }
+    }
+
+    if(emit_parentheses)
+        status_return(quick_ublock_a7char_add(ss_function_add_arguments.p_quick_ublock, CH_RIGHT_PARENTHESIS));
+
+    return(quick_ublock_nullch_add(&p_function_list_entry->quick_ublock));
+}
+
+_Check_return_
+static STATUS
+ss_ui_function_textual_representation_from(
+    P_FUNCTION_LIST_ENTRY p_function_list_entry,
+    _InRef_     P_RESOURCE_SPEC p_resource_spec)
 {
     STATUS status;
     SS_DECOMPILER_OPTIONS ss_decompiler_options = g_ss_decompiler_options;
@@ -1091,35 +1146,11 @@ ss_ui_quick_ublock_func_name_add(
         g_ss_decompiler_options.zero_args_function_parentheses = 1;
     }
 
-    status = quick_ublock_func_name_add(p_quick_ublock, ustr);
+    status = _ss_function_textual_representation_from(p_function_list_entry, p_resource_spec);
 
     g_ss_decompiler_options = ss_decompiler_options;
 
     return(status);
-}
-
-_Check_return_
-static STATUS
-ss_function_textual_representation_from(
-    P_FUNCTION_LIST_ENTRY p_function_list_entry,
-    _In_z_      PC_USTR ustr,
-    _InVal_     S32 n_args)
-{
-    status_return(ss_ui_quick_ublock_func_name_add(&p_function_list_entry->quick_ublock, ustr));
-
-    if(n_args > 0)
-    {
-        U32 argument_index;
-
-        status_return(quick_ublock_a7char_add(&p_function_list_entry->quick_ublock, CH_LEFT_PARENTHESIS));
-
-        for(argument_index = 0; argument_index < (U32) n_args; ++argument_index)
-            status_return(ss_function_add_argument(&p_function_list_entry->quick_ublock, p_function_list_entry->ev_status_line_number, argument_index, FALSE));
-
-        status_return(quick_ublock_a7char_add(&p_function_list_entry->quick_ublock, CH_RIGHT_PARENTHESIS));
-    }
-
-    return(quick_ublock_nullch_add(&p_function_list_entry->quick_ublock));
 }
 
 /******************************************************************************
@@ -1141,37 +1172,30 @@ PROC_QSORT_PROTO(static, proc_qsort_function_list, FUNCTION_LIST_ENTRY)
     return(ustr_compare_nocase(ustr_1, ustr_2)); 
 }
 
-T5_CMD_PROTO(static, t5_cmd_ss_functions)
+static STATUS
+t5_cmd_ss_functions_category(
+    _DocuRef_   P_DOCU p_docu,
+    _In_        S32 category)
 {
     STATUS status = STATUS_OK;
-    S32 category = EV_RESO_ALL_VISIBLE;
     STATUS caption_resource_id;
     STATUS help_topic_resource_id;
     FUNCTION_LIST_STATE function_list_state;
     P_FUNCTION_LIST_ENTRY p_function_list_entry;
     PIXIT max_width = 0;
 
-    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    zero_struct_fn(function_list_state);
 
-    zero_struct(function_list_state);
-
-    if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
-    {
-        P_ARGLIST_ARG p_arg;
-        if(arg_present(&p_t5_cmd->arglist_handle, 0, &p_arg))
-            category = p_arg->val.s32;
-    }
-
-    if(category == EV_RESO_ALL_VISIBLE)
+    if(EV_RESO_ALL_VISIBLE == category)
     {
         caption_resource_id    = SS_MSG_DIALOG_FUNCTIONS_ALL;
         help_topic_resource_id = SS_MSG_DLG_HT_FUNCTIONS_ALL;
     }
-    else if((category < 0) || (category > EV_RESO_COMPAT))
+    else if( (category < 0) || (category > EV_RESO_COMPAT) )
     {
         category = -1;
-        caption_resource_id    = SS_MSG_DIALOG_FUNCTIONS_SOME;
-        help_topic_resource_id = SS_MSG_DLG_HT_FUNCTIONS_SOME;
+        caption_resource_id    = SS_MSG_DIALOG_FUNCTIONS_SHORT;
+        help_topic_resource_id = SS_MSG_DLG_HT_FUNCTIONS_SHORT;
     }
     else
     {
@@ -1211,7 +1235,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
         SC_ARRAY_INIT_BLOCK array_init_block = aib_init(8, sizeof32(*p_function_list_entry), 1);
         STATUS ev_item_no;
 
-        /* SKS 09jun93 - 'some functions' list is now read in from config file */
+        /* SKS 09jun93 - 'short functions' list is now read in from config file */
         if(category == -1)
         {
             const PC_DOCU p_docu_config = p_docu_from_config();
@@ -1223,7 +1247,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
             {
                 const PC_UI_NUMFORM p_ui_numform = array_ptrc(p_ui_numform_handle, UI_NUMFORM, ui_item_no);
 
-                if(p_ui_numform->numform_class != UI_NUMFORM_CLASS_FUNCTIONS_SOME)
+                if(p_ui_numform->numform_class != UI_NUMFORM_CLASS_FUNCTIONS_SHORT)
                 {
                     ++ui_item_no;
                     continue;
@@ -1273,7 +1297,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
                 break;
             }
 
-            status = ss_function_textual_representation_from(p_function_list_entry, array_ustr(&resource_spec.h_id_ustr), resource_spec.n_args);
+            status = ss_ui_function_textual_representation_from(p_function_list_entry, &resource_spec);
 
             /* but this contains inlines!!! */
             width = ui_width_from_ustr(quick_ublock_ustr(&p_function_list_entry->quick_ublock));
@@ -1306,11 +1330,11 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
     if(status_ok(status))
     {
         { /* make appropriate size box */
-        const PIXIT buttons_width = DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_STDCANCEL_H;
+        const PIXIT buttons_width = DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_FATCANCEL_H;
         PIXIT_SIZE list_size;
         DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
         dialog_cmd_ctl_size_estimate.p_dialog_control = &ss_functions_list;
-        dialog_cmd_ctl_size_estimate.p_dialog_control_data = &stdlisttext_data;
+        dialog_cmd_ctl_size_estimate.p_dialog_control_data.list_text = &stdlisttext_data;
         ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
         dialog_cmd_ctl_size_estimate.size.x += max_width;
         ui_list_size_estimate(array_elements(&function_list_state.list_handle), &list_size);
@@ -1323,9 +1347,8 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
 
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_functions_ctl_create, elemof32(ss_functions_ctl_create), help_topic_resource_id);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = caption_resource_id;
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_functions_ctl_create, elemof32(ss_functions_ctl_create), caption_resource_id);
+        dialog_cmd_process_dbox.help_topic_resource_id = help_topic_resource_id;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_ss_functions;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &function_list_state;
         status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
@@ -1342,7 +1365,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
             {
                 /* selected function to use NB. UI list unsorted so maps directly onto field list index */
                 p_function_list_entry = array_ptr_no_checks(&function_list_state.list_handle, FUNCTION_LIST_ENTRY, function_list_state.selected_item);
-                status = ss_function_paste_to_editing_line(p_docu, p_function_list_entry->ev_category, p_function_list_entry->ev_item_no);
+                status = ss_ui_function_paste_to_editing_line(p_docu, p_function_list_entry->ev_category, p_function_list_entry->ev_item_no);
             }
         }
     }
@@ -1352,69 +1375,94 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
     return(status);
 }
 
+T5_CMD_PROTO(static, t5_cmd_ss_functions)
+{
+    S32 category = EV_RESO_ALL_VISIBLE;
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+
+    if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
+    {
+        P_ARGLIST_ARG p_arg;
+        if(arg_present(&p_t5_cmd->arglist_handle, 0, &p_arg))
+            category = p_arg->val.s32;
+    }
+
+    return(t5_cmd_ss_functions_category(p_docu, category));
+}
+
+T5_CMD_PROTO(static, t5_cmd_ss_functions_short)
+{
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+
+    return(t5_cmd_ss_functions_category(p_docu, -1));
+}
+
 /* Given category and item number get the relevant argument text
  * and then paste the resulting data into the editing line.
  */
 
 _Check_return_
 static STATUS
-ss_function_paste_to_editing_line(
+_ss_function_paste_to_editing_line( /* call via wrapper */
     _DocuRef_   P_DOCU p_docu,
     _InVal_     S32 category,
     _InVal_     S32 item_number)
 {
-    SS_RECOG_CONTEXT ss_recog_context;
-    SS_DECOMPILER_OPTIONS ss_decompiler_options = g_ss_decompiler_options;
     EV_RESOURCE ev_resource;
     RESOURCE_SPEC resource_spec;
     STATUS ev_item_no = item_number;
     STATUS status = STATUS_OK;
 
-    ss_recog_context_push(&ss_recog_context);
-
-    if(global_preferences.ss_alternate_formula_style)
-    {   /* Alternate formula style (Excel-ise) the decompiler output */
-        g_ss_decompiler_options.lf = 0; /* prune these out for now */
-        g_ss_decompiler_options.cr = 0;
-        g_ss_decompiler_options.initial_formula_equals = 1;
-        g_ss_decompiler_options.range_colon_separator = 1;
-        g_ss_decompiler_options.upper_case_function = 1;
-        g_ss_decompiler_options.upper_case_slr = 1;
-        g_ss_decompiler_options.zero_args_function_parentheses = 1;
-    }
-
     ev_enum_resource_init(&ev_resource, &resource_spec, category, ev_item_no, DOCNO_NONE, ev_docno_from_p_docu(p_docu));
 
     if((ev_item_no = ev_enum_resource_get(&resource_spec, &ev_resource)) >= 0)
     {
+        const P_RESOURCE_SPEC p_resource_spec = &resource_spec;
+        const U32 min_n_args = p_resource_spec->n_args;
+        const U32 max_n_args = p_resource_spec->n_args + p_resource_spec->max_additional_args;
+        const bool emit_parentheses = (max_n_args != 0) || g_ss_decompiler_options.zero_args_function_parentheses;
         QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("function(....and....,....some....,....arguments....)"));
         quick_ublock_with_buffer_setup(quick_ublock);
 
         /* allocate some store for the command and bosch it into there. NB. no terminating CH_NULL wanted in quick_block */
-        if(status_ok(status))
-            if(g_ss_decompiler_options.initial_formula_equals)
-                status = quick_ublock_a7char_add(&quick_ublock, CH_EQUALS_SIGN);
+        if(status_ok(status) && g_ss_decompiler_options.initial_formula_equals)
+            status = quick_ublock_a7char_add(&quick_ublock, CH_EQUALS_SIGN);
+
+        {
+        SS_FUNCTION_ADD_ARGUMENTS ss_function_add_arguments;
+        zero_struct_fn(ss_function_add_arguments);
+
+        ss_function_add_arguments.p_quick_ublock = &quick_ublock;
+        ss_function_add_arguments.f_inline_wrap = TRUE;
 
         if(status_ok(status))
-            status = quick_ublock_func_name_add(&quick_ublock, array_ustr(&resource_spec.h_id_ustr));
+            status = quick_ublock_func_name_add(ss_function_add_arguments.p_quick_ublock, array_ustr(&p_resource_spec->h_id_ustr));
+
+        if(status_ok(status) && emit_parentheses)
+            status = quick_ublock_a7char_add(ss_function_add_arguments.p_quick_ublock, CH_LEFT_PARENTHESIS);
 
         /* strap all the argument descriptions onto the end encased in in-lines */
-        if(status_ok(status) && (resource_spec.n_args > 0))
-            if(status_ok(status = quick_ublock_a7char_add(&quick_ublock, CH_LEFT_PARENTHESIS)))
+        if(status_ok(status) && (max_n_args != 0))
+        {
+            U32 argument_index = 0;
+
+            for(;;)
             {
-                S32 argument_index = 0;
+                status_break(status = ss_function_add_argument(&ss_function_add_arguments, SS_MSG_STATUS_GET_NUMBER_FROM_RPN(item_number), argument_index, argument_index >= min_n_args));
 
-                for(;;)
+                if(++argument_index >= max_n_args)
                 {
-                    status_break(status = ss_function_add_argument(&quick_ublock, SS_MSG_STATUS_GET_NUMBER_FROM_RPN(item_number), argument_index, TRUE));
-
-                    if(++argument_index >= resource_spec.n_args)
-                    {
-                        status = quick_ublock_a7char_add(&quick_ublock, CH_RIGHT_PARENTHESIS);
-                        break;
-                    }
+                    assert(0 == ss_function_add_arguments.n_trailing_curly_brackets);
+                    break;
                 }
             }
+        }
+
+        if(status_ok(status) && emit_parentheses)
+            status = quick_ublock_a7char_add(ss_function_add_arguments.p_quick_ublock, CH_RIGHT_PARENTHESIS);
+        } /*block*/
 
         ev_enum_resource_dispose(&resource_spec);
 
@@ -1436,9 +1484,38 @@ ss_function_paste_to_editing_line(
             status = ev_item_no;
     }
 
-    ss_recog_context_pull(&ss_recog_context);
+    return(status);
+}
+
+_Check_return_
+static STATUS
+ss_ui_function_paste_to_editing_line(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     S32 category,
+    _InVal_     S32 item_number)
+{
+    STATUS status;
+    SS_RECOG_CONTEXT ss_recog_context;
+    SS_DECOMPILER_OPTIONS ss_decompiler_options = g_ss_decompiler_options;
+
+    ss_recog_context_push(&ss_recog_context);
+
+    if(global_preferences.ss_alternate_formula_style)
+    {   /* Alternate formula style (Excel-ise) the decompiler output */
+        g_ss_decompiler_options.lf = 0; /* prune these out for now */
+        g_ss_decompiler_options.cr = 0;
+        g_ss_decompiler_options.initial_formula_equals = 1;
+        g_ss_decompiler_options.range_colon_separator = 1;
+        g_ss_decompiler_options.upper_case_function = 1;
+        g_ss_decompiler_options.upper_case_slr = 1;
+        g_ss_decompiler_options.zero_args_function_parentheses = 1;
+    }
+
+    status = _ss_function_paste_to_editing_line(p_docu, category, item_number);
 
     g_ss_decompiler_options = ss_decompiler_options;
+
+    ss_recog_context_pull(&ss_recog_context);
 
     return(status);
 }
@@ -1450,47 +1527,42 @@ ss_function_paste_to_editing_line(
 
 _Check_return_
 static STATUS
-ss_function_add_arg_inline(
-    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    _InVal_     STATUS message,
-    _InVal_     U32 argument_index,
-    _InVal_     BOOL in_line_wrap,
+ss_function_add_argument_inline(
+    _InoutRef_  P_SS_FUNCTION_ADD_ARGUMENTS p_ss_function_add_arguments,
     _In_reads_(arg_len) PC_UCHARS message_string,
-    _InVal_     U32 arg_len)
+    _InVal_     U32 arg_len,
+    _InVal_     STATUS message,
+    _InVal_     U32 argument_index)
 {
-    if(in_line_wrap)
-    {
-        BYTE msg_token[4];
-        /* data consists of msg token and the text to display for the inline */
-        MULTIPLE_DATA multiple_data[3];
+    BYTE msg_token[4];
+    /* data consists of msg token and the text to display for the inline */
+    MULTIPLE_DATA multiple_data[3];
 
-        msg_token[0] = (BYTE) ((message - SS_MSG_BASE)     );
-        msg_token[1] = (BYTE) ((message - SS_MSG_BASE) >> 8);
-        msg_token[2] = (BYTE) (argument_index     );
-        msg_token[3] = (BYTE) (argument_index >> 8);
+    msg_token[0] = (BYTE) ((message - SS_MSG_BASE)     );
+    msg_token[1] = (BYTE) ((message - SS_MSG_BASE) >> 8);
+    msg_token[2] = (BYTE) (argument_index     );
+    msg_token[3] = (BYTE) (argument_index >> 8);
 
-        multiple_data[0].p_data = msg_token;
-        multiple_data[0].n_bytes = elemof32(msg_token);
+    multiple_data[0].p_data = msg_token;
+    multiple_data[0].n_bytes = elemof32(msg_token);
 
-        multiple_data[1].p_data = de_const_cast(P_ANY, message_string); /* not written to */
-        multiple_data[1].n_bytes = arg_len;
+    multiple_data[1].p_data = (PC_ANY) message_string; /* not written to */
+    multiple_data[1].n_bytes = arg_len;
 
-        multiple_data[2].p_data = empty_string;
-        multiple_data[2].n_bytes = 1;
+    multiple_data[2].p_data = empty_string;
+    multiple_data[2].n_bytes = 1;
 
-        return(inline_quick_ublock_from_multiple_data(p_quick_ublock, IL_SLE_ARGUMENT, IL_TYPE_PRIVATE, multiple_data, elemof32(multiple_data)));
-    }
+    assert(p_ss_function_add_arguments->f_inline_wrap);
 
-    return(quick_ublock_uchars_add(p_quick_ublock, message_string, arg_len));
+    return(inline_quick_ublock_from_multiple_data(p_ss_function_add_arguments->p_quick_ublock, IL_SLE_ARGUMENT, IL_TYPE_PRIVATE, multiple_data, elemof32(multiple_data)));
 }
 
 _Check_return_
 static STATUS
 ss_function_add_argument_try(
-    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InoutRef_  P_SS_FUNCTION_ADD_ARGUMENTS p_ss_function_add_arguments,
     _In_        STATUS message,
     _InVal_     U32 argument_index,
-    _InVal_     BOOL in_line_wrap,
     _In_z_      PC_USTR message_string_in /*pointing past CH_VERTICAL_LINE*/)
 {
     PC_USTR message_string = message_string_in;
@@ -1514,20 +1586,32 @@ ss_function_add_argument_try(
 
     if(argument_number == argument_index)
     {
-        PC_USTR ustr = message_string;
+        PC_USTR ustr_optional_end = P_USTR_NONE;
+        PC_USTR ustr;
         U32 arg_len;
 
-        /* place a function arg separator char before the parameter if second or subsequent parameter */
+        /* place a function argument separator char before the parameter if second or subsequent parameter */
         if(0 != argument_index)
         {
-            if(!in_line_wrap && (CH_LEFT_CURLY_BRACKET == PtrGetByte(message_string)))
-            {   /* for optional parameters, place the separator AFTER the opening bracket */
-                status_return(quick_ublock_a7char_add(p_quick_ublock, CH_LEFT_CURLY_BRACKET));
-                ustr_IncByte(message_string);
-
+            if(p_ss_function_add_arguments->f_inline_wrap)
+            {
+                status_return(quick_ublock_ucs4_add(p_ss_function_add_arguments->p_quick_ublock, get_ss_recog_context_alt(function_arg_sep)));
             }
-
-            status_return(quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context_alt.function_arg_sep));
+            else /* !in_line_wrap */
+            {
+                if(CH_LEFT_CURLY_BRACKET == PtrGetByte(message_string))
+                {   /* for optional parameters, place the separator AFTER the opening curly bracket and skip that for output */
+                    ustr_IncByte(message_string);
+                    status_return(quick_ublock_a7char_add(p_ss_function_add_arguments->p_quick_ublock, CH_SPACE));
+                    status_return(quick_ublock_a7char_add(p_ss_function_add_arguments->p_quick_ublock, CH_LEFT_CURLY_BRACKET));
+                    status_return(quick_ublock_ucs4_add(p_ss_function_add_arguments->p_quick_ublock, get_ss_recog_context_alt(function_arg_sep)));
+                }
+                else
+                {
+                    status_return(quick_ublock_ucs4_add(p_ss_function_add_arguments->p_quick_ublock, get_ss_recog_context_alt(function_arg_sep)));
+                    status_return(quick_ublock_a7char_add(p_ss_function_add_arguments->p_quick_ublock, CH_SPACE));
+                }
+            }
         }
 
         ustr = message_string;
@@ -1547,14 +1631,31 @@ ss_function_add_argument_try(
                 break;
             }
 
+            if(CH_RIGHT_CURLY_BRACKET == PtrGetByte(ustr))
+                ustr_optional_end = ustr;
+
             ustr_IncByte(ustr);
         }
 
         arg_len = PtrDiffBytesU32(ustr, message_string);
 
-        status_return(ss_function_add_arg_inline(p_quick_ublock, message, argument_index, in_line_wrap, message_string, arg_len));
+        if(p_ss_function_add_arguments->f_inline_wrap)
+        {
+            status_return(ss_function_add_argument_inline(p_ss_function_add_arguments, message_string, arg_len, message, argument_index));
+        }
+        else
+        {   /* add argument as plain text string */
+            if(P_USTR_NONE != ustr_optional_end)
+            {
+                arg_len = PtrDiffBytesU32(ustr_optional_end, message_string);
 
-        return(0); /* added the requested arg, so caller can terminate */
+                p_ss_function_add_arguments->n_trailing_curly_brackets += 1; /* sort these out at the end */
+            }
+
+            status_return(quick_ublock_uchars_add(p_ss_function_add_arguments->p_quick_ublock, message_string, arg_len));
+        }
+
+        return(0); /* added the requested argument, so caller can terminate */
     }
 
     /* skip this whole delimited sequence */
@@ -1581,10 +1682,10 @@ ss_function_add_argument_try(
 _Check_return_
 static STATUS
 ss_function_add_argument(
-    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InoutRef_  P_SS_FUNCTION_ADD_ARGUMENTS p_ss_function_add_arguments,
     _In_        STATUS message,
     _InVal_     U32 argument_index,
-    _InVal_     BOOL in_line_wrap)
+    _InVal_     BOOL f_argument_is_optional)
 {
     PC_USTR message_string;
 
@@ -1601,7 +1702,7 @@ ss_function_add_argument(
 
             if(CH_VERTICAL_LINE == ch)
             {
-                STATUS status = ss_function_add_argument_try(p_quick_ublock, message, argument_index, in_line_wrap, message_string);
+                STATUS status = ss_function_add_argument_try(p_ss_function_add_arguments, message, argument_index, message_string);
                 U32 uchars_n;
 
                 if(!status_done(status))
@@ -1616,18 +1717,24 @@ ss_function_add_argument(
         }
     }
 
-    /* Unable to locate a suitable entry for this argument so default to the standard (empty) message */
-    if(NULL != (message_string = resource_lookup_ustr_no_default(SS_MSG_STATUS_ARG_DEFAULT_STRING)))
+    /* Unable to locate a suitable entry for this argument so default to the standard (empty) message iff mandatory */
+    if(!f_argument_is_optional)
     {
-        const U32 arg_len = ustrlen32(message_string);
+        if(NULL != (message_string = resource_lookup_ustr_no_default(SS_MSG_STATUS_ARG_DEFAULT_STRING)))
+        {
+            const U32 arg_len = ustrlen32(message_string);
 
-        if(0 == message)
-            message = SS_MSG_STATUS_ARG_DEFAULT_STRING;
+            if(0 == message)
+                message = SS_MSG_STATUS_ARG_DEFAULT_STRING;
 
-        if(0 != argument_index)
-            status_return(quick_ublock_ucs4_add(p_quick_ublock, g_ss_recog_context_alt.function_arg_sep));
+            if(0 != argument_index)
+                status_return(quick_ublock_ucs4_add(p_ss_function_add_arguments->p_quick_ublock, get_ss_recog_context_alt(function_arg_sep)));
 
-        return(ss_function_add_arg_inline(p_quick_ublock, message, argument_index, in_line_wrap, message_string, arg_len));
+            if(p_ss_function_add_arguments->f_inline_wrap)
+                return(ss_function_add_argument_inline(p_ss_function_add_arguments, message_string, arg_len, message, argument_index));
+            else
+                return(quick_ublock_uchars_add(p_ss_function_add_arguments->p_quick_ublock, message_string, arg_len));
+        }
     }
 
     return(STATUS_OK);
@@ -1679,7 +1786,7 @@ ss_function_get_argument_help_try(
             if(CH_VERTICAL_LINE == ch)
             {
                 assert(CH_VERTICAL_LINE != PtrGetByte(message_string)); /* || shouldn't be present in argument name */
-                /* no help present for this arg */
+                /* no help present for this argument */
                 return(PtrDiffBytesS32(message_string, message_string_in));
             }
         }
@@ -1886,55 +1993,65 @@ ss_function_get_help(
 
 enum ALERT_QUERY_CONTROL_IDS
 {
-    ALERT_QUERY_ID_BUT_1 = IDOK,
+    ALERT_QUERY_ID_BUTTON_1 = IDOK,
 
-    ALERT_QUERY_ID_TEXT_1 = 30,
-    ALERT_QUERY_ID_BUT_2,
-    INPUT_QUERY_INPUT
+    ALERT_QUERY_ID_BUTTON_2 = 30,
+    ALERT_QUERY_ID_TEXT,
+    INPUT_QUERY_ID_INPUT
 };
 
 static /*poked*/ DIALOG_CONTROL
-alert_query_text_1 =
+alert_query_text =
 {
-    ALERT_QUERY_ID_TEXT_1, DIALOG_CONTROL_WINDOW,
+    ALERT_QUERY_ID_TEXT, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDTEXT_V },
     { DRT(LTLT, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-alert_query_text_1_data = { { UI_TEXT_TYPE_NONE } };
+alert_query_text_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
-alert_query_but_1 =
+alert_query_button_1 =
 {
-    ALERT_QUERY_ID_BUT_1, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, ALERT_QUERY_ID_TEXT_1, ALERT_QUERY_ID_TEXT_1 },
+    ALERT_QUERY_ID_BUTTON_1, DIALOG_CONTROL_WINDOW,
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
+#if RISCOS
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
+#else
+    { DIALOG_STDPUSHBUTTON_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
+#endif
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
-alert_query_but_1_data = { { 0 }, { UI_TEXT_TYPE_NONE } };
+alert_query_button_1_data = { { 0 }, { UI_TEXT_TYPE_NONE } };
 
 static const DIALOG_CONTROL
-alert_query_but_2 =
+alert_query_button_2 =
 {
-    ALERT_QUERY_ID_BUT_2, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, ALERT_QUERY_ID_BUT_1, ALERT_QUERY_ID_BUT_1, ALERT_QUERY_ID_BUT_1 },
+    ALERT_QUERY_ID_BUTTON_2, DIALOG_CONTROL_WINDOW,
+    { DIALOG_CONTROL_SELF, ALERT_QUERY_ID_BUTTON_1, ALERT_QUERY_ID_BUTTON_1, ALERT_QUERY_ID_BUTTON_1 },
+#if RISCOS
     { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
+#else
+    { DIALOG_STDPUSHBUTTON_H, 0, DIALOG_STDSPACING_H, 0 },
+#endif
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
-alert_query_but_2_data = { { 0 }, { UI_TEXT_TYPE_NONE } };
+alert_query_button_2_data = { { 0 }, { UI_TEXT_TYPE_NONE } };
 
 static const DIALOG_CTL_CREATE
 alert_query_ctl_create[] =
 {
-    { &alert_query_text_1, &alert_query_text_1_data },
-    { &alert_query_but_1,  &alert_query_but_1_data },
-    { &alert_query_but_2,  &alert_query_but_2_data },
+    { { &dialog_main_group },       NULL },
+    { { &alert_query_text },        &alert_query_text_data },
+
+    { { &alert_query_button_1 },    &alert_query_button_1_data },
+    { { &alert_query_button_2 },    &alert_query_button_2_data }
 };
 
 /*
@@ -1947,12 +2064,12 @@ dialog_alert_ctl_pushbutton(P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbut
 {
     switch(p_dialog_msg_ctl_pushbutton->dialog_control_id)
     {
-    case ALERT_QUERY_ID_BUT_1:
-        alert_result = ALERT_RESULT_BUT_1;
+    case ALERT_QUERY_ID_BUTTON_1:
+        alert_result = ALERT_RESULT_BUTTON_1;
         break;
 
-    case ALERT_QUERY_ID_BUT_2:
-        alert_result = ALERT_RESULT_BUT_2;
+    case ALERT_QUERY_ID_BUTTON_2:
+        alert_result = ALERT_RESULT_BUTTON_2;
         break;
 
     default:
@@ -1980,6 +2097,58 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_alert)
     }
 }
 
+_Check_return_
+static STATUS
+create_alert_input_button_common(
+    _InoutRef_  P_UI_TEXT p_ui_text,
+    _InRef_     PC_SS_STRINGC p_ss_string)
+{
+    PC_UCHARS uchars = p_ss_string->uchars;
+    U32 uchars_n = p_ss_string->size;
+    SS_STRINGC ss_string;
+
+    /* if empty, leaves current content as default */
+    uchars = ss_string_trim_leading_whitespace_uchars(uchars, &uchars_n);
+    if(0 == uchars_n)
+        return(STATUS_OK);
+
+    /* create button from the fully trimmed string */
+    ss_string.uchars = ss_string_trim_trailing_whitespace_uchars(uchars, &uchars_n);
+    ss_string.size = uchars_n;
+    return(ui_text_alloc_from_ss_string(p_ui_text, &ss_string));
+}
+
+_Check_return_
+static inline STATUS
+create_alert_input_button_1(
+    _InoutRef_  P_UI_TEXT p_ui_text,
+    _InRef_     PC_SS_STRINGC p_ss_string)
+{
+    p_ui_text->type = UI_TEXT_TYPE_RESID;
+    p_ui_text->text.resource_id = MSG_BUTTON_OK;
+
+    /* if empty, leaves OK as default */
+    return(create_alert_input_button_common(p_ui_text, p_ss_string));
+}
+
+_Check_return_
+static inline STATUS
+create_alert_input_button_2(
+    _InoutRef_  P_UI_TEXT p_ui_text,
+    _InRef_     PC_SS_STRINGC p_ss_string)
+{
+    p_ui_text->type = UI_TEXT_TYPE_NONE;
+
+    if(PTR_IS_NULL_OR_NONE(p_ss_string))
+        return(STATUS_OK);
+
+    p_ui_text->type = UI_TEXT_TYPE_RESID;
+    p_ui_text->text.resource_id = MSG_BUTTON_CANCEL;
+
+    /* if empty, leaves Cancel as default */
+    return(create_alert_input_button_common(p_ui_text, p_ss_string));
+}
+
 T5_MSG_PROTO(static, ss_msg_ss_alert_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input_exec)
 {
     STATUS status;
@@ -1989,27 +2158,37 @@ T5_MSG_PROTO(static, ss_msg_ss_alert_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
 
     alert_result = 0;
 
-    status_assert(ui_text_alloc_from_ss_string(&alert_query_text_1_data.caption, p_ss_input_exec->p_ss_string_message));
-    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_1_data.caption,  p_ss_input_exec->p_ss_string_but_1));
-    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_2_data.caption,  p_ss_input_exec->p_ss_string_but_2));
-
+    for(;;) /* loop for structure */
     {
-    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, alert_query_ctl_create, elemof32(alert_query_ctl_create), SS_MSG_DIALOG_ALERT_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = SS_MSG_DIALOG_ALERT_CAPTION;
-    dialog_cmd_process_dbox.bits.modeless = 1;
-    dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
-    dialog_cmd_process_dbox.p_proc_client = dialog_event_alert;
-    if(NULL == p_ss_input_exec->p_ss_string_but_2)
-        dialog_cmd_process_dbox.n_ctls -= 1;
-    status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
-    h_alert_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
-    } /*block*/
+        status_break(status = ui_text_alloc_from_ss_string(&alert_query_text_data.caption, p_ss_input_exec->p_ss_string_message));
 
-    ui_text_dispose(&alert_query_text_1_data.caption);
-    ui_text_dispose(&alert_query_but_1_data.caption);
-    ui_text_dispose(&alert_query_but_2_data.caption);
+        /* this one is mandatory */
+        PTR_ASSERT(p_ss_input_exec->p_ss_string_button_1);
+        status_break(status = create_alert_input_button_1(&alert_query_button_1_data.caption, p_ss_input_exec->p_ss_string_button_1));
+        
+        /* this one is optional */
+        status_break(status = create_alert_input_button_2(&alert_query_button_2_data.caption, p_ss_input_exec->p_ss_string_button_2));
+
+        {
+        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, alert_query_ctl_create, elemof32(alert_query_ctl_create), SS_MSG_DIALOG_ALERT_CAPTION);
+        dialog_cmd_process_dbox.help_topic_resource_id = SS_MSG_DIALOG_ALERT_HELP_TOPIC;
+        dialog_cmd_process_dbox.bits.modeless = 1;
+        dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
+        dialog_cmd_process_dbox.p_proc_client = dialog_event_alert;
+        if(ui_text_is_blank(&alert_query_button_2_data.caption))
+            dialog_cmd_process_dbox.n_ctls -= 1;
+        status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        h_alert_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
+        } /*block*/
+
+        break; /* out of loop for structure */
+        /*NOTREACHED*/
+    }
+
+    ui_text_dispose(&alert_query_text_data.caption);
+    ui_text_dispose(&alert_query_button_1_data.caption);
+    ui_text_dispose(&alert_query_button_2_data.caption);
 
     return(status);
 }
@@ -2019,39 +2198,29 @@ re-uses ALERT controls where possible
 */
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-input_query_text_1_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*(not) centre_text*/ } };
+input_query_text_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 input_query_input =
 {
-    INPUT_QUERY_INPUT, DIALOG_CONTROL_WINDOW,
-
-    { ALERT_QUERY_ID_TEXT_1, ALERT_QUERY_ID_TEXT_1, ALERT_QUERY_ID_TEXT_1, DIALOG_CONTROL_SELF },
-
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
-
-    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+    INPUT_QUERY_ID_INPUT, DIALOG_MAIN_GROUP,
+    { ALERT_QUERY_ID_TEXT, ALERT_QUERY_ID_TEXT },
+    { 0, DIALOG_STDSPACING_V, (DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_STDCANCEL_H), DIALOG_STDEDIT_V },
+    { DRT(LBLT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
 input_query_input_data = { { { FRAMED_BOX_EDIT } } };
 
-static /*poked*/ DIALOG_CONTROL
-input_query_but_1 =
-{
-    ALERT_QUERY_ID_BUT_1, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, INPUT_QUERY_INPUT, INPUT_QUERY_INPUT },
-    { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
-};
-
 static const DIALOG_CTL_CREATE
 input_query_ctl_create[] =
 {
-    { &alert_query_text_1, &input_query_text_1_data },
-    { &input_query_input,  &input_query_input_data },
-    { &input_query_but_1,  &alert_query_but_1_data },
-    { &alert_query_but_2,  &alert_query_but_2_data },
+    { { &dialog_main_group },       NULL },
+    { { &alert_query_text },        &input_query_text_data },
+    { { &input_query_input },       &input_query_input_data },
+
+    { { &alert_query_button_1 },    &alert_query_button_1_data },
+    { { &alert_query_button_2 },    &alert_query_button_2_data }
 };
 
 /******************************************************************************
@@ -2065,16 +2234,16 @@ static STATUS
 dialog_event_input_ctl_pushbutton(
     _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
 {
-    ui_dlg_get_edit(p_dialog_msg_ctl_pushbutton->h_dialog, INPUT_QUERY_INPUT, &ui_text_input); /*donate*/
+    ui_dlg_get_edit(p_dialog_msg_ctl_pushbutton->h_dialog, INPUT_QUERY_ID_INPUT, &ui_text_input); /*donate*/
 
     switch(p_dialog_msg_ctl_pushbutton->dialog_control_id)
     {
-    case ALERT_QUERY_ID_BUT_1:
-        input_result = ALERT_RESULT_BUT_1;
+    case ALERT_QUERY_ID_BUTTON_1:
+        input_result = ALERT_RESULT_BUTTON_1;
         break;
 
-    case ALERT_QUERY_ID_BUT_2:
-        input_result = ALERT_RESULT_BUT_2;
+    case ALERT_QUERY_ID_BUTTON_2:
+        input_result = ALERT_RESULT_BUTTON_2;
         break;
 
     default:
@@ -2112,27 +2281,37 @@ T5_MSG_PROTO(static, ss_msg_ss_input_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
 
     ui_text_input.type = UI_TEXT_TYPE_NONE;
 
-    status_assert(ui_text_alloc_from_ss_string(&input_query_text_1_data.caption, p_ss_input_exec->p_ss_string_message));
-    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_1_data.caption,  p_ss_input_exec->p_ss_string_but_1));
-    status_assert(ui_text_alloc_from_ss_string(&alert_query_but_2_data.caption,  p_ss_input_exec->p_ss_string_but_2));
-
+    for(;;) /* loop for structure */
     {
-    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, input_query_ctl_create, elemof32(input_query_ctl_create), SS_MSG_DIALOG_INPUT_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = SS_MSG_DIALOG_INPUT_CAPTION;
-    dialog_cmd_process_dbox.bits.modeless = 1;
-    dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
-    dialog_cmd_process_dbox.p_proc_client = dialog_event_input;
-    if(NULL == p_ss_input_exec->p_ss_string_but_2)
-        dialog_cmd_process_dbox.n_ctls -= 1;
-    status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
-    h_input_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
-    } /*block*/
+        status_break(status = ui_text_alloc_from_ss_string(&input_query_text_data.caption, p_ss_input_exec->p_ss_string_message));
 
-    ui_text_dispose(&input_query_text_1_data.caption);
-    ui_text_dispose(&alert_query_but_1_data.caption);
-    ui_text_dispose(&alert_query_but_2_data.caption);
+        /* this one is mandatory */
+        PTR_ASSERT(p_ss_input_exec->p_ss_string_button_1);
+        status_break(status = create_alert_input_button_1(&alert_query_button_1_data.caption, p_ss_input_exec->p_ss_string_button_1));
+
+        /* this one is optional */
+        status_break(status = create_alert_input_button_2(&alert_query_button_2_data.caption, p_ss_input_exec->p_ss_string_button_2));
+
+        {
+        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, input_query_ctl_create, elemof32(input_query_ctl_create), SS_MSG_DIALOG_INPUT_CAPTION);
+        dialog_cmd_process_dbox.help_topic_resource_id = SS_MSG_DIALOG_INPUT_HELP_TOPIC;
+        dialog_cmd_process_dbox.bits.modeless = 1;
+        dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
+        dialog_cmd_process_dbox.p_proc_client = dialog_event_input;
+        if(ui_text_is_blank(&alert_query_button_2_data.caption))
+            dialog_cmd_process_dbox.n_ctls -= 1;
+        status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        h_input_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
+        } /*block*/
+
+        break; /* out of loop for structure */
+        /*NOTREACHED*/
+    }
+
+    ui_text_dispose(&input_query_text_data.caption);
+    ui_text_dispose(&alert_query_button_1_data.caption);
+    ui_text_dispose(&alert_query_button_2_data.caption);
 
     return(status);
 }
@@ -2308,17 +2487,18 @@ T5_CMD_PROTO(static, ss_cmd_force_recalc)
 
 /******************************************************************************
 *
-* splat in a sum() expression
+* splat in a sum() (or other aggregate function) expression
 *
 ******************************************************************************/
 
 _Check_return_
 static STATUS
-auto_sum_exp_add(
+auto_function_expr_add(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_SLR p_slr_at,
     _InRef_     PC_SLR p_slr_s,
-    _InRef_     PC_SLR p_slr_e)
+    _InRef_     PC_SLR p_slr_e,
+    _In_z_      PC_USTR ustr_function)
 {
     STATUS status = STATUS_OK;
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
@@ -2330,7 +2510,12 @@ auto_sum_exp_add(
         EV_SLR ev_slr;
         UCHARZ another_ustr_buf[50];
 
-        status_break(status = quick_ublock_ustr_add(&quick_ublock, global_preferences.ss_alternate_formula_style ? USTR_TEXT("=SUM(") : USTR_TEXT("sum(")));
+        if(global_preferences.ss_alternate_formula_style)
+            status_break(status = quick_ublock_ustr_add(&quick_ublock, USTR_TEXT("=")));
+
+        status_break(status = quick_ublock_ustr_add(&quick_ublock, ustr_function));
+
+        status_break(status = quick_ublock_ustr_add(&quick_ublock, USTR_TEXT("(")));
 
         ev_slr_from_slr(p_docu, &ev_slr, p_slr_s);
         len = ev_dec_slr_ustr_buf(ustr_bptr(another_ustr_buf), elemof32(another_ustr_buf), ev_slr_docno(&ev_slr), &ev_slr);
@@ -2347,17 +2532,17 @@ auto_sum_exp_add(
 
         status = ss_object_from_text(&p_docu,
                                      p_slr_at,
-                                     NULL,
+                                     NULL,      // ustr_result
                                      quick_ublock_ustr(&quick_ublock),
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     FALSE,
-                                     FALSE,
-                                     FALSE,
-                                     FALSE);
+                                     NULL,      // p_slr_offset
+                                     NULL,      // p_region_saved
+                                     NULL,      // p_compile_error
+                                     NULL,      // p_pos
+                                     NULL,      // tstr_autoformat_style
+                                     FALSE,     // try_autoformat
+                                     FALSE,     // please_uref_overwrite
+                                     FALSE,     // force_recalc
+                                     FALSE);    // clip_data_from_cut_operation
 
         break;
         /*NOTREACHED*/
@@ -2458,7 +2643,7 @@ ss_object_convert_to_output_text(
     {
         NUMFORM_PARMS numform_parms;
         SS_DATA ss_data;
-        QUICK_TBLOCK_WITH_BUFFER(quick_tblock_style, 50);
+        QUICK_TBLOCK_WITH_BUFFER(quick_tblock_style, 64);
         quick_tblock_with_buffer_setup(quick_tblock_style);
 
         ss_data_from_ev_cell(&ss_data, p_ev_cell);
@@ -2576,8 +2761,8 @@ ss_object_from_text(
     ss_data_set_blank(&ss_data_autoformat);
 
     if(try_autoformat)
-    {
-        if((NULL != ustr_formula) || (NULL != ustr_result))
+    {   /* have to consider applying autoformat to formula as caller may be just sending text that they have no idea about */
+        if( (NULL != ustr_formula) || (NULL != ustr_result) )
         {
             ARRAY_HANDLE h_mrofmun;
             if(status_ok(mrofmun_get_list(p_docu, &h_mrofmun)))
@@ -2588,10 +2773,10 @@ ss_object_from_text(
     if(STYLE_HANDLE_NONE != style_handle_autoformat)
     {
         /* squirt in de-formatted constant */
-        zero_struct(compiler_output);
+        zero_struct_fn(compiler_output);
         compiler_output.ss_data = ss_data_autoformat;
         compiler_output.ev_parms.data_only = 1;
-        compiler_output.ev_parms.data_id = ss_data_get_data_id(&compiler_output.ss_data);
+        compiler_output.ev_parms.data_id = UBF_PACK(ss_data_get_data_id(&compiler_output.ss_data));
         compiler_output.ev_parms.style_handle_autoformat = UBF_PACK(style_handle_autoformat);
         status = STATUS_DONE;
         trace_1(TRACE_APP_SKEL,
@@ -2660,22 +2845,23 @@ ss_object_from_text(
 
                 {
                 EV_RANGE ev_range_scope;
-                BOOL restrict_range;
+                BOOL use_ev_range_scope = FALSE;
 
-#if 0
-                restrict_range = FALSE; /* SKS 18aug95 try to allow pasted formulas how punters would like them */
-#else
-                /* SKS 07aug06 cut-paste leaves cell references to outside the block unmodified, copy-paste adjusts cell references */
-                restrict_range = clip_data_from_cut_operation && (p_region_saved && use_ev_slr_offset);
-#endif
+                if(use_ev_slr_offset)
+                {
+                    /* copy-paste adjusts cell references;
+                     * cut-paste leaves cell references to outside the block unmodified
+                     */
+                    use_ev_range_scope = clip_data_from_cut_operation && (NULL != p_region_saved);
 
-                if(restrict_range)
-                    ev_range_from_two_slrs(p_docu, &ev_range_scope, &p_region_saved->tl, &p_region_saved->br);
+                    if(use_ev_range_scope)
+                        ev_range_from_two_slrs(p_docu, &ev_range_scope, &p_region_saved->tl, &p_region_saved->br);
+                }
 
                 if(status_ok(status = ev_cell_from_compiler_output(p_ev_cell,
                                                                    &compiler_output,
                                                                    use_ev_slr_offset ? &ev_slr_offset : NULL,
-                                                                   restrict_range ? &ev_range_scope : NULL)))
+                                                                   use_ev_range_scope ? &ev_range_scope : NULL)))
                 {
                     BOOL add_todo = force_recalc; /* SKS 07jul96 add ability to control forcing on recalc for wingey punters */
 
@@ -2687,7 +2873,7 @@ ss_object_from_text(
                         if(use_ev_slr_offset)
                             add_todo = 1;
 
-                        switch(compiler_output.ev_parms.data_id)
+                        switch(UBF_UNPACK(EV_IDNO, compiler_output.ev_parms.data_id))
                         {
                         case DATA_ID_BLANK:
                         case DATA_ID_ERROR:
@@ -2705,9 +2891,9 @@ ss_object_from_text(
 
 #if TRACE_ALLOWED
                 trace_2(TRACE_MODULE_EVAL,
-                        TEXT("ss_object_from_text ") S32_TFMT TEXT(" bytes, constant: ") S32_TFMT,
+                        TEXT("ss_object_from_text ") S32_TFMT TEXT(" bytes, constant: ") U32_TFMT,
                         ev_compiler_output_size(&compiler_output),
-                        compiler_output.ev_parms.data_only);
+                        (U32) compiler_output.ev_parms.data_only);
 #endif
             }
         }
@@ -2814,7 +3000,7 @@ T5_MSG_PROTO(static, split_ev_call, _InRef_ P_EV_SPLIT_EXEC_DATA p_ev_split_exec
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    (*p_proc_exec) (p_ev_split_exec_data->args, p_ev_split_exec_data->n_args, p_ev_split_exec_data->p_ss_data_res, p_ev_split_exec_data->p_cur_slr);
+    (* p_proc_exec) (p_ev_split_exec_data->args, p_ev_split_exec_data->n_args, p_ev_split_exec_data->p_ss_data_res, p_ev_split_exec_data->p_cur_slr);
 
     return(STATUS_OK);
 }
@@ -2886,7 +3072,7 @@ ss_msg_startup(void)
     style_selector_bit_set(&style_selector_ob_ss_numform_all, STYLE_SW_PS_NUMFORM_DT);
     style_selector_bit_set(&style_selector_ob_ss_numform_all, STYLE_SW_PS_NUMFORM_SE);
 
-    trace_6(TRACE_OUT | TRACE_ANY, TEXT("ss_constant: ") U32_TFMT TEXT(", ss_data: ") U32_TFMT TEXT(", ev_slr: ") U32_TFMT TEXT(", LIST_ITEMOVH: ") S32_TFMT TEXT(", CELL_OVH: ") S32_TFMT TEXT(", OVH_EV_CELL: ") S32_TFMT,
+    trace_6(TRACE_OUT | TRACE_ANY, TEXT("SS_CONSTANT: ") U32_TFMT TEXT(", SS_DATA: ") U32_TFMT TEXT(", EV_SLR: ") U32_TFMT TEXT(", LIST_ITEMOVH: ") S32_TFMT TEXT(", CELL_OVH: ") S32_TFMT TEXT(", OVH_EV_CELL: ") S32_TFMT,
             sizeof32(SS_CONSTANT), sizeof32(SS_DATA), sizeof32(EV_SLR), (S32) LIST_ITEMOVH, (S32) CELL_OVH, (S32) OVH_EV_CELL);
 
     return(register_object_construct_table(OBJECT_ID_SS, object_construct_table, FALSE /* no inlines */));
@@ -2930,7 +3116,7 @@ ss_msg_init1(
 {
     if(DOCNO_CONFIG != docno_from_p_docu(p_docu)) /* SKS 26apr95 ignore config document */
     {
-        /* add implied style region to handle mrofmuns */
+        /* add implied style region to handle autoformat styles */
         STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
         DOCU_AREA docu_area;
         STYLE style;
@@ -2942,7 +3128,7 @@ ss_msg_init1(
         style.para_style.h_numform_se = 0;
         style_selector_copy(&style.selector, &style_selector_numform);
 
-        STYLE_DOCU_AREA_ADD_IMPLIED(&style_docu_area_add_parm, NULL, OBJECT_ID_SS, T5_EXT_STYLE_MROFMUN, 0, REGION_LOWER);
+        STYLE_DOCU_AREA_ADD_IMPLIED(&style_docu_area_add_parm, NULL, OBJECT_ID_SS, T5_EXT_STYLE_AUTOFORMAT, 0, REGION_LOWER);
         style_docu_area_add_parm.type = STYLE_DOCU_AREA_ADD_TYPE_IMPLIED;
         style_docu_area_add_parm.data.p_style = &style;
         style_docu_area_add_parm.internal = TRUE;
@@ -3209,8 +3395,8 @@ T5_MSG_PROTO(static, ss_msg_object_copy, _InoutRef_ P_OBJECT_COPY p_object_copy)
 
             if(P_DATA_NONE != p_ev_cell_from)
             {
-                EV_SLR ev_slr_offset, ev_slr_to;
                 SLR slr_offset;
+                EV_SLR ev_slr_offset, ev_slr_to;
 
                 ev_exp_copy(p_ev_cell_to, p_ev_cell_from);
 
@@ -3218,7 +3404,7 @@ T5_MSG_PROTO(static, ss_msg_object_copy, _InoutRef_ P_OBJECT_COPY p_object_copy)
                 slr_offset.col = p_object_copy->slr_to.col - p_object_copy->slr_from.col;
                 slr_offset.row = p_object_copy->slr_to.row - p_object_copy->slr_from.row;
                 ev_slr_from_slr(p_docu, &ev_slr_offset, &slr_offset);
-                ev_exp_refs_adjust(p_ev_cell_to, &ev_slr_offset, NULL);
+                ev_exp_refs_adjust(p_ev_cell_to, &ev_slr_offset);
 
                 /* add cell to tree */
                 ev_slr_from_slr(p_docu, &ev_slr_to, &p_object_copy->slr_to);
@@ -3495,9 +3681,9 @@ T5_MSG_PROTO(static, ss_msg_load_cell_ownform, _InoutRef_ P_LOAD_CELL_OWNFORM p_
                                  &compile_error,
                                  &pos,
                                  p_load_cell_ownform->tstr_autoformat_style,
-                                 FALSE,
-                                 FALSE,
-                                 global_preferences.ss_calc_on_load,
+                                 FALSE,     // try_autoformat
+                                 FALSE,     // please_uref_overwrite
+                                 global_preferences.ss_calc_on_load,    // force_recalc
                                  p_load_cell_ownform->clip_data_from_cut_operation);
 
     if(status_fail(compile_error))
@@ -3543,31 +3729,30 @@ T5_MSG_PROTO(static, ss_msg_save_cell_ownform, _InoutRef_ P_SAVE_CELL_OWNFORM p_
 
         if(p_ev_cell->ev_parms.data_only)
         {
-        switch(p_ev_cell->ev_parms.data_id)
-        {
-        case DATA_ID_REAL:
-        case DATA_ID_LOGICAL:
-        case DATA_ID_WORD8:
-        case DATA_ID_WORD16:
-        case DATA_ID_WORD32:
-            p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_CONSTANT;
-            break;
+            switch(UBF_UNPACK(EV_IDNO, p_ev_cell->ev_parms.data_id))
+            {
+            case DATA_ID_REAL:
+            case DATA_ID_LOGICAL:
+            case DATA_ID_WORD16:
+            case DATA_ID_WORD32:
+                p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_CONSTANT;
+                break;
 
-        case DATA_ID_STRING:
-            p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_TEXT;
-            break;
+            case DATA_ID_DATE:
+                p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_DATE;
+                break;
 
-        case DATA_ID_ARRAY:
-            p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_ARRAY;
-            break;
+            case DATA_ID_STRING:
+                p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_TEXT;
+                break;
 
-        case DATA_ID_DATE:
-            p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_DATE;
-            break;
+            case DATA_ID_ARRAY:
+                p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_ARRAY;
+                break;
 
-        default:
-            p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_OWNER;
-            break;
+            default:
+                p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_OWNER;
+                break;
             }
         }
         else
@@ -3626,6 +3811,13 @@ T5_MSG_PROTO(static, ss_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN p_
     /* if we will be setting any explicit number formatting style, don't autoformat here */
     if(style_selector_test(&p_load_cell_foreign->style.selector, &style_selector_ob_ss_numform_all))
         try_autoformat = FALSE;
+    else if(0 != p_load_cell_foreign->style_handle)
+    {
+        const PC_STYLE p_style = p_style_from_handle(p_docu, p_load_cell_foreign->style_handle);
+        PTR_ASSERT(p_style);
+        if((NULL != p_style) && style_selector_test(&p_style->selector, &style_selector_ob_ss_numform_all))
+            try_autoformat = FALSE;
+    }
 
     /* adjust refs for load offset */
     slr_offset.col = p_load_cell_foreign->object_data.data_ref.arg.slr.col - p_load_cell_foreign->original_slr.col;
@@ -3639,20 +3831,20 @@ T5_MSG_PROTO(static, ss_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN p_
                                  ustr_result,
                                  ustr_formula,
                                  &slr_offset,
-                                 NULL,
+                                 NULL,                                  // p_region_saved
                                  &compile_error,
                                  &pos,
-                                 NULL,
+                                 NULL,                                  // tstr_autoformat_style
                                  try_autoformat,
-                                 FALSE,
-                                 global_preferences.ss_calc_on_load,
-                                 FALSE /*clip_data_from_cut_operation*/);
+                                 FALSE,                                 // please_uref_overwrite
+                                 global_preferences.ss_calc_on_load,    // force_recalc
+                                 FALSE);                                // clip_data_from_cut_operation
 
     if(status_fail(compile_error) && ((NULL != ustr_formula) || (NULL != ustr_result)))
     {
         /* try to load failed foreign formula / result as text object */
         LOAD_CELL_OWNFORM load_cell_ownform;
-        zero_struct(load_cell_ownform);
+        zero_struct_fn(load_cell_ownform);
         load_cell_ownform.object_data = p_load_cell_foreign->object_data;
         load_cell_ownform.original_slr = p_load_cell_foreign->original_slr;
         load_cell_ownform.data_type = OWNFORM_DATA_TYPE_TEXT;
@@ -3703,7 +3895,7 @@ T5_MSG_PROTO(static, ss_msg_object_read_text_draft, _InoutRef_ P_OBJECT_READ_TEX
                 U8 effects[PLAIN_EFFECT_COUNT];
                 PIXIT_POINT offset;
                 const PC_FONT_CONTEXT p_font_context = p_font_context_from_fonty_handle(fonty_handle);
-                QUICK_UBLOCK_WITH_BUFFER(quick_ublock_plain, 100);
+                QUICK_UBLOCK_WITH_BUFFER(quick_ublock_plain, 128);
                 quick_ublock_with_buffer_setup(quick_ublock_plain);
 
                 ss_offset_from_style(&offset, &style, &text_width, &text_height, &p_object_read_text_draft->skel_rect_object);
@@ -3756,17 +3948,17 @@ T5_MSG_PROTO(static, ss_msg_new_object_from_text, _InoutRef_ P_NEW_OBJECT_FROM_T
 
     status = ss_object_from_text(&p_docu,
                                  &p_new_object_from_text->data_ref.arg.slr,
-                                 NULL,
+                                 NULL,      // ustr_result
                                  quick_ublock_ustr(p_new_object_from_text->p_quick_ublock),
-                                 NULL,
-                                 NULL,
+                                 NULL,      // p_region_saved
+                                 NULL,      // p_compile_error
                                  &p_new_object_from_text->status,
                                  &p_new_object_from_text->pos,
-                                 NULL,
+                                 NULL,      // tstr_autoformat_style
                                  p_new_object_from_text->try_autoformat,
                                  p_new_object_from_text->please_uref_overwrite,
-                                 FALSE,
-                                 FALSE);
+                                 FALSE,     // force_recalc
+                                 FALSE);    // clip_data_from_cut_operation
 
     ss_recog_context_pull(&ss_recog_context);
 
@@ -3796,7 +3988,7 @@ T5_MSG_PROTO(static, ss_msg_new_object_from_text, _InoutRef_ P_NEW_OBJECT_FROM_T
     return(status);
 }
 
-T5_MSG_PROTO(static, t5_ext_style_mrofmun, _InoutRef_ P_IMPLIED_STYLE_QUERY p_implied_style_query)
+T5_MSG_PROTO(static, t5_ext_style_autoformat, _InoutRef_ P_IMPLIED_STYLE_QUERY p_implied_style_query)
 {
     const P_EV_CELL p_ev_cell = p_ev_cell_object_from_slr(p_docu, &p_implied_style_query->position.slr);
 
@@ -3960,24 +4152,56 @@ T5_CMD_PROTO(static, t5_cmd_replicate)
     return(status);
 }
 
-T5_CMD_PROTO(static, t5_cmd_auto_sum)
+_Check_return_
+static STATUS
+cmd_auto_function_check_protection(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     PC_DOCU_AREA p_docu_area,
+    _InVal_     COL last_col,
+    _InVal_     ROW last_row)
+{
+    CHECK_PROTECTION check_protection;
+    check_protection.docu_area = *p_docu_area;
+    if(last_col >= 0)
+    {
+        check_protection.docu_area.tl.slr.row = check_protection.docu_area.br.slr.row - 1;
+        check_protection.docu_area.br.slr.col = last_col;
+    }
+    else
+    {
+        check_protection.docu_area.tl.slr.col = check_protection.docu_area.br.slr.col - 1;
+        check_protection.docu_area.br.slr.row = last_row;
+    }
+    check_protection.status_line_message = FALSE;
+    check_protection.use_docu_area = TRUE;
+    return(object_skel(p_docu, T5_MSG_CHECK_PROTECTION, &check_protection));
+}
+
+T5_CMD_PROTO(static, t5_cmd_auto_function)
 {
     STATUS status = STATUS_OK;
+    PC_USTR ustr_function_name = USTR_TEXT("SUM");
+
+    if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
+    {
+        P_ARGLIST_ARG p_arg;
+        if(arg_present(&p_t5_cmd->arglist_handle, 0, &p_arg))
+            ustr_function_name = p_arg->val.ustr;
+    }
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
-    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(p_docu->mark_info_cells.h_markers)
     {
         DOCU_AREA docu_area;
         ROW row_format = MAX_ROW;
-        U8 rhs_ok = 0, bot_ok = 0;
+        BOOL rhs_col_ok = false, bot_row_ok = false;
 
         cur_change_before(p_docu);
 
         docu_area_normalise(p_docu, &docu_area, p_docu_area_from_markers_first(p_docu));
 
-        /* the column of sums */
+        /* the column of 'sums' */
         if( (docu_area.br.slr.col > docu_area.tl.slr.col + 1)
             &&
             cells_block_is_blank(p_docu,
@@ -3985,9 +4209,9 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
                                 docu_area.br.slr.col,
                                 docu_area.tl.slr.row,
                                 docu_area.br.slr.row - docu_area.tl.slr.row))
-            rhs_ok = 1;
+            rhs_col_ok = true;
 
-        /* the row of sums */
+        /* the row of 'sums' */
         if( (docu_area.br.slr.row > docu_area.tl.slr.row + 1)
             &&
             cells_block_is_blank(p_docu,
@@ -3995,12 +4219,15 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
                                 docu_area.br.slr.col,
                                 docu_area.br.slr.row - 1,
                                 1))
-            bot_ok = 1;
+            bot_row_ok = true;
 
-        if(status_ok(status) && rhs_ok)
-        {
-            ROW last_row = bot_ok ? (docu_area.br.slr.row - 1) : docu_area.br.slr.row;
+        if(status_ok(status) && rhs_col_ok)
+        {   /* go down rows */
+            ROW last_row = bot_row_ok ? (docu_area.br.slr.row - 1) : docu_area.br.slr.row;
 
+#if 1
+            status = cmd_auto_function_check_protection(p_docu, &docu_area, -1, last_row);
+#else
             {
             CHECK_PROTECTION check_protection;
             check_protection.docu_area = docu_area;
@@ -4010,6 +4237,7 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
             check_protection.use_docu_area = TRUE;
             status = object_skel(p_docu, T5_MSG_CHECK_PROTECTION, &check_protection);
             } /*block*/
+#endif
 
             if(status_ok(status))
             {
@@ -4029,15 +4257,18 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
                     slr_e.col = docu_area.br.slr.col - 2;
                     slr_e.row = slr.row;
 
-                    status_break(status = auto_sum_exp_add(p_docu, &slr, &slr_s, &slr_e));
+                    status_break(status = auto_function_expr_add(p_docu, &slr, &slr_s, &slr_e, ustr_function_name));
                 }
             }
         }
 
-        if(status_ok(status) && bot_ok)
-        {
-            COL last_col = rhs_ok ? (docu_area.br.slr.col - 1) : docu_area.br.slr.col;
+        if(status_ok(status) && bot_row_ok)
+        {   /* go across columns */
+            COL last_col = /*rhs_col_ok ? (docu_area.br.slr.col - 1) :*/ docu_area.br.slr.col; /* SKS 20200805 put the last cell (sum of sums of rows) in as well */
 
+#if 1
+            status = cmd_auto_function_check_protection(p_docu, &docu_area, last_col, -1);
+#else
             {
             CHECK_PROTECTION check_protection;
             check_protection.docu_area = docu_area;
@@ -4047,6 +4278,7 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
             check_protection.use_docu_area = TRUE;
             status = object_skel(p_docu, T5_MSG_CHECK_PROTECTION, &check_protection);
             } /*block*/
+#endif
 
             if(status_ok(status))
             {
@@ -4066,7 +4298,7 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
                     slr_e.col = slr.col;
                     slr_e.row = docu_area.br.slr.row - 2;
 
-                    status_break(status = auto_sum_exp_add(p_docu, &slr, &slr_s, &slr_e));
+                    status_break(status = auto_function_expr_add(p_docu, &slr, &slr_s, &slr_e, ustr_function_name));
                 }
             }
         }
@@ -4074,11 +4306,32 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
         if(row_format < MAX_ROW)
             reformat_from_row(p_docu, row_format, REFORMAT_Y);
 
-        if(!bot_ok && !rhs_ok)
+        if(!bot_row_ok && !rhs_col_ok)
             status = create_error(SS_ERR_AREA_NOT_BLANK);
     }
     else
-        status = ss_function_paste_to_editing_line(p_docu, EV_RESO_MATHS, RPN_FNV_SUM);
+    {
+#if 1
+        STATUS ev_item_no;
+        EV_RESOURCE ev_resource;
+        RESOURCE_SPEC resource_spec;
+
+        if((ev_item_no = ev_func_lookup(ustr_function_name)) < 0)
+            return(STATUS_OK);
+
+        ev_enum_resource_init(&ev_resource, &resource_spec, EV_RESO_ALL_VISIBLE, ev_item_no, DOCNO_NONE, ev_docno_from_p_docu(p_docu));
+
+        if((ev_item_no = ev_enum_resource_get(&resource_spec, &ev_resource)) < 0)
+        {
+            if(STATUS_FAIL != ev_item_no)
+                return(ev_item_no);
+        }
+
+        status = ss_ui_function_paste_to_editing_line(p_docu, ev_resource.category, ev_item_no);
+#else
+        status = ss_text_paste_to_editing_line(p_docu, ustr_function);
+#endif
+    }
 
     return(status);
 }
@@ -4087,6 +4340,7 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
 {
     STATUS status = STATUS_OK;
     PC_USTR ustr = ustr_empty_string;
+    BOOL equals_prefix;
     U32 wss;
     NEW_OBJECT_FROM_TEXT new_object_from_text;
     QUICK_UBLOCK quick_ublock;
@@ -4102,6 +4356,8 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
 
     wss = ss_string_skip_leading_whitespace_uchars(ustr, ustrlen32p1(ustr));
 
+    equals_prefix = (CH_EQUALS_SIGN == PtrGetByteOff(ustr, wss));
+
     quick_ublock_setup_fill_from_const_ubuf(&quick_ublock, ustr, ustrlen32p1(ustr));
 
     data_ref_from_slr(&new_object_from_text.data_ref, &p_docu->cur.slr);
@@ -4110,7 +4366,7 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
     new_object_from_text.please_redraw = TRUE;
     new_object_from_text.please_uref_overwrite = TRUE;
 #if 1
-    new_object_from_text.try_autoformat = ('=' != PtrGetByteOff(ustr, wss)); /* don't bother if definitely a formula; NB preserve leading whitespace for formula esp. custom */
+    new_object_from_text.try_autoformat = !equals_prefix; /* don't bother if definitely a formula; NB preserve leading whitespace for formula esp. custom */
 #else
     new_object_from_text.try_autoformat = FALSE; /* SKS 17nov95 confirms */
 #endif
@@ -4125,14 +4381,17 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
 
     style_docu_area_uref_release(p_docu, &p_docu->h_style_docu_area, &p_docu->cur.slr, OBJECT_ID_NONE);
 
-    if(status_ok(status) && status_fail(new_object_from_text.status))
+    if( status_ok(status) && status_fail(new_object_from_text.status) )
     {
-        UI_TEXT ui_text;
-        ui_text.type = UI_TEXT_TYPE_RESID;
-        ui_text.text.resource_id = new_object_from_text.status;
-        status_line_set(p_docu, STATUS_LINE_LEVEL_AUTO_CLEAR, &ui_text);
         p_docu->cur.object_position.object_id = OBJECT_ID_TEXT;
         p_docu->cur.object_position.data = new_object_from_text.pos;
+
+        if( equals_prefix || (EVAL_ERR_NAMEUNDEF != new_object_from_text.status) )
+        {
+            UI_TEXT ui_text;
+            ui_text_init_resid(&ui_text, new_object_from_text.status);
+            status_line_set(p_docu, STATUS_LINE_LEVEL_AUTO_CLEAR, &ui_text);
+        }
     }
 
     return(status);
@@ -4147,7 +4406,7 @@ T5_MSG_PROTO(static, ss_msg_object_snapshot, _InRef_ P_OBJECT_SNAPSHOT p_object_
 
     if(P_DATA_NONE != p_ev_cell)
     {
-        if(!p_ev_cell->ev_parms.data_only && (DATA_ID_ERROR != p_ev_cell->ev_parms.data_id))
+        if( !p_ev_cell->ev_parms.data_only && (DATA_ID_ERROR != UBF_UNPACK(EV_IDNO, p_ev_cell->ev_parms.data_id)) )
         {
             SS_DATA ss_data, ss_data_copy;
             ss_data_from_ev_cell(&ss_data, p_ev_cell);
@@ -4246,7 +4505,8 @@ T5_MSG_PROTO(static, ss_msg_ss_name_ensure, _InoutRef_ P_SS_NAME_ENSURE p_ss_nam
 
             if((name_num = ensure_name_in_list((EV_DOCNO) docno, ustr_name_id)) >= 0)
             {
-                P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
+                const PC_EV_NAME p_ev_name = array_ptrc(&name_def_deptable.h_table, EV_NAME, name_num);
+
                 p_ss_name_ensure->ev_handle = p_ev_name->handle;
             }
             else
@@ -4285,6 +4545,34 @@ T5_MSG_PROTO(static, ss_msg_ss_name_id_from_handle, _InRef_ P_SS_NAME_ID_FROM_HA
     return(status);
 }
 
+_Check_return_ _Ret_notnull_
+static PC_SS_DATA
+ss_name_read_indirected(
+    _InRef_     PC_EV_NAME p_ev_name,
+    _OutRef_    P_SS_DATA p_ss_data_temp,
+    _InVal_     BOOL fFollowIndirection)
+{
+    ss_data_set_blank(p_ss_data_temp);
+
+    switch(ss_data_get_data_id(&p_ev_name->def_data))
+    {
+    case DATA_ID_SLR:
+        if(fFollowIndirection)
+            return(ev_slr_deref(p_ss_data_temp, &p_ev_name->def_data.arg.slr));
+        break;
+
+    case DATA_ID_RANGE:
+        if(fFollowIndirection)
+            return(ev_slr_deref(p_ss_data_temp, &p_ev_name->def_data.arg.range.s));
+        break;
+
+    default:
+        break;
+    }
+
+    return(&p_ev_name->def_data);
+}
+
 T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_read)
 {
     STATUS status = STATUS_OK;
@@ -4303,31 +4591,9 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
             status = create_error(EVAL_ERR_NAMEUNDEF);
         else
         {
-            PC_SS_DATA p_ss_data = &p_ev_name->def_data;
             SS_DATA ss_data;
 
-            ss_data_set_blank(&ss_data);
-
-            if(p_ss_name_read->follow_indirection)
-            {
-                switch(ss_data_get_data_id(&p_ev_name->def_data))
-                {
-                default:
-                    break;
-
-                case DATA_ID_SLR:
-                    ev_slr_deref(&ss_data, &p_ev_name->def_data.arg.slr);
-                    p_ss_data = &ss_data;
-                    break;
-
-                case DATA_ID_RANGE:
-                    ev_slr_deref(&ss_data, &p_ev_name->def_data.arg.range.s);
-                    p_ss_data = &ss_data;
-                    break;
-                }
-            }
-
-            status = ss_data_resource_copy(&p_ss_name_read->ss_data, p_ss_data);
+            status = ss_data_resource_copy(&p_ss_name_read->ss_data, ss_name_read_indirected(p_ev_name, &ss_data, p_ss_name_read->follow_indirection));
 
             ss_data_free_resources(&ss_data);
 
@@ -4358,8 +4624,8 @@ T5_MSG_PROTO(static, ss_msg_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_ch
     /* saves having ob_charb */
     choices_chart_update_auto_data.init_state           = (U8) !global_preferences.chart_update_manual;
 
-    choices_ss_group.relative_dialog_control_id[0] = p_choices_query_block->tr_dialog_control_id;
-    choices_ss_group.relative_dialog_control_id[1] = p_choices_query_block->tr_dialog_control_id;
+    choices_ss_group.relative_dialog_control_id[0] = (PACKED_DIALOG_CTL_ID) p_choices_query_block->tr_dialog_control_id;
+    choices_ss_group.relative_dialog_control_id[1] = (PACKED_DIALOG_CTL_ID) p_choices_query_block->tr_dialog_control_id;
 
     p_choices_query_block->tr_dialog_control_id = CHOICES_SS_ID_GROUP;
     p_choices_query_block->br_dialog_control_id = CHOICES_CHART_ID_GROUP;
@@ -4532,7 +4798,10 @@ T5_CMD_PROTO(static, object_ss_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SOFT_HYPHEN):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_TAB):
         return(STATUS_FAIL);
+    }
 
+    switch(T5_MESSAGE_CMD_OFFSET(t5_message))
+    {
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_MAKE_TEXT):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_MAKE_NUMBER):
         return(t5_cmd_ss_make_tn(p_docu, t5_message, p_t5_cmd));
@@ -4543,8 +4812,8 @@ T5_CMD_PROTO(static, object_ss_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_REPLICATE_LEFT):
         return(t5_cmd_replicate(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_AUTO_SUM):
-        return(t5_cmd_auto_sum(p_docu, t5_message, p_t5_cmd));
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_AUTO_FUNCTION):
+        return(t5_cmd_auto_function(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_OPERATOR_PLUS):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_OPERATOR_MINUS):
@@ -4554,6 +4823,9 @@ T5_CMD_PROTO(static, object_ss_cmd)
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_FUNCTIONS):
         return(t5_cmd_ss_functions(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_FUNCTIONS_SHORT):
+        return(t5_cmd_ss_functions_short(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_NAME_INTRO):
         return(t5_cmd_ss_name_intro(p_docu, t5_message, p_t5_cmd));
@@ -4589,6 +4861,7 @@ T5_CMD_PROTO(static, object_ss_cmd)
         return(ss_choices_chart_update_auto(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_AUTO_FUNCTION):
         return(t5_cmd_activate_menu(p_docu, t5_message));
 
 #if CHECKING
@@ -4655,8 +4928,8 @@ OBJECT_PROTO(extern, object_ss)
     case T5_MSG_OBJECT_HOW_WIDE:
         return(ss_msg_object_how_wide(p_docu, t5_message, (P_OBJECT_HOW_WIDE) p_data));
 
-    case T5_EXT_STYLE_MROFMUN:
-        return(t5_ext_style_mrofmun(p_docu, t5_message, (P_IMPLIED_STYLE_QUERY) p_data));
+    case T5_EXT_STYLE_AUTOFORMAT:
+        return(t5_ext_style_autoformat(p_docu, t5_message, (P_IMPLIED_STYLE_QUERY) p_data));
 
     /* turn lots of keys pressed message into insert_sub message; */
     case T5_MSG_OBJECT_KEYS:

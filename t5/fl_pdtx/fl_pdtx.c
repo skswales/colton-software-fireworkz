@@ -349,7 +349,7 @@ pdtx_para_process(
 {
     STATUS status;
     ARRAY_HANDLE h_pd_format;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_para, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_para, 256);
     quick_ublock_with_buffer_setup(quick_ublock_para);
 
     if(status_ok(status = pdtx_para_make(&quick_ublock_para, &h_pd_format, p_h_data, p_h_cols)))
@@ -357,7 +357,7 @@ pdtx_para_process(
         if((0 != quick_ublock_bytes(&quick_ublock_para)) && status_ok(status = quick_ublock_nullch_add(&quick_ublock_para)))
         {
             LOAD_CELL_FOREIGN load_cell_foreign;
-            zero_struct(load_cell_foreign);
+            zero_struct_fn(load_cell_foreign);
             status_consume(object_data_from_position(p_docu, &load_cell_foreign.object_data, p_position, P_OBJECT_POSITION_NONE));
             load_cell_foreign.original_slr = p_position->slr;
 
@@ -1080,7 +1080,7 @@ pdtx_slot_construct_strip(
 
                         if(p_pd_construct->p_proc_construct)
                         {
-                            (*p_pd_construct->p_proc_construct) (p_u8_slot, p_u8_construct, len);
+                            (* p_pd_construct->p_proc_construct) (p_u8_slot, p_u8_construct, len);
                             done = TRUE;
                         }
 

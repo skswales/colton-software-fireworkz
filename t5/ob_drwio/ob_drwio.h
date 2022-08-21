@@ -20,32 +20,26 @@ messages
 
 #define MSG_DIALOG_SAVE_AS_DRAWFILE_INTRO_CAPTION       DRAW_IO_MSG(1)
 #define MSG_DIALOG_SAVE_AS_DRAWFILE_INTRO_HELP_TOPIC    DRAW_IO_MSG(2)
-#define MSG_DRAW_IO_DRAWFILE                            DRAW_IO_MSG(3)
+
+#define ARG_HYBRID_SETUP_FILETYPE   0
+#define ARG_HYBRID_SETUP_PAGE_RANGE 1
+#define ARG_HYBRID_SETUP_N_ARGS     2
 
 /*
 exported routines
 */
-
-extern void
-save_as_drawfile_percentage_initialise(
-    _DocuRef_   P_DOCU p_docu,
-    P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage,
-    _In_        S32 page_count);
-
-extern void
-save_as_drawfile_percentage_page_inc(
-    P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage);
-
-extern void
-save_as_drawfile_percentage_finalise(
-    P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage);
 
 _Check_return_
 extern STATUS
 save_as_drawfile_host_print_document(
     _DocuRef_   P_DOCU p_docu,
     P_PRINT_CTRL p_save_as_drawfile_ctrl,
-    _In_z_      PCTSTR filename,
+    _In_opt_z_  PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype);
+
+_Check_return_
+extern STATUS
+find_fireworkz_data_in_drawfile(
+    _InoutRef_  P_OF_IP_FORMAT p_of_ip_format);
 
 /* end of ob_drwio.h */

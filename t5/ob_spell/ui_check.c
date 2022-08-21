@@ -186,13 +186,13 @@ dict_cancel =
 static const DIALOG_CTL_CREATE
 check_dialog_create[] =
 {
-    { &dict_guess, &dict_guess_data },
-    { &dict_word, &dict_word_data },
-    { &dict_list, &stdlisttext_data },
-    { &dict_add, &dict_add_data },
-    { &dict_replace, &dict_replace_data },
-    { &dict_skip, &dict_skip_data },
-    { &dict_cancel, &stdbutton_cancel_data } /* SKS 02aug94 added Cancel button */
+    { { &dict_guess }, &dict_guess_data },
+    { { &dict_word }, &dict_word_data },
+    { { &dict_list }, &stdlisttext_data },
+    { { &dict_add }, &dict_add_data },
+    { { &dict_replace }, &dict_replace_data },
+    { { &dict_skip }, &dict_skip_data },
+    { { &dict_cancel }, &stdbutton_cancel_data } /* SKS 02aug94 added Cancel button */
 };
 
 _Check_return_
@@ -423,7 +423,7 @@ ui_check_dbox(
 {
     STATUS status = STATUS_OK;
     CHECK_CALLBACK check_callback;
-    zero_struct(check_callback);
+    zero_struct_fn(check_callback);
 
     check_callback.p_word_check = p_word_check;
     check_callback.ustr_init_word = ustr_init_word;
@@ -434,9 +434,8 @@ ui_check_dbox(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, check_dialog_create, elemof32(check_dialog_create), OB_SPELL_MSG_CHECK_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = OB_SPELL_MSG_CHECK_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, check_dialog_create, elemof32(check_dialog_create), OB_SPELL_MSG_CHECK_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = OB_SPELL_MSG_CHECK_HELP_TOPIC;
     dialog_cmd_process_dbox.bits.note_position = 1;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_check;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &check_callback;

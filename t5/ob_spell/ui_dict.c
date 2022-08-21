@@ -96,35 +96,38 @@ enum DICT_CONTROL_IDS
     CONTROL_ID_LIST,
     CONTROL_ID_ADD,
     CONTROL_ID_DELETE,
-    CONTROL_ID_CANCEL,
     CONTROL_ID_ALL,
     CONTROL_ID_UP,
     CONTROL_ID_DOWN
 };
 
-#define CONTROL_BUTT_H (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Delete"))
+#if RISCOS
+#define CONTROL_BUTT_H (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Abbrechen"))
+#else
+#define CONTROL_BUTT_H DIALOG_STDPUSHBUTTON_H
+#endif
 #define CONTROL_EDIT_H (16 * PIXITS_PER_INCH) / 8
-#define CONTROL_LIST_V (10 * PIXITS_PER_INCH) / 8
+#define CONTROL_LIST_V DIALOG_STDLISTOVH_V + (DIALOG_STDLISTITEM_V * 7) //(10 * PIXITS_PER_INCH) / 8
 
 static const DIALOG_CONTROL
 dict_word_ornament =
 {
-    CONTROL_ID_WORD_ORNAMENT, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0, 0, CONTROL_BUTT_H, DIALOG_STDEDIT_V },
-    { DRT(LTLT, STATICTEXT) }
+    CONTROL_ID_WORD_ORNAMENT, DIALOG_MAIN_GROUP,
+    { CONTROL_ID_ADD, CONTROL_ID_WORD, CONTROL_ID_ADD, CONTROL_ID_WORD },
+    { 0 },
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 dict_word_ornament_data = { UI_TEXT_INIT_RESID(OB_SPELL_MSG_WORD), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
 dict_word =
 {
-    CONTROL_ID_WORD, DIALOG_CONTROL_WINDOW,
-    { CONTROL_ID_WORD_ORNAMENT, CONTROL_ID_WORD_ORNAMENT, DIALOG_CONTROL_SELF, CONTROL_ID_WORD_ORNAMENT },
-    { DIALOG_STDSPACING_H, 0, CONTROL_EDIT_H, 0 },
-    { DRT(RTLB, EDIT), 1 /*tabstop*/ }
+    CONTROL_ID_WORD, DIALOG_MAIN_GROUP,
+    { CONTROL_ID_WORD_ORNAMENT, DIALOG_CONTROL_PARENT },
+    { DIALOG_STDSPACING_H, 0, CONTROL_EDIT_H, DIALOG_STDEDIT_V },
+    { DRT(RTLT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
@@ -133,7 +136,7 @@ dict_word_data = { { { FRAMED_BOX_EDIT } }, /*EDIT_XX*/ { UI_TEXT_TYPE_NONE } /*
 static const DIALOG_CONTROL
 dict_list =
 {
-    CONTROL_ID_LIST, DIALOG_CONTROL_WINDOW,
+    CONTROL_ID_LIST, DIALOG_MAIN_GROUP,
     { CONTROL_ID_WORD, CONTROL_ID_WORD, CONTROL_ID_WORD },
     { 0, DIALOG_STDSPACING_V, 0, CONTROL_LIST_V },
     { DRT(LBRT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
@@ -154,10 +157,10 @@ dict_add_data = { { 0 }, UI_TEXT_INIT_RESID(OB_SPELL_MSG_ADD_WORD), &dict_add_co
 static const DIALOG_CONTROL
 dict_add =
 {
-    CONTROL_ID_ADD, DIALOG_CONTROL_WINDOW,
-    { CONTROL_ID_WORD_ORNAMENT, CONTROL_ID_WORD_ORNAMENT, CONTROL_ID_WORD_ORNAMENT },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    CONTROL_ID_ADD, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, CONTROL_ID_WORD_ORNAMENT },
+    { 0, DIALOG_STDSPACING_V, CONTROL_BUTT_H, DIALOG_STDPUSHBUTTON_V },
+    { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_ID
@@ -172,17 +175,8 @@ dict_delete_data = { { 0 }, UI_TEXT_INIT_RESID(OB_SPELL_MSG_DELETE_WORD), &dict_
 static const DIALOG_CONTROL
 dict_delete =
 {
-    CONTROL_ID_DELETE, DIALOG_CONTROL_WINDOW,
+    CONTROL_ID_DELETE, DIALOG_MAIN_GROUP,
     { CONTROL_ID_ADD, CONTROL_ID_ADD, CONTROL_ID_ADD },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
-    { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
-};
-
-static const DIALOG_CONTROL
-dict_cancel =
-{
-    CONTROL_ID_CANCEL, DIALOG_CONTROL_WINDOW,
-    { CONTROL_ID_DELETE, CONTROL_ID_DELETE, CONTROL_ID_DELETE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
     { DRT(LBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
@@ -190,8 +184,8 @@ dict_cancel =
 static const DIALOG_CONTROL
 dict_all =
 {
-    CONTROL_ID_ALL, DIALOG_CONTROL_WINDOW,
-    { CONTROL_ID_CANCEL, CONTROL_ID_CANCEL, CONTROL_ID_CANCEL },
+    CONTROL_ID_ALL, DIALOG_MAIN_GROUP,
+    { CONTROL_ID_DELETE, CONTROL_ID_DELETE, CONTROL_ID_DELETE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
     { DRT(LBRT, CHECKBOX), 1 /*tabstop*/ }
 };
@@ -212,19 +206,19 @@ dict_all_data = { { 0 },  UI_TEXT_INIT_RESID(OB_SPELL_MSG_ALL_DICTS), 1 };
 static const DIALOG_CONTROL
 dict_up =
 {
-    CONTROL_ID_UP, DIALOG_CONTROL_WINDOW,
+    CONTROL_ID_UP, DIALOG_MAIN_GROUP,
     { CONTROL_ID_LIST, CONTROL_ID_LIST },
     { DICT_UD_SPACING_H, 0, DICT_UD_BUTTONS_H, DICT_UD_BUTTONS_V },
     { DRT(RTLT, PUSHPICTURE) }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHPICTURE
-dict_up_data = { { 0, 0, 0, 0, 1 /*auto repeat*/, 1 /*not_dlg_framed*/ }, { OBJECT_ID_SKEL, SKEL_ID_BM_INC }};
+dict_up_data = { { 0, 0, 0, 0, 1 /*auto repeat*/, 1 /*not_dlg_framed*/ }, { OBJECT_ID_SKEL, SKEL_ID_BM_INC } };
 
 static const DIALOG_CONTROL
 dict_down =
 {
-    CONTROL_ID_DOWN, DIALOG_CONTROL_WINDOW,
+    CONTROL_ID_DOWN, DIALOG_MAIN_GROUP,
     { CONTROL_ID_UP, CONTROL_ID_LIST, CONTROL_ID_UP, CONTROL_ID_LIST },
     { 0, -DICT_UD_BUTTONS_V, 0, 0 },
     { DRT(LBRB, PUSHPICTURE) }
@@ -236,15 +230,17 @@ dict_down_data = { { 0, 0, 0, 0, 1 /*auto repeat*/, 1 /*not_dlg_framed*/ }, { OB
 static const DIALOG_CTL_CREATE
 dictionary_dialog_create[] =
 {
-    { &dict_word_ornament, &dict_word_ornament_data },
-    { &dict_word, &dict_word_data },
-    { &dict_list, &dict_list_data },
-    { &dict_add, &dict_add_data },
-    { &dict_delete, &dict_delete_data },
-    { &dict_cancel, &stdbutton_cancel_data },
-    { &dict_all, &dict_all_data },
-    { &dict_up, &dict_up_data },
-    { &dict_down, &dict_down_data }
+    { { &dialog_main_group }, NULL },
+    { { &dict_word_ornament }, &dict_word_ornament_data },
+    { { &dict_word }, &dict_word_data },
+    { { &dict_list }, &dict_list_data },
+    { { &dict_add }, &dict_add_data },
+    { { &dict_delete }, &dict_delete_data },
+    { { &dict_all }, &dict_all_data },
+    { { &dict_up }, &dict_up_data },
+    { { &dict_down }, &dict_down_data },
+
+    { { &defbutton_close }, &defbutton_close_data }
 };
 
 _Check_return_
@@ -453,7 +449,7 @@ t5_cmd_spell_dictionary(
     DICTIONARY_CALLBACK dictionary_callback;
     STATUS status = STATUS_OK;
 
-    zero_struct(dictionary_callback);
+    zero_struct_fn(dictionary_callback);
 
     dictionary_callback.search_all = dict_all_data.init_state;
 
@@ -481,9 +477,8 @@ t5_cmd_spell_dictionary(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, dictionary_dialog_create, elemof32(dictionary_dialog_create), OB_SPELL_MSG_DICTIONARY_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = OB_SPELL_MSG_DICTIONARY_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, dictionary_dialog_create, elemof32(dictionary_dialog_create), OB_SPELL_MSG_DICTIONARY_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = OB_SPELL_MSG_DICTIONARY_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_dictionary;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &dictionary_callback;
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);

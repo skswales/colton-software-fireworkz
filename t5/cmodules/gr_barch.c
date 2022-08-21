@@ -1203,7 +1203,7 @@ gr_linechart_point_addin(
         err_box.y0 = 0;         /* move later */
 
         if(cp->d3.bits.use)
-            gr_point_partial_z_shift((P_GR_POINT) &err_box.x0, (P_GR_POINT) &err_box.x0, cp,  0.5);
+            gr_point_partial_z_shift((P_GR_POINT) &err_box.x0, (P_GR_POINT) &err_box.x0, cp, 0.5);
 
         err_box.x1 = err_box.x0;
     }

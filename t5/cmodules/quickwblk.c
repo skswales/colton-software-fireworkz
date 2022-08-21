@@ -36,6 +36,8 @@
 *
 ******************************************************************************/
 
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 /* dispose of a quick_wblock is inline */
 
 /******************************************************************************
@@ -312,6 +314,8 @@ quick_wblock_nullch_strip(
 *
 ******************************************************************************/
 
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 _Check_return_
 extern STATUS __cdecl
 quick_wblock_printf(
@@ -329,6 +333,8 @@ quick_wblock_printf(
     return(status);
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * vsprintf into quick_wblock
@@ -336,6 +342,8 @@ quick_wblock_printf(
 * NB. does NOT add terminating CH_NULL
 *
 ******************************************************************************/
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 _Check_return_
 extern STATUS
@@ -483,6 +491,8 @@ quick_wblock_vprintf(
 
     return(status);
 }
+
+#endif /* OS */
 
 /* appending with conversion */
 
@@ -718,5 +728,7 @@ quick_wblock_utf8str_add_n(
 {
     return(quick_wblock_utf8_add(p_quick_wblock, ustr, utf8str_strlen32_n(ustr, uchars_n)));
 }
+
+#endif /* OS */
 
 /* end of quickwblk.c */

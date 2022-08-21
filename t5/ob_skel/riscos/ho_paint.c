@@ -355,123 +355,119 @@ host_paint_border_line(
 #endif /* PROFILING */
 
 {
-    PIXIT_LINE pixit_line = *p_pixit_line;
-    DRAW_POINT start, end;
-    BOOL rect_fill;
-    PIXIT_POINT line_width, line_width_eff, line_width_select;
+    PIXIT_LINE pixit_line;
+    BOOL rect_fill = !(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile); /* unless BROKEN line */
+    PIXIT_POINT line_width_select;
     PIXIT_RECT pixit_rect;
+    DRAW_POINT start, end;
 
     if(p_rgb->transparent)
         return;
 
+    pixit_line = *p_pixit_line;
+
     switch(flags.border_style)
     {
+    default: default_unhandled();
+#if CHECKING
     case SF_BORDER_NONE:
+#endif
         return;
 
     case SF_BORDER_THIN:
-        line_width     = p_redraw_context->thin_width;
-        line_width_eff = p_redraw_context->thin_width_eff;
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case SF_BORDER_STANDARD:
-    case SF_BORDER_BROKEN:
-#endif
-        line_width     = p_redraw_context->line_width;
-        line_width_eff = p_redraw_context->line_width_eff;
-        break;
-
-    case SF_BORDER_THICK:
-        line_width     = p_redraw_context->border_width;
-        line_width_eff = p_redraw_context->border_width;
-        break;
-    }
-
-    switch(flags.border_style)
-    {
-    default:
-#if CHECKING
-    case SF_BORDER_NONE:
-        assert0();
-
-        /*FALLTHRU*/
-
-    case SF_BORDER_THIN:
-    case SF_BORDER_STANDARD:
-    case SF_BORDER_THICK:
-#endif
-        rect_fill = !(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile);
+        line_width_select = p_redraw_context->thin_width;
+        if(rect_fill)
+            line_width_select = p_redraw_context->thin_width_eff;
         break;
 
     case SF_BORDER_BROKEN:
-        rect_fill = 0;
+        rect_fill = FALSE;
+        /*DROPTHRU*/
+    case SF_BORDER_STANDARD:
+        line_width_select = p_redraw_context->line_width;
+        if(rect_fill)
+            line_width_select = p_redraw_context->line_width_eff;
+
+        if( (flags.border_style == SF_BORDER_BROKEN) || p_redraw_context->flags.drawfile )
+        {
+            if(line_width_select.x <= PIXITS_PER_INCH / 90)
+                flags.add_lw_to_l = flags.add_lw_to_t = flags.add_lw_to_r = flags.add_lw_to_b = 0;
+        }
+        break;
+
+    case SF_BORDER_THICK:
+        line_width_select = p_redraw_context->border_width;
         break;
     }
 
 #if TRACE_ALLOWED
-    tracef(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: line tl ") S32_TFMT TEXT(",") S32_TFMT TEXT(" br ") S32_TFMT TEXT(",") S32_TFMT TEXT(" %s lw ") S32_TFMT TEXT(",") S32_TFMT TEXT(" lw_eff ") S32_TFMT TEXT(",") S32_TFMT,
-           pixit_line.tl.x, pixit_line.tl.y, pixit_line.br.x, pixit_line.br.y, pixit_line.horizontal ? "H" : "V",
-           line_width.x, line_width.y, line_width_eff.x, line_width_eff.y);
+    tracef(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: %s line ") PIXIT_RECT_TFMT TEXT(" lw ") S32_TFMT TEXT(",") S32_TFMT,
+           pixit_line.horizontal ? "H" : "V",
+           PIXIT_RECT_ARGS(pixit_line),
+           line_width_select.x, line_width_select.y);
 #endif
-
-    if( p_redraw_context->flags.printer  ||
-        /*p_redraw_context->flags.metafile || not on RISCOS!*/
-        p_redraw_context->flags.drawfile )
-        line_width_select = line_width;
-    else
-        line_width_select = line_width_eff;
 
     if(flags.add_lw_to_l)
         pixit_line.tl.x += line_width_select.x;
-    if(flags.add_gw_to_l)
-        pixit_line.tl.x += p_redraw_context->border_width.x;
-    if(flags.sub_gw_from_l)
-        pixit_line.tl.x -= p_redraw_context->border_width.x;
-
     if(flags.add_lw_to_t)
         pixit_line.tl.y += line_width_select.y;
-    if(flags.add_gw_to_t)
-        pixit_line.tl.y += p_redraw_context->border_width.y;
-    if(flags.sub_gw_from_t)
-        pixit_line.tl.y -= p_redraw_context->border_width.y;
-
     if(flags.add_lw_to_r)
         pixit_line.br.x += line_width_select.x;
-    if(flags.add_gw_to_r)
-        pixit_line.br.x += p_redraw_context->border_width.x;
-    if(flags.sub_gw_from_r)
-        pixit_line.br.x -= p_redraw_context->border_width.x;
-
     if(flags.add_lw_to_b)
         pixit_line.br.y += line_width_select.y;
-    if(flags.add_gw_to_b)
-        pixit_line.br.y += p_redraw_context->border_width.y;
-    if(flags.sub_gw_from_b)
-        pixit_line.br.y -= p_redraw_context->border_width.y;
 
-    pixit_rect.tl.x = pixit_line.tl.x;
-    pixit_rect.tl.y = pixit_line.tl.y;
+    pixit_rect.tl = pixit_line.tl;
+    pixit_rect.br = pixit_line.br;
 
     if(pixit_line.horizontal)
-    {
-        pixit_rect.br.x = pixit_line.br.x;
         pixit_rect.br.y = pixit_rect.tl.y + line_width_select.y;
+    else
+        pixit_rect.br.x = pixit_rect.tl.x + line_width_select.x;
+
+    trace_1(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: rect ") PIXIT_RECT_TFMT, PIXIT_RECT_ARGS(pixit_rect));
+
+    if(rect_fill)
+    {
+        GDI_RECT gdi_rect;
+        GDI_POINT os_start, os_end;
+
+        /* clip close to GDI limits (only ok because lines either horizontal or vertical) */
+        if(!status_done(gdi_rect_limited_from_pixit_rect_and_context(&gdi_rect, &pixit_rect, p_redraw_context)))
+        {   /* line too small to plot */
+            trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: box ") S32_TFMT TEXT(",") S32_TFMT TEXT(";") S32_TFMT TEXT(",") S32_TFMT TEXT(" FAILED"), gdi_rect.tl.x, gdi_rect.tl.y, gdi_rect.br.x, gdi_rect.br.y);
+            return;
+        }
+
+        os_start.x = gdi_rect.tl.x; /*inc*/
+        os_start.y = gdi_rect.br.y; /*inc*/
+        os_end.x   = gdi_rect.br.x; /*exc*/
+        os_end.y   = gdi_rect.tl.y; /*exc*/
+
+        os_end.x -= p_redraw_context->host_xform.riscos.dx;
+        os_end.y -= p_redraw_context->host_xform.riscos.dy;
+
+        if(flags.border_style == SF_BORDER_THIN)
+        {
+            /* thin is always drawn very thin on screen, whereas standard and thick may be scaled */
+            if(pixit_line.horizontal)
+                os_start.y = os_end.y;
+            else
+                os_end.x = os_start.x;
+        }
+
+        void_WrapOsErrorChecking(
+            bbc_move(os_start.x, os_start.y));
+
+        void_WrapOsErrorChecking(
+            os_plot(host_setcolour(p_rgb) | bbc_MoveCursorAbs | bbc_RectangleFill,
+                    (os_end.x + p_redraw_context->host_xform.riscos.dx - 1 /* fill out to pixel edge for printer drivers */),
+                    (os_end.y + p_redraw_context->host_xform.riscos.dy - 1)));
+
+        return;
     }
     else
     {
-        pixit_rect.br.x = pixit_rect.tl.x + line_width_select.x;
-        pixit_rect.br.y = pixit_line.br.y;
-    }
-
-    trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: rect tl ") S32_TFMT TEXT(",") S32_TFMT TEXT(" br ") S32_TFMT TEXT(",") S32_TFMT, pixit_rect.tl.x, pixit_rect.tl.y, pixit_rect.br.x, pixit_rect.br.y);
-
-    if(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile)
-    {
         GDI_RECT gdi_rect;
-
-        assert(!rect_fill);
 
         /* go straight into Draw units, no pixel rounding */
         status_consume(gdi_rect_from_pixit_rect_and_context_draw(&gdi_rect, &pixit_rect, p_redraw_context));
@@ -481,104 +477,58 @@ host_paint_border_line(
         end.x   = gdi_rect.br.x; /*exc*/
         end.y   = gdi_rect.tl.y; /*exc*/
     }
-    else
-    {
-        GDI_RECT gdi_rect;
-
-        /* clip close to GDI limits (only ok because lines either horizontal or vertical) */
-        if(!status_done(gdi_rect_limited_from_pixit_rect_and_context(&gdi_rect, &pixit_rect, p_redraw_context)))
-        {   /* line too small to plot */
-            trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: box ") S32_TFMT TEXT(",") S32_TFMT TEXT(";") S32_TFMT TEXT(",") S32_TFMT TEXT(" FAILED"), gdi_rect.tl.x, gdi_rect.tl.y, gdi_rect.br.x, gdi_rect.br.y);
-            return;
-        }
-
-        if(rect_fill)
-        {
-            GDI_POINT os_start, os_end;
-
-            os_start.x = gdi_rect.tl.x; /*inc*/
-            os_start.y = gdi_rect.br.y; /*inc*/
-            os_end.x   = gdi_rect.br.x; /*exc*/
-            os_end.y   = gdi_rect.tl.y; /*exc*/
-
-            os_end.x -= p_redraw_context->host_xform.riscos.dx;
-            os_end.y -= p_redraw_context->host_xform.riscos.dy;
-
-            if(flags.border_style == SF_BORDER_THIN)
-            {
-                /* thin is always drawn very thin on screen, whereas standard and thick may be scaled */
-                if(pixit_line.horizontal)
-                    os_start.y = os_end.y;
-                else
-                    os_end.x = os_start.x;
-            }
-
-            void_WrapOsErrorChecking(
-                bbc_move(os_start.x, os_start.y));
-
-            void_WrapOsErrorChecking(
-                os_plot(host_setcolour(p_rgb) | bbc_MoveCursorAbs | bbc_RectangleFill,
-                        (os_end.x + p_redraw_context->host_xform.riscos.dx - 1 /* fill out to pixel edge for printer drivers */),
-                        (os_end.y + p_redraw_context->host_xform.riscos.dy - 1)));
-
-            return;
-        }
-
-        /* go into Draw units after pixel rounding and GDI limiting */
-        start.x = gdi_rect.tl.x << 8; /*inc*/
-        start.y = gdi_rect.br.y << 8; /*inc*/
-        end.x   = gdi_rect.br.x << 8; /*exc*/
-        end.y   = gdi_rect.tl.y << 8; /*exc*/
-    }
 
     trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: start ") S32_TFMT TEXT(",") S32_TFMT TEXT("; end") S32_TFMT TEXT(",") S32_TFMT, start.x, start.y, end.x, end.y);
 
     { /* use Draw module for all dotted lines and most printed lines */
-    static S32 matrix[6] =
+    static const S32 matrix[6] =
     {
         0x00010000, 0,
         0,          0x00010000,
         0,          0
     };
 
-    struct { DRAW_PATH_MOVE move; DRAW_PATH_LINE line; DRAW_PATH_TERM term; } thin;
+    struct { DRAW_PATH_MOVE move; DRAW_PATH_LINE line; DRAW_PATH_TERM term; } dr_line;
     struct { drawmod_dashhdr header; int pattern[2]; } dash_pattern;
     drawmod_line line_attributes;
     _kernel_swi_regs rs;
-    S32 half_width;
+    DRAW_COORD half_width;
 
-    zero_struct(line_attributes);
+    zero_struct_fn(line_attributes); /* butt caps, etc. */
+    line_attributes.spec.mitrelimit = 0xA0000; /* Mitre limit=10.0 (PostScript default) */
 
-    /* It would have been nice to use the draw modules transformation matrix to do our scaling  */
-    /* (or at least to have used to do the <<8 RISC_OS to draw unit conversion), but such large */
-    /* matrix multiplication factors (~256) cause overflow errors in the draw module.           */
+    /* It would have been nice to use the Draw modules transformation matrix to do our scaling  */
+    /* (or at least to have used to do the <<8 RISC_OS to Draw unit conversion), but such large */
+    /* matrix multiplication factors (~256) cause overflow errors in the Draw module.           */
 
     /* setup move x1,y1; line_to x2,y2; term sequence */
 
-    thin.move.tag = path_move_2;
-    thin.move.pt  = start;
+    dr_line.move.tag = path_move_2;
+    dr_line.move.pt  = start;
 
-    thin.line.tag = path_lineto;
-    thin.line.pt  = end;
+    dr_line.line.tag = path_lineto;
+    dr_line.line.pt  = end;
 
     if(pixit_line.horizontal)
-        thin.move.pt.y = end.y;
+        dr_line.move.pt.y = dr_line.line.pt.y;
     else
-        thin.line.pt.x = start.x;
+        dr_line.line.pt.x = dr_line.move.pt.x;
 
-    thin.term.tag = path_term;
+    dr_line.term.tag = path_term;
 
 #define BROKEN_LINE_MARK  14513 /* 180*256*8/25.4 i.e. 1mm */
 #define BROKEN_LINE_SPACE 14513
 
     if(flags.border_style == SF_BORDER_BROKEN)
     {
-        dash_pattern.header.dashstart = pixit_line.horizontal
-                                      ? os_unit_from_pixit_x(pixit_line.tl.x, &p_redraw_context->host_xform)
-                                      : os_unit_from_pixit_y(pixit_line.tl.y, &p_redraw_context->host_xform);
-
         dash_pattern.pattern[0] = os_unit_from_pixit_x(BROKEN_LINE_MARK,  &p_redraw_context->host_xform);
         dash_pattern.pattern[1] = os_unit_from_pixit_x(BROKEN_LINE_SPACE, &p_redraw_context->host_xform);
+
+        dash_pattern.header.dashstart = pixit_line.horizontal ? 0 : dash_pattern.pattern[1];
+#if 0
+                                      ? os_unit_from_pixit_x(pixit_line.tl.x, &p_redraw_context->host_xform)
+                                      : os_unit_from_pixit_y(pixit_line.tl.y, &p_redraw_context->host_xform);
+#endif
 
         dash_pattern.header.dashstart = ((U32) abs((int) dash_pattern.header.dashstart)) << 8;
         dash_pattern.header.dashcount = 2;
@@ -587,58 +537,68 @@ host_paint_border_line(
         line_attributes.dash_pattern = &dash_pattern.header;
     }
 
-    line_attributes.thickness = pixit_line.horizontal ? (end.y - start.y) : (end.x - start.x);
-    if(p_redraw_context->flags.printer)
+    line_attributes.thickness = 0; /* true Thin line */
+    if(flags.border_style != SF_BORDER_THIN)
     {
-        /* adjust downwards as I think the Draw module must fill pixels whose centres are touched by the line in both ways */
-        line_attributes.thickness = MAX(0, line_attributes.thickness - 1);
+        line_attributes.thickness = pixit_line.horizontal ? (end.y - start.y) : (end.x - start.x);
+        if(line_attributes.thickness < 0)
+            line_attributes.thickness = 0;
     }
-    else
+    if(line_attributes.thickness != 0)
     {
-        line_attributes.thickness = MAX(0, line_attributes.thickness);
+        if(p_redraw_context->flags.printer)
+        {
+            /* adjust downwards as I think the Draw module must fill pixels whose centres are touched by the line in both ways */
+            if(line_attributes.thickness > 0)
+                line_attributes.thickness -= 1;
+        }
+        else
+        {
+            if(line_attributes.thickness <= GR_RISCDRAW_PER_INCH / 90)
+                line_attributes.thickness = 0; /* substitute Thin line for one which should only be one pixel thick but Draw module strokes two */
+        }
     }
     half_width = line_attributes.thickness >> 1;
 
-    /* put the line down the middle of the rectangle that the line lies in */
+    /* put the line down the middle of the rectangle that the line lies in (Draw is Cartesian) */
     if(p_redraw_context->flags.printer)
     {
         if(pixit_line.horizontal)
         {
             if(half_width < 128)
             {
-                thin.move.pt.y -= 256; /* come just inside */
-                thin.line.pt.y -= 256;
+                dr_line.move.pt.y -= 256; /* come just inside */
+                dr_line.line.pt.y -= 256;
             }
             else
             {
-                thin.move.pt.y -= half_width;
-                thin.line.pt.y -= half_width;
+                dr_line.move.pt.y -= half_width;
+                dr_line.line.pt.y -= half_width;
             }
         }
         else
         {
-            thin.move.pt.x += half_width;
-            thin.line.pt.x += half_width;
+            dr_line.move.pt.x += half_width;
+            dr_line.line.pt.x += half_width;
         }
     }
-    else if(p_redraw_context->flags.drawfile)
+    else
     {
         if(pixit_line.horizontal)
         {
-            thin.line.pt.x -= half_width;
+            dr_line.move.pt.y -= half_width;
+            dr_line.line.pt.y -= half_width;
         }
         else
         {
-            thin.move.pt.y += half_width;
-            thin.line.pt.y += half_width;
+            dr_line.move.pt.x += half_width;
+            dr_line.line.pt.x += half_width;
         }
     }
 
-    line_attributes.spec.mitrelimit = 0xA0000; /* Mitre limit=10.0 (PostScript default) */
-
     if(p_redraw_context->flags.drawfile)
     {
-        struct gr_riscdiag_line_guts line;
+        struct gr_riscdiag_line_guts rd_line;
         STATUS status;
         P_BYTE pPathGuts;
         DRAW_DIAG_OFFSET line_start;
@@ -646,27 +606,27 @@ host_paint_border_line(
 #ifndef gr_riscDraw_from_pixit
 #define gr_riscDraw_from_pixit(x) ((x) * GR_RISCDRAW_PER_PIXIT)
 #endif
-        line.pos.tag  = DRAW_PATH_TYPE_MOVE;
-        line.pos.pt.x = thin.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.pos.pt.y = thin.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        rd_line.pos.tag  = DRAW_PATH_TYPE_MOVE;
+        rd_line.pos.pt.x = dr_line.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        rd_line.pos.pt.y = dr_line.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
-        line.lineto.tag  = DRAW_PATH_TYPE_LINE;
-        line.lineto.pt.x = thin.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.lineto.pt.y = thin.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        rd_line.lineto.tag  = DRAW_PATH_TYPE_LINE;
+        rd_line.lineto.pt.x = dr_line.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        rd_line.lineto.pt.y = dr_line.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
-        line.term.tag = DRAW_PATH_TYPE_TERM;
-        if(NULL != (pPathGuts = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, &line_attributes, p_rgb, sizeof32(line), &status)))
-            memcpy32(pPathGuts, &line, sizeof32(line));
+        rd_line.term.tag = DRAW_PATH_TYPE_TERM;
+        if(NULL != (pPathGuts = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, &line_attributes, p_rgb, sizeof32(rd_line), &status)))
+            memcpy32(pPathGuts, &rd_line, sizeof32(rd_line));
 
         return;
     }
 
     (void) host_setfgcolour(p_rgb);
 
-    rs.r[0] = (int) &thin;
+    rs.r[0] = (int) &dr_line;
     rs.r[1] = 0x38;
     rs.r[2] = (int) &matrix[0];
-    rs.r[3] = 200; /* flatness: would normally use 200/zoomfactor, but since line IS flat, this should do */
+    rs.r[3] = 0; /* flatness: would normally use 200/zoomfactor, but since line IS flat, default should do */
     rs.r[4] = (int) line_attributes.thickness;
     rs.r[5] = (int) &line_attributes.spec;
     rs.r[6] = (int) line_attributes.dash_pattern;
@@ -691,35 +651,27 @@ host_paint_underline(
     _InRef_     PC_RGB p_rgb,
     _InVal_     PIXIT line_thickness)
 {
-    PIXIT_LINE pixit_line = *p_pixit_line;
-    DRAW_POINT start, end;
-    BOOL rect_fill;
+    const BOOL rect_fill = !(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile);
     PIXIT line_width;
+    PIXIT_RECT pixit_rect;
+    DRAW_POINT start, end;
 
     if(p_rgb->transparent)
         return;
 
-    /* SKS after 1.20/50 14mar95 */
-    if(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile)
-        line_width = line_thickness /* was p_redraw_context->line_width.y */;
-    else
-        line_width = MAX(line_thickness, p_redraw_context->one_real_pixel.y /* was thin_width_eff */);
+    pixit_rect.tl = p_pixit_line->tl;
+    pixit_rect.br = p_pixit_line->br;
 
-    rect_fill = !(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile);
-
-    {
-    PIXIT_RECT pixit_rect;
-
-    pixit_rect.tl.x = pixit_line.tl.x;
-    pixit_rect.tl.y = pixit_line.tl.y;
-    pixit_rect.br.x = pixit_line.br.x;
-    pixit_rect.br.y = pixit_rect.tl.y + line_width;
-
-    if(p_redraw_context->flags.printer || p_redraw_context->flags.drawfile)
+    if( p_redraw_context->flags.printer || p_redraw_context->flags.drawfile )
     {
         GDI_RECT gdi_rect;
 
         assert(!rect_fill);
+
+        line_width = line_thickness;
+
+        /* line is horizontal */
+        pixit_rect.br.y += line_width;
 
         /* go straight into Draw units, no pixel rounding */
         status_consume(gdi_rect_from_pixit_rect_and_context_draw(&gdi_rect, &pixit_rect, p_redraw_context));
@@ -732,6 +684,12 @@ host_paint_underline(
     else
     {
         GDI_RECT gdi_rect;
+
+        /* SKS after 1.20/50 14mar95 */
+        line_width = MAX(line_thickness, p_redraw_context->one_real_pixel.y /* was thin_width_eff */);
+
+        /* line is horizontal */
+        pixit_rect.br.y += line_width;
 
         /* clip close to GDI limits (only ok because lines either horizontal or vertical) */
         if(!status_done(gdi_rect_limited_from_pixit_rect_and_context(&gdi_rect, &pixit_rect, p_redraw_context)))
@@ -769,51 +727,50 @@ host_paint_underline(
         end.x   = gdi_rect.br.x << 8; /*exc*/
         end.y   = gdi_rect.tl.y << 8; /*exc*/
     }
-    } /*block*/
 
     trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_underline: start ") S32_TFMT TEXT(",") S32_TFMT TEXT("; end") S32_TFMT TEXT(",") S32_TFMT, start.x, start.y, end.x, end.y);
 
     { /* use Draw module otherwise */
-    static S32 matrix[6] =
+    static const S32 matrix[6] =
     {
         0x00010000, 0,
         0,          0x00010000,
         0,          0
     };
 
-    struct { DRAW_PATH_MOVE move; DRAW_PATH_LINE line; DRAW_PATH_TERM term; } thin;
+    struct { DRAW_PATH_MOVE move; DRAW_PATH_LINE line; DRAW_PATH_TERM term; } dr_line;
     drawmod_line line_attributes;
     _kernel_swi_regs rs;
-    S32 half_width;
+    DRAW_COORD half_width;
 
-    zero_struct(line_attributes);
+    zero_struct(line_attributes); /* butt caps, etc. */
+    line_attributes.spec.mitrelimit = 0xA0000; /* Mitre limit=10.0 (PostScript default) */
 
-    /* It would have been nice to use the draw modules transformation matrix to do our scaling  */
-    /* (or at least to have used to do the <<8 RISC_OS to draw unit conversion), but such large */
-    /* matrix multiplication factors (~256) cause overflow errors in the draw module.           */
+    /* It would have been nice to use the Draw modules transformation matrix to do our scaling  */
+    /* (or at least to have used to do the <<8 RISC_OS to Draw unit conversion), but such large */
+    /* matrix multiplication factors (~256) cause overflow errors in the Draw module.           */
 
     /* setup move x1,y1; line_to x2,y2; term sequence */
 
-    thin.move.tag = path_move_2;
-    thin.move.pt.x = start.x;
-    thin.move.pt.y = end.y;
+    dr_line.move.tag = path_move_2;
+    dr_line.move.pt.x = start.x;
+    dr_line.move.pt.y = end.y;
 
-    thin.line.tag = path_lineto;
-    thin.line.pt = end;
+    dr_line.line.tag = path_lineto;
+    dr_line.line.pt = end;
 
     /* line is horizontal */
 
-    thin.term.tag = path_term;
+    dr_line.term.tag = path_term;
 
     line_attributes.thickness = end.y - start.y;
+    if(line_attributes.thickness < 0)
+        line_attributes.thickness = 0;
     if(p_redraw_context->flags.printer)
     {
         /* adjust downwards as I think the Draw module must fill pixels whose centres are touched by the line in both ways */
-        line_attributes.thickness = MAX(0, line_attributes.thickness - 1);
-    }
-    else
-    {
-        line_attributes.thickness = MAX(0, line_attributes.thickness);
+        if(line_attributes.thickness < 0)
+            line_attributes.thickness -= 1;
     }
     half_width = line_attributes.thickness >> 1;
 
@@ -822,25 +779,23 @@ host_paint_underline(
     {
         if(half_width < 128)
         {
-            thin.move.pt.y -= 256; /* come just inside */
-            thin.line.pt.y -= 256;
+            dr_line.move.pt.y -= 256; /* come just inside */
+            dr_line.line.pt.y -= 256;
         }
         else
         {
-            thin.move.pt.y -= half_width;
-            thin.line.pt.y -= half_width;
+            dr_line.move.pt.y -= half_width;
+            dr_line.line.pt.y -= half_width;
         }
     }
-    else if(p_redraw_context->flags.drawfile)
+    else //if(p_redraw_context->flags.drawfile)
     {
-        thin.line.pt.x -= half_width;
+        dr_line.line.pt.y -= half_width;
     }
-
-    line_attributes.spec.mitrelimit = 0xA0000; /* Mitre limit=10.0 (PostScript default) */
 
     if(p_redraw_context->flags.drawfile)
     {
-        struct gr_riscdiag_line_guts line;
+        struct gr_riscdiag_line_guts rd_line;
         STATUS status;
         P_BYTE pPathGuts;
         DRAW_DIAG_OFFSET line_start;
@@ -848,28 +803,28 @@ host_paint_underline(
 #ifndef gr_riscDraw_from_pixit
 #define gr_riscDraw_from_pixit(x) ((x) * GR_RISCDRAW_PER_PIXIT)
 #endif
-        line.pos.tag  = DRAW_PATH_TYPE_MOVE;
-        line.pos.pt.x = thin.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.pos.pt.y = thin.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        rd_line.pos.tag  = DRAW_PATH_TYPE_MOVE;
+        rd_line.pos.pt.x = dr_line.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        rd_line.pos.pt.y = dr_line.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
-        line.lineto.tag  = DRAW_PATH_TYPE_LINE;
-        line.lineto.pt.x = thin.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.lineto.pt.y = thin.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        rd_line.lineto.tag  = DRAW_PATH_TYPE_LINE;
+        rd_line.lineto.pt.x = dr_line.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        rd_line.lineto.pt.y = dr_line.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
-        line.term.tag = DRAW_PATH_TYPE_TERM;
+        rd_line.term.tag = DRAW_PATH_TYPE_TERM;
 
-        if(NULL != (pPathGuts = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, &line_attributes, p_rgb, sizeof32(line), &status)))
-            memcpy32(pPathGuts, &line, sizeof32(line));
+        if(NULL != (pPathGuts = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, &line_attributes, p_rgb, sizeof32(rd_line), &status)))
+            memcpy32(pPathGuts, &rd_line, sizeof32(rd_line));
 
         return;
     }
 
     (void) host_setfgcolour(p_rgb);
 
-    rs.r[0] = (int) &thin;
+    rs.r[0] = (int) &dr_line;
     rs.r[1] = 0x38;
     rs.r[2] = (int) &matrix[0];
-    rs.r[3] = 200; /* flatness: would normally use 200/zoomfactor, but since line IS flat, this should do */
+    rs.r[3] = 0; /* flatness: would normally use 200/zoomfactor, but since line IS flat, default should do */
     rs.r[4] = (int) line_attributes.thickness;
     rs.r[5] = (int) &line_attributes.spec;
     rs.r[6] = (int) line_attributes.dash_pattern;
@@ -1126,7 +1081,7 @@ host_font_find(
     numer = (16 * p_host_font_spec->size_y);
     denom = PIXITS_PER_POINT;
 
-    if(!IS_REDRAW_CONTEXT_NONE(p_redraw_context))
+    if(P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context))
     {
         if(p_redraw_context->host_xform.do_x_scale && p_redraw_context->host_xform.do_y_scale)
         {   /* only if both are scaled */
@@ -1146,7 +1101,7 @@ host_font_find(
         numer = (16 * p_host_font_spec->size_x);
         denom = PIXITS_PER_POINT;
 
-        if(!IS_REDRAW_CONTEXT_NONE(p_redraw_context))
+        if(P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context))
         {
             if(p_redraw_context->host_xform.do_x_scale && p_redraw_context->host_xform.do_y_scale)
             {   /* only if both are scaled */
@@ -1201,6 +1156,7 @@ host_fonty_uchars_width_mp(
     _In_reads_(uchars_n) PC_USTR uchars,
     _InVal_     U32 uchars_n)
 {
+    const U32 uchars_n_limited = MIN(32*1024, uchars_n); /* millipoints go wrong at about 160K chars at standard size and text wraps on same line in cell */
     _kernel_swi_regs rs;
     _kernel_oserror * p_kernel_oserror;
 
@@ -1209,7 +1165,7 @@ host_fonty_uchars_width_mp(
     rs.r[2] = FONT_SCANSTRING_USE_HANDLE /*r0*/ | FONT_SCANSTRING_USE_LENGTH /*r7*/;
     rs.r[3] = INT_MAX;
     rs.r[4] = INT_MAX;
-    rs.r[7] = (int) uchars_n;
+    rs.r[7] = (int) uchars_n_limited; /* see above */
 
     if(host_version_font_m_read(HOST_FONT_KERNING))
         rs.r[2] |= FONT_SCANSTRING_KERNING;
@@ -1240,18 +1196,19 @@ gdi_point_mp_from_pixit_point_and_context(
     _InRef_     PC_PIXIT_POINT p_pixit_point,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    PIXIT_POINT pixit_point = *p_pixit_point;
-    PIXIT_POINT multiplier;
-    PIXIT_POINT divisor;
+    PIXIT_POINT pixit_point;
+    S32_POINT multiplier;
+    const U32 YEigFactor = p_redraw_context->host_xform.riscos.YEigFactor;
+    S32_POINT divisor; /* NB divisor.x = scale.b ; divisor.y = scale.b * pixits per pixel */
 
-    pixit_point.x += p_redraw_context->pixit_origin.x;
-    pixit_point.y += p_redraw_context->pixit_origin.y;
+    pixit_point.x = p_pixit_point->x + p_redraw_context->pixit_origin.x;
+    pixit_point.y = p_pixit_point->y + p_redraw_context->pixit_origin.y;
 
-    multiplier.x = (MILLIPOINTS_PER_PIXIT * p_redraw_context->host_xform.scale.t.x);
+    multiplier.x = (p_redraw_context->host_xform.scale.t.x * MILLIPOINTS_PER_PIXIT);
     multiplier.y = (p_redraw_context->host_xform.scale.t.y);
 
     divisor.x = (p_redraw_context->host_xform.scale.b.x);
-    divisor.y = p_redraw_context->host_xform.riscos.dy * (PIXITS_PER_RISCOS * p_redraw_context->host_xform.scale.b.y);
+    divisor.y = (p_redraw_context->host_xform.scale.b.y * PIXITS_PER_RISCOS) << YEigFactor;
 
     p_gdi_point_mp->x = +muldiv64_round_floor(/*+*/pixit_point.x, multiplier.x, divisor.x);
     p_gdi_point_mp->y = -muldiv64_round_floor(/*-*/pixit_point.y, multiplier.y, divisor.y);
@@ -1274,6 +1231,7 @@ host_fonty_text_paint_uchars_rubout(
     _HfontRef_opt_ HOST_FONT host_font,
     _InRef_opt_ PC_PIXIT_RECT p_pixit_rect_rubout)
 {
+    const U32 uchars_n_limited = MIN(32*1024, uchars_n); /* millipoints go wrong at about 160K chars at standard size and text wraps on same line in cell */
     STATUS status;
     GDI_POINT gdi_point_mp;
     struct fontmanager_coords
@@ -1301,7 +1259,7 @@ host_fonty_text_paint_uchars_rubout(
 
     rs.r[1] = (int) uchars;
     rs.r[2] = FONT_PAINT_USE_LENGTH /*r7*/ | FONT_PAINT_RUBOUT; /* rubout now always required (see simple below) */
-    rs.r[7] = (int) uchars_n;
+    rs.r[7] = (int) uchars_n_limited; /* see above */
 
     if(HOST_FONT_NONE != host_font)
     {
@@ -1351,6 +1309,7 @@ host_fonty_text_paint_uchars_simple(
     _HfontRef_opt_ HOST_FONT host_font,
     _InVal_     int text_align_lcr)
 {
+    const U32 uchars_n_limited = MIN(32*1024, uchars_n); /* millipoints go wrong at about 160K chars at standard size and text wraps on same line in cell */
     STATUS status;
     GDI_POINT gdi_point;
     _kernel_swi_regs rs;
@@ -1365,7 +1324,7 @@ host_fonty_text_paint_uchars_simple(
 
     gdi_point_mp_from_pixit_point_and_context(&gdi_point, p_pixit_point, p_redraw_context);
 
-    if(TA_LEFT != text_align_lcr)
+    if( (TA_LEFT != text_align_lcr) && (uchars_n == uchars_n_limited) )
     {
         S32 mp_width = 0;
         if(HOST_FONT_NONE != host_font)
@@ -1380,7 +1339,7 @@ host_fonty_text_paint_uchars_simple(
     rs.r[2] = FONT_PAINT_USE_LENGTH /*r7*/;
     rs.r[3] = gdi_point.x;
     rs.r[4] = gdi_point.y;
-    rs.r[7] = (int) uchars_n;
+    rs.r[7] = (int) uchars_n_limited; /* see above */
 
     if(HOST_FONT_NONE != host_font)
     {
@@ -1430,6 +1389,7 @@ host_fonty_text_paint_uchars_in_framed_box(
     _InVal_     S32 text_wimpcolour,
     _HfontRef_opt_ HOST_FONT host_font)
 {
+    const U32 uchars_n_limited = MIN(32*1024, uchars_n); /* millipoints go wrong at about 160K chars at standard size and text wraps on same line in cell */
     GDI_RECT gdi_rect;
     GDI_BOX gdi_box, clip_box;
 
@@ -1480,7 +1440,7 @@ host_fonty_text_paint_uchars_in_framed_box(
             }
         }
 
-        if(0 != uchars_n)
+        if(0 != uchars_n_limited)
         {
             icon.flags.bits.text        = 1;
             icon.flags.bits.horz_centre = 1;
@@ -1490,7 +1450,7 @@ host_fonty_text_paint_uchars_in_framed_box(
 
             icon.data.it.buffer = de_const_cast(P_U8, uchars);
             icon.data.it.validation = NULL;
-            icon.data.it.buffer_size = uchars_n;
+            icon.data.it.buffer_size = uchars_n_limited; /* see above */
 
             plot_icon = TRUE;
         }
@@ -1616,7 +1576,6 @@ host_fonty_text_paint_uchars_in_rectangle(
     gdi_box.x1 = gdi_rect.br.x;
     gdi_box.y1 = gdi_rect.tl.y;
 
-
     /* never set a clip rect outside the parent clip rect */
     clip_box.x0 = MAX(gdi_box.x0, p_redraw_context->riscos.host_machine_clip_box.x0);
     clip_box.y0 = MAX(gdi_box.y0, p_redraw_context->riscos.host_machine_clip_box.y0);
@@ -1683,6 +1642,7 @@ host_fonty_text_paint_uchars_in_rectangle(
         }
         else
         {
+            const U32 uchars_n_limited = MIN(32*1024, uchars_n); /* millipoints go wrong at about 160K chars at standard size and text wraps on same line in cell */
             WimpIconBlockWithBitset icon;
 
             /* NB host_ploticon() plots window relative */
@@ -1699,7 +1659,7 @@ host_fonty_text_paint_uchars_in_rectangle(
 
             icon.data.it.buffer = de_const_cast(P_U8, uchars);
             icon.data.it.validation = NULL;
-            icon.data.it.buffer_size = uchars_n;
+            icon.data.it.buffer_size = uchars_n_limited;
 
             if(HOST_FONT_NONE == host_font)
             {
@@ -1712,7 +1672,7 @@ host_fonty_text_paint_uchars_in_rectangle(
 
                 /*host_ploticon(&icon);*/
 
-                if(0 != uchars_n)
+                if(0 != uchars_n_limited)
                 {
                     /* then plot text */
                     icon.flags.bits.text   = 1;
@@ -2612,13 +2572,13 @@ host_set_clip_rectangle(
     {
       /*pixit_rect.tl.x -= rect_flags.extend_left_currently_unused  * p_redraw_context->border_width.x;*/
         if(rect_flags.reduce_left_by_2)
-            pixit_rect.tl.x += p_redraw_context->border_width_2.x;
+            pixit_rect.tl.x += p_redraw_context->border_width.x << 1;
         if(rect_flags.reduce_left_by_1) /* only used by PMF */
             pixit_rect.tl.x += p_redraw_context->border_width.x;
 
       /*pixit_rect.tl.y -= rect_flags.extend_up_currently_unused    * p_redraw_context->border_width.y;*/
         if(rect_flags.reduce_up_by_2)
-            pixit_rect.tl.y += p_redraw_context->border_width_2.y;
+            pixit_rect.tl.y += p_redraw_context->border_width.y << 1;
         if(rect_flags.reduce_up_by_1)
             pixit_rect.tl.y += p_redraw_context->border_width.y;
 
@@ -2710,13 +2670,13 @@ host_set_clip_rectangle2(
     {
       /*pixit_rect.tl.x -= rect_flags.extend_left_currently_unused  * p_redraw_context->border_width.x;*/
         if(rect_flags.reduce_left_by_2)
-            pixit_rect.tl.x += p_redraw_context->border_width_2.x;
+            pixit_rect.tl.x += p_redraw_context->border_width.x << 1;
         if(rect_flags.reduce_left_by_1) /* only used by PMF */
             pixit_rect.tl.x += p_redraw_context->border_width.x;
 
       /*pixit_rect.tl.y -= rect_flags.extend_up_currently_unused    * p_redraw_context->border_width.y;*/
         if(rect_flags.reduce_up_by_2)
-            pixit_rect.tl.y += p_redraw_context->border_width_2.y;
+            pixit_rect.tl.y += p_redraw_context->border_width.y << 1;
         if(rect_flags.reduce_up_by_1)
             pixit_rect.tl.y += p_redraw_context->border_width.y;
 
@@ -3350,7 +3310,7 @@ host_version_font_m_reset(void)
 
 extern void
 host_ploticon(
-    _In_        WimpIconBlockWithBitset * const p_icon)
+    _InRef_     PC_WimpIconBlockWithBitset p_icon)
 {
     _kernel_swi_regs rs;
 
@@ -3365,7 +3325,7 @@ host_ploticon(
 
 extern void
 host_ploticon_setup_bbox(
-    _Inout_     WimpIconBlockWithBitset * const p_icon,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
@@ -3409,17 +3369,15 @@ plotscaled2(
     _InVal_     GDI_COORD x,
     _InVal_     GDI_COORD y,
     _InRef_     PC_SCB p_scb,
-    P_SPRITEOP_SCALING_FACTORS r6,
-    _InVal_     U32 sprite_mode_word);
+    P_SPRITEOP_SCALING_FACTORS r6);
 
 _Check_return_
 static P_U8
 generate_table(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_SCB p_scb,
-    _InVal_     U32 sprite_mode_word,
-    P_U8 paltemp,
-    P_U8 pixtrans);
+    _Out_writes_(256) P_U8 pixtrans,
+    _InoutRef_  P_S32 p_r5);
 
 _Check_return_
 static STATUS
@@ -3491,7 +3449,7 @@ host_paint_sprite_abs_coords(
     }
 
     rs.r[0] = 0x200 | 40; /* Read sprite information */
-    rs.r[1] = 0xFF;
+    rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
     rs.r[2] = (int) p_scb;
 
     if(NULL != _kernel_swi(OS_SpriteOp, &rs, &rs))
@@ -3520,7 +3478,7 @@ host_paint_sprite_abs_coords(
             scaling =
                 (spriteop_scaling_factors.multiplier_x != spriteop_scaling_factors.divisor_x) ||
                 (spriteop_scaling_factors.multiplier_y != spriteop_scaling_factors.divisor_y);
-            status = plotscaled2(p_redraw_context, x, y, p_scb, scaling ? &spriteop_scaling_factors : NULL, sprite_mode_word);
+            status = plotscaled2(p_redraw_context, x, y, p_scb, scaling ? &spriteop_scaling_factors : NULL);
             break;
             }
 
@@ -3568,7 +3526,7 @@ host_paint_sprite_abs_coords(
             y_offset = (h - ((sprite_pixH << p_redraw_context->host_xform.riscos.YEigFactor) * spriteop_scaling_factors.multiplier_y) / spriteop_scaling_factors.divisor_y);
             if(0 != y_offset) y_offset /= 2;
             //reportf("%s x=%d/%d y=%d/%d tw=%dos, th=%dos, xo=%dos, yo=%dos", report_boolstring(scaling), spriteop_scaling_factors.multiplier_x, spriteop_scaling_factors.divisor_x, spriteop_scaling_factors.multiplier_y, spriteop_scaling_factors.divisor_y, ((sprite_pixW << p_redraw_context->host_xform.riscos.XEigFactor) * spriteop_scaling_factors.multiplier_x) / spriteop_scaling_factors.divisor_x, ((sprite_pixH << p_redraw_context->host_xform.riscos.YEigFactor) * spriteop_scaling_factors.multiplier_y) / spriteop_scaling_factors.divisor_y, x_offset, y_offset);
-            status = plotscaled2(p_redraw_context, x + x_offset, y + y_offset, p_scb, scaling ? &spriteop_scaling_factors : NULL, sprite_mode_word);
+            status = plotscaled2(p_redraw_context, x + x_offset, y + y_offset, p_scb, scaling ? &spriteop_scaling_factors : NULL);
             break;
             }
 
@@ -3579,7 +3537,7 @@ host_paint_sprite_abs_coords(
             if(0 != x_offset) x_offset /= 2;
             y_offset = (h - (sprite_pixH << sprite_YEigFactor));
             if(0 != y_offset) y_offset /= 2;
-            status = plotscaled2(p_redraw_context, x + x_offset, y + y_offset, p_scb, NULL, sprite_mode_word);
+            status = plotscaled2(p_redraw_context, x + x_offset, y + y_offset, p_scb, NULL);
             break;
             }
         }
@@ -3722,23 +3680,21 @@ plotscaled2(
     _InVal_     GDI_COORD x,
     _InVal_     GDI_COORD y,
     _InRef_     PC_SCB p_scb,
-    P_SPRITEOP_SCALING_FACTORS r6,
-    _InVal_     U32 sprite_mode_word /*that the mode the sprite was defined in */)
+    P_SPRITEOP_SCALING_FACTORS r6)
 {
-    U8 temp_pixtrans[256];
+    U8 pixtrans[1024];//256];
     P_U8 r7;
-    U8 temppal[1024]; /* SKS 04oct95 this used to be static */
     _kernel_swi_regs rs;
 
-    r7 = generate_table(p_redraw_context, p_scb, sprite_mode_word, temppal, temp_pixtrans);
-
     rs.r[0] = 0x200 | 52; /* Put sprite scaled */
-    rs.r[1] = 0xFF;
+    rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
     rs.r[2] = (int) p_scb;
     rs.r[3] = x;
     rs.r[4] = y;
     rs.r[5] = 8; /* Use mask */
     rs.r[6] = (int) r6;
+
+    r7 = generate_table(p_redraw_context, p_scb, pixtrans, &rs.r[5]);
     rs.r[7] = (int) r7;
 
     if(NULL != _kernel_swi(OS_SpriteOp, &rs, &rs))
@@ -3748,11 +3704,10 @@ plotscaled2(
 }
 
 /* Build a pixel translation table
- return -1 or a pixtrans table for use in r7 of the SpriteOp(52)
+ return NULL or a pixtrans table for use in r7 of the SpriteOp(52)
  sptr%     -> sprite control block
  paltemp%  -> 1K buffer
  pixtrans% -> 256 byte buffer
- sprite_mode_word is the mode the sprite was defined in
  See Application Note in PRM
 */
 
@@ -3761,93 +3716,185 @@ static P_U8
 generate_table(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_SCB p_scb,
-    _InVal_     U32 sprite_mode_word,
-    P_U8 paltemp,
-    P_U8 pixtrans)
+    _Out_writes_(256) P_U8 pixtrans,
+    _InoutRef_  P_S32 p_r5)
 {
     STATUS status = STATUS_OK;
-    int Q;
-    S32 grab;
-    P_U8 spx;
+    U32 bpp;
+    U32 Q, Q_limit;
+    P_U8 spx = NULL;
     _kernel_swi_regs rs;
-    P_U8 palptr;
+    U8 paltemp[4*256]; /* SKS 04oct95 this used to be static */
+    P_U8 palptr = NULL; /* Default palette for source mode */
 
-    if( p_scb->offset_to_data == 44 )
+    host_modevar_cache_query_bpp(p_scb->mode, &bpp);
+
+    switch(bpp)
     {
-        /* Offset to sprite image implies no palette */
-        U32 bpp;
+    default:
+        Q_limit = 256U;
+        break;
 
-        /* palptr%=-1  :REM Current palette          */
-        /* palptr%=0   :REM Default for mode         */
+    case 4: /*Q_limit = 16*/
+    case 2: /*Q_limit = 4*/
+    case 1: /*Q_limit = 2*/
+        Q_limit = (1U << bpp);
+        break;
+    }
 
-        host_modevar_cache_query_bpp(sprite_mode_word, &bpp);
-
-        if( bpp == 8 )
-            /* Leave as 0 */
-            palptr = 0;
-        else
+    if(p_scb->offset_to_data == 44)
+    {   /* Offset to sprite image implies no palette */
+        if(bpp < 8)
         {
-#if 1
-            memcpy32(paltemp, &cache.palette, 16 * sizeof32(U32));
-#else
-            /* Use Wimp_ReadPalette */
-            rs.r[0] = 0;
-            rs.r[1] = (int)paltemp;
+            rs.r[0] = 0x200;
+            rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
+            rs.r[2] = (int) p_scb;
+            rs.r[6] = 0;
+            rs.r[7] = (int) pixtrans;
 
-            if( _kernel_swi(Wimp_ReadPalette, &rs, &rs) )
-                status = STATUS_FAIL;
-#endif
-            palptr = paltemp;
-       }
+            void_WrapOsErrorReporting(_kernel_swi(Wimp_ReadPixTrans, &rs, &rs));
+
+            /* Check to see if pixtrans[] is redundant (for faster OS_SpriteOp) */
+            for(Q = 0; Q < Q_limit; ++Q)
+            {
+                if(pixtrans[Q] != Q)
+                {
+                    spx = pixtrans;
+                    break;
+                }
+            }
+
+            return(spx);
+        }
     }
     else
     {
-        P_S32 p_s32_paltemp = (P_S32) paltemp;
-        P_S32 p_s32_sptr = (P_S32) p_scb;
+        PC_BYTE sptr = (PC_BYTE) p_scb;
+        const U32 grab_limit = Q_limit * 8;
+        U32 grab;
 
-        /* Read a 2K palette hunk */
-        for(grab = 0; grab <= 2048-8; grab += 8)
-            p_s32_paltemp[ ((grab >> 1) >> 2) ] = p_s32_sptr[ ((grab + 44) >> 2) ];
+        if((bpp <= 8) && (!p_redraw_context->flags.printer) && (host_modevar_cache_current.bpp > 8))
+        if((U32) p_scb->offset_to_data == (44 + (8 * Q_limit)))
+        {
+            *p_r5 |= (1 << 4); /* Plot 1/2/4 bpp sprite using full palette entries to 16/32 bpp */ /* Needs RISC OS 3.5 (as does 16/32bpp!) */
+            return(NULL);
+        }
+
+        zero_struct(paltemp);
+
+        /* Read alternate words from the sprite palette */
+        for(grab = 0; grab < grab_limit; grab += 8)
+            * (P_S32) &paltemp[(grab >> 1)] = * (PC_S32) &sptr[(44 + grab)];
 
         palptr = paltemp;
     }
 
-    for(Q = 0; Q <= 255; Q++)
-        pixtrans[Q] = u8_from_int(Q);
-
-    if(p_scb->offset_to_data == 44+2048)
-    {
-        /* Implication is that there is a 256 entry palette */
-        for(Q = 0; Q <= 255; Q++)
+    if((p_scb->offset_to_data == (44 + 2048)) && (bpp == 8))
+    {   /* Implication is that this 256 colour sprite has a 256 entry palette */
+        for(Q = 0; Q < Q_limit; Q++)
         {
             P_S32 p_s32 = (P_S32) palptr;
+
             rs.r[0] = (int) p_s32[Q];
+
             if(NULL == WrapOsErrorChecking(_kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs)))
                 pixtrans[Q] = u8_from_int(rs.r[0]);
+            else
+                pixtrans[Q] = u8_from_int(Q);
+
+            if(pixtrans[Q] != Q)
+                spx = pixtrans; /* finding difference here saves another loop */
         }
     }
     else
     {
-        rs.r[0] = (int) sprite_mode_word;
-        rs.r[1] = (int) palptr;
+        const BOOL wide_trt =
+            (host_os_version_query() >= RISCOS_3_6) &&
+            ((!p_redraw_context->flags.printer) && (host_modevar_cache_current.bpp > 8));
+
+        Q = 0; /* keep dataflower happy */
+        if(!wide_trt)
+            for(Q = 0; Q < Q_limit; Q++)
+                pixtrans[Q] = u8_from_int(Q);
+
+        rs.r[0] = (int) p_scb; //p_scb->mode;
+        rs.r[1] = (int) p_scb; //palptr;
+        rs.r[2] = -1; /* destination mode is current mode */
+        rs.r[3] = -1; /* destination palette is current palette */
+        rs.r[4] = (int) 0;
+
+        rs.r[5] =
+            (1 << 0) /* R1 is pointer to sprite */ |
+            (1 << 1) /* Use current palette if none */ ;
+
+        if(wide_trt)
+            rs.r[5] |= (1 << 4) /* Allow generation of wide entries */;
+
+        rs.r[6] = 0;
+        rs.r[7] = 0;
+
+        if(NULL != WrapOsErrorReporting(_kernel_swi(ColourTrans_SelectTable, &rs, &rs)))
+            status = STATUS_FAIL;
+reportf("s %s CTST length %d", p_scb->name, rs.r[4]);
+if(rs.r[4] > 1024) return(NULL);
+
+        rs.r[0] = (int) p_scb; //p_scb->mode;
+        rs.r[1] = (int) p_scb; //palptr;
         rs.r[2] = -1; /* destination mode is current mode */
         rs.r[3] = -1; /* destination palette is current palette */
         rs.r[4] = (int) pixtrans;
 
+        rs.r[5] =
+            (1 << 0) /* R1 is pointer to sprite */ |
+            (1 << 1) /* Use current palette if none */ ;
+
+        if(wide_trt)
+            rs.r[5] |= (1 << 4) /* Allow generation of wide entries */;
+
+        rs.r[6] = 0;
+        rs.r[7] = 0;
+
         if(NULL != WrapOsErrorReporting(_kernel_swi(ColourTrans_SelectTable, &rs, &rs)))
             status = STATUS_FAIL;
+        else
+        {
+            if(wide_trt)
+            {
+                *p_r5 |= (1 << 5) /* Allow use of wide entries in OS_SpriteOp */;
+                spx = pixtrans;
+            }
+            else
+            {   /* Check to see if pixtrans[] is redundant (for faster OS_SpriteOp) */
+                for(Q = 0; Q < Q_limit; Q++)
+                {
+                    if(pixtrans[Q] != Q)
+                    {
+                        spx = pixtrans;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     UNREFERENCED_PARAMETER(status);
 
-    spx = (P_U8) NULL;/*-1;*/
-
-    for(Q = 0; Q <= 255; Q++ )
-        if( pixtrans[Q] != Q )
-        {
-            spx = pixtrans;
-            break;
-        }
+#if CHECKING
+if(0 == strcmp("doc_save", p_scb->name))
+{
+reportf("s %s m %d otd %d otm %d otn %d palptr %p spx %p", p_scb->name, p_scb->mode, p_scb->offset_to_data, p_scb->offset_to_mask, p_scb->offset_to_next, palptr, spx);
+if((p_scb->offset_to_data == 44+2048) && (bpp == 8))
+{
+if(spx) reportf("%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X", pixtrans[0], pixtrans[1], pixtrans[2], pixtrans[3], pixtrans[4], pixtrans[5], pixtrans[6], pixtrans[7], pixtrans[8], pixtrans[9], pixtrans[10], pixtrans[11], pixtrans[12], pixtrans[13], pixtrans[14], pixtrans[15]);
+}
+else
+{
+if(spx) reportf("Q %d", Q);
+if(spx) reportf("%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X", pixtrans[0], pixtrans[1], pixtrans[2], pixtrans[3], pixtrans[4], pixtrans[5], pixtrans[6], pixtrans[7], pixtrans[8], pixtrans[9], pixtrans[10], pixtrans[11], pixtrans[12], pixtrans[13], pixtrans[14], pixtrans[15]);
+if(spx) reportf("%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X", pixtrans[16], pixtrans[17], pixtrans[18], pixtrans[19], pixtrans[20], pixtrans[21], pixtrans[22], pixtrans[23], pixtrans[24], pixtrans[25], pixtrans[26], pixtrans[27], pixtrans[28], pixtrans[29], pixtrans[30], pixtrans[31]);
+}
+}
+#endif
 
     return(spx);
 }
@@ -4012,7 +4059,7 @@ host_modevar_cache_dispose(void)
 
     host_modevar_cache_entry_dispose(&host_modevar_cache_current);
 
-    zero_struct(host_modevar_cache_current);
+    zero_struct_fn(host_modevar_cache_current);
 }
 
 #if TRACE_ALLOWED
@@ -4076,7 +4123,7 @@ host_modevar_cache_obtain_data(
     trace_2(0, "obtain_mode %d (%x)", mode_specifier, mode_specifier); report_mode_specifier(mode_specifier);
 #endif
 
-    zero_struct_ptr(p_host_modevar_cache_entry);
+    zero_struct_ptr_fn(p_host_modevar_cache_entry);
 
     p_host_modevar_cache_entry->mode_specifier = mode_specifier;
 

@@ -1,0 +1,66 @@
+#
+# this is the messages file for ob_ruler (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_ruler/ob_ruler.h
+#
+# RULER_MSG_STATUS_RULER_xxx_NO_MARK
+#
+# UK 1:Ruler
+1:Ruler
+# UK 2:Side ruler
+2:Side ruler
+# UK 3:Ruler. Click to place a new tab
+3:Ruler. Click to place a new tab
+#
+# RULER_MSG_STATUS_RULER_HORZ_xxx
+#
+# UK 274:Click to place a new tab
+274:Click to place a new tab
+# UK 275:Left tab
+275:Left tab
+# UK 276:Centre tab
+276:Centre tab
+# UK 277:Right tab
+277:Right tab
+# UK 278:Decimal tab
+278:Decimal tab
+# UK r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+# UK w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
+w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
+#
+# UK 285:Left margin
+285:Left margin
+# UK 286:Paragraph margin
+286:Paragraph margin
+# UK 287:Right margin
+287:Right margin
+# UK 288:Drag to reposition
+288:Drag to reposition
+#
+# UK 729:Column width
+729:Column width
+#
+# RULER_MSG_STATUS_RULER_VERT_xxx
+#
+# UK 723:Header margin
+723:Header margin
+# UK 724:Footer margin
+724:Footer margin
+# UK 725:Row height
+725:Row height
+# UK 727:Header offset
+727:Header offset
+# UK 728:Footer offset
+728:Footer offset
+#
+# errors (none)
+#
+# end of msg (ob_ruler)

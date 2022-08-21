@@ -75,8 +75,8 @@ args_bind_file_type[] =
     ARG_TYPE_S32 | ARG_MANDATORY,   /* load, save, insert mask */
     ARG_TYPE_X32 | ARG_MANDATORY,   /* file type */
     ARG_TYPE_USTR | ARG_MANDATORY,  /* descriptive string displayed (for saver / loader) */
-    ARG_TYPE_USTR,                  /* extra string displayed (for saver / loader (Windows)) */
-    ARG_TYPE_USTR,                  /* optional wildcard spec for saver / loader (Windows) */
+    ARG_TYPE_TSTR,                  /* optional extra string appended for saver / loader (Windows) */
+    ARG_TYPE_TSTR,                  /* optional wildcard spec for saver / loader (Windows) */
     ARG_TYPE_NONE
 };
 
@@ -220,16 +220,23 @@ args_cmd_current_posn[] =
 static const ARG_TYPE
 args_cmd_view_control[] =
 {
-    ARG_TYPE_S32,
-    ARG_TYPE_S32,
-    ARG_TYPE_BOOL,
-    ARG_TYPE_BOOL,
-    ARG_TYPE_BOOL,
-    ARG_TYPE_BOOL,
-    ARG_TYPE_BOOL,
+    ARG_TYPE_S32, /* scale percentage */
     ARG_TYPE_S32,
     ARG_TYPE_BOOL,
+    ARG_TYPE_BOOL,
+    ARG_TYPE_BOOL,
+    ARG_TYPE_BOOL,
+    ARG_TYPE_BOOL,
     ARG_TYPE_S32,
+    ARG_TYPE_BOOL,
+    ARG_TYPE_S32,
+    ARG_TYPE_NONE
+};
+
+static const ARG_TYPE
+args_cmd_view_scale[] =
+{
+    ARG_TYPE_S32, /* scale percentage */
     ARG_TYPE_NONE
 };
 
@@ -305,7 +312,7 @@ static const ARG_TYPE
 args_cmd_button[] =
 {
     ARG_TYPE_TSTR | ARG_MANDATORY,
-    ARG_TYPE_BOOL,
+    ARG_TYPE_S32, /* expanded from BOOL */
     ARG_TYPE_NONE
 };
 
@@ -317,31 +324,76 @@ args_cmd_load[] =
     ARG_TYPE_NONE
 };
 
+/* no args_cmd_save */
+
 static const ARG_TYPE
 args_cmd_save_as[] =
 {
-    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK,
-    ARG_TYPE_BOOL,
+    ARG_TYPE_TSTR | ARG_MANDATORY,          /* filename */
+    ARG_TYPE_X32,                           /* t5_filetype */
+    ARG_TYPE_BOOL,                          /* save_selection */
     ARG_TYPE_NONE
 };
 
 static const ARG_TYPE
-args_cmd_save_foreign[] =
+args_cmd_save_as_intro[] =
 {
-    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK,
-    ARG_TYPE_S32 | ARG_MANDATORY_OR_BLANK,
-    ARG_TYPE_BOOL,
+    ARG_TYPE_X32,                           /* t5_filetype */ /* can't be ARG_MANDATORY as it's on a toolbar button that has no way of passing args */
     ARG_TYPE_NONE
 };
 
 static const ARG_TYPE
-args_cmd_save_template[] =
+args_cmd_save_as_template[] =
 {
-    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK,
-    ARG_TYPE_BOOL,
-    ARG_TYPE_TSTR,
+    ARG_TYPE_TSTR | ARG_MANDATORY,          /* filename */
+    ARG_TYPE_S32  | ARG_MANDATORY,          /* SAVING_TEMPLATE_xxx */
+    ARG_TYPE_TSTR,                          /* style_name, iff SAVING_TEMPLATE_ONE_STYLE */
     ARG_TYPE_NONE
 };
+
+/* no args_cmd_save_as_template_intro */
+
+static const ARG_TYPE
+args_cmd_save_as_foreign[] =
+{
+    ARG_TYPE_TSTR | ARG_MANDATORY,          /* filename */
+    ARG_TYPE_X32  | ARG_MANDATORY,          /* t5_filetype */
+    ARG_TYPE_BOOL,                          /* save_selection */
+    ARG_TYPE_NONE
+};
+
+static const ARG_TYPE
+args_cmd_save_as_foreign_intro[] =
+{
+    ARG_TYPE_X32 | ARG_MANDATORY,           /* t5_filetype */
+    ARG_TYPE_TSTR,                          /* suggested leafname */
+    ARG_TYPE_NONE
+};
+
+static const ARG_TYPE
+args_cmd_save_as_drawfile[] =
+{
+    ARG_TYPE_TSTR | ARG_MANDATORY,          /* filename */
+    ARG_TYPE_TSTR,                          /* page range (may be absent/empty -> all pages) */
+    ARG_TYPE_NONE
+};
+
+static const ARG_TYPE
+args_cmd_save_as_drawfile_intro[] =
+{
+    ARG_TYPE_TSTR,                          /* suggested leafname */
+    ARG_TYPE_NONE
+};
+
+static const ARG_TYPE
+args_cmd_save_picture[] =
+{
+    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK, /* filename */
+    ARG_TYPE_X32  | ARG_MANDATORY,          /* t5_filetype */
+    ARG_TYPE_NONE
+};
+
+/* no args_cmd_save_picture_intro */
 
 static const ARG_TYPE
 args_cmd_of_block[] =
@@ -547,7 +599,7 @@ static const ARG_TYPE
 args_cmd_print[] =
 {
     ARG_TYPE_S32,   /* copies */
-    ARG_TYPE_S32,   /* 0=all/1=range */
+    ARG_TYPE_S32,   /* 0=all/1=range */ /* you might think this could be BOOL but it is constructed from a RADIOBUTTON state */
     ARG_TYPE_S32,   /* range y0 */
     ARG_TYPE_S32,   /* range y1 */
     ARG_TYPE_TSTR,  /* range  */
@@ -826,24 +878,31 @@ object_construct_table[] =
 
     { "Execute",                args_ustr_mandorblk,        T5_CMD_EXECUTE },
 
+    { "NewDocumentIntro",       NULL,                       T5_CMD_NEW_DOCUMENT_INTRO,                  { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
+
     { "Load",                   args_cmd_load,              T5_CMD_LOAD,                                { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
     { "LoadForeign",            args_tstr_s32_tstr,         T5_CMD_LOAD_FOREIGN ,                       { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
     { "LoadTemplate",           args_tstr_mandatory,        T5_CMD_LOAD_TEMPLATE,                       { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
 
-    { "Save",                   NULL,                       T5_CMD_SAVE_OWNFORM },
-    { "SaveAsIntro",            NULL,                       T5_CMD_SAVE_OWNFORM_AS_INTRO },
-    { "SaveAs",                 args_cmd_save_as,           T5_CMD_SAVE_OWNFORM_AS },
-    { "SaveForeignIntro",       NULL,                       T5_CMD_SAVE_FOREIGN_INTRO },
-    { "SaveForeign",            args_cmd_save_foreign,      T5_CMD_SAVE_FOREIGN },
+    { "Save",                   NULL,                       T5_CMD_SAVE },
+    { "SaveAs",                 args_cmd_save_as,           T5_CMD_SAVE_AS },
+    { "SaveAsIntro",            args_cmd_save_as_intro,     T5_CMD_SAVE_AS_INTRO },
+    { "SaveAsTemplate",         args_cmd_save_as_template,  T5_CMD_SAVE_AS_TEMPLATE },
+    { "SaveAsTemplateIntro",    NULL,                       T5_CMD_SAVE_AS_TEMPLATE_INTRO },
+    { "SaveAsForeign",          args_cmd_save_as_foreign,   T5_CMD_SAVE_AS_FOREIGN },
+    { "SaveAsForeignIntro",     args_cmd_save_as_foreign_intro, T5_CMD_SAVE_AS_FOREIGN_INTRO },
+    { "SaveAsDrawfile",         args_cmd_save_as_drawfile,  T5_CMD_SAVE_AS_DRAWFILE },
+    { "SaveAsDrawfileIntro",    args_cmd_save_as_drawfile_intro, T5_CMD_SAVE_AS_DRAWFILE_INTRO },
+    { "SavePicture",            args_cmd_save_picture,      T5_CMD_SAVE_PICTURE },
     { "SavePictureIntro",       NULL,                       T5_CMD_SAVE_PICTURE_INTRO },
-    { "SaveTemplateIntro",      NULL,                       T5_CMD_SAVE_TEMPLATE_INTRO },
-    { "SaveTemplate",           args_cmd_save_template,     T5_CMD_SAVE_TEMPLATE },
     { "SaveClipboard",          args_ustr,                  T5_CMD_SAVE_CLIPBOARD },
 
                                                                                                     /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
     { "ViewControlIntro",       NULL,                       T5_CMD_VIEW_CONTROL_INTRO,                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
     { "ViewControl",            args_cmd_view_control,      T5_CMD_VIEW_CONTROL,                        { 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
+    { "ViewScaleIntro",         NULL,                       T5_CMD_VIEW_SCALE_INTRO,                    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { "ViewScale",              args_cmd_view_scale,        T5_CMD_VIEW_SCALE,                          { 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "ViewCreate",             args_s32_s32_s32_s32,       T5_CMD_VIEW_CREATE,                         { 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 } },
     { "ViewMaximize",           NULL,                       T5_CMD_VIEW_MAXIMIZE,                       { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
     { "ViewMinimize",           NULL,                       T5_CMD_VIEW_MINIMIZE,                       { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
@@ -908,27 +967,32 @@ object_construct_table[] =
 
                                                                                                     /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
-    { "AddColumnsIntro",        NULL,                       T5_CMD_ADD_COLS_INTRO,                      { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
-    { "AddColumns",             args_s32_mandatory,         T5_CMD_ADD_COLS,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
-    { "InsertCol",              NULL,                       T5_CMD_INSERT_COL,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
-    { "DeleteCol",              NULL,                       T5_CMD_DELETE_COL,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "AddColumns",             args_s32,                   T5_CMD_COLS_ADD_AFTER,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "AddColumnsIntro",        NULL,                       T5_CMD_COLS_ADD_AFTER_INTRO,                { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+    { "InsertColumns",          args_s32,                   T5_CMD_COLS_INSERT_BEFORE,                  { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "InsertColumnsIntro",     NULL,                       T5_CMD_COLS_INSERT_BEFORE_INTRO,            { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+    { "DeleteColumn",           NULL,                       T5_CMD_COL_DELETE,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
 
-    { "AddRowsIntro",           NULL,                       T5_CMD_ADD_ROWS_INTRO,                      { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
-    { "AddRows",                args_s32_mandatory,         T5_CMD_ADD_ROWS,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
-    { "InsertRow",              NULL,                       T5_CMD_INSERT_ROW,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
-    { "DeleteRow",              NULL,                       T5_CMD_DELETE_ROW,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "AddRows",                args_s32,                   T5_CMD_ROWS_ADD_AFTER,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "AddRowsIntro",           NULL,                       T5_CMD_ROWS_ADD_AFTER_INTRO,                { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+    { "InsertRows",             args_s32,                   T5_CMD_ROWS_INSERT_BEFORE,                  { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "InsertRowsIntro",        NULL,                       T5_CMD_ROWS_INSERT_BEFORE_INTRO,            { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1 } },
+    { "DeleteRow",              NULL,                       T5_CMD_ROW_DELETE,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
 
-    { "InsertTableIntro",       NULL,                       T5_CMD_INSERT_TABLE_INTRO,                  { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
     { "InsertTable",            args_s32_s32,               T5_CMD_INSERT_TABLE,                        { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
+    { "InsertTableIntro",       NULL,                       T5_CMD_INSERT_TABLE_INTRO,                  { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+
+    { "GoTo",                   args_ustr,                  T5_CMD_GOTO,                                { 0, 0, 0, 0, 0, 0, 0, 1 } },
+    { "GoToIntro",              NULL,                       T5_CMD_GOTO_INTRO,                          { 0, 0, 0, 0, 0, 0, 0, 1 } },
 
     { "InsertPageBreak",        NULL,                       T5_CMD_INSERT_PAGE_BREAK,                   { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
-    { "WordCount",              NULL,                       T5_CMD_WORD_COUNT, },
+    { "WordCount",              NULL,                       T5_CMD_WORD_COUNT,                          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 } },
     { "BoxIntro",               NULL,                       T5_CMD_BOX_INTRO,                           { 0, 0, 0, 0, 0, 0, 0, 1 } },
     { "Box",                    args_cmd_box,               T5_CMD_BOX,                                 { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1 } },
     { "AutoWidth",              NULL,                       T5_CMD_AUTO_WIDTH,                          { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
     { "AutoHeight",             NULL,                       T5_CMD_AUTO_HEIGHT,                         { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
-    { "SearchPossDBQ",          NULL,                       T5_CMD_SEARCH_BUTTON_POSS_DB_QUERY },
-    { "SearchPossDBQS",         NULL,                       T5_CMD_SEARCH_BUTTON_POSS_DB_QUERIES },
+    { "SearchButton",           NULL,                       T5_CMD_SEARCH_BUTTON },
+    { "SearchButtonAlternate",  NULL,                       T5_CMD_SEARCH_BUTTON_ALTERNATE },
     { "Search",                 args_cmd_search,            T5_CMD_SEARCH,                              { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 } },
     { "SearchIntro",            args_cmd_search,            T5_CMD_SEARCH_INTRO },
     { "Choices",                NULL,                       T5_CMD_CHOICES },
@@ -939,7 +1003,7 @@ object_construct_table[] =
                                                                                                     /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
     { "AutoSave",               args_s32,                   T5_CMD_AUTO_SAVE },
-    { "SortIntro",              NULL,                       T5_CMD_SORT_INTRO,                          { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1 } },
+    { "SortIntro",              NULL,                       T5_CMD_SORT_INTRO,                          { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1 } },
     { "Sort",                   args_cmd_sort,              T5_CMD_SORT,                                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1 } },
     { "Snapshot",               NULL,                       T5_CMD_SNAPSHOT,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
     { "ObjectConvert",          args_s32_mandatory,         T5_CMD_OBJECT_CONVERT,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0 } },

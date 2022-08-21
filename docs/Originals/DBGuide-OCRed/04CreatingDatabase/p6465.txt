@@ -1,0 +1,62 @@
+﻿
+Field types
+The type of a field detennines the infonnation it can hold and the
+way in which you can perform searches and sorts on its contents.
+Settmg a field type
+When a field is created its type is set by default to be text. To
+change the field type:
+1 Choose Properties from the Database menu to display the
+Field properties dialogue box.
+2 Highlight the field whose type is to be set by clicking on it or
+pressing the up and down arrow keys on the keyboard to move
+the highlight bar onto it.
+3 Click on the menu icon adjacent to the field to display the list
+of types available:
+Text
+Number
+Date
+Integer
+Boolean
+Picture
+File
+Formula
+Interval
+4 Choose a type from the list.
+
+The types in detail
+Text fields
+Text fields can hold strings of characters. They can be used for
+names, addresses, descriptions etc. Anything entered into a text
+field will be stored as text. Thus you can enter a number, but you
+will not be able to perform calculations on it nor perform numeric
+searches on it.
+
+Number fields
+Number fields can hold any numbers, with or without decimal
+points. They can be used for measurements, prices etc. Data in
+number fields can be used as the basis of calculations. Number
+fields can be sorted into increasing or decreasing numerical order
+and searches can be performed to find, for example, all numbers
+less than a particular value.
+
+Date fields
+Date fields can hold dates and/or times in different formats (as
+listed in Chapter 14 - Date formats). They can be used for dates of
+birth, purchasing details etc. Date fields can be sorted into forward
+or reverse chronological order and searches can be performed to
+find, for example, all dates before or after a particular day, or
+which occur within a given year.
+
+Integer fields
+Integer fields can hold any integer (whole) numbers. They can be
+used for ages, sizes, scores etc. Data in integer fields can be used
+as the basis of calculations. Integer fields can be sorted into
+increasing or decreasing numerical order and searches can be
+performed to find, for example, all numbers less than a particular
+value.
+
+Fireworkz Pro 65
+
+
+
+

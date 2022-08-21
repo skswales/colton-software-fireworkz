@@ -69,18 +69,18 @@
 > 
 > #else /* NOT COLTON_SOFTWARE */
 > 
-55a121,130
+55a121,127
 > #endif /* COLTON_SOFTWARE */
 > 
 > 
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
 > 
 > void CursorsCache(HINSTANCE hInstance)
-> { hInstance=hInstance; /*EMPTY*/ }
-> 
+> { UNREFERENCED_PARAMETER(hInstance); /*EMPTY*/ }
+56a129,139
 > void CursorsFree(void)
 > { /*EMPTY*/ }
-56a132,139
+> 
 > _Check_return_
 > extern BOOL
 > bttncur_LibMain(HINSTANCE hInstance)
@@ -501,29 +501,4 @@
 >     if ((ATTRIBUTEBUTTON_ON & uState) && (BUTTONGROUP_DISABLED & uState))
 > #else
 1064a1503
-> #endif /* COLTON_SOFTWARE */
-1068a1508,1531
-> 
-> #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
-> 
-> /*
-> Does the caller have to bother redrawing the button when a mouse enter/leave happens?
-> */
-> 
-> _Check_return_
-> extern BOOL
-> UIToolButtonMouseOverSignificant(void)
-> {
->     switch(g_button_output_style)
->     {
->     case 97:
->     case 2005:
->     default:
->         return(TRUE);
-> 
->     case 95:
->         return(FALSE);
->     }
-> }
-> 
 > #endif /* COLTON_SOFTWARE */

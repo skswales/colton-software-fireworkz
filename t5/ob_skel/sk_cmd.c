@@ -132,9 +132,7 @@ docu_modify(
 
     assert(!p_docu->flags.read_only);
 
-    p_docu->modified += 1;
-
-    if(p_docu->modified == 1)
+    if(0 == p_docu->modified++)
         /* SKS 04apr95/13oct95 register time of *first* update as new time this session - will be updated on save */
         ss_local_time_to_ss_date(&p_docu->file_ss_date);
 
@@ -886,7 +884,7 @@ execute_command_common(
 
     if(status_ok(status))
         if(p_construct_table->bits.check_protect)
-            if(!IS_DOCU_NONE(p_docu))
+            if(DOCU_NOT_NONE(p_docu))
                 status = check_protection_selection(p_docu);
 
     /* note any sneaky changes in document number */
@@ -1612,7 +1610,7 @@ T5_CMD_PROTO(extern, t5_cmd_current_document)
 {
     /*DOCU_NAME docu_name;*/
 
-    UNREFERENCED_PARAMETER(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 

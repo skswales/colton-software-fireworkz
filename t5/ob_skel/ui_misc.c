@@ -26,6 +26,17 @@ static STATUS
 query_close_linked(
     _DocuRef_   P_DOCU p_docu);
 
+_Ret_ _Check_return_
+static PC_UI_TEXT
+get_ui_text_product_ui_id(void)
+{
+    static UI_TEXT ui_text_product_ui_id = { UI_TEXT_TYPE_TSTR_PERM };
+
+    ui_text_product_ui_id.text.tstr = product_ui_id();
+
+    return(&ui_text_product_ui_id);
+}
+
 #if WINDOWS && 1
 
 #define INFO_WINDOW_TIMER_TIMEOUT 50 * 100  /* up for ~5 seconds */
@@ -36,7 +47,7 @@ t5_cmd_info(
     _DocuRef_   P_DOCU p_docu)
 {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    const HOST_WND hwnd = !IS_VIEW_NONE(p_view) ? p_view->main[WIN_BACK].hwnd : HOST_WND_NONE;
+    const HOST_WND hwnd = VIEW_NOT_NONE(p_view) ? p_view->main[WIN_BACK].hwnd : HOST_WND_NONE;
 
     splash_window_create(hwnd, INFO_WINDOW_TIMER_TIMEOUT);
 
@@ -52,134 +63,136 @@ t5_cmd_info(
 ******************************************************************************/
 
 #if RISCOS
-#define INFO_FIELDS_1_H ( 8 * (PIXITS_PER_INCH / 10))
-#define INFO_FIELDS_2_H (30 * (PIXITS_PER_INCH / 10))
-#define INFO_FIELDS_2_V (48 * PIXITS_PER_RISCOS)
+#define INFO_FIELDS_LABEL_H ( 8 * (PIXITS_PER_INCH / 10))
+#define INFO_FIELDS_DATA_H  (30 * (PIXITS_PER_INCH / 10))
+#define INFO_FIELDS_DATA_V  (48 * PIXITS_PER_RISCOS)
 #else
-#define INFO_FIELDS_1_H DIALOG_SYSCHARSL_H(16)
-#define INFO_FIELDS_2_H DIALOG_SYSCHARSL_H(32)
-#define INFO_FIELDS_2_V DIALOG_STDEDIT_V
+#define INFO_FIELDS_LABEL_H DIALOG_SYSCHARSL_H(16)
+#define INFO_FIELDS_DATA_H  DIALOG_SYSCHARSL_H(32)
+#define INFO_FIELDS_DATA_V  DIALOG_STDEDIT_V
 #endif
 
 enum INFO_CONTROL_IDS
 {
-    INFO_ID_NAME_1 = 40,
-    INFO_ID_NAME_2,
-    INFO_ID_AUTHOR_1,
-    INFO_ID_AUTHOR_2,
+    INFO_ID_NAME_LABEL = 40,
+    INFO_ID_NAME,
+    INFO_ID_AUTHOR_LABEL,
+    INFO_ID_AUTHOR,
     INFO_ID_EXTRA_BUMPH,
     INFO_ID_PICTURE,
     INFO_ID_WEB,
-    INFO_ID_VERSION_1,
-    INFO_ID_VERSION_2,
-    INFO_ID_USER_1,
-    INFO_ID_USER_2,
+    INFO_ID_VERSION_LABEL,
+    INFO_ID_VERSION,
+    INFO_ID_USER_LABEL,
+    INFO_ID_USER,
     INFO_ID_ORGAN,
-    INFO_ID_REGNO_1,
-    INFO_ID_REGNO_2
+    INFO_ID_REGNO_LABEL,
+    INFO_ID_REGNO
 };
 
 #define FRAMED_BOX_INFO_FIELDS FRAMED_BOX_TROUGH
 #define P_RGB_INFO_FIELDS      NULL
 
 static const DIALOG_CONTROL
-info_name_1 =
+info_name_label =
 {
-    INFO_ID_NAME_1, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, INFO_ID_NAME_2, DIALOG_CONTROL_SELF, INFO_ID_NAME_2 },
-    { 0, 0, INFO_FIELDS_1_H, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    INFO_ID_NAME_LABEL, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, INFO_ID_NAME, DIALOG_CONTROL_SELF, INFO_ID_NAME },
+    { 0, 0, INFO_FIELDS_LABEL_H, 0 },
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-info_name_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_NAME_1), { 0 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+info_name_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_NAME_LABEL) };
 
 static const DIALOG_CONTROL
-info_name_2 =
+info_name =
 {
-    INFO_ID_NAME_2, DIALOG_MAIN_GROUP,
-    { INFO_ID_NAME_1, DIALOG_CONTROL_PARENT },
-    { DIALOG_LABELGAP_H, 0, INFO_FIELDS_2_H, INFO_FIELDS_2_V },
-    { DRT(RTLT, STATICFRAME) }
+    INFO_ID_NAME, DIALOG_MAIN_GROUP,
+    { INFO_ID_NAME_LABEL, DIALOG_CONTROL_PARENT },
+    { DIALOG_LABELGAP_H, 0, INFO_FIELDS_DATA_H, INFO_FIELDS_DATA_V },
+    { DRT(RTLT, TEXTFRAME) }
 };
 
-static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
-info_name_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+static /*poked*/ DIALOG_CONTROL_DATA_TEXTFRAME
+info_name_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
 static const DIALOG_CONTROL
-info_author_1 =
+info_author_label =
 {
-    INFO_ID_AUTHOR_1, DIALOG_MAIN_GROUP,
-    { INFO_ID_NAME_1, INFO_ID_AUTHOR_2, INFO_ID_NAME_1, INFO_ID_AUTHOR_2 },
+    INFO_ID_AUTHOR_LABEL, DIALOG_MAIN_GROUP,
+    { INFO_ID_NAME_LABEL, INFO_ID_AUTHOR, INFO_ID_NAME_LABEL, INFO_ID_AUTHOR },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-info_author_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_AUTHOR_1), { 0 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+info_author_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_AUTHOR_LABEL) };
 
 static const DIALOG_CONTROL
-info_author_2 =
+info_author =
 {
-    INFO_ID_AUTHOR_2, DIALOG_MAIN_GROUP,
-    { INFO_ID_NAME_2, INFO_ID_NAME_2, INFO_ID_NAME_2 },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    INFO_ID_AUTHOR, DIALOG_MAIN_GROUP,
+    { INFO_ID_NAME, INFO_ID_NAME, INFO_ID_NAME },
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 };
 
-static DIALOG_CONTROL_DATA_STATICFRAME
-info_author_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+static DIALOG_CONTROL_DATA_TEXTFRAME
+info_author_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
 static const DIALOG_CONTROL
 info_extra_bumph =
 {
     INFO_ID_EXTRA_BUMPH, DIALOG_MAIN_GROUP,
-    { INFO_ID_AUTHOR_2, INFO_ID_AUTHOR_2, INFO_ID_AUTHOR_2 },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    { INFO_ID_AUTHOR, INFO_ID_AUTHOR, INFO_ID_AUTHOR },
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 };
 
-static DIALOG_CONTROL_DATA_STATICFRAME
+static DIALOG_CONTROL_DATA_TEXTFRAME
 info_extra_bumph_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
 static const DIALOG_CONTROL
-info_version_1 =
+info_version_label =
 {
-    INFO_ID_VERSION_1, DIALOG_MAIN_GROUP,
-    { INFO_ID_AUTHOR_1, INFO_ID_VERSION_2, INFO_ID_AUTHOR_1, INFO_ID_VERSION_2 },
+    INFO_ID_VERSION_LABEL, DIALOG_MAIN_GROUP,
+    { INFO_ID_AUTHOR_LABEL, INFO_ID_VERSION, INFO_ID_AUTHOR_LABEL, INFO_ID_VERSION },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-info_version_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_VERSION_1), { 0 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+info_version_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_VERSION_LABEL) };
 
 static const DIALOG_CONTROL
-info_version_2_sans_extra =
+info_version_sans_extra =
 {
-    INFO_ID_VERSION_2, DIALOG_MAIN_GROUP,
-    { INFO_ID_AUTHOR_2, INFO_ID_AUTHOR_2, INFO_ID_AUTHOR_2 },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    INFO_ID_VERSION, DIALOG_MAIN_GROUP,
+    { INFO_ID_AUTHOR, INFO_ID_AUTHOR, INFO_ID_AUTHOR },
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 };
 
 static const DIALOG_CONTROL
-info_version_2 =
+info_version =
 {
-    INFO_ID_VERSION_2, DIALOG_MAIN_GROUP,
+    INFO_ID_VERSION, DIALOG_MAIN_GROUP,
     { INFO_ID_EXTRA_BUMPH, INFO_ID_EXTRA_BUMPH, INFO_ID_EXTRA_BUMPH },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 };
 
-static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
-info_version_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+static /*poked*/ DIALOG_CONTROL_DATA_TEXTFRAME
+info_version_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+
+#if RISCOS
 
 static const DIALOG_CONTROL
 info_picture =
 {
     INFO_ID_PICTURE, DIALOG_MAIN_GROUP,
-    { INFO_ID_NAME_2, INFO_ID_NAME_2, INFO_ID_WEB },
+    { INFO_ID_NAME, INFO_ID_NAME, INFO_ID_WEB },
     { DIALOG_SMALLSPACING_H, 0, 0 /*120 * PIXITS_PER_RISCOS*/, 96 * PIXITS_PER_RISCOS },
     { DRT(RTRT, STATICPICTURE) }
 };
@@ -187,12 +200,14 @@ info_picture =
 static const DIALOG_CONTROL_DATA_STATICPICTURE
 info_picture_data = { { OBJECT_ID_SKEL, "!fireworkz" } };
 
+#endif /* RISCOS */
+
 static const DIALOG_CONTROL
 info_web =
 {
     INFO_ID_WEB, DIALOG_MAIN_GROUP,
-    { INFO_ID_VERSION_2, INFO_ID_VERSION_2, DIALOG_CONTROL_SELF, INFO_ID_VERSION_2 },
-    { DIALOG_SMALLSPACING_H, 0, INFO_FIELDS_1_H, 0 },
+    { INFO_ID_VERSION, INFO_ID_VERSION, DIALOG_CONTROL_SELF, INFO_ID_VERSION },
+    { DIALOG_SMALLSPACING_H, 0, INFO_FIELDS_LABEL_H, 0 },
     { DRT(RTLB, PUSHBUTTON) }
 };
 
@@ -206,117 +221,121 @@ static const DIALOG_CONTROL_DATA_PUSHBUTTON
 info_web_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_WEB_BUTTON), &info_web_command };
 
 static const DIALOG_CONTROL
-info_user_1 =
+info_user_label =
 {
-    INFO_ID_USER_1, DIALOG_MAIN_GROUP,
-    { INFO_ID_VERSION_1, INFO_ID_USER_2, INFO_ID_VERSION_1, INFO_ID_USER_2 },
+    INFO_ID_USER_LABEL, DIALOG_MAIN_GROUP,
+    { INFO_ID_VERSION_LABEL, INFO_ID_USER, INFO_ID_VERSION_LABEL, INFO_ID_USER },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-info_user_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_USER_1), { 0 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+info_user_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_USER_LABEL) };
 
 static const DIALOG_CONTROL
-info_user_2 =
+info_user =
 {
-    INFO_ID_USER_2, DIALOG_MAIN_GROUP,
-    { INFO_ID_VERSION_2, INFO_ID_VERSION_2, INFO_ID_VERSION_2 },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    INFO_ID_USER, DIALOG_MAIN_GROUP,
+    { INFO_ID_VERSION, INFO_ID_VERSION, INFO_ID_VERSION },
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 };
 
-static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
-info_user_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+static /*poked*/ DIALOG_CONTROL_DATA_TEXTFRAME
+info_user_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
 static const DIALOG_CONTROL
 info_organ =
 {
     INFO_ID_ORGAN, DIALOG_MAIN_GROUP,
-    { INFO_ID_USER_2, INFO_ID_USER_2, INFO_ID_USER_2 },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    { INFO_ID_USER, INFO_ID_USER, INFO_ID_USER },
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 };
 
-static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
+static /*poked*/ DIALOG_CONTROL_DATA_TEXTFRAME
 info_organ_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
 static const DIALOG_CONTROL
-info_regno_1 =
+info_regno_label =
 {
-    INFO_ID_REGNO_1, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_SELF, INFO_ID_REGNO_2, INFO_ID_REGNO_2, INFO_ID_REGNO_2 },
-    { DIALOG_CONTENTS_CALC, 0, DIALOG_SMALLSPACING_H, 0 },
-    { DRT(RTLB, STATICTEXT) }
+    INFO_ID_REGNO_LABEL, DIALOG_MAIN_GROUP,
+    { INFO_ID_VERSION_LABEL, INFO_ID_REGNO, INFO_ID_VERSION_LABEL, INFO_ID_REGNO },
+    { 0 },
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-info_regno_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_REGNO_1), { 0 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+info_regno_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INFO_REGNO_LABEL) };
 
 static const DIALOG_CONTROL
-info_regno_2 =
+info_regno =
 {
-    INFO_ID_REGNO_2, DIALOG_MAIN_GROUP,
+    INFO_ID_REGNO, DIALOG_MAIN_GROUP,
 #if WINDOWS || 1
     { INFO_ID_ORGAN, INFO_ID_ORGAN, INFO_ID_ORGAN },
-    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(LBRT, STATICFRAME) }
+    { 0, DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(LBRT, TEXTFRAME) }
 #else
     { DIALOG_CONTROL_SELF, INFO_ID_ORGAN, INFO_ID_ORGAN },
-    { DIALOG_SYSCHARS_H("  6000 0000 0000 0000  "), DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_2_V },
-    { DRT(RBRT, STATICFRAME) }
+    { DIALOG_SYSCHARS_H("  6000 0000 0000 0000  "), DIALOG_SMALLSPACING_V, 0, INFO_FIELDS_DATA_V },
+    { DRT(RBRT, TEXTFRAME) }
 #endif
 };
 
-static /*poked*/ DIALOG_CONTROL_DATA_STATICFRAME
-info_regno_2_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
+static /*poked*/ DIALOG_CONTROL_DATA_TEXTFRAME
+info_regno_data = { { UI_TEXT_TYPE_NONE }, { 0, 1 /*centre_text*/, 0, FRAMED_BOX_INFO_FIELDS }, P_RGB_INFO_FIELDS };
 
 static const DIALOG_CTL_CREATE
 info_ctl_create_sans_extra[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &info_name_1, &info_name_1_data },
-    { &info_name_2, &info_name_2_data },
-    { &info_author_1, &info_author_1_data },
-    { &info_author_2, &info_author_2_data },
+    { { &info_name_label }, &info_name_label_data },
+    { { &info_name }, &info_name_data },
+    { { &info_author_label }, &info_author_label_data },
+    { { &info_author }, &info_author_data },
 
-    { &info_version_1, &info_version_1_data },
-    { &info_version_2_sans_extra, &info_version_2_data },
+    { { &info_version_label }, &info_version_label_data },
+    { { &info_version_sans_extra }, &info_version_data },
 
-    { &info_picture, &info_picture_data },
-    { &info_web, &info_web_data },
+#if RISCOS
+    { { &info_picture }, &info_picture_data },
+#endif
+    { { &info_web }, &info_web_data },
 
-    { &info_user_1, &info_user_1_data },
-    { &info_user_2, &info_user_2_data },
-    { &info_organ, &info_organ_data },
-    { &info_regno_1, &info_regno_1_data },
-    { &info_regno_2, &info_regno_2_data }
+    { { &info_user_label }, &info_user_label_data },
+    { { &info_user }, &info_user_data },
+    { { &info_organ }, &info_organ_data },
+    { { &info_regno_label }, &info_regno_label_data },
+    { { &info_regno }, &info_regno_data }
 };
 
 static const DIALOG_CTL_CREATE
 info_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &info_name_1, &info_name_1_data },
-    { &info_name_2, &info_name_2_data },
-    { &info_author_1, &info_author_1_data },
-    { &info_author_2, &info_author_2_data },
+    { { &info_name_label }, &info_name_label_data },
+    { { &info_name }, &info_name_data },
+    { { &info_author_label }, &info_author_label_data },
+    { { &info_author }, &info_author_data },
 
-    { &info_extra_bumph, &info_extra_bumph_data },
+    { { &info_extra_bumph }, &info_extra_bumph_data },
 
-    { &info_version_1, &info_version_1_data },
-    { &info_version_2, &info_version_2_data },
+    { { &info_version_label }, &info_version_label_data },
+    { { &info_version }, &info_version_data },
 
-    { &info_picture, &info_picture_data },
-    { &info_web, &info_web_data },
+#if RISCOS
+    { { &info_picture }, &info_picture_data },
+#endif
+    { { &info_web }, &info_web_data },
 
-    { &info_user_1, &info_user_1_data },
-    { &info_user_2, &info_user_2_data },
-    { &info_organ, &info_organ_data },
-    { &info_regno_1, &info_regno_1_data },
-    { &info_regno_2, &info_regno_2_data }
+    { { &info_user_label }, &info_user_label_data },
+    { { &info_user }, &info_user_data },
+    { { &info_organ }, &info_organ_data },
+    { { &info_regno_label }, &info_regno_label_data },
+    { &info_regno, &info_regno_data }
 };
 
 _Check_return_
@@ -345,6 +364,54 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_info)
     }
 }
 
+static void
+cmd_info_init(
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock)
+{
+    info_name_data.caption = *get_ui_text_product_ui_id();
+
+    info_author_data.caption.type = UI_TEXT_TYPE_RESID;
+    info_author_data.caption.text.resource_id = MSG_COPYRIGHT;
+
+#if RISCOS
+    if(has_real_database)
+    {
+        info_extra_bumph_data.caption.type = UI_TEXT_TYPE_RESID;
+        info_extra_bumph_data.caption.text.resource_id = MSG_PORTIONS_R_COMP;
+    }
+#elif WINDOWS
+    info_extra_bumph_data.caption.type = UI_TEXT_TYPE_RESID;
+    info_extra_bumph_data.caption.text.resource_id = MSG_PORTIONS_DIAL_SOLUTIONS;
+#endif
+
+    info_version_data.caption.type = UI_TEXT_TYPE_NONE;
+
+    if(status_ok(resource_lookup_quick_tblock(p_quick_tblock, MSG_SKEL_VERSION)))
+    {
+#if WINDOWS && defined(_M_X64)
+        if(status_ok(quick_tblock_tstr_add(p_quick_tblock, TEXT(" 64-bit"))))
+#endif
+        if(status_ok(quick_tblock_tchar_add(p_quick_tblock, CH_SPACE)))
+        if(status_ok(quick_tblock_tchar_add(p_quick_tblock, UCH_LEFT_PARENTHESIS)))
+        if(status_ok(resource_lookup_quick_tblock(p_quick_tblock, MSG_SKEL_DATE)))
+        if(status_ok(quick_tblock_tchar_add(p_quick_tblock, UCH_RIGHT_PARENTHESIS)))
+        if(status_ok(quick_tblock_nullch_add(p_quick_tblock)))
+        {
+            info_version_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
+            info_version_data.caption.text.tstr = quick_tblock_tstr(p_quick_tblock);
+        }
+    }
+
+    info_user_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
+    info_user_data.caption.text.tstr = user_id();
+
+    info_organ_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
+    info_organ_data.caption.text.tstr = user_organ_id();
+
+    info_regno_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
+    info_regno_data.caption.text.tstr = registration_number();
+}
+
 _Check_return_
 extern STATUS
 t5_cmd_info(
@@ -355,79 +422,29 @@ t5_cmd_info(
     QUICK_TBLOCK_WITH_BUFFER(version_quick_tblock, 64);
     quick_tblock_with_buffer_setup(version_quick_tblock);
 
-    info_name_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    info_name_2_data.caption.text.tstr = product_ui_id();
+    cmd_info_init(&version_quick_tblock);
 
-    info_author_2_data.caption.type = UI_TEXT_TYPE_RESID;
-    info_author_2_data.caption.text.resource_id = MSG_COPYRIGHT;
-
-#if RISCOS
-    if(has_real_database)
-    {
-        info_extra_bumph_data.caption.type = UI_TEXT_TYPE_RESID;
-        info_extra_bumph_data.caption.text.resource_id = MSG_PORTIONS_R_COMP;
-    }
-#elif WINDOWS
-    info_extra_bumph_data.caption.type = UI_TEXT_TYPE_RESID;
-    info_extra_bumph_data.caption.text.resource_id = MSG_STATUS_DIAL_SOLUTIONS;
-#endif
-
-    info_version_2_data.caption.type = UI_TEXT_TYPE_NONE;
-
-    if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_VERSION)))
-    {
-#if WINDOWS && defined(_M_X64)
-        if(status_ok(quick_tblock_tstr_add(&version_quick_tblock, TEXT(" 64-bit"))))
-#endif
-        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, CH_SPACE)))
-        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, UCH_LEFT_PARENTHESIS)))
-        if(status_ok(resource_lookup_quick_tblock(&version_quick_tblock, MSG_SKEL_DATE)))
-        if(status_ok(quick_tblock_tchar_add(&version_quick_tblock, UCH_RIGHT_PARENTHESIS)))
-        if(status_ok(quick_tblock_nullch_add(&version_quick_tblock)))
-        {
-            info_version_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-            info_version_2_data.caption.text.tstr = quick_tblock_tstr(&version_quick_tblock);
-        }
-    }
-
-    {
-    PCTSTR tstr = user_id();
-    if(CH_NULL != tstr[0])
-    {
-        info_user_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-        info_user_2_data.caption.text.tstr = user_id();
-    }
-    else
-    {
-        info_user_2_data.caption.type = UI_TEXT_TYPE_RESID;
-        info_user_2_data.caption.text.resource_id = MSG_SKEL_NO_USER_ID;
-
-        /* and try omitting the user info block */
+    if(CH_NULL == info_user_data.caption.text.tstr[0])
+    {   /* omit the user info block */
+        assert(UI_TEXT_TYPE_RESID == info_user_data.caption.type);
         n_strip = 5;
     }
-    } /*block*/
-
-    info_organ_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    info_organ_data.caption.text.tstr = user_organ_id();
-
-    info_regno_2_data.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    info_regno_2_data.caption.text.tstr = registration_number();
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
 #if RISCOS
     if(!has_real_database)
     {
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create_sans_extra, elemof32(info_ctl_create_sans_extra) - n_strip, 0);
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create_sans_extra, elemof32(info_ctl_create_sans_extra) - n_strip, MSG_DIALOG_INFO_CAPTION);
     }
-#endif
     else
+#endif
     {
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create, elemof32(info_ctl_create) - n_strip, 0);
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, info_ctl_create, elemof32(info_ctl_create) - n_strip, MSG_DIALOG_INFO_CAPTION);
     }
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_INFO_CAPTION;
+  /*dialog_cmd_process_dbox.help_topic_resource_id = 0;*/
     dialog_cmd_process_dbox.p_proc_client = dialog_event_info;
+  /*dialog_cmd_process_dbox.client_handle = NULL;*/
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
@@ -489,7 +506,7 @@ modified_docno_save(
     STATUS status = STATUS_OK;
     const P_DOCU p_docu = p_docu_from_docno(docno);
     const OBJECT_ID object_id = OBJECT_ID_SKEL;
-    const T5_MESSAGE t5_message = T5_CMD_SAVE_OWNFORM;
+    const T5_MESSAGE t5_message = T5_CMD_SAVE;
     PC_CONSTRUCT_TABLE p_construct_table;
     ARGLIST_HANDLE arglist_handle;
 
@@ -506,13 +523,17 @@ modified_docno_save(
     return(status);
 }
 
-/*#define QUIT_QUERY_ACROSS_H     ((9 * QUIT_QUERY_BUTTON_H) / 2)*/
 #if WINDOWS
-#define QUIT_QUERY_BUTTON_H     (DIALOG_STDPUSHBUTTON_H)
+#define QUIT_QUERY_BUTTON_H     ((DIALOG_STDPUSHBUTTON_H) * 5) / 4 /* "Nicht speichern" */
 #else
 #define QUIT_QUERY_BUTTON_H     (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Discard "))
 #endif
-/*#define QUIT_QUERY_BUTTON_GAP_H ((QUIT_QUERY_ACROSS_H - 3 * QUIT_QUERY_BUTTON_H) / 2)*/
+#if 1
+#define QUIT_QUERY_BUTTON_GAP_H DIALOG_STDSPACING_H /*poked*/
+#else
+/*#define QUIT_QUERY_ACROSS_H   ((9 * QUIT_QUERY_BUTTON_H) / 2)*/
+#define QUIT_QUERY_BUTTON_GAP_H ((QUIT_QUERY_ACROSS_H - 3 * QUIT_QUERY_BUTTON_H) / 2)
+#endif
 
 enum QUIT_QUERY_CONTROL_IDS
 {
@@ -527,82 +548,104 @@ enum QUIT_QUERY_CONTROL_IDS
 static /*poked*/ DIALOG_CONTROL
 quit_query_text_1 =
 {
-    QUIT_QUERY_ID_TEXT_1, DIALOG_CONTROL_WINDOW,
+    QUIT_QUERY_ID_TEXT_1, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, DIALOG_STDTEXT_V + 0, 0/*QUIT_QUERY_ACROSS_H*/, DIALOG_STDTEXT_V },
     { DRT(LTLT, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-quit_query_text_1_data = { { UI_TEXT_TYPE_NONE }, { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+quit_query_text_1_data = { { UI_TEXT_TYPE_NONE }, { 0 /*left_text*/, 1 /*centre_text*/ } };
 
 static const DIALOG_CONTROL
 quit_query_text_2 =
 {
-    QUIT_QUERY_ID_TEXT_2, DIALOG_CONTROL_WINDOW,
+    QUIT_QUERY_ID_TEXT_2, DIALOG_MAIN_GROUP,
     { QUIT_QUERY_ID_TEXT_1, QUIT_QUERY_ID_TEXT_1, QUIT_QUERY_ID_TEXT_1 },
     { 0, DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
     { DRT(LBRT, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-quit_query_text_2_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_QUIT_QUERY_SECOND), { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+quit_query_text_2_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_QUIT_QUERY_SECOND), { 0 /*left_text*/, 1 /*centre_text*/ } };
 
 static const DIALOG_CONTROL
 quit_query_text_3 =
 {
-    QUIT_QUERY_ID_TEXT_3, DIALOG_CONTROL_WINDOW,
+    QUIT_QUERY_ID_TEXT_3, DIALOG_MAIN_GROUP,
     { QUIT_QUERY_ID_TEXT_2, QUIT_QUERY_ID_TEXT_2, QUIT_QUERY_ID_TEXT_2 },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
     { DRT(LBRT, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-quit_query_text_3_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_QUIT_QUERY_SURE), { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+quit_query_text_3_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_QUIT_QUERY_SURE), { 0 /*left_text*/, 1 /*centre_text*/ } };
+
+/* RISC OS: Discard, Cancel, [Save] */
+/* Windows: [Save], Discard, Cancel */
 
 static const DIALOG_CONTROL
-quit_query_save =
+SDC_query_save =
 {
     QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_WINDOW,
-    { QUIT_QUERY_ID_TEXT_3, QUIT_QUERY_ID_TEXT_3 },
+#if RISCOS
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
+    { QUIT_QUERY_BUTTON_H + (2 * DIALOG_DEFPUSHEXTRA_H), DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+#else
+    { DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
     { 0, DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, QUIT_QUERY_BUTTON_H + (2 * DIALOG_DEFPUSHEXTRA_H), DIALOG_DEFPUSHBUTTON_V },
     { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 quit_query_save_data = { { QUERY_COMPLETION_SAVE }, UI_TEXT_INIT_RESID(MSG_QUERY_SAVE) };
 
 static /*poked*/ DIALOG_CONTROL
-quit_query_discard =
+SDC_query_discard =
 {
     QUIT_QUERY_ID_DISCARD, DIALOG_CONTROL_WINDOW,
-    { QUIT_QUERY_ID_SAVE, QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_SELF, QUIT_QUERY_ID_SAVE },
-    { 0/*QUIT_QUERY_BUTTON_GAP_H*/, -DIALOG_DEFPUSHEXTRA_V, QUIT_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
+#if RISCOS
+    { DIALOG_MAIN_GROUP, IDCANCEL, DIALOG_CONTROL_SELF, IDCANCEL },
+    { 0, 0, QUIT_QUERY_BUTTON_H, 0 },
+    { DRT(LTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#else
+    { QUIT_QUERY_ID_SAVE, IDCANCEL, DIALOG_CONTROL_SELF, IDCANCEL },
+    { QUIT_QUERY_BUTTON_GAP_H /*poked*/, 0, QUIT_QUERY_BUTTON_H, 0 },
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-quit_query_discard_data = { { QUERY_COMPLETION_DISCARD }, UI_TEXT_INIT_RESID(MSG_DISCARD) };
+quit_query_discard_data = { { QUERY_COMPLETION_DISCARD }, UI_TEXT_INIT_RESID(MSG_QUERY_DISCARD) };
 
-static const DIALOG_CONTROL
-quit_query_cancel =
+static /*poked*/ DIALOG_CONTROL
+SDC_query_cancel =
 {
     IDCANCEL, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, QUIT_QUERY_ID_DISCARD, QUIT_QUERY_ID_TEXT_2, QUIT_QUERY_ID_DISCARD },
-    { QUIT_QUERY_BUTTON_H, 0, 0, 0 },
+#if RISCOS
+    { QUIT_QUERY_ID_DISCARD, QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_SELF, QUIT_QUERY_ID_SAVE },
+    { QUIT_QUERY_BUTTON_GAP_H /*poked*/, -DIALOG_DEFPUSHEXTRA_V, QUIT_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#else
+    { DIALOG_CONTROL_SELF, QUIT_QUERY_ID_SAVE, DIALOG_MAIN_GROUP, QUIT_QUERY_ID_SAVE },
+    { QUIT_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V, 0, -DIALOG_DEFPUSHEXTRA_V },
     { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 static const DIALOG_CTL_CREATE
 quit_query_ctl_create[] =
 {
-    { &quit_query_text_1,  &quit_query_text_1_data  },
-    { &quit_query_text_2,  &quit_query_text_2_data  },
-    { &quit_query_text_3,  &quit_query_text_3_data  },
+    { { &dialog_main_group },   NULL },
+    { { &quit_query_text_1 },   &quit_query_text_1_data  },
+    { { &quit_query_text_2 },   &quit_query_text_2_data  },
+    { { &quit_query_text_3 },   &quit_query_text_3_data  },
 
-    { &quit_query_save,    &quit_query_save_data    },
-    { &quit_query_discard, &quit_query_discard_data },
-    { &quit_query_cancel,  &stdbutton_cancel_data   }
+    { { &SDC_query_save },      &quit_query_save_data    },
+    { { &SDC_query_discard },   &quit_query_discard_data },
+    { { &SDC_query_cancel },    &stdbutton_cancel_data   }
 };
 
 /******************************************************************************
@@ -619,7 +662,7 @@ query_quit_do_query(
 {
     STATUS completion_code = QUERY_COMPLETION_DISCARD;
     STATUS status;
-    PIXIT width_1;
+    PIXIT width_1, buttongap_h;
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock_1, 32);
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock_2, 32);
     quick_tblock_with_buffer_setup(quick_tblock_1);
@@ -636,23 +679,28 @@ query_quit_do_query(
     width_1 = ui_width_from_tstr(quit_query_text_1_data.caption.text.tstr);
 
     /* but not so small as to have buttons crashing into each other */
-    if( width_1 < ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_STDSPACING_H)))
-        width_1 = ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_STDSPACING_H));
+    if( width_1 < ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H)))
+        width_1 = ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H));
 
     quit_query_text_1.relative_offset[2] = width_1;
 
-    quit_query_discard.relative_offset[0] = ((width_1 - (3 * QUIT_QUERY_BUTTON_H)) / 2);
+    /* centralise the middle button of the three */
+    buttongap_h = ((width_1 - ((3 * QUIT_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H))) / 2);
+#if RISCOS
+    SDC_query_cancel.relative_offset[0] = buttongap_h;
+#else
+    SDC_query_discard.relative_offset[0] = buttongap_h;
+#endif
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, quit_query_ctl_create, elemof32(quit_query_ctl_create), 0);
-    dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, quit_query_ctl_create, elemof32(quit_query_ctl_create), get_ui_text_product_ui_id());
 #if RISCOS
     dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
-    dialog_cmd_process_dbox.p_proc_client = NULL;
+    dialog_cmd_process_dbox.bits.dialog_position_type = DIALOG_POSITION_CENTRE_MOUSE;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     completion_code = status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
@@ -777,7 +825,7 @@ save_linked_query_text_1 =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-save_linked_query_text_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_SAVE_QUERY_LINKED), { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+save_linked_query_text_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_SAVE_QUERY_LINKED), { 0 /*left_text*/, 1 /*centre_text*/ } };
 
 static const DIALOG_CONTROL
 save_linked_query_save_all =
@@ -815,11 +863,11 @@ save_linked_query_cancel =
 static const DIALOG_CTL_CREATE
 save_linked_query_ctl_create[] =
 {
-    { &save_linked_query_text_1,      &save_linked_query_text_1_data },
+    { { &save_linked_query_text_1 },      &save_linked_query_text_1_data },
 
-    { &save_linked_query_save_all,    &save_linked_query_save_all_data },
-    { &save_linked_query_discard_all, &save_linked_query_discard_all_data },
-    { &save_linked_query_cancel,      &stdbutton_cancel_data }
+    { { &save_linked_query_save_all },    &save_linked_query_save_all_data },
+    { { &save_linked_query_discard_all }, &save_linked_query_discard_all_data },
+    { { &save_linked_query_cancel },      &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -831,14 +879,13 @@ query_save_linked(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, save_linked_query_ctl_create, elemof32(save_linked_query_ctl_create), 0);
-    dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, save_linked_query_ctl_create, elemof32(save_linked_query_ctl_create), get_ui_text_product_ui_id());
 #if RISCOS
     dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
-    /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+    dialog_cmd_process_dbox.bits.dialog_position_type = DIALOG_POSITION_CENTRE_MOUSE;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
@@ -862,7 +909,9 @@ query_save_linked(
 #endif
 
 /*#define CLOSE_QUERY_ACROSS_H     MAX(3 * CLOSE_QUERY_BUTTON_H + 2 * DIALOG_STDSPACING_H, ((MAX_FILENAME_FOR_SAVE_QUERY + sizeof32("''?")) * DIALOG_SYSCHAR_H))*/
-#if WINDOWS
+#if 1
+#define CLOSE_QUERY_BUTTON_H     QUIT_QUERY_BUTTON_H /* reuse these buttons */
+#elif WINDOWS
 #define CLOSE_QUERY_BUTTON_H     DIALOG_STDPUSHBUTTON_H
 #else
 #define CLOSE_QUERY_BUTTON_H     (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Discard "))
@@ -872,27 +921,28 @@ query_save_linked(
 static const DIALOG_CONTROL
 close_query_text_1 =
 {
-    QUIT_QUERY_ID_TEXT_1, DIALOG_CONTROL_WINDOW,
+    QUIT_QUERY_ID_TEXT_1, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, QUIT_QUERY_ID_TEXT_2 },
     { 0, DIALOG_STDTEXT_V + 0, 0, DIALOG_STDTEXT_V },
     { DRT(LTRT, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-close_query_text_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CLOSE_QUERY_1), { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+close_query_text_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CLOSE_QUERY_1), { 0 /*left_text*/, 1 /*centre_text*/ } };
 
 static /*poked*/ DIALOG_CONTROL
 close_query_text_2 =
 {
-    QUIT_QUERY_ID_TEXT_2, DIALOG_CONTROL_WINDOW,
+    QUIT_QUERY_ID_TEXT_2, DIALOG_MAIN_GROUP,
     { QUIT_QUERY_ID_TEXT_1, QUIT_QUERY_ID_TEXT_1 },
     { 0, DIALOG_STDSPACING_V, 0 /*CLOSE_QUERY_ACROSS_H*/, DIALOG_STDTEXT_V },
     { DRT(LBLT, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-close_query_text_2_data = { { UI_TEXT_TYPE_NONE }, { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+close_query_text_2_data = { { UI_TEXT_TYPE_NONE }, { 0 /*left_text*/, 1 /*centre_text*/ } };
 
+#if 0
 static const DIALOG_CONTROL
 close_query_save =
 {
@@ -901,22 +951,26 @@ close_query_save =
     { 0, DIALOG_STDTEXT_V + DIALOG_STDSPACING_V, CLOSE_QUERY_BUTTON_H, DIALOG_DEFPUSHBUTTON_V },
     { DRT(LBLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
+#endif
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 close_query_save_data = { { QUERY_COMPLETION_SAVE }, UI_TEXT_INIT_RESID(MSG_QUERY_SAVE) };
 
+#if 0
 static /*poked*/ DIALOG_CONTROL
 close_query_discard =
 {
     QUIT_QUERY_ID_DISCARD, DIALOG_CONTROL_WINDOW,
     { QUIT_QUERY_ID_SAVE, QUIT_QUERY_ID_SAVE, DIALOG_CONTROL_SELF, QUIT_QUERY_ID_SAVE },
-    { 0 /*CLOSE_QUERY_BUTTON_GAP_H*/, -DIALOG_DEFPUSHEXTRA_V, CLOSE_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
+    { CLOSE_QUERY_BUTTON_GAP_H /*poked*/, -DIALOG_DEFPUSHEXTRA_V, CLOSE_QUERY_BUTTON_H, -DIALOG_DEFPUSHEXTRA_V },
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
+#endif
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-close_query_discard_data = { { QUERY_COMPLETION_DISCARD }, UI_TEXT_INIT_RESID(MSG_DISCARD) };
+close_query_discard_data = { { QUERY_COMPLETION_DISCARD }, UI_TEXT_INIT_RESID(MSG_QUERY_DISCARD) };
 
+#if 0
 static const DIALOG_CONTROL
 close_query_cancel =
 {
@@ -925,15 +979,18 @@ close_query_cancel =
     { CLOSE_QUERY_BUTTON_H, 0, 0, 0 },
     { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
+#endif
 
 static const DIALOG_CTL_CREATE
 close_query_ctl_create[] =
 {
-    { &close_query_text_1,  &close_query_text_1_data  },
-    { &close_query_text_2,  &close_query_text_2_data  },
-    { &close_query_save,    &close_query_save_data    },
-    { &close_query_discard, &close_query_discard_data },
-    { &close_query_cancel,  &stdbutton_cancel_data    }
+    { { &dialog_main_group },   NULL },
+    { { &close_query_text_1 },  &close_query_text_1_data  },
+    { { &close_query_text_2 },  &close_query_text_2_data  },
+
+    { { &SDC_query_save },      &close_query_save_data    },
+    { { &SDC_query_discard },   &close_query_discard_data },
+    { { &SDC_query_cancel },    &stdbutton_cancel_data    }
 };
 
 _Check_return_
@@ -943,7 +1000,7 @@ query_save_modified(
 {
     STATUS status;
     TCHARZ mess_tstr_buf[BUF_MAX_PATHSTRING];
-    PIXIT width_2;
+    PIXIT width_2, buttongap_h;
 
     status_assert(maeve_event(p_docu, T5_MSG_CELL_MERGE, P_DATA_NONE)); /* flush */
 
@@ -1037,22 +1094,28 @@ query_save_modified(
     width_2 = ui_width_from_tstr(close_query_text_2_data.caption.text.tstr);
 
     /* but not so small as to have buttons crashing into each other */
-    if( width_2 < ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_STDSPACING_H)))
-        width_2 = ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_STDSPACING_H));
+    if( width_2 < ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H)))
+        width_2 = ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H) + (2 * DIALOG_STDSPACING_H));
 
     close_query_text_2.relative_offset[2] = width_2;
 
-    close_query_discard.relative_offset[0] = ((width_2 - (3 * CLOSE_QUERY_BUTTON_H)) / 2);
+    /* centralise the middle button of the three */
+    buttongap_h = ((width_2 - ((3 * CLOSE_QUERY_BUTTON_H) + (2 * DIALOG_DEFPUSHEXTRA_H))) / 2);
+#if RISCOS
+    SDC_query_cancel.relative_offset[0] = buttongap_h; 
+#else
+    SDC_query_discard.relative_offset[0] = buttongap_h;
+#endif
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, close_query_ctl_create, elemof32(close_query_ctl_create), 0);
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, close_query_ctl_create, elemof32(close_query_ctl_create), get_ui_text_product_ui_id());
     dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
 #if RISCOS
     dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
+    dialog_cmd_process_dbox.bits.dialog_position_type = DIALOG_POSITION_CENTRE_MOUSE;
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
@@ -1283,7 +1346,7 @@ close_linked_query_text_1 =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-close_linked_query_text_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CLOSE_QUERY_LINKED), { 0 /*left_text*/, 1 /*centre_text*/, 1 /*windows_no_colon*/ } };
+close_linked_query_text_1_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CLOSE_QUERY_LINKED), { 0 /*left_text*/, 1 /*centre_text*/ } };
 
 static const DIALOG_CONTROL
 close_linked_query_close_all =
@@ -1321,11 +1384,11 @@ close_linked_query_cancel =
 static const DIALOG_CTL_CREATE
 close_linked_query_ctl_create[] =
 {
-    { &close_linked_query_text_1, &close_linked_query_text_1_data },
+    { { &close_linked_query_text_1 }, &close_linked_query_text_1_data },
 
-    { &close_linked_query_close_all, &close_linked_query_close_all_data },
-    { &close_linked_query_close_doc, &close_linked_query_close_doc_data },
-    { &close_linked_query_cancel, &stdbutton_cancel_data }
+    { { &close_linked_query_close_all }, &close_linked_query_close_all_data },
+    { { &close_linked_query_close_doc }, &close_linked_query_close_doc_data },
+    { { &close_linked_query_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -1337,13 +1400,12 @@ query_close_linked(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, close_linked_query_ctl_create, elemof32(close_linked_query_ctl_create), 0);
-    dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, close_linked_query_ctl_create, elemof32(close_linked_query_ctl_create), get_ui_text_product_ui_id());
 #if RISCOS
     dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
+    dialog_cmd_process_dbox.bits.dialog_position_type = DIALOG_POSITION_CENTRE_MOUSE;
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/

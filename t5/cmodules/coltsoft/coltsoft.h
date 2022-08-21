@@ -235,23 +235,23 @@ typedef P_PC_U8 P_PC_U8Z;
 #define u8_is_ascii7(u8) ( \
     (u8) < 0x80)
 
-typedef signed char S8; typedef S8 * P_S8, ** P_P_S8;
+typedef   int8_t  S8; typedef S8 * P_S8, ** P_P_S8;
 
-typedef unsigned short U16; typedef U16 * P_U16, ** P_P_U16; typedef const U16 * PC_U16;
+typedef  int16_t S16; typedef S16 * P_S16, ** P_P_S16; typedef const S16 * PC_S16;
 
-typedef /*signed*/ short S16; typedef S16 * P_S16, ** P_P_S16; typedef const S16 * PC_S16;
+typedef uint16_t U16; typedef U16 * P_U16, ** P_P_U16; typedef const U16 * PC_U16;
 
-typedef unsigned int U32; typedef U32 * P_U32, ** P_P_U32; typedef const U32 * PC_U32;
+typedef  int32_t S32; typedef S32 * P_S32, ** P_P_S32; typedef const S32 * PC_S32;
 
-typedef /*signed*/ int S32; typedef S32 * P_S32, ** P_P_S32; typedef const S32 * PC_S32;
+typedef uint32_t U32; typedef U32 * P_U32, ** P_P_U32; typedef const U32 * PC_U32;
 
 #define P_S32_NONE _P_DATA_NONE(P_S32)
 
-typedef int64_t S64; typedef S64 * P_S64, ** P_P_S64; typedef const S64 * PC_S64;
+typedef  int64_t S64; typedef S64 * P_S64, ** P_P_S64; typedef const S64 * PC_S64;
 
 typedef uint64_t U64; typedef U64 * P_U64, ** P_P_U64; typedef const U64 * PC_U64;
 
-typedef double F64; typedef F64 * P_F64, ** P_P_F64; typedef const F64 * PC_F64;
+typedef double   F64; typedef F64 * P_F64, ** P_P_F64; typedef const F64 * PC_F64;
 
 typedef BOOL * P_BOOL; typedef const BOOL * PC_BOOL;
 
@@ -298,7 +298,7 @@ static inline BOOL
 ucs4_is_C1(
     _InVal_     UCS4 ucs4)
 {
-    return(((ucs4) >= 0x00000080U) && ((ucs4) < 0x0000009FU));
+    return(((ucs4) >= 0x00000080U) && ((ucs4) <= 0x0000009FU));
 }
 
 /*
@@ -407,6 +407,33 @@ Windows Unicode build
 TCHAR/TSTR is WCHAR (UTF-16)
 UCHARS/USTR is still Latin-N and should become UTF-8
 */
+
+#if APP_UNICODE
+
+#if 0
+
+/* UTF-8 encoding is used in USTR/UCHAR */
+#define USTR_IS_SBSTR 0
+/* TCHAR is WCHAR (UTF-16, was simply UCS-2 on NT 4.0) */
+#define TSTR_IS_SBSTR 0
+
+#else
+
+/* Do NOT use UTF-8 encoding in USTR/UCHAR - alias USTR/UCHAR as SBSTR/SBCHAR U8 Latin-N throughout */
+#define USTR_IS_SBSTR 1
+/* But TCHAR is WCHAR (UTF-16, was simply UCS-2 on NT 4.0) */
+#define TSTR_IS_SBSTR 0
+
+#endif
+
+#else /* NOT APP_UNICODE */
+
+/* Do NOT use UTF-8 encoding in USTR/UCHAR - alias USTR/UCHAR as SBSTR/SBCHAR U8 Latin-N throughout */
+#define USTR_IS_SBSTR 1
+/* Also TSTR/TCHAR is SBSTR/SBCHAR U8 Latin-N */
+#define TSTR_IS_SBSTR 1
+
+#endif /* APP_UNICODE */
 
 /*
 UTF-8 is a sequence of bytes encoding a UCS-4 32-bit character
@@ -594,7 +621,7 @@ printf format strings
 #define S32_FMT         "%d"
 #define S32_FMT_POSTFIX  "d"
 #define U32_FMT         "%u"
-#define U32_XFMT        "%X"
+#define U32_XFMT        "0x%X"
 #define S64_FMT         "%" PRId64
 #define U64_FMT         "%" PRIu64
 #define U64_XFMT        "%" PRIx64
@@ -1098,14 +1125,30 @@ SecureZeroMemory(
 
 #endif /* OS */
 
+/* slower way to clear memory, but it saves space when speed is not important */
+
+extern void
+memclr32(
+    _Out_writes_bytes_(n_bytes) P_ANY ptr,
+    _InVal_     U32 n_bytes);
+
 #define zero_array(_array) \
     (void) memset(_array, 0, sizeof(_array))
+
+#define zero_array_fn(_array) \
+    memclr32(_array, sizeof32(_array))
 
 #define zero_struct(_struct) \
     (void) memset(&_struct, 0, sizeof(_struct))
 
+#define zero_struct_fn(_struct) \
+    memclr32(&_struct, sizeof32(_struct))
+
 #define zero_struct_ptr(_ptr) \
     (void) memset(_ptr, 0, sizeof(*(_ptr)))
+
+#define zero_struct_ptr_fn(_ptr) \
+    memclr32(_ptr, sizeof32(*(_ptr)))
 
 #define zero_32(_struct) \
     * (P_U32) (&_struct) = 0
@@ -1135,8 +1178,8 @@ STATUS  status_wrap(STATUS)         executes expression, returns result, also re
 
 ******************************************************************************/
 
-#if !defined(UNICODE) || 1
-typedef S32 STATUS;
+#if 1
+typedef /*_Return_type_success_(return >= 0)*/ S32 STATUS;
 #define STATUS_TFMT S32_TFMT
 #else
 /*#pragma warning(disable:4820)*/
@@ -1201,11 +1244,11 @@ typedef STATUS * P_STATUS;
 
 /* standard constants */
 #ifndef FALSE
-#define FALSE 0
+#define FALSE false
 #endif
 
 #ifndef TRUE
-#define TRUE 1
+#define TRUE true
 #endif
 
 #define INDETERMINATE 2
@@ -1378,6 +1421,9 @@ idiv_floor_fn(
     return(idiv_floor(a, b));
 }
 
+#if defined(UNREFERENCED_PARAMETER) && ((defined(__clang__) && !defined(_PREFAST_)) || (0 /*defined(_MSC_VER) && defined(_PREFAST_)*/))
+#undef UNREFERENCED_PARAMETER
+#endif
 #if !defined(UNREFERENCED_PARAMETER)
 #define UNREFERENCED_PARAMETER(p)           (p)=(p)
 #endif
@@ -1400,6 +1446,12 @@ idiv_floor_fn(
 #define consume_bool(expr) consume(BOOL, expr)
 
 #define consume_int(expr) consume(int, expr) /* quite useful for printf() etc. */
+
+#define PTR_IS_NULL(/*ANY*/ p) ( \
+    NULL == /*(PC_ANY)*/ (p) )
+
+#define PTR_NOT_NULL(/*ANY*/ p) ( \
+    NULL != /*(PC_ANY)*/ (p) )
 
 /*
 a pointer that will hopefully give a trap when dereferenced even when not CHECKING
@@ -1433,8 +1485,11 @@ a pointer that will hopefully give a trap when dereferenced even when not CHECKI
 
 #endif /* _WIN64 */
 
-#define IS_BAD_POINTER(p) ( \
-    ((uintptr_t) (p) - (uintptr_t) BAD_POINTER_X(uintptr_t, 0)) <= BAD_POINTER_X_RANGE )
+#define PTR_IS_BAD_POINTER(p) ( \
+    ((uintptr_t) (p) - BAD_POINTER_X(uintptr_t, 0)) <= BAD_POINTER_X_RANGE )
+
+#define PTR_NOT_BAD_POINTER(p) ( \
+    ((uintptr_t) (p) - BAD_POINTER_X(uintptr_t, 0)) >  BAD_POINTER_X_RANGE )
 
 /*
 a more limited range of values for strictly typed pointers when CHECKING
@@ -1448,23 +1503,37 @@ a more limited range of values for strictly typed pointers when CHECKING
 #define PTR_NONE_X_RANGE ( \
     (uintptr_t) (0x1FU))
 
-#define IS_PTR_NONE(/*ANY*/ p) ( \
-    ((uintptr_t) (p) - (uintptr_t) PTR_NONE_X(PC_ANY, 0)) <= PTR_NONE_X_RANGE )
+#define PTR_IS_NONE(/*ANY*/ p) ( \
+    ((uintptr_t) (p) - PTR_NONE_X(uintptr_t, 0)) <= PTR_NONE_X_RANGE )
 
-#define IS_PTR_NONE_X(__ptr_type, X, p) ( \
+#define PTR_NOT_NONE(/*ANY*/ p) ( \
+    ((uintptr_t) (p) - PTR_NONE_X(uintptr_t, 0)) >  PTR_NONE_X_RANGE )
+
+#define PTR_IS_NONE_X(__ptr_type, X, p) ( \
     PTR_NONE_X(__ptr_type, X) == (p) )
 
-#define IS_PTR_NULL_OR_NONE(/*ANY*/ p) ( \
-    (NULL == (PC_ANY) (p)) || IS_PTR_NONE(p) )
+#define PTR_NOT_NONE_X(__ptr_type, X, p) ( \
+    PTR_NONE_X(__ptr_type, X) != (p) )
 
-#define IS_PTR_NULL_OR_NONE_X(__ptr_type, X, p) ( \
-    ((__ptr_type) NULL == (p)) || IS_PTR_NONE_X(__ptr_type, X, p) )
+#define PTR_IS_NULL_OR_NONE(/*ANY*/ p) ( \
+    PTR_IS_NULL(p) || PTR_IS_NONE(p) )
+
+#define PTR_NOT_NULL_OR_NONE(/*ANY*/ p) ( \
+    PTR_NOT_NULL(p) && PTR_NOT_NONE(p) )
+
+#define PTR_IS_NULL_OR_NONE_X(__ptr_type, X, p) ( \
+    PTR_IS_NULL(p) || PTR_IS_NONE_X(__ptr_type, X, p) )
+
+#define PTR_NOT_NULL_OR_NONE_X(__ptr_type, X, p) ( \
+    PTR_NOT_NULL(p) && PTR_NOT_NONE_X(__ptr_type, X, p) )
 
 /* Some SAL to reflect the fact that PTR_NONE is not NULL in this state */
 
-#define _In_maybenone_      _In_
-#define _Inout_maybenone_   _Inout_
-#define _Out_maybenone_     _Out_
+#define _In_maybenone_          _In_
+#define _Inout_maybenone_       _Inout_
+#define _Out_maybenone_         _Out_
+
+#define _In_reads_bytes_maybenone_  _In_reads_bytes_ /*-_opt_*/
 
 #define _Ret_notnone_           _Ret_notnull_
 #define _Ret_maybenone_         _Ret_notnull_
@@ -1478,23 +1547,37 @@ a more limited range of values for strictly typed pointers when CHECKING
 #define PTR_NONE_X(__ptr_type, X) ( \
     (__ptr_type) NULL)
 
-#define IS_PTR_NONE(/*ANY*/ p) ( \
-    (NULL == (PC_ANY) (p)) )
+#define PTR_IS_NONE(/*ANY*/ p) ( \
+    PTR_IS_NULL(p) )
 
-#define IS_PTR_NONE_X(__ptr_type, X, p) ( \
+#define PTR_NOT_NONE(/*ANY*/ p) ( \
+    PTR_NOT_NULL(p) )
+
+#define PTR_IS_NONE_X(__ptr_type, X, p) ( \
     (PTR_NONE_X(__ptr_type, X) == (p)) )
 
-#define IS_PTR_NULL_OR_NONE(/*ANY*/ p) ( \
-    /* (NULL == (PC_ANY) (p)) || */ IS_PTR_NONE(p) )
+#define PTR_NOT_NONE_X(__ptr_type, X, p) ( \
+    (PTR_NONE_X(__ptr_type, X) != (p)) )
 
-#define IS_PTR_NULL_OR_NONE_X(__ptr_type, X, p) ( \
-    /* ((__ptr_type) NULL == (p)) || */ IS_PTR_NONE_X(__ptr_type, X, p) )
+#define PTR_IS_NULL_OR_NONE(/*ANY*/ p) ( \
+    /* PTR_IS_NULL(p) || */ PTR_IS_NONE(p) )
+
+#define PTR_NOT_NULL_OR_NONE(/*ANY*/ p) ( \
+    /* PTR_NOT_NULL(p) && */ PTR_NOT_NONE(p) )
+
+#define PTR_IS_NULL_OR_NONE_X(__ptr_type, X, p) ( \
+    /* PTR_IS_NULL(p) || */ PTR_IS_NONE_X(__ptr_type, X, p) )
+
+#define PTR_NOT_NULL_OR_NONE_X(__ptr_type, X, p) ( \
+    /* PTR_NOT_NULL(p) && */ PTR_NOT_NONE_X(__ptr_type, X, p) )
 
 /* Some SAL to reflect the fact that PTR_NONE is NULL in this state */
 
-#define _In_maybenone_      _In_opt_
-#define _Inout_maybenone_   _Inout_opt_
-#define _Out_maybenone_     _Out_opt_
+#define _In_maybenone_          _In_opt_
+#define _Inout_maybenone_       _Inout_opt_
+#define _Out_maybenone_         _Out_opt_
+
+#define _In_reads_bytes_maybenone_  _In_reads_bytes_opt_
 
 #define _Ret_notnone_           _Ret_notnull_
 #define _Ret_maybenone_         _Ret_maybenull_
@@ -1503,14 +1586,14 @@ a more limited range of values for strictly typed pointers when CHECKING
 
 #endif /* CHECKING */
 
+#define PTR_ASSERT(p) \
+    assert(PTR_NOT_NULL_OR_NONE(p))
+
 #define _P_DATA_NONE(__ptr_type) ( \
     PTR_NONE_X(__ptr_type, 1))
 
 #define _IS_P_DATA_NONE(__ptr_type, p) ( \
-    IS_PTR_NONE_X(__ptr_type, 1, p))
-
-#define PTR_ASSERT(p) \
-    assert(!IS_PTR_NULL_OR_NONE(p))
+    PTR_IS_NONE_X(__ptr_type, 1, p))
 
 /*
 round up v if needed to the next r (r must be a power of 2)

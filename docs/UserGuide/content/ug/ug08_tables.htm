@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Tables</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Tables" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug06_the_style_editor.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug10_pictures.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">The Style editor </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Pictures</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="tables" id="tables"></a><span class="csg-chapter-number">7 </span>Tables</h1>
+
+    <p>
+        Some types of information are much better presented in tables
+        rather than as running text. You should consider presenting any
+        numerical information, or lists, in table format. Tables are easily
+        created and edited, and are ideal for creating a wide range of
+        forms and reports.
+    </p>
+    <p>This chapter shows you how to:</p>
+    <ul>
+        <li><a href="#adding_tables">Create a new table within your document</a></li>
+        <li><a href="#editing_table_layouts">Edit the layout of the table to suit your need by altering the number and width of columns and rows</a></li>
+        <li><a href="#designing_grids_boxes_and_borders">Design grids, boxes and borders</a></li>
+        <li><a href="#entering_text_into_tables">Enter text and data into tables</a></li>
+        <li><a href="#using_styles_and_effects_in_tables">Use styles and effects in tables</a></li>
+    </ul>
+    <p>
+        The information in this section can also be applied to designing spreadsheet documents.
+        Simply select the area of spreadsheet you want to format, and add grids, borders and backgrounds as if it were a table.
+    </p>
+
+    <h2><a name="table_basics" id="table_basics"></a>Table basics</h2>
+
+    <p>
+        Tables are a way of presenting information which is neat and easily understandable.
+        Transport timetable information and the ingredients in a recipe are two everyday examples of information which can be presented in tables.
+        Forms such as software registration cards or school worksheets can also be created as tables.
+    </p>
+    <p>Tables can range from a simple two-column list, to large and detailed documents.</p>
+    <h3>The language of tables</h3>
+    <p>
+        Some basic terms are used within Fireworkz and throughout the computer world to refer to the parts which make up a table.
+        They are the same as the words used to describe the content of a spreadsheet.
+        These terms are used throughout this chapter.
+    </p>
+    <p>
+        A table is made up of vertical <strong>columns</strong> and horizontal <strong>rows</strong>.
+        The intersections of these are called <strong>cells</strong>, and this is where you enter your text or data.
+    </p>
+    <p>
+        Cells can be shown more clearly by a <strong>grid</strong>, a pattern of lines showing the boundary between each row and column.
+        Each cell can also have its own <strong>border</strong>, and cells can be given a <strong>background colour</strong>.
+    </p>
+
+    <h2><a name="adding_tables" id="adding_tables"></a>Adding tables</h2>
+
+    <p>
+        Tables are easily added to any Fireworkz document.
+        You can add tables to both letter and worksheet documents.
+    </p>
+    <p>To add a table to a document:</p>
+    <ol>
+        <li>Place the caret at the place where you want the table to start.</li>
+        <li>
+            Choose <span class="csg-dbox-option">Table</span> from the <span class="csg-menu">Edit</span> menu.
+            The <span class="csg-dbox">Insert table</span> dialogue box will appear.
+        </li>
+        <li>
+            Enter the number of columns and the number of rows you want in the table.
+            If you are not sure exactly how many you will need, enter the approximate number; its easy to add or remove rows and columns later.
+        </li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Insert</span></span> in the dialogue box.</li>
+        <li>
+            The table will appear.
+            A new style will be added to the document.
+            For the first table in a document it will be called .Table1; for subsequent tables it will have an appropriate number.
+        </li>
+    </ol>
+    <p>
+        You can now go on to edit and customise your table.
+        See <a href="ug8_editing_table_layouts.htm">Editing table layouts</a>.
+    </p>
+
+    <h3><a name="editing_table_layouts" id="editing_table_layouts"></a>Editing table layouts</h3>
+    <p>
+        Editing table layouts is made easy by Fireworkz.
+        Most changes can be made by selecting the part of the table you want to change, and dragging it to the new size in the ruler.
+    </p>
+    <p>
+        If it is not already displayed, you should switch on the Side ruler in the
+        <a href="../ug/ug02_fireworkz_basics.htm#accessing_the_view_control_dialogue_box.htm"><span class="csg-dbox">View control</span></a> dialogue box.
+        This makes it much easier to resize rows.
+    </p>
+
+    <h4><a name="editing_the_cell_layout" id="editing_the_cell_layout"></a>Editing the cell layout</h4>
+    <p>
+        The cell layout for each table is defined in the corresponding style .Table<em>N</em>
+        which is automatically created when you add a table to your document.
+        These are the default table settings, which you will probably want to alter:
+    </p>
+    <ul>
+        <li>The text will appear in the same style as the base style of the document.</li>
+        <li>A black grid will appear around all four sides of each cell.</li>
+        <li>The three margins are set to 2mm from the edge of the cell.</li>
+        <li>No tabs are set.</li>
+        <li>The column width is set to 20mm.</li>
+    </ul>
+    <p>You should make any changes which you want to apply to the whole table by altering the settings in the ruler when no area of the table is selected.</p>
+    <p>
+        The type style, border, colours and the grid are altered using the
+        <a href="../ug/ug06_the_style_editor.htm">Style dialogue box</a>
+        by editing the appropriate table style or creating new styles and applying them to the table.
+    </p>
+
+    <h4><a name="merging_two_cells" id="merging_two_cells"></a>Merging two cells</h4>
+    <p>
+        You may wish to remove column boundaries in some rows of your table,
+        perhaps because a row is being used as a heading or break in the table.
+        The method described here is one way to do this:
+        you could also <a href="#straddling_cells">straddle</a> the two cells.
+    </p>
+    <ol>
+        <li>Select the left of the two cells you want to merge.</li>
+        <li>Point at the column width marker at its righthand side.</li>
+        <li>Press the <span class="csg-key">Ctrl</span> key and the left mouse button and drag the column width marker to the edge of the righthand of the two cells.</li>
+        <li>
+            When you release the left mouse button you will see that the cell boundary has disappeared.
+            You can repeat this process across as many columns as you need,
+            but if you want to widen a cell over several columns you have to do it from right to left, column by column.
+            This is because you can only drag one column border at a time in this way.
+        </li>
+    </ol>
+
+    <h4><a name="straddling_cells" id="straddling_cells"></a>Straddling cells</h4>
+    <p>
+        There is a simple and convenient way to merge a pair of cells in a row.
+        This is called straddling.
+        To do this:
+    </p>
+    <ol>
+        <li>Select the two cells which you wish to straddle.</li>
+        <li>Point at the column border between the two cells.</li>
+        <li>Control-double click (or, RISC OS only, <span class="csg-mouse-button">Adjust</span> double-click).</li>
+        <li>The two cells will merge.</li>
+    </ol>
+
+    <h4><a name="adding_extra_rows_and_columns" id="adding_extra_rows_and_columns"></a>Adding extra rows and columns</h4>
+    <p>
+        There are two options for adding extra rows and columns to a table.
+        You may either insert additional rows and columns at a point within the table,
+        or add rows and columns to the end of an existing table.
+    </p>
+    <p>To insert extra rows within a table:</p>
+    <ol>
+        <li>Place the caret within the table at the point where you want to insert an extra row.</li>
+        <li>Display the <span class="csg-menu">Rows</span> sub-menu from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>Choose <span class="csg-menu-option">Insert</span> from that sub-menu.</li>
+        <li>An extra row will be inserted into the table.</li>
+    </ol>
+    <p>To insert extra columns within a table:</p>
+    <ol>
+        <li>Place the caret within the table at the point where you want to insert an extra row or column.</li>
+        <li>Display the <span class="csg-menu">Columns</span> sub-menu from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>Choose <span class="csg-menu-option">Insert</span> from that sub-menu.</li>
+        <li>An extra column will be inserted into the table.</li>
+    </ol>
+    <p>To add rows to the bottom of a table:</p>
+    <ol>
+        <li>Place the caret in the last row of the table</li>
+        <li>Display the <span class="csg-menu">Rows</span> sub-menu from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>
+            Choose <span class="csg-menu-option">Add</span> from the <span class="csg-menu">Row</span> sub-menu.
+            The <span class="csg-dbox">Add Rows</span> dialogue box will be displayed.
+        </li>
+        <li>Enter the number of rows to add by typing in the writable field or by using the arrows.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Add</span></span>.
+            The extra rows will be added.
+            They will be displayed in the table style for this table.
+        </li>
+    </ol>
+    <p>To add columns to the right of a table:</p>
+    <ol>
+        <li>Place the caret in the last column of the table</li>
+        <li>Display the <span class="csg-menu">Columns</span> sub-menu from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>
+            Choose <span class="csg-menu-option">Add</span> from the <span class="csg-menu">Columns</span> sub-menu.
+            The <span class="csg-dbox">Add Columns</span> dialogue box will be displayed.
+        </li>
+        <li>Enter the number of columns to add by typing in the writable field or by using the arrows.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Add</span></span>.
+            The extra columns will be added.
+            They will be displayed in the table style for this table.
+        </li>
+    </ol>
+
+    <h4><a name="removing_redundant_rows_and_columns" id="removing_redundant_rows_and_columns"></a>Removing redundant rows and columns</h4>
+    <p>To remove a row or column from the table:</p>
+    <ol>
+        <li>Select the row or column to remove by clicking in the top or leftmost cell and dragging down to the bottom or far right.</li>
+        <li>
+            Choose <span class="csg-menu-option">Delete</span> from the
+            <span class="csg-menu">Columns</span> or <span class="csg-menu">Rows</span> sub-menu as appropriate.
+            The columns or rows will be removed from the table.
+        </li>
+    </ol>
+
+    <h4><a name="changing_column_width" id="changing_column_width"></a>Changing column width</h4>
+    <p>
+        Tables are usually created with all their columns of equal width.
+        However, you may need one or more columns to be wider than the others.
+        For example, if you made a table to display students marks in a series of tests,
+        you would need a wide column for their names and narrower columns for the marks.
+    </p>
+    <p>To change column width:</p>
+    <ol>
+        <li>
+            Place the caret in the column you want to change.
+            If you want to change more than one column, select all the columns you want to change by
+            putting the caret in the upper leftmost cell and dragging down to the lower rightmost.
+        </li>
+        <li>Point at the column width marker in the ruler.</li>
+        <li>
+            When the pointer turns into two vertical lines with arrows pointing out from them,
+            click <span class="csg-mouse-button">Select</span> and drag this new pointer along to the place where you want the column to end.
+            The status line will give you precise information about the measurement.
+        </li>
+        <li>The table will now appear with the extended or shrunken column you have altered.</li>
+    </ol>
+    <p>You can change the width of part of a column, by selecting only those cells whose width you want to change and following the process outlined above.</p>
+
+    <h4><a name="repositioning_the_table_on_the_page" id="repositioning_the_table_on_the_page"></a>Repositioning the table on the page</h4>
+    <p>
+        You can alter column widths to reposition the table on the page.
+        Tables automatically start in the second column.
+        By adjusting the width of the first (leftmost) column on the page,
+        you can align your table with your text or margins.
+    </p>
+    <ol>
+        <li>Make sure that the column border is displayed.</li>
+        <li>
+            Select all the rows of the column to the left of the table, as many rows as there are rows in the table.
+            This will ensure that it is only the table which is repositioned, and not the rest of your text.
+        </li>
+        <li>Point at the column width marker for this first column, and drag it to the required position.</li>
+        <li>Your table will be repositioned on the page.</li>
+    </ol>
+
+    <h4><a name="changing_row_height" id="changing_row_height"></a>Changing row height</h4>
+    <p>The process for changing row height is exactly like that for changing columns, but uses the side ruler.</p>
+    <p>However the height of the entire row will change; you cannot select part of a row and change its height.</p>
+
+    <h4><a name="autowidth_and_autoheight" id="autowidth_and_autoheight"></a>Choosing the width or height for a column or row</h4>
+    <p>
+        The Auto Width and Auto Height facilities make it possible to
+        make columns and rows exactly the right width to contain their largest member.
+        Using this facility allows you to tidy up your table.
+    </p>
+    <p>To use Auto Width:</p>
+    <ol>
+        <li>Select the column whose width you want to adjust (or individual cells in the column).</li>
+        <li>
+            Point at the column width marker for the column whose width you want to adjust.
+            The pointer will change into double arrows.
+        </li>
+        <li>Double-click on the column border.</li>
+        <li>The column(s) will be resized to the best width according to the widest entry.</li>
+    </ol>
+    <p>
+        The process for setting automatic row height is identical but you should select a row and double-click on its marker.
+        This effectively clears the fixed row height setting attached to a row,
+        so that the row height will alter automatically to track the tallest paragraph in the row.
+    </p>
+
+    <h2><a name="designing_grids_boxes_and_borders" id="designing_grids_boxes_and_borders"></a>Designing grids, boxes and borders</h2>
+
+    <p>
+        Most tables are easier to read if there is a pattern of lines, or grid, dividing the columns and rows.
+        Fireworkz enables you to design the grid containing the information in your table using the Box editor and the Style editor.
+    </p>
+    <p>
+        The grid exists in an space between each cell.
+        Each cell also has a border, which is its boundary.
+        You can highlight cells, columns and rows by displaying the border.
+        Either create a style, based on the table style, or apply an effect to the cells you want to change.
+    </p>
+    <p>The default style for tables is a black grid surrounding every cell.</p>
+    <p>The example and template files in the Examples directory contain several different table styles which you can use in your own document.</p>
+
+    <h3><a name="using_background_colours" id="using_background_colours"></a>Using background colours</h3>
+    <p>
+        Adding a background colour to a row or column is a good way of emphasising it.
+        Background colours are also added using either the Style editor or the Effects command.
+    </p>
+    <p>To add a background colour to a table style:</p>
+    <ol>
+        <li>
+            Create a new style based on your existing table style.
+            Call it something like <code>Table colour</code>.
+        </li>
+        <li>Go to the <span class="csg-dbox-option">Colour</span> section of the <span class="csg-dbox">Style</span> dialogue box.</li>
+        <li>
+            Turn on <span class="csg-dbox-option">Background colour</span>.
+            Choose the colour you want for the background, either by
+            clickin the <span class="csg-dbox-button">Colour</span> button in this group to use the standard colour selector,
+            or by clicking on one of the pre-defined colour buttons in the palette,
+            or by typing in RGB values,
+            or use the arrows to enter RGB values.
+        </li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.</li>
+        <li>Select the part of the table you want to appear in the new colour, and apply the <code>Table colour</code> style to it.</li>
+        <li>The selected cells will appear in the new colour.</li>
+    </ol>
+
+    <h3><a name="boxes_and_borders" id="boxes_and_borders"></a>Boxes and borders</h3>
+    <p>As the finishing touch to your table or form you may want to add a border or box around some areas of your page.</p>
+    <p>
+        You may add an external box or internal grid lines to areas of cells or paragraphs.
+        You can apply a box style to individual cells, groups of cells, whole tables or whole documents.
+    </p>
+
+    <h3><a name="boxes" id="boxes"></a>Boxes</h3>
+    <p>Boxes are external lines around a rectangular group of cells or paragraphs.</p>
+    <p>
+        There are several different line styles available for drawing boxes.
+        These are shown in the <span class="csg-dbox-option">Line style</span> section of the <span class="csg-dbox">Box</span> dialogue box.
+        They are:
+    </p>
+    <ul>
+        <li>invisible (no line);</li>
+        <li>narrow lines;</li>
+        <li>thin solid lines;</li>
+        <li>thick solid lines;</li>
+        <li>dotted lines.</li>
+    </ul>
+    <h4>Setting the size of box lines</h4>
+    <p>
+        The width of lines used in boxes is based on the width of line set in the
+        <span class="csg-dbox-option">Grid width</span> setting of the
+        <span class="csg-dbox">Paper</span> dialogue box.
+        The thin and dotted lines are the same as this width,
+        the narrow line half of this width and the thick line twice this width.
+    </p>
+    <p>
+        Change the setting of the grid width to the width you want in points.
+        If you do this, and make the measurement much larger, you should check the text at the beginning and end of paragraphs;
+        a large grid width setting could cut into the tops and bottoms of letters
+        if there is insufficient paragraph spacing to cover the grid width.
+    </p>
+    <p>
+        If you have large text in shallow paragraphs or rows, you may occasionally
+        find that the grid is drawn over the tops or bottoms of the letters,
+        which you will see as the tops or bottoms of letters being clipped off.
+        If you have no grid displayed this will manifest itself as the
+        top of the first or bottom of the last lines in paragraphs being missing.
+        This problem usually appears on screen.
+    </p>
+    <p>There are two possible solutions to this problem if it arises:</p>
+    <ul>
+        <li>
+            Set the grid width to a smaller size.
+            If you do this, remember that the width of lines in boxes and explicitly drawn grids is calculated
+            as a proportion of the width of the grid line width set in the <span class="csg-dbox">Paper</span> dialogue box.
+        </li>
+        <li class="csg-list-style-none">If you have no visible grids in the document, you can happily set the grid width to zero.</li>
+        <li>
+            Make your rows or paragraphs slightly deeper, by adding spacing above or below in the
+            <span class="csg-dbox-option">Spacing</span> section of the Style editor
+            for the style affecting the area where text is being clipped.
+        </li>
+    </ul>
+
+    <h4><a name="creating_boxes" id="creating_boxes"></a>Creating boxes</h4>
+    <p>To add a box:</p>
+    <ol>
+        <li>Select the area of table that you want to add a box to.</li>
+        <li>Display the <span class="csg-dbox">Box</span> dialogue box by choosing <span class="csg-menu-option">Box</span> from the <span class="csg-menu">Style</span> menu.</li>
+        <li>Select <span class="csg-dbox-option">Outside</span>.</li>
+        <li>Choose a line style by clicking on its button in the <span class="csg-dbox-option">Line style</span> section of the dialogue box.</li>
+        <li>Choose a colour for the box using the colour selection tools.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+            A box will appear around the edge of the selected area.
+        </li>
+    </ol>
+
+    <h3><a name="grid_lines" id="grid_lines"></a>Grid lines</h3>
+    <p>
+        You can add grid lines to any set of selected cells or paragraphs using the <span class="csg-dbox">Box</span> dialogue box.
+        The line styles available for grid lines are the same as for boxes.
+    </p>
+    <p>To do this:</p>
+    <ol>
+        <li>Select the area you want to add the grid to.</li>
+        <li>Display the <span class="csg-dbox">Box</span> dialogue box by choosing <span class="csg-menu-option">Box</span> from the <span class="csg-menu">Style menu.</span></li>
+        <li>
+            Select <span class="csg-dbox-option">All</span> to add the line to all sides of
+            all cells/paragraphs, or the required combination of vertical and horizontal lines.
+        </li>
+        <li>Choose the line style and colour for the grid lines.</li>
+        <li>
+            Click on <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+            The grid lines will be added to the selected area as directed.
+        </li>
+    </ol>
+
+    <h3><a name="boxes_and_the_grid" id="boxes_and_the_grid"></a>Boxes and the grid</h3>
+    <p>When you draw a box around a group of cells, it is based on the positioning of the grid between the cells and their neighbours.</p>
+    <p>
+        If you are creating a complex document, where the width of columns varies as tables and text appear in the document,
+        you may encounter some problems with the drawing of boxes.
+    </p>
+    <p>
+        The simple solution to this is to keep an extra row in the same column format as the table above and below the table.
+        These act as a buffer between the table and the rest of the document and ensure that its box is always displayed and printed correctly.
+    </p>
+    <p>
+        You should not encounter this problem where tables are added to documents where the surrounding column is the full width of the page;
+        it only occurs when tables are embedded in worksheet type documents with variable column widths.
+    </p>
+
+    <h3><a name="removing_boxes_and_grid_lines" id="removing_boxes_and_grid_lines"></a>Removing boxes and grid lines</h3>
+    <p>There are two options for removing boxes, borders and grid lines from tables or from areas within tables.</p>
+
+    <h4><a name="removing_boxes_and_grid_lines_regions" id="removing_boxes_and_grid_lines_regions"></a>Using the Regions editor</h4>
+    <p>
+        You can use the Regions editor to remove grids and boxes from your documents.
+        You can do this because grids, boxes and so on are applied to the document as effects, and are therefore controlled by the Regions editor.
+    </p>
+    <p>
+        If you use the Regions editor to remove a region, it will remove the whole of that grid or box.
+        To do this:
+    </p>
+    <ol>
+        <li>Click in the area containing the grid or box you want to remove.</li>
+        <li>Display the <span class="csg-menu">Regions</span> sub-menu from the <span class="csg-menu">Style</span> menu, and choose <span class="csg-menu-option">Edit</span>.</li>
+        <li>
+            Click the <span class="csg-dbox-button">In</span> or <span class="csg-dbox-button">Out</span> buttons
+            until you see that the grid or box you want to remove is described in the status line.
+            You will also see that the region containing the grid or box is selected in the document.
+        </li>
+        <li>
+            When you have the right region selected, click <span class="csg-dbox-button">Delete</span>.
+            The effect will be removed from the document
+        </li>
+    </ol>
+
+    <h4><a name="removing_boxes_and_grid_lines_transparent" id="removing_boxes_and_grid_lines_transparent"></a>Using the transparent/invisible option</h4>
+    <p>A much more flexible option for editing the grids and boxes in tables or elsewhere in documents is to use the transparent/invisible line facility in the Box editor.</p>
+    <ol>
+        <li>Select the table or the part of the table or document from which you want to remove the line, grid or box.</li>
+        <li>Choose <span class="csg-menu-option">Box</span> from the <span class="csg-menu">Style</span> menu.</li>
+        <li>
+            Set up the box editor so that it affects the lines you want to change,
+            for example if you want to remove a box from outside a selection of cells you would choose <span class="csg-dbox-option">Outside</span>.
+        </li>
+        <li>Click the Line style button representing transparent/invisible (this is the button with no marking on it).</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            The table should be redrawn with the lines you selected no longer displayed.
+        </li>
+    </ol>
+
+    <h2><a name="entering_text_into_tables" id="entering_text_into_tables"></a>Entering text into tables</h2>
+
+    <h3><a name="typing_directly_into_tables" id="typing_directly_into_tables"></a>Typing directly into tables</h3>
+    <p>
+        To type directly into a table, place the caret in the cell you want to type in and enter your text.
+        This will enter the information as text.
+    </p>
+    <ul>
+        <li>
+            Text typed into cells will automatically flow on to a new line if necessary,
+            creating a deeper cell, unless Fixed row height is turned on.
+            In this case the row height will not automatically expand to compensate for this,
+            and you will need to accommodate the extra text by making the column wider
+            or the row deeper using the row and column borders.
+        </li>
+        <li>
+            Press <span class="csg-key">Ctrl-Return&crarr;</span> to start a new line within a cell.
+            If you have several words to enter within a cell
+            (perhaps a list of items, or parts of an address)
+            this lets you ensure that each starts on a new line.
+        </li>
+        <li>
+            Use the arrow keys on the keyboard to move between cells.
+            Or press <span class="csg-key">Tab</span>,
+            <span class="csg-key">Shift-Tab</span> or <span class="csg-key">Ctrl-Tab</span> to move around the table.
+        </li>
+    </ul>
+
+    <h4><a name="entering_numerical_live_data_into_tables" id="entering_numerical_live_data_into_tables"></a>Entering numerical live data into tables</h4>
+    <p>
+        You may enter data into tables in Fireworkz as data, via the editing line.
+        This makes the data live and enables you to perform calculations upon it.
+        To enter live data in a cell:
+    </p>
+    <ol>
+        <li>Click on the cell.</li>
+        <li>
+            Press <span class="csg-key">F2 </span>or click in the formula line.
+            The caret will appear in the formula line.
+        </li>
+        <li>Type in the number or data, or enter a formula.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-key">Tick</span> tool button on the toolbar
+            (or press <span class="csg-key">Return&crarr;</span>)
+            to confirm the data and enter it in the cell.
+        </li>
+    </ol>
+
+    <h3><a name="using_styles_and_effects_in_tables" id="using_styles_and_effects_in_tables"></a>Using styles and effects in tables</h3>
+    <p>Text will appear in the main text style of your document, with the margins defined in the Table style, but you can modify that style to suit.</p>
+    <p>Useful points to consider are:</p>
+    <ul>
+        <li>Consider using a <strong>sans-serif</strong> font, such as Homerton (RISC OS) or Arial (Windows), which is easier to read.</li>
+        <li>Emphasise any title rows and/or columns by using bold text rather than capitals as this provides emphasis without lessening readability.</li>
+    </ul>
+    <p>
+        Grid patterns and background colours are also defined as styles.
+        Remember that you can apply more than one style to an area if different attributes are set in each style.
+    </p>
+    <p>
+        You should define grids and background colours as separate styles to the main table style you are using for the table.
+        This makes it much easier to change the look of the table without altering the basic way it is laid out.
+    </p>
+
+    <h3><a name="importing_data_into_tables" id="importing_data_into_tables"></a>Importing data into tables</h3>
+    <p>Rather than type your data directly into the table, you may want to import the data from another source and place it directly in the cells of a table.</p>
+    <p>Data for import should be in CSV format.</p>
+    <p>Drag the CSV file icon on to the document window, or on Windows, choose <span class="csg-menu-option">Insert file</span> from the <span class="csg-menu">File</span> menu.</p>
+    <p>A dialogue box will appear presenting the following options:</p>
+    <ul>
+        <li>
+            <strong>Insert, overwriting blank cells</strong>.
+            This simply places the data in a blank area of the worksheet.
+            If not enough cells are blank, rows are inserted.
+            This option is only useful for worksheet documents;
+            you should use the following option in letter documents,
+            unless you are importing the CSV file into an existing table.
+        </li>
+        <li>
+            <strong>Insert as a table</strong>.
+            This is the default option which is normally selected when you start loading CSV files.
+            This option creates a table within the document at the place where you dropped the file icon.
+            The table will be the correct size for the file you import.
+        </li>
+        <li>
+            <strong>Insert as labels</strong>.
+            This gives you the option of creating mailing labels from a suitable file.
+            Each row is turned into a label, with each column becoming a single line.
+            You can specify the number of labels across the page.
+            Use the <span class="csg-dbox-option">Fixed row height</span> option in the Style editor to make the labels on screen the right size for printing on to labels.
+            See the section on printing labels.
+        </li>
+    </ul>
+    <p>If you added the file as a table, use the Style editor to turn grid lines and background colours on or off as required.</p>
+    <p>Edit the table layout in the usual way.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug06_the_style_editor.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug10_pictures.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">The Style editor </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Pictures</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

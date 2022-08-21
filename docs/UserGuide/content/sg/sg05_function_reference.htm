@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Spreadsheet functions</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Functions" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../sg/sg03_number_formats_and_styles.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../sg/sg04_charts.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Number formats </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Charts</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="idh_contents" id="idh_contents"></a><span class="csg-chapter-number">14 </span>Spreadsheet functions</h1>
+
+    <p>Fireworkz has a large number of built-in functions for use in spreadsheets:</p>
+    <ul>
+        <li><a href="#database_functions">Database functions</a></li>
+        <li><a href="#date_time_functions">Date and time functions</a></li>
+        <li><a href="#engineering_functions">Engineering functions</a></li>
+        <li><a href="#financial_functions">Financial functions</a></li>
+        <li><a href="#logical_functions">Logical functions</a></li>
+        <li><a href="#lookup_functions">Lookup functions</a></li>
+        <li><a href="#mathematical_functions">Mathematical functions</a></li>
+        <li><a href="#matrix_functions">Matrix functions</a></li>
+        <li><a href="#miscellaneous_functions">Miscellaneous functions</a></li>
+        <li><a href="#statistical_functions">Statistical functions</a></li>
+        <li><a href="#string_functions">String functions</a></li>
+        <li><a href="#trigonometrical_functions">Trigonometrical functions</a></li>
+        <li><a href="#compatibility_functions">Compatibility functions</a></li>
+    </ul>
+
+    <p>Additionally, you may create your own custom functions:</p>
+    <ul>
+        <li><a href="../sg/sg07_custom_functions.htm">Custom functions</a></li>
+    </ul>
+
+    <h2><a name="database_functions" id="database_functions"></a>Database functions</h2>
+
+    <p>Database functions provide a set of powerful tools for data analysis.</p>
+    <p>They perform a mathematical or statistical function on the values of only those cells in a range which meet a corresponding specified condition.</p>
+    <ul>
+        <li><a href="../sg06d/sg6_DAVG.htm">DAVG</a></li>
+        <li><a href="../sg06d/sg6_DCOUNT.htm">DCOUNT</a></li>
+        <li><a href="../sg06d/sg6_DCOUNTA.htm">DCOUNTA</a></li>
+        <li><a href="../sg06d/sg6_DMAX.htm">DMAX</a></li>
+        <li><a href="../sg06d/sg6_DMIN.htm">DMIN</a></li>
+        <li><a href="../sg06d/sg6_DPRODUCT.htm">DPRODUCT</a></li>
+        <li><a href="../sg06d/sg6_DSTD.htm">DSTD</a></li>
+        <li><a href="../sg06d/sg6_DSTDP.htm">DSTDP</a></li>
+        <li><a href="../sg06d/sg6_DSUM.htm">DSUM</a></li>
+        <li><a href="../sg06d/sg6_DVAR.htm">DVAR</a></li>
+        <li><a href="../sg06d/sg6_DVARP.htm">DVARP</a></li>
+    </ul>
+
+    <h2><a name="date_functions" id="date_functions"></a>Date and time functions</h2>
+
+    <p>Date and time functions provide a variety of operations on numbers and text strings which enable you to work with dates and times.</p>
+    <p>
+        Note that the output of many of these functions which you see displayed on screen
+        will have its appearance modified so that it is in the date or time style specified for the containing cell.
+    </p>
+
+    <p>Any dates and times input to all these functions must be supplied in a format which Fireworkz can recognise.</p>
+    <p><strong>Dates</strong> should be entered in the form</p>
+    <p class="csg-sample-indent csg-user-text">day.month.year</p>
+    <p>where the components are expressed in figures with or without leading zeros.</p>
+    <p>There must be two full stops and no spaces within the date.</p>
+    <p>If you only give two digits of the year, Fireworkz will use a sliding window to determine the appropriate century.</p>
+
+    <p><strong>Times</strong> should be entered in the form</p>
+    <p class="csg-sample-indent csg-user-text">hours:minutes{:seconds}</p>
+    <p>where the components are expressed in figures with or without leading zeros.</p>
+    <p>There must be colons between the figures and no spaces within the time.</p>
+
+    <ul>
+        <li><a href="../sg06a/sg6_AGE.htm">AGE</a></li>
+        <li><a href="../sg06d/sg6_DATE.htm">DATE</a></li>
+        <li><a href="../sg06d/sg6_DATEVALUE.htm">DATEVALUE</a></li>
+        <li><a href="../sg06d/sg6_DAY.htm">DAY</a></li>
+        <li><a href="../sg06d/sg6_DAYNAME.htm">DAYNAME</a></li>
+        <li><a href="../sg06d/sg6_DAYS_360.htm">DAYS_360</a></li>
+        <li><a href="../sg06h/sg6_HOUR.htm">HOUR</a></li>
+        <li><a href="../sg06i/sg6_ISOWEEKNUM.htm">ISOWEEKNUM</a></li>
+        <li><a href="../sg06m/sg6_MINUTE.htm">MINUTE</a></li>
+        <li><a href="../sg06m/sg6_MONTH.htm">MONTH</a></li>
+        <li><a href="../sg06m/sg6_MONTHDAYS.htm">MONTHDAYS</a></li>
+        <li><a href="../sg06m/sg6_MONTHNAME.htm">MONTHNAME</a></li>
+        <li><a href="../sg06n/sg6_NOW.htm">NOW</a></li>
+        <li><a href="../sg06s/sg6_SECOND.htm">SECOND</a></li>
+        <li><a href="../sg06t/sg6_TIME.htm">TIME</a></li>
+        <li><a href="../sg06t/sg6_TIMEVALUE.htm">TIMEVALUE</a></li>
+        <li><a href="../sg06t/sg6_TODAY.htm">TODAY</a></li>
+        <li><a href="../sg06w/sg6_WEEKDAY.htm">WEEKDAY</a></li>
+        <li><a href="../sg06w/sg6_WEEKNUMBER.htm">WEEKNUMBER</a></li>
+        <li><a href="../sg06y/sg6_YEAR.htm">YEAR</a></li>
+    </ul>
+
+    <h2><a name="engineering_functions" id="engineering_functions"></a>Engineering functions</h2>
+
+    <h3>Complex number functions</h3>
+    <p>
+        Complex number functions provide arithmetic, mathematical and trigonometrical functions for use with
+        complex numbers, i.e. numbers which have both real and imaginary components.
+    </p>
+    <p>In Fireworkz <a href="../sg06/sg6_complex_numbers.htm">complex numbers</a> must be expressed as</p>
+    <ul>
+        <li>a 1&times;2 <a href="../sg06/sg6_arrays.htm">array</a> (or <a href="../sg06/sg6_ranges.htm">range</a> of cells);</li>
+        <li>composed using the <code>><a href="../sg06cn/sg6_C_COMPLEX.htm">C_COMPLEX</a></code> function;</li>
+        <li>as an OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</li>
+    </ul>
+    <ul>
+        <li><a href="../sg06cn/sg6_C_ACOS.htm">C_ACOS</a></li>
+        <li><a href="../sg06cn/sg6_C_ACOSEC.htm">C_ACOSEC</a></li>
+        <li><a href="../sg06cn/sg6_C_ACOSECH.htm">C_ACOSECH</a></li>
+        <li><a href="../sg06cn/sg6_C_ACOSH.htm">C_ACOSH</a></li>
+        <li><a href="../sg06cn/sg6_C_ACOT.htm">C_ACOT</a></li>
+        <li><a href="../sg06cn/sg6_C_ACOTH.htm">C_ACOTH</a></li>
+        <li><a href="../sg06cn/sg6_C_ADD.htm">C_ADD</a></li>
+        <li><a href="../sg06cn/sg6_C_ASEC.htm">C_ASEC</a></li>
+        <li><a href="../sg06cn/sg6_C_ASECH.htm">C_ASECH</a></li>
+        <li><a href="../sg06cn/sg6_C_ASIN.htm">C_ASIN</a></li>
+        <li><a href="../sg06cn/sg6_C_ASINH.htm">C_ASINH</a></li>
+        <li><a href="../sg06cn/sg6_C_ATAN.htm">C_ATAN</a></li>
+        <li><a href="../sg06cn/sg6_C_ATANH.htm">C_ATANH</a></li>
+        <li><a href="../sg06cn/sg6_C_COMPLEX.htm">C_COMPLEX</a></li>
+        <li><a href="../sg06cn/sg6_C_CONJUGATE.htm">C_CONJUGATE</a></li>
+        <li><a href="../sg06cn/sg6_C_COS.htm">C_COS</a></li>
+        <li><a href="../sg06cn/sg6_C_COSEC.htm">C_COSEC</a></li>
+        <li><a href="../sg06cn/sg6_C_COSECH.htm">C_COSECH</a></li>
+        <li><a href="../sg06cn/sg6_C_COSH.htm">C_COSH</a></li>
+        <li><a href="../sg06cn/sg6_C_COT.htm">C_COT</a></li>
+        <li><a href="../sg06cn/sg6_C_COTH.htm">C_COTH</a></li>
+        <li><a href="../sg06cn/sg6_C_DIV.htm">C_DIV</a></li>
+        <li><a href="../sg06cn/sg6_C_EXP.htm">C_EXP</a></li>
+        <li><a href="../sg06cn/sg6_C_IMAGINARY.htm">C_IMAGINARY</a></li>
+        <li><a href="../sg06cn/sg6_C_LN.htm">C_LN</a></li>
+        <li><a href="../sg06cn/sg6_C_MUL.htm">C_MUL</a></li>
+        <li><a href="../sg06cn/sg6_C_POWER.htm">C_POWER</a></li>
+        <li><a href="../sg06cn/sg6_C_RADIUS.htm">C_RADIUS</a></li>
+        <li><a href="../sg06cn/sg6_C_REAL.htm">C_REAL</a></li>
+        <li><a href="../sg06cn/sg6_C_ROUND.htm">C_ROUND</a></li>
+        <li><a href="../sg06cn/sg6_C_SEC.htm">C_SEC</a></li>
+        <li><a href="../sg06cn/sg6_C_SECH.htm">C_SECH</a></li>
+        <li><a href="../sg06cn/sg6_C_SIN.htm">C_SIN</a></li>
+        <li><a href="../sg06cn/sg6_C_SINH.htm">C_SINH</a></li>
+        <li><a href="../sg06cn/sg6_C_SQRT.htm">C_SQRT</a></li>
+        <li><a href="../sg06cn/sg6_C_SUB.htm">C_SUB</a></li>
+        <li><a href="../sg06cn/sg6_C_TAN.htm">C_TAN</a></li>
+        <li><a href="../sg06cn/sg6_C_TANH.htm">C_TANH</a></li>
+        <li><a href="../sg06cn/sg6_C_THETA.htm">C_THETA</a></li>
+    </ul>
+
+    <h3>Miscellaneous engineering functions</h3>
+    <ul>
+        <li><a href="../sg06b/sg6_BESSELI.htm">BESSELI</a></li>
+        <li><a href="../sg06b/sg6_BESSELJ.htm">BESSELJ</a></li>
+        <li><a href="../sg06b/sg6_BESSELK.htm">BESSELK</a></li>
+        <li><a href="../sg06b/sg6_BESSELY.htm">BESSELY</a></li>
+        <li><a href="../sg06b/sg6_BIN2DEC.htm">BIN2DEC</a></li>
+        <li><a href="../sg06b/sg6_BIN2HEX.htm">BIN2HEX</a></li>
+        <li><a href="../sg06b/sg6_BIN2OCT.htm">BIN2OCT</a></li>
+        <li><a href="../sg06b/sg6_BITAND.htm">BITAND</a></li>
+        <li><a href="../sg06b/sg6_BITLSHIFT.htm">BITLSHIFT</a></li>
+        <li><a href="../sg06b/sg6_BITOR.htm">BITOR</a></li>
+        <li><a href="../sg06b/sg6_BITRSHIFT.htm">BITRSHIFT</a></li>
+        <li><a href="../sg06b/sg6_BITXOR.htm">BITXOR</a></li>
+        <li><a href="../sg06d/sg6_DEC2BIN.htm">DEC2BIN</a></li>
+        <li><a href="../sg06d/sg6_DEC2HEX.htm">DEC2HEX</a></li>
+        <li><a href="../sg06d/sg6_DEC2OCT.htm">DEC2OCT</a></li>
+        <li><a href="../sg06d/sg6_DELTA.htm">DELTA</a></li>
+        <li><a href="../sg06e/sg6_ERF.htm">ERF</a></li>
+        <li><a href="../sg06e/sg6_ERFC.htm">ERFC</a></li>
+        <li><a href="../sg06g/sg6_GESTEP.htm">GESTEP</a></li>
+        <li><a href="../sg06h/sg6_HEX2HEX.htm">HEX2BIN</a></li>
+        <li><a href="../sg06h/sg6_HEX2DEC.htm">HEX2DEC</a></li>
+        <li><a href="../sg06h/sg6_HEX2OCT.htm">HEX2OCT</a></li>
+        <li><a href="../sg06o/sg6_OCT2BIN.htm">OCT2BIN</a></li>
+        <li><a href="../sg06o/sg6_OCT2DEC.htm">OCT2DEC</a></li>
+        <li><a href="../sg06o/sg6_OCT2HEX.htm">OCT2HEX</a></li>
+    </ul>
+
+    <h2><a name="financial_functions" id="financial_functions"></a>Financial functions</h2>
+
+    <p>Financial functions perform a range of specialist calculations involving money.</p>
+    <ul>
+        <li><a href="../sg06c/sg6_CTERM.htm">CTERM</a></li>
+        <li><a href="../sg06d/sg6_DDB.htm">DDB</a></li>
+        <li><a href="../sg06f/sg6_FV.htm">FV</a></li>
+        <li><a href="../sg06f/sg6_FVSCHEDULE.htm">FVSCHEDULE</a></li>
+        <li><a href="../sg06i/sg6_IRR.htm">IRR</a></li>
+        <li><a href="../sg06m/sg6_MIRR.htm">MIRR</a></li>
+        <li><a href="../sg06n/sg6_NPER.htm">NPER</a></li>
+        <li><a href="../sg06n/sg6_NPV.htm">NPV</a></li>
+        <li><a href="../sg06p/sg6_PMT.htm">PMT</a></li>
+        <li><a href="../sg06p/sg6_PV.htm">PV</a></li>
+        <li><a href="../sg06r/sg6_RATE.htm">RATE</a></li>
+        <li><a href="../sg06s/sg6_SLN.htm">SLN</a></li>
+        <li><a href="../sg06s/sg6_SYD.htm">SYD</a></li>
+        <li><a href="../sg06t/sg6_TERM.htm">TERM</a></li>
+    </ul>
+
+    <h2><a name="logical_functions" id="logical_functions"></a>Logical functions</h2>
+
+    <p>Logical functions provide a set of functions similar to those of the logical operators.</p>
+    <ul>
+        <li><a href="../sg06a/sg6_AND.htm">AND</a></li>
+        <li><a href="../sg06f/sg6_FALSE.htm">FALSE</a></li>
+        <li><a href="../sg06n/sg6_NOT.htm">NOT</a></li>
+        <li><a href="../sg06o/sg6_OR.htm">OR</a></li>
+        <li><a href="../sg06t/sg6_TRUE.htm">TRUE</a></li>
+        <li><a href="../sg06x/sg6_XOR.htm">XOR</a></li>
+    </ul>
+    <p>These functions are most useful for Microsoft Excel compatibility.</p>
+
+    <h2><a name="lookup_functions" id="lookup_functions"></a>Lookup functions</h2>
+
+    <ul>
+        <li><a href="../sg06c/sg6_CHOOSE.htm">CHOOSE</a></li>
+        <li><a href="../sg06h/sg6_HLOOKUP.htm">HLOOKUP</a></li>
+        <li><a href="../sg06l/sg6_LOOKUP.htm">LOOKUP</a></li>
+        <li><a href="../sg06m/sg6_MATCH.htm">MATCH</a></li>
+        <li><a href="../sg06v/sg6_VLOOKUP.htm">VLOOKUP</a></li>
+    </ul>
+
+    <h2><a name="mathematical_functions" id="mathematical_functions"></a>Mathematical functions</h2>
+
+    <p>A range of mathematical functions are provided by Fireworkz.</p>
+    <ul>
+        <li><a href="../sg06a/sg6_ABS.htm">ABS</a></li>
+        <li><a href="../sg06b/sg6_BASE.htm">BASE</a></li>
+        <li><a href="../sg06c/sg6_CEILING.htm">CEILING</a></li>
+        <li><a href="../sg06d/sg6_DECIMAL.htm">DECIMAL</a></li>
+        <li><a href="../sg06e/sg6_EVEN.htm">EVEN</a></li>
+        <li><a href="../sg06e/sg6_EXP.htm">EXP</a></li>
+        <li><a href="../sg06f/sg6_FACT.htm">FACT</a></li>
+        <li><a href="../sg06f/sg6_FLOOR.htm">FLOOR</a></li>
+        <li><a href="../sg06g/sg6_GCD.htm">GCD</a></li>
+        <li><a href="../sg06i/sg6_INT.htm">INT</a></li>
+        <li><a href="../sg06l/sg6_LCM.htm">LCM</a></li>
+        <li><a href="../sg06l/sg6_LN.htm">LN</a></li>
+        <li><a href="../sg06l/sg6_LOG.htm">LOG</a></li>
+        <li><a href="../sg06m/sg6_MOD.htm">MOD</a></li>
+        <li><a href="../sg06m/sg6_MROUND.htm">MROUND</a></li>
+        <li><a href="../sg06m/sg6_MULTINOMIAL.htm">MULTINOMIAL</a></li>
+        <li><a href="../sg06o/sg6_ODD.htm">ODD</a></li>
+        <li><a href="../sg06p/sg6_POWER.htm">POWER</a></li>
+        <li><a href="../sg06p/sg6_PRODUCT.htm">PRODUCT</a></li>
+        <li><a href="../sg06q/sg6_QUOTIENT.htm">QUOTIENT</a></li>
+        <li><a href="../sg06r/sg6_RAND.htm">RAND</a></li>
+        <li><a href="../sg06r/sg6_RANDBETWEEN.htm">RANDBETWEEN</a></li>
+        <li><a href="../sg06r/sg6_ROUND.htm">ROUND</a></li>
+        <li><a href="../sg06r/sg6_ROUNDDOWN.htm">ROUNDDOWN</a></li>
+        <li><a href="../sg06r/sg6_ROUNDUP.htm">ROUNDUP</a></li>
+        <li><a href="../sg06s/sg6_SERIESSUM.htm">SERIESSUM</a></li>
+        <li><a href="../sg06s/sg6_SGN.htm">SGN</a></li>
+        <li><a href="../sg06s/sg6_SQR.htm">SQR</a></li>
+        <li><a href="../sg06s/sg6_SUM.htm">SUM</a></li>
+        <li><a href="../sg06s/sg6_SUMPRODUCT.htm">SUMPRODUCT</a></li>
+        <li><a href="../sg06s/sg6_SUMSQ.htm">SUMSQ</a></li>
+        <li><a href="../sg06s/sg6_SUM_X2MY2.htm">SUM_X2MY2</a></li>
+        <li><a href="../sg06s/sg6_SUM_X2PY2.htm">SUM_X2PY2</a></li>
+        <li><a href="../sg06s/sg6_SUM_XMY2.htm">SUM_XMY2</a></li>
+        <li><a href="../sg06t/sg6_TRUNC.htm">TRUNC</a></li>
+    </ul>
+
+    <h2><a name="matrix_functions" id="matrix_functions"></a>Matrix functions</h2>
+
+    <p>Matrix functions work internally on arrays and return an array (or a number, in the case of <code>M_DETERM</code>).</p>
+    <ul>
+        <li><a href="../sg06m/sg6_M_DETERM.htm">M_DETERM</a></li>
+        <li><a href="../sg06m/sg6_M_INVERSE.htm">M_INVERSE</a></li>
+        <li><a href="../sg06m/sg6_M_MULT.htm">M_MULT</a></li>
+        <li><a href="../sg06t/sg6_TRANSPOSE.htm">TRANSPOSE</a></li>
+    </ul>
+
+    <h2><a name="miscellaneous_functions" id="miscellaneous_functions"></a>Miscellaneous functions</h2>
+
+    <p>The following functions perform a wide range of tasks:</p>
+    <ul>
+        <li><a href="../sg06a/sg6_ALERT.htm">ALERT</a></li>
+        <li><a href="../sg06c/sg6_COL.htm">COL</a></li>
+        <li><a href="../sg06c/sg6_COLS.htm">COLS</a></li>
+        <li><a href="../sg06c/sg6_COMMAND.htm">COMMAND</a></li>
+        <li><a href="../sg06c/sg6_CURRENT_CELL.htm">CURRENT_CELL</a></li>
+        <li><a href="../sg06d/sg6_DEREF.htm">DEREF</a></li>
+        <li><a href="../sg06d/sg6_DOUBLECLICK.htm">DOUBLECLICK</a></li>
+        <li><a href="../sg06f/sg6_FLIP.htm">FLIP</a></li>
+        <li><a href="../sg06i/sg6_IF.htm">IF</a></li>
+        <li><a href="../sg06i/sg6_INDEX.htm">INDEX</a></li>
+        <li><a href="../sg06i/sg6_INPUT.htm">INPUT</a></li>
+        <li><a href="../sg06i/sg6_ISEVEN.htm">ISEVEN</a></li>
+        <li><a href="../sg06i/sg6_ISODD.htm">ISODD</a></li>
+        <li><a href="../sg06n/sg6_N.htm">N</a></li>
+        <li><a href="../sg06p/sg6_PAGE.htm">PAGE</a></li>
+        <li><a href="../sg06p/sg6_PAGES.htm">PAGES</a></li>
+        <li><a href="../sg06r/sg6_ROW.htm">ROW</a></li>
+        <li><a href="../sg06r/sg6_ROWS.htm">ROWS</a></li>
+        <li><a href="../sg06s/sg6_SET_NAME.htm">SET_NAME</a></li>
+        <li><a href="../sg06s/sg6_SET_VALUE.htm">SET_VALUE</a></li>
+        <li><a href="../sg06s/sg6_SORT.htm">SORT</a></li>
+        <li><a href="../sg06t/sg6_TYPE.htm">TYPE</a></li>
+        <li><a href="../sg06v/sg6_VERSION.htm">VERSION</a></li>
+    </ul>
+
+    <h1><a name="statistical_functions" id="statistical_functions"></a>Statistical functions</h1>
+
+    <p>All statistical functions can operate on an <a href="../sg06/sg6_arrays.htm">array</a> or <a href="../sg06/sg6_ranges.htm">range</a> of cells.</p>
+    <p>In those cases where a list is specified as the parameter the function can also take a list of discrete cell references and/or values.</p>
+    <ul>
+        <li><a href="../sg06a/sg6_AVEDEV.htm">AVEDEV</a></li>
+        <li><a href="../sg06a/sg6_AVG.htm">AVG</a></li>
+        <li><a href="../sg06b/sg6_BETA.htm">BETA</a></li>
+        <li><a href="../sg06b/sg6_BIN.htm">BIN</a></li>
+        <li><a href="../sg06c/sg6_COMBIN.htm">COMBIN</a></li>
+        <li><a href="../sg06c/sg6_COUNT.htm">COUNT</a></li>
+        <li><a href="../sg06c/sg6_COUNTA.htm">COUNTA</a></li>
+        <li><a href="../sg06c/sg6_COUNTBLANK.htm">COUNTBLANK</a></li>
+        <li><a href="../sg06c/sg6_COVARIANCE_P.htm">COVARIANCE.P</a></li>
+        <li><a href="../sg06c/sg6_COVARIANCE_S.htm">COVARIANCE.S</a></li>
+        <li><a href="../sg06d/sg6_DEVSQ.htm">DEVSQ</a></li>
+        <li><a href="../sg06g/sg6_GAMMALN.htm">GAMMALN</a></li>
+        <li><a href="../sg06g/sg6_GEOMEAN.htm">GEOMEAN</a></li>
+        <li><a href="../sg06g/sg6_GRAND.htm">GRAND</a></li>
+        <li><a href="../sg06g/sg6_GROWTH.htm">GROWTH</a></li>
+        <li><a href="../sg06h/sg6_HARMEAN.htm">HARMEAN</a></li>
+        <li><a href="../sg06k/sg6_KURT.htm">KURT</a></li>
+        <li><a href="../sg06l/sg6_LARGE.htm">LARGE</a></li>
+        <li><a href="../sg06l/sg6_LINEST.htm">LINEST</a></li>
+        <li><a href="../sg06l/sg6_LISTCOUNT.htm">LISTCOUNT</a></li>
+        <li><a href="../sg06l/sg6_LOGEST.htm">LOGEST</a></li>
+        <li><a href="../sg06m/sg6_MAX.htm">MAX</a></li>
+        <li><a href="../sg06m/sg6_MEDIAN.htm">MEDIAN</a></li>
+        <li><a href="../sg06m/sg6_MIN.htm">MIN</a></li>
+        <li><a href="../sg06m/sg6_MODE_SNGL.htm">MODE.SNGL</a></li>
+        <li><a href="../sg06p/sg6_PERCENTILE_EXC.htm">PERCENTILE.EXC</a></li>
+        <li><a href="../sg06p/sg6_PERCENTILE_INC.htm">PERCENTILE.INC</a></li>
+        <li><a href="../sg06p/sg6_PERMUT.htm">PERMUT</a></li>
+        <li><a href="../sg06q/sg6_QUARTILE_EXC.htm">QUARTILE.EXC</a></li>
+        <li><a href="../sg06q/sg6_QUARTILE_INC.htm">QUARTILE.INC</a></li>
+        <li><a href="../sg06r/sg6_RANK.htm">RANK</a></li>
+        <li><a href="../sg06r/sg6_RANK_EQ.htm">RANK.EQ</a></li>
+        <li><a href="../sg06s/sg6_SKEW.htm">SKEW</a></li>
+        <li><a href="../sg06s/sg6_SKEW_P.htm">SKEW.P</a></li>
+        <li><a href="../sg06s/sg6_SMALL.htm">SMALL</a></li>
+        <li><a href="../sg06s/sg6_SPEARMAN.htm">SPEARMAN</a></li>
+        <li><a href="../sg06s/sg6_STANDARDIZE.htm">STANDARDIZE</a></li>
+        <li><a href="../sg06s/sg6_STD.htm">STD</a></li>
+        <li><a href="../sg06s/sg6_STDP.htm">STDP</a></li>
+        <li><a href="../sg06t/sg6_TREND.htm">TREND</a></li>
+        <li><a href="../sg06t/sg6_TRIMMEAN.htm">TRIMMEAN</a></li>
+        <li><a href="../sg06v/sg6_VAR.htm">VAR</a></li>
+        <li><a href="../sg06v/sg6_VARP.htm">VARP</a></li>
+    </ul>
+
+    <h2><a name="string_functions" id="string_functions"></a>String functions</h2>
+
+    <p>
+        String functions operate on text strings.
+        If you deliberately enter a string into a number cell, remember to enclose it in double quotes.
+        Unlike other most functions, string functions can also operate on text cells.
+    </p>
+    <ul>
+        <li><a href="../sg06c/sg6_CHAR.htm">CHAR</a></li>
+        <li><a href="../sg06c/sg6_CLEAN.htm">CLEAN</a></li>
+        <li><a href="../sg06c/sg6_CODE.htm">CODE</a></li>
+        <li><a href="../sg06d/sg6_DOLLAR.htm">DOLLAR</a></li>
+        <li><a href="../sg06e/sg6_EXACT.htm">EXACT</a></li>
+        <li><a href="../sg06f/sg6_FIND.htm">FIND</a></li>
+        <li><a href="../sg06f/sg6_FIXED.htm">FIXED</a></li>
+        <li><a href="../sg06f/sg6_FORMULA_TEXT.htm">FORMULA_TEXT</a></li>
+        <li><a href="../sg06j/sg6_JOIN.htm">JOIN</a></li>
+        <li><a href="../sg06l/sg6_LEFT.htm">LEFT</a></li>
+        <li><a href="../sg06l/sg6_LENGTH.htm">LENGTH</a></li>
+        <li><a href="../sg06l/sg6_LOWER.htm">LOWER</a></li>
+        <li><a href="../sg06m/sg6_MID.htm">MID</a></li>
+        <li><a href="../sg06p/sg6_PROPER.htm">PROPER</a></li>
+        <li><a href="../sg06r/sg6_REPLACE.htm">REPLACE</a></li>
+        <li><a href="../sg06r/sg6_REPT.htm">REPT</a></li>
+        <li><a href="../sg06r/sg6_REVERSE.htm">REVERSE</a></li>
+        <li><a href="../sg06r/sg6_RIGHT.htm">RIGHT</a></li>
+        <li><a href="../sg06s/sg6_STRING.htm">STRING</a></li>
+        <li><a href="../sg06s/sg6_SUBSTITUTE.htm">SUBSTITUTE</a></li>
+        <li><a href="../sg06t/sg6_TEXT.htm">TEXT</a></li>
+        <li><a href="../sg06t/sg6_TRIM.htm">TRIM</a></li>
+        <li><a href="../sg06u/sg6_UPPER.htm">UPPER</a></li>
+        <li><a href="../sg06v/sg6_VALUE.htm">VALUE</a></li>
+    </ul>
+
+    <h2><a name="trigonometrical_functions" id="trigonometrical_functions"></a>Trigonometrical functions</h2>
+
+    <p>All angles are expressed in radians except where specifically stated.</p>
+    <ul>
+        <li><a href="../sg06a/sg6_ACOS.htm">ACOS</a></li>
+        <li><a href="../sg06a/sg6_ACOSEC.htm">ACOSEC</a></li>
+        <li><a href="../sg06a/sg6_ACOSECH.htm">ACOSECH</a></li>
+        <li><a href="../sg06a/sg6_ACOSH.htm">ACOSH</a></li>
+        <li><a href="../sg06a/sg6_ACOT.htm">ACOT</a></li>
+        <li><a href="../sg06a/sg6_ACOTH.htm">ACOTH</a></li>
+        <li><a href="../sg06a/sg6_ASEC.htm">ASEC</a></li>
+        <li><a href="../sg06a/sg6_ASECH.htm">ASECH</a></li>
+        <li><a href="../sg06a/sg6_ASIN.htm">ASIN</a></li>
+        <li><a href="../sg06a/sg6_ASINH.htm">ASINH</a></li>
+        <li><a href="../sg06a/sg6_ATAN.htm">ATAN</a></li>
+        <li><a href="../sg06a/sg6_ATANH.htm">ATANH</a></li>
+        <li><a href="../sg06a/sg6_ATAN_2.htm">ATAN_2</a></li>
+        <li><a href="../sg06c/sg6_COS.htm">COS</a></li>
+        <li><a href="../sg06c/sg6_COSEC.htm">COSEC</a></li>
+        <li><a href="../sg06c/sg6_COSECH.htm">COSECH</a></li>
+        <li><a href="../sg06c/sg6_COSH.htm">COSH</a></li>
+        <li><a href="../sg06c/sg6_COT.htm">COT</a></li>
+        <li><a href="../sg06c/sg6_COTH.htm">COTH</a></li>
+        <li><a href="../sg06d/sg6_DEG.htm">DEG</a></li>
+        <li><a href="../sg06p/sg6_PI.htm">PI</a></li>
+        <li><a href="../sg06r/sg6_RAD.htm">RAD</a></li>
+        <li><a href="../sg06s/sg6_SEC.htm">SEC</a></li>
+        <li><a href="../sg06s/sg6_SECH.htm">SECH</a></li>
+        <li><a href="../sg06s/sg6_SIN.htm">SIN</a></li>
+        <li><a href="../sg06s/sg6_SINH.htm">SINH</a></li>
+        <li><a href="../sg06t/sg6_TAN.htm">TAN</a></li>
+        <li><a href="../sg06t/sg6_TANH.htm">TANH</a></li>
+    </ul>
+
+    <h2><a name="compatibility_functions" id="compatibility_functions"></a>Compatibility functions</h2>
+
+    <p>These functions are most useful for Microsoft Excel compatibility.</p>
+
+    <h3 id="compatibility_engineering_functions">Engineering compatibility functions</h3>
+    <p>
+        These compatibility complex number functions provide
+        arithmetic, mathematical and trigonometrical functions for use with
+        <a href="../sg06/sg6_complex_numbers_odf.htm">complex number strings</a>,
+        i.e. text strings representing complex numbers that have both real and imaginary components.
+    </p>
+    <p>
+        In Fireworkz, complex numbers passed to compatibility complex number functions should be expressed as
+        Open Document / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number strings</a>.
+    </p>
+    <ul>
+        <li><a href="../sg06odf/sg6_ODF_COMPLEX.htm">ODF.COMPLEX</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMABS.htm">ODF.IMABS</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMAGINARY.htm">ODF.IMAGINARY</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMARGUMENT.htm">ODF.IMARGUMENT</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMCONJUGATE.htm">ODF.IMCONJUGATE</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMCOS.htm">ODF.IMCOS</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMDIV.htm">ODF.IMDIV</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMEXP.htm">ODF.IMEXP</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMLN.htm">ODF.IMLN</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMLOG10.htm">ODF.IMLOG10</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMLOG2.htm">ODF.IMLOG2</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMPOWER.htm">ODF.IMPOWER</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMPRODUCT.htm">ODF.IMPRODUCT</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMREAL.htm">ODF.IMREAL</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMSIN.htm">ODF.IMSIN</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMSQRT.htm">ODF.IMSQRT</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMSUB.htm">ODF.IMSUB</a></li>
+        <li><a href="../sg06odf/sg6_ODF_IMSUM.htm">ODF.IMSUM</a></li>
+    </ul>
+
+    <h3>Financial compatibility functions</h3>
+    <ul>
+        <li><a href="../sg06odf/sg6_ODF_FV.htm">ODF.FV</a></li>
+        <li><a href="../sg06odf/sg6_ODF_PMT.htm">ODF.PMT</a></li>
+    </ul>
+
+    <h3>Miscellaneous compatibility functions</h3>
+    <ul>
+        <li><a href="../sg06odf/sg6_ODF_TYPE.htm">ODF.TYPE</a></li>
+    </ul>
+
+    <h3>Statistical compatibility functions</h3>
+    <ul>
+        <li><a href="../sg06odf/sg6_ODF_BETADIST.htm">ODF.BETADIST</a></li>
+    </ul>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg03_number_formats_and_styles.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg04_charts.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Number formats </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Charts</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

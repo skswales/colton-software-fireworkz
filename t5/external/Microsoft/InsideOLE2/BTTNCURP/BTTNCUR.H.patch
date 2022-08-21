@@ -1,4 +1,4 @@
-22a23,37
+22a23,33
 > #define COLTON_SOFTWARE 1 /* Added by Colton Software */
 > 
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
@@ -7,21 +7,17 @@
 > #define ATTRIBUTEBUTTON_OFF             ATTRIBUTEBUTTON_UP
 > #define COMMANDBUTTON_NORMAL            COMMANDBUTTON_UP
 > 
-> _Check_return_
-> extern BOOL
-> UIToolButtonMouseOverSignificant(void);
-> 
 > #endif /* COLTON_SOFTWARE */
 > 
 > 
-140a156,161
+140a152,157
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
 > #define BUTTONGROUP_DIALOGUE_BOX_BUTTON 0x0020 /* for dialogue box buttons */
 > #define BUTTONGROUP_MOUSEDOWN           0x0040
 > #define BUTTONGROUP_MOUSEOVER           0x0080
 > #endif /* COLTON_SOFTWARE */
 > 
-187a209,213
+187a205,209
 > 
 > #if defined(COLTON_SOFTWARE) /* Exported by Colton Software */
 > //Display sensitive information

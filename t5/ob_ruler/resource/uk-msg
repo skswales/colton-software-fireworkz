@@ -8,18 +8,22 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_ruler/ob_ruler.h
+#
+# RULER_MSG_STATUS_RULER_xxx_NO_MARK
 #
 1:Ruler
 2:Side ruler
 3:Ruler. Click to place a new tab
+#
+# RULER_MSG_STATUS_RULER_HORZ_xxx
 #
 274:Click to place a new tab
 275:Left tab
 276:Centre tab
 277:Right tab
 278:Decimal tab
-r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+r279:Drag/Adjust-drag to reposition. Double-click to clear. Double-click Adjust to change type
 w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
 #
 285:Left margin
@@ -29,10 +33,14 @@ w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to c
 #
 729:Column width
 #
+# RULER_MSG_STATUS_RULER_VERT_xxx
+#
 723:Header margin
 724:Footer margin
 725:Row height
 727:Header offset
 728:Footer offset
+#
+# errors (none)
 #
 # end of msg (ob_ruler)

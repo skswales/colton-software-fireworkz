@@ -414,7 +414,7 @@ find_custom_in_list(
         if(owner_ev_docno != ev_slr_docno(&p_ev_custom->owner))
             continue;
 
-        if(ustr_compare_equals_nocase(ustr_bptr(p_ev_custom->ustr_custom_id), ustr_custom_name))
+        if(ustr_compare_equals_nocase(ustr_bptrc(p_ev_custom->ustr_custom_id), ustr_custom_name))
             return(i);
     }
 

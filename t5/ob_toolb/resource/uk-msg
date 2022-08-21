@@ -8,11 +8,12 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_toolb/ob_toolb.h
 #
 w1:%s [%d%%]: Left click to change the background colour. Right click to change the text colour
 #
-# errors
+# errors: keep consistent with ob_toolb/ob_toolb.h
+# see TOOLB_ERR(n)
 #
 e0:Unknown toolbar control
 #

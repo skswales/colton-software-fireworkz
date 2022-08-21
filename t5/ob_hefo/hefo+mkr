@@ -32,7 +32,7 @@ $(BUILD_DIR).ob_hefo.$(COUNTRY)-07/rc: $(T5).ob_hefo.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 07 -common
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob07: $(T5).ob_hefo.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob07: $(T5).ob_hefo.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

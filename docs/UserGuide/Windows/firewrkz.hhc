@@ -1,0 +1,3011 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Contents">
+		<param name="Local" value="content/index.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Introduction">
+		<param name="Local" value="content/ug/ug01_introduction.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Fireworkz basics">
+		<param name="Local" value="content/ug/ug02_fireworkz_basics.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The Fireworkz document window">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#the_fireworkz_document_window.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The toolbar">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#the_toolbar">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The status line">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#the_status_line">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The ruler">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#the_ruler">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Menus">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#menus">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Dialogue boxes">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#dialogue_boxes">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Customising the on-screen look of the program">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#customising_the_look_of_the_program">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Accessing the View Control dialogue box">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#accessing_the_view_control_dialogue_box">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Selecting a view scale">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#accessing_the_view_scale_dialogue_box">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Displaying paper and borders">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#displaying_paper_and_borders">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Rulers, row and column borders">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#rulers_and_borders">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Choosing the displayed rulers">
+					<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#rulers_and_borders">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Choosing the measurement displayed">
+					<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#choosing_the_ruler_measurement">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Splitting the view">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#splitting_the_view">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="New view">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#new_view">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Setting up your preferences">
+			<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#choices_dialogue_box">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Auto save">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#auto_save.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Dithering">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#dithering.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Display pictures">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#display_pictures">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Embed pictures">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#embed_pictures">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Status line">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#choices_status_line">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Default ruler">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#default_ruler">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Recalculation">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#recalculation">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Charts (options)">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#charts_options">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Spelling">
+				<param name="Local" value="content/ug/ug02_fireworkz_basics.htm#spelling.htm">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Creating new documents">
+		<param name="Local" value="content/ug/ug03_creating_new_documents.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Creating a new document">
+			<param name="Local" value="content/ug/ug03_creating_new_documents.htm#creating_a_new_document">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Opening existing documents">
+			<param name="Local" value="content/ug/ug03_creating_new_documents.htm#opening_existing_documents">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Templates">
+			<param name="Local" value="content/ug/ug03_creating_new_documents.htm#templates">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Setting up a template file">
+				<param name="Local" value="content/ug/ug03_creating_new_documents.htm#setting_up_a_template_file">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating templates">
+					<param name="Local" value="content/ug/ug03_creating_new_documents.htm#creating_new_documents.htm#creating_templates">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Removing templates from the template selector">
+					<param name="Local" value="content/ug/ug03_creating_new_documents.htm#removing_templates_from_the_template_selector">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using templates to reformat existing documents">
+					<param name="Local" value="content/ug/ug03_creating_new_documents.htm#using_templates_to_reformat_existing_documents">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Rules for merging templates into documents">
+						<param name="Local" value="content/ug/ug03_creating_new_documents.htm#rules">
+						</OBJECT>
+				</UL>
+			</UL>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Editing text">
+		<param name="Local" value="content/ug/ug04_editing_text.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Positioning the caret">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#positioning_the_caret">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Moving around the document">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#moving_around_the_document">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Typing text">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#typing_text">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Starting a new paragraph">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#starting_a_new_paragraph">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Paragraphs and rows">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#paragraphs_and_rows">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Starting a new line without starting a new paragraph">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#starting_a_new_line_without_starting_a_new_paragraph">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Overtyping existing text">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#overtyping_existing_text">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Line spaces and paragraph spaces">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#line_spaces_and_paragraph_spaces">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Hints and tips">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#hints_and_tips">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Preventing line breaks">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#preventing_line_breaks">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Starting a new page">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#starting_a_new_page">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Forcing a page break">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#forcing_a_page_break">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Preventing page breaks within paragraphs">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#preventing_page_breaks_within_paragraphs">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Upper and lower case">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#upper_and_lower_case">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Correcting typing errors">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#correcting_typing_errors">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Deleting text in tables">
+					<param name="Local" value="content/ug/ug04_editing_text.htm#deleting_text_in_tables">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Selecting areas of text">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#selecting_areas_of_text">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Clearing a selected area">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#clearing_a_selected_area">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Moving text around documents">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#moving_text_around_documents">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Copying text within and between documents">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#copying_text_within_and_between_documents">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Entering text effects">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#entering_text_effects">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Bold">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#bold">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Italic">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#italic">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Entering special text and characters">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#entering_special_text_and_characters">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Dates">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#dates">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Page numbers">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#page_numbers">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Restarting page numbers">
+					<param name="Local" value="content/ug/ug04_editing_text.htm#restarting_page_numbers">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="x-page numbers">
+					<param name="Local" value="content/ug/ug04_editing_text.htm#x_page_numbers">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Special characters">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#special_characters">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Printing filename within documents">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#printing_filename_within_documents">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Find and replace">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#find_and_replace">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Finding special characters">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#finding_special_characters">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Checking spellings">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#checking_spellings">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Check as you type">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#check_asyoutype">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Checking spelling">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#check_attheend">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Adding words to the dictionary">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#adding_words_to_the_dictionary">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Browsing through the dictionary">
+				<param name="Local" value="content/ug/ug04_editing_text.htm#browsing_the_dictionary">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Counting words">
+			<param name="Local" value="content/ug/ug04_editing_text.htm#counting_words">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Working with styles and effects">
+		<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="What are styles?">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#what_are_styles">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Toolbar buttons">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#toolbar_buttons_and_effects">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Effects">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#effects">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Applying effects">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#applying_effects">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The style list">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#the_style_list">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Special styles">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#special_styles">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Deleting styles">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#deleting_styles">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Working with styles">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#working_with_styles">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Naming your styles">
+				<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#naming_styles">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Applying styles">
+				<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#applying_styles">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Layering styles">
+				<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#layering_styles.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The region editor">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#the_region_editor">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Removing styles and effects">
+			<param name="Local" value="content/ug/ug05_working_with_styles_and_effects.htm#removing_styles_and_effects">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="The Style editor">
+		<param name="Local" value="content/ug/ug06_the_style_editor.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Setting up styles">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#setting_up_styles">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Editing styles">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#editing_styles">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Adding a new style">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#adding_a_new_style">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The style dialogue box">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#the_style_dialogue_box">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Style">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#style">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="About style names">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#style_names">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Control key shortcuts">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#style_keys">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Text">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#text">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Fonts and typefaces">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#fonts_and_typefaces">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Typeface">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#typeface">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Setting the typeface">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#typeface_setting">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Style hints">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#style_hints">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Attributes">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#text_attributes">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Height and width">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#text_height_and_width">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Colour">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#text_colour">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Ruler">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#ruler">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Margins">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#margins">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="About margins">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#about_margins">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Setting margins">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#setting_margins">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Tabs">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#tabs">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="About tabs">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#about_tabs">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding tabs with the ruler">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#adding_tabs">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Repositioning tabs">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#repositioning_tabs">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Removing tabs">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#removing_tabs">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding and editing tabs in the Style editor">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#editing_tabs">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Alignment">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#alignment">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Justification options">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#alignment_options">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Choosing an alignment option">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#choosing_alignment">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using the toolbar to set alignment">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#toolbar_alignment">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Vertical justification">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#vertical_justification">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Column">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#column">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Column heading">
+					<param name="Local" value="content/ug/ug06_the_style_editor.htm#column_heading">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Colour">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#colour">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Background colour and borders">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#background_colour_and_borders">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Adding colour to a style">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#adding_colour_to_a_style">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Spacing">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#spacing">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Line spacing">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#line_spacing">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Paragraph spacing">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#paragraph_spacing">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Row">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#row">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Row height">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#row_height">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Row heading">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#row_heading">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Number">
+			<param name="Local" value="content/ug/ug06_the_style_editor.htm#number">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Number, date and time formats">
+				<param name="Local" value="content/ug/ug06_the_style_editor.htm#number_formats">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Tables">
+		<param name="Local" value="content/ug/ug08_tables.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Adding tables">
+			<param name="Local" value="content/ug/ug08_tables.htm#adding_tables">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Editing table layouts">
+			<param name="Local" value="content/ug/ug08_tables.htm#editing_table_layouts">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Editing the cell layout">
+				<param name="Local" value="content/ug/ug08_tables.htm#editing_the_cell_layout">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Merging two cells">
+				<param name="Local" value="content/ug/ug08_tables.htm#merging_two_cells">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Straddling cells">
+				<param name="Local" value="content/ug/ug08_tables.htm#straddling_cells">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Adding extra rows and columns">
+				<param name="Local" value="content/ug/ug08_tables.htm#adding_extra_rows_and_columns">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Removing redundant rows and columns">
+				<param name="Local" value="content/ug/ug08_tables.htm#removing_redundant_rows_and_columns">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Changing column width">
+				<param name="Local" value="content/ug/ug08_tables.htm#changing_column_width">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Changing row height">
+				<param name="Local" value="content/ug/ug08_tables.htm#changing_row_height">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Autowidth and autoheight">
+				<param name="Local" value="content/ug/ug08_tables.htm#autowidth_and_autoheight">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Repositioning the table on the page">
+				<param name="Local" value="content/ug/ug08_tables.htm#repositioning_the_table_on_the_page">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Designing grids, boxes and borders">
+			<param name="Local" value="content/ug/ug08_tables.htm#designing_grids_boxes_and_borders">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using background colours">
+				<param name="Local" value="content/ug/ug08_tables.htm#using_background_colours">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Boxes">
+				<param name="Local" value="content/ug/ug08_tables.htm#boxes">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Setting the size of box lines">
+					<param name="Local" value="content/ug/ug08_tables.htm#boxes">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating boxes">
+					<param name="Local" value="content/ug/ug08_tables.htm#creating_boxes">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Grid lines">
+				<param name="Local" value="content/ug/ug08_tables.htm#grid_lines">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Boxes and the grid">
+				<param name="Local" value="content/ug/ug08_tables.htm#boxes_and_the_grid">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Removing boxes and grid lines">
+				<param name="Local" value="content/ug/ug08_tables.htm#removing_boxes_and_grid_lines">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using the Regions editor">
+					<param name="Local" value="content/ug/ug08_tables.htm#removing_boxes_and_grid_lines_regions">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using the transparent/invisible option">
+					<param name="Local" value="content/ug/ug08_tables.htm#removing_boxes_and_grid_lines_transparent">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Entering text into tables">
+			<param name="Local" value="content/ug/ug08_tables.htm#entering_text_into_tables">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Typing directly into tables">
+				<param name="Local" value="content/ug/ug08_tables.htm#typing_directly_into_tables">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Entering numerical live data into tables">
+				<param name="Local" value="content/ug/ug08_tables.htm#entering_numerical_live_data_into_tables">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using styles and effects in tables">
+				<param name="Local" value="content/ug/ug08_tables.htm#using_styles_and_effects_in_tables">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Importing data into tables">
+				<param name="Local" value="content/ug/ug08_tables.htm#importing_data_into_tables">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Pictures">
+		<param name="Local" value="content/ug/ug10_pictures.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Picture file formats">
+			<param name="Local" value="content/ug/ug10_pictures.htm#picture_file_formats">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="How Fireworkz handles pictures">
+			<param name="Local" value="content/ug/ug10_pictures.htm#how_fireworkz_handles_pictures">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Adding pictures to your document">
+			<param name="Local" value="content/ug/ug10_pictures.htm#adding_pictures_to_your_document">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using the Insert file command (Windows)">
+				<param name="Local" value="content/ug/ug10_pictures.htm#adding_pictures_insert_file">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Storing pictures in documents">
+			<param name="Local" value="content/ug/ug10_pictures.htm#storing_pictures_in_documents">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Positioning pictures on the page">
+			<param name="Local" value="content/ug/ug10_pictures.htm#positioning_pictures_on_the_page.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Fixing the position of pictures on the page">
+				<param name="Local" value="content/ug/ug10_pictures.htm#positioning_pictures_on_the_page.htm#fixing">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Unpinning pictures">
+				<param name="Local" value="content/ug/ug10_pictures.htm#positioning_pictures_on_the_page.htm#unpinning">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Resizing pictures">
+				<param name="Local" value="content/ug/ug10_pictures.htm#resizing_pictures.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Stretching or shrinking the picture">
+				<param name="Local" value="content/ug/ug10_pictures.htm#stretching_pictures">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Showing and hiding pictures">
+				<param name="Local" value="content/ug/ug10_pictures.htm#showing_and_hiding_pictures">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Backdrop pictures">
+			<param name="Local" value="content/ug/ug10_pictures.htm#backdrop_pictures">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating backdrops">
+				<param name="Local" value="content/ug/ug10_pictures.htm#creating_backdrops">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Repositioning backdrops">
+				<param name="Local" value="content/ug/ug10_pictures.htm#repositioning_backdrops">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Page design">
+		<param name="Local" value="content/ug/ug07_page_design.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Paper size and printable area">
+			<param name="Local" value="content/ug/ug07_page_design.htm#paper_size_and_printable_area">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Setting paper size">
+			<param name="Local" value="content/ug/ug07_page_design.htm#setting_paper_size">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Custom page sizes">
+				<param name="Local" value="content/ug/ug07_page_design.htm#custom_page_sizes">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Paper orientation">
+				<param name="Local" value="content/ug/ug07_page_design.htm#paper_orientation">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Paper margins">
+				<param name="Local" value="content/ug/ug07_page_design.htm#paper_margins">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Printing the row and column borders">
+				<param name="Local" value="content/ug/ug07_page_design.htm#printing_the_row_and_column_borders">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Forcing page breaks">
+			<param name="Local" value="content/ug/ug07_page_design.htm#forcing_page_breaks">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Headers and footers">
+			<param name="Local" value="content/ug/ug07_page_design.htm#headers_and_footers">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating headers and footers">
+				<param name="Local" value="content/ug/ug07_page_design.htm#creating_headers_and_footers">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Opposing headers and footers">
+				<param name="Local" value="content/ug/ug07_page_design.htm#opposing_headers_and_footers">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Multiple headers and footers">
+				<param name="Local" value="content/ug/ug07_page_design.htm#multiple_headers_and_footers">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Different headers or footers on the first page">
+				<param name="Local" value="content/ug/ug07_page_design.htm#different_headers_or_footers_on_the_first_page">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Repositioning headers and footers">
+				<param name="Local" value="content/ug/ug07_page_design.htm#repositioning_headers_and_footers">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Editing header and footer text">
+				<param name="Local" value="content/ug/ug07_page_design.htm#editing_header_and_footer_text">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Numbering pages">
+			<param name="Local" value="content/ug/ug07_page_design.htm#numbering_pages">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Automatic page numbers">
+				<param name="Local" value="content/ug/ug07_page_design.htm#numbering_pages">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="x- and y-Pages">
+				<param name="Local" value="content/ug/ug07_page_design.htm#x_and_y_pages">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Printing">
+		<param name="Local" value="content/ug/ug11_printing.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Before printing">
+			<param name="Local" value="content/ug/ug11_printing.htm#before_printing">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Choosing to print">
+			<param name="Local" value="content/ug/ug11_printing.htm#choosing_to_print">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Basic printing options">
+			<param name="Local" value="content/ug/ug11_printing.htm#basic_print_options">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Additional printing options">
+			<param name="Local" value="content/ug/ug11_printing.htm#extra_print_options">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Range of pages">
+				<param name="Local" value="content/ug/ug11_printing.htm#range_of_pages">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Pamphlet printing">
+				<param name="Local" value="content/ug/ug11_printing.htm#pamphlet_printing">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Sides">
+				<param name="Local" value="content/ug/ug11_printing.htm#sides">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Reverse printing">
+				<param name="Local" value="content/ug/ug11_printing.htm#reverse_printing">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Collated">
+				<param name="Local" value="content/ug/ug11_printing.htm#collated">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Two up">
+				<param name="Local" value="content/ug/ug11_printing.htm#two_up">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Print scale">
+			<param name="Local" value="content/ug/ug11_printing.htm#print_scale">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Printing labels">
+			<param name="Local" value="content/ug/ug11_printing.htm#printing_labels">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Solving printing problems">
+			<param name="Local" value="content/ug/ug11_printing.htm#printing_problems">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Nothing happens when I try to print">
+				<param name="Local" value="content/ug/ug11_printing.htm#printing_problems">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Edges of the page are missing, although the rest prints normally">
+				<param name="Local" value="content/ug/ug11_printing.htm#printing_problems">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="The printer produces blank pages between each page of my document">
+				<param name="Local" value="content/ug/ug11_printing.htm#printing_problems">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Entering and editing data in cells">
+		<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Cell types: number and text cells">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#cell_types">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Dealing with cell types">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#cell_types">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Text cells">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#text_cells">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Number cells">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#number_cells">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Changing cell types">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#changing_cell_types">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Cell type problem areas">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#cell_type_problem_areas">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Moving from cell to cell">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#moving_from_cell_to_cell">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Autoentry">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#autoentry">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Entering text and data in number cells">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#entering_text_and_data_in_number_cells">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Entering numbers">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#entering_numbers">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Entering dates">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#entering_dates">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Entering strings">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#entering_strings">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Entering cell references">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#entering_cell_references">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Editing number cell contents">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#editing_number_cell_contents">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Clearing cells">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#clearing_cells">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Copying data from cell to cell">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#copying_data_from_cell_to_cell">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Filling data">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#filling_data">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Cell references">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#cell_references">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Single cell references">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#single_cell_references">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Ranges">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#ranges">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Absolute references">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#absolute_references">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Entering absolute references">
+					<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#absolute_references">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="External references">
+				<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#external_references">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Managing external references">
+					<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#external_references.">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="External references and directories">
+					<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#external_references">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using names for external references">
+					<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#external_references">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Sorting your data">
+			<param name="Local" value="content/sg/sg01_entering_and_editing_numerical_data.htm#sorting_your_data">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Entering and editing formulae">
+		<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Formula building blocks">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#formula_building_blocks">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Using operators in a formula">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#using_operators_in_a_formula">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Arithmetic operators">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#arithmetic_operators">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Relational operators">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#relational_operators">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Comparing strings using wildcards">
+					<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#relational_operators">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Logical operators">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#logical_operators">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Operator precedence">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#operator_precedence">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The function selector">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#the_function_selector">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Building and editing a formula">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#building_and_editing_a_formula">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Building complex formulae">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#building_and_editing_a_formulae">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Autosum">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#autosum">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Arrays">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#arrays">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Entering arrays">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#arrays">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Typing arrays directly into cells">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#typing_arrays_directly_into_cells">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Displaying arrays">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#displaying_arrays">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Displaying the whole array">
+					<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#displaying_arrays">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Accessing a sub-array or a single array component">
+					<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#displaying_arrays">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using arrays">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#using_arrays">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Matrices and complex numbers">
+					<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#using_arrays">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Complex numbers">
+						<param name="Local" value="content/sg06/sg6_complex_numbers.htm">
+						</OBJECT>
+				</UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Batch processing">
+					<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#using_arrays">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Arrays as parameters to functions">
+					<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#using_arrays">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Names">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#names">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Uses for names">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#uses_for_names">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Names as numerical variables">
+					<param name="Local" value="content/ug/ug09_advanced_features.htm#uses_for_names">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Names as text variables">
+					<param name="Local" value="content/ug/ug09_advanced_features.htm#uses_for_names">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Troubleshooting">
+			<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#troubleshooting.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Punctuation">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#troubleshooting">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Order of parameters">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#troubleshooting">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Cell types">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#troubleshooting">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Circular references">
+				<param name="Local" value="content/sg/sg02_entering_and_editing_formulae.htm#troubleshooting">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Number, date and time formats">
+		<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm">
+		</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Styles in spreadsheet documents">
+				<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#styles_in_spreadsheet_documents">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Predefined styles">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#styles_in_spreadsheet_documents">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Number formats">
+				<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#constructing_number_formats">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Hashes and zeros">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#hashes_and_zeros">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Positive and negative numbers">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#positive_and_negative_numbers">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Including text strings in number formats">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#including_text_strings_in_number_formats">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Precision">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#precision">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Decimal places">
+						<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#precision">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Rounding large numbers">
+						<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#precision">
+						</OBJECT>
+				</UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Percentage">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#percentage">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Scientific number formats">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#scientific_number_formats">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Engineering format">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#engineering_format">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Expressing Roman numerals">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#expressing_roman_numerals">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Foreign formats">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#foreign_formats">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Saving a number format as a style">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#saving_a_number_format_as_a_style">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Date and time formats">
+				<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#constructing_date_formats">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Creating date and time formats">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#creating_date_and_time_formats">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Displaying parts of a time">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#displaying_parts_of_a_time">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="12 hour and 24 hour clock">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#12_and_24_hour_clocks">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Saving a date format as part of a style">
+					<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#creating_date_and_time_formats">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Error and string formats">
+				<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#error_and_string_formats">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="New object">
+				<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#new_object">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Protecting cells">
+				<param name="Local" value="content/sg/sg03_number_formats_and_styles.htm#protecting_cells">
+				</OBJECT>
+		</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Spreadsheet functions">
+		<param name="Local" value="content/sg/sg05_function_reference.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Database functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#database_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DAVG">
+				<param name="Local" value="content/sg06d/sg6_DAVG.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DCOUNT">
+				<param name="Local" value="content/sg06d/sg6_DCOUNT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DCOUNTA">
+				<param name="Local" value="content/sg06d/sg6_DCOUNTA.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DMAX">
+				<param name="Local" value="content/sg06d/sg6_DMAX.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DMIN">
+				<param name="Local" value="content/sg06d/sg6_DMIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DPRODUCT">
+				<param name="Local" value="content/sg06d/sg6_DPRODUCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DSTD">
+				<param name="Local" value="content/sg06d/sg6_DSTD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DSTDP">
+				<param name="Local" value="content/sg06d/sg6_DSTDP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DSUM">
+				<param name="Local" value="content/sg06d/sg6_DSUM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DVAR">
+				<param name="Local" value="content/sg06d/sg6_DVAR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DVARP">
+				<param name="Local" value="content/sg06d/sg6_DVARP.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Date and time functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#date_time_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="AGE">
+				<param name="Local" value="content/sg06a/sg6_AGE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DATE">
+				<param name="Local" value="content/sg06d/sg6_DATE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DATEVALUE">
+				<param name="Local" value="content/sg06d/sg6_DATEVALUE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DAY">
+				<param name="Local" value="content/sg06d/sg6_DAY.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DAYS">
+				<param name="Local" value="content/sg06d/sg6_DAYS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DAYS_360">
+				<param name="Local" value="content/sg06d/sg6_DAYS_360.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DAYNAME">
+				<param name="Local" value="content/sg06d/sg6_DAYNAME.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="HOUR">
+				<param name="Local" value="content/sg06h/sg6_HOUR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ISOWEEKNUM">
+				<param name="Local" value="content/sg06i/sg6_ISOWEEKNUM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MINUTE">
+				<param name="Local" value="content/sg06m/sg6_MINUTE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MONTH">
+				<param name="Local" value="content/sg06m/sg6_MONTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MONTHDAYS">
+				<param name="Local" value="content/sg06m/sg6_MONTHDAYS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MONTHNAME">
+				<param name="Local" value="content/sg06m/sg6_MONTHNAME.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="NOW">
+				<param name="Local" value="content/sg06n/sg6_NOW.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SECOND">
+				<param name="Local" value="content/sg06s/sg6_SECOND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TIME">
+				<param name="Local" value="content/sg06t/sg6_TIME.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TIMEVALUE">
+				<param name="Local" value="content/sg06t/sg6_TIMEVALUE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TODAY">
+				<param name="Local" value="content/sg06t/sg6_TODAY.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="WEEKDAY">
+				<param name="Local" value="content/sg06w/sg6_WEEKDAY.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="WEEKNUMBER">
+				<param name="Local" value="content/sg06w/sg6_WEEKNUMBER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="YEAR">
+				<param name="Local" value="content/sg06y/sg6_YEAR.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Engineering functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#engineering_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ACOS">
+				<param name="Local" value="content/sg06cn/sg6_C_ACOS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ACOSEC">
+				<param name="Local" value="content/sg06cn/sg6_C_ACOSEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ACOSECH">
+				<param name="Local" value="content/sg06cn/sg6_C_ACOSECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ACOSH">
+				<param name="Local" value="content/sg06cn/sg6_C_ACOSH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ACOT">
+				<param name="Local" value="content/sg06cn/sg6_C_ACOT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ACOTH">
+				<param name="Local" value="content/sg06cn/sg6_C_ACOTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ADD">
+				<param name="Local" value="content/sg06cn/sg6_C_ADD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ASEC">
+				<param name="Local" value="content/sg06cn/sg6_C_ASEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ASECH">
+				<param name="Local" value="content/sg06cn/sg6_C_ASECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ASIN">
+				<param name="Local" value="content/sg06cn/sg6_C_ASIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ASINH">
+				<param name="Local" value="content/sg06cn/sg6_C_ASINH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ATAN">
+				<param name="Local" value="content/sg06cn/sg6_C_ATAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ATANH">
+				<param name="Local" value="content/sg06cn/sg6_C_ATANH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COMPLEX">
+				<param name="Local" value="content/sg06cn/sg6_C_COMPLEX.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_CONJUGATE">
+				<param name="Local" value="content/sg06cn/sg6_C_CONJUGATE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COS">
+				<param name="Local" value="content/sg06cn/sg6_C_COS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COSEC">
+				<param name="Local" value="content/sg06cn/sg6_C_COSEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COSECH">
+				<param name="Local" value="content/sg06cn/sg6_C_COSECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COSH">
+				<param name="Local" value="content/sg06cn/sg6_C_COSH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COT">
+				<param name="Local" value="content/sg06cn/sg6_C_COT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_COTH">
+				<param name="Local" value="content/sg06cn/sg6_C_COTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_DIV">
+				<param name="Local" value="content/sg06cn/sg6_C_DIV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_EXP">
+				<param name="Local" value="content/sg06cn/sg6_C_EXP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_IMAGINARY">
+				<param name="Local" value="content/sg06cn/sg6_C_IMAGINARY.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_LN">
+				<param name="Local" value="content/sg06cn/sg6_C_LN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_MUL">
+				<param name="Local" value="content/sg06cn/sg6_C_MUL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_POWER">
+				<param name="Local" value="content/sg06cn/sg6_C_POWER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_RADIUS">
+				<param name="Local" value="content/sg06cn/sg6_C_RADIUS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_REAL">
+				<param name="Local" value="content/sg06cn/sg6_C_REAL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_ROUND">
+				<param name="Local" value="content/sg06cn/sg6_C_ROUND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_SEC">
+				<param name="Local" value="content/sg06cn/sg6_C_SEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_SECH">
+				<param name="Local" value="content/sg06cn/sg6_C_SECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_SIN">
+				<param name="Local" value="content/sg06cn/sg6_C_SIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_SINH">
+				<param name="Local" value="content/sg06cn/sg6_C_SINH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_SQRT">
+				<param name="Local" value="content/sg06cn/sg6_C_SQRT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_SUB">
+				<param name="Local" value="content/sg06cn/sg6_C_SUB.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_TAN">
+				<param name="Local" value="content/sg06cn/sg6_C_TAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_TANH">
+				<param name="Local" value="content/sg06cn/sg6_C_TANH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="C_THETA">
+				<param name="Local" value="content/sg06cn/sg6_C_THETA.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BESSELI">
+				<param name="Local" value="content/sg06b/sg6_BESSELI.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BESSELJ">
+				<param name="Local" value="content/sg06b/sg6_BESSELJ.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BESSELK">
+				<param name="Local" value="content/sg06b/sg6_BESSELK.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BESSELY">
+				<param name="Local" value="content/sg06b/sg6_BESSELY.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BIN2DEC">
+				<param name="Local" value="content/sg06b/sg6_BIN2DEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BIN2HEX">
+				<param name="Local" value="content/sg06b/sg6_BIN2HEX.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BIN2OCT">
+				<param name="Local" value="content/sg06b/sg6_BIN2OCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BITAND">
+				<param name="Local" value="content/sg06b/sg6_BITAND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BITLSHIFT">
+				<param name="Local" value="content/sg06b/sg6_BITLSHIFT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BITOR">
+				<param name="Local" value="content/sg06b/sg6_BITOR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BITRSHIFT">
+				<param name="Local" value="content/sg06b/sg6_BITRSHIFT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BITXOR">
+				<param name="Local" value="content/sg06b/sg6_BITXOR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DEC2BIN">
+				<param name="Local" value="content/sg06d/sg6_DEC2BIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DEC2HEX">
+				<param name="Local" value="content/sg06d/sg6_DEC2HEX.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DEC2OCT">
+				<param name="Local" value="content/sg06d/sg6_DEC2OCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DELTA">
+				<param name="Local" value="content/sg06d/sg6_DELTA.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ERF">
+				<param name="Local" value="content/sg06e/sg6_ERF.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ERFC">
+				<param name="Local" value="content/sg06e/sg6_ERFC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GESTEP">
+				<param name="Local" value="content/sg06g/sg6_GESTEP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="HEX2BIN">
+				<param name="Local" value="content/sg06h/sg6_HEX2BIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="HEX2DEC">
+				<param name="Local" value="content/sg06h/sg6_HEX2DEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="HEX2OCT">
+				<param name="Local" value="content/sg06h/sg6_HEX2OCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="OCT2BIN">
+				<param name="Local" value="content/sg06o/sg6_OCT2BIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="OCT2DEC">
+				<param name="Local" value="content/sg06o/sg6_OCT2BIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="OCT2HEX">
+				<param name="Local" value="content/sg06o/sg6_OCT2HEX.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Financial functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#financial_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CTERM">
+				<param name="Local" value="content/sg06c/sg6_CTERM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DDB">
+				<param name="Local" value="content/sg06d/sg6_DDB.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FV">
+				<param name="Local" value="content/sg06f/sg6_FV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FVSCHEDULE">
+				<param name="Local" value="content/sg06f/sg6_FVSCHEDULE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="IRR">
+				<param name="Local" value="content/sg06i/sg6_IRR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MIRR">
+				<param name="Local" value="content/sg06m/sg6_MIRR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="NPER">
+				<param name="Local" value="content/sg06n/sg6_NPER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="NPV">
+				<param name="Local" value="content/sg06n/sg6_NPV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PMT">
+				<param name="Local" value="content/sg06p/sg6_PMT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PV">
+				<param name="Local" value="content/sg06p/sg6_PV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RATE">
+				<param name="Local" value="content/sg06r/sg6_RATE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SLN">
+				<param name="Local" value="content/sg06s/sg6_SLN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SYD">
+				<param name="Local" value="content/sg06s/sg6_SYD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TERM">
+				<param name="Local" value="content/sg06t/sg6_TERM.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Logical functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#logical_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="AND">
+				<param name="Local" value="content/sg06a/sg6_AND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FALSE">
+				<param name="Local" value="content/sg06f/sg6_FALSE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="NOT">
+				<param name="Local" value="content/sg06n/sg6_NOT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="OR">
+				<param name="Local" value="content/sg06o/sg6_OR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TRUE">
+				<param name="Local" value="content/sg06t/sg6_TRUE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="XOR">
+				<param name="Local" value="content/sg06x/sg6_XOR.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Lookup functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#lookup_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CHOOSE">
+				<param name="Local" value="content/sg06c/sg6_CHOOSE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="HLOOKUP">
+				<param name="Local" value="content/sg06h/sg6_HLOOKUP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LOOKUP">
+				<param name="Local" value="content/sg06l/sg6_LOOKUP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MATCH">
+				<param name="Local" value="content/sg06m/sg6_MATCH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="VLOOKUP">
+				<param name="Local" value="content/sg06v/sg6_VLOOKUP.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Mathematical functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#mathematical_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ABS">
+				<param name="Local" value="content/sg06a/sg6_ABS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BASE">
+				<param name="Local" value="content/sg06b/sg6_BASE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CEILING">
+				<param name="Local" value="content/sg06c/sg6_CEILING.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DECIMAL">
+				<param name="Local" value="content/sg06d/sg6_DECIMAL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="EVEN">
+				<param name="Local" value="content/sg06e/sg6_EVEN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="EXP">
+				<param name="Local" value="content/sg06e/sg6_EXP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FACT">
+				<param name="Local" value="content/sg06f/sg6_FACT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FLOOR">
+				<param name="Local" value="content/sg06f/sg6_FLOOR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GCD">
+				<param name="Local" value="content/sg06g/sg6_GCD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="INT">
+				<param name="Local" value="content/sg06i/sg6_INT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LCM">
+				<param name="Local" value="content/sg06l/sg6_LCM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LN">
+				<param name="Local" value="content/sg06l/sg6_LN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LOG">
+				<param name="Local" value="content/sg06l/sg6_LOG.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MOD">
+				<param name="Local" value="content/sg06m/sg6_MOD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MROUND">
+				<param name="Local" value="content/sg06m/sg6_MROUND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MULTINOMIAL">
+				<param name="Local" value="content/sg06m/sg6_MULTINOMIAL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODD">
+				<param name="Local" value="content/sg06o/sg6_ODD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="POWER">
+				<param name="Local" value="content/sg06p/sg6_POWER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PRODUCT">
+				<param name="Local" value="content/sg06p/sg6_PRODUCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="QUOTIENT">
+				<param name="Local" value="content/sg06q/sg6_QUOTIENT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RAND">
+				<param name="Local" value="content/sg06r/sg6_RAND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RANDBETWEEN">
+				<param name="Local" value="content/sg06r/sg6_RANDBETWEEN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ROUND">
+				<param name="Local" value="content/sg06r/sg6_ROUND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ROUNDDOWN">
+				<param name="Local" value="content/sg06r/sg6_ROUNDDOWN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ROUNDUP">
+				<param name="Local" value="content/sg06r/sg6_ROUNDUP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SERIESSUM">
+				<param name="Local" value="content/sg06s/sg6_SERIESSUM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SGN">
+				<param name="Local" value="content/sg06s/sg6_SGN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SQR">
+				<param name="Local" value="content/sg06s/sg6_SQR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUM">
+				<param name="Local" value="content/sg06s/sg6_SUM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUMPRODUCT">
+				<param name="Local" value="content/sg06s/sg6_SUMPRODUCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUMSQ">
+				<param name="Local" value="content/sg06s/sg6_SUMSQ.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUM_X2MY2">
+				<param name="Local" value="content/sg06s/sg6_SUM_X2MY2.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUM_X2PY2">
+				<param name="Local" value="content/sg06s/sg6_SUM_X2PY2.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUM_XMY2">
+				<param name="Local" value="content/sg06s/sg6_SUM_XMY2.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TRUNC">
+				<param name="Local" value="content/sg06t/sg6_TRUNC.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Matrix functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#matrix_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="M_DETERM">
+				<param name="Local" value="content/sg06m/sg6_M_DETERM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="M_INVERSE">
+				<param name="Local" value="content/sg06m/sg6_M_INVERSE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="M_MULT">
+				<param name="Local" value="content/sg06m/sg6_M_MULT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TRANSPOSE">
+				<param name="Local" value="content/sg06t/sg6_TRANSPOSE.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Miscellaneous functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#miscellaneous_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ALERT">
+				<param name="Local" value="content/sg06a/sg6_ALERT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CURRENT_CELL">
+				<param name="Local" value="content/sg06c/sg6_CURRENT_CELL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COL">
+				<param name="Local" value="content/sg06c/sg6_COL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COLS">
+				<param name="Local" value="content/sg06c/sg6_COLS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COMMAND">
+				<param name="Local" value="content/sg06c/sg6_COMMAND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DEREF">
+				<param name="Local" value="content/sg06d/sg6_DEREF.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DOUBLECLICK">
+				<param name="Local" value="content/sg06d/sg6_DOUBLECLICK.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FLIP">
+				<param name="Local" value="content/sg06f/sg6_FLIP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="IF">
+				<param name="Local" value="content/sg06i/sg6_IF.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="INDEX">
+				<param name="Local" value="content/sg06i/sg6_INDEX.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="INPUT">
+				<param name="Local" value="content/sg06i/sg6_INPUT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ISEVEN">
+				<param name="Local" value="content/sg06i/sg6_ISEVEN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ISODD">
+				<param name="Local" value="content/sg06i/sg6_ISODD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="N">
+				<param name="Local" value="content/sg06n/sg6_N.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PAGE">
+				<param name="Local" value="content/sg06p/sg6_PAGE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PAGES">
+				<param name="Local" value="content/sg06p/sg6_PAGES.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ROW">
+				<param name="Local" value="content/sg06r/sg6_ROW.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ROWS">
+				<param name="Local" value="content/sg06r/sg6_ROWS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SET_NAME">
+				<param name="Local" value="content/sg06s/sg6_SET_NAME.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SET_VALUE">
+				<param name="Local" value="content/sg06s/sg6_SET_VALUE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SORT">
+				<param name="Local" value="content/sg06s/sg6_SORT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TYPE">
+				<param name="Local" value="content/sg06t/sg6_TYPE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="VERSION">
+				<param name="Local" value="content/sg06v/sg6_VERSION.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Statistical functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#statistical_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="AVEDEV">
+				<param name="Local" value="content/sg06a/sg6_AVEDEV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="AVG">
+				<param name="Local" value="content/sg06a/sg6_AVG.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BETA">
+				<param name="Local" value="content/sg06b/sg6_BETA.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="BIN">
+				<param name="Local" value="content/sg06b/sg6_BIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COMBIN">
+				<param name="Local" value="content/sg06c/sg6_COMBIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COUNT">
+				<param name="Local" value="content/sg06c/sg6_COUNT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COUNTA">
+				<param name="Local" value="content/sg06c/sg6_COUNTA.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COUNTBLANK">
+				<param name="Local" value="content/sg06c/sg6_COUNTBLANK.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COVARIANCE.P">
+				<param name="Local" value="content/sg06c/sg6_COVARIANCE_P.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COVARIANCE.S">
+				<param name="Local" value="content/sg06c/sg6_COVARIANCE_S.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DEVSQ">
+				<param name="Local" value="content/sg06d/sg6_DEVSQ.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GAMMALN">
+				<param name="Local" value="content/sg06g/sg6_GAMMALN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GEOMEAN">
+				<param name="Local" value="content/sg06g/sg6_GEOMEAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GRAND">
+				<param name="Local" value="content/sg06g/sg6_GRAND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GROWTH">
+				<param name="Local" value="content/sg06g/sg6_GROWTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="HARMEAN">
+				<param name="Local" value="content/sg06h/sg6_HARMEAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="KURT">
+				<param name="Local" value="content/sg06k/sg6_KURT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LARGE">
+				<param name="Local" value="content/sg06l/sg6_LARGE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LINEST">
+				<param name="Local" value="content/sg06l/sg6_LINEST.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LISTCOUNT">
+				<param name="Local" value="content/sg06l/sg6_LISTCOUNT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LOGEST">
+				<param name="Local" value="content/sg06l/sg6_LOGEST.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MAX">
+				<param name="Local" value="content/sg06m/sg6_MAX.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MEDIAN">
+				<param name="Local" value="content/sg06m/sg6_MEDIAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MIN">
+				<param name="Local" value="content/sg06m/sg6_MIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MODE.SNGL">
+				<param name="Local" value="content/sg06m/sg6_MODE_SNGL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PERCENTILE.EXC">
+				<param name="Local" value="content/sg06p/sg6_PERCENTILE_EXC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PERCENTILE.INC">
+				<param name="Local" value="content/sg06p/sg6_PERCENTILE_INC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PERMUT">
+				<param name="Local" value="content/sg06p/sg6_PERMUT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="QUARTILE.EXC">
+				<param name="Local" value="content/sg06q/sg6_QUARTILE_EXC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="QUARTILE.INC">
+				<param name="Local" value="content/sg06q/sg6_QUARTILE_INC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RANK">
+				<param name="Local" value="content/sg06r/sg6_RANK.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RANK.EQ">
+				<param name="Local" value="content/sg06r/sg6_RANK_EQ.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SKEW">
+				<param name="Local" value="content/sg06s/sg6_SKEW.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SKEW.P">
+				<param name="Local" value="content/sg06s/sg6_SKEW_P.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SMALL">
+				<param name="Local" value="content/sg06s/sg6_SMALL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SPEARMAN">
+				<param name="Local" value="content/sg06s/sg6_SPEARMAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="STANDARDIZE">
+				<param name="Local" value="content/sg06s/sg6_STANDARDIZE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="STD">
+				<param name="Local" value="content/sg06s/sg6_STD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="STDP">
+				<param name="Local" value="content/sg06s/sg6_STDP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TREND">
+				<param name="Local" value="content/sg06t/sg6_TREND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TRIMMEAN">
+				<param name="Local" value="content/sg06t/sg6_TRIMMEAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="VAR">
+				<param name="Local" value="content/sg06v/sg6_VAR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="VARP">
+				<param name="Local" value="content/sg06v/sg6_VARP.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="String functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#string_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CHAR">
+				<param name="Local" value="content/sg06c/sg6_CHAR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CLEAN">
+				<param name="Local" value="content/sg06c/sg6_CLEAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="CODE">
+				<param name="Local" value="content/sg06c/sg6_CODE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DOLLAR">
+				<param name="Local" value="content/sg06d/sg6_DOLLAR.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="EXACT">
+				<param name="Local" value="content/sg06e/sg6_EXACT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FIND">
+				<param name="Local" value="content/sg06f/sg6_FIND.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FIXED">
+				<param name="Local" value="content/sg06f/sg6_FIXED.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="FORMULA_TEXT">
+				<param name="Local" value="content/sg06f/sg6_FORMULA_TEXT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="JOIN">
+				<param name="Local" value="content/sg06j/sg6_JOIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LEFT">
+				<param name="Local" value="content/sg06l/sg6_LEFT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LENGTH">
+				<param name="Local" value="content/sg06l/sg6_LENGTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="LOWER">
+				<param name="Local" value="content/sg06l/sg6_LOWER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MID">
+				<param name="Local" value="content/sg06m/sg6_MID.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PROPER">
+				<param name="Local" value="content/sg06p/sg6_PROPER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="REPLACE">
+				<param name="Local" value="content/sg06r/sg6_REPLACE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="REPT">
+				<param name="Local" value="content/sg06r/sg6_REPT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="REVERSE">
+				<param name="Local" value="content/sg06r/sg6_REVERSE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RIGHT">
+				<param name="Local" value="content/sg06r/sg6_RIGHT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="STRING">
+				<param name="Local" value="content/sg06s/sg6_STRING.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SUBSTITUTE">
+				<param name="Local" value="content/sg06s/sg6_SUBSTITUTE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TEXT">
+				<param name="Local" value="content/sg06t/sg6_TEXT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TRIM">
+				<param name="Local" value="content/sg06t/sg6_TRIM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="UPPER">
+				<param name="Local" value="content/sg06u/sg6_UPPER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="VALUE">
+				<param name="Local" value="content/sg06v/sg6_VALUE.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Trigonometrical functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#trigonometrical_functions.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ACOS">
+				<param name="Local" value="content/sg06a/sg6_ACOS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ACOSEC">
+				<param name="Local" value="content/sg06a/sg6_ACOSEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ACOSECH">
+				<param name="Local" value="content/sg06a/sg6_ACOSECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ACOSH">
+				<param name="Local" value="content/sg06a/sg6_ACOSH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ACOT">
+				<param name="Local" value="content/sg06a/sg6_ACOT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ACOTH">
+				<param name="Local" value="content/sg06a/sg6_ACOTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ASEC">
+				<param name="Local" value="content/sg06a/sg6_ASEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ASECH">
+				<param name="Local" value="content/sg06a/sg6_ASECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ASIN">
+				<param name="Local" value="content/sg06a/sg6_ASIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ASINH">
+				<param name="Local" value="content/sg06a/sg6_ASINH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ATAN">
+				<param name="Local" value="content/sg06a/sg6_ATAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ATAN_2">
+				<param name="Local" value="content/sg06a/sg6_ATAN_2.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ATANH">
+				<param name="Local" value="content/sg06a/sg6_ATANH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COS">
+				<param name="Local" value="content/sg06c/sg6_COS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COSEC">
+				<param name="Local" value="content/sg06c/sg6_COSEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COSECH">
+				<param name="Local" value="content/sg06c/sg6_COSECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COSH">
+				<param name="Local" value="content/sg06c/sg6_COSH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COT">
+				<param name="Local" value="content/sg06c/sg6_COT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="COTH">
+				<param name="Local" value="content/sg06c/sg6_COTH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="DEG">
+				<param name="Local" value="content/sg06d/sg6_DEG.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PI">
+				<param name="Local" value="content/sg06p/sg6_PI.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="RAD">
+				<param name="Local" value="content/sg06r/sg6_RAD.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SEC">
+				<param name="Local" value="content/sg06s/sg6_SEC.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SECH">
+				<param name="Local" value="content/sg06s/sg6_SECH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SIN">
+				<param name="Local" value="content/sg06s/sg6_SIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="SINH">
+				<param name="Local" value="content/sg06s/sg6_SINH.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TAN">
+				<param name="Local" value="content/sg06t/sg6_TAN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="TANH">
+				<param name="Local" value="content/sg06t/sg6_TANH.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Compatibility functions">
+			<param name="Local" value="content/sg/sg05_function_reference.htm#compatibility_functions">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMABS">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMABS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMAGINARY">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMAGINARY.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMARGUMENT">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMARGUMENT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMCONJUGATE">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMCONJUGATE.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMCOS">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMCOS.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMDIV">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMDIV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMEXP">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMEXP.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMLN">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMLN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMLOG10">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMLOG10.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMLOG2">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMLOG2.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMPOWER">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMPOWER.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMPRODUCT">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMPRODUCT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMREAL">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMREAL.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMSIN">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMSIN.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMSQRT">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMSQRT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMSUB">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMSUB.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.IMSUM">
+				<param name="Local" value="content/sg06odf/sg6_ODF_IMSUM.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.FV">
+				<param name="Local" value="content/sg06odf/sg6_ODF_FV.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.PMT">
+				<param name="Local" value="content/sg06odf/sg6_ODF_PMT.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="ODF.TYPE">
+				<param name="Local" value="content/sg06odf/sg6_ODF_TYPE.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Custom functions">
+			<param name="Local" value="content/sg/sg07_custom_functions.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="What is a custom function?">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#what_is_a_custom_function">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Custom function libraries">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#custom_function_libraries">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using custom functions">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#using_custom_functions">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Writing custom functions">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#writing_custom_functions">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="The FUNCTION function">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#the_FUNCTION_function">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Naming custom functions">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#naming_custom_functions">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Parameters to FUNCTION">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#parameters_to_FUNCTION">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Specifying the types of parameter">
+						<param name="Local" value="content/sg/sg07_custom_functions.htm#parameters_to_FUNCTION">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Using your parameters inside the custom function">
+						<param name="Local" value="content/sg/sg07_custom_functions.htm#parameters_to_FUNCTION">
+						</OBJECT>
+				</UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Declaring the result">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#declaring_the_result">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Editing custom functions">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#editing_custom_functions">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Custom function control statements">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#custom_function_control_statements">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="BREAK">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#BREAK">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="CONTINUE">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#CONTINUE">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="FOR, NEXT">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#FOR_NEXT">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="GOTO">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#GOTO">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="IF, ELSE, ELSEIF, ENDIF">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#IF_ELSE_ELSEIF_ENDIF">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="REPEAT ... UNTIL">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#REPEAT_UNTIL">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="RESULT">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#RESULT">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="WHILE, ENDWHILE">
+					<param name="Local" value="content/sg/sg07_custom_functions.htm#WHILE_ENDWHILE">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Processing ranges of data">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#processing_ranges_of_data">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Recalculation and custom function sheets">
+				<param name="Local" value="content/sg/sg07_custom_functions.htm#recalculation_and_custom_function_sheets">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Charts">
+		<param name="Local" value="content/sg/sg04_charts.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Creating a chart">
+			<param name="Local" value="content/sg/sg04_charts.htm#creating_a_chart">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Preparing your data">
+				<param name="Local" value="content/sg/sg04_charts.htm#creating_a_chart">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Making the chart">
+				<param name="Local" value="content/sg/sg04_charts.htm#creating_a_chart">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Bar charts">
+			<param name="Local" value="content/sg/sg04_charts.htm#bar_charts">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Types of bar chart">
+				<param name="Local" value="content/sg/sg04_charts.htm#types_of_bar_chart">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Bar">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_bar_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Stacked bar">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_bar_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Percentage stacked bar">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_bar_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Error bars">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_bar_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Cumulative bar chart">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_bar_chart">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Customising bar charts">
+				<param name="Local" value="content/sg/sg04_charts.htm#customising_bar_charts">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Three dimensional charts">
+					<param name="Local" value="content/sg/sg04_charts.htm#customising_bar_charts">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Bar positioning">
+					<param name="Local" value="content/sg/sg04_charts.htm#customising_bar_charts">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Pictograms">
+				<param name="Local" value="content/sg/sg04_charts.htm#pictograms">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding your own pictures to pictograms">
+					<param name="Local" value="content/sg/sg04_charts.htm#pictograms">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Line charts">
+			<param name="Local" value="content/sg/sg04_charts.htm#line_charts">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Types of line chart">
+				<param name="Local" value="content/sg/sg04_charts.htm#types_of_line_chart">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Simple line chart">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_line_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Area chart">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_line_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Stacked area chart">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_line_chart">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Line chart with error bars">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_line_chart">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Pie charts">
+			<param name="Local" value="content/sg/sg04_charts.htm#pie_charts">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Labelling options">
+				<param name="Local" value="content/sg/sg04_charts.htm#pie_labelling_options">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Exploding segments">
+				<param name="Local" value="content/sg/sg04_charts.htm#pie_exploding_segments">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Start position">
+				<param name="Local" value="content/sg/sg04_charts.htm#pie_start_position">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Direction">
+				<param name="Local" value="content/sg/sg04_charts.htm#pie_direction">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="X-Y Scatter graphs">
+			<param name="Local" value="content/sg/sg04_charts.htm#x_y_scatter_graphs">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Types of scatter graph">
+				<param name="Local" value="content/sg/sg04_charts.htm#types_of_scatter_graph">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Line">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_scatter_graph">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Point">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_scatter_graph">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Line and point">
+					<param name="Local" value="content/sg/sg04_charts.htm#types_of_scatter_graph">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Overlays">
+			<param name="Local" value="content/sg/sg04_charts.htm#overlays">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Editing charts">
+			<param name="Local" value="content/sg/sg04_charts.htm#editing_charts.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Updating chart data">
+			<param name="Local" value="content/sg/sg04_charts.htm#updating_chart_data">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Live charts vs. dead charts">
+				<param name="Local" value="content/sg/sg04_charts.htm#updating_chart_data">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Customising charts">
+				<param name="Local" value="content/sg/sg04_charts.htm#customising_charts">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Editing axes">
+					<param name="Local" value="content/sg/sg04_charts.htm#editing_axes">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Using colour in charts">
+					<param name="Local" value="content/sg/sg04_charts.htm#using_colour_in_charts">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Editing lines">
+					<param name="Local" value="content/sg/sg04_charts.htm#editing_lines">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Editing text in charts">
+					<param name="Local" value="content/sg/sg04_charts.htm#editing_text_in_charts">
+					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Arranging the legend">
+						<param name="Local" value="content/sg/sg04_charts.htm#editing_text_in_charts">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Changing the style of text">
+						<param name="Local" value="content/sg/sg04_charts.htm#editing_text_in_charts">
+						</OBJECT>
+				</UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Editing data series">
+					<param name="Local" value="content/sg/sg04_charts.htm#editing_data_series">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Positioning the chart">
+					<param name="Local" value="content/sg/sg04_charts.htm#positioning_the_chart">
+					</OBJECT>
+			</UL>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Advanced features">
+		<param name="Local" value="content/ug/ug09_advanced_features.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Using names in Fireworkz">
+			<param name="Local" value="content/ug/ug09_advanced_features.htm#using_names_in_fireworkz">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Setting up a name">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#setting_up_a_name">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Naming names">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#naming_names">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Adding a name to a text cell">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#adding_a_name_to_a_text_cell">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Adding a name to a number cell">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#adding_a_name_to_a_number_cell">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Uses for names">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#uses_for_names">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Using mail merge">
+			<param name="Local" value="content/ug/ug09_advanced_features.htm#using_mail_merge">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Suitable lists for mail shots">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#suitable_lists_for_mail_shots">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Setting up your letter">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#setting_up_your_letter">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Adding fields to your document">
+					<param name="Local" value="content/ug/ug09_advanced_features.htm#setting_up_your_letter_adding">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Choosing the database file">
+					<param name="Local" value="content/ug/ug09_advanced_features.htm#setting_up_your_letter_choosing">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Removing blank fields">
+					<param name="Local" value="content/ug/ug09_advanced_features.htm#setting_up_your_letter_removing">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Printing a mail shot">
+				<param name="Local" value="content/ug/ug09_advanced_features.htm#printing_a_mail_shot">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Printing a sample copy">
+					<param name="Local" value="content/ug/ug09_advanced_features.htm#printing_a_mail_shot_sample">
+					</OBJECT>
+			</UL>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Transferring files between platforms">
+		<param name="Local" value="content/ug/ug90_transferring_files_between_platforms.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Fonts (transferring)">
+			<param name="Local" value="content/ug/ug90_transferring_files_between_platforms.htm#transferring_files_between_platforms_fonts">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Pictures and charts (transferring)">
+			<param name="Local" value="content/ug/ug90_transferring_files_between_platforms.htm#transferring_files_between_platforms_pictures">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Transferring files from RISC OS to Windows">
+			<param name="Local" value="content/ug/ug90_transferring_files_between_platforms.htm#transferring_files_from_risc_os_to_windows">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Transferring files from Windows to RISC OS">
+			<param name="Local" value="content/ug/ug90_transferring_files_between_platforms.htm#transferring_files_from_windows_to_risc_os">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Glossary">
+		<param name="Local" value="content/ug/ug98_glossary.htm">
+		</OBJECT>
+</UL>
+</BODY></HTML>

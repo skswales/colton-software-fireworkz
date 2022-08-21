@@ -11,31 +11,38 @@
 # Copyright (C) 1998-2015 R W Colton
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually 00)
-TEXTUAL_VERSION_NUMBER=2.24
-TEXTUAL_VERSION_NUMBER=2.24.07
+TEXTUAL_VERSION_NUMBER=2.30
+#TEXTUAL_VERSION_NUMBER=2.30.01
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=22407
+STUBS_VERSION_NUMBER=0x23000
 # when changing version number for release, remember:
 #   common.mf_mid
-#   ob_skel.resource.xx.msg
 #   ob_skel.version.h
+#   ob_skel.resource.xx.msg
 # RISC OS
 #   firewrkz.RelNotes/htm
 #   firewrkz.r.RiscPkg.Control
-#   firewrkz.r32b.MakeRiscPkg
+#   firewrkz.r32.MakeRiscPkg
 # Windows
 #   firewrkz\RelNotesW.htm
-#   firewrkz\resource\windows\UK\res00.rci (updated by RISC OS build)
-#   Build\windows\firewrkz.rc
+#   firewrkz\Resources\Windows\UK\res00.rci (updated by RISC OS build)
 #   Build\windows\OUTx64\BLDCD2.BAT
 #   Build\windows\OUTx64\firewrkz-x64.iss
 #   Build\windows\OUTx86\BLDCD2.BAT
 #   Build\windows\OUTx86\firewrkz-x86.iss
 
 # and for Fireworkz Pro:
-#   ^.fprowrkz.r32b.Make_TS
 #   ^.fprowrkz.RelNotes/htm
+#   ^.fprowrkz.r32.Make_TS
+#   ^.fprowrkz.r32.MakeStore
+
+# when creating a new branch, remember:
+# RISC OS
+#   Build.!!!Boot
+#   Build.configure
+# Windows
+#   Build\windows\t5_tbt.bat
 
 AS=objasm
 

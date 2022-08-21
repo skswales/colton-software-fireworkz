@@ -503,61 +503,72 @@ _gr_riscdiag_ensure(
 
 _Check_return_
 static STATUS
+gr_riscdiag_fontlistR_new_alloc(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _InVal_     U32 allocBytes)
+{
+    STATUS status;
+    P_BYTE pObject;
+    DRAW_OBJECT_HEADER_NO_BBOX objhdr;
+
+    objhdr.type = DRAW_OBJECT_TYPE_FONTLIST;
+    objhdr.size = sizeof32(objhdr) + allocBytes;
+    /* this doesn't have a bbox */
+
+    if(NULL != (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, objhdr.size, &status)))
+        memcpy32(pObject, &objhdr, sizeof32(objhdr));
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
 gr_riscdiag_fontlistR_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
     _InRef_     PC_ARRAY_HANDLE p_array_handleR)
 {
-    DRAW_DIAG_OFFSET fontListStart = gr_riscdiag_query_offset(p_gr_riscdiag);
+    const DRAW_DIAG_OFFSET fontListStart = gr_riscdiag_query_offset(p_gr_riscdiag);
 
+    /* can omit font list object if no fonts needed */
     if(0 == array_elements(p_array_handleR))
         return(STATUS_OK);
 
     {
     const ARRAY_INDEX n_elements = array_elements(p_array_handleR);
+    const ARRAY_INDEX limited_n_elements = MIN(n_elements, 255);
     ARRAY_INDEX i;
-    P_GR_RISCDIAG_RISCOS_FONTLIST_ENTRY p = array_range(p_array_handleR, GR_RISCDIAG_RISCOS_FONTLIST_ENTRY, 0, n_elements);
     U32 extraBytes = 0;
+    U32 allocBytes;
 
-    for(i = 0; i < n_elements; ++i, ++p)
+    for(i = 0; i < limited_n_elements; ++i)
     {
+        const PC_GR_RISCDIAG_RISCOS_FONTLIST_ENTRY p = array_ptrc(p_array_handleR, GR_RISCDIAG_RISCOS_FONTLIST_ENTRY, i);
         const DRAW_DIAG_OFFSET lenp1 = strlen32p1(p->szHostFontName); /*CH_NULL*/
         const DRAW_DIAG_OFFSET thislen = offsetof32(DRAW_FONTLIST_ELEM, szHostFontName) + lenp1;
 
         extraBytes += thislen;
     }
 
-    /* round up size to 32bit boundary */
-    extraBytes = (extraBytes + (4-1)) & ~(4-1);
+    /* round up allocation to 32-bit boundary */
+    allocBytes = (extraBytes + (4-1)) & ~(4-1);
 
-    {
-    STATUS status;
-    P_BYTE pObject;
-    DRAW_OBJECT_HEADER_NO_BBOX objhdr;
-
-    objhdr.type = DRAW_OBJECT_TYPE_FONTLIST;
-    objhdr.size = sizeof32(objhdr) + extraBytes;
-    /* this doesn't have a bbox */
-
-    if(NULL == (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, objhdr.size, &status)))
-        return(status);
-
-    memcpy32(pObject, &objhdr, sizeof32(objhdr));
-    } /*block*/
+    status_return(gr_riscdiag_fontlistR_new_alloc(p_gr_riscdiag, allocBytes));
     } /*block*/
 
     {
     const ARRAY_INDEX n_elements = array_elements(p_array_handleR);
+    const ARRAY_INDEX limited_n_elements = MIN(n_elements, 255);
     ARRAY_INDEX i;
-    PC_GR_RISCDIAG_RISCOS_FONTLIST_ENTRY p = array_range(p_array_handleR, GR_RISCDIAG_RISCOS_FONTLIST_ENTRY, 0, n_elements);
     DRAW_DIAG_OFFSET fontListPos = fontListStart + sizeof32(DRAW_OBJECT_HEADER_NO_BBOX);
 
-    for(i = 0; i < n_elements; ++i, ++p)
+    for(i = 0; i < limited_n_elements; ++i)
     {
+        const PC_GR_RISCDIAG_RISCOS_FONTLIST_ENTRY p = array_ptrc(p_array_handleR, GR_RISCDIAG_RISCOS_FONTLIST_ENTRY, i);
         const DRAW_DIAG_OFFSET lenp1 = strlen32p1(p->szHostFontName); /*CH_NULL*/
         const DRAW_DIAG_OFFSET thislen = offsetof32(DRAW_FONTLIST_ELEM, szHostFontName) + lenp1;
         const P_DRAW_FONTLIST_ELEM pFontListElemR = gr_riscdiag_getoffptr(DRAW_FONTLIST_ELEM, p_gr_riscdiag, fontListPos);
 
-        pFontListElemR->fontref8 = (U8) (i + 1);
+        pFontListElemR->fontref8 = (U8) (i + 1); /* font references start at one */
 
         memcpy32(pFontListElemR->szHostFontName, p->szHostFontName, lenp1);
 
@@ -578,24 +589,15 @@ gr_riscdiag_fontlistR_new(
 
 _Check_return_
 static STATUS
-gr_riscdiag_fontlistW_new(
+gr_riscdiag_fontlistW_new_alloc(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _InRef_     PC_ARRAY_HANDLE p_array_handleW)
+    _InVal_     U32 allocBytes)
 {
-    DRAW_DIAG_OFFSET fontListStart = gr_riscdiag_query_offset(p_gr_riscdiag);
-
-    if(0 == array_elements(p_array_handleW))
-        return(STATUS_OK);
-
-    {
-    U32 n = array_elements32(p_array_handleW);
-    U32 extraBytes = sizeof32(DRAW_DS_WINFONTLIST_ELEM) * n;
-    U32 allocBytes = extraBytes;
     STATUS status;
     P_BYTE pObject;
     DRAW_OBJECT_HEADER objhdr;
 
-    zero_struct(objhdr); /* NB bounding box of DS windows font list object must be ignored */
+    /*zero_struct(objhdr);*/ /* NB bounding box of DS windows font list object must be ignored */
 
     objhdr.type = DRAW_OBJECT_TYPE_DS_WINFONTLIST;
     objhdr.size = sizeof32(objhdr) + allocBytes;
@@ -605,23 +607,43 @@ gr_riscdiag_fontlistW_new(
     objhdr.bbox.x1 = (DRAW_COORD) 0x80000000;
     objhdr.bbox.y1 = (DRAW_COORD) 0x80000000;
 
-    if(NULL == (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, objhdr.size, &status)))
-        return(status);
+    if(NULL != (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, objhdr.size, &status)))
+        memcpy32(pObject, &objhdr, sizeof32(objhdr));
 
-    memcpy32(pObject, &objhdr, sizeof32(objhdr));
+    return(status);
+}
+
+_Check_return_
+static STATUS
+gr_riscdiag_fontlistW_new(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _InRef_     PC_ARRAY_HANDLE p_array_handleW)
+{
+    const DRAW_DIAG_OFFSET fontListStart = gr_riscdiag_query_offset(p_gr_riscdiag);
+
+    /* can omit DS windows font list object if no fonts needed */
+    if(0 == array_elements(p_array_handleW))
+        return(STATUS_OK);
+
+    {
+    const U32 n = array_elements32(p_array_handleW);
+    const U32 extraBytes = sizeof32(DRAW_DS_WINFONTLIST_ELEM) * n;
+    const U32 allocBytes = extraBytes;
+
+    status_return(gr_riscdiag_fontlistW_new_alloc(p_gr_riscdiag, allocBytes));
     } /*block*/
 
     {
     const ARRAY_INDEX n_elements = array_elements(p_array_handleW);
     ARRAY_INDEX i;
-    PC_DRAW_DS_WINDOWS_LOGFONT p_draw_ds_windows_logfont = array_range(p_array_handleW, DRAW_DS_WINDOWS_LOGFONT, 0, n_elements);
     DRAW_DIAG_OFFSET fontListPos = fontListStart + sizeof32(DRAW_OBJECT_HEADER);
 
-    for(i = 0; i < n_elements; ++i, ++p_draw_ds_windows_logfont)
+    for(i = 0; i < n_elements; ++i)
     {
+        const PC_DRAW_DS_WINDOWS_LOGFONT p_draw_ds_windows_logfont = array_ptrc(p_array_handleW, DRAW_DS_WINDOWS_LOGFONT, i);
         const P_DRAW_DS_WINFONTLIST_ELEM pFontListElemW = gr_riscdiag_getoffptr(DRAW_DS_WINFONTLIST_ELEM, p_gr_riscdiag, fontListPos);
 
-        pFontListElemW->draw_font_ref16 = (DRAW_FONT_REF16) (i + 1);
+        pFontListElemW->draw_font_ref16 = (DRAW_FONT_REF16) (i + 1); /* font references start at one */
 
         pFontListElemW->draw_ds_windows_logfont = *p_draw_ds_windows_logfont;
 

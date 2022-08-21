@@ -26,22 +26,6 @@ host_bleep(void)
     MessageBeep((UINT) -1); /* default system beep */
 }
 
-/* There are no scrap file transfers on Windows so files are always safe */
-
-_Check_return_
-extern BOOL
-host_xfer_loaded_file_is_safe(void)
-{
-    return(TRUE);
-}
-
-_Check_return_
-extern BOOL
-host_xfer_saved_file_is_safe(void)
-{
-    return(TRUE);
-}
-
 _Check_return_
 extern U32
 host_rand_between(
@@ -53,9 +37,17 @@ host_rand_between(
     if(hi > lo)
     {
         const U32 n = hi - lo;
+        const U32 mask = n - 1;
         const U32 r = (U32) rand();
         assert(n < (U32) RAND_MAX);
-        res = lo + (r % n);
+        if(0 == (n & mask))
+        {   /* n is a power of two - saves a divide */
+            res = lo + (r & mask);
+        }
+        else
+        {
+            res = lo + (r % n);
+        }
     }
 
     return(res);

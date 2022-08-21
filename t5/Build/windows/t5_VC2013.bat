@@ -18,6 +18,6 @@ set FIREWORKZ_ROOT=N:\fireworkz\%FIREWORKZ_TBT%
 @rem display environment set for development
 set
 
-title %FIREWORKZ_ROOT%
-
 cd /D %FIREWORKZ_ROOT%
+
+title %FIREWORKZ_TBT% - Fireworkz

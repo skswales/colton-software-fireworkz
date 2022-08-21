@@ -1,0 +1,3 @@
+| !Run for a Fireworkz Pro database directory
+Set Alias$Database_Filer_Run Filer_Run <Obey$Dir>.database_f|MUnset Alias$Database_Filer_Run
+Database_Filer_Run

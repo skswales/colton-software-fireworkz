@@ -34,6 +34,12 @@ dialog_col2_group;
 #endif
 
 extern const DIALOG_CONTROL
+defbutton_close;
+
+extern const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_close_data;
+
+extern const DIALOG_CONTROL
 defbutton_ok;
 
 extern const DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -48,23 +54,35 @@ stdbutton_cancel;
 extern const DIALOG_CONTROL_DATA_PUSHBUTTON
 stdbutton_cancel_data;
 
+extern const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_apply_data;
+
+extern const DIALOG_CONTROL_DATA_PUSHBUTTONR
+defbutton_apply_persist_data;
+
+extern const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_create_data;
+
+extern const DIALOG_CONTROL_DATA_PUSHBUTTON
+defbutton_save_data;
+
 extern const DIALOG_CONTROL_DATA_LIST_TEXT
 stdlisttext_data;
 
 extern const DIALOG_CONTROL_DATA_LIST_TEXT
-stdlisttext_data_vsc;
+stdlisttext_data_vscroll;
 
 extern const DIALOG_CONTROL_DATA_LIST_TEXT
 stdlisttext_data_dd;
 
 extern const DIALOG_CONTROL_DATA_LIST_TEXT
-stdlisttext_data_dd_vsc;
+stdlisttext_data_dd_vscroll;
 
 extern const DIALOG_CONTROL_DATA_RADIOPICTURE
 line_style_data[5];
 
 #if RISCOS
-#define LINE_STYLE_H (48 * 2 * PIXITS_PER_RISCOS + (4 + 2) * 2 * PIXITS_PER_RISCOS)
+#define LINE_STYLE_H (48 * 2 * PIXITS_PER_RISCOS + (4 + 2 + 8) * 2 * PIXITS_PER_RISCOS)
 #define LINE_STYLE_V ( 9 * 4 * PIXITS_PER_RISCOS)
 #elif WINDOWS
 #define LINE_STYLE_H (32 * PIXITS_PER_WDU_H)
@@ -102,10 +120,10 @@ line_style_data[5];
 extern const DIALOG_CONTROL
 rgb_group_inner;
 
-extern const DIALOG_CONTROL
+extern const DIALOG_CONTROL /*TEXTLABEL*/
 rgb_tx[3];
 
-extern const DIALOG_CONTROL
+extern const DIALOG_CONTROL /*BUMP_S32*/
 rgb_bump[3];
 
 extern const DIALOG_CONTROL
@@ -123,7 +141,7 @@ rgb_transparent;
 extern const DIALOG_CONTROL_DATA_GROUPBOX
 rgb_group_data;
 
-extern const DIALOG_CONTROL_DATA_STATICTEXT
+extern const DIALOG_CONTROL_DATA_TEXTLABEL
 rgb_tx_data[3];
 #define RGB_TX_IX_R 0
 #define RGB_TX_IX_G 1
@@ -158,8 +176,8 @@ measurement_points_data;
 #if RISCOS
 #define RGB_TX_H      (28 * PIXITS_PER_RISCOS)
 
-#define RGB_PATCHES_H (28 * PIXITS_PER_RISCOS)
-#define RGB_PATCHES_V (28 * PIXITS_PER_RISCOS)
+#define RGB_PATCHES_H (32 * PIXITS_PER_RISCOS) /* was 28 */
+#define RGB_PATCHES_V (32 * PIXITS_PER_RISCOS)
 #elif WINDOWS
 #define RGB_TX_H      (8 * PIXITS_PER_WDU_H)
 
@@ -207,7 +225,14 @@ dialog_cmd_process_dbox_setup(
     _OutRef_    P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd_process_dbox,
     _In_reads_opt_(n_ctls) P_DIALOG_CTL_CREATE p_ctl_create,
     _InVal_     U32 n_ctls,
-    _InVal_     STATUS help_topic_resource_id);
+    _InVal_     STATUS caption_resource_id);
+
+extern void
+dialog_cmd_process_dbox_setup_ui_text(
+    _OutRef_    P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd_process_dbox,
+    _In_reads_opt_(n_ctls) P_DIALOG_CTL_CREATE p_ctl_create,
+    _InVal_     U32 n_ctls,
+    _InRef_     PC_UI_TEXT p_ui_text);
 
 extern void
 ui_dlg_ctl_enable(
@@ -336,7 +361,8 @@ ui_dlg_ctl_set_default(
 _Check_return_
 extern S32
 ui_dlg_s32_from_f64(
-    _InVal_     F64 f64_in,
+    _InVal_     F64 f64,
+    _InVal_     F64 f64_multiplier,
     _InVal_     S32 s32_min,
     _InVal_     S32 s32_max);
 

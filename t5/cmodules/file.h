@@ -144,7 +144,6 @@ typedef struct FILE_EDATA_RISCOS
     file_open_mode openmode;
     T5_FILETYPE t5_filetype;
     int file_date_loword, file_date_hiword; /* UTC representation of file modified date/time */
-    TCHARZ filename[BUF_MAX_PATHSTRING];
 }
 FILE_EDATA_RISCOS;
 #elif WINDOWS
@@ -188,6 +187,8 @@ typedef struct _FILE_HANDLE
     U32                     bufbytes;           /* amount of buffer valid (bufbytes - count) */
     filepos_t               bufpos;             /* file position of buffer */
     BOOL                    written_to;
+
+    PTSTR                   tstr_filename;      /* copy of opened filename */
 
 #if RISCOS
     FILE_EDATA_RISCOS       riscos;
@@ -332,6 +333,17 @@ extern STATUS
 file_error_set(
     _In_opt_z_  PCTSTR error);
 
+#if WINDOWS
+
+_Check_return_
+extern STATUS
+file_error_set_from_last_error(
+    _InVal_     DWORD dwLastError,
+    _InVal_     STATUS status_message,
+    _In_z_      PCTSTR filename);
+
+#endif /* WINDOWS */
+
 extern void
 file_finalise(void);
 
@@ -379,7 +391,8 @@ _Check_return_
 extern STATUS
 file_pad(
     _InoutRef_opt_ FILE_HANDLE file_handle,
-    _InVal_     U32 alignpower);
+    _InVal_     U32 alignpower,
+    _InVal_     U8 pad_byte);
 
 _Check_return_
 extern STATUS
@@ -582,6 +595,9 @@ file_get_resources_path(void);
 extern PCTSTR
 file_get_search_path(void);
 
+extern PCTSTR
+file_get_templates_path(void);
+
 _Check_return_
 extern BOOL
 file_is_dir(
@@ -637,6 +653,12 @@ extern STATUS
 file_objinfo_name(
     _InRef_     PC_FILE_OBJINFO oip,
     _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/);
+
+_Check_return_
+_Ret_z_
+extern PCTSTR /* low-lifetime*/
+file_objinfo_name_ll(
+    _InRef_     PC_FILE_OBJINFO oip);
 
 _Check_return_
 extern U32
@@ -801,10 +823,11 @@ can only say for sure about EOF if read last buffer in and not yet at end
 #define file_postooff(fileposp) ( \
     (S32) ((fileposp)->lo) )
 
-#define FILE_PATH_STANDARD  0
-#define FILE_PATH_NETWORK   1
-#define FILE_PATH_SYSTEM    2
-#define FILE_PATH_RESOURCES 3
+#define FILE_PATH_USER      0U  /* User data */
+#define FILE_PATH_ADMIN     1U  /* Admin data */
+#define FILE_PATH_RESOURCES 2U  /* Program resources */
+#define FILE_PATH_TEMPLATES 3U  /* Program templates */
+#define FILE_PATH_N_PATHS   4U
 
 #define RESOURCE_NUM_FILE 31
 
@@ -820,28 +843,33 @@ error definition
 #define FILE_ERR_ERROR_RQ           FILE_ERR(1)
 #define FILE_ERR_CANTREAD           FILE_ERR(2)
 #define FILE_ERR_CANTWRITE          FILE_ERR(3)
-#define FILE_ERR_HANDLEUNBUFFERED   FILE_ERR(4)
+#define FILE_ERR_CANTREADREQUESTED  FILE_ERR(4)
 #define FILE_ERR_INVALIDPOSITION    FILE_ERR(5)
-#define FILE_ERR_DEVICEFULL         FILE_ERR(6)
-#define FILE_ERR_ACCESSDENIED       FILE_ERR(7)
-#define FILE_ERR_TOOMANYFILES       FILE_ERR(8)
-#define FILE_ERR_CANTCLOSE          FILE_ERR(9)
+#define FILE_ERR_HANDLEUNBUFFERED   FILE_ERR(6)
+#define FILE_ERR_spare_7            FILE_ERR(7)
+#define FILE_ERR_DEVICEFULL         FILE_ERR(8)
+#define FILE_ERR_CANTCLOSE          FILE_ERR(9) /* not on RISC OS, or on Windows */
 #define FILE_ERR_BADHANDLE          FILE_ERR(10)
-#define FILE_ERR_BADNAME            FILE_ERR(11)
+#define FILE_ERR_BADNAME            FILE_ERR(11) /* not on RISC OS */
 #define FILE_ERR_NOTFOUND           FILE_ERR(12)
 #define FILE_ERR_ISAFILE            FILE_ERR(13)
 #define FILE_ERR_ISADIR             FILE_ERR(14)
 #define FILE_ERR_NAMETOOLONG        FILE_ERR(15)
-#define FILE_ERR_LOCKED             FILE_ERR(16)
-#define FILE_ERR_NO_ACCESS_READ     FILE_ERR(17)
-#define FILE_ERR_RENAME_FAILED      FILE_ERR(18) /* not on RISCOS */
-#define FILE_ERR_NO_ACCESS_WRITE    FILE_ERR(19)
+#define FILE_ERR_LOCKED             FILE_ERR(16) /* not on Windows */
+#define FILE_ERR_NO_ACCESS_READ     FILE_ERR(17) /* not on Windows */
+#define FILE_ERR_NO_ACCESS_WRITE    FILE_ERR(18)
+#define FILE_ERR_ISAZIP             FILE_ERR(19)
 #define FILE_ERR_NOTADIR            FILE_ERR(20)
-#define FILE_ERR_REMOVE_FAILED      FILE_ERR(21) /* not on RISCOS */
-#define FILE_ERR_MKDIR_FAILED       FILE_ERR(22) /* not on RISCOS */
-#define FILE_ERR_CANTREADREQUESTED  FILE_ERR(23)
-#define FILE_ERR_BADTIMESTAMP       FILE_ERR(24)
-#define FILE_ERR_ISAZIP             FILE_ERR(25)
+#define FILE_ERR_BADTIMESTAMP       FILE_ERR(21)
+
+#define FILE_ERR_FRAG_WHEN_OPENING      FILE_ERR(108)
+#define FILE_ERR_FRAG_WHEN_CLOSING      FILE_ERR(109)
+#define FILE_ERR_FRAG_WHILE_READING     FILE_ERR(110)
+#define FILE_ERR_FRAG_WHILE_WRITING     FILE_ERR(111)
+#define FILE_ERR_FRAG_WHILE_SEEKING     FILE_ERR(112)
+#define FILE_ERR_FRAG_RENAMING          FILE_ERR(114)
+#define FILE_ERR_FRAG_REMOVING          FILE_ERR(115)
+#define FILE_ERR_FRAG_CREATE_DIRECTORY  FILE_ERR(116)
 
 #endif /* __file_h */
 

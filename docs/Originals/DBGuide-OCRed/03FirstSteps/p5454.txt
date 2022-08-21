@@ -1,0 +1,11 @@
+﻿
+Summary
+You should now be able to create a database using Recordz,
+display it in various ways, sort the records into a particular order
+and search for a subset of records.
+The following chapters go through each of the steps in more detail,
+covering all the options available. In addition, they look at some of
+the other features of the system, such as applying styles to your
+data and merging separate databases together.
+54 Recordz
+

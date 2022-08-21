@@ -8,21 +8,26 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_mails/ob_mails.h
+#
+# MAILSHOT_MSG_DIALOG_SELECT_xxx
 #
 1:Document
-2:ug09/ug9_setting_up_your_letter.htm
+2:ug/ug09_setting_up_your_letter.htm
 3:Row
 4:Blank fields
 5:Shuffle
 6:Start
 7:End
 #
+# MAILSHOT_MSG_DIALOG_INSERT_FIELD_xxx
+#
 10:Insert mailshot field
-11:ug09/ug9_setting_up_your_letter.htm
+11:ug/ug09_setting_up_your_letter.htm
 12:Field number
 #
-# errors
+# errors: keep consistent with ob_mails/ob_mails.h
+# see MAILSHOT_ERR(n)
 #
 e0:No document selected for mailshot
 e2:No documents with tables for mailshot

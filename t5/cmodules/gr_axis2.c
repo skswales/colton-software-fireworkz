@@ -38,14 +38,14 @@ splitlognum(
 
     /* watch for logs going awry */
     if(mantissa < LOG_SIG_EPS)
-        /* keep rounded down */
-        mantissa = 0.0;
+    {   /* keep rounded down */
+        return(0.0);
+    }
 
-    else if((1.0 - mantissa) < LOG_SIG_EPS)
-        /* round up */
-    {
-        mantissa = 0.0;
+    if((1.0 - mantissa) < LOG_SIG_EPS)
+    {   /* round up */
         *exponent += 1.0;
+        return(0.0);
     }
 
     return(mantissa);
@@ -367,7 +367,7 @@ gr_axis_form_value_lin(
     const F64 mantissa = splitlognum(log10_major, &exponent);
     const int decimals = (int) floor(exponent);
     UNREFERENCED_LOCAL_VARIABLE(mantissa);
-    p_axis->major.bits.decimals = (decimals < 0) ? -decimals : 0;
+    p_axis->major.bits.decimals = UBF_PACK((decimals < 0) ? (unsigned int) -decimals : 0U);
     } /*block*/
 
     /* Round down the current.min to a multiple of the major value towards -infinity */
@@ -449,7 +449,7 @@ gr_axis_form_value(
 /* helper routine needed to stop MSC8.00 compiler barfing on release */
 
 _Check_return_
-static BOOL
+static inline BOOL
 gr_lin_major_test(
     _InVal_     F64 mantissa,
     _InVal_     F64 cutoff,

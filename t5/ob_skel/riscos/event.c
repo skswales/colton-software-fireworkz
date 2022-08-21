@@ -18,6 +18,8 @@
  *
  */
 
+#if RISCOS
+
 static
 struct EVENT_STATICS
 {
@@ -276,7 +278,7 @@ event_process_Menu_Selection(
     }
     while(p_event_data->words[i++] != -1);
 
-    trace_1(TRACE_RISCOS_HOST, TEXT("| ADJUST = %s"), report_boolstring(event_.recreatepending));
+    trace_1(TRACE_RISCOS_HOST, TEXT("| Adjust = %s"), report_boolstring(event_.recreatepending));
 
     /* allow access to initial click cache during handler */
     event_.menu_click.valid = TRUE;
@@ -301,7 +303,7 @@ event_process_Menu_Selection(
         /* Twas an ADJ-hit on a menu item.
          * The menu should be recreated.
         */
-        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by ADJUST - recreating menu"));
+        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by Adjust - recreating menu"));
         event_.menu_click.valid = TRUE;
         event_.recreation = 1;
 
@@ -314,7 +316,7 @@ event_process_Menu_Selection(
     else if(submenu_fake_hit)
         trace_0(TRACE_RISCOS_HOST, TEXT("menu hit was faked"));
     else
-        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by SELECT - let tree collapse"));
+        trace_0(TRACE_RISCOS_HOST, TEXT("menu hit caused by Select - let tree collapse"));
 #endif
 
     /* initial click cache no longer valid */
@@ -356,7 +358,7 @@ event_do_process(
 
         if(p_event_data->mouse_click.buttons & Wimp_MouseButtonMenu)
         {
-            /* don't use MENU to get menus for registered to icons; fake work area */
+            /* don't use the Menu button to get menus for registered to icons; fake work area */
             if(!p && (window_handle == ICONBAR_WIMP_W))
                 p = winx_menu_get_handle(window_handle, icon_handle);
 
@@ -546,5 +548,7 @@ event_return_real_menu(
 
     return((abstract_menu_handle) p_menuhdr);
 }
+
+#endif /* RISCOS */
 
 /* end of event.c */

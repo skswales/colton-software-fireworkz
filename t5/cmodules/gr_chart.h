@@ -18,32 +18,34 @@
 chart object 'names'
 */
 
-#define GR_CHART_OBJNAME_ANON       0
+typedef enum GR_CHART_OBJID_NAME
+{
+    GR_CHART_OBJNAME_ANON       = 0,
 
-#define GR_CHART_OBJNAME_CHART      1 /* only one of these per chart */
-#define GR_CHART_OBJNAME_PLOTAREA   2 /* now 0..2 */
-#define GR_CHART_OBJNAME_LEGEND     3 /* only one of these per chart */
+    GR_CHART_OBJNAME_CHART      = 1, /* only one of these per chart */
+    GR_CHART_OBJNAME_PLOTAREA   = 2, /* now 0..2 */
+    GR_CHART_OBJNAME_LEGEND     = 3, /* only one of these per chart */
 
-#define GR_CHART_OBJNAME_TEXT       4 /* as many as you want */
+    GR_CHART_OBJNAME_TEXT       = 4, /* as many as you want */
 
-#define GR_CHART_OBJNAME_SERIES     5
-#define GR_CHART_OBJNAME_POINT      6
+    GR_CHART_OBJNAME_SERIES     = 5,
+    GR_CHART_OBJNAME_POINT      = 6,
 
-#define GR_CHART_OBJNAME_DROPSERIES 7
-#define GR_CHART_OBJNAME_DROPPOINT  8
+    GR_CHART_OBJNAME_DROPSERIES = 7,
+    GR_CHART_OBJNAME_DROPPOINT  = 8,
 
-#define GR_CHART_OBJNAME_AXIS       9 /* 0..5 */
-#define GR_CHART_OBJNAME_AXISGRID   10
-#define GR_CHART_OBJNAME_AXISTICK   11
+    GR_CHART_OBJNAME_AXIS       = 9, /* 0..5 */
+    GR_CHART_OBJNAME_AXISGRID   = 10,
+    GR_CHART_OBJNAME_AXISTICK   = 11,
 
-#define GR_CHART_OBJNAME_BESTFITSER 12
+    GR_CHART_OBJNAME_BESTFITSER = 12,
 
-#define GR_CHART_OBJNAME_LEGDSERIES 13
-#define GR_CHART_OBJNAME_LEGDPOINT  14
+    GR_CHART_OBJNAME_LEGDSERIES = 13,
+    GR_CHART_OBJNAME_LEGDPOINT  = 14
 
-/* if it gets more than 15 here, increase below bitfield size */
-
-#define GR_CHART_OBJID_NAME int
+    /* if it gets more than 15 here, increase the bitfield size in GR_CHART_OBJID */
+}
+GR_CHART_OBJID_NAME;
 
 /*
 this is a 32-bit id
@@ -66,7 +68,7 @@ GR_CHART_OBJID, * P_GR_CHART_OBJID; typedef const GR_CHART_OBJID * PC_GR_CHART_O
 
 #define GR_CHART_OBJID_INIT(name, has_no, has_subno, no, subno) \
 { \
-    (name), 0, (has_no), (has_subno), (no), (subno) \
+    UBF_PACK(name), 0, (has_no), (has_subno), (no), (subno) \
 }
 
 #define GR_CHART_OBJID_INIT_NAME(name) \

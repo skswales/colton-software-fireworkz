@@ -17,10 +17,6 @@
 
 #include "cmodules/mathxcpx.h"
 
-#define complex_unity complex_Re_one /* transitional */
-#define complex_get_imag complex_imag
-#define complex_get_real complex_real
-
 #include "cmodules/mathxtra.h"
 
 #ifndef                   __mathnums_h
@@ -227,7 +223,7 @@ complex_check_arg_string(
     _InRef_     P_SS_DATA p_ss_data_in)
 {
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     *z = complex_zero;
@@ -361,12 +357,12 @@ complex_result_complex(
     if(CH_NULL != imag_suffix_char)
     {
 #if defined(COMPLEX_STRING)
-        complex_result_reals_string(p_ss_data, complex_get_real(z), complex_get_imag(z), imag_suffix_char);
+        complex_result_reals_string(p_ss_data, complex_real(z), complex_imag(z), imag_suffix_char);
 #endif
         return;
     }
 
-    complex_result_reals(p_ss_data, complex_get_real(z), complex_get_imag(z));
+    complex_result_reals(p_ss_data, complex_real(z), complex_imag(z));
 }
 
 /******************************************************************************
@@ -403,7 +399,7 @@ complex_result_complex_string(
     _InRef_     PC_COMPLEX z,
     _InVal_     U8 imag_suffix_char)
 {
-    complex_result_reals_string(p_ss_data, complex_get_real(z), complex_get_imag(z), imag_suffix_char);
+    complex_result_reals_string(p_ss_data, complex_real(z), complex_imag(z), imag_suffix_char);
 }
 
 #endif /* UNUSED */
@@ -434,7 +430,7 @@ complex_result_reals_string(
     F64 imag_abs = fabs(imag_part);
     U8 imag_sign_char = imag_negative ? CH_MINUS_SIGN__BASIC : CH_PLUS_SIGN;
     UCHARZ fp_buffer[64];
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     /* always output real part first if it is non-zero */
@@ -650,7 +646,7 @@ PROC_EXEC_PROTO(c_c_conjugate)
     if(status_fail(complex_check_arg(p_ss_data_res, &z, &imag_suffix_char, args[0])))
         return;
 
-    complex_conjugate(&conjugate_result, &z);
+    complex_conjugate(&z, &conjugate_result);
 
     complex_result_complex(p_ss_data_res, &conjugate_result, imag_suffix_char);
 }
@@ -672,7 +668,7 @@ PROC_EXEC_PROTO(c_c_real)
     if(status_fail(complex_check_arg(p_ss_data_res, &z, &imag_suffix_char, args[0])))
         return;
 
-    ss_data_set_real(p_ss_data_res, complex_get_real(&z));
+    ss_data_set_real(p_ss_data_res, complex_real(&z));
 }
 
 /******************************************************************************
@@ -692,7 +688,7 @@ PROC_EXEC_PROTO(c_c_imaginary)
     if(status_fail(complex_check_arg(p_ss_data_res, &z, &imag_suffix_char, args[0])))
         return;
 
-    ss_data_set_real(p_ss_data_res, complex_get_imag(&z));
+    ss_data_set_real(p_ss_data_res, complex_imag(&z));
 }
 
 /******************************************************************************
@@ -771,12 +767,12 @@ PROC_EXEC_PROTO(c_c_round)
     else
         ss_data_set_integer(&decimal_places, 2);
 
-    ss_data_set_real(&number, complex_get_real(&z));
+    ss_data_set_real(&number, complex_real(&z));
     round_common(local_args, 2, p_ss_data_res, RPN_FNV_ROUND);
     assert(ss_data_is_real(p_ss_data_res));
     round_result_real = ss_data_get_real(p_ss_data_res);
 
-    ss_data_set_real(&number, complex_get_imag(&z));
+    ss_data_set_real(&number, complex_imag(&z));
     round_common(local_args, 2, p_ss_data_res, RPN_FNV_ROUND);
     assert(ss_data_is_real(p_ss_data_res));
     round_result_imag = ss_data_get_real(p_ss_data_res);

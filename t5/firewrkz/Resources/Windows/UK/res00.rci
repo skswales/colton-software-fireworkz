@@ -1,0 +1,827 @@
+﻿//
+// RCGen created for Object 0
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_skel (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_skel/resource/resource.h
+//
+// NB Keep Style Guide in mind
+// Use Select / Adjust for mouse buttons on RISC OS
+// Use Title Caps on Windows for:
+// Title Bar / Action Buttons
+//
+// Ampersand signifies the 'hot-key' character
+//
+// Version number and date
+// When changing for release, remember other files
+// The definitive list of files is in common.mf_mid
+//1:2.xx.yy
+//1:2.xx
+	0x1,	L"2.30"
+	0x2,	L"10 Nov 2020"
+//
+	0x3,	L"© 1992-2020 Colton Software"
+	0x40D,	L"The product uses the following components"
+	0x407,	L"Drawfile rendering DLLs © 1994-2005 Dial Solutions"
+//
+// Dialogue box buttons
+//
+	0x5A,	L"&Add"
+	0x5B,	L"&Create"
+	0x5C,	L"&Remove"
+	0x5D,	L"&Insert"
+	0x5E,	L"&Help"
+	0x5F,	L"&Apply"
+	0x60,	L"&New"
+	0x61,	L"&Change"
+	0x62,	L"&Delete"
+	0x63,	L"&Replace"
+//
+// Window title bar text
+//
+	0x64,	L"Untitled"
+//r101:%P: %W
+	0x65,	L"%L - %P"
+	0x408,	L"%L [Read-only] - %P"
+//r1032:%P: %W [Read-only]
+	0x66,	L" *"
+	0x67,	L" at %g%%"
+//
+	0x68,	L"%"
+	0x69,	L"&Embed"
+	0x6B,	L"Selection"
+	0x6C,	L"Close"
+	0x6D,	L"Cancel"
+	0x6E,	L"OK"
+	0x76,	L"&Save"
+//r119:&Discard
+	0x77,	L"&Don't save"
+//
+// Long names for function keys
+// 
+//r120:PRINT
+	0x79,	L"F1"
+	0x7A,	L"F2"
+	0x7B,	L"F3"
+	0x7C,	L"F4"
+	0x7D,	L"F5"
+	0x7E,	L"F6"
+	0x7F,	L"F7"
+	0x80,	L"F8"
+	0x81,	L"F9"
+	0x82,	L"F10"
+	0x83,	L"F11"
+	0x84,	L"F12"
+//r133:Insert
+	0x85,	L"Ins"
+	0x86,	L"Tab"
+	0x87,	L"End"
+//r136:‼
+	0x88,	L"Left"
+//r137:‼
+	0x89,	L"Right"
+//r138:‼
+	0x8A,	L"Down"
+//r139:‼
+	0x8B,	L"Up"
+//r140:Delete
+	0x8C,	L"Del"
+	0x8D,	L"Home"
+	0x8E,	L"Backspace"
+	0x8F,	L"Return"
+//
+	0x96,	L"Shift+"
+	0x97,	L"Ctrl+"
+	0x98,	L"Ctrl+Shift+"
+//
+//r153:‼
+	0x99,	L"Shift+"
+//r154:^
+	0x9A,	L"Ctrl+"
+//r155:^‼
+	0x9B,	L"Ctrl+Shift+"
+//
+//r160:Page Down
+	0xA0,	L"Page Down"
+//r161:Page Up
+	0xA1,	L"Page Up"
+//
+// MSG_DIALOG_INSERT_FIELD_xxx
+//
+//r168:Insert time
+	0xA8,	L"Insert Time"
+// spare 169
+//r170:Insert date
+	0xAA,	L"Insert Date"
+// spare 1032
+//r171:Insert page number
+	0xAB,	L"Insert Page Number"
+	0xAC,	L"&Live"
+// spare 173
+//r174:Click Select to insert date. Click Adjust to insert time. Inserts either when this document was last changed or today
+	0xAE,	L"Click to insert date. Ctrl-click to insert time. Inserts either when this document was last changed or today"
+//
+	0x40E,	L"Y page number"
+	0x40F,	L"X page number"
+//
+	0x414,	L"Current date"
+	0x415,	L"File modification date"
+	0x416,	L"Current time"
+	0x417,	L"File modification time"
+//
+// MSG_DIALOG_VIEW_xxx
+//
+	0xFA,	L"Scale"
+//
+// %ge values corresponding to buttons in the View scale dialogue box
+// These numeric values are read by the button processing code
+//
+	0xFB,	L"50%"
+	0xFC,	L"75%"
+	0xFD,	L"100%"
+	0xFE,	L"150%"
+	0xFF,	L"200%"
+//
+//r256:View control
+	0x100,	L"View Control"
+//r257:Scale view
+	0x101,	L"Scale View"
+	0x4D7,	L"ug/ug02_fireworkz_basics.htm#accessing_the_view_control_dialogue_box"
+	0x4D8,	L"ug/ug02_fireworkz_basics.htm#accessing_the_view_scale_dialogue_box"
+//r702:Click Select for View control dialogue box. Click Adjust for View scale dialogue box
+	0x2BE,	L"Click for View Control dialogue box. Ctrl-click for View Scale dialogue box"
+//
+	0x102,	L"C&olumn border"
+	0x103,	L"&Row border"
+	0x106,	L"&Top ruler"
+	0x107,	L"&Side ruler"
+//r264:&New view
+	0x108,	L"&New View"
+	0x109,	L"Display area"
+	0x10A,	L"&Full"
+	0x10B,	L"&Printable area"
+	0x10C,	L"&Work area"
+	0x10D,	L"F&it Horz"
+	0x10E,	L"Fit Vert"
+	0x110,	L"&Horizontal split"
+	0x111,	L"V&ertical split"
+//
+//r290:Select template
+	0x122,	L"Select Template"
+	0x123,	L"ug/ug03_creating_a_new_document.htm"
+//r292:New document
+	0x124,	L"New Document"
+//
+	0x41F,	L"Copy template"
+	0x420,	L"This template is a set of files"
+	0x421,	L"contained in a directory."
+	0x422,	L"You must drag this directory"
+	0x423,	L"to a directory display in order"
+	0x424,	L"to make a copy of it."
+//
+// MSG_DIALOG_PRINT_xxx
+//
+//r306 - On RISC OS, the dialogue box title is the printer name
+	0x132,	L"Print"
+	0x12C,	L"ug/ug11_printing.htm#basic_print_options"
+	0x12D,	L"&Copies"
+	0x418,	L"Page range"
+	0x12E,	L"&All"
+	0x12F,	L"Pa&ges"
+	0x40B,	L"from"
+	0x40C,	L"to"
+	0x130,	L"&Two up"
+	0x131,	L"ug/ug11_printing.htm#extra_print_options"
+//r307:No RISC OS printer installed
+	0x133,	L"No Printer Selected"
+	0x141,	L"Revers&e"
+	0x142,	L"Co&llated"
+	0x143,	L"Acros&s"
+	0x144,	L"Pa&mphlet"
+	0x157,	L"&Extra"
+	0x158,	L"Sides"
+	0x159,	L"&Both"
+	0x15A,	L"Od&d"
+	0x15B,	L"Eve&n"
+	0x15C,	L"Draft print"
+	0x3E8,	L"Mailshot"
+//
+// MSG_DIALOG_PAPER_SCALE_xxx
+//
+//r1020:Print scale
+	0x3FC,	L"Print Scale"
+//r1021:Fit one page
+	0x3FD,	L"Fit One Page"
+//r1022:Fit one page across
+	0x3FE,	L"Fit One Page Across"
+	0x3FF,	L"Scale"
+	0x400,	L"100%"
+	0x401,	L"ug/ug11_printing.htm#print_scale"
+//
+// MSG_DIALOG_ES_STYLE_xxx
+//
+	0xB4,	L"Name"
+	0xB5,	L"Shortcut"
+//
+	0x135,	L"Paragraph"
+	0x136,	L"St&yle"
+	0x137,	L"&Text"
+	0x138,	L"&Colours"
+	0x139,	L"&Ruler"
+	0x13A,	L"&Spacing"
+	0x13B,	L"&Number"
+	0x13C,	L"Ro&w"
+	0x13D,	L"Column"
+//
+	0x134,	L"&Justify"
+	0x15E,	L"&Vertical"
+	0x15F,	L"Cell"
+//
+	0x149,	L"New object"
+//
+	0x15D,	L"Formats"
+	0x13E,	L"Number"
+	0x13F,	L"Date"
+	0x3E9,	L"Date and time"
+	0x140,	L"Text"
+	0x3EA,	L"Text and error"
+//
+	0x145,	L"&Typeface"
+	0x146,	L"&Height"
+	0x147,	L"&Width"
+	0x148,	L"points"
+//
+	0x14A,	L"&Paragraph"
+	0x14B,	L"&Left"
+	0x14C,	L"&Right"
+	0x14D,	L"&Tabs"
+	0x14E,	L"&Width"
+	0x14F,	L"Heading"
+//
+	0x150,	L"cm"
+	0x151,	L"mm"
+	0x152,	L"in"
+	0x1DE,	L"pt"
+//
+	0x160,	L"Protection"
+//
+// UI of left/centre/right/decimal tabs
+// NB the spaces following L/C/R/D are intentional
+//
+	0x153,	L"L "
+	0x154,	L"C "
+	0x155,	L"R "
+	0x156,	L"D "
+//
+	0x1C2,	L"Height"
+	0x1C3,	L"Fixed height"
+	0x1C4,	L"Unbreakable"
+	0x1C5,	L"Heading"
+//
+// MSG_DIALOG_PAPER_xxx
+//
+	0x1C7,	L"Paper"
+	0x1C8,	L"ug/ug07_page_design.htm#setting_paper_size"
+	0x1C9,	L"Paper"
+	0x1CA,	L"Paper margin"
+	0x1CB,	L"Binding"
+	0x1CC,	L"&Name"
+	0x1CD,	L"&Height"
+	0x1CE,	L"&Width"
+	0x1CF,	L"&Top"
+	0x1D0,	L"&Bottom"
+	0x1D1,	L"&Left"
+	0x1D2,	L"&Right"
+	0x1D3,	L"Margin"
+	0x1D4,	L"&Alternate"
+//r469:Read pr&inter
+	0x1D5,	L"Read Pr&inter"
+	0x1D6,	L"None"
+	0x1D7,	L"From printer"
+	0x1D8,	L"&Portrait"
+	0x1D9,	L"Lan&dscape"
+	0x1DA,	L"C&olumn margin"
+	0x1DB,	L"Row margin"
+	0x1DC,	L"W&idth"
+	0x1DD,	L"&Faint grid"
+	0x1E0,	L"Grid"
+//
+// MSG_DIALOG_RGB_xxx
+//
+	0x1EA,	L"Colour"
+	0x1EB,	L"Background"
+	0x1EC,	L"R"
+	0x1ED,	L"G"
+	0x1EE,	L"B"
+	0x1EF,	L"Transparent"
+	0x404,	L"Colour..."
+//
+// MSG_DIALOG_ES_PS_xxx
+//
+	0x1F4,	L"&Above paragraph"
+	0x1F5,	L"&Below paragraph"
+	0x1F6,	L"Bet&ween lines"
+	0x1F7,	L"&Paragraph spacing"
+	0x1F8,	L"&Line spacing"
+//
+	0x1FE,	L"Borders"
+	0x1FF,	L"Grid"
+	0x200,	L"Left"
+	0x201,	L"Top"
+	0x202,	L"Right"
+	0x203,	L"Bottom"
+//
+	0x204,	L"Margins"
+	0x205,	L"Line"
+//
+	0x20C,	L"Page number"
+//
+// MSG_DIALOG_SETC_xxx
+//
+	0x226,	L"Case"
+	0x227,	L"ug/ug04_editing_text.htm#upper_and_lower_case"
+//
+// MSG_PRINT_WARNING_xxx
+//
+	0x258,	L"Warning"
+	0x259,	L"Printable area larger than printer driver settings;"
+	0x25A,	L"click Read Printer in Paper dialogue box for best settings."
+	0x25B,	L"Print"
+//
+// MSG_STATUS_xxx
+//
+	0x6A,	L"Sorting"
+	0x6F,	L"Converting"
+	0x70,	L"Loading"
+	0x71,	L"Inserting"
+	0x72,	L"Saving"
+	0x73,	L"Reformatting document"
+	0x74,	L"Pasting"
+	0x75,	L"Cutting"
+//
+	0x11B,	L"Column %d, width"
+	0x11C,	L"Row %d, height"
+//
+	0x2BC,	L"Page %d"
+	0x2BD,	L"Page x %d, y %d"
+	0x3F8,	L"Create a new document"
+	0x3F9,	L"Open an existing document"
+//r703:Click Select to apply left justification to the selection or at caret
+	0x2BF,	L"Apply left justification to the selection or at caret"
+//r704:Click Select to apply centre justification to the selection or at caret
+	0x2C0,	L"Apply centre justification to the selection or at caret"
+//r705:Click Select to apply right justification to the selection or at caret
+	0x2C1,	L"Apply right justification to the selection or at caret"
+//r706:Click Select to apply full justification to the selection or at caret
+	0x2C2,	L"Apply full justification to the selection or at caret"
+//r707:Click Select for Style dialogue box, where you can apply a style to the selection, and also change, create and delete styles
+	0x2C3,	L"Apply, change, create and delete styles"
+//r708:Click Select for Effects dialogue box, where you can apply various effects to the selection or at the caret
+	0x2C4,	L"Apply effects to the selection or at caret"
+//r709:Click Select to apply bold to the selection or at caret
+	0x2C5,	L"Apply bold to the selection or at caret"
+//r710:Click Select to apply italic to the selection or at caret
+	0x2C6,	L"Apply italic to the selection or at caret"
+//r1012:Click Select to apply underline to the selection or at caret
+	0x3F4,	L"Apply underline to the selection or at caret"
+//r1018:Click Select to apply superscript to the selection or at caret
+	0x3FA,	L"Apply superscript to the selection or at caret"
+//r1019:Click Select to apply subscript to the selection or at caret
+	0x3FB,	L"Apply subscript to the selection or at caret"
+	0x2C7,	L"Use left tab stop; click in ruler to place new tab"
+	0x2C8,	L"Use centre tab stop; click in ruler to place new tab"
+	0x2C9,	L"Use right tab stop; click in ruler to place new tab"
+	0x2CA,	L"Use decimal tab stop; click in ruler to place new tab"
+//r715:Click Select to select all if no selection is present, otherwise to clear the selection
+	0x2CB,	L"Clear selection/select document"
+//r716:Click Select to copy the selection to the clipboard
+	0x2CC,	L"Copy the selection to the clipboard"
+//r717:Click Select to cut the selection to the clipboard. Click Adjust to delete the selection without altering the clipboard
+	0x2CD,	L"Click to cut the selection to the clipboard. Ctrl-click to delete the selection without altering the clipboard"
+//r718:Click Select to paste from the clipboard
+	0x2CE,	L"Paste from the clipboard"
+	0x2CF,	L"This is the status line"
+//r720:Click Select for Save dialogue box. Click Adjust to save document immediately
+	0x2D0,	L"Save document"
+//r721:Click Select for Print dialogue box. Click Adjust for Print Extra dialogue box
+	0x2D1,	L"Print document"
+//r1013:Click Select to apply box effects to the selection
+	0x3F5,	L"Apply box effects to the selection"
+//r1014:Click Select to insert a table at the caret
+	0x3F6,	L"Insert table at caret"
+//r1015:Click Select for Search dialogue box. Click Adjust to find the next match
+	0x3F7,	L"Click for Search dialogue box. Ctrl-click to find the next match"
+//r1030:Click Select for Sort dialogue box
+	0x406,	L"Sort dialogue box"
+//r1051:Click Select to spell check. Click Adjust for dictionary management
+	0x41B,	L"Click to spell check. Ctrl-Click for dictionary management"
+	0x41C,	L"Thesaurus"
+	0x2D2,	L"Can't delete as selection spans more than one row"
+	0x2D6,	L"%d words counted"
+	0x2DA,	L"Not found"
+	0x2DB,	L"%d replaced"
+//r732:Drag to resize. Double-click for auto-width. Drag Adjust to reposition
+	0x2DC,	L"Drag to resize. Double-click for auto-width. Ctrl+drag to reposition"
+	0x2DD,	L"Drag to resize. Double-click for auto-height"
+//r734:Drag Adjust to reposition
+	0x2DE,	L"Ctrl+drag to reposition"
+	0x2E2,	L"Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%"
+	0x2E3,	L"Picture at (%s,%s) mm : w=%s h=%s mm %d%%,%d%%"
+	0x2E4,	L"Picture at (%s,%s) in : w=%s h=%s in %d%%,%d%%"
+	0x1DF,	L"Picture at (%s,%s) pt : w=%s h=%s pt %d%%,%d%%"
+	0x2E5,	L"No action: column too wide"
+	0x2E6,	L"%d word counted"
+	0x2E7,	L"Selection contains %d regions"
+	0x402,	L"Selection contains %d region"
+//
+// MSG_NUMFORM_xxx
+//
+// generic 1,2,3 decimal places numforms
+// first set with optional trailing zeros
+	0x2E8,	L"0.#"
+	0x2E9,	L"0.##"
+	0x2EA,	L"0.###"
+// second set with forced trailing zeros
+	0x2EB,	L"0.0"
+	0x2EC,	L"0.00"
+	0x2ED,	L"0.000"
+//
+// MSG_DIALOG_BACKDROP_xxx
+//
+	0x2EE,	L"Backdrop"
+	0x2EF,	L"First page"
+	0x2F0,	L"All pages"
+	0x2F1,	L"Print"
+	0x2F2,	L"Scale to fit"
+	0x2F3,	L"Origin"
+	0x2F4,	L"As is"
+	0x2F5,	L"Work area"
+	0x2F6,	L"Printable area"
+	0x2F7,	L"Paper"
+	0x2F8,	L"Embed"
+	0x2F9,	L"Delete"
+	0x2FA,	L"ug/ug10_pictures.htm#backdrop_pictures"
+//
+// Close / Quit dialogue box messages
+//
+	0x316,	L"One or more documents in the group have been modified"
+//r791:Save group
+	0x317,	L"Save Group"
+//r792:Discard group
+	0x318,	L"Discard Group"
+//
+//r800:There is %d document edited but not saved in %s.
+//r801:There are %d documents edited but not saved in %s.
+//r799:Do you want to save the changes before exiting
+//r802:or exit now, discarding all unsaved changes?
+	0x320,	L"There is %d document edited but not saved in %s."
+	0x321,	L"There are %d documents edited but not saved in %s."
+	0x31F,	L"Do you want to save the changes before exiting"
+	0x322,	L"or exit now, discarding all unsaved changes?"
+//
+	0x323,	L"Do you want to save edited file"
+	0x324,	L"'%s'?"
+//
+	0x325,	L"This document is part of a linked group"
+//r806:Close group
+	0x326,	L"Close Group"
+//r807:Close doc
+	0x327,	L"Close Doc"
+//
+// MSG_DIALOG_INFO_xxx
+//
+//w810:
+//w811:
+	0x32C,	L"Version"
+	0x32D,	L"User"
+	0x32E,	L"Reg. no."
+	0x330,	L"About Fireworkz"
+//r810:Name
+//r811:
+//r812:Version
+//r813:User
+//r814:Reg. no.
+//r816:About this program
+//
+	0x331,	L"Fireworkz Online..."
+	0x332,	L"http://groups.google.com/group/colton-software-fireworkz"
+//r817:Web...
+//r818:http://www.croftnuisk.co.uk/coltsoft/fireworkz
+//
+// Table style name
+	0x337,	L".Table%d"
+// BaseTable style name
+	0x338,	L"BaseTable"
+//
+	0x33E,	L"Page break"
+	0x33F,	L"Page number"
+//
+// MSG_DIALOG_SAVE
+//
+	0x359,	L"Save as"
+//858:to-do.htm
+	0x41E,	L"Save selection"
+//
+// MSG_DIALOG_SAVE_AS_TEMPLATE
+//
+//r859:Save as template
+	0x35B,	L"Save as Template"
+	0x35C,	L"ug/ug03_creating_a_new_document.htm#saving_a_template"
+//r861:Template
+	0x35D,	L"template.fwt"
+	0x35E,	L"&All"
+	0x35F,	L"All styl&es"
+	0x360,	L"&Style"
+//
+// MSG_DIALOG_SAVE_AS_FOREIGN
+//
+//r260:Export as
+	0x104,	L"Export as"
+	0x105,	L"Other"
+	0x425,	L"Drawfile"
+//
+// MSG_DIALOG_SAVE_PICTURE
+//
+//r865:Save picture
+	0x361,	L"Save Picture"
+//866:to-do.htm
+	0x363,	L"Picture"
+//
+// MSG_DIALOG_SEARCH_xxx
+//
+	0x366,	L"Search"
+	0x367,	L"&Find"
+	0x368,	L"&Replace with"
+	0x369,	L"&Ignore capitals"
+	0x36A,	L"Co&py capitals"
+//r875:From &caret
+	0x36B,	L"From &Caret"
+//r876:From &top
+	0x36C,	L"From &Top"
+	0x36D,	L"&Whole words"
+	0x36E,	L"From Text &Cursor"
+	0x36F,	L"ug/ug04_editing_text.htm#find_and_replace"
+//
+	0x370,	L"Found"
+	0x371,	L"ug/ug04_editing_text.htm#find_and_replace"
+	0x372,	L"&Next"
+	0x373,	L"Replace &all"
+//
+	0x37A,	L"<Field %d>"
+//
+// MSG_DIALOG_GOTO_xxx
+//
+//r891:Go to
+	0x37B,	L"Go To"
+	0x37C,	L"Cell, row or column"
+//r893:Go to
+	0x37D,	L"Go To"
+	0x37E,	L"sg/sg01_entering_and_editing_numerical_data.htm#moving_from_cell_to_cell"
+//
+// MSG_DIALOG_CHOICES_xxx
+//
+	0x38D,	L"Choices"
+	0x38E,	L"ug/ug02_fireworkz_basics.htm#choices_dialogue_box"
+	0x38F,	L"Auto save"
+	0x390,	L"(mins)"
+	0x391,	L"Display pictures"
+	0x392,	L"Embed inserted files"
+	0x393,	L"Status line"
+	0x398,	L"Toolbar"
+	0x394,	L"Measurement"
+	0x395,	L"Kerning"
+	0x396,	L"Allow dithering"
+	0x399,	L"Load text using delimiter"
+	0x397,	L"Load text as paragraphs"
+	0x39A,	L"Update styles from choices"
+//
+// Style Region editor
+//
+	0x3A2,	L"&In"
+	0x3A3,	L"&Out"
+	0x3A5,	L"No more regions"
+	0x3A6,	L"Region"
+//
+// Style text conversion
+//
+	0x3AA,	L" on"
+	0x3AB,	L" off"
+//
+// SF_JUSTIFY_LEFT/CENTRE/RIGHT/BOTH
+//
+	0x3AD,	L" left"
+	0x3AE,	L" centre"
+	0x3AF,	L" right"
+	0x3B0,	L" both"
+	0x3B1,	L" %s"
+//
+	0x3B3,	L"Region: %s"
+//
+// NB order matches style bit numbering order
+//
+	0x3B4,	L"Style"
+	0x3B5,	L"Key shortcut"
+	0x3B6,	L"[Handle]"
+	0x3B7,	L"[Special]"
+	0x3B8,	L"Col width"
+	0x3B9,	L"Col name"
+	0x3BA,	L"Row height"
+	0x3BB,	L"Row height fixed"
+	0x3BC,	L"Row unbreakable"
+	0x3BD,	L"Row name"
+	0x3BE,	L"Left margin"
+	0x3BF,	L"Right margin"
+	0x3C0,	L"Para margin"
+	0x3C1,	L"Tabs"
+	0x3C2,	L"Background colour"
+	0x3C3,	L"Space before para"
+	0x3C4,	L"Space after para"
+	0x3C5,	L"Line space"
+	0x3C6,	L"Justify"
+	0x3C7,	L"Justify"
+	0x3C8,	L"New object"
+	0x3C9,	L"Number format"
+	0x3CA,	L"Date format"
+	0x3CB,	L"Text format"
+	0x3CC,	L"Border colour"
+	0x3CD,	L"Border"
+	0x3CE,	L"Grid left colour"
+	0x3CF,	L"Grid top colour"
+	0x3D0,	L"Grid right colour"
+	0x3D1,	L"Grid bottom colour"
+	0x3D2,	L"Grid left"
+	0x3D3,	L"Grid top"
+	0x3D4,	L"Grid right"
+	0x3D5,	L"Grid bottom"
+	0x3D6,	L"Protect"
+	0x3D7,	L"Typeface"
+	0x3D8,	L"Font width"
+	0x3D9,	L"Font height"
+	0x3DA,	L"Underline"
+	0x3DB,	L"Bold"
+	0x3DC,	L"Italic"
+	0x3DD,	L"Superscript"
+	0x3DE,	L"Subscript"
+	0x3DF,	L"Font colour"
+//
+// SF_JUSTIFY_V_TOP/BOTTOM
+//
+	0x3E3,	L" top"
+	0x3E4,	L" bottom"
+//
+// MSG_CUSTOM_LIBRARY - directory that is searched for custom function sheets
+//
+	0x3E5,	L"Library"
+//
+// MSG_DIALOG_SORT_xxx
+//
+	0x3E6,	L"Sort"
+	0x413,	L"sg/sg01_entering_and_editing_numerical_data.htm#sorting_your_data"
+	0x3E7,	L"Descending order"
+//
+//r1011:This is the %s application.|MClick Select to create a new document.
+//
+// MSG_OBJECT_TYPE_xxx
+//
+	0x410,	L"Text"
+	0x411,	L"* DB data"
+	0x412,	L"Number"
+//
+// Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
+//
+// e0:Not an error
+// e1:ERROR_RQ
+	0x8002,	L"General failure"
+	0x8003,	L"Memory full"
+	0x8005,	L"Run-time check failed"
+//
+// Skeleton errors: keep consistent with ob_skel/resource/resource.h ERR_xxx
+//
+	0x8030,	L"Error (%d:%d) not found"
+	0x8031,	L"Message (%d:%d) not found"
+//
+	0x8033,	L"Feature unavailable"
+	0x8034,	L"Too many windows"
+	0x8035,	L"Unable to start %s: Config file not found"
+	0x8036,	L"Unable to start %s: %s when loading Config file"
+//re55:Font Manager: Error in setting current font
+//re56:Font Manager: Error in setting colour
+//re57:Font Manager: Error in Font_Paint
+//re58:Font Manager: Error in Font_Find
+	0x803B,	L"Printer driver not loaded"
+//
+	0x803C,	L"Can't do this whilst recording a command"
+	0x803F,	L"File %s is already loaded"
+//re64:Sprites file not found
+	0x8041,	L"File %s has the same leafname as an already loaded file"
+	0x8042,	L"Cannot load this type of file"
+	0x8043,	L"End of file reached before construct end"
+	0x8044,	L"Font not found in FontMap"
+//re69:RISC OS font name not found
+//
+	0x8046,	L"Template file not found"
+//re71:No fonts available
+	0x8047,	L"No TrueType fonts available"
+	0x8048,	L"Style name not found in style list"
+	0x8049,	L"Style in use in document"
+//re74:Print stream won't open
+	0x804A,	L"Failed to open print device"
+	0x804B,	L"Print failed %s"
+	0x804C,	L"Already printing"
+//re77:No printer driver loaded
+	0x804E,	L"Bad find string"
+//re79:No thesaurus loaded
+//
+	0x8050,	L"No data found in file"
+//re81:Unable to locate Stubs file
+	0x8053,	L"No alternate command for this toolbar button"
+	0x8054,	L"This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format"
+	0x8055,	L"Unable to load referenced picture %s because file not found; reference retained"
+	0x8056,	L"Area is protected"
+	0x8057,	L"Supporting file %s not found"
+	0x8058,	L"Style name already in use"
+	0x8059,	L"Style name can not be blank"
+//
+	0x805A,	L"%s has missing mandatory arg %d, type %d"
+	0x805B,	L"Can't edit notes which are scaled to fit"
+	0x805C,	L"Unable to display help file"
+	0x805D,	L"No browser available to access URL"
+	0x805E,	L"Failed to load Dial Solutions Drawfile DLL"
+	0x805F,	L"%s has bad raw arg %u, size %u, sep '%c'"
+	0x8060,	L"Unable to locate compound file template for save"
+//re97:To save, drag the icon to a directory display
+	0x8061,	L"Full path name must be specified for save"
+//re98:Can't transfer file (Scrap directory not set)
+	0x8063,	L"Invalid date/time"
+//
+	0x8064,	L"Module not found"
+	0x8065,	L"%s has bad arg %u, value %u, limit %u"
+	0x8066,	L"Document has too many columns to export in this format"
+	0x8067,	L"Document has too many rows to export in this format"
+//
+	0x8078,	L"Read only"
+	0x8079,	L"Destination specified for templates already exists"
+	0x807A,	L"Can't import as '%s' because a file of that name already exists"
+	0x807B,	L"Can't delete the text body column - use make blank to clear data"
+	0x807C,	L"This file is too small to be correct"
+	0x807D,	L"This file is too large to be loaded into memory"
+	0x807E,	L"Bad UTF-8 encoding"
+	0x807F,	L"UCS-4 NONCHARACTER"
+	0x8080,	L"Clipboard data is too large to be loaded into memory"
+//
+//re202:Not a module file
+//re203:Bad chunk within module file
+//re204:Module too new for this application
+//re205:Object loader failed to read entire block
+//re206:Stub binding failed
+//re207:Stub entry referenced that is no longer available
+//re208:Attempt to relocate unknown instruction sequence
+//
+	0x80D3,	L"Print cancelled - unknown error from printing system"
+	0x80D4,	L"Print cancelled"
+	0x80D5,	L"Print cancelled"
+	0x80D6,	L"Not enough disk space currently available for spooling"
+	0x80D7,	L"Not enough memory is available for spooling"
+//
+	0x80D8,	L"Native compound file write needs filename"
+//
+// RISC OS specific messages looked up by name
+//
+// Only needed in translated message files as application has en-GB default strings
+//
+//rsignal0:Unknown
+//rsignal1:Abnormal termination
+//rsignal2:Arithmetic exception
+//rsignal3:Illegal instruction
+//rsignal4:Escape
+//rsignal5:Address exception
+//rsignal6:Termination request
+//rsignal7:Stack overflow
+//rsignal10:OS error
+//
+//rerror_fatal:%s has gone wrong (%s). Click Continue to quit, losing data.
+//rerror_serious:%s has gone wrong (%s). Click Continue to try to resume or Cancel to quit, losing data.
+//
+// end of msg (ob_skel)
+END
+//
+// end of RCGen created string table

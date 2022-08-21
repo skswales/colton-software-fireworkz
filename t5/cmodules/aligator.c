@@ -83,7 +83,7 @@ al_ptr_realloc_us(
 
 #endif /* ALIGATOR_USE_ALLOC */
 
-#define ALLOC_SIZE_LIMIT 0x01000000U /* only for debugging */
+#define ALLOC_SIZE_LIMIT 0x40000000U /* only for debugging checks, not actually trying to limit allocation here */
 
 /*
 auto managed arrays
@@ -1294,7 +1294,7 @@ _al_array_extend_by(
 
     if(0 == *p_array_handle)
     {
-        assert(!IS_PTR_NONE(p_array_init_block));
+        assert(PTR_NOT_NONE(p_array_init_block));
         return(_al_array_alloc(p_array_handle, add_elements, p_array_init_block, p_status CODE_ANALYSIS_ONLY_ARG(bytesof_elem_x_num_elem)));
     }
 
@@ -1685,7 +1685,7 @@ realloc_array(
 #if WINDOWS
         if(ALLOC_USE_GLOBAL_ALLOC == p_array_block->parms.use_alloc)
         {
-            CHECKING_ONLY(if(IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
+            CHECKING_ONLY(if(PTR_IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
 
             if(P_DATA_NONE == p_array_block->p_data)
             {
@@ -1730,7 +1730,7 @@ realloc_array(
         }
         else if(ALLOC_USE_DS_ALLOC == p_array_block->parms.use_alloc)
         {
-            CHECKING_ONLY(if(IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
+            CHECKING_ONLY(if(PTR_IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
 
             if(P_DATA_NONE == p_array_block->p_data)
                 p_new_array = _dsapplib_ptr_alloc(n_bytes, &status);
@@ -1740,7 +1740,7 @@ realloc_array(
         else /* if(ALLOC_USE_ALLOC == p_array_block->parms.use_alloc) */
 #endif /* WINDOWS */
         {
-            CHECKING_ONLY(if(IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
+            CHECKING_ONLY(if(PTR_IS_BAD_POINTER(p_array_block->p_data)) p_array_block->p_data = P_BYTE_NONE); /* might be reusing debug mutilated one so restore sanity for clarity */
 
             if(P_DATA_NONE == p_array_block->p_data)
                 p_new_array = al_ptr_alloc_us(n_bytes, &status);
@@ -1852,7 +1852,7 @@ tell_full_event_clients_client_phase(
         assert(array_handle_is_valid(&h_full_clients));
         p_full_event_client = array_ptr_no_checks(&h_full_clients, FULL_EVENT_CLIENT, next_client);
         assert(p_full_event_client);
-        it_freed = (*p_full_event_client->proc) (bytes_needed - freed);
+        it_freed = (* p_full_event_client->proc) (bytes_needed - freed);
 
         trace_3(TRACE_MODULE_ALLOC, TEXT("******* called full event client ") U32_TFMT TEXT(" to release: ") U32_TFMT TEXT(" bytes, ") S32_TFMT TEXT(" bytes freed"), next_client, bytes_needed, it_freed);
 

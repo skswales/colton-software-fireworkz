@@ -179,7 +179,7 @@ virtual_row_table_set(
 {
     STATUS status = STATUS_OK;
 
-    trace_2(TRACE_OUT | TRACE_ANY, TEXT("virtual_row_table_set(docno=") DOCNO_TFMT TEXT(", vrt=%s)"), docno_from_p_docu(p_docu), report_boolstring(new_vrt));
+    trace_2(TRACE_APP_FORMAT, TEXT("virtual_row_table_set(docno=") DOCNO_TFMT TEXT(", vrt=%s)"), docno_from_p_docu(p_docu), report_boolstring(new_vrt));
 
     if((BOOL) p_docu->flags.virtual_row_table != new_vrt)
     {
@@ -257,11 +257,11 @@ format_below_row(
 
     if(p_docu->flags.null_event_rowtab_format_started)
     {   /* already running - null event will pick up this new format_start_row value */
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") - prev format_start_row ") ROW_TFMT TEXT(" - *** null_events already running"), docno_from_p_docu(p_docu), row, prev_format_start_row);
+        trace_3(TRACE_APP_FORMAT, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") - prev format_start_row ") ROW_TFMT TEXT(" - *** null_events already running"), docno_from_p_docu(p_docu), row, prev_format_start_row);
     }
     else
     {
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") - prev format_start_row ") ROW_TFMT TEXT(" - *** null_events_start()"), docno_from_p_docu(p_docu), row, prev_format_start_row);
+        trace_3(TRACE_APP_FORMAT, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") - prev format_start_row ") ROW_TFMT TEXT(" - *** null_events_start()"), docno_from_p_docu(p_docu), row, prev_format_start_row);
     }
     } /*block*/
 #endif /* TRACE_ALLOWED */
@@ -278,7 +278,7 @@ format_below_row(
     {
         SKEL_RECT skel_rect;
 
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") visible"), docno_from_p_docu(p_docu), row);
+        trace_2(TRACE_APP_FORMAT, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") visible"), docno_from_p_docu(p_docu), row);
 
         {
         ROW_ENTRY row_entry;
@@ -305,7 +305,7 @@ format_below_row(
     }
     else
     {
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") %s"), docno_from_p_docu(p_docu), row, (row == 0) ? TEXT(" ALL") : TEXT(" invisible"));
+        trace_3(TRACE_APP_FORMAT, TEXT("format_below_row(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") %s"), docno_from_p_docu(p_docu), row, (row == 0) ? TEXT(" ALL") : TEXT(" invisible"));
 
         view_update_all(p_docu, UPDATE_PANE_CELLS_AREA);
         view_update_all(p_docu, UPDATE_PANE_MARGIN_ROW);
@@ -807,7 +807,7 @@ ensure_formatted_upto_row__virtual_row_table(
 
         p_docu->format_start_row = rows + 1; /* <<< SKS surely this should be rows + 1 (was row + 1) */
 
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("ensure_formatted_upto_row__virtual_row_table(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") - format_start_row := ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
+        trace_3(TRACE_APP_FORMAT, TEXT("ensure_formatted_upto_row__virtual_row_table(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") - format_start_row := ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
     }
 }
 
@@ -1046,7 +1046,7 @@ row_entries_from_row__virtual_row_table(
 
     if(row >= p_docu->format_start_row)
     {
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("row_entries_from_row__virtual_row_table(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") >= format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
+        trace_3(TRACE_APP_FORMAT, TEXT("row_entries_from_row__virtual_row_table(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") >= format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
         ensure_formatted_upto_row__virtual_row_table(p_docu, row);
     }
 
@@ -1095,7 +1095,7 @@ row_entries_from_row__normal_row_table(
 
     if(row >= p_docu->format_start_row)
     {
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("row_entries_from_row__normal_row_table(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") >= format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
+        trace_3(TRACE_APP_FORMAT, TEXT("row_entries_from_row__normal_row_table(docno=") DOCNO_TFMT TEXT(", row=") ROW_TFMT TEXT(") >= format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
         ensure_formatted_upto_row__normal_row_table(p_docu, row); /* <<< SKS for p_rowtab[1] to be valid this would have to be row + 1 */
     }
 
@@ -1298,7 +1298,7 @@ T5_MSG_PROTO(static, rowtab_event_null, P_NULL_EVENT_BLOCK p_null_event_block)
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
-    trace_3(TRACE_OUT | TRACE_ANY /*TRACE_APP_FORMAT*/, TEXT("null_event_rowtab_format(docno=") DOCNO_TFMT TEXT(") - null_event: n_rows: ") ROW_TFMT TEXT(", format_start_row: ") ROW_TFMT, docno_from_p_docu(p_docu), n_rows(p_docu), p_docu->format_start_row);
+    trace_3(TRACE_APP_FORMAT, TEXT("null_event_rowtab_format(docno=") DOCNO_TFMT TEXT(") - null_event: n_rows: ") ROW_TFMT TEXT(", format_start_row: ") ROW_TFMT, docno_from_p_docu(p_docu), n_rows(p_docu), p_docu->format_start_row);
 
 #if RISCOS
     /* if we ran out last (or some other) time, see if we've got some memory to run in now */
@@ -1337,12 +1337,12 @@ T5_MSG_PROTO(static, rowtab_event_null, P_NULL_EVENT_BLOCK p_null_event_block)
             if(p_docu->flags.null_event_rowtab_format_started)
             {
                 p_docu->flags.null_event_rowtab_format_started = FALSE;
-                trace_1(TRACE_OUT | TRACE_ANY, TEXT("null_event_rowtab_format(docno=") DOCNO_TFMT TEXT(") - reformat ended - *** null_events_stop()"), docno_from_p_docu(p_docu));
+                trace_1(TRACE_APP_FORMAT, TEXT("null_event_rowtab_format(docno=") DOCNO_TFMT TEXT(") - reformat ended - *** null_events_stop()"), docno_from_p_docu(p_docu));
                 null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_rowtab_format, ROWTAB_NULL_CLIENT_HANDLE);
             }
             else
             {
-                trace_1(TRACE_OUT | TRACE_ANY, TEXT("null_event_rowtab_format(docno=") DOCNO_TFMT TEXT(") - reformat ended - *** null_events ALREADY STOPPED"), docno_from_p_docu(p_docu));
+                trace_1(TRACE_APP_FORMAT, TEXT("null_event_rowtab_format(docno=") DOCNO_TFMT TEXT(") - reformat ended - *** null_events ALREADY STOPPED"), docno_from_p_docu(p_docu));
             }
             break;
         }
@@ -1525,7 +1525,7 @@ sk_form_msg_close2(
     if(p_docu->flags.null_event_rowtab_format_started)
     {
         p_docu->flags.null_event_rowtab_format_started = FALSE;
-        trace_1(TRACE_OUT | TRACE_ANY, TEXT("sk_form_msg_close2(docno=") DOCNO_TFMT TEXT(") - *** null_events_stop()"), docno_from_p_docu(p_docu));
+        trace_1(TRACE_APP_FORMAT, TEXT("sk_form_msg_close2(docno=") DOCNO_TFMT TEXT(") - *** null_events_stop()"), docno_from_p_docu(p_docu));
         null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_rowtab_format, ROWTAB_NULL_CLIENT_HANDLE);
     }
 

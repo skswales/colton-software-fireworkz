@@ -1738,7 +1738,7 @@ ruler_scale_and_figures(
 
 #if RISCOS
     {
-    const PIXIT pixits_per_riscos_dy = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.dy;
+    const PIXIT pixits_per_riscos_dy = PIXITS_PER_RISCOS << p_redraw_context->host_xform.riscos.YEigFactor;
     _kernel_swi_regs rs;
     rs.r[0] = host_font_redraw;
     rs.r[1] = '0';
@@ -1775,8 +1775,8 @@ ruler_scale_and_figures(
     } /*block*/
 
     { /* convert to dpi-independent pixits */ /* DPI-aware */
-    SIZE PixelsPerInch;
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+    GDI_SIZE PixelsPerInch;
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
     two_digits_width = idiv_ceil_u(two_digits_width * PIXITS_PER_INCH, PixelsPerInch.cx);
     digits_height    = idiv_ceil_u(digits_height    * PIXITS_PER_INCH, PixelsPerInch.cy);

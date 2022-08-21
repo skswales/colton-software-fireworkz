@@ -1,0 +1,7 @@
+From http://kappa.me.uk/download.htm
+
+"These are the files that can be downloaded from this site.
+They include software of various sorts and also miscellaneous files that I have put up for all sorts of reasons.
+
+All software is released under the modified BSD licences, even if this is not stated in the older files.
+This means that you can do what you like with it, but do not blame me if anything goes wrong."

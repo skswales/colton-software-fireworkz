@@ -176,9 +176,6 @@ decompiler_stack_dispose(void)
 *
 * decompile current symbol
 *
-* --out--
-* length of string
-*
 ******************************************************************************/
 
 _Check_return_
@@ -189,7 +186,7 @@ decode_data_slr(
     _InVal_     EV_DOCNO ev_docno)
 {
     UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
-    U32 len = ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, p_ev_slr);
+    const U32 len = ev_dec_slr_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, p_ev_slr);
     return(quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(ustr_buf), len));
 }
 
@@ -201,7 +198,7 @@ decode_data_range(
     _InVal_     EV_DOCNO ev_docno)
 {
     UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
-    U32 len = ev_dec_range_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, p_ev_range);
+    const U32 len = ev_dec_range_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), ev_docno, p_ev_range);
     return(quick_ublock_uchars_add(p_quick_ublock, uchars_bptr(ustr_buf), len));
 }
 
@@ -212,8 +209,8 @@ decode_data_name(
     _InRef_     PC_SS_DATA p_ss_data,
     _InVal_     EV_DOCNO ev_docno)
 {
-    ARRAY_INDEX name_num = name_def_from_handle(p_ss_data->arg.h_name);
     STATUS status = STATUS_OK;
+    const ARRAY_INDEX name_num = name_def_from_handle(p_ss_data->arg.h_name);
 
     if(name_num >= 0)
     {
@@ -237,26 +234,22 @@ _Check_return_
 static STATUS
 decode_data(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    P_SS_DATA p_ss_data,
+    _InRef_     PC_SS_DATA p_ss_data,
     _InVal_     EV_DOCNO ev_docno)
 {
-
     switch(ss_data_get_data_id(p_ss_data))
     {
-    default:
+    default: default_unhandled();
 #if CHECKING
-        default_unhandled();
-        /*FALLTHRU*/
     case DATA_ID_REAL:
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
-    case DATA_ID_STRING:
-    case DATA_ID_ARRAY:
     case DATA_ID_DATE:
+    case DATA_ID_STRING:
     case DATA_ID_BLANK:
     case DATA_ID_ERROR:
+    case DATA_ID_ARRAY:
 #endif
         return(ss_decode_constant(p_quick_ublock, p_ss_data));
 
@@ -484,7 +477,7 @@ dec_rpn_token(
         PC_USTR ustr_fname;
 
         dec_format_space(p_quick_ublock);
-        ustr_fname = func_name(p_decompiler_context->sym_inf.did_num);
+        ustr_fname = func_name(p_decompiler_context->sym_inf.sym_idno);
         assert(ustr_fname);
         status = quick_ublock_func_name_add(p_quick_ublock, ustr_fname);
         if(g_ss_decompiler_options.zero_args_function_parentheses)
@@ -529,14 +522,14 @@ dec_rpn_token(
         {
             EV_HANDLE h_custom;
             ARRAY_INDEX custom_num;
-            P_EV_CUSTOM p_ev_custom;
+            PC_EV_CUSTOM p_ev_custom;
 
             /* read custom id */
             h_custom = *(p_ev_custom_from_ev_cell(p_decompiler_context->rpnstate.p_ev_cell,
                                                   (S32) *(p_decompiler_context->rpnstate.pos + sizeof32(EV_IDNO) + sizeof32(U8))));
             custom_num = custom_def_from_handle(h_custom);
             assert(custom_num >= 0);
-            p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
+            p_ev_custom = array_ptrc(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
             if(ev_slr_docno(&p_ev_custom->owner) != p_decompiler_context->docno)
             {
@@ -546,7 +539,7 @@ dec_rpn_token(
             }
 
             if(status_ok(status))
-                status = quick_ublock_func_name_add(p_quick_ublock, ustr_bptr(p_ev_custom->ustr_custom_id));
+                status = quick_ublock_func_name_add(p_quick_ublock, ustr_bptrc(p_ev_custom->ustr_custom_id));
         }
         else
         {

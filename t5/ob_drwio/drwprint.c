@@ -22,7 +22,59 @@
 
 #include "cmodules/gr_rdia3.h"
 
+static void
+save_as_drawfile_percentage_reflect(
+    _InoutRef_  P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage);
+
+static void
+save_as_drawfile_percentage_initialise(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage,
+    _InVal_     S32 page_count)
+{
+    zero_struct_ptr_fn(p_save_as_drawfile_percentage);
+    p_save_as_drawfile_percentage->process_status.flags.foreground = 1;
+
+    assert(page_count > 0);
+    p_save_as_drawfile_percentage->final_page_count   = MAX(1, page_count);/* page_count should be >0, but lets be paranoid about division by 0 */
+    p_save_as_drawfile_percentage->current_page_count = 0;
+    p_save_as_drawfile_percentage->percent_per_page   = 100 / p_save_as_drawfile_percentage->final_page_count;
+
+    process_status_begin(p_docu, &p_save_as_drawfile_percentage->process_status, PROCESS_STATUS_PERCENT);
+
+    save_as_drawfile_percentage_reflect(p_save_as_drawfile_percentage);
+}
+
+static void
+save_as_drawfile_percentage_finalise(
+    _InoutRef_  P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage)
+{
+    process_status_end(&p_save_as_drawfile_percentage->process_status);
+}
+
+static void
+save_as_drawfile_percentage_page_inc(
+    _InoutRef_  P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage)
+{
+    p_save_as_drawfile_percentage->current_page_count++;
+
+    save_as_drawfile_percentage_reflect(p_save_as_drawfile_percentage);
+}
+
+static void
+save_as_drawfile_percentage_reflect(
+    _InoutRef_  P_PRINTER_PERCENTAGE p_save_as_drawfile_percentage)
+{
+    const S32 percent = (p_save_as_drawfile_percentage->current_page_count * 100) / p_save_as_drawfile_percentage->final_page_count;
+
+    p_save_as_drawfile_percentage->process_status.data.percent.current = percent;
+
+    process_status_reflect(&p_save_as_drawfile_percentage->process_status);
+}
+
 #if WINDOWS && 0
+
+/* SKS notes we could maybe do hybrid using EMR_COMMENT record */
 
 /* metafile equivalent of host_redraw_context_set_host_xform() */
 
@@ -135,9 +187,9 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
     tbm = MAX(margin.top, margin.bottom);
 #endif /* OS */
 
-    zero_struct_ptr(p_redraw_context);
+    zero_struct_ptr_fn(p_redraw_context);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     p_redraw_context->flags.metafile = TRUE;
@@ -170,8 +222,7 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
 
     p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
 
-    p_redraw_context->border_width.x   = p_redraw_context->border_width.y   =     p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
+    p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
 
     metafile_host_redraw_context_set_host_xform(&p_redraw_context->host_xform);
 
@@ -210,7 +261,7 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
         print_area.br.x = p_docu->page_def.size_x - margin_left_from(&p_docu->page_def, page_num_y) - margin_right_from(&p_docu->page_def, page_num_y);
         print_area.br.y = p_docu->page_def.size_y - p_docu->page_def.margin_top - p_docu->page_def.margin_bottom;
 
-        zero_struct(skelevent_redraw);
+        zero_struct_fn(skelevent_redraw);
 
         /*skelevent_redraw.flags = REDRAW_FLAGS_INIT;*/
         skelevent_redraw.flags.show_content = TRUE;
@@ -269,14 +320,14 @@ drawfile_host_redraw_context_set_host_xform(
     p_host_xform->windows.pixels_per_inch.x = 
     p_host_xform->windows.pixels_per_inch.y = 96;
 
-    p_host_xform->windows.d.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.d.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
 
     p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
     p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
 
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.d.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.d.y * p_host_xform->scale.t.y;
+    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
+    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
 #endif /* OS */
 }
 
@@ -349,9 +400,9 @@ save_as_drawfile_one_document_page(
     static const GDI_POINT pixels_per_inch = { 600, 600 }; /* like a typical medium-res printer */
 #endif
 
-    zero_struct_ptr(p_redraw_context);
+    zero_struct_ptr_fn(p_redraw_context);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     p_redraw_context->flags.drawfile = 1;
@@ -382,7 +433,6 @@ save_as_drawfile_one_document_page(
     p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     drawfile_host_redraw_context_set_host_xform(&p_redraw_context->host_xform);
 
@@ -434,7 +484,7 @@ save_as_drawfile_one_document_page(
             print_area.br.x = p_docu->page_def.size_x - margin_left_from(&p_docu->page_def, p_page_entry->page.y) - margin_right_from(&p_docu->page_def, p_page_entry->page.y);
             print_area.br.y = p_docu->page_def.size_y - p_docu->page_def.margin_top  - p_docu->page_def.margin_bottom;
 
-            zero_struct(skelevent_redraw);
+            zero_struct_fn(skelevent_redraw);
 
             /*skelevent_redraw.flags = REDRAW_FLAGS_INIT;*/
             skelevent_redraw.flags.show_content = TRUE;
@@ -491,24 +541,16 @@ save_as_drawfile_one_document_page(
     return(status);
 }
 
-_Check_return_
-static STATUS
-save_as_drawfile_host_print_document_core(
-    _DocuRef_   P_DOCU p_docu,
-    _InRef_     P_PRINT_CTRL p_print_ctrl,
-    P_GR_RISCDIAG p_gr_riscdiag_saving,
-    P_GR_RISCDIAG p_gr_riscdiag_lookup)
+/* find the minimum and maximum (non-blank) pages present */
+
+static void
+save_as_drawfile_host_print_document_set_up_min_max(
+    _InRef_     P_PRINT_CTRL p_print_ctrl)
 {
-    STATUS status = STATUS_OK;
     const ARRAY_INDEX page_count = array_elements(&p_print_ctrl->h_page_list);
-    ARRAY_INDEX page_index, docu_pages_per_printer_page;
-    PRINTER_PERCENTAGE printer_percentage;
+    ARRAY_INDEX page_index;
 
-    docu_pages_per_printer_page = 1; /* probably ... as we don't emulate two up etc. */
-
-    save_as_drawfile_percentage_initialise(p_docu, &printer_percentage, page_count);
-
-    /* find the minimum and maximum (non-blank) pages present */
+    /* statics */
     page_min_x = S32_MAX;
     page_min_y = S32_MAX;
     page_max_x = -1;
@@ -526,18 +568,13 @@ save_as_drawfile_host_print_document_core(
             if(page_max_y < p_page_entry->page.y) page_max_y = p_page_entry->page.y;
         }
     }
+}
 
-    for(page_index = 0; page_index < page_count; page_index += docu_pages_per_printer_page)
-    {
-        status_break(status = save_as_drawfile_one_document_page(p_docu, p_print_ctrl->h_page_list, page_index, p_gr_riscdiag_saving, p_gr_riscdiag_lookup));
-
-        save_as_drawfile_percentage_page_inc(&printer_percentage);
-    }
-
-    save_as_drawfile_percentage_finalise(&printer_percentage);
-
-    status_return(status);
-
+static void
+save_as_drawfile_host_print_document_adjust_options(
+    _InRef_     P_PRINT_CTRL p_print_ctrl,
+    P_GR_RISCDIAG p_gr_riscdiag_saving)
+{
     if(p_gr_riscdiag_saving->dd_options)
     {   /* adjust options for paper size etc. */
         P_BYTE pObject = gr_riscdiag_getoffptr(BYTE, p_gr_riscdiag_saving, p_gr_riscdiag_saving->dd_options);
@@ -557,6 +594,40 @@ save_as_drawfile_host_print_document_core(
 
         memcpy32(pObject, &options, sizeof32(options));
     }
+}
+
+_Check_return_
+static STATUS
+save_as_drawfile_host_print_document_core(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     P_PRINT_CTRL p_print_ctrl,
+    P_GR_RISCDIAG p_gr_riscdiag_saving,
+    P_GR_RISCDIAG p_gr_riscdiag_lookup)
+{
+    STATUS status = STATUS_OK;
+    const ARRAY_INDEX page_count = array_elements(&p_print_ctrl->h_page_list);
+    ARRAY_INDEX page_index, docu_pages_per_printer_page;
+    PRINTER_PERCENTAGE printer_percentage;
+
+    docu_pages_per_printer_page = 1; /* probably ... as we don't emulate two up etc. */
+
+    save_as_drawfile_percentage_initialise(p_docu, &printer_percentage, page_count);
+
+    /* find the minimum and maximum (non-blank) pages present */
+    save_as_drawfile_host_print_document_set_up_min_max(p_print_ctrl);
+
+    for(page_index = 0; page_index < page_count; page_index += docu_pages_per_printer_page)
+    {
+        status_break(status = save_as_drawfile_one_document_page(p_docu, p_print_ctrl->h_page_list, page_index, p_gr_riscdiag_saving, p_gr_riscdiag_lookup));
+
+        save_as_drawfile_percentage_page_inc(&printer_percentage);
+    }
+
+    save_as_drawfile_percentage_finalise(&printer_percentage);
+
+    status_return(status);
+
+    save_as_drawfile_host_print_document_adjust_options(p_print_ctrl, p_gr_riscdiag_saving);
 
     return(status);
 }
@@ -568,7 +639,7 @@ save_as_drawfile_drawfile_initialise(
     _OutRef_    P_P_GR_RISCDIAG p_p_gr_riscdiag_lookup,
     _InVal_     T5_FILETYPE t5_filetype)
 {
-    const PC_SBSTR creator_name = (FILETYPE_T5_DRAW == t5_filetype) ? "FwkzHybrid" : "FwkzExport";
+    const PC_SBSTR creator_name = (FILETYPE_T5_HYBRID_DRAW == t5_filetype) ? "FwkzHybrid" : "FwkzExport";
     STATUS status = STATUS_OK;
 
     *p_p_gr_riscdiag_lookup = NULL; /* well done code analysis! */
@@ -672,7 +743,20 @@ save_as_drawfile_drawfile_finalise(
         /* which will itself set sensible bbox again */
         gr_riscdiag_diagram_end(p_gr_riscdiag_saving);
 
-        status = gr_riscdiag_diagram_save(p_gr_riscdiag_saving, filename, t5_filetype);
+        if(NULL == filename)
+        {
+            /* copy the Draw data and return that to caller (unable to steal this) */
+            ARRAY_HANDLE array_handle = 0;
+
+            status = al_array_add(&array_handle, BYTE, p_gr_riscdiag_saving->draw_diag.length, &array_init_block_u8, p_gr_riscdiag_saving->draw_diag.data);
+
+            if(status_ok(status))
+                status = (STATUS) array_handle;
+        }
+        else
+        {
+            status = gr_riscdiag_diagram_save(p_gr_riscdiag_saving, filename, t5_filetype);
+        }
     }
 
     /* and finally tidy up */
@@ -687,7 +771,7 @@ extern STATUS
 save_as_drawfile_host_print_document(
     _DocuRef_   P_DOCU p_docu,
     P_PRINT_CTRL p_print_ctrl,
-    _In_z_      PCTSTR filename,
+    _In_opt_z_  PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype)
 {
     STATUS status = STATUS_OK;
@@ -698,6 +782,57 @@ save_as_drawfile_host_print_document(
     status = save_as_drawfile_host_print_document_core(p_docu, p_print_ctrl, p_gr_riscdiag_saving, p_gr_riscdiag_lookup);
 
     status = save_as_drawfile_drawfile_finalise(&p_gr_riscdiag_saving, &p_gr_riscdiag_lookup, filename, t5_filetype);
+
+    return(status);
+}
+
+/******************************************************************************
+*
+* draw_io locate Fireworkz document data within Draw data
+*
+******************************************************************************/
+
+_Check_return_
+extern STATUS
+find_fireworkz_data_in_drawfile(
+    _InoutRef_  P_OF_IP_FORMAT p_of_ip_format)
+{
+    STATUS status = STATUS_OK;
+    GR_RISCDIAG gr_riscdiag;
+    DRAW_DIAG_OFFSET sttObject, endObject;
+    P_BYTE pObject;
+    const BOOL recurse = FALSE; /* flat scan good enough for what I want - gets there quickly */
+
+    assert(IP_INPUT_MEM == p_of_ip_format->input.state);
+
+    gr_riscdiag_diagram_setup_from_data(&gr_riscdiag, array_base(p_of_ip_format->input.mem.p_array_handle, BYTE), array_elements32(p_of_ip_format->input.mem.p_array_handle));
+
+    sttObject = gr_riscdiag_normalise_stt(&gr_riscdiag, DRAW_DIAG_OFFSET_FIRST);
+    endObject = gr_riscdiag_normalise_end(&gr_riscdiag, DRAW_DIAG_OFFSET_LAST);
+
+    if(gr_riscdiag_object_first(&gr_riscdiag, &sttObject, &endObject, &pObject, recurse))
+    {
+        do  {
+            switch(*DRAW_OBJHDR(U32, pObject, type))
+            {
+            case DRAW_OBJECT_TYPE_CS_HYBRID:
+                {
+                DRAW_OBJECT_CS_HYBRID draw_object_cs_hybrid;
+
+                memcpy32(&draw_object_cs_hybrid, pObject, sizeof32(draw_object_cs_hybrid));
+
+                if(draw_object_cs_hybrid.data_filetype == FILETYPE_T5_HYBRID_DRAW)
+                    return(sttObject + sizeof32(DRAW_OBJECT_CS_HYBRID));
+
+                break;
+                }
+
+            default:
+                break;
+            }
+        }
+        while(gr_riscdiag_object_next(&gr_riscdiag, &sttObject, &endObject, &pObject, recurse));
+    }
 
     return(status);
 }

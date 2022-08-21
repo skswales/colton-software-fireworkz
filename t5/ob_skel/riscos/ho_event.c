@@ -484,7 +484,7 @@ general_message_TaskInitialise(
         {
             WimpMessage msg;
 
-            zero_struct(msg);
+            zero_struct_fn(msg);
             msg.hdr.size = sizeof32(msg.hdr);
           /*msg.hdr.your_ref = 0;*/ /* fresh msg */
             msg.hdr.action_code = Wimp_MQuit;
@@ -500,7 +500,13 @@ general_message_TaskInitialise(
 }
 
 _Check_return_
-static inline BOOL
+static T5_FILETYPE
+claim_broadcast_file_mutate_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _In_z_      PCTSTR filename);
+
+_Check_return_
+static BOOL
 claim_broadcast_t5_file(
     _InVal_     T5_FILETYPE t5_filetype)
 {
@@ -510,10 +516,15 @@ claim_broadcast_t5_file(
         return(TRUE); /* accept all of the t5 filetypes */
 
     case PRODUCT_ID_FIREWORKZ:
-        if(FILETYPE_T5_RECORDZ == t5_filetype)
-            return(FALSE); /* don't claim Recordz on broadcast (can still drag to icon) */
+        switch(t5_filetype)
+        {
+        case FILETYPE_T5_RECORDZ:
+        case FILETYPE_T5_HYBRID_DRAW:
+            return(FALSE); /* don't claim these on broadcast (can still drag to icon) */
 
-        return(TRUE); /* accept all of the other t5 filetypes */
+        default:
+            return(TRUE); /* accept all of the other t5 filetypes */
+        }
 
     default:
         return(FALSE); /* accept none of the t5 filetypes */
@@ -521,15 +532,17 @@ claim_broadcast_t5_file(
 }
 
 _Check_return_
-static inline T5_FILETYPE
-claim_broadcast_foreign_file_as(
+static T5_FILETYPE
+claim_broadcast_foreign_file_mutate_filetype(
     _InVal_     T5_FILETYPE t5_filetype,
     _In_z_      PCTSTR filename)
 {
-    /* accept any foreign filetype if it is currently set up to use our app */
-    U8Z var_name[BUF_MAX_PATHSTRING];
-    TCHARZ var_value[BUF_MAX_PATHSTRING];
     BOOL claim = FALSE;
+    T5_FILETYPE t_t5_filetype;
+
+    { /* accept any foreign filetype if it is currently set up to use our app */
+    U8Z var_name[32];
+    TCHARZ var_value[BUF_MAX_PATHSTRING];
 
     consume_int(xsnprintf(var_name, elemof32(var_name), "Alias$@RunType_%.3X", t5_filetype));
 
@@ -539,7 +552,8 @@ claim_broadcast_foreign_file_as(
     if(NULL != strstr(var_value, "!Fireworkz.!Run"))
         claim = TRUE;
 
-    reportf(TEXT("%s : %s - claim=%s"), var_name, var_value, report_boolstring(claim));
+    reportf(TEXT("claim_broadcast=%s for %s : %s"), report_boolstring(claim), var_name, var_value);
+    } /*block*/
 
     if(claim)
         return(t5_filetype);
@@ -547,23 +561,54 @@ claim_broadcast_foreign_file_as(
     switch(t5_filetype)
     {
     case FILETYPE_TEXT:
+        /* Might have been Shift-double-clicked or Shift-Filer_Run */
+        /* Pass on these */
+        if(host_shift_pressed())
+            return(FILETYPE_UNDETERMINED);
+        break;
+
     case FILETYPE_DOS:
     case FILETYPE_DATA:
     case FILETYPE_UNTYPED:
-        {
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
-
-        if((FILETYPE_UNDETERMINED != t_t5_filetype) && (t5_filetype != t_t5_filetype)) /* don't recurse if same! */
-            return(claim_broadcast_foreign_file_as(t_t5_filetype, filename));
-
         break;
+
+    default:
+        return(FILETYPE_UNDETERMINED);
+    }
+
+    t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
+
+    if( (FILETYPE_UNDETERMINED == t_t5_filetype) || (t5_filetype == t_t5_filetype) ) /* don't recurse if same! */
+        return(FILETYPE_UNDETERMINED);
+
+    return(claim_broadcast_file_mutate_filetype(t_t5_filetype, filename)); /* have another go */
+}
+
+_Check_return_
+static T5_FILETYPE
+claim_broadcast_file_mutate_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _In_z_      PCTSTR filename)
+{
+    switch(t5_filetype)
+    {
+    case FILETYPE_T5_FIREWORKZ:
+    case FILETYPE_T5_WORDZ:
+    case FILETYPE_T5_RESULTZ:
+    case FILETYPE_T5_RECORDZ:
+    case FILETYPE_T5_HYBRID_DRAW:
+    case FILETYPE_T5_TEMPLATE:
+    case FILETYPE_T5_COMMAND:
+        {
+        if(claim_broadcast_t5_file(t5_filetype))
+            return(t5_filetype);
+
+        return(FILETYPE_UNDETERMINED);
         }
 
     default:
-        break;
+        return(claim_broadcast_foreign_file_mutate_filetype(t5_filetype, filename));
     }
-
-    return(FILETYPE_UNDETERMINED);
 }
 
 static BOOL
@@ -619,35 +664,46 @@ general_message_DataSaveAck(
     /* else error - should have been reported */
 }
 
+_Check_return_ _Ret_z_
+static PCTSTR
+canonicalise_unless_rooted(
+    _Out_writes_z_(elemof_buffer) PTSTR buffer,
+    _InVal_     U32 elemof_buffer,
+    _In_z_      PCTSTR filename)
+{
+    tstr_xstrkpy(buffer, elemof_buffer, filename);
+
+#if 1
+    /* just test for colon - either then on a named filesystem/disc or path (which we leave alone) */
+    if(NULL == strchr(filename, CH_COLON))
+#else
+    if(!file_is_rooted(filename))
+#endif
+    {
+        _kernel_swi_regs rs;
+        rs.r[0] = 37; /* Canonicalise */
+        rs.r[1] = (int) filename;
+        rs.r[2] = (int) buffer;
+        rs.r[3] = 0;
+        rs.r[4] = 0;
+        rs.r[5] = elemof_buffer;
+        _kernel_swi(OS_FSControl, &rs, &rs);
+    }
+
+    return(buffer);
+}
+
 static void
 general_message_DataOpen(
     _InRef_     PC_WimpMessage p_wimp_message)
 {
     /* File double-clicked in directory display */
-    const PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
-    T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
+    TCHARZ buffer[BUF_MAX_PATHSTRING];
+    const PCTSTR filename = canonicalise_unless_rooted(buffer, elemof32(buffer), p_wimp_message->data.data_load.leaf_name);
+    const T5_FILETYPE t5_filetype = claim_broadcast_file_mutate_filetype((T5_FILETYPE) p_wimp_message->data.data_load.file_type, filename);
 
-    switch(t5_filetype)
-    {
-    case FILETYPE_T5_FIREWORKZ:
-    case FILETYPE_T5_WORDZ:
-    case FILETYPE_T5_RESULTZ:
-    case FILETYPE_T5_RECORDZ:
-    case FILETYPE_T5_TEMPLATE:
-    case FILETYPE_T5_COMMAND:
-        if(!claim_broadcast_t5_file(t5_filetype))
-            return;
-
-        break;
-
-    default:
-        t5_filetype = claim_broadcast_foreign_file_as(t5_filetype, filename);
-
-        if(FILETYPE_UNDETERMINED == t5_filetype)
-            return;
-
-        break;
-    }
+    if(FILETYPE_UNDETERMINED == t5_filetype)
+        return;
 
     /* need host_xfer_load_file_setup(m) at top of recognized cases to
      * stop null events in load allowing unacked message bounce thereby
@@ -662,6 +718,7 @@ general_message_DataOpen(
     case FILETYPE_T5_WORDZ:
     case FILETYPE_T5_RESULTZ:
     case FILETYPE_T5_RECORDZ:
+    case FILETYPE_T5_HYBRID_DRAW:
         status_consume(load_this_fireworkz_file_rl(P_DOCU_NONE, filename, FALSE /*fReadOnly*/));
         break;
 
@@ -686,7 +743,8 @@ general_message_PrintTypeOdd(
     _InRef_     PC_WimpMessage p_wimp_message)
 {
     /* printer broadcast to find someone to print this odd filetype */
-    const PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
+    TCHARZ buffer[256];
+    const PCTSTR filename = canonicalise_unless_rooted(buffer, elemof32(buffer), p_wimp_message->data.data_load.leaf_name); /* low-lifetime name */
     const T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
 
     switch(t5_filetype)
@@ -705,6 +763,7 @@ general_message_PrintTypeOdd(
         break;
 
     default:
+    case FILETYPE_T5_HYBRID_DRAW: /* how should that be printed? using Draw I'd suggest */
         break;
     }
 }
@@ -742,7 +801,7 @@ general_message_ThesaurusSend_for_docu(
     const PC_SBSTR sbstr_replace_string = p_wimp_message->data.bytes;
     OBJECT_STRING_REPLACE object_string_replace;
     SCAN_BLOCK scan_block;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if((OBJECT_ID_CELLS != p_docu->focus_owner) && (OBJECT_ID_REC_FLOW != p_docu->focus_owner))
@@ -804,6 +863,7 @@ general_message_ThesaurusSend(
     return(FALSE);
 }
 
+_Check_return_
 static BOOL
 general_message(
     _InRef_     PC_WimpMessage p_wimp_message)
@@ -872,7 +932,8 @@ general_message_bounced(
 {
     switch(p_wimp_message->hdr.action_code)
     {
-    default: default_unhandled(); return(FALSE);
+    default: default_unhandled();
+        return(FALSE);
 
     case Message_ThesaurusQuery:
         thesaurus_loaded_state = 0;
@@ -937,7 +998,7 @@ iconbar_event_mouse_click_Select(void)
     }
     else
     {
-        status_consume(load_this_template_file_rl(P_DOCU_NONE, NULL));
+        status_consume(object_call_id(OBJECT_ID_SKEL, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT_INTRO, P_DATA_NONE));
     }
 }
 
@@ -950,12 +1011,11 @@ iconbar_event_mouse_click_Adjust(void)
     { /*EMPTY*/ } /* reserved */
     else
     {
-        of_load_prepare_first_template();
-
-        status_consume(load_this_template_file_rl(P_DOCU_NONE, NULL));
+        status_consume(object_call_id(OBJECT_ID_SKEL, P_DOCU_NONE, T5_CMD_NEW_DOCUMENT_DEFAULT, P_DATA_NONE));
     }
 }
 
+_Check_return_
 static BOOL
 iconbar_mouse_click(
     _In_        const WimpMouseClickEvent * const p_mouse_click)
@@ -969,6 +1029,7 @@ iconbar_mouse_click(
     return(TRUE);
 }
 
+_Check_return_
 static BOOL
 iconbar_message_DataSave(
     _InRef_     PC_WimpMessage p_wimp_message /*DataSave*/)
@@ -999,61 +1060,28 @@ iconbar_message_DataSave(
     return(TRUE);
 }
 
-static BOOL
-iconbar_message_DataLoad(
-    _InRef_     PC_WimpMessage p_wimp_message /*DataLoad*/)
+_Check_return_
+static T5_FILETYPE
+iconbar_message_DataLoad_mutate_filetype(
+    _In_        T5_FILETYPE t5_filetype, /* mutate as needed */
+    _In_z_      PCTSTR filename)
 {
-    /* File dragged from directory display, dropped on our icon */
-    TCHARZ filename[256];
-    T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
-
-    tstr_xstrkpy(filename, elemof32(filename), p_wimp_message->data.data_load.leaf_name); /* low-lifetime name */
-
-    host_xfer_load_file_setup(p_wimp_message);
+    /* suss imprecise things like TEXT,DOS,DATA,UNTYPED first */
+    T5_FILETYPE t_t5_filetype = FILETYPE_UNDETERMINED;
 
     switch(t5_filetype)
     {
-    case FILETYPE_DIRECTORY:
-    case FILETYPE_APPLICATION:
-    case FILETYPE_T5_FIREWORKZ:
-    case FILETYPE_T5_WORDZ:
-    case FILETYPE_T5_RESULTZ:
-    case FILETYPE_T5_RECORDZ:
-    case FILETYPE_T5_TEMPLATE:
-    case FILETYPE_T5_COMMAND:
-        break;
-
-    case FILETYPE_PIPEDREAM:
-        { /* SKS 30jul19 scan to see if it's a PD chart with the old filetype */
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_file_header(filename);
-
-        if(FILETYPE_UNDETERMINED != t_t5_filetype)
-            t5_filetype = t_t5_filetype;
-
-        break;
-        }
-
     case FILETYPE_TEXT:
-        { /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected - but does not scan these for recognisable headers */
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
-
-        if(FILETYPE_UNDETERMINED != t_t5_filetype)
-            t5_filetype = t_t5_filetype;
-
-        break;
-        }
-
+        /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected */
+        /* OK to scan for recognisable headers as file has been dragged to iconbar not broadcast */
     case FILETYPE_DOS:
     case FILETYPE_DATA:
     case FILETYPE_UNTYPED:
         {
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
+        t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
 
         if(FILETYPE_UNDETERMINED == t_t5_filetype)
             t_t5_filetype = t5_filetype_from_file_header(filename); /* no, so scan for recognisable headers */
-
-        if(FILETYPE_UNDETERMINED != t_t5_filetype)
-            t5_filetype = t_t5_filetype;
 
         break;
         }
@@ -1061,6 +1089,38 @@ iconbar_message_DataLoad(
     default:
         break;
     }
+
+    switch(t5_filetype)
+    {
+    case FILETYPE_PIPEDREAM:
+        /* SKS 30jul19 scan to see if it's a PipeDream chart with the old filetype */
+        t_t5_filetype = t5_filetype_from_file_header(filename);
+        break;
+
+    default:
+        break;
+    }
+
+    if(FILETYPE_UNDETERMINED != t_t5_filetype)
+        t5_filetype = t_t5_filetype;
+
+    return(t5_filetype);
+}
+
+_Check_return_
+static BOOL
+iconbar_message_DataLoad(
+    _InRef_     PC_WimpMessage p_wimp_message /*DataLoad*/)
+{
+    /* File dragged from directory display, dropped on our icon (or somehow sent via Wimp message) */
+    TCHARZ buffer[256];
+    const PCTSTR filename = canonicalise_unless_rooted(buffer, elemof32(buffer), p_wimp_message->data.data_load.leaf_name); /* low-lifetime name */
+    T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
+
+    host_xfer_load_file_setup(p_wimp_message); /* we may need to grok the file content */
+
+    /* suss imprecise things like TEXT,DOS,DATA,UNTYPED first */
+    t5_filetype = iconbar_message_DataLoad_mutate_filetype(t5_filetype, filename);
 
     switch(t5_filetype)
     {
@@ -1073,6 +1133,7 @@ iconbar_message_DataLoad(
     case FILETYPE_T5_WORDZ:
     case FILETYPE_T5_RESULTZ:
     case FILETYPE_T5_RECORDZ:
+    case FILETYPE_T5_HYBRID_DRAW:
         status_consume(load_this_fireworkz_file_rl(P_DOCU_NONE, filename, FALSE /*fReadOnly*/));
         break;
 
@@ -1095,6 +1156,7 @@ iconbar_message_DataLoad(
     return(TRUE);
 }
 
+_Check_return_
 static BOOL
 iconbar_message_HelpRequest(
     _InRef_     PC_WimpMessage p_wimp_message /*HelpRequest*/)
@@ -1124,6 +1186,7 @@ iconbar_message_HelpRequest(
     return(TRUE);
 }
 
+_Check_return_
 static BOOL
 iconbar_message(
     _InRef_     PC_WimpMessage p_wimp_message)
@@ -1144,6 +1207,7 @@ iconbar_message(
     }
 }
 
+_Check_return_
 static BOOL
 iconbar_event_handler(
     _InVal_     int event_code,
@@ -1327,7 +1391,7 @@ host_xfer_save_file(
     host_xfer_save_statics.p_proc_host_xfer_save = p_proc_host_xfer_save;
     host_xfer_save_statics.client_handle = client_handle;
 
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = sizeof32(msg.hdr) + sizeof32(WimpDataSaveMessage);
     msg.hdr.sender = p_pointer_info->window_handle;
   /*msg.hdr.my_ref = 0;*/ /* will be filled in by the Window Manager */
@@ -1366,7 +1430,7 @@ host_xfer_save_file_for_DataRequest(
     host_xfer_save_statics.p_proc_host_xfer_save = p_proc_host_xfer_save;
     host_xfer_save_statics.client_handle = client_handle;
 
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = sizeof(msg.hdr) + sizeof32(WimpDataSaveMessage);
     msg.hdr.your_ref = p_wimp_message->hdr.my_ref;
     msg.hdr.action_code = Wimp_MDataSave;
@@ -1420,15 +1484,15 @@ ho_event_msg_startup(void)
        * it needs an event handler, plus a menu and the menu's event handler */
     U8Z buffer[16];
     WimpCreateIconBlockWithBitset icreate;
-    zero_struct(icreate);
+    zero_struct_fn(icreate);
     icreate.window_handle = (wimp_w) (-1) /* icon bar, right hand side */;
     icreate.icon.flags.bits.sprite      = 1;
     icreate.icon.flags.bits.horz_centre = 1;
     icreate.icon.flags.bits.button_type = ButtonType_Click;
 
-    xstrkpy(buffer, elemof32(buffer), g_product_sprite_name);
+    xstrkpy(buffer, elemof32(buffer), g_product_riscos_app_sprite);
 
-    {
+    { /* fill in the icon size */
     RESOURCE_BITMAP_ID resource_bitmap_id;
     RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     GDI_SIZE size;
@@ -1516,7 +1580,7 @@ thesaurus_process_word(
     if(!thesaurus_loaded())
         return(create_error(ERR_NO_THESAURUS));
 
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = sizeof32(msg.hdr);
   /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = Message_ThesaurusReceive;
@@ -1542,7 +1606,7 @@ thesaurus_startup(void)
     /* queue a message to Desktop Thesaurus to see if it's loaded; it will reply 'soon' */
     WimpMessage msg;
 
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = sizeof32(msg.hdr);
   /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = Message_ThesaurusQuery;

@@ -1,0 +1,17 @@
+﻿9 Searching
+Probably the most important task which a database can perform is
+to locate records of interest. Recordz allows you to perform
+searches quickly and easily. It also keeps a list of the searches you
+have performed so you can repeat them or gradually amend them
+to isolate exactly the subset of records you require.
+This chapter covers:
+. Simple searches.
+. Search expressions and wildcards.
+. Active queries.
+. Building up complex searches.
+. Search and replace.
+Fireworkz Pro 123
+
+
+
+

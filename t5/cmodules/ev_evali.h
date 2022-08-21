@@ -476,6 +476,15 @@ typedef struct STAT_BLOCK
 }
 STAT_BLOCK, * P_STAT_BLOCK; typedef const STAT_BLOCK * PC_STAT_BLOCK;
 
+static inline void
+stat_block_running_data_add_real(
+    _InoutRef_  P_STAT_BLOCK p_stat_block,
+    _InVal_     F64 f64)
+{
+    assert(ss_data_is_number(&p_stat_block->running_data));
+    p_stat_block->running_data.arg.fp += f64;
+}
+
 typedef struct LOOKUP_BLOCK
 {
     SS_DATA target_data;
@@ -896,10 +905,12 @@ PROC_EXEC_PROTO(c_isodd);
 PROC_EXEC_PROTO(c_isref);
 PROC_EXEC_PROTO(c_istext);
 PROC_EXEC_PROTO(c_na);
+PROC_EXEC_PROTO(c_not);
 PROC_EXEC_PROTO(c_odd);
 PROC_EXEC_PROTO(c_odf_type);
 PROC_EXEC_PROTO(c_page);
 PROC_EXEC_PROTO(c_pages);
+PROC_EXEC_PROTO(c_power);
 PROC_EXEC_PROTO(c_set_name);
 PROC_EXEC_PROTO(c_sort);
 PROC_EXEC_PROTO(c_true);
@@ -964,8 +975,21 @@ PROC_EXEC_PROTO(c_bitxor);
 ev_fnenc.c external functions (engineering - conversion)
 */
 
+PROC_EXEC_PROTO(c_bin2dec);
+PROC_EXEC_PROTO(c_bin2hex);
+PROC_EXEC_PROTO(c_bin2oct);
+PROC_EXEC_PROTO(c_dec2bin);
+PROC_EXEC_PROTO(c_dec2hex);
+PROC_EXEC_PROTO(c_dec2oct);
+PROC_EXEC_PROTO(c_hex2bin);
+PROC_EXEC_PROTO(c_hex2dec);
+PROC_EXEC_PROTO(c_hex2oct);
+PROC_EXEC_PROTO(c_oct2bin);
+PROC_EXEC_PROTO(c_oct2dec);
+PROC_EXEC_PROTO(c_oct2hex);
+
 /*
- ev_fneng.c external functions (engineering)
+ev_fneng.c external functions (engineering)
 */
 
 PROC_EXEC_PROTO(c_besseli);
@@ -1037,7 +1061,7 @@ PROC_EXEC_PROTO(c_spearman);
 
 extern void
 binomial_coefficient_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InVal_     S32 n,
     _InVal_     S32 k);
 
@@ -1198,23 +1222,6 @@ PROC_EXEC_PROTO(c_upper);
 PROC_EXEC_PROTO(c_value);
 
 /*
-ev_fncnv.c external functions (conversion)
-*/
-
-PROC_EXEC_PROTO(c_bin2dec);
-PROC_EXEC_PROTO(c_bin2hex);
-PROC_EXEC_PROTO(c_bin2oct);
-PROC_EXEC_PROTO(c_dec2bin);
-PROC_EXEC_PROTO(c_dec2hex);
-PROC_EXEC_PROTO(c_dec2oct);
-PROC_EXEC_PROTO(c_hex2bin);
-PROC_EXEC_PROTO(c_hex2dec);
-PROC_EXEC_PROTO(c_hex2oct);
-PROC_EXEC_PROTO(c_oct2bin);
-PROC_EXEC_PROTO(c_oct2dec);
-PROC_EXEC_PROTO(c_oct2hex);
-
-/*
 ev_help.c
 */
 
@@ -1307,7 +1314,8 @@ field_scan_init(
     _OutRef_    P_ARRAY_SCAN_BLOCK p_array_scan_block,
     _InRef_     PC_SS_DATA p_ss_data);
 
-extern void
+/*ncr*/ _Ret_notnull_
+extern P_SS_DATA
 name_deref(
     P_SS_DATA p_ss_data,
     _InVal_     EV_HANDLE h_name);
@@ -1339,6 +1347,18 @@ slr_offset_add(
     _InVal_     BOOL use_abs,
     _InVal_     BOOL end_coord);
 
+extern void
+slr_offset_add_simple(
+    _InoutRef_  P_EV_SLR p_ev_slr,
+    _InRef_     PC_EV_SLR p_ev_slr_offset);
+
+extern void
+slr_offset_add_harder(
+    _InoutRef_  P_EV_SLR p_ev_slr,
+    _InRef_     PC_EV_SLR p_ev_slr_offset,
+    _InRef_opt_ PC_EV_RANGE p_ev_range_scope,
+    _InVal_     BOOL end_coord);
+
 #if TRACE_ALLOWED
 
 extern void
@@ -1361,36 +1381,8 @@ f64_is_divisor_too_small(
 
 _Check_return_ _Success_(return)
 extern bool
-two_nums_bop_propagate_errors(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2);
-
-_Check_return_ _Success_(return)
-extern bool
 two_nums_add_try(
-    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2);
-
-_Check_return_ _Success_(return)
-extern bool
-two_nums_divide_try(
-    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2);
-
-_Check_return_ _Success_(return)
-extern bool
-two_nums_multiply_try(
-    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
-    _InoutRef_  P_SS_DATA p_ss_data_1,
-    _InoutRef_  P_SS_DATA p_ss_data_2);
-
-_Check_return_ _Success_(return)
-extern bool
-two_nums_subtract_try(
-    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, up to the caller */
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, that's up to the caller */
     _InoutRef_  P_SS_DATA p_ss_data_1,
     _InoutRef_  P_SS_DATA p_ss_data_2);
 
@@ -1403,8 +1395,22 @@ two_nums_add_propagate_error(
 
 _Check_return_ _Success_(return)
 extern bool
-two_nums_divide_propagate_error(
+two_nums_subtract_try(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, that's up to the caller */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_subtract_propagate_error(
     _OutRef_    P_SS_DATA p_ss_data_res, /* propagate errors */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_multiply_try(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, that's up to the caller */
     _InoutRef_  P_SS_DATA p_ss_data_1,
     _InoutRef_  P_SS_DATA p_ss_data_2);
 
@@ -1417,7 +1423,14 @@ two_nums_multiply_propagate_error(
 
 _Check_return_ _Success_(return)
 extern bool
-two_nums_subtract_propagate_error(
+two_nums_divide_try(
+    _OutRef_    P_SS_DATA p_ss_data_res, /* does not propagate errors, that's up to the caller */
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+_Check_return_ _Success_(return)
+extern bool
+two_nums_divide_propagate_error(
     _OutRef_    P_SS_DATA p_ss_data_res, /* propagate errors */
     _InoutRef_  P_SS_DATA p_ss_data_1,
     _InoutRef_  P_SS_DATA p_ss_data_2);
@@ -1442,13 +1455,13 @@ PROC_EXEC_PROTO(c_sqr);
 
 extern void
 factorial_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InVal_     S32 n);
 
 extern void
 product_between_calc(
-    _InoutRef_  P_SS_DATA p_ss_data_res, /* denotes integer or fp; may return integer or fp */
-    _InVal_     S32 start,
+    _InoutRef_  P_SS_DATA p_ss_data_res, /* denotes integer or real; may return integer or real. NB must contain 'start' value as integer or real */
+  /*_InVal_     S32 start,*/
     _InVal_     S32 end);
 
 _Check_return_

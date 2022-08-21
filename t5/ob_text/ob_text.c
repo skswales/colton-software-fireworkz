@@ -94,7 +94,7 @@ p_ss_name_record_from_client_handle(
 
     for(i = 0; i < n_records; i++)
     {
-        P_SS_NAME_RECORD p_ss_name_record = array_ptr(&p_text_instance->h_ss_name_record, SS_NAME_RECORD, i);
+        const P_SS_NAME_RECORD p_ss_name_record = array_ptr(&p_text_instance->h_ss_name_record, SS_NAME_RECORD, i);
 
         if(p_ss_name_record->is_deleted)
             continue;
@@ -109,17 +109,20 @@ p_ss_name_record_from_client_handle(
     return(p_ss_name_record_out);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, ss_name_record_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, ss_name_record_is_deleted)
 {
-    return(((P_SS_NAME_RECORD) p_any)->is_deleted);
+    const P_SS_NAME_RECORD p_ss_name_record = (P_SS_NAME_RECORD) p_any;
+
+    return(p_ss_name_record->is_deleted);
 }
 
 static void
 ss_name_record_delete(
     _DocuRef_   P_DOCU p_docu,
-    P_SS_NAME_RECORD p_ss_name_record)
+    _InoutRef_  P_SS_NAME_RECORD p_ss_name_record)
 {
     uref_del_dependency(docno_from_p_docu(p_docu), p_ss_name_record->uref_handle);
+
     p_ss_name_record->is_deleted = 1;
 }
 
@@ -129,44 +132,49 @@ ss_name_record_delete(
 *
 ******************************************************************************/
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_ss)
+PROC_UREF_EVENT_PROTO(static, text_ss_uref_event_dep_delete)
 {
-    switch(p_uref_event_block->reason.code)
+    /* dependency must be deleted */
+    /* free a region */
+    const P_SS_NAME_RECORD p_ss_name_record = p_ss_name_record_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
+
+    UNREFERENCED_PARAMETER_InVal_(uref_message);
+
+    PTR_ASSERT(p_ss_name_record);
+    if(NULL != p_ss_name_record)
+        ss_name_record_delete(p_docu, p_ss_name_record);
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, text_ss_uref_event_dep_update)
+{
+    /* dependency region must be updated */
+    /* find our entry */
+    const P_SS_NAME_RECORD p_ss_name_record = p_ss_name_record_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
+
+    PTR_ASSERT(p_ss_name_record);
+    if(NULL != p_ss_name_record)
+        if(Uref_Dep_Delete == uref_match_slr(&p_ss_name_record->slr, uref_message, p_uref_event_block))
+            ss_name_record_delete(p_docu, p_ss_name_record);
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, text_ss_uref_event)
+{
+    switch(UBF_UNPACK(UREF_COMMS, p_uref_event_block->reason.code))
     {
     case Uref_Dep_Delete: /* dependency must be deleted */
-        switch(uref_message)
-        {
-        /* free a region */
-        default:
-            {
-            const P_SS_NAME_RECORD p_ss_name_record = p_ss_name_record_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
-
-            PTR_ASSERT(p_ss_name_record);
-            if(NULL != p_ss_name_record)
-                ss_name_record_delete(p_docu, p_ss_name_record);
-            break;
-            }
-        }
-        break;
+        return(text_ss_uref_event_dep_delete(p_docu, uref_message, p_uref_event_block));
 
     case Uref_Dep_Update: /* dependency region must be updated */
     case Uref_Dep_Inform:
-        {
-        /* find our entry */
-        const P_SS_NAME_RECORD p_ss_name_record = p_ss_name_record_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
-
-        if(NULL != p_ss_name_record)
-            if(Uref_Dep_Delete == uref_match_slr(&p_ss_name_record->slr, uref_message, p_uref_event_block))
-                ss_name_record_delete(p_docu, p_ss_name_record);
-
-        break;
-        }
+        return(text_ss_uref_event_dep_update(p_docu, uref_message, p_uref_event_block));
 
     default: default_unhandled();
-        break;
+        return(STATUS_OK);
     }
-
-    return(STATUS_OK);
 }
 
 static S32 next_ss_client_handle = 1;
@@ -185,7 +193,7 @@ ss_name_record_find(
 
     for(i = 0; i < n_records; i++)
     {
-        P_SS_NAME_RECORD p_ss_name_record = array_ptr(&p_text_instance->h_ss_name_record, SS_NAME_RECORD, i);
+        const P_SS_NAME_RECORD p_ss_name_record = array_ptr(&p_text_instance->h_ss_name_record, SS_NAME_RECORD, i);
 
         if(p_ss_name_record->is_deleted)
             continue;
@@ -218,7 +226,7 @@ ss_name_record_add(
 
         region_from_two_slrs(&region, p_slr, p_slr, TRUE /* add_one_to_br */);
 
-        if(status_ok(status = uref_add_dependency(p_docu, &region, proc_uref_event_text_ss, next_ss_client_handle, &p_ss_name_record->uref_handle, FALSE)))
+        if(status_ok(status = uref_add_dependency(p_docu, &region, text_ss_uref_event, next_ss_client_handle, &p_ss_name_record->uref_handle, FALSE)))
         {
             p_ss_name_record->ev_handle = ev_handle;
             p_ss_name_record->slr = *p_slr;
@@ -259,7 +267,7 @@ text_ss_name_scan_delete(
         if(IL_SS_NAME == inline_code_off(uchars_inline, offset))
         {
             EV_HANDLE ev_handle_name = (EV_HANDLE) data_from_inline_s32(uchars_inline_AddBytes(uchars_inline, offset));
-            P_SS_NAME_RECORD p_ss_name_record = ss_name_record_find(p_docu, ev_handle_name);
+            const P_SS_NAME_RECORD p_ss_name_record = ss_name_record_find(p_docu, ev_handle_name);
             if(NULL != p_ss_name_record)
                 ss_name_record_delete(p_docu, p_ss_name_record);
         }
@@ -369,7 +377,7 @@ text_message_block_init(
         skel_rect_from_slr(p_docu, &p_text_message_block->text_format_info.skel_rect_object, &p_object_data->data_ref.arg.slr);
     else
         /* at least initialise it */
-        zero_struct(p_text_message_block->text_format_info.skel_rect_object);
+        zero_struct_fn(p_text_message_block->text_format_info.skel_rect_object);
 }
 
 /*
@@ -620,7 +628,7 @@ T5_MSG_PROTO(static, text_msg_object_how_wide, _InoutRef_ P_OBJECT_HOW_WIDE p_ob
     TEXT_MESSAGE_BLOCK text_message_block;
     SKEL_RECT skel_rect;
 
-    zero_struct(skel_rect);
+    zero_struct_fn(skel_rect);
     skel_rect.br.pixit_point.x = p_docu->page_def.cells_usable_x;
     skel_rect.br.pixit_point.y = p_docu->page_def.cells_usable_y;
 
@@ -844,7 +852,7 @@ ob_text_msg_close1(
     al_garbage_flags.remove_deleted = 1;
     al_garbage_flags.shrink = 1;
     al_garbage_flags.may_dispose = 1; /* hopefully does so */
-    consume(S32, al_array_garbage_collect(&p_text_instance->h_ss_name_record, 0, ss_name_record_deleted, al_garbage_flags));
+    consume(S32, al_array_garbage_collect(&p_text_instance->h_ss_name_record, 0, ss_name_record_is_deleted, al_garbage_flags));
 
     assert(0 == p_text_instance->h_ss_name_record);
     } /*block*/
@@ -923,7 +931,7 @@ T5_MSG_PROTO(static, text_msg_object_string_replace, P_OBJECT_STRING_REPLACE p_o
     {
         S32 start, end, size;
         S32 case_1, case_2;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
         quick_ublock_with_buffer_setup(quick_ublock);
 
         size = ustr_inline_strlen(ustr_inline);
@@ -1136,7 +1144,7 @@ T5_MSG_PROTO(static, text_msg_save_construct_ownform, P_SAVE_CONSTRUCT_OWNFORM p
     case IL_SS_NAME:
         { /* SS_NAMEs must convert their handle into text */
         SS_NAME_ID_FROM_HANDLE ss_name_id_from_handle;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
         quick_ublock_with_buffer_setup(quick_ublock);
 
         ss_name_id_from_handle.ev_handle = (EV_HANDLE) data_from_inline_s32(p_save_inline_ownform->ustr_inline);

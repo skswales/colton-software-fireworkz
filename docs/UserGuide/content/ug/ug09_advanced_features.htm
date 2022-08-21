@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Advanced features</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Advanced features" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../sg/sg04_charts.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug90_transferring_files_between_platforms.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Charts </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Transferring files</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="advanced_features" id="advanced_features"></a><span class="csg-chapter-number">16 </span>Advanced features</h1>
+
+    <p>This chapter covers various features of Fireworkz which are not covered elsewhere in the documentation</p>
+    <p>It includes sections on:</p>
+    <ul>
+        <li><a href="#using_names_in_fireworkz">Using names as text and numerical variables</a></li>
+        <li><a href="#using_mail_merge">Using mail merge</a></li>
+    </ul>
+
+    <h2><a name="using_names_in_fireworkz" id="using_names_in_fireworkz"></a>Using names in Fireworkz</h2>
+
+    <p>
+        You can use the Names facility in Fireworkz to reference the contents of number cells within text, or even within other documents.
+        Names can be used to create variables, to refer to numbers or data within the text in a text cell, or to create links between documents.
+    </p>
+    <p>For example, you may want to refer to the total shown in a table in the text which describes the table.</p>
+    <p>
+        If more than one document is open you have access to all the names which have been defined for all the open documents.
+        <a href="../sg/sg02_entering_and_editing_formulae.htm#names">Names</a> are an excellent way to control external references.
+    </p>
+
+    <h3><a name="setting_up_a_name" id="setting_up_a_name"></a>Setting up a name</h3>
+    <p>To set up names, use the Names facility accessed from the <span class="csg-toolbar-button">Function selector</span>.</p>
+    <ol>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/selfnc.png" alt="Function selector tool button" />
+            Click the <span class="csg-toolbar-button">Function selector</span> tool button on the toolbar and choose
+            <span class="csg-dbox-option">Names</span> from the menu which appears.
+        </li>
+        <li>Click the <span class="csg-dbox-button">New</span> button in the <span class="csg-dbox">Names</span> dialogue box.</li>
+        <li>A further dialogue box will appear in which you define the new name.</li>
+        <li>
+            Type in the name for your new name, such as <code>Total</code>.
+            The more names that you create in a document, the more important it is that their names should be clearly descriptive.
+        </li>
+        <li>
+            Enter the value which the name should reference.
+            This can be a cell reference, although you could enter text or a number directly.
+        </li>
+    </ol>
+
+    <h4><a name="naming_names" id="naming_names"></a>Naming names</h4>
+    <p>
+        Fireworkz has some rules about the names which you can give to your names.
+        These are to prevent Fireworkz from misinterpreting names as cell references.
+        These are the same rules as are applied to custom function names:
+        see the <a href="../sg/sg07_custom_functions.htm">Custom Functions</a> section of this guide.
+    </p>
+
+    <h3><a name="uses_for_names" id="uses_for_names"></a>Uses for names</h3>
+    <p>
+        You can use names in some quite sophisticated ways to provide a range of additional features to your documents.
+        Remember that a name does not have to contain a number or formula;
+        it can contain any kind of information, entered as a string or a date.
+    </p>
+    <h4>Names as text variables</h4>
+    <p>
+        Names can be used to insert variables in text.
+        For example, you could be writing about a product with a code name.
+        By defining a name with the products code name,
+        you can easily change it in all documents containing the name by changing the value of the name.
+    </p>
+    <p>To do this:</p>
+    <ol>
+        <li>Click the <span class="csg-toolbar-button">Function selector</span> tool button and choose <span class="csg-menu-option">Names</span>.</li>
+        <li>Choose <span class="csg-dbox-button">New</span> in the dialogue box which appears.</li>
+        <li>Enter a name for the new name.</li>
+        <li>
+            Enter the current value.
+            You must enter it as a string, which means enclosing the text in double quotes like this:<br />
+            <span class="csg-user-text">&quot;Big bang plus&quot;</span>
+        </li>
+        <li>
+            You can now use the name throughout your documents by using
+            <span class="csg-menu-option">Name</span> from the <span class="csg-menu">Edit &ndash; Insert</span> menu.
+        </li>
+    </ol>
+    <h4>Names as numerical variables</h4>
+    <p>
+        You can use names to enter numerical variables in formulae.
+        For example, you could create a name <code>vat_rate</code>, to enter the value 0.20 in any formula or cell.
+        If the VAT rate was decreased, you could then change the definition of the name, and all your formulae using it would be updated.
+    </p>
+
+    <h3><a name="adding_a_name_to_a_text_cell" id="adding_a_name_to_a_text_cell"></a>Adding a name to a text cell</h3>
+    <p>When you want to refer to a name within a section of text, you should follow these steps:</p>
+    <ol>
+        <li>
+            In the text where you want to insert the data which the name represents,
+            place the caret where you want this data to go and choose
+            <span class="csg-menu-option">Name</span> from the <span class="csg-menu">Edit &ndash; Insert</span> menu.
+        </li>
+        <li>
+            A list of names will appear.
+            Choose the one you want from the list and click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Insert</span></span>.
+        </li>
+        <li>
+            The data referred to by the name will be inserted into your text.
+        </li>
+        <li class="csg-list-style-none">
+            If the contents of the cell referenced are subsequently updated, this insertion will also automatically be updated.
+        </li>
+    </ol>
+
+    <h3><a name="adding_a_name_to_a_number_cell" id="adding_a_name_to_a_number_cell"></a>Adding a name to a number cell</h3>
+    <p>When you want to add a name to a formula, you can do so using the function selector.</p>
+    <ol>
+        <li>Click on the cell into which you want to enter the name.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/selfnc.png" alt="Function selector tool button" />
+            Click the <span class="csg-toolbar-button">Function selector</span> button and choose
+            <span class="csg-menu-option">Names</span> from the menu which appears.
+        </li>
+        <li>Choose the name you want from the list.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Insert</span></span>.<br />
+            The name will be entered into the formula line.
+        </li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-toolbar-button">Tick</span> button
+            (or press <span class="csg-key">Return&crarr;</span>).
+        </li>
+    </ol>
+
+    <h2><a name="using_mail_merge" id="using_mail_merge"></a>Using mail merge</h2>
+
+    <p>
+        The mail merge facility in Fireworkz creates personalised mailings from a combination of two files.
+        One should be a document containing a list of names and addresses in a tabular/spreadsheet format,
+        the other a text document which contains references to the fields in the address list.
+    </p>
+    <p>
+        When you print the mail shot document, a copy of the document will be printed for each names and address in the list.
+        Each copy will contain details of one entry in the list.
+    </p>
+
+    <h3><a name="suitable_lists_for_mail_shots" id="suitable_lists_for_mail_shots"></a>Suitable lists for mail shots</h3>
+    <p>
+        You can use quite a wide range of document types as the basis for the address list in your mail shots.
+        You have two options:
+    </p>
+    <ul>
+        <li>Using a list held in a Fireworkz worksheet</li>
+        <li>Using a list stored in CSV format or saved as a CSV file from another program.</li>
+    </ul>
+    <p>
+        Fireworkz requires the names and addresses to be held in rows, with each column acting as a distinct field.
+        For accurate mail merge, a particular column in a document must always have the same type of information, such as surname or postcode.
+        If the type of contents of a column differ in each row, you may find it difficult to set up mail merge precisely.
+    </p>
+    <p>
+        It does not matter if there are blank cells in some rows.
+        You can instruct Fireworkz to shuffle these out when the address is placed in the target document.
+    </p>
+
+    <h3><a name="setting_up_your_letter" id="setting_up_your_letter"></a>Setting up your letter</h3>
+    <p>
+        The easiest way to set up your mail shot is to open the document containing the name and address list at the same time as the text document is open.
+        This gives you more feedback on what you are actually entering into your document.
+    </p>
+    <a name="setting_up_your_letter_adding" id="setting_up_your_letter_adding"></a>
+    <h4>Adding fields to your document</h4>
+    <p>
+        When you add fields to your document, you are telling Fireworkz that when it prints the merged document
+        it should include the contents of that column in the selected row for that copy of the letter.
+    </p>
+    <p>
+        Fields are inserted by number, which is the column number.
+        As columns are usually displayed by letter in worksheet documents, you will have to do a quick conversion before inserting the field.
+    </p>
+    <p>To insert a field:</p>
+    <ol>
+        <li>Place the insertion point in the place where you want the merged text to appear.</li>
+        <li>
+            Choose <span class="csg-menu-option">Insert field</span> from the
+            <span class="csg-menu">Extra &ndash; Text &ndash; Mailshot</span> menu.
+            A small dialogue box will appear.
+        </li>
+        <li>Enter the number of the column whose contents you want to appear here (e.g. 1 for column A, 4 for column D).</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Insert</span></span>.
+            In your document you will see the text which Fireworkz found in your chosen row.
+            If you didn't select a database and choose a row before inserting the field,
+            the text in your text document will simply read &lt;field1&gt;, if you inserted field 1.
+        </li>
+    </ol>
+    <p>
+        You can add as many fields as you like, or use the same field more than once in a document.
+        If you enter two fields next to each other, remember to enter a space or appropriate punctuation between them, as Fireworkz will not do this automatically.
+    </p>
+    <a name="setting_up_your_letter_choosing" id="setting_up_your_letter_choosing"></a>
+    <h4>Choosing the database file</h4>
+    <p>To tell Fireworkz which file is the one containing the names and addresses:</p>
+    <ol>
+        <li>
+            Choose <span class="csg-dbox-option">Select source</span> from the
+            <span class="csg-menu">Extra &ndash; Text &ndash; <span class="csg-windows-capitalize">Mail merge</span></span> menu.
+        </li>
+        <li>
+            The names of all suitable open documents will appear at the top of the dialogue box which appears.
+            Select the one you want.
+        </li>
+        <li>
+            Once you have chosen a document, Fireworkz uses it as the source of data for the mailshot.
+            You should now choose a row, the contents of which will be added to the document when you insert fields.
+            It is a good idea to choose the row which contains the titles of the columns, if there is one, because this will give you the best idea of what is going on.
+        </li>
+        <li>Choose a row number and click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">OK</span></span>.</li>
+    </ol>
+    <a name="setting_up_your_letter_removing" id="setting_up_your_letter_removing"></a>
+    <h4>Removing blank fields</h4>
+    <p>
+        In some cases, such as addresses, there may be blank fields in some records in the database.
+        These will appear as blank lines in your document, unless you take the following steps:
+    </p>
+    <ol>
+        <li>
+            Choose <span class="csg-menu-option">Select source</span> from the
+            <span class="csg-menu">Extra &ndash; Text &ndash; <span class="csg-windows-capitalize">Mail merge</span></span> menu.
+        </li>
+        <li>Click the <span class="csg-dbox-option">Shuffle</span> button.</li>
+        <li>
+            Enter the numbers of the fields affected.
+            For example, if you have entered fields 4 to 8 as the reply address in a letter,
+            these are the ones you want to close up if any blank lines appear, assuming there is a postcode in field 8.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">OK</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            When you print the document, there will be no blank lines within addresses based on the fields you specified.
+        </li>
+    </ol>
+
+    <h3><a name="printing_a_mail_shot" id="printing_a_mail_shot"></a>Printing a mail shot</h3>
+    <p>Once you have followed these steps you are ready to print your mail merged document.</p>
+    <p>Before you can do this, you must have both the text document and the address list loaded, and a printer driver loaded.</p>
+    <p>
+        To print the merged document, simply click the <span class="csg-dbox-button">Mailshot</span> button
+        in the <span class="csg-dbox">Print</span> dialogue box.
+    </p>
+    <p>This will print a copy of the document for each row in the selected database.</p>
+
+    <h4><a name="printing_a_mail_shot_sample" id="printing_a_mail_shot_sample"></a>Printing a sample copy</h4>
+    <p>To print a test copy for any row in the address list:</p>
+    <ol>
+        <li>Choose <span class="csg-menu-option">Select</span> from the <span class="csg-menu">Mailshot</span> sub-menu, and enter the row you want.</li>
+        <li>The rows contents will be displayed in the document.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/print.png" alt="Print tool button" />
+            Click the <span class="csg-toolbar-button">Print</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Print</span> from the <span class="csg-menu">File</span> menu).
+        </li>
+        <li>The sample copy will be printed.</li>
+    </ol>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg04_charts.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug90_transferring_files_between_platforms.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Charts </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Transferring files</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

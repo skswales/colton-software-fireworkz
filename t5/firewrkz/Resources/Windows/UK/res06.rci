@@ -1,0 +1,226 @@
+﻿//
+// RCGen created for Object 6
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// Manually based at 0x3000
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_chart (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// ob_chart messages: keep consistent with ob_chart/resource/resource.h
+//
+// CHART_MSG_DIALOG_PIE_GALLERY_xxx
+//
+	0x3000,	L"Pie chart"
+	0x3001,	L"sg/sg04_charts.htm#pie_charts"
+	0x3002,	L"Label"
+	0x3003,	L"Explode"
+	0x3004,	L"By"
+	0x3005,	L"Start position"
+	0x3006,	L"°"
+	0x3007,	L"Anticlockwise"
+//
+// CHART_MSG_SUGGESTED_LEAFNAME
+//
+	0x300A,	L"Chart"
+//
+// CHART_MSG_DIALOG_BAR_GALLERY_xxx
+//
+	0x3064,	L"Bar chart"
+	0x3065,	L"sg/sg04_charts.htm#bar_charts"
+	0x3066,	L"Horizontal"
+	0x3067,	L"3-D"
+//
+	0x3069,	L"Bar / line overlay chart"
+	0x306A,	L"sg/sg04_charts.htm#overlays"
+//
+	0x306E,	L"Data series are in"
+	0x306F,	L"Columns"
+	0x3070,	L"Rows"
+	0x3071,	L"First series contains"
+	0x3072,	L"Category (X) labels"
+	0x3073,	L"Series data"
+	0x3074,	L"First category is"
+	0x3075,	L"Series labels"
+	0x3076,	L"First data point"
+	0x3077,	L"Category (Y) labels"
+	0x3078,	L"Data series arranged as"
+	0x3079,	L"X,Y,Y"
+	0x307A,	L"X,Y X,Y"
+	0x307B,	L"First data point is"
+	0x307C,	L"First data point"
+	0x307D,	L"Category labels"
+	0x307E,	L"Series label"
+//
+//r130:Click on a chart element to select it. Click Adjust for finer selection
+	0x3082,	L"Click on a chart element to select it. Ctrl-click for finer selection"
+//
+// CHART_MSG_DIALOG_BAR_xxx
+//
+	0x3096,	L"Bar"
+	0x3097,	L"% width"
+	0x3098,	L"% overlap"
+	0x3099,	L"% depth"
+	0x30A0,	L"sg/sg04_charts.htm#customising_bar_charts"
+//
+	0x30BE,	L"3-D"
+	0x30BF,	L"Droop"
+	0x30C0,	L"Turn"
+//
+// CHART_MSG_DIALOG_LINE_GALLERY_xxx
+//
+	0x30C8,	L"Line chart"
+	0x30C9,	L"sg/sg04_charts.htm#line_charts"
+	0x30CA,	L"3-D ribbons"
+//
+// CHART_MSG_DIALOG_LINE_xxx
+//
+	0x30FA,	L"Line"
+	0x30FB,	L"% width"
+	0x30FC,	L"% shift"
+	0x30FD,	L"% depth"
+//260:sg/sg04_charts.htm#customising_line_charts
+	0x3104,	L"sg/sg04_charts.htm#line_charts"
+//
+// CHART_MSG_DIALOG_SCAT_GALLERY_xxx
+//
+	0x312C,	L"Scatter graph"
+	0x312D,	L"sg/sg04_charts.htm#x_y_scatter_graphs"
+//
+// CHART_MSG_DIALOG_SCAT_xxx
+//
+	0x315E,	L"Point"
+	0x315F,	L"% width"
+//360:sg/sg04_charts.htm#customising_scatter_charts
+	0x3168,	L"sg/sg04_charts.htm#x_y_scatter_graphs"
+//
+// CHART_MSG_DIALOG_GEN_AXIS_xxx
+//
+	0x3190,	L"Position"
+	0x3191,	L"Left"
+	0x3192,	L"Top"
+	0x3193,	L"Right"
+	0x3194,	L"Bottom"
+	0x3195,	L"Zero"
+	0x3196,	L"Front"
+	0x3197,	L"Auto"
+	0x3198,	L"Rear"
+	0x3199,	L"Major interval"
+	0x319A,	L"Automatic"
+	0x319B,	L"Spacing"
+	0x319C,	L"Grid lines"
+	0x319D,	L"Ticks"
+	0x319E,	L"Minor interval"
+//
+// CHART_MSG_DIALOG_VAL_AXIS_xxx
+//
+	0x31A4,	L"Scaling"
+	0x31A5,	L"Automatic"
+	0x31A6,	L"Minimum value"
+	0x31A7,	L"Maximum value"
+	0x31A8,	L"Include zero"
+	0x31A9,	L"Logarithmic"
+	0x31AA,	L"Log labels"
+	0x31AB,	L"Series defaults"
+	0x31AC,	L"Cumulative"
+	0x31AD,	L"Vary by point"
+	0x31AE,	L"Line of best fit"
+	0x31AF,	L"Fill to axis"
+	0x31B0,	L"Stack series"
+//
+	0x31B1,	L"Overlay"
+//
+// CHART_MSG_DIALOG_STYLE_xxx
+//
+	0x31F4,	L"Line colour"
+	0x31F5,	L"Line style"
+	0x31F7,	L"Fill style"
+	0x31F8,	L"Fill colour"
+	0x31F9,	L"Solid"
+	0x31FA,	L"Picture"
+	0x31FB,	L"Preserve aspect ratio"
+	0x31FC,	L"Allow recolouring"
+	0x31FE,	L"sg/sg04_charts.htm#using_colour_in_charts"
+	0x31FF,	L"sg/sg04_charts.htm#editing_lines"
+//
+// CHART_MSG_DIALOG_CHART_MARGINS_xxx
+//
+	0x3208,	L"Chart margins"
+	0x3209,	L"sg/sg04_charts.htm#positioning_the_chart"
+	0x320A,	L"Top"
+	0x320B,	L"Bottom"
+	0x320C,	L"Left"
+	0x320D,	L"Right"
+//
+// CHART_MSG_DIALOG_CHART_LEGEND_xxx
+//
+	0x3212,	L"Legend"
+	0x3213,	L"sg/sg04_charts.htm#editing_text_in_charts"
+	0x3214,	L"On"
+	0x3215,	L"Arrange horizontally"
+//
+// CHART_MSG_DEFAULT_xxx
+//
+	0x3258,	L"8 0 Helvetica"
+	0x325A,	L"Chart%d"
+//
+// CHART_MSG_OBJNAME_xxx (UI names for objects in each chart)
+//
+	0x32BC,	L"Chart"
+	0x32BD,	L"Wall"
+	0x32BE,	L"Floor"
+	0x32BF,	L"Plot area"
+	0x32C0,	L"Legend"
+	0x32C1,	L"Text %hd"
+	0x32C2,	L"Series %hd"
+	0x32C3,	L"Series %hd Point %hd"
+	0x32C4,	L"Series %hd drop"
+	0x32C5,	L"Series %hd Point %hd drop"
+	0x32C6,	L"Axis %hd"
+	0x32C7,	L"X Axis"
+	0x32C8,	L"Y Axis"
+	0x32C9,	L"Category (X) axis"
+	0x32CA,	L"Value (Y) axis"
+	0x32CB,	L"Series (Z) axis"
+	0x32CC,	L"Grid %hd"
+	0x32CD,	L"Tick %hd"
+	0x32CE,	L"Best fit %hd"
+//
+// CHART_MSG_DIALOG_xxx_HELP_TOPIC
+//
+	0x3320,	L"sg/sg04_charts.htm#editing_data_series"
+	0x3321,	L"sg/sg04_charts.htm#editing_axes"
+	0x3322,	L"sg/sg04_charts.htm#editing_axes"
+//
+// errors: keep consistent with ob_chart/resource/resource.h
+// see CHART_ERR(n)
+//
+	0xB000,	L"Not enough data for pie chart"
+	0xB002,	L"Negative and/or zero data ignored in pie chart"
+	0xB003,	L"Arithmetic exception in chart creation"
+	0xB004,	L"Negative and/or zero data ignored in stacked chart"
+	0xB005,	L"Unable to load chart because memory full; chart discarded"
+	0xB006,	L"No data for chart"
+	0xB007,	L"Charts can only use Draw and Sprite files"
+//
+// end of msg (ob_chart)
+END
+//
+// end of RCGen created string table

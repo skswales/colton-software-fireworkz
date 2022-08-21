@@ -604,13 +604,15 @@ t5_wimp_messages[] =
 
 int g_current_wm_version = 310;
 
-extern int
-main(
+_Check_return_
+static BOOL
+main_init(
     int argc,
     char * argv[])
 {
+    static int ctrlflag;
+
     STATUS status;
-    int ctrlflag;
 
     /* Trap ESCAPE as soon as possible */
     EscH(&ctrlflag);
@@ -637,7 +639,7 @@ main(
     get_user_info();
 
     if(status_fail(startup_t5_application_1()))
-        exit(EXIT_FAILURE);
+        return(FALSE);
 
     status_assert(decode_command_line_options(argc, argv, 1));
 
@@ -661,7 +663,7 @@ main(
     if(status_fail(aligator_init())) /* which sets an atexit() for flex dynamic area shutdown */
     {   /* Output in English - unlikely to be able to load messages file for error report! */
         reperr(ERR_OUTPUT_STRING, TEXT("Not enough memory, or not in *Desktop world"));
-        exit(EXIT_FAILURE);
+        return(FALSE);
     }
 
     /* These may need doing prior to any object startup */
@@ -671,24 +673,22 @@ main(
 
     thesaurus_startup();
 
-    host_initialise_file_paths();
-
     file_startup();
 
-    file_build_paths();
+    host_initialise_file_paths();
 
     /* Make error messages available for startup */
-    resource_startup(dll_store);
+    resource_startup();
 
     if(status_fail(status = resource_init(OBJECT_ID_SKEL, P_BOUND_MESSAGES_OBJECT_ID_SKEL, P_BOUND_RESOURCES_OBJECT_ID_SKEL)))
     {
         reperr_null(status);
-        exit(EXIT_FAILURE);
+        return(FALSE);
     }
 
     /* Now try and startup some non-host specific stuff */
     if(status_fail(startup_t5_application_2()))
-        exit(EXIT_FAILURE);
+        return(FALSE);
 
     status = decode_command_line_options(argc, argv, 2);
 
@@ -698,14 +698,25 @@ main(
     {
     STUB_DESC stub_desc;
     RUNTIME_INFO runtime_info;
-    if( status_ok(host_load_stubs("<Fireworkz$Dir>.AppData.Neutral.xxMstubs", &stub_desc)) &&
-        status_ok(host_load_module("<Fireworkz$Dir>.AppData.Neutral.xxMso", &runtime_info, 1, stub_desc.p_stub_data)) )
+    if( status_ok(host_load_stubs("<Fireworkz$Dir>.Resources.Neutral.xxMstubs", &stub_desc)) &&
+        status_ok(host_load_module("<Fireworkz$Dir>.Resources.Neutral.xxMso", &runtime_info, 1, stub_desc.p_stub_data)) )
     {
         xxM_usr_init(runtime_info.p_module_entry);
         xxM_test_routine();
     }
     } /*block*/
 #endif /* XXM_LGPL_DYNAMIC_LINKING */
+
+    return(TRUE);
+}
+
+extern int
+main(
+    int argc,
+    char * argv[])
+{
+    if(!main_init(argc, argv))
+        return(EXIT_FAILURE);
 
     /* Set up a point we can longjmp back to on serious error */
     switch(setjmp(event_loop_jmp_buf))
@@ -738,12 +749,11 @@ main(
     {
         WM_EVENT res = wm_event_get(FALSE /*fgNullEventsWanted*/);
 
-        if(res == WM_EVENT_PROCESSED)
-            continue;
-
-        break;
+        if(WM_EVENT_PROCESSED != res)
+            break;
     }
 
+    /* atexit() works on RISC OS, so we don't need explicit tidying here */
     return(EXIT_SUCCESS);
 }
 

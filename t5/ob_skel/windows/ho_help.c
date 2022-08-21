@@ -95,7 +95,7 @@ ho_help_url(
 {
     SHELLEXECUTEINFO sei;
 
-    zero_struct(sei);
+    zero_struct_fn(sei);
     sei.cbSize = sizeof32(sei);
     sei.hwnd = hwnd;
     sei.lpVerb = TEXT("Open");
@@ -112,7 +112,7 @@ T5_CMD_PROTO(extern, t5_cmd_help)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1); /* NB just the common span */
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    const HOST_WND hwnd = !IS_VIEW_NONE(p_view) ? p_view->main[WIN_BACK].hwnd : HOST_WND_NONE;
+    const HOST_WND hwnd = VIEW_NOT_NONE(p_view) ? p_view->main[WIN_BACK].hwnd : HOST_WND_NONE;
 
     switch(t5_message)
     {

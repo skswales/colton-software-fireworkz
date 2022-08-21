@@ -1,0 +1,743 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Entering and editing data in cells</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Entering and editing data in cells" />
+        <param name="Keyword" value="Cells, entering and editing data" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug11_printing.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../sg/sg02_entering_and_editing_formulae.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L"> Printing</td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Entering formulae</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="entering_and_editing_data" id="entering_and_editing_data"></a><span class="csg-chapter-number">11 </span>Entering and editing data in cells</h1>
+
+    <p>
+        This chapter, and a number of subsequent chapters, show you how to use
+        the spreadsheet facilities of Fireworkz for entering, editing, analysing and managing data.
+    </p>
+    <p>This chapter explains how to enter and edit data, both text and numbers, to build up your worksheet.</p>
+    <p>It includes sections on:</p>
+    <ul>
+        <li><a href="#cell_types">Working with cells</a></li>
+        <li><a href="#moving_from_cell_to_cell">Moving around the worksheet</a></li>
+        <li><a href="#entering_text_and_data_in_number_cells">Entering text and data</a></li>
+        <li><a href="#editing_number_cell_contents">Editing number cell contents</a></li>
+        <li><a href="#clearing_cells">Clearing cells</a></li>
+        <li><a href="#confirming_data_entry">Confirming data entry</a></li>
+        <li><a href="#copying_data_from_cell_to_cell">Copying data from cell to cell</a></li>
+        <li><a href="#filling_data">Filling data</a></li>
+        <li><a href="#cell_references">Cell references</a></li>
+        <li><a href="#sorting_your_data">Sorting your data</a></li>
+    </ul>
+
+    <h2><a name="cell_types" id="cell_types"></a>Cell types: number and text cells</h2>
+
+    <p>
+        Fireworkz worksheets are made up out of cells, which may contain text or data.
+        To make it easier for Fireworkz to handle information, each cell is assigned a type, either <b>text</b> or <b>number</b> (numeric).
+        The type of the cell governs the way the cell handles the data it contains.
+        If you follow the instructions in the section below, you should not have to manipulate cell types directly.
+        But on occasions you may find that the default decisions Fireworkz makes about cell types are not what you want.
+    </p>
+    <p>
+        When a cell is created, its type is first set according to the cell type which has been chosen in the current style used in the worksheet.
+        This will usually result in numeric cells, but may be different in some templates.
+        The Sheet template creates number cells by default.
+    </p>
+    <p>
+        You can assign a type to an empty cell easily by selecting it and applying a
+        <a href="../ug/ug06_the_style_editor.htm">style</a> which affects the type of the cell.
+        You can also change the type of cells which contain text or data,
+        although this has a major impact on their behaviour,
+        by using the commands on the <span class="csg-menu">Make</span> sub-menu.
+    </p>
+    <p>
+        Usually you will want to apply a type to a whole column or row.
+        For example, you might want to apply the Text style to the leftmost column in the worksheet,
+        to ensure that all labels come out as text.
+    </p>
+
+    <h3>Dealing with cell types</h3>
+    <p>
+        If you place the caret in a cell and start typing, Fireworkz will mark the cell as a text cell and interpret its contents as text.
+        It will do this regardless of the information which you enter,
+        so if you type numbers straight on to the worksheet you will not be able to add them up unless you mark the cells as number cells.
+    </p>
+
+    <h3><a name="text_cells" id="text_cells"></a>Text cells</h3>
+    <p>Text and Number cells behave differently in several important ways.</p>
+
+    <h4>Behaviour of text cells</h4>
+    <ul>
+        <li>
+            You can type text directly on to the worksheet.
+            You can do this either when the cell already has some text in it,
+            or when the new cell type in its style is set to text.
+        </li>
+        <li>
+            Anything entered in a text cell is stored as a text paragraph.
+            Whether you type in a number, text, a date or a time,
+            it is stored as text and you cannot perform calculations on it directly.
+        </li>
+        <li>A cell reference to a text cell will always treat the contents of the cell as a string.</li>
+        <li>
+            You can enter automatic page numbers and live dates into text cells,
+            as well as filenames and pathnames, using the <span class="csg-menu">Inserts</span> menu.
+        </li>
+    </ul>
+
+    <h3><a name="number_cells" id="number_cells"></a>Number cells</h3>
+    <p>Cells which contain the data for your calculations must be marked as number cells.</p>
+    <p>With number cells:</p>
+    <ul>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            You must type in your data or formula on the formula line,
+            and click the <span class="csg-toolbar-button">Tick</span> button
+            (or press <span class="csg-key">Return&crarr;</span>)
+            to enter the data or the formula into the cell in the worksheet.
+        </li>
+        <li>Data entered in number cells can be used easily as the basis of calculations.</li>
+        <li>
+            Numerical information that you enter on the formula line, or the result of any formula you enter,
+            is formatted according to the Number or Date format defined in the cell's style for display on the worksheet.
+        </li>
+        <li>
+            If you type text on the formula line and Fireworkz is unable to understand it as numerical data or a formula,
+            it will make the cell a text cell.
+        </li>
+        <li>
+            You can enter <a href="#cell_references">references</a> to other cells as part of your formula.
+            References to text cells will produce a text string.
+        </li>
+        <li>You can't enter information using the <span class="csg-menu">Inserts</span> menu.</li>
+    </ul>
+    <p>
+        You will usually find that you need a mixture of both types of cell within your worksheet.
+        Text cells are useful for entering headings for worksheets, and for columns holding data such as people's names,
+        while obviously you will need Number cells to hold data and calculations.
+        New cells in documents based on spreadsheet templates that use the BaseSheet style will default to being Number cells.
+    </p>
+
+    <h4><a name="cell_type_problem_areas" id="cell_type_problem_areas"></a>Cell type problem areas</h4>
+    <p>There are a few occasions when Fireworkz may not make a sensible decision about the contents of a cell.</p>
+    <p>
+        The most notable of these is numeric or alphanumeric information which you wish to store as text rather than numbers.
+        Telephone numbers and British postcodes which you wish to enter in a database are good examples.
+        Typing a telephone number is likely to have its leading zero stripped off,
+        and Fireworkz may attempt to recognise postcodes as cell references, because of their letter/number format.
+        If you are entering such details in cells, the easiest ways to avoid this problem are:
+    </p>
+    <ul>
+        <li>
+            Enclose telephone numbers or postcodes in double quotes if you are typing them on the formula line.
+            This will ensure that they are entered as strings, i.e. text not as numbers or cell references.
+        </li>
+        <li>
+            Set a Text style on the pertinent data area so that you can click in the cell to type them in the cell, not on the formula line.
+            By typing directly into the worksheet you are entering the text as text, not as data.
+        </li>
+    </ul>
+
+    <h3><a name="changing_cell_types" id="changing_cell_types"></a>Changing cell types</h3>
+    <p>
+        Once you have created a cell, you can change its type using the commands on the <span class="csg-menu">Make</span> sub-menu,
+        accessed from the <span class="csg-menu">Edit</span> menu.
+        Follow the procedure outlined below.
+    </p>
+
+    <h4>Changing cell type</h4>
+    <p>To change the type of a cell:</p>
+    <ol>
+        <li>Select the cell or group of cells whose type you want to change.</li>
+        <li>Display the <span class="csg-menu">Make</span> sub-menu from the <span class="csg-menu">Edit</span> menu.</li>
+        <li>
+            Choose <span class="csg-menu-option">Make number</span> to convert text cells to number cells,
+            or <span class="csg-menu-option">Make text</span> to convert number cells to text cells.
+        </li>
+    </ol>
+
+    <h2><a name="moving_from_cell_to_cell" id="moving_from_cell_to_cell"></a>Moving from cell to cell</h2>
+
+    <p>
+        Whether you are entering text or numeric data, it will appear in the current cell.
+        Usually when you start typing the the caret will appear in the current cell.
+        If the current cell is a number cell, and Edit in cell is not enabled,
+        then the caret will appear in the formula editing line at the top of the window.
+        Whatever you type in the formula line will then be placed in the current cell.
+    </p>
+    <p>
+        The current cell is highlighted with a different cell background and border.
+        The precise appearance of the current cell is governed by the Current cell style in the style list.
+        If you want to change this, see the earlier chapter on Styles for details on changing styles.
+        The corresponding column and row headings are also highlighted.
+    </p>
+    <p>Combine the process of moving to another cell with confirming the contents of the current one using <a href="#autoentry">Autoentry</a></p>
+    <p>You can move around the worksheet from cell to cell in several ways:</p>
+    <ul>
+        <li>
+            Click on the cell you want with <span class="csg-mouse-button">Select</span> (the left mouse button).
+            You will see that its border is highlighted, and that the row and column borders to which the cell belong are also highlighted.
+        </li>
+        <li>
+            Click on a column heading with <span class="csg-mouse-button">Select</span> (the left mouse button).
+            This will leave the current cell on the same row as before, but move it to the specified column.
+        </li>
+        <li>
+            Click on a row heading with <span class="csg-mouse-button">Select</span> (the left mouse button).
+            This will leave the current cell in the same column as before, but move it to the specified row.
+        </li>
+        <li>
+            There are several keyboard shortcuts to make it easier to get to the cell you want,
+            the simplest being to use the arrow/cursor keys to move around the worksheet.
+        </li>
+        <li>
+            In number cells, <span class="csg-key">Tab</span> will move one cell to the right,
+            and <span class="csg-key">Shift-Tab</span> will move one cell to the left.
+        </li>
+        <li>
+            Use the Go to command (<span class="csg-key">F5</span>).
+            A dialogue box will appear in which you can specify where you want to go to.
+        </li>
+        <li class="csg-list-style-none">
+            You can type a cell reference (or range) here or use a name that specifies one.
+        </li>
+        <li class="csg-list-style-none">
+            If you type a number, it will be interpreted as a row number.
+            The current cell will stay in the same column as before, but move to the specified row.
+            If you type plus (or minus) before the number, it will be interpreted as a row offset.
+            The current cell will move down (or up) by that number of rows.
+        </li>
+        <li class="csg-list-style-none">
+            If you type one or more letters, it will be interpreted as a column specifier.
+            The current cell will stay on the same row as before, but move to the specified column.
+            If you type <span class="csg-user-text">C</span> followed by plus (or minus) then a number, it will be interpreted as a column offset.
+            The current cell will move right (or left) by that number of columns.
+        </li>
+    </ul>
+
+    <h4><a name="autoentry" id="autoentry"></a>Autoentry</h4>
+    <p>
+        When you enter numbers or formulae on the formula line, you ca
+        combine the act of clicking the Tick button and
+        moving to an adjacent cell for entry by pressing one of the following keys.
+    </p>
+    <ul>
+        <li>
+            Press <span class="csg-key">Tab</span>.
+            This enters the data and moves to the cell to the right.
+        </li>
+        <li>
+            Press <span class="csg-key">Shift-Tab</span>.
+            This enters the data and moves to the cell to the left.
+        </li>
+        <li>
+            Press the up or down arrow keys.
+            This enters the data and moves to the adjacent cell in the direction of the arrow pressed,
+            i.e. the down arrow selects the cell beneath the current one.
+        </li>
+    </ul>
+
+    <h2><a name="entering_text_and_data_in_number_cells" id="entering_text_and_data_in_number_cells"></a>Entering text and data in number cells</h2>
+
+    <p>
+        To make or edit number cells, you type into the formula line at the top of the window.
+        <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+        When you have finished typing or editing, you click the <span class="csg-toolbar-button">Tick</span> button and the result appears in the cell.
+    </p>
+    <p>
+        When you are typing in the formula line, you will see that the pointer changes to a caret while it is pointing to the formula line
+        and to a crosshair pointer when it points at cells in the worksheet.
+        Also note that some buttons in the toolbar are greyed out.
+    </p>
+
+    <h3><a name="entering_numbers" id="entering_numbers"></a>Entering numbers</h3>
+    <p>Much of your work with Fireworkz will consist of entering numbers which you will then manipulate and analyse with formulae.</p>
+    <p>
+        Numbers which appear in the spreadsheet because you have typed them in are called <b>constants</b>.
+        Other numbers which might appear on your page are the displayed results of formulae.
+    </p>
+
+    <h4>Number formats</h4>
+    <p>
+        Fireworkz always stores numbers in a plain format.
+        Other information about the number, such as currency symbols, percentage symbols and so on,
+        is applied to the number as a <a href="../sg/sg03_number_formats_and_styles.htm">style</a>.
+    </p>
+    <p>
+        When you enter a number on the formula line, you must not enter any characters other than the numerals and, if relevant, the decimal point.
+        Formatting information is applied to the number when it is displayed on the page as part of its style.
+    </p>
+
+    <h3><a name="entering_dates" id="entering_dates"></a>Entering dates</h3>
+    <p>Dates are effectively a special kind of number. You must enter dates in the following format, in day, month, year order:</p>
+    <pre class="csg-sample-indent">15.2.1993</pre>
+    <p>or</p>
+    <pre class="csg-sample-indent">31.12.93</pre>
+    <p>The critical part is that the date must have two full stops (but no spaces) separating its three parts.</p>
+    <p>See the section on formatting dates and times.</p>
+
+    <h3><a name="entering_strings" id="entering_strings"></a>Entering strings</h3>
+    <p>
+        Text in number cells can be entered as a string.
+        Strings must be enclosed between double quotes.
+        They can contain spaces, but not control characters.
+    </p>
+    <pre class="csg-sample-indent">&quot;As long as a piece of string&quot;</pre>
+    <p>If you need to include a double quote mark within a string, you must enter it twice:</p>
+    <pre class="csg-sample-indent">&quot;She said &quot;&quot;Hello!&quot;&quot;&quot;</pre>
+    <p>
+        It is much easier to enter text strings as plain text in a text cell.
+        When you need to use the text in a formula, you can enter its cell reference;
+        this automatically creates a string out of the contents of the cell.
+    </p>
+    <p>
+        To enter text in a cell, place the caret within the cell and type the text.
+        If the text was not entered via the formula line, it will be interpreted as text automatically.
+    </p>
+
+    <h3><a name="entering_cell_references" id="entering_cell_references"></a>Entering cell references</h3>
+    <p>
+        The ability to cross-reference data, and to use the result of one calculation as the basis for another, is fundamental to spreadsheets.
+        By using cell references your data can stay live throughout a chain of calculations,
+        so that if you change the original data for the first calculation,
+        all further calculations referring to it are automatically updated without any further effort from you.
+    </p>
+    <p>
+        You can type a cell reference into a number cell.
+        When evaluating the formula, Fireworkz uses the value of the referenced cell, which may itself be the result of a formula.
+        If you were working with a large worksheet and wanted to create a summary section, this is one way to do it.
+        If the value of the referenced cell changes, the value in the cell containing the reference is updated too.
+    </p>
+    <p>
+        You should always make a reference to a cell rather than typing its value into a second cell as a constant.
+        If the value changes (perhaps because you discovered an error earlier in your worksheet) the reference will be updated,
+        and the new figure automatically passed on to further calculations which need it.
+    </p>
+    <p>To enter a cell reference:</p>
+    <ol>
+        <li>
+            Make sure that the caret is in the formula line, not on the worksheet.
+            You cannot enter cell references into text cells.
+        </li>
+        <li>
+            Point at the body of the worksheet.
+            You will see that the cursor turns into a crosshair pointer.
+        </li>
+        <li>When you are pointing at the cell you want to reference, click on it.</li>
+        <li>
+            The cell reference will be entered on the formula line.
+            It will appear in a different format to numbers which you type in directly: it will have a light grey background.
+            As long as the reference has a light grey background, it is selected and can be deleted in one operation, because Fireworkz treats it as a single character.
+        </li>
+    </ol>
+
+    <h4>Editing cell references</h4>
+    <p>
+        When you type another character, enter a function or operator, or enter another cell reference, the grey highlight disappears.
+        The cell reference is no longer subject to special treatment.
+    </p>
+    <p>You can now edit the elements of the cell reference individually, for example, replacing the row or column part of it.</p>
+
+    <h3><a name="confirming_data_entry" id="confirming_data_entry"></a>Confirming data entry</h3>
+    <p>
+        When you enter data via the formula line, you must confirm it before it is displayed on your worksheet.
+        There are several ways to do this:
+    </p>
+    <ul>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-toolbar-button">Tick</span> button on the toolbar.
+            This enters the data and leaves the current cell selected.
+        </li>
+        <li>
+            Press <span class="csg-key">Return&crarr;</span>.
+            This is the same as clicking the Tick button.
+        </li>
+        <li>
+            You can also auto-enter data.
+            See <a href="#autoentry">Auto entry.</a>
+        </li>
+    </ul>
+
+    <h3><a name="editing_number_cell_contents" id="editing_number_cell_contents"></a>Editing number cell contents</h3>
+    <p>The available options for editing data you have typed in the formula line are rather similar to those in a word processor.</p>
+    <p>If you need to replace some of your entry:</p>
+    <ol>
+        <li>Click on the cell you want to change.</li>
+        <li>Click in the formula line or press <span class="csg-key">F2</span> to start editing.</li>
+        <li>Click the caret into position or move the caret with the left or right arrow keys.</li>
+        <li>Use <span class="csg-key">Delete</span> or <span class="csg-key">Backspace</span> to remove the characters you don't want, and enter the new characters.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            Click the <span class="csg-key">Tick</span> button on the toolbar
+            (or press <span class="csg-key">Return&crarr;</span>) to enter the new formula.
+        </li>
+    </ol>
+
+    <h3><a name="clearing_cells" id="clearing_cells"></a>Clearing cells</h3>
+    <p>To clear cells, totally removing their contents but leaving their style and formatting information intact:</p>
+    <ol>
+        <li>Select the cells you want to clear.</li>
+        <li>Choose <span class="csg-menu-option">Make Blank</span> from the <span class="csg-menu">Edit &ndash; Make</span> menu.</li>
+        <li>The cells will be cleared, but remain in the worksheet so that you can enter new data.</li>
+    </ol>
+
+    <p>You can also simply select the information on the formula line and type over it.</p>
+
+    <h3><a name="copying_data_from_cell_to_cell" id="copying_data_from_cell_to_cell"></a>Copying data from cell to cell</h3>
+    <p>You can use the Copy, Cut and Paste commands to move data around your spreadsheet.</p>
+    <h2>To copy data:</h2>
+    <ol>
+        <li>Select the data cells whose contents you want to copy.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/copy.png" alt="Copy tool button" />
+            Click the <span class="csg-toolbar-button">Copy</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Copy</span> from the <span class="csg-menu">Edit</span> menu,
+            or press <span>Ctrl-C</span>).
+        </li>
+        <li>Click at the starting position of where you want to paste the data, i.e. the cell which will now be the top left of the range.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/paste.png" alt="Paste tool button" />
+            Click the <span class="csg-toolbar-button">Paste</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Paste</span> from the <span class="csg-menu">Edit</span> menu,
+            or press <span>Ctrl-V</span>).
+        </li>
+        <li>A copy of the data will appear in the new cells.</li>
+    </ol>
+    <h2>To move data:</h2>
+    <ol>
+        <li>Select the data cells whose contents you want to move.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/cut.png" alt="Cut tool button" />
+            Click the <span class="csg-toolbar-button">Cut</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Cut</span> from the <span class="csg-menu">Edit</span> menu,
+            or press <span>Ctrl-X</span>).
+        </li>
+        <li>Click at the starting position of where you want to paste the data, i.e. the cell which will now be the top left of the range.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/paste.png" alt="Paste tool button" />
+            Click the <span class="csg-toolbar-button">Paste</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Paste</span> from the <span class="csg-menu">Edit</span> menu,
+            or press <span>Ctrl-V</span>).
+        </li>
+        <li>The data will be removed from the old cells and will appear in the new cells.</li>
+    </ol>
+
+    <h3><a name="filling_data" id="filling_data"></a>Filling data</h3>
+    <p>
+        If you want to copy an item of data across a row or down a column, you can use the Fill buttons to make this easier.
+        You might want to do this if, for example, you were working on your accounts and needed to enter a fixed payment into every month.
+    </p>
+    <p>To copy data by filling:</p>
+    <ol>
+        <li>Enter the data into the first cell in the row or column.</li>
+        <li>Select that cell and the rest of the cells in the row or column where you want the data to appear.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/fill_d.png" alt="Fill down tool button" />
+            If you are filling down a column, click the <span class="csg-toolbar-button">Fill down</span> button on the toolbar.<br />
+            If you are filling across a row, click the <span class="csg-toolbar-button">Fill right</span> button on the toolbar.
+        </li>
+        <li>Your data will be copied into the selected cells.</li>
+    </ol>
+
+    <p>For information on the way pasting and filling affect cell references in formulae, see <a href="#entering_cell_references">Cell references</a>.</p>
+
+    <h2><a name="formatting_numbers" id="formatting_numbers"></a>Formatting numbers</h2>
+
+    <p>
+        The concept of formatting is applied to two different facets of cells and their contents in Fireworkz.
+        You may be familiar with the idea of formatting, from work with other programs,
+        and understand it to mean the choice of font, text style and alignment
+        applied to an area of text, and the way it is laid out on the page.
+    </p>
+    <p>
+        This all applies in Fireworkz.
+        In addition, numbers can also be formatted to display in different ways.
+        There are many ways to express the same number.
+        For example the number 50 can be expressed in all of the following ways:
+
+    </p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;" />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr><td style="width: 6em;">50</td><td>5.00e+01</td></tr>
+                <tr><td style="width: 6em;">50.00</td><td>5000%</td></tr>
+                <tr><td style="width: 6em;">£50.00</td><td>L</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>
+        The appropriate format will usually depend on the context;
+        if you are performing financial calculations, it will be useful to have numbers expressed
+        in a currency format such as a leading pound sign, and perhaps negative numbers in brackets.
+        For mathematical work, you may want to see a greater degree of precision in the form of extra decimal places,
+        or even to express numbers in a scientific format.
+    </p>
+
+    <h3><a name="number_formats" id="number_formats"></a>Choosing a number format and applying it to a cell</h3>
+    <p>
+        Fireworkz contains a number of standard number formats which are easily applied to any numbers in spreadsheets.
+        Because number formats are an aspect of style, number formats are manipulated through the Style editor.
+    </p>
+
+    <h4>Formatting a number</h4>
+    <p>To change the display format of a number, you need to apply a style to the cell containing it.</p>
+    <ol>
+        <li>Select the cell or range of cells to which you wish to apply the format.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/style.png" alt="Style tool button" />
+            Click the <span class="csg-toolbar-button">Style</span> tool button on the toolbar.
+            A dialogue box will appear listing the available styles.
+        </li>
+        <li>Click on the style you want to use to select it from the list.</li>
+        <li>
+            Click the <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> button.
+            The numbers in the selected cells will be redisplayed in the new style.
+        </li>
+    </ol>
+
+    <h4>More about number formats and styles based on them</h4>
+    <p>
+        The <a href="../sg/sg04_number_formats_and_styles.htm">Number formats and styles</a> chapter
+        contains a full reference to the wide range of number formats built into Fireworkz and ways
+        in which you can develop custom styles based upon them.
+    </p>
+
+    <h2><a name="cell_references" id="cell_references"></a>Cell references</h2>
+
+    <p>Once you have entered your data into number cells, you can build formulae which operate upon the data to produce results.</p>
+    <p>
+        You don't need to type in your data all over again to include it in the formulae; instead, you enter a reference to the cell containing the data.
+        When the formula is calculated, Fireworkz looks for the number stored in that cell, and uses that in the calculation.
+        This allows you to build up chains of calculations, each operating on the result of the previous calculation;
+        if you change some of the original data, all the calculations will be automatically updated to reflect the new starting data.
+    </p>
+
+    <h4><a name="single_cell_references" id="single_cell_references"></a>Single cell references</h4>
+    <p>
+        References to single cells are always given in the format <em>column_letterrow_number</em>, for example A1, D13, and so on.
+        You can use either upper-case or lower-case letters to create cell references.
+        Even if you have altered the column or row heading format, cell references must still be entered in this standard form.
+    </p>
+    <p>To enter a cell reference:</p>
+    <ul>
+        <li>Type in the cell reference explicitly <em>or</em></li>
+        <li>
+            Point and click at the cell required.
+            When you are working on a formula this will automatically enter its reference on the formula line;
+            you will see the pointer change into a crosshair pointer when you move it
+            across cells which could be referenced when you are working in the formula line.
+        </li>
+        <li class="csg-list-style-none">
+            After clicking on the cell you will get a selected cell reference in the formula line.
+            If this is not the cell you need click again on the cell you do want.
+            If it is the cell you want you can carry on typing to finish your formula
+        </li>
+    </ul>
+
+    <h4><a name="ranges" id="ranges"></a>Ranges</h4>
+    <p>
+        Some functions require a contiguous group of cells to work on, which may extend over one or more rows and columns.
+        Such <b>ranges</b> are described by giving the references of the top left and bottom right cells included in the range; for example B1:D5.
+    </p>
+    <p>There are two ways to enter ranges:</p>
+    <ul>
+        <li>Type in the two cell references.</li>
+        <li>
+            Click on the top left cell and drag to the bottom right cell (then release).
+            This will create the range entry on the formula line automatically.
+        </li>
+    </ul>
+    <p>
+        Unlike many other spreadsheets which require you to enter ranges as two cell references separated by a colon,
+        Fireworkz does not require use of the colon, so could accept B1D5 as equivalent to the above example range.
+        All examples in the <em>User Guide</em> use the colon separator for clarity.
+    </p>
+
+    <h3><a name="absolute_references" id="absolute_references"></a>Absolute references</h3>
+
+    <p>
+        Usually when you copy a formula using Fill down or Fill right Fireworkz
+        updates the cell references within the formula as it moves down the column or across the row.
+        If you do not want this to happen, but want to refer to a particular cell explicitly,
+        and always to refer to that cell, in copies of a formula, you must use an absolute reference.
+        You may also make half of the reference absolute, so that different cells within the same column or row are always referenced.
+    </p>
+    <p>
+        Absolute references are expressed by prefixing the row and column address with dollar signs.
+        For example:
+    </p>
+    <p><code>$A$1 </code> Always refers to the same cell, <code>A1</code></p>
+    <p><code>$A1  </code> Always refers to column <code>A</code> but the row number will be updated when the formula is copied</p>
+    <p><code>A$1  </code> Always refers to row <code>1</code> but the column is updated when the formula is copied.</p>
+
+    <h4>Entering absolute references</h4>
+    <p>You can set up absolute references in the same way as ordinary, relative references, by clicking on cells when you are working on the formula line.</p>
+    <ul>
+        <li>
+            To enter an absolute reference use <span class="csg-mouse-button">Adjust</span> (RISC OS) or Ctrl-click (Windows).
+            This puts both <code>$</code> signs into the reference; if you only want one, delete the other.
+        </li>
+    </ul>
+    <p>
+        Note that absolute references only make a difference when copying cells from one part of the worksheet to another using Paste, Fill right or Fill down.
+        There is no difference at all between absolute and relative references when inserting or deleting rows and columns in the worksheet.
+        In this case if there is a reference to a cell which moves the reference will always change to reflect the new position.
+    </p>
+
+    <h3><a name="external_references" id="external_references"></a>External references</h3>
+
+    <p>
+        You need not restrict your references to cells in the current worksheet.
+        You can incorporate a reference to a cell in another worksheet; this is called an external reference.
+        You might want to do this if, for example, you had a worksheet for each months accounts and wanted to transfer the totals to the annual return.
+    </p>
+    <p>To make an external reference:</p>
+    <ol>
+        <li>Open the source worksheet containing the data you want to reference.</li>
+        <li>Select the cell in your worksheet where you want the reference to appear.</li>
+        <li>Click in the formula line.</li>
+        <li>
+            Click on the cell in the external worksheet.
+            The file and path names will be enclosed in square brackets.
+        </li>
+    </ol>
+    <p>For example:</p>
+    <pre class="csg-sample-indent">[May]E55</pre>
+    <p>will place the value of cell E55 from the file May into the current cell in your worksheet.</p>
+    <p>
+        Ideally you should ensure that all files between which a set of external references are made are stored in the same directory.
+        This makes the management process much easier, because Fireworkz need only store the leafname in the cell reference,
+        and it is much easier for you to copy sets of linked documents if they are in the same directory.
+    </p>
+
+    <h2>Managing external references</h2>
+    <p>
+        When you create an external reference by including a reference and its filename in a worksheet,
+        you inextricably link the two documents for as long as the reference remains in the file.
+    </p>
+    <p>
+        Whenever you open the document containing the reference (the dependent document),
+        the referenced document (the supporting document) will also be opened.
+        In the following case, opening worksheet A also opens B, C and D.
+    </p>
+    <p>
+        If you are creating dependencies between several documents
+        (e.g. referring to each of 12 monthly worksheets in an annual roundup),
+        and the documents themselves are each very large, you may want to consider the memory implications of this,
+        particularly if you are running several programs in addition to Fireworkz.
+    </p>
+    <p>
+        If you open a supporting document, the dependent document is not automatically opened.
+        If you edit the supporting document without opening the dependent document,
+        however, references may not be updated and the link may become confused,
+        for example if you insert extra rows or columns into the supporting document thus changing all the cell positions.
+    </p>
+    <p>
+        If all the documents are open, references are updated automatically,
+        so if a referenced cell is moved within the supporting document,
+        the reference to it in the dependent document is automatically updated,
+        and the dependent document is modified, so you will be prompted to save it.
+    </p>
+
+    <h2>External references and directories</h2>
+    <p>
+        Fireworkz tries wherever possible to use only the leafname (the actual name of the file)
+        rather than the full pathname when providing external references.
+        You may refer to files in other directories, but if you do you will need to
+        take care when you copy the file to another disc that you take all the supporting documents with it,
+        and you may need to manually update the filenames in the external references.
+        Keeping all the files in the same directory enables Fireworkz to use only the leafname,
+        and so you can copy the files to other discs or directories very easily.
+    </p>
+
+    <h2>Using names for external references</h2>
+    <p>
+        External references can become unwieldy and hard to use.
+        It is always much simpler to use the Names capability of Fireworkz to set up external references.
+        A name is defined for a particular reference, which may or may not be an external reference.
+        When you want to use the external reference, simply enter the name you have defined
+        &mdash; you can do this automatically from the names option in the Function selector &mdash;
+        and choose the name you want from the list.
+    </p>
+
+    <h2><a name="sorting_your_data" id="sorting_your_data"></a>Sorting your data</h2>
+
+    <p>
+        Some functions require that data is sorted into ascending or descending order before it is processed.
+        You may also want to sort a list of names into alphabetical order.
+    </p>
+    <p>
+        The Sort command provides the easiest means of doing this.
+        It will sort rows by ascending or descending numerical or alphabetical order.
+    </p>
+    <p>
+        If you want to sort data that is organised along rows, not down columns,
+        you will need to use the <code>TRANSPOSE()</code> spreadsheet function to swap the data around.
+    </p>
+    <p>To sort your data:</p>
+    <ol>
+        <li>
+            Select the rows you want to sort.
+            Make sure you select all the columns which you want to move when sorting.
+        </li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/sort.png" alt="Sort tool button" />
+            Click the <span class="csg-toolbar-button">Sort</span> tool button on the toolbar
+            (or choose <span class="csg-menu-option">Sort</span> from the <span class="csg-menu">Extra</span> menu).
+            The <span class="csg-dbox">Sort</span> dialogue box will appear.
+        </li>
+        <li>Enter the name of the column containing the data which you wish to sort by.</li>
+        <li>If you wish to sort the data further, enter the names of other columns.</li>
+        <li>If you wish to sort in descending order (i.e. highest number first) select that option.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Sort</span></span>.
+            Your selected range will be sorted.
+        </li>
+    </ol>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug11_printing.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg02_entering_and_editing_formulae.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Printing </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Entering formulae</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

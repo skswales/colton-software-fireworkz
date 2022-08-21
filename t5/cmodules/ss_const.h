@@ -163,10 +163,10 @@ EV_RANGE, * P_EV_RANGE; typedef const EV_RANGE * PC_EV_RANGE;
 date/time type
 */
 
-typedef S32 SS_DATE_DATE; typedef SS_DATE_DATE * P_SS_DATE_DATE;
+typedef S32 SS_DATE_DATE; typedef SS_DATE_DATE * P_SS_DATE_DATE; typedef const SS_DATE_DATE * PC_SS_DATE_DATE;
 #define SS_DATE_NULL S32_MIN
 
-typedef S32 SS_DATE_TIME; typedef SS_DATE_TIME * P_SS_DATE_TIME;
+typedef S32 SS_DATE_TIME; typedef SS_DATE_TIME * P_SS_DATE_TIME; typedef const SS_DATE_TIME * PC_SS_DATE_TIME;
 #define SS_TIME_NULL S32_MIN
 
 typedef struct SS_DATE
@@ -191,13 +191,14 @@ evaluator error type
 typedef struct SS_ERROR
 {
     STATUS      status; /* negative */
+
     EV_ROW      row;
     UBF         docno : 8;
     UBF         type  : 2;
     UBF         spare : 8-2;
     EV_COL_SBF  col   : EV_COL_BITS;
 }
-SS_ERROR;
+SS_ERROR, * P_SS_ERROR;
 
 #define ERROR_NORMAL 0
 #define ERROR_CUSTOM 1
@@ -233,6 +234,8 @@ typedef struct SS_STRINGC
 }
 SS_STRINGC, * P_SS_STRINGC; typedef const SS_STRINGC * PC_SS_STRINGC;
 
+#define SS_STRING_BYTE_LIMIT 0x10000000U /* 256MB */
+
 /*
 database binary resource
 */
@@ -245,23 +248,33 @@ typedef struct DB_BLOB
 DB_BLOB, * P_DB_BLOB;
 
 /*
-data identifier numbers - externally visible numbers only (need to pack into small bitfield)
+data identifier numbers
 */
 
 enum DATA_ID_NUMBERS
 {
+    /* these are never stored in SS_DATA or SS_CONSTANT */
+    DATA_ID_CONVERSION_FAILED = 0xFF00U, /* ARM immediate constant */
+
+    /* SS_CONSTANT - externally visible numbers only (need to pack into small bitfield) NB affects sort order */
     DATA_ID_REAL        = 0U,
     DATA_ID_LOGICAL     = 1U,
-    DATA_ID_WORD8       = 2U,
-    DATA_ID_WORD16      = 3U,
-    DATA_ID_WORD32      = 4U,
+    DATA_ID_WORD16      = 2U,
+    DATA_ID_WORD32      = 3U,
+    DATA_ID_DATE        = 4U,
     DATA_ID_STRING      = 5U,
-    DATA_ID_ARRAY       = 6U,
-    DATA_ID_DATE        = 7U,
-    DATA_ID_BLANK       = 8U,
-    DATA_ID_ERROR       = 9U,
+    DATA_ID_BLANK       = 6U,
+    DATA_ID_ERROR       = 7U,
+    DATA_ID_ARRAY       = 8U,
+    DATA_ID_WORD8_UNUSED = 9U,
 
-    RPN_DAT_NEXT_NUMBER = 10U       /* (RPN_NUMBERS follow here) */
+    /* SS_DATA - these others start after externally visible numbers */
+    DATA_ID_SLR         = 10U,
+    DATA_ID_RANGE       = 11U,
+    DATA_ID_FIELD       = 12U,
+    DATA_ID_NAME        = 13U,
+
+    RPN_DAT_NEXT_NUMBER = 14U       /* (general RPN_NUMBERS follow here) */
 };
 
 /*
@@ -276,7 +289,7 @@ typedef S32 EV_HANDLE; typedef EV_HANDLE * P_EV_HANDLE;
 typedef union SS_CONSTANT
 {
     F64             fp;             /* floating point constant */
-    BOOL            boolean;        /* Logical value */
+    BOOL            boolean;        /* Boolean value */
     S32             integer;        /* integer constant */
     SS_STRING       string_wr;      /* string constant (writeable) */
     SS_STRINGC      string;         /* string constant (const) */
@@ -284,16 +297,18 @@ typedef union SS_CONSTANT
     SS_DATE         ss_date;        /* date */
     SS_ERROR        ss_error;       /* error */
 }
-SS_CONSTANT;
+SS_CONSTANT, * P_SS_CONSTANT;
 
 /*
 evaluator mixed data type
 */
 
-typedef union EV_DATA_ARG
+typedef union SS_DATA_ARG
 {
     F64             fp;             /* floating point */
-    BOOL            boolean;        /* Logical value */
+    BOOL            boolean;        /* Boolean value */
+    bool            logical_bool;   /* Logical value */
+    U32             logical_integer; /* Logical value (as full width integer) */
     S32             integer;        /* integer */
     SS_STRING       string_wr;      /* string (writeable) */
     SS_STRINGC      string;         /* string (const) */
@@ -320,12 +335,22 @@ SS_DATA_ARG;
 
 typedef struct SS_DATA
 {
+#if defined(EV_IDNO_U16) && 1
+    U8 local_data;                  /* if set, resources are owned by this structure */
+    U8 _spare[4-1-sizeof(EV_IDNO)];
+    EV_IDNO data_id;                /* has small enum DATA_ID_NUMBERS subset of EV_IDNO, but also some larger ones like DATA_ID_SLR */
+#define SS_DATA_HAS_EV_IDNO_IN_TOP_16_BITS 1
+#else
+#if defined(EV_IDNO_U16)
+#define SS_DATA_HAS_EV_IDNO_IN_BOTTOM_16_BITS 1
+#endif
     EV_IDNO data_id;                /* has small enum DATA_ID_NUMBERS subset of EV_IDNO, but also some larger ones like DATA_ID_SLR */
     U8 local_data;                  /* if set, resources are owned by this structure */
 #if defined(EV_IDNO_U32)
     U8 _spare[4-1];
 #else
     U8 _spare[4-1-sizeof(EV_IDNO)];
+#endif
 #endif
 
     SS_DATA_ARG arg;
@@ -419,7 +444,7 @@ error definition
 #define EVAL_ERR_UNEXARRAY           EVAL_ERR(24)
 #define EVAL_ERR_LOCALUNDEF          EVAL_ERR(25)
 #define EVAL_ERR_NORETURN            EVAL_ERR(26)
-#define EVAL_ERR_ODF_NA              EVAL_ERR(27)
+#define EVAL_ERR_TOO_MANY_FUNARGS    EVAL_ERR(27)
 #define EVAL_ERR_NOTIMPLEMENTED      EVAL_ERR(28)
 #define EVAL_ERR_BADSLR              EVAL_ERR(29)
 #define EVAL_ERR_NOTIME              EVAL_ERR(30)
@@ -432,7 +457,7 @@ error definition
 #define EVAL_ERR_BADGOTO             EVAL_ERR(37)
 #define EVAL_ERR_BADLOOPNEST         EVAL_ERR(38)
 #define EVAL_ERR_ARGRANGE            EVAL_ERR(39)
-#define EVAL_ERR_BADTIME             EVAL_ERR(40)
+#define EVAL_ERR_BAD_TIME            EVAL_ERR(40)
 #define EVAL_ERR_BADIFNEST           EVAL_ERR(41)
 #define EVAL_ERR_MISMATCHED_MATRICES EVAL_ERR(42)
 #define EVAL_ERR_MATRIX_NOT_NUMERIC  EVAL_ERR(43)
@@ -456,8 +481,9 @@ error definition
 #define EVAL_ERR_DATABASE            EVAL_ERR(61)
 #define EVAL_ERR_ODF_VALUE           EVAL_ERR(62)
 #define EVAL_ERR_ODF_NUM             EVAL_ERR(63)
+#define EVAL_ERR_ODF_NA              EVAL_ERR(64)
 
-#define EVAL_ERR_END                 EVAL_ERR(64)
+#define EVAL_ERR_END                 EVAL_ERR(65)
 
 #define EVAL_ERR_ODF_DIV0            EVAL_ERR_DIVIDEBY0
 
@@ -509,7 +535,12 @@ real_trunc( /* as Colton Software Fireworkz & PipeDream / Lotus 1-2-3 INT() */
     _InVal_     F64 f64_in);
 
 _Check_return_
-extern STATUS /* DONE iff converted in range */
+extern F64
+real_round( /* rounds away from zero, truncating towards zero */
+    _InVal_     F64 f64_in);
+
+_Check_return_
+extern EV_IDNO /* DATA_ID_CONVERSION_FAILED iff not converted in range */
 ss_data_real_to_integer_force(
     _InoutRef_  P_SS_DATA p_ss_data);
 
@@ -536,6 +567,14 @@ _Check_return_
 _Ret_valid_
 extern PC_SS_DATA
 ss_array_element_index_borrow(
+    _InRef_     PC_SS_DATA p_ss_data_in,
+    _InVal_     S32 ix,
+    _InVal_     S32 iy);
+
+_Check_return_
+_Ret_maybenone_
+extern PC_SS_DATA
+ss_array_element_index_borrow_check(
     _InRef_     PC_SS_DATA p_ss_data_in,
     _InVal_     S32 ix,
     _InVal_     S32 iy);
@@ -568,10 +607,6 @@ ss_data_compare(
     _InRef_     PC_SS_DATA p_ss_data_2,
     _InVal_     BOOL blanks_equal_zero,
     _InVal_     BOOL allow_wild_match);
-
-#define ss_data_copy(pd_o, pd_i) ( \
-    (*pd_o) = (*pd_i), \
-    (pd_o)->local_data = 0 )
 
 extern void
 ss_data_free_resources(
@@ -685,6 +720,28 @@ ss_string_skip_trailing_whitespace_uchars(
     _In_reads_(uchars_n) PC_UCHARS uchars,
     _InRef_     U32 uchars_n);
 
+_Check_return_
+static inline PC_UCHARS
+ss_string_trim_leading_whitespace_uchars(
+    _In_reads_(*p_uchars_n) PC_UCHARS uchars,
+    _InoutRef_  P_U32 p_uchars_n)
+{
+    const U32 wss = ss_string_skip_internal_whitespace_uchars(uchars, *p_uchars_n, 0U);
+    *p_uchars_n -= wss;
+    return(PtrAddBytes(PC_UCHARS, uchars, wss));
+}
+
+_Check_return_
+static inline PC_UCHARS
+ss_string_trim_trailing_whitespace_uchars(
+    _In_reads_(*p_uchars_n) PC_UCHARS uchars,
+    _InoutRef_  P_U32 p_uchars_n)
+{
+    const U32 wss = ss_string_skip_trailing_whitespace_uchars(uchars, *p_uchars_n);
+    *p_uchars_n -= wss;
+    return(uchars);
+}
+
 /*
 two_nums_type_match result values
 */
@@ -692,14 +749,20 @@ two_nums_type_match result values
 enum two_nums_type_match_result
 {
     TWO_INTEGERS = 0,
-  /*TWO_INTEGERS_WORD32 = ,*/
-    TWO_REALS = 1,
-    TWO_MIXED = 2
+    TWO_INTEGERS_WORD32 = 1,
+    TWO_REALS = 2,
+    TWO_MIXED = 3
 };
 
 /*ncr*/
 extern enum two_nums_type_match_result
 two_nums_type_match(
+    _InoutRef_  P_SS_DATA p_ss_data_1,
+    _InoutRef_  P_SS_DATA p_ss_data_2);
+
+/*ncr*/
+extern enum two_nums_type_match_result
+two_nums_type_match_maybe_worry(
     _InoutRef_  P_SS_DATA p_ss_data_1,
     _InoutRef_  P_SS_DATA p_ss_data_2,
     _InVal_     BOOL size_worry);
@@ -729,23 +792,24 @@ g_ss_recog_context;
 extern SS_RECOG_CONTEXT
 g_ss_recog_context_alt;
 
+#define get_ss_recog_context_alt(field_name) g_ss_recog_context_alt.field_name
+
 /* inline functions may call our exported functions */
+
+/* use this for minimising need for overflow detection in calculations */
 
 _Check_return_
 static inline EV_IDNO
 ev_integer_size(
     _InVal_     S32 integer)
 {
-    if( (integer <=   (S32) S8_MAX) &&
-        (integer >=   (S32) S8_MIN) )
-        return(DATA_ID_WORD8);
+    const S32 abs_integer = abs(integer);
 
     /* S16_MAX + 1 for ARM immediate constant */
-    if( (integer <   ((S32) S16_MAX + 1)) &&
-        (integer > - ((S32) S16_MAX + 1)) /* NB NOT S16_MIN */ )
-        return(DATA_ID_WORD16);
+    if(abs_integer >= ((S32) S16_MAX + 1))
+        return(DATA_ID_WORD32);
 
-    return(DATA_ID_WORD32);
+    return(DATA_ID_WORD16);
 }
 
 _Check_return_
@@ -766,6 +830,33 @@ ss_data_get_data_id(
 
 #define ss_data_set_data_id(p_ss_data, ev_idno) /*EV_IDNO*/ \
     (p_ss_data)->data_id = (ev_idno)
+
+#if RELEASED && RISCOS
+
+/* avoid really annoying return(BOOL == x); inline overhead */
+
+#define ss_data_is_array(pc_ss_data) \
+    (DATA_ID_ARRAY == ss_data_get_data_id(pc_ss_data))
+
+#define ss_data_is_blank(pc_ss_data) \
+    (DATA_ID_BLANK == ss_data_get_data_id(pc_ss_data))
+
+#define ss_data_is_date(pc_ss_data) \
+    (DATA_ID_DATE == ss_data_get_data_id(pc_ss_data))
+
+#define ss_data_is_error(pc_ss_data) \
+    (DATA_ID_ERROR == ss_data_get_data_id(pc_ss_data))
+
+#define ss_data_is_logical(pc_ss_data) \
+    (DATA_ID_LOGICAL == ss_data_get_data_id(pc_ss_data))
+
+#define ss_data_is_real(pc_ss_data) \
+    (DATA_ID_REAL == ss_data_get_data_id(pc_ss_data))
+
+#define ss_data_is_string(pc_ss_data) \
+    (DATA_ID_STRING == ss_data_get_data_id(pc_ss_data))
+
+#else /* normal */
 
 _Check_return_
 static inline BOOL
@@ -809,13 +900,30 @@ ss_data_is_logical(
 
 _Check_return_
 static inline BOOL
+ss_data_is_real(
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    return(DATA_ID_REAL == ss_data_get_data_id(p_ss_data));
+}
+
+_Check_return_
+static inline BOOL
+ss_data_is_string(
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    return(DATA_ID_STRING == ss_data_get_data_id(p_ss_data));
+}
+
+#endif /* RELEASED && RISCOS */
+
+_Check_return_
+static inline BOOL
 ss_data_is_integer(
     _InRef_     PC_SS_DATA p_ss_data)
 {
     switch(ss_data_get_data_id(p_ss_data))
     {
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         return(TRUE);
@@ -834,7 +942,6 @@ ss_data_is_number(
     {
     case DATA_ID_REAL:
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         return(TRUE);
@@ -842,22 +949,6 @@ ss_data_is_number(
     default:
         return(FALSE);
     }
-}
-
-_Check_return_
-static inline BOOL
-ss_data_is_real(
-    _InRef_     PC_SS_DATA p_ss_data)
-{
-    return(DATA_ID_REAL == ss_data_get_data_id(p_ss_data));
-}
-
-_Check_return_
-static inline BOOL
-ss_data_is_string(
-    _InRef_     PC_SS_DATA p_ss_data)
-{
-    return(DATA_ID_STRING == ss_data_get_data_id(p_ss_data));
 }
 
 _Check_return_
@@ -876,6 +967,15 @@ ss_data_get_real(
 {
     assert(ss_data_is_real(p_ss_data));
     return(p_ss_data->arg.fp);
+}
+
+_Check_return_
+static __forceinline PC_F64
+ss_data_get_pc_real(
+    _InRef_     PC_SS_DATA p_ss_data)
+{
+    assert(ss_data_is_real(p_ss_data));
+    return(&p_ss_data->arg.fp);
 }
 
 _Check_return_
@@ -998,7 +1098,7 @@ ss_data_set_real_try_integer(
 {
     ss_data_set_real(p_ss_data, f64);
 
-    consume_bool(/*ss_data_*/ss_data_real_to_integer_try(p_ss_data));
+    consume_bool(ss_data_real_to_integer_try(p_ss_data));
 }
 
 /*
@@ -1018,7 +1118,7 @@ extern S32
 ss_dateval_to_serial_number(
     _InVal_     SS_DATE_DATE ss_date_date);
 
-_Check_return_ _Success_(return >= 0)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 ss_serial_number_to_dateval(
     _OutRef_    P_SS_DATE_DATE p_ss_date_date,
@@ -1085,7 +1185,7 @@ extern F64
 ss_date_to_serial_number(
     _InRef_     PC_SS_DATE p_ss_date);
 
-_Check_return_
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 ss_serial_number_to_date(
     _OutRef_    P_SS_DATE p_ss_date,
@@ -1109,7 +1209,7 @@ extern S32
 sliding_window_year(
     _InVal_     S32 year);
 
-_Check_return_ _Success_(return >= 0)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 ss_recog_date_time(
     _OutRef_    P_SS_DATA p_ss_data,
@@ -1132,8 +1232,8 @@ ss_date_decode(
 
 typedef struct INT64_WITH_INT32_OVERFLOW
 {
-    int64_t int64_result;
-    bool    f_overflow;
+    int64_t     int64_result;
+    bool        f_overflow;
 }
 INT64_WITH_INT32_OVERFLOW, * P_INT64_WITH_INT32_OVERFLOW;
 
@@ -1157,6 +1257,43 @@ int32_multiply_check_overflow(
     _In_        const int32_t multiplicand_a,
     _In_        const int32_t multiplicand_b,
     _OutRef_    P_INT64_WITH_INT32_OVERFLOW p_int64_with_int32_overflow);
+
+/******************************************************************************
+*
+* add, subtract or multiply two 32-bit unsigned integers,
+* checking for overflow and also returning
+* an unsigned 64-bit result that the caller may consult
+* e.g. to promote to fp
+*
+******************************************************************************/
+
+typedef struct UINT64_WITH_UINT32_OVERFLOW
+{
+    uint64_t    uint64_result;
+    bool        f_overflow;
+}
+UINT64_WITH_UINT32_OVERFLOW, * P_UINT64_WITH_UINT32_OVERFLOW;
+
+_Check_return_
+extern uint32_t
+uint32_add_check_overflow(
+    _In_        const uint32_t addend_a,
+    _In_        const uint32_t addend_b,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow);
+
+_Check_return_
+extern uint32_t
+uint32_subtract_check_overflow(
+    _In_        const uint32_t minuend,
+    _In_        const uint32_t subtrahend,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow);
+
+_Check_return_
+extern uint32_t
+uint32_multiply_check_overflow(
+    _In_        const uint32_t multiplicand_a,
+    _In_        const uint32_t multiplicand_b,
+    _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow);
 
 #endif /* __ss_const_h */
 

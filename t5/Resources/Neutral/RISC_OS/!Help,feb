@@ -1,0 +1,18 @@
+| !Help for Fireworkz
+|
+| HTML help is preferred if a browser is available, with fallback to Text
+|
+| For HTML help, use Fireworkz-Manuals package if installed, otherwise use help from Fireworkz package
+|
+| Take care with possibly-unset paths
+|
+If "<Fireworkz$Dir>"="" Then <Obey$Dir>.!Boot
+|
+If "<Fireworkz$Path>"="" Then Set Fireworkz$Path <Fireworkz$Dir>.Resources.UK.,<Fireworkz$Dir>.Resources.Neutral.
+|
+If "<FireworkzManuals$Path>"="" Then Set FireworkzManuals$Path <Boot$Dir>.^.Manuals.Fireworkz.UK.
+|
+If "<Alias$@RunType_FAF>"="" Then Else Set Fireworkz$Help FireworkzManuals:UserGuide.index/htm
+If "<Alias$@RunType_FAF>"="" Then Set Fireworkz$Help Fireworkz:RISC_OS.Help.Text Else IfThere <Fireworkz$Help> Then Else Set Fireworkz$Help Fireworkz:RISC_OS.Help.HTML.index/html
+|
+IfThere <Fireworkz$Help> Then Filer_Run <Fireworkz$Help> Else Error Help not found

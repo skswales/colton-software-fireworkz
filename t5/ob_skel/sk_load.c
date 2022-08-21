@@ -888,7 +888,7 @@ t5_cmd_of_cell(
     OBJECT_ID object_id;
     POSITION position;
 
-    zero_struct(load_cell_ownform);
+    zero_struct(load_cell_ownform); /* leave this one as fast */
 
     if(status_fail(status = object_id_from_construct_id(p_args[ARG_CELL_OWNER].val.u8c, &object_id)))
     {
@@ -1238,7 +1238,7 @@ t5_cmd_of_block(
         LOAD_CELL_OWNFORM load_cell_ownform_stt_frag;
         OBJECT_ID object_id;
 
-        zero_struct(load_cell_ownform_stt_frag);
+        zero_struct_fn(load_cell_ownform_stt_frag);
         load_cell_ownform_stt_frag.ustr_inline_contents = ustr_inline_frag_stt;
         load_cell_ownform_stt_frag.ustr_formula = NULL;
 
@@ -1278,7 +1278,7 @@ t5_cmd_of_block(
         OBJECT_ID object_id;
         POSITION position_end;
 
-        zero_struct(load_cell_ownform_end_frag);
+        zero_struct_fn(load_cell_ownform_end_frag);
         load_cell_ownform_end_frag.ustr_inline_contents = ustr_inline_frag_end;
         load_cell_ownform_end_frag.ustr_formula = NULL;
 
@@ -1377,7 +1377,7 @@ t5_cmd_of_style_specific(
         style_docu_area_add_parm.t5_message = T5_EXT_STYLE_CELL_CURRENT;
         style_docu_area_add_parm.region_class = REGION_UPPER;
 
-        docu_area_init(&docu_area);
+        docu_area_init(&docu_area); /* don't let this fool you - it gets modified to keep current by T5_MSG_DOCU_COLROW */
         docu_area.whole_col = 1;
         docu_area.whole_row = 1;
 

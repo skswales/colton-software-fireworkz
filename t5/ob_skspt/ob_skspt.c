@@ -58,17 +58,21 @@ enum ADD_CR_CONTROL_IDS
     ADD_CR_ID_NUMBER
 };
 
+/*
+cols
+*/
+
 static const DIALOG_CONTROL
-add_cols_number_label =
+add_cr_number_label =
 {
     ADD_CR_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER, DIALOG_CONTROL_SELF, ADD_CR_ID_NUMBER },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-add_cols_number_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_COLS_NUMBER) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+add_cols_number_label_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_COLS) };
 
 static const DIALOG_CONTROL
 add_cr_number =
@@ -80,31 +84,85 @@ add_cr_number =
 };
 
 static const UI_CONTROL_S32
-add_cr_table_cols_bump_control = { 1, 1000 };
+add_cols_n_table_cols_bump_control = { 1, 1000 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-add_cols_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 1 };
+add_cols_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cols_n_table_cols_bump_control } /* BUMP_XX */, 1 };
+
+/*
+CMD
+*/
 
 static const DIALOG_CONTROL_ID
 add_cr_ok_data_argmap[] = { ADD_CR_ID_NUMBER };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
-add_cols_ok_command = { T5_CMD_ADD_COLS, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
+add_cols_ok_command = { T5_CMD_COLS_ADD_AFTER, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-add_cols_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &add_cols_ok_command };
+add_cols_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_ADD), &add_cols_ok_command };
 
 static const DIALOG_CTL_CREATE
 add_cols_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &add_cols_number_label,   &add_cols_number_label_data },
-    { &add_cr_number,           &add_cols_number_data },
+    { { &add_cr_number_label },     &add_cols_number_label_data },
+    { { &add_cr_number },           &add_cols_number_data },
 
-    { &defbutton_ok,            &add_cols_ok_data },
-    { &stdbutton_cancel,        &stdbutton_cancel_data }
+    { { &defbutton_ok },            &add_cols_ok_data },
+    { { &stdbutton_cancel },        &stdbutton_cancel_data }
 };
+
+T5_CMD_PROTO(static, t5_cmd_cols_add_after_intro)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, add_cols_ctl_create, elemof32(add_cols_ctl_create), SKEL_SPLIT_MSG_DIALOG_COLS_ADD);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_ADD_CR_HELP_TOPIC;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+/******************************************************************************
+*
+* insert columns dialog box
+*
+******************************************************************************/
+
+/*
+CMD
+*/
+
+static const DIALOG_CONTROL_DATA_PUSH_COMMAND
+insert_cols_ok_command = { T5_CMD_COLS_INSERT_BEFORE, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+insert_cols_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT), &insert_cols_ok_command };
+
+static const DIALOG_CTL_CREATE
+insert_cols_ctl_create[] =
+{
+    { { &dialog_main_group }, NULL },
+
+    { { &add_cr_number_label },     &add_cols_number_label_data },
+    { { &add_cr_number },           &add_cols_number_data },
+
+    { { &defbutton_ok },            &insert_cols_ok_data },
+    { { &stdbutton_cancel },        &stdbutton_cancel_data }
+};
+
+T5_CMD_PROTO(static, t5_cmd_cols_insert_before_intro)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_cols_ctl_create, elemof32(insert_cols_ctl_create), SKEL_SPLIT_MSG_DIALOG_COLS_INSERT);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_ADD_CR_HELP_TOPIC;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
 
 /******************************************************************************
 *
@@ -112,54 +170,88 @@ add_cols_ctl_create[] =
 *
 ******************************************************************************/
 
-static const DIALOG_CONTROL
-add_rows_number_label =
-{
-    ADD_CR_ID_NUMBER_LABEL, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, ADD_CR_ID_NUMBER, DIALOG_CONTROL_SELF, ADD_CR_ID_NUMBER },
-    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
-};
+/*
+rows
+*/
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-add_rows_number_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ADD_ROWS_NUMBER) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+add_rows_number_label_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_ROWS) };
 
 static const UI_CONTROL_S32
-add_cr_table_rows_bump_control = { 1, 1000000 };
+add_rows_n_table_rows_bump_control = { 1, 1000000 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-add_rows_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 1 };
+add_rows_number_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_rows_n_table_rows_bump_control } /* BUMP_XX */, 1 };
+
+/*
+CMD
+*/
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
-add_rows_ok_command = { T5_CMD_ADD_ROWS, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
+add_rows_ok_command = { T5_CMD_ROWS_ADD_AFTER, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-add_rows_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &add_rows_ok_command };
+add_rows_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_ADD), &add_rows_ok_command };
 
 static const DIALOG_CTL_CREATE
 add_rows_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &add_rows_number_label,   &add_rows_number_label_data },
-    { &add_cr_number,           &add_rows_number_data },
+    { { &add_cr_number_label },     &add_rows_number_label_data },
+    { { &add_cr_number },           &add_rows_number_data },
 
-    { &defbutton_ok,            &add_rows_ok_data },
-    { &stdbutton_cancel,        &stdbutton_cancel_data }
+    { { &defbutton_ok },            &add_rows_ok_data },
+    { { &stdbutton_cancel },        &stdbutton_cancel_data }
 };
 
-T5_CMD_PROTO(static, t5_cmd_add_cr_intro)
+T5_CMD_PROTO(static, t5_cmd_rows_add_after_intro)
 {
-    const BOOL add_cols = (t5_message == T5_CMD_ADD_COLS_INTRO);
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
-    if(add_cols)
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, add_cols_ctl_create, elemof32(add_cols_ctl_create), MSG_DIALOG_ADD_CR_HELP_TOPIC);
-    else
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, add_rows_ctl_create, elemof32(add_rows_ctl_create), MSG_DIALOG_ADD_CR_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = add_cols ? MSG_DIALOG_ADD_COLS : MSG_DIALOG_ADD_ROWS;
-    /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, add_rows_ctl_create, elemof32(add_rows_ctl_create), SKEL_SPLIT_MSG_DIALOG_ROWS_ADD);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_ADD_CR_HELP_TOPIC;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+/******************************************************************************
+*
+* insert rows dialog box
+*
+******************************************************************************/
+
+/*
+CMD
+*/
+
+static const DIALOG_CONTROL_DATA_PUSH_COMMAND
+insert_rows_ok_command = { T5_CMD_ROWS_INSERT_BEFORE, OBJECT_ID_SKEL, NULL, add_cr_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/} };
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+insert_rows_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT), &insert_rows_ok_command };
+
+static const DIALOG_CTL_CREATE
+insert_rows_ctl_create[] =
+{
+    { { &dialog_main_group }, NULL },
+
+    { { &add_cr_number_label },     &add_rows_number_label_data },
+    { { &add_cr_number },           &add_rows_number_data },
+
+    { { &defbutton_ok },            &insert_rows_ok_data },
+    { { &stdbutton_cancel },        &stdbutton_cancel_data }
+};
+
+T5_CMD_PROTO(static, t5_cmd_rows_insert_before_intro)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_rows_ctl_create, elemof32(insert_rows_ctl_create), SKEL_SPLIT_MSG_DIALOG_ROWS_INSERT);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_ADD_CR_HELP_TOPIC;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
@@ -177,15 +269,6 @@ enum INSERT_TABLE_CONTROL_IDS
     INSERT_TABLE_ID_ROWS
 };
 
-static const DIALOG_CONTROL_ID
-insert_table_insert_data_argmap[] = { INSERT_TABLE_ID_COLS, INSERT_TABLE_ID_ROWS };
-
-static const DIALOG_CONTROL_DATA_PUSH_COMMAND
-insert_table_insert_command = { T5_CMD_INSERT_TABLE, OBJECT_ID_SKEL, NULL, insert_table_insert_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-insert_table_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_INSERT), &insert_table_insert_command };
-
 /*
 cols
 */
@@ -196,11 +279,11 @@ insert_table_cols_label =
     INSERT_TABLE_ID_COLS_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, INSERT_TABLE_ID_COLS, DIALOG_CONTROL_SELF, INSERT_TABLE_ID_COLS },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-insert_table_cols_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_COLS) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+insert_table_cols_label_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_COLS) };
 
 static const DIALOG_CONTROL
 insert_table_cols =
@@ -212,7 +295,7 @@ insert_table_cols =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-insert_table_cols_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 4 };
+insert_table_cols_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cols_n_table_cols_bump_control } /* BUMP_XX */, 4 };
 
 /*
 rows
@@ -224,11 +307,11 @@ insert_table_rows_label =
     INSERT_TABLE_ID_ROWS_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_SELF, INSERT_TABLE_ID_ROWS, INSERT_TABLE_ID_COLS_LABEL, INSERT_TABLE_ID_ROWS },
     { DIALOG_CONTENTS_CALC, 0, 0, 0 },
-    { DRT(RTRB, STATICTEXT) }
+    { DRT(RTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-insert_table_rows_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_TABLE_ROWS) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+insert_table_rows_label_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_ROWS) };
 
 static const DIALOG_CONTROL
 insert_table_rows =
@@ -240,20 +323,33 @@ insert_table_rows =
 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-insert_table_rows_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_cr_table_rows_bump_control } /* BUMP_XX */, 9 };
+insert_table_rows_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &add_rows_n_table_rows_bump_control } /* BUMP_XX */, 9 };
+
+/*
+CMD
+*/
+
+static const DIALOG_CONTROL_ID
+insert_table_insert_data_argmap[] = { INSERT_TABLE_ID_COLS, INSERT_TABLE_ID_ROWS };
+
+static const DIALOG_CONTROL_DATA_PUSH_COMMAND
+insert_table_insert_command = { T5_CMD_INSERT_TABLE, OBJECT_ID_SKEL, NULL, insert_table_insert_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+insert_table_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT), &insert_table_insert_command };
 
 static const DIALOG_CTL_CREATE
 insert_table_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &insert_table_cols_label, &insert_table_cols_label_data },
-    { &insert_table_cols,       &insert_table_cols_data },
-    { &insert_table_rows_label, &insert_table_rows_label_data },
-    { &insert_table_rows,       &insert_table_rows_data },
+    { { &insert_table_cols_label }, &insert_table_cols_label_data },
+    { { &insert_table_cols },       &insert_table_cols_data },
+    { { &insert_table_rows_label }, &insert_table_rows_label_data },
+    { { &insert_table_rows },       &insert_table_rows_data },
 
-    { &defbutton_ok,            &insert_table_insert_data },
-    { &stdbutton_cancel,        &stdbutton_cancel_data }
+    { { &defbutton_ok },            &insert_table_insert_data },
+    { { &stdbutton_cancel },        &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -267,18 +363,17 @@ T5_CMD_PROTO(static, t5_cmd_insert_table_intro)
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
     UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_table_ctl_create, elemof32(insert_table_ctl_create), MSG_DIALOG_INSERT_TABLE_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_INSERT_TABLE_CAPTION;
-    /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_table_ctl_create, elemof32(insert_table_ctl_create), SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_INSERT_TABLE_HELP_TOPIC;
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
 /******************************************************************************
 *
 * add a table style to a docu_area;
-* the table is assumed to start at col 1,
-* with a blank col 0 for moving the table about
+* the table is assumed to start at column index 1,
+* with a blank column index 0 for moving the table about
 *
 ******************************************************************************/
 
@@ -290,25 +385,17 @@ table_style_add(
     _InVal_     COL col_extra)
 {
     STATUS status = STATUS_OK;
-    BOOL base_table_added = FALSE;
+    S32 style_handle_base_table = 0;
+    PC_STYLE p_style_base_table = NULL;
 
-    { /* Attempt to add a BaseTable style area if said style exists SKS 27jun96 */
-    STYLE_HANDLE style_handle_table;
-
-    if(status_done(style_handle_table = style_handle_from_name(p_docu, TEXT("BaseTable"))))
-    {
-        STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
-        DOCU_AREA docu_area_table;
-
-        STYLE_DOCU_AREA_ADD_HANDLE(&style_docu_area_add_parm, style_handle_table);
-
-        docu_area_table = *p_docu_area;
-        docu_area_table.tl.slr.col += col_extra;
-
-        status_return(style_docu_area_add(p_docu, &docu_area_table, &style_docu_area_add_parm));
-
-        base_table_added = TRUE;
-    }
+    { /* attempt to add a BaseTable style area if said style exists */
+    DOCU_AREA docu_area_table;
+    docu_area_table = *p_docu_area;
+    docu_area_table.tl.slr.col += col_extra;
+    status_return(status = table_apply_style_basetable(p_docu, &docu_area_table));
+    style_handle_base_table = (S32) (status);
+    if(0 != style_handle_base_table)
+        p_style_base_table = p_style_from_handle(p_docu, style_handle_base_table);
     } /*block*/
 
     {
@@ -317,64 +404,11 @@ table_style_add(
 
     style_init(&style_table);
 
-    style_table.para_style.para_start = style_default_measurement(p_docu, STYLE_SW_PS_PARA_START);
-    style_bit_set(&style_table, STYLE_SW_PS_PARA_START);
+    /* invent a new, appropriately named, style for this table (which will be 'renumbered' on file insertion) */
+    status_return(table_invent_style_name(p_docu, &style_table));
 
-    style_table.para_style.para_end = style_default_measurement(p_docu, STYLE_SW_PS_PARA_END);
-    style_bit_set(&style_table, STYLE_SW_PS_PARA_END);
-
-    if(global_preferences.ss_edit_in_cell) /* SKS 09jan97 turn this section back on with this extra condition */
-    if(object_present(OBJECT_ID_SS))
-    {
-        style_table.para_style.new_object = OBJECT_ID_SS;
-        style_bit_set(&style_table, STYLE_SW_PS_NEW_OBJECT);
-    }
-
-    if(!base_table_added) /* SKS 03oct96 don't override BaseTable settings */
-    {
-        style_table.para_style.grid_left   =
-        style_table.para_style.grid_top    =
-        style_table.para_style.grid_right  =
-        style_table.para_style.grid_bottom = SF_BORDER_STANDARD;
-        rgb_set(&style_table.para_style.rgb_grid_left, 0, 0, 0); /* true black */
-        style_table.para_style.rgb_grid_top =
-        style_table.para_style.rgb_grid_right =
-        style_table.para_style.rgb_grid_bottom =
-        style_table.para_style.rgb_grid_left;
-        void_style_selector_or(&style_table.selector, &style_table.selector, &style_selector_para_grid);
-    }
-
-    { /* invent a new, appropriately named, style for this table (which will be 'renumbered' on file insertion) */
-    S32 i = 1;
-    PCTSTR tstr_format = resource_lookup_tstr(MSG_DIALOG_INSERT_TABLE_TABLE);
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 16);
-    quick_tblock_with_buffer_setup(quick_tblock);
-
-    for(;;)
-    {
-        BOOL do_break = FALSE;
-
-        status_break(status = quick_tblock_printf(&quick_tblock, tstr_format, i));
-        status_break(status = quick_tblock_nullch_add(&quick_tblock));
-
-        if(0 == style_handle_from_name(p_docu, quick_tblock_tstr(&quick_tblock)))
-        {
-            status = al_tstr_set(&style_table.h_style_name_tstr, quick_tblock_tstr(&quick_tblock));
-            do_break = TRUE;
-        }
-
-        quick_tblock_dispose(&quick_tblock);
-
-        if(do_break)
-            break;
-
-        ++i;
-    }
-    } /*block*/
-
-    status_return(status);
-
-    style_bit_set(&style_table, STYLE_SW_NAME);
+    /* only apply style elements that are not already defined in the base table style */
+    table_add_some_style_elements(p_docu, &style_table, p_style_base_table);
 
     status_return(status = style_handle_add(p_docu, &style_table));
     style_handle_table = (STYLE_HANDLE) status;
@@ -393,42 +427,50 @@ table_style_add(
     } /*block*/
 
     {
-    STYLE style_cols;
-    DOCU_AREA docu_area_cols;
+    int pass;
 
-    style_init(&style_cols);
-
-    style_cols.para_style.margin_para = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_PARA);
-    style_bit_set(&style_cols, STYLE_SW_PS_MARGIN_PARA);
-
-    style_cols.para_style.margin_left = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_LEFT);
-    style_bit_set(&style_cols, STYLE_SW_PS_MARGIN_LEFT);
-
-    style_cols.para_style.margin_right = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_RIGHT);
-    style_bit_set(&style_cols, STYLE_SW_PS_MARGIN_RIGHT);
-
-    style_cols.para_style.h_tab_list = 0;
-    style_bit_set(&style_cols, STYLE_SW_PS_TAB_LIST);
-
-    style_cols.col_style.width = style_default_measurement(p_docu, STYLE_SW_CS_WIDTH);
-    style_bit_set(&style_cols, STYLE_SW_CS_WIDTH);
-
-    /* an empty column at left to move table about as well as independent width regions for columns in table */
-    docu_area_cols = *p_docu_area;
-
-    while(docu_area_cols.tl.slr.col < docu_area_cols.br.slr.col)
+    for(pass = 1; pass <= 2; ++pass)
     {
-        DOCU_AREA docu_area_inner;
-        STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
+        DOCU_AREA docu_area_cols = *p_docu_area;
+        STYLE style_cols;
 
-        STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style_cols);
+        style_init(&style_cols);
 
-        docu_area_inner = docu_area_cols;
-        docu_area_inner.br.slr.col = docu_area_inner.tl.slr.col + 1;
+        /* derive initial state from BaseTable style if possible */
+        if(1 == pass)
+        {
+            table_cols_add_some_style_elements(p_docu, &style_cols, p_style_base_table);
+        }
+        else /* 2 == pass */
+        {
+            /* if added, added as separate region so it can be deleted if required */
+            if( (NULL == p_style_base_table) || !style_bit_test(p_style_base_table, STYLE_SW_PS_NEW_OBJECT) )
+            {
+                if(global_preferences.ss_edit_in_cell) /* SKS 09jan97 turn this section back on with this extra condition */
+                {
+                    if(object_present(OBJECT_ID_SS))
+                    {
+                        style_cols.para_style.new_object = OBJECT_ID_SS;
+                        style_bit_set(&style_cols, STYLE_SW_PS_NEW_OBJECT);
+                    }
+                }
+            }
+        }
 
-        status_return(style_docu_area_add(p_docu, &docu_area_inner, &style_docu_area_add_parm));
+        if(!style_selector_any(&style_cols.selector))
+            continue;
 
-        ++docu_area_cols.tl.slr.col;
+        /* empty column(s) at left to move table about as well as independent width regions for columns in table */
+        while(docu_area_cols.tl.slr.col < docu_area_cols.br.slr.col)
+        {
+            DOCU_AREA docu_area_inner = docu_area_cols;
+            STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
+            STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style_cols);
+            style_docu_area_add_parm.add_without_subsume = TRUE;
+            docu_area_inner.br.slr.col = docu_area_inner.tl.slr.col + 1;
+            status_return(style_docu_area_add(p_docu, &docu_area_inner, &style_docu_area_add_parm));
+            ++docu_area_cols.tl.slr.col;
+        }
     }
     } /*block*/
 
@@ -732,26 +774,26 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 sort_intro_ok_command = { T5_CMD_SORT, OBJECT_ID_SKEL, args_cmd_sort_intro, sort_intro_argmap, { 0 } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-sort_intro_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &sort_intro_ok_command };
+sort_intro_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &sort_intro_ok_command };
 
 static const DIALOG_CTL_CREATE
 sort_intro_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &sort_intro_col[0],   &sort_intro_col_data[0] },
-    { &sort_intro_order[0], &sort_intro_order_data[0] },
-    { &sort_intro_col[1],   &sort_intro_col_data[1] },
-    { &sort_intro_order[1], &sort_intro_order_data[1] },
-    { &sort_intro_col[2],   &sort_intro_col_data[2] },
-    { &sort_intro_order[2], &sort_intro_order_data[2] },
-    { &sort_intro_col[3],   &sort_intro_col_data[3] },
-    { &sort_intro_order[3], &sort_intro_order_data[3] },
-    { &sort_intro_col[4],   &sort_intro_col_data[4] },
-    { &sort_intro_order[4], &sort_intro_order_data[4] },
+    { { &sort_intro_col[0] },   &sort_intro_col_data[0] },
+    { { &sort_intro_order[0] }, &sort_intro_order_data[0] },
+    { { &sort_intro_col[1] },   &sort_intro_col_data[1] },
+    { { &sort_intro_order[1] }, &sort_intro_order_data[1] },
+    { { &sort_intro_col[2] },   &sort_intro_col_data[2] },
+    { { &sort_intro_order[2] }, &sort_intro_order_data[2] },
+    { { &sort_intro_col[3] },   &sort_intro_col_data[3] },
+    { { &sort_intro_order[3] }, &sort_intro_order_data[3] },
+    { { &sort_intro_col[4] },   &sort_intro_col_data[4] },
+    { { &sort_intro_order[4] }, &sort_intro_order_data[4] },
 
-    { &defbutton_ok, &sort_intro_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &sort_intro_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -939,11 +981,13 @@ T5_CMD_PROTO(static, t5_cmd_sort_intro)
             return(status);
     }
 
+    if(!p_docu->mark_info_cells.h_markers)
+        return(STATUS_FAIL);
+
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, sort_intro_ctl_create, elemof32(sort_intro_ctl_create), MSG_DIALOG_SORT_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SORT_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, sort_intro_ctl_create, elemof32(sort_intro_ctl_create), MSG_DIALOG_SORT_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_SORT_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_sort_intro;
     return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
     } /*block*/
@@ -1030,9 +1074,17 @@ OBJECT_PROTO(extern, object_skel_split)
     case T5_MSG_UISTYLE_STYLE_EDIT:
         return(t5_msg_uistyle_style_edit(p_docu, t5_message, (P_MSG_UISTYLE_STYLE_EDIT) p_data));
 
-    case T5_CMD_ADD_COLS_INTRO:
-    case T5_CMD_ADD_ROWS_INTRO:
-        return(t5_cmd_add_cr_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
+    case T5_CMD_COLS_ADD_AFTER_INTRO:
+        return(t5_cmd_cols_add_after_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
+
+    case T5_CMD_COLS_INSERT_BEFORE_INTRO:
+        return(t5_cmd_cols_insert_before_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
+
+    case T5_CMD_ROWS_ADD_AFTER_INTRO:
+        return(t5_cmd_rows_add_after_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
+
+    case T5_CMD_ROWS_INSERT_BEFORE_INTRO:
+        return(t5_cmd_rows_insert_before_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
 
     case T5_CMD_INSERT_TABLE:
         return(t5_cmd_insert_table(p_docu, t5_message, (PC_T5_CMD) p_data));

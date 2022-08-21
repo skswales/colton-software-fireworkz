@@ -1,0 +1,19 @@
+﻿Fireworkz Pro 159
+
+Integration within
+Fireworkz Pro
+Fireworkz Pro combines the word processing abilities of Wordz,
+the sheet abilities of Resultz and the database facilities provided
+by Recordz. The outcome is a powerful integrated package. This
+chapter looks at some of the ways in which the word processing
+and spreadsheet areas of the system can make use of databases. It
+also covers some of the other improvements added to Fireworkz in
+addition to the database related features.
+It includes sections on:
+. Database formats.
+. Database functions.
+. Mail merging.
+. Non-database improvements.
+
+
+

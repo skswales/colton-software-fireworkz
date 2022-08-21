@@ -34,7 +34,7 @@ macro used to align allocations as desired
 
 _Check_return_
 extern STATUS
-alloc_block_create(
+alloc_block_create_block(
     _OutRef_    P_P_ALLOCBLOCK lplpAllocBlock,
     _InVal_     U32 n_bytes_wanted)
 {
@@ -61,7 +61,7 @@ alloc_block_create(
 __pragma(warning(push)) __pragma(warning(disable:6001)) /* Using uninitialized memory '*lpAllocBlock' */
 
 extern void
-alloc_block_dispose(
+alloc_block_dispose_block(
     _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock)
 {
     P_ALLOCBLOCK lpAllocBlock = *lplpAllocBlock;
@@ -160,7 +160,7 @@ alloc_block_ustr_set(
 #endif
 
     if(!*lplpAllocBlock)
-        status_return(alloc_block_create(lplpAllocBlock, 0x0800 - sizeof32(ALLOCBLOCK)));
+        status_return(alloc_block_create_block(lplpAllocBlock, 0x0800 - sizeof32(ALLOCBLOCK)));
 
     if(NULL == (*aa = a = (P_USTR) alloc_block_malloc(lplpAllocBlock, l, &status)))
         return(status);
@@ -188,7 +188,7 @@ alloc_block_tstr_set(
     l = tstrlen32p1(b);
 
     if(!*lplpAllocBlock)
-        status_return(alloc_block_create(lplpAllocBlock, 0x0800 - sizeof32(ALLOCBLOCK)));
+        status_return(alloc_block_create_block(lplpAllocBlock, 0x0800 - sizeof32(ALLOCBLOCK)));
 
     if(NULL == (*aa = a = (PTCH) alloc_block_malloc(lplpAllocBlock, l * sizeof32(*a), &status)))
         return(status);

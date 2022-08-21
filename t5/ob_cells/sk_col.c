@@ -32,21 +32,17 @@ local data
 
 typedef struct COL_ENUM_CACHE
 {
+    ARRAY_HANDLE h_col_info;
     DOCNO docno;
-    U8 used;
     U8 locked;
-    U8 _spare;
+    U8 _spare[2];
     COL col;
     ROW row;
     PAGE page;
-    ARRAY_HANDLE h_col_info;
 }
 COL_ENUM_CACHE, * P_COL_ENUM_CACHE; typedef const COL_ENUM_CACHE * PC_COL_ENUM_CACHE;
 
-#define CACHE_SIZE_COL_ENUM 20
-
-#define CACHE_HIT  -1
-#define CACHE_MISS -2
+#define COL_ENUM_CACHE_SIZE 32
 
 static ARRAY_HANDLE h_col_enum_cache;
 
@@ -680,7 +676,7 @@ row_is_visible(
 ******************************************************************************/
 
 _Check_return_
-static ARRAY_HANDLE
+static ARRAY_HANDLE /*h_col_info*/
 skel_col_enum_cache_check(
     _InVal_     DOCNO docno,
     _InVal_     ROW row,
@@ -689,36 +685,51 @@ skel_col_enum_cache_check(
 {
     const ARRAY_INDEX n_cache_elements = array_elements(&h_col_enum_cache);
     ARRAY_INDEX i;
+    PC_COL_ENUM_CACHE p_col_enum_cache = array_rangec(&h_col_enum_cache, COL_ENUM_CACHE, 0, n_cache_elements);
 
-    for(i = 0; i < n_cache_elements; ++i)
+    for(i = 0; i < n_cache_elements; ++i, ++p_col_enum_cache)
     {
-        PC_COL_ENUM_CACHE p_col_enum_cache = array_ptrc(&h_col_enum_cache, COL_ENUM_CACHE, i);
-
-        if(!p_col_enum_cache->used)
+        if(0 == p_col_enum_cache->h_col_info)
             continue;
 
-#if TRACE_ALLOWED
-        assert(0 != array_elements(&p_col_enum_cache->h_col_info));
-#endif
-
-        if(
-           (p_col_enum_cache->docno == docno)
-           &&
-           (p_col_enum_cache->row == row)
-           &&
-           (((page >= 0) && (p_col_enum_cache->page == page)) || ((page < 0) && (p_col_enum_cache->page < 0)))
-           &&
-           (((col >= 0) && (p_col_enum_cache->col == col)) || ((col < 0) && (p_col_enum_cache->col < 0)))
-          )
+        if( (p_col_enum_cache->docno == docno)
+            &&
+            (p_col_enum_cache->row == row)
+            &&
+            (((page >= 0) && (p_col_enum_cache->page == page)) || ((page < 0) && (p_col_enum_cache->page < 0)))
+            &&
+            (((col >= 0) && (p_col_enum_cache->col == col)) || ((col < 0) && (p_col_enum_cache->col < 0))) )
+        {
             return(p_col_enum_cache->h_col_info);
+        }
     }
 
     return(0);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, col_enum_cache_deleted)
+/******************************************************************************
+*
+* remove deleted entries from the array
+*
+******************************************************************************/
+
+PROC_ELEMENT_IS_DELETED_PROTO(static, col_enum_cache_is_deleted)
 {
-    return(!((PC_COL_ENUM_CACHE) p_any)->used);
+    const PC_COL_ENUM_CACHE p_col_enum_cache = (PC_COL_ENUM_CACHE) p_any;
+
+    return(0 == p_col_enum_cache->h_col_info);
+}
+
+static void
+skel_col_enum_cache_garbage_collect(
+    _InVal_     BOOL may_dispose)
+{
+    AL_GARBAGE_FLAGS al_garbage_flags;
+    AL_GARBAGE_FLAGS_CLEAR(al_garbage_flags);
+    al_garbage_flags.remove_deleted = 1; /* just shuffle remaining used elements together */
+    /* al_garbage_flags.shrink = 1; */
+    al_garbage_flags.may_dispose = may_dispose;
+    consume(S32, al_array_garbage_collect(&h_col_enum_cache, 0, col_enum_cache_is_deleted, al_garbage_flags));
 }
 
 extern void
@@ -726,6 +737,7 @@ skel_col_enum_cache_dispose(
     _InVal_     DOCNO docno,
     _InRef_     PC_REGION p_region)
 {
+    BOOL do_garbage_collect = FALSE;
     const ARRAY_INDEX n_cache_elements = array_elements(&h_col_enum_cache);
     ARRAY_INDEX i;
 
@@ -733,29 +745,21 @@ skel_col_enum_cache_dispose(
     {
         P_COL_ENUM_CACHE p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
 
-        if(!p_col_enum_cache->used)
+        if(0 == p_col_enum_cache->h_col_info)
             continue;
 
-        if(
-           (p_col_enum_cache->docno == docno)
-           &&
-           row_in_region(p_region, p_col_enum_cache->row)
-          )
+        if( (docno == p_col_enum_cache->docno)
+            &&
+            row_in_region(p_region, p_col_enum_cache->row) )
         {
+            assert(0 == p_col_enum_cache->locked);
             al_array_dispose(&p_col_enum_cache->h_col_info);
-            p_col_enum_cache->used = 0;
-            assert(p_col_enum_cache->locked == 0);
+            do_garbage_collect = TRUE;
         }
     }
 
-    { /* garbage collect col enum cache */
-    AL_GARBAGE_FLAGS al_garbage_flags;
-    AL_GARBAGE_FLAGS_CLEAR(al_garbage_flags);
-    al_garbage_flags.remove_deleted = 1;
-    al_garbage_flags.shrink = 1;
-    al_garbage_flags.may_dispose = 1;
-    consume(S32, al_array_garbage_collect(&h_col_enum_cache, 0, col_enum_cache_deleted, al_garbage_flags));
-    } /*block*/
+    if(do_garbage_collect)
+        skel_col_enum_cache_garbage_collect(FALSE /*may_dispose*/);
 }
 
 static void
@@ -766,55 +770,58 @@ skel_col_enum_cache_insert(
     _InVal_     COL col,
     _InVal_     ARRAY_HANDLE h_col_info)
 {
-    ARRAY_INDEX i;
     ARRAY_INDEX n_cache_elements = array_elements(&h_col_enum_cache);
-    ARRAY_INDEX limit = 0;
     P_COL_ENUM_CACHE p_col_enum_cache;
 
-    if(n_cache_elements < CACHE_SIZE_COL_ENUM)
-    {
-        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(COL_ENUM_CACHE), TRUE);
+    assert(array_elements(&h_col_info));
+
+    if(n_cache_elements < COL_ENUM_CACHE_SIZE)
+    {   /* cache not yet full - return another fresh entry at the end */
+        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(COL_ENUM_CACHE_SIZE, sizeof32(COL_ENUM_CACHE), TRUE);
         STATUS status;
 
-        consume_ptr(al_array_extend_by(&h_col_enum_cache, COL_ENUM_CACHE, CACHE_SIZE_COL_ENUM - n_cache_elements, &array_init_block, &status));
+        /* garbage collect doesn't shrink allocation, so we should be able to trivially extend allocation back up to CACHE_SIZE_COL_ENUM */
+        p_col_enum_cache = al_array_extend_by(&h_col_enum_cache, COL_ENUM_CACHE, 1, &array_init_block, &status);
         status_assert(status);
-
-        assert(h_col_enum_cache != 0);
-        n_cache_elements = array_elements(&h_col_enum_cache);
 
         trace_1(TRACE_APP_MEMORY_USE,
                 TEXT("col_enum_cache_size is ") U32_TFMT TEXT(" bytes"),
                 array_size32(&h_col_enum_cache) * sizeof32(COL_ENUM_CACHE));
+
+        n_cache_elements = array_elements(&h_col_enum_cache);
     }
-
-    do  {
-        i = host_rand_between(0, n_cache_elements);
-        p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
-        limit += 1;
-    }
-    while(p_col_enum_cache->locked && limit < CACHE_SIZE_COL_ENUM);
-
-    assert(limit < CACHE_SIZE_COL_ENUM);
-#if TRACE_ALLOWED
-    if(limit > 1)
-        trace_1(TRACE_APP_FORMAT, TEXT("skel_col_enum_cache_insert limit: ") S32_TFMT, limit);
-#endif
-
-    if(p_col_enum_cache->used)
+    else
     {
-        assert(p_col_enum_cache->locked == 0);
+        /* cache full - find a random unlocked cache entry to use */
+        S32 count = 0;
+        ARRAY_INDEX i = host_rand_between(0, n_cache_elements);
+
+        for(;;)
+        {
+            if(i >= n_cache_elements)
+                i = 0;
+
+            p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
+            if(0 == p_col_enum_cache->locked)
+                break;
+
+            ++count;
+            if(count >= n_cache_elements)
+                break;
+
+            ++i;
+        }
+
+        assert(0 == p_col_enum_cache->locked);
+
         al_array_dispose(&p_col_enum_cache->h_col_info);
-        p_col_enum_cache->used = 0;
     }
 
+    p_col_enum_cache->h_col_info = h_col_info;
     p_col_enum_cache->docno = docno;
     p_col_enum_cache->row = row;
     p_col_enum_cache->col = (col >= 0) ? col : (COL) -1;
     p_col_enum_cache->page = (page >= 0) ? page : (PAGE) -1;
-    p_col_enum_cache->h_col_info = h_col_info;
-    p_col_enum_cache->used = 1;
-
-    assert(array_elements(&p_col_enum_cache->h_col_info));
 
     trace_3(TRACE_APP_FORMAT, TEXT("skel_col_enum_cache_insert: row: ") ROW_TFMT TEXT(", col: ") COL_TFMT TEXT(", page: ") S32_TFMT,
             p_col_enum_cache->row, p_col_enum_cache->col, p_col_enum_cache->page);
@@ -832,15 +839,14 @@ skel_col_enum_cache_lock(
 
     for(i = 0; i < n_cache_elements; ++i)
     {
-        P_COL_ENUM_CACHE p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
+        const P_COL_ENUM_CACHE p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
 
         if(p_col_enum_cache->h_col_info == h_col_info)
         {
-            assert(p_col_enum_cache->used);
             assert(p_col_enum_cache->locked >= 0);
             p_col_enum_cache->locked += 1;
             trace_1(TRACE_APP_FORMAT, TEXT("skel_col_enum_cache_lock: ") S32_TFMT, (S32) p_col_enum_cache->locked);
-            break;
+            return;
         }
     }
 
@@ -859,15 +865,14 @@ skel_col_enum_cache_release(
 
     for(i = 0; i < n_cache_elements; ++i)
     {
-        P_COL_ENUM_CACHE p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
+        const P_COL_ENUM_CACHE p_col_enum_cache = array_ptr(&h_col_enum_cache, COL_ENUM_CACHE, i);
 
         if(p_col_enum_cache->h_col_info == h_col_info)
         {
-            assert(p_col_enum_cache->used);
             assert(p_col_enum_cache->locked > 0);
             p_col_enum_cache->locked -= 1;
             trace_1(TRACE_APP_FORMAT, TEXT("skel_col_enum_cache_release: ") S32_TFMT, (S32) p_col_enum_cache->locked);
-            break;
+            return;
         }
     }
 
@@ -1420,6 +1425,51 @@ cell_width(
     }
 
     return(width);
+}
+
+/*
+exported services hook
+*/
+
+MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_col);
+
+_Check_return_
+static STATUS
+sk_col_msg_exit2(void)
+{
+    skel_col_enum_cache_garbage_collect(TRUE /*may_dispose*/);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+maeve_services_sk_col_msg_initclose(
+    _InRef_     PC_MSG_INITCLOSE p_msg_initclose)
+{
+    switch(p_msg_initclose->t5_msg_initclose_message)
+    {
+    case T5_MSG_IC__EXIT2:
+        return(sk_col_msg_exit2());
+
+    default:
+        return(STATUS_OK);
+    }
+}
+
+MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_col)
+{
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
+
+    switch(t5_message)
+    {
+    case T5_MSG_INITCLOSE:
+        return(maeve_services_sk_col_msg_initclose((PC_MSG_INITCLOSE) p_data));
+
+    default:
+        return(STATUS_OK);
+    }
 }
 
 /* end of sk_col.c */

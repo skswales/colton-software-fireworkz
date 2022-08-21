@@ -1,0 +1,54 @@
+﻿Database Guide 160
+
+Databases inside letters and spreadsheets
+When using Recordz, the database occupies the entire document.
+However, with Fireworkz Pro this isn't necessarily the case
+because you can insert a database within the middle of a
+spreadsheet or letter.
+To have a database displayed within a letter or spreadsheet, you
+need to start with the Letter or Sheet template. Then, when you
+drop a database (in the form of the DataPower format file - not the
+document file which references it) into your document, it will be
+positioned relative to the current cursor position.
+When a database is displayed in this way you may prefer to have a
+fixed number of records visible at all times, rather than the whole
+database, although either is allowed.
+To alter the number of records visible, you use the Layout
+dialogue box:
+. Setting the Auto option means that the number of rows
+occupied by the database will automatically vary, depending
+on the number of records in the current subset.
+. Clearing the Auto option means that the number of rows
+occupied by the database will be fixed by the number you
+enter in the Rows box.
+
+Fireworkz Pro 161
+
+Spreadsheet operations on databases
+
+Cell references to individual fields
+You can refer to data displayed in fields by using cell references
+and ranges in the normal manner. However, as the data in the field
+changes when you scroll the database, so will the value displayed.
+This may or may not be what you intended.
+
+Referring to all values in a field
+If you want to carry out an operation such as adding together all
+the values in a particular field for every record in your current
+subset then it is possible to do so using the Sum button if:
+. You are using a sheet layout. I
+. All the records are currently displayed.
+These conditions may be inconvenient in certain circumstances.
+Therefore, Fireworkz Pro provides the ? operator to solve the
+problem.
+? allows you to refer to a particular field in every record of the
+current subset. For example:
+sum(?Score)
+will take all the values in the field whose name is Score and add
+them together. Similarly:
+avg(?Score)
+will calculate the average of all these values.
+? can be used in any of the spreadsheet functions which takes an
+array as its argument. These are described in the Spreadsheet
+Guide.
+

@@ -27,6 +27,8 @@
 *
 ******************************************************************************/
 
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 _Check_return_
 extern STATUS
 al_wstr_realloc(
@@ -53,11 +55,15 @@ al_wstr_realloc(
     return(STATUS_OK);
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * do a WCHAR-based string assignment
 *
 ******************************************************************************/
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 _Check_return_
 extern STATUS
@@ -119,11 +125,15 @@ wstr_set_n(
     return(STATUS_DONE);
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * case sensitive lexical comparison of leading chars of two WCHAR-based strings
 *
 ******************************************************************************/
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 _Check_return_
 extern int /* 0:EQ, +ve:arg1>arg2, -ve:arg1<arg2 */
@@ -202,6 +212,8 @@ wstr_compare_n2(
     return(res);
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * case insensitive lexical comparison of leading chars of two WCHAR-based strings
@@ -209,6 +221,8 @@ wstr_compare_n2(
 * uses sbchar_sortbyte() for collation
 *
 ******************************************************************************/
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 _Check_return_
 extern int /* 0:EQ, +ve:arg1>arg2, -ve:arg1<arg2 */
@@ -298,6 +312,8 @@ wstr_compare_n2_nocase(
     return(res);
 }
 
+#endif /* OS */
+
 /*
 portable string copy functions that ensure CH_NULL termination without buffer overflow
 
@@ -311,6 +327,8 @@ dst buffer is always then CH_NULL-terminated within dst_n characters limit
 /*
 append up characters from src (until CH_NULL found) to dst (subject to dst limit)
 */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 /*ncr*/
 extern U32 /* WCHARs currently in output */
@@ -544,6 +562,10 @@ wstr_xstrnkpy(
     return(dst_idx); /* WCHARs currently in output */
 }
 
+#endif /* OS */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 /*
 a portable but inexact replacement for (v)snprintf(), which Microsoft CRT doesn't have... also ensures CH_NULL termination
 */
@@ -565,6 +587,10 @@ wstr_xsnprintf(
 
     return(ret);
 }
+
+#endif /* OS */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 _Check_return_
 extern int __cdecl
@@ -625,6 +651,8 @@ wstr_xvsnprintf(
     return(ret);
 }
 
+#endif /* OS */
+
 #if RISCOS || 1
 
 #if 1
@@ -639,6 +667,8 @@ wstr_xvsnprintf(
 #endif
 
 #include <ctype.h> /* for "C"isalpha and friends */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 /******************************************************************************
 *
@@ -732,6 +762,8 @@ wstrpbrk(
     }
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * case insensitive lexical comparison of two WCHAR-based strings
@@ -746,40 +778,7 @@ C_wcsicmp(
     _In_z_      PCWSTR wstr_a,
     _In_z_      PCWSTR wstr_b)
 {
-    int res;
-
-    profile_ensure_frame();
-
-    assert(0 == (1 & (uintptr_t) wstr_a)); /* OK on x86 but not on ARM */
-    assert(0 == (1 & (uintptr_t) wstr_b)); /* OK on x86 but not on ARM */
-
-    for(;;)
-    {
-        WCHAR c_a = GetWchar(wstr_a);
-        WCHAR c_b = GetWchar(wstr_b);
-
-        ++wstr_a;
-        ++wstr_b;
-
-        res = (int) c_a - (int) c_b; /* NB can't overflow given valid UCS-2 range */
-
-        if(0 != res)
-        {   /* retry with case folding */
-            if((c_a < 256) && (c_b < 256))
-            {
-                c_a = (WCHAR) /*"C"*/tolower(c_a); /* ASCII, no remapping */
-                c_b = (WCHAR) /*"C"*/tolower(c_b);
-            }
-
-            res = (int) c_a - (int) c_b; /* NB can't overflow given valid UCS-2 range */
-
-            if(0 != res)
-                return(res);
-        }
-
-        if(CH_NULL == c_a)
-            return(0); /* ended together at the terminator (before limit) -> equal */
-    }
+    return(C_wcsnicmp(wstr_a, wstr_b, U32_MAX)); /* expect both to finish before limit... */
 }
 
 /******************************************************************************
@@ -805,32 +804,53 @@ C_wcsnicmp(
     assert(0 == (1 & (uintptr_t) wstr_a)); /* OK on x86 but not on ARM */
     assert(0 == (1 & (uintptr_t) wstr_b)); /* OK on x86 but not on ARM */
 
-    while(wchars_n_remain-- != 0)
+    while(0 != wchars_n_remain--)
     {
-        WCHAR c_a = GetWchar(wstr_a);
-        WCHAR c_b = GetWchar(wstr_b);
+        const WCHAR wc_a = GetWchar(wstr_a);
+        const WCHAR wc_b = GetWchar(wstr_b);
 
         ++wstr_a;
         ++wstr_b;
 
-        res = (int) c_a - (int) c_b; /* NB can't overflow given valid UCS-2 range */
+#if 1
+        /* JFDI */
+#else
+        if(CH_NULL == wc_a)
+            return((int) wc_b); /* if b zero, ended together at the terminator (before limit) -> equal; otherwise b > a */
 
-        if(0 != res)
+        res = (int) wc_a - (int) wc_b; /* NB can't overflow given valid UCS-2 range */
+
+        if(0 == res)
+            continue;
+#endif
+
         {   /* retry with case folding */
-            if((c_a < 256) && (c_b < 256))
+            int i_a = wc_a;
+            int i_b = wc_b;
+
+#if 1 /* Traditional ASCII tolower(). Can't have any funny encoding business here given it's UCS-2 and in "C" locale */
+            if( (i_a >= 'A') && (i_a <= 'Z') )
+                i_a ^= ('A' ^ 'a');
+            if( (i_b >= 'A') && (i_b <= 'Z') )
+                i_b ^= ('A' ^ 'a');
+#else
+            if( (i_a < 256) && (i_b < 256) )
             {
-                c_a = (WCHAR) /*"C"*/tolower(c_a); /* ASCII, no remapping */
-                c_b = (WCHAR) /*"C"*/tolower(c_b);
+                i_a = /*"C"*/tolower(i_a); /* ASCII, no remapping */
+                i_b = /*"C"*/tolower(i_b);
             }
+#endif
 
-            res = (int) c_a - (int) c_b; /* NB can't overflow given valid UCS-2 range */
+            if(CH_NULL == i_a)
+                return(i_b); /* if b zero, ended together at the terminator (before limit) -> equal; otherwise b > a */
 
-            if(0 != res)
-                return(res);
-        }
+            res = i_a - i_b; /* NB can't overflow given valid UCS-2 range */
 
-        if(CH_NULL == c_a)
-            return(0); /* ended together at the terminator (before limit) -> equal */
+            if(0 == res)
+                continue;
+
+            return(res);
+        } /*block*/
     }
 
     /* matched up to the comparison limit */

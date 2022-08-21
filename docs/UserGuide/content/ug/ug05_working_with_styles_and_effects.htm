@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Working with styles and effects</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Working with styles and effects" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug04_editing_text.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug06_the_style_editor.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Editing text </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> The Style editor</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="working_with_styles_and_effects" id="working_with_styles_and_effects"></a><span class="csg-chapter-number">5 </span>Working with styles and effects</h1>
+
+    <p>
+        This chapter shows you how to work with the styles you have
+        created within your documents.
+    </p>
+    <p>
+        It shows you how to use the Regions editor to manage the number
+        of styles you have used, and to remove styles from areas or text.
+    </p>
+    <p>
+        It provides hints and tips for working with styles and using
+        effects.
+    </p>
+    <p>It contains sections on:</p>
+    <ul>
+        <li><a href="#what_are_styles">What are styles?</a></li>
+
+        <li><a href="#toolbar_buttons_and_effects">Toolbar buttons and effects</a></li>
+
+        <li><a href="#effects">Effects</a></li>
+
+        <li><a href="#the_style_list">The style list</a></li>
+
+        <li><a href="#special_styles">Special styles</a></li>
+
+        <li><a href="#deleting_styles">Deleting styles</a></li>
+
+        <li><a href="#working_with_styles">Working with styles</a></li>
+
+        <li><a href="#the_region_editor">The region editor</a></li>
+
+        <li><a href="#removing_styles_and_effects">Removing styles and effects</a></li>
+    </ul>
+
+    <h2><a name="cell_and_text_styles" id="cell_and_text_styles"></a>Cell and text styles</h2>
+
+    <h3<a name="what_are_styles" id="what_are_styles"></a>What are styles?</h3>
+    <p>
+        Styles are sets of choices which determine the appearance and layout of numbers, text cells, rows and dates within your worksheet.
+        Aspects of style include: the margins of each cell; the typeface used,
+        its size, colour and any special attributes applied to it; and the alignment of figures within a cell.
+        These are referred to in the following sections as attributes.
+    </p>
+    <p>
+        <img class="csg-lhs-img" src="../common/images/toolbar/style.png" alt="Style tool button" />
+        To see the list of styles available for use in any worksheet document,
+        click the <span class="csg-toolbar-button">Style</span> button in the toolbar
+        (or choose <span class="csg-menu-option">Styles</span> from the <span class="csg-menu">Style</span> menu).
+        You will see a dialogue box containing a list similar to this:
+    </p>
+    <p>
+        Styles provide a mechanism for changing the look of a worksheet quickly and easily.
+        All styles contained in the worksheet are listed in the Style selector;
+        to add a style to part of a worksheet, simply select it,
+        click the <span class="csg-toolbar-button">Style</span> tool button on the toolbar,
+        select the preferred style from the list and click
+        <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+    </p>
+    <p>Styles can quickly be changed; any changes made will be applied to all occurrences of that style within the worksheet.</p>
+    <p>
+        Using styles can save you a lot of time in formatting your worksheets, as well as ensuring consistency.
+        For example, you can define a Totals style, and use it to highlight all totals within your worksheet.
+        If the Totals style uses a different typeface, in a different size,
+        and with extra spacing beneath compared to the style used for ordinary cells,
+        the ability to apply a style with a couple of clicks can save you a lot of time even in short documents.
+    </p>
+
+    <h4><a name="toolbar_buttons_and_effects" id="toolbar_buttons_and_effects"></a>Toolbar buttons and effects</h4>
+    <p>
+        Changes you make to the look of data using the bold, italic, and justification buttons on the toolbar
+        are applied as effects and don't change the underlying style applied to the area.
+    </p>
+    <p>
+        It is worth spending some time learning to use the Style and Effects dialogue boxes.
+        If you haven't worked through the tutorials in the <em>Getting Started Guide</em>, you should do so.
+        The documents supplied in the Examples directory all contain a variety of styles and show different ways that styles and effects can be used.
+    </p>
+
+    <h3><a name="effects" id="effects"></a>Effects</h3>
+    <p>
+        Effects are virtually identical to styles and you use them to change the appearance of your document in exactly the same way.
+        The difference is that effects do not have names and so are applied once only.
+        They are useful for quick one-off changes but less so if you want to be able to make consistent changes to a large worksheet or document.
+    </p>
+    <p>If you make changes to the ruler or toolbar settings while any cells are selected, the changes will be applied to them as an effect.</p>
+    <p>If no cells are selected:</p>
+    <ul>
+        <li>The alignment buttons will change the current cell or paragraph as an effect.</li>
+        <li>Bold, Italic, Style and Effect are applied to the caret, so will apply to any new text or data typed in.</li>
+        <li>Changing ruler or column settings affects the current region at that point, which may be a style or an effect.</li>
+    </ul>
+
+    <h4><a name="applying_effects" id="applying_effects"></a>Applying effects</h4>
+    <p>
+        The <span class="csg-toolbar-button">Effects</span> tool button on the toolbar (and the
+        <span class="csg-menu-option">Effects</span> option on the <span class="csg-menu">Style</span> menu)
+        enable you to alter one or more attributes and apply the new settings to the selected area of text.
+        To do this:
+    </p>
+    <ol>
+        <li>Select the area of text you want to apply effects to.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/effects.png" alt="Effects tool button" />
+            Click the <span class="csg-toolbar-button">Effects</span> button
+            (or choose <span class="csg-menu-option">Effects</span> from the <span class="csg-menu">Style</span> menu).
+        </li>
+        <li>
+            The <span class="csg-dbox">Effects</span> dialogue box will appear.
+            It is like the <span class="csg-dbox">Style</span> dialogue box for the style currently applied to the area you have selected;
+            but all the entries are greyed out until you click on the attribute you want to change.
+        </li>
+        <li>Click on the entry for the attributes you want to change, and make the required changes as if editing a named style.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> in the dialogue box.
+        </li>
+        <li class="csg-list-style-none">
+            The attributes you have chosen will be applied to the selected area.
+        </li>
+    </ol>
+
+    <h2><a name="the_style_list" id="the_style_list"></a>The style list</h2>
+
+    <p>All styles which exist within your document are shown in the style list.</p>
+    <p>
+        All documents have several styles to start with, before you start editing and creating additional styles.
+        These are the styles defined in the
+        <a href="../ug/ug03_creating_new_documents.htm#templates">template</a> from which the document was created.
+    </p>
+    <ul>
+        <li>Documents based on a Letter template will have a base letter style, which is the style in which all text appears, and a header/footer style.</li>
+        <li>Documents based on a Sheet template will have a base sheet style, a header and footer style, and a current cell style.</li>
+        <li>Documents based on your own templates will contain any additional styles you have defined for those templates.</li>
+    </ul>
+
+    <h3><a name="special_styles" id="special_styles"></a>Special styles</h3>
+    <p>
+        When you open a new document it already contains several styles which are predefined in the template on which the document is based.
+        Some of these styles have special purposes and you cannot set one up yourself.
+    </p>
+
+    <h4>Base style</h4>
+    <p>
+        The base style of the document behaves slightly differently from other styles.
+        When you examine its contents, you will see that the buttons,
+        which are normally red to show that an area is selected, are grey and cannot be switched off.
+    </p>
+
+    <h4>Current cell</h4>
+    <p>
+        All documents created as sheets in Fireworkz contain a current cell style.
+        This style is used in tables and worksheets to show the cell which is currently selected,
+        that is where any data or formula entered on the editing line will appear on the sheet when you press Return&crarr;.
+    </p>
+    <p>
+        The default current cell style is that a border appears around the cell, and that the cell has a grey background.
+        You can, of course, edit the style of the cell so that a different colour is used for its contents, and so on.
+    </p>
+    <p>
+        Most of the time you wouldn't want a current cell style in a document which was mostly text,
+        as you would have an irritating border around the paragraph you were typing.
+    </p>
+
+    <h4><a name="adding_a_current_cell_style" id="adding_a_current_cell_style"></a>Adding a current cell style</h4>
+    <p>
+        A current cell style is not automatically added to a document based on a letter template.
+        An easy way to add one is to:
+    </p>
+    <ol>
+        <li>Open a document containing a current cell style.</li>
+        <li>Choose <span class="csg-menu-option">Save template</span> from the <span class="csg-menu">File</span> menu.</li>
+        <li>Select <span class="csg-dbox-option">Style</span> and click on the <span class="csg-dbox-option">Current cell</span> style in the list of styles.</li>
+        <li>Drag the template icon on to the document to which you wish to add it.</li>
+        <li>That document will now have a current cell style.</li>
+    </ol>
+    <p>You will also find Current Cell style templates in the Examples directory.</p>
+
+    <h3><a name="deleting_styles" id="deleting_styles"></a>Deleting styles</h3>
+    <p>You can remove a style from the style list by selecting it from the style list and clicking the button marked <span class="csg-dbox-button">Delete</span>.</p>
+    <p>
+        If the style is in use in the document, you will see a dialogue box.
+        This gives you the option of removing the style wherever it has been applied in the document, as well as from the style list.
+        Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">OK</span></span> to confirm this,
+        or <span class="csg-dbox-button">Cancel</span> to cancel the deletion of the style.
+    </p>
+    <p>
+        Do not delete the BaseStyle from the document.
+        If you do this, you will find it difficult to edit or reformat the document.
+    </p>
+
+    <h2><a name="working_with_styles" id="working_with_styles"></a>Working with styles</h2>
+
+    <p>Effective use of the Style editor can make your work with Fireworkz much more productive.</p>
+
+    <h3><a name="naming" id="naming"></a>Naming your styles</h3>
+    <p>
+        You can give your styles any name you like.
+        However, it is a good idea to make the style names refer to the purpose of the style in the document rather than the actual features of the style.
+        This means that you could change the look of all your second level headings, and the style name would still make sense.
+    </p>
+
+    <h3><a name="applying" id="applying"></a>Applying styles</h3>
+    <p>
+        There are two main ways you can apply existing styles.
+        You can either apply a style to text or numbers you have already entered,
+        or you can apply styles to blank cells so that when you type in data it appears in the format and style you want.
+    </p>
+    <p>To apply a style to the contents of one or more cells:</p>
+    <ol>
+        <li>Select the cells to which you wish to apply the style.</li>
+        <li>
+            <img class="csg-lhs-img" src="../common/images/toolbar/style.png" alt="Style tool button" />
+            Click the <span class="csg-toolbar-button">Style</span> tool button on the toolbar.
+        </li>
+        <li>
+            Choose the style you want from the list and click
+            <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+        </li>
+        <li>Alternatively, if you have defined control key short cuts, you can enter the style's control key short cut.</li>
+    </ol>
+
+    <h3><a name="layering_styles" id="layering_styles"></a>Layering styles</h3>
+    <p>
+        There are many different attributes which can be defined as part of a style.
+        However, they do not all have to be defined in each style,
+        and there are advantages to defining fewer rather than more attributes for each style.
+    </p>
+    <p>
+        If you define only some attributes for each style, you can apply more than one style to the same text.
+        For example, you might want a currency style, with the number format including a &pound; sign,
+        and a Totals style, which highlighted the contents of the cell in bold.
+        Defining these as separate styles would give you increased flexibility;
+        rather than having to create a separate style for each combination of attributes,
+        you can simple apply several styles to the same cell.
+    </p>
+    <p>
+        Non-text style attributes, such as <a href="../sg/sg03_number_formats_and_styles.htm#number_formats">number and date formats</a>,
+        background colours and <a href="../ug/ug08_tables.htm">table</a> grid information,
+        should always be defined separately from text styles.
+        This gives you a great deal more flexibility in changing the design without affecting the text it contains.
+    </p>
+
+    <h3><a name="the_region_editor" id="the_region_editor"></a>The region editor</h3>
+
+    <p>
+        The region editor is a tool for managing styles and effects which have been applied to the text in your documents.
+        It allows you to:
+    </p>
+    <ul>
+        <li>Examine the styles and effects (including tables, borders and boxes) which have been applied to an area</li>
+        <li>Count the number of regions of style or effect which have been created in the document</li>
+        <li>Remove applied styles or effects from the document one by one.</li>
+    </ul>
+    <p>
+        To see the styles and effects applied to any text, you can use the region editor.
+        This also enables you to remove any styles or effects from an area,
+        and to see how the layering of styles affects the look of the document content at any point.
+    </p>
+    <p>
+        The style region editor tells you the name of styles applied to an area,
+        and gives details of effects such as bold, italic, grids and boxes.
+        This information will appear in the status line.
+    </p>
+    <p>To use the style region editor:</p>
+    <ol>
+        <li>Place the caret in the area you want to look at.</li>
+        <li>
+            Choose the <span class="csg-menu">Regions</span> option from the <span class="csg-menu">Style</span> menu.
+            The <span class="csg-dbox">Region</span> dialogue box will appear,
+            and the name of the style or attributes set by the effect most recently applied to the area will be shown on the status line.
+        </li>
+        <li>
+            To look at other styles and effects applied to the area,
+            click the <span class="csg-dbox-button">In</span> button in the <span class="csg-dbox">Region</span> dialogue box.
+            You can move inwards as far as the base style of the document.
+            As you move in, the selection will change to show you the area
+            to which the style named or effects shown in the status line is applied.
+        </li>
+        <li>Click the <span class="csg-dbox-button">Out</span> button to move back out through the layers of styles.</li>
+    </ol>
+
+    <h3><a name="removing_styles_and_effects" id="removing_styles_and_effects"></a>Removing styles and effects</h3>
+    <p>Use the Region editor to remove applied styles or effects from a selected area of the worksheet.</p>
+    <ol>
+        <li>Select the area you want to alter.</li>
+        <li>Choose the <span class="csg-menu-option">Regions</span> option from the <span class="csg-menu">Style</span> menu.</li>
+        <li>Move in or out until you see the style or effect you want to change in the status line.</li>
+        <li>Click on <span class="csg-dbox-button">Remove</span> in the Region dialogue box.</li>
+        <li>The style or effect will be removed from your selected area.</li>
+    </ol>
+    <p>
+        If you have added many styles to a worksheet and are finding it over-complicated,
+        you can use this option to remove styles which have become redundant from areas of the worksheet.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug04_editing_text.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug06_the_style_editor.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Editing text </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> The Style editor</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

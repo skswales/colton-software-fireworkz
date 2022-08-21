@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>AGE</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="AGE" />
+        <param name="Keyword" value="Functions, Date and time, AGE" />
+        <param name="Keyword" value="Date and time functions, difference between dates" />
+    </object>
+
+    <h1><a name="age" id="age"></a>AGE</h1>
+
+    <p>Calculates the difference between two date values in years and months.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        AGE(<span class="csg-function-parameter">recent</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_date_formats.htm">Date</a></span>,
+        <span class="csg-function-parameter">earlier</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_date_formats.htm">Date</a></span>)
+    </p>
+    <p>
+        <span class="csg-function-parameter"><a href="../sg06/sg6_date_formats.htm">recent</a></span> should be the more recent date and
+        <span class="csg-function-parameter"><a href="../sg06/sg6_date_formats.htm">earlier</a></span> the earlier date.
+    </p>
+    <p>This function returns the difference between two date values in years and months as a floating point number.</p>
+    <p>Use <code>INT()</code> to extract the years part of the result.</p>
+    <p>Use <code>result-INT(result)</code> to extract the months part of the result.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">AGE(26.6.1994, 25.8.1982)</pre>
+    <p>returns the age of someone aged 12 years and 10 months as the number <code>12.10</code>.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg05_function_reference.htm#date_time_functions">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#date_time_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06d/sg6_DATE.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

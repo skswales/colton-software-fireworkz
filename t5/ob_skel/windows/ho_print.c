@@ -152,17 +152,14 @@ status_from_print(
     switch(return_code)
     {
     case SP_ERROR:       return(create_error(ERR_PRINT_UNKNOWN));
+    case SP_APPABORT:    return(create_error(ERR_PRINT_TERMINATED));
+    case SP_USERABORT:   return(create_error(ERR_PRINT_TERMINATED_VIA_PM));
     case SP_OUTOFDISK:   return(create_error(ERR_PRINT_DISK_FULL));
     case SP_OUTOFMEMORY: return(create_error(ERR_PRINT_MEMORY_FULL));
-    case SP_USERABORT:   return(create_error(ERR_PRINT_TERMINATED_VIA_PM));
-    case SP_APPABORT:    return(create_error(ERR_PRINT_TERMINATED));
     default:
-        if(return_code < 0)
-            return(create_error(ERR_PRINT_UNKNOWN));
-        break;
+        if(return_code >= 0) return(STATUS_OK);
+        return(create_error(ERR_PRINT_UNKNOWN));
     }
-
-    return(STATUS_OK);
 }
 
 extern BOOL CALLBACK
@@ -173,17 +170,19 @@ AbortProc(
     UNREFERENCED_PARAMETER_InRef_(hPr);
     UNREFERENCED_PARAMETER(Code);
 
-    if(hAbortDlgWnd) /* abort dialog up yet? */
+    if(NULL != hAbortDlgWnd) /* abort dialog up yet? */
     {
         MSG msg;
 
         /* Process messages intended for the abort dialog box */
         while(!bAbort && PeekMessage(&msg, NULL, 0, 0, TRUE))
+        {
             if(!IsDialogMessage(hAbortDlgWnd, &msg))
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
+        }
     }
 
     /* bAbort is TRUE (return is FALSE) if the user has aborted */
@@ -296,14 +295,14 @@ print_host_redraw_context_set_host_xform(
     p_host_xform->windows.pixels_per_inch.x = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSX);
     p_host_xform->windows.pixels_per_inch.y = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSY);
 
-    p_host_xform->windows.d.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.d.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
 
     p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
     p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
 
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.d.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.d.y * p_host_xform->scale.t.y;
+    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
+    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
 }
 
 _Check_return_
@@ -354,7 +353,7 @@ print_one_printer_page(
 
     zero_struct_ptr(p_redraw_context);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     p_redraw_context->flags.printer = 1;
@@ -418,7 +417,6 @@ print_one_printer_page(
     p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     print_host_redraw_context_set_host_xform(p_redraw_context, &p_redraw_context->host_xform);
 
@@ -472,7 +470,7 @@ print_one_printer_page(
                 print_area.br.x = p_docu->page_def.size_x - margin_left_from(&p_docu->page_def, p_page_entry->page.y) - margin_right_from(&p_docu->page_def, p_page_entry->page.y);
                 print_area.br.y = p_docu->page_def.size_y - p_docu->page_def.margin_top - p_docu->page_def.margin_bottom;
 
-                zero_struct(skelevent_redraw);
+                zero_struct_fn(skelevent_redraw);
 
                 /*skelevent_redraw.flags = REDRAW_FLAGS_INIT;*/
                 skelevent_redraw.flags.show_content = TRUE;
@@ -744,9 +742,9 @@ T5_CMD_PROTO(extern, t5_cmd_print_setup)
             status = status_nomem();
             break;
 
+        case CDERR_NOTEMPLATE:
         case CDERR_NOHINSTANCE:
         case CDERR_NOHOOK:
-        case CDERR_NOTEMPLATE:
             assert0();
             break;
 

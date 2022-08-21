@@ -167,14 +167,14 @@ host_redraw_context_set_host_xform(
     p_host_xform->windows.pixels_per_inch.x = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSX);
     p_host_xform->windows.pixels_per_inch.y = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSY);
 
-    p_host_xform->windows.d.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.d.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
 
     p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
     p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
 
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.d.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.d.y * p_host_xform->scale.t.y;
+    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
+    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
 
     p_redraw_context->host_xform = *p_host_xform;
 }
@@ -187,9 +187,9 @@ host_redraw_context_fillin(
     GDI_RECT gdi_rect;
 
     /* users of one_pixel please note that it is only an approximation and MUST BE >= real pixel size */
-    p_redraw_context->one_real_pixel.x = muldiv64(p_redraw_context->host_xform.scale.b.x, PIXITS_PER_METRE, p_redraw_context->host_xform.windows.d.x);
+    p_redraw_context->one_real_pixel.x = muldiv64(p_redraw_context->host_xform.scale.b.x, PIXITS_PER_METRE, p_redraw_context->host_xform.windows.pixels_per_metre.x);
     p_redraw_context->one_real_pixel.x = idiv_ceil(p_redraw_context->one_real_pixel.x, p_redraw_context->host_xform.scale.t.x);
-    p_redraw_context->one_real_pixel.y = muldiv64(p_redraw_context->host_xform.scale.b.y, PIXITS_PER_METRE, p_redraw_context->host_xform.windows.d.y);
+    p_redraw_context->one_real_pixel.y = muldiv64(p_redraw_context->host_xform.scale.b.y, PIXITS_PER_METRE, p_redraw_context->host_xform.windows.pixels_per_metre.y);
     p_redraw_context->one_real_pixel.y = idiv_ceil(p_redraw_context->one_real_pixel.y, p_redraw_context->host_xform.scale.t.y);
 
     p_redraw_context->one_program_pixel.x = p_redraw_context->host_xform.scale.b.x * PIXITS_PER_PROGRAM_PIXEL_X;
@@ -230,8 +230,10 @@ host_redraw_context_fillin(
                                        ? p_redraw_context->thin_width.y
                                        : MIN(p_redraw_context->border_width.y, p_redraw_context->one_real_pixel.y);
 
-    p_redraw_context->pixels_per_inch.cx = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSX);
-    p_redraw_context->pixels_per_inch.cy = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSY);
+    p_redraw_context->pixels_per_inch.cx = p_redraw_context->host_xform.windows.pixels_per_inch.x;
+    p_redraw_context->pixels_per_inch.cy = p_redraw_context->host_xform.windows.pixels_per_inch.y;
+    assert(p_redraw_context->pixels_per_inch.cx == GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSX));
+    assert(p_redraw_context->pixels_per_inch.cy == GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSY));
 }
 
 static void
@@ -242,19 +244,19 @@ host_click_context_set_host_xform(
     { /* NB. clicks are in views and so pertain only to the screen */
     const HDC hic_display = CreateIC(TEXT("DISPLAY"), NULL, NULL, NULL);
     assert(hic_display);
-    p_host_xform->windows.d.x = GetDeviceCaps(hic_display, LOGPIXELSX);
-    p_host_xform->windows.d.y = GetDeviceCaps(hic_display, LOGPIXELSY);
+    p_host_xform->windows.pixels_per_inch.x = GetDeviceCaps(hic_display, LOGPIXELSX);
+    p_host_xform->windows.pixels_per_inch.y = GetDeviceCaps(hic_display, LOGPIXELSY);
     void_WrapOsBoolChecking(DeleteDC(hic_display));
     } /*block*/
 
-    p_host_xform->windows.d.x = muldiv64(p_host_xform->windows.d.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.d.y = muldiv64(p_host_xform->windows.d.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
 
     p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
     p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
 
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.d.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.d.y * p_host_xform->scale.t.y;
+    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
+    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
 
     p_click_context->host_xform = *p_host_xform;
 }
@@ -278,9 +280,9 @@ host_set_click_context(
     p_click_context->border_width.x = p_click_context->border_width.y = p_docu->page_def.grid_size;
 
     /* users of one_pixel please note that it is only an approximation and MUST BE >= real pixel size */
-    p_click_context->one_real_pixel.x = muldiv64(p_click_context->host_xform.scale.b.x, PIXITS_PER_METRE, p_click_context->host_xform.windows.d.x);
+    p_click_context->one_real_pixel.x = muldiv64(p_click_context->host_xform.scale.b.x, PIXITS_PER_METRE, p_click_context->host_xform.windows.pixels_per_metre.x);
     p_click_context->one_real_pixel.x = idiv_ceil(p_click_context->one_real_pixel.x, p_click_context->host_xform.scale.t.x);
-    p_click_context->one_real_pixel.y = muldiv64(p_click_context->host_xform.scale.b.y, PIXITS_PER_METRE, p_click_context->host_xform.windows.d.y);
+    p_click_context->one_real_pixel.y = muldiv64(p_click_context->host_xform.scale.b.y, PIXITS_PER_METRE, p_click_context->host_xform.windows.pixels_per_metre.y);
     p_click_context->one_real_pixel.y = idiv_ceil(p_click_context->one_real_pixel.y, p_click_context->host_xform.scale.t.y);
 
     p_click_context->one_program_pixel.x = p_click_context->host_xform.scale.b.x * PIXITS_PER_PROGRAM_PIXEL_X;
@@ -346,14 +348,14 @@ set_host_xform_for_view(
     void_WrapOsBoolChecking(DeleteDC(hic_display));
     } /*block*/
 
-    p_host_xform->windows.d.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.d.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
 
     p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
     p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
 
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.d.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.d.y * p_host_xform->scale.t.y;
+    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
+    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
 }
 
 /******************************************************************************

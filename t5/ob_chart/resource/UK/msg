@@ -8,26 +8,32 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# ob_chart messages: keep consistent with ob_chart/resource/resource.h
+#
+# CHART_MSG_DIALOG_PIE_GALLERY_xxx
 #
 0:Pie chart
-1:sg04/sg4_pie_charts.htm
+1:sg/sg04_charts.htm#pie_charts
 2:Label
 3:Explode
-4:% by
+4:By
 5:Start position
 6:°
 7:Anticlockwise
 #
+# CHART_MSG_SUGGESTED_LEAFNAME
+#
 10:Chart
 #
+# CHART_MSG_DIALOG_BAR_GALLERY_xxx
+#
 100:Bar chart
-101:sg04/sg4_bar_charts.htm
+101:sg/sg04_charts.htm#bar_charts
 102:Horizontal
 103:3-D
 #
 105:Bar / line overlay chart
-106:sg04/sg4_overlays.htm
+106:sg/sg04_charts.htm#overlays
 #
 110:Data series are in
 111:Columns
@@ -47,37 +53,49 @@
 125:Category labels
 126:Series label
 #
-r130:Click on a chart element to select it. ADJUST-click for finer selection
+r130:Click on a chart element to select it. Click Adjust for finer selection
 w130:Click on a chart element to select it. Ctrl-click for finer selection
+#
+# CHART_MSG_DIALOG_BAR_xxx
 #
 150:Bar
 151:% width
 152:% overlap
 153:% depth
-160:sg04/sg4_customising_bar_charts.htm
+160:sg/sg04_charts.htm#customising_bar_charts
 #
 190:3-D
-191:° droop
-192:° turn
+191:Droop
+192:Turn
+#
+# CHART_MSG_DIALOG_LINE_GALLERY_xxx
 #
 200:Line chart
-201:sg04/sg4_line_charts.htm
+201:sg/sg04_charts.htm#line_charts
 202:3-D ribbons
+#
+# CHART_MSG_DIALOG_LINE_xxx
 #
 250:Line
 251:% width
 252:% shift
 253:% depth
-#260:sg04/sg4_customising_line_charts.htm
-260:sg04/sg4_line_charts.htm
+#260:sg/sg04_charts.htm#customising_line_charts
+260:sg/sg04_charts.htm#line_charts
+#
+# CHART_MSG_DIALOG_SCAT_GALLERY_xxx
 #
 300:Scatter graph
-301:sg04/sg4_x_y_scatter_graphs.htm
+301:sg/sg04_charts.htm#x_y_scatter_graphs
+#
+# CHART_MSG_DIALOG_SCAT_xxx
 #
 350:Point
 351:% width
-#360:sg04/sg4_customising_scatter_charts.htm
-360:sg04/sg4_x_y_scatter_graphs.htm
+#360:sg/sg04_charts.htm#customising_scatter_charts
+360:sg/sg04_charts.htm#x_y_scatter_graphs
+#
+# CHART_MSG_DIALOG_GEN_AXIS_xxx
 #
 400:Position
 401:Left
@@ -94,6 +112,9 @@ w130:Click on a chart element to select it. Ctrl-click for finer selection
 412:Grid lines
 413:Ticks
 414:Minor interval
+#
+# CHART_MSG_DIALOG_VAL_AXIS_xxx
+#
 420:Scaling
 421:Automatic
 422:Minimum value
@@ -107,32 +128,44 @@ w130:Click on a chart element to select it. Ctrl-click for finer selection
 430:Line of best fit
 431:Fill to axis
 432:Stack series
+#
 433:Overlay
 #
+# CHART_MSG_DIALOG_STYLE_xxx
+#
 500:Line colour
+501:Line style
 503:Fill style
 504:Fill colour
 505:Solid
 506:Picture
 507:Preserve aspect ratio
 508:Allow recolouring
-510:sg04/sg4_using_colour_in_charts.htm
-511:sg04/sg4_editing_lines.htm
+510:sg/sg04_charts.htm#using_colour_in_charts
+511:sg/sg04_charts.htm#editing_lines
+#
+# CHART_MSG_DIALOG_CHART_MARGINS_xxx
 #
 520:Chart margins
-521:sg04/sg4_positioning_the_chart.htm
+521:sg/sg04_charts.htm#positioning_the_chart
 522:Top
 523:Bottom
 524:Left
 525:Right
 #
+# CHART_MSG_DIALOG_CHART_LEGEND_xxx
+#
 530:Legend
-531:sg04/sg4_editing_text_in_charts.htm
+531:sg/sg04_charts.htm#editing_text_in_charts
 532:On
 533:Arrange horizontally
 #
+# CHART_MSG_DEFAULT_xxx
+#
 600:8 0 Helvetica
 602:Chart%d
+#
+# CHART_MSG_OBJNAME_xxx (UI names for objects in each chart)
 #
 700:Chart
 701:Wall
@@ -154,11 +187,14 @@ w130:Click on a chart element to select it. Ctrl-click for finer selection
 717:Tick %hd
 718:Best fit %hd
 #
-800:sg04/sg4_editing_data_series.htm
-801:sg04/sg4_editing_axes.htm
-802:sg04/sg4_editing_axes.htm
+# CHART_MSG_DIALOG_xxx_HELP_TOPIC
 #
-# errors
+800:sg/sg04_charts.htm#editing_data_series
+801:sg/sg04_charts.htm#editing_axes
+802:sg/sg04_charts.htm#editing_axes
+#
+# errors: keep consistent with ob_chart/resource/resource.h
+# see CHART_ERR(n)
 #
 e0:Not enough data for pie chart
 e2:Negative and/or zero data ignored in pie chart

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" Content="text/html; charset=iso-8859-1">
+<title>Fireworkz:!ReadMe</title>
+</head>
+<body>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!-- Copyright (C) 2016-2020 Stuart Swales -->
+
+<H1>Fireworkz:!ReadMe</H1>
+
+<p>This directory contains most of Fireworkz's application resources.</p>
+
+<h4>!ReadMe</h4>
+<p>
+This file explains the purpose of the files in this directory.
+Most of these files are critical to the operation of Fireworkz
+and so should not be deleted or modified without due consideration and care.
+</p>
+
+<h4>Neutral</h4>
+<p>Directory containing non-localised resources.</p>
+
+<h4>Neutral.Markers</h4>
+<p>Directory containing non-localised image files used as series point markers in charts.</p>
+
+<h4>Neutral.Pictures</h4>
+<p>Directory containing non-localised image files used to fill bars in bar charts.</p>
+
+<h4>Neutral.RISC_OS</h4>
+<p>Directory containing non-localised RISC OS-specific resources.</p>
+
+<h4>Neutral.RISC_OS.!Sprite</h4>
+<p>Compressed sprite file displayed as the main image on the splash screen.</p>
+
+<h4>Neutral.RISC_OS.BuildVer</h4>
+<p>Text file containing information about this build (application and compiler versions).</p>
+
+<h4>Neutral.RISC_OS.ImageSlot</h4>
+<p>
+Utility to set the Window Manager slot size appropriately for a RISC OS application executable from its size and AIF header information.
+Replaces *WimpSlot in the application's !Run file.
+</p>
+
+<h4>Neutral.RISC_OS.PicConvert</h4>
+<p>RISC OS relocatable module used to convert some Windows image formats.</p>
+
+<h4>Neutral.RISC_OS.Splash</h4>
+<p>BASIC program that displays a splash screen.</p>
+
+<h4>Neutral.RISC_OS.Sprites11.Ob<em>nn</em></h4>
+<p>Highest resolution (square pixel) language-independent toolbar and button sprites.</p>
+
+<h4>Neutral.RISC_OS.Sprites22.Ob<em>nn</em></h4>
+<p>Medium resolution (square pixel) language-independent toolbar and button sprites.</p>
+
+<h4>Neutral.RISC_OS.Sprites24.Ob<em>nn</em></h4>
+<p>Lowest resolution (rectangular pixel) language-independent toolbar and button sprites.</p>
+
+<h4>UK</h4>
+<p>Country-specific directory containing localised resources for the United Kingdom.</p>
+
+<h4>UK.Config</h4>
+<p>File containing localised initial application configuration for the United Kingdom.</p>
+
+<h4>UK.Choices</h4>
+<p>Directory containing localised initial application configuration for the United Kingdom.</p>
+<p>The file Choices18 is used to configure the Fireworkz tool bar.</p>
+
+<h4>UK.Dicts</h4>
+<p>Directory containing master dictionaries for the United Kingdom.</p>
+
+<h4>UK.Templates</h4>
+<p>Directory containing localised template files for the United Kingdom.</p>
+
+<h4>UK.RISC_OS</h4>
+<p>Directory containing localised RISC OS-specific resources for the United Kingdom.</p>
+
+<h4><em>Country</em>.RISC_OS.Help.HTML</h4>
+<p>Directory containing help files in HTML format that are displayed if a browser is present.</p>
+
+<h4><em>Country</em>.RISC_OS.Help.Text</h4>
+<p>Text file displayed as trivial help if no browser is present to display the HTML help.</p>
+
+<h4><em>Country</em>.RISC_OS.Messages.Ob<em>nn</em></h4>
+<p>Text files that are used to look up localised textual messages from language-independent tags and internal error numbers.</p>
+
+<h4><em>Country</em>.RISC_OS.Sprites11.Ob<em>nn</em></h4>
+<p>Toolbar and button sprites - highest resolution (square pixel, pixel size 1 OS unit).</p>
+
+<h4><em>Country</em>.RISC_OS.Sprites22.Ob<em>nn</em></h4>
+<p>Toolbar and button sprites - standard resolution (square pixel, pixel size 2 OS units).</p>
+
+<h4><em>Country</em>.RISC_OS.Sprites24.Ob<em>nn</em></h4>
+<p>Toolbar and button sprites - lowest resolution (rectangular pixel, pixels sizes x = 2, y = 4 OS units).</p>
+
+</body>
+</html>

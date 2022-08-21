@@ -31,10 +31,13 @@ __product_ui_name = TEXT("Fireworkz");
 
 #if RISCOS
 const PC_U8Z
-g_product_sprite_name = "!fireworkz";
+g_product_riscos_app_dynamic_area = "Fireworkz workspace";
 
 const PC_U8Z
-g_dynamic_area_name = "Fireworkz workspace";
+g_product_riscos_app_directory = "!Fireworkz";
+
+const PC_U8Z
+g_product_riscos_app_sprite = "!fireworkz";
 
 const PCTSTR
 prefix_uri_userguide_content_tstr = "file:///FireworkzManuals:UserGuide/content/";
@@ -71,13 +74,17 @@ const PCTSTR
 extension_document_tstr = TEXT("fwk");
 
 const PCTSTR
+extension_hybrid_draw_tstr = TEXT("fwkh");
+
+const PCTSTR
 extension_template_tstr = TEXT("fwt");
 
 const int
 has_real_database = 0;
 
 const PCTSTR
-dll_store =
+tstr_objects_dll_store =
+TEXT("RISC_OS") FILE_DIR_SEP_TSTR
 TEXT("Objects") FILE_DIR_SEP_TSTR
 TEXT("Ob") TEXT("%.2u") RESOURCE_DLL_SUFFIX;
 

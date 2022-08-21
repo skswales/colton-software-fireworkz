@@ -14,15 +14,17 @@ A Windows SVN client such as TortoiseSVN (minimal install, with command line too
 
 GNU Win32 Patch to generate the patched BTTNCUR(P) source files.
 
-Microsoft Visual Studio 2013 or later (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options).
+Microsoft Visual Studio 2017 or later (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options).
 
 I recommend setting:
 
     Tools - Options - Text editor - C++:
-		Tabs - Insert Spaces
-		Formatting - Spacing - Spacing for control blocks - Insert space between keyword ... (Off)
+        Tabs - Insert Spaces
+        Formatting - Spacing - Spacing for control blocks - Insert space between keyword ... (Off)
 
 InnoSetup to create the distributable setup executable.
+
+GNU Win32 Zip to generate the final distributable file.
 
 NB. Fireworkz Pro can not be built for Windows.
 
@@ -46,7 +48,7 @@ to copy and patch those files as needed.
 
 Double-click on Build\windows\firewrkz-vs2013.sln to load the solution and project files into Visual Studio.
 
-Choose the variant to build (e.g. Debug or Release).
+Choose the variant to build (e.g. Debug XP ANSI or Release XP ANSI).
 
 Select Build -> Build Solution.
 
@@ -88,5 +90,6 @@ brings up InnoSetup with this script loaded.
 
 From the InnoSetup menu, select Build -> Compile.
 
-This creates a setup file for distribution in InnoSetup, named as per the inbuilt release number, setup_fireworkz_xxx.exe.
+This creates a setup file for distribution in InnoSetup, named as per the inbuilt release number, fireworkz-x_yy_zz_0-windows-x86.exe
 
+Then use BLD32CD2.BAT to create the zip for distribution, tidying intermediate temporary directories.

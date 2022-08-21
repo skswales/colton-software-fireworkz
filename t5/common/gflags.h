@@ -72,26 +72,29 @@
 #define BACKGROUND_LOAD_INITIAL_RUN 500 /* ms */
 #endif
 
-#define BOUND_ALL_MSGS 1
-#define BOUND_ALL_SPRITES 1
-
 /* affects just vi_cmd (sizing), ob_ruler (rendering) */
 #define MARKERS_INSIDE_RULER_HORZ 1
 #define MARKERS_INSIDE_RULER_VERT 1
 
 #define COMPLEX_STRING 1
 
-#if (WINDOWS && 1) || (RISCOS && 1)
+#if RISCOS
 #define USE_GLOBAL_CLIPBOARD 1
-#endif
+
+#define EDIT_XX_SINGLE_LINE_WIMP_RO 1
+#endif /* RISCOS */
 
 #if WINDOWS
+#define USE_GLOBAL_CLIPBOARD 1
+
+#define WINDOWS_SAVE_AS 1
+
 #if _MSC_VER >= 1910 /* VS2017 or later */
 #define USE_RNG_STD_MT19937 1
 #else /* earlier than VS2017 */
 #define USE_RNG_DSFMT 1
-#endif
-#endif
+#endif /* _MSC_VER */
+#endif /* WINDOWS */
 
 /* -------------- new features, not in release version yet --------------- */
 

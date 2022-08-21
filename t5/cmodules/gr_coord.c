@@ -69,13 +69,13 @@ eliminate_common_factors(
         {
             div_t n, d;
 
-            if((*p_numer < prime) || (*p_denom < prime))
+            if( (*p_numer < prime) || (*p_denom < prime) )
                 return;
 
             n = div(*p_numer, prime);
             d = div(*p_denom, prime);
 
-            if((0 != n.rem) || (0 != d.rem))
+            if( (0 != n.rem) || (0 != d.rem) )
                 break;
 
             *p_numer = n.quot;
@@ -184,11 +184,11 @@ gr_box_intersection(
     ibox->x1 = MIN(abox->x1, bbox->x1);
     ibox->y1 = MIN(abox->y1, bbox->y1);
 
-    if((ibox->x0 == ibox->x1)  ||  (ibox->y0 == ibox->y1))
+    if( (ibox->x0 == ibox->x1)  ||  (ibox->y0 == ibox->y1) )
         /* zero sized intersection, point or line */
         return(0);
 
-    if((ibox->x0  > ibox->x1)  ||  (ibox->y0  > ibox->y1))
+    if( (ibox->x0  > ibox->x1)  ||  (ibox->y0  > ibox->y1) )
         /* no intersection */
         return(-1);
 
@@ -271,6 +271,7 @@ gdi_rect_clip_mesh(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_rotate(
     _OutRef_    P_GR_BOX xbox,
@@ -288,6 +289,7 @@ gr_box_rotate(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_scale(
     _OutRef_    P_GR_BOX xbox,
@@ -307,6 +309,7 @@ gr_box_scale(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_sort(
     _OutRef_    P_GR_BOX sbox,
@@ -349,6 +352,7 @@ gr_box_sort(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_translate(
     _OutRef_    P_GR_BOX xbox,
@@ -377,6 +381,7 @@ gr_box_translate(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_union(
     _OutRef_    P_GR_BOX ubox,
@@ -385,12 +390,12 @@ gr_box_union(
 {
     /* all coordinates independent so using input as output is trivial */
 #ifdef GR_COORD_NO_UNION_EMPTIES
-    if((abox->x0 == abox->x1)  ||  (abox->y0 == abox->y1))
+    if( (abox->x0 == abox->x1)  ||  (abox->y0 == abox->y1) )
     {
         if(ubox != (voidp) bbox)
             *ubox = *bbox;
     }
-    else if((bbox->x0 == bbox->x1)  ||  (bbox->y0 == bbox->y1))
+    else if( (bbox->x0 == bbox->x1)  ||  (bbox->y0 == bbox->y1) )
     {
         if(ubox != (voidp) abox)
             *ubox = *abox;
@@ -421,28 +426,25 @@ gr_box_union(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_BOX
 gr_box_xform(
     _OutRef_    P_GR_BOX xbox,
     _InRef_     PC_GR_BOX abox,
     _InRef_     PC_GR_XFORMMATRIX xform)
 {
-    GR_BOX   tmp;
-    P_GR_BOX p;
-
     /* enable user to use input as output */
-    if(abox == (P_GR_BOX) xbox)
-        p = &tmp;
-    else
-        p = xbox;
+    GR_COORD x0, y0, x1, y1;
 
-    p->x0 = muldiv64_a_b_GR_SCALE_ONE(xform->a, abox->x0) + muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->y0) + xform->e;
-    p->y0 = muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->x0) + muldiv64_a_b_GR_SCALE_ONE(xform->d, abox->y0) + xform->f;
-    p->x1 = muldiv64_a_b_GR_SCALE_ONE(xform->a, abox->x1) + muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->y1) + xform->e;
-    p->y1 = muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->x1) + muldiv64_a_b_GR_SCALE_ONE(xform->d, abox->y1) + xform->f;
+    x0 = muldiv64_a_b_GR_SCALE_ONE(xform->a, abox->x0) + muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->y0) + xform->e;
+    y0 = muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->x0) + muldiv64_a_b_GR_SCALE_ONE(xform->d, abox->y0) + xform->f;
+    x1 = muldiv64_a_b_GR_SCALE_ONE(xform->a, abox->x1) + muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->y1) + xform->e;
+    y1 = muldiv64_a_b_GR_SCALE_ONE(xform->c, abox->x1) + muldiv64_a_b_GR_SCALE_ONE(xform->d, abox->y1) + xform->f;
 
-    if(p == &tmp)
-        *xbox = tmp;
+    xbox->x0 = x0;
+    xbox->y0 = y0;
+    xbox->x1 = x1;
+    xbox->y1 = y1;
 
     return(xbox);
 }
@@ -521,6 +523,7 @@ gdi_point_mesh_hit(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_rotate(
     _OutRef_    P_GR_POINT xpoint,
@@ -538,6 +541,7 @@ gr_point_rotate(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_scale(
     _OutRef_    P_GR_POINT xpoint,
@@ -555,6 +559,7 @@ gr_point_scale(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_translate(
     _OutRef_    P_GR_POINT xpoint,
@@ -578,26 +583,21 @@ gr_point_translate(
 *
 ******************************************************************************/
 
+/*ncr*/
 extern P_GR_POINT
 gr_point_xform(
     _OutRef_    P_GR_POINT xpoint,
     _InRef_     PC_GR_POINT apoint,
     _InRef_     PC_GR_XFORMMATRIX xform)
 {
-    GR_POINT   tmp;
-    P_GR_POINT p;
-
     /* enable user to use input as output */
-    if(apoint == xpoint)
-        p = &tmp;
-    else
-        p = xpoint;
+    GR_COORD x, y;
 
-    p->x = muldiv64_a_b_GR_SCALE_ONE(xform->a, apoint->x) + muldiv64_a_b_GR_SCALE_ONE(xform->c, apoint->y) + xform->e;
-    p->y = muldiv64_a_b_GR_SCALE_ONE(xform->c, apoint->x) + muldiv64_a_b_GR_SCALE_ONE(xform->d, apoint->y) + xform->f;
+    x = muldiv64_a_b_GR_SCALE_ONE(xform->a, apoint->x) + muldiv64_a_b_GR_SCALE_ONE(xform->c, apoint->y) + xform->e;
+    y = muldiv64_a_b_GR_SCALE_ONE(xform->c, apoint->x) + muldiv64_a_b_GR_SCALE_ONE(xform->d, apoint->y) + xform->f;
 
-    if(p == &tmp)
-        *xpoint = tmp;
+    xpoint->x = x;
+    xpoint->y = y;
 
     return(xpoint);
 }

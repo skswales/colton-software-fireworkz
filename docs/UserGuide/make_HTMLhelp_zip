@@ -1,6 +1,0 @@
-#!/bin/sh
-rm HTMLhelp.zip
-zip -0 -r -x*.svn* HTMLhelp.zip content
-mv HTMLhelp.zip HTMLhelp,a91
-ls -l HTMLhelp,a91
-echo This ZIP file lives in t5/resource directory

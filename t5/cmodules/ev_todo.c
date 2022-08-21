@@ -273,16 +273,15 @@ ev_todo_add_doc_dependents(
     {
     const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_docno);
 
-    if(P_DATA_NONE != p_ss_doc)
+    PTR_ASSERT(p_ss_doc);
+    if(P_SS_DOC_NONE != p_ss_doc)
     {
         { /* look thru range dependencies */
         ARRAY_INDEX range_table_elements = array_elements(&p_ss_doc->range_table.h_table);
-        ARRAY_INDEX range_ix;
-        P_RANGE_USE p_range_use;
+        ARRAY_INDEX range_idx;
+        PC_RANGE_USE p_range_use = array_rangec(&p_ss_doc->range_table.h_table, RANGE_USE, 0, range_table_elements);
 
-        for(range_ix = 0, p_range_use = p_range_use_from_p_ss_doc(p_ss_doc, range_ix);
-            range_ix < range_table_elements;
-            ++range_ix, ++p_range_use)
+        for(range_idx = 0; range_idx < range_table_elements; ++range_idx, ++p_range_use)
         {
             if(p_range_use->flags.to_be_deleted)
                 continue;
@@ -294,12 +293,10 @@ ev_todo_add_doc_dependents(
 
         { /* add slr dependencies */
         const ARRAY_INDEX slr_table_elements = array_elements(&p_ss_doc->slr_table.h_table);
-        ARRAY_INDEX slr_ix;
-        P_SLR_USE p_slr_use;
+        ARRAY_INDEX slr_idx;
+        PC_SLR_USE p_slr_use = array_rangec(&p_ss_doc->slr_table.h_table, SLR_USE, 0, slr_table_elements);
 
-        for(slr_ix = 0, p_slr_use = p_slr_use_from_p_ss_doc(p_ss_doc, slr_ix);
-            slr_ix < slr_table_elements;
-            ++slr_ix, ++p_slr_use)
+        for(slr_idx = 0; slr_idx < slr_table_elements; ++slr_idx, ++p_slr_use)
         {
             if(p_slr_use->flags.to_be_deleted)
                 continue;
@@ -313,17 +310,18 @@ ev_todo_add_doc_dependents(
 
     { /* add dependents of names referencing this document */
     EV_SLR slr;
-    const ARRAY_INDEX custom_table_elements = array_elements(&custom_def_deptable.h_table);
-    ARRAY_INDEX i;
-    P_EV_CUSTOM p_ev_custom;
 
     slr.docno = EV_DOCNO_PACK(ev_docno);
 
     todo_add_name_deps_of_slr(&slr, ev_docno);
+    } /*block*/
 
-    for(i = 0, p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, i);
-        i < custom_table_elements;
-        ++i, ++p_ev_custom)
+    {
+    const ARRAY_INDEX custom_table_elements = array_elements(&custom_def_deptable.h_table);
+    ARRAY_INDEX custom_idx;
+    PC_EV_CUSTOM p_ev_custom = array_rangec(&custom_def_deptable.h_table, EV_CUSTOM, 0, custom_table_elements);
+
+    for(custom_idx = 0; custom_idx < custom_table_elements; ++custom_idx, ++p_ev_custom)
     {
         if(p_ev_custom->flags.to_be_deleted)
             continue;
@@ -716,7 +714,7 @@ dep_add_stack_inc(
 
         if(NULL == (p_dep_add_stack = al_array_extend_by(&h_dep_add_stack, DEP_ADD_STACK, 1, &array_init_block, &status)))
         {
-            __analysis_assume(status < 0);
+            _Analysis_assume_(status < 0);
             return(status);
         }
 
@@ -865,11 +863,9 @@ dep_add_range(void)
     STATUS status = STATUS_OK;
     const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_dep_add_stack->slr));
 
-    if(P_DATA_NONE == p_ss_doc)
-    {
-        assert0();
+    PTR_ASSERT(p_ss_doc);
+    if(P_SS_DOC_NONE == p_ss_doc)
         return(status);
-    }
 
     if(p_ss_doc->h_range_cols && p_ss_doc->h_range_rows)
     {
@@ -994,7 +990,8 @@ dep_add_slr(void)
     {
         const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_dep_add_stack->slr));
 
-        if(P_DATA_NONE != p_ss_doc)
+        PTR_ASSERT(p_ss_doc);
+        if(P_SS_DOC_NONE != p_ss_doc)
         {
             P_SLR_USE p_slr_use = p_slr_use_from_p_ss_doc(p_ss_doc, slr_ix);
             ARRAY_INDEX n_slrs = array_elements(&p_ss_doc->slr_table.h_table);

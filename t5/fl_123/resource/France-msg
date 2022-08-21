@@ -1,0 +1,22 @@
+#
+# this is the messages file for fl_123 (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages (none)
+#
+# errors: keep consistent with fl_123/fl_123.h
+# see LOTUS123_ERR(n)
+#
+# UK e0:Bad Lotus file
+e0:Bad Lotus file
+#e1:ERROR_RQ
+# UK e2:Bad formula
+e2:Bad formula
+#
+# end of msg (fl_123)

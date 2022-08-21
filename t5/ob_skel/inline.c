@@ -219,7 +219,7 @@ inline_uchars_buf_from_data(
 
     if(0 != data_size)
     {
-        if(IS_PTR_NULL_OR_NONE(p_data))
+        if(PTR_IS_NULL_OR_NONE(p_data))
             return(0/*status_check()*/);
 
         memcpy32(inline_data_ptr(P_BYTE, uchars_inline), p_data, data_size);
@@ -319,7 +319,7 @@ inline_quick_ublock_from_data(
 
     if(0 != data_size)
     {
-        if(IS_PTR_NULL_OR_NONE(p_data))
+        if(PTR_IS_NULL_OR_NONE(p_data))
             return(status_check());
 
         memcpy32(inline_data_ptr(P_BYTE, uchars_inline), p_data, data_size);
@@ -359,7 +359,7 @@ inline_quick_ublock_from_multiple_data(
         if(0 == n_bytes)
             continue;
 
-        if(IS_PTR_NULL_OR_NONE(p_src))
+        if(PTR_IS_NULL_OR_NONE(p_src))
             return(status_check());
 
         data_size += n_bytes;
@@ -422,7 +422,7 @@ inline_quick_ublock_from_ustr(
     U32 data_size;
     P_USTR_INLINE uchars_inline;
 
-    if(IS_PTR_NULL_OR_NONE(ustr))
+    if(PTR_IS_NULL_OR_NONE(ustr))
         return(status_check());
 
 #if CHECKING_UCHARS
@@ -1163,7 +1163,7 @@ report_ustr_inline(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE(ustr_inline))
+    if(PTR_IS_NONE(ustr_inline))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -1172,7 +1172,7 @@ report_ustr_inline(
         ((uintptr_t) ustr_inline < (uintptr_t) LOW_MEMORY_LIMIT ) ||
         ((uintptr_t) ustr_inline > (uintptr_t) HIGH_MEMORY_LIMIT) ||
 #endif
-        IS_BAD_POINTER(ustr_inline) )
+        PTR_IS_BAD_POINTER(ustr_inline) )
     {
         static TCHARZ stringbuffer[16];
 #if WINDOWS

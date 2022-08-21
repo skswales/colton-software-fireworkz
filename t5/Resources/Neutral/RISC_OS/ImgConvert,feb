@@ -1,0 +1,15 @@
+| ImgConvert <source> <destination> <options>
+|
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+|
+| Copyright (C) 2020 Stuart Swales
+|
+If "%*0"="" Then Error This utility is used by Fireworkz to convert image files
+If "<ChangeFSI$Dir>"="" Then Error 0 Fireworkz needs ChangeFSI to convert this file
+IfThere <ChangeFSI$Dir>.ChangeFSI Then Else Error 0 ChangeFSI is missing
+|
+RMEnsure UtilityModule 3.60 Error ChangeFSI can only be run under RISC OS 3.60 or later
+WimpSlot -min 320K -max 508K
+Run <ChangeFSI$Dir>.ChangeFSI %*0

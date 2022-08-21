@@ -24,17 +24,18 @@ _Check_return_
 extern STATUS
 dialog_riscos_file_icon_drag(
     _InVal_     H_DIALOG h_dialog,
-    _In_        WimpIconBlockWithBitset * const p_icon);
+    _InRef_     PC_WimpIconBlockWithBitset p_icon);
 
 extern void
 dialog_riscos_file_icon_setup(
-    _Inout_     WimpIconBlockWithBitset * const p_icon,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _InVal_     T5_FILETYPE t5_filetype);
 
 struct DIALOG_MSG_CTL_USER_MOUSE_RISCOS
 {
     wimp_w window_handle;
     WimpIconBlockWithBitset icon;
+    const WimpMouseClickEvent * p_mouse_click;
 };
 
 /*

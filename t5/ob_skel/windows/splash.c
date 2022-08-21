@@ -59,8 +59,8 @@ splash_onPaint_banner(
     hm = p_size->cy;
 
     { /* DPI-aware */
-    SIZE PixelsPerInch;
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+    GDI_SIZE PixelsPerInch;
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
     p_size->cx = idiv_ceil_u(p_size->cx * PixelsPerInch.cx, 96);
     p_size->cy = idiv_ceil_u(p_size->cy * PixelsPerInch.cy, 96);
@@ -107,10 +107,10 @@ splash_onPaint_text(
     text_y_inter_line = user_info_height;
 
     { /* DPI-aware */
-    SIZE PixelsPerInch;
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+    GDI_SIZE PixelsPerInch;
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
-    text_y_inter_line += idiv_ceil_u(SPLASH_INTER_LINE_SPACING * PixelsPerInch.cy, 96);
+    text_y_inter_line   += idiv_ceil_u(SPLASH_INTER_LINE_SPACING   * PixelsPerInch.cy, 96);
     bottom_margin_pixels = idiv_ceil_u(SPLASH_BOTTOM_MARGIN_PIXELS * PixelsPerInch.cy, 96);
     } /*block*/
 
@@ -282,7 +282,7 @@ wndproc_splash_onTimer(
     _HwndRef_   HWND hwnd,
     _In_        UINT id)
 {
-    trace_1(TRACE_WINDOWS_HOST, TEXT("WM_TIMER(splash): timer id %d"), id);
+    trace_1(TRACE_WINDOWS_HOST, TEXT("WM_TIMER(splash): timer id %u"), id);
 
     switch(id)
     {
@@ -327,6 +327,8 @@ splash_window_create(
 {
     RECT screen_rect;
     GDI_SIZE size = { 0, 0 };
+    GDI_SIZE PixelsPerInch; /* DPI-aware */
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
     if(0 == splash_timeout_ms)
     {
@@ -386,13 +388,9 @@ splash_window_create(
         size.cx = g_banner_bitmap.bmWidth;
         size.cy = g_banner_bitmap.bmHeight;
 
-        { /* DPI-aware */
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
-
+        /* DPI-aware */
         size.cx = idiv_ceil_u(size.cx * PixelsPerInch.cx, 96);
         size.cy = idiv_ceil_u(size.cy * PixelsPerInch.cy, 96);
-        } /*block*/
     }
 
     if(NULL != g_h_bitmap_banner)
@@ -437,13 +435,9 @@ splash_window_create(
 
             text_y_inter_line = user_info_height;
 
-            { /* DPI-aware */
-            SIZE PixelsPerInch;
-            host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
-
-            text_y_inter_line += idiv_ceil_u(SPLASH_INTER_LINE_SPACING * PixelsPerInch.cy, 96);
+            /* DPI-aware */
+            text_y_inter_line   += idiv_ceil_u(SPLASH_INTER_LINE_SPACING   * PixelsPerInch.cy, 96);
             bottom_margin_pixels = idiv_ceil_u(SPLASH_BOTTOM_MARGIN_PIXELS * PixelsPerInch.cy, 96);
-            } /*block*/
 
             g_extra_text_pixels_y = (1 * text_y_inter_line) + (user_info_height + bottom_margin_pixels);
 

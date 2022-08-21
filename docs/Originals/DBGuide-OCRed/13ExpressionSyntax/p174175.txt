@@ -1,0 +1,60 @@
+﻿Database Guide 174
+
+Function list
+
+ABS
+ABS(number)
+Returns the absolute positive value of number. So, for example,
+ABS(-10 )
+retums the value 10.
+
+AGE
+AGE(date/time1, date/time2)
+Returns the interval between date/time1 and date/time2 in years,
+months, days, hours, minutes and seconds. For example:
+AGE( 'Date1 ‘ , 'Date2 ')
+returns the interval between the dates in the fields Date1 and
+Date2. The result is positive if Date1 is greater than Date2.
+
+ARCCOS
+ARCCOS(number)
+Returns the arc cosine of number. The result is in radians.
+
+ARCSIN
+ARCSIN ( number)
+Returns the arc sine of number. The result is in radians.
+
+ARCTAN
+ARCTAN (number)
+Returns the arc tangent of number. The result is in radians.
+
+Database Guide 175
+
+ASC
+ASC(text)
+Returns the ASCII number of the first character of the text string
+ text. For example:
+ASC("Hello")
+returns 72, the ASCII value of H.
+
+AVERAGE
+AVERAGE (numeric- expr {, numeric- expr}*)
+Returns a real number giving the average value for all non-NULL
+items in a list of numeric expressions. If all items are NULL the
+result is NULL. For example:
+AVERAGE(13,2,61,103)
+returns the value 44.75.
+
+CASE
+CASE( field, expression)
+used for making multiple comparisons against a single field. The
+expression takes the form:
+comparison => expression : else expression
+For example:
+CASE('Age',<3 => "Baby" : <11 =>
+"Child" : <20 => "Teenager" : "Adult")
+If the value in the Age field is less than 3, the CASE returns the
+result Baby, if Age is between 3 and 11, CASE returns Child,
+if Age is between 11 and 20, CASE retums Teenager
+otherwise, CASE retums Adult.
+

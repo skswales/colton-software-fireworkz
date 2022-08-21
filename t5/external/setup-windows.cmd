@@ -11,8 +11,13 @@
 pushd %~dp0
 IF NOT EXIST setup-windows.cmd EXIT
 
+call ..\Build\windows\t5_tbt.bat
+
 set COLTSOFT_CS_FREE=..\..\..\..\coltsoft\%FIREWORKZ_TBT%\cs-free
 set COLTSOFT_CS_NONFREE=..\..\..\..\coltsoft\%FIREWORKZ_TBT%\cs-nonfree
+
+IF NOT EXIST %COLTSOFT_CS_FREE% EXIT
+IF NOT EXIST %COLTSOFT_CS_NONFREE% EXIT
 
 mklink /j %CD%\cs-free    %COLTSOFT_CS_FREE%
 mklink /j %CD%\cs-nonfree %COLTSOFT_CS_NONFREE%
@@ -43,3 +48,5 @@ attrib +r .\Microsoft\InsideOLE2\BTTNCURP\BTTNCUR.H
 attrib +r .\Microsoft\InsideOLE2\BTTNCURP\BTTNCURI.H
 
 popd
+
+pause

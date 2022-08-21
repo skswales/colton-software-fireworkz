@@ -1,0 +1,67 @@
+﻿Database Guide 182
+
+LOG
+LOG(number)
+Returns the base 10 logarithm of number.
+
+MATRIX
+MATRIX(graphic, xx, xy, yx, yy, xoffset, yoffset)
+Retums a drawfile graphic transformed by the given matrix. The
+mapping is as follows:
+mew = xold * xx + yold * yx + xoffset
+ynew = xold * xy + yold * yy + yoffset
+The offsets are given in OS units.
+
+MAX
+MAX(expr {, expr}*)
+Retums the maximum item from a list of expressions. Expressions
+may be of any type, but they must all be of the same type. For
+example:
+MAX(13,2, 61, 103)
+returns the value 103.
+
+MEDIAN
+MEDIAN(numeric-expr {, numeric-expr}*)
+Returns a real number giving the median value for all non-NULL
+items in a list of numeric expressions, i.e. it evaluates all the
+expressions, sorts them into numeric order and returns the middle
+value. If there is an even number of entries in the list, the mean of
+the two middle values is returned. For example:
+MEDIAN(13, 2, 61, 103)
+returns the value 37.
+
+Database Guide 183
+
+MlD$
+MID$(text, start_n {, chars_n})
+Returns the middle chars_n characters of text starting at
+start_n. If chars_n is not specified then the remainder of the
+string is retumed. For example:
+MID$("abcdefgh",3,2)
+retums the string cd and:
+MID$("abcdefgh",3)
+retums cdefgh.
+
+MIN
+MIN(expr {, expr}*)
+Retums the minimum item from a list of expressions. Expressions
+may be of any type, but they must all be of the same type. For
+example:
+MIN(13, 2, 61, 103)
+retums the value 2.
+
+MINUTEOF
+MINUTEOF(date/interval)
+Returns an integer for the minute value of a date or interval. For
+example:
+MINUTEOF( 'Date1' )
+retums the minute component of the date in the field Date1.
+
+MONTHNAME
+MONTHNAME(integer)
+Returns a text string giving the name of the month corresponding
+to the integer, from January (1) to December (12). For example:
+
+
+
+

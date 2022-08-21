@@ -1,0 +1,40 @@
+﻿
+Re-ordering fields
+Having entered your fields, you may decide that you want to have
+them in a different order. To move a field to a different position in
+the list:
+1 Highlight the field to be moved by clicking on it or pressing
+the up and down arrow keys on the keyboard to move the
+highlight bar onto it.
+2 Click Up to move the field one place up the list or Down to
+move the field one place down the list.
+When you are happy
+When you are happy with your list of fields:
+. Click OK.
+This will have two effects:
+. A database will be created on disc. (That is why you had to
+save your document to disc first - Recordz wouldn't have
+known what to call the database otherwise.)
+. Your document will be changed.
+If you are using a sheet layout, the column headings will be
+set to be field names and a row containing an empty record
+will be created.
+If you are using a card layout, an empty card will appear with
+the field boxes labelled with the field names.
+
+62 Recordz
+
+The Field properties dialogue box
+Various properties of a field can be altered using the Field
+properties dialogue box. To display this:
+. Choose Properties from the Database menu.
+The dialogue box will appear as follows:
+
+The field list box will contain the list of fields which your database
+currently contains. This can be used to change the structure as
+described in Chapter 11 - Editing & appending databases.
+
+Fireworkz Pro 63
+
+
+

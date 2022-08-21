@@ -50,104 +50,104 @@ ss_name_edit(
 
 typedef struct SS_NAME_LIST_ENTRY
 {
-    QUICK_UBLOCK_WITH_BUFFER(name_quick_ublock, elemof32("names_are_short")); /* NB buffer adjacent for fixup */
+    QUICK_UBLOCK_WITH_BUFFER(name_quick_ublock, 16); /* NB buffer adjacent for fixup */
 }
 SS_NAME_LIST_ENTRY, * P_SS_NAME_LIST_ENTRY; typedef const SS_NAME_LIST_ENTRY * PC_SS_NAME_LIST_ENTRY;
 
 enum SS_NAME_INTRO_CONTROL_IDS
 {
-#define SS_NAME_INTRO_MINLIST_H (12 * PIXITS_PER_INCH / 8)
-#define SS_NAME_INTRO_MINLIST_V (DIALOG_DEFPUSHBUTTON_V + 4 * (DIALOG_STDPUSHBUTTON_V +  DIALOG_STDSPACING_V))
-    SS_NAME_INTRO_ID_LIST_CAPTION = 164,
+    SS_NAME_INTRO_ID_LIST_LABEL = 164,
     SS_NAME_INTRO_ID_LIST,
-    SS_NAME_INTRO_ID_VALUE_CAPTION,
+    SS_NAME_INTRO_ID_VALUE_LABEL,
     SS_NAME_INTRO_ID_VALUE,
-    SS_NAME_INTRO_ID_DESC_CAPTION,
+    SS_NAME_INTRO_ID_DESC_LABEL,
     SS_NAME_INTRO_ID_DESC,
+
     SS_NAME_INTRO_ID_INSERT_ADJUST, /*logical*/
+
     SS_NAME_INTRO_ID_DELETE,
     SS_NAME_INTRO_ID_DELETE_ADJUST, /*logical*/
     SS_NAME_INTRO_ID_EDIT,
-    SS_NAME_INTRO_ID_ADD,
-    SS_NAME_INTRO_ID_HELP
-#define SS_NAME_INTRO_BUTTONS_H (DIALOG_PUSHBUTTONOVH_H + DIALOG_SYSCHARS_H("Edit... "))
+    SS_NAME_INTRO_ID_ADD
 };
+
+#define SS_NAME_INTRO_NAME_FIELD_WIDTH DIALOG_SYSCHARS_H("QuiteLongNamesGetDisplayedHere")
 
 static const DIALOG_CONTROL
-ss_name_intro_list_caption =
+ss_name_intro_list_label =
 {
-    SS_NAME_INTRO_ID_LIST_CAPTION, DIALOG_MAIN_GROUP,
+    SS_NAME_INTRO_ID_LIST_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, SS_NAME_INTRO_ID_LIST },
     { 0, 0, 0, DIALOG_STDTEXT_V },
-    { DRT(LTRT, STATICTEXT) }
+    { DRT(LTRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-ss_name_intro_list_caption_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_NAME), {1 /* left text */} };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+ss_name_intro_list_label_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_NAME), { 1 /* left text */ } };
 
 static const DIALOG_CONTROL
 ss_name_intro_list =
 {
     SS_NAME_INTRO_ID_LIST, DIALOG_MAIN_GROUP,
-    { SS_NAME_INTRO_ID_LIST_CAPTION, SS_NAME_INTRO_ID_LIST_CAPTION },
-    { 0, DIALOG_SMALLSPACING_V, DIALOG_SYSCHARS_H("QuiteLongNamesGetDisplayedHere"), DIALOG_STDLISTOVH_V + 10 * DIALOG_STDLISTITEM_V },
+    { SS_NAME_INTRO_ID_LIST_LABEL, SS_NAME_INTRO_ID_LIST_LABEL },
+    { 0, DIALOG_LABELGAP_V, DIALOG_STDEDITOVH_H + SS_NAME_INTRO_NAME_FIELD_WIDTH, DIALOG_STDLISTOVH_V + (8 * DIALOG_STDLISTITEM_V) },
     { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
-ss_name_intro_value_caption =
+ss_name_intro_value_label =
 {
-    SS_NAME_INTRO_ID_VALUE_CAPTION, DIALOG_MAIN_GROUP,
-    { SS_NAME_INTRO_ID_LIST, SS_NAME_INTRO_ID_LIST, SS_NAME_INTRO_ID_VALUE },
+    SS_NAME_INTRO_ID_VALUE_LABEL, DIALOG_MAIN_GROUP,
+    { SS_NAME_INTRO_ID_LIST_LABEL, SS_NAME_INTRO_ID_LIST, SS_NAME_INTRO_ID_VALUE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
-    { DRT(LBRT, STATICTEXT) }
+    { DRT(LBRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-ss_name_intro_value_caption_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_VALUE), {1 /* left text */} };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+ss_name_intro_value_label_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_VALUE), { 1 /* left text */ } };
 
 static const DIALOG_CONTROL
 ss_name_intro_value =
 {
     SS_NAME_INTRO_ID_VALUE, DIALOG_MAIN_GROUP,
-    { SS_NAME_INTRO_ID_LIST_CAPTION, SS_NAME_INTRO_ID_VALUE_CAPTION, SS_NAME_INTRO_ID_LIST },
-    { 0, DIALOG_SMALLSPACING_V, 0, DIALOG_STDEDIT_V },
+    { SS_NAME_INTRO_ID_LIST, SS_NAME_INTRO_ID_VALUE_LABEL, SS_NAME_INTRO_ID_LIST },
+    { 0, DIALOG_LABELGAP_V, 0, DIALOG_STDEDIT_V },
     { DRT(LBRT, EDIT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
-ss_name_intro_value_data = { { { FRAMED_BOX_EDIT, 1 /*read_only*/ }, NULL } /*EDIT_XX*/ };
+ss_name_intro_value_data = { { { FRAMED_BOX_EDIT_READ_ONLY, 1 /*read_only*/ }, NULL } /*EDIT_XX*/ };
 
 static const DIALOG_CONTROL
-ss_name_intro_desc_caption =
+ss_name_intro_desc_label =
 {
-    SS_NAME_INTRO_ID_DESC_CAPTION, DIALOG_CONTROL_WINDOW,
-    { SS_NAME_INTRO_ID_VALUE_CAPTION, SS_NAME_INTRO_ID_VALUE, SS_NAME_INTRO_ID_DESC },
+    SS_NAME_INTRO_ID_DESC_LABEL, DIALOG_MAIN_GROUP,
+    { SS_NAME_INTRO_ID_VALUE_LABEL, SS_NAME_INTRO_ID_VALUE, SS_NAME_INTRO_ID_DESC },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
-    { DRT(LBRT, STATICTEXT) }
+    { DRT(LBRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-ss_name_intro_desc_caption_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_DESC), {1 /* left text */} };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+ss_name_intro_desc_label_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_DESC), { 1 /* left text */ } };
 
 static const DIALOG_CONTROL
 ss_name_intro_desc =
 {
-    SS_NAME_INTRO_ID_DESC, DIALOG_CONTROL_WINDOW,
-    { SS_NAME_INTRO_ID_VALUE, SS_NAME_INTRO_ID_DESC_CAPTION, IDOK, DIALOG_CONTROL_SELF },
-    { 0, DIALOG_STDSPACING_V, 0, PIXITS_PER_INCH },
+    SS_NAME_INTRO_ID_DESC, DIALOG_MAIN_GROUP,
+    { SS_NAME_INTRO_ID_VALUE, SS_NAME_INTRO_ID_DESC_LABEL, IDOK, DIALOG_CONTROL_SELF },
+    { 0, DIALOG_LABELGAP_V, 0, DIALOG_MULEDIT_V(3) },
     { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
-ss_name_intro_desc_data = { { { FRAMED_BOX_EDIT, 1 /*read_only*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
+ss_name_intro_desc_data = { { { FRAMED_BOX_EDIT_READ_ONLY, 1 /*read_only*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
 
 static const DIALOG_CONTROL
 ss_name_intro_insert =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
-    { DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
-    { DIALOG_STDSPACING_H, 0, (3 * PIXITS_PER_INCH) / 4, DIALOG_DEFPUSHBUTTON_V },
+    { SS_NAME_INTRO_ID_LIST, SS_NAME_INTRO_ID_LIST_LABEL, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
+    { DIALOG_STDSPACING_H, 0, ((3 * PIXITS_PER_INCH) / 4) + DIALOG_PUSHBUTTONOVH_H + (2 * DIALOG_DEFPUSHEXTRA_H), DIALOG_DEFPUSHBUTTON_V },
     { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
@@ -188,7 +188,7 @@ ss_name_intro_delete =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
-ss_name_intro_delete_data = { { SS_NAME_INTRO_ID_DELETE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_DELETE), SS_NAME_INTRO_ID_DELETE_ADJUST };
+ss_name_intro_delete_data = { { SS_NAME_INTRO_ID_DELETE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_DELETE), SS_NAME_INTRO_ID_DELETE_ADJUST };
 
 static const DIALOG_CONTROL
 ss_name_intro_cancel =
@@ -202,22 +202,49 @@ ss_name_intro_cancel =
 static const DIALOG_CTL_CREATE
 ss_name_intro_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &ss_name_intro_list_caption,  &ss_name_intro_list_caption_data },
-    { &ss_name_intro_list,          &stdlisttext_data },
+    { { &ss_name_intro_list_label },    &ss_name_intro_list_label_data },
+    { { &ss_name_intro_list },          &stdlisttext_data },
 
-    { &ss_name_intro_value_caption, &ss_name_intro_value_caption_data },
-    { &ss_name_intro_value,         &ss_name_intro_value_data },
+    { { &ss_name_intro_value_label },   &ss_name_intro_value_label_data },
+    { { &ss_name_intro_value },         &ss_name_intro_value_data },
 
-    { &ss_name_intro_desc_caption,  &ss_name_intro_desc_caption_data },
-    { &ss_name_intro_desc,          &ss_name_intro_desc_data },
+    { { &ss_name_intro_desc_label },    &ss_name_intro_desc_label_data },
+    { { &ss_name_intro_desc },          &ss_name_intro_desc_data },
 
-    { &ss_name_intro_insert,        &ss_name_intro_insert_data },
-    { &ss_name_intro_edit,          &ss_name_intro_edit_data },
-    { &ss_name_intro_add,           &ss_name_intro_add_data },
-    { &ss_name_intro_delete,        &ss_name_intro_delete_data },
-    { &ss_name_intro_cancel,        &stdbutton_cancel_data }
+    { { &ss_name_intro_insert },        &ss_name_intro_insert_data },
+    { { &ss_name_intro_edit },          &ss_name_intro_edit_data },
+    { { &ss_name_intro_add },           &ss_name_intro_add_data },
+    { { &ss_name_intro_delete },        &ss_name_intro_delete_data },
+    { { &ss_name_intro_cancel },        &stdbutton_cancel_data }
+};
+
+static const DIALOG_CONTROL
+ss_name_intro_insert_desc =
+{
+    SS_NAME_INTRO_ID_DESC, DIALOG_MAIN_GROUP,
+    { SS_NAME_INTRO_ID_VALUE, SS_NAME_INTRO_ID_DESC_LABEL, SS_NAME_INTRO_ID_VALUE, DIALOG_CONTROL_SELF },
+    { 0, DIALOG_LABELGAP_V, 0, (3 * PIXITS_PER_INCH) / 4 },
+    { DRT(LBRT, EDIT), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CTL_CREATE
+ss_name_intro_insert_ctl_create[] =
+{
+    { { &dialog_main_group }, NULL },
+
+    { { &ss_name_intro_list_label },    &ss_name_intro_list_label_data },
+    { { &ss_name_intro_list },          &stdlisttext_data },
+
+    { { &ss_name_intro_value_label },   &ss_name_intro_value_label_data },
+    { { &ss_name_intro_value },         &ss_name_intro_value_data },
+
+    { { &ss_name_intro_desc_label },    &ss_name_intro_desc_label_data },
+    { { &ss_name_intro_insert_desc },   &ss_name_intro_desc_data }, /* different */
+
+    { { &defbutton_ok },                &ss_name_intro_insert_data }, /* different */
+    { { &stdbutton_cancel },            &stdbutton_cancel_data } /* different */
 };
 
 /******************************************************************************
@@ -282,7 +309,7 @@ encode_from_selected_name(
 {
     P_USTR ustr_description = NULL;
     BOOL kosher_selection = FALSE;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("a_buffer_for_some_text"));
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 16);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(array_index_is_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
@@ -295,7 +322,7 @@ encode_from_selected_name(
         {
             SS_NAME_READ ss_name_read;
             SS_RECOG_CONTEXT ss_recog_context;
-            zero_struct(ss_name_read);
+            zero_struct_fn(ss_name_read);
             ss_name_read.ev_handle = status;
             ss_data_set_blank(&ss_name_read.ss_data);
             ss_name_read.follow_indirection = FALSE;
@@ -414,7 +441,7 @@ ss_name_intro_delete_using_callback(
         P_SS_NAME_LIST_ENTRY p_ss_name_list_entry = array_ptr_no_checks(&p_ss_name_intro_callback->ss_name_list_handle, SS_NAME_LIST_ENTRY, p_ss_name_intro_callback->selected_ss_name);
         PC_USTR ustr_name = quick_ublock_ustr(&p_ss_name_list_entry->name_quick_ublock);
         SS_NAME_MAKE ss_name_make;
-        zero_struct(ss_name_make);
+        zero_struct_fn(ss_name_make);
         ss_name_make.ustr_name_id = ustr_name;
         ss_name_make.ustr_name_def = NULL;
         ss_name_make.undefine = TRUE;
@@ -442,13 +469,13 @@ ss_name_intro_edit_using_callback(
         if(status_ok(status = name_handle_from_external_id(p_docu, ustr_name)))
         {
             P_USTR ustr_description;
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("a_buffer_for_some_text"));
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 16);
             quick_ublock_with_buffer_setup(quick_ublock);
 
             {
             SS_NAME_READ ss_name_read;
             SS_RECOG_CONTEXT ss_recog_context;
-            zero_struct(ss_name_read);
+            zero_struct_fn(ss_name_read);
             ss_name_read.ev_handle = status;
             ss_data_set_blank(&ss_name_read.ss_data);
             ss_name_read.follow_indirection = FALSE;
@@ -631,19 +658,16 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
     {
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_intro_ctl_create, elemof32(ss_name_intro_ctl_create),
-            (ss_name_intro_callback.name_selector_type != 1)
-            ? SS_MSG_DIALOG_NAME_INTRO_INSERT_HELP_TOPIC
-            : SS_MSG_DIALOG_NAME_INTRO_HELP_TOPIC);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = SS_MSG_DIALOG_NAME_INTRO_CAPTION;
+        if(ss_name_intro_callback.name_selector_type != 1)
+            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_intro_insert_ctl_create, elemof32(ss_name_intro_insert_ctl_create), SS_MSG_DIALOG_NAME_INTRO_CAPTION);
+        else
+            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_intro_ctl_create, elemof32(ss_name_intro_ctl_create), SS_MSG_DIALOG_NAME_INTRO_CAPTION);
+        dialog_cmd_process_dbox.help_topic_resource_id = SS_MSG_DIALOG_NAME_INTRO_HELP_TOPIC;
 #if RISCOS
         dialog_cmd_process_dbox.bits.note_position = 1;
 #endif
         dialog_cmd_process_dbox.p_proc_client = dialog_event_ss_name_intro;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &ss_name_intro_callback;
-        if(ss_name_intro_callback.name_selector_type != 1)
-            dialog_cmd_process_dbox.n_ctls -= 3; /* remove the add, edit and delete buttons */
         status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         } /*block*/
 
@@ -731,33 +755,33 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
 
 enum SS_NAME_EDIT_CONTROL_IDS
 {
-    SS_NAME_EDIT_ID_NAME_CAPTION = 289,
+    SS_NAME_EDIT_ID_NAME_LABEL = 289,
     SS_NAME_EDIT_ID_NAME,
-    SS_NAME_EDIT_ID_VALUE_CAPTION,
+    SS_NAME_EDIT_ID_VALUE_LABEL,
     SS_NAME_EDIT_ID_VALUE,
-    SS_NAME_EDIT_ID_DESC_CAPTION,
+    SS_NAME_EDIT_ID_DESC_LABEL,
     SS_NAME_EDIT_ID_DESC,
     SS_NAME_EDIT_ID_HELP
 };
 
 static const DIALOG_CONTROL
-ss_name_edit_name_caption =
+ss_name_edit_name_label =
 {
-    SS_NAME_EDIT_ID_NAME_CAPTION, DIALOG_MAIN_GROUP,
+    SS_NAME_EDIT_ID_NAME_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, SS_NAME_EDIT_ID_NAME },
     { 0, 0, 0, DIALOG_STDTEXT_V },
-    { DRT(LTRT, STATICTEXT) }
+    { DRT(LTRT, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-ss_name_edit_name_caption_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_NAME), {1 /*left_text*/} };
+ss_name_edit_name_label_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_NAME), { 1 /*left_text*/ } };
 
 static /*poked*/ DIALOG_CONTROL
 ss_name_edit_name =
 {
     SS_NAME_EDIT_ID_NAME, DIALOG_MAIN_GROUP,
-    { SS_NAME_EDIT_ID_NAME_CAPTION, SS_NAME_EDIT_ID_NAME_CAPTION },
-    { 0, DIALOG_SMALLSPACING_V, DIALOG_STDEDITOVH_H + DIALOG_SYSCHARS_H("QuiteLongNamesTypedHere"), DIALOG_STDEDIT_V },
+    { SS_NAME_EDIT_ID_NAME_LABEL, SS_NAME_EDIT_ID_NAME_LABEL },
+    { 0, DIALOG_LABELGAP_V, DIALOG_STDEDITOVH_H + SS_NAME_INTRO_NAME_FIELD_WIDTH, DIALOG_STDEDIT_V },
     { DRT(LBLT, EDIT), 1 /*tabstop*/ }
 };
 
@@ -765,23 +789,23 @@ static /*poked*/ DIALOG_CONTROL_DATA_EDIT
 ss_name_edit_name_data = { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ };
 
 static const DIALOG_CONTROL
-ss_name_edit_value_caption =
+ss_name_edit_value_label =
 {
-    SS_NAME_EDIT_ID_VALUE_CAPTION, DIALOG_MAIN_GROUP,
-    { SS_NAME_EDIT_ID_NAME_CAPTION, SS_NAME_EDIT_ID_NAME, SS_NAME_EDIT_ID_VALUE },
+    SS_NAME_EDIT_ID_VALUE_LABEL, DIALOG_MAIN_GROUP,
+    { SS_NAME_EDIT_ID_NAME_LABEL, SS_NAME_EDIT_ID_NAME, SS_NAME_EDIT_ID_VALUE },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
-    { DRT(LBRT, STATICTEXT) }
+    { DRT(LBRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-ss_name_edit_value_caption_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_VALUE), {1 /*left_text*/} };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+ss_name_edit_value_label_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_VALUE), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 ss_name_edit_value =
 {
     SS_NAME_EDIT_ID_VALUE, DIALOG_MAIN_GROUP,
-    { SS_NAME_EDIT_ID_VALUE_CAPTION, SS_NAME_EDIT_ID_VALUE_CAPTION, SS_NAME_EDIT_ID_NAME },
-    { 0, DIALOG_SMALLSPACING_V, 0, DIALOG_STDEDIT_V },
+    { SS_NAME_EDIT_ID_VALUE_LABEL, SS_NAME_EDIT_ID_VALUE_LABEL, SS_NAME_EDIT_ID_NAME },
+    { 0, DIALOG_LABELGAP_V, 0, DIALOG_STDEDIT_V },
     { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
@@ -789,43 +813,46 @@ static const DIALOG_CONTROL_DATA_EDIT
 ss_name_edit_value_data = { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/ };
 
 static const DIALOG_CONTROL
-ss_name_edit_desc_caption =
+ss_name_edit_desc_label =
 {
-    SS_NAME_EDIT_ID_DESC_CAPTION, DIALOG_MAIN_GROUP,
-    { SS_NAME_EDIT_ID_VALUE_CAPTION, SS_NAME_EDIT_ID_VALUE, SS_NAME_EDIT_ID_DESC },
-    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
-    { DRT(LBRT, STATICTEXT) }
+    SS_NAME_EDIT_ID_DESC_LABEL, DIALOG_MAIN_GROUP,
+    { SS_NAME_EDIT_ID_VALUE_LABEL, SS_NAME_EDIT_ID_VALUE, SS_NAME_EDIT_ID_DESC },
+    { 0, DIALOG_LABELGAP_V, 0, DIALOG_STDTEXT_V },
+    { DRT(LBRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-ss_name_edit_desc_caption_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_DESC), {1 /* left text */} };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+ss_name_edit_desc_label_data = { UI_TEXT_INIT_RESID(SS_MSG_DIALOG_NAME_DESC), { 1 /* left text */ } };
 
 static const DIALOG_CONTROL
 ss_name_edit_desc =
 {
     SS_NAME_EDIT_ID_DESC, DIALOG_MAIN_GROUP,
-    { SS_NAME_EDIT_ID_VALUE, SS_NAME_EDIT_ID_DESC_CAPTION, SS_NAME_EDIT_ID_VALUE, DIALOG_CONTROL_SELF },
-    { 0, DIALOG_STDSPACING_V, 0, PIXITS_PER_INCH },
+    { SS_NAME_EDIT_ID_VALUE, SS_NAME_EDIT_ID_DESC_LABEL, SS_NAME_EDIT_ID_VALUE, DIALOG_CONTROL_SELF },
+    { 0, DIALOG_LABELGAP_V, 0, DIALOG_MULEDIT_V(3) },
     { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_EDIT
 ss_name_edit_desc_data = { { { FRAMED_BOX_EDIT, 0 /*read_only*/, 0, 1 /*multiline*/ }, NULL }, /* EDIT_XX */ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
 
+static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
+ss_name_edit_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_CREATE) };
+
 static const DIALOG_CTL_CREATE
 ss_name_edit_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &ss_name_edit_name_caption,  &ss_name_edit_name_caption_data },
-    { &ss_name_edit_name,          &ss_name_edit_name_data },
-    { &ss_name_edit_value_caption, &ss_name_edit_value_caption_data },
-    { &ss_name_edit_value,         &ss_name_edit_value_data },
-    { &ss_name_edit_desc_caption,  &ss_name_edit_desc_caption_data },
-    { &ss_name_edit_desc,          &ss_name_edit_desc_data },
+    { { &ss_name_edit_name_label },     &ss_name_edit_name_label_data },
+    { { &ss_name_edit_name },           &ss_name_edit_name_data },
+    { { &ss_name_edit_value_label },    &ss_name_edit_value_label_data },
+    { { &ss_name_edit_value },          &ss_name_edit_value_data },
+    { { &ss_name_edit_desc_label },     &ss_name_edit_desc_label_data },
+    { { &ss_name_edit_desc },           &ss_name_edit_desc_data },
 
-    { &defbutton_ok,     &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok },     &ss_name_edit_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 typedef struct SS_NAME_EDIT_CALLBACK
@@ -956,6 +983,7 @@ ss_name_add(
 
     ss_name_edit_validation_setup(ss_name_edit_callback.name_validation);
     ss_name_edit_name_data.edit_xx.p_bitmap_validation = ss_name_edit_callback.name_validation;
+    ss_name_edit_name_data.edit_xx.bits.border_style = FRAMED_BOX_EDIT;
     ss_name_edit_name_data.edit_xx.bits.read_only = FALSE;
     ss_name_edit_name.bits.tabstop = 1;
 
@@ -981,11 +1009,11 @@ ss_name_add(
         ss_name_edit_callback.ui_text_value.text.ustr = ustr_bptr(ustr_buf);
     }
 
+    ss_name_edit_ok_data.caption.text.resource_id = MSG_BUTTON_CREATE;
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_edit_ctl_create, elemof32(ss_name_edit_ctl_create), SS_MSG_DIALOG_NAME_INTRO_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = SS_MSG_DIALOG_NAME_ADD_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_edit_ctl_create, elemof32(ss_name_edit_ctl_create), SS_MSG_DIALOG_NAME_ADD_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = SS_MSG_DIALOG_NAME_INTRO_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_ss_name_edit;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &ss_name_edit_callback;
 #if WINDOWS
@@ -1012,7 +1040,7 @@ ss_name_add(
         {
             SS_NAME_MAKE ss_name_make;
             SS_RECOG_CONTEXT ss_recog_context;
-            zero_struct(ss_name_make);
+            zero_struct_fn(ss_name_make);
             ss_name_make.ustr_name_id = ui_text_ustr(&ss_name_edit_callback.ui_text_name);
             ss_name_make.ustr_name_def = ui_text_ustr(&ss_name_edit_callback.ui_text_value);
             ss_name_make.undefine = FALSE;
@@ -1070,14 +1098,15 @@ ss_name_edit(
 
     ss_name_edit_validation_setup(ss_name_edit_callback.name_validation);
     ss_name_edit_name_data.edit_xx.p_bitmap_validation = ss_name_edit_callback.name_validation;
+    ss_name_edit_name_data.edit_xx.bits.border_style = FRAMED_BOX_EDIT_READ_ONLY;
     ss_name_edit_name_data.edit_xx.bits.read_only = TRUE;
     ss_name_edit_name.bits.tabstop = 0;
 
+    ss_name_edit_ok_data.caption.text.resource_id = MSG_BUTTON_APPLY;
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_edit_ctl_create, elemof32(ss_name_edit_ctl_create), SS_MSG_DIALOG_NAME_INTRO_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = SS_MSG_DIALOG_NAME_EDIT_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, ss_name_edit_ctl_create, elemof32(ss_name_edit_ctl_create), SS_MSG_DIALOG_NAME_EDIT_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = SS_MSG_DIALOG_NAME_INTRO_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_ss_name_edit;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &ss_name_edit_callback;
 #if WINDOWS
@@ -1104,7 +1133,7 @@ ss_name_edit(
         {
             SS_NAME_MAKE ss_name_make;
             SS_RECOG_CONTEXT ss_recog_context;
-            zero_struct(ss_name_make);
+            zero_struct_fn(ss_name_make);
             ss_name_make.ustr_name_id = ui_text_ustr(&ss_name_edit_callback.ui_text_name);
             ss_name_make.ustr_name_def = ui_text_ustr(&ss_name_edit_callback.ui_text_value);
             ss_name_make.undefine = FALSE;

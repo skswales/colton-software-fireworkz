@@ -1,0 +1,36 @@
+﻿
+Follow the steps above to enter the remaining three records. Note
+that you will also have to change part of the address and telephone
+number for the final record.
+
+Numbers & dates
+Numbers and dates are entered in exactly the same way as text
+strings. The difference between the types of fields only affects
+what you can enter in them, not how you enter it. For example, if
+you tried to type a text string such as Unknown in one of the
+Birthday fields, it would be rejected because the field expects a
+date to be entered. When you moved out of the record, the text
+would disappear. (See Chapter 14 - Date formats, for the various
+date formats which you can use.)
+
+Editing the structure
+Note that the records only use 3 lines of the address, in every case
+the Address4 field is empty. Therefore, you may as well delete this
+field. To change the structure, choose Properties from the
+Database menu and the Field properties dialogue box will appear
+again.
+Deleting a field
+The same process can be used now to delete a field as when you
+were creating the database:
+1 Highlight the Address4 field.
+2 Click Remove.
+3 Click OK.
+The field will be deleted from every record. You should be careful
+when making any changes of this nature to an existing database
+because the deletion cannot be undone. If you change your mind,
+you have to add a new field to the structure and type the
+information into each record from scratch.
+
+Fireworkz Pro 41
+
+

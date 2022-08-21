@@ -100,7 +100,7 @@ T5_MSG_PROTO(static, fwp_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
                 while(row_count--)
                 {
                     ARRAY_HANDLE h_hilites;
-                    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_para, 500);
+                    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_para, 256);
                     quick_ublock_with_buffer_setup(quick_ublock_para);
 
                     if(status_ok(status = fwp_para_make(&quick_ublock_para, &h_hilites, &h_data, &para_offset)))
@@ -108,7 +108,7 @@ T5_MSG_PROTO(static, fwp_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
                         if((0 != quick_ublock_bytes(&quick_ublock_para)) && status_ok(status = quick_ublock_nullch_add(&quick_ublock_para)))
                         {
                             LOAD_CELL_FOREIGN load_cell_foreign;
-                            zero_struct(load_cell_foreign);
+                            zero_struct_fn(load_cell_foreign);
                             status_consume(object_data_from_position(p_docu, &load_cell_foreign.object_data, &position, P_OBJECT_POSITION_NONE));
                             load_cell_foreign.data_type = OWNFORM_DATA_TYPE_TEXT;
 

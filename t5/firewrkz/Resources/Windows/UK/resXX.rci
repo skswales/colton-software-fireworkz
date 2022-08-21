@@ -1,0 +1,1154 @@
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+﻿//
+// RCGen created for Object 27
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for fl_123 (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages (none)
+//
+// errors: keep consistent with fl_123/fl_123.h
+// see LOTUS123_ERR(n)
+//
+	0xED80,	L"Bad Lotus file"
+//e1:ERROR_RQ
+	0xED82,	L"Bad formula"
+//
+// end of msg (fl_123)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 23
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6B81,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 24
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for fl_csv (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with fl_csv/fl_csv.h
+//
+// CSV_MSG_LOAD_QUERY_xxx
+//
+	0x6C01,	L"Loading CSV"
+	0x6C02,	L"ug/ug08_importing_data_into_tables.htm"
+	0x6C03,	L"Insert as table"
+	0x6C04,	L"Insert as labels"
+	0x6C05,	L"Labels across"
+	0x6C07,	L"Insert, overwriting blank cells"
+	0x6C08,	L"Insert as database"
+	0x6C0A,	L"Loading delimited text"
+//
+// errors: keep consistent with fl_csv/fl_csv.h
+// see CSV_ERR(n)
+//
+	0xEC00,	L"Cannot import CSV as database when the destination document has not been saved"
+//e1:ERROR_RQ
+	0xEC02,	L"Cannot import CSV as database file '%s' as a file of that name already exists"
+//
+// end of msg (fl_csv)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 25
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6C81,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 20
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6A01,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 22
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6B01,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 28
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for fl_rtf (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages (none)
+//
+// errors: keep consistent with fl_rtf/fl_rtf.h
+// see OB_RTF_ERR_xxx
+//
+	0xEE00,	L"Mismatched section brackets in RTF file"
+//
+// end of msg (fl_rtf)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 26
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for fl_xls (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1994-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with fl_xls/fl_xls.h
+//
+	0x6D00,	L"Password required"
+//
+// errors: keep consistent with fl_xls/fl_xls.h
+// see XLS_ERR(n)
+//
+	0xED00,	L"Excel load: unknown BOF record"
+//e1:ERROR_RQ
+	0xED02,	L"Excel load: bad formula"
+//e3:Spare
+	0xED04,	L"Excel load: no DIMENSIONS record"
+	0xED05,	L"Excel load: bad BOUNDSHEET record"
+	0xED06,	L"Excel load: unsupported file encryption"
+	0xED07,	L"Excel load: wrong file password"
+//
+// end of msg (fl_xls)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 40
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x7401,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 33
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x7081,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 35
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x7181,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 41
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x7481,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 10
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6501,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 15
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_dlg (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages (none)
+//
+// errors: keep consistent with ob_dlg/xp_dlg.h
+// see DIALOG_ERR(n)
+//
+	0xE780,	L"ERR_UNKNOWN_DIALOG"
+// e1: ERROR_RQ
+	0xE782,	L"ERR_UNKNOWN_DIALOG_VIEW"
+	0xE783,	L"ERR_UNKNOWN_DIALOG_CONTROL"
+//
+// end of msg (ob_dlg)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 4
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_draw (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_draw/ob_draw.h
+//
+	0x6201,	L"DrawFile"
+	0x6202,	L"Image"
+//
+// errors (none)
+//
+// end of msg (ob_draw)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 17
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_drwio (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 2001-2015 R W Colton
+//
+// messages: keep consistent with ob_drwio/ob_drwio.h
+	0x6881,	L"zz-msg"
+//
+// errors (none)
+//
+// end of msg (ob_drwio)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 31
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_file (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_file/ob_file.h
+//
+// FILE_MSG_INSERT_FILE_xxx
+//
+	0x6F81,	L"Insert file"
+	0x6F82,	L"Import file"
+//
+// errors: keep consistent with cmodules/file.h
+// see FILE_ERR(n)
+//
+	0xEF80,	L"Can't open file"
+	0xEF82,	L"Can't read from file"
+	0xEF83,	L"Can't write to file"
+	0xEF84,	L"Can't read all the requested data from file"
+	0xEF85,	L"Invalid position in file"
+	0xEF86,	L"File handle is unbuffered"
+	0xEF88,	L"Device full"
+//e9:Can't close file
+//
+	0xEF8A,	L"Bad file handle"
+	0xEF8B,	L"Bad filename"
+	0xEF8C,	L"File %s not found"
+	0xEF8D,	L"%s is a file"
+	0xEF8E,	L"%s is a directory"
+	0xEF8F,	L"Filename %.64s... too long"
+	0xEF90,	L"Locked - unable to write file"
+	0xEF91,	L"No read access to file"
+	0xEF92,	L"No write access to file"
+	0xEF93,	L"%s is a ZIP file"
+	0xEF94,	L"Not a directory"
+	0xEF95,	L"Bad timestamp"
+//
+	0xEFE4,	L"FileOpenDlg: LoadString failed"
+	0xEFE5,	L"FileOpenDlg: Resource unavailable"
+	0xEFE6,	L"FileOpenDlg: Failed to load resource"
+//
+// fragments used like <error x> while reading from <filename>
+//
+	0xEFEC,	L"when opening"
+	0xEFED,	L"when closing"
+	0xEFEE,	L"while reading from"
+	0xEFEF,	L"while writing to"
+	0xEFF0,	L"while setting position in"
+	0xEFF2,	L"when renaming"
+	0xEFF3,	L"when deleting"
+	0xEFF4,	L"when creating directory"
+//
+// end of msg (ob_file)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 7
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_hefo (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_hefo/ob_hefo.h
+//
+// MSG_DIALOG_PAGE_HEFO_BREAK_xxx
+//
+	0x6380,	L"Page"
+	0x6381,	L"Page break"
+	0x6382,	L"Page number"
+	0x6383,	L"Margin"
+	0x6384,	L"Offset"
+	0x6385,	L"Page %d"
+	0x6386,	L"Row %d"
+	0x6387,	L"Header"
+	0x6388,	L"Even header"
+	0x6389,	L"First header"
+	0x638A,	L"Footer"
+	0x638B,	L"Even footer"
+	0x638C,	L"First footer"
+	0x638F,	L"ug/ug07_headers_and_footers.htm"
+//
+// MSG_STATUS_HEFO_xxx
+//
+	0x6394,	L"Header"
+	0x6395,	L"Footer"
+//
+// errors (none)
+//
+// end of msg (ob_hefo)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 21
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_mails (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_mails/ob_mails.h
+//
+// MAILSHOT_MSG_DIALOG_SELECT_xxx
+//
+	0x6A81,	L"Document"
+	0x6A82,	L"ug/ug09_setting_up_your_letter.htm"
+	0x6A83,	L"Row"
+	0x6A84,	L"Blank fields"
+	0x6A85,	L"Shuffle"
+	0x6A86,	L"Start"
+	0x6A87,	L"End"
+//
+// MAILSHOT_MSG_DIALOG_INSERT_FIELD_xxx
+//
+	0x6A8A,	L"Insert mailshot field"
+	0x6A8B,	L"ug/ug09_setting_up_your_letter.htm"
+	0x6A8C,	L"Field number"
+//
+// errors: keep consistent with ob_mails/ob_mails.h
+// see MAILSHOT_ERR(n)
+//
+	0xEA80,	L"No document selected for mailshot"
+	0xEA82,	L"No documents with tables for mailshot"
+//
+// end of msg (ob_mails)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 12
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6601,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 38
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_recn (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 2014-2020 Stuart Swales
+//
+// messages (none)
+//
+// errors: keep consistent with ob_recn/ob_recn.h
+// see RECN_ERR(n)
+//
+//re2:No database module present. You can purchase Fireworkz Pro from R-Comp
+	0xF302,	L"No database module present. You can purchase Fireworkz Pro from R-Comp for RISC OS systems"
+//
+// end of msg (ob_recn)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 19
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_ruler (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_ruler/ob_ruler.h
+//
+// RULER_MSG_STATUS_RULER_xxx_NO_MARK
+//
+	0x6981,	L"Ruler"
+	0x6982,	L"Side ruler"
+	0x6983,	L"Ruler. Click to place a new tab"
+//
+// RULER_MSG_STATUS_RULER_HORZ_xxx
+//
+	0x6A92,	L"Click to place a new tab"
+	0x6A93,	L"Left tab"
+	0x6A94,	L"Centre tab"
+	0x6A95,	L"Right tab"
+	0x6A96,	L"Decimal tab"
+//r279:Drag/Adjust-drag to reposition. Double-click to clear. Double-click Adjust to change type
+	0x6A97,	L"Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type"
+//
+	0x6A9D,	L"Left margin"
+	0x6A9E,	L"Paragraph margin"
+	0x6A9F,	L"Right margin"
+	0x6AA0,	L"Drag to reposition"
+//
+	0x6C59,	L"Column width"
+//
+// RULER_MSG_STATUS_RULER_VERT_xxx
+//
+	0x6C53,	L"Header margin"
+	0x6C54,	L"Footer margin"
+	0x6C55,	L"Row height"
+	0x6C57,	L"Header offset"
+	0x6C58,	L"Footer offset"
+//
+// errors (none)
+//
+// end of msg (ob_ruler)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 9
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_skspt (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_skspt/ob_skspt.h
+//
+// SKEL_SPLIT_MSG_DIALOG_STYLE_xxx
+//
+	0x6481,	L"Styles"
+	0x648A,	L"ug/ug06_the_style_editor.htm"
+	0x6482,	L"Define new style"
+	0x648B,	L"ug/ug06_the_style_editor.htm#adding_a_new_style"
+	0x6483,	L"NewStyle%ld"
+	0x6484,	L"New style name"
+	0x6485,	L"Based on"
+	0x6486,	L"Defining new style - %s"
+//r6:Defining new style: %s
+	0x6487,	L"Editing style - %s"
+//r7:Editing style: %s
+	0x6488,	L"Apply effects"
+	0x6489,	L"Style in use in this document. Remove all uses?"
+	0x648C,	L"Type"
+	0x648D,	L"Region"
+	0x648E,	L"ug/ug05_working_with_styles_and_effects.htm#removing_styles_and_effects"
+	0x648F,	L"Style"
+	0x6490,	L"ug/ug05_working_with_styles_and_effects.htm#deleting_styles"
+//
+// SKEL_SPLIT_MSG_DIALOG_xxx_HELP_TOPIC
+//
+	0x6494,	L"ug/ug06_the_style_editor.htm#style"
+	0x6495,	L"ug/ug06_the_style_editor.htm#text"
+	0x6496,	L"ug/ug06_the_style_editor.htm#ruler"
+	0x6497,	L"ug/ug06_the_style_editor.htm#colour"
+	0x6498,	L"ug/ug06_the_style_editor.htm#spacing"
+	0x6499,	L"sg/sg03_styles_in_spreadsheet_documents.htm"
+	0x649A,	L"ug/ug06_the_style_editor.htm#row"
+//
+// MSG_DIALOG_BOX_xxx
+//
+	0x64A7,	L"Box"
+	0x64A8,	L"ug/ug08_tables.htm#creating_boxes"
+	0x64A9,	L"&Outside"
+	0x64AB,	L"Vertical lines"
+	0x64AC,	L"Horizontal lines"
+	0x64AD,	L"All"
+	0x64AE,	L"&Left"
+	0x64AF,	L"&Right"
+	0x64B0,	L"&Top"
+	0x64B1,	L"&Bottom"
+	0x64B2,	L"Line style"
+	0x64B3,	L"Colour"
+//
+// MSG_DIALOG_INSERT_TABLE_xxx
+//
+//r59:Insert table
+	0x64BB,	L"Insert Table"
+	0x64BC,	L"ug/ug08_tables.htm#adding_tables"
+	0x64BD,	L"Number of c&olumns"
+	0x64BE,	L"Number of &rows"
+//
+// MSG_DIALOG_ADD_CR_xxx
+//
+	0x64C0,	L"ug/ug08_tables.htm#adding_extra_rows_and_columns"
+//r65:Add columns
+	0x64C1,	L"Add Columns"
+//r66:Insert columns
+	0x64C2,	L"Insert Columns"
+//r67:Add rows
+	0x64C3,	L"Add Rows"
+//r68:Insert rows
+	0x64C4,	L"Insert Rows"
+//
+// errors: keep consistent with ob_skspt/ob_skspt.h
+// see SKEL_SPLIT_ERR(n)
+//
+	0xE480,	L"Can't delete the base style"
+//
+// end of msg (ob_skspt)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 29
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_spelb (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_spelb/ob_spelb.h
+//
+// MSG_DIALOG_CHOICES_SPELB_xxx
+//
+	0x6E80,	L"Spell"
+	0x6E81,	L"Auto check"
+	0x6E82,	L"Dictionaries"
+	0x6E83,	L"Load master"
+	0x6E84,	L"Load user"
+	0x6E85,	L"Write to dictionaries"
+//
+// errors (none)
+//
+// end of msg (ob_spelb)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 8
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_spell (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_spell/resource/resource.h
+//
+// OB_SPELL_MSG_DICTIONARY_xxx
+//
+	0x6403,	L"Dictionary"
+	0x6401,	L"ug/ug04_checking_spellings.htm"
+	0x6404,	L"&Word"
+	0x6405,	L"&Add"
+	0x6406,	L"&Delete"
+//
+// OB_SPELL_MSG_CHECK_xxx
+//
+	0x6409,	L"Word not found"
+	0x6402,	L"ug/ug04_checking_spellings.htm"
+	0x640A,	L"&Replace"
+	0x640B,	L"&Next"
+	0x640C,	L"&Guess"
+	0x640D,	L"Cancel"
+	0x6413,	L"Spell check complete"
+//
+	0x6414,	L"Spell check complete: %d word not found"
+	0x6415,	L"Spell check complete: %d words not found"
+	0x6416,	L"All"
+//
+// errors: keep consistent with ob_spell/resource/resource.h
+// see SPELL_ERR(n)
+//
+	0xE400,	L"File already exists"
+	0xE404,	L"Bad dictionary"
+	0xE406,	L"Bad word"
+	0xE407,	L"Dictionary read only"
+//
+	0xE40A,	L"Word not found"
+	0xE40B,	L"Escape"
+	0xE40C,	L"Can't update dictionary"
+	0xE40D,	L"Can't read dictionary"
+	0xE40E,	L"Can't enlarge dictionary"
+	0xE40F,	L"Bad dictionary definition file"
+	0xE410,	L"Bad character in dictionary definition file"
+//
+// ob_spell errors
+//
+	0xE464,	L"No user dictionaries"
+//
+// end of msg (ob_spell)
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 16
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6801,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 3
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+// this is an empty messages file
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1995-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+	0x6181,	L"zz-msg"
+//
+// end of zz-msg
+END
+//
+// end of RCGen created string table
+﻿//
+// RCGen created for Object 18
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_toolb (UK)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_toolb/ob_toolb.h
+//
+	0x6901,	L"%s [%d%%]: Left click to change the background colour. Right click to change the text colour"
+//
+// errors: keep consistent with ob_toolb/ob_toolb.h
+// see TOOLB_ERR(n)
+//
+	0xE900,	L"Unknown toolbar control"
+//
+// end of msg (ob_toolb)
+END
+//
+// end of RCGen created string table

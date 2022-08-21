@@ -52,8 +52,6 @@ extern U32 alloc_main_heap_minsize;
 
 extern U32 g_dynamic_area_limit;
 
-extern const PC_U8Z g_dynamic_area_name;
-
 _Check_return_
 extern STATUS
 alloc_ensure_froth(

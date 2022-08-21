@@ -1,0 +1,21 @@
+﻿Database Guide 200
+
+Layouts
+If you have a DataPower database, you can use this with both
+DataPower and Recordz without losing the layout information
+created by either.
+The DataPower file contains layout information which is required
+by the DataPower application to determine how the database will
+appear. Recordz does not use this layout information. It stores its
+layout information inside the separate Recordz document file(s).
+However, Recordz ensures that the DataPower layout information
+within the database file is preserved.
+This means that if one user wishes to access a database using
+Recordz and another using DataPower then they can do so without
+affecting each others layout.
+
+
+
+Database Guide 201
+
+

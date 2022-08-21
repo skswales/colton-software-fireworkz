@@ -407,7 +407,7 @@ name_set_untitled_with(
     }
 
 #if !RISCOS
-    if(NULL != tstr_extension)
+    if(NULL == tstr_extension)
         tstr_extension = extension_document_tstr;
 #endif
 

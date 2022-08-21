@@ -13,11 +13,12 @@ BITS=32
 
 # Use current set of 32-bit tools on Run$Path and libraries on C$Path
 
-ASflags_BASE=-I$(T5).common.Hdr -throwback -Stamp -quit -CloseExec
+# -cpu=3M to allow assembly of UMULL
+ASflags_BASE=-I$.fireworkz.trunk.t5.common.Hdr --cpu=3M -throwback
 ASflags=$(ASflags_BASE)
 
 # NB INC_RAM and _INC_2_ are substituted by configure
-CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fah -throwback
+CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fafh -throwback
 CCflags=$(CCflags_BASE) -Otime
 
 # -I$(T5).external.RISC_OSLib.rlib no longer need patched & pruned RISC_OSLib - explictly use AcornC/C++'s one

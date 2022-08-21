@@ -1,0 +1,55 @@
+﻿
+Entering text
+To enter text:
+1 Use the mouse to move the pointer to the field where you
+want to enter the text.
+2 Click the Select button to place the caret there.
+3 Type the text.
+For example, to enter the first field of the first record:
+1 Point at the top field, which is labelled Name.
+2 Click Select.
+3 Type Rev Alan Green.
+Moving around the document
+You can move the caret around the document to insert information
+into other fields in different ways:
+. Press Retum to move to the next field.
+. Press the Up/Down arrow keys on the keyboard to move up/
+down by one field.
+. Use the mouse to point to the place where you want the caret
+to be and click the Select button.
+For example, to enter the remainder of the first record:
+1 Press Return to move to the second field.
+2 Type 118 High St.
+3 Press Rettun again to move to the third field.
+4 Type Leeds.
+5 Repeat this process until the whole record is complete. N otc
+that the Address4 column is empty because the address only
+has three lines. Therefore, after entering the final line of the
+address you need to press Retum twice in succession to move
+to the Phone field.
+38 Recordz
+
+Your first record should now look as follows:
+
+Repeat the process to add the data into all six of the records you
+have created.
+
+Copying records
+The remaining four records are very similar to the one you have
+just entered for Mr Frank Smith. You can save time when entering
+these records by copying the existing one and then changing just
+the fields which are different.
+To make a copy:
+1 Click on the record for Mr Frank Smith to identify it.
+2 Slide off the Record option of the Database menu and choose
+Copy. A new record will be created, which is identical to the
+one you clicked on.
+3 Click at the end of the word Frank in the first field of the
+record you have just created to position the cursor. Use the
+Delete key to remove the first name and title. Then type Mrs
+Gloria to change the name to that of the seventh record.
+4 Similarly, replace the existing birthday by 13.08.52.
+
+Fireworkz Pro 39
+
+

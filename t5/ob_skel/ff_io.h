@@ -231,20 +231,24 @@ new_docno_using(
     _InRef_     PC_DOCU_NAME p_docu_name /*copied*/,
     _InVal_     BOOL fReadOnly);
 
-_Check_return_
-extern /*for ff_load*/ STATUS
-select_a_template(
-    _DocuRef_   P_DOCU cur_p_docu,
-    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/,
-    /*out*/ P_BOOL p_just_the_one,
-    _InVal_     BOOL allow_dirs,
-    _InRef_     PC_UI_TEXT p_ui_text_caption);
-
 /*
 ff_load.c
 */
 
 extern /*for of_load*/ void
 ff_load_msg_exit2(void);
+
+/*
+ui_load.c
+*/
+
+_Check_return_
+extern STATUS
+select_a_template(
+    _DocuRef_   P_DOCU cur_p_docu,
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/,
+    /*out*/ P_BOOL p_just_the_one,
+    _InVal_     BOOL allow_dirs,
+    _InRef_     PC_UI_TEXT p_ui_text_caption);
 
 /* end of ff_io.h */

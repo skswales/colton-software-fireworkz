@@ -52,7 +52,7 @@ typedef struct RISCOS_MSGS_INDEX
     PC_U8Z tag;
     U32 tag_length;
 }
-RISCOS_MSGS_INDEX, * P_RISCOS_MSGS_INDEX;
+RISCOS_MSGS_INDEX, * P_RISCOS_MSGS_INDEX; typedef const RISCOS_MSGS_INDEX * PC_RISCOS_MSGS_INDEX;
 
 typedef struct RISCOS_MSGS
 {
@@ -66,10 +66,11 @@ RISCOS_MSGS, * P_RISCOS_MSGS;
 typedef struct RISCOS_LOADED_SPRITES
 {
     UBF loaded_c  : 8;
+    UBF loaded_11 : 8;
     UBF loaded_22 : 8;
     UBF loaded_24 : 8;
-    UBF reserved  : 8;
     P_SAH s_c;
+    P_SAH s_11;
     P_SAH s_22;
     P_SAH s_24;
 }
@@ -77,23 +78,43 @@ RISCOS_LOADED_SPRITES, * P_RISCOS_LOADED_SPRITES;
 
 #endif /* RISCOS */
 
+typedef struct RESOURCES_PER_OBJECT
+{
+    /* nothing host-independent here */
+#if RISCOS
+    struct RESOURCES_PER_OBJECT_RISCOS
+    {
+        RISCOS_MSGS mangled_msgs;
+        RISCOS_LOADED_SPRITES sprites;
+    } riscos;
+#elif WINDOWS
+    struct RESOURCES_PER_OBJECT_WINDOWS
+    {
+        LIST_BLOCK bitmap_cache;
+#if defined(NOT_ALL_IN_ONE)
+        HINSTANCE library_handle[MAX_OBJECTS];
+#endif
+    } windows;
+#endif /* OS */
+}
+* P_RESOURCES_PER_OBJECT;
+
 typedef struct RESOURCE_STATICS
 {
-    PCTSTR tstr_dll_store;
     ARRAY_HANDLE bitmap_index;
 
-#if RISCOS
+    P_RESOURCES_PER_OBJECT objects[MAX_OBJECTS]; /* allocated as needed */
+
+#if RISCOS && 0 /* now empty */
     struct RESOURCE_STATICS_WINDOWS
     {
-        RISCOS_MSGS mangled_msgs[MAX_OBJECTS];
-        RISCOS_LOADED_SPRITES sprites[MAX_OBJECTS];
+        int foo;
     } riscos;
 #elif WINDOWS
     struct RESOURCE_STATICS_WINDOWS
     {
-        LIST_BLOCK bitmap_cache[MAX_OBJECTS];
-        #if defined(NOT_ALL_IN_ONE)
-        HINSTANCE library_handle[MAX_OBJECTS];
+        #if !defined(NOT_ALL_IN_ONE)
+        HINSTANCE library_handle; /* used for UI translation */
         #endif
     } windows;
 #endif /* OS */
@@ -113,8 +134,9 @@ static RESOURCE_STATICS resource_statics;
 _Check_return_
 _Ret_z_
 static PCTSTR
-riscos_msg_lookup_in(
-    PCTSTR tag_and_default,
+riscos_msg_lookup_in_without_default(
+    _In_reads_(tag_length) PCTSTR tag,
+    _InVal_     U32 tag_length,
     /*inout*/ P_RISCOS_MSGS p_msgs);
 
 _Check_return_
@@ -130,6 +152,74 @@ riscos_msg_init(
 *
 ******************************************************************************/
 
+#if RISCOS
+
+_Check_return_
+static int
+spriteop_select_sprite(
+    _In_opt_    P_SAH sprite_area,
+    _In_z_      PC_U8Z sprite_name)
+{
+    _kernel_swi_regs  rs;
+    _kernel_oserror * p_kernel_oserror;
+
+    if(NULL == sprite_area)
+        return(0);
+
+    rs.r[0] = 0x100 | 24; /* Select sprite (in area) */
+    rs.r[1] = (int) sprite_area;
+    rs.r[2] = (int) sprite_name;
+
+    if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
+        return(rs.r[2]);
+
+    return(0);
+}
+
+typedef P_SAH * P_P_SAH;
+
+_Check_return_
+static int
+spriteop_select_sprite_in_areas(
+    _In_reads_opt_(n_areas) P_P_SAH sprite_areas,
+    _InVal_     U32 n_areas,
+    _In_z_      PC_U8Z sprite_name)
+{
+    U32 area_idx;
+    int result = 0;
+
+    for(area_idx = 0; area_idx < n_areas; ++area_idx)
+    {
+        if(0 != (result = spriteop_select_sprite(sprite_areas[area_idx], sprite_name)))
+            break;
+    }
+
+    return(result);
+}
+
+#endif
+
+_Check_return_
+static RESOURCE_BITMAP_HANDLE
+resource_bitmap_find_scan_objects(
+    _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id)
+{
+    RESOURCE_BITMAP_ID resource_bitmap_id = *p_resource_bitmap_id;
+    RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
+
+    resource_bitmap_handle.i = 0;
+
+    while(status_ok(object_next(&resource_bitmap_id.object_id)))
+    {
+        resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
+
+        if(0 != resource_bitmap_handle.i)
+            break;
+    }
+
+    return(resource_bitmap_handle);
+}
+
 _Check_return_
 extern RESOURCE_BITMAP_HANDLE
 resource_bitmap_find(
@@ -137,6 +227,7 @@ resource_bitmap_find(
 {
     RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     OBJECT_ID object_id;
+    P_RESOURCES_PER_OBJECT p_resources_per_object;
 
     resource_bitmap_handle.i = 0;
 
@@ -146,78 +237,49 @@ resource_bitmap_find(
     object_id = p_resource_bitmap_id->object_id;
 
     if(OBJECT_ID_ENUM_START == object_id) /* scan all currently loaded objects */
-    {
-        RESOURCE_BITMAP_ID resource_bitmap_id = *p_resource_bitmap_id;
-
-        resource_bitmap_id.object_id = OBJECT_ID_ENUM_START;
-
-        while(status_ok(object_next(&resource_bitmap_id.object_id)))
-        {
-            resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
-
-            if(resource_bitmap_handle.i)
-                break;
-        }
-
-        return(resource_bitmap_handle);
-    }
+        return(resource_bitmap_find_scan_objects(p_resource_bitmap_id));
 
     myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("resource_bitmap_find(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
 
-    if(!object_present(object_id))
+    if( !object_present(object_id) ||
+        (NULL == (p_resources_per_object = resource_statics.objects[object_id])) )
         return(resource_bitmap_handle);
 
-    {
 #if RISCOS
-    _kernel_swi_regs  rs;
-    _kernel_oserror * p_kernel_oserror;
-    P_SAH area;
-    int scan_hi_res = (host_modevar_cache_current.XEigFactor < 2) && (host_modevar_cache_current.YEigFactor < 2);
+    {
+    P_SAH sprite_areas[4];
+    const BOOL scan_11 = (host_modevar_cache_current.XEigFactor < 1U) && (host_modevar_cache_current.YEigFactor < 1U);
+    const BOOL scan_22 = (host_modevar_cache_current.XEigFactor < 2U) && (host_modevar_cache_current.YEigFactor < 2U);
 
     /* can't really use system-defined bitmaps here? */
 
-    if(scan_hi_res)
+    if(scan_11)
     {
-        if(NULL != (area = resource_statics.riscos.sprites[object_id].s_22))
-        {
-            rs.r[0] = 24 + 256; /* sprite_select in area */
-            rs.r[1] = (int) area;
-            rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
-
-            if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
-            {
-                resource_bitmap_handle.i = rs.r[2];
-                return(resource_bitmap_handle);
-            }
-        }
+        sprite_areas[0] = p_resources_per_object->riscos.sprites.s_11;
+        sprite_areas[1] = p_resources_per_object->riscos.sprites.s_22;
+        sprite_areas[2] = p_resources_per_object->riscos.sprites.s_24;
+    }
+    else if(scan_22)
+    {
+        sprite_areas[0] = p_resources_per_object->riscos.sprites.s_22;
+        sprite_areas[1] = p_resources_per_object->riscos.sprites.s_11;
+        sprite_areas[2] = p_resources_per_object->riscos.sprites.s_24;
+    }
+    else
+    {
+        sprite_areas[0] = p_resources_per_object->riscos.sprites.s_24;
+        sprite_areas[1] = p_resources_per_object->riscos.sprites.s_22;
+        sprite_areas[2] = p_resources_per_object->riscos.sprites.s_11;
     }
 
-    if(NULL != (area = resource_statics.riscos.sprites[object_id].s_24))
-    {
-        rs.r[0] = 24 + 256; /* sprite_select in area */
-        rs.r[1] = (int) area;
-        rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
+    sprite_areas[3] = p_resources_per_object->riscos.sprites.s_c;
 
-        if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
-        {
-            resource_bitmap_handle.i = rs.r[2];
-            return(resource_bitmap_handle);
-        }
-    }
-
-    if(NULL != (area = resource_statics.riscos.sprites[object_id].s_c))
-    {
-        rs.r[0] = 24 + 256; /* sprite_select in area */
-        rs.r[1] = (int) area;
-        rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
-
-        if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
-            resource_bitmap_handle.i = rs.r[2];
-    }
+    resource_bitmap_handle.i = spriteop_select_sprite_in_areas(sprite_areas, 4, p_resource_bitmap_id->bitmap_name);
+    } /*block*/
 #elif WINDOWS
-    /* scan this object's cache for bitmap */
+    { /* scan this object's cache for bitmap */
     STATUS status;
-    const P_LIST_BLOCK p_list_block = &resource_statics.windows.bitmap_cache[object_id];
+    const P_LIST_BLOCK p_list_block = &p_resources_per_object->windows.bitmap_cache;
     const LIST_ITEMNO item = (LIST_ITEMNO) p_resource_bitmap_id->bitmap_id;
     HBITMAP * p_hBitmap = collect_goto_item(HBITMAP, p_list_block, item);
     /*STATUS status;*/
@@ -227,12 +289,17 @@ resource_bitmap_find(
     }
     else if(NULL != (p_hBitmap = collect_add_entry_elem(HBITMAP, p_list_block, P_DATA_NONE, item, &status)))
     {
-        HINSTANCE hInstance = resource_get_object_resources(object_id);
+        HINSTANCE hInstance_fallback;
+        const HINSTANCE hInstance = resource_get_object_resources(object_id, &hInstance_fallback);
 
-        resource_bitmap_handle.i = *p_hBitmap = (HBITMAP) LoadImage(hInstance, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id), IMAGE_BITMAP, 0, 0, 0);
+        if(NULL == (resource_bitmap_handle.i = (HBITMAP) LoadImage(hInstance, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id), IMAGE_BITMAP, 0, 0, 0)))
+            resource_bitmap_handle.i = (HBITMAP) LoadImage(hInstance_fallback, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id), IMAGE_BITMAP, 0, 0, 0);
+
+        /* cache this value */
+        *p_hBitmap = resource_bitmap_handle.i;
     }
-#endif /* OS */
     } /*block*/
+#endif /* OS */
 
     return(resource_bitmap_handle);
 }
@@ -240,7 +307,7 @@ resource_bitmap_find(
 #if WINDOWS
 
 _Check_return_
-extern BOOL
+extern BOOL /*found*/
 resource_bitmap_find_new(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id,
     _OutRef_    P_RESOURCE_BITMAP_HANDLE p_resource_bitmap_handle,
@@ -255,44 +322,57 @@ resource_bitmap_find_new(
     p_bm_grid_size->cx = 0;
     p_bm_grid_size->cy = 0;
 
+    *p_index = 0;
+
     if(p_resource_bitmap_id->bitmap_id & T5_RESOURCE_COMMON_BMP_BIT) /* index into one of our multi-image stores? */
     {
         *p_index = resource_bitmap_id.bitmap_id >> 8;
         resource_bitmap_id.bitmap_id &= 0xFF;
 
         if(tdd.uDPI >= 120)
-        {
-            resource_bitmap_id.bitmap_id += 1; /* try for high-dpi variant */
-            *p_resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
-            if(0 == p_resource_bitmap_handle->i)
-                resource_bitmap_id.bitmap_id -= 1; /* stick with normal-dpi variant */
+        {   /* try for high-dpi variant (at id+1) */
+            /* NB this only applies to multi-image stores */
+            RESOURCE_BITMAP_ID high_dpi_resource_bitmap_id;
+            high_dpi_resource_bitmap_id.object_id = resource_bitmap_id.object_id;
+            high_dpi_resource_bitmap_id.bitmap_id = resource_bitmap_id.bitmap_id + 1;
+            *p_resource_bitmap_handle = resource_bitmap_find(&high_dpi_resource_bitmap_id);
+            if(0 != p_resource_bitmap_handle->i)
+            {
+                status_assert(resource_bitmap_tool_size_query(&high_dpi_resource_bitmap_id, p_bm_grid_size));
+                return(TRUE);
+            }
+
+            /* stick with normal-dpi variant */
         }
 
         *p_resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
 
         if(0 != p_resource_bitmap_handle->i)
+        {
             status_assert(resource_bitmap_tool_size_query(&resource_bitmap_id, p_bm_grid_size));
+            return(TRUE);
+        }
 
-        return(0 != p_resource_bitmap_handle->i);
+        return(FALSE);
     }
 
-    *p_index = 0;
     *p_resource_bitmap_handle = resource_bitmap_find(&resource_bitmap_id);
 
-    if(p_resource_bitmap_handle->i)
+    if(0 != p_resource_bitmap_handle->i)
     {
         BITMAP bitmap;
         GetObject(p_resource_bitmap_handle->i, sizeof32(bitmap), &bitmap);
         p_bm_grid_size->cx = bitmap.bmWidth;
         p_bm_grid_size->cy = bitmap.bmHeight;
+        return(TRUE);
     }
 
-    return(0 != p_resource_bitmap_handle->i);
+    return(FALSE);
 }
 
 #endif /* OS */
 
-#if RISCOS
+#if RISCOS && defined(UNUSED_KEEP_ALIVE)
 
 _Check_return_
 extern RESOURCE_BITMAP_HANDLE
@@ -302,6 +382,7 @@ resource_bitmap_find_in_area(
 {
     RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
     OBJECT_ID object_id;
+    P_RESOURCES_PER_OBJECT p_resources_per_object;
 
     resource_bitmap_handle.i = 0;
 
@@ -312,7 +393,7 @@ resource_bitmap_find_in_area(
 
     myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("resource_bitmap_find(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
 
-    if(!object_present(object_id))
+    if( !object_present(object_id) || (NULL == (p_resources_per_object = resource_statics.objects[object_id])) )
         return(resource_bitmap_handle);
 
     {
@@ -320,34 +401,27 @@ resource_bitmap_find_in_area(
 
     switch(area_id)
     {
+    case RESOURCE_BITMAP_AREA_UHI_RES:
+        area = p_resources_per_object->riscos.sprites.s_11;
+        break;
+
     case RESOURCE_BITMAP_AREA_HI_RES:
-        area = resource_statics.riscos.sprites[object_id].s_22;
+        area = p_resources_per_object->riscos.sprites.s_22;
         break;
 
     case RESOURCE_BITMAP_AREA_LO_RES:
-        area = resource_statics.riscos.sprites[object_id].s_24;
+        area = p_resources_per_object->riscos.sprites.s_24;
         break;
 
     default: default_unhandled();
 #if CHECKING
     case RESOURCE_BITMAP_AREA_STANDARD:
 #endif
-        area = resource_statics.riscos.sprites[object_id].s_c;
+        area = p_resources_per_object->riscos.sprites.s_c;
         break;
     }
 
-    if(area)
-    {
-        _kernel_swi_regs  rs;
-        _kernel_oserror * p_kernel_oserror;
-
-        rs.r[0] = 24 + 256; /* sprite_select in area */
-        rs.r[1] = (int) area;
-        rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
-
-        if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
-            resource_bitmap_handle.i = rs.r[2];
-    }
+    resource_bitmap_handle.i = spriteop_select_sprite(area, p_resource_bitmap_id->bitmap_name);
     } /*block*/
 
     return(resource_bitmap_handle);
@@ -366,11 +440,11 @@ resource_bitmap_find_defaulting(
 
     resource_bitmap_handle = resource_bitmap_find(p_resource_bitmap_id);
 
-    if(!resource_bitmap_handle.i)
+    if(0 == resource_bitmap_handle.i)
     {
         resource_bitmap_handle = resource_bitmap_find_system(p_resource_bitmap_id);
 
-        if(resource_bitmap_handle.i)
+        if(0 != resource_bitmap_handle.i)
         {   /* return a bodged pointer to the name rather than an address */
             resource_bitmap_handle.p_u8 = de_const_cast(P_U8, p_resource_bitmap_id->bitmap_name);
             resource_bitmap_handle.i |= RESOURCE_BITMAP_HANDLE_RISCOS_BODGE;
@@ -390,34 +464,16 @@ resource_bitmap_find_system(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id)
 {
     RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
+    SAH * sprite_areas[2];
+
+    { /* have a look in Window Manager's back pockets */
     _kernel_swi_regs rs;
-    _kernel_oserror * p_kernel_oserror;
-    SAH * area[2];
-    U32 area_idx;
+    void_WrapOsErrorChecking(_kernel_swi(Wimp_BaseOfSprites, &rs, &rs));
+    sprite_areas[0] = (P_ANY) rs.r[1]; /* RAM */
+    sprite_areas[1] = (P_ANY) rs.r[0]; /* ROM */
+    } /*block*/
 
-    resource_bitmap_handle.i = 0;
-
-    /* have a look in Window Manager's back pockets */
-    void_WrapOsErrorChecking(_kernel_swi(/*Wimp_BaseOfSprites*/ 0x000400EA, &rs, &rs));
-
-    area[0] = (P_ANY) rs.r[1]; /* RAM */
-    area[1] = (P_ANY) rs.r[0]; /* ROM */
-
-    for(area_idx = 0; area_idx <= 1; ++area_idx)
-    {
-        if(area[area_idx])
-        {
-            rs.r[0] = 24 + 256; /* sprite_select in area */
-            rs.r[1] = (int) area[area_idx];
-            rs.r[2] = (int) p_resource_bitmap_id->bitmap_name;
-
-            if(NULL == (p_kernel_oserror = _kernel_swi(OS_SpriteOp, &rs, &rs)))
-            {
-                resource_bitmap_handle.i = rs.r[2];
-                break;
-            }
-        }
-    }
+    resource_bitmap_handle.i = spriteop_select_sprite_in_areas(sprite_areas, 2, p_resource_bitmap_id->bitmap_name);
 
     return(resource_bitmap_handle);
 }
@@ -466,16 +522,16 @@ resource_bitmap_tool_size_register(
 
 extern void
 resource_bitmap_lose(
-    /*inout*/ P_RESOURCE_BITMAP_HANDLE p_h_bitmap)
+    /*inout*/ P_RESOURCE_BITMAP_HANDLE p_resource_bitmap_handle)
 {
-    if(0 != p_h_bitmap->i)
+    if(0 != p_resource_bitmap_handle->i)
     {
 #if RISCOS
         /* Don't need to throw away on RISC OS */
 #elif WINDOWS
         /* Decrement cache ref count if we can be bothered */
 #endif
-        p_h_bitmap->i = 0;
+        p_resource_bitmap_handle->i = 0;
     }
 }
 
@@ -491,15 +547,14 @@ resource_bitmap_gdi_size_query(
 
     if(resource_bitmap_handle.i & RESOURCE_BITMAP_HANDLE_RISCOS_BODGE)
     {
-        rs.r[0] = 40 + 256;
-        rs.r[1] = 1; /* Use Window Manager's Sprite Pools */
+        rs.r[0] = 40; /* Read sprite information */
         rs.r[2] = resource_bitmap_handle.i & ~RESOURCE_BITMAP_HANDLE_RISCOS_BODGE;
 
         ok = (NULL == _kernel_swi(Wimp_SpriteOp, &rs, &rs));
     }
     else
     {
-        rs.r[0] = 40 + 512;
+        rs.r[0] = 0x200 | 40; /* Read sprite information */
         rs.r[1] = (int) 0x89ABFEDC; /* kill the OS or any twerp who dares to access this! */
         rs.r[2] = resource_bitmap_handle.i;
 
@@ -522,35 +577,42 @@ resource_bitmap_gdi_size_query(
 
 #endif /* OS */
 
-_Check_return_
-extern STATUS
-resource_close(
+static inline void
+resource_close_per_object_resources(
     _InVal_     OBJECT_ID object_id)
 {
-    assert(IS_OBJECT_ID_VALID(object_id));
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+
+    PTR_ASSERT(p_resources_per_object);
 
 #if RISCOS
-    if(resource_statics.riscos.sprites[object_id].loaded_24)
+    if(p_resources_per_object->riscos.sprites.loaded_24)
     {
-        resource_statics.riscos.sprites[object_id].loaded_24 = 0;
-        al_ptr_dispose(P_P_ANY_PEDANTIC(&resource_statics.riscos.sprites[object_id].s_24));
+        p_resources_per_object->riscos.sprites.loaded_24 = 0;
+        al_ptr_dispose(P_P_ANY_PEDANTIC(&p_resources_per_object->riscos.sprites.s_24));
     }
 
-    if(resource_statics.riscos.sprites[object_id].loaded_22)
+    if(p_resources_per_object->riscos.sprites.loaded_22)
     {
-        resource_statics.riscos.sprites[object_id].loaded_22 = 0;
-        al_ptr_dispose(P_P_ANY_PEDANTIC(&resource_statics.riscos.sprites[object_id].s_22));
+        p_resources_per_object->riscos.sprites.loaded_22 = 0;
+        al_ptr_dispose(P_P_ANY_PEDANTIC(&p_resources_per_object->riscos.sprites.s_22));
     }
 
-    if(resource_statics.riscos.sprites[object_id].loaded_c)
+    if(p_resources_per_object->riscos.sprites.loaded_11)
     {
-        resource_statics.riscos.sprites[object_id].loaded_c = 0;
-        al_ptr_dispose(P_P_ANY_PEDANTIC(&resource_statics.riscos.sprites[object_id].s_c));
+        p_resources_per_object->riscos.sprites.loaded_11 = 0;
+        al_ptr_dispose(P_P_ANY_PEDANTIC(&p_resources_per_object->riscos.sprites.s_11));
+    }
+
+    if(p_resources_per_object->riscos.sprites.loaded_c)
+    {
+        p_resources_per_object->riscos.sprites.loaded_c = 0;
+        al_ptr_dispose(P_P_ANY_PEDANTIC(&p_resources_per_object->riscos.sprites.s_c));
     }
 #elif WINDOWS
-    if(collect_has_data(&resource_statics.windows.bitmap_cache[object_id]))
+    if(collect_has_data(&p_resources_per_object->windows.bitmap_cache))
     {   /* blow away cached bitmaps or else Mr GDI gets all upset */
-        const P_LIST_BLOCK p_list_block = &resource_statics.windows.bitmap_cache[object_id];
+        const P_LIST_BLOCK p_list_block = &p_resources_per_object->windows.bitmap_cache;
         LIST_ITEMNO item;
         HBITMAP * p_hBitmap;
 
@@ -566,16 +628,40 @@ resource_close(
     }
 
 #if defined(NOT_ALL_IN_ONE)
-    if(resource_statics.windows.library_handle[object_id])
+    if(NULL != p_resources_per_object->windows.library_handle)
     {
-        FreeLibrary(resource_statics.windows.library_handle[object_id]); /* now kosher 'cos only resources out there */
-        resource_statics.windows.library_handle[object_id] = 0;
+        FreeLibrary(p_resources_per_object->windows.library_handle); /* now kosher 'cos only resources out there */
+        p_resources_per_object->windows.library_handle = 0;
     }
-#endif
+#endif /* NOT_ALL_IN_ONE */
 #endif /* OS */
+}
 
-    /* remove all entries that belong to this object from the resource_bitmap_index array */
+_Check_return_
+extern STATUS
+resource_close(
+    _InVal_     OBJECT_ID object_id)
+{
+    if(!IS_OBJECT_ID_VALID(object_id))
     {
+        myassert1(TEXT("resource_close(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
+        return(status_check());
+    }
+
+    if(NULL == resource_statics.objects[object_id])
+        return(STATUS_OK);
+
+    resource_close_per_object_resources(object_id);
+
+#if WINDOWS && !defined(NOT_ALL_IN_ONE)
+    if( (0 == object_id) && (NULL != resource_statics.windows.library_handle) )
+    {
+        FreeLibrary(resource_statics.windows.library_handle); /* now kosher 'cos only resources out there */
+        resource_statics.windows.library_handle = 0;
+    }
+#endif /* NOT_ALL_IN_ONE */
+
+    { /* remove all entries that belong to this object from the resource_bitmap_index array */
     ARRAY_INDEX i = 0;
 
     while(i < array_elements(&resource_statics.bitmap_index))
@@ -608,9 +694,13 @@ resource_dll_find(
 {
     TCHARZ name[BUF_MAX_PATHSTRING];
 
-    assert(IS_OBJECT_ID_VALID(object_id));
+    if(!IS_OBJECT_ID_VALID(object_id))
+    {
+        myassert1(TEXT("resource_dll_find(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
+        return(status_check());
+    }
 
-    consume_int(tstr_xsnprintf(name, elemof32(name), resource_statics.tstr_dll_store, (U32) object_id));
+    consume_int(tstr_xsnprintf(name, elemof32(name), tstr_objects_dll_store, (U32) object_id));
 
     if(file_find_on_path(tstr_buf, elemof_buffer, file_get_resources_path(), name) > 0)
         return(STATUS_OK);
@@ -619,16 +709,43 @@ resource_dll_find(
     return(STATUS_FAIL);
 }
 
+#if WINDOWS
+
+_Check_return_
+static STATUS
+resource_language_dll_find(
+    _Out_writes_z_(elemof_buffer) PTSTR tstr_buf,
+    _InVal_     U32 elemof_buffer)
+{
+    if(file_find_on_path(tstr_buf, elemof_buffer, file_get_resources_path(), TEXT("LangRes.dll")) > 0)
+        return(STATUS_OK);
+
+    tstr_buf[0] = CH_NULL;
+    return(STATUS_FAIL);
+}
+
+#endif /* WINDOWS */
+
 extern void
 resource_dll_free(
     _InVal_     OBJECT_ID object_id)
 {
-#if WINDOWS && defined(NOT_ALL_IN_ONE)
-    if(resource_statics.windows.library_handle[object_id])
+#if WINDOWS
+#if defined(NOT_ALL_IN_ONE)
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+
+    if(p_resources_per_object->windows.library_handle)
     {
-        FreeLibrary(resource_statics.windows.library_handle[object_id]);
-        resource_statics.windows.library_handle[object_id] = 0;
+        FreeLibrary(p_resources_per_object->windows.library_handle);
+        p_resources_per_object->windows.library_handle = 0;
     }
+#else
+    if( (0 == object_id) && (NULL != resource_statics.windows.library_handle) )
+    {
+        FreeLibrary(resource_statics.windows.library_handle);
+        resource_statics.windows.library_handle = 0;
+    }
+#endif
 #else
     UNREFERENCED_PARAMETER_InVal_(object_id);
 #endif
@@ -644,8 +761,8 @@ resource_donate(
 #if RISCOS
     assert(OBJECT_ID_SKEL == object_id_dst);
     {
-    P_SAH * p_p_src = &resource_statics.riscos.sprites[object_id_src].s_22;
-    P_SAH * p_p_dst = &resource_statics.riscos.sprites[object_id_dst].s_22;
+    P_SAH * p_p_src = &resource_statics.objects[object_id_src]->riscos.sprites.s_22;
+    P_SAH * p_p_dst = &resource_statics.objects[object_id_dst]->riscos.sprites.s_22;
     if(*p_p_src)
     {
         *p_p_dst = *p_p_src;
@@ -660,80 +777,132 @@ resource_donate(
 
 #endif /* UNUSED_KEEP_ALIVE */
 
+#if RISCOS
+
+_Check_return_
+static STATUS
+resource_init_riscos_msgs(
+    _InVal_     OBJECT_ID object_id,
+    _In_opt_    PC_U8 * const p_u8_bound_msg)
+{
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+
+    if(DONT_LOAD_MESSAGES_FILE == p_u8_bound_msg)
+        return(STATUS_OK);
+
+    PTR_ASSERT(p_resources_per_object);
+    p_resources_per_object->riscos.mangled_msgs.msgs_block = (PC_U8) p_u8_bound_msg;
+
+    if(LOAD_MESSAGES_FILE == p_u8_bound_msg)
+        return(resource_load_messages(object_id));
+
+    riscos_msg_init(&p_resources_per_object->riscos.mangled_msgs);
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+resource_init_riscos_bound_resources(
+    _InVal_     OBJECT_ID object_id,
+    _InRef_opt_ PC_BOUND_RESOURCES p_bound_resources)
+{
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+
+    if(DONT_LOAD_RESOURCES == p_bound_resources)
+        return(STATUS_OK);
+
+    if(LOAD_RESOURCES == p_bound_resources)
+        return(resource_load_appropriate_sprites(object_id));
+
+    PTR_ASSERT(p_resources_per_object);
+
+    /* load common sprites */
+    if(p_bound_resources->sprite_area_c)
+        p_resources_per_object->riscos.sprites.s_c = p_bound_resources->sprite_area_c;
+
+    /* load EIG-dependent sprites */
+    if(p_bound_resources->sprite_area_11)
+        p_resources_per_object->riscos.sprites.s_11 = p_bound_resources->sprite_area_11;
+
+    if(p_bound_resources->sprite_area_22)
+        p_resources_per_object->riscos.sprites.s_22 = p_bound_resources->sprite_area_22;
+
+    if(p_bound_resources->sprite_area_24)
+        p_resources_per_object->riscos.sprites.s_24 = p_bound_resources->sprite_area_24;
+
+    return(STATUS_OK);
+}
+
+#elif WINDOWS
+
 _Check_return_
 extern STATUS
-resource_init(
+resource_init_windows_bound_resources(
     _InVal_     OBJECT_ID object_id,
-    _In_opt_    PC_U8 * const p_u8_bound_msg,
-    _InRef_opt_ PC_BOUND_RESOURCES p_bound)
+    _InRef_opt_ PC_BOUND_RESOURCES p_bound_resources)
 {
-    assert(IS_OBJECT_ID_VALID(object_id));
-
-#if RISCOS
-    assert(DONT_LOAD_MESSAGES_FILE != p_u8_bound_msg);
-    resource_statics.riscos.mangled_msgs[object_id].msgs_block = (PC_U8) p_u8_bound_msg;
-
-    if(NULL != p_u8_bound_msg)
-    {
-        if(LOAD_MESSAGES_FILE == p_u8_bound_msg)
-        {
-            status_return(resource_load_messages(object_id));
-        }
-        else
-        {
-            riscos_msg_init(&resource_statics.riscos.mangled_msgs[object_id]);
-        }
-    }
-
-    if(NULL != p_bound)
-    {
-        if(LOAD_RESOURCES == p_bound)
-        {
-            status_return(resource_load_appropriate_sprites(object_id));
-        }
-        else
-        {
-            /* load common sprites */
-            if(p_bound->sprite_area_c)
-                resource_statics.riscos.sprites[object_id].s_c = p_bound->sprite_area_c;
-
-            /* load mode-dependent sprites */
-            if(p_bound->sprite_area_22)
-                resource_statics.riscos.sprites[object_id].s_22 = p_bound->sprite_area_22;
-
-            if(p_bound->sprite_area_24)
-                resource_statics.riscos.sprites[object_id].s_24 = p_bound->sprite_area_24;
-        }
-    }
-#elif WINDOWS
-    UNREFERENCED_PARAMETER_CONST(p_u8_bound_msg);
-    assert(DONT_LOAD_MESSAGES_FILE == p_u8_bound_msg);
-
 #if defined(NOT_ALL_IN_ONE)
-    if(NULL == resource_statics.windows.library_handle[object_id])
-    {
-        TCHARZ resource_file[BUF_MAX_PATHSTRING];
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+    TCHARZ resource_file[BUF_MAX_PATHSTRING];
 
-        if(NULL != p_bound)
+    PTR_ASSERT(p_resources_per_object);
+
+    if(NULL == p_resources_per_object->windows.library_handle)
+    {
+        if(NULL != p_bound_resources)
         {
             if(status_ok(resource_dll_find(object_id, resource_file, elemof32(resource_file))))
             {
-                resource_statics.windows.library_handle[object_id] = LoadLibrary(resource_file);
+                p_resources_per_object->windows.library_handle = LoadLibrary(resource_file);
 
-                if((UINT) resource_statics.windows.library_handle[object_id] <= (UINT) HINSTANCE_ERROR)
+                if((UINT) p_resources_per_object->windows.library_handle <= (UINT) HINSTANCE_ERROR)
                 {
-                    resource_statics.windows.library_handle[object_id] = NULL;   /* just-in-case */
+                    p_resources_per_object->windows.library_handle = NULL;   /* just-in-case */
                     return(STATUS_MODULE_NOT_FOUND);
                 }
             }
         }
     }
 #else
-    /* never load any DLL resources */
-    UNREFERENCED_PARAMETER_InRef_(p_bound);
+    /* don't load any further per-object resources */
     UNREFERENCED_PARAMETER_InVal_(object_id);
+    UNREFERENCED_PARAMETER_InRef_(p_bound_resources);
 #endif
 
+    return(STATUS_OK);
+}
+
+#endif /* OS */
+
+_Check_return_
+extern STATUS
+resource_init(
+    _InVal_     OBJECT_ID object_id,
+    _In_opt_    PC_U8 * const p_u8_bound_msg,
+    _InRef_opt_ PC_BOUND_RESOURCES p_bound_resources)
+{
+    if(!IS_OBJECT_ID_VALID(object_id))
+    {
+        myassert1(TEXT("resource_init(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
+        return(status_check());
+    }
+
+    if(NULL == resource_statics.objects[object_id])
+    {
+        STATUS status;
+        if(NULL == (resource_statics.objects[object_id] = al_ptr_calloc_elem(struct RESOURCES_PER_OBJECT, 1, &status)))
+            return(status);
+    }
+
+#if RISCOS
+    status_return(resource_init_riscos_msgs(object_id, p_u8_bound_msg));
+
+    status_return(resource_init_riscos_bound_resources(object_id, p_bound_resources));
+#elif WINDOWS
+    UNREFERENCED_PARAMETER_CONST(p_u8_bound_msg);
+    assert(DONT_LOAD_MESSAGES_FILE == p_u8_bound_msg);
+
+    status_return(resource_init_windows_bound_resources(object_id, p_bound_resources));
 #endif /* OS */
 
     return(STATUS_OK);
@@ -748,36 +917,50 @@ riscos_sprite_readfile_into(
     _Out_       P_SAH * p_p_sah)
 {
     STATUS status = STATUS_OK;
-    _kernel_swi_regs rs;
+    _kernel_osfile_block osfile_block;
     _kernel_oserror * e;
 
     *p_p_sah = NULL;
 
-    rs.r[0] = 5;
-    rs.r[1] = (int) filename;
-    void_WrapOsErrorChecking(_kernel_swi(OS_File, &rs, &rs));
+    zero_struct_fn(osfile_block);
 
-    if(rs.r[0] == 1)
+    switch(_kernel_osfile(OSFile_ReadNoPath, filename, &osfile_block))
     {
-        int arealen = rs.r[4] + 4; /* file is sprite area without the length word */
+    default: default_unhandled();
+#if CHECKING
+    case _kernel_ERROR:
+    case OSFile_ObjectType_None:
+    case OSFile_ObjectType_Dir:
+    case OSFile_ObjectType_Image:
+#endif
+        break;
 
-        if(NULL != (*p_p_sah = al_ptr_alloc_bytes(P_SAH, arealen, &status)))
+    case OSFile_ObjectType_File:
         {
-            (*p_p_sah)->area_size = arealen; /* first we must initialise it ourselves */
+        const U32 area_size = osfile_block.start /*R4*/ + 4; /* sprite file is sprite area without the length word */
+
+        if(NULL != (*p_p_sah = al_ptr_alloc_bytes(P_SAH, area_size, &status)))
+        {
+            _kernel_swi_regs rs;
+
+            (*p_p_sah)->area_size = area_size; /* first we must initialise it ourselves */
             (*p_p_sah)->offset_to_first = 16;
 
-            rs.r[0] = 9 + 256; /* sprite area initialise */
+            rs.r[0] = 0x100 | 9; /* Initialise sprite area */
             rs.r[1] = (int) *p_p_sah;
-            rs.r[2] = arealen;
+            rs.r[2] = area_size;
 
             void_WrapOsErrorChecking(_kernel_swi(OS_SpriteOp, &rs, &rs));
 
-            rs.r[0] = 10 + 256; /* sprite area load */
+            rs.r[0] = 0x100 | 10; /* Load sprite file */
             rs.r[1] = (int) *p_p_sah;
             rs.r[2] = (int) filename;
 
             if(NULL != (e = _kernel_swi(OS_SpriteOp, &rs, &rs)))
                 al_ptr_dispose((void **) p_p_sah);
+        }
+
+        break;
         }
     }
 
@@ -799,7 +982,7 @@ resource_find_sprites(
         const U32 used = strlen(name);
 
         consume_int(snprintf(name + used, elemof32(name) - used,
-                             "Sprites%.2u" FILE_DIR_SEP_TSTR "Ob%.2u",
+                             TEXT("RISC_OS") FILE_DIR_SEP_TSTR TEXT("Sprites%.2u") FILE_DIR_SEP_TSTR TEXT("Ob%.2u"),
                              (unsigned int) which, (unsigned int) object_id));
 
         if(file_find_on_path(buffer, elemof_buffer, file_get_resources_path(), name) > 0)
@@ -807,7 +990,7 @@ resource_find_sprites(
     }
 
     consume_int(snprintf(name, elemof32(name),
-                         "Sprites%.2u" FILE_DIR_SEP_TSTR "Ob%.2u",
+                         TEXT("RISC_OS") FILE_DIR_SEP_TSTR TEXT("Sprites%.2u") FILE_DIR_SEP_TSTR TEXT("Ob%.2u"),
                          (unsigned int) which, (unsigned int) object_id));
 
     if(file_find_on_path(buffer, elemof_buffer, file_get_resources_path(), name) > 0)
@@ -822,6 +1005,7 @@ resource_load_sprites(
     _InVal_     OBJECT_ID object_id,
     _In_        UINT which)
 {
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
     TCHARZ resource_file[BUF_MAX_PATHSTRING];
     STATUS status = STATUS_OK;
 
@@ -830,12 +1014,12 @@ resource_load_sprites(
     default:
         break;
 
-    case 24:
+    case 11:
         if(status_done(resource_find_sprites(resource_file, elemof32(resource_file), object_id, which)))
         {
-            reportf("resource_load_sprites(%u): load %s", object_id, resource_file);
-            riscos_sprite_readfile_into(resource_file, &resource_statics.riscos.sprites[object_id].s_24);
-            resource_statics.riscos.sprites[object_id].loaded_24 = 1;
+          /*reportf("resource_load_sprites(%u): load %s", object_id, resource_file);*/
+            riscos_sprite_readfile_into(resource_file, &p_resources_per_object->riscos.sprites.s_11);
+            p_resources_per_object->riscos.sprites.loaded_11 = 1;
             return(STATUS_DONE);
         }
 
@@ -844,18 +1028,34 @@ resource_load_sprites(
     case 22:
         if(status_done(resource_find_sprites(resource_file, elemof32(resource_file), object_id, which)))
         {
-            reportf("resource_load_sprites(%u): load %s", object_id, resource_file);
-            riscos_sprite_readfile_into(resource_file, &resource_statics.riscos.sprites[object_id].s_22);
-            resource_statics.riscos.sprites[object_id].loaded_22 = 1;
+          /*reportf("resource_load_sprites(%u): load %s", object_id, resource_file);*/
+            riscos_sprite_readfile_into(resource_file, &p_resources_per_object->riscos.sprites.s_22);
+            p_resources_per_object->riscos.sprites.loaded_22 = 1;
+            return(STATUS_DONE);
+        }
+
+        break;
+
+    case 24:
+        if(status_done(resource_find_sprites(resource_file, elemof32(resource_file), object_id, which)))
+        {
+          /*reportf("resource_load_sprites(%u): load %s", object_id, resource_file);*/
+            riscos_sprite_readfile_into(resource_file, &p_resources_per_object->riscos.sprites.s_24);
+            p_resources_per_object->riscos.sprites.loaded_24 = 1;
             return(STATUS_DONE);
         }
 
         break;
     }
 
-    reportf("resource_load_sprites(%u, %u): no match", object_id, which);
+  /*reportf("resource_load_sprites(%u, %u): no match", object_id, which);*/
     return(status);
 }
+
+/* In fact this loads all sprites for current mode and lower resolutions
+ * in case of mode change to lower resolution mode whilst running.
+ * Doesn't waste space loading highest resolution sprites if not wanted!
+ */
 
 _Check_return_
 extern STATUS
@@ -863,15 +1063,19 @@ resource_load_appropriate_sprites(
     _InVal_     OBJECT_ID object_id)
 {
     STATUS status;
-    int load_hi_res = (host_modevar_cache_current.XEigFactor < 2) && (host_modevar_cache_current.YEigFactor < 2);
+    const BOOL load_res_11 = (host_modevar_cache_current.XEigFactor < 1U) && (host_modevar_cache_current.YEigFactor < 1U);
+    const BOOL load_res_22 = (host_modevar_cache_current.XEigFactor < 2U) && (host_modevar_cache_current.YEigFactor < 2U);
 
-    if(load_hi_res)
-    {
-        if(STATUS_OK != (status = resource_load_sprites(object_id, 22)))
-            return(status);
-    }
+    if(load_res_11)
+        status_return(resource_load_sprites(object_id, 11));
 
-    if(STATUS_OK != (status = resource_load_sprites(object_id, 24)))
+    if(load_res_22)
+        status_return(resource_load_sprites(object_id, 22));
+
+    /* always needs to have lowest resolution sprites to register */
+    status = resource_load_sprites(object_id, 24);
+
+    if(STATUS_OK != status)
         return(status);
 
     return(ERR_NO_SPRITES);
@@ -922,10 +1126,24 @@ resource_shutdown(void)
 }
 
 extern void
-resource_startup(
-    _In_z_      PCTSTR tstr_dll_store)
+resource_startup(void)
 {
-    resource_statics.tstr_dll_store = tstr_dll_store;
+#if WINDOWS
+    /* check for a language resource DLL */
+    TCHARZ language_resource_file[BUF_MAX_PATHSTRING];
+
+    assert(NULL == resource_statics.windows.library_handle);
+
+    if(status_ok(resource_language_dll_find(language_resource_file, elemof32(language_resource_file))))
+    {
+        resource_statics.windows.library_handle = LoadLibrary(language_resource_file);
+
+        if((UINT) resource_statics.windows.library_handle <= (UINT) HINSTANCE_ERROR)
+        {
+            resource_statics.windows.library_handle = NULL;   /* just-in-case */
+        }
+    }
+#endif
 }
 
 #if WINDOWS
@@ -933,19 +1151,29 @@ resource_startup(
 _Check_return_
 extern HINSTANCE
 resource_get_object_resources(
-    _InVal_     OBJECT_ID object_id)
+    _InVal_     OBJECT_ID object_id,
+    _Out_       HINSTANCE * const p_hInstance_fallback)
 {
-    HINSTANCE hInstance;
+    HINSTANCE hInstance = NULL;
 
-    assert(IS_OBJECT_ID_VALID(object_id));
+    *p_hInstance_fallback = GetInstanceHandle();
+
+    if(!IS_OBJECT_ID_VALID(object_id))
+    {
+        myassert1(TEXT("resource_get_object_resources(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
+        return(NULL);
+    }
 
 #if defined(NOT_ALL_IN_ONE)
-    hInstance = resource_statics.windows.library_handle[object_id];
+    if(NULL != resource_statics.objects[object_id]->windows.library_handle)
+        hInstance = resource_statics.objects[object_id]->windows.library_handle;
 #else
-    UNREFERENCED_PARAMETER_InVal_(object_id);
-
-    hInstance = GetInstanceHandle();
+    if( (0 == object_id) && (NULL != resource_statics.windows.library_handle) )
+        hInstance = resource_statics.windows.library_handle;
 #endif
+
+    if(NULL == hInstance)
+        hInstance = GetInstanceHandle();
 
     return(hInstance);
 }
@@ -1086,6 +1314,7 @@ resource_lookup_tstr_no_default(
 {
     OBJECT_ID object_id;
     U16 status_offset;
+    P_RESOURCES_PER_OBJECT p_resources_per_object;
     BOOL is_err;
 
     if(0 == status)
@@ -1093,25 +1322,30 @@ resource_lookup_tstr_no_default(
 
     is_err = resource_split_status(status, &status_offset, &object_id);
 
-    if(IS_OBJECT_ID_VALID(object_id));
+    if( !IS_OBJECT_ID_VALID(object_id) || (NULL == (p_resources_per_object = resource_statics.objects[object_id])) )
     {
-        TCHARZ tagbuffer[sizeof32("e32767")];
-        PC_SBSTR str;
-
-        consume_int(tstr_xsnprintf(tagbuffer, elemof32(tagbuffer), is_err ? "e%u" : "%u", (unsigned int) status_offset));
-
-        str = riscos_msg_lookup_in(tagbuffer, &resource_statics.riscos.mangled_msgs[object_id]);
-
-        if(str != tagbuffer)
-            return((PTSTR) str);
+        myassert1x(IS_OBJECT_ID_VALID(object_id), TEXT("resource_lookup_tstr_no_default(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), object_id);
+        return(NULL);
     }
 
-    /* lookup failed */
-    assert(IS_OBJECT_ID_VALID(object_id));
-    return(NULL);
+    {
+    TCHARZ tag_buffer[sizeof32("e32767")];
+    PC_SBSTR str;
+    U32 tag_length = tstr_xsnprintf(tag_buffer, elemof32(tag_buffer), is_err ? "e%u" : "%u", (unsigned int) status_offset);
+
+    str = riscos_msg_lookup_in_without_default(tag_buffer, tag_length, &p_resources_per_object->riscos.mangled_msgs);
+
+    return((PTSTR) str); /* may be NULL */
+    } /*block*/
 }
 
 #elif WINDOWS
+
+_Check_return_ _Ret_maybenone_
+static PCWCH
+resource_lookup_wchars_no_default(
+    _OutRef_    P_U32 p_n_chars,
+    _InVal_     STATUS status);
 
 _Check_return_
 static BOOL
@@ -1160,35 +1394,24 @@ resource_lookup_tstr_no_default(
 }
 
 _Check_return_
-static BOOL
-resource_lookup_tstr_buffer_no_default(
-    _Out_writes_z_(elemof_buffer) PTSTR tstr_buf,
-    _InVal_     U32 elemof_buffer,
+static inline UINT
+resource_id_from_status(
+    _OutRef_    P_OBJECT_ID p_object_id,
     _InVal_     STATUS status)
 {
-    OBJECT_ID object_id;
     U16 status_offset;
-    BOOL is_err;
+    const BOOL is_err = resource_split_status(status, &status_offset, p_object_id);
     UINT uint;
 
-    is_err = resource_split_status(status, &status_offset, &object_id);
-
-    assert(IS_OBJECT_ID_VALID(object_id));
-
     if(is_err)
+    {
+        /*assert(1 != status_offset);*/ /* shouldn't be asked for ERROR_RQ, but don't complain or else create_error(xxx_ERROR_RQ) hurts */
         status_offset += 0x8000U;
+    }
 
-    PTR_ASSERT(tstr_buf);
-    assert(0 != elemof_buffer);
-
-    switch(object_id)
+    switch(*p_object_id)
     {
     case 0:
-        if(0 == status)
-        {
-            tstr_buf[0] = CH_NULL;
-            return(FALSE);
-        }
         uint = status_offset;
         break;
     case 1:
@@ -1201,23 +1424,117 @@ resource_lookup_tstr_buffer_no_default(
         uint = status_offset + 0x3500;
         break;
     default:
+        myassert1x(IS_OBJECT_ID_VALID(*p_object_id), TEXT("resource_lookup_tstr_buffer_no_default(INVALID OBJECT_ID ") S32_TFMT TEXT(")"), *p_object_id);
 #define N_DEFAULT_MSGS 128
         uint = 0x8000U;
         uint -= N_DEFAULT_MSGS * MAX_OBJECTS;
-        uint += N_DEFAULT_MSGS * (UINT) object_id;
+        uint += N_DEFAULT_MSGS * (UINT) *p_object_id;
         uint += status_offset;
         break;
     }
 
-    if(!LoadString(GetInstanceHandle(), uint, tstr_buf, elemof_buffer-1))
+    return(uint);
+}
+
+#if TSTR_IS_SBSTR
+
+_Check_return_
+static BOOL
+resource_lookup_tstr_buffer_no_default(
+    _Out_writes_z_(elemof_buffer) PTSTR tstr_buf,
+    _InVal_     U32 elemof_buffer,
+    _InVal_     STATUS status)
+{
+    OBJECT_ID object_id;
+    const UINT uint = resource_id_from_status(&object_id, status);
+    HINSTANCE hInstance;
+
+    if(0 == status)
     {
-        /* lookup failed */
         tstr_buf[0] = CH_NULL;
         return(FALSE);
     }
 
-    return(TRUE);
+    hInstance = resource_statics.windows.library_handle;
+    if(NULL != hInstance)
+        if(LoadString(hInstance, uint, tstr_buf, elemof_buffer-1))
+            return(TRUE);
+
+    /* fallback */
+    hInstance = GetInstanceHandle();
+    if(LoadString(hInstance, uint, tstr_buf, elemof_buffer-1))
+        return(TRUE);
+
+    /* lookup failed */
+    tstr_buf[0] = CH_NULL;
+    return(FALSE);
 }
+
+#else
+
+/* can obtain a read-only pointer to the wide-char resource */
+
+_Check_return_ _Ret_maybenone_
+static PCWCH
+resource_lookup_wchars_no_default(
+    _OutRef_    P_U32 p_n_chars,
+    _InVal_     STATUS status)
+{
+    OBJECT_ID object_id;
+    const UINT uint = resource_id_from_status(&object_id, status);
+    HINSTANCE hInstance;
+    union _LOADSTRING_BUFFER
+    {
+        BYTE data[80];
+        PCWCH pwch;
+    } loadstring_buffer;
+
+    if(0 == status)
+    {
+        *p_n_chars = 0;
+        return(P_DATA_NONE);
+    }
+
+    hInstance = resource_statics.windows.library_handle;
+    if(NULL != hInstance)
+        if(0 != (*p_n_chars = LoadStringW(hInstance, uint, (LPWSTR) &loadstring_buffer.data[0], 0)))
+            return(loadstring_buffer.pwch);
+
+    /* fallback */
+    hInstance = GetInstanceHandle();
+    if(0 != (*p_n_chars = LoadStringW(hInstance, uint, (LPWSTR) &loadstring_buffer.data[0], 0)))
+        return(loadstring_buffer.pwch);
+
+    *p_n_chars = 0;
+    return(P_DATA_NONE);
+}
+
+_Check_return_
+static BOOL
+resource_lookup_tstr_buffer_no_default(
+    _Out_writes_z_(elemof_buffer) PTSTR tstr_buf,
+    _InVal_     U32 elemof_buffer,
+    _InVal_     STATUS status)
+{
+    U32 n_chars;
+    const PCWCH wchars = resource_lookup_wchars_no_default(&n_chars, status);
+
+    if(0 != n_chars)
+    {   /* caller may get a truncated copy */
+        assert(0 != elemof_buffer);
+        if(n_chars >= elemof_buffer)
+            n_chars = elemof_buffer - 1; /* ensure room for terminator */
+        memcpy32(tstr_buf, wchars, n_chars*sizeof32(WCHAR));
+        tstr_buf[n_chars] = CH_NULL;
+        return(TRUE);
+    }
+
+    /* lookup failed */
+    tstr_buf[0] = CH_NULL;
+    return(FALSE);
+}
+
+#endif /* TSTR_IS_SBSTR */
 
 #endif /* OS */
 
@@ -1269,12 +1586,22 @@ resource_lookup_quick_tblock_no_default(
     _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended*/,
     _InVal_     STATUS status)
 {
+#if TSTR_IS_SBSTR
     PCTSTR tstr = resource_lookup_tstr_no_default(status);
 
     if(NULL == tstr)
         return(STATUS_OK);
 
     status_return(quick_tblock_tstr_add(p_quick_tblock, tstr));
+#else
+    U32 n_chars;
+    const PCWCH wchars = resource_lookup_wchars_no_default(&n_chars, status);
+
+    if(0 == n_chars)
+        return(STATUS_OK);
+
+    status_return(quick_tblock_tchars_add(p_quick_tblock, wchars, n_chars));
+#endif
 
     return(STATUS_DONE);
 }
@@ -1295,10 +1622,13 @@ riscos_filesprite(
         {
         _kernel_swi_regs rs;
 
-        consume_int(xsnprintf(sbstr_buf, elemof_buffer, "file_%.3x", t5_filetype));
+        if(FILETYPE_UNTYPED == t5_filetype)
+            xstrkpy(sbstr_buf, elemof_buffer, "file_lxa");
+        else
+            consume_int(xsnprintf(sbstr_buf, elemof_buffer, "file_%.3x", t5_filetype));
 
-        /* now to check if the sprite exists: do a sprite_select on the Window Manager sprite pool */
-        rs.r[0] = 24;
+        /* now to check if the sprite exists: do a sprite select on the Window Manager sprite pool */
+        rs.r[0] = 24; /* Select sprite */
         rs.r[2] = (int) sbstr_buf;
         if(NULL == _kernel_swi(Wimp_SpriteOp, &rs, &rs))
             return;
@@ -1309,7 +1639,6 @@ riscos_filesprite(
         /*FALLTHRU*/
 
     case FILETYPE_UNDETERMINED:
-    case FILETYPE_UNTYPED:
         xstrkpy(sbstr_buf, elemof_buffer, "file_xxx");
         break;
 
@@ -1328,7 +1657,9 @@ extern P_SAH
 riscos_sprite_area_lookup(
     _InVal_     OBJECT_ID object_id)
 {
-    return(resource_statics.riscos.sprites[object_id].s_c);
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+
+    return((NULL != p_resources_per_object) ? p_resources_per_object->riscos.sprites.s_c : NULL);
 }
 
 #endif /* UNUSED_KEEP_ALIVE */
@@ -1377,48 +1708,125 @@ tstrrncmp(
 #define COMMENT_CH    CH_NUMBER_SIGN
 #define TAG_DELIMITER CH_COLON
 
-#define INVALID_MSGS_BLOCK ((void *) 1)
+typedef struct RISCOS_MSGS_SEARCH
+{
+    PCTSTR tag;
+    U32 tag_length;
+}
+RISCOS_MSGS_SEARCH, * P_RISCOS_MSGS_SEARCH; typedef const RISCOS_MSGS_SEARCH * PC_RISCOS_MSGS_SEARCH;
+
+#if RISCOS
+#define riscos_msgs_tag_compare short_memcmp32
+#else
+#define riscos_msgs_tag_compare memcmp /* use native function */
+#endif /* OS */
+
+PROC_BSEARCH_PROTO(static, riscos_msgs_search_compare, RISCOS_MSGS_SEARCH, RISCOS_MSGS_INDEX)
+{
+    BSEARCH_KEY_VAR_DECL(PC_RISCOS_MSGS_SEARCH, key);
+    BSEARCH_DATUM_VAR_DECL(PC_RISCOS_MSGS_INDEX, datum);
+
+    PCTSTR tag_key;
+    PCTSTR tag_datum;
+
+    const U32 tag_length_key   = key->tag_length;
+    const U32 tag_length_datum = datum->tag_length;
+
+  /*reportf("lookup(%u:%s) tag:msg %u:%s", tag_length_key, key->tag, tag_length_datum, datum->tag);*/
+
+    if(tag_length_key != tag_length_datum)
+        return((int) tag_length_key - (int) tag_length_datum);
+
+    tag_key = key->tag;
+    tag_datum = datum->tag;
+
+    return(riscos_msgs_tag_compare(tag_key, tag_datum, tag_length_key));
+}
+
+_Check_return_
+_Ret_z_
+static PCTSTR
+riscos_msg_lookup_using_index(
+    _In_reads_(tag_length) PCTSTR tag,
+    _InVal_     U32 tag_length,
+    /*inout*/ P_RISCOS_MSGS p_msgs)
+{
+    U32 msg_idx;
+    RISCOS_MSGS_SEARCH riscos_msgs_search;
+
+    riscos_msgs_search.tag = tag;
+    riscos_msgs_search.tag_length = tag_length;
+
+    for(msg_idx = 0; msg_idx < p_msgs->n_msgs; ++msg_idx)
+    {
+        const int res = riscos_msgs_search_compare(&riscos_msgs_search, &p_msgs->msgs_index[msg_idx]);
+
+        if(0 == res)
+            return(p_msgs->msgs_index[msg_idx].tag + tag_length + 1);
+    }
+
+    return(NULL);
+}
+
+_Check_return_
+_Ret_z_
+static PCTSTR
+riscos_msg_lookup_in_without_default(
+    _In_reads_(tag_length) PCTSTR tag,
+    _InVal_     U32 tag_length,
+    /*inout*/ P_RISCOS_MSGS p_msgs)
+{
+    PCTSTR init_lookup_ptr;
+
+    /* if there ain't a message block then we can't do lookup */
+    if(NULL == p_msgs->msgs_block)
+        return(NULL);
+
+    if(NULL != p_msgs->msgs_index)
+        return(riscos_msg_lookup_using_index(tag, tag_length, p_msgs));
+
+    init_lookup_ptr = p_msgs->lookup_ptr;
+
+    for(;;)
+    {
+        /* try resuming search at last position or at start */
+        if(NULL == p_msgs->lookup_ptr)
+            p_msgs->lookup_ptr = p_msgs->msgs_block;
+
+        while(CH_NULL != *p_msgs->lookup_ptr)
+        {
+            const U32 lookup_length = tstrlen32(p_msgs->lookup_ptr);
+
+            if(lookup_length > tag_length)
+                if(*(p_msgs->lookup_ptr + tag_length) == TAG_DELIMITER)
+                    if(0 == tstrrncmp(tag, p_msgs->lookup_ptr, tag_length))
+                        return(p_msgs->lookup_ptr + tag_length + 1);
+
+            /* step to next message */
+            p_msgs->lookup_ptr += lookup_length + 1;
+
+            if(p_msgs->lookup_ptr == init_lookup_ptr)
+            {
+                init_lookup_ptr = NULL;
+                break; /* out of both loops */
+            }
+        }
+
+        p_msgs->lookup_ptr = NULL; /* ensure restart */
+
+        if(NULL == init_lookup_ptr)
+            break;
+    }
+
+    return(NULL);
+}
 
 #define msgs_TAG_MAX  10 /*max length of a tag in characters*/
 
 _Check_return_
 _Ret_z_
 static PCTSTR
-riscos_msg_lookup_using_index(
-    PCTSTR tag_and_default,
-    /*inout*/ P_RISCOS_MSGS p_msgs)
-{
-    PCTSTR tag = tag_and_default;
-    PCTSTR default_ptr;
-    U32 tag_length;
-    U32 msg_idx;
-
-    if(NULL == (default_ptr = tstrchr(tag_and_default, TAG_DELIMITER)))
-        tag_length = tstrlen32(tag);
-    else
-    {
-        tag_length = default_ptr - tag_and_default;
-        default_ptr++; /* skip delimiter */
-    }
-
-    for(msg_idx = 0; msg_idx < p_msgs->n_msgs; ++msg_idx)
-    {
-        if(p_msgs->msgs_index[msg_idx].tag_length != tag_length)
-            continue;
-
-        /*reportf("lookup(%s) tag:msg %s", tag, p_msgs->msgs_index[msg_idx].tag);*/
-        if(0 == memcmp(tag, p_msgs->msgs_index[msg_idx].tag, tag_length))
-            return(p_msgs->msgs_index[msg_idx].tag + tag_length + 1);
-    }
-
-    /* return the default, or if that fails, the tag */
-    return(default_ptr ? default_ptr : tag_and_default);
-}
-
-_Check_return_
-_Ret_z_
-static PCTSTR
-riscos_msg_lookup_in(
+riscos_msg_lookup_in_with_default(
     PCTSTR tag_and_default,
     /*inout*/ P_RISCOS_MSGS p_msgs)
 {
@@ -1426,10 +1834,7 @@ riscos_msg_lookup_in(
     U32 tag_length;
     char tag_buffer[msgs_TAG_MAX + 1];
     PCTSTR default_ptr;
-    PCTSTR init_lookup_ptr;
-
-    if(NULL != p_msgs->msgs_index)
-        return(riscos_msg_lookup_using_index(tag_and_default, p_msgs));
+    PCTSTR ptr;
 
     if(NULL == (default_ptr = tstrchr(tag_and_default, TAG_DELIMITER)))
         tag_length = tstrlen32(tag);
@@ -1441,50 +1846,15 @@ riscos_msg_lookup_in(
         tag = tag_buffer;
     }
 
-    /* if there ain't a message block or it's bad then we can't do lookup */
-    if((NULL != p_msgs->msgs_block)  &&  (p_msgs->msgs_block != INVALID_MSGS_BLOCK))
-    {
-        init_lookup_ptr = p_msgs->lookup_ptr;
-
-        for(;;)
-        {
-            /* try resuming search at last position or at start */
-            if(!p_msgs->lookup_ptr)
-                p_msgs->lookup_ptr = p_msgs->msgs_block;
-
-            while(*p_msgs->lookup_ptr)
-            {
-                U32 lookup_length = tstrlen32(p_msgs->lookup_ptr);
-
-                if(lookup_length > tag_length)
-                    if(*(p_msgs->lookup_ptr + tag_length) == TAG_DELIMITER)
-                        if(0 == tstrrncmp(tag, p_msgs->lookup_ptr, tag_length))
-                            return(p_msgs->lookup_ptr + tag_length + 1);
-
-                /* step to next message */
-                p_msgs->lookup_ptr += lookup_length + 1;
-
-                if(p_msgs->lookup_ptr == init_lookup_ptr)
-                {
-                    init_lookup_ptr = NULL;
-                    break; /* out of both loops */
-                }
-            }
-
-            p_msgs->lookup_ptr = NULL; /* ensure restart */
-
-            if(!init_lookup_ptr)
-                break;
-        }
-    }
+    if(NULL != (ptr = riscos_msg_lookup_in_without_default(tag, tag_length, p_msgs)))
+        return(ptr);
 
     /* return the default, or if that fails, the tag */
-    return(default_ptr ? default_ptr : tag_and_default);
+    return((NULL != default_ptr) ? default_ptr : tag_and_default);
 }
 
 #define MSG_PARSE_STATE_IN_TAG 0
 #define MSG_PARSE_STATE_IN_MESSAGE 1
-#define MSG_PARSE_STATE_IN_COMMENT 2
 
 _Check_return_
 static STATUS
@@ -1494,7 +1864,7 @@ riscos_msg_init(
     STATUS status = STATUS_OK;
     UINT pass;
 
-    if((NULL == p_msgs->msgs_block) || (p_msgs->msgs_block == INVALID_MSGS_BLOCK))
+    if(NULL == p_msgs->msgs_block)
         return(status);
 
     /*reportf("riscos_msg_init %s", p_msgs->msgs_block);*/
@@ -1541,13 +1911,6 @@ riscos_msg_init(
                 ++n_msgs;
                 continue;
             }
-
-            /* ignore '#' in message part */
-            if((COMMENT_CH == *p_u8) && (MSG_PARSE_STATE_IN_TAG == msg_parse_state))
-            {   /* will skip lines like 'some-chars#more-chars' */
-                msg_parse_state = MSG_PARSE_STATE_IN_COMMENT;
-                continue;
-            }
         }
 
         if(1 == pass)
@@ -1561,7 +1924,7 @@ riscos_msg_init(
         else /* 2 == pass */
         {   /* sort at some point */
             /*reportf("n_msgs[2]: %u", n_msgs);*/
-            if(n_msgs != p_msgs->n_msgs) { reportf("n_msgs[2]!=n_msgs[1]"); break; }
+            if(n_msgs != p_msgs->n_msgs) { /*reportf("n_msgs[2] != n_msgs[1]");*/ break; }
         }
     }
 
@@ -1572,13 +1935,13 @@ _Check_return_
 static STATUS
 resource_find_messages(
     _Out_writes_(elemof_buffer) PTSTR buffer,
-    U32 elemof_buffer,
+    _InVal_     U32 elemof_buffer,
     _InVal_     OBJECT_ID object_id)
 {
     TCHARZ name[BUF_MAX_PATHSTRING];
 
     consume_int(snprintf(name, elemof32(name),
-                         "Messages" FILE_DIR_SEP_TSTR "Ob%.2u",
+                         TEXT("RISC_OS") FILE_DIR_SEP_TSTR TEXT("Messages") FILE_DIR_SEP_TSTR TEXT("Ob%.2u"),
                          (unsigned int) object_id));
 
     if(file_find_on_path(buffer, elemof_buffer, file_get_resources_path(), name) > 0)
@@ -1594,27 +1957,34 @@ riscos_messages_readfile_into(
     _Out_       P_P_U8 p_p_u8)
 {
     STATUS status = STATUS_OK;
-    _kernel_swi_regs rs;
-    _kernel_oserror * e;
+    _kernel_osfile_block osfile_block;
 
     *p_p_u8 = NULL;
 
-    rs.r[0] = 17; /*InfoNoPath*/
-    rs.r[1] = (int) filename;
-    void_WrapOsErrorChecking(_kernel_swi(OS_File, &rs, &rs));
+    zero_struct_fn(osfile_block);
 
-    if(rs.r[0] == 1)
+    switch(_kernel_osfile(OSFile_ReadNoPath, filename, &osfile_block))
     {
-        const U32 file_length = (U32) rs.r[4]; /* file is sprite area without the length word */
+    default: default_unhandled();
+#if CHECKING
+    case _kernel_ERROR:
+    case OSFile_ObjectType_None:
+    case OSFile_ObjectType_Dir:
+    case OSFile_ObjectType_Image:
+#endif
+        break;
+
+    case OSFile_ObjectType_File:
+        {
+        const U32 file_length = (U32) osfile_block.start /*[R4]*/;
         P_BYTE p_u8;
 
         if(NULL != (p_u8 = al_ptr_alloc_bytes(P_U8, file_length + 1, &status)))
         {
-            rs.r[0] = 16; /*LoadNoPath*/
-            rs.r[1] = (int) filename;
-            rs.r[2] = (int) p_u8;
-            rs.r[3] = 0;
-            if(NULL != (e = WrapOsErrorChecking(_kernel_swi(OS_File, &rs, &rs))))
+            zero_struct_fn(osfile_block);
+            osfile_block.load = (int) p_u8;
+
+            if(_kernel_ERROR == _kernel_osfile(OSFile_LoadNoPath, filename, &osfile_block))
             {
                 al_ptr_dispose(P_P_ANY_PEDANTIC(&p_u8));
             }
@@ -1624,6 +1994,9 @@ riscos_messages_readfile_into(
                 *p_p_u8 = p_u8;
                 status = STATUS_DONE;
             }
+        }
+
+        break;
         }
     }
 
@@ -1640,15 +2013,16 @@ resource_load_messages(
 
     if(status_done(resource_find_messages(resource_file, elemof32(resource_file), object_id)))
     {
+        const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
         P_U8 msgs_block = NULL;
-        reportf("resource_load_messages(%u): load %s", object_id, resource_file);
+      /*reportf("resource_load_messages(%u): load %s", object_id, resource_file);*/
         status_return(riscos_messages_readfile_into(resource_file, &msgs_block));
-        resource_statics.riscos.mangled_msgs[object_id].msgs_block = msgs_block;
-        riscos_msg_init(&resource_statics.riscos.mangled_msgs[object_id]);
+        p_resources_per_object->riscos.mangled_msgs.msgs_block = msgs_block;
+        riscos_msg_init(&p_resources_per_object->riscos.mangled_msgs);
         return(STATUS_DONE);
     }
 
-    reportf("resource_load_messages(%u): no match", object_id);
+  /*reportf("resource_load_messages(%u): no match", object_id);*/
     return(status);
 }
 
@@ -1659,7 +2033,8 @@ string_for_object(
     _In_z_      PCTSTR tag_and_default,
     _InVal_     OBJECT_ID object_id)
 {
-    return(riscos_msg_lookup_in(tag_and_default, &resource_statics.riscos.mangled_msgs[object_id]));
+    const P_RESOURCES_PER_OBJECT p_resources_per_object = resource_statics.objects[object_id];
+    return(riscos_msg_lookup_in_with_default(tag_and_default, &p_resources_per_object->riscos.mangled_msgs));
 }
 
 extern void

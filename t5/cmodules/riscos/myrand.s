@@ -15,18 +15,44 @@
         AREA    |C$$code|,CODE,READONLY
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int myrand(P_MYRAND_SEED p_myrand_seed, U32 n /*excl*/, U32 bias)
-;                   a1 (R0)                      a2 (R1)         a3 (R2)
+; extern uint32_t myrand(P_MYRAND_SEED p_myrand_seed)
+;                        a1 (R0)
 
 ; Fast pseudo-random binary sequence generator
 
-; a4, ip, lr used as temporary registers
+; a2 (R1), a3 (R2), a4 (R3) used as temporary registers
 
         BeginExternal myrand
 
-        FunctionEntry "v5,v6","MakeFrame"
+        ; LinkNotStacked - no FunctionEntry here
 
-        LDMIA   a1, {v5, v6}            ; Load 33 bit seed (32 bit word in Ra (=v5) and a single bit in LSB of Rb (=v6))
+        MOV     R3, R0                  ; Remember where to store the updated 33 bit seed
+
+        LDMIA   R0, {R0, R1}            ; Load 33 bit seed (32 bit word in R0 and a single bit in LSB of R1)
+
+; Core code derived from ARM Assembler Release 2 p.186
+
+        TST     R1, R1, LSR #1          ; Top bit into carry
+        MOVS    R2, R0, RRX             ; Which is then used in 33 bit rotate right into R2
+        ADC     R1, R1, R1              ; Carry into LSB of R1
+        EOR     R2, R2, R0, LSL #12     ; 'involved!' goes the comment in the book
+        EOR     R0, R2, R2, LSR #20     ; 'similarly involved!'
+
+        STMIA   R3, {R0, R1}            ; Store updated 33 bit seed, returning R0
+
+        Return "","LinkNotStacked"
+
+; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+; extern uint32_t myrand_n(P_MYRAND_SEED p_myrand_seed, uint32_t n /*excl*/)
+;                          a1 (R0)                      a2 (R1)
+
+; Fast pseudo-random binary sequence generator
+
+; R2, R3, ip, lr used as temporary registers
+
+        BeginExternal myrand_n
+
+        FunctionEntry "",""
 
         MOV     ip, #0                  ; Find a mask (=ip) > n (can't have n == &FFFFFFFF)
 
@@ -35,24 +61,27 @@
         CMP     ip, a2
         BLS     %BT10
 
+        MOV     R3, R0                  ; Remember where to store the updated 33 bit seed
+        MOV     lr, R1                  ; Remember n
+
+        LDMIA   R0, {R0, R1}            ; Load 33 bit seed (32 bit word in R0 and a single bit in LSB of R1)
+
 ; Core code derived from ARM Assembler Release 2 p.186
 
-20      TST     v6, v6, LSR #1
-        MOVS    lr, v5, RRX             ; Rc (=lr)
-        ADC     v6, v6, v6
-        EOR     lr, lr, v5, LSL #12     ; 'involved!' goes the comment in the book
-        EOR     v5, lr, lr, LSR #20     ; 'similarly involved!'
+20      TST     R1, R1, LSR #1          ; Top bit into carry
+        MOVS    R2, R0, RRX             ; Which is then used in 33 bit rotate right into R2
+        ADC     R1, R1, R1              ; Carry into LSB of R1
+        EOR     R2, R2, R0, LSL #12     ; 'involved!' goes the comment in the book
+        EOR     R0, R2, R2, LSR #20     ; 'similarly involved!'
 
-        AND     a4, v5, ip              ; rval (=a4) now in range [0..mask]
+        AND     R0, R0, ip              ; rval (=R0) now in range [0..mask]
 
-        CMP     a4, a2                  ; Test for rval < n
+        CMP     R0, lr                  ; Test for rval < n
         BHS     %BT20                   ; Too large this time, so loop
 
-        STMIA   a1, {v5, v6}            ; Store updated 33 bit seed
+        STMIA   R3, {R0, R1}            ; Store updated 33 bit seed
 
-        ADD     a1, a4, a3              ; Final result (=a1) := bias (=a3) + rval (=a4)
-
-        Return "v5,v6","fpbased"
+        Return "",""
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

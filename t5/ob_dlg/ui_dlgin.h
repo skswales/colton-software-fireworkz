@@ -16,6 +16,7 @@
 #include "ob_dlg/resource/resource.h"
 
 #if RISCOS
+/*#define EDIT_XX_SINGLE_LINE_WIMP_RO 1*/
 /*#define EDIT_XX_SINGLE_LINE_WIMP 1*/
 
 #include "ob_dlg/xp_dlgr.h"
@@ -74,7 +75,7 @@ typedef struct DIALOG_ICTL_EDIT_XX
 #if RISCOS
     struct DIALOG_ICTL_EDIT_XX_RISCOS
     {
-#ifdef EDIT_XX_SINGLE_LINE_WIMP
+#if defined(EDIT_XX_SINGLE_LINE_WIMP) || defined(EDIT_XX_SINGLE_LINE_WIMP_RO)
         P_U8 slec_buffer;
         U32 slec_buffer_size;
 #endif
@@ -130,7 +131,7 @@ union DIALOG_ICTL_DATA
     struct DIALOG_ICTL_DATA_STATICTEXT
     {
         U32 foo;
-    } statictext, staticframe;
+    } statictext, textlabel, textframe;
 
     struct DIALOG_ICTL_DATA_STATICPICTURE
     {
@@ -434,7 +435,7 @@ internal functions as macros from ob_dlg.c
     msg_ctl_hdr__ref.h_dialog = (p_dialog)->h_dialog; \
     msg_ctl_hdr__ref.dialog_control_id = (p_dialog_ictl)->p_dialog_control->dialog_control_id; \
     msg_ctl_hdr__ref.p_dialog_control = (p_dialog_ictl)->p_dialog_control; \
-    msg_ctl_hdr__ref.p_dialog_control_data = (p_dialog_ictl)->p_dialog_control_data.p_any
+    msg_ctl_hdr__ref.p_dialog_control_data = (p_dialog_ictl)->p_dialog_control_data
 
 /*
 internally exported routines from ob_dlg.c
@@ -674,7 +675,7 @@ dialog_riscos_cache_common_bitmaps(
 
 extern void
 dialog_riscos_dbox_modify_open_type(
-    P_DIALOG p_dialog,
+    _InRef_     P_DIALOG p_dialog,
     _InoutRef_  P_S32 p_type);
 
 _Check_return_
@@ -690,28 +691,28 @@ dialog_riscos_free_cached_bitmaps(
 _Check_return_
 extern STATUS
 dialog_riscos_icon_recreate(
-    P_DIALOG p_dialog,
-    _In_        const WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _InRef_     PC_WimpIconBlockWithBitset p_icon,
     _InoutRef_  P_DIALOG_WIMP_I p_i);
 
 _Check_return_ _Success_(status_ok(return))
 extern STATUS
 dialog_riscos_icon_recreate_prepare(
-    P_DIALOG p_dialog,
-    _Out_       WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _OutRef_    P_WimpIconBlockWithBitset p_icon,
     _InRef_     PC_DIALOG_WIMP_I p_i);
 
 _Check_return_
 extern STATUS
 dialog_riscos_icon_recreate_with(
-    P_DIALOG p_dialog,
-    _Inout_     WimpIconBlockWithBitset * const p_icon,
+    _InRef_     PC_DIALOG p_dialog,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _InoutRef_  P_DIALOG_WIMP_I p_i,
     RESOURCE_BITMAP_HANDLE resource_bitmap_handle);
 
 extern void
 dialog_riscos_icon_redraw_for_encode(
-    P_DIALOG p_dialog,
+    _InoutRef_  P_DIALOG p_dialog,
     _InRef_     PC_DIALOG_WIMP_I p_i,
     _In_        FRAMED_BOX_STYLE border_style,
     _InVal_     S32 encode_bits);
@@ -719,7 +720,7 @@ dialog_riscos_icon_redraw_for_encode(
 /*ncr*/
 extern BOOL
 dialog_riscos_icon_text_setup(
-    WimpIconBlockWithBitset * p_icon,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _In_opt_z_  PC_U8Z p_u8);
 
 _Check_return_

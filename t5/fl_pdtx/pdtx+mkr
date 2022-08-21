@@ -24,14 +24,14 @@ $(PROD_BUILD_DIR).binaries.Neutral.Ob22: $(PROD_BUILD_DIR).o.Neutral.M22 $(PROD_
  $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M22 -N22 $(OBJMUNGE_OBJFLAGS) -Eobject_fl_pdtx
 
 # Windows STRINGTABLE
-$(BUILD_DIR).fl_pdtx.$(COUNTRY)-22/rc: $(T5).resource.zz-msg
+$(BUILD_DIR).fl_pdtx.$(COUNTRY)-22/rc: $(T5).Resources.Neutral.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 22 -common
 
 # RISC OS loaded messages
-# $(T5).resource.zz-msg
+# $(T5).Resources.Neutral.zz-msg
 
 # RISC OS bound messages
-$(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B22: $(T5).resource.zz-msg
+$(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B22: $(T5).Resources.Neutral.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).fl_pdtx.o.$(COUNTRY)-B_tmp -symbol rb_fl_pdtx_msg_weak
 

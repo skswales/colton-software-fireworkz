@@ -113,21 +113,18 @@ drawfile_paint_rectangle_filled(
 ******************************************************************************/
 
 static DRAW_FONT_REF16
-fonty_gr_riscdiag_fontlist_lookup_textstyle(
+fonty_gr_riscdiag_fontlist_lookup_host_font_name(
     P_GR_RISCDIAG p_gr_riscdiag,
     _InVal_     DRAW_DIAG_OFFSET fontListR,
-    _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle,
+    _InVal_     PCTSTR tstrHostFontName,
     _OutRef_    P_BOOL p_found)
 {
-    DRAW_FONT_REF16 fontRefNum = 0; /* will have to use System font unless request matched */
-    HOST_FONT_SPEC host_font_spec;
-    STATUS status = gr_riscdiag_host_font_spec_riscos_from_textstyle(&host_font_spec, p_gr_textstyle);
+    DRAW_FONT_REF16 fontRefNum = 0; /* System font */
 
     *p_found = FALSE;
 
-    if(status_ok(status) && fontListR && array_elements(&host_font_spec.h_host_name_tstr))
+    if(0 != fontListR)
     {
-        PCTSTR tstrHostFontName = array_tstr(&host_font_spec.h_host_name_tstr);
         P_DRAW_OBJECT_FONTLIST pFontListObject = gr_riscdiag_getoffptr(DRAW_OBJECT_FONTLIST, p_gr_riscdiag, fontListR);
         DRAW_DIAG_OFFSET nextObject = fontListR + pFontListObject->size;
         DRAW_DIAG_OFFSET thisOffset = fontListR + sizeof32(*pFontListObject);
@@ -150,6 +147,29 @@ fonty_gr_riscdiag_fontlist_lookup_textstyle(
 
             pFontListElemR = PtrAddBytes(P_DRAW_FONTLIST_ELEM, pFontListElemR, thislen);
         }
+    }
+
+    return(fontRefNum); /* returns the matched font reference, or the last font reference in the list */
+}
+
+static DRAW_FONT_REF16
+fonty_gr_riscdiag_fontlist_lookup_textstyle(
+    P_GR_RISCDIAG p_gr_riscdiag,
+    _InVal_     DRAW_DIAG_OFFSET fontListR,
+    _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle,
+    _OutRef_    P_BOOL p_found)
+{
+    DRAW_FONT_REF16 fontRefNum = 0; /* System font */
+
+    *p_found = FALSE;
+
+    if(0 != fontListR)
+    {
+        HOST_FONT_SPEC host_font_spec;
+        STATUS status = gr_riscdiag_host_font_spec_riscos_from_textstyle(&host_font_spec, p_gr_textstyle);
+
+        if( status_ok(status) && (0 != array_elements(&host_font_spec.h_host_name_tstr)) )
+            fontRefNum = fonty_gr_riscdiag_fontlist_lookup_host_font_name(p_gr_riscdiag, fontListR, array_tstr(&host_font_spec.h_host_name_tstr), p_found);
 
         host_font_spec_dispose(&host_font_spec);
     }
@@ -159,43 +179,64 @@ fonty_gr_riscdiag_fontlist_lookup_textstyle(
 
 _Check_return_
 static STATUS
-ensure_textstyle_in_font_object(
-    _InoutRef_  P_GR_RISCDIAG lookup_gr_riscdiag,
+add_host_font_name_to_lookup_fontlist_object(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag_lookup,
+    _InVal_     PCTSTR tstrHostFontName,
+    _InVal_     DRAW_FONT_REF16 fontRefNum)
+{
+    const PC_SBSTR szHostFontName = _sbstr_from_tstr(tstrHostFontName);
+    const S32 namelen_p1 = strlen32p1(szHostFontName); /*CH_NULL*/
+    const S32 thislen = offsetof32(DRAW_FONTLIST_ELEM, szHostFontName) + namelen_p1;
+    const S32 pad_bytes = ((thislen + (4-1)) & ~(4-1)) - thislen;
+    STATUS status;
+    P_BYTE p_u8;
+
+    assert((fontRefNum != 0) && (fontRefNum < 256));
+
+    /* we have to allocate multiples of 4 */
+    if(NULL != (p_u8 = gr_riscdiag_ensure(BYTE, p_gr_riscdiag_lookup, thislen + pad_bytes, &status)))
+    {
+        {
+        P_DRAW_FONTLIST_ELEM pFontListElemR = (P_DRAW_FONTLIST_ELEM) p_u8;
+        pFontListElemR->fontref8 = (U8) fontRefNum;
+        memcpy32(pFontListElemR->szHostFontName, szHostFontName, namelen_p1);
+        } /*block*/
+
+        /* adjust the font object header. NB size may not be a multiple of 4 */
+        p_u8 = gr_riscdiag_getoffptr(BYTE, p_gr_riscdiag_lookup, p_gr_riscdiag_lookup->dd_fontListR);
+        ((P_DRAW_OBJECT_HEADER_NO_BBOX) p_u8)->size += thislen;
+
+        /* give the remainder back! NB length may not be a multiple of 4 */
+        p_gr_riscdiag_lookup->draw_diag.length -= pad_bytes;
+    }
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+ensure_textstyle_in_lookup_fontlist_object(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag_lookup,
     _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle)
 {
-    /* search for the text style using lookup_gr_riscdiag */
+    /* search for the text style using p_gr_riscdiag_lookup */
     BOOL found;
-    DRAW_FONT_REF16 fontRef = fonty_gr_riscdiag_fontlist_lookup_textstyle(lookup_gr_riscdiag, lookup_gr_riscdiag->dd_fontListR, p_gr_textstyle, &found);
+    DRAW_FONT_REF16 fontRefNum = fonty_gr_riscdiag_fontlist_lookup_textstyle(p_gr_riscdiag_lookup, p_gr_riscdiag_lookup->dd_fontListR, p_gr_textstyle, &found);
 
     if(!found)
     {
         /* not present - best add it, one ref# beyond what's already there */
         HOST_FONT_SPEC host_font_spec;
         STATUS status = gr_riscdiag_host_font_spec_riscos_from_textstyle(&host_font_spec, p_gr_textstyle);
-        if(status_ok(status) && array_elements(&host_font_spec.h_host_name_tstr))
+
+        if( status_ok(status) && (0 != array_elements(&host_font_spec.h_host_name_tstr)) )
         {
-            const PC_SBSTR szHostFontName = _sbstr_from_tstr(array_tstr(&host_font_spec.h_host_name_tstr));
-            const S32 namelen_p1 = strlen32p1(szHostFontName); /*CH_NULL*/
-            const S32 thislen = offsetof32(DRAW_FONTLIST_ELEM, szHostFontName) + namelen_p1;
-            const S32 pad_bytes = ((thislen + (4-1)) & ~(4-1)) - thislen;
-            P_BYTE p_u8;
-            /* we have to allocate multiples of 4 */
-            if(NULL != (p_u8 = gr_riscdiag_ensure(BYTE, lookup_gr_riscdiag, thislen + pad_bytes, &status)))
-            {
-                /* give the remainder back! */
-                lookup_gr_riscdiag->draw_diag.length -= pad_bytes;
-                {
-                P_DRAW_FONTLIST_ELEM pFontListElemR = (P_DRAW_FONTLIST_ELEM) p_u8;
-                pFontListElemR->fontref8 = (U8) (fontRef + 1);
-                memcpy32(pFontListElemR->szHostFontName, szHostFontName, namelen_p1);
-                } /*block*/
-                /* adjust the font object header too */
-                p_u8 = gr_riscdiag_getoffptr(BYTE, lookup_gr_riscdiag, lookup_gr_riscdiag->dd_fontListR);
-                ((P_DRAW_OBJECT_HEADER_NO_BBOX) p_u8)->size += thislen;
-            }
+            status = add_host_font_name_to_lookup_fontlist_object(p_gr_riscdiag_lookup, array_tstr(&host_font_spec.h_host_name_tstr), fontRefNum + 1);
+
             host_font_spec_dispose(&host_font_spec);
         }
-        status_assert(status);
+
+        return(status);
     }
 
     return(STATUS_OK);
@@ -263,7 +304,7 @@ drawfile_paint_uchars(
 
     draw_point_from_pixit_point_and_context(&draw_point, p_pixit_point, p_redraw_context);
 
-    if(status_fail(status = ensure_textstyle_in_font_object(p_redraw_context->lookup_gr_riscdiag, &textstyle)))
+    if(status_fail(status = ensure_textstyle_in_lookup_fontlist_object(p_redraw_context->lookup_gr_riscdiag, &textstyle)))
         return;
 
     if(status_fail(status = gr_riscdiag_string_new_uchars(p_redraw_context->p_gr_riscdiag, &text_start /*filled*/, &draw_point, uchars, uchars_n, &textstyle, textstyle.fg, &bg, p_redraw_context->lookup_gr_riscdiag)))
@@ -287,7 +328,7 @@ static P_BYTE
 gr_riscdiag_path_new_raw(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
     _OutRef_    P_DRAW_DIAG_OFFSET pPathStart,
-    _InVal_     S32 thickness,
+    _InVal_     DRAW_COORD thickness,
     _InRef_opt_ PC_DRAW_DASH_HEADER dash_pattern,
     _InRef_     PC_RGB p_rgb,
     _InVal_     U32 extraBytes,
@@ -348,36 +389,133 @@ extern void
 drawfile_paint_line(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
-    _InVal_     S32 thickness,
+    _InVal_     DRAW_COORD thickness,
     _InRef_opt_ PC_DRAW_DASH_HEADER dash_pattern,
     _InRef_     PC_RGB p_rgb)
 {
     DRAW_BOX draw_box;
-    struct gr_riscdiag_line_guts line;
+    struct gr_riscdiag_line_guts rd_line;
     DRAW_DIAG_OFFSET line_start;
     P_BYTE pLine;
     STATUS status;
+    const DRAW_COORD half_width = thickness >> 1;
 
     draw_box_from_pixit_rect_and_context(&draw_box, p_pixit_rect, p_redraw_context);
 
-    line.pos.tag = DRAW_PATH_TYPE_MOVE;
-    line.pos.pt.x = MIN(draw_box.x0, draw_box.x1);
-    line.pos.pt.y = MIN(draw_box.y0, draw_box.y1);
+    rd_line.pos.tag = DRAW_PATH_TYPE_MOVE;
+    rd_line.pos.pt.x = MIN(draw_box.x0, draw_box.x1);
+    rd_line.pos.pt.y = MIN(draw_box.y0, draw_box.y1);
 
-    line.lineto.tag = DRAW_PATH_TYPE_LINE;
-    line.lineto.pt.x = MAX(draw_box.x0, draw_box.x1);
-    line.lineto.pt.y = MAX(draw_box.y0, draw_box.y1);
+    rd_line.lineto.tag = DRAW_PATH_TYPE_LINE;
+    rd_line.lineto.pt.x = MAX(draw_box.x0, draw_box.x1);
+    rd_line.lineto.pt.y = MAX(draw_box.y0, draw_box.y1);
 
-    line.term.tag = DRAW_PATH_TYPE_TERM;
+    rd_line.term.tag = DRAW_PATH_TYPE_TERM;
 
-    if(NULL != (pLine = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, thickness, dash_pattern, p_rgb, sizeof32(line), &status)))
-        memcpy32(pLine, &line, sizeof32(line));
+    /* put the line down the middle of the rectangle that the line lies in */
+    if(rd_line.pos.pt.y == rd_line.lineto.pt.y)
+    {   /* horizontal line */
+        rd_line.pos.pt.y    -= half_width;
+        rd_line.lineto.pt.y -= half_width;
+    }
+    else if(rd_line.pos.pt.x == rd_line.lineto.pt.x)
+    {   /* vertical line */
+        rd_line.pos.pt.x    += half_width;
+        rd_line.lineto.pt.x += half_width;
+    }
+
+    if(NULL != (pLine = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, thickness, dash_pattern, p_rgb, sizeof32(rd_line), &status)))
+        memcpy32(pLine, &rd_line, sizeof32(rd_line));
 
     if(status_fail(status))
         return;
 }
 
 #endif /* OS */
+
+_Check_return_
+static STATUS
+ensure_diagram_fontlistR_in_lookup_fontlist_object(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag_lookup,
+    _InRef_     PC_GR_RISCDIAG p_gr_riscdiag_source)
+{
+    const DRAW_DIAG_OFFSET fontListR = p_gr_riscdiag_source->dd_fontListR;
+    P_DRAW_OBJECT_FONTLIST pFontListObject = gr_riscdiag_getoffptr(DRAW_OBJECT_FONTLIST, p_gr_riscdiag_source, fontListR);
+    DRAW_DIAG_OFFSET nextObject = fontListR + pFontListObject->size;
+    DRAW_DIAG_OFFSET thisOffset = fontListR + sizeof32(*pFontListObject);
+    assert(0 != p_gr_riscdiag_source->dd_fontListR);
+
+    /* actual end of RISC OS font list object data may not be word aligned */
+    while((nextObject - thisOffset) >= 4)
+    {
+        const PC_DRAW_FONTLIST_ELEM pFontListElemR = gr_riscdiag_getoffptr(DRAW_FONTLIST_ELEM, p_gr_riscdiag_source, thisOffset);
+        const DRAW_DIAG_OFFSET thislen = offsetof32(DRAW_FONTLIST_ELEM, szHostFontName) + strlen32p1(pFontListElemR->szHostFontName); /*CH_NULL*/
+        const PCTSTR tstrHostFontName = _tstr_from_sbstr(pFontListElemR->szHostFontName);
+        BOOL found;
+        DRAW_FONT_REF16 fontRefNum = fonty_gr_riscdiag_fontlist_lookup_host_font_name(p_gr_riscdiag_lookup, p_gr_riscdiag_lookup->dd_fontListR, tstrHostFontName, &found);
+
+        if(!found)
+        {   /* not present - best add it, one ref# beyond what's already there */
+            status_return(add_host_font_name_to_lookup_fontlist_object(p_gr_riscdiag_lookup, tstrHostFontName, fontRefNum + 1));
+        }
+
+        thisOffset += thislen;
+    }
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+ensure_diagram_fonts_in_lookup_fontlist_object(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag_lookup,
+    _In_reads_(diag_len) PC_BYTE p_diag,
+    _InVal_     U32 diag_len)
+{
+    GR_RISCDIAG source_gr_riscdiag;
+    U32 diagLength = diag_len;
+
+    if(NULL == p_diag)
+        return(STATUS_FAIL);
+
+    if(diagLength <= sizeof32(DRAW_FILE_HEADER))
+        return(status_check());
+
+    /* scan the diagram to be copied for font tables - no need to set hglobal */
+    gr_riscdiag_diagram_setup_from_data(&source_gr_riscdiag, p_diag, diag_len);
+
+    {
+    DRAW_DIAG_OFFSET sttObject = DRAW_DIAG_OFFSET_FIRST;
+    DRAW_DIAG_OFFSET endObject = DRAW_DIAG_OFFSET_LAST;
+    P_BYTE pObject;
+
+    if(gr_riscdiag_object_first(&source_gr_riscdiag, &sttObject, &endObject, &pObject, FALSE)) /* flat scan good enough for what I want */
+    {
+        do {
+            switch(*DRAW_OBJHDR(U32, pObject, type))
+            {
+            /* these objects are never grouped */
+            case DRAW_OBJECT_TYPE_FONTLIST:
+                source_gr_riscdiag.dd_fontListR = sttObject;
+/*reportf(TEXT("edf: ") PTR_XTFMT TEXT(" fontListR at %d"), &source_gr_riscdiag, sttObject);*/
+                status_return(ensure_diagram_fontlistR_in_lookup_fontlist_object(p_gr_riscdiag_lookup, &source_gr_riscdiag));
+                break;
+
+            case DRAW_OBJECT_TYPE_DS_WINFONTLIST:
+                source_gr_riscdiag.dd_fontListW = sttObject;
+/*reportf(TEXT("edf: ") PTR_XTFMT TEXT(" fontListW at %d"), &source_gr_riscdiag, sttObject);*/
+                break;
+
+            default:
+                break;
+            }
+        }
+        while(gr_riscdiag_object_next(&source_gr_riscdiag, &sttObject, &endObject, &pObject, FALSE));
+    }
+    } /*block*/
+
+    return(STATUS_OK);
+}
 
 extern void
 drawfile_paint_drawfile(
@@ -414,7 +552,8 @@ drawfile_paint_drawfile(
         draw_box.x1 = draw_box.x0 + draw_coord_scale(bbox.x1 - bbox.x0, gr_scale_pair.x);
         draw_box.y0 = draw_box.y1 - draw_coord_scale(bbox.y1 - bbox.y0, gr_scale_pair.y);
 
-        status = gr_riscdiag_scaled_diagram_add(p_redraw_context->p_gr_riscdiag, &drawfile_start, &draw_box, (P_BYTE) p_draw_file_header, p_draw_diag->length, &fillstyleb, NULL /*fillstylec*/);
+        if(status_ok(status = ensure_diagram_fonts_in_lookup_fontlist_object(p_redraw_context->lookup_gr_riscdiag, (PC_BYTE) p_draw_file_header, p_draw_diag->length)))
+            status = gr_riscdiag_scaled_diagram_add(p_redraw_context->p_gr_riscdiag, &drawfile_start, &draw_box, (PC_BYTE) p_draw_file_header, p_draw_diag->length, &fillstyleb, NULL /*fillstylec*/, p_redraw_context->lookup_gr_riscdiag);
     }
     } /*block*/
 

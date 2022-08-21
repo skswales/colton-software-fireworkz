@@ -278,6 +278,8 @@ os_unit_from_pixit_x(
     return((pixit_x * p_host_xform->scale.t.x) / (PIXITS_PER_RISCOS * p_host_xform->scale.b.x));
 }
 
+#if defined(UNUSED_KEEP_ALIVE)
+
 _Check_return_
 extern GDI_COORD
 os_unit_from_pixit_y(
@@ -286,6 +288,8 @@ os_unit_from_pixit_y(
 {
     return((pixit_y * p_host_xform->scale.t.y) / (PIXITS_PER_RISCOS * p_host_xform->scale.b.y));
 }
+
+#endif /* UNUSED_KEEP_ALIVE */
 
 extern void
 pixit_point_from_window_point(

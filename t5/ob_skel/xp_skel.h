@@ -27,11 +27,11 @@ typedef DOCNO * P_DOCNO;
 typedef U8 PACKED_DOCNO; /* packed version for critical structures */
 #define    DOCNO_BITS 8
 
-#define DOCNO_MAX           ((DOCNO) 255)
-#define DOCNO_NONE          ((DOCNO) 0)
-#define DOCNO_FIRST         ((DOCNO) 1)
-#define DOCNO_CONFIG        ((DOCNO) 1)
-#define DOCNO_SKIP_CONFIG   ((DOCNO) 1) /* start value for docno_enum_docs() to skip config */
+#define DOCNO_MAX           ((DOCNO) 255U)
+#define DOCNO_NONE          ((DOCNO) 0U)
+#define DOCNO_FIRST         ((DOCNO) 1U)
+#define DOCNO_CONFIG        ((DOCNO) 1U)
+#define DOCNO_SKIP_CONFIG   ((DOCNO) 1U) /* start value for docno_enum_docs() to skip config */
 
 #define DOCNO_TFMT          U32_TFMT
 
@@ -99,13 +99,6 @@ typedef        UCHARB             UCHARB_INLINE; /* this is needed to make array
 #include "cmodules/coltsoft/filetype.h"
 #endif
 
-#if WINDOWS
-#define _HdcRef_    _InRef_
-
-#define HDC_ASSERT(hdc) \
-    assert(NULL != hdc);
-#endif /* OS */
-
 /*
 module includes
 */
@@ -145,7 +138,6 @@ basic structure
 
 #define PIXITS_PER_INCH         1440    /* pixits (twips) per inch */
 #define PIXITS_PER_HALF_INCH    720
-#define PIXITS_PER_QUARTER_INCH 360
 #define PIXITS_PER_POINT        20      /* pixits (twips) per point */
 
 #define MILLIPOINTS_PER_PIXIT   50      /* 1000 / 20 */
@@ -181,9 +173,9 @@ typedef S32 PAGE;
 #define MAX_PAGE        0x7FFF
 
 #if RISCOS
-#define  MAX_WMUNIT     0x007FFFFF /* never trust RISC OS Window Manager */
+#define MAX_WMUNIT      0x007FFFFF /* never trust RISC OS Window Manager */
 #else
-#define  MAX_WMUNIT     0x7FFFFFFF
+#define MAX_WMUNIT      0x7FFFFFFF
 #endif
 
 #define LARGECOL        0x7FFFFFFF
@@ -255,6 +247,7 @@ typedef enum OBJECT_ID
     OBJECT_ID_FS_LOTUS123 = 40,
     OBJECT_ID_FS_RTF = 41,
     OBJECT_ID_FS_XLS = 42,
+    OBJECT_ID_FS_OLE = 43,
 
     OBJECT_ID_MAX,              /* for object_call_between() upper limit */
 
@@ -276,6 +269,9 @@ OBJECT_ID, * P_OBJECT_ID;
 #define OBJECT_ID_DECR(object_id__ref) \
     ENUM_DECR(OBJECT_ID, object_id__ref)
 
+#define IS_OBJECT_ID_VALID(object_id) \
+    ((U32) (object_id) < (U32) OBJECT_ID_MAX)
+
 typedef U8 PACKED_OBJECT_ID; /* packed version for critical structures */
 
 #define OBJECT_ID_PACK(__packed_type, object_id) \
@@ -283,9 +279,6 @@ typedef U8 PACKED_OBJECT_ID; /* packed version for critical structures */
 
 #define OBJECT_ID_UNPACK(packed_object_id) \
     ENUM_UNPACK(OBJECT_ID, packed_object_id)
-
-#define IS_OBJECT_ID_VALID(object_id) \
-    ((U32) (object_id) < (U32) OBJECT_ID_MAX)
 
 /*
 definition of messages
@@ -373,9 +366,6 @@ typedef enum T5_MESSAGE
 
     T5_MSG_INSERT_OWNFORM,
     T5_MSG_INSERT_FOREIGN,
-
-    T5_MSG_INSERT_FILE_WINDOWS,
-    T5_MSG_INSERT_FILE_WINDOWS_PICTURE,
 
     T5_MSG_CHOICES_CHANGED,
     T5_MSG_CHOICE_CHANGED,
@@ -533,6 +523,8 @@ typedef enum T5_MESSAGE
     T5_MSG_TABLE_STYLE_ADD,
     T5_MSG_WIN_HOST_NULL,
     T5_MSG_WORD_FROM_THESAURUS,
+    T5_MSG_RENDER_AS_DRAW,
+    T5_MSG_SETUP_FOR_INPUT_FROM_HYBRID_DRAW,
 
     /*******************************************************/
 
@@ -627,7 +619,7 @@ typedef enum T5_MESSAGE
 
     T5_EXT_STYLE_CELL_TYPE = 1000,
     T5_EXT_STYLE_CELL_CURRENT = 1001,
-    T5_EXT_STYLE_MROFMUN = 1010,
+    T5_EXT_STYLE_AUTOFORMAT = 1010,
     T5_EXT_STYLE_STRIPE_ROWS = 1011,
     T5_EXT_STYLE_STRIPE_COLS = 1012,
     T5_EXT_STYLE_RECORDZ = 1066,
@@ -665,6 +657,8 @@ typedef enum T5_MESSAGE
     T5_CMD_OF_HEFO_DATA,
     T5_CMD_OF_HEFO_BASE_REGION,
     T5_CMD_OF_HEFO_REGION,
+
+    T5_CMD_OF_HYBRID_SETUP,
 
     /*******************************************************/
  
@@ -706,12 +700,15 @@ typedef enum T5_MESSAGE
 
     T5_CMD_SET_INTERACTIVE,
 
-    T5_CMD_NEW_DOCUMENT,
+    T5_CMD_NEW_DOCUMENT_INTRO,
+    T5_CMD_NEW_DOCUMENT_DEFAULT,
     T5_CMD_OPEN_DOCUMENT,
     T5_CMD_CLOSE_DOCUMENT_REQ,
 
     T5_CMD_VIEW_CONTROL,
     T5_CMD_VIEW_CONTROL_INTRO,
+    T5_CMD_VIEW_SCALE,
+    T5_CMD_VIEW_SCALE_INTRO,
     T5_CMD_BORDER_TOGGLE,
     T5_CMD_RULER_SCALE,
     T5_CMD_RULER_SCALE_V,
@@ -806,16 +803,19 @@ typedef enum T5_MESSAGE
     T5_CMD_LOAD_TEMPLATE,
     T5_CMD_LOAD_FOREIGN,
 
-    T5_CMD_SAVE_OWNFORM,
+    T5_CMD_INSERT_FILE_WINDOWS,
+    T5_CMD_INSERT_FILE_WINDOWS_PICTURE,
 
-    T5_CMD_SAVE_OWNFORM_AS,
-    T5_CMD_SAVE_OWNFORM_AS_INTRO,
+    T5_CMD_SAVE,
 
-    T5_CMD_SAVE_TEMPLATE,
-    T5_CMD_SAVE_TEMPLATE_INTRO,
+    T5_CMD_SAVE_AS,
+    T5_CMD_SAVE_AS_INTRO,
 
-    T5_CMD_SAVE_FOREIGN,
-    T5_CMD_SAVE_FOREIGN_INTRO,
+    T5_CMD_SAVE_AS_TEMPLATE,
+    T5_CMD_SAVE_AS_TEMPLATE_INTRO,
+
+    T5_CMD_SAVE_AS_FOREIGN,
+    T5_CMD_SAVE_AS_FOREIGN_INTRO,
 
     T5_CMD_SAVE_AS_DRAWFILE,
     T5_CMD_SAVE_AS_DRAWFILE_INTRO,
@@ -823,8 +823,10 @@ typedef enum T5_MESSAGE
     T5_CMD___SAVE_AS_METAFILE,  /* disabled for now */
     T5_CMD___SAVE_AS_METAFILE_INTRO,
 
-    T5_CMD_SAVE_CLIPBOARD,
+    T5_CMD_SAVE_PICTURE,
     T5_CMD_SAVE_PICTURE_INTRO,
+
+    T5_CMD_SAVE_CLIPBOARD,
 
     T5_CMD_PRINT,
     T5_CMD_PRINT_INTRO,
@@ -844,6 +846,9 @@ typedef enum T5_MESSAGE
 
     T5_CMD_SEARCH,
     T5_CMD_SEARCH_INTRO,
+
+    T5_CMD_SEARCH_BUTTON,       /* if DB object is present, try displaying DB query, else fall back to SearchIntro */
+    T5_CMD_SEARCH_BUTTON_ALTERNATE,
 
     T5_CMD_SORT,
     T5_CMD_SORT_INTRO,
@@ -870,7 +875,7 @@ typedef enum T5_MESSAGE
     T5_CMD_REPLICATE_UP,
     T5_CMD_REPLICATE_LEFT,
 
-    T5_CMD_AUTO_SUM,
+    T5_CMD_AUTO_FUNCTION,
 
     T5_CMD_STRADDLE_HORZ,
 
@@ -915,14 +920,18 @@ typedef enum T5_MESSAGE
     T5_CMD_PAGE_HEFO_BREAK_VALUES,
     T5_CMD_PAGE_HEFO_BREAK_VALUES_INTRO,
 
-    T5_CMD_ADD_COLS,
-    T5_CMD_ADD_COLS_INTRO,
-    T5_CMD_ADD_ROWS,
-    T5_CMD_ADD_ROWS_INTRO,
-    T5_CMD_DELETE_COL,
-    T5_CMD_INSERT_COL,
-    T5_CMD_DELETE_ROW,
-    T5_CMD_INSERT_ROW,
+    T5_CMD_COLS_ADD_AFTER,
+    T5_CMD_COLS_ADD_AFTER_INTRO,
+    T5_CMD_COLS_INSERT_BEFORE,
+    T5_CMD_COLS_INSERT_BEFORE_INTRO,
+    T5_CMD_COL_DELETE,
+
+    T5_CMD_ROWS_ADD_AFTER,
+    T5_CMD_ROWS_ADD_AFTER_INTRO,
+    T5_CMD_ROWS_INSERT_BEFORE,
+    T5_CMD_ROWS_INSERT_BEFORE_INTRO,
+    T5_CMD_ROW_DELETE,
+
     T5_CMD_INSERT_TABLE,
     T5_CMD_INSERT_TABLE_INTRO,
 
@@ -943,12 +952,15 @@ typedef enum T5_MESSAGE
     T5_CMD_OBJECT_ENSURE,
 
     T5_CMD_FORCE_RECALC,
+
+    T5_CMD_ACTIVATE_MENU_AUTO_FUNCTION,
     T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR,
     T5_CMD_ACTIVATE_MENU_CHART,
 
     T5_CMD_SS_CONTEXT,
     T5_CMD_SS_EDIT_FORMULA,
     T5_CMD_SS_FUNCTIONS,
+    T5_CMD_SS_FUNCTIONS_SHORT,
     T5_CMD_SS_NAME,
     T5_CMD_SS_NAME_INTRO,
 
@@ -1082,9 +1094,6 @@ typedef enum T5_MESSAGE
     T5_CMD_RECORDZ_GOTO_RECORD,
     T5_CMD_RECORDZ_GOTO_RECORD_INTRO,
 
-    T5_CMD_SEARCH_BUTTON_POSS_DB_QUERIES,
-    T5_CMD_SEARCH_BUTTON_POSS_DB_QUERY,
-
     T5_CMD_RECORDZ_IO_TABLE,
     T5_CMD_RECORDZ_IO_TITLE,
     T5_CMD_RECORDZ_IO_FRAME,
@@ -1110,6 +1119,9 @@ typedef enum T5_MESSAGE
     /*******************************************************/
 
     T5_CMD_TOOLBAR_TOOL,
+
+    T5_CMD_GOTO,
+    T5_CMD_GOTO_INTRO,
 
     /*******************************************************/
 
@@ -1202,16 +1214,42 @@ rgb_compare_not_equals(
     _InRef_     PC_RGB p_rgb_1,
     _InRef_     PC_RGB p_rgb_2)
 {
-    if(p_rgb_1->transparent && p_rgb_2->transparent)
-        return(FALSE); /* same - both transparent */
+#if 1 /* (sizeof(RGB) == 4) && (offsetof(RGB, transparent) == 3) */
+    /* avoid painful byte-by-byte comparison */
+    /* halves the number of ARM instructions and early-out for same */
+    const U32 u32_1 = * (PC_U32) p_rgb_1;
+    const U32 u32_2 = * (PC_U32) p_rgb_2;
 
+    if(u32_1 == u32_2)
+    {
+        /* FALSE (equals) -> completely the same! */
+        return(FALSE);
+    }
+
+    {
+    const U32 u32_transparent_1 = u32_1 & 0xFF000000U;
+    const U32 u32_transparent_2 = u32_2 & 0xFF000000U;
+
+    if(0 == (u32_transparent_1 | u32_transparent_2))
+        /* TRUE (not equals) -> both are solid colours and failed the whole word test */
+        return(TRUE);
+
+    /* TRUE  (not equals) -> one is transparent, but the other one is not */
+    /* FALSE (equals)     -> both are transparent (NB component values are then not relevant) */
+    return(u32_transparent_1 != u32_transparent_2);
+    } /*block*/
+#else
     if(p_rgb_1->transparent != p_rgb_2->transparent)
-        return(TRUE); /* differ - one transparent, one not */
+        return(TRUE); /* differ - one is transparent, the other is not */
+
+    if(p_rgb_1->transparent /* && p_rgb_2->transparent */)
+        return(FALSE); /* same - both are transparent (NB component values are then not relevant) */
 
     /* both are solid colours - any components differ? */
     return( (p_rgb_1->r != p_rgb_2->r) ||
             (p_rgb_1->g != p_rgb_2->g) ||
             (p_rgb_1->b != p_rgb_2->b) );
+#endif
 }
 
 typedef struct PIXIT_POINT
@@ -1775,7 +1813,7 @@ static inline void
 docu_area_init(
     _OutRef_    P_DOCU_AREA p_docu_area)
 {
-    zero_struct_ptr(p_docu_area);
+    zero_struct_ptr_fn(p_docu_area);
     p_docu_area->tl.object_position.object_id = OBJECT_ID_NONE;
     p_docu_area->br.object_position.object_id = OBJECT_ID_NONE;
 }
@@ -1944,7 +1982,7 @@ host specific window and event routines
 
 extern const UINT g_product_id;
 
-extern const PCTSTR dll_store;
+extern const PCTSTR tstr_objects_dll_store;
 
 #if RISCOS
 
@@ -2286,7 +2324,7 @@ typedef struct HOST_XFORM
     struct HOST_XFORM_WINDOWS
     {
         POINT pixels_per_inch; /* pixels per inch */
-        PIXIT_POINT d; /* WINDOWS: pixels per metre */
+        PIXIT_POINT pixels_per_metre; /* WINDOWS: pixels per metre */
         PIXIT_POINT multiplier_of_pixels; /* pixit_point.x = point.x * multiplier_of_pixels.x / divisor_of_pixels.x using precision */
         PIXIT_POINT divisor_of_pixels;
     } windows;
@@ -2380,8 +2418,9 @@ typedef struct REDRAW_CONTEXT
     PIXIT_POINT thin_width_eff;
     REDRAW_CONTEXT_FLAGS flags;
 
-    GDI_SIZE pixels_per_inch;
-    PIXIT_POINT border_width_2;
+#if WINDOWS
+    GDI_SIZE pixels_per_inch; /* not yet set up or used on RISC OS */
+#endif
 
     P_GR_RISCDIAG p_gr_riscdiag; /* SKS 15apr01 GR_DIAG -> SKS 09.05.2006 GR_RISCDIAG*/
     P_GR_RISCDIAG lookup_gr_riscdiag; /* ditto */
@@ -2397,8 +2436,8 @@ typedef struct REDRAW_CONTEXT
 }
 REDRAW_CONTEXT, * P_REDRAW_CONTEXT; typedef const REDRAW_CONTEXT * PC_REDRAW_CONTEXT;
 
-#define   P_REDRAW_CONTEXT_NONE                 _P_DATA_NONE(P_REDRAW_CONTEXT)
-#define IS_REDRAW_CONTEXT_NONE(p_redraw_context) IS_PTR_NONE(p_redraw_context)
+#define P_REDRAW_CONTEXT_NONE                       _P_DATA_NONE(P_REDRAW_CONTEXT)
+#define P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context) PTR_NOT_NONE(p_redraw_context)
 
 typedef enum RULER_MARKER
 {
@@ -2502,6 +2541,12 @@ POINTER_SHAPE, * P_POINTER_SHAPE;
 #define FRAMED_BOX_W31_BUTTON_IN 13
 
 #define FRAMED_BOX_GROUP FRAMED_BOX_CHANNEL_OUT
+
+#if RISCOS
+#define FRAMED_BOX_EDIT_READ_ONLY FRAMED_BOX_TROUGH
+#else
+#define FRAMED_BOX_EDIT_READ_ONLY FRAMED_BOX_EDIT
+#endif
 
 #define FRAMED_BOX_DISABLED 0x80
 
@@ -2621,22 +2666,14 @@ host_paint_start(
 
 typedef struct BORDER_LINE_FLAGS
 {
-    UBF border_style  : 8;
-    UBF add_gw_to_l   : 1;
-    UBF add_gw_to_t   : 1;
-    UBF add_gw_to_r   : 1;
-    UBF add_gw_to_b   : 1;
-    UBF sub_gw_from_l : 1;
-    UBF sub_gw_from_t : 1;
-    UBF sub_gw_from_r : 1;
-    UBF sub_gw_from_b : 1;
-    UBF add_lw_to_l   : 1;
-    UBF add_lw_to_t   : 1;
-    UBF add_lw_to_r   : 1;
-    UBF add_lw_to_b   : 1;
-    UBF reserved      : sizeof(U32)*8 - 12*1 - 8;
+    UBF border_style : 8;
+    UBF add_lw_to_l  : 1;
+    UBF add_lw_to_t  : 1;
+    UBF add_lw_to_r  : 1;
+    UBF add_lw_to_b  : 1;
+    UBF reserved     : sizeof(U32)*8 - 4*1 - 8;
 }
-BORDER_LINE_FLAGS; /* 20 bits so far */
+BORDER_LINE_FLAGS; /* 12 bits so far */
 
 #define CLEAR_BORDER_LINE_FLAGS(flags) \
     zero_32(flags)
@@ -2961,6 +2998,8 @@ host_fonty_text_paint_uchars_in_framed_box(
     _HfontRef_  HOST_FONT host_font);
 #endif
 
+#if RISCOS
+
 _Check_return_
 extern BOOL
 host_xfer_loaded_file_is_safe(void);
@@ -2972,6 +3011,33 @@ host_xfer_saved_file_is_safe(void);
 extern void
 host_xfer_set_saved_file_is_safe(
     _InVal_     BOOL value);
+
+#else
+
+/* There are no scrap file transfers on Windows so files are always safe */
+
+_Check_return_
+static inline BOOL
+host_xfer_loaded_file_is_safe(void)
+{
+    return(true);
+}
+
+_Check_return_
+static inline BOOL
+host_xfer_saved_file_is_safe(void)
+{
+    return(true);
+}
+
+static inline void
+host_xfer_set_saved_file_is_safe(
+    _InVal_     BOOL value)
+{
+    UNREFERENCED_PARAMETER_InVal_(value);
+}
+
+#endif /* OS */
 
 extern void
 host_reenter_window(void);
@@ -3007,11 +3073,6 @@ extern STATUS
 host_setfontcolours_for_mlec(
     _InRef_     PC_RGB p_rgb_foreground,
     _InRef_     PC_RGB p_rgb_background);
-
-extern BOOL
-riscos_colour_picker(
-    HOST_WND    parent_window_handle,
-    _InoutRef_  P_RGB p_rgb);
 
 #endif /* RISCOS */
 
@@ -3323,7 +3384,8 @@ host_dithering_set(
 extern void
 host_get_pixel_size(
     _HwndRef_opt_ HWND hwnd /* NULL for screen */,
-    _OutRef_    PSIZE p_size);
+    _OutRef_opt_  P_GDI_COORD p_size_cx,
+    _OutRef_opt_  P_GDI_COORD p_size_cy);
 
 /* Windows specific code for handling the instance information */
 
@@ -3343,6 +3405,9 @@ extern BOOL
 host_open_global_clipboard(
     _DocuRef_   PC_DOCU p_docu,
     _ViewRef_   PC_VIEW p_view);
+
+extern void
+host_close_global_clipboard(void);
 
 #endif /* USE_GLOBAL_CLIPBOARD */
 
@@ -4025,7 +4090,7 @@ extern void
 drawfile_paint_line(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
-    _InVal_     S32 thickness,
+    _InVal_     DRAW_COORD thickness,
     _InRef_opt_ PC_DRAW_DASH_HEADER dash_pattern,
     _InRef_     PC_RGB p_rgb);
 
@@ -4460,7 +4525,7 @@ typedef S32 IL_TYPE; typedef IL_TYPE * P_IL_TYPE;
 
 typedef struct MULTIPLE_DATA
 {
-    P_ANY p_data;
+    PC_ANY p_data;
     U32 n_bytes;
 }
 MULTIPLE_DATA, * P_MULTIPLE_DATA; typedef const MULTIPLE_DATA * PC_MULTIPLE_DATA;
@@ -5299,6 +5364,23 @@ UI_TEXT, * P_UI_TEXT; typedef const UI_TEXT * PC_UI_TEXT;
 
 #define UI_TEXT_INIT_RESID(resource_id) { UI_TEXT_TYPE_RESID, { (resource_id) } }
 
+static inline void
+ui_text_init_resid(
+    _OutRef_    P_UI_TEXT p_ui_text,
+    _InVal_     STATUS resource_id)
+{
+    p_ui_text->type = UI_TEXT_TYPE_RESID;
+    p_ui_text->text.resource_id = resource_id;
+}
+
+_Check_return_
+static inline UI_TEXT_TYPE
+ui_text_type(
+    _InRef_     PC_UI_TEXT p_ui_text)
+{
+    return(p_ui_text->type);
+}
+
 /*
 these are the known classes of UI data
 */
@@ -5482,8 +5564,8 @@ typedef enum UI_NUMFORM_CLASS
     UI_NUMFORM_CLASS_NUMFORM_NU = 4, /*STYLE_SW_PS_NUMFORM_NU*/
     UI_NUMFORM_CLASS_NUMFORM_DT = 5, /*STYLE_SW_PS_NUMFORM_DT*/
     UI_NUMFORM_CLASS_NUMFORM_SE = 6, /*STYLE_SW_PS_NUMFORM_SE*/
-    UI_NUMFORM_CLASS_FUNCTIONS_SOME = 7,
-    UI_NUMFORM_CLASS_MROFMUN = 8,
+    UI_NUMFORM_CLASS_FUNCTIONS_SHORT = 7,
+    UI_NUMFORM_CLASS_AUTOFORMAT = 8,
     UI_NUMFORM_CLASS_LOAD_TEMPLATE = 9,
     UI_NUMFORM_CLASS_TIME = 10,
 
@@ -5501,7 +5583,7 @@ UI_NUMFORM, * P_UI_NUMFORM; typedef const UI_NUMFORM * PC_UI_NUMFORM;
 
 typedef struct UI_LIST_ENTRY_STYLE
 {
-    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, elemof32("A reasonable style")); /* NB buffer adjacent for fixup */
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 16); /* NB buffer adjacent for fixup */
 }
 UI_LIST_ENTRY_STYLE, * P_UI_LIST_ENTRY_STYLE;
 
@@ -5923,7 +6005,7 @@ static inline void
 process_status_init(
     _OutRef_    P_PROCESS_STATUS p_process_status)
 {
-    zero_struct_ptr(p_process_status);
+    zero_struct_ptr_fn(p_process_status);
 }
 
 extern void
@@ -6484,8 +6566,8 @@ typedef struct STYLE
 }
 STYLE, * P_STYLE, ** P_P_STYLE; typedef const STYLE * PC_STYLE;
 
-#define    P_STYLE_NONE             _P_DATA_NONE(P_STYLE)
-#define IS_P_STYLE_NONE(p_style)     IS_PTR_NONE(p_style)
+#define P_STYLE_NONE                _P_DATA_NONE(P_STYLE)
+#define P_STYLE_NOT_NONE(p_style)   PTR_NOT_NONE(p_style)
 
 static inline void
 style_bit_set(
@@ -6546,18 +6628,6 @@ enum SF_LINE_SPACE
 #define SF_BORDER_BROKEN   3U
 #define SF_BORDER_THICK    4U
 #define SF_BORDER_COUNT    5U
-
-/*
-slr style cache entry
-*/
-
-typedef struct STYLE_CACHE_SLR_ENTRY
-{
-    SLR slr;
-    STYLE style;
-    U8 used;
-}
-STYLE_CACHE_SLR_ENTRY, * P_STYLE_CACHE_SLR_ENTRY;
 
 /*
 style info stored in regions
@@ -7455,10 +7525,12 @@ typedef struct LOAD_CELL_OWNFORM
     OBJECT_DATA     object_data;
     SLR             original_slr;
     S32             data_type;
+
     PC_USTR_INLINE  ustr_inline_contents;
     PC_USTR         ustr_formula;
 
     PCTSTR          tstr_autoformat_style;
+
     REGION          region_saved;
     BOOL            clip_data_from_cut_operation;
 }
@@ -7471,6 +7543,7 @@ typedef struct LOAD_CELL_FOREIGN
     OBJECT_DATA     object_data;
     SLR             original_slr;
     S32             data_type;
+
     PC_USTR_INLINE  ustr_inline_contents;
     PC_USTR         ustr_formula;
 
@@ -7564,10 +7637,13 @@ extern const PCTSTR
 extension_document_tstr;
 
 extern const PCTSTR
+extension_hybrid_draw_tstr;
+
+extern const PCTSTR
 extension_template_tstr;
 
 #if RISCOS
-#define TEMPLATES_SUBDIR TEXT("Template")
+#define TEMPLATES_SUBDIR TEXT("Templates") /* was Template prior to 2.30 */
 #else
 #define TEMPLATES_SUBDIR TEXT("Templates")
 #endif
@@ -7740,9 +7816,6 @@ object_id_from_construct_id(
     _OutRef_    P_OBJECT_ID p_object_id);
 
 extern void
-of_load_prepare_first_template(void);
-
-extern void
 of_load_S32_arg_offset_as_COL(
     _InRef_     P_OF_IP_FORMAT p_of_ip_format,
     _InoutRef_  P_ARGLIST_ARG p_arg);
@@ -7769,6 +7842,30 @@ register_object_construct_table(
     _InVal_     OBJECT_ID object_id,
     _InRef_     P_CONSTRUCT_TABLE p_construct_table /*data sorted*/,
     _InVal_     BOOL needs_help);
+
+_Check_return_
+extern STATUS
+table_invent_style_name(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_STYLE p_style_table);
+
+_Check_return_
+extern STATUS
+table_apply_style_basetable(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     PC_DOCU_AREA p_docu_area_table);
+
+extern void
+table_add_some_style_elements(
+    _DocuRef_   PC_DOCU p_docu,
+    _InoutRef_  P_STYLE p_style_table,
+    _InRef_     PC_STYLE p_style_base_table);
+
+extern void
+table_cols_add_some_style_elements(
+    _DocuRef_   PC_DOCU p_docu,
+    _InoutRef_  P_STYLE p_style_cols,
+    _InRef_     PC_STYLE p_style_base_table);
 
 /*
 foreign
@@ -7820,22 +7917,33 @@ enumerate_bound_filetypes(
     _InoutRef_  P_ARRAY_INDEX p_array_index,
     _InVal_     S32 mask);
 
-_Check_return_
-_Ret_z_
+_Ret_z_ _Check_return_
 extern PC_USTR
 description_ustr_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype,
     _OutRef_    P_BOOL p_found);
 
-_Check_return_
-_Ret_z_
-extern PC_USTR
-extension_srch_ustr_from_t5_filetype(
+_Ret_z_ _Check_return_
+extern PCTSTR
+extension_tstr_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype,
     _OutRef_    P_BOOL p_found);
 
-_Check_return_
-_Ret_maybenull_
+WINDOWS_ONLY( _Ret_z_ _Check_return_
+extern PCTSTR
+filter_text_tstr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     S32 mask,
+    _OutRef_    P_BOOL p_found); )
+
+WINDOWS_ONLY( _Ret_z_ _Check_return_
+extern PCTSTR
+filter_wildcard_tstr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     S32 mask,
+    _OutRef_    P_BOOL p_found); )
+
+_Ret_maybenull_ _Check_return_
 extern PCTSTR
 foreign_template_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype);
@@ -7864,7 +7972,8 @@ t5_filetype_from_filename(
 _Check_return_
 extern OBJECT_ID
 object_id_from_t5_filetype(
-    _InVal_     T5_FILETYPE t5_filetype);
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     BOOL fInserting);
 
 /*
 sk_stylg.c
@@ -7882,7 +7991,7 @@ typedef struct GRID_LINE_STYLE
     BORDER_LINE_FLAGS border_line_flags;
     RGB rgb;
 }
-GRID_LINE_STYLE, * P_GRID_LINE_STYLE;
+GRID_LINE_STYLE, * P_GRID_LINE_STYLE; typedef const GRID_LINE_STYLE * PC_GRID_LINE_STYLE;
 
 typedef struct GRID_FLAGS
 {
@@ -7972,7 +8081,7 @@ style_grid_block_init(
 
 extern COL
 style_grid_from_grid_block_h(
-    P_GRID_LINE_STYLE p_grid_line_style,
+    _OutRef_    P_GRID_LINE_STYLE p_grid_line_style,
     P_GRID_BLOCK p_grid_block,
     _InVal_     COL col,
     _InVal_     ROW row,
@@ -7980,7 +8089,7 @@ style_grid_from_grid_block_h(
 
 extern ROW
 style_grid_from_grid_block_v(
-    P_GRID_LINE_STYLE p_grid_line_style,
+    _OutRef_    P_GRID_LINE_STYLE p_grid_line_style,
     P_GRID_BLOCK p_grid_block,
     _InVal_     COL col,
     _InVal_     ROW row,
@@ -8070,21 +8179,25 @@ SAVE_FILETYPE, * P_SAVE_FILETYPE; typedef const SAVE_FILETYPE * PC_SAVE_FILETYPE
 
 typedef struct OF_TEMPLATE
 {
-    UBF used_styles      : 1;
-    UBF unused_styles    : 1;
-    UBF version          : 1;
-    UBF _____unused      : 1;
-    UBF key_defn         : 1;
-    UBF menu_struct      : 1;
-    UBF views            : 1;
-    UBF data_class       : 2; /* derived during save */
-    UBF ruler_scale      : 1;
-    UBF note_layer       : 1;
-    UBF numform_context  : 1;
-    UBF paper            : 1;
-    UBF _spare           : 3;
+    UBF data_class      : 2; /* derived during save */
+    UBF used_styles     : 1;
+    UBF unused_styles   : 1;
+    UBF version         : 1;
+    UBF key_defn        : 1;
+    UBF menu_struct     : 1;
+    UBF views           : 1;
 
-    UBF _spare_16        : 16;
+    UBF ruler_scale     : 1;
+    UBF note_layer      : 1;
+    UBF numform_context : 1;
+    UBF paper           : 1;
+    UBF _spare_csbl     : 4;
+
+    UBF _spare_csbh     : 8;
+
+    /* these ones are normally zero, set exceptionally */
+    UBF _spare_msb      : 8;
+
     /* must be 32 bits total */
 }
 OF_TEMPLATE; typedef const OF_TEMPLATE * PC_OF_TEMPLATE;
@@ -8095,6 +8208,8 @@ typedef struct OF_OP_FORMAT
 
     DOCNO               docno;
     U8                  _spare_1[3];
+
+    T5_FILETYPE         t5_filetype;
 
     DOCU_AREA           save_docu_area;         /* originally specified save area */
 
@@ -8115,7 +8230,7 @@ typedef struct OF_OP_FORMAT
 }
 OF_OP_FORMAT, * P_OF_OP_FORMAT;
 
-#define OF_OP_FORMAT_INIT { OP_FORMAT_OUTPUT_INIT, 0, 0, 0, 0, { 0 }, PROCESS_STATUS_INIT }
+#define OF_OP_FORMAT_INIT { OP_FORMAT_OUTPUT_INIT, 0, 0, 0, 0, FILETYPE_UNDETERMINED, { 0 }, PROCESS_STATUS_INIT }
 
 /* Save construct request */
 
@@ -8155,17 +8270,18 @@ typedef enum T5_MSG_SAVE_MESSAGE
 {
     T5_MSG_SAVE__SAVE_STARTED,
 
+    T5_MSG_SAVE__PRE_SAVE_0,
     T5_MSG_SAVE__PRE_SAVE_1,
     T5_MSG_SAVE__PRE_SAVE_2,
     T5_MSG_SAVE__PRE_SAVE_3,
 
-    T5_MSG_SAVE__POST_SAVE_1,
-    T5_MSG_SAVE__POST_SAVE_2,
-    T5_MSG_SAVE__POST_SAVE_3,
-
     T5_MSG_SAVE__DATA_SAVE_1,
     T5_MSG_SAVE__DATA_SAVE_2,
     T5_MSG_SAVE__DATA_SAVE_3,
+
+    T5_MSG_SAVE__POST_SAVE_1,
+    T5_MSG_SAVE__POST_SAVE_2,
+    T5_MSG_SAVE__POST_SAVE_3,
 
     T5_MSG_SAVE__SAVE_ENDED
 }
@@ -8323,6 +8439,15 @@ typedef struct MSG_SAVE_PICTURE_FILETYPES_REQUEST
     uintptr_t           extra;
 }
 MSG_SAVE_PICTURE_FILETYPES_REQUEST, * P_MSG_SAVE_PICTURE_FILETYPES_REQUEST;
+
+typedef struct MSG_RENDER_AS_DRAW
+{
+    T5_FILETYPE t5_filetype;    /*in*/
+    PCTSTR tstr_page_range;     /*in*/
+
+    ARRAY_HANDLE array_handle;  /*out*/
+}
+MSG_RENDER_AS_DRAW, * P_MSG_RENDER_AS_DRAW;
 
 /*
 reperr.c
@@ -8582,21 +8707,6 @@ t5_ucs4_is_decimal_digit(_InVal_ UCS4 ucs4)
 #if USTR_IS_SBSTR
 _Check_return_
 static inline BOOL
-t5_ucs4_is_hexadecimal_digit(_InVal_ UCS4 ucs4)
-{
-    if(!ucs4_is_sbchar(ucs4))
-        return(FALSE);
-
-    return(sbchar_isxdigit((U8) ucs4));
-}
-#else
-#define t5_ucs4_is_hexadecimal_digit(ucs4) \
-    ucs4_is_hexadecimal_digit(ucs4)
-#endif
-
-#if USTR_IS_SBSTR
-_Check_return_
-static inline BOOL
 t5_ucs4_is_lowercase(_InVal_ UCS4 ucs4)
 {
     if(!ucs4_is_sbchar(ucs4))
@@ -8822,6 +8932,7 @@ typedef struct GLOBAL_PREFERENCES
     BOOL ss_calc_manual;
     BOOL ss_calc_on_load;
     BOOL ss_calc_additional_rounding;
+    BOOL ss_calc_try_IEEE_maths;
     BOOL ss_edit_in_cell;
     BOOL ss_alternate_formula_style;
 
@@ -9013,8 +9124,8 @@ p_docu_from_docno_valid(
     _InVal_     DOCNO docno)
 {
     const P_DOCU p_docu = p_docu_from_docno(docno);
-    CHECKING_ONLY(if(IS_PTR_NULL_OR_NONE(p_docu)) myDebugBreak());
-    __analysis_assume(p_docu);
+    CHECKING_ONLY(if(PTR_IS_NULL_OR_NONE(p_docu)) myDebugBreak());
+    _Analysis_assume_(p_docu);
     return(p_docu);
 }
 
@@ -9265,6 +9376,7 @@ typedef struct PAGE_HEFO_BREAK
     CLIENT_HANDLE uref_client_handle;
     UREF_HANDLE uref_handle;
     REGION region;
+
     U8 is_deleted;
     U8 _spare[3];
 }
@@ -9579,7 +9691,12 @@ UREF_PARMS, * P_UREF_PARMS;
 
 typedef struct UREF_EVENT_BLOCK_REASON
 {
+#if 1
+    /* only need four bits but what the heck - saves AND on unpacking everywhere */
+    U32 code;
+#else
     UBF code : 4;
+#endif
 }
 UREF_EVENT_BLOCK_REASON;
 
@@ -9668,6 +9785,12 @@ uref_match_slr(
     _InoutRef_  P_SLR p_slr,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
+
+_Check_return_
+_Ret_z_
+extern PCTSTR
+uref_report_message(
+    _InVal_     UREF_MESSAGE uref_message);
 
 #if TRACE_ALLOWED
 
@@ -10396,7 +10519,7 @@ view_cmd_showhide_paper(
     _InVal_     S32 show);
 
 extern void
-view_set_zoom_from_wheel_delta(
+view_set_scale_from_wheel_delta(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     S32 delta);
@@ -10569,9 +10692,10 @@ typedef enum MENU_ROOT_ID
 
     MENU_ROOT_DOCU = MENU_ROOT_ID_FIRST,
     MENU_ROOT_ICON_BAR = 1, /* RISC OS */
-    MENU_ROOT_FUNCTION_SELECTOR = 2,
-    MENU_ROOT_CHART = 3,
-    MENU_ROOT_CHART_EDIT = 4,
+    MENU_ROOT_AUTO_FUNCTION = 2,
+    MENU_ROOT_FUNCTION_SELECTOR = 3,
+    MENU_ROOT_CHART = 4,
+    MENU_ROOT_CHART_EDIT = 5,
 
     MENU_ROOT_MAX
 }
@@ -10690,7 +10814,7 @@ typedef struct DATA_REF_NAME_COMPARE
 {
     DOCNO docno;
     DATA_REF data_ref;
-    P_U8 p_compound_name;
+    PC_U8Z p_compound_name;
     S32 result;
 }
 DATA_REF_NAME_COMPARE, * P_DATA_REF_NAME_COMPARE;
@@ -11664,17 +11788,23 @@ struct DOCU
 
     DOCU_NAME docu_name;
 
-    SS_DATE file_ss_date;
-
     DOCNO docno;
     VIEWNO viewno_caret;                /* the view that would like the caret and input focus */
     U8 region_class_limit;
-    U8 _spare_u8_here;
+    TAB_TYPE insert_tab_type;
 
     OBJECT_ID object_id_flow;           /* flow structure object id */
     OBJECT_ID focus_owner;              /* owner of input focus: head/foot/cells */
 
     S32 modified;                       /* modified index number (0=unmodified) */
+
+    SS_DATE file_ss_date;
+
+    T5_FILETYPE docu_preferred_filetype;
+
+    PTSTR tstr_hybrid_draw_page_range;
+
+    S32 auto_save_period_minutes;
 
     ARRAY_HANDLE h_maeve_table;         /* handle to master event table */
 
@@ -11723,11 +11853,6 @@ struct DOCU
     DATA_REF mark_focus_hefo;           /* hefo marker focus indicator */
     HEFO_POSITION hefo_position;        /* current position in header/footer */
 
-    TAB_TYPE insert_tab_type;
-    U8 _spare_u8[3];
-
-    S32 auto_save_period_minutes;
-
     ARRAY_HANDLE h_arglist_search;      /* arglist for search */
 
     LIST_BLOCK defined_keys;
@@ -11738,7 +11863,7 @@ struct DOCU
     P_NUMFORM_CONTEXT p_numform_context;
     ARRAY_HANDLE numforms;              /* for UI */
 
-    ARRAY_HANDLE h_mrofmun;             /* array of mrofmun entries */
+    ARRAY_HANDLE h_mrofmun;             /* array of mrofmun strings for autoformat */
 
     SCALE_INFO scale_info;              /* ruler scale */
     SCALE_INFO vscale_info;
@@ -11790,15 +11915,17 @@ struct DOCU
 
 /* no longer rounded out in size as it's referenced by a pointer in the doc table (which is now private to sk_docno.c) */
 
-#define  P_DOCU_NONE                    PTR_NONE_X(P_DOCU, 2)
-#define IS_DOCU_NONE(p_docu)         IS_PTR_NONE_X(P_DOCU, 2, p_docu)
-#define    DOCU_ASSERT(p_docu) \
-    assert(!IS_DOCU_NONE(p_docu))
+#define   P_DOCU_NONE                   PTR_NONE_X(P_DOCU, 2)
+#define  IS_DOCU_NONE(p_docu)        PTR_IS_NONE_X(P_DOCU, 2, p_docu)
+#define DOCU_NOT_NONE(p_docu)       PTR_NOT_NONE_X(P_DOCU, 2, p_docu)
+#define DOCU_ASSERT(p_docu)             assert(DOCU_NOT_NONE(p_docu))
 
-#define  P_VIEW_NONE                    PTR_NONE_X(P_VIEW, 3)
-#define IS_VIEW_NONE(p_view)         IS_PTR_NONE_X(P_VIEW, 3, p_view)
-#define    VIEW_ASSERT(p_view) \
-    assert(!IS_VIEW_NONE(p_view))
+#define   P_VIEW_NONE                   PTR_NONE_X(P_VIEW, 3)
+#define  IS_VIEW_NONE(p_view)        PTR_IS_NONE_X(P_VIEW, 3, p_view)
+#define VIEW_NOT_NONE(p_view)       PTR_NOT_NONE_X(P_VIEW, 3, p_view)
+#define VIEW_ASSERT(p_view)             assert(VIEW_NOT_NONE(p_view))
+
+/* p_object_instance_data_SS only used in evaluator */
 
 #if RISCOS
 
@@ -12350,6 +12477,21 @@ extern void
 page_def_validate(
     _InoutRef_  P_PAGE_DEF p_page_def);
 
+_Check_return_
+extern STATUS
+print_page_list_add_range(
+    _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
+    _InVal_     S32 x0,
+    _InVal_     S32 y0,
+    _InVal_     S32 x1,
+    _InVal_     S32 y1);
+
+_Check_return_
+extern STATUS
+print_page_list_fill_from_tstr(
+    _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
+    _In_z_      PCTSTR tstr);
+
 extern void
 print_percentage_finalise(
     _InoutRef_  P_PRINTER_PERCENTAGE p_printer_percentage);
@@ -12369,31 +12511,10 @@ print_percentage_reflect(
     _InoutRef_  P_PRINTER_PERCENTAGE p_printer_percentage,
     _InVal_     S32 sub_percentage);
 
-extern U32 /* used */
-get_pagenum(
-    _In_z_      PCTSTR tstr_in,
-    _OutRef_    P_PAGE_NUM p_page_num);
+extern BITMAP(print_page_range_edit_validation, 256);
 
-_Check_return_
-extern  STATUS
-pagelist_add_blank(
-    _InoutRef_  P_ARRAY_HANDLE p_h_page_list);
-
-_Check_return_
-extern STATUS
-pagelist_add_page(
-    _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
-    _InVal_     S32 x,
-    _InVal_     S32 y);
-
-_Check_return_
-extern STATUS
-pagelist_add_range(
-    _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
-    _InVal_     S32 x0,
-    _InVal_     S32 y0,
-    _InVal_     S32 x1,
-    _InVal_     S32 y1);
+extern void
+print_page_range_edit_validation_setup(void);
 
 /* >>>>>>>>>>>>this wants removing soon 18.2.94 */
 #ifndef          __sk_col_h
@@ -12415,10 +12536,12 @@ t5_cmd_activate_menu(
 sk_find.c
 */
 
-T5_CMD_PROTO(extern, t5_cmd_search_button_poss_db_queries);
-T5_CMD_PROTO(extern, t5_cmd_search_button_poss_db_query);
+T5_CMD_PROTO(extern, t5_cmd_search_button);
+T5_CMD_PROTO(extern, t5_cmd_search_button_alternate);
 T5_CMD_PROTO(extern, t5_cmd_search_intro);
 T5_CMD_PROTO(extern, t5_cmd_search_do);
+
+T5_CMD_PROTO(extern, t5_cmd_goto_intro);
 
 /*
 sk_table.c
@@ -12452,7 +12575,6 @@ enum ARG_CELL
 
     ARG_CELL_CONTENTS,
     ARG_CELL_FORMULA,
-
     ARG_CELL_AUTOFORMAT_STYLE,
 
     ARG_CELL_N_ARGS

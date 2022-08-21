@@ -95,7 +95,7 @@ remove_query_remove =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
-remove_query_remove_data = { { REGION_EDIT_COMPLETION_REMOVE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_DELETE), REGION_EDIT_COMPLETION_REMOVE_PERSIST };
+remove_query_remove_data = { { REGION_EDIT_COMPLETION_REMOVE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_DELETE), REGION_EDIT_COMPLETION_REMOVE_PERSIST };
 
 /*
 cancel
@@ -116,10 +116,10 @@ remove_query_cancel =
 static const DIALOG_CTL_CREATE
 remove_query_ctl_create[] =
 {
-    { &remove_query_in,      &remove_query_in_data      },
-    { &remove_query_out,     &remove_query_out_data     },
-    { &remove_query_remove,  &remove_query_remove_data  },
-    { &remove_query_cancel,  &stdbutton_cancel_data }
+    { { &remove_query_in },      &remove_query_in_data      },
+    { { &remove_query_out },     &remove_query_out_data     },
+    { { &remove_query_remove },  &remove_query_remove_data  },
+    { { &remove_query_cancel },  &stdbutton_cancel_data }
 };
 
 typedef struct UI_REMOVE_CALLBACK
@@ -156,6 +156,21 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_ui_remove)
     }
 }
 
+_Check_return_
+static STATUS
+cmd_style_region_edit_dialog(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_UI_REMOVE_CALLBACK p_ui_remove_callback)
+{
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, remove_query_ctl_create, elemof32(remove_query_ctl_create), SKEL_SPLIT_MSG_DIALOG_REGION_EDIT_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_REGION_EDIT_HELP_TOPIC;
+    dialog_cmd_process_dbox.bits.note_position = 1;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_ui_remove;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_ui_remove_callback;
+    return(/*remove_action*/ object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
 T5_CMD_PROTO(extern, t5_cmd_style_region_edit)
 {
     STATUS status = STATUS_OK;
@@ -185,7 +200,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_region_edit)
 
         if((new_ix = style_docu_area_choose(&p_docu->h_style_docu_area, p_docu_area, p_position, action, ix)) >= 0)
         {
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
             quick_ublock_with_buffer_setup(quick_ublock);
 
             p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, new_ix);
@@ -223,19 +238,10 @@ T5_CMD_PROTO(extern, t5_cmd_style_region_edit)
 
             {
             UI_REMOVE_CALLBACK ui_remove_callback;
-            DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-
             ui_remove_callback.in = ix > bottom_ix;
             ui_remove_callback.out = top_ix > 0 && ix < top_ix;
             ui_remove_callback.removable = !p_style_docu_area->base;
-
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, remove_query_ctl_create, elemof32(remove_query_ctl_create), SKEL_SPLIT_MSG_DIALOG_REGION_EDIT_HELP_TOPIC);
-            /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-            dialog_cmd_process_dbox.caption.text.resource_id = SKEL_SPLIT_MSG_DIALOG_REGION_EDIT_CAPTION;
-            dialog_cmd_process_dbox.bits.note_position = 1;
-            dialog_cmd_process_dbox.p_proc_client = dialog_event_ui_remove;
-            dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &ui_remove_callback;
-            remove_action = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+            remove_action = cmd_style_region_edit_dialog(p_docu, &ui_remove_callback);
             } /*block*/
 
             switch(remove_action)
@@ -347,7 +353,7 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 box_ok_command = { T5_CMD_BOX, OBJECT_ID_SKEL, NULL, box_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-box_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &box_ok_command };
+box_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &box_ok_command };
 
 /*
 main 'group'
@@ -363,7 +369,7 @@ box_all =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_all_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_ALL), DIALOG_BUTTONSTATE_ON /*state*/ };
+box_all_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_ALL), DIALOG_BUTTONSTATE_ON /*state*/ };
 
 static const DIALOG_CONTROL
 box_outside =
@@ -375,7 +381,7 @@ box_outside =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_outside_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_OUTSIDE) };
+box_outside_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_OUTSIDE) };
 
 static const DIALOG_CONTROL
 box_V_group =
@@ -387,7 +393,7 @@ box_V_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-box_V_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_V), { FRAMED_BOX_GROUP } };
+box_V_group_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_V), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 box_V_all =
@@ -399,7 +405,7 @@ box_V_all =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_V_all_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_ALL) };
+box_V_all_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_ALL) };
 
 static const DIALOG_CONTROL
 box_V_l =
@@ -411,7 +417,7 @@ box_V_l =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_V_l_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_L) };
+box_V_l_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_L) };
 
 static const DIALOG_CONTROL
 box_V_r =
@@ -423,7 +429,7 @@ box_V_r =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_V_r_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_R) };
+box_V_r_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_R) };
 
 static const DIALOG_CONTROL
 box_H_group =
@@ -435,7 +441,7 @@ box_H_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-box_H_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_H), { FRAMED_BOX_GROUP } };
+box_H_group_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_H), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 box_H_all =
@@ -447,7 +453,7 @@ box_H_all =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_H_all_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_ALL) };
+box_H_all_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_ALL) };
 
 static const DIALOG_CONTROL
 box_H_t =
@@ -459,7 +465,7 @@ box_H_t =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_H_t_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_T) };
+box_H_t_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_T) };
 
 static const DIALOG_CONTROL
 box_H_b =
@@ -471,7 +477,7 @@ box_H_b =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-box_H_b_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_B) };
+box_H_b_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_B) };
 
 /*
 RGB container
@@ -500,98 +506,106 @@ box_line_group =
 };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
-box_line_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE), { FRAMED_BOX_GROUP } };
+box_line_group_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_LINE_STYLE), { FRAMED_BOX_GROUP } };
 
 static const DIALOG_CONTROL
 box_line[5] =
 {
     {
-        BOX_ID_LINE_0, BOX_ID_LINE_GROUP, { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-        { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
+        BOX_ID_LINE_0, BOX_ID_LINE_GROUP,
+        { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+        { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, LINE_STYLE_H, LINE_STYLE_V },
+        { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
     },
 
     {
         BOX_ID_LINE_1, BOX_ID_LINE_GROUP, { BOX_ID_LINE_0, BOX_ID_LINE_0, DIALOG_CONTROL_SELF, BOX_ID_LINE_0 },
-        { 0, 0, LINE_STYLE_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
-    },
-
-
-    {
-        BOX_ID_LINE_2, BOX_ID_LINE_GROUP, { BOX_ID_LINE_1, BOX_ID_LINE_1, DIALOG_CONTROL_SELF, BOX_ID_LINE_1 },
-        { 0, 0, LINE_STYLE_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { 0, 0, LINE_STYLE_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     },
 
     {
-        BOX_ID_LINE_3, BOX_ID_LINE_GROUP, { BOX_ID_LINE_1, BOX_ID_LINE_1, BOX_ID_LINE_1 },
-        { 0, 0, 0, LINE_STYLE_V }, { DRT(LBRT, RADIOPICTURE) }
+        BOX_ID_LINE_2, BOX_ID_LINE_GROUP,
+        { BOX_ID_LINE_1, BOX_ID_LINE_1, DIALOG_CONTROL_SELF, BOX_ID_LINE_1 },
+        { 0, 0, LINE_STYLE_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     },
 
     {
-        BOX_ID_LINE_4, BOX_ID_LINE_GROUP, { BOX_ID_LINE_3, BOX_ID_LINE_3, DIALOG_CONTROL_SELF, BOX_ID_LINE_3 },
-        { 0, 0, LINE_STYLE_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        BOX_ID_LINE_3, BOX_ID_LINE_GROUP,
+        { BOX_ID_LINE_1, BOX_ID_LINE_1, BOX_ID_LINE_1 },
+        { 0, 0, 0, LINE_STYLE_V },
+        { DRT(LBRT, RADIOPICTURE) }
+    },
+
+    {
+        BOX_ID_LINE_4, BOX_ID_LINE_GROUP,
+        { BOX_ID_LINE_3, BOX_ID_LINE_3, DIALOG_CONTROL_SELF, BOX_ID_LINE_3 },
+        { 0, 0, LINE_STYLE_H, 0 },
+        { DRT(RTLB, RADIOPICTURE) }
     }
 };
 
 static const DIALOG_CTL_CREATE
 box_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &dialog_col1_group },
+    { { &dialog_col1_group }, NULL },
 
-    { &box_all,        &box_all_data },
-    { &box_outside,    &box_outside_data },
-    { &box_V_group,    &box_V_group_data },
-    { &box_V_all,      &box_V_all_data },
-    { &box_V_l,        &box_V_l_data },
-    { &box_V_r,        &box_V_r_data },
-    { &box_H_group,    &box_H_group_data },
-    { &box_H_all,      &box_H_all_data },
-    { &box_H_t,        &box_H_t_data },
-    { &box_H_b,        &box_H_b_data },
+    { { &box_all },        &box_all_data },
+    { { &box_outside },    &box_outside_data },
+    { { &box_V_group },    &box_V_group_data },
+    { { &box_V_all },      &box_V_all_data },
+    { { &box_V_l },        &box_V_l_data },
+    { { &box_V_r },        &box_V_r_data },
+    { { &box_H_group },    &box_H_group_data },
+    { { &box_H_all },      &box_H_all_data },
+    { { &box_H_t },        &box_H_t_data },
+    { { &box_H_b },        &box_H_b_data },
 
-    { &box_line_group, &box_line_group_data },
-    { &box_line[0], &line_style_data[0] },
-    { &box_line[1], &line_style_data[1] },
-    { &box_line[2], &line_style_data[2] },
-    { &box_line[3], &line_style_data[3] },
-    { &box_line[4], &line_style_data[4] },
+    { { &box_line_group }, &box_line_group_data },
+    { { &box_line[0] }, &line_style_data[0] },
+    { { &box_line[1] }, &line_style_data[1] },
+    { { &box_line[2] }, &line_style_data[2] },
+    { { &box_line[3] }, &line_style_data[3] },
+    { { &box_line[4] }, &line_style_data[4] },
 
-    { &dialog_col2_group },
+    { { &dialog_col2_group }, NULL },
 
-    { &rgb_group,  &rgb_group_data },
-    { &rgb_group_inner },
+    { { &rgb_group },  &rgb_group_data },
+    { { &rgb_group_inner }, NULL },
 
-    { &rgb_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] },
-    { &rgb_bump[RGB_TX_IX_R], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] },
-    { &rgb_bump[RGB_TX_IX_G], &rgb_bump_data },
-    { &rgb_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] },
-    { &rgb_bump[RGB_TX_IX_B], &rgb_bump_data },
-    { &rgb_patch,      &rgb_patch_data },
+    { { &rgb_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] },
+    { { &rgb_bump[RGB_TX_IX_R] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] },
+    { { &rgb_bump[RGB_TX_IX_G] }, &rgb_bump_data },
+    { { &rgb_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] },
+    { { &rgb_bump[RGB_TX_IX_B] }, &rgb_bump_data },
+    { { &rgb_patch },      &rgb_patch_data },
 
-    { &rgb_button,      &rgb_button_data },
+    { { &rgb_button },      &rgb_button_data },
 
-    { &rgb_patches[0],  &rgb_patches_data[0] },
-    { &rgb_patches[1],  &rgb_patches_data[1] },
-    { &rgb_patches[2],  &rgb_patches_data[2] },
-    { &rgb_patches[3],  &rgb_patches_data[3] },
-    { &rgb_patches[4],  &rgb_patches_data[4] },
-    { &rgb_patches[5],  &rgb_patches_data[5] },
-    { &rgb_patches[6],  &rgb_patches_data[6] },
-    { &rgb_patches[7],  &rgb_patches_data[7] },
-    { &rgb_patches[8],  &rgb_patches_data[8] },
-    { &rgb_patches[9],  &rgb_patches_data[9] },
-    { &rgb_patches[10], &rgb_patches_data[10] },
-    { &rgb_patches[11], &rgb_patches_data[11] },
-    { &rgb_patches[12], &rgb_patches_data[12] },
-    { &rgb_patches[13], &rgb_patches_data[13] },
-    { &rgb_patches[14], &rgb_patches_data[14] },
-    { &rgb_patches[15], &rgb_patches_data[15] },
+    { { &rgb_patches[0] },  &rgb_patches_data[0] },
+    { { &rgb_patches[1] },  &rgb_patches_data[1] },
+    { { &rgb_patches[2] },  &rgb_patches_data[2] },
+    { { &rgb_patches[3] },  &rgb_patches_data[3] },
+    { { &rgb_patches[4] },  &rgb_patches_data[4] },
+    { { &rgb_patches[5] },  &rgb_patches_data[5] },
+    { { &rgb_patches[6] },  &rgb_patches_data[6] },
+    { { &rgb_patches[7] },  &rgb_patches_data[7] },
+    { { &rgb_patches[8] },  &rgb_patches_data[8] },
+    { { &rgb_patches[9] },  &rgb_patches_data[9] },
+    { { &rgb_patches[10] }, &rgb_patches_data[10] },
+    { { &rgb_patches[11] }, &rgb_patches_data[11] },
+    { { &rgb_patches[12] }, &rgb_patches_data[12] },
+    { { &rgb_patches[13] }, &rgb_patches_data[13] },
+    { { &rgb_patches[14] }, &rgb_patches_data[14] },
+    { { &rgb_patches[15] }, &rgb_patches_data[15] },
     /* no transparent */
 
-    { &defbutton_ok,     &box_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data}
+    { { &defbutton_ok },     &box_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data}
 };
 
 _Check_return_
@@ -888,11 +902,17 @@ T5_CMD_PROTO(extern, t5_cmd_box_intro)
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
     UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, box_ctl_create, elemof32(box_ctl_create), MSG_DIALOG_BOX_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_BOX_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, box_ctl_create, elemof32(box_ctl_create), SKEL_SPLIT_MSG_DIALOG_BOX_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_BOX_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_box;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &rgb;
+#if RISCOS
+    if(g_has_colour_picker)
+    {   /* this needs to be addressed */
+        dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
+        dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_NOT_MENU;
+    }
+#endif
     return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
@@ -965,7 +985,7 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
     style_docu_area_add_parm.p_array_handle = p_box_apply->p_array_handle;
     style_docu_area_add_parm.data_space = p_box_apply->data_space;
 
-    zero_struct(box_persistent_state);
+    zero_struct_fn(box_persistent_state);
     box_persistent_state.line_style = SF_BORDER_STANDARD;
     box_persistent_state.all = 1;
 

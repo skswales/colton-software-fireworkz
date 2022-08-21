@@ -1,0 +1,63 @@
+﻿
+Note that active queries are saved with your document and so will
+be remembered between sessions.
+The search actions which you specified when carrying out your
+searches are mapped onto the following special symbols:
+' is =
+. is not <>
+. is greater than >
+. is less than <
+. is empty =NULL
+
+Options
+The buttons down the right-hand side act on the currently selected
+query.
+
+View
+Displays the result of the search.
+Selecting this for Whole File will return you to the whole
+database. Selecting it for any other query will display the subset of
+records matching that search pattem. Note that selecting a query
+and clicking View is quicker that carrying out the search again.
+
+Refine
+Allows you to limit your search by specifying further criteria
+which the records must obey. It displays a blank Search dialogue
+box for you to enter a further search pattem. This is then combined
+with the original such that both have to match.
+
+For example if you took the query:
+Name is Fred
+and you refined it using:
+Address is London
+
+the following search would be perfonned:
+Name is Fred and Address is London
+
+Extend
+Allows you to extend your search to include records matching a
+further set of pattems instead. It displays a blank Search dialogue
+box, for you to enter a further search pattern. This is then
+combined with the original such that either has to match. For
+example if you took the query:
+Name is Fred
+and extended it using:
+Address is London
+the following search would be performed:
+Name is Fred or Address is London
+Note that Extend is not available for the Whole File.
+
+Change
+This allows you to alter an existing query. It displays a Search
+dialogue box, with the query entered into it. The search pattem
+which you enter replaces the original.
+Note that Change is only available for simple queries. It may not
+be used on the Whole File nor on compound queries, i.e. those
+which have been built up by refining etc.
+
+Delete
+This removes a query from the list.
+Note that you may not Delete the Whole File query.
+
+Fireworkz Pro 133
+

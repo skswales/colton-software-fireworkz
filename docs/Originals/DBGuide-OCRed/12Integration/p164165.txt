@@ -1,0 +1,53 @@
+﻿Database Guide 164
+
+Non-database features
+Fireworkz Pro provides a number of new features which are not
+related to databases.
+
+New button bar
+The button bar in Fireworkz Pro has been re-arranged and
+extended. In addition, the buttons displayed alter depending on
+what type of cell you are currently in. For example, if the cell is
+within a database, the database options will be displayed but the
+spreadsheet options will disappear.
+
+Editing in cell
+With Resultz and Fireworkz, if you wanted to edit a number held
+in a cell, you had to use the Formula line as follows:
+1 Click in the cell you want to change.
+2 Click in the formula line or press F2 to start editing.
+3 Click the caret into position or move the caret with the left or
+right arrow keys.
+4 Use the Delete key to remove the characters you don't want
+and enter the new characters
+5 Press Return or click on the Tick button to enter the new
+value.
+With Fireworkz Pro, you can edit the number in the cell as though
+it were text. In order to do this, you need to tum on the appropriate
+option in the Choices dialogue box:
+
+Fireworkz Pro 165
+
+1 Point at the Fireworkz Pro icon on the icon bar, click the
+menu button and select the Choices option. The Choices
+dialogue box will appear:
+2 Set the Edit in cell option within the Spreadsheet section by
+clicking on it.
+3 Click OK.
+Now, you can alter a number as follows:
+1 Click the caret into position in the cell you want to change.
+2 Use the Delete key to remove the characters you don't want
+and enter the new characters.
+3 Press Return.
+You can still use the formula line if you wish, however the in cell
+editing involves fewer steps and is therefore faster. The
+disadvantage of in cell editing is that if slows down the display
+speed of very large spreadsheets. This is why the option is off by
+default. If you set this option you are advised to set the Fixed
+height option in the Row section of the BaseSheet style to off.
+Note that you still have to use the formula line for editing
+formulae.
+
+
+
+

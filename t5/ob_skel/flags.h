@@ -190,18 +190,28 @@ enum ARG_IMPLIED
 };
 
 /*
+ui_load.c
+*/
+
+T5_CMD_PROTO(extern, t5_cmd_new_document_default);
+T5_CMD_PROTO(extern, t5_cmd_new_document_intro);
+
+/*
 ui_save.c
 */
 
 T5_CMD_PROTO(extern, t5_cmd_object_bind_saver);
-T5_CMD_PROTO(extern, t5_cmd_save_ownform);
-T5_CMD_PROTO(extern, t5_cmd_save_ownform_as);
-T5_CMD_PROTO(extern, t5_cmd_save_ownform_as_intro);
-T5_CMD_PROTO(extern, t5_cmd_save_foreign);
-T5_CMD_PROTO(extern, t5_cmd_save_foreign_intro);
+T5_CMD_PROTO(extern, t5_cmd_save);
+T5_CMD_PROTO(extern, t5_cmd_save_as);
+T5_CMD_PROTO(extern, t5_cmd_save_as_intro);
+T5_CMD_PROTO(extern, t5_cmd_save_as_template);
+T5_CMD_PROTO(extern, t5_cmd_save_as_template_intro);
+T5_CMD_PROTO(extern, t5_cmd_save_as_foreign);
+T5_CMD_PROTO(extern, t5_cmd_save_as_foreign_intro);
+T5_CMD_PROTO(extern, t5_cmd_save_as_drawfile);
+T5_CMD_PROTO(extern, t5_cmd_save_as_drawfile_intro);
+T5_CMD_PROTO(extern, t5_cmd_save_picture);
 T5_CMD_PROTO(extern, t5_cmd_save_picture_intro);
-T5_CMD_PROTO(extern, t5_cmd_save_template);
-T5_CMD_PROTO(extern, t5_cmd_save_template_intro);
 
 /*
 view.c
@@ -216,6 +226,8 @@ PROC_EVENT_PROTO(extern, view_event_ruler_vert);
 
 T5_CMD_PROTO(extern, t5_cmd_view_control_intro);
 T5_CMD_PROTO(extern, t5_cmd_view_control);
+T5_CMD_PROTO(extern, t5_cmd_view_scale_intro);
+T5_CMD_PROTO(extern, t5_cmd_view_scale);
 T5_CMD_PROTO(extern, t5_cmd_view_create);
 T5_CMD_PROTO(extern, t5_cmd_view_new);
 T5_CMD_PROTO(extern, t5_cmd_view_size);

@@ -23,39 +23,47 @@
 
 extern void
 product_between_calc(
-    _InoutRef_  P_SS_DATA p_ss_data_res, /* denotes integer or fp; may return integer or fp */
-    _InVal_     S32 start,
+    _InoutRef_  P_SS_DATA p_ss_data_res, /* denotes integer or real; may return integer or real. NB must contain 'start' value as integer or real */
+  /*_InVal_     S32 start,*/
     _InVal_     S32 end)
 {
-    S32 i = start + 1;
+    S32 i;
 
-    if(ss_data_is_integer(p_ss_data_res))
+    if(ss_data_is_real(p_ss_data_res))
     {
-        /* a small lookup table saves some time for stats functions and handles the exceptions anyway */
-        static const S32 factorial_n[] =
-        {
-        /*0!*/  1,
-        /*1!*/  1,
-        /*2!*/  2,
-        /*3!*/  2*3,
-        /*4!*/  2*3*4,
-        /*5!*/  2*3*4*5,
-        /*6!*/  2*3*4*5*6,
-        /*7!*/  2*3*4*5*6*7,
-        /*8!*/  2*3*4*5*6*7*8,
-        /*9!*/  2*3*4*5*6*7*8*9,
-        /*10!*/ 2*3*4*5*6*7*8*9*10,
-        /*11!*/ 2*3*4*5*6*7*8*9*10*11,
-        /*12!*/ 2*3*4*5*6*7*8*9*10*11*12
-        };
+        const F64 f_start = ss_data_get_real(p_ss_data_res);
 
-        ss_data_set_WORD32(p_ss_data_res, start);
+        i = (S32) f_start + 1;
+    }
+    else
+    {
+        const S32 i_start = ss_data_get_integer(p_ss_data_res);
 
-        if(1 == start) /*even for end==0*/
+        i = i_start + 1;
+
+        if(1 == i_start) /*even for end==0*/
         {
+            /* a small lookup table saves some time for stats functions and handles the exceptions anyway */
+            static const S32 factorial_n[] =
+            {
+            /*0!*/  1,
+            /*1!*/  1,
+            /*2!*/  2,
+            /*3!*/  2*3,
+            /*4!*/  2*3*4,
+            /*5!*/  2*3*4*5,
+            /*6!*/  2*3*4*5*6,
+            /*7!*/  2*3*4*5*6*7,
+            /*8!*/  2*3*4*5*6*7*8,
+            /*9!*/  2*3*4*5*6*7*8*9,
+            /*10!*/ 2*3*4*5*6*7*8*9*10,
+            /*11!*/ 2*3*4*5*6*7*8*9*10*11,
+            /*12!*/ 2*3*4*5*6*7*8*9*10*11*12
+            };
+
+            assert(end >= 0);
             if((U32) end < elemof32(factorial_n))
             {
-                assert(end >= 0);
                 p_ss_data_res->arg.integer = factorial_n[end];
                 return;
             }
@@ -84,18 +92,15 @@ product_between_calc(
         }
 
         /* NB leave p_ss_data_res' data_id undisturbed if not DATA_ID_REAL for caller to sort out */
-        if(DATA_ID_REAL != ss_data_get_data_id(p_ss_data_res))
+        if(!ss_data_is_real(p_ss_data_res))
             return;
-    }
-    else
-    {
-        ss_data_set_real(p_ss_data_res, start);
     }
 
     /* finish off in fp if needed */
+    assert(ss_data_is_real(p_ss_data_res));
     while(i <= end)
     {
-        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_res) * i);
+        ss_data_set_real(p_ss_data_res, ss_data_get_real(p_ss_data_res) * (F64) i);
         ++i;
     }
 }
@@ -161,7 +166,7 @@ PROC_EXEC_PROTO(c_exp)
 
 extern void
 factorial_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InVal_     S32 n)
 {
     if( (n < 0) || (n > 170) ) /* SKS maximum factorial that will fit in F64 */
@@ -170,11 +175,9 @@ factorial_calc(
         return;
     }
 
-    /* assume result will be integer to start with */
-    ss_data_set_WORD32(p_ss_data_out, 1);
-
-    /* function will go to fp as necessary */
-    product_between_calc(p_ss_data_out, 1, n); /* n==0 is handled by that */ /* may return integer or fp */
+    /* assume result will be (widest) integer to start with; function will go to fp as necessary */
+    ss_data_set_WORD32(p_ss_data_out, 1); /* start */
+    product_between_calc(p_ss_data_out, /*1,*/ n); /* n==0 is handled by that */ /* may return integer or real */
 }
 
 PROC_EXEC_PROTO(c_fact)
@@ -183,10 +186,10 @@ PROC_EXEC_PROTO(c_fact)
 
     exec_func_ignore_parms();
 
-    factorial_calc(p_ss_data_res, n); /* may return integer or fp or error */
+    factorial_calc(p_ss_data_res, n); /* may return integer or real or error */
 
-    if(DATA_ID_WORD32 == ss_data_get_data_id(p_ss_data_res))
-        ss_data_set_data_id(p_ss_data_res, ev_integer_size(ss_data_get_integer(p_ss_data_res)));
+    if(ss_data_is_integer(p_ss_data_res))
+        ss_data_set_integer_size(p_ss_data_res);
 }
 
 /******************************************************************************
@@ -194,15 +197,9 @@ PROC_EXEC_PROTO(c_fact)
 * NUMBER int(number)
 *
 * NB truncates towards zero - this is unlike OpenDocument and Microsoft Excel
-* but is what Lotus 1-2-3 and PipeDream did
+* but is what Lotus 1-2-3 did and what PipeDream does too
 *
 ******************************************************************************/
-
-/* SKS 06oct97 for INT() function try rounding an ickle bit
- * so INT((0.06-0.04)/0.01) is 2 not 1
- * and now dec14 INT((0.06-0.02)/2E-6) is 20000 not 19999
- * which is different to naive real_trunc()
- */
 
 PROC_EXEC_PROTO(c_int)
 {
@@ -269,7 +266,7 @@ calc_mod_two_reals(
     ss_data_set_real_try_integer(p_ss_data_res, f64_mod_result);
 
     /* would have divided by zero? */
-    /*if(!global_preferences.ss_calc_try_IEEE_maths)*/
+    if(!global_preferences.ss_calc_try_IEEE_maths)
         if(errno /* == EDOM */)
             ss_data_set_error(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
 }
@@ -311,24 +308,21 @@ PROC_EXEC_PROTO(c_mod)
 {
     exec_func_ignore_parms();
 
-    switch(two_nums_type_match(args[0], args[1], FALSE)) /* FALSE is OK as the result is always smaller if TWO_INTS */
+    switch(two_nums_type_match(args[0], args[1]))
     {
     case TWO_INTEGERS:
+    case TWO_INTEGERS_WORD32: /* NB the result is always smaller - no potential overflow worries */
         c_mod_two_integers(p_ss_data_res, args[0], args[1]);
-        break;
+        return;
 
     case TWO_REALS:
         c_mod_two_reals(p_ss_data_res, args[0], args[1]);
-        break;
+        return;
+
+    default: default_unhandled();
+        return;
     }
 }
-
-/* a little note from SKS:
-
- * it seems that fmod(a, b) guarantees the sign of the result
- * to be the same sign as a, whereas integer ops give an
- * implementation defined sign for both a / b and a % b.
-*/
 
 /******************************************************************************
 *

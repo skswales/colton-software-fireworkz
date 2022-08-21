@@ -21,10 +21,6 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
-#if !WINDOWS
-#include <time.h> /* for struct tm and friends */
-#endif
-
 #define SECS_IN_24 ((S32) 60 * (S32) 60 * (S32) 24)
 
 /*
@@ -95,7 +91,7 @@ ss_dateval_to_serial_number(
 
 /* reverse conversion */
 
-_Check_return_ _Success_(return >= 0)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 ss_serial_number_to_dateval(
     _OutRef_    P_SS_DATE_DATE p_ss_date_date,
@@ -593,7 +589,7 @@ ss_date_to_serial_number(
 
 /* reverse conversion */
 
-_Check_return_
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 ss_serial_number_to_date(
     _OutRef_    P_SS_DATE p_ss_date,
@@ -619,6 +615,10 @@ ss_serial_number_to_date(
 * read the current time as actual values
 *
 ******************************************************************************/
+
+#if !WINDOWS
+#include <time.h> /* for struct tm and friends */
+#endif
 
 extern void
 ss_local_time_as_ymd_hms(
@@ -916,7 +916,7 @@ recog_dmy_date(
 
     *p_year = scan_val;
 
-    return(PtrDiffBytesU32(epos, spos));
+    return(PtrDiffBytesU32(pos, spos));
 }
 
 /*
@@ -1139,7 +1139,7 @@ recog_time(
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return >= 0)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 ss_recog_date_time(
     _OutRef_    P_SS_DATA p_ss_data,
@@ -1161,11 +1161,14 @@ ss_recog_date_time(
 
     if(0 != date_scanned)
     {
-        S32 tres = ss_ymd_to_dateval(&p_ss_data->arg.ss_date.date, year, month, day);
+        S32 tres;
+
+        tres = ss_ymd_to_dateval(&p_ss_data->arg.ss_date.date, year, month, day);
 
         if(tres >= 0)
         {
             ustr_IncBytes(pos, date_scanned);
+
             ss_data_set_data_id(p_ss_data, DATA_ID_DATE);
             p_ss_data->local_data = 1;
 
@@ -1193,6 +1196,7 @@ ss_recog_date_time(
         if(ss_hms_to_timeval(&p_ss_data->arg.ss_date.time, hours, minutes, seconds) >= 0)
         {
             ustr_IncBytes(pos, time_scanned);
+
             ss_data_set_data_id(p_ss_data, DATA_ID_DATE);
             p_ss_data->local_data = 1;
         }

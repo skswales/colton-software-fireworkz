@@ -1,0 +1,324 @@
+/* --------------------------------------------------- */
+/* CSS for Fireworkz Getting Started Guide for RISC OS */
+/* --------------------------------------------------- */
+
+/* Contains RISC OS-specific CSS so is not identical to GSG Windows */
+/* Don't try to tune GSG RISC OS pages on Windows :-) */
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/* Copyright (C) 1994-1998 Colton Software Limited
+ * Copyright (C) 1998-2015 R W Colton */
+
+/* ----- General ----- */
+body {
+    font-size: 12.8pt;
+    font-family: sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    color: black;
+    background-color: white;
+    line-height: 1.33em;
+    margin-left: 2.0em;
+    margin-right: 2.0em;
+    max-width: 750px;
+}
+
+a:link {
+    color: #800080;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #FF0000;
+    text-decoration: none;
+}
+
+a:active {
+    color: #FF0000;
+    text-decoration: none;
+}
+
+/* paragraphs */
+.csg-page-padding-left,
+p {
+    padding-left: 2.5em;
+}
+
+/* ----- para note box -----*/
+p.note {
+    background-color: #FFFFCC;
+    border: 1px solid #FFCC00;
+    margin-left: 10px;
+    padding: 6px 6px;
+}
+
+/* headings */
+h1 {
+    /*font-size: 200%;*/
+    /*line-height: normal;*/
+    padding-top: 0.0em;
+    padding-bottom: 0.5em;
+    margin-top: 0.5em;
+    border-bottom: 1px solid #888;
+}
+
+h2 {
+    /*font-size: 160%;*/
+    /*line-height: normal;*/
+    margin-top: 0.9em;
+}
+
+h3 {
+    /*font-size: 140%;*/
+    /*line-height: normal;*/
+}
+
+h4 {
+    /*font-size: 120%;*/
+    /*line-height: normal;*/
+    padding-left: 1.25em;
+}
+
+td {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+/* lists */
+ol li {
+    /*line-height:1.5em;*/
+    margin-left: 2.0em;
+    padding-left: 0.5em;
+    padding-bottom: 4px;
+}
+
+ul li {
+    /*line-height:1.5em;*/
+    margin-left: 1.6em;
+    padding-left: 1.0em;
+    padding-bottom: 4px;
+}
+
+ul.csg-list-style-none,
+li.csg-list-style-none {
+    list-style-type: none;
+}
+
+/* See http://bugs.netsurf-browser.org/mantis/view.php?id=2434 */
+ul.csg-netsurf-2434 {
+    padding: 0 0 0 2.0em;
+    list-style-type: none;
+}
+
+span.csg-netsurf-2434-number {
+    margin-left: -2.0em;
+    margin-right: 0.8em;
+}
+
+blockquote {
+    padding-left: 2.0em;
+}
+
+/* start of csg-* definitions */
+
+.csg-chapter-number {
+    float: left;
+    min-width: 1.25em;
+}
+
+.csg-chapter-number-index {
+    float: left;
+    width: 1.25em;
+}
+
+/* Most UI elements in bold text */
+.csg-dbox,
+.csg-dbox-button,
+.csg-dbox-button-core,
+.csg-dbox-option,
+.csg-dbox-option-value,
+.csg-menu,
+.csg-menu-option,
+.csg-toolbar-button {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* A dialogue box */
+.csg-dbox {
+}
+
+/* An action button in a dialogue box */
+.csg-dbox-button {
+    display: inline-block;
+    padding: 0px 4px;
+    background-color: #E4E4E4;
+    border: 1px solid #BBB;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.csg-dbox-button-core {
+    display: inline-block;
+    padding: 0px 4px;
+    background-color: #E4E4E4;
+    border: 1px solid #CCC;
+}
+
+/* Container for default action button */
+.csg-dbox-button-default {
+    display: inline-block;
+    padding: 1px;
+    background-color: #FFFFAA;
+    border: 1px solid #BBB;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+/* An option button or field in a dialogue box */
+.csg-dbox-option {
+}
+
+/* A specific option button value (e.g. radio button label) */
+.csg-dbox-option-value {
+}
+
+.csg-example-border-colhead {
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+.csg-example-border-rowhead {
+    background-color: #f4f4f4;
+    text-align: center;
+    width: 48px;
+}
+
+.csg-example-column {
+    width: 96px;
+}
+
+/* Filename elements */
+.csg-filename {
+    font-family: monospace;
+}
+
+.csg-function-parameter {
+    font-family: monospace;
+    font-style: italic;
+}
+
+/* Things like pi render better */
+.csg-greek-symbol {
+    font-family: Symbol, serif;
+}
+
+/* A key on the keyboard */
+.csg-key {
+    font-weight: bold;
+}
+
+.csg-lhs-img {
+    margin-top: 5px;
+    position: absolute;
+    left: 16px;
+    float: left;
+    border: 1px solid #CCC;
+}
+
+.csg-list-option {
+    /*font-weight: bold;*/
+    font-style: italic;
+}
+
+/* A menu */
+.csg-menu {
+}
+
+/* An option on a menu */
+.csg-menu-option {
+}
+
+/* Sample text */
+.csg-sample {
+    font-family: sans-serif;
+    font-size: 11pt;
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* A button on the Fireworkz toolbar */
+.csg-toolbar-button {
+}
+
+.csg-table-align-top {
+    vertical-align: top;
+}
+
+/* Text typed by the user */
+.csg-user-text {
+    font-family: monospace;
+}
+
+.navheader {
+}
+
+#navheader {
+    width: 100%;
+}
+
+.navheader_PCN_L {
+    width: 35%;
+    text-align: left;
+    padding-left: 0;
+    vertical-align: top;
+}
+
+.navheader_PCN_C {
+    width: 30%;
+    text-align: center;
+    vertical-align: top;
+}
+
+.navheader_PCN_R {
+    width: 35%;
+    text-align: right;
+    padding-right: 0;
+    vertical-align: top;
+}
+
+.navfooter {
+}
+
+div.navfooter {
+    border-top: 1px solid #888;
+    padding-top: 8pt;
+    margin-top: 24pt;
+}
+
+#navfooter {
+    width: 100%;
+}
+
+.navfooter_PUN_L {
+    width: 40%;
+    text-align: left;
+    padding-left: 0;
+    vertical-align: top;
+}
+
+.navfooter_PUN_C {
+    width: 20%;
+    text-align: center;
+    vertical-align: top;
+}
+
+.navfooter_PUN_R {
+    width: 40%;
+    text-align: right;
+    padding-right: 0;
+    vertical-align: top;
+}

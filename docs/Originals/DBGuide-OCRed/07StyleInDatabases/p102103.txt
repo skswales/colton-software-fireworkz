@@ -1,0 +1,51 @@
+﻿Database Guide
+The width of the font will be its correct width proportional to its
+height, if you leave the width set to zero. You may wish to alter
+the width of the font to create a special effect:
+. Setting a width smaller than the height of the type condenses
+it, so that it takes up less space and appears squashed.
+. Setting a width greater than the height of the type expands it,
+so that it takes up more space and appears stretched.
+To set the width:
+1 Click on the Width button.
+2 Click the arrows to increase or decrease the number shown to
+reach the point size you require.
+
+Attributes
+There are five different attributes which you can apply to your
+typeface singly or in combination. They are:
+. Bold.
+. Italic.
+. Underline.
+. Superscript.
+. Subscript.
+To add any of these:
+1 Click on the on/off switch to the left of the attribute‘s icon.
+The attribute button will be illuminated and appear to have been
+pressed. This means that the attribute is now tumed on.
+If you wanted to tum an attribute off, then:
+1 Click on the on/off switch to the left of the attribute‘s icon.
+2 Click on the attribute button so that it is not pressed in.
+The attribute button will be illuminated and appear to have been
+pushed out. This means that the attribute is now tumed off.
+
+Colour
+If you have access to a colour printer, or will be using your
+document mainly on screen, you can set the colour option and use
+a colour other than black for your text.
+To set the text colour:
+1 Click the Colour switch to on.
+2 Choose the colour you want.
+The colour will be shown in the bar at the bottom of the colour
+section.
+Note that there are several ways to choose a colour:
+. Click on one of the small buttons representing the colours in
+the current palette.
+. Type in numerical RGB values.
+. Use the arrows to enter RGB values.
+
+Fireworkz Pro 103
+
+
+
+

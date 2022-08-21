@@ -101,10 +101,10 @@ paper_scale_label =
     PAPER_SCALE_ID_LABEL, DIALOG_MAIN_GROUP,
     { PAPER_SCALE_ID_100, PAPER_SCALE_ID_VALUE, DIALOG_CONTROL_SELF, PAPER_SCALE_ID_VALUE },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_scale_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_SCALE) };
 
 static const DIALOG_CONTROL
@@ -127,12 +127,12 @@ paper_scale_units =
 {
     PAPER_SCALE_ID_UNITS, DIALOG_MAIN_GROUP,
     { PAPER_SCALE_ID_VALUE, PAPER_SCALE_ID_VALUE, DIALOG_CONTROL_SELF, PAPER_SCALE_ID_VALUE },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-paper_scale_units_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+paper_scale_units_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/ } };
 
 /*
 ok
@@ -148,23 +148,23 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 paper_scale_ok_command = { T5_CMD_PAPER_SCALE, OBJECT_ID_SKEL, NULL, paper_scale_ok_data_argmap, { 0 /*set_view*/, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-paper_scale_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &paper_scale_ok_command };
+paper_scale_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &paper_scale_ok_command };
 
 static const DIALOG_CTL_CREATE
 paper_scale_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &paper_scale_fit,   &paper_scale_fit_data },
-    { &paper_scale_fit_x, &paper_scale_fit_x_data },
-    { &paper_scale_100,   &paper_scale_100_data },
+    { { &paper_scale_fit },   &paper_scale_fit_data },
+    { { &paper_scale_fit_x }, &paper_scale_fit_x_data },
+    { { &paper_scale_100 },   &paper_scale_100_data },
 
-    { &paper_scale_label, &paper_scale_label_data },
-    { &paper_scale_value, &paper_scale_value_data },
-    { &paper_scale_units, &paper_scale_units_data },
+    { { &paper_scale_label }, &paper_scale_label_data },
+    { { &paper_scale_value }, &paper_scale_value_data },
+    { { &paper_scale_units }, &paper_scale_units_data },
 
-    { &defbutton_ok,      &paper_scale_ok_data },
-    { &stdbutton_cancel,  &stdbutton_cancel_data }
+    { { &defbutton_ok },      &paper_scale_ok_data },
+    { { &stdbutton_cancel },  &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -273,9 +273,8 @@ T5_CMD_PROTO(extern, t5_cmd_paper_scale_intro)
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
     UNREFERENCED_PARAMETER_InVal_(t5_message);
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, paper_scale_ctl_create, elemof32(paper_scale_ctl_create), MSG_DIALOG_PAPER_SCALE_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_PAPER_SCALE_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, paper_scale_ctl_create, elemof32(paper_scale_ctl_create), MSG_DIALOG_PAPER_SCALE_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_PAPER_SCALE_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_paper_scale;
     return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
@@ -315,8 +314,7 @@ enum PAPER_CONTROL_IDS
     PAPER_ID_WIDTH,
     PAPER_ID_WIDTH_LABEL,
     PAPER_ID_WIDTH_UNITS,
-#define PAPER_UNITS_H  DIALOG_MMCMIN_UNITS_H
-#define PAPER_TEXTS2_H (DIALOG_SYSCHARS_H("olumn margin") + DIALOG_FATCHAR_H)
+#define PAPER_LABELS_H (DIALOG_SYSCHARS_H("olumn margin") + DIALOG_FATCHAR_H)
 
     PAPER_ID_PAPER_MARGIN_GROUP = 130,
 
@@ -369,10 +367,10 @@ enum PAPER_CONTROL_IDS
 
 #define PAPER_BUTTONS_H (PIXITS_PER_INCH +  (PIXITS_PER_INCH * 4) / 16)
 
+    PAPER_ID_GRID_GROUP,
     PAPER_ID_GRID_SIZE,
     PAPER_ID_GRID_SIZE_LABEL,
     PAPER_ID_GRID_SIZE_UNITS,
-
     PAPER_ID_GRID_FAINT,
 
     PAPER_ID_MAX
@@ -404,7 +402,7 @@ paper_paper_labels_group =
 };
 
 /*
-paper name 'group'
+paper name 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -413,17 +411,17 @@ paper_name_label =
     PAPER_ID_NAME_LABEL, PAPER_ID_PAPER_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_NAME, DIALOG_CONTROL_SELF, PAPER_ID_NAME },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-paper_name_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_NAME), { 1/*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+paper_name_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_NAME), { 1/*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 paper_name =
 {
     PAPER_ID_NAME, PAPER_ID_PAPER_GROUP,
-    { PAPER_ID_PAPER_LABELS_GROUP, DIALOG_CONTROL_PARENT, PAPER_ID_HEIGHT_UNITS },
+    { PAPER_ID_PAPER_MARGIN_LABELS_GROUP, DIALOG_CONTROL_PARENT, PAPER_ID_HEIGHT_UNITS },
     { DIALOG_LABELGAP_H, DIALOG_STDGROUP_TM, 0, DIALOG_STDEDIT_V },
     { DRT(RTRT, EDIT), 1 /*tabstop*/ }
 };
@@ -432,10 +430,10 @@ static /*poked*/ DIALOG_CONTROL_DATA_EDIT
 paper_name_data = { { { FRAMED_BOX_EDIT } }, /*EDIT_XX*/ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-paper_units_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+paper_units_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-height 'group'
+height 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -444,10 +442,10 @@ paper_height_label =
     PAPER_ID_HEIGHT_LABEL, PAPER_ID_PAPER_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_HEIGHT, DIALOG_CONTROL_SELF, PAPER_ID_HEIGHT },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_height_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_HEIGHT), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -455,7 +453,7 @@ paper_height =
 {
     PAPER_ID_HEIGHT, PAPER_ID_PAPER_GROUP,
     { PAPER_ID_NAME, PAPER_ID_NAME },
-    { 0, DIALOG_STDSPACING_V, DIALOG_BUMP_H(7), DIALOG_STDBUMP_V },
+    { 0, DIALOG_STDSPACING_V, DIALOG_BUMP_H(6), DIALOG_STDBUMP_V },
     { DRT(LBLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
@@ -467,12 +465,12 @@ paper_height_units =
 {
     PAPER_ID_HEIGHT_UNITS, PAPER_ID_PAPER_GROUP,
     { PAPER_ID_HEIGHT, PAPER_ID_HEIGHT, DIALOG_CONTROL_SELF, PAPER_ID_HEIGHT },
-    { DIALOG_LABELGAP_H, 0, PAPER_UNITS_H, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 /*
-width 'group'
+width 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -481,10 +479,10 @@ paper_width_label =
     PAPER_ID_WIDTH_LABEL, PAPER_ID_PAPER_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_WIDTH, DIALOG_CONTROL_SELF, PAPER_ID_WIDTH },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_width_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_WIDTH), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -534,7 +532,7 @@ paper_paper_margin_labels_group =
 };
 
 /*
-top margin 'group'
+top margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -543,10 +541,10 @@ paper_margin_top_label =
     PAPER_ID_MARGIN_TOP_LABEL, PAPER_ID_PAPER_MARGIN_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_MARGIN_TOP, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_TOP },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_top_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_TOP), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -566,12 +564,12 @@ paper_margin_top_units =
 {
     PAPER_ID_MARGIN_TOP_UNITS, PAPER_ID_PAPER_MARGIN_GROUP,
     { PAPER_ID_MARGIN_TOP, PAPER_ID_MARGIN_TOP, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_TOP },
-    { DIALOG_LABELGAP_H, 0, PAPER_UNITS_H, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 /*
-bottom margin 'group'
+bottom margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -580,10 +578,10 @@ paper_margin_bottom_label =
     PAPER_ID_MARGIN_BOTTOM_LABEL, PAPER_ID_PAPER_MARGIN_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_MARGIN_BOTTOM, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_BOTTOM },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_bottom_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_BOTTOM), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -608,7 +606,7 @@ paper_margin_bottom_units =
 };
 
 /*
-left margin 'group'
+left margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -617,10 +615,10 @@ paper_margin_left_label =
     PAPER_ID_MARGIN_LEFT_LABEL, PAPER_ID_PAPER_MARGIN_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_MARGIN_LEFT, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_LEFT },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_left_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_LEFT), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -645,7 +643,7 @@ paper_margin_left_units =
 };
 
 /*
-right margin 'group'
+right margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -654,10 +652,10 @@ paper_margin_right_label =
     PAPER_ID_MARGIN_RIGHT_LABEL, PAPER_ID_PAPER_MARGIN_LABELS_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_MARGIN_RIGHT, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_RIGHT },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_right_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_RIGHT), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -702,7 +700,7 @@ paper_orientation_p =
 {
     PAPER_ID_ORIENTATION_P, PAPER_ID_ORIENTATION_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
     { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
@@ -807,7 +805,7 @@ static const DIALOG_CONTROL_DATA_GROUPBOX
 paper_binding_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_BINDING), { FRAMED_BOX_GROUP } };
 
 /*
-bind margin 'group'
+bind margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -815,11 +813,11 @@ paper_margin_bind_label =
 {
     PAPER_ID_MARGIN_BIND_LABEL, PAPER_ID_BINDING_GROUP,
     { DIALOG_CONTROL_PARENT, PAPER_ID_MARGIN_BIND, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_BIND },
-    { DIALOG_STDGROUP_LM, 0, PAPER_TEXTS2_H, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DIALOG_STDGROUP_LM, 0, PAPER_LABELS_H, 0 },
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_bind_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_BIND), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -827,7 +825,7 @@ paper_margin_bind =
 {
     PAPER_ID_MARGIN_BIND, PAPER_ID_BINDING_GROUP,
     { PAPER_ID_MARGIN_BIND_LABEL, DIALOG_CONTROL_PARENT },
-    { DIALOG_LABELGAP_H, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(7), DIALOG_STDBUMP_V },
+    { DIALOG_LABELGAP_H, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
@@ -839,7 +837,7 @@ paper_margin_bind_units =
 {
     PAPER_ID_MARGIN_BIND_UNITS, PAPER_ID_BINDING_GROUP,
     { PAPER_ID_MARGIN_BIND, PAPER_ID_MARGIN_BIND, DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_BIND },
-    { DIALOG_LABELGAP_H, 0, PAPER_UNITS_H, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -856,7 +854,7 @@ static const DIALOG_CONTROL_DATA_CHECKBOX
 paper_margin_oe_swap_data = { { 1 /*left_text*/ }, UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_OE_SWAP) };
 
 /*
-col margin 'group'
+col margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -865,10 +863,10 @@ paper_margin_col_label =
     PAPER_ID_MARGIN_COL_LABEL, DIALOG_MAIN_GROUP,
     { PAPER_ID_MARGIN_BIND_LABEL, PAPER_ID_MARGIN_COL, PAPER_ID_MARGIN_BIND_LABEL, PAPER_ID_MARGIN_COL },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_col_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_COL), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -893,7 +891,7 @@ paper_margin_col_units =
 };
 
 /*
-row margin 'group'
+row margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -902,10 +900,10 @@ paper_margin_row_label =
     PAPER_ID_MARGIN_ROW_LABEL, DIALOG_MAIN_GROUP,
     { PAPER_ID_MARGIN_COL_LABEL, PAPER_ID_MARGIN_ROW, PAPER_ID_MARGIN_COL_LABEL, PAPER_ID_MARGIN_ROW },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_margin_row_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_MARGIN_ROW), { 1/*left_text*/ } };
 
 static const DIALOG_CONTROL
@@ -929,25 +927,41 @@ paper_margin_row_units =
     { DRT(LTRB, STATICTEXT) }
 };
 
+/*
+grid group
+*/
+
+static const DIALOG_CONTROL
+paper_grid_group =
+{
+    PAPER_ID_GRID_GROUP, DIALOG_MAIN_GROUP,
+    { PAPER_ID_PAPER_MARGIN_GROUP, PAPER_ID_PAPER_MARGIN_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0, DIALOG_GROUPSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    { DRT(LBRB, GROUPBOX) }
+};
+
+static const DIALOG_CONTROL_DATA_GROUPBOX
+paper_grid_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_GRID), { FRAMED_BOX_GROUP } };
+
 static const DIALOG_CONTROL
 paper_grid_size_label =
 {
-    PAPER_ID_GRID_SIZE_LABEL, DIALOG_MAIN_GROUP,
-    { PAPER_ID_PAPER_MARGIN_GROUP, PAPER_ID_GRID_SIZE, DIALOG_CONTROL_SELF, PAPER_ID_GRID_SIZE },
-    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    PAPER_ID_GRID_SIZE_LABEL, PAPER_ID_GRID_GROUP,
+    { DIALOG_CONTROL_PARENT, PAPER_ID_GRID_SIZE, DIALOG_CONTROL_SELF, PAPER_ID_GRID_SIZE },
+    { DIALOG_STDGROUP_LM, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
+static const DIALOG_CONTROL_DATA_TEXTLABEL
 paper_grid_size_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_GRID_SIZE) };
 
 static const DIALOG_CONTROL
 paper_grid_size =
 {
-    PAPER_ID_GRID_SIZE, DIALOG_MAIN_GROUP,
-    { PAPER_ID_GRID_SIZE_LABEL, PAPER_ID_PAPER_MARGIN_GROUP },
-    { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(RBLT, BUMP_F64), 1 /*tabstop*/ }
+    PAPER_ID_GRID_SIZE, PAPER_ID_GRID_GROUP,
+    { PAPER_ID_PAPER_MARGIN_LABELS_GROUP, DIALOG_CONTROL_PARENT },
+    { DIALOG_LABELGAP_H, DIALOG_STDGROUP_TM, DIALOG_BUMP_H(3), DIALOG_STDBUMP_V },
+    { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
 };
 
 static UCHARZ
@@ -962,9 +976,9 @@ paper_grid_size_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_X
 static const DIALOG_CONTROL
 paper_grid_size_units =
 {
-    PAPER_ID_GRID_SIZE_UNITS, DIALOG_MAIN_GROUP,
+    PAPER_ID_GRID_SIZE_UNITS, PAPER_ID_GRID_GROUP,
     { PAPER_ID_GRID_SIZE, PAPER_ID_GRID_SIZE, DIALOG_CONTROL_SELF, PAPER_ID_GRID_SIZE },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -973,10 +987,10 @@ paper_grid_size_units =
 static const DIALOG_CONTROL
 paper_grid_faint =
 {
-    PAPER_ID_GRID_FAINT, DIALOG_MAIN_GROUP,
-    { PAPER_ID_GRID_SIZE_UNITS, PAPER_ID_GRID_SIZE_UNITS, DIALOG_CONTROL_SELF, PAPER_ID_GRID_SIZE_UNITS },
-    { DIALOG_STDSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(RTLB, CHECKBOX), 1 /*tabstop*/ }
+    PAPER_ID_GRID_FAINT, PAPER_ID_GRID_GROUP,
+    { PAPER_ID_GRID_SIZE_LABEL, PAPER_ID_GRID_SIZE },
+    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+    { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
@@ -1006,15 +1020,15 @@ paper_ok_data_argmap[] =
     PAPER_ID_GRID_FAINT
 };
 
-#if RISCOS
+#if RISCOS || 1
 
 static const DIALOG_CONTROL
 paper_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, PAPER_ID_MARGIN_ROW_UNITS, DIALOG_MAIN_GROUP },
-    { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+    { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
+    { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, DIALOG_STDSPACING_V },
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 #else
@@ -1025,75 +1039,75 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 paper_ok_command = { T5_CMD_PAPER, OBJECT_ID_SKEL, NULL, paper_ok_data_argmap, { 0 /*set_view*/, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-paper_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &paper_ok_command };
+paper_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &paper_ok_command };
 
 static /*poked*/ DIALOG_CTL_CREATE
 paper_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &paper_paper_group,          &paper_paper_group_data },
-    { &paper_paper_labels_group },
-    { &paper_name_label,           &paper_name_label_data },
-    { &paper_name,                 &paper_name_data },
-    { &paper_height_label,         &paper_height_label_data },
-    { &paper_height,               &paper_height_data },
-    { &paper_height_units,         &paper_units_data },
-    { &paper_width_label,          &paper_width_label_data },
-    { &paper_width,                &paper_width_data },
-    { &paper_width_units,          &paper_units_data },
+    { { &paper_paper_group },          &paper_paper_group_data },
+    { { &paper_paper_labels_group },   NULL },
+    { { &paper_name_label },           &paper_name_label_data },
+    { { &paper_name },                 &paper_name_data },
+    { { &paper_height_label },         &paper_height_label_data },
+    { { &paper_height },               &paper_height_data },
+    { { &paper_height_units },         &paper_units_data },
+    { { &paper_width_label },          &paper_width_label_data },
+    { { &paper_width },                &paper_width_data },
+    { { &paper_width_units },          &paper_units_data },
 
-    { &paper_paper_margin_group,   &paper_paper_margin_group_data },
-    { &paper_paper_margin_labels_group },
-    { &paper_margin_top_label,     &paper_margin_top_label_data },
-    { &paper_margin_top,           &paper_margin_top_data },
-    { &paper_margin_top_units,     &paper_units_data },
-    { &paper_margin_bottom_label,  &paper_margin_bottom_label_data },
-    { &paper_margin_bottom,        &paper_margin_bottom_data },
-    { &paper_margin_bottom_units,  &paper_units_data },
-    { &paper_margin_left_label,    &paper_margin_left_label_data },
-    { &paper_margin_left,          &paper_margin_left_data },
-    { &paper_margin_left_units,    &paper_units_data },
-    { &paper_margin_right_label,   &paper_margin_right_label_data },
-    { &paper_margin_right,         &paper_margin_right_data },
-    { &paper_margin_right_units,   &paper_units_data },
+    { { &paper_paper_margin_group },   &paper_paper_margin_group_data },
+    { { &paper_paper_margin_labels_group }, NULL },
+    { { &paper_margin_top_label },     &paper_margin_top_label_data },
+    { { &paper_margin_top },           &paper_margin_top_data },
+    { { &paper_margin_top_units },     &paper_units_data },
+    { { &paper_margin_bottom_label },  &paper_margin_bottom_label_data },
+    { { &paper_margin_bottom },        &paper_margin_bottom_data },
+    { { &paper_margin_bottom_units },  &paper_units_data },
+    { { &paper_margin_left_label },    &paper_margin_left_label_data },
+    { { &paper_margin_left },          &paper_margin_left_data },
+    { { &paper_margin_left_units },    &paper_units_data },
+    { { &paper_margin_right_label },   &paper_margin_right_label_data },
+    { { &paper_margin_right },         &paper_margin_right_data },
+    { { &paper_margin_right_units },   &paper_units_data },
 
-    { &paper_orientation_group,    NULL },
-    { &paper_orientation_p,        &paper_orientation_p_data },
-    { &paper_orientation_l,        &paper_orientation_l_data },
+    { { &paper_orientation_group },    NULL },
+    { { &paper_orientation_p },        &paper_orientation_p_data },
+    { { &paper_orientation_l },        &paper_orientation_l_data },
 
-    { &paper_button_read,          &paper_button_read_data },
-    { &paper_button_none,          &paper_button_none_data },
-    { &paper_button[0],            &paper_button_data[0] },
-    { &paper_button[1],            &paper_button_data[1] },
-    { &paper_button[2],            &paper_button_data[2] },
-    { &paper_button[3],            &paper_button_data[3] },
-    { &paper_button[4],            &paper_button_data[4] },
-    { &paper_button[5],            &paper_button_data[5] },
+    { { &paper_button_read },          &paper_button_read_data },
+    { { &paper_button_none },          &paper_button_none_data },
+    { { &paper_button[0] },            &paper_button_data[0] },
+    { { &paper_button[1] },            &paper_button_data[1] },
+    { { &paper_button[2] },            &paper_button_data[2] },
+    { { &paper_button[3] },            &paper_button_data[3] },
+    { { &paper_button[4] },            &paper_button_data[4] },
+    { { &paper_button[5] },            &paper_button_data[5] },
 
-    { &paper_binding_group,        &paper_binding_group_data },
+    { { &paper_binding_group },        &paper_binding_group_data },
 
-    { &paper_margin_bind_label,    &paper_margin_bind_label_data },
-    { &paper_margin_bind,          &paper_margin_bind_data },
-    { &paper_margin_bind_units,    &paper_units_data },
+    { { &paper_margin_bind_label },    &paper_margin_bind_label_data },
+    { { &paper_margin_bind },          &paper_margin_bind_data },
+    { { &paper_margin_bind_units },    &paper_units_data },
 
-    { &paper_margin_oe_swap,       &paper_margin_oe_swap_data },
+    { { &paper_margin_oe_swap },       &paper_margin_oe_swap_data },
 
-    { &paper_margin_col_label,     &paper_margin_col_label_data },
-    { &paper_margin_col,           &paper_margin_col_data },
-    { &paper_margin_col_units,     &paper_units_data },
-    { &paper_margin_row_label,     &paper_margin_row_label_data },
-    { &paper_margin_row,           &paper_margin_row_data },
-    { &paper_margin_row_units,     &paper_units_data },
+    { { &paper_margin_col_label },     &paper_margin_col_label_data },
+    { { &paper_margin_col },           &paper_margin_col_data },
+    { { &paper_margin_col_units },     &paper_units_data },
+    { { &paper_margin_row_label },     &paper_margin_row_label_data },
+    { { &paper_margin_row },           &paper_margin_row_data },
+    { { &paper_margin_row_units },     &paper_units_data },
 
-    { &paper_grid_size_label,      &paper_grid_size_label_data },
-    { &paper_grid_size,            &paper_grid_size_data },
-    { &paper_grid_size_units,      &paper_grid_size_units_data },
+    { { &paper_grid_group },           &paper_grid_group_data },
+    { { &paper_grid_size_label },      &paper_grid_size_label_data },
+    { { &paper_grid_size },            &paper_grid_size_data },
+    { { &paper_grid_size_units },      &paper_grid_size_units_data },
+    { { &paper_grid_faint },           &paper_grid_faint_data },
 
-    { &paper_grid_faint,           &paper_grid_faint_data },
-
-    { &paper_ok, &paper_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &paper_ok }, &paper_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static void
@@ -1107,15 +1121,16 @@ paper_precreate_button(
     if(array_index_is_valid(&p_docu_config->loaded_phys_page_defs, control_index))
     {
         P_PHYS_PAGE_DEF p_phys_page_def = array_ptr_no_checks(&p_docu_config->loaded_phys_page_defs, PHYS_PAGE_DEF, control_index);
-        PC_DIALOG_CONTROL_DATA_PUSHBUTTON p_dialog_control_data_pushbutton = (PC_DIALOG_CONTROL_DATA_PUSHBUTTON) p_dialog_ctl_create->p_dialog_control_data;
-        P_UI_TEXT p_ui_text = (P_UI_TEXT) &p_dialog_control_data_pushbutton->caption;
+        PC_DIALOG_CONTROL_DATA_PUSHBUTTON p_dialog_control_data_pushbutton = p_dialog_ctl_create->p_dialog_control_data.pushbutton;
+        P_UI_TEXT p_ui_text = de_const_cast(P_UI_TEXT, &p_dialog_control_data_pushbutton->caption);
         /* a bold assignment follows ... I assert these will not move (at least not during the paper box!) */
         p_ui_text->type = UI_TEXT_TYPE_USTR_PERM;
         p_ui_text->text.ustr = ustr_bptr(p_phys_page_def->ustr_name);
     }
     else
-        /* don't add this control */
+    {   /* don't add this control */
         * (PC_DIALOG_CONTROL *) &p_dialog_ctl_create->p_dialog_control.p_dialog_control = NULL;
+    }
 }
 
 static void
@@ -1129,8 +1144,37 @@ paper_precreate(
 
     resource_lookup_ustr_buffer(ustr_bptr(paper_grid_size_numform_ustr_buf), elemof32(paper_grid_size_numform_ustr_buf), MSG_NUMFORM_2_DP);
 
-    /* reflect current measurement system in dialogue box */
+#if 0
     paper_user_unit_resource_id = MSG_DIALOG_UNITS_MM;
+#else
+   { /* reflect current measurement system in dialogue box */
+    SCALE_INFO scale_info;
+
+    scale_info_from_docu(p_docu, TRUE, &scale_info);
+
+    switch(scale_info.display_unit)
+    {
+    default: default_unhandled();
+#if CHECKING
+    case DISPLAY_UNIT_CM:
+#endif
+        paper_user_unit_resource_id = MSG_DIALOG_UNITS_CM;
+        break;
+
+    case DISPLAY_UNIT_MM:
+        paper_user_unit_resource_id = MSG_DIALOG_UNITS_MM;
+        break;
+
+    case DISPLAY_UNIT_INCHES:
+        paper_user_unit_resource_id = MSG_DIALOG_UNITS_INCHES;
+        break;
+
+    case DISPLAY_UNIT_POINTS:
+        paper_user_unit_resource_id = MSG_DIALOG_UNITS_POINTS;
+        break;
+    }
+    } /*block*/
+#endif
 
     {
     const F64 max_inches = 1000.0;
@@ -1146,16 +1190,16 @@ paper_precreate(
     case MSG_DIALOG_UNITS_CM:
 #endif
         paper_fp_pixits_per_user_unit = FP_PIXITS_PER_CM;
-        numform_resource_id = MSG_NUMFORM_3_DP0;
+        numform_resource_id = MSG_NUMFORM_2_DP0;
         p_ui_control_f64->inc_dec_round = 10.0;
-        p_ui_control_f64->max_val = (max_inches* PIXITS_PER_INCH) / PIXITS_PER_CM;
+        p_ui_control_f64->max_val = (max_inches * PIXITS_PER_INCH) / PIXITS_PER_CM;
         break;
 
     case MSG_DIALOG_UNITS_MM:
         paper_fp_pixits_per_user_unit = FP_PIXITS_PER_MM;
-        numform_resource_id = MSG_NUMFORM_2_DP0;
+        numform_resource_id = MSG_NUMFORM_1_DP0;
         p_ui_control_f64->inc_dec_round = 1.0;
-        p_ui_control_f64->max_val = (max_inches* PIXITS_PER_INCH) / PIXITS_PER_MM;
+        p_ui_control_f64->max_val = (max_inches * PIXITS_PER_INCH) / PIXITS_PER_MM;
         break;
 
     case MSG_DIALOG_UNITS_INCHES:
@@ -1651,9 +1695,8 @@ T5_CMD_PROTO(extern, t5_cmd_paper_intro)
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, paper_ctl_create, elemof32(paper_ctl_create), MSG_DIALOG_PAPER_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_PAPER_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, paper_ctl_create, elemof32(paper_ctl_create), MSG_DIALOG_PAPER_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_PAPER_HELP_TOPIC;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &paper_orientation_pl_current;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_paper_intro;
     paper_precreate(p_docu, &dialog_cmd_process_dbox);

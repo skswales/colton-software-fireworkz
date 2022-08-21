@@ -64,121 +64,135 @@ dialog_arglist_arg_xstr_from_ui_text(
 
 _Check_return_
 static STATUS
+dialog_arglist_construct_add_args(
+    _InRef_     P_ARGLIST_HANDLE p_arglist_handle,
+    P_DIALOG p_dialog,
+    const PC_DIALOG_CTL_ID p_dialog_control_id /*[n_arglist_args]*/)
+{
+    const U32 n_args = n_arglist_args(p_arglist_handle);
+    const P_ARGLIST_ARG p_args = p_arglist_args(p_arglist_handle, n_args);
+    U32 arg_idx;
+
+    for(arg_idx = 0; arg_idx < n_args; ++arg_idx)
+    {
+        const P_ARGLIST_ARG p_arg = &p_args[arg_idx];
+        DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
+        STATUS status;
+
+        dialog_cmd_ctl_state_query.dialog_control_id = p_dialog_control_id[arg_idx];
+
+        if(0 == dialog_cmd_ctl_state_query.dialog_control_id)
+        {
+            p_arg->type = ARG_TYPE_NONE; /*arg_dispose(p_arglist_handle, arg_idx);*/
+            continue;
+        }
+
+        dialog_cmd_ctl_state_query.h_dialog = p_dialog->h_dialog;
+        dialog_cmd_ctl_state_query.bits = 0;
+        status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query);
+
+        if(status_fail(status))
+        {   /* e.g. view control may not have controls for ruler on/off */
+            p_arg->type = ARG_TYPE_NONE; /*arg_dispose(p_arglist_handle, arg_idx);*/
+            continue;
+        }
+
+        switch(dialog_cmd_ctl_state_query.dialog_control_type)
+        {
+        case DIALOG_CONTROL_CHECKBOX:
+        case DIALOG_CONTROL_CHECKPICTURE:
+#ifdef DIALOG_HAS_TRISTATE
+        case DIALOG_CONTROL_TRISTATE:
+        case DIALOG_CONTROL_TRIPICTURE:
+#endif
+            /* all these are generic_u8n or bool */
+            assert(((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_U8N) || ((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_BOOL));
+            p_arg->val.u8n = dialog_cmd_ctl_state_query.state.generic_u8n;
+            break;
+
+#if CHECKING
+        case DIALOG_CONTROL_RADIOBUTTON:
+        case DIALOG_CONTROL_RADIOPICTURE:
+            myassert0(TEXT("lookup the group!"));
+
+            /*FALLTHRU*/
+#endif
+
+        case DIALOG_CONTROL_GROUPBOX:
+        case DIALOG_CONTROL_BUMP_S32:
+            assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_S32);
+            p_arg->val.s32 = dialog_cmd_ctl_state_query.state.bump_s32;
+            break;
+
+        case DIALOG_CONTROL_BUMP_F64:
+            assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_F64);
+            p_arg->val.f64 = dialog_cmd_ctl_state_query.state.bump_f64;
+            break;
+
+        case DIALOG_CONTROL_EDIT:
+            status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.edit.ui_text);
+            break;
+
+        case DIALOG_CONTROL_LIST_S32:
+            assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_S32);
+            assert(dialog_cmd_ctl_state_query.state.list_s32.itemno >= 0);
+            p_arg->val.s32 = dialog_cmd_ctl_state_query.state.list_s32.s32;
+            break;
+
+        case DIALOG_CONTROL_LIST_TEXT:
+            assert(dialog_cmd_ctl_state_query.state.list_text.itemno >= 0);
+            status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.list_text.ui_text);
+            break;
+
+        case DIALOG_CONTROL_COMBO_S32:
+            assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_S32);
+            assert(dialog_cmd_ctl_state_query.state.combo_s32.itemno >= 0);
+            p_arg->val.s32 = dialog_cmd_ctl_state_query.state.combo_s32.s32;
+            break;
+
+        case DIALOG_CONTROL_COMBO_TEXT:
+            assert(dialog_cmd_ctl_state_query.state.list_text.itemno != DIALOG_CTL_STATE_LIST_ITEM_NONE);
+            status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.combo_text.ui_text);
+            break;
+
+        case DIALOG_CONTROL_USER:
+            assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_X32);
+            p_arg->val.x32 = dialog_cmd_ctl_state_query.state.user.u32;
+            break;
+
+        default: default_unhandled();
+#if CHECKING
+        case DIALOG_CONTROL_STATICTEXT:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
+        case DIALOG_CONTROL_PUSHBUTTON:
+#endif
+            status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.pushbutton);
+            break;
+        }
+
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY_DISPOSE, &dialog_cmd_ctl_state_query));
+
+        status_return(status); /* unable to read arg correctly - fault command */
+    }
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
 dialog_arglist_construct(
     _OutRef_    P_ARGLIST_HANDLE p_arglist_handle,
-    P_DIALOG p_dialog,
     _InRef_     PC_ARG_TYPE p_arg_types /*[], terminator is ARG_TYPE_NONE*/,
+    P_DIALOG p_dialog,
     const PC_DIALOG_CTL_ID p_dialog_control_id /*[n_arglist_args]*/)
 {
     status_return(arglist_prepare(p_arglist_handle, p_arg_types));
 
-    if(0 != n_arglist_args(p_arglist_handle))
-    {
-        const U32 n_args = n_arglist_args(p_arglist_handle);
-        const P_ARGLIST_ARG p_args = p_arglist_args(p_arglist_handle, n_args);
-        U32 arg_idx;
+    if(0 == n_arglist_args(p_arglist_handle))
+        return(STATUS_OK);
 
-        for(arg_idx = 0; arg_idx < n_args; ++arg_idx)
-        {
-            const P_ARGLIST_ARG p_arg = &p_args[arg_idx];
-            DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
-            STATUS status;
-
-            dialog_cmd_ctl_state_query.dialog_control_id = p_dialog_control_id[arg_idx];
-
-            if(0 == dialog_cmd_ctl_state_query.dialog_control_id)
-            {
-                p_arg->type = ARG_TYPE_NONE; /*arg_dispose(p_arglist_handle, arg_idx);*/
-                continue;
-            }
-
-            dialog_cmd_ctl_state_query.h_dialog = p_dialog->h_dialog;
-            dialog_cmd_ctl_state_query.bits = 0;
-            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query);
-
-            if(status_fail(status))
-            {   /* e.g. view control may not have controls for ruler on/off */
-                p_arg->type = ARG_TYPE_NONE; /*arg_dispose(p_arglist_handle, i);*/
-                continue;
-            }
-            switch(dialog_cmd_ctl_state_query.dialog_control_type)
-            {
-            default: default_unhandled();
-#if CHECKING
-            case DIALOG_CONTROL_CHECKBOX:
-            case DIALOG_CONTROL_CHECKPICTURE:
-#ifdef DIALOG_HAS_TRISTATE
-            case DIALOG_CONTROL_TRISTATE:
-            case DIALOG_CONTROL_TRIPICTURE:
-#endif
-#endif
-                /* all these are generic_u8n or bool */
-                assert(((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_U8N) || ((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_BOOL));
-                p_arg->val.u8n = dialog_cmd_ctl_state_query.state.generic_u8n;
-                break;
-
-#if CHECKING
-            case DIALOG_CONTROL_RADIOBUTTON:
-            case DIALOG_CONTROL_RADIOPICTURE:
-                myassert0(TEXT("lookup the group!"));
-
-                /*FALLTHRU*/
-#endif
-
-            case DIALOG_CONTROL_GROUPBOX:
-            case DIALOG_CONTROL_BUMP_S32:
-                assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_S32);
-                p_arg->val.s32 = dialog_cmd_ctl_state_query.state.bump_s32;
-                break;
-
-            case DIALOG_CONTROL_BUMP_F64:
-                assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_F64);
-                p_arg->val.f64 = dialog_cmd_ctl_state_query.state.bump_f64;
-                break;
-
-            case DIALOG_CONTROL_EDIT:
-                status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.edit.ui_text);
-                break;
-
-            case DIALOG_CONTROL_LIST_S32:
-                assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_S32);
-                assert(dialog_cmd_ctl_state_query.state.list_s32.itemno >= 0);
-                p_arg->val.s32 = dialog_cmd_ctl_state_query.state.list_s32.s32;
-                break;
-
-            case DIALOG_CONTROL_LIST_TEXT:
-                assert(dialog_cmd_ctl_state_query.state.list_text.itemno >= 0);
-                status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.list_text.ui_text);
-                break;
-
-            case DIALOG_CONTROL_COMBO_S32:
-                assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_S32);
-                assert(dialog_cmd_ctl_state_query.state.combo_s32.itemno >= 0);
-                p_arg->val.s32 = dialog_cmd_ctl_state_query.state.combo_s32.s32;
-                break;
-
-            case DIALOG_CONTROL_COMBO_TEXT:
-                assert(dialog_cmd_ctl_state_query.state.list_text.itemno != DIALOG_CTL_STATE_LIST_ITEM_NONE);
-                status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.combo_text.ui_text);
-                break;
-
-            case DIALOG_CONTROL_USER:
-                assert((p_arg->type & ARG_TYPE_MASK) == ARG_TYPE_X32);
-                p_arg->val.x32 = dialog_cmd_ctl_state_query.state.user.u32;
-                break;
-
-            case DIALOG_CONTROL_STATICTEXT:
-            case DIALOG_CONTROL_STATICFRAME:
-            case DIALOG_CONTROL_PUSHBUTTON:
-                status = dialog_arglist_arg_xstr_from_ui_text(p_arglist_handle, arg_idx, &dialog_cmd_ctl_state_query.state.pushbutton);
-                break;
-            }
-
-            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY_DISPOSE, &dialog_cmd_ctl_state_query));
-        }
-    }
-
-    return(STATUS_OK);
+    return(dialog_arglist_construct_add_args(p_arglist_handle, p_dialog, p_dialog_control_id));
 }
 
 _Check_return_
@@ -403,7 +417,7 @@ dialog_click_pushbutton(
                 p_arg_type = p_construct_table->args;
             }
 
-            status_return(status = dialog_arglist_construct(&arglist_handle, p_dialog, p_arg_type, p->p_dialog_control_id));
+            status_return(status = dialog_arglist_construct(&arglist_handle, p_arg_type, p_dialog, p->p_dialog_control_id));
 
             { /* allow command preprocessing by dialog callback */
             P_PROC_DIALOG_EVENT p_proc_client;
@@ -734,7 +748,7 @@ dialog_control_rect_using_bitmap(
             {
                 DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
                 dialog_cmd_ctl_size_estimate.p_dialog_control = p_dialog_control;
-                dialog_cmd_ctl_size_estimate.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data.p_any;
+                dialog_cmd_ctl_size_estimate.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data;
                 ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
                 relative_offset = dialog_cmd_ctl_size_estimate.size.x;
             }
@@ -811,6 +825,50 @@ dialog_control_rect_using_bitmap(
                     (U32) this_dialog_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
 
             coord = (relative_bit_number < 2) ? S16_MAX : S16_MIN;
+
+#if 0 /* not in 230b yet */
+            if((0 == relative_bit_number) || (2 == relative_bit_number))
+            {   /* try to use estimate edge coord using current caption as minimum width (e.g. long caption, short radio buttons) */
+                DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
+                dialog_cmd_ctl_size_estimate.p_dialog_control = p_dialog_control;
+                dialog_cmd_ctl_size_estimate.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data;
+                ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
+                if(0 != dialog_cmd_ctl_size_estimate.size.x)
+                {
+                    const BIT_NUMBER relative_bit_number_for_edge = relative_bit_number ^ 2;
+                    PIXIT_RECT relative_pixit_rect = { { 0, 0 }, { 0, 0 } }; /* dataflower */
+                    BITMAP(relative_bitmap, 4);
+                    PIXIT relative_coord;
+
+                    bitmap_clear(relative_bitmap, N_BITS_ARG(4));
+                    bitmap_bit_set(relative_bitmap, relative_bit_number_for_edge, N_BITS_ARG(4));
+
+#if CHECKING
+                    {
+                    /* push an element on dependency stack */
+                    DSC dsc;
+                    dsc.dep_id = this_dialog_control_id;
+                    dsc.dep_bn = bit_number;
+                    status_assert(al_array_add(p_stack, DSC, 1, PC_ARRAY_INIT_BLOCK_NONE, &dsc));
+#endif
+
+                    dialog_control_rect_using_bitmap(p_dialog, p_dialog_ictl, &relative_pixit_rect, relative_bitmap CHECKING_ONLY_ARG(p_stack));
+
+#if CHECKING
+                    /* pop element off dependency stack */
+                    al_array_shrink_by(p_stack, -1);
+                    }
+#endif
+
+                    relative_coord = ((PC_PIXIT) &relative_pixit_rect)[relative_bit_number_for_edge];
+
+                    if(relative_bit_number < 2)
+                        coord = relative_coord - dialog_cmd_ctl_size_estimate.size.x;
+                    else
+                        coord = relative_coord + dialog_cmd_ctl_size_estimate.size.x;
+                }
+            }
+#endif
 
             for(i = 0; i < n_ictls_from_group(p_ictl_group); ++i)
             {
@@ -1340,7 +1398,7 @@ dialog_current_set(
                 DIALOG_MSG_HDR_from_dialog(dialog_msg_ctl_current, p_dialog);
                 dialog_msg_ctl_current.dialog_control_id = 0;
                 dialog_msg_ctl_current.p_dialog_control = NULL;
-                dialog_msg_ctl_current.p_dialog_control_data = NULL;
+                dialog_msg_ctl_current.p_dialog_control_data.p_any = NULL;
             }
 
             status_assert(dialog_call_client(p_dialog, DIALOG_MSG_CODE_CTL_CURRENT, &dialog_msg_ctl_current, p_proc_client));
@@ -1355,12 +1413,15 @@ dialog_current_set(
 
         if(NULL != p_dialog_ictl_edit_xx)
         {   /* position cursor at end of any edit control */
-            if(!p_dialog_ictl_edit_xx->read_only && (NULL != p_dialog_ictl_edit_xx->riscos.mlec))
+            if(!p_dialog_ictl_edit_xx->read_only)
             {
-                mlec_claim_focus(p_dialog_ictl_edit_xx->riscos.mlec);
+                if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
+                {
+                    mlec_claim_focus(p_dialog_ictl_edit_xx->riscos.mlec);
 
-                if(!disallow_movement)
-                    mlec__cursor_textend(p_dialog_ictl_edit_xx->riscos.mlec);
+                    if(!disallow_movement)
+                        mlec__cursor_textend(p_dialog_ictl_edit_xx->riscos.mlec);
+                }
             }
 
             return;
@@ -1368,28 +1429,17 @@ dialog_current_set(
 
         switch(p_dialog_ictl->dialog_control_type)
         {
-#if CHECKING
-            case DIALOG_CONTROL_STATICTEXT:
-            case DIALOG_CONTROL_STATICFRAME:
-            case DIALOG_CONTROL_STATICPICTURE:
-                assert0();
-#endif
-            default:
-                break;
+        default:
+            break;
 
-            case DIALOG_CONTROL_LIST_S32:
-            case DIALOG_CONTROL_LIST_TEXT:
-                {
-                const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
-                assert(p_dialog_ictl->data.list_xx.list_xx.riscos.lbox);
-                ri_lbox_focus_set(p_dialog_ictl->data.list_xx.list_xx.riscos.lbox);
-                break;
-                }
-
-            case DIALOG_CONTROL_COMBO_S32:
-            case DIALOG_CONTROL_COMBO_TEXT:
-                /* ensure dropdown opened ??? */
-                break;
+        case DIALOG_CONTROL_LIST_S32:
+        case DIALOG_CONTROL_LIST_TEXT:
+            {
+            const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
+            assert(p_dialog_ictl->data.list_xx.list_xx.riscos.lbox);
+            ri_lbox_focus_set(p_dialog_ictl->data.list_xx.list_xx.riscos.lbox);
+            break;
+            }
         }
     }
 #endif
@@ -1486,7 +1536,7 @@ dialog_dbox_dispose(
     if(0 != p_dialog->stolen_focus_.maeve_handle)
     {
         const P_DOCU p_docu = p_docu_from_docno(p_dialog->stolen_focus_.docno);
-        if(!IS_DOCU_NONE(p_docu))
+        if(DOCU_NOT_NONE(p_docu))
             maeve_event_handler_del_handle(p_docu, p_dialog->stolen_focus_.maeve_handle);
         p_dialog->stolen_focus_.maeve_handle = 0;
         p_dialog->stolen_focus_.docno = DOCNO_NONE;
@@ -1549,7 +1599,7 @@ dialog_dbox_dispose(
     if(0 != p_dialog->maeve_handle)
     {
         const P_DOCU p_docu = p_docu_from_docno(p_dialog->docno);
-        if(!IS_DOCU_NONE(p_docu))
+        if(DOCU_NOT_NONE(p_docu))
             maeve_event_handler_del_handle(p_docu, p_dialog->maeve_handle);
         p_dialog->maeve_handle = 0;
     }
@@ -1577,6 +1627,37 @@ dialog_cmd_dispose_dbox(
 
 /* start to steal the caret away from its current owner */
 
+_Check_return_
+static BOOL
+dialog_dbox_process_focus_steal_from_doc(
+    P_DIALOG p_dialog,
+    _DocuRef_   P_DOCU p_docu)
+{
+    const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
+
+    if(IS_VIEW_NONE(p_view))
+        return(FALSE);
+
+#if RISCOS
+    if(p_view->pane[p_view->cur_pane].hwnd != p_dialog->riscos.stolen_focus_caretstr.window_handle)
+        return(FALSE);
+#endif
+
+    {
+    STATUS maeve_handle;
+
+    p_dialog->stolen_focus_from_doc = 1;
+    p_dialog->stolen_focus_.docno = docno_from_p_docu(p_docu);
+    p_dialog->stolen_focus_.focus_owner = p_docu->focus_owner;
+
+    /*status_consume(object_skel(p_docu, T5_MSG_CARET_SHOW_CLAIM, &focus));*/ /*just claim machine focus*/
+
+    status_assert(maeve_handle = maeve_event_handler_add(p_docu_from_docno(p_dialog->stolen_focus_.docno), maeve_event_dialog_stolen_focus, (CLIENT_HANDLE) p_dialog->h_dialog));
+    p_dialog->stolen_focus_.maeve_handle = (MAEVE_HANDLE) maeve_handle;
+    return(TRUE);
+    } /*block*/
+}
+
 static void
 dialog_dbox_process_focus_steal(
     P_DIALOG p_dialog)
@@ -1585,41 +1666,20 @@ dialog_dbox_process_focus_steal(
 
 #if RISCOS
     void_WrapOsErrorReporting(winx_get_caret_position(&p_dialog->riscos.stolen_focus_caretstr));
+
+    if(p_dialog->riscos.stolen_focus_caretstr.window_handle == (wimp_w) -1)
+        return;
 #endif
 
-    /* is it one of our documents that we have stolen from? */
-#if RISCOS
-    if(p_dialog->riscos.stolen_focus_caretstr.window_handle != (wimp_w) -1)
-#endif
+    { /* is it one of our documents' views that we have stolen from? */
+    DOCNO docno = DOCNO_NONE;
+
+    while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        DOCNO docno = DOCNO_NONE;
-
-        while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
-        {
-            const P_DOCU p_docu = p_docu_from_docno_valid(docno);
-            const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-
-            if(IS_VIEW_NONE(p_view))
-                continue;
-
-#if RISCOS
-            if(p_view->pane[p_view->cur_pane].hwnd == p_dialog->riscos.stolen_focus_caretstr.window_handle)
-#endif
-            {
-                STATUS maeve_handle;
-
-                p_dialog->stolen_focus_from_doc = 1;
-                p_dialog->stolen_focus_.docno = docno;
-                p_dialog->stolen_focus_.focus_owner = p_docu->focus_owner;
-
-                /*status_consume(object_skel(p_docu, T5_MSG_CARET_SHOW_CLAIM, &focus));*/ /*just claim machine focus*/
-
-                status_assert(maeve_handle = maeve_event_handler_add(p_docu_from_docno(p_dialog->stolen_focus_.docno), maeve_event_dialog_stolen_focus, (CLIENT_HANDLE) p_dialog->h_dialog));
-                p_dialog->stolen_focus_.maeve_handle = (MAEVE_HANDLE) maeve_handle;
-                break;
-            }
-        }
+        if(dialog_dbox_process_focus_steal_from_doc(p_dialog, p_docu_from_docno_valid(docno)))
+            break;
     }
+    } /*block*/
 }
 
 /* before closing down the dialog tree, see if it still has the input focus */
@@ -1686,7 +1746,7 @@ dialog_dbox_process_focus_return_post(
     if(0 != p_dialog->stolen_focus_.maeve_handle)
     {
         const P_DOCU p_docu = p_docu_from_docno(p_dialog->stolen_focus_.docno);
-        if(!IS_DOCU_NONE(p_docu))
+        if(DOCU_NOT_NONE(p_docu))
             maeve_event_handler_del_handle(p_docu, p_dialog->stolen_focus_.maeve_handle);
         p_dialog->stolen_focus_.maeve_handle = 0;
         p_dialog->stolen_focus_.docno = DOCNO_NONE;
@@ -1702,19 +1762,22 @@ dialog_dbox_process_riscos(
     P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd_process_dbox,
     _InRef_     PC_PIXIT_RECT p_pixit_rect)
 {
-    DIALOG_POSITION_TYPE dialog_position_type;
-    S32 menu_requested;
-    S32 menu_used;
     const GDI_SIZE screen_gdi_size = host_modevar_cache_current.gdi_size;
     GDI_POINT gdi_tl = { 0, 0 }; /* actually OS units */ /* dataflower */
     GDI_COORD overhead;
+    DIALOG_POSITION_TYPE dialog_position_type;
+    S32 menu_requested = DIALOG_RISCOS_MENU;
+    S32 menu_used;
+
+    if(p_dialog_cmd_process_dbox->bits.use_riscos_menu)
+        menu_requested = p_dialog_cmd_process_dbox->riscos.menu;
 
     { /*a*/
     WimpWindowWithBitset wind_defn;
     GDI_SIZE gdi_size;
     GDI_BOX gdi_box;
 
-    zero_struct(wind_defn);
+    zero_struct_fn(wind_defn);
 
     wind_defn.behind = (wimp_w) -1; /* open at the top of the window stack */
 
@@ -1734,7 +1797,7 @@ dialog_dbox_process_riscos(
     wind_defn.flags.bits.flags_are_new = 1;
     wind_defn.flags.bits.moveable = 1;
 
-    if(p_dialog->riscos.caption)
+    if(NULL != p_dialog->riscos.caption)
     {
         wind_defn.flags.bits.has_title = 1;
 
@@ -1748,11 +1811,6 @@ dialog_dbox_process_riscos(
 
     dialog_riscos_box_from_pixit_rect(&gdi_box, p_pixit_rect);
 
-    /* create offsets such that DIALOG_CONTROL_PARENT no longer neccesarily refers to this tl point! */
-    /* add top and left margins */
-    gdi_box.x0 -= +(DIALOG_BOX_LM / PIXITS_PER_RISCOS);
-    gdi_box.y1 -= -(DIALOG_BOX_TM / PIXITS_PER_RISCOS);
-
     p_dialog->riscos.gdi_offset_tl.x = gdi_box.x0;
     p_dialog->riscos.gdi_offset_tl.y = gdi_box.y1;
 
@@ -1763,14 +1821,10 @@ dialog_dbox_process_riscos(
     gdi_size.cx = 4 * idiv_ceil_u(gdi_size.cx, 4);
     gdi_size.cy = 4 * idiv_ceil_u(gdi_size.cy, 4);
 
-    menu_requested = p_dialog_cmd_process_dbox->bits.use_riscos_menu
-                   ? p_dialog_cmd_process_dbox->riscos.menu
-                   : DIALOG_RISCOS_MENU;
-
     if(DIALOG_RISCOS_MENU == menu_requested)
     {
         if(event_query_submenudata_valid())
-        {   /* mustn't round posn to worst possible pixel granularity as Window Manager will get upset */
+        {   /* mustn't round position to worst possible pixel granularity as Window Manager will get upset */
             status_assert(event_read_submenudata(NULL, (int *) &gdi_tl.x, (int *) &gdi_tl.y)); /* ask about menu position */
         }
         else
@@ -1783,61 +1837,81 @@ dialog_dbox_process_riscos(
 
     dialog_riscos_dbox_modify_open_type(p_dialog, &menu_used);
 
-    dialog_position_type = ENUM_UNPACK(DIALOG_POSITION_TYPE, p_dialog_cmd_process_dbox->bits.dialog_position_type);
+    /* it may be necessary to force the dialog box to have a close icon */
+    if( p_dialog->modeless ||
+        ((DIALOG_RISCOS_NOT_MENU == menu_used) && (NULL == p_dialog_ictl_from_control_id(p_dialog, IDCANCEL))) )
+    {
+        wind_defn.flags.bits.has_close = 1;
+        wind_defn.flags.bits.has_title = 1;
+    }
 
-    if(DIALOG_POSITION_DEFAULT == dialog_position_type)
+    if(DIALOG_POSITION_DEFAULT == (dialog_position_type = ENUM_UNPACK(DIALOG_POSITION_TYPE, p_dialog_cmd_process_dbox->bits.dialog_position_type)))
         dialog_position_type = DIALOG_POSITION_NEAR_MOUSE;
 
-    if(DIALOG_RISCOS_MENU != menu_requested) /* otherwise we already have the position */
-    switch(dialog_position_type)
+    if(DIALOG_RISCOS_MENU != menu_requested) /* otherwise we already have the exact position */
     {
-    case DIALOG_POSITION_CENTRE_WINDOW: /* unsupported - default to screen */
-    case DIALOG_POSITION_CENTRE_SCREEN:
-        gdi_tl.x = (screen_gdi_size.cx - gdi_size.cx) / 2;
-        gdi_tl.y = (screen_gdi_size.cy + gdi_size.cy) / 2;
+        { /* initialise gdi_tl - capture current mouse position - may offset from here */
+        WimpGetPointerInfoBlock m;
+        void_WrapOsErrorReporting(wimp_get_pointer_info(&m));
+        gdi_tl.x = m.x;
+        gdi_tl.y = m.y;
+        } /*block*/
 
-        /* round posn to worst possible pixel granularity */
-        gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
-        gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
-        break;
-
-    default: default_unhandled();
-#if CHECKING
-    case DIALOG_POSITION_NEAR_MOUSE:
-#endif
-        switch(menu_requested)
+        switch(dialog_position_type)
         {
-        case DIALOG_RISCOS_MENU:
+        case DIALOG_POSITION_CENTRE_SCREEN:
+            gdi_tl.x = (screen_gdi_size.cx - gdi_size.cx) / 2;
+            gdi_tl.y = (screen_gdi_size.cy + gdi_size.cy) / 2;
+
+            /* round posn to worst possible pixel granularity */
+            gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
+            gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
+            break;
+
+        case DIALOG_POSITION_CENTRE_WINDOW: /* unsupported - default to mouse */
+        case DIALOG_POSITION_CENTRE_MOUSE:
+            gdi_tl.x -= gdi_size.cx / 2;
+            gdi_tl.y += gdi_size.cy / 2;
+
+            /* round posn to worst possible pixel granularity */
+            gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
+            gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
             break;
 
         default: default_unhandled();
 #if CHECKING
-        case DIALOG_RISCOS_STANDALONE_MENU:
-        case DIALOG_RISCOS_NOT_MENU:
+        case DIALOG_POSITION_NEAR_MOUSE:
 #endif
-            if(dialog_statics.noted_gdi_tl.x && dialog_statics.noted_gdi_tl.y)
+            switch(menu_requested)
             {
-                gdi_tl = dialog_statics.noted_gdi_tl;
+            case DIALOG_RISCOS_MENU:
+                break;
 
-                dialog_statics.noted_gdi_tl.x = 0;
-                dialog_statics.noted_gdi_tl.y = 0;
-            }
-            else
-            {
-                WimpGetPointerInfoBlock m;
+            default: default_unhandled();
+#if CHECKING
+            case DIALOG_RISCOS_STANDALONE_MENU:
+            case DIALOG_RISCOS_NOT_MENU:
+#endif
+                if(dialog_statics.noted_gdi_tl.x && dialog_statics.noted_gdi_tl.y)
+                {
+                    gdi_tl = dialog_statics.noted_gdi_tl;
 
-                void_WrapOsErrorReporting(wimp_get_pointer_info(&m));
+                    dialog_statics.noted_gdi_tl.x = 0;
+                    dialog_statics.noted_gdi_tl.y = 0;
+                }
+                else 
+                {
+                    gdi_tl.x -= 64 /*32*/; /* try to be a bit into the window */
+                    gdi_tl.y += 64 /*32*/;
 
-                gdi_tl.x = m.x - 64 /*32*/; /* try to be a bit into the window */
-                gdi_tl.y = m.y + 64 /*32*/;
-
-                /* round posn to worst possible pixel granularity */
-                gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
-                gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
+                    /* round posn to worst possible pixel granularity */
+                    gdi_tl.x = 4 * idiv_floor(gdi_tl.x, 4);
+                    gdi_tl.y = 4 * idiv_floor(gdi_tl.y, 4);
+                }
+                break;
             }
             break;
         }
-        break;
     }
 
     wind_defn.visible_area.xmin = gdi_tl.x;
@@ -1888,13 +1962,6 @@ dialog_dbox_process_riscos(
         wind_defn.visible_area.ymax = wind_defn.visible_area.ymin + gdi_size.cy;
         wind_defn.flags.bits.has_vert_scroll = 1;
         wind_defn.flags.bits.has_adjust_size = 1;
-    }
-
-    /* it may be necessary to force the dialog box to have a close icon */
-    if(p_dialog->modeless || ((DIALOG_RISCOS_NOT_MENU == menu_used) && (NULL == p_dialog_ictl_from_control_id(p_dialog, IDCANCEL))))
-    {
-        wind_defn.flags.bits.has_close = 1;
-        wind_defn.flags.bits.has_title = 1;
     }
 
     status_return(winx_create_window(&wind_defn, &p_dialog->hwnd, dialog_riscos_dbox_event_handler, (P_ANY) p_dialog->h_dialog));
@@ -2091,6 +2158,15 @@ T5_MSG_PROTO(extern, dialog_dbox_process, P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd
         gr_box_make_bad((P_GR_BOX) &pixit_rect);
         status_assert(dialog_ictls_bbox_in(p_dialog, &p_dialog->ictls, &pixit_rect));
 
+#if 1
+        /* if we have placed the dialogue box contents further down, it was probably deliberate e.g. SDC for Close */
+        if(pixit_rect.tl.y > 0) pixit_rect.tl.y = 0;
+#endif
+
+        /* add top and left margins (still in pixit space) */
+        pixit_rect.tl.x -= DIALOG_BOX_LM;
+        pixit_rect.tl.y -= DIALOG_BOX_TM;
+
         /* add right and bottom margins (still in pixit space) */
         pixit_rect.br.x += DIALOG_BOX_RM;
         pixit_rect.br.y += DIALOG_BOX_BM;
@@ -2098,10 +2174,6 @@ T5_MSG_PROTO(extern, dialog_dbox_process, P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd
 #if RISCOS
         status = dialog_dbox_process_riscos(p_dialog, p_dialog_cmd_process_dbox, &pixit_rect);
 #elif WINDOWS
-        /* add top and left margins (still in pixit space) */
-        pixit_rect.tl.x -= DIALOG_BOX_LM;
-        pixit_rect.tl.y -= DIALOG_BOX_TM;
-
         status = dialog_dbox_process_windows(p_dialog, p_dialog_cmd_process_dbox, &pixit_rect);
 #endif
 

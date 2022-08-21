@@ -23,9 +23,10 @@ $(PROD_BUILD_DIR).!$(APPL).!Boot: \
  Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR) -boot
 
 $(PROD_BUILD_DIR).!$(APPL).!Run: \
+ $(PROD_BUILD_DIR).!$(APPL).!RunImage \
  $(T5).Build.Tools.BootRunGen \
  $(PROD_BUILD_DIR).Makefile
- Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR)
+ Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR) -runimage $(PROD_BUILD_DIR).!$(APPL).!RunImage
 
 $(PROD_BUILD_DIR).!RunDB: \
  $(T5).Build.Tools.BootRunGen \
@@ -37,229 +38,192 @@ $(PROD_BUILD_DIR).!RunND: \
  $(PROD_BUILD_DIR).Makefile
  Basic -quit $(T5).Build.Tools.BootRunGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -$(DIR) -alternate
 
-$(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Config: \
+$(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Config: \
  $(T5).Build.Tools.ConfigGen \
  $(PROD_BUILD_DIR).Makefile
  Basic -quit $(T5).Build.Tools.ConfigGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -country $(COUNTRY)
 
-$(PROD_SOURCE_DIR).resource.windows.$(COUNTRY).Config: \
+$(PROD_SOURCE_DIR).Resources.Windows.$(COUNTRY).config/txt: \
  $(T5).Build.Tools.ConfigGen \
  $(PROD_BUILD_DIR).Makefile
  Basic -quit $(T5).Build.Tools.ConfigGen -output $@ -product $(PROD) -version $(TEXTUAL_VERSION_NUMBER) -country $(COUNTRY) -windows
 
-$(PROD_BUILD_DIR).!$(APPL).!Help: $(T5).resource.riscos.Neutral.!Help
+$(PROD_BUILD_DIR).!$(APPL).!Help: $(T5).Resources.Neutral.RISC_OS.!Help
  Copy $? $@ ~C FV
 
+# Copy a pre-registered (generic) Info file for testing
+$(PROD_BUILD_DIR).!$(APPL).Info: $(T5).Resources.Neutral.RISC_OS.TestInfo
+ Copy $? $@ ~C FV
+
+# Do ship extra file type icons that are in not RISC OS 4.02 ROM
+
 $(PROD_BUILD_DIR).!$(APPL).!Sprites: \
-$(T5).resource.riscos.!spr_comm \
-$(T5).resource.riscos.!spr24 \
-$(PROD_SOURCE_DIR).resource.riscos.!spr24
+$(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app24 \
+$(T5).Resources.Neutral.RISC_OS.spr_file24 \
+$(T5).Resources.Neutral.RISC_OS.spr_fxtr24R4
  X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
- SMerge $(T5).resource.riscos.!spr_comm
- SMerge $(T5).resource.riscos.!spr24
- SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr24
- $(SRENAME1)
- $(SRENAME2)
- X Wipe $@ ~cf~r~v
+ SMerge $(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app24
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file24
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_fxtr24R4
+ Remove $@
  SSave $@
  X SNew; ChangeDynamicArea -SpriteSize 8K
 
 $(PROD_BUILD_DIR).!$(APPL).!Sprites22: \
-$(T5).resource.riscos.!spr_comm \
-$(T5).resource.riscos.!spr22 \
-$(PROD_SOURCE_DIR).resource.riscos.!spr22
+$(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app22 \
+$(T5).Resources.Neutral.RISC_OS.spr_file22 \
+$(T5).Resources.Neutral.RISC_OS.spr_fxtr22R4
  X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
- SMerge $(T5).resource.riscos.!spr_comm
- SMerge $(T5).resource.riscos.!spr22
- SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr22
- $(SRENAME1)
- $(SRENAME2)
- X Wipe $@ ~cf~r~v
+ SMerge $(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app22
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file22
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_fxtr22R4
+ Remove $@
  SSave $@
  X SNew; ChangeDynamicArea -SpriteSize 8K
+
+# !SpritesR5XX have different ic_dde pin position
+
+# Also don't ship extra file type icons that are in RISC OS 5 ROM
 
 # !SpritesR5 builds on !Sprites22
 $(PROD_BUILD_DIR).!$(APPL).!SpritesR5: \
-$(T5).resource.riscos.!spr_comm \
-$(T5).resource.riscos.!spr22 \
-$(PROD_SOURCE_DIR).resource.riscos.!spr22 \
-$(T5).resource.riscos.!sprR5 \
-$(T5).resource.riscos.!sprR5L \
-$(PROD_SOURCE_DIR).resource.riscos.!sprR5
+$(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app22 \
+$(T5).Resources.Neutral.RISC_OS.spr_file22 \
+$(T5).Resources.Neutral.RISC_OS.spr_file22R5 \
+$(T5).Resources.Neutral.RISC_OS.spr_lfxt22
  X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
- SMerge $(T5).resource.riscos.!spr_comm
- SMerge $(T5).resource.riscos.!spr22
- SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr22
- SMerge $(T5).resource.riscos.!sprR5
- SMerge $(T5).resource.riscos.!sprR5L
- SMerge $(PROD_SOURCE_DIR).resource.riscos.!sprR5
- $(SRENAME1)
- $(SRENAME2)
- X Wipe $@ ~cf~r~v
+ SMerge $(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app22
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file22
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file22R5
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_lfxt22
+ Remove $@
  SSave $@
  X SNew; ChangeDynamicArea -SpriteSize 8K
 
-# Copy a pre-registered (generic) Info file for testing
-$(PROD_BUILD_DIR).!$(APPL).Info: $(T5).resource.TestInfo
+$(PROD_BUILD_DIR).!$(APPL).!SpritesR511: \
+$(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app11 \
+$(T5).Resources.Neutral.RISC_OS.spr_file22 \
+$(T5).Resources.Neutral.RISC_OS.spr_file11 \
+$(T5).Resources.Neutral.RISC_OS.spr_file11R5 \
+$(T5).Resources.Neutral.RISC_OS.spr_lfxt22
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.spr_app11
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file22
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file11
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_file11R5
+ SMerge $(T5).Resources.Neutral.RISC_OS.spr_lfxt22
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.!ReadMe: $(PROD_SOURCE_DIR).Resources.RISC_OS.!ReadMe
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.!Sprite: $(PROD_SOURCE_DIR).resource.riscos.Neutral.!Sprite
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf: $(T5).Resources.Neutral.Support.cfbf
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.BuildVer: $(BUILD_DIR).ob_skel.o.version
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Support.cfbf-mini: $(T5).Resources.Neutral.Support.cfbf-mini
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.!Sprite: $(PROD_SOURCE_DIR).Resources.RISC_OS.Neutral.!Sprite
+ Copy $? $@ ~C FV
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.BuildVer: $(BUILD_DIR).ob_skel.o.version
  DecAOF -a $? > $@
- 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.ImageSlot: $(T5).resource.riscos.Neutral.ImageSlot
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.ImageSlot: $(T5).Resources.Neutral.RISC_OS.ImageSlot
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Loader: $(T5).resource.riscos.Neutral.Loader
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.ImgConvert: $(T5).Resources.Neutral.RISC_OS.ImgConvert
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.PicConvert: $(T5).resource.riscos.Neutral.PicConvert
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.Loader: $(T5).Resources.Neutral.RISC_OS.Loader
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Stubs: $(PROD_BUILD_DIR).binaries.Neutral.Stubs
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.PicConvert: $(T5).Resources.Neutral.RISC_OS.PicConvert
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Help.Text: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Help.Text
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.RISC_OS.Splash: $(T5).Resources.Neutral.RISC_OS.Splash
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Config: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Config
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Config: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Config
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob02: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob02
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Choices.Choice00: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Choices.Choice00
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob04: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob04
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Choices.Choice01: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Choices.Choice01
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob06: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob06
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Choices.Choice18: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Choices.Choice18
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob07: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob07
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Choices.Choice29: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Choices.Choice29
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob08: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob08
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Choices.Choice37: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Choices.Choice37
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob09: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob09
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Choices.ChoicesDoc: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Choices.ChoicesDoc
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob12: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob12
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob17: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob17
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob19: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob19
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob20: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob20
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob21: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob21
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob22: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob22
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob23: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob23
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob24: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob24
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob25: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob25
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob26: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob26
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob27: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob27
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob28: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob28
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob33: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob33
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob35: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob35
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob40: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob40
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Objects.Ob41: $(PROD_BUILD_DIR).binaries.$(COUNTRY).Ob41
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.Choice00: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice00
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.Choice01: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice01
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.Choice18: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice18
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.Choice29: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice29
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.Choice37: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.Choice37
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Choices.ChoicesDoc: $(PROD_SOURCE_DIR).resource.riscos.$(COUNTRY).Choices.ChoicesDoc
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Help.Text: $(PROD_SOURCE_DIR).Resources.RISC_OS.$(COUNTRY).Help.Text
  Copy $? $@ ~C FV
 
 #
 # Resultz (and Fireworkz) specific resources
 #
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Markers.S1: $(T5).AppData.Neutral.Markers.S1
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S1: $(T5).Resources.Neutral.Markers.S1
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Markers.S2: $(T5).AppData.Neutral.Markers.S2
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S2: $(T5).Resources.Neutral.Markers.S2
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Markers.S3: $(T5).AppData.Neutral.Markers.S3
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S3: $(T5).Resources.Neutral.Markers.S3
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Markers.S4: $(T5).AppData.Neutral.Markers.S4
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S4: $(T5).Resources.Neutral.Markers.S4
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Markers.S5: $(T5).AppData.Neutral.Markers.S5
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S5: $(T5).Resources.Neutral.Markers.S5
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Markers.S6: $(T5).AppData.Neutral.Markers.S6
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Markers.S6: $(T5).Resources.Neutral.Markers.S6
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Pictures.S1: $(T5).AppData.Neutral.Pictures.S1
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Pictures.S1: $(T5).Resources.Neutral.Pictures.S1
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Pictures.S2: $(T5).AppData.Neutral.Pictures.S2
+$(PROD_BUILD_DIR).!$(APPL).Resources.Neutral.Pictures.S2: $(T5).Resources.Neutral.Pictures.S2
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Support.cfbf: $(T5).AppData.Neutral.Support.cfbf
+# language-dependent
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.UK.Templates.Sheet: $(T5).Resources.UK.Templates.Sheet
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.Neutral.Support.cfbf-mini: $(T5).AppData.Neutral.Support.cfbf-mini
+$(PROD_BUILD_DIR).!$(APPL).Resources.UK.Templates.Text: $(T5).Resources.UK.Templates.Text
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Template.Sheet: $(T5).AppData.$(COUNTRY).Template.Sheet
+$(PROD_BUILD_DIR).!$(APPL).Resources.France.Templates.Sheet: $(T5).Resources.France.Templates.Sheet
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Template.Text: $(T5).AppData.$(COUNTRY).Template.Text
+$(PROD_BUILD_DIR).!$(APPL).Resources.Germany.Templates.Sheet: $(T5).Resources.Germany.Templates.Sheet
  Copy $? $@ ~C FV
 
 #
 # Wordz (and Fireworkz) specific resources
 #
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Template.Letter: $(T5).AppData.$(COUNTRY).Template.Letter
+
+# language-dependent
+
+$(PROD_BUILD_DIR).!$(APPL).Resources.UK.Templates.Letter: $(T5).Resources.UK.Templates.Letter
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Dicts.Master: $(T5).ob_spell.resource.dicts.MasterAsz
+$(PROD_BUILD_DIR).!$(APPL).Resources.UK.Dicts.Master: $(T5).ob_spell.resource.UK.Dicts.MasterAsz
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).AppData.$(COUNTRY).Dicts.MasterC: $(T5).ob_spell.resource.dicts.MasterCsz
+$(PROD_BUILD_DIR).!$(APPL).Resources.UK.Dicts.MasterC: $(T5).ob_spell.resource.UK.Dicts.MasterCsz
  Copy $? $@ ~C FV
 
 #
@@ -278,6 +242,7 @@ $(T5).Build.configure \
 $(T5).common.mf_mid \
 $(T5).common.mf_mid$(BITS) \
 $(T5).common.mf_end \
+$(T5).common.mf_end_m \
 $(T5).Build.configure
  @Error 0 $(PROD_BUILD_DIR).Makefile is out-of-date: use Build.configure to regenerate it
 

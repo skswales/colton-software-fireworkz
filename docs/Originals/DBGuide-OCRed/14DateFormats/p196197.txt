@@ -1,0 +1,81 @@
+﻿Database Guide 196
+
+Date formats
+
+Full dates
+dmy
+d m y
+D M y
+M D y
+dmYa
+D M Y a
+M D Y a
+d/m/y
+d/m/Y a
+d.m.y
+d.m.Y a
+d-M~y
+d-M-Y a
+Y.m.d
+130261
+13 02 61
+13th Feb{ruary} 61
+Feb{ruary} 13th 61
+13 021961 {AD}
+13th Feb{ruary} 1961 {AD}
+Feb{ruary} 13th1961 {AD}
+13/02/61
+13/02/1961 {AD}
+13.02.61
+13.02.1961 {AD}
+13-Feb{ruary}-61
+13 Feb{ruary}-1961 {AD}
+1961.02.13
+
+Individual days, months or years
+D 13th
+M Feb{ruary}
+Y 61
+Y a 1961 {AD}
+
+
+
+Database Guide 197
+
+Pairs of days & months or months & years
+dm
+my
+d/m
+m/y
+d.m
+m.y
+mY a
+m.Y a
+D M
+M D
+M y
+MYa
+
+13 02
+02 61
+13/02
+02.61
+13.02
+02.61
+02 1961 {AD}
+02.1961 {AD}
+13th Feb{rualy}
+Feb{ruary} 13th
+Feb{ruary} 61
+Feb{ruary} 1961 {AD}
+
+Times
+Any of the dates can be followed by a time in the followmg
+format:
+hour:minute:second {am/pm}
+For example:
+17th March 1994 11:45:00 pm
+
+
+
+

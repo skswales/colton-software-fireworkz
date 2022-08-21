@@ -215,7 +215,7 @@ typedef struct RESOURCE_SPEC
 {
     ARRAY_HANDLE_USTR h_id_ustr;
     ARRAY_HANDLE_USTR h_definition_ustr;
-    S32 n_args;
+    U32 n_args;
     U32 max_additional_args;
     P_USTR ustr_description; /* owned by us */
 }
@@ -233,16 +233,12 @@ enum RPN_NUMBERS
 {
     /* start after externally visible numbers */
 #if defined(EV_IDNO_U16_FORCE)
-    DATA_ID_SLR = RPN_DAT_NEXT_NUMBER + 4*64U,
-#else
-    DATA_ID_SLR = RPN_DAT_NEXT_NUMBER,
-#endif
-    DATA_ID_RANGE       ,
-    DATA_ID_NAME        ,
-    DATA_ID_FIELD       ,
-
     /* local argument */
-    RPN_LCL_ARGUMENT    ,
+    RPN_LCL_ARGUMENT = RPN_DAT_NEXT_NUMBER + 4*64U,
+#else
+    /* local argument */
+    RPN_LCL_ARGUMENT = RPN_DAT_NEXT_NUMBER,
+#endif
 
     /* format information */
     RPN_FRM_BRACKETS    ,
@@ -823,6 +819,12 @@ ev_compile(
     _InRef_     PC_EV_SLR p_ev_slr);
 
 extern void
+ev_compiler_output_adjust(
+    _InoutRef_  P_COMPILER_OUTPUT p_compiler_output,
+    _InRef_     PC_EV_SLR p_ev_slr_offset,
+    _InRef_opt_ PC_EV_RANGE p_ev_range_scope);
+
+extern void
 ev_compiler_output_dispose(
     _InoutRef_  P_COMPILER_OUTPUT p_compiler_output);
 
@@ -909,12 +911,8 @@ ev_exp_copy(
 
 extern void
 ev_exp_refs_adjust(
-    P_EV_CELL p_ev_cell,
-    _InRef_     PC_EV_SLR p_ev_slr_offset    /* adjustment to slrs */,
-    _InRef_opt_ PC_EV_RANGE p_ev_range_scope /* source range */);
-
-#define ev_cell_contains_formula(p_ev_cell) ( \
-    !(p_ev_cell)->ev_parms.data_only )
+    _InoutRef_  P_EV_CELL p_ev_cell,
+    _InRef_     PC_EV_SLR p_ev_slr_offset /* adjustment to slrs */);
 
 extern void
 ev_cell_constant_from_data(
@@ -925,7 +923,8 @@ extern void
 ev_cell_free_resources(
     P_EV_CELL p_ev_cell);
 
-extern void
+/*ncr*/ _Ret_notnull_
+extern P_SS_DATA
 ev_slr_deref(
     _OutRef_    P_SS_DATA p_ss_data,
     _InRef_     PC_EV_SLR p_ev_slr);
@@ -939,8 +938,8 @@ extern STATUS
 ev_alert(
     _InVal_     EV_DOCNO ev_docno,
     _InRef_     PC_SS_STRINGC p_ss_string_message,
-    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
-    _InRef_     PC_SS_STRINGC p_ss_string_but_2);
+    _InRef_     PC_SS_STRINGC p_ss_string_button_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_button_2);
 
 extern void
 ev_alert_close(void);
@@ -954,8 +953,8 @@ extern STATUS
 ev_input(
     _InVal_     EV_DOCNO ev_docno,
     _InRef_     PC_SS_STRINGC p_ss_string_message,
-    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
-    _InRef_     PC_SS_STRINGC p_ss_string_but_2);
+    _InRef_     PC_SS_STRINGC p_ss_string_button_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_button_2);
 
 extern void
 ev_input_close(void);

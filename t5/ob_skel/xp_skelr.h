@@ -189,8 +189,9 @@ typedef struct WimpIconFlagsBitset /* flags bitset for ease of manipulation */
 
     UBF button_type   : 4;
 
-    UBF esg           : 5; /* as per PRM Vol III */
+    UBF esg           : 4; /* as per RO5 PRM */
 
+    UBF numbers_ltor  : 1;
     UBF selected      : 1;
     UBF disabled      : 1;
     UBF deleted       : 1;
@@ -214,7 +215,7 @@ typedef struct WimpIconBlockWithBitset /* contains bitset for ease of manipulati
     WimpIconFlagsWithBitset flags;
     WimpIconData    data;
 }
-WimpIconBlockWithBitset; /* analogous to WimpIconBlock */
+WimpIconBlockWithBitset /* analogous to WimpIconBlock */, * P_WimpIconBlockWithBitset; typedef const WimpIconBlockWithBitset * PC_WimpIconBlockWithBitset;
 
 /*
 Windows
@@ -528,10 +529,10 @@ report_wimp_send_message(
 extern _kernel_oserror *
 __WrapOsErrorChecking(
     _In_opt_    _kernel_oserror * const p_kernel_oserror,
-    _In_z_      PCTSTR p_function,
-    _In_z_      PCTSTR p_file,
+    _In_z_      PCTSTR tstr_function,
+    _In_z_      PCTSTR tstr_file,
     _In_        int line_no,
-    _In_z_      PCTSTR str);
+    _In_z_      PCTSTR tstr);
 
 /*ncr*/
 static inline _kernel_oserror *
@@ -846,7 +847,7 @@ _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
 winx_drag_box(
-    _In_opt_    WimpDragBox * const dr);
+    _In_opt_    /*const*/ WimpDragBox * const dr);
 
 _Check_return_
 _Ret_maybenull_
@@ -854,8 +855,8 @@ extern _kernel_oserror *
 winx_drag_a_sprite_start(
     int flags,
     int sprite_area_id,
-    char * p_sprite_name,
-    _In_        WimpDragBox * const dr);
+    _In_z_      const char * p_sprite_name,
+    _In_        const WimpDragBox * const dr);
 
 extern void
 winx_drag_a_sprite_stop(void);
@@ -1079,11 +1080,11 @@ host_query_alphabet_number(void);
 
 extern void
 host_ploticon(
-    _In_        WimpIconBlockWithBitset * const p_icon);
+    _InRef_     PC_WimpIconBlockWithBitset p_icon);
 
 extern void
 host_ploticon_setup_bbox(
-    _Inout_     WimpIconBlockWithBitset * const p_icon,
+    _InoutRef_  P_WimpIconBlockWithBitset p_icon,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context);
 
@@ -1110,7 +1111,7 @@ host_xfer_print_file_done(
 typedef /*_Check_return_*/ BOOL (* P_PROC_HOST_XFER_SAVE) (
     _In_z_      PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype,
-    CLIENT_HANDLE client_handle);
+    _InVal_     CLIENT_HANDLE client_handle);
 
 _Check_return_
 extern BOOL

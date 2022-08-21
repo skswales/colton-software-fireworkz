@@ -419,9 +419,9 @@ lotus123_load_all_cells_wk1(
     PC_BYTE p_file_start = array_rangec(p_h_data, BYTE, 0, n_file_bytes);
     U32 opcode_offset = 0;
     U16 opcode = L_NONE;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 50);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 200);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 128);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 64);
     quick_ublock_with_buffer_setup(quick_ublock_result);
     quick_ublock_with_buffer_setup(quick_ublock_formula);
     quick_ublock_with_buffer_setup(quick_ublock_format);
@@ -580,7 +580,7 @@ lotus123_load_all_cells_wk1(
                 LOAD_CELL_FOREIGN load_cell_foreign;
                 OBJECT_ID object_id;
 
-                zero_struct(load_cell_foreign);
+                zero_struct_fn(load_cell_foreign);
                 status_consume(object_data_from_slr(p_docu, &load_cell_foreign.object_data, &slr));
                 load_cell_foreign.original_slr = slr;
 
@@ -676,9 +676,9 @@ lotus123_load_all_cells_wk3(
     PC_BYTE p_file_start = array_rangec(p_h_data, BYTE, 0, n_file_bytes);
     U32 opcode_offset = 0;
     U16 opcode = L_NONE;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 50);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 200);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_result, 64);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 128);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_format, 64);
     quick_ublock_with_buffer_setup(quick_ublock_result);
     quick_ublock_with_buffer_setup(quick_ublock_formula);
     quick_ublock_with_buffer_setup(quick_ublock_format);
@@ -840,7 +840,7 @@ lotus123_load_all_cells_wk3(
                 LOAD_CELL_FOREIGN load_cell_foreign;
                 OBJECT_ID object_id;
 
-                zero_struct(load_cell_foreign);
+                zero_struct_fn(load_cell_foreign);
                 status_consume(object_data_from_slr(p_docu, &load_cell_foreign.object_data, &slr));
                 load_cell_foreign.original_slr = slr;
 
@@ -913,49 +913,6 @@ lotus123_load_all_cells_wk3(
     quick_ublock_dispose(&quick_ublock_result);
     quick_ublock_dispose(&quick_ublock_formula);
     quick_ublock_dispose(&quick_ublock_format);
-
-    return(status);
-}
-
-_Check_return_
-static STATUS
-lotus123_auto_width_table(
-    _DocuRef_   P_DOCU p_docu,
-    _InVal_     COL n_cols,
-    _InVal_     ROW n_rows)
-{
-    STATUS status = STATUS_OK;
-    COL col = 0;
-    DOCU_AREA docu_area;
-    STYLE style;
-
-    docu_area_init(&docu_area);
-    docu_area_set_whole_col(&docu_area);
-
-    style_init(&style);
-    style_bit_set(&style, STYLE_SW_CS_WIDTH);
-
-    while(col < n_cols)
-    {
-        COL_AUTO_WIDTH col_auto_width;
-        col_auto_width.col = col;
-        col_auto_width.row_s = 0;
-        col_auto_width.row_e = n_rows;
-        col_auto_width.allow_special = TRUE;
-        status_assert(object_call_id(p_docu->object_id_flow, p_docu, T5_MSG_COL_AUTO_WIDTH, &col_auto_width));
-        style.col_style.width = col_auto_width.width;
-
-        if(style.col_style.width != 0)
-        {
-            STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
-            STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style);
-            docu_area.tl.slr.col = col;
-            docu_area.br.slr.col = col + 1;
-            status_break(status = style_docu_area_add(p_docu, &docu_area, &style_docu_area_add_parm));
-        }
-
-        ++col;
-    }
 
     return(status);
 }
@@ -2359,13 +2316,8 @@ T5_MSG_PROTO(static, lotus123_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIG
     PCTSTR p_pathname = p_msg_insert_foreign->filename;
     ARRAY_HANDLE h_data = p_msg_insert_foreign->array_handle;
     BOOL data_allocated = 0;
-    BOOL insert_as_table = FALSE;
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
-
-    /* If it's a Letter-derived document, insert as table */
-    if(p_docu->flags.base_single_col)
-        insert_as_table = TRUE;
 
     if(NULL == (arg_stack = al_ptr_calloc_elem(P_USTR, MAXSTACK, &status)))
         return(status);
@@ -2413,9 +2365,6 @@ T5_MSG_PROTO(static, lotus123_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIG
                     else
                         status = lotus123_load_all_cells_wk1(p_docu, &h_data, &process_status);
                 }
-
-                if(status_ok(status) && insert_as_table)
-                    status = lotus123_auto_width_table(p_docu, n_cols, n_rows);
             }
         }
     }

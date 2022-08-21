@@ -1,0 +1,30 @@
+#
+# this is the messages file for ob_spelb (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_spelb/ob_spelb.h
+#
+# MSG_DIALOG_CHOICES_SPELB_xxx
+#
+# UK 0:Spell
+0:Spell
+# UK 1:Auto check
+1:Auto check
+# UK 2:Dictionaries
+2:Dictionaries
+# UK 3:Load master
+3:Load master
+# UK 4:Load user
+4:Load user
+# UK 5:Write to dictionaries
+5:Write to dictionaries
+#
+# errors (none)
+#
+# end of msg (ob_spelb)

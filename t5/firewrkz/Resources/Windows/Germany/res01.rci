@@ -1,0 +1,2038 @@
+﻿//
+// RCGen created for Object 1
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// Manually based at 0x2000
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_ss (Germany)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// ob_ss messages: keep consistent with ob_ss/resource/resource.h
+//
+// SS_MSG_STATUS_xxx
+//
+// UK 28:Recalc: %d
+	0x201C,	L"Recalc: %d"
+// UK 29:Error: %s
+	0x201D,	L"Fehler: %s"
+// UK 30:Error: %s, from custom function, cell %s
+	0x201E,	L"Fehler: %s, von Benutzerdefinierte Funktion, Zelle %s"
+// UK 31:Error: %s, from cell %s
+	0x201F,	L"Fehler: %s, von Zelle %s"
+//
+// Toolbar button help
+//
+// UK r90:Fill down (or ADJUST to Fill up)
+//r90:Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). SPEZIAL-Klick, um nach oben zu replizieren.
+// UK w90:Fill down (or Ctrl-click to Fill up)
+	0x205A,	L"Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). Strg-Klick, um nach oben zu replizieren."
+// UK r91:Fill right (or ADJUST to Fill left)
+//r91:Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). SPEZIAL-Klick, um nach links zu replizieren.
+// UK w91:Fill right (or Ctrl-click to Fill left)
+	0x205B,	L"Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). Strg-Klick, um nach links zu replizieren."
+// UK r92:Auto sum. ADJUST for short function list
+//r92:Summe. SPEZIAL-Klick, um eine kurze Liste der Funktionen anzuzeigen
+// UK w92:Auto sum. Ctrl-click for short function list
+	0x205C,	L"Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen"
+// UK 93:Create chart
+	0x205D,	L"Diagramm erstellen"
+// UK 94:Function selector
+	0x205E,	L"Funktionsauswahl"
+// UK 95:Cancel formula line editing
+	0x205F,	L"Brechen Sie die Bearbeitung der Formelzeile ab"
+// UK 96:Enter formula as new cell contents
+	0x2060,	L"Geben Sie die Formel als neuen Zelleninhalt ein"
+// UK 97:This is the formula line
+	0x2061,	L"Dies ist die Bearbeitungszeile für Formeln"
+//
+// UK 951:Plus
+	0x23B7,	L"Plus"
+// UK 952:Minus
+	0x23B8,	L"Minus"
+// UK 953:Times
+	0x23B9,	L"Mal"
+// UK 954:Divide
+	0x23BA,	L"Geteilt durch"
+// UK 955:Force cell to text
+	0x23BB,	L"Zelle in Text umzuwandeln"
+// UK 956:Attempt to force cell to number
+	0x23BC,	L"Versucht, die Zelle in eine Zahl umzuwandeln"
+// UK 957:Force cell to constant
+	0x23BD,	L"Zelle in konstanten Wert umwandeln"
+// UK 958:Insert date
+	0x23BE,	L"Datum einfügen"
+// UK 959:Insert name
+	0x23BF,	L"Benutzerdefinierten Namen einfügen"
+//
+// SS_MSG_DIALOG_CHOICES_xxx
+//
+// UK 935:Spreadsheet
+	0x23A7,	L"Kalkulationstabelle"
+// UK 936:Background recalc
+	0x23A8,	L"Hintergrund Berechnung"
+// UK 937:Automatic recalc
+	0x23A9,	L"Automatische Berechnung"
+// UK 938:Recalc on load
+	0x23AA,	L"Berechnung beim Laden des Dok."
+// UK 950:Extra rounding
+	0x23B6,	L"Zusätzliche Rundung"
+// UK 948:Edit in cell
+	0x23B4,	L"In Zelle bearbeiten"
+// UK 949:Alternate formula
+	0x23B5,	L"Alternate Formel"
+//
+// UK 960:Chart
+	0x23C0,	L"Diagramm"
+// UK 961:Automatic update
+	0x23C1,	L"Automatisches Update"
+//
+// SS_MSG_DIALOG_FUNCTIONS_xxx
+//
+// UK 1:Engineering
+	0x2001,	L"Technik"
+// UK 2:Database
+	0x2002,	L"Datenbank"
+// UK 3:Date and time
+	0x2003,	L"Datum / Zeit"
+// UK 4:Financial
+	0x2004,	L"Finanziel"
+// UK 5:Mathematical
+	0x2005,	L"Mathematik"
+// UK 6:Matrix
+	0x2006,	L"Matrix"
+// UK 7:Miscellaneous
+	0x2007,	L"Oberflächen"
+// UK 8:Statistical
+	0x2008,	L"Statistik"
+// UK 9:String
+	0x2009,	L"String"
+// UK 10:Trigonometrical
+	0x200A,	L"Trigonometrik"
+// UK 11:Custom control
+	0x200B,	L"B'te Funktion Ctrl"
+// UK 12:Lookup and reference
+	0x200C,	L"Lookup"
+// UK 13:Custom
+	0x200D,	L"Benutzerdefinierte"
+// UK 14:Logical
+	0x200E,	L"Logisch"
+// UK 15:Compatibility
+	0x200F,	L"Compatibility"
+// UK 16:Names
+	0x2010,	L"Namen"
+// UK 17:All
+	0x2011,	L"Alle"
+// UK 18:Quick
+	0x2012,	L"Schnell"
+//
+// SS_MSG_DLG_HT_FUNCTIONS_xxx
+//
+// UK 65:sg/sg05_engineering_functions.htm
+	0x2041,	L"sg/sg05_engineering_functions.htm"
+// UK 66:sg/sg05_database_functions.htm
+	0x2042,	L"sg/sg05_database_functions.htm"
+// UK 67:sg/sg05_date_time_functions.htm
+	0x2043,	L"sg/sg05_date_time_functions.htm"
+// UK 68:sg/sg05_financial_functions.htm
+	0x2044,	L"sg/sg05_financial_functions.htm"
+// UK 69:sg/sg05_mathematical_functions.htm
+	0x2045,	L"sg/sg05_mathematical_functions.htm"
+// UK 70:sg/sg05_matrix_functions.htm
+	0x2046,	L"sg/sg05_matrix_functions.htm"
+// UK 71:sg/sg05_miscellaneous_functions.htm
+	0x2047,	L"sg/sg05_miscellaneous_functions.htm"
+// UK 72:sg/sg05_statistical_functions.htm
+	0x2048,	L"sg/sg05_statistical_functions.htm"
+// UK 73:sg/sg05_string_functions.htm
+	0x2049,	L"sg/sg05_string_functions.htm"
+// UK 74:sg/sg05_trigonometrical_functions.htm
+	0x204A,	L"sg/sg05_trigonometrical_functions.htm"
+// UK 75:sg/sg07_custom_function_control_statements.htm
+	0x204B,	L"sg/sg07_custom_function_control_statements.htm"
+// UK 76:sg/sg05_lookup_functions.htm
+	0x204C,	L"sg/sg05_lookup_functions.htm"
+// UK 77:sg/sg07_custom_functions.htm
+	0x204D,	L"sg/sg07_custom_functions.htm"
+// UK 78:sg/sg05_logical_functions.htm
+	0x204E,	L"sg/sg05_logical_functions.htm"
+// UK 79:sg/sg05_compatibility_functions.htm
+	0x204F,	L"sg/sg05_compatibility_functions.htm"
+// UK 80:ug/ug09_adding_a_name_to_a_number_cell.htm
+	0x2050,	L"ug/ug09_adding_a_name_to_a_number_cell.htm"
+// UK 81:sg/sg05_function_reference.htm
+	0x2051,	L"sg/sg05_function_reference.htm"
+// UK 82:sg/sg05_function_reference.htm
+	0x2052,	L"sg/sg05_function_reference.htm"
+//
+// This text is used to define the default text and help message for undefined parameters (i.e. ones which do not have an entry down below)
+// These must be blank otherwise custom functions display invalid parameter descriptions
+	0x2020,	L""
+	0x2021,	L""
+//
+// This token is used for pasting in the dynamic strings made when showing info about functions and their parameters
+	0x2022,	L"%s"
+//
+// SS_MSG_DIALOG_NAME_xxx
+//
+// UK 38:Names
+	0x2026,	L"Benutzerdefinierten Namen"
+// UK 39:ug/ug09_using_names_in_fireworkz.htm
+	0x2027,	L"ug/ug09_using_names_in_fireworkz.htm"
+// UK 53:ug/ug09_adding_a_name_to_a_text_cell.htm
+	0x2035,	L"ug/ug09_adding_a_name_to_a_text_cell.htm"
+// UK 40:&Name
+	0x2028,	L"&Name"
+// UK 41:&Value
+	0x2029,	L"&Wert"
+// UK 42:Descrip&tion
+	0x202A,	L"Beschreibun&g"
+// UK 43:&New
+	0x202B,	L"&Neu"
+// UK 44:&Change
+	0x202C,	L"Ä&ndern"
+// UK 45:&Insert
+	0x202D,	L"&Einfügen"
+// UK 52:&Delete
+	0x2034,	L"&Löschen"
+//
+// UK 50:Editing name
+	0x2032,	L"Namen bearbeiten"
+// UK 51:Defining new name
+	0x2033,	L"Namen hinzufügen"
+//
+// SS_MSG_DIALOG_ALERT_xxx
+//
+// UK 55:ALERT
+	0x2037,	L"ALERT"
+// UK 56:sg06a/sg6_ALERT.htm
+	0x2038,	L"sg06a/sg6_ALERT.htm"
+//
+// SS_MSG_DIALOG_INPUT_xxx
+//
+// UK 57:INPUT
+	0x2039,	L"INPUT"
+// UK 58:sg06i/sg6_INPUT.htm
+	0x203A,	L"sg06i/sg6_INPUT.htm"
+//
+// 101... referenced by macro SS_MSG_STATUS_GET_NUMBER_FROM_RPN in ob_ss.h
+// 501... referenced by macro SS_MSG_FUNCTION_FROM_RPN in ob_ss.h (these are required on all platforms if translated, just Windows if not)
+//
+// UK 101:Absolute value of |number:Real number|
+// UK 501:abs
+	0x2065,	L"Liefert den absoluten positiven Wert von |Zahl:Reele Zahl|"
+	0x21F5,	L"abs"
+// UK 102:Arc cosine of |number:Real number, modulus <= 1|
+// UK 502:acos
+	0x2066,	L"Arkuscosinus der |Zahl:Reele Zahl, abs(z) <= 1|"
+	0x21F6,	L"arccos"
+// UK 103:Arc cosecant of |number:Real number, modulus >= 1|
+// UK 503:acosec
+	0x2067,	L"Arkuskosekans der |Zahl:Reele Zahl, abs(z) >= 1|"
+	0x21F7,	L"arccosec"
+// UK 104:Inverse hyperbolic cosecant of |number:Real number|
+// UK 504:acosech
+	0x2068,	L"Areakosekans hyperbolicus der |Zahl:Reele Zahl|"
+	0x21F8,	L"arccosechhyp"
+// UK 105:Inverse hyperbolic cosine of |number:Real number >= 1|
+// UK 505:acosh
+	0x2069,	L"Areakosinus hyperbolicus der |Zahl:Reele Zahl, >= 1|"
+	0x21F9,	L"arccoshhyp"
+// UK 106:Arc cotangent of |number:Real number|
+// UK 506:acot
+	0x206A,	L"Arkuskotangens der |Zahl:Reele Zahl|"
+	0x21FA,	L"arccot"
+// UK 107:Inverse hyperbolic cotangent of |number:Real number, modulus >= 1|
+// UK 507:acoth
+	0x206B,	L"Areakotangens hyperbolicus der |Zahl:Reele Zahl, abs(z) >= 1|"
+	0x21FB,	L"arccothyp"
+// UK 108:Subtracts |1birthdate:Earlier date| from |date:Later date| to give age
+// UK 508:age
+	0x206C,	L"Subtrahiert das |1frühere Datum| vom |späteren Datum|, um das Alter anzugeben"
+	0x21FC,	L"alter"
+// UK 109:Dialogue box displaying a |message:Text string displayed in dialogue box| and at least one |1button:Label| with an optional |2{second button}:Label|
+// UK 509:alert
+	0x206D,	L"Dialogfenster mit einer |Nachricht:Text string displayed in dialogue box| und mindestens einem |1button:Etikett| mit einem optionalen |2{second button}:Etikett|"
+	0x21FD,	L"alarm"
+// UK 110:Logical AND of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+// UK 510:and
+	0x206E,	L"Logisches UND der |Liste:Liste der Booleschen Werte (oder des Arrays oder des Zellbereichs)| der Booleschen Werte"
+	0x21FE,	L"und"
+// UK 111:Arc secant of |number:Real number, modulus >= 1|
+// UK 511:asec
+	0x206F,	L"Arkussekans der |Zahl:Reele Zahl, abs(z) >= 1|"
+	0x21FF,	L"arcsec"
+// UK 112:Inverse hyperbolic secant of |number:Real number, 0 <= number <= 1|
+// UK 512:asech
+	0x2070,	L"Areasekans hyperbolicus der |Zahl:Reele Zahl, 0 <= Zahl <= 1|"
+	0x2200,	L"arcsechyp"
+// UK 113:Arc sine of |number:Real number, modulus <= 1|
+// UK 513:asin
+	0x2071,	L"Arkussinus der |Zahl:Reele Zahl, abs(z) <= 1|"
+	0x2201,	L"arcsin"
+// UK 114:Inverse hyperbolic sine of |number:Real number|
+// UK 514:asinh
+	0x2072,	L"Areasinus hyperbolicus der |Zahl:Reele Zahl|"
+	0x2202,	L"arcsinhyp"
+// UK 115:Arc tangent of |number:Real number|
+// UK 515:atan
+	0x2073,	L"Arkustangens der |Zahl:Reele Zahl|"
+	0x2203,	L"arctan"
+// UK 116:Arc tangent of |x:Real number| and |1y:Real number|
+// UK 516:atan_2
+	0x2074,	L"Arkustangens von |x:Reele Zahl| und |1y:Reele Zahl|"
+	0x2204,	L"arctan2"
+// UK 117:Inverse hyperbolic tangent of |number:Real number, modulus <= 1|
+// UK 517:atanh
+	0x2075,	L"Areatangens hyperbolicus der |Zahl:Reele Zahl, abs(z) <= 1|"
+	0x2205,	L"arctanhyp"
+// UK 118:Average deviation of the numbers in |list:List of numbers (or array, or range of cells)| from their arithmetic mean
+// UK 518:avedev
+	0x2076,	L"Durchschnittliche Abweichung der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| von ihrem arithmetischen Mittelwert"
+	0x2206,	L"mittelabw"
+// UK 119:Average of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK 519:avg
+	0x2077,	L"Durchschnitt der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|. Leere Zellen werden ignoriert."
+	0x2207,	L"mittelwert"
+//
+// UK 120:Beta function for |a:Real number| and |1b:Real number|
+// UK 520:beta
+	0x2078,	L"Werte der Beta-verteilung mit |a:Reele Zahl| und |1b:Reele Zahl|"
+	0x2208,	L"beta"
+// UK 121:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bin array:Array of bin limit values (or range of cells)|. Useful for histogram
+// UK 521:bin
+	0x2079,	L"Frequencies in |Daten Array:Array oder Zellbereich von Daten| given bin values in |1bin Array:Array oder Zellbereich von bin limit values|. Useful for histogram"
+	0x2209,	L"bin"
+// UK 122:Break out of |{n}:Optional number of loops| loops in custom function
+// UK 522:break
+	0x207A,	L"Brechen Sie die |{n}:Optional Anzahl der Schleifen| Schleifen in der benutzerdefinierten Funktion aus"
+	0x220A,	L"break"
+//
+// UK 123:Inverse cosine of |complex number:1*2 array or range|
+// UK 523:c_acos
+	0x207B,	L"Inverser Kosinus der |complexe Zahl:1*2 array or range|"
+	0x220B,	L"c_arccos"
+// UK 124:Inverse cosecant of |complex number:1*2 array or range|
+// UK 524:c_acosec
+	0x207C,	L"Inverser Kosekant der |komplexe Zahl:1*2 array or range|"
+	0x220C,	L"c_arccosec"
+// UK 125:Inverse hyperbolic cosecant of |complex number:1*2 array or range|
+// UK 525:c_acosech
+	0x207D,	L"Areakosekans hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x220D,	L"c_arccosechyp"
+// UK 126:Inverse hyperbolic cosine of |complex number:1*2 array or range|
+// UK 526:c_acosh
+	0x207E,	L"Areakosinus hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x220E,	L"c_arccoshyp"
+// UK 127:Inverse cotangent of |complex number:1*2 array or range|
+// UK 527:c_acot
+	0x207F,	L"Inverser Kotangens der |complexe Zahl:1*2 array or range|"
+	0x220F,	L"c_arccot"
+// UK 128:Inverse hyperbolic cotangent of |complex number:1*2 array or range|
+// UK 528:c_arccothhyp
+	0x2080,	L"Areakotangens hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x2210,	L"c_arccothyp"
+// UK 129:Add |complex addend 1:1*2 array or range| and |1complex addend 2:1*2 array or range|
+// UK 529:c_add
+	0x2081,	L"|complex addend 1:1*2 array or range| + |1complex addend 2:1*2 array or range|"
+	0x2211,	L"c_add"
+// UK 130:Inverse secant of |complex number:1*2 array or range|
+// UK 530:c_asec
+	0x2082,	L"Inverser Sekans der |complexe Zahl:1*2 array or range|"
+	0x2212,	L"c_arcsec"
+// UK 131:Inverse hyperbolic secant of |complex number:1*2 array or range|
+// UK 531:c_asech
+	0x2083,	L"Areasekans hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x2213,	L"c_arcsechyp"
+// UK 132:Inverse sine of |complex number:1*2 array or range|
+// UK 532:c_asin
+	0x2084,	L"Inverser Sinus der |complexe Zahl:1*2 array or range|"
+	0x2214,	L"c_arcsin"
+// UK 133:Inverse hyperbolic sine of |complex number:1*2 array or range|
+// UK 533:c_asinh
+	0x2085,	L"Areasinus hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x2215,	L"c_arcsinhyp"
+// UK 134:Inverse tangent of |complex number:1*2 array or range|
+// UK 534:c_atan
+	0x2086,	L"Inverser Tangens der |complexe Zahl:1*2 array or range|"
+	0x2216,	L"c_arctan"
+// UK 135:Inverse hyperbolic tangent of |complex number:1*2 array or range|
+// UK 535:c_atanh
+	0x2087,	L"Areatangens hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x2217,	L"c_arctanhyp"
+// UK 136:Complex conjugate of |complex number:1*2 array or range|
+// UK 536:c_conjugate
+	0x2088,	L"Konjugiert Komplexe der |complexe Zahl:1*2 array or range|"
+	0x2218,	L"c_konjugiert"
+// UK 137:Cosine of |complex number:1*2 array or range|
+// UK 537:c_cos
+	0x2089,	L"Kosinus der |complexe Zahl:1*2 array or range|"
+	0x2219,	L"c_cos"
+// UK 138:Cosecant of |complex number:1*2 array or range|
+// UK 538:c_cosec
+	0x208A,	L"Kosekans der |complexe Zahl:1*2 array or range|"
+	0x221A,	L"c_cosec"
+// UK 139:Hyperbolic cosecant of |complex number:1*2 array or range|
+// UK 539:c_cosech
+	0x208B,	L"Kosekans hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x221B,	L"c_cosechyp"
+// UK 140:Hyperbolic cosine of |complex number:1*2 array or range|
+// UK 540:c_cosh
+	0x208C,	L"Kosinus hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x221C,	L"c_coshyp"
+// UK 141:Cotangent of |complex number:1*2 array or range|
+// UK 541:c_cot
+	0x208D,	L"Kotangens der |complexe Zahl:1*2 array or range|"
+	0x221D,	L"c_cot"
+// UK 142:Hyperbolic cotangent of |complex number:1*2 array or range|
+// UK 542:c_coth
+	0x208E,	L"Kotangens hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x221E,	L"c_cothyp"
+// UK 143:Divide |complex dividend:1*2 array or range| by |1complex divisor:1*2 array or range|
+// UK 543:c_div
+	0x208F,	L"Teilen |komplexe Dividende:1*2 array or range| durch |1komplexer Teiler:1*2 array or range|"
+	0x221F,	L"c_div"
+// UK 144:Exponential value of |complex number:1*2 array or range|
+// UK 544:c_exp
+	0x2090,	L"Berechnet die Exponentialfunktion zur Basis e der |complexe Zahl:1*2 array or range|"
+	0x2220,	L"c_exp"
+// UK 145:Natural logarithm of |complex number:1*2 array or range|
+// UK 545:c_ln
+	0x2091,	L"Logarithmus zur Basis e der |complexe Zahl:1*2 array or range|"
+	0x2221,	L"c_ln"
+// UK 146:Multiply |complex multiplicand 1:1*2 array or range| by |1complex multiplicand 2:1*2 array or range|
+// UK 546:c_mul
+	0x2092,	L"|komplexer Multiplikand 1:1*2 array or range| mit |1komplexer Multiplikand 2:1*2 array or range| multiplizieren"
+	0x2222,	L"c_produkt"
+// UK 147:|complex number 1:1*2 array or range| raised to the power of |1complex number 2:1*2 array or range|
+// UK 547:c_power
+	0x2093,	L"|complexe Zahl 1:1*2 array or range| zur Potenz der |1:complexe Zahl 2:1*2 array or range| erhoben"
+	0x2223,	L"c_potenz"
+// UK 148:Absolute value (modulus, radius) of |complex number:1*2 array or range|
+// UK 548:c_radius
+	0x2094,	L"Absolutwert (Betrag, modulus, radius) der |complexe Zahl:1*2 array or range|"
+	0x2224,	L"c_abs"
+// UK 149:Secant of |complex number:1*2 array or range|
+// UK 549:c_sec
+	0x2095,	L"Secant of |complexe Zahl:1*2 array or range|"
+	0x2225,	L"c_sec"
+// UK 150:Hyperbolic secant of |complex number:1*2 array or range|
+// UK 550:c_sech
+	0x2096,	L"Sekans Hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x2226,	L"c_sechyp"
+// UK 151:Sine of |complex number:1*2 array or range|
+// UK 551:c_sin
+	0x2097,	L"Sinus der |complexe Zahl:1*2 array or range|"
+	0x2227,	L"c_sin"
+// UK 152:Hyperbolic sine of |complex number:1*2 array or range|
+// UK 552:c_sinh
+	0x2098,	L"Sinus hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x2228,	L"c_sinhyp"
+// UK 153:Subtract |1complex subtrahend:1*2 array or range| from |complex minuend:1*2 array or range|
+// UK 553:c_sub
+	0x2099,	L"|complex minuend:1*2 array or range| - |1complex subtrahend:1*2 array or range|"
+	0x2229,	L"c_sub"
+// UK 154:Tangent of |complex number:1*2 array or range|
+// UK 554:c_tan
+	0x209A,	L"Tangens der |complexe Zahl:1*2 array or range|"
+	0x222A,	L"c_tan"
+// UK 155:Hyperbolic tangent of |complex number:1*2 array or range|
+// UK 555:c_tanh
+	0x209B,	L"Tangens hyperbolicus der |complexe Zahl:1*2 array or range|"
+	0x222B,	L"c_tanhyp"
+// UK 156:Argument (angle) of |complex number:1*2 array or range|
+// UK 556:c_theta
+	0x209C,	L"Argument der |complexe Zahl:1*2 array or range|"
+	0x222C,	L"c_argument"
+//
+// UK 157:Rounds |number:Real number| to the given |1multiple:Real number| towards +infinity (or away from zero, if both are negative)
+// UK 557:ceiling
+	0x209D,	L"Rounds |Zahl:Reele Zahl| to the given |1multiple:Reele Zahl| towards +infinity (or away from zero, if both are negative)"
+	0x222D,	L"obergrenze"
+// UK 158:Convert ASCII |value:ASCII number| to character
+// UK 558:char
+	0x209E,	L"Konvertiert den ASCII-|Wert:ASCII Zahl| in ein Zeichen"
+	0x222E,	L"zeichen"
+// UK 159:Choose |n:Index of element in list|-th item from |1list:List to be selected from|
+// UK 559:choose
+	0x209F,	L"Liefert das |n:Index of element in list|-te Element aus der |1Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x222F,	L"wahl"
+// UK 160:Cleans |string:Text string or reference to text cell| by removing non-printing characters
+// UK 560:clean
+	0x20A0,	L"Cleans |Text:Text oder Verweis auf Textzelle| by removing non-printing characters"
+	0x2230,	L"säubern"
+// UK 161:ASCII value of |character:Text string or reference to text cell|
+// UK 561:code
+	0x20A1,	L"ASCII value of |character:Text oder Verweis auf Textzelle|"
+	0x2231,	L"code"
+// UK 162:Column number of |cell reference:Cell reference| (or cell containing col formula)
+// UK 562:col
+	0x20A2,	L"Spaltennummer der |Zellenverweis| (oder der Zelle, die die Formel enthält). Spalte A ist 1, B ist 2, usw."
+	0x2232,	L"spalte"
+// UK 163:Number of columns in worksheet or |{array}:Array (or range of cells)|
+// UK 563:cols
+	0x20A3,	L"Anzahl der Spalten im Arbeitsblatt oder |{Array}:Array oder Zellbereich|"
+	0x2233,	L"spalten"
+// UK 164:Number of combinations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time
+// UK 564:combin
+	0x20A4,	L"Anzahl der Kombinationen von |1m: Positive Ganzzahl| Objekte aus |n: Positive Ganzzahl| mögliche ohne Wiederholungen"
+	0x2234,	L"kombinationen"
+// UK 165:Execute command
+// UK 565:command
+	0x20A5,	L"Execute command"
+	0x2235,	L"command"
+// UK 166:Jump to start of loop in custom function
+// UK 566:continue
+	0x20A6,	L"Jump to start of loop in Benutzerdefinierte Funktion"
+	0x2236,	L"continue"
+// UK 167:Cosine of |angle:Angle in radians|
+// UK 567:cos
+	0x20A7,	L"Kosinus des |Winkel:Winkel in Bogenmaß|"
+	0x2237,	L"cos"
+// UK 168:Cosecant of |angle:Angle in radians|
+// UK 568:cosec
+	0x20A8,	L"Kosekans des |Winkel:Winkel in Bogenmaß|"
+	0x2238,	L"cosec"
+// UK 169:Hyperbolic cosecant of |number:Real number|
+// UK 569:cosech
+	0x20A9,	L"Kosekans hyperbolicus der |Zahl:Reele Zahl|"
+	0x2239,	L"cosechyp"
+// UK 170:Hyperbolic cosine of |number:Real number|
+// UK 570:cosh
+	0x20AA,	L"Kosinus hyperbolicus der |Zahl:Reele Zahl|"
+	0x223A,	L"coshyp"
+// UK 171:Cotangent of |angle:Angle in radians|
+// UK 571:cot
+	0x20AB,	L"Kotangens des |Winkel:Winkel in Bogenmaß|"
+	0x223B,	L"cot"
+// UK 172:Hyperbolic cotangent of |number:Real number|
+// UK 572:coth
+	0x20AC,	L"Kotangens hyperbolicus der |Zahl:Reele Zahl|"
+	0x223C,	L"cothyp"
+// UK 173:Number of numeric cells in |list|
+// UK 573:count
+	0x20AD,	L"Anzahl der numerischen Zellen in der |Liste|"
+	0x223D,	L"anzahl"
+// UK 174:Number of non-blank cells in |list|
+// UK 574:counta
+	0x20AE,	L"Anzahl der nicht leeren Zellen in der |Liste|"
+	0x223E,	L"anzahl2"
+// UK 175:Number of terms at |rate:interest rate per term| to reach |1fv:future value| from |2pv:present value|
+// UK 575:cterm
+	0x20AF,	L"Ermittelt die Anzahl der Zinsperioden fur eine Invesition, die einen bestimmten |2Barwert| hat und in der Zukunft mit gleichbleibender |Zinsrate| einen bestimmten |1Endwert| erreichen soll"
+	0x223F,	L"cterm"
+// UK 176:Reference to the current cell
+// UK 576:current_cell
+	0x20B0,	L"Verweis auf die aktuelle Zelle"
+	0x2240,	L"aktuelle_zelle"
+//
+// UK 177:Makes date from |year|, |1month| and |2day|
+// UK 577:date
+	0x20B1,	L"Liefert das Datum von |Jahr|, |1Monat| und |2Tag|"
+	0x2241,	L"datum"
+// UK 178:Converts |string:Text string in form ""dd.mm.yyyy""| to date
+// UK 578:datevalue
+	0x20B2,	L"Konvertiert |Text:Text hat die Form ""tt.mm.jjjj""| in Datum"
+	0x2242,	L"datumwert"
+// UK 179:Average of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 579:davg
+	0x20B3,	L"Durchschnitt der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2243,	L"dbmittelwert"
+// UK 180:Day part of |date:Date in form dd.mm.yyyy|
+// UK 580:day
+	0x20B4,	L"Liefert die Zahl des Tages des |Datum:Datum hat die Form tt.mm.jjjj|s"
+	0x2244,	L"tag"
+// UK 181:Day name given |weekday| number (1=Sunday, 2=Monday…, controlled by optional |1{mode}|)
+// UK 581:dayname
+	0x20B5,	L"Day name given |weekday| number (1=Sunday, 2=Monday…, controlled by optional |1{mode}|)"
+	0x2245,	L"tagesname"
+// UK 182:Returns integral number of days between |start_date:Date in form dd.mm.yyyy| and |1end_date:Date in form dd.mm.yyyy| according to a 360-day calendar
+// UK 582:days_360
+	0x20B6,	L"Returns integral number of days between |start_date:Datum hat die Form tt.mm.jjjj| and |1end_date:Datum hat die Form tt.mm.jjjj| according to a 360-day calendar"
+	0x2246,	L"tage360"
+// UK 183:Count of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark"". Consider using dcounta() instead - please refer to the documentation for details
+// UK 583:dcount
+	0x20B7,	L"Anzahl der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"". Consider using dcounta() instead - please refer to the documentation for details"
+	0x2247,	L"dbanzahl"
+// UK 184:Count of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 584:dcounta
+	0x20B8,	L"Anzahl der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2248,	L"dbanzahl2"
+// UK 185:Double declining balance depreciation during the given |3period:Period at which value is being calculated| with |cost:Cost at start|, |1salvage:Salvage value at end|, |2lifetime:Lifetime as number of periods|
+// UK 585:ddb
+	0x20B9,	L"Ermittelt die Abschreibung auf Anlagen zu einer bestimmten |3Zeit|, unter Verwendung der doppelt abfallenden Ausgleichsmethode mit |Kost|, |1Endwert|, |2Dauer|"
+	0x2249,	L"gda"
+// UK 186:Converts |angle:Angle in radians| from radians to degrees
+// UK 586:deg
+	0x20BA,	L"Wandelt den |Winkel:Winkel in Bogenmaß| vom Bogenmaß in Grad um"
+	0x224A,	L"grad"
+// UK 187:Dereferences (calculates value of) a |cell reference:Cell reference|
+// UK 587:deref
+	0x20BB,	L"Dereferences (calculates value of) a |cell reference:Cell reference|"
+	0x224B,	L"deref"
+// UK 188:Sum of squares of the deviation of the numbers in the |list:List of numbers (or array, or range of cells)| from their arithmetic mean
+// UK 588:devsq
+	0x20BC,	L"Sum of squares of the deviation of the numbers in the |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| from their arithmetic mean"
+	0x224C,	L"sumquadabw"
+// UK 189:Maximum of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 589:dmax
+	0x20BD,	L"Maximum der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x224D,	L"dbmax"
+// UK 190:Minimum of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 590:dmin
+	0x20BE,	L"Minimum der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x224E,	L"dbmin"
+// UK 191:Converts |number:Real number| into a string with a currency symbol, thousands commas, |1digits:Integer| decimal places and with negative numbers in parentheses
+// UK 591:dollar
+	0x20BF,	L"Converts |Zahl:Reele Zahl| into a string with a currency symbol, thousands commas, |1Dezimalstellen:Ganzzahl| and with negative numbers in parentheses"
+	0x224F,	L"eur"
+// UK 192:Double-click handling |function:Custom function to be called on a double-click|
+// UK 592:doubleclick
+	0x20C0,	L"Double-click handling |function:Custom function to be called on a double-click|"
+	0x2250,	L"doubleclick"
+// UK 193:Product of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 593:dproduct
+	0x20C1,	L"Produkt der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2251,	L"dbprodukt"
+// UK 194:Standard deviation of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 594:dstd
+	0x20C2,	L"Standardabweichung der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2252,	L"dbstdabw"
+// UK 195:Population standard deviation of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 595:dstdp
+	0x20C3,	L"Populationsstandardabweichung der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2253,	L"dbstdabwn"
+// UK 196:Sum of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 596:dsum
+	0x20C4,	L"Summe der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2254,	L"dbsumme"
+// UK 197:Variance of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 597:dvar
+	0x20C5,	L"Varianz der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2255,	L"dbvarianz"
+// UK 198:Population variance of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20=""Mark""
+// UK 598:dvarp
+	0x20C6,	L"Populationsvarianz der Elemente eines |Zellbereich:Bereich der zu verarbeitenden Zellen|s, die die |1Bedingung| erfüllen zB E1E20=""Mark"""
+	0x2256,	L"dbvarianzen"
+//
+// UK 199:IF…THEN…ELSEIF…ELSE…ENDIF in custom functions
+// UK 599:else
+	0x20C7,	L"IF…THEN…ELSEIF…ELSE…ENDIF in Benutzerdefinierte Funktion"
+	0x2257,	L"else"
+// UK 200:IF…THEN…ELSEIF(|condition:Expression returning Boolean value|)…ELSE…ENDIF in custom functions
+// UK 600:elseif
+	0x20C8,	L"IF…THEN…ELSEIF(|Bedingung:Ausdruck, der einen booleschen Wert zurückgibt|)…ELSE…ENDIF in Benutzerdefinierte Funktion"
+	0x2258,	L"elseif"
+// UK 201:IF…THEN…ELSEIF…ELSE…ENDIF in custom functions
+// UK 601:endif
+	0x20C9,	L"IF…THEN…ELSEIF…ELSE…ENDIF in Benutzerdefinierte Funktion"
+	0x2259,	L"endif"
+// UK 202:WHILE(condition)…ENDWHILE in custom functions
+// UK 602:endwhile
+	0x20CA,	L"WHILE(condition)…ENDWHILE in Benutzerdefinierte Funktion"
+	0x225A,	L"endwhile"
+// UK 203:Rounds |number:Real number| up to the next even integer, away from zero
+// UK 603:even
+	0x20CB,	L"Rundet |Zahl:Reele Zahl| bis zur nächsten gerade ganzen Zahl, weg von Null"
+	0x225B,	L"gerade"
+// UK 204:Compares |string_1:Text string| and |1string_2:Text string| for exact match
+// UK 604:exact
+	0x20CC,	L"Compares |Text_1:Text| and |1Text_2:Text| for exact match"
+	0x225C,	L"identisch"
+// UK 205:Exponential value of |number:Real number|
+// UK 605:exp
+	0x20CD,	L"Berechnet die Exponentialfunktion zur Basis e der |Zahl:Reele Zahl|"
+	0x225D,	L"exp"
+//
+// UK 206:Factorial of |n:Positive integer|
+// UK 606:fact
+	0x20CE,	L"Factorial of |n:Positive Ganzzahl|"
+	0x225E,	L"fakultät"
+// UK 207:Boolean value FALSE (zero)
+// UK 607:false
+	0x20CF,	L"Boolescher wert: FALSCH (0)"
+	0x225F,	L"falsch"
+// UK 208:Finds position of |string_1:Target string| in |1string_2:Source string|
+// UK 608:find
+	0x20D0,	L"Liefert die Position eines Textsegments (|Text 1:Target string|) innerhalb einer Zeichenkette (|1Text 2:Source string|)"
+	0x2260,	L"finden"
+// UK 209:Converts |number:Real number| into a string with the given number of |1digits:Integer| decimal places and thousands separators (unless optional |2{no commas}| is TRUE)
+// UK 609:fixed
+	0x20D1,	L"Converts |Zahl:Reele Zahl| into a string with the given number of |1Dezimalstellen:Ganzzahl| and thousands separators (unless optional |2{no commas}| is TRUE)"
+	0x2261,	L"fest"
+// UK 210:Flip |array:Array (or range of cells)| vertically
+// UK 610:flip
+	0x20D2,	L"Flip |Array:Array oder Zellbereich| vertically"
+	0x2262,	L"flip"
+// UK 211:Rounds |number:Real number| to given |1multiple:Real number| towards -infinity (or towards zero, if both are negative)
+// UK 611:floor
+	0x20D3,	L"Rounds |Zahl:Reele Zahl| to given |1multiple:Reele Zahl| towards -infinity (or towards zero, if both are negative)"
+	0x2263,	L"floor"
+// UK 212:FOR(|""label"":Control variable created by for-loop|,|1from|,|2to|) in custom function
+// UK 612:for
+	0x20D4,	L"FOR(|""label"":Control variable created by for-loop|,|1from|,|2to|) in Benutzerdefinierte Funktion"
+	0x2264,	L"for"
+// UK 213:Text string of formula in |cell:Reference of cell|
+// UK 613:formula_text
+	0x20D5,	L"Text string of formula in |cell:Reference of cell|"
+	0x2265,	L"formel"
+// UK 214:Custom function definition specifying |name:Name of function being defined, specified as string| and optional parameters
+// UK 614:function
+	0x20D6,	L"Custom function definition specifying |name:Name of function being defined, specified as string| and optional parameters"
+	0x2266,	L"function"
+// UK 215:Future value given |payment:Payment each term|, |1rate:Interest rate per period| and |2term:Number of payments|
+// UK 615:fv
+	0x20D7,	L"Endwert einer Anlage mit |Zahlung|, |1Zins| and |2Zeit|"
+	0x2267,	L"zw"
+// UK 216:Future value given |rate:Interest rate per period|, |1term:Number of payments|, |2payment:Payment each term| and optional |3{present value}| (OpenDocument/Excel-compatible behaviour)
+// UK 616:odf.fv
+	0x20D8,	L"Future value given |rate:Interest rate per period|, |1term:Number of payments|, |2payment:Payment each term| and optional |3{present value}| (OpenDocument/Excel-compatible behaviour)"
+	0x2268,	L"odf.zw"
+//
+// UK 217:Natural logarithm of the gamma function for |n:Real number|
+// UK 617:gammaln
+	0x20D9,	L"Natürlicher Logarithmus der Gammafunktion für |n:Reele Zahl|"
+	0x2269,	L"gammaln"
+// UK 218:Geometric mean of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK 618:geomean
+	0x20DA,	L"Geometrischer Mittelwert der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x226A,	L"geomittel"
+// UK 219:GOTO |cell reference:Cell reference| in custom function
+// UK 619:goto
+	0x20DB,	L"GOTO |cell reference:Cell reference| in Benutzerdefinierte Funktion"
+	0x226B,	L"goto"
+// UK 220:Gaussian random number, optional |mean:Real number| and |1std:Real number|
+// UK 620:grand
+	0x20DC,	L"Gaußsche Zufallszahl mit optionalem |Mittelwert:Reele Zahl| und |1Standardabweichung:Reele Zahl|"
+	0x226C,	L"grand"
+// UK 221:Predict y values given |logest:Output from logest function| data and |1x| data
+// UK 621:growth
+	0x20DD,	L"Predict y-values given |logest:Output from logest function| data and |1x| data"
+	0x226D,	L"variation"
+//
+// UK 222:Harmonic mean of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK 622:harmean
+	0x20DE,	L"Harmonischer Mittelwert der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x226E,	L"harmittel"
+// UK 223:Look for |key:Key value| in horizontal |1target:Horizontally-arranged, array (or range of cells e.g. B1:J3)| data set (sorted in ascending order) and return corresponding element from |2row index:Integer|-th row in target array
+// UK 623:hlookup
+	0x20DF,	L"Suchen |Schlüssel| in |1Zielarray:Array oder Zellbereich| (Horizontal angeordneter Datensatz zB B1:J3, in aufsteigender Reihenfolge sortiert) und liefert das entsprechende Element aus |2Zeile index:Ganzzahl|-te Zeile im Zielarray"
+	0x226F,	L"wverweis"
+// UK 224:Hour part of |time:Time in form hh:mm:ss|
+// UK 624:hour
+	0x20E0,	L"Liefert die Stunden Teil der |Zeit:Zeit hat die Form hh:mm:ss|"
+	0x2270,	L"stunde"
+//
+// UK 225:If |condition:Expression returning Boolean value that controls which parameter is returned| is TRUE, returns |1then:Returned if condition is TRUE| parameter, otherwise returns |2else:Returned if condition is FALSE| parameter
+// UK 625:if
+	0x20E1,	L"Wenn der Wert von |Bedingung:Ausdruck, der einen booleschen Wert zurückgibt, der steuert, welcher Parameter zurückgegeben wird| WAHR ist, dann liefert die Funktion |1dann:geliefert, wenn Bedingung WEHR ist|, ansonsten |2sonst:geliefert, wenn Bedingung FALSCH ist|"
+	0x2271,	L"wenn"
+// UK 226:First part of IF(|condition:Expression returning Boolean value|)…ENDIF, use only in custom functions
+// UK 626:if
+	0x20E2,	L"Erster Teil von IF(|Bedingung:Ausdruck, der einen booleschen Wert zurückgibt|)…ENDIF, nur in benutzerdefinierten Funktionen verwenden"
+	0x2272,	L"if"
+// UK 227:Element in |array| at position |1x:Column of array, starting 1|, |2y:Row of array, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|
+// UK 627:index
+	0x20E3,	L"Liefert das Element in |Array| an Position |1x:Spalte des Arrays, beginnend mit 1|, |2y:Zeile des Arrays, beginnend mit 1| oder Unterarray beginnend bei x, y mit den Dimensionen |3{x_size} , |4{y_size}|"
+	0x2273,	L"index"
+// UK 228:Dialogue box displaying a |caption:Text string| requesting input for |1""name"":Name to be written back to|, with at least one |2button:Label| and an optional |3{second button}:Label|
+// UK 628:input
+	0x20E4,	L"Dialogfeld mit einer |Beschriftung:Text|, in der die Eingabe von |1""Name"":Name to be written back to| angefordert wird, mit mindestens einer |2Schaltfläche:Label| und einer optionalen |3{zweiten Schaltfläche}:Label|"
+	0x2274,	L"input"
+// UK 229:Integer part of |number:Real number|
+// UK 629:int
+	0x20E5,	L"Liefert den ganzzahligen Teil von |Zahl:Reele Zahl|"
+	0x2275,	L"ganzzahl"
+// UK 230:Internal rate of return given |guess:Initial guessed interest rate, e.g. 0.01| and |1array:Array of numbers (or range of cells) representing cashflows| of cashflows
+// UK 630:irr
+	0x20E6,	L"Internal rate of return given |Vermutung:Initial guessed interest rate, e.g. 0.01| and |1Array:Array oder Zellbereich of numbers representing cashflows| of cashflows"
+	0x2276,	L"ikv"
+// UK 231:Returns Boolean value TRUE if |value| refers to an empty cell, FALSE otherwise. Unlike Excel, an empty string also returns TRUE
+// UK 631:isblank
+	0x20E7,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf eine leere Zelle bezieht, andernfalls FALSCH. Im Gegensatz zu Excel gibt eine leere Zeichenfolge auch WEHR zurück"
+	0x2277,	L"istleer"
+// UK 232:Returns Boolean value TRUE if |value| refers to any error value, FALSE otherwise. Fireworkz does not support #N/A
+// UK 632:iserr
+	0x20E8,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf einen Fehlerwert bezieht, andernfalls FALSCH. Fireworkz unterstützt den Wert #N/A nicht"
+	0x2278,	L"istfehl"
+// UK 233:Returns Boolean value TRUE if |value| refers to any error value, FALSE otherwise
+// UK 633:iserror
+	0x20E9,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf einen Fehlerwert bezieht, andernfalls FALSCH"
+	0x2279,	L"istfehler"
+// UK 234:Returns Boolean value TRUE if |number:Real number| is even, FALSE otherwise
+// UK 634:iseven
+	0x20EA,	L"Liefert den Booleschen Wert WEHR, wenn die |Zahl:Reele Zahl| gerade ist, andernfalls FALSCH"
+	0x227A,	L"istgerade"
+// UK 235:Returns Boolean value TRUE if |value| refers to a Boolean value, FALSE otherwise
+// UK 635:islogical
+	0x20EB,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf einen Booleschen Wert bezieht, andernfalls FALSCH"
+	0x227B,	L"istlogisch"
+// UK 236:Returns Boolean value FALSE. Fireworkz does not support #N/A
+// UK 636:isna
+	0x20EC,	L"Liefert den Booleschen Wert FALSCH. Fireworkz does not support #N/V"
+	0x227C,	L"istnv"
+// UK 237:Returns Boolean value FALSE if |value| refers to a text cell or string, TRUE otherwise
+// UK 637:isnontext
+	0x20ED,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf einen Text bezieht, andernfalls WEHR"
+	0x227D,	L"istkeintext"
+// UK 238:Returns Boolean value TRUE if |value| refers to a number, FALSE otherwise. Fireworkz does not treat Boolean values as numbers for this test
+// UK 638:isnumber
+	0x20EE,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf eine Zahl bezieht, andernfalls FALSE. Fireworkz behandelt Boolesche Werte für diesen Test nicht als Zahlen"
+	0x227E,	L"istzahl"
+// UK 239:Returns Boolean value TRUE if |number:Real number| is odd, FALSE otherwise
+// UK 639:isodd
+	0x20EF,	L"Liefert den Booleschen Wert WEHR, wenn die |Zahl:Reele Zahl| ungerade ist, andernfalls FALSCH"
+	0x227F,	L"istungerade"
+// UK 240:Returns Boolean value TRUE if |value| is a cell reference or range, FALSE otherwise
+// UK 640:isref
+	0x20F0,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| eine Zellenverweis oder ein Zellbereich ist, andernfalls FALSE"
+	0x2280,	L"istbezug"
+// UK 241:Returns Boolean value TRUE if |value| refers to a text cell or string, FALSE otherwise
+// UK 641:istext
+	0x20F1,	L"Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf einen Text bezieht, andernfalls FALSCH"
+	0x2281,	L"isttext"
+//
+// UK 242:Joins |list:List of strings (or array, or range of cells)| of strings together
+// UK 642:join
+	0x20F2,	L"Verbindet eine |Liste:Liste der Texte (oder des Arrays oder des Zellbereichs)| von Zeichenfolgen miteinander"
+	0x2282,	L"verketten"
+//
+// UK 243:Kurtosis of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK 643:kurt
+	0x20F3,	L"Berechnet die Kurtosis einer Verteilung, die durch die |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| der Zahlen gegeben ist"
+	0x2283,	L"kurt"
+//
+// UK 244:Returns the |1k:Integer|-th largest item in |array|
+// UK 644:large
+	0x20F4,	L"Liefert das |1k:Ganzzahl|-te größte Element im |Array|"
+	0x2284,	L"kgrösste"
+// UK 245:Left part of |string:Text string or reference to text cell| to |1n:Positive integer| characters
+// UK 645:left
+	0x20F5,	L"Linker Teil des |Text:Text oder Verweis auf Textzelle|es, |1n:Positive Ganzzahl| Zeichen"
+	0x2285,	L"links"
+// UK 246:Length of |string:Text string or reference to text cell|
+// UK 646:length
+	0x20F6,	L"Länge des |Text:Text oder Verweis auf Textzelle|es in Zeichen"
+	0x2286,	L"länge"
+// UK 247:Linest of |y-array:Array of y-values (or range of cells)| and optional |1{x-array}:Array of x-values (or range of cells)|
+// UK 647:linest
+	0x20F7,	L"Linest of |y-Daten:Array oder Zellbereich von y-Daten| and optional |1{x-Daten}:Array oder Zellbereich von x-Daten|"
+	0x2287,	L"rgp"
+// UK 248:Returns array of numbers of entries in |array:Array of values to be counted (or range of cells)| with optional |1amounts:Corresponding numeric amounts to be summed|. Useful for histogram
+// UK 648:listcount
+	0x20F8,	L"Liefert ein Array von Anzahlen von Einträgen in |Array:Array oder Zellenbereich von Werten|, die mit einem optionalen |1{Zweites Array:Array oder Zellenbereich von Zahlen}| von entsprechenden numerischen Beträgen gezählt werden sollen, die summiert werden sollen. Nützlich für das Histogramm"
+	0x2288,	L"listcount"
+// UK 249:Natural logarithm of |number:Real number > 0|
+// UK 649:ln
+	0x20F9,	L"Natürlicher Logarithmus (Logarithmus zur Basis e) der |Zahl:Reele Zahl, > 0|"
+	0x2289,	L"ln"
+// UK 250:Logarithm to base |1{b}:Number, default 10| of |x:Real number > 0|
+// UK 650:log
+	0x20FA,	L"Logarithmus zur Basis |1{b}:Zahl, default 10 (Zehnerlogarithmus)| der |x:Reele Zahl, > 0|"
+	0x228A,	L"log"
+// UK 251:Logest of |y-array:Array of y-values (or range of cells)| and optional |1{x-array}:Array of x-values (or range of cells)|
+// UK 651:logest
+	0x20FB,	L"Logest of |y-Daten:Array oder Zellbereich von y-Daten| and optional |1{x-Daten}:Array oder Zellbereich von x-Daten|"
+	0x228B,	L"rkp"
+// UK 252:Look for exact match of |key:Key - any value| in |1target:Target array (or range of cells)| and return corresponding element(s) from |2result array:Array (or range of cells)|
+// UK 652:lookup
+	0x20FC,	L"Liefert den Wert in |2Array 2:Array oder Zellbereich|, dessen Position derjenigen von |Schlüssel| in |1Array 1:Array oder Zellbereich| entspricht"
+	0x228C,	L"verweis"
+// UK 253:Converts |string:Text string or reference to text cell| to lower-case
+// UK 653:lower
+	0x20FD,	L"Konvertiert |Text:Textzeichenfolge oder Verweis auf Textzelle| in Kleinbuchstaben"
+	0x228D,	L"klein"
+//
+// UK 254:Determinant of |matrix:Square array (or range of cells)|
+// UK 654:m_determ
+	0x20FE,	L"Determinant of |Matrix:Square Array oder Zellbereich|"
+	0x228E,	L"m_det"
+// UK 255:Inverse of |matrix:Square array (or range of cells)|
+// UK 655:m_inverse
+	0x20FF,	L"Inverse of |Matrix:Square Array oder Zellbereich|"
+	0x228F,	L"m_inv"
+// UK 256:Multiply |matrix 1:Array (or range of cells)| by |1matrix 2:Array (or range of cells)|
+// UK 656:m_mul
+	0x2100,	L"|Matrix 1:Array oder Zellbereich| mit |1Matrix 2:Array oder Zellbereich| multiplizieren"
+	0x2290,	L"m_mul"
+// UK 257:Looks up |key:Key - any value| in |1array:Target array (or range of cells)| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
+// UK 657:match
+	0x2101,	L"Looks up |key:Key - any value| in |1Array:Target Array oder Zellbereich| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference"
+	0x2291,	L"vergleich"
+// UK 258:Maximum value in |list:List of values (or array, or range of cells)|
+// UK 658:max
+	0x2102,	L"Maximalwert der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2292,	L"max"
+// UK 259:Median value of |list:List of values (or array, or range of cells)|
+// UK 659:median
+	0x2103,	L"Medianwert der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2293,	L"median"
+// UK 260:Middle part of |string:Text tring or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string required|
+// UK 660:mid
+	0x2104,	L"Middle part of |Text:Text oder Verweis auf Textzelle| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string required|"
+	0x2294,	L"teil"
+// UK 261:Minimum value in |list:List of values (or array, or range of cells)|
+// UK 661:min
+	0x2105,	L"Mindestwert der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2295,	L"min"
+// UK 262:Minute part of |time:Time in form hh:mm:ss|
+// UK 662:minute
+	0x2106,	L"Liefert die Minuten Teil der |Zeit:Zeit hat die Form hh:mm:ss|"
+	0x2296,	L"minute"
+// UK 263:Modified irr given |cashflow:Array of cashflows (or range of cells)|, |1rate_1:Interest rate of borrowed finance|, |2rate_2:Interest rate of invested finance|
+// UK 663:mirr
+	0x2107,	L"Modified irr given |cashflow:Array oder Zellbereich von Cashflows|, |1Zins 1:Zinsrate borrowed finance|, |2Zins 2:Zinsrate of invested finance|"
+	0x2297,	L"qikv"
+// UK 264:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0|
+// UK 664:mod
+	0x2108,	L"Liefert den Rest nach einer Division von |Dividende:Reele Zahl| durch |1Quotient:Reele Zahl, <> 0|"
+	0x2298,	L"rest"
+// UK 265:Mode of |array:Array of values (or range of cells)|
+// UK 665:mode.sngl
+	0x2109,	L"Liefert den Wert, der innerhalb einer |Array:Array oder Zellbereich| am häufigsten vorkommt"
+	0x2299,	L"modus.einf"
+// UK 266:Month part of |date:Date in form dd.mm.yyyy|
+// UK 666:month
+	0x210A,	L"Liefert die Zahl des Monats des |Datum:Datum hat die Form tt.mm.jjjj|s"
+	0x229A,	L"monat"
+// UK 267:Number of days in month of |date:Date in form dd.mm.yyyy|
+// UK 667:monthdays
+	0x210B,	L"Liefert die Anzahl der Tage im Monat des |Datum:Datum hat die Form tt.mm.jjjj|s"
+	0x229B,	L"tageimmonat"
+// UK 268:Name of month given |month number:Number of month (January = 1)|
+// UK 668:monthname
+	0x210C,	L"Name of month given |month number:Number of month (January = 1)|"
+	0x229C,	L"monatname"
+// UK 269:Rounds |number:Real number| to given |1multiple:Real number|
+// UK 669:mround
+	0x210D,	L"Runden |Zahl:Reele Zahl| auf das gegebene |1Vielfache:Reele Zahl|"
+	0x229D,	L"vrunden"
+//
+// UK 270:|number|
+// UK 670:n
+	0x210E,	L"|Zahl|"
+	0x229E,	L"n"
+// UK 271:Next loop in FOR statement: use only in custom functions
+// UK 671:next
+	0x210F,	L"Nächste Schleife in der FOR-Anweisung: Nur in Benutzerdefinierte Funktion verwenden"
+	0x229F,	L"next"
+// UK 272:Logical NOT of |Boolean value|
+// UK 672:not
+	0x2110,	L"Logicshes NICHT von |Boolescher wert|"
+	0x22A0,	L"nicht"
+// UK 273:Current date and time
+// UK 673:now
+	0x2111,	L"Gibt das aktuelle Datum und Zeit aus"
+	0x22A1,	L"jetzt"
+// UK 274:OpenDocument/Excel-compatible TERM given interest |rate:Rate of interest|, |1payment:Payment per term| and |2present value|
+// UK 674:nper
+	0x2112,	L"OpenDocument/Excel-compatible TERM given interest |rate:Rate of interest|, |1payment:Payment per term| and |2present value|"
+	0x22A2,	L"nper"
+// UK 275:Net present value given interest |rate:Rate of interest| and range of |1cashflows:Array of cashflows (or range of cells)|
+// UK 675:npv
+	0x2113,	L"Nettobarwert eines Arrays von |1Cashflows:Array oder Zellbereich von Cashflows| mit einem unverändlichen |Zinsatz|"
+	0x22A3,	L"nbw"
+//
+// UK 276:Rounds |number:Real number| up to the next odd integer, away from zero
+// UK 676:odd
+	0x2114,	L"Rundet |Zahl:Reelle Zahl| bis zur nächsten ungerade ganzen Zahl, weg von Null"
+	0x22A4,	L"ungerade"
+// UK 277:Logical OR of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+// UK 677:or
+	0x2115,	L"Logisches ODER der |Liste:Liste der Booleschen Werte (oder des Arrays oder des Zellbereichs)| der Booleschen Werte"
+	0x22A5,	L"oder"
+//
+// UK 278:Current page number or page containing |cell reference:Cell reference|
+// UK 678:page
+	0x2116,	L"Aktuelle Seitenzahl oder die Seite mit der |Zellreferenz|"
+	0x22A6,	L"seite"
+// UK 279:Number of pages in worksheet in either |direction:0 gives pages across document, 1 gives pages down|
+// UK 679:pages
+	0x2117,	L"Anzahl der Seiten im Arbeitsblatt in beide |Richtungen:0 gibt Seiten über das Dokument hinweg, 1 gibt Seiten nach unten|"
+	0x22A7,	L"seiten"
+// UK 280:Returns the |1percentile:Real number|-th value in the given |array|
+// UK 680:percentile.inc
+	0x2118,	L"Returns the |1percentile:Reele Zahl|-th value in the given |Array|"
+	0x22A8,	L"quantil.inkl"
+// UK 281:Number of permutations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time
+// UK 681:permut
+	0x2119,	L"Number of permutations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time"
+	0x22A9,	L"variationen"
+// UK 282:Ratio of the circumference of any circle to its diameter
+// UK 682:pi
+	0x211A,	L"Verhältnis des Umfangs eines Kreises zu seinem Durchmesser"
+	0x22AA,	L"pi"
+// UK 283:Payment on loan given |investment|, interest |1rate| and |2term|
+// UK 683:pmt
+	0x211B,	L"Zahlungen auf einem Darlehen, wenn |Kapital|, regelmäßige |1Zins|zahlungen und |2Zeit|perioden gegeben sind"
+	0x22AB,	L"rmz"
+// UK 284:OpenDocument/Excel-compatible PMT given interest |rate|, |1term| and |2present value|
+// UK 684:odf.pmt
+	0x211C,	L"OpenDocument/Excel-compatible PMT given interest |rate|, |1term| and |2present value|"
+	0x22AC,	L"odf.rmz"
+// UK 285:|number1:Real number| raised to the power of |1number2:Real number|
+// UK 685:power
+	0x211D,	L"|number1:Reele Zahl| zur Potenz der |1number2:Reele Zahl| erhoben"
+	0x22AD,	L"potenz"
+// UK 286:Product of numbers in |list:List of numbers (or array, or range of cells)|
+// UK 686:product
+	0x211E,	L"Product of numbers in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22AE,	L"produkt"
+// UK 287:Convert |string:Text string or reference to text cell| to Initial Capitals
+// UK 687:proper
+	0x211F,	L"Wandelt alle Wortanfänge einer |Text:Text oder Verweis auf Textzelle| in Großbuchstaben um"
+	0x22AF,	L"gross2"
+// UK 288:Present value given |payment|, interest |1rate| and |2term|
+// UK 688:pv
+	0x2120,	L"Der Barwert einer Reihe von gleichen |Zahlung|en, distkontiert zu einem regelmäßigen |1Zinssatz| and für eine |2Zeit|periode"
+	0x22B0,	L"bw"
+//
+// UK 289:Returns the |1quartile:Integer, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |array|
+// UK 689:quartile.inc
+	0x2121,	L"Returns the |1quartile:Ganzzahl, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |Array|"
+	0x22B1,	L"quartile.inkl"
+//
+// UK 290:Convert |angle:Angle in degrees| from degrees to radians
+// UK w690:rad
+	0x2122,	L"Wandelt den |Winkel:Winkel in Grad| von Grad in Bogenmaß um"
+	0x22B2,	L"bogenmass"
+// UK 291:Random number from 0 to 1 with optional |seed:Real number to be used as seed|
+// UK w691:rand
+	0x2123,	L"Liefert eine Zufallszahrl im Bereich 0 bis 1. |{seed}:Reele Zahl to be used as seed| is optional."
+	0x22B3,	L"zufallszahl"
+// UK 292:Random integer in the interval |lower:Integer|..|1upper:Integer|
+// UK 692:randbetween
+	0x2124,	L"Zufällige Ganzzahl im Intervall |Kleinste_Zahl:Ganzzahl|..|Größte_Zahl:Ganzzahl|"
+	0x22B4,	L"zufallsbereich"
+// UK 293:Gives ranking corresponding to |array:Array of values to be ranked (or range of cells)|
+// UK w693:rank
+	0x2125,	L"Ermittelt Rangfolge entsprechend |Array:Array oder Zellbereich, für den Rangfolge ermittelt werden soll|"
+	0x22B5,	L"rank"
+// UK 294:Returns the rank of |number| in the given |1array|
+// UK 694:rank.eq
+	0x2126,	L"Returns the rank of |Zahl| in the given |1Array|"
+	0x22B6,	L"rank.eq"
+// UK 295:Interest rate given |future value|, |1present value| and |2term:Number of periods|
+// UK w695:rate
+	0x2127,	L"Zinsrate bei |zukünftigem Wert|, |1aktuellem Wert| und |2Laufzeit:Anzahl der Perioden|"
+	0x22B7,	L"zins"
+// UK 296:REPEAT…UNTIL in custom functions
+// UK w696:repeat
+	0x2BB4,	L"REPEAT…UNTIL in Benutzerdefinierte Funktionen"
+	0x22B8,	L"repeat"
+// UK 297:Replace text at |1offset:Offset in text string string_1| of given |2length:Length of text to replace| in |source:Text string being changed| string with |3replacement:Text string being inserted| string
+// UK w697:replace
+	0x2129,	L"Text erstetzen am |1Position:Position in Text s_1| mit |2Länge:Länge des zu ersetzenden Textes| in |Text 1:Text wird ersetzt| durch |3Text 2:Text, der eingefügt wird|"
+	0x22B9,	L"ersetzen"
+// UK 298:Repeat |string:Text string or reference to text cell| |1n:Number of times to repeat - positive integer| times
+// UK w698:rept
+	0x212A,	L"Wiederhole |String:Textzeichenfolge oder Verweis auf Textzelle| $1n:Ganzzahl$| mal"
+	0x22BA,	L"wiederholen"
+// UK 299:RETURN |value:Any value or formula| as result of custom function
+// UK w699:return
+	0x212B,	L"RETURN |wert:Beliebiger Wert oder Formel| als Ergebnis einer Benutzerdefinierte Funktion"
+	0x22BB,	L"return"
+// UK 300:Reverse order of |string:Text string or reference to text cell|
+// UK w700:reverse
+	0x212C,	L"Umgekehrte Reihenfolge von |String:Textzeichenfolge oder Verweis auf Textzelle|"
+	0x22BC,	L"umkehren"
+// UK 301:Right part of |string:Text string or reference to text cell| to |1n:Positive integer| characters
+// UK w701:right
+	0x212D,	L"Rechter Teil von |String:Textzeichenfolge oder Verweis auf Textzelle| bis |1n:Positiv Ganzzahl| Zeichen"
+	0x22BD,	L"rechts"
+// UK 302:Rounds |number:Real number| to |1decimal places:Integer|
+// UK w702:round
+	0x212E,	L"Rundet |Zahl:Reele Zahl| auf |1Dezimalstellen:Ganzzahl|"
+	0x22BE,	L"runden"
+// UK 303:Rounds |number:Real number| down to |1decimal places:Integer|, towards zero
+// UK 703:rounddown
+	0x212F,	L"Rundet |Zahl:Reele Zahl| auf |1Dezimalstellen:Ganzzahl|, gegen Null"
+	0x22BF,	L"abrunden"
+// UK 304:Rounds |number:Real number| up to |1decimal places:Integer|, away from zero
+// UK 704:roundup
+	0x2130,	L"Rundet |Zahl:Reele Zahl| auf |1Dezimalstellen:Ganzzahl|, away from zero"
+	0x22C0,	L"aufrunden"
+// UK 305:Row number of |cell reference:Cell reference| (or cell containing row formula)
+// UK w705:row
+	0x2131,	L"Zeilennummer der |{Zellenverweis}| (oder der Zelle, die die Formel enthält)"
+	0x22C1,	L"zeile"
+// UK 306:Number of rows in worksheet or |{array}:Array (or range of cells)|
+// UK w706:rows
+	0x2132,	L"Anzahl der Zeilen im Arbeitsblatt oder |{Array}:Array oder Zellbereich|"
+	0x22C2,	L"zeilen"
+//
+// UK 307:Secant of |number:Real number|
+// UK w707:sec
+	0x2133,	L"Sekante der |Zahl:Reele Zahl|"
+	0x22C3,	L"sec"
+// UK 308:Hyperbolic secant of |number:Real number|
+// UK w708:sech
+	0x2134,	L"Sekans hyperbolicus der |Zahl:Reele Zahl|"
+	0x22C4,	L"sechyp"
+// UK 309:Second part of |time:Time in form hh:mm:ss|
+// UK w709:second
+	0x2135,	L"Liefert den Sekunden-Teil der |Zeit:Zeit hat die Form hh:mm:ss|"
+	0x22C5,	L"sekunde"
+// UK 310:Set |name:Name given as string e.g. ""VAT""| to |1expression:Value, cell reference or formula to be assigned to name|
+// UK w710:set_name
+	0x2136,	L"Setze |Name:Name ausgegeben als String zB """"MwSt""""| bis |1Ausdruck:Wert, Zellenverweis oder Formel, die einem Namen zugewiesen wird|"
+	0x22C6,	L"setze_name"
+// UK 311:Set |cell:Cell reference, range of cells, or name|, range, or name to |1expression:Formula or array to be placed in destination|
+// UK w711:set_value
+	0x2137,	L"Setze |Zelle:Zellenverweis, Zellbereich oder Name|, Bereich oder Name auf |Ausdruck:Formel oder Array, der in Zelle oder Bereich eingesetzt wird|"
+	0x22C7,	L"setze_wert"
+// UK 312:Sign of |number:Real number|, 1 if positive, 0 if zero, -1 if negative
+// UK w712:sgn
+	0x2138,	L"Vorzeichen von |Zahl:Reele Zahl|, 1 wenn positive, 0 wenn null, -1 wenn negativ"
+	0x22C8,	L"vorzeichen"
+// UK 313:Sine of |angle:Angle in radians|
+// UK w713:sin
+	0x2139,	L"Sinus von |Winkel:Winkel in Bogenmaß|"
+	0x22C9,	L"sin"
+// UK 314:Hyperbolic sine of |number:Real number|
+// UK w714:sinh
+	0x213A,	L"Sinus hyperbolicus der |Zahl:Reele Zahl|"
+	0x22CA,	L"sinhyp"
+// UK 315:Skewness of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK 715:skew
+	0x213B,	L"Berechnet die Schiefe einer Verteilung, die durch die |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| der Zahlen gegeben ist"
+	0x22CB,	L"schiefe"
+// UK 316:Straight line depreciation given |cost:Cost at start|, |1salvage:Salvage value at end| and |2lifetime:Lifetime as number of periods|
+// UK w716:sln
+	0x213C,	L"Geradlinige Abwertung bei |Kosten:Kosten am Anfang|, |1Salvagewert:Salvagewert am Ende$| und |2Laufzeit:Anzahl der Perioden|"
+	0x22CC,	L"lia"
+// UK 317:Returns the |1k:Integer|-th smallest item in |array|
+// UK w717:small
+	0x213D,	L"Liefert das |1k:Ganzzahl|-te kleinste Element im |Array|"
+	0x22CD,	L"kkleinste"
+// UK 318:Sort |array:Array of data to be sorted (or range of cells)| in ascending order, with optional |1{column number:1 if omitted}|
+// UK w718:sort
+	0x213E,	L"Sortiere |Array:Array oder Zellbereich zu sortieren| in aufsteigender Folge, mit optionaler |1{Spaltenzahl:1, wenn weggelassen}|"
+	0x22CE,	L"sort"
+// UK 319:Spearman's rank correlation coefficient for |Array 1:First array, can be output from rank() | and |1Array 2:Second array, can be output from rank()|
+// UK w719:spearman
+	0x213F,	L"Rangkorrelationskoeffizient nach Spearman für |Array 1:Erstes Array| und |1Array 2:Zweites Array|"
+	0x22CF,	L"spearman"
+// UK 320:Square root of |number:Real number|. Number must be >= 0
+// UK w720:sqr
+	0x2140,	L"Quadratwurzel der |Zahl:Reele Zahl, >= 0|"
+	0x22D0,	L"wurzel"
+// UK 321:Standardizes the value |x:Number| to the distribution with given |1mean:Number| and |2standard deviation:Number|
+// UK 721:standardize
+	0x2141,	L"Standardisiert den Wert |x:Zahl| auf die Verteilung mit dem angegebenen |1Mittelwert:Zahl| und der angegebenen |2Standardabweichung:Zahl|"
+	0x22D1,	L"standardisierung"
+// UK 322:Standard deviation of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK w722:std
+	0x2142,	L"Standardabweichung der Zahlen in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22D2,	L"stabw"
+// UK 323:Population standard deviation of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK w723:stdp
+	0x2143,	L"Populationsstandardabweichung der Zahlen in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22D3,	L"stabwn"
+// UK 324:Converts |number:Number to be converted| to string with optional |1{digits}:Integer| decimal places
+// UK w724:string
+	0x2144,	L"Konvertiert |Zahl:Zu konvertierende Zahl| in String mit optionaler |1{Dezimalstellen}:Ganzzahl|"
+	0x22D4,	L"string"
+// UK 325:Substitutes |1old text:Text string| with |2new text:Text string| in the |string:Text string|
+// UK w725:substitute
+	0x2145,	L"Substitutes |1old text:Text| with |2new text:Text| in the |string:Text|"
+	0x22D5,	L"wechseln"
+// UK 326:Sum of the values in |list:List of numbers (or array, or range of cells)|
+// UK w726:sum
+	0x2146,	L"Summe von |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22D6,	L"summe"
+// UK 327:Sum of the squares of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK w727:sumsq
+	0x2147,	L"Summe der Quadrate der Zahlen in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22D7,	L"quadratesumme"
+// UK 328:Sum-of-years' depreciation during the given |3period:Period of calculation| with |cost:Cost at start|, |1salvage:Salvage value at end|, |2lifetime:Number of periods|
+// UK w728:syd
+	0x2148,	L"Summe-von-Jahren Abwertung bei |Kosten:Kosten zu Beginn|, |1Salvagewert:Salvagewert am Ende|, |2Zeitspanne:Zahl von Perioden| und |3Periode:Periode der Berechnungen|"
+	0x22D8,	L"dia"
+//
+// UK 329:|value|
+// UK w729:t
+	0x2149,	L"|value|"
+	0x22D9,	L"t"
+// UK 330:Tangent of |angle:Angle in radians|
+// UK w730:tan
+	0x214A,	L"Tangens des |Winkel:Winkel im Bogenmaß|"
+	0x22DA,	L"tan"
+// UK 331:Hyperbolic tangent of |number:Real number|
+// UK w731:tanh
+	0x214B,	L"Tangens hyperbolicus der |Zahl:Reele Zahl|"
+	0x22DB,	L"tanhyp"
+// UK 332:Term of investment given regular |payment:Payment per term|, interest |1rate:Interest rate, e.g. give 0.12 for 12% per period| and |2fv:Future value required|
+// UK w732:term
+	0x214C,	L"Laufzeit der Investition bei regulärer |Zahlung:Zahlung pro Laufzeit|, |1Zinsrate:Zinsrate, zB nimm 0,12 für 12% pro Laufzeit| und |fv:Zukünftiger Wert benötigt|"
+	0x22DC,	L"pduration"
+// UK 333:Converts |number:Number or date to be converted| or date value to string using |1format:Format string, see styles for examples|
+// UK w733:text
+	0x214D,	L"Konvertiert |Zahl:Zahl oder zu konvertierendes Datum| oder Datumswert bei String unter Verwendung |1Format:Formatstring, siehe Stil für Beispiele|"
+	0x22DD,	L"text"
+// UK 334:Makes time from |hour|, |1minute|, |2second|
+// UK w734:time
+	0x214E,	L"Macht Uhrzeit aus |Stunde|, |1Minute|, |Sekunde|"
+	0x22DE,	L"zeit"
+// UK 335:Converts |string:Text string or text cell in form ""hh:mm:ss""| to time
+// UK w735:timevalue
+	0x214F,	L"Konvertiert |Text:Text oder Verweis auf Textzelle in Form """"hh:mm:ss""""| in Zeit"
+	0x22DF,	L"zeitwert"
+// UK 336:Today's date
+// UK w736:today
+	0x2150,	L"Gibt das aktuelle Datum aus"
+	0x22E0,	L"heute"
+// UK 337:Transpose |matrix:Array of data to be transposed (or range of cells)|
+// UK w737:transpose
+	0x2151,	L"Transponiere |matrix:Array oder Zellbereich zu transponierender|"
+	0x22E1,	L"mtrans"
+// UK 338:Predict y-values given |linest:Output from linest function| data and |1x-data:Value or array to generate y-values from|
+// UK w738:trend
+	0x2152,	L"Voraussage y-Werte bei |linest:Output von LINEST Funktion| Daten und |1x-Daten:Wert oder Array, der y-Werte aus Daten generiert|"
+	0x22E2,	L"trend"
+// UK 339:Trims leading, trailing and multiple spaces from |string:Text string or reference to text cell|
+// UK w739:trim
+	0x2153,	L"Entfernt vorausgehende, nachfolgende und mehrfache Leerzeichen aus |Text:Text oder Verweis auf Textzelle|"
+	0x22E3,	L"glätten"
+// UK 340:Arithmetic mean value of the interior of the data in |array:Array of values (or range of cells)| when the lowest and highest |1percent:Real number, 0 <= percent <= 0.5| values are excluded
+// UK w740:trimmean
+	0x2154,	L"Liefert den Mittelwert einer |Datengruppe:Array oder Zellbereich|, wenn die niedrigsten und höchsten |1Prozent:Reele Zahl, 0 <= Prozent <= 0.5| Werte ausgeschlossen sind"
+	0x22E4,	L"gestutztmittel"
+// UK 341:Boolean value TRUE (one)
+// UK w741:true
+	0x2155,	L"Boolescher wert: WEHR (1)"
+	0x22E5,	L"wehr"
+// UK 342:Truncates |number:Real number| to |1decimal places:Integer| (always truncating towards zero)
+// UK w742:trunc
+	0x2156,	L"Kürzt eine |Zahl:Reele Zahl| mit |1Dezimalstellen:Ganzzahl| (gegen Null abschneiden)"
+	0x22E6,	L"kürzen"
+// UK 343:Type of |expression|. If expression is cell reference, you may wish to use deref() to find type of contents
+// UK w743:type
+	0x2157,	L"Typ von |Ausdruck|. Wenn Ausdruck Zellenverweis ist, benutze =DEREF(Zellenverweis) um Typ herauszufinden"
+	0x22E7,	L"typ"
+//
+// UK 344:REPEAT…UNTIL(|condition:Expression returning Boolean value|) in custom function
+// UK w744:until
+	0x2158,	L"REPEAT…UNTIL(|Bedingung:Ausdruck, der einen booleschen Wert zurückgibt|) in Benutzerdefinierte Funktion"
+	0x22E8,	L"until"
+// UK 345:Converts |string:Text string or reference to text cell| to upper-case
+// UK w745:upper
+	0x2159,	L"Konvertiert |Text:Textzeichenfolge oder Verweis auf Textzelle| in Großbuchstaben"
+	0x22E9,	L"gross"
+//
+// UK 346:Converts |string:Text string or reference to text cell| to number
+// UK w746:value
+	0x215A,	L"Konvertiert |Text:Textzeichenfolge oder Verweis auf Textzelle| in eine Zahl"
+	0x22EA,	L"wert"
+// UK 347:Variance of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK w747:var
+	0x215B,	L"Varianz der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22EB,	L"varianz"
+// UK 348:Population variance of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK w748:varp
+	0x215C,	L"Populationsvarianz der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x22EC,	L"varianzen"
+// UK 349:Version of Fireworkz
+// UK w749:version
+	0x215D,	L"Version von Fireworkz"
+	0x22ED,	L"version"
+// UK 350:Look for |key:Key value| in vertical |1target:Vertically-arranged array (or range of cells e.g. B1:D20)| data set (sorted in ascending order) and return corresponding element from |2column index:Integer|-th column in target array
+// UK w750:vlookup
+	0x215E,	L"Suchen |Schlüssel| in |1Zielarray:Array oder Zellbereich| (Vertikal angeordneter Datensatz zB B1:J3, in aufsteigender Reihenfolge sortiert) und liefert das entsprechende Element aus |Spalte Index:Ganzzahl|-te Spalte im Zielarray"
+	0x22EE,	L"sverweis"
+//
+// UK 351:Weekday of |date:Date in form dd.mm.yyyy|. Sunday is 1, 2=Monday…, controlled by optional |1{mode}|
+// UK w751:weekday
+	0x215F,	L"Wochentag von |Datum:Datum hat die Form tt.mm.jjjj|, Sonntag ist 1, 2=Montag…"
+	0x22EF,	L"wochentag"
+// UK 352:Week number of |date:Date in form dd.mm.yyyy|
+// UK w752:weeknumber
+	0x2160,	L"Wochennumber des |Datum:Datum hat die Form tt.mm.jjjj|"
+	0x22F0,	L"kalenderwoche"
+// UK 353:WHILE(|condition:Expression returning Boolean value|)…ENDWHILE in custom function
+// UK w753:while
+	0x2161,	L"WHILE(|Bedingung:Ausdruck, der einen booleschen Wert zurückgibt|)…ENDWHILE in Benutzerdefinierte Funktion"
+	0x22F1,	L"while"
+//
+// UK 354:Year part of |date:Date in form dd.mm.yyyy|
+// UK w754:year
+	0x2162,	L"Liefert die Jahreszahl des |Datum:Datum hat die Form tt.mm.jjjj|s"
+	0x22F2,	L"jahr"
+//
+// New functions should go here (in the order they appear in ev_eval.h and in RPNDEF) until we have another big sort-out
+//
+// UK 355:Sum of the product of each of the corresponding values from all the |array 1| .. |1array n| parameters
+// UK 755:sumproduct
+	0x2163,	L"Sum of the product of each of the corresponding values from all the |Array 1| .. |1Array n| parameters"
+	0x22F3,	L"summenprodukt"
+// UK 356:Sum of the difference of the squares of corresponding values from |x-data:Array| and |1y-data:Array|
+// UK 756:sum_x2my2
+	0x2164,	L"Sum of the difference of the squares of corresponding values from |x-Daten:Array| and |1y-Daten:Array|"
+	0x22F4,	L"summex2my2"
+// UK 357:Sum of the sum of the squares of the corresponding values from |x-data:Array| and |1y-data:Array|
+// UK 757:sum_x2py2
+	0x2165,	L"Sum of the sum of the squares of the corresponding values from |x-Daten:Array| and |1y-Daten:Array|"
+	0x22F5,	L"summex2py2"
+// UK 358:Sum of the squares of the difference of the corresponding values from |x-data:Array| and |1y-data:Array|
+// UK 758:sum_xmy2
+	0x2166,	L"Sum of the squares of the difference of the corresponding values from |x-Daten:Array| and |1y-Daten:Array|"
+	0x22F6,	L"summexmy2"
+// UK 359:OpenDocument/Excel-compatible number representing the type of |parameter|
+// UK 759:odf.type
+	0x2167,	L"OpenDocument/Excel-compatible number representing the type of |parameter|"
+	0x22F7,	L"odf.typ"
+// UK 360:Count of the number of blank cells (or empty text strings) in |range|
+// UK 760:countblank
+	0x2168,	L"Count of the number of blank cells (or empty text strings) in |range|"
+	0x22F8,	L"anzahlleerezellen"
+// UK 361:Population covariance of the values from |x-data:Array| and |1y-data:Array|
+// UK 761:covariance.p
+	0x2169,	L"Populationskovarianz der Werte aus |x-Daten:Array| und |1y-Daten:Array|"
+	0x22F9,	L"kovarianz.p"
+// UK 362:Pearson-r correlation coefficient of the values from |x-data:Array| and |1y-data:Array|
+// UK 762:pearson
+	0x216A,	L"Pearsonschen Produktmoment-Korrelationskoeffizient der Werte aus |x-Daten:Array| und |1y-Daten:Array|"
+	0x22FA,	L"pearson"
+// UK 363:Square of Pearson-r of the values from |x-data:Array| and |1y-data:Array|
+// UK 763:rsq
+	0x216B,	L"Quadrat des Pearsonschen Produktmoment-Korrelationskoeffizient der Werte aus |x-Daten:Array| und |1y-Daten:Array|"
+	0x22FB,	L"bestimmtheitsmass"
+// UK 364:Slope of the linear regression line to |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+// UK 764:slope
+	0x216C,	L"Liefert die Steigung der Regressionsgeraden von |y-Daten:Array oder Zellbereich von y-Daten| und |1x-Daten:Array oder Zellbereich von x-Daten|"
+	0x22FC,	L"steigung"
+// UK 365:Intercept of the linear regression line to |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+// UK 765:intercept
+	0x216D,	L"Liefert den Wert, bei dem eine lineare Regressionslinie die y-Achse schneidet, unter Verwendung bekannter |y-Daten:Array oder Zellbereich von y-Daten| und |1x-Daten:Array oder Zellbereich von x-Daten|"
+	0x22FD,	L"achsenabschnitt"
+// UK 366:Forecast y-value corresponding to the given |x-value:Number| of the linear regression line to |1y-array:Array of y-values (or range of cells)| and |2x-array:Array of x-values (or range of cells)|
+// UK 766:forecast
+	0x216E,	L"Forecast y-value corresponding to the given |x-value:Zahl| of the linear regression line to |1y-Daten:Array oder Zellbereich von y-Daten| and |2x-Daten:Array oder Zellbereich von x-Daten|"
+	0x22FE,	L"forecast"
+// UK 367:Standard error of the predicted y-values for |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+// UK 767:steyx
+	0x216F,	L"Liefert den Standardfehler der geschätzten y-Werte fur alle |y-Daten:Array oder Zellbereich von y-Daten| und |1x-Daten:Array oder Zellbereich von x-Daten| der Regression"
+	0x22FF,	L"stfehleryx"
+// UK 368:Population skewness of the numbers in |list:List of numbers (or array, or range of cells)|
+// UK 768:skew.p
+	0x2170,	L"Population skewness of the numbers in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|"
+	0x2300,	L"schiefe.p"
+// UK 369:|1n:Number|-th order Bessel function of the first kind. Jn(|x:Number|)
+// UK 769:besselj
+	0x2171,	L"Besselfunktion der ersten Gattung. J|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)"
+	0x2301,	L"besselj"
+// UK 370:|1n:Number|-th order Bessel function of the second kind. Yn(|x:Number|)
+// UK 770:bessely
+	0x2172,	L"Besselfunktion der zweiten Gattung. Y|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)"
+	0x2302,	L"bessely"
+// UK 371:Average of all the values in |list:List of values (or array, or range of cells)|
+// UK 771:averagea
+	0x2173,	L"Durchschnitt aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2303,	L"mittelwerta"
+// UK 372:Minimum of all the values in |list:List of values (or array, or range of cells)|
+// UK 772:mina
+	0x2174,	L"Minimum aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2304,	L"mina"
+// UK 373:Maximum of all the values in |list:List of values (or array, or range of cells)|
+// UK 773:maxa
+	0x2175,	L"Maximum aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2305,	L"maxa"
+// UK 374:Standard deviation of all the values in |list:List of values (or array, or range of cells)|
+// UK 774:stdeva
+	0x2176,	L"Standardabweichung aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2306,	L"stabwa"
+// UK 375:Population standard deviation of all the values in |list:List of values (or array, or range of cells)|
+// UK 775:stdevpa
+	0x2177,	L"Populationsstandardabweichung aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2307,	L"stabwna"
+// UK 376:Variance of all the values in |list:List of values (or array, or range of cells)|
+// UK 776:vara
+	0x2178,	L"Varianz aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2308,	L"varianza"
+// UK 377:Population variance of all the values in |list:List of values (or array, or range of cells)|
+// UK 777:varpa
+	0x2179,	L"Populationsvarianz aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x2309,	L"varianzena"
+// UK 378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
+// UK 778:percentrank.inc
+	0x217A,	L"Percentage rank (in 0.0..1.0 inclusive) of the |1value:Zahl| in the |data set:Array| to the optional |2{Dezimalstellen}:Zahl|"
+	0x230A,	L"quantilsrang.inkl"
+// UK 379:Error function integrated between zero and |lower limit:Number|, or between lower limit and the optional |1{upper limit}:Number|
+// UK 779:erf
+	0x217B,	L"Gauß'schen Fehlerfunktion integrated between zero and |lower limit:Zahl|, or between lower limit and the optional |1{upper limit}:Zahl|"
+	0x230B,	L"gaussfehler"
+// UK 380:Error function integrated between |x:Number| and +infinity. This is the complementary error function
+// UK 780:erfc
+	0x217C,	L"Gauß'schen Fehlerfunktion integrated between |x:Zahl| and +infinity. This is the complementary error function"
+	0x230C,	L"gaussfkompl"
+// UK 381:Sample covariance of the values from |x-data:Array| and |1y-data:Array|
+// UK 781:covariance.s
+	0x217D,	L"Kovarianz der Werte aus |x-Daten:Array| und |1y-Daten:Array|"
+	0x230D,	L"kovarianz.s"
+// UK 382:Logical Exclusive-OR of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+// UK 782:xor
+	0x217E,	L"Logisches Exklusiv-ODER der |Liste:Liste der Booleschen Werte (oder des Arrays oder des Zellbereichs)| der Booleschen Werte"
+	0x230E,	L"xoder"
+// UK 383:Create complex number string from |real part:Number| and |1imaginary part:Number| with optional |2{suffix}:Text string|
+// UK 783:c_complex
+	0x217F,	L"Erstellt eine komplexe Zahl aus |Realteil:Zahl| ind |1Imaginärteil:Zahl| mit optionalen |2{Suffix}:Text|"
+	0x230F,	L"c_komplexe"
+// UK 384:Create cell reference from |row:Number| number and |1column:Number| number
+// UK 784:address
+	0x2180,	L"Create cell reference from |row:Zahl| number and |1column:Zahl| number"
+	0x2310,	L"adresse"
+// UK 385:Fixed-declining balance depreciation during the given |3period:Number| with |cost:Cost at start|, |1salvage:Salvage value at end| and |2lifetime:Lifetime as number of periods|
+// UK 785:db
+	0x2181,	L"Fixed-declining balance depreciation during the given |3period:Zahl| with |cost:Cost at start|, |1salvage:Salvage value at end| and |2lifetime:Lifetime as number of periods|"
+	0x2311,	L"gda2"
+// UK 386:Calculates the future value of |principal:Number| given the series of compounded interest |1rates:Array|
+// UK 786:fvschedule
+	0x2182,	L"Calculates the future value of |principal:Zahl| given the series of compounded interest |1rates:Array|"
+	0x2312,	L"zw2"
+// UK 387:Truncates the result of |numerator:Number| divided by |1denominator:Number| to an integer, always towards zero
+// UK 787:quotient
+	0x2183,	L"Liefert das abgeschnittene Ergebnis des |Zählers:Zahl| geteilt durch den |1Nenner:Zahl| zu einer ganzen Zahl, gegen Null"
+	0x2313,	L"quotient"
+// UK 388:Value of the PDF or CDF for the exponential distribution for |x:Number| and |1lambda:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 788:expon.dist
+	0x2184,	L"Wert des VF oder WDF für die Exponentialverteilung für |x:Zahl| und |1Lambda:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2314,	L"expon.vert"
+// UK 389:Number of combinations of |1m:Positive integer| objects out of |n:Positive integer| possible ones with repetitions allowed
+// UK 789:combina
+	0x2185,	L"Anzahl der Kombinationen von |1m: Positive Ganzzahl| Objekte aus |n: Positive Ganzzahl| mögliche mit Wiederholungen erlaubt"
+	0x2315,	L"kombinationen2"
+// UK 390:Double factorial of |n:Positive integer|
+// UK 790:factdouble
+	0x2186,	L"Double factorial of |n:Positive Ganzzahl|"
+	0x2316,	L"zweifakultät"
+// UK 391:Sum of |3coefficients:Array| times |x:Number| to the power of |1n:Number|, n + |2m:Number| …
+// UK 791:seriessum
+	0x2187,	L"Summe von |3Koeffizient(en):Array| x |x:Zahl| zur Potenz von |1n:Zahl|, n + |2m:Zahl| …"
+	0x2317,	L"potenzreihe"
+// UK 392:Value of the PMF or CDF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PMF (default)
+// UK 792:hypgeom.dist
+	0x2188,	L"Wert der hypergeometrische Verteilung (oder Wahrscheinlichkeitsfunktion) für |sample_s:Zahl|uccesses, |1sample_n:Zahl|umber, |2pop_s:Zahl|uccesses, |3pop_n:Zahl|umber. |4{Kumuliert}:Boolescher Wert|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion (default)"
+	0x2318,	L"hypgeom.vert"
+// UK 393:Value of the PDF or CDF for the Weibull distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3cumulative:Boolean|=TRUE selects CDF, else PDF
+// UK 793:weibull.dist
+	0x2189,	L"Wert der Weibull-Verteilung (oder WDF) für |x:Zahl|, |1Form:Zahl|, and |2Maßstab:Zahl|. |3Kumuliert:Boolescher Wert|=WAHR wählt VF, sonst WDF"
+	0x2319,	L"weibull.vert"
+// UK 394:Value of the PDF or CDF for the Poisson distribution for |x:Number| and |1lambda:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 794:poisson.dist
+	0x218A,	L"Wert der Poisson-Verteilung (oder WDF) für |x:Zahl| und |1lambda:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x231A,	L"poisson.vert"
+// UK 395:Value of the PMF or CDF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF
+// UK 795:binom.dist
+	0x218B,	L"Wert der Wahrscheinlichkeitsfunktion der Binomialverteilung (oder Verteilungsfunktion) für |Anzahl der Erfolge:Ganzzahl| in |1Versuchen:Ganzzahl| und die |2Erfolgswahrscheinlichkeit:Zahl| für jeden Versuch. |3Kumuliert:Boolescher Wert|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion"
+	0x231B,	L"binom.vert"
+// UK 396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|
+// UK 796:binom.dist.range
+	0x218C,	L"Wahrscheinlichkeit eines Versuchsergebnisses unter Verwendung der Binomialverteilung. |Anzahl der Versuche:Ganzzahl|, die |1Erfolgswahrscheinlichkeit:Zahl| für jeden Versuch, und die Anzahl erfolgreicher Versuche |2S:Ganzzahl| und |3{S2}:Ganzzahl|"
+	0x231C,	L"binom.vert.bereich"
+// UK 397:Fisher transformation at |x:Number|
+// UK 797:fisher
+	0x218D,	L"Fisher-Transformation bei |x:Zahl|"
+	0x231D,	L"fisher"
+// UK 398:Inverse Fisher transformation for |y:Number|
+// UK 798:fisherinv
+	0x218E,	L"Inverse Fisher-Transformation bei |y:Zahl|"
+	0x231E,	L"fisherinv"
+// UK 399:Multinomial of all the values in |list:List of values (or array, or range of cells)|
+// UK 799:multinomial
+	0x218F,	L"Multinomial of all the values in |Liste:Liste der Werten (oder des Arrays oder des Zellbereichs)|"
+	0x231F,	L"polynomial"
+// UK 400:|1n:Number|-th order modified Bessel function of the first kind. In(|x:Number|)
+// UK 800:besseli
+	0x2190,	L"Modifizierte Besselfunktion der ersten Gattung. I|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)"
+	0x2320,	L"besseli"
+// UK 401:|1n:Number|-th order modified Bessel function of the second kind. Kn(|x:Number|)
+// UK 801:besselk
+	0x2191,	L"Modifizierte Besselfunktion der zweiten Gattung. K|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)"
+	0x2321,	L"besselk"
+// UK 402:Value of the PDF or CDF for the normal distribution with given |1mean:Number| and |2standard deviation:Number| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 802:norm.dist
+	0x2192,	L"Wert der Normalverteilung (oder WDF) mit angegebenem |1Mittelwert:Zahl| und |2Standardabweichung:Zahl| für den Wert |x:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2322,	L"norm.vert"
+// UK 403:Value of the PDF or CDF for the standard normal distribution for the (standardized) value |z:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 803:norm.s.dist
+	0x2193,	L"Wert der Standardnormalverteilung (oder WDF) für den (standardisierten) Wert |z:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2323,	L"norm.s.vert"
+// UK 404:Value of the PDF or CDF for the log-normal distribution with given |1{mean}:Number, default zero| and |2{standard deviation}:Number, default one| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 804:lognorm.dist
+	0x2194,	L"Wert der logarithmische Normalverteilung (oder WDF) mit angegebenem |1{Mittelwert}:Zahl, default 0| und |2{Standardabweichung}:Zahl, default 1| für den Wert |x:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2324,	L"lognorm.vert"
+// UK 405:Value of the PDF for the standard normal distribution for the (standardized) value |z:Number|
+// UK 805:phi
+	0x2195,	L"Wert des PDF für die Standardnormalverteilung für den (standardisierten) Wert |z:Zahl|"
+	0x2325,	L"phi"
+// UK 406:Returns the value 1 if |number_1:Number| == |1{number_2}:Number, default zero|, else 0
+// UK 806:delta
+	0x2196,	L"Liefert 1, wenn |Zahl_1:Zahl| == |1{Zahl_2}:Zahl, default 0|, sonst 0"
+	0x2326,	L"delta"
+// UK 407:Returns the value 1 if |number| >= |1{step}:Number, default zero|, else 0
+// UK 807:gestep
+	0x2197,	L"Liefert 1 1, wenn |Zahl| größer als oder gleich groß wie |1{step}:Zahl, default 0|, sonst 0"
+	0x2327,	L"gganzzahl"
+// UK 408:Rounds |number| down to the nearest integer, towards -infinity (OpenDocument/Excel-compatible behaviour)
+// UK 808:odf.int
+	0x2198,	L"Rounds |Zahl| down to the nearest integer, towards -infinity (OpenDocument/Excel-compatible behaviour)"
+	0x2328,	L"odf.ganzzahl"
+// UK 409:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bins array:Array of bin limit values (or range of cells)|. Ignores blank cells and text
+// UK 809:frequency
+	0x2199,	L"Frequencies in |data Array:Array oder Zellbereich von Daten| given bin values in |1bins array:Array oder Zellbereich von bin limit values|. Ignores blank cells and text"
+	0x2329,	L"häufigkeit"
+// UK 410:Unit matrix of dimension |n:Number|
+// UK 810:m_unit
+	0x219A,	L"Quadratische Einheitsmatrix mit der Größe |n:Zahl|"
+	0x232A,	L"einheitsmatrix"
+// UK 411:OpenDocument/Excel-compatible internal rate of return given |array:Array of numbers (or range of cells) representing cashflows| of cashflows and |1{guess}:Number, default 0.1. Initial guessed interest rate, e.g. 0.01|
+// UK 811:odf.irr
+	0x219B,	L"OpenDocument/Excel-compatible internal rate of return given |Array:Array oder Zellbereich representing cashflows| of cashflows and |1{guess}:Zahl, default 0.1. Initial guessed interest rate, e.g. 0.01|"
+	0x232B,	L"odf.ikv"
+// UK 412:Find the value in the CDF for the normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|
+// UK 812:norm.inv
+	0x219C,	L"Find the value in the CDF for the normal distribution with given |1mean:Zahl| and |2standard deviation:Zahl| matching the given |probability:Zahl, [0,1]|"
+	0x232C,	L"norm.inv"
+// UK 413:Find the value in the CDF for the standard normal distribution matching the given |probability:Number, [0,1]|
+// UK 813:norm.s.inv
+	0x219D,	L"Find the value in the CDF for the standard normal distribution matching the given |probability:Zahl, [0,1]|"
+	0x232D,	L"norm.s.inv"
+// UK 414:Log to base 10 of |number:Real number > 0|
+// UK 814:odf.log10
+	0x219E,	L"Log to base 10 of |Zahl:Reele Zahl, > 0|"
+	0x232E,	L"odf.log10"
+// UK 415:Gamma function for |n:Real number|
+// UK 815:gamma
+	0x219F,	L"Gammafunktion für |n:Reele Zahl|"
+	0x232F,	L"gamma"
+// UK 416:Value of the PMF or CDF for the negative binomial distribution with |n failures:Integer| before the |1n successes:Integer| and the |2probability:Number| of success. |3{cumulative}:Boolean, default FALSE|=TRUE selects CDF, else PMF (default)
+// UK 816:negbinom.dist
+	0x21A0,	L"Wert der Wahrscheinlichkeitsfunktion der negativen Binomialverteilung (oder Verteilungsfunktion) für |Anzahl Misserfolge:Ganzzahl| before the |1Anzahl der Erfolge:Ganzzahl| und die |2Erfolgswahrscheinlichkeit:Zahl| of success. |3{Kumuliert}:Boolescher Wert, default FALSCH|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion (default)"
+	0x2330,	L"negbinom.vert"
+// UK 417:Element in |array| at position |1row:Number|, |2column:Number|
+// UK 817:odf.index
+	0x21A1,	L"Element in |Array| at position |1row:Zahl|, |2column:Zahl|"
+	0x2331,	L"odf.index"
+// UK 418:Value of the PDF or CDF for the gamma distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 818:gamma.dist
+	0x21A2,	L"Wert der Gammaverteilung (oder WDF) für |x:Zahl|, |1Form:Zahl|, und |2Maßstab:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2332,	L"gamma.vert"
+// UK 419:Find the value in the CDF for the gamma distribution with given |shape:Number| and |2scale:Number| matching the given |probability:Number, [0,1]|
+// UK 819:gamma.inv
+	0x21A3,	L"Find the value in the CDF for the gamma distribution with given |Form:Zahl| and |2Maßstab:Zahl| matching the given |probability:Zahl, [0,1]|"
+	0x2333,	L"gamma.inv"
+// UK 420:Value of the PDF or CDF for the beta distribution for |x:Number|, |1alpha:Number|, and |2beta:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF. |4{a}:Number| and |5{b}:Number| shift and scale
+// UK 820:beta.dist
+	0x21A4,	L"Value of the PDF or CDF for the beta distribution for |x:Zahl|, |1alpha:Zahl|, and |2beta:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF. |4{a}:Zahl| and |5{b}:Zahl| shift and scale"
+	0x2334,	L"beta.vert"
+// UK 421:Value of the PDF or CDF for the beta distribution for |x:Number|, |1alpha:Number|, and |2beta:Number|. |3{a}:Number| and |4{b}:Number| shift and scale. |5{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 821:odf.betadist
+	0x21A5,	L"Value of the PDF or CDF for the beta distribution for |x:Zahl|, |1alpha:Zahl|, and |2beta:Zahl|. |3{a}:Zahl| and |4{b}:Zahl| shift and scale. |5{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2335,	L"odf.betavert"
+// UK 422:Find the value in the CDF for the beta distribution with given |1alpha:Number| and |2beta:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
+// UK 822:beta.inv
+	0x21A6,	L"Find the value in the CDF for the beta distribution with given |1alpha:Zahl| and |2beta:Zahl| matching the given |probability:Zahl, [0,1]|. |3{a}:Zahl| and |4{b}:Zahl| shift and scale"
+	0x2336,	L"beta.inv"
+// UK 423:Pearson-r correlation coefficient of the values from |x-data:Array| and |1y-data:Array|
+// UK 823:correl
+	0x21A7,	L"Pearson-r Korrelationskoeffizient of the values from |x-Daten:Array| and |1y-Daten:Array|"
+	0x2337,	L"korrel"
+// UK 424:Returns the error value #N/A (not available)
+// UK 824:na
+	0x21A8,	L"Liefert den Fehlerwert  #N/V (not available)"
+	0x2338,	L"nv"
+// UK 425:Value of the PDF or CDF for the chi-squared distribution with |1degrees of freedom:Number, > 0, truncated| for |x:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 825:chisq.dist
+	0x21A9,	L"Wert der Chi-Quadrat-Verteilung (oder WDF) mit |Freiheitsgraden:Zahl, > 0, gekürzt| für |x:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2339,	L"chiqu.vert"
+// UK 426:Find the value in the CDF for the chi-squared distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+// UK 826:chisq.inv
+	0x21AA,	L"Findet den Wert in der CDF für die Chi-Quadrat-Verteilung mit gegebenen |1Freiheitsgraden:Zahl, > 0, gekürzt|, die der gegebenen |Wahrscheinlichkeit:Zahl, [0,1]| entsprechen"
+	0x233A,	L"chiqu.inv"
+// UK 427:Right-tailed probability for the chi-squared distribution and |degrees of freedom:Number, > 0, truncated| for |x:Number|
+// UK 827:chisq.dist.rt
+	0x21AB,	L"Rechtsschwanzwahrscheinlichkeit für die Chi-Quadrat-Verteilung und |1Freiheitsgraden:Zahl, > 0, gekürzt| für |x:Zahl|"
+	0x233B,	L"chiqu.vert.re"
+// UK 428:Find the value for the chi-squared distribution with given |1k:degrees of freedom, > 0, truncated| matching the given right-tailed |probability:Number, [0,1]|
+// UK 828:chisq.inv.rt
+	0x21AC,	L"Findet den Wert für die Chi-Quadrat-Verteilung mit gegebenen |1k:Freiheitsgraden, > 0, gekürzt|, der der gegebenen Wahrscheinlichkeit mit dem |Rechtsschwanzwahrscheinlichkeit:Zahl, [0,1]|"
+	0x233C,	L"chiqu.inv.re"
+// UK 429:Value of the PDF or CDF for the F-distribution for |x:Number| and |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 829:f.dist
+	0x21AD,	L"Wert der F-Verteilung (oder WDF) für |x:Zahl| and |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x233D,	L"f.vert"
+// UK 430:Find the value in the CDF for the F-distribution with given |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+// UK 830:f.inv
+	0x21AE,	L"Findet den Wert in der CDF für die F-Verteilung mit gegebenem |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt| Übereinstimmung mit der gegebenen |Wahrscheinlichkeit:Zahl, [0,1]|"
+	0x233E,	L"f.inv"
+// UK 431:Right-tailed probability for the F-distribution for |x:Number| and |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated|
+// UK 831:f.dist.rt
+	0x21AF,	L"Rechtsschwanzwahrscheinlichkeit für die F-Verteilung für |x:Zahl| und |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt|"
+	0x233F,	L"f.vert.re"
+// UK 432:Find the value for the F-distribution with given |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated| matching the given right-tailed |probability:Number, [0,1]|
+// UK 832:f.inv.rt
+	0x21B0,	L"Find the value for the F-distribution with given |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt| matching the given right-tailed |probability:Zahl, [0,1]|"
+	0x2340,	L"f.inv.rt"
+// UK 433:Value of the PDF or CDF for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+// UK 833:t.dist
+	0x21B1,	L"Wert der Student'schen t-Verteilung (oder WDF) für |x:Zahl| und |1Freiheitsgrade:Zahl, > 0, gekürzt|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF"
+	0x2341,	L"t.vert"
+// UK 434:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+// UK 834:t.inv
+	0x21B2,	L"Find the value in the CDF for the Student'schen t-Verteilung with given |1Freiheitsgrade:Zahl, > 0, gekürzt| matching the given |probability:Zahl, [0,1]|"
+	0x2342,	L"t.inv"
+// UK 435:Two-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|
+// UK 835:t.dist.2t
+	0x21B3,	L"Zweiseitige Wahrscheinlichkeit für die Student'schen t-Verteilung für |x:Zahl| und |1Freiheitsgrade:Zahl, > 0, gekürzt|"
+	0x2343,	L"t.vert.2s"
+// UK 436:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given two-tailed |probability:Number, [0,1]|
+// UK 836:t.inv.2t
+	0x21B4,	L"Find the value in the CDF for the Student'schen t-Verteilung with given |1Freiheitsgrade:Zahl, > 0, gekürzt| matching the given |Zweiseitige Wahrscheinlichkeit:Zahl, [0,1]|"
+	0x2344,	L"t.inv.2e"
+// UK 437:Right-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|
+// UK 837:t.dist.rt
+	0x21B5,	L"Rechtsschwanzwahrscheinlichkeit für die Student'schen t-Verteilung für |x:Zahl| and |1Freiheitsgrade:Zahl, > 0, gekürzt|"
+	0x2345,	L"t.vert.re"
+// UK 438:One- or two-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated| and |2number of tails:Number, 1 or 2|
+// UK 838:odf.tdist
+	0x21B6,	L"Ein- oder zweiseitige Wahrscheinlichkeit für die Student'schen t-Verteilung für |x:Zahl| und |1Freiheitsgrade:Zahl, > 0, gekürzt| und |2number of tails:Zahl, 1 or 2|"
+	0x2346,	L"odf.tdist"
+// UK 439:Confidence interval for a population mean given significance level |alpha:Number| for the normal distribution with given |1standard deviation:Real number, > 0| and a |2sample size:Number, > 0, truncated|
+// UK 839:confidence.norm
+	0x21B7,	L"Confidence interval for a population mean given significance level |alpha:Zahl| for the normal distribution with given |1standard deviation:Reele Zahl, > 0| and a |2sample size:Zahl, > 0, gekürzt|"
+	0x2347,	L"konfidenz.norm"
+// UK 440:Confidence interval for a population mean given significance level |alpha:Number| for a Student's t-distribution with given |1standard deviation:Real number, > 0| and a |2sample size:Number, > 0, truncated|
+// UK 840:confidence.t
+	0x21B8,	L"Confidence interval for a population mean given significance level |alpha:Zahl| for a Student'schen t-Verteilung with given |1standard deviation:Reele Zahl, > 0| and a |2sample size:Zahl, > 0, gekürzt|"
+	0x2348,	L"konfidenz.t"
+// UK 441:Returns the |1percentile:Real number|-th value in the given |array|, exclusive of 0 and 1
+// UK 841:percentile.exc
+	0x21B9,	L"Returns the |1percentile:Reele Zahl|-th value in the given |Array|, exclusive of 0 and 1"
+	0x2349,	L"quantil.exkl"
+// UK 442:Returns the |1quartile:Integer, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |array|, exclusive of 0 and 1
+// UK 842:quartile.exc
+	0x21BA,	L"Returns the |1quartile:Ganzzahl, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |Array|, exclusive of 0 and 1"
+	0x234A,	L"quartile.exkl"
+// UK 443:Find the lowest value in the CDF for the binomial distribution with number |trials:Integer| and the |1probability:Number| of success for each trial that is greater than or equal to the given probability |2alpha:Number, [0,1]|
+// UK 843:binom.inv
+	0x21BB,	L"Find the lowest value in the CDF for the binomial distribution with number |trials:Ganzzahl| and the |1probability:Zahl| of success for each trial that is greater than or equal to the given probability |2alpha:Zahl, [0,1]|"
+	0x234B,	L"binom.inv"
+// UK 444:z-test using the values from |data:Array| with |1hypothesised mean:Number|. |2{standard deviation}:Number| may be given, otherwise it is calculated from the sample data
+// UK 844:z.test
+	0x21BC,	L"z-test using the values from |data:Array| with |1hypothesised mean:Zahl|. |2{Standardabweichung}:Zahl| may be given, otherwise it is calculated from the sample data"
+	0x234C,	L"g.test"
+// UK 445:Probability that values are between two limits given |x range:Array| of data and |1associated probabilities:Array|. Sums probabilities from |2lower limit:Number| to optional |3{upper limit}:Number
+// UK 845:prob
+	0x21BD,	L"Probability that values are between two limits given |x range:Array| of data and |1associated probabilities:Array|. Sums probabilities from |2lower limit:Zahl| to optional |3{upper limit}:Zahl"
+	0x234D,	L"wahrschbereich"
+// UK 446:Chi-squared value of corresponding values from |actual data:Array| and |1expected data:Array|
+// UK 846:chisq.test
+	0x21BE,	L"Chi-squared value of corresponding values from |actual data:Array| and |1expected data:Array|"
+	0x234E,	L"chiqu.test"
+// UK 447:F-test for data from |array 1:Array| and |1array 2:Array|
+// UK 847:f.test
+	0x21BF,	L"F-test for data from |Array 1:Array| and |1Array 2:Array|"
+	0x234F,	L"f.test"
+// UK 448:t-test for data from |array 1:Array| and |1array 2:Array| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
+// UK 848:t.test
+	0x21C0,	L"t-test for data from |Array 1:Array| and |1Array 2:Array| with number of |2tails:Zahl, 1 or 2| and |3type:Zahl|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic"
+	0x2350,	L"t.test"
+//
+// UK 449:Absolute value (modulus) of |complex number|
+// UK 849:odf.imabs
+	0x21C1,	L"Absolutwert (modulus) der |complexe Zahl|"
+	0x2351,	L"odf.imabs"
+// UK 450:Imaginary part of |complex number|
+// UK 850:odf.imaginary
+	0x21C2,	L"Imaginärteil der |complexe Zahl|"
+	0x2352,	L"odf.imaginärteil"
+// UK 451:Argument of |complex number|
+// UK 851:odf.imargument
+	0x21C3,	L"Argument of |complexe Zahl|"
+	0x2353,	L"odf.imargument"
+// UK 452:Complex conjugate of |complex number|
+// UK 852:odf.imconjugate
+	0x21C4,	L"Konjugiert Komplexe der |complexe Zahl|"
+	0x2354,	L"odf.imkonjugiert"
+// UK 453:Cosine of |complex number|
+// UK 853:odf.imcos
+	0x21C5,	L"Kosinus der |complexe Zahl|"
+	0x2355,	L"odf.imcos"
+// UK 454:Divide |complex dividend:Complex number| by |1complex divisor:Complex number|
+// UK 854:odf.imdiv
+	0x21C6,	L"Teilen |komplexe Dividende:complexe Zahl| durch |1komplexer Teiler:complexe Zahl|"
+	0x2356,	L"odf.imdiv"
+// UK 455:Exponential value of |complex number|
+// UK 855:odf.imexp
+	0x21C7,	L"Berechnet die Exponentialfunktion zur Basis e der |complexe Zahl|"
+	0x2357,	L"odf.imexp"
+// UK 456:Natural logarithm of |complex number|
+// UK 856:odf.imln
+	0x21C8,	L"Logarithmus zur Basis e der Zahl |complexe Zahl|"
+	0x2358,	L"odf.imln"
+// UK 457:Logarithm to base 10 of |complex number|
+// UK 857:odf.imlog10
+	0x21C9,	L"Logarithmus zur Basis 10 der |complexe Zahl|"
+	0x2359,	L"odf.imlog10"
+// UK 458:Logarithm to base 2 of |complex number|
+// UK 858:odf.imlog2
+	0x21CA,	L"Logarithmus zur Basis 2 der |complexe Zahl|"
+	0x235A,	L"odf.imlog2"
+// UK 459:|complex number 1| raised to the power of |1complex number 2|
+// UK 859:odf.impower
+	0x21CB,	L"|complexe Zahl 1| zur Potenz der |1complexe Zahl 2| erhoben"
+	0x235B,	L"odf.impotenz"
+// UK 460:Multiply |complex multiplicand 1:Complex number| by |1complex multiplicand 2:Complex number|
+// UK 860:odf.improduct
+	0x21CC,	L"|komplexer Multiplikand 1:complexe Zahl| mit |1komplexer Multiplikand 2:complexe Zahl| multiplizieren"
+	0x235C,	L"odf.improdukt"
+// UK 461:Real part of |complex number|
+// UK 861:odf.imreal
+	0x21CD,	L"Realteil der |complexe Zahl|"
+	0x235D,	L"odf.imrealteil"
+// UK 462:Sine of |complex number|
+// UK 862:odf.imsin
+	0x21CE,	L"Sinus der |complexe Zahl|"
+	0x235E,	L"odf.imsin"
+// UK 463:Square root of |complex number|
+// UK 863:odf.imsqrt
+	0x21CF,	L"Quadratwurzel der |complexe Zahl|"
+	0x235F,	L"odf.imwurzel"
+// UK 464:Subtract |1complex subtrahend:Complex number| from |complex minuend:Complex number|
+// UK 864:odf.imsub
+	0x21D0,	L"|complex minuend:complexe Zahl| - |1complex subtrahend:complexe Zahl|"
+	0x2360,	L"odf.imsub"
+// UK 465:Add |complex addend 1:Complex number| and |1complex addend 2:Complex number|
+// UK 865:odf.imsum
+	0x21D1,	L"|complex addend 1:complexe Zahl| + |1complex addend 2:complexe Zahl|"
+	0x2361,	L"odf.imsumme"
+//
+//:Inverse cosine of |complex number| #:imacos
+//:Inverse cosecant of |complex number| #:imacosec
+//:Inverse hyperbolic cosecant of |complex number| #:imacosech
+//:Inverse hyperbolic cosine of |complex number| #:imacos
+//:Inverse cotangent of |complex number| #:imacot
+//:Inverse hyperbolic cotangent of |complex number| #:imacoth
+//:Inverse secant of |complex number| #:imasec
+//:Inverse hyperbolic secant of |complex number| #:imasech
+//:Inverse sine of |complex number| #:imasin
+//:Inverse hyperbolic sine of |complex number| #:imasinh
+//:Inverse tangent of |complex number| #:imatan
+//:Inverse hyperbolic tangent of |complex number| #:imatanh
+//:Cosecant of |complex number| #:imcosec
+//:Hyperbolic cosecant of |complex number| #:imcosech
+//:Hyperbolic cosine of |complex number| #:imcosh
+//:Cotangent of |complex number| #:imcot
+//:Hyperbolic cotangent of |complex number| #:imcoth
+//:Secant of |complex number| #:imsec
+//:Hyperbolic secant of |complex number| #:imsech
+//:Hyperbolic sine of |complex number| #:imsinh
+//:Tangent of |complex number| #:imtan
+//:Hyperbolic tangent of |complex number| #:imtanh
+//
+// UK 466:Imaginary part of |complex number:1*2 array or range|
+// UK 86:c_imaginary
+	0x21D2,	L"Imaginärteil der |complexe Zahl:1*2 array or range|"
+	0x2362,	L"c_imaginärteil"
+// UK 467:Real part of |complex number:1*2 array or range|
+// UK 867:c_real
+	0x21D3,	L"Realteil der |complexe Zahl:1*2 array or range|"
+	0x2363,	L"c_realteil"
+// UK 468:Separately rounds the components of |complex number:1*2 array or range| to |1{digits}:Integer, default=2| decimal places
+// UK 868:c_round
+	0x21D4,	L"Rundet den Real- und Imaginärteil einer |complexe Zahl:1*2 array or range| getrennt auf |1{Dezimalstellen}:Ganzzahl, default=2|"
+	0x2364,	L"c_round"
+// UK 469:Square root of |complex number:1*2 array or range|
+// UK 869:c_sqrt
+	0x21D5,	L"Quadratwurzel der |complexe Zahl:1*2 array or range|"
+	0x2365,	L"c_wurzel"
+//
+// UK 470:Create complex number string from |real part:Number| and |1imaginary part:Number| with optional |2{suffix}:Text string|
+// UK 870:odf.complex
+	0x21D6,	L"Erstellt eine komplexe Zahl aus |Realteil:Zahl| ind |1Imaginärteil:Zahl| mit optionalen |2{Suffix}:Text|"
+	0x2366,	L"odf.komplexe"
+// UK 471:Find the value in the CDF for the log-normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
+// UK 871:lognorm.inv
+	0x21D7,	L"Findet den Wert in der CDF für die logarithmische Normalverteilung mit dem angegebenen |1Mittelwert:Zahl| und der |2Standardabweichung:Zahl|, die der angegebenen |Wahrscheinlichkeit:Zahl, [0,1]| entsprechen. |3{a}:Zahl| and |4{b}:Zahl| shift and scale"
+	0x2367,	L"lognorm.inv"
+// UK 472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
+// UK 872:percentrank.exc
+	0x21D8,	L"Percentage rank (in 0.0..1.0 exclusive) of the |1value:Zahl| in the |data set:Array| to the optional |2{Dezimalstellen}:Zahl|"
+	0x2368,	L"quantilsrang.exkl"
+// UK 473:Returns the date that is the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
+// UK 873:edate
+	0x21D9,	L"Liefert das Datum, das die angegebene |1Anzahl von Monaten:Zahl| vor oder nach dem angegebenen |Startdatum:Datum hat die Form tt.mm.jjjj| ist"
+	0x2369,	L"edatum"
+// UK 474:Returns the date that is the the last day of the month for the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
+// UK 874:eomonth
+	0x21DA,	L"Liefert das Datum, das der letzte Tag des Monats für die angegebene |1Anzahl von Monaten:Zahl| vor oder nach dem angegebenen |Startdatum:Datum hat die Form tt.mm.jjjj| ist"
+	0x236A,	L"monatsende"
+// UK 475:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0| (OpenDocument/Excel-compatible behaviour)
+// UK 875:odf.mod
+	0x21DB,	L"Liefert den Rest nach einer Division von |Dividende:Reele Zahl| durch |1Quotient:Reele Zahl, <> 0| (OpenDocument/Excel-compatible behaviour)"
+	0x236B,	L"odf.rest"
+// UK 476:Converts binary |number:Text string| to decimal
+// UK 876:bin2dec
+	0x21DC,	L"Konvertiert die |Binärzahl:Text| in eine Dezimalzahl"
+	0x236C,	L"binindez"
+// UK 477:Converts binary |number:Text string| to string of hexadecimal digits with optional number of |1{places}:number|
+// UK 877:bin2hex
+	0x21DD,	L"Konvertiert die |Binärzahl:Text| in eine Textzeichenfolge mit hexadezimalen Ziffern und optionaler |1{Anzahl von Stellen}:Zahl|"
+	0x236D,	L"bininhex"
+// UK 478:Converts binary |number:Text string| to string of octal digits with optional number of |1{places}:number|
+// UK 878:bin2oct
+	0x21DE,	L"Konvertiert die |Binärzahl:Text| in eine Textzeichenfolge mit oktalen Ziffern und optionaler |1{Anzahl von Stellen}:number|"
+	0x236E,	L"bininokt"
+// UK 479:Convert |number| to string of binary digits with optional number of |1{places}:number|
+// UK 879:dec2bin
+	0x21DF,	L"Konvertiert |Zahl| zu einer Textzeichenfolge mit Binärziffern und optionaler |1{Anzahl von Stellen}:number|"
+	0x236F,	L"dezinbin"
+//
+// UK 480:Convert |number| to string of hexadecimal digits with optional number of |1{places}:number|
+// UK 880:dec2hex
+	0x21E0,	L"Konvertiert |Zahl| zu einer Textzeichenfolge mit hexadezimalen Ziffern und optionaler |1{Anzahl von Stellen}:number|"
+	0x2370,	L"dezinhex"
+// UK 481:Convert |number| to string of octal digits with optional number of |1{places}:number|
+// UK 881:dec2oct
+	0x21E1,	L"Konvertiert |Zahl| zu einer Textzeichenfolge mit oktalen Ziffern und optionaler |1{Anzahl von Stellen}:number|"
+	0x2371,	L"dezinokt"
+// UK 482:Converts hexadecimal |number:Text string| to string of binary digits with optional number of |1{places}:number|
+// UK 882:hex2bin
+	0x21E2,	L"Konvertiert die |Hexadezimalzahl:Text| in eine Textzeichenfolge mit Binärziffern und optionaler |1{Anzahl von Stellen}:number|"
+	0x2372,	L"hexinbin"
+// UK 483:Converts hexadecimal |number:Text string| to decimal
+// UK 883:hex2dec
+	0x21E3,	L"Konvertiert die |Hexadezimalzahl:Text| in eine Dezimalzahl"
+	0x2373,	L"hexindec"
+// UK 484:Converts hexadecimal |number:Text string| to string of octal digits with optional number of places
+// UK 884:hex2oct
+	0x21E4,	L"Konvertiert die |Hexadezimalzahl:Text| in eine Textzeichenfolge mit oktalen Ziffern und optionaler |1{Anzahl von Stellen}:number|"
+	0x2374,	L"hexinoct"
+// UK 485:Converts octal |number:Text string| to string of binary digits with optional number of |1{places}:number|
+// UK 885:oct2bin
+	0x21E5,	L"Konvertiert die |Oktalzahl:Text| in eine Textzeichenfolge mit Binärziffern und optionaler |1{Anzahl von Stellen}:Zahl|"
+	0x2375,	L"oktinbin"
+// UK 486:Converts octal |number:Text string| to decimal
+// UK 886:oct2dec
+	0x21E6,	L"Konvertiert die |Oktalzahl:Text| in eine Dezimalzahl"
+	0x2376,	L"oktindez"
+// UK 487:Converts octal |number:Text string| to string of hexadecimal digits with optional number of |1{places}:number|
+// UK 887:oct2hex
+	0x21E7,	L"Konvertiert die |Oktalzahl:Text| in eine Textzeichenfolge mit hexadezimalen Ziffern und optionaler |1{Anzahl von Stellen}:Zahl|"
+	0x2377,	L"oktinhex"
+// UK 488:Returns the bit-wise AND of |number_1:Number| and |1number_2:Number|
+// UK 888:bitand
+	0x21E8,	L"Liefert das bitweise UND von |Zahl 1:Zahl| und |1Zahl 2:Zahl|"
+	0x2378,	L"bitund"
+// UK 489:Returns |number:Number| shifted left bit-wise by |1shift:Number| bits
+// UK 889:bitlshift
+	0x21E9,	L"Liefert |Zahl| bitweise um die |1Anzahl der Bits:Zahl| nach links verschoben"
+	0x2379,	L"bitlverschieb"
+//
+// UK 490:Returns the bit-wise OR of |number_1:Number| and |1number_2:Number|
+// UK 890:bitor
+	0x21EA,	L"Liefert das bitweise ODER von |Zahl 1:Zahl| und |1Zahl 2:Zahl|"
+	0x237A,	L"bitoder"
+// UK 491:Returns |number:Number| shifted right bit-wise by |1shift:Number| bits
+// UK 891:bitrshift
+	0x21EB,	L"Liefert |Zahl| bitweise um die |1Anzahl der Bits:Zahl| nach rechts verschoben"
+	0x237B,	L"bitrverschieb"
+// UK 492:Returns the bit-wise exclusive-OR of |number_1:Number| and |1number_2:Number|
+// UK 892:bitxor
+	0x21EC,	L"Liefert das bitweise Exklusiv-ODER von |Zahl 1:Zahl| und |1Zahl 2:Zahl|"
+	0x237C,	L"bitxoder"
+// UK 493:Converts |number:Positive integer| using the given |1radix:Positive integer| and optional minimum number of |2{digits}:number|
+// UK 893:base
+	0x21ED,	L"Konvertiert die |Zahl:Positive Ganzzahl| mit dem angegebenen |Radix:Positive Ganzzahl| and optional minimum number of |2{digits}:Zahl|"
+	0x237D,	L"basis"
+// UK 494:Converts |number:Positive integer| from the given |1radix:Positive integer| to its corresponding decimal value
+// UK 894:decimal
+	0x21EE,	L"Konvertiert die |Zahl:Positive Ganzzahl| vom angegebenen |Radix:Positive Ganzzahl| in den entsprechenden Dezimalwert"
+	0x237E,	L"dezimal"
+// UK 495:Returns the greatest common denominator of all the values in |list:List of numbers (or array, or range of cells)|
+// UK 895:gcd
+	0x21EF,	L"Gibt den größten gemeinsamen Nenner aller Werte in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| zurück"
+	0x237F,	L"ggt"
+// UK 496:Returns the least common multiple of all the values in |list:List of numbers (or array, or range of cells)|
+// UK 896:lcm
+	0x21F0,	L"Gibt das kleinste gemeinsame Vielfache aller Werte in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| zurück"
+	0x2380,	L"kgv"
+// UK 497:Week number of |date:Date in form dd.mm.yyyy| (ISO 8601)
+// UK 897:isoweeknum
+	0x21F1,	L"Wochennumber des |Datum:Datum hat die Form tt.mm.jjjj| (ISO 8601)"
+	0x2381,	L"isokalenderwoche"
+// UK 498:Returns integral number of days between |1start_date:Date in form dd.mm.yyyy| and |end_date:Date in form dd.mm.yyyy|
+// UK 898:days
+	0x21F2,	L"Liefert die ganzzahlige Anzahl von Tagen zwischen |1StartDatum:Datum hat die Form tt.mm.jjjj| und |Enddatum:Datum hat die Form tt.mm.jjjj|"
+	0x2382,	L"tage"
+//
+// evaluator errors (see xp_ss.h, ob_ss.h)
+// see SS_ERR(n)
+//
+// UK e0:Irr
+	0xA000,	L"Irr"
+//e1:ERROR_RQ
+// UK e2:Bad date
+	0xA002,	L"Ungültiges Datum"
+// UK e3:Lookup
+	0xA003,	L"Lookup"
+// UK e4:Negative root
+	0xA004,	L"Negatives Quadratwurzel"
+// UK e5:Propagated
+	0xA005,	L"Fehler weitergegeben"
+// UK e6:Divide by zero
+	0xA006,	L"Geteilt durch Null"
+// UK e7:Bad index
+	0xA007,	L"Ungültiger Index"
+// UK e8:FP error
+	0xA008,	L"Rechenfehler"
+// UK e9:Circular reference
+	0xA009,	L"Zirkuläre Verweis"
+//
+// UK e10:File not loaded
+	0xA00A,	L"Datei nicht geladen"
+// UK e11:Array expected
+	0xA00B,	L"Array erwartet"
+// UK e12:Bad compiled data
+	0xA00C,	L"Ungültige kompilierte Daten"
+// UK e13:Formula too long
+	0xA00D,	L"Formel zu lang"
+// UK e14:Internal evaluator error 14
+	0xA00E,	L"Interner Evaluatorfehler 14"
+// UK e15:Mistake in formula
+	0xA00F,	L"Fehler in der Formel"
+// UK e16:Number not expected
+	0xA010,	L"Zahl nicht erwartet"
+// UK e17:String not expected
+	0xA011,	L"Zeichenfolge nicht erwartet"
+// UK e18:Date not expected
+	0xA012,	L"Datum nicht erwartet"
+// UK e19:Name not defined
+	0xA013,	L"Name nicht definiert"
+//
+// UK e20:Range not expected
+	0xA014,	L"Zellbereich nicht erwartet"
+// UK e21:Internal evaluator error 21
+	0xA015,	L"Interner Evaluatorfehler 21"
+// UK e22:Custom function not defined
+	0xA016,	L"Benutzerdefinierte Funktion nicht definiert"
+// UK e23:Nested array
+	0xA017,	L"Array verschachtelte"
+// UK e24:Array not expected
+	0xA018,	L"Array nicht erwartet"
+// UK e25:Parameter to custom function not declared
+	0xA019,	L"Parameter zur Benutzerdefinierte Funktion nicht deklariert"
+// UK e26:No RESULT in custom function
+	0xA01A,	L"Kein RESULT in der Benutzerdefinierte Funktion"
+// UK e27:Too many parameters given to function
+	0xA01B,	L"Zu viele Parameter wurden an die Funktion übergeben"
+// UK e28:Not implemented
+	0xA01C,	L"Nicht implementiert"
+// UK e29:Cell deleted
+	0xA01D,	L"Zelle gelöscht"
+//
+// UK e30:No time value
+	0xA01E,	L"Kein Zeitwert"
+// UK e31:No date value
+	0xA01F,	L"Kein Datum"
+// UK e32:Bad identifier
+	0xA020,	L"Ungültige Kennzeichnung"
+// UK e33:Bad complex number
+	0xA021,	L"Ungültige komplexe Nummer"
+// UK e34:Out of range
+	0xA022,	L"Außerhalb des gültigen Bereichs"
+// UK e35:Array wrong size
+	0xA023,	L"Array ist die falsche Größe"
+// UK e36:Control function outside custom function
+	0xA024,	L"Kontrollfunktion außerhalb der Benutzerdefinierte Funktion"
+// UK e37:Bad target for GOTO
+	0xA025,	L"Ungültiges Ziel für GOTO"
+// UK e38:Wrongly nested loop
+	0xA026,	L"Falsch verschachtelte Schleife"
+// UK e39:Parameter out of range
+	0xA027,	L"Parameter außerhalb des gültigen Bereichs"
+//
+// UK e40:Bad time
+	0xA028,	L"Ungültige Zeit"
+// UK e41:Wrongly nested IF ELSE ELSEIF ENDIF
+	0xA029,	L"Fehlerhaft verschachtelte WENN ELSE ELSEWENN ENDWENN"
+// UK e42:Mismatched matrices
+	0xA02A,	L"Matrixgrößen stimmen nicht überein"
+// UK e43:Matrix not numeric
+	0xA02B,	L"Matrix ist nicht numerisch"
+// UK e44:Matrix wrong size
+	0xA02C,	L"Matrix hat die falsche Größe"
+// UK e45:Mixed signs
+	0xA02D,	L"Gemischte Zeichen"
+// UK e46:Accuracy lost
+	0xA02E,	L"Die Genauigkeit ist verloren gegangen"
+// UK e47:Can't overwrite formula
+	0xA02F,	L"Formel kann nicht überschrieben werden"
+// UK e48:Wrong number of parameters to function
+	0xA030,	L"Falsche Anzahl von Parametern, die an die Funktion übergeben wurden"
+// UK e49:Missing )
+	0xA031,	L"Fehlende rechte runde Klammer"
+//
+// UK e50:Can't nest database functions
+	0xA032,	L"Datenbankfunktionen können nicht verschachtelt werden"
+// UK e51:Parameter is wrong type
+	0xA033,	L"Parameter ist der falsche Typ"
+// UK e52:Custom function already defined
+	0xA034,	L"Benutzerdefinierte Funktion ist bereits definiert"
+// UK e53:Type not recognised
+	0xA035,	L"Typ wird nicht erkannt"
+// UK e54:Array size is set by first row
+	0xA036,	L"Die Arraygröße wird durch die erste Zeile festgelegt"
+// UK e55:Missing }
+	0xA037,	L"Fehlende rechte geschweifte Klammer"
+// UK e56:Can't write beyond existing rows and columns
+	0xA038,	L"Kann nicht über vorhandene Zeilen und Spalten hinaus schreiben"
+// UK e57:Bad logarithm
+	0xA039,	L"Ungültiger Logarithmus"
+// UK e58:Matrix is not square
+	0xA03A,	L"Matrix ist nicht quadratisch"
+// UK e59:Matrix is singular
+	0xA03B,	L"Matrix ist singulär"
+//
+// UK e60:No valid data found
+	0xA03C,	L"Keine gültigen Daten gefunden"
+// UK e61:Database access error
+	0xA03D,	L"Datenbankzugriffsfehler"
+// UK e62:#VALUE!
+	0xA03E,	L"#VALUE!"
+// UK e63:#NUM!
+	0xA03F,	L"#NUM!"
+// UK e64:#N/A
+	0xA040,	L"#N/A"
+//
+// ob_ss errors
+//
+// UK e100:Last column/row not blank
+	0xA064,	L"Die letzte Spalte / Zeile ist nicht leer"
+// UK e101:Spreadsheet function not available
+	0xA065,	L"Die Tabellenkalkulationsfunktion ist nicht verfügbar"
+// UK e102:You must give names a non-blank name
+	0xA066,	L"Namen müssen einen nicht leeren Namen erhalten"
+// UK e103:You must give names a non-blank value
+	0xA067,	L"Namen müssen einen nicht leeren Wert erhalten"
+//
+// end of msg (ob_ss)
+END
+//
+// end of RCGen created string table

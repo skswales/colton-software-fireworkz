@@ -1,0 +1,47 @@
+#
+# this is the messages file for ob_mails (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_mails/ob_mails.h
+#
+# MAILSHOT_MSG_DIALOG_SELECT_xxx
+#
+# UK 1:Document
+1:Dokument
+# UK 2:ug/ug09_setting_up_your_letter.htm
+2:ug/ug09_setting_up_your_letter.htm
+# UK 3:Row
+3:Reihe
+# UK 4:Blank fields
+4:Leere Felder
+# UK 5:Shuffle
+5:Mischen
+# UK 6:Start
+6:Starten
+# UK 7:End
+7:Ende
+#
+# MAILSHOT_MSG_DIALOG_INSERT_FIELD_xxx
+#
+# UK 10:Insert mailshot field
+10:Seriendruckfeld einfügen
+# UK 11:ug/ug09_setting_up_your_letter.htm
+11:ug/ug09_setting_up_your_letter.htm
+# UK 12:Field number
+12:Feldnumber
+#
+# errors: keep consistent with ob_mails/ob_mails.h
+# see MAILSHOT_ERR(n)
+#
+# UK e0:No document selected for mailshot
+e0:Für den Seriendruck ist kein Dokument ausgewählt
+# UK e2:No documents with tables for mailshot
+e2:Keine Dokumente mit Tabellen für den Seriendruck
+#
+# end of msg (ob_mails)

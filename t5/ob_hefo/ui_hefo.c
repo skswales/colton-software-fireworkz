@@ -123,14 +123,16 @@ enum PAGE_HEFO_BREAK_VALUES_IDS
     PAGE_HEFO_BREAK_VALUES_ID_MAX
 };
 
+/* use left_text as these labels align on the left to vertical guidelines */
+
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+page_hefo_break_values_hf_oef_margin_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_MARGIN), { 1 /*left_text*/ } };
+
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+page_hefo_break_values_hf_oef_offset_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_OFFSET), { 1 /*left_text*/ } };
+
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-page_hefo_break_values_hf_oef_units_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-page_hefo_break_values_hf_oef_margin_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_MARGIN) };
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-page_hefo_break_values_hf_oef_offset_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PAGE_HEFO_BREAK_VALUES_OFFSET) };
+page_hefo_break_values_hf_oef_units_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 static /*poked*/ UI_CONTROL_F64
 page_hefo_break_values_units_control;
@@ -191,7 +193,7 @@ page_hefo_break_values_header_odd_margin_label =
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -211,7 +213,7 @@ page_hefo_break_values_header_odd_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -225,7 +227,7 @@ page_hefo_break_values_header_odd_offset_label =
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_CAPTION_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -306,7 +308,7 @@ page_hefo_break_values_header_even_margin_label =
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -326,7 +328,7 @@ page_hefo_break_values_header_even_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -340,7 +342,7 @@ page_hefo_break_values_header_even_offset_label =
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_CAPTION_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -421,7 +423,7 @@ page_hefo_break_values_header_first_margin_label =
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -441,7 +443,7 @@ page_hefo_break_values_header_first_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -455,7 +457,7 @@ page_hefo_break_values_header_first_offset_label =
     PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_CAPTION_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_HEADER_FIRST_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -536,7 +538,7 @@ page_hefo_break_values_footer_odd_margin_label =
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -556,7 +558,7 @@ page_hefo_break_values_footer_odd_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -570,7 +572,7 @@ page_hefo_break_values_footer_odd_offset_label =
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -651,14 +653,14 @@ page_hefo_break_values_footer_even_margin_label =
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
 page_hefo_break_values_footer_even_margin =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_GROUP2,
-    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL, DIALOG_CONTROL_PARENT },
+    { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_CAPTION_GROUP2, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_VALUES_FIELDS_H, DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
 };
@@ -671,7 +673,7 @@ page_hefo_break_values_footer_even_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -685,7 +687,7 @@ page_hefo_break_values_footer_even_offset_label =
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_CAPTION_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -766,7 +768,7 @@ page_hefo_break_values_footer_first_margin_label =
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
     { DIALOG_CONTROL_PARENT, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -786,7 +788,7 @@ page_hefo_break_values_footer_first_margin_units =
 {
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_UNITS, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -800,7 +802,7 @@ page_hefo_break_values_footer_first_offset_label =
     PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_CAPTION_GROUP2,
     { PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN_LABEL, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET, DIALOG_CONTROL_SELF, PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -925,85 +927,85 @@ static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 page_hefo_break_values_ok_command = { T5_CMD_PAGE_HEFO_BREAK_VALUES, OBJECT_ID_HEFO, NULL, argmap_cmd_page_hefo_break_values, { 0, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-page_hefo_break_values_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &page_hefo_break_values_ok_command };
+page_hefo_break_values_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), &page_hefo_break_values_ok_command };
 
 static const DIALOG_CTL_CREATE
 page_hefo_break_values_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &page_hefo_break_values_header_odd_group,            &page_hefo_break_values_header_odd_group_data },
-    { &page_hefo_break_values_header_odd_group2,           NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
-    { &page_hefo_break_values_header_odd_caption_group2 },
-    { &page_hefo_break_values_header_odd_enable,           &page_hefo_break_values_header_odd_enable_data },
-    { &page_hefo_break_values_header_odd_margin,           &page_hefo_break_values_header_odd_margin_data },
-    { &page_hefo_break_values_header_odd_margin_label,     &page_hefo_break_values_hf_oef_margin_label_data },
-    { &page_hefo_break_values_header_odd_margin_units,     &page_hefo_break_values_hf_oef_units_data },
-    { &page_hefo_break_values_header_odd_offset,           &page_hefo_break_values_header_odd_offset_data },
-    { &page_hefo_break_values_header_odd_offset_label,     &page_hefo_break_values_hf_oef_offset_label_data },
-    { &page_hefo_break_values_header_odd_offset_units,     &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_header_odd_group },            &page_hefo_break_values_header_odd_group_data },
+    { { &page_hefo_break_values_header_odd_group2 },           NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
+    { { &page_hefo_break_values_header_odd_caption_group2 },   NULL },
+    { { &page_hefo_break_values_header_odd_enable },           &page_hefo_break_values_header_odd_enable_data },
+    { { &page_hefo_break_values_header_odd_margin },           &page_hefo_break_values_header_odd_margin_data },
+    { { &page_hefo_break_values_header_odd_margin_label },     &page_hefo_break_values_hf_oef_margin_label_data },
+    { { &page_hefo_break_values_header_odd_margin_units },     &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_header_odd_offset },           &page_hefo_break_values_header_odd_offset_data },
+    { { &page_hefo_break_values_header_odd_offset_label },     &page_hefo_break_values_hf_oef_offset_label_data },
+    { { &page_hefo_break_values_header_odd_offset_units },     &page_hefo_break_values_hf_oef_units_data },
 
-    { &page_hefo_break_values_header_even_group,           &page_hefo_break_values_header_even_group_data },
-    { &page_hefo_break_values_header_even_group2,          NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
-    { &page_hefo_break_values_header_even_caption_group2 },
-    { &page_hefo_break_values_header_even_enable,          &page_hefo_break_values_header_even_enable_data },
-    { &page_hefo_break_values_header_even_margin,          &page_hefo_break_values_header_even_margin_data },
-    { &page_hefo_break_values_header_even_margin_label,    &page_hefo_break_values_hf_oef_margin_label_data },
-    { &page_hefo_break_values_header_even_margin_units,    &page_hefo_break_values_hf_oef_units_data },
-    { &page_hefo_break_values_header_even_offset,          &page_hefo_break_values_header_even_offset_data },
-    { &page_hefo_break_values_header_even_offset_label,    &page_hefo_break_values_hf_oef_offset_label_data },
-    { &page_hefo_break_values_header_even_offset_units,    &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_header_even_group },           &page_hefo_break_values_header_even_group_data },
+    { { &page_hefo_break_values_header_even_group2 },          NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
+    { { &page_hefo_break_values_header_even_caption_group2 },  NULL },
+    { { &page_hefo_break_values_header_even_enable },          &page_hefo_break_values_header_even_enable_data },
+    { { &page_hefo_break_values_header_even_margin },          &page_hefo_break_values_header_even_margin_data },
+    { { &page_hefo_break_values_header_even_margin_label },    &page_hefo_break_values_hf_oef_margin_label_data },
+    { { &page_hefo_break_values_header_even_margin_units },    &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_header_even_offset },          &page_hefo_break_values_header_even_offset_data },
+    { { &page_hefo_break_values_header_even_offset_label },    &page_hefo_break_values_hf_oef_offset_label_data },
+    { { &page_hefo_break_values_header_even_offset_units },    &page_hefo_break_values_hf_oef_units_data },
 
-    { &page_hefo_break_values_header_first_group,          &page_hefo_break_values_header_first_group_data },
-    { &page_hefo_break_values_header_first_group2,         NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
-    { &page_hefo_break_values_header_first_caption_group2 },
-    { &page_hefo_break_values_header_first_enable,         &page_hefo_break_values_header_first_enable_data },
-    { &page_hefo_break_values_header_first_margin,         &page_hefo_break_values_header_first_margin_data },
-    { &page_hefo_break_values_header_first_margin_label,   &page_hefo_break_values_hf_oef_margin_label_data },
-    { &page_hefo_break_values_header_first_margin_units,   &page_hefo_break_values_hf_oef_units_data },
-    { &page_hefo_break_values_header_first_offset,         &page_hefo_break_values_header_first_offset_data },
-    { &page_hefo_break_values_header_first_offset_label,   &page_hefo_break_values_hf_oef_offset_label_data },
-    { &page_hefo_break_values_header_first_offset_units,   &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_header_first_group },          &page_hefo_break_values_header_first_group_data },
+    { { &page_hefo_break_values_header_first_group2 },         NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
+    { { &page_hefo_break_values_header_first_caption_group2 }, NULL },
+    { { &page_hefo_break_values_header_first_enable },         &page_hefo_break_values_header_first_enable_data },
+    { { &page_hefo_break_values_header_first_margin },         &page_hefo_break_values_header_first_margin_data },
+    { { &page_hefo_break_values_header_first_margin_label },   &page_hefo_break_values_hf_oef_margin_label_data },
+    { { &page_hefo_break_values_header_first_margin_units },   &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_header_first_offset },         &page_hefo_break_values_header_first_offset_data },
+    { { &page_hefo_break_values_header_first_offset_label },   &page_hefo_break_values_hf_oef_offset_label_data },
+    { { &page_hefo_break_values_header_first_offset_units },   &page_hefo_break_values_hf_oef_units_data },
 
-    { &page_hefo_break_values_footer_odd_group,            &page_hefo_break_values_footer_odd_group_data },
-    { &page_hefo_break_values_footer_odd_group2,           NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
-    { &page_hefo_break_values_footer_odd_caption_group2 },
-    { &page_hefo_break_values_footer_odd_enable,           &page_hefo_break_values_footer_odd_enable_data },
-    { &page_hefo_break_values_footer_odd_margin,           &page_hefo_break_values_footer_odd_margin_data },
-    { &page_hefo_break_values_footer_odd_margin_label,     &page_hefo_break_values_hf_oef_margin_label_data },
-    { &page_hefo_break_values_footer_odd_margin_units,     &page_hefo_break_values_hf_oef_units_data },
-    { &page_hefo_break_values_footer_odd_offset,           &page_hefo_break_values_footer_odd_offset_data },
-    { &page_hefo_break_values_footer_odd_offset_label,     &page_hefo_break_values_hf_oef_offset_label_data },
-    { &page_hefo_break_values_footer_odd_offset_units,     &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_footer_odd_group },            &page_hefo_break_values_footer_odd_group_data },
+    { { &page_hefo_break_values_footer_odd_group2 },           NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
+    { { &page_hefo_break_values_footer_odd_caption_group2 },   NULL },
+    { { &page_hefo_break_values_footer_odd_enable },           &page_hefo_break_values_footer_odd_enable_data },
+    { { &page_hefo_break_values_footer_odd_margin },           &page_hefo_break_values_footer_odd_margin_data },
+    { { &page_hefo_break_values_footer_odd_margin_label },     &page_hefo_break_values_hf_oef_margin_label_data },
+    { { &page_hefo_break_values_footer_odd_margin_units },     &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_footer_odd_offset },           &page_hefo_break_values_footer_odd_offset_data },
+    { { &page_hefo_break_values_footer_odd_offset_label },     &page_hefo_break_values_hf_oef_offset_label_data },
+    { { &page_hefo_break_values_footer_odd_offset_units },     &page_hefo_break_values_hf_oef_units_data },
 
-    { &page_hefo_break_values_footer_even_group,           &page_hefo_break_values_footer_even_group_data },
-    { &page_hefo_break_values_footer_even_group2,          NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
-    { &page_hefo_break_values_footer_even_caption_group2 },
-    { &page_hefo_break_values_footer_even_enable,          &page_hefo_break_values_footer_even_enable_data },
-    { &page_hefo_break_values_footer_even_margin,          &page_hefo_break_values_footer_even_margin_data },
-    { &page_hefo_break_values_footer_even_margin_label,    &page_hefo_break_values_hf_oef_margin_label_data },
-    { &page_hefo_break_values_footer_even_margin_units,    &page_hefo_break_values_hf_oef_units_data },
-    { &page_hefo_break_values_footer_even_offset,          &page_hefo_break_values_footer_even_offset_data },
-    { &page_hefo_break_values_footer_even_offset_label,    &page_hefo_break_values_hf_oef_offset_label_data },
-    { &page_hefo_break_values_footer_even_offset_units,    &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_footer_even_group },           &page_hefo_break_values_footer_even_group_data },
+    { { &page_hefo_break_values_footer_even_group2 },          NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
+    { { &page_hefo_break_values_footer_even_caption_group2 },  NULL },
+    { { &page_hefo_break_values_footer_even_enable },          &page_hefo_break_values_footer_even_enable_data },
+    { { &page_hefo_break_values_footer_even_margin },          &page_hefo_break_values_footer_even_margin_data },
+    { { &page_hefo_break_values_footer_even_margin_label },    &page_hefo_break_values_hf_oef_margin_label_data },
+    { { &page_hefo_break_values_footer_even_margin_units },    &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_footer_even_offset },          &page_hefo_break_values_footer_even_offset_data },
+    { { &page_hefo_break_values_footer_even_offset_label },    &page_hefo_break_values_hf_oef_offset_label_data },
+    { { &page_hefo_break_values_footer_even_offset_units },    &page_hefo_break_values_hf_oef_units_data },
 
-    { &page_hefo_break_values_footer_first_group,          &page_hefo_break_values_footer_first_group_data },
-    { &page_hefo_break_values_footer_first_group2,         NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
-    { &page_hefo_break_values_footer_first_caption_group2 },
-    { &page_hefo_break_values_footer_first_enable,         &page_hefo_break_values_footer_first_enable_data },
-    { &page_hefo_break_values_footer_first_margin,         &page_hefo_break_values_footer_first_margin_data },
-    { &page_hefo_break_values_footer_first_margin_label,   &page_hefo_break_values_hf_oef_margin_label_data },
-    { &page_hefo_break_values_footer_first_margin_units,   &page_hefo_break_values_hf_oef_units_data },
-    { &page_hefo_break_values_footer_first_offset,         &page_hefo_break_values_footer_first_offset_data },
-    { &page_hefo_break_values_footer_first_offset_label,   &page_hefo_break_values_hf_oef_offset_label_data },
-    { &page_hefo_break_values_footer_first_offset_units,   &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_footer_first_group },          &page_hefo_break_values_footer_first_group_data },
+    { { &page_hefo_break_values_footer_first_group2 },         NULL /*&page_hefo_break_values_hf_oef_group2_data*/ },
+    { { &page_hefo_break_values_footer_first_caption_group2 }, NULL },
+    { { &page_hefo_break_values_footer_first_enable },         &page_hefo_break_values_footer_first_enable_data },
+    { { &page_hefo_break_values_footer_first_margin },         &page_hefo_break_values_footer_first_margin_data },
+    { { &page_hefo_break_values_footer_first_margin_label },   &page_hefo_break_values_hf_oef_margin_label_data },
+    { { &page_hefo_break_values_footer_first_margin_units },   &page_hefo_break_values_hf_oef_units_data },
+    { { &page_hefo_break_values_footer_first_offset },         &page_hefo_break_values_footer_first_offset_data },
+    { { &page_hefo_break_values_footer_first_offset_label },   &page_hefo_break_values_hf_oef_offset_label_data },
+    { { &page_hefo_break_values_footer_first_offset_units },   &page_hefo_break_values_hf_oef_units_data },
 
-    { &page_hefo_break_values_page_break,                  &page_hefo_break_values_page_break_data },
-    { &page_hefo_break_values_page_number,                 &page_hefo_break_values_page_number_data },
-    { &page_hefo_break_values_page_number_enable,          &page_hefo_break_values_page_number_enable_data },
+    { { &page_hefo_break_values_page_break },                  &page_hefo_break_values_page_break_data },
+    { { &page_hefo_break_values_page_number },                 &page_hefo_break_values_page_number_data },
+    { { &page_hefo_break_values_page_number_enable },          &page_hefo_break_values_page_number_enable_data },
 
-    { &page_hefo_break_values_ok, &page_hefo_break_values_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &page_hefo_break_values_ok }, &page_hefo_break_values_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 typedef struct PAGE_HEFO_BREAK_VALUES_CALLBACK
@@ -1269,7 +1271,7 @@ page_hefo_break_values_precreate(
         case PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_MARGIN:
         case PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_OFFSET:
             {
-            const PC_DIALOG_CONTROL_DATA_BUMP_F64 p_dialog_control_data_bump_f64 = (PC_DIALOG_CONTROL_DATA_BUMP_F64) p_dialog_ctl_create->p_dialog_control_data;
+            const PC_DIALOG_CONTROL_DATA_BUMP_F64 p_dialog_control_data_bump_f64 = p_dialog_ctl_create->p_dialog_control_data.bump_f64;
             P_F64 p_f64 = de_const_cast(P_F64, &p_dialog_control_data_bump_f64->state);
             *p_f64 = /*FP_USER_UNIT*/ (/*FP_PIXIT*/ *p_f64 / page_hefo_break_values_fp_pixits_per_user_unit);
             break;
@@ -1365,21 +1367,15 @@ ui_page_hefo_break_textual_representation(
     consume_int(ustr_xsnprintf(ustr_buf, elemof_buffer, resource_lookup_ustr(msg), arg));
 }
 
-T5_CMD_PROTO(extern, t5_cmd_page_hefo_break_values_interactive)
+/* encode initial state of control(s) */
+
+static void
+cmd_page_hefo_break_values_interactive_init(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     ROW row)
 {
-    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, ARG_PAGE_HEFO_BREAK_VALUES_ROW+1);
-    ROW row = p_args[ARG_PAGE_HEFO_BREAK_VALUES_ROW].val.row;
-    P_PAGE_HEFO_BREAK p_page_hefo_break;
-    PAGE_HEFO_BREAK_VALUES_CALLBACK page_hefo_break_values_callback;
-    UCHARZ name_ustr_buf[256];
     PAGE_HEFO_SELECTOR selector;
-    STATUS status;
-
-    UNREFERENCED_PARAMETER_InVal_(t5_message);
-
-    page_hefo_break_values_callback.row = row;
-
-    /* encode initial state of control(s) */
+    P_PAGE_HEFO_BREAK p_page_hefo_break;
 
     /* supply some defaults */
     page_hefo_break_values_page_break_data.init_state = 0;
@@ -1437,21 +1433,43 @@ T5_CMD_PROTO(extern, t5_cmd_page_hefo_break_values_interactive)
 
     if(NULL != p_page_hefo_break)
         values_setup_from(&selector, p_page_hefo_break, DIALOG_BUTTONSTATE_OFF);
+}
+
+_Check_return_
+static inline STATUS
+cmd_page_hefo_break_values_interactive_dialog(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_PAGE_HEFO_BREAK_VALUES_CALLBACK p_page_hefo_break_values_callback,
+    _In_z_      PC_USTR ustr_caption)
+{
+    static UI_TEXT caption = { UI_TEXT_TYPE_USTR_PERM };
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    caption.text.ustr = ustr_caption;
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, page_hefo_break_values_ctl_create, elemof32(page_hefo_break_values_ctl_create), &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_PAGE_HEFO_BREAK_INTRO_HELP_TOPIC;
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_page_hefo_break_values;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_page_hefo_break_values_callback;
+    page_hefo_break_values_precreate(p_docu, &dialog_cmd_process_dbox);
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+T5_CMD_PROTO(extern, t5_cmd_page_hefo_break_values_interactive)
+{
+    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, ARG_PAGE_HEFO_BREAK_VALUES_ROW+1);
+    const ROW row = p_args[ARG_PAGE_HEFO_BREAK_VALUES_ROW].val.row;
+    PAGE_HEFO_BREAK_VALUES_CALLBACK page_hefo_break_values_callback;
+    UCHARZ name_ustr_buf[256];
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+
+    page_hefo_break_values_callback.row = row;
+
+    /* encode initial state of control(s) */
+    cmd_page_hefo_break_values_interactive_init(p_docu, row);
 
     ui_page_hefo_break_textual_representation(p_docu, row, ustr_bptr(name_ustr_buf), elemof32(name_ustr_buf));
 
-    {
-    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, page_hefo_break_values_ctl_create, elemof32(page_hefo_break_values_ctl_create), MSG_DIALOG_PAGE_HEFO_BREAK_INTRO_HELP_TOPIC);
-    dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_USTR_PERM;
-    dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(name_ustr_buf);
-    dialog_cmd_process_dbox.p_proc_client = dialog_event_page_hefo_break_values;
-    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &page_hefo_break_values_callback;
-    page_hefo_break_values_precreate(p_docu, &dialog_cmd_process_dbox);
-    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
-    } /*block*/
-
-    return(status);
+    return(cmd_page_hefo_break_values_interactive_dialog(p_docu, &page_hefo_break_values_callback, ustr_bptr(name_ustr_buf)));
 }
 
 /* end of ui_hefo.c */

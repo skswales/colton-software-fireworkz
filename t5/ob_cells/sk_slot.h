@@ -186,13 +186,16 @@ cells_block_delete(
 
 _Check_return_
 extern STATUS
-cells_block_insert(
+cells_block_add_ins(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     COL col_s,
     _InVal_     COL col_e,
     _InVal_     ROW at_row,
     _InVal_     S32 n_rows,
-    _InVal_     S32 add);
+    _InVal_     bool add);
+
+#define cells_block_insert(p_docu, col_s, col_e, at_row, n_rows) \
+    cells_block_add_ins(p_docu, col_s, col_e, at_row, n_rows, false)
 
 _Check_return_
 extern STATUS
@@ -205,13 +208,13 @@ cells_column_delete(
 
 _Check_return_
 extern STATUS
-cells_column_insert(
+cells_column_add_ins(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     COL at_col,
     _InVal_     COL n_cols,
     _InVal_     ROW row_s,
     _InVal_     ROW row_e,
-    _InVal_     S32 add);
+    _InVal_     bool add);
 
 _Check_return_
 extern STATUS
@@ -221,7 +224,7 @@ cells_docu_area_delete(
     _InVal_     BOOL delete_whole_rows,
     _InVal_     BOOL before_and_after);
 
-_Check_return_ _Success_(return >= 0)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 cells_docu_area_insert(
     _DocuRef_   P_DOCU p_docu,

@@ -937,7 +937,7 @@ save_hefo_docu_area(
     P_ARGLIST_ARG     p_args;
     STATUS            status;
     OBJECT_ID         tl_object_id, br_object_id;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     status_return(arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table));
@@ -1288,12 +1288,12 @@ page_hefo_break_intro_change =
 {
     PAGE_HEFO_BREAK_INTRO_ID_CHANGE, DIALOG_CONTROL_WINDOW,
     { PAGE_HEFO_BREAK_INTRO_ID_LIST, PAGE_HEFO_BREAK_INTRO_ID_LIST },
-    { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_INTRO_BUTTONS_H, DIALOG_STDPUSHBUTTON_V },
+    { DIALOG_STDSPACING_H, 0, PAGE_HEFO_BREAK_INTRO_BUTTONS_H, DIALOG_DEFPUSHBUTTON_V },
     { DRT(RTLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-page_hefo_break_intro_change_data = { { PAGE_HEFO_BREAK_INTRO_ID_CHANGE }, UI_TEXT_INIT_RESID(MSG_CHANGE) };
+page_hefo_break_intro_change_data = { { PAGE_HEFO_BREAK_INTRO_ID_CHANGE }, UI_TEXT_INIT_RESID(MSG_BUTTON_CHANGE) };
 
 static const DIALOG_CONTROL
 page_hefo_break_intro_delete =
@@ -1305,7 +1305,7 @@ page_hefo_break_intro_delete =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-page_hefo_break_intro_delete_data = { { PAGE_HEFO_BREAK_INTRO_ID_DELETE }, UI_TEXT_INIT_RESID(MSG_DELETE) };
+page_hefo_break_intro_delete_data = { { PAGE_HEFO_BREAK_INTRO_ID_DELETE }, UI_TEXT_INIT_RESID(MSG_BUTTON_DELETE) };
 
 static const DIALOG_CONTROL
 page_hefo_break_intro_new =
@@ -1317,7 +1317,7 @@ page_hefo_break_intro_new =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-page_hefo_break_intro_new_data = { { PAGE_HEFO_BREAK_INTRO_ID_NEW }, UI_TEXT_INIT_RESID(MSG_NEW) };
+page_hefo_break_intro_new_data = { { PAGE_HEFO_BREAK_INTRO_ID_NEW }, UI_TEXT_INIT_RESID(MSG_BUTTON_NEW) };
 
 static const DIALOG_CONTROL
 page_hefo_break_intro_cancel =
@@ -1331,14 +1331,14 @@ page_hefo_break_intro_cancel =
 static const DIALOG_CTL_CREATE
 page_hefo_break_intro_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &page_hefo_break_intro_list,   &stdlisttext_data },
+    { { &page_hefo_break_intro_list },   &stdlisttext_data },
 
-    { &page_hefo_break_intro_change, &page_hefo_break_intro_change_data },
-    { &page_hefo_break_intro_delete, &page_hefo_break_intro_delete_data },
-    { &page_hefo_break_intro_new,    &page_hefo_break_intro_new_data },
-    { &page_hefo_break_intro_cancel, &stdbutton_cancel_data }
+    { { &page_hefo_break_intro_change }, &page_hefo_break_intro_change_data },
+    { { &page_hefo_break_intro_delete }, &page_hefo_break_intro_delete_data },
+    { { &page_hefo_break_intro_new },    &page_hefo_break_intro_new_data },
+    { { &page_hefo_break_intro_cancel }, &stdbutton_cancel_data }
 };
 
 static UI_SOURCE
@@ -1493,9 +1493,8 @@ t5_cmd_page_hefo_break_intro(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, page_hefo_break_intro_ctl_create, elemof32(page_hefo_break_intro_ctl_create), MSG_DIALOG_PAGE_HEFO_BREAK_INTRO_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_PAGE_HEFO_BREAK_INTRO_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, page_hefo_break_intro_ctl_create, elemof32(page_hefo_break_intro_ctl_create), MSG_DIALOG_PAGE_HEFO_BREAK_INTRO_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_PAGE_HEFO_BREAK_INTRO_HELP_TOPIC;
     dialog_cmd_process_dbox.bits.note_position = 1;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_page_hefo_break_intro;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &selected_item;
@@ -1884,7 +1883,7 @@ OBJECT_PROTO(extern, object_hefo)
         /* send these messages to our helper object */
         { /* SKS after 1.07 02dec93 - we can't just dereference p_data willy-nilly! */
         P_HEFO_BLOCK p_hefo_block = (P_HEFO_BLOCK) p_data;
-        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, !IS_PTR_NONE(p_hefo_block) ? p_hefo_block->p_data : P_DATA_NONE));
+        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, PTR_NOT_NONE(p_hefo_block) ? p_hefo_block->p_data : P_DATA_NONE));
         }
 
     case T5_CMD_TAB_RIGHT:
@@ -3049,9 +3048,9 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         {
         P_HEFO_BLOCK p_hefo_block = (P_HEFO_BLOCK) p_data;
         P_SKELEVENT_CLICK p_skelevent_click = P_DATA_FROM_HEFO_BLOCK(SKELEVENT_CLICK, p_hefo_block);
-        const OBJECT_ID object_id = object_id_from_t5_filetype(p_skelevent_click->data.fileinsert.t5_filetype);
+        const OBJECT_ID object_id = object_id_from_t5_filetype(p_skelevent_click->data.fileinsert.t5_filetype, TRUE);
         MSG_INSERT_FILE msg_insert_file;
-        zero_struct(msg_insert_file);
+        zero_struct_fn(msg_insert_file);
 
         if(OBJECT_ID_NONE == object_id)
             return(create_error(ERR_UNKNOWN_FILETYPE));
@@ -3732,7 +3731,7 @@ hefo_logical_move(
     if(array_elements(p_hefo_block->p_h_data))
     {
         OBJECT_LOGICAL_MOVE object_logical_move;
-        zero_struct(object_logical_move);
+        zero_struct_fn(object_logical_move);
 
         object_logical_move.object_data = p_hefo_block->object_data;
         object_logical_move.action = action;

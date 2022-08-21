@@ -15,8 +15,8 @@
 #   trunk or
 #   branch (e.g. for branches/fireworkz__2_10__branch use the leaf, fireworkz__2_10__branch) or
 #   tag (e.g. for tags/fireworkz__2016_06_26__2_10_00 use the leaf, fireworkz__2016_06_26__2_10_00).
-$(FIREWORKZ_TBT)=fireworkz__2_24__branch
-# $(FIREWORKZ_TBT)=trunk
+FIREWORKZ_TBT=fireworkz__2_30__branch
+# FIREWORKZ_TBT=trunk
 
 # NB Substitute URD location as necessary
 URD=$.fireworkz.$(FIREWORKZ_TBT)
@@ -32,8 +32,11 @@ INC_RAM=
 SED=$._coltsoft.Library.gnu-sed
 
 all: \
-r32b.fprowrkz.Makefile \
-r32b.firewrkz.Makefile \
+r32.fprowrkz.Makefile \
+r32.fprowrkz.Germany-Mf \
+r32.firewrkz.Makefile \
+r32.firewrkz.France-Mf \
+r32.firewrkz.Germany-Mf \
 Tools.ImageSlot.ImageSlot \
 Tools.MakeAOF.MakeAOF \
 Tools.MakeMess.MakeMess \
@@ -42,10 +45,10 @@ Tools.MakeResp.MakeResp
 # Copy just the targets of interest to Build-Makefiles ^^^
 All-Makefiles: \
 d32.fprowrkz.Makefile \
-r32b.fprowrkz.Makefile \
+r32.fprowrkz.Makefile \
 r32m.fprowrkz.Makefile \
 d32.firewrkz.Makefile \
-r32b.firewrkz.Makefile \
+r32.firewrkz.Makefile \
 r32m.firewrkz.Makefile
 
 TMP_FILES=\
@@ -87,6 +90,7 @@ MF_FILES_Z1=\
 ^.ob_recn.recn+mkr
 
 MF_FILES_Z2=\
+^.^.fprowrkz.fs_ole.fs_ole+mkr \
 ^.fs_xls.fs_xls+mkr \
 ^.^.fprowrkz.ob_recb.recb+mkr \
 ^.^.fprowrkz.ob_rec.rec+mkr
@@ -120,25 +124,69 @@ d32.firewrkz.Makefile: \
     $(MF_FILES) $(MF_FILES_Z1) \
     ^.common.mf_end
 #
-r32b.firewrkz.Makefile: \
+r32.firewrkz.Makefile: \
     configure \
-    ^.firewrkz.r32b.mfm \
-    ^.firewrkz.r32b.mf_hdr \
+    ^.firewrkz.r32.mfm \
+    ^.firewrkz.r32.mf_hdr \
     ^.common.mf_mid ^.common.mf_mid32 \
-    ^.firewrkz.r32b.mf_mid \
+    ^.firewrkz.r32.mf_mid \
     $(MF_FILES) $(MF_FILES_Z1) \
     ^.common.mf_end
-    Obey <Prefix$Dir>.bld_mkdir.r32b_mkdir
+    Obey <Prefix$Dir>.bld_mkdir.r32_mkdir
    @Remove $@
     $(SED) > $@ \
-    -f ^.firewrkz.r32b.mfm \
+    -f ^.firewrkz.r32.mfm \
     -e "s/_INC_2_/$(INC_2_FIREWRKZ)/g" \
     -e "s/_URD_/$(URD)/g" \
     -e "s/_CSNF_/$(CSNF)/g" \
     -e "s/_INC_RAM_/$(INC_RAM)/g" \
-    ^.firewrkz.r32b.mf_hdr \
+    ^.firewrkz.r32.mf_hdr \
     ^.common.mf_mid ^.common.mf_mid32 \
-    ^.firewrkz.r32b.mf_mid \
+    ^.firewrkz.r32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+#
+r32.firewrkz.France-Mf: \
+    configure \
+    ^.firewrkz.r32.France-mfm \
+    ^.firewrkz.r32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32_mkdir
+   @Remove $@
+    $(SED) > $@ \
+    -f ^.firewrkz.r32.France-mfm \
+    -e "s/_INC_2_/$(INC_2_FIREWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.firewrkz.r32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+#
+r32.firewrkz.Germany-Mf: \
+    configure \
+    ^.firewrkz.r32.Germany-mfm \
+    ^.firewrkz.r32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32_mkdir
+   @Remove $@
+    $(SED) > $@ \
+    -f ^.firewrkz.r32.Germany-mfm \
+    -e "s/_INC_2_/$(INC_2_FIREWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.firewrkz.r32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.firewrkz.r32.mf_mid \
     $(MF_FILES) $(MF_FILES_Z1) \
     ^.common.mf_end
 #
@@ -149,6 +197,7 @@ r32m.firewrkz.Makefile: \
     ^.common.mf_mid ^.common.mf_mid32 \
     ^.firewrkz.r32m.mf_mid \
     $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end_m \
     ^.common.mf_end
     Obey <Prefix$Dir>.bld_mkdir.r32m_mkdir
    @Remove $@
@@ -162,6 +211,7 @@ r32m.firewrkz.Makefile: \
     ^.common.mf_mid ^.common.mf_mid32 \
     ^.firewrkz.r32m.mf_mid \
     $(MF_FILES) $(MF_FILES_Z1) \
+    ^.common.mf_end_m \
     ^.common.mf_end
 #
 # fprowrkz (Fireworkz Pro)
@@ -189,25 +239,48 @@ d32.fprowrkz.Makefile: \
     ^.common.mf_end
    @echo Don't worry if that failed unless you are a Fireworkz Pro builder
 #
-r32b.fprowrkz.Makefile: \
+r32.fprowrkz.Makefile: \
     configure \
-    ^.^.fprowrkz.fprowrkz.r32b.mfm \
-    ^.^.fprowrkz.fprowrkz.r32b.mf_hdr \
+    ^.^.fprowrkz.fprowrkz.r32.mfm \
+    ^.^.fprowrkz.fprowrkz.r32.mf_hdr \
     ^.common.mf_mid ^.common.mf_mid32 \
-    ^.^.fprowrkz.fprowrkz.r32b.mf_mid \
+    ^.^.fprowrkz.fprowrkz.r32.mf_mid \
     $(MF_FILES) $(MF_FILES_Z2) \
     ^.common.mf_end
-    Obey <Prefix$Dir>.bld_mkdir.r32b_mkdir
+    Obey <Prefix$Dir>.bld_mkdir.r32_mkdir
    @Remove $@
    -$(SED) > $@ \
-    -f ^.^.fprowrkz.fprowrkz.r32b.mfm \
+    -f ^.^.fprowrkz.fprowrkz.r32.mfm \
     -e "s/_INC_2_/$(INC_2_FPROWRKZ)/g" \
     -e "s/_URD_/$(URD)/g" \
     -e "s/_CSNF_/$(CSNF)/g" \
     -e "s/_INC_RAM_/$(INC_RAM)/g" \
-    ^.^.fprowrkz.fprowrkz.r32b.mf_hdr \
+    ^.^.fprowrkz.fprowrkz.r32.mf_hdr \
     ^.common.mf_mid ^.common.mf_mid32 \
-    ^.^.fprowrkz.fprowrkz.r32b.mf_mid \
+    ^.^.fprowrkz.fprowrkz.r32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+   @echo Don't worry if that failed unless you are a Fireworkz Pro builder
+#
+r32.fprowrkz.Germany-Mf: \
+    configure \
+    ^.^.fprowrkz.fprowrkz.r32.Germany-mfm \
+    ^.^.fprowrkz.fprowrkz.r32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.r32.mf_mid \
+    $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end
+    Obey <Prefix$Dir>.bld_mkdir.r32_mkdir
+   @Remove $@
+   -$(SED) > $@ \
+    -f ^.^.fprowrkz.fprowrkz.r32.Germany-mfm \
+    -e "s/_INC_2_/$(INC_2_FPROWRKZ)/g" \
+    -e "s/_URD_/$(URD)/g" \
+    -e "s/_CSNF_/$(CSNF)/g" \
+    -e "s/_INC_RAM_/$(INC_RAM)/g" \
+    ^.^.fprowrkz.fprowrkz.r32.mf_hdr \
+    ^.common.mf_mid ^.common.mf_mid32 \
+    ^.^.fprowrkz.fprowrkz.r32.mf_mid \
     $(MF_FILES) $(MF_FILES_Z2) \
     ^.common.mf_end
    @echo Don't worry if that failed unless you are a Fireworkz Pro builder
@@ -219,6 +292,7 @@ r32m.fprowrkz.Makefile: \
     ^.common.mf_mid ^.common.mf_mid32 \
     ^.^.fprowrkz.fprowrkz.r32m.mf_mid \
     $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end_m \
     ^.common.mf_end
     Obey <Prefix$Dir>.bld_mkdir.r32m_mkdir
    @Remove $@
@@ -232,6 +306,7 @@ r32m.fprowrkz.Makefile: \
     ^.common.mf_mid ^.common.mf_mid32 \
     ^.^.^.fprowrkz.fprowrkz.fprowrkz.r32m.mf_mid \
     $(MF_FILES) $(MF_FILES_Z2) \
+    ^.common.mf_end_m \
     ^.common.mf_end
    @echo Don't worry if that failed unless you are a Fireworkz Pro builder
 

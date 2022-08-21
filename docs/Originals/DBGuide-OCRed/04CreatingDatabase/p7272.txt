@@ -1,0 +1,28 @@
+﻿Entry validation
+There are also options which help to validate any data which is
+entered into particular fields. For details of how these options
+affect the entry of data refer to Chapter 6 - Adding & editing
+records.
+
+Compulsory fields
+If a field has the Compulsory option set, then the user will not be
+allowed to edit the field and leave it empty.
+Note that this option is currently disabled but may be implemented
+in future versions.
+
+Checking input
+For certain fields, you may wish to insist that what is entered
+obeys one or more conditions. To do this you can enter a check list
+or formula in the Check formula slot.
+For example, in the illustration used above of foreign languages
+studied by pupils, you could insist that the value entered was one
+of French, German, Spanish or Italian by setting up the check list:
+"French" OR "German" OR "Spanish" OR
+"Italian"
+Alternatively, you can check that a number, such as a distance,
+was within a sensible range by setting up a check formula such as:
+>1.0 AND <3.5
+The expressions which may be used are described in Chapter 13 -
+Expression syntax.
+
+

@@ -1,0 +1,66 @@
+﻿Database Guide 168
+
+Month_short
+Jan
+Feb
+Mar
+Apr
+May
+Jun
+Jul
+Aug
+Sep
+Oct
+Nov
+Dec
+Month_long
+January
+February
+March
+April
+May
+June
+July
+August
+September
+October
+November
+December
+
+These styles are stored as templates in the New directory on the
+Examples disc. To make them available, drag the required
+template and drop it on to your document.
+
+Edit names dialogue box
+With Resultz and Fireworkz you could use the Names facility to
+reference the contents of number cells within text, or even within
+other documents.
+With Fireworkz Pro, the Names dialogue box has been extended to
+provide a Description box in which you can store extra details
+about the names you create.
+
+Printing mailshots
+With Wordz and Fireworkz, mail merged documents could be
+printed by choosing the Print option from the Mailshot menu.
+With Fireworkz Pro, a Mailshot button has been added to the Print
+dialogue box to perform this task.
+
+XLS loader
+Fireworkz Pro can load Microsoft Excel files in version 2, 3 or 4.0
+format.
+
+Database Guide 169
+
+File transfer from Windows
+When a file is transferred from Fireworkz for Windows to
+Fireworkz Pro, file names will handled as expected, i e the type
+extension will be ignored and Just the first part of the name will be
+treated as the leafname
+For example the file
+Data/fwk
+will be treated as though its leafname were just
+Data
+and behave as expected
+
+
+

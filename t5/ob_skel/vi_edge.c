@@ -196,8 +196,8 @@ border_horz_cache_height(
         } /*block*/
 
         { /* convert to dpi-independent pixits */ /* DPI-aware */
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+        GDI_SIZE PixelsPerInch;
+        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
         col_repr_height  = idiv_ceil_u(col_repr_height  * PIXITS_PER_INCH, PixelsPerInch.cy);
         col_repr_descent = idiv_ceil_u(col_repr_descent * PIXITS_PER_INCH, PixelsPerInch.cy);
@@ -255,8 +255,8 @@ border_vert_cache_width(
         } /*block*/
 
         { /* convert to dpi-independent pixits */ /* DPI-aware */
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+        GDI_SIZE PixelsPerInch;
+        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
         four_digits_width = idiv_ceil_u(four_digits_width  * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
@@ -436,8 +436,8 @@ ruler_horz_cache_height(
         } /*block*/
 
         { /* convert to dpi-independent pixits */ /* DPI-aware */
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+        GDI_SIZE PixelsPerInch;
+        host_get_pixel_size(NULL /*screen*/, NULL /*cx*/, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
         digits_height = idiv_ceil_u(digits_height * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
@@ -512,8 +512,8 @@ ruler_vert_cache_width(
         } /*block*/
 
         { /* convert to dpi-independent pixits */ /* DPI-aware */
-        SIZE PixelsPerInch;
-        host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for the screen e.g. 96 or 120 */
+        GDI_SIZE PixelsPerInch;
+        host_get_pixel_size(NULL /*screen*/, NULL /*cx*/, &PixelsPerInch.cy); /* Get current pixel size for the screen e.g. 96 or 120 */
 
         two_digits_width = idiv_ceil_u(two_digits_width  * PIXITS_PER_INCH, PixelsPerInch.cy);
         } /*block*/
@@ -553,7 +553,7 @@ view_edge_windows_cache_size(
     const HDC hdc = GetDC(hwnd); /* only used here as an IC */
 #endif
 
-    zero_struct_ptr(p_redraw_context);
+    zero_struct_ptr_fn(p_redraw_context);
 
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
@@ -567,7 +567,6 @@ view_edge_windows_cache_size(
     p_redraw_context->display_mode = DISPLAY_DESK_AREA;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     host_redraw_context_set_host_xform(p_redraw_context, &p_view->host_xform[XFORM_HORZ]);
 

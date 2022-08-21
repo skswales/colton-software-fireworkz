@@ -8,7 +8,10 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
+# messages (none)
+#
+# errors: keep consistent with fl_rtf/fl_rtf.h
+# see OB_RTF_ERR_xxx
 #
 e0:Mismatched section brackets in RTF file
 #

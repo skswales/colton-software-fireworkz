@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>REPLACE</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="REPLACE" />
+        <param name="Keyword" value="String functions, REPLACE" />
+    </object>
+
+    <h1><a name="replace" id="replace"></a>REPLACE</h1>
+
+    <p>Replaces a specified part of a text string with another.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        REPLACE(<span class="csg-function-parameter">text</span>,
+        <span class="csg-function-parameter">start</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">length</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">new</span>:<span class="csg-function-parameter-type">Text</span>)
+    </p>
+    <p>
+        Replaces the part of the <span class="csg-function-parameter">text</span> string
+        starting at position <span class="csg-function-parameter">start</span>
+        and continuing for <span class="csg-function-parameter">length</span> characters
+        with the <span class="csg-function-parameter">new</span> text string.
+    </p>
+    <p>Note that <span class="csg-function-parameter">length</span> may be zero, in which case the new text is inserted without replacing any previous content.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">REPLACE(&quot;Vive la reine&quot;, 9, 5, &quot;revolution&quot;)</pre>
+    <p>returns the text string <code>&quot;Vive la revolution&quot;</code>.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06p/sg6_PROPER.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#string_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06r/sg6_REPT.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Custom functions</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Custom functions" />
+        <param name="Keyword" value="Functions, Custom control" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../sg/sg05_function_reference.htm#compatibility_functions">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../sg/sg04_charts.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Compatibility functions </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Charts</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="custom_functions" id="custom_functions"></a>Custom functions</h1>
+
+    <p>
+        This chapter describes how to use and write custom functions within your Fireworkz spreadsheets.
+        It explains what a custom function is, and when it might be useful to create one,
+        and goes on to show you how to create a custom function and
+        to describe the tools provided by Fireworkz for this purpose.
+    </p>
+    <p>
+        Before you start to use and write custom functions,
+        you will need to understand all the components of Fireworkz spreadsheets,
+        including functions, ranges, arrays and external references.
+        If you are unsure about any of these, read the appropriate section(s) of the <em>User Guide</em>.
+    </p>
+    <p><a href="#what_is_a_custom_function">What is a custom function?</a></p>
+    <p><a href="#custom_function_libraries">Custom function libraries</a></p>
+    <p><a href="#using_custom_functions">Using custom functions</a></p>
+    <p><a href="#writing_custom_functions">Writing custom functions</a></p>
+    <p><a href="#the_FUNCTION_function">The FUNCTION function</a></p>
+    <p><a href="#custom_function_control_statements">Custom function control statements</a></p>
+    <p><a href="#editing_custom_functions">Editing custom functions</a></p>
+    <p><a href="#declaring_the_result">Declaring the result</a></p>
+    <p><a href="#recalculation_and_custom_function_sheets">Recalculation and custom function sheets</a></p>
+
+    <h2><a name="what_is_a_custom_function" id="what_is_a_custom_function"></a>What is a custom function?</h2>
+
+    <p>
+        Custom functions are spreadsheet functions which are not built into Fireworkz,
+        but are written by users in Fireworkz custom function language.
+    </p>
+    <p>
+        There are two parts to a custom function.
+        The first, in your worksheet, is the call to the custom function,
+        which is just like a call to an ordinary function,
+        and specifies how you want to use the custom function.
+    </p>
+    <p>
+        The second, the custom function definition, specifies what the custom function actually does.
+        This is stored in a special worksheet called a custom function sheet.
+        Custom function sheets are different to ordinary worksheets.
+    </p>
+    <p>
+        Custom function sheets will usually be supporting documents to single worksheets,
+        and will be loaded automatically when the dependent document is loaded.
+        Remember that it is easiest to keep supporting and dependent documents in the same directory.
+    </p>
+
+    <h3><a name="custom_function_libraries" id="custom_function_libraries"></a>Custom function libraries</h3>
+    <p>
+        Custom function sheets can also be stored in a library of sheets.
+        If Fireworkz cannot find the supporting custom function sheet
+        in the same directory as the worksheet it is loading,
+        it will look here for the custom function sheet which you called.
+    </p>
+    <p>The default library location is:</p>
+    <ul>
+        <li>RISC OS:<code> Choices:Fireworkz.Library</code></li>
+        <li>Windows:<code> %APPDATA%\Colton&nbsp;Software\Fireworkz\Library</code></li>
+    </ul>
+
+    <h3><a name="using_custom_functions" id="using_custom_functions"></a>Using custom functions</h3>
+    <p>
+        Calling a custom function is just like calling an ordinary, built-in function.
+        The custom function sheet containing the function must be open;
+        you can then enter the custom function in the formula line by
+        choosing it from the custom function section of the function selector.
+    </p>
+    <p>
+        The custom function dialogue box which you see will vary according to the custom functions you have loaded.
+        If there are no custom functions loaded the list in the dialogue box will be blank.
+    </p>
+    <p>
+        Calling a custom function in this way creates an external reference,
+        and therefore a dependency between your worksheet and the custom function sheet containing the custom function used.
+    </p>
+
+    <h2><a name="writing_custom_functions" id="writing_custom_functions"></a>Writing custom functions</h2>
+
+    <p>
+        Writing custom functions is like writing procedures and functions in BASIC or a similar language.
+        The following description of Fireworkz custom functions assumes that you have programmed in BASIC or a similar language.
+        You will find it difficult to write working custom functions without this type of experience.
+    </p>
+    <p>Before you start to create your custom function, you should decide some important things about it:</p>
+    <ul>
+        <li>What will the functions name be?</li>
+        <li>What parameters does the function have?</li>
+        <li>Do the types of these parameters need to be specified?</li>
+        <li>What does the function do?</li>
+        <li>What result does the function return?</li>
+    </ul>
+    <p>
+        Deciding all these matters in advance will make the process of creating the custom function much simpler.
+        If you have thought it through in advance you are much more likely to write a function which works and produces the kind of results you anticipated.
+    </p>
+    <p>
+        A custom function sheet is not an ordinary worksheet.
+        Formulae that you enter into custom function sheets are displayed on the sheet.
+        Recalculation is also carried out differently;
+        see the section <a href="#recalculation_and_custom_function_sheets">below</a>.
+    </p>
+
+    <h4>Tangent example</h4>
+    <p>
+        While reading through this section, it will be useful to have the file Tangent loaded.
+        This file can be found in the Custom sub-directory within the Examples directory.
+        This contains a call to the custom function <code>tangent</code>,
+        stored in the custom function worksheet <code>c_tangen</code>.
+        Unsurprisingly, this function calculates the tangent of an angle (expressed in radians).
+    </p>
+
+    <h3><a name="the_function_function" id="the_function_function"></a>The FUNCTION function</h3>
+    <p>
+        You declare a custom function using the <code>FUNCTION</code> spreadsheet function.
+        This must be done on a worksheet created from a special custom function template.
+        A custom function template, Custom, is provided in the Custom sub-directory in the Examples directory.
+        If you are going to create a number of custom function sheets
+        you might want to copy the Custom template as one of your standard templates.
+    </p>
+    <p>You should use <code>FUNCTION</code> in the following way:</p>
+
+    <p class="csg-function-declaration">
+        FUNCTION(<span class="csg-function-parameter">name</span>:<span class="csg-function-parameter-type">Text</span>
+        {,&nbsp;<span class="csg-function-parameter">parameter_1</span>:<span class="csg-function-parameter-type">Text</span>
+        {,&nbsp;<span class="csg-function-parameter">parameter_2</span>:<span class="csg-function-parameter-type">Text</span> &hellip;}})
+    </p>
+
+    <p>You must always specify the <span class="csg-function-parameter">name</span> of a custom function.</p>
+
+    <p><span class="csg-function-parameter">parameter_<span style="font-style: italic"></span>n</span> are optional data which may be required by your custom function.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        The <code><em>tangent</em></code> example custom function has one parameter,
+        called <code>angle</code>, which is specified to be of type <code>number</code>,
+        so its first line reads:
+    </p>
+    <pre class="csg-sample-indent">FUNCTION(&quot;tangent&quot;,&quot;angle:number&quot;)</pre>
+
+    <h3><a name="naming_custom_functions" id="naming_custom_functions"></a>Naming custom functions</h3>
+    <p>
+        All custom functions must be given a unique name, if they are to be used in your work with Fireworkz.
+        The name is expressed as the first parameter to <code>FUNCTION</code>.
+        Certain rules apply to the names you can give your custom functions:
+    </p>
+    <ul>
+        <li>The maximum length permitted is 24 characters.</li>
+        <li>Names can include letters, numerals and the underscore character.</li>
+        <li>
+            You may only use digits after an underscore character has been used.
+            This is so that Fireworkz can distinguish between custom function names and cell references.
+            So <em>my_function1</em> and <em>function_1</em> are valid custom function names, but <em>function1</em> is not.
+        </li>
+    </ul>
+    <p>The name should appear in the following way:</p>
+    <pre class="csg-sample-indent">FUNCTION(&quot;my_function&quot;)</pre>
+
+    <h3><a name="parameters_to_function" id="parameters_to_function"></a>Parameters to FUNCTION</h3>
+    <p>
+        In addition to the name, your custom function can have several parameters.
+        You can add as many parameters as your function will require.
+        For example:
+    </p>
+
+    <pre class="csg-sample-indent">FUNCTION(&quot;my_function&quot;,&quot;number_1&quot;,&quot;number_2&quot;)</pre>
+
+    <p>
+        Parameters must be expressed as strings, but they need not refer to strings.
+        You can use the parameter names to reflect the type of data your function expects to be given for these parameters.
+    </p>
+
+    <h4>Specifying the types of parameter</h4>
+    <p>
+        The types of data which can be used in custom functions are
+        the same as those which appear throughout Fireworkz,
+        as yielded by the <code>TYPE</code> function:
+    </p>
+    <table>
+        <tr>
+            <td><code>array</code></td>
+            <td>array or range</td>
+        </tr>
+        <tr>
+            <td><code>date</code></td>
+            <td>dates and/or times</td>
+        </tr>
+        <tr>
+            <td><code>error</code></td>
+            <td>errors</td>
+        </tr>
+        <tr>
+            <td><code>number</code></td>
+            <td>numbers</td>
+        </tr>
+        <tr>
+            <td><code>reference&nbsp;</code></td>
+            <td>cell references</td>
+        </tr>
+        <tr>
+            <td><code>text</code></td>
+            <td>text</td>
+        </tr>
+    </table>
+
+    <p>You may specify the type of data a parameter must have by appending one of the above names, preceded by a colon, to the parameter name.</p>
+    <p>For example:</p>
+    <pre class="csg-sample-indent">FUNCTION(&quot;adding&quot;, &quot;first:number&quot;, &quot;second:number&quot;)</pre>
+    <p>specifies a function called <code>adding</code>, which has two parameters, <code>first</code> and <code>second</code>, which must be numbers.</p>
+    <p>If you don't specify a type, Fireworkz permits the function to accept numbers, text and dates as parameters.</p>
+    <p>If you pass an array to a custom function which has no parameters set as arrays, Fireworkz will perform automatic array processing.</p>
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        In the <code><em>tangent</em></code> example custom function,
+        the parameter <code>angle</code> is specified as requiring a number,
+        so it is named in the function statement as:
+    </p>
+    <pre class="csg-sample-indent">&quot;angle:number&quot;</pre>
+
+    <h4>Using your parameters inside the custom function</h4>
+    <p>
+        To call the parameters you have specified in the <code>FUNCTION</code> definition from within the function,
+        you should precede their names with an <code>@</code> character.
+        So, for example, you would have
+    </p>
+
+    <pre class="csg-sample-indent">FUNCTION(&quot;adding&quot;,&quot;one:number&quot;,&quot;two:number&quot;)</pre>
+
+    <pre class="csg-sample-indent">@one+@two</pre>
+
+    <h3><a name="declaring_the_result" id="declaring_the_result"></a>Declaring the result</h3>
+    <p>
+        Whatever your custom function does, it must produce a result.
+        You do this using the <code>RESULT</code> function, in the following form:
+    </p>
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">RESULT(<span class="csg-function-parameter">value</span>)</p>
+
+    <p>You may enter either a specific value, a formula, or a cell reference in the custom function sheet.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <p>The <code><em>tangent</em></code> example custom function has the following <code>RESULT</code>:</p>
+    <pre class="csg-sample-indent">RESULT(sin(@angle)/cos(@angle))</pre>
+    <p>The value here is returned to the cell in the worksheet from which the custom function was called.</p>
+
+    <h3><a name="editing_custom_functions" id="editing_custom_functions"></a>Editing custom functions</h3>
+    <p>
+        You may need to edit your custom function.
+        When you do this, your changes will not immediately cause the custom function calls in the main worksheet to be recalculated.
+        When you want calls to the custom function to be recalculated, re-enter the function name definition.
+        This will cause all references to the function to be recalculated.
+    </p>
+
+    <h2><a name="custom_function_control_statements" id="custom_function_control_statements"></a>Custom function control statements</h2>
+
+    <p>
+        Normally a custom function is executed in a precise order,
+        working line by line down the column from the cell containing the FUNCTION function which marked its beginning.
+        As each cell is evaluated, the result is stored in the cell and this can be referred to by references in other cells.
+    </p>
+    <p>
+        Fireworkz includes some features for use in custom functions which are more like a programming language,
+        and control the order in which commands are executed or formulae evaluated.
+        These are the custom function control statements.
+    </p>
+    <ul>
+        <li><a href="#BREAK">BREAK</a></li>
+        <li><a href="#CONTINUE">CONTINUE</a></li>
+        <li><a href="#FOR_NEXT">FOR, NEXT</a></li>
+        <li><a href="#GOTO">GOTO</a></li>
+        <li><a href="#IF_ELSE_ELSEIF_ENDIF">IF, ELSE, ELSEIF, ENDIF</a></li>
+        <li><a href="#REPEAT_UNTIL">REPEAT, UNTIL</a></li>
+        <li><a href="#RESULT">RESULT</a></li>
+        <li><a href="#WHILE_ENDWHILE">WHILE, ENDWHILE</a></li>
+    </ul>
+    <p>
+        Most of these control statements must appear in their own cell (with their parameters if appropriate) but
+        <code>BREAK</code>, <code>CONTINUE</code>, <code>RESULT</code> and <code>GOTO</code>
+        can appear in the parameters to other control statements, for example:
+    </p>
+    <pre class="csg-sample-indent">IF(C&lt;=D,RESULT(C),)</pre>
+
+    <h3><a name="BREAK" id="BREAK"></a>BREAK</h3>
+    <p class="csg-function-subheading">Syntax #1:</p>
+    <p class="csg-function-declaration">BREAK</p>
+    <p>Breaks out of the most recent loop in a custom function.</p>
+    <p class="csg-function-subheading"><br />Syntax #2:</p>
+    <p class="csg-function-declaration">BREAK(<span class="csg-function-parameter">number</span>)</p>
+    <p>You can break out of a <span class="csg-function-parameter">number</span> of containing loops at once.</p>
+
+    <h3><a name="CONTINUE" id="CONTINUE"></a>CONTINUE</h3>
+    <p>Execution continues at the most recent loop in a custom function:</p>
+    <ul>
+        <li>in a <code>WHILE</code> loop, it continues at the next <code>ENDWHILE</code>;</li>
+        <li>in a <code>REPEAT</code> loop, it continues at <code>UNTIL</code>;</li>
+        <li>in a <code>FOR</code> loop, it continues at <code>NEXT</code>.</li>
+    </ul>
+    <p>Statements between the CONTINUE and the pertinent loop continuation statement are not evaluated.</p>
+
+    <h3><a name="FOR_NEXT" id="FOR_NEXT"></a>FOR, NEXT</h3>
+    <p>Repetetive execution of statements in a custom function, controlled by a counter.</p>
+    <p class="csg-function-declaration">
+        FOR(<span class="csg-function-parameter">counter_name</span>:<span class="csg-function-parameter-type">Text</span>,
+        <span class="csg-function-parameter">start</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">end</span>:<span class="csg-function-parameter-type">Number</span>
+        {,&nbsp;<span class="csg-function-parameter">step</span>:<span class="csg-function-parameter-type">Number</span>})
+    </p>
+    <p>The named counter is initialised to <span class="csg-function-parameter">start</span>.</p>
+    <p>Statements in the loop are executed if the counter is less than, or equal to, <span class="csg-function-parameter">end</span>.</p>
+    <p>
+        The <code>NEXT</code> statement signals the end of an iteration.
+        At the end of each iteration 1 (one) is added to the counter,
+        unless the optional <span class="csg-function-parameter">step</span> parameter is specified,
+        in which case that value is added.
+    </p>
+    <p>When the counter passes the end value, execution continues after the <code>NEXT</code> statement.</p>
+    <p>
+        If <span class="csg-function-parameter">step</span> is negative,
+        the loop will be iterated while the counter is
+        greater than, or equal to, <span class="csg-function-parameter">end</span>.
+    </p>
+    <p class="csg-function-subheading">Example:</p>
+    <p>
+        The following custom function code scans an array of numbers
+        and builds a set of square roots of the number in column D,
+        checking for negative roots along the way:
+    </p>
+
+    <pre class="csg-sample-indent">
+FOR(&quot;i&quot;,1,rows(@list))
+&nbsp;&nbsp;IF(index(@list,1,i)&lt;0)
+&nbsp;&nbsp;&nbsp;&nbsp;SET_VALUE(INDEX(D1:D100,1,i),0)
+&nbsp;&nbsp;ELSE
+&nbsp;&nbsp;&nbsp;&nbsp;SET_VALUE(INDEX(D1:D100,1,i),SQR(INDEX(@list,1,i))) 
+&nbsp;&nbsp;ENDIF
+NEXT
+    </pre>
+
+    <h3><a name="GOTO" id="GOTO"></a>GOTO</h3>
+    <p>Move to a specified statement in a custom function.</p>
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">GOTO(<span class="csg-function-parameter">cell_reference</span>)</p>
+    <p>Moves to the statement specified by <span class="csg-function-parameter">cell_reference</span>.</p>
+
+    <h3><a name="IF_ELSE_ELSEIF_ENDIF" id="IF_ELSE_ELSEIF_ENDIF"></a>IF, ELSE, ELSEIF, ENDIF</h3>
+    <p>Conditional execution of statements in a custom function.</p>
+    <p class="csg-function-subheading">Syntax #1:</p>
+    <p class="csg-function-declaration">IF(<span class="csg-function-parameter">parameter</span>)</p>
+    <p>
+        When <code>IF</code> has only a single parameter,
+        it signals the start of an <code>IF &hellip; ENDIF</code> sequence.
+        The parameter is a condition:
+    </p>
+    <ul>
+        <li>if it is <code>TRUE</code>, execution follows on the following line;</li>
+        <li>
+            if it is <code>FALSE</code>, execution continues after the next
+            <code>ELSE</code>, <code>ELSEIF</code> or <code>ENDIF</code> statement that follows.
+        </li>
+    </ul>
+    <p class="csg-function-subheading">Example:</p>
+
+<pre class="csg-sample-indent">
+IF(@parameter_1&gt;10)
+  SET_VALUE(C10,1)
+ELSEIF(@parameter_1&gt;8)
+  SET_VALUE(C12,1)
+ELSEIF(@parameter_1&gt;6)
+  SET_VALUE(C14,1)
+ELSE
+  SET_VALUE(C16,1)
+ENDIF
+</pre>
+
+    <p>
+        <code>ENDIF</code> marks the end of the sequence,
+        <code>ELSEIF</code> marks the beginning of a second condition, and
+        <code>ELSE</code> a statement to be executed if the preceding conditions evaluated to <code>FALSE</code>.
+    </p>
+    <p>
+        You can nest <code>IF</code> statements inside each other,
+        and it is advisable to use spaces to make <code>IF</code> statements more readable:
+    </p>
+
+<pre class="csg-sample-indent">
+IF(A15&gt;B15)
+  IF(TYPE(DEREF(C16))=&quot;error&quot;)
+    RESULT(&quot;Bad value&quot;)
+  ENDIF
+  C16+4+SUM(E1:E10)
+ENDIF
+</pre>
+
+    <p class="csg-function-subheading"><br />Syntax #2:</p>
+    <p class="csg-function-declaration">
+        IF(<span class="csg-function-parameter">parameter_1</span>,
+        <span class="csg-function-parameter">parameter_2</span>
+        {,&nbsp;<span class="csg-function-parameter">parameter_3</span>})
+    </p>
+    <p>
+        If the condition expressed in <span class="csg-function-parameter">parameter_1</span> is <code>TRUE</code>,
+        then <span class="csg-function-parameter">parameter_2</span> is executed.
+        If it is <code>FALSE</code>, execution continues or if a third parameter is supplied, that is executed.
+        You should not use an <code>ENDIF</code> statement to mark the end of the sequence.
+    </p>
+    <p class="csg-function-subheading">Examples:</p>
+    <pre class="csg-sample-indent">IF(B3&gt;7,RESULT(C3))</pre>
+    <pre class="csg-sample-indent">IF(B5=2,,BREAK)</pre>
+    <pre class="csg-sample-indent">IF(@num&lt;=0,RESULT(1),RESULT(@num))</pre>
+
+    <h3><a name="REPEAT_UNTIL" id="REPEAT_UNTIL"></a>REPEAT, UNTIL</h3>
+    <p>Repetetive execution of statements in a custom function, controlled by condition at end of loop.</p>
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">REPEAT</p>
+    <pre style="font-style: italic">  loop code</pre>
+    <p class="csg-function-declaration">UNTIL(<span class="csg-function-parameter">condition</span>)</p>
+    <p>Loops executing statements between the <code>REPEAT</code> and <code>UNTIL</code> statements until the <span class="csg-function-parameter">condition</span> is <code>TRUE</code>.</p>
+    <p>Note that the loop will always execute at least once.</p>
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">
+REPEAT
+  SET_VALUE(remainder,remainder-divisor)
+UNTIL(remainder&lt;divisor)
+    </pre>
+
+    <h3><a name="RESULT" id="RESULT"></a>RESULT</h3>
+    <p>Returning a value from a custom function.</p>
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">RESULT(<span class="csg-function-parameter">value</span>)</p>
+    <p>
+        As described above, a <code>RESULT</code> statement marks the end of the custom function.
+        The <span class="csg-function-parameter">value</span> is returned as the result of the function.
+    </p>
+
+    <h3><a name="WHILE_ENDWHILE" id="WHILE_ENDWHILE"></a>WHILE, ENDWHILE</h3>
+    <p>Repetetive execution of statements in a custom function, controlled by condition at start of loop.</p>
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">WHILE(<span class="csg-function-parameter">condition</span>)</p>
+    <pre style="font-style: italic">  loop code</pre>
+    <p class="csg-function-declaration">ENDWHILE</p>
+    <p>Loops executing statements between the <code>WHILE</code> and <code>ENDWHILE</code> statements while the <span class="csg-function-parameter">condition</span> is <code>TRUE</code>.</p>
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">
+WHILE(D56 &lt; 100)
+  SET_VALUE(D56, D56+E63)
+ENDWHILE
+    </pre>
+
+    <h2><a name="processing_ranges_of_data" id="processing_ranges_of_data"></a>Processing ranges of data</h2>
+
+    <p>
+        You can use custom functions to process arrays of data or ranges of cells.
+        The example Total, in the sub-directory Custom in the Examples directory, illustrates this use of custom functions.
+        It returns the sum of the numbers contained in the first column of the range of cells.
+        It could be used as the starting point for your own custom functions which process ranges of cells.
+    </p>
+    <p>Cell <code>A4 SET_NAME(&quot;sumtotal&quot;,D4)</code> creates a name sumtotal and defines it to refer to the cell <code>D4</code>.</p>
+    <p>
+        Cell <code>A5 SET_VALUE(&quot;sumtotal&quot;,0)</code> sets the value of sumtotal (i.e. <code>D4</code>) to <code>0</code>.
+        Note the use of quotes in <code>A4</code> and their absence in <code>A5</code>.
+    </p>
+    <p>In cell <code>A8, FOR(&quot;i&quot;,1,rows(@list))</code>, the part <code>rows(@list)</code> returns the number of rows in the array.</p>
+    <p>Cell <code>A9 ...index(@list,1,i)</code> returns the <em>i</em>-th element of the array to be added to the total.</p>
+
+    <h2><a name="recalculation_and_custom_function_sheets" id="recalculation_and_custom_function_sheets"></a>Recalculation and custom function sheets</h2>
+    <p>
+        Ordinary worksheets use natural recalculation.
+        This means that Fireworkz builds a tree of dependencies and uses this dependency tree to determine the order of recalculation.
+        Custom function sheets are recalculated differently, with recalculation proceeding down the worksheet from one row to the next.
+    </p>
+    <p>
+        The only links between the worksheet and the custom function sheet are the function name definition cells.
+        Each of these cells is known about by the dependency tree,
+        but none of the rest of the custom function is put on the dependency tree.
+    </p>
+    <p>
+        For this reason you should make not references into a custom function sheet from an external worksheet and
+        you should not make references from a custom function sheet to an external worksheet.
+        All of the data needed by a custom function should be passed into the function as function parameters.
+        All of the data which the function exports should be passed out using <a href="#RESULT">RESULT</a>, perhaps passing out an array.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg05_function_reference.htm#compatibility_functions">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg04_charts.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Compatibility functions </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Charts</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -180,7 +180,7 @@ cfbf_write_read_template(
     U32 bytes_read;
     FILE_HANDLE file_handle;
 
-    if(file_find_on_path(template_filename, elemof32(template_filename), file_get_search_path(), template_leafname) <= 0)
+    if(file_find_on_path(template_filename, elemof32(template_filename), file_get_resources_path(), template_leafname) <= 0)
     {
         *p_status = create_error(ERR_CFBF_SAVE_NEEDS_TEMPLATE);
         return(NULL);
@@ -316,7 +316,7 @@ cfbf_write_stream_in_storage(
 
                 /* pad the whole file up to sector boundary */
                 if(status_ok(status))
-                    status = file_pad(file_handle, p_structured_storage_header->_uSectorShift);
+                    status = file_pad(file_handle, p_structured_storage_header->_uSectorShift, CH_NULL);
 
                 status_accumulate(status, t5_file_close(&file_handle));
             }

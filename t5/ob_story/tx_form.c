@@ -149,7 +149,7 @@ extern void
 formatted_text_init(
     _OutRef_    P_FORMATTED_TEXT p_formatted_text)
 {
-    zero_struct_ptr(p_formatted_text);
+    zero_struct_ptr_fn(p_formatted_text);
 }
 
 /******************************************************************************
@@ -311,7 +311,7 @@ plain_text_from_formatted_text(
     P_SEGMENT p_segment;
     PAGE page_y = 0;
     U8 effects[PLAIN_EFFECT_COUNT];
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     zero_array(effects);
@@ -550,7 +550,7 @@ text_chunkify_CHUNK_UTF8(
 #if RISCOS && USTR_IS_SBSTR
 
     HOST_FONT host_font_utf8 = fonty_host_font_utf8_from_fonty_handle_formatting(fonty_handle, p_docu->flags.draft_mode);
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(HOST_FONT_NONE == host_font_utf8)
@@ -583,7 +583,7 @@ text_chunkify_CHUNK_UTF8(
 
 #elif WINDOWS && TSTR_IS_SBSTR
 
-    QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 100);
+    QUICK_WBLOCK_WITH_BUFFER(quick_wblock, 128);
     quick_wblock_with_buffer_setup(quick_wblock);
 
     /* Convert from UTF8 inline sequence (UTF-8) to UTF-16 */
@@ -888,7 +888,7 @@ text_chunkify(
 #endif
                         {
                         STATUS status;
-                        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+                        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
                         quick_ublock_with_buffer_setup(quick_ublock);
 
                         status_assert(status = text_from_field_uchars(p_docu, &quick_ublock,
@@ -998,6 +998,186 @@ text_chunkify(
 ******************************************************************************/
 
 _Check_return_
+static STATUS
+text_from_field_DATE_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n))
+{
+    STATUS status;
+    const IL_CODE il_code = inline_code(uchars_inline);
+    SS_DATA ss_data;
+    NUMFORM_PARMS numform_parms;
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(uchars_n));
+
+    if(IL_DATE == il_code)
+        ss_local_time_to_ss_date(&ss_data.arg.ss_date);
+    else
+        ss_data.arg.ss_date = p_docu->file_ss_date;
+
+    ss_data_set_data_id(&ss_data, DATA_ID_DATE);
+
+    zero_struct(numform_parms);
+    numform_parms.ustr_numform_datetime = inline_data_ptr(PC_USTR, uchars_inline);
+    numform_parms.p_numform_context = get_p_numform_context(p_docu);
+
+    if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
+        quick_ublock_nullch_strip(p_quick_ublock);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+text_from_field_PAGE_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n),
+    _InRef_maybenone_ PC_PAGE_NUM p_page_num)
+{
+    STATUS status;
+    const IL_CODE il_code = inline_code(uchars_inline);
+    SS_DATA ss_data;
+    NUMFORM_PARMS numform_parms;
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(uchars_n));
+
+    if(IS_P_DATA_NONE(p_page_num))
+        ss_data_set_integer(&ss_data, 1);
+    else if(IL_PAGE_Y == il_code)
+        ss_data_set_integer(&ss_data, page_number_from_page_y(p_docu, p_page_num->y) + 1);
+    else /* IL_PAGE_X */
+        ss_data_set_integer(&ss_data, p_page_num->x + 1);
+
+    zero_struct(numform_parms);
+    numform_parms.ustr_numform_numeric = inline_data_ptr(PC_USTR, uchars_inline);
+    numform_parms.p_numform_context = get_p_numform_context(p_docu);
+
+    if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
+        quick_ublock_nullch_strip(p_quick_ublock);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+text_from_field_WHOLENAME_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/)
+{
+    STATUS status;
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, BUF_MAX_PATHSTRING);
+    quick_tblock_with_buffer_setup(quick_tblock);
+
+    if(status_ok(status = name_make_wholename(&p_docu->docu_name, &quick_tblock, TRUE)))
+        status = quick_ublock_tstr_add(p_quick_ublock, quick_tblock_tstr(&quick_tblock));
+
+    quick_tblock_dispose(&quick_tblock);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+text_from_field_MS_FIELD_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n))
+{
+    STATUS status;
+    READ_MAIL_TEXT read_mail_text;
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(uchars_n));
+
+    read_mail_text.field_no = data_from_inline_s32(uchars_inline);
+    read_mail_text.p_quick_ublock = p_quick_ublock;
+    read_mail_text.responded = 0;
+
+    status = object_call_id_load(p_docu, T5_MSG_READ_MAIL_TEXT, &read_mail_text, OBJECT_ID_MAILSHOT);
+
+    if(!read_mail_text.responded && status_ok(status))
+        status = quick_ublock_printf(p_quick_ublock, resource_lookup_ustr(MSG_FIELD), read_mail_text.field_no + 1);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+text_from_field_SS_NAME_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n),
+    _InRef_maybenone_ PC_STYLE p_style_text_global)
+{
+    STATUS status;
+    SS_NAME_READ ss_name_read;
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(uchars_n));
+
+    zero_struct_fn(ss_name_read);
+    ss_name_read.ev_handle = (EV_HANDLE) data_from_inline_s32(uchars_inline);
+    ss_name_read.follow_indirection = TRUE;
+    ss_data_set_blank(&ss_name_read.ss_data);
+
+    if(object_present(OBJECT_ID_SS)) /* SKS 27sep94 allow for no SS module but load file with duff fields */
+        status = object_call_id(OBJECT_ID_SS, p_docu, T5_MSG_SS_NAME_READ, &ss_name_read);
+    else
+        status = STATUS_MODULE_NOT_FOUND;
+
+    if(status_fail(status))
+    {
+        ss_data_set_error(&ss_name_read.ss_data, status);
+        status = STATUS_OK;
+    }
+
+    {
+    NUMFORM_PARMS numform_parms;
+    zero_struct(numform_parms);
+
+    if(P_STYLE_NOT_NONE(p_style_text_global))
+    {
+        numform_parms.ustr_numform_numeric = array_ustr(&p_style_text_global->para_style.h_numform_nu);
+        numform_parms.ustr_numform_datetime = array_ustr(&p_style_text_global->para_style.h_numform_dt);
+        numform_parms.ustr_numform_texterror = array_ustr(&p_style_text_global->para_style.h_numform_se);
+    }
+
+    numform_parms.p_numform_context = get_p_numform_context(p_docu);
+
+    if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_name_read.ss_data, &numform_parms)))
+        quick_ublock_nullch_strip(p_quick_ublock);
+    } /*block*/
+
+    ss_data_free_resources(&ss_name_read.ss_data);
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+text_from_field_UTF8_uchars(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n))
+{
+    STATUS status = STATUS_OK;
+    const PC_UTF8 utf8 = inline_data_ptr(PC_UTF8, uchars_inline);
+    const U32 il_data_size = (U32) inline_data_size(uchars_inline);
+    U32 offset = 0;
+
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(uchars_n));
+
+    while(offset < il_data_size)
+    {
+        U32 bytes_of_char;
+        const UCS4 ucs4 = utf8_char_decode_off(utf8, offset, bytes_of_char);
+
+        status_break(status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("[U+%.4X]"), ucs4));
+
+        offset += bytes_of_char;
+    }
+
+    return(status);
+}
+
+_Check_return_
 extern STATUS
 text_from_field_uchars(
     _DocuRef_   P_DOCU p_docu,
@@ -1017,59 +1197,17 @@ text_from_field_uchars(
     {
     case IL_DATE:
     case IL_FILE_DATE:
-        {
-        SS_DATA ss_data;
-        NUMFORM_PARMS numform_parms;
-
-        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
-
-        if(IL_DATE == il_code)
-            ss_local_time_to_ss_date(&ss_data.arg.ss_date);
-        else
-            ss_data.arg.ss_date = p_docu->file_ss_date;
-
-        zero_struct(numform_parms);
-        numform_parms.ustr_numform_datetime = inline_data_ptr(PC_USTR, uchars_inline);
-        numform_parms.p_numform_context = get_p_numform_context(p_docu);
-
-        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
-            quick_ublock_nullch_strip(p_quick_ublock);
+        status = text_from_field_DATE_uchars(p_docu, p_quick_ublock, uchars_inline CODE_ANALYSIS_ONLY_ARG(uchars_n));
         break;
-        }
 
     case IL_PAGE_X:
     case IL_PAGE_Y:
-        {
-        SS_DATA ss_data;
-        NUMFORM_PARMS numform_parms;
-
-        if(IS_P_DATA_NONE(p_page_num))
-            ss_data_set_integer(&ss_data, 1);
-        else if(IL_PAGE_Y == il_code)
-            ss_data_set_integer(&ss_data, page_number_from_page_y(p_docu, p_page_num->y) + 1);
-        else /* IL_PAGE_X */
-            ss_data_set_integer(&ss_data, p_page_num->x + 1);
-
-        zero_struct(numform_parms);
-        numform_parms.ustr_numform_numeric = inline_data_ptr(PC_USTR, uchars_inline);
-        numform_parms.p_numform_context = get_p_numform_context(p_docu);
-
-        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms)))
-            quick_ublock_nullch_strip(p_quick_ublock);
+        status = text_from_field_PAGE_uchars(p_docu, p_quick_ublock, uchars_inline CODE_ANALYSIS_ONLY_ARG(uchars_n), p_page_num);
         break;
-        }
 
     case IL_WHOLENAME:
-        {
-        QUICK_TBLOCK_WITH_BUFFER(quick_tblock, BUF_MAX_PATHSTRING);
-        quick_tblock_with_buffer_setup(quick_tblock);
-
-        if(status_ok(status = name_make_wholename(&p_docu->docu_name, &quick_tblock, TRUE)))
-            status = quick_ublock_tstr_add(p_quick_ublock, quick_tblock_tstr(&quick_tblock));
-
-        quick_tblock_dispose(&quick_tblock);
+        status = text_from_field_WHOLENAME_uchars(p_docu, p_quick_ublock);
         break;
-        }
 
     case IL_LEAFNAME:
         status = quick_ublock_tstr_add(p_quick_ublock, p_docu->docu_name.leaf_name);
@@ -1080,88 +1218,26 @@ text_from_field_uchars(
         break;
 
     case IL_MS_FIELD:
-        {
-        READ_MAIL_TEXT read_mail_text;
-
-        read_mail_text.field_no = data_from_inline_s32(uchars_inline);
-        read_mail_text.p_quick_ublock = p_quick_ublock;
-        read_mail_text.responded = 0;
-
-        status = object_call_id_load(p_docu, T5_MSG_READ_MAIL_TEXT, &read_mail_text, OBJECT_ID_MAILSHOT);
-
-        if(!read_mail_text.responded && status_ok(status))
-            status = quick_ublock_printf(p_quick_ublock, resource_lookup_ustr(MSG_FIELD), read_mail_text.field_no + 1);
-
+        status = text_from_field_MS_FIELD_uchars(p_docu, p_quick_ublock, uchars_inline CODE_ANALYSIS_ONLY_ARG(uchars_n));
         break;
-        }
 
     case IL_SS_NAME:
-        {
-        SS_NAME_READ ss_name_read;
-
-        ss_name_read.ev_handle = (EV_HANDLE) data_from_inline_s32(uchars_inline);
-        ss_name_read.follow_indirection = 1;
-        ss_data_set_blank(&ss_name_read.ss_data);
-
-        if(object_present(OBJECT_ID_SS)) /* SKS 27sep94 allow for no SS module but load file with duff fields */
-            status = object_call_id(OBJECT_ID_SS, p_docu, T5_MSG_SS_NAME_READ, &ss_name_read);
-        else
-            status = STATUS_MODULE_NOT_FOUND;
-
-        if(status_fail(status))
-        {
-            ss_data_set_error(&ss_name_read.ss_data, status);
-            status = STATUS_OK;
-        }
-
-        {
-        NUMFORM_PARMS numform_parms;
-        zero_struct(numform_parms);
-
-        if(!IS_P_STYLE_NONE(p_style_text_global))
-        {
-            numform_parms.ustr_numform_numeric = array_ustr(&p_style_text_global->para_style.h_numform_nu);
-            numform_parms.ustr_numform_datetime = array_ustr(&p_style_text_global->para_style.h_numform_dt);
-            numform_parms.ustr_numform_texterror = array_ustr(&p_style_text_global->para_style.h_numform_se);
-        }
-
-        numform_parms.p_numform_context = get_p_numform_context(p_docu);
-
-        if(status_ok(status = numform(p_quick_ublock, P_QUICK_TBLOCK_NONE, &ss_name_read.ss_data, &numform_parms)))
-            quick_ublock_nullch_strip(p_quick_ublock);
-        } /*block*/
-
-        ss_data_free_resources(&ss_name_read.ss_data);
-
+        status = text_from_field_SS_NAME_uchars(p_docu, p_quick_ublock, uchars_inline CODE_ANALYSIS_ONLY_ARG(uchars_n), p_style_text_global);
         break;
-        }
 
     case IL_UTF8:
-        {
-        const PC_UTF8 utf8 = inline_data_ptr(PC_UTF8, uchars_inline);
-        const U32 il_data_size = (U32) inline_data_size(uchars_inline);
-        U32 offset = 0;
-
-        while(offset < il_data_size)
-        {
-            U32 bytes_of_char;
-            const UCS4 ucs4 = utf8_char_decode_off(utf8, offset, bytes_of_char);
-
-            status_break(status = quick_ublock_printf(p_quick_ublock, USTR_TEXT("[U+%.4X]"), ucs4));
-
-            offset += bytes_of_char;
-        }
-
+        status = text_from_field_UTF8_uchars(p_docu, p_quick_ublock, uchars_inline CODE_ANALYSIS_ONLY_ARG(uchars_n));
         break;
-        }
 
     default: default_unhandled();
         break;
     }
 
+    status_return(status);
+
     {
     U32 len_add = quick_ublock_bytes(p_quick_ublock) - len_before;
-    return(status_ok(status) ? (S32) len_add : status);
+    return((S32) len_add);
     } /*block*/
 }
 
@@ -1385,6 +1461,7 @@ pending_tab_proc(
 
         case TAB_DECIMAL:
             {
+            const U8 decimal_point_char = get_ss_recog_context_alt(decimal_point_char);
             extra_lead_space = tab_width - tab_text_width;
 
             if(p_pending_tab->chunk + 1 < array_elements(&p_formatted_text->h_chunks))
@@ -1401,17 +1478,19 @@ pending_tab_proc(
 
                     for(i = p_chunk->input_len - 1; i >= 0 && dot < 0; i -= 1)
                     {
-                        switch(PtrGetByteOff(p_text_chunk, i))
+                        const U8 u8 = PtrGetByteOff(p_text_chunk, i);
+
+                        switch(u8)
                         {
                         case CH_COLON:
                         case CH_SEMICOLON:
-                        case CH_COMMA:
-                        case CH_FULL_STOP:
                         case UCH_MIDDLE_DOT: /* Latin-1 decimal point - SKS 16may96 added */
                             dot = i;
                             break;
 
                         default:
+                            if(decimal_point_char == u8)
+                                dot = i;
                             break;
                         }
                     }

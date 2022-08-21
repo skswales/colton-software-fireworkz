@@ -15,17 +15,20 @@
 
 #include "ob_ss/ob_ss.h"
 
-extern void
-ss_data_add(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InRef_     P_SS_DATA p_ss_data_addend_a,
-    _InRef_     P_SS_DATA p_ss_data_addend_b);
+/******************************************************************************
+*
+* LOGICAL unary not operator
+*
+******************************************************************************/
 
-extern void
-ss_data_subtract(
-    _OutRef_    P_SS_DATA p_ss_data_res,
-    _InRef_     P_SS_DATA p_ss_data_minuend,
-    _InRef_     P_SS_DATA p_ss_data_subtrahend);
+PROC_EXEC_PROTO(c_uop_not)
+{
+    const bool not_result = !ss_data_get_logical(args[0]);
+
+    exec_func_ignore_parms();
+
+    ss_data_set_logical(p_ss_data_res, not_result);
+}
 
 /******************************************************************************
 *
@@ -51,25 +54,11 @@ PROC_EXEC_PROTO(c_uop_minus)
 {
     exec_func_ignore_parms();
 
+    assert(ss_data_is_number(args[0]));
     if(ss_data_is_real(args[0]))
         ss_data_set_real(p_ss_data_res, -ss_data_get_real(args[0]));
-    else
+    else /* ss_data_is_integer */
         ss_data_set_integer(p_ss_data_res, -ss_data_get_integer(args[0]));
-}
-
-/******************************************************************************
-*
-* LOGICAL unary not operator / not() function
-*
-******************************************************************************/
-
-PROC_EXEC_PROTO(c_uop_not)
-{
-    const bool not_result = !ss_data_get_logical(args[0]);
-
-    exec_func_ignore_parms();
-
-    ss_data_set_logical(p_ss_data_res, not_result);
 }
 
 /******************************************************************************
@@ -305,8 +294,8 @@ PROC_EXEC_PROTO(c_bop_add)
 extern void
 ss_data_add(
     _OutRef_    P_SS_DATA p_ss_data_res,
-    _InRef_     P_SS_DATA p_ss_data_addend_a,
-    _InRef_     P_SS_DATA p_ss_data_addend_b)
+    _InoutRef_  P_SS_DATA p_ss_data_addend_a,
+    _InoutRef_  P_SS_DATA p_ss_data_addend_b)
 {
     if(ss_data_is_number(p_ss_data_addend_a))
     {
@@ -464,8 +453,8 @@ PROC_EXEC_PROTO(c_bop_sub)
 extern void
 ss_data_subtract(
     _OutRef_    P_SS_DATA p_ss_data_res,
-    _InRef_     P_SS_DATA p_ss_data_minuend,
-    _InRef_     P_SS_DATA p_ss_data_subtrahend)
+    _InoutRef_  P_SS_DATA p_ss_data_minuend,
+    _InoutRef_  P_SS_DATA p_ss_data_subtrahend)
 {
     if(ss_data_is_number(p_ss_data_minuend))
     {
@@ -498,10 +487,34 @@ PROC_EXEC_PROTO(c_bop_mul)
 {
     exec_func_ignore_parms();
 
-    if(two_nums_multiply_try(p_ss_data_res, args[0], args[1]))
+    ss_data_multiply(p_ss_data_res, args[0], args[1]);
+}
+
+extern void
+ss_data_multiply(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_multiplicand_a,
+    _InoutRef_  P_SS_DATA p_ss_data_multiplicand_b)
+{
+ retry:;
+
+    if(two_nums_multiply_try(p_ss_data_res, p_ss_data_multiplicand_a, p_ss_data_multiplicand_b))
         return;
 
-    ss_data_bop_err_argtype(p_ss_data_res, args[0], args[1]);
+    /* handle dates here by converting to Excel serial numbers (yuk) */
+    if(ss_data_is_date(p_ss_data_multiplicand_a))
+    {
+        if(status_ok(arg_normalise(p_ss_data_multiplicand_a, EM_REA, NULL, NULL, NULL)))
+            goto retry;
+    }
+
+    if(ss_data_is_date(p_ss_data_multiplicand_b))
+    {
+        if(status_ok(arg_normalise(p_ss_data_multiplicand_b, EM_REA, NULL, NULL, NULL)))
+            goto retry;
+    }
+
+    ss_data_bop_err_argtype(p_ss_data_res, p_ss_data_multiplicand_a, p_ss_data_multiplicand_b);
 }
 
 /******************************************************************************
@@ -514,17 +527,39 @@ PROC_EXEC_PROTO(c_bop_div)
 {
     exec_func_ignore_parms();
 
-    if(two_nums_divide_try(p_ss_data_res, args[0], args[1]))
+    ss_data_divide(p_ss_data_res, args[0], args[1]);
+}
+
+extern void
+ss_data_divide(
+    _OutRef_    P_SS_DATA p_ss_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_dividend,
+    _InoutRef_  P_SS_DATA p_ss_data_divisor)
+{
+ retry:;
+
+    if(two_nums_divide_try(p_ss_data_res, p_ss_data_dividend, p_ss_data_divisor))
         return;
 
-    ss_data_bop_err_argtype(p_ss_data_res, args[0], args[1]);
+    /* handle dates here by converting to Excel serial numbers (yuk) */
+    if(ss_data_is_date(p_ss_data_dividend))
+    {
+        if(status_ok(arg_normalise(p_ss_data_dividend, EM_REA, NULL, NULL, NULL)))
+            goto retry;
+    }
+
+    if(ss_data_is_date(p_ss_data_divisor))
+    {
+        if(status_ok(arg_normalise(p_ss_data_divisor, EM_REA, NULL, NULL, NULL)))
+            goto retry;
+    }
+
+    ss_data_bop_err_argtype(p_ss_data_res, p_ss_data_dividend, p_ss_data_divisor);
 }
 
 /******************************************************************************
 *
 * NUMBER res = a ^ b
-*
-* NUMBER power(a, b) is equivalent OpenDocument / Microsoft Excel function
 *
 ******************************************************************************/
 
@@ -537,7 +572,10 @@ PROC_EXEC_PROTO(c_bop_power)
 
     errno = 0;
 
-    ss_data_set_real_try_integer(p_ss_data_res, pow(a, b));
+    if(0.5 == b)
+        ss_data_set_real_try_integer(p_ss_data_res, sqrt(a));
+    else
+        ss_data_set_real_try_integer(p_ss_data_res, pow(a, b));
 
     if(errno /* == EDOM */)
     {
@@ -553,7 +591,6 @@ PROC_EXEC_PROTO(c_bop_power)
             if(ss_data_real_to_integer_try(&test))
             {
                 ss_data_set_real_try_integer(p_ss_data_res, -(pow(-(a), b)));
-
                 ok = true;
             }
         }

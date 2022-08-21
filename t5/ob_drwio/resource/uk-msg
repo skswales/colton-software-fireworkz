@@ -7,10 +7,9 @@
 #
 # Copyright (C) 2001-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_drwio/ob_drwio.h
+1:zz-msg
 #
-1:Export as Drawfile
-#2:to-do.htm
-3:Drawfile
+# errors (none)
 #
 # end of msg (ob_drwio)

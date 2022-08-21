@@ -33,6 +33,7 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_fonty);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_object);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_of_load);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_bord);
+MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_col);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_cont);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_docno);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_find);
@@ -72,6 +73,7 @@ rb_skel_maeve_services[] =
     maeve_services_event_sk_form,
     maeve_services_event_sk_mark,
     maeve_services_event_sk_bord,
+    maeve_services_event_sk_col,
     maeve_services_event_sk_menu,
     maeve_services_event_sk_cont,
     maeve_services_event_sk_docno,

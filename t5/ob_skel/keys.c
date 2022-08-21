@@ -233,7 +233,7 @@ host_key_cache_event(
             /* iff keys were for another document emit them */
             emit = 1;
 
-            trace_2(TRACE_APP_HOST, TEXT("key cache belongs to docno ") S32_TFMT TEXT(" not ") S32_TFMT TEXT(" -> emit"), key_event_cache.docno, docno);
+            trace_2(TRACE_APP_HOST, TEXT("key cache belongs to docno ") DOCNO_TFMT TEXT(" not ") DOCNO_TFMT TEXT(" -> emit"), key_event_cache.docno, docno);
         }
         else if(fn_key)
         {
@@ -271,13 +271,13 @@ host_key_cache_event(
     {
         key_event_cache.fn_key = keycode;
 
-        trace_3(TRACE_OUT | TRACE_APP_HOST, TEXT("key cache function key ") U32_XTFMT TEXT(" for docno ") S32_TFMT TEXT(", now size ") S32_TFMT, key_event_cache.fn_key, key_event_cache.docno, quick_ublock_bytes(&key_event_cache.quick_ublock));
+        trace_3(TRACE_OUT | TRACE_APP_HOST, TEXT("key cache function key ") U32_XTFMT TEXT(" for docno ") DOCNO_TFMT TEXT(", now size ") U32_TFMT, key_event_cache.fn_key, key_event_cache.docno, quick_ublock_bytes(&key_event_cache.quick_ublock));
     }
     else
     {
         /* only real keys are stored on list in cache */
         *p_u8 = (U8) keycode;
-        trace_3(TRACE_APP_HOST, TEXT("key cache normal key ") U32_XTFMT TEXT(" for docno ") S32_TFMT TEXT(", now size ") S32_TFMT, *p_u8, key_event_cache.docno, quick_ublock_bytes(&key_event_cache.quick_ublock));
+        trace_3(TRACE_APP_HOST, TEXT("key cache normal key ") U32_XTFMT TEXT(" for docno ") DOCNO_TFMT TEXT(", now size ") U32_TFMT, *p_u8, key_event_cache.docno, quick_ublock_bytes(&key_event_cache.quick_ublock));
     }
 
     if((quick_ublock_bytes(&key_event_cache.quick_ublock) > MAX_KEY_EVENT_CACHE)

@@ -233,11 +233,8 @@ static const DIALOG_CONTROL
 process_status_reason =
 {
     PROCESS_STATUS_CONTROL_ID_REASON, DIALOG_CONTROL_WINDOW,
-
     { DIALOG_CONTROL_SELF, PROCESS_STATUS_CONTROL_ID_STATUS, PROCESS_STATUS_CONTROL_ID_STATUS, PROCESS_STATUS_CONTROL_ID_STATUS },
-
     { DIALOG_SYSCHARSL_H(10), 0, DIALOG_STDSPACING_H, 0 },
-
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -248,16 +245,13 @@ static const DIALOG_CONTROL
 process_status_status =
 {
     PROCESS_STATUS_CONTROL_ID_STATUS, DIALOG_CONTROL_WINDOW,
-
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-
     { 0, 0, DIALOG_SYSCHARSL_H(5), 32 * PIXITS_PER_RISCOS },
-
     { DRT(LTLT, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-process_status_status_data = { { UI_TEXT_TYPE_NONE }, { 0 /*left_text*/ } };
+process_status_status_data = { { UI_TEXT_TYPE_NONE } };
 
 _Check_return_
 static STATUS
@@ -379,6 +373,7 @@ process_status_reflect_create_dialog(
 
 #if RISCOS
 
+    static const UI_TEXT caption = { UI_TEXT_TYPE_NONE };
     DIALOG_CTL_CREATE dialog_ctl_create[2];
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
 
@@ -387,8 +382,7 @@ process_status_reflect_create_dialog(
     dialog_ctl_create[1].p_dialog_control.p_dialog_control = &process_status_status;
     dialog_ctl_create[1].p_dialog_control_data = &p_process_status->controls.status_data;
 
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, dialog_ctl_create, elemof32(dialog_ctl_create), 0);
-    dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_NONE;
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, dialog_ctl_create, elemof32(dialog_ctl_create), &caption);
     dialog_cmd_process_dbox.bits.modeless = 1;
     dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
     dialog_cmd_process_dbox.p_proc_client = dialog_event_process_status_reflect;
@@ -655,7 +649,48 @@ fill_in_help_request(
     if(0 != array_elements(&p_docu->status_line_info))
     {   /* point at the topmost entry */
         P_STATUS_LINE_ENTRY p_status_line_entry = array_ptr(&p_docu->status_line_info, STATUS_LINE_ENTRY, array_elements(&p_docu->status_line_info) - 1);
-        tstr_xstrkpy(tstr_buf, elemof_buffer, ui_text_tstr(&p_status_line_entry->ui_text));
+        PCTSTR tstr_status_line = ui_text_tstr(&p_status_line_entry->ui_text);
+
+        tstr_xstrkpy(tstr_buf, elemof_buffer, tstr_status_line);
+
+#if RISCOS
+        {
+        PTSTR tstr;
+
+        if(tstrlen(tstr_status_line) >= elemof_buffer)
+        {   /* indicate that it has been truncated at this point */
+            tstr_buf[elemof_buffer - 2] = '\x8C'; /* Acorn Extended Latin-1 ELLIPSIS */
+        }
+
+        /* Terminate 'sentences' from status line with a 'newline' for interactive help */
+        for(tstr = tstr_buf;;)
+        {
+            PTSTR tstr_next = strchr(tstr, '.');
+
+            if(NULL == tstr_next++)
+                break;
+
+            if(CH_SPACE == *tstr_next)
+            {
+                U32 remaining_chars = tstrlen32(tstr_next + 1); /* what's left after that space */
+                *tstr_next++ = CH_VERTICAL_LINE; /* replace the space here */
+                /* care with moving remainder of text up */
+                if((tstr_next + remaining_chars + 1) == (tstr_buf + elemof_buffer))
+                {   /* buffer has been CH_NULL terminated at its last character, which we will preserve, but have to truncate the remainder */
+                    memmove(tstr_next + 1, tstr_next, (remaining_chars - 1) * sizeof32(TCHAR)); /* could be r-2 but leave for ease of understanding and debug */
+                    tstr_buf[elemof_buffer - 2] = '\x8C'; /* Acorn Extended Latin-1 ELLIPSIS */
+                }
+                else
+                {   /* safe to move remainder up, including the CH_NULL terminator */
+                    memmove(tstr_next + 1, tstr_next, (remaining_chars + 1) * sizeof32(TCHAR));
+                }
+                *tstr_next++ = 'M';
+            }
+
+            tstr = tstr_next;
+        }
+        } /*block*/
+#endif /* RISCOS */
     }
 }
 

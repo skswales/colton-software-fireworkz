@@ -154,7 +154,7 @@ from_decimal_decode_string(
     _OutRef_    P_F64 p_f64)
 {
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 50);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     *p_f64 = 0.0;

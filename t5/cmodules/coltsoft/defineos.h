@@ -24,41 +24,67 @@
 #define CROSS_COMPILE 0
 #endif
 
-#if defined(WINDOWS) /* set up on command line */
-#else
-#if defined(TARGET_WINDOWS)
-#define WINDOWS 1
-#elif defined(_WIN32) /* defined by compiler (even for _WIN64) */
-#define WINDOWS 1
-#else
-#define WINDOWS 0
-#endif
-#endif /* WINDOWS */
-
-#if defined(RISCOS) /* set up on command line */
-#else
-#if defined(TARGET_RISCOS)
+#if defined(RISCOS)
+/* set up on command line */
+#elif defined(__acorn) && defined(__CC_NORCROFT) /* defined by Norcroft ARM compiler */
 #define RISCOS 1
-#if defined(HOST_GCCSDK)
+#elif defined(TARGET_RISCOS)
+#define RISCOS 1
+#if !defined(HOST_RISCOS)
 #undef  CROSS_COMPILE
 #define CROSS_COMPILE 1
 #endif
 #if defined(HOST_WINDOWS)
 #undef  WINDOWS
 #define WINDOWS 0
-#undef  CROSS_COMPILE
-#define CROSS_COMPILE 1
 #endif
-#elif defined(__acorn) && defined(__CC_NORCROFT) /* defined by Norcroft ARM compiler */
-#define RISCOS 1
 #else
 #define RISCOS 0
-#endif
 #endif /* RISCOS */
 
-#if !(WINDOWS || RISCOS)
+#if defined(WINDOWS)
+/* set up on command line */
+#elif defined(_WIN32) /* defined by compiler (even for _WIN64) */
+#define WINDOWS 1
+#elif defined(TARGET_WINDOWS)
+#define WINDOWS 1
+#else
+#define WINDOWS 0
+#endif /* WINDOWS */
+
+#if !(RISCOS || WINDOWS)
 #error Unable to compile code for this OS
 #endif /* OS */
+
+#if RISCOS
+#define RISCOS_ONLY(stmt)       stmt
+#else
+#define RISCOS_ONLY(stmt)       /* stmt omitted in other targets */
+#endif
+
+#if RISCOS
+#define RISCOS_ONLY_ARG(arg)    , arg
+#else
+#define RISCOS_ONLY_ARG(arg)    /* arg omitted in other targets */
+#endif
+
+#if WINDOWS
+#define WINDOWS_ONLY(stmt)      stmt
+#else
+#define WINDOWS_ONLY(stmt)      /* stmt omitted in other targets */
+#endif
+
+#if WINDOWS
+#define WINDOWS_ONLY_ARG(arg)   , arg
+#else
+#define WINDOWS_ONLY_ARG(arg)   /* arg omitted in other targets */
+#endif
+
+#if RISCOS
+#define RISCOS_OR_WINDOWS(r_val, w_val) (r_val)
+#elif WINDOWS
+#define RISCOS_OR_WINDOWS(r_val, w_val) (w_val)
+#endif
 
 /* define something we can consistently test on */
 #if (WINDOWS && defined(_UNICODE)) || (RISCOS && 0)
@@ -73,11 +99,11 @@
 /* First time set-up */
 #include "cmodules/coltsoft/pragma.h"
 
-#define BIG_ENDIAN 4321
-#define LITTLE_ENDIAN 1234
+#define BIG_ENDIAN      4321
+#define LITTLE_ENDIAN   1234
 
 #if defined(__clang__)
-#include "cmodules/coltsoft/host_clang.h"
+//#include "cmodules/coltsoft/host_clang.h"
 #endif
 
 #if RISCOS
@@ -110,6 +136,11 @@
 
 #define inline_when_fast_fp /*nothing*/
 
+#if CROSS_COMPILE && defined(HOST_CLANG) && defined(TARGET_RISCOS)
+/*__pragma(message("CROSS_COMPILE: HOST_CLANG & TARGET_RISCOS"))*/
+#include "cmodules/coltsoft/target_riscos_host_clang.h"
+#endif
+
 #if CROSS_COMPILE && defined(HOST_GCCSDK) && defined(TARGET_RISCOS)
 /*__pragma(message("CROSS_COMPILE: HOST_GCCSDK & TARGET_RISCOS"))*/
 #include "cmodules/coltsoft/target_riscos_host_gccsdk.h"
@@ -134,38 +165,13 @@ __pragma(message("CROSS_COMPILE: HOST_WINDOWS & TARGET_RISCOS"))
 
 #endif /* WINDOWS */
 
-#if APP_UNICODE
-
-#if 1
-
-/* UTF-8 encoding is used in USTR/UCHAR */
-#define USTR_IS_SBSTR 0
-/* TCHAR is WCHAR (UTF-16, was simply UCS-2 on NT 4.0) */
-#define TSTR_IS_SBSTR 0
-
-#else
-
-/* Do NOT use UTF-8 encoding in USTR/UCHAR - alias USTR/UCHAR as SBSTR/SBCHAR U8 Latin-N throughout */
-#define USTR_IS_SBSTR 1
-/* But TCHAR is WCHAR (UTF-16, was simply UCS-2 on NT 4.0) */
-#define TSTR_IS_SBSTR 0
-
-#endif
-
-#else /* NOT APP_UNICODE */
-
-/* Do NOT use UTF-8 encoding in USTR/UCHAR - alias USTR/UCHAR as SBSTR/SBCHAR U8 Latin-N throughout */
-#define USTR_IS_SBSTR 1
-/* Also TSTR/TCHAR is SBSTR/SBCHAR U8 Latin-N */
-#define TSTR_IS_SBSTR 1
-
-#endif /* APP_UNICODE */
-
 /* Nobble Microsoft extensions and definitions on sensible systems */
 
 #if RISCOS
 
-#if !CROSS_COMPILE
+#if CROSS_COMPILE && defined(HOST_WINDOWS)
+/* leave alone for MSVC */
+#else
 #define __cdecl
 #endif
 #define PASCAL
@@ -186,6 +192,10 @@ __pragma(message("CROSS_COMPILE: HOST_WINDOWS & TARGET_RISCOS"))
 
 #ifndef __analysis_assume
 #define __analysis_assume(expr) __assume(expr)
+#endif
+
+#ifndef _Analysis_assume_
+#define _Analysis_assume_(expr) __assume(expr)
 #endif
 
 /* much more of differences covered in coltsoft/coltsoft.h ... */

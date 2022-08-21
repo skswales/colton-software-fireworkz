@@ -370,7 +370,7 @@ pdss_cell_process(
     STATUS status;
     U8 data_type;
     ARRAY_HANDLE h_pd_format;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_cell, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_cell, 256);
     quick_ublock_with_buffer_setup(quick_ublock_cell);
 
     if(status_ok(status = pdss_cell_make(&data_type,
@@ -383,7 +383,7 @@ pdss_cell_process(
         {
             OBJECT_ID object_id;
             LOAD_CELL_FOREIGN load_cell_foreign;
-            zero_struct(load_cell_foreign);
+            zero_struct_fn(load_cell_foreign);
             status_consume(object_data_from_slr(p_docu, &load_cell_foreign.object_data, p_slr));
             load_cell_foreign.original_slr = *p_slr;
 
@@ -418,52 +418,6 @@ pdss_cell_process(
 
     return(status);
 }
-
-#if defined(PDSS_AUTO_WIDTH)
-
-_Check_return_
-static STATUS
-pdss_auto_width(
-    _DocuRef_   P_DOCU p_docu,
-    _InVal_     COL n_cols,
-    _InVal_     ROW n_rows)
-{
-    STATUS status = STATUS_OK;
-    DOCU_AREA docu_area;
-    STYLE style;
-    COL col;
-
-    docu_area_init(&docu_area);
-    docu_area_set_whole_col(&docu_area);
-
-    style_init(&style);
-    style_bit_set(&style, STYLE_SW_CS_WIDTH);
-
-    for(col = 0; col < n_cols; ++col)
-    {
-        COL_AUTO_WIDTH col_auto_width;
-        col_auto_width.col = col;
-        col_auto_width.row_s = 0;
-        col_auto_width.row_e = n_rows;
-        col_auto_width.allow_special = TRUE;
-        col_auto_width.width = 0;
-        status_assert(object_call_id(p_docu->object_id_flow, p_docu, T5_MSG_COL_AUTO_WIDTH, &col_auto_width));
-        style.col_style.width = col_auto_width.width;
-
-        if(style.col_style.width != 0)
-        {
-            STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
-            STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style);
-            docu_area.tl.slr.col = col;
-            docu_area.br.slr.col = col + 1;
-            status_break(status = style_docu_area_add(p_docu, &docu_area, &style_docu_area_add_parm));
-        }
-    }
-
-    return(status);
-}
-
-#endif /* PDSS_AUTO_WIDTH */
 
 _Check_return_
 static STATUS
@@ -561,11 +515,6 @@ T5_MSG_PROTO(static, pdss_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_
                             status_break(status);
                         }
                     }
-
-#if defined(PDSS_AUTO_WIDTH)
-                    if(status_ok(status))
-                        status = pdss_auto_width(p_docu, n_cols, n_rows);
-#endif /* PDSS_AUTO_WIDTH */
                 }
             }
         }
@@ -1115,7 +1064,7 @@ pdss_slot_construct_strip(
                         if(p_pd_construct->p_proc_construct)
                         {
                             BOOL ok_flag = (p_u8_construct == p_u8_slot) || (p_u8_construct == p_u8_ss);
-                            S32 ss_len = (*p_pd_construct->p_proc_construct) (ok_flag, p_u8_construct, len);
+                            S32 ss_len = (* p_pd_construct->p_proc_construct) (ok_flag, p_u8_construct, len);
 
                             if(ss_len != 0)
                                 p_u8_ss = p_u8_slot + len;

@@ -13,13 +13,14 @@
  * Stuart K. Swales 17-Jul-1990
  *
  * History:
- * 0.01 17-Jul-90 SKS created
- * 0.10 11-Apr-94 SKS made it output messages conditional on RISCOS/WINDOWS
- * 0.11 19-Sep-94 SKS made it not identify comments that don't start at start of line
- * 0.12 09-Jan-12 SKS default country string UK, fix comments
- * 0.13 13-Feb-14 SKS MPL-ed
- * 0.14 17-Nov-16 SKS Allow LF separator
- * 0.15 21-Aug-19 SKS fprintf(stderr)
+ * 0.01 17-Jul-1990 SKS created
+ * 0.10 11-Apr-1994 SKS made it output messages conditional on RISCOS/WINDOWS
+ * 0.11 19-Sep-1994 SKS made it not identify comments that don't start at start of line
+ * 0.12 09-Jan-2012 SKS default country string UK, fix comments
+ * 0.13 13-Feb-2014 SKS MPL-ed
+ * 0.14 17-Nov-2016 SKS Allow LF separator
+ * 0.15 21-Aug-2019 SKS fprintf(stderr)
+ * 0.16 20-May-2020 SKS (country) check back in concordance with calling Makefiles
 */
 
 #include <stdlib.h>
@@ -54,7 +55,7 @@ messages_init(FILE * fin);
 
 /* ----------------------------------------------------------------------- */
 
-#define VERSION "0.15"
+#define VERSION "0.16"
 
 #define ARG_STROP_CHAR '-'
 #define ARG_STROP_STR  "-"
@@ -77,7 +78,7 @@ static int
 g_lf_sep = 0;
 
 static char
-country_string[16] = "(UK)";
+country_string[16] = "UK";
 
 static int
 messages_init(FILE * fin)
@@ -183,11 +184,9 @@ messages_init(FILE * fin)
                 /* first chars now conditional country string */
                 if(ch == '(')
                 {
-                    size_t csl = strlen(country_string);
+                    const size_t csl = strlen(country_string);
 
-                    --in;
-
-                    if(strncmp(in, country_string, csl))
+                    if( (')' != in[csl]) || (0 != strncmp(in, country_string, csl)) )
                     {
                         /*fprintf(stderr, "rejects %10s", in);*/
 
@@ -201,7 +200,7 @@ messages_init(FILE * fin)
                         continue;
                     }
 
-                    in += csl;
+                    in += csl + 2 /* leading and trailing brackets */;
                     continue;
                 }
 

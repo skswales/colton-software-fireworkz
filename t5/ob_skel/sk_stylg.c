@@ -72,14 +72,17 @@ style_grid_array_from_region(
 
                 style_selector_clear(&selector);
 
-                for(i = 0, p_grid_slot_i = p_grid_slot; i < n_slots; i += 1, p_grid_slot_i += 1)
-                    if(p_grid_slot_i->slr.col >= 0 && p_grid_slot_i->slr.row >= 0
-                       &&
-                       p_grid_slot_i->slr.col < n_cols_logical(p_docu) && p_grid_slot_i->slr.row < n_rows(p_docu))
+                for(i = 0, p_grid_slot_i = p_grid_slot; i < n_slots; ++i, ++p_grid_slot_i)
+                {
+                    if( (p_grid_slot_i->slr.col >= 0) &&
+                        (p_grid_slot_i->slr.row >= 0) &&
+                        (p_grid_slot_i->slr.col < n_cols_logical(p_docu)) &&
+                        (p_grid_slot_i->slr.row < n_rows(p_docu)) )
                     {
                         style_slr_grid_get(p_docu, p_grid_slot_i, p_style_docu_area, stack_level);
                         void_style_selector_or(&selector, &selector, &p_grid_slot_i->selector);
                     }
+                }
 
                 if(!style_selector_any(&selector))
                     break;
@@ -98,7 +101,7 @@ static void
 style_grid_array_init(
     P_GRID_BLOCK p_grid_block,
     _InRef_     PC_REGION p_region,
-    _In_        PAGE_FLAGS page_flags)
+    _InVal_     PAGE_FLAGS page_flags)
 {
     SLR slr;
     P_GRID_SLOT p_grid_slot;
@@ -121,10 +124,10 @@ style_grid_array_init(
                 p_grid_slot->grid_element[i].rgb_level = S32_MAX;
             }
 
-            if(slr.row     == p_grid_block->region.tl.row && page_flags.first_row_on_page ||
-               slr.col     == p_grid_block->region.tl.col && page_flags.first_col_on_page ||
-               slr.row + 1 == p_grid_block->region.br.row && page_flags.last_row_on_page  ||
-               slr.col + 1 == p_grid_block->region.br.col && page_flags.last_col_on_page)
+            if( ((slr.row     == p_grid_block->region.tl.row) && page_flags.first_row_on_page) ||
+                ((slr.col     == p_grid_block->region.tl.col) && page_flags.first_col_on_page) ||
+                ((slr.row + 1 == p_grid_block->region.br.row) && page_flags.last_row_on_page)  ||
+                ((slr.col + 1 == p_grid_block->region.br.col) && page_flags.last_col_on_page)  )
             {
                 p_grid_slot->slr.col = -1;
                 p_grid_slot->slr.row = -1;
@@ -248,15 +251,34 @@ define offsets from current slot in grid array
 *
 ******************************************************************************/
 
-static S32
+_Check_return_
+static inline BOOL
 style_grid_line_style_compare(
-    P_GRID_LINE_STYLE p_grid_line_style1,
-    P_GRID_LINE_STYLE p_grid_line_style2)
+    _InRef_     PC_GRID_LINE_STYLE p_grid_line_style1,
+    _InRef_     PC_GRID_LINE_STYLE p_grid_line_style2)
 {
     if(p_grid_line_style1->border_line_flags.border_style != p_grid_line_style2->border_line_flags.border_style)
-        return(1);
+        return(TRUE);
 
     return(rgb_compare_not_equals(&p_grid_line_style1->rgb, &p_grid_line_style2->rgb));
+}
+
+/******************************************************************************
+*
+* set the faint grid line style
+*
+******************************************************************************/
+
+#define COLOUR_OF_FAINT_GRID 1 /* restore this!!! */
+
+static inline void
+grid_line_style_set_faint_grid(
+    _InoutRef_  P_GRID_LINE_STYLE p_grid_line_style)
+{
+    assert(p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE);
+    p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
+    assert(p_grid_line_style->border_line_flags.border_style < SF_BORDER_COUNT);
+    p_grid_line_style->rgb = rgb_stash[COLOUR_OF_FAINT_GRID]; /* maybe read from UI.FaintGrid style in future */
 }
 
 /******************************************************************************
@@ -267,7 +289,7 @@ style_grid_line_style_compare(
 
 static void
 style_grid_from_grid_slot_h(
-    P_GRID_LINE_STYLE p_grid_line_style,
+    _OutRef_    P_GRID_LINE_STYLE p_grid_line_style,
     P_GRID_SLOT p_grid_slot,
     _InVal_     S32 n_slots_per_row,
     _In_        GRID_FLAGS grid_flags)
@@ -297,10 +319,9 @@ style_grid_from_grid_slot_h(
         if(p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_TOP].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].rgb;
 
-        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
+        if( grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE) )
         {
-            p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
-            assert(p_grid_line_style->border_line_flags.border_style < SF_BORDER_COUNT);
+            grid_line_style_set_faint_grid(p_grid_line_style);
             level = S32_MAX;
         }
         else
@@ -345,10 +366,9 @@ style_grid_from_grid_slot_h(
         if(p_grid_slot_mb->grid_element[IX_GRID_TOP].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_BOTTOM].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_mb->grid_element[IX_GRID_TOP].rgb;
 
-        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
+        if( grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE) )
         {
-            p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
-            assert(p_grid_line_style->border_line_flags.border_style < SF_BORDER_COUNT);
+            grid_line_style_set_faint_grid(p_grid_line_style);
             level = S32_MAX;
         }
         else
@@ -375,7 +395,7 @@ style_grid_from_grid_slot_h(
 
 static void
 style_grid_from_grid_slot_v(
-    P_GRID_LINE_STYLE p_grid_line_style,
+    _OutRef_    P_GRID_LINE_STYLE p_grid_line_style,
     P_GRID_SLOT p_grid_slot,
     _InVal_     S32 n_slots_per_row,
     _In_        GRID_FLAGS grid_flags)
@@ -402,9 +422,9 @@ style_grid_from_grid_slot_v(
         if(p_grid_slot_lm->grid_element[IX_GRID_RIGHT].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_LEFT].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_lm->grid_element[IX_GRID_RIGHT].rgb;
 
-        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
+        if( grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE) )
         {
-            p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
+            grid_line_style_set_faint_grid(p_grid_line_style);
             level = S32_MAX;
         }
         else
@@ -448,9 +468,9 @@ style_grid_from_grid_slot_v(
         if(p_grid_slot_rm->grid_element[IX_GRID_LEFT].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_RIGHT].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_rm->grid_element[IX_GRID_LEFT].rgb;
 
-        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
+        if( grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE) )
         {
-            p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
+            grid_line_style_set_faint_grid(p_grid_line_style);
             level = S32_MAX;
         }
         else
@@ -480,7 +500,7 @@ style_grid_from_grid_slot_v(
 
 extern COL
 style_grid_from_grid_block_h(
-    P_GRID_LINE_STYLE p_grid_line_style,
+    _OutRef_    P_GRID_LINE_STYLE p_grid_line_style,
     P_GRID_BLOCK p_grid_block,
     _InVal_     COL col,
     _InVal_     ROW row,
@@ -527,7 +547,7 @@ style_grid_from_grid_block_h(
 
 extern ROW
 style_grid_from_grid_block_v(
-    P_GRID_LINE_STYLE p_grid_line_style,
+    _OutRef_    P_GRID_LINE_STYLE p_grid_line_style,
     P_GRID_BLOCK p_grid_block,
     _InVal_     COL col,
     _InVal_     ROW row,

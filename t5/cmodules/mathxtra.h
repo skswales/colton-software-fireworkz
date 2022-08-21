@@ -157,6 +157,8 @@ extern double FreeBSD_yn(int, double);
 #define asinh(d) mx_asinh(d)
 #define atanh(d) mx_atanh(d)
 
+#define hypot(x, y) mx_fhypot(x, y)
+
 _Check_return_
 static inline bool
 isunordered(_InVal_ double a, _InVal_ double b)
@@ -176,12 +178,32 @@ isgreater(_InVal_ double a, _InVal_ double b)
 
 _Check_return_
 static inline bool
+isgreaterequal(_InVal_ double a, _InVal_ double b)
+{
+    if(isnan(a) || isnan(b))
+        return(!isnan(b));
+
+    return(a >= b);
+}
+
+_Check_return_
+static inline bool
 isless(_InVal_ double a, _InVal_ double b)
 {
     if(isnan(a) || isnan(b))
         return(!isnan(b));
 
     return(a < b);
+}
+
+_Check_return_
+static inline bool
+islessequal(_InVal_ double a, _InVal_ double b)
+{
+    if(isnan(a) || isnan(b))
+        return(!isnan(b));
+
+    return(a <= b);
 }
 
 _Check_return_

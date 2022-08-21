@@ -23,7 +23,7 @@ $(BUILD_DIR).ob_toolb.$(COUNTRY)-18/rc: $(T5).ob_toolb.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 18 -common
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob18: $(T5).ob_toolb.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob18: $(T5).ob_toolb.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

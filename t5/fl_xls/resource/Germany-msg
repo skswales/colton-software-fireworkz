@@ -1,0 +1,34 @@
+#
+# this is the messages file for fl_xls (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1994-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with fl_xls/fl_xls.h
+#
+# UK 0:Password required
+0:Password required
+#
+# errors: keep consistent with fl_xls/fl_xls.h
+# see XLS_ERR(n)
+#
+# UK e0:Excel load: unknown BOF record
+e0:Laden von Excel-Daten: Unbekannter BOF-Datensatz
+#e1:ERROR_RQ
+# UK e2:Excel load: bad formula
+e2:Laden von Excel-Daten: Ungültige Formel
+#e3:Spare
+# UK e4:Excel load: no DIMENSIONS record
+e4:Laden von Excel-Daten: Kein DIMENSIONS-Datensatz
+# UK e5:Excel load: bad BOUNDSHEET record
+e5:Laden von Excel-Daten: Ungültige BOUNDSHEET-Datensatz
+# UK e6:Excel load: unsupported file encryption
+e6:Laden von Excel-Daten: Nicht unterstützte Dateiverschlüsselung
+# UK e7:Excel load: wrong file password
+e7:Laden von Excel-Daten: Falsches Passwort für diese Datei
+#
+# end of msg (fl_xls)

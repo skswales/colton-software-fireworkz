@@ -8,7 +8,9 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_spelb/ob_spelb.h
+#
+# MSG_DIALOG_CHOICES_SPELB_xxx
 #
 0:Spell
 1:Auto check
@@ -16,5 +18,7 @@
 3:Load master
 4:Load user
 5:Write to dictionaries
+#
+# errors (none)
 #
 # end of msg (ob_spelb)

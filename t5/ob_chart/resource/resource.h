@@ -173,7 +173,7 @@ messages
 #define CHART_MSG_DIALOG_PIE_GALLERY_EXPLODE                        CHART_MSG(3)
 #define CHART_MSG_DIALOG_PIE_GALLERY_EXPLODE_BY                     CHART_MSG(4)
 #define CHART_MSG_DIALOG_PIE_GALLERY_START_POSITION                 CHART_MSG(5)
-#define CHART_MSG_DIALOG_PIE_GALLERY_START_POSITION_ANGLE           CHART_MSG(6)
+#define CHART_MSG_DIALOG_ANGLE                                      CHART_MSG(6)
 #define CHART_MSG_DIALOG_PIE_GALLERY_ANTICLOCKWISE                  CHART_MSG(7)
 
 #define CHART_MSG_SUGGESTED_LEAFNAME                                CHART_MSG(10)
@@ -181,7 +181,8 @@ messages
 #define CHART_MSG_DIALOG_BAR_GALLERY_CAPTION                        CHART_MSG(100)
 #define CHART_MSG_DIALOG_BAR_GALLERY_HELP_TOPIC                     CHART_MSG(101)
 #define CHART_MSG_DIALOG_BAR_GALLERY_HORIZONTAL                     CHART_MSG(102)
-#define CHART_MSG_DIALOG_BAR_GALLERY_3D                             CHART_MSG(103)
+
+#define CHART_MSG_DIALOG_BL_GALLERY_3D                              CHART_MSG(103)
 
 #define CHART_MSG_DIALOG_OVER_BL_GALLERY_CAPTION                    CHART_MSG(105)
 #define CHART_MSG_DIALOG_OVER_BL_GALLERY_HELP_TOPIC                 CHART_MSG(106)
@@ -268,6 +269,7 @@ messages
 #define CHART_MSG_DIALOG_SERIES_IN_OVERLAY                          CHART_MSG(433)
 
 #define CHART_MSG_DIALOG_STYLE_LINE_COLOUR                          CHART_MSG(500)
+#define CHART_MSG_DIALOG_STYLE_LINE_STYLE                           CHART_MSG(501)
 
 #define CHART_MSG_DIALOG_STYLE_FILL                                 CHART_MSG(503)
 #define CHART_MSG_DIALOG_STYLE_FILL_COLOUR                          CHART_MSG(504)

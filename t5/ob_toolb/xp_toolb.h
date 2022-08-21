@@ -116,7 +116,8 @@ T5_TOOLBAR_TOOL_SET /*, * P_T5_TOOLBAR_TOOL_SET*/; typedef const T5_TOOLBAR_TOOL
 typedef struct T5_TOOLBAR_TOOL_ENABLE_QUERY
 {
     /*IN*/
-    PC_USTR name;
+    PC_UCHARS name;
+    U32 name_len;
 
     /*OUT*/
     BOOL enabled;

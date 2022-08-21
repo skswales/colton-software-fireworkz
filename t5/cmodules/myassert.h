@@ -284,23 +284,23 @@ WrapOsBoolReporting(
 #define myassert0x(exp, str) do { \
     if_constant(!(exp)) \
         myassert0(      str); \
-    __analysis_assume(exp); } while_constant(0)
+    _Analysis_assume_(exp); } while_constant(0)
 #define myassert1x(exp, format, arg1) do { \
     if_constant(!(exp)) \
         myassert1(      format, arg1); \
-    __analysis_assume(exp); } while_constant(0)
+    _Analysis_assume_(exp); } while_constant(0)
 #define myassert2x(exp, format, arg1, arg2) do { \
     if_constant(!(exp)) \
         myassert2(      format, arg1, arg2); \
-    __analysis_assume(exp); } while_constant(0)
+    _Analysis_assume_(exp); } while_constant(0)
 #define myassert3x(exp, format, arg1, arg2, arg3) do { \
     if_constant(!(exp)) \
         myassert3(      format, arg1, arg2, arg3); \
-    __analysis_assume(exp); } while_constant(0)
+    _Analysis_assume_(exp); } while_constant(0)
 #define myassert4x(exp, format, arg1, arg2, arg3, arg4) do { \
     if_constant(!(exp)) \
         myassert4(      format, arg1, arg2, arg3, arg4); \
-    __analysis_assume(exp); } while_constant(0)
+    _Analysis_assume_(exp); } while_constant(0)
 
 #define assert_EQ(exp1, exp2) do { \
     if(__myasserted_EQ(__Tfunc__, __TFILE__, __LINE__, (U32) (exp1), (U32) (exp2))) \
@@ -392,11 +392,11 @@ _status_assert(
 #define myassert12(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
 #define myassert13(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13)
 
-#define myassert0x(exp, format) __analysis_assume(exp)
-#define myassert1x(exp, format, arg1) __analysis_assume(exp)
-#define myassert2x(exp, format, arg1, arg2) __analysis_assume(exp)
-#define myassert3x(exp, format, arg1, arg2, arg3) __analysis_assume(exp)
-#define myassert4x(exp, format, arg1, arg2, arg3, arg4) __analysis_assume(exp)
+#define myassert0x(exp, format) _Analysis_assume_(exp)
+#define myassert1x(exp, format, arg1) _Analysis_assume_(exp)
+#define myassert2x(exp, format, arg1, arg2) _Analysis_assume_(exp)
+#define myassert3x(exp, format, arg1, arg2, arg3) _Analysis_assume_(exp)
+#define myassert4x(exp, format, arg1, arg2, arg3, arg4) _Analysis_assume_(exp)
 
 #define assert_EQ(exp1, exp2)
 

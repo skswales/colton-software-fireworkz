@@ -38,11 +38,11 @@ $(PROD_BUILD_DIR).binaries.Neutral.Ob08: $(PROD_BUILD_DIR).o.Neutral.M08 $(PROD_
  $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M08 -N08 $(OBJMUNGE_OBJFLAGS) -Eobject_spell
 
 # Windows STRINGTABLE
-$(BUILD_DIR).ob_spell.$(COUNTRY)-08/rc: $(T5).ob_spell.resource.$(COUNTRY)-msg
+$(BUILD_DIR).ob_spell.$(COUNTRY)-08/rc: $(T5).ob_spell.resource.$(COUNTRY).msg
  Basic -quit $(RCGen) -output $@ -from $? -object 08 -common
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob08: $(T5).ob_spell.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob08: $(T5).ob_spell.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

@@ -1,0 +1,41 @@
+#
+# this is the messages file for fl_csv (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with fl_csv/fl_csv.h
+#
+# CSV_MSG_LOAD_QUERY_xxx
+#
+# UK 1:Loading CSV
+1:Laden von CSV-Daten
+# UK 2:ug/ug08_importing_data_into_tables.htm
+2:ug/ug08_importing_data_into_tables.htm
+# UK 3:Insert as table
+3:Als Tabelle einfügen
+# UK 4:Insert as labels
+4:Als Etiketten einfügen
+# UK 5:Labels across
+5:Etiketten quer
+# UK 7:Insert, overwriting blank cells
+7:Daten einfügen, leere Zellen überschreiben
+# UK 8:Insert as database
+8:Daten als Datenbank einfügen
+# UK 10:Loading delimited text
+10:Laden von begrenztem Text
+#
+# errors: keep consistent with fl_csv/fl_csv.h
+# see CSV_ERR(n)
+#
+# UK e0:Cannot import CSV as database when the destination document has not been saved
+e0:CSV kann nicht als Datenbank importiert werden, wenn das Zieldokument nicht gespeichert wurde
+#e1:ERROR_RQ
+# UK e2:Cannot import CSV as database file '%s' as a file of that name already exists
+e2:CSV kann nicht als Datenbankdatei '%s' importiert werden, da ein Dokument mit diesem Namen bereits vorhanden ist
+#
+# end of msg (fl_csv)

@@ -157,14 +157,14 @@ choices_spell_write_user_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_S
 static const DIALOG_CTL_CREATE
 choices_spell_ctl_create[] =
 {
-    { &choices_spell_group,       &choices_spell_group_data },
-    { &choices_spell_auto_check,  &choices_spell_auto_check_data },
+    { { &choices_spell_group },       &choices_spell_group_data },
+    { { &choices_spell_auto_check },  &choices_spell_auto_check_data },
 #if 0
-    { &choices_spell_dict_group,  &choices_spell_dict_group_data },
-    { &choices_spell_load_master, &choices_spell_load_master_data },
-    { &choices_spell_load_user,   &choices_spell_load_user_data },
+    { { &choices_spell_dict_group },  &choices_spell_dict_group_data },
+    { { &choices_spell_load_master }, &choices_spell_load_master_data },
+    { { &choices_spell_load_user },   &choices_spell_load_user_data },
 #endif
-    { &choices_spell_write_user,  &choices_spell_write_user_data }
+    { { &choices_spell_write_user },  &choices_spell_write_user_data }
 };
 
 T5_MSG_PROTO(static, spelb_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_choices_query_block)
@@ -179,8 +179,8 @@ T5_MSG_PROTO(static, spelb_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_cho
 #endif
     choices_spell_write_user_data.init_state  = (U8) global_preferences.spell_write_user;
 
-    choices_spell_group.relative_dialog_control_id[0] = p_choices_query_block->tr_dialog_control_id;
-    choices_spell_group.relative_dialog_control_id[1] = p_choices_query_block->tr_dialog_control_id;
+    choices_spell_group.relative_dialog_control_id[0] = (PACKED_DIALOG_CTL_ID) p_choices_query_block->tr_dialog_control_id;
+    choices_spell_group.relative_dialog_control_id[1] = (PACKED_DIALOG_CTL_ID) p_choices_query_block->tr_dialog_control_id;
 
     p_choices_query_block->tr_dialog_control_id =
     p_choices_query_block->br_dialog_control_id = CHOICES_SPELB_ID_GROUP;

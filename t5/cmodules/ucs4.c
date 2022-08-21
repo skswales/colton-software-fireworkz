@@ -116,7 +116,7 @@ load_case_map_simple(
     if(read_failed_UnicodeData)
         return(STATUS_FAIL);
 
-    if(!status_done(status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("UnicodeData.txt"))))
+    if(!status_done(status = file_find_on_path(filename, elemof32(filename), file_get_resources_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("UnicodeData.txt"))))
     {
         read_failed_UnicodeData = 1;
         return(STATUS_FAIL);
@@ -136,7 +136,7 @@ load_case_map_simple(
     else
     {
         const U32 l2_size_bytes = UCS4_TABLE_L2_SIZE * sizeof32(*l2_table);
-        l2_table = collect_add_entry_bytes(CASE_MAP, &list_block_case_map_simple, NULL, l2_size_bytes, l2_base_ucs4, &status);
+        l2_table = collect_add_entry_bytes(CASE_MAP, &list_block_case_map_simple, P_DATA_NONE, l2_size_bytes, l2_base_ucs4, &status);
     }
 
     if(NULL != l2_table)
@@ -611,7 +611,7 @@ load_DerivedCoreProperties(
     if(read_failed_DerivedCoreProperties)
         return(STATUS_FAIL);
 
-    if(!status_done(status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("DerivedCoreProperties.txt"))))
+    if(!status_done(status = file_find_on_path(filename, elemof32(filename), file_get_resources_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("DerivedCoreProperties.txt"))))
     {
         read_failed_DerivedCoreProperties = 1;
         return(STATUS_FAIL);
@@ -629,7 +629,7 @@ load_DerivedCoreProperties(
     }
     else
     {
-        l2_table = collect_add_entry_bytes(U8, &list_block_DerivedCoreProperties, NULL, l2_size_bytes, l2_base_ucs4, &status);
+        l2_table = collect_add_entry_bytes(U8, &list_block_DerivedCoreProperties, P_DATA_NONE, l2_size_bytes, l2_base_ucs4, &status);
     }
 
     if(NULL != l2_table)
@@ -1032,7 +1032,7 @@ load_case_fold_simple(
     if(read_failed_CaseFolding)
         return(load_case_fold_simple_fallback(ucs4));
 
-    if(!status_done(status = file_find_on_path(filename, elemof32(filename), file_get_search_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("CaseFolding.txt"))))
+    if(!status_done(status = file_find_on_path(filename, elemof32(filename), file_get_resources_path(), TEXT("UCD") FILE_DIR_SEP_TSTR TEXT("CaseFolding.txt"))))
     {
         read_failed_CaseFolding = 1;
         return(load_case_fold_simple_fallback(ucs4));
@@ -1052,7 +1052,7 @@ load_case_fold_simple(
     else
     {
         const U32 l2_size_bytes = UCS4_TABLE_L2_SIZE * sizeof32(*l2_table);
-        l2_table = collect_add_entry_bytes(UCS4, &list_block_case_fold_simple, NULL, l2_size_bytes, l2_base_ucs4, &status);
+        l2_table = collect_add_entry_bytes(UCS4, &list_block_case_fold_simple, P_DATA_NONE, l2_size_bytes, l2_base_ucs4, &status);
     }
 
     if(NULL != l2_table)

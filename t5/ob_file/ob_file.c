@@ -50,17 +50,21 @@ extern PC_U8 rb_file_msg_weak;
 internal routines
 */
 
+#if WINDOWS
+static const ARG_TYPE
+args_s32[] = { ARG_TYPE_S32, ARG_TYPE_NONE };
+#endif /* WINDOWS */
+
 static CONSTRUCT_TABLE
 object_construct_table[] =
 {                                                                                                   /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
-    { "NewDocument",            NULL,                       T5_CMD_NEW_DOCUMENT },
 #if WINDOWS
     { "OpenDocument",           NULL,                       T5_CMD_OPEN_DOCUMENT },
     { "CloseDocumentReq",       NULL,                       T5_CMD_CLOSE_DOCUMENT_REQ },
 
-    { "InsertFile",             NULL,                       T5_MSG_INSERT_FILE_WINDOWS },
-    { "InsertPicture",          NULL,                       T5_MSG_INSERT_FILE_WINDOWS_PICTURE },
+    { "InsertFile",             NULL,                       T5_CMD_INSERT_FILE_WINDOWS },
+    { "InsertPicture",          args_s32,                   T5_CMD_INSERT_FILE_WINDOWS_PICTURE },
 #endif /* WINDOWS */
 
     { NULL,                     NULL,                       T5_EVENT_NONE } /* end of table */
@@ -72,7 +76,7 @@ static struct OB_FILE_STATICS
 
 #if WINDOWS
     OPENFILENAME openfilename;
-    DWORD nFilterIndex[2];
+    DWORD nFilterIndex[3];
     TCHARZ szDirName[BUF_MAX_PATHSTRING];
     TCHARZ szCustomFilter[64]; /* space for GetOpenFileName to stash custom filespec */
 #endif /* WINDOWS */
@@ -81,6 +85,37 @@ ob_file_statics;
 
 #if WINDOWS
 
+/* build filters as descriptive text,CH_NULL,wildcard spec,CH_NULL sets */
+/* e.g. "Fireworkz (*.fwk)",CH_NULL,"*.fwk",CH_NULL */
+
+_Check_return_
+extern STATUS
+windows_filter_list_add(
+    _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
+    _In_z_      PCTSTR tstr_filter_text,
+    _In_z_      PCTSTR tstr_filter_wildcard_srch)
+{
+    status_return(quick_tblock_tstr_add_n(p_filter_quick_tblock, tstr_filter_text, strlen_with_NULLCH));
+           return(quick_tblock_tstr_add_n(p_filter_quick_tblock, tstr_filter_wildcard_srch, strlen_with_NULLCH));
+}
+
+/* filter list ends with one final CH_NULL; kill if it is not OK */
+
+_Check_return_
+extern STATUS
+windows_filter_list_finish(
+    _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
+    _In_        STATUS status)
+{
+    if(status_ok(status))
+        status = quick_tblock_nullch_add(p_filter_quick_tblock);
+
+    if(status_fail(status))
+        quick_tblock_dispose(p_filter_quick_tblock);
+
+    return(status);
+}
+
 _Check_return_
 extern STATUS /*n_filters*/
 windows_filter_list_create(
@@ -88,7 +123,7 @@ windows_filter_list_create(
     _InVal_     S32 filter_mask,
     _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */)
 {
-    /* build filters as description,CH_NULL,wildcard spec,CH_NULL sets */
+    /* build filters as description,CH_NULL,wildcard spec,CH_NULL sets, finished with one more CH_NULL */
     STATUS status = STATUS_OK;
     const BOOL fEnumerating = (0 == array_elements32(p_h_save_filetype));
     ARRAY_INDEX array_index = fEnumerating ? ENUMERATE_BOUND_FILETYPES_START : 0;
@@ -97,9 +132,8 @@ windows_filter_list_create(
     for(;;)
     {
         T5_FILETYPE t5_filetype;
-        BOOL fFound_description, fFound_extension;
-        PC_USTR ustr_description;
-        PC_USTR ustr_extension_srch;
+        BOOL fFound_text, fFound_wildcard;
+        PCTSTR tstr_filter_text, tstr_filter_wildcard;
 
         if(fEnumerating)
         {
@@ -122,26 +156,62 @@ windows_filter_list_create(
             ++array_index;
         }
 
-        ustr_description = description_ustr_from_t5_filetype(t5_filetype, &fFound_description);
-        ustr_extension_srch = extension_srch_ustr_from_t5_filetype(t5_filetype, &fFound_extension);
+        tstr_filter_text = filter_text_tstr_from_t5_filetype(t5_filetype, filter_mask, &fFound_text);
+        tstr_filter_wildcard = filter_wildcard_tstr_from_t5_filetype(t5_filetype, filter_mask, &fFound_wildcard);
 
-        status_break(status = quick_tblock_ustr_add_n(p_filter_quick_tblock, ustr_description, strlen_with_NULLCH));
-        status_break(status = quick_tblock_ustr_add_n(p_filter_quick_tblock, ustr_extension_srch, strlen_with_NULLCH));
+        status_break(status = windows_filter_list_add(p_filter_quick_tblock, tstr_filter_text, tstr_filter_wildcard));
 
         ++n_filters;
     }
 
-    /* list ends with one final CH_NULL */
-    if(status_ok(status))
-        status = quick_tblock_nullch_add(p_filter_quick_tblock);
-
-    if(status_fail(status))
-    {
-        quick_tblock_dispose(p_filter_quick_tblock);
-        return(status);
-    }
+    status_return(windows_filter_list_finish(p_filter_quick_tblock, status));
 
     return(n_filters);
+}
+
+_Check_return_
+extern S32
+windows_filter_list_get_filter_index_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype_in,
+    _InVal_     S32 filter_mask,
+    _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */)
+{
+    const BOOL fEnumerating = (0 == array_elements32(p_h_save_filetype));
+    ARRAY_INDEX array_index = fEnumerating ? ENUMERATE_BOUND_FILETYPES_START : 0;
+    S32 n_filters = 1; /* NB filter index returned by GetSaveFileName() is one-based */
+
+    for(;;)
+    {
+        T5_FILETYPE t5_filetype;
+
+        if(fEnumerating)
+        {
+            t5_filetype = enumerate_bound_filetypes(&array_index, filter_mask);
+
+            if(ENUMERATE_BOUND_FILETYPES_START == array_index)
+                break;
+        }
+        else
+        {
+            PC_SAVE_FILETYPE p_save_filetype;
+
+            if(!array_index_is_valid(p_h_save_filetype, array_index))
+                break;
+
+            p_save_filetype = array_ptrc(p_h_save_filetype, SAVE_FILETYPE, array_index);
+
+            t5_filetype = p_save_filetype->t5_filetype;
+
+            ++array_index;
+        }
+
+        if(t5_filetype_in == t5_filetype)
+            return(n_filters);
+
+        ++n_filters;
+    }
+
+    return(0);
 }
 
 _Check_return_
@@ -267,9 +337,9 @@ insert_file_here(
 {
     HCURSOR hcursor_old;
     STATUS status;
-    const OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype);
+    const OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype, TRUE);
     MSG_INSERT_FILE msg_insert_file;
-    zero_struct(msg_insert_file);
+    zero_struct_fn(msg_insert_file);
 
     if(OBJECT_ID_NONE == object_id)
         return(create_error(ERR_UNKNOWN_FILETYPE));
@@ -344,17 +414,18 @@ static STATUS
 open_document(
     _DocuRef_   P_DOCU cur_p_docu,
     _InVal_     BOOL insert_file,
-    _InVal_     BOOL importing_picture)
+    _InVal_     OBJECT_ID object_id_importing_picture)
 {
     STATUS status;
     TCHARZ szFile[BUF_MAX_PATHSTRING];
+    const BOOL importing_picture = (OBJECT_ID_NONE != object_id_importing_picture);
     const S32 filter_mask = importing_picture ? BOUND_FILETYPE_READ_PICT : BOUND_FILETYPE_READ;
     const ARRAY_HANDLE h_save_filetype = 0;
     BOOL ofnResult;
     PTSTR loop_filename;
     T5_FILETYPE t5_filetype;
     QUICK_TBLOCK_WITH_BUFFER(filter_quick_tblock, 256);
-    QUICK_TBLOCK_WITH_BUFFER(insert_file_title_quick_tblock, 48);
+    QUICK_TBLOCK_WITH_BUFFER(insert_file_title_quick_tblock, 64);
     QUICK_TBLOCK_WITH_BUFFER(pathname_quick_tblock, 32);
     quick_tblock_with_buffer_setup(filter_quick_tblock);
     quick_tblock_with_buffer_setup(insert_file_title_quick_tblock);
@@ -381,6 +452,8 @@ open_document(
 
     if(!insert_file && !importing_picture)
         ob_file_statics.openfilename.Flags |= OFN_ALLOWMULTISELECT;
+    else /* (insert_file || importing_picture) */
+        ob_file_statics.openfilename.Flags |= OFN_HIDEREADONLY;
 
     /* build filters as description,CH_NULL,wildcard spec,CH_NULL sets */
     status_return(windows_filter_list_create(&filter_quick_tblock, filter_mask, &h_save_filetype));
@@ -430,7 +503,7 @@ open_document(
     ob_file_statics.openfilename.hwndOwner = NULL /*host_get_icon_hwnd()*/;
     {
     const P_VIEW p_view = p_view_from_viewno_caret(cur_p_docu);
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         ob_file_statics.openfilename.hwndOwner = p_view->main[WIN_BACK].hwnd;
         if(HOST_WND_NONE != p_view->pane[p_view->cur_pane].hwnd)
@@ -456,9 +529,9 @@ open_document(
     DWORD * p_nFilterIndex;
     if(insert_file)
     {
-        p_nFilterIndex = &ob_file_statics.nFilterIndex[1];
+        p_nFilterIndex = &ob_file_statics.nFilterIndex[importing_picture ? 2 : 1];
         if(!*p_nFilterIndex)
-            *p_nFilterIndex = 1; /* assumes All files (*.*) at start (newer style) */
+            *p_nFilterIndex = 1;
     }
     else
     {
@@ -478,22 +551,24 @@ open_document(
     {
         switch(CommDlgExtendedError())
         {
-        case 0: return(STATUS_CANCEL);
-        case CDERR_STRUCTSIZE: return(STATUS_FAIL);
-        case CDERR_INITIALIZATION: return(status_nomem());
-        case CDERR_NOTEMPLATE: return(STATUS_FAIL);
-        case CDERR_LOADSTRFAILURE: return(create_error(FILE_ERR_LOADSTRFAIL));
-        case CDERR_FINDRESFAILURE: return(create_error(FILE_ERR_FINDRESFAIL));
-        case CDERR_LOADRESFAILURE: return(create_error(FILE_ERR_LOADRESFAIL));
-        case CDERR_LOCKRESFAILURE: return(create_error(FILE_ERR_LOCKRESFAIL));
+        case 0:                     return(STATUS_CANCEL);
+
+        case CDERR_STRUCTSIZE:      return(STATUS_FAIL);
+        case CDERR_INITIALIZATION:  return(status_nomem());
+        case CDERR_NOTEMPLATE:      return(STATUS_FAIL);
+        case CDERR_NOHINSTANCE:     return(STATUS_FAIL);
+        case CDERR_LOADSTRFAILURE:  return(create_error(FILE_ERR_LOADSTRFAIL));
+        case CDERR_FINDRESFAILURE:  return(create_error(FILE_ERR_FINDRESFAIL));
+        case CDERR_LOADRESFAILURE:  return(create_error(FILE_ERR_LOADRESFAIL));
+        case CDERR_LOCKRESFAILURE:  return(status_nomem());
         case CDERR_MEMALLOCFAILURE: return(status_nomem());
-        case CDERR_MEMLOCKFAILURE: return(status_nomem());
-        case CDERR_NOHOOK: return(STATUS_FAIL);
+        case CDERR_MEMLOCKFAILURE:  return(status_nomem());
+        case CDERR_NOHOOK:          return(STATUS_FAIL);
         case CDERR_REGISTERMSGFAIL: return(status_nomem());
         case FNERR_SUBCLASSFAILURE: return(status_nomem());
         case FNERR_INVALIDFILENAME: return(create_error(FILE_ERR_BADNAME));
-        case FNERR_BUFFERTOOSMALL: return(status_nomem());
-        default: return(STATUS_FAIL);
+        case FNERR_BUFFERTOOSMALL:  return(status_nomem());
+        default:                    return(STATUS_FAIL);
         }
     }
 
@@ -532,16 +607,15 @@ open_document(
         if(!importing_picture)
             file_dirname(ob_file_statics.szDirName, filename);
 
-        /* remember filter indexes separately for each dialog */
-        if(!importing_picture)
-            ob_file_statics.nFilterIndex[insert_file ? 1 : 0] = ob_file_statics.openfilename.nFilterIndex;
+        /* remember filter indexes separately for each type of dialog */
+        ob_file_statics.nFilterIndex[importing_picture ? 2 : (insert_file ? 1 : 0)] = ob_file_statics.openfilename.nFilterIndex;
 
         t5_filetype = t5_filetype_from_filename(filename);
 
-        if(importing_picture)
+        if(importing_picture && (OBJECT_ID_CHART == object_id_importing_picture))
         {
             MSG_INSERT_FOREIGN msg_insert_foreign;
-            zero_struct(msg_insert_foreign);
+            zero_struct_fn(msg_insert_foreign);
             msg_insert_foreign.filename = filename;
             msg_insert_foreign.t5_filetype = t5_filetype;
             msg_insert_foreign.insert = TRUE;
@@ -562,9 +636,7 @@ open_document(
         switch(t5_filetype)
         {
         case FILETYPE_T5_FIREWORKZ:
-        case FILETYPE_T5_WORDZ:
-        case FILETYPE_T5_RESULTZ:
-        case FILETYPE_T5_RECORDZ:
+        case FILETYPE_T5_HYBRID_DRAW:
             {
             const BOOL fReadOnly = (0 != (ob_file_statics.openfilename.Flags & OFN_READONLY));
             status = load_this_fireworkz_file_rl(cur_p_docu, filename, fReadOnly);
@@ -760,15 +832,6 @@ T5_MSG_PROTO(static, file_msg_error_rq, _InoutRef_ P_MSG_ERROR_RQ p_msg_error_rq
     return(STATUS_OK);
 }
 
-T5_CMD_PROTO(static, file_cmd_new_document)
-{
-    UNREFERENCED_PARAMETER_InVal_(t5_message);
-    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
-
-    /* pop up template list or load single template */
-    return(load_this_template_file_rl(p_docu, NULL));
-}
-
 #if WINDOWS
 
 T5_CMD_PROTO(static, file_cmd_close_document_req)
@@ -779,6 +842,22 @@ T5_CMD_PROTO(static, file_cmd_close_document_req)
     process_close_request(p_docu, P_VIEW_NONE, TRUE /*closing_a_doc*/, FALSE, FALSE);
 
     return(STATUS_OK);
+}
+
+T5_CMD_PROTO(static, file_cmd_insert_file_windows_picture)
+{
+    P_ARGLIST_ARG p_arg;
+    OBJECT_ID object_id = OBJECT_ID_DRAW;
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+
+    if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
+    {
+        if(arg_present(&p_t5_cmd->arglist_handle, 0, &p_arg))
+            object_id = p_arg->val.object_id;
+    }
+
+    return(open_document(p_docu, TRUE, object_id));
 }
 
 #endif /* WINDOWS */
@@ -794,21 +873,18 @@ OBJECT_PROTO(extern, object_file)
     case T5_MSG_ERROR_RQ:
         return(file_msg_error_rq(p_docu, t5_message, (P_MSG_ERROR_RQ) p_data));
 
-    case T5_CMD_NEW_DOCUMENT:
-        return(file_cmd_new_document(p_docu, t5_message, (PC_T5_CMD) p_data));
-
 #if WINDOWS
     case T5_CMD_OPEN_DOCUMENT:
-        return(open_document(p_docu, FALSE, FALSE));
+        return(open_document(p_docu, FALSE, OBJECT_ID_NONE));
 
     case T5_CMD_CLOSE_DOCUMENT_REQ:
         return(file_cmd_close_document_req(p_docu, t5_message, (PC_T5_CMD) p_data));
 
-    case T5_MSG_INSERT_FILE_WINDOWS:
-        return(open_document(p_docu, TRUE, FALSE));
+    case T5_CMD_INSERT_FILE_WINDOWS:
+        return(open_document(p_docu, TRUE, OBJECT_ID_NONE));
 
-    case T5_MSG_INSERT_FILE_WINDOWS_PICTURE:
-        return(open_document(p_docu, TRUE, TRUE));
+    case T5_CMD_INSERT_FILE_WINDOWS_PICTURE:
+        return(file_cmd_insert_file_windows_picture(p_docu, t5_message, (PC_T5_CMD) p_data));
 #endif /* WINDOWS */
 
     default:

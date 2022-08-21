@@ -1,5 +1,5 @@
 REM BootRunGen - !Boot/!Run file generator for Fireworkz family
-:
+REM
 REM This Source Code Form is subject to the terms of the Mozilla Public
 REM License, v. 2.0. If a copy of the MPL was not distributed with this
 REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -8,59 +8,24 @@ REM Copyright (C) 1992-1998 Colton Software Limited
 REM Copyright (C) 1998-2015 R W Colton
 :
 REM TRACE TO "$.Temp.BRGen_out": TRACE ON
-PROCmain(FNreadargs)
+PROCmain
 END
 :
 :
-DEF PROCmain(args$)
-LOCAL ptr%
+DEF PROCraise
+IF NOT raised% THEN raised% = TRUE: ERROR ERR,REPORT$+" at line "+STR$ERL+" in BootRunGen"
+ERROR ERR,REPORT$
+ENDPROC
 :
+:
+DEF PROCmain
 raised% = FALSE
 LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: PROCraise
+REM ERROR 1,"Here": REM Move this about for debugging line numbers
 :
-buflen% = 255
-DIM buffer% buflen%
-:
-REM read & decode command line args
-SYS "OS_ReadArgs","BASIC,quit/K,load/K,output/A,product/A,version/A,r32b/S,d32/S,p32/S,r32m/S,boot/S,alternate/S",args$,buffer%,buflen%
-:
-ptr% = buffer%
-:
-REM Skip BASIC, optional -quit, -load filename
-ptr% += 4
-ptr% += 4
-ptr% += 4
-:
-outfile$ = FNstringize(!ptr%)
-ptr% += 4
-:
-raw_product$ = FNstringize(!ptr%)
-ptr% += 4
-:
-version$ = FNstringize(!ptr%)
-ptr% += 4
-:
-bound_release32% = FALSE: IF !ptr% THEN bound_release32% = TRUE
-ptr% += 4
-:
-debug32% = FALSE: IF !ptr% THEN debug32% = TRUE
-ptr% += 4
-:
-profile32% = FALSE: IF !ptr% THEN profile32% = TRUE
-ptr% += 4
-:
-release32% = FALSE: IF !ptr% THEN release32% = TRUE
-ptr% += 4
-:
-boot% = FALSE: IF !ptr% THEN boot% = TRUE
-ptr% += 4
-:
-alternate% = FALSE: IF !ptr% THEN alternate% = TRUE
-ptr% += 4
+PROCread_args
 :
 info$ = ""
-:
-IF bound_release32% THEN release32% = TRUE
 :
 REM Any kind of debug?
 debug% = debug32%
@@ -73,11 +38,10 @@ IF profile% THEN info$ += "Profile "
 REM Any kind of release?
 release% = release32%
 IF release% THEN info$ += "Release "
-IF bound_release32% THEN info$ += "(objects bound) "
+REM IF bound_release32% THEN info$ += "(objects bound) "
+IF loadable_release32% THEN info$ += "(object modules loadable) "
 :
 REM Only 32-bit now; info$ += "32-bit "
-:
-imageslotparm$ = "12K 64K"
 :
 IF boot% THEN
   file$ = "Boot"
@@ -90,7 +54,7 @@ ENDIF
 :
 colour_picker% = FALSE
 :
-REM FProworkz is a simple superset of Fireworkz
+REM Fireworkz Pro is a simple superset of Fireworkz
 :
 t5_dir$ = raw_product$
 :
@@ -119,8 +83,21 @@ IF raw_product$ = "firewrkz" THEN
   is_z% = TRUE
 ENDIF
 :
+REM The first parameter controls the amount of additional memory
+REM that this application requires to be in the WimpSlot on startup
+REM The second parameter is how much extra memory this application
+REM will need to claim on startup on top of the initial WimpSlot
+root_stack_size% =  16*1024: REM Now added in FNanalyse_image
+imageslotparm_1% =   2*1024: REM A trivial amount of memory for RTL to use
+imageslotparm_2% = 208*1024: REM Reflect the true horror!
+REM Compose arguments to ImageSlot utility in case we use it as fallback
+REM In which case it needs to know about ImageSlot 8KB stack assumption
+imageslotparm$ = STR$((imageslotparm_1%+root_stack_size%-8*1024)/1024)+"K" + " " + STR$(imageslotparm_2%/1024)+"K"
+:
 info$ = true_product$ + " " + info$
 PRINT info$
+:
+var_product_dir$ = "<"+FNvar_product("Dir")+">"
 :
 quote$ = """"
 :
@@ -128,270 +105,288 @@ PRINT "Creating "+outfile$
 f% = OPENOUT(outfile$)
 LOCAL ERROR: ON ERROR LOCAL: RESTORE ERROR: CLOSE#f%: PROCraise
 :
+PROCgenerate(f%)
+:
+RESTORE ERROR: CLOSE#f%
+:
+OSCLI("SetType "+outfile$+" Obey")
+:
+RESTORE ERROR
+ENDPROC
+:
+:
+REM read & decode command line args
+DEF PROCread_args
+LOCAL env%, ptr%, buflen%
+SYS "OS_GetEnv" TO env%
+:
+buflen% = 511
+DIM buffer% LOCAL buflen%
+:
+SYS "XOS_ReadArgs","BASIC,quit/K,load/K,output/A,product/A,version/A,runimage/K,r32/S,d32/S,p32/S,r32m/S,boot/S,alternate/S",env%,buffer%,buflen% TO ;PSR%
+IF PSR% AND 1 THEN ERROR 0,"Bad parameters to BootRunGen"
+:
+ptr% = buffer%: ptr% += 3*4: REM Skip BASIC, optional -quit, -load filename
+:
+outfile$ = FNstringize(!ptr%): ptr% += 4
+raw_product$ = FNstringize(!ptr%): ptr% += 4
+version$ = FNstringize(!ptr%): ptr% += 4
+:
+runimage$ = "": IF !ptr% THEN runimage$ = FNstringize(!ptr%)
+ptr% += 4
+:
+release32% = FALSE: IF !ptr% THEN release32% = TRUE
+ptr% += 4
+:
+debug32% = FALSE: IF !ptr% THEN debug32% = TRUE
+ptr% += 4
+:
+profile32% = FALSE: IF !ptr% THEN profile32% = TRUE
+ptr% += 4
+:
+loadable_release32% = FALSE: IF !ptr% THEN loadable_release32% = TRUE
+ptr% += 4
+:
+boot% = FALSE: IF !ptr% THEN boot% = TRUE
+ptr% += 4
+:
+alternate% = FALSE: IF !ptr% THEN alternate% = TRUE
+ptr% += 4
+:
+bound_release32% = FALSE: IF release32% AND NOT loadable_release32% THEN bound_release32% = TRUE
+ENDPROC
+:
+REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ok here we go!
+:
+DEF FNvar_product(suffix$)
+=product$+"$"+suffix$
+:
+:
+DEF PROCgenerate(f%)
+:
 PROCo(f%,"|")
 postfix$ = ""
-postfix$ += " 32-bit"
+REM Only 32-bit now; postfix$ += " 32-bit"
 IF debug% THEN postfix$ += " DEBUG"
 IF profile% THEN postfix$ += " PROFILE"
-version_and_date$ = version$+" ("+MID$(TIME$,5,11)+")"
+DIM os_word_blk% 8: !os_word_blk% = 3: SYS"OS_Word",14,os_word_blk%: REM read five byte date/time
+DIM convert_blk% 16: SYS"Territory_ConvertDateAndTime",1,os_word_blk%,convert_blk%,16,"%CE%YR%MN%DY"+CHR$0: convert_blk%?8 = 13
+iso_date$ = $convert_blk%
+text_date$ = MID$(TIME$,5,11)
+version_and_date$ = version$+" ("+text_date$+")"
 PROCo(f%,"| "+file$+" file for "+true_product$+postfix$+" "+version_and_date$)
+IF NOT boot% THEN
+  REM Fireworkz can have multiple running instances
+ENDIF
 PROCo(f%,"|")
 IF alternate% THEN
-  PROCs(f%,product$+"$Dir","<Obey$Dir>.!"+appl_product$,boot%)
+  PROCs(f%,FNvar_product("Dir"),"<Obey$Dir>.!"+appl_product$,boot%)
 ELSE
-  PROCs(f%,product$+"$Dir","<Obey$Dir>",boot%)
+  PROCs(f%,FNvar_product("Dir"),"<Obey$Dir>",boot%)
 ENDIF
 :
 PROCo(f%,"|")
-PROCs(f%,product$+"Res$Path","<"+product$+"$Dir>.Resources.UK."+",<"+product$+"$Dir>.Resources.Neutral.",boot%)
+PROCs(f%,FNvar_product("Help"),var_product_dir$+".!Help",boot%)
+PROCs(f%,FNvar_product("Version"),version$,boot%)
+PROCs(f%,FNvar_product("Web"),"http://croftnuisk.co.uk/coltsoft/fireworkz/",boot%)
+PROCs(f%,FNvar_product("Title"),true_product$,boot%)
+IF is_y% THEN
+PROCs(f%,FNvar_product("Description"),"Integrated spreadsheet, word processor and database",boot%)
+PROCs(f%,FNvar_product("Publisher"),"R-Comp and Colton Software",boot%)
+ELSE
+PROCs(f%,FNvar_product("Description"),"Integrated spreadsheet and word processor",boot%)
+PROCs(f%,FNvar_product("Publisher"),"Colton Software",boot%)
+ENDIF
 :
-REM IF boot% THEN
+PROCo(f%,"|")
+PROCfiletypes(f%,boot%)
+:
+PROCo(f%,"|")
+REM Needs 3.10+ anyway now; PROCo(f%,"RMEnsure UtilityModule 3.10 Error 0 32-bit applications require RISC OS 3.10 or later")
+PROCo(f%,"RMEnsure UtilityModule 3.10 Error 0 "+true_product$+" needs RISC OS 3.10 or later")
+:
+PROCo(f%,"|")
+PROCo(f%,FNif_z_then("Boot$OSVersion")+"Error 0 "+true_product$+" needs Boot$OSVersion to be set")
+:
+PROCo(f%,"|")
+IF is_y% THEN
+  REM Fireworkz Pro has separate !SpritesR4 from R-Comp
+  PROCo(f%,"If (Boot$OSVersion>=600) Then IconSprites "+var_product_dir$+".!SpritesR4")
+  PROCo(f%,"If (Boot$OSVersion>=500 AND Boot$OSVersion<600) Then IconSprites "+var_product_dir$+".!SpritesR5")
+  PROCo(f%,"If (Boot$OSVersion>=400 AND Boot$OSVersion<500) Then IconSprites "+var_product_dir$+".!SpritesR4")
+  PROCo(f%,"If (Boot$OSVersion< 400) Then IconSprites "+var_product_dir$+".!Sprites")
+ELSE
+ PROCo(f%,"If (Boot$OSVersion>=500 AND Boot$OSVersion<600) Then IconSprites "+var_product_dir$+".!SpritesR5 Else IconSprites "+var_product_dir$+".!Sprites")
+ENDIF
+:
+REM PROCo(f%,"|")
+REM PROCdosmap(f%)
+:
+IF NOT boot% THEN PROCgenerate_run_end(f%)
+ENDPROC
+:
+:
+DEF PROCgenerate_run_end(f%)
+REM Go for the minimal version we can cope with using the Stubs we built with
+REM and the required functionality (we need working C99 functions)
+REM SharedCLibrary 6.06 is the latest ROOL seen to date (May 2020)
+CLibVersion$="SharedCLibrary 5.45"
+:
+PROCo(f%,"|")
+PROCo(f%,"RMEnsure UtilityModule 3.70 RMEnsure CallASWI 0.02 RMLoad System:Modules.CallASWI")
+PROCo(f%,"RMEnsure UtilityModule 3.70 RMEnsure CallASWI 0.02 Error 0 SharedCLibrary needs CallASWI 0.02 or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
+:
+PROCo(f%,"|")
+PROCo(f%,"| Ensure we have the shared C library and determine its vintage")
+PROCo(f%,"| NB Don't load a newer version over an older one that may be in RAM")
+PROCo(f%,"|")
+PROCo(f%,"Set "+FNvar_product("CLibLoaded")+" 1")
+PROCo(f%,"RMEnsure SharedCLibrary 0.00 Set "+FNvar_product("CLibLoaded")+" 0")
+PROCo(f%,"If "+FNvar_product("CLibLoaded")+"=1 Then RMEnsure "+CLibVersion$+" Error 0 "+true_product$+" needs "+CLibVersion$+" or later but an earlier version is already running. An updated 32-bit !System may be obtained from the RISC OS Open website")
+PROCo(f%,"Unset "+FNvar_product("CLibLoaded"))
+:
+REM Older systems need a SysMerge with the RISC OS Open !System
+PROCo(f%,"|")
+PROCo(f%,"RMEnsure "+CLibVersion$+" RMLoad System:Modules.CLib")
+PROCo(f%,"RMEnsure "+CLibVersion$+" Error 0 "+true_product$+" needs "+CLibVersion$+" or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
+:
+PROCo(f%,"|")
+PROCo(f%,"RMEnsure BASIC 0.00 Error 0 "+true_product$+"'s Loader needs BASIC. Is it unplugged?")
+:
+IF colour_picker% THEN
   PROCo(f%,"|")
-  REM Needs 3.10+ anyway now; PROCo(f%,"RMEnsure UtilityModule 3.10 Error 0 32-bit applications require RISC OS 3.10 or later")
-  PROCo(f%,"RMEnsure UtilityModule 3.10 Error 0 "+true_product$+" needs RISC OS 3.10 or later")
-  :
-  PROCo(f%,"|")
-  PROCo(f%,FNif_z_then("Boot$OSVersion")+"Error 0 "+true_product$+" needs Boot$OSVersion to be set")
-  :
-  PROCo(f%,"|")
-  IF is_y% THEN
-    REM Fireworkz Pro has separate !SpritesR4 from R-Comp
-    PROCo(f%,"If (Boot$OSVersion>=600) Then IconSprites <"+product$+"$Dir>.!SpritesR4")
-    PROCo(f%,"If (Boot$OSVersion>=500 AND Boot$OSVersion<600) Then IconSprites <"+product$+"$Dir>.!SpritesR5")
-    PROCo(f%,"If (Boot$OSVersion>=400 AND Boot$OSVersion<500) Then IconSprites <"+product$+"$Dir>.!SpritesR4")
-    PROCo(f%,"If (Boot$OSVersion< 400) Then IconSprites <"+product$+"$Dir>.!Sprites")
-  ELSE
-    PROCo(f%,"If (Boot$OSVersion>=600) Then IconSprites <"+product$+"$Dir>.!Sprites")
-    PROCo(f%,"If (Boot$OSVersion>=500 AND Boot$OSVersion<600) Then IconSprites <"+product$+"$Dir>.!SpritesR5")
-    PROCo(f%,"If (Boot$OSVersion< 500) Then IconSprites <"+product$+"$Dir>.!Sprites")
-  ENDIF
-  :
-  PROCo(f%,"|")
-  PROCs(f%,"File$Type_BDF","Firewrkz",boot%)
-  PROCs(f%,"Alias$@RunType_BDF",  "Run <"+product$+"$Dir>.!Run %%*0",boot%)
-  PROCs(f%,"Alias$@PrintType_BDF","Run <"+product$+"$Dir>.!Run -Print %%*0",boot%)
-  :
-  PROCo(f%,"|")
-  PROCs(f%,"File$Type_BE0","Recordz",boot%)
-  IF is_y% THEN
-    REM Only claim these for Fireworkz Pro
-    PROCs(f%,"Alias$@RunType_BE0",  "Run <"+product$+"$Dir>.!Run %%*0",boot%)
-    PROCs(f%,"Alias$@PrintType_BE0","Run <"+product$+"$Dir>.!Run -Print %%*0",boot%)
-  ENDIF
-  :
-  PROCo(f%,"|")
-  PROCs(f%,"File$Type_BE1","Resultz",boot%)
-  PROCs(f%,"Alias$@RunType_BE1",  "Run <"+product$+"$Dir>.!Run %%*0",boot%)
-  PROCs(f%,"Alias$@PrintType_BE1","Run <"+product$+"$Dir>.!Run -Print %%*0",boot%)
-  :
-  PROCo(f%,"|")
-  PROCs(f%,"File$Type_C1C","Wordz",boot%)
-  PROCs(f%,"Alias$@RunType_C1C",  "Run <"+product$+"$Dir>.!Run %%*0",boot%)
-  PROCs(f%,"Alias$@PrintType_C1C","Run <"+product$+"$Dir>.!Run -Print %%*0",boot%)
-  :
-  PROCo(f%,"|")
-  PROCs(f%,"File$Type_C1D","FwrkzTem",boot%)
-  PROCs(f%,"Alias$@RunType_C1D",  "Run <"+product$+"$Dir>.!Run -Template %%*0",boot%)
-  PROCs(f%,"Alias$@PrintType_C1D","Run <"+product$+"$Dir>.!Run -oPrint %%*0",boot%)
-  :
-  PROCo(f%,"|")
-  PROCs(f%,"File$Type_C1E","FwrkzCmd",boot%)
-  PROCs(f%,"Alias$@RunType_C1E",  "Run <"+product$+"$Dir>.!Run -Command %%*0",boot%)
-  :
-  IF fy_or_fz% THEN PROCo(f%,"|")
-  REM Never override any other definition of file types we do not actually own
-  IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE)
-  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_BA6",  "Run <"+product$+"$Dir>.!Run -import %%*0",TRUE)
-  :
-  IF fy_or_fz% THEN PROCo(f%,"|")
-  REM Never override any other definition...
-  IF fy_or_fz% THEN PROCs(f%,"File$Type_C27","Database",TRUE)
-  :
-  IF fy_or_fz% THEN PROCo(f%,"|")
-  REM Never override any other definition...
-  IF fy_or_fz% THEN PROCs(f%,"File$Type_C32","RTF",TRUE)
-  :
-  IF fy_or_fz% THEN PROCo(f%,"|")
-  REM Never override any other definition...
-  IF fy_or_fz% THEN PROCs(f%,"File$Type_DB0","LotusWK1",TRUE)
-  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_DB0",  "Run <"+product$+"$Dir>.!Run -import %%*0",TRUE)
-  :
-  IF fy_or_fz% THEN PROCo(f%,"|")
-  REM Never override any other definition...
-  IF fy_or_fz% THEN PROCs(f%,"File$Type_DFE","CSV",TRUE)
-  IF fy_or_fz% THEN PROCs(f%,"Alias$@RunType_DFE",  "Run <"+product$+"$Dir>.!Run -import %%*0",TRUE)
-  :
-  PROCo(f%,"|")
-  PROCo(f%,"DOSMap BMP &69C")
-  PROCo(f%,"DOSMap DIB &69C")
-  PROCo(f%,"DOSMap AFF &AFF")
-  PROCo(f%,"DOSMap XLS &BA6")
-  PROCo(f%,"DOSMap FWK &BDF")
-  PROCo(f%,"DOSMap FWT &C1D")
-  PROCo(f%,"DOSMap RTF &C32")
-  PROCo(f%,"DOSMap JPG &C85")
-  PROCo(f%,"DOSMap WKS &DB0")
-  PROCo(f%,"DOSMap CSV &DFE")
-  PROCo(f%,"DOSMap TXT &FFF")
-  PROCo(f%,"| RISC OS 3.10 DOSFS can't take numbers in extension")
-  PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap WK1 &DB0")
-  PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap PD4 &DDE")
-  PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap FF9 &FF9")
+  PROCo(f%,"RMEnsure ColourPicker 0.00 RMLoad System:Modules.Picker")
+  PROCo(f%,"RMEnsure ColourPicker 0.00 Error 0 "+true_product$+" needs ColourPicker 0.00 or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
+ENDIF
+:
+PROCo(f%,"|")
+PROCo(f%,"RMEnsure ColourTrans 0.52 RMLoad System:Modules.Colours")
+PROCo(f%,"RMEnsure ColourTrans 0.52 Error 0 "+true_product$+" needs ColourTrans 0.52 or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
+:
+PROCo(f%,"|")
+REM Drawfile module is supplied in end-user redistributable, supporting RISC OS 3.1 and newer systems
+REM RISC OS 3.6 on have Drawfile in ROM
+PROCo(f%,"RMEnsure Drawfile 1.30 RMLoad System:Modules.Drawfile")
+PROCo(f%,"RMEnsure Drawfile 1.30 Error 0 "+true_product$+" needs Drawfile 1.30 or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
 :
 REM Go for the minimal version we can cope with
 REM NB FPEmulator 4.09 in RISC OS 4.02 ROM (also in 4.39 ROM) has poor precision
 REM FPEmulator 4.10 in RISC OS 4.39 ROM is better
-REM FPEmulator 4.35 is the latest ROOL seen to date (Apr 2016)
+REM FPEmulator 4.37 is the latest ROOL seen to date (Nov 2019)
 FPEVersion$="FPEmulator 4.10"
 :
-REM Go for the minimal version we can cope with using the Stubs we built with
-REM and the required functionality (we need working C99 functions)
-REM SharedCLibrary 5.92 is the latest ROOL seen to date (May 2016)
-CLibVersion$="SharedCLibrary 5.45"
+PROCo(f%,"|")
+PROCo(f%,"RMEnsure "+FPEVersion$+" RMLoad System:Modules.FPEmulator")
+PROCo(f%,"RMEnsure "+FPEVersion$+" Error 0 "+true_product$+" needs "+FPEVersion$+" or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
 :
-IF NOT boot% THEN
+IF loadable_release32% THEN
   PROCo(f%,"|")
-  PROCo(f%,"RMEnsure "+FPEVersion$+" RMLoad System:Modules.FPEmulator")
-  PROCo(f%,"RMEnsure "+FPEVersion$+" Error 0 "+true_product$+" needs "+FPEVersion$+" or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
-  :
+  PROCo(f%,"RMEnsure Squash 0.00 RMLoad System:Modules.Squash")
+ENDIF
+:
+PROCo(f%,"|")
+PROCo(f%,FNif_z_then("Choices$Write")+"Error 0 "+true_product$+" needs Choices$Write to be set")
+:
+slot_size% = FNanalyse_image(f%,runimage$)
+:
+PROCo(f%,"|")
+PROCo(f%,"| Ensure that the Choices directory is populated with some initial data")
+PROCo(f%,"IfThere <Choices$Write>."+appl_product$+".Choices.ChoicesDoc Then Else Obey "+var_product_dir$+".uChoices.DoCopy"): REM Ensure ChoicesDoc even if Choice00 etc there
+:
+PROCo(f%,"|")
+PROCo(f%,"WimpSlot -min 32K -max 32K")
+PROCo(f%,"Run "+var_product_dir$+".Resources.Neutral.RISC_OS.Loader -id "+product$+reg_extra$+" -ver "+version$+" -isodate "+iso_date$)
+:
+PROCo(f%,"|")
+PROCo(f%,"| "+FNvar_product("Path")+" is set appropriately by the Loader")
+PROCo(f%,"| It is used to locate vital resources needed to run "+true_product$+" e.g. messages and sprite files")
+PROCo(f%,"| and to locate most data presented to the "+true_product$+" user e.g. document templates, dictionaries, chart markers")
+REM "<Choices$Write>."+appl_product$ is used on the path rather than "Choices:"+appl_product$
+REM as it helps when supporting documents are loaded from Choices$Path or you get a confusing mix of some documents loaded
+REM some with Boot: prefix and some with Choices: - that can be the same file!
+:
+PROCo(f%,"| "+FNvar_product("TemplatesPath")+" is also set appropriately by the Loader - it does not contain fallback locations")
+:
+PROCo(f%,"|")
+PROCo(f%,"| If a "+FNvar_product("UserPath")+" has been set, prepend "+FNvar_product("Path")+" with that")
+PROCo(f%,FNif_nz_then(FNvar_product("UserPath"))+"Set "+FNvar_product("Path")+" <"+FNvar_product("UserPath")+">,<"+FNvar_product("Path")+">")
+PROCo(f%,FNif_nz_then(FNvar_product("UserPath"))+"Set "+FNvar_product("TemplatesPath")+" <"+FNvar_product("UserPath")+">.Templates.,<"+FNvar_product("TemplatesPath")+">")
+:
+PROCo(f%,"|")
+PROCo(f%,"| On systems with only a small WimpSlot for application & its data, allow dynamic area to be used (limit in MB) ")
+PROCo(f%,"If (Boot$OSVersion<500) OR (Boot$OSVersion>=600) Then Set "+FNvar_product("RunOptions")+" <"+FNvar_product("RunOptions")+"> --dynamic-area-limit=256")
+:
+IF debug% THEN
   PROCo(f%,"|")
-  PROCo(f%,"| Ensure we have the shared C library and determine its vintage")
-  PROCo(f%,"| NB Don't load a newer version over an older one that may be in RAM")
+  PROCo(f%,"Set t5$Debug 1")
+  PROCo(f%,"Set Fireworkz$ReportEnable 1")
+ENDIF
+:
+IF profile% AND NOT alternate% THEN
   PROCo(f%,"|")
-  PROCo(f%,"Set "+product$+"$CLibLoaded 1")
-  PROCo(f%,"RMEnsure SharedCLibrary 0.00 Set "+product$+"$CLibLoaded 0")
-  PROCo(f%,"If "+product$+"$CLibLoaded=1 Then RMEnsure "+CLibVersion$+" Error 0 "+true_product$+" needs "+CLibVersion$+" or later but an earlier version is already running. An updated 32-bit !System may be obtained from the RISC OS Open website")
-  :
-  REM 32-bit needs a SysMerge with the supplied !System
-  :
+  PROCo(f%,"| Deviant stuff")
   PROCo(f%,"|")
-  PROCo(f%,"RMEnsure "+CLibVersion$+" RMLoad System:Modules.CLib")
-  PROCo(f%,"RMEnsure "+CLibVersion$+" Error 0 "+true_product$+" needs "+CLibVersion$+" or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
-  :
-  IF colour_picker% THEN
+  PROCo(f%,"  If ""<"+FNvar_product("do_profile")+">""<>"""" Then RMEnsure Profiler 0.00 RMLoad "+var_product_dir$+".^.Profiler")
+  PROCo(f%,"  If ""<"+FNvar_product("do_profile")+">""<>"""" Then IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
+  PROCo(f%,"  If ""<"+FNvar_product("do_profile")+">""<>"""" Then InitStore EEDCBE0A { > NULL: }")
+  PROCo(f%,"  If ""<"+FNvar_product("do_profile")+">""<>"""" Then profiler_load             "+var_product_dir$+".!RunImage")
+  PROCo(f%,"  If ""<"+FNvar_product("do_profile")+">""<>"""" Then profiler_loadunwindtable  "+var_product_dir$+".^.pro_unwi")
+  PROCo(f%,"  If ""<"+FNvar_product("do_profile")+">""<>"""" Then profiler_samplefrequency  1234")
+ENDIF
+:
+IF debug% THEN
+  IF alternate% OR TRUE THEN
     PROCo(f%,"|")
-    PROCo(f%,"RMEnsure ColourPicker 0.00 RMLoad System:Modules.Picker")
-    PROCo(f%,"RMEnsure ColourPicker 0.00 Error 0 The version of ColourPicker installed in your !System is too old. "+true_product$+" needs ColourPicker 0.00 or later")
+    PROCo(f%,"IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
+    PROCo(f%,"InitStore EEDCBE0A { > NULL: }")
   ENDIF
-  :
   PROCo(f%,"|")
-  PROCo(f%,"RMEnsure ColourTrans 0.52 RMLoad System:Modules.Colours")
-  PROCo(f%,"RMEnsure ColourTrans 0.52 Error 0 The version of ColourTrans installed in your !System is too old. "+true_product$+" needs ColourTrans 0.52 or later")
-  :
+  PROCo(f%,"Run "+product$+":RISC_OS.ImageSlot "+var_product_dir$+".!RunImage "+imageslotparm$)
   PROCo(f%,"|")
-  REM Drawfile module is supplied in end-user redistributable, supporting RISC OS 3.1 and newer systems
-  REM RISC OS 3.6 on have Drawfile in ROM
-  PROCo(f%,"RMEnsure Drawfile 1.30 RMLoad System:Modules.Drawfile")
-  PROCo(f%,"RMEnsure Drawfile 1.30 Error 0 The version of Drawfile installed in your !System is too old. "+true_product$+" needs Drawfile 1.30 or later")
-  :
-  REM PROCo(f%,"|")
-  REM PROCo(f%,"RMEnsure Squash 0.00 RMLoad System:Modules.Squash")
-  :
-  REM PROCo(f%,"|")
-  REM PROCo(f%,"Set "+appl_product$+"$AcornURI TRUE")
-  REM PROCo(f%,"RMEnsure AcornURI 0.00 Set "+appl_product$+"$AcornURI FALSE")
-  :
-  PROCo(f%,"|")
-  PROCo(f%,FNif_z_then("Choices$Write")+"Error 0 "+true_product$+" needs Choices$Write to be set")
-  :
-  PROCo(f%,"|")
-  PROCo(f%,"IfThere <Choices$Write>.Fireworkz.Choices.ChoicesDoc Then Else Obey <"+product$+"$Dir>.uChoices.DoCopy"): REM Ensure ChoicesDoc even if Choice00 etc there
-  :
-  PROCo(f%,"|")
-  insert$ = ""
-  REM IF debug% OR profile% THEN insert$ = ",&.t5."+t5_dir$+".resource.riscos.UK.,&.t5.resource."
-  PROCo(f%,"Set "+product$+"$Path <Choices$Write>."+appl_product$+"."+insert$+",<"+product$+"$Dir>.AppData.UK."+",<"+product$+"$Dir>.AppData.Neutral.")
-  PROCo(f%,"|")
-  PROCo(f%,"| Iff UserPath is set, prepend the path with that")
-  PROCo(f%,FNif_z_then(product$+"$UserPath")+"Set "+product$+"$Path <"+product$+"$UserPath>,<"+product$+"$Path>")
-  :
-  IF is_z% THEN
+  IF alternate% THEN
+    PROCo(f%,"Load "+var_product_dir$+".!RunImage 8000"): REM !RunND
+    PROCno(f%,"Go 8000 ; %*0 >$.Temp.out 2>&1")
+  ELSE
+    PROCo(f%,"RMEnsure DDT 0.0 RMLoad System:Modules.DDT")
     PROCo(f%,"|")
-    PROCs(f%,product$+"Manuals$Path","<Boot$Dir>.^.Manuals."+product$+".UK.",boot%)
+    PROCo(f%,"| change directory to allow debugger to see the source")
+    PROCo(f%,"Dir "+var_product_dir$+".^")
+    PROCno(f%,"debugaif "+var_product_dir$+".!RunImage %*0 >$.Temp.out 2>&1")
   ENDIF
-  :
-  PROCo(f%,"|")
-  PROCo(f%,"Set "+product$+"$Web "+"http://croftnuisk.co.uk/coltsoft/fireworkz/")
-  :
-  PROCo(f%,"|")
-  PROCo(f%,"WimpSlot -min 32K -max 32K")
-  PROCo(f%,"Run "+product$+"Res:Loader -dir <"+product$+"$Dir> -id "+product$+reg_extra$+" -ver "+quote$+version_and_date$+quote$)
-  :
-  PROCo(f%,"|")
-  PROCo(f%,"Set "+product$+"$RunOptions """"")
-  PROCo(f%,"| Allow dynamic area use (limit in MB) on systems with small WimpSlot for application & all data")
-  PROCo(f%,"If (Boot$OSVersion<500) OR (Boot$OSVersion>=600) Then Set "+product$+"$RunOptions --dynamic-area-limit=256")
-  :
-  IF debug% THEN
+ENDIF
+:
+IF profile% THEN
+  IF alternate% THEN
     PROCo(f%,"|")
-    PROCo(f%,"Set t5$Debug 1")
-    PROCo(f%,"Set Fireworkz$ReportEnable 1")
+    PROCo(f%,"IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
+    PROCo(f%,"InitStore EEDCBE0A { > NULL: }")
   ENDIF
-  :
-  IF profile% AND NOT alternate% THEN
+  PROCo(f%,"|")
+  PROCo(f%,"Run "+product$+":RISC_OS.ImageSlot "+var_product_dir$+".!RunImage "+imageslotparm$)
+  PROCo(f%,"|")
+  IF alternate% THEN
+    PROCo(f%,"RMEnsure DDT 0.0 RMLoad System:Modules.DDT")
+    PROCo(f%,"|")
+    PROCo(f%,"| change directory to allow debugger to see the source")
+    PROCo(f%,"Dir "+var_product_dir$+".^")
+    PROCno(f%,"debugaif "+var_product_dir$+".!RunImage %*0"): REM !RunDB
+  ELSE
+    PROCo(f%,"Load "+var_product_dir$+".!RunImage 8000")
+    PROCo(f%,"Go 8000 ; %*0")
     PROCo(f%,"|")
     PROCo(f%,"| Deviant stuff")
     PROCo(f%,"|")
-    PROCo(f%,"  If ""<"+product$+"$do_profile>""<>"""" Then RMEnsure Profiler 0.00 RMLoad <"+product$+"$Dir>.^.Profiler")
-    PROCo(f%,"  If ""<"+product$+"$do_profile>""<>"""" Then IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
-    PROCo(f%,"  If ""<"+product$+"$do_profile>""<>"""" Then InitStore EEDCBE0A { > NULL: }")
-    PROCo(f%,"  If ""<"+product$+"$do_profile>""<>"""" Then profiler_load             <"+product$+"$Dir>.!RunImage")
-    PROCo(f%,"  If ""<"+product$+"$do_profile>""<>"""" Then profiler_loadunwindtable  <"+product$+"$Dir>.^.pro_unwi")
-    PROCo(f%,"  If ""<"+product$+"$do_profile>""<>"""" Then profiler_samplefrequency  1234")
+    PROCno(f%,"If ""<"+FNvar_product("do_profile")+">""<>"""" Then profiler_unload")
   ENDIF
-  :
-  IF debug% THEN
-    IF alternate% OR TRUE THEN
-      PROCo(f%,"|")
-      PROCo(f%,"IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
-      PROCo(f%,"InitStore EEDCBE0A { > NULL: }")
-    ENDIF
+ENDIF
+:
+IF release% THEN
+  IF alternate% THEN
     PROCo(f%,"|")
-    PROCo(f%,"Run "+product$+"Res:ImageSlot <"+product$+"$Dir>.!RunImage "+imageslotparm$)
-    PROCo(f%,"|")
-    IF alternate% THEN
-      PROCo(f%,"Load <"+product$+"$Dir>.!RunImage 8000"): REM !RunND
-      PROCno(f%,"Go 8000 ; %*0 >$.Temp.out 2>&1")
-    ELSE
-      PROCo(f%,"RMEnsure DDT 0.0 RMLoad System:Modules.DDT")
-      PROCo(f%,"|")
-      PROCo(f%,"| change directory to allow debugger to see the source")
-      PROCo(f%,"Dir <"+product$+"$Dir>.^")
-      PROCno(f%,"debugaif <"+product$+"$Dir>.!RunImage %*0 >$.Temp.out 2>&1")
-    ENDIF
+    PROCo(f%,"IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
+    PROCo(f%,"InitStore EEDCBE0A { > NULL: }")
   ENDIF
-  :
-  IF profile% THEN
-    IF alternate% THEN
-      PROCo(f%,"|")
-      PROCo(f%,"IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
-      PROCo(f%,"InitStore EEDCBE0A { > NULL: }")
-    ENDIF
-    PROCo(f%,"|")
-    PROCo(f%,"Run "+product$+"Res:ImageSlot <"+product$+"$Dir>.!RunImage "+imageslotparm$)
-    PROCo(f%,"|")
-    IF alternate% THEN
-      PROCo(f%,"RMEnsure DDT 0.0 RMLoad System:Modules.DDT")
-      PROCo(f%,"|")
-      PROCo(f%,"| change directory to allow debugger to see the source")
-      PROCo(f%,"Dir <"+product$+"$Dir>.^")
-      PROCno(f%,"debugaif <"+product$+"$Dir>.!RunImage %*0"): REM !RunDB
-    ELSE
-      PROCo(f%,"Load <"+product$+"$Dir>.!RunImage 8000")
-      PROCo(f%,"Go 8000 ; %*0")
-      PROCo(f%,"|")
-      PROCo(f%,"| Deviant stuff")
-      PROCo(f%,"|")
-      PROCno(f%,"If ""<"+product$+"$do_profile>""<>"""" Then profiler_unload")
-    ENDIF
-  ENDIF
-  :
-  IF release% THEN
-    IF alternate% THEN
-      PROCo(f%,"|")
-      PROCo(f%,"IfThere $._coltsoft.Library.MaxRun Then Run $._coltsoft.Library.MaxRun")
-      PROCo(f%,"InitStore EEDCBE0A { > NULL: }")
-    ENDIF
+  IF alternate% OR (slot_size% = 0) THEN
     PROCo(f%,"|")
     PROCo(f%,"| The first parameter controls the amount of additional memory")
     PROCo(f%,"| that "+true_product$+" requires to be in the WimpSlot on startup")
@@ -399,26 +394,41 @@ IF NOT boot% THEN
     PROCo(f%,"| The second parameter is how much extra memory "+true_product$+" will")
     PROCo(f%,"| need to claim on startup on top of the initial WimpSlot")
     PROCo(f%,"|")
-    PROCo(f%,"Run "+product$+"Res:ImageSlot <"+product$+"$Dir>.!RunImage "+imageslotparm$)
-    PROCo(f%,"|")
-    IF alternate% THEN
-      PROCo(f%,"RMEnsure DDT 0.0 RMLoad System:Modules.DDT")
-      PROCo(f%,"|")
-      PROCo(f%,"| change directory to allow debugger to see the source")
-      PROCo(f%,"Dir <"+product$+"$Dir>.^")
-      PROCno(f%,"debugaif <"+product$+"$Dir>.!RunImage %*0 >$.Temp.out 2>&1"): REM !RunDB
-    ELSE
-      PROCno(f%,"Run <"+product$+"$Dir>.!RunImage %*0")
+    PROCo(f%,"Run "+product$+":RISC_OS.ImageSlot "+var_product_dir$+".!RunImage "+imageslotparm$)
+  ELSE
+    REM Use our determined slot size to generate arguments to WimpSlot command
+    REM Round up to 16KB (not 32KB) here to maximise free memory for 2MB systems
+    REM Note that may end up with some trivial wastage on modern 4KB page systems
+    REM NB min/max are usually crossed here
+    wimpslotparm_min$ = "-min "+STR$(FNround_up(slot_size% + imageslotparm_1% + imageslotparm_2%, 16384)/1024)+"K"
+    wimpslotparm_max$ = "-max "+STR$(FNround_up(slot_size% + imageslotparm_1%, 16384)/1024)+"K"
+    IF TRUE THEN
+    REM Hell, if it works on a 4KB page system, it will do on a larger page one!
+    wimpslotparm_min$ = "-min "+STR$(FNround_up(slot_size% + imageslotparm_1% + imageslotparm_2%, 4096)/1024)+"K"
+    wimpslotparm_max$ = "-max "+STR$(FNround_up(slot_size% + imageslotparm_1%, 4096)/1024)+"K"
     ENDIF
+    PRINT "WimpSlot "+wimpslotparm_min$+" "+wimpslotparm_max$
+    REM Clearer to user if we split into two commands
+    PROCo(f%,"|")
+    PROCo(f%,"| The higher value is specified as the minimum first so that there is sufficient memory to get "+true_product$+" fully running")
+    PROCo(f%,"WimpSlot "+wimpslotparm_min$)
+    PROCo(f%,"| The lower value is specified as the maximum last so that becomes the initial slot that "+true_product$+" is started with")
+    PROCo(f%,"WimpSlot "+wimpslotparm_max$)
+    PROCo(f%,"| Equivalent to Run "+product$+":RISC_OS.ImageSlot "+var_product_dir$+".!RunImage "+imageslotparm$)
+  ENDIF
+  IF alternate% THEN
+    PROCo(f%,"|")
+    PROCo(f%,"RMEnsure DDT 0.0 RMLoad System:Modules.DDT")
+    PROCo(f%,"|")
+    PROCo(f%,"| change directory to allow debugger to see the source")
+    PROCo(f%,"Dir "+var_product_dir$+".^")
+    PROCno(f%,"debugaif "+var_product_dir$+".!RunImage %*0 >$.Temp.out 2>&1"): REM !RunDB
+  ELSE
+    PROCo(f%,"|")
+    PROCno(f%,"Run "+var_product_dir$+".!RunImage %*0")
   ENDIF
 ENDIF
 :
-RESTORE ERROR
-CLOSE#f%
-:
-OSCLI("SetType "+outfile$+" Obey")
-:
-RESTORE ERROR
 ENDPROC
 :
 :
@@ -452,8 +462,22 @@ PROCo(file%,prefix$+"Set "+V$+" "+A$)
 ENDPROC
 :
 :
+DEF PROCft_ar(f%,type$,action$,boot%)
+PROCs(f%,"Alias$@RunType_"+type$,action$,boot%)
+ENDPROC
+:
+:
+DEF PROCft_ap(f%,type$,action$,boot%)
+PROCs(f%,"Alias$@PrintType_"+type$,action$,boot%)
+ENDPROC
+:
+:
 DEF FNif_z_then(V$)
 ="If ""<"+V$+">""="""" Then "
+:
+:
+DEF FNif_nz_then(V$)
+="If ""<"+V$+">""<>"""" Then "
 :
 :
 DEF PROCno(file%,A$)
@@ -483,16 +507,195 @@ ptr%??A% = 13
 = $ptr%
 :
 :
-DEF FNreadargs
-LOCAL A$
-SYS "OS_GetEnv" TO A$
-= A$
+DEF PROCfiletypes(f%,boot%)
+PROCs(f%,"File$Type_BDF","Firewrkz",FALSE)
+PROCft_ar(f%,"BDF","Run "+var_product_dir$+".!Run %%*0",boot%)
+PROCft_ap(f%,"BDF","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
 :
+PROCo(f%,"|")
+PROCs(f%,"File$Type_A78","FzDraw",FALSE)
+IF is_y% THEN
+  REM Only claim these for Fireworkz Pro
+  PROCft_ar(f%,"A78","Run "+var_product_dir$+".!Run %%*0",boot%)
+ELSE
+  PROCo(f%,"| Embedded (OLE) files may be inserted as pictures in Fireworkz documents.")
+  PROCo(f%,"| They may be loaded as documents by Fireworkz by dragging them to the Fireworkz icon on the icon bar.")
+  PROCo(f%,"| However, to update or save them in their original form, you need to use Fireworkz Pro.")
+ENDIF
 :
-DEF PROCraise
-IF NOT raised% THEN raised% = TRUE: ERROR ERR,REPORT$+" at line "+STR$ERL
-ERROR ERR,REPORT$
+PROCo(f%,"|")
+PROCs(f%,"File$Type_C1D","FwrkzTem",FALSE)
+PROCft_ar(f%,"C1D","Run "+var_product_dir$+".!Run -Template %%*0",boot%)
+PROCft_ap(f%,"C1D","Run "+var_product_dir$+".!Run -oPrint %%*0",boot%)
+:
+PROCo(f%,"|")
+PROCs(f%,"File$Type_C1E","FwrkzCmd",FALSE)
+PROCft_ar(f%,"C1E","Run "+var_product_dir$+".!Run -Command %%*0",boot%)
+:
+PROCo(f%,"|")
+PROCs(f%,"File$Type_C1C","Wordz",FALSE)
+PROCft_ar(f%,"C1C","Run "+var_product_dir$+".!Run %%*0",boot%)
+PROCft_ap(f%,"C1C","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
+:
+PROCo(f%,"|")
+PROCs(f%,"File$Type_BE1","Resultz",FALSE)
+PROCft_ar(f%,"BE1","Run "+var_product_dir$+".!Run %%*0",boot%)
+PROCft_ap(f%,"BE1","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
+:
+PROCo(f%,"|")
+PROCs(f%,"File$Type_BE0","Recordz",FALSE)
+IF is_y% THEN
+  REM Only fully claim these for Fireworkz Pro
+  PROCft_ar(f%,"BE0","Run "+var_product_dir$+".!Run %%*0",boot%)
+  PROCft_ap(f%,"BE0","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
+ELSE
+  PROCo(f%,"| Recordz files are unlikely to be fully loaded by Fireworkz.")
+  PROCo(f%,"| To update or save them, you need to use Fireworkz Pro.")
+  REM IF NOT boot% THEN PROCft_ar(f%,"BE0","Run "+var_product_dir$+".!Run %%*0",TRUE)
+ENDIF
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition...
+IF fy_or_fz% THEN PROCs(f%,"File$Type_C27","Database",TRUE)
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition of file types we do not actually own
+IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE)
+IF fy_or_fz% THEN PROCft_ar(f%,"BA6","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition...
+IF fy_or_fz% THEN PROCs(f%,"File$Type_DB0","LotusWK1",TRUE)
+IF fy_or_fz% THEN PROCft_ar(f%,"DB0","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition...
+IF fy_or_fz% THEN PROCs(f%,"File$Type_DFE","CSV",TRUE)
+IF fy_or_fz% THEN PROCft_ar(f%,"DFE","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition...
+IF fy_or_fz% THEN PROCs(f%,"File$Type_C32","RTF",TRUE)
 ENDPROC
+:
+:
+DEF PROCdosmap(f%)
+PROCo(f%,"DOSMap BMP &69C")
+PROCo(f%,"DOSMap DIB &69C")
+PROCo(f%,"DOSMap AFF &AFF")
+PROCo(f%,"DOSMap XLS &BA6")
+PROCo(f%,"DOSMap FWK &BDF")
+PROCo(f%,"DOSMap FWT &C1D")
+PROCo(f%,"DOSMap RTF &C32")
+PROCo(f%,"DOSMap JPG &C85")
+PROCo(f%,"DOSMap WKS &DB0")
+PROCo(f%,"DOSMap CSV &DFE")
+PROCo(f%,"DOSMap TXT &FFF")
+PROCo(f%,"| RISC OS 3.10 DOSFS can't take numbers in extension")
+PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap WK1 &DB0")
+PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap PD4 &DDE")
+PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap FF9 &FF9")
+ENDPROC
+:
+:
+REM *** AIF header structure (see ImageSlot) ***
+REM AIF_BL_DecompressedCode * 0*4
+REM AIF_BL_SelfRelocCode * 1*4
+REM AIF_BL_ZeroInitCode * 2*4
+REM AIF_BL_ImageEntryPoint * 3*4
+REM AIF_SWI_OS_Exit * 4*4
+REM AIF_ImageReadOnlySize * 5*4
+REM AIF_ImageReadWriteSize * 6*4
+REM AIF_ImageDebugInfoSize * 7*4
+REM AIF_ImageZeroInitSize * 8*4
+REM AIF_ImageDebugType * 9*4
+REM AIF_ImageBase * 10*4
+REM AIF_Workspace * 11*4
+REM AIF_Reserved1 * 12*4
+REM AIF_Reserved2 * 13*4
+REM AIF_Reserved3 * 14*4
+REM AIF_Reserved4 * 15*4
+REM AIF_ZeroInitCode * 16*4 ; 16 words
+:
+REM If analyse image fails, defer to ImageSlot as before
+DEF FNanalyse_image(f%,runimage$)
+LOCAL file_len%, R3%
+LOCAL slot_size%, slot_extra%
+IF runimage$ = "" THEN =0
+PRINT "Analysing "+runimage$
+LOCAL h%: h% = OPENIN(runimage$): IF h% = 0 THEN =0
+file_len% = EXT#h%
+REM PRINT "Length:"," "+FNhex8(file_len%)
+IF file_len% < 128 THEN CLOSE#h%: =0: REM !RunImage too small to have AIF header
+:
+REM Check AIF header validity - first four words
+REM (BL DecompressedCode, BL SelfRelocCode, BL ZeroInitCode, BL ImageEntryPoint) must be one of
+REM     BL somewhere
+REM     BLNV somewhere
+REM     MOV R0,R0
+REM followed by fifth word
+REM     SWI OS_Exit
+DIM aif_header% LOCAL 127
+LOCAL ro_area_size%, rw_area_size%, dbg_area_size%, zi_area_size%
+LOCAL image_base%, ro_end%, rw_end, dbg_end%, zi_end%, max_addr%
+slot_size% = file_len%: REM In case it's not an AIF
+SYS"OS_GBPB",4,h%,aif_header%,128 TO ,,,R3%: REM Read @PTR
+IF R3% <> 0 THEN CLOSE#h%: =0: REM Not all bytes transferred?
+REM PRINT  0," "+FNhex8(aif_header%!0),"DecompressedCode"
+REM PRINT  4," "+FNhex8(aif_header%!4),"SelfRelocCode"
+REM PRINT  8," "+FNhex8(aif_header%!8),"ZeroInitCode"
+REM PRINT 12," "+FNhex8(aif_header%!12),"ImageEntryPoint"
+REM PRINT 16," "+FNhex8(aif_header%!16),"OS_Exit"
+IF FNAIF_valid_code_entry(aif_header%,0) AND FNAIF_valid_code_entry(aif_header%,4) AND FNAIF_valid_code_entry(aif_header%,8) AND FNAIF_valid_code_entry(aif_header%,12) THEN
+  IF aif_header%!16 = &EF000011 THEN: REM SWI OS_Exit
+    REM It's a good AIF header - next four words are area sizes (RO, RW, DBG, ZI)
+    REM PRINT "AIF header"," "+"OK"
+    image_base%    = aif_header%!40
+    ro_area_size%  = aif_header%!20: REM PRINT 20," "+FNhex8(aif_header%!20),"RO area size",FNhex8(image_base%)
+    rw_area_size%  = aif_header%!24: REM PRINT 24," "+FNhex8(aif_header%!24),"RW area size",FNhex8(image_base%+ro_area_size%)
+    dbg_area_size% = aif_header%!28: REM PRINT 28," "+FNhex8(aif_header%!28),"DBG area size",FNhex8(image_base%+ro_area_size%+rw_area_size%)
+    zi_area_size%  = aif_header%!32: REM PRINT 32," "+FNhex8(aif_header%!32),"ZI area size",FNhex8(image_base%+ro_area_size%+rw_area_size%)
+    image_base%    = aif_header%!40: REM PRINT 40," "+FNhex8(aif_header%!40),"Image base"
+    ro_end% = image_base% + ro_area_size%
+    rw_end% = ro_end% + rw_area_size%
+    zi_end% = rw_end% + zi_area_size%
+     PRINT "End addr"," "+FNhex8(zi_end%)
+    max_addr% = zi_end% + (root_stack_size% + &027C): REM Add room for the stack + &27C extra for RTL
+    REM Consider DBG area - same start address as ZI area and likely to be larger if present
+    IF max_addr% < rw_end% + dbg_area_size% THEN
+      REM Plenty of room once debug info has been stripped
+      max_addr% = rw_end% + dbg_area_size%
+    ENDIF
+     PRINT "Max addr"," "+FNhex8(max_addr%)
+    slot_size% = max_addr% - &8000: REM required WimpSlot minimum (slot starts at &8000)
+     PRINT "Slot size"," "+FNhex8(slot_size%),STR$INT(0.5+slot_size%/1024)+"KB (before rounding)"
+  ENDIF
+ENDIF
+:
+CLOSE#h%
+slot_size% = FNround_up(slot_size%,1024): REM Round up to 1KB here - caller will round out for WimpSlot
+PRINT "Slot size"," "+FNhex8(slot_size%),STR$(slot_size%/1024)+"KB (after rounding to 1KB)"
+=slot_size%
+:
+:
+DEF FNround_up(size%,page_size%)
+=(size% + (page_size%-1)) AND NOT (page_size%-1)
+:
+:
+DEF FNhex8(A%)
+="0x"+RIGHT$("00000000"+STR$~A%,8)
+:
+:
+DEF FNAIF_valid_code_entry(aif_header%,off%)
+LOCAL w%: w% = aif_header%!off%
+CASE (w% >>> 24) OF
+  WHEN &EB,&FB: REM BL(NV) something
+    =TRUE
+  OTHERWISE
+    IF w% = &E1A00000 THEN =TRUE: REM MOV R0,R0
+ENDCASE
+PRINT "Invalid AIF code entry["+STR$off%+"]: "+FNhex8(w%)
+=FALSE
 :
 :
 REM end of BootRunGen

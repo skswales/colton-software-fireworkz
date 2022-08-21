@@ -23,7 +23,7 @@ $(BUILD_DIR).ob_spelb.$(COUNTRY)-29/rc: $(T5).ob_spelb.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 29 -common
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob29: $(T5).ob_spelb.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob29: $(T5).ob_spelb.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

@@ -36,10 +36,6 @@ execute_menu_command(
     _InVal_     UINT command,
     _InVal_     BOOL slide_off);
 
-static HMENU
-make_popup_from_menu_root(
-    P_MENU_ROOT p_menu_root);
-
 _Check_return_
 static STATUS
 make_host_menu(
@@ -450,11 +446,15 @@ host_wm_initmenu_recurse(
             {
                 const U32 n_bytes_command = PtrDiffBytesU32(p_colon, p_command) + 1;
                 const U32 n_bytes_test = sizeof32("Button:")-1;
-                if( (n_bytes_command == n_bytes_test) && (0 == memcmp("Button:", p_command, n_bytes_test)) ) /* SKS eliminate strncmp() for Pentium build */
+                /* SKS eliminate strncmp() for Pentium build as VS2013 library uses a Pentium Pro conditional assignment opcode */
+                if( (n_bytes_command == n_bytes_test) && (0 == memcmp("Button:", p_command, n_bytes_test)) )
                 {
                     const PC_U8Z p_button_name = PtrAddBytes(PC_USTR, p_command, n_bytes_command);
+                    const PC_U8Z p_button_optional_args = strchr(p_button_name, CH_SEMICOLON);
+                    const U32 button_name_len = (NULL != p_button_optional_args) ? PtrDiffBytesU32(p_button_optional_args, p_button_name) : ustrlen32(p_button_name);
                     T5_TOOLBAR_TOOL_ENABLE_QUERY t5_toolbar_tool_enable_query;
                     t5_toolbar_tool_enable_query.name = p_button_name;
+                    t5_toolbar_tool_enable_query.name_len = button_name_len;
                     status_assert(object_call_id(OBJECT_ID_TOOLBAR, de_const_cast(P_DOCU, p_docu), T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY, &t5_toolbar_tool_enable_query));
                     state = t5_toolbar_tool_enable_query.enabled ? MF_ENABLED : (MF_DISABLED | MF_GRAYED);
                 }
@@ -527,11 +527,11 @@ host_onInitMenu(
         {
             const P_MENU_ROOT p_menu_root = sk_menu_root(p_docu_config, i);
 
-            if(!IS_DOCU_NONE(p_docu))
+            if(DOCU_NOT_NONE(p_docu))
                 host_wm_initmenu_for_docu(p_docu);
 
             DOCU_ASSERT(p_docu); /* currently all callers DO pass valid DOCU */
-            __analysis_assume(p_docu);
+            _Analysis_assume_(p_docu);
             host_wm_initmenu_recurse(p_docu, p_menu_root, hmenu);
 
             break;

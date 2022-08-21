@@ -1,0 +1,361 @@
+﻿//
+// RCGen created for Object 6
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// Manually based at 0x3000
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_chart (Germany)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// ob_chart messages: keep consistent with ob_chart/resource/resource.h
+//
+// CHART_MSG_DIALOG_PIE_GALLERY_xxx
+//
+// UK 0:Pie chart
+	0x3000,	L"Kreisdiagramm"
+// UK 1:sg/sg04_pie_charts.htm
+	0x3001,	L"sg/sg04_pie_charts.htm"
+// UK 2:Label
+	0x3002,	L"Beschriftung"
+// UK 3:Explode
+	0x3003,	L"Explodiertes"
+// UK 4:By
+	0x3004,	L"By"
+// UK 5:Start position
+	0x3005,	L"Startposition"
+// UK 6:°
+	0x3006,	L"°"
+// UK 7:Anticlockwise
+	0x3007,	L"Gegen den Uhrzeigersinn"
+//
+// CHART_MSG_SUGGESTED_LEAFNAME
+//
+// UK 10:Chart
+	0x300A,	L"Diagramm"
+//
+// CHART_MSG_DIALOG_BAR_GALLERY_xxx
+//
+// UK 100:Bar chart
+	0x3064,	L"Säulendiagramm"
+// UK 101:sg/sg04_bar_charts.htm
+	0x3065,	L"sg/sg04_bar_charts.htm"
+// UK 102:Horizontal
+	0x3066,	L"Horizontal"
+// UK 103:3-D
+	0x3067,	L"3-D"
+//
+// UK 105:Bar / line overlay chart
+	0x3069,	L"Säulen / linien overlay diagramm"
+// UK 106:sg/sg04_overlays.htm
+	0x306A,	L"sg/sg04_overlays.htm"
+//
+// UK 110:Data series are in
+	0x306E,	L"Datenreihen in"
+// UK 111:Columns
+	0x306F,	L"Spalten"
+// UK 112:Rows
+	0x3070,	L"Zeilen"
+// UK 113:First series contains
+	0x3071,	L"Erste Serie enthält"
+// UK 114:Category (X) labels
+	0x3072,	L"Kategorie (X) Beschriftung"
+// UK 115:Series data
+	0x3073,	L"Datenreihen"
+// UK 116:First category is
+	0x3074,	L"Erste Kategorie ist"
+// UK 117:Series labels
+	0x3075,	L"Serien Beschriftung"
+// UK 118:First data point
+	0x3076,	L"Erster Datenpunkt"
+// UK 119:Category (Y) labels
+	0x3077,	L"Kategorie (Y) Beschriftung"
+// UK 120:Data series arranged as
+	0x3078,	L"Datenreihen angeordnet als"
+// UK 121:X,Y,Y
+	0x3079,	L"X,Y,Y"
+// UK 122:X,Y X,Y
+	0x307A,	L"X,Y X,Y"
+// UK 123:First data point is
+	0x307B,	L"Erster Datenpunkt ist"
+// UK 124:First data point
+	0x307C,	L"Erster Datenpunkt"
+// UK 125:Category labels
+	0x307D,	L"Kategorie Beschriftung"
+// UK 126:Series label
+	0x307E,	L"Serie Beschriftung"
+//
+// UK r130:Click on a chart element to select it. ADJUST-click for finer selection
+//r130:Klicken Sie auf ein Diagrammelement, um es auszuwählen. ADJUST-Klicken Sie für eine feinere Auswahl
+// UK w130:Click on a chart element to select it. Ctrl-click for finer selection
+	0x3082,	L"Klicken Sie auf ein Diagrammelement, um es auszuwählen. Strg-Klicken Sie für eine feinere Auswahl"
+//
+// CHART_MSG_DIALOG_BAR_xxx
+//
+// UK 150:Bar
+	0x3096,	L"Säule"
+// UK 151:% width
+	0x3097,	L"% Breite"
+// UK 152:% overlap
+	0x3098,	L"% Überlappung"
+// UK 153:% depth
+	0x3099,	L"% Tiefe"
+// UK 160:sg/sg04_customising_bar_charts.htm
+	0x30A0,	L"sg/sg04_customising_bar_charts.htm"
+//
+// UK 190:3-D
+	0x30BE,	L"3-D"
+// UK 191:Droop
+	0x30BF,	L"Herabhängen"
+// UK 192:Turn
+	0x30C0,	L"Wende"
+//
+// CHART_MSG_DIALOG_LINE_GALLERY_xxx
+//
+// UK 200:Line chart
+	0x30C8,	L"Liniendiagramm"
+// UK 201:sg/sg04_line_charts.htm
+	0x30C9,	L"sg/sg04_line_charts.htm"
+// UK 202:3-D ribbons
+	0x30CA,	L"3-D band"
+//
+// CHART_MSG_DIALOG_LINE_xxx
+//
+// UK 250:Line
+	0x30FA,	L"Linie"
+// UK 251:% width
+	0x30FB,	L"% Breite"
+// UK 252:% shift
+	0x30FC,	L"% Verschieben"
+// UK 253:% depth
+	0x30FD,	L"% Tiefe"
+//260:sg/sg04_customising_line_charts.htm
+// UK 260:sg/sg04_line_charts.htm
+	0x3104,	L"sg/sg04_line_charts.htm"
+//
+// CHART_MSG_DIALOG_SCAT_GALLERY_xxx
+//
+// UK 300:Scatter graph
+	0x312C,	L"Streudiagramm"
+// UK 301:sg/sg04_x_y_scatter_graphs.htm
+	0x312D,	L"sg/sg04_x_y_scatter_graphs.htm"
+//
+// CHART_MSG_DIALOG_SCAT_xxx
+//
+// UK 350:Point
+	0x315E,	L"Punkt"
+// UK 351:% width
+	0x315F,	L"% Breite"
+//360:sg/sg04_customising_scatter_charts.htm
+// UK 360:sg/sg04_x_y_scatter_graphs.htm
+	0x3168,	L"sg/sg04_x_y_scatter_graphs.htm"
+//
+// CHART_MSG_DIALOG_GEN_AXIS_xxx
+//
+// UK 400:Position
+	0x3190,	L"Platzierung"
+// UK 401:Left
+	0x3191,	L"Links"
+// UK 402:Top
+	0x3192,	L"Oben"
+// UK 403:Right
+	0x3193,	L"Rechts"
+// UK 404:Bottom
+	0x3194,	L"Unten"
+// UK 405:Zero
+	0x3195,	L"Null"
+// UK 406:Front
+	0x3196,	L"Nach vorne"
+// UK 407:Auto
+	0x3197,	L"Auto."
+// UK 408:Rear
+	0x3198,	L"Nach hinten"
+// UK 409:Major interval
+	0x3199,	L"Hauptintervall"
+// UK 410:Automatic
+	0x319A,	L"Automatisch"
+// UK 411:Spacing
+	0x319B,	L"Spacing"
+// UK 412:Grid lines
+	0x319C,	L"Gitterlinien"
+// UK 413:Ticks
+	0x319D,	L"Teilstriche"
+// UK 414:Minor interval
+	0x319E,	L"Teilintervall"
+//
+// CHART_MSG_DIALOG_VAL_AXIS_xxx
+//
+// UK 420:Scaling
+	0x31A4,	L"Skalierung"
+// UK 421:Automatic
+	0x31A5,	L"Automatisch"
+// UK 422:Minimum value
+	0x31A6,	L"Minimum"
+// UK 423:Maximum value
+	0x31A7,	L"Maximum"
+// UK 424:Include zero
+	0x31A8,	L"Null einschließen"
+// UK 425:Logarithmic
+	0x31A9,	L"Logarithmisch"
+// UK 426:Log labels
+	0x31AA,	L"Log. Beschriftung"
+// UK 427:Series defaults
+	0x31AB,	L"Serienstandard"
+// UK 428:Cumulative
+	0x31AC,	L"Kumulativ"
+// UK 429:Vary by point
+	0x31AD,	L"Variieren nach Punkten"
+// UK 430:Line of best fit
+	0x31AE,	L"Trendlinie"
+// UK 431:Fill to axis
+	0x31AF,	L"Füllen bis zur Achse"
+// UK 432:Stack series
+	0x31B0,	L"Gestapelt"
+//
+// UK 433:Overlay
+	0x31B1,	L"Overlay"
+//
+// CHART_MSG_DIALOG_STYLE_xxx
+//
+// UK 500:Line colour
+	0x31F4,	L"Linienfarbe"
+// UK 501:Line style
+	0x31F5,	L"Linienstil"
+// UK 503:Fill style
+	0x31F7,	L"Füllungstil"
+// UK 504:Fill colour
+	0x31F8,	L"Füllungfarbe"
+// UK 505:Solid
+	0x31F9,	L"Solide"
+// UK 506:Picture
+	0x31FA,	L"Bild"
+// UK 507:Preserve aspect ratio
+	0x31FB,	L"Seitenverhältnis beibehalten"
+// UK 508:Allow recolouring
+	0x31FC,	L"Umfärben zulassen"
+// UK 510:sg/sg04_using_colour_in_charts.htm
+	0x31FE,	L"sg/sg04_using_colour_in_charts.htm"
+// UK 511:sg/sg04_editing_lines.htm
+	0x31FF,	L"sg/sg04_editing_lines.htm"
+//
+// CHART_MSG_DIALOG_CHART_MARGINS_xxx
+//
+// UK 520:Chart margins
+	0x3208,	L"Diagrammränder"
+// UK 521:sg/sg04_positioning_the_chart.htm
+	0x3209,	L"sg/sg04_positioning_the_chart.htm"
+// UK 522:Top
+	0x320A,	L"Oben"
+// UK 523:Bottom
+	0x320B,	L"Unten"
+// UK 524:Left
+	0x320C,	L"Links"
+// UK 525:Right
+	0x320D,	L"Rechts"
+//
+// CHART_MSG_DIALOG_CHART_LEGEND_xxx
+//
+// UK 530:Legend
+	0x3212,	L"Legende"
+// UK 531:sg/sg04_editing_text_in_charts.htm
+	0x3213,	L"sg/sg04_editing_text_in_charts.htm"
+// UK 532:On
+	0x3214,	L"Anzeigen"
+// UK 533:Arrange horizontally
+	0x3215,	L"Horizontal anordnen"
+//
+// CHART_MSG_DEFAULT_xxx
+//
+// UK 600:8 0 Helvetica
+	0x3258,	L"8 0 Helvetica"
+// UK 602:Chart%d
+	0x325A,	L"Diagramm%d"
+//
+// CHART_MSG_OBJNAME_xxx (UI names for objects in each chart)
+//
+// UK 700:Chart
+	0x32BC,	L"Diagrammfläche"
+// UK 701:Wall
+	0x32BD,	L"Diagrammwand"
+// UK 702:Floor
+	0x32BE,	L"Diagrammboden"
+// UK 703:Plot area
+	0x32BF,	L"Diagramm"
+// UK 704:Legend
+	0x32C0,	L"Legende"
+// UK 705:Text %hd
+	0x32C1,	L"Text %hd"
+// UK 706:Series %hd
+	0x32C2,	L"Datenreihe %hd"
+// UK 707:Series %hd Point %hd
+	0x32C3,	L"Datenreihe %hd, Datenpunkt %hd"
+// UK 708:Series %hd drop
+	0x32C4,	L"Datenreihe %hd drop"
+// UK 709:Series %hd Point %hd drop
+	0x32C5,	L"Datenreihe %hd, Datenpunkt %hd drop"
+// UK 710:Axis %hd
+	0x32C6,	L"Achse %hd"
+// UK 711:X Axis
+	0x32C7,	L"z-Achse"
+// UK 712:Y Axis
+	0x32C8,	L"y-Achse"
+// UK 713:Category (X) axis
+	0x32C9,	L"x-Asche (Kategorie) "
+// UK 714:Value (Y) axis
+	0x32CA,	L"y-Asche (Wert) "
+// UK 715:Series (Z) axis
+	0x32CB,	L"z-Achse (Serie)"
+// UK 716:Grid %hd
+	0x32CC,	L"Gitter %hd"
+// UK 717:Tick %hd
+	0x32CD,	L"Teilstriche %hd"
+// UK 718:Best fit %hd
+	0x32CE,	L"Trendlinie %hd"
+//
+// CHART_MSG_DIALOG_xxx_HELP_TOPIC
+//
+// UK 800:sg/sg04_editing_data_series.htm
+	0x3320,	L"sg/sg04_editing_data_series.htm"
+// UK 801:sg/sg04_editing_axes.htm
+	0x3321,	L"sg/sg04_editing_axes.htm"
+// UK 802:sg/sg04_editing_axes.htm
+	0x3322,	L"sg/sg04_editing_axes.htm"
+//
+// errors: keep consistent with ob_chart/resource/resource.h
+// see CHART_ERR(n)
+//
+// UK e0:Not enough data for pie chart
+	0xB000,	L"Nicht genügend Daten für Kreisdiagramm"
+// UK e2:Negative and/or zero data ignored in pie chart
+	0xB002,	L"Negative und / oder Nulldaten werden im Kreisdiagramm ignoriert"
+// UK e3:Arithmetic exception in chart creation
+	0xB003,	L"Numerische Ausnahme bei der Diagrammerstellung"
+// UK e4:Negative and/or zero data ignored in stacked chart
+	0xB004,	L"Negative und / oder Nulldaten werden im gestapelten Diagramm ignoriert"
+// UK e5:Unable to load chart because memory full; chart discarded
+	0xB005,	L"Diagramm kann nicht geladen werden, da der Speicher voll ist; Diagramm verworfen"
+// UK e6:No data for chart
+	0xB006,	L"Keine Daten für Diagramm"
+// UK e7:Charts can only use Draw and Sprite files
+	0xB007,	L"Diagramme können nur Draw- und Sprite-Dateien verwenden"
+//
+// end of msg (ob_chart)
+END
+//
+// end of RCGen created string table

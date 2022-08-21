@@ -1,0 +1,64 @@
+﻿
+To set up a formula field, you need to enter the formula into the
+box labelled Default value within the Field properties dialogue
+box. If you wish to refer to values held in other fields, the field
+names should be enclosed by single quotes (not double quotes).
+For example, to set up a formula to calculate the VAT on a value
+held in a number field whose name is ‘Price’, enter the following in
+the Default value box:
+‘Price’ * 0.175
+Alternatively, to set up a fonnula to display the length of time
+worked given the values in the two date fields; 'ClockIn' and
+'ClockOut', enter the following in the Default value box:
+'ClockOut' - 'ClockIn'
+These are just simple examples, the value can be the result of a
+complex expression, up to 255 characters in length, involving
+several different fields and operators. Thus formula fields can be
+very powerful and flexible tools when you become familiar with
+them. (See Chapter 13 - Expression syntax, for details of the
+syntax and functions available for formula fields.)
+
+Interval fields
+Interval fields can hold time intervals which are specified in terms
+of a number of years, months, days, hours, minutes and/or
+seconds. These can be used for manufacturing times, work hours
+etc.
+For example:
+1 hour 15 minutes 6 seconds
+or
+5 months 6 days
+
+Setting up short cuts for data entry
+When creating your database, options are provided which can
+reduce the amount of effort involved when you come to enter data.
+Details of how to set up these short cuts are given below. For
+details of how to use the short cuts when entering data refer to
+Chapter 6 - Adding & editing records.
+
+Value lists
+There may be some fields in your database which will be required
+to hold a wide range of different entries. Conversely, there may be
+some which are intended to hold one of just a few different
+choices. For example, a school database holding details of which
+foreign language pupils studied in their first year may be limited to
+say; French, German, Spanish or Italian.
+To help speed up the entry of information into this field, you can
+build a list of entries so all that the user need do is choose an entry
+from the list, rather than type the entry in full each time.
+Note that the user will be free to type an entry if they prefer and
+will not be limited to the choices presented, (unless a check
+formula has been set as discussed in the next section). In the
+example above, this means that if a pupil has moved from a
+different school which offered, say Russian, their first foreign
+language can be entered by typing it in the normal manner and
+ignoring the value list.
+Building a value list is similar to building a list of fields.
+To add an entry:
+1 Highlight the field to which the value list will apply by
+clicking on it or using the up and down arrow keys to move
+the highlight bar onto it.
+2 Type the value into the box labelled Value list.
+3 Click Add or press Retum.
+
+Fireworkz Pro 69
+

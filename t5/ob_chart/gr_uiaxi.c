@@ -534,17 +534,15 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_gr_chart_axis_process)
     }
 }
 
-_Check_return_
-extern STATUS
-gr_chart_axis_process(
-    P_CHART_HEADER p_chart_header,
-    _In_        GR_CHART_OBJID id)
+static inline void
+gr_chart_axis_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _In_        GR_CHART_OBJID id,
+    _OutRef_    P_GR_CHART_AXIS_STATE p_state)
 {
-    GR_CHART_AXIS_STATE state;
-    STATUS status;
-
-    state.processing_cat = 0;
-    state.level = 0;
+    p_state->p_chart_header = p_chart_header;
+    p_state->processing_cat = 0;
+    p_state->level = 0;
 
     {
     const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
@@ -584,37 +582,61 @@ gr_chart_axis_process(
         break;
     }
 
-    state.modifying_axis_idx = gr_axes_idx_from_external(cp, id.no, &state.modifying_axes_idx);
+    p_state->modifying_axis_idx = gr_axes_idx_from_external(cp, id.no, &p_state->modifying_axes_idx);
 
-    if((GR_CHART_TYPE_SCAT != cp->axes[state.modifying_axes_idx].chart_type) && (GR_CHART_TYPE_SCAT != cp->axes[0].chart_type))
-        if(state.modifying_axis_idx == X_AXIS_IDX)
-            state.processing_cat = 1; /* give him a hand with id processing */
+    if((GR_CHART_TYPE_SCAT != cp->axes[p_state->modifying_axes_idx].chart_type) && (GR_CHART_TYPE_SCAT != cp->axes[0].chart_type))
+        if(p_state->modifying_axis_idx == X_AXIS_IDX)
+            p_state->processing_cat = 1; /* give him a hand with id processing */
     } /*block*/
 
-    state.p_chart_header = p_chart_header;
-    state.id = id;
+    p_state->id = id;
+}
+
+_Check_return_
+static STATUS
+gr_chart_axis_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_GR_CHART_AXIS_STATE p_state)
+{
+    static UI_TEXT caption = { UI_TEXT_TYPE_USTR_TEMP };
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
+    gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), p_state->id, ustr_bptr(buffer), elemof32(buffer));
+    caption.text.ustr = ustr_bptr(buffer);
+    {
+    T5_MSG_CHART_DIALOG_DATA t5_msg_chart_dialog_data;
+    msgclr(t5_msg_chart_dialog_data);
+    t5_msg_chart_dialog_data.reason = p_state->processing_cat ? CHART_DIALOG_AXIS_CAT : CHART_DIALOG_AXIS_VAL;
+    t5_msg_chart_dialog_data.modifying_axis_idx = p_state->modifying_axis_idx;
+    status_return(object_call_id(OBJECT_ID_CHART, P_DOCU_NONE, T5_MSG_CHART_DIALOG, &t5_msg_chart_dialog_data));
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, t5_msg_chart_dialog_data.p_ctl_create, t5_msg_chart_dialog_data.n_ctls, &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = t5_msg_chart_dialog_data.help_topic_resource_id;
+    } /*block*/
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_gr_chart_axis_process;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_state;
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
+_Check_return_
+extern STATUS
+gr_chart_axis_process(
+    P_CHART_HEADER p_chart_header,
+    _In_        GR_CHART_OBJID id)
+{
+    GR_CHART_AXIS_STATE state;
+    STATUS status;
+
+    gr_chart_axis_process_init(p_chart_header, id, &state);
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
-        gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), id, ustr_bptr(buffer), elemof32(buffer));
-        {
-        T5_MSG_CHART_DIALOG_DATA t5_msg_chart_dialog_data;
-        msgclr(t5_msg_chart_dialog_data);
-        t5_msg_chart_dialog_data.reason = state.processing_cat ? CHART_DIALOG_AXIS_CAT : CHART_DIALOG_AXIS_VAL;
-        t5_msg_chart_dialog_data.modifying_axis_idx = state.modifying_axis_idx;
-        status_break(status = object_call_id(OBJECT_ID_CHART, P_DOCU_NONE, T5_MSG_CHART_DIALOG, &t5_msg_chart_dialog_data));
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, t5_msg_chart_dialog_data.p_ctl_create, t5_msg_chart_dialog_data.n_ctls, t5_msg_chart_dialog_data.help_topic_resource_id);
-        } /*block*/
-        dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_USTR_TEMP;
-        dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_gr_chart_axis_process;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &state;
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_axis_process_dialog(p_chart_header, &state);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
+
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -789,6 +811,58 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_gr_chart_series_process)
     }
 }
 
+static inline void
+gr_chart_series_process_init(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InVal_     GR_CHART_OBJID id_in,
+    _OutRef_    P_GR_CHART_SERIES_STATE p_state)
+{
+    const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
+
+    p_state->p_chart_header = p_chart_header;
+
+    switch(id_in.name)
+    {
+    default:
+        p_state->modifying_series_idx = 0;
+        break;
+
+    case GR_CHART_OBJNAME_SERIES:
+    case GR_CHART_OBJNAME_DROPSERIES:
+    case GR_CHART_OBJNAME_BESTFITSER:
+    case GR_CHART_OBJNAME_POINT:
+    case GR_CHART_OBJNAME_DROPPOINT:
+        p_state->modifying_series_idx = gr_series_idx_from_external(cp, id_in.no);
+        break;
+    }
+
+    gr_chart_objid_from_series_idx(cp, p_state->modifying_series_idx, &p_state->modifying_id);
+}
+
+_Check_return_
+static STATUS
+gr_chart_series_process_dialog(
+    _InoutRef_  P_CHART_HEADER p_chart_header,
+    _InoutRef_  P_GR_CHART_SERIES_STATE p_state)
+{
+    static UI_TEXT caption = { UI_TEXT_TYPE_USTR_TEMP };
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
+    gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), p_state->modifying_id, ustr_bptr(buffer), elemof32(buffer));
+    caption.text.ustr = ustr_bptr(buffer);
+    {
+    T5_MSG_CHART_DIALOG_DATA t5_msg_chart_dialog_data;
+    msgclr(t5_msg_chart_dialog_data);
+    t5_msg_chart_dialog_data.reason = CHART_DIALOG_SERIES;
+    status_return(object_call_id(OBJECT_ID_CHART, P_DOCU_NONE, T5_MSG_CHART_DIALOG, &t5_msg_chart_dialog_data));
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, t5_msg_chart_dialog_data.p_ctl_create, t5_msg_chart_dialog_data.n_ctls, &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = t5_msg_chart_dialog_data.help_topic_resource_id;
+    } /*block*/
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_gr_chart_series_process;
+    dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_state;
+    return(object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+}
+
 _Check_return_
 extern STATUS
 gr_chart_series_process(
@@ -798,49 +872,17 @@ gr_chart_series_process(
     GR_CHART_SERIES_STATE state;
     STATUS status;
 
-    {
-    const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
-
-    switch(id_in.name)
-    {
-    default:
-        state.modifying_series_idx = 0;
-        break;
-
-    case GR_CHART_OBJNAME_SERIES:
-    case GR_CHART_OBJNAME_DROPSERIES:
-    case GR_CHART_OBJNAME_BESTFITSER:
-    case GR_CHART_OBJNAME_POINT:
-    case GR_CHART_OBJNAME_DROPPOINT:
-        state.modifying_series_idx = gr_series_idx_from_external(cp, id_in.no);
-        break;
-    }
-
-    gr_chart_objid_from_series_idx(cp, state.modifying_series_idx, &state.modifying_id);
-    } /*block*/
-
-    state.p_chart_header = p_chart_header;
+    gr_chart_series_process_init(p_chart_header, id_in, &state);
 
     for(;;)
     {
-        DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        UCHARZ buffer[BUF_MAX_GR_CHART_OBJID_REPR];
-        gr_chart_object_name_from_id(p_gr_chart_from_chart_handle(p_chart_header->ch), state.modifying_id, ustr_bptr(buffer), elemof32(buffer));
-        {
-        T5_MSG_CHART_DIALOG_DATA t5_msg_chart_dialog_data;
-        msgclr(t5_msg_chart_dialog_data);
-        t5_msg_chart_dialog_data.reason = CHART_DIALOG_SERIES;
-        status_break(status = object_call_id(OBJECT_ID_CHART, P_DOCU_NONE, T5_MSG_CHART_DIALOG, &t5_msg_chart_dialog_data));
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, t5_msg_chart_dialog_data.p_ctl_create, t5_msg_chart_dialog_data.n_ctls, t5_msg_chart_dialog_data.help_topic_resource_id);
-        } /*block*/
-        dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_USTR_TEMP;
-        dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
-        dialog_cmd_process_dbox.p_proc_client = dialog_event_gr_chart_series_process;
-        dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &state;
-        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = gr_chart_series_process_dialog(p_chart_header, &state);
+
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
+
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }

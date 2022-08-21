@@ -283,10 +283,10 @@ text_from_cell(
     if(status == STATUS_OK)
     {
         OBJECT_READ_TEXT object_read_text;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
         quick_ublock_with_buffer_setup(quick_ublock);
 
-        zero_struct(object_read_text);
+        zero_struct_fn(object_read_text);
         object_read_text.p_quick_ublock = &quick_ublock;
         object_read_text.type = OBJECT_READ_TEXT_EDIT;
         object_read_text.object_data = *p_object_data_in;
@@ -1038,7 +1038,7 @@ T5_MSG_PROTO(static, cells_edit_msg_object_string_replace, P_OBJECT_STRING_REPLA
         } /*block*/
 
         { /* convert replace data */
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
         quick_ublock_with_buffer_setup(quick_ublock);
 
         status_assert(ustr_inline_replace_convert(&quick_ublock,

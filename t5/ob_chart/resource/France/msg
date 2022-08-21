@@ -1,0 +1,342 @@
+#
+# this is the messages file for ob_chart (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# ob_chart messages: keep consistent with ob_chart/resource/resource.h
+#
+# CHART_MSG_DIALOG_PIE_GALLERY_xxx
+#
+# UK 0:Pie chart
+0:Pie chart
+# UK 1:sg/sg04_pie_charts.htm
+1:sg/sg04_pie_charts.htm
+# UK 2:Label
+2:Label
+# UK 3:Explode
+3:Explode
+# UK 4:By
+4:By
+# UK 5:Start position
+5:Start position
+# UK 6:°
+6:°
+# UK 7:Anticlockwise
+7:Anticlockwise
+#
+# CHART_MSG_SUGGESTED_LEAFNAME
+#
+# UK 10:Chart
+10:Chart
+#
+# CHART_MSG_DIALOG_BAR_GALLERY_xxx
+#
+# UK 100:Bar chart
+100:Bar chart
+# UK 101:sg/sg04_bar_charts.htm
+101:sg/sg04_bar_charts.htm
+# UK 102:Horizontal
+102:Horizontal
+# UK 103:3-D
+103:3-D
+#
+# UK 105:Bar / line overlay chart
+105:Bar / line overlay chart
+# UK 106:sg/sg04_overlays.htm
+106:sg/sg04_overlays.htm
+#
+# UK 110:Data series are in
+110:Data series are in
+# UK 111:Columns
+111:Columns
+# UK 112:Rows
+112:Rows
+# UK 113:First series contains
+113:First series contains
+# UK 114:Category (X) labels
+114:Category (X) labels
+# UK 115:Series data
+115:Series data
+# UK 116:First category is
+116:First category is
+# UK 117:Series labels
+117:Series labels
+# UK 118:First data point
+118:First data point
+# UK 119:Category (Y) labels
+119:Category (Y) labels
+# UK 120:Data series arranged as
+120:Data series arranged as
+# UK 121:X,Y,Y
+121:X,Y,Y
+# UK 122:X,Y X,Y
+122:X,Y X,Y
+# UK 123:First data point is
+123:First data point is
+# UK 124:First data point
+124:First data point
+# UK 125:Category labels
+125:Category labels
+# UK 126:Series label
+126:Series label
+#
+# UK r130:Click on a chart element to select it. ADJUST-click for finer selection
+r130:Click on a chart element to select it. ADJUST-click for finer selection
+# UK w130:Click on a chart element to select it. Ctrl-click for finer selection
+w130:Click on a chart element to select it. Ctrl-click for finer selection
+#
+# CHART_MSG_DIALOG_BAR_xxx
+#
+# UK 150:Bar
+150:Bar
+# UK 151:% width
+151:% width
+# UK 152:% overlap
+152:% overlap
+# UK 153:% depth
+153:% depth
+# UK 160:sg/sg04_customising_bar_charts.htm
+160:sg/sg04_customising_bar_charts.htm
+#
+# UK 190:3-D
+190:3-D
+# UK 191:Droop
+191:Droop
+# UK 192:Turn
+192:Turn
+#
+# CHART_MSG_DIALOG_LINE_GALLERY_xxx
+#
+# UK 200:Line chart
+200:Line chart
+# UK 201:sg/sg04_line_charts.htm
+201:sg/sg04_line_charts.htm
+# UK 202:3-D ribbons
+202:3-D ribbons
+#
+# CHART_MSG_DIALOG_LINE_xxx
+#
+# UK 250:Line
+250:Line
+# UK 251:% width
+251:% width
+# UK 252:% shift
+252:% shift
+# UK 253:% depth
+253:% depth
+#260:sg/sg04_customising_line_charts.htm
+# UK 260:sg/sg04_line_charts.htm
+260:sg/sg04_line_charts.htm
+#
+# CHART_MSG_DIALOG_SCAT_GALLERY_xxx
+#
+# UK 300:Scatter graph
+300:Scatter graph
+# UK 301:sg/sg04_x_y_scatter_graphs.htm
+301:sg/sg04_x_y_scatter_graphs.htm
+#
+# CHART_MSG_DIALOG_SCAT_xxx
+#
+# UK 350:Point
+350:Point
+# UK 351:% width
+351:% width
+#360:sg/sg04_customising_scatter_charts.htm
+# UK 360:sg/sg04_x_y_scatter_graphs.htm
+360:sg/sg04_x_y_scatter_graphs.htm
+#
+# CHART_MSG_DIALOG_GEN_AXIS_xxx
+#
+# UK 400:Position
+400:Position
+# UK 401:Left
+401:Left
+# UK 402:Top
+402:Top
+# UK 403:Right
+403:Right
+# UK 404:Bottom
+404:Bottom
+# UK 405:Zero
+405:Zero
+# UK 406:Front
+406:Front
+# UK 407:Auto
+407:Auto
+# UK 408:Rear
+408:Rear
+# UK 409:Major interval
+409:Major interval
+# UK 410:Automatic
+410:Automatic
+# UK 411:Spacing
+411:Spacing
+# UK 412:Grid lines
+412:Grid lines
+# UK 413:Ticks
+413:Ticks
+# UK 414:Minor interval
+414:Minor interval
+#
+# CHART_MSG_DIALOG_VAL_AXIS_xxx
+#
+# UK 420:Scaling
+420:Scaling
+# UK 421:Automatic
+421:Automatic
+# UK 422:Minimum value
+422:Minimum value
+# UK 423:Maximum value
+423:Maximum value
+# UK 424:Include zero
+424:Include zero
+# UK 425:Logarithmic
+425:Logarithmic
+# UK 426:Log labels
+426:Log labels
+# UK 427:Series defaults
+427:Series defaults
+# UK 428:Cumulative
+428:Cumulative
+# UK 429:Vary by point
+429:Vary by point
+# UK 430:Line of best fit
+430:Line of best fit
+# UK 431:Fill to axis
+431:Fill to axis
+# UK 432:Stack series
+432:Stack series
+#
+# UK 433:Overlay
+433:Overlay
+#
+# CHART_MSG_DIALOG_STYLE_xxx
+#
+# UK 500:Line colour
+500:Line colour
+# UK 501:Line style
+501:Line style
+# UK 503:Fill style
+503:Fill style
+# UK 504:Fill colour
+504:Fill colour
+# UK 505:Solid
+505:Solid
+# UK 506:Picture
+506:Picture
+# UK 507:Preserve aspect ratio
+507:Preserve aspect ratio
+# UK 508:Allow recolouring
+508:Allow recolouring
+# UK 510:sg/sg04_using_colour_in_charts.htm
+510:sg/sg04_using_colour_in_charts.htm
+# UK 511:sg/sg04_editing_lines.htm
+511:sg/sg04_editing_lines.htm
+#
+# CHART_MSG_DIALOG_CHART_MARGINS_xxx
+#
+# UK 520:Chart margins
+520:Chart margins
+# UK 521:sg/sg04_positioning_the_chart.htm
+521:sg/sg04_positioning_the_chart.htm
+# UK 522:Top
+522:Top
+# UK 523:Bottom
+523:Bottom
+# UK 524:Left
+524:Left
+# UK 525:Right
+525:Right
+#
+# CHART_MSG_DIALOG_CHART_LEGEND_xxx
+#
+# UK 530:Legend
+530:Legend
+# UK 531:sg/sg04_editing_text_in_charts.htm
+531:sg/sg04_editing_text_in_charts.htm
+# UK 532:On
+532:On
+# UK 533:Arrange horizontally
+533:Arrange horizontally
+#
+# CHART_MSG_DEFAULT_xxx
+#
+# UK 600:8 0 Helvetica
+600:8 0 Helvetica
+# UK 602:Chart%d
+602:Chart%d
+#
+# CHART_MSG_OBJNAME_xxx (UI names for objects in each chart)
+#
+# UK 700:Chart
+700:Chart
+# UK 701:Wall
+701:Wall
+# UK 702:Floor
+702:Floor
+# UK 703:Plot area
+703:Plot area
+# UK 704:Legend
+704:Legend
+# UK 705:Text %hd
+705:Text %hd
+# UK 706:Series %hd
+706:Series %hd
+# UK 707:Series %hd Point %hd
+707:Series %hd Point %hd
+# UK 708:Series %hd drop
+708:Series %hd drop
+# UK 709:Series %hd Point %hd drop
+709:Series %hd Point %hd drop
+# UK 710:Axis %hd
+710:Axis %hd
+# UK 711:X Axis
+711:X Axis
+# UK 712:Y Axis
+712:Y Axis
+# UK 713:Category (X) axis
+713:Category (X) axis
+# UK 714:Value (Y) axis
+714:Value (Y) axis
+# UK 715:Series (Z) axis
+715:Series (Z) axis
+# UK 716:Grid %hd
+716:Grid %hd
+# UK 717:Tick %hd
+717:Tick %hd
+# UK 718:Best fit %hd
+718:Best fit %hd
+#
+# CHART_MSG_DIALOG_xxx_HELP_TOPIC
+#
+# UK 800:sg/sg04_editing_data_series.htm
+800:sg/sg04_editing_data_series.htm
+# UK 801:sg/sg04_editing_axes.htm
+801:sg/sg04_editing_axes.htm
+# UK 802:sg/sg04_editing_axes.htm
+802:sg/sg04_editing_axes.htm
+#
+# errors: keep consistent with ob_chart/resource/resource.h
+# see CHART_ERR(n)
+#
+# UK e0:Not enough data for pie chart
+e0:Not enough data for pie chart
+# UK e2:Negative and/or zero data ignored in pie chart
+e2:Negative and/or zero data ignored in pie chart
+# UK e3:Arithmetic exception in chart creation
+e3:Arithmetic exception in chart creation
+# UK e4:Negative and/or zero data ignored in stacked chart
+e4:Negative and/or zero data ignored in stacked chart
+# UK e5:Unable to load chart because memory full; chart discarded
+e5:Unable to load chart because memory full; chart discarded
+# UK e6:No data for chart
+e6:No data for chart
+# UK e7:Charts can only use Draw and Sprite files
+e7:Charts can only use Draw and Sprite files
+#
+# end of msg (ob_chart)

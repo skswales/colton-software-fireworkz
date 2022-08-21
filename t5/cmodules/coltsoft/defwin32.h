@@ -80,15 +80,20 @@
 #endif
 #endif /* _PREFAST_ */
 
-#if (defined(_PREFAST_) || 0) && 0
+#if (defined(_PREFAST_) || defined(CODE_ANALYSIS))
 /* Allow sal.h to choose attribute or __declspec implementation */
 /* these permit override if needed */
 /*#define _USE_DECLSPECS_FOR_SAL  1*/
 /*#define _USE_ATTRIBUTES_FOR_SAL 0*/
 #elif 1
 /* Enable expansion of SAL macros in non-Code Analysis mode for API conformance checking */
+#if _MSC_VER >= 1910 /* VS2017 or later */
 #define _USE_DECLSPECS_FOR_SAL  1
 #define _USE_ATTRIBUTES_FOR_SAL 0
+#else
+#define _USE_DECLSPECS_FOR_SAL  0
+#define _USE_ATTRIBUTES_FOR_SAL 1
+#endif
 #else
 /* Usually disable expansion of SAL macros in non-Code Analysis mode to improve compiler throughput */
 #define _USE_DECLSPECS_FOR_SAL  0
@@ -96,7 +101,14 @@
 #endif /* CODE_ANALYSIS */
 
 #pragma warning(push)
+#if _MSC_VER >= 1910 /* VS2017 or later */
+#if !defined(__cplusplus)
+#pragma warning(disable:4255) /* '__FallThrough': no function prototype given: converting '()' to '(void)' */
+#endif
+#pragma warning(disable:4555) /* result of expression not used */
+#else /* < VS2017 */
 #pragma warning(disable:4820) /* 'x' bytes padding added after data member */
+#endif
 
 #ifndef SAL_SUPP_H /* try to suppress inclusion as we get macro redefinition warnings when using Visual C++ 11.0 with the Windows 7.1 SDK */
 /*#define SAL_SUPP_H 1*/
@@ -194,6 +206,11 @@ typedef PCTSTR * P_PCTSTR;
 /* and this is a useful alias meaning CH_NULL-terminated array of TCHAR */
 #define TCHARZ TCHAR
 
+#define _HdcRef_    _InRef_
+
+#define HDC_ASSERT(hdc) \
+    assert(NULL != hdc);
+
 /*
 macros that ought to be in windows.h but aren't
 */
@@ -282,8 +299,14 @@ Turn off various Level 4 warnings
 #endif
 #endif /* __cplusplus */
 
+#if _MSC_VER >= 1920 /* VS2019 or later */
+#pragma warning(disable:4061) /* enumerator 'x' in switch of enum 'y' is not explicitly handled by a case label */
+#endif
+
 #if _MSC_VER >= 1910 /* VS2017 or later */
 #pragma warning(disable:5045) /* Compiler will insert Spectre mitigation for memory load if / Qspectre switch specified */
+
+#pragma warning(disable:26812) /* The enum type 'x' is unscoped. Prefer 'enum class' over 'enum' (Enum.3) */
 #endif
 
 /* Temporarily disable some VS2015 warnings */

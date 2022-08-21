@@ -102,7 +102,7 @@ T5_MSG_PROTO(extern, ascii_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg
             {
             /* SKS 18jul94 after 1.08b2 output displayed values - used to save like ownform! */
             OBJECT_READ_TEXT object_read_text;
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
             quick_ublock_with_buffer_setup(quick_ublock);
 
             object_read_text.object_data = object_data;

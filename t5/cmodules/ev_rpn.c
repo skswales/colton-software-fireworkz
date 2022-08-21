@@ -51,13 +51,18 @@ len_rpn(
 *
 ******************************************************************************/
 
+_Check_return_
 static S32
 read_check_custom_def(
     _InVal_     EV_HANDLE h_custom,
-    P_ARRAY_INDEX custom_num,
-    P_P_EV_CUSTOM p_p_ev_custom)
+    _OutRef_    P_ARRAY_INDEX custom_num,
+    _OutRef_    P_P_EV_CUSTOM p_p_ev_custom)
 {
-    if((*custom_num = custom_def_from_handle(h_custom)) >= 0)
+    if((*custom_num = custom_def_from_handle(h_custom)) < 0)
+    {
+        *p_p_ev_custom = NULL; /* CA */
+    }
+    else
     {
         *p_p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, *custom_num);
 
@@ -132,11 +137,9 @@ args_check(
 
     if(0 != arg_count)
     {
-        S32 ix, typec;
-        PC_EV_TYPE p_ev_type;
-
-        typec = type_count;
-        p_ev_type = p_arg_types;
+        S32 ix;
+        S32 typec = type_count;
+        PC_EV_TYPE p_ev_type = p_arg_types;
 
         for(ix = 0; ix < arg_count; ++ix)
         {
@@ -177,8 +180,8 @@ args_check(
                 {
                     switch(ss_data_get_data_id(args[ix]))
                     {
-                    case DATA_ID_RANGE:
                     case DATA_ID_ARRAY:
+                    case DATA_ID_RANGE:
                     case DATA_ID_FIELD:
                         ss_data_set_error(p_ss_data_res, EVAL_ERR_NESTEDARRAY);
                         args_ok = FALSE;
@@ -262,43 +265,47 @@ eval_backtrack_error(
 *
 ******************************************************************************/
 
-static S32
+static bool
 eval_optimise(
     P_RPNSTATE p_rpnstate)
 {
-    S32 did_opt = 0;
+    bool did_opt = false;
 
     switch(p_rpnstate->num)
     {
     case RPN_BOP_PLUS:
-        if(0 != (did_opt = two_nums_add_try(
+        if( true == (did_opt =
+                     two_nums_add_try(
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
-                                    &stack_base[stack_offset-0].data.stack_data_item.data)))
+                                    &stack_base[stack_offset-0].data.stack_data_item.data)) )
             stack_offset -= 1;
         break;
 
     case RPN_BOP_MINUS:
-        if(0 != (did_opt = two_nums_subtract_try(
+        if( true == (did_opt =
+                     two_nums_subtract_try(
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
-                                    &stack_base[stack_offset-0].data.stack_data_item.data)))
+                                    &stack_base[stack_offset-0].data.stack_data_item.data)) )
             stack_offset -= 1;
         break;
 
     case RPN_BOP_DIVIDE:
-        if(0 != (did_opt = two_nums_divide_try(
+        if( true == (did_opt =
+                     two_nums_divide_try(
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
-                                    &stack_base[stack_offset-0].data.stack_data_item.data)))
+                                    &stack_base[stack_offset-0].data.stack_data_item.data)) )
             stack_offset -= 1;
         break;
 
     case RPN_BOP_TIMES:
-        if(0 != (did_opt = two_nums_multiply_try(
+        if( true == (did_opt =
+                     two_nums_multiply_try(
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
                                     &stack_base[stack_offset-1].data.stack_data_item.data,
-                                    &stack_base[stack_offset-0].data.stack_data_item.data)))
+                                    &stack_base[stack_offset-0].data.stack_data_item.data)) )
             stack_offset -= 1;
         break;
     }
@@ -737,6 +744,16 @@ eval_rpn(
                     {
                     case EXEC_EXEC:
                         {
+#if CHECKING
+                        if(0 != p_rpndef->max_additional_args)
+                        {   /* check that we aren't passing too many if function shouln't cope */
+                            const S32 min_n_args = (- (S32) (p_rpndef->n_args)) - 1;
+                            const S32 max_n_args = min_n_args + p_rpndef->max_additional_args;
+                            assert(p_rpndef->n_args < 0);
+                            assert(arg_count <= max_n_args);
+                        }
+#endif
+
                         ev_split_exec_data.object_table_index = p_rpndef->object_table_index;
                         ev_split_exec_data.n_args = arg_count; /* optimise? */
                         ev_split_exec_data.p_ss_data_res = &func_result_data;
@@ -1195,16 +1212,8 @@ read_cur_sym(
         return;
 
     case DATA_ID_LOGICAL:
-        p_ss_data->arg.boolean = (BOOL) PtrGetByte(p_rpn_content); /* U8: 0 or 1 */
+        ss_data_set_logical(p_ss_data, (bool) PtrGetByte(p_rpn_content)); /* U8: 0 or 1 */
         return;
-
-    case DATA_ID_WORD8:
-        {
-        S8 s8;
-        read_from_rpn(&s8, p_rpn_content, sizeof32(S8));
-        p_ss_data->arg.integer = (S32) s8;
-        return;
-        }
 
     case DATA_ID_WORD16:
         {
@@ -1218,6 +1227,18 @@ read_cur_sym(
         read_from_rpn(&p_ss_data->arg.integer, p_rpn_content, sizeof32(S32));
         return;
 
+    case DATA_ID_DATE:
+        read_from_rpn(&p_ss_data->arg.ss_date, p_rpn_content, sizeof32(SS_DATE));
+        return;
+
+    case DATA_ID_STRING:
+        p_ss_data->arg.string.uchars = (PC_UCHARS) p_rpn_content;
+        p_ss_data->arg.string.size = ustrlen32(p_ss_data->arg.string.uchars); /* string in RPN can't contain CH_NULL */
+        return;
+
+    case DATA_ID_BLANK:
+        return;
+
     case DATA_ID_SLR:
         p_ss_data->arg.slr = *(p_ev_slr_from_ev_cell(p_rpnstate->p_ev_cell, (S32) *p_rpn_content));
         return;
@@ -1226,20 +1247,8 @@ read_cur_sym(
         p_ss_data->arg.range = *(p_ev_range_from_ev_cell(p_rpnstate->p_ev_cell, (S32) *p_rpn_content));
         return;
 
-    case DATA_ID_STRING:
-        p_ss_data->arg.string.uchars = (PC_UCHARS) p_rpn_content;
-        p_ss_data->arg.string.size = ustrlen32(p_ss_data->arg.string.uchars); /* string in RPN can't contain CH_NULL */
-        return;
-
-    case DATA_ID_DATE:
-        read_from_rpn(&p_ss_data->arg.ss_date, p_rpn_content, sizeof32(SS_DATE));
-        return;
-
     case DATA_ID_NAME:
         p_ss_data->arg.h_name = (p_ev_name_from_ev_cell(p_rpnstate->p_ev_cell, (S32) *p_rpn_content))->h_name;
-        return;
-
-    case DATA_ID_BLANK:
         return;
     }
 }
@@ -1280,16 +1289,23 @@ rpn_skip(
                 p_rpnstate->pos += sizeof32(U8);
                 break;
 
-            case DATA_ID_WORD8:
-                p_rpnstate->pos += sizeof32(S8);
-                break;
-
             case DATA_ID_WORD16:
                 p_rpnstate->pos += sizeof32(S16);
                 break;
 
             case DATA_ID_WORD32:
                 p_rpnstate->pos += sizeof32(S32);
+                break;
+
+            case DATA_ID_DATE:
+                p_rpnstate->pos += sizeof32(SS_DATE);
+                break;
+
+            case DATA_ID_STRING:
+                p_rpnstate->pos += strlen32p1(p_rpnstate->pos);
+                break;
+
+            case DATA_ID_BLANK:
                 break;
 
             case DATA_ID_SLR:
@@ -1300,19 +1316,8 @@ rpn_skip(
                 p_rpnstate->pos += sizeof32(U8);
                 break;
 
-            case DATA_ID_STRING:
-                p_rpnstate->pos += strlen32p1(p_rpnstate->pos);
-                break;
-
-            case DATA_ID_DATE:
-                p_rpnstate->pos += sizeof32(SS_DATE);
-                break;
-
             case DATA_ID_NAME:
                 p_rpnstate->pos += sizeof32(U8);
-                break;
-
-            case DATA_ID_BLANK:
                 break;
             }
             break;

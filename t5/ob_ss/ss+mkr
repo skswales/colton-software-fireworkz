@@ -157,31 +157,58 @@ $(PROD_BUILD_DIR).o.Neutral.M01: $(OBJS_01_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_01_S)
 
 # Windows STRINGTABLE
-$(T5).$(PROD).resource.windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY).msg
- Basic -quit $(RCGen) -output $@ -from $? -object 01 -base &2000
+$(T5).$(PROD).Resources.Windows.$(COUNTRY).res01/rci: $(T5).ob_ss.resource.$(COUNTRY).msg
+ Basic -quit $(RCGen)L -output $@ -from $? -object 01 -base &2000
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob01: $(T5).ob_ss.resource.$(COUNTRY).msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob01: $(T5).ob_ss.resource.$(COUNTRY).msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS loaded sprites
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites11.Ob01: \
- $(T5).ob_ss.resource.$(COUNTRY).spr11 \
- $(T5).ob_ss.resource.$(COUNTRY).spr22
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Sprites11.Ob01: \
+ $(T5).ob_ss.resource.Neutral.spr24 \
+ $(T5).ob_ss.resource.$(COUNTRY).spr24 \
+ $(T5).ob_ss.resource.Neutral.spr22 \
+ $(T5).ob_ss.resource.$(COUNTRY).spr22 \
+ $(T5).ob_ss.resource.Neutral.spr11 \
+ $(T5).ob_ss.resource.$(COUNTRY).spr11
  X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_ss.resource.Neutral.spr24
+ SMerge $(T5).ob_ss.resource.$(COUNTRY).spr24
+ SMerge $(T5).ob_ss.resource.Neutral.spr22
  SMerge $(T5).ob_ss.resource.$(COUNTRY).spr22
+ SMerge $(T5).ob_ss.resource.Neutral.spr11
  SMerge $(T5).ob_ss.resource.$(COUNTRY).spr11
+ SDelete delete_me
  Remove $@
  SSave $@
  X SNew; ChangeDynamicArea -SpriteSize 8K
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites22.Ob01: \
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Sprites22.Ob01: \
+ $(T5).ob_ss.resource.Neutral.spr24 \
+ $(T5).ob_ss.resource.$(COUNTRY).spr24 \
+ $(T5).ob_ss.resource.Neutral.spr22 \
  $(T5).ob_ss.resource.$(COUNTRY).spr22
- Copy $? $@ ~C FV
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_ss.resource.Neutral.spr24
+ SMerge $(T5).ob_ss.resource.$(COUNTRY).spr24
+ SMerge $(T5).ob_ss.resource.Neutral.spr22
+ SMerge $(T5).ob_ss.resource.$(COUNTRY).spr22
+ SDelete delete_me
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
 
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Sprites24.Ob01: \
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Sprites24.Ob01: \
+ $(T5).ob_ss.resource.Neutral.spr24 \
  $(T5).ob_ss.resource.$(COUNTRY).spr24
- Copy $? $@ ~C FV
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
+ SMerge $(T5).ob_ss.resource.Neutral.spr24
+ SMerge $(T5).ob_ss.resource.$(COUNTRY).spr24
+ SDelete delete_me
+ Remove $@
+ SSave $@
+ X SNew; ChangeDynamicArea -SpriteSize 8K
 
 # RISC OS bound messages
 $(BUILD_DIR).ob_ss.o.$(COUNTRY)-B01: $(T5).ob_ss.resource.$(COUNTRY).msg

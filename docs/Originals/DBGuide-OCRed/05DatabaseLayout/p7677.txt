@@ -1,0 +1,52 @@
+﻿
+The effect of templates
+If you create a new database or drag an existing database file
+(either a DataPower format file or a CSV file) into a document
+which doesn't already contain a database, then the template which
+you are using defines how the database will be displayed. The
+template determines the type of display, i.e. card or sheet, number
+of rows deep the display is to be and, for card layouts, the number
+of columns to be used. The templates provided for Recordz have
+been set up as follows:
+
+database
+. Card layout.
+. 1 column.
+. Variable number of rows - rows are created and deleted
+automatically so that the whole database is displayed.
+
+db_1 card
+. Card layout.
+. 1 column.
+. 1 row.
+
+db_cards
+. Card layout.
+. 1 column.
+. Variable number of rows - rows are created and deleted
+automatically so that the whole database is displayed.
+
+db_sheet
+. Sheet layout.
+. Variable number of rows - rows are created and deleted
+automatically so that the whole database is displayed.
+
+76 Recordz
+
+Changing the layout
+Whichever layout you start with, you are free to change it at any
+time by using the Layout dialogue box To display this, either:
+. Click on the Layout button on the button bar.
+or
+. Choose Layout from the Database menu.
+The Layout dialogue box will appear, for example:
+
+If this is the first time you have used the Layout dialogue box, the
+current settings will be taken from the template which you are
+using.
+
+Fireworkz Pro 77
+
+
+
+

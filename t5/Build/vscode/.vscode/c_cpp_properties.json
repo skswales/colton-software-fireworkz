@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "name": "Linux-cross-RISCOS",
+            "includePath": [
+                "${workspaceFolder}/../..",
+                "/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/tboxlibs",
+                "/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/RISC_OSLib",
+                "/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/CLib/clanghack",
+                "/extra/coltsoft/coltsoft/trunk/cs-nonfree/Acorn/Library/32/CLib",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "CROSS_COMPILE=1",
+                "HOST_CLANG=1",
+                "TARGET_RISCOS=1",
+                "RELEASED=1"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c99",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-arm",
+            "compilerArgs": [
+                "-target",
+                "arm-none-eabi",
+                "-funsigned-char"
+            ],
+            "forcedInclude": [
+                "../../common/gflags.h"
+            ]
+        }
+    ],
+    "version": 4
+}

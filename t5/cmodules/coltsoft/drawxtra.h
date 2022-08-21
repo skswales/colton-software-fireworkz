@@ -268,14 +268,14 @@ Elements within a path
 
 typedef struct DRAW_PATH_TERM
 {
-#define DRAW_PATH_TYPE_TERM     0 /* end of path */
+#define DRAW_PATH_TYPE_TERM     0U /* end of path */
     U32 tag;
 }
 DRAW_PATH_TERM;
 
 typedef struct DRAW_PATH_MOVE
 {
-#define DRAW_PATH_TYPE_MOVE     2 /* move to (x,y), starts new subpath */
+#define DRAW_PATH_TYPE_MOVE     2U /* move to (x,y), starts new subpath */
     U32 tag;
     DRAW_POINT pt;
 }
@@ -283,15 +283,15 @@ DRAW_PATH_MOVE;
 
 typedef struct DRAW_PATH_CLOSE
 {
-#define DRAW_PATH_TYPE_CLOSE_WITH_GAP   4 /* close current subpath with a gap  */
-#define DRAW_PATH_TYPE_CLOSE_WITH_LINE  5 /* close current subpath with a line */
+#define DRAW_PATH_TYPE_CLOSE_WITH_GAP   4U /* close current subpath with a gap  */
+#define DRAW_PATH_TYPE_CLOSE_WITH_LINE  5U /* close current subpath with a line */
     U32 tag;
 }
 DRAW_PATH_CLOSE;
 
 typedef struct DRAW_PATH_CURVE
 {
-#define DRAW_PATH_TYPE_CURVE    6 /* bezier curve to (x3,y3) with 2 control points */
+#define DRAW_PATH_TYPE_CURVE    6U /* bezier curve to (x3,y3) with 2 control points */
     U32 tag;
     DRAW_POINT cp1;
     DRAW_POINT cp2;
@@ -301,7 +301,7 @@ DRAW_PATH_CURVE;
 
 typedef struct DRAW_PATH_LINE
 {
-#define DRAW_PATH_TYPE_LINE     8 /* line to (x,y) */
+#define DRAW_PATH_TYPE_LINE     8U /* line to (x,y) */
     U32 tag;
     DRAW_POINT pt;
 }

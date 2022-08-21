@@ -118,9 +118,9 @@ toolbar_posn_user_buttons(
 
                     { /* Ensure clipped to parent client area */
                     const HOST_WND hwnd = p_view->main[WIN_TOOLBAR].hwnd;
-                    SIZE PixelsPerInch;
+                    GDI_SIZE PixelsPerInch;
 
-                    host_get_pixel_size(hwnd, &PixelsPerInch); /* Get current pixel size for this window e.g. 96 or 120 */
+                    host_get_pixel_size(hwnd, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for this window e.g. 96 or 120 */
 
                     t5_toolbar_tool_user_posn_set.pixit_rect.tl.x = MAX(p_t5_toolbar_view_tool_desc->pixit_rect.tl.x, (p_msg_frame_window->gdi_rect.tl.x * PIXITS_PER_INCH) / PixelsPerInch.cx);
                     t5_toolbar_tool_user_posn_set.pixit_rect.tl.y = MAX(p_t5_toolbar_view_tool_desc->pixit_rect.tl.y, (p_msg_frame_window->gdi_rect.tl.y * PIXITS_PER_INCH) / PixelsPerInch.cy);
@@ -313,9 +313,7 @@ status_line_onMouseMove(
     }
 
     {
-    UI_TEXT ui_text;
-    ui_text.type = UI_TEXT_TYPE_RESID;
-    ui_text.text.resource_id = MSG_STATUS_STATUS_LINE;
+    static const UI_TEXT ui_text = UI_TEXT_INIT_RESID(MSG_STATUS_STATUS_LINE);
     status_line_set(p_docu, STATUS_LINE_LEVEL_DIALOG_CONTROLS, &ui_text);
     } /*block*/
 }
@@ -371,7 +369,7 @@ status_line_register_wndclass(void)
     if(NULL == g_hInstancePrev)
     {   /* register a task-owned class for either upper or lower status line */
         WNDCLASS wndclass;
-        zero_struct(wndclass);
+        zero_struct_fn(wndclass);
         wndclass.style = CS_HREDRAW;
         wndclass.lpfnWndProc = (WNDPROC) wndproc_status_line;
       /*wndclass.cbClsExtra = 0;*/
@@ -443,14 +441,44 @@ toolbar_set_tooltip_text(
     _ViewRef_   P_VIEW p_view,
     _InRef_     PC_UI_TEXT p_ui_text)
 {
-    if(0 == ui_text_compare(&p_view->toolbar.ui_text, p_ui_text, 0, 0))
+    TCHARZ tstr_buf[256];
+    const U32 elemof_buffer = elemof32(tstr_buf);
+    UI_TEXT ui_text;
+    PCTSTR tstr_text = ui_text_tstr(p_ui_text);
+    PCTSTR tstr;
+
+    tstr_xstrkpy(tstr_buf, elemof_buffer, tstr_text);
+
+    if(tstrlen32(tstr_text) >= elemof_buffer)
+    {   /* indicate that it has been truncated at this point */
+        tstr_buf[elemof_buffer - 2] = '\x85'; /* Windows-1252 ELLIPSIS */
+    }
+
+    /* Terminate 'sentences' from status line with a newline for multi-line tooltip */
+    for(tstr = tstr_buf;;)
+    {
+        PTSTR tstr_next = strchr(tstr, '.');
+
+        if(NULL == tstr_next++)
+            break;
+
+        if(CH_SPACE == *tstr_next)
+            *tstr_next++ = '\n'; /* replace the space here */
+
+        tstr = tstr_next;
+    }
+
+    ui_text.type = UI_TEXT_TYPE_TSTR_TEMP;
+    ui_text.text.tstr = tstr_buf;
+    
+    if(0 == ui_text_compare(&p_view->toolbar.ui_text, &ui_text, 0, 0))
         /* setting the same text is uninteresting */
         return;
 
     if(NULL != p_view->toolbar.hwndTT)
     {
         ui_text_dispose(&p_view->toolbar.ui_text);
-        status_assert(ui_text_copy(&p_view->toolbar.ui_text, p_ui_text));
+        status_assert(ui_text_copy(&p_view->toolbar.ui_text, &ui_text));
         consume(LRESULT, SendMessage(p_view->toolbar.hwndTT, TTM_POP, 0, 0));
     }
 }
@@ -610,7 +638,7 @@ toolbar_onButtonDown(
         {
             if(p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc->bits.immediate)
             {
-                const BOOL alternate = /*right_button_down ||*/ ctrl_pressed;
+                const S32 alternate = /*right_button_down ||*/ ctrl_pressed;
                 status_line_clear(p_docu, STATUS_LINE_LEVEL_BACKWINDOW_CONTROLS);
                 execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
                 return;
@@ -735,7 +763,7 @@ toolbar_onButtonUp(
     if(NULL != p_t5_toolbar_view_tool_desc)
     {
         const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = array_ptr(&p_docu->h_toolbar, T5_TOOLBAR_DOCU_TOOL_DESC, p_t5_toolbar_view_tool_desc->docu_tool_index);
-        const BOOL alternate = /*right_button_up ||*/ ctrl_pressed;
+        const S32 alternate = /*right_button_up ||*/ ctrl_pressed;
         status_line_clear(p_docu, STATUS_LINE_LEVEL_BACKWINDOW_CONTROLS);
         execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
         return;
@@ -879,18 +907,9 @@ toolbar_onMouseMove_update_buttons(
 
             if(required_state != this_p_t5_toolbar_view_tool_desc->button_down)
             {
-                BOOL redraw = TRUE;
-
-                if((0 == required_state) && (1 == this_p_t5_toolbar_view_tool_desc->button_down))
-                    redraw = UIToolButtonMouseOverSignificant();
-
-                if((1 == required_state) && (0 == this_p_t5_toolbar_view_tool_desc->button_down))
-                    redraw = UIToolButtonMouseOverSignificant();
-
                 this_p_t5_toolbar_view_tool_desc->button_down = required_state;
 
-                if(redraw)
-                    redraw_tool(p_docu, p_view, this_p_t5_toolbar_view_tool_desc);
+                redraw_tool(p_docu, p_view, this_p_t5_toolbar_view_tool_desc);
             }
         }
     }
@@ -944,15 +963,34 @@ toolbar_onTTNGetDispInfo(
     _Inout_     NMTTDISPINFO * const nmttdispinfo,
     _ViewRef_   PC_VIEW p_view)
 {
+    static PTSTR g_ttn_tstr = NULL;
+
     if(nmttdispinfo->hdr.hwndFrom != p_view->toolbar.hwndTT)
         return;
 
-    if(!ui_text_is_blank(&p_view->toolbar.ui_text))
-        tstr_xstrkpy(nmttdispinfo->szText, elemof32(nmttdispinfo->szText), ui_text_tstr(&p_view->toolbar.ui_text));
-    else
-        nmttdispinfo->szText[0] = CH_NULL;
+    tstr_clr(&g_ttn_tstr);
+
+    SendMessage(nmttdispinfo->hdr.hwndFrom, TTM_SETMAXTIPWIDTH, 0, 480);
+
+    nmttdispinfo->szText[0] = CH_NULL;
 
     nmttdispinfo->lpszText = nmttdispinfo->szText;
+
+    if(!ui_text_is_blank(&p_view->toolbar.ui_text))
+    {
+        const PCTSTR tstr = ui_text_tstr(&p_view->toolbar.ui_text);
+        const U32 lenp1 = tstrlen32p1(tstr); /*CH_NULL*/
+        if(lenp1 <= elemof32(nmttdispinfo->szText))
+        {   /* fits in the message buffer */
+            tstr_xstrkpy(nmttdispinfo->szText, elemof32(nmttdispinfo->szText), ui_text_tstr(&p_view->toolbar.ui_text));
+        }
+        else
+        {   /* return something with a longer lifetime */
+            status_consume(tstr_set(&g_ttn_tstr, tstr));
+            if(NULL != g_ttn_tstr)
+                nmttdispinfo->lpszText = g_ttn_tstr;
+        }
+    }
 }
 
 static LRESULT
@@ -1065,7 +1103,7 @@ toolbar_register_wndclass(void)
     if(NULL == g_hInstancePrev)
     {   /* register a task-owned class for toolbar */
         WNDCLASS wndclass;
-        zero_struct(wndclass);
+        zero_struct_fn(wndclass);
       /*wndclass.style = 0;*/
         wndclass.lpfnWndProc = (WNDPROC) wndproc_toolbar;
       /*wndclass.cbClsExtra = 0;*/

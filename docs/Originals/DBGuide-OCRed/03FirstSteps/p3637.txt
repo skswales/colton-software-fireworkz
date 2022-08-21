@@ -1,0 +1,49 @@
+﻿
+These options are not appropriate for the address book database
+which you are currently creating. However, it is worth knowing
+about them when you are creating other databases because they
+can save you a lot of time and effort.
+For example, a default value is useful if a large proportion of your
+records are going to have the same entry in a particular field. In
+the case of names, addresses etc, you expect to have most of them
+completely different. However, if you were creating a database of
+your music collection then you may want to have a category type
+field and have a default for this of whatever your favourite type of
+music is; ‘Country & Westem', ‘Opera’, ‘Heavy Metal‘ etc.
+
+Entering the data
+The aim of the exercise
+For the purpose of this exercise, you need to create 10 records
+containing the following details:
+Rev Alan Green 118 High St Leeds Yorkshire 01454 123456 01.03.54
+Dr Ben Brown 93 Sea View Grimsby Sth Humbs 01472 234567 02.08.49
+Mrs Cathy Black 42 Brookside Cambridge Cambs 01223 345678 13.02.61
+Mr David White 3 The Lake Hull Nth Humbs 01482 456789 27.09.50
+Miss Ena Scarlet 27 Riverside Hardwick Cambs 01954 567890 16.10.70
+Mr Frank Smith 4 Falcon Cres Bristol Avon 01272 678901 23.1 1.48
+Mrs Gloria Smith 4 Falcon Cres Bristol Avon 01272 678901 13.08.52
+Mr Harry Smith 4 Falcon Cres Bristol Avon 01272 678901 15.12.81
+Miss Ida Smith 4 Falcon Cres Bristol Avon 01272 678901 08.04.88
+Mr John Smith 48 Kestrel St Bristol Avon 01272 789012 17.11.74
+The next few sections on adding records, entering text, moving
+around the document and copying records will take you through
+the steps required to create the records and enter the details into
+them.
+
+Adding records
+To add a record, either:
+. Click on the Add record button.
+or
+. Slide off the Record option of the Database menu and choose
+Add.
+An empty record will appear in your document.
+Add further records in the same way until your document contains
+six records in total. If you point within the document area of the
+window, the status line will tell you how many exist at a particular
+time. (The other four records will be created later by copying
+existing records.)
+
+Fireworkz Pro 37
+
+
+

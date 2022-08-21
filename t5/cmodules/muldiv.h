@@ -34,35 +34,35 @@ exported functions
 extern void
 muldiv64_init(void);
 
-/* careful 32-bit * 32-bit / 32-bit a la BCPL */
+/* careful (32-bit * 32-bit) / 32-bit a la BCPL */
 
 _Check_return_
 extern S32
 muldiv64(
     _InVal_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator);
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor);
 
 _Check_return_
 extern S32
 muldiv64_ceil(
     _InVal_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator);
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor);
 
 _Check_return_
 extern S32
 muldiv64_floor(
     _InVal_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator);
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor);
 
 _Check_return_
 extern S32
 muldiv64_round_floor(
     _InVal_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator);
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor);
 
 /* muldiv64, but limit against +/-S32_MAX on overflows */
 
@@ -70,8 +70,8 @@ _Check_return_
 extern S32
 muldiv64_limiting(
     _InVal_     S32 dividend,
-    _InVal_     S32 numerator,
-    _InVal_     S32 denominator);
+    _InVal_     S32 multiplier,
+    _InVal_     S32 divisor);
 
 /* the overflow from a prior muldiv64() */
 

@@ -1,0 +1,16 @@
+// skel-ld.rci - Language dependent (Germany)
+
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+
+// multi-bitmaps: 0x0n (+1 = high-dpi variant)
+1 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Germany/BMP/skel_tbar_4bpp.bmp"
+2 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Germany/BMP/skel_tbarh_4bpp.bmp"
+3 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Germany/BMP/skel_tbar_32bpp.bmp"
+4 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/Germany/BMP/skel_tbarh_32bpp.bmp"
+
+// end

@@ -1372,7 +1372,6 @@ lotus123_write_cell(
                 }
 
             case DATA_ID_LOGICAL:
-            case DATA_ID_WORD8:
             case DATA_ID_WORD16:
                 status_break(status = lotus123_write_cell_start(p_ff_op_format, L_INTEGER, 7, p_slr));
                 status_break(status = lotus123_write_S16(p_ff_op_format, (S16) ss_data_get_integer(p_ss_data)));
@@ -1477,7 +1476,7 @@ PROC_WRITE_PROTO(proc_write_cols)
                 {
                 OBJECT_READ_TEXT object_read_text;
                 OBJECT_DATA_READ object_data_read;
-                QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+                QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
                 quick_ublock_with_buffer_setup(quick_ublock);
 
                 object_data_read.object_data = object_data;

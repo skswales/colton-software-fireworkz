@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>SUMPRODUCT</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 2014-2020 Stuart Swales -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="SUMPRODUCT" />
+        <param name="Keyword" value="Functions, Mathematical, SUMPRODUCT" />
+        <param name="Keyword" value="Mathematical functions, sum of products of values" />
+    </object>
+
+    <h1><a name="sumproduct" id="sumproduct"></a>SUMPRODUCT</h1>
+
+    <p>Returns the sum of the products of all the corresponding values in the given arrays.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        SUMPRODUCT(<span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">array_1</a></span> &hellip;
+        <span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">array_<span style="font-style: normal">N</span></a></span>)
+    </p>
+    <p>
+        This function returns the sum of the products of all the corresponding values
+        in each of the given <span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">array</a></span> parameters.
+    </p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        SUMPRODUCT =
+        <span class="csg-math-symbol-sum">&sum;</span><em><sup>i=m</sup></em>
+        <span class="csg-math-symbol-sum">&sum;</span><em><sup>j=n</sup></em>
+        <span class="csg-function-formula-parentheses-1">(</span>
+        <span class="csg-math-symbol-prod">&prod;</span><em><sup>k=N</sup></em> (<em>a<sub>ij</sub></em>)<em><sub>k</sub></em>
+        <span class="csg-function-formula-parentheses-1">)</span>
+    </p>
+    <p>where:</p>
+    <table>
+        <tr>
+            <td>(<em>a<sub>ij</sub></em>)<em><sub>k</sub></em></td>
+            <td>is the value of the <em>k</em>-th array at index row=<em>i</em>,column=<em>j</em>;</td>
+        </tr>
+        <tr>
+            <td><em>m</em></td>
+            <td>is the number of rows in each array;</td>
+        </tr>
+        <tr>
+            <td><em>n</em></td>
+            <td>is the number of columns in each array;</td>
+        </tr>
+        <tr>
+            <td><em>N</em></td>
+            <td>is the number of arrays.</td>
+        </tr>
+    </table>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">SUMPRODUCT(B1:B14, C1:C14)</pre>
+    <p>returns the sum of the products of the corresponding values of cells <code>B1:B14</code> with cells <code>C1:C14</code>.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.00.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06s/sg6_SUM.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#mathematical_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06s/sg6_SUMSQ.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

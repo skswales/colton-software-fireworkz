@@ -7,32 +7,47 @@
 pushd %~dp0
 IF NOT EXIST BLDCD2.BAT EXIT
 
-set OUT_DIR=fwin-22407
+set BLDCD2_DIR=fwin-23000
 
-rmdir /s /q                                            %OUT_DIR%
-mkdir                                                  %OUT_DIR%\
+rmdir /s /q                                            %BLDCD2_DIR%
+@del                                                   %BLDCD2_DIR%.zip
+
+mkdir                                                  %BLDCD2_DIR%\
 @if errorlevel 1 goto failed
 @
 @rem copy newly built stuff ie. the Setup EXE
-xcopy .\InnoSetup\*.exe                                %OUT_DIR%\
+xcopy .\InnoSetup\*.exe                                %BLDCD2_DIR%\
 @if errorlevel 1 goto failed
 @
-@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm        %OUT_DIR%\RelNotes.htm
+@echo F | xcopy ..\..\..\firewrkz\RelNotesW.htm        %BLDCD2_DIR%\RelNotes.htm
 @if errorlevel 1 goto failed
 @
-@echo D | xcopy /s ..\..\..\..\docs\GSGuide\windows    %OUT_DIR%\StartGuide\
+@echo D | xcopy /s ..\..\..\..\docs\GSGuide\windows    %BLDCD2_DIR%\StartGuide\
 @if errorlevel 1 goto failed
+@del                                                   %BLDCD2_DIR%\StartGuide\.htaccess
+@
+mkdir                                                  %BLDCD2_DIR%\Examples\
+call ..\..\..\..\examples\_make_w32.cmd                %BLDCD2_DIR%\Examples
+@
+@rem zip this for distribution
+pushd %BLDCD2_DIR%
+..\..\..\..\external\cs-free\GNU\win32\zip.exe -2 -n .exe:.png -r -v ..\%BLDCD2_DIR%.zip .
+@if errorlevel 1 goto failed2
+popd
+@
+@rem remove the temporary directories
+@rem rmdir /s /q                                            CD
+@rem rmdir /s /q                                            InnoSetup
 @
 @explorer .
 @
 @popd
-@
-@pause
 @exit /b
 @
-:failed
-@echo *** copy failed ***
+:failed2
 @popd
-@
+:failed
+@popd
+@echo *** copy failed ***
 @pause
 @exit /b 1

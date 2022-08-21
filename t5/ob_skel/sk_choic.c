@@ -67,7 +67,7 @@ do_auto_save_all(void)
         if(!p_docu->modified)
             continue;
 
-        status_break(status = execute_command_reperr(p_docu, T5_CMD_SAVE_OWNFORM, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
+        status_break(status = execute_command_reperr(p_docu, T5_CMD_SAVE, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
     }
 
     status = STATUS_OK;
@@ -307,7 +307,7 @@ listed info
 
 typedef struct CHOICES_MAIN_RULERS_LIST_INFO
 {
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("1/16 in")); /* NB buffer adjacent for fixup */
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 16); /* NB buffer adjacent for fixup */
 
     SCALE_INFO scale_info;
 }
@@ -701,7 +701,7 @@ static /*poked*/ DIALOG_CONTROL
 choices_main_group =
 {
     CHOICES_MAIN_ID_GROUP, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_RULERS_RULER_COMBO },
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0 },
     { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
@@ -712,18 +712,18 @@ choices_main_auto_save_label =
     CHOICES_MAIN_ID_AUTO_SAVE_LABEL, CHOICES_MAIN_ID_GROUP,
     { DIALOG_CONTROL_PARENT, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_SELF, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-choices_main_auto_save_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_AUTO_SAVE), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+choices_main_auto_save_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_AUTO_SAVE), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 choices_main_auto_save_period_minutes =
 {
     CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_WINDOW,
     { CHOICES_MAIN_ID_AUTO_SAVE_LABEL, DIALOG_CONTROL_PARENT },
-    { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
+    { DIALOG_LABELGAP_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
@@ -738,12 +738,12 @@ choices_main_auto_save_units =
 {
     CHOICES_MAIN_ID_AUTO_SAVE_UNITS, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD, DIALOG_CONTROL_SELF, CHOICES_MAIN_ID_AUTO_SAVE_PERIOD },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-choices_main_auto_save_units_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_AUTO_SAVE_UNITS), { 1 /*left_text*/, 0, 1 /*windows_no_colon*/ } };
+choices_main_auto_save_units_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_AUTO_SAVE_UNITS), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 choices_main_display_pictures =
@@ -880,12 +880,12 @@ choices_main_rulers_ruler_label =
 {
     CHOICES_MAIN_ID_RULERS_RULER_LABEL, CHOICES_MAIN_ID_GROUP,
     { CHOICES_MAIN_ID_TOOLBAR, CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_RULERS_RULER_COMBO },
-    { 0, 0, DIALOG_STDSPACING_H, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { 0, 0, DIALOG_LABELGAP_H, 0 },
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-choices_main_rulers_ruler_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_RULERS_RULER), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+choices_main_rulers_ruler_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_CHOICES_MAIN_RULERS_RULER), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static /*poked*/ DIALOG_CONTROL
 choices_main_rulers_ruler_combo =
@@ -893,7 +893,7 @@ choices_main_rulers_ruler_combo =
     CHOICES_MAIN_ID_RULERS_RULER_COMBO, CHOICES_MAIN_ID_GROUP,
     /* SKS 26sep93 overlap previous item to save space */
     { DIALOG_CONTROL_SELF, CHOICES_MAIN_ID_TOOLBAR, CHOICES_MAIN_ID_AUTO_SAVE_UNITS },
-    { 0 /*poked*/, DIALOG_STDSPACING_V, 0, DIALOG_STDCOMBO_V },
+    { 0 /*poked-with-width*/, DIALOG_STDSPACING_V, 0, DIALOG_STDCOMBO_V },
     { DRT(RBRT, COMBO_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
@@ -902,7 +902,7 @@ choices_main_rulers_ruler_combo_data =
 {
   {/*combo_xx*/
 
-    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT, 1 /*read_only*/ /*bits*/}, NULL /*edit_xx*/},
+    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT_READ_ONLY, 1 /*read_only*/ /*bits*/}, NULL /*edit_xx*/},
 
     {/*list_xx*/ { 0 /*force_v_scroll*/, 1 /*disable_double*/, 0 /*tab_position*/} /*list_xx*/},
 
@@ -918,67 +918,91 @@ choices_main_rulers_ruler_combo_data =
 static const DIALOG_CTL_CREATE
 choices_main_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &choices_main_group },
-    { &choices_main_auto_save_label,            &choices_main_auto_save_label_data },
-    { &choices_main_auto_save_period_minutes,   &choices_main_auto_save_period_minutes_data },
-    { &choices_main_auto_save_units,            &choices_main_auto_save_units_data },
-    { &choices_main_display_pictures,           &choices_main_display_pictures_data },
-    { &choices_main_embed_inserted_files,       &choices_main_embed_inserted_files_data },
-    { &choices_main_update_styles_from_choices, &choices_main_update_styles_from_choices_data },
-    { &choices_main_ascii_load_as_delimited,    &choices_main_ascii_load_as_delimited_data },
-    { &choices_main_ascii_load_delimiter,       &choices_main_ascii_load_delimiter_data },
-    { &choices_main_ascii_load_as_paragraphs,   &choices_main_ascii_load_as_paragraphs_data },
+    { { &choices_main_group }, NULL },
+    { { &choices_main_auto_save_label },            &choices_main_auto_save_label_data },
+    { { &choices_main_auto_save_period_minutes },   &choices_main_auto_save_period_minutes_data },
+    { { &choices_main_auto_save_units },            &choices_main_auto_save_units_data },
+    { { &choices_main_display_pictures },           &choices_main_display_pictures_data },
+    { { &choices_main_embed_inserted_files },       &choices_main_embed_inserted_files_data },
+    { { &choices_main_update_styles_from_choices }, &choices_main_update_styles_from_choices_data },
+    { { &choices_main_ascii_load_as_delimited },    &choices_main_ascii_load_as_delimited_data },
+    { { &choices_main_ascii_load_delimiter },       &choices_main_ascii_load_delimiter_data },
+    { { &choices_main_ascii_load_as_paragraphs },   &choices_main_ascii_load_as_paragraphs_data },
 #if RISCOS
-    { &choices_main_kerning,                    &choices_main_kerning_data },
+    { { &choices_main_kerning },                    &choices_main_kerning_data },
 #elif WINDOWS
-    { &choices_main_dithering,                  &choices_main_dithering_data },
+    { { &choices_main_dithering },                  &choices_main_dithering_data },
 #endif
-    { &choices_main_status_line,                &choices_main_status_line_data },
-    { &choices_main_toolbar,                    &choices_main_toolbar_data },
-    { &choices_main_rulers_ruler_label,         &choices_main_rulers_ruler_label_data },
-    { &choices_main_rulers_ruler_combo,         &choices_main_rulers_ruler_combo_data }
+    { { &choices_main_status_line },                &choices_main_status_line_data },
+    { { &choices_main_toolbar },                    &choices_main_toolbar_data },
+    { { &choices_main_rulers_ruler_label },         &choices_main_rulers_ruler_label_data },
+    { { &choices_main_rulers_ruler_combo },         &choices_main_rulers_ruler_combo_data }
 };
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-choices_apply_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_APPLY) };
 
 static const DIALOG_CONTROL
-choices_cancel =
+choices_apply =
 {
-    IDCANCEL, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, CHOICES_ID_SAVE, CHOICES_ID_SAVE, CHOICES_ID_SAVE },
-#if WINDOWS
-    { DIALOG_STDCANCEL_H, 0, DIALOG_STDSPACING_H, 0 },
-#else
-    { DIALOG_CONTENTS_CALC, 0, DIALOG_STDSPACING_H, 0 },
+    IDOK, DIALOG_CONTROL_WINDOW,
+#if WINDOWS /* 'Apply' is the bottom leftmost button */
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, CHOICES_ID_SAVE },
+    { DIALOG_STDPUSHBUTTON_H, DIALOG_STDSPACING_V, DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBLT, PUSHBUTTON), 1 /*tabstop*/ }
+#else /* 'Apply' is the bottom rightmost button */
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
+    { DIALOG_CONTENTS_CALC, 0, 0, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 #endif
-    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
 };
+
+#define choices_apply_data defbutton_apply_data
 
 static const DIALOG_CONTROL
 choices_save =
 {
     CHOICES_ID_SAVE, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, IDOK, IDOK, IDOK },
-#if WINDOWS
+#if WINDOWS /* 'Save' is between 'Apply' and Cancel */
+    { DIALOG_CONTROL_SELF, IDOK, IDCANCEL, IDOK },
     { DIALOG_STDPUSHBUTTON_H, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
-#else
-    { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
-#endif
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#else /* 'Save' is between Cancel and 'Apply' */
+    { DIALOG_CONTROL_SELF, IDOK, IDOK, IDOK },
+    { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 choices_save_data = { { CHOICES_ID_SAVE }, UI_TEXT_INIT_RESID(MSG_QUERY_SAVE) };
 
+#if RISCOS
+
+static const DIALOG_CONTROL
+choices_cancel =
+{
+    IDCANCEL, DIALOG_CONTROL_WINDOW,
+#if WINDOWS /* Cancel is the bottom rightmost button */
+    { DIALOG_CONTROL_SELF, IDOK, DIALOG_MAIN_GROUP, IDOK },
+    { DIALOG_STDCANCEL_H, DIALOG_DEFPUSHEXTRA_V, 0, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
+#else /* Cancel is to the left of 'Save' */
+    { DIALOG_CONTROL_SELF, CHOICES_ID_SAVE, CHOICES_ID_SAVE, CHOICES_ID_SAVE },
+    { DIALOG_CONTENTS_CALC, 0, DIALOG_STDSPACING_H, 0 },
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
+};
+
+#else
+#define choices_cancel stdbutton_cancel
+#endif
+
 static const DIALOG_CTL_CREATE
 choices_ctl_create[] =
 {
-    { &defbutton_ok,   &choices_apply_data },
-    { &choices_save,   &choices_save_data },
-    { &choices_cancel, &stdbutton_cancel_data }
+    { { &choices_apply },  &choices_apply_data },
+    { { &choices_save },   &choices_save_data },
+    { { &choices_cancel }, &stdbutton_cancel_data }
 };
 
 typedef struct CHOICES_MAIN_CALLBACK
@@ -1253,7 +1277,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
         PIXIT max_width = 0;
         status_return(choices_main_rulers_list_create(p_docu_config, &choices_main_callback.rulers_list_handle, &choices_main_rulers_list_source, &max_width));
         dialog_cmd_ctl_size_estimate.p_dialog_control = &choices_main_rulers_ruler_combo;
-        dialog_cmd_ctl_size_estimate.p_dialog_control_data = &choices_main_rulers_ruler_combo_data;
+        dialog_cmd_ctl_size_estimate.p_dialog_control_data.combo_text = &choices_main_rulers_ruler_combo_data;
         ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
 #if RISCOS
         dialog_cmd_ctl_size_estimate.size.x += (6 * max_width) / 4; /* System font */
@@ -1270,6 +1294,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
         SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(DIALOG_CTL_CREATE), FALSE);
         S32 n_ctls = elemof32(choices_main_ctl_create);
 
+#if 0
         if(choices_main_callback.atx)
         {
             choices_main_group.relative_dialog_control_id[2] =
@@ -1279,9 +1304,11 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
         {
             choices_main_group.relative_dialog_control_id[2] = CHOICES_MAIN_ID_AUTO_SAVE_PERIOD;
             choices_main_group.relative_dialog_control_id[3] = CHOICES_MAIN_ID_TOOLBAR;
-
-            n_ctls -= 2; /* remove ruler controls */
         }
+#endif
+
+        if(!choices_main_callback.atx)
+            n_ctls -= 2; /* remove ruler controls */
 
         status_break(status = al_array_add(&choices_query_block.ctl_create, DIALOG_CTL_CREATE, n_ctls, &array_init_block, choices_main_ctl_create));
         } /*block*/
@@ -1297,9 +1324,8 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
         {
         const U32 n_elements = array_elements32(&choices_query_block.ctl_create);
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, array_range(&choices_query_block.ctl_create, DIALOG_CTL_CREATE, 0, n_elements), n_elements, MSG_DIALOG_CHOICES_HELP_TOPIC);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_CHOICES_CAPTION;
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, array_range(&choices_query_block.ctl_create, DIALOG_CTL_CREATE, 0, n_elements), n_elements, MSG_DIALOG_CHOICES_CAPTION);
+        dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_CHOICES_HELP_TOPIC;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_choices;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &choices_main_callback;
         status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);

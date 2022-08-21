@@ -12,70 +12,71 @@
 
 /* bitmap ids */
 #if RISCOS
-#define SKEL_ID_BM_TOOLBAR_VIEW             "view_ctrl"
-#define SKEL_ID_BM_TOOLBAR_SAVE             "doc_save"
-#define SKEL_ID_BM_TOOLBAR_PRINT            "doc_print"
-#define SKEL_ID_BM_TOOLBAR_CUT              "edit_cut"
-#define SKEL_ID_BM_TOOLBAR_COPY             "edit_copy"
-#define SKEL_ID_BM_TOOLBAR_PASTE            "edit_paste"
-#define SKEL_ID_BM_TOOLBAR_MARKS            "edit_marks0"
-#define SKEL_ID_BM_TOOLBAR_MARKS_ON         "edit_marks1"
+#define SKEL_ID_BM_TOOLBAR_NEW                  "doc_new" /* not actually present */
+#define SKEL_ID_BM_TOOLBAR_VIEW                 "view_ctrl"
+#define SKEL_ID_BM_TOOLBAR_SAVE                 "doc_save"
+#define SKEL_ID_BM_TOOLBAR_PRINT                "doc_print"
+#define SKEL_ID_BM_TOOLBAR_CUT                  "edit_cut"
+#define SKEL_ID_BM_TOOLBAR_COPY                 "edit_copy"
+#define SKEL_ID_BM_TOOLBAR_PASTE                "edit_paste"
+#define SKEL_ID_BM_TOOLBAR_MARKS                "edit_marks0"
+#define SKEL_ID_BM_TOOLBAR_MARKS_ON             "edit_marks1"
 
-#define SKEL_ID_BM_TOOLBAR_STYLE            "styl_s"
-#define SKEL_ID_BM_TOOLBAR_EFFECTS          "styl_e"
-#define SKEL_ID_BM_TOOLBAR_BOLD             "styl_b"
-#define SKEL_ID_BM_TOOLBAR_ITALIC           "styl_i"
-#define SKEL_ID_BM_TOOLBAR_UNDERLINE        "styl_u"
-#define SKEL_ID_BM_TOOLBAR_SUPERSCRIPT_THIN "thin_super"
-#define SKEL_ID_BM_TOOLBAR_SUBSCRIPT_THIN   "thin_sub"
+#define SKEL_ID_BM_TOOLBAR_STYLE                "styl_s"
+#define SKEL_ID_BM_TOOLBAR_EFFECTS              "styl_e"
+#define SKEL_ID_BM_TOOLBAR_BOLD                 "styl_b"
+#define SKEL_ID_BM_TOOLBAR_ITALIC               "styl_i"
+#define SKEL_ID_BM_TOOLBAR_UNDERLINE            "styl_u"
+#define SKEL_ID_BM_TOOLBAR_SUPERSCRIPT_THIN     "thin_super"
+#define SKEL_ID_BM_TOOLBAR_SUBSCRIPT_THIN       "thin_sub"
 
-#define SKEL_ID_BM_TOOLBAR_J_LEFT           "j_l"
-#define SKEL_ID_BM_TOOLBAR_J_CENTRE         "j_c"
-#define SKEL_ID_BM_TOOLBAR_J_RIGHT          "j_r"
-#define SKEL_ID_BM_TOOLBAR_J_FULL           "j_b"
+#define SKEL_ID_BM_TOOLBAR_J_LEFT               "j_l"
+#define SKEL_ID_BM_TOOLBAR_J_CENTRE             "j_c"
+#define SKEL_ID_BM_TOOLBAR_J_RIGHT              "j_r"
+#define SKEL_ID_BM_TOOLBAR_J_FULL               "j_b"
 
-#define SKEL_ID_BM_TOOLBAR_SEARCH           "edit_find"
-#define SKEL_ID_BM_TOOLBAR_TABLE            "table"
-#define SKEL_ID_BM_TOOLBAR_BOX              "box"
-#define SKEL_ID_BM_TOOLBAR_MARKER           "marker"
-#define SKEL_ID_BM_TOOLBAR_SORT             "sort"
-#define SKEL_ID_BM_TOOLBAR_CHECK            "check"
-#define SKEL_ID_BM_TOOLBAR_THESAURUS        "thesaurus"
-#define SKEL_ID_BM_TOOLBAR_INSERT_DATE      "insert_date"
+#define SKEL_ID_BM_TOOLBAR_SEARCH               "edit_find"
+#define SKEL_ID_BM_TOOLBAR_TABLE                "table"
+#define SKEL_ID_BM_TOOLBAR_BOX                  "box"
+#define SKEL_ID_BM_TOOLBAR_MARKER               "marker"
+#define SKEL_ID_BM_TOOLBAR_SORT                 "sort"
+#define SKEL_ID_BM_TOOLBAR_CHECK                "check"
+#define SKEL_ID_BM_TOOLBAR_THESAURUS            "thesaurus"
+#define SKEL_ID_BM_TOOLBAR_INSERT_DATE          "insert_date"
 
-#define SKEL_ID_BM_TOOLBAR_TAB_LEFT         "tab+l"
-#define SKEL_ID_BM_TOOLBAR_TAB_CENTRE       "tab+c"
-#define SKEL_ID_BM_TOOLBAR_TAB_RIGHT        "tab+r"
-#define SKEL_ID_BM_TOOLBAR_TAB_DECIMAL      "tab+d"
+#define SKEL_ID_BM_TOOLBAR_TAB_LEFT             "tab+l"
+#define SKEL_ID_BM_TOOLBAR_TAB_CENTRE           "tab+c"
+#define SKEL_ID_BM_TOOLBAR_TAB_RIGHT            "tab+r"
+#define SKEL_ID_BM_TOOLBAR_TAB_DECIMAL          "tab+d"
 
-#define SKEL_ID_BM_BOLD                     SKEL_ID_BM_TOOLBAR_BOLD
-#define SKEL_ID_BM_ITALIC                   SKEL_ID_BM_TOOLBAR_ITALIC
-#define SKEL_ID_BM_UNDERLINE                SKEL_ID_BM_TOOLBAR_UNDERLINE
-#define SKEL_ID_BM_SUPERSCRIPT              "styl_super"
-#define SKEL_ID_BM_SUBSCRIPT                "styl_sub"
+#define SKEL_ID_BM_BOLD                         SKEL_ID_BM_TOOLBAR_BOLD
+#define SKEL_ID_BM_ITALIC                       SKEL_ID_BM_TOOLBAR_ITALIC
+#define SKEL_ID_BM_UNDERLINE                    SKEL_ID_BM_TOOLBAR_UNDERLINE
+#define SKEL_ID_BM_SUPERSCRIPT                  "styl_super"
+#define SKEL_ID_BM_SUBSCRIPT                    "styl_sub"
 
-#define SKEL_ID_BM_J_LEFT                   SKEL_ID_BM_TOOLBAR_J_LEFT
-#define SKEL_ID_BM_J_CENTRE                 SKEL_ID_BM_TOOLBAR_J_CENTRE
-#define SKEL_ID_BM_J_RIGHT                  SKEL_ID_BM_TOOLBAR_J_RIGHT
-#define SKEL_ID_BM_J_FULL                   SKEL_ID_BM_TOOLBAR_J_FULL
+#define SKEL_ID_BM_J_LEFT                       SKEL_ID_BM_TOOLBAR_J_LEFT
+#define SKEL_ID_BM_J_CENTRE                     SKEL_ID_BM_TOOLBAR_J_CENTRE
+#define SKEL_ID_BM_J_RIGHT                      SKEL_ID_BM_TOOLBAR_J_RIGHT
+#define SKEL_ID_BM_J_FULL                       SKEL_ID_BM_TOOLBAR_J_FULL
 
-#define SKEL_ID_BM_VJ_TOP                   "v_t"
-#define SKEL_ID_BM_VJ_CENTRE                "v_c"
-#define SKEL_ID_BM_VJ_BOTTOM                "v_b"
+#define SKEL_ID_BM_VJ_TOP                       "v_t"
+#define SKEL_ID_BM_VJ_CENTRE                    "v_c"
+#define SKEL_ID_BM_VJ_BOTTOM                    "v_b"
 
-#define SKEL_ID_BM_PS_SINGLE                "spac1"
-#define SKEL_ID_BM_PS_ONEP5                 "spac1p5"
-#define SKEL_ID_BM_PS_DOUBLE                "spac2"
-#define SKEL_ID_BM_PS_N                     "spacn"
+#define SKEL_ID_BM_PS_SINGLE                    "spac1"
+#define SKEL_ID_BM_PS_ONEP5                     "spac1p5"
+#define SKEL_ID_BM_PS_DOUBLE                    "spac2"
+#define SKEL_ID_BM_PS_N                         "spacn"
 
-#define SKEL_ID_BM_LINE_NONE                "lnone"
-#define SKEL_ID_BM_LINE_THIN                "lthin"
-#define SKEL_ID_BM_LINE_STD                 "lstd"
-#define SKEL_ID_BM_LINE_STDD                "lstdd"
-#define SKEL_ID_BM_LINE_THICK               "lthick"
+#define SKEL_ID_BM_LINE_NONE                    "lnone"
+#define SKEL_ID_BM_LINE_THIN                    "lthin"
+#define SKEL_ID_BM_LINE_STD                     "lstd"
+#define SKEL_ID_BM_LINE_STDD                    "lstdd"
+#define SKEL_ID_BM_LINE_THICK                   "lthick"
 
-#define SKEL_ID_BM_DEC                      "down"
-#define SKEL_ID_BM_INC                      "up"
+#define SKEL_ID_BM_DEC                          "down"
+#define SKEL_ID_BM_INC                          "up"
 #elif WINDOWS
 /* multi-bitmaps: 0x0n (+1 = high-dpi variant) */
 #define SKEL_ID_BM_TOOLBAR_COM_BTN_ID           T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 1)
@@ -126,48 +127,48 @@
 #define SKEL_ID_BM_TOOLBAR_BOX                  SKEL_ID_BM_TOOLBAR_COM_BTN(14)
 #define SKEL_ID_BM_TOOLBAR_MARKER               SKEL_ID_BM_TOOLBAR_COM_BTN(15)
 
-#define SKEL_ID_BM_BOLD                 SKEL_ID_BM_COM_BTN(3)
-#define SKEL_ID_BM_ITALIC               SKEL_ID_BM_COM_BTN(4)
-#define SKEL_ID_BM_UNDERLINE            SKEL_ID_BM_COM_BTN(5)
-#define SKEL_ID_BM_SUPERSCRIPT          SKEL_ID_BM_COM_BTN(6)
-#define SKEL_ID_BM_SUBSCRIPT            SKEL_ID_BM_COM_BTN(7)
+#define SKEL_ID_BM_BOLD                         SKEL_ID_BM_COM_BTN(3)
+#define SKEL_ID_BM_ITALIC                       SKEL_ID_BM_COM_BTN(4)
+#define SKEL_ID_BM_UNDERLINE                    SKEL_ID_BM_COM_BTN(5)
+#define SKEL_ID_BM_SUPERSCRIPT                  SKEL_ID_BM_COM_BTN(6)
+#define SKEL_ID_BM_SUBSCRIPT                    SKEL_ID_BM_COM_BTN(7)
 
-#define SKEL_ID_BM_J_LEFT               SKEL_ID_BM_COM_BTN(8)
-#define SKEL_ID_BM_J_CENTRE             SKEL_ID_BM_COM_BTN(9)
-#define SKEL_ID_BM_J_RIGHT              SKEL_ID_BM_COM_BTN(10)
-#define SKEL_ID_BM_J_FULL               SKEL_ID_BM_COM_BTN(11)
+#define SKEL_ID_BM_J_LEFT                       SKEL_ID_BM_COM_BTN(8)
+#define SKEL_ID_BM_J_CENTRE                     SKEL_ID_BM_COM_BTN(9)
+#define SKEL_ID_BM_J_RIGHT                      SKEL_ID_BM_COM_BTN(10)
+#define SKEL_ID_BM_J_FULL                       SKEL_ID_BM_COM_BTN(11)
 
-#define SKEL_ID_BM_VJ_TOP               SKEL_ID_BM_COM_BTN(16)
-#define SKEL_ID_BM_VJ_CENTRE            SKEL_ID_BM_COM_BTN(17)
-#define SKEL_ID_BM_VJ_BOTTOM            SKEL_ID_BM_COM_BTN(18)
+#define SKEL_ID_BM_VJ_TOP                       SKEL_ID_BM_COM_BTN(16)
+#define SKEL_ID_BM_VJ_CENTRE                    SKEL_ID_BM_COM_BTN(17)
+#define SKEL_ID_BM_VJ_BOTTOM                    SKEL_ID_BM_COM_BTN(18)
 
-#define SKEL_ID_BM_PS_SINGLE            SKEL_ID_BM_COM_BTN(19)
-#define SKEL_ID_BM_PS_ONEP5             SKEL_ID_BM_COM_BTN(20)
-#define SKEL_ID_BM_PS_DOUBLE            SKEL_ID_BM_COM_BTN(21)
-#define SKEL_ID_BM_PS_N                 SKEL_ID_BM_COM_BTN(22)
+#define SKEL_ID_BM_PS_SINGLE                    SKEL_ID_BM_COM_BTN(19)
+#define SKEL_ID_BM_PS_ONEP5                     SKEL_ID_BM_COM_BTN(20)
+#define SKEL_ID_BM_PS_DOUBLE                    SKEL_ID_BM_COM_BTN(21)
+#define SKEL_ID_BM_PS_N                         SKEL_ID_BM_COM_BTN(22)
 
-#define SKEL_ID_BM_LINE_NONE            1225
-#define SKEL_ID_BM_LINE_THIN            1226
-#define SKEL_ID_BM_LINE_STD             1227
-#define SKEL_ID_BM_LINE_STDD            1228
-#define SKEL_ID_BM_LINE_THICK           1229
+#define SKEL_ID_BM_LINE_NONE                    1225
+#define SKEL_ID_BM_LINE_THIN                    1226
+#define SKEL_ID_BM_LINE_STD                     1227
+#define SKEL_ID_BM_LINE_STDD                    1228
+#define SKEL_ID_BM_LINE_THICK                   1229
 
-#define SKEL_ID_BM_RULER_TABL           1250
-#define SKEL_ID_BM_RULER_TABR           1251
-#define SKEL_ID_BM_RULER_TABC           1252
-#define SKEL_ID_BM_RULER_TABD           1253
-#define SKEL_ID_BM_RULER_MARL           1254
-#define SKEL_ID_BM_RULER_MARP           1255
-#define SKEL_ID_BM_RULER_MARR           1256
-#define SKEL_ID_BM_RULER_MARH           1257
-#define SKEL_ID_BM_RULER_MARF           1258
-#define SKEL_ID_BM_RULER_ROWB           1259
-#define SKEL_ID_BM_RULER_COLR           1260
-#define SKEL_ID_BM_RULER_COLS           1261
-#define SKEL_ID_BM_RULER_ROWS           1262
+#define SKEL_ID_BM_RULER_TABL                   1250
+#define SKEL_ID_BM_RULER_TABR                   1251
+#define SKEL_ID_BM_RULER_TABC                   1252
+#define SKEL_ID_BM_RULER_TABD                   1253
+#define SKEL_ID_BM_RULER_MARL                   1254
+#define SKEL_ID_BM_RULER_MARP                   1255
+#define SKEL_ID_BM_RULER_MARR                   1256
+#define SKEL_ID_BM_RULER_MARH                   1257
+#define SKEL_ID_BM_RULER_MARF                   1258
+#define SKEL_ID_BM_RULER_ROWB                   1259
+#define SKEL_ID_BM_RULER_COLR                   1260
+#define SKEL_ID_BM_RULER_COLS                   1261
+#define SKEL_ID_BM_RULER_ROWS                   1262
 
-#define SKEL_ID_BM_INC                  1216
-#define SKEL_ID_BM_DEC                  1217
+#define SKEL_ID_BM_INC                          1216
+#define SKEL_ID_BM_DEC                          1217
 #endif /* OS */
 
 /*
@@ -212,8 +213,8 @@ keep consistent with &.t5.ob_skel.resource.msg
 #define ERR_NO_DATA_LOADED                  -80
 #define ERR_NO_STUBS                        -81
 #define ERR_NOTE_NOT_LOADED                 -82 /* for display */
-#define ERR_spare_83                        -83
-#define ERR_spare_84                        -84
+#define ERR_NO_ALTERNATE_COMMAND            -83
+#define ERR_WILL_SAVE_AS_FIREWORKZ          -84
 #define ERR_NOTFOUND_REFERENCED_PICTURE     -85
 #define ERR_AREA_PROTECTED                  -86
 #define ERR_SUPPORTER_NOT_FOUND             -87
@@ -243,6 +244,7 @@ keep consistent with &.t5.ob_skel.resource.msg
 #define ERR_FILE_TOO_LARGE                  -125
 #define ERR_INVALID_UTF8_ENCODING           -126
 #define ERR_UCS4_NONCHARACTER               -127
+#define ERR_CLIP_DATA_TOO_LARGE             -128
 
 #if RISCOS
 #define STATUS_NOT_A_MODULE                 -202
@@ -255,11 +257,12 @@ keep consistent with &.t5.ob_skel.resource.msg
 #endif
 
 #if WINDOWS
-#define ERR_PRINT_DISK_FULL                 -211
-#define ERR_PRINT_MEMORY_FULL               -212
+#define ERR_PRINT_UNKNOWN                   -211
+#define ERR_PRINT_TERMINATED                -212
 #define ERR_PRINT_TERMINATED_VIA_PM         -213
-#define ERR_PRINT_UNKNOWN                   -214
-#define ERR_PRINT_TERMINATED                -215
+#define ERR_PRINT_DISK_FULL                 -214
+#define ERR_PRINT_MEMORY_FULL               -215
+
 #define ERR_CFBF_SAVE_NEEDS_FILENAME        -216
 #endif
 
@@ -269,16 +272,18 @@ string resource allocation
 
 #define MSG_SKEL_VERSION                        1
 #define MSG_SKEL_DATE                           2
-#define MSG_SKEL_NO_USER_ID                     3
+#define MSG_COPYRIGHT                           3
 
-#define MSG_REMOVE                              92
-#define MSG_INSERT                              93
-#define MSG_HELP                                94
-#define MSG_APPLY                               95
-#define MSG_NEW                                 96
-#define MSG_CHANGE                              97
-#define MSG_DELETE                              98
-#define MSG_REPLACE                             99
+#define MSG_BUTTON_ADD                          90
+#define MSG_BUTTON_CREATE                       91
+#define MSG_BUTTON_REMOVE                       92
+#define MSG_BUTTON_INSERT                       93
+#define MSG_BUTTON_HELP                         94
+#define MSG_BUTTON_APPLY                        95
+#define MSG_BUTTON_NEW                          96
+#define MSG_BUTTON_CHANGE                       97
+#define MSG_BUTTON_DELETE                       98
+#define MSG_BUTTON_REPLACE                      99
 
 #define MSG_FILENAME_UNTITLED                   100
 #define MSG_TITLEBAR_NORMAL                     101
@@ -290,9 +295,9 @@ string resource allocation
 #define MSG_STATUS_SORTING                      106
 
 #define MSG_SELECTION                           107
-#define MSG_REVERT                              108
-#define MSG_CANCEL                              109
-#define MSG_OK                                  110
+#define MSG_BUTTON_CLOSE                        108
+#define MSG_BUTTON_CANCEL                       109
+#define MSG_BUTTON_OK                           110
 #define MSG_STATUS_CONVERTING                   111
 #define MSG_STATUS_LOADING                      112
 #define MSG_STATUS_INSERTING                    113
@@ -300,8 +305,9 @@ string resource allocation
 #define MSG_STATUS_REFORMATTING                 115
 #define MSG_STATUS_PASTING                      116
 #define MSG_STATUS_CUTTING                      117
-#define MSG_QUERY_SAVE                          118
-#define MSG_DISCARD                             119
+#define MSG_BUTTON_SAVE                         118
+#define MSG_QUERY_SAVE                          MSG_BUTTON_SAVE
+#define MSG_QUERY_DISCARD                       119
 
 /*
 long names for function keys
@@ -360,16 +366,17 @@ long names for function keys
 #define MSG_DIALOG_ES_STYLE_NAME                180
 #define MSG_DIALOG_ES_STYLE_KEY                 181
 
-#define MSG_DIALOG_VIEW_SCALE                   250
+#define MSG_DIALOG_VIEW_SCALE_GROUP             250
 #define MSG_DIALOG_VIEW_SCALE_1                 251
 #define MSG_DIALOG_VIEW_SCALE_2                 252
 #define MSG_DIALOG_VIEW_SCALE_3                 253
 #define MSG_DIALOG_VIEW_SCALE_4                 254
 #define MSG_DIALOG_VIEW_SCALE_5                 255
 
-#define MSG_DIALOG_VIEW_CONTROL                 256
+#define MSG_DIALOG_VIEW_CONTROL_CAPTION         256
 #define MSG_DIALOG_VIEW_CONTROL_HELP_TOPIC      1239
-#define MSG_DIALOG_VIEW_ZOOM                    257
+#define MSG_DIALOG_VIEW_SCALE_CAPTION           257
+#define MSG_DIALOG_VIEW_SCALE_HELP_TOPIC        1240
 #define MSG_DIALOG_VIEW_BORDER_HORZ             258
 #define MSG_DIALOG_VIEW_BORDER_VERT             259
 
@@ -379,9 +386,12 @@ long names for function keys
 #define MSG_DIALOG_LOCATE_TEMPLATE_WAFFLE_2     1057
 #define MSG_DIALOG_LOCATE_TEMPLATE_WAFFLE_3     1058
 #define MSG_DIALOG_LOCATE_TEMPLATE_WAFFLE_4     1059
+#define MSG_DIALOG_LOCATE_TEMPLATE_WAFFLE_5     1060
 
-#define MSG_DIALOG_SAVE_FOREIGN_CAPTION         260
-#define MSG_DIALOG_SAVE_FOREIGN_NAME            261
+#define MSG_DIALOG_SAVE_AS_FOREIGN_CAPTION      260
+#define MSG_DIALOG_SAVE_AS_FOREIGN_NAME         261
+#define MSG_DIALOG_SAVE_AS_DRAWFILE_CAPTION     MSG_DIALOG_SAVE_AS_FOREIGN_CAPTION
+#define MSG_DIALOG_SAVE_AS_DRAWFILE_NAME        1061
 
 #define MSG_DIALOG_VIEW_RULER_HORZ              262
 #define MSG_DIALOG_VIEW_RULER_VERT              263
@@ -412,10 +422,14 @@ long names for function keys
 #define MSG_DIALOG_EDITING_STYLE                298
 #define MSG_DIALOG_APPLY_EFFECTS                299
 
+#define MSG_DIALOG_PRINT                        306
 #define MSG_DIALOG_PRINT_BASIC_HELP_TOPIC       300
 #define MSG_DIALOG_PRINT_COPIES                 301
-#define MSG_DIALOG_PRINT_ALL                    302
-#define MSG_DIALOG_PRINT_RANGE                  303
+#define MSG_DIALOG_PRINT_PAGE_RANGE_OUTER       1048
+#define MSG_DIALOG_PRINT_ALL_PAGES              302
+#define MSG_DIALOG_PRINT_PAGES                  303
+#define MSG_DIALOG_PRINT_PAGE_RANGE_Y0          1035
+#define MSG_DIALOG_PRINT_PAGE_RANGE_Y1          1036
 #define MSG_DIALOG_PRINT_TWO_UP                 304
 #define MSG_DIALOG_PRINT_EXTRA_HELP_TOPIC       305
 #define MSG_DIALOG_PRINT_NO_RISCOS              307
@@ -431,8 +445,6 @@ long names for function keys
 #define MSG_DIALOG_PRINT_EVEN                   347
 #define MSG_DIALOG_PRINT_DRAFT                  348
 #define MSG_DIALOG_PRINT_MAILS                  1000
-#define MSG_DIALOG_PRINT_RANGE_Y0               1035
-#define MSG_DIALOG_PRINT_RANGE_Y1               1036
 
 #define MSG_DIALOG_PAPER_SCALE_CAPTION          1020
 #define MSG_DIALOG_PAPER_SCALE_FIT              1021
@@ -516,8 +528,9 @@ long names for function keys
 #define MSG_DIALOG_PAPER_MARGIN_ROW             475
 #define MSG_DIALOG_PAPER_GRID_SIZE              476
 #define MSG_DIALOG_PAPER_GRID_FAINT             477
+#define MSG_DIALOG_PAPER_GRID                   480
 
-#define MSG_spares_480_489                      480 /* ... 489 */
+#define MSG_spares_481_489                      481 /* ... 489 */
 
 #define MSG_DIALOG_RGB_COLOUR                   490
 #define MSG_DIALOG_ES_PS_RGB_BACK               491
@@ -545,12 +558,6 @@ long names for function keys
 
 #define MSG_DIALOG_PBRK_PAGE_NUMBER             524
 
-#define MSG_DIALOG_ADD_CR_HELP_TOPIC            534
-#define MSG_DIALOG_ADD_COLS                     535
-#define MSG_DIALOG_ADD_COLS_NUMBER              536
-#define MSG_DIALOG_ADD_ROWS                     540
-#define MSG_DIALOG_ADD_ROWS_NUMBER              541
-
 #define MSG_DIALOG_SETC_CAPTION                 550
 #define MSG_DIALOG_SETC_HELP_TOPIC              551
 #define MSG_DIALOG_SETC_GROUP                   552
@@ -561,7 +568,7 @@ long names for function keys
 #define MSG_PRINT_WARNING_TITLE                 600
 #define MSG_PRINT_WARNING_MSG1                  601
 #define MSG_PRINT_WARNING_MSG2                  602
-#define MSG_PRINT_WARNING_OK                    603
+#define MSG_BUTTON_PRINT                        603
 
 #define MSG_STATUS_PAGE_ONE_NUM                 700
 #define MSG_STATUS_PAGE_XY_NUM                  701
@@ -637,38 +644,20 @@ long names for function keys
 #define MSG_DIALOG_CLOSE_DOCUMENT               807
 
 #if RISCOS
-#define MSG_DIALOG_INFO_NAME_1                  810
-#define MSG_DIALOG_INFO_AUTHOR_1                0
+#define MSG_DIALOG_INFO_NAME_LABEL              810
 #else
-#define MSG_DIALOG_INFO_NAME_1                  0
-#define MSG_DIALOG_INFO_AUTHOR_1                0
+#define MSG_DIALOG_INFO_NAME_LABEL              0
 #endif
-#define MSG_DIALOG_INFO_VERSION_1               812
-#define MSG_DIALOG_INFO_USER_1                  813
-#define MSG_DIALOG_INFO_REGNO_1                 814
+#define MSG_DIALOG_INFO_AUTHOR_LABEL            0
+#define MSG_DIALOG_INFO_VERSION_LABEL           812
+#define MSG_DIALOG_INFO_USER_LABEL              813
+#define MSG_DIALOG_INFO_REGNO_LABEL             814
 #define MSG_DIALOG_INFO_CAPTION                 816
 #define MSG_DIALOG_INFO_WEB_BUTTON              817
 #define MSG_DIALOG_INFO_WEB_URL                 818
 
-#define MSG_DIALOG_INSERT_TABLE_CAPTION         819
-#define MSG_DIALOG_INSERT_TABLE_HELP_TOPIC      820
-#define MSG_DIALOG_INSERT_TABLE_COLS            821
-#define MSG_DIALOG_INSERT_TABLE_ROWS            822
 #define MSG_DIALOG_INSERT_TABLE_TABLE           823
-
-#define MSG_DIALOG_BOX_CAPTION                  839
-#define MSG_DIALOG_BOX_HELP_TOPIC               840
-#define MSG_DIALOG_BOX_OUTSIDE                  841
-#define MSG_DIALOG_BOX_INSIDE                   842
-#define MSG_DIALOG_BOX_V                        843
-#define MSG_DIALOG_BOX_H                        844
-#define MSG_DIALOG_BOX_ALL                      845
-#define MSG_DIALOG_BOX_L                        846
-#define MSG_DIALOG_BOX_R                        847
-#define MSG_DIALOG_BOX_T                        848
-#define MSG_DIALOG_BOX_B                        849
-#define MSG_DIALOG_BOX_LINE_STYLE               850
-#define MSG_DIALOG_BOX_COLOUR                   851
+#define MSG_DIALOG_INSERT_TABLE_BASETABLE       824
 
 #define MSG_DIALOG_SAVE_CAPTION                 857
 #define MSG_DIALOG_SAVE_HELP_TOPIC              858
@@ -702,6 +691,11 @@ long names for function keys
 
 #define MSG_FIELD                               890
 
+#define MSG_DIALOG_GOTO_CAPTION                 891
+#define MSG_DIALOG_GOTO_LABEL                   892
+#define MSG_BUTTON_GOTO                         893
+#define MSG_DIALOG_GOTO_HELP_TOPIC              894
+
 #define MSG_DIALOG_STYLE_NUMFORM_POINTS         MSG_NUMFORM_2_DP
 #define MSG_DIALOG_STYLE_NUMFORM_MM             MSG_NUMFORM_1_DP
 #define MSG_DIALOG_STYLE_NUMFORM_CM             MSG_NUMFORM_2_DP
@@ -709,7 +703,7 @@ long names for function keys
 #define MSG_DIALOG_STYLE_NUMFORM_MM_FINE        MSG_NUMFORM_2_DP
 #define MSG_DIALOG_STYLE_NUMFORM_CM_FINE        MSG_NUMFORM_3_DP
 
-#define MSG_spares_891_896                      891
+#define MSG_spares_895_896                      895
 
 #define MSG_DIALOG_CHOICES_CAPTION                          909
 #define MSG_DIALOG_CHOICES_HELP_TOPIC                       910
@@ -774,15 +768,13 @@ long names for function keys
 #define MSG_STATUS_THESAURUS                    1052
 
 #define MSG_PORTIONS_DIAL_SOLUTIONS             1031
-#define MSG_COPYRIGHT                           1033
-#define MSG_PORTIONS_R_COMP                     1034
 #define MSG_USES_COMPONENTS                     1037
 
 #define MSG_OBJECT_TYPE_TEXT                    1040
 #define MSG_OBJECT_TYPE_REC                     1041
 #define MSG_OBJECT_TYPE_SS                      1042
 
-#define MSG_SKS_DEBUG                           1060
+#define MSG_PORTIONS_R_COMP                     ((STATUS_MSG_INCREMENT * OBJECT_ID_RECB) + 0)
 
 #endif /* __ob_skel_resource_resource_h */
 

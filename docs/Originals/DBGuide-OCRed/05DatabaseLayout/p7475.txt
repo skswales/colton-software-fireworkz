@@ -1,0 +1,37 @@
+﻿
+Display formats: cards v sheets
+There are two fundamentally different ways in which you can
+display your records; either using a card layout or a sheet layout.
+
+Card layouts
+With a card layout, each record occupies a single cell. The depth
+of the cell is determined initially by the number of fields being
+displayed. (Note that a card cannot span more than one page,
+either horizontally or vertically, therefore there is a limit on the
+number and size of fields which can be displayed using a card
+layout.) You can choose the number of cards to be placed side by
+side i.e. the number of columns to be used and the number of cards
+to be displayed vertically, i.e. the number of rows to be used. For
+example:
+
+This shows a card display which is two columns wide and three
+rows deep. Thus a total of six cards are visible. (Note that the
+Scale option from the Page menu has been used to fit the two
+columns on a single page.)
+
+Sheet layouts
+With a sheet layout, each record occupies a single row but
+multiple columns. The number of columns is determined by the
+number of fields being displayed. For example:
+
+This shows six records from a database, each of which contains
+five fields. Thus the database is occupying six rows by five
+columns. Note that the Column border and Row border displays
+have been turned on, using the View Control button, to show that
+the columns are labelled with the Field names.
+
+Fireworkz Pro 75
+
+
+
+

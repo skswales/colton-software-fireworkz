@@ -544,8 +544,8 @@ ev_compile(
     assert(RPN_END <= U8_MAX);
 #endif
 
-    zero_struct_ptr(p_compiler_output);
-    zero_struct(compiler_context);
+    zero_struct_ptr_fn(p_compiler_output);
+    zero_struct_fn(compiler_context);
 
     /* save options */
     compiler_context.p_compiler_output = p_compiler_output;
@@ -632,6 +632,44 @@ ev_compile(
     }
 
     return(status);
+}
+
+/******************************************************************************
+*
+* adjust cell and range references in compiler output
+*
+******************************************************************************/
+
+extern void
+ev_compiler_output_adjust(
+    _InoutRef_  P_COMPILER_OUTPUT p_compiler_output,
+    _InRef_     PC_EV_SLR p_ev_slr_offset,
+    _InRef_opt_ PC_EV_RANGE p_ev_range_scope)
+{
+    if(0 != p_compiler_output->ev_parms.slr_n)
+    {
+        const U32 n = p_compiler_output->ev_parms.slr_n;
+        P_EV_SLR p_ev_slr = array_range(&p_compiler_output->h_slrs, EV_SLR, 0, n);
+        U32 i;
+
+        for(i = 0; i < n; i += 1, p_ev_slr += 1)
+        {
+            slr_offset_add_harder(p_ev_slr, p_ev_slr_offset, p_ev_range_scope, FALSE);
+        }
+    }
+
+    if(0 != p_compiler_output->ev_parms.range_n)
+    {
+        const U32 n = p_compiler_output->ev_parms.range_n;
+        P_EV_RANGE p_ev_range = array_range(&p_compiler_output->h_ranges, EV_RANGE, 0, n);
+        U32 i;
+
+        for(i = 0; i < n; i += 1, p_ev_range += 1)
+        {
+            slr_offset_add_harder(&p_ev_range->s, p_ev_slr_offset, p_ev_range_scope, FALSE);
+            slr_offset_add_harder(&p_ev_range->e, p_ev_slr_offset, p_ev_range_scope, TRUE);
+        }
+    }
 }
 
 /******************************************************************************
@@ -750,7 +788,7 @@ ev_cell_from_compiler_output(
 
     p_u8 = (P_U8) p_ev_cell->slrs;
 
-    if(p_ev_cell->ev_parms.slr_n)
+    if(p_compiler_output->ev_parms.slr_n)
     {
         const U32 n = p_compiler_output->ev_parms.slr_n;
         const U32 n_bytes = n * sizeof32(EV_SLR);
@@ -771,7 +809,7 @@ ev_cell_from_compiler_output(
         }
     }
 
-    if(p_ev_cell->ev_parms.range_n)
+    if(p_compiler_output->ev_parms.range_n)
     {
         const U32 n = p_compiler_output->ev_parms.range_n;
         const U32 n_bytes = n * sizeof32(EV_RANGE);
@@ -779,7 +817,7 @@ ev_cell_from_compiler_output(
         p_u8 += n_bytes;
     }
 
-    if(p_ev_cell->ev_parms.name_n)
+    if(p_compiler_output->ev_parms.name_n)
     {
         const U32 n = p_compiler_output->ev_parms.name_n;
         const U32 n_bytes = n * sizeof32(EV_NAME_REF);
@@ -787,7 +825,7 @@ ev_cell_from_compiler_output(
         p_u8 += n_bytes;
     }
 
-    if(p_ev_cell->ev_parms.custom_n)
+    if(p_compiler_output->ev_parms.custom_n)
     {
         const U32 n = p_compiler_output->ev_parms.custom_n;
         const U32 n_bytes = n * sizeof32(EV_HANDLE);
@@ -795,7 +833,7 @@ ev_cell_from_compiler_output(
         p_u8 += n_bytes;
     }
 
-    if(p_ev_cell->ev_parms.event_n)
+    if(p_compiler_output->ev_parms.event_n)
     {
         const U32 n = p_compiler_output->ev_parms.event_n;
         const U32 n_bytes = n * sizeof32(EVENT_TYPE);
@@ -857,13 +895,13 @@ func_call(
     {
         /* custom definitions */
         S32 narg;
-        EV_HANDLE h_custom;
+        EV_HANDLE h_custom_here;
 
-        if((narg = proc_func_custom(&h_custom)) >= 0)
+        if((narg = proc_func_custom(&h_custom_here)) >= 0)
         {
             out_idno_format(p_sym_inf);
             out_byte((U8) narg);
-            out_custom_def(h_custom);
+            out_custom_def(h_custom_here);
         }
     }
     else
@@ -1091,14 +1129,14 @@ proc_custom_argument(
     /* is there a type following? (actually a list of types is acceptable) */
     if((uchars_idx < uchars_n) && (CH_COLON == PtrGetByteOff(uchars, uchars_idx)))
     {
-        EV_TYPE type_list = 0;
+        EV_TYPE type_flags_list = 0;
 
         ++uchars_idx;
 
         while(uchars_idx < uchars_n)
         {
             UCHARZ type_id[BUF_EV_INTNAMLEN]; /* really A7STR */
-            EV_TYPE type_res;
+            EV_TYPE type_flags_res;
 
             outidx = 0;
 
@@ -1126,10 +1164,10 @@ proc_custom_argument(
 
             type_id[outidx] = CH_NULL;
 
-            if(0 == (type_res = type_name_lookup(ustr_bptr(type_id))))
+            if(0 == (type_flags_res = type_name_lookup(ustr_bptr(type_id))))
                 return(create_error(EVAL_ERR_ARGCUSTTYPE));
 
-            type_list |= type_res;
+            type_flags_list |= type_flags_res;
 
             uchars_idx += ss_string_skip_internal_whitespace_uchars(uchars, uchars_n, uchars_idx);
 
@@ -1142,7 +1180,7 @@ proc_custom_argument(
             break;
         }
 
-        *p_ev_type = type_list;
+        *p_ev_type = type_flags_list;
     }
 
     assert(uchars_idx == uchars_n);
@@ -1164,7 +1202,7 @@ static S32
 proc_func(
     /*_In_*/    PC_RPNDEF p_rpndef)
 {
-    S32 narg;
+    S32 n_args;
 
     /* have we any arguments at all ? */
     if(scan_check_next(NULL) != SYM_OBRACKET)
@@ -1179,7 +1217,7 @@ proc_func(
     else
         compiler_context.sym_inf.sym_idno = SYM_BLANK;
 
-    narg = 0;
+    n_args = 0;
 
     /* loop over function arguments */
     if(scan_check_next(NULL) != SYM_CBRACKET)
@@ -1194,7 +1232,7 @@ proc_func(
                 nodep -= 1;
 
             proc_func_arg_maybe_blank();
-            narg += 1;
+            n_args += 1;
 
             if(scan_check_next(NULL) != SYM_COMMA)
                 break;
@@ -1210,14 +1248,22 @@ proc_func(
     /* functions with fixed number of arguments must have exactly the correct number of arguments */
     if(p_rpndef->n_args >= 0)
     {
-        if(narg != p_rpndef->n_args)
-            return(set_compile_error(EVAL_ERR_FUNARGS));
+        if(n_args != p_rpndef->n_args)
+            return(set_compile_error((n_args > p_rpndef->n_args) ? EVAL_ERR_TOO_MANY_FUNARGS : EVAL_ERR_FUNARGS));
     }
     /* functions with variable number of arguments must have at least (-p_rpndef->n_args - 1) arguments */
-    else if(narg < - (S32) p_rpndef->n_args - 1)
-        return(set_compile_error(EVAL_ERR_FUNARGS));
+    else
+    {
+        if(n_args < ((- (S32) p_rpndef->n_args) - 1))
+            return(set_compile_error(EVAL_ERR_FUNARGS));
 
-    return(narg);
+        /* and we now attempt to limit the number of arguments accepted at compile-time iff required */
+        if(0 != p_rpndef->max_additional_args)
+            if(n_args > ((- (S32) p_rpndef->n_args) - 1) + p_rpndef->max_additional_args)
+                return(set_compile_error(EVAL_ERR_TOO_MANY_FUNARGS));
+    }
+
+    return(n_args);
 }
 
 /******************************************************************************
@@ -1257,7 +1303,7 @@ proc_func_custom(
     SYM_INF sym_inf;
     ARRAY_INDEX custom_num;
     UCHARZ custom_name[BUF_EV_INTNAMLEN];
-    EV_TYPE dummy_type;
+    EV_TYPE dummy_type_flags;
     P_EV_CUSTOM p_ev_custom;
     S32 narg;
     STATUS res;
@@ -1278,7 +1324,7 @@ proc_func_custom(
     if(status_fail(
         res = proc_custom_argument(&compiler_context.data_cur.arg.string,
                                    ustr_bptr(custom_name),
-                                   &dummy_type)))
+                                   &dummy_type_flags)))
         return(set_compile_error(res));
 
     /* does the custom already exist ? */
@@ -1298,7 +1344,7 @@ proc_func_custom(
     else
         p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
-    /* send custom identidier home */
+    /* send custom identifier home */
     *p_h_custom = p_ev_custom->handle;
 
     /* store custom name (first arg to function()) in rpn */
@@ -1878,13 +1924,7 @@ rec_lterm(void)
     case DATA_ID_LOGICAL:
         compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
-        out_byte((U8) compiler_context.data_cur.arg.boolean);
-        break;
-
-    case DATA_ID_WORD8:
-        compiler_context.sym_inf.sym_idno = SYM_BLANK;
-        out_idno_format(&sym_inf);
-        out_byte((U8) (S8) ss_data_get_integer(&compiler_context.data_cur));
+        out_byte((U8) ss_data_get_logical(&compiler_context.data_cur));
         break;
 
     case DATA_ID_WORD16:
@@ -1899,6 +1939,17 @@ rec_lterm(void)
         out_to_rpn(sizeof32(S32), &compiler_context.data_cur.arg.integer);
         break;
 
+    case DATA_ID_DATE:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
+        out_idno_format(&sym_inf);
+        out_to_rpn(sizeof32(SS_DATE), ss_data_get_date(&compiler_context.data_cur));
+        break;
+
+    case DATA_ID_STRING:
+        compiler_context.sym_inf.sym_idno = SYM_BLANK;
+        out_string_free(&sym_inf, &compiler_context.data_cur);
+        break;
+
     case DATA_ID_SLR:
         compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
@@ -1909,17 +1960,6 @@ rec_lterm(void)
         compiler_context.sym_inf.sym_idno = SYM_BLANK;
         out_idno_format(&sym_inf);
         out_range(&compiler_context.data_cur.arg.range, compiler_context.fun_parms.nodep);
-        break;
-
-    case DATA_ID_STRING:
-        compiler_context.sym_inf.sym_idno = SYM_BLANK;
-        out_string_free(&sym_inf, &compiler_context.data_cur);
-        break;
-
-    case DATA_ID_DATE:
-        compiler_context.sym_inf.sym_idno = SYM_BLANK;
-        out_idno_format(&sym_inf);
-        out_to_rpn(sizeof32(SS_DATE), ss_data_get_date(&compiler_context.data_cur));
         break;
 
     case SYM_OARRAY:
@@ -2004,9 +2044,9 @@ rec_lterm(void)
         if(scan_check_next(NULL) == SYM_OBRACKET)
         {
             ARRAY_INDEX custom_num;
-            P_EV_CUSTOM p_ev_custom;
+            PC_EV_CUSTOM p_ev_custom;
 
-            /* must be a custom - establish reference */
+            /* must be a custom function - establish reference */
             custom_num = ensure_custom_in_list(refto_ev_docno, ustr_bptr(ident));
 
             if(status_fail(custom_num))
@@ -2015,7 +2055,7 @@ rec_lterm(void)
                 break;
             }
 
-            p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
+            p_ev_custom = array_ptrc(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
             sym_inf.sym_idno = RPN_FNM_CUSTOMCALL;
             func_call(&sym_inf, p_ev_custom->handle);
         }

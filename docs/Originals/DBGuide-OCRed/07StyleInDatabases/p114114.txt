@@ -1,0 +1,31 @@
+﻿
+Text strings
+You can enter text strings, to distinguish between am and pm.
+Remember to enclose the text string in double quotes.
+
+Displaying parts of a time
+You do not have to display all of the time. You may choose only
+to show hours and minutes, or minutes and seconds. Build the
+format you want using:
+hh represents hours
+mm represents minutes except that
+nn is used to represent minutes when these are the first
+part of the time displayed
+ss represents seconds
+Remember that when you are entering times, : must be used to
+separate the components of the time. This ensures that the correct
+time format is applied to the number.
+
+Creating date and time formats
+Each template comes with several pre-defined styles to cover
+dates/times. When you enter a date, the format will be identified
+and automatically set for that cell.
+Later, you can use the Number section of the Style dialogue box,
+to change the format if you wish. To do this click on the right
+arrow at the edge of the date format definition box. A large
+selection of pre-defined date and time formats will appear.
+Pick one of these formats by clicking on it. It will be entered in the
+date and time definition box. If it matches your requirements,
+that’s all you need do; however, just like number formats, you can
+edit date and time formats as long as you obey the general rules
+outlined above.

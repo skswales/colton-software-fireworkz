@@ -1,0 +1,67 @@
+﻿Introduction to the Style system
+The style system gives you control over the appearance of your
+document. Styles can be used to change, for example:
+. The typeface, size and colour of text.
+. The precision to which numbers are displayed and the way in
+which they are fonnatted.
+- The way in which dates and times are displayed.
+(Existing Z family users who have upgraded to Fireworkz Pro will
+find that the style system described below differs from that which
+they are familiar with. The 'ordinary', region-based system is still
+available within other parts of the system. In addition, the
+'ordinary‘ styles can be accessed from within a database region by
+clicking Adjust on the Style button. However, their use is not
+recommended with databases.
+Existing users should also note that Shift F4 and Ctrl F4 are no
+longer available as key shortcuts to frequently used styles. These
+have been taken over by the database‘s Search and Query
+operations.)
+
+lmplied styles
+Whenever you display a database within a document, a number of
+new implied styles will be created. These are automatically applied
+to particular objects, such as individual fields, regardless of the
+region of the document which they are occupying.
+
+Generic styles
+Three generic styles will be generated:
+. Database will apply to the whole of the database, i.e. titles (in
+card layouts) and data fields.
+. All fields will apply to all the data fields. '
+. All titles will apply to all the field titles (in card layouts).
+
+Field styles
+Each field will have a separate style, the style name being the
+same as the name of the field to which it applies. If the field name
+is changed then the style name is changed to stay in step.
+Using these styles
+If you want to apply a style to all the data fields, then you just
+need to alter the All fields style. For example, to turn off the
+borders around all the fields in a card layout:
+1 Click on the Style button.
+2 Highlight the All fields style in the list box.
+3 Click Change.
+4 Click on the Colours radio button to move to the appropriate
+section of the Style editor.
+5 Within the area devoted to Borders, set the Line style button
+and choose the blank box which corresponds to tuming the
+border off.
+6 Click OK.
+If you want to apply a particular style to a particular field, then all
+you have to do is alter the corresponding field style. The style will
+be applied to that field in all records, including any records which
+may not currently be displayed.
+For example, if your document contains a number field whose
+name is Price, then a style called Price will exist which applies to
+that field. If you change the Price style using the Style Editor, so
+that numbers are formatted with two decimal places and are
+preceded by a £ sign, then every value in that field will be
+displayed in the standard currency form.
+Note that it is not possible to use styles on parts of fields, only on
+whole fields.
+
+Fireworkz Pro 99
+
+
+
+

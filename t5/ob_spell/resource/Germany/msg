@@ -1,0 +1,82 @@
+#
+# this is the messages file for ob_spell (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_spell/resource/resource.h
+#
+# OB_SPELL_MSG_DICTIONARY_xxx
+#
+# UK 3:Dictionary
+3:Benutzerwörterbüch
+# UK 1:ug/ug04_checking_spellings.htm
+1:ug/ug04_checking_spellings.htm
+# UK 4:&Word
+4:&Wort
+# UK 5:&Add
+5:&Einfügen
+# UK 6:&Delete
+6:&Löschen
+#
+# OB_SPELL_MSG_CHECK_xxx
+#
+# UK 9:Word not found
+9:Wort nicht gefunden
+# UK 2:ug/ug04_checking_spellings.htm
+2:ug/ug04_checking_spellings.htm
+# UK 10:&Replace
+10:&Ersetzen
+# UK 11:&Next
+11:&Next
+# UK 12:&Guess
+12:&Guess
+# UK 13:Cancel
+13:Abbrechen
+# UK 19:Spell check complete
+19:Spell check complete
+#
+# UK 20:Spell check complete: %d word not found
+20:Spell check complete: %d unbekanntes Wort
+# UK 21:Spell check complete: %d words not found
+21:Spell check complete: %d unbekannte Wörter
+# UK 22:All
+22:Alle
+#
+# errors: keep consistent with ob_spell/resource/resource.h
+# see SPELL_ERR(n)
+#
+# UK e0:File already exists
+e0:Datei besteht schon
+# UK e4:Bad dictionary
+e4:Ungültiges Wörterbuch
+# UK e6:Bad word
+e6:Ungültiges Wort
+# UK e7:Dictionary read only
+e7:Wörterbuch nur zum Lesen
+#
+# UK e10:Word not found
+e10:Wort nicht gefunden
+# UK e11:Escape
+e11:Escape
+# UK e12:Can't update dictionary
+e12:Wörterbuch kann nicht aktualisiert werden
+# UK e13:Can't read dictionary
+e13:Wörterbuch kann nicht gelesen werden
+# UK e14:Can't enlarge dictionary
+e14:Wörterbuch kann nicht erweitert werden
+# UK e15:Bad dictionary definition file
+e15:Ungültige Wörterbuch-Definitionsdatei
+# UK e16:Bad character in dictionary definition file
+e16:Ungültiges Zeichen in Wörterbuch-Definitionsdatei
+#
+# ob_spell errors
+#
+# UK e100:No user dictionaries
+e100:Keine Benutzerwörterbücher
+#
+# end of msg (ob_spell)

@@ -28,14 +28,14 @@ $(PROD_BUILD_DIR).binaries.Neutral.Ob12: $(PROD_BUILD_DIR).o.Neutral.M12 $(PROD_
  $(OBJMUNGE) -D$@ -O$(PROD_BUILD_DIR).o.Neutral.M12 -N12 $(OBJMUNGE_OBJFLAGS) -Eobject_note
 
 # Windows STRINGTABLE
-$(BUILD_DIR).ob_note.$(COUNTRY)-12/rc: $(T5).resource.zz-msg
+$(BUILD_DIR).ob_note.$(COUNTRY)-12/rc: $(T5).Resources.Neutral.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 12 -common
 
 # RISC OS loaded messages
-# $(T5).resource.zz-msg
+# $(T5).Resources.Neutral.zz-msg
 
 # RISC OS bound messages
-$(BUILD_DIR).ob_note.o.$(COUNTRY)-B12: $(T5).resource.zz-msg
+$(BUILD_DIR).ob_note.o.$(COUNTRY)-B12: $(T5).Resources.Neutral.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_note.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_note.o.$(COUNTRY)-B_tmp -symbol rb_note_msg_weak
 

@@ -56,6 +56,7 @@ static STATUS
 dialog_windows_dlgtemplate_prepare(
     _InoutRef_  P_DIALOG p_dialog,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
+    _InVal_     DIALOG_POSITION_TYPE dialog_position_type,
     _InRef_opt_ PC_GDI_POINT p_gdi_tl);
 
 _Check_return_
@@ -102,6 +103,12 @@ dialog_onNotify(
 static void
 dialog_onThemeChanged(
     _HwndRef_   HWND hwnd);
+
+#define pixels_from_pixit_x(pixit_x) ( \
+    (pixit_x * PixelsPerInch.cx) / PIXITS_PER_INCH)
+
+#define pixels_from_pixit_y(pixit_y) ( \
+    (pixit_y * PixelsPerInch.cy) / PIXITS_PER_INCH)
 
 static HHOOK g_hhook; /* nasty */
 
@@ -331,8 +338,6 @@ dialog_ictls_make_lists(
     }
 }
 
-static BOOL bMouseOverButton;
-
 static void
 SubclassedDialogControl_onLButtonDown(
     _HwndRef_   HWND hwnd,
@@ -397,6 +402,12 @@ SubclassedDialogControlProc(
     }
 
     p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
+
+    if(NULL == p_dialog_ictl)
+    {
+        PTR_ASSERT(p_dialog_ictl);
+        return(0L);
+    }
 
     switch(message)
     {
@@ -524,15 +535,6 @@ dialog_onInitDialog(
     } /*block*/
 #endif
 
-    if(p_dialog->modeless)
-    if(HOST_WND_NONE == p_dialog->windows.hwnd_parent)
-    {
-        if(NULL != host_get_prog_icon_large())
-            consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) host_get_prog_icon_large()));
-        if(NULL != host_get_prog_icon_small())
-            consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) host_get_prog_icon_small()));
-    }
-
     /* subclass all necessary buttons */
     dialog_ictls_subclass(p_dialog, &p_dialog->ictls);
 
@@ -555,6 +557,29 @@ dialog_onInitDialog(
         status_assert(status = dialog_call_client(p_dialog, DIALOG_MSG_CODE_PROCESS_START, &dialog_msg_process_start, p_proc_client));
     }
     } /*block*/
+
+    if(p_dialog->modeless)
+    {
+        if(HOST_WND_NONE == p_dialog->windows.hwnd_parent)
+        {   /* This one does appear when you TAB round the apps */
+            if(NULL != host_get_prog_icon_large())
+                consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM) host_get_prog_icon_large()));
+
+            /* This one doesn't seem to register, but hey... */
+            if(NULL != host_get_prog_icon_small())
+                consume(LRESULT, /*old HICON*/ SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM) host_get_prog_icon_small()));
+        }
+    }
+
+    if(dialog_statics.noted_position)
+    {
+        const GDI_POINT gdi_tl = dialog_statics.noted_gdi_tl;
+        dialog_statics.noted_position = FALSE;
+        dialog_statics.noted_gdi_tl.x = 0;
+        dialog_statics.noted_gdi_tl.y = 0;
+
+        SetWindowPos(hwnd, HWND_TOP, gdi_tl.x, gdi_tl.y, 0, 0, SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_NOZORDER | SWP_NOSIZE); /* ignore hWndInsertAfter, cx, cy */
+    }
 
     return(TRUE);
 }
@@ -687,6 +712,98 @@ dialog_windows_wstr_from_tstr(
     return(p_byte + b);
 }
 
+#if TRACE_ALLOWED
+
+static void
+dialog_windows_dlgtemplate_prepare_controls_in_TRACE(
+    _InRef_     PC_DIALOG_ICTL p_dialog_ictl,
+    _In_        P_DLGITEMHELPER pcd /* NB [-1] may be accessed */)
+{
+    switch(p_dialog_ictl->dialog_control_type)
+    {
+    case DIALOG_CONTROL_GROUPBOX:
+        if(!p_dialog_ictl->p_dialog_control->bits.logical_group)
+            trace_6(TRACE_APP_DIALOG, TEXT("GROUPBOX text=\"%s\", id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (BUTTON)"),
+                report_tstr(ui_text_tstr(&p_dialog_ictl->caption)), pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_TEXTFRAME:
+        trace_5(TRACE_APP_DIALOG, TEXT("STATIC id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (sunken frame)"),
+            pcd[-1].di.id, (S32) pcd[-1].di.x, (S32) pcd[-1].di.y, (S32) pcd[-1].di.cx, (S32) pcd[-1].di.cy);
+
+        /*FALLTHRU*/
+
+    case DIALOG_CONTROL_STATICTEXT:
+    case DIALOG_CONTROL_TEXTLABEL:
+        trace_7(TRACE_APP_DIALOG, TEXT("%sTEXT text=\"%s\", id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (STATIC)"),
+            (pcd->di.style & SS_CENTER) ? TEXT("C") : ((pcd->di.style & SS_RIGHT) ? TEXT("R") : TEXT("L")),
+            report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_PUSHBUTTON:
+        trace_6(TRACE_APP_DIALOG, TEXT("BUTTON text=\"%s\", id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_PUSHPICTURE:
+        trace_5(TRACE_APP_DIALOG, TEXT("BUTTON OWNERDRAW id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (PUSHPICTURE)"),
+            pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_RADIOBUTTON:
+        trace_6(TRACE_APP_DIALOG, TEXT("RADIOBUTTON text=\"%s\", id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_CHECKBOX:
+        trace_6(TRACE_APP_DIALOG, TEXT("CHECKBOX text=\"%s\", id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+#ifdef DIALOG_HAS_TRISTATE
+    case DIALOG_CONTROL_TRISTATE:
+        trace_6(TRACE_APP_DIALOG, TEXT("STATE3 text=\"%s\", id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+#endif
+
+    case DIALOG_CONTROL_EDIT:
+        trace_5(TRACE_APP_DIALOG, TEXT("EDIT id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_LIST_S32:
+    case DIALOG_CONTROL_LIST_TEXT:
+        trace_5(TRACE_APP_DIALOG, TEXT("LISTBOX id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_COMBO_S32:
+    case DIALOG_CONTROL_COMBO_TEXT:
+        trace_5(TRACE_APP_DIALOG, TEXT("COMBOBOX id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT,
+            pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_BUMP_S32:
+    case DIALOG_CONTROL_BUMP_F64:
+        trace_5(TRACE_APP_DIALOG, TEXT("EDIT id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (BUMP)"),
+            pcd[-1].di.id, (S32) pcd[-1].di.x, (S32) pcd[-1].di.y, (S32) pcd[-1].di.cx, (S32) pcd[-1].di.cy);
+        trace_5(TRACE_APP_DIALOG, TEXT("UPDOWN id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (BUMP)"),
+            pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    case DIALOG_CONTROL_USER:
+        trace_5(TRACE_APP_DIALOG, TEXT("USER id=%u, x=") S32_TFMT TEXT(", y=") S32_TFMT TEXT(", w=") S32_TFMT TEXT(", h=") S32_TFMT TEXT(" (BUTTON, OWNERDRAW)"),
+            pcd->di.id, (S32) pcd->di.x, (S32) pcd->di.y, (S32) pcd->di.cx, (S32) pcd->di.cy);
+        break;
+
+    default:
+        break;
+    }
+}
+
+#endif /* TRACE_ALLOWED */
+
 _Check_return_
 static STATUS
 dialog_windows_dlgtemplate_prepare_controls_in(
@@ -720,7 +837,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
         {
         case DIALOG_CONTROL_COMBO_S32:
         case DIALOG_CONTROL_COMBO_TEXT:
-            assert(p_dialog_control_data.combo_s32);
+            PTR_ASSERT(p_dialog_control_data.combo_s32);
             pixit_rect.br.y += p_dialog_control_data.combo_s32->combo_xx.dropdown_size;
             break;
 
@@ -732,10 +849,10 @@ dialog_windows_dlgtemplate_prepare_controls_in(
         cd[0].di.exStyle = 0;
 
         /* simple transform, used to all be in multiples of PIXITS_PER_WDU but no longer... */
-        cd[0].di.x  = (short) (pixit_rect.tl.x / PIXITS_PER_WDU_H);
-        cd[0].di.y  = (short) (pixit_rect.tl.y / PIXITS_PER_WDU_V);
-        cd[0].di.cx = (short) ((pixit_rect.br.x - pixit_rect.tl.x) / PIXITS_PER_WDU_H);
-        cd[0].di.cy = (short) ((pixit_rect.br.y - pixit_rect.tl.y) / PIXITS_PER_WDU_V);
+        cd[0].di.x  = (short) /*idiv_floor*/ (pixit_rect.tl.x / PIXITS_PER_WDU_H); /*+ve*/
+        cd[0].di.y  = (short) /*idiv_floor*/ (pixit_rect.tl.y / PIXITS_PER_WDU_V); /*+ve*/
+        cd[0].di.cx = (short) idiv_ceil((pixit_rect.br.x - pixit_rect.tl.x), PIXITS_PER_WDU_H);
+        cd[0].di.cy = (short) idiv_ceil((pixit_rect.br.y - pixit_rect.tl.y), PIXITS_PER_WDU_V);
 
         /* transform according to desired origin within window */
         cd[0].di.x  = (short) (cd[0].di.x - p_dialog->windows.wdu_offset_tl.x);
@@ -755,59 +872,70 @@ dialog_windows_dlgtemplate_prepare_controls_in(
         p_dialog_ictl->windows.wid = (p_dh->windows_control_id)++;
         pcd->di.id = /*(WORD)*/ p_dialog_ictl->windows.wid;
 
+        /* GROUPBOX: can have logical group with no data for shorter defs; OTHER: this control should have WS_GROUP on Windows */
+        if(p_dialog_ictl->p_dialog_control->bits.logical_group)
+            pcd->di.style |= WS_GROUP;
+
+        if(p_dialog_ictl->p_dialog_control->bits.tabstop)
+            pcd->di.style |= WS_TABSTOP;
+
         switch(p_dialog_ictl->dialog_control_type)
         {
         case DIALOG_CONTROL_GROUPBOX:
-            if(p_dialog_ictl->p_dialog_control->bits.logical_group || !p_dialog_control_data.groupbox || p_dialog_control_data.groupbox->bits.logical_group)
+            if(p_dialog_ictl->p_dialog_control->bits.logical_group)
             {
+#if CHECKING && 0 /* for checking layout */
+                pcd->diClass = DTIC_STATIC;
+                pcd->di.style |= SS_SUNKEN;
+                pcd->di.x -= 1; pcd->di.y -= 1; pcd->di.cx += 2; pcd->di.cy += 2; /* avoid being overlapped by contained controls */
+                break;
+#endif
                 p_dialog_ictl->windows.wid = 0; /* no need to reset pcd->di.id 'cos we're deleting it completely */
                 n_cw--;
                 n_id--;
                 (p_dh->windows_control_id)--;
+                break;
+            }
+
+            PTR_ASSERT(p_dialog_control_data.groupbox);
+            pcd->diCaption = &p_dialog_ictl->caption;
+            pcd->di.style |= WS_GROUP;
+            if(FRAMED_BOX_GROUP == p_dialog_control_data.groupbox->bits.border_style)
+            {   /* standard captioned group box */
+                pcd->di.style |= BS_GROUPBOX;
             }
             else
-            {
-                assert(!IS_PTR_NULL_OR_NONE(p_dialog_control_data.groupbox));
-                pcd->diCaption = &p_dialog_ictl->caption;
-                pcd->di.style |= BS_GROUPBOX;
-                /* pcd->di.y += WINDOWS_GROUPBOX_TM; */
-                /* pcd->di.cy -= WINDOWS_GROUPBOX_TM; */
-                if(pass == 2)
-                trace_6(TRACE_APP_DIALOG, TEXT("GROUPBOX text=\"%s\", id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (BUTTON)"),
-                    report_tstr(ui_text_tstr(&p_dialog_ictl->caption)), pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
+            {   /* mutate into top left static text */
+                pcd->diClass = DTIC_STATIC;
+                pcd->di.style |= SS_LEFTNOWORDWRAP;
             }
+            /* pcd->di.y += WINDOWS_GROUPBOX_TM; */
+            /* pcd->di.cy -= WINDOWS_GROUPBOX_TM; */
             break;
 
-        case DIALOG_CONTROL_STATICFRAME:
-            assert(p_dialog_control_data.staticframe);
-            assert(p_dialog_control_data.staticframe->bits.border_style);
-            {
-                pcd->diClass = DTIC_STATIC;
-                pcd->di.style |= SS_SUNKEN;
+        case DIALOG_CONTROL_TEXTFRAME:
+            PTR_ASSERT(p_dialog_control_data.textframe);
+            assert(p_dialog_control_data.textframe->bits.border_style);
+            pcd->diClass = DTIC_STATIC;
+            pcd->di.style |= SS_SUNKEN;
 
-                if(pass == 2)
-                trace_5(TRACE_APP_DIALOG, TEXT("STATIC id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (sunken frame)"),
-                    pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
+            pcd++; n_cw++; n_id++; /* followed by the static text */
 
-                pcd++;
-                n_cw++;
-                n_id++;
+            p_dialog_ictl->windows.wid = (p_dh->windows_control_id)++; /* override one stored in dialog_ictl 'cos we don't want to know the frame's id (but must still allocate one) */
 
-                p_dialog_ictl->windows.wid = (p_dh->windows_control_id)++; /* override one stored in dialog_ictl 'cos we don't want to know the frame's id (but must still allocate one) */
-                pcd->di.id = (WORD) p_dialog_ictl->windows.wid;
-
-                pcd->di.x += 1;
-                pcd->di.y += 1;
-                pcd->di.cx -= 2;
-                pcd->di.cy -= 2;
-            } /*block*/
+            pcd->di.id = (WORD) p_dialog_ictl->windows.wid;
+            pcd->di.x += 1;
+            pcd->di.y += 1;
+            pcd->di.cx -= 2;
+            pcd->di.cy -= 2;
 
             /*FALLTHRU*/
 
         case DIALOG_CONTROL_STATICTEXT:
+        case DIALOG_CONTROL_TEXTLABEL:
+            PTR_ASSERT(p_dialog_control_data.statictext);
             pcd->diClass = DTIC_STATIC;
             pcd->diCaption = &p_dialog_ictl->state.statictext;
-            assert(p_dialog_control_data.statictext);
             if(p_dialog_control_data.statictext->bits.centre_text)
                 pcd->di.style |= SS_CENTER;
             else if(p_dialog_control_data.statictext->bits.left_text)
@@ -815,76 +943,57 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             else
                 pcd->di.style |= SS_RIGHT;
 
+#if CHECKING && 0 /* for checking layout */
+            pcd->di.style |= SS_SUNKEN;
+#endif
+
             /* trivial attempt to vertically centre caption */
             /* at least this way they also line up with checkbox text etc. on same line */
             pcd->di.style |= SS_CENTERIMAGE;
-
-            if(pass == 2)
-            trace_7(TRACE_APP_DIALOG, TEXT("%sTEXT text=\"%s\", id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (STATIC)"),
-                p_dialog_control_data.statictext->bits.centre_text ? TEXT("C") : (p_dialog_control_data.statictext->bits.left_text ? TEXT("L") : TEXT("R")),
-                report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_PUSHBUTTON:
-            if((p_dialog_ictl->dialog_control_id == IDOK) || (p_dialog_ictl->dialog_control_id == IDCANCEL))
-            {
+            if( (p_dialog_ictl->dialog_control_id == IDOK) || (p_dialog_ictl->dialog_control_id == IDCANCEL) )
+            {   /* use standard control IDs */
                 p_dialog_ictl->windows.wid = pcd->di.id = (WORD) p_dialog_ictl->dialog_control_id;
                 n_id--;
                 (p_dh->windows_control_id)--;
             }
+
             pcd->diCaption = &p_dialog_ictl->state.pushbutton;
-            if((p_dialog_ictl->dialog_control_id == IDOK) || p_dialog_control_data.pushbutton->push_xx.def_pushbutton)
+            if( (p_dialog_ictl->dialog_control_id == IDOK) || p_dialog_control_data.pushbutton->push_xx.def_pushbutton )
                 pcd->di.style |= BS_DEFPUSHBUTTON;
             else
                 pcd->di.style |= BS_PUSHBUTTON;
-
-            if(pass == 2)
-            trace_6(TRACE_APP_DIALOG, TEXT("BUTTON text=\"%s\", id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_PUSHPICTURE:
-            if((p_dialog_ictl->dialog_control_id == IDOK) || (p_dialog_ictl->dialog_control_id == IDCANCEL))
-            {
+            if( (p_dialog_ictl->dialog_control_id == IDOK) || (p_dialog_ictl->dialog_control_id == IDCANCEL) )
+            {   /* use standard control IDs */
                 pcd->di.id = (WORD) p_dialog_ictl->dialog_control_id;
                 n_id--;
                 (p_dh->windows_control_id)--;
             }
-            assert(p_dialog_control_data.pushpicture);
+
+            PTR_ASSERT(p_dialog_control_data.pushpicture);
             assert(!p_dialog_control_data.pushpicture->push_xx.def_pushbutton);
             pcd->di.style |= BS_OWNERDRAW;
-
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("BUTTON OWNERDRAW id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (PUSHPICTURE)"),
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_RADIOBUTTON:
             pcd->diCaption = &p_dialog_ictl->caption;
             pcd->di.style |= BS_RADIOBUTTON;
-
-            if(pass == 2)
-            trace_6(TRACE_APP_DIALOG, TEXT("RADIOBUTTON text=\"%s\", id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_CHECKBOX:
             pcd->diCaption = &p_dialog_ictl->caption;
             pcd->di.style |= BS_CHECKBOX;
-
-            if(pass == 2)
-            trace_6(TRACE_APP_DIALOG, TEXT("CHECKBOX text=\"%s\", id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
 #ifdef DIALOG_HAS_TRISTATE
         case DIALOG_CONTROL_TRISTATE:
             pcd->diCaption = &p_dialog_ictl->caption;
             pcd->di.style |= BS_3STATE;
-
-            if(pass == 2)
-            trace_6(TRACE_APP_DIALOG, TEXT("STATE3 text=\"%s\", id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                report_tstr(ui_text_tstr(pcd->diCaption)), pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 #endif
 
@@ -903,31 +1012,32 @@ dialog_windows_dlgtemplate_prepare_controls_in(
 #endif
 
         case DIALOG_CONTROL_EDIT:
+            PTR_ASSERT(p_dialog_control_data.edit);
+            assert(FRAMED_BOX_EDIT == p_dialog_control_data.edit->edit_xx.bits.border_style);
             pcd->diClass = DTIC_EDIT;
             pcd->di.style |= WS_BORDER;
-            pcd->di.style |= ES_LEFT;
-            assert(p_dialog_control_data.edit);
-            assert(FRAMED_BOX_EDIT == p_dialog_control_data.edit->edit_xx.bits.border_style);
+            if(p_dialog_control_data.edit->edit_xx.bits.read_only)
+                pcd->di.style |= ES_READONLY;
+            if(p_dialog_control_data.edit->edit_xx.bits.right_text)
+                pcd->di.style |= ES_RIGHT;
+            else
+                pcd->di.style |= ES_LEFT;
+
             if(p_dialog_control_data.edit->edit_xx.bits.multiline)
             {
                 pcd->di.style |= ES_MULTILINE | ES_AUTOVSCROLL;
+                if(!p_dialog_control_data.edit->edit_xx.bits.read_only)
+                    pcd->di.style |= ES_WANTRETURN;
             }
             else
             {
                 pcd->di.style |= ES_AUTOHSCROLL;
+
 #define EDIT_EDIT_HEIGHT_HACK_WDU 0 /* bump it down a fraction to see if we can align with labels */
                 /* it now often lines up perfectly on XP @96dpi, still fraction out on Vista @120 dpi */
                 pcd->di.y  += EDIT_EDIT_HEIGHT_HACK_WDU;
                 pcd->di.cy -= EDIT_EDIT_HEIGHT_HACK_WDU;
             }
-            if(p_dialog_control_data.edit->edit_xx.bits.read_only)
-                pcd->di.style |= ES_READONLY;
-            if(p_dialog_control_data.edit->edit_xx.bits.right_text)
-                pcd->di.style |= ES_RIGHT;
-
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("EDIT id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_LIST_S32:
@@ -935,14 +1045,10 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             pcd->diClass = DTIC_LISTBOX;
             pcd->di.style |= WS_BORDER | WS_VSCROLL;
             pcd->di.style |= LBS_NOINTEGRALHEIGHT | LBS_NOTIFY | LBS_HASSTRINGS /*| LBS_OWNERDRAWFIXED*/;
-            if(p_dialog_control_data.list_text && p_dialog_control_data.list_text->list_xx.bits.force_v_scroll)
+            if( p_dialog_control_data.list_text && p_dialog_control_data.list_text->list_xx.bits.force_v_scroll )
                 pcd->di.style |= LBS_DISABLENOSCROLL;
-            if(p_dialog_control_data.list_text && p_dialog_control_data.list_text->list_xx.bits.tab_position)
+            if( p_dialog_control_data.list_text && p_dialog_control_data.list_text->list_xx.bits.tab_position )
                 pcd->di.style |= LBS_USETABSTOPS;
-
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("LISTBOX id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_COMBO_S32:
@@ -950,61 +1056,47 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             pcd->diClass = DTIC_COMBOBOX;
             pcd->di.style |= WS_BORDER | WS_VSCROLL;
             pcd->di.style |= CBS_AUTOHSCROLL | CBS_HASSTRINGS /*| CBS_OWNERDRAWFIXED*/;
-            if(p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.list_xx.bits.force_v_scroll)
+            if( p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.list_xx.bits.force_v_scroll )
                 pcd->di.style |= CBS_DISABLENOSCROLL;
-            if(p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.edit_xx.bits.read_only)
+            if( p_dialog_control_data.combo_text && p_dialog_control_data.combo_text->combo_xx.edit_xx.bits.read_only )
                 pcd->di.style |= CBS_DROPDOWNLIST;
             else
                 pcd->di.style |= CBS_DROPDOWN;
-
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("COMBOBOX id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT,
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
+            PTR_ASSERT(p_dialog_control_data.bump_xx);
+            assert(FRAMED_BOX_EDIT == p_dialog_control_data.bump_xx->edit_xx.bits.border_style);
             pcd->diClass = DTIC_EDIT;
             pcd->di.style |= WS_BORDER;
-            pcd->di.style |= ES_LEFT | ES_AUTOHSCROLL;
-#define BUMP_EDIT_HEIGHT_HACK_WDU EDIT_EDIT_HEIGHT_HACK_WDU /* bump it down a fraction to see if we can align with labels */
-            /* it now lines up perfectly on XP @96dpi, still fraction out on Vista @120 dpi */
-            pcd->di.y  += BUMP_EDIT_HEIGHT_HACK_WDU;
-            pcd->di.cy -= BUMP_EDIT_HEIGHT_HACK_WDU;
-            assert(p_dialog_control_data.bump_xx);
-            assert(FRAMED_BOX_EDIT == p_dialog_control_data.bump_xx->edit_xx.bits.border_style);
+            pcd->di.style |= ES_AUTOHSCROLL;
             if(p_dialog_control_data.bump_xx->edit_xx.bits.read_only)
                 pcd->di.style |= ES_READONLY;
             if(p_dialog_control_data.bump_xx->edit_xx.bits.right_text)
                 pcd->di.style |= ES_RIGHT;
+            else
+                pcd->di.style |= ES_LEFT;
 
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("EDIT id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (BUMP)"),
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
+#define BUMP_EDIT_HEIGHT_HACK_WDU EDIT_EDIT_HEIGHT_HACK_WDU /* bump it down a fraction to see if we can align with labels */
+            /* it now lines up perfectly on XP @96dpi, still fraction out on Vista @120 dpi */
+            pcd->di.y  += BUMP_EDIT_HEIGHT_HACK_WDU;
+            pcd->di.cy -= BUMP_EDIT_HEIGHT_HACK_WDU;
 
-            pcd++;
-            n_cw++;
-            n_id++;
+            pcd++; n_cw++; n_id++; /* followed by the spin control */
 
             p_dialog_ictl->data.bump_xx.windows.spin_wid = (p_dh->windows_control_id)++;
+
+            pcd->di.id = (WORD) p_dialog_ictl->data.bump_xx.windows.spin_wid;
             pcd->diClassName = UPDOWN_CLASS;
             pcd->di.style |= UDS_AUTOBUDDY | UDS_ALIGNRIGHT | UDS_ARROWKEYS;
-            pcd->di.id = (WORD) p_dialog_ictl->data.bump_xx.windows.spin_wid;
             pcd->di.x  = (short) (pcd->di.x + pcd->di.cx);
             pcd->di.y  = pcd[-1].di.y; /* match hacked edit control height */
             pcd->di.cy = pcd[-1].di.cy;
-
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("UPDOWN id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (BUMP)"),
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         case DIALOG_CONTROL_USER:
             pcd->di.style |= BS_OWNERDRAW;
-
-            if(pass == 2)
-            trace_5(TRACE_APP_DIALOG, TEXT("USER id=%d, x=") U32_TFMT TEXT(", y=") U32_TFMT TEXT(", w=") U32_TFMT TEXT(", h=") U32_TFMT TEXT(" (BUTTON, OWNERDRAW)"),
-                pcd->di.id, (U32) pcd->di.x, (U32) pcd->di.y, (U32) pcd->di.cx, (U32) pcd->di.cy);
             break;
 
         default: default_unhandled();
@@ -1013,9 +1105,15 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             break;
         }
 
+#if TRACE_ALLOWED /* batched here for clarity above */
+        if(pass == 2)
+            if_constant(tracing(TRACE_APP_DIALOG))
+                dialog_windows_dlgtemplate_prepare_controls_in_TRACE(p_dialog_ictl, pcd);
+#endif /* TRACE_ALLOWED */
+
         if(pass == 1)
             p_dh->dlgtemplateex.cDlgItems = (WORD) (p_dh->dlgtemplateex.cDlgItems + n_cw);
-
+        
         if(pass == 2)
         {
             WINDOWS_CTL_MAP windows_ctl_map;
@@ -1027,16 +1125,6 @@ dialog_windows_dlgtemplate_prepare_controls_in(
                 status_break(status = al_array_add(&p_dh->p_dialog->windows.h_windows_ctl_map, WINDOWS_CTL_MAP, 1, &array_init_block, &windows_ctl_map));
             }
         }
-
-        if(pass == 2)
-            if(n_cw)
-            {
-                if(i == 0)
-                    cd[0].di.style |= WS_GROUP;
-
-                if(p_dialog_ictl->p_dialog_control->bits.tabstop)
-                    cd[0].di.style |= WS_TABSTOP;
-            }
 
         for(j = 0; j < n_cw; ++j)
         {   /* Ensure each DLGITEMTEMPLATEEX is DWORD aligned */
@@ -1135,12 +1223,13 @@ static STATUS
 dialog_windows_dlgtemplate_prepare(
     _InoutRef_  P_DIALOG p_dialog,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
+    _InVal_     DIALOG_POSITION_TYPE dialog_position_type,
     _InRef_opt_ PC_GDI_POINT p_gdi_tl)
 {
     DLGTEMPLATE_HELPER dh;
     P_DLGTEMPLATE_HELPER p_dh = &dh;
     STATUS status = STATUS_OK; /* keep dataflower happy */
-    SIZE PixelsPerInch;
+    GDI_SIZE PixelsPerInch;
     int pass = 1;
     PCTSTR tstr;
     U32 b;
@@ -1151,6 +1240,8 @@ dialog_windows_dlgtemplate_prepare(
 
     bastard_windows_h_dialog = p_dialog->h_dialog; /* Windows 3.1 inadequacy */
 
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for this dialog e.g. 96 or 120 */
+
     p_dh->dlgtemplateex.dlgVer = 1;
     p_dh->dlgtemplateex.signature = 0xFFFF;
     p_dh->dlgtemplateex.helpID = 0;
@@ -1159,9 +1250,9 @@ dialog_windows_dlgtemplate_prepare(
     p_dh->dlgtemplateex.style = WS_VISIBLE;
 
     if(p_dialog->modeless)
-        p_dh->dlgtemplateex.style |= (WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_BORDER);
+        p_dh->dlgtemplateex.style |= (WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_VISIBLE | WS_BORDER);
     else
-        p_dh->dlgtemplateex.style |= (WS_POPUP | WS_SYSMENU | WS_CAPTION | DS_MODALFRAME);
+        p_dh->dlgtemplateex.style |= (WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_VISIBLE | DS_MODALFRAME);
 
     p_dh->dlgtemplateex.style |= DS_3DLOOK;
     /* NB this flag may be obsolete, but does affect the code below! */
@@ -1170,29 +1261,57 @@ dialog_windows_dlgtemplate_prepare(
 
     p_dh->dlgtemplateex.exStyle |= WS_EX_CONTEXTHELP; /* all provide F1 help so why not */
 
-    if(NULL != p_gdi_tl)
+    switch(dialog_position_type)
     {
-        p_dh->dlgtemplateex.x = (short) p_gdi_tl->x / 2; /* NB still in WDU not pixels... */
-        p_dh->dlgtemplateex.y = (short) p_gdi_tl->y / 2;
-
-        p_dh->dlgtemplateex.style |= DS_ABSALIGN /* coordinates are screen-absolute */;
-    }
-    else
+    case DIALOG_POSITION_CENTRE_SCREEN:
         p_dh->dlgtemplateex.style |= DS_CENTER;
+        break;
+
+    case DIALOG_POSITION_CENTRE_MOUSE:
+        p_dh->dlgtemplateex.style |= DS_CENTERMOUSE;
+        break;
+
+    case DIALOG_POSITION_CENTRE_WINDOW:
+        dialog_statics.noted_position = FALSE;
+
+        /*FALLTHRU*/
+
+    default:
+        /*FALLTHRU*/ /*default_unhandled();*/
+#if CHECKING
+    case DIALOG_POSITION_NEAR_MOUSE:
+#endif
+        p_dh->dlgtemplateex.x = (short) (p_gdi_tl->x / 2); /* NB still in WDU not pixels... this is why we used to get drift */
+        p_dh->dlgtemplateex.y = (short) (p_gdi_tl->y / 2);
+
+        if(!dialog_statics.noted_position)
+        {
+            /*p_dh->dlgtemplateex.style |= DS_CENTERMOUSE;*/
+            dialog_statics.noted_position = TRUE;
+            dialog_statics.noted_gdi_tl = *p_gdi_tl;
+        }
+        break;
+    }
 
     p_dialog->windows.wdu_offset_tl.x = p_pixit_rect->tl.x / PIXITS_PER_WDU_H; /* offset_tl stored in h/v dialog units */
     p_dialog->windows.wdu_offset_tl.y = p_pixit_rect->tl.y / PIXITS_PER_WDU_V;
 
-    p_dh->dlgtemplateex.cx = (short) (pixit_rect_width(p_pixit_rect)  / PIXITS_PER_WDU_H);
+    p_dh->dlgtemplateex.cx = (short) (pixit_rect_width( p_pixit_rect) / PIXITS_PER_WDU_H);
     p_dh->dlgtemplateex.cy = (short) (pixit_rect_height(p_pixit_rect) / PIXITS_PER_WDU_V);
+
+    if(p_dialog->modeless)
+    {   /* have to leave room for the title bar */
+        p_dh->dlgtemplateex.cy += (short) ((GetSystemMetrics(SM_CYCAPTION) * 8) / 16);
+
+        /* make sure it's not too narrow */
+        p_dh->dlgtemplateex.cx = max(p_dh->dlgtemplateex.cx, (PIXITS_PER_INCH * 5) / (PIXITS_PER_WDU_H * 4));
+    }
 
     p_dh->size = 0;
 
     trace_5(TRACE_APP_DIALOG, TEXT("DIALOGEX x=%d, y=%d%s, w=%d, h=%d"),
         p_dh->dlgtemplateex.x, p_dh->dlgtemplateex.y, (NULL != p_gdi_tl) ? TEXT(" (ABS x,y)") : tstr_empty_string,
         p_dh->dlgtemplateex.cx, p_dh->dlgtemplateex.cy);
-
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for this dialog e.g. 96 or 120 */
 
     do  { /* reset each time round */
         p_dh->windows_control_id = WINDOWS_CTL_ID_STT;
@@ -1276,7 +1395,7 @@ dialog_windows_dlgtemplate_prepare(
             if(pass == 2)
             {
                 p_dh->p_byte = dialog_windows_wstr_from_tstr(p_dh->p_byte, tstr);
-                trace_2(TRACE_APP_DIALOG, TEXT("FONT %d, \"%s\""), font_height, report_tstr(tstr));
+                trace_2(TRACE_APP_DIALOG, TEXT("FONT %d, \"%s\""), (S32) font_height, report_tstr(tstr));
             }
             else
                 p_dh->size += dialog_windows_tstrlen32p1_bytes(tstr);
@@ -1401,8 +1520,10 @@ dialog_windows_ictl_enable_here(
         EnableWindow(hwnd, enabled);
         break;
 
+    case DIALOG_CONTROL_STATICPICTURE:
     case DIALOG_CONTROL_STATICTEXT:
-    case DIALOG_CONTROL_STATICFRAME:
+    case DIALOG_CONTROL_TEXTLABEL:
+    case DIALOG_CONTROL_TEXTFRAME:
         Static_Enable(hwnd, enabled);
         break;
 
@@ -2181,9 +2302,8 @@ dialog_UIToolButtonDrawTDD(
 {
     UINT uState;
 
-    if(NULL != hTheme)
-        if(themed_dialog_UIToolButtonDraw(hTheme, hDC, pRect, hBmp, bmx, bmy, iImageIndex, uStateIn))
-            return(TRUE);
+    if( (NULL != hTheme) && themed_dialog_UIToolButtonDraw(hTheme, hDC, pRect, hBmp, bmx, bmy, iImageIndex, uStateIn) )
+        return(TRUE);
 
     /* fallback is old implementation */
     uState = uStateIn;
@@ -2203,14 +2323,14 @@ dialog_host_redraw_context_set_host_xform(
     p_host_xform->windows.pixels_per_inch.x = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSX);
     p_host_xform->windows.pixels_per_inch.y = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSY);
 
-    p_host_xform->windows.d.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.d.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
+    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
 
     p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
     p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
 
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.d.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.d.y * p_host_xform->scale.t.y;
+    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
+    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
 }
 
 static void
@@ -2368,7 +2488,7 @@ dialog_onDrawItem(
             REDRAW_CONTEXT_CACHE redraw_context_cache = { NULL };
             const P_REDRAW_CONTEXT p_redraw_context = &dialog_msg_ctl_user_redraw.redraw_context;
 
-            zero_struct_ptr(p_redraw_context);
+            zero_struct_ptr_fn(p_redraw_context);
             p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
             p_redraw_context->windows.paintstruct.hdc = pDrawItem->hDC;
@@ -2384,10 +2504,7 @@ dialog_onDrawItem(
             p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
 
             if(DOCNO_NONE != p_dialog->docno)
-            {
                 p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu_from_docno(p_dialog->docno)->page_def.grid_size;
-                p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_redraw_context->border_width.x;
-            }
 
             dialog_host_redraw_context_set_host_xform(p_redraw_context, &p_redraw_context->host_xform);
 
@@ -2709,23 +2826,12 @@ dialog_dbox_process_windows(
     _InoutRef_  P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd_process_dbox,
     _InRef_     PC_PIXIT_RECT p_pixit_rect)
 {
-    DIALOG_POSITION_TYPE dialog_position_type = ENUM_UNPACK(DIALOG_POSITION_TYPE, p_dialog_cmd_process_dbox->bits.dialog_position_type);
     STATUS status = STATUS_OK;
-    PIXIT_RECT pixit_rect = *p_pixit_rect;
+    DIALOG_POSITION_TYPE dialog_position_type;
+    GDI_SIZE PixelsPerInch;
     GDI_POINT gdi_tl;
-    P_GDI_POINT p_gdi_tl = &gdi_tl;
-    SIZE PixelsPerInch;
 
-    /* add top and left margins (still in pixit space) */
-    pixit_rect.tl.x -= DIALOG_BOX_LM;
-    pixit_rect.tl.y -= DIALOG_BOX_TM;
-
-    /* add right and bottom margins (still in pixit space) */
-    pixit_rect.br.x += DIALOG_BOX_RM;
-    pixit_rect.br.y += DIALOG_BOX_BM;
-
-    if(DIALOG_POSITION_DEFAULT == dialog_position_type)
-        dialog_position_type = DIALOG_POSITION_NEAR_MOUSE;
+    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch.cx, &PixelsPerInch.cy); /* Get current pixel size for this dialog e.g. 96 or 120 */
 
     if(p_dialog_cmd_process_dbox->bits.use_windows_hwnd)
     {
@@ -2735,58 +2841,61 @@ dialog_dbox_process_windows(
     {
         const P_DOCU p_docu = p_docu_from_docno(p_dialog->docno);
         const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-        p_dialog->windows.hwnd_parent = !IS_VIEW_NONE(p_view) ? p_view->main[WIN_BACK].hwnd : HOST_WND_NONE;
+        p_dialog->windows.hwnd_parent = VIEW_NOT_NONE(p_view) ? p_view->main[WIN_BACK].hwnd : HOST_WND_NONE;
     }
 
-    if(HOST_WND_NONE == p_dialog->windows.hwnd_parent)
+    if(DIALOG_POSITION_DEFAULT == (dialog_position_type = ENUM_UNPACK(DIALOG_POSITION_TYPE, p_dialog_cmd_process_dbox->bits.dialog_position_type)))
+        dialog_position_type = DIALOG_POSITION_NEAR_MOUSE;
+
+    if( (HOST_WND_NONE == p_dialog->windows.hwnd_parent) && (DIALOG_POSITION_CENTRE_WINDOW == dialog_position_type) )
         dialog_position_type = DIALOG_POSITION_CENTRE_SCREEN;
 
-    host_get_pixel_size(NULL /*screen*/, &PixelsPerInch); /* Get current pixel size for this dialog e.g. 96 or 120 */
-
-#define pixels_from_pixit_x(pixit_x) ( \
-    (pixit_x * PixelsPerInch.cx) / PIXITS_PER_INCH)
-
-#define pixels_from_pixit_y(pixit_y) ( \
-    (pixit_y * PixelsPerInch.cy) / PIXITS_PER_INCH)
+    { /* initialise gdi_tl */
+    POINT cursor_pos;
+    GetCursorPos(&cursor_pos);
+    gdi_tl.x = cursor_pos.x - GetSystemMetrics(SM_CXDLGFRAME);
+    gdi_tl.y = cursor_pos.y - GetSystemMetrics(SM_CYDLGFRAME);
+    gdi_tl.y -= GetSystemMetrics(SM_CYCAPTION);
+    } /*block*/
 
     switch(dialog_position_type)
     {
-    default: default_unhandled();
-#if CHECKING
     case DIALOG_POSITION_CENTRE_SCREEN:
-#endif
-        p_gdi_tl = NULL;
+        /* template will set style to centre dialogue box on screen */
+        break;
+
+    case DIALOG_POSITION_CENTRE_MOUSE:
+        /* template will set style to centre dialogue box on mouse */
         break;
 
     case DIALOG_POSITION_CENTRE_WINDOW:
-        {
-        RECT client_rect;
-        GetClientRect(p_dialog->windows.hwnd_parent, &client_rect);
-        gdi_tl.x = ((client_rect.right  - client_rect.left)     - pixels_from_pixit_x(pixit_rect_width(&pixit_rect)) ) / 2;
-        gdi_tl.y = ((client_rect.bottom - client_rect.top )     - pixels_from_pixit_y(pixit_rect_height(&pixit_rect))) / 2;
+        { /* calculate abs screen position */
+        WINDOWINFO windowinfo;
+        windowinfo.cbSize = sizeof32(windowinfo);
+        GetWindowInfo(p_dialog->windows.hwnd_parent, &windowinfo);
+        gdi_tl.x = ((windowinfo.rcWindow.left + windowinfo.rcWindow.right ) - pixels_from_pixit_x(pixit_rect_width( p_pixit_rect))) / 2;
+        gdi_tl.y = ((windowinfo.rcWindow.top  + windowinfo.rcWindow.bottom) - pixels_from_pixit_y(pixit_rect_height(p_pixit_rect))) / 2;
         break;
         }
 
+    default: default_unhandled();
+#if CHECKING
     case DIALOG_POSITION_NEAR_MOUSE:
+#endif
         if(dialog_statics.noted_position)
         {
             gdi_tl = dialog_statics.noted_gdi_tl;
             /* leave dialog_statics.note_position alone; this will apply at the end of this dialog session */
+#if 0 /* defer to WM_INITDIALOG as we can't map to abs position before dialog is open given WDU transform */
             dialog_statics.noted_position = FALSE;
             dialog_statics.noted_gdi_tl.x = 0;
             dialog_statics.noted_gdi_tl.y = 0;
-        }
-        else
-        {
-            POINT cursor_pos;
-            GetCursorPos(&cursor_pos);
-            gdi_tl.x = cursor_pos.x - 4;
-            gdi_tl.y = cursor_pos.y - 4;
+#endif
         }
         break;
     }
 
-    status_return(dialog_windows_dlgtemplate_prepare(p_dialog, p_pixit_rect, p_gdi_tl));
+    status_return(dialog_windows_dlgtemplate_prepare(p_dialog, p_pixit_rect, dialog_position_type, &gdi_tl));
 
     p_dialog->windows.dlg_filter_hook = g_hhook = SetWindowsHookEx(WH_MSGFILTER, FilterFunc, GetInstanceHandle(), GetCurrentThreadId());
 
@@ -2805,11 +2914,6 @@ dialog_dbox_process_windows(
             status = status_check();
         else if(HOST_WND_NONE == (p_dialog->hwnd = CreateDialogIndirectParam(GetInstanceHandle(), lpTemplate, p_dialog->windows.hwnd_parent, (DLGPROC) modeless_dialog_handler, (LPARAM) p_dialog->h_dialog)))
             status = status_nomem();
-        else
-        {
-            InvalidateRect(p_dialog->hwnd, NULL, TRUE);
-            UpdateWindow(p_dialog->hwnd);
-        }
     }
 
     return(status);
@@ -2861,22 +2965,24 @@ dialog_windows_ui_len_init(void)
                 TEXTMETRIC textmetric;
                 S32 avgWidth, avgHeight;
 
-                void_WrapOsBoolChecking(GetTextMetrics(hdc, &textmetric));
-                trace_2(TRACE_APP_DIALOG, TEXT("GetTextMetrics() yields average width=%d, height=%d"), textmetric.tmAveCharWidth, textmetric.tmHeight);
-
                 void_WrapOsBoolChecking(GetTextExtentPoint32(hdc,
                     TEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
                     TEXT("abcdefghijklmnopqrstuvwxyz"),
                     26 * 2, &size));
                 avgWidth = (S32) (((size.cx / 26) + 1) / 2); /* See KB145994 - tmAveCharWidth is imprecise */
-                avgHeight = (S32) textmetric.tmHeight; /* DPI-aware */
                 trace_1(TRACE_APP_DIALOG, TEXT("GetTextExtentPoint32() yields average width=%d"), avgWidth);
+
+                void_WrapOsBoolChecking(GetTextMetrics(hdc, &textmetric));
+                avgHeight = (S32) textmetric.tmHeight; /* DPI-aware */
+                trace_2(TRACE_APP_DIALOG, TEXT("GetTextMetrics() yields average width=%d, height=%d"), textmetric.tmAveCharWidth, textmetric.tmHeight);
 
                 /* One horizontal base unit is equal to one-fourth of the average character width for the font. */
                 dialog_statics.windows.pixels_per_four_h_du = avgWidth;
+                reportf(/*trace_1(TRACE_APP_DIALOG,*/ TEXT("DIALOG pixels_per_four_h_du=%d"), avgWidth);
 
                 /* One vertical base unit is equal to one-eighth of the average character height for the font */
                 dialog_statics.windows.pixels_per_eight_v_du = avgHeight;
+                reportf(/*trace_1(TRACE_APP_DIALOG,*/ TEXT("DIALOG pixels_per_eight_v_du=%d"), avgHeight);
 
                 consume(HFONT, SelectFont(hdc, old_hfont));
 
@@ -2914,7 +3020,7 @@ ui_width_from_tstr_host(
             void_WrapOsBoolChecking(1 == ReleaseDC(hwnd, hdc));
 
             /* return width rounded out plus a wee bit as multiples of dialog units */ /* DPI-aware */
-            width = PIXITS_PER_WDU_H * (2 + muldiv64_ceil(size.cx, 4, dialog_statics.windows.pixels_per_four_h_du));
+            width = PIXITS_PER_WDU_H * (1 + muldiv64_ceil(size.cx, 4, dialog_statics.windows.pixels_per_four_h_du));
             return(width);
         }
     }

@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>Page design</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Page design" />
+    </object>
+    <div class="navheader">
+        <table id="navheader" summary="Navigation header">
+            <tr>
+                <td class="navheader_PCN_L"><a href="../ug/ug10_pictures.htm">Prev</a> </td>
+                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
+                <td class="navheader_PCN_R"> <a href="../ug/ug11_printing.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navheader_PCN_L">Pictures </td>
+                <th class="navheader_PCN_C">User Guide</th>
+                <td class="navheader_PCN_R"> Printing</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1><a name="page_design" id="page_design"></a><span class="csg-chapter-number">9 </span>Page design</h1>
+
+    <p>This chapter shows you how to:</p>
+    <ul>
+        <li><a href="#paper_size_and_printable_area">Set up the paper size</a></li>
+
+        <li><a href="#paper_orientation">Change the paper orientation</a></li>
+
+        <li><a href="#paper_margins">Set the paper margins</a></li>
+
+        <li><a href="#printing_the_row_and_column_borders">Print the row and column borders</a></li>
+
+        <li><a href="#forcing_page_breaks">Add page breaks</a></li>
+
+        <li><a href="#headers_and_footers">Add headers and footers to pages</a></li>
+
+        <li><a href="#numbering_pages">Number pages</a></li>
+    </ul>
+    <p>
+        There are many similarities between the ways pages are set up
+        and managed in RISC OS and Windows, but at the few points
+        where they diverge separate instructions are given for each
+        platform.
+    </p>
+
+    <h2><a name="paper_size_and_printable_area" id="paper_size_and_printable_area"></a>Paper size and printable area</h2>
+
+    <p>
+        One of the most important options which you need to define for every worksheet is the page size and printable area.
+        This will ensure that you can print it correctly.
+    </p>
+
+    <h3><a name="setting_up_paper_size" id="setting_up_paper_size"></a>Setting up paper size</h3>
+    <p>
+        The end result of most documents which you create will be a printed document.
+        In order to ensure that all your documents print out correctly first time on your printer,
+        without text being lost off the edge of pages, you should read the following sections.
+    </p>
+    <p>
+        If the page and margin sizes that Fireworkz uses on-screen do not match those of your printer driver,
+        you may have problems when you try to print your document.
+    </p>
+    <ul>
+        <li>
+            The simplest way to ensure that your document and printer driver match is to use the
+            <span class="csg-dbox-button">Read printer</span> option in the <span class="csg-dbox">Paper</span> dialogue box.
+            This matches the printable area shown on screen with the printable area produced by your printer.
+            In effect, it makes it impossible for you to format your pages incorrectly.
+            If you know your document is always going to be printed on the same printer, you should use this for maximum accuracy.
+        </li>
+        <li class="csg-list-style-none">
+            However, the <span class="csg-dbox-button">Read printer</span> option will only be accurate if your printer driver has been set up carefully.
+            Remember to refer to your operating system and specific printer documentation.
+        </li>
+    </ul>
+    <p>
+        The key thing to remember is that if you attempt to print a document at full size on a piece of paper smaller than that it has been designed for,
+        or using a printer which can only print a smaller area, you will not get the full page on the piece of paper.
+    </p>
+    <!--- Diagram here -->
+    <ul>
+        <li>
+            If you find that you are getting page feed or line feed problems (such as extra blank pages),
+            it is most likely that your printer driver has the wrong page length set.
+            Try reducing the page length in your printer driver, if that is possible,
+            then click on <span class="csg-dbox-button">Read printer</span> again in Fireworkz.
+        </li>
+    </ul>
+
+    <h3><a name="setting_paper_size" id="setting_paper_size"></a>Setting paper size</h3>
+    <p>
+        To set the paper size for a worksheet or document, choose <span class="csg-menu-option">Paper</span> from the <span class="csg-menu">Page</span> menu.
+        The <span class="csg-dbox">Paper</span> dialogue box will be displayed.
+    </p>
+    <p>
+        To choose the paper size, either click on one of the pre-defined paper size buttons,
+        or the <span class="csg-dbox-button">Read printer</span> button in the dialogue box.
+        On RISC OS this option is only available if a printer driver is loaded on the icon bar,
+        but if it is you should use it as it will ensure that your document is laid out correctly for use with your printer, as described above.
+    </p>
+    <p>
+        The name of the paper chosen appears in the <span class="csg-dbox-option">Paper name</span> writable field.
+        Its size details and the margins needed to define the printable area appear below.
+    </p>
+
+    <h4><a name="custom_page_sizes" id="custom_page_sizes"></a>Custom page sizes</h4>
+    <p>
+        Perhaps the size of paper or page you want to use is not included on a button.
+        In this case you will need to create a custom paper size.
+        You can create paper up to any size, but you will not be able to print a page larger than your printer can handle.
+    </p>
+    <p>To create a custom paper size:</p>
+    <ol>
+        <li>Open the <span class="csg-dbox">Paper</span> dialogue box.</li>
+        <li>Click the <span class="csg-dbox-button">None</span> button,
+            then enter the height and width of the paper (in the specified units) in the appropriate writable fields.
+            You can either type directly into the writable fields or click the up or down arrow buttons to increase or decrease the amount shown in each.
+        </li>
+        <li>Enter the top, bottom, left and right margins needed to ensure that you do not try to print on an area larger than your printer can cope with.</li>
+        <li>
+            Click the <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> button.
+            Your document will appear laid out on the paper size you have defined.
+        </li>
+    </ol>
+    <p>
+        Remember, you can use any of the paper sizes defined by your printer driver
+        by selecting them and clicking on the <span class="csg-dbox-button">Read printer</span> button.
+    </p>
+
+    <h4><a name="paper_orientation" id="paper_orientation"></a>Paper orientation</h4>
+    <p>
+        You can prepare documents in either portrait (tall) or landscape (wide) orientation.
+        As worksheets often have more columns than will fit on a portrait page, you may want to choose landscape orientation.
+        Letters, on the other hand, are usually more suited to portrait orientation.
+    </p>
+    <p>To set the orientation of the paper:</p>
+    <ol>
+        <li>Open the <span class="csg-dbox">Paper</span> dialogue box.</li>
+        <li>
+            Select either the <span class="csg-dbox-option">Portrait</span>
+            or the <span class="csg-dbox-option">Landscape</span> option.
+        </li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.</li>
+    </ol>
+
+    <h4><a name="paper_margins" id="paper_margins"></a>Paper margins</h4>
+    <p>
+        The margins set up in the <span class="csg-dbox">Paper</span> dialogue box define the area in which you could place text if you wanted to.
+        They provide the limits of the printable area.
+        On screen you will see that the area beyond the printable area is shown in light grey,
+        and you will be unable to place text or pictures there.
+    </p>
+    <p>
+        Entries are shown for top, bottom, left and right margins.
+        You can increase or decrease the margins using the arrows.
+    </p>
+    <p>
+        If your document is to be printed double-sided and/or bound up,
+        you should consider setting an extra <strong>Binding margin</strong> to take account of the space used up by the binding.
+        This will ensure that an adequate space is left for the binding and that your text will not disappear into the binding.
+    </p>
+    <p>To set a Binding margin:</p>
+    <ol>
+        <li>
+            Check the amount of space you need to use for the binding you are using.
+            For example, an A4 ring binder will typically need a binding margin of 10mm.
+        </li>
+        <li>
+            Go to the <span class="csg-dbox-option">Binding</span> area on the <span class="csg-dbox">Paper</span> dialogue box.
+            Enter the binding margin you want in the Margin box, by typing it in or clicking on the arrow keys.
+        </li>
+        <li>
+            If your worksheet has left and right pages, click the
+            <span class="csg-dbox-option">Alternate</span> option button to swap the binding margin over
+            so that it is on the bound side (the gutter) of both odd and even pages.
+        </li>
+    </ol>
+
+    <h4><a name="printing_the_row_and_column_borders" id="printing_the_row_and_column_borders"></a>Printing the row and column borders</h4>
+    <p>
+        You may need to print the row and column headings on your page,
+        for example if you have been working with the spreadsheet
+        as an educational exercise and need to show what you have done.
+    </p>
+    <p>To print these borders:</p>
+    <ol>
+        <li>Display the <span class="csg-dbox">Paper</span> dialogue box.</li>
+        <li>
+            Increase the size of the <span class="csg-dbox-option">Column margin</span> entry to about 8mm
+            and the <span class="csg-dbox-option">Row margin</span> entry to around 10mm.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.
+            The borders will then appear on the paper on screen and when you print the worksheet.
+        </li>
+    </ol>
+
+    <h2><a name="forcing_page_breaks" id="forcing_page_breaks"></a>Forcing page breaks</h2>
+
+    <p>To start a new page, do this:</p>
+    <ol>
+        <li>Place the caret in a cell in the row which you want to be the first on the new page.</li>
+        <li>
+            Choose <span class="csg-menu-option">Pages</span> from the <span class="csg-menu">Page</span> menu.
+            Click the <span class="csg-dbox-button">New</span> button in the dialogue box which appears.
+        </li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span> in the
+            <span class="csg-dbox">Page</span> dialogue box which appears.
+        </li>
+        <li>A new page will be started.</li>
+    </ol>
+
+    <h2><a name="headers_and_footers" id="headers_and_footers"></a>Headers and footers</h2>
+
+    <p>
+        You can add headers and footers to the pages of your worksheet document easily.
+        In fact, if you turn on <span class="csg-dbox-option">Full</span> display using the
+        <a href="../ug/ug02_fireworkz_basics.htm#accessing_the_view_control_dialogue_box"><span class="csg-dbox">View control</span></a> dialogue box,
+        you will see that there is space for a header and footer automatically provided on each page.
+    </p>
+    <p>
+        If your document has left and right pages, your headers and footers can be set up to take this into account,
+        so that, for example, page numbers always appear on the outside corner of pages.
+        You can also specify that the header or footer is different on the first page of the document.
+    </p>
+
+    <h3><a name="creating_headers_and_footers" id="creating_headers_and_footers"></a>Creating headers and footers</h3>
+    <p>To add a header to a document:</p>
+    <ol>
+        <li>
+            For the first header or footer in the worksheet, use the one which appears by default and edit it as necessary.
+            For subsequent ones, create a page break and specify new header/footer.
+            All headers and footers are attached to a home page,
+            which you must choose from the <span class="csg-dbox">Pages</span> dialogue box in order to edit them.
+        </li>
+        <li>Put the caret in the header or footer, and type in the text you want.</li>
+        <li>
+            Each worksheet has a style called <code>BaseHeadFoot</code> already defined.
+            This is automatically applied to all headers and footers.
+            If you wish you can use the Style editor to make changes to the text style and justification.
+        </li>
+    </ol>
+    <p>
+        The process for adding footers is identical;
+        the margin is the gap between the bottom of the main text and the bottom of the printable area,
+        and the footer offset is the gap between the bottom of the footer and the bottom of the printable area.
+    </p>
+
+    <h4><a name="opposing_headers_and_footers" id="opposing_headers_and_footers"></a>Adding opposing headers and footers to your document</h4>
+    <p>
+        If your worksheet has left and right pages you may want your headers and footers to reflect this,
+        so that text and page numbers appear in the outer corners of the bound pages.
+    </p>
+    <p>To set up alternating headers:</p>
+    <ol>
+        <li>Create the header and/or footer on the first page; this will usually be a right-hand page.</li>
+        <li>Choose <span class="csg-menu-option">Pages</span> from the <span class="csg-menu">Page</span> menu.</li>
+        <li>Select the Page 1 entry and click <span class="csg-dbox-button">Change</span> in the <span class="csg-dbox">Pages</span> dialogue box which appears.</li>
+        <li>
+            Click the option button for <span class="csg-dbox-option">Even header</span> or <span class="csg-dbox-option">Even footer</span>, as required.
+            You can alter the margin and offset settings; they will first appear identical to the original header and footer.
+        </li>
+        <li>Go to an even numbered page in your document and type in the text for the new header or footer.</li>
+        <li>
+            Create a new header or footer style based on the <code>BaseHeadFoot</code> style, adding the tabs and other style features you want to use.
+            Call it something like <code>Left Header</code>.
+        </li>
+    </ol>
+    <p>The two headers will automatically appear on opposing pages throughout the document.</p>
+
+    <h4><a name="multiple_headers_and_footers" id="multiple_headers_and_footers"></a>Using multiple headers and footers within a document</h4>
+    <p>
+        You can set up as many different headers and footers as you need to use in your document; the limit is the number of pages.
+        All headers and footers are associated with a page, where the caret was in the document when they were created.
+        Usually they will also be associated with a page break, either at the start of a document or the start of new chapters.
+    </p>
+    <p>To add a different header or footer to a page:</p>
+    <ol>
+        <li>Create a new header or footer there using the <span class="csg-dbox">Pages</span> dialogue box.</li>
+        <li>Click the <span class="csg-dbox-button">New</span> button in the <span class="csg-dbox">Pages</span> dialogue box.</li>
+        <li>Enter the header or footer margin details in the <span class="csg-dbox">Page</span> dialogue which then appears.</li>
+        <li>Type in your new header or footer text on the page where the new header or footer appears.</li>
+    </ol>
+    <p>
+        If you have more than one header or footer set up you can choose which you use on each page using the <span class="csg-dbox">Pages</span> dialogue box.
+        This presents a list of options; each header or footer is listed by the number of the page it was first set up on.
+    </p>
+    <ol>
+        <li>Go to the page you want to choose a header or footer for.</li>
+        <li>Display the list of page entries by choosing <span class="csg-menu-option">Pages</span> from the <span class="csg-menu">Page</span> menu.</li>
+        <li>Click on the one you want to use in the list which appears.</li>
+        <li>
+            Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">OK</span></span>.
+        </li>
+        <li class="csg-list-style-none">
+            The chosen header will appear on the page.
+        </li>
+    </ol>
+
+    <h4><a name="different_headers_or_footers_on_the_first_page" id="different_headers_or_footers_on_the_first_page"></a>Using different headers or footers on the first page</h4>
+    <p>
+        You may want to have a different header or footer on the first page of your document,
+        or any other header home page, perhaps because it is the title page of the document or chapter.
+        To use a different header on the first page:
+    </p>
+    <ol>
+        <li>Choose <span class="csg-menu-option">Pages</span> from the <span class="csg-menu">Page</span> menu.</li>
+        <li>Choose the home page you want from the menu and click the <span class="csg-dbox-button">Change</span> button.</li>
+        <li>Turn on <span class="csg-dbox-option">First header</span> or <span class="csg-dbox-option">First footer</span>, and enter the required margin and offset values.</li>
+        <li>Click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Apply</span></span>.</li>
+        <li>Now go to the page and add the text you want for your first header or footer.</li>
+    </ol>
+    <p>This works on both the first page of the document and any page which is the home page for headers or footers.</p>
+
+    <h4><a name="repositioning_headers_and_footers" id="repositioning_headers_and_footers"></a>Repositioning headers and footers</h4>
+    <p>You can reposition your headers and footers on the page using the <span class="csg-dbox">Pages</span> dialogue box:</p>
+    <ol>
+        <li>Choose <span class="csg-menu-option">Pages</span> from the <span class="csg-menu">Page</span> menu.</li>
+        <li>
+            Select the header or footer you want to change from the list in the <span class="csg-dbox">Pages</span> dialogue box.
+            Click the <span class="csg-dbox-button">Change</span> button.
+        </li>
+        <li>
+            The <span class="csg-dbox">Page</span> dialogue box will be displayed and you can change the values entered for the margin and offset,
+            and whether or not the headers and footers alternate.
+        </li>
+    </ol>
+    <ul>
+        <li>
+            You can also drag the controls in the vertical ruler, to see immediate feedback of any changes you make.
+        </li>
+    </ul>
+
+    <h3><a name="editing_header_and_footer_text" id="editing_header_and_footer_text"></a>Editing header and footer text</h3>
+    <p>You can edit header and footer text on any page on which it appears.</p>
+    <p>To edit the text:</p>
+    <ol>
+        <li>Place the caret at the place where you want to start editing.</li>
+        <li>Replace the text or add new text in the usual way.</li>
+    </ol>
+    <p>This process will change the header or footer on all the pages where it appears.</p>
+    <ul>
+        <li>
+            If you want to change the header or footer on some but not all pages,
+            create a new header or footer with the different text and use the
+            Pages dialogue box to apply it to the pages you want.
+        </li>
+    </ul>
+
+    <h3><a name="numbering_pages" id="numbering_pages"></a>Numbering pages</h3>
+    <p>One of the most usual uses for headers and footers is to add page numbers to documents.</p>
+
+    <h4>Automatic page numbers</h4>
+    <p>To add a page number to text:</p>
+    <ol>
+        <li>Place the caret where you want the page number to appear on your page, for example in the footer.</li>
+        <li>Display the <span class="csg-menu">Inserts</span> sub-menu from the <span class="csg-menu">Extra</span> menu.</li>
+        <li>Choose <span class="csg-dbox-option">Page #</span>. The <span class="csg-dbox">Insert page number</span> dialogue box will appear.</li>
+        <li>Select the page number format you want from the list and click <span class="csg-dbox-button-default"><span class="csg-dbox-button-core">Insert</span></span>.</li>
+        <li class="csg-list-style-none">The page number will appear in your document in the format you chose.</li>
+    </ol>
+    <ul>
+        <li>When you are working in a spreadsheet document, you can't place a page number in number cells using this method.
+        To place a page number in a number cell in a spreadsheet document,
+        you will need to use the <a href="../sg06p/sg6_PAGE.htm"><code>PAGE</code></a> function,
+        which displays the current page number within the cell,
+        and enables you to distinguish between x- and y-pages.</li>
+    </ul>
+
+    <h4><a name="x_and_y_pages" id="x_and_y_pages"></a>x- and y-Pages</h4>
+    <p>Pages are usually numbered down the y-axis, i.e. down the document.</p>
+    <p>
+        Spreadsheets are often wider than they are long.
+        You may find that your worksheet documents have pages which go across as well as down.
+        These are referred to as x-pages.
+    </p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../ug/ug10_pictures.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../ug/ug11_printing.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td class="navfooter_PUN_L">Pictures </td>
+                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
+                <td class="navfooter_PUN_R"> Printing</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

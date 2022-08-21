@@ -1,0 +1,66 @@
+﻿Database Guide 154
+
+Changing the order of fields
+To change the position of a field in the list:
+1 Highlight the field to be moved by clicking on it or using the
+up and down arrow keys to move the highlight bar onto it.
+2 Click Up to move the field one place up the list or Down to
+move the field one place down the list.
+Note that this operation changes the order of the fields in the
+database file. However, it only has an effect on the display if you
+are using a sheet layout. With a card layout you can place fields
+side by side as well as vertically down the card so ‘field order‘ is
+not meaningful for display purposes. For card layouts the field
+order is only important in determining the movement of the caret
+when pressing the up and down arrow keys on the keyboard.
+
+Renaming fields
+To rename a field:
+1 Highlight the field by clicking on it or using the up and down
+arrow keys to move the highlight bar onto it.
+2 Type the new name into the box at the top left.
+3 Click Rename.
+Note that this change occurs immediately - pressing Cancel will
+not retum you to the previous field name.
+The field title text will be altered automatically when you rename
+the field. In addition, the name of the corresponding implied field
+style will be changed.
+
+Changing the field type
+To change the field type:
+1 Highlight the field by clicking on it or using the up and down
+arrow keys to move the highlight bar onto it.
+2 Click on the menu icon to display the list of types available.
+3 Choose a type from the list.
+
+Fireworkz Pro 155
+
+If you change the field type, then data which you have entered will
+be coerced into the new type whenever possible. For example, if
+you change a text field into a number field, then strings such as
+‘123’ will change to the number 123. However, if a string cannot
+be evaluated, for example 'one', this will be set to 0.
+
+Settlng a default value for a field
+To set a default value:
+1 Highlight the field by clicking on it or using the up and down
+arrow keys to move the highlight bar onto it.
+2 Enter the default value into the box provided.
+This value will be applied wherever the field is currently empty.
+
+Setting a value list for a field
+To add an entry:
+1 Type the value into the Value box.
+2 Click Add.
+To remove an entry:
+1 Highlight the entry by clicking on it in the list box or using
+the up and down arrow keys to move the highlight bar onto it.
+2 Click Remove.
+To move an entry elsewhere in the list:
+1 Highlight the entry by clicking on it in the list box or using
+the up and down arrow keys to move the highlight bar onto it.
+2 Click Up to move the entry one place up the list or Down to
+move the entry one place down the list.
+
+
+

@@ -8,118 +8,51 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_file/ob_file.h
+#
+# FILE_MSG_INSERT_FILE_xxx
 #
 1:Insert file
 w2:Import file
 #
-# errors
+# errors: keep consistent with cmodules/file.h
+# see FILE_ERR(n)
 #
 e0:Can't open file
 e2:Can't read from file
 e3:Can't write to file
-e4:File handle is unbuffered
+e4:Can't read all the requested data from file
 e5:Invalid position in file
-e6:Device full
-e7:Access denied to file
-e8:Too many open files%0.s
-e9:Can't close file
+e6:File handle is unbuffered
+e8:Device full
+#e9:Can't close file
 #
 e10:Bad file handle
-e11:Bad filename
+we11:Bad filename
 e12:File %s not found
 e13:%s is a file
 e14:%s is a directory
 e15:Filename %.64s... too long
 e16:Locked - unable to write file
 e17:No read access to file
-we18:Rename failed
-e19:No write access to file
+e18:No write access to file
+e19:%s is a ZIP file
 e20:Not a directory
-we21:Remove failed
-we22:Create directory failed
-e23:Can't read all the requested data from file
-e24:Bad timestamp
-e25:%s is a ZIP file
-#
-we31:Unknown MS-DOS file error
-we32:Invalid function
-we33:File not found
-we34:Path not found
-we35:Too many open files
-we36:Access denied
-we37:Invalid handle
-we38:Arena trashed
-we39:Not enough memory
-#
-we40:Invalid block
-we41:Bad environment
-we42:Bad format
-we43:Invalid access
-we44:Invalid data
-we45:Invalid drive
-we46:Current directory
-we47:Not same device
-we48:No more files
-we49:Write protect error
-#
-we50:Bad unit
-we51:Not ready
-we52:Bad command
-we53:CRC error
-we54:Bad length
-we55:Seek error
-we56:Not MS-DOS disk
-we57:Sector not found
-we58:Out of paper
-we59:Write fault
-#
-we60:Read fault
-we61:General failure
-we62:Sharing violation
-we63:Lock violation
-we64:Wrong disk
-we65:File control block unavailable
-we66:Sharing buffer exceeded
-we67:Not supported
-we68:Remote not listed
-we69:Duplicate name
-#
-we70:Bad netpath
-we71:Network busy
-we72:Device does not exist
-we73:Too many commands
-we74:Adaptor hardware error
-we75:Bad network response
-we76:Unexpected network error
-we77:Bad remote adaptor
-we78:Print queue full
-we79:No spool space
-#
-we80:Print canceled
-we81:Netname deleted
-we82:Network access denied
-we83:Bad device type
-we84:Bad network name
-we85:Too many names
-we86:Too many sessions
-we87:Sharing paused
-we88:Request not accepted
-we89:Redirection paused
-#
-we90:File exists
-we91:Duplicate file control block
-we92:Cannot make
-we93:Interrupt 24 failure
-we94:Out of structures
-we95:Already assigned
-we96:Invalid password
-we97:Invalid parameter
-we98:Net write fault
+e21:Bad timestamp
 #
 we100:FileOpenDlg: LoadString failed
 we101:FileOpenDlg: Resource unavailable
 we102:FileOpenDlg: Failed to load resource
-we103:FileOpenDlg: Failed to lock resource
+#
+# fragments used like <error x> while reading from <filename>
+#
+we108:when opening
+we109:when closing
+we110:while reading from
+we111:while writing to
+we112:while setting position in
+we114:when renaming
+we115:when deleting
+we116:when creating directory
 #
 # end of msg (ob_file)

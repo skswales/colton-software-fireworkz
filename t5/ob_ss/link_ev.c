@@ -23,6 +23,8 @@
 #include "ob_skel/xp_skeld.h"
 #endif
 
+#include "cmodules/mrofmun.h"
+
 H_DIALOG h_alert_dialog = 0;
 S32 alert_result = ALERT_RESULT_NONE;
 
@@ -35,14 +37,14 @@ extern STATUS
 ev_alert(
     _InVal_     EV_DOCNO ev_docno,
     _InRef_     PC_SS_STRINGC p_ss_string_message,
-    _InRef_     PC_SS_STRINGC p_ss_string_but_1,
-    _InRef_     PC_SS_STRINGC p_ss_string_but_2)
+    _InRef_     PC_SS_STRINGC p_ss_string_button_1,
+    _InRef_     PC_SS_STRINGC p_ss_string_button_2)
 {
     SS_INPUT_EXEC ss_input_exec;
     ss_input_exec.ev_docno = ev_docno;
     ss_input_exec.p_ss_string_message = p_ss_string_message;
-    ss_input_exec.p_ss_string_but_1 = p_ss_string_but_1;
-    ss_input_exec.p_ss_string_but_2 = p_ss_string_but_2;
+    ss_input_exec.p_ss_string_button_1 = p_ss_string_button_1;
+    ss_input_exec.p_ss_string_button_2 = p_ss_string_button_2;
     return(object_call_id_load(P_DOCU_NONE, T5_MSG_SS_ALERT_EXEC, &ss_input_exec, OBJECT_ID_SS_SPLIT));
 }
 
@@ -71,30 +73,23 @@ _Check_return_
 extern STATUS
 ev_alert_poll(void)
 {
-    STATUS status = STATUS_FAIL;
-
     switch(alert_result)
     {
     default: default_unhandled();
 #if CHECKING
     case ALERT_RESULT_NONE:
 #endif
-        break;
+        return(STATUS_FAIL);
 
     case ALERT_RESULT_CLOSE:
-        status = 0;
-        break;
+        return(0);
 
-    case ALERT_RESULT_BUT_1:
-        status = STATUS_DONE;
-        break;
+    case ALERT_RESULT_BUTTON_1:
+        return(1);
 
-    case ALERT_RESULT_BUT_2:
-        status = 2;
-        break;
+    case ALERT_RESULT_BUTTON_2:
+        return(2);
     }
-
-    return(status);
 }
 
 _Check_return_
@@ -108,8 +103,8 @@ ev_input(
     SS_INPUT_EXEC ss_input_exec;
     ss_input_exec.ev_docno = ev_docno;
     ss_input_exec.p_ss_string_message = p_ss_string_message;
-    ss_input_exec.p_ss_string_but_1 = p_ss_string_but_1;
-    ss_input_exec.p_ss_string_but_2 = p_ss_string_but_2;
+    ss_input_exec.p_ss_string_button_1 = p_ss_string_but_1;
+    ss_input_exec.p_ss_string_button_2 = p_ss_string_but_2;
     return(object_call_id_load(P_DOCU_NONE, T5_MSG_SS_INPUT_EXEC, &ss_input_exec, OBJECT_ID_SS_SPLIT));
 }
 
@@ -141,7 +136,7 @@ ev_input_poll(
     _Out_writes_z_(elemof_buffer) P_USTR buffer,
     _InVal_     U32 elemof_buffer)
 {
-    STATUS status = STATUS_FAIL;
+    STATUS status;
 
     assert(0 != elemof_buffer);
     PtrPutByte(buffer, CH_NULL);
@@ -152,20 +147,47 @@ ev_input_poll(
 #if CHECKING
     case ALERT_RESULT_NONE:
 #endif
-        break;
+        return(STATUS_FAIL);
 
     case ALERT_RESULT_CLOSE:
-        status = 0;
-        break;
+        return(0);
 
-    case ALERT_RESULT_BUT_1:
-    case ALERT_RESULT_BUT_2:
+    case ALERT_RESULT_BUTTON_1:
+    case ALERT_RESULT_BUTTON_2:
         ustr_xstrkpy(buffer, elemof_buffer, ui_text_ustr(&ui_text_input));
-        status = (input_result == ALERT_RESULT_BUT_2) ? 2 : STATUS_DONE;
-        break;
+        status = (input_result == ALERT_RESULT_BUTTON_2) ? 2 : STATUS_DONE;
+        return(status);
     }
+}
 
-    return(status);
+extern void
+ev_recog_constant_using_autoformat(
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InVal_     EV_DOCNO ev_docno,
+    _In_z_      PC_USTR ustr)
+{
+    const P_DOCU p_docu = p_docu_from_ev_docno(ev_docno);
+    STYLE_HANDLE style_handle_autoformat = STYLE_HANDLE_NONE;
+    ARRAY_HANDLE h_mrofmun;
+    SS_RECOG_CONTEXT ss_recog_context;
+
+    ss_data_set_blank(p_ss_data_out);
+
+    ustr_SkipSpaces(ustr);
+
+    if(CH_NULL == PtrGetByte(ustr)) /* check for early exit */
+        return;
+
+    ss_recog_context_push(&ss_recog_context); /* recognise numbers from cells as if typed by user with current UI settings */
+
+    if(status_ok(mrofmun_get_list(p_docu, &h_mrofmun)))
+        status_consume(autoformat(p_ss_data_out, &style_handle_autoformat, ustr, &h_mrofmun));
+
+    if(ss_data_is_blank(p_ss_data_out))
+        if(!status_done(ss_recog_constant(p_ss_data_out, ustr)))
+            ss_data_set_blank(p_ss_data_out); /* don't leave half-recognised things lying around */
+
+    ss_recog_context_pull(&ss_recog_context);
 }
 
 extern void
@@ -339,7 +361,7 @@ field_data_query_init(
     _InVal_     ARRAY_INDEX name_num,
     _InVal_     S32 record_no)
 {
-    P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
+    const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
     p_field_data_query->p_compound_name = p_ev_name->ustr_name_id;
     p_field_data_query->record_no = record_no;
@@ -415,7 +437,7 @@ ev_field_names_check(
 {
     const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
     ARRAY_INDEX i;
-    P_EV_NAME p_ev_name = array_range(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
+    PC_EV_NAME p_ev_name = array_rangec(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
 
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
     {
@@ -858,8 +880,8 @@ ev_uref_change_range(
 {
     if(DOCNO_NONE != ev_slr_docno(&p_ev_range->s))
     {
-        UREF_PARMS uref_parms;
         const P_DOCU p_docu = p_docu_from_ev_docno(ev_slr_docno(&p_ev_range->s));
+        UREF_PARMS uref_parms;
 
         slr_from_ev_slr(&uref_parms.source.region.tl, &p_ev_range->s);
         slr_from_ev_slr(&uref_parms.source.region.br, &p_ev_range->e);
@@ -883,38 +905,35 @@ ev_uref_match_range(
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
-    UREF_COMMS res = Uref_Dep_None;
+    UREF_COMMS res;
+    REGION region;
 
     DOCU_ASSERT(p_docu);
 
-    if(ev_slr_docno(&p_ev_range->s) == p_docu->docno)
+    if(ev_slr_docno(&p_ev_range->s) != p_docu->docno)
+        return(Uref_Dep_None);
+
+    region.tl.col = p_ev_range->s.col;
+    region.tl.row = p_ev_range->s.row;
+    region.br.col = p_ev_range->e.col;
+    region.br.row = p_ev_range->e.row;
+    region.whole_col = region.whole_row = FALSE;
+
+    if(Uref_Dep_None == (res = uref_match_region(&region, uref_message, p_uref_event_block)))
+        return(Uref_Dep_None);
+
+    p_ev_range->s.col = EV_COL_PACK(region.tl.col);
+    p_ev_range->s.row = (EV_ROW)    region.tl.row;
+    p_ev_range->e.col = EV_COL_PACK(region.br.col);
+    p_ev_range->e.row = (EV_ROW)    region.br.row;
+
+    if( (Uref_Dep_Delete == res)
+        &&
+        (Uref_Msg_CLOSE1 != uref_message)
+        &&
+        (Uref_Msg_CLOSE2 != uref_message) )
     {
-        REGION region;
-
-        region.tl.col = p_ev_range->s.col;
-        region.tl.row = p_ev_range->s.row;
-        region.br.col = p_ev_range->e.col;
-        region.br.row = p_ev_range->e.row;
-        region.whole_col = region.whole_row = FALSE;
-
-        res = uref_match_region(&region, uref_message, p_uref_event_block);
-
-        if(Uref_Dep_None != res)
-        {
-            p_ev_range->s.col = EV_COL_PACK(region.tl.col);
-            p_ev_range->s.row = (EV_ROW)    region.tl.row;
-            p_ev_range->e.col = EV_COL_PACK(region.br.col);
-            p_ev_range->e.row = (EV_ROW)    region.br.row;
-
-            if( (Uref_Dep_Delete == res)
-                &&
-                (Uref_Msg_CLOSE1 != uref_message)
-                &&
-                (Uref_Msg_CLOSE2 != uref_message) )
-            {
-                p_ev_range->s.bad_ref = p_ev_range->e.bad_ref = 1;
-            }
-        }
+        p_ev_range->s.bad_ref = p_ev_range->e.bad_ref = 1;
     }
 
     return(res);
@@ -934,33 +953,30 @@ ev_uref_match_slr(
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
-    UREF_COMMS res = Uref_Dep_None;
+    UREF_COMMS res;
+    SLR slr;
 
     DOCU_ASSERT(p_docu);
 
-    if(ev_slr_docno(p_ev_slr) == p_docu->docno)
+    if(ev_slr_docno(p_ev_slr) != p_docu->docno)
+        return(Uref_Dep_None);
+
+    slr.col = ev_slr_col(p_ev_slr);
+    slr.row = ev_slr_row(p_ev_slr);
+
+    if(Uref_Dep_None == (res = uref_match_slr(&slr, uref_message, p_uref_event_block)))
+        return(Uref_Dep_None);
+
+    p_ev_slr->col = EV_COL_PACK(slr.col);
+    p_ev_slr->row = (EV_ROW)    slr.row;
+
+    if( (Uref_Dep_Delete == res)
+        &&
+        (Uref_Msg_CLOSE1 != uref_message)
+        &&
+        (Uref_Msg_CLOSE2 != uref_message) )
     {
-        SLR slr;
-
-        slr.col = ev_slr_col(p_ev_slr);
-        slr.row = ev_slr_row(p_ev_slr);
-
-        res = uref_match_slr(&slr, uref_message, p_uref_event_block);
-
-        if(Uref_Dep_None != res)
-        {
-            p_ev_slr->col = EV_COL_PACK(slr.col);
-            p_ev_slr->row = (EV_ROW)    slr.row;
-
-            if( (Uref_Dep_Delete == res)
-                &&
-                (Uref_Msg_CLOSE1 != uref_message)
-                &&
-                (Uref_Msg_CLOSE2 != uref_message) )
-            {
-                p_ev_slr->bad_ref = 1;
-            }
-        }
+        p_ev_slr->bad_ref = 1;
     }
 
     return(res);

@@ -19,8 +19,6 @@
 #include "ob_skel/flags.h"
 #endif
 
-#include "external/Microsoft/InsideOLE2/BTTNCURP/bttncur.h"
-
 #ifndef          __gr_diag_h
 #include "cmodules/gr_diag.h"
 #endif
@@ -481,7 +479,7 @@ host_font_find(
     LOGFONT logfont = p_host_font_spec->logfont; /* take all data except size info from font enumeration */
     S32 numer, denom;
 
-    if(!IS_REDRAW_CONTEXT_NONE(p_redraw_context))
+    if(P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context))
     {
         /* do_x_scale=FALSE do_y_scale=FALSE use y values (unscaled, should be the same) e.g. back window */
         /* do_x_scale=TRUE  do_y_scale=FALSE use y values (unscaled) e.g. horz ruler */
@@ -515,7 +513,7 @@ host_font_find(
         numer = 13;
         denom = 32;
 
-        if(!IS_REDRAW_CONTEXT_NONE(p_redraw_context))
+        if(P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context))
         {
             /* do_x_scale=FALSE do_y_scale=FALSE use x values (unscaled, should be the same) e.g. back window */
             /* do_x_scale=TRUE  do_y_scale=FALSE use y values (unscaled) e.g. horz ruler */
@@ -544,11 +542,11 @@ host_font_find(
     {
         trace_4(TRACE_APP_FONTS,
                 TEXT("host_font_find(%s): sent: %s, lfWidth=%d, lfHeight=%d"),
-                IS_REDRAW_CONTEXT_NONE(p_redraw_context) ? TEXT("formatting") : TEXT("redraw"),
+                P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context) ? TEXT("redraw") : TEXT("formatting"),
                 logfont.lfFaceName, logfont.lfWidth, logfont.lfHeight);
         if(HOST_FONT_NONE != host_font)
         {
-            const HDC hdc = IS_REDRAW_CONTEXT_NONE(p_redraw_context) ? host_get_hic_format_pixits() : p_redraw_context->windows.paintstruct.hdc;
+            const HDC hdc = P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context) ? p_redraw_context->windows.paintstruct.hdc : host_get_hic_format_pixits();
             HFONT h_font_old = SelectFont(hdc, host_font);
             TCHARZ face_buffer[100];
             int len;
@@ -611,7 +609,7 @@ host_font_delete(
 {
     const PC_REDRAW_CONTEXT p_redraw_context = (P_REDRAW_CONTEXT_NONE != p_redraw_context_in) ? p_redraw_context_in : cur_p_redraw_context;
 
-    if(!IS_REDRAW_CONTEXT_NONE(p_redraw_context))
+    if(P_REDRAW_CONTEXT_NOT_NONE(p_redraw_context))
     {
         if(host_font == p_redraw_context->p_redraw_context_cache->h_font)
         {
@@ -968,13 +966,13 @@ host_set_clip_rectangle(
     {
       /*pixit_rect.tl.x -= rect_flags.extend_left_currently_unused  * p_redraw_context->border_width.x;*/
         if(rect_flags.reduce_left_by_2)
-            pixit_rect.tl.x += p_redraw_context->border_width_2.x;
+            pixit_rect.tl.x += p_redraw_context->border_width.x << 1;
         if(rect_flags.reduce_left_by_1) /* only used by PMF */
             pixit_rect.tl.x += p_redraw_context->border_width.x;
 
       /*pixit_rect.tl.y -= rect_flags.extend_up_currently_unused    * p_redraw_context->border_width.y;*/
         if(rect_flags.reduce_up_by_2)
-            pixit_rect.tl.y += p_redraw_context->border_width_2.y;
+            pixit_rect.tl.y += p_redraw_context->border_width.y << 1;
         if(rect_flags.reduce_up_by_1)
             pixit_rect.tl.y += p_redraw_context->border_width.y;
 
@@ -1055,13 +1053,13 @@ host_set_clip_rectangle2(
     {
       /*pixit_rect.tl.x -= rect_flags.extend_left_currently_unused  * p_redraw_context->border_width.x;*/
         if(rect_flags.reduce_left_by_2)
-            pixit_rect.tl.x += p_redraw_context->border_width_2.x;
+            pixit_rect.tl.x += p_redraw_context->border_width.x << 1;
         if(rect_flags.reduce_left_by_1) /* only used by PMF */
             pixit_rect.tl.x += p_redraw_context->border_width.x;
 
       /*pixit_rect.tl.y -= rect_flags.extend_up_currently_unused    * p_redraw_context->border_width.y;*/
         if(rect_flags.reduce_up_by_2)
-            pixit_rect.tl.y += p_redraw_context->border_width_2.y;
+            pixit_rect.tl.y += p_redraw_context->border_width.y << 1;
         if(rect_flags.reduce_up_by_1)
             pixit_rect.tl.y += p_redraw_context->border_width.y;
 
@@ -1378,7 +1376,7 @@ host_paint_line_solid(
 ******************************************************************************/
 
 _Check_return_
-static GDI_COORD
+static inline GDI_COORD
 riscos_unit_from_pixit_x(
     _InVal_     PIXIT pixit_x,
     _InRef_     PC_HOST_XFORM p_host_xform)
@@ -1387,7 +1385,7 @@ riscos_unit_from_pixit_x(
 }
 
 _Check_return_
-static GDI_COORD
+static inline GDI_COORD
 riscos_unit_from_pixit_y(
     _InVal_     PIXIT pixit_y,
     _InRef_     PC_HOST_XFORM p_host_xform)
@@ -1402,14 +1400,17 @@ host_paint_border_line(
     _InRef_     PC_RGB p_rgb,
     _In_        BORDER_LINE_FLAGS flags)
 {
-    const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
-    PIXIT_LINE pixit_line = *p_pixit_line;
+    PIXIT_LINE pixit_line;
+    // different to RISC OS here as we can see finer pixels so can always do rect_fill
     PIXIT_POINT line_width, line_width_eff, line_width_select;
     PIXIT_RECT pixit_rect;
     GDI_RECT gdi_rect;
+    const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
 
     if(p_rgb->transparent)
         return;
+
+    pixit_line = *p_pixit_line;
 
     switch(flags.border_style)
     {
@@ -1436,63 +1437,33 @@ host_paint_border_line(
         break;
     }
 
-    // different to RISC OS here as we can see finer pixels so can always do rect_fill
+    line_width_select = line_width_eff;
+    if( p_redraw_context->flags.printer || p_redraw_context->flags.metafile || p_redraw_context->flags.drawfile )
+        line_width_select = line_width;
 
 #if TRACE_ALLOWED
-    tracef(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: line ") PIXIT_RECT_TFMT TEXT(" %s lw ") PIXIT_TFMT TEXT(",") PIXIT_TFMT TEXT(" lw ") PIXIT_TFMT TEXT(",") PIXIT_TFMT,
-           PIXIT_RECT_ARGS(pixit_line),
+    tracef(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: %s line ") PIXIT_RECT_TFMT TEXT(" lw ") PIXIT_TFMT TEXT(",") PIXIT_TFMT,
            pixit_line.horizontal ? TEXT("H") : TEXT("V"),
-           line_width.x, line_width.y, line_width_eff.x, line_width_eff.y);
+           PIXIT_RECT_ARGS(pixit_line),
+           line_width_select.x, line_width_select.y);
 #endif
-
-    if( p_redraw_context->flags.printer  ||
-        p_redraw_context->flags.metafile ||
-        p_redraw_context->flags.drawfile )
-        line_width_select = line_width;
-    else
-        line_width_select = line_width_eff;
 
     if(flags.add_lw_to_l)
         pixit_line.tl.x += line_width_select.x;
-    if(flags.add_gw_to_l)
-        pixit_line.tl.x += p_redraw_context->border_width.x;
-    if(flags.sub_gw_from_l)
-        pixit_line.tl.x -= p_redraw_context->border_width.x;
-
     if(flags.add_lw_to_t)
         pixit_line.tl.y += line_width_select.y;
-    if(flags.add_gw_to_t)
-        pixit_line.tl.y += p_redraw_context->border_width.y;
-    if(flags.sub_gw_from_t)
-        pixit_line.tl.y -= p_redraw_context->border_width.y;
-
     if(flags.add_lw_to_r)
         pixit_line.br.x += line_width_select.x;
-    if(flags.add_gw_to_r)
-        pixit_line.br.x += p_redraw_context->border_width.x;
-    if(flags.sub_gw_from_r)
-        pixit_line.br.x -= p_redraw_context->border_width.x;
-
     if(flags.add_lw_to_b)
         pixit_line.br.y += line_width_select.y;
-    if(flags.add_gw_to_b)
-        pixit_line.br.y += p_redraw_context->border_width.y;
-    if(flags.sub_gw_from_b)
-        pixit_line.br.y -= p_redraw_context->border_width.y;
 
-    pixit_rect.tl.x = pixit_line.tl.x;
-    pixit_rect.tl.y = pixit_line.tl.y;
+    pixit_rect.tl = pixit_line.tl;
+    pixit_rect.br = pixit_line.br;
 
     if(pixit_line.horizontal)
-    {
-        pixit_rect.br.x = pixit_line.br.x;
         pixit_rect.br.y = pixit_rect.tl.y + line_width_select.y;
-    }
     else
-    {
         pixit_rect.br.x = pixit_rect.tl.x + line_width_select.x;
-        pixit_rect.br.y = pixit_line.br.y;
-    }
 
     trace_1(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: rect ") PIXIT_RECT_TFMT, PIXIT_RECT_ARGS(pixit_rect));
 
@@ -1503,11 +1474,12 @@ host_paint_border_line(
     if(p_redraw_context->flags.metafile) // NB NOT drawfile !!!
     {
         /* sad bit of code here - punters want to see the lines in their metafiles in tiny views */
-        int full_width = (pixit_line.horizontal ? (gdi_rect.br.y - gdi_rect.tl.y) : (gdi_rect.br.x - gdi_rect.tl.x));
-        int half_width = full_width / 2;
+        const GDI_COORD full_width = (pixit_line.horizontal ? (gdi_rect.br.y - gdi_rect.tl.y) : (gdi_rect.br.x - gdi_rect.tl.x));
+        const GDI_COORD half_width = full_width / 2;
         const int pen_style = PS_INSIDEFRAME;
         POINT wanky_point_start;
         POINT wanky_point_end;
+
         /* put the line down the middle of the rectangle that the line lies in */
         if(pixit_line.horizontal)
         {
@@ -1558,19 +1530,21 @@ host_paint_border_line(
     {
         struct { DRAW_DASH_HEADER header; S32 pattern[2]; } dash_pattern;
         PC_DRAW_DASH_HEADER line_dash_pattern = NULL;
-        S32 thickness = 0; /* thin, unless otherwise specified */
+        DRAW_COORD draw_thickness = 0; /* Thin, unless otherwise specified */
 
 #define BROKEN_LINE_MARK  14513 /* 180*256*8/25.4 i.e. 1mm */
 #define BROKEN_LINE_SPACE 14513
 
         if(flags.border_style == SF_BORDER_BROKEN)
         {
-            dash_pattern.header.dashstart = pixit_line.horizontal
-                                          ? riscos_unit_from_pixit_x(pixit_rect.tl.x, &p_redraw_context->host_xform)
-                                          : riscos_unit_from_pixit_y(pixit_rect.tl.y, &p_redraw_context->host_xform);
-
             dash_pattern.pattern[0] = riscos_unit_from_pixit_x(BROKEN_LINE_MARK,  &p_redraw_context->host_xform);
             dash_pattern.pattern[1] = riscos_unit_from_pixit_x(BROKEN_LINE_SPACE, &p_redraw_context->host_xform);
+
+            dash_pattern.header.dashstart = pixit_line.horizontal ? 0 : dash_pattern.pattern[1];
+#if 0
+                                          ? riscos_unit_from_pixit_x(pixit_rect.tl.x, &p_redraw_context->host_xform)
+                                          : riscos_unit_from_pixit_y(pixit_rect.tl.y, &p_redraw_context->host_xform);
+#endif
 
             dash_pattern.header.dashstart = ((U32) abs((int) dash_pattern.header.dashstart)) << 8;
             dash_pattern.header.dashcount = 2;
@@ -1586,12 +1560,18 @@ host_paint_border_line(
 
         if(flags.border_style != SF_BORDER_THIN)
         {
-            PIXIT pixit = pixit_line.horizontal ? (pixit_rect.br.y - pixit_rect.tl.y) : (pixit_rect.br.x - pixit_rect.tl.x);
+            const PIXIT pixit = pixit_line.horizontal ? (pixit_rect.br.y - pixit_rect.tl.y) : (pixit_rect.br.x - pixit_rect.tl.x);
             if(pixit > 0)
-                thickness = pixit * GR_RISCDRAW_PER_PIXIT;
+                draw_thickness = pixit * GR_RISCDRAW_PER_PIXIT;
         }
 
-        drawfile_paint_line(p_redraw_context, &pixit_rect, thickness, line_dash_pattern, p_rgb);
+        /* Make truly horizontal or vertical (after we calculated the line thickness) */
+        if(pixit_line.horizontal)
+            pixit_rect.tl.y = pixit_rect.br.y;
+        else
+            pixit_rect.br.x = pixit_rect.tl.x;
+
+        drawfile_paint_line(p_redraw_context, &pixit_rect, draw_thickness, line_dash_pattern, p_rgb);
 
         return;
     }
@@ -1600,7 +1580,7 @@ host_paint_border_line(
     {
         RECT rect;
 
-        if((gdi_rect.tl.x >= gdi_rect.br.x) || (gdi_rect.tl.y >= gdi_rect.br.y))
+        if( (gdi_rect.tl.x >= gdi_rect.br.x) || (gdi_rect.tl.y >= gdi_rect.br.y) )
         {
             /* line too small to plot using FillRect */
             trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: box ") S32_TFMT TEXT(",") S32_TFMT TEXT(";") S32_TFMT TEXT(",") S32_TFMT TEXT(" FAILED"), gdi_rect.tl.x, gdi_rect.tl.y, gdi_rect.br.x, gdi_rect.br.y);
@@ -1615,7 +1595,7 @@ host_paint_border_line(
         rect.bottom = gdi_rect.br.y;
 
         if(flags.border_style == SF_BORDER_THIN)
-        { /* thin is always drawn very thin on screen, whereas standard and thick may be scaled */
+        {   /* Thin is always drawn very thin on screen, whereas standard and thick may be scaled */
             if(pixit_line.horizontal)
                 rect.top = rect.bottom - 1;
             else
@@ -1630,7 +1610,7 @@ host_paint_border_line(
 
     // due to Draw_Stroke using PolyPolygon and all the bugs therein, do the job ourselves
 
-    if((gdi_rect.tl.x >= gdi_rect.br.x) || (gdi_rect.tl.y >= gdi_rect.br.y))
+    if( (gdi_rect.tl.x >= gdi_rect.br.x) || (gdi_rect.tl.y >= gdi_rect.br.y) )
     {
         /* line too small to plot using FillRect */
         trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_border_line: box ") S32_TFMT TEXT(",") S32_TFMT TEXT(";") S32_TFMT TEXT(",") S32_TFMT TEXT(" FAILED"), gdi_rect.tl.x, gdi_rect.tl.y, gdi_rect.br.x, gdi_rect.br.y);
@@ -1707,45 +1687,30 @@ host_paint_underline(
     _InRef_     PC_RGB p_rgb,
     _InVal_     PIXIT line_thickness)
 {
-    const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
-    PIXIT_LINE pixit_line = *p_pixit_line;
+    // different to RISC OS here as we can see finer pixels so can always do rect_fill
     PIXIT line_width;
     PIXIT_RECT pixit_rect;
     GDI_RECT gdi_rect;
     RECT rect;
+    const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
 
     if(p_rgb->transparent)
         return;
 
-    if( p_redraw_context->flags.printer  ||
-        p_redraw_context->flags.drawfile )
-        line_width = line_thickness /* was p_redraw_context->line_width.y */;
-    else
-        line_width = MAX(line_thickness, p_redraw_context->one_real_pixel.y /* was thin_width_eff */);
+    line_width = MAX(line_thickness, p_redraw_context->one_real_pixel.y /* was thin_width_eff */);
+    if( p_redraw_context->flags.printer || p_redraw_context->flags.drawfile )
+        line_width = line_thickness;
 
-    // different to RISC OS here as we can see finer pixels so can always do rect_fill
+    pixit_rect.tl = p_pixit_line->tl;
+    pixit_rect.br = p_pixit_line->br;
 
 #if TRACE_ALLOWED
-    tracef(TRACE_APP_HOST_PAINT, TEXT("host_paint_underline: line tl ") S32_TFMT TEXT(",") S32_TFMT TEXT(" br ") S32_TFMT TEXT(",") S32_TFMT TEXT(" %s lw ") S32_TFMT,
-           pixit_line.tl.x, pixit_line.tl.y, pixit_line.br.x, pixit_line.br.y, pixit_line.horizontal ? TEXT("H") : TEXT("V"),
-           line_width);
+    tracef(TRACE_APP_HOST_PAINT, TEXT("host_paint_underline: line ") PIXIT_RECT_TFMT TEXT(" lw ") S32_TFMT,
+           PIXIT_RECT_ARGS(pixit_rect), line_width);
 #endif
 
-    pixit_rect.tl.x = pixit_line.tl.x;
-    pixit_rect.tl.y = pixit_line.tl.y;
-
-    if(pixit_line.horizontal)
-    {
-        pixit_rect.br.x = pixit_line.br.x;
-        pixit_rect.br.y = pixit_rect.tl.y + line_width;
-    }
-    else
-    {
-        pixit_rect.br.x = pixit_rect.tl.x + line_width;
-        pixit_rect.br.y = pixit_line.br.y;
-    }
-
-    trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_underline: rect tl ") S32_TFMT TEXT(",") S32_TFMT TEXT(" br ") S32_TFMT TEXT(",") S32_TFMT, pixit_rect.tl.x, pixit_rect.tl.y, pixit_rect.br.x, pixit_rect.br.y);
+    /* line is horizontal */
+    pixit_rect.br.y = pixit_rect.tl.y + line_width;
 
     /* clip close to GDI limits (only ok because lines either horizontal or vertical) */
     if(!status_done(gdi_rect_limited_from_pixit_rect_and_context(&gdi_rect, &pixit_rect, p_redraw_context)))
@@ -1754,26 +1719,27 @@ host_paint_underline(
     if(p_redraw_context->flags.metafile) // NB NOT drawfile !!!
     {
         /* sad bit of code here - punters want to see the lines in their metafiles in tiny views */
-        int full_width = (pixit_line.horizontal ? (gdi_rect.br.y - gdi_rect.tl.y) : (gdi_rect.br.x - gdi_rect.tl.x));
-        int half_width = full_width / 2;
+        const GDI_COORD full_width = /*line_is_horizontal*/ (gdi_rect.br.y - gdi_rect.tl.y);
+        const GDI_COORD half_width = full_width / 2;
         const int pen_style = PS_INSIDEFRAME;
         POINT wanky_point_start;
         POINT wanky_point_end;
+
         /* put the line down the middle of the rectangle that the line lies in */
-        if(pixit_line.horizontal)
+        /*line_is_horizontal*/
         {
             wanky_point_start.x = gdi_rect.tl.x + half_width; /* account for wanky rounded GDI end caps */
             wanky_point_start.y = gdi_rect.tl.y + half_width;
             wanky_point_end.x   = gdi_rect.br.x - half_width / 2;
             wanky_point_end.y   = wanky_point_start.y;
         }
-        else
+        /*else
         {
             wanky_point_start.x = gdi_rect.tl.x + half_width;
             wanky_point_start.y = gdi_rect.tl.y + half_width;
             wanky_point_end.x   = wanky_point_start.x;
             wanky_point_end.y   = gdi_rect.br.y - half_width;
-        }
+        }*/
 
         {
         HPEN hpen =
@@ -1801,21 +1767,24 @@ host_paint_underline(
 
     if(p_redraw_context->flags.drawfile)
     {
-        PC_DRAW_DASH_HEADER line_dash_pattern = NULL;
-        S32 thickness = 0; /* thin, unless otherwise specified */
+        const PC_DRAW_DASH_HEADER line_dash_pattern = NULL;
+        DRAW_COORD draw_thickness = 0; /* Thin, unless otherwise specified */
 
         {
-        PIXIT pixit = pixit_line.horizontal ? (pixit_rect.br.y - pixit_rect.tl.y) : (pixit_rect.br.x - pixit_rect.tl.x);
+        const PIXIT pixit = /*line_is_horizontal*/ (pixit_rect.br.y - pixit_rect.tl.y);
         if(pixit > 0)
-            thickness = pixit * GR_RISCDRAW_PER_PIXIT;
+            draw_thickness = pixit * GR_RISCDRAW_PER_PIXIT;
         }
 
-        drawfile_paint_line(p_redraw_context, &pixit_rect, thickness, line_dash_pattern, p_rgb);
+        /* line is horizontal */
+        pixit_rect.tl.y = pixit_rect.br.y;
+
+        drawfile_paint_line(p_redraw_context, &pixit_rect, draw_thickness, line_dash_pattern, p_rgb);
 
         return;
     }
 
-    if((gdi_rect.tl.x >= gdi_rect.br.x) || (gdi_rect.tl.y >= gdi_rect.br.y))
+    if( (gdi_rect.tl.x >= gdi_rect.br.x) || (gdi_rect.tl.y >= gdi_rect.br.y) )
     {
         /* line too small to plot using FillRect */
         trace_4(TRACE_APP_HOST_PAINT, TEXT("host_paint_underline: box ") S32_TFMT TEXT(",") S32_TFMT TEXT(";") S32_TFMT TEXT(",") S32_TFMT TEXT(" FAILED"), gdi_rect.tl.x, gdi_rect.tl.y, gdi_rect.br.x, gdi_rect.br.y);
@@ -2340,7 +2309,7 @@ fonty_text_paint_simple_uchars(
                           prect ? ETO_CLIPPED : 0, /* force to clip when output to metafile */
                           prect,
                           uchars, (int) uchars_n,
-                          h_log_pos ? array_rangec(&h_log_pos, INT, 0, uchars_n - 1) : NULL));
+                          h_log_pos ? array_rangec(&h_log_pos, INT, 0, uchars_n) : NULL));
 
     al_array_dispose(&h_log_pos);
 #else
@@ -2413,11 +2382,11 @@ fonty_text_paint_rubout_wchars(
         SetTextColor(hdc, colorref_from_rgb(p_redraw_context, &p_font_context->font_spec.colour)));
 
     void_WrapOsBoolChecking(
-              ExtTextOutW(hdc,
-                          gdi_point.x, gdi_point.y,
-                          0, NULL,
-                          wchars, (int) wchars_n,
-                          NULL));
+        ExtTextOutW(hdc,
+                    gdi_point.x, gdi_point.y,
+                    0, NULL,
+                    wchars, (int) wchars_n,
+                    NULL));
 }
 
 extern void
@@ -2472,12 +2441,12 @@ fonty_text_paint_simple_wchars(
         SetTextColor(hdc, colorref_from_rgb(p_redraw_context, &p_font_context->font_spec.colour)));
 
     void_WrapOsBoolChecking(
-              ExtTextOutW(hdc,
-                          gdi_point.x, gdi_point.y,
-                          prect ? ETO_CLIPPED : 0, /* force to clip when output to metafile */
-                          prect,
-                          wchars, (int) wchars_n,
-                          NULL));
+        ExtTextOutW(hdc,
+                    gdi_point.x, gdi_point.y,
+                    prect ? ETO_CLIPPED : 0, /* force to clip when output to metafile */
+                    prect,
+                    wchars, (int) wchars_n,
+                    NULL));
 }
 
 #endif /* TSTR_IS_SBSTR */
@@ -2501,7 +2470,8 @@ uchars_ExtTextOut(
     STATUS status = STATUS_OK;
     BOOL res;
 
-    res = WrapOsBoolChecking(ExtTextOutA(hdc, x, y, options, pRect, pString, uchars_n, pDx));
+    /* NB ExtTextOut can fail without setting an error with long strings, including ones shorter than the documented limit of 8192 */
+    res = WrapOsBoolChecking(ExtTextOutA(hdc, x, y, options, pRect, pString, MIN(3*1024+512, uchars_n), pDx));
 
     if(!res)
         status = status_check();
@@ -2686,8 +2656,12 @@ host_set_pointer_shape(
 
     case CURSOR_SOURCE_BOUND:
         {
-        HINSTANCE hInstance = resource_get_object_resources(OBJECT_ID_SKEL);
-        cursor.hcursor = (HCURSOR) LoadImage(hInstance, p_t5_pointer_info->id, IMAGE_CURSOR, 0, 0, 0);
+        HINSTANCE hInstance_fallback;
+        const HINSTANCE hInstance = resource_get_object_resources(OBJECT_ID_SKEL, &hInstance_fallback);
+
+        if(NULL == (cursor.hcursor = (HCURSOR) LoadImage(hInstance, p_t5_pointer_info->id, IMAGE_CURSOR, 0, 0, 0)))
+            cursor.hcursor = (HCURSOR) LoadImage(hInstance_fallback, p_t5_pointer_info->id, IMAGE_CURSOR, 0, 0, 0);
+
         break;
         }
     }

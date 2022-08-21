@@ -18,6 +18,7 @@
 #include "ob_skel/ff_io.h"
 
 #include "cmodules/unicode/u2000.h" /* 2000..206F General Punctuation */
+#include "cmodules/utf16.h"
 
 #if RISCOS
 #if defined(BOUND_MESSAGES_OBJECT_ID_FS_RTF)
@@ -210,8 +211,9 @@ rtf_save_fileheader_info(
     S32 default_font_number;
     U8Z buffer[256];
 
-    /* main document block, version and character set */
-    status_return(plain_write_a7str(p_ff_op_format, "{" "\\" "rtf1" "\\" "ansi"));
+    /* main document block, version and character set. */
+    /* NB any \u characters emitted have no associate substitute character */
+    status_return(plain_write_a7str(p_ff_op_format, "{" "\\" "rtf1" "\\" "ansi" "\\" "uc0"));
 
     /* default font */
     status_return(default_font_number = create_error(fontmap_app_index_from_app_font_name(array_tstr(&p_style->font_spec.h_app_name_tstr))));
@@ -383,17 +385,17 @@ rtf_output_colortbl(
     ARRAY_INDEX i;
 
     {
-    static const RGB black = { 0, 0, 0 };
-    status_return(ensure_colour_in_table(&h_colour_table_save, &black));
+    static const RGB rgb_black = RGB_INIT_BLACK;
+    status_return(ensure_colour_in_table(&h_colour_table_save, &rgb_black));
     } /*block*/
 
-    for(i = 0; i < array_elements(&p_docu->h_style_list); ++i)
-        status_return(ensure_style_colours_in_table(array_ptrc(&p_docu->h_style_list, STYLE, i)));
+    for(i = 1 /*skip zero*/; i < array_elements(&p_docu->h_style_list); ++i)
+        status_return(ensure_style_colours_in_table(p_style_from_handle(p_docu, i)));
 
     /* Now search through regions for colours */
     for(i = 0; i < array_elements(&p_docu->h_style_docu_area); ++i)
     {
-        P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, i);
+        const P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, i);
 
         if(p_style_docu_area->is_deleted)
             continue;
@@ -405,7 +407,7 @@ rtf_output_colortbl(
 
     for(i = 0; i < array_elements(&h_colour_table_save); ++i)
     {
-        PC_RGB p_rgb = array_ptrc(&h_colour_table_save, RGB, i);
+        const PC_RGB p_rgb = array_ptrc(&h_colour_table_save, RGB, i);
         U8Z color_buffer[256];
         consume_int(xsnprintf(color_buffer, sizeof32(color_buffer),
                               RTF_LINESEP_STR "\\" "red" U32_FMT "\\" "green" U32_FMT "\\" "blue" U32_FMT ";",
@@ -435,9 +437,9 @@ rtf_output_stylesheet(
 
     status_return(plain_write_a7str(p_ff_op_format, "{" "\\" "stylesheet"));
 
-    for(index = 0; index < array_elements(&p_docu->h_style_list); index ++)
+    for(index = 1 /*skip zero*/; index < array_elements(&p_docu->h_style_list); ++index)
     {
-        PC_STYLE p_style = array_ptrc(&p_docu->h_style_list, STYLE, index);
+        const PC_STYLE p_style = array_ptrc(&p_docu->h_style_list, STYLE, index);
 
         if(style_bit_test(p_style, STYLE_SW_NAME))
         {
@@ -764,7 +766,7 @@ rtf_save_cell(
         {
             /* get displayed not stored values */
             OBJECT_READ_TEXT object_read_text;
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
             quick_ublock_with_buffer_setup(quick_ublock);
 
             object_read_text.object_data = *p_object_data;
@@ -819,6 +821,127 @@ rtf_save_cell(
 * outputs RTF text, decoding any relevant inlines
 *
 ******************************************************************************/
+
+_Check_return_
+static PC_U8Z
+rtf_convert_ucs4_for_save(
+    _Out_writes_(elemof_buffer) P_U8Z buffer,
+    _InVal_     U32 elemof_buffer,
+    _InVal_     UCS4 ucs4)
+{
+    assert(!ucs4_is_C1(ucs4)); /* hopefully no C1 to complicate things */
+
+    switch(ucs4)
+    {
+    case CH_BACKWARDS_SLASH:
+        return("\\" "\\");
+
+    case CH_LEFT_CURLY_BRACKET:
+        return("\\" "{");
+
+    case CH_RIGHT_CURLY_BRACKET:
+        return("\\" "}");
+
+    case UCH_SOFT_HYPHEN:
+        return("\\" "-");
+
+    case UCH_LEFT_SINGLE_QUOTATION_MARK:
+        return("\\" "lquote ");
+
+    case UCH_RIGHT_SINGLE_QUOTATION_MARK:
+        return("\\" "rquote ");
+
+    case UCH_LEFT_DOUBLE_QUOTATION_MARK:
+        return("\\" "ldblquote ");
+
+    case UCH_RIGHT_DOUBLE_QUOTATION_MARK:
+        return("\\" "rdblquote ");
+
+    case UCH_EM_DASH:
+        return("\\" "emdash ");
+        break;
+
+    case UCH_EN_DASH:
+        return("\\" "endash ");
+        break;
+
+    case UCH_BULLET:
+        return("\\" "bullet ");
+
+    case CH_DELETE:
+        return(P_U8_NONE);
+
+    default:
+        break;
+    }
+
+    if(ucs4 < 0x80)
+    {
+        buffer[0] = (U8) ucs4;
+        buffer[1] = CH_NULL;
+    }
+    else if(ucs4_is_sbchar(ucs4))
+    {
+        unsigned int parameter = (unsigned int) ucs4;
+        consume_int(xsnprintf(buffer, elemof_buffer, "\\" "hich" "\\" "'" "%02X" "\\" "loch" , parameter));
+    }
+    else if(ucs4 < 0x8000U)
+    {
+        S32 parameter = (S32) ucs4;
+        consume_int(xsnprintf(buffer, elemof_buffer, "\\u" S32_FMT, parameter)); /* NB no substitute character is supplied with \uc0 */
+    }
+    else if(ucs4 < 0x10000U)
+    {
+        S32 parameter = (S32) ucs4 - 65536;
+        consume_int(xsnprintf(buffer, elemof_buffer, "\\u" S32_FMT, parameter));
+    }
+#if 1 /* Word 2007 seems to save out a surrogate pair for non-BMP characters - try that */
+    else if(ucs4 < UCH_UNICODE_INVALID)
+    {
+        WCHAR high_surrogate, low_surrogate;
+        S32 parameter1, parameter2;
+        utf16_char_encode_surrogates(&high_surrogate, &low_surrogate, ucs4);
+        /* both surrogate words definitely have bit 15 set */
+        parameter1 = (S32) high_surrogate - 65536;
+        parameter2 = (S32) low_surrogate  - 65536;
+        consume_int(xsnprintf(buffer, elemof_buffer, "\\u" S32_FMT "\\u" S32_FMT, parameter1, parameter2));
+    }
+#endif
+    else
+    {
+        /* RTF can't handle these */
+        return(P_U8_NONE);
+    }
+
+    return(buffer);
+}
+
+_Check_return_
+static STATUS
+rtf_save_UTF8_chars(
+    _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
+    _In_        PC_UCHARS_INLINE uchars_inline)
+{
+    STATUS status = STATUS_OK;
+    const PC_UTF8 utf8 = inline_data_ptr(PC_UTF8, uchars_inline);
+    const U32 il_data_size = (U32) inline_data_size(uchars_inline);
+    U32 offset = 0;
+
+    while(offset < il_data_size)
+    {
+        U32 bytes_of_char;
+        const UCS4 ucs4 = utf8_char_decode_off(utf8, offset, bytes_of_char);
+        U8Z buffer[32];
+        PC_A7STR str_out = rtf_convert_ucs4_for_save(buffer, elemof32(buffer), ucs4);
+
+        if(P_U8_NONE != str_out)
+            status_break(status = plain_write_a7str(p_ff_op_format, str_out));
+
+        offset += bytes_of_char;
+    }
+
+    return(status);
+}
 
 _Check_return_
 static STATUS
@@ -896,10 +1019,11 @@ rtf_save_data_ref(
 
     while(status_ok(status))
     {
+        PC_A7STR str_out = P_U8_NONE;
+        U8Z buffer[32];
+
         if(is_inline_off(ustr_inline, offset))
         {
-            PC_A7STR str_out = P_U8_NONE;
-
             switch(inline_code_off(ustr_inline, offset))
             {
             default:             /*assert0();*/             break;
@@ -908,10 +1032,8 @@ rtf_save_data_ref(
             case IL_DATE:        str_out = "\\" "chdate ";  break; /* may wish to look at argument to see if time/data present (e.g. 'd' vs 'h') */
             case IL_SOFT_HYPHEN: str_out = "\\" "-";        break;
             case IL_RETURN:      str_out = "\\" "line ";    break;
+            case IL_UTF8:        status = rtf_save_UTF8_chars(p_ff_op_format, PtrAddBytes(PC_UCHARS_INLINE, ustr_inline, offset)); break;
             }
-
-            if(P_U8_NONE != str_out)
-                status = plain_write_a7str(p_ff_op_format, str_out);
 
             offset += inline_bytecount_off(ustr_inline, offset);
         }
@@ -946,96 +1068,13 @@ rtf_save_data_ref(
                 }
             }
 
-            {
-            U8Z buffer[20];
-            PC_A7STR str_out = P_U8_NONE;
-
-            assert(!ucs4_is_C1(ucs4)); /* hopefully no C1 to complicate things */
-
-            switch(ucs4)
-            {
-            case CH_BACKWARDS_SLASH:
-                str_out = "\\" "\\";
-                break;
-
-            case CH_LEFT_CURLY_BRACKET:
-                str_out = "\\" "{";
-                break;
-
-            case CH_RIGHT_CURLY_BRACKET:
-                str_out = "\\" "}";
-                break;
-
-            case UCH_SOFT_HYPHEN:
-                str_out = "\\" "-";
-                break;
-
-            case UCH_LEFT_SINGLE_QUOTATION_MARK:
-                str_out = "\\" "lquote ";
-                break;
-
-            case UCH_RIGHT_SINGLE_QUOTATION_MARK:
-                str_out = "\\" "rquote ";
-                break;
-
-            case UCH_LEFT_DOUBLE_QUOTATION_MARK:
-                str_out = "\\" "ldblquote ";
-                break;
-
-            case UCH_RIGHT_DOUBLE_QUOTATION_MARK:
-                str_out = "\\" "rdblquote ";
-                break;
-
-            case UCH_EM_DASH:
-                str_out = "\\" "emdash ";
-                break;
-
-            case UCH_EN_DASH:
-                str_out = "\\" "endash ";
-                break;
-
-            case UCH_BULLET:
-                str_out = "\\" "bullet ";
-                break;
-
-            case CH_DELETE:
-                break;
-
-            default:
-                if(ucs4 < 0x80)
-                {
-                    buffer[0] = (U8) ucs4;
-                    buffer[1] = CH_NULL;
-                }
-                else if(ucs4_is_sbchar(ucs4))
-                {
-                    unsigned int parameter = (unsigned int) ucs4;
-                    consume_int(xsnprintf(buffer, elemof32(buffer), "\\" "hich" "\\" "'" "%02X" "\\" "loch" , parameter));
-                }
-                else if(ucs4 < 0x8000U)
-                {
-                    S32 parameter = (S32) ucs4;
-                    consume_int(xsnprintf(buffer, elemof32(buffer), "\\" "uc0" "\\u" S32_FMT, parameter));
-                }
-                else if(ucs4 < 0x10000U)
-                {
-                    S32 parameter = (S32) ucs4 - 65536;
-                    consume_int(xsnprintf(buffer, elemof32(buffer), "\\" "uc0" "\\u" S32_FMT, parameter));
-                }
-                else
-                {
-                    buffer[0] = CH_NULL; /* RTF can't handle these */
-                }
-                str_out = buffer;
-                break;
-            }
-
-            assert(P_U8_NONE != str_out);
-            status = plain_write_a7str(p_ff_op_format, str_out);
-            } /*block*/
+            str_out = rtf_convert_ucs4_for_save(buffer, elemof32(buffer), ucs4);
 
             offset += bytes_of_char;
         }
+
+        if(P_U8_NONE != str_out)
+            status = plain_write_a7str(p_ff_op_format, str_out);
     }
 
     style_dispose(&current_style);

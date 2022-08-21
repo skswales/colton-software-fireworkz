@@ -19,6 +19,8 @@
 
 #if RISCOS
 
+#include "ob_skel/prodinfo.h"
+
 /*
 set consistent set of flags for alloc.h
 */
@@ -810,7 +812,7 @@ alloc_init(void)
     for(;;) /* loop for structure */
     {
         /*reportf(TEXT("g_dynamic_area_limit: %d"), g_dynamic_area_limit);*/
-        if((alloc_dynamic_area_handle = flex_init(de_const_cast(char *, g_dynamic_area_name), 0, g_dynamic_area_limit)) < 0)
+        if((alloc_dynamic_area_handle = flex_init(de_const_cast(char *, g_product_riscos_app_dynamic_area), 0, g_dynamic_area_limit)) < 0)
             break;
 
         if(alloc_main_heap_minsize)

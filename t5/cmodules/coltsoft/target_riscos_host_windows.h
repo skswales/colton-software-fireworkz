@@ -106,6 +106,8 @@ __pragma(warning(disable:4820)) /* padding added after data member */
 typedef unsigned int _Bool;
 #endif
 
+#define __STDC_NO_COMPLEX__ 1 /* see RISC OS complex.h */
+
 #endif /* __target_riscos_host_windows_h */
 
 /* end of target_riscos_host_windows.h */

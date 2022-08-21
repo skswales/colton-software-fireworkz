@@ -88,7 +88,8 @@ utf8_ExtTextOut(
         PCWCH pwch = quick_wblock_wchars(&quick_wblock);
         UINT cbCount = (UINT) quick_wblock_chars(&quick_wblock);
 
-        res = WrapOsBoolChecking(ExtTextOutW(hdc, x, y, options, pRect, pwch, cbCount, pDx));
+        /* NB ExtTextOut can fail without setting an error with long strings, including ones shorter than the documented limit of 8192 */
+        res = WrapOsBoolChecking(ExtTextOutW(hdc, x, y, options, pRect, pwch, MIN(3*1024+512, cbCount), pDx));
 
         if(!res)
             status = status_check();
@@ -176,7 +177,7 @@ _tstr_from_ustr(
         return(TEXT("<<tstr_from_ustr - NULL>>"));
     }
 
-    if(IS_PTR_NONE(ustr))
+    if(PTR_IS_NONE(ustr))
     {
         assert0();
         return(TEXT("<<tstr_from_ustr - NONE>>"));
@@ -189,7 +190,7 @@ _tstr_from_ustr(
     }
 #endif
 
-#if CHECKING_UTF8
+#if CHECKING_UTF8 && !USTR_IS_SBSTR
     /* Check that the string we are converting is valid UTF-8 */
     if(status_fail(ustr_validate(TEXT("_tstr_from_ustr arg"), ustr)))
         return(TEXT("<<tstr_from_ustr - INVALID UTF-8>>"));
@@ -247,7 +248,7 @@ _ustr_from_tstr(
         return(USTR_TEXT("<<ustr_from_tstr - NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE(tstr))
+    if(PTR_IS_NONE(tstr))
         return(USTR_TEXT("<<ustr_from_tstr - NONE>>"));
 #endif
 
@@ -285,7 +286,7 @@ _ustr_from_tstr(
     if(multi_n > 0)
         ustr_from_tstr_statics.used += multi_n;
 
-#if CHECKING_UTF8
+#if CHECKING_UTF8 && !USTR_IS_SBSTR
     if(multi_n > 0) /* Check that the converted string is valid UTF-8 */
         (void) ustr_validate_n(TEXT("_ustr_from_tstr tmpbuf"), dstptr, multi_n);
 #endif

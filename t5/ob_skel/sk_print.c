@@ -29,11 +29,28 @@
 internal routines
 */
 
+static U32 /* used */
+get_pagenum(
+    _In_z_      PCTSTR tstr_in,
+    _OutRef_    P_PAGE_NUM p_page_num);
+
 _Check_return_
 static STATUS
 pamphlet(
     _OutRef_    P_UI_TEXT p_ui_text,
     _InVal_     S32 max_page_y);
+
+_Check_return_
+static STATUS
+print_page_list_add_blank(
+    _InoutRef_  P_ARRAY_HANDLE p_h_page_list);
+
+_Check_return_
+static STATUS
+print_page_list_add_page(
+    _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
+    _InVal_     S32 x,
+    _InVal_     S32 y);
 
 _Check_return_
 static STATUS
@@ -180,9 +197,9 @@ paper_scale_save(
 
 typedef struct PRINT_CALLBACK
 {
-    S32 extra;
+    bool extra;
     PAGE max_page_y;
-    S32 all_or_range;
+    bool use_page_range_list;
 }
 PRINT_CALLBACK, * P_PRINT_CALLBACK;
 
@@ -191,19 +208,22 @@ enum PRINT_CONTROL_IDS
     CONTROL_ID_EXTRA = 64,
     CONTROL_ID_MAILS,
 
-    CONTROL_ID_COPIES_ORNAMENT,
-    CONTROL_ID_COPIES,
-    CONTROL_ID_AR_GROUP,
-    CONTROL_ID_ALL,
-    CONTROL_ID_RANGE,
+    CONTROL_ID_PRINTER_NAME,
 
-    CONTROL_ID_RANGE_GROUP,
-    CONTROL_ID_RANGE_Y_GROUP,
-    CONTROL_ID_RANGE_Y0_LABEL,
-    CONTROL_ID_RANGE_Y0,
-    CONTROL_ID_RANGE_EDIT = CONTROL_ID_RANGE_Y0,
-    CONTROL_ID_RANGE_Y1_LABEL,
-    CONTROL_ID_RANGE_Y1,
+    CONTROL_ID_COPIES_LABEL,
+    CONTROL_ID_COPIES,
+
+    CONTROL_ID_PAGE_RANGE_OUTER_GROUP,
+    CONTROL_ID_AR_GROUP,
+    CONTROL_ID_ALL_PAGES,
+    CONTROL_ID_PAGE_RANGE,
+
+    CONTROL_ID_PAGE_RANGE_INNER_GROUP, /* for enabling this set of controls */
+    CONTROL_ID_PAGE_RANGE_EDIT,
+    CONTROL_ID_PAGE_RANGE_Y0_LABEL,
+    CONTROL_ID_PAGE_RANGE_Y0,
+    CONTROL_ID_PAGE_RANGE_Y1_LABEL,
+    CONTROL_ID_PAGE_RANGE_Y1,
 
     CONTROL_ID_SIDES_GROUP = 128,
     CONTROL_ID_BOTH,
@@ -218,25 +238,49 @@ enum PRINT_CONTROL_IDS
     CONTROL_ID_MESSAGE2         /* actually belongs to warning dialog box */
 };
 
+#if !RISCOS
+
 static const DIALOG_CONTROL
-print_copies_ornament =
+print_printer_name =
 {
-    CONTROL_ID_COPIES_ORNAMENT, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, CONTROL_ID_COPIES, DIALOG_CONTROL_SELF, CONTROL_ID_COPIES },
-    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    CONTROL_ID_PRINTER_NAME, DIALOG_CONTROL_WINDOW,
+    { DIALOG_MAIN_GROUP, DIALOG_CONTROL_PARENT, DIALOG_MAIN_GROUP },
+    { 0, 0, 0, DIALOG_STDTEXT_V },
+    { DRT(LTRT, STATICTEXT) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-print_copies_ornament_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_COPIES) };
+static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
+print_printer_name_data = { { UI_TEXT_TYPE_NONE }, { 1 /*left-text*/ } };
+
+#endif /* RISCOS */
+
+static const DIALOG_CONTROL
+print_copies_label =
+{
+    CONTROL_ID_COPIES_LABEL, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, CONTROL_ID_COPIES, DIALOG_CONTROL_SELF, CONTROL_ID_COPIES },
+    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(LTLB, TEXTLABEL) }
+};
+
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+print_copies_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_COPIES), { 1 /*left-text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 print_copies =
 {
     CONTROL_ID_COPIES, DIALOG_MAIN_GROUP,
-    { CONTROL_ID_COPIES_ORNAMENT, DIALOG_CONTROL_PARENT },
-    { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
+#if !RISCOS
+    /* we have a printer name above this control */
+    { CONTROL_ID_COPIES_LABEL, CONTROL_ID_PRINTER_NAME },
+    { DIALOG_LABELGAP_H, DIALOG_UNRELSPACING_V, DIALOG_BUMP_H(3), DIALOG_STDBUMP_V },
+    { DRT(RBLT, BUMP_S32), 1 /*tabstop*/ }
+#else
+    /* RISC OS Style Guide tells us to put the printer name in the dialogue box title */
+    { CONTROL_ID_COPIES_LABEL, DIALOG_CONTROL_PARENT },
+    { DIALOG_LABELGAP_H, 0, DIALOG_BUMP_H(3), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+#endif
 };
 
 static const UI_CONTROL_S32
@@ -246,132 +290,151 @@ static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
 print_copies_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_copies_data_control } };
 
 static const DIALOG_CONTROL
+print_page_range_outer_group =
+{
+    CONTROL_ID_PAGE_RANGE_OUTER_GROUP, DIALOG_MAIN_GROUP,
+    { CONTROL_ID_COPIES_LABEL, CONTROL_ID_COPIES_LABEL, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0, DIALOG_STDSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    { DRT(LBRB, GROUPBOX) }
+};
+
+static const DIALOG_CONTROL_DATA_GROUPBOX
+print_page_range_outer_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAGE_RANGE_OUTER), { FRAMED_BOX_GROUP } };
+
+static const DIALOG_CONTROL
 print_ar_group =
 {
-    CONTROL_ID_AR_GROUP, DIALOG_MAIN_GROUP,
-    { CONTROL_ID_COPIES_ORNAMENT, CONTROL_ID_COPIES_ORNAMENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_STDSPACING_V, 0, 0 },
-    { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
+    CONTROL_ID_AR_GROUP, CONTROL_ID_PAGE_RANGE_OUTER_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, 0, 0 },
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
-print_all =
+print_all_pages =
 {
-    CONTROL_ID_ALL, CONTROL_ID_AR_GROUP,
+    CONTROL_ID_ALL_PAGES, CONTROL_ID_AR_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
     { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
-print_all_data = { { 0 }, 0 /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_ALL) };
+print_all_pages_data = { { 0 }, 0 /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_ALL_PAGES) };
 
 static const DIALOG_CONTROL
-print_range =
+print_page_range =
 {
-    CONTROL_ID_RANGE, CONTROL_ID_AR_GROUP,
-    { CONTROL_ID_ALL, CONTROL_ID_ALL },
+    CONTROL_ID_PAGE_RANGE, CONTROL_ID_AR_GROUP,
+    { CONTROL_ID_ALL_PAGES, CONTROL_ID_ALL_PAGES },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
     { DRT(LBLT, RADIOBUTTON) }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTONF
-e_print_range_data = { { { 0, 1 /*move_focus*/ }, 1 /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE) }, CONTROL_ID_RANGE_Y0 };
+e_print_page_range_data = { { { 0, 1 /*move_focus*/ }, 1 /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAGES) }, CONTROL_ID_PAGE_RANGE_EDIT };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTONF
-s_print_range_data = { { { 0, 1 /*move_focus*/ }, 1 /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE) }, CONTROL_ID_RANGE_EDIT };
+s_print_page_range_data = { { { 0, 1 /*move_focus*/ }, 1 /* activate_state */, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAGES) }, CONTROL_ID_PAGE_RANGE_Y0 };
 
 static const DIALOG_CONTROL
-print_range_group =
+print_page_range_inner_group =
 {
-    CONTROL_ID_RANGE_GROUP, DIALOG_MAIN_GROUP,
-    { CONTROL_ID_AR_GROUP, CONTROL_ID_RANGE, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    CONTROL_ID_PAGE_RANGE_INNER_GROUP, CONTROL_ID_PAGE_RANGE_OUTER_GROUP,
+    { CONTROL_ID_AR_GROUP, CONTROL_ID_PAGE_RANGE, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { DIALOG_STDSPACING_H, (DIALOG_STDBUMP_V - DIALOG_STDRADIO_V) /2 /*DIALOG_SMALLSPACING_V*/ },
     { DRT(RTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
 static const DIALOG_CONTROL
-print_range_edit =
+print_page_range_edit =
 {
-    CONTROL_ID_RANGE_EDIT, CONTROL_ID_RANGE_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0, 0, PIXITS_PER_INCH + PIXITS_PER_HALF_INCH, PIXITS_PER_INCH },
-    { DRT(LTLT, EDIT), 1 /*tabstop*/ }
+    CONTROL_ID_PAGE_RANGE_EDIT, CONTROL_ID_PAGE_RANGE_INNER_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, CONTROL_ID_EVEN },
+    { 0, 0, 0, DIALOG_MULEDIT_V(2) },
+    { DRT(LTRT, EDIT), 1 /*tabstop*/ }
 };
 
-static BITMAP(print_range_edit_validation, 256);
+/*extern*/ BITMAP(print_page_range_edit_validation, 256);
 
 static const DIALOG_CONTROL_DATA_EDIT
-print_range_edit_data = { { { FRAMED_BOX_EDIT, 0, 0, 1 /*multiline*/ }, print_range_edit_validation } /* EDIT_XX */ };
+print_page_range_edit_data = { { { FRAMED_BOX_EDIT, 0, 0, 1 /*multiline*/ }, print_page_range_edit_validation } /* EDIT_XX */ };
 
 static const DIALOG_CONTROL
-print_range_y_group =
+print_page_range_y0_label =
 {
-    CONTROL_ID_RANGE_Y_GROUP, CONTROL_ID_RANGE_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0 },
-    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
-};
-
-static const DIALOG_CONTROL
-print_range_y0_label =
-{
-    CONTROL_ID_RANGE_Y0_LABEL, CONTROL_ID_RANGE_Y_GROUP,
-    { DIALOG_CONTROL_PARENT, CONTROL_ID_RANGE_Y0, DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_Y0 },
+    CONTROL_ID_PAGE_RANGE_Y0_LABEL, CONTROL_ID_PAGE_RANGE_INNER_GROUP,
+    { DIALOG_CONTROL_PARENT, CONTROL_ID_PAGE_RANGE_Y0, DIALOG_CONTROL_SELF, CONTROL_ID_PAGE_RANGE_Y0 },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-print_range_y0_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE_Y0) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+print_page_range_y0_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAGE_RANGE_Y0) };
 
 static const DIALOG_CONTROL
-print_range_y0 =
+print_page_range_y0 =
 {
-    CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y_GROUP,
-    { CONTROL_ID_RANGE_Y0_LABEL, DIALOG_CONTROL_PARENT },
+    CONTROL_ID_PAGE_RANGE_Y0, CONTROL_ID_PAGE_RANGE_INNER_GROUP,
+    { CONTROL_ID_PAGE_RANGE_Y0_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_LABELGAP_H, 0, DIALOG_BUMP_H(5), DIALOG_STDBUMP_V },
     { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_S32
-print_range_y0_data_control = { 1, 1, 1 };
+print_page_range_y0_data_control = { 1, 1, 1 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-print_range_y0_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_range_y0_data_control } };
+print_page_range_y0_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_page_range_y0_data_control } };
 
 static const DIALOG_CONTROL
-print_range_y1_label =
+print_page_range_y1_label =
 {
-    CONTROL_ID_RANGE_Y1_LABEL, CONTROL_ID_RANGE_Y_GROUP,
-    { DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_Y1, CONTROL_ID_RANGE_Y0_LABEL, CONTROL_ID_RANGE_Y1 },
+    CONTROL_ID_PAGE_RANGE_Y1_LABEL, CONTROL_ID_PAGE_RANGE_INNER_GROUP,
+    { DIALOG_CONTROL_SELF, CONTROL_ID_PAGE_RANGE_Y1, CONTROL_ID_PAGE_RANGE_Y0_LABEL, CONTROL_ID_PAGE_RANGE_Y1 },
     { DIALOG_CONTENTS_CALC, 0, 0, 0 },
-    { DRT(RTRB, STATICTEXT) }
+    { DRT(RTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-print_range_y1_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_RANGE_Y1) };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+print_page_range_y1_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAGE_RANGE_Y1) };
 
 static const DIALOG_CONTROL
-print_range_y1 =
+print_page_range_y1 =
 {
-    CONTROL_ID_RANGE_Y1, CONTROL_ID_RANGE_Y_GROUP,
-    { CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y0, CONTROL_ID_RANGE_Y0 },
+    CONTROL_ID_PAGE_RANGE_Y1, CONTROL_ID_PAGE_RANGE_INNER_GROUP,
+    { CONTROL_ID_PAGE_RANGE_Y0, CONTROL_ID_PAGE_RANGE_Y0, CONTROL_ID_PAGE_RANGE_Y0 },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
     { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
 };
 
 static /*poked*/ UI_CONTROL_S32
-print_range_y1_data_control = { 1, 1, 1 };
+print_page_range_y1_data_control = { 1, 1, 1 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_BUMP_S32
-print_range_y1_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_range_y1_data_control } };
+print_page_range_y1_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } }, &print_page_range_y1_data_control } };
+
+static const DIALOG_CONTROL
+print_pamphlet =
+{
+    CONTROL_ID_PAMPHLET, CONTROL_ID_PAGE_RANGE_OUTER_GROUP,
+    { DIALOG_CONTROL_SELF, CONTROL_ID_PAGE_RANGE_EDIT, CONTROL_ID_PAGE_RANGE_EDIT },
+#if RISCOS
+    { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
+#else
+    { DIALOG_STDPUSHBUTTON_H, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
+#endif
+    { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+print_pamphlet_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAMPHLET) };
 
 static const DIALOG_CONTROL
 print_sides_group =
 {
     CONTROL_ID_SIDES_GROUP, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, CONTROL_ID_RANGE_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { DIALOG_CONTROL_PARENT, CONTROL_ID_PAGE_RANGE_OUTER_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0, DIALOG_STDSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
     { DRT(LBRB, GROUPBOX) }
 };
@@ -452,22 +515,6 @@ static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
 print_two_up_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_TWO_UP) };
 
 static const DIALOG_CONTROL
-print_pamphlet =
-{
-    CONTROL_ID_PAMPHLET, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_GROUP, CONTROL_ID_TWO_UP },
-#if RISCOS
-    { DIALOG_CONTENTS_CALC, DIALOG_STDPUSHBUTTON_V, 0, 0 },
-#else
-    { DIALOG_STDPUSHBUTTON_H, DIALOG_STDPUSHBUTTON_V, 0, 0 },
-#endif
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
-};
-
-static const DIALOG_CONTROL_DATA_PUSHBUTTON
-print_pamphlet_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_PAMPHLET) };
-
-static const DIALOG_CONTROL
 print_mails =
 {
     CONTROL_ID_MAILS, DIALOG_MAIN_GROUP,
@@ -490,7 +537,7 @@ static const DIALOG_CONTROL
 print_extra =
 {
     CONTROL_ID_EXTRA, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_SELF, CONTROL_ID_RANGE_GROUP, CONTROL_ID_RANGE_GROUP, DIALOG_CONTROL_SELF },
+    { DIALOG_CONTROL_SELF, CONTROL_ID_PAGE_RANGE_OUTER_GROUP, CONTROL_ID_PAGE_RANGE_OUTER_GROUP, DIALOG_CONTROL_SELF },
 #if RISCOS
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_STDPUSHBUTTON_V },
 #else
@@ -505,25 +552,25 @@ print_extra_data = { { CONTROL_ID_EXTRA }, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_E
 static const DIALOG_CONTROL_ID
 e_print_ok_data_argmap[] =
 {
-#define ARG_PRINT_COPIES       0
+#define ARG_PRINT_COPIES            0
     CONTROL_ID_COPIES,
-#define ARG_PRINT_RANGE        1
+#define ARG_PRINT_PAGE_RANGE        1
     CONTROL_ID_AR_GROUP,
-#define ARG_PRINT_RANGE_Y0     2
+#define ARG_PRINT_PAGE_RANGE_Y0     2
     0,
-#define ARG_PRINT_RANGE_Y1     3
+#define ARG_PRINT_PAGE_RANGE_Y1     3
     0,
-#define ARG_PRINT_RANGE_LIST   4
-    CONTROL_ID_RANGE_EDIT,
-#define ARG_PRINT_SIDES        5
+#define ARG_PRINT_PAGE_RANGE_LIST   4
+    CONTROL_ID_PAGE_RANGE_EDIT,
+#define ARG_PRINT_SIDES             5
     CONTROL_ID_SIDES_GROUP,
-#define ARG_PRINT_REVERSE      6
+#define ARG_PRINT_REVERSE           6
     CONTROL_ID_REVERSE,
-#define ARG_PRINT_COLLATE      7
+#define ARG_PRINT_COLLATE           7
     CONTROL_ID_COLLATE,
-#define ARG_PRINT_TWO_UP       8
+#define ARG_PRINT_TWO_UP            8
     CONTROL_ID_TWO_UP
-#define ARG_PRINT_N_ARGS       9
+#define ARG_PRINT_N_ARGS            9
 };
 
 static const DIALOG_CONTROL_ID
@@ -531,67 +578,77 @@ s_print_ok_data_argmap[elemof32(e_print_ok_data_argmap)] =
 {
     CONTROL_ID_COPIES,
     CONTROL_ID_AR_GROUP,
-    CONTROL_ID_RANGE_Y0,
-    CONTROL_ID_RANGE_Y1
+    CONTROL_ID_PAGE_RANGE_Y0,
+    CONTROL_ID_PAGE_RANGE_Y1
 };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 e_print_ok_command = { T5_CMD_PRINT_EXTRA, OBJECT_ID_SKEL, NULL, e_print_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-e_print_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &e_print_ok_command };
+e_print_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_PRINT), &e_print_ok_command };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
 s_print_ok_command = { T5_CMD_PRINT, OBJECT_ID_SKEL, NULL, s_print_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-s_print_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &s_print_ok_command };
+s_print_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_PRINT), &s_print_ok_command };
 
 static const DIALOG_CTL_CREATE
 e_print_dialog_create[] =
 {
-    { &dialog_main_group },
-    { &print_copies_ornament, &print_copies_ornament_data },
-    { &print_copies         , &print_copies_data          },
-    { &print_ar_group },
-    { &print_all            , &print_all_data             },
-    { &print_range          , &e_print_range_data         },
-    { &print_range_group },
-    { &print_range_edit     , &print_range_edit_data      },
-    { &print_sides_group    , &print_sides_group_data     },
-    { &print_both           , &print_both_data            },
-    { &print_odd            , &print_odd_data             },
-    { &print_even           , &print_even_data            },
-    { &print_reverse        , &print_reverse_data         },
-    { &print_collate        , &print_collate_data         },
-    { &print_two_up         , &print_two_up_data          },
-    { &print_pamphlet       , &print_pamphlet_data        },
+    { { &dialog_main_group },           NULL },
+#if !RISCOS
+    { { &print_printer_name },          &print_printer_name_data },
+#endif
+    { { &print_copies_label },          &print_copies_label_data },
+    { { &print_copies },                &print_copies_data },
 
-    { &defbutton_ok, &e_print_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &print_page_range_outer_group }, &print_page_range_outer_group_data },
+    { { &print_ar_group },              NULL },
+    { { &print_all_pages },             &print_all_pages_data },
+    { { &print_page_range },            &e_print_page_range_data },
+    { { &print_pamphlet },              &print_pamphlet_data },
+    { { &print_page_range_inner_group }, NULL }, /* for enabling this set of controls */
+    { { &print_page_range_edit },       &print_page_range_edit_data },
+
+    { { &print_sides_group },           &print_sides_group_data },
+    { { &print_both },                  &print_both_data },
+    { { &print_odd },                   &print_odd_data },
+    { { &print_even },                  &print_even_data },
+    { { &print_reverse },               &print_reverse_data },
+    { { &print_collate },               &print_collate_data },
+    { { &print_two_up },                &print_two_up_data },
+
+    { { &defbutton_ok },                &e_print_ok_data },
+    { { &stdbutton_cancel },            &stdbutton_cancel_data }
 };
 
 static /*poked*/ DIALOG_CTL_CREATE
 s_print_dialog_create[] =
 {
-    { &dialog_main_group },
-    { &print_copies_ornament, &print_copies_ornament_data },
-    { &print_copies         , &print_copies_data },
-    { &print_ar_group },
-    { &print_all            , &print_all_data },
-    { &print_range          , &s_print_range_data },
-    { &print_range_group },
-    { &print_range_y_group },
-    { &print_range_y0_label , &print_range_y0_label_data },
-    { &print_range_y0       , &print_range_y0_data },
-    { &print_range_y1_label , &print_range_y1_label_data },
-    { &print_range_y1       , &print_range_y1_data },
+    { { &dialog_main_group },           NULL },
+#if !RISCOS
+    { { &print_printer_name },          &print_printer_name_data },
+#endif
+    { { &print_copies_label },          &print_copies_label_data },
+    { { &print_copies },                &print_copies_data },
 
-    { &print_mails          , &print_mails_data }, /* this is the fourth last entry and must not move wrt end */
-    { &print_extra          , &print_extra_data }, /* this is the third last entry and must not move wrt end */
+    { { &print_page_range_outer_group }, &print_page_range_outer_group_data },
+    { { &print_ar_group },              NULL },
+    { { &print_all_pages },             &print_all_pages_data },
+    { { &print_page_range },            &s_print_page_range_data },
+    { { &print_page_range_inner_group }, NULL }, /* for enabling this set of controls */
+    { { &print_page_range_y0_label },   &print_page_range_y0_label_data },
+    { { &print_page_range_y0 },         &print_page_range_y0_data },
+    { { &print_page_range_y1_label },   &print_page_range_y1_label_data },
+    { { &print_page_range_y1 },         &print_page_range_y1_data },
 
-    { &defbutton_ok, &s_print_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &print_mails },                 &print_mails_data }, /* this is the fourth last entry and must not move wrt end */
+    { { &print_extra },                 &print_extra_data }, /* this is the third last entry and must not move wrt end */
+
+    { { &defbutton_ok },                &s_print_ok_data },
+    { { &stdbutton_cancel },            &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -607,27 +664,29 @@ dialog_print_intro_ctl_create_state(
         p_dialog_msg_ctl_create_state->state_set.state.radiobutton = 0;
         break;
 
-    case CONTROL_ID_RANGE_EDIT:
+    case CONTROL_ID_PAGE_RANGE_EDIT:
         {
         const P_PRINT_CALLBACK p_print_callback = (P_PRINT_CALLBACK) p_dialog_msg_ctl_create_state->client_handle;
 
         if(p_print_callback->extra)
         {
             UI_TEXT ui_text;
-            UCHARZ ustr_buf[256];
+            TCHARZ tstr_buf[256];
 
 #if 0
             consume_int(xsnprintf(ustr_buf, elemof32(ustr_buf),
                                   S32_FMT "." S32_FMT " - " S32_FMT "." S32_FMT,
-                                  print_range_x0_data.state, print_range_y0_data.state, print_range_x1_data.state, print_range_y1_data.state));
+                                  print_page_range_x0_data.state, print_page_range_y0_data.state, print_page_range_x1_data.state, print_page_range_y1_data.state));
 #endif
-            consume_int(xsnprintf(ustr_buf, elemof32(ustr_buf),
-                                  S32_FMT " - " S32_FMT,
-                                  print_range_y0_data.state, print_range_y1_data.state));
+            consume_int(tstr_xsnprintf(tstr_buf, elemof32(tstr_buf),
+                                       (print_page_range_y0_data.state == print_page_range_y1_data.state)
+                                       ? S32_TFMT
+                                       : S32_TFMT TEXT(" - ") S32_TFMT,
+                                       print_page_range_y0_data.state, print_page_range_y1_data.state));
 
-            ui_text.type = UI_TEXT_TYPE_USTR_TEMP;
-            ui_text.text.ustr = ustr_bptr(ustr_buf);
-            status = ui_dlg_set_edit(p_dialog_msg_ctl_create_state->h_dialog, CONTROL_ID_RANGE_EDIT, &ui_text);
+            ui_text.type = UI_TEXT_TYPE_TSTR_TEMP;
+            ui_text.text.tstr = tstr_buf;
+            status = ui_dlg_set_edit(p_dialog_msg_ctl_create_state->h_dialog, CONTROL_ID_PAGE_RANGE_EDIT, &ui_text);
             p_dialog_msg_ctl_create_state->processed = 1;
         }
 
@@ -649,7 +708,7 @@ dialog_print_intro_ctl_state_change(
     switch(p_dialog_msg_ctl_state_change->dialog_control_id)
     {
     case CONTROL_ID_AR_GROUP:
-        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, CONTROL_ID_RANGE_GROUP, (p_dialog_msg_ctl_state_change->new_state.radiobutton == 1));
+        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, CONTROL_ID_PAGE_RANGE_INNER_GROUP, (p_dialog_msg_ctl_state_change->new_state.radiobutton == 1));
         break;
 
     default:
@@ -672,7 +731,7 @@ dialog_print_intro_process_start(
     /* especially 'cos he might choose pamphlet printing */
     if(!p_print_callback->extra)
     {
-        ui_dlg_ctl_enable(p_dialog_msg_process_start->h_dialog, CONTROL_ID_RANGE_GROUP, (print_range_y0_data_control.max_val > 1));
+        ui_dlg_ctl_enable(p_dialog_msg_process_start->h_dialog, CONTROL_ID_PAGE_RANGE_INNER_GROUP, (print_page_range_y0_data_control.max_val > 1));
 
         {
         const P_BYTE p_data = _p_object_instance_data(p_docu, OBJECT_ID_MAILSHOT CODE_ANALYSIS_ONLY_ARG(1));
@@ -686,7 +745,7 @@ dialog_print_intro_process_start(
         ui_dlg_ctl_enable(p_dialog_msg_process_start->h_dialog, CONTROL_ID_TWO_UP,   !p_docu->flags.draft_mode);
     }
 
-    return(ui_dlg_set_radio(p_dialog_msg_process_start->h_dialog, CONTROL_ID_AR_GROUP, p_print_callback->all_or_range && (print_range_y0_data_control.max_val > 1)));
+    return(ui_dlg_set_radio(p_dialog_msg_process_start->h_dialog, CONTROL_ID_AR_GROUP, p_print_callback->use_page_range_list && (print_page_range_y0_data_control.max_val > 1)));
 }
 
 _Check_return_
@@ -703,7 +762,7 @@ dialog_print_intro_ctl_pushbutton(
         const P_PRINT_CALLBACK p_print_callback = (P_PRINT_CALLBACK) p_dialog_msg_ctl_pushbutton->client_handle;
         UI_TEXT ui_text;
         status_break(status = pamphlet(&ui_text, p_print_callback->max_page_y));
-        status = ui_dlg_set_edit(p_dialog_msg_ctl_pushbutton->h_dialog, CONTROL_ID_RANGE_EDIT, &ui_text);
+        status = ui_dlg_set_edit(p_dialog_msg_ctl_pushbutton->h_dialog, CONTROL_ID_PAGE_RANGE_EDIT, &ui_text);
         ui_text_dispose(&ui_text);
         if(status_ok(status = ui_dlg_set_radio(p_dialog_msg_ctl_pushbutton->h_dialog, CONTROL_ID_AR_GROUP, 1))) /* set all/range radio button to range */
                      status = ui_dlg_set_check(p_dialog_msg_ctl_pushbutton->h_dialog, CONTROL_ID_TWO_UP, TRUE); /* and two up */
@@ -726,13 +785,12 @@ dialog_print_intro_process_end(
         /* 'extra' button pressed, so read back copies, range etc, loop back and create new dialog box */
         print_copies_data.state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, CONTROL_ID_COPIES);
 
-        p_print_callback->all_or_range = ui_dlg_get_radio(p_dialog_msg_process_end->h_dialog, CONTROL_ID_AR_GROUP);
+        p_print_callback->use_page_range_list = (0 != ui_dlg_get_radio(p_dialog_msg_process_end->h_dialog, CONTROL_ID_AR_GROUP));
 
-        if(p_print_callback->all_or_range)
-        {
-            /* range selected: assume punter wants one vertical strip */
-            print_range_y0_data.state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, CONTROL_ID_RANGE_Y0);
-            print_range_y1_data.state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, CONTROL_ID_RANGE_Y1);
+        if(p_print_callback->use_page_range_list)
+        {   /* range selected: assume punter wants one vertical strip */
+            print_page_range_y0_data.state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, CONTROL_ID_PAGE_RANGE_Y0);
+            print_page_range_y1_data.state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, CONTROL_ID_PAGE_RANGE_Y1);
         }
     }
 
@@ -768,16 +826,35 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_print_intro)
     return(status);
 }
 
+extern void
+print_page_range_edit_validation_setup(void)
+{
+    BIT_NUMBER bit_number;
+
+    bitmap_clear(print_page_range_edit_validation, N_BITS_ARG(256));
+
+    for(bit_number = CH_DIGIT_ZERO; bit_number <= CH_DIGIT_NINE; bit_number++)
+        bitmap_bit_set(print_page_range_edit_validation, bit_number, N_BITS_ARG(256));
+
+    bitmap_bit_set(print_page_range_edit_validation, get_ss_recog_context_alt(list_sep_char), N_BITS_ARG(256));
+    bitmap_bit_set(print_page_range_edit_validation, CH_SPACE, N_BITS_ARG(256));
+    bitmap_bit_set(print_page_range_edit_validation, CH_HYPHEN_MINUS, N_BITS_ARG(256));
+    bitmap_bit_set(print_page_range_edit_validation, CH_FULL_STOP, N_BITS_ARG(256)); /* <<< NB this is not a decimal point */
+    bitmap_bit_set(print_page_range_edit_validation, '\n', N_BITS_ARG(256));
+    bitmap_bit_set(print_page_range_edit_validation, 'B', N_BITS_ARG(256));
+    bitmap_bit_set(print_page_range_edit_validation, 'b', N_BITS_ARG(256));
+}
+
 _Check_return_
-static STATUS
-pagelist_fill_from(
-    P_ARRAY_HANDLE p_h_page_list,
+extern STATUS
+print_page_list_fill_from_tstr(
+    _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
     _In_z_      PCTSTR tstr)
 {
     STATUS status = STATUS_OK;
-    SS_RECOG_CONTEXT ss_recog_context;
 
-    ss_recog_context_push(&ss_recog_context);
+    if( PTR_IS_NULL_OR_NONE(tstr) || (CH_NULL == *tstr) )
+        tstr = TEXT("1"); /* just first page if empty list */
 
     for(;;)
     {
@@ -788,11 +865,10 @@ pagelist_fill_from(
 
         /* skip spaces, commas and newlines */
 
-        while(((ch = *tstr++) == CH_SPACE) || (ch == g_ss_recog_context.list_sep_char) || (ch == LF))
-        { /*EMPTY*/ }
-        --tstr;
+        while( ((ch = *tstr) == CH_SPACE) || (ch == get_ss_recog_context_alt(list_sep_char)) || (ch == LF) )
+            ++tstr;
 
-        if(!ch)
+        if(CH_NULL == ch)
             break;
 
         if((used = get_pagenum(tstr, &page_num_1)) > 0)
@@ -800,21 +876,19 @@ pagelist_fill_from(
             tstr += used;
 
             /* skip over any unrecognized debris */
-            while(((ch = *tstr++) != CH_SPACE) && (ch != g_ss_recog_context.list_sep_char) && (ch != CH_HYPHEN_MINUS) && (ch != LF) && ch)
-            { /*EMPTY*/ }
-            --tstr;
+            while( ((ch = *tstr) != CH_SPACE) && (ch != get_ss_recog_context_alt(list_sep_char)) && (ch != CH_HYPHEN_MINUS) && (ch != LF) && ch )
+                ++tstr;
 
             /* skip_spaces */
-            while(((ch = *tstr++) == CH_SPACE))
-            { /*EMPTY*/ }
-            --tstr;
+            while(((ch = *tstr) == CH_SPACE))
+                ++tstr;
 
             if(ch != CH_HYPHEN_MINUS)
             {
-                if((page_num_1.x > 0) && (page_num_1.y > 0))
-                    status = pagelist_add_page(p_h_page_list, page_num_1.x, page_num_1.y);
+                if( (page_num_1.x > 0) && (page_num_1.y > 0) )
+                    status = print_page_list_add_page(p_h_page_list, page_num_1.x, page_num_1.y);
                 else
-                    status = pagelist_add_blank(p_h_page_list);
+                    status = print_page_list_add_blank(p_h_page_list);
             }
             else
             {
@@ -825,13 +899,12 @@ pagelist_fill_from(
                 {
                     tstr += used;
 
-                    if((page_num_1.x > 0) && (page_num_1.y > 0) && (page_num_2.x > 0) && (page_num_2.y > 0))
-                        status = pagelist_add_range(p_h_page_list, page_num_1.x, page_num_1.y, page_num_2.x, page_num_2.y);
+                    if( (page_num_1.x > 0) && (page_num_1.y > 0) && (page_num_2.x > 0) && (page_num_2.y > 0) )
+                        status = print_page_list_add_range(p_h_page_list, page_num_1.x, page_num_1.y, page_num_2.x, page_num_2.y);
 
                     /* skip over any unrecognized debris */
-                    while(((ch = *tstr++) != CH_SPACE) && (ch != g_ss_recog_context.list_sep_char) && (ch != LF) && ch)
-                    { /*EMPTY*/ }
-                    --tstr;
+                    while( ((ch = *tstr) != CH_SPACE) && (ch != get_ss_recog_context_alt(list_sep_char)) && (ch != LF) && ch )
+                        ++tstr;
                 }
             }
         }
@@ -843,12 +916,10 @@ pagelist_fill_from(
         }
     }
 
-    ss_recog_context_pull(&ss_recog_context);
-
     return(status);
 }
 
-extern U32 /* used */
+static U32 /* used */
 get_pagenum(
     _In_z_      PCTSTR tstr_in,
     _OutRef_    P_PAGE_NUM p_page_num)
@@ -861,7 +932,7 @@ get_pagenum(
     p_page_num->x = -1; /* blank */
     p_page_num->y = -1;
 
-    if((*tstr == 'B') || (*tstr == 'b'))
+    if( (*tstr == 'B') || (*tstr == 'b') )
     {
         ++tstr;
         /*p_page_num->x = -1;*/
@@ -900,8 +971,8 @@ get_pagenum(
 SC_ARRAY_INIT_BLOCK page_entry_array_init_block = aib_init(1, sizeof32(PAGE_ENTRY), TRUE);
 
 _Check_return_
-extern STATUS
-pagelist_add_blank(
+static STATUS
+print_page_list_add_blank(
     _InoutRef_  P_ARRAY_HANDLE p_h_page_list)
 {
     PAGE_ENTRY page_entry;
@@ -913,8 +984,8 @@ pagelist_add_blank(
 }
 
 _Check_return_
-extern STATUS
-pagelist_add_page(
+static STATUS
+print_page_list_add_page(
     _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
     _InVal_     S32 x,
     _InVal_     S32 y)
@@ -929,7 +1000,7 @@ pagelist_add_page(
 
 _Check_return_
 extern STATUS
-pagelist_add_range(
+print_page_list_add_range(
     _InoutRef_  P_ARRAY_HANDLE p_h_page_list,
     _InVal_     S32 x0,
     _InVal_     S32 y0,
@@ -945,7 +1016,7 @@ pagelist_add_range(
 
         for(x = x0; x <= x1; ++x)
         {
-            status_break(status = pagelist_add_page(p_h_page_list, x, y));
+            status_break(status = print_page_list_add_page(p_h_page_list, x, y));
         }
 
         status_break(status);
@@ -1019,7 +1090,7 @@ warning_message1 =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-warning_message1_data = { UI_TEXT_INIT_RESID(MSG_PRINT_WARNING_MSG1), { 0, 0 /*centre_text*/ } };
+warning_message1_data = { UI_TEXT_INIT_RESID(MSG_PRINT_WARNING_MSG1) };
 
 static const DIALOG_CONTROL
 warning_message2 =
@@ -1031,7 +1102,7 @@ warning_message2 =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-warning_message2_data = { UI_TEXT_INIT_RESID(MSG_PRINT_WARNING_MSG2), { 0, 0 /*centre_text*/ } };
+warning_message2_data = { UI_TEXT_INIT_RESID(MSG_PRINT_WARNING_MSG2) };
 
 static const DIALOG_CONTROL
 warning_ok =
@@ -1043,18 +1114,18 @@ warning_ok =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-warning_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_PRINT_WARNING_OK) };
+warning_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_PRINT) };
 
 static const DIALOG_CTL_CREATE
 warning_dialog_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &warning_message1, &warning_message1_data },
-    { &warning_message2, &warning_message2_data },
+    { { &warning_message1 }, &warning_message1_data },
+    { { &warning_message2 }, &warning_message2_data },
 
-    { &warning_ok, &warning_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &warning_ok }, &warning_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -1093,11 +1164,10 @@ margin_warning(
 
     { /* put up a dialog box, warning that the margins may crop the text */
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, warning_dialog_create, elemof32(warning_dialog_create), 0);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_PRINT_WARNING_TITLE;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, warning_dialog_create, elemof32(warning_dialog_create), MSG_PRINT_WARNING_TITLE);
+  /*dialog_cmd_process_dbox.help_topic_resource_id = 0;*/
     dialog_cmd_process_dbox.bits.note_position = 1;
-    /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
     if((status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox)) == STATUS_OK)
         p_docu->flags.print_margin_warning_issued = 1;
     } /*block*/
@@ -1115,7 +1185,7 @@ print_percentage_initialise(
     if(page_count <= 0)         /* page_count should be >0, but lets be paranoid about division by 0 */
         page_count = 1;
 
-    zero_struct_ptr(p_printer_percentage);
+    zero_struct_ptr_fn(p_printer_percentage);
     p_printer_percentage->process_status.flags.foreground = 1;
 
     p_printer_percentage->final_page_count   = page_count;
@@ -1296,70 +1366,61 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_print)
 
 T5_CMD_PROTO(extern, t5_cmd_print_intro)
 {
-    BOOL extra = (T5_CMD_PRINT_EXTRA_INTRO == t5_message);
+    bool extra = (T5_CMD_PRINT_EXTRA_INTRO == t5_message);
     STATUS status = STATUS_OK;
     S32 last_page_y_read = last_page_y_non_blank(p_docu);
-    BIT_NUMBER bit_number;
     PRINT_CALLBACK print_callback;
     S32 completion_code;
 
     UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     print_callback.extra = extra;
+    print_callback.max_page_y = last_page_y_read;
+    print_callback.use_page_range_list = false; /* will set full ranges below */
 
     /* encode initial state of control(s) */
 
     print_copies_data.state   = 1;
-    print_callback.all_or_range = 0; /* will set full ranges below */
     print_reverse_data.init_state  = 0;
     print_collate_data.init_state  = 0;
     print_two_up_data.init_state   = 0;
 
-    print_range_y0_data.state = 1;
-    print_range_y1_data.state = last_page_y_read;
-    print_range_y0_data_control.max_val = last_page_y_read;
-    print_range_y1_data_control.max_val = last_page_y_read;
+    print_page_range_y0_data.state = 1;
+    print_page_range_y1_data.state = last_page_y_read;
+    print_page_range_y0_data_control.max_val = last_page_y_read;
+    print_page_range_y1_data_control.max_val = last_page_y_read;
 
-    bitmap_clear(print_range_edit_validation, N_BITS_ARG(256));
-
-    for(bit_number = CH_DIGIT_ZERO; bit_number <= CH_DIGIT_NINE; bit_number++)
-        bitmap_bit_set(print_range_edit_validation, bit_number, N_BITS_ARG(256));
-
-    {
-    SS_RECOG_CONTEXT ss_recog_context;
-    ss_recog_context_push(&ss_recog_context);
-    bitmap_bit_set(print_range_edit_validation, g_ss_recog_context.list_sep_char, N_BITS_ARG(256));
-    ss_recog_context_pull(&ss_recog_context);
-    } /*block*/
-    bitmap_bit_set(print_range_edit_validation, CH_SPACE, N_BITS_ARG(256));
-    bitmap_bit_set(print_range_edit_validation, CH_HYPHEN_MINUS, N_BITS_ARG(256));
-    bitmap_bit_set(print_range_edit_validation, CH_FULL_STOP, N_BITS_ARG(256)); /* <<< not a decimal point */
-    bitmap_bit_set(print_range_edit_validation, '\n', N_BITS_ARG(256));
-    bitmap_bit_set(print_range_edit_validation, 'B', N_BITS_ARG(256));
-    bitmap_bit_set(print_range_edit_validation, 'b', N_BITS_ARG(256));
+    print_page_range_edit_validation_setup();
 
     /* loop back to here on EXTRA */
     for(;;)
     {
-        print_callback.max_page_y = last_page_y_read;
-
         /* in order to mailshot, we must have a mailshot object loaded and something selected */
-        s_print_dialog_create[elemof32(s_print_dialog_create) - 4 /*eek*/].p_dialog_control.p_dialog_control
-            = object_available(OBJECT_ID_MAILSHOT) ? &print_mails : NULL;
+        s_print_dialog_create[elemof32(s_print_dialog_create) - 4 /*eek*/].p_dialog_control.p_dialog_control =
+            object_available(OBJECT_ID_MAILSHOT)
+                ? &print_mails
+                : NULL;
 
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
         if(print_callback.extra)
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, e_print_dialog_create, elemof32(e_print_dialog_create), MSG_DIALOG_PRINT_EXTRA_HELP_TOPIC);
+            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, e_print_dialog_create, elemof32(e_print_dialog_create), MSG_DIALOG_PRINT);
         else
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, s_print_dialog_create, elemof32(s_print_dialog_create), MSG_DIALOG_PRINT_BASIC_HELP_TOPIC);
+            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, s_print_dialog_create, elemof32(s_print_dialog_create), MSG_DIALOG_PRINT);
         if(p_docu->flags.draft_mode)
         {
-            /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
             dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_PRINT_DRAFT;
         }
         else
+        {
+#if !RISCOS
+            host_printer_name_query(&print_printer_name_data.caption);
+#else
+            /* RISC OS Style Guide tells us to put the printer name in the dialogue box title */
             host_printer_name_query(&dialog_cmd_process_dbox.caption);
+#endif
+        }
+        dialog_cmd_process_dbox.help_topic_resource_id = print_callback.extra ? MSG_DIALOG_PRINT_EXTRA_HELP_TOPIC : MSG_DIALOG_PRINT_BASIC_HELP_TOPIC;
         dialog_cmd_process_dbox.bits.note_position = !print_callback.extra;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_print_intro;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &print_callback;
@@ -1372,7 +1433,8 @@ T5_CMD_PROTO(extern, t5_cmd_print_intro)
         if(completion_code != CONTROL_ID_EXTRA)
             break;
 
-        print_callback.extra = TRUE;
+        print_callback.extra = true;
+        print_callback.max_page_y = last_page_y_read;
     } /*loop*/
 
     status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
@@ -1412,17 +1474,17 @@ T5_CMD_PROTO(extern, t5_cmd_print)
         if(arg_is_present(p_args, ARG_PRINT_COPIES))
             print_ctrl.copies = p_args[ARG_PRINT_COPIES].val.s32;
 
-        if(arg_is_present(p_args, ARG_PRINT_RANGE) && p_args[ARG_PRINT_RANGE].val.s32)           /* 0=all/1=range */
+        if( arg_is_present(p_args, ARG_PRINT_PAGE_RANGE) && p_args[ARG_PRINT_PAGE_RANGE].val.fBool ) /* 0=all/1=range */
         {
             /* page range specified */
-            if(arg_is_present(p_args, ARG_PRINT_RANGE_LIST))
-                tstr_fill = p_args[ARG_PRINT_RANGE_LIST].val.tstr;
+            if(arg_is_present(p_args, ARG_PRINT_PAGE_RANGE_LIST))
+                tstr_fill = p_args[ARG_PRINT_PAGE_RANGE_LIST].val.tstr;
 
-            if(arg_is_present(p_args, ARG_PRINT_RANGE_Y0))
-                y0 = p_args[ARG_PRINT_RANGE_Y0].val.s32;
+            if(arg_is_present(p_args, ARG_PRINT_PAGE_RANGE_Y0))
+                y0 = p_args[ARG_PRINT_PAGE_RANGE_Y0].val.s32;
 
-            if(arg_is_present(p_args, ARG_PRINT_RANGE_Y1))
-                y1 = p_args[ARG_PRINT_RANGE_Y1].val.s32;
+            if(arg_is_present(p_args, ARG_PRINT_PAGE_RANGE_Y1))
+                y1 = p_args[ARG_PRINT_PAGE_RANGE_Y1].val.s32;
         }
 
         if(arg_is_present(p_args, ARG_PRINT_SIDES))
@@ -1438,15 +1500,15 @@ T5_CMD_PROTO(extern, t5_cmd_print)
             print_ctrl.flags.two_up = p_args[ARG_PRINT_TWO_UP].val.fBool;
     }
 
-    assert(y0>0);
-    assert(y1>0);
-    assert(x0>0);
-    assert(x1>0);
-
-    if(PTSTR_NONE != tstr_fill)
-        status = pagelist_fill_from(&print_ctrl.h_page_list, tstr_fill);
+    if(PTR_NOT_NULL_OR_NONE(tstr_fill))
+    {
+        status = print_page_list_fill_from_tstr(&print_ctrl.h_page_list, tstr_fill);
+    }
     else
-        status = pagelist_add_range(&print_ctrl.h_page_list, x0, y0, x1, y1);
+    {
+        assert(x0 >= 1); assert(x1 >= 1); assert(y0 >= 1); assert(y1 >= 0);
+        status = print_page_list_add_range(&print_ctrl.h_page_list, x0, y0, x1, y1);
+    }
   /*else                    */
   /*    list already filled */
 
@@ -1470,7 +1532,7 @@ T5_CMD_PROTO(extern, t5_cmd_print)
             padding_mask = 3;
 
         while(array_elements(&print_ctrl.h_page_list) & padding_mask)
-            status_break(status = pagelist_add_blank(&print_ctrl.h_page_list));
+            status_break(status = print_page_list_add_blank(&print_ctrl.h_page_list));
     }
 
     if(status_ok(status))

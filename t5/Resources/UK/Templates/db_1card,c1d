@@ -1,0 +1,23 @@
+{Version:2.10.02;07 Jul 2016;Recordz;Colton Software;0000 0000 0000 0000;Alphabet-Latin1}
+{RowTable:1}
+{Flow:39}
+{Block:0;0;;32;1;1;;32;1;1}
+{Style:BaseCard;{ColWidth:5725}{ColName:x#}{RowHeight:3159}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:32}{ParaEnd:16}{LineSpace:0;72}{Justify:0}{JustifyV:0}{NewObject:2}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yyyy hh:mm:ss\\\;dd.mm.yyyy\\\;hh:mm:ss}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseCard}
+{Style:General;{StyleSearch:3}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}}
+{Style:Currency;{StyleSearch:4}{Numform:£#,##0.00\\\;£-#,##0.00[negative]}}
+{Style:Percent;{StyleSearch:5}{Numform:0.##%\\\;-0.##%[negative]}}
+{Style:Date;{StyleSearch:1}{NumformDT:dd.mm.yyyy}}
+{Style:Date_a;{StyleSearch:2}{NumformDT:dd/mm/yyyy}}
+{Style:Time;{StyleSearch:6}{NumformDT:hh:mm}}
+{Style:Time_s;{StyleSearch:7}{NumformDT:hh:mm:ss}}
+{Style:Negative;{Foreground:221;0;0}}
+{Paper:A4;0;16840;11900;736;736;392;392;0;0;0;0;32;;1}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{Layout-b:Card;1;1;1}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseCard}}
+{EndOfData}
+{RulerScale:0;5;2;1}
+{CmdGroup:{ViewCreate:0;0;0;0}{ViewControl:100;2;0;0;0;0;0;2048;0;2048}{CurrentPosition:1;0;;;0}}

@@ -43,7 +43,7 @@ calc_gamma_pdf(
 
 static void
 gamma_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p,
     _InVal_     F64 shape,
     _InVal_     F64 scale);
@@ -74,12 +74,12 @@ calc_norm_std_pdf(
 
 static void
 norm_std_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p);
 
 static void
 t_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p,
     _InVal_     F64 k);
 
@@ -220,7 +220,7 @@ calc_beta_pdf(
 
 static void
 beta_dist_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 x,
     _InVal_     F64 alpha, /* alpha and beta are shape parameters */
     _InVal_     F64 beta,
@@ -266,7 +266,7 @@ PROC_EXEC_PROTO(c_beta_dist)
 
     exec_func_ignore_parms();
 
-    beta_dist_calc(p_ss_data_res, x, alpha, beta, cumulative, a, b); /* may return fp or error */
+    beta_dist_calc(p_ss_data_res, x, alpha, beta, cumulative, a, b); /* may return real or error */
 }
 
 PROC_EXEC_PROTO(c_odf_betadist)
@@ -280,7 +280,7 @@ PROC_EXEC_PROTO(c_odf_betadist)
 
     exec_func_ignore_parms();
 
-    beta_dist_calc(p_ss_data_res, x, alpha, beta, cumulative, a, b); /* may return fp or error */
+    beta_dist_calc(p_ss_data_res, x, alpha, beta, cumulative, a, b); /* may return real or error */
 }
 
 /******************************************************************************
@@ -293,7 +293,7 @@ PROC_EXEC_PROTO(c_odf_betadist)
 
 static void
 beta_std_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p,
     _InVal_     F64 alpha,
     _InVal_     F64 beta)
@@ -343,14 +343,14 @@ beta_std_inv_calc(
     }
     else if(alpha == 1.0)
     {   /* these are all well over to the left of [0,1] for beta > 1 */
-        F64 median = 1.0 - pow(2.0, -1.0/beta);
+        F64 median = 1.0 - exp2(-1.0/beta);
         x = median;
         if(p < 0.5)
             x /= 2.0;
     }
     else if(beta == 1.0)
     {   /* these are all well over to the right of [0,1] for alpha > 1 */
-        F64 median = pow(2.0, -1.0/alpha);
+        F64 median = exp2(-1.0/alpha);
         x = median;
         if(p < 0.5)
             x /= 2.0;
@@ -372,7 +372,7 @@ beta_std_inv_calc(
         x = ((p < 0.5) ? 0.25 : 0.75);
     }
 
-    reportf(TEXT("beta_std_inv_calc(p=%f, alpha=%f, beta=%f): initial_x=%f"), p, alpha, beta, x);
+    //reportf(TEXT("beta_std_inv_calc(p=%f, alpha=%f, beta=%f): initial_x=%f"), p, alpha, beta, x);
     for(iteration_count = 0; iteration_count < 100; ++iteration_count)
     {
         const F64 CDF_x = calc_beta_std_cdf(x, alpha, beta);
@@ -401,20 +401,20 @@ beta_std_inv_calc(
         if(x1 < lower_bracket)
         {   /* constrain using bisection in [lower,x] */
             F64 new_delta_x = (lower_bracket - x) * 0.5; /*-ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else if(x1 > upper_bracket)
         {   /* constrain using bisection in [x,upper] */
             F64 new_delta_x = (upper_bracket - x) * 0.5; /*+ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else
         {
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
         }
 
         x = x1;
@@ -445,7 +445,7 @@ PROC_EXEC_PROTO(c_beta_inv)
     if( (alpha <= 0.0) || (beta <= 0.0) || (a >= b) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    beta_std_inv_calc(p_ss_data_res, p, alpha, beta); /* may return fp or error */
+    beta_std_inv_calc(p_ss_data_res, p, alpha, beta); /* may return real or error */
 
     if(!ss_data_is_error(p_ss_data_res) && ((a != 0.0) || (b != 1.0)))
     {   /* scale and shift standardized result from [0..1] into [a..b] */
@@ -511,7 +511,7 @@ calc_chisq_pdf(
     const F64 numerator_power_term = pow(x, half_k - 1.0);
     const F64 numerator_exp_term = exp(-half_x);
     const F64 denominator_gamma_term = tgamma(half_k);
-    const F64 denominator_power_term = pow(2.0, half_k);
+    const F64 denominator_power_term = exp2(half_k);
     const F64 pdf = (numerator_power_term * numerator_exp_term) / (denominator_gamma_term * denominator_power_term);
 
     return(pdf);
@@ -588,7 +588,7 @@ PROC_EXEC_PROTO(c_chisq_inv)
     if( (shape <= 0.0) || (scale <= 0.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    gamma_inv_calc(p_ss_data_res, p, shape, scale); /* may return fp or error */
+    gamma_inv_calc(p_ss_data_res, p, shape, scale); /* may return real or error */
 }
 
 /******************************************************************************
@@ -612,7 +612,7 @@ PROC_EXEC_PROTO(c_chisq_inv_rt)
     if( (shape <= 0.0) || (scale <= 0.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    gamma_inv_calc(p_ss_data_res, 1.0 - p, shape, scale); /* may return fp or error */
+    gamma_inv_calc(p_ss_data_res, 1.0 - p, shape, scale); /* may return real or error */
 }
 
 /******************************************************************************
@@ -638,7 +638,7 @@ chisq_test_calc(
     array_range_sizes(array_a, &x_size[0], &y_size[0]);
     array_range_sizes(array_e, &x_size[1], &y_size[1]);
 
-    if((x_size[0] != x_size[1]) || (y_size[0] != y_size[1]))
+    if( (x_size[0] != x_size[1]) || (y_size[0] != y_size[1]) )
     {
         ss_data_set_error(p_ss_data_out, EVAL_ERR_ODF_NA);
         return;
@@ -695,10 +695,10 @@ PROC_EXEC_PROTO(c_confidence_norm)
 
     exec_func_ignore_parms();
 
-    if( (sigma <= 0.0) || (size <= 0.0) )
+    if( (sigma <= 0.0) || (size < 1.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    norm_std_inv_calc(p_ss_data_res, 1.0 - (alpha * 0.5)); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, 1.0 - (alpha * 0.5)); /* may return real or error */
 
     if(!ss_data_is_error(p_ss_data_res))
     {
@@ -727,7 +727,7 @@ PROC_EXEC_PROTO(c_confidence_t)
     if( (sigma <= 0.0) || (size <= 1.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    t_inv_calc(p_ss_data_res, 1.0 - (alpha * 0.5), size - 1.0); /* may return fp or error */
+    t_inv_calc(p_ss_data_res, 1.0 - (alpha * 0.5), size - 1.0); /* may return real or error */
 
     if(!ss_data_is_error(p_ss_data_res))
     {
@@ -915,7 +915,7 @@ PROC_EXEC_PROTO(c_F_dist_rt)
 
 static void
 F_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p,
     _InVal_     F64 d1,
     _InVal_     F64 d2)
@@ -954,7 +954,7 @@ F_inv_calc(
         x = 1.0;
     }
 
-    reportf(TEXT("F_inv_calc(p=%f, d1=%f, d2=%f): initial_x=%f"), p, d1, d2, x);
+    //reportf(TEXT("F_inv_calc(p=%f, d1=%f, d2=%f): initial_x=%f"), p, d1, d2, x);
     for(iteration_count = 0; iteration_count < 100; ++iteration_count)
     {
         const F64 CDF_x = calc_F_cdf(x, d1, d2);
@@ -983,20 +983,20 @@ F_inv_calc(
         if(x1 < lower_bracket)
         {   /* constrain using bisection in [lower,x] */
             F64 new_delta_x = (lower_bracket - x) * 0.5; /*-ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else if(x1 > upper_bracket)
         {   /* constrain using bisection in [x,upper] */
             F64 new_delta_x = (upper_bracket - x) * 0.5; /*+ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else
         {
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
         }
 
         x = x1;
@@ -1025,7 +1025,7 @@ PROC_EXEC_PROTO(c_F_inv)
     if( (d1 <= 0.0) || (d2 <= 0.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    F_inv_calc(p_ss_data_res, p, d1, d2); /* may return fp or error */
+    F_inv_calc(p_ss_data_res, p, d1, d2); /* may return real or error */
 }
 
 /******************************************************************************
@@ -1048,7 +1048,7 @@ PROC_EXEC_PROTO(c_F_inv_rt)
     if( (d1 <= 0.0) || (d2 <= 0.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    F_inv_calc(p_ss_data_res, 1.0 - p, d1, d2); /* may return fp or error */
+    F_inv_calc(p_ss_data_res, 1.0 - p, d1, d2); /* may return real or error */
 }
 
 /******************************************************************************
@@ -1061,7 +1061,7 @@ PROC_EXEC_PROTO(c_F_inv_rt)
 
 static void
 statistics_array_variance(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InRef_     PC_SS_DATA array_data,
     _OutRef_    P_F64 p_mean,
     _OutRef_    P_S32 p_n)
@@ -1149,7 +1149,7 @@ statistics_array_variance(
 
 static void
 F_test_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InRef_     PC_SS_DATA array_1,
     _InRef_     PC_SS_DATA array_2)
 {
@@ -1159,7 +1159,7 @@ F_test_calc(
     S32 d1, d2;
     F64 x;
 
-    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
+    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return real or error */
 
     if(ss_data_is_error(&variance_1))
     {
@@ -1167,7 +1167,7 @@ F_test_calc(
         return;
     }
 
-    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
+    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return real or error */
 
     if(ss_data_is_error(&variance_2))
     {
@@ -1198,7 +1198,7 @@ PROC_EXEC_PROTO(c_F_test)
 
     exec_func_ignore_parms();
 
-    F_test_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
+    F_test_calc(p_ss_data_res, array_1, array_2); /* may return real or error */
 }
 
 /******************************************************************************
@@ -1314,7 +1314,7 @@ gamma_inv_guess_initial_x(
 
 static void
 gamma_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p,
     _InVal_     F64 shape,
     _InVal_     F64 scale)
@@ -1335,7 +1335,7 @@ gamma_inv_calc(
         return;
     }
 
-    reportf(TEXT("gamma_inv_calc(p=%f, shape=%f, scale=%f): initial_x=%f"), p, shape, scale, x);
+    //reportf(TEXT("gamma_inv_calc(p=%f, shape=%f, scale=%f): initial_x=%f"), p, shape, scale, x);
     for(iteration_count = 0; iteration_count < 100; ++iteration_count)
     {
         const F64 CDF_x = calc_gamma_cdf(x, shape, scale);
@@ -1364,20 +1364,20 @@ gamma_inv_calc(
         if(x1 < lower_bracket)
         {   /* constrain using bisection in [lower,x] */
             F64 new_delta_x = (lower_bracket - x) * 0.5; /*-ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else if(x1 > upper_bracket)
         {   /* constrain using bisection in [x,upper] */
             F64 new_delta_x = (upper_bracket - x) * 0.5; /*+ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else
         {
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
         }
 
         x = x1;
@@ -1406,20 +1406,20 @@ PROC_EXEC_PROTO(c_gamma_inv)
     if( (shape <= 0.0) || (scale <= 0.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    gamma_inv_calc(p_ss_data_res, p, shape, scale); /* may return fp or error */
+    gamma_inv_calc(p_ss_data_res, p, shape, scale); /* may return real or error */
 }
 
 /******************************************************************************
 *
-* NUMBER lognorm.dist(x:number, mean:number, sigma:number {, cumulative:Logical=TRUE})
+* NUMBER lognorm.dist(x:number {, mean:number {, sigma:number {, cumulative:Logical=TRUE}}})
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_lognorm_dist)
 {
     const F64 x = ss_data_get_real(args[0]);
-    const F64 mean = ss_data_get_real(args[1]);
-    const F64 sigma = ss_data_get_real(args[2]);
+    const F64 mean = (n_args > 1) ? ss_data_get_real(args[1]) : 0.0;
+    const F64 sigma = (n_args > 2) ? ss_data_get_real(args[2]) : 1.0;
     const bool cumulative = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
     F64 ln_x;
     F64 z;
@@ -1427,11 +1427,11 @@ PROC_EXEC_PROTO(c_lognorm_dist)
 
     exec_func_ignore_parms();
 
+    if( (x <= 0.0) || (sigma <= 0.0) )
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
+
     if(f64_is_divisor_too_small(sigma))
         exec_func_status_return(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
-
-    if(x <= 0.0)
-        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     errno = 0;
 
@@ -1468,11 +1468,11 @@ PROC_EXEC_PROTO(c_lognorm_inv)
     if( (p < 0.0) || (p > 1.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    norm_std_inv_calc(p_ss_data_res, p); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, p); /* may return real or error */
 
     /* scale and shift standardized result */
     if( !two_nums_multiply_propagate_error(p_ss_data_res, p_ss_data_res, args[2] /*sigma*/) ||
-        !two_nums_add_propagate_error(     p_ss_data_res, p_ss_data_res, args[1] /*mean*/) )
+        !two_nums_add_propagate_error(     p_ss_data_res, p_ss_data_res, args[1] /*mean*/ ) )
     {
         ss_data_set_error(p_ss_data_res, EVAL_ERR_CALC_FAILURE);
     }
@@ -1578,7 +1578,7 @@ norm_std_inv_guess_initial_x(
 
 static void
 norm_std_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p)
 {
     F64 x = norm_std_inv_guess_initial_x(p);
@@ -1586,7 +1586,7 @@ norm_std_inv_calc(
 
     /* there is guaranteed to be a unique solution for p in [0,1] */
 
-    reportf(TEXT("norm_std_inv_calc(p=%f): initial_x=%+f"), p, x);
+    //reportf(TEXT("norm_std_inv_calc(p=%f): initial_x=%+f"), p, x);
     for(iteration_count = 0; iteration_count < 100; ++iteration_count)
     {
         const F64 PHI_x = calc_norm_std_cdf(x);
@@ -1598,7 +1598,7 @@ norm_std_inv_calc(
             break;
 
         delta_x = - (F_x / d_F_x);
-        reportf(TEXT("%u: Fz=CDF(x=%+f)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
+        //reportf(TEXT("%u: Fz=CDF(x=%+f)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
 
         x += delta_x;
 
@@ -1621,7 +1621,7 @@ PROC_EXEC_PROTO(c_norm_s_inv)
     if( (p < 0.0) || (p > 1.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    norm_std_inv_calc(p_ss_data_res, p); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, p); /* may return real or error */
 }
 
 /******************************************************************************
@@ -1667,6 +1667,9 @@ PROC_EXEC_PROTO(c_norm_dist)
 
     exec_func_ignore_parms();
 
+    if(sigma <= 0.0)
+        exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
+
     if(f64_is_divisor_too_small(sigma))
         exec_func_status_return(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
 
@@ -1692,17 +1695,17 @@ PROC_EXEC_PROTO(c_norm_inv)
 
     exec_func_ignore_parms();
 
-    if( (p < 0.0) || (p > 1.0) )
+    if( (p < 0.0) || (p > 1.0) || (sigma <= 0.0) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
     if(f64_is_divisor_too_small(sigma))
         exec_func_status_return(p_ss_data_res, EVAL_ERR_DIVIDEBY0);
 
-    norm_std_inv_calc(p_ss_data_res, p); /* may return fp or error */
+    norm_std_inv_calc(p_ss_data_res, p); /* may return real or error */
 
     /* scale and shift standardized result */
     if( !two_nums_multiply_propagate_error(p_ss_data_res, p_ss_data_res, args[2] /*sigma*/) ||
-        !two_nums_add_propagate_error(     p_ss_data_res, p_ss_data_res, args[1] /*mean*/) )
+        !two_nums_add_propagate_error(     p_ss_data_res, p_ss_data_res, args[1] /*mean*/ ) )
     {
         exec_func_status_return(p_ss_data_res, EVAL_ERR_CALC_FAILURE);
     }
@@ -1868,7 +1871,7 @@ PROC_EXEC_PROTO(c_odf_tdist)
 
 static void
 t_inv_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     F64 p,
     _InVal_     F64 k)
 {
@@ -1885,7 +1888,7 @@ t_inv_calc(
     /* Student's t approaches normal as d.f. -> +inf so that guess probably isn't far off */
     x = norm_std_inv_guess_initial_x(p);
 
-    reportf(TEXT("t_inv_calc(p=%f, d.f.=%f): initial_x=%f"), p, k, x);
+    //reportf(TEXT("t_inv_calc(p=%f, d.f.=%f): initial_x=%f"), p, k, x);
     for(iteration_count = 0; iteration_count < 100; ++iteration_count)
     {
         const F64 CDF_x = calc_t_cdf(x, k);
@@ -1914,20 +1917,20 @@ t_inv_calc(
         if(x1 < lower_bracket)
         {   /* constrain using bisection in [lower,x] */
             F64 new_delta_x = (lower_bracket - x) * 0.5; /*-ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [l=%f,x]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, lower_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else if(x1 > upper_bracket)
         {   /* constrain using bisection in [x,upper] */
             F64 new_delta_x = (upper_bracket - x) * 0.5; /*+ve*/
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f (bisect [x,u=%f]), new_dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x, upper_bracket, new_delta_x);
             delta_x = new_delta_x;
             x1 = x + delta_x;
         }
         else
         {
-            reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
+            //reportf(TEXT("%u: CDF(x=%f;a,b)-p=%+f, CDF'=%f, dx=%+f"), iteration_count, x, F_x, d_F_x, delta_x);
         }
 
         x = x1;
@@ -1955,7 +1958,7 @@ PROC_EXEC_PROTO(c_t_inv)
     if(k <= 0.0)
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
 
-    t_inv_calc(p_ss_data_res, p, k); /* may return fp or error */
+    t_inv_calc(p_ss_data_res, p, k); /* may return real or error */
 }
 
 /******************************************************************************
@@ -1979,7 +1982,7 @@ PROC_EXEC_PROTO(c_t_inv_2t)
 
     { /* NB t_dist_2t_result = 2.0 * (1.0 - calc_t_cdf(fabs(t), nu)); */
     const F64 lookup_p = 1.0 - (0.5 * p);
-    t_inv_calc(p_ss_data_res, lookup_p, k); /* may return fp or error */
+    t_inv_calc(p_ss_data_res, lookup_p, k); /* may return real or error */
     } /*block*/
 }
 
@@ -1993,7 +1996,7 @@ PROC_EXEC_PROTO(c_t_inv_2t)
 
 static void
 t_test_paired_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InRef_     PC_SS_DATA array_1,
     _InRef_     PC_SS_DATA array_2)
 {
@@ -2001,7 +2004,7 @@ t_test_paired_calc(
     F64 mean_1, mean_2;
     S32 n1, n2;
 
-    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
+    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return real or error */
 
     if(ss_data_is_error(&variance_1))
     {
@@ -2009,7 +2012,7 @@ t_test_paired_calc(
         return;
     }
 
-    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
+    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return real or error */
 
     if(ss_data_is_error(&variance_2))
     {
@@ -2085,7 +2088,7 @@ t_test_paired_calc(
 
 static void
 t_test_homoscedastic_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InRef_     PC_SS_DATA array_1,
     _InRef_     PC_SS_DATA array_2)
 {
@@ -2093,7 +2096,7 @@ t_test_homoscedastic_calc(
     F64 mean_1, mean_2;
     S32 n1, n2;
 
-    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
+    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return real or error */
 
     if(ss_data_is_error(&variance_1))
     {
@@ -2101,7 +2104,7 @@ t_test_homoscedastic_calc(
         return;
     }
 
-    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
+    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return real or error */
 
     if(ss_data_is_error(&variance_2))
     {
@@ -2127,7 +2130,7 @@ t_test_homoscedastic_calc(
 
 static void
 t_test_heteroscedastic_calc(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InRef_     PC_SS_DATA array_1,
     _InRef_     PC_SS_DATA array_2)
 {
@@ -2135,7 +2138,7 @@ t_test_heteroscedastic_calc(
     F64 mean_1, mean_2;
     S32 n1, n2;
 
-    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return fp or error */
+    statistics_array_variance(&variance_1, array_1, &mean_1, &n1); /* may return real or error */
 
     if(ss_data_is_error(&variance_1))
     {
@@ -2143,7 +2146,7 @@ t_test_heteroscedastic_calc(
         return;
     }
 
-    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return fp or error */
+    statistics_array_variance(&variance_2, array_2, &mean_2, &n2); /* may return real or error */
 
     if(ss_data_is_error(&variance_2))
     {
@@ -2186,15 +2189,15 @@ PROC_EXEC_PROTO(c_t_test)
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ODF_NUM);
 
     case 1:
-        t_test_paired_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
+        t_test_paired_calc(p_ss_data_res, array_1, array_2); /* may return real or error */
         break;
 
     case 2:
-        t_test_homoscedastic_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
+        t_test_homoscedastic_calc(p_ss_data_res, array_1, array_2); /* may return real or error */
         break;
 
     case 3:
-        t_test_heteroscedastic_calc(p_ss_data_res, array_1, array_2); /* may return fp or error */
+        t_test_heteroscedastic_calc(p_ss_data_res, array_1, array_2); /* may return real or error */
         break;
     }
 

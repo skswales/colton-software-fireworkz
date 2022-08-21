@@ -24,8 +24,8 @@ MinVersion=5.1sp3
 ; Require XP SP3
 ; AppVersion=2.xx.yy
 ; AppVerName=Colton Software Fireworkz 2.xx.yy
-AppVersion=2.24.07
-AppVerName=Colton Software Fireworkz 2.24.07
+AppVersion=2.30.00
+AppVerName=Colton Software Fireworkz 2.30.00
 AppCopyright=Copyright (C) 1992-2020 Colton Software
 AppId=Colton Fireworkz for Windows (32-bit)
 AppName=Colton Software Fireworkz for Windows (32-bit)
@@ -40,7 +40,7 @@ OutputDir=InnoSetup
 OutputBaseFilename={#SetupBaseName + AppVersionFile + "-windows-" + ThisArchitecture}
 PrivilegesRequired=poweruser
 SolidCompression=yes
-SetupIconFile=..\..\..\firewrkz\resource\windows\Neutral\prog.ico
+SetupIconFile=..\..\..\firewrkz\Resources\Windows\Neutral\prog.ico
 AllowNoIcons=yes
 ChangesAssociations=yes
 UserInfoPage=yes
@@ -56,10 +56,9 @@ Source: "CD\RelNotes.htm"; DestDir: "{app}"; Flags: ignoreversion isreadme
 Source: "CD\firewrkz.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "CD\DefaultUser\*"; DestDir: "{app}\DefaultUser\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "CD\Resources\*"; DestDir: "{app}\Resources\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "CD\System\*"; DestDir: "{app}\System\"; Flags: ignoreversion recursesubdirs createallsubdirs
 ;
 ; INI file used by Dial Solutions DLLs
-Source: "CD\Windows\RO.ini"; DestDir: "{win}"; Flags: onlyifdoesntexist
+Source: "CD\Install\Windows\RO.ini"; DestDir: "{win}"; Flags: onlyifdoesntexist
 
 [Icons]
 ;
@@ -71,6 +70,13 @@ Name: "{group}\Fireworkz"; Filename: "{app}\firewrkz.exe"
 ;
 Name: "{commondesktop}\Fireworkz"; Filename: "{app}\firewrkz.exe"; Tasks: desktopicon
 
+[InstallDelete]
+;
+; Remove redundant directory
+;
+Type: filesandordirs; Name: "{app}\System\*"
+Type: dirifempty; Name: "{app}\System"
+
 [Registry]
 ;
 ; Main keys (don't override existing installation's preferences)
@@ -78,32 +84,34 @@ Name: "{commondesktop}\Fireworkz"; Filename: "{app}\firewrkz.exe"; Tasks: deskto
 Root: HKLM; Subkey: "SOFTWARE\Colton Software"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "Directory"; ValueData: "{app}"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ResourcesPath"; ValueData: "{app}\Resources\UK\;{app}\Resources\Neutral\"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "SystemPath"; ValueData: "{app}\System\UK\;{app}\System\Neutral\"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ResourcesPath"; ValueData: ""; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "NetworkPath"; ValueData: ""; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "Usr1"; ValueData: "{userinfoname}"; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "Usr2"; ValueData: "{userinfoorg}"; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "RegistrationNumber"; ValueData: ""; Flags: uninsdeletekey createvalueifdoesntexist
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ButtonStyle"; ValueData: "97"; Flags: uninsdeletekey createvalueifdoesntexist
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "ReportEnable"; ValueData: "0"; Flags: uninsdeletekey createvalueifdoesntexist
 ; StandardTemplates set / DefaultTemplate may be forced to be updated for each user when program is run - change each file's version (ISO date)
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "StandardTemplates"; ValueData: "20160624:Letter.fwt;20160624:Sheet.fwt"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "DefaultTemplate"; ValueData: "20160624:firewrkz.fwt"; Flags: uninsdeletekey
 ;
-Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: none;   ValueName: "DialogStyle"; ValueData: "xx"; Flags: deletevalue
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: none;   ValueName: "ButtonStyle"; ValueData: ""; Flags: deletevalue
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: none;   ValueName: "DialogStyle"; ValueData: ""; Flags: deletevalue
+Root: HKLM; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: string; ValueName: "SystemPath"; ValueData: ""; Flags: deletevalue
 ;
 ; Various keys are now cloned to each HKCU by Fireworkz on first-run (UserPath non present or empty)
-;
-;;; Root: HKCU; Subkey: "SOFTWARE\Colton Software\Fireworkz"; ValueType: none;   ValueName: "DialogStyle"; ValueData: "xx"; Flags: deletevalue
 ;
 ; Our file types
 ;
 Root: HKLM; SubKey: "SOFTWARE\Classes\.fwk"; ValueType: string; ValueName: ; ValueData: "ColtonSoftware.Fireworkz.Document"; Flags: uninsdeletekey
 Root: HKLM; SubKey: "SOFTWARE\Classes\.fwk\ColtonSoftware.Fireworkz.Document\ShellNew"; ValueType: string; ValueName: "Filename"; ValueData: "firewrkz.fwt"; Flags: uninsdeletekey
 ;
-Root: HKLM; SubKey: "SOFTWARE\Classes\.fwt"; ValueType: string; ValueName: ; ValueData: "ColtonSoftware.Fireworkz.Document"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\.fwkh"; ValueType: string; ValueName: ; ValueData: "ColtonSoftware.Fireworkz.DocumentHybridDraw"; Flags: uninsdeletekey
+; Don't offer a ShellNew for this
 ;
-Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document"; ValueType: string; ValueName: ; ValueData: "Colton Fireworkz Document"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\.fwt"; ValueType: string; ValueName: ; ValueData: "ColtonSoftware.Fireworkz.Template"; Flags: uninsdeletekey
+; Don't offer a ShellNew for this
+;
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document"; ValueType: string; ValueName: ; ValueData: "Colton Software Fireworkz Document"; Flags: uninsdeletekey
 Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\DefaultIcon"; ValueType: string; ValueName: ; ValueData: "{app}\firewrkz.exe,1"; Flags: uninsdeletekey
 Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\shell\New\command"; ValueType: string; ValueName: ; ValueData: """{app}\firewrkz.exe"" /n"; Flags: uninsdeletekey
 Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\shell\New\ddeexec"; ValueType: string; ValueName: ; ValueData: "[FileNew(""%1"")]"; Flags: uninsdeletekey
@@ -121,6 +129,20 @@ Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\shell\Pr
 Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\shell\PrintTo\ddeexec"; ValueType: string; ValueName: ; ValueData: "[FilePrintTo(""%1"",""%2"")]"; Flags: uninsdeletekey
 Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\shell\PrintTo\ddeexec\application"; ValueType: string; ValueName: ; ValueData: "Fireworkz"; Flags: uninsdeletekey
 Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Document\shell\PrintTo\ddeexec\topic"; ValueType: string; ValueName: ; ValueData: "System"; Flags: uninsdeletekey
+;
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw"; ValueType: string; ValueName: ; ValueData: "Colton Software Fireworkz Document [Hybrid Draw]"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\DefaultIcon"; ValueType: string; ValueName: ; ValueData: "{app}\firewrkz.exe,1"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\New\command"; ValueType: string; ValueName: ; ValueData: """{app}\firewrkz.exe"" /n"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\New\ddeexec"; ValueType: string; ValueName: ; ValueData: "[FileNew(""%1"")]"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\New\ddeexec\application"; ValueType: string; ValueName: ; ValueData: "Fireworkz"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\New\ddeexec\topic"; ValueType: string; ValueName: ; ValueData: "System"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\Open\command"; ValueType: string; ValueName: ; ValueData: """{app}\firewrkz.exe"" /n"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\Open\ddeexec"; ValueType: string; ValueName: ; ValueData: "[FileOpen(""%1"")]"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\Open\ddeexec\application"; ValueType: string; ValueName: ; ValueData: "Fireworkz"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.DocumentHybridDraw\shell\Open\ddeexec\topic"; ValueType: string; ValueName: ; ValueData: "System"; Flags: uninsdeletekey
+;
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Template"; ValueType: string; ValueName: ; ValueData: "Colton Software Fireworkz Template"; Flags: uninsdeletekey
+Root: HKLM; SubKey: "SOFTWARE\Classes\ColtonSoftware.Fireworkz.Template\DefaultIcon"; ValueType: string; ValueName: ; ValueData: "{app}\firewrkz.exe,1"; Flags: uninsdeletekey
 ;
 ; So users can start application from Explorer's Run dialog by entering just the EXE's filename and no path
 ;

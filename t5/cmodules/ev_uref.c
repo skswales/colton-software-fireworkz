@@ -644,7 +644,7 @@ ev_uref_event_scan_custom_use_table(
     if(un_sort)
         custom_use_deptable.sorted = 0;
 
-    } /*block*/   
+    } /*block*/
 }
 
 /* look through the custom function definition table */

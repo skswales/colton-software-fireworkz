@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>COVARIANCE.P</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 2014-2020 Stuart Swales -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="COVARIANCE.P" />
+        <param name="Keyword" value="Statistical functions, COVARIANCE.P" />
+        <param name="Keyword" value="Statistical functions, population covariance" />
+    </object>
+
+    <h1><a name="covariance_p" id="covariance_p"></a>COVARIANCE.P</h1>
+
+    <p>Returns the population covariance of the values in two data sets.</p>
+    <p>This is the average of the products of the deviations of each pair of data points from their respective means. </p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        COVARIANCE.P(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
+        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+    </p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        COVARIANCE.P =
+        <span class="csg-function-formula-parentheses-1">(</span>
+        <span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span>
+        (<em>x</em><em><sub>i</sub></em> &minus; <em><span style="text-decoration: overline">x</span></em>) &sdot;
+        (<em>y</em><em><sub>i</sub></em> &minus; <em><span style="text-decoration: overline">y</span></em>)
+        <span class="csg-function-formula-parentheses-1">)</span>
+        &divide;
+        <em>n</em>
+    </p>
+    <p>
+        where <em>n</em> is the number of values,
+        <em>x</em><em><sub>i</sub></em> is the <em>i</em>-th value in the <span class="csg-function-parameter">x-data</span> and
+        <em>y</em><em><sub>i</sub></em> is the <em>i</em>-th value in the <span class="csg-function-parameter">y-data</span>,
+    </p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">COVARIANCE.P(A1:A15, B1:B15)</pre>
+    <p>returns the population covariance of the contents of cells in the range <code>A1:A15</code> and <code>B1:B15</code>.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.00.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06c/sg6_COUNTBLANK.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06c/sg6_COVARIANCE_S.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

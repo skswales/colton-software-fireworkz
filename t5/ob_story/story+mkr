@@ -29,14 +29,14 @@ $(PROD_BUILD_DIR).o.Neutral.M16: $(OBJS_16_S)
  $(LD) $(LDflags_AOF) -o $@ $(OBJS_16_S)
 
 # Windows STRINGTABLE
-$(BUILD_DIR).ob_story.$(COUNTRY)-16/rc: $(T5).resource.zz-msg
+$(BUILD_DIR).ob_story.$(COUNTRY)-16/rc: $(T5).Resources.Neutral.zz-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 16 -common
 
 # RISC OS loaded messages
-# $(T5).resource.zz-msg
+# $(T5).Resources.Neutral.zz-msg
 
 # RISC OS bound messages
-$(BUILD_DIR).ob_story.o.$(COUNTRY)-B16: $(T5).resource.zz-msg
+$(BUILD_DIR).ob_story.o.$(COUNTRY)-B16: $(T5).Resources.Neutral.zz-msg
  $(MAKEMESS) -to $(BUILD_DIR).ob_story.o.$(COUNTRY)-B_tmp -from $? -country $(COUNTRY)
  $(MAKEAOF) -to $@ -from $(BUILD_DIR).ob_story.o.$(COUNTRY)-B_tmp -symbol rb_story_msg_weak
 

@@ -317,7 +317,7 @@ host_print_document_download_fonts_list(
 
     for(style_docu_area_idx = 0; style_docu_area_idx < array_elements(p_h_style_list); ++style_docu_area_idx)
     {
-        P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(p_h_style_list, STYLE_DOCU_AREA, style_docu_area_idx);
+        const P_STYLE_DOCU_AREA p_style_docu_area = array_ptr(p_h_style_list, STYLE_DOCU_AREA, style_docu_area_idx);
         STYLE style;
         P_STYLE p_style;
 
@@ -466,11 +466,11 @@ host_print_download_fonts(
         FONT_SPEC font_spec;
         HOST_FONT_SPEC host_font_spec;
 
-        zero_struct(host_font_spec); /*host_font_spec.h_host_name_tstr = 0;*/
+        zero_struct_fn(host_font_spec); /*host_font_spec.h_host_name_tstr = 0;*/
 
         for(i = 0; i < array_elements(&download_fonts_info.h_typefaces); ++i)
         {
-            zero_struct(font_spec);
+            zero_struct_fn(font_spec);
 
             font_spec.h_app_name_tstr = *array_ptr(&download_fonts_info.h_typefaces, ARRAY_HANDLE_TSTR, i);
 
@@ -662,9 +662,9 @@ print_one_document_page(
     SKELEVENT_REDRAW skelevent_redraw;
     const P_REDRAW_CONTEXT p_redraw_context = &skelevent_redraw.redraw_context;
 
-    zero_struct(skelevent_redraw);
+    zero_struct_fn(skelevent_redraw);
 
-    zero_struct(redraw_context_cache);
+    zero_struct_fn(redraw_context_cache);
     p_redraw_context->p_redraw_context_cache = &redraw_context_cache;
 
     skelevent_redraw.flags.show_content = TRUE;
@@ -679,7 +679,6 @@ print_one_document_page(
     p_redraw_context->display_mode = DISPLAY_PRINT_AREA;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     print_host_redraw_context_set_host_xform(&p_redraw_context->host_xform);
 

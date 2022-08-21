@@ -198,7 +198,7 @@ covariance_calc(
 {
     STATUS status = STATUS_OK;
     STATISTICS_PAIRED statistics_paired;
-    zero_struct(statistics_paired);
+    zero_struct_fn(statistics_paired);
 
     if(status_ok(status = statistics_paired_calc(&statistics_paired, array_x, array_y)))
     {
@@ -224,7 +224,6 @@ PROC_EXEC_PROTO(c_covariance_p)
     exec_func_ignore_parms();
 
     status = covariance_calc(p_ss_data_res, array_x, array_y, TRUE);
-
     exec_func_status_return(p_ss_data_res, status);
 }
 
@@ -237,7 +236,6 @@ PROC_EXEC_PROTO(c_covariance_s)
     exec_func_ignore_parms();
 
     status = covariance_calc(p_ss_data_res, array_x, array_y, FALSE);
-
     exec_func_status_return(p_ss_data_res, status);
 }
 
@@ -260,7 +258,7 @@ slope_or_forecast_calc(
 {
     STATUS status = STATUS_OK;
     STATISTICS_PAIRED statistics_paired;
-    zero_struct(statistics_paired);
+    zero_struct_fn(statistics_paired);
 
     if(status_ok(status = statistics_paired_calc(&statistics_paired, known_x, known_y)))
     {
@@ -320,7 +318,7 @@ PROC_EXEC_PROTO(c_slope)
 
     exec_func_ignore_parms();
 
-    slope_or_forecast_calc(p_ss_data_res, known_y, known_x, FALSE);
+    slope_or_forecast_calc(p_ss_data_res, known_y, known_x, NULL);
 }
 
 /******************************************************************************
@@ -345,7 +343,7 @@ PROC_EXEC_PROTO(c_pearson)
     const PC_SS_DATA array_y = args[1];
     STATUS status = STATUS_OK;
     STATISTICS_PAIRED statistics_paired;
-    zero_struct(statistics_paired);
+    zero_struct_fn(statistics_paired);
 
     exec_func_ignore_parms();
 
@@ -483,15 +481,16 @@ PROC_EXEC_PROTO(c_rsq)
 *
 ******************************************************************************/
 
-static void
+_Check_return_
+static STATUS
 steyx_calc(
     _InoutRef_  P_SS_DATA p_ss_data_out,
     _InRef_     PC_SS_DATA known_y,
     _InRef_     PC_SS_DATA known_x)
 {
-    STATUS status = STATUS_OK;
+    STATUS status;
     STATISTICS_PAIRED statistics_paired;
-    zero_struct(statistics_paired);
+    zero_struct_fn(statistics_paired);
 
     if(status_ok(status = statistics_paired_calc(&statistics_paired, known_x, known_y)))
     {
@@ -519,18 +518,19 @@ steyx_calc(
         ss_data_set_real(p_ss_data_out, steyx);
     }
 
-    if(status_fail(status))
-        ss_data_set_error(p_ss_data_out, status);
+    return(status);
 }
 
 PROC_EXEC_PROTO(c_steyx)
 {
     const PC_SS_DATA known_y = args[0];
     const PC_SS_DATA known_x = args[1];
+    STATUS status;
 
     exec_func_ignore_parms();
 
-    steyx_calc(p_ss_data_res, known_y, known_x);
+    status = steyx_calc(p_ss_data_res, known_y, known_x);
+    exec_func_status_return(p_ss_data_res, status);
 }
 
 /* end of ev_fnstp.c */

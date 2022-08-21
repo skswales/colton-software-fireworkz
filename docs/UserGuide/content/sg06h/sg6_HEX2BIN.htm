@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>HEX2BIN</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 2019-2020 Stuart Swales -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="HEX2BIN" />
+        <param name="Keyword" value="Functions, Engineering, HEX2BIN" />
+        <param name="Keyword" value="Base conversion function, hexadecimal to binary" />
+    </object>
+
+    <h1><a name="hex2bin" id="hex2bin"></a>HEX2BIN</h1>
+
+    <p>Converts a hexadecimal number to its corresponding binary representation.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        HEX2BIN(<span class="csg-function-parameter">number</span>
+        {,&nbsp;<span class="csg-function-parameter">places</span>:<span class="csg-function-parameter-type">Number</span>})
+    </p>
+
+    <p><span class="csg-function-parameter">number</span> may be a string of up to ten hexadecimal digits or a number of up to ten digits.</p>
+
+    <p>
+        Two's complement representation is used:
+        the highest (fortieth) bit is the sign bit of the hexadecimal number
+        and the highest (tenth) bit is the sign bit of the binary result.
+    </p>
+
+    <p>
+        If specified, <span class="csg-function-parameter">places</span> must be in the range 1..10.
+        If <span class="csg-function-parameter">places</span> is omitted, the minimum appropriate number of digits is returned.
+    </p>
+
+    <p class="csg-function-subheading">Examples:</p>
+    <pre class="csg-sample-indent">HEX2BIN(&quot;40&quot;, 8)</pre>
+    <p>returns the text string <code>&quot;01000000&quot;</code>.</p>
+    <pre class="csg-sample-indent">HEX2BIN(&quot;1111111111&quot;)</pre>
+    <p>returns the text string <code>&quot;1111111111&quot;</code>.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.24.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06g/sg6_GESTEP.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#engineering_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06h/sg6_HEX2DEC.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

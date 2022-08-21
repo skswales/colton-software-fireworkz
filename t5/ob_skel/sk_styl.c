@@ -18,10 +18,22 @@
 #endif
 
 /*
+slr style cache entry
+*/
+
+typedef struct STYLE_CACHE_SLR_ENTRY
+{
+    SLR slr;
+    STYLE style;
+    U8 used;
+}
+STYLE_CACHE_SLR_ENTRY, * P_STYLE_CACHE_SLR_ENTRY;
+
+/*
 entry points
 */
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_style);
+PROC_UREF_EVENT_PROTO(static, style_uref_event);
 
 /*
 internal routines
@@ -81,7 +93,7 @@ style_apply_struct_to_source(
     PC_CONSTRUCT_TABLE p_construct_table;
     ARGLIST_HANDLE arglist_handle;
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
@@ -148,7 +160,8 @@ style_default_measurement(
     case STYLE_SW_PS_PARA_END:
         return(DEFAULT_PARA_END);
 
-    default: default_unhandled(); return(0);
+    default: default_unhandled();
+        return(0);
     }
 
     value = skel_ruler_snap_to_click_stop(p_docu, horizontal, value, snap_mode);
@@ -169,15 +182,13 @@ p_style_docu_area_from_client_handle(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     CLIENT_HANDLE client_handle)
 {
-    P_STYLE_DOCU_AREA p_style_docu_area;
     ARRAY_INDEX n_regions = array_elements(&p_docu->h_style_docu_area);
     ARRAY_INDEX style_docu_area_ix;
+    P_STYLE_DOCU_AREA p_style_docu_area = array_range(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, 0, n_regions);
 
     profile_ensure_frame();
 
-    for(style_docu_area_ix = 0, p_style_docu_area = array_ptr(&p_docu->h_style_docu_area, STYLE_DOCU_AREA, style_docu_area_ix);
-        style_docu_area_ix < n_regions;
-        ++style_docu_area_ix, ++p_style_docu_area)
+    for(style_docu_area_ix = 0; style_docu_area_ix < n_regions; ++style_docu_area_ix, ++p_style_docu_area)
     {
         if(p_style_docu_area->is_deleted)
             continue;
@@ -1163,30 +1174,28 @@ style_docu_area_add(
     {
         REGION region;
 
-        if(status_ok(status = uref_add_dependency(p_docu, region_from_docu_area_max(&region, &p_style_docu_area->docu_area), proc_uref_event_style, next_client_handle, &p_style_docu_area->uref_handle, TRUE /* SKS 19feb97 */)))
+        if(status_ok(status = uref_add_dependency(p_docu, region_from_docu_area_max(&region, &p_style_docu_area->docu_area), style_uref_event, next_client_handle, &p_style_docu_area->uref_handle, TRUE /* SKS 19feb97 */)))
             p_style_docu_area->client_handle = next_client_handle++;
     }
 
     /* MRJC 23.10.93: check for special text document column zero width region */
     if(status_ok(status))
     {
-        if(p_style_docu_area->base
-           &&
-           p_style_docu_area->docu_area.whole_col
-           &&
-           p_style_docu_area->docu_area.whole_row)
+        if( p_style_docu_area->base &&
+            p_style_docu_area->docu_area.whole_col &&
+            p_style_docu_area->docu_area.whole_row )
         {
             const PC_STYLE p_style = p_style_from_docu_area(p_docu, p_style_docu_area);
 
-            if(!IS_P_STYLE_NONE(p_style))
-                if(style_bit_test(p_style, STYLE_SW_CS_WIDTH)
-                   &&
-                   p_style->col_style.width == 0)
+            if(P_STYLE_NOT_NONE(p_style))
+            {
+                if( style_bit_test(p_style, STYLE_SW_CS_WIDTH) && (0 == p_style->col_style.width) )
                 {
                     p_style_docu_area->column_zero_width = 1;
                     p_docu->flags.base_single_col = 1;
                     trace_0(TRACE_APP_SKEL, TEXT("1111 - style_docu_area_add found zero width base region"));
                 }
+            }
         }
     }
 
@@ -1208,7 +1217,7 @@ style_docu_area_add(
             docu_reformat.data_space = p_style_docu_area->data_space;
             docu_reformat.data.docu_area = p_style_docu_area->docu_area;
 
-            if(!IS_P_STYLE_NONE(p_style) && style_selector_test(&p_style->selector, &style_selector_extent_x))
+            if( P_STYLE_NOT_NONE(p_style) && style_selector_test(&p_style->selector, &style_selector_extent_x) )
                 docu_reformat.action = REFORMAT_XY;
         }
         else
@@ -1312,7 +1321,7 @@ style_docu_area_add_internal(
     DOCU_AREA docu_area;
 
     /* initialise style */
-    zero_struct(style);
+    zero_struct_fn(style);
     style_init(&style);
 
     /* everything is defined in base style */
@@ -1550,7 +1559,7 @@ style_docu_area_delete(
     {
         const P_STYLE p_style = p_style_from_docu_area(p_docu, p_style_docu_area);
 
-        if(!IS_P_STYLE_NONE(p_style))
+        if(P_STYLE_NOT_NONE(p_style))
             style_free_resources_all(p_style);
 
         al_ptr_dispose(P_P_ANY_PEDANTIC(&p_style_docu_area->p_style_effect));
@@ -1564,9 +1573,11 @@ style_docu_area_delete(
     status_assert(maeve_event(p_docu, T5_MSG_STYLE_DOCU_AREA_CHANGED, &style_docu_area_changed));
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, style_docu_area_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, style_docu_area_is_deleted)
 {
-    return(((P_STYLE_DOCU_AREA) p_any)->is_deleted);
+    const P_STYLE_DOCU_AREA p_style_docu_area = (P_STYLE_DOCU_AREA) p_any;
+
+    return(p_style_docu_area->is_deleted);
 }
 
 /******************************************************************************
@@ -1652,7 +1663,7 @@ style_docu_area_delete_list(
     AL_GARBAGE_FLAGS_CLEAR(al_garbage_flags);
     al_garbage_flags.remove_deleted = 1;
     al_garbage_flags.shrink = 1;
-    consume(S32, al_array_garbage_collect(&h_style_docu_area, 0, style_docu_area_deleted, al_garbage_flags));
+    consume(S32, al_array_garbage_collect(&h_style_docu_area, 0, style_docu_area_is_deleted, al_garbage_flags));
     assert(h_style_docu_area == *p_h_style_docu_area);
     } /*block*/
 }
@@ -1850,7 +1861,7 @@ style_docu_area_remove(
     AL_GARBAGE_FLAGS_CLEAR(al_garbage_flags);
     al_garbage_flags.remove_deleted = 1;
     al_garbage_flags.shrink = 1;
-    consume(S32, al_array_garbage_collect(&h_style_list, 0, style_docu_area_deleted, al_garbage_flags));
+    consume(S32, al_array_garbage_collect(&h_style_list, 0, style_docu_area_is_deleted, al_garbage_flags));
     assert(h_style_list == *p_h_style_list);
     } /*block*/
 
@@ -2239,7 +2250,7 @@ style_docu_area_subsume(
 
                             status_assert(uref_add_dependency(p_docu,
                                                               region_from_docu_area_max(&region, &docu_area_coalesced),
-                                                              proc_uref_event_style,
+                                                              style_uref_event,
                                                               p_style_docu_area->client_handle,
                                                               &p_style_docu_area->uref_handle, FALSE));
                         }
@@ -2277,7 +2288,7 @@ style_docu_area_subsume(
     AL_GARBAGE_FLAGS_CLEAR(al_garbage_flags);
     al_garbage_flags.remove_deleted = 1;
     al_garbage_flags.shrink = 1;
-    consume(S32, al_array_garbage_collect(p_array_handle, 0, style_docu_area_deleted, al_garbage_flags));
+    consume(S32, al_array_garbage_collect(p_array_handle, 0, style_docu_area_is_deleted, al_garbage_flags));
     } /*block*/
 
     trace_0(TRACE_APP_STYLE, TEXT("+++ style_docu_area_subsume - out"));
@@ -2322,7 +2333,7 @@ style_effect_source_find(
             const PC_STYLE p_style = p_style_from_docu_area(p_docu, p_style_docu_area);
             BOOL res;
 
-            assert(!IS_P_STYLE_NONE(p_style));
+            PTR_ASSERT(p_style);
 
             if(test_only)
                 res = style_selector_test(&p_style->selector, p_style_selector);
@@ -2628,7 +2639,7 @@ style_from_docu_area_no_indirection(
     {
         const PC_STYLE p_style = p_style_from_docu_area(p_docu, p_style_docu_area);
 
-        if(!IS_P_STYLE_NONE(p_style))
+        if(P_STYLE_NOT_NONE(p_style))
             *p_style_out = *p_style;
         else
             style_init(p_style_out);
@@ -2676,7 +2687,7 @@ style_from_position(
             if(caret_check && p_style_docu_area->caret)
                 p_style_docu_area->docu_area.br.object_position.data += 1;
 
-            if((*p_proc_position_compare) (&p_style_docu_area->docu_area, p_position))
+            if((* p_proc_position_compare) (&p_style_docu_area->docu_area, p_position))
             {
                 STYLE_SELECTOR temp;
 
@@ -2695,7 +2706,7 @@ style_from_position(
                     else
                         p_style = p_style_from_docu_area(p_docu, p_style_docu_area);
 
-                    if(!IS_P_STYLE_NONE(p_style))
+                    if(P_STYLE_NOT_NONE(p_style))
                     {
                         style_copy(p_style_out, p_style, &selector);
                         res = style_selector_bic(&selector, &selector, &p_style->selector);
@@ -3014,7 +3025,7 @@ style_handle_modify(
     STYLE_SELECTOR selector;
     STYLE_CHANGED style_changed;
 
-    assert(!IS_P_STYLE_NONE(p_style));
+    PTR_ASSERT(p_style);
 
     void_style_selector_or(&selector, p_style_selector, p_style_selector_modified);
 
@@ -3465,14 +3476,16 @@ style_save_docu_area_save_from_index(
     /* single fragment being saved (to clipboard 12.10.93) */
     case DATA_SAVE_CHARACTER:
         if(docu_area_in_docu_area(p_docu_area_save, &p_style_docu_area->docu_area))
+        {
             if(!p_style_docu_area->base)
             {
                 const PC_STYLE p_style = p_style_from_docu_area(p_docu, p_style_docu_area);
 
-                if(!IS_P_STYLE_NONE(p_style))
+                if(P_STYLE_NOT_NONE(p_style))
                     if(style_selector_test(&p_style->selector, &style_selector_font_spec))
                         do_save = TRUE;
             }
+        }
         break;
 
     /* clipboard save more than 1 frag */
@@ -3600,15 +3613,16 @@ style_sub_changes(
 *
 ******************************************************************************/
 
+_Check_return_
 static BOOL
 style_uref_current_cell(
-    P_STYLE_DOCU_AREA p_style_docu_area,
+    _InRef_     PC_STYLE_DOCU_AREA p_style_docu_area,
     _InVal_     UREF_MESSAGE uref_message)
 {
     /* MRJC: 27.4.95 check for current cell region which wants uref-ing only sometimes */
     if( (OBJECT_ID_NONE != p_style_docu_area->object_message.object_id)
         &&
-        (p_style_docu_area->object_message.t5_message == T5_EXT_STYLE_CELL_CURRENT)
+        (T5_EXT_STYLE_CELL_CURRENT == p_style_docu_area->object_message.t5_message)
         &&
         (Uref_Msg_CLOSE1 != uref_message) )
     {
@@ -3618,7 +3632,7 @@ style_uref_current_cell(
     return(FALSE);
 }
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
+PROC_UREF_EVENT_PROTO(static, style_uref_event)
 {
     switch(p_uref_event_block->reason.code)
     {
@@ -3670,7 +3684,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
             al_garbage_flags.remove_deleted = 1;
             al_garbage_flags.shrink = 1;
             al_garbage_flags.may_dispose = 1; /*hopefully does so*/
-            consume(S32, al_array_garbage_collect(&p_docu->h_style_docu_area, 0, style_docu_area_deleted, al_garbage_flags));
+            consume(S32, al_array_garbage_collect(&p_docu->h_style_docu_area, 0, style_docu_area_is_deleted, al_garbage_flags));
             assert(0 == p_docu->h_style_docu_area);
             } /*block*/
 
@@ -3706,17 +3720,19 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
             if(!style_uref_current_cell(p_style_docu_area, uref_message))
             {
                 BOOL delete_it = FALSE;
-                UREF_COMMS res = uref_match_docu_area(&p_style_docu_area->docu_area, uref_message, p_uref_event_block);
+                UREF_COMMS res;
+
+                res = uref_match_docu_area(&p_style_docu_area->docu_area, uref_message, p_uref_event_block);
 
                 if(Uref_Dep_Delete == res)
                     delete_it = TRUE;
-                else if( (res != Uref_Dep_None)
+                else if( (Uref_Dep_None != res)
                          &&
                          (Uref_Msg_Overwrite == uref_message)
                          &&
                          !p_style_docu_area->uref_hold
                          &&
-                         docu_area_is_frag(&p_style_docu_area->docu_area) )
+                         docu_area_is_frag(&p_style_docu_area->docu_area))
                 {
                     /* delete overwritten regions less than a cell */
                     REGION region;
@@ -3727,7 +3743,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
 
                 if(delete_it)
                     style_docu_area_delete(p_docu, p_style_docu_area);
-                else if(res != Uref_Dep_None)
+                else if(Uref_Dep_None != res)
                 {
                     REGION region;
                     region_from_docu_area_max(&region, &p_style_docu_area->docu_area);
@@ -3960,7 +3976,7 @@ sk_styl_msg_init1(
     REGION region = REGION_INIT;
     region.whole_col = TRUE;
     region.whole_row = TRUE;
-    status_return(status = uref_add_dependency(p_docu, &region, proc_uref_event_style, STYLE_LIST_DEP, &uref_handle, FALSE));
+    status_return(status = uref_add_dependency(p_docu, &region, style_uref_event, STYLE_LIST_DEP, &uref_handle, FALSE));
     } /*block*/
 
     /*if(DOCNO_CONFIG != docno_from_p_docu(p_docu))*/ /* SKS 26apr95 ignore for config document */ /* SKS 15aug14 put back now we load a config document with styles */

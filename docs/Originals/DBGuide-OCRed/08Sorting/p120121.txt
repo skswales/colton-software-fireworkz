@@ -1,0 +1,47 @@
+﻿
+Sorting different data types
+Different types of field are treated in different ways when they are
+sorted:
+. Text fields are sorted alphabetically using the ASCII character
+values.
+. Number fields are sorted numerically.
+. Date and interval fields are sorted chronologically.
+. Formula fields are sorted depending on the data type which
+they evaluate to. For example if the fonriula yields a number,
+they will be sorted numerically.
+Therefore it is important that you have theitypes of your fields set
+correctly. For example, if you are performing ascending sorts (+):
+. 20 will be placed before 110 if they occur in number fields but
+110 will be placed before 20 if they occur in text fields
+because the first character of 110, i.e. 1, has a lower ASCII
+value than the first character of 20, i.e. 2.
+. Similarly, 31.12.92 will be placed before 01.01.93 if they
+occur in date fields but not if they occur in text fields.
+
+Adding and editing fields
+If you enter data into a new, blank record, or make changes to an
+existing record, then the record you are working on will be moved
+into its correct position within the database, using the last sort you
+carried out.
+In the case of card layouts, this re-positioning occurs when you
+move to a different card. Thus, when you are entering data into a
+card, the record will only be re-positioned when you have finished
+all the input and moved off the record, for example by clicking
+within a different record or pressing Retum from the last field to
+move on to the next record.
+In the case of sheet layouts, the re-positioning occurs when you
+move off a field which is relevant to the sort - and so can happen
+whilst you are in the middle of completing a record. This can be
+inconvenient because you will suddenly find that the record you
+are working on has ‘disappeared’ and that the caret is in the middle
+of a different record. Thus you are recommended to use card
+layouts when you are entering and editing data within a sorted
+database.
+Note that if you sort your data and then add some extra records, it
+is not necessary to sort your data again afterwards.
+Note also that sorting affects the order of records within the
+database itself. After carrying out a sort it is not possible to return
+to the ‘unsorted’ order in which the records were entered.
+
+Fireworkz Pro 121
+

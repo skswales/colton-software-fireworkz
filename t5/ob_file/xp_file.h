@@ -25,7 +25,6 @@ error numbers (sadly these need exposing to other modules)
 #define FILE_ERR_LOADSTRFAIL    FILE_ERR__PRIVATE(0)
 #define FILE_ERR_FINDRESFAIL    FILE_ERR__PRIVATE(1)
 #define FILE_ERR_LOADRESFAIL    FILE_ERR__PRIVATE(2)
-#define FILE_ERR_LOCKRESFAIL    FILE_ERR__PRIVATE(3)
 
 /* abstract file handle */
 #ifndef __FILE_HANDLE_DEFINED
@@ -39,9 +38,29 @@ exports from ob_file.c
 */
 
 _Check_return_
+extern STATUS
+windows_filter_list_add(
+    _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
+    _In_z_      PCTSTR tstr_filter_text,
+    _In_z_      PCTSTR tstr_filter_wildcard_srch);
+
+_Check_return_
+extern STATUS
+windows_filter_list_finish(
+    _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
+    _In_        STATUS status);
+
+_Check_return_
 extern STATUS /*n_filters*/
 windows_filter_list_create(
     _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
+    _InVal_     S32 filter_mask,
+    _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */);
+
+_Check_return_
+extern S32
+windows_filter_list_get_filter_index_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype_in,
     _InVal_     S32 filter_mask,
     _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */);
 

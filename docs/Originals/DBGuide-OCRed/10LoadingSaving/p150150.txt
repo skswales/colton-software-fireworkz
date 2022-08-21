@@ -1,0 +1,36 @@
+﻿Database Guide 150
+
+2 Choose the option you want. Fit one page fits all of the
+document on to one page of your paper. Fit one page X does
+the same but only across the paper; the document will have as
+many Y pages as are needed. 100% prints a tme full size copy
+of the document. Alternatively, enter the size of the document
+you want by clicking the arrows or typing in a number; sizes
+under 100% will reduce the size and above 100% will
+increase it.
+3 Click OK. The next time you print the document, it will be at
+the chosen scale.
+
+Database specific issues
+
+Printing field names
+When using a sheet layout, you can print the field names as the
+column headings as follows:
+1 Choose the Paper option from the Page menu.
+2 Change the column margin to about 8mm.
+3 Click OK.
+If you click on the View control button and set the Full option in
+the Display section, you will see how these appear on the page
+ready to print.
+
+Printing different layouts
+By hiding fields, you can choose which pieces of information from
+your database are printed. However, if you have two or more
+different sets of information which you often print out, you may
+find that repeated hiding and re-displaying becomes time
+consuming. In this situation, you should consider creating more
+docmnents which access the same database. Each document can
+have a different layout defined for it. Then setting up the layout to
+be printed simply becomes a matter of loading the appropriate
+document file.
+

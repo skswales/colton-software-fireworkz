@@ -8,7 +8,10 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# errors
+# messages (none)
+#
+# errors: keep consistent with cmodules/mlec.h
+# see MLEC_ERR(n)
 #
 e0:No selected text
 e2:No paste buffer

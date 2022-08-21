@@ -51,6 +51,9 @@ X %Wipe <t5$Build$Dir>.ob_story
 X %Wipe <t5$Build$Dir>.ob_text
 X %Wipe <t5$Build$Dir>.ob_toolb
 
+X %Wipe <t5$Build$Dir>.firewrkz.!Fireworkz
+X %Remove <t5$Build$Dir>.firewrkz.!RunDB
+X %Remove <t5$Build$Dir>.firewrkz.Makefile
 X %Wipe <t5$Build$Dir>.firewrkz.binaries
 X %Wipe <t5$Build$Dir>.firewrkz.o
 
@@ -58,6 +61,9 @@ X %Wipe <t5$Build$Dir>.ob_rec
 X %Wipe <t5$Build$Dir>.ob_recb
 X %Wipe <t5$Build$Dir>.fs_xls
 
+X %Wipe <t5$Build$Dir>.fprowrkz.!Fireworkz
+X %Remove <t5$Build$Dir>.fprowrkz.!RunDB
+X %Remove <t5$Build$Dir>.fprowrkz.Makefile
 X %Wipe <t5$Build$Dir>.fprowrkz.binaries
 X %Wipe <t5$Build$Dir>.fprowrkz.o
 

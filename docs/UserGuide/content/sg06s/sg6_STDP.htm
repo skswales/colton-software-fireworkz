@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>STDP</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="STDP" />
+        <param name="Keyword" value="Statistical functions, STDP" />
+        <param name="Keyword" value="Statistical functions, population standard deviation" />
+    </object>
+
+    <h1><a name="stdp" id="stdp"></a>STDP</h1>
+
+    <p>Calculates the population standard deviation of the values in a data set.</p>
+    <p>This is the square root of the population variance.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">STDP(<span class="csg-function-parameter">list</span>)</p>
+    <p>Returns the population standard deviation of the values in the <span class="csg-function-parameter">list</span>.</p>
+    <p><span class="csg-function-parameter">list</span> may be an <a href="../sg06/sg6_arrays.htm">array</a>, a <a href="../sg06/sg6_ranges.htm">range</a> of cells, or a comma-separated list of values.</p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        STDP =
+        &radic;
+        <span class="csg-function-formula-parentheses-2">(</span>
+        <span class="csg-function-formula-parentheses-1">(</span><em>n</em>&sdot;<span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span> (<em>x</em><em><sub>i</sub></em><sup>2</sup>)
+        &minus;
+        (<span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span> <em>x</em><em><sub>i</sub></em>)<sup>2</sup><span class="csg-function-formula-parentheses-1">)</span>
+        &divide;
+        <em>n</em><sup>2</sup>
+        <span class="csg-function-formula-parentheses-2">)</span>
+    </p>
+    <p>where <em>n</em> is the number of values and <em>x</em><em><sub>i</sub></em> is the <em>i</em>-th value.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">STDP(A1:A15)</pre>
+    <p>returns the population standard deviation of cells in the range <code>A1:A15</code>.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06s/sg6_STD.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06t/sg6_TREND.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

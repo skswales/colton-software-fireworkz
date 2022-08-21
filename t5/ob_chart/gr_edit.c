@@ -248,7 +248,7 @@ chart_selection_make_repr(
     if(p_chart_header->selection.id.name == GR_CHART_OBJNAME_ANON)
         return;
 
-    zero_struct(linestyle);
+    zero_struct_fn(linestyle);
 
     /* Draw in an unmottled colour */
 #if RISCOS
@@ -570,13 +570,13 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
 
     if(tighter_selection)
     {
-        /* tighter click box if ADJUST clicked (but remember some objects may be truly subpixel ...) */
+        /* tighter click box if Adjust clicked (but remember some objects may be truly subpixel ...) */
         selsize.cx = 2 * MAX(p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.x, p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.y);
         selsize.cy = PIXITS_PER_PIXEL;
     }
     else
     {
-        /* larger (but still small) click box if SELECT clicked */
+        /* larger (but still small) click box if Select clicked */
         selsize.cx = 4 * MAX(p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.x, p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.y);
         selsize.cy = selsize.cx;
     }

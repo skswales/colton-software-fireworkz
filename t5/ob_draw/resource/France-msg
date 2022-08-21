@@ -1,0 +1,20 @@
+#
+# this is the messages file for ob_draw (France)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_draw/ob_draw.h
+#
+# UK 1:DrawFile
+1:DrawFile
+# UK 2:Image
+2:Image
+#
+# errors (none)
+#
+# end of msg (ob_draw)

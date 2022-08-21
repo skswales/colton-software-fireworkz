@@ -2963,7 +2963,7 @@ xls_dump_records(
         case X_PASSWORD:
         case X_WSBOOL_B3_B8:
             consume_int(ustr_xsnprintf(ustr_bptr(extra_data), elemof32(extra_data),
-                        USTR_TEXT("0x" U32_XFMT), (U32) xls_read_U16_LE(p_x)));
+                        USTR_TEXT(U32_XFMT), (U32) xls_read_U16_LE(p_x)));
             break;
 
         case X_COUNTRY_B3_B8:
@@ -2991,7 +2991,7 @@ xls_dump_records(
         case X_BOF_B4:
         case X_BOF_B5_B8:
             consume_int(ustr_xsnprintf(ustr_bptr(extra_data), elemof32(extra_data),
-                        USTR_TEXT("0x" U32_XFMT), (U32) xls_read_U16_LE(p_x + 2)));
+                        USTR_TEXT(U32_XFMT), (U32) xls_read_U16_LE(p_x + 2)));
             break;
 
         case X_WRITEACCESS_B3_B8:
@@ -3095,12 +3095,12 @@ pswd_edit_data= { { { FRAMED_BOX_EDIT } }, { UI_TEXT_TYPE_NONE } };
 static const DIALOG_CTL_CREATE
 pswd_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &pswd_edit,        &pswd_edit_data },
+    { { &pswd_edit },        &pswd_edit_data },
 
-    { &defbutton_ok,     &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok },     &defbutton_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static UI_TEXT ui_text_edit;
@@ -3147,11 +3147,10 @@ xls_get_password(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, pswd_ctl_create, elemof32(pswd_ctl_create), 0);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = XLS_MSG_PASSWORD_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, pswd_ctl_create, elemof32(pswd_ctl_create), XLS_MSG_PASSWORD_CAPTION);
+  /*dialog_cmd_process_dbox.help_topic_resource_id = 0;*/
     dialog_cmd_process_dbox.p_proc_client = dialog_event_pswd;
-    /*dialog_cmd_process_dbox.client_handle = NULL;*/
+  /*dialog_cmd_process_dbox.client_handle = NULL;*/
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
@@ -3437,7 +3436,7 @@ rgb_from_colour_index(
     return(FALSE);
 }
 
-/* Default colour table for BIFF5 (colours 08H–17H are equal to the BIFF3/BIFF4 default colour table) */
+/* Default colour table for BIFF5 (colours 08Hï¿½17H are equal to the BIFF3/BIFF4 default colour table) */
 
 static const RGB
 xls_colour_table_BIFF5[0x40 - 0x08] =
@@ -3506,7 +3505,7 @@ xls_colour_table_BIFF5[0x40 - 0x08] =
     /*3FH*/ RGB_INIT(0x42, 0x42, 0x42)
 };
 
-/* Default colour table for BIFF8 (colours 08H–17H are equal to the BIFF3/BIFF4 default colour table) */
+/* Default colour table for BIFF8 (colours 08Hï¿½17H are equal to the BIFF3/BIFF4 default colour table) */
 
 static const RGB
 xls_colour_table_BIFF8[0x40 - 0x08] =
@@ -3723,6 +3722,143 @@ xls_read_DIMENSIONS(
     return(STATUS_OK);
 }
 
+/* rename this Fireworkz document as per the Excel worksheet name (helper functions) */
+
+_Check_return_
+static STATUS
+xls_rename_document_add_filename(
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock,
+    _In_z_      PCTSTR filename)
+{
+    U32 pathname_len = tstrlen32(filename);
+    PCTSTR tstr_leafname = file_leafname(filename);
+    PCTSTR tstr_extension = file_extension(filename);
+
+    PTR_ASSERT(tstr_leafname);
+    if(NULL != tstr_leafname)
+        pathname_len = PtrDiffElemU32(tstr_leafname, filename); /* retain the dir sep ch */
+
+    status_return(quick_tblock_tchars_add(p_quick_tblock, filename, pathname_len));
+
+    if(NULL != tstr_leafname)
+    {   /* append leafname, carefully */
+        U32 leafname_len = tstrlen32(tstr_leafname);
+        U32 i;
+
+        if(NULL != tstr_extension)
+            leafname_len = PtrDiffElemU32(tstr_extension - 1, tstr_leafname);
+
+        for(i = 0; i < leafname_len; ++i)
+        {
+            TCHAR tchar = tstr_leafname[i];
+
+            if(tchar == (TCHAR) CH_SPACE)
+                tchar = (TCHAR) CH_UNDERSCORE; /* in case we are on, or wish to transfer files to, RISC OS */
+
+            status_return(quick_tblock_tchar_add(p_quick_tblock, tchar));
+        }
+    }
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+xls_rename_document_add_worksheet_tchar(
+    _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock,
+    _In_        TCHAR tchar)
+{
+#if TSTR_IS_SBSTR
+    if(!ucs4_is_ascii7(tchar))
+    {
+        UCS4 ucs4 = ucs4_from_sbchar_with_codepage((SBCHAR) tchar /*& x0xFF*/, p_xls_load_info->sbchar_codepage);
+
+        if(ucs4_is_sbchar(ucs4))
+            tchar = (TCHAR) ucs4;
+        else
+        {   /* out-of-range -> force mapping to native */
+            tchar = (TCHAR) ucs4_to_sbchar_force_with_codepage(ucs4, get_system_codepage(), CH_UNDERSCORE /*CH_QUESTION_MARK*/);
+        }
+    }
+#else
+    UNREFERENCED_PARAMETER_InoutRef_(p_xls_load_info);
+#endif
+
+    if(tchar == (TCHAR) CH_SPACE)
+        tchar = (TCHAR) CH_UNDERSCORE; /* in case we are on, or wish to transfer files to, RISC OS */
+
+    return(quick_tblock_tchar_add(p_quick_tblock, tchar));
+}
+
+_Check_return_
+static STATUS
+xls_rename_document_add_worksheet_nameA(
+    _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock,
+    _In_reads_(worksheet_name_len) PC_SBSTR p_name,
+    _InVal_     U32 worksheet_name_len)
+{
+    U32 i;
+
+    for(i = 0; i < worksheet_name_len; ++i)
+    {
+        SBCHAR sbchar = p_name[i];
+        TCHAR tchar = sbchar;
+
+        status_return(xls_rename_document_add_worksheet_tchar(p_xls_load_info, p_quick_tblock, tchar));
+    }
+
+    return(STATUS_OK);
+}
+
+/* Unicode UTF-16LE string */
+
+_Check_return_
+static STATUS
+xls_rename_document_add_worksheet_nameW(
+    _InoutRef_  P_XLS_LOAD_INFO p_xls_load_info,
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock,
+    _In_reads_(worksheet_name_len) PCWCH p_name,
+    _InVal_     U32 worksheet_name_len)
+{
+    U32 i;
+
+    for(i = 0; i < worksheet_name_len; ++i)
+    {
+        WCHAR wchar = xls_read_WCHAR_off((PCWCH) p_name, i); /* may be unaligned */
+        TCHAR tchar;
+#if TSTR_IS_SBSTR
+        if(ucs4_is_sbchar((UCS4) wchar))
+            tchar = (TCHAR) (wchar & 0xFF);
+        else
+        {   /* out-of-range -> try mapping to native */
+            tchar = (TCHAR) ucs4_to_sbchar_force_with_codepage((UCS4) wchar, get_system_codepage(), CH_UNDERSCORE /*CH_QUESTION_MARK*/);
+        }
+#else
+        tchar = wchar;
+#endif
+
+        status_return(xls_rename_document_add_worksheet_tchar(p_xls_load_info, p_quick_tblock, tchar));
+    }
+
+    return(STATUS_OK);
+}
+
+/* foreign extension is useless here - replace if needed with native one, and terminate */
+
+_Check_return_
+static STATUS
+xls_rename_document_add_extension(
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock)
+{
+#if !RISCOS
+    status_return(quick_tblock_tchar_add(p_quick_tblock, FILE_EXT_SEP_CH));
+    status_return(quick_tblock_tstr_add(p_quick_tblock, extension_document_tstr));
+#endif /* OS */
+    return(quick_tblock_nullch_add(p_quick_tblock));
+}
+
 /* rename this Fireworkz document as per the Excel worksheet name in the BOUNDSHEET record */
 
 _Check_return_
@@ -3736,20 +3872,17 @@ xls_rename_document_as_per_BOUNDSHEET_record(
     U32 worksheet_name_len = p_x[6];
     PC_BYTE p_name = p_x + 7;
     BYTE string_flags = 0;
-    U32 i;
-    STATUS status;
+    STATUS status = STATUS_OK;
     PCTSTR filename = p_xls_load_info->p_msg_insert_foreign->filename;
-    U32 filename_len = tstrlen32(filename);
-    PCTSTR tstr_extension = file_extension(filename);
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
     quick_tblock_with_buffer_setup(quick_tblock);
 
-    if(NULL != tstr_extension)
-        filename_len = PtrDiffElemU32(tstr_extension - 1, filename);
+    status_return(xls_rename_document_add_filename(&quick_tblock, filename));
 
-    status_return(quick_tblock_tchars_add(&quick_tblock, filename, filename_len));
+    /* append _ and worksheet name */
+    if(status_ok(status))
+        status = quick_tblock_tchar_add(&quick_tblock, (TCHAR) CH_UNDERSCORE);
 
-    /* append _worksheet name */
     if(biff_version >= 8)
     {
         string_flags = *p_name++;
@@ -3760,8 +3893,16 @@ xls_rename_document_as_per_BOUNDSHEET_record(
             p_name += 4;
     }
 
-    status = quick_tblock_tchar_add(&quick_tblock, (TCHAR) CH_UNDERSCORE);
-
+#if 1
+    if(string_flags & 0x01)
+    {   /* Unicode UTF-16LE string */
+        xls_rename_document_add_worksheet_nameW(p_xls_load_info, &quick_tblock, (PCWCH) p_name, worksheet_name_len);
+    }
+    else
+    {
+        xls_rename_document_add_worksheet_nameA(p_xls_load_info, &quick_tblock, p_name, worksheet_name_len);
+    }
+#else
     for(i = 0; (i < worksheet_name_len) && status_ok(status); ++i)
     {
         TCHAR tchar;
@@ -3805,16 +3946,10 @@ xls_rename_document_as_per_BOUNDSHEET_record(
 
         status = quick_tblock_tchar_add(&quick_tblock, tchar);
     }
+#endif
 
-    /* foreign extension useless - replace if needed with native one */
-#if !RISCOS
     if(status_ok(status))
-        status = quick_tblock_tchar_add(&quick_tblock, FILE_EXT_SEP_CH);
-    if(status_ok(status))
-        status = quick_tblock_tstr_add(&quick_tblock, extension_document_tstr);
-#endif /* OS */
-    if(status_ok(status))
-        status = quick_tblock_nullch_add(&quick_tblock);
+        status = xls_rename_document_add_extension(&quick_tblock);
 
     /* suggest that this document be renamed */
     if(status_ok(status))
@@ -3939,43 +4074,22 @@ xls_rename_document_as_per_SHEETHDR_record(
     PC_BYTE p_x = p_xls_record(p_xls_load_info, opcode_offset, record_length);
     U32 worksheet_name_len = p_x[4];
     PC_BYTE p_name = p_x + 5;
-    U32 i;
     STATUS status;
     PCTSTR filename = file_leafname(p_xls_load_info->p_msg_insert_foreign->filename);
-    U32 filename_len = tstrlen32(filename);
-    PCTSTR tstr_extension = file_extension(filename);
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
     quick_tblock_with_buffer_setup(quick_tblock);
 
-    if(NULL != tstr_extension)
-        filename_len = PtrDiffElemU32(tstr_extension - 1, filename);
+    status = xls_rename_document_add_filename(&quick_tblock, filename);
 
-    status_return(quick_tblock_tchars_add(&quick_tblock, filename, filename_len));
-
-    /* append _worksheet name */
-    status = quick_tblock_tchar_add(&quick_tblock, (TCHAR) CH_UNDERSCORE);
-
-    for(i = 0; (i < worksheet_name_len) && status_ok(status); ++i)
-    {
-        TCHAR tch;
-        SBCHAR sbchar = p_name[i];
-        tch = sbchar;
-
-        if(tch == (TCHAR) CH_SPACE)
-            tch = (TCHAR) CH_UNDERSCORE; /* in case we are on, or wish to transfer files to, RISC OS */
-
-        status = quick_tblock_tchar_add(&quick_tblock, tch);
-    }
-
-    /* foreign extension useless - replace with native one if needed */
-#if !RISCOS
+    /* append _ and worksheet name */
     if(status_ok(status))
-        status = quick_tblock_tchar_add(&quick_tblock, FILE_EXT_SEP_CH);
+        status = quick_tblock_tchar_add(&quick_tblock, (TCHAR) CH_UNDERSCORE);
+
     if(status_ok(status))
-        status = quick_tblock_tstr_add(&quick_tblock, extension_document_tstr);
-#endif /* OS */
+        status = xls_rename_document_add_worksheet_nameA(p_xls_load_info, &quick_tblock, p_name, worksheet_name_len);
+
     if(status_ok(status))
-        status = quick_tblock_nullch_add(&quick_tblock);
+        status = xls_rename_document_add_extension(&quick_tblock);
 
     /* suggest that this document be renamed */
     if(status_ok(status))
@@ -4954,7 +5068,7 @@ operand_convert(
 
                 if(biff_version >= 8)
                 {
-                    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_name, 50);
+                    QUICK_UBLOCK_WITH_BUFFER(quick_ublock_name, 64);
                     quick_ublock_with_buffer_setup(quick_ublock_name);
 
                     status_assert(xls_quick_ublock_xls_string_add(&quick_ublock_name, p_name, name_len, p_xls_load_info->sbchar_codepage, FALSE));
@@ -4969,14 +5083,14 @@ operand_convert(
             else
             {
                 consume_int(ustr_xsnprintf(ustr_bptr(buffer), elemof32(buffer),
-                                           USTR_TEXT("OTHER_IDX 0x" U32_XFMT),
+                                           USTR_TEXT("OTHER_IDX " U32_XFMT),
                                            (U32) other_idx));
             }
         }
         else
         {
             consume_int(ustr_xsnprintf(ustr_bptr(buffer), elemof32(buffer),
-                                       USTR_TEXT("REF_IDX 0x" U32_XFMT),
+                                       USTR_TEXT("REF_IDX " U32_XFMT),
                                        (U32) ref_idx));
         }
         break;
@@ -4996,7 +5110,7 @@ operand_convert(
     case tMemNoMemNR:
     default:
         consume_int(ustr_xsnprintf(ustr_bptr(buffer), elemof32(buffer),
-                                   USTR_TEXT("TOKEN 0x" U32_XFMT),
+                                   USTR_TEXT("TOKEN " U32_XFMT),
                                    (U32) sym));
         break;
     }
@@ -5670,8 +5784,8 @@ xls_names_make(
         PC_BYTE p_name;
         U16 formula_len;
         PC_BYTE p_formula;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock_name, 50);
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 100);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock_name, 64);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 128);
         quick_ublock_with_buffer_setup(quick_ublock_name);
         quick_ublock_with_buffer_setup(quick_ublock_formula);
 
@@ -5898,10 +6012,10 @@ ExcelBuiltinFORMAT[0x32] =
 /*0x02*/ {  FALSE,  SBSTR_TEXT("0.00") },
 /*0x03*/ {  FALSE,  SBSTR_TEXT("#,##0") },
 /*0x04*/ {  FALSE,  SBSTR_TEXT("#,##0.00") },
-/*0x05*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0 ;(\\" "\xA3" "#,##0)") }, /*XLS spec "_(£#,##0_);(£#,##0)"*/
-/*0x06*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0 ;[Red](\\" "\xA3" "#,##0)") }, /*XLS spec "_(£#,##0_);[Red](£#,##0)"*/
-/*0x07*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0.00 ;(\\" "\xA3" "#,##0.00)") }, /*XLS spec "_(£#,##0.00_);(£#,##0.00)"*/
-/*0x08*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0.00 ;[Red](\\" "\xA3" "#,##0.00)") }, /*XLS spec "_(£#,##0.00_);[Red](£#,##0.00)"*/
+/*0x05*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0 ;(\\" "\xA3" "#,##0)") }, /*XLS spec "_(ï¿½#,##0_);(ï¿½#,##0)"*/
+/*0x06*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0 ;[Red](\\" "\xA3" "#,##0)") }, /*XLS spec "_(ï¿½#,##0_);[Red](ï¿½#,##0)"*/
+/*0x07*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0.00 ;(\\" "\xA3" "#,##0.00)") }, /*XLS spec "_(ï¿½#,##0.00_);(ï¿½#,##0.00)"*/
+/*0x08*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0.00 ;[Red](\\" "\xA3" "#,##0.00)") }, /*XLS spec "_(ï¿½#,##0.00_);[Red](ï¿½#,##0.00)"*/
 /*0x09*/ {  FALSE,  SBSTR_TEXT("0%") },
 /*0x0a*/ {  FALSE,  SBSTR_TEXT("0.00%") },
 /*0x0b*/ {  FALSE,  SBSTR_TEXT("0.00E+00") },
@@ -5935,9 +6049,9 @@ ExcelBuiltinFORMAT[0x32] =
 /*0x27*/ {  FALSE,  SBSTR_TEXT(" #,##0.00 ;(#,##0.00)") }, /*XLS spec "_(#,##0.00_);(#,##0.00)"*/
 /*0x28*/ {  FALSE,  SBSTR_TEXT(" #,##0.00 ;[Red](#,##0.00)") }, /*XLS spec "_(#,##0.00_);[Red](#,##0.00)" */
 /*0x29*/ {  FALSE,  SBSTR_TEXT("  #,##0 ; (#,##0)") }, /*XLS spec "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)"*/
-/*0x2a*/ {  FALSE,  SBSTR_TEXT("  \\" "\xA3" " #,##0 ; (\\" "\xA3" " #,##0)") }, /*XLS spec "_(£* #,##0_);_(£* (#,##0);_(£* \"-\"_);_(@_)"*/
+/*0x2a*/ {  FALSE,  SBSTR_TEXT("  \\" "\xA3" " #,##0 ; (\\" "\xA3" " #,##0)") }, /*XLS spec "_(ï¿½* #,##0_);_(ï¿½* (#,##0);_(ï¿½* \"-\"_);_(@_)"*/
 /*0x2b*/ {  FALSE,  SBSTR_TEXT("  #,##0.00 ; (#,##0.00)") }, /*XLS spec "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"*/
-/*0x2c*/ {  FALSE,  SBSTR_TEXT("  \\" "\xA3" " #,##0.00 ; (\\" "\xA3" " #,##0.00)") }, /*XLS spec "_(£* #,##0.00_);_(£* (#,##0.00);_(£* \"-\"??_);_(@_)"*/
+/*0x2c*/ {  FALSE,  SBSTR_TEXT("  \\" "\xA3" " #,##0.00 ; (\\" "\xA3" " #,##0.00)") }, /*XLS spec "_(ï¿½* #,##0.00_);_(ï¿½* (#,##0.00);_(ï¿½* \"-\"??_);_(@_)"*/
 /*0x2d*/ {  TRUE,   SBSTR_TEXT("mm:ss") },
 /*0x2e*/ {  TRUE,   SBSTR_TEXT("h:mm:ss") }, /*XLS spec "[h]:mm:ss"*/
 /*0x2f*/ {  TRUE,   SBSTR_TEXT("mm:ss") }, /*XLS spec "mm:ss.0"*/
@@ -6321,7 +6435,7 @@ xls_cell_make(
     const P_DOCU p_docu = p_xls_load_info->p_docu;
     SLR actual_slr;
     LOAD_CELL_FOREIGN load_cell_foreign;
-    zero_struct(load_cell_foreign);
+    zero_struct_fn(load_cell_foreign);
 
     actual_slr.col = p_xls_load_info->current_slr.col + p_xls_load_info->offset_slr.col;
     actual_slr.row = p_xls_load_info->current_slr.row + p_xls_load_info->offset_slr.row;
@@ -7355,7 +7469,7 @@ font_spec_from_xls_FONT_record(
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    zero_struct_ptr(p_font_spec);
+    zero_struct_ptr_fn(p_font_spec);
 
     p_font_spec->size_x = 0;
     p_font_spec->size_y = height_twips;
@@ -8270,7 +8384,7 @@ T5_MSG_PROTO(extern, xls_msg_insert_foreign, P_MSG_INSERT_FOREIGN p_msg_insert_f
 {
     STATUS status;
     XLS_LOAD_INFO xls_load_info;
-    zero_struct(xls_load_info);
+    zero_struct_fn(xls_load_info);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 

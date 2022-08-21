@@ -928,7 +928,7 @@ style_ustr_inline_from_struct(
         const PC_STYLE_ENCODING p_style_encoding = &style_encoding_table[style_bit_number];
 
         if(NULL != p_style_encoding->p_proc_style_inline_from_data)
-            status = (*p_style_encoding->p_proc_style_inline_from_data) (p_docu, p_style, p_style_encoding, p_quick_ublock);
+            status = (* p_style_encoding->p_proc_style_inline_from_data) (p_docu, p_style, p_style_encoding, p_quick_ublock);
         else
             status = inline_quick_ublock_from_data(p_quick_ublock,
                                                    p_style_encoding->inline_id,

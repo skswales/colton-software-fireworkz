@@ -13,10 +13,26 @@
 
 #include "ob_chart/ob_chart.h"
 
+#if RISCOS
+#define BAR_GALLERY_PICT_H (DIALOG_PUSHPICTUREOVH_H + ((2*56) * PIXITS_PER_RISCOS))
+#define BAR_GALLERY_PICT_V (DIALOG_PUSHPICTUREOVH_V + ((4*27) * PIXITS_PER_RISCOS))
+#else
+#define BAR_GALLERY_PICT_H (DIALOG_PUSHPICTUREOVH_H + (42 * PIXITS_PER_WDU_H)) /* need to be bigger than picture for highlighting */
+#define BAR_GALLERY_PICT_V (DIALOG_PUSHPICTUREOVH_V + (36 * PIXITS_PER_WDU_V))
+#endif
+
+#if RISCOS
+#define BAR_GALLERY_PICTGAP_H   DIALOG_SMALLSPACING_H
+#define BAR_GALLERY_PICTGAP_V   DIALOG_SMALLSPACING_V
+#else
+#define BAR_GALLERY_PICTGAP_H   (3 * PIXITS_PER_WDU_H)
+#define BAR_GALLERY_PICTGAP_V   (3 * PIXITS_PER_WDU_H)
+#endif
+
 static const DIALOG_CONTROL
 bl_gallery_pict_group =
 {
-    BL_GALLERY_ID_PICT_GROUP, DIALOG_MAIN_GROUP,
+    BL_GALLERY_ID_PICT_GROUP, DIALOG_COL1_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0 },
     { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
@@ -56,72 +72,72 @@ bl_gallery_pict[8] =
 {
     {
         BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_GROUP,
-        { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
+        { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
         { 0, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
         { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
     },
 
     {
         BL_GALLERY_ID_PICT_1, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_0 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 },
-        { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V },
-        { DRT(LBRT, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0 },
+        { 0, BAR_GALLERY_PICTGAP_V, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LBLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_2 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 },
-        { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V },
-        { DRT(LBRT, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_2 },
+        { 0, BAR_GALLERY_PICTGAP_V, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LBLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_5, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_4 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 },
-        { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V },
-        { DRT(LBRT, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4 },
+        { 0, BAR_GALLERY_PICTGAP_V, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LBLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_7, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_6, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_6 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 },
-        { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_6 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     }
 };
 
 static const DIALOG_CONTROL
-bar_gallery_3d =
+bl_gallery_3d =
 {
-    BL_GALLERY_ID_3D, DIALOG_MAIN_GROUP,
-    { BL_GALLERY_ID_PICT_GROUP, BL_GALLERY_ID_PICT_GROUP },
-    { DIALOG_GROUPSPACING_H, 0, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
-    { DRT(RTLT, CHECKBOX), 1 /*tabstop*/ }
+    BL_GALLERY_ID_3D, DIALOG_COL2_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+    { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-bar_gallery_3d_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BAR_GALLERY_3D) };
+bl_gallery_3d_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_3D) };
 
 /*
 series group
@@ -130,9 +146,9 @@ series group
 static const DIALOG_CONTROL
 bl_gallery_arrange_group =
 {
-    BL_GALLERY_ID_ARRANGE_GROUP, DIALOG_MAIN_GROUP,
-    { BL_GALLERY_ID_3D, BL_GALLERY_ID_3D, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_GROUPSPACING_V + 2 * DIALOG_SMALLSPACING_V, 0, 0 },
+    BL_GALLERY_ID_ARRANGE_GROUP, DIALOG_COL2_GROUP,
+    { DIALOG_CONTROL_PARENT, BL_GALLERY_ID_3D, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0, DIALOG_GROUPSPACING_V + 2 * BAR_GALLERY_PICTGAP_V, 0, 0 },
     { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
@@ -145,25 +161,16 @@ bl_gallery_series_group =
     { DRT(LTRB, GROUPBOX) }
 };
 
-static const DIALOG_CONTROL
-bl_gallery_series_text =
-{
-    BL_GALLERY_ID_SERIES_TEXT, BL_GALLERY_ID_SERIES_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, STATICTEXT) }
-};
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_gallery_series_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_SERIES_TEXT), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_GROUPBOX
+bl_gallery_series_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_SERIES_TEXT), { FRAMED_BOX_NONE } };
 
 static const DIALOG_CONTROL
 bl_gallery_series_cols =
 {
     BL_GALLERY_ID_SERIES_COLS, BL_GALLERY_ID_SERIES_GROUP,
-    { BL_GALLERY_ID_SERIES_TEXT, BL_GALLERY_ID_SERIES_TEXT },
-    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { 0, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -190,29 +197,20 @@ bl_gallery_first_series_group =
 {
     BL_GALLERY_ID_FIRST_SERIES_GROUP, BL_GALLERY_ID_ARRANGE_GROUP,
     { BL_GALLERY_ID_SERIES_GROUP, BL_GALLERY_ID_SERIES_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_GROUPSPACING_V + 2 * DIALOG_SMALLSPACING_V, 0, 0 },
+    { 0, DIALOG_GROUPSPACING_V + 2 * BAR_GALLERY_PICTGAP_V, 0, 0 },
     { DRT(LBRB, GROUPBOX) }
 };
 
-static const DIALOG_CONTROL
-bl_gallery_first_series_text =
-{
-    BL_GALLERY_ID_FIRST_SERIES_TEXT, BL_GALLERY_ID_FIRST_SERIES_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, STATICTEXT) }
-};
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_gallery_first_series_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_SERIES_TEXT), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_GROUPBOX
+bl_gallery_first_series_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_SERIES_TEXT), { FRAMED_BOX_NONE } };
 
 static const DIALOG_CONTROL
 bl_gallery_first_series_category_labels =
 {
     BL_GALLERY_ID_FIRST_SERIES_CATEGORY_LABELS, BL_GALLERY_ID_FIRST_SERIES_GROUP,
-    { BL_GALLERY_ID_FIRST_SERIES_TEXT, BL_GALLERY_ID_FIRST_SERIES_TEXT },
-    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { 0, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -239,29 +237,20 @@ bl_gallery_first_category_group =
 {
     BL_GALLERY_ID_FIRST_CATEGORY_GROUP, BL_GALLERY_ID_ARRANGE_GROUP,
     { BL_GALLERY_ID_FIRST_SERIES_GROUP, BL_GALLERY_ID_FIRST_SERIES_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_GROUPSPACING_V + 2 * DIALOG_SMALLSPACING_V, 0, 0 },
+    { 0, DIALOG_GROUPSPACING_V + 2 * BAR_GALLERY_PICTGAP_V, 0, 0 },
     { DRT(LBRB, GROUPBOX) }
 };
 
-static const DIALOG_CONTROL
-bl_gallery_first_category_text =
-{
-    BL_GALLERY_ID_FIRST_CATEGORY_TEXT, BL_GALLERY_ID_FIRST_CATEGORY_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, STATICTEXT) }
-};
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_gallery_first_category_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_CATEGORY_TEXT), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_GROUPBOX
+bl_gallery_first_category_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_CATEGORY_TEXT), { FRAMED_BOX_NONE } };
 
 static const DIALOG_CONTROL
 bl_gallery_first_category_series_labels =
 {
     BL_GALLERY_ID_FIRST_CATEGORY_SERIES_LABELS, BL_GALLERY_ID_FIRST_CATEGORY_GROUP,
-    { BL_GALLERY_ID_FIRST_CATEGORY_TEXT, BL_GALLERY_ID_FIRST_CATEGORY_TEXT },
-    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { 0, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -279,55 +268,58 @@ bl_gallery_first_category_category_data =
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
 bl_gallery_first_category_category_data_data = { { 0 }, 0, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_CATEGORY_CATEGORY_DATA) };
 
+#if RISCOS
+
 static const DIALOG_CONTROL
 bl_gallery_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
-#if RISCOS
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#else
-    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#endif
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
+
+#else
+#define bl_gallery_ok defbutton_ok
+#endif
 
 static const DIALOG_CTL_CREATE
 bar_gallery_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &bl_gallery_pict_group, NULL },
-    { &bl_gallery_pict[0], &bar_gallery_pict_data[0] },
-    { &bl_gallery_pict[1], &bar_gallery_pict_data[1] },
-    { &bl_gallery_pict[2], &bar_gallery_pict_data[2] },
-    { &bl_gallery_pict[3], &bar_gallery_pict_data[3] },
-    { &bl_gallery_pict[4], &bar_gallery_pict_data[4] },
-    { &bl_gallery_pict[5], &bar_gallery_pict_data[5] },
-    { &bl_gallery_pict[6], &bar_gallery_pict_data[6] },
-    { &bl_gallery_pict[7], &bar_gallery_pict_data[7] },
+    { { &dialog_col1_group }, NULL },
 
-    { &bar_gallery_3d, &bar_gallery_3d_data },
+    { { &bl_gallery_pict_group }, NULL },
+    { { &bl_gallery_pict[0] }, &bar_gallery_pict_data[0] },
+    { { &bl_gallery_pict[1] }, &bar_gallery_pict_data[1] },
+    { { &bl_gallery_pict[2] }, &bar_gallery_pict_data[2] },
+    { { &bl_gallery_pict[3] }, &bar_gallery_pict_data[3] },
+    { { &bl_gallery_pict[4] }, &bar_gallery_pict_data[4] },
+    { { &bl_gallery_pict[5] }, &bar_gallery_pict_data[5] },
+    { { &bl_gallery_pict[6] }, &bar_gallery_pict_data[6] },
+    { { &bl_gallery_pict[7] }, &bar_gallery_pict_data[7] },
 
-    { &bl_gallery_arrange_group, NULL },
+    { { &dialog_col2_group }, NULL },
 
-    { &bl_gallery_series_group, NULL },
-    { &bl_gallery_series_text, &bl_gallery_series_text_data },
-    { &bl_gallery_series_cols, &bl_gallery_series_cols_data },
-    { &bl_gallery_series_rows, &bl_gallery_series_rows_data },
+    { { &bl_gallery_3d }, &bl_gallery_3d_data },
 
-    { &bl_gallery_first_series_group, NULL },
-    { &bl_gallery_first_series_text, &bl_gallery_first_series_text_data },
-    { &bl_gallery_first_series_category_labels, &bl_gallery_first_series_category_labels_data },
-    { &bl_gallery_first_series_series_data, &bl_gallery_first_series_series_data_data },
+    { { &bl_gallery_arrange_group }, NULL },
 
-    { &bl_gallery_first_category_group, NULL },
-    { &bl_gallery_first_category_text, &bl_gallery_first_category_text_data },
-    { &bl_gallery_first_category_series_labels, &bl_gallery_first_category_series_labels_data },
-    { &bl_gallery_first_category_category_data, &bl_gallery_first_category_category_data_data },
+    { { &bl_gallery_series_group }, &bl_gallery_series_group_data },
+    { { &bl_gallery_series_cols }, &bl_gallery_series_cols_data },
+    { { &bl_gallery_series_rows }, &bl_gallery_series_rows_data },
 
-    { &bl_gallery_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &bl_gallery_first_series_group }, &bl_gallery_first_series_group_data },
+    { { &bl_gallery_first_series_category_labels }, &bl_gallery_first_series_category_labels_data },
+    { { &bl_gallery_first_series_series_data }, &bl_gallery_first_series_series_data_data },
+
+    { { &bl_gallery_first_category_group }, &bl_gallery_first_category_group_data },
+    { { &bl_gallery_first_category_series_labels }, &bl_gallery_first_category_series_labels_data },
+    { { &bl_gallery_first_category_category_data }, &bl_gallery_first_category_category_data_data },
+
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
+    { { &bl_gallery_ok }, &defbutton_create_data }
 };
 
 static const RESOURCE_BITMAP_ID
@@ -362,39 +354,40 @@ line_gallery_selected_pict = 1;
 static const DIALOG_CTL_CREATE
 line_gallery_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &bl_gallery_pict_group, NULL },
-    { &bl_gallery_pict[0], &line_gallery_pict_data[0] },
-    { &bl_gallery_pict[1], &line_gallery_pict_data[1] },
-    { &bl_gallery_pict[2], &line_gallery_pict_data[2] },
-    { &bl_gallery_pict[3], &line_gallery_pict_data[3] },
-    { &bl_gallery_pict[4], &line_gallery_pict_data[4] },
-    { &bl_gallery_pict[5], &line_gallery_pict_data[5] },
-    { &bl_gallery_pict[6], &line_gallery_pict_data[6] },
-    { &bl_gallery_pict[7], &line_gallery_pict_data[7] },
+    { { &dialog_col1_group }, NULL },
 
-    { &bar_gallery_3d, &bar_gallery_3d_data },
+    { { &bl_gallery_pict_group } },
+    { { &bl_gallery_pict[0] }, &line_gallery_pict_data[0] },
+    { { &bl_gallery_pict[1] }, &line_gallery_pict_data[1] },
+    { { &bl_gallery_pict[2] }, &line_gallery_pict_data[2] },
+    { { &bl_gallery_pict[3] }, &line_gallery_pict_data[3] },
+    { { &bl_gallery_pict[4] }, &line_gallery_pict_data[4] },
+    { { &bl_gallery_pict[5] }, &line_gallery_pict_data[5] },
+    { { &bl_gallery_pict[6] }, &line_gallery_pict_data[6] },
+    { { &bl_gallery_pict[7] }, &line_gallery_pict_data[7] },
 
-    { &bl_gallery_arrange_group, NULL },
+    { { &dialog_col2_group }, NULL },
 
-    { &bl_gallery_series_group, NULL },
-    { &bl_gallery_series_text, &bl_gallery_series_text_data },
-    { &bl_gallery_series_cols, &bl_gallery_series_cols_data },
-    { &bl_gallery_series_rows, &bl_gallery_series_rows_data },
+    { { &bl_gallery_3d }, &bl_gallery_3d_data },
 
-    { &bl_gallery_first_series_group, NULL },
-    { &bl_gallery_first_series_text, &bl_gallery_first_series_text_data },
-    { &bl_gallery_first_series_category_labels, &bl_gallery_first_series_category_labels_data },
-    { &bl_gallery_first_series_series_data, &bl_gallery_first_series_series_data_data },
+    { { &bl_gallery_arrange_group }, NULL },
 
-    { &bl_gallery_first_category_group, NULL },
-    { &bl_gallery_first_category_text, &bl_gallery_first_category_text_data },
-    { &bl_gallery_first_category_series_labels, &bl_gallery_first_category_series_labels_data },
-    { &bl_gallery_first_category_category_data, &bl_gallery_first_category_category_data_data },
+    { { &bl_gallery_series_group }, &bl_gallery_series_group_data },
+    { { &bl_gallery_series_cols }, &bl_gallery_series_cols_data },
+    { { &bl_gallery_series_rows }, &bl_gallery_series_rows_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &bl_gallery_ok, &defbutton_ok_data }
+    { { &bl_gallery_first_series_group }, &bl_gallery_first_series_group_data },
+    { { &bl_gallery_first_series_category_labels }, &bl_gallery_first_series_category_labels_data },
+    { { &bl_gallery_first_series_series_data }, &bl_gallery_first_series_series_data_data },
+
+    { { &bl_gallery_first_category_group }, &bl_gallery_first_category_group_data },
+    { { &bl_gallery_first_category_series_labels }, &bl_gallery_first_category_series_labels_data },
+    { { &bl_gallery_first_category_category_data }, &bl_gallery_first_category_category_data_data },
+
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
+    { { &bl_gallery_ok }, &defbutton_create_data }
 };
 
 static const RESOURCE_BITMAP_ID
@@ -425,13 +418,13 @@ over_bl_gallery_pict[3] =
     {
         BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { 0, BAR_GALLERY_PICTGAP_V, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_GROUP,
         { BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { 0, BAR_GALLERY_PICTGAP_V, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
     }
 };
 
@@ -441,34 +434,35 @@ over_bl_gallery_selected_pict = 1;
 static const DIALOG_CTL_CREATE
 over_bl_gallery_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &bl_gallery_pict_group, NULL },
-    { &over_bl_gallery_pict[0], &over_bl_gallery_pict_data[0] },
-    { &over_bl_gallery_pict[1], &over_bl_gallery_pict_data[1] },
-    { &over_bl_gallery_pict[2], &over_bl_gallery_pict_data[2] },
+    { { &dialog_col1_group }, NULL },
 
-    { &bar_gallery_3d, &bar_gallery_3d_data },
+    { { &bl_gallery_pict_group }, NULL },
+    { { &over_bl_gallery_pict[0] }, &over_bl_gallery_pict_data[0] },
+    { { &over_bl_gallery_pict[1] }, &over_bl_gallery_pict_data[1] },
+    { { &over_bl_gallery_pict[2] }, &over_bl_gallery_pict_data[2] },
 
-    { &bl_gallery_arrange_group, NULL },
+    { { &dialog_col2_group }, NULL },
 
-    { &bl_gallery_series_group, NULL },
-    { &bl_gallery_series_text, &bl_gallery_series_text_data },
-    { &bl_gallery_series_cols, &bl_gallery_series_cols_data },
-    { &bl_gallery_series_rows, &bl_gallery_series_rows_data },
+    { { &bl_gallery_3d }, &bl_gallery_3d_data },
 
-    { &bl_gallery_first_series_group, NULL },
-    { &bl_gallery_first_series_text, &bl_gallery_first_series_text_data },
-    { &bl_gallery_first_series_category_labels, &bl_gallery_first_series_category_labels_data },
-    { &bl_gallery_first_series_series_data, &bl_gallery_first_series_series_data_data },
+    { { &bl_gallery_arrange_group }, NULL },
 
-    { &bl_gallery_first_category_group, NULL },
-    { &bl_gallery_first_category_text, &bl_gallery_first_category_text_data },
-    { &bl_gallery_first_category_series_labels, &bl_gallery_first_category_series_labels_data },
-    { &bl_gallery_first_category_category_data, &bl_gallery_first_category_category_data_data },
+    { { &bl_gallery_series_group }, &bl_gallery_series_group_data },
+    { { &bl_gallery_series_cols }, &bl_gallery_series_cols_data },
+    { { &bl_gallery_series_rows }, &bl_gallery_series_rows_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &bl_gallery_ok, &defbutton_ok_data }
+    { { &bl_gallery_first_series_group }, &bl_gallery_first_series_group_data },
+    { { &bl_gallery_first_series_category_labels }, &bl_gallery_first_series_category_labels_data },
+    { { &bl_gallery_first_series_series_data }, &bl_gallery_first_series_series_data_data },
+
+    { { &bl_gallery_first_category_group }, &bl_gallery_first_category_group_data },
+    { { &bl_gallery_first_category_series_labels }, &bl_gallery_first_category_series_labels_data },
+    { { &bl_gallery_first_category_category_data }, &bl_gallery_first_category_category_data_data },
+
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
+    { { &bl_gallery_ok }, &defbutton_create_data }
 };
 
 static const RESOURCE_BITMAP_ID
@@ -504,56 +498,65 @@ scat_gallery_pict[9] =
 {
     {
         BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_GROUP,
-        { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
-        { 0, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V }, { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
+        { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+        { 0, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/, 1 /*logical_group*/ }
     },
 
     {
         BL_GALLERY_ID_PICT_1, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_0 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_2, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_1, BL_GALLERY_ID_PICT_1, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_1 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_1, BL_GALLERY_ID_PICT_1 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_0, BL_GALLERY_ID_PICT_0 },
+        { 0, BAR_GALLERY_PICTGAP_V, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LBLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_3 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_5, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_4 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_4, BL_GALLERY_ID_PICT_4 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3, DIALOG_CONTROL_SELF },
-        { 0, 0, 0, BAR_GALLERY_PICT_V }, { DRT(LBRT, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_3, BL_GALLERY_ID_PICT_3 },
+        { 0, BAR_GALLERY_PICTGAP_V, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(LBLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_7, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_6, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_6 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_6, BL_GALLERY_ID_PICT_6 },
+        { BAR_GALLERY_PICTGAP_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     },
 
     {
         BL_GALLERY_ID_PICT_8, BL_GALLERY_ID_PICT_GROUP,
-        { BL_GALLERY_ID_PICT_7, BL_GALLERY_ID_PICT_7, DIALOG_CONTROL_SELF, BL_GALLERY_ID_PICT_7 },
-        { 0, 0, BAR_GALLERY_PICT_H, 0 }, { DRT(RTLB, RADIOPICTURE) }
+        { BL_GALLERY_ID_PICT_7, BL_GALLERY_ID_PICT_7 },
+        { DIALOG_SMALLSPACING_H, 0, BAR_GALLERY_PICT_H, BAR_GALLERY_PICT_V },
+        { DRT(RTLT, RADIOPICTURE) }
     }
 };
 
@@ -561,33 +564,24 @@ static S32
 scat_gallery_selected_pict = 1;
 
 static const DIALOG_CONTROL
-scat_gallery_arrange_group =
+sp_gallery_arrange_group =
 {
-    BL_GALLERY_ID_ARRANGE_GROUP, DIALOG_MAIN_GROUP,
-    { BL_GALLERY_ID_PICT_GROUP, BL_GALLERY_ID_PICT_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { DIALOG_STDSPACING_H, 0, 0, 0 },
-    { DRT(RTRB, GROUPBOX), 0, 1 /*logical_group*/ }
+    BL_GALLERY_ID_ARRANGE_GROUP, DIALOG_COL2_GROUP,
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
+    { 0 },
+    { DRT(LTRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
-static const DIALOG_CONTROL
-scat_gallery_first_series_text =
-{
-    BL_GALLERY_ID_FIRST_SERIES_TEXT, BL_GALLERY_ID_FIRST_SERIES_GROUP,
-    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LTLT, STATICTEXT) }
-};
-
-static const DIALOG_CONTROL_DATA_STATICTEXT
-scat_gallery_first_series_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_SERIES_TEXT1), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_GROUPBOX
+scat_gallery_first_series_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_SERIES_TEXT1), { FRAMED_BOX_NONE } };
 
 static const DIALOG_CONTROL
 scat_gallery_first_series_xyy_data =
 {
     BL_GALLERY_ID_FIRST_SERIES_CATEGORY_LABELS, BL_GALLERY_ID_FIRST_SERIES_GROUP,
-    { BL_GALLERY_ID_FIRST_SERIES_TEXT, BL_GALLERY_ID_FIRST_SERIES_TEXT },
-    { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
-    { DRT(LBLT, RADIOBUTTON), 1 /*tabstop*/ }
+    { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
+    { 0, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
+    { DRT(LTLT, RADIOBUTTON), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
@@ -605,8 +599,8 @@ scat_gallery_first_series_xyxy_data =
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
 scat_gallery_first_series_xyxy_data_data = { { 0 }, 0, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_SERIES_XYXY_DATA) };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-scat_gallery_first_point_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_POINT_TEXT), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_GROUPBOX
+scat_gallery_first_point_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_GALLERY_FIRST_POINT_TEXT), { FRAMED_BOX_NONE } };
 
 static const DIALOG_CONTROL
 scat_gallery_first_point_point_data =
@@ -623,39 +617,51 @@ scat_gallery_first_point_point_data_data = { { 0 }, 0, UI_TEXT_INIT_RESID(CHART_
 static const DIALOG_CTL_CREATE
 scat_gallery_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &bl_gallery_pict_group, NULL },
-    { &scat_gallery_pict[0], &scat_gallery_pict_data[0] },
-    { &scat_gallery_pict[1], &scat_gallery_pict_data[1] },
-    { &scat_gallery_pict[2], &scat_gallery_pict_data[2] },
-    { &scat_gallery_pict[3], &scat_gallery_pict_data[3] },
-    { &scat_gallery_pict[4], &scat_gallery_pict_data[4] },
-    { &scat_gallery_pict[5], &scat_gallery_pict_data[5] },
-    { &scat_gallery_pict[6], &scat_gallery_pict_data[6] },
-    { &scat_gallery_pict[7], &scat_gallery_pict_data[7] },
-    { &scat_gallery_pict[8], &scat_gallery_pict_data[8] },
+    { { &dialog_col1_group }, NULL },
 
-    { &scat_gallery_arrange_group, NULL },
+    { { &bl_gallery_pict_group }, NULL },
+    { { &scat_gallery_pict[0] }, &scat_gallery_pict_data[0] },
+    { { &scat_gallery_pict[1] }, &scat_gallery_pict_data[1] },
+    { { &scat_gallery_pict[2] }, &scat_gallery_pict_data[2] },
+    { { &scat_gallery_pict[3] }, &scat_gallery_pict_data[3] },
+    { { &scat_gallery_pict[4] }, &scat_gallery_pict_data[4] },
+    { { &scat_gallery_pict[5] }, &scat_gallery_pict_data[5] },
+    { { &scat_gallery_pict[6] }, &scat_gallery_pict_data[6] },
+    { { &scat_gallery_pict[7] }, &scat_gallery_pict_data[7] },
+    { { &scat_gallery_pict[8] }, &scat_gallery_pict_data[8] },
 
-    { &bl_gallery_series_group, NULL },
-    { &bl_gallery_series_text, &bl_gallery_series_text_data },
-    { &bl_gallery_series_cols, &bl_gallery_series_cols_data },
-    { &bl_gallery_series_rows, &bl_gallery_series_rows_data },
+    { { &dialog_col2_group }, NULL },
 
-    { &bl_gallery_first_series_group, NULL },
-    { &scat_gallery_first_series_text, &scat_gallery_first_series_text_data },
-    { &scat_gallery_first_series_xyy_data, &scat_gallery_first_series_xyy_data_data },
-    { &scat_gallery_first_series_xyxy_data, &scat_gallery_first_series_xyxy_data_data },
+    { { &sp_gallery_arrange_group }, NULL },
 
-    { &bl_gallery_first_category_group, NULL },
-    { &bl_gallery_first_category_text, &scat_gallery_first_point_text_data },
-    { &bl_gallery_first_category_series_labels, &bl_gallery_first_category_series_labels_data },
-    { &scat_gallery_first_point_point_data, &scat_gallery_first_point_point_data_data },
+    { { &bl_gallery_series_group }, &bl_gallery_series_group_data },
+    { { &bl_gallery_series_cols }, &bl_gallery_series_cols_data },
+    { { &bl_gallery_series_rows }, &bl_gallery_series_rows_data },
 
-    { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &bl_gallery_ok, &defbutton_ok_data }
+    { { &bl_gallery_first_series_group }, &scat_gallery_first_series_group_data },
+    { { &scat_gallery_first_series_xyy_data }, &scat_gallery_first_series_xyy_data_data },
+    { { &scat_gallery_first_series_xyxy_data }, &scat_gallery_first_series_xyxy_data_data },
+
+    { { &bl_gallery_first_category_group }, &scat_gallery_first_point_group_data },
+    { { &bl_gallery_first_category_series_labels }, &bl_gallery_first_category_series_labels_data },
+    { { &scat_gallery_first_point_point_data }, &scat_gallery_first_point_point_data_data },
+
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
+    { { &bl_gallery_ok }, &defbutton_create_data }
 };
+
+#if RISCOS
+#define PIE_GALLERY_LABELPICT_H (DIALOG_PUSHPICTUREOVH_H + ((2*60) * PIXITS_PER_RISCOS))
+#define PIE_GALLERY_LABELPICT_V (DIALOG_PUSHPICTUREOVH_V + ((4*29) * PIXITS_PER_RISCOS))
+#else
+#define PIE_GALLERY_LABELPICT_H (DIALOG_PUSHPICTUREOVH_H + (42 * PIXITS_PER_WDU_H)) /* teeny bit wider than other pics! */
+#define PIE_GALLERY_LABELPICT_V (DIALOG_PUSHPICTUREOVH_V + (36 * PIXITS_PER_WDU_V))
+#endif
+
+#define PIE_GALLERY_EXPLODEPICT_H PIE_GALLERY_LABELPICT_H
+#define PIE_GALLERY_EXPLODEPICT_V PIE_GALLERY_LABELPICT_V
 
 /*
 label group
@@ -664,7 +670,7 @@ label group
 static const DIALOG_CONTROL
 pie_gallery_label_group =
 {
-    BL_GALLERY_ID_PICT_GROUP, DIALOG_MAIN_GROUP,
+    BL_GALLERY_ID_PICT_GROUP, DIALOG_COL1_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0, 0, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
     { DRT(LTRB, GROUPBOX) }
@@ -681,6 +687,36 @@ pie_gallery_label_none =
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, PIE_GALLERY_LABELPICT_H, PIE_GALLERY_LABELPICT_V },
     { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ }
 };
+
+static const DIALOG_CONTROL
+pie_gallery_label_label =
+{
+    PIE_GALLERY_ID_LABEL_LABEL, PIE_GALLERY_ID_LABEL_GROUP,
+    { PIE_GALLERY_ID_LABEL_NONE, PIE_GALLERY_ID_LABEL_NONE },
+    { BAR_GALLERY_PICTGAP_H, 0, PIE_GALLERY_LABELPICT_H, PIE_GALLERY_LABELPICT_V },
+    { DRT(RTLT, RADIOPICTURE) }
+};
+
+static const DIALOG_CONTROL
+pie_gallery_label_value =
+{
+    PIE_GALLERY_ID_LABEL_VALUE, PIE_GALLERY_ID_LABEL_GROUP,
+    { PIE_GALLERY_ID_LABEL_LABEL, PIE_GALLERY_ID_LABEL_LABEL },
+    { BAR_GALLERY_PICTGAP_H, 0, PIE_GALLERY_LABELPICT_H, PIE_GALLERY_LABELPICT_V },
+    { DRT(RTLT, RADIOPICTURE) }
+};
+
+static const DIALOG_CONTROL
+pie_gallery_label_v_pct =
+{
+    PIE_GALLERY_ID_LABEL_V_PCT, PIE_GALLERY_ID_LABEL_GROUP,
+    { PIE_GALLERY_ID_LABEL_VALUE, PIE_GALLERY_ID_LABEL_VALUE },
+    { BAR_GALLERY_PICTGAP_H, 0, PIE_GALLERY_LABELPICT_H, PIE_GALLERY_LABELPICT_V },
+    { DRT(RTLT, RADIOPICTURE) }
+};
+
+static S32
+pie_gallery_selected_label_pict = 1;
 
 static const RESOURCE_BITMAP_ID
 pie_gallery_label_pict_bitmap[4] =
@@ -700,36 +736,6 @@ pie_gallery_label_pict_data[4] =
     { { 0 }, 4, &pie_gallery_label_pict_bitmap[3] }
 };
 
-static const DIALOG_CONTROL
-pie_gallery_label_label =
-{
-    PIE_GALLERY_ID_LABEL_LABEL, PIE_GALLERY_ID_LABEL_GROUP,
-    { PIE_GALLERY_ID_LABEL_NONE, PIE_GALLERY_ID_LABEL_NONE, DIALOG_CONTROL_SELF, PIE_GALLERY_ID_LABEL_NONE },
-    { 0, 0, PIE_GALLERY_LABELPICT_H, 0 },
-    { DRT(RTLB, RADIOPICTURE) }
-};
-
-static const DIALOG_CONTROL
-pie_gallery_label_value =
-{
-    PIE_GALLERY_ID_LABEL_VALUE, PIE_GALLERY_ID_LABEL_GROUP,
-    { PIE_GALLERY_ID_LABEL_LABEL, PIE_GALLERY_ID_LABEL_LABEL, DIALOG_CONTROL_SELF, PIE_GALLERY_ID_LABEL_LABEL },
-    { 0, 0, PIE_GALLERY_LABELPICT_H, 0 },
-    { DRT(RTLB, RADIOPICTURE) }
-};
-
-static const DIALOG_CONTROL
-pie_gallery_label_v_pct =
-{
-    PIE_GALLERY_ID_LABEL_V_PCT, PIE_GALLERY_ID_LABEL_GROUP,
-    { PIE_GALLERY_ID_LABEL_VALUE, PIE_GALLERY_ID_LABEL_VALUE, DIALOG_CONTROL_SELF, PIE_GALLERY_ID_LABEL_VALUE },
-    { 0, 0, PIE_GALLERY_LABELPICT_H, 0 },
-    { DRT(RTLB, RADIOPICTURE) }
-};
-
-static S32
-pie_gallery_selected_label_pict = 1;
-
 /*
 explode group
 */
@@ -737,9 +743,9 @@ explode group
 static const DIALOG_CONTROL
 pie_gallery_explode_group =
 {
-    PIE_GALLERY_ID_EXPLODE_GROUP, DIALOG_MAIN_GROUP,
-    { PIE_GALLERY_ID_LABEL_GROUP, PIE_GALLERY_ID_LABEL_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_GROUPSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    PIE_GALLERY_ID_EXPLODE_GROUP, DIALOG_COL1_GROUP,
+    { PIE_GALLERY_ID_LABEL_GROUP, PIE_GALLERY_ID_LABEL_GROUP, PIE_GALLERY_ID_LABEL_GROUP, DIALOG_CONTROL_CONTENTS },
+    { 0, DIALOG_GROUPSPACING_V, 0, DIALOG_STDGROUP_BM },
     { DRT(LBRB, GROUPBOX) }
 };
 
@@ -753,6 +759,24 @@ pie_gallery_explode_none =
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, PIE_GALLERY_EXPLODEPICT_H, PIE_GALLERY_EXPLODEPICT_V },
     { DRT(LTLT, RADIOPICTURE), 1 /*tabstop*/ }
+};
+
+static const DIALOG_CONTROL
+pie_gallery_explode_first =
+{
+    PIE_GALLERY_ID_EXPLODE_FIRST, PIE_GALLERY_ID_EXPLODE_GROUP,
+    { PIE_GALLERY_ID_EXPLODE_NONE, PIE_GALLERY_ID_EXPLODE_NONE },
+    { DIALOG_SMALLSPACING_H, 0, PIE_GALLERY_EXPLODEPICT_H, PIE_GALLERY_EXPLODEPICT_V },
+    { DRT(RTLT, RADIOPICTURE) }
+};
+
+static const DIALOG_CONTROL
+pie_gallery_explode_all =
+{
+    PIE_GALLERY_ID_EXPLODE_ALL, PIE_GALLERY_ID_EXPLODE_GROUP,
+    { PIE_GALLERY_ID_EXPLODE_FIRST, PIE_GALLERY_ID_EXPLODE_FIRST },
+    { DIALOG_SMALLSPACING_H, 0, PIE_GALLERY_EXPLODEPICT_H, PIE_GALLERY_EXPLODEPICT_V },
+    { DRT(RTLT, RADIOPICTURE) }
 };
 
 static const RESOURCE_BITMAP_ID
@@ -772,36 +796,24 @@ pie_gallery_explode_pict_data[3] =
 };
 
 static const DIALOG_CONTROL
-pie_gallery_explode_first =
+pie_gallery_explode_by_label =
 {
-    PIE_GALLERY_ID_EXPLODE_FIRST, PIE_GALLERY_ID_EXPLODE_GROUP,
-    { PIE_GALLERY_ID_EXPLODE_NONE, PIE_GALLERY_ID_EXPLODE_NONE, DIALOG_CONTROL_SELF, PIE_GALLERY_ID_EXPLODE_NONE },
-    { 0, 0, PIE_GALLERY_EXPLODEPICT_H, 0 },
-    { DRT(RTLB, RADIOPICTURE) }
+    PIE_GALLERY_ID_EXPLODE_BY_LABEL, PIE_GALLERY_ID_EXPLODE_GROUP,
+    { PIE_GALLERY_ID_EXPLODE_NONE, PIE_GALLERY_ID_EXPLODE_BY_VALUE, PIE_GALLERY_ID_EXPLODE_BY_VALUE, PIE_GALLERY_ID_EXPLODE_BY_VALUE },
+    { 0, 0, DIALOG_LABELGAP_H, 0 },
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL
-pie_gallery_explode_all =
-{
-    PIE_GALLERY_ID_EXPLODE_ALL, PIE_GALLERY_ID_EXPLODE_GROUP,
-    { PIE_GALLERY_ID_EXPLODE_FIRST, PIE_GALLERY_ID_EXPLODE_FIRST, DIALOG_CONTROL_SELF, PIE_GALLERY_ID_EXPLODE_FIRST },
-    { 0, 0, PIE_GALLERY_EXPLODEPICT_H, 0 },
-    { DRT(RTLB, RADIOPICTURE) }
-};
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+pie_gallery_explode_by_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_EXPLODE_BY) };
 
 static const DIALOG_CONTROL
 pie_gallery_explode_by_value =
 {
     PIE_GALLERY_ID_EXPLODE_BY_VALUE, PIE_GALLERY_ID_EXPLODE_GROUP,
-#if 1
-    { PIE_GALLERY_ID_EXPLODE_NONE, PIE_GALLERY_ID_EXPLODE_NONE },
+    { PIE_GALLERY_ID_EXPLODE_FIRST, PIE_GALLERY_ID_EXPLODE_FIRST },
     { 0, DIALOG_STDSPACING_V, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(LBLT, BUMP_F64), 1 /*tabstop*/, 1 /*logical_group*/ }
-#else
-    { PIE_GALLERY_ID_EXPLODE_ALL, PIE_GALLERY_ID_EXPLODE_ALL },
-    { DIALOG_STDSPACING_H, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
-    { DRT(RTLT, BUMP_F64), 1 /*tabstop*/ }
-#endif
 };
 
 static const UI_CONTROL_F64
@@ -811,16 +823,16 @@ static const DIALOG_CONTROL_DATA_BUMP_F64
 pie_gallery_explode_by_value_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &pie_gallery_explode_by_value_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
-pie_gallery_explode_by_text =
+pie_gallery_explode_by_percent =
 {
-    PIE_GALLERY_ID_EXPLODE_BY_TEXT, PIE_GALLERY_ID_EXPLODE_GROUP,
+    PIE_GALLERY_ID_EXPLODE_BY_PERCENT, PIE_GALLERY_ID_EXPLODE_GROUP,
     { PIE_GALLERY_ID_EXPLODE_BY_VALUE, PIE_GALLERY_ID_EXPLODE_BY_VALUE, DIALOG_CONTROL_SELF, PIE_GALLERY_ID_EXPLODE_BY_VALUE },
-    { DIALOG_SMALLSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-pie_gallery_explode_by_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_EXPLODE_BY), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+pie_gallery_explode_by_percent_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/ } };
 
 /*
 start angle group
@@ -829,9 +841,9 @@ start angle group
 static const DIALOG_CONTROL
 pie_gallery_start_position_group =
 {
-    PIE_GALLERY_ID_START_POSITION_GROUP, DIALOG_MAIN_GROUP,
-    { PIE_GALLERY_ID_EXPLODE_GROUP, PIE_GALLERY_ID_EXPLODE_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_GROUPSPACING_V, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
+    PIE_GALLERY_ID_START_POSITION_GROUP, DIALOG_COL1_GROUP,
+    { PIE_GALLERY_ID_EXPLODE_GROUP, PIE_GALLERY_ID_EXPLODE_GROUP, PIE_GALLERY_ID_EXPLODE_GROUP, DIALOG_CONTROL_CONTENTS },
+    { 0, DIALOG_GROUPSPACING_V, 0, DIALOG_STDGROUP_BM },
     { DRT(LBRB, GROUPBOX) }
 };
 
@@ -975,7 +987,7 @@ pie_gallery_start_position_angle_text =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-pie_gallery_start_position_angle_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_START_POSITION_ANGLE), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+pie_gallery_start_position_angle_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_ANGLE), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 pie_gallery_anticlockwise =
@@ -989,86 +1001,82 @@ pie_gallery_anticlockwise =
 static const DIALOG_CONTROL_DATA_CHECKBOX
 pie_gallery_anticlockwise_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_ANTICLOCKWISE) };
 
-static const DIALOG_CONTROL
-pie_gallery_arrange_group =
-{
-    BL_GALLERY_ID_ARRANGE_GROUP, DIALOG_MAIN_GROUP,
-    { PIE_GALLERY_ID_LABEL_GROUP, PIE_GALLERY_ID_LABEL_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { DIALOG_GROUPSPACING_H, 0, 0, 0 },
-    { DRT(RTRB, GROUPBOX) }
-};
-
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
 pie_gallery_first_series_category_labels_data = { { 0 }, 1, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_FIRST_SERIES_CATEGORY_LABELS) };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
 pie_gallery_first_category_series_label_data = { { 0 }, 1, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_PIE_GALLERY_FIRST_CATEGORY_SERIES_LABEL) };
 
+#if RISCOS
+
 static const DIALOG_CONTROL
 pie_gallery_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, PIE_GALLERY_ID_START_POSITION_GROUP },
-#if RISCOS
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-#else
-    { DIALOG_DEFOK_H, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-#endif
     { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
+
+#else
+#define pie_gallery_ok defbutton_ok
+#endif
 
 static const DIALOG_CTL_CREATE
 pie_gallery_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &pie_gallery_label_group, &pie_gallery_label_group_data },
-    { &pie_gallery_label_none,  &pie_gallery_label_pict_data[0] },
-    { &pie_gallery_label_label, &pie_gallery_label_pict_data[1] },
-    { &pie_gallery_label_value, &pie_gallery_label_pict_data[2] },
-    { &pie_gallery_label_v_pct, &pie_gallery_label_pict_data[3] },
+    { { &dialog_col1_group }, NULL },
 
-    { &pie_gallery_explode_group,    &pie_gallery_explode_group_data },
-    { &pie_gallery_explode_none,     &pie_gallery_explode_pict_data[0] },
-    { &pie_gallery_explode_first,    &pie_gallery_explode_pict_data[1] },
-    { &pie_gallery_explode_all,      &pie_gallery_explode_pict_data[2] },
-    { &pie_gallery_explode_by_value, &pie_gallery_explode_by_value_data },
-    { &pie_gallery_explode_by_text,  &pie_gallery_explode_by_text_data },
+    { { &pie_gallery_label_group },                 &pie_gallery_label_group_data },
+    { { &pie_gallery_label_none },                  &pie_gallery_label_pict_data[0] },
+    { { &pie_gallery_label_label },                 &pie_gallery_label_pict_data[1] },
+    { { &pie_gallery_label_value },                 &pie_gallery_label_pict_data[2] },
+    { { &pie_gallery_label_v_pct },                 &pie_gallery_label_pict_data[3] },
 
-    { &pie_gallery_start_position_group,       &pie_gallery_start_position_group_data },
-    { &pie_gallery_start_position_circle_000,  &pie_gallery_start_position_circle_000_data },
-    { &pie_gallery_start_position_circle_045,  &pie_gallery_start_position_circle_045_data },
-    { &pie_gallery_start_position_circle_090,  &pie_gallery_start_position_circle_090_data },
-    { &pie_gallery_start_position_circle_135,  &pie_gallery_start_position_circle_135_data },
-    { &pie_gallery_start_position_circle_180,  &pie_gallery_start_position_circle_180_data },
-    { &pie_gallery_start_position_circle_225,  &pie_gallery_start_position_circle_225_data },
-    { &pie_gallery_start_position_circle_270,  &pie_gallery_start_position_circle_270_data },
-    { &pie_gallery_start_position_circle_315,  &pie_gallery_start_position_circle_315_data },
+    { { &pie_gallery_explode_group },               &pie_gallery_explode_group_data },
+    { { &pie_gallery_explode_none },                &pie_gallery_explode_pict_data[0] },
+    { { &pie_gallery_explode_first },               &pie_gallery_explode_pict_data[1] },
+    { { &pie_gallery_explode_all },                 &pie_gallery_explode_pict_data[2] },
 
-    { &pie_gallery_start_position_angle_value, &pie_gallery_start_position_angle_value_data },
-    { &pie_gallery_start_position_angle_text,  &pie_gallery_start_position_angle_text_data },
+    { { &pie_gallery_explode_by_label },            &pie_gallery_explode_by_label_data },
+    { { &pie_gallery_explode_by_value },            &pie_gallery_explode_by_value_data },
+    { { &pie_gallery_explode_by_percent },          &pie_gallery_explode_by_percent_data },
 
-    { &pie_gallery_anticlockwise, &pie_gallery_anticlockwise_data },
+    { { &pie_gallery_start_position_group },        &pie_gallery_start_position_group_data },
+    { { &pie_gallery_start_position_circle_000 },   &pie_gallery_start_position_circle_000_data },
+    { { &pie_gallery_start_position_circle_045 },   &pie_gallery_start_position_circle_045_data },
+    { { &pie_gallery_start_position_circle_090 },   &pie_gallery_start_position_circle_090_data },
+    { { &pie_gallery_start_position_circle_135 },   &pie_gallery_start_position_circle_135_data },
+    { { &pie_gallery_start_position_circle_180 },   &pie_gallery_start_position_circle_180_data },
+    { { &pie_gallery_start_position_circle_225 },   &pie_gallery_start_position_circle_225_data },
+    { { &pie_gallery_start_position_circle_270 },   &pie_gallery_start_position_circle_270_data },
+    { { &pie_gallery_start_position_circle_315 },   &pie_gallery_start_position_circle_315_data },
 
-    { &pie_gallery_arrange_group, NULL },
+    { { &pie_gallery_start_position_angle_value },  &pie_gallery_start_position_angle_value_data },
+    { { &pie_gallery_start_position_angle_text },   &pie_gallery_start_position_angle_text_data },
 
-    { &bl_gallery_series_group, NULL },
-    { &bl_gallery_series_text, &bl_gallery_series_text_data },
-    { &bl_gallery_series_cols, &bl_gallery_series_cols_data },
-    { &bl_gallery_series_rows, &bl_gallery_series_rows_data },
+    { { &pie_gallery_anticlockwise },               &pie_gallery_anticlockwise_data },
 
-    { &bl_gallery_first_series_group, NULL },
-    { &bl_gallery_first_series_text, &bl_gallery_first_series_text_data },
-    { &bl_gallery_first_series_category_labels, &pie_gallery_first_series_category_labels_data },
-    { &bl_gallery_first_series_series_data, &bl_gallery_first_series_series_data_data },
+    { { &dialog_col2_group }, NULL },
 
-    { &bl_gallery_first_category_group, NULL },
-    { &bl_gallery_first_category_text, &bl_gallery_first_category_text_data },
-    { &bl_gallery_first_category_series_labels, &pie_gallery_first_category_series_label_data },
-    { &bl_gallery_first_category_category_data, &bl_gallery_first_category_category_data_data },
+    { { &sp_gallery_arrange_group }, NULL },
 
-    { &pie_gallery_ok, &defbutton_ok_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &bl_gallery_series_group }, &bl_gallery_series_group_data },
+    { { &bl_gallery_series_cols }, &bl_gallery_series_cols_data },
+    { { &bl_gallery_series_rows }, &bl_gallery_series_rows_data },
+
+    { { &bl_gallery_first_series_group }, &bl_gallery_first_series_group_data },
+    { { &bl_gallery_first_series_category_labels }, &pie_gallery_first_series_category_labels_data },
+    { { &bl_gallery_first_series_series_data }, &bl_gallery_first_series_series_data_data },
+
+    { { &bl_gallery_first_category_group }, &bl_gallery_first_category_group_data },
+    { { &bl_gallery_first_category_series_labels }, &pie_gallery_first_category_series_label_data },
+    { { &bl_gallery_first_category_category_data }, &bl_gallery_first_category_category_data_data },
+
+    { { &stdbutton_cancel }, &stdbutton_cancel_data },
+    { { &pie_gallery_ok }, &defbutton_create_data }
 };
 
 T5_MSG_PROTO(extern, chart_msg_chart_gallery, _InoutRef_ P_T5_MSG_CHART_GALLERY_DATA p_t5_msg_chart_gallery_data)
@@ -1124,17 +1132,19 @@ T5_MSG_PROTO(extern, chart_msg_chart_gallery, _InoutRef_ P_T5_MSG_CHART_GALLERY_
 }
 
 #if RISCOS
-#define GEN_AXIS_TICKS_H (((28) * PIXITS_PER_RISCOS) + DIALOG_PUSHPICTUREOVH_H)
-#define GEN_AXIS_TICKS_V (((28) * PIXITS_PER_RISCOS) + DIALOG_PUSHPICTUREOVH_V)
+#define GEN_AXIS_TICKS_H DIALOG_STDRADIO_H /* (((28) * PIXITS_PER_RISCOS) + DIALOG_PUSHPICTUREOVH_H) */
+#define GEN_AXIS_TICKS_V DIALOG_STDRADIO_V /* (((28) * PIXITS_PER_RISCOS) + DIALOG_PUSHPICTUREOVH_V) */
 #else
 #define GEN_AXIS_TICKS_H PIXITS_PER_STDTOOL_H
 #define GEN_AXIS_TICKS_V PIXITS_PER_STDTOOL_V
 #endif
 
+#define GEN_AXIS_TICKGAP_H DIALOG_SMALLSPACING_H
+
 static const DIALOG_CONTROL
 gen_axis_position_group =
 {
-    GEN_AXIS_ID_POSITION_GROUP, DIALOG_MAIN_GROUP,
+    GEN_AXIS_ID_POSITION_GROUP, DIALOG_COL1_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { 0, 0, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
     { DRT(LTRB, GROUPBOX) }
@@ -1201,7 +1211,7 @@ gen_axis_position_arf_group =
 {
     GEN_AXIS_ID_POSITION_ARF_GROUP, GEN_AXIS_ID_POSITION_GROUP,
     { GEN_AXIS_ID_POSITION_LZR_GROUP, GEN_AXIS_ID_POSITION_LZR_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { 0, DIALOG_STDSPACING_V, 0, 0 },
+    { 0, DIALOG_UNRELSPACING_V, 0, 0 },
     { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
 };
 
@@ -1248,7 +1258,7 @@ major group
 static const DIALOG_CONTROL
 gen_axis_major_group =
 {
-    GEN_AXIS_ID_MAJOR_GROUP, DIALOG_MAIN_GROUP,
+    GEN_AXIS_ID_MAJOR_GROUP, DIALOG_COL1_GROUP,
     { GEN_AXIS_ID_POSITION_GROUP, GEN_AXIS_ID_POSITION_GROUP, GEN_AXIS_ID_POSITION_GROUP /*GEN_AXIS_ID_MAJOR_SPACING*/, DIALOG_CONTROL_CONTENTS },
     { 0, DIALOG_STDSPACING_V, 0 /*DIALOG_STDGROUP_RM*/, DIALOG_STDGROUP_BM },
     { DRT(LBRB, GROUPBOX) }
@@ -1270,16 +1280,16 @@ static const DIALOG_CONTROL_DATA_CHECKBOX
 gen_axis_major_auto_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR_AUTO) };
 
 static const DIALOG_CONTROL
-gen_axis_major_spacing_text =
+gen_axis_major_spacing_label =
 {
-    GEN_AXIS_ID_MAJOR_SPACING_TEXT, GEN_AXIS_ID_MAJOR_GROUP,
+    GEN_AXIS_ID_MAJOR_SPACING_LABEL, GEN_AXIS_ID_MAJOR_GROUP,
     { GEN_AXIS_ID_MAJOR_AUTO, GEN_AXIS_ID_MAJOR_SPACING, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MAJOR_SPACING },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-gen_axis_major_spacing_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR_SPACING), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+gen_axis_major_spacing_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR_SPACING), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 val_axis_major_spacing =
@@ -1312,7 +1322,7 @@ static const DIALOG_CONTROL
 gen_axis_major_grid =
 {
     GEN_AXIS_ID_MAJOR_GRID, GEN_AXIS_ID_MAJOR_GROUP,
-    { GEN_AXIS_ID_MAJOR_SPACING_TEXT, GEN_AXIS_ID_MAJOR_SPACING },
+    { GEN_AXIS_ID_MAJOR_SPACING_LABEL, GEN_AXIS_ID_MAJOR_SPACING },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
@@ -1321,16 +1331,16 @@ static const DIALOG_CONTROL_DATA_CHECKBOX
 gen_axis_major_grid_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR_GRID) };
 
 static const DIALOG_CONTROL
-gen_axis_major_ticks_text =
+gen_axis_major_ticks_label =
 {
-    GEN_AXIS_ID_MAJOR_TICKS_TEXT, GEN_AXIS_ID_MAJOR_GROUP,
-    { GEN_AXIS_ID_MAJOR_SPACING_TEXT, GEN_AXIS_ID_MAJOR_TICKS_NONE, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MAJOR_TICKS_NONE },
+    GEN_AXIS_ID_MAJOR_TICKS_LABEL, GEN_AXIS_ID_MAJOR_GROUP,
+    { GEN_AXIS_ID_MAJOR_SPACING_LABEL, GEN_AXIS_ID_MAJOR_TICKS_NONE, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MAJOR_TICKS_NONE },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-gen_axis_major_ticks_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR_TICKS), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+gen_axis_major_ticks_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_MAJOR_TICKS), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 gen_axis_major_ticks_none =
@@ -1346,7 +1356,7 @@ gen_axis_major_ticks_full =
 {
     GEN_AXIS_ID_MAJOR_TICKS_FULL, GEN_AXIS_ID_MAJOR_GROUP,
     { GEN_AXIS_ID_MAJOR_TICKS_NONE, GEN_AXIS_ID_MAJOR_TICKS_NONE, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MAJOR_TICKS_NONE },
-    { 0, 0, GEN_AXIS_TICKS_H, 0 },
+    { GEN_AXIS_TICKGAP_H, 0, GEN_AXIS_TICKS_H, 0 },
     { DRT(RTLB, RADIOPICTURE) }
 };
 
@@ -1355,7 +1365,7 @@ gen_axis_major_ticks_in =
 {
     GEN_AXIS_ID_MAJOR_TICKS_IN, GEN_AXIS_ID_MAJOR_GROUP,
     { GEN_AXIS_ID_MAJOR_TICKS_FULL, GEN_AXIS_ID_MAJOR_TICKS_FULL, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MAJOR_TICKS_FULL },
-    { 0, 0, GEN_AXIS_TICKS_H, 0 },
+    { GEN_AXIS_TICKGAP_H, 0, GEN_AXIS_TICKS_H, 0 },
     { DRT(RTLB, RADIOPICTURE) }
 };
 
@@ -1364,7 +1374,7 @@ gen_axis_major_ticks_out =
 {
     GEN_AXIS_ID_MAJOR_TICKS_OUT, GEN_AXIS_ID_MAJOR_GROUP,
     { GEN_AXIS_ID_MAJOR_TICKS_IN, GEN_AXIS_ID_MAJOR_TICKS_IN, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MAJOR_TICKS_IN },
-    { 0, 0, GEN_AXIS_TICKS_H, 0 },
+    { GEN_AXIS_TICKGAP_H, 0, GEN_AXIS_TICKS_H, 0 },
     { DRT(RTLB, RADIOPICTURE) }
 };
 
@@ -1375,7 +1385,7 @@ minor group
 static const DIALOG_CONTROL
 gen_axis_minor_group =
 {
-    GEN_AXIS_ID_MINOR_GROUP, DIALOG_MAIN_GROUP,
+    GEN_AXIS_ID_MINOR_GROUP, DIALOG_COL1_GROUP,
     { GEN_AXIS_ID_MAJOR_GROUP, GEN_AXIS_ID_MAJOR_GROUP, GEN_AXIS_ID_MAJOR_GROUP, DIALOG_CONTROL_CONTENTS },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDGROUP_BM },
     { DRT(LBRB, GROUPBOX) }
@@ -1394,12 +1404,12 @@ gen_axis_minor_auto =
 };
 
 static const DIALOG_CONTROL
-gen_axis_minor_spacing_text =
+gen_axis_minor_spacing_label =
 {
-    GEN_AXIS_ID_MINOR_SPACING_TEXT, GEN_AXIS_ID_MINOR_GROUP,
-    { GEN_AXIS_ID_MAJOR_SPACING_TEXT, GEN_AXIS_ID_MINOR_SPACING, GEN_AXIS_ID_MAJOR_SPACING_TEXT, GEN_AXIS_ID_MINOR_SPACING },
+    GEN_AXIS_ID_MINOR_SPACING_LABEL, GEN_AXIS_ID_MINOR_GROUP,
+    { GEN_AXIS_ID_MAJOR_SPACING_LABEL, GEN_AXIS_ID_MINOR_SPACING, GEN_AXIS_ID_MAJOR_SPACING_LABEL, GEN_AXIS_ID_MINOR_SPACING },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -1433,18 +1443,18 @@ static const DIALOG_CONTROL
 gen_axis_minor_grid =
 {
     GEN_AXIS_ID_MINOR_GRID, GEN_AXIS_ID_MINOR_GROUP,
-    { GEN_AXIS_ID_MINOR_SPACING_TEXT, GEN_AXIS_ID_MINOR_SPACING },
+    { GEN_AXIS_ID_MINOR_SPACING_LABEL, GEN_AXIS_ID_MINOR_SPACING },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL
-gen_axis_minor_ticks_text =
+gen_axis_minor_ticks_label =
 {
-    GEN_AXIS_ID_MINOR_TICKS_TEXT, GEN_AXIS_ID_MINOR_GROUP,
-    { GEN_AXIS_ID_MINOR_SPACING_TEXT, GEN_AXIS_ID_MINOR_TICKS_NONE, GEN_AXIS_ID_MINOR_SPACING_TEXT, GEN_AXIS_ID_MINOR_TICKS_NONE },
+    GEN_AXIS_ID_MINOR_TICKS_LABEL, GEN_AXIS_ID_MINOR_GROUP,
+    { GEN_AXIS_ID_MINOR_SPACING_LABEL, GEN_AXIS_ID_MINOR_TICKS_NONE, GEN_AXIS_ID_MINOR_SPACING_LABEL, GEN_AXIS_ID_MINOR_TICKS_NONE },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
 static const DIALOG_CONTROL
@@ -1461,7 +1471,7 @@ gen_axis_minor_ticks_full =
 {
     GEN_AXIS_ID_MINOR_TICKS_FULL, GEN_AXIS_ID_MINOR_GROUP,
     { GEN_AXIS_ID_MINOR_TICKS_NONE, GEN_AXIS_ID_MINOR_TICKS_NONE, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MINOR_TICKS_NONE },
-    { 0, 0, GEN_AXIS_TICKS_H, 0 },
+    { GEN_AXIS_TICKGAP_H, 0, GEN_AXIS_TICKS_H, 0 },
     { DRT(RTLB, RADIOPICTURE) }
 };
 
@@ -1470,7 +1480,7 @@ gen_axis_minor_ticks_in =
 {
     GEN_AXIS_ID_MINOR_TICKS_IN, GEN_AXIS_ID_MINOR_GROUP,
     { GEN_AXIS_ID_MINOR_TICKS_FULL, GEN_AXIS_ID_MINOR_TICKS_FULL, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MINOR_TICKS_FULL },
-    { 0, 0, GEN_AXIS_TICKS_H, 0 },
+    { GEN_AXIS_TICKGAP_H, 0, GEN_AXIS_TICKS_H, 0 },
     { DRT(RTLB, RADIOPICTURE) }
 };
 
@@ -1479,7 +1489,7 @@ gen_axis_minor_ticks_out =
 {
     GEN_AXIS_ID_MINOR_TICKS_OUT, GEN_AXIS_ID_MINOR_GROUP,
     { GEN_AXIS_ID_MINOR_TICKS_IN, GEN_AXIS_ID_MINOR_TICKS_IN, DIALOG_CONTROL_SELF, GEN_AXIS_ID_MINOR_TICKS_IN },
-    { 0, 0, GEN_AXIS_TICKS_H, 0 },
+    { GEN_AXIS_TICKGAP_H, 0, GEN_AXIS_TICKS_H, 0 },
     { DRT(RTLB, RADIOPICTURE) }
 };
 
@@ -1511,6 +1521,8 @@ gen_axis_ticks_out_data = { { 0 }, GR_AXIS_TICK_POSITION_HALF_LEFT  /* == TOP */
 cat axis specifics
 */
 
+#if RISCOS
+
 static const DIALOG_CONTROL
 cat_axis_ok =
 {
@@ -1520,45 +1532,51 @@ cat_axis_ok =
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
+#else
+#define cat_axis_ok defbutton_ok
+#endif
+
 static const DIALOG_CTL_CREATE
 cat_axis_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &gen_axis_position_group,     &gen_axis_position_group_data },
-    { &gen_axis_position_lzr_group, NULL /*&gen_axis_position_lzr_group_data*/ },
-    { &gen_axis_position_lzr_lb,    &gen_axis_position_lzr_lb_data },
-    { &gen_axis_position_lzr_zero,  &gen_axis_position_lzr_zero_data },
-    { &gen_axis_position_lzr_rt,    &gen_axis_position_lzr_rt_data },
-    { &gen_axis_position_arf_group, NULL /*&gen_axis_position_arf_group_data*/ },
-    { &gen_axis_position_arf_front, &gen_axis_position_arf_front_data },
-    { &gen_axis_position_arf_auto,  &gen_axis_position_arf_auto_data },
-    { &gen_axis_position_arf_rear,  &gen_axis_position_arf_rear_data },
+    { { &dialog_col1_group }, NULL },
 
-    { &gen_axis_major_group,        &gen_axis_major_group_data },
-    { &gen_axis_major_auto,         &gen_axis_major_auto_data },
-    { &gen_axis_major_spacing_text, &gen_axis_major_spacing_text_data },
-    { &cat_axis_major_spacing,      &cat_axis_major_spacing_data },
-    { &gen_axis_major_grid,         &gen_axis_major_grid_data },
-    { &gen_axis_major_ticks_text,   &gen_axis_major_ticks_text_data },
-    { &gen_axis_major_ticks_none,   &gen_axis_ticks_none_data },
-    { &gen_axis_major_ticks_full,   &gen_axis_ticks_full_data },
-    { &gen_axis_major_ticks_in,     &gen_axis_ticks_in_data },
-    { &gen_axis_major_ticks_out,    &gen_axis_ticks_out_data },
+    { { &gen_axis_position_group },     &gen_axis_position_group_data },
+    { { &gen_axis_position_lzr_group }, NULL /*&gen_axis_position_lzr_group_data*/ },
+    { { &gen_axis_position_lzr_lb },    &gen_axis_position_lzr_lb_data },
+    { { &gen_axis_position_lzr_zero },  &gen_axis_position_lzr_zero_data },
+    { { &gen_axis_position_lzr_rt },    &gen_axis_position_lzr_rt_data },
+    { { &gen_axis_position_arf_group }, NULL /*&gen_axis_position_arf_group_data*/ },
+    { { &gen_axis_position_arf_front }, &gen_axis_position_arf_front_data },
+    { { &gen_axis_position_arf_auto },  &gen_axis_position_arf_auto_data },
+    { { &gen_axis_position_arf_rear },  &gen_axis_position_arf_rear_data },
 
-    { &gen_axis_minor_group,        &gen_axis_minor_group_data },
-    { &gen_axis_minor_auto,         &gen_axis_major_auto_data },
-    { &gen_axis_minor_spacing_text, &gen_axis_major_spacing_text_data },
-    { &cat_axis_minor_spacing,      &cat_axis_minor_spacing_data },
-    { &gen_axis_minor_grid,         &gen_axis_major_grid_data },
-    { &gen_axis_minor_ticks_text,   &gen_axis_major_ticks_text_data },
-    { &gen_axis_minor_ticks_none,   &gen_axis_ticks_none_data },
-    { &gen_axis_minor_ticks_full,   &gen_axis_ticks_full_data },
-    { &gen_axis_minor_ticks_in,     &gen_axis_ticks_in_data },
-    { &gen_axis_minor_ticks_out,    &gen_axis_ticks_out_data },
+    { { &gen_axis_major_group },        &gen_axis_major_group_data },
+    { { &gen_axis_major_auto },         &gen_axis_major_auto_data },
+    { { &gen_axis_major_spacing_label },&gen_axis_major_spacing_label_data },
+    { { &cat_axis_major_spacing },      &cat_axis_major_spacing_data },
+    { { &gen_axis_major_grid },         &gen_axis_major_grid_data },
+    { { &gen_axis_major_ticks_label },  &gen_axis_major_ticks_label_data },
+    { { &gen_axis_major_ticks_none },   &gen_axis_ticks_none_data },
+    { { &gen_axis_major_ticks_full },   &gen_axis_ticks_full_data },
+    { { &gen_axis_major_ticks_in },     &gen_axis_ticks_in_data },
+    { { &gen_axis_major_ticks_out },    &gen_axis_ticks_out_data },
 
-    { &cat_axis_ok, &defbutton_ok_persist_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &gen_axis_minor_group },        &gen_axis_minor_group_data },
+    { { &gen_axis_minor_auto },         &gen_axis_major_auto_data },
+    { { &gen_axis_minor_spacing_label },&gen_axis_major_spacing_label_data },
+    { { &cat_axis_minor_spacing },      &cat_axis_minor_spacing_data },
+    { { &gen_axis_minor_grid },         &gen_axis_major_grid_data },
+    { { &gen_axis_minor_ticks_label },  &gen_axis_major_ticks_label_data },
+    { { &gen_axis_minor_ticks_none },   &gen_axis_ticks_none_data },
+    { { &gen_axis_minor_ticks_full },   &gen_axis_ticks_full_data },
+    { { &gen_axis_minor_ticks_in },     &gen_axis_ticks_in_data },
+    { { &gen_axis_minor_ticks_out },    &gen_axis_ticks_out_data },
+
+    { { &cat_axis_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 /*
@@ -1568,7 +1586,7 @@ val axis specifics
 static const DIALOG_CONTROL
 val_axis_scaling_group =
 {
-    VAL_AXIS_ID_SCALING_GROUP, DIALOG_MAIN_GROUP,
+    VAL_AXIS_ID_SCALING_GROUP, DIALOG_COL2_GROUP,
     { GEN_AXIS_ID_POSITION_GROUP, GEN_AXIS_ID_POSITION_GROUP, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
     { DIALOG_STDSPACING_H, 0, DIALOG_STDGROUP_RM, DIALOG_STDGROUP_BM },
     { DRT(RTRB, GROUPBOX) }
@@ -1590,22 +1608,22 @@ static const DIALOG_CONTROL_DATA_CHECKBOX
 val_axis_scaling_auto_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING_AUTO) };
 
 static const DIALOG_CONTROL
-val_axis_scaling_minimum_text =
+val_axis_scaling_minimum_label =
 {
-    VAL_AXIS_ID_SCALING_MINIMUM_TEXT, VAL_AXIS_ID_SCALING_GROUP,
+    VAL_AXIS_ID_SCALING_MINIMUM_LABEL, VAL_AXIS_ID_SCALING_GROUP,
     { VAL_AXIS_ID_SCALING_AUTO, VAL_AXIS_ID_SCALING_MINIMUM, DIALOG_CONTROL_SELF, VAL_AXIS_ID_SCALING_MINIMUM },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-val_axis_scaling_minimum_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING_MINIMUM), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+val_axis_scaling_minimum_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING_MINIMUM), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 val_axis_scaling_minimum =
 {
     VAL_AXIS_ID_SCALING_MINIMUM, VAL_AXIS_ID_SCALING_GROUP,
-    { VAL_AXIS_ID_SCALING_MINIMUM_TEXT, VAL_AXIS_ID_SCALING_AUTO },
+    { VAL_AXIS_ID_SCALING_MINIMUM_LABEL, VAL_AXIS_ID_SCALING_AUTO },
     { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, DIALOG_BUMP_H(6), DIALOG_STDBUMP_V },
     { DRT(RBLT, BUMP_F64), 1 /*tabstop*/ }
 };
@@ -1617,16 +1635,16 @@ static const DIALOG_CONTROL_DATA_BUMP_F64
 val_axis_scaling_minimum_data = { { { { FRAMED_BOX_EDIT, 0, 1 /*right_text*/ } } /*EDIT_XX*/, &val_axis_scaling_minimum_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
-val_axis_scaling_maximum_text =
+val_axis_scaling_maximum_label =
 {
-    VAL_AXIS_ID_SCALING_MAXIMUM_TEXT, VAL_AXIS_ID_SCALING_GROUP,
-    { VAL_AXIS_ID_SCALING_MINIMUM_TEXT, VAL_AXIS_ID_SCALING_MAXIMUM, VAL_AXIS_ID_SCALING_MINIMUM_TEXT, VAL_AXIS_ID_SCALING_MAXIMUM },
+    VAL_AXIS_ID_SCALING_MAXIMUM_LABEL, VAL_AXIS_ID_SCALING_GROUP,
+    { VAL_AXIS_ID_SCALING_MINIMUM_LABEL, VAL_AXIS_ID_SCALING_MAXIMUM, VAL_AXIS_ID_SCALING_MINIMUM_LABEL, VAL_AXIS_ID_SCALING_MAXIMUM },
     { 0 },
-    { DRT(LTRB, STATICTEXT) }
+    { DRT(LTRB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-val_axis_scaling_maximum_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING_MAXIMUM), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+val_axis_scaling_maximum_label_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SCALING_MAXIMUM), { 1 /*left_text*/ } }; /* left-aligned as we use vertical guideline here */
 
 static const DIALOG_CONTROL
 val_axis_scaling_maximum =
@@ -1686,7 +1704,7 @@ series defaults group
 static const DIALOG_CONTROL
 val_axis_series_group =
 {
-    VAL_AXIS_ID_SERIES_GROUP, DIALOG_MAIN_GROUP,
+    VAL_AXIS_ID_SERIES_GROUP, DIALOG_COL2_GROUP,
     { VAL_AXIS_ID_SCALING_GROUP, VAL_AXIS_ID_SCALING_GROUP, VAL_AXIS_ID_SCALING_GROUP, DIALOG_CONTROL_CONTENTS },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDGROUP_BM },
     { DRT(LBRB, GROUPBOX) }
@@ -1746,7 +1764,7 @@ val_axis_series_fill_to_axis_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG
 static const DIALOG_CONTROL
 val_axis_series_stack =
 {
-    VAL_AXIS_ID_SERIES_STACK, DIALOG_MAIN_GROUP,
+    VAL_AXIS_ID_SERIES_STACK, DIALOG_COL2_GROUP,
     { VAL_AXIS_ID_SERIES_FILL_TO_AXIS, VAL_AXIS_ID_SERIES_GROUP },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
@@ -1755,72 +1773,82 @@ val_axis_series_stack =
 static const DIALOG_CONTROL_DATA_CHECKBOX
 val_axis_series_stack_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_VAL_AXIS_SERIES_STACK) };
 
+#if RISCOS
+
 static const DIALOG_CONTROL
 val_axis_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, VAL_AXIS_ID_SERIES_STACK, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
+    { DIALOG_CONTROL_SELF, DIALOG_COL2_GROUP, DIALOG_MAIN_GROUP, DIALOG_CONTROL_SELF },
     { DIALOG_CONTENTS_CALC, 0, 0, DIALOG_DEFPUSHBUTTON_V },
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
+#else
+#define val_axis_ok defbutton_ok
+#endif
+
 static const DIALOG_CTL_CREATE
 val_axis_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &gen_axis_position_group,     &gen_axis_position_group_data },
-    { &gen_axis_position_lzr_group, NULL /*&gen_axis_position_lzr_group_data*/ },
-    { &gen_axis_position_lzr_lb,    &gen_axis_position_lzr_lb_data },
-    { &gen_axis_position_lzr_zero,  &gen_axis_position_lzr_zero_data },
-    { &gen_axis_position_lzr_rt,    &gen_axis_position_lzr_rt_data },
-    { &gen_axis_position_arf_group, NULL /*&gen_axis_position_arf_group_data*/ },
-    { &gen_axis_position_arf_front, &gen_axis_position_arf_front_data },
-    { &gen_axis_position_arf_auto,  &gen_axis_position_arf_auto_data },
-    { &gen_axis_position_arf_rear,  &gen_axis_position_arf_rear_data },
+    { { &dialog_col1_group }, NULL },
 
-    { &gen_axis_major_group,        &gen_axis_major_group_data },
-    { &gen_axis_major_auto,         &gen_axis_major_auto_data },
-    { &gen_axis_major_spacing_text, &gen_axis_major_spacing_text_data },
-    { &val_axis_major_spacing,      &val_axis_major_spacing_data },
-    { &gen_axis_major_grid,         &gen_axis_major_grid_data },
-    { &gen_axis_major_ticks_text,   &gen_axis_major_ticks_text_data },
-    { &gen_axis_major_ticks_none,   &gen_axis_ticks_none_data },
-    { &gen_axis_major_ticks_full,   &gen_axis_ticks_full_data },
-    { &gen_axis_major_ticks_in,     &gen_axis_ticks_in_data },
-    { &gen_axis_major_ticks_out,    &gen_axis_ticks_out_data },
+    { { &gen_axis_position_group },     &gen_axis_position_group_data },
+    { { &gen_axis_position_lzr_group }, NULL /*&gen_axis_position_lzr_group_data*/ },
+    { { &gen_axis_position_lzr_lb },    &gen_axis_position_lzr_lb_data },
+    { { &gen_axis_position_lzr_zero },  &gen_axis_position_lzr_zero_data },
+    { { &gen_axis_position_lzr_rt },    &gen_axis_position_lzr_rt_data },
+    { { &gen_axis_position_arf_group }, NULL /*&gen_axis_position_arf_group_data*/ },
+    { { &gen_axis_position_arf_front }, &gen_axis_position_arf_front_data },
+    { { &gen_axis_position_arf_auto },  &gen_axis_position_arf_auto_data },
+    { { &gen_axis_position_arf_rear },  &gen_axis_position_arf_rear_data },
 
-    { &gen_axis_minor_group,        &gen_axis_minor_group_data },
-    { &gen_axis_minor_auto,         &gen_axis_major_auto_data },
-    { &gen_axis_minor_spacing_text, &gen_axis_major_spacing_text_data },
-    { &val_axis_minor_spacing,      &val_axis_minor_spacing_data },
-    { &gen_axis_minor_grid,         &gen_axis_major_grid_data },
-    { &gen_axis_minor_ticks_text,   &gen_axis_major_ticks_text_data },
-    { &gen_axis_minor_ticks_none,   &gen_axis_ticks_none_data },
-    { &gen_axis_minor_ticks_full,   &gen_axis_ticks_full_data },
-    { &gen_axis_minor_ticks_in,     &gen_axis_ticks_in_data },
-    { &gen_axis_minor_ticks_out,    &gen_axis_ticks_out_data },
+    { { &gen_axis_major_group },        &gen_axis_major_group_data },
+    { { &gen_axis_major_auto },         &gen_axis_major_auto_data },
+    { { &gen_axis_major_spacing_label },&gen_axis_major_spacing_label_data },
+    { { &val_axis_major_spacing },      &val_axis_major_spacing_data },
+    { { &gen_axis_major_grid },         &gen_axis_major_grid_data },
+    { { &gen_axis_major_ticks_label },  &gen_axis_major_ticks_label_data },
+    { { &gen_axis_major_ticks_none },   &gen_axis_ticks_none_data },
+    { { &gen_axis_major_ticks_full },   &gen_axis_ticks_full_data },
+    { { &gen_axis_major_ticks_in },     &gen_axis_ticks_in_data },
+    { { &gen_axis_major_ticks_out },    &gen_axis_ticks_out_data },
 
-    { &val_axis_scaling_group,        &val_axis_scaling_group_data },
-    { &val_axis_scaling_auto,         &val_axis_scaling_auto_data },
-    { &val_axis_scaling_minimum_text, &val_axis_scaling_minimum_text_data },
-    { &val_axis_scaling_minimum,      &val_axis_scaling_minimum_data },
-    { &val_axis_scaling_maximum_text, &val_axis_scaling_maximum_text_data },
-    { &val_axis_scaling_maximum,      &val_axis_scaling_maximum_data },
-    { &val_axis_scaling_include_zero, &val_axis_scaling_include_zero_data },
-    { &val_axis_scaling_logarithmic,  &val_axis_scaling_logarithmic_data },
-    { &val_axis_scaling_log_labels,   &val_axis_scaling_log_labels_data },
+    { { &gen_axis_minor_group },        &gen_axis_minor_group_data },
+    { { &gen_axis_minor_auto },         &gen_axis_major_auto_data },
+    { { &gen_axis_minor_spacing_label },&gen_axis_major_spacing_label_data },
+    { { &val_axis_minor_spacing },      &val_axis_minor_spacing_data },
+    { { &gen_axis_minor_grid },         &gen_axis_major_grid_data },
+    { { &gen_axis_minor_ticks_label },  &gen_axis_major_ticks_label_data },
+    { { &gen_axis_minor_ticks_none },   &gen_axis_ticks_none_data },
+    { { &gen_axis_minor_ticks_full },   &gen_axis_ticks_full_data },
+    { { &gen_axis_minor_ticks_in },     &gen_axis_ticks_in_data },
+    { { &gen_axis_minor_ticks_out },    &gen_axis_ticks_out_data },
 
-    { &val_axis_series_group,         &val_axis_series_group_data },
-    { &val_axis_series_cumulative,    &val_axis_series_cumulative_data },
-    { &val_axis_series_vary_by_point, &val_axis_series_vary_by_point_data },
-    { &val_axis_series_best_fit,      &val_axis_series_best_fit_data },
-    { &val_axis_series_fill_to_axis,  &val_axis_series_fill_to_axis_data },
+    { { &dialog_col2_group }, NULL },
 
-    { &val_axis_series_stack,         &val_axis_series_stack_data },
+    { { &val_axis_scaling_group },        &val_axis_scaling_group_data },
+    { { &val_axis_scaling_auto },         &val_axis_scaling_auto_data },
+    { { &val_axis_scaling_minimum_label },&val_axis_scaling_minimum_label_data },
+    { { &val_axis_scaling_minimum },      &val_axis_scaling_minimum_data },
+    { { &val_axis_scaling_maximum_label },&val_axis_scaling_maximum_label_data },
+    { { &val_axis_scaling_maximum },      &val_axis_scaling_maximum_data },
+    { { &val_axis_scaling_include_zero }, &val_axis_scaling_include_zero_data },
+    { { &val_axis_scaling_logarithmic },  &val_axis_scaling_logarithmic_data },
+    { { &val_axis_scaling_log_labels },   &val_axis_scaling_log_labels_data },
 
-    { &val_axis_ok, &defbutton_ok_persist_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &val_axis_series_group },         &val_axis_series_group_data },
+    { { &val_axis_series_cumulative },    &val_axis_series_cumulative_data },
+    { { &val_axis_series_vary_by_point }, &val_axis_series_vary_by_point_data },
+    { { &val_axis_series_best_fit },      &val_axis_series_best_fit_data },
+    { { &val_axis_series_fill_to_axis },  &val_axis_series_fill_to_axis_data },
+
+    { { &val_axis_series_stack },         &val_axis_series_stack_data },
+
+    { { &val_axis_ok }, &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CONTROL
@@ -1828,7 +1856,11 @@ series_series_cumulative =
 {
     VAL_AXIS_ID_SERIES_CUMULATIVE, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
-    { DIALOG_STDGROUP_LM, DIALOG_STDGROUP_TM, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+#if WINDOWS
+    { 0, 0, DIALOG_STDWIDTH_MIN, DIALOG_STDCHECK_V },
+#else
+    { 0, 0, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
+#endif
     { DRT(LTLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
@@ -1874,16 +1906,16 @@ series_in_overlay_data = { { 0 }, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_SERIES_IN_
 static const DIALOG_CTL_CREATE
 series_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &series_series_cumulative, &val_axis_series_cumulative_data },
-    { &series_vary_by_point,     &val_axis_series_vary_by_point_data },
-    { &series_best_fit,          &val_axis_series_best_fit_data },
-    { &series_fill_to_axis,      &val_axis_series_fill_to_axis_data },
-    { &series_in_overlay,        &series_in_overlay_data },
+    { { &series_series_cumulative }, &val_axis_series_cumulative_data },
+    { { &series_vary_by_point },     &val_axis_series_vary_by_point_data },
+    { { &series_best_fit },          &val_axis_series_best_fit_data },
+    { { &series_fill_to_axis },      &val_axis_series_fill_to_axis_data },
+    { { &series_in_overlay },        &series_in_overlay_data },
 
-    { &defbutton_ok,     &defbutton_ok_persist_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok },     &defbutton_apply_persist_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 T5_MSG_PROTO(extern, chart_msg_chart_dialog, _InoutRef_ P_T5_MSG_CHART_DIALOG_DATA p_msg_chart_dialog_data)

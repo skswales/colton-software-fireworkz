@@ -52,7 +52,7 @@ local data
 
 #define HEFOD_LIST_DEP 0
 
-static int next_uref_client_handle;
+static int next_uref_client_handle = HEFOD_LIST_DEP + 1;
 
 /******************************************************************************
 *
@@ -213,108 +213,115 @@ hefod_margins_min(
 *
 ******************************************************************************/
 
-PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
+PROC_UREF_EVENT_PROTO(static, sk_hefod_uref_event_dep_delete)
 {
+    /* dependency must be deleted */
     P_PAGE_HEFO_BREAK p_page_hefo_break;
 
-#if TRACE_ALLOWED && 0
-    uref_trace_reason(p_uref_event_block->reason.code, TEXT("HEFOD_UREF"));
-#endif
-
-    switch(p_uref_event_block->reason.code)
+    switch(uref_message)
     {
-    case Uref_Dep_Delete: /* dependency must be deleted */
+    /* free a region */
+    default:
         {
-        switch(uref_message)
-        {
-        /* free a region */
-        default:
-            {
-            p_page_hefo_break = p_page_hefo_break_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
-
-            if(NULL != p_page_hefo_break)
-            {
-                DOCU_REFORMAT docu_reformat;
-
-                trace_6(TRACE_APP_UREF,
-                        TEXT("hefod_uref_event CLOSE1 tl: ") COL_TFMT TEXT(",") ROW_TFMT TEXT("; br: ") COL_TFMT TEXT(",") ROW_TFMT TEXT(", whole_col: ") S32_TFMT TEXT(", whole_row: ") S32_TFMT,
-                        p_uref_event_block->uref_id.region.tl.col,
-                        p_uref_event_block->uref_id.region.tl.row,
-                        p_uref_event_block->uref_id.region.br.col,
-                        p_uref_event_block->uref_id.region.br.row,
-                        (S32) p_uref_event_block->uref_id.region.whole_col,
-                        (S32) p_uref_event_block->uref_id.region.whole_row);
-
-                docu_reformat.data.row = p_page_hefo_break->region.tl.row;
-                page_hefo_break_delete(p_docu, p_page_hefo_break);
-
-                docu_reformat.action = REFORMAT_HEFO_Y;
-                docu_reformat.data_type = REFORMAT_ROW;
-                docu_reformat.data_space = DATA_NONE;
-                status_assert(maeve_event(p_docu, T5_MSG_REFORMAT, &docu_reformat));
-            }
-
-            break;
-            }
-
-        case Uref_Msg_CLOSE1:
-            if(p_uref_event_block->uref_id.client_handle > HEFOD_LIST_DEP)
-            {
-                p_page_hefo_break = p_page_hefo_break_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
-
-                PTR_ASSERT(p_page_hefo_break);
-
-                if(NULL != p_page_hefo_break)
-                    page_hefo_break_delete(p_docu, p_page_hefo_break);
-            }
-            break;
-
-        /* free the whole header/footer stuff */
-        case Uref_Msg_CLOSE2:
-            /* can only be freeing whole by now */
-            assert(p_uref_event_block->uref_id.client_handle == HEFOD_LIST_DEP);
-
-            page_hefo_break_garbage_collect(p_docu);
-            uref_del_dependency(docno_from_p_docu(p_docu), p_uref_event_block->uref_id.uref_handle);
-            break;
-        }
-
-        break;
-        }
-
-    case Uref_Dep_Update: /* dependency region must be updated */
-        {
-        REGION region_old;
-
         p_page_hefo_break = p_page_hefo_break_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
 
-        PTR_ASSERT(p_page_hefo_break);
-
-        region_old = p_page_hefo_break->region;
-
-        consume(UREF_COMMS, uref_match_region(&p_page_hefo_break->region, uref_message, p_uref_event_block));
-
-        if(region_old.tl.row != p_page_hefo_break->region.tl.row)
+        if(NULL != p_page_hefo_break)
         {
             DOCU_REFORMAT docu_reformat;
+
+            trace_6(TRACE_APP_UREF,
+                    TEXT("hefod_uref_event CLOSE1 tl: ") COL_TFMT TEXT(",") ROW_TFMT TEXT("; br: ") COL_TFMT TEXT(",") ROW_TFMT TEXT(", whole_col: ") S32_TFMT TEXT(", whole_row: ") S32_TFMT,
+                    p_uref_event_block->uref_id.region.tl.col,
+                    p_uref_event_block->uref_id.region.tl.row,
+                    p_uref_event_block->uref_id.region.br.col,
+                    p_uref_event_block->uref_id.region.br.row,
+                    (S32) p_uref_event_block->uref_id.region.whole_col,
+                    (S32) p_uref_event_block->uref_id.region.whole_row);
+
+            docu_reformat.data.row = p_page_hefo_break->region.tl.row;
+            page_hefo_break_delete(p_docu, p_page_hefo_break);
+
             docu_reformat.action = REFORMAT_HEFO_Y;
             docu_reformat.data_type = REFORMAT_ROW;
             docu_reformat.data_space = DATA_NONE;
-            docu_reformat.data.row = MIN(region_old.tl.row, p_page_hefo_break->region.tl.row);
             status_assert(maeve_event(p_docu, T5_MSG_REFORMAT, &docu_reformat));
         }
 
         break;
         }
 
-    case Uref_Dep_Inform:
+    case Uref_Msg_CLOSE1:
+        if(p_uref_event_block->uref_id.client_handle > HEFOD_LIST_DEP)
+        {
+            p_page_hefo_break = p_page_hefo_break_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
+
+            PTR_ASSERT(p_page_hefo_break);
+
+            if(NULL != p_page_hefo_break)
+                page_hefo_break_delete(p_docu, p_page_hefo_break);
+        }
         break;
 
-    default: default_unhandled();
+    /* free the whole header/footer stuff */
+    case Uref_Msg_CLOSE2:
+        /* can only be freeing whole by now */
+        assert(p_uref_event_block->uref_id.client_handle == HEFOD_LIST_DEP);
+
+        page_hefo_break_garbage_collect(p_docu);
+        uref_del_dependency(docno_from_p_docu(p_docu), p_uref_event_block->uref_id.uref_handle);
         break;
     }
 
     return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, sk_hefod_uref_event_dep_update)
+{
+    /* dependency region must be updated */
+    P_PAGE_HEFO_BREAK p_page_hefo_break;
+    REGION region_old;
+
+    p_page_hefo_break = p_page_hefo_break_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
+
+    PTR_ASSERT(p_page_hefo_break);
+
+    region_old = p_page_hefo_break->region;
+
+    consume(UREF_COMMS, uref_match_region(&p_page_hefo_break->region, uref_message, p_uref_event_block));
+
+    if(region_old.tl.row != p_page_hefo_break->region.tl.row)
+    {
+        DOCU_REFORMAT docu_reformat;
+        docu_reformat.action = REFORMAT_HEFO_Y;
+        docu_reformat.data_type = REFORMAT_ROW;
+        docu_reformat.data_space = DATA_NONE;
+        docu_reformat.data.row = MIN(region_old.tl.row, p_page_hefo_break->region.tl.row);
+        status_assert(maeve_event(p_docu, T5_MSG_REFORMAT, &docu_reformat));
+    }
+
+    return(STATUS_OK);
+}
+
+PROC_UREF_EVENT_PROTO(static, sk_hefod_uref_event)
+{
+#if TRACE_ALLOWED && 0
+    uref_trace_reason(UBF_UNPACK(UREF_COMMS, p_uref_event_block->reason.code), TEXT("HEFOD_UREF"));
+#endif
+
+    switch(UBF_UNPACK(UREF_COMMS, p_uref_event_block->reason.code))
+    {
+    case Uref_Dep_Delete: /* dependency must be deleted */
+        return(sk_hefod_uref_event_dep_delete(p_docu, uref_message, p_uref_event_block));
+
+    case Uref_Dep_Update: /* dependency region must be updated */
+        return(sk_hefod_uref_event_dep_update(p_docu, uref_message, p_uref_event_block));
+
+    case Uref_Dep_Inform:
+        return(STATUS_OK);
+
+    default: default_unhandled();
+        return(STATUS_OK);
+    }
 }
 
 /******************************************************************************
@@ -634,7 +641,7 @@ p_page_hefo_break_new_for_row(
                 p_page_hefo_break->region.whole_col = 1;
             p_page_hefo_break->region.whole_row = 1;
 
-            if(status_ok(*p_status = uref_add_dependency(p_docu, &p_page_hefo_break->region, proc_uref_event_sk_hefod, next_uref_client_handle, &p_page_hefo_break->uref_handle, FALSE)))
+            if(status_ok(*p_status = uref_add_dependency(p_docu, &p_page_hefo_break->region, sk_hefod_uref_event, next_uref_client_handle, &p_page_hefo_break->uref_handle, FALSE)))
                 p_page_hefo_break->uref_client_handle = next_uref_client_handle++;
 
             if(status_fail(*p_status))
@@ -690,9 +697,11 @@ page_hefo_break_delete(
     uref_del_dependency(docno_from_p_docu(p_docu), p_page_hefo_break->uref_handle);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, page_hefo_break_deleted)
+PROC_ELEMENT_IS_DELETED_PROTO(static, page_hefo_break_is_deleted)
 {
-    return(((P_PAGE_HEFO_BREAK) p_any)->is_deleted);
+    const P_PAGE_HEFO_BREAK p_page_hefo_break = (P_PAGE_HEFO_BREAK) p_any;
+
+    return(p_page_hefo_break->is_deleted);
 }
 
 /******************************************************************************
@@ -733,7 +742,7 @@ page_hefo_break_garbage_collect(
     al_garbage_flags.remove_deleted = 1;
     al_garbage_flags.shrink = 1;
     al_garbage_flags.may_dispose = 1;
-    consume(S32, al_array_garbage_collect(&p_docu->h_page_hefo, 0, page_hefo_break_deleted, al_garbage_flags));
+    consume(S32, al_array_garbage_collect(&p_docu->h_page_hefo, 0, page_hefo_break_is_deleted, al_garbage_flags));
 }
 
 /******************************************************************************
@@ -864,7 +873,7 @@ sk_hefod_msg_init1(
 
     p_docu->h_page_hefo = 0;
 
-    return(uref_add_dependency(p_docu, &region, proc_uref_event_sk_hefod, HEFOD_LIST_DEP, &uref_handle, FALSE));
+    return(uref_add_dependency(p_docu, &region, sk_hefod_uref_event, HEFOD_LIST_DEP, &uref_handle, FALSE));
 }
 
 T5_MSG_PROTO(static, maeve_services_sk_hefod_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
@@ -873,10 +882,6 @@ T5_MSG_PROTO(static, maeve_services_sk_hefod_msg_initclose, _InRef_ PC_MSG_INITC
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
-    case T5_MSG_IC__STARTUP:
-        next_uref_client_handle = HEFOD_LIST_DEP + 1;
-        return(STATUS_OK);
-
     case T5_MSG_IC__INIT1:
         return(sk_hefod_msg_init1(p_docu));
 

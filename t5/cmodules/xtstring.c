@@ -685,7 +685,7 @@ _sbstr_from_tstr(
     if(NULL == tstr)
         return(("<<sbstr_from_tstr - NULL>>"));
 
-    if(IS_PTR_NONE(tstr))
+    if(PTR_IS_NONE(tstr))
         return(("<<sbstr_from_tstr - NONE>>"));
 #endif
 
@@ -747,7 +747,7 @@ _tstr_from_sbstr(
     if(NULL == sbstr)
         return(TEXT("<<tstr_from_sbstr - NULL>>"));
 
-    if(IS_PTR_NONE(sbstr))
+    if(PTR_IS_NONE(sbstr))
         return(TEXT("<<tstr_from_sbstr - NONE>>"));
 
     if(contains_inline(sbstr, strlen32(sbstr)))
@@ -812,6 +812,8 @@ _tstr_from_sbstr(
 #endif
 
 /* host-specific implementation */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
 
 static struct tstr_from_wstr_statics
 {
@@ -899,6 +901,10 @@ _tstr_from_wstr(
     return(dstptr);
 }
 
+#endif /* OS */
+
+#if WINDOWS /* seems to be no use case on RISC OS */
+
 static struct wstr_from_tstr_statics
 {
     PCWSTR last;
@@ -976,6 +982,8 @@ _wstr_from_tstr(
 
     return(dstptr);
 }
+
+#endif /* OS */
 
 #endif /* TSTR_IS_SBSTR */
 

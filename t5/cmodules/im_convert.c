@@ -30,8 +30,10 @@
 
 #if RISCOS
 
-static TCHARZ
-ChangeFSI_name_buffer[256];
+#if defined(REMEMBER_CFSI_APP)
+static PTSTR
+ChangeFSI_application;
+#endif
 
 _Check_return_
 static BOOL
@@ -41,16 +43,19 @@ ChangeFSI_available(void)
 
     if(available < 0)
     {
-        const char * var_name = "ChangeFSI$Dir";
+        TCHARZ ChangeFSI_name_buffer[256];
 
         available = 0;
 
-        if(NULL == _kernel_getenv(var_name, ChangeFSI_name_buffer, elemof32(ChangeFSI_name_buffer)))
+        if(NULL == _kernel_getenv("ChangeFSI$Dir", ChangeFSI_name_buffer, elemof32(ChangeFSI_name_buffer)))
         {
-            tstr_xstrkat(ChangeFSI_name_buffer, elemof32(ChangeFSI_name_buffer), ".ChangeFSI");
+            tstr_xstrkat(ChangeFSI_name_buffer, elemof32(ChangeFSI_name_buffer), "." "ChangeFSI");
 
             if(file_is_file(ChangeFSI_name_buffer))
-                available = 1;
+#if defined(REMEMBER_CFSI_APP)
+                if(status_ok(tstr_set(&ChangeFSI_application, ChangeFSI_name_buffer)))
+#endif
+                    available = 1;
         }
     }
 
@@ -252,41 +257,60 @@ image_convert_do_convert_file(
 #if RISCOS
     UNREFERENCED_PARAMETER_InVal_(t5_filetype);
 
+#if defined(REMEMBER_CFSI_APP)
+    { /* check that there will be enough memory in the Window Manager next slot to run ChangeFSI */
+    _kernel_swi_regs rs;
+    rs.r[0] = -1; /* read */
+    rs.r[1] = -1; /* read next slot */
+#define MIN_NEXT_SLOT (512 * 1024)
+    if(NULL != WrapOsErrorReporting(_kernel_swi(Wimp_SlotSize, &rs, &rs)))
+        return(STATUS_FAIL);
+    else if(rs.r[1] < MIN_NEXT_SLOT)
+    {
+        rs.r[0] = -1; /* read */
+        rs.r[1] = MIN_NEXT_SLOT; /* write next slot */
+        if(NULL != WrapOsErrorReporting(_kernel_swi(Wimp_SlotSize, &rs, &rs))) /* sorry for the override, but it does need some space to run! */
+            return(STATUS_FAIL);
+    }
+    } /*block*/
+#else
+    /* Fireworkz:RISC_OS.ImgConvert will set the next slot when the correct task is running */
+#endif
+
     if(host_os_version_query() < RISCOS_4_0)
         mode = TEXT("28r");
 
-    if( status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEXT("WimpTask Run ")              )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, ChangeFSI_name_buffer              )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEXT(" ")                          )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, source_file_name  /* <in file>  */ )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEXT(" ")                          )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, *p_converted_name /* <out file> */ )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEXT(" ")                          )) &&
-        status_ok(status = quick_tblock_tstr_add(&quick_tblock, mode              /* <mode>     */ )) &&
+    if( status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEXT("WimpTask Run ")                )) &&
+#if defined(REMEMBER_CFSI_APP)
+        status_ok(status = quick_tblock_tstr_add(&quick_tblock, ChangeFSI_application                )) &&
+        status_ok(status = quick_tblock_tchar_add(&quick_tblock, CH_SPACE                            )) &&
+#else
+        status_ok(status = quick_tblock_tstr_add(&quick_tblock, TEXT("Fireworkz:RISC_OS.ImgConvert "))) && /* that sets WimpSlot and calls ChangeFSI */
+#endif
+        status_ok(status = quick_tblock_tstr_add(&quick_tblock, source_file_name  /* <in file>  */   )) &&
+        status_ok(status = quick_tblock_tchar_add(&quick_tblock, CH_SPACE                            )) &&
+        status_ok(status = quick_tblock_tstr_add(&quick_tblock, *p_converted_name /* <out file> */   )) &&
+        status_ok(status = quick_tblock_tchar_add(&quick_tblock, CH_SPACE                            )) &&
+        status_ok(status = quick_tblock_tstr_add(&quick_tblock, mode              /* <mode>     */   )) &&
         status_ok(status = quick_tblock_tstr_add_n(&quick_tblock, TEXT(" -nomode -noscale") /* <options> */, strlen_with_NULLCH)) )
     { /*EMPTY*/ }
 
     if(status_ok(status))
-    {   /* check that there will be enough memory in the Window Manager next slot to run ChangeFSI */
-        _kernel_swi_regs rs;
-        rs.r[0] = -1; /* read */
-        rs.r[1] = -1; /* read next slot */
-#define MIN_NEXT_SLOT (512 * 1024)
-        if(NULL != WrapOsErrorReporting(_kernel_swi(Wimp_SlotSize, &rs, &rs)))
-            status = STATUS_FAIL;
-        else if(rs.r[1] < MIN_NEXT_SLOT)
-        {
-            rs.r[0] = -1; /* read */
-            rs.r[1] = MIN_NEXT_SLOT; /* write next slot */
-            if(NULL != WrapOsErrorReporting(_kernel_swi(Wimp_SlotSize, &rs, &rs))) /* sorry for the override, but it does need some space to run! */
-                status = STATUS_FAIL;
-        }
-    }
-
-    if(status_ok(status))
     {
-        reportf(quick_tblock_tstr(&quick_tblock));
-        _kernel_oscli(quick_tblock_tstr(&quick_tblock));
+        const PCTSTR convert_command = quick_tblock_tstr(&quick_tblock);
+
+        report_output(convert_command);
+
+        if(_kernel_ERROR == _kernel_oscli(convert_command))
+        {
+            const _kernel_oserror * const e = _kernel_last_oserror();
+            status = ((NULL != e) ? file_error_set(e->errmess) : FILE_ERR_NOTFOUND);
+        }
+        else
+        {
+            if(!file_is_file(*p_converted_name))
+                status = FILE_ERR_NOTFOUND;
+        }
     }
 
     if(status_ok(status))
@@ -298,19 +322,20 @@ image_convert_do_convert_file(
     {
         BOOL ok;
 
-        assert(NULL != gdip_image);
+        PTR_ASSERT(gdip_image);
 
         ok = GdipImage_Load_File(gdip_image, _wstr_from_tstr(source_file_name), t5_filetype);
 
         if(ok)
             ok = GdipImage_SaveAs_BMP(gdip_image, _wstr_from_tstr(quick_tblock_tstr(&quick_tblock)));
 
-        if(ok)
-            *p_t5_filetype_converted = FILETYPE_BMP;
-        else
+        if(!ok)
             status = STATUS_FAIL;
 
         GdipImage_Dispose(&gdip_image);
+
+        if(status_ok(status))
+            *p_t5_filetype_converted = FILETYPE_BMP;
     }
 #endif /* OS */
 

@@ -136,6 +136,8 @@ only one drag operation goes on at once
 
 static CB_DATA_NOTELAYER_DRAG_DATA notelayer_drag_data;
 
+#if 0
+
 /* NB ensure this table kept in step with grab handle defs */
 
 static const POINTER_SHAPE
@@ -151,6 +153,8 @@ notelayer_pointer_shape[PIXIT_RECT_EAR_COUNT] =
     POINTER_DRAG_LEFTRIGHT, /* right        */
     POINTER_DRAG_ALL        /* bottom right */
 };
+
+#endif
 
 static const CB_DATA_NOTELAYER_ADJUST
 notelayer_resize[PIXIT_RECT_EAR_COUNT] =
@@ -1361,6 +1365,9 @@ notelayer_click(
     {
     case T5_EVENT_CLICK_LEFT_DRAG:
         status_return(notelayer_click_trap());
+        break;
+
+    default:
         break;
     }
 #endif

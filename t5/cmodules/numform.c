@@ -942,17 +942,13 @@ numform(
     _InRef_     PC_SS_DATA p_ss_data,
     _InRef_     PC_NUMFORM_PARMS p_numform_parms)
 {
-    PC_NUMFORM_CONTEXT p_numform_context = p_numform_parms->p_numform_context;
-    NUMFORM_INFO numform_info = { 0 };
     UCHARZ own_numform[BUF_SECTION_MAX]; /* buffer into which numform section is extracted */
 #if 1 /* consider DBL_MAX in base 2 */
     UCHARZ num_ustr_buf[1 /*sign*/ + (1+DBL_MAX_EXP) /*digits*/ + 1 /*paranoia*/ + 1 /*CH_NULL*/]; /* Contains the number to be output */
 #else
     UCHARZ num_ustr_buf[1 /*sign*/ + (1+DBL_MAX_10_EXP) /*digits*/ + 1 /*paranoia*/ + 1 /*CH_NULL*/]; /* Contains the number to be output */
 #endif
-
-    if(IS_P_DATA_NONE(p_numform_context))
-        p_numform_context = &default_numform_context;
+    NUMFORM_INFO numform_info; zero_struct_fn(numform_info);
 
     numform_info.p_quick_ublock = p_quick_ublock;
     numform_info.ustr_style_name = NULL;
@@ -992,14 +988,13 @@ numform(
             numform_info.number.negative = 1;
         }
 
-        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_numeric))
+        if(PTR_NOT_NULL_OR_NONE(p_numform_parms->ustr_numform_numeric))
             numform_section_extract_numeric(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_numeric, ustr_bptr(num_ustr_buf), sizeof32(num_ustr_buf));
         break;
 
     case DATA_ID_LOGICAL:
         /*break;*/
 
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         numform_info.type = DATA_ID_REAL;
@@ -1015,7 +1010,7 @@ numform(
             numform_info.number.negative = 1;
         }
 
-        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_numeric))
+        if(PTR_NOT_NULL_OR_NONE(p_numform_parms->ustr_numform_numeric))
             numform_section_extract_numeric(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_numeric, ustr_bptr(num_ustr_buf), sizeof32(num_ustr_buf));
         break;
 
@@ -1025,26 +1020,25 @@ numform(
         numform_info.date.valid = status_ok(ss_dateval_to_ymd(ss_data_get_date(&numform_info.ss_data)->date, &numform_info.date.year,  &numform_info.date.month,   &numform_info.date.day));
         numform_info.time.valid = status_ok(ss_timeval_to_hms(ss_data_get_date(&numform_info.ss_data)->time, &numform_info.time.hours, &numform_info.time.minutes, &numform_info.time.seconds));
 
-        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_datetime))
+        if(PTR_NOT_NULL_OR_NONE(p_numform_parms->ustr_numform_datetime))
             numform_section_extract_datetime(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_datetime);
         break;
 
-    default:
 #if CHECKING
-        default_unhandled();
-        /*FALLTHRU*/
     case RPN_DAT_NEXT_NUMBER:
         assert0();
-
         /*FALLTHRU*/
+#endif
 
+    default: default_unhandled();
+#if CHECKING
     case DATA_ID_STRING:
     case DATA_ID_BLANK:
     case DATA_ID_ERROR:
 #endif
         numform_info.type = DATA_ID_STRING;
 
-        if(!IS_PTR_NULL_OR_NONE(p_numform_parms->ustr_numform_texterror))
+        if(PTR_NOT_NULL_OR_NONE(p_numform_parms->ustr_numform_texterror))
             numform_section_extract_texterror(&numform_info, ustr_bptr(own_numform), sizeof32(own_numform), p_numform_parms->ustr_numform_texterror);
         break;
 
@@ -1052,7 +1046,10 @@ numform(
         return(create_error(EVAL_ERR_UNEXARRAY));
     }
 
-    status_return(numform_output(p_numform_context, &numform_info, ustr_bptr(own_numform)));
+    status_return(
+        numform_output(
+            (!IS_P_DATA_NONE(p_numform_parms->p_numform_context) ? p_numform_parms->p_numform_context : &default_numform_context),
+            &numform_info, ustr_bptr(own_numform)));
 
     /* get style name if requested and if one exists */
     if(P_QUICK_TBLOCK_NONE != p_quick_tblock_style)
@@ -2156,6 +2153,7 @@ numform_section_extract_numeric(
 
     p_numform_info->ustr_integer_section = ustr_numeric_buf;
     p_numform_info->elemof_integer_section = elemof_numeric_buffer;
+    CODE_ANALYSIS_ONLY(ustr_numeric_buf[0] = CH_NULL); /* all code paths below set it but CA can't see that */
 
     /* now handle exceptional stuff */
     if(p_numform_info->number.nan || p_numform_info->number.infinity)

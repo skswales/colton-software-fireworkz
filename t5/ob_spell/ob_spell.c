@@ -158,6 +158,7 @@ spell_msg_init1(
 
     {
     const P_SPELL_INSTANCE_DATA p_spell_instance = p_object_instance_data_SPELL(p_docu);
+    PTR_ASSERT(p_spell_instance);
     list_init(&p_spell_instance->skip_list);
     } /*block*/
 
@@ -170,7 +171,14 @@ spell_msg_close1(
     _DocuRef_   P_DOCU p_docu)
 {
     const P_SPELL_INSTANCE_DATA p_spell_instance = p_object_instance_data_SPELL(p_docu);
-    collect_delete(&p_spell_instance->skip_list);
+
+    /* care here, as failure during startup may have half-cocked resources */
+    if(!IS_P_DATA_NONE(p_spell_instance))
+    {
+        collect_delete(&p_spell_instance->skip_list);
+    }
+    PTR_ASSERT(p_spell_instance);
+
     return(STATUS_OK);
 }
 
@@ -973,6 +981,8 @@ skip_list_add_word(
     const U32 size = ustrlen32p1(ustr); /*CH_NULL*/
     STATUS status;
 
+    PTR_ASSERT(p_spell_instance);
+
     consume_ptr(collect_add_entry_bytes(UCHARZ, &p_spell_instance->skip_list, ustr, size, (LIST_ITEMNO) -1 /* add, don't care about itemno */, &status));
 
     return(status);
@@ -986,13 +996,14 @@ skip_list_find_word(
 {
     const U32 ustr_len = ustrlen32(ustr);
     const P_SPELL_INSTANCE_DATA p_spell_instance = p_object_instance_data_SPELL(p_docu);
-    const P_LIST_BLOCK p_list_block = &p_spell_instance->skip_list;
     LIST_ITEMNO key;
     PC_USTR ustr_entry;
 
-    for(ustr_entry = (PC_USTR) collect_first(UCHARZ, p_list_block, &key);
+    PTR_ASSERT(p_spell_instance);
+
+    for(ustr_entry = (PC_USTR) collect_first(UCHARZ, &p_spell_instance->skip_list, &key);
         ustr_entry;
-        ustr_entry = (PC_USTR) collect_next(UCHARZ, p_list_block, &key))
+        ustr_entry = (PC_USTR) collect_next(UCHARZ, &p_spell_instance->skip_list, &key))
     {
         const U32 entry_len = ustrlen32(ustr_entry);
 

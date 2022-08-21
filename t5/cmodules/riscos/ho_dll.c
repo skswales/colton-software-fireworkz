@@ -145,7 +145,7 @@ ho_dll_msg_startup(void)
     TCHARZ filename[BUF_MAX_PATHSTRING];
 
     /* Only try to load the Stubs once */
-    if(status_done(file_find_on_path(filename, elemof32(filename), file_get_resources_path(), TEXT("Stubs"))))
+    if(status_done(file_find_on_path(filename, elemof32(filename), file_get_resources_path(), TEXT("RISC_OS") FILE_DIR_SEP_TSTR TEXT("Stubs"))))
         if(status_ok(tstr_set(&global_stubs_filename, filename))) /* NB. not status = !!! */
             status = global_stubs_ensure_loaded();
 

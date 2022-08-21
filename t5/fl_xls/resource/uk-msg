@@ -8,11 +8,12 @@
 # Copyright (C) 1994-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with fl_xls/fl_xls.h
 #
 0:Password required
 #
-# errors
+# errors: keep consistent with fl_xls/fl_xls.h
+# see XLS_ERR(n)
 #
 e0:Excel load: unknown BOF record
 #e1:ERROR_RQ

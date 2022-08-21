@@ -28,7 +28,7 @@ $(BUILD_DIR).fl_csv.$(COUNTRY)-24/rc: $(T5).fl_csv.resource.$(COUNTRY)-msg
  Basic -quit $(RCGen) -output $@ -from $? -object 24 -common
 
 # RISC OS loaded messages
-$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).Messages.Ob24: $(T5).fl_csv.resource.$(COUNTRY)-msg
+$(PROD_BUILD_DIR).!$(APPL).Resources.$(COUNTRY).RISC_OS.Messages.Ob24: $(T5).fl_csv.resource.$(COUNTRY)-msg
  $(MAKEMESS) -to $@ -from $? -lf -country $(COUNTRY)
 
 # RISC OS bound messages

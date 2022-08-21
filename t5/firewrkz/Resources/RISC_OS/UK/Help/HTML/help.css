@@ -1,0 +1,446 @@
+/* --------------------------------- */
+/* CSS for Fireworkz simple HTMLHelp */
+/* --------------------------------- */
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/* Copyright (C) 2014-2020 Stuart Swales */
+
+/* default rules for the whole document */
+body {
+    font-size: 12.8pt;
+    font-family: sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    color: black;
+    background-color: white;
+    line-height: 1.33em;
+    margin-left: 2.0em;
+    margin-right: 2.0em;
+    max-width: 750pt;
+}
+
+/* paragraphs */
+p {
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    text-align: left;
+}
+
+hr {
+    border: 0;
+    background-color: #888;
+    color: #888;
+}
+
+/* headings */
+h1 {
+  /*font-size: 150%;*/
+  /*font-family: serif;*/
+  /*font-weight: bold;*/
+  /*font-style: normal;*/
+    padding-top: 0.0em;
+    padding-bottom: 0.5em;
+    margin-top: 0.5em;
+    border-bottom: 1px solid #888;
+}
+
+h2 {
+    font-size: 120%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: 1.0em;
+    margin-bottom: 1.1em;
+}
+
+h3 {
+    font-size: 110%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: 1.0em;
+    margin-bottom: 1.1em;
+}
+
+h4 {
+    font-size: 100%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: 1.0em;
+    margin-bottom: 1.1em;
+}
+
+h5 {
+    font-size: 100%;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+h6 {
+    font-size: 100%;
+    font-weight: normal;
+    font-style: italic;
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* divisions */
+div {
+    padding: 0;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+/* lists */
+ul, ol {
+    padding: 0 0 0 3em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+ul ul, ol ol, ul ol, ol ul {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* See http://bugs.netsurf-browser.org/mantis/view.php?id=2434 */
+ul.csg-netsurf-2434 {
+    padding: 0 0 0 2em;
+    list-style-type: none;
+}
+
+li {
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    text-align: left;
+}
+
+li p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+dl {
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 1em;
+}
+
+dl dl {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+dt {
+    padding: 0;
+    font-weight: bold;
+    margin-top: .3em;
+    margin-bottom: .3em;
+}
+
+dd {
+    padding: 0;
+    margin-top: .3em;
+    margin-left: 3em;
+    margin-bottom: .3em;
+}
+
+dl p {
+    margin-top: .3em;
+    margin-bottom: .3em;
+}
+
+/* start of csg-* definitions */
+
+/* A PipeDream Ctrl-Command sequence, e.g. EIRC */
+.csg-command {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* A dialogue box */
+.csg-dbox {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* An action button in a dialogue box */
+.csg-dbox-button {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* An option button or field in a dialogue box */
+.csg-dbox-option {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* A specific option button value (e.g. radio button label) */
+.csg-dbox-option-value {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* Filename elements */
+.csg-filename {
+    font-family: monospace;
+}
+
+/* Heading style for spreadsheet function sections */
+h2.csg-function {
+  /*color: red;*/
+    padding-top: 16pt;
+}
+
+/* A spreadsheet function declaration: name(parameter-list) */
+.csg-function-declaration {
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Formula used to evaluate a spreadsheet function */
+.csg-function-formula {
+    font-size: 120%;
+    font-family: serif;
+    margin-left: 2em;
+}
+
+/* Outermost backets in formula modifier */
+.csg-function-formula-outer-parentheses {
+    font-size: 120%;
+}
+
+/* Variables in the above, referred to in text */
+.csg-function-formula-variable {
+    font-family: serif;
+    font-style: italic;
+}
+
+/* A parameter to a spreadsheet function */
+.csg-function-parameter {
+    font-family: monospace;
+    font-style: italic;
+}
+
+/* A parameter to a spreadsheet function in a descriptive table */
+td.csg-function-parameter {
+    font-family: monospace;
+    font-style: italic;
+    vertical-align: top;
+}
+
+/* The type of a parameter to a spreadsheet function */
+.csg-function-parameter-type {
+}
+
+/* Things like pi render better */
+.csg-greek-symbol {
+    font-family: Symbol, serif;
+}
+
+/* A key on the keyboard */
+.csg-key {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* An arrow key on the keyboard (these render poorly on Windows in csg-key) */
+.csg-key-arrow {
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* A menu */
+.csg-menu {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* An option on a menu */
+.csg-menu-option {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* Try to stop formatter... */
+.csg-nobr {
+    white-space: nowrap;
+}
+
+/* Sample text */
+.csg-sample {
+    font-family: sans-serif;
+    font-size: 11pt;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.csg-sample p {
+    padding: 0;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+
+/* How much to indent samples by (NB not all sample text is on its own line to indent) */
+.csg-sample-indent {
+    margin-left: 2em;
+}
+
+/* Column headings in sample spreadsheets */
+.csg-sample-sheet-border-column {
+    background-color: #dddddd;
+    text-align: center;
+}
+
+/* Row headings in sample spreadsheets */
+.csg-sample-sheet-border-row {
+    background-color: #dddddd;
+    text-align: center;
+    width: 36pt;
+}
+
+/* A number cell in sample spreadsheets */
+.csg-sample-sheet-cell-number {
+    text-align: right;
+    padding-left: 6pt;
+    padding-right: 6pt;
+}
+
+.csg-sample-sheet-column-stdwidth {
+    width: 72pt;
+}
+
+/* A button on the PipeDream toolbar */
+.csg-toolbar-button {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* Text typed by the user */
+.csg-user-text {
+    font-family: monospace;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+/* PipeDream command tables (Menu, Command, Ctrl-seq, Key) */
+table.csg-command-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.csg-command-table, table.csg-command-table th, table.csg-command-table td {
+    border: 1px solid black;
+}
+
+table.csg-command-table th {
+    text-align: left;
+    font-weight: bold;
+    background-color: #eeeeee;
+}
+
+table.csg-command-table th.csg-ct-th-menu {
+    width: 20%;
+}
+
+table.csg-command-table th.csg-ct-th-command {
+    width: 30%;
+}
+
+table.csg-command-table th.csg-ct-th-ctrl {
+    width: 30%;
+}
+
+table.csg-command-table th.csg-ct-th-key {
+    width: 20%;
+}
+
+table.csg-command-table th.csg-ct-th-tool {
+    width: 6%;
+}
+
+table.csg-info-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 1em;
+}
+
+table.csg-info-table, table.csg-info-table th, table.csg-info-table td {
+    border: 1px solid black;
+}
+
+table.csg-info-table th {
+    text-align: left;
+    font-weight: bold;
+    background-color: #eeeeee;
+}
+
+.navheader {
+}
+
+#navheader {
+    width: 100%;
+}
+
+#navheader_PCN_L {
+    width: 20%;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+#navheader_PCN_C {
+    width: 60%;
+    text-align: center;
+    vertical-align: top;
+}
+
+#navheader_PCN_R {
+    width: 20%;
+    text-align: right;
+    vertical-align: bottom;
+}
+
+.navfooter {
+}
+
+div.navfooter {
+    border-top: 1px solid #888;
+    padding-top: 8pt;
+    margin-top: 24pt;
+}
+
+#navfooter {
+    width: 100%;
+}
+
+#navfooter_PUN_L {
+    width: 40%;
+    text-align: left;
+    vertical-align: top;
+}
+
+#navfooter_PUN_C {
+    width: 20%;
+    text-align: center;
+    vertical-align: top;
+}
+
+#navfooter_PUN_R {
+    width: 40%;
+    text-align: right;
+    vertical-align: top;
+}

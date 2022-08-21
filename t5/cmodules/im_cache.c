@@ -198,7 +198,7 @@ image_cache_can_load(
     switch(t5_filetype)
     {
     case FILETYPE_PD_CHART:
-    case FILETYPE_T5_DRAW:
+    case FILETYPE_T5_HYBRID_DRAW:
     case FILETYPE_DRAW:
     case FILETYPE_VECTOR:
     case FILETYPE_POSTER:
@@ -911,7 +911,7 @@ image_cache_load_setup_foreign_diagram(
     {
     DRAW_OBJECT_OPTIONS options;
 
-    zero_struct(options); /* NB bounding box of options object must be ignored */
+    zero_struct_fn(options); /* NB bounding box of options object must be ignored */
 
     options.type = DRAW_OBJECT_TYPE_OPTIONS;
     options.size = sizeof32(options);
@@ -1037,7 +1037,7 @@ image_cache_process_loaded_or_embedded_data(
                 break;
 
             case FILETYPE_PD_CHART:
-            case FILETYPE_T5_DRAW:
+            case FILETYPE_T5_HYBRID_DRAW:
             case FILETYPE_DRAW:
             case FILETYPE_VECTOR:
             case FILETYPE_POSTER:
@@ -1097,7 +1097,7 @@ image_cache_process_loaded_or_embedded_data(
             default: default_unhandled();
 #if CHECKING
             case FILETYPE_PD_CHART:
-            case FILETYPE_T5_DRAW:
+            case FILETYPE_T5_HYBRID_DRAW:
             case FILETYPE_DRAW:
             case FILETYPE_VECTOR:
             case FILETYPE_POSTER:
@@ -1129,7 +1129,7 @@ image_cache_process_loaded_or_embedded_data(
                 break;
 
             case FILETYPE_PD_CHART:
-            case FILETYPE_T5_DRAW:
+            case FILETYPE_T5_HYBRID_DRAW:
             case FILETYPE_DRAW:
             case FILETYPE_VECTOR:
             case FILETYPE_POSTER:
@@ -1589,7 +1589,7 @@ image_cache_load_file_to_handle(
         *p_t5_filetype = (T5_FILETYPE) file_get_risc_os_filetype(fin);
 
         switch(*p_t5_filetype)
-        {   /* refine - side-effect is to mutate PipeDream chart to Draw file and then offers to save as such */
+        {   /* refine - side-effect is to mutate (old filetype) PipeDream chart to Draw file and then offers to save as such */
         case FILETYPE_PIPEDREAM:
             *p_t5_filetype = t5_filetype_from_data(array_basec(p_h_data, BYTE), n_bytes);
             break;

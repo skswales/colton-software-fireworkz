@@ -1,0 +1,1388 @@
+﻿//
+// RCGen created for Object 0
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+#pragma code_page(65001) // UTF-8
+//
+STRINGTABLE
+BEGIN
+//
+// this is the messages file for ob_skel (Germany)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Copyright (C) 1993-1998 Colton Software Limited
+// Copyright (C) 1998-2015 R W Colton
+//
+// messages: keep consistent with ob_skel/resource/resource.h
+//
+// NB Keep Style Guide in mind
+// Use SELECT / ADJUST for mouse buttons on RISC OS
+// Use Title Caps on Windows for:
+// Title Bar / Action Buttons
+//
+// Ampersand signifies the 'hot-key' character
+//
+// Version number and date
+// When changing for release, remember other files
+// The definitive list of files is in common.mf_mid
+//1:2.xx.yy
+//1:2.xx
+	0x1,	L"2.30"
+// UK 2:dd mmm yyyy
+	0x2,	L"10 Nov. 2020"
+//
+	0x3,	L"© 1992-2020 Colton Software"
+// UK w1037:The product uses the following components
+	0x40D,	L"Das Produkt verwendet die folgenden Komponenten"
+// UK w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
+	0x407,	L"Drawfile DLLs © 1994-2005 Dial Solutions"
+//
+// Dialogue box buttons
+//
+// UK 90:&Add
+	0x5A,	L"&Hinzufügen"
+// UK 91:&Create
+	0x5B,	L"&Create"
+// UK 92:&Remove
+	0x5C,	L"&Löschen"
+// UK 93:&Insert
+	0x5D,	L"&Einfügen"
+// UK 94:&Help
+	0x5E,	L"&Hilfe"
+// UK 95:&Apply
+	0x5F,	L"&Anwenden"
+// UK 96:&New
+	0x60,	L"&Neu"
+// UK 97:&Change
+	0x61,	L"&Ändern"
+// UK 98:&Delete
+	0x62,	L"&Löschen"
+// UK 99:&Replace
+	0x63,	L"&Ersetzen"
+//
+// Window title bar text
+//
+// UK 100:Untitled
+	0x64,	L"Namenlos"
+// UK r101:%P: %W
+//r101:%P: %W
+// UK w101:%L - %P
+	0x65,	L"%L - %P"
+// UK r1032:%P: %W [Read-only]
+//r1032:%P: %W [schreibgeschützt]
+// UK w1032:%L [Read-only] - %P
+	0x408,	L"%L [schreibgeschützt] - %P"
+// UK 102: *
+	0x66,	L" *"
+// UK 103: at %g%%
+	0x67,	L" bei %g%%"
+//
+// UK 104:%
+	0x68,	L"%"
+// UK 105:&Embed
+	0x69,	L"&Einbetten"
+// UK 107:Selection
+	0x6B,	L"Selection"
+// UK NEW 108:Close
+	0x6C,	L"Close"
+// UK 109:Cancel
+	0x6D,	L"Abbrechen"
+// UK 110:OK
+	0x6E,	L"OK"
+// UK 118:&Save
+	0x76,	L"&Speichern"
+// UK r119:&Discard
+//r119:&Verwerfen
+// UK w119:&Don't save
+	0x77,	L"&Nicht speichern"
+//
+// Long names for function keys
+// 
+// UK 120:PRINT
+	0x78,	L"DRUCK"
+// UK 121:F1
+	0x79,	L"F1"
+// UK 122:F2
+	0x7A,	L"F2"
+// UK 123:F3
+	0x7B,	L"F3"
+// UK 124:F4
+	0x7C,	L"F4"
+// UK 125:F5
+	0x7D,	L"F5"
+// UK 126:F6
+	0x7E,	L"F6"
+// UK 127:F7
+	0x7F,	L"F7"
+// UK 128:F8
+	0x80,	L"F8"
+// UK 129:F9
+	0x81,	L"F9"
+// UK 130:F10
+	0x82,	L"F10"
+// UK 131:F11
+	0x83,	L"F11"
+// UK 132:F12
+	0x84,	L"F12"
+// UK r133:Insert
+//r133:Einfügen
+// UK w133:Ins
+	0x85,	L"Einfg"
+// UK 134:Tab
+	0x86,	L"Tab"
+// UK 135:End
+	0x87,	L"Ende"
+// UK r136:‼
+//r136:‼
+// UK w136:Left
+	0x88,	L"Pfeil links"
+// UK r137:‼
+//r137:‼
+// UK w137:Right
+	0x89,	L"Pfeil rechts"
+// UK r138:‼
+//r138:‼
+// UK w138:Down
+	0x8A,	L"Pfeil unten"
+// UK r139:‼
+//r139:‼
+// UK w139:Up
+	0x8B,	L"Pfeil oben"
+// UK r140:Delete
+//r140:Entf
+// UK w140:Del
+	0x8C,	L"Entf"
+// UK 141:Home
+	0x8D,	L"Pos1"
+// UK 142:Backspace
+	0x8E,	L"Rücktaste"
+// UK 143:Return
+	0x8F,	L"Return"
+//
+// UK 150:Shift+
+	0x96,	L"Umschalt+"
+// UK 151:Ctrl+
+	0x97,	L"Strg+"
+// UK 152:Ctrl+Shift+
+	0x98,	L"Strg+Umschalt+"
+//
+// UK r153:‼
+//r153:‼
+// UK w153:Shift+
+	0x99,	L"Umschalt+"
+// UK r154:^
+//r154:^
+// UK w154:Ctrl+
+	0x9A,	L"Strg+"
+// UK r155:^‼
+//r155:^‼
+// UK w155:Ctrl+Shift+
+	0x9B,	L"Strg+Umschalt+"
+//
+// UK r160:Page Down
+//r160:Bild nach oben
+// UK w160:Page Down
+	0xA0,	L"Bild nach oben"
+// UK r161:Page Up
+//r161:Bild nach unten
+// UK w161:Page Up
+	0xA1,	L"Bild nach unten"
+//
+// MSG_DIALOG_INSERT_FIELD_xxx
+//
+// UK r168:Insert time
+//r168:Uhrzeit einfügen
+// UK w168:Insert Time
+	0xA8,	L"Uhrzeit Einfügen"
+// spare 169
+// UK r170:Insert date
+//r170:Datum einfügen
+// UK w170:Insert Date
+	0xAA,	L"Datum Einfügen"
+// spare 1032
+// UK r171:Insert page number
+//r171:Seitennummer einfügen
+// UK w171:Insert Page Number
+	0xAB,	L"Seitennummer Einfügen"
+// UK 172:&Live
+	0xAC,	L"&Aktualisieren"
+// spare 173
+// UK r174:Insert date (or ADJUST to insert time). Inserts either when this file was last changed or today
+//r174:Datum einfügen (oder SPEZIAL-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute
+// UK w174:Insert date (or Ctrl-click to insert time). Inserts either when this file was last changed or today
+	0xAE,	L"Datum einfügen (oder Strg-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute"
+//
+// UK 1038:Y page number
+	0x40E,	L"y-Seitennummer"
+// UK 1039:X page number
+	0x40F,	L"x-Seitennummer"
+//
+// UK 1044:Current date
+	0x414,	L"Aktuelles Datum"
+// UK 1045:File modification date
+	0x415,	L"Änderungsdatum der Datei"
+// UK 1046:Current time
+	0x416,	L"Aktuelle Uhrzeit"
+// UK 1047:File modification time
+	0x417,	L"Änderungszeit der Datei"
+//
+// MSG_DIALOG_VIEW_xxx
+//
+// UK 250:Scale
+	0xFA,	L"Größe"
+//
+// %ge values corresponding to buttons in the View scale dialogue box
+// These numeric values are read by the button processing code
+//
+// UK 251:50%
+	0xFB,	L"50%"
+// UK 252:75%
+	0xFC,	L"75%"
+// UK 253:100%
+	0xFD,	L"100%"
+// UK 254:150%
+	0xFE,	L"150%"
+// UK 255:200%
+	0xFF,	L"200%"
+//
+// UK r256:View control
+//r256:Ansicht Kontrolle
+// UK w256:View Control
+	0x100,	L"Ansicht Kontrolle"
+// UK r257:Scale view
+//r257:Ansicht ändern
+// UK w257:Scale View
+	0x101,	L"Ansicht Ändern"
+// UK 1239:ug/ug02_accessing_the_view_control_dialogue_box.htm
+	0x4D7,	L"ug/ug02_accessing_the_view_control_dialogue_box.htm"
+// UK 1240:ug/ug02_accessing_the_view_control_dialogue_box.htm
+	0x4D8,	L"ug/ug02_accessing_the_view_control_dialogue_box.htm"
+// UK OLD 702:View control dialogue box
+// Germany OLD 702:Ansicht Kontrolle Dialogfenster
+// UK r702:Click SELECT for View control dialogue box. Click ADJUST for View scale dialogue box
+//r702:Click SELECT for View control dialogue box. Click ADJUST for View scale dialogue box
+// UK w702:Click for View control dialogue box. Ctrl-click for View Scale dialogue box
+	0x2BE,	L"Click for View control dialogue box. Ctrl-click for View Scale dialogue box"
+//
+// UK 258:C&olumn border
+	0x102,	L"&Spaltenrand"
+// UK 259:&Row border
+	0x103,	L"&Zeilenrand"
+// UK 262:&Top ruler
+	0x106,	L"&Oberer Ruler"
+// UK 263:&Side ruler
+	0x107,	L"&Seiten Ruler"
+// UK r264:&New view
+//r264:&Neue Ansicht
+// UK w264:&New View
+	0x108,	L"&Neue Ansicht"
+// UK 265:Display area
+	0x109,	L"Anzeigebereich"
+// UK 266:&Full
+	0x10A,	L"&Voll"
+// UK 267:&Printable area
+	0x10B,	L"&Druckbereich"
+// UK 268:&Work area
+	0x10C,	L"&Arbeitsbereich"
+// UK 269:F&it Horz
+	0x10D,	L"Horz. Pas."
+// UK 270:Fit Vert
+	0x10E,	L"Vert. Pas."
+// UK 272:&Horizontal split
+	0x110,	L"&Horizontaler teilen"
+// UK 273:V&ertical split
+	0x111,	L"V&ertikaler teilen"
+//
+// UK r290:Select template
+//r290:Vorlage auswahl
+// UK w290:Select Template
+	0x122,	L"Vorlage auswahl"
+// UK 291:ug/ug03_creating_a_new_document.htm
+	0x123,	L"ug/ug03_creating_a_new_document.htm"
+// UK r292:New document
+//r292:Neues Dokument
+// UK w292:New Document
+	0x124,	L"Neues Dokument"
+//
+// UK 1055:Copy template
+	0x41F,	L"Vorlage kopieren"
+// UK 1056:This template is a set of files
+	0x420,	L"Diese Vorlage besteht aus Dateien,"
+// UK 1057:contained in a directory.
+	0x421,	L"die in einem Verzeichnis enthalten sind."
+// UK 1058:You must drag this directory
+	0x422,	L"Sie müssen dieses Verzeichnis in"
+// UK 1059:to a directory display in order
+	0x423,	L"eine Verzeichnisansicht ziehen,"
+// UK 1059:to make a copy of it.
+	0x423,	L"um es zu kopieren."
+//
+// MSG_DIALOG_PRINT_xxx
+//
+// UK 300:ug/ug11_basic_print_options.htm
+	0x12C,	L"ug/ug11_basic_print_options.htm"
+// UK 301:&Copies
+	0x12D,	L"An&zahl"
+// UK 1048:Page range
+	0x418,	L"Page range"
+// UK 302:&All
+	0x12E,	L"&Alle"
+// UK 303:Pa&ges
+	0x12F,	L"&Seiten"
+// UK 1035:from
+	0x40B,	L"von"
+// UK 1036:to
+	0x40C,	L"zu"
+// UK 304:&Two up
+	0x130,	L"&Zwei hoch"
+// UK 305:ug/ug11_extra_print_options.htm
+	0x131,	L"ug/ug11_extra_print_options.htm"
+// UK r307:No RISC OS printer installed
+//r307:Kein RISC OS Druckertreiber
+// UK w307:No Printer Selected
+	0x133,	L"Kein Drucker ausgewählt"
+// UK 321:Revers&e
+	0x141,	L"&Revers"
+// UK 322:Co&llated
+	0x142,	L"Eingesetzt"
+// UK 323:Acros&s
+	0x143,	L"&Überkreuz"
+// UK 324:Pa&mphlet
+	0x144,	L"Pa&mphlet"
+// UK 343:&Extra
+	0x157,	L"&Extra"
+// UK 344:Sides
+	0x158,	L"Seiten"
+// UK 345:&Both
+	0x159,	L"&Beide"
+// UK 346:Od&d
+	0x15A,	L"Ungera&de"
+// UK 347:Eve&n
+	0x15B,	L"Gerade"
+// UK 348:Draft print
+	0x15C,	L"Draft print"
+// UK 1000:Mailshot
+	0x3E8,	L"Mailshot"
+//
+// MSG_DIALOG_PAPER_SCALE_xxx
+//
+// UK r1020:Print scale
+//r1020:Drucker skala
+// UK w1020:Print Scale
+	0x3FC,	L"Drucker Skala"
+// UK r1021:Fit one page
+//r1021:Fit one page
+// UK w1021:Fit One Page
+	0x3FD,	L"Fit One Page"
+// UK r1022:Fit one page across
+//r1022:Fit one page across
+// UK w1022:Fit One Page Across
+	0x3FE,	L"Fit One Page Across"
+// UK 1023:Scale
+	0x3FF,	L"Scale"
+// UK 1024:100%
+	0x400,	L"100%"
+// UK 1025:ug/ug11_print_scale.htm
+	0x401,	L"ug/ug11_print_scale.htm"
+//
+// MSG_DIALOG_ES_STYLE_xxx
+//
+// UK 180:Name
+	0xB4,	L"Name"
+// UK 181:Shortcut
+	0xB5,	L"Shortcut"
+//
+// UK 309:Paragraph
+	0x135,	L"Absatz"
+// UK 310:St&yle
+	0x136,	L"St&il"
+// UK 311:&Text
+	0x137,	L"&Text"
+// UK 312:&Colours
+	0x138,	L"F&arben"
+// UK 313:&Ruler
+	0x139,	L"&Lineal"
+// UK 314:&Spacing
+	0x13A,	L"&Abstände"
+// UK 315:&Number
+	0x13B,	L"&Zahl"
+// UK 316:Ro&w
+	0x13C,	L"Zeile"
+// UK 317:Column
+	0x13D,	L"Spalte"
+//
+// UK 308:&Justify
+	0x134,	L"&Justieren"
+// UK 350:&Vertical
+	0x15E,	L"&Vertikal"
+// UK 351:Cell
+	0x15F,	L"Zelle"
+//
+// UK 329:New object
+	0x149,	L"Neues objekt"
+//
+// UK 349:Formats
+	0x15D,	L"Format"
+// UK 318:Number
+	0x13E,	L"Zahl"
+// UK 319:Date
+	0x13F,	L"Datum"
+// UK 1001:Date and time
+	0x3E9,	L"Datum und Zeit"
+// UK 320:Text
+	0x140,	L"Text"
+// UK 1002:Text and error
+	0x3EA,	L"Text und Fehler"
+//
+// UK 325:&Typeface
+	0x145,	L"&Schriftart"
+// UK 326:&Height
+	0x146,	L"&Höhe"
+// UK 327:&Width
+	0x147,	L"&Breite"
+// UK 328:points
+	0x148,	L"point"
+//
+// UK 330:&Paragraph
+	0x14A,	L"&Absatz"
+// UK 331:&Left
+	0x14B,	L"&Links"
+// UK 332:&Right
+	0x14C,	L"&Rechts"
+// UK 333:&Tabs
+	0x14D,	L"&Tabs"
+// UK 334:&Width
+	0x14E,	L"&Breite"
+// UK 335:Heading
+	0x14F,	L"Überschrift"
+//
+// UK 336:cm
+	0x150,	L"cm"
+// UK 337:mm
+	0x151,	L"mm"
+// UK 338:in
+	0x152,	L"Zoll"
+// UK 478:pt
+	0x1DE,	L"point"
+//
+// UK 352:Protection
+	0x160,	L"Schutz"
+//
+// UI of left/centre/right/decimal tabs
+// NB the spaces following L/C/R/D are intentional
+//
+// UK 339:L 
+	0x153,	L"L "
+// UK 340:C 
+	0x154,	L"M "
+// UK 341:R 
+	0x155,	L"R "
+// UK 342:D 
+	0x156,	L"D "
+//
+// UK 450:Height
+	0x1C2,	L"Höhe"
+// UK 451:Fixed height
+	0x1C3,	L"Feste Höhe"
+// UK 452:Unbreakable
+	0x1C4,	L"Unteilbar"
+// UK 453:Heading
+	0x1C5,	L"Überschrift"
+//
+// MSG_DIALOG_PAPER_xxx
+//
+// UK 455:Paper
+	0x1C7,	L"Papier"
+// UK 456:ug/ug07_setting_paper_size.htm
+	0x1C8,	L"ug/ug07_setting_paper_size.htm"
+// UK 457:Paper
+	0x1C9,	L"Papier"
+// UK 458:Paper margin
+	0x1CA,	L"Papierrand"
+// UK 459:Binding
+	0x1CB,	L"Bindung"
+// UK 460:&Name
+	0x1CC,	L"&Name"
+// UK 461:&Height
+	0x1CD,	L"&Höhe"
+// UK 462:&Width
+	0x1CE,	L"&Breite"
+// UK 463:&Top
+	0x1CF,	L"&Oben"
+// UK 464:&Bottom
+	0x1D0,	L"&Unten"
+// UK 465:&Left
+	0x1D1,	L"&Links"
+// UK 466:&Right
+	0x1D2,	L"&Rechts"
+// UK 467:Margin
+	0x1D3,	L"Rand"
+// UK 468:&Alternate
+	0x1D4,	L"&Alternate"
+// UK r469:Read pr&inter
+//r469:Drucker lesen
+// UK w469:Read Pr&inter
+	0x1D5,	L"Drucker Lesen"
+// UK 470:None
+	0x1D6,	L"Kein"
+// UK 471:From printer
+	0x1D7,	L"Aus Drucker"
+// UK 472:&Portrait
+	0x1D8,	L"Hochformat"
+// UK 473:Lan&dscape
+	0x1D9,	L"Querformat"
+// UK 474:C&olumn margin
+	0x1DA,	L"Spaltenrand"
+// UK 475:Row margin
+	0x1DB,	L"Zeilenrand"
+// UK 476:&Grid size
+	0x1DC,	L"&Größe"
+// UK 477:&Faint grid
+	0x1DD,	L"&Leise raster"
+// UK 480:Grid
+	0x1E0,	L"Raster"
+//
+// MSG_DIALOG_RGB_xxx
+//
+// UK 490:Colour
+	0x1EA,	L"Farbe"
+// UK 491:Background
+	0x1EB,	L"Hintergrund"
+// UK 492:R
+	0x1EC,	L"R"
+// UK 493:G
+	0x1ED,	L"G"
+// UK 494:B
+	0x1EE,	L"B"
+// UK 495:Transparent
+	0x1EF,	L"Transparenz"
+// UK 1028:Colour...
+	0x404,	L"Farbe..."
+//
+// MSG_DIALOG_ES_PS_xxx
+//
+// UK 500:&Above paragraph
+	0x1F4,	L"&Über Absatz"
+// UK 501:&Below paragraph
+	0x1F5,	L"&Unter Absatz"
+// UK 502:Bet&ween lines
+	0x1F6,	L"Z&wischen Zeilen"
+// UK 503:&Paragraph spacing
+	0x1F7,	L"&Absatzabstände"
+// UK 504:&Line spacing
+	0x1F8,	L"&Zeilenabstand"
+//
+// UK 510:Borders
+	0x1FE,	L"Grenzen"
+// UK 511:Grid
+	0x1FF,	L"Raster"
+// UK 512:Left
+	0x200,	L"Links"
+// UK 513:Top
+	0x201,	L"Oben"
+// UK 514:Right
+	0x202,	L"Rechts"
+// UK 515:Bottom
+	0x203,	L"Unten"
+//
+// UK 516:Margins
+	0x204,	L"Ränder"
+// UK 517:Line
+	0x205,	L"Linie"
+//
+// UK 524:Page number
+	0x20C,	L"Seitennummer"
+//
+// MSG_DIALOG_SETC_xxx
+//
+// UK 550:Case
+	0x226,	L"Groß-/Kleinschreibung"
+// UK 551:ug/ug04_upper_and_lower_case.htm
+	0x227,	L"ug/ug04_upper_and_lower_case.htm"
+//
+// MSG_PRINT_WARNING_xxx
+//
+// UK 600:Warning
+	0x258,	L"Warnung"
+// UK 601:Printable area larger than printer driver settings;
+	0x259,	L"Druckbereich größer als im Druckertreiber eingestellt;"
+// UK 602:click Read Printer in Paper dialogue box for best settings.
+	0x25A,	L"klick Drucker Lesen in Papier Dialog Box für beste Einstellung."
+// UK 603:Print
+	0x25B,	L"Drucken"
+//
+// MSG_STATUS_xxx
+//
+// UK 106:Sorting
+	0x6A,	L"Sortiere"
+// UK 111:Converting
+	0x6F,	L"Konvertiere"
+// UK 112:Loading
+	0x70,	L"Lade"
+// UK 113:Inserting
+	0x71,	L"Füge ein"
+// UK 114:Saving
+	0x72,	L"Speichere"
+// UK 115:Reformatting document
+	0x73,	L"Formatiere Dokument"
+// UK 116:Pasting
+	0x74,	L"Setze ein"
+// UK 117:Cutting
+	0x75,	L"Schneide aus"
+//
+// UK 283:Column %d, width
+	0x11B,	L"Spalte %d, width"
+// UK 284:Row %d, height
+	0x11C,	L"Zeile %d, height"
+//
+// UK 700:Page %d
+	0x2BC,	L"Seite %d"
+// UK 701:Page x %d, y %d
+	0x2BD,	L"Seite x %d, y %d"
+// UK 1016:Create a new document
+	0x3F8,	L"Ein neues Dokument erzeugen"
+// UK 1017:Open an existing document
+	0x3F9,	L"Ein existierendes Dokument öffnen"
+// UK 703:Apply left justification to the selection or at caret
+	0x2BF,	L"Linksbündigkeit benutzen für die Auswahl oder ab der Cursorposition"
+// UK 704:Apply centre justification to the selection or at caret
+	0x2C0,	L"Mittelbündigkeit benutzen für die Auswahl oder ab der Cursorposition"
+// UK 705:Apply right justification to the selection or at caret
+	0x2C1,	L"Rechstbündigkeit benutzen für die Auswahl oder ab der Cursorposition"
+// UK 706:Apply full justification to the selection or at caret
+	0x2C2,	L"Bündigkeit benutzen für die Auswahl oder ab der Cursorposition"
+// UK 707:Apply, change, create and delete styles
+	0x2C3,	L"Stil hinzufügen, löschen oder ändern"
+// UK 708:Apply effects to the selection or at caret
+	0x2C4,	L"Effete benutzen für die Auswahl oder ab der Cursorposition"
+// UK 709:Apply bold to the selection or at caret
+	0x2C5,	L"Fettschrift benutzen für die Auswahl oder ab der Cursorposition"
+// UK 710:Apply italic to the selection or at caret
+	0x2C6,	L"Kursivschrift benutzen für die Auswahl oder ab der Cursorposition"
+// UK 1012:Apply underline to the selection or at caret
+	0x3F4,	L"Unterstreichen benutzen für die Auswahl oder ab der Cursorposition"
+// UK 1018:Apply superscript to the selection or at caret
+	0x3FA,	L"Hochstellen benutzen für die Auswahl oder ab der Cursorposition"
+// UK 1019:Apply subscript to the selection or at caret
+	0x3FB,	L"Tiefstellen benutzen für die Auswahl oder ab der Cursorposition"
+// UK 711:Use left tab stop; click in ruler to place new tab
+	0x2C7,	L"Benutzen Sie linken Tabstop; klick im Rand um Tab zu setzen"
+// UK 712:Use centre tab stop; click in ruler to place new tab
+	0x2C8,	L"Benutzen Sie mittleren Tabstop; klick im Rand um Tab zu setzen"
+// UK 713:Use right tab stop; click in ruler to place new tab
+	0x2C9,	L"Benutzen Sie rechten Tabstop; klick im Rand um Tab zu setzen"
+// UK 714:Use decimal tab stop; click in ruler to place new tab
+	0x2CA,	L"Benutzen Sie dezimalen Tabstop; klick im Rand um Tab zu setzen"
+// UK 715:Clear selection/select document
+	0x2CB,	L"Auswahl leeren / Dokumentinhalt auswählen"
+// UK 716:Copy the selection to the clipboard
+	0x2CC,	L"Auswahl in die Zwischenablage kopieren"
+// UK 717:Cut the selection to the clipboard
+	0x2CD,	L"Auswahl in die Zwischenablage ausschneiden"
+// UK 718:Paste from the clipboard
+	0x2CE,	L"Aus der Zwischenablage einfügen"
+// UK 719:This is the status line
+	0x2CF,	L"Dies ist die Statuszeile"
+// UK NEW r720:Click SELECT for Save dialogue box. Click ADJUST to save immediately
+//r720:Dokument speichern. AUSWAHL für Dialogfenster, SPEZIAL um sofort zu speichern
+// UK w720:Save document
+	0x2D0,	L"Dokument Speichern"
+// UK NEW r721:Click SELECT for Print dialogue box. Click ADJUST for Print Extra dialogue box
+//r721:Dokument drucken. AUSWAHL für Dialogfenster, SPEZIAL für Print Extra Dialogfenster
+// UK w721:Print document
+	0x2D1,	L"Dokument drucken"
+// UK 1013:Apply box to the selection
+	0x3F5,	L"Auswahl mit Rahmen versehen"
+// UK 1014:Insert table at caret
+	0x3F6,	L"Fügt Tabelle an der Cursorposition ein"
+// UK 1015:Search dialogue box
+	0x3F7,	L"Suchen Dialogfenster"
+// UK 1030:Sort dialogue box
+	0x406,	L"Sortieren Dialogfenster"
+// UK 1051:Spell check
+	0x41B,	L"Rechtschreibung"
+// UK 1052:Thesaurus
+	0x41C,	L"Thesaurus"
+// UK 722:Can't delete as selection spans more than one row
+	0x2D2,	L"Kann nicht löschen, da Auswahl sich über mehrere Zeilen erstreckt"
+// UK 726:%d words counted
+	0x2D6,	L"%d Wörter gezählt"
+// UK 730:Not found
+	0x2DA,	L"Nicht gefunden"
+// UK 731:%d replaced
+	0x2DB,	L"%d ausgetauscht"
+// UK r732:Drag to resize. Double-click for auto-width. ADJUST-drag to reposition
+//r732:Ziehen um Größe zu ändern, Doppelclick für automatische Breite. SPEZIAL-ziehen um zu positionieren
+// UK w732:Drag to resize. Double-click for auto-width. Ctrl+drag to reposition
+	0x2DC,	L"Ziehen um Größe zu ändern, Doppelclick für automatische Breite. Strg+ziehen um zu positionieren"
+// UK 733:Drag to resize. Double-click for auto-height
+	0x2DD,	L"Ziehen um Größe zu ändern, Doppleclick für automatische Höhe"
+// UK r734:ADJUST-drag to reposition
+//r734:SPEZIAL-ziehen um zu positionieren
+// UK w734:Ctrl+drag to reposition
+	0x2DE,	L"Strg+ziehen um zu positionieren"
+// UK 738:Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%
+	0x2E2,	L"Bild bei (%s,%s) cm : br.=%s h=%s cm %d%%,%d%%"
+// UK 739:Picture at (%s,%s) mm : w=%s h=%s mm %d%%,%d%%
+	0x2E3,	L"Bild bei (%s,%s) mm : br.=%s h=%s mm %d%%,%d%%"
+// UK 740:Picture at (%s,%s) in : w=%s h=%s in %d%%,%d%%
+	0x2E4,	L"Bild bei (%s,%s) in : br.=%s h=%s in %d%%,%d%%"
+// UK 479:Picture at (%s,%s) pt : w=%s h=%s pt %d%%,%d%%
+	0x1DF,	L"Bild bei (%s,%s) pt : br.=%s h=%s pt %d%%,%d%%"
+// UK 741:No action: column too wide
+	0x2E5,	L"Keine Aktion: Spalte zu groß"
+// UK 742:%d word counted
+	0x2E6,	L"%ld Wort gezählt"
+// UK 743:Selection contains %d regions
+	0x2E7,	L"Auswahl beinhaltet %ld Regionen"
+// UK 1026:Selection contains %d region
+	0x402,	L"Auswahl beinhaltet %ld Region"
+//
+// MSG_NUMFORM_xxx
+//
+// generic 1,2,3 decimal places numforms
+// first set with optional trailing zeros
+// UK 744:0.#
+	0x2E8,	L"0.,#"
+// UK 745:0.##
+	0x2E9,	L"0.,##"
+// UK 746:0.###
+	0x2EA,	L"0.,###"
+// second set with forced trailing zeros
+// UK 747:0.0
+	0x2EB,	L"0.,0"
+// UK 748:0.00
+	0x2EC,	L"0.,00"
+// UK 749:0.000
+	0x2ED,	L"0.,000"
+//
+// MSG_DIALOG_BACKDROP_xxx
+//
+// UK 750:Backdrop
+	0x2EE,	L"Hintergrund"
+// UK 751:First page
+	0x2EF,	L"Erste seite"
+// UK 752:All pages
+	0x2F0,	L"Alle seiten"
+// UK 753:Print
+	0x2F1,	L"Drucken"
+// UK 754:Scale to fit
+	0x2F2,	L"Scalieren"
+// UK 755:Origin
+	0x2F3,	L"Anfang"
+// UK 756:As is
+	0x2F4,	L"Wie es ist"
+// UK 757:Work area
+	0x2F5,	L"Arbeitsbereich"
+// UK 758:Printable area
+	0x2F6,	L"Druckbereich"
+// UK 759:Paper
+	0x2F7,	L"Papier"
+// UK 760:Embed
+	0x2F8,	L"Einfügen"
+// UK 761:Delete
+	0x2F9,	L"Löschen"
+// UK 762:ug/ug10_backdrop_pictures.htm
+	0x2FA,	L"ug/ug10_backdrop_pictures.htm"
+//
+// Close / Quit dialogue box messages
+//
+// UK 790:One or more documents in the group have been modified
+	0x316,	L"Eine oder mehrere Dokumenten in der Gruppe verändert"
+// UK r791:Save group
+//r791:Gruppe abspeichern
+// UK w791:Save Group
+	0x317,	L"Gruppe Abspeichern"
+// UK r792:Discard group
+//r792:Gruppe löschen
+// UK w792:Discard Group
+	0x318,	L"Gruppe Löschen"
+//
+// UK r800:There is %d document edited but not saved in %s.
+//r800:%d Dokument bearbeitet aber nicht abgespeichert in %s.
+// UK r801:There are %d documents edited but not saved in %s.
+//r801:%d Dokumenten bearbeitet aber nicht abgespeichert in %s.
+// UK r799:Do you want to save the changes before exiting
+//r799:Möchten Sie die Änderungen vor dem Beenden speichern oder
+// UK r802:or exit now, discarding all unsaved changes?
+//r802:jetzt beenden und alle nicht gespeicherten Änderungen verwerfen?
+// UK w800:There is %d document edited but not saved in %s.
+	0x320,	L"%d Dokument bearbeitet aber nicht abgespeichert in %s."
+// UK w801:There are %d documents edited but not saved in %s.
+	0x321,	L"%d Dokumenten bearbeitet aber nicht abgespeichert in %s."
+// UK w799:Do you want to save the changes before exiting
+	0x31F,	L"Möchten Sie die Änderungen vor dem Beenden speichern oder"
+// UK w802:or exit now, discarding all unsaved changes?
+	0x322,	L"jetzt beenden und alle nicht gespeicherten Änderungen verwerfen?"
+//
+// UK 803:Do you want to save edited file
+	0x323,	L"Wollen Sie bearbeite Dokument"
+// UK 804:'%s'?
+	0x324,	L"'%s' speichern?"
+//
+// UK 805:This document is part of a linked group
+	0x325,	L"Dieses Dokument gehört zu einer Gruppe"
+// UK r806:Close group
+//r806:Schließe Gruppe
+// UK w806:Close Group
+	0x326,	L"Schließe Gruppe"
+// UK r807:Close doc
+//r807:Schließe Dok
+// UK w807:Close Doc
+	0x327,	L"Schließe Dok"
+//
+// MSG_DIALOG_INFO_xxx
+//
+//w810:
+//w811:
+// UK w812:Version
+	0x32C,	L"Version"
+// UK w813:User
+	0x32D,	L"Benutzer"
+// UK w814:Reg. no.
+	0x32E,	L"Reg.-Nr."
+// UK w816:About Fireworkz
+	0x330,	L"Über Fireworkz"
+// UK r810:Name
+//r810:Name
+//r811:
+// UK r812:Version
+//r812:Version
+// UK r813:User
+//r813:Benutzer
+// UK r814:Reg. no.
+//r814:Reg.-Nr.
+// UK r816:About this program
+//r816:Über dieses Programm
+//
+// UK w817:Fireworkz Online...
+	0x331,	L"Fireworkz Online..."
+	0x332,	L"https://groups.google.com/group/colton-software-fireworkz"
+// UK r817:Web...
+//r817:Webseite...
+//r818:https://www.croftnuisk.co.uk/coltsoft/fireworkz
+//
+// Table style name
+// UK 823:.Table%d
+	0x337,	L".Tabelle%d"
+// BaseTable style name
+// UK 824:BaseTable
+	0x338,	L"BasisTabelle"
+//
+// UK 830:Page break
+	0x33E,	L"Seitenumbruch"
+// UK 831:Page number
+	0x33F,	L"Seitennumber"
+//
+// MSG_DIALOG_SAVE
+//
+// UK 857:Save as
+	0x359,	L"Speichern als"
+//858:to-do.htm
+// UK 1054:Selection
+	0x41E,	L"Auswahl"
+//
+// MSG_DIALOG_SAVE_AS_TEMPLATE
+//
+// UK r859:Save as template
+//r859:Vorlage speichern
+// UK w859:Save as Template
+	0x35B,	L"Vorlage Speichern"
+// UK 860:ug/ug03_creating_templates.htm
+	0x35C,	L"ug/ug03_creating_templates.htm"
+// UK r861:Template
+//r861:Vorlage
+// UK w861:template.fwt
+	0x35D,	L"vorlage.fwt"
+// UK 862:&All
+	0x35E,	L"&Alle"
+// UK 863:Alle styl&es
+	0x35F,	L"Alle Stil&e"
+// UK 864:&Style
+	0x360,	L"&Stil"
+//
+// MSG_DIALOG_SAVE_AS_FOREIGN
+//
+// UK r260:Export as
+//r260:Sichere andere
+// UK w260:Export as
+	0x104,	L"Sichere Andere"
+// UK 261:Other
+	0x105,	L"Andere"
+// UK 1061:Drawfile
+	0x425,	L"DrawDatei"
+//
+// MSG_DIALOG_SAVE_PICTURE
+//
+// UK r865:Save picture
+//r865:Bild speichern
+// UK w865:Save Picture
+	0x361,	L"Bild Speichern"
+//# UK 866:to-do.htm
+	0x362,	L"to-do.htm"
+// UK 867:Picture
+	0x363,	L"Bild"
+//
+// MSG_DIALOG_SEARCH_xxx
+//
+// UK 870:Search
+	0x366,	L"Suchen"
+// UK 871:&Find
+	0x367,	L"&Suchen"
+// UK 872:&Replace with
+	0x368,	L"&Ersetzen durch"
+// UK 873:&Ignore capitals
+	0x369,	L"&Großbuchstaben ignorieren"
+// UK 874:Co&py capitals
+	0x36A,	L"G&roßschreibung beibehalten"
+// UK r875:From &caret
+//r875:Ab &Cursorposition
+// UK w875:From &Caret
+	0x36B,	L"Ab &Cursorposition"
+// UK r876:From &top
+//r876:Von &Oben
+// UK w876:From &Top
+	0x36C,	L"Von &Oben"
+// UK 877:&Whole words
+	0x36D,	L"&Ganze Wörter"
+// UK w878:From Text &Cursor
+	0x36E,	L"Ab &Cursorposition"
+// UK 879:ug/ug04_find_and_replace.htm
+	0x36F,	L"ug/ug04_find_and_replace.htm"
+//
+// UK 880:Found
+	0x370,	L"Gefunden"
+// UK 881:ug/ug04_find_and_replace.htm
+	0x371,	L"ug/ug04_find_and_replace.htm"
+// UK 882:&Next
+	0x372,	L"&Nächste"
+// UK 883:Replace &all
+	0x373,	L"&Alle ersetzen"
+//
+// UK 890:<Field %d>
+	0x37A,	L"<Feld %d>"
+//
+// MSG_DIALOG_GOTO_xxx
+//
+// UK r891:Go to
+//r891:Go to
+// UK w891:Go To
+	0x37B,	L"Go To"
+// UK 892:Cell, row or column
+	0x37C,	L"Cell, row or column"
+// r893:Go to
+//r893:Go to
+// w893:Go To
+	0x37D,	L"Go To"
+// UK 894:sg/sg01_moving_from_cell_to_cell.htm
+	0x37E,	L"sg/sg01_moving_from_cell_to_cell.htm"
+//
+// MSG_DIALOG_CHOICES_xxx
+//
+// UK 909:Choices
+	0x38D,	L"Optionen"
+// UK 910:ug/ug02_choices_dialogue_box.htm
+	0x38E,	L"ug/ug02_choices_dialogue_box.htm"
+// UK 911:Auto save
+	0x38F,	L"Auto Speichern"
+// UK 912:(mins)
+	0x390,	L"(Min.)"
+// UK 913:Display pictures
+	0x391,	L"Bilder zeigen"
+// UK 914:Embed inserted files
+	0x392,	L"Embed inserted files"
+// UK 915:Status line
+	0x393,	L"Statuszeile"
+// UK 920:Toolbar
+	0x398,	L"Toolbar"
+// UK 916:Measurement
+	0x394,	L"Messen"
+// UK 917:Kerning
+	0x395,	L"Kerning"
+// UK 918:Allow dithering
+	0x396,	L"Dithering erlaubt"
+// UK 921:Load text using delimiter
+	0x399,	L"Load text using delimiter"
+// UK 919:Load text as paragraphs
+	0x397,	L"Load text as paragraphs"
+// UK 922:Update styles from choices
+	0x39A,	L"Update styles from choices"
+//
+// Style Region editor
+//
+// UK 930:&In
+	0x3A2,	L"&In"
+// UK 931:&Out
+	0x3A3,	L"&Raus"
+// UK 933:No more regions
+	0x3A5,	L"Keine weiteren Regionen"
+// UK 934:Region
+	0x3A6,	L"Region"
+//
+// Style text conversion
+//
+// UK 938: on
+	0x3AA,	L" an"
+// UK 939: off
+	0x3AB,	L" aus"
+//
+// SF_JUSTIFY_LEFT/CENTRE/RIGHT/BOTH
+//
+// UK 941: left
+	0x3AD,	L" links"
+// UK 942: centre
+	0x3AE,	L" zentriert"
+// UK 943: right
+	0x3AF,	L" rechts"
+// UK 944: both
+	0x3B0,	L" beide"
+// UK 945: %s
+	0x3B1,	L" %s"
+//
+// UK 947:Region: %s
+	0x3B3,	L"Region: %s"
+//
+// NB order matches style bit numbering order
+//
+// UK 948:Style
+	0x3B4,	L"Stil"
+// UK 949:Key shortcut
+	0x3B5,	L"Schnelltaste"
+// UK 950:[Handle]
+	0x3B6,	L"[Zeiger]"
+// UK 951:[Special]
+	0x3B7,	L"[Spezial]"
+// UK 952:Col width
+	0x3B8,	L"Spaltengröße"
+// UK 953:Col name
+	0x3B9,	L"Spaltenname"
+// UK 954:Row height
+	0x3BA,	L"Zeilenhöhe"
+// UK 955:Row height fixed
+	0x3BB,	L"Höhe der Zeile fest"
+// UK 956:Row unbreakable
+	0x3BC,	L"Zeile nicht aufspaltbar"
+// UK 957:Row name
+	0x3BD,	L"Name der Zeile"
+// UK 958:Left margin
+	0x3BE,	L"Linker Rand"
+// UK 959:Right margin
+	0x3BF,	L"Rechter Rand"
+// UK 960:Para margin
+	0x3C0,	L"Para margin"
+// UK 961:Tabs
+	0x3C1,	L"Tabulator"
+// UK 962:Background colour
+	0x3C2,	L"Hintergrundfarbe"
+// UK 963:Space before para
+	0x3C3,	L"Freiraum vor Absatz"
+// UK 964:Space after para
+	0x3C4,	L"Freiraum nach Absatz"
+// UK 965:Line space
+	0x3C5,	L"Line space"
+// UK 966:Justify
+	0x3C6,	L"Ausrichtung"
+// UK 967:Justify
+	0x3C7,	L"Ausrichtung"
+// UK 968:New object
+	0x3C8,	L"Neues Objekt"
+// UK 969:Number format
+	0x3C9,	L"Zahlenformat"
+// UK 970:Date format
+	0x3CA,	L"Datumsformat"
+// UK 971:Text format
+	0x3CB,	L"Textformat"
+// UK 972:Border colour
+	0x3CC,	L"Randfarbe"
+// UK 973:Border
+	0x3CD,	L"Rand"
+// UK 974:Grid left colour
+	0x3CE,	L"Raster links Farbe"
+// UK 975:Grid top colour
+	0x3CF,	L"Raster oben Farbe"
+// UK 976:Grid right colour
+	0x3D0,	L"Raster rechts Farbe"
+// UK 977:Grid bottom colour
+	0x3D1,	L"Raster unten Farbe"
+// UK 978:Grid left
+	0x3D2,	L"Raster left"
+// UK 979:Grid top
+	0x3D3,	L"Raster oben"
+// UK 980:Grid right
+	0x3D4,	L"Raster right"
+// UK 981:Grid bottom
+	0x3D5,	L"Raster unten"
+// UK 982:Protect
+	0x3D6,	L"Schützen"
+// UK 983:Typeface
+	0x3D7,	L"Schriftart"
+// UK 984:Font width
+	0x3D8,	L"Schriftbreite"
+// UK 985:Font height
+	0x3D9,	L"Schrifthöhe"
+// UK 986:Underline
+	0x3DA,	L"Unterstrichen"
+// UK 987:Bold
+	0x3DB,	L"Fett"
+// UK 988:Italic
+	0x3DC,	L"Kursiv"
+// UK 989:Superscript
+	0x3DD,	L"Hochgestellt"
+// UK 990:Subscript
+	0x3DE,	L"Tiefgestellt"
+// UK 991:Font colour
+	0x3DF,	L"Schriftfarbe"
+//
+// SF_JUSTIFY_V_TOP/BOTTOM
+//
+// UK 995: top
+	0x3E3,	L" oben"
+// UK 996: bottom
+	0x3E4,	L" unten"
+//
+// MSG_CUSTOM_LIBRARY - directory that is searched for custom function sheets
+//
+// UK 997:Library
+	0x3E5,	L"Library"
+//
+// MSG_DIALOG_SORT_xxx
+//
+// UK 998:Sort
+	0x3E6,	L"Sortieren"
+// UK 1043:sg/sg01_sorting_your_data.htm
+	0x413,	L"sg/sg01_sorting_your_data.htm"
+// UK 999:Descending order
+	0x3E7,	L"Absteig. Reihenfolge"
+//
+// UK r1011:This is the %s application.|MClick SELECT to create a new document.
+//r1011:Dies ist die %s Applikation.|MKlick SELECT um ein neues Dokument zu erzeugen.
+//
+// MSG_OBJECT_TYPE_xxx
+//
+// UK 1040:Text
+	0x410,	L"Text"
+// UK 1041:* DB data
+	0x411,	L"* DB data"
+// UK 1042:Number
+	0x412,	L"Zahl"
+//
+// Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
+//
+// # UK e0:Not an error
+	0x8000,	L"Kein Fehler"
+// e1:ERROR_RQ
+// UK e2:General failure
+	0x8002,	L"Allgemeines Versagen"
+// UK e3:Memory full
+	0x8003,	L"Speicher voll"
+// UK e5:Run-time check failed
+	0x8005,	L"Laufzeitprüfung fehlgeschlagen"
+//
+// Skeleton errors: keep consistent with ob_skel/resource/resource.h ERR_xxx
+//
+// UK e48:Error (%d:%d) not found
+	0x8030,	L"Fehler (%d:%d) nicht gefunden"
+// UK e49:Message (%d:%d) not found
+	0x8031,	L"Meldung (%d:%d) nicht gefunden"
+//
+// UK e51:Feature unavailable
+	0x8033,	L"Funktion nicht benutzbar"
+// UK e52:Too many windows
+	0x8034,	L"Zu viele Fenster"
+// UK e53:Unable to start %s: Config file not found
+	0x8035,	L"Kann %s nicht ausführen: Config-Datei nicht gefunden"
+// UK e54:Unable to start %s: %s when loading Config file
+	0x8036,	L"Kann %s nicht ausführen: %s beim Config-Datei laden"
+// UK re55:Font Manager: Error in setting current font
+//re55:Font Manager: Fehler beim setzen des aktuellen Fonts
+// UK re56:Font Manager: Error in setting colour
+//re56:Font Manager: Fehler bei Farbsetzung
+// UK re57:Font Manager: Error in Font_Paint
+//re57:Font Manager: Fehler in Font_Paint
+// UK re58:Font Manager: Error in Font_Find
+//re58:Font Manager: Fehler in Font_Find
+// UK e59:Printer driver not loaded
+	0x803B,	L"Druckertreiber nicht geladen"
+//
+// UK e60:Can't do this whilst recording a command
+	0x803C,	L"Kann das nicht tun während der Aufnahme eines Kommandos"
+// UK e63:File %s is already loaded
+	0x803F,	L"Datei %s ist schon geladen"
+// UK re64:Sprites file not found
+//re64:Sprites-Datei nicht gefunden
+// UK e65:File %s has the same leafname as an already loaded file
+	0x8041,	L"Datei %s hat die gleiche Überschrift wie das vorherig geladene"
+// UK e66:Cannot load this type of file
+	0x8042,	L"Kann diesen Dateityp nicht laden"
+// UK e67:End of file reached before construct end
+	0x8043,	L"Ende der Datei erreicht ohne das Ende der Konstruktion erreicht zu haben"
+// UK e68:Font not found in FontMap
+	0x8044,	L"Schriftart nicht gefunden in FontMap"
+// UK re69:RISC OS font name not found
+//re69:RISC OS Schriftart nicht gefunden
+//
+// UK e70:Template file not found
+	0x8046,	L"Vorlagendatei nicht gefunden"
+// UK re71:No fonts available
+//re71:Keine Schriften vorhanden
+// UK we71:No TrueType fonts available
+	0x8047,	L"Keine TrueType-Schriften vorhanden"
+// UK e72:Style name not found in style list
+	0x8048,	L"Stil Name nicht gefunden in Stil Liste"
+// UK e73:Style in use in document
+	0x8049,	L"Stil im Dokument schon benutzt"
+// UK re74:Print stream won't open
+//re74:Drucker Kannal konnte nicht geöffnet werden
+// UK we74:Failed to open print device
+	0x804A,	L"Drucker konnte nicht geöffnet werden"
+// UK e75:Print failed %s
+	0x804B,	L"Ausdruck abgebrochen %s"
+// UK e76:Already printing
+	0x804C,	L"Es wird gedruckt"
+// UK re77:No printer driver loaded
+//re77:Kein Druckertreiber installiert
+// UK e78:Bad find string
+	0x804E,	L"Suchstring nicht akzeptabel"
+// UK re79:No thesaurus loaded
+//re79:Kein Thesaurus geladen
+//
+// UK e80:No data found in file
+	0x8050,	L"Keine Daten in Datei gefunden"
+// UK re81:Unable to locate Stubs file
+//re81:Konnte Stubs Datei nicht finden
+// UK NEW e83:No alternate command for this toolbar button
+	0x8053,	L"No alternate command for this toolbar button"
+// UK e84:This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format
+	0x8054,	L"This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format"
+// UK e85:Unable to load referenced picture %s because file not found; reference retained
+	0x8055,	L"Das verwiesene Bild %s konnte nicht gefunden werden; Verweis bleibt"
+// UK e86:Area is protected
+	0x8056,	L"Bereich ist geschützt"
+// UK e87:Supporting file %s not found
+	0x8057,	L"Unterstützungsdatei %s nicht gefunden"
+// UK e88:Style name already in use
+	0x8058,	L"Stil Name wird schon benutzt"
+// UK e89:Style name can not be blank
+	0x8059,	L"Stil Name kann nicht ausgeblendet werden"
+//
+// UK e90:%s has missing mandatory arg %d, type %d
+	0x805A,	L"%s fehlt ein Arg %d, Typ %d"
+// UK e91:Can't edit notes which are scaled to fit
+	0x805B,	L"Kann nicht skalierte Notitzen darstellen"
+// UK e92:Unable to display help file
+	0x805C,	L"Konnte Hilfsdatei nicht darstellen"
+// UK e93:No browser available to access URL
+	0x805D,	L"Kein Browser verfügbar, um auf die URL zuzugreifen"
+// UK we94:Failed to load Dial Solutions Drawfile DLL
+	0x805E,	L"Konnte Dial Solutions Drawfile DLL nicht laden"
+// UK e95:%s has bad raw Arg %u, Größe %u, sep '%c'
+	0x805F,	L"%s fehlt raw Arg %u, size %u, sep '%c'"
+// UK e96:Unable to locate compound file template for save
+	0x8060,	L"Vorlage zum Speichern der zusammengesetzten Datei konnte nicht gefunden werden"
+// UK re97:To save, drag the icon to a directory display
+//re97:Um zu speichern, das Icon ins Verzeichnis ziehen
+// UK we97:Full path name must be specified for save
+	0x8061,	L"Full path name must be specified for save"
+// UK re98:Can't transfer file (Scrap directory not set)
+//re98:Datei kann nicht übertragen werden (Scrap-Verzeichnis nicht festgelegt)
+// UK e99:Invalid date/time
+	0x8063,	L"Ungültiges Datum/Uhrzeit"
+//
+// UK e100:Module not found
+	0x8064,	L"Module nicht gefunden"
+// UK e101:%s has bad arg %u, value %u, limit %u
+	0x8065,	L"%s has bad arg %u, value %u, limit %u"
+// UK e102:Document has too many columns to export in this format
+	0x8066,	L"Das Dokument enthält zu viele Spalten, um in diesem Format exportiert zu werden"
+// UK e103:Document has too many rows to export in this format
+	0x8067,	L"Das Dokument enthält zu viele Zeilen, um in diesem Format exportiert zu werden"
+//
+// UK e120:Read only
+	0x8078,	L"Nur lesen"
+// UK e121:Destination specified for templates already exists
+	0x8079,	L"Ziel für Vorlagen besteht bereits"
+// UK e122:Can't import as '%s' because a file of that name already exists
+	0x807A,	L"Kann nicht als '% s' importiert werden, da bereits eine Datei mit diesem Namen vorhanden ist"
+// UK e123:Can't delete the text body column - use make blank to clear data
+	0x807B,	L"Die Textkörperspalte kann nicht gelöscht werden. Verwenden Sie 'Machen leeren', um Daten zu löschen"
+// UK e124:This file is too small to be correct
+	0x807C,	L"Diese Datei ist zu klein, um gültig zu sein"
+// UK e125:This file is too large to be loaded into memory
+	0x807D,	L"Diese Datei ist zu groß, um in den Speicher geladen zu werden"
+// UK e126:Bad UTF-8 encoding
+	0x807E,	L"Ungültige UTF-8-Codierung"
+// UK e127:UCS-4 NONCHARACTER
+	0x807F,	L"UCS-4 NONCHARACTER"
+// UK e128:Clipboard data is too large to be loaded into memory
+	0x8080,	L"Die Daten in der Zwischenablage sind zu groß, um in den Speicher geladen zu werden"
+//
+// UK re202:Not a module file
+//re202:Keine Module Datei
+// UK re203:Bad chunk within module file
+//re203:Module Datei enthalt ein fehlerhaften Chunk
+// UK re204:Module too new for this application
+//re204:Module zu neu für diese Applikation
+// UK re205:Object loader failed to read entire block
+//re205:Objekt Lader kann den Block nicht lesen
+// UK re206:Stub binding failed
+//re206:Stub binden nicht möglich
+// UK re207:Stub entry referenced that is no longer available
+//re207:Stub Eintrag vorhanden, der nicht länger vorhanden
+// UK re208:Attempt to relocate unknown instruction sequence
+//re208:Versucht ein unbekannte Instruktions Sequenz einzurichten
+//
+// UK we211:Print cancelled - unknown error from printing system
+	0x80D3,	L"Druck abgebrochen - Unbekannter Fehler vom Drucker"
+// UK we212:Print cancelled
+	0x80D4,	L"Druck abgebrochen"
+// UK we213:Print cancelled
+	0x80D5,	L"Druck abgebrochen"
+// UK we214:Not enough disk space currently available for spooling
+	0x80D6,	L"Nicht genug Platz auf Medium frei für Drucker-Spooling"
+// UK we215:Not enough memory is available for spooling
+	0x80D7,	L"Nicht genug Arbeitsspeicher frei für Drucker-Spooling"
+//
+// UK we216:Native compound file write needs filename
+	0x80D8,	L"Das Schreiben einer nativen zusammengesetzten Datei benötigt einen Dateinamen"
+//
+// RISC OS specific messages looked up by name
+//
+// Only needed in translated message files as application has en-GB default strings
+//
+// UK rsignal0:Unknown
+//rsignal0:Unknown
+// UK rsignal1:Abnormal termination
+//rsignal1:Abnormal termination
+// UK rsignal2:Arithmetic exception
+//rsignal2:Arithmetic exception
+// UK rsignal3:Illegal instruction
+//rsignal3:Illegal instruction
+// UK rsignal4:Escape
+//rsignal4:Escape
+// UK rsignal5:Address exception
+//rsignal5:Address exception
+// UK rsignal6:Termination request
+//rsignal6:Termination request
+// UK rsignal7:Stack overflow
+//rsignal7:Stack überlauf
+// UK rsignal10:OS error
+//rsignal10:OS fehler
+//
+// UK rerror_fatal:%s has gone wrong (%s). Click Continue to quit, losing data.
+//rerror_fatal:%s ist schief gelaufen (%s). Klicken Sie zum Beenden auf Weiter, um Daten zu verlieren.
+// UK rerror_serious:%s has gone wrong (%s). Click Continue to try to resume or Cancel to quit, losing data.
+//rerror_serious:%s ist schief gelaufen (%s). Klicken Sie auf Weiter, um den Vorgang fortzusetzen, oder auf Abbrechen, um den Vorgang zu beenden und Daten zu verlieren.
+//
+// end of msg (ob_skel)
+END
+//
+// end of RCGen created string table

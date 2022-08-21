@@ -19,6 +19,20 @@
 
 /******************************************************************************
 *
+* slower way to clear memory, but it saves space when speed is not important
+*
+******************************************************************************/
+
+extern void
+memclr32(
+    _Out_writes_bytes_(n_bytes) P_ANY ptr,
+    _InVal_     U32 n_bytes)
+{
+    (void) memset(ptr, 0, n_bytes);
+}
+
+/******************************************************************************
+*
 * like bsearch but always return a pointer even if not perfect match
 *
 ******************************************************************************/

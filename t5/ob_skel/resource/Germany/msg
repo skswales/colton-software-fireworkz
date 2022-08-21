@@ -1,0 +1,1371 @@
+#
+# this is the messages file for ob_skel (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_skel/resource/resource.h
+#
+# NB Keep Style Guide in mind
+# Use SELECT / ADJUST for mouse buttons on RISC OS
+# Use Title Caps on Windows for:
+# Title Bar / Action Buttons
+#
+# Ampersand signifies the 'hot-key' character
+#
+# Version number and date
+# When changing for release, remember other files
+# The definitive list of files is in common.mf_mid
+#1:2.xx.yy
+#1:2.xx
+1:2.30
+# UK 2:dd mmm yyyy
+2:10 Nov. 2020
+#
+3:© 1992-2020 Colton Software
+# UK w1037:The product uses the following components
+w1037:Das Produkt verwendet die folgenden Komponenten
+# UK w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
+w1031:Drawfile DLLs © 1994-2005 Dial Solutions
+#
+# Dialogue box buttons
+#
+# UK 90:&Add
+90:&Hinzufügen
+# UK 91:&Create
+91:&Create
+# UK 92:&Remove
+92:&Löschen
+# UK 93:&Insert
+93:&Einfügen
+# UK 94:&Help
+94:&Hilfe
+# UK 95:&Apply
+95:&Anwenden
+# UK 96:&New
+96:&Neu
+# UK 97:&Change
+97:&Ändern
+# UK 98:&Delete
+98:&Löschen
+# UK 99:&Replace
+99:&Ersetzen
+#
+# Window title bar text
+#
+# UK 100:Untitled
+100:Namenlos
+# UK r101:%P: %W
+r101:%P: %W
+# UK w101:%L - %P
+w101:%L - %P
+# UK r1032:%P: %W [Read-only]
+r1032:%P: %W [schreibgeschützt]
+# UK w1032:%L [Read-only] - %P
+w1032:%L [schreibgeschützt] - %P
+# UK 102: *
+102: *
+# UK 103: at %g%%
+103: bei %g%%
+#
+# UK 104:%
+104:%
+# UK 105:&Embed
+105:&Einbetten
+# UK 107:Selection
+107:Selection
+# UK NEW 108:Close
+108:Close
+# UK 109:Cancel
+109:Abbrechen
+# UK 110:OK
+110:OK
+# UK 118:&Save
+118:&Speichern
+# UK r119:&Discard
+r119:&Verwerfen
+# UK w119:&Don't save
+w119:&Nicht speichern
+#
+# Long names for function keys
+# 
+# UK 120:PRINT
+120:DRUCK
+# UK 121:F1
+121:F1
+# UK 122:F2
+122:F2
+# UK 123:F3
+123:F3
+# UK 124:F4
+124:F4
+# UK 125:F5
+125:F5
+# UK 126:F6
+126:F6
+# UK 127:F7
+127:F7
+# UK 128:F8
+128:F8
+# UK 129:F9
+129:F9
+# UK 130:F10
+130:F10
+# UK 131:F11
+131:F11
+# UK 132:F12
+132:F12
+# UK r133:Insert
+r133:Einfügen
+# UK w133:Ins
+w133:Einfg
+# UK 134:Tab
+134:Tab
+# UK 135:End
+135:Ende
+# UK r136:ˆ
+r136:ˆ
+# UK w136:Left
+w136:Pfeil links
+# UK r137:‰
+r137:‰
+# UK w137:Right
+w137:Pfeil rechts
+# UK r138:Š
+r138:Š
+# UK w138:Down
+w138:Pfeil unten
+# UK r139:‹
+r139:‹
+# UK w139:Up
+w139:Pfeil oben
+# UK r140:Delete
+r140:Entf
+# UK w140:Del
+w140:Entf
+# UK 141:Home
+141:Pos1
+# UK 142:Backspace
+142:Rücktaste
+# UK 143:Return
+143:Return
+#
+# UK 150:Shift+
+150:Umschalt+
+# UK 151:Ctrl+
+151:Strg+
+# UK 152:Ctrl+Shift+
+152:Strg+Umschalt+
+#
+# UK r153:‹
+r153:‹
+# UK w153:Shift+
+w153:Umschalt+
+# UK r154:^
+r154:^
+# UK w154:Ctrl+
+w154:Strg+
+# UK r155:^‹
+r155:^‹
+# UK w155:Ctrl+Shift+
+w155:Strg+Umschalt+
+#
+# UK r160:Page Down
+r160:Bild nach oben
+# UK w160:Page Down
+w160:Bild nach oben
+# UK r161:Page Up
+r161:Bild nach unten
+# UK w161:Page Up
+w161:Bild nach unten
+#
+# MSG_DIALOG_INSERT_FIELD_xxx
+#
+# UK r168:Insert time
+r168:Uhrzeit einfügen
+# UK w168:Insert Time
+w168:Uhrzeit Einfügen
+# spare 169
+# UK r170:Insert date
+r170:Datum einfügen
+# UK w170:Insert Date
+w170:Datum Einfügen
+# spare 1032
+# UK r171:Insert page number
+r171:Seitennummer einfügen
+# UK w171:Insert Page Number
+w171:Seitennummer Einfügen
+# UK 172:&Live
+172:&Aktualisieren
+# spare 173
+# UK r174:Insert date (or ADJUST to insert time). Inserts either when this file was last changed or today
+r174:Datum einfügen (oder SPEZIAL-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute
+# UK w174:Insert date (or Ctrl-click to insert time). Inserts either when this file was last changed or today
+w174:Datum einfügen (oder Strg-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute
+#
+# UK 1038:Y page number
+1038:y-Seitennummer
+# UK 1039:X page number
+1039:x-Seitennummer
+#
+# UK 1044:Current date
+1044:Aktuelles Datum
+# UK 1045:File modification date
+1045:Änderungsdatum der Datei
+# UK 1046:Current time
+1046:Aktuelle Uhrzeit
+# UK 1047:File modification time
+1047:Änderungszeit der Datei
+#
+# MSG_DIALOG_VIEW_xxx
+#
+# UK 250:Scale
+250:Größe
+#
+# %ge values corresponding to buttons in the View scale dialogue box
+# These numeric values are read by the button processing code
+#
+# UK 251:50%
+251:50%
+# UK 252:75%
+252:75%
+# UK 253:100%
+253:100%
+# UK 254:150%
+254:150%
+# UK 255:200%
+255:200%
+#
+# UK r256:View control
+r256:Ansicht Kontrolle
+# UK w256:View Control
+w256:Ansicht Kontrolle
+# UK r257:Scale view
+r257:Ansicht ändern
+# UK w257:Scale View
+w257:Ansicht Ändern
+# UK 1239:ug/ug02_accessing_the_view_control_dialogue_box.htm
+1239:ug/ug02_accessing_the_view_control_dialogue_box.htm
+# UK 1240:ug/ug02_accessing_the_view_control_dialogue_box.htm
+1240:ug/ug02_accessing_the_view_control_dialogue_box.htm
+# UK OLD 702:View control dialogue box
+# Germany OLD 702:Ansicht Kontrolle Dialogfenster
+# UK r702:Click SELECT for View control dialogue box. Click ADJUST for View scale dialogue box
+r702:Click SELECT for View control dialogue box. Click ADJUST for View scale dialogue box
+# UK w702:Click for View control dialogue box. Ctrl-click for View Scale dialogue box
+w702:Click for View control dialogue box. Ctrl-click for View Scale dialogue box
+#
+# UK 258:C&olumn border
+258:&Spaltenrand
+# UK 259:&Row border
+259:&Zeilenrand
+# UK 262:&Top ruler
+262:&Oberer Ruler
+# UK 263:&Side ruler
+263:&Seiten Ruler
+# UK r264:&New view
+r264:&Neue Ansicht
+# UK w264:&New View
+w264:&Neue Ansicht
+# UK 265:Display area
+265:Anzeigebereich
+# UK 266:&Full
+266:&Voll
+# UK 267:&Printable area
+267:&Druckbereich
+# UK 268:&Work area
+268:&Arbeitsbereich
+# UK 269:F&it Horz
+269:Horz. Pas.
+# UK 270:Fit Vert
+270:Vert. Pas.
+# UK 272:&Horizontal split
+272:&Horizontaler teilen
+# UK 273:V&ertical split
+273:V&ertikaler teilen
+#
+# UK r290:Select template
+r290:Vorlage auswahl
+# UK w290:Select Template
+w290:Vorlage auswahl
+# UK 291:ug/ug03_creating_a_new_document.htm
+291:ug/ug03_creating_a_new_document.htm
+# UK r292:New document
+r292:Neues Dokument
+# UK w292:New Document
+w292:Neues Dokument
+#
+# UK 1055:Copy template
+1055:Vorlage kopieren
+# UK 1056:This template is a set of files
+1056:Diese Vorlage besteht aus Dateien,
+# UK 1057:contained in a directory.
+1057:die in einem Verzeichnis enthalten sind.
+# UK 1058:You must drag this directory
+1058:Sie müssen dieses Verzeichnis in
+# UK 1059:to a directory display in order
+1059:eine Verzeichnisansicht ziehen,
+# UK 1059:to make a copy of it.
+1059:um es zu kopieren.
+#
+# MSG_DIALOG_PRINT_xxx
+#
+# UK 300:ug/ug11_basic_print_options.htm
+300:ug/ug11_basic_print_options.htm
+# UK 301:&Copies
+301:An&zahl
+# UK 1048:Page range
+1048:Page range
+# UK 302:&All
+302:&Alle
+# UK 303:Pa&ges
+303:&Seiten
+# UK 1035:from
+1035:von
+# UK 1036:to
+1036:zu
+# UK 304:&Two up
+304:&Zwei hoch
+# UK 305:ug/ug11_extra_print_options.htm
+305:ug/ug11_extra_print_options.htm
+# UK r307:No RISC OS printer installed
+r307:Kein RISC OS Druckertreiber
+# UK w307:No Printer Selected
+w307:Kein Drucker ausgewählt
+# UK 321:Revers&e
+321:&Revers
+# UK 322:Co&llated
+322:Eingesetzt
+# UK 323:Acros&s
+323:&Überkreuz
+# UK 324:Pa&mphlet
+324:Pa&mphlet
+# UK 343:&Extra
+343:&Extra
+# UK 344:Sides
+344:Seiten
+# UK 345:&Both
+345:&Beide
+# UK 346:Od&d
+346:Ungera&de
+# UK 347:Eve&n
+347:Gerade
+# UK 348:Draft print
+348:Draft print
+# UK 1000:Mailshot
+1000:Mailshot
+#
+# MSG_DIALOG_PAPER_SCALE_xxx
+#
+# UK r1020:Print scale
+r1020:Drucker skala
+# UK w1020:Print Scale
+w1020:Drucker Skala
+# UK r1021:Fit one page
+r1021:Fit one page
+# UK w1021:Fit One Page
+w1021:Fit One Page
+# UK r1022:Fit one page across
+r1022:Fit one page across
+# UK w1022:Fit One Page Across
+w1022:Fit One Page Across
+# UK 1023:Scale
+1023:Scale
+# UK 1024:100%
+1024:100%
+# UK 1025:ug/ug11_print_scale.htm
+1025:ug/ug11_print_scale.htm
+#
+# MSG_DIALOG_ES_STYLE_xxx
+#
+# UK 180:Name
+180:Name
+# UK 181:Shortcut
+181:Shortcut
+#
+# UK 309:Paragraph
+309:Absatz
+# UK 310:St&yle
+310:St&il
+# UK 311:&Text
+311:&Text
+# UK 312:&Colours
+312:F&arben
+# UK 313:&Ruler
+313:&Lineal
+# UK 314:&Spacing
+314:&Abstände
+# UK 315:&Number
+315:&Zahl
+# UK 316:Ro&w
+316:Zeile
+# UK 317:Column
+317:Spalte
+#
+# UK 308:&Justify
+308:&Justieren
+# UK 350:&Vertical
+350:&Vertikal
+# UK 351:Cell
+351:Zelle
+#
+# UK 329:New object
+329:Neues objekt
+#
+# UK 349:Formats
+349:Format
+# UK 318:Number
+318:Zahl
+# UK 319:Date
+319:Datum
+# UK 1001:Date and time
+1001:Datum und Zeit
+# UK 320:Text
+320:Text
+# UK 1002:Text and error
+1002:Text und Fehler
+#
+# UK 325:&Typeface
+325:&Schriftart
+# UK 326:&Height
+326:&Höhe
+# UK 327:&Width
+327:&Breite
+# UK 328:points
+328:point
+#
+# UK 330:&Paragraph
+330:&Absatz
+# UK 331:&Left
+331:&Links
+# UK 332:&Right
+332:&Rechts
+# UK 333:&Tabs
+333:&Tabs
+# UK 334:&Width
+334:&Breite
+# UK 335:Heading
+335:Überschrift
+#
+# UK 336:cm
+336:cm
+# UK 337:mm
+337:mm
+# UK 338:in
+338:Zoll
+# UK 478:pt
+478:point
+#
+# UK 352:Protection
+352:Schutz
+#
+# UI of left/centre/right/decimal tabs
+# NB the spaces following L/C/R/D are intentional
+#
+# UK 339:L 
+339:L 
+# UK 340:C 
+340:M 
+# UK 341:R 
+341:R 
+# UK 342:D 
+342:D 
+#
+# UK 450:Height
+450:Höhe
+# UK 451:Fixed height
+451:Feste Höhe
+# UK 452:Unbreakable
+452:Unteilbar
+# UK 453:Heading
+453:Überschrift
+#
+# MSG_DIALOG_PAPER_xxx
+#
+# UK 455:Paper
+455:Papier
+# UK 456:ug/ug07_setting_paper_size.htm
+456:ug/ug07_setting_paper_size.htm
+# UK 457:Paper
+457:Papier
+# UK 458:Paper margin
+458:Papierrand
+# UK 459:Binding
+459:Bindung
+# UK 460:&Name
+460:&Name
+# UK 461:&Height
+461:&Höhe
+# UK 462:&Width
+462:&Breite
+# UK 463:&Top
+463:&Oben
+# UK 464:&Bottom
+464:&Unten
+# UK 465:&Left
+465:&Links
+# UK 466:&Right
+466:&Rechts
+# UK 467:Margin
+467:Rand
+# UK 468:&Alternate
+468:&Alternate
+# UK r469:Read pr&inter
+r469:Drucker lesen
+# UK w469:Read Pr&inter
+w469:Drucker Lesen
+# UK 470:None
+470:Kein
+# UK 471:From printer
+471:Aus Drucker
+# UK 472:&Portrait
+472:Hochformat
+# UK 473:Lan&dscape
+473:Querformat
+# UK 474:C&olumn margin
+474:Spaltenrand
+# UK 475:Row margin
+475:Zeilenrand
+# UK 476:&Grid size
+476:&Größe
+# UK 477:&Faint grid
+477:&Leise raster
+# UK 480:Grid
+480:Raster
+#
+# MSG_DIALOG_RGB_xxx
+#
+# UK 490:Colour
+490:Farbe
+# UK 491:Background
+491:Hintergrund
+# UK 492:R
+492:R
+# UK 493:G
+493:G
+# UK 494:B
+494:B
+# UK 495:Transparent
+495:Transparenz
+# UK 1028:Colour...
+1028:Farbe...
+#
+# MSG_DIALOG_ES_PS_xxx
+#
+# UK 500:&Above paragraph
+500:&Über Absatz
+# UK 501:&Below paragraph
+501:&Unter Absatz
+# UK 502:Bet&ween lines
+502:Z&wischen Zeilen
+# UK 503:&Paragraph spacing
+503:&Absatzabstände
+# UK 504:&Line spacing
+504:&Zeilenabstand
+#
+# UK 510:Borders
+510:Grenzen
+# UK 511:Grid
+511:Raster
+# UK 512:Left
+512:Links
+# UK 513:Top
+513:Oben
+# UK 514:Right
+514:Rechts
+# UK 515:Bottom
+515:Unten
+#
+# UK 516:Margins
+516:Ränder
+# UK 517:Line
+517:Linie
+#
+# UK 524:Page number
+524:Seitennummer
+#
+# MSG_DIALOG_SETC_xxx
+#
+# UK 550:Case
+550:Groß-/Kleinschreibung
+# UK 551:ug/ug04_upper_and_lower_case.htm
+551:ug/ug04_upper_and_lower_case.htm
+#
+# MSG_PRINT_WARNING_xxx
+#
+# UK 600:Warning
+600:Warnung
+# UK 601:Printable area larger than printer driver settings;
+601:Druckbereich größer als im Druckertreiber eingestellt;
+# UK 602:click Read Printer in Paper dialogue box for best settings.
+602:klick Drucker Lesen in Papier Dialog Box für beste Einstellung.
+# UK 603:Print
+603:Drucken
+#
+# MSG_STATUS_xxx
+#
+# UK 106:Sorting
+106:Sortiere
+# UK 111:Converting
+111:Konvertiere
+# UK 112:Loading
+112:Lade
+# UK 113:Inserting
+113:Füge ein
+# UK 114:Saving
+114:Speichere
+# UK 115:Reformatting document
+115:Formatiere Dokument
+# UK 116:Pasting
+116:Setze ein
+# UK 117:Cutting
+117:Schneide aus
+#
+# UK 283:Column %d, width
+283:Spalte %d, width
+# UK 284:Row %d, height
+284:Zeile %d, height
+#
+# UK 700:Page %d
+700:Seite %d
+# UK 701:Page x %d, y %d
+701:Seite x %d, y %d
+# UK 1016:Create a new document
+1016:Ein neues Dokument erzeugen
+# UK 1017:Open an existing document
+1017:Ein existierendes Dokument öffnen
+# UK 703:Apply left justification to the selection or at caret
+703:Linksbündigkeit benutzen für die Auswahl oder ab der Cursorposition
+# UK 704:Apply centre justification to the selection or at caret
+704:Mittelbündigkeit benutzen für die Auswahl oder ab der Cursorposition
+# UK 705:Apply right justification to the selection or at caret
+705:Rechstbündigkeit benutzen für die Auswahl oder ab der Cursorposition
+# UK 706:Apply full justification to the selection or at caret
+706:Bündigkeit benutzen für die Auswahl oder ab der Cursorposition
+# UK 707:Apply, change, create and delete styles
+707:Stil hinzufügen, löschen oder ändern
+# UK 708:Apply effects to the selection or at caret
+708:Effete benutzen für die Auswahl oder ab der Cursorposition
+# UK 709:Apply bold to the selection or at caret
+709:Fettschrift benutzen für die Auswahl oder ab der Cursorposition
+# UK 710:Apply italic to the selection or at caret
+710:Kursivschrift benutzen für die Auswahl oder ab der Cursorposition
+# UK 1012:Apply underline to the selection or at caret
+1012:Unterstreichen benutzen für die Auswahl oder ab der Cursorposition
+# UK 1018:Apply superscript to the selection or at caret
+1018:Hochstellen benutzen für die Auswahl oder ab der Cursorposition
+# UK 1019:Apply subscript to the selection or at caret
+1019:Tiefstellen benutzen für die Auswahl oder ab der Cursorposition
+# UK 711:Use left tab stop; click in ruler to place new tab
+711:Benutzen Sie linken Tabstop; klick im Rand um Tab zu setzen
+# UK 712:Use centre tab stop; click in ruler to place new tab
+712:Benutzen Sie mittleren Tabstop; klick im Rand um Tab zu setzen
+# UK 713:Use right tab stop; click in ruler to place new tab
+713:Benutzen Sie rechten Tabstop; klick im Rand um Tab zu setzen
+# UK 714:Use decimal tab stop; click in ruler to place new tab
+714:Benutzen Sie dezimalen Tabstop; klick im Rand um Tab zu setzen
+# UK 715:Clear selection/select document
+715:Auswahl leeren / Dokumentinhalt auswählen
+# UK 716:Copy the selection to the clipboard
+716:Auswahl in die Zwischenablage kopieren
+# UK 717:Cut the selection to the clipboard
+717:Auswahl in die Zwischenablage ausschneiden
+# UK 718:Paste from the clipboard
+718:Aus der Zwischenablage einfügen
+# UK 719:This is the status line
+719:Dies ist die Statuszeile
+# UK NEW r720:Click SELECT for Save dialogue box. Click ADJUST to save immediately
+r720:Dokument speichern. AUSWAHL für Dialogfenster, SPEZIAL um sofort zu speichern
+# UK w720:Save document
+w720:Dokument Speichern
+# UK NEW r721:Click SELECT for Print dialogue box. Click ADJUST for Print Extra dialogue box
+r721:Dokument drucken. AUSWAHL für Dialogfenster, SPEZIAL für Print Extra Dialogfenster
+# UK w721:Print document
+w721:Dokument drucken
+# UK 1013:Apply box to the selection
+1013:Auswahl mit Rahmen versehen
+# UK 1014:Insert table at caret
+1014:Fügt Tabelle an der Cursorposition ein
+# UK 1015:Search dialogue box
+1015:Suchen Dialogfenster
+# UK 1030:Sort dialogue box
+1030:Sortieren Dialogfenster
+# UK 1051:Spell check
+1051:Rechtschreibung
+# UK 1052:Thesaurus
+1052:Thesaurus
+# UK 722:Can't delete as selection spans more than one row
+722:Kann nicht löschen, da Auswahl sich über mehrere Zeilen erstreckt
+# UK 726:%d words counted
+726:%d Wörter gezählt
+# UK 730:Not found
+730:Nicht gefunden
+# UK 731:%d replaced
+731:%d ausgetauscht
+# UK r732:Drag to resize. Double-click for auto-width. ADJUST-drag to reposition
+r732:Ziehen um Größe zu ändern, Doppelclick für automatische Breite. SPEZIAL-ziehen um zu positionieren
+# UK w732:Drag to resize. Double-click for auto-width. Ctrl+drag to reposition
+w732:Ziehen um Größe zu ändern, Doppelclick für automatische Breite. Strg+ziehen um zu positionieren
+# UK 733:Drag to resize. Double-click for auto-height
+733:Ziehen um Größe zu ändern, Doppleclick für automatische Höhe
+# UK r734:ADJUST-drag to reposition
+r734:SPEZIAL-ziehen um zu positionieren
+# UK w734:Ctrl+drag to reposition
+w734:Strg+ziehen um zu positionieren
+# UK 738:Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%
+738:Bild bei (%s,%s) cm : br.=%s h=%s cm %d%%,%d%%
+# UK 739:Picture at (%s,%s) mm : w=%s h=%s mm %d%%,%d%%
+739:Bild bei (%s,%s) mm : br.=%s h=%s mm %d%%,%d%%
+# UK 740:Picture at (%s,%s) in : w=%s h=%s in %d%%,%d%%
+740:Bild bei (%s,%s) in : br.=%s h=%s in %d%%,%d%%
+# UK 479:Picture at (%s,%s) pt : w=%s h=%s pt %d%%,%d%%
+479:Bild bei (%s,%s) pt : br.=%s h=%s pt %d%%,%d%%
+# UK 741:No action: column too wide
+741:Keine Aktion: Spalte zu groß
+# UK 742:%d word counted
+742:%ld Wort gezählt
+# UK 743:Selection contains %d regions
+743:Auswahl beinhaltet %ld Regionen
+# UK 1026:Selection contains %d region
+1026:Auswahl beinhaltet %ld Region
+#
+# MSG_NUMFORM_xxx
+#
+# generic 1,2,3 decimal places numforms
+# first set with optional trailing zeros
+# UK 744:0.#
+744:0.,#
+# UK 745:0.##
+745:0.,##
+# UK 746:0.###
+746:0.,###
+# second set with forced trailing zeros
+# UK 747:0.0
+747:0.,0
+# UK 748:0.00
+748:0.,00
+# UK 749:0.000
+749:0.,000
+#
+# MSG_DIALOG_BACKDROP_xxx
+#
+# UK 750:Backdrop
+750:Hintergrund
+# UK 751:First page
+751:Erste seite
+# UK 752:All pages
+752:Alle seiten
+# UK 753:Print
+753:Drucken
+# UK 754:Scale to fit
+754:Scalieren
+# UK 755:Origin
+755:Anfang
+# UK 756:As is
+756:Wie es ist
+# UK 757:Work area
+757:Arbeitsbereich
+# UK 758:Printable area
+758:Druckbereich
+# UK 759:Paper
+759:Papier
+# UK 760:Embed
+760:Einfügen
+# UK 761:Delete
+761:Löschen
+# UK 762:ug/ug10_backdrop_pictures.htm
+762:ug/ug10_backdrop_pictures.htm
+#
+# Close / Quit dialogue box messages
+#
+# UK 790:One or more documents in the group have been modified
+790:Eine oder mehrere Dokumenten in der Gruppe verändert
+# UK r791:Save group
+r791:Gruppe abspeichern
+# UK w791:Save Group
+w791:Gruppe Abspeichern
+# UK r792:Discard group
+r792:Gruppe löschen
+# UK w792:Discard Group
+w792:Gruppe Löschen
+#
+# UK r800:There is %d document edited but not saved in %s.
+r800:%d Dokument bearbeitet aber nicht abgespeichert in %s.
+# UK r801:There are %d documents edited but not saved in %s.
+r801:%d Dokumenten bearbeitet aber nicht abgespeichert in %s.
+# UK r799:Do you want to save the changes before exiting
+r799:Möchten Sie die Änderungen vor dem Beenden speichern oder
+# UK r802:or exit now, discarding all unsaved changes?
+r802:jetzt beenden und alle nicht gespeicherten Änderungen verwerfen?
+# UK w800:There is %d document edited but not saved in %s.
+w800:%d Dokument bearbeitet aber nicht abgespeichert in %s.
+# UK w801:There are %d documents edited but not saved in %s.
+w801:%d Dokumenten bearbeitet aber nicht abgespeichert in %s.
+# UK w799:Do you want to save the changes before exiting
+w799:Möchten Sie die Änderungen vor dem Beenden speichern oder
+# UK w802:or exit now, discarding all unsaved changes?
+w802:jetzt beenden und alle nicht gespeicherten Änderungen verwerfen?
+#
+# UK 803:Do you want to save edited file
+803:Wollen Sie bearbeite Dokument
+# UK 804:'%s'?
+804:'%s' speichern?
+#
+# UK 805:This document is part of a linked group
+805:Dieses Dokument gehört zu einer Gruppe
+# UK r806:Close group
+r806:Schließe Gruppe
+# UK w806:Close Group
+w806:Schließe Gruppe
+# UK r807:Close doc
+r807:Schließe Dok
+# UK w807:Close Doc
+w807:Schließe Dok
+#
+# MSG_DIALOG_INFO_xxx
+#
+#w810:
+#w811:
+# UK w812:Version
+w812:Version
+# UK w813:User
+w813:Benutzer
+# UK w814:Reg. no.
+w814:Reg.-Nr.
+# UK w816:About Fireworkz
+w816:Über Fireworkz
+# UK r810:Name
+r810:Name
+#r811:
+# UK r812:Version
+r812:Version
+# UK r813:User
+r813:Benutzer
+# UK r814:Reg. no.
+r814:Reg.-Nr.
+# UK r816:About this program
+r816:Über dieses Programm
+#
+# UK w817:Fireworkz Online...
+w817:Fireworkz Online...
+w818:https://groups.google.com/group/colton-software-fireworkz
+# UK r817:Web...
+r817:Webseite...
+r818:https://www.croftnuisk.co.uk/coltsoft/fireworkz
+#
+# Table style name
+# UK 823:.Table%d
+823:.Tabelle%d
+# BaseTable style name
+# UK 824:BaseTable
+824:BasisTabelle
+#
+# UK 830:Page break
+830:Seitenumbruch
+# UK 831:Page number
+831:Seitennumber
+#
+# MSG_DIALOG_SAVE
+#
+# UK 857:Save as
+857:Speichern als
+#858:to-do.htm
+# UK 1054:Selection
+1054:Auswahl
+#
+# MSG_DIALOG_SAVE_AS_TEMPLATE
+#
+# UK r859:Save as template
+r859:Vorlage speichern
+# UK w859:Save as Template
+w859:Vorlage Speichern
+# UK 860:ug/ug03_creating_templates.htm
+860:ug/ug03_creating_templates.htm
+# UK r861:Template
+r861:Vorlage
+# UK w861:template.fwt
+w861:vorlage.fwt
+# UK 862:&All
+862:&Alle
+# UK 863:Alle styl&es
+863:Alle Stil&e
+# UK 864:&Style
+864:&Stil
+#
+# MSG_DIALOG_SAVE_AS_FOREIGN
+#
+# UK r260:Export as
+r260:Sichere andere
+# UK w260:Export as
+w260:Sichere Andere
+# UK 261:Other
+261:Andere
+# UK 1061:Drawfile
+1061:DrawDatei
+#
+# MSG_DIALOG_SAVE_PICTURE
+#
+# UK r865:Save picture
+r865:Bild speichern
+# UK w865:Save Picture
+w865:Bild Speichern
+## UK 866:to-do.htm
+866:to-do.htm
+# UK 867:Picture
+867:Bild
+#
+# MSG_DIALOG_SEARCH_xxx
+#
+# UK 870:Search
+870:Suchen
+# UK 871:&Find
+871:&Suchen
+# UK 872:&Replace with
+872:&Ersetzen durch
+# UK 873:&Ignore capitals
+873:&Großbuchstaben ignorieren
+# UK 874:Co&py capitals
+874:G&roßschreibung beibehalten
+# UK r875:From &caret
+r875:Ab &Cursorposition
+# UK w875:From &Caret
+w875:Ab &Cursorposition
+# UK r876:From &top
+r876:Von &Oben
+# UK w876:From &Top
+w876:Von &Oben
+# UK 877:&Whole words
+877:&Ganze Wörter
+# UK w878:From Text &Cursor
+w878:Ab &Cursorposition
+# UK 879:ug/ug04_find_and_replace.htm
+879:ug/ug04_find_and_replace.htm
+#
+# UK 880:Found
+880:Gefunden
+# UK 881:ug/ug04_find_and_replace.htm
+881:ug/ug04_find_and_replace.htm
+# UK 882:&Next
+882:&Nächste
+# UK 883:Replace &all
+883:&Alle ersetzen
+#
+# UK 890:<Field %d>
+890:<Feld %d>
+#
+# MSG_DIALOG_GOTO_xxx
+#
+# UK r891:Go to
+r891:Go to
+# UK w891:Go To
+w891:Go To
+# UK 892:Cell, row or column
+892:Cell, row or column
+# r893:Go to
+r893:Go to
+# w893:Go To
+w893:Go To
+# UK 894:sg/sg01_moving_from_cell_to_cell.htm
+894:sg/sg01_moving_from_cell_to_cell.htm
+#
+# MSG_DIALOG_CHOICES_xxx
+#
+# UK 909:Choices
+909:Optionen
+# UK 910:ug/ug02_choices_dialogue_box.htm
+910:ug/ug02_choices_dialogue_box.htm
+# UK 911:Auto save
+911:Auto Speichern
+# UK 912:(mins)
+912:(Min.)
+# UK 913:Display pictures
+913:Bilder zeigen
+# UK 914:Embed inserted files
+914:Embed inserted files
+# UK 915:Status line
+915:Statuszeile
+# UK 920:Toolbar
+920:Toolbar
+# UK 916:Measurement
+916:Messen
+# UK 917:Kerning
+917:Kerning
+# UK 918:Allow dithering
+918:Dithering erlaubt
+# UK 921:Load text using delimiter
+921:Load text using delimiter
+# UK 919:Load text as paragraphs
+919:Load text as paragraphs
+# UK 922:Update styles from choices
+922:Update styles from choices
+#
+# Style Region editor
+#
+# UK 930:&In
+930:&In
+# UK 931:&Out
+931:&Raus
+# UK 933:No more regions
+933:Keine weiteren Regionen
+# UK 934:Region
+934:Region
+#
+# Style text conversion
+#
+# UK 938: on
+938: an
+# UK 939: off
+939: aus
+#
+# SF_JUSTIFY_LEFT/CENTRE/RIGHT/BOTH
+#
+# UK 941: left
+941: links
+# UK 942: centre
+942: zentriert
+# UK 943: right
+943: rechts
+# UK 944: both
+944: beide
+# UK 945: %s
+945: %s
+#
+# UK 947:Region: %s
+947:Region: %s
+#
+# NB order matches style bit numbering order
+#
+# UK 948:Style
+948:Stil
+# UK 949:Key shortcut
+949:Schnelltaste
+# UK 950:[Handle]
+950:[Zeiger]
+# UK 951:[Special]
+951:[Spezial]
+# UK 952:Col width
+952:Spaltengröße
+# UK 953:Col name
+953:Spaltenname
+# UK 954:Row height
+954:Zeilenhöhe
+# UK 955:Row height fixed
+955:Höhe der Zeile fest
+# UK 956:Row unbreakable
+956:Zeile nicht aufspaltbar
+# UK 957:Row name
+957:Name der Zeile
+# UK 958:Left margin
+958:Linker Rand
+# UK 959:Right margin
+959:Rechter Rand
+# UK 960:Para margin
+960:Para margin
+# UK 961:Tabs
+961:Tabulator
+# UK 962:Background colour
+962:Hintergrundfarbe
+# UK 963:Space before para
+963:Freiraum vor Absatz
+# UK 964:Space after para
+964:Freiraum nach Absatz
+# UK 965:Line space
+965:Line space
+# UK 966:Justify
+966:Ausrichtung
+# UK 967:Justify
+967:Ausrichtung
+# UK 968:New object
+968:Neues Objekt
+# UK 969:Number format
+969:Zahlenformat
+# UK 970:Date format
+970:Datumsformat
+# UK 971:Text format
+971:Textformat
+# UK 972:Border colour
+972:Randfarbe
+# UK 973:Border
+973:Rand
+# UK 974:Grid left colour
+974:Raster links Farbe
+# UK 975:Grid top colour
+975:Raster oben Farbe
+# UK 976:Grid right colour
+976:Raster rechts Farbe
+# UK 977:Grid bottom colour
+977:Raster unten Farbe
+# UK 978:Grid left
+978:Raster left
+# UK 979:Grid top
+979:Raster oben
+# UK 980:Grid right
+980:Raster right
+# UK 981:Grid bottom
+981:Raster unten
+# UK 982:Protect
+982:Schützen
+# UK 983:Typeface
+983:Schriftart
+# UK 984:Font width
+984:Schriftbreite
+# UK 985:Font height
+985:Schrifthöhe
+# UK 986:Underline
+986:Unterstrichen
+# UK 987:Bold
+987:Fett
+# UK 988:Italic
+988:Kursiv
+# UK 989:Superscript
+989:Hochgestellt
+# UK 990:Subscript
+990:Tiefgestellt
+# UK 991:Font colour
+991:Schriftfarbe
+#
+# SF_JUSTIFY_V_TOP/BOTTOM
+#
+# UK 995: top
+995: oben
+# UK 996: bottom
+996: unten
+#
+# MSG_CUSTOM_LIBRARY - directory that is searched for custom function sheets
+#
+# UK 997:Library
+997:Library
+#
+# MSG_DIALOG_SORT_xxx
+#
+# UK 998:Sort
+998:Sortieren
+# UK 1043:sg/sg01_sorting_your_data.htm
+1043:sg/sg01_sorting_your_data.htm
+# UK 999:Descending order
+999:Absteig. Reihenfolge
+#
+# UK r1011:This is the %s application.|MClick SELECT to create a new document.
+r1011:Dies ist die %s Applikation.|MKlick SELECT um ein neues Dokument zu erzeugen.
+#
+# MSG_OBJECT_TYPE_xxx
+#
+# UK 1040:Text
+1040:Text
+# UK 1041:* DB data
+1041:* DB data
+# UK 1042:Number
+1042:Zahl
+#
+# Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
+#
+# # UK e0:Not an error
+e0:Kein Fehler
+# e1:ERROR_RQ
+# UK e2:General failure
+e2:Allgemeines Versagen
+# UK e3:Memory full
+e3:Speicher voll
+# UK e5:Run-time check failed
+e5:Laufzeitprüfung fehlgeschlagen
+#
+# Skeleton errors: keep consistent with ob_skel/resource/resource.h ERR_xxx
+#
+# UK e48:Error (%d:%d) not found
+e48:Fehler (%d:%d) nicht gefunden
+# UK e49:Message (%d:%d) not found
+e49:Meldung (%d:%d) nicht gefunden
+#
+# UK e51:Feature unavailable
+e51:Funktion nicht benutzbar
+# UK e52:Too many windows
+e52:Zu viele Fenster
+# UK e53:Unable to start %s: Config file not found
+e53:Kann %s nicht ausführen: Config-Datei nicht gefunden
+# UK e54:Unable to start %s: %s when loading Config file
+e54:Kann %s nicht ausführen: %s beim Config-Datei laden
+# UK re55:Font Manager: Error in setting current font
+re55:Font Manager: Fehler beim setzen des aktuellen Fonts
+# UK re56:Font Manager: Error in setting colour
+re56:Font Manager: Fehler bei Farbsetzung
+# UK re57:Font Manager: Error in Font_Paint
+re57:Font Manager: Fehler in Font_Paint
+# UK re58:Font Manager: Error in Font_Find
+re58:Font Manager: Fehler in Font_Find
+# UK e59:Printer driver not loaded
+e59:Druckertreiber nicht geladen
+#
+# UK e60:Can't do this whilst recording a command
+e60:Kann das nicht tun während der Aufnahme eines Kommandos
+# UK e63:File %s is already loaded
+e63:Datei %s ist schon geladen
+# UK re64:Sprites file not found
+re64:Sprites-Datei nicht gefunden
+# UK e65:File %s has the same leafname as an already loaded file
+e65:Datei %s hat die gleiche Überschrift wie das vorherig geladene
+# UK e66:Cannot load this type of file
+e66:Kann diesen Dateityp nicht laden
+# UK e67:End of file reached before construct end
+e67:Ende der Datei erreicht ohne das Ende der Konstruktion erreicht zu haben
+# UK e68:Font not found in FontMap
+e68:Schriftart nicht gefunden in FontMap
+# UK re69:RISC OS font name not found
+re69:RISC OS Schriftart nicht gefunden
+#
+# UK e70:Template file not found
+e70:Vorlagendatei nicht gefunden
+# UK re71:No fonts available
+re71:Keine Schriften vorhanden
+# UK we71:No TrueType fonts available
+we71:Keine TrueType-Schriften vorhanden
+# UK e72:Style name not found in style list
+e72:Stil Name nicht gefunden in Stil Liste
+# UK e73:Style in use in document
+e73:Stil im Dokument schon benutzt
+# UK re74:Print stream won't open
+re74:Drucker Kannal konnte nicht geöffnet werden
+# UK we74:Failed to open print device
+we74:Drucker konnte nicht geöffnet werden
+# UK e75:Print failed %s
+e75:Ausdruck abgebrochen %s
+# UK e76:Already printing
+e76:Es wird gedruckt
+# UK re77:No printer driver loaded
+re77:Kein Druckertreiber installiert
+# UK e78:Bad find string
+e78:Suchstring nicht akzeptabel
+# UK re79:No thesaurus loaded
+re79:Kein Thesaurus geladen
+#
+# UK e80:No data found in file
+e80:Keine Daten in Datei gefunden
+# UK re81:Unable to locate Stubs file
+re81:Konnte Stubs Datei nicht finden
+# UK NEW e83:No alternate command for this toolbar button
+e83:No alternate command for this toolbar button
+# UK e84:This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format
+e84:This file will be saved as a Fireworkz format file as Fireworkz cannot save it in its original format
+# UK e85:Unable to load referenced picture %s because file not found; reference retained
+e85:Das verwiesene Bild %s konnte nicht gefunden werden; Verweis bleibt
+# UK e86:Area is protected
+e86:Bereich ist geschützt
+# UK e87:Supporting file %s not found
+e87:Unterstützungsdatei %s nicht gefunden
+# UK e88:Style name already in use
+e88:Stil Name wird schon benutzt
+# UK e89:Style name can not be blank
+e89:Stil Name kann nicht ausgeblendet werden
+#
+# UK e90:%s has missing mandatory arg %d, type %d
+e90:%s fehlt ein Arg %d, Typ %d
+# UK e91:Can't edit notes which are scaled to fit
+e91:Kann nicht skalierte Notitzen darstellen
+# UK e92:Unable to display help file
+e92:Konnte Hilfsdatei nicht darstellen
+# UK e93:No browser available to access URL
+e93:Kein Browser verfügbar, um auf die URL zuzugreifen
+# UK we94:Failed to load Dial Solutions Drawfile DLL
+we94:Konnte Dial Solutions Drawfile DLL nicht laden
+# UK e95:%s has bad raw Arg %u, Größe %u, sep '%c'
+e95:%s fehlt raw Arg %u, size %u, sep '%c'
+# UK e96:Unable to locate compound file template for save
+e96:Vorlage zum Speichern der zusammengesetzten Datei konnte nicht gefunden werden
+# UK re97:To save, drag the icon to a directory display
+re97:Um zu speichern, das Icon ins Verzeichnis ziehen
+# UK we97:Full path name must be specified for save
+we97:Full path name must be specified for save
+# UK re98:Can't transfer file (Scrap directory not set)
+re98:Datei kann nicht übertragen werden (Scrap-Verzeichnis nicht festgelegt)
+# UK e99:Invalid date/time
+e99:Ungültiges Datum/Uhrzeit
+#
+# UK e100:Module not found
+e100:Module nicht gefunden
+# UK e101:%s has bad arg %u, value %u, limit %u
+e101:%s has bad arg %u, value %u, limit %u
+# UK e102:Document has too many columns to export in this format
+e102:Das Dokument enthält zu viele Spalten, um in diesem Format exportiert zu werden
+# UK e103:Document has too many rows to export in this format
+e103:Das Dokument enthält zu viele Zeilen, um in diesem Format exportiert zu werden
+#
+# UK e120:Read only
+e120:Nur lesen
+# UK e121:Destination specified for templates already exists
+e121:Ziel für Vorlagen besteht bereits
+# UK e122:Can't import as '%s' because a file of that name already exists
+e122:Kann nicht als '% s' importiert werden, da bereits eine Datei mit diesem Namen vorhanden ist
+# UK e123:Can't delete the text body column - use make blank to clear data
+e123:Die Textkörperspalte kann nicht gelöscht werden. Verwenden Sie 'Machen leeren', um Daten zu löschen
+# UK e124:This file is too small to be correct
+e124:Diese Datei ist zu klein, um gültig zu sein
+# UK e125:This file is too large to be loaded into memory
+e125:Diese Datei ist zu groß, um in den Speicher geladen zu werden
+# UK e126:Bad UTF-8 encoding
+e126:Ungültige UTF-8-Codierung
+# UK e127:UCS-4 NONCHARACTER
+e127:UCS-4 NONCHARACTER
+# UK e128:Clipboard data is too large to be loaded into memory
+e128:Die Daten in der Zwischenablage sind zu groß, um in den Speicher geladen zu werden
+#
+# UK re202:Not a module file
+re202:Keine Module Datei
+# UK re203:Bad chunk within module file
+re203:Module Datei enthalt ein fehlerhaften Chunk
+# UK re204:Module too new for this application
+re204:Module zu neu für diese Applikation
+# UK re205:Object loader failed to read entire block
+re205:Objekt Lader kann den Block nicht lesen
+# UK re206:Stub binding failed
+re206:Stub binden nicht möglich
+# UK re207:Stub entry referenced that is no longer available
+re207:Stub Eintrag vorhanden, der nicht länger vorhanden
+# UK re208:Attempt to relocate unknown instruction sequence
+re208:Versucht ein unbekannte Instruktions Sequenz einzurichten
+#
+# UK we211:Print cancelled - unknown error from printing system
+we211:Druck abgebrochen - Unbekannter Fehler vom Drucker
+# UK we212:Print cancelled
+we212:Druck abgebrochen
+# UK we213:Print cancelled
+we213:Druck abgebrochen
+# UK we214:Not enough disk space currently available for spooling
+we214:Nicht genug Platz auf Medium frei für Drucker-Spooling
+# UK we215:Not enough memory is available for spooling
+we215:Nicht genug Arbeitsspeicher frei für Drucker-Spooling
+#
+# UK we216:Native compound file write needs filename
+we216:Das Schreiben einer nativen zusammengesetzten Datei benötigt einen Dateinamen
+#
+# RISC OS specific messages looked up by name
+#
+# Only needed in translated message files as application has en-GB default strings
+#
+# UK rsignal0:Unknown
+rsignal0:Unknown
+# UK rsignal1:Abnormal termination
+rsignal1:Abnormal termination
+# UK rsignal2:Arithmetic exception
+rsignal2:Arithmetic exception
+# UK rsignal3:Illegal instruction
+rsignal3:Illegal instruction
+# UK rsignal4:Escape
+rsignal4:Escape
+# UK rsignal5:Address exception
+rsignal5:Address exception
+# UK rsignal6:Termination request
+rsignal6:Termination request
+# UK rsignal7:Stack overflow
+rsignal7:Stack überlauf
+# UK rsignal10:OS error
+rsignal10:OS fehler
+#
+# UK rerror_fatal:%s has gone wrong (%s). Click Continue to quit, losing data.
+rerror_fatal:%s ist schief gelaufen (%s). Klicken Sie zum Beenden auf Weiter, um Daten zu verlieren.
+# UK rerror_serious:%s has gone wrong (%s). Click Continue to try to resume or Cancel to quit, losing data.
+rerror_serious:%s ist schief gelaufen (%s). Klicken Sie auf Weiter, um den Vorgang fortzusetzen, oder auf Abbrechen, um den Vorgang zu beenden und Daten zu verlieren.
+#
+# end of msg (ob_skel)

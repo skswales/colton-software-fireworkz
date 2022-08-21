@@ -300,16 +300,25 @@ xtos_ustr_buf(
 {
     U32 outidx = 0;
     BOOL force;
-    U32 digit_n, i;
     PC_S32 nlp;
     PC_S32 npp;
     S32 col, nl, np;
-    S32 digit[1 + elemof32(nth_power)];
+    S32 digit[1 + 1 + elemof32(nth_power)];
+    U32 digit_n = 0;
+    U32 i;
 
     profile_ensure_frame();
 
-    col     = x;
-    digit_n = 0;
+    assert(elemof_buffer >= 2); /* at least one digit and terminator please! */
+
+    col = x;
+
+    if(col < 0)
+    {
+        col = 0 - col;
+
+        PtrPutByteOff(ustr_buf, outidx++, CH_MINUS_SIGN__BASIC);
+    }
 
     if(col >= 26 /*nth_letter[0]*/)
     {
@@ -340,8 +349,6 @@ xtos_ustr_buf(
         digit[digit_n++] = col / 26 - 1;
         col = col % 26;
     }
-    else if(col < 0) /* avoid catastrophe */
-        col = 0;
 
     digit[digit_n++] = col;
 
@@ -605,7 +612,7 @@ _tstr_from_ustr(
         return(TEXT("<<tstr_from_ustr - NULL>>"));
     }
 
-    if(IS_PTR_NONE(ustr))
+    if(PTR_IS_NONE(ustr))
     {
         assert0();
         return(TEXT("<<tstr_from_ustr - NONE>>"));
@@ -629,7 +636,7 @@ _ustr_from_tstr(
     if(NULL == tstr)
         return(("<<ustr_from_tstr - NULL>>"));
 
-    if(IS_PTR_NONE(tstr))
+    if(PTR_IS_NONE(tstr))
         return(("<<ustr_from_tstr - NONE>>"));
 
     return((PC_USTR) _sbstr_from_tstr(tstr));

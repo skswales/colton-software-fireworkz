@@ -14,7 +14,6 @@
 
         GBLL    MULDIV_USE_UMULL
 MULDIV_USE_UMULL SETL {TRUE}
-;MULDIV_USE_UMULL SETL {FALSE}
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -25,37 +24,17 @@ muldiv64__statics
 MULDIV_REMAINDER * 0*4
 MULDIV_OVERFLOW  * 1*4
 
+; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         AREA    |C$$code|,CODE,READONLY
-
-; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_remainder(void);
-
-        BeginExternal muldiv64_remainder
-
-        ; LinkNotStacked - no FunctionEntry here
-
-        LDR     a1, =muldiv64__statics
-        LDR     a1, [a1, #MULDIV_REMAINDER]
-
-        Return "","LinkNotStacked"
-
-; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_overflow(void);
-
-        BeginExternal muldiv64_overflow
-
-        ; LinkNotStacked - no FunctionEntry here
-
-        LDR     a1, =muldiv64__statics
-        LDR     a1, [a1, #MULDIV_OVERFLOW]
-
-        Return "","LinkNotStacked"
-
-; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         MACRO
 $label  MULDIV_UMULL
+ [ {TRUE} ; Needs ObjAsm --cpu=3M
+$label  UMULL   a3,a4,a1,a2     ; NB Syntax is UMULL RdLo, RdHi, Rm, Rs (this one assembles to same word as below)
+ |
 $label  DCD     &E0832190       ; UMULL a1*a2 ->a4(hi),a3(lo) for ARM600 and better processors
+ ]
         MEND
 
 ; +++
@@ -197,26 +176,7 @@ $label
 
         MEND
 
-        IMPORT  |raise|
-
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-muldiv64_divide_zero
-
-        MOV     a1, #2          ; SIGFPE
-        BL      raise
-
-; and on the off chance that returns, drop into...
-
-muldiv64_zero_result
-
-        MOV     a1, #0          ; result
-
-        LDR     ip, =muldiv64__statics ; stash the remainder and overflow
-        STR     a1, [ip, #MULDIV_REMAINDER]
-        STR     a1, [ip, #MULDIV_OVERFLOW]
-
-        Return "v1-v6","fpbased"
 
 ; muldiv64(dividend, multiplier, divisor)
 ; result1 = (a*b) / divisor
@@ -235,7 +195,7 @@ muldiv64_zero_result
 
 md64_p1 MULDIV_DO_MUL
 
-        MULDIV_DO_DIV
+md64_do MULDIV_DO_DIV
 
         MULDIV_FINISH
 
@@ -268,11 +228,15 @@ md64_p2 MULDIV_DO_MUL
 
 muldiv64_ceil_continue
 
+ [ {TRUE} :LAND: (:LNOT: PROFILING)
+        B      md64_do         ; complete with common div and finish routines
+ |
         MULDIV_DO_DIV
 
         MULDIV_FINISH
 
         Return "v1-v6","fpbased"
+ ]
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern int32_t muldiv64_floor(int32_t dividend, int32_t multiplier, int32_t divisor);
@@ -301,11 +265,15 @@ md64_p3 MULDIV_DO_MUL
 
 muldiv64_floor_continue
 
+ [ {TRUE} :LAND: (:LNOT: PROFILING)
+        B      md64_do         ; complete with common div and finish routines
+ |
         MULDIV_DO_DIV
 
         MULDIV_FINISH
 
         Return "v1-v6","fpbased"
+ ]
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern int32_t muldiv64_round_floor(int32_t dividend, int32_t multiplier, int32_t divisor);
@@ -338,11 +306,62 @@ md64_p4 MULDIV_DO_MUL
 
 muldiv64_round_floor_continue
 
+ [ {TRUE} :LAND: (:LNOT: PROFILING)
+        B      md64_do         ; complete with common div and finish routines
+ |
         MULDIV_DO_DIV
 
         MULDIV_FINISH
 
         Return "v1-v6","fpbased"
+ ]
+
+; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        IMPORT  |raise|
+
+muldiv64_divide_zero
+
+        MOV     a1, #2          ; SIGFPE
+        BL      raise
+
+; and on the off chance that returns, drop into...
+
+muldiv64_zero_result
+
+        MOV     a1, #0          ; result
+
+        LDR     ip, =muldiv64__statics ; stash the remainder and overflow
+        STR     a1, [ip, #MULDIV_REMAINDER]
+        STR     a1, [ip, #MULDIV_OVERFLOW]
+
+        Return "v1-v6","fpbased"
+
+; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+; extern int32_t muldiv64_remainder(void);
+
+        BeginExternal muldiv64_remainder
+
+        ; LinkNotStacked - no FunctionEntry here
+
+        LDR     a1, =muldiv64__statics
+        LDR     a1, [a1, #MULDIV_REMAINDER]
+
+        Return "","LinkNotStacked"
+
+; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+; extern int32_t muldiv64_overflow(void);
+
+        BeginExternal muldiv64_overflow
+
+        ; LinkNotStacked - no FunctionEntry here
+
+        LDR     a1, =muldiv64__statics
+        LDR     a1, [a1, #MULDIV_OVERFLOW]
+
+        Return "","LinkNotStacked"
+
+ [ {FALSE} ; Still used in PipeDream but no longer used in Fireworkz
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern int32_t muldiv64_limiting(int32_t dividend, int32_t multiplier, int32_t divisor);
@@ -361,6 +380,7 @@ muldiv64_round_floor_continue
         ADDLT   a1, a2, #1 ; -> -LONG_MAX (0x80000001)
 
         Return "","fpbased"
+ ]
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern void muldiv64_init(void);

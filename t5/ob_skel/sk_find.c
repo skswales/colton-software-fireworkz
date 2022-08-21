@@ -125,7 +125,7 @@ search_query_replace =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-search_query_replace_data = { { SEARCH_QUERY_COMPLETION_REPLACE }, UI_TEXT_INIT_RESID(MSG_REPLACE) };
+search_query_replace_data = { { SEARCH_QUERY_COMPLETION_REPLACE }, UI_TEXT_INIT_RESID(MSG_BUTTON_REPLACE) };
 
 /*
 replace all
@@ -159,11 +159,11 @@ search_query_cancel =
 static const DIALOG_CTL_CREATE
 search_query_ctl_create[] =
 {
-    { &dialog_main_group },
-    { &search_query_next,        &search_query_next_data        },
-    { &search_query_replace,     &search_query_replace_data     },
-    { &search_query_replace_all, &search_query_replace_all_data },
-    { &search_query_cancel, &stdbutton_cancel_data }
+    { { &dialog_main_group }, NULL },
+    { { &search_query_next },        &search_query_next_data        },
+    { { &search_query_replace },     &search_query_replace_data     },
+    { { &search_query_replace_all }, &search_query_replace_all_data },
+    { { &search_query_cancel }, &stdbutton_cancel_data }
 };
 
 /******************************************************************************
@@ -174,11 +174,12 @@ search_query_ctl_create[] =
 
 enum SEARCH_INTRO_CONTROL_IDS
 {
+    SEARCH_INTRO_ID_FROM_CARET = IDOK,
+
     SEARCH_INTRO_ID_FROM_TOP = 155,
-    SEARCH_INTRO_ID_FROM_CARET,
 
     SEARCH_INTRO_ID_FIND = 164,
-    SEARCH_INTRO_ID_FIND_ORNAMENT,
+    SEARCH_INTRO_ID_FIND_LABEL,
     SEARCH_INTRO_ID_IGNORE_CAPITALS,
     SEARCH_INTRO_ID_WHOLE_WORDS,
     SEARCH_INTRO_ID_REPLACE_ENABLE,
@@ -189,22 +190,22 @@ enum SEARCH_INTRO_CONTROL_IDS
 #define SEARCH_INTRO_FIND_H (7 * PIXITS_PER_INCH / 2)
 
 static const DIALOG_CONTROL
-search_intro_find_ornament =
+search_intro_find_label =
 {
-    SEARCH_INTRO_ID_FIND_ORNAMENT, DIALOG_MAIN_GROUP,
+    SEARCH_INTRO_ID_FIND_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, SEARCH_INTRO_ID_FIND, DIALOG_CONTROL_SELF, SEARCH_INTRO_ID_FIND },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(LTLB, STATICTEXT) }
+    { DRT(LTLB, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-search_intro_find_ornament_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_SEARCH_FIND), { 0 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+search_intro_find_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_SEARCH_FIND) };
 
 static const DIALOG_CONTROL
 search_intro_find =
 {
     SEARCH_INTRO_ID_FIND, DIALOG_MAIN_GROUP,
-    { SEARCH_INTRO_ID_FIND_ORNAMENT, DIALOG_CONTROL_PARENT },
+    { SEARCH_INTRO_ID_FIND_LABEL, DIALOG_CONTROL_PARENT },
     { DIALOG_STDSPACING_H, 0, SEARCH_INTRO_FIND_H, DIALOG_STDEDIT_V },
     { DRT(RTLT, EDIT), 1 /*tabstop*/ }
 };
@@ -216,7 +217,7 @@ static const DIALOG_CONTROL
 search_intro_ignore_capitals =
 {
     SEARCH_INTRO_ID_IGNORE_CAPITALS, DIALOG_MAIN_GROUP,
-    { SEARCH_INTRO_ID_FIND_ORNAMENT, SEARCH_INTRO_ID_FIND_ORNAMENT },
+    { SEARCH_INTRO_ID_FIND_LABEL, SEARCH_INTRO_ID_FIND_LABEL },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDCHECK_V },
     { DRT(LBLT, CHECKBOX), 1 /*tabstop*/ }
 };
@@ -272,19 +273,6 @@ search_intro_copy_capitals =
 static /*poked*/ DIALOG_CONTROL_DATA_CHECKBOX
 search_intro_copy_capitals_data = { { 0 /*left_text*/ }, UI_TEXT_INIT_RESID(MSG_DIALOG_SEARCH_COPY_CAPITALS) };
 
-static const DIALOG_CONTROL
-search_intro_cancel =
-{
-    IDCANCEL, DIALOG_CONTROL_WINDOW,
-    { DIALOG_CONTROL_SELF, SEARCH_INTRO_ID_FROM_TOP, SEARCH_INTRO_ID_FROM_TOP, SEARCH_INTRO_ID_FROM_TOP },
-#if WINDOWS
-    { DIALOG_STDCANCEL_H, 0/*-DIALOG_DEFPUSHEXTRA_V*/, DIALOG_STDSPACING_H, 0 /*-DIALOG_DEFPUSHEXTRA_V*/ },
-#else
-    { DIALOG_CONTENTS_CALC, 0/*-DIALOG_DEFPUSHEXTRA_V*/, DIALOG_STDSPACING_H, 0 /*-DIALOG_DEFPUSHEXTRA_V*/ },
-#endif
-    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
-};
-
 static const DIALOG_CONTROL_ID
 search_argmap[] =
 {
@@ -321,9 +309,15 @@ static const DIALOG_CONTROL
 search_intro_from_top =
 {
     SEARCH_INTRO_ID_FROM_TOP, DIALOG_CONTROL_WINDOW,
+#if WINDOWS /* 'From top' is between 'From caret' and Cancel */
+    { DIALOG_CONTROL_SELF, SEARCH_INTRO_ID_FROM_CARET, IDCANCEL, SEARCH_INTRO_ID_FROM_CARET },
+    { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#else /* 'From top' is between Cancel and 'From caret' */
     { DIALOG_CONTROL_SELF, SEARCH_INTRO_ID_FROM_CARET, SEARCH_INTRO_ID_FROM_CARET, SEARCH_INTRO_ID_FROM_CARET },
     { DIALOG_CONTENTS_CALC, -DIALOG_DEFPUSHEXTRA_V, DIALOG_STDSPACING_H, -DIALOG_DEFPUSHEXTRA_V },
     { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
@@ -337,29 +331,50 @@ static const DIALOG_CONTROL
 search_intro_from_caret =
 {
     SEARCH_INTRO_ID_FROM_CARET, DIALOG_CONTROL_WINDOW,
+#if WINDOWS /* 'From Caret' is the bottom leftmost button */
+    { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, SEARCH_INTRO_ID_FROM_TOP },
+    { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBLT, PUSHBUTTON), 1 /*tabstop*/ }
+#else /* 'From Caret' is the bottom rightmost button */
     { DIALOG_CONTROL_SELF, DIALOG_MAIN_GROUP, DIALOG_MAIN_GROUP },
     { DIALOG_CONTENTS_CALC, 0, 0, DIALOG_DEFPUSHBUTTON_V },
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_PUSHBUTTON
 search_intro_from_caret_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_SEARCH_FROM_CARET), &search_intro_command };
 
+static const DIALOG_CONTROL
+search_intro_cancel =
+{
+    IDCANCEL, DIALOG_CONTROL_WINDOW,
+#if WINDOWS /* Cancel is the bottom rightmost button */
+    { DIALOG_CONTROL_SELF, IDOK, DIALOG_MAIN_GROUP, IDOK },
+    { DIALOG_STDCANCEL_H, DIALOG_DEFPUSHEXTRA_V, 0, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
+#else /* Cancel is to the left of 'From top' */
+    { DIALOG_CONTROL_SELF, SEARCH_INTRO_ID_FROM_TOP, SEARCH_INTRO_ID_FROM_TOP, SEARCH_INTRO_ID_FROM_TOP },
+    { DIALOG_CONTENTS_CALC, 0/*-DIALOG_DEFPUSHEXTRA_V*/, DIALOG_STDSPACING_H, 0 /*-DIALOG_DEFPUSHEXTRA_V*/ },
+    { DRT(RTLB, PUSHBUTTON), 1 /*tabstop*/ }
+#endif
+};
+
 static const DIALOG_CTL_CREATE
 search_intro_ctl_create[] =
 {
-    { &dialog_main_group },
-    { &search_intro_find,            &search_intro_find_data },
-    { &search_intro_find_ornament,   &search_intro_find_ornament_data },
-    { &search_intro_ignore_capitals, &search_intro_ignore_capitals_data },
-    { &search_intro_whole_words,     &search_intro_whole_words_data },
-    { &search_intro_replace_enable,  &search_intro_replace_enable_data },
-    { &search_intro_replace,         &search_intro_replace_data },
-    { &search_intro_copy_capitals,   &search_intro_copy_capitals_data },
+    { { &dialog_main_group }, NULL },
+    { { &search_intro_find },            &search_intro_find_data },
+    { { &search_intro_find_label },      &search_intro_find_label_data },
+    { { &search_intro_ignore_capitals }, &search_intro_ignore_capitals_data },
+    { { &search_intro_whole_words },     &search_intro_whole_words_data },
+    { { &search_intro_replace_enable },  &search_intro_replace_enable_data },
+    { { &search_intro_replace },         &search_intro_replace_data },
+    { { &search_intro_copy_capitals },   &search_intro_copy_capitals_data },
 
-    { &search_intro_from_caret, &search_intro_from_caret_data },
-    { &search_intro_from_top, &search_intro_from_top_data },
-    { &search_intro_cancel, &stdbutton_cancel_data }
+    { { &search_intro_from_caret }, &search_intro_from_caret_data },
+    { { &search_intro_from_top }, &search_intro_from_top_data },
+    { { &search_intro_cancel }, &stdbutton_cancel_data }
 };
 
 static void
@@ -617,11 +632,10 @@ T5_CMD_PROTO(extern, t5_cmd_search_do)
 
                                     {
                                     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-                                    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, search_query_ctl_create, elemof32(search_query_ctl_create), MSG_DIALOG_SEARCH_QUERY_HELP_TOPIC);
-                                    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-                                    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SEARCH_QUERY_CAPTION;
+                                    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, search_query_ctl_create, elemof32(search_query_ctl_create), MSG_DIALOG_SEARCH_QUERY_CAPTION);
+                                    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_SEARCH_QUERY_HELP_TOPIC;
                                     dialog_cmd_process_dbox.bits.note_position = 1;
-                                    /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
+                                  /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
                                     search_query = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
                                     } /*block*/
 
@@ -714,20 +728,7 @@ T5_CMD_PROTO(extern, t5_cmd_search_do)
     return(status);
 }
 
-T5_CMD_PROTO(extern, t5_cmd_search_button_poss_db_queries)
-{
-    if(object_present(OBJECT_ID_REC))
-    {
-        STATUS status = object_call_id(OBJECT_ID_REC, p_docu, T5_CMD_VIEW_RECORDZ, P_DATA_NONE);
-
-        if(STATUS_OK != status) /* done, or error */
-            return(status);
-    }
-
-    return(t5_cmd_search_intro(p_docu, t5_message, p_t5_cmd));
-}
-
-T5_CMD_PROTO(extern, t5_cmd_search_button_poss_db_query)
+T5_CMD_PROTO(extern, t5_cmd_search_button)
 {
     if(object_present(OBJECT_ID_REC))
     {
@@ -740,10 +741,23 @@ T5_CMD_PROTO(extern, t5_cmd_search_button_poss_db_query)
     return(t5_cmd_search_intro(p_docu, t5_message, p_t5_cmd));
 }
 
+T5_CMD_PROTO(extern, t5_cmd_search_button_alternate)
+{
+    if(object_present(OBJECT_ID_REC))
+    {
+        STATUS status = object_call_id(OBJECT_ID_REC, p_docu, T5_CMD_VIEW_RECORDZ, P_DATA_NONE);
+
+        if(STATUS_OK != status) /* done, or error */
+            return(status);
+    }
+
+    return(t5_cmd_search_intro(p_docu, t5_message, p_t5_cmd));
+}
+
 T5_CMD_PROTO(extern, t5_cmd_search_intro)
 {
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
@@ -784,9 +798,8 @@ T5_CMD_PROTO(extern, t5_cmd_search_intro)
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, search_intro_ctl_create, elemof32(search_intro_ctl_create), MSG_DIALOG_SEARCH_HELP_TOPIC);
-    /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-    dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SEARCH_CAPTION;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, search_intro_ctl_create, elemof32(search_intro_ctl_create), MSG_DIALOG_SEARCH_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_SEARCH_HELP_TOPIC;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_search_intro;
     status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
@@ -794,6 +807,80 @@ T5_CMD_PROTO(extern, t5_cmd_search_intro)
     status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     quick_ublock_dispose(&quick_ublock);
+
+    return(status);
+}
+
+enum GOTO_INTRO_CONTROL_IDS
+{
+    GOTO_INTRO_ID_TARGET = 246,
+    GOTO_INTRO_ID_TARGET_LABEL
+};
+
+static const DIALOG_CONTROL
+goto_intro_target_label =
+{
+    GOTO_INTRO_ID_TARGET_LABEL, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, GOTO_INTRO_ID_TARGET, DIALOG_CONTROL_SELF, GOTO_INTRO_ID_TARGET },
+    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(LTLB, TEXTLABEL) }
+};
+
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+goto_intro_target_label_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_GOTO_LABEL) };
+
+static const DIALOG_CONTROL
+goto_intro_target =
+{
+    GOTO_INTRO_ID_TARGET, DIALOG_MAIN_GROUP,
+    { GOTO_INTRO_ID_TARGET_LABEL, DIALOG_CONTROL_PARENT },
+    { DIALOG_STDSPACING_H, 0, PIXITS_PER_INCH, DIALOG_STDEDIT_V },
+    { DRT(RTLT, EDIT), 1 /*tabstop*/ }
+};
+
+static /*poked*/ DIALOG_CONTROL_DATA_EDIT
+goto_intro_target_data = { { { FRAMED_BOX_EDIT } } };
+
+static const DIALOG_CONTROL_ID
+goto_argmap[] =
+{
+#define ARG_GOTO_TARGET     0
+    GOTO_INTRO_ID_TARGET
+
+#define ARG_GOTO_N_ARGS     1
+};
+
+static const DIALOG_CONTROL_DATA_PUSH_COMMAND
+goto_intro_command = { T5_CMD_GOTO, OBJECT_ID_SKEL, NULL, goto_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
+
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+goto_intro_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_BUTTON_GOTO), &goto_intro_command };
+
+static const DIALOG_CTL_CREATE
+goto_intro_ctl_create[] =
+{
+    { { &dialog_main_group }, NULL },
+    { { &goto_intro_target },       &goto_intro_target_data },
+    { { &goto_intro_target_label }, &goto_intro_target_label_data },
+
+    { { &defbutton_ok }, &goto_intro_ok_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
+};
+
+T5_CMD_PROTO(extern, t5_cmd_goto_intro)
+{
+    STATUS status;
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
+
+    {
+    DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, goto_intro_ctl_create, elemof32(goto_intro_ctl_create), MSG_DIALOG_GOTO_CAPTION);
+    dialog_cmd_process_dbox.help_topic_resource_id = MSG_DIALOG_GOTO_HELP_TOPIC;
+    //dialog_cmd_process_dbox.p_proc_client = dialog_event_goto_intro;
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    } /*block*/
 
     return(status);
 }

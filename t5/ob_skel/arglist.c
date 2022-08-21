@@ -63,7 +63,7 @@ arg_alloc_ustr(
 
     if(!array_index_is_valid(p_h_args, arg_idx))
     {
-        myassert4(TEXT("arg_alloc_ustr: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
+        myassert4(TEXT("arg_alloc_ustr: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") U32_TFMT TEXT(") ") U32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return(status_nomem());
     }
 #endif
@@ -98,7 +98,7 @@ arg_alloc_tstr(
 #if CHECKING
     if(!array_offset_is_valid(p_h_args, arg_idx))
     {
-        myassert4(TEXT("arg_alloc_tstr: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
+        myassert4(TEXT("arg_alloc_tstr: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") U32_TFMT TEXT(") ") U32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return(status_check());
     }
 #endif
@@ -134,7 +134,7 @@ arg_dispose(
 #if CHECKING
     if(!array_offset_is_valid(p_h_args, arg_idx))
     {
-        myassert4(TEXT("arg_dispose: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
+        myassert4(TEXT("arg_dispose: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") U32_TFMT TEXT(") ") U32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return;
     }
 #endif
@@ -189,7 +189,7 @@ arg_dispose_val(
 #if CHECKING
     if(!array_offset_is_valid(p_h_args, arg_idx))
     {
-        myassert4(TEXT("arg_dispose_val: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
+        myassert4(TEXT("arg_dispose_val: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") U32_TFMT TEXT(") ") U32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return;
     }
 #endif
@@ -265,7 +265,7 @@ arglist_dispose(
         ARRAY_INDEX i;
         ARGLIST_HANDLE arglist_handle = *p_h_args;
 
-        trace_1(TRACE_APP_ARGLIST, TEXT("arglist_dispose(") S32_TFMT TEXT(")"), arglist_handle);
+        trace_1(TRACE_APP_ARGLIST, TEXT("arglist_dispose(") U32_TFMT TEXT(")"), arglist_handle);
 
         arglist_dispose_after(p_h_args, U32_MAX /*all args*/);
 
@@ -492,7 +492,7 @@ arglist_prepare(
 
                     ++arglist_cache.entries_in_use;
 
-                    trace_2(TRACE_APP_ARGLIST, TEXT("arglist_cache MISS: alloced ") S32_TFMT TEXT(", ") S32_TFMT TEXT(" args"), *p_h_args, n_arglist_args(p_h_args));
+                    trace_2(TRACE_APP_ARGLIST, TEXT("arglist_cache MISS: alloced ") U32_TFMT TEXT(", ") U32_TFMT TEXT(" args"), *p_h_args, n_arglist_args(p_h_args));
 
                     break;
                 }
@@ -512,7 +512,7 @@ arglist_prepare(
 
                     ++arglist_cache.entries_in_use;
 
-                    trace_2(TRACE_APP_ARGLIST, TEXT("arglist_cache HIT: using ") S32_TFMT TEXT(", ") S32_TFMT TEXT(" args"), *p_h_args, n_arglist_args(p_h_args));
+                    trace_2(TRACE_APP_ARGLIST, TEXT("arglist_cache HIT: using ") U32_TFMT TEXT(", ") U32_TFMT TEXT(" args"), *p_h_args, n_arglist_args(p_h_args));
 
                     break;
                 }

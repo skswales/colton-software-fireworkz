@@ -63,7 +63,10 @@ registration_number(void)
 
     UINT grpidx;
 
-    if(CH_NULL != __registration_number[0])
+    if(CH_NULL == __registration_number[0])
+        return(__registration_number); /* empty string */
+
+    /*if(CH_NULL != __registration_number[0])*/
     {
         for(grpidx = 0; grpidx < 4; grpidx++)
         {

@@ -131,53 +131,53 @@ static const DIALOG_CONTROL_DATA_CHECKBOX
 insert_field_live_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_INSERT_FIELD_LIVE) };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-insert_field_insert_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_INSERT) };
+insert_field_insert_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_INSERT) };
 
 static const DIALOG_CTL_CREATE
 insert_field_date_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &insert_field_selector_group, NULL },
-    { &insert_field_selector_0, &insert_field_date_selector_0_data },
-    { &insert_field_selector_1, &insert_field_date_selector_1_data },
+    { { &insert_field_selector_group }, NULL },
+    { { &insert_field_selector_0 }, &insert_field_date_selector_0_data },
+    { { &insert_field_selector_1 }, &insert_field_date_selector_1_data },
 
-    { &insert_field_list_dt, &stdlisttext_data },
+    { { &insert_field_list_dt }, &stdlisttext_data },
 
-    { &insert_field_live, &insert_field_live_data },
+    { { &insert_field_live }, &insert_field_live_data },
 
-    { &defbutton_ok, &insert_field_insert_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &insert_field_insert_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CTL_CREATE
 insert_field_date_dead_only_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &insert_field_selector_group, NULL },
-    { &insert_field_selector_0, &insert_field_date_selector_0_data },
-    { &insert_field_selector_1, &insert_field_date_selector_1_data },
+    { { &insert_field_selector_group }, NULL },
+    { { &insert_field_selector_0 }, &insert_field_date_selector_0_data },
+    { { &insert_field_selector_1 }, &insert_field_date_selector_1_data },
 
-    { &insert_field_list_dt, &stdlisttext_data },
+    { { &insert_field_list_dt }, &stdlisttext_data },
 
-    { &defbutton_ok, &insert_field_insert_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &insert_field_insert_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 static const DIALOG_CTL_CREATE
 insert_field_page_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &insert_field_selector_group, NULL },
-    { &insert_field_selector_0, &insert_field_page_selector_0_data },
-    { &insert_field_selector_1, &insert_field_page_selector_1_data },
+    { { &insert_field_selector_group }, NULL },
+    { { &insert_field_selector_0 }, &insert_field_page_selector_0_data },
+    { { &insert_field_selector_1 }, &insert_field_page_selector_1_data },
 
-    { &insert_field_list, &stdlisttext_data },
+    { { &insert_field_list }, &stdlisttext_data },
 
-    { &defbutton_ok, &insert_field_insert_data },
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &insert_field_insert_data },
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -195,8 +195,8 @@ insert_field_intro_setup_entry_date(
 
     UNREFERENCED_PARAMETER(p_setup_data);
 
-    zero_struct(ss_data);
-    zero_struct(numform_parms);
+    zero_struct_fn(ss_data);
+    zero_struct_fn(numform_parms);
 
     /* each ***entry*** has a quick buf! */
     quick_ublock_with_buffer_setup(p_field_list_entry->quick_ublock);
@@ -204,16 +204,16 @@ insert_field_intro_setup_entry_date(
     switch(selector_idx)
     {
     case 1:
-        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
         ss_local_time_to_ss_date(&ss_data.arg.ss_date);
+        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
         break;
 
     default: default_unhandled();
 #if CHECKING
     case 0:
 #endif
-        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
         ss_data.arg.ss_date = p_docu->file_ss_date;
+        ss_data_set_data_id(&ss_data, DATA_ID_DATE);
         break;
     }
 
@@ -244,7 +244,7 @@ insert_field_intro_setup_entry_page(
     NUMFORM_PARMS numform_parms;
     STATUS status;
 
-    zero_struct(numform_parms);
+    zero_struct_fn(numform_parms);
 
     /* each ***entry*** has a quick buf! */
     quick_ublock_with_buffer_setup(p_field_list_entry->quick_ublock);
@@ -415,11 +415,11 @@ insert_field_list_get_size(
     _InVal_     PIXIT max_width,
     _OutRef_    P_PIXIT_SIZE p_pixit_size_out)
 {
-    const PIXIT buttons_width = DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_STDCANCEL_H;
+    const PIXIT buttons_width = DIALOG_DEFOK_H + DIALOG_STDSPACING_H + DIALOG_FATCANCEL_H;
     const PIXIT caption_width = ui_width_from_p_ui_text(p_ui_text_caption) + DIALOG_CAPTIONOVH_H;
     DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
     dialog_cmd_ctl_size_estimate.p_dialog_control = &insert_field_list;
-    dialog_cmd_ctl_size_estimate.p_dialog_control_data = &stdlisttext_data;
+    dialog_cmd_ctl_size_estimate.p_dialog_control_data.list_text = &stdlisttext_data;
     ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
     dialog_cmd_ctl_size_estimate.size.x += max_width;
     dialog_cmd_ctl_size_estimate.size.x += p_list_size->cx;
@@ -591,7 +591,7 @@ T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_date)
 
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        zero_struct(dialog_cmd_process_dbox);
+        zero_struct_fn(dialog_cmd_process_dbox);
         dialog_cmd_process_dbox.caption = caption;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_insert_field_intro;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &insert_field_intro_callback;
@@ -778,7 +778,7 @@ T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_page)
 
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        zero_struct(dialog_cmd_process_dbox);
+        zero_struct_fn(dialog_cmd_process_dbox);
         dialog_cmd_process_dbox.caption = caption;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_insert_field_intro;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &insert_field_intro_callback;

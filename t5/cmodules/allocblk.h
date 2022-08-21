@@ -32,12 +32,12 @@ extern P_ALLOCBLOCK global_string_alloc_block;
 
 _Check_return_
 extern STATUS
-alloc_block_create(
+alloc_block_create_block(
     _OutRef_    P_P_ALLOCBLOCK lplpAllocBlock,
     _InVal_     U32 n_bytes);
 
 extern void
-alloc_block_dispose(
+alloc_block_dispose_block(
     _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock);
 
 _Check_return_
@@ -48,6 +48,14 @@ alloc_block_malloc(
     _InVal_     U32 n_bytes_requested,
     _OutRef_    P_STATUS p_status);
 
+static inline void
+alloc_block_dispose(
+    _Inout_     P_P_ANY aa /*,
+    _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock*/)
+{
+    *aa = NULL; /* doesn't need freeing */
+}
+
 _Check_return_
 extern STATUS
 alloc_block_ustr_set(
@@ -55,12 +63,28 @@ alloc_block_ustr_set(
     _In_z_      PC_USTR b,
     _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock);
 
+static inline void
+alloc_block_ustr_clr(
+    _Inout_     P_P_USTR aa /*,
+    _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock*/)
+{
+    *aa = NULL; /* doesn't need freeing */
+}
+
 _Check_return_
 extern STATUS
 alloc_block_tstr_set(
     _OutRef_    P_PTSTR aa,
     _In_z_      PCTSTR b,
     _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock);
+
+static inline void
+alloc_block_tstr_clr(
+    _Inout_     P_PTSTR aa /*,
+    _InoutRef_  P_P_ALLOCBLOCK lplpAllocBlock*/)
+{
+    *aa = NULL; /* doesn't need freeing */
+}
 
 #endif /* __allocblk_h */
 

@@ -12,12 +12,9 @@
 
 /* bitmap bits per word */
 #if !defined(BITMAP_BPW)
-#if RISCOS || (WINDOWS && 1)
+#if RISCOS || WINDOWS
 #define BITMAP_BPW 32
 #define FAST_BITMAP_OPS_32 1 /* fast 32-bit aligned bitmap ops */
-#elif WINDOWS
-#define BITMAP_BPW 64
-#define FAST_BITMAP_OPS_64 1 /* fast 64-bit aligned bitmap ops */
 #endif
 #endif /* BITMAP_BPW */
 
@@ -140,9 +137,15 @@ bitmap_bit_test(
     assert(bit_number < n_bits);
     if(bit_number < n_bits)
     {
-        BITMAP_WORD result = (BITMAP_WORD) (p_bitmap[word] & mask);
+        const BITMAP_WORD test_word = (BITMAP_WORD) (p_bitmap[word] & mask);
 
-        return((result != 0));
+#if defined(_MSC_VER) && !CROSS_COMPILE && (defined(_M_IX86) || defined(_M_X64) || defined(_M_ARM) || defined(_M_ARM64)) && 0 /* 225b diff minimization */
+#if BITMAP_BPW == 32
+        assert(_bittest((const LONG *) &p_bitmap[word], bit) == (0 != test_word));
+#endif
+#endif
+
+        return((0 != test_word));
     }
 
     return(FALSE);

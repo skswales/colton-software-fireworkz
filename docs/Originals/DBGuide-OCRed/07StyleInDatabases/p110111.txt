@@ -1,0 +1,40 @@
+﻿Changing a number format
+To change the number format defined in a style:
+1 Choose the style you want to edit and click on Change.
+2 Display the Number section of the Changing style dialogue
+box.
+3 There will be a number format already shown in the box. This
+is the current number format. Click on the box to the right to
+display the list of other predefined number formats. If one of
+these is what you want, or is closer to what you want, click on
+it and it will appear in the main Number format box.
+4 Edit the number format to your requirements. Type in hashes
+to represent numbers, and any punctuation marks or currency
+symbols you wish to appear. Remember to specify the
+precision required after the decimal place.
+5 Click OK. The style will be changed as specified and any
+numbers entered in that style will be reformatted.
+
+Creating your own custom number format
+You may find that the alternatives within the list don’t quite match
+your requirements. For example you may want to work in a
+currency format other than pounds sterling.
+To do this you should:
+1 Display the Number section of the Style dialogue box as
+described above.
+2 Select the standard number fomiat which most closely relates
+to what you want to create.
+3 In the Number format box, edit the format by adding or
+removing the necessary characters.
+4 Click OK to save the new number format as part of the style
+you were editing.
+
+The auto-format system
+If you create or alter styles containing number formats, the auto-
+format system will recognise new numbers entered in that form.
+
+Fireworkz Pro 111
+
+
+
+

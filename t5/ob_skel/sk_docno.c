@@ -33,7 +33,7 @@ internal routines
 
 _Check_return_
 static BOOL /* TRUE=can reuse entry */
-docno_void_entry(
+docu_entry_is_void(
     _DocuRef_   P_DOCU p_docu);
 
 /*
@@ -45,7 +45,7 @@ static
 #endif
 P_DOCU g_docu_table[256];
 
-static U32 g_docu_table_limit = 1; /* excl. DOCNO_NONE entry is valid (albeit always NONE) */
+static U32 g_docu_table_limit = 1; /* excl. */ /* DOCNO_NONE entry is valid (albeit always NONE) */
 
 static S32 docno_reuse_hold_count; /* document re-use hold */
 
@@ -103,7 +103,7 @@ docno_close_issue_close_thunk(
     maeve_event_close_thunk(p_docu); /* tidy up */
     } /*block*/
 
-    reportf(/*trace_4(TRACE_APP_SKEL,*/
+    trace_4(TRACE_APP_SKEL,
             TEXT("docno_close_issue_close_thunk freed docno: ") S32_TFMT TEXT(", path(%s), leaf(%s), extension(%s)"),
             (S32) p_docu->docno,
             report_tstr(p_docu->docu_name.path_name),
@@ -112,6 +112,19 @@ docno_close_issue_close_thunk(
 
     /* free name resources */
     name_dispose(&p_docu->docu_name);
+}
+
+static void
+docno_close_deallocate(
+    _DocuRef_   P_DOCU p_docu)
+{
+    const P_P_DOCU p_p_docu = &g_docu_table[p_docu->docno];
+
+    alloc_block_dispose_block(&p_docu->general_string_alloc_block);
+
+    al_ptr_dispose(P_P_ANY_PEDANTIC(p_p_docu));
+
+    *p_p_docu = P_DOCU_NONE;
 }
 
 extern void
@@ -135,32 +148,35 @@ docno_close(
 
     docno_close_issue_close(p_docu_from_docno(docno));
 
+    /* you might be tempted to just call
+     * docno_close_deallocate(p_docu_from_docno(docno));
+     * but the document might be now reduced to a thunk we need to hang on to
+     */
+
     { /* look for any documents (including this one) that can be released as a result of the close */
     S32 docs_remaining = 0;
     DOCNO i = (DOCNO) g_docu_table_limit;
 
     while(--i > DOCNO_NONE)
     {
-        const P_P_DOCU p_p_docu = &g_docu_table[i];
-        const P_DOCU p_docu = *p_p_docu;
+        const P_DOCU p_docu = p_docu_from_docno(i);
 
         if(IS_DOCU_NONE(p_docu))
             continue;
 
-        if(!docno_void_entry(p_docu))
+        if(docu_entry_is_void(p_docu))
         {
-            docs_remaining += 1;
+            docno_close_issue_close_thunk(p_docu);
+
+            docno_close_deallocate(p_docu);
+
             continue;
         }
 
-        docno_close_issue_close_thunk(p_docu);
-
-        alloc_block_dispose(&p_docu->general_string_alloc_block);
-
-        al_ptr_dispose(P_P_ANY_PEDANTIC(p_p_docu));
-
-        *p_p_docu = P_DOCU_NONE;
+        docs_remaining += 1;
     }
+
+    trace_1(TRACE_APP_SKEL, TEXT("docno_close docs_remaining: ") S32_TFMT, docs_remaining);
 
 #if 0 /* no longer needed now we use g_docu_table[] */
     /* when there are none left, blow away document table */
@@ -220,24 +236,25 @@ extern DOCNO /* DOCNO_NONE == end */
 docno_enum_docs(
     _InVal_     DOCNO docno_in)
 {
-    DOCNO res = DOCNO_NONE;
     DOCNO docno = (DOCNO) ((docno_in == DOCNO_NONE) ? DOCNO_FIRST : (docno_in + 1));
 
     for(; docno < g_docu_table_limit; ++docno)
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
-        if(docno_void_entry(p_docu))
+        if(IS_DOCU_NONE(p_docu))
+            continue;
+
+        if(docu_entry_is_void(p_docu))
             continue;
 
         if(!p_docu->flags.has_data)
             continue;
 
-        res = docno;
-        break;
+        return(docno);
     }
 
-    return(res);
+    return(DOCNO_NONE);
 }
 
 /******************************************************************************
@@ -254,21 +271,22 @@ extern DOCNO /* DOCNO_NONE == end */
 docno_enum_thunks(
     _InVal_     DOCNO docno_in)
 {
-    DOCNO res = DOCNO_NONE;
     DOCNO docno = (DOCNO) ((docno_in == DOCNO_NONE) ? DOCNO_FIRST : (docno_in + 1));
 
     for(; docno < g_docu_table_limit; ++docno)
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
-        if(docno_void_entry(p_docu))
+        if(IS_DOCU_NONE(p_docu))
             continue;
 
-        res = docno;
-        break;
+        if(docu_entry_is_void(p_docu))
+            continue;
+
+        return(docno);
     }
 
-    return(res);
+    return(DOCNO_NONE);
 }
 
 /******************************************************************************
@@ -279,6 +297,75 @@ docno_enum_thunks(
 * DOCNO_NONE = unable to allocate a document
 *
 ******************************************************************************/
+
+_Check_return_
+static DOCNO
+docno_allocate_scan_table(void)
+{
+    /* scan g_docu_table[] for a free slot */
+    DOCNO docno;
+
+    for(docno = DOCNO_FIRST; docno < g_docu_table_limit; ++docno)
+    {
+        const P_DOCU p_docu = p_docu_from_docno(docno);
+
+        if(IS_DOCU_NONE(p_docu) || docu_entry_is_void(p_docu))
+            return(docno);
+    }
+
+    return(DOCNO_NONE);
+}
+
+_Check_return_
+static DOCNO
+docno_allocate(void)
+{
+    P_DOCU p_docu = P_DOCU_NONE;
+    DOCNO docno = DOCNO_NONE;
+
+#if 1
+    /* Monotonic allocation of slots until g_docu_table[] exhausted */
+    if(g_docu_table_limit > DOCNO_MAX)
+    {
+        if(DOCNO_NONE == (docno = docno_allocate_scan_table()))
+            return(DOCNO_NONE);
+    }
+#else
+    /* Aggressive re-use of slots within current g_docu_table[] limits */
+    docno = docno_allocate_scan_table();
+#endif
+
+    if(DOCNO_NONE == docno)
+    {   /* Need to 'allocate' a slot for a new document at the end of g_docu_table[] */
+        if(g_docu_table_limit >= DOCNO_MAX)
+            return(DOCNO_NONE);
+
+        /* NB The first slot allocated will be &g_docu_table[1], thereby avoiding DOCNO_NONE */
+        docno = (DOCNO) g_docu_table_limit++;
+
+        /* Still no associated document structure in this slot */
+        assert(IS_DOCU_NONE(g_docu_table[docno]));
+    }
+
+    if(IS_DOCU_NONE(g_docu_table[docno]))
+    {   /* Need to allocate a new document structure in this slot */
+        STATUS status;
+
+        if(NULL == (g_docu_table[docno] = al_ptr_alloc_elem(DOCU, 1, &status)))
+        {
+            status_assert(status);
+            return(DOCNO_NONE);
+        }
+    }
+
+    p_docu = g_docu_table[docno];
+
+    memset32(p_docu, 0, sizeof32(DOCU));
+
+    p_docu->docno = docno;
+
+    return(docno);
+}
 
 _Check_return_
 static STATUS
@@ -305,62 +392,24 @@ docno_establish_docno_from_name(
         STATUS status = STATUS_OK;
         P_DOCU p_docu;
 
-        { /* scan g_docu_table[] for a free slot */
-        P_P_DOCU p_p_docu = NULL;
-        DOCNO i = (DOCNO) g_docu_table_limit;
-
-        while(--i > DOCNO_NONE)
-        {
-            P_P_DOCU this_p_p_docu = &g_docu_table[i];
-
-            p_docu = *this_p_p_docu;
-
-            if(IS_DOCU_NONE(p_docu) || docno_void_entry(p_docu))
-            {
-                p_p_docu = this_p_p_docu;
-                break;
-            }
-        }
-
-        if(NULL == p_p_docu)
-        {   /* Need to 'allocate' a slot for a new document at the end of g_docu_table[] */
-            if(g_docu_table_limit >= DOCNO_MAX)
-                return(DOCNO_NONE);
-
-            /* NB the first one allocated will be &g_docu_table[1], thereby avoiding DOCNO_NONE */
-            p_p_docu = &g_docu_table[g_docu_table_limit++];
-
-            *p_p_docu = P_DOCU_NONE;
-        }
-
-        if(IS_DOCU_NONE(*p_p_docu))
-        {   /* Need to allocate a new document structure in this slot */
-            if(NULL == (p_docu = al_ptr_alloc_elem(DOCU, 1, &status)))
-            {
-                status_assert(status);
-                return(DOCNO_NONE);
-            }
-            *p_p_docu = p_docu;
-        }
-
-        memset32(*p_p_docu, 0, sizeof32(DOCU));
-
-        docno = (DOCNO) (p_p_docu - &g_docu_table[0]); /* return index of this slot in g_docu_table[] */
-        } /*block*/
+        if(DOCNO_NONE == (docno = docno_allocate()))
+            return(DOCNO_NONE);
 
         p_docu = p_docu_from_docno(docno);
 
-        p_docu->docno = docno;
+        p_docu->docu_preferred_filetype = FILETYPE_T5_FIREWORKZ;
+
+        ss_local_time_to_ss_date(&p_docu->file_ss_date); /* overridden by loading */
 
         if(1 == docno)
             ab_size = 2048; /* SKS 24oct95 optimize for Config doc */
 
         ab_size -= ALLOCBLOCK_OVH;
 
-        if(status_ok(status = alloc_block_create(&p_docu->general_string_alloc_block, ab_size)))
+        if(status_ok(status = alloc_block_create_block(&p_docu->general_string_alloc_block, ab_size)))
         if(status_ok(status = name_dup(&p_docu->docu_name, p_docu_name))) /* copy in our name */
         {
-            reportf(/*trace_4(TRACE_APP_SKEL,*/
+            trace_4(TRACE_APP_SKEL,
                    TEXT("docno_establish_docno_from_name established docno: ") S32_TFMT TEXT(", path(%s), leaf(%s), extension(%s)"),
                    (S32) p_docu->docno,
                    report_tstr(p_docu->docu_name.path_name),
@@ -406,7 +455,10 @@ docno_find_name(
     {
         const P_DOCU p_docu = p_docu_from_docno(docno);
 
-        if(docno_void_entry(p_docu))
+        if(IS_DOCU_NONE(p_docu))
+            continue;
+
+        if(docu_entry_is_void(p_docu))
             continue;
 
         if(NULL == p_docu->docu_name.leaf_name)
@@ -736,11 +788,10 @@ docno_reuse_release(void)
 
 _Check_return_
 static BOOL /* TRUE=can reuse entry */
-docno_void_entry(
+docu_entry_is_void(
     _DocuRef_   P_DOCU p_docu)
 {
-    if(IS_DOCU_NONE(p_docu))
-        return(TRUE);
+    DOCU_ASSERT(p_docu);
 
     /* does this document have an instance ? */
     if(p_docu->flags.has_data)
@@ -889,14 +940,6 @@ extern DOCNO
 docno_from_p_docu(
     _DocuRef_   PC_DOCU p_docu)
 {
-#if CHECKING
-    if(NULL == p_docu) /* until this release is proven kosher and the assert here NEVER triggers ... */
-    {
-        assert(NULL != p_docu);
-        return(DOCNO_NONE);
-    }
-#endif
-
     if(IS_DOCU_NONE(p_docu))
         return(DOCNO_NONE);
 
@@ -938,7 +981,7 @@ docno_is_valid(
     if(docno >= g_docu_table_limit)
         return(FALSE);
 
-    return(!IS_DOCU_NONE(g_docu_table[docno]));
+    return(DOCU_NOT_NONE(g_docu_table[docno]));
 }
 
 extern void

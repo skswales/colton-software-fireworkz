@@ -24,8 +24,6 @@
 #include "cmodules/typepack.h"
 #endif
 
-#include <ctype.h> /* for "C"isalpha and friends */
-
 /******************************************************************************
 *
 * Save as Microsoft Office Excel BIFF Format
@@ -509,6 +507,7 @@ BIFF8_compiler_functions[] = /* ordered as Fireworkz */
 /*alert*/
 /*asec*/
 /*asech*/
+/*base*/
 /*beta*/
 /*bin*/
 /*break*/
@@ -557,6 +556,7 @@ BIFF8_compiler_functions[] = /* ordered as Fireworkz */
 /*dayname*/
 /*dcount*/
 /*dcounta*/
+/*decimal*/
 /*deref*/
 /*dmax*/
 /*dmin*/
@@ -973,7 +973,7 @@ xls_recog_slr(
         abs_row = TRUE;
     }
 
-    if(!/*"C"*/isdigit(*p_u8))
+    if(!sbchar_isdigit(*p_u8))
         return(0);
 
     {
@@ -1162,7 +1162,7 @@ scan_next_symbol(void)
     }
 
     /* check for constant */
-    if(/*"C"*/isdigit(PtrGetByte(p_compile_scan)) /*|| (PtrGetByte(p_compile_scan) == CH_FULL_STOP)*/)
+    if(sbchar_isdigit(PtrGetByte(p_compile_scan)) /*|| (PtrGetByte(p_compile_scan) == CH_FULL_STOP)*/)
     {
         S32 scan_code, scanned;
 
@@ -1381,6 +1381,8 @@ process_function_arguments(
 *
 ******************************************************************************/
 
+#if defined(UNUSED_KEEP_ALIVE)
+
 _Check_return_
 static inline STATUS
 xls_rpn_out_BIFF_FN_False(void)
@@ -1398,6 +1400,8 @@ xls_rpn_out_BIFF_FN_True(void)
 
     return(xls_rpn_out_U16(BIFF_FN_True));
 }
+
+#endif /* UNUSED */
 
 _Check_return_
 static STATUS
@@ -2068,7 +2072,7 @@ _Check_return_
 static STATUS
 xls_write_BOOLERR_record_boolean(
     _InoutRef_  P_FF_OP_FORMAT p_ff_op_format,
-    _InVal_     U8 boolean_value,
+    _InVal_     bool boolean_value,
     _InRef_     PC_SLR p_slr)
 {
     const XLS_OPCODE opcode = X_BOOLERR_B3_B8;
@@ -2089,7 +2093,7 @@ xls_write_BOOLERR_record_boolean(
 
     /* 4,5 are XF index (already set) */
 
-    x[6] = boolean_value;
+    x[6] = boolean_value ? 1U : 0U;
     /* 7 is flag as Boolean/Error value (already set) */
 
     return(xls_write_record(p_ff_op_format, opcode, sizeof_x, x));
@@ -2357,9 +2361,8 @@ xls_write_cell_ss_constant(
         }
 
     case DATA_ID_LOGICAL:
-        return(xls_write_BOOLERR_record_boolean(p_ff_op_format, (U8) ss_data_get_integer(p_ss_data), p_slr));
+        return(xls_write_BOOLERR_record_boolean(p_ff_op_format, ss_data_get_logical(p_ss_data), p_slr));
 
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
         {
@@ -2367,22 +2370,27 @@ xls_write_cell_ss_constant(
         return(xls_write_NUMBER_record(p_ff_op_format, f64, p_slr));
         }
 
-    case DATA_ID_STRING:
-        if(ss_data_get_string_size(p_ss_data) > 255)
-            return(xls_write_LABEL_record(p_ff_op_format, ss_data_get_string(p_ss_data), ss_data_get_string_size(p_ss_data), p_slr));
-
-        return(xls_write_string(p_ff_op_format, ss_data_get_string(p_ss_data), ss_data_get_string_size(p_ss_data), p_slr));
-
     case DATA_ID_DATE:
         return(xls_write_date(p_ff_op_format, ss_data_get_date(p_ss_data), p_slr));
+
+    case DATA_ID_STRING:
+        {
+        const PC_UCHARS uchars = ss_data_get_string(p_ss_data);
+        const U32 uchars_n = ss_data_get_string_size(p_ss_data);
+
+        if(uchars_n > 255)
+            return(xls_write_LABEL_record(p_ff_op_format, uchars, uchars_n, p_slr));
+
+        return(xls_write_string(p_ff_op_format, uchars, uchars_n, p_slr));
+        }
 
     case DATA_ID_BLANK:
         return(xls_write_BLANK_record(p_ff_op_format, p_slr));
 
     default: default_unhandled();
 #if CHECKING
-    case DATA_ID_ARRAY:
     case DATA_ID_ERROR:
+    case DATA_ID_ARRAY:
 #endif
         break;
     }
@@ -2402,10 +2410,10 @@ encode_result_STRING(
 static void
 encode_result_BOOLEAN(
     /*_Out_writes_(8)*/ P_BYTE result,
-    _InVal_     BOOL fBool)
+    _InVal_     bool fBool)
 {
     result[0] = 0x01; /* denote Boolean value result */
-    result[2] = (BYTE) (fBool != FALSE);
+    result[2] = (BYTE) (fBool ? 1U : 0U);
     result[6] = 0xFF;
     result[7] = 0xFF;
 }
@@ -2464,13 +2472,6 @@ xls_write_cell_ss_normal(
 
         switch(ss_data_get_data_id(p_ss_data))
         {
-        default: default_unhandled();
-#if CHECKING
-        case DATA_ID_ARRAY:
-        case DATA_ID_ERROR:
-#endif
-            break;
-
         case DATA_ID_REAL:
             {
             const F64 f64_result = ss_data_get_real(p_ss_data);
@@ -2485,12 +2486,21 @@ xls_write_cell_ss_normal(
             encode_result_BOOLEAN(&x[6], ss_data_get_logical(p_ss_data));
             break;
 
-        case DATA_ID_WORD8:
         case DATA_ID_WORD16:
         case DATA_ID_WORD32:
             {
             const F64 f64_result = (F64) ss_data_get_integer(p_ss_data);
             writeval_F64_as_8087(&x[6], f64_result);
+            break;
+            }
+
+        case DATA_ID_DATE:
+            {
+            const F64 f64_result = xls_get_f64_from_date(ss_data_get_date(p_ss_data));
+            if(isfinite((double) f64_result))
+                writeval_F64_as_8087(&x[6], f64_result);
+            else
+                encode_result_ERROR_NUM(&x[6]);
             break;
             }
 
@@ -2509,16 +2519,6 @@ xls_write_cell_ss_normal(
             string_size = ss_data_get_string_size(p_ss_data);
             break;
 
-        case DATA_ID_DATE:
-            {
-            const F64 f64_result = xls_get_f64_from_date(ss_data_get_date(p_ss_data));
-            if(isfinite((double) f64_result))
-                writeval_F64_as_8087(&x[6], f64_result);
-            else
-                encode_result_ERROR_NUM(&x[6]);
-            break;
-            }
-
         case DATA_ID_BLANK:
             if(biff_version == 8)
             {
@@ -2527,6 +2527,13 @@ xls_write_cell_ss_normal(
             }
             string_uchars = uchars_empty_string;
             string_size = 0;
+            break;
+
+        default: default_unhandled();
+#if CHECKING
+        case DATA_ID_ERROR:
+        case DATA_ID_ARRAY:
+#endif
             break;
         }
 
@@ -2582,7 +2589,7 @@ xls_write_cell_ss(
     }
     else
     {
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
         quick_ublock_with_buffer_setup(quick_ublock);
 
         { /* Excel-ise the decompiler output - formulae that don't compile will appear better in Excel */
@@ -2626,7 +2633,7 @@ xls_write_cell_text(
     _InRef_     PC_OBJECT_DATA p_object_data)
 {
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 256);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     {

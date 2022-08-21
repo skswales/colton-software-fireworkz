@@ -38,7 +38,7 @@ PROC_EXEC_PROTO(c_address)
     const COL col = ss_data_get_integer(args[1]) - 1;
     BOOL abs_row = TRUE;
     BOOL abs_col = TRUE;
-    bool a1 = true;
+    const bool a1 = (n_args > 3) ? ss_data_get_logical(args[3]) : true;
     UCHARZ ustr_buf[BUF_EV_LONGNAMLEN];
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 32);
     quick_ublock_with_buffer_setup(quick_ublock);
@@ -66,9 +66,6 @@ PROC_EXEC_PROTO(c_address)
             break;
         }
     }
-
-    if(n_args > 3)
-        a1 = ss_data_get_logical(args[3]);
 
     if(n_args > 4)
     {   /* prepend external reference */
@@ -119,15 +116,11 @@ PROC_EXEC_PROTO(c_address)
     }
 
     if(status_ok(status))
-    {
         status_assert(ss_string_make_uchars(p_ss_data_res, quick_ublock_uchars(&quick_ublock), quick_ublock_bytes(&quick_ublock)));
-    }
-    else
-    {
-        ss_data_set_error(p_ss_data_res, status);
-    }
 
     quick_ublock_dispose(&quick_ublock);
+
+    exec_func_status_return(p_ss_data_res, status);
 }
 
 /******************************************************************************
@@ -138,12 +131,14 @@ PROC_EXEC_PROTO(c_address)
 
 PROC_EXEC_PROTO(c_choose)
 {
+    const S32 arg_number = ss_data_get_integer(args[0]);
+
     exec_func_ignore_parms();
 
-    if( (ss_data_get_integer(args[0]) < 1) || (ss_data_get_integer(args[0]) >= n_args) )
+    if( (arg_number < 1) || (arg_number >= n_args) )
         exec_func_status_return(p_ss_data_res, EVAL_ERR_OUTOFRANGE);
 
-    status_assert(ss_data_resource_copy(p_ss_data_res, args[ss_data_get_integer(args[0])]));
+    status_assert(ss_data_resource_copy(p_ss_data_res, args[arg_number]));
 }
 
 /******************************************************************************
@@ -159,7 +154,7 @@ PROC_EXEC_PROTO(c_col)
 
     exec_func_ignore_parms();
 
-    if(n_args >= 1)
+    if(0 != n_args)
     {
         if(DATA_ID_SLR == ss_data_get_data_id(args[0]))
             p_ev_slr = &(args[0]->arg.slr);
@@ -251,7 +246,7 @@ PROC_EXEC_PROTO(c_index)
     array_range_sizes(array_data, &x_size_in, &y_size_in);
 
     /* NB Fireworkz and PipeDream INDEX() has x, y args */
-    if(0 == ss_data_get_integer(args[1]))
+    if(ss_data_get_integer(args[1]) <= 0)
     {   /* zero column number -> whole row */
         ix = 0;
         x_size_out = x_size_in;
@@ -262,7 +257,7 @@ PROC_EXEC_PROTO(c_index)
         x_size_out = 1;
     }
 
-    if(0 == ss_data_get_integer(args[2]))
+    if(ss_data_get_integer(args[2]) <= 0)
     {   /* zero row number -> whole column */
         iy = 0;
         y_size_out = y_size_in;
@@ -276,19 +271,17 @@ PROC_EXEC_PROTO(c_index)
     /* get size out parameters */
     if(n_args > 4)
     {
-        if(0 == ss_data_get_integer(args[3]))
+        x_size_out = MAX(0, ss_data_get_integer(args[3]));
+        if(0 == x_size_out)
         {   /* zero x_size -> all of row starting from column index x */
             x_size_out = x_size_in - ix;
         }
-        else
-            x_size_out = MAX(1, ss_data_get_integer(args[3]));
 
-        if(0 == ss_data_get_integer(args[4]))
+        y_size_out = MAX(0, ss_data_get_integer(args[4]));
+        if(0 == y_size_out)
         {   /* zero y_size -> all of column starting from row index y */
             y_size_out = y_size_in - iy;
         }
-        else
-            y_size_out = MAX(1, ss_data_get_integer(args[4]));
     }
 
     /* check it's all in range */
@@ -313,7 +306,7 @@ PROC_EXEC_PROTO(c_odf_index)
     array_range_sizes(array_data, &x_size_in, &y_size_in);
 
     /* NB OpenDocument INDEX() has row, column args */
-    if(0 == ss_data_get_integer(args[1]))
+    if(ss_data_get_integer(args[1]) <= 0)
     {   /* zero row number -> whole column */
         iy = 0;
         y_size_out = y_size_in;
@@ -324,7 +317,7 @@ PROC_EXEC_PROTO(c_odf_index)
         y_size_out = 1;
     }
 
-    if(0 == ss_data_get_integer(args[2]))
+    if(ss_data_get_integer(args[2]) <= 0)
     {   /* zero column number -> whole row */
         ix = 0;
         x_size_out = x_size_in;
@@ -360,7 +353,7 @@ PROC_EXEC_PROTO(c_row)
 
     exec_func_ignore_parms();
 
-    if(n_args >= 1)
+    if(0 != n_args)
     {
         if(DATA_ID_SLR == ss_data_get_data_id(args[0]))
             p_ev_slr = &(args[0]->arg.slr);
@@ -448,7 +441,6 @@ PROC_EXEC_PROTO(c_current_cell)
     UNREFERENCED_PARAMETER(args);
 
     ev_current_cell(&p_ss_data_res->arg.slr);
-
     ss_data_set_data_id(p_ss_data_res, DATA_ID_SLR);
 }
 
@@ -480,11 +472,10 @@ PROC_EXEC_PROTO(c_doubleclick)
     UNREFERENCED_PARAMETER(args);
 
     ev_double_click(&p_ss_data_res->arg.slr, p_cur_slr);
+    ss_data_set_data_id(p_ss_data_res, DATA_ID_SLR);
 
     if(DOCNO_NONE == ev_slr_docno(&p_ss_data_res->arg.slr))
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ODF_NA);
-
-    ss_data_set_data_id(p_ss_data_res, DATA_ID_SLR);
 }
 
 /******************************************************************************
@@ -495,7 +486,7 @@ PROC_EXEC_PROTO(c_doubleclick)
 
 PROC_EXEC_PROTO(c_even)
 {
-    BOOL negate_result = FALSE;
+    bool negate_result = false;
     F64 f64 = ss_data_get_real(args[0]);
     F64 even_result;
 
@@ -504,7 +495,7 @@ PROC_EXEC_PROTO(c_even)
     if(f64 < 0.0)
     {
         f64 = -f64;
-        negate_result = TRUE;
+        negate_result = true;
     }
 
     even_result = 2.0 * ceil(f64 * 0.5);
@@ -548,10 +539,7 @@ PROC_EXEC_PROTO(c_flip)
     status_assert(ss_data_resource_copy(p_ss_data_res, args[0]));
     data_ensure_constant(p_ss_data_res);
 
-    if(ss_data_is_error(p_ss_data_res))
-        return;
-
-    if(DATA_ID_ARRAY == ss_data_get_data_id(p_ss_data_res))
+    if(ss_data_is_array(p_ss_data_res))
     {
         array_range_sizes(p_ss_data_res, &x_size, &y_size);
         y_half = y_size / 2;
@@ -634,38 +622,51 @@ PROC_EXEC_PROTO(c_iserror)
 }
 
 static void
+iseven_isodd_calc_real(
+    _InoutRef_  P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA arg0,
+    _InVal_     bool test_iseven)
+{
+    bool is_even;
+    F64 f64 = ss_data_get_real(arg0);
+    if(f64 < 0.0)
+        f64 = -f64;
+    f64 = floor(f64); /* NB truncate (Excel) */
+    is_even = (f64 == (2.0 * floor(f64 * 0.5))); /* exactly divisible by two? */
+    ss_data_set_logical(p_ss_data_out, (test_iseven ? is_even /* test for iseven() */ : !is_even /* test for isodd() */));
+}
+
+static void
+iseven_isodd_calc_integer(
+    _InoutRef_  P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA arg0,
+    _InVal_     bool test_iseven)
+{
+    bool is_even;
+    S32 s32 = ss_data_get_integer(arg0);
+    if(s32 < 0)
+        s32 = -s32;
+    is_even = (0 == (s32 & 1)); /* bottom bit clear -> number is even */
+    ss_data_set_logical(p_ss_data_out, (test_iseven ? is_even /* test for iseven() */ : !is_even /* test for isodd() */));
+}
+
+static void
 iseven_isodd_calc(
     _InoutRef_  P_SS_DATA p_ss_data_out,
     _InRef_     PC_SS_DATA arg0,
     _InVal_     bool test_iseven)
 {
-    bool is_even = false;
-
     switch(ss_data_get_data_id(arg0))
     {
     case DATA_ID_REAL:
-        {
-        F64 f64 = ss_data_get_real(arg0);
-        if(f64 < 0.0)
-            f64 = -f64;
-        f64 = floor(f64); /* NB truncate (Excel) */
-        is_even = (f64 == (2.0 * floor(f64 * 0.5))); /* exactly divisible by two? */
-        ss_data_set_logical(p_ss_data_out, (test_iseven ? is_even /* test for iseven() */ : !is_even /* test for isodd() */));
+        iseven_isodd_calc_real(p_ss_data_out, arg0, test_iseven);
         break;
-        }
 
     case DATA_ID_LOGICAL: /* more useful? */
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
-        {
-        S32 s32 = ss_data_get_integer(arg0);
-        if(s32 < 0)
-            s32 = -s32;
-        is_even = (0 == (s32 & 1)); /* bottom bit clear -> number is even */
-        ss_data_set_logical(p_ss_data_out, (test_iseven ? is_even /* test for iseven() */ : !is_even /* test for isodd() */));
+        iseven_isodd_calc_integer(p_ss_data_out, arg0, test_iseven);
         break;
-        }
 
 #if 0 /* more pedantic? */
     case DATA_ID_LOGICAL:
@@ -733,7 +734,7 @@ PROC_EXEC_PROTO(c_isnontext)
     switch(ss_data_get_data_id(args[0]))
     {
     case DATA_ID_STRING:
-        isnontext_result = FALSE;
+        isnontext_result = false;
         break;
 
     default:
@@ -753,10 +754,9 @@ PROC_EXEC_PROTO(c_isnumber)
     {
     case DATA_ID_REAL:
     /*case DATA_ID_LOGICAL:*/ /* indeed! that's a LOGICAL for Excel */
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
-    case DATA_ID_DATE:
+    case DATA_ID_DATE: /* as it can be converted to an Excel serial number */
         isnumber_result = true;
         break;
 
@@ -829,13 +829,24 @@ PROC_EXEC_PROTO(c_na)
 
 /******************************************************************************
 *
+* LOGICAL not() function is equivalent OpenDocument / Microsoft Excel function
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_not)
+{
+    c_uop_not(args, n_args, p_ss_data_res, p_cur_slr);
+}
+
+/******************************************************************************
+*
 * NUMBER odd(number)
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_odd)
 {
-    BOOL negate_result = FALSE;
+    bool negate_result = false;
     F64 f64 = ss_data_get_real(args[0]);
 
     exec_func_ignore_parms();
@@ -843,7 +854,7 @@ PROC_EXEC_PROTO(c_odd)
     if(f64 < 0.0)
     {
         f64 = -f64;
-        negate_result = TRUE;
+        negate_result = true;
     }
 
     f64 = (2.0 * ceil((f64 + 1.0) * 0.5)) - 1.0;
@@ -857,14 +868,14 @@ PROC_EXEC_PROTO(c_odd)
 
 /******************************************************************************
 *
-* INTEGER page(ref, n)
+* INTEGER page(ref {, n})
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_page)
 {
     S32 page_result;
-    BOOL y_flag = (n_args < 2) ? TRUE : ss_data_get_logical(args[1]);
+    const BOOL y_flag = (n_args > 1) ? (ss_data_get_integer(args[1]) != 0) : TRUE;
     STATUS status = ev_page_slr(&args[0]->arg.slr, y_flag);
 
     exec_func_ignore_parms();
@@ -878,14 +889,14 @@ PROC_EXEC_PROTO(c_page)
 
 /******************************************************************************
 *
-* INTEGER pages(n)
+* INTEGER pages({n})
 *
 ******************************************************************************/
 
 PROC_EXEC_PROTO(c_pages)
 {
     S32 pages_result;
-    BOOL y_flag = (n_args < 1) ? TRUE : ss_data_get_logical(args[0]);
+    const BOOL y_flag = (0 != n_args) ? (ss_data_get_integer(args[0]) != 0) : TRUE;
     STATUS status = ev_page_last(ev_slr_docno(p_cur_slr), y_flag);
 
     exec_func_ignore_parms();
@@ -895,6 +906,17 @@ PROC_EXEC_PROTO(c_pages)
     pages_result = (S32) status;
 
     ss_data_set_integer(p_ss_data_res, pages_result);
+}
+
+/******************************************************************************
+*
+* NUMBER power(a, b) is equivalent OpenDocument / Microsoft Excel function
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_power)
+{
+    c_bop_power(args, n_args, p_ss_data_res, p_cur_slr);
 }
 
 /******************************************************************************
@@ -913,8 +935,8 @@ PROC_EXEC_PROTO(c_set_name)
 
     exec_func_ignore_parms();
 
-    if((res = name_make(&name_key, ev_slr_docno(p_cur_slr), &args[0]->arg.string, args[1], NULL)) < 0)
-        exec_func_status_return(p_ss_data_res, res);
+    res = name_make(&name_key, ev_slr_docno(p_cur_slr), &args[0]->arg.string, args[1], NULL);
+    exec_func_status_return(p_ss_data_res, res);
 
     name_num = name_def_from_handle(name_key);
     assert(name_num >= 0);
@@ -936,7 +958,7 @@ PROC_EXEC_PROTO(c_sort)
     exec_func_ignore_parms();
 
     if(n_args > 1)
-        x_index = (U32) ss_data_get_integer(args[1]); /* array_sort() does range checking */ /* NB NOT -1 - SORT() is zero-based (see printed Fireworkz documentation) */
+        x_index = (U32) ss_data_get_integer(args[1]); /* NB NOT -1 - SORT() is zero-based (see printed Fireworkz documentation) */
 
     status_assert(ss_data_resource_copy(p_ss_data_res, args[0]));
     data_ensure_constant(p_ss_data_res);
@@ -944,7 +966,7 @@ PROC_EXEC_PROTO(c_sort)
     if(ss_data_is_error(p_ss_data_res))
         return;
 
-    if(status_fail(status = array_sort(p_ss_data_res, x_index)))
+    if(status_fail(status = array_sort(p_ss_data_res, x_index))) /* array_sort() does range checking */
     {
         ss_data_free_resources(p_ss_data_res);
         ss_data_set_error(p_ss_data_res, status);
@@ -984,29 +1006,18 @@ PROC_EXEC_PROTO(c_type)
 #if CHECKING
     case DATA_ID_REAL:
     case DATA_ID_LOGICAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
 #endif
         type = EM_REA;
         break;
 
-    case DATA_ID_SLR:
-        type = EM_SLR;
-        break;
-
-    case DATA_ID_STRING:
-        type = EM_STR;
-        break;
-
     case DATA_ID_DATE:
         type = EM_DAT;
         break;
 
-    case DATA_ID_RANGE:
-    case DATA_ID_ARRAY:
-    case DATA_ID_FIELD:
-        type = EM_ARY;
+    case DATA_ID_STRING:
+        type = EM_STR;
         break;
 
     case DATA_ID_BLANK:
@@ -1015,6 +1026,16 @@ PROC_EXEC_PROTO(c_type)
 
     case DATA_ID_ERROR:
         type = EM_ERR;
+        break;
+
+    case DATA_ID_SLR:
+        type = EM_SLR;
+        break;
+
+    case DATA_ID_ARRAY:
+    case DATA_ID_RANGE:
+    case DATA_ID_FIELD:
+        type = EM_ARY;
         break;
     }
 
@@ -1041,7 +1062,6 @@ PROC_EXEC_PROTO(c_odf_type)
     default: default_unhandled();
 #if CHECKING
     case DATA_ID_REAL:
-    case DATA_ID_WORD8:
     case DATA_ID_WORD16:
     case DATA_ID_WORD32:
     case DATA_ID_DATE: /* Excel stores these as real numbers; we can convert if required */
@@ -1062,8 +1082,8 @@ PROC_EXEC_PROTO(c_odf_type)
         odf_type_result = 16;
         break;
 
-    case DATA_ID_RANGE:
     case DATA_ID_ARRAY:
+    case DATA_ID_RANGE:
     case DATA_ID_FIELD:
         odf_type_result = 64;
         break;

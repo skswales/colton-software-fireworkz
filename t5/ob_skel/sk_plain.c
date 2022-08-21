@@ -134,7 +134,7 @@ plain_text_effects_off(
     P_U8 effects)
 {
     FONT_SPEC font_spec;
-    zero_struct(font_spec);
+    zero_struct_fn(font_spec);
     return(plain_text_effects_update(p_quick_ublock, effects, &font_spec));
 }
 

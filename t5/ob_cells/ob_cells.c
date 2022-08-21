@@ -287,6 +287,68 @@ clip_data_array_handle_prepare(
     return(al_array_alloc_zero(p_h_clip_data, &array_init_block));
 }
 
+#if CHECKING || WINDOWS
+
+/******************************************************************************
+*
+* dump clipboard data to a file for later perusal
+*
+******************************************************************************/
+
+static void
+clip_data_save_clip_get(
+    _InVal_     ARRAY_HANDLE array_handle)
+{
+#if WINDOWS
+    const PCTSTR leafname = TEXT("clip_get.dat");
+    const U32 leafname_len = tstrlen32(leafname);
+    TCHARZ tempPathBuffer[MAX_PATH];
+    /* Gets the temp path env string (no guarantee it's a valid path). */
+    DWORD dwRetVal = GetTempPath(elemof32(tempPathBuffer), tempPathBuffer);
+    /* Check that there is space to append our leafname */
+    if((dwRetVal != 0) && ((dwRetVal + leafname_len) < elemof32(tempPathBuffer)))
+    {
+        tstr_xstrkat(tempPathBuffer, elemof32(tempPathBuffer), leafname);
+        status_assert(clip_data_save(tempPathBuffer, &array_handle));
+    }
+#elif RISCOS
+    status_assert(clip_data_save(TEXT("$.Temp.clip_get/dat"), &array_handle));
+#endif
+}
+
+#endif /* CHECKING */
+
+#if CHECKING
+
+/******************************************************************************
+*
+* dump clipboard data to a file for later perusal
+*
+******************************************************************************/
+
+static void
+clip_data_save_clip_set(
+    _In_        ARRAY_HANDLE h_clip_data)
+{
+#if WINDOWS
+    const PCTSTR leafname = TEXT("clip_set.fwk");
+    const U32 leafname_len = tstrlen32(leafname);
+    TCHARZ tempPathBuffer[MAX_PATH];
+    /* Gets the temp path env string (no guarantee it's a valid path). */
+    DWORD dwRetVal = GetTempPath(elemof32(tempPathBuffer), tempPathBuffer);
+    /* Check that there is space to append our leafname */
+    if((dwRetVal != 0) && ((dwRetVal + leafname_len) < elemof32(tempPathBuffer)))
+    {
+        tstr_xstrkat(tempPathBuffer, elemof32(tempPathBuffer), leafname);
+        status_assert(clip_data_save(tempPathBuffer, &h_clip_data));
+    }
+#elif RISCOS
+    status_assert(clip_data_save(TEXT("$.Temp.clip_set/fwk"), &h_clip_data));
+#endif
+}
+
+#endif /* CHECKING */
+
 /******************************************************************************
 *
 * donate handle as application-local or system-global clipboard data
@@ -377,11 +439,12 @@ cells_global_clipboard_data_xfer_save(
 
 reportf("cells_global_clipboard_data_xfer_save(0x%.3X)", t5_filetype);
 
-    if(!IS_DOCU_NONE(global_clipboard_owning_p_docu))
+    if(DOCU_NOT_NONE(global_clipboard_owning_p_docu))
     {
         switch(t5_filetype)
         {
         case FILETYPE_T5_FIREWORKZ:
+        case FILETYPE_T5_HYBRID_DRAW:
             status = cells_global_clipboard_data_xfer_save_native(filename, t5_filetype);
             break;
 
@@ -449,6 +512,95 @@ reportf("cells_global_clipboard_data_DataRequest(0x%.3X)", save_as_t5_filetype);
 *
 ******************************************************************************/
 
+#if defined(USE_GLOBAL_CLIPBOARD) && RISCOS
+
+_Check_return_
+static BOOL
+global_clip_data_set_core_riscos(
+    _DocuRef_   P_DOCU p_docu,
+    _In_        ARRAY_HANDLE h_clip_data,
+    _InVal_     BOOL clip_data_from_cut_operation,
+    _InVal_     OBJECT_ID object_id)
+{
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("global_clip_data_set"));
+
+    if(!host_acquire_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu), cells_global_clipboard_data_dispose, cells_global_clipboard_data_DataRequest))
+        return(FALSE);
+
+    { /* render(ed by saver) as Fireworkz already */
+    g_h_global_clip_data = h_clip_data; /* steal */
+    h_clip_data = 0;
+    } /*block*/
+
+    g_clip_data_from_cut_operation = clip_data_from_cut_operation;
+
+    if(!clip_data_from_cut_operation || (OBJECT_ID_CELLS != object_id))
+    {
+    }
+
+    return(TRUE);
+}
+
+#endif /* RISCOS */
+
+#if defined(USE_GLOBAL_CLIPBOARD) && WINDOWS
+
+static BOOL
+global_clip_data_set_core_windows(
+    _DocuRef_   P_DOCU p_docu,
+    _In_        ARRAY_HANDLE h_clip_data,
+    _InVal_     BOOL clip_data_from_cut_operation,
+    _InVal_     OBJECT_ID object_id)
+{
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("global_clip_data_set"));
+
+    /* Put on Windows clipboard best-format-first after first acquiring clipboard (emptying establishes ownership) */
+    if(!host_acquire_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu)))
+        return(FALSE);
+
+    al_array_trim(&h_clip_data);
+
+    { /* render(ed by saver) as Fireworkz already */
+    HGLOBAL hMem = al_array_steal_hglobal(&h_clip_data);
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("global_clip_data_set_core_windows: SetClipboardData(cf_fireworkz, hMem)"));
+    if(WrapOsBoolChecking(NULL != SetClipboardData(cf_fireworkz, hMem)))
+    { /*EMPTY*/ }
+    } /*block*/
+
+    g_clip_data_from_cut_operation = clip_data_from_cut_operation;
+
+    if(!clip_data_from_cut_operation || (OBJECT_ID_CELLS != object_id))
+    {
+        /* defer rendering in other formats until requested for copy - can't do for cut!
+         * NB won't be precise if this doc is modified before paste in other app!
+         */
+
+        /* Always offer CF_TEXT */
+        trace_0(TRACE_APP_CLIPBOARD, TEXT("global_clip_data_set_core_windows: SetClipboardData(CF_TEXT, deferred)"));
+        /* NB NULL data incorrectly triggers non-success */
+        (void) SetClipboardData(CF_TEXT, NULL);
+
+        { /* Then loop over all clipboard formats that we've registered */
+        ARRAY_INDEX i;
+
+        for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
+        {
+            const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
+
+            if(0 != p_installed_save_object->uClipboardFormat)
+                (void) SetClipboardData(p_installed_save_object->uClipboardFormat, NULL);
+        }
+        } /*block*/
+    }
+
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("global_clip_data_set_core_windows: CloseClipboard"));
+    host_close_global_clipboard();
+
+    return(TRUE);
+}
+
+#endif /* WINDOWS */
+
 extern void
 global_clip_data_set(
     _DocuRef_   P_DOCU p_docu,
@@ -459,84 +611,17 @@ global_clip_data_set(
 #if defined(USE_GLOBAL_CLIPBOARD)
     global_clip_data_dispose();
 
-    g_clip_data_from_cut_operation = clip_data_from_cut_operation;
-
 #if CHECKING
     if(0 != h_clip_data)
-    {
-#if WINDOWS
-        {
-        PCTSTR leafname = TEXT("clip_set.fwk");
-        const U32 leafname_len = tstrlen32(leafname);
-        TCHARZ tempPathBuffer[MAX_PATH];
-        /* Gets the temp path env string (no guarantee it's a valid path). */
-        DWORD dwRetVal = GetTempPath(elemof32(tempPathBuffer), tempPathBuffer);
-        /* Check that there is space to append our leafname */
-        if((dwRetVal != 0) && ((dwRetVal + leafname_len) < elemof32(tempPathBuffer)))
-        {
-            tstr_xstrkat(tempPathBuffer, elemof32(tempPathBuffer), leafname);
-            status_assert(clip_data_save(tempPathBuffer, &h_clip_data));
-        }
-        } /*block*/
-#elif RISCOS
-        status_assert(clip_data_save(TEXT("$.Temp.clip_set/fwk"), &h_clip_data));
-#endif
-    }
+        clip_data_save_clip_set(h_clip_data);
 #endif /* CHECKING */
 
 #if RISCOS
-    if(host_acquire_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu), cells_global_clipboard_data_dispose, cells_global_clipboard_data_DataRequest))
-    {
-        { /* render(ed by saver) as Fireworkz already */
-        g_h_global_clip_data = h_clip_data; /* steal */
-        h_clip_data = 0;
-        } /*block*/
-
-        if(!clip_data_from_cut_operation || (OBJECT_ID_CELLS != object_id))
-        {
-        }
-
+    if(global_clip_data_set_core_riscos(p_docu, h_clip_data, clip_data_from_cut_operation, object_id))
         return;
-    }
 #elif WINDOWS
-    /* Put on Windows clipboard best-format-first after first acquiring clipboard (emptying establishes ownership) */
-    if(host_acquire_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu)))
-    {
-        { /* render(ed by saver) as Fireworkz already */
-        HGLOBAL hMem;
-        al_array_trim(&h_clip_data);
-        hMem = al_array_steal_hglobal(&h_clip_data);
-        if(WrapOsBoolChecking(NULL != SetClipboardData(cf_fireworkz, hMem)))
-        { /*EMPTY*/ }
-        } /*block*/
-
-        if(!clip_data_from_cut_operation || (OBJECT_ID_CELLS != object_id))
-        {
-            /* defer rendering in other formats until requested for copy - can't do for cut!
-             * NB won't be precise if this doc is modified before paste in other app!
-             */
-
-            /* Always offer CF_TEXT */
-            /* NB NULL data incorrectly triggers non-success */
-            (void) SetClipboardData(CF_TEXT, NULL);
-
-            { /* Then loop over all clipboard formats that we've registered */
-            ARRAY_INDEX i;
-
-            for(i = 0; i < array_elements(&g_installed_save_objects_handle); ++i)
-            {
-                const PC_INSTALLED_SAVE_OBJECT p_installed_save_object = array_ptrc(&g_installed_save_objects_handle, INSTALLED_SAVE_OBJECT, i);
-
-                if(0 != p_installed_save_object->uClipboardFormat)
-                    (void) SetClipboardData(p_installed_save_object->uClipboardFormat, NULL);
-            }
-            } /*block*/
-        }
-
-        CloseClipboard();
-
+    if(global_clip_data_set_core_windows(p_docu, h_clip_data, clip_data_from_cut_operation, object_id))
         return;
-    }
 #endif /* OS */
 
     /*clip_issue_change();*/
@@ -600,25 +685,7 @@ local_clip_data_set(
 
 #if CHECKING
     if(0 != g_h_local_clip_data)
-    {
-#if WINDOWS
-        {
-        PCTSTR leafname = TEXT("clip_set.fwk");
-        const U32 leafname_len = tstrlen32(leafname);
-        TCHARZ tempPathBuffer[MAX_PATH];
-        /* Gets the temp path env string (no guarantee it's a valid path). */
-        DWORD dwRetVal = GetTempPath(elemof32(tempPathBuffer), tempPathBuffer);
-        /* Check that there is space to append our leafname */
-        if((dwRetVal != 0) && ((dwRetVal + leafname_len) < elemof32(tempPathBuffer)))
-        {
-            tstr_xstrkat(tempPathBuffer, elemof32(tempPathBuffer), leafname);
-            status_assert(clip_data_save(tempPathBuffer, &g_h_local_clip_data));
-        }
-        } /*block*/
-#elif RISCOS
-        status_assert(clip_data_save(TEXT("$.Temp.clip_set/fwk"), &g_h_local_clip_data));
-#endif
-    }
+        clip_data_save_clip_set(g_h_local_clip_data);
 #endif /* CHECKING */
 
     /*clip_issue_change();*/
@@ -654,9 +721,9 @@ load_foreign_from_array_handle(
     _InVal_     T5_FILETYPE t5_filetype)
 {
     STATUS status = STATUS_OK;
-    const OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype);
+    const OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype, TRUE);
     MSG_INSERT_FOREIGN msg_insert_foreign;
-    zero_struct(msg_insert_foreign);
+    zero_struct_fn(msg_insert_foreign);
 
     if(OBJECT_ID_NONE == object_id)
         return(create_error(ERR_UNKNOWN_FILETYPE));
@@ -677,6 +744,8 @@ load_foreign_from_array_handle(
 
     return(status);
 }
+
+/* NB Windows clipboard must be open */
 
 _Check_return_
 static UINT
@@ -787,6 +856,9 @@ load_from_windows_clipboard(
     int res;
     UINT uFormat;
     T5_FILETYPE t5_filetype = FILETYPE_TEXT;
+    ARRAY_HANDLE array_handle = 0;
+
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("load_from_windows_clipboard"));
 
     if(!host_open_global_clipboard(p_docu, p_view_from_viewno_caret(p_docu)))
         return(STATUS_OK); /* can't lock Windows clipboard for our use */
@@ -821,58 +893,50 @@ load_from_windows_clipboard(
             {
                 SIZE_T n = GlobalSize(handle);
                 SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(BYTE), FALSE);
-                ARRAY_HANDLE array_handle = 0;
                 P_BYTE core;
 
                 if(CF_TEXT == uFormat)
                     n = lstrlen((PCTSTR) p_clip_data);
 
-                if(NULL != (core = al_array_alloc_BYTE(&array_handle, (U32) n, &array_init_block, &status)))
-                {
+#if defined(_M_X64)
+                if(n > U32_MAX)
+#else
+                if(n > S32_MAX)
+#endif
+                    status = create_error(ERR_CLIP_DATA_TOO_LARGE);
+                else if(NULL != (core = al_array_alloc_BYTE(&array_handle, (U32) n, &array_init_block, &status)))
                     memcpy32(core, p_clip_data, (U32) n);
-
-#if WINDOWS
-                    {
-                    PCTSTR leafname = TEXT("clip_get.dat");
-                    const U32 leafname_len = tstrlen32(leafname);
-                    TCHARZ tempPathBuffer[MAX_PATH];
-                    /* Gets the temp path env string (no guarantee it's a valid path). */
-                    DWORD dwRetVal = GetTempPath(elemof32(tempPathBuffer), tempPathBuffer);
-                    /* Check that there is space to append our leafname */
-                    if((dwRetVal != 0) && ((dwRetVal + leafname_len) < elemof32(tempPathBuffer)))
-                    {
-                        tstr_xstrkat(tempPathBuffer, elemof32(tempPathBuffer), leafname);
-                        status_assert(clip_data_save(tempPathBuffer, &array_handle));
-                    }
-                    } /*block*/
-#endif /* OS */
-
-                    if(cf_fireworkz == uFormat)
-                    {
-                        report_clipboard_format(TEXT("load_from_windows_clipboard"), uFormat);
-                        reportf(TEXT("load_from_windows_clipboard: size=") UINTPTR_XTFMT, n);
-                        status = load_ownform_from_array_handle(p_docu, &array_handle, P_POSITION_NONE, clip_data_from_cut_operation);
-                    }
-                    else
-                    {
-                        report_clipboard_format(TEXT("load_from_windows_clipboard"), uFormat);
-                        reportf(TEXT("load_from_windows_clipboard: size=") UINTPTR_XTFMT, n);
-                        status = load_foreign_from_array_handle(p_docu, &array_handle, t5_filetype);
-                    }
-
-                    al_array_dispose(&array_handle);
-                }
 
                 GlobalUnlock(handle);
             }
         }
     }
 
-    trace_0(TRACE_WINDOWS_HOST, TEXT("load_from_windows_clipboard: CloseClipboard"));
-    CloseClipboard();
+    report_clipboard_format(TEXT("load_from_windows_clipboard"), uFormat);
+    reportf(TEXT("load_from_windows_clipboard: size=") UINTPTR_XTFMT, array_elements(&array_handle));
+
+    /* close Windows clipboard as soon as we are finished with it */
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("load_from_windows_clipboard: CloseClipboard"));
+    host_close_global_clipboard();
+
+    if(0 != array_elements(&array_handle))
+    {
+#if CHECKING || 1
+        clip_data_save_clip_get(array_handle);
+#endif
+
+        if(cf_fireworkz == uFormat)
+            status = load_ownform_from_array_handle(p_docu, &array_handle, P_POSITION_NONE, clip_data_from_cut_operation);
+        else
+            status = load_foreign_from_array_handle(p_docu, &array_handle, t5_filetype);
+    }
+
+    al_array_dispose(&array_handle);
 
     return(status);
 }
+
+/* NB Windows clipboard must be open */
 
 _Check_return_
 extern STATUS
@@ -915,12 +979,15 @@ clip_render_format_for_filetype(
         HGLOBAL hMem;
         al_array_trim(&h_global_clip_data);
         hMem = al_array_steal_hglobal(&h_global_clip_data);
+        trace_0(TRACE_APP_CLIPBOARD, TEXT("clip_render_format_for_filetype: SetClipBoardData(hMem)"));
         if(WrapOsBoolChecking(NULL != SetClipboardData(uFormat, hMem)))
         { /*EMPTY*/ }
     }
 
     return(status);
 }
+
+/* NB Windows clipboard must be open */
 
 _Check_return_
 extern STATUS
@@ -964,6 +1031,8 @@ clip_render_format(
 
     return(clip_render_format_for_filetype(p_docu, uFormat, t5_filetype));
 }
+
+/* NB Windows clipboard must be open */
 
 _Check_return_
 extern STATUS
@@ -2252,7 +2321,7 @@ logical_move(
 {
     STATUS status = STATUS_FAIL;
     OBJECT_LOGICAL_MOVE object_logical_move;
-    zero_struct(object_logical_move);
+    zero_struct_fn(object_logical_move);
 
     consume_bool(cell_data_from_position(p_docu, &object_logical_move.object_data, &p_docu->cur));
     object_logical_move.action = action;
@@ -2491,30 +2560,113 @@ T5_CMD_PROTO(static, cells_cmd_last_column)
 
 /******************************************************************************
 *
-* delete/insert rows and columns
+* add/delete/insert rows and columns
 *
 ******************************************************************************/
 
+static void
+cells_cmd_col_add_ins_get_style_default(
+    _DocuRef_   P_DOCU p_docu,
+    _InoutRef_  P_STYLE p_style)
+{
+    p_style->para_style.margin_para = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_PARA);
+    style_bit_set(p_style, STYLE_SW_PS_MARGIN_PARA);
+    p_style->para_style.margin_left = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_LEFT);
+    style_bit_set(p_style, STYLE_SW_PS_MARGIN_LEFT);
+    p_style->para_style.margin_right = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_RIGHT);
+    style_bit_set(p_style, STYLE_SW_PS_MARGIN_RIGHT);
+    p_style->para_style.h_tab_list = 0;
+    style_bit_set(p_style, STYLE_SW_PS_TAB_LIST);
+
+    p_style->col_style.width = style_default_measurement(p_docu, STYLE_SW_CS_WIDTH);
+    style_bit_set(p_style, STYLE_SW_CS_WIDTH);
+}
+
+static void
+cells_cmd_col_add_ins_get_style(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_STYLE p_style,
+    _InVal_     COL col_s, /* no need for col_e here */
+    _InVal_     ROW row_s,
+    _InVal_     ROW row_e)
+{
+    /* when inserting columns, duplicate some of the style of the previous column */
+    /* when adding columns, duplicate some of the style of the existing column */
+    DOCU_AREA docu_area;
+
+    docu_area_init(&docu_area);
+    docu_area.tl.slr.col = col_s;
+    docu_area.tl.slr.row = row_s;
+    docu_area.br.slr.col = col_s + 1;
+    docu_area.br.slr.row = row_e;
+
+    {
+    STYLE_SELECTOR selector_fuzzy_out;
+    STYLE_SELECTOR selector_in;
+    style_selector_clear(&selector_in);
+    style_selector_bit_set(&selector_in, STYLE_SW_PS_MARGIN_PARA);
+    style_selector_bit_set(&selector_in, STYLE_SW_PS_MARGIN_LEFT);
+    style_selector_bit_set(&selector_in, STYLE_SW_PS_MARGIN_RIGHT);
+    style_selector_bit_set(&selector_in, STYLE_SW_CS_WIDTH);
+
+    style_of_area(p_docu, p_style, &selector_fuzzy_out, &selector_in, &docu_area);
+    } /*block*/
+
+    p_style->para_style.h_tab_list = 0; /* but force an override for this one - SKS 07jul96 made it work */
+    style_bit_set(p_style, STYLE_SW_PS_TAB_LIST);
+}
+
 _Check_return_
 static STATUS
-row_col_ins_del(
+cells_cmd_col_add_ins_set_style(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     P_STYLE p_style,
+    _InVal_     COL col_s,
+    _InVal_     COL col_e,
+    _InVal_     ROW row_s,
+    _InVal_     ROW row_e)
+{
+    COL col;
+    DOCU_AREA docu_area;
+
+    docu_area_init(&docu_area);
+    docu_area.tl.slr.row = row_s;
+    docu_area.br.slr.row = row_e;
+
+    for(col = col_s; col < col_e; ++col)
+    {
+        STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
+        STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, p_style);
+
+        docu_area.tl.slr.col = col;
+        docu_area.br.slr.col = col + 1;
+
+        status_return(style_docu_area_add(p_docu, &docu_area, &style_docu_area_add_parm));
+    }
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+cells_cmd_row_col_add_ins_del(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
     _InRef_maybenone_ PC_S32 p_n_given /* P_DATA_NONE -> use selection */)
 {
+    const BOOL use_n_given = PTR_NOT_NONE(p_n_given);
     STATUS status = STATUS_OK;
-    const BOOL use_n_given = !IS_PTR_NONE(p_n_given);
     COL col_s, col_e;
     ROW row_s, row_e;
     DOCU_AREA docu_area;
-    BOOL had_selection = 0;
-    BOOL was_base = 0;
+    BOOL had_selection = false;
+    BOOL was_base = false;
 
     if(p_docu->mark_info_cells.h_markers)
     {
+        had_selection = true;
         docu_area_from_markers_first(p_docu, &docu_area);
         status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
-        had_selection = 1;
     }
     else
     {
@@ -2537,46 +2689,60 @@ row_col_ins_del(
     {
     default: default_unhandled();
 #if CHECKING
-    case T5_CMD_ADD_ROWS:
-    case T5_CMD_INSERT_ROW:
-    case T5_CMD_DELETE_ROW:
+    case T5_CMD_ROWS_ADD_AFTER:
+    case T5_CMD_ROWS_INSERT_BEFORE:
+    case T5_CMD_ROW_DELETE:
 #endif
         {
-        ROW n_rows;
+        ROW n_rows = use_n_given ? (ROW) *p_n_given : 1;
 
-        if(!had_selection)
+        if(had_selection)
         {
+            if(T5_CMD_ROWS_ADD_AFTER == t5_message)
+                row_s = row_e - 1;
+
+            n_rows = row_e - row_s;
+        }
+        else
+        {
+            row_s = p_docu->cur.slr.row;
             col_s = 0;
             col_e = all_cols(p_docu);
-            row_s = p_docu->cur.slr.row;
         }
-        else if(t5_message == T5_CMD_ADD_ROWS)
-            row_s = row_e - 1;
-
-        n_rows = use_n_given ? (ROW) *p_n_given : (had_selection ? (row_e - row_s) : 1);
 
         row_e = row_s + n_rows;
+
+        if((U32) row_e > (U32) MAX_ROW)
+            return(status_check());
         break;
         }
 
-    case T5_CMD_ADD_COLS:
-    case T5_CMD_INSERT_COL:
-    case T5_CMD_DELETE_COL:
+    case T5_CMD_COLS_ADD_AFTER:
+    case T5_CMD_COLS_INSERT_BEFORE:
+    case T5_CMD_COL_DELETE:
         {
-        COL n_cols;
+        COL n_cols = use_n_given ? (COL) *p_n_given : 1;
 
-        if(!had_selection)
+        if(had_selection)
+        {
+            if(T5_CMD_COLS_ADD_AFTER == t5_message)
+                col_s = col_e - 1;
+
+            n_cols = col_e - col_s;
+        }
+        else
+        {
             col_s = p_docu->cur.slr.col;
-        else if(t5_message == T5_CMD_ADD_COLS)
-            col_s = col_e - 1;
+        }
 
         /* SKS 07sep95 stop them deleting the first text column in letters etc. */
-        if(was_base && (T5_CMD_DELETE_COL == t5_message) && (0 == col_s))
+        if( (T5_CMD_COL_DELETE == t5_message) && (0 == col_s) && was_base )
             return(create_error(ERR_CANT_DELETE_MAIN_COL));
 
-        n_cols = use_n_given ? (COL) *p_n_given : (had_selection ? (col_e - col_s) : 1);
-
         col_e = col_s + n_cols;
+
+        if((U32) col_e > (U32) MAX_COL)
+            return(status_check());
         break;
         }
     }
@@ -2591,70 +2757,46 @@ row_col_ins_del(
     default:
         break;
 
-    case T5_CMD_INSERT_COL:
-        style.para_style.margin_para = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_PARA);
-        style_bit_set(&style, STYLE_SW_PS_MARGIN_PARA);
-        style.para_style.margin_left = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_LEFT);
-        style_bit_set(&style, STYLE_SW_PS_MARGIN_LEFT);
-        style.para_style.margin_right = style_default_measurement(p_docu, STYLE_SW_PS_MARGIN_RIGHT);
-        style_bit_set(&style, STYLE_SW_PS_MARGIN_RIGHT);
-        style.para_style.h_tab_list = 0;
-        style_bit_set(&style, STYLE_SW_PS_TAB_LIST);
-        style.col_style.width = style_default_measurement(p_docu, STYLE_SW_CS_WIDTH);
-        style_bit_set(&style, STYLE_SW_CS_WIDTH);
-        break;
-
-    /* when adding columns, duplicate the style of the existing column */
-    case T5_CMD_ADD_COLS:
+    case T5_CMD_COLS_INSERT_BEFORE:
+        /* when inserting columns, duplicate some of the style of the column before the first */
+        if(col_s > 0)
         {
-        DOCU_AREA docu_area_read;
-
-        docu_area_init(&docu_area_read);
-        docu_area_read.tl.slr.col = col_s;
-        docu_area_read.tl.slr.row = row_s;
-        docu_area_read.br.slr.col = col_s + 1;
-        docu_area_read.br.slr.row = row_e;
-
-        {
-        STYLE_SELECTOR selector_fuzzy_out;
-        STYLE_SELECTOR selector_in;
-        style_selector_clear(&selector_in);
-        style_selector_bit_set(&selector_in, STYLE_SW_PS_MARGIN_PARA);
-        style_selector_bit_set(&selector_in, STYLE_SW_PS_MARGIN_LEFT);
-        style_selector_bit_set(&selector_in, STYLE_SW_PS_MARGIN_RIGHT);
-        style_selector_bit_set(&selector_in, STYLE_SW_CS_WIDTH);
-
-        style_of_area(p_docu, &style, &selector_fuzzy_out, &selector_in, &docu_area_read);
-        } /*block*/
-
-        style.para_style.h_tab_list = 0; /* but force an override for this one - SKS 07jul96 made it work */
-        style_bit_set(&style, STYLE_SW_PS_TAB_LIST);
-
-        break;
+            cells_cmd_col_add_ins_get_style(p_docu, &style, col_s-1, row_s, row_e);
         }
+        else
+        {   /* inserting before the first column in the document - use some defaults */
+            cells_cmd_col_add_ins_get_style_default(p_docu, &style);
+        }
+        break;
+
+    case T5_CMD_COLS_ADD_AFTER:
+        /* when adding columns, duplicate some of the style of the first column (which is also the last, see above) */
+        cells_cmd_col_add_ins_get_style(p_docu, &style, col_s, row_s, row_e);
+        break;
     }
 
     switch(t5_message)
     {
-    default: default_unhandled();
+    case T5_CMD_COLS_ADD_AFTER:
+        status = cells_column_add_ins(p_docu, col_s, col_e - col_s, row_s, row_e, true);
         break;
-    case T5_CMD_ADD_ROWS:
-        status = cells_block_insert(p_docu, col_s, col_e, row_s, row_e - row_s, TRUE);
+    case T5_CMD_COLS_INSERT_BEFORE:
+        status = cells_column_add_ins(p_docu, col_s, col_e - col_s, row_s, row_e, false);
         break;
-    case T5_CMD_ADD_COLS:
-        status = cells_column_insert(p_docu, col_s, col_e - col_s, row_s, row_e, TRUE);
-        break;
-    case T5_CMD_INSERT_ROW:
-        status = cells_block_insert(p_docu, col_s, col_e, row_s, row_e - row_s, FALSE);
-        break;
-    case T5_CMD_INSERT_COL:
-        status = cells_column_insert(p_docu, col_s, col_e - col_s, row_s, row_e, FALSE);
-        break;
-    case T5_CMD_DELETE_ROW:
-        cells_block_delete(p_docu, col_s, col_e, row_s, row_e - row_s);
-        break;
-    case T5_CMD_DELETE_COL:
+    case T5_CMD_COL_DELETE:
         status = cells_column_delete(p_docu, col_s, col_e - col_s, row_s, row_e);
+        break;
+    case T5_CMD_ROWS_ADD_AFTER:
+        status = cells_block_add_ins(p_docu, col_s, col_e, row_s, row_e - row_s, true);
+        break;
+    default: default_unhandled();
+#if CHECKING
+    case T5_CMD_ROWS_INSERT_BEFORE:
+#endif
+        status = cells_block_add_ins(p_docu, col_s, col_e, row_s, row_e - row_s, false);
+        break;
+    case T5_CMD_ROW_DELETE:
+        cells_block_delete(p_docu, col_s, col_e, row_s, row_e - row_s);
         break;
     }
 
@@ -2668,34 +2810,13 @@ row_col_ins_del(
         default:
             break;
 
-        case T5_CMD_ADD_COLS:
-            col_s += 1;
-            col_e += 1;
-
-            /*FALLTHRU*/
-
-        case T5_CMD_INSERT_COL:
-            {
-            COL col;
-            DOCU_AREA docu_area_set;
-
-            docu_area_init(&docu_area_set);
-            docu_area_set.tl.slr.row = row_s;
-            docu_area_set.br.slr.row = row_e;
-
-            for(col = col_s; col < col_e && status_ok(status); ++col)
-            {
-                STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
-
-                docu_area.tl.slr.col = col;
-                docu_area.br.slr.col = col + 1;
-
-                STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style);
-                status = style_docu_area_add(p_docu, &docu_area, &style_docu_area_add_parm);
-            }
-
+        case T5_CMD_COLS_ADD_AFTER:
+            status = cells_cmd_col_add_ins_set_style(p_docu, &style, col_s+1, col_e+1, row_s, row_e);
             break;
-            }
+
+        case T5_CMD_COLS_INSERT_BEFORE:
+            status = cells_cmd_col_add_ins_set_style(p_docu, &style, col_s, col_e, row_s, row_e);
+            break;
         }
     }
 
@@ -2708,6 +2829,21 @@ row_col_ins_del(
     view_update_all(p_docu, UPDATE_RULER_HORZ);
 
     return(status);
+}
+
+T5_CMD_PROTO(static, cells_cmd_row_col_a_i_d)
+{
+    const U32 n_args = n_arglist_args(&p_t5_cmd->arglist_handle);
+    S32 n = 0;
+    if(0 != n_args)
+    {
+        const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
+        assert(ARG_TYPE_S32 == (p_args[0].type & ~ARG_TYPE_CONTROL_FLAGS)); /* discard control flags for type checking */
+        n = p_args[0].val.s32;
+        if(n <= 0)
+            return(status_check());
+    }
+    return(cells_cmd_row_col_add_ins_del(p_docu, t5_message, (0 != n_args) ? &n : P_S32_NONE));
 }
 
 /******************************************************************************
@@ -2820,13 +2956,6 @@ spell_auto_check(
 }
 
 /* ------------------------------------------------------------------------- */
-
-T5_CMD_PROTO(static, cells_cmd_add_cr)
-{
-    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
-    const S32 n_rc_add = p_args[0].val.s32;
-    return(row_col_ins_del(p_docu, t5_message, &n_rc_add));
-}
 
 /* apply a region containing just row height unfixed */
 
@@ -3145,6 +3274,44 @@ T5_CMD_PROTO(static, cells_cmd_insert_field)
     return(status);
 }
 
+_Check_return_
+static STATUS
+cells_cmd_object_convert_this_cell(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     OBJECT_ID target_object,
+    _InoutRef_  P_OBJECT_READ_TEXT p_object_read_text)
+{
+    STATUS status;
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
+    quick_ublock_with_buffer_setup(quick_ublock);
+
+    p_object_read_text->p_quick_ublock = &quick_ublock;
+    p_object_read_text->type = OBJECT_READ_TEXT_PLAIN;
+
+    status = object_call_id(p_object_read_text->object_data.object_id, p_docu, T5_MSG_OBJECT_READ_TEXT, p_object_read_text);
+
+    if(status_ok(status) && (0 != quick_ublock_bytes(p_object_read_text->p_quick_ublock)))
+    {
+        status = quick_ublock_nullch_add(p_object_read_text->p_quick_ublock);
+
+        if(status_ok(status))
+        {
+            NEW_OBJECT_FROM_TEXT new_object_from_text;
+            new_object_from_text.data_ref = p_object_read_text->object_data.data_ref;
+            new_object_from_text.p_quick_ublock = p_object_read_text->p_quick_ublock;
+            new_object_from_text.status = STATUS_OK;
+            new_object_from_text.please_redraw = FALSE;
+            new_object_from_text.please_uref_overwrite = TRUE;
+            new_object_from_text.try_autoformat = TRUE;
+            status = object_call_id(target_object, p_docu, T5_MSG_NEW_OBJECT_FROM_TEXT, &new_object_from_text);
+        }
+    }
+
+    quick_ublock_dispose(&quick_ublock);
+
+    return(status);
+}
+
 T5_CMD_PROTO(static, cells_cmd_object_convert)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
@@ -3185,39 +3352,13 @@ T5_CMD_PROTO(static, cells_cmd_object_convert)
     {
         while(status_done(cells_scan_next(p_docu, &object_read_text.object_data, &scan_block)))
         {
-            QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
-            quick_ublock_with_buffer_setup(quick_ublock);
+            if(target_object == object_read_text.object_data.object_id)
+                continue;
 
             process_status.data.percent.current = cells_scan_percent(&scan_block);
             process_status_reflect(&process_status);
 
-            object_read_text.p_quick_ublock = &quick_ublock;
-            object_read_text.type = OBJECT_READ_TEXT_PLAIN;
-            if(target_object != object_read_text.object_data.object_id)
-            {
-                status = object_call_id(object_read_text.object_data.object_id, p_docu, T5_MSG_OBJECT_READ_TEXT, &object_read_text);
-
-                if(status_ok(status) && (0 != quick_ublock_bytes(object_read_text.p_quick_ublock)))
-                {
-                    status = quick_ublock_nullch_add(object_read_text.p_quick_ublock);
-
-                    if(status_ok(status))
-                    {
-                        NEW_OBJECT_FROM_TEXT new_object_from_text;
-                        new_object_from_text.data_ref = object_read_text.object_data.data_ref;
-                        new_object_from_text.p_quick_ublock = &quick_ublock;
-                        new_object_from_text.status = STATUS_OK;
-                        new_object_from_text.please_redraw = FALSE;
-                        new_object_from_text.please_uref_overwrite = TRUE;
-                        new_object_from_text.try_autoformat = TRUE;
-                        status = object_call_id(target_object, p_docu, T5_MSG_NEW_OBJECT_FROM_TEXT, &new_object_from_text);
-                    }
-                }
-            }
-
-            quick_ublock_dispose(&quick_ublock);
-
-            status_break(status);
+            status_break(status = cells_cmd_object_convert_this_cell(p_docu, target_object, &object_read_text));
         }
     }
 
@@ -3401,7 +3542,7 @@ cells_cmd_return(
                     if(on_last_row)
                     {
                         docu_modify(p_docu);
-                        if(status_ok(cells_block_insert(p_docu, 0, all_cols(p_docu), p_docu->cur.slr.row + 1, 1, FALSE)))
+                        if(status_ok(cells_block_insert(p_docu, 0, all_cols(p_docu), p_docu->cur.slr.row + 1, 1)))
                             status_assert(cursor_down(p_docu, t5_message, CARET_TO_LEFT));
                     }
                     else
@@ -3801,6 +3942,321 @@ T5_CMD_PROTO(static, cells_cmd_tab_lr)
     return(status);
 }
 
+/******************************************************************************
+*
+* read a column reference
+*
+******************************************************************************/
+
+_Check_return_
+static BOOL
+cmd_goto_recog_col_offset(
+    _InoutRef_  P_ROW p_col,
+    _In_z_      PC_USTR in_str)
+{
+    S32 sign = 1;
+    U32 col_temp;
+    PC_USTR pos = in_str;
+    P_U8Z epos;
+
+    assert('C' == PtrGetByte(pos));
+    ustr_IncByte(pos);
+
+    switch(PtrGetByte(pos))
+    {
+    default: default_unhandled();
+#if CHECKING
+    case '+':
+#endif
+        break;
+
+    case '-':
+        sign = -1;
+        break;
+    }
+
+    ustr_IncByte(pos);
+
+    col_temp = fast_strtoul((PC_U8Z) pos, &epos);
+
+    if((PC_USTR) epos == pos)
+        return(false);
+
+    if(sign < 0)
+    {   /* go back n columns */
+        *p_col -= (COL) col_temp;
+    }
+    else /*if(sign > 0)*/
+    {   /* go forward n columns */
+        *p_col += (COL) col_temp;
+    }
+
+    return(true);
+}
+
+_Check_return_
+static BOOL
+cmd_goto_recog_col(
+    _InoutRef_  P_ROW p_col,
+    _In_z_      PC_USTR in_str)
+{
+    S32 res, col_temp;
+    PC_USTR pos = in_str;
+
+    if('C' == PtrGetByte(pos))
+    {
+        switch(PtrGetByteOff(pos, 1))
+        {
+        case '+':
+        case '-':
+            return(cmd_goto_recog_col_offset(p_col, pos));
+
+        default:
+            break;
+        }
+    }
+
+    if( ((res = stox(pos, &col_temp)) == 0) || (col_temp >= EV_MAX_COL) )
+        return(false);
+
+    ustr_IncBytes(pos, res);
+
+    if(CH_NULL != PtrGetByte(pos))
+        return(false);
+
+    *p_col = (COL) col_temp;
+
+    return(true);
+}
+
+/******************************************************************************
+*
+* read a row number
+*
+******************************************************************************/
+
+_Check_return_
+static BOOL
+cmd_goto_recog_row(
+    _InoutRef_  P_ROW p_row,
+    _In_z_      PC_USTR in_str)
+{
+    S32 sign = 0;
+    U32 row_temp;
+    PC_USTR pos = in_str;
+    P_U8Z epos;
+
+    if('R' == PtrGetByte(pos))
+        ustr_IncByte(pos);
+
+    switch(PtrGetByte(pos))
+    {
+    case '+':
+        sign = 1;
+        ustr_IncByte(pos);
+        break;
+
+    case '-':
+        sign = -1;
+        ustr_IncByte(pos);
+        break;
+
+    default:
+        break;
+    }
+
+    row_temp = fast_strtoul((PC_U8Z) pos, &epos);
+
+    if((PC_USTR) epos == pos)
+        return(false);
+
+    if(sign < 0)
+    {   /* go back n rows */
+        *p_row -= (ROW) row_temp;
+    }
+    else if(sign > 0)
+    {   /* go forward n rows */
+        *p_row += (ROW) row_temp;
+    }
+    else
+    {   /* go to the specified row */
+        row_temp -= 1;
+        *p_row = (ROW) row_temp;
+    }
+
+    return(true);
+}
+
+/******************************************************************************
+*
+* read a simple cell reference
+*
+******************************************************************************/
+
+_Check_return_
+static BOOL
+cmd_goto_recog_slr(
+    _OutRef_    P_SLR p_slr,
+    _In_z_      PC_USTR in_str)
+{
+    S32 res, col_temp;
+    U32 row_temp;
+    PC_USTR pos = in_str;
+    P_U8Z epos;
+
+    zero_struct_ptr(p_slr);
+
+    if(PtrGetByte(pos) == CH_DOLLAR_SIGN)
+        ustr_IncByte(pos);
+
+    if( ((res = stox(pos, &col_temp)) == 0) || (col_temp >= EV_MAX_COL) )
+        return(false);
+
+    ustr_IncBytes(pos, res);
+
+    if(PtrGetByte(pos) == CH_DOLLAR_SIGN)
+        ustr_IncByte(pos);
+
+    /* stop things like + and - being munged */
+    if(!sbchar_isdigit(PtrGetByte(pos)))
+        return(false);
+
+    row_temp = fast_strtoul((PC_U8Z) pos, &epos);
+
+    if((PC_USTR) epos == pos)
+        return(false);
+
+    row_temp -= 1;
+
+    if(row_temp > (U32) EV_MAX_ROW)
+        return(false);
+
+    p_slr->col = (COL) col_temp;
+    p_slr->row = (ROW) row_temp;
+
+    return(true);
+}
+
+/******************************************************************************
+*
+* read a name and check if it is a cell reference
+*
+******************************************************************************/
+
+#include "ob_ss/ob_ss.h"
+
+_Check_return_
+static inline STATUS
+name_handle_from_local_id(
+    _DocuRef_   PC_DOCU p_docu,
+    _In_z_      PC_USTR ustr_name_id)
+{
+    STATUS status = STATUS_FAIL;
+    ARRAY_INDEX name_num;
+
+    if((name_num = find_name_in_list((EV_DOCNO) docno_from_p_docu(p_docu), ustr_name_id)) >= 0)
+        status = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num)->handle;
+
+    return(status);
+}
+
+_Check_return_
+static BOOL
+cmd_goto_recog_name(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_SLR p_slr,
+    _In_z_      PC_USTR in_str)
+{
+    STATUS status;
+
+    zero_struct_ptr(p_slr);
+
+    if(status_fail(status = name_handle_from_local_id(p_docu, in_str)))
+        return(false);
+
+    {
+    SS_NAME_READ ss_name_read;
+    zero_struct_fn(ss_name_read);
+    ss_name_read.ev_handle = status;
+    ss_data_set_blank(&ss_name_read.ss_data);
+    ss_name_read.follow_indirection = FALSE;
+    status = object_call_id(OBJECT_ID_SS, p_docu, T5_MSG_SS_NAME_READ, &ss_name_read);
+    if(status_fail(status))
+        return(false);
+
+    switch(ss_data_get_data_id(&ss_name_read.ss_data))
+    {
+    case DATA_ID_SLR:
+        p_slr->col = ss_name_read.ss_data.arg.slr.col;
+        p_slr->row = ss_name_read.ss_data.arg.slr.row;
+        return(true);
+
+    case DATA_ID_RANGE:
+        p_slr->col = ss_name_read.ss_data.arg.range.s.col;
+        p_slr->row = ss_name_read.ss_data.arg.range.s.row;
+        return(true);
+
+    default:
+        return(false);
+    }
+    } /*block*/
+}
+
+T5_CMD_PROTO(static, cells_cmd_goto)
+{
+    const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
+    PC_USTR ustr = p_args[0].val.ustr;
+    SLR slr;
+    SKELCMD_GOTO skelcmd_goto;
+
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+
+    if(cmd_goto_recog_name(p_docu, &slr, ustr))
+    {
+        /*EMPTY*/
+    }
+    else if(cmd_goto_recog_slr(&slr, ustr))
+    {
+        /*EMPTY*/
+    }
+    else
+    {
+        slr = p_docu->cur.slr;
+
+        if(cmd_goto_recog_col(&slr.col, ustr))
+        {
+            /*EMPTY*/
+        }
+        else if(cmd_goto_recog_row(&slr.row, ustr))
+        {
+            /*EMPTY*/
+        }
+        else
+            return(status_check());
+    }
+
+    { /* apply current document limits */
+    const COL max_col = n_cols_logical(p_docu)-1; /*incl*/
+    const ROW max_row = n_rows(p_docu)-1; /*incl*/
+    if(slr.col < 0)
+        slr.col = 0;
+    if(slr.col > max_col)
+        slr.col = max_col;
+    if(slr.row < 0)
+        slr.row = 0;
+    if(slr.row > max_row)
+        slr.row = max_row;
+    } /*block*/
+
+    skelcmd_goto.slr = slr;
+
+    skelcmd_goto.keep_selection = FALSE;
+
+    skel_point_from_slr_tl(p_docu, &skelcmd_goto.skel_point, &skelcmd_goto.slr);
+
+    return(object_skel(p_docu, T5_MSG_GOTO_SLR, &skelcmd_goto));
+}
+
 #if RISCOS
 
 _Check_return_
@@ -4135,10 +4591,10 @@ T5_MSG_PROTO(static, cells_event_fileinsert_doinsert_1, _InoutRef_ P_SKELEVENT_C
 
 T5_MSG_PROTO(static, cells_event_fileinsert_doinsert, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
-    const OBJECT_ID object_id = object_id_from_t5_filetype(p_skelevent_click->data.fileinsert.t5_filetype);
+    const OBJECT_ID object_id = object_id_from_t5_filetype(p_skelevent_click->data.fileinsert.t5_filetype, TRUE);
     STATUS status;
     MSG_INSERT_FILE msg_insert_file;
-    zero_struct(msg_insert_file);
+    zero_struct_fn(msg_insert_file);
 
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
@@ -4255,7 +4711,7 @@ T5_MSG_PROTO(static, cells_msg_object_at_current_position, _InoutRef_ P_OBJECT_A
 
     {
     OBJECT_WANTS_LOAD object_wants_load;
-    zero_struct(object_wants_load);
+    zero_struct_fn(object_wants_load);
     status_consume(object_call_id(object_id, p_docu, T5_MSG_OBJECT_WANTS_LOAD, &object_wants_load));
     if(object_wants_load.object_wants_load)
         p_object_at_current_position->object_id = object_id;
@@ -4637,18 +5093,18 @@ T5_CMD_PROTO(static, object_cells_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_PASTE_AT_CURSOR):
         return(cells_cmd_paste_at_cursor(p_docu));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_COL):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DELETE_COL):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_DELETE_ROW):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_ROW):
-        return(row_col_ins_del(p_docu, t5_message, P_S32_NONE));
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_COLS_ADD_AFTER):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_COLS_INSERT_BEFORE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_COL_DELETE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ROWS_ADD_AFTER):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ROWS_INSERT_BEFORE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ROW_DELETE):
+        return(cells_cmd_row_col_a_i_d(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ADD_COLS):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ADD_ROWS):
-        return(cells_cmd_add_cr(p_docu, t5_message, p_t5_cmd));
-
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ADD_COLS_INTRO):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ADD_ROWS_INTRO):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_COLS_ADD_AFTER_INTRO):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_COLS_INSERT_BEFORE_INTRO):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ROWS_ADD_AFTER_INTRO):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ROWS_INSERT_BEFORE_INTRO):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_TABLE):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_TABLE_INTRO):
 
@@ -4668,11 +5124,11 @@ T5_CMD_PROTO(static, object_cells_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SEARCH_INTRO):
         return(t5_cmd_search_intro(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SEARCH_BUTTON_POSS_DB_QUERIES):
-        return(t5_cmd_search_button_poss_db_queries(p_docu, t5_message, p_t5_cmd));
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SEARCH_BUTTON):
+        return(t5_cmd_search_button(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SEARCH_BUTTON_POSS_DB_QUERY):
-        return(t5_cmd_search_button_poss_db_query(p_docu, t5_message, p_t5_cmd));
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SEARCH_BUTTON_ALTERNATE):
+        return(t5_cmd_search_button_alternate(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SORT):
         return(cells_cmd_sort(p_docu, t5_message, p_t5_cmd));
@@ -4692,6 +5148,12 @@ T5_CMD_PROTO(static, object_cells_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_FORCE_RECALC):
         /* SKS quick fudge 18.10.93 to allow charts to get calced; just pass on to SS here */
         return(object_call_id(OBJECT_ID_SS, p_docu, t5_message, de_const_cast(P_T5_CMD, p_t5_cmd)));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_GOTO):
+        return(cells_cmd_goto(p_docu, t5_message, p_t5_cmd));
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_GOTO_INTRO):
+        return(t5_cmd_goto_intro(p_docu, t5_message, p_t5_cmd));
 
 #if RISCOS
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_THESAURUS):

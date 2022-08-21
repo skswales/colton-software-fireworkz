@@ -121,27 +121,44 @@ static const DIALOG_CONTROL
 es_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
+#if WINDOWS /* OK is to the left of Cancel */
+    { DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, IDCANCEL, DIALOG_CONTROL_SELF },
+    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, DIALOG_STDSPACING_H, DIALOG_DEFPUSHBUTTON_V },
+    { DRT(RBLT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+#else /* OK is the bottom rightmost button */
     { DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP, DIALOG_CONTROL_SELF },
-#if WINDOWS
-    { DIALOG_DEFOK_H, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#else
     { DIALOG_CONTENTS_CALC, DIALOG_STDSPACING_V, 0, DIALOG_DEFPUSHBUTTON_V },
-#endif
     { DRT(RBRT, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+#endif
 };
+
+#if WINDOWS /* Cancel is the bottom rightmost button */
+
+const DIALOG_CONTROL
+es_cancel =
+{
+    IDCANCEL, DIALOG_CONTROL_WINDOW,
+    { DIALOG_CONTROL_SELF, IDOK, ES_ID_RHS_GROUP, IDOK },
+    { DIALOG_STDCANCEL_H, DIALOG_DEFPUSHEXTRA_V, 0, -DIALOG_DEFPUSHEXTRA_V },
+    { DRT(RTRB, PUSHBUTTON), 1 /*tabstop*/ }
+};
+
+#else /* Cancel is to the left of OK */
+#define es_cancel stdbutton_cancel
+#endif
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
 es_ok_data =
 {
 #ifndef STYLE_DONT_ADJUST_APPLY
-    { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_OK), ES_ID_ADJUST_APPLY
+    { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), ES_ID_ADJUST_APPLY
 #else
-    { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_OK), ES_ID_SET
+    { DIALOG_COMPLETION_OK, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), ES_ID_SET
 #endif
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
-es_cancel_data = { { DIALOG_COMPLETION_CANCEL, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_CANCEL), ES_ID_REVERT };
+es_cancel_data = { { DIALOG_COMPLETION_CANCEL, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_CANCEL), ES_ID_REVERT };
 
 /******************************************************************************
 *
@@ -186,7 +203,7 @@ static const DIALOG_CONTROL_DATA_EDIT
 es_name_edit_data = { { { FRAMED_BOX_EDIT } }, /*EDIT_XX*/ { UI_TEXT_TYPE_NONE } /* UI_TEXT state */ };
 
 /*
-key list 'group'
+key list 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -231,14 +248,14 @@ ok
 static const ES_DIALOG_CTL_CREATE
 es_name_ctl_create[] =
 {
-    { ES_ALW, { &es_name_group, &es_name_group_data } },
-    { ES_ALW, { &es_name_edit, &es_name_edit_data } },
-    { ES_ALW, { &es_name_edit_enable, &es_name_edit_enable_data } },
-    { ES_ALW, { &es_key_group, &es_key_group_data } },
-    { ES_ALW, { &es_key_list, &stdlisttext_data } },
-    { ES_ALW, { &es_key_list_enable, &es_key_list_enable_data } },
+    { ES_ALW, { { &es_name_group }, &es_name_group_data } },
+    { ES_ALW, { { &es_name_edit }, &es_name_edit_data } },
+    { ES_ALW, { { &es_name_edit_enable }, &es_name_edit_enable_data } },
+    { ES_ALW, { { &es_key_group }, &es_key_group_data } },
+    { ES_ALW, { { &es_key_list }, &stdlisttext_data } },
+    { ES_ALW, { { &es_key_list_enable }, &es_key_list_enable_data } },
 
-    { ES_ALW, { &es_name_ok, &es_ok_data } }
+    { ES_ALW, { { &es_name_ok }, &es_ok_data } }
 };
 
 /******************************************************************************
@@ -260,7 +277,7 @@ static const DIALOG_CONTROL_DATA_GROUPBOX
 es_fs_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_FS), { FRAMED_BOX_GROUP } };
 
 /*
-typeface 'group'
+typeface 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -279,7 +296,11 @@ static const DIALOG_CONTROL
 es_fs_typeface_list =
 {
     ES_FS_ID_TYPEFACE, ES_FS_ID_GROUP,
-#if RISCOS
+#if RISCOS && 1
+    { ES_FS_ID_TYPEFACE_ENABLE, ES_FS_ID_TYPEFACE_ENABLE, DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF },
+    { 0, DIALOG_STDSPACING_V, ES_FS_TYPEFACE_H, ES_FS_TYPEFACE_V }, /* just drops below subscript button */
+    { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
+#elif RISCOS
     { ES_FS_ID_TYPEFACE_ENABLE, ES_FS_ID_TYPEFACE_ENABLE, DIALOG_CONTROL_SELF, ES_FS_ID_SUBSCRIPT },
     { 0, DIALOG_STDSPACING_V, ES_FS_TYPEFACE_H }, /* <<< unused ES_FS_TYPEFACE_V */
     { DRT(LBLB, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
@@ -300,7 +321,7 @@ es_fs_hw_caption_group =
 };
 
 /*
-height 'group'
+height 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -332,14 +353,14 @@ es_fs_height_units =
 {
     ES_FS_ID_HEIGHT_UNITS, ES_FS_ID_GROUP,
     { ES_FS_ID_HEIGHT, ES_FS_ID_HEIGHT, DIALOG_CONTROL_SELF, ES_FS_ID_HEIGHT },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 #define es_fs_height_units_data measurement_points_data
 
 /*
-width 'group'
+width 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -378,7 +399,7 @@ es_fs_width_units =
 #define es_fs_width_units_data measurement_points_data
 
 /*
-bold 'group'
+bold 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -400,7 +421,7 @@ es_fs_bold =
 };
 
 /*
-italic 'group'
+italic 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -422,7 +443,7 @@ es_fs_italic =
 };
 
 /*
-underline 'group'
+underline 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -450,7 +471,7 @@ static const DIALOG_CONTROL_DATA_CHECKPICTURE
 es_fs_underline_data = { { 0 }, &es_fs_underline_bitmap };
 
 /*
-superscript 'group'
+superscript 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -478,7 +499,7 @@ static const DIALOG_CONTROL_DATA_CHECKPICTURE
 es_fs_superscript_data = { { 0 }, &es_fs_superscript_bitmap };
 
 /*
-subscript 'group'
+subscript 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -540,16 +561,22 @@ static const DIALOG_CONTROL
 es_fs_colour_tx[3] =
 {
     {
-        ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_GROUP, { ES_FS_ID_COLOUR_GROUP, ES_FS_ID_COLOUR_R, DIALOG_CONTROL_SELF, ES_FS_ID_COLOUR_R },
-        { 0, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) }
+        ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_GROUP,
+        { ES_FS_ID_COLOUR_GROUP, ES_FS_ID_COLOUR_R, DIALOG_CONTROL_SELF, ES_FS_ID_COLOUR_R },
+        { 0, 0, RGB_TX_H },
+        { DRT(LTLB, TEXTLABEL) }
     },
     {
-        ES_FS_ID_COLOUR_TX_G, ES_FS_ID_COLOUR_GROUP, { ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_G },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        ES_FS_ID_COLOUR_TX_G, ES_FS_ID_COLOUR_GROUP,
+        { ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_G },
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     },
     {
-        ES_FS_ID_COLOUR_TX_B, ES_FS_ID_COLOUR_GROUP, { ES_FS_ID_COLOUR_TX_G, ES_FS_ID_COLOUR_B, ES_FS_ID_COLOUR_TX_G, ES_FS_ID_COLOUR_B },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        ES_FS_ID_COLOUR_TX_B, ES_FS_ID_COLOUR_GROUP,
+        { ES_FS_ID_COLOUR_TX_G, ES_FS_ID_COLOUR_B, ES_FS_ID_COLOUR_TX_G, ES_FS_ID_COLOUR_B },
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     }
 };
 
@@ -557,16 +584,22 @@ static const DIALOG_CONTROL
 es_fs_colour_field[3] =
 {
     {
-        ES_FS_ID_COLOUR_R, ES_FS_ID_COLOUR_GROUP, { ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_GROUP },
-        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+        ES_FS_ID_COLOUR_R, ES_FS_ID_COLOUR_GROUP,
+        { ES_FS_ID_COLOUR_TX_R, ES_FS_ID_COLOUR_GROUP },
+        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V },
+        { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
-        ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_GROUP, { ES_FS_ID_COLOUR_R, ES_FS_ID_COLOUR_R, ES_FS_ID_COLOUR_R },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_GROUP,
+        { ES_FS_ID_COLOUR_R, ES_FS_ID_COLOUR_R, ES_FS_ID_COLOUR_R },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
-        ES_FS_ID_COLOUR_B, ES_FS_ID_COLOUR_GROUP, { ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_G },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        ES_FS_ID_COLOUR_B, ES_FS_ID_COLOUR_GROUP,
+        { ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_G, ES_FS_ID_COLOUR_G },
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     }
 };
 
@@ -637,7 +670,7 @@ es_fs_ok =
     IDOK, DIALOG_CONTROL_WINDOW,
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
 
 #else
@@ -647,56 +680,56 @@ es_fs_ok =
 static const ES_DIALOG_CTL_CREATE
 es_fs_ctl_create[] =
 {
-    { ES_ALW, { &es_fs_group, &es_fs_group_data } },
-    { ES_ALW, { &es_fs_typeface_list, &stdlisttext_data } },
-    { ES_ALW, { &es_fs_typeface_enable, &es_fs_typeface_enable_data } },
-    { ES_ALW, { &es_fs_hw_caption_group } },
-    { ES_ALW, { &es_fs_height, &es_fs_height_data } },
-    { ES_ALW, { &es_fs_height_units, &es_fs_height_units_data } },
-    { ES_ALW, { &es_fs_height_enable, &es_fs_height_enable_data } },
-    { ES_ALW, { &es_fs_width, &es_fs_width_data } },
-    { ES_ALW, { &es_fs_width_units, &es_fs_width_units_data } },
-    { ES_ALW, { &es_fs_width_enable, &es_fs_width_enable_data } },
-    { ES_ALW, { &es_fs_bold, &style_text_bold_data } },
-    { ES_ALW, { &es_fs_bold_enable, &es_fs_bold_enable_data } },
-    { ES_ALW, { &es_fs_italic, &style_text_italic_data } },
-    { ES_ALW, { &es_fs_italic_enable, &es_fs_italic_enable_data } },
-    { ES_ALW, { &es_fs_underline, &es_fs_underline_data } },
-    { ES_ALW, { &es_fs_underline_enable, &es_fs_underline_enable_data } },
-    { ES_ALW, { &es_fs_superscript, &es_fs_superscript_data } },
-    { ES_ALW, { &es_fs_superscript_enable, &es_fs_superscript_enable_data } },
-    { ES_ALW, { &es_fs_subscript, &es_fs_subscript_data } },
-    { ES_ALW, { &es_fs_subscript_enable, &es_fs_subscript_enable_data } },
+    { ES_ALW, { { &es_fs_group }, &es_fs_group_data } },
+    { ES_ALW, { { &es_fs_typeface_list }, &stdlisttext_data } },
+    { ES_ALW, { { &es_fs_typeface_enable }, &es_fs_typeface_enable_data } },
+    { ES_ALW, { { &es_fs_hw_caption_group }, NULL } },
+    { ES_ALW, { { &es_fs_height }, &es_fs_height_data } },
+    { ES_ALW, { { &es_fs_height_units }, &es_fs_height_units_data } },
+    { ES_ALW, { { &es_fs_height_enable }, &es_fs_height_enable_data } },
+    { ES_ALW, { { &es_fs_width }, &es_fs_width_data } },
+    { ES_ALW, { { &es_fs_width_units }, &es_fs_width_units_data } },
+    { ES_ALW, { { &es_fs_width_enable }, &es_fs_width_enable_data } },
+    { ES_ALW, { { &es_fs_bold }, &style_text_bold_data } },
+    { ES_ALW, { { &es_fs_bold_enable }, &es_fs_bold_enable_data } },
+    { ES_ALW, { { &es_fs_italic }, &style_text_italic_data } },
+    { ES_ALW, { { &es_fs_italic_enable }, &es_fs_italic_enable_data } },
+    { ES_ALW, { { &es_fs_underline }, &es_fs_underline_data } },
+    { ES_ALW, { { &es_fs_underline_enable }, &es_fs_underline_enable_data } },
+    { ES_ALW, { { &es_fs_superscript }, &es_fs_superscript_data } },
+    { ES_ALW, { { &es_fs_superscript_enable }, &es_fs_superscript_enable_data } },
+    { ES_ALW, { { &es_fs_subscript }, &es_fs_subscript_data } },
+    { ES_ALW, { { &es_fs_subscript_enable }, &es_fs_subscript_enable_data } },
 
-    { ES_ALW, { &es_fs_colour_group_main, &rgb_group_data } },
-    { ES_ALW, { &es_fs_colour_group } },
-    { ES_ALW, { &es_fs_colour_patch, &rgb_patch_data } }, /* patch must be created before first field */
-    { ES_ALW, { &es_fs_colour_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] } },
-    { ES_ALW, { &es_fs_colour_field[RGB_TX_IX_R], &rgb_bump_data } },
-    { ES_ALW, { &es_fs_colour_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] } },
-    { ES_ALW, { &es_fs_colour_field[RGB_TX_IX_G], &rgb_bump_data } },
-    { ES_ALW, { &es_fs_colour_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] } },
-    { ES_ALW, { &es_fs_colour_field[RGB_TX_IX_B], &rgb_bump_data } },
-    { ES_NRO, { &es_fs_colour_button, &rgb_button_data } },
-    { ES_ALW, { &es_fs_colour[0], &rgb_patches_data[0] } },
-    { ES_ALW, { &es_fs_colour[1], &rgb_patches_data[1] } },
-    { ES_ALW, { &es_fs_colour[2], &rgb_patches_data[2] } },
-    { ES_ALW, { &es_fs_colour[3], &rgb_patches_data[3] } },
-    { ES_ALW, { &es_fs_colour[4], &rgb_patches_data[4] } },
-    { ES_ALW, { &es_fs_colour[5], &rgb_patches_data[5] } },
-    { ES_ALW, { &es_fs_colour[6], &rgb_patches_data[6] } },
-    { ES_ALW, { &es_fs_colour[7], &rgb_patches_data[7] } },
-    { ES_ALW, { &es_fs_colour[8], &rgb_patches_data[8] } },
-    { ES_ALW, { &es_fs_colour[9], &rgb_patches_data[9] } },
-    { ES_ALW, { &es_fs_colour[10], &rgb_patches_data[10] } },
-    { ES_ALW, { &es_fs_colour[11], &rgb_patches_data[11] } },
-    { ES_ALW, { &es_fs_colour[12], &rgb_patches_data[12] } },
-    { ES_ALW, { &es_fs_colour[13], &rgb_patches_data[13] } },
-    { ES_ALW, { &es_fs_colour[14], &rgb_patches_data[14] } },
-    { ES_ALW, { &es_fs_colour[15], &rgb_patches_data[15] } },
-    { ES_ALW, { &es_fs_colour_group_enable, &es_fs_colour_group_enable_data } },
+    { ES_ALW, { { &es_fs_colour_group_main }, &rgb_group_data } },
+    { ES_ALW, { { &es_fs_colour_group }, NULL } },
+    { ES_ALW, { { &es_fs_colour_patch }, &rgb_patch_data } }, /* patch must be created before first field */
+    { ES_ALW, { { &es_fs_colour_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] } },
+    { ES_ALW, { { &es_fs_colour_field[RGB_TX_IX_R] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_fs_colour_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] } },
+    { ES_ALW, { { &es_fs_colour_field[RGB_TX_IX_G] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_fs_colour_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] } },
+    { ES_ALW, { { &es_fs_colour_field[RGB_TX_IX_B] }, &rgb_bump_data } },
+    { ES_NRO, { { &es_fs_colour_button }, &rgb_button_data } },
+    { ES_ALW, { { &es_fs_colour[0] }, &rgb_patches_data[0] } },
+    { ES_ALW, { { &es_fs_colour[1] }, &rgb_patches_data[1] } },
+    { ES_ALW, { { &es_fs_colour[2] }, &rgb_patches_data[2] } },
+    { ES_ALW, { { &es_fs_colour[3] }, &rgb_patches_data[3] } },
+    { ES_ALW, { { &es_fs_colour[4] }, &rgb_patches_data[4] } },
+    { ES_ALW, { { &es_fs_colour[5] }, &rgb_patches_data[5] } },
+    { ES_ALW, { { &es_fs_colour[6] }, &rgb_patches_data[6] } },
+    { ES_ALW, { { &es_fs_colour[7] }, &rgb_patches_data[7] } },
+    { ES_ALW, { { &es_fs_colour[8] }, &rgb_patches_data[8] } },
+    { ES_ALW, { { &es_fs_colour[9] }, &rgb_patches_data[9] } },
+    { ES_ALW, { { &es_fs_colour[10] }, &rgb_patches_data[10] } },
+    { ES_ALW, { { &es_fs_colour[11] }, &rgb_patches_data[11] } },
+    { ES_ALW, { { &es_fs_colour[12] }, &rgb_patches_data[12] } },
+    { ES_ALW, { { &es_fs_colour[13] }, &rgb_patches_data[13] } },
+    { ES_ALW, { { &es_fs_colour[14] }, &rgb_patches_data[14] } },
+    { ES_ALW, { { &es_fs_colour[15] }, &rgb_patches_data[15] } },
+    { ES_ALW, { { &es_fs_colour_group_enable }, &es_fs_colour_group_enable_data } },
 
-    { ES_ALW, { &es_fs_ok, &es_ok_data } }
+    { ES_ALW, { { &es_fs_ok }, &es_ok_data } }
 };
 
 /******************************************************************************
@@ -727,7 +760,7 @@ es_cs_col_caption_group =
 };
 
 /*
-width 'group'
+width 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -759,15 +792,15 @@ es_cs_width_units =
 {
     ES_CS_ID_WIDTH_UNITS, ES_CS_ID_GROUP,
     { ES_CS_ID_WIDTH, ES_CS_ID_WIDTH, DIALOG_CONTROL_SELF, ES_CS_ID_WIDTH },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_cs_width_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_cs_width_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-column numform name 'group'
+column numform name 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -1021,7 +1054,7 @@ es_ps_margins_caption_group =
 };
 
 /*
-left margin 'group'
+left margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -1053,15 +1086,15 @@ es_ps_margin_left_units =
 {
     ES_PS_ID_MARGIN_LEFT_UNITS, ES_PS_ID_MARGINS_GROUP,
     { ES_PS_ID_MARGIN_LEFT, ES_PS_ID_MARGIN_LEFT, DIALOG_CONTROL_SELF, ES_PS_ID_MARGIN_LEFT },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_ps_margin_left_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_ps_margin_left_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-para margin 'group'
+para margin 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -1098,10 +1131,10 @@ es_ps_margin_para_units =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_ps_margin_para_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_ps_margin_para_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-right margin 'group'
+right margin 'buddies'
 */
 
 static /*poked*/ DIALOG_CONTROL
@@ -1139,10 +1172,10 @@ es_ps_margin_right_units =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_ps_margin_right_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_ps_margin_right_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-tab list 'group'
+tab list 'buddies'
 */
 
 static /*poked*/ DIALOG_CONTROL
@@ -1193,7 +1226,7 @@ es_ps_tab_list_units =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_ps_tab_list_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_ps_tab_list_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
 ok
@@ -1204,47 +1237,47 @@ ok
 static const ES_DIALOG_CTL_CREATE
 es_ps2_ctl_create[] =
 {
-    { ES_ALW, { &es_cs_group, &es_cs_group_data } },
-    { ES_ALW, { &es_cs_col_caption_group } },
-    { ES_ALW, { &es_cs_width, &es_cs_width_data } },
-    { ES_ALW, { &es_cs_width_units, &es_cs_width_units_data } },
-    { ES_ALW, { &es_cs_width_enable, &es_cs_width_enable_data } },
-    { ES_NUM, { &es_cs_col_name, &es_cs_col_name_data } },
-    { ES_NUM, { &es_cs_col_name_enable, &es_cs_col_name_enable_data } },
+    { ES_ALW, { { &es_cs_group }, &es_cs_group_data } },
+    { ES_ALW, { { &es_cs_col_caption_group }, NULL } },
+    { ES_ALW, { { &es_cs_width }, &es_cs_width_data } },
+    { ES_ALW, { { &es_cs_width_units }, &es_cs_width_units_data } },
+    { ES_ALW, { { &es_cs_width_enable }, &es_cs_width_enable_data } },
+    { ES_NUM, { { &es_cs_col_name }, &es_cs_col_name_data } },
+    { ES_NUM, { { &es_cs_col_name_enable }, &es_cs_col_name_enable_data } },
 
-    { ES_ALW, { &es_ps_horz_justify_group_main, &es_ps_horz_justify_group_main_data } },
-    { ES_ALW, { &es_ps_horz_justify_group } },
-    { ES_ALW, { &es_ps_horz_justify_left, &es_ps_horz_justify_left_data } },
-    { ES_ALW, { &es_ps_horz_justify_centre, &es_ps_horz_justify_centre_data } },
-    { ES_ALW, { &es_ps_horz_justify_right, &es_ps_horz_justify_right_data } },
-    { ES_ATX, { &es_ps_horz_justify_both, &es_ps_horz_justify_both_data } },
-    { ES_ALW, { &es_ps_horz_justify_group_enable, &es_ps_horz_justify_group_enable_data } },
+    { ES_ALW, { { &es_ps_horz_justify_group_main }, &es_ps_horz_justify_group_main_data } },
+    { ES_ALW, { { &es_ps_horz_justify_group }, NULL } },
+    { ES_ALW, { { &es_ps_horz_justify_left }, &es_ps_horz_justify_left_data } },
+    { ES_ALW, { { &es_ps_horz_justify_centre }, &es_ps_horz_justify_centre_data } },
+    { ES_ALW, { { &es_ps_horz_justify_right }, &es_ps_horz_justify_right_data } },
+    { ES_ATX, { { &es_ps_horz_justify_both }, &es_ps_horz_justify_both_data } },
+    { ES_ALW, { { &es_ps_horz_justify_group_enable }, &es_ps_horz_justify_group_enable_data } },
 
-    { ES_ALW, { &es_ps_vert_justify_group_main, &es_ps_vert_justify_group_main_data } },
-    { ES_ALW, { &es_ps_vert_justify_group, NULL /*&es_ps_vert_justify_group_data*/ } },
-    { ES_ALW, { &es_ps_vert_justify_top, &es_ps_vert_justify_top_data } },
-    { ES_ALW, { &es_ps_vert_justify_centre, &es_ps_vert_justify_centre_data } },
-    { ES_ALW, { &es_ps_vert_justify_bottom, &es_ps_vert_justify_bottom_data } },
-    { ES_ALW, { &es_ps_vert_justify_group_enable, &es_ps_vert_justify_group_enable_data } },
+    { ES_ALW, { { &es_ps_vert_justify_group_main }, &es_ps_vert_justify_group_main_data } },
+    { ES_ALW, { { &es_ps_vert_justify_group }, NULL /*&es_ps_vert_justify_group_data*/ } },
+    { ES_ALW, { { &es_ps_vert_justify_top }, &es_ps_vert_justify_top_data } },
+    { ES_ALW, { { &es_ps_vert_justify_centre }, &es_ps_vert_justify_centre_data } },
+    { ES_ALW, { { &es_ps_vert_justify_bottom }, &es_ps_vert_justify_bottom_data } },
+    { ES_ALW, { { &es_ps_vert_justify_group_enable }, &es_ps_vert_justify_group_enable_data } },
 
-    { ES_ALW, { &es_ps_margins_group, &es_ps_margins_group_data } },
-    { ES_ALW, { &es_ps_margins_caption_group } },
-    { ES_ALW, { &es_ps_margin_left, &es_ps_margin_left_data } },
-    { ES_ALW, { &es_ps_margin_left_units, &es_ps_margin_left_units_data } },
-    { ES_ALW, { &es_ps_margin_left_enable, &es_ps_margin_left_enable_data } },
-    { ES_ATX, { &es_ps_margin_para, &es_ps_margin_para_data } },
-    { ES_ATX, { &es_ps_margin_para_units, &es_ps_margin_para_units_data } },
-    { ES_ATX, { &es_ps_margin_para_enable, &es_ps_margin_para_enable_data } },
-    { ES_ALW, { &es_ps_margin_right, &es_ps_margin_right_data } },
-    { ES_ALW, { &es_ps_margin_right_units, &es_ps_margin_right_units_data } },
-    { ES_ALW, { &es_ps_margin_right_enable, &es_ps_margin_right_enable_data } },
+    { ES_ALW, { { &es_ps_margins_group }, &es_ps_margins_group_data } },
+    { ES_ALW, { { &es_ps_margins_caption_group }, NULL } },
+    { ES_ALW, { { &es_ps_margin_left }, &es_ps_margin_left_data } },
+    { ES_ALW, { { &es_ps_margin_left_units }, &es_ps_margin_left_units_data } },
+    { ES_ALW, { { &es_ps_margin_left_enable }, &es_ps_margin_left_enable_data } },
+    { ES_ATX, { { &es_ps_margin_para }, &es_ps_margin_para_data } },
+    { ES_ATX, { { &es_ps_margin_para_units }, &es_ps_margin_para_units_data } },
+    { ES_ATX, { { &es_ps_margin_para_enable }, &es_ps_margin_para_enable_data } },
+    { ES_ALW, { { &es_ps_margin_right }, &es_ps_margin_right_data } },
+    { ES_ALW, { { &es_ps_margin_right_units }, &es_ps_margin_right_units_data } },
+    { ES_ALW, { { &es_ps_margin_right_enable }, &es_ps_margin_right_enable_data } },
 
-    { ES_ATX, { &es_ps_tab_list_group, &es_ps_tab_list_group_data } },
-    { ES_ATX, { &es_ps_tab_list, &es_ps_tab_list_data } },
-    { ES_ATX, { &es_ps_tab_list_units, &es_ps_tab_list_units_data } },
-    { ES_ATX, { &es_ps_tab_list_enable, &es_ps_tab_list_enable_data } },
+    { ES_ATX, { { &es_ps_tab_list_group }, &es_ps_tab_list_group_data } },
+    { ES_ATX, { { &es_ps_tab_list }, &es_ps_tab_list_data } },
+    { ES_ATX, { { &es_ps_tab_list_units }, &es_ps_tab_list_units_data } },
+    { ES_ATX, { { &es_ps_tab_list_enable }, &es_ps_tab_list_enable_data } },
 
-    { ES_ALW, { &es_ps2_ok, &es_ok_data } }
+    { ES_ALW, { { &es_ps2_ok }, &es_ok_data } }
 };
 
 /******************************************************************************
@@ -1297,17 +1330,18 @@ es_ps_border_tx[3] =
     {
         ES_PS_ID_BORDER_TX_R, ES_PS_ID_BORDER_RGB_GROUP,
         { ES_PS_ID_BORDER_RGB_GROUP, ES_PS_ID_BORDER_R, DIALOG_CONTROL_SELF, ES_PS_ID_BORDER_R },
-        { 0, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) }
+        { 0, 0, RGB_TX_H },
+        { DRT(LTLB, TEXTLABEL) }
     },
     {
         ES_PS_ID_BORDER_TX_G, ES_PS_ID_BORDER_RGB_GROUP,
         { ES_PS_ID_BORDER_TX_R, ES_PS_ID_BORDER_G, ES_PS_ID_BORDER_TX_R, ES_PS_ID_BORDER_G },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 }, { DRT(LTRB, TEXTLABEL) }
     },
     {
         ES_PS_ID_BORDER_TX_B, ES_PS_ID_BORDER_RGB_GROUP,
         { ES_PS_ID_BORDER_TX_G, ES_PS_ID_BORDER_B, ES_PS_ID_BORDER_TX_G, ES_PS_ID_BORDER_B },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 }, { DRT(LTRB, TEXTLABEL) }
     }
 };
 
@@ -1317,17 +1351,20 @@ es_ps_border_field[3] =
     {
         ES_PS_ID_BORDER_R, ES_PS_ID_BORDER_RGB_GROUP,
         { ES_PS_ID_BORDER_TX_R, ES_PS_ID_BORDER_RGB_GROUP },
-        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V },
+        { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         ES_PS_ID_BORDER_G, ES_PS_ID_BORDER_RGB_GROUP,
         { ES_PS_ID_BORDER_R, ES_PS_ID_BORDER_R, ES_PS_ID_BORDER_R },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         ES_PS_ID_BORDER_B, ES_PS_ID_BORDER_RGB_GROUP,
         { ES_PS_ID_BORDER_G, ES_PS_ID_BORDER_G, ES_PS_ID_BORDER_G },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     }
 };
 
@@ -1400,7 +1437,7 @@ es_ps_border_line_group_enable =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-es_ps_border_line_group_enable_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE) };
+es_ps_border_line_group_enable_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_LINE_STYLE) };
 
 static const DIALOG_CONTROL
 es_ps_border_line_group =
@@ -1480,17 +1517,20 @@ es_ps_grid_tx[3] =
     {
         ES_PS_ID_GRID_TX_R, ES_PS_ID_GRID_RGB_GROUP,
         { ES_PS_ID_GRID_RGB_GROUP, ES_PS_ID_GRID_R, DIALOG_CONTROL_SELF, ES_PS_ID_GRID_R },
-        { 0, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) }
+        { 0, 0, RGB_TX_H },
+        { DRT(LTLB, TEXTLABEL) }
     },
     {
         ES_PS_ID_GRID_TX_G, ES_PS_ID_GRID_RGB_GROUP,
         { ES_PS_ID_GRID_TX_R, ES_PS_ID_GRID_G, ES_PS_ID_GRID_TX_R, ES_PS_ID_GRID_G },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     },
     {
         ES_PS_ID_GRID_TX_B, ES_PS_ID_GRID_RGB_GROUP,
         { ES_PS_ID_GRID_TX_G, ES_PS_ID_GRID_B, ES_PS_ID_GRID_TX_G, ES_PS_ID_GRID_B },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     }
 };
 
@@ -1500,17 +1540,20 @@ es_ps_grid_field[3] =
     {
         ES_PS_ID_GRID_R, ES_PS_ID_GRID_RGB_GROUP,
         { ES_PS_ID_GRID_TX_R, ES_PS_ID_GRID_RGB_GROUP },
-        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V },
+        { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         ES_PS_ID_GRID_G, ES_PS_ID_GRID_RGB_GROUP,
         { ES_PS_ID_GRID_R, ES_PS_ID_GRID_R, ES_PS_ID_GRID_R },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         ES_PS_ID_GRID_B, ES_PS_ID_GRID_RGB_GROUP,
         { ES_PS_ID_GRID_G, ES_PS_ID_GRID_G, ES_PS_ID_GRID_G },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     }
 };
 
@@ -1583,7 +1626,7 @@ es_ps_grid_line_group_enable =
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOX
-es_ps_grid_line_group_enable_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_BOX_LINE_STYLE) };
+es_ps_grid_line_group_enable_data = { { 0 }, UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_BOX_LINE_STYLE) };
 
 static const DIALOG_CONTROL
 es_ps_grid_line_group =
@@ -1673,17 +1716,20 @@ es_ps_rgb_back_tx[3] =
     {
         ES_PS_ID_RGB_BACK_TX_R, ES_PS_ID_RGB_BACK_GROUP_INNER,
         { DIALOG_CONTROL_PARENT, ES_PS_ID_RGB_BACK_R, DIALOG_CONTROL_SELF, ES_PS_ID_RGB_BACK_R },
-        { 0, 0, RGB_TX_H }, { DRT(LTLB, STATICTEXT) }
+        { 0, 0, RGB_TX_H },
+        { DRT(LTLB, TEXTLABEL) }
     },
     {
         ES_PS_ID_RGB_BACK_TX_G, ES_PS_ID_RGB_BACK_GROUP_INNER,
         { ES_PS_ID_RGB_BACK_TX_R, ES_PS_ID_RGB_BACK_G, ES_PS_ID_RGB_BACK_TX_R, ES_PS_ID_RGB_BACK_G },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     },
     {
         ES_PS_ID_RGB_BACK_TX_B, ES_PS_ID_RGB_BACK_GROUP_INNER,
         { ES_PS_ID_RGB_BACK_TX_G, ES_PS_ID_RGB_BACK_B, ES_PS_ID_RGB_BACK_TX_G, ES_PS_ID_RGB_BACK_B },
-        { 0 }, { DRT(LTRB, STATICTEXT) }
+        { 0 },
+        { DRT(LTRB, TEXTLABEL) }
     }
 };
 
@@ -1693,17 +1739,20 @@ es_ps_rgb_back_field[3] =
     {
         ES_PS_ID_RGB_BACK_R, ES_PS_ID_RGB_BACK_GROUP_INNER,
         { ES_PS_ID_RGB_BACK_TX_R, DIALOG_CONTROL_PARENT },
-        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V }, { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
+        { DIALOG_LABELGAP_H, 0, RGB_FIELDS_H, DIALOG_STDBUMP_V },
+        { DRT(RTLT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         ES_PS_ID_RGB_BACK_G, ES_PS_ID_RGB_BACK_GROUP_INNER,
         { ES_PS_ID_RGB_BACK_R, ES_PS_ID_RGB_BACK_R, ES_PS_ID_RGB_BACK_R },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     },
     {
         ES_PS_ID_RGB_BACK_B, ES_PS_ID_RGB_BACK_GROUP_INNER,
         { ES_PS_ID_RGB_BACK_G, ES_PS_ID_RGB_BACK_G, ES_PS_ID_RGB_BACK_G },
-        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V }, { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
+        { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
+        { DRT(LBRT, BUMP_S32), 1 /*tabstop*/ }
     }
 };
 
@@ -1775,20 +1824,20 @@ es_ps_rgb_back_t =
 ok
 */
 
+#if RISCOS
+
 static const DIALOG_CONTROL
 es_ps1_ok =
 {
     IDOK, DIALOG_CONTROL_WINDOW,
-#if RISCOS
     { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP /*bodge for pretty*/ },
     { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
-#else
-    { DIALOG_CONTROL_SELF, DIALOG_CONTROL_SELF, ES_ID_RHS_GROUP, ES_ID_RHS_GROUP /*bodge for pretty*/ },
-    { DIALOG_CONTENTS_CALC, DIALOG_DEFPUSHBUTTON_V, 0, 0 },
-    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
-#endif
+    { DRT(RBRB, PUSHBUTTON), 1 /*tabstop*/ }
 };
+
+#else
+#define es_ps1_ok es_ok
+#endif
 
 static ES_DIALOG_CTL_CREATE
 es_ps1_ctl_create[] =
@@ -1797,117 +1846,117 @@ es_ps1_ctl_create[] =
 border
 */
 
-    { ES_ALW, { &es_ps_border_group, &es_ps_border_group_data } },
-    { ES_ALW, { &es_ps_border_rgb_group } },
-    { ES_ALW, { &es_ps_border_patch, &rgb_patch_data } }, /* patch must be created before first field */
-    { ES_ALW, { &es_ps_border_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] } },
-    { ES_ALW, { &es_ps_border_field[RGB_TX_IX_R], &rgb_bump_data } },
-    { ES_ALW, { &es_ps_border_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] } },
-    { ES_ALW, { &es_ps_border_field[RGB_TX_IX_G], &rgb_bump_data } },
-    { ES_ALW, { &es_ps_border_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] } },
-    { ES_ALW, { &es_ps_border_field[RGB_TX_IX_B], &rgb_bump_data } },
-    { ES_NRO, { &es_ps_border_button, &rgb_button_data } },
-    { ES_ALW, { &es_ps_border[0], &rgb_patches_data[0] } },
-    { ES_ALW, { &es_ps_border[1], &rgb_patches_data[1] } },
-    { ES_ALW, { &es_ps_border[2], &rgb_patches_data[2] } },
-    { ES_ALW, { &es_ps_border[3], &rgb_patches_data[3] } },
-    { ES_ALW, { &es_ps_border[4], &rgb_patches_data[4] } },
-    { ES_ALW, { &es_ps_border[5], &rgb_patches_data[5] } },
-    { ES_ALW, { &es_ps_border[6], &rgb_patches_data[6] } },
-    { ES_ALW, { &es_ps_border[7], &rgb_patches_data[7] } },
-    { ES_ALW, { &es_ps_border[8], &rgb_patches_data[8] } },
-    { ES_ALW, { &es_ps_border[9], &rgb_patches_data[9] } },
-    { ES_ALW, { &es_ps_border[10], &rgb_patches_data[10] } },
-    { ES_ALW, { &es_ps_border[11], &rgb_patches_data[11] } },
-    { ES_ALW, { &es_ps_border[12], &rgb_patches_data[12] } },
-    { ES_ALW, { &es_ps_border[13], &rgb_patches_data[13] } },
-    { ES_ALW, { &es_ps_border[14], &rgb_patches_data[14] } },
-    { ES_ALW, { &es_ps_border[15], &rgb_patches_data[15] } },
-    { ES_ALW, { &es_ps_border_rgb_group_enable, &es_ps_border_rgb_group_enable_data } },
+    { ES_ALW, { { &es_ps_border_group }, &es_ps_border_group_data } },
+    { ES_ALW, { { &es_ps_border_rgb_group }, NULL } },
+    { ES_ALW, { { &es_ps_border_patch }, &rgb_patch_data } }, /* patch must be created before first field */
+    { ES_ALW, { { &es_ps_border_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] } },
+    { ES_ALW, { { &es_ps_border_field[RGB_TX_IX_R] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_ps_border_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] } },
+    { ES_ALW, { { &es_ps_border_field[RGB_TX_IX_G] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_ps_border_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] } },
+    { ES_ALW, { { &es_ps_border_field[RGB_TX_IX_B] }, &rgb_bump_data } },
+    { ES_NRO, { { &es_ps_border_button }, &rgb_button_data } },
+    { ES_ALW, { { &es_ps_border[0] }, &rgb_patches_data[0] } },
+    { ES_ALW, { { &es_ps_border[1] }, &rgb_patches_data[1] } },
+    { ES_ALW, { { &es_ps_border[2] }, &rgb_patches_data[2] } },
+    { ES_ALW, { { &es_ps_border[3] }, &rgb_patches_data[3] } },
+    { ES_ALW, { { &es_ps_border[4] }, &rgb_patches_data[4] } },
+    { ES_ALW, { { &es_ps_border[5] }, &rgb_patches_data[5] } },
+    { ES_ALW, { { &es_ps_border[6] }, &rgb_patches_data[6] } },
+    { ES_ALW, { { &es_ps_border[7] }, &rgb_patches_data[7] } },
+    { ES_ALW, { { &es_ps_border[8] }, &rgb_patches_data[8] } },
+    { ES_ALW, { { &es_ps_border[9] }, &rgb_patches_data[9] } },
+    { ES_ALW, { { &es_ps_border[10] }, &rgb_patches_data[10] } },
+    { ES_ALW, { { &es_ps_border[11] }, &rgb_patches_data[11] } },
+    { ES_ALW, { { &es_ps_border[12] }, &rgb_patches_data[12] } },
+    { ES_ALW, { { &es_ps_border[13] }, &rgb_patches_data[13] } },
+    { ES_ALW, { { &es_ps_border[14] }, &rgb_patches_data[14] } },
+    { ES_ALW, { { &es_ps_border[15] }, &rgb_patches_data[15] } },
+    { ES_ALW, { { &es_ps_border_rgb_group_enable }, &es_ps_border_rgb_group_enable_data } },
 
-    { ES_ALW, { &es_ps_border_line_group } },
-    { ES_ALW, { &es_ps_border_line[0], &line_style_data[0] } },
-    { ES_ALW, { &es_ps_border_line[1], &line_style_data[1] } },
-    { ES_ALW, { &es_ps_border_line[2], &line_style_data[2] } },
-    { ES_ALW, { &es_ps_border_line[3], &line_style_data[3] } },
-    { ES_ALW, { &es_ps_border_line[4], &line_style_data[4] } },
-    { ES_ALW, { &es_ps_border_line_group_enable, &es_ps_border_line_group_enable_data } },
+    { ES_ALW, { { &es_ps_border_line_group }, NULL } },
+    { ES_ALW, { { &es_ps_border_line[0] }, &line_style_data[0] } },
+    { ES_ALW, { { &es_ps_border_line[1] }, &line_style_data[1] } },
+    { ES_ALW, { { &es_ps_border_line[2] }, &line_style_data[2] } },
+    { ES_ALW, { { &es_ps_border_line[3] }, &line_style_data[3] } },
+    { ES_ALW, { { &es_ps_border_line[4] }, &line_style_data[4] } },
+    { ES_ALW, { { &es_ps_border_line_group_enable }, &es_ps_border_line_group_enable_data } },
 
 /*
 grid
 */
 
-    { ES_ALW, { &es_ps_grid_group, &es_ps_grid_group_data } },
+    { ES_ALW, { { &es_ps_grid_group }, &es_ps_grid_group_data } },
     { ES_ALW, { &es_ps_grid_rgb_group } },
-    { ES_ALW, { &es_ps_grid_patch, &rgb_patch_data } }, /* patch must be created before first field */
-    { ES_ALW, { &es_ps_grid_tx[RGB_TX_IX_R],&rgb_tx_data[RGB_TX_IX_R] } },
-    { ES_ALW, { &es_ps_grid_field[RGB_TX_IX_R], &rgb_bump_data } },
-    { ES_ALW, { &es_ps_grid_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] } },
-    { ES_ALW, { &es_ps_grid_field[RGB_TX_IX_G], &rgb_bump_data } },
-    { ES_ALW, { &es_ps_grid_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] } },
-    { ES_ALW, { &es_ps_grid_field[RGB_TX_IX_B], &rgb_bump_data } },
-    { ES_NRO, { &es_ps_grid_button, &rgb_button_data } },
-    { ES_ALW, { &es_ps_grid[0], &rgb_patches_data[0] } },
-    { ES_ALW, { &es_ps_grid[1], &rgb_patches_data[1] } },
-    { ES_ALW, { &es_ps_grid[2], &rgb_patches_data[2] } },
-    { ES_ALW, { &es_ps_grid[3], &rgb_patches_data[3] } },
-    { ES_ALW, { &es_ps_grid[4], &rgb_patches_data[4] } },
-    { ES_ALW, { &es_ps_grid[5], &rgb_patches_data[5] } },
-    { ES_ALW, { &es_ps_grid[6], &rgb_patches_data[6] } },
-    { ES_ALW, { &es_ps_grid[7], &rgb_patches_data[7] } },
-    { ES_ALW, { &es_ps_grid[8], &rgb_patches_data[8] } },
-    { ES_ALW, { &es_ps_grid[9], &rgb_patches_data[9] } },
-    { ES_ALW, { &es_ps_grid[10], &rgb_patches_data[10] } },
-    { ES_ALW, { &es_ps_grid[11], &rgb_patches_data[11] } },
-    { ES_ALW, { &es_ps_grid[12], &rgb_patches_data[12] } },
-    { ES_ALW, { &es_ps_grid[13], &rgb_patches_data[13] } },
-    { ES_ALW, { &es_ps_grid[14], &rgb_patches_data[14] } },
-    { ES_ALW, { &es_ps_grid[15], &rgb_patches_data[15] } },
-    { ES_ALW, { &es_ps_grid_rgb_group_enable, &es_ps_grid_rgb_group_enable_data } },
+    { ES_ALW, { { &es_ps_grid_patch }, &rgb_patch_data } }, /* patch must be created before first field */
+    { ES_ALW, { { &es_ps_grid_tx[RGB_TX_IX_R] },&rgb_tx_data[RGB_TX_IX_R] } },
+    { ES_ALW, { { &es_ps_grid_field[RGB_TX_IX_R] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_ps_grid_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] } },
+    { ES_ALW, { { &es_ps_grid_field[RGB_TX_IX_G] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_ps_grid_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] } },
+    { ES_ALW, { { &es_ps_grid_field[RGB_TX_IX_B] }, &rgb_bump_data } },
+    { ES_NRO, { { &es_ps_grid_button }, &rgb_button_data } },
+    { ES_ALW, { { &es_ps_grid[0] }, &rgb_patches_data[0] } },
+    { ES_ALW, { { &es_ps_grid[1] }, &rgb_patches_data[1] } },
+    { ES_ALW, { { &es_ps_grid[2] }, &rgb_patches_data[2] } },
+    { ES_ALW, { { &es_ps_grid[3] }, &rgb_patches_data[3] } },
+    { ES_ALW, { { &es_ps_grid[4] }, &rgb_patches_data[4] } },
+    { ES_ALW, { { &es_ps_grid[5] }, &rgb_patches_data[5] } },
+    { ES_ALW, { { &es_ps_grid[6] }, &rgb_patches_data[6] } },
+    { ES_ALW, { { &es_ps_grid[7] }, &rgb_patches_data[7] } },
+    { ES_ALW, { { &es_ps_grid[8] }, &rgb_patches_data[8] } },
+    { ES_ALW, { { &es_ps_grid[9] }, &rgb_patches_data[9] } },
+    { ES_ALW, { { &es_ps_grid[10] }, &rgb_patches_data[10] } },
+    { ES_ALW, { { &es_ps_grid[11] }, &rgb_patches_data[11] } },
+    { ES_ALW, { { &es_ps_grid[12] }, &rgb_patches_data[12] } },
+    { ES_ALW, { { &es_ps_grid[13] }, &rgb_patches_data[13] } },
+    { ES_ALW, { { &es_ps_grid[14] }, &rgb_patches_data[14] } },
+    { ES_ALW, { { &es_ps_grid[15] }, &rgb_patches_data[15] } },
+    { ES_ALW, { { &es_ps_grid_rgb_group_enable }, &es_ps_grid_rgb_group_enable_data } },
 
     { ES_ALW, { &es_ps_grid_line_group } },
-    { ES_ALW, { &es_ps_grid_line[0], &line_style_data[0] } },
-    { ES_ALW, { &es_ps_grid_line[1], &line_style_data[1] } },
-    { ES_ALW, { &es_ps_grid_line[2], &line_style_data[2] } },
-    { ES_ALW, { &es_ps_grid_line[3], &line_style_data[3] } },
-    { ES_ALW, { &es_ps_grid_line[4], &line_style_data[4] } },
-    { ES_ALW, { &es_ps_grid_line_group_enable, &es_ps_grid_line_group_enable_data } },
+    { ES_ALW, { { &es_ps_grid_line[0] }, &line_style_data[0] } },
+    { ES_ALW, { { &es_ps_grid_line[1] }, &line_style_data[1] } },
+    { ES_ALW, { { &es_ps_grid_line[2] }, &line_style_data[2] } },
+    { ES_ALW, { { &es_ps_grid_line[3] }, &line_style_data[3] } },
+    { ES_ALW, { { &es_ps_grid_line[4] }, &line_style_data[4] } },
+    { ES_ALW, { { &es_ps_grid_line_group_enable }, &es_ps_grid_line_group_enable_data } },
 
 /*
 background
 */
 
-    { ES_ALW, { &es_ps_back_group, &es_ps_back_group_data } },
+    { ES_ALW, { { &es_ps_back_group }, &es_ps_back_group_data } },
     { ES_ALW, { &es_ps_rgb_back_group } },
     { ES_ALW, { &es_ps_rgb_back_group_inner } },
-    { ES_ALW, { &es_ps_rgb_back_patch, &rgb_patch_data } }, /* patch must be created before first field */
-    { ES_ALW, { &es_ps_rgb_back_tx[RGB_TX_IX_R], &rgb_tx_data[RGB_TX_IX_R] } },
-    { ES_ALW, { &es_ps_rgb_back_field[RGB_TX_IX_R], &rgb_bump_data } },
-    { ES_ALW, { &es_ps_rgb_back_tx[RGB_TX_IX_G], &rgb_tx_data[RGB_TX_IX_G] } },
-    { ES_ALW, { &es_ps_rgb_back_field[RGB_TX_IX_G], &rgb_bump_data } },
-    { ES_ALW, { &es_ps_rgb_back_tx[RGB_TX_IX_B], &rgb_tx_data[RGB_TX_IX_B] } },
-    { ES_ALW, { &es_ps_rgb_back_field[RGB_TX_IX_B], &rgb_bump_data } },
-    { ES_NRO, { &es_ps_rgb_back_button, &rgb_button_data } },
-    { ES_ALW, { &es_ps_rgb_back[0], &rgb_patches_data[0] } },
-    { ES_ALW, { &es_ps_rgb_back[1], &rgb_patches_data[1] } },
-    { ES_ALW, { &es_ps_rgb_back[2], &rgb_patches_data[2] } },
-    { ES_ALW, { &es_ps_rgb_back[3], &rgb_patches_data[3] } },
-    { ES_ALW, { &es_ps_rgb_back[4], &rgb_patches_data[4] } },
-    { ES_ALW, { &es_ps_rgb_back[5], &rgb_patches_data[5] } },
-    { ES_ALW, { &es_ps_rgb_back[6], &rgb_patches_data[6] } },
-    { ES_ALW, { &es_ps_rgb_back[7], &rgb_patches_data[7] } },
-    { ES_ALW, { &es_ps_rgb_back[8], &rgb_patches_data[8] } },
-    { ES_ALW, { &es_ps_rgb_back[9], &rgb_patches_data[9] } },
-    { ES_ALW, { &es_ps_rgb_back[10], &rgb_patches_data[10] } },
-    { ES_ALW, { &es_ps_rgb_back[11], &rgb_patches_data[11] } },
-    { ES_ALW, { &es_ps_rgb_back[12], &rgb_patches_data[12] } },
-    { ES_ALW, { &es_ps_rgb_back[13], &rgb_patches_data[13] } },
-    { ES_ALW, { &es_ps_rgb_back[14], &rgb_patches_data[14] } },
-    { ES_ALW, { &es_ps_rgb_back[15], &rgb_patches_data[15] } },
-    { ES_ALW, { &es_ps_rgb_back_t, &es_tx_t_data } },
-    { ES_ALW, { &es_ps_rgb_back_group_enable, &es_ps_rgb_back_group_enable_data } },
+    { ES_ALW, { { &es_ps_rgb_back_patch }, &rgb_patch_data } }, /* patch must be created before first field */
+    { ES_ALW, { { &es_ps_rgb_back_tx[RGB_TX_IX_R] }, &rgb_tx_data[RGB_TX_IX_R] } },
+    { ES_ALW, { { &es_ps_rgb_back_field[RGB_TX_IX_R] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_ps_rgb_back_tx[RGB_TX_IX_G] }, &rgb_tx_data[RGB_TX_IX_G] } },
+    { ES_ALW, { { &es_ps_rgb_back_field[RGB_TX_IX_G] }, &rgb_bump_data } },
+    { ES_ALW, { { &es_ps_rgb_back_tx[RGB_TX_IX_B] }, &rgb_tx_data[RGB_TX_IX_B] } },
+    { ES_ALW, { { &es_ps_rgb_back_field[RGB_TX_IX_B] }, &rgb_bump_data } },
+    { ES_NRO, { { &es_ps_rgb_back_button }, &rgb_button_data } },
+    { ES_ALW, { { &es_ps_rgb_back[0] }, &rgb_patches_data[0] } },
+    { ES_ALW, { { &es_ps_rgb_back[1] }, &rgb_patches_data[1] } },
+    { ES_ALW, { { &es_ps_rgb_back[2] }, &rgb_patches_data[2] } },
+    { ES_ALW, { { &es_ps_rgb_back[3] }, &rgb_patches_data[3] } },
+    { ES_ALW, { { &es_ps_rgb_back[4] }, &rgb_patches_data[4] } },
+    { ES_ALW, { { &es_ps_rgb_back[5] }, &rgb_patches_data[5] } },
+    { ES_ALW, { { &es_ps_rgb_back[6] }, &rgb_patches_data[6] } },
+    { ES_ALW, { { &es_ps_rgb_back[7] }, &rgb_patches_data[7] } },
+    { ES_ALW, { { &es_ps_rgb_back[8] }, &rgb_patches_data[8] } },
+    { ES_ALW, { { &es_ps_rgb_back[9] }, &rgb_patches_data[9] } },
+    { ES_ALW, { { &es_ps_rgb_back[10] }, &rgb_patches_data[10] } },
+    { ES_ALW, { { &es_ps_rgb_back[11] }, &rgb_patches_data[11] } },
+    { ES_ALW, { { &es_ps_rgb_back[12] }, &rgb_patches_data[12] } },
+    { ES_ALW, { { &es_ps_rgb_back[13] }, &rgb_patches_data[13] } },
+    { ES_ALW, { { &es_ps_rgb_back[14] }, &rgb_patches_data[14] } },
+    { ES_ALW, { { &es_ps_rgb_back[15] }, &rgb_patches_data[15] } },
+    { ES_ALW, { { &es_ps_rgb_back_t }, &es_tx_t_data } },
+    { ES_ALW, { { &es_ps_rgb_back_group_enable }, &es_ps_rgb_back_group_enable_data } },
 
-    { ES_ALW, { &es_ps1_ok, &es_ok_data } }
+    { ES_ALW, { { &es_ps1_ok }, &es_ok_data } }
 };
 
 /******************************************************************************
@@ -1942,7 +1991,7 @@ es_ps_para_space_caption_group =
 };
 
 /*
-para start 'group'
+para start 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -1974,15 +2023,15 @@ es_ps_para_start_units =
 {
     ES_PS_ID_PARA_START_UNITS, ES_PS_ID_PARA_SPACE_GROUP,
     { ES_PS_ID_PARA_START, ES_PS_ID_PARA_START, DIALOG_CONTROL_SELF, ES_PS_ID_PARA_START },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_ps_para_start_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_ps_para_start_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-para end 'group'
+para end 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -2019,7 +2068,7 @@ es_ps_para_end_units =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_ps_para_end_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_ps_para_end_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
 line space group
@@ -2148,7 +2197,7 @@ es_ps_line_space_n_val_units =
 {
     ES_PS_ID_LINE_SPACE_N_VAL_UNITS, ES_PS_ID_LINE_SPACE_GROUP,
     { ES_PS_ID_LINE_SPACE_N_VAL, ES_PS_ID_LINE_SPACE_N_VAL, DIALOG_CONTROL_SELF, ES_PS_ID_LINE_SPACE_N_VAL },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
@@ -2163,25 +2212,25 @@ ok
 static ES_DIALOG_CTL_CREATE
 es_ps3_ctl_create[] =
 {
-    { ES_ATX, { &es_ps_para_space_group, &es_ps_para_space_group_data } },
-    { ES_ATX, { &es_ps_para_space_caption_group } },
-    { ES_ATX, { &es_ps_para_start, &es_ps_para_start_data } },
-    { ES_ATX, { &es_ps_para_start_units, &es_ps_para_start_units_data } },
-    { ES_ATX, { &es_ps_para_start_enable, &es_ps_para_start_enable_data } },
-    { ES_ATX, { &es_ps_para_end, &es_ps_para_end_data } },
-    { ES_ATX, { &es_ps_para_end_units, &es_ps_para_end_units_data } },
-    { ES_ATX, { &es_ps_para_end_enable, &es_ps_para_end_enable_data } },
-    { ES_ATX, { &es_ps_line_space_group_main, &es_ps_line_space_group_main_data } },
-    { ES_ATX, { &es_ps_line_space_group } },
-    { ES_ATX, { &es_ps_line_space_single, &es_ps_line_space_single_data } },
-    { ES_ATX, { &es_ps_line_space_onep5, &es_ps_line_space_onep5_data } },
-    { ES_ATX, { &es_ps_line_space_double, &es_ps_line_space_double_data } },
-    { ES_ATX, { &es_ps_line_space_n, &es_ps_line_space_n_data } },
-    { ES_ATX, { &es_ps_line_space_n_val, &es_ps_line_space_n_val_data } },
-    { ES_ATX, { &es_ps_line_space_n_val_units, &es_ps_line_space_n_val_units_data } },
-    { ES_ATX, { &es_ps_line_space_group_enable, &es_ps_line_space_group_enable_data } },
+    { ES_ATX, { { &es_ps_para_space_group }, &es_ps_para_space_group_data } },
+    { ES_ATX, { { &es_ps_para_space_caption_group }, NULL } },
+    { ES_ATX, { { &es_ps_para_start }, &es_ps_para_start_data } },
+    { ES_ATX, { { &es_ps_para_start_units }, &es_ps_para_start_units_data } },
+    { ES_ATX, { { &es_ps_para_start_enable }, &es_ps_para_start_enable_data } },
+    { ES_ATX, { { &es_ps_para_end }, &es_ps_para_end_data } },
+    { ES_ATX, { { &es_ps_para_end_units }, &es_ps_para_end_units_data } },
+    { ES_ATX, { { &es_ps_para_end_enable }, &es_ps_para_end_enable_data } },
+    { ES_ATX, { { &es_ps_line_space_group_main }, &es_ps_line_space_group_main_data } },
+    { ES_ATX, { { &es_ps_line_space_group }, NULL } },
+    { ES_ATX, { { &es_ps_line_space_single }, &es_ps_line_space_single_data } },
+    { ES_ATX, { { &es_ps_line_space_onep5 }, &es_ps_line_space_onep5_data } },
+    { ES_ATX, { { &es_ps_line_space_double }, &es_ps_line_space_double_data } },
+    { ES_ATX, { { &es_ps_line_space_n }, &es_ps_line_space_n_data } },
+    { ES_ATX, { { &es_ps_line_space_n_val }, &es_ps_line_space_n_val_data } },
+    { ES_ATX, { { &es_ps_line_space_n_val_units }, &es_ps_line_space_n_val_units_data } },
+    { ES_ATX, { { &es_ps_line_space_group_enable }, &es_ps_line_space_group_enable_data } },
 
-    { ES_ALW, { &es_ps3_ok, &es_ok_data } }
+    { ES_ALW, { { &es_ps3_ok }, &es_ok_data } }
 };
 
 /******************************************************************************
@@ -2342,7 +2391,7 @@ static const DIALOG_CONTROL_DATA_GROUPBOX
 es_ps_new_object_group_data = { UI_TEXT_INIT_RESID(MSG_DIALOG_ES_PS_NEW_OBJECT), { FRAMED_BOX_GROUP } };
 
 /*
-new object list 'group'
+new object list 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -2397,7 +2446,7 @@ es_ps_new_object_list_data =
 {
   {/*combo_xx*/
 
-    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT, 1 /*read_only*/ /*bits*/}, NULL /*edit_xx*/},
+    {/*edit_xx*/ {/*bits*/ FRAMED_BOX_EDIT_READ_ONLY, 1 /*read_only*/ /*bits*/}, NULL /*edit_xx*/},
     {/*list_xx*/ { 0 /*force_v_scroll*/, 0 /*disable_double*/, 0 /*tab_position*/} /*list_xx*/},
         NULL,
         ES_PS_NEW_OBJECT_LIST_DROP_V /*dropdown_size*/
@@ -2420,9 +2469,9 @@ static const DIALOG_CONTROL
 es_ps_protection_enable =
 {
     ES_PS_ID_PROTECTION_ENABLE, ES_ID_RHS_GROUP,
-    { ES_PS_ID_NEW_OBJECT_GROUP, ES_PS_ID_PROTECTION, DIALOG_CONTROL_SELF, ES_PS_ID_PROTECTION },
-    { DIALOG_GROUPSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
-    { DRT(RTLB, CHECKBOX), 1 /*tabstop*/ }
+    { ES_PS_ID_NEW_OBJECT_LIST_ENABLE, ES_PS_ID_PROTECTION, DIALOG_CONTROL_SELF, ES_PS_ID_PROTECTION },
+    { 0, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DRT(LTLB, CHECKBOX), 1 /*tabstop*/ }
 };
 
 static const DIALOG_CONTROL_DATA_CHECKBOXF
@@ -2432,9 +2481,9 @@ static const DIALOG_CONTROL
 es_ps_protection =
 {
     ES_PS_ID_PROTECTION, ES_ID_RHS_GROUP,
-    { ES_PS_ID_PROTECTION_ENABLE, ES_PS_ID_NEW_OBJECT_LIST_ENABLE },
-    { DIALOG_STDSPACING_H, 0, DIALOG_STDCHECK_H, DIALOG_STDCHECK_V },
-    { DRT(RTLT, CHECKBOX), 1 /*tabstop*/ }
+    { ES_PS_ID_PROTECTION_ENABLE, ES_PS_ID_NEW_OBJECT_GROUP },
+    { DIALOG_STDSPACING_H, DIALOG_GROUPSPACING_V, DIALOG_STDCHECK_H, DIALOG_STDCHECK_V },
+    { DRT(RBLT, CHECKBOX), 1 /*tabstop*/ }
 };
 
 /*
@@ -2450,20 +2499,20 @@ ok
 static ES_DIALOG_CTL_CREATE
 es_ps4_ctl_create[] =
 {
-    { ES_ALW, { &es_ps_numform_group, &es_ps_numform_group_data } },
-    { ES_NUM, { &es_ps_numform_list_nu, &es_ps_numform_list_nu_data } },
-    { ES_NUM, { &es_ps_numform_list_nu_enable, &es_ps_numform_list_nu_enable_data } },
-    { ES_NUM, { &es_ps_numform_list_dt, &es_ps_numform_list_dt_data } },
-    { ES_NUM, { &es_ps_numform_list_dt_enable, &es_ps_numform_list_dt_enable_data } },
-    { ES_NUM, { &es_ps_numform_list_se, &es_ps_numform_list_se_data } },
-    { ES_NUM, { &es_ps_numform_list_se_enable, &es_ps_numform_list_se_enable_data } },
-    { ES_ALW, { &es_ps_new_object_group, &es_ps_new_object_group_data } },
-    { ES_ALW, { &es_ps_new_object_list, &es_ps_new_object_list_data } },
-    { ES_ALW, { &es_ps_new_object_list_enable, &es_ps_new_object_list_enable_data } },
-    { ES_NUM, { &es_ps_protection, &es_ps_protection_data } },
-    { ES_NUM, { &es_ps_protection_enable, &es_ps_protection_enable_data } },
+    { ES_ALW, { { &es_ps_numform_group }, &es_ps_numform_group_data } },
+    { ES_NUM, { { &es_ps_numform_list_nu }, &es_ps_numform_list_nu_data } },
+    { ES_NUM, { { &es_ps_numform_list_nu_enable }, &es_ps_numform_list_nu_enable_data } },
+    { ES_NUM, { { &es_ps_numform_list_dt }, &es_ps_numform_list_dt_data } },
+    { ES_NUM, { { &es_ps_numform_list_dt_enable }, &es_ps_numform_list_dt_enable_data } },
+    { ES_NUM, { { &es_ps_numform_list_se }, &es_ps_numform_list_se_data } },
+    { ES_NUM, { { &es_ps_numform_list_se_enable }, &es_ps_numform_list_se_enable_data } },
+    { ES_ALW, { { &es_ps_new_object_group }, &es_ps_new_object_group_data } },
+    { ES_ALW, { { &es_ps_new_object_list }, &es_ps_new_object_list_data } },
+    { ES_ALW, { { &es_ps_new_object_list_enable }, &es_ps_new_object_list_enable_data } },
+    { ES_NUM, { { &es_ps_protection }, &es_ps_protection_data } },
+    { ES_NUM, { { &es_ps_protection_enable }, &es_ps_protection_enable_data } },
 
-    { ES_ALW, { &es_ps4_ok, &es_ok_data } }
+    { ES_ALW, { { &es_ps4_ok }, &es_ok_data } }
 };
 
 /******************************************************************************
@@ -2494,7 +2543,7 @@ es_rs_caption_group =
 };
 
 /*
-height 'group'
+height 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -2526,15 +2575,15 @@ es_rs_height_units =
 {
     ES_RS_ID_HEIGHT_UNITS, ES_RS_ID_GROUP,
     { ES_RS_ID_HEIGHT, ES_RS_ID_HEIGHT, DIALOG_CONTROL_SELF, ES_RS_ID_HEIGHT },
-    { DIALOG_LABELGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
+    { DIALOG_BUMPUNITSGAP_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_STATICTEXT
-es_rs_height_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+es_rs_height_units_data = { { /*poked*/ UI_TEXT_TYPE_NONE }, { 1 /*left_text*/ } };
 
 /*
-height fixed 'group'
+height fixed 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -2563,7 +2612,7 @@ es_rs_height_fixed =
 };
 
 /*
-unbreakable 'group'
+unbreakable 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -2592,7 +2641,7 @@ es_rs_unbreakable =
 };
 
 /*
-row numform name 'group'
+row numform name 'buddies'
 */
 
 static const DIALOG_CONTROL
@@ -2628,19 +2677,19 @@ ok
 static const ES_DIALOG_CTL_CREATE
 es_rs_ctl_create[] =
 {
-    { ES_ALW, { &es_rs_group, &es_rs_group_data } },
-    { ES_ALW, { &es_rs_caption_group } },
-    { ES_ALW, { &es_rs_height, &es_rs_height_data } },
-    { ES_ALW, { &es_rs_height_units, &es_rs_height_units_data } },
-    { ES_ALW, { &es_rs_height_enable, &es_rs_height_enable_data } },
-    { ES_ALW, { &es_rs_height_fixed, &es_rs_height_fixed_data } },
-    { ES_ALW, { &es_rs_height_fixed_enable, &es_rs_height_fixed_enable_data } },
-    { ES_ALW, { &es_rs_unbreakable, &es_rs_unbreakable_data } },
-    { ES_ALW, { &es_rs_unbreakable_enable, &es_rs_unbreakable_enable_data } },
-    { ES_ALW, { &es_rs_row_name, &es_rs_row_name_data } },
-    { ES_ALW, { &es_rs_row_name_enable, &es_rs_row_name_enable_data } },
+    { ES_ALW, { { &es_rs_group }, &es_rs_group_data } },
+    { ES_ALW, { { &es_rs_caption_group }, NULL } },
+    { ES_ALW, { { &es_rs_height }, &es_rs_height_data } },
+    { ES_ALW, { { &es_rs_height_units }, &es_rs_height_units_data } },
+    { ES_ALW, { { &es_rs_height_enable }, &es_rs_height_enable_data } },
+    { ES_ALW, { { &es_rs_height_fixed }, &es_rs_height_fixed_data } },
+    { ES_ALW, { { &es_rs_height_fixed_enable }, &es_rs_height_fixed_enable_data } },
+    { ES_ALW, { { &es_rs_unbreakable }, &es_rs_unbreakable_data } },
+    { ES_ALW, { { &es_rs_unbreakable_enable }, &es_rs_unbreakable_enable_data } },
+    { ES_ALW, { { &es_rs_row_name }, &es_rs_row_name_data } },
+    { ES_ALW, { { &es_rs_row_name_enable }, &es_rs_row_name_enable_data } },
 
-    { ES_ALW, { &es_rs_ok, &es_ok_data } }
+    { ES_ALW, { { &es_rs_ok }, &es_ok_data } }
 };
 
 static const
@@ -2880,37 +2929,36 @@ es_light_rs_data = { 0, { FRAMED_BOX_BUTTON_OUT, 1 /*state_is_rgb*/ } };
 static const ES_DIALOG_CTL_CREATE
 es_ctl_1_create[] =
 {
-    { ES_ALW, { &dialog_main_group } },
-    { ES_ALW, { &es_rhs_group } }
+    { ES_ALW, { { &es_rhs_group }, NULL } }
 };
 
 static const ES_DIALOG_CTL_CREATE
 es_ctl_2_create[] =
 {
-    { ES_ALW, { &stdbutton_cancel, &es_cancel_data } }, /* always just after the OK button */
+    { ES_ALW, { { &es_cancel }, &es_cancel_data } }, /* always just after the OK button */
 
-    { ES_ALW, { &es_category_group, NULL } },
+    { ES_ALW, { { &es_category_group }, NULL } },
 
-    { ES_ALW, { &es_name, &es_name_data } },
-    { ES_ALW, { &es_light_name, &es_light_name_data } },
+    { ES_ALW, { { &es_name }, &es_name_data } },
+    { ES_ALW, { { &es_light_name }, &es_light_name_data } },
 
-    { ES_ALW, { &es_fs, &es_fs_data } },
-    { ES_ALW, { &es_light_fs, &es_light_fs_data } },
+    { ES_ALW, { { &es_fs }, &es_fs_data } },
+    { ES_ALW, { { &es_light_fs }, &es_light_fs_data } },
 
-    { ES_ALW, { &es_ps2, &es_ps2_data } },
-    { ES_ALW, { &es_light_ps2, &es_light_ps2_data } },
+    { ES_ALW, { { &es_ps2 }, &es_ps2_data } },
+    { ES_ALW, { { &es_light_ps2 }, &es_light_ps2_data } },
 
-    { ES_ALW, { &es_ps1, &es_ps1_data } },
-    { ES_ALW, { &es_light_ps1, &es_light_ps1_data } },
+    { ES_ALW, { { &es_ps1 }, &es_ps1_data } },
+    { ES_ALW, { { &es_light_ps1 }, &es_light_ps1_data } },
 
-    { ES_ATX, { &es_ps3, &es_ps3_data } },
-    { ES_ATX, { &es_light_ps3, &es_light_ps3_data } },
+    { ES_ATX, { { &es_ps3 }, &es_ps3_data } },
+    { ES_ATX, { { &es_light_ps3 }, &es_light_ps3_data } },
 
-    { ES_NUM, { &es_ps4, &es_ps4_data } },
-    { ES_NUM, { &es_light_ps4, &es_light_ps4_data } },
+    { ES_NUM, { { &es_ps4 }, &es_ps4_data } },
+    { ES_NUM, { { &es_light_ps4 }, &es_light_ps4_data } },
 
-    { ES_ALW, { &es_rs, &es_rs_data } },
-    { ES_ALW, { &es_light_rs, &es_light_rs_data } }
+    { ES_ALW, { { &es_rs }, &es_rs_data } },
+    { ES_ALW, { { &es_light_rs }, &es_light_rs_data } }
 };
 
 /*extern*/ S32
@@ -3007,8 +3055,8 @@ es_process(
     _InVal_     STYLE_HANDLE style_handle_being_modified /*i.e. not effects*/,
     _InVal_     S32 subdialog /*-1 -> whichever was last */)
 {
-    ES_CALLBACK escb = { 0 };
     STATUS status;
+    ES_CALLBACK escb; zero_struct_fn(escb);
 
     style_init(p_style_out);
 
@@ -3106,7 +3154,7 @@ es_subdialog_process(
     P_ES_CALLBACK p_es_callback)
 {
     /* biggest so far is the colours box, ca. 3*33 + ca. 20 */
-#if RISCOS
+#if RISCOS && 0
     static
 #endif
     DIALOG_CTL_CREATE es_subdialog_ctl_create[120 /*increase me if controls overflow - watch for assert() going bang*/];
@@ -3213,13 +3261,19 @@ es_subdialog_process(
         assert(n_ctls <= elemof32(es_subdialog_ctl_create));
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, es_subdialog_ctl_create, n_ctls,
-            es_subdialogs[p_es_callback->subdialog_current].help_topic_resource_id);
-        dialog_cmd_process_dbox.caption = p_es_callback->caption;
+        dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, es_subdialog_ctl_create, n_ctls, &p_es_callback->caption);
+        dialog_cmd_process_dbox.help_topic_resource_id = es_subdialogs[p_es_callback->subdialog_current].help_topic_resource_id;
         dialog_cmd_process_dbox.bits.note_position = 1;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_tweak_style;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) p_es_callback;
         es_tweak_style_precreate(p_es_callback, &dialog_cmd_process_dbox);
+#if RISCOS
+        if(g_has_colour_picker)
+        {   /* this needs to be addressed */
+            dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
+            dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_NOT_MENU;
+        }
+#endif
 #if WINDOWS
         if(p_es_callback->hwnd_parent)
         {

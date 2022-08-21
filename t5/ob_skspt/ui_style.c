@@ -17,6 +17,8 @@
 
 #if RISCOS
 #include "ob_dlg/xp_dlgr.h"
+
+#include "cmodules/riscos/colourpick.h"
 #endif
 
 /*
@@ -121,20 +123,20 @@ remove_style_use_query_text_1 =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-remove_style_use_query_text_1_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_REMOVE_STYLE_USE_QUERY), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+remove_style_use_query_text_1_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_REMOVE_STYLE_USE_QUERY), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-remove_style_use_query_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_OK) };
+remove_style_use_query_ok_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_BUTTON_OK) };
 
 static const DIALOG_CTL_CREATE
 remove_style_use_query_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &remove_style_use_query_text_1, &remove_style_use_query_text_1_data },
+    { { &remove_style_use_query_text_1 }, &remove_style_use_query_text_1_data },
 
-    { &defbutton_ok, &remove_style_use_query_ok_data},
-    { &stdbutton_cancel, &stdbutton_cancel_data }
+    { { &defbutton_ok }, &remove_style_use_query_ok_data},
+    { { &stdbutton_cancel }, &stdbutton_cancel_data }
 };
 
 _Check_return_
@@ -142,10 +144,11 @@ static STATUS
 remove_style_use_query(
     _DocuRef_   P_DOCU p_docu)
 {
+    static UI_TEXT caption = { UI_TEXT_TYPE_TSTR_PERM };
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, remove_style_use_query_ctl_create, elemof32(remove_style_use_query_ctl_create), SKEL_SPLIT_MSG_DIALOG_REMOVE_STYLE_USE_QUERY_HELP_TOPIC);
-    dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
-    dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
+    caption.text.tstr = product_ui_id();
+    dialog_cmd_process_dbox_setup_ui_text(&dialog_cmd_process_dbox, remove_style_use_query_ctl_create, elemof32(remove_style_use_query_ctl_create), &caption);
+    dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_REMOVE_STYLE_USE_QUERY_HELP_TOPIC;
     return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
@@ -197,7 +200,7 @@ style_intro_change =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-style_intro_change_data = { { STYLE_INTRO_ID_CHANGE }, UI_TEXT_INIT_RESID(MSG_CHANGE) };
+style_intro_change_data = { { STYLE_INTRO_ID_CHANGE }, UI_TEXT_INIT_RESID(MSG_BUTTON_CHANGE) };
 
 static const DIALOG_CONTROL
 style_intro_apply =
@@ -209,7 +212,7 @@ style_intro_apply =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
-style_intro_apply_data = { { STYLE_INTRO_ID_APPLY, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_APPLY), STYLE_INTRO_ID_APPLY_ADJUST };
+style_intro_apply_data = { { STYLE_INTRO_ID_APPLY, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_APPLY), STYLE_INTRO_ID_APPLY_ADJUST };
 
 static const DIALOG_CONTROL
 style_intro_delete =
@@ -221,7 +224,7 @@ style_intro_delete =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTONR
-style_intro_delete_data = { { STYLE_INTRO_ID_DELETE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_DELETE), STYLE_INTRO_ID_DELETE_ADJUST };
+style_intro_delete_data = { { STYLE_INTRO_ID_DELETE, 0, 0, 1 /*alternate_right*/ }, UI_TEXT_INIT_RESID(MSG_BUTTON_DELETE), STYLE_INTRO_ID_DELETE_ADJUST };
 
 static const DIALOG_CONTROL
 style_intro_new =
@@ -233,7 +236,7 @@ style_intro_new =
 };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-style_intro_new_data = { { STYLE_INTRO_ID_NEW }, UI_TEXT_INIT_RESID(MSG_NEW) };
+style_intro_new_data = { { STYLE_INTRO_ID_NEW }, UI_TEXT_INIT_RESID(MSG_BUTTON_NEW) };
 
 static const DIALOG_CONTROL
 style_intro_cancel =
@@ -247,15 +250,15 @@ style_intro_cancel =
 static const DIALOG_CTL_CREATE
 style_intro_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group }, NULL },
 
-    { &style_intro_list,   &stdlisttext_data },
+    { { &style_intro_list },   &stdlisttext_data },
 
-    { &style_intro_change, &style_intro_change_data },
-    { &style_intro_apply,  &style_intro_apply_data },
-    { &style_intro_delete, &style_intro_delete_data },
-    { &style_intro_new,    &style_intro_new_data },
-    { &style_intro_cancel, &stdbutton_cancel_data }
+    { { &style_intro_change }, &style_intro_change_data },
+    { { &style_intro_apply },  &style_intro_apply_data },
+    { { &style_intro_delete }, &style_intro_delete_data },
+    { { &style_intro_new },    &style_intro_new_data },
+    { { &style_intro_cancel }, &stdbutton_cancel_data }
 };
 
 /*
@@ -378,7 +381,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
         return(STATUS_OK);
     }
 
-    zero_struct(style_intro_callback);
+    zero_struct_fn(style_intro_callback);
     style_intro_callback.selected_item = -1;
 
     do  {
@@ -395,7 +398,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
         PIXIT_SIZE list_size;
         DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
         dialog_cmd_ctl_size_estimate.p_dialog_control = &style_intro_list;
-        dialog_cmd_ctl_size_estimate.p_dialog_control_data = &stdlisttext_data;
+        dialog_cmd_ctl_size_estimate.p_dialog_control_data.list_text = &stdlisttext_data;
         ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
         dialog_cmd_ctl_size_estimate.size.x += max_width;
         ui_list_size_estimate(array_elements(&style_intro_list_handle), &list_size);
@@ -413,9 +416,8 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
 
             {
             DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, style_intro_ctl_create, elemof32(style_intro_ctl_create), SKEL_SPLIT_MSG_DIALOG_STYLE_HELP_TOPIC);
-            /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-            dialog_cmd_process_dbox.caption.text.resource_id = SKEL_SPLIT_MSG_DIALOG_STYLE_CAPTION;
+            dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, style_intro_ctl_create, elemof32(style_intro_ctl_create), SKEL_SPLIT_MSG_DIALOG_STYLE_CAPTION);
+            dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_STYLE_HELP_TOPIC;
             dialog_cmd_process_dbox.bits.note_position = 1;
             dialog_cmd_process_dbox.p_proc_client = dialog_event_style_intro;
             dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &style_intro_callback;
@@ -517,7 +519,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
 
                         {
                         MSG_UISTYLE_STYLE_EDIT msg_uistyle_style_edit;
-                        zero_struct(msg_uistyle_style_edit);
+                        zero_struct_fn(msg_uistyle_style_edit);
                         msg_uistyle_style_edit.p_caption = &ui_text;
                         msg_uistyle_style_edit.p_style_in = &style_in;
                         msg_uistyle_style_edit.p_style_selector = &style_selector;
@@ -730,7 +732,7 @@ T5_CMD_PROTO(extern, t5_cmd_effects_button)
 
         {
         MSG_UISTYLE_STYLE_EDIT msg_uistyle_style_edit;
-        zero_struct(msg_uistyle_style_edit);
+        zero_struct_fn(msg_uistyle_style_edit);
         msg_uistyle_style_edit.p_caption = &ui_text;
         msg_uistyle_style_edit.p_style_in = &style_in;
         msg_uistyle_style_edit.p_style_selector = &style_selector;
@@ -770,35 +772,35 @@ T5_CMD_PROTO(extern, t5_cmd_effects_button)
 
 enum NEW_STYLE_CONTROL_IDS
 {
-    NEW_STYLE_ID_NAME_ORNAMENT = 64,
+    NEW_STYLE_ID_NAME_LABEL = 64,
     NEW_STYLE_ID_NAME,
-    NEW_STYLE_ID_BASED_ON,
+    NEW_STYLE_ID_BASED_ON_LABEL,
     NEW_STYLE_ID_USE_GROUP,
     NEW_STYLE_ID_USE_SELECTION,
     NEW_STYLE_ID_USE_STYLE,
-    NEW_STYLE_ID_LIST
+    NEW_STYLE_ID_USE_STYLE_LIST
 };
 
 #define NEW_STYLE_USE_STYLE     0
 #define NEW_STYLE_USE_SELECTION 1
 
 static const DIALOG_CONTROL
-new_style_name_ornament =
+new_style_name_label =
 {
-    NEW_STYLE_ID_NAME_ORNAMENT, DIALOG_MAIN_GROUP,
+    NEW_STYLE_ID_NAME_LABEL, DIALOG_MAIN_GROUP,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, (3 * PIXITS_PER_INCH) / 2, DIALOG_STDTEXT_V },
-    { DRT(LTLT, STATICTEXT) }
+    { DRT(LTLT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-new_style_name_ornament_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_NAME), { 1 /*left_text*/} };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+new_style_name_label_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_NAME), { 1 /*left_text*/} };
 
 static const DIALOG_CONTROL
 new_style_name =
 {
     NEW_STYLE_ID_NAME, DIALOG_MAIN_GROUP,
-    { NEW_STYLE_ID_NAME_ORNAMENT, NEW_STYLE_ID_NAME_ORNAMENT, NEW_STYLE_ID_LIST },
+    { NEW_STYLE_ID_NAME_LABEL, NEW_STYLE_ID_NAME_LABEL, NEW_STYLE_ID_USE_STYLE_LIST },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
     { DRT(LBRT, EDIT), 1 /*tabstop*/ }
 };
@@ -807,22 +809,22 @@ static const DIALOG_CONTROL_DATA_EDIT
 new_style_name_data = { { { FRAMED_BOX_EDIT }, NULL }, /* EDIT_XX */ UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_SUGGESTED) /* state */ };
 
 static const DIALOG_CONTROL
-new_style_based_on =
+new_style_based_on_label =
 {
-    NEW_STYLE_ID_BASED_ON, DIALOG_MAIN_GROUP,
-    { NEW_STYLE_ID_NAME_ORNAMENT, NEW_STYLE_ID_NAME, NEW_STYLE_ID_NAME_ORNAMENT },
+    NEW_STYLE_ID_BASED_ON_LABEL, DIALOG_MAIN_GROUP,
+    { NEW_STYLE_ID_NAME_LABEL, NEW_STYLE_ID_NAME, NEW_STYLE_ID_NAME_LABEL },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDTEXT_V },
-    { DRT(LBRT, STATICTEXT) }
+    { DRT(LBRT, TEXTLABEL) }
 };
 
-static const DIALOG_CONTROL_DATA_STATICTEXT
-new_style_based_on_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_BASED_ON), { 1 /*left_text*/ } };
+static const DIALOG_CONTROL_DATA_TEXTLABEL
+new_style_based_on_label_data = { UI_TEXT_INIT_RESID(SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_BASED_ON), { 1 /*left_text*/ } };
 
 static const DIALOG_CONTROL
 new_style_use_group =
 {
     NEW_STYLE_ID_USE_GROUP, DIALOG_MAIN_GROUP,
-    { NEW_STYLE_ID_BASED_ON, NEW_STYLE_ID_BASED_ON, NEW_STYLE_ID_USE_SELECTION, NEW_STYLE_ID_USE_SELECTION },
+    { NEW_STYLE_ID_BASED_ON_LABEL, NEW_STYLE_ID_BASED_ON_LABEL, NEW_STYLE_ID_USE_SELECTION, NEW_STYLE_ID_USE_SELECTION },
     { 0, DIALOG_STDSPACING_V, 0, 0 },
     { DRT(LBLT, GROUPBOX), 0, 1 /*logical_group*/ }
 };
@@ -831,7 +833,7 @@ static const DIALOG_CONTROL
 new_style_use_style =
 {
     NEW_STYLE_ID_USE_STYLE, NEW_STYLE_ID_USE_GROUP,
-    { NEW_STYLE_ID_BASED_ON, NEW_STYLE_ID_BASED_ON },
+    { NEW_STYLE_ID_BASED_ON_LABEL, NEW_STYLE_ID_BASED_ON_LABEL },
     { 0, DIALOG_STDSPACING_V, DIALOG_CONTENTS_CALC, DIALOG_STDRADIO_V },
     { DRT(LBLT, RADIOBUTTON), 1 /*tabstop*/, 1 /*logical_group*/ }
 };
@@ -852,9 +854,9 @@ static const DIALOG_CONTROL_DATA_RADIOBUTTON
 new_style_use_selection_data = { { 0 }, NEW_STYLE_USE_SELECTION, UI_TEXT_INIT_RESID(MSG_SELECTION) };
 
 static /*poked*/ DIALOG_CONTROL
-new_style_list =
+new_style_use_style_list =
 {
-    NEW_STYLE_ID_LIST, DIALOG_MAIN_GROUP,
+    NEW_STYLE_ID_USE_STYLE_LIST, DIALOG_MAIN_GROUP,
     { NEW_STYLE_ID_USE_STYLE, NEW_STYLE_ID_USE_STYLE },
     { 0, DIALOG_STDSPACING_V },
     { DRT(LBLT, LIST_TEXT), 1 /*tabstop*/, 1 /*logical_group*/ }
@@ -865,18 +867,18 @@ new_style_list =
 static const DIALOG_CTL_CREATE
 new_style_ctl_create[] =
 {
-    { &dialog_main_group },
+    { { &dialog_main_group },           NULL },
+    { { &new_style_name_label },        &new_style_name_label_data },
+    { { &new_style_name },              &new_style_name_data },
 
-    { &new_style_name_ornament, &new_style_name_ornament_data },
-    { &new_style_name,          &new_style_name_data },
-    { &new_style_based_on,      &new_style_based_on_data },
-    { &new_style_use_group,     NULL },
-    { &new_style_use_style,     &new_style_use_style_data },
-    { &new_style_use_selection, &new_style_use_selection_data },
-    { &new_style_list,          &stdlisttext_data_dd },
+    { { &new_style_based_on_label },    &new_style_based_on_label_data },
+    { { &new_style_use_group },         NULL },
+    { { &new_style_use_style },         &new_style_use_style_data },
+    { { &new_style_use_selection },     &new_style_use_selection_data },
+    { { &new_style_use_style_list },    &stdlisttext_data_dd },
 
-    { &defbutton_ok,            &defbutton_ok_data },
-    { &stdbutton_cancel,        &stdbutton_cancel_data }
+    { { &defbutton_ok },                &defbutton_create_data },
+    { { &stdbutton_cancel },            &stdbutton_cancel_data }
 };
 
 typedef struct NEW_STYLE_CALLBACK
@@ -897,7 +899,7 @@ dialog_new_style_ctl_fill_source(
 
     switch(p_dialog_msg_ctl_fill_source->dialog_control_id)
     {
-    case NEW_STYLE_ID_LIST:
+    case NEW_STYLE_ID_USE_STYLE_LIST:
         p_dialog_msg_ctl_fill_source->p_ui_source = &p_new_style_callback->ui_source;
         break;
 
@@ -919,7 +921,7 @@ dialog_new_style_ctl_state_change(
     {
     case NEW_STYLE_ID_USE_GROUP:
         /* enable style list according to possibility of use */
-        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, NEW_STYLE_ID_LIST, (p_dialog_msg_ctl_state_change->new_state.radiobutton == NEW_STYLE_USE_STYLE));
+        ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, NEW_STYLE_ID_USE_STYLE_LIST, (p_dialog_msg_ctl_state_change->new_state.radiobutton == NEW_STYLE_USE_STYLE));
         break;
 
     default:
@@ -968,7 +970,7 @@ dialog_new_style_process_start(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.dialog_control_id = NEW_STYLE_ID_LIST;
+    dialog_cmd_ctl_state_set.dialog_control_id = NEW_STYLE_ID_USE_STYLE_LIST;
     dialog_cmd_ctl_state_set.bits = 0;
 
     if(p_new_style_callback->tstr_style_name && *p_new_style_callback->tstr_style_name)
@@ -1030,7 +1032,7 @@ dialog_new_style_process_end(
             p_new_style_callback->selected_item = -2;
         else
         {
-            p_new_style_callback->selected_item = ui_dlg_get_list_idx(p_dialog_msg_process_end->h_dialog, NEW_STYLE_ID_LIST);
+            p_new_style_callback->selected_item = ui_dlg_get_list_idx(p_dialog_msg_process_end->h_dialog, NEW_STYLE_ID_USE_STYLE_LIST);
 
             if(p_new_style_callback->selected_item < 0)
                 p_new_style_callback->selected_item = -1;
@@ -1114,7 +1116,7 @@ new_style_do(
 
             {
             MSG_UISTYLE_STYLE_EDIT msg_uistyle_style_edit;
-            zero_struct(msg_uistyle_style_edit);
+            zero_struct_fn(msg_uistyle_style_edit);
             msg_uistyle_style_edit.p_caption = &ui_text;
             msg_uistyle_style_edit.p_style_in = &style_in;
             msg_uistyle_style_edit.p_style_selector = &style_selector;
@@ -1192,7 +1194,7 @@ new_style(
                        (OBJECT_ID_FOOTER == p_docu->focus_owner) );
     } /*block*/
 
-    zero_struct(new_style_callback);
+    zero_struct_fn(new_style_callback);
     new_style_callback.tstr_style_name = tstr_style_name;
     new_style_callback.selected_item = -1;
 
@@ -1211,23 +1213,22 @@ new_style(
         { /* make appropriate size box */
         PIXIT_SIZE list_size;
         DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
-        dialog_cmd_ctl_size_estimate.p_dialog_control = &new_style_list;
-        dialog_cmd_ctl_size_estimate.p_dialog_control_data = &stdlisttext_data;
+        dialog_cmd_ctl_size_estimate.p_dialog_control = &new_style_use_style_list;
+        dialog_cmd_ctl_size_estimate.p_dialog_control_data.list_text = &stdlisttext_data;
         ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
         dialog_cmd_ctl_size_estimate.size.x += max_width;
         ui_list_size_estimate(array_elements(&new_style_list_handle), &list_size);
         dialog_cmd_ctl_size_estimate.size.x += list_size.cx;
         dialog_cmd_ctl_size_estimate.size.y += list_size.cy;
         dialog_cmd_ctl_size_estimate.size.x = MAX(dialog_cmd_ctl_size_estimate.size.x, NEW_STYLE_MINLIST_H);
-        new_style_list.relative_offset[2] = dialog_cmd_ctl_size_estimate.size.x;
-        new_style_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y;
+        new_style_use_style_list.relative_offset[2] = dialog_cmd_ctl_size_estimate.size.x;
+        new_style_use_style_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y;
         } /*block*/
 
         {
         DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, new_style_ctl_create, elemof32(new_style_ctl_create), SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_HELP_TOPIC);
-        /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
-        dialog_cmd_process_dbox.caption.text.resource_id = SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_CAPTION;
+        dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, new_style_ctl_create, elemof32(new_style_ctl_create), SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_CAPTION);
+        dialog_cmd_process_dbox.help_topic_resource_id = SKEL_SPLIT_MSG_DIALOG_NEW_STYLE_HELP_TOPIC;
         dialog_cmd_process_dbox.bits.note_position = 1;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_new_style;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &new_style_callback;
@@ -1263,7 +1264,7 @@ style_apply_struct(
     PC_CONSTRUCT_TABLE p_construct_table;
     ARGLIST_HANDLE arglist_handle;
     STATUS status;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 500);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 512);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
@@ -1320,7 +1321,7 @@ T5_MSG_PROTO(extern, t5_msg_uistyle_colour_picker, P_MSG_UISTYLE_COLOUR_PICKER p
     res = windows_colour_picker(get_colour_picker_parent_window_handle(p_msg_uistyle_colour_picker), &rgb);
 #elif RISCOS
     /* wop up RISC OS's colour selector */
-    res = riscos_colour_picker(get_colour_picker_parent_window_handle(p_msg_uistyle_colour_picker), &rgb);
+    res = riscos_colour_picker(COLOUR_PICKER_NORMAL, get_colour_picker_parent_window_handle(p_msg_uistyle_colour_picker), &rgb, TRUE /*allow_transparent*/, "Colour");
 #endif /* OS */
 
     ui_dlg_ctl_enable(p_msg_uistyle_colour_picker->h_dialog, p_msg_uistyle_colour_picker->button_dialog_control_id, TRUE);

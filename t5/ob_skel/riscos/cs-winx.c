@@ -299,7 +299,7 @@ winx_claim_entity(
     _InVal_     int bits)
 {
     WimpMessage msg;
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = sizeof32(msg.hdr) + 4; /* one word */
   /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = Wimp_MClaimEntity;
@@ -429,7 +429,7 @@ host_paste_from_global_clipboard(
     WimpDataRequestMessage * const p_wimp_data_request_message = (WimpDataRequestMessage *) &msg.data;
     U32 i;
 
-    zero_struct(msg);
+    zero_struct_fn(msg);
     msg.hdr.size = sizeof32(msg);
   /*msg.hdr.my_ref = 0;*/ /* fresh msg */
     msg.hdr.action_code = Wimp_MDataRequest;
@@ -483,9 +483,9 @@ _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
 winx_drag_box(
-    _In_opt_    WimpDragBox * const dr)
+    _In_opt_    /*const*/ WimpDragBox * const dr)
 {
-    if(dr)
+    if(NULL != dr)
     {
         /* window handle MUST be valid, unlike what PRM doc says, due to changed event handling here */
         P_WINX_WINDOW p_winx_window = winx_find_w(dr->wimp_window);
@@ -508,8 +508,8 @@ extern _kernel_oserror *
 winx_drag_a_sprite_start(
     int flags,
     int sprite_area_id,
-    char * p_sprite_name,
-    _In_        WimpDragBox * const dr)
+    _In_z_      const char * p_sprite_name,
+    _In_        const WimpDragBox * const dr)
 {
     /* window handle MUST be valid, unlike what PRM doc says, due to changed event handling here */
     _kernel_swi_regs rs;
@@ -528,7 +528,7 @@ winx_drag_a_sprite_start(
     rs.r[2] = (int) p_sprite_name;
     rs.r[3] = (int) &dr->dragging_box;
     winx_statics.dragging_a_sprite = 1;
-    return(_kernel_swi(/*DragASprite_Start*/ 0x00042400, &rs, &rs));
+    return(_kernel_swi(DragASprite_Start /*0x00042400*/, &rs, &rs));
 }
 
 extern void
@@ -538,7 +538,7 @@ winx_drag_a_sprite_stop(void)
     {
         _kernel_swi_regs rs;
         winx_statics.dragging_a_sprite = 0;
-        void_WrapOsErrorReporting(_kernel_swi(/*DragASprite_Stop*/ 0x00042401, &rs, &rs));
+        void_WrapOsErrorReporting(_kernel_swi(DragASprite_Stop /*0x00042401*/, &rs, &rs));
     }
 }
 
@@ -869,12 +869,8 @@ winx_default_event_handler(
         }
 
     case Wimp_EKeyPressed:
-        {
-        _kernel_swi_regs rs;
-        rs.r[0] = p_event_data->key_pressed.key_code;
-        void_WrapOsErrorReporting(_kernel_swi(/*Wimp_ProcessKey*/ 0x000400DC, &rs, &rs));
+        void_WrapOsErrorReporting(wimp_process_key(p_event_data->key_pressed.key_code));
         break;
-        }
 
     default:
         break;
@@ -933,7 +929,7 @@ winx_dispatch_event(
         {
         const PC_WimpMessage p_wimp_message = &p_event_data->user_message;
 
-        reportf(/*trace_1(TRACE_RISCOS_HOST,*/ TEXT("wx: %s"), report_wimp_message(p_wimp_message, FALSE));
+        trace_1(TRACE_RISCOS_HOST, TEXT("wx: %s"), report_wimp_message(p_wimp_message, FALSE));
 
         switch(p_wimp_message->hdr.action_code)
         {

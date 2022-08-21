@@ -189,7 +189,7 @@ complex_multiply( /* z1 * z2 */
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 complex_divide( /* z1 / z2 */
     _InRef_     PC_COMPLEX z1,
@@ -637,7 +637,7 @@ complex_arc_cosecant( /* arc cosecant : arccsc(z) */
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 complex_tangent( /* tangent : tan(z) */
     _InRef_     PC_COMPLEX z,
@@ -690,7 +690,7 @@ complex_arc_tangent( /* arc tangent : arctan(z) */
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 complex_cotangent( /* cotangent : cot(z) */
     _InRef_     PC_COMPLEX z,
@@ -910,7 +910,7 @@ complex_inverse_hyperbolic_cosecant( /* inverse hyperbolic cosecant : acsch(z) *
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 complex_hyperbolic_tangent( /* hyperbolic tangent : tanh(z) */
     _InRef_     PC_COMPLEX z,
@@ -960,7 +960,7 @@ complex_inverse_hyperbolic_tangent( /* inverse hyperbolic tangent : atanh(z) */
 *
 ******************************************************************************/
 
-_Check_return_ _Success_(return)
+_Check_return_ _Success_(status_ok(return))
 extern STATUS
 complex_hyperbolic_cotangent( /* hyperbolic cotangent : coth(z) */
     _InRef_     PC_COMPLEX z,

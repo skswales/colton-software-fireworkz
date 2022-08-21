@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>WEEKDAY</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="WEEKDAY" />
+        <param name="Keyword" value="Functions, Date and time, WEEKDAY" />
+        <param name="Keyword" value="Date and time functions, weekday number of date" />
+    </object>
+
+    <h1><a name="weekday" id="weekday"></a>WEEKDAY</h1>
+
+    <p>Returns the weekday number of a date value.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        WEEKDAY(<span class="csg-function-parameter"><a href="../sg06/sg6_date_formats.htm">date</a></span>
+        {,&nbsp;<span class="csg-function-parameter">mode</span>:<span class="csg-function-parameter-type">Number</span>})
+    </p>
+
+    <p>The weekday number of <span class="csg-function-parameter"><a href="../sg06/sg6_date_formats.htm">date</a></span> is returned in numeric form.</p>
+    <p>
+        Usually the value <code>1</code> represents Sunday, <code>2</code> represents Monday, &hellip; and <code>7</code> represents Saturday,
+        but an optional <span class="csg-function-parameter">mode</span> value may be used to adjust the calculation.
+    </p>
+
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="min-width: 4em;" />
+                <col />
+            </colgroup>
+            <thead class="csg-table-align-top">
+                <tr><th style="min-width: 4em; text-align: left;"><span class="csg-function-parameter">mode</span></th><th></th></tr>
+            </thead>
+            <tbody class="csg-table-align-top">
+                <tr><td>1</td><td>Sunday is day one, Saturday is day seven</td></tr>
+                <tr><td>2</td><td>Monday is day one, Sunday is day seven</td></tr>
+                <tr><td>3</td><td>Monday is day zero, Sunday is day six</td></tr>
+                <tr><td>11</td><td>Monday is day one, Sunday is day seven</td></tr>
+                <tr><td>12</td><td>Tuesday is day one, Monday is day seven</td></tr>
+                <tr><td>13</td><td>Wednesday is day one, Tuesday is day seven</td></tr>
+                <tr><td>14</td><td>Thursday is day one, Wednesday is day seven</td></tr>
+                <tr><td>15</td><td>Friday is day one, Thursday is day seven</td></tr>
+                <tr><td>16</td><td>Saturday is day one, Friday is day seven</td></tr>
+                <tr><td>17</td><td>Sunday is day one, Saturday is day seven</td></tr>
+                <tr><td>21</td><td>Monday is day one, Sunday is day seven (ISO 8601)</td></tr>
+                <tr><td>150</td><td>Monday is day one, Sunday is day seven (ISO 8601)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>The optional <span class="csg-function-parameter">mode</span> parameter was added in 2.24.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">WEEKDAY(26.05.1993)</pre>
+    <p>returns the number <code>4</code>, which corresponds to Wednesday.</p>
+    <pre class="csg-sample-indent">WEEKDAY(26.05.1993, 13)</pre>
+    <p>returns the number <code>1</code>, which also corresponds to Wednesday in that particular system.</p>
+
+    <p>See also <a href="../sg06d/sg6_DAYNAME.htm">DAYNAME</a>.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06t/sg6_TODAY.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#date_time_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06w/sg6_WEEKNUMBER.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+﻿
+Saving
+Recordz works directly on the database file on disc. Thus the
+changes you made to the database, such as altering its structure by
+deleting a field and adding data into the records, automatically
+caused the database file to be updated. You do not need to
+explicitly save the database file at any time.
+However, all the infomiation about how the database is displayed
+is held by the Recordz document. In the previous section you
+altered the display by tuming off two of the field titles and moving
+data fields and titles within the card display. In order not to lose
+these changes, you need to save your document. To do this:
+1 Click on the Save button, or choose Save from the File
+submenu or press F3.
+2 Click OK to save the document using the existing name.
+
+46 Recordz
+
+Searching
+Imagine you are a member of the Smith family, Christmas is
+approaching and you want to find all the records of your young
+relatives so you don't forget to buy them a present. What you need
+to do is search through your records to locate the relevant ones.
+To perform a search click on one of the records to position the
+caret within the database display and
+. Click on the Search button.
+or
+. Choose Search from the Database menu.
+or
+. Press Shift-F4.
+
+Fireworkz Pro 47
+
+
+
+

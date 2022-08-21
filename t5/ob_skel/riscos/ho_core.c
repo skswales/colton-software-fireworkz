@@ -42,6 +42,45 @@ wimp_dispose_icon(
     return(wimp_delete_icon(&wdib));
 }
 
+static inline void
+wimp_reporterror_copyerror(
+     _Out_      _kernel_oserror * o_e,
+     _In_       const _kernel_oserror * e)
+{
+    /* copy error, sanitising */
+    *o_e = *e;
+
+    {
+    const char * p_u8 = e->errmess;
+    char * p_u8_out = o_e->errmess;
+    int len = 0;
+    int non_blanks = 0;
+
+    for(;;)
+    {
+        U8 c = *p_u8++;
+        *p_u8_out++ = c;
+        if(CH_NULL == c)
+            break;
+        ++len;
+
+        if( (c != 0x20) && (c != 0xA0) )
+            ++non_blanks;
+
+        if( (c <= 0x1F) || (c == 0x7F) )
+            /* Found control characters in error string */
+            p_u8_out[-1] = CH_FULL_STOP;
+    }
+
+    if(0 == len)
+        strcpy(o_e->errmess, "No characters in error string");
+    else if(0 == non_blanks)
+        strcpy(o_e->errmess, "All characters in error string are blank");
+    } /*block*/
+
+    reportf(TEXT("OS error: %d:%s"), o_e->errnum, o_e->errmess);
+}
+
 _Check_return_
 _Ret_valid_
 extern _kernel_oserror *
@@ -56,43 +95,9 @@ wimp_reporterror_rf(
 
     *p_button_clicked = 1;
 
-#if 0
-    g_e.errnum = 1 /* lie to over-knowledgeable RISC PC error handler - was e->errnum */;
-#else
-    g_e.errnum = e->errnum;
-#endif
-
-    {
-    const char * p_u8 = e->errmess;
-    char * p_u8_out = g_e.errmess;
-    int len = 0;
-    int non_blanks = 0;
-
-    for(;;)
-    {
-        U8 c = *p_u8++;
-        *p_u8_out++ = c;
-        if(CH_NULL == c)
-            break;
-        ++len;
-
-        if((c != 0x20) && (c != 0xA0))
-            ++non_blanks;
-
-        if((c <= 0x1F) || (c == 0x7F))
-            /* Found control characters in error string */
-            p_u8_out[-1] = CH_FULL_STOP;
-    }
-
-    if(0 == len)
-        strcpy(g_e.errmess, "No characters in error string");
-    else if(0 == non_blanks)
-        strcpy(g_e.errmess, "All characters in error string are blank");
-    } /*block*/
+    wimp_reporterror_copyerror(&g_e, e);
 
     e = &g_e;
-
-    reportf(TEXT("OS error: %d:%s"), e->errnum, g_e.errmess);
 
     if(!g_silent_shutdown)
     {
@@ -117,9 +122,14 @@ wimp_reporterror_rf(
             }
             rs.r[1] |= Wimp_ReportError_UseCategory; /*new style*/
             rs.r[1] |= Wimp_ReportError_Category(error_level); /* 11..9 */
-            rs.r[3] = (int) g_product_sprite_name;
+            rs.r[3] = (int) g_product_riscos_app_sprite;
             rs.r[4] = 1; /* Wimp Sprite Area */
             rs.r[5] = NULL; /* no additional buttons */
+
+#if 1 /* needed because RISC PC error handler takes upon itself to mutate some warnings into program errors */
+            if(2 == error_level)
+                g_e.errnum = 1; /* lie to over-knowledgeable RISC PC error handler */
+#endif
         }
 
         if(NULL == (err = _kernel_swi(Wimp_ReportError, &rs, &rs)))

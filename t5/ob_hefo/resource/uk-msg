@@ -8,7 +8,9 @@
 # Copyright (C) 1993-1998 Colton Software Limited
 # Copyright (C) 1998-2015 R W Colton
 #
-# messages
+# messages: keep consistent with ob_hefo/ob_hefo.h
+#
+# MSG_DIALOG_PAGE_HEFO_BREAK_xxx
 #
 0:Page
 1:Page break
@@ -23,11 +25,13 @@
 10:Footer
 11:Even footer
 12:First footer
-15:ug07/ug7_headers_and_footers.htm
+15:ug/ug07_headers_and_footers.htm
+#
+# MSG_STATUS_HEFO_xxx
 #
 20:Header
 21:Footer
 #
-# errors
+# errors (none)
 #
 # end of msg (ob_hefo)

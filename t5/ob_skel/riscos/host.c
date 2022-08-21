@@ -773,6 +773,56 @@ reply_to_help_request(
 }
 
 _Check_return_
+static T5_FILETYPE
+generic_window_process_DataLoad_mutate_filetype(
+    _In_        T5_FILETYPE t5_filetype, /* mutate as needed */
+    _In_z_      PCTSTR filename)
+{
+    /* suss imprecise things like TEXT,DOS,DATA,UNTYPED first */
+    T5_FILETYPE t_t5_filetype = FILETYPE_UNDETERMINED;
+
+    switch(t5_filetype)
+    {
+    case FILETYPE_TEXT:
+        /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected */
+        t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
+        /* NB here we do not scan these for recognisable headers (e.g. paste text from clipboard) */
+        break;
+
+    case FILETYPE_DOS:
+    case FILETYPE_DATA:
+    case FILETYPE_UNTYPED:
+        {
+        t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
+
+        if(FILETYPE_UNDETERMINED == t_t5_filetype)
+            t_t5_filetype = t5_filetype_from_file_header(filename); /* no, so scan for recognisable headers */
+
+        break;
+        }
+
+    default:
+        break;
+    }
+
+    switch(t5_filetype)
+    {
+    case FILETYPE_PIPEDREAM:
+        /* SKS 30jul19 scan to see if it's a PipeDream chart with the old filetype */
+        t_t5_filetype = t5_filetype_from_file_header(filename);
+        break;
+
+    default:
+        break;
+    }
+
+    if(FILETYPE_UNDETERMINED != t_t5_filetype)
+        t5_filetype = t_t5_filetype;
+
+    return(t5_filetype);
+}
+
+_Check_return_
 static STATUS
 generic_window_process_DataLoad(
     _DocuRef_   P_DOCU p_docu,
@@ -797,78 +847,31 @@ generic_window_process_DataLoad(
 
     xstrkpy(filename, elemof32(filename), p_wimp_message_data_load->leaf_name); /* low-lifetime name */
 
-    host_xfer_load_file_setup(p_wimp_message);
+    host_xfer_load_file_setup(p_wimp_message); /* we may need to grok the file content */
 
-    switch(t5_filetype)
+    /* suss imprecise things like TEXT,DOS,DATA,UNTYPED first */
+    t5_filetype = generic_window_process_DataLoad_mutate_filetype(t5_filetype, filename);
+
     {
-    case FILETYPE_T5_FIREWORKZ:
-    case FILETYPE_T5_WORDZ:
-    case FILETYPE_T5_RESULTZ:
-    case FILETYPE_T5_RECORDZ:
-    case FILETYPE_T5_TEMPLATE:
-    case FILETYPE_T5_COMMAND:
-        break;
+    VIEWEVENT_CLICK viewevent_click;
 
-    case FILETYPE_PIPEDREAM:
-        { /* SKS 30jul19 scan to see if it's a PD chart with the old filetype */
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_file_header(filename);
+    zero_struct(viewevent_click);
 
-        if(FILETYPE_UNDETERMINED != t_t5_filetype)
-            t5_filetype = t_t5_filetype;
+    /* NB DataLoad event x,y are absolute screen coordinates (i.e. not window relative) */
+    viewevent_click.click_context.hwnd = p_wimp_message_data_load->destination_window;
+    viewevent_click.click_context.ctrl_pressed = host_ctrl_pressed();
+    viewevent_click.click_context.shift_pressed = host_shift_pressed();
+    set_click_context_gdi_org_from_screen(&viewevent_click.click_context, p_wimp_message_data_load->destination_window);
+    host_set_click_context(p_docu, p_view, &viewevent_click.click_context, &p_view->host_xform[p_ctrl_host_view->xform_idx]);
 
-        break;
-        }
+    view_point_from_screen_point_and_context(&viewevent_click.view_point, (PC_GDI_POINT) &p_wimp_message_data_load->destination_x, &viewevent_click.click_context);
 
-    case FILETYPE_TEXT:
-        { /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected - but does not scan these for recognisable headers */
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
+    viewevent_click.data.fileinsert.filename = (P_U8) filename;
+    viewevent_click.data.fileinsert.t5_filetype = t5_filetype;
+    viewevent_click.data.fileinsert.safesource = host_xfer_loaded_file_is_safe();
 
-        if(FILETYPE_UNDETERMINED != t_t5_filetype)
-            t5_filetype = t_t5_filetype;
-
-        break;
-        }
-
-    case FILETYPE_DOS:
-    case FILETYPE_DATA:
-    case FILETYPE_UNTYPED:
-        {
-        T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
-
-        if(FILETYPE_UNDETERMINED == t_t5_filetype)
-            t_t5_filetype = t5_filetype_from_file_header(filename); /* no, so scan for recognisable headers */
-
-        if(FILETYPE_UNDETERMINED != t_t5_filetype)
-            t5_filetype = t_t5_filetype;
-
-        break;
-        }
-
-    default:
-        break;
-    }
-
-    /*if(t5_filetype != FILETYPE_UNDETERMINED)*/
-    {
-        VIEWEVENT_CLICK viewevent_click;
-
-        zero_struct(viewevent_click);
-
-        /* NB DataLoad event x,y are absolute screen coordinates (i.e. not window relative) */
-        viewevent_click.click_context.hwnd = p_wimp_message_data_load->destination_window;
-        viewevent_click.click_context.ctrl_pressed = host_ctrl_pressed();
-        viewevent_click.click_context.shift_pressed = host_shift_pressed();
-        set_click_context_gdi_org_from_screen(&viewevent_click.click_context, p_wimp_message_data_load->destination_window);
-        host_set_click_context(p_docu, p_view, &viewevent_click.click_context, &p_view->host_xform[p_ctrl_host_view->xform_idx]);
-
-        view_point_from_screen_point_and_context(&viewevent_click.view_point, (PC_GDI_POINT) &p_wimp_message_data_load->destination_x, &viewevent_click.click_context);
-
-        viewevent_click.data.fileinsert.filename = (P_U8) filename;
-        viewevent_click.data.fileinsert.t5_filetype = t5_filetype;
-        viewevent_click.data.fileinsert.safesource = host_xfer_loaded_file_is_safe();
-
-        status = (* p_ctrl_host_view->p_proc_view_event) (p_docu, T5_EVENT_FILEINSERT_DOINSERT, &viewevent_click);
-    }
+    status = (* p_ctrl_host_view->p_proc_view_event) (p_docu, T5_EVENT_FILEINSERT_DOINSERT, &viewevent_click);
+    } /*block*/
 
     host_xfer_load_file_done();
 
@@ -944,7 +947,7 @@ generic_window_event_handler(
 
     case Wimp_ELoseCaret:
         /* SKS 30jul93 dump out any keys still destined for this document */
-        trace_1(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("Wimp_ELoseCaret: host_key_cache_emit_events(docno ") S32_TFMT TEXT(")"), docno_from_p_docu(p_docu));
+        trace_1(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("Wimp_ELoseCaret: host_key_cache_emit_events(docno ") DOCNO_TFMT TEXT(")"), docno_from_p_docu(p_docu));
         status = host_key_cache_emit_events_for(docno_from_p_docu(p_docu));
         break;
 
@@ -1012,7 +1015,7 @@ generic_window_event_handler(
 
     p_docu = p_docu_from_docno(docno);
 
-    if(!IS_DOCU_NONE(p_docu))
+    if(DOCU_NOT_NONE(p_docu))
     {
 #if 0
         if(p_docu->flags.new_extent)
@@ -1932,7 +1935,7 @@ update_common_pre_loop(
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
-    zero_struct_ptr(p_viewevent_redraw);
+    zero_struct_ptr_fn(p_viewevent_redraw);
 
     p_viewevent_redraw->flags = redraw_flags;
 
@@ -1950,7 +1953,6 @@ update_common_pre_loop(
     p_redraw_context->display_mode = p_view->display_mode;
 
     p_redraw_context->border_width.x = p_redraw_context->border_width.y = p_docu->page_def.grid_size;
-    p_redraw_context->border_width_2.x = p_redraw_context->border_width_2.y = 2 * p_docu->page_def.grid_size;
 
     host_redraw_context_set_host_xform(p_redraw_context, p_host_xform);
 
@@ -3434,7 +3436,7 @@ calc_window_positions(
 *
 * Typically called when some aspect of the view layout changes
 *
-* e.g. switching border/ruler windows on/off or when the zoom factor changes
+* e.g. switching border/ruler windows on/off or when the scale factor changes
 *
 ******************************************************************************/
 
@@ -3689,25 +3691,40 @@ make_var_name(
     return(buffer);
 }
 
+static void
+host_initialise_resources_path(void)
+{
+    TCHARZ var_name[64];
+    TCHARZ path_buffer[BUF_MAX_PATHSTRING * 4];
+
+    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$Path"), path_buffer, elemof32(path_buffer)))
+    {
+        reportf("file_path_set(var=%s, path=%u:%s)", report_tstr(var_name), strlen32(path_buffer), report_tstr(path_buffer));
+        status_assert(file_path_set(path_buffer, FILE_PATH_RESOURCES));
+    }
+}
+
+static void
+host_initialise_templates_path(void)
+{
+    TCHARZ var_name[64];
+    TCHARZ path_buffer[BUF_MAX_PATHSTRING * 4];
+
+    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$TemplatesPath"), path_buffer, elemof32(path_buffer)))
+    {
+        reportf("file_path_set(var=%s, path=%u:%s)", report_tstr(var_name), strlen32(path_buffer), report_tstr(path_buffer));
+        status_assert(file_path_set(path_buffer, FILE_PATH_TEMPLATES));
+    }
+}
+
 extern void
 host_initialise_file_paths(void)
 {
-    TCHARZ var_name[BUF_MAX_PATHSTRING];
-    TCHARZ resources_path[BUF_MAX_PATHSTRING * 3];
+    host_initialise_resources_path();
 
-    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "Res$Path"), resources_path, elemof32(resources_path)))
-    {
-        trace_2(TRACE_APP_SKEL, "var=%s, path=%s", report_tstr(var_name), report_tstr(resources_path));
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_RESOURCES, report_tstr(resources_path));
-        status_assert(file_path_set(resources_path, FILE_PATH_RESOURCES));
-    }
+    host_initialise_templates_path();
 
-    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$Path"), resources_path, elemof32(resources_path)))
-    {
-        trace_2(TRACE_APP_SKEL, "var=%s, path=%s", report_tstr(var_name), report_tstr(resources_path));
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_STANDARD, report_tstr(resources_path));
-        status_assert(file_path_set(resources_path, FILE_PATH_STANDARD));
-    }
+    file_build_paths();
 }
 
 _Check_return_
@@ -3798,10 +3815,10 @@ host_acquire_global_clipboard(
     const DOCNO acquiring_docno = docno_from_p_docu(p_docu);
     const VIEWNO acquiring_viewno = viewno_from_p_view_fn(p_view);
 
-    trace_2(TRACE_RISCOS_HOST, TEXT("host_acquire_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(")"), acquiring_docno, acquiring_viewno);
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard(docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT TEXT(")"), acquiring_docno, acquiring_viewno);
 
 #if CHECKING
-    if(!IS_VIEW_NONE(p_view))
+    if(VIEW_NOT_NONE(p_view))
     {
         assert(p_view->docno == acquiring_docno);
     }
@@ -3811,7 +3828,7 @@ host_acquire_global_clipboard(
 
     g_global_clipboard_owning_docno  = acquiring_docno;
     g_global_clipboard_owning_viewno = acquiring_viewno;
-    trace_2(TRACE_RISCOS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=%d, viewno:=%d"), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_acquire_global_clipboard: cbo docno:=") DOCNO_TFMT TEXT(", viewno:=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     return(TRUE);
 }
@@ -3820,8 +3837,8 @@ extern void
 host_release_global_clipboard(
     _InVal_     BOOL render_if_acquired)
 {
-    trace_1(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
-    trace_2(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard: cbo docno=") DOCNO_TFMT TEXT(", viewno=") DOCNO_TFMT TEXT(""), g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
+    trace_1(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard(render_if_acquired=%s)"), report_boolstring(render_if_acquired));
+    trace_2(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard: cbo docno=") DOCNO_TFMT TEXT(", viewno=") VIEWNO_TFMT, g_global_clipboard_owning_docno, g_global_clipboard_owning_viewno);
 
     UNREFERENCED_PARAMETER_InVal_(render_if_acquired); /* no deferred rendering for close on RISC OS */
 
@@ -3837,7 +3854,7 @@ host_release_global_clipboard(
 
     g_global_clipboard_owning_docno  = DOCNO_NONE;
     g_global_clipboard_owning_viewno = VIEWNO_NONE;
-    trace_0(TRACE_RISCOS_HOST, TEXT("host_release_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
+    trace_0(TRACE_APP_CLIPBOARD, TEXT("host_release_global_clipboard: cbo docno:=NONE, viewno:=NONE"));
 }
 
 #endif /* USE_GLOBAL_CLIPBOARD */
@@ -3852,9 +3869,13 @@ ensure_memory_froth(void)
 _Check_return_
 extern U32
 myrand(
+    _InoutRef_  P_MYRAND_SEED p_myrand_seed);
+
+_Check_return_
+extern U32
+myrand_n(
     _InoutRef_  P_MYRAND_SEED p_myrand_seed,
-    _InVal_     U32 n /*excl*/,
-    _InVal_     U32 bias);
+    _InVal_     U32 n /*excl*/);
 
 static MYRAND_SEED myrand_seed = {0x12345678, 1};
 
@@ -3868,7 +3889,19 @@ host_rand_between(
     U32 res = lo;
 
     if(hi > lo)
-        res = myrand(&myrand_seed, hi - lo, lo);
+    {
+        const U32 n = hi - lo;
+        const U32 mask = n - 1;
+        if(0 == (n & mask))
+        {   /* n is a power of two - saves much rejection if we can accept the full return space then mask down here */
+            const U32 r = myrand(&myrand_seed);
+            res = lo + (r & mask);
+        }
+        else
+        {
+            res = lo + myrand_n(&myrand_seed, n);
+        }
+    }
 
     /*reportf("hrb[%u,%u] %u", lo, hi, res);*/
     return(res);

@@ -71,10 +71,10 @@ ss_tools[] =
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_DIVIDE) },
 
     { USTR_TEXT("AUTO_SUM"),
-        OBJECT_ID_SS, T5_CMD_AUTO_SUM,
+        OBJECT_ID_SS, T5_CMD_ACTIVATE_MENU_AUTO_FUNCTION,
         OBJECT_ID_SS, SS_ID_BM_TOOLBAR_AUTO_SUM, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_AUTO_SUM) },
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 1/*im*/ },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_AUTO_SUM), T5_CMD_SS_FUNCTIONS_SHORT },
 
     { USTR_TEXT("CHART"),
         OBJECT_ID_CHART, T5_CMD_ACTIVATE_MENU_CHART,
@@ -155,7 +155,7 @@ ss_formula_reflect_contents(
 {
     P_EV_CELL p_ev_cell;
     STATUS status = STATUS_OK;
-    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 80);
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 128);
     quick_ublock_with_buffer_setup(quick_ublock);
 
     if(P_DATA_NONE != (p_ev_cell = p_ev_cell_object_from_slr(p_docu, &p_docu->cur.slr)))

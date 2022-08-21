@@ -18,7 +18,7 @@
 #endif
 
 _Check_return_
-static F64 /*radians*/
+static inline F64 /*radians*/
 reduce_into_range(
     _In_        F64 alpha /*radians*/)
 {
@@ -34,14 +34,14 @@ reduce_into_range(
 _Check_return_
 static F64 /*radians*/
 conv_heading_to_angle(
-    _InVal_     F64 heading_degrees_in)
+    _In_        F64 heading_degrees)
 {
-    F64 heading_degrees = heading_degrees_in;
     F64 heading_radians, alpha;
 
     /* sanitise input degrees into [0,360) */
     while(heading_degrees >= 360.0)
         heading_degrees -= 360.0;
+
     while(heading_degrees < 0.0)
         heading_degrees += 360.0;
 
@@ -53,7 +53,7 @@ conv_heading_to_angle(
 
     alpha = reduce_into_range(alpha);
 
-    trace_2(TRACE_MODULE_GR_CHART, TEXT("conv_heading_to_angle(%g degrees) yields %g radians"), heading_degrees_in, alpha);
+    trace_2(TRACE_MODULE_GR_CHART, TEXT("conv_heading_to_angle(%g degrees) yields %g radians"), heading_degrees, alpha);
 
     return(alpha);
 }
@@ -233,6 +233,7 @@ gr_pie_addin(
                             gr_travel_dsh_label(cp, dsh, point, &cv);
                         else if(piechlabelstyle.bits.label_pct)
                         {
+                            F64 label_value = value;
                             NUMFORM_PARMS numform_parms;
                             SS_DATA ss_data;
                             QUICK_UBLOCK quick_ublock;
@@ -240,17 +241,17 @@ gr_pie_addin(
 
                             cv.data.text[0] = CH_NULL;
 
-                            ss_data_set_real(&ss_data, value);
-
                             /* convert value into %ge value */
-                            ss_data.arg.fp *= 100.0; /* care with order else 14.0 -> 0.14 -> ~14.0 */
-                            ss_data.arg.fp /= total; /* ALWAYS in 0.0 - 100.0 */
+                            label_value *= 100.0; /* care with order else 14.0 -> 0.14 -> ~14.0 */
+                            label_value /= total; /* ALWAYS in 0.0 - 100.0 */
 
                             zero_struct(numform_parms);
                             numform_parms.ustr_numform_numeric =
-                                (floor(ss_data_get_real(&ss_data)) == ss_data_get_real(&ss_data))
+                                (floor(label_value) == label_value)
                                     ? USTR_TEXT("0\\%")
                                     : USTR_TEXT("0.00\\%");
+
+                            ss_data_set_real(&ss_data, label_value);
 
                             status = numform(&quick_ublock, P_QUICK_TBLOCK_NONE, &ss_data, &numform_parms);
 

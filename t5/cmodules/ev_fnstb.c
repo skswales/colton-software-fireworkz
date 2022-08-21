@@ -143,7 +143,7 @@ PROC_EXEC_PROTO(c_combina)
 
     exec_func_ignore_parms();
 
-    binomial_coefficient_calc(p_ss_data_res, n + m - 1, n - 1); /* may return integer or fp or error */
+    binomial_coefficient_calc(p_ss_data_res, n + m - 1, n - 1); /* may return integer or real or error */
 }
 
 /******************************************************************************
@@ -248,7 +248,7 @@ large_small_common(
         return;
     }
 
-    if((k_idx < 0) || (k_idx >= y_size))
+    if( (k_idx < 0) || (k_idx >= y_size) )
     {
         ss_data_free_resources(&ss_data_temp_array);
         ss_data_set_error(p_ss_data_out, EVAL_ERR_OUTOFRANGE);
@@ -462,7 +462,7 @@ percentile_calc(
 
 static void
 percentile_inc_exc_common(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InRef_     PC_SS_DATA array_data,
     _InVal_     F64 percentile_fraction,
     _InVal_     BOOL exclusive)
@@ -471,7 +471,7 @@ percentile_inc_exc_common(
     SS_DATA ss_data_temp_array;
     S32 x_size, y_size;
 
-    if((percentile_fraction < 0.0) || (percentile_fraction > 1.0))
+    if( (percentile_fraction < 0.0) || (percentile_fraction > 1.0) )
     {
         ss_data_set_error(p_ss_data_out, EVAL_ERR_ARGRANGE);
         return;
@@ -520,7 +520,7 @@ PROC_EXEC_PROTO(c_percentile_exc)
 
     exec_func_ignore_parms();
 
-    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, TRUE/*exclusive*/); /* may return integer or fp or error */
+    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, TRUE/*exclusive*/); /* may return integer or real or error */
 }
 
 PROC_EXEC_PROTO(c_percentile_inc)
@@ -530,7 +530,7 @@ PROC_EXEC_PROTO(c_percentile_inc)
 
     exec_func_ignore_parms();
 
-    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, FALSE/*exclusive*/); /* may return integer or fp or error */
+    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, FALSE/*exclusive*/); /* may return integer or real or error */
 }
 
 /******************************************************************************
@@ -554,7 +554,7 @@ interpolate_fraction_between(
 
 static void
 percentrank_inc_exc_common(
-    _OutRef_    P_SS_DATA p_ss_data_out, /* may return fp or error */
+    _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InRef_     PC_SS_DATA array_data,
     _InRef_     PC_SS_DATA number,
     _InVal_     S32 decimal_places,
@@ -658,7 +658,7 @@ PROC_EXEC_PROTO(c_percentrank_exc)
 
     exec_func_ignore_parms();
 
-    percentrank_inc_exc_common(p_ss_data_res, array_data, number, decimal_places, TRUE/*exclusive*/); /* may return fp or error */
+    percentrank_inc_exc_common(p_ss_data_res, array_data, number, decimal_places, TRUE/*exclusive*/); /* may return real or error */
 }
 
 PROC_EXEC_PROTO(c_percentrank_inc)
@@ -669,7 +669,7 @@ PROC_EXEC_PROTO(c_percentrank_inc)
 
     exec_func_ignore_parms();
 
-    percentrank_inc_exc_common(p_ss_data_res, array_data, number, decimal_places, FALSE/*exclusive*/); /* may return fp or error */
+    percentrank_inc_exc_common(p_ss_data_res, array_data, number, decimal_places, FALSE/*exclusive*/); /* may return real or error */
 }
 
 /******************************************************************************
@@ -695,7 +695,7 @@ PROC_EXEC_PROTO(c_quartile_exc)
 
     exec_func_ignore_parms();
 
-    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, TRUE/*exclusive*/); /* may return integer or fp or error */
+    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, TRUE/*exclusive*/); /* may return integer or real or error */
 }
 
 PROC_EXEC_PROTO(c_quartile_inc)
@@ -706,7 +706,7 @@ PROC_EXEC_PROTO(c_quartile_inc)
 
     exec_func_ignore_parms();
 
-    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, FALSE/*exclusive*/); /* may return integer or fp or error */
+    percentile_inc_exc_common(p_ss_data_res, array_data, percentile_fraction, FALSE/*exclusive*/); /* may return integer or real or error */
 }
 
 #else

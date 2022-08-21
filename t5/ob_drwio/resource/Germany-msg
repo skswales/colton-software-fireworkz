@@ -1,0 +1,20 @@
+#
+# this is the messages file for ob_drwio (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 2001-2015 R W Colton
+#
+# messages: keep consistent with ob_drwio/ob_drwio.h
+#
+# MSG_DIALOG_SAVE_AS_DRAWFILE_INTRO_xxx
+#
+# UK 1:Export as Drawfile
+1:Als Draw-Datei exportieren
+#2:to-do.htm
+#
+# errors (none)
+#
+# end of msg (ob_drwio)

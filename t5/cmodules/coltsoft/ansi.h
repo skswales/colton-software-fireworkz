@@ -25,12 +25,26 @@
 #elif defined(_MSC_VER)
 
 /* Define from MSVC's internal types */
+typedef signed char int8_t;
+#define INT8_MAX _I8_MAX
+#define INT8_MIN _I8_MIN
+
+typedef unsigned char uint8_t;
+#define UINT8_MAX _UI8_MAX
+
+typedef __int16 int16_t;
+#define INT16_MAX _I16_MAX
+#define INT16_MIN _I16_MIN
+
+typedef unsigned __int16 uint16_t;
+#define UINT16_MAX _UI16_MAX
+
 typedef __int32 int32_t;
 #define INT32_MAX _I32_MAX
 #define INT32_MIN _I32_MIN
 
 typedef unsigned __int32 uint32_t;
-#define UINT64_MAX _UI64_MAX
+#define UINT32_MAX _UI32_MAX
 
 typedef __int64 int64_t;
 #define INT64_MAX _I64_MAX

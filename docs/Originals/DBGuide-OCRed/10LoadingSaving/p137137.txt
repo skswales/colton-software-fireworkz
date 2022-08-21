@@ -1,0 +1,15 @@
+﻿Loading, saving &
+printing
+This chapter looks at the fundamental topics of loading existing
+databases into a document, saving out databases and printing out
+all the records within a database.
+It includes sections on:
+. Loading existing DataPower files.
+. Loading CSV files.
+. Exporting databases as DataPower files
+. Exporting databases as CSV files.
+. Deleting databases.
+. Printing records.
+
+
+

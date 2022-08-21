@@ -950,7 +950,7 @@ utf8_validate(
                 bytes_of_char = 2;
                 if(u8 <= 0xC1)
                 {
-                    myassert5(TEXT("%s: Not Well Formed UTF-8 - first byte fails in sequence ") PTR_XTFMT TEXT("(%d) @ %u:0x%.2X"), func, p_u8_in, uchars_n, PtrDiffBytesU32((p_u8 - 1), p_u8_in), u8);
+                    myassert5(TEXT("%s: Not Well Formed UTF-8 - first byte fails in sequence ") PTR_XTFMT TEXT("(%u) @ %u:0x%.2X"), func, p_u8_in, uchars_n, PtrDiffBytesU32((p_u8 - 1), p_u8_in), u8);
                     return(ERR_INVALID_UTF8_ENCODING);
                 }
                 break;

@@ -1,0 +1,246 @@
+﻿Database Guide 192
+
+Summary
+Arithmetic functions
+ABS
+EXP
+INT
+LN
+LOG
+SGN
+SQR
+number
+number
+number
+number
+number
+number
+number
+Statistical functions
+AVERAGE num-expr*
+COUNT
+MAX
+MEDIAN num-expr*
+MIN
+SUM num-expr*
+expr*
+expr*
+expr*
+String functions
+LEN
+CHR$
+STR$
+LEFT$
+RIGHT$
+STRING$
+MID$
+INCOUNT
+INSTR
+ITEM$
+ITEMNO
+string
+number
+number
+string,n
+string,n
+string,n
+s,n1 I , n2 /
+sI,s2
+s1,s2{,n}
+Number
+Number
+Integer
+Number
+Number
+Integer
+Number
+Number
+Integer
+Item
+Number
+Item
+Number
+Integer
+String
+String
+String
+String
+String
+String
+Number
+String
+s,n{,s2,{n2}} String
+s1,s2{,s3] Number
+Absolute positive value of number
+e to the power number
+Integer part of number
+Natural logarithm of number
+Base 10 logarithm of number
+Sign of number (+1, -1 or 0)
+Square root of number
+Average value of list of numeric expressions
+Counts items is list of expressions
+Maximum item from list of expressions
+Median value of list of numeric expressions
+Minimum item from list of expressions
+Adds together list of numeric expressions
+Length of string
+Converts ASCII code number to character
+Converts number to string
+First n characters of string
+Last n characters of string
+String made by repeating string n times
+The n2 characters of s (or remainder if n2 not
+given) starting at n1
+Number of times s2 occurs in s1.
+Position of s2 in sl (search starting from n if
+given)
+One (or n2 if given) items from s starting from
+item n (s2 is used as item separator if given)
+First item in s1 which matches s2 (s3 is used as
+item separator if given)
+
+
+Database Guide 193
+
+
+Trigonometrical functions
+ARCCOS
+ARCSIN
+ARCTAN
+COS
+DEG
+RAD
+SIN
+TAN
+number
+number
+number
+angle
+angle
+angle
+angle
+angle
+Date I time functions
+AGE d1,d2
+DATE y,m,d
+DATENEW date,time
+DATEONLY date/time
+DATEVALUE
+DAYNAME
+DAYOF
+HOUROF
+INTERVAL
+INTERVALVALUE
+MINUTEOF
+MONTHNAME
+MONTHOF
+NOW
+SECONDOF
+TIME
+TIMEONLY
+TIMEVALUE
+TODAY
+WEEKDAY
+WEEKNO
+WEEKYEAR
+WORKDAY
+WORKDAYADD
+WORKDAYSUB
+YEARDAYS
+YEAROF
+string
+integer
+date or int
+date or int
+y,m,d,h,m,s
+string
+date or int
+integer
+date or int
+date or int
+h,m,s
+date/time
+string
+date
+date
+date
+date
+date, integer
+date1, date2
+integer
+date or int
+Number
+Number
+Number
+Number
+Number
+Number
+Number
+Number
+Interval
+Date
+Date
+Date
+Number
+String
+Integer
+Integer
+Interval
+Interval
+Integer
+String
+Integer
+Date
+Integer
+Date
+Time
+Time
+Date
+Integer
+Integer
+Integer
+Boolean
+Date
+Integer
+Integer
+Integer
+Arc cosine of number
+Arc sine of number
+Arc tangent of number
+Cosine of angle
+Converts angle from radians to degrees
+Converts angle from degrees to radians
+Sine of angle
+Tangent of angle
+Interval between dates d1 and d2
+Date from year, month & day
+Date/time from date & time
+Date only from date/time
+Date from string
+Name of day for day value integer
+Day value of date or interval
+Hour value of date or interval
+Interval from year,month,day,hour,minute,second
+Interval from string
+Minute value of date or interval
+Name of month for month value integer
+Month value of date or interval
+Current date/time
+Second value of date or interval
+Date from hour, minute & second
+Time only from date/time
+Datel time from string
+Current date
+Day of week value date falls on
+Week number date falls in
+Year that week number of date falls in
+True if date falls on a working day, else false
+Adds integer working days to date
+number of working days between date1 & date2
+Number of days in year integer
+Year value of date or interval
+
+
+
+

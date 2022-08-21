@@ -37,6 +37,7 @@ menu_root_table[] =
 {
     MRTE_INIT(TEXT("$")),
     MRTE_INIT(TEXT("IconBar")),
+    MRTE_INIT(TEXT("AutoFunction")),
     MRTE_INIT(TEXT("Function")),
     MRTE_INIT(TEXT("Chart")),
     MRTE_INIT(TEXT("ChartEdit"))
@@ -53,7 +54,7 @@ recursive_menu_dispose(
     {
         P_MENU_ENTRY p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, i);
 
-        if(p_menu_entry->key_code && !IS_DOCU_NONE(p_docu))
+        if(p_menu_entry->key_code && DOCU_NOT_NONE(p_docu))
             command_array_handle_dispose_from_key_code(p_docu, p_menu_entry->key_code);     /* undefine key binding */
 
         /*tstr_clr(&p_menu_entry->tstr_entry_text); alloc_block*/
@@ -160,6 +161,48 @@ search_for_entry(
     return(FALSE);
 }
 
+_Check_return_
+static BOOL
+menu_name_compare(
+    _In_z_      PCTSTR tstr_a,
+    _In_reads_(n_chars) PCTCH tchars_b,
+    _InVal_     U32 n_chars)
+{
+    BOOL found = FALSE;
+    U32 i = 0;
+
+    for(;;) /* bit like tstrncmp() but catering for & escaping */
+    {
+        TCHAR a, b;
+
+        a = *tstr_a++;
+        if(CH_AMPERSAND == a)
+            a = *tstr_a++;
+
+        b = *tchars_b++;
+        if(i++ >= n_chars)
+        {
+            found = (CH_NULL == a);
+            break;
+        }
+        if(CH_AMPERSAND == b)
+        {
+            b = *tchars_b++;
+            if(i++ >= n_chars)
+            {
+                found = (CH_NULL == a);
+                break;
+            }
+        }
+
+        if(a != b)
+            break;
+    }
+
+    return(found);
+}
+
+_Check_return_
 static BOOL
 search_for_root(
     _DocuRef_   P_DOCU p_docu,
@@ -174,84 +217,65 @@ search_for_root(
         return(FALSE);
 
     {
+    const U32 menu_name_length = tstrlen32(tstr_menu_name);
     MENU_ROOT_ID menu_root_id;
 
     for(menu_root_id = MENU_ROOT_DOCU; menu_root_id < elemof32(menu_root_table); ENUM_INCR(MENU_ROOT_ID, menu_root_id))
     {
-        if(0 == tstrncmp(tstr_menu_name, menu_root_table[menu_root_id].name, menu_root_table[menu_root_id].name_length))
+        const U32 mrte_name_length = menu_root_table[menu_root_id].name_length;
+
+        if(mrte_name_length > menu_name_length)
+            continue; /* this entry is too long to possibly match */
+
+        if(0 != memcmp(tstr_menu_name, menu_root_table[menu_root_id].name, mrte_name_length * sizeof32(TCHAR)))
+            continue; /* failed to match at all */
+
+        if( (tstr_menu_name[mrte_name_length] == CH_NULL) ||
+            (tstr_menu_name[mrte_name_length] == MENU_SEP_CH) )
         {
-            if( (tstr_menu_name[menu_root_table[menu_root_id].name_length] == CH_NULL) ||
-                (tstr_menu_name[menu_root_table[menu_root_id].name_length] == MENU_SEP_CH) )
-            {
-                p_menu_root = sk_menu_root(p_docu, menu_root_id);
-                break;
-            }
+            /* good match (NULL -> entire match; MENU_SEP_CH -> matched as prefix) */
+            p_menu_root = sk_menu_root(p_docu, menu_root_id);
+
+            /* skip what we matched, leaving pointing to either terminator */
+            tstr_menu_name += mrte_name_length;
+            break;
         }
     }
     } /*block */
 
-    if(NULL == p_menu_root)
+    if(P_MENU_ROOT_NONE == p_menu_root)
     {
         assert0();
         return(0);
     }
 
-    if(NULL != (tstr_menu_name = tstrchr(tstr_menu_name, MENU_SEP_CH)))
+    if(MENU_SEP_CH == *tstr_menu_name)
     {
         while(MENU_SEP_CH == *tstr_menu_name++)
         {
-            PCTSTR tstr_name_start = tstr_menu_name;
+            PCTSTR tstr_menu_name_start = tstr_menu_name;
+            U32 menu_name_length;
             ARRAY_INDEX element;
             BOOL found;
 
-            while((MENU_SEP_CH != *tstr_menu_name) && *tstr_menu_name)
+            while( (MENU_SEP_CH != *tstr_menu_name) && (CH_NULL != *tstr_menu_name) )
                 tstr_menu_name++;
 
-            if(tstr_name_start == tstr_menu_name)
+            if(tstr_menu_name_start == tstr_menu_name)
                 return(FALSE);                  /* zero length name */
+
+            menu_name_length = PtrDiffElemU32(tstr_menu_name, tstr_menu_name_start);
 
             /* search menu for entry */
             for(element = 0, found = FALSE; element < array_elements(&p_menu_root->h_entry_list); element++)
             {
-                P_MENU_ENTRY p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, element);
-                PTSTR tstr_menu_entry_name = p_menu_entry->tstr_entry_text;
-                U32 name_length = PtrDiffElemU32(tstr_menu_name, tstr_name_start);
-                PCTSTR tstr_a = tstr_menu_entry_name;
-                PCTSTR tstr_b = tstr_name_start;
-                U32 i = 0;
+                const P_MENU_ENTRY p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, element);
+                const PCTSTR tstr_menu_entry_name = p_menu_entry->tstr_entry_text;
 
                 if(NULL == tstr_menu_entry_name)
                     continue;
 
-                found = TRUE;
-
-                for(;;) /* tstrncmp() but catering for & escaping */
-                {
-                    TCHAR a, b;
-
-                    b = *tstr_b++;
-                    if(i++ >= name_length)
-                        break;
-                    if(b == CH_AMPERSAND)
-                    {
-                        b = *tstr_b++;
-                        if(i++ >= name_length)
-                            break;
-                    }
-
-                    a = *tstr_a++;
-                    if(a == CH_AMPERSAND)
-                        a = *tstr_a++;
-
-                    if(a != b)
-                    {
-                        found = FALSE;
-                        break;
-                    }
-
-                    if(CH_NULL == a) /* ended together -> equal */
-                        break;
-                }
+                found = menu_name_compare(tstr_menu_entry_name, tstr_menu_name_start, menu_name_length);
 
                 if(found)
                 {
@@ -472,7 +496,27 @@ t5_cmd_activate_menu(
     _InVal_     T5_MESSAGE t5_message)
 {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    return(ho_menu_popup(p_docu, p_view, (t5_message == T5_CMD_ACTIVATE_MENU_CHART) ? MENU_ROOT_CHART : MENU_ROOT_FUNCTION_SELECTOR));
+    MENU_ROOT_ID menu_root_id = MENU_ROOT_DOCU;
+
+    switch(T5_MESSAGE_CMD_OFFSET(t5_message))
+    {
+    default: default_unhandled();
+        break;
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_AUTO_FUNCTION):
+        menu_root_id = MENU_ROOT_AUTO_FUNCTION;
+        break;
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR):
+        menu_root_id = MENU_ROOT_FUNCTION_SELECTOR;
+        break;
+
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_CHART):
+        menu_root_id = MENU_ROOT_CHART;
+        break;
+    }
+
+    return(ho_menu_popup(p_docu, p_view, menu_root_id));
 }
 
 #define ARG_MENU_ADD_NAME     0

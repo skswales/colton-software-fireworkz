@@ -86,7 +86,7 @@ number of bytes of UTF-8 encoding of the character pointed to
 _Check_return_
 extern U32
 utf8__bytes_of_char(
-    _In_        PC_UTF8 uchars);
+    _In_reads_(1) PC_UTF8 uchars);
 
 _Check_return_
 static inline U32

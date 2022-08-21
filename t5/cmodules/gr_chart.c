@@ -297,7 +297,7 @@ gr_chart_dispose_core(
     tstr_clr(&cp->core.currentfilename);
     tstr_clr(&cp->core.currentdrawname);
 
-    zero_struct(cp->core);
+    zero_struct_fn(cp->core);
 }
 
 static void
@@ -515,7 +515,7 @@ gr_chart_new(
     *chp = ch;
 
     /* empty the descriptor */
-    zero_struct_ptr(cp);
+    zero_struct_ptr_fn(cp);
 
     cp->core.ch = ch;
 

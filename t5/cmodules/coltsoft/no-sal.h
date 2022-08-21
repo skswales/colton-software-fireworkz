@@ -106,6 +106,7 @@ Some SAL1.1 fakery - only defined as needed
 
 #define _Ret_
 #define _Ret_z_
+#define _Ret_opt_z_
 
 #endif /* _Success_ */
 

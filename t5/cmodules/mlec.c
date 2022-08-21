@@ -346,6 +346,10 @@ force_redraw_eotext(
     mlec__callback(MLEC_CODE_UPDATE, mlec, NULL)
 
 static void
+mlec__select_all(
+    /*_Inout_*/ MLEC mlec);
+
+static void
 mlec__select_word(
     /*_Inout_*/ MLEC mlec);
 
@@ -599,14 +603,14 @@ mlec_get_host_font_ascent(
     _InVal_     HOST_FONT host_font,
     _OutRef_    P_GDI_COORD p_descent)
 {
-    const char * str_sizing = "$y" "\xC2"; /* UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX is generally the tallest Latin-1 character */
+    const char * str_sizing = "_$y" "\xC2"; /* UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX is generally the tallest Latin-1 character */
     GDI_COORD ascent  = 0;
     GDI_COORD descent = 0;
     struct fss_coord_block { GDI_POINT space_offset; GDI_POINT letter_offset; int split_ch; BBox bbox; } fss_coord_block;
     _kernel_swi_regs rs;
     _kernel_oserror * p_kernel_oserror;
 
-    zero_struct(fss_coord_block);
+    zero_struct_fn(fss_coord_block);
     fss_coord_block.split_ch = -1; /* none */
 
     rs.r[0] = host_font;
@@ -623,10 +627,10 @@ mlec_get_host_font_ascent(
     {   /* returns i,i,e,e bbox */
         const U32 YEigFactor = host_modevar_cache_current.YEigFactor;
         const S32 divisor = MILLIPOINTS_PER_RISCOS << YEigFactor;
-        const S32 bodge = MILLIPOINTS_PER_RISCOS * (host_modevar_cache_current.dy - 1);
-reportf("FSS: %d,%d, %d,%d", fss_coord_block.bbox.xmin, fss_coord_block.bbox.ymin, fss_coord_block.bbox.xmax, fss_coord_block.bbox.ymax);
-        ascent  = ( (fss_coord_block.bbox.ymax + bodge) / divisor) << YEigFactor;
-        descent = (-(fss_coord_block.bbox.ymin        ) / divisor) << YEigFactor;
+reportf("mlec: FSS min %d,%d mp, max %d,%d mp", fss_coord_block.bbox.xmin, fss_coord_block.bbox.ymin, fss_coord_block.bbox.xmax, fss_coord_block.bbox.ymax);
+        ascent  =  (idiv_ceil( fss_coord_block.bbox.ymax, divisor) << YEigFactor); /* ymin is +ve */
+        descent = -(idiv_floor(fss_coord_block.bbox.ymin, divisor) << YEigFactor); /* ymin is -ve */
+reportf("mlec: FSS ascent %d, descent %d OS", ascent, descent);
     }
 
     *p_descent = descent;
@@ -679,10 +683,9 @@ mlec_create(
                 GDI_COORD descent;
                 GDI_COORD ascent = mlec_get_host_font_ascent(mlec->host_font, &descent);
                 mlec->charwidth = 18;
-                reportf("mlec: FSS ascent %d, descent %d OS", ascent, descent);
                 mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT] = ascent + descent;
                 mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT] = ascent;
-                reportf("mlec: charascent %d, charheight %d OS", mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT], mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT]);
+              /*reportf("mlec: charascent %d, charheight %d OS", mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT], mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT]);*/
             }
             else
             {   /* VDU 5 System font */
@@ -693,8 +696,8 @@ mlec_create(
 
             mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] = mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT];
 
-            mlec->attributes[MLEC_ATTRIBUTE_CARETHEIGHTPOS] = mlec->attributes[MLEC_ATTRIBUTE_LINESPACE] + 4;
-            mlec->attributes[MLEC_ATTRIBUTE_CARETHEIGHTNEG] = 4;
+            mlec->attributes[MLEC_ATTRIBUTE_CARETHEIGHTPOS] = 4 + mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT];
+            mlec->attributes[MLEC_ATTRIBUTE_CARETHEIGHTNEG] = 4 + mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT] - mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT];
 
             mlec->attributes[MLEC_ATTRIBUTE_BG_RGB] = * (PC_S32) &rgb_background;
             mlec->attributes[MLEC_ATTRIBUTE_FG_RGB] = * (PC_S32) &rgb_foreground;
@@ -1228,23 +1231,44 @@ mlec__Key_Pressed(
     STATUS status;
 
     status_return(status = mlec__callback(MLEC_CODE_KEY, mlec, &kmap_code));
-    if(status != STATUS_OK)
+    if(STATUS_OK != status)
         return(STATUS_DONE);
+
+  /*reportf(TEXT("mlec__Key_Pressed: kmap_code=%d"), kmap_code);*/
 
     status = STATUS_DONE;
 
     switch(kmap_code)
     {
+    /* shortcuts which would be menu equivalents */
+    case KMAP_CODE_ADDED_ALT | 'A':       mlec__select_all      (mlec); break;
+#if defined(MLEC_PASTE_BUFFER)
+    case KMAP_CODE_ADDED_ALT | 'C':       status_break(status = mlec__selection_copy(mlec)); status = STATUS_DONE; break;
+#endif
+    case KMAP_CODE_ADDED_ALT | 'K':       mlec__selection_delete(mlec); break;
+    case KMAP_CODE_ADDED_ALT | 'U':       mlec__delete_line     (mlec); break;
+    case KMAP_CODE_ADDED_ALT | 'V':       status_break(status = mlec__atcursor_paste(mlec)); status = STATUS_DONE; break;
+#if defined(MLEC_PASTE_BUFFER)
+    case KMAP_CODE_ADDED_ALT | 'X':       status_break(status = mlec__selection_cut(mlec)); status = STATUS_DONE; break;
+#endif
+    case KMAP_CODE_ADDED_ALT | 'Z':       mlec__selection_clear (mlec); break;
+
+    /* movement */
     case KMAP_FUNC_ARROW_LEFT:            mlec__cursor_left     (mlec); break;
     case KMAP_FUNC_ARROW_RIGHT:           mlec__cursor_right    (mlec); break;
-    case KMAP_FUNC_ARROW_UP:              mlec__cursor_up       (mlec); break;
     case KMAP_FUNC_ARROW_DOWN:            mlec__cursor_down     (mlec); break;
+    case KMAP_FUNC_ARROW_UP:              mlec__cursor_up       (mlec); break;
 
     case KMAP_FUNC_HOME:
     case KMAP_FUNC_CARROW_LEFT:           mlec__cursor_linehome (mlec); break;
+
+    case KMAP_FUNC_END:
     case KMAP_FUNC_CARROW_RIGHT:          mlec__cursor_lineend  (mlec); break;
+
     case KMAP_FUNC_CHOME:
     case KMAP_FUNC_CARROW_UP:             mlec__cursor_texthome (mlec); break;
+
+    case KMAP_FUNC_CEND:
     case KMAP_FUNC_CARROW_DOWN:           mlec__cursor_textend  (mlec); break;
 
     case KMAP_FUNC_SARROW_LEFT:           mlec__cursor_wordleft (mlec); break;
@@ -1253,25 +1277,21 @@ mlec__Key_Pressed(
     case KMAP_FUNC_TAB:                   status_break(status = mlec__insert_tab(mlec)); status = STATUS_DONE; break;
     case KMAP_FUNC_STAB:                  mlec__cursor_tab_left (mlec); break;
 
-    case KMAP_FUNC_END:                   mlec__delete_right    (mlec); break;      /* Copy and End are same key */
     case KMAP_FUNC_SEND:                  mlec__delete_lineend  (mlec); break;
-    case KMAP_FUNC_CEND:                  mlec__delete_line     (mlec); break;
     case KMAP_FUNC_CSEND:                 mlec__delete_linehome (mlec); break;
 
     case KMAP_FUNC_BACKSPACE:             mlec__delete_left     (mlec); break;
+
+    case KMAP_FUNC_DELETE:                mlec__delete_right    (mlec); break;
+#if defined(MLEC_PASTE_BUFFER)
+    case KMAP_FUNC_SDELETE:               status_break(status = mlec__selection_cut(mlec)); status = STATUS_DONE; break;
+#endif
 
     case KMAP_FUNC_SINSERT:               status_break(status = mlec__atcursor_paste(mlec)); status = STATUS_DONE; break;
 
 #if defined(MLEC_PASTE_BUFFER)
     case KMAP_FUNC_CINSERT:               status_break(status = mlec__selection_copy(mlec)); status = STATUS_DONE; break;
 #endif
-
-    case KMAP_FUNC_DELETE:                mlec__delete_left     (mlec); break;
-#if defined(MLEC_PASTE_BUFFER)
-    case KMAP_FUNC_SDELETE:               status_break(status = mlec__selection_cut(mlec)); status = STATUS_DONE; break;
-#endif
-    case KMAP_CODE_ADDED_ALT | 'K':       mlec__selection_delete(mlec); break;
-    case KMAP_CODE_ADDED_ALT | 'Z':       mlec__selection_clear (mlec); break;
 
     case KMAP_FUNC_RETURN:                if(STATUS_OK != (status = mlec__callback(MLEC_CODE_KEY_RETURN, mlec, NULL)))
                                               break;
@@ -2348,7 +2368,7 @@ scroll_until_cursor_visible(
 
     trace_2(TRACE_MODULE_MLEC, TEXT("cursor is (%d,%d)"), curshape.x0, curshape.y1);
 
-    zero_struct(mlec_queryscroll);
+    zero_struct_fn(mlec_queryscroll);
     /*mlec_queryscroll.use = 0;*/
 
     /*CONSTANTCONDITION*/
@@ -2500,7 +2520,7 @@ build_caretstr(
     mlec__point_from_colrow(mlec, &caretoffset, mlec->cursor.pcol, mlec->cursor.row);
 
     /* put caret at baseline */
-    caretoffset.y -= (mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT] * 7) / 8;
+    caretoffset.y -= mlec->attributes[MLEC_ATTRIBUTE_CHARASCENT];
 
     carrotp->window_handle = mlec->pane;
     carrotp->icon_handle = (wimp_i) -1;
@@ -3177,7 +3197,7 @@ mlec__selection_adjust(
 
 extern void
 mlec__selection_clear(
-    MLEC mlec)
+    /*_Inout_*/ MLEC mlec)
 {
     clear_selection(mlec);
     show_caret(mlec);   /* do show_caret, not scroll_until_cursor_visible, so the window won't scroll */
@@ -3185,10 +3205,19 @@ mlec__selection_clear(
 
 extern void
 mlec__selection_delete(
-    MLEC mlec)
+    /*_Inout_*/ MLEC mlec)
 {
     delete_selection(mlec);
     scroll_until_cursor_visible(mlec);
+}
+
+static void
+mlec__select_all(
+    /*_Inout_*/ MLEC mlec)
+{
+    /* move cursor to end; set anchor there, moving back to start */
+    mlec__cursor_textend(mlec);
+    mlec__selection_adjust(mlec, 0, 0);
 }
 
 static void
@@ -4311,9 +4340,9 @@ static BOOL
 mlec_global_clipboard_data_xfer_save(
     _In_z_      PCTSTR filename /*low lifetime*/,
     _InVal_     T5_FILETYPE t5_filetype,
-    CLIENT_HANDLE client_handle)
+    _InVal_     CLIENT_HANDLE client_handle)
 {
-    UNREFERENCED_PARAMETER(client_handle);
+    UNREFERENCED_PARAMETER_InVal_(client_handle);
 
     if(NULL == paste_buffer)
         return(FALSE);

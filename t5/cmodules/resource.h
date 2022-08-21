@@ -20,6 +20,7 @@ typedef struct BOUND_RESOURCES
 #define RESOURCE_DLL_SUFFIX /*nothing*/
 
     P_ANY sprite_area_c; /* sprite_area * */
+    P_ANY sprite_area_11;
     P_ANY sprite_area_22;
     P_ANY sprite_area_24;
 
@@ -89,7 +90,8 @@ typedef U32 T5_RESOURCE_BITMAP_ID_PACKED;
 #define RESOURCE_BITMAP_AREA_STANDARD 0
 #define RESOURCE_BITMAP_AREA_LO_RES 1
 #define RESOURCE_BITMAP_AREA_HI_RES 2
-#define RESOURCE_BITMAP_AREA_COUNT 3
+#define RESOURCE_BITMAP_AREA_UHI_RES 3
+#define RESOURCE_BITMAP_AREA_COUNT 4
 
 #define RESOURCE_BITMAP_AREA_ID int
 
@@ -215,15 +217,15 @@ extern void
 resource_shutdown(void);
 
 extern void
-resource_startup(
-    _In_z_      PCTSTR tstr_dll_store);
+resource_startup(void);
 
 #if WINDOWS
 
 _Check_return_
 extern HINSTANCE
 resource_get_object_resources(
-    _InVal_     OBJECT_ID object_id);
+    _InVal_     OBJECT_ID object_id,
+    _Out_       HINSTANCE * const p_hInstance_fallback);
 
 #endif
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <title>INPUT</title>
+</head>
+<body>
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright (C) 1994-1998 Colton Software Limited
+       - Copyright (C) 1998-2015 R W Colton -->
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="INPUT" />
+        <param name="Keyword" value="Functions, Miscellaneous, INPUT" />
+        <param name="Keyword" value="Miscellaneous functions, user input value dialogue box" />
+    </object>
+
+    <h1><a name="input" id="input"></a>INPUT</h1>
+
+    <p>Displays a dialogue box containing a message and sets a name to the text entered into its input field.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        INPUT(<span class="csg-function-parameter">message</span>:<span class="csg-function-parameter-type">Text</span>,
+        <span class="csg-function-parameter">name</span>:<span class="csg-function-parameter-type">Text</span>,
+        <span class="csg-function-parameter">button1</span>:<span class="csg-function-parameter-type">Text</span>
+        {,&nbsp;<span class="csg-function-parameter">button2</span>:<span class="csg-function-parameter-type">Text</span>})
+    </p>
+    <p>A dialogue box is displayed containing the text <span class="csg-function-parameter">message</span> and containing an input field.</p>
+    <p><span class="csg-function-parameter">button1</span> and the optional <span class="csg-function-parameter">button2</span> supply the text which appears on button(s) within the dialogue box.</p>
+    <p>Sets <span class="csg-function-parameter">name</span> to the text typed into the input field and returns <code>1</code> when button1 is clicked or <code>2</code> when button2 is clicked.</p>
+    <p>Only makes sense in custom functions.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">INPUT(&quot;Work out the average of&quot;, &quot;range&quot;, &quot;OK&quot;, &quot;Cancel&quot;)</pre>
+    <p>displays a dialogue box containing the message <strong>Work out the average of</strong> and hands the name of the range typed in back to the custom function, along with the value <code>1</code> if <em>button1</em> is clicked and <code>2</code> if <em>button2</em> is clicked.</p>
+
+    <div class="navfooter">
+        <table id="navfooter" summary="Navigation footer">
+            <tr>
+                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06i/sg6_INDEX.htm">Prev</a> </td>
+                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#miscellaneous_functions">Up</a></td>
+                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06i/sg6_ISEVEN.htm">Next</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

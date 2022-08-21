@@ -151,7 +151,7 @@ dialog_ictls_bbox_in(
 
         case DIALOG_CONTROL_GROUPBOX:
             {
-            const BOOL logical_group = p_dialog_ictl->p_dialog_control->bits.logical_group || !p_dialog_ictl->p_dialog_control_data.groupbox || p_dialog_ictl->p_dialog_control_data.groupbox->bits.logical_group;
+            const BOOL logical_group = p_dialog_ictl->p_dialog_control->bits.logical_group;
 
             if(!logical_group)
                 gr_box_union((P_GR_BOX) p_rect, (P_GR_BOX) p_rect, (P_GR_BOX) &pixit_rect);
@@ -257,16 +257,14 @@ dialog_ictls_create(
     /* first pass creates the control structures */
     for(i = 0; i < n_ctls; ++i)
     {
-        PC_DIALOG_CONTROL p_dialog_control = p_dialog_ctl_create[i].p_dialog_control.p_dialog_control;
-        PC_DIALOG_CONTROL_DATA p_dialog_control_data;
+        const PC_DIALOG_CONTROL p_dialog_control = p_dialog_ctl_create[i].p_dialog_control.p_dialog_control;
+        const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_ctl_create[i].p_dialog_control_data;
         P_DIALOG_ICTL_GROUP p_ictl_group;
         P_DIALOG_ICTL p_dialog_ictl;
         BOOL suppress;
 
         if(NULL == p_dialog_control)
             continue;
-
-        p_dialog_control_data.p_any = p_dialog_ctl_create[i].p_dialog_control_data;
 
 #if CHECKING
         /* ensure that a control of the same id is not already there */
@@ -286,7 +284,7 @@ dialog_ictls_create(
 
             PTR_ASSERT(parent_p_dialog_ictl);
             myassert3x(parent_p_dialog_ictl && (parent_p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX),
-                      TEXT("stupid parent for control ") S32_TFMT TEXT(": parent_p_dialog_ictl ") PTR_XTFMT TEXT(", type ") S32_TFMT,
+                      TEXT("stupid parent for control ") U32_TFMT TEXT(": parent_p_dialog_ictl ") PTR_XTFMT TEXT(", type ") S32_TFMT,
                       (U32) p_dialog_control->dialog_control_id, parent_p_dialog_ictl, (S32) (parent_p_dialog_ictl ? parent_p_dialog_ictl->dialog_control_type : 0));
 
             p_ictl_group = &parent_p_dialog_ictl->data.groupbox.ictls;
@@ -332,14 +330,6 @@ dialog_ictls_create(
 
             if(p_dialog_control_data.groupbox)
             {
-#if defined(DIALOG_GROUPBOX_CAN_HAVE_HANDLER)
-                if(p_dialog_control_data.groupbox->bits.has_client)
-                {
-                    p_dialog_ictl->data.groupbox.client_handle = p_dialog_control_data.groupboxx->client_handle;
-                    p_dialog_ictl->data.groupbox.p_proc_client = p_dialog_control_data.groupboxx->p_proc_client;
-                }
-#endif
-
                 status_assert(status = ui_text_copy(&p_dialog_ictl->caption, &p_dialog_control_data.groupbox->caption));
 
 #if RISCOS
@@ -350,7 +340,8 @@ dialog_ictls_create(
             break;
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
             break;
 
         case DIALOG_CONTROL_STATICPICTURE:
@@ -369,7 +360,7 @@ dialog_ictls_create(
 #if RISCOS
             p_dialog_ictl->riscos.hot_key = (U8) p_dialog_ictl->p_dialog_control_data.pushpicture->push_xx.hot_key;
 
-            p_dialog_ictl->data.pushpicture.riscos.resource_bitmap_handle = resource_bitmap_find(&p_dialog_control_data.pushpicture->picture_bitmap_id);
+            p_dialog_ictl->data.pushpicture.riscos.resource_bitmap_handle = resource_bitmap_find_defaulting(&p_dialog_control_data.pushpicture->picture_bitmap_id);
 #endif
             break;
 
@@ -495,8 +486,12 @@ dialog_ictls_create(
 #if CHECKING
             case DIALOG_CONTROL_BUMP_S32:
 #endif
+                {
                 p_bitmap_validation_default = dialog_statics.bitmap_validation_s32;
+                if(((PC_UI_CONTROL_S32) pcd_bump_xx->p_uic)->min_val >= 0)
+                    p_bitmap_validation_default = dialog_statics.bitmap_validation_u8; /* don't allow +/- */
                 break;
+                }
 
             case DIALOG_CONTROL_BUMP_F64:
                 p_bitmap_validation_default = dialog_statics.bitmap_validation_f64;
@@ -547,16 +542,14 @@ dialog_ictls_create(
     /* second pass sets up the state if required and informs the punter */
     for(i = 0; i < n_ctls; ++i)
     {
-        PC_DIALOG_CONTROL p_dialog_control = p_dialog_ctl_create[i].p_dialog_control.p_dialog_control;
-        PC_DIALOG_CONTROL_DATA p_dialog_control_data;
+        const PC_DIALOG_CONTROL p_dialog_control = p_dialog_ctl_create[i].p_dialog_control.p_dialog_control;
+        const PC_DIALOG_CONTROL_DATA p_dialog_control_data = p_dialog_ctl_create[i].p_dialog_control_data;
         P_DIALOG_ICTL p_dialog_ictl;
         BOOL state_set = 1;
         DIALOG_MSG_CTL_CREATE_STATE dialog_msg_ctl_create_state;
 
         if(NULL == p_dialog_control)
             continue;
-
-        p_dialog_control_data.p_any = p_dialog_ctl_create[i].p_dialog_control_data;
 
         p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_control->dialog_control_id);
         PTR_ASSERT(p_dialog_ictl);
@@ -626,7 +619,7 @@ dialog_ictls_create(
 
         msgclr(dialog_msg_ctl_create_state);
         DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_create_state, p_dialog, p_dialog_ictl);
-        zero_struct(dialog_msg_ctl_create_state.state_set.state);
+        zero_struct_fn(dialog_msg_ctl_create_state.state_set.state);
 
         switch(p_dialog_ictl->dialog_control_type)
         {
@@ -641,18 +634,19 @@ dialog_ictls_create(
             break;
 
         case DIALOG_CONTROL_USER:
-            __analysis_assume(p_dialog_control_data.user);
+            _Analysis_assume_(p_dialog_control_data.user);
             dialog_msg_ctl_create_state.state_set.state.user = p_dialog_control_data.user->state;
             break;
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
-            __analysis_assume(p_dialog_control_data.statictext);
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
+            _Analysis_assume_(p_dialog_control_data.statictext);
             dialog_msg_ctl_create_state.state_set.state.statictext = p_dialog_control_data.statictext->caption;
             break;
 
         case DIALOG_CONTROL_PUSHBUTTON:
-            __analysis_assume(p_dialog_control_data.pushbutton);
+            _Analysis_assume_(p_dialog_control_data.pushbutton);
             dialog_msg_ctl_create_state.state_set.state.pushbutton = p_dialog_control_data.pushbutton->caption;
             break;
 
@@ -661,12 +655,12 @@ dialog_ictls_create(
             break;
 
         case DIALOG_CONTROL_CHECKBOX:
-            __analysis_assume(p_dialog_control_data.checkbox);
+            _Analysis_assume_(p_dialog_control_data.checkbox);
             dialog_msg_ctl_create_state.state_set.state.checkbox = p_dialog_control_data.checkbox->init_state;
             break;
 
         case DIALOG_CONTROL_CHECKPICTURE:
-            __analysis_assume(p_dialog_control_data.checkpicture);
+            _Analysis_assume_(p_dialog_control_data.checkpicture);
             dialog_msg_ctl_create_state.state_set.state.checkbox = p_dialog_control_data.checkpicture->init_state;
             break;
 
@@ -681,17 +675,17 @@ dialog_ictls_create(
 #endif
 
         case DIALOG_CONTROL_EDIT:
-            __analysis_assume(p_dialog_control_data.edit);
+            _Analysis_assume_(p_dialog_control_data.edit);
             dialog_msg_ctl_create_state.state_set.state.edit.ui_text = p_dialog_control_data.edit->state;
             break;
 
         case DIALOG_CONTROL_BUMP_S32:
-            __analysis_assume(p_dialog_control_data.bump_s32);
+            _Analysis_assume_(p_dialog_control_data.bump_s32);
             dialog_msg_ctl_create_state.state_set.state.bump_s32 = p_dialog_control_data.bump_s32->state;
             break;
 
         case DIALOG_CONTROL_BUMP_F64:
-            __analysis_assume(p_dialog_control_data.bump_f64);
+            _Analysis_assume_(p_dialog_control_data.bump_f64);
             dialog_msg_ctl_create_state.state_set.state.bump_f64 = p_dialog_control_data.bump_f64->state;
             break;
 
@@ -763,7 +757,7 @@ dialog_ictls_create(
         {
         case DIALOG_CONTROL_PUSHBUTTON:
         case DIALOG_CONTROL_PUSHPICTURE:
-            __analysis_assume(p_dialog_ictl->p_dialog_control_data.pushbutton);
+            _Analysis_assume_(p_dialog_ictl->p_dialog_control_data.pushbutton);
             if(p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.help_id_offset)
                 p_dialog->help_dialog_control_id = p_dialog_ictl->dialog_control_id;
 
@@ -818,7 +812,7 @@ dialog_ictls_dispose_in(
             if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_dispose.client_handle)))
             {
                 DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_dispose, p_dialog, p_dialog_ictl);
-                dialog_msg_ctl_dispose.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data.p_any;
+                dialog_msg_ctl_dispose.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data;
                 status_assert(dialog_call_client(p_dialog, DIALOG_MSG_CODE_CTL_DISPOSE, &dialog_msg_ctl_dispose, p_proc_client));
             }
         }
@@ -842,7 +836,8 @@ dialog_ictls_dispose_in(
             break;
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
             break;
 
         case DIALOG_CONTROL_STATICPICTURE:
@@ -923,7 +918,8 @@ dialog_ictls_dispose_in(
             break;
 
         case DIALOG_CONTROL_STATICTEXT:
-        case DIALOG_CONTROL_STATICFRAME:
+        case DIALOG_CONTROL_TEXTLABEL:
+        case DIALOG_CONTROL_TEXTFRAME:
         case DIALOG_CONTROL_PUSHBUTTON:
             ui_text_dispose(&p_dialog_ictl->state.pushbutton);
             break;

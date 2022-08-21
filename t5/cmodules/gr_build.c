@@ -1197,7 +1197,7 @@ cache_automap_for(
                                             : TEXT("Pictures") FILE_DIR_SEP_TSTR TEXT("PS") U32_TFMT FILE_DIR_SEP_TSTR TEXT("P") U32_TFMT,
                                        (U32) id.no, (U32) id.subno));
 
-#ifdef DRAWFILE_EXTENSION_TSTR
+#if !RISCOS
             tstr_xstrkat(leafname, elemof32(leafname), DRAWFILE_EXTENSION_TSTR);
 #endif
 
@@ -1278,7 +1278,7 @@ cache_automap_for(
                                     : TEXT("Pictures") FILE_DIR_SEP_TSTR TEXT("S") U32_TFMT,
                                (U32) id.no));
 
-#ifdef DRAWFILE_EXTENSION_TSTR
+#if !RISCOS
     tstr_xstrkat(leafname, elemof32(leafname), DRAWFILE_EXTENSION_TSTR);
 #endif
 

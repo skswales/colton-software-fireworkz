@@ -1,0 +1,90 @@
+#
+# this is the messages file for ob_file (Germany)
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (C) 1993-1998 Colton Software Limited
+# Copyright (C) 1998-2015 R W Colton
+#
+# messages: keep consistent with ob_file/ob_file.h
+#
+# FILE_MSG_INSERT_FILE_xxx
+#
+# UK 1:Insert file
+1:Insert file
+# UK w2:Import file
+w2:Import file
+#
+# errors: keep consistent with cmodules/file.h
+# see FILE_ERR(n)
+#
+# UK e0:Can't open file
+e0:Can't open file
+# UK e2:Can't read from file
+e2:Can't read from file
+# UK e3:Can't write to file
+e3:Can't write to file
+# UK e4:Can't read all the requested data from file
+e4:Can't read all the requested data from file
+# UK e5:Invalid position in file
+e5:Invalid position in file
+# UK e6:File handle is unbuffered
+e6:File handle is unbuffered
+# UK e8:Device full
+e8:Device full
+#e9:Can't close file
+#
+# UK e10:Bad file handle
+e10:Bad file handle
+# UK we11:Bad filename
+we11:Bad filename
+# UK e12:File %s not found
+e12:File %s not found
+# UK e13:%s is a file
+e13:%s is a file
+# UK e14:%s is a directory
+e14:%s is a directory
+# UK e15:Filename %.64s... too long
+e15:Filename %.64s... too long
+# UK e16:Locked - unable to write file
+e16:Locked - unable to write file
+# UK e17:No read access to file
+e17:No read access to file
+# UK e18:No write access to file
+e18:No write access to file
+# UK e19:%s is a ZIP file
+e19:%s is a ZIP file
+# UK e20:Not a directory
+e20:Not a directory
+# UK e21:Bad timestamp
+e21:Bad timestamp
+#
+# UK we100:FileOpenDlg: LoadString failed
+we100:FileOpenDlg: LoadString failed
+# UK we101:FileOpenDlg: Resource unavailable
+we101:FileOpenDlg: Resource unavailable
+# UK we102:FileOpenDlg: Failed to load resource
+we102:FileOpenDlg: Failed to load resource
+#
+# fragments used like <error x> while reading from <filename>
+#
+# UK we108:when opening
+we108:when opening
+# UK we109:when closing
+we109:when closing
+# UK we110:while reading from
+we110:while reading from
+# UK we111:while writing to
+we111:while writing to
+# UK we112:while setting position in
+we112:while setting position in
+# UK we114:when renaming
+we114:when renaming
+# UK we115:when deleting
+we115:when deleting
+# UK we116:when creating directory
+we116:when creating directory
+#
+# end of msg (ob_file)
