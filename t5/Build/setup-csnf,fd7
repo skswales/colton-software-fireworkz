@@ -4,11 +4,8 @@
 |
 | Copyright (C) 2013-2016 Stuart Swales
 |
-set COLTSOFT_CS_NONFREE <Obey$Dir>.^.^.^.^.coltsoft.trunk.cs-nonfree
+set COLTSOFT_CS_NONFREE <Obey$Dir>.^.^.^.^.coltsoft.<fireworkz_tbt>.cs-nonfree
 |
 IfThere <COLTSOFT_CS_NONFREE>.Microsoft Then Else Error 0 <COLTSOFT_CS_NONFREE> not present
 |
-cdir                                                               <Obey$Dir>.^.external.Microsoft.Excel97SDK.INCLUDE
-cdir                                                               <Obey$Dir>.^.external.Microsoft.Excel97SDK.INCLUDE.h
-copy <COLTSOFT_CS_NONFREE>.Microsoft.Excel_97_SDK.INCLUDE.XLCALL/H <Obey$Dir>.^.external.Microsoft.Excel97SDK.INCLUDE.h.xlcall ~CF~N~RV
-
+echo Nothing to do these days

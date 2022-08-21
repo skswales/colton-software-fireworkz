@@ -191,7 +191,7 @@ extern void
 host_paint_start(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
 {
-    IGNOREPARM_InRef_(p_redraw_context);
+    UNREFERENCED_PARAMETER_InRef_(p_redraw_context);
 }
 
 extern void
@@ -1080,7 +1080,7 @@ host_paint_drawfile_render_path(
         int fill = DMFT_PLOT_Bint | DMFT_PLOT_NonBint;
         _kernel_swi_regs rs;
 
-        IGNOREPARM(gcol_out);
+        UNREFERENCED_PARAMETER(gcol_out);
 
         /* two bit winding rule field, either 10 (even-odd) or 00 (non-zero) from Draw path object */
         if(path.pathstyle.flags & DRAW_PS_WINDRULE_PACK_MASK)
@@ -1344,7 +1344,7 @@ host_font_dispose(
     {
         *p_host_font = HOST_FONT_NONE;
 
-        IGNOREPARM_InRef_(p_redraw_context);
+        UNREFERENCED_PARAMETER_InRef_(p_redraw_context);
         WrapOsErrorReporting(font_LoseFont(host_font));
     }
 }
@@ -3862,7 +3862,7 @@ generate_table(
             status = STATUS_FAIL;
     }
 
-    IGNOREPARM(status);
+    UNREFERENCED_PARAMETER(status);
 
     spx = (P_U8) NULL;/*-1;*/
 
@@ -4006,10 +4006,10 @@ host_modevar_cache_entry_compare_equals(
         for(p_s32 = &p_mode_selector->terminator; *p_s32 != -1; p_s32 += 2)
             sizeof_mode_selector += 2 * sizeof32(S32);
 
-        if(sizeof_mode_selector != array_elements32(&p_host_modevar_cache_entry->h_selector))
+        if(sizeof_mode_selector != array_elements32(&p_host_modevar_cache_entry->h_mode_selector))
             return(FALSE);
 
-        return(0 == short_memcmp32(p_mode_selector, array_base(&p_host_modevar_cache_entry->h_selector, U8), sizeof_mode_selector));
+        return(0 == short_memcmp32(p_mode_selector, array_base(&p_host_modevar_cache_entry->h_mode_selector, U8), sizeof_mode_selector));
     }
 
     /* if(1 == ms_bit_zero) */
@@ -4021,7 +4021,7 @@ static void
 host_modevar_cache_entry_dispose(
     _InoutRef_  P_HOST_MODEVAR_CACHE_ENTRY p_host_modevar_cache_entry)
 {
-    al_array_dispose(&p_host_modevar_cache_entry->h_selector);
+    al_array_dispose(&p_host_modevar_cache_entry->h_mode_selector);
 }
 
 static void
@@ -4091,6 +4091,8 @@ host_modevar_cache_obtain_data(
     trace_2(0, "obtain_mode %d (%x)", mode_specifier, mode_specifier); report_mode_specifier(mode_specifier);
 #endif
 
+    zero_struct_ptr(p_host_modevar_cache_entry);
+
     p_host_modevar_cache_entry->mode_specifier = mode_specifier;
 
     if(mode_specifier < 256U)
@@ -4105,7 +4107,7 @@ host_modevar_cache_obtain_data(
         for(p_s32 = &p_mode_selector->terminator; *p_s32 != -1; p_s32 += 2)
             sizeof_mode_selector += 2 * sizeof32(S32);
 
-        status_assert(al_array_add(&p_host_modevar_cache_entry->h_selector, BYTE, sizeof_mode_selector, &array_init_block_u8, p_mode_selector));
+        status_assert(al_array_add(&p_host_modevar_cache_entry->h_mode_selector, BYTE, sizeof_mode_selector, &array_init_block_u8, p_mode_selector));
     }
     else
     {   /* Sprite Mode Word */

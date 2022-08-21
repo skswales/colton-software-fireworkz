@@ -48,8 +48,8 @@ format_row_move_y(
 
 T5_MSG_PROTO(static, docu_new_extent_null, P_NULL_EVENT_BLOCK p_null_event_block)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM(p_null_event_block);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER(p_null_event_block);
 
     trace_1(TRACE_DNE_NULL, TEXT("docu_new_extent_null(docno=%d): null_event"), docno_from_p_docu(p_docu));
 
@@ -70,7 +70,7 @@ PROC_EVENT_PROTO(static, null_event_docu_new_extent)
 
     case T5_EVENT_NULL:
 #else
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
     {
 #endif
         return(docu_new_extent_null(p_docu, t5_message, (P_NULL_EVENT_BLOCK) p_data));
@@ -1296,7 +1296,7 @@ T5_MSG_PROTO(static, rowtab_event_null, P_NULL_EVENT_BLOCK p_null_event_block)
 {
     const MONOTIME time_started = p_null_event_block->initial_time;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_3(TRACE_OUT | TRACE_ANY /*TRACE_APP_FORMAT*/, TEXT("null_event_rowtab_format(docno=%d) - null_event: n_rows: ") ROW_TFMT TEXT(", format_start_row: ") ROW_TFMT, docno_from_p_docu(p_docu), n_rows(p_docu), p_docu->format_start_row);
 
@@ -1384,7 +1384,7 @@ main events
 
 T5_MSG_PROTO(static, rowtab_msg_reformat, _InRef_ PC_DOCU_REFORMAT p_docu_reformat)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_docu_reformat->data_space)
     {
@@ -1466,7 +1466,7 @@ T5_MSG_PROTO(static, rowtab_msg_reformat, _InRef_ PC_DOCU_REFORMAT p_docu_reform
 
 MAEVE_EVENT_PROTO(static, maeve_event_sk_form)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1534,7 +1534,7 @@ sk_form_msg_close2(
 
 T5_MSG_PROTO(static, maeve_services_sk_form_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1551,7 +1551,7 @@ T5_MSG_PROTO(static, maeve_services_sk_form_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_form)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

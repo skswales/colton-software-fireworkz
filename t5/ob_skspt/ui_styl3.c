@@ -543,7 +543,7 @@ tweak_style_ctl_user_redraw(
 
 PROC_DIALOG_EVENT_PROTO(extern, dialog_event_tweak_style)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1364,7 +1364,7 @@ fill_using_es_wibble(
     P_ES_WIBBLE p_es_wibble,
     P_ES_CALLBACK p_es_callback)
 {
-    IGNOREPARM(p_es_callback);
+    UNREFERENCED_PARAMETER(p_es_callback);
 
     switch(p_es_wibble->packed_dialog_control_id)
     {
@@ -2212,7 +2212,7 @@ ui_list_create_style_key(
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(8, sizeof32(*p_ui_list_entry_style_key), TRUE);
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     *p_array_handle = 0;
 

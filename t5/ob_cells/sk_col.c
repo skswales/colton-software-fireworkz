@@ -74,7 +74,7 @@ col_at_skel_point(
     ARRAY_INDEX i;
     PC_COL_INFO p_col_info = array_range(&h_col_info, COL_INFO, 0, n_elements);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     for(i = 0; i < n_elements; ++i, ++p_col_info)
     {

@@ -1095,7 +1095,7 @@ T5_MSG_PROTO(static, rtf_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg_s
     P_PAGE_HEFO_BREAK   p_page_hefo_break;
     ROW                 row = -1;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* Write ASCII-7 encoded file - we hex encode all the top bit set and Unicode characters */
     status_assert(foreign_save_set_io_type(p_ff_op_format, IO_TYPE_ASCII));
@@ -1328,8 +1328,8 @@ T5_MSG_PROTO(static, rtf_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg_s
 
 T5_MSG_PROTO(static, rtf_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

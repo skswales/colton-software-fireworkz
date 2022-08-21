@@ -503,6 +503,32 @@ mlec__point_from_colrow(
 
 _Check_return_
 static HOST_FONT
+mlec_find_font(
+    const char * name,
+    U32 x16_size_x,
+    U32 x16_size_y)
+{
+    HOST_FONT host_font = HOST_FONT_NONE;
+
+    /* c.f. host_font_find() in Fireworkz */
+    _kernel_swi_regs rs;
+    _kernel_oserror * p_kernel_oserror;
+
+    rs.r[1] = (int) name;
+    rs.r[2] = x16_size_x;
+    rs.r[3] = x16_size_y;
+    rs.r[4] = 0;
+    rs.r[5] = 0;
+
+    if(NULL == (p_kernel_oserror = (_kernel_swi(Font_FindFont, &rs, &rs))))
+        host_font = (HOST_FONT) rs.r[0];
+
+    return(host_font);
+
+}
+
+_Check_return_
+static HOST_FONT
 mlec_get_host_font(void)
 {
     HOST_FONT host_font;
@@ -514,33 +540,23 @@ mlec_get_host_font(void)
     /*U32 x16_size_x = 16 * 0;*/
     U32 x16_size_y = 16 * size_y;
 
-    /* c.f. host_font_find() in Fireworkz */
-    _kernel_swi_regs rs;
-    _kernel_oserror * p_kernel_oserror;
+    /* Only use DejaVuSans.Mono if we have a Unicode Font Manager */
+    host_font = mlec_find_font("\\F" "DejaVuSans.Mono" "\\E" "UTF8", x16_size_y, x16_size_y);
 
-    rs.r[1] = (int) /*"\\E" "Latin1"*/ "\\F" "DejaVuSans.Mono";
-    rs.r[2] = /*x16_size_x ? x16_size_x :*/ x16_size_y;
-    rs.r[3] = x16_size_y;
-    rs.r[4] = 0;
-    rs.r[5] = 0;
-
-    if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+    if(HOST_FONT_NONE != host_font)
     {
-        host_font = (HOST_FONT) rs.r[0];
-        return(host_font);
+        (void) font_LoseFont(host_font);
+        
+        host_font = mlec_find_font("\\F" "DejaVuSans.Mono" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
+
+        if(HOST_FONT_NONE != host_font)
+            return(host_font);
     }
 
-    rs.r[1] = (int) /*"\\E" "Latin1"*/ "\\F" "Corpus.Medium";
-    rs.r[2] = /*x16_size_x ? x16_size_x :*/ x16_size_y;
-    rs.r[3] = x16_size_y;
-    rs.r[4] = 0;
-    rs.r[5] = 0;
+    host_font = mlec_find_font("\\F" "Corpus.Medium" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
 
-    if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
-    {
-        host_font = (HOST_FONT) rs.r[0];
+    if(HOST_FONT_NONE != host_font)
         return(host_font);
-    }
 
     return(HOST_FONT_NONE);
 }
@@ -2963,7 +2979,7 @@ mlec__drag_complete(
     /*_Inout_*/ MLEC mlec,
     BBox * dragboxp)
 {
-    IGNOREPARM(dragboxp);
+    UNREFERENCED_PARAMETER(dragboxp);
 
     trace_0(TRACE_OUT | TRACE_ANY, TEXT("mlec__drag_complete() - *** null_events_stop(DOCNO_NONE)"));
     null_events_stop(P_DOCU_NONE, T5_EVENT_NULL, null_event_mlec_drag, mlec);
@@ -2997,7 +3013,7 @@ mlec_drag_null_event(
 
 PROC_EVENT_PROTO(static, null_event_mlec_drag)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
 #if CHECKING
     switch(t5_message)
@@ -3007,7 +3023,7 @@ PROC_EVENT_PROTO(static, null_event_mlec_drag)
 
     case T5_EVENT_NULL:
 #else
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
     {
 #endif
         return(mlec_drag_null_event((P_NULL_EVENT_BLOCK) p_data));
@@ -3608,7 +3624,7 @@ show_selection(
     }
 
     /* remaining lines are above the graphics window */
-    IGNOREPARM(lineCol);
+    UNREFERENCED_PARAMETER(lineCol);
     } /*block*/
 }
 
@@ -3740,8 +3756,8 @@ file_write_size(
     P_XFER_HANDLE xferhandlep,
     _In_        int xfersize)
 {
-    IGNOREPARM(xferhandlep);
-    IGNOREPARM(xfersize);
+    UNREFERENCED_PARAMETER(xferhandlep);
+    UNREFERENCED_PARAMETER(xfersize);
 
     return(0);    /*>>>might be better to set the file extent to xfersize - ask Tutu */
 }
@@ -3839,7 +3855,7 @@ paste_read_open(
 {
     marked_text range;
 
-    IGNOREPARM(filename);
+    UNREFERENCED_PARAMETER(filename);
 
     xferhandlep->p = (MLEC) paste;
 
@@ -3871,7 +3887,7 @@ paste_read_getblock(
 {
     MLEC mlec = (MLEC) xferhandlep->p;
 
-    IGNOREPARM(datasize);
+    UNREFERENCED_PARAMETER(datasize);
 
     if(mlec)
     {

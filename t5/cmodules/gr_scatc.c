@@ -170,7 +170,7 @@ gr_actualise_series_point(
 {
     const P_GR_SERIES serp = getserp(cp, series_idx);
 
-    IGNOREPARM_InVal_(plain);
+    UNREFERENCED_PARAMETER_InVal_(plain);
 
 #if 0
     if(1 /*!serp->valid.limits*/)
@@ -230,7 +230,7 @@ gr_actualise_series_point_error1(
 {
     const P_GR_SERIES serp = getserp(cp, series_idx);
 
-    IGNOREPARM_InVal_(plain);
+    UNREFERENCED_PARAMETER_InVal_(plain);
 
 #if 0
     if(1 /*!serp->valid.limits*/)
@@ -310,7 +310,7 @@ gr_actualise_series_point_error2(
 {
     const P_GR_SERIES serp = getserp(cp, series_idx);
 
-    IGNOREPARM_InVal_(plain);
+    UNREFERENCED_PARAMETER_InVal_(plain);
 
 #if 0
     if(1 /*!serp->valid.limits*/)

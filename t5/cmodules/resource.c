@@ -616,7 +616,7 @@ resource_dll_free(
         resource_statics.windows.library_handle[object_id] = 0;
     }
 #else
-    IGNOREPARM_InVal_(object_id);
+    UNREFERENCED_PARAMETER_InVal_(object_id);
 #endif
 }
 
@@ -639,8 +639,8 @@ resource_donate(
     }
     } /*block*/
 #else
-    IGNOREPARM_InVal_(object_id_dst);
-    IGNOREPARM_InVal_(object_id_src);
+    UNREFERENCED_PARAMETER_InVal_(object_id_dst);
+    UNREFERENCED_PARAMETER_InVal_(object_id_src);
 #endif
 }
 
@@ -673,7 +673,7 @@ resource_init(
             resource_statics.riscos.sprites[object_id].s_24 = p_bound->sprite_area_24;
     }
 #elif WINDOWS
-    IGNOREPARM_CONST(p_u8_bound_msg);
+    UNREFERENCED_PARAMETER_CONST(p_u8_bound_msg);
     assert(MSG_WEAK == p_u8_bound_msg);
 
 #if defined(NOT_ALL_IN_ONE)
@@ -697,8 +697,8 @@ resource_init(
     }
 #else
     /* never load any DLL resources */
-    IGNOREPARM_InRef_(p_bound);
-    IGNOREPARM_InVal_(object_id);
+    UNREFERENCED_PARAMETER_InRef_(p_bound);
+    UNREFERENCED_PARAMETER_InVal_(object_id);
 #endif
 
 #endif /* OS */
@@ -853,7 +853,7 @@ resource_get_object_resources(
 #if defined(NOT_ALL_IN_ONE)
     hInstance = resource_statics.windows.library_handle[object_id];
 #else
-    IGNOREPARM_InVal_(object_id);
+    UNREFERENCED_PARAMETER_InVal_(object_id);
 
     hInstance = GetInstanceHandle();
 #endif

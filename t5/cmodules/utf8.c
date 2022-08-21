@@ -873,7 +873,7 @@ utf8_validate(
     PC_U8 p_u8 = p_u8_in;
     U32 n_bytes_so_far = 0;
 
-    IGNOREPARM_CONST(func);
+    UNREFERENCED_PARAMETER_CONST(func);
 
     assert(strlen_without_NULLCH > uchars_n);
 
@@ -1006,7 +1006,7 @@ uchars_inline_validate(
     PC_U8 p_u8 = p_u8_in;
     U32 n_bytes_so_far = 0;
 
-    IGNOREPARM_CONST(func);
+    UNREFERENCED_PARAMETER_CONST(func);
 
     assert(strlen_without_NULLCH > uchars_n);
 

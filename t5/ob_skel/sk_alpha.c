@@ -1399,8 +1399,8 @@ T5_CMD_PROTO(extern, t5_cmd_ctypetable)
     U32 bic_mask = 0;
     U32 value;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, 1))
     {

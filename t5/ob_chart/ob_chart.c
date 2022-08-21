@@ -372,8 +372,8 @@ gr_chart_warning(
     _ChartRef_  P_GR_CHART p_gr_chart,
     _InVal_     STATUS status)
 {
-    IGNOREPARM_ChartRef_(p_gr_chart);
-    IGNOREPARM_InVal_(status);
+    UNREFERENCED_PARAMETER_ChartRef_(p_gr_chart);
+    UNREFERENCED_PARAMETER_InVal_(status);
 }
 
 /* try to allocate charts in multiples of this */
@@ -461,7 +461,7 @@ chart_add(
                 break;
         }
 
-        IGNOREPARM(p_u8);
+        UNREFERENCED_PARAMETER(p_u8);
 
         end_key = stt_key + 1;
 
@@ -813,7 +813,7 @@ chart_event_scheduled(
 
 PROC_EVENT_PROTO(static, scheduled_event_chart)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(t5_message)
     {
@@ -868,7 +868,7 @@ chart_new(
         if(NULL == collect_add_entry_elem(CHART_LISTED_DATA, &charts_list_block, &chart_listed_data, chartdatakey, &status))
             break;
 
-        IGNOREPARM_InVal_(use_preferred);
+        UNREFERENCED_PARAMETER_InVal_(use_preferred);
         status = (/*use_preferred
                   ? gr_chart_preferred_new(&p_chart_header->ch, p_chart_header)
                   :*/ gr_chart_new(&p_chart_header->ch, p_chart_header, new_untitled));
@@ -1287,7 +1287,7 @@ main events
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_chart)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1333,9 +1333,9 @@ chart_msg_recalced(void)
 
 MAEVE_SERVICES_EVENT_PROTO(static, maeve_services_event_ob_chart)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -1358,7 +1358,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
     const P_CHART_ELEMENT p_chart_element = (P_CHART_ELEMENT) p_uref_event_block->uref_id.client_handle;
     const P_CHART_HEADER p_chart_header = p_chart_element->p_chart_header;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
 #if TRACE_ALLOWED && 1
     if_constant(tracing(TRACE_APP_UREF))
@@ -1820,7 +1820,7 @@ PROC_GR_CHART_TRAVEL_PROTO(proc_travel_chart_text)
 {
     const P_CHART_ELEMENT p_chart_element = (P_CHART_ELEMENT) client_handle;
 
-    IGNOREPARM(item);
+    UNREFERENCED_PARAMETER(item);
 
     if(!val)
     {

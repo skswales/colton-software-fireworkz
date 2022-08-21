@@ -500,7 +500,7 @@ compound_file_dump_directory_entry(
     _InRef_     PC_StructuredStorageDirectoryEntry file_dir,
     _In_        int dirnum)
 {
-    IGNOREPARM_InRef_(p_compound_file);
+    UNREFERENCED_PARAMETER_InRef_(p_compound_file);
 
     if(CFBF_STGTY_INVALID == file_dir->_mse)
         return;

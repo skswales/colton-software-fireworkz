@@ -48,7 +48,7 @@ sk_find_msg_close1(
 
 T5_MSG_PROTO(static, maeve_services_sk_find_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -65,7 +65,7 @@ T5_MSG_PROTO(static, maeve_services_sk_find_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_find)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -485,7 +485,7 @@ T5_CMD_PROTO(extern, t5_cmd_search_do)
     S32 n_replaced = 0;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 == n_arglist_args(&h_arglist))
     {   /* next match (no arguments given) */
@@ -745,8 +745,8 @@ T5_CMD_PROTO(extern, t5_cmd_search_intro)
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 100);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* encode initial state of control(s) */
     search_intro_from_top_data.push_xx.def_pushbutton = 0;

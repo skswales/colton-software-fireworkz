@@ -267,10 +267,10 @@ wndproc_splash_onLButtonUp(
     _InVal_     int y,
     _InVal_     UINT keyFlags)
 {
-    IGNOREPARM_HwndRef_(hwnd);
-    IGNOREPARM_InVal_(x);
-    IGNOREPARM_InVal_(y);
-    IGNOREPARM_InVal_(keyFlags);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER_InVal_(x);
+    UNREFERENCED_PARAMETER_InVal_(y);
+    UNREFERENCED_PARAMETER_InVal_(keyFlags);
 
     splash_window_remove();
 }

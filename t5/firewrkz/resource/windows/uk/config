@@ -1,4 +1,4 @@
-{Version:2.10;24 Jun 2016;Fireworkz for Windows (uk);Colton Software;Windows-1252}
+{Version:2.10.02;07 Jul 2016;Fireworkz for Windows (uk);Colton Software;Windows-1252}
 {RowTable:1}
 {#:ObjectBindConstruct:object-id;command-suffix-character}
 {ObjectBindConstruct:0;*}
@@ -211,6 +211,7 @@
 {DefineKey:^U;DeleteLine}
 {DefineKey:^W;SelectWord}
 {DefineKey:^Z;Clear}
+{DefineKey:^!D;InsertFieldIntroDate}
 {DefineKey:^!V;Button:VIEW}
 {DefineKey:^!X;Button:BOX}
 {DefineKey:^!Z;Button:CHART}

@@ -306,7 +306,7 @@ t5_cmd_version(
     const PC_ARGLIST_HANDLE p_arglist_handle = &p_construct_convert->arglist_handle;
     PC_ARGLIST_ARG p_arg;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* ignore most of the supplied information */
 
@@ -518,7 +518,7 @@ skeleton_load_inline(
     STATUS status = STATUS_OK;
     const IL_CODE il_code = (IL_CODE) p_construct_convert->p_construct->t5_message;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     p_construct_convert->object_array_handle_uchars_inline = 0;
 
@@ -1436,7 +1436,7 @@ t5_cmd_of_rowtable(
     /* SKS 03feb96 defer execution to end of data */
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_construct_convert->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     p_construct_convert->p_of_ip_format->flags.virtual_row_table = p_args[0].val.fBool;
 
@@ -1451,7 +1451,7 @@ t5_cmd_of_base_single_col(
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_construct_convert->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(p_args[0].val.fBool)
         p_construct_convert->p_of_ip_format->flags.incoming_base_single_col = 1;

@@ -456,7 +456,7 @@ static void
 general_message_Shutdown(
     _In_        const WimpMessage * const p_wimp_message)
 {
-    IGNOREPARM_InRef_(p_wimp_message);
+    UNREFERENCED_PARAMETER_InRef_(p_wimp_message);
 
     g_silent_shutdown = TRUE; /* suppress error reporting for uninterrupted processing */
 
@@ -882,7 +882,7 @@ general_event_handler(
     _In_        const WimpPollBlock * const p_event_data,
     P_ANY handle)
 {
-    IGNOREPARM(handle);
+    UNREFERENCED_PARAMETER(handle);
 
     trace_2(TRACE_RISCOS_HOST, TEXT("%s: %s"), __Tfunc__, report_wimp_event(event_code, p_event_data));
 
@@ -1135,7 +1135,7 @@ iconbar_event_handler(
     _In_        const WimpPollBlock * const p_event_data,
     P_ANY handle)
 {
-    IGNOREPARM(handle);
+    UNREFERENCED_PARAMETER(handle);
 
     trace_2(TRACE_RISCOS_HOST, TEXT("%s: %s"), __Tfunc__, report_wimp_event(event_code, p_event_data));
 
@@ -1418,8 +1418,8 @@ ho_event_msg_exit2(void)
 
 T5_MSG_PROTO(static, maeve_services_ho_event_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1436,7 +1436,7 @@ T5_MSG_PROTO(static, maeve_services_ho_event_msg_initclose, _InRef_ PC_MSG_INITC
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_ho_event)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

@@ -105,7 +105,7 @@ ho_create_docu_menus(
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_ho_menu_desc), 1);
     const P_DOCU p_docu_config = p_docu_from_config_wr(); /* SKS 21jan95 */
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(p_docu_config->ho_menu_data)
         return(status);
@@ -162,7 +162,7 @@ ho_menu_popup(
     STATUS status = STATUS_FAIL;
     const PC_DOCU p_docu_config = p_docu_from_config();
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(array_index_is_valid(&p_docu_config->ho_menu_data, menu_root))
     {
@@ -202,8 +202,8 @@ ho_get_menu_bar(
     _ViewRef_   P_VIEW p_view)
 {
     const PC_DOCU p_docu_config = p_docu_from_config();
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
     return(array_ptr(&p_docu_config->ho_menu_data, HO_MENU_DESC, MENU_ROOT_DOCU)->hmenu);
 }
 
@@ -353,7 +353,7 @@ ho_execute_menu_command(
         }
     }
 
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
     return(FALSE);
 }
 
@@ -510,7 +510,7 @@ host_onInitMenu(
     const MENU_ROOT_ID i_max = (MENU_ROOT_ID) array_elements(&p_docu_config->ho_menu_data);
     MENU_ROOT_ID i;
 
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 
     zero_array(disable);
 

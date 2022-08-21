@@ -275,7 +275,7 @@ dialog_riscos_free_cached_bitmaps(
 
 PROC_DIALOG_EVENT_PROTO(static, lbn_event_dialog)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     return(object_call_DIALOG(dialog_message, p_data));
 }
 
@@ -2574,7 +2574,7 @@ dialog_riscos_ictl_edit_xx_destroy(
             p_dialog_ictl_edit_xx->riscos.slec_buffer_size = 0;
         }
 #else
-        IGNOREPARM(p_dialog);
+        UNREFERENCED_PARAMETER(p_dialog);
 #endif
 
         if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
@@ -2798,7 +2798,7 @@ static STATUS
 dialog_riscos_help_contents(
     _InoutRef_  P_DIALOG p_dialog)
 {
-    IGNOREPARM_InRef_(p_dialog);
+    UNREFERENCED_PARAMETER_InRef_(p_dialog);
 
     return(dialog_riscos_help_common(TEXT("HTMLhelp.html.") TEXT("index/htm")));
 }
@@ -2887,7 +2887,7 @@ dialog_riscos_key_pressed_hot_key(
         }
     }
 
-    IGNOREPARM(status);
+    UNREFERENCED_PARAMETER(status);
 
     return(STATUS_DONE /*processed*/);
 }
@@ -3227,7 +3227,7 @@ dialog_riscos_null_event_do(
 
             if(NULL != (p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl)))
             {
-                IGNOREPARM(p_dialog_ictl_edit_xx);
+                UNREFERENCED_PARAMETER(p_dialog_ictl_edit_xx);
                 dialog_riscos_mlec_enull(p_dialog, p_dialog_ictl);
                 return;
             }
@@ -3634,8 +3634,8 @@ dialog_riscos_mlec_event_mouse_click_pshape(
     P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx,
     _In_        const WimpMouseClickEvent * const p_mouse_click)
 {
-    IGNOREPARM(p_dialog);
-    IGNOREPARM(p_dialog_ictl);
+    UNREFERENCED_PARAMETER(p_dialog);
+    UNREFERENCED_PARAMETER(p_dialog_ictl);
 
     if(p_dialog_ictl_edit_xx->riscos.mlec)
     {

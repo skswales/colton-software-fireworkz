@@ -170,8 +170,8 @@ AbortProc(
     _HdcRef_    HDC hPr,
     _In_        int Code)
 {
-    IGNOREPARM_InRef_(hPr);
-    IGNOREPARM(Code);
+    UNREFERENCED_PARAMETER_InRef_(hPr);
+    UNREFERENCED_PARAMETER(Code);
 
     if(hAbortDlgWnd) /* abort dialog up yet? */
     {
@@ -197,8 +197,8 @@ AbortDlg(
     _In_        WPARAM wParam,
     _In_        LPARAM lParam)
 {
-    IGNOREPARM(wParam);
-    IGNOREPARM(lParam);
+    UNREFERENCED_PARAMETER(wParam);
+    UNREFERENCED_PARAMETER(lParam);
 
     switch(uiMsg)
     {
@@ -693,9 +693,9 @@ T5_CMD_PROTO(extern, t5_cmd_print_setup)
     PRINTDLG pd = { sizeof32(PRINTDLG) };
     BOOL ok;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     zero_struct(pd);
 
@@ -950,8 +950,8 @@ maeve_services_ho_print_msg_from_windows(
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_ho_print)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

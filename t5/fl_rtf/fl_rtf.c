@@ -176,12 +176,12 @@ _proc_name( \
     _InVal_     UCS4 arg)
 
 #define func_ignore_parms() \
-    IGNOREPARM_InoutRef_(p_rtf_load_info); \
-    IGNOREPARM(a7str_control_word); \
-    IGNOREPARM(a7str_parameter); \
-    IGNOREPARM_InoutRef_(p_h_dest_contents); \
-    IGNOREPARM(p_h_sub_regions); \
-    IGNOREPARM_InVal_(arg)
+    UNREFERENCED_PARAMETER_InoutRef_(p_rtf_load_info); \
+    UNREFERENCED_PARAMETER(a7str_control_word); \
+    UNREFERENCED_PARAMETER(a7str_parameter); \
+    UNREFERENCED_PARAMETER_InoutRef_(p_h_dest_contents); \
+    UNREFERENCED_PARAMETER(p_h_sub_regions); \
+    UNREFERENCED_PARAMETER_InVal_(arg)
 
 _Check_return_
 static STATUS
@@ -1924,7 +1924,7 @@ rtf_load_process_control_word(
     RTF_CONTROL_WORD_TABLE_SEARCH rtf_control_word_table_search;
 
 #if !TRACE_ALLOWED
-    IGNOREPARM(container_control_word);
+    UNREFERENCED_PARAMETER(container_control_word);
 #endif
 
     rtf_control_word_table_search.a7str_control_word = a7str_control_word;
@@ -4261,7 +4261,7 @@ T5_MSG_PROTO(static, rtf_msg_insert_foreign, _InRef_ P_MSG_INSERT_FOREIGN p_msg_
     DOCU_AREA docu_area_to_insert;
     POSITION position_actual;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     docu_area_init(&docu_area_to_insert);
 
@@ -4390,8 +4390,8 @@ T5_MSG_PROTO(static, rtf_msg_insert_foreign, _InRef_ P_MSG_INSERT_FOREIGN p_msg_
 
 T5_MSG_PROTO(static, rtf_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

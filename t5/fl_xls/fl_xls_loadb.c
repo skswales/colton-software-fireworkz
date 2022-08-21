@@ -330,400 +330,400 @@ token_table[128] = /* MUST be in Excel token order, complete */
 
 typedef struct XLS_FUNC_ENTRY
 {
-    PC_A7STR p_text_t5;     /* Fireworkz' function name */
+    PC_A7STR p_text_t5;         /* Fireworkz' function name */
 
-    U16 xls_func_number;    /* Excel's function number (see xlcall.h) */
+    U16 biff_function_number;   /* Excel BIFF function number */
 
-    U8 n_args;              /* Required for tFuncV but leave zero for tFuncVarV */
+    U8 n_args;                  /* Required for tFuncV but leave zero for tFuncVarV */
     U8 _padding[1];
 }
 XLS_FUNC_ENTRY; typedef const XLS_FUNC_ENTRY * PC_XLS_FUNC_ENTRY;
 
-#define xls_func_entry(number, n_args, p_text_xls) \
-    { p_text_xls, number, n_args, 0 }
+#define xls_func_entry(biff_function_number, n_args, p_text_xls) \
+    { p_text_xls, biff_function_number, n_args, 0 }
 
-#define xlfExternCall 255 /* needs special handling */
+#define BIFF_FN_ExternCall 255 /* needs special handling */
 
 static const XLS_FUNC_ENTRY
 BIFF2_functions[] =  /* ordered as Excel for completeness checking */
 {
-    xls_func_entry(xlfCount,        /*Var*/ 0, "COUNT"),
-    xls_func_entry(xlfIf,           /*Var*/ 0, "IF"),
-    xls_func_entry(xlfIsna,                 1, "ISNA"),
-    xls_func_entry(xlfIserror,              1, "ISERROR"),
-    xls_func_entry(xlfSum,          /*Var*/ 0, "SUM"),
-    xls_func_entry(xlfAverage,      /*Var*/ 0, "AVG"), /* XLS:AVERAGE */
-    xls_func_entry(xlfMin,          /*Var*/ 0, "MIN"),
-    xls_func_entry(xlfMax,          /*Var*/ 0, "MAX"),
-    xls_func_entry(xlfRow,          /*Var*/ 0, "ROW"),
-    xls_func_entry(xlfColumn,       /*Var*/ 0, "COL"), /* XLS:COLUMN */
-    xls_func_entry(xlfNa,                   0, "NA"),
-    xls_func_entry(xlfNpv,          /*Var*/ 0, "NPV"),
-    xls_func_entry(xlfStdev,        /*Var*/ 0, "STD"), /* XLS:STDEV */
-    xls_func_entry(xlfDollar,       /*Var*/ 0, "DOLLAR"),
-    xls_func_entry(xlfFixed,                2, "FIXED"), /* BIFF2 - becomes Var(2,3) in BIFF4 */
-    xls_func_entry(xlfSin,                  1, "SIN"),
-    xls_func_entry(xlfCos,                  1, "COS"),
-    xls_func_entry(xlfTan,                  1, "TAN"),
-    xls_func_entry(xlfAtan,                 1, "ATAN"),
-    xls_func_entry(xlfPi,                   0, "PI"),
-    xls_func_entry(xlfSqrt,                 1, "SQR"), /* XLS:SQRT */
-    xls_func_entry(xlfExp,                  1, "EXP"),
-    xls_func_entry(xlfLn,                   1, "LN"),
-    xls_func_entry(xlfLog10,                1, "ODF.LOG10"), /* XLS:LOG10 */
-    xls_func_entry(xlfAbs,                  1, "ABS"),
-    xls_func_entry(xlfInt,                  1, "ODF.INT"), /*XLS:INT*/
-    xls_func_entry(xlfSign,                 1, "SGN"), /* XLS:SIGN */
-    xls_func_entry(xlfRound,                2, "ROUND"),
-    xls_func_entry(xlfLookup,       /*Var*/ 0, "LOOKUP"),
-    xls_func_entry(xlfIndex,        /*Var*/ 0, "ODF.INDEX"), /* XLS:INDEX */
-    xls_func_entry(xlfRept,                 2, "REPT"),
-    xls_func_entry(xlfMid,                  3, "MID"),
-    xls_func_entry(xlfLen,                  1, "LENGTH"), /* XLS:LEN */
-    xls_func_entry(xlfValue,                1, "VALUE"),
-    xls_func_entry(xlfTrue,                 0, "TRUE"),
-    xls_func_entry(xlfFalse,                0, "FALSE"),
-    xls_func_entry(xlfAnd,          /*Var*/ 0, "AND"),
-    xls_func_entry(xlfOr,           /*Var*/ 0, "OR"),
-    xls_func_entry(xlfNot,                  1, "NOT"),
-    xls_func_entry(xlfMod,                  2, "MOD"),
-    xls_func_entry(xlfDcount,               3, ".DCOUNT.XLS"), /* XLS:DCOUNT */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfDsum,                 3, ".DSUM.XLS"), /* XLS:DSUM */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfDaverage,             3, ".DAVG.XLS"), /* XLS:DAVERAGE */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfDmin,                 3, ".DMIN.XLS"), /* XLS:DMIN */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfDmax,                 3, ".DMAX.XLS"), /* XLS:DMAX */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfDstdev,               3, ".DSTD.XLS"), /* XLS:DSTD */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfVar,          /*Var*/ 0, "VAR"),
-    xls_func_entry(xlfDvar,                 3, ".DVAR.XLS"), /* XLS:DVAR */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfText,                 2, "TEXT"),
-    xls_func_entry(xlfLinest,       /*Var*/ 0, "LINEST"),
-    xls_func_entry(xlfTrend,        /*Var*/ 0, "TREND"),
-    xls_func_entry(xlfLogest,       /*Var*/ 0, "LOGEST"),
-    xls_func_entry(xlfGrowth,       /*Var*/ 0, "GROWTH"),
-  /*xls_func_entry(xlfGoto,                 0, ".Goto"),*/
-  /*xls_func_entry(xlfHalt,                 0, ".Halt"),*/
-    xls_func_entry(xlfPv,           /*Var*/ 0, "PV"),
-    xls_func_entry(xlfFv,           /*Var*/ 0, "ODF.FV"), /* XLS:FV */
-    xls_func_entry(xlfNper,         /*Var*/ 0, "NPER"),
-    xls_func_entry(xlfPmt,          /*Var*/ 0, "ODF.PMT"), /* XLS:PMT */
-    xls_func_entry(xlfRate,         /*Var*/ 0, "RATE"),
-    xls_func_entry(xlfMirr,                 3, "MIRR"),
-    xls_func_entry(xlfIrr,          /*Var*/ 0, "ODF.IRR"), /* XLS:IRR */
-    xls_func_entry(xlfRand,                 0, "RAND"),
-    xls_func_entry(xlfMatch,        /*Var*/ 0, "MATCH"),
-    xls_func_entry(xlfDate,                 3, "DATE"),
-    xls_func_entry(xlfTime,                 3, "TIME"),
-    xls_func_entry(xlfDay,                  1, "DAY"),
-    xls_func_entry(xlfMonth,                1, "MONTH"),
-    xls_func_entry(xlfYear,                 1, "YEAR"),
-    xls_func_entry(xlfWeekday,              1, "WEEKDAY"), /* BIFF2 - becomes Var(1,2) in BIFF5 */
-    xls_func_entry(xlfHour,                 1, "HOUR"),
-    xls_func_entry(xlfMinute,               1, "MINUTE"),
-    xls_func_entry(xlfSecond,               1, "SECOND"),
-    xls_func_entry(xlfNow,                  0, "NOW"),
-    xls_func_entry(xlfAreas,                1, ".AREAS"),
-    xls_func_entry(xlfRows,                 1, "ROWS"),
-    xls_func_entry(xlfColumns,              1, "COLS"), /* XLS:COLUMNS */
-    xls_func_entry(xlfOffset,       /*Var*/ 0, ".OFFSET"),
-  /*xls_func_entry(xlfAbsref,               0, ".Absref"),*/
-  /*xls_func_entry(xlfRelref,               0, ".Relref"),*/
-  /*xls_func_entry(xlfArgument,             0, ".Argument"),*/
-    xls_func_entry(xlfSearch,       /*Var*/ 0, "SEARCH"),
-    xls_func_entry(xlfTranspose,            1, "TRANSPOSE"),
-  /*xls_func_entry(xlfError,                0, ".Error"),*/
-  /*xls_func_entry(xlfStep,                 0, ".Step"),*/
-    xls_func_entry(xlfType,                 1, "ODF.TYPE"), /* XLS:TYPE */
-  /*xls_func_entry(xlfEcho,                 0, ".Echo"),*/
-  /*xls_func_entry(xlfSetName,              0, ".Set.Name"),*/
-  /*xls_func_entry(xlfCaller,               0, ".Caller"),*/
-  /*xls_func_entry(xlfDeref,                0, ".Deref"),*/
-  /*xls_func_entry(xlfWindows,              0, ".Windows"),*/
-  /*xls_func_entry(xlfSeries,               0, ".Series"),*/
-  /*xls_func_entry(xlfDocuments,            0, ".Documents"),*/
-  /*xls_func_entry(xlfActiveCell,           0, ".Active.Cell"),*/
-  /*xls_func_entry(xlfSelection,            0, ".Selection"),*/
-  /*xls_func_entry(xlfResult,               0, ".Result"),*/
-    xls_func_entry(xlfAtan2,                2, "ATAN_2"), /* XLS:ATAN2 */
-    xls_func_entry(xlfAsin,                 1, "ASIN"),
-    xls_func_entry(xlfAcos,                 1, "ACOS"),
-    xls_func_entry(xlfChoose,       /*Var*/ 0, "CHOOSE"),
-    xls_func_entry(xlfHlookup,              3, "HLOOKUP"), /* BIFF2 - becomes Var(3,4) in BIFF5 */
-    xls_func_entry(xlfVlookup,              3, "VLOOKUP"), /* BIFF2 - becomes Var(3,4) in BIFF5 */
-  /*xls_func_entry(xlfLinks,                0, ".Links"),*/
-  /*xls_func_entry(xlfInput,                0, ".Input"),*/
-    xls_func_entry(xlfIsref,                1, "ISREF"),
-  /*xls_func_entry(xlfGetFormula,           0, ".Get.Formula"),*/
-  /*xls_func_entry(xlfGetName,              0, ".Get.Name"),*/
-  /*xls_func_entry(xlfSetValue,             0, ".Set.Value"),*/
-    xls_func_entry(xlfLog,          /*Var*/ 0, "LOG"),
-  /*xls_func_entry(xlfExec,                 0, ".Exec"),*/
-    xls_func_entry(xlfChar,                 1, "CHAR"),
-    xls_func_entry(xlfLower,                1, "LOWER"),
-    xls_func_entry(xlfUpper,                1, "UPPER"),
-    xls_func_entry(xlfProper,               1, "PROPER"),
-    xls_func_entry(xlfLeft,         /*Var*/ 0, "LEFT"),
-    xls_func_entry(xlfRight,        /*Var*/ 0, "RIGHT"),
-    xls_func_entry(xlfExact,                2, "EXACT"),
-    xls_func_entry(xlfTrim,                 1, "TRIM"),
-    xls_func_entry(xlfReplace,              4, "REPLACE"),
-    xls_func_entry(xlfSubstitute,   /*Var*/ 0, "SUBSTITUTE"),
-    xls_func_entry(xlfCode,                 1, "CODE"),
-  /*xls_func_entry(xlfNames,                0, ".Names"),*/
-  /*xls_func_entry(xlfDirectory,            0, ".Directory"),*/
-    xls_func_entry(xlfFind,         /*Var*/ 0, "FIND"),
-    xls_func_entry(xlfCell,         /*Var*/ 0, ".CELL"),
-    xls_func_entry(xlfIserr,                1, "ISERR"),
-    xls_func_entry(xlfIstext,               1, "ISTEXT"),
-    xls_func_entry(xlfIsnumber,             1, "ISNUMBER"),
-    xls_func_entry(xlfIsblank,              1, "ISBLANK"),
-    xls_func_entry(xlfT,                    1, "T"),
-    xls_func_entry(xlfN,                    1, "N"),
-  /*xls_func_entry(xlfFopen,                0, ".Fopen"),*/
-  /*xls_func_entry(xlfFclose,               0, ".Fclose"),*/
-  /*xls_func_entry(xlfFsize,                0, ".Fsize"),*/
-  /*xls_func_entry(xlfFreadln,              0, ".Freadln"),*/
-  /*xls_func_entry(xlfFread,                0, ".Fread"),*/
-  /*xls_func_entry(xlfFwriteln,             0, ".Fwriteln"),*/
-  /*xls_func_entry(xlfFwrite,               0, ".Fwrite"),*/
-  /*xls_func_entry(xlfFpos,                 0, ".Fpos"),*/
-    xls_func_entry(xlfDatevalue,            1, "DATEVALUE"),
-    xls_func_entry(xlfTimevalue,            1, "TIMEVALUE"),
-    xls_func_entry(xlfSln,                  3, "SLN"),
-    xls_func_entry(xlfSyd,                  4, "SYD"),
-    xls_func_entry(xlfDdb,          /*Var*/ 0, "DDB"),
-  /*xls_func_entry(xlfGetDef,               0, ".Get.Def"),*/
-  /*xls_func_entry(xlfReftext,              0, ".Reftext"),*/
-  /*xls_func_entry(xlfTextref,              0, ".Textref"),*/
-  /*xls_func_entry(xlfIndirect,             0, ".INDIRECT"),*/
-  /*xls_func_entry(xlfRegister,             0, ".Register"),*/
-  /*xls_func_entry(xlfCall,                 0, ".Call"),*/
-  /*xls_func_entry(xlfAddBar,               0, ".Add.Bar"),*/
-  /*xls_func_entry(xlfAddMenu,              0, ".Add.Menu"),*/
-  /*xls_func_entry(xlfAddCommand,           0, ".Add.Command"),*/
-  /*xls_func_entry(xlfEnableCommand,        0, ".Enable.Command"),*/
-  /*xls_func_entry(xlfCheckCommand,         0, ".Check.Command"),*/
-  /*xls_func_entry(xlfRenameCommand,        0, ".Rename.Command"),*/
-  /*xls_func_entry(xlfShowBar,              0, ".Show.Bar"),*/
-  /*xls_func_entry(xlfDeleteMenu,           0, ".Delete.Menu"),*/
-  /*xls_func_entry(xlfDeleteCommand,        0, ".Delete.Command"),*/
-  /*xls_func_entry(xlfGetChartItem,         0, ".Get.Chart.Item"),*/
-  /*xls_func_entry(xlfDialogBox,            0, ".Dialog.Box"),*/
-    xls_func_entry(xlfClean,                1, "CLEAN"),
-    xls_func_entry(xlfMdeterm,              1, "M_DETERM"), /* XLS:MDETERM */
-    xls_func_entry(xlfMinverse,             1, "M_INVERSE"), /* XLS:MINVERSE */
-    xls_func_entry(xlfMmult,                2, "M_MULT"), /* XLS:MMULT */
-  /*xls_func_entry(xlfFiles,                0, ".Files"),*/
-    xls_func_entry(xlfIpmt,         /*Var*/ 0, ".IPMT"),
-    xls_func_entry(xlfPpmt,         /*Var*/ 0, ".PPMT"),
-    xls_func_entry(xlfCounta,       /*Var*/ 0, "COUNTA"),
-  /*xls_func_entry(xlfCancelKey,            0, ".Cancel.Key"),*/
-  /*xls_func_entry(xlfInitiate,             0, ".Initiate"),*/
-  /*xls_func_entry(xlfRequest,              0, ".Request"),*/
-  /*xls_func_entry(xlfPoke,                 0, ".Poke"),*/
-  /*xls_func_entry(xlfExecute,              0, ".Execute"),*/
-  /*xls_func_entry(xlfTerminate,            0, ".Terminate"),*/
-  /*xls_func_entry(xlfRestart,              0, ".Restart"),*/
-  /*xls_func_entry(xlfHelp,                 0, ".Help"),*/
-  /*xls_func_entry(xlfGetBar,               0, ".Get.Bar"),*/
-    xls_func_entry(xlfProduct,      /*Var*/ 0, "PRODUCT"),
-    xls_func_entry(xlfFact,                 1, "FACT"),
-  /*xls_func_entry(xlfGetCell,              0, ".Get.Cell"),*/
-  /*xls_func_entry(xlfGetWorkspace,         0, ".Get.Workspace"),*/
-  /*xls_func_entry(xlfGetWindow,            0, ".Get.Window"),*/
-  /*xls_func_entry(xlfGetDocument,          0, ".Get.Document"),*/
-    xls_func_entry(xlfDproduct,             3, ".DPRODUCT.XLS"), /* XLS:DPRODUCT */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfIsnontext,            1, "ISNONTEXT"),
-  /*xls_func_entry(xlfGetNote,              0, ".Get.Note"),*/
-  /*xls_func_entry(xlfNote,                 0, ".Note"),*/
-    xls_func_entry(xlfStdevp,       /*Var*/ 0, "STDP"), /* XLS:STDEVP */
-    xls_func_entry(xlfVarp,         /*Var*/ 0, "VARP"),
-    xls_func_entry(xlfDstdevp,              3, ".DSTDEVP.XLS"), /* XLS:DSTDEVP */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfDvarp,                3, ".DVARP.XLS"), /* XLS:DVARP */ /* Fireworkz is incompatible */
-    xls_func_entry(xlfTrunc,                2, "TRUNC"), /* BIFF2 - becomes Var(1,2) in BIFF3 */
-    xls_func_entry(xlfIslogical,            1, "ISLOGICAL"),
-    xls_func_entry(xlfDcounta,              3, ".DCOUNTA.XLS") /* XLS:DCOUNTA */ /* Fireworkz is incompatible */
-  /*xls_func_entry(xlfDeleteBar,            0, ".Delete.Bar"),*/
-  /*xls_func_entry(xlfUnregister,           0, ".Unregister"),*/
+    xls_func_entry(BIFF_FN_Count,           /*Var*/ 0, "COUNT"),
+    xls_func_entry(BIFF_FN_If,              /*Var*/ 0, "IF"),
+    xls_func_entry(BIFF_FN_Isna,                    1, "ISNA"),
+    xls_func_entry(BIFF_FN_Iserror,                 1, "ISERROR"),
+    xls_func_entry(BIFF_FN_Sum,             /*Var*/ 0, "SUM"),
+    xls_func_entry(BIFF_FN_Average,         /*Var*/ 0, "AVG"), /* XLS:AVERAGE */
+    xls_func_entry(BIFF_FN_Min,             /*Var*/ 0, "MIN"),
+    xls_func_entry(BIFF_FN_Max,             /*Var*/ 0, "MAX"),
+    xls_func_entry(BIFF_FN_Row,             /*Var*/ 0, "ROW"),
+    xls_func_entry(BIFF_FN_Column,          /*Var*/ 0, "COL"), /* XLS:COLUMN */
+    xls_func_entry(BIFF_FN_Na,                      0, "NA"),
+    xls_func_entry(BIFF_FN_Npv,             /*Var*/ 0, "NPV"),
+    xls_func_entry(BIFF_FN_Stdev,           /*Var*/ 0, "STD"), /* XLS:STDEV */
+    xls_func_entry(BIFF_FN_Dollar,          /*Var*/ 0, "DOLLAR"),
+    xls_func_entry(BIFF_FN_Fixed,                   2, "FIXED"), /* BIFF2 - becomes Var(2,3) in BIFF4 */
+    xls_func_entry(BIFF_FN_Sin,                     1, "SIN"),
+    xls_func_entry(BIFF_FN_Cos,                     1, "COS"),
+    xls_func_entry(BIFF_FN_Tan,                     1, "TAN"),
+    xls_func_entry(BIFF_FN_Atan,                    1, "ATAN"),
+    xls_func_entry(BIFF_FN_Pi,                      0, "PI"),
+    xls_func_entry(BIFF_FN_Sqrt,                    1, "SQR"), /* XLS:SQRT */
+    xls_func_entry(BIFF_FN_Exp,                     1, "EXP"),
+    xls_func_entry(BIFF_FN_Ln,                      1, "LN"),
+    xls_func_entry(BIFF_FN_Log10,                   1, "ODF.LOG10"), /* XLS:LOG10 */
+    xls_func_entry(BIFF_FN_Abs,                     1, "ABS"),
+    xls_func_entry(BIFF_FN_Int,                     1, "ODF.INT"), /*XLS:INT*/
+    xls_func_entry(BIFF_FN_Sign,                    1, "SGN"), /* XLS:SIGN */
+    xls_func_entry(BIFF_FN_Round,                   2, "ROUND"),
+    xls_func_entry(BIFF_FN_Lookup,          /*Var*/ 0, "LOOKUP"),
+    xls_func_entry(BIFF_FN_Index,           /*Var*/ 0, "ODF.INDEX"), /* XLS:INDEX */
+    xls_func_entry(BIFF_FN_Rept,                    2, "REPT"),
+    xls_func_entry(BIFF_FN_Mid,                     3, "MID"),
+    xls_func_entry(BIFF_FN_Len,                     1, "LENGTH"), /* XLS:LEN */
+    xls_func_entry(BIFF_FN_Value,                   1, "VALUE"),
+    xls_func_entry(BIFF_FN_True,                    0, "TRUE"),
+    xls_func_entry(BIFF_FN_False,                   0, "FALSE"),
+    xls_func_entry(BIFF_FN_And,             /*Var*/ 0, "AND"),
+    xls_func_entry(BIFF_FN_Or,              /*Var*/ 0, "OR"),
+    xls_func_entry(BIFF_FN_Not,                     1, "NOT"),
+    xls_func_entry(BIFF_FN_Mod,                     2, "MOD"),
+    xls_func_entry(BIFF_FN_Dcount,                  3, ".DCOUNT.XLS"), /* XLS:DCOUNT */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Dsum,                    3, ".DSUM.XLS"), /* XLS:DSUM */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Daverage,                3, ".DAVG.XLS"), /* XLS:DAVERAGE */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Dmin,                    3, ".DMIN.XLS"), /* XLS:DMIN */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Dmax,                    3, ".DMAX.XLS"), /* XLS:DMAX */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Dstdev,                  3, ".DSTD.XLS"), /* XLS:DSTD */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Var,             /*Var*/ 0, "VAR"),
+    xls_func_entry(BIFF_FN_Dvar,                    3, ".DVAR.XLS"), /* XLS:DVAR */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Text,                    2, "TEXT"),
+    xls_func_entry(BIFF_FN_Linest,          /*Var*/ 0, "LINEST"),
+    xls_func_entry(BIFF_FN_Trend,           /*Var*/ 0, "TREND"),
+    xls_func_entry(BIFF_FN_Logest,          /*Var*/ 0, "LOGEST"),
+    xls_func_entry(BIFF_FN_Growth,          /*Var*/ 0, "GROWTH"),
+  /*xls_func_entry(BIFF_FN_Goto,                    0, ".Goto"),*/
+  /*xls_func_entry(BIFF_FN_Halt,                    0, ".Halt"),*/
+    xls_func_entry(BIFF_FN_Pv,              /*Var*/ 0, "PV"),
+    xls_func_entry(BIFF_FN_Fv,              /*Var*/ 0, "ODF.FV"), /* XLS:FV */
+    xls_func_entry(BIFF_FN_Nper,            /*Var*/ 0, "NPER"),
+    xls_func_entry(BIFF_FN_Pmt,             /*Var*/ 0, "ODF.PMT"), /* XLS:PMT */
+    xls_func_entry(BIFF_FN_Rate,            /*Var*/ 0, "RATE"),
+    xls_func_entry(BIFF_FN_Mirr,                    3, "MIRR"),
+    xls_func_entry(BIFF_FN_Irr,             /*Var*/ 0, "ODF.IRR"), /* XLS:IRR */
+    xls_func_entry(BIFF_FN_Rand,                    0, "RAND"),
+    xls_func_entry(BIFF_FN_Match,           /*Var*/ 0, "MATCH"),
+    xls_func_entry(BIFF_FN_Date,                    3, "DATE"),
+    xls_func_entry(BIFF_FN_Time,                    3, "TIME"),
+    xls_func_entry(BIFF_FN_Day,                     1, "DAY"),
+    xls_func_entry(BIFF_FN_Month,                   1, "MONTH"),
+    xls_func_entry(BIFF_FN_Year,                    1, "YEAR"),
+    xls_func_entry(BIFF_FN_Weekday,                 1, "WEEKDAY"), /* BIFF2 - becomes Var(1,2) in BIFF5 */
+    xls_func_entry(BIFF_FN_Hour,                    1, "HOUR"),
+    xls_func_entry(BIFF_FN_Minute,                  1, "MINUTE"),
+    xls_func_entry(BIFF_FN_Second,                  1, "SECOND"),
+    xls_func_entry(BIFF_FN_Now,                     0, "NOW"),
+    xls_func_entry(BIFF_FN_Areas,                   1, ".AREAS"),
+    xls_func_entry(BIFF_FN_Rows,                    1, "ROWS"),
+    xls_func_entry(BIFF_FN_Columns,                 1, "COLS"), /* XLS:COLUMNS */
+    xls_func_entry(BIFF_FN_Offset,          /*Var*/ 0, ".OFFSET"),
+  /*xls_func_entry(BIFF_FN_Absref,                  0, ".Absref"),*/
+  /*xls_func_entry(BIFF_FN_Relref,                  0, ".Relref"),*/
+  /*xls_func_entry(BIFF_FN_Argument,                0, ".Argument"),*/
+    xls_func_entry(BIFF_FN_Search,          /*Var*/ 0, "SEARCH"),
+    xls_func_entry(BIFF_FN_Transpose,               1, "TRANSPOSE"),
+  /*xls_func_entry(BIFF_FN_Error,                   0, ".Error"),*/
+  /*xls_func_entry(BIFF_FN_Step,                    0, ".Step"),*/
+    xls_func_entry(BIFF_FN_Type,                    1, "ODF.TYPE"), /* XLS:TYPE */
+  /*xls_func_entry(BIFF_FN_Echo,                    0, ".Echo"),*/
+  /*xls_func_entry(BIFF_FN_SetName,                 0, ".Set.Name"),*/
+  /*xls_func_entry(BIFF_FN_Caller,                  0, ".Caller"),*/
+  /*xls_func_entry(BIFF_FN_Deref,                   0, ".Deref"),*/
+  /*xls_func_entry(BIFF_FN_Windows,                 0, ".Windows"),*/
+  /*xls_func_entry(BIFF_FN_Series,                  0, ".Series"),*/
+  /*xls_func_entry(BIFF_FN_Documents,               0, ".Documents"),*/
+  /*xls_func_entry(BIFF_FN_ActiveCell,              0, ".Active.Cell"),*/
+  /*xls_func_entry(BIFF_FN_Selection,               0, ".Selection"),*/
+  /*xls_func_entry(BIFF_FN_Result,                  0, ".Result"),*/
+    xls_func_entry(BIFF_FN_Atan2,                   2, "ATAN_2"), /* XLS:ATAN2 */
+    xls_func_entry(BIFF_FN_Asin,                    1, "ASIN"),
+    xls_func_entry(BIFF_FN_Acos,                    1, "ACOS"),
+    xls_func_entry(BIFF_FN_Choose,          /*Var*/ 0, "CHOOSE"),
+    xls_func_entry(BIFF_FN_Hlookup,                 3, "HLOOKUP"), /* BIFF2 - becomes Var(3,4) in BIFF5 */
+    xls_func_entry(BIFF_FN_Vlookup,                 3, "VLOOKUP"), /* BIFF2 - becomes Var(3,4) in BIFF5 */
+  /*xls_func_entry(BIFF_FN_Links,                   0, ".Links"),*/
+  /*xls_func_entry(BIFF_FN_Input,                   0, ".Input"),*/
+    xls_func_entry(BIFF_FN_Isref,                   1, "ISREF"),
+  /*xls_func_entry(BIFF_FN_GetFormula,              0, ".Get.Formula"),*/
+  /*xls_func_entry(BIFF_FN_GetName,                 0, ".Get.Name"),*/
+  /*xls_func_entry(BIFF_FN_SetValue,                0, ".Set.Value"),*/
+    xls_func_entry(BIFF_FN_Log,             /*Var*/ 0, "LOG"),
+  /*xls_func_entry(BIFF_FN_Exec,                    0, ".Exec"),*/
+    xls_func_entry(BIFF_FN_Char,                    1, "CHAR"),
+    xls_func_entry(BIFF_FN_Lower,                   1, "LOWER"),
+    xls_func_entry(BIFF_FN_Upper,                   1, "UPPER"),
+    xls_func_entry(BIFF_FN_Proper,                  1, "PROPER"),
+    xls_func_entry(BIFF_FN_Left,            /*Var*/ 0, "LEFT"),
+    xls_func_entry(BIFF_FN_Right,           /*Var*/ 0, "RIGHT"),
+    xls_func_entry(BIFF_FN_Exact,                   2, "EXACT"),
+    xls_func_entry(BIFF_FN_Trim,                    1, "TRIM"),
+    xls_func_entry(BIFF_FN_Replace,                 4, "REPLACE"),
+    xls_func_entry(BIFF_FN_Substitute,      /*Var*/ 0, "SUBSTITUTE"),
+    xls_func_entry(BIFF_FN_Code,                    1, "CODE"),
+  /*xls_func_entry(BIFF_FN_Names,                   0, ".Names"),*/
+  /*xls_func_entry(BIFF_FN_Directory,               0, ".Directory"),*/
+    xls_func_entry(BIFF_FN_Find,            /*Var*/ 0, "FIND"),
+    xls_func_entry(BIFF_FN_Cell,            /*Var*/ 0, ".CELL"),
+    xls_func_entry(BIFF_FN_Iserr,                   1, "ISERR"),
+    xls_func_entry(BIFF_FN_Istext,                  1, "ISTEXT"),
+    xls_func_entry(BIFF_FN_Isnumber,                1, "ISNUMBER"),
+    xls_func_entry(BIFF_FN_Isblank,                 1, "ISBLANK"),
+    xls_func_entry(BIFF_FN_T,                       1, "T"),
+    xls_func_entry(BIFF_FN_N,                       1, "N"),
+  /*xls_func_entry(BIFF_FN_Fopen,                   0, ".Fopen"),*/
+  /*xls_func_entry(BIFF_FN_Fclose,                  0, ".Fclose"),*/
+  /*xls_func_entry(BIFF_FN_Fsize,                   0, ".Fsize"),*/
+  /*xls_func_entry(BIFF_FN_Freadln,                 0, ".Freadln"),*/
+  /*xls_func_entry(BIFF_FN_Fread,                   0, ".Fread"),*/
+  /*xls_func_entry(BIFF_FN_Fwriteln,                0, ".Fwriteln"),*/
+  /*xls_func_entry(BIFF_FN_Fwrite,                  0, ".Fwrite"),*/
+  /*xls_func_entry(BIFF_FN_Fpos,                    0, ".Fpos"),*/
+    xls_func_entry(BIFF_FN_Datevalue,               1, "DATEVALUE"),
+    xls_func_entry(BIFF_FN_Timevalue,               1, "TIMEVALUE"),
+    xls_func_entry(BIFF_FN_Sln,                     3, "SLN"),
+    xls_func_entry(BIFF_FN_Syd,                     4, "SYD"),
+    xls_func_entry(BIFF_FN_Ddb,             /*Var*/ 0, "DDB"),
+  /*xls_func_entry(BIFF_FN_GetDef,                  0, ".Get.Def"),*/
+  /*xls_func_entry(BIFF_FN_Reftext,                 0, ".Reftext"),*/
+  /*xls_func_entry(BIFF_FN_Textref,                 0, ".Textref"),*/
+  /*xls_func_entry(BIFF_FN_Indirect,                0, ".INDIRECT"),*/
+  /*xls_func_entry(BIFF_FN_Register,                0, ".Register"),*/
+  /*xls_func_entry(BIFF_FN_Call,                    0, ".Call"),*/
+  /*xls_func_entry(BIFF_FN_AddBar,                  0, ".Add.Bar"),*/
+  /*xls_func_entry(BIFF_FN_AddMenu,                 0, ".Add.Menu"),*/
+  /*xls_func_entry(BIFF_FN_AddCommand,              0, ".Add.Command"),*/
+  /*xls_func_entry(BIFF_FN_EnableCommand,           0, ".Enable.Command"),*/
+  /*xls_func_entry(BIFF_FN_CheckCommand,            0, ".Check.Command"),*/
+  /*xls_func_entry(BIFF_FN_RenameCommand,           0, ".Rename.Command"),*/
+  /*xls_func_entry(BIFF_FN_ShowBar,                 0, ".Show.Bar"),*/
+  /*xls_func_entry(BIFF_FN_DeleteMenu,              0, ".Delete.Menu"),*/
+  /*xls_func_entry(BIFF_FN_DeleteCommand,           0, ".Delete.Command"),*/
+  /*xls_func_entry(BIFF_FN_GetChartItem,            0, ".Get.Chart.Item"),*/
+  /*xls_func_entry(BIFF_FN_DialogBox,               0, ".Dialog.Box"),*/
+    xls_func_entry(BIFF_FN_Clean,                   1, "CLEAN"),
+    xls_func_entry(BIFF_FN_Mdeterm,                 1, "M_DETERM"), /* XLS:MDETERM */
+    xls_func_entry(BIFF_FN_Minverse,                1, "M_INVERSE"), /* XLS:MINVERSE */
+    xls_func_entry(BIFF_FN_Mmult,                   2, "M_MULT"), /* XLS:MMULT */
+  /*xls_func_entry(BIFF_FN_Files,                   0, ".Files"),*/
+    xls_func_entry(BIFF_FN_Ipmt,            /*Var*/ 0, ".IPMT"),
+    xls_func_entry(BIFF_FN_Ppmt,            /*Var*/ 0, ".PPMT"),
+    xls_func_entry(BIFF_FN_Counta,          /*Var*/ 0, "COUNTA"),
+  /*xls_func_entry(BIFF_FN_CancelKey,               0, ".Cancel.Key"),*/
+  /*xls_func_entry(BIFF_FN_Initiate,                0, ".Initiate"),*/
+  /*xls_func_entry(BIFF_FN_Request,                 0, ".Request"),*/
+  /*xls_func_entry(BIFF_FN_Poke,                    0, ".Poke"),*/
+  /*xls_func_entry(BIFF_FN_Execute,                 0, ".Execute"),*/
+  /*xls_func_entry(BIFF_FN_Terminate,               0, ".Terminate"),*/
+  /*xls_func_entry(BIFF_FN_Restart,                 0, ".Restart"),*/
+  /*xls_func_entry(BIFF_FN_Help,                    0, ".Help"),*/
+  /*xls_func_entry(BIFF_FN_GetBar,                  0, ".Get.Bar"),*/
+    xls_func_entry(BIFF_FN_Product,         /*Var*/ 0, "PRODUCT"),
+    xls_func_entry(BIFF_FN_Fact,                    1, "FACT"),
+  /*xls_func_entry(BIFF_FN_GetCell,                 0, ".Get.Cell"),*/
+  /*xls_func_entry(BIFF_FN_GetWorkspace,            0, ".Get.Workspace"),*/
+  /*xls_func_entry(BIFF_FN_GetWindow,               0, ".Get.Window"),*/
+  /*xls_func_entry(BIFF_FN_GetDocument,             0, ".Get.Document"),*/
+    xls_func_entry(BIFF_FN_Dproduct,                3, ".DPRODUCT.XLS"), /* XLS:DPRODUCT */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Isnontext,               1, "ISNONTEXT"),
+  /*xls_func_entry(BIFF_FN_GetNote,                 0, ".Get.Note"),*/
+  /*xls_func_entry(BIFF_FN_Note,                    0, ".Note"),*/
+    xls_func_entry(BIFF_FN_Stdevp,          /*Var*/ 0, "STDP"), /* XLS:STDEVP */
+    xls_func_entry(BIFF_FN_Varp,            /*Var*/ 0, "VARP"),
+    xls_func_entry(BIFF_FN_Dstdevp,                 3, ".DSTDEVP.XLS"), /* XLS:DSTDEVP */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Dvarp,                   3, ".DVARP.XLS"), /* XLS:DVARP */ /* Fireworkz is incompatible */
+    xls_func_entry(BIFF_FN_Trunc,                   2, "TRUNC"), /* BIFF2 - becomes Var(1,2) in BIFF3 */
+    xls_func_entry(BIFF_FN_Islogical,               1, "ISLOGICAL"),
+    xls_func_entry(BIFF_FN_Dcounta,                 3, ".DCOUNTA.XLS") /* XLS:DCOUNTA */ /* Fireworkz is incompatible */
+  /*xls_func_entry(BIFF_FN_DeleteBar,               0, ".Delete.Bar"),*/
+  /*xls_func_entry(BIFF_FN_Unregister,              0, ".Unregister"),*/
 };
 
 static const XLS_FUNC_ENTRY
 BIFF3_functions[] =  /* ordered as Excel for completeness checking */
 {
-    xls_func_entry(xlfLinest,       /*Var*/ 0, "LINEST"),
-    xls_func_entry(xlfTrend,        /*Var*/ 0, "TREND"),
-    xls_func_entry(xlfLogest,       /*Var*/ 0, "LOGEST"),
-    xls_func_entry(xlfGrowth,       /*Var*/ 0, "GROWTH"),
-    xls_func_entry(xlfTrunc,        /*Var*/ 0, "TRUNC"), /*Var(1,2) in BIFF3 */
+    xls_func_entry(BIFF_FN_Linest,          /*Var*/ 0, "LINEST"),
+    xls_func_entry(BIFF_FN_Trend,           /*Var*/ 0, "TREND"),
+    xls_func_entry(BIFF_FN_Logest,          /*Var*/ 0, "LOGEST"),
+    xls_func_entry(BIFF_FN_Growth,          /*Var*/ 0, "GROWTH"),
+    xls_func_entry(BIFF_FN_Trunc,           /*Var*/ 0, "TRUNC"), /*Var(1,2) in BIFF3 */
 
-    xls_func_entry(xlfUsdollar,     /*Var*/ 0, ".YEN"), /* BIFF3 - becomes USDOLLAR in BIFF4 */
-    xls_func_entry(xlfFindb,        /*Var*/ 0, "FIND"), /* XLS:FINDB */ /* Fireworkz doesn't handle DBCS */
-    xls_func_entry(xlfSearchb,      /*Var*/ 0, "SEARCH"), /* XLS:SEARCHB */
-    xls_func_entry(xlfReplaceb,             4, "REPLACE"), /* XLS:REPLACEB */
-    xls_func_entry(xlfLeftb,        /*Var*/ 0, "LEFT"), /* XLS:LEFTB */
-    xls_func_entry(xlfRightb,       /*Var*/ 0, "RIGHT"), /* XLS:RIGHTB */
-    xls_func_entry(xlfMidb,                 3, "MID"), /* XLS:MIDB */
-    xls_func_entry(xlfLenb,                 1, "LEN"), /* XLS:LENB */
-    xls_func_entry(xlfRoundup,              2, "ROUNDUP"),
-    xls_func_entry(xlfRounddown,            2, "ROUNDDOWN"),
-    xls_func_entry(xlfAsc,                  1, ".ASC"),
-    xls_func_entry(xlfDbcs,                 1, ".JIS"), /* BIFF3 - becomes DBCS in BIFF4 */
-    xls_func_entry(xlfAddress,      /*Var*/ 0, "ADDRESS"),
-    xls_func_entry(xlfDays360,              2, "DAYS_360"), /* XLS:DAYS360 */ /* BIFF3 - becomes Var(2,3) in BIFF5 */
-    xls_func_entry(xlfToday,                0, "TODAY"),
-    xls_func_entry(xlfVdb,          /*Var*/ 0, ".VDB"),
-    xls_func_entry(xlfMedian,       /*Var*/ 0, "MEDIAN"),
-    xls_func_entry(xlfSumproduct,   /*Var*/ 0, "SUMPRODUCT"),
-    xls_func_entry(xlfSinh,                 1, "SINH"),
-    xls_func_entry(xlfCosh,                 1, "COSH"),
-    xls_func_entry(xlfTanh,                 1, "TANH"),
-    xls_func_entry(xlfAsinh,                1, "ASINH"),
-    xls_func_entry(xlfAcosh,                1, "ACOSH"),
-    xls_func_entry(xlfAtanh,                1, "ATANH"),
-    xls_func_entry(xlfDget,                 3, ".DGET"),
-  /*xls_func_entry(xlfCreateObject,         0, ".Create.Object"),*/
-  /*xls_func_entry(xlfVolatile,             0, ".Volatile"),*/
-  /*xls_func_entry(xlfLastError,            0, ".Last.Error"),*/
-  /*xls_func_entry(xlfCustomUndo,           0, ".Custom.Undo"),*/
-  /*xls_func_entry(xlfCustomRepeat,         0, ".Custom.Repeat"),*/
-  /*xls_func_entry(xlfFormulaConvert,       0, ".Formula.Convert"),*/
-  /*xls_func_entry(xlfGetLinkInfo,          0, ".Get.Link.Info"),*/
-  /*xls_func_entry(xlfTextBox,              0, ".Text.Box"),*/
-    xls_func_entry(xlfInfo,                 1, ".INFO")
+    xls_func_entry(BIFF_FN_Usdollar,        /*Var*/ 0, ".YEN"), /* BIFF3 - becomes USDOLLAR in BIFF4 */
+    xls_func_entry(BIFF_FN_Findb,           /*Var*/ 0, "FIND"), /* XLS:FINDB */ /* Fireworkz doesn't handle DBCS */
+    xls_func_entry(BIFF_FN_Searchb,         /*Var*/ 0, "SEARCH"), /* XLS:SEARCHB */
+    xls_func_entry(BIFF_FN_Replaceb,                4, "REPLACE"), /* XLS:REPLACEB */
+    xls_func_entry(BIFF_FN_Leftb,           /*Var*/ 0, "LEFT"), /* XLS:LEFTB */
+    xls_func_entry(BIFF_FN_Rightb,          /*Var*/ 0, "RIGHT"), /* XLS:RIGHTB */
+    xls_func_entry(BIFF_FN_Midb,                    3, "MID"), /* XLS:MIDB */
+    xls_func_entry(BIFF_FN_Lenb,                    1, "LEN"), /* XLS:LENB */
+    xls_func_entry(BIFF_FN_Roundup,                 2, "ROUNDUP"),
+    xls_func_entry(BIFF_FN_Rounddown,               2, "ROUNDDOWN"),
+    xls_func_entry(BIFF_FN_Asc,                     1, ".ASC"),
+    xls_func_entry(BIFF_FN_Dbcs,                    1, ".JIS"), /* BIFF3 - becomes DBCS in BIFF4 */
+    xls_func_entry(BIFF_FN_Address,         /*Var*/ 0, "ADDRESS"),
+    xls_func_entry(BIFF_FN_Days360,                 2, "DAYS_360"), /* XLS:DAYS360 */ /* BIFF3 - becomes Var(2,3) in BIFF5 */
+    xls_func_entry(BIFF_FN_Today,                   0, "TODAY"),
+    xls_func_entry(BIFF_FN_Vdb,             /*Var*/ 0, ".VDB"),
+    xls_func_entry(BIFF_FN_Median,          /*Var*/ 0, "MEDIAN"),
+    xls_func_entry(BIFF_FN_Sumproduct,      /*Var*/ 0, "SUMPRODUCT"),
+    xls_func_entry(BIFF_FN_Sinh,                    1, "SINH"),
+    xls_func_entry(BIFF_FN_Cosh,                    1, "COSH"),
+    xls_func_entry(BIFF_FN_Tanh,                    1, "TANH"),
+    xls_func_entry(BIFF_FN_Asinh,                   1, "ASINH"),
+    xls_func_entry(BIFF_FN_Acosh,                   1, "ACOSH"),
+    xls_func_entry(BIFF_FN_Atanh,                   1, "ATANH"),
+    xls_func_entry(BIFF_FN_Dget,                    3, ".DGET"),
+  /*xls_func_entry(BIFF_FN_CreateObject,            0, ".Create.Object"),*/
+  /*xls_func_entry(BIFF_FN_Volatile,                0, ".Volatile"),*/
+  /*xls_func_entry(BIFF_FN_LastError,               0, ".Last.Error"),*/
+  /*xls_func_entry(BIFF_FN_CustomUndo,              0, ".Custom.Undo"),*/
+  /*xls_func_entry(BIFF_FN_CustomRepeat,            0, ".Custom.Repeat"),*/
+  /*xls_func_entry(BIFF_FN_FormulaConvert,          0, ".Formula.Convert"),*/
+  /*xls_func_entry(BIFF_FN_GetLinkInfo,             0, ".Get.Link.Info"),*/
+  /*xls_func_entry(BIFF_FN_TextBox,                 0, ".Text.Box"),*/
+    xls_func_entry(BIFF_FN_Info,                    1, ".INFO")
 };
 
 static const XLS_FUNC_ENTRY
 BIFF4_functions[] =  /* ordered as Excel for completeness checking */
 {
-    xls_func_entry(xlfFixed,        /*Var*/ 0, "FIXED"), /* Var(2,3) in BIFF4 */
-    xls_func_entry(xlfUsdollar,     /*Var*/ 0, ".USDOLLAR"), /* BIFF4 - was YEN in BIFF3 */
-    xls_func_entry(xlfDbcs,                 1, ".DBCS"), /* BIFF4 - was JIS in BIFF3 */
+    xls_func_entry(BIFF_FN_Fixed,           /*Var*/ 0, "FIXED"), /* Var(2,3) in BIFF4 */
+    xls_func_entry(BIFF_FN_Usdollar,        /*Var*/ 0, ".USDOLLAR"), /* BIFF4 - was YEN in BIFF3 */
+    xls_func_entry(BIFF_FN_Dbcs,                    1, ".DBCS"), /* BIFF4 - was JIS in BIFF3 */
 
-    xls_func_entry(xlfRank,         /*Var*/ 0, "RANK.EQ"), /* XLS:RANK */
+    xls_func_entry(BIFF_FN_Rank,            /*Var*/ 0, "RANK.EQ"), /* XLS:RANK */
 
-  /*xls_func_entry(xlfGroup,                0, ".Group"),*/
-  /*xls_func_entry(xlfGetObject,            0, ".Get.Object"),*/
-    xls_func_entry(xlfDb,           /*Var*/ 0, "DB"),
-  /*xls_func_entry(xlfPause,                0, ".Pause"),*/
-  /*xls_func_entry(xlfResume,               0, ".Resume"),*/
-    xls_func_entry(xlfFrequency,            2, "FREQUENCY"),
-  /*xls_func_entry(xlfAddToolbar,           0, ".Add.Toolbar"),*/
-  /*xls_func_entry(xlfDeleteToolbar,        0, ".Delete.Toolbar"),*/
-    xls_func_entry(xlfExternCall,   /*Var*/ 0, "EXTERN.CALL"), /* needs special handling */
-  /*xls_func_entry(xlfResetToolbar,         0, ".Reset.Toolbar"),*/
-  /*xls_func_entry(xlfEvaluate,             0, ".Evaluate"),*/
-  /*xls_func_entry(xlfGetToolbar,           0, ".Get.Toolbar"),*/
-  /*xls_func_entry(xlfGetTool,              0, ".Get.Tool"),*/
-  /*xls_func_entry(xlfSpellingCheck,        0, ".Spelling.Check"),*/
-    xls_func_entry(xlfErrorType,            1, ".ERROR.TYPE"),
-  /*xls_func_entry(xlfAppTitle,             0, ".App.Title"),*/
-  /*xls_func_entry(xlfWindowTitle,          0, ".Window.Title"),*/
-  /*xls_func_entry(xlfSaveToolbar,          0, ".Save.Toolbar"),*/
-  /*xls_func_entry(xlfEnableTool,           0, ".Enable.Tool"),*/
-  /*xls_func_entry(xlfPressTool,            0, ".Press.Tool"),*/
-  /*xls_func_entry(xlfRegisterId,           0, ".Register.Id"),*/
-  /*xls_func_entry(xlfGetWorkbook,          0, ".Get.Workbook"),*/
-    xls_func_entry(xlfAvedev,       /*Var*/ 0, "AVEDEV"),
-    xls_func_entry(xlfBetadist,     /*Var*/ 0, "ODF.BETADIST"), /* XLS:BETADIST */
-    xls_func_entry(xlfGammaln,              1, "GAMMALN"),
-    xls_func_entry(xlfBetainv,      /*Var*/ 0, "BETA.INV"), /* XLS:BETAINV */
-    xls_func_entry(xlfBinomdist,            4, "BINOM.DIST"), /* XLS:BINOMDIST */
-    xls_func_entry(xlfChidist,              2, "CHISQ.DIST.RT"), /* XLS:CHIDIST */
-    xls_func_entry(xlfChiinv,               2, "CHISQ.INV.RT"), /* XLS:CHIINV */
-    xls_func_entry(xlfCombin,               2, "COMBIN"),
-    xls_func_entry(xlfConfidence,           3, "CONFIDENCE"),
-    xls_func_entry(xlfCritbinom,            3, "BINOM.INV"), /* XLS:CRITBINOM */
-    xls_func_entry(xlfEven,                 1, "EVEN"),
-    xls_func_entry(xlfExpondist,            3, "EXPON.DIST"), /* XLS:EXPONDIST */
-    xls_func_entry(xlfFdist,                3, "F.DIST.RT"), /* XLS:FDIST */
-    xls_func_entry(xlfFinv,                 3, "F.INV.RT"), /* XLS:FINV */
-    xls_func_entry(xlfFisher,               1, "FISHER"),
-    xls_func_entry(xlfFisherinv,            1, "FISHERINV"),
-    xls_func_entry(xlfFloor,                2, "FLOOR"),
-    xls_func_entry(xlfGammadist,            4, "GAMMA.DIST"), /* XLS:GAMMADIST */
-    xls_func_entry(xlfGammainv,             3, "GAMMA.INV"), /* XLS:GAMMAINV */
-    xls_func_entry(xlfCeiling,              2, "CEILING"),
-    xls_func_entry(xlfHypgeomdist,          4, "HYPGEOM.DIST"), /* XLS:HYPGEOMDIST */
-    xls_func_entry(xlfLognormdist,          3, "LOGNORM.DIST"), /* XLS:LOGNORMDIST */
-    xls_func_entry(xlfLoginv,               3, "LOGNORM.INV"), /* XLS:LOGINV */
-    xls_func_entry(xlfNegbinomdist,         3, "NEGBINOM.DIST"), /* XLS:NEGBINOMDIST */
-    xls_func_entry(xlfNormdist,             4, "NORM.DIST"), /* XLS:NORMDIST */
-    xls_func_entry(xlfNormsdist,            1, "NORM.S.DIST"), /* XLS:NORMSDIST */
-    xls_func_entry(xlfNorminv,              3, "NORM.INV"), /* XLS:NORMINV */
-    xls_func_entry(xlfNormsinv,             1, "NORM.S.INV"), /* XLS:NORMSINV */
-    xls_func_entry(xlfStandardize,          3, "STANDARDIZE"),
-    xls_func_entry(xlfOdd,                  1, "ODD"),
-    xls_func_entry(xlfPermut,               2, "PERMUT"),
-    xls_func_entry(xlfPoisson,              3, "POISSON.DIST"), /* XLS:POISSON */
-    xls_func_entry(xlfTdist,                3, "ODF.TDIST"), /* XLS:TDIST */
-    xls_func_entry(xlfWeibull,              4, "WEIBULL.DIST"), /*XLS:WEIBULL */
-    xls_func_entry(xlfSumxmy2,              2, "SUM_XMY2"), /* XLS:SUMXMY2*/
-    xls_func_entry(xlfSumx2my2,             2, "SUM_X2MY2"), /* XLS:SUMX2MY2 */
-    xls_func_entry(xlfSumx2py2,             2, "SUM_X2PY2"), /* XLS:SUMX2PY2 */
-    xls_func_entry(xlfChitest,              2, "CHISQ.TEST"), /* XLS:CHITEST */
-    xls_func_entry(xlfCorrel,               2, "CORREL"),
-    xls_func_entry(xlfCovar,                2, "COVARIANCE.P"), /* XLS:COVAR */
-    xls_func_entry(xlfForecast,             3, "FORECAST"),
-    xls_func_entry(xlfFtest,                2, "F.TEST"), /* XLS:FTEST */
-    xls_func_entry(xlfIntercept,            2, "INTERCEPT"),
-    xls_func_entry(xlfPearson,              2, "PEARSON"),
-    xls_func_entry(xlfRsq,                  2, "RSQ"),
-    xls_func_entry(xlfSteyx,                2, "STEYX"),
-    xls_func_entry(xlfSlope,                2, "SLOPE"),
-    xls_func_entry(xlfTtest,                4, "T.TEST"), /* XLS:TTEST */
-    xls_func_entry(xlfProb,         /*Var*/ 0, "PROB"),
-    xls_func_entry(xlfDevsq,        /*Var*/ 0, "DEVSQ"),
-    xls_func_entry(xlfGeomean,      /*Var*/ 0, "GEOMEAN"),
-    xls_func_entry(xlfHarmean,      /*Var*/ 0, "HARMEAN"),
-    xls_func_entry(xlfSumsq,        /*Var*/ 0, "SUMSQ"),
-    xls_func_entry(xlfKurt,         /*Var*/ 0, "KURT"),
-    xls_func_entry(xlfSkew,         /*Var*/ 0, "SKEW"),
-    xls_func_entry(xlfZtest,        /*Var*/ 0, "Z.TEST"), /* XLS:ZTEST */
-    xls_func_entry(xlfLarge,                2, "LARGE"),
-    xls_func_entry(xlfSmall,                2, "SMALL"),
-    xls_func_entry(xlfQuartile,             2, "QUARTILE.INC"), /* XLS:QUARTILE */
-    xls_func_entry(xlfPercentile,           2, "PERCENTILE.INC"), /* XLS:PERCENTILE */
-    xls_func_entry(xlfPercentrank,  /*Var*/ 0, "PERCENTRANK.INC"), /* XLS:PERCENTRANK */
-    xls_func_entry(xlfMode,         /*Var*/ 0, "MODE"),
-    xls_func_entry(xlfTrimmean,             2, "TRIMMEAN"),
-    xls_func_entry(xlfTinv,                 2, "T.INV.2T") /* XLS:TINV */
+  /*xls_func_entry(BIFF_FN_Group,                   0, ".Group"),*/
+  /*xls_func_entry(BIFF_FN_GetObject,               0, ".Get.Object"),*/
+    xls_func_entry(BIFF_FN_Db,              /*Var*/ 0, "DB"),
+  /*xls_func_entry(BIFF_FN_Pause,                   0, ".Pause"),*/
+  /*xls_func_entry(BIFF_FN_Resume,                  0, ".Resume"),*/
+    xls_func_entry(BIFF_FN_Frequency,               2, "FREQUENCY"),
+  /*xls_func_entry(BIFF_FN_AddToolbar,              0, ".Add.Toolbar"),*/
+  /*xls_func_entry(BIFF_FN_DeleteToolbar,           0, ".Delete.Toolbar"),*/
+    xls_func_entry(BIFF_FN_ExternCall,      /*Var*/ 0, "EXTERN.CALL"), /* needs special handling */
+  /*xls_func_entry(BIFF_FN_ResetToolbar,            0, ".Reset.Toolbar"),*/
+  /*xls_func_entry(BIFF_FN_Evaluate,                0, ".Evaluate"),*/
+  /*xls_func_entry(BIFF_FN_GetToolbar,              0, ".Get.Toolbar"),*/
+  /*xls_func_entry(BIFF_FN_GetTool,                 0, ".Get.Tool"),*/
+  /*xls_func_entry(BIFF_FN_SpellingCheck,           0, ".Spelling.Check"),*/
+    xls_func_entry(BIFF_FN_ErrorType,               1, ".ERROR.TYPE"),
+  /*xls_func_entry(BIFF_FN_AppTitle,                0, ".App.Title"),*/
+  /*xls_func_entry(BIFF_FN_WindowTitle,             0, ".Window.Title"),*/
+  /*xls_func_entry(BIFF_FN_SaveToolbar,             0, ".Save.Toolbar"),*/
+  /*xls_func_entry(BIFF_FN_EnableTool,              0, ".Enable.Tool"),*/
+  /*xls_func_entry(BIFF_FN_PressTool,               0, ".Press.Tool"),*/
+  /*xls_func_entry(BIFF_FN_RegisterId,              0, ".Register.Id"),*/
+  /*xls_func_entry(BIFF_FN_GetWorkbook,             0, ".Get.Workbook"),*/
+    xls_func_entry(BIFF_FN_Avedev,          /*Var*/ 0, "AVEDEV"),
+    xls_func_entry(BIFF_FN_Betadist,        /*Var*/ 0, "ODF.BETADIST"), /* XLS:BETADIST */
+    xls_func_entry(BIFF_FN_Gammaln,                 1, "GAMMALN"),
+    xls_func_entry(BIFF_FN_Betainv,         /*Var*/ 0, "BETA.INV"), /* XLS:BETAINV */
+    xls_func_entry(BIFF_FN_Binomdist,               4, "BINOM.DIST"), /* XLS:BINOMDIST */
+    xls_func_entry(BIFF_FN_Chidist,                 2, "CHISQ.DIST.RT"), /* XLS:CHIDIST */
+    xls_func_entry(BIFF_FN_Chiinv,                  2, "CHISQ.INV.RT"), /* XLS:CHIINV */
+    xls_func_entry(BIFF_FN_Combin,                  2, "COMBIN"),
+    xls_func_entry(BIFF_FN_Confidence,              3, "CONFIDENCE"),
+    xls_func_entry(BIFF_FN_Critbinom,               3, "BINOM.INV"), /* XLS:CRITBINOM */
+    xls_func_entry(BIFF_FN_Even,                    1, "EVEN"),
+    xls_func_entry(BIFF_FN_Expondist,               3, "EXPON.DIST"), /* XLS:EXPONDIST */
+    xls_func_entry(BIFF_FN_Fdist,                   3, "F.DIST.RT"), /* XLS:FDIST */
+    xls_func_entry(BIFF_FN_Finv,                    3, "F.INV.RT"), /* XLS:FINV */
+    xls_func_entry(BIFF_FN_Fisher,                  1, "FISHER"),
+    xls_func_entry(BIFF_FN_Fisherinv,               1, "FISHERINV"),
+    xls_func_entry(BIFF_FN_Floor,                   2, "FLOOR"),
+    xls_func_entry(BIFF_FN_Gammadist,               4, "GAMMA.DIST"), /* XLS:GAMMADIST */
+    xls_func_entry(BIFF_FN_Gammainv,                3, "GAMMA.INV"), /* XLS:GAMMAINV */
+    xls_func_entry(BIFF_FN_Ceiling,                 2, "CEILING"),
+    xls_func_entry(BIFF_FN_Hypgeomdist,             4, "HYPGEOM.DIST"), /* XLS:HYPGEOMDIST */
+    xls_func_entry(BIFF_FN_Lognormdist,             3, "LOGNORM.DIST"), /* XLS:LOGNORMDIST */
+    xls_func_entry(BIFF_FN_Loginv,                  3, "LOGNORM.INV"), /* XLS:LOGINV */
+    xls_func_entry(BIFF_FN_Negbinomdist,            3, "NEGBINOM.DIST"), /* XLS:NEGBINOMDIST */
+    xls_func_entry(BIFF_FN_Normdist,                4, "NORM.DIST"), /* XLS:NORMDIST */
+    xls_func_entry(BIFF_FN_Normsdist,               1, "NORM.S.DIST"), /* XLS:NORMSDIST */
+    xls_func_entry(BIFF_FN_Norminv,                 3, "NORM.INV"), /* XLS:NORMINV */
+    xls_func_entry(BIFF_FN_Normsinv,                1, "NORM.S.INV"), /* XLS:NORMSINV */
+    xls_func_entry(BIFF_FN_Standardize,             3, "STANDARDIZE"),
+    xls_func_entry(BIFF_FN_Odd,                     1, "ODD"),
+    xls_func_entry(BIFF_FN_Permut,                  2, "PERMUT"),
+    xls_func_entry(BIFF_FN_Poisson,                 3, "POISSON.DIST"), /* XLS:POISSON */
+    xls_func_entry(BIFF_FN_Tdist,                   3, "ODF.TDIST"), /* XLS:TDIST */
+    xls_func_entry(BIFF_FN_Weibull,                 4, "WEIBULL.DIST"), /*XLS:WEIBULL */
+    xls_func_entry(BIFF_FN_Sumxmy2,                 2, "SUM_XMY2"), /* XLS:SUMXMY2*/
+    xls_func_entry(BIFF_FN_Sumx2my2,                2, "SUM_X2MY2"), /* XLS:SUMX2MY2 */
+    xls_func_entry(BIFF_FN_Sumx2py2,                2, "SUM_X2PY2"), /* XLS:SUMX2PY2 */
+    xls_func_entry(BIFF_FN_Chitest,                 2, "CHISQ.TEST"), /* XLS:CHITEST */
+    xls_func_entry(BIFF_FN_Correl,                  2, "CORREL"),
+    xls_func_entry(BIFF_FN_Covar,                   2, "COVARIANCE.P"), /* XLS:COVAR */
+    xls_func_entry(BIFF_FN_Forecast,                3, "FORECAST"),
+    xls_func_entry(BIFF_FN_Ftest,                   2, "F.TEST"), /* XLS:FTEST */
+    xls_func_entry(BIFF_FN_Intercept,               2, "INTERCEPT"),
+    xls_func_entry(BIFF_FN_Pearson,                 2, "PEARSON"),
+    xls_func_entry(BIFF_FN_Rsq,                     2, "RSQ"),
+    xls_func_entry(BIFF_FN_Steyx,                   2, "STEYX"),
+    xls_func_entry(BIFF_FN_Slope,                   2, "SLOPE"),
+    xls_func_entry(BIFF_FN_Ttest,                   4, "T.TEST"), /* XLS:TTEST */
+    xls_func_entry(BIFF_FN_Prob,            /*Var*/ 0, "PROB"),
+    xls_func_entry(BIFF_FN_Devsq,           /*Var*/ 0, "DEVSQ"),
+    xls_func_entry(BIFF_FN_Geomean,         /*Var*/ 0, "GEOMEAN"),
+    xls_func_entry(BIFF_FN_Harmean,         /*Var*/ 0, "HARMEAN"),
+    xls_func_entry(BIFF_FN_Sumsq,           /*Var*/ 0, "SUMSQ"),
+    xls_func_entry(BIFF_FN_Kurt,            /*Var*/ 0, "KURT"),
+    xls_func_entry(BIFF_FN_Skew,            /*Var*/ 0, "SKEW"),
+    xls_func_entry(BIFF_FN_Ztest,           /*Var*/ 0, "Z.TEST"), /* XLS:ZTEST */
+    xls_func_entry(BIFF_FN_Large,                   2, "LARGE"),
+    xls_func_entry(BIFF_FN_Small,                   2, "SMALL"),
+    xls_func_entry(BIFF_FN_Quartile,                2, "QUARTILE.INC"), /* XLS:QUARTILE */
+    xls_func_entry(BIFF_FN_Percentile,              2, "PERCENTILE.INC"), /* XLS:PERCENTILE */
+    xls_func_entry(BIFF_FN_Percentrank,     /*Var*/ 0, "PERCENTRANK.INC"), /* XLS:PERCENTRANK */
+    xls_func_entry(BIFF_FN_Mode,            /*Var*/ 0, "MODE"),
+    xls_func_entry(BIFF_FN_Trimmean,                2, "TRIMMEAN"),
+    xls_func_entry(BIFF_FN_Tinv,                    2, "T.INV.2T") /* XLS:TINV */
 };
 
 static const XLS_FUNC_ENTRY
 BIFF5_functions[] =  /* ordered as Excel for completeness checking */
 {
-    xls_func_entry(xlfWeekday,      /*Var*/ 0, "WEEKDAY"), /* Var(1,2) in BIFF5 */
-    xls_func_entry(xlfHlookup,      /*Var*/ 0, "HLOOKUP"), /* Var(3,4) in BIFF5 */
-    xls_func_entry(xlfVlookup,      /*Var*/ 0, "VLOOKUP"), /* Var(3,4) in BIFF5 */
-    xls_func_entry(xlfDays360,      /*Var*/ 0, "DAYS_360"), /* XLS:DAYS360 */ /* Var(2,3) in BIFF5 */
+    xls_func_entry(BIFF_FN_Weekday,         /*Var*/ 0, "WEEKDAY"), /* Var(1,2) in BIFF5 */
+    xls_func_entry(BIFF_FN_Hlookup,         /*Var*/ 0, "HLOOKUP"), /* Var(3,4) in BIFF5 */
+    xls_func_entry(BIFF_FN_Vlookup,         /*Var*/ 0, "VLOOKUP"), /* Var(3,4) in BIFF5 */
+    xls_func_entry(BIFF_FN_Days360,         /*Var*/ 0, "DAYS_360"), /* XLS:DAYS360 */ /* Var(2,3) in BIFF5 */
 
-    xls_func_entry(xlfConcatenate,  /*Var*/ 0, "JOIN"), /* XLS:CONCATENATE */
-    xls_func_entry(xlfPower,                2, "POWER"),
-    xls_func_entry(xlfRadians,              1, "RAD"), /* XLS:RADIANS */
-    xls_func_entry(xlfDegrees,              1, "DEG"), /* XLS:DEGREES */
-    xls_func_entry(xlfSubtotal,     /*Var*/ 0, ".SUBTOTAL"),
-    xls_func_entry(xlfSumif,        /*Var*/ 0, ".SUMIF"),
-    xls_func_entry(xlfCountif,              2, ".COUNTIF"),
-    xls_func_entry(xlfCountblank,           1, "COUNTBLANK"),
-    xls_func_entry(xlfIspmt,                1, ".ISPMT"),
-    xls_func_entry(xlfDatedif,              3, ".DATEDIF"),
-    xls_func_entry(xlfDatestring,           1, ".DATESTRING"),
-    xls_func_entry(xlfNumberstring,         2, ".NUMBERSTRING"),
-    xls_func_entry(xlfRoman,        /*Var*/ 0, ".ROMAN")
+    xls_func_entry(BIFF_FN_Concatenate,     /*Var*/ 0, "JOIN"), /* XLS:CONCATENATE */
+    xls_func_entry(BIFF_FN_Power,                   2, "POWER"),
+    xls_func_entry(BIFF_FN_Radians,                 1, "RAD"), /* XLS:RADIANS */
+    xls_func_entry(BIFF_FN_Degrees,                 1, "DEG"), /* XLS:DEGREES */
+    xls_func_entry(BIFF_FN_Subtotal,        /*Var*/ 0, ".SUBTOTAL"),
+    xls_func_entry(BIFF_FN_Sumif,           /*Var*/ 0, ".SUMIF"),
+    xls_func_entry(BIFF_FN_Countif,                 2, ".COUNTIF"),
+    xls_func_entry(BIFF_FN_Countblank,              1, "COUNTBLANK"),
+    xls_func_entry(BIFF_FN_Ispmt,                   1, ".ISPMT"),
+    xls_func_entry(BIFF_FN_Datedif,                 3, ".DATEDIF"),
+    xls_func_entry(BIFF_FN_Datestring,              1, ".DATESTRING"),
+    xls_func_entry(BIFF_FN_Numberstring,            2, ".NUMBERSTRING"),
+    xls_func_entry(BIFF_FN_Roman,           /*Var*/ 0, ".ROMAN")
 };
 
 static const XLS_FUNC_ENTRY
 BIFF8_functions[] =  /* ordered as Excel for completeness checking */
 {
-    xls_func_entry(xlfGetPivotData, /*Var*/ 0, ".GETPIVOTDATA"),
-    xls_func_entry(xlfHyperlink,    /*Var*/ 0, ".HYPERLINK"),
-    xls_func_entry(xlfPhonetic,             1, ".PHONETIC"),
-    xls_func_entry(xlfAverageA,     /*Var*/ 0, "AVERAGEA"),
-    xls_func_entry(xlfMaxA,         /*Var*/ 0, "MAXA"),
-    xls_func_entry(xlfMinA,         /*Var*/ 0, "MINA"),
-    xls_func_entry(xlfStDevPA,      /*Var*/ 0, "STDEVPA"),
-    xls_func_entry(xlfVarPA,        /*Var*/ 0, "VARPA"),
-    xls_func_entry(xlfStDevA,       /*Var*/ 0, "STDEVA"),
-    xls_func_entry(xlfVarA,         /*Var*/ 0, "VARA")
+    xls_func_entry(BIFF_FN_GetPivotData,    /*Var*/ 0, ".GETPIVOTDATA"),
+    xls_func_entry(BIFF_FN_Hyperlink,       /*Var*/ 0, ".HYPERLINK"),
+    xls_func_entry(BIFF_FN_Phonetic,                1, ".PHONETIC"),
+    xls_func_entry(BIFF_FN_AverageA,        /*Var*/ 0, "AVERAGEA"),
+    xls_func_entry(BIFF_FN_MaxA,            /*Var*/ 0, "MAXA"),
+    xls_func_entry(BIFF_FN_MinA,            /*Var*/ 0, "MINA"),
+    xls_func_entry(BIFF_FN_StDevPA,         /*Var*/ 0, "STDEVPA"),
+    xls_func_entry(BIFF_FN_VarPA,           /*Var*/ 0, "VARPA"),
+    xls_func_entry(BIFF_FN_StDevA,          /*Var*/ 0, "STDEVA"),
+    xls_func_entry(BIFF_FN_VarA,            /*Var*/ 0, "VARA")
 };
 
 _Check_return_
@@ -1113,7 +1113,7 @@ p_xls_record(
 {
     PC_BYTE p_x = p_xls_load_info->p_file_start + opcode_offset;
     assert(opcode_offset + 4 /*opcode,record_length*/ + record_length <= p_xls_load_info->file_end_offset);
-    IGNOREPARM_InVal_(record_length);
+    UNREFERENCED_PARAMETER_InVal_(record_length);
     p_x += 4 /*opcode,record_length*/;
     return(p_x);
 }
@@ -1819,7 +1819,7 @@ xls_quick_ublock_xls_string_add(
         status = xls_quick_ublock_sbchars_add(p_quick_ublock, (PC_SBCHARS) xls_string, n_chars, sbchar_codepage, allow_il_unicode);
     }
 
-    IGNOREPARM_InVal_(allow_il_unicode); /* on UNICODE builds this is ignored as no inlines are generated */
+    UNREFERENCED_PARAMETER_InVal_(allow_il_unicode); /* on UNICODE builds this is ignored as no inlines are generated */
 
     return(status);
 }
@@ -2187,7 +2187,7 @@ xls_dump_records(
         extra_data[0] = CH_NULL;
 
 #if 0 /* limited reporting best for large sheets unless critical! */
-        IGNOREPARM(p_x);
+        UNREFERENCED_PARAMETER(p_x);
 
         switch(opcode)
         {
@@ -3117,7 +3117,7 @@ dialog_pswd_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_pswd)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -4129,7 +4129,7 @@ PROC_BSEARCH_PROTO(static, xls_proc_func_compare, U16, XLS_FUNC_ENTRY)
     BSEARCH_KEY_VAR_DECL(PC_U16, key);
     const U16 s1 = *key;
     BSEARCH_DATUM_VAR_DECL(PC_XLS_FUNC_ENTRY, datum);
-    const U16 s2 = datum->xls_func_number;
+    const U16 s2 = datum->biff_function_number;
 
     if(s1 > s2)
         return(1);
@@ -4144,7 +4144,7 @@ _Check_return_
 _Ret_maybenull_
 static PC_XLS_FUNC_ENTRY
 xls_func_lookup(
-    _InVal_     U16 xls_func_number)
+    _InVal_     U16 biff_function_number)
 {
     PC_XLS_FUNC_ENTRY p_xls_func_entry = NULL;
 
@@ -4152,33 +4152,33 @@ xls_func_lookup(
     if(biff_version >= 8)
     {
         if(NULL != (p_xls_func_entry = (PC_XLS_FUNC_ENTRY)
-            bsearch(&xls_func_number, BIFF8_functions, elemof(BIFF8_functions), sizeof(BIFF8_functions[0]), xls_proc_func_compare)))
+            bsearch(&biff_function_number, BIFF8_functions, elemof(BIFF8_functions), sizeof(BIFF8_functions[0]), xls_proc_func_compare)))
             return(p_xls_func_entry);
     }
 
     if(biff_version >= 5)
     {
         if(NULL != (p_xls_func_entry = (PC_XLS_FUNC_ENTRY)
-            bsearch(&xls_func_number, BIFF5_functions, elemof(BIFF5_functions), sizeof(BIFF5_functions[0]), xls_proc_func_compare)))
+            bsearch(&biff_function_number, BIFF5_functions, elemof(BIFF5_functions), sizeof(BIFF5_functions[0]), xls_proc_func_compare)))
             return(p_xls_func_entry);
     }
 
     if(biff_version >= 4)
     {
         if(NULL != (p_xls_func_entry = (PC_XLS_FUNC_ENTRY)
-            bsearch(&xls_func_number, BIFF4_functions, elemof(BIFF4_functions), sizeof(BIFF4_functions[0]), xls_proc_func_compare)))
+            bsearch(&biff_function_number, BIFF4_functions, elemof(BIFF4_functions), sizeof(BIFF4_functions[0]), xls_proc_func_compare)))
             return(p_xls_func_entry);
     }
 
     if(biff_version >= 3)
     {
         if(NULL != (p_xls_func_entry = (PC_XLS_FUNC_ENTRY)
-            bsearch(&xls_func_number, BIFF3_functions, elemof(BIFF3_functions), sizeof(BIFF3_functions[0]), xls_proc_func_compare)))
+            bsearch(&biff_function_number, BIFF3_functions, elemof(BIFF3_functions), sizeof(BIFF3_functions[0]), xls_proc_func_compare)))
             return(p_xls_func_entry);
     }
 
     p_xls_func_entry = (PC_XLS_FUNC_ENTRY)
-        bsearch(&xls_func_number, BIFF2_functions, elemof(BIFF2_functions), sizeof(BIFF2_functions[0]), xls_proc_func_compare);
+        bsearch(&biff_function_number, BIFF2_functions, elemof(BIFF2_functions), sizeof(BIFF2_functions[0]), xls_proc_func_compare);
 
     return(p_xls_func_entry);
 }
@@ -4419,7 +4419,7 @@ extern_ref_sheet_name_out(
     PC_UCHARS filename = PtrAddBytes(PC_UCHARS, p_x, 2);
     assert(p_x[0] <= 0x04);
     assert(*p_len + filename_len + 1 + 1 < elemof_buffer);
-    IGNOREPARM_InVal_(elemof_buffer);
+    UNREFERENCED_PARAMETER_InVal_(elemof_buffer);
     PtrPutByteOff(uchars_buf, (*p_len)++, CH_LEFT_SQUARE_BRACKET);
     memcpy32(PtrAddBytes(P_UCHARS, uchars_buf, *p_len), filename, filename_len);
     *p_len += filename_len;
@@ -5068,7 +5068,7 @@ func_decode(
     if( n_args > (U8) arg_stack_n)
         n_args = (U8) arg_stack_n; /* limit, and see what we can make of it */
 
-    if(xlfExternCall == p_xls_func_entry->xls_func_number)
+    if(BIFF_FN_ExternCall == p_xls_func_entry->biff_function_number)
     {
         /* permute EXTERN.CALL args such that function name moves to TOS and all actual function args move down one */
         P_USTR function_arg = arg_stack[(arg_stack_n - n_args) + 0];
@@ -5085,7 +5085,7 @@ func_decode(
     len_tot += ustrlen32(ustr_t5);
 
 #if 0
-    if(xlfIrr == p_xls_func_entry->xls_func_number)
+    if(BIFF_FN_Irr == p_xls_func_entry->biff_function_number)
     {
         /* SKS create guess arg for IRR() if needed */
         if(n_args == 1)
@@ -5267,7 +5267,7 @@ static STATUS
 xls_decode_formula_ptg_FUNC(void)
 {
     const S32 symR = (cursym & ~0x60) | 0x20; /* convert V and A to corresponding R token */
-    U16 xls_func_number;
+    U16 biff_function_number;
     U8 n_args = 0; /* keep dataflower happy */
     PC_XLS_FUNC_ENTRY p_xls_func_entry = NULL;
 
@@ -5275,11 +5275,11 @@ xls_decode_formula_ptg_FUNC(void)
     {
     case tFuncR:
         if(biff_version >= 4)
-            xls_func_number = xls_read_U16_LE(p_scan + 1);
+            biff_function_number = xls_read_U16_LE(p_scan + 1);
         else /* (biff_version < 4) */
-            xls_func_number = (U16) p_scan[1];
+            biff_function_number = (U16) p_scan[1];
 
-        if(NULL != (p_xls_func_entry = xls_func_lookup(xls_func_number)))
+        if(NULL != (p_xls_func_entry = xls_func_lookup(biff_function_number)))
             n_args = p_xls_func_entry->n_args;
         break;
 
@@ -5290,15 +5290,15 @@ xls_decode_formula_ptg_FUNC(void)
             n_args = (U8) (p_scan[1] & 0x7F);
             if(func_number_word & 0x8000U)
                 break;
-            xls_func_number = (U16) (func_number_word & 0x7FFFU);
+            biff_function_number = (U16) (func_number_word & 0x7FFFU);
         }
         else /* (biff_version < 4) */
         {
             n_args = (U8) p_scan[1];
-            xls_func_number = (U16) p_scan[2];
+            biff_function_number = (U16) p_scan[2];
         }
 
-        p_xls_func_entry = xls_func_lookup(xls_func_number);
+        p_xls_func_entry = xls_func_lookup(biff_function_number);
         break;
 
 #if CHECKING
@@ -5399,7 +5399,7 @@ xls_decode_formula_ptg_OTHER(
         U8 grbit = p_scan[1];
         if(grbit & 0x10)
         {   /* optimised SUM function */
-            PC_XLS_FUNC_ENTRY p_xls_func_entry = xls_func_lookup(xlfSum);
+            PC_XLS_FUNC_ENTRY p_xls_func_entry = xls_func_lookup(BIFF_FN_Sum);
             PTR_ASSERT(p_xls_func_entry);
             status = func_decode(p_xls_func_entry, 1);
         }
@@ -5506,7 +5506,7 @@ xls_decode_formula_result(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     _In_reads_c_(sizeof32(F64)) PC_BYTE p_formula_result)
 {
-    IGNOREPARM(p_xls_load_info);
+    UNREFERENCED_PARAMETER(p_xls_load_info);
 
     if( (0xFF == PtrGetByteOff(p_formula_result, 7)) &&
         (0xFF == PtrGetByteOff(p_formula_result, 6)) )
@@ -5585,7 +5585,7 @@ xls_get_shared_formula(
     else /* (biff_version == 2) */
         tl_col = (XLS_COL) p_formula[3];
 
-    IGNOREPARM_InVal_(formula_len);
+    UNREFERENCED_PARAMETER_InVal_(formula_len);
 
     /* first, try cached offset as they do repeat a LOT */
     if(0 != p_xls_load_info->shared_formula_opcode_offset)
@@ -6460,7 +6460,7 @@ xls_cell_make_from_excel(
     zero_struct(xf_data);
     style_init(&style);
 
-    IGNOREPARM_InVal_(record_length); /* for now, check CONTINUE later */
+    UNREFERENCED_PARAMETER_InVal_(record_length); /* for now, check CONTINUE later */
 
     xls_read_cell_address_r2_c2(p_x, &row, &col);
 
@@ -8257,7 +8257,7 @@ T5_MSG_PROTO(extern, xls_msg_insert_foreign, P_MSG_INSERT_FOREIGN p_msg_insert_f
     XLS_LOAD_INFO xls_load_info;
     zero_struct(xls_load_info);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 == p_msg_insert_foreign->retry_with_this_arg)
     {   /* not a continuation of previous workbook */

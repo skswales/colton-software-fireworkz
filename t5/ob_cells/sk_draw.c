@@ -469,7 +469,7 @@ draw_grid(
 ******************************************************************************/
 
 static void
-draw_this_object(
+draw_these_objects(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     ROW row_s,
     _InVal_     ROW row_e,
@@ -625,7 +625,7 @@ object_background(
     _InoutRef_  P_OBJECT_REDRAW p_object_redraw,
     _InRef_     PC_STYLE p_style)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* only render background if requested */
     if(!p_object_redraw->flags.show_content)
@@ -756,7 +756,7 @@ T5_MSG_PROTO(extern, skel_event_redraw, _InoutRef_ P_SKELEVENT_REDRAW p_skeleven
 {
     ROW_ENTRY row_entry_top;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_4(TRACE_APP_SKEL_DRAW,
             TEXT("skel_rect_redraw pixits tl: ") PIXIT_TFMT TEXT(",") PIXIT_TFMT TEXT(" br: ") PIXIT_TFMT TEXT(",") PIXIT_TFMT,
@@ -801,7 +801,7 @@ T5_MSG_PROTO(extern, skel_event_redraw, _InoutRef_ P_SKELEVENT_REDRAW p_skeleven
                 draw_grid(p_docu, row_entry_top.row, row_entry_bot.row + 1, p_skelevent_redraw);
         }
 
-        draw_this_object(p_docu, row_entry_top.row, row_entry_bot.row + 1, p_skelevent_redraw);
+        draw_these_objects(p_docu, row_entry_top.row, row_entry_bot.row + 1, p_skelevent_redraw);
 
         if(p_skelevent_redraw->redraw_context.flags.printer  ||
            p_skelevent_redraw->redraw_context.flags.metafile ||

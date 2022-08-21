@@ -9,7 +9,7 @@
 |
 If "<Hdr$Path>"="" Then Error AcornC/C++ Tools not yet opened
 |
-If "<t5_root>"<>""  Then Error 0 Please reboot and reselect
+If "<fireworkz_root>"<>""  Then Error 0 Please reboot and reselect
 |
 | SKS iMX6
 If "<disc_root>"="" Then IfThere SCSI::hd4.$.!Boot Then Set disc_root SCSI::hd4.$
@@ -23,15 +23,16 @@ If "<disc_root>"="" Then IfThere SDFS::RISCOSpi.$.!Boot Then Set disc_root SDFS:
 | RPCEmu
 If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
 |
-Set t5_root <disc_root>.fireworkz.trunk
+Set fireworkz_tbt fireworkz__2_10__branch
+Set fireworkz_root <disc_root>.fireworkz.<fireworkz_tbt>
 |
-URD <t5_root>
+URD <fireworkz_root>
 |Lib &.arm.Library
 |Dir &.t5
 |
 | Fireworkz Pro can only be built if R-Comp components are present
-IfThere <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.
-IfThere <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <disc_root>.coltsoft.trunk.cs-nonfree.DataPower.WindLibC.<C$Mode>.
+IfThere <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.
+IfThere <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <disc_root>.coltsoft.<fireworkz_tbt>.cs-nonfree.DataPower.WindLibC.<C$Mode>.
 |
 Set Fireworkz$ReportEnable 1
 Set Fireworkz$TraceEnable 1

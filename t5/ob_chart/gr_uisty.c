@@ -602,7 +602,7 @@ dialog_style_fill_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_fill)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -877,7 +877,7 @@ dialog_style_line_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_line)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1276,7 +1276,7 @@ dialog_style_text_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_text)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1720,7 +1720,7 @@ dialog_chart_margins_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_chart_margins)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1845,7 +1845,7 @@ dialog_chart_legend_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_chart_legend)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {

@@ -416,7 +416,7 @@ T5_MSG_PROTO(static, draw_msg_note_delete, /*_Inout_*/ P_ANY p_data)
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
     ARRAY_INDEX intref = (ARRAY_INDEX) (intptr_t) p_data; /* position in h_drawing_list */
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(array_index_is_valid(&p_draw_instance_data->h_drawing_list, intref))
     {
@@ -444,7 +444,7 @@ T5_MSG_PROTO(static, draw_note_donate, P_NOTE_OBJECT_SNAPSHOT p_note_object_snap
     ARRAY_HANDLE array_handle = 0;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     {
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_drawing_info), TRUE);
@@ -499,7 +499,7 @@ T5_MSG_PROTO(static, draw_msg_note_object_size_query, P_NOTE_OBJECT_SIZE p_note_
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
     const P_DRAWING_INFO p_drawing_info = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, (ARRAY_INDEX) (intptr_t) p_note_object_size->object_data_ref);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_drawing_info->use_image_cache_handle)
     {
@@ -534,8 +534,8 @@ T5_MSG_PROTO(static, draw_msg_note_load_intref_from_extref, P_NOTE_REF p_note_re
 {
     const P_DRAW_LOAD_INSTANCE p_draw_load_instance = collect_goto_item(DRAW_LOAD_INSTANCE, &p_note_ref->p_of_ip_format->object_data_list, OBJECT_ID_DRAW);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != p_draw_load_instance)
     {
@@ -561,7 +561,7 @@ T5_MSG_PROTO(static, draw_msg_note_ensure_embedded, P_NOTE_ENSURE_EMBEDDED p_not
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
     const P_DRAWING_INFO p_drawing_info = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, (ARRAY_INDEX) (intptr_t) p_note_ensure_embedded->object_data_ref);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_drawing_info->tag == DRAWING_REFERENCE)
     {
@@ -653,7 +653,7 @@ T5_MSG_PROTO(static, draw_msg_note_ensure_saved, P_NOTE_ENSURE_SAVED p_note_ensu
     P_DRAW_SAVE_INSTANCE p_draw_save_instance = collect_goto_item(DRAW_SAVE_INSTANCE, &p_of_op_format->object_data_list, (LIST_ITEMNO) object_id);
     P_DRAW_SAVE_MAP p_draw_save_map;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != p_draw_save_instance)
     {
@@ -966,7 +966,7 @@ draw_msg_close2(
 
 T5_MSG_PROTO(static, draw_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -994,7 +994,7 @@ T5_MSG_PROTO(static, draw_event_redraw, P_NOTE_OBJECT_REDRAW p_note_object_redra
 {
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_note_object_redraw->object_redraw.flags.show_content)
     {
@@ -1049,8 +1049,8 @@ T5_MSG_PROTO(static, draw_msg_load_ended, P_OF_IP_FORMAT p_of_ip_format)
 {
     const P_DRAW_LOAD_INSTANCE p_draw_load_instance = collect_goto_item(DRAW_LOAD_INSTANCE, &p_of_ip_format->object_data_list, OBJECT_ID_DRAW);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != p_draw_load_instance)
         al_array_dispose(&p_draw_load_instance->h_mapping_list);
@@ -1060,7 +1060,7 @@ T5_MSG_PROTO(static, draw_msg_load_ended, P_OF_IP_FORMAT p_of_ip_format)
 
 T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_construct_convert)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_construct_convert->p_construct->t5_message)
     {
@@ -1154,7 +1154,7 @@ T5_MSG_PROTO(static, draw_msg_insert_foreign, P_MSG_INSERT_FOREIGN p_msg_insert_
     const BOOL ctrl_pressed = p_msg_insert_foreign->ctrl_pressed;
     BOOL embed_file = global_preferences.embed_inserted_files;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(!image_cache_can_import_with_image_convert(p_msg_insert_foreign->t5_filetype))
         return(create_error(ERR_UNKNOWN_FILETYPE));
@@ -1176,8 +1176,8 @@ T5_MSG_PROTO(static, draw_msg_insert_foreign, P_MSG_INSERT_FOREIGN p_msg_insert_
 
 T5_MSG_PROTO(static, draw_msg_save, _InRef_ PC_MSG_SAVE p_msg_save)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_save->t5_msg_save_message)
     {
@@ -1202,7 +1202,7 @@ T5_MSG_PROTO(static, draw_msg_save_picture, _InRef_ P_MSG_SAVE_PICTURE p_msg_sav
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
     const P_DRAWING_INFO p_drawing_info = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, (ARRAY_INDEX) p_msg_save_picture->extra);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_drawing_info->use_image_cache_handle)
     {
@@ -1238,7 +1238,7 @@ T5_MSG_PROTO(static, draw_msg_save_picture_filetypes_request, _InoutRef_ P_MSG_S
     SAVE_FILETYPE save_filetype;
     zero_struct(save_filetype);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(FILETYPE_UNDETERMINED == p_drawing_info->t5_filetype)
         return(STATUS_OK);

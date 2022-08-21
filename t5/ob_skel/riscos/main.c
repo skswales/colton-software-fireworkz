@@ -343,7 +343,7 @@ t5_signal_handler(int sig)
 static void
 t5_stack_overflow_handler(int sig)
 {
-    IGNOREPARM(sig);
+    UNREFERENCED_PARAMETER(sig);
 
     report_output("*** Stack overflow ***");
 
@@ -455,6 +455,8 @@ t5_wimp_messages[] =
     0 /* terminate list */
 };
 
+int g_current_wm_version = 310;
+
 extern int
 main(
     int argc,
@@ -517,18 +519,15 @@ main(
 
     decode_run_options();
 
-    { /* Startup Window Manager interface */
-    int current_wm_version;
-
+    /* Startup Window Manager interface */
     (void) wimp_initialise(
                 310 /*wm_version*/,
                 de_const_cast(char *, product_ui_id()),
                 de_const_cast(int *, t5_wimp_messages),
-                &current_wm_version,
+                &g_current_wm_version,
                 &g_host_task_handle);
 
-    atexit(window_manager_atexit); /* will need to close our task correctly */
-    } /*block*/
+    atexit(window_manager_atexit); /* will now need to close our task correctly */
 
 #ifdef PROFILING
     /* Task ID may now have changed, so re-register */

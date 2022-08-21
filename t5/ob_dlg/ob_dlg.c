@@ -380,7 +380,7 @@ dialog_cmd_ctl_parent_query(
     if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, p_dialog_cmd_ctl_parent_query->dialog_control_id, &p_parent_ictls)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    IGNOREPARM(p_dialog_ictl);
+    UNREFERENCED_PARAMETER(p_dialog_ictl);
 
     PTR_ASSERT(p_parent_ictls);
 
@@ -763,7 +763,7 @@ dialog_cmd_ctl_size_set(
     _InRef_     P_DIALOG_CMD_CTL_SIZE_SET p_dialog_cmd_ctl_size_set)
 {
     /* no longer required */
-    IGNOREPARM_InRef_(p_dialog_cmd_ctl_size_set);
+    UNREFERENCED_PARAMETER_InRef_(p_dialog_cmd_ctl_size_set);
     return(STATUS_OK);
 }
 
@@ -1429,7 +1429,7 @@ dialog_cmd_hwnd_query(
             return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
         /* otherwise WHAT? */
-        IGNOREPARM(p_dialog_ictl);
+        UNREFERENCED_PARAMETER(p_dialog_ictl);
     }
 
     return(STATUS_OK);
@@ -1731,8 +1731,8 @@ dialog_ictl_edit_xx_encode_here(
 #endif
     if(NULL != p_dialog_ictl_edit_xx->riscos.mlec)
         status_assert(status = mlec_SetText(p_dialog_ictl_edit_xx->riscos.mlec, ustr));
-    IGNOREPARM_InRef_(p_dialog);
-    IGNOREPARM(combo_type);
+    UNREFERENCED_PARAMETER_InRef_(p_dialog);
+    UNREFERENCED_PARAMETER(combo_type);
 #elif WINDOWS
     if(HOST_WND_NONE != p_dialog->hwnd)
     {
@@ -1786,7 +1786,7 @@ dialog_ictl_encode_here(
     _InVal_     S32 bits)
 {
 #if WINDOWS
-    IGNOREPARM_InVal_(bits);
+    UNREFERENCED_PARAMETER_InVal_(bits);
 #endif
 
     {
@@ -2321,8 +2321,8 @@ dialog_event(
 
 T5_MSG_PROTO(static, dialog_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

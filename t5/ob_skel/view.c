@@ -999,20 +999,20 @@ view_default_event(
 
         skelevent_click.click_context = p_viewevent_click->click_context;
 
-        if(t5_message == T5_EVENT_FILEINSERT_DOINSERT)
+        if(T5_EVENT_FILEINSERT_DOINSERT == t5_message)
         {
             skelevent_click.data.fileinsert.filename = p_viewevent_click->data.fileinsert.filename;
             skelevent_click.data.fileinsert.t5_filetype = p_viewevent_click->data.fileinsert.t5_filetype;
             skelevent_click.data.fileinsert.safesource = p_viewevent_click->data.fileinsert.safesource;
         }
 #if WINDOWS && 1
-        else if(t5_message == T5_EVENT_POINTER_MOVEMENT)
+        else if(T5_EVENT_POINTER_MOVEMENT == t5_message)
         {
             /* why did I have this as a special case ? */
             host_set_pointer_shape(POINTER_DEFAULT);
         }
 #endif
-        else if(t5_message == T5_EVENT_POINTER_ENTERS_WINDOW)
+        else if(T5_EVENT_POINTER_ENTERS_WINDOW == t5_message)
         {
             host_set_pointer_shape(POINTER_DEFAULT);
         }
@@ -1086,7 +1086,7 @@ view_default_event(
         P_VIEWEVENT_CLICK p_viewevent_click = (P_VIEWEVENT_CLICK) p_data;
         SKELEVENT_CLICK skelevent_click;
 
-        IGNOREPARM_InRef_(p_ctrl_view_skel);
+        UNREFERENCED_PARAMETER_InRef_(p_ctrl_view_skel);
 
         skelevent_click.click_context = p_viewevent_click->click_context;
 
@@ -1630,7 +1630,7 @@ try_calling(
     _InRef_     PC_REDRAW_TAG_AND_EVENT p_redraw_tag_and_event
     CHECKING_ONLY_ARG(PCTSTR area))
 {
-    CHECKING_ONLY(IGNOREPARM(area));
+    CHECKING_ONLY(UNREFERENCED_PARAMETER(area));
 
     if(p_redraw_tag_and_event->p_proc_event)
     {
@@ -2123,7 +2123,7 @@ view_update_now(
 #if defined(NOTE_LAYER) && 0
     update_now_caller_layer = layer;
 #else
-    IGNOREPARM_InVal_(layer);
+    UNREFERENCED_PARAMETER_InVal_(layer);
 #endif
 
     while(P_VIEW_NONE != (p_view = docu_enum_views(p_docu, &viewno)))
@@ -2146,7 +2146,7 @@ view_update_now_single(
 #if defined(NOTE_LAYER) && 0
     update_now_caller_layer = layer;
 #else
-    IGNOREPARM_InVal_(layer);
+    UNREFERENCED_PARAMETER_InVal_(layer);
 #endif
 
     /* do a reverse bacon slicer on skel_rect, to turn pages into view space */
@@ -2177,7 +2177,7 @@ fast_update_common(
 {
     SKELEVENT_REDRAW skelevent_redraw;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     skelevent_redraw.flags = p_viewevent_redraw->flags;
 
@@ -2251,7 +2251,7 @@ view_update_fast_start(
 
     REDRAW_FLAGS_CLEAR(redraw_flags);
 
-    IGNOREPARM_InVal_(layer);
+    UNREFERENCED_PARAMETER_InVal_(layer);
     DOCU_ASSERT(p_docu);
     PTR_ASSERT(p_skel_rect);
 

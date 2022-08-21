@@ -505,7 +505,7 @@ extern void
 host_clear_tracking_for_window(
     _HwndRef_   HWND hwnd)
 {
-    IGNOREPARM_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
 
     g_current_track_window = NULL;
 }
@@ -853,7 +853,7 @@ maeve_services_ho_win_msg_initclose(
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_ho_win)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -869,8 +869,8 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_ho_win)
 
 PROC_EVENT_PROTO(static, null_event_ho_win)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
 
     switch(t5_message)
     {
@@ -1016,7 +1016,7 @@ host_view_destroy(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     trace_2(TRACE_WINDOWS_HOST, TEXT("host_view_destroy: called to remove windows from p_view ") PTR_XTFMT TEXT(" from p_docu ") PTR_XTFMT, p_view, p_docu);
 
@@ -1101,7 +1101,7 @@ host_view_query_posn(
     GDI_RECT gdi_rect;
     PIXIT_RECT pixit_rect;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     GetWindowRect(p_view->main[WIN_BACK].hwnd, &window_rect);
     gdi_rect.tl.x = window_rect.left;
@@ -1128,7 +1128,7 @@ host_set_extent_this_view(
 {
     GDI_POINT pane_extent;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     window_point_from_pixit_point(&pane_extent, &p_view->paneextent, &p_view->host_xform[XFORM_PANE]);
 
@@ -1183,7 +1183,7 @@ host_settitle(
     _ViewRef_   P_VIEW p_view,
     _In_z_      PCTSTR p_new_title)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     trace_1(TRACE_WINDOWS_HOST, TEXT("host_settitle: set title string for window: '%s'"), p_new_title);
     SetWindowText(p_view->main[WIN_BACK].hwnd, p_new_title);
 }
@@ -2532,7 +2532,7 @@ host_open_global_clipboard(
     HWND hwndClipOwner = NULL;
     BOOL res;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     trace_2(TRACE_WINDOWS_HOST, TEXT("host_open_global_clipboard(docno=%d, viewno=%d)"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
 
     if(!IS_VIEW_NONE(p_view))
@@ -2797,11 +2797,11 @@ host_onButtonUp_dragging(
     GDI_POINT point;
 
     assert(ho_win_state.drag.hwnd == hwnd);
-    IGNOREPARM_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
 
     GetMessagePosAsClient(ho_win_state.drag.hwnd, &point.x, &point.y);
-    IGNOREPARM_InVal_(x);
-    IGNOREPARM_InVal_(y);
+    UNREFERENCED_PARAMETER_InVal_(x);
+    UNREFERENCED_PARAMETER_InVal_(y);
     assert(point.x == x);
     assert(point.y == y);
 
@@ -3011,7 +3011,7 @@ host_onCommand(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    IGNOREPARM_InVal_(codeNotify);
+    UNREFERENCED_PARAMETER_InVal_(codeNotify);
 
     switch(id)
     {
@@ -3516,7 +3516,7 @@ wndproc_host_onMouseHWheel(
     }
     } /*block*/
 
-    IGNOREPARM_HwndRef_(hwnd_in);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd_in);
 
     return(FALSE); /* allow OS to do emulation */
 }
@@ -4330,7 +4330,7 @@ static BOOL
 preprocess_key_event_ESCAPE(
     _DocuRef_   P_DOCU p_docu_for_key)
 {
-    IGNOREPARM_DocuRef_(p_docu_for_key);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu_for_key);
 
     host_key_buffer_flush();
 
@@ -4379,7 +4379,7 @@ send_key_to_docu(
             if(preprocess_key_event_ESCAPE(p_docu))
                 return(1 /*processed*/);
 
-        fn_key = (t5_message != T5_EVENT_NONE);
+        fn_key = (T5_EVENT_NONE != t5_message);
 
         if(!fn_key)
         {
@@ -4528,7 +4528,7 @@ send_mouse_event(
     VIEWEVENT_CLICK viewevent_click;
     zero_struct(viewevent_click);
 
-    if((t5_message == T5_EVENT_NONE) || (NULL == p_host_event_desc->p_proc_event))
+    if((T5_EVENT_NONE == t5_message) || (NULL == p_host_event_desc->p_proc_event))
         return;
 
     gdi_point.x = x;
@@ -4564,13 +4564,13 @@ send_mouse_event(
     hard_assert(FALSE);
 
     /* start a triple click timer if double just broadcast */
-    if((t5_message == T5_EVENT_CLICK_LEFT_DOUBLE) || (t5_message == T5_EVENT_CLICK_RIGHT_DOUBLE))
+    if((T5_EVENT_CLICK_LEFT_DOUBLE == t5_message) || (T5_EVENT_CLICK_RIGHT_DOUBLE == t5_message))
         enable_triple_click(hwnd, x, y);
-    else if(t5_message != T5_EVENT_POINTER_MOVEMENT)
+    else if(T5_EVENT_POINTER_MOVEMENT != t5_message)
         disable_triple_click();
 
     /* if its a drag starting then tell the client about it */
-    if(((t5_message == T5_EVENT_CLICK_LEFT_DRAG) || (t5_message == T5_EVENT_CLICK_RIGHT_DRAG)) && (ho_win_state.drag.enabled))
+    if(((T5_EVENT_CLICK_LEFT_DRAG == t5_message) || (T5_EVENT_CLICK_RIGHT_DRAG == t5_message)) && (ho_win_state.drag.enabled))
     {
         ho_win_state.drag.start_pixit_point = viewevent_click.view_point.pixit_point;
         send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_STARTED, hwnd, x, y, ctrl_pressed, shift_pressed, event_handler);
@@ -4874,7 +4874,7 @@ host_update_all(
     int index[2], i;
     HWND hwnd;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(redraw_tag)
     {
@@ -5102,7 +5102,7 @@ host_update_fast_continue(
     const P_REDRAW_CONTEXT p_redraw_context = &p_viewevent_redraw->redraw_context;
     const P_VIEW p_view = p_redraw_context->p_view;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     trace_0(TRACE_WINDOWS_HOST, TEXT("host_update_fast_continue: **** EXITING FAST UPDATE ****"));
 
@@ -5135,7 +5135,7 @@ host_update_fast_start(
 {
     const P_VIEW p_view = p_view_rect->p_view;
 
-    IGNOREPARM_InVal_(redraw_tag);
+    UNREFERENCED_PARAMETER_InVal_(redraw_tag);
 
     zero_struct_ptr(p_viewevent_redraw);
 
@@ -5252,7 +5252,7 @@ host_view_minimize(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     ShowWindow(p_view->main[WIN_BACK].hwnd, SW_MINIMIZE);
 }
 
@@ -5263,7 +5263,7 @@ host_view_maximize(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     ShowWindow(p_view->main[WIN_BACK].hwnd, SW_SHOWMAXIMIZED);
 }
 

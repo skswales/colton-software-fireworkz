@@ -219,7 +219,7 @@ extern P_PROC_OBJECT
 t5_glued_object(
     _InVal_     OBJECT_ID object_id)
 {
-    IGNOREPARM_InVal_(object_id); /* there are times when this is really never used */
+    UNREFERENCED_PARAMETER_InVal_(object_id); /* there are times when this is really never used */
 
     switch(object_id)
     {

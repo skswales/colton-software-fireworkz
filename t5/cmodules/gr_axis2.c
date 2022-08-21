@@ -385,7 +385,7 @@ gr_axis_form_value_lin(
     F64 exponent;
     F64 mantissa = splitlognum(&log10_major, &exponent);
     int decimals = (int) floor(exponent);
-    IGNOREPARM(mantissa);
+    UNREFERENCED_PARAMETER(mantissa);
     p_axis->major.bits.decimals = (decimals < 0) ? -decimals : 0;
     } /*block*/
 

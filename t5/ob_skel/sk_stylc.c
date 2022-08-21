@@ -424,8 +424,8 @@ PROC_STYLE_DATA_FROM_INLINE_PROTO(proc_style_ps_tab_list_data_from_inline)
     SC_ARRAY_INIT_BLOCK tab_init_block = aib_init(1, sizeof32(TAB_INFO), TRUE);
     P_TAB_INFO p_tab_info;
 
-    IGNOREPARM_CONST(p_docu);
-    IGNOREPARM_CONST(p_style_encoding);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_style_encoding);
 
     if(NULL != (p_tab_info = al_array_alloc(&p_style->para_style.h_tab_list, TAB_INFO, list_elements, &tab_init_block, &status)))
     {
@@ -443,7 +443,7 @@ PROC_STYLE_INLINE_FROM_DATA_PROTO(proc_style_ps_tab_list_inline_from_data)
 {
     STATUS status;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     status = inline_quick_ublock_from_data(p_quick_ublock,
                                             p_style_encoding->inline_id,
@@ -459,7 +459,7 @@ PROC_STYLE_DATA_FROM_INLINE_PROTO(proc_style_numform_data_from_inline)
     STATUS status;
     P_ARRAY_HANDLE_USTR p_array_handle_ustr = PtrAddBytes(P_ARRAY_HANDLE_USTR, p_style, p_style_encoding->member_offset);
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     status = al_ustr_set(p_array_handle_ustr, inline_data_ptr(PC_USTR, ustr_inline));
 
@@ -471,7 +471,7 @@ PROC_STYLE_INLINE_FROM_DATA_PROTO(proc_style_numform_inline_from_data)
     STATUS status;
     PC_ARRAY_HANDLE_USTR p_array_handle_ustr = PtrAddBytes(PC_ARRAY_HANDLE_USTR, p_style, p_style_encoding->member_offset);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(IL_TYPE_USTR == p_style_encoding->inline_data_type);
 
@@ -489,7 +489,7 @@ PROC_STYLE_DATA_FROM_INLINE_PROTO(proc_style_app_font_name_data_from_inline)
     PC_USTR ustr = inline_data_ptr(PC_USTR, ustr_inline);
     PCTSTR tstr = _tstr_from_ustr(ustr);
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     *p_array_handle_tstr = 0;
 
@@ -506,7 +506,7 @@ PROC_STYLE_DATA_FROM_INLINE_PROTO(proc_style_tstr_data_from_inline)
     PC_USTR ustr = inline_data_ptr(PC_USTR, ustr_inline);
     PCTSTR tstr = _tstr_from_ustr(ustr);
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     *p_array_handle_tstr = 0;
 
@@ -522,7 +522,7 @@ PROC_STYLE_INLINE_FROM_DATA_PROTO(proc_style_tstr_inline_from_data)
     PC_ARRAY_HANDLE_TSTR p_array_handle_tstr = PtrAddBytes(PC_ARRAY_HANDLE_TSTR, p_style, p_style_encoding->member_offset);
     PC_USTR ustr = array_elements(p_array_handle_tstr) ? _ustr_from_tstr(array_tstr(p_array_handle_tstr)) : ustr_empty_string;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(IL_TYPE_USTR == p_style_encoding->inline_data_type);
 
@@ -541,7 +541,7 @@ PROC_STYLE_INLINE_FROM_DATA_PROTO(proc_style_tstr_inline_from_data)
 
 PROC_STYLE_COMPARE_NEQ_PROTO(proc_style_ps_tab_list_compare_neq)
 {
-    IGNOREPARM_InRef_(p_style_encoding);
+    UNREFERENCED_PARAMETER_InRef_(p_style_encoding);
 
     if(p_style_1->para_style.h_tab_list == p_style_2->para_style.h_tab_list)
         return(FALSE);
@@ -576,7 +576,7 @@ PROC_STYLE_COMPARE_NEQ_PROTO(proc_style_colour_compare_neq)
 
 PROC_STYLE_COMPARE_NEQ_PROTO(proc_style_line_space_compare_neq)
 {
-    IGNOREPARM_InRef_(p_style_encoding);
+    UNREFERENCED_PARAMETER_InRef_(p_style_encoding);
 
     return(!(p_style_1->para_style.line_space.type    == p_style_2->para_style.line_space.type &&
              p_style_1->para_style.line_space.leading == p_style_2->para_style.line_space.leading));
@@ -1034,7 +1034,7 @@ PROC_STYLE_TEXT_PROTO(proc_style_text_font_name)
     PC_ARRAY_HANDLE p_array_handle = (PC_ARRAY_HANDLE) p_member;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     if(status_ok(status = quick_ublock_a7char_add(p_quick_ublock, CH_SPACE)))
     {
@@ -1059,7 +1059,7 @@ PROC_STYLE_TEXT_PROTO(proc_style_text_justify)
     PC_U8 p_arg = (PC_U8) p_member;
     STATUS message_no;
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     switch(p_arg[0])
     {
@@ -1098,7 +1098,7 @@ PROC_STYLE_TEXT_PROTO(proc_style_text_justify_v)
     PC_U8 p_arg = (P_U8) p_member;
     STATUS message_no;
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     switch(p_arg[0])
     {
@@ -1128,9 +1128,9 @@ PROC_STYLE_TEXT_PROTO(proc_style_text_justify_v)
 
 PROC_STYLE_TEXT_PROTO(proc_style_text_none)
 {
-    IGNOREPARM_CONST(p_docu);
-    IGNOREPARM_InoutRef_(p_quick_ublock);
-    IGNOREPARM_InRef_(p_member);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
+    UNREFERENCED_PARAMETER_InoutRef_(p_quick_ublock);
+    UNREFERENCED_PARAMETER_InRef_(p_member);
 
     return(STATUS_OK);
 }
@@ -1145,7 +1145,7 @@ PROC_STYLE_TEXT_PROTO(proc_style_text_on_off)
 {
     PC_U8 p_arg = (PC_U8) p_member;
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     /* read text */
     return(resource_lookup_quick_ublock(p_quick_ublock, *p_arg ? MSG_STYLE_TEXT_ON : MSG_STYLE_TEXT_OFF));
@@ -1161,7 +1161,7 @@ PROC_STYLE_TEXT_PROTO(proc_style_text_points)
 {
     PC_PIXIT p_pixit = (PC_PIXIT) p_member;
 
-    IGNOREPARM_CONST(p_docu);
+    UNREFERENCED_PARAMETER_CONST(p_docu);
 
     return(quick_ublock_printf(p_quick_ublock, USTR_TEXT(" " S32_FMT), (S32) *p_pixit / PIXITS_PER_POINT));
 }

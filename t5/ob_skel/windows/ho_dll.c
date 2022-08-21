@@ -66,8 +66,8 @@ maeve_services_ho_dll_msg_initclose(
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_ho_dll)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

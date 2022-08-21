@@ -425,7 +425,7 @@ T5_MSG_PROTO(static, ruler_horz_event_click_left_single, _InoutRef_ P_SKELEVENT_
     RULER_MARKER ruler_marker;
     ARRAY_INDEX tab_number; /* valid iff ruler_marker is TAB_xxx */
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_skelevent_click->processed = 1;
 
@@ -456,9 +456,9 @@ T5_MSG_PROTO(static, ruler_horz_event_click_left_single, _InoutRef_ P_SKELEVENT_
 
 T5_MSG_PROTO(static, ruler_horz_event_click_right_single, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InoutRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InoutRef_(p_skelevent_click);
 
     return(STATUS_OK);
 }
@@ -541,7 +541,7 @@ T5_MSG_PROTO(static, ruler_horz_event_click_left_double, _InoutRef_ P_SKELEVENT_
     RULER_MARKER ruler_marker;
     ARRAY_INDEX tab_number;    /* valid iff ruler_marker is TAB_xxx */
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_skelevent_click->processed = 1;
 
@@ -637,7 +637,7 @@ T5_MSG_PROTO(static, ruler_horz_event_click_right_double, _InoutRef_ P_SKELEVENT
     RULER_MARKER ruler_marker;
     ARRAY_INDEX tab_number;    /* valid iff ruler_marker is TAB_xxx */
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_skelevent_click->processed = 1;
 
@@ -833,10 +833,10 @@ T5_MSG_PROTO(static, ruler_horz_event_click_drag_finished, _InRef_ P_SKELEVENT_C
 
 T5_MSG_PROTO(static, ruler_horz_event_click_pointer_movement, _InRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_v0(TRACE_APP_CLICK,
-            (t5_message == T5_EVENT_POINTER_ENTERS_WINDOW)
+            (T5_EVENT_POINTER_ENTERS_WINDOW == t5_message)
                 ? TEXT("edge_window_event_ruler_horz T5_EVENT_POINTER_ENTERS_WINDOW")
                 : TEXT("edge_window_event_ruler_horz T5_EVENT_POINTER_MOVEMENT"));
 
@@ -847,8 +847,8 @@ T5_MSG_PROTO(static, ruler_horz_event_click_pointer_movement, _InRef_ P_SKELEVEN
 
 T5_MSG_PROTO(static, ruler_horz_event_click_pointer_leaves_window, _InRef_ PC_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_skelevent_click);
 
     trace_0(TRACE_APP_CLICK, TEXT("edge_window_event_ruler_horz T5_EVENT_POINTER_LEAVES_WINDOW"));
 
@@ -1016,7 +1016,7 @@ T5_MSG_PROTO(static, ruler_horz_event_redraw, _InoutRef_ P_SKELEVENT_REDRAW p_sk
     PIXIT_LINE base_line;
     HORZ_MARGINS_INFO margins_info;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert((p_skelevent_redraw->clip_skel_rect.tl.page_num.x == p_skelevent_redraw->clip_skel_rect.br.page_num.x) &&
            (p_skelevent_redraw->clip_skel_rect.tl.page_num.y == p_skelevent_redraw->clip_skel_rect.br.page_num.y));
@@ -1414,7 +1414,7 @@ ruler_horz_drag_limits(
         tracker = col_edge_left + column_width - p_col_info->margin_right;
         p_horz_blk->tracking.ruler_marker = RULER_MARKER_MARGIN_RIGHT;
 
-        p_horz_blk->dragging_single = (t5_message == T5_EVENT_CLICK_LEFT_DRAG);
+        p_horz_blk->dragging_single = (T5_EVENT_CLICK_LEFT_DRAG == t5_message);
 
         if(!p_horz_blk->dragging_single)
         {
@@ -1463,7 +1463,7 @@ ruler_horz_drag_limits(
         p_horz_blk->min_limit = col_edge_left + p_col_info->margin_left + MIN(p_col_info->margin_para, 0);
         p_horz_blk->max_limit = col_edge_left + column_width - p_col_info->margin_right;
 
-        p_horz_blk->dragging_single = (t5_message == T5_EVENT_CLICK_RIGHT_DRAG);
+        p_horz_blk->dragging_single = (T5_EVENT_CLICK_RIGHT_DRAG == t5_message);
 
         if(!p_horz_blk->dragging_single)
             p_horz_blk->update_rect_flags.extend_right_window = TRUE; /* drags other tabs around with it */
@@ -2171,7 +2171,7 @@ T5_MSG_PROTO(static, ruler_vert_event_click_left_double, _InoutRef_ P_SKELEVENT_
 {
     RULER_MARKER ruler_marker;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_skelevent_click->processed = 1;
 
@@ -2191,9 +2191,9 @@ T5_MSG_PROTO(static, ruler_vert_event_click_left_double, _InoutRef_ P_SKELEVENT_
 
 T5_MSG_PROTO(static, ruler_vert_event_click_right_double, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InoutRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InoutRef_(p_skelevent_click);
 
     return(STATUS_OK);
 }
@@ -2213,7 +2213,7 @@ T5_MSG_PROTO(static, ruler_vert_event_click_left_drag, _InoutRef_ P_SKELEVENT_CL
 {
     RULER_MARKER ruler_marker;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_skelevent_click->processed = 1;
 
@@ -2241,9 +2241,9 @@ T5_MSG_PROTO(static, ruler_vert_event_click_left_drag, _InoutRef_ P_SKELEVENT_CL
 
 T5_MSG_PROTO(static, ruler_vert_event_click_right_drag, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InoutRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InoutRef_(p_skelevent_click);
 
     return(STATUS_OK);
 }
@@ -2264,7 +2264,7 @@ T5_MSG_PROTO(static, ruler_vert_event_click_drag_movement_adjust_marker_position
     const P_CB_DATA_RULER_VERT_ADJUST_MARKER_POSITION p_vert_blk = (P_CB_DATA_RULER_VERT_ADJUST_MARKER_POSITION) p_skelevent_click->data.drag.p_reason_data;
     BOOL show = 1;
 
-    if(t5_message == T5_EVENT_CLICK_DRAG_MOVEMENT)
+    if(T5_EVENT_CLICK_DRAG_MOVEMENT == t5_message)
     {
         PIXIT value = click_stop_limited(p_vert_blk->init_value + p_skelevent_click->data.drag.pixit_delta.y,
                                          p_vert_blk->min_limit, p_vert_blk->max_limit, p_vert_blk->click_stop_origin, &p_vert_blk->click_stop_step);
@@ -2331,7 +2331,7 @@ T5_MSG_PROTO(static, ruler_vert_event_click_drag_finished_adjust_marker_position
     const P_CB_DATA_RULER_VERT_ADJUST_MARKER_POSITION p_vert_blk = (P_CB_DATA_RULER_VERT_ADJUST_MARKER_POSITION) p_skelevent_click->data.drag.p_reason_data;
     STATUS status = STATUS_OK;
 
-    if(t5_message == T5_EVENT_CLICK_DRAG_FINISHED)
+    if(T5_EVENT_CLICK_DRAG_FINISHED == t5_message)
     {
         PIXIT value = click_stop_limited(p_vert_blk->init_value + p_skelevent_click->data.drag.pixit_delta.y,
                                          p_vert_blk->min_limit, p_vert_blk->max_limit, p_vert_blk->click_stop_origin, &p_vert_blk->click_stop_step);
@@ -2341,7 +2341,7 @@ T5_MSG_PROTO(static, ruler_vert_event_click_drag_finished_adjust_marker_position
         else
             status = ruler_vert_drag_apply(p_docu, p_vert_blk->ruler_marker, p_vert_blk->pag, value - p_vert_blk->init_value);
     }
-    else /* T5_EVENT_CLICK_DRAG_ABORTED */
+    else /* (T5_EVENT_CLICK_DRAG_ABORTED == t5_message) */
     {
         SKEL_RECT skel_rect;
         RECT_FLAGS rect_flags;
@@ -2383,10 +2383,10 @@ T5_MSG_PROTO(static, ruler_vert_event_click_drag_finished, _InRef_ P_SKELEVENT_C
 
 T5_MSG_PROTO(static, ruler_vert_event_click_pointer_movement, _InRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_v0(TRACE_APP_CLICK,
-            (t5_message == T5_EVENT_POINTER_ENTERS_WINDOW)
+            (T5_EVENT_POINTER_ENTERS_WINDOW == t5_message)
                 ? TEXT("edge_window_event_ruler_vert T5_EVENT_POINTER_ENTERS_WINDOW")
                 : TEXT("edge_window_event_ruler_vert T5_EVENT_POINTER_MOVEMENT"));
 
@@ -2398,8 +2398,8 @@ T5_MSG_PROTO(static, ruler_vert_event_click_pointer_movement, _InRef_ P_SKELEVEN
 
 T5_MSG_PROTO(static, ruler_vert_event_click_pointer_leaves_window, _InRef_ PC_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_skelevent_click);
 
     trace_0(TRACE_APP_CLICK, TEXT("edge_window_event_ruler_vert T5_EVENT_POINTER_LEAVES_WINDOW"));
 
@@ -2746,7 +2746,7 @@ T5_MSG_PROTO(static, ruler_vert_event_redraw, _InoutRef_ P_SKELEVENT_REDRAW p_sk
     PIXIT_LINE base_line;
     VERT_MARGINS_INFO margins_info;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert((p_skelevent_redraw->clip_skel_rect.tl.page_num.x == p_skelevent_redraw->clip_skel_rect.br.page_num.x) &&
            (p_skelevent_redraw->clip_skel_rect.tl.page_num.y == p_skelevent_redraw->clip_skel_rect.br.page_num.y));
@@ -3062,7 +3062,7 @@ MAEVE_EVENT_PROTO(static, maeve_event_ob_ruler)
 {
     const STATUS status = STATUS_OK;
 
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -3346,7 +3346,7 @@ ruler_msg_close1(
 
 T5_MSG_PROTO(static, ruler_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

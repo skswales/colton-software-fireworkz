@@ -29,11 +29,11 @@ internal functions
 
 #if defined(UNUSED) || 0
 T5_CMD_PROTO(static, t5_cmd_test);
-#endif
+#endif /* UNUSED */
 
 T5_MSG_PROTO(static, skel_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -97,7 +97,7 @@ T5_CMD_PROTO(static, t5_cmd_auto_save)
 {
     S32 auto_save_period_minutes = 0;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {
@@ -114,8 +114,8 @@ T5_CMD_PROTO(static, t5_cmd_trace)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
 #if TRACE_ALLOWED
     if(p_args[0].val.s32)
@@ -123,7 +123,7 @@ T5_CMD_PROTO(static, t5_cmd_trace)
     else
         trace_off();
 #else
-    IGNOREPARM_CONST(p_args);
+    UNREFERENCED_PARAMETER_CONST(p_args);
 #endif
 
     return(STATUS_OK);
@@ -147,7 +147,7 @@ T5_MSG_PROTO(static, t5_msg_skelcmd_view_destroy, P_SKELCMD_CLOSE_VIEW p_skelcmd
 {
     DOCNO docno = docno_from_p_docu(p_docu);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     view_destroy(p_docu, p_skelcmd_close_view->p_view);
 
@@ -172,8 +172,8 @@ create_error_from_tstr(
 
 T5_MSG_PROTO(static, skel_error_get, _InoutRef_ P_MSG_ERROR_RQ p_msg_error_rq)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(CH_NULL == error_from_tstr_buffer[0])
     {   /* no error to be returned */
@@ -204,7 +204,7 @@ T5_CMD_PROTO(static, t5_cmd_numform_data)
     P_NUMFORM_CONTEXT p_numform_context = p_docu->p_numform_context;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_numform_context)
     {
@@ -310,7 +310,7 @@ T5_CMD_PROTO(static, t5_cmd_numform_load)
     P_USTR ustr_numform_arg_opt = NULL;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, 1))
         status = alloc_block_ustr_set(&ustr_numform_arg, p_args[1].val.ustr, &p_docu->general_string_alloc_block);
@@ -339,8 +339,8 @@ T5_CMD_PROTO(static, t5_cmd_ss_context)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 10);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     g_ss_recog_context_alt.thousands_char           = PtrGetByte(p_args[0].val.ustr);
     g_ss_recog_context_alt.decimal_point_char       = PtrGetByte(p_args[1].val.ustr);
@@ -363,7 +363,7 @@ T5_MSG_PROTO(static, t5_msg_insert_ownform, P_MSG_INSERT_OWNFORM p_msg_insert_ow
     OF_IP_FORMAT of_ip_format = OF_IP_FORMAT_INIT;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_insert_ownform->t5_filetype)
     {
@@ -409,8 +409,8 @@ T5_MSG_PROTO(static, t5_msg_load_ended, P_OF_IP_FORMAT p_of_ip_format)
 {
     ARRAY_INDEX i;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* throw away renamed style info */
     for(i = 0; i < array_elements(&p_of_ip_format->renamed_styles); ++i)
@@ -431,8 +431,8 @@ T5_CMD_PROTO(static, t5_cmd_object_ensure)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
     const OBJECT_ID object_id = p_args[0].val.object_id;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(object_load(object_id));
 }
@@ -442,7 +442,7 @@ T5_CMD_PROTO(static, t5_cmd_selection_make)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, ARG_DOCU_AREA_N_ARGS);
     DOCU_AREA docu_area;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     docu_area_init(&docu_area);
 
@@ -474,9 +474,9 @@ T5_CMD_PROTO(static, t5_cmd_selection_make)
 
 T5_CMD_PROTO(static, t5_cmd_nyi)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     return(create_error(ERR_NYI));
 }
@@ -961,7 +961,7 @@ OBJECT_PROTO(extern, object_skel)
 #if defined(UNUSED) || 0
     case T5_CMD_TEST:
         return(t5_cmd_test(p_docu, t5_message, (PC_T5_CMD) p_data));
-#endif
+#endif /* UNUSED */
     }
 }
 
@@ -1240,9 +1240,9 @@ status_check(void)
 T5_CMD_PROTO(static, t5_cmd_test)
 {
     STATUS status = STATUS_OK;
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     return(status);
 }
 

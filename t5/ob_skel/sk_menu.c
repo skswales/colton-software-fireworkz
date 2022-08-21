@@ -366,7 +366,7 @@ sk_menu_msg_init1(
 #if defined(MENU_SAVE_ENABLED)
     return(maeve_event_handler_add(p_docu, maeve_event_sk_menu, (CLIENT_HANDLE) 0));
 #else
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     return(STATUS_OK);
 #endif /* MENU_SAVE_ENABLED */
 }
@@ -427,8 +427,8 @@ maeve_services_sk_menu_msg_initclose(
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_menu);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_menu)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -649,7 +649,7 @@ T5_CMD_PROTO(extern, t5_cmd_menu_delete)
     PCTSTR tstr_entry_text;
     P_MENU_ROOT p_menu_root;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, ARG_MENU_DELETE_ENTRY))
         tstr_entry_text = p_args[ARG_MENU_DELETE_ENTRY].val.tstr;
@@ -726,7 +726,7 @@ T5_CMD_PROTO(extern, t5_cmd_menu_name)
     PCTSTR tstr_entry_text = p_args[ARG_MENU_NAME_ENTRY].val.tstr;
     P_MENU_ROOT p_menu_root;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(search_for_root(p_docu, tstr_menu_name, &p_menu_root))
         tstr_xstrkpy(p_menu_root->name, elemof32(p_menu_root->name), tstr_entry_text);

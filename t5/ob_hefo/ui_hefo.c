@@ -1144,7 +1144,7 @@ dialog_page_hefo_break_values_ctl_state_change(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_page_hefo_break_values)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1373,7 +1373,7 @@ T5_CMD_PROTO(extern, t5_cmd_page_hefo_break_values_interactive)
     PAGE_HEFO_SELECTOR selector;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     page_hefo_break_values_callback.row = row;
 

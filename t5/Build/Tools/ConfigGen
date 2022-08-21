@@ -455,6 +455,7 @@ REM PROCco(f%,"DefineKey:^!C"+asp$+"Button:JUSTIFY_CENTRE")
 REM PROCco(f%,"DefineKey:^!F"+asp$+"Button:JUSTIFY_FULL")
 REM PROCco(f%,"DefineKey:^!L"+asp$+"Button:JUSTIFY_LEFT")
 REM PROCco(f%,"DefineKey:^!R"+asp$+"Button:JUSTIFY_RIGHT")
+PROCco(f%,"DefineKey:^!D"+asp$+"InsertFieldIntroDate")
 PROCco(f%,"DefineKey:^!V"+asp$+"Button:VIEW")
 PROCco(f%,"DefineKey:^!X"+asp$+"Button:BOX"): REM ^!X as alias for ^!B
 PROCco(f%,"DefineKey:^!Z"+asp$+"Button:CHART")

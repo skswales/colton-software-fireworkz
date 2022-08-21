@@ -19,8 +19,8 @@
 %Access                                                 <t5$Disc>.Z.Resource.Choices.* r/r
 
 %CDir                                                   <t5$Disc>.Z.Resource.Dicts
-%Copy <t5_root>.t5.ob_spell.resource.dicts.master       <t5$Disc>.Z.Resource.Dicts.Master  f~cln~v
-%Copy <t5_root>.t5.ob_spell.resource.dicts.masterc      <t5$Disc>.Z.Resource.Dicts.MasterC f~cln~v
+%Copy <fireworkz_root>.t5.ob_spell.resource.dicts.master  <t5$Disc>.Z.Resource.Dicts.Master  f~cln~v
+%Copy <fireworkz_root>.t5.ob_spell.resource.dicts.masterc <t5$Disc>.Z.Resource.Dicts.MasterC f~cln~v
 %Access                                                 <t5$Disc>.Z.Resource.Dicts.* r/r
 
 %CDir                                                   <t5$Disc>.Z.Resource.Markers
@@ -53,8 +53,8 @@
 
 | not enough room on disc 2 for floppy users to have user dictionaries
 |%CDir                                                   <t5$Disc>.Z.User.Dicts
-|%Copy <t5_root>.t5.ob_spell.resource.dicts.user         <t5$Disc>.Z.User.Dicts.User  f~cln~v
-|%Copy <t5_root>.t5.ob_spell.resource.dicts.userc        <t5$Disc>.Z.User.Dicts.UserC f~cln~v
+|%Copy <fireworkz_root>.t5.ob_spell.resource.dicts.user  <t5$Disc>.Z.User.Dicts.User  f~cln~v
+|%Copy <fireworkz_root>.t5.ob_spell.resource.dicts.userc <t5$Disc>.Z.User.Dicts.UserC f~cln~v
 |%Access                                                 <t5$Disc>.Z.User.Dicts.* wr/r
 
 | >>> if desperate for space start to lose these three

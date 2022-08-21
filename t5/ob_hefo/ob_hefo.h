@@ -68,7 +68,7 @@ _p_data_from_hefo_block(
     CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 bytesof_elem))
 {
     assert(HEFO_BLOCK_MAGIC == p_hefo_block->magic);
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
     return((P_BYTE) p_hefo_block->p_data);
 }
 

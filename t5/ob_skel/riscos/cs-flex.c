@@ -278,7 +278,7 @@ flex_set_budge(int newstate)
     if(flex_.area_num)
         return(-1);
 
-    IGNOREPARM(newstate);
+    UNREFERENCED_PARAMETER_InVal_(newstate);
     assert(0 == newstate);
     return(0);
 }
@@ -330,7 +330,7 @@ flex_msgs_lookup(
 static void
 flex__fail(int i)
 {
-   IGNOREPARM(i);
+   UNREFERENCED_PARAMETER_InVal_(i);
    flex_werr(FALSE, flex_msgs_lookup(MSGS_flex1)); /* don't abort */
 }
 
@@ -568,7 +568,7 @@ flex_init(
     int *error_fd,
     int dynamic_size)
 {
-    IGNOREPARM(error_fd);
+    UNREFERENCED_PARAMETER(error_fd);
 
     {
     _kernel_swi_regs rs;
@@ -617,7 +617,7 @@ flex_set_budge(int newstate)
     if(flex_.area_num)
         return(-1);
 
-    IGNOREPARM(newstate);
+    UNREFERENCED_PARAMETER_InVal_(newstate);
     assert(0 == newstate);
     return(0);
 }

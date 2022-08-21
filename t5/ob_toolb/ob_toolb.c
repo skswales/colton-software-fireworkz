@@ -167,7 +167,7 @@ T5_MSG_PROTO(static, toolbar_msg_view_destroy, _InRef_ P_T5_MSG_VIEW_DESTROY_BLO
 {
     const P_VIEW p_view = p_t5_msg_view_destroy_block->p_view;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_line_view_dispose(p_view);
 
@@ -180,7 +180,7 @@ T5_MSG_PROTO(static, toolbar_msg_view_new, _InRef_ P_T5_MSG_VIEW_NEW_BLOCK p_t5_
 {
     const P_VIEW p_view = p_t5_msg_view_new_block->p_view;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(status_line_view_new(p_docu, p_view));
 
@@ -402,7 +402,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_disable, _InRef_ PC_T5_TOOLBAR_TOOL_DISABL
 {
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, p_t5_toolbar_tool_disable->name);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
         return(create_error(TOOLB_ERR_UNKNOWN_CONTROL));
@@ -448,7 +448,7 @@ _tool_enable(
 
 T5_MSG_PROTO(static, msg_toolbar_tool_enable, _InRef_ PC_T5_TOOLBAR_TOOL_ENABLE p_t5_toolbar_tool_enable)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(_tool_enable(p_docu, p_t5_toolbar_tool_enable));
 }
@@ -457,7 +457,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_enable_query, _InoutRef_ P_T5_TOOLBAR_TOOL
 {
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, p_t5_toolbar_tool_enable_query->name);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
     {
@@ -626,7 +626,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_nobble, _InRef_ PC_T5_TOOLBAR_TOOL_NOBBLE 
     const PC_USTR name = p_t5_toolbar_tool_nobble->name;
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, name);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
         return(/*create_error*/(TOOLB_ERR_UNKNOWN_CONTROL));
@@ -659,7 +659,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_query, _InoutRef_ P_T5_TOOLBAR_TOOL_QUERY 
 {
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, p_t5_toolbar_tool_query->name);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
         return(create_error(TOOLB_ERR_UNKNOWN_CONTROL));
@@ -990,7 +990,7 @@ do_paint_tool(
     RECT rect;
     UINT uState;
 
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 
     (void) RECT_limited_from_pixit_rect_and_context(&rect, &tool_rect, p_redraw_context);
 
@@ -1135,13 +1135,13 @@ redraw_tool(
     skel_rect.br.page_num.x = 0;
     skel_rect.br.page_num.y = 0;
 
-    REDRAW_FLAGS_CLEAR(redraw_flags);
     RECT_FLAGS_CLEAR(rect_flags);
+    REDRAW_FLAGS_CLEAR(redraw_flags);
     view_update_now_single(p_docu, p_view, UPDATE_BACK_WINDOW, &skel_rect, rect_flags, redraw_flags, LAYER_TOOLBAR);
 
 #elif WINDOWS
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(HOST_WND_NONE != p_view->main[WIN_TOOLBAR].hwnd)
     {
@@ -1379,7 +1379,7 @@ T5_MSG_PROTO(static, paint_toolbar_riscos, _InoutRef_ P_SKELEVENT_REDRAW p_skele
     BOOL paint_status_line = !global_preferences.disable_status_line;
     BOOL first_time = TRUE;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     redraw_clip_pixit_rect.tl = p_skelevent_redraw->clip_skel_rect.tl.pixit_point;
     redraw_clip_pixit_rect.br = p_skelevent_redraw->clip_skel_rect.br.pixit_point;
@@ -1859,10 +1859,10 @@ T5_MSG_PROTO(static, scheduled_toolbar_redraw, P_SCHEDULED_EVENT_BLOCK p_schedul
     P_VIEW p_view;
     const PC_DOCU p_docu_for_unpack = viewid_unpack((U32) p_scheduled_event_block->client_handle, &p_view, &u16_row);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_docu_for_unpack == p_docu);
-    IGNOREPARM_CONST(p_docu_for_unpack);
+    UNREFERENCED_PARAMETER_CONST(p_docu_for_unpack);
 
     /* check for this on any of the toolbar events - it's of much greater priority */
     if(p_view->toolbar.nobble_scheduled_event_id)
@@ -1915,7 +1915,7 @@ T5_MSG_PROTO(static, msg_toolbar_tool_set, _InRef_ PC_T5_TOOLBAR_TOOL_SET p_t5_t
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, p_t5_toolbar_tool_set->name);
     BOOL same = TRUE;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
         return(create_error(TOOLB_ERR_UNKNOWN_CONTROL));
@@ -1960,8 +1960,8 @@ status_line_view_update(
     skel_rect.tl.pixit_point.y += (PIXITS_PER_RISCOS) << host_modevar_cache_current.YEig;
     skel_rect.br.pixit_point.y -= (PIXITS_PER_RISCOS) << host_modevar_cache_current.YEig;
 
-    REDRAW_FLAGS_CLEAR(redraw_flags);
     RECT_FLAGS_CLEAR(rect_flags);
+    REDRAW_FLAGS_CLEAR(redraw_flags);
     view_update_now_single(p_docu, p_view, UPDATE_BACK_WINDOW, &skel_rect, rect_flags, redraw_flags, LAYER_TOOLBAR);
 }
 
@@ -2004,7 +2004,7 @@ status_line_view_update(
 
 T5_MSG_PROTO(static, t5_msg_status_line_set, _InRef_ PC_UI_TEXT p_ui_text)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     ui_text_dispose(&p_docu->status_line_ui_text);
 
@@ -2039,7 +2039,7 @@ status_line_view_dispose(
     _ViewRef_   P_VIEW p_view)
 {
 #if RISCOS
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 #elif WINDOWS
     if(HOST_WND_NONE != p_view->main[WIN_UPPER_STATUS_LINE].hwnd)
     {
@@ -2065,8 +2065,8 @@ status_line_view_new(
 
 #if RISCOS
 
-    IGNOREPARM_ViewRef_(p_docu);
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_docu);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 
     status_line_font_height_pixits = 0;
 
@@ -2726,7 +2726,7 @@ frame_windows_set_margins(
     BOOL first_time = TRUE;
     PIXIT height = 0;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(has_toolbar)
     {
@@ -2796,7 +2796,7 @@ T5_CMD_PROTO(static, t5_cmd_button)
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, name);
     BOOL alternate = FALSE;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, 1))
         alternate = p_args[1].val.fBool;
@@ -2817,8 +2817,8 @@ T5_CMD_PROTO(static, t5_cmd_toolbar_tool)
     T5_TOOLBAR_REQUESTED_TOOL_DESC t5_toolbar_requested_tool_desc;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(t5_toolbar_requested_tool_desc), 0);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     t5_toolbar_requested_tool_desc.row = p_args[0].val.u8n;
     ustr_xstrkpy(ustr_bptr(t5_toolbar_requested_tool_desc.name), elemof32(t5_toolbar_requested_tool_desc.name), name);
@@ -2836,7 +2836,7 @@ T5_CMD_PROTO(static, t5_cmd_toolbar_tool_disallow)
     SC_ARRAY_INIT_BLOCK array_init_block = ain_init(4, sizeof32(t5_toolbar_disallowed_tool_desc), 0);
     P_ARRAY_HANDLE p_array_handle = &toolbar_disallowed_array_handle;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     ustr_xstrkpy(t5_toolbar_disallowed_tool_desc.name, elemof32(t5_toolbar_disallowed_tool_desc.name), name);
 
@@ -2884,7 +2884,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click, _InoutRef_ P_BACK_WINDOW_EV
 
             default:
                 {
-                const BOOL alternate = (t5_message == T5_EVENT_CLICK_RIGHT_SINGLE) || (t5_message == T5_EVENT_CLICK_RIGHT_DOUBLE);
+                const BOOL alternate = (T5_EVENT_CLICK_RIGHT_SINGLE == t5_message) || (T5_EVENT_CLICK_RIGHT_DOUBLE == t5_message);
                 execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
                 break;
                 }
@@ -2916,7 +2916,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click_drag, _InoutRef_ P_BACK_WIND
 
             if(p_t5_toolbar_tool_desc->bits.auto_repeat)
             {
-                const BOOL alternate = (t5_message == T5_EVENT_CLICK_RIGHT_DRAG);
+                const BOOL alternate = (T5_EVENT_CLICK_RIGHT_DRAG == t5_message);
                 execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
             }
         }
@@ -2928,8 +2928,8 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click_drag, _InoutRef_ P_BACK_WIND
 
 T5_MSG_PROTO(static, t5_msg_back_window_event_click_consume, _InoutRef_ P_BACK_WINDOW_EVENT p_back_window_event)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_back_window_event->processed = TRUE;
 
@@ -2942,10 +2942,10 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_pointer_movement, _InoutRef_ P_BAC
     const P_VIEW p_view = p_skelevent_click->click_context.p_view;
     P_T5_TOOLBAR_VIEW_TOOL_DESC p_t5_toolbar_view_tool_desc;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_v0(TRACE_APP_CLICK,
-            (t5_message == T5_EVENT_POINTER_ENTERS_WINDOW)
+            (T5_EVENT_POINTER_ENTERS_WINDOW == t5_message)
                 ? "t5_msg_back_window_event T5_EVENT_POINTER_ENTERS_WINDOW"
                 : "t5_msg_back_window_event T5_EVENT_POINTER_MOVEMENT");
 
@@ -2969,8 +2969,8 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_pointer_movement, _InoutRef_ P_BAC
 
 T5_MSG_PROTO(static, t5_msg_back_window_event_pointer_leaves_window, _InoutRef_ P_BACK_WINDOW_EVENT p_back_window_event)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InoutRef_(p_back_window_event);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InoutRef_(p_back_window_event);
 
     trace_0(TRACE_APP_CLICK, TEXT("t5_msg_back_window_event T5_EVENT_POINTER_LEAVES_WINDOW"));
 
@@ -2981,7 +2981,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_pointer_leaves_window, _InoutRef_ 
 
 T5_MSG_PROTO(static, t5_msg_back_window_event, _InoutRef_ P_BACK_WINDOW_EVENT p_back_window_event)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_back_window_event->t5_message)
     {
@@ -3024,7 +3024,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_resized, P_VIEWEVENT_VISIBLEAREA_C
     ARRAY_INDEX view_row_idx;
     P_T5_TOOLBAR_VIEW_ROW_DESC p_t5_toolbar_view_row_desc = array_range(&p_view->toolbar.h_toolbar_view_row_desc, T5_TOOLBAR_VIEW_ROW_DESC, 0, view_rows);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     for(view_row_idx = 0; view_row_idx < view_rows; ++view_row_idx, ++p_t5_toolbar_view_row_desc)
     {
@@ -3072,8 +3072,8 @@ T5_MSG_PROTO(static, t5_msg_toolbar_tools, _InRef_ PC_T5_TOOLBAR_TOOLS p_t5_tool
     ARRAY_INDEX i;
     const ARRAY_INDEX n = array_elements(&toolbar_candidates_array_handle);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     for(i = 0; i < p_t5_toolbar_tools->n_tool_desc; ++i)
     {
@@ -3164,7 +3164,7 @@ toolbar_msg_exit1(void)
 
 T5_MSG_PROTO(static, toolbar_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -3222,7 +3222,7 @@ toolbar_msg_choice_changed_ui_styles(
 
 T5_MSG_PROTO(static, toolbar_msg_choice_changed, _InRef_ PC_MSG_CHOICE_CHANGED p_msg_choice_changed)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_choice_changed->t5_message)
     {

@@ -1008,7 +1008,7 @@ dialog_csv_load_query_ctl_pushbutton(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_csv_load_query)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1061,7 +1061,7 @@ T5_MSG_PROTO(static, csv_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
 {
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(FILETYPE_TEXT == p_msg_insert_foreign->t5_filetype)
         g_field_sep_ch = (CH_NULL != global_preferences.ascii_load_delimiter) ? (U8) global_preferences.ascii_load_delimiter : CH_TAB;
@@ -1122,8 +1122,8 @@ csv_msg_csv_read_record_core(
 
 T5_MSG_PROTO(static, csv_msg_csv_read_record, _InoutRef_ P_CSV_READ_RECORD p_csv_read_record)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(csv_msg_csv_read_record_core(p_csv_read_record));
 }
@@ -1136,8 +1136,8 @@ T5_MSG_PROTO(static, csv_msg_csv_read_record, _InoutRef_ P_CSV_READ_RECORD p_csv
 
 T5_MSG_PROTO(static, csv_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

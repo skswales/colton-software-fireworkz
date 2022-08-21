@@ -1131,8 +1131,8 @@ vi_edge_msg_startup(void)
 
 T5_MSG_PROTO(static, maeve_services_vi_edge_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1184,7 +1184,7 @@ vi_edge_msg_choice_changed_ui_styles(
 
 T5_MSG_PROTO(static, maeve_services_vi_edge_msg_choice_changed, _InRef_ PC_MSG_CHOICE_CHANGED p_msg_choice_changed)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_choice_changed->t5_message)
     {
@@ -1198,7 +1198,7 @@ T5_MSG_PROTO(static, maeve_services_vi_edge_msg_choice_changed, _InRef_ PC_MSG_C
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_vi_edge)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

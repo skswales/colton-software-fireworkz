@@ -157,7 +157,7 @@ T5_CMD_PROTO(static, t5_cmd_add_cr_intro)
 {
     const BOOL add_cols = (t5_message == T5_CMD_ADD_COLS_INTRO);
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     if(add_cols)
         dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, add_cols_ctl_create, elemof32(add_cols_ctl_create), MSG_DIALOG_ADD_CR_HELP_TOPIC);
     else
@@ -270,8 +270,8 @@ insert_table_ctl_create[] =
 T5_CMD_PROTO(static, t5_cmd_insert_table_intro)
 {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_table_ctl_create, elemof32(insert_table_ctl_create), MSG_DIALOG_INSERT_TABLE_HELP_TOPIC);
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_INSERT_TABLE_CAPTION;
@@ -442,7 +442,7 @@ table_style_add(
 
 T5_MSG_PROTO(static, t5_msg_table_style_add, P_DOCU_AREA p_docu_area)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(table_style_add(p_docu, p_docu_area, 1));
 }
@@ -454,7 +454,7 @@ T5_CMD_PROTO(static, t5_cmd_insert_table)
     ROW n_rows_add = 1;
     COL col_extra = 0;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->flags.base_single_col)
         col_extra = 1;
@@ -763,7 +763,7 @@ dialog_sort_intro_preprocess_command(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_sort_intro)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -865,7 +865,7 @@ T5_CMD_PROTO(static, t5_cmd_sort)
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->mark_info_cells.h_markers)
     {
@@ -892,7 +892,7 @@ T5_CMD_PROTO(static, t5_cmd_sort)
 
 T5_CMD_PROTO(static, t5_cmd_sort_intro)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(object_present(OBJECT_ID_REC))
     {
@@ -918,8 +918,8 @@ T5_CMD_PROTO(static, t5_cmd_word_count)
     SCAN_BLOCK scan_block;
     OBJECT_WORD_COUNT object_word_count;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(status_done(cells_scan_init(p_docu, &scan_block, SCAN_DOWN, p_docu->mark_info_cells.h_markers ? SCAN_MARKERS : SCAN_WHOLE, NULL, OBJECT_ID_NONE)))
     {
@@ -940,7 +940,7 @@ T5_CMD_PROTO(static, t5_cmd_style_for_config)
 {
     STATUS status;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     {
     const P_DOCU p_docu = p_docu_from_config_wr();
@@ -955,8 +955,8 @@ T5_CMD_PROTO(static, t5_cmd_style_for_config)
 
 T5_MSG_PROTO(static, skel_split_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

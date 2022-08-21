@@ -480,7 +480,7 @@ dialog_onInitDialog(
 
     consume(LONG_PTR, SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR) lParam));
 
-    IGNOREPARM_HwndRef_(hwndFocus);
+    UNREFERENCED_PARAMETER_HwndRef_(hwndFocus);
 
     p_dialog->hwnd = hwnd;
 
@@ -1909,7 +1909,7 @@ dialog_onCommand(
     const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_HwndRef_(hwndCtl);
+    UNREFERENCED_PARAMETER_HwndRef_(hwndCtl);
 
     if(NULL != p_dialog_ictl) /* some of them don't have Cancel buttons, for instance */
     switch(p_dialog_ictl->dialog_control_type)
@@ -2042,9 +2042,9 @@ dialog_onSetFont(
     _In_        HFONT hfont,
     _InVal_     BOOL fRedraw)
 {
-    IGNOREPARM_HwndRef_(hwnd);
-    IGNOREPARM(hfont);
-    IGNOREPARM_InVal_(fRedraw);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER(hfont);
+    UNREFERENCED_PARAMETER_InVal_(fRedraw);
 }
 
 /******************************************************************************
@@ -2464,7 +2464,7 @@ dialog_onMeasureItem(
     /*const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);*/
     SIZE gdi_size = { 16, 16 }; /* Keep dataflower happy */
 
-    IGNOREPARM_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
 
     pMeasureItem->itemWidth = gdi_size.cx;
     pMeasureItem->itemHeight = gdi_size.cy;
@@ -2556,7 +2556,7 @@ dialog_onNotify(
     _In_        int wParam,
     _In_reads_bytes_c_(sizeof32(NMUPDOWN)) NMHDR * pNmHdr)
 {
-    IGNOREPARM(wParam); /* The identifier of the common control sending the message */
+    UNREFERENCED_PARAMETER(wParam); /* The identifier of the common control sending the message */
 
     switch(pNmHdr->code)
     {

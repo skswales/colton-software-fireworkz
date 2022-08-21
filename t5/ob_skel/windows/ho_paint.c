@@ -1273,8 +1273,8 @@ host_invert_rectangle_filled(
     const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
     RECT rect;
 
-    IGNOREPARM_InRef_(p_fore);
-    IGNOREPARM_InRef_(p_back);
+    UNREFERENCED_PARAMETER_InRef_(p_fore);
+    UNREFERENCED_PARAMETER_InRef_(p_back);
 
     if(!status_done(RECT_limited_from_pixit_rect_and_context(&rect, p_pixit_rect, p_redraw_context)))
         return;
@@ -1293,8 +1293,8 @@ host_invert_rectangle_outline(
     RECT rect;
     RECT r;
 
-    IGNOREPARM_InRef_(p_fore);
-    IGNOREPARM_InRef_(p_back);
+    UNREFERENCED_PARAMETER_InRef_(p_fore);
+    UNREFERENCED_PARAMETER_InRef_(p_back);
 
     if(!status_done(RECT_limited_from_pixit_rect_and_context(&rect, p_pixit_rect, p_redraw_context)))
         return;
@@ -2038,7 +2038,7 @@ host_paint_drawfile(
     Draw_SetColourMapping(host_dithering ? DRAW_COLOURDITHER : DRAW_COLOURNEAREST, (COLORREF) 0);
 
     assert(!eor_paths); /* XOR no longer works with GDI+ */
-    IGNOREPARM_InVal_(eor_paths);
+    UNREFERENCED_PARAMETER_InVal_(eor_paths);
 
     if(!p_redraw_context->flags.metafile)
     {
@@ -2443,7 +2443,7 @@ fonty_text_paint_simple_wchars(
     if(p_redraw_context->flags.drawfile)
     {
         pixit_point.y += drawfile_fonty_paint_calc_shift_y(p_font_context);
-        IGNOREPARM_InRef_(p_rgb_back);
+        UNREFERENCED_PARAMETER_InRef_(p_rgb_back);
         // <<< drawfile_paint_uchars(p_redraw_context, &pixit_point, uchars, uchars_n, p_rgb_back, p_font_context);
         return;
     }

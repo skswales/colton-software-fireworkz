@@ -67,7 +67,7 @@ T5_MSG_PROTO(static, fwp_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
     STATUS status = STATUS_OK;
     ARRAY_HANDLE h_data = 0;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = file_memory_load(p_docu, &h_data, p_msg_insert_foreign->filename, NULL, 1)))
     {
@@ -516,8 +516,8 @@ fwp_regions_make(
 
 T5_MSG_PROTO(static, fwp_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

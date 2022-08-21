@@ -2351,7 +2351,7 @@ T5_MSG_PROTO(static, lotus123_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIG
     BOOL data_allocated = 0;
     BOOL insert_as_table = FALSE;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* If it's a Letter-derived document, insert as table */
     if(p_docu->flags.base_single_col)
@@ -2425,8 +2425,8 @@ T5_MSG_PROTO(static, lotus123_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIG
 
 T5_MSG_PROTO(static, lotus123_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

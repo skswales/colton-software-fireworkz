@@ -35,7 +35,7 @@ T5_MSG_PROTO(extern, ascii_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg
     OBJECT_DATA object_data;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_done(cells_scan_init(p_docu, &scan_block, SCAN_ACROSS, SCAN_AREA, &p_ff_op_format->of_op_format.save_docu_area, OBJECT_ID_NONE)))
     {
@@ -125,8 +125,8 @@ T5_MSG_PROTO(extern, ascii_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg
 
 T5_MSG_PROTO(static, ascii_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

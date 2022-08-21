@@ -1100,7 +1100,7 @@ maeve_dialog_msg_initclose(
     _InRef_     PC_MSG_INITCLOSE p_msg_initclose,
     _InRef_     PC_MAEVE_BLOCK p_maeve_block)
 {
-    IGNOREPARM_InVal_(t5_message_dummy); /* dummy for APCS */
+    UNREFERENCED_PARAMETER_InVal_(t5_message_dummy); /* dummy for APCS */
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1118,7 +1118,7 @@ maeve_dialog_msg_initclose(
 
 MAEVE_EVENT_PROTO(extern, maeve_event_dialog)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1151,7 +1151,7 @@ maeve_dialog_stolen_focus_msg_initclose(
     _InRef_     PC_MSG_INITCLOSE p_msg_initclose,
     _InRef_     PC_MAEVE_BLOCK p_maeve_block)
 {
-    IGNOREPARM_InVal_(t5_message_dummy); /* dummy for APCS */
+    UNREFERENCED_PARAMETER_InVal_(t5_message_dummy); /* dummy for APCS */
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1169,7 +1169,7 @@ maeve_dialog_stolen_focus_msg_initclose(
 
 MAEVE_EVENT_PROTO(extern, maeve_event_dialog_stolen_focus)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {

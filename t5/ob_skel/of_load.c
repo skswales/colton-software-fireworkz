@@ -1946,7 +1946,7 @@ dialog_select_template_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_select_template)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -2264,8 +2264,8 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_of_load);
 
 T5_MSG_PROTO(static, maeve_services_of_load_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -2280,7 +2280,7 @@ T5_MSG_PROTO(static, maeve_services_of_load_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_of_load)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -2299,8 +2299,8 @@ T5_CMD_PROTO(extern, t5_cmd_object_bind_construct)
     const U8 construct_id = p_args[1].val.u8c;
     P_REGISTERED_CONSTRUCT_TABLE p = &of_load_statics.registered_construct_table[object_id];
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p->construct_id = construct_id;
     return(STATUS_OK);
@@ -2767,8 +2767,8 @@ T5_CMD_PROTO(extern, t5_cmd_load)
     BOOL fReadOnly = FALSE;
     STATUS status;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_present(&p_t5_cmd->arglist_handle, 1, &p_arg))
         fReadOnly = p_arg->val.fBool;
@@ -2988,7 +2988,7 @@ load_and_print_this_file_core(
 #if WINDOWS
         if(NULL != printername) status = host_printer_set(printername); /* set up for specific printer, not default */
 #else
-        IGNOREPARM(printername);
+        UNREFERENCED_PARAMETER(printername);
 #endif
 
         if(status_ok(status))
@@ -3042,7 +3042,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 100);
     quick_tblock_with_buffer_setup(quick_tblock);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, 0))
     {

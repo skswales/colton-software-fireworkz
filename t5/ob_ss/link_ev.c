@@ -660,8 +660,8 @@ BOOL g_ev_recalc_started = FALSE;
 
 PROC_EVENT_PROTO(static, null_event_recalc)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
 
 #if CHECKING
     switch(t5_message)
@@ -671,7 +671,7 @@ PROC_EVENT_PROTO(static, null_event_recalc)
 
     case T5_EVENT_NULL: /* null events for recalc come here */
 #else
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
     {
 #endif
         ev_recalc();

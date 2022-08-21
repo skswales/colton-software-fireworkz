@@ -291,7 +291,7 @@ IF NOT boot% THEN
   PROCo(f%,"If ""z<Choices$Write>""=""z"" Then Error 0 "+true_product$+" needs Choices$Write to be set")
   :
   PROCo(f%,"|")
-  PROCo(f%,"IfThere <Choices$Write>.Fireworkz Then Else Obey <"+product$+"$Dir>.uChoices.DoCopy")
+  PROCo(f%,"IfThere <Choices$Write>.Fireworkz.Choices.ChoicesDoc Then Else Obey <"+product$+"$Dir>.uChoices.DoCopy"): REM Ensure ChoicesDoc even if Choice00 etc there
   :
   REM Use appl_product$ to keep name length down for old filing systems and FireworkzPro
   PROCo(f%,"|")

@@ -611,7 +611,7 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
     SS_NAME_INTRO_CALLBACK ss_name_intro_callback;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* 0 -> insert name as inline into text */
     /* 1 -> Fireworkz variables box */
@@ -885,7 +885,7 @@ dialog_ss_name_edit_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_ss_name_edit)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -946,8 +946,8 @@ ss_name_add(
     STATUS status;
 
 #if RISCOS
-    IGNOREPARM_InVal_(h_dialog);
-    IGNOREPARM_InVal_(dialog_control_id);
+    UNREFERENCED_PARAMETER_InVal_(h_dialog);
+    UNREFERENCED_PARAMETER_InVal_(dialog_control_id);
 #endif
 
     ss_name_edit_callback.ui_text_name.type = UI_TEXT_TYPE_NONE;
@@ -1044,8 +1044,8 @@ ss_name_edit(
     STATUS status;
 
 #if RISCOS
-    IGNOREPARM_InVal_(h_dialog);
-    IGNOREPARM_InVal_(dialog_control_id);
+    UNREFERENCED_PARAMETER_InVal_(h_dialog);
+    UNREFERENCED_PARAMETER_InVal_(dialog_control_id);
 #endif
 
     ss_name_edit_callback.ui_text_name.type = UI_TEXT_TYPE_USTR_TEMP;

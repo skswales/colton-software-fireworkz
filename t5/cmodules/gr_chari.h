@@ -882,7 +882,7 @@ typedef struct GR_CHART
 GR_CHART, * P_GR_CHART; typedef const GR_CHART * PC_GR_CHART;
 
 #define _ChartRef_   const
-#define IGNOREPARM_ChartRef_(p_gr_chart) IGNOREPARM_CONST(p_gr_chart)
+#define UNREFERENCED_PARAMETER_ChartRef_(p_gr_chart) UNREFERENCED_PARAMETER_CONST(p_gr_chart)
 
 typedef struct GR_TEXT_BITS
 {

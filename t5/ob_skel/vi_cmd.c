@@ -116,7 +116,7 @@ T5_CMD_PROTO(extern, t5_cmd_current_pane)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(!IS_VIEW_NONE(p_view))
         p_view->cur_pane = ENUM_PACK(PANE_ID, p_args[0].val.s32);
@@ -136,7 +136,7 @@ T5_CMD_PROTO(extern, t5_cmd_current_view)
     VIEWNO viewno = (VIEWNO) p_args[0].val.s32;
     P_VIEW p_view = p_view_from_viewno(p_docu, viewno);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(!IS_VIEW_NONE(p_view))
         p_view = p_view_from_viewno_caret(p_docu);
@@ -315,7 +315,7 @@ view_return_extid(
     _DocuRef_   PC_DOCU p_docu,
     _ViewRef_   PC_VIEW p_view)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     return((S32) viewno_from_p_view_fn(p_view));
 }
 
@@ -896,8 +896,8 @@ T5_CMD_PROTO(extern, t5_cmd_view_control_intro)
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
     VIEW_CONTROL_CALLBACK view_control_callback;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* encode initial state of control(s) */
     view_control_callback.zoom_bump_state = muldiv64_ceil(100, p_view->scalet, p_view->scaleb);
@@ -928,8 +928,8 @@ T5_CMD_PROTO(extern, t5_cmd_view_control)
     BOOL set_extent = 0;
     BOOL redisplay = 0;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
 #if 0 /* SKS 20may97 try this out on people... */
     if(1/*invent a first time thru on a view*/)
@@ -1180,7 +1180,7 @@ T5_CMD_PROTO(extern, t5_cmd_view_create)
     VIEW_CREATE view_create;
     P_VIEW p_view;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     view_create.docno   = docno_from_p_docu(p_docu);
     view_create.tl.x    = p_args[0].val.s32;
@@ -1217,8 +1217,8 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
     VIEW_CREATE view_create;
     P_VIEW p_view;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     view_create.docno = docno_from_p_docu(p_docu);
 
@@ -1295,24 +1295,24 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
 
 T5_CMD_PROTO(extern, t5_cmd_view_size)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     return(STATUS_OK);
 }
 
 T5_CMD_PROTO(extern, t5_cmd_view_posn)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     return(STATUS_OK);
 }
 
 T5_CMD_PROTO(extern, t5_cmd_view_maximize)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     host_view_maximize(p_docu, p_view_from_viewno_caret(p_docu));
 
@@ -1321,8 +1321,8 @@ T5_CMD_PROTO(extern, t5_cmd_view_maximize)
 
 T5_CMD_PROTO(extern, t5_cmd_view_minimize)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     host_view_minimize(p_docu, p_view_from_viewno_caret(p_docu));
 
@@ -1331,16 +1331,16 @@ T5_CMD_PROTO(extern, t5_cmd_view_minimize)
 
 T5_CMD_PROTO(extern, t5_cmd_view_scroll)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     return(STATUS_OK);
 }
 
 T5_CMD_PROTO(extern, t5_cmd_view_close_req)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     status_return(maeve_event(p_docu, T5_MSG_CELL_MERGE, P_DATA_NONE));
 
@@ -1591,7 +1591,7 @@ vi_cmd_msg_save(
 
 MAEVE_EVENT_PROTO(static, maeve_event_vi_cmd)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1669,7 +1669,7 @@ vi_cmd_msg_close1(
 
 T5_MSG_PROTO(static, maeve_services_vi_cmd_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1686,7 +1686,7 @@ T5_MSG_PROTO(static, maeve_services_vi_cmd_msg_initclose, _InRef_ PC_MSG_INITCLO
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_vi_cmd)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

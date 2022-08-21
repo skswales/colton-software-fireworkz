@@ -205,7 +205,7 @@ dialog_insert_mailshot_field_intro_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_insert_mailshot_field_intro)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -632,7 +632,7 @@ dialog_mailshot_select_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_mailshot_select)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -906,7 +906,7 @@ T5_MSG_PROTO(static, mailshot_msg_read_mail_text, _InoutRef_ P_READ_MAIL_TEXT p_
     P_MAILSHOT_INSTANCE_DATA p_mailshot_instance_data = p_object_instance_data_MAILSHOT_maybenone(p_docu);
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if((P_DATA_NONE != p_mailshot_instance_data) && array_elements(&p_mailshot_instance_data->field_data_handle))
     {
@@ -945,7 +945,7 @@ mailshot_msg_close1(
     P_DOCU p_docu_dependent = p_docu_from_docno(dependent_docno);
     P_MAILSHOT_INSTANCE_DATA p_mailshot_instance_data = p_object_instance_data_MAILSHOT_valid(p_docu_dependent);
 
-    IGNOREPARM_InVal_(source_docno);
+    UNREFERENCED_PARAMETER_InVal_(source_docno);
     /*reportf(TEXT("mailshot_msg_close1(source_docno=%d): dependent_docno=%d (maeve_handle was %d)"), source_docno, dependent_docno, p_mailshot_instance_data->maeve_handle);*/
 
     p_mailshot_instance_data->source_docno = DOCNO_NONE;
@@ -966,7 +966,7 @@ maeve_mailshot_msg_initclose(
     _InRef_     PC_MSG_INITCLOSE p_msg_initclose,
     _InRef_     PC_MAEVE_BLOCK p_maeve_block)
 {
-    IGNOREPARM_InVal_(t5_message_dummy); /* dummy for APCS */
+    UNREFERENCED_PARAMETER_InVal_(t5_message_dummy); /* dummy for APCS */
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -985,7 +985,7 @@ maeve_mailshot_msg_initclose(
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_mails)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1005,7 +1005,7 @@ MAEVE_EVENT_PROTO(static, maeve_event_ob_mails)
 
 T5_MSG_PROTO(static, mailshot_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

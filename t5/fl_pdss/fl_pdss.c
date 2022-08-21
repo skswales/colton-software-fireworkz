@@ -827,7 +827,7 @@ pdss_regions_make(
     const ARRAY_INDEX n_elements = array_elements(p_h_pd_format);
     STATUS status = STATUS_OK;
 
-    IGNOREPARM(p_data_type);
+    UNREFERENCED_PARAMETER(p_data_type);
 
     if(0 != n_elements)
     {
@@ -1288,7 +1288,7 @@ PROC_PDSS_CONSTRUCT_PROTO(proc_pdss_hilite)
     S32 hilite = fast_strtol(p_construct + 2, NULL);
     U8 format_ch;
 
-    IGNOREPARM(ok_flag);
+    UNREFERENCED_PARAMETER(ok_flag);
 
     switch(hilite)
     {
@@ -1312,7 +1312,7 @@ PROC_PDSS_CONSTRUCT_PROTO(proc_pdss_left)
 
 PROC_PDSS_CONSTRUCT_PROTO(proc_pdss_percent)
 {
-    IGNOREPARM(ok_flag);
+    UNREFERENCED_PARAMETER(ok_flag);
 
     pdss_blat_with_format_ch(p_construct, len, CH_PERCENT_SIGN);
     return(0);
@@ -1338,8 +1338,8 @@ PROC_PDSS_CONSTRUCT_PROTO(proc_pdss_ss)
 
 T5_MSG_PROTO(static, pdss_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

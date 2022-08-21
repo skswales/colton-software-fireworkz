@@ -10,7 +10,7 @@ Copyright (C) 2013-2016 Stuart Swales
 Prerequisites
 -------------
 
-A Windows SVN client (such as TortoiseSVN - minimal install with command line tools, no en_US dictionary, no additional iconsets will suffice).
+A Windows SVN client such as TortoiseSVN (minimal install, with command line tools, no en_US dictionary, no additional iconsets will suffice).
 
 Microsoft Visual Studio 2013 or later (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options).
 
@@ -18,7 +18,7 @@ I recommend setting:
 
     Options - Text editor - C++ - Tabs - Insert Spaces
 
-GNU Win32 Patch (install with PackMan) to generate the patched BTTNCUR(P) source files.
+GNU Win32 Patch to generate the patched BTTNCUR(P) source files.
 
 InnoSetup to create the distributable setup executable.
 
@@ -32,23 +32,17 @@ You first need to acquire some files that are needed to compile Fireworkz but ca
 
 See
 
-external/Microsoft/Excel97SDK/README.TXT
-
-for the Excel 97 SDK (trivial)
-
-and
-
 external/Microsoft/InsideOLE2/README.TXT
 
-for the 'Inside OLE 2' BTTNCUR sample (less so)
+for the 'Inside OLE 2' BTTNCUR sample.
 
 Then run
 
-Build\w32\Setup.cmd
+Build\windows\Setup.cmd
 
 to copy and patch those files as needed.
 
-Double-click on Build\w32\firewrkz-vs2013.sln to load the solution and project files into Visual Studio.
+Double-click on Build\windows\firewrkz-vs2013.sln to load the solution and project files into Visual Studio.
 
 Choose the variant to build (e.g. Debug or Release).
 
@@ -59,7 +53,6 @@ Subsequent builds
 -----------------
 
 To clean up a build, select Build -> Build Solution.
-
 
 In order to build again, select Build -> Build Solution or Build -> Rebuild Solution.
 
@@ -81,7 +74,7 @@ At a command prompt:
 
 cd /p N:\fireworkz\trunk\t5
 
-pushd firewrkz\w32\OUT
+pushd firewrkz\windows\OUTx86
 
 BLD32CD.BAT
 

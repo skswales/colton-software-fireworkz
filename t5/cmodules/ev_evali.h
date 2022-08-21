@@ -66,10 +66,10 @@ types for exec routines
 */
 
 #define exec_func_ignore_parms() (void) ( \
-    IGNOREPARM(args), \
-    IGNOREPARM_InVal_(n_args), \
-    IGNOREPARM_InoutRef_(p_ev_data_res), \
-    IGNOREPARM_InRef_(p_cur_slr) )
+    UNREFERENCED_PARAMETER(args), \
+    UNREFERENCED_PARAMETER_InVal_(n_args), \
+    UNREFERENCED_PARAMETER_InoutRef_(p_ev_data_res), \
+    UNREFERENCED_PARAMETER_InRef_(p_cur_slr) )
 
 /* symbol information */
 

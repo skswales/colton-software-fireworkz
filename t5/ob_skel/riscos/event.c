@@ -163,8 +163,6 @@ event__createmenu(
             event_.menu_click.mce.mouse_y += m->item_height + m->gap;
         }
         while(!((mi++)->flags & WimpMenuItem_Last));
-
-        IGNOREPARM(mi);
     }
 
     (void) event_create_menu(m, event_.menu_click.mce.mouse_x - 64, event_.menu_click.mce.mouse_y);

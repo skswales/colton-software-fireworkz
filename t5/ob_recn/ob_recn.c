@@ -42,8 +42,8 @@ Flow:39 (OBJECT_ID_REC_FLOW) is handled OK by skeleton when ob_recb is not prese
 
 T5_MSG_PROTO(static, recn_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -62,9 +62,9 @@ T5_MSG_PROTO(static, recn_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
 
 T5_CMD_PROTO(static, recn_cmd_recordz_io_table)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     reperr_null(RECN_ERR_NO_DATABASE_MODULE);
 

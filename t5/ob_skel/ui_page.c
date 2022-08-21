@@ -271,8 +271,8 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_paper_scale)
 T5_CMD_PROTO(extern, t5_cmd_paper_scale_intro)
 {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, paper_scale_ctl_create, elemof32(paper_scale_ctl_create), MSG_DIALOG_PAPER_SCALE_HELP_TOPIC);
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_PAPER_SCALE_CAPTION;
@@ -1109,7 +1109,7 @@ paper_precreate(
 {
     static UCHARZ paper_units_numform_ustr_buf[7]; /* must fit "0.,###" higher precision */
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     resource_lookup_ustr_buffer(ustr_bptr(paper_grid_size_numform_ustr_buf), elemof32(paper_grid_size_numform_ustr_buf), MSG_NUMFORM_2_DP);
 
@@ -1597,7 +1597,7 @@ dialog_paper_intro_ctl_pushbutton(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_paper_intro)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1626,8 +1626,8 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_paper_intro)
 
 T5_CMD_PROTO(extern, t5_cmd_paper_intro)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     paper_name_data.state.type = UI_TEXT_TYPE_USTR_TEMP;
     paper_name_data.state.text.ustr = ustr_bptr(p_docu->phys_page_def.ustr_name);

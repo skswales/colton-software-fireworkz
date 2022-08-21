@@ -602,7 +602,7 @@ spell_addword(
 
         cache_lock = 0;
 
-        IGNOREPARM(cache_lock);
+        UNREFERENCED_PARAMETER(cache_lock);
 
         status_return(err);
 
@@ -1486,6 +1486,8 @@ spell_setoptions(
     return(STATUS_OK);
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * return statistics about spelling checker
@@ -1520,8 +1522,6 @@ spell_stats(
         while(NULL != (it = list_nextseq(p_list_block_cache, &cacheno)));
     }
 }
-
-#endif /* OS */
 
 extern void
 spell_startup(void)

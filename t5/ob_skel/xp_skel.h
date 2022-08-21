@@ -15,11 +15,11 @@ typedef struct DOCU DOCU, * P_DOCU, ** P_P_DOCU; typedef const DOCU * PC_DOCU; /
 #if 0
 #define _DocuRef_           _InoutRef_
 #define _DocuRef_maybenone_ _InoutRef_
-#define IGNOREPARM_DocuRef_(p_docu) IGNOREPARM_InoutRef_(p_docu)
+#define UNREFERENCED_PARAMETER_DocuRef_(p_docu) UNREFERENCED_PARAMETER_InoutRef_(p_docu)
 #else
 #define _DocuRef_           _Inout_ /*const*/
 #define _DocuRef_maybenone_ _Inout_maybenone_ /*const*/
-#define IGNOREPARM_DocuRef_(p_docu) IGNOREPARM_CONST(p_docu)
+#define UNREFERENCED_PARAMETER_DocuRef_(p_docu) UNREFERENCED_PARAMETER_CONST(p_docu)
 #endif
 
 typedef U8 DOCNO;
@@ -38,11 +38,11 @@ typedef struct VIEW VIEW, * P_VIEW, ** P_P_VIEW; typedef const VIEW * PC_VIEW; /
 #if 1
 #define _ViewRef_           _InoutRef_
 #define _ViewRef_maybenone_ _InoutRef_maybenone_
-#define IGNOREPARM_ViewRef_(p_view) IGNOREPARM_InoutRef_(p_view)
+#define UNREFERENCED_PARAMETER_ViewRef_(p_view) UNREFERENCED_PARAMETER_InoutRef_(p_view)
 #else
 #define _ViewRef_           const
 #define _ViewRef_maybenone_ const
-#define IGNOREPARM_ViewRef_(p_view) IGNOREPARM_CONST(p_view)
+#define UNREFERENCED_PARAMETER_ViewRef_(p_view) UNREFERENCED_PARAMETER_CONST(p_view)
 #endif
 
 typedef U32 VIEWNO; /* full version for argument passing without masking */
@@ -2997,7 +2997,6 @@ host_rgb_stash(void);
 #define COLOUR_OF_BUTTON_IN         2
 #define COLOUR_OF_BUTTON_OUT        1
 #define COLOUR_OF_DESKTOP           3
-#define COLOUR_OF_FAINT_GRID        1
 #define COLOUR_OF_HEFO_LINE         1
 #define COLOUR_OF_MARGIN            1
 #define COLOUR_OF_PAPER             0
@@ -4791,7 +4790,7 @@ p_arglist_args(
     _InVal_     U32 n_args)
 {
     assert(n_args <= array_elements32(pc_arglist_handle)); /* NB NOT array_index_is_valid(pc_arglist_handle, n_args) */
-    IGNOREPARM_InVal_(n_args);
+    UNREFERENCED_PARAMETER_InVal_(n_args);
     return(array_range(pc_arglist_handle, ARGLIST_ARG, 0, n_args));
 }
 
@@ -4803,7 +4802,7 @@ pc_arglist_args(
     _InVal_     U32 n_args)
 {
     assert(n_args <= array_elements32(pc_arglist_handle)); /* NB NOT array_index_is_valid(pc_arglist_handle, n_args) */
-    IGNOREPARM_InVal_(n_args);
+    UNREFERENCED_PARAMETER_InVal_(n_args);
     return(array_rangec(pc_arglist_handle, ARGLIST_ARG, 0, n_args));
 }
 
@@ -8893,6 +8892,7 @@ p_docu_from_docno_valid(
     _InVal_     DOCNO docno)
 {
     const P_DOCU p_docu = p_docu_from_docno(docno);
+    CHECKING_ONLY(if(IS_PTR_NULL_OR_NONE(p_docu)) myDebugBreak());
     __analysis_assume(p_docu);
     return(p_docu);
 }

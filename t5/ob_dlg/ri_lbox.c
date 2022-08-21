@@ -393,7 +393,7 @@ ri_lbox_event_close_window(
         return(dialog_riscos_lbn_destroy.processed);
     }
 
-    IGNOREPARM_CONST(p_close_window_request);
+    UNREFERENCED_PARAMETER_CONST(p_close_window_request);
 
     return(FALSE /*unprocessed*/);
 }

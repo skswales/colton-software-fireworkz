@@ -54,8 +54,8 @@ sk_mark_msg_selection_clear(
 
 MAEVE_EVENT_PROTO(static, maeve_event_sk_mark)
 {
-    IGNOREPARM(p_data);
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER(p_data);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -99,7 +99,7 @@ sk_mark_msg_close1(
 
 T5_MSG_PROTO(static, maeve_services_sk_mark_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -116,7 +116,7 @@ T5_MSG_PROTO(static, maeve_services_sk_mark_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_mark)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -355,10 +355,11 @@ markers_show(
         RECT_FLAGS rect_flags;
         REDRAW_FLAGS redraw_flags;
 
+        RECT_FLAGS_CLEAR(rect_flags);
+
         REDRAW_FLAGS_CLEAR(redraw_flags);
         redraw_flags.show_selection = TRUE;
 
-        RECT_FLAGS_CLEAR(rect_flags);
         view_update_now(p_docu, UPDATE_PANE_CELLS_AREA, &skel_rect_all, rect_flags, redraw_flags, LAYER_CELLS);
 
         trace_4(TRACE_APP_SKEL_DRAW,

@@ -516,7 +516,7 @@ gr_chart_axis_process_ctl_state_change(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_gr_chart_axis_process)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -771,7 +771,7 @@ dialog_gr_chart_series_process_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_gr_chart_series_process)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {

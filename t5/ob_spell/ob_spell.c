@@ -170,7 +170,7 @@ spell_msg_close1(
 
 T5_MSG_PROTO(static, spell_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -198,8 +198,8 @@ T5_MSG_PROTO(static, spell_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
 
 T5_MSG_PROTO(static, spell_msg_spell_isupper, _InRef_ PC_S32 p_s32)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_fail(ob_spell_.dictionary[DICTIONARY_USER].status))
         return(STATUS_FAIL);
@@ -209,8 +209,8 @@ T5_MSG_PROTO(static, spell_msg_spell_isupper, _InRef_ PC_S32 p_s32)
 
 T5_MSG_PROTO(static, spell_msg_spell_iswordc, _InRef_ PC_S32 p_s32)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_fail(ob_spell_.dictionary[DICTIONARY_USER].status))
         return(STATUS_FAIL);
@@ -220,8 +220,8 @@ T5_MSG_PROTO(static, spell_msg_spell_iswordc, _InRef_ PC_S32 p_s32)
 
 T5_MSG_PROTO(static, spell_msg_spell_tolower, _InRef_ PC_S32 p_s32)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_fail(ob_spell_.dictionary[DICTIONARY_USER].status))
         return(STATUS_FAIL);
@@ -231,8 +231,8 @@ T5_MSG_PROTO(static, spell_msg_spell_tolower, _InRef_ PC_S32 p_s32)
 
 T5_MSG_PROTO(static, spell_msg_spell_toupper, _InRef_ PC_S32 p_s32)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_fail(ob_spell_.dictionary[DICTIONARY_USER].status))
         return(STATUS_FAIL);
@@ -242,8 +242,8 @@ T5_MSG_PROTO(static, spell_msg_spell_toupper, _InRef_ PC_S32 p_s32)
 
 T5_MSG_PROTO(static, spell_msg_spell_valid1, _InRef_ PC_S32 p_s32)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_fail(ob_spell_.dictionary[DICTIONARY_USER].status))
         return(STATUS_FAIL);
@@ -307,7 +307,7 @@ T5_MSG_PROTO(static, t5_msg_spell_word_check, _InoutRef_ P_WORD_CHECK p_word_che
 {
     STATUS result = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     PTR_ASSERT(p_word_check);
 
@@ -489,8 +489,8 @@ T5_CMD_PROTO(static, t5_cmd_spell_dictionary_add_word)
     const PC_USTR ustr_word = p_args[0].val.ustr;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if((NULL != ustr_word) && (ustrlen32(ustr_word) >= 2))
     {
@@ -537,8 +537,8 @@ T5_CMD_PROTO(static, t5_cmd_spell_dictionary_delete_word)
     const PC_USTR ustr_word = p_args[0].val.ustr;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if((NULL != ustr_word) && (ustrlen32(ustr_word) >= 3))
     {

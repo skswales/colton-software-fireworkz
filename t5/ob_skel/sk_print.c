@@ -759,7 +759,7 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_print_intro)
         return(dialog_print_intro_ctl_pushbutton((P_DIALOG_MSG_CTL_PUSHBUTTON) p_data));
 
     default:
-        IGNOREPARM_DocuRef_(p_docu);
+        UNREFERENCED_PARAMETER_DocuRef_(p_docu);
         break;
     }
 
@@ -1201,7 +1201,7 @@ sk_print_msg_save(
 
 MAEVE_EVENT_PROTO(static, maeve_event_sk_print)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1272,7 +1272,7 @@ maeve_services_sk_print_msg_initclose(
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_print)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -1299,7 +1299,7 @@ T5_CMD_PROTO(extern, t5_cmd_print_intro)
     PRINT_CALLBACK print_callback;
     S32 completion_code;
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     print_callback.extra = extra;
 
@@ -1399,7 +1399,7 @@ T5_CMD_PROTO(extern, t5_cmd_print)
     print_ctrl.flags.landscape = 0;
     print_ctrl.flags.two_up    = 0;
 
-    IGNOREPARM_InVal_(t5_message); /* we use arglist to decide on print action */
+    UNREFERENCED_PARAMETER_InVal_(t5_message); /* we use arglist to decide on print action */
 
     if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {
@@ -1581,7 +1581,7 @@ T5_CMD_PROTO(extern, t5_cmd_paper)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, ARG_PAPER_N_ARGS);
     P_PHYS_PAGE_DEF p_phys_page_def = &p_docu->phys_page_def;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, ARG_PAPER_LOADED_ID) && (p_args[ARG_PAPER_LOADED_ID].val.s32 > 0))
     {
@@ -1652,7 +1652,7 @@ T5_CMD_PROTO(extern, t5_cmd_paper_scale)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(arg_is_present(p_args, ARG_PAPER_SCALE_VALUE))
         p_docu->paper_scale = p_args[ARG_PAPER_SCALE_VALUE].val.s32;
@@ -1698,7 +1698,7 @@ print_quality_save(
 
 T5_CMD_PROTO(extern, t5_cmd_print_quality)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_docu->flags.draft_mode = 0;
 

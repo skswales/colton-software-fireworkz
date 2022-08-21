@@ -144,7 +144,7 @@ dialog_ui_remove_process_start(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_ui_remove)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -167,8 +167,8 @@ T5_CMD_PROTO(extern, t5_cmd_style_region_edit)
     DOCU_AREA docu_area;
     P_STYLE_DOCU_AREA p_style_docu_area = NULL;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* select starting point */
     if(p_docu->mark_info_cells.h_markers)
@@ -875,8 +875,8 @@ T5_CMD_PROTO(extern, t5_cmd_box_intro)
 {
     RGB rgb = g_box_persistent_state.rgb;
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, box_ctl_create, elemof32(box_ctl_create), MSG_DIALOG_BOX_HELP_TOPIC);
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_BOX_CAPTION;
@@ -944,7 +944,7 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
     STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     style_init(&style);
 

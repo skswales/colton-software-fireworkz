@@ -1250,7 +1250,7 @@ PROC_PDTX_CONSTRUCT_PROTO(proc_pdtx_hilite)
     S32 hilite = fast_strtol(p_construct + 2, NULL);
     U8 format_ch;
 
-    IGNOREPARM(p_u8_start);
+    UNREFERENCED_PARAMETER(p_u8_start);
 
     switch(hilite)
     {
@@ -1272,7 +1272,7 @@ PROC_PDTX_CONSTRUCT_PROTO(proc_pdtx_left)
 
 PROC_PDTX_CONSTRUCT_PROTO(proc_pdtx_percent)
 {
-    IGNOREPARM(p_u8_start);
+    UNREFERENCED_PARAMETER(p_u8_start);
 
     pdtx_blat_with_format_ch(p_construct, len, CH_PERCENT_SIGN);
 }
@@ -1290,8 +1290,8 @@ PROC_PDTX_CONSTRUCT_PROTO(proc_pdtx_right)
 
 T5_MSG_PROTO(static, pdtx_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

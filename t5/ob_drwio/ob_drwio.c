@@ -571,7 +571,7 @@ dialog_save_as_drawfile_riscos_drag_ended(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_save_as_drawfile)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -624,8 +624,8 @@ save_as_drawfile_details_query(
     }
 #else
     /* Assume filename already set up correctly, and is the one in p_save_as_drawfile_callback */
-    IGNOREPARM_InoutRef_(p_save_as_drawfile_callback);
-    IGNOREPARM(p_ui_text_filename);
+    UNREFERENCED_PARAMETER_InoutRef_(p_save_as_drawfile_callback);
+    UNREFERENCED_PARAMETER(p_ui_text_filename);
 #endif
 }
 
@@ -634,7 +634,7 @@ static STATUS
 save_as_drawfile_dialog_check(
     _InoutRef_  P_SAVE_AS_DRAWFILE_CALLBACK p_save_as_drawfile_callback)
 {
-    IGNOREPARM_InoutRef_(p_save_as_drawfile_callback);
+    UNREFERENCED_PARAMETER_InoutRef_(p_save_as_drawfile_callback);
 
     /* as good a place as any to get state back from UI */
     p_save_as_drawfile_callback->all_or_range = ui_dlg_get_check(p_save_as_drawfile_callback->h_dialog, CONTROL_ID_AR_GROUP);
@@ -1019,8 +1019,8 @@ T5_CMD_PROTO(static, t5_cmd_save_as_drawfile_intro)
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 64);
     quick_tblock_with_buffer_setup(quick_tblock);
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* encode initial state of control(s) */
 
@@ -1139,7 +1139,7 @@ T5_CMD_PROTO(static, t5_cmd_save_as_drawfile)
     SAVE_AS_DRAWFILE_CALLBACK save_as_drawfile_callback;
     PCTSTR filename;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     t5_cmd_save_as_drawfile_init(p_docu, &save_as_drawfile_callback);
 
@@ -1170,8 +1170,8 @@ T5_CMD_PROTO(static, t5_cmd_save_as_drawfile)
 
 T5_MSG_PROTO(static, draw_io_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

@@ -18,7 +18,7 @@ grep -v "z$" ../CwC_src.txt | cut -f1 > CwCs
 grep -v "s$" ../CwA_src.txt | cut -f1 > CwAz
 grep -v "s$" ../CwC_src.txt | cut -f1 > CwCz
 
-SCOWL=/cygdrive/N/coltsoft/trunk/cs-free/SCOWL
+SCOWL=/cygdrive/N/coltsoft/$FIREWORKZ_TBT/cs-free/SCOWL
 # Split the header off
 awk '{print >out}; /---/{out="wl-GBs"}' out=/dev/null \
  $SCOWL/wordlist-strip-70-0-GBs.txt

@@ -212,8 +212,8 @@ ui_save_msg_exit2(void)
 
 T5_MSG_PROTO(static, maeve_services_ui_save_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -230,7 +230,7 @@ T5_MSG_PROTO(static, maeve_services_ui_save_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_ui_save)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -248,8 +248,8 @@ T5_CMD_PROTO(extern, t5_cmd_object_bind_saver)
     INSTALLED_SAVE_OBJECT installed_save_object;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(installed_save_object), FALSE);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     zero_struct(installed_save_object);
     installed_save_object.object_id   = p_args[0].val.object_id;
@@ -545,7 +545,7 @@ dialog_save_common_ctl_fill_source(
 {
     const P_SAVE_CALLBACK p_save_callback = (P_SAVE_CALLBACK) p_dialog_msg_ctl_fill_source->client_handle;
 
-    IGNOREPARM_CONST(p_save_callback);
+    UNREFERENCED_PARAMETER_CONST(p_save_callback);
 
     switch(p_dialog_msg_ctl_fill_source->dialog_control_id)
     {
@@ -1025,8 +1025,8 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform)
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 64);
     quick_tblock_with_buffer_setup(quick_tblock);
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(status_ok(status = name_make_wholename(&p_docu->docu_name, &quick_tblock, TRUE)))
     {
@@ -1181,7 +1181,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform_as)
     SAVE_CALLBACK save_callback;
     PCTSTR filename;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     t5_cmd_save_as_common_init(p_docu, &save_callback);
 
@@ -1523,7 +1523,7 @@ t5_cmd_save_foreign_common_init(
         p_ui_source = &save_foreign_statics.ui_source;
     }
 #else
-    IGNOREPARM_InVal_(intro);
+    UNREFERENCED_PARAMETER_InVal_(intro);
 #endif
 
     return(save_foreign_create_filemap(p_save_callback, p_ui_text, p_ui_source));
@@ -1535,8 +1535,8 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign_intro)
     STATUS status;
     BOOL name_set = FALSE;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* create a list of filetypes and textual representations thereof from the loaded objects */
     status_return(t5_cmd_save_foreign_common_init(p_docu, &save_callback, TRUE));
@@ -1615,7 +1615,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign)
     STATUS status;
     PCTSTR filename;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(t5_cmd_save_foreign_common_init(p_docu, &save_callback, FALSE));
 
@@ -1683,8 +1683,8 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_picture_intro)
     STATUS status;
     BOOL name_set;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     zero_struct(save_callback);
 
@@ -1872,8 +1872,8 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_template_intro)
     ARRAY_HANDLE save_template_style_list_handle;
     PIXIT max_width;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     t5_cmd_save_template_common_init(p_docu, &save_callback);
 
@@ -1932,7 +1932,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_template)
     SAVE_CALLBACK save_callback;
     PCTSTR filename;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     t5_cmd_save_template_common_init(p_docu, &save_callback);
 
@@ -1961,7 +1961,7 @@ static T5_FILETYPE
 which_t5_filetype(
     _DocuRef_   P_DOCU p_docu)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(g_product_id)
     {
@@ -2103,7 +2103,7 @@ SaveFileHook(
 {
     const HWND hwnd = GetParent(hdlg); /* *This* is the 'Save As' window handle */
 
-    IGNOREPARM(wParam);
+    UNREFERENCED_PARAMETER(wParam);
 
     switch(uiMsg)
     {
@@ -2414,12 +2414,12 @@ save_template_locate(
     if(NULL != (e = WrapOsErrorChecking(_kernel_swi(OS_FSControl, &rs, &rs))))
         return(file_error_set(e->errmess));
 #else
-    IGNOREPARM(p_save_callback);
+    UNREFERENCED_PARAMETER(p_save_callback);
 #endif
 
     tstr_xstrkpy(g_dirname_buffer, g_elemof_dirname_buffer, filename);
 
-    IGNOREPARM(cur_p_docu);
+    UNREFERENCED_PARAMETER(cur_p_docu);
 
     return(status);
 }

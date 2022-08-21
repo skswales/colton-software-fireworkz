@@ -710,7 +710,7 @@ object_construct_table[] =
     { "RowHeight",              args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_RS_HEIGHT,            { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "RowHeightFix",           args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_RS_HEIGHT_FIXED,      { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "RowUnbreakable",         args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_RS_UNBREAKABLE,       { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
-    { "RowName",                args_ustr_mandorblk,        (T5_MESSAGE) IL_STYLE_RS_ROW_NAME,          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { "RowName",                args_ustr_mandorblk,        (T5_MESSAGE) IL_STYLE_RS_ROW_NAME,          { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
 
     { "MarginLeft",             args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_PS_MARGIN_LEFT,       { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "MarginRight",            args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_PS_MARGIN_RIGHT,      { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
@@ -718,7 +718,7 @@ object_construct_table[] =
     { "Tablist",                args_ustr_mandorblk,        (T5_MESSAGE) IL_STYLE_PS_TAB_LIST,          { 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0 } },
     { "Background",             args_rgb,                   (T5_MESSAGE) IL_STYLE_PS_RGB_BACK,          { 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0 } },
     { "ParaStart",              args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_PS_PARA_START,        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
-    { "ParaEnd",                args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_PS_PARA_END,          { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { "ParaEnd",                args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_PS_PARA_END,          { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "LineSpace",              args_s32_s32,               (T5_MESSAGE) IL_STYLE_PS_LINE_SPACE,        { 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0 } },
     { "Justify",                args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_PS_JUSTIFY,           { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "JustifyV",               args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_PS_JUSTIFY_V,         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
@@ -739,7 +739,7 @@ object_construct_table[] =
     { "GridRight",              args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_PS_GRID_RIGHT,        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "GridBottom",             args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_PS_GRID_BOTTOM,       { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
 
-    { "Protect",                args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_PS_PROTECT,           { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+    { "Protect",                args_u8n_mandatory,         (T5_MESSAGE) IL_STYLE_PS_PROTECT,           { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
 
     { "Typeface",               args_ustr_mandorblk,        (T5_MESSAGE) IL_STYLE_FS_NAME,              { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },
     { "Fontx",                  args_s32_mandatory,         (T5_MESSAGE) IL_STYLE_FS_SIZE_X,            { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 } },

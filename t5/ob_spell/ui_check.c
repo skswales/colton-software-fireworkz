@@ -346,7 +346,7 @@ dialog_check_ctl_state_change(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_check)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {

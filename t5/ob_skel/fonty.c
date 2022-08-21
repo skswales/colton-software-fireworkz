@@ -279,7 +279,7 @@ fonty_scanstring_old(
     return(p_kernel_oserror);
 }
 
-#endif
+#endif /* UNUSED */
 
 #endif /* RISCOS */
 
@@ -1478,7 +1478,7 @@ fontmap_default_font(
         FONTMAP_BITS try_fontmap_bits;
 
 #if RISCOS
-        IGNOREPARM_InVal_(use_host_riscos);
+        UNREFERENCED_PARAMETER_InVal_(use_host_riscos);
         assert(!use_host_riscos);
 #else
         if(use_host_riscos)
@@ -1705,7 +1705,7 @@ fontmap_host_font_spec_from_font_spec(
     FONTMAP_BITS fontmap_bits, try_fontmap_bits;
 
 #if WINDOWS
-    IGNOREPARM_InVal_(for_riscos_utf8);
+    UNREFERENCED_PARAMETER_InVal_(for_riscos_utf8);
 #endif
 
     /* Keep same attributes where applicable */
@@ -1908,7 +1908,7 @@ fontmap_enum_fonts_callback(
         return(fontmap_enum_fonts_add_font(lpelf, p));
     }
 
-    IGNOREPARM(lpntme);
+    UNREFERENCED_PARAMETER(lpntme);
     return(1);
 }
 
@@ -1931,7 +1931,7 @@ fontmap_enum_faces_callback(
         return(EnumFontFamiliesEx(p->hdc, &logfont, fontmap_enum_fonts_callback, lParam, 0));
     }
 
-    IGNOREPARM(lpntm);
+    UNREFERENCED_PARAMETER(lpntm);
     return(1);
 }
 
@@ -2451,7 +2451,7 @@ fontmap_remap_using_rtf_class(
             FONTMAP_BITS try_fontmap_bits;
             
 #if RISCOS
-            IGNOREPARM_InVal_(use_host_riscos);
+            UNREFERENCED_PARAMETER_InVal_(use_host_riscos);
             assert(!use_host_riscos);
 #else
             if(use_host_riscos)
@@ -2720,8 +2720,8 @@ T5_CMD_PROTO(extern, t5_cmd_fontmap)
     ARRAY_INDEX insert_before;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_1(TRACE_APP_FONTS, TEXT("config Fireworkz font name '%s'"), tstr_app_font_name);
 
@@ -2804,9 +2804,9 @@ T5_CMD_PROTO(extern, t5_cmd_fontmap)
 
 T5_CMD_PROTO(extern, t5_cmd_fontmap_end)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     return(fontmap_table_host_create());
 }
@@ -2843,8 +2843,8 @@ T5_CMD_PROTO(extern, t5_cmd_fontmap_remap)
     ARRAY_INDEX insert_before;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_2(TRACE_APP_FONTS, TEXT("config FontmapRemap Fireworkz font name '%s' from '%s'"), tstr_app_font_name, tstr_app_font_name_old);
 
@@ -2883,8 +2883,8 @@ fonty_msg_exit2(void)
 
 T5_MSG_PROTO(static, maeve_services_fonty_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -2898,7 +2898,7 @@ T5_MSG_PROTO(static, maeve_services_fonty_msg_initclose, _InRef_ PC_MSG_INITCLOS
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_fonty)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

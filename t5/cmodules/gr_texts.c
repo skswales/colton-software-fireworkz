@@ -187,7 +187,7 @@ gr_chart_text_order_set(
     _InVal_     GR_CHART_HANDLE ch,
     _InVal_     S32 key)
 {
-    IGNOREPARM_InVal_(ch);
+    UNREFERENCED_PARAMETER_InVal_(ch);
 
     gr_text_key_to_use = key;
 }

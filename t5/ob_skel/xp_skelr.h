@@ -405,6 +405,8 @@ typedef struct WimpWindowInfoMessage
 }
 WimpWindowInfoMessage;
 
+extern int g_current_wm_version;
+
 _Check_return_
 _Ret_maybenull_
 static inline _kernel_oserror *
@@ -985,15 +987,14 @@ typedef struct HOST_MODEVAR_CACHE_ENTRY
     GDI_SIZE gdi_size;
 
     /* raw values */
-    U8 XEig;
-    U8 YEig;
-    U8 Log2BPP;
-    U8 _spare;
+    U32 XEig;
+    U32 YEig;
+    U32 Log2BPP;
 
     U32 XWindLimit;
     U32 YWindLimit;
 
-    ARRAY_HANDLE h_selector; /*RISCOS_MODE_SELECTOR*/
+    ARRAY_HANDLE h_mode_selector; /*RISCOS_MODE_SELECTOR*/
 }
 HOST_MODEVAR_CACHE_ENTRY, * P_HOST_MODEVAR_CACHE_ENTRY; typedef const HOST_MODEVAR_CACHE_ENTRY * PC_HOST_MODEVAR_CACHE_ENTRY;
 

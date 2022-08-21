@@ -8,9 +8,9 @@
 
 #rem Copyright (C) 2013-2016 Stuart Swales
 
-#rem Execute from top-level t5 directory
+#rem Execute from top-level t5 directory (move as t5/external/setup-gccsdk.sh soon)
 
-COLTSOFT_CS_NONFREE=../../../coltsoft/trunk/cs-nonfree
+COLTSOFT_CS_NONFREE=../../../coltsoft/$FIREWORKZ_TBT/cs-nonfree
 
 [ ! -d ./external/Microsoft/Excel97SDK/INCLUDE ] && mkdir       ./external/Microsoft/Excel97SDK/INCLUDE
 cp $COLTSOFT_CS_NONFREE/Microsoft/Excel_97_SDK/INCLUDE/XLCALL.H ./external/Microsoft/Excel97SDK/INCLUDE/xlcall.h

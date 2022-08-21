@@ -383,8 +383,8 @@ T5_MSG_PROTO(static, ascii_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p
 
 T5_MSG_PROTO(static, ascii_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

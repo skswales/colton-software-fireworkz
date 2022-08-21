@@ -806,7 +806,7 @@ ob_ss_msg_save(
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_ss)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1126,7 +1126,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
     P_FUNCTION_LIST_ENTRY p_function_list_entry;
     PIXIT max_width = 0;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     zero_struct(function_list_state);
 
@@ -1746,8 +1746,8 @@ T5_MSG_PROTO(static, ss_function_get_argument_help, _InRef_ P_SS_FUNCTION_ARGUME
 {
     PC_USTR message_string = resource_lookup_ustr_no_default(p_ss_function_argument_help->help_id + SS_MSG_BASE);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == message_string)
         return(STATUS_OK);
@@ -1969,7 +1969,7 @@ dialog_alert_ctl_pushbutton(P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbut
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_alert)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1989,8 +1989,8 @@ T5_MSG_PROTO(static, ss_msg_ss_alert_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
 {
     STATUS status;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     alert_result = 0;
 
@@ -2091,7 +2091,7 @@ dialog_event_input_ctl_pushbutton(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_input)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -2110,8 +2110,8 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_input)
 T5_MSG_PROTO(static, ss_msg_ss_input_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input_exec)
 {
     STATUS status;
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     input_result = 0;
 
@@ -2144,7 +2144,7 @@ T5_MSG_PROTO(static, ss_msg_ss_input_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
 
 T5_MSG_PROTO(static, ss_msg_docu_supporters, _InoutRef_ P_DOCU_DEP_SUP p_docu_dep_sup)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     tree_get_supporting_docs(ev_docno_from_p_docu(p_docu), p_docu_dep_sup);
 
@@ -2153,7 +2153,7 @@ T5_MSG_PROTO(static, ss_msg_docu_supporters, _InoutRef_ P_DOCU_DEP_SUP p_docu_de
 
 T5_MSG_PROTO(static, ss_msg_docu_dependents, _InoutRef_ P_DOCU_DEP_SUP p_docu_dep_sup)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     tree_get_dependent_docs(ev_docno_from_p_docu(p_docu), p_docu_dep_sup);
 
@@ -2162,8 +2162,8 @@ T5_MSG_PROTO(static, ss_msg_docu_dependents, _InoutRef_ P_DOCU_DEP_SUP p_docu_de
 
 T5_MSG_PROTO(static, ss_msg_object_in_cell_allowed, P_OBJECT_IN_CELL_ALLOWED p_object_in_cell_allowed)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_object_in_cell_allowed->in_cell_allowed = global_preferences.ss_edit_in_cell;
 
@@ -2234,7 +2234,7 @@ ss_text_paste_to_editing_line(
 
 T5_CMD_PROTO(static, ss_cmd_insert_operator)
 {
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     switch(t5_message)
     {
@@ -2287,7 +2287,7 @@ T5_CMD_PROTO(static, ss_cmd_force_recalc)
 {
     BOOL all = FALSE;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {
@@ -2828,8 +2828,8 @@ T5_MSG_PROTO(static, split_ev_call, _InRef_ P_EV_SPLIT_EXEC_DATA p_ev_split_exec
 {
     P_PROC_EXEC p_proc_exec = ss_func_table[p_ev_split_exec_data->object_table_index].p_proc_exec;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     (*p_proc_exec) (p_ev_split_exec_data->args, p_ev_split_exec_data->n_args, p_ev_split_exec_data->p_ev_data_res, p_ev_split_exec_data->p_cur_slr);
 
@@ -3028,8 +3028,8 @@ T5_MSG_PROTO(static, ss_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 
 T5_MSG_PROTO(static, ss_msg_ss_linest, _InoutRef_ P_SS_LINEST p_ss_linest)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(linest(p_ss_linest->p_proc_get, p_ss_linest->p_proc_put, p_ss_linest->client_handle, p_ss_linest->m, p_ss_linest->n));
 }
@@ -3038,7 +3038,7 @@ T5_MSG_PROTO(static, ss_msg_click_left_double, _InoutRef_ P_OBJECT_DOUBLE_CLICK 
 {
     const P_EV_SLR p_ev_slr = &p_object_instance_data_SS(p_docu)->ev_slr_double_click;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_object_double_click->data_ref.data_space == DATA_SLOT);
 
@@ -3054,7 +3054,7 @@ T5_MSG_PROTO(static, ss_msg_object_how_big, _InoutRef_ P_OBJECT_HOW_BIG p_object
 {
     PIXIT_POINT pixit_point;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_object_how_big->object_data.data_ref.data_space == DATA_SLOT);
 
@@ -3071,7 +3071,7 @@ T5_MSG_PROTO(static, ss_msg_object_how_wide, _InoutRef_ P_OBJECT_HOW_WIDE p_obje
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_object_how_wide->object_data.u.p_object)
     {
@@ -3158,30 +3158,25 @@ ss_event_redraw_show_selection(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_OBJECT_REDRAW p_object_redraw)
 {
-    BOOL do_invert = FALSE;
+    BOOL do_invert;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
-    if(!p_object_redraw->flags.show_content)
-    {
-        if(p_object_redraw->flags.marked_now != p_object_redraw->flags.marked_screen)
-            do_invert = TRUE;
-    }
-    else
+    if(p_object_redraw->flags.show_content)
         do_invert = p_object_redraw->flags.marked_now;
+    else
+        do_invert = (p_object_redraw->flags.marked_now != p_object_redraw->flags.marked_screen);
 
     if(do_invert)
-    {
         host_invert_rectangle_filled(&p_object_redraw->redraw_context,
                                      &p_object_redraw->pixit_rect_object,
                                      &p_object_redraw->rgb_fore,
                                      &p_object_redraw->rgb_back);
-    }
 }
 
 T5_MSG_PROTO(static, ss_event_redraw, _InoutRef_ P_OBJECT_REDRAW p_object_redraw)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_object_redraw->flags.show_content && (P_DATA_NONE != p_object_redraw->object_data.u.p_object))
         ss_event_redraw_show_content(p_docu, p_object_redraw);
@@ -3194,8 +3189,8 @@ T5_MSG_PROTO(static, ss_event_redraw, _InoutRef_ P_OBJECT_REDRAW p_object_redraw
 
 T5_MSG_PROTO(static, ss_msg_object_compare, _InoutRef_ P_OBJECT_COMPARE p_object_compare)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_object_compare->p_object_1 && p_object_compare->p_object_2)
     {
@@ -3215,7 +3210,7 @@ T5_MSG_PROTO(static, ss_msg_object_copy, _InoutRef_ P_OBJECT_COPY p_object_copy)
     STATUS status = STATUS_OK;
     P_EV_CELL p_ev_cell_from = p_ev_cell_object_from_slr(p_docu, &p_object_copy->slr_from);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_ev_cell_from)
     {
@@ -3253,8 +3248,8 @@ T5_MSG_PROTO(static, ss_msg_object_copy, _InoutRef_ P_OBJECT_COPY p_object_copy)
 
 T5_MSG_PROTO(static, ss_msg_object_data_read, _InoutRef_ P_OBJECT_DATA_READ p_object_data_read)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_object_data_read->object_data.u.p_object)
     {
@@ -3278,7 +3273,7 @@ T5_MSG_PROTO(static, ss_msg_object_read_text, _InoutRef_ P_OBJECT_READ_TEXT p_ob
 {
     P_EV_CELL p_ev_cell = p_object_read_text->object_data.u.p_ev_cell;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_ev_cell)
     {
@@ -3456,7 +3451,7 @@ T5_MSG_PROTO(static, ss_msg_load_cell_ownform, _InoutRef_ P_LOAD_CELL_OWNFORM p_
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock_formula, 256);
     quick_ublock_with_buffer_setup(quick_ublock_formula);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* check the data type */
     switch(p_load_cell_ownform->data_type)
@@ -3547,7 +3542,7 @@ T5_MSG_PROTO(static, ss_msg_save_cell_ownform, _InoutRef_ P_SAVE_CELL_OWNFORM p_
     STATUS status = STATUS_OK;
     const PC_EV_CELL p_ev_cell = p_save_cell_ownform->object_data.u.p_ev_cell;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_ev_cell)
     {
@@ -3619,7 +3614,7 @@ T5_MSG_PROTO(static, ss_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN p_
     PC_USTR ustr_formula = NULL;
     BOOL do_mrofmun = TRUE;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* check the data type */
     switch(p_load_cell_foreign->data_type)
@@ -3694,7 +3689,7 @@ T5_MSG_PROTO(static, ss_msg_object_read_text_draft, _InoutRef_ P_OBJECT_READ_TEX
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_object_read_text_draft->object_data.u.p_object)
     {
@@ -3763,7 +3758,7 @@ T5_MSG_PROTO(static, ss_msg_new_object_from_text, _InoutRef_ P_NEW_OBJECT_FROM_T
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_new_object_from_text->data_ref.data_space == DATA_SLOT);
 
@@ -3821,7 +3816,7 @@ T5_MSG_PROTO(static, t5_ext_style_mrofmun, _InoutRef_ P_IMPLIED_STYLE_QUERY p_im
 {
     const P_EV_CELL p_ev_cell = p_ev_cell_object_from_slr(p_docu, &p_implied_style_query->position.slr);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_ev_cell)
     {
@@ -3845,7 +3840,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_make_tn)
     const OBJECT_ID object_id = (t5_message == T5_CMD_SS_MAKE_NUMBER) ? OBJECT_ID_SS : OBJECT_ID_TEXT;
     ARGLIST_HANDLE arglist_handle;
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(status_ok(status = arglist_prepare(&arglist_handle, ss_args_s32)))
     {
@@ -3866,7 +3861,7 @@ T5_CMD_PROTO(static, t5_cmd_replicate)
     const BOOL up    = (T5_CMD_REPLICATE_UP    == t5_message);
   /*const BOOL left  = (T5_CMD_REPLICATE_LEFT  == t5_message);*/
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(p_docu->mark_info_cells.h_markers)
     {
@@ -3985,8 +3980,8 @@ T5_CMD_PROTO(static, t5_cmd_auto_sum)
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(p_docu->mark_info_cells.h_markers)
     {
@@ -4111,7 +4106,7 @@ T5_CMD_PROTO(static, t5_cmd_new_expression)
     NEW_OBJECT_FROM_TEXT new_object_from_text;
     QUICK_UBLOCK quick_ublock;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {
@@ -4157,7 +4152,7 @@ T5_MSG_PROTO(static, ss_msg_object_snapshot, _InRef_ P_OBJECT_SNAPSHOT p_object_
     STATUS status = STATUS_OK;
     const P_EV_CELL p_ev_cell = p_object_snapshot->object_data.u.p_ev_cell;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_ev_cell)
     {
@@ -4201,7 +4196,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_name)
     PC_USTR ustr_description = p_args[2].val.ustr;
     const EV_DOCNO ev_docno = ev_docno_from_p_docu(p_docu);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     PTR_ASSERT(p_of_ip_format);
 
@@ -4225,7 +4220,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_make, _InRef_ P_SS_NAME_MAKE p_ss_name_make)
     PC_USTR ustr_description = p_ss_name_make->ustr_description;
     DOCNO docno;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = docno_from_id(p_docu, &docno, ustr_name_id, FALSE /* ensure */)))
     {
@@ -4247,7 +4242,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_ensure, _InoutRef_ P_SS_NAME_ENSURE p_ss_nam
     PC_USTR ustr_name_id = p_ss_name_ensure->ustr_name_id;
     DOCNO docno;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = docno_from_id(p_docu, &docno, ustr_name_id, TRUE /* ensure */)))
     {
@@ -4276,8 +4271,8 @@ T5_MSG_PROTO(static, ss_msg_ss_name_id_from_handle, _InRef_ P_SS_NAME_ID_FROM_HA
     STATUS status = STATUS_OK;
     const ARRAY_INDEX name_num = name_def_find(p_ss_name_id_from_handle->ev_handle);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(name_num >= 0)
     {
@@ -4304,8 +4299,8 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
     STATUS status = STATUS_OK;
     const ARRAY_INDEX name_num = name_def_find(p_ss_name_read->ev_handle);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     ev_data_set_blank(&p_ss_name_read->ev_data);
 
@@ -4347,8 +4342,8 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
 
 T5_MSG_PROTO(static, ss_msg_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_choices_query_block)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     choices_ss_calc_auto_data.init_state                = (U8) !global_preferences.ss_calc_manual;
     choices_ss_calc_background_data.init_state          = (U8) !global_preferences.ss_calc_foreground;
@@ -4373,7 +4368,7 @@ T5_MSG_PROTO(static, ss_msg_choices_set, _InRef_ P_CHOICES_SET_BLOCK p_choices_s
 {
     const H_DIALOG h_dialog = p_choices_set_block->h_dialog;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     ss_choice_process(p_docu, h_dialog, CHOICES_SS_ID_CALC_AUTO,                T5_CMD_CHOICES_SS_CALC_AUTO);
     ss_choice_process(p_docu, h_dialog, CHOICES_SS_ID_CALC_BACKGROUND,          T5_CMD_CHOICES_SS_CALC_BACKGROUND);
@@ -4390,8 +4385,8 @@ T5_MSG_PROTO(static, ss_msg_choices_set, _InRef_ P_CHOICES_SET_BLOCK p_choices_s
 
 T5_MSG_PROTO(static, ss_msg_choices_save, _InoutRef_ P_OF_OP_FORMAT p_of_op_format)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(ss_choice_save(T5_CMD_CHOICES_SS_CALC_AUTO,              !global_preferences.ss_calc_manual,              p_of_op_format));
     status_return(ss_choice_save(T5_CMD_CHOICES_SS_CALC_BACKGROUND,        !global_preferences.ss_calc_foreground,          p_of_op_format));
@@ -4408,7 +4403,7 @@ T5_CMD_PROTO(static, ss_choices_ss_calc_auto)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.ss_calc_manual != !(p_args[0].val.fBool))
     {
@@ -4425,7 +4420,7 @@ T5_CMD_PROTO(static, ss_choices_ss_calc_background)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.ss_calc_foreground != !(p_args[0].val.fBool))
     {
@@ -4440,7 +4435,7 @@ T5_CMD_PROTO(static, ss_choices_ss_calc_on_load)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.ss_calc_on_load != p_args[0].val.fBool)
     {
@@ -4455,7 +4450,7 @@ T5_CMD_PROTO(static, ss_choices_ss_calc_additional_rounding)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.ss_calc_additional_rounding != p_args[0].val.fBool)
     {
@@ -4470,7 +4465,7 @@ T5_CMD_PROTO(static, ss_choices_ss_edit_in_cell)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.ss_edit_in_cell != p_args[0].val.fBool)
     {
@@ -4485,7 +4480,7 @@ T5_CMD_PROTO(static, ss_choices_ss_alternate_formula_style)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.ss_alternate_formula_style != p_args[0].val.fBool)
     {
@@ -4500,7 +4495,7 @@ T5_CMD_PROTO(static, ss_choices_chart_update_auto)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.chart_update_manual != !(p_args[0].val.fBool))
     {

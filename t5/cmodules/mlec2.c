@@ -117,7 +117,7 @@ mlec__event_menu_proc(
     MLEC mlec = (MLEC) handle;
     int err = 0;
 
-    IGNOREPARM(submenurequest);
+    UNREFERENCED_PARAMETER(submenurequest);
 
     switch(*hit++)
     {

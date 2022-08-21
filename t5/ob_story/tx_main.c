@@ -132,7 +132,7 @@ T5_MSG_PROTO(static, text_main_redraw, /**/ P_TEXT_MESSAGE_BLOCK p_text_message_
     P_TEXT_CACHE p_text_cache;
     S32 slot_mark_start_now, slot_mark_end_now, slot_mark_start_screen, slot_mark_end_screen;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /******* set marking flags and start and end indexes *******/
     slot_mark_start_now = slot_mark_end_now = slot_mark_start_screen = slot_mark_end_screen = 0;
@@ -274,8 +274,8 @@ T5_MSG_PROTO(static, text_main_msg_tab_wanted, /**/ P_TEXT_MESSAGE_BLOCK p_text_
 {
     const P_TAB_WANTED p_tab_wanted = (P_TAB_WANTED) p_text_message_block->p_data;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(array_elements(&p_text_message_block->text_format_info.style_text_global.para_style.h_tab_list))
         p_tab_wanted->want_inline_insert = 1;
@@ -289,7 +289,7 @@ T5_MSG_PROTO(static, text_main_msg_object_position_from_skel_point, /**/ P_TEXT_
 {
     const P_OBJECT_POSITION_FIND p_object_position_find = (P_OBJECT_POSITION_FIND) p_text_message_block->p_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* must cope with NULL objects */
     if( (P_DATA_NONE != p_text_message_block->inline_object.object_data.u.p_object)
@@ -326,7 +326,7 @@ T5_MSG_PROTO(static, text_main_msg_skel_point_from_object_position, /**/ P_TEXT_
 {
     const P_OBJECT_POSITION_FIND p_object_position_find = (P_OBJECT_POSITION_FIND) p_text_message_block->p_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* must cope with NULL objects */
     if( (P_DATA_NONE != p_text_message_block->inline_object.object_data.u.p_object)
@@ -443,7 +443,7 @@ T5_MSG_PROTO(static, text_main_msg_object_logical_move, /**/ P_TEXT_MESSAGE_BLOC
     P_SEGMENT p_segment;
     SKEL_RECT skel_rect;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE == p_object_logical_move->object_data.u.p_object)
         return(STATUS_FAIL);
@@ -515,7 +515,7 @@ T5_MSG_PROTO(static, text_main_msg_object_read_text_draft, /**/ P_TEXT_MESSAGE_B
     const P_OBJECT_READ_TEXT_DRAFT p_object_read_text_draft = (P_OBJECT_READ_TEXT_DRAFT) p_text_message_block->p_data;
     const P_TEXT_CACHE p_text_cache = p_text_cache_from_data_ref(p_docu, &p_text_message_block->text_format_info, &p_text_message_block->inline_object);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_text_cache)
         return(STATUS_FAIL);
@@ -542,8 +542,8 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
     STATUS status = STATUS_DONE;
     S32 start, end;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     offsets_from_object_data(&start, &end, p_object_data, !IS_PTR_NONE(p_object_data->u.ustr_inline) ? ustr_inline_strlen(p_object_data->u.ustr_inline) : 0);
 
@@ -645,7 +645,7 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
 
 T5_MSG_PROTO(static, text_main_msg_object_word_check, P_OBJECT_DATA p_object_data)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE == p_object_data->u.p_object)
         return(STATUS_OK);
@@ -665,7 +665,7 @@ T5_MSG_PROTO(static, text_main_msg_object_check, P_OBJECT_CHECK p_object_check)
     S32 start, end;
     S32 now;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     offsets_from_object_data(&start, &end, &p_object_check->object_data, len);
 
@@ -704,8 +704,8 @@ T5_MSG_PROTO(static, text_main_msg_object_string_search, P_OBJECT_STRING_SEARCH 
     const PC_USTR_INLINE ustr_inline = p_object_string_search->object_data.u.ustr_inline;
     S32 start, end;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     object_position_init(&p_object_string_search->object_position_found_start);
     object_position_init(&p_object_string_search->object_position_found_end);
@@ -737,7 +737,7 @@ T5_MSG_PROTO(static, text_main_msg_object_read_text, P_OBJECT_READ_TEXT p_object
     const PC_USTR_INLINE ustr_inline = p_object_read_text->object_data.u.ustr_inline;
     S32 start, end;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE == ustr_inline)
         return(STATUS_OK);
@@ -768,8 +768,8 @@ T5_MSG_PROTO(static, text_main_cmd_word_count, P_OBJECT_WORD_COUNT p_object_word
     S32 len = (P_DATA_NONE != p_object_word_count->object_data.u.p_object) ? ustr_inline_strlen(p_object_word_count->object_data.u.ustr_inline) : 0;
     S32 start, end, offset;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     offsets_from_object_data(&start, &end, &p_object_word_count->object_data, len);
 
@@ -2044,7 +2044,7 @@ T5_CMD_PROTO(static, text_main_cmd_insert_field_none)
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, INLINE_OVH + 1);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     switch(t5_message)
     {
@@ -2129,7 +2129,7 @@ T5_CMD_PROTO(static, text_main_cmd_insert_field_ss_name)
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, INLINE_OVH + 32);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = inline_quick_ublock_from_data(&quick_ublock, IL_SS_NAME, IL_TYPE_S32, &s32, 0)))
         status = skelevent_keys_from_quick_block(p_docu, &quick_ublock);
@@ -2147,7 +2147,7 @@ T5_CMD_PROTO(static, text_main_cmd_insert_field_ms_field)
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, INLINE_OVH + 32);
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = inline_quick_ublock_from_data(&quick_ublock, IL_MS_FIELD, IL_TYPE_S32, &field_idx, 0)))
         status = skelevent_keys_from_quick_block(p_docu, &quick_ublock);

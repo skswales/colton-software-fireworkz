@@ -236,7 +236,7 @@ host_wm_dde_initiate(
     ATOM aApplication = LOWORD(lParam);
     ATOM aTopic = HIWORD(lParam);
 
-    IGNOREPARM_InVal_(uiMsg);
+    UNREFERENCED_PARAMETER_InVal_(uiMsg);
 
     if(aApplication == atom_Application || !aApplication)
     if(aTopic == atom_Topic_System || !aTopic)
@@ -262,8 +262,8 @@ host_wm_dde_terminate(
 {
     HWND hwnd_sender = (HWND) wParam;
 
-    IGNOREPARM_InVal_(uiMsg);
-    IGNOREPARM_InVal_(lParam);
+    UNREFERENCED_PARAMETER_InVal_(uiMsg);
+    UNREFERENCED_PARAMETER_InVal_(lParam);
 
     trace_1(TRACE__DDE, TEXT("DDE_TERMINATE (sender=") U32_XTFMT TEXT(")"), (UINT) (UINT_PTR) hwnd_sender);
 
@@ -285,7 +285,7 @@ host_wm_dde_execute(
     DDEACK ddeack;
     WORD wStatus;
 
-    IGNOREPARM_InVal_(uiMsg);
+    UNREFERENCED_PARAMETER_InVal_(uiMsg);
 
     ddeack.bAppReturnCode = 0;
     ddeack.reserved = 0;

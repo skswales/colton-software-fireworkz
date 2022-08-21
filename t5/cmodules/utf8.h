@@ -573,7 +573,7 @@ uchars_char_copy(
     _In_reads_(uchars_n) PC_UCHARS src_uchars,
     _InVal_     U32 uchars_n)
 {
-    IGNOREPARM_InVal_(uchars_n);
+    UNREFERENCED_PARAMETER_InVal_(uchars_n);
     assert(1 == uchars_n);
     PtrPutByte(dst_uchars, PtrGetByte(src_uchars));
 }

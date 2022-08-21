@@ -1355,8 +1355,8 @@ style_docu_area_add_internal(
     style.para_style.rgb_grid_left =
     style.para_style.rgb_grid_top =
     style.para_style.rgb_grid_right =
-    style.para_style.rgb_grid_bottom = rgb_stash[15];   /* pale blue */
-    style.para_style.grid_left = SF_BORDER_STANDARD;
+    style.para_style.rgb_grid_bottom = rgb_stash[1];    /* light grey */
+    style.para_style.grid_left = SF_BORDER_NONE;
     style.para_style.grid_top = style.para_style.grid_right = style.para_style.grid_bottom = style.para_style.grid_left;
 
     /* add this as base region */
@@ -1901,7 +1901,7 @@ style_docu_area_uref_hold(
     P_STYLE_DOCU_AREA p_style_docu_area = array_range(p_h_style_docu_area, STYLE_DOCU_AREA, 0, n_regions);
     REGION region_slr;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     region_from_two_slrs(&region_slr, p_slr, p_slr, TRUE);
 
@@ -3075,7 +3075,7 @@ style_handle_use_find(
 {
     ARRAY_INDEX style_docu_area_ix, style_docu_area_ix_out = -1;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     profile_ensure_frame();
 
@@ -3276,7 +3276,7 @@ style_docu_colrow(
     ARRAY_INDEX array_index = -1;
     T5_MESSAGE t5_message = T5_EXT_STYLE_CELL_CURRENT;
 
-    IGNOREPARM_InRef_(p_slr_old);
+    UNREFERENCED_PARAMETER_InRef_(p_slr_old);
 
     if(NULL != (p_style_docu_area = style_docu_area_enum_implied(p_docu, &array_index, OBJECT_ID_IMPLIED_STYLE, &t5_message, NULL)))
         docu_area_from_slr(&p_style_docu_area->docu_area, &p_docu->cur.slr);
@@ -3374,7 +3374,7 @@ MAEVE_EVENT_PROTO(static, maeve_event_style)
 {
     const STATUS status = STATUS_OK;
 
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -3983,7 +3983,7 @@ sk_styl_msg_close1(
 
 T5_MSG_PROTO(static, maeve_services_sk_styl_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -4003,7 +4003,7 @@ T5_MSG_PROTO(static, maeve_services_sk_styl_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_styl)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

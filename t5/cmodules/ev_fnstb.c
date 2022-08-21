@@ -235,7 +235,7 @@ large_small_common(
     S32 x_size, y_size;
     const S32 k_idx = args[1]->arg.integer - 1;
 
-    IGNOREPARM_InVal_(n_args);
+    UNREFERENCED_PARAMETER_InVal_(n_args);
 
     /* can trivially index by sorting a flattened copy of the source */
     status_assert(statistics_array_flatten_copy(&ev_data_temp_array, args[0]));

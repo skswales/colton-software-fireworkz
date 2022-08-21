@@ -1281,7 +1281,7 @@ dialog_current_set(
     const DIALOG_CONTROL_ID old_current_dialog_control_id = p_dialog->current_dialog_control_id;
 
 #if !RISCOS
-    IGNOREPARM_InVal_(disallow_movement);
+    UNREFERENCED_PARAMETER_InVal_(disallow_movement);
 #endif
 
 #if RISCOS
@@ -1643,7 +1643,7 @@ dialog_dbox_process_focus_return_pre(
         }
     }
 #else
-    IGNOREPARM(p_dialog);
+    UNREFERENCED_PARAMETER(p_dialog);
 #endif
 }
 
@@ -2055,7 +2055,7 @@ T5_MSG_PROTO(extern, dialog_dbox_process, P_DIALOG_CMD_PROCESS_DBOX p_dialog_cmd
     P_DIALOG p_dialog;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_dialog_cmd_process_dbox->caption.type != 0xBCBCBCBC);
     assert(* (PC_U32) &p_dialog_cmd_process_dbox->bits != (U32) 0xBCBCBCBC);

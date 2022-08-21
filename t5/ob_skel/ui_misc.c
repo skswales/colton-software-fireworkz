@@ -284,7 +284,7 @@ dialog_info_preprocess_command(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_info)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {

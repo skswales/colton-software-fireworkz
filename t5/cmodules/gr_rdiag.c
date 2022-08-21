@@ -976,7 +976,7 @@ gr_riscdiag_normalise_stt(
     DRAW_DIAG_OFFSET sttObject = sttObject_in;
 
     myassert0x(p_gr_riscdiag && p_gr_riscdiag->draw_diag.length, TEXT("gr_riscdiag_normalise_stt has no diagram"));
-    IGNOREPARM_InRef_(p_gr_riscdiag);
+    UNREFERENCED_PARAMETER_InRef_(p_gr_riscdiag);
 
     if(sttObject == DRAW_DIAG_OFFSET_FIRST)
         sttObject = sizeof32(DRAW_FILE_HEADER);
@@ -1099,7 +1099,7 @@ gr_riscdiag_object_first(
               TEXT("gr_riscdiag_object_first object ") U32_XTFMT TEXT(" size ") U32_XTFMT TEXT(" goes beyond end ") U32_XTFMT, thisObject, objectSize, *pEndObject);
     } /*block*/
 #else
-    IGNOREPARM_InVal_(recurse);
+    UNREFERENCED_PARAMETER_InVal_(recurse);
 #endif /* CHECKING */
 
     /* stay at this first object */

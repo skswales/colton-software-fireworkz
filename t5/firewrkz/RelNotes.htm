@@ -101,14 +101,14 @@
     <A ID="Support"></A>
     <H2>Support</H2>
 
-    <p>Fireworkz is now free-to-use, so support for Fireworkz is a self-help affair.</p>
+    <p>As Fireworkz is now free-to-use, support for Fireworkz is a self-help affair.</p>
 
     <p>
         There is a Google Group <A HREF="http://groups.google.com/group/colton-software-fireworkz">
             <strong>colton-software-fireworkz</strong>
         </A>
         where you may seek help from other users.
-        Please include files (in a ZIP or Spark archive) which demonstrate any problems.
+        Please include files which demonstrate any problems (in a ZIP or Spark archive).
     </p>
 
     <p>
@@ -126,7 +126,31 @@
     </p>
 
 
-    <H3>2.10 (24 Jun 2016)</H3>
+    <h3>2.10.02 (07 Jul 2016)</h3>
+
+    <p>Version information (and therefore top-bit-set encoding used therein) is saved in each Choices file.</p>
+
+    <p>BaseSingleCol construct is only saved in files where needed (i.e. when non-zero).</p>
+
+    <p>All newlines are suppressed in files between elements in Style definitions and Effect applications.</p>
+
+    <p>Reinstated the older Ctrl-Shift-D keyboard shortcut as synonym for Insert Date (now Ctrl-D).</p>
+
+    <p>RISC&nbsp;OS: Better handles upgrading from an earlier version with a Choices directory but without a ChoicesDoc.</p>
+
+    <p>RISC&nbsp;OS: Uses DejaVuSans.Mono 12pt (if it is available AND a Unicode Font Manager is in use) as the font for formula line text, edit controls and combo box controls.</p>
+
+
+    <h3>2.10.01 (04 Jul 2016)</h3>
+
+    <p>When the <em>Faint grid</em> option is used for on-screen display, the (thin) grid colour is now derived from the style system. For spreadsheets, this is usually best set in <code>BaseSheet</code>.</p>
+
+    <p>RISC&nbsp;OS: Fix for partially initialised structure that could cause fault during application exit.</p>
+
+    <p>RISC&nbsp;OS: Use extended syntax Wimp_ForceRedraw to update title bar more efficiently.</p>
+
+
+    <h3>2.10 (24 Jun 2016)</h3>
 
     <p>
         Spreadsheet functions that take date parameters have been extended to accept numeric input.
@@ -776,7 +800,8 @@
     <p>LoadOther and SaveOther commands renamed as LoadForeign and SaveForeign for source consistency.</p>
 
     <p>
-        Fireworkz' inline identifier character changed to ASCII 21 (was ASCII 7). NB. This character value is not exposed in file data.
+        Fireworkz' internal inline sequence identifier character changed to ASCII 21 (was ASCII 7).
+        NB. This character value is not exposed in file data.
         This helps on RISC&nbsp;OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as
         ASCII 21 is the Font Manager Comment sequence lead-in byte and so is ignored rather than giving an Unhandled CtrlChar error.
     </p>
@@ -1032,7 +1057,9 @@
 
     <p>If you have a text cell with an inserted name which refers directly to another cell (e.g. you have defined "fred" to be h30) then if the value in the cell which is referred to changes, the text cell is not automatically reformatted or redisplayed. The way to do this at the moment is to use set_name to define the name in the number cell itself, e.g. set_name("fred",&nbsp;calculation)</p>
 
-    <p>RISC&nbsp;OS: Text handling will not behave correctly if *Alphabet UTF8 is set.</p>
+    <h4>RISC&nbsp;OS</h4>
+
+    <p>Text handling will not behave correctly if *Alphabet UTF8 is set.</p>
 
 
     <A ID="AddendaAndErrata"></A>

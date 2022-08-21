@@ -161,10 +161,10 @@ static XLS_SCAN_SYMBOL xls_scan_symbol;
 
 typedef struct XLS_COMPILER_FUNC_ENTRY
 {
-    PC_A7STR a7str_text_t5; /* Fireworkz' function name */
+    PC_A7STR a7str_text_t5;     /* Fireworkz' function name */
 
-    U16 xlf_number;         /* Excel's function number (see xlcall.h) */
-    S32 token;              /* Excel function token (depends on return type) */
+    U16 biff_function_number;   /* Excel BIFF function number */
+    S32 token;                  /* Excel function token (depends on return type) */
     PC_BYTE p_args;
     U8 min_args;
     U8 max_args;
@@ -172,8 +172,8 @@ typedef struct XLS_COMPILER_FUNC_ENTRY
 }
 XLS_COMPILER_FUNC_ENTRY; typedef const XLS_COMPILER_FUNC_ENTRY * PC_XLS_COMPILER_FUNC_ENTRY;
 
-#define xls_func_entry(xlf_number, token, p_args, min_args, max_args, p_text_t5) \
-    { p_text_t5, xlf_number, token, p_args, min_args, max_args, 0, 0 }
+#define xls_func_entry(biff_fn_number, token, p_args, min_args, max_args, p_text_t5) \
+    { p_text_t5, biff_fn_number, token, p_args, min_args, max_args, 0, 0 }
 
 static const BYTE
 arg_R[] =
@@ -245,156 +245,156 @@ arg_A_A_V[] =
 static const XLS_COMPILER_FUNC_ENTRY
 BIFF3_compiler_functions[] = /* ordered as Fireworkz */
 {
-    xls_func_entry(xlfAbs,              tFuncV,         arg_V,          1, 1,   "ABS"),
-    xls_func_entry(xlfAddress,          tFuncVarV,      arg_V,          2, 5,   "ADDRESS"),
-    xls_func_entry(xlfAnd,              tFuncVarV,      arg_R,          1, 30,  "AND"),
-    xls_func_entry(xlfAcos,             tFuncV,         arg_V,          1, 1,   "ACOS"),
-    xls_func_entry(xlfAcosh,            tFuncV,         arg_V,          1, 1,   "ACOSH"),
-    xls_func_entry(xlfAsin,             tFuncV,         arg_V,          1, 1,   "ASIN"),
-    xls_func_entry(xlfAsinh,            tFuncV,         arg_V,          1, 1,   "ASINH"),
-    xls_func_entry(xlfAtan,             tFuncV,         arg_V,          1, 1,   "ATAN"),
-    xls_func_entry(xlfAtan2,            tFuncV,         arg_V,          2, 2,   "ATAN_2"), /* XLS:ATAN2 */
-    xls_func_entry(xlfAtanh,            tFuncV,         arg_V,          1, 1,   "ATANH"),
-    xls_func_entry(xlfAverage,          tFuncVarV,      arg_R,          1, 30,  "AVG"), /* XLS:AVERAGE */
+    xls_func_entry(BIFF_FN_Abs,                 tFuncV,         arg_V,          1, 1,   "ABS"),
+    xls_func_entry(BIFF_FN_Address,             tFuncVarV,      arg_V,          2, 5,   "ADDRESS"),
+    xls_func_entry(BIFF_FN_And,                 tFuncVarV,      arg_R,          1, 30,  "AND"),
+    xls_func_entry(BIFF_FN_Acos,                tFuncV,         arg_V,          1, 1,   "ACOS"),
+    xls_func_entry(BIFF_FN_Acosh,               tFuncV,         arg_V,          1, 1,   "ACOSH"),
+    xls_func_entry(BIFF_FN_Asin,                tFuncV,         arg_V,          1, 1,   "ASIN"),
+    xls_func_entry(BIFF_FN_Asinh,               tFuncV,         arg_V,          1, 1,   "ASINH"),
+    xls_func_entry(BIFF_FN_Atan,                tFuncV,         arg_V,          1, 1,   "ATAN"),
+    xls_func_entry(BIFF_FN_Atan2,               tFuncV,         arg_V,          2, 2,   "ATAN_2"), /* XLS:ATAN2 */
+    xls_func_entry(BIFF_FN_Atanh,               tFuncV,         arg_V,          1, 1,   "ATANH"),
+    xls_func_entry(BIFF_FN_Average,             tFuncVarV,      arg_R,          1, 30,  "AVG"), /* XLS:AVERAGE */
 
-    xls_func_entry(xlfChar,             tFuncV,         arg_V,          1, 1,   "CHAR"),
-    xls_func_entry(xlfChoose,           tFuncVarV,      arg_V_R,        2, 30,  "CHOOSE"),
-    xls_func_entry(xlfClean,            tFuncV,         arg_V,          1, 1,   "CLEAN"),
-    xls_func_entry(xlfCode,             tFuncV,         arg_V,          1, 1,   "CODE"),
-    xls_func_entry(xlfColumn,           tFuncVarV,      arg_R,          0, 1,   "COL"), /* XLS:COLUMN */
-    xls_func_entry(xlfColumns,          tFuncV,         arg_R,          1, 1,   "COLS"), /* XLS:COLUMNS */
-    xls_func_entry(xlfCos,              tFuncV,         arg_V,          1, 1,   "COS"),
-    xls_func_entry(xlfCosh,             tFuncV,         arg_V,          1, 1,   "COSH"),
-    xls_func_entry(xlfCount,            tFuncVarV,      arg_R,          0, 30,  "COUNT"),
-    xls_func_entry(xlfCounta,           tFuncVarV,      arg_R,          0, 30,  "COUNTA"),
+    xls_func_entry(BIFF_FN_Char,                tFuncV,         arg_V,          1, 1,   "CHAR"),
+    xls_func_entry(BIFF_FN_Choose,              tFuncVarV,      arg_V_R,        2, 30,  "CHOOSE"),
+    xls_func_entry(BIFF_FN_Clean,               tFuncV,         arg_V,          1, 1,   "CLEAN"),
+    xls_func_entry(BIFF_FN_Code,                tFuncV,         arg_V,          1, 1,   "CODE"),
+    xls_func_entry(BIFF_FN_Column,              tFuncVarV,      arg_R,          0, 1,   "COL"), /* XLS:COLUMN */
+    xls_func_entry(BIFF_FN_Columns,             tFuncV,         arg_R,          1, 1,   "COLS"), /* XLS:COLUMNS */
+    xls_func_entry(BIFF_FN_Cos,                 tFuncV,         arg_V,          1, 1,   "COS"),
+    xls_func_entry(BIFF_FN_Cosh,                tFuncV,         arg_V,          1, 1,   "COSH"),
+    xls_func_entry(BIFF_FN_Count,               tFuncVarV,      arg_R,          0, 30,  "COUNT"),
+    xls_func_entry(BIFF_FN_Counta,              tFuncVarV,      arg_R,          0, 30,  "COUNTA"),
 
-    xls_func_entry(xlfDate,             tFuncV,         arg_V,          3, 3,   "DATE"),
-    xls_func_entry(xlfDatevalue,        tFuncV,         arg_V,          1, 1,   "DATEVALUE"),
-    xls_func_entry(xlfDaverage,         tFuncV,         arg_R,          3, 3,   "DAVG"), /* XLS:DAVERAGE */
-    xls_func_entry(xlfDay,              tFuncV,         arg_V,          1, 1,   "DAY"),
-    xls_func_entry(xlfDays360,          tFuncV,         arg_V,          2, 2,   "DAYS_360"), /* XLS:DAYS360 */
-    xls_func_entry(xlfDdb,              tFuncVarV,      arg_V,          4, 5,   "DDB"),
-    xls_func_entry(xlfDegrees,          tFuncV,         arg_V,          1, 1,   "DEG"), /* XLS:DEGREES (BIFF5) */
+    xls_func_entry(BIFF_FN_Date,                tFuncV,         arg_V,          3, 3,   "DATE"),
+    xls_func_entry(BIFF_FN_Datevalue,           tFuncV,         arg_V,          1, 1,   "DATEVALUE"),
+    xls_func_entry(BIFF_FN_Daverage,            tFuncV,         arg_R,          3, 3,   "DAVG"), /* XLS:DAVERAGE */
+    xls_func_entry(BIFF_FN_Day,                 tFuncV,         arg_V,          1, 1,   "DAY"),
+    xls_func_entry(BIFF_FN_Days360,             tFuncV,         arg_V,          2, 2,   "DAYS_360"), /* XLS:DAYS360 */
+    xls_func_entry(BIFF_FN_Ddb,                 tFuncVarV,      arg_V,          4, 5,   "DDB"),
+    xls_func_entry(BIFF_FN_Degrees,             tFuncV,         arg_V,          1, 1,   "DEG"), /* XLS:DEGREES (BIFF5) */
 
-    xls_func_entry(xlfExact,            tFuncV,         arg_V,          2, 2,   "EXACT"),
-    xls_func_entry(xlfExp,              tFuncV,         arg_V,          1, 1,   "EXP"),
+    xls_func_entry(BIFF_FN_Exact,               tFuncV,         arg_V,          2, 2,   "EXACT"),
+    xls_func_entry(BIFF_FN_Exp,                 tFuncV,         arg_V,          1, 1,   "EXP"),
 
-    xls_func_entry(xlfFact,             tFuncV,         arg_V,          1, 1,   "FACT"),
-    xls_func_entry(xlfFalse,            tFuncV,         NULL,           0, 0,   "FALSE"),
-    xls_func_entry(xlfFind,             tFuncVarV,      arg_V,          2, 3,   "FIND"),
-    xls_func_entry(xlfFixed,            tFuncVarV,      arg_V,          2, 3,   "FIXED"),
+    xls_func_entry(BIFF_FN_Fact,                tFuncV,         arg_V,          1, 1,   "FACT"),
+    xls_func_entry(BIFF_FN_False,               tFuncV,         NULL,           0, 0,   "FALSE"),
+    xls_func_entry(BIFF_FN_Find,                tFuncVarV,      arg_V,          2, 3,   "FIND"),
+    xls_func_entry(BIFF_FN_Fixed,               tFuncVarV,      arg_V,          2, 3,   "FIXED"),
 
-    xls_func_entry(xlfGrowth,           tFuncVarA,      arg_R,          1, 3,   "GROWTH"),
+    xls_func_entry(BIFF_FN_Growth,              tFuncVarA,      arg_R,          1, 3,   "GROWTH"),
 
-    xls_func_entry(xlfHlookup,          tFuncV,         arg_V_R,        3, 3,   "HLOOKUP"),
-    xls_func_entry(xlfHour,             tFuncV,         arg_V,          1, 1,   "HOUR"),
+    xls_func_entry(BIFF_FN_Hlookup,             tFuncV,         arg_V_R,        3, 3,   "HLOOKUP"),
+    xls_func_entry(BIFF_FN_Hour,                tFuncV,         arg_V,          1, 1,   "HOUR"),
 
-    xls_func_entry(xlfIf,               tFuncVarR,      arg_V_R,        2, 3,   "IF"),
-    xls_func_entry(xlfInt,              tFuncV,         arg_V,          1, 1,   "INT"), /* NB XLS:INT is different for negative numbers but this is better than failing */
-    xls_func_entry(xlfIsblank,          tFuncV,         arg_V,          1, 1,   "ISBLANK"),
-    xls_func_entry(xlfIserr,            tFuncV,         arg_V,          1, 1,   "ISERR"),
-    xls_func_entry(xlfIserror,          tFuncV,         arg_V,          1, 1,   "ISERROR"),
-    xls_func_entry(xlfIslogical,        tFuncV,         arg_V,          1, 1,   "ISLOGICAL"),
-    xls_func_entry(xlfIsna,             tFuncV,         arg_V,          1, 1,   "ISNA"),
-    xls_func_entry(xlfIsnontext,        tFuncV,         arg_V,          1, 1,   "ISNONTEXT"),
-    xls_func_entry(xlfIsnumber,         tFuncV,         arg_V,          1, 1,   "ISNUMBER"),
-    xls_func_entry(xlfIsref,            tFuncV,         arg_R,          1, 1,   "ISREF"),
-    xls_func_entry(xlfIstext,           tFuncV,         arg_V,          1, 1,   "ISTEXT"),
+    xls_func_entry(BIFF_FN_If,                  tFuncVarR,      arg_V_R,        2, 3,   "IF"),
+    xls_func_entry(BIFF_FN_Int,                 tFuncV,         arg_V,          1, 1,   "INT"), /* NB XLS:INT is different for negative numbers but this is better than failing */
+    xls_func_entry(BIFF_FN_Isblank,             tFuncV,         arg_V,          1, 1,   "ISBLANK"),
+    xls_func_entry(BIFF_FN_Iserr,               tFuncV,         arg_V,          1, 1,   "ISERR"),
+    xls_func_entry(BIFF_FN_Iserror,             tFuncV,         arg_V,          1, 1,   "ISERROR"),
+    xls_func_entry(BIFF_FN_Islogical,           tFuncV,         arg_V,          1, 1,   "ISLOGICAL"),
+    xls_func_entry(BIFF_FN_Isna,                tFuncV,         arg_V,          1, 1,   "ISNA"),
+    xls_func_entry(BIFF_FN_Isnontext,           tFuncV,         arg_V,          1, 1,   "ISNONTEXT"),
+    xls_func_entry(BIFF_FN_Isnumber,            tFuncV,         arg_V,          1, 1,   "ISNUMBER"),
+    xls_func_entry(BIFF_FN_Isref,               tFuncV,         arg_R,          1, 1,   "ISREF"),
+    xls_func_entry(BIFF_FN_Istext,              tFuncV,         arg_V,          1, 1,   "ISTEXT"),
 
-    xls_func_entry(xlfConcatenate,      tFuncVarV,      arg_V,          0, 30,  "JOIN"), /* XLS:CONCATENATE */
+    xls_func_entry(BIFF_FN_Concatenate,         tFuncVarV,      arg_V,          0, 30,  "JOIN"), /* XLS:CONCATENATE */
 
-    xls_func_entry(xlfLeft,             tFuncVarV,      arg_V,          1, 2,   "LEFT"),
-    xls_func_entry(xlfLen,              tFuncV,         arg_V,          1, 1,   "LENGTH"), /* XLS:LEN */
-    xls_func_entry(xlfLinest,           tFuncVarA,      arg_R,          1, 2,   "LINEST"),
-    xls_func_entry(xlfLn,               tFuncV,         arg_V,          1, 1,   "LN"),
-    xls_func_entry(xlfLog10,            tFuncV,         arg_V,          1, 1,   "ODF.LOG10"), /* XLS:LOG10 */
-    xls_func_entry(xlfLog,              tFuncVarV,      arg_V,          1, 2,   "LOG"),
-    xls_func_entry(xlfLogest,           tFuncVarA,      arg_R,          1, 2,   "LOGEST"),
-    xls_func_entry(xlfLookup,           tFuncVarV,      arg_V_R,        2, 3,   "LOOKUP"),
-    xls_func_entry(xlfLower,            tFuncV,         arg_V,          1, 1,   "LOWER"),
+    xls_func_entry(BIFF_FN_Left,                tFuncVarV,      arg_V,          1, 2,   "LEFT"),
+    xls_func_entry(BIFF_FN_Len,                 tFuncV,         arg_V,          1, 1,   "LENGTH"), /* XLS:LEN */
+    xls_func_entry(BIFF_FN_Linest,              tFuncVarA,      arg_R,          1, 2,   "LINEST"),
+    xls_func_entry(BIFF_FN_Ln,                  tFuncV,         arg_V,          1, 1,   "LN"),
+    xls_func_entry(BIFF_FN_Log10,               tFuncV,         arg_V,          1, 1,   "ODF.LOG10"), /* XLS:LOG10 */
+    xls_func_entry(BIFF_FN_Log,                 tFuncVarV,      arg_V,          1, 2,   "LOG"),
+    xls_func_entry(BIFF_FN_Logest,              tFuncVarA,      arg_R,          1, 2,   "LOGEST"),
+    xls_func_entry(BIFF_FN_Lookup,              tFuncVarV,      arg_V_R,        2, 3,   "LOOKUP"),
+    xls_func_entry(BIFF_FN_Lower,               tFuncV,         arg_V,          1, 1,   "LOWER"),
 
-    xls_func_entry(xlfMdeterm,          tFuncV,         arg_A,          1, 1,   "M_DETERM"),
-    xls_func_entry(xlfMinverse,         tFuncA,         arg_A,          1, 1,   "M_INVERSE"),
-    xls_func_entry(xlfMmult,            tFuncA,         arg_A,          2, 2,   "M_MULT"),
+    xls_func_entry(BIFF_FN_Mdeterm,             tFuncV,         arg_A,          1, 1,   "M_DETERM"),
+    xls_func_entry(BIFF_FN_Minverse,            tFuncA,         arg_A,          1, 1,   "M_INVERSE"),
+    xls_func_entry(BIFF_FN_Mmult,               tFuncA,         arg_A,          2, 2,   "M_MULT"),
 
-    xls_func_entry(xlfMatch,            tFuncVarV,      arg_V_R,        2, 3,   "MATCH"),
-    xls_func_entry(xlfMax,              tFuncVarV,      arg_R,          1, 30,  "MAX"),
-    xls_func_entry(xlfMedian,           tFuncVarV,      arg_R,          1, 30,  "MEDIAN"),
-    xls_func_entry(xlfMid,              tFuncV,         arg_V,          3, 3,   "MID"),
-    xls_func_entry(xlfMin,              tFuncVarV,      arg_R,          1, 30,  "MIN"),
-    xls_func_entry(xlfMinute,           tFuncV,         arg_V,          1, 1,   "MINUTE"),
-    xls_func_entry(xlfMirr,             tFuncV,         arg_R_V,        3, 3,   "MIRR"),
-    xls_func_entry(xlfMod,              tFuncV,         arg_V,          2, 2,   "MOD"),
-    xls_func_entry(xlfMonth,            tFuncV,         arg_V,          1, 1,   "MONTH"),
+    xls_func_entry(BIFF_FN_Match,               tFuncVarV,      arg_V_R,        2, 3,   "MATCH"),
+    xls_func_entry(BIFF_FN_Max,                 tFuncVarV,      arg_R,          1, 30,  "MAX"),
+    xls_func_entry(BIFF_FN_Median,              tFuncVarV,      arg_R,          1, 30,  "MEDIAN"),
+    xls_func_entry(BIFF_FN_Mid,                 tFuncV,         arg_V,          3, 3,   "MID"),
+    xls_func_entry(BIFF_FN_Min,                 tFuncVarV,      arg_R,          1, 30,  "MIN"),
+    xls_func_entry(BIFF_FN_Minute,              tFuncV,         arg_V,          1, 1,   "MINUTE"),
+    xls_func_entry(BIFF_FN_Mirr,                tFuncV,         arg_R_V,        3, 3,   "MIRR"),
+    xls_func_entry(BIFF_FN_Mod,                 tFuncV,         arg_V,          2, 2,   "MOD"),
+    xls_func_entry(BIFF_FN_Month,               tFuncV,         arg_V,          1, 1,   "MONTH"),
 
-    xls_func_entry(xlfN,                tFuncV,         arg_R,          1, 1,   "N"),
-    xls_func_entry(xlfNa,               tFuncV,         NULL,           0, 0,   "NA"),
-    xls_func_entry(xlfNot,              tFuncV,         arg_V,          1, 1,   "NOT"),
-    xls_func_entry(xlfNow,              tFuncV,         NULL,           0, 0,   "NOW"),
-    xls_func_entry(xlfNper,             tFuncVarV,      arg_V,          3, 5,   "NPER"),
-    xls_func_entry(xlfNpv,              tFuncVarV,      arg_V_R,        2, 30,  "NPV"),
+    xls_func_entry(BIFF_FN_N,                   tFuncV,         arg_R,          1, 1,   "N"),
+    xls_func_entry(BIFF_FN_Na,                  tFuncV,         NULL,           0, 0,   "NA"),
+    xls_func_entry(BIFF_FN_Not,                 tFuncV,         arg_V,          1, 1,   "NOT"),
+    xls_func_entry(BIFF_FN_Now,                 tFuncV,         NULL,           0, 0,   "NOW"),
+    xls_func_entry(BIFF_FN_Nper,                tFuncVarV,      arg_V,          3, 5,   "NPER"),
+    xls_func_entry(BIFF_FN_Npv,                 tFuncVarV,      arg_V_R,        2, 30,  "NPV"),
 
-    xls_func_entry(xlfFv,               tFuncVarV,      arg_V,          3, 5,   "ODF.FV"), /* XLS:FV */
-    xls_func_entry(xlfIndex,            tFuncVarR,      arg_R_V,        2, 4,   "ODF.INDEX"), /* XLS:INDEX */
-    xls_func_entry(xlfInt,              tFuncV,         arg_V,          1, 1,   "ODF.INT"), /* XLS:INT */
-    xls_func_entry(xlfIrr,              tFuncVarV,      arg_R_V,        1, 2,   "ODF.IRR"), /* XLS:IRR */
-    xls_func_entry(xlfPmt,              tFuncVarV,      arg_V,          3, 5,   "ODF.PMT"), /* XLS:PMT */
-    xls_func_entry(xlfType,             tFuncV,         arg_V,          1, 1,   "ODF.TYPE"), /* XLS:TYPE */
+    xls_func_entry(BIFF_FN_Fv,                  tFuncVarV,      arg_V,          3, 5,   "ODF.FV"), /* XLS:FV */
+    xls_func_entry(BIFF_FN_Index,               tFuncVarR,      arg_R_V,        2, 4,   "ODF.INDEX"), /* XLS:INDEX */
+    xls_func_entry(BIFF_FN_Int,                 tFuncV,         arg_V,          1, 1,   "ODF.INT"), /* XLS:INT */
+    xls_func_entry(BIFF_FN_Irr,                 tFuncVarV,      arg_R_V,        1, 2,   "ODF.IRR"), /* XLS:IRR */
+    xls_func_entry(BIFF_FN_Pmt,                 tFuncVarV,      arg_V,          3, 5,   "ODF.PMT"), /* XLS:PMT */
+    xls_func_entry(BIFF_FN_Type,                tFuncV,         arg_V,          1, 1,   "ODF.TYPE"), /* XLS:TYPE */
 
-    xls_func_entry(xlfOr,               tFuncVarV,      arg_R,          1, 30,  "OR"),
+    xls_func_entry(BIFF_FN_Or,                  tFuncVarV,      arg_R,          1, 30,  "OR"),
 
-    xls_func_entry(xlfPi,               tFuncV,         NULL,           0, 0,   "PI"),
-    xls_func_entry(xlfProduct,          tFuncVarV,      arg_R,          1, 30,  "PRODUCT"),
-    xls_func_entry(xlfProper,           tFuncV,         arg_V,          1, 1,   "PROPER"),
-    xls_func_entry(xlfPv,               tFuncVarV,      arg_V,          3, 5,   "PV"),
+    xls_func_entry(BIFF_FN_Pi,                  tFuncV,         NULL,           0, 0,   "PI"),
+    xls_func_entry(BIFF_FN_Product,             tFuncVarV,      arg_R,          1, 30,  "PRODUCT"),
+    xls_func_entry(BIFF_FN_Proper,              tFuncV,         arg_V,          1, 1,   "PROPER"),
+    xls_func_entry(BIFF_FN_Pv,                  tFuncVarV,      arg_V,          3, 5,   "PV"),
 
-    xls_func_entry(xlfRadians,          tFuncV,         arg_V,          1, 1,   "RAD"), /* XLS:RADIANS */
-    xls_func_entry(xlfRand,             tFuncV,         NULL,           0, 0,   "RAND"),
-    xls_func_entry(xlfRate,             tFuncVarV,      arg_V,          3, 6,   "RATE"),
-    xls_func_entry(xlfReplace,          tFuncV,         arg_V,          4, 4,   "REPLACE"),
-    xls_func_entry(xlfRept,             tFuncV,         arg_V,          2, 2,   "REPT"),
-    xls_func_entry(xlfRight,            tFuncVarV,      arg_V,          1, 2,   "RIGHT"),
-    xls_func_entry(xlfRound,            tFuncV,         arg_V,          2, 2,   "ROUND"),
-    xls_func_entry(xlfRounddown,        tFuncV,         arg_V,          2, 2,   "ROUNDDOWN"),
-    xls_func_entry(xlfRoundup,          tFuncV,         arg_V,          2, 2,   "ROUNDUP"),
-    xls_func_entry(xlfRow,              tFuncVarV,      arg_R,          0, 1,   "ROW"),
-    xls_func_entry(xlfRows,             tFuncV,         arg_R,          1, 1,   "ROWS"),
+    xls_func_entry(BIFF_FN_Radians,             tFuncV,         arg_V,          1, 1,   "RAD"), /* XLS:RADIANS */
+    xls_func_entry(BIFF_FN_Rand,                tFuncV,         NULL,           0, 0,   "RAND"),
+    xls_func_entry(BIFF_FN_Rate,                tFuncVarV,      arg_V,          3, 6,   "RATE"),
+    xls_func_entry(BIFF_FN_Replace,             tFuncV,         arg_V,          4, 4,   "REPLACE"),
+    xls_func_entry(BIFF_FN_Rept,                tFuncV,         arg_V,          2, 2,   "REPT"),
+    xls_func_entry(BIFF_FN_Right,               tFuncVarV,      arg_V,          1, 2,   "RIGHT"),
+    xls_func_entry(BIFF_FN_Round,               tFuncV,         arg_V,          2, 2,   "ROUND"),
+    xls_func_entry(BIFF_FN_Rounddown,           tFuncV,         arg_V,          2, 2,   "ROUNDDOWN"),
+    xls_func_entry(BIFF_FN_Roundup,             tFuncV,         arg_V,          2, 2,   "ROUNDUP"),
+    xls_func_entry(BIFF_FN_Row,                 tFuncVarV,      arg_R,          0, 1,   "ROW"),
+    xls_func_entry(BIFF_FN_Rows,                tFuncV,         arg_R,          1, 1,   "ROWS"),
 
-    xls_func_entry(xlfSecond,           tFuncV,         arg_V,          1, 1,   "SECOND"),
-    xls_func_entry(xlfSign,             tFuncV,         arg_V,          1, 1,   "SGN"), /* XLS:SIGN */
-    xls_func_entry(xlfSin,              tFuncV,         arg_V,          1, 1,   "SIN"),
-    xls_func_entry(xlfSinh,             tFuncV,         arg_V,          1, 1,   "SINH"),
-    xls_func_entry(xlfSln,              tFuncV,         arg_V,          3, 3,   "SLN"),
-    xls_func_entry(xlfSqrt,             tFuncV,         arg_V,          1, 1,   "SQR"), /* XLS:SQRT */
-    xls_func_entry(xlfStdev,            tFuncVarV,      arg_R,          1, 30,  "STD"), /* XLS:STDEV */
-    xls_func_entry(xlfStdevp,           tFuncVarV,      arg_R,          1, 30,  "STDP"), /* XLS:STDEVP */
-    xls_func_entry(xlfSum,              tFuncVarV,      arg_R,          1, 30,  "SUM"),
-    xls_func_entry(xlfSumproduct,       tFuncVarV,      arg_A,          1, 30,  "SUMPRODUCT"),
-    xls_func_entry(xlfSyd,              tFuncV,         arg_V,          4, 4,   "SYD"),
+    xls_func_entry(BIFF_FN_Second,              tFuncV,         arg_V,          1, 1,   "SECOND"),
+    xls_func_entry(BIFF_FN_Sign,                tFuncV,         arg_V,          1, 1,   "SGN"), /* XLS:SIGN */
+    xls_func_entry(BIFF_FN_Sin,                 tFuncV,         arg_V,          1, 1,   "SIN"),
+    xls_func_entry(BIFF_FN_Sinh,                tFuncV,         arg_V,          1, 1,   "SINH"),
+    xls_func_entry(BIFF_FN_Sln,                 tFuncV,         arg_V,          3, 3,   "SLN"),
+    xls_func_entry(BIFF_FN_Sqrt,                tFuncV,         arg_V,          1, 1,   "SQR"), /* XLS:SQRT */
+    xls_func_entry(BIFF_FN_Stdev,               tFuncVarV,      arg_R,          1, 30,  "STD"), /* XLS:STDEV */
+    xls_func_entry(BIFF_FN_Stdevp,              tFuncVarV,      arg_R,          1, 30,  "STDP"), /* XLS:STDEVP */
+    xls_func_entry(BIFF_FN_Sum,                 tFuncVarV,      arg_R,          1, 30,  "SUM"),
+    xls_func_entry(BIFF_FN_Sumproduct,          tFuncVarV,      arg_A,          1, 30,  "SUMPRODUCT"),
+    xls_func_entry(BIFF_FN_Syd,                 tFuncV,         arg_V,          4, 4,   "SYD"),
 
-    xls_func_entry(xlfT,                tFuncV,         arg_R,          1, 1,   "T"),
-    xls_func_entry(xlfTan,              tFuncV,         arg_V,          1, 1,   "TAN"),
-    xls_func_entry(xlfTanh,             tFuncV,         arg_V,          1, 1,   "TANH"),
-    xls_func_entry(xlfText,             tFuncV,         arg_V,          2, 2,   "TEXT"),
-    xls_func_entry(xlfTime,             tFuncV,         arg_V,          3, 3,   "TIME"),
-    xls_func_entry(xlfTimevalue,        tFuncV,         arg_V,          1, 1,   "TIMEVALUE"),
-    xls_func_entry(xlfToday,            tFuncV,         NULL,           0, 0,   "TODAY"),
-    xls_func_entry(xlfTranspose,        tFuncA,         arg_A,          1, 1,   "TRANSPOSE"),
-    xls_func_entry(xlfTrend,            tFuncVarA,      arg_R,          1, 3,   "TREND"),
-    xls_func_entry(xlfTrim,             tFuncV,         arg_V,          1, 1,   "TRIM"),
-    xls_func_entry(xlfTrue,             tFuncV,         NULL,           0, 0,   "TRUE"),
-    xls_func_entry(xlfTrunc,            tFuncVarV,      arg_V,          1, 2,   "TRUNC"),
+    xls_func_entry(BIFF_FN_T,                   tFuncV,         arg_R,          1, 1,   "T"),
+    xls_func_entry(BIFF_FN_Tan,                 tFuncV,         arg_V,          1, 1,   "TAN"),
+    xls_func_entry(BIFF_FN_Tanh,                tFuncV,         arg_V,          1, 1,   "TANH"),
+    xls_func_entry(BIFF_FN_Text,                tFuncV,         arg_V,          2, 2,   "TEXT"),
+    xls_func_entry(BIFF_FN_Time,                tFuncV,         arg_V,          3, 3,   "TIME"),
+    xls_func_entry(BIFF_FN_Timevalue,           tFuncV,         arg_V,          1, 1,   "TIMEVALUE"),
+    xls_func_entry(BIFF_FN_Today,               tFuncV,         NULL,           0, 0,   "TODAY"),
+    xls_func_entry(BIFF_FN_Transpose,           tFuncA,         arg_A,          1, 1,   "TRANSPOSE"),
+    xls_func_entry(BIFF_FN_Trend,               tFuncVarA,      arg_R,          1, 3,   "TREND"),
+    xls_func_entry(BIFF_FN_Trim,                tFuncV,         arg_V,          1, 1,   "TRIM"),
+    xls_func_entry(BIFF_FN_True,                tFuncV,         NULL,           0, 0,   "TRUE"),
+    xls_func_entry(BIFF_FN_Trunc,               tFuncVarV,      arg_V,          1, 2,   "TRUNC"),
 
-    xls_func_entry(xlfUpper,            tFuncV,         arg_V,          1, 1,   "UPPER"),
+    xls_func_entry(BIFF_FN_Upper,               tFuncV,         arg_V,          1, 1,   "UPPER"),
 
-    xls_func_entry(xlfValue,            tFuncV,         arg_V,          1, 1,   "VALUE"),
-    xls_func_entry(xlfVar,              tFuncVarV,      arg_R,          1, 30 , "VAR"),
-    xls_func_entry(xlfVarp,             tFuncVarV,      arg_R,          1, 30,  "VARP"),
-    xls_func_entry(xlfVlookup,          tFuncV,         arg_V_R,        3, 3,   "VLOOKUP"),
+    xls_func_entry(BIFF_FN_Value,               tFuncV,         arg_V,          1, 1,   "VALUE"),
+    xls_func_entry(BIFF_FN_Var,                 tFuncVarV,      arg_R,          1, 30 , "VAR"),
+    xls_func_entry(BIFF_FN_Varp,                tFuncVarV,      arg_R,          1, 30,  "VARP"),
+    xls_func_entry(BIFF_FN_Vlookup,             tFuncV,         arg_V_R,        3, 3,   "VLOOKUP"),
 
-    xls_func_entry(xlfWeekday,          tFuncV,         arg_V,          1, 1,   "WEEKDAY"),
+    xls_func_entry(BIFF_FN_Weekday,             tFuncV,         arg_V,          1, 1,   "WEEKDAY"),
 
-    xls_func_entry(xlfYear,             tFuncV,         arg_V,          1, 1,   "YEAR")
+    xls_func_entry(BIFF_FN_Year,                tFuncV,         arg_V,          1, 1,   "YEAR")
 };
 
 /*
@@ -404,96 +404,96 @@ Later Excel versions add more functions, and the number of arguments can change 
 static const XLS_COMPILER_FUNC_ENTRY
 BIFF4_compiler_functions[] = /* ordered as Fireworkz */
 {
-    xls_func_entry(xlfAvedev,           tFuncVarV,      arg_R,          1, 30,  "AVEDEV"),
-    xls_func_entry(xlfBinomdist,        tFuncV,         arg_V,          4, 4,   "BINOM.DIST"), /* XLS:BINOMDIST */
-    xls_func_entry(xlfCritbinom,        tFuncV,         arg_V,          3, 3,   "BINOM.INV"), /* XLS:CRITBINOM */
-    xls_func_entry(xlfCeiling,          tFuncV,         arg_V,          2, 2,   "CEILING"),
-    xls_func_entry(xlfChidist,          tFuncV,         arg_V,          2, 2,   "CHISQ.DIST.RT"), /* XLS:CHIDIST */
-    xls_func_entry(xlfChiinv,           tFuncV,         arg_V,          2, 2,   "CHISQ.INV.RT"), /* XLS:CHIINV */
-    xls_func_entry(xlfChitest,          tFuncV,         arg_A,          2, 2,   "CHISQ.TEST"), /* XLS:CHITEST */
-    xls_func_entry(xlfCombin,           tFuncV,         arg_V,          2, 2,   "COMBIN"),
-    xls_func_entry(xlfConfidence,       tFuncV,         arg_V,          3, 3,   "CONFIDENCE.NORM"), /* XLS:CONFIDENCE */
-    xls_func_entry(xlfCorrel,           tFuncV,         arg_A,          2, 2,   "CORREL"),
-    xls_func_entry(xlfCovar,            tFuncV,         arg_A,          2, 2,   "COVARIANCE.P"), /* XLS:COVAR */
-    xls_func_entry(xlfDb,               tFuncVarV,      arg_V,          4, 5,   "DB"),
-    xls_func_entry(xlfDevsq,            tFuncVarV,      arg_R,          1, 30,  "DEVSQ"),
-    xls_func_entry(xlfEven,             tFuncV,         arg_V,          1, 1,   "EVEN"),
-    xls_func_entry(xlfExpondist,        tFuncV,         arg_V,          3, 3,   "EXPON.DIST"), /* XLS:EXPONDIST */ /* NB Excel requires third optional parameter */
-    xls_func_entry(xlfFdist,            tFuncV,         arg_V,          3, 3,   "F.DIST.RT"), /* XLS:FDIST */
-    xls_func_entry(xlfFinv,             tFuncV,         arg_V,          3, 3,   "F.INV.RT"), /* XLS:FINV */
-    xls_func_entry(xlfFtest,            tFuncV,         arg_A,          2, 2,   "F.TEST"), /* XLS:FTEST */
-    xls_func_entry(xlfFisher,           tFuncV,         arg_V,          1, 1,   "FISHER"),
-    xls_func_entry(xlfFisherinv,        tFuncV,         arg_V,          1, 1,   "FISHERINV"),
-    xls_func_entry(xlfFixed,            tFuncVarV,      arg_V,          2, 3,   "FIXED"),
-    xls_func_entry(xlfFloor,            tFuncV,         arg_V,          2, 2,   "FLOOR"),
-    xls_func_entry(xlfFrequency,        tFuncA,         arg_R,          2, 2,   "FREQUENCY"),
-    xls_func_entry(xlfGammadist,        tFuncV,         arg_V,          4, 4,   "GAMMA.DIST"), /* XLS:GAMMADIST */ /* NB Excel requires fourth optional parameter */
-    xls_func_entry(xlfGammainv,         tFuncV,         arg_V,          3, 3,   "GAMMA.INV"), /* XLS:GAMMAINV */
-    xls_func_entry(xlfGammaln,          tFuncV,         arg_V,          1, 1,   "GAMMALN"),
-    xls_func_entry(xlfGeomean,          tFuncVarV,      arg_R,          1, 30,  "GEOMEAN"),
-    xls_func_entry(xlfHarmean,          tFuncVarV,      arg_R,          1, 30,  "HARMEAN"),
-    xls_func_entry(xlfHypgeomdist,      tFuncV,         arg_V,          4, 4,   "HYPGEOM.DIST"), /* XLS:HYPGEOMDIST */ /* NB Excel doesn't cater for fifth optional parameter */
-    xls_func_entry(xlfLognormdist,      tFuncV,         arg_V,          3, 3,   "LOGNORM.DIST"), /* XLS:LOGNORMDIST*/ /* NB Excel doesn't cater for fourth optional parameter */
-    xls_func_entry(xlfLoginv,           tFuncV,         arg_V,          3, 3,   "LOGNORM.INV"), /* XLS:LOGINV */
-    xls_func_entry(xlfKurt,             tFuncVarV,      arg_R,          1, 30,  "KURT"),
-    xls_func_entry(xlfMode,             tFuncV,         arg_A,          1, 1,   "MODE"),
-    xls_func_entry(xlfNegbinomdist,     tFuncV,         arg_V,          3, 3,   "NEGBINOM.DIST"), /* XLS:NEGBINOMDIST */ /* NB Excel doesn't cater for fourth optional parameter */
-    xls_func_entry(xlfNormdist,         tFuncV,         arg_V,          4, 4,   "NORM.DIST"), /* XLS:NORMDIST */ /* NB Excel requires fourth optional parameter */
-    xls_func_entry(xlfNorminv,          tFuncV,         arg_V,          3, 3,   "NORM.INV"), /* XLS:NORMINV */
-    xls_func_entry(xlfNormsdist,        tFuncV,         arg_V,          1, 1,   "NORM.S.DIST"), /* XLS:NORMSDIST */ /* NB Excel doesn't cater for second optional parameter */
-    xls_func_entry(xlfNormsinv,         tFuncV,         arg_V,          1, 1,   "NORM.S.INV"), /* XLS:NORMSINV */
-    xls_func_entry(xlfOdd,              tFuncV,         arg_V,          1, 1,   "ODD"),
+    xls_func_entry(BIFF_FN_Avedev,              tFuncVarV,      arg_R,          1, 30,  "AVEDEV"),
+    xls_func_entry(BIFF_FN_Binomdist,           tFuncV,         arg_V,          4, 4,   "BINOM.DIST"), /* XLS:BINOMDIST */
+    xls_func_entry(BIFF_FN_Critbinom,           tFuncV,         arg_V,          3, 3,   "BINOM.INV"), /* XLS:CRITBINOM */
+    xls_func_entry(BIFF_FN_Ceiling,             tFuncV,         arg_V,          2, 2,   "CEILING"),
+    xls_func_entry(BIFF_FN_Chidist,             tFuncV,         arg_V,          2, 2,   "CHISQ.DIST.RT"), /* XLS:CHIDIST */
+    xls_func_entry(BIFF_FN_Chiinv,              tFuncV,         arg_V,          2, 2,   "CHISQ.INV.RT"), /* XLS:CHIINV */
+    xls_func_entry(BIFF_FN_Chitest,             tFuncV,         arg_A,          2, 2,   "CHISQ.TEST"), /* XLS:CHITEST */
+    xls_func_entry(BIFF_FN_Combin,              tFuncV,         arg_V,          2, 2,   "COMBIN"),
+    xls_func_entry(BIFF_FN_Confidence,          tFuncV,         arg_V,          3, 3,   "CONFIDENCE.NORM"), /* XLS:CONFIDENCE */
+    xls_func_entry(BIFF_FN_Correl,              tFuncV,         arg_A,          2, 2,   "CORREL"),
+    xls_func_entry(BIFF_FN_Covar,               tFuncV,         arg_A,          2, 2,   "COVARIANCE.P"), /* XLS:COVAR */
+    xls_func_entry(BIFF_FN_Db,                  tFuncVarV,      arg_V,          4, 5,   "DB"),
+    xls_func_entry(BIFF_FN_Devsq,               tFuncVarV,      arg_R,          1, 30,  "DEVSQ"),
+    xls_func_entry(BIFF_FN_Even,                tFuncV,         arg_V,          1, 1,   "EVEN"),
+    xls_func_entry(BIFF_FN_Expondist,           tFuncV,         arg_V,          3, 3,   "EXPON.DIST"), /* XLS:EXPONDIST */ /* NB Excel requires third optional parameter */
+    xls_func_entry(BIFF_FN_Fdist,               tFuncV,         arg_V,          3, 3,   "F.DIST.RT"), /* XLS:FDIST */
+    xls_func_entry(BIFF_FN_Finv,                tFuncV,         arg_V,          3, 3,   "F.INV.RT"), /* XLS:FINV */
+    xls_func_entry(BIFF_FN_Ftest,               tFuncV,         arg_A,          2, 2,   "F.TEST"), /* XLS:FTEST */
+    xls_func_entry(BIFF_FN_Fisher,              tFuncV,         arg_V,          1, 1,   "FISHER"),
+    xls_func_entry(BIFF_FN_Fisherinv,           tFuncV,         arg_V,          1, 1,   "FISHERINV"),
+    xls_func_entry(BIFF_FN_Fixed,               tFuncVarV,      arg_V,          2, 3,   "FIXED"),
+    xls_func_entry(BIFF_FN_Floor,               tFuncV,         arg_V,          2, 2,   "FLOOR"),
+    xls_func_entry(BIFF_FN_Frequency,           tFuncA,         arg_R,          2, 2,   "FREQUENCY"),
+    xls_func_entry(BIFF_FN_Gammadist,           tFuncV,         arg_V,          4, 4,   "GAMMA.DIST"), /* XLS:GAMMADIST */ /* NB Excel requires fourth optional parameter */
+    xls_func_entry(BIFF_FN_Gammainv,            tFuncV,         arg_V,          3, 3,   "GAMMA.INV"), /* XLS:GAMMAINV */
+    xls_func_entry(BIFF_FN_Gammaln,             tFuncV,         arg_V,          1, 1,   "GAMMALN"),
+    xls_func_entry(BIFF_FN_Geomean,             tFuncVarV,      arg_R,          1, 30,  "GEOMEAN"),
+    xls_func_entry(BIFF_FN_Harmean,             tFuncVarV,      arg_R,          1, 30,  "HARMEAN"),
+    xls_func_entry(BIFF_FN_Hypgeomdist,         tFuncV,         arg_V,          4, 4,   "HYPGEOM.DIST"), /* XLS:HYPGEOMDIST */ /* NB Excel doesn't cater for fifth optional parameter */
+    xls_func_entry(BIFF_FN_Lognormdist,         tFuncV,         arg_V,          3, 3,   "LOGNORM.DIST"), /* XLS:LOGNORMDIST*/ /* NB Excel doesn't cater for fourth optional parameter */
+    xls_func_entry(BIFF_FN_Loginv,              tFuncV,         arg_V,          3, 3,   "LOGNORM.INV"), /* XLS:LOGINV */
+    xls_func_entry(BIFF_FN_Kurt,                tFuncVarV,      arg_R,          1, 30,  "KURT"),
+    xls_func_entry(BIFF_FN_Mode,                tFuncV,         arg_A,          1, 1,   "MODE"),
+    xls_func_entry(BIFF_FN_Negbinomdist,        tFuncV,         arg_V,          3, 3,   "NEGBINOM.DIST"), /* XLS:NEGBINOMDIST */ /* NB Excel doesn't cater for fourth optional parameter */
+    xls_func_entry(BIFF_FN_Normdist,            tFuncV,         arg_V,          4, 4,   "NORM.DIST"), /* XLS:NORMDIST */ /* NB Excel requires fourth optional parameter */
+    xls_func_entry(BIFF_FN_Norminv,             tFuncV,         arg_V,          3, 3,   "NORM.INV"), /* XLS:NORMINV */
+    xls_func_entry(BIFF_FN_Normsdist,           tFuncV,         arg_V,          1, 1,   "NORM.S.DIST"), /* XLS:NORMSDIST */ /* NB Excel doesn't cater for second optional parameter */
+    xls_func_entry(BIFF_FN_Normsinv,            tFuncV,         arg_V,          1, 1,   "NORM.S.INV"), /* XLS:NORMSINV */
+    xls_func_entry(BIFF_FN_Odd,                 tFuncV,         arg_V,          1, 1,   "ODD"),
 
-    xls_func_entry(xlfBetadist,         tFuncVarV,      arg_V,          3, 5,   "ODF.BETADIST"), /* NB Excel doesn't cater for sixth optional parameter */
-    xls_func_entry(xlfTdist,            tFuncV,         arg_V,          3, 3,   "ODF.TDIST"), /* XLS:TDIST */
+    xls_func_entry(BIFF_FN_Betadist,            tFuncVarV,      arg_V,          3, 5,   "ODF.BETADIST"), /* NB Excel doesn't cater for sixth optional parameter */
+    xls_func_entry(BIFF_FN_Tdist,               tFuncV,         arg_V,          3, 3,   "ODF.TDIST"), /* XLS:TDIST */
 
-    xls_func_entry(xlfPearson,          tFuncV,         arg_A,          2, 2,   "PEARSON"),
-    xls_func_entry(xlfPercentile,       tFuncV,         arg_R_V,        2, 2,   "PERCENTILE.INC"), /* XLS:PERCENTILE */
-    xls_func_entry(xlfPercentrank,      tFuncVarV,      arg_R_V,        2, 3,   "PERCENTRANK.INC"), /* XLS:PERCENTRANK */
-    xls_func_entry(xlfPermut,           tFuncV,         arg_V,          2, 2,   "PERMUT"),
-    xls_func_entry(xlfPoisson,          tFuncV,         arg_V,          3, 3,   "POISSON.DIST"), /* XLS:POISSON */
-    xls_func_entry(xlfProb,             tFuncVarV,      arg_A_A_V,      3, 4,   "PROB"),
-    xls_func_entry(xlfQuartile,         tFuncV,         arg_R_V,        2, 2,   "QUARTILE.INC"), /* XLS:QUARTILE */
-    xls_func_entry(xlfRank,             tFuncVarV,      arg_V_R_V,      2, 3,   "RANK.EQ"), /* XLS:RANK */
-    xls_func_entry(xlfRsq,              tFuncV,         arg_A,          2, 2,   "RSQ"),
-    xls_func_entry(xlfSkew,             tFuncVarV,      arg_R,          1, 30,  "SKEW"),
-    xls_func_entry(xlfSlope,            tFuncV,         arg_A,          2, 2,   "SLOPE"),
-    xls_func_entry(xlfStandardize,      tFuncV,         arg_V,          3, 3,   "STANDARDIZE"),
-    xls_func_entry(xlfSumsq,            tFuncVarV,      arg_R,          0, 30,  "SUMSQ"),
-    xls_func_entry(xlfSumx2my2,         tFuncV,         arg_A,          2, 2,   "SUM_X2MY2"),
-    xls_func_entry(xlfSumx2py2,         tFuncV,         arg_A,          2, 2,   "SUM_X2PY2"),
-    xls_func_entry(xlfSumxmy2,          tFuncV,         arg_A,          2, 2,   "SUM_XMY2"),
-    xls_func_entry(xlfTinv,             tFuncV,         arg_V,          2, 2,   "T.INV.2T"), /* XLS:TINV */
-    xls_func_entry(xlfTtest,            tFuncV,         arg_A_A_V,      4, 4,   "T.TEST"), /* XLS:TTEST */
-    xls_func_entry(xlfTrimmean,         tFuncV,         arg_R_V,        2, 2,   "TRIMMEAN"),
-    xls_func_entry(xlfWeibull,          tFuncV,         arg_V,          4, 4,   "WEIBULL.DIST"), /* XLS:WEIBULL */
-    xls_func_entry(xlfZtest,            tFuncVarV,      arg_R_V,        2, 3,   "Z.TEST") /* XLS:ZTEST */
+    xls_func_entry(BIFF_FN_Pearson,             tFuncV,         arg_A,          2, 2,   "PEARSON"),
+    xls_func_entry(BIFF_FN_Percentile,          tFuncV,         arg_R_V,        2, 2,   "PERCENTILE.INC"), /* XLS:PERCENTILE */
+    xls_func_entry(BIFF_FN_Percentrank,         tFuncVarV,      arg_R_V,        2, 3,   "PERCENTRANK.INC"), /* XLS:PERCENTRANK */
+    xls_func_entry(BIFF_FN_Permut,              tFuncV,         arg_V,          2, 2,   "PERMUT"),
+    xls_func_entry(BIFF_FN_Poisson,             tFuncV,         arg_V,          3, 3,   "POISSON.DIST"), /* XLS:POISSON */
+    xls_func_entry(BIFF_FN_Prob,                tFuncVarV,      arg_A_A_V,      3, 4,   "PROB"),
+    xls_func_entry(BIFF_FN_Quartile,            tFuncV,         arg_R_V,        2, 2,   "QUARTILE.INC"), /* XLS:QUARTILE */
+    xls_func_entry(BIFF_FN_Rank,                tFuncVarV,      arg_V_R_V,      2, 3,   "RANK.EQ"), /* XLS:RANK */
+    xls_func_entry(BIFF_FN_Rsq,                 tFuncV,         arg_A,          2, 2,   "RSQ"),
+    xls_func_entry(BIFF_FN_Skew,                tFuncVarV,      arg_R,          1, 30,  "SKEW"),
+    xls_func_entry(BIFF_FN_Slope,               tFuncV,         arg_A,          2, 2,   "SLOPE"),
+    xls_func_entry(BIFF_FN_Standardize,         tFuncV,         arg_V,          3, 3,   "STANDARDIZE"),
+    xls_func_entry(BIFF_FN_Sumsq,               tFuncVarV,      arg_R,          0, 30,  "SUMSQ"),
+    xls_func_entry(BIFF_FN_Sumx2my2,            tFuncV,         arg_A,          2, 2,   "SUM_X2MY2"),
+    xls_func_entry(BIFF_FN_Sumx2py2,            tFuncV,         arg_A,          2, 2,   "SUM_X2PY2"),
+    xls_func_entry(BIFF_FN_Sumxmy2,             tFuncV,         arg_A,          2, 2,   "SUM_XMY2"),
+    xls_func_entry(BIFF_FN_Tinv,                tFuncV,         arg_V,          2, 2,   "T.INV.2T"), /* XLS:TINV */
+    xls_func_entry(BIFF_FN_Ttest,               tFuncV,         arg_A_A_V,      4, 4,   "T.TEST"), /* XLS:TTEST */
+    xls_func_entry(BIFF_FN_Trimmean,            tFuncV,         arg_R_V,        2, 2,   "TRIMMEAN"),
+    xls_func_entry(BIFF_FN_Weibull,             tFuncV,         arg_V,          4, 4,   "WEIBULL.DIST"), /* XLS:WEIBULL */
+    xls_func_entry(BIFF_FN_Ztest,               tFuncVarV,      arg_R_V,        2, 3,   "Z.TEST") /* XLS:ZTEST */
 };
 
 static const XLS_COMPILER_FUNC_ENTRY
 BIFF5_compiler_functions[] = /* ordered as Fireworkz */
 {
-    xls_func_entry(xlfCountblank,       tFuncV,         arg_V,          1, 1,   "COUNTBLANK"),
-    xls_func_entry(xlfDays360,          tFuncVarV,      arg_V,          2, 3,   "DAYS_360"), /* XLS:DAYS360 */
-  /*xls_func_entry(xlfHlookup,          tFuncVarV,      arg_V_R_R_V,    3, 4,   "HLOOKUP"),*/ /* our 4th argument is not the same */
-    xls_func_entry(xlfConcatenate,      tFuncVarV,      arg_V,          0, 30,  "JOIN"), /* XLS:CONCATENATE */
-    xls_func_entry(xlfLarge,            tFuncV,         arg_R_V,        2, 2,   "LARGE"),
-    xls_func_entry(xlfPower,            tFuncV,         arg_V,          2, 2,   "POWER"),
-    xls_func_entry(xlfSmall,            tFuncV,         arg_R_V,        2, 2,   "SMALL"),
-  /*xls_func_entry(xlfVlookup,          tFuncVarV,      arg_V_R_R_V,    3, 4,   "VLOOKUP"),*/ /* our 4th argument is not the same */
-    xls_func_entry(xlfWeekday,          tFuncVarV,      arg_V,          1, 2,   "WEEKDAY")
+    xls_func_entry(BIFF_FN_Countblank,          tFuncV,         arg_V,          1, 1,   "COUNTBLANK"),
+    xls_func_entry(BIFF_FN_Days360,             tFuncVarV,      arg_V,          2, 3,   "DAYS_360"), /* XLS:DAYS360 */
+  /*xls_func_entry(BIFF_FN_Hlookup,             tFuncVarV,      arg_V_R_R_V,    3, 4,   "HLOOKUP"),*/ /* our 4th argument is not the same */
+    xls_func_entry(BIFF_FN_Concatenate,         tFuncVarV,      arg_V,          0, 30,  "JOIN"), /* XLS:CONCATENATE */
+    xls_func_entry(BIFF_FN_Large,               tFuncV,         arg_R_V,        2, 2,   "LARGE"),
+    xls_func_entry(BIFF_FN_Power,               tFuncV,         arg_V,          2, 2,   "POWER"),
+    xls_func_entry(BIFF_FN_Small,               tFuncV,         arg_R_V,        2, 2,   "SMALL"),
+  /*xls_func_entry(BIFF_FN_Vlookup,             tFuncVarV,      arg_V_R_R_V,    3, 4,   "VLOOKUP"),*/ /* our 4th argument is not the same */
+    xls_func_entry(BIFF_FN_Weekday,             tFuncVarV,      arg_V,          1, 2,   "WEEKDAY")
 };
 
 static const XLS_COMPILER_FUNC_ENTRY
 BIFF8_compiler_functions[] = /* ordered as Fireworkz */
 {
-    xls_func_entry(xlfAverageA,         tFuncVarV,      arg_R,          1, 30,  "AVERAGEA"),
-    xls_func_entry(xlfMaxA,             tFuncVarV,      arg_R,          1, 30,  "MINA"),
-    xls_func_entry(xlfMinA,             tFuncVarV,      arg_R,          1, 30,  "MAXA"),
-    xls_func_entry(xlfStDevA,           tFuncVarV,      arg_R,          1, 30,  "STDEVA"),
-    xls_func_entry(xlfStDevPA,          tFuncVarV,      arg_R,          1, 30,  "STDEVPA"),
-    xls_func_entry(xlfVarA,             tFuncVarV,      arg_R,          1, 30,  "VARA"),
-    xls_func_entry(xlfVarPA,            tFuncVarV,      arg_R,          1, 30,  "VARPA")
+    xls_func_entry(BIFF_FN_AverageA,            tFuncVarV,      arg_R,          1, 30,  "AVERAGEA"),
+    xls_func_entry(BIFF_FN_MaxA,                tFuncVarV,      arg_R,          1, 30,  "MINA"),
+    xls_func_entry(BIFF_FN_MinA,                tFuncVarV,      arg_R,          1, 30,  "MAXA"),
+    xls_func_entry(BIFF_FN_StDevA,              tFuncVarV,      arg_R,          1, 30,  "STDEVA"),
+    xls_func_entry(BIFF_FN_StDevPA,             tFuncVarV,      arg_R,          1, 30,  "STDEVPA"),
+    xls_func_entry(BIFF_FN_VarA,                tFuncVarV,      arg_R,          1, 30,  "VARA"),
+    xls_func_entry(BIFF_FN_VarPA,               tFuncVarV,      arg_R,          1, 30,  "VARPA")
 };
 
 /* Fireworkz functions unsupported for Excel BIFF export */
@@ -1378,20 +1378,20 @@ process_function_arguments(
 
 _Check_return_
 static inline STATUS
-xls_rpn_out_xlfFalse(void)
+xls_rpn_out_BIFF_FN_False(void)
 {
     status_return(tFuncV);
 
-    return(xls_rpn_out_U16(xlfFalse));
+    return(xls_rpn_out_U16(BIFF_FN_False));
 }
 
 _Check_return_
 static inline STATUS
-xls_rpn_out_xlfTrue(void)
+xls_rpn_out_BIFF_FN_True(void)
 {
     status_return(tFuncV);
 
-    return(xls_rpn_out_U16(xlfTrue));
+    return(xls_rpn_out_U16(BIFF_FN_True));
 }
 
 _Check_return_
@@ -1400,13 +1400,13 @@ process_extra_function_arguments(
     _InRef_     PC_XLS_COMPILER_FUNC_ENTRY p_xls_compiler_func_entry,
     _In_        S32 n_args)
 {
-    switch(p_xls_compiler_func_entry->xlf_number)
+    switch(p_xls_compiler_func_entry->biff_function_number)
     {
     default:
         break;
 
-    case xlfCeiling:
-    case xlfFloor:
+    case BIFF_FN_Ceiling:
+    case BIFF_FN_Floor:
         if(n_args < 2)
         {   /* Excel requires second parameter - Fireworkz significance is one if omitted */
             status_return(xls_rpn_out_tNum(1.0));
@@ -1414,20 +1414,20 @@ process_extra_function_arguments(
         }
         break;
 
-    case xlfExpondist:
-    case xlfPoisson:
+    case BIFF_FN_Expondist:
+    case BIFF_FN_Poisson:
         if(n_args < 3)
         {   /* Excel requires third parameter - Fireworkz default is TRUE (CDF) */
-            status_return(xls_rpn_out_tBool(TRUE)); /*xls_rpn_out_xlfTrue();*/
+            status_return(xls_rpn_out_tBool(TRUE)); /*xls_rpn_out_BIFF_FN_True();*/
             ++n_args;
         }
         break;
 
-    case xlfGammadist:
-    case xlfNormdist:
+    case BIFF_FN_Gammadist:
+    case BIFF_FN_Normdist:
         if(n_args < 4)
         {   /* Excel requires fourth parameter - Fireworkz default is TRUE (CDF) */
-            status_return(xls_rpn_out_tBool(TRUE)); /*xls_rpn_out_xlfTrue();*/
+            status_return(xls_rpn_out_tBool(TRUE)); /*xls_rpn_out_BIFF_FN_True();*/
             ++n_args;
         }
         break;
@@ -1524,7 +1524,7 @@ xls_lterm(void)
             }
 
             if(status_ok(status))
-                status = xls_rpn_out_U16(p_xls_compiler_func_entry->xlf_number);
+                status = xls_rpn_out_U16(p_xls_compiler_func_entry->biff_function_number);
         }
 
         break;
@@ -1608,7 +1608,7 @@ xls_fterm(void)
             status = xls_rpn_out_U8(tFuncV);
 
         if(status_ok(status))
-            status = xls_rpn_out_U16(xlfNot);
+            status = xls_rpn_out_U16(BIFF_FN_Not);
         break;
 
     default:
@@ -1789,7 +1789,7 @@ xls_aterm(void)
             status = xls_rpn_out_U8((U8) n_args);
 
         if(status_ok(status))
-            status = xls_rpn_out_U16(xlfAnd);
+            status = xls_rpn_out_U16(BIFF_FN_And);
     }
 
     return(status);
@@ -1828,7 +1828,7 @@ xls_expr(void)
             status = xls_rpn_out_U8((U8) n_args);
 
         if(status_ok(status))
-            status = xls_rpn_out_U16(xlfOr);
+            status = xls_rpn_out_U16(BIFF_FN_Or);
     }
 
     return(status);

@@ -476,7 +476,7 @@ array_range_proc_blank(
     _InoutRef_  P_STAT_BLOCK p_stat_block,
     _InoutRef_  P_EV_DATA p_ev_data)
 {
-    IGNOREPARM_InoutRef_(p_ev_data);
+    UNREFERENCED_PARAMETER_InoutRef_(p_ev_data);
 
     p_stat_block->count_blank += 1;
 }
@@ -960,7 +960,7 @@ array_range_proc_others(
     _InoutRef_  P_STAT_BLOCK p_stat_block,
     _InoutRef_  P_EV_DATA p_ev_data)
 {
-    IGNOREPARM_InoutRef_(p_ev_data);
+    UNREFERENCED_PARAMETER_InoutRef_(p_ev_data);
 
     assert(0 != p_stat_block->exec_array_range_id);
 

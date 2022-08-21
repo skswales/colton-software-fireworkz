@@ -317,7 +317,7 @@ sk_bord_docu_colrow(
 
 MAEVE_EVENT_PROTO(static, maeve_event_sk_bord)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -337,7 +337,7 @@ Event handler for a column border rendered within a page c.f. edge_window_event_
 
 T5_MSG_PROTO(static, margin_col_event_redraw, P_SKELEVENT_REDRAW p_skelevent_redraw)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(border_horz_redraw(p_docu, FALSE, p_skelevent_redraw, p_style_for_margin_col())); /* drag operations in window are NOT shown */
 }
@@ -617,7 +617,7 @@ border_horz_event_click_drag_column_width_adjustor(
 {
     const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
     const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
-    BOOL split = (t5_message_effective == T5_EVENT_CLICK_RIGHT_DRAG) && ((col_number+1) < n_cols_logical(p_docu));
+    BOOL split = (T5_EVENT_CLICK_RIGHT_DRAG == t5_message_effective) && ((col_number+1) < n_cols_logical(p_docu));
 
     /* 'goto' the new column, cos resizes apply to current column */
     if(p_docu->cur.slr.col != col_number)
@@ -789,7 +789,7 @@ T5_MSG_PROTO(static, border_horz_event_click_drag_finished, _InoutRef_ P_SKELEVE
 
     trace_0(TRACE_APP_CLICK, TEXT("edge_window_event_border_horz T5_EVENT_CLICK_DRAG_FINISHED"));
 
-    if(t5_message == T5_EVENT_CLICK_DRAG_FINISHED)
+    if(T5_EVENT_CLICK_DRAG_FINISHED == t5_message)
     {
         redraw_border = 0;
 
@@ -869,10 +869,10 @@ T5_MSG_PROTO(static, border_horz_event_click_drag_finished, _InoutRef_ P_SKELEVE
 
 T5_MSG_PROTO(static, border_horz_event_pointer_movement, _InRef_ PC_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     trace_v0(TRACE_APP_CLICK,
-            (t5_message == T5_EVENT_POINTER_ENTERS_WINDOW)
+            (T5_EVENT_POINTER_ENTERS_WINDOW == t5_message)
                 ? TEXT("edge_window_event_border_horz T5_EVENT_POINTER_ENTERS_WINDOW")
                 : TEXT("edge_window_event_border_horz T5_EVENT_POINTER_MOVEMENT"));
 
@@ -883,8 +883,8 @@ T5_MSG_PROTO(static, border_horz_event_pointer_movement, _InRef_ PC_SKELEVENT_CL
 
 T5_MSG_PROTO(static, border_horz_event_pointer_leaves_window, _InRef_ PC_SKELEVENT_CLICK p_skelevent_click)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InVal_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(p_skelevent_click);
 
     trace_0(TRACE_APP_CLICK, TEXT("edge_window_event_border_horz T5_EVENT_POINTER_LEAVES_WINDOW"));
 
@@ -898,7 +898,7 @@ T5_MSG_PROTO(static, border_horz_event_pointer_leaves_window, _InRef_ PC_SKELEVE
 
 T5_MSG_PROTO(static, border_horz_event_redraw, P_SKELEVENT_REDRAW p_skelevent_redraw)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* Fix the bottom right to define the height of the border region */
     p_skelevent_redraw->work_skel_rect.br.pixit_point.y = view_border_pixit_size(p_skelevent_redraw->redraw_context.p_view, TRUE);
@@ -1160,7 +1160,7 @@ border_horz_redraw(
                     host_fonty_text_paint_uchars_in_framed_box(&p_skelevent_redraw->redraw_context, &col_rect, ustr_numform_res, ustrlen32(ustr_numform_res),
                                                                border_style, fill_wimpcolour, text_wimpcolour, host_font_redraw);
                 else
-#endif
+#endif /* UNUSED */
                     host_fonty_text_paint_uchars_in_rectangle( p_redraw_context, &col_rect, ustr_numform_res, ustrlen32(ustr_numform_res),
                                                                &border_flags, &rgb_fill, p_rgb_line, p_rgb_text, host_font_redraw);
             }
@@ -1199,7 +1199,7 @@ Event handler for a row border rendered within a page c.f. edge_window_event_bor
 
 T5_MSG_PROTO(static, margin_row_event_redraw, P_SKELEVENT_REDRAW p_skelevent_redraw)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(border_vert_redraw(p_docu, FALSE, p_skelevent_redraw, p_style_for_margin_row())); /* drag operations in window are NOT shown */
 }
@@ -1358,10 +1358,10 @@ border_vert_event_click_right_double_row_centre(
     _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
     _InVal_     ROW row_number)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_skelevent_click);
-    IGNOREPARM_InVal_(row_number);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_InVal_(row_number);
 
     return(STATUS_OK);
 }
@@ -1374,10 +1374,10 @@ border_vert_event_click_right_drag_row_centre(
     _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
     _InVal_     ROW row_number)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_skelevent_click);
-    IGNOREPARM_InVal_(row_number);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_InVal_(row_number);
 
     return(STATUS_OK);
 }
@@ -1525,8 +1525,8 @@ border_vert_event_click_right_double_height_adjustor(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     ROW row_number)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(row_number);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(row_number);
 
     return(STATUS_OK);
 }
@@ -1538,9 +1538,9 @@ border_vert_event_click_right_drag_height_adjustor(
     _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
     _InVal_     ROW row_number)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InRef_(p_skelevent_click);
-    IGNOREPARM_InVal_(row_number);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InRef_(p_skelevent_click);
+    UNREFERENCED_PARAMETER_InVal_(row_number);
 
     return(STATUS_OK);
 }
@@ -1739,7 +1739,7 @@ border_vert_event_drag_movement(
 
 T5_MSG_PROTO(static, border_vert_event_redraw, P_SKELEVENT_REDRAW p_skelevent_redraw)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* Fix the width of the vertical ruler to the pixit width */
     p_skelevent_redraw->work_skel_rect.br.pixit_point.x = view_border_pixit_size(p_skelevent_redraw->redraw_context.p_view, FALSE);
@@ -1779,7 +1779,7 @@ PROC_EVENT_PROTO(extern, edge_window_event_border_vert)
 
         trace_0(TRACE_APP_CLICK, TEXT("edge_window_event_border_vert T5_EVENT_CLICK_DRAG_FINISHED"));
 
-        if(t5_message == T5_EVENT_CLICK_DRAG_FINISHED)
+        if(T5_EVENT_CLICK_DRAG_FINISHED == t5_message)
         {
             redraw_border = 0;
 
@@ -2035,7 +2035,7 @@ border_vert_redraw(
                 host_fonty_text_paint_uchars_in_framed_box(&p_skelevent_redraw->redraw_context, &row_rect, ustr_numform, ustrlen32(ustr_numform),
                                                            border_style, fill_wimpcolour, text_wimpcolour, host_font_redraw);
             else
-#endif
+#endif /* UNUSED */
                 host_fonty_text_paint_uchars_in_rectangle( &p_skelevent_redraw->redraw_context, &row_rect, ustr_numform, ustrlen32(ustr_numform),
                                                            &border_flags, &rgb_fill, p_rgb_line, p_rgb_text, host_font_redraw);
         }
@@ -2733,7 +2733,7 @@ skel_visible_row_range(
 {
     ROW_ENTRY row_entry_top, row_entry_bot;
 
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 
     row_entry_from_skel_point(p_docu, &row_entry_top, &p_skel_rect->tl, FALSE);
     row_entry_from_skel_point(p_docu, &row_entry_bot, &p_skel_rect->br, FALSE);
@@ -2837,7 +2837,7 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_bord);
 
 T5_MSG_PROTO(static, maeve_services_sk_bord_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -2855,7 +2855,7 @@ T5_MSG_PROTO(static, maeve_services_sk_bord_msg_initclose, _InRef_ PC_MSG_INITCL
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_bord)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

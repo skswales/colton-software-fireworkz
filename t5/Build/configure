@@ -11,11 +11,14 @@
 
 # By the way, you may need set the wimpslot in !Amu.Desc to at 2760k or so ...
 
+# Specify trunk, branch (e.g. branches/fireworkz__2_10__branch) or tag (e.g. tags/fireworkz__2016_06_26__2_10_00)
+$(FIREWORKZ_TBT)=fireworkz__2_10__branch
+
 # NB Substitute URD location as necessary
-URD=$.fireworkz.trunk
+URD=$.fireworkz.$(FIREWORKZ_TBT)
 
 # Only Fireworkz Pro builders need to worry about this one
-CSNF=$.coltsoft.trunk.cs-nonfree
+CSNF=$.coltsoft.$(FIREWORKZ_TBT).cs-nonfree
 
 INC_RAM=
 # vvv Uncomment this line to allow use of RAM: to speed full builds

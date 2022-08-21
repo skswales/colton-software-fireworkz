@@ -9,7 +9,7 @@
 @rem     SUBST N: %USERPROFILE%\cs-dev
 @rem or some appropriate equivalent for your dev environment.
 @rem If not, you just have to navigate to this directory before executing the batch file
-set SRC_DIR=N:\fireworkz\trunk\examples\Apps\Document\FzExamples
+set SRC_DIR=N:\fireworkz\%FIREWORKZ_TBT%\examples\Apps\Document\FzExamples
 @rem
 set OUT_DIR=%TEMP%\OUT_DIR
 @rem

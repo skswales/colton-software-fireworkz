@@ -821,8 +821,8 @@ T5_CMD_PROTO(extern, t5_cmd_insert_page_break)
     P_PAGE_HEFO_BREAK p_page_hefo_break;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* ensure thing at this exact row */
     if(NULL == (p_page_hefo_break = p_page_hefo_break_from_row_exact(p_docu, row)))
@@ -867,7 +867,7 @@ sk_hefod_msg_init1(
 
 T5_MSG_PROTO(static, maeve_services_sk_hefod_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -886,7 +886,7 @@ T5_MSG_PROTO(static, maeve_services_sk_hefod_msg_initclose, _InRef_ PC_MSG_INITC
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_hefod);
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_hefod)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

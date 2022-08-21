@@ -86,7 +86,7 @@
     <A ID="Support"></A>
     <H2>Support</H2>
 
-    <p>Fireworkz is now free-to-use, so support for Fireworkz is a self-help affair.</p>
+    <p>As Fireworkz is now free-to-use, support for Fireworkz is a self-help affair.</p>
 
     <p>
         There is a Google Group <A HREF="http://groups.google.com/group/colton-software-fireworkz">
@@ -109,6 +109,22 @@
     <p>
         The full release history may be found <A HREF="http://croftnuisk.co.uk/coltsoft/fireworkz/release_history">online</A>; just the last revision of Fireworkz is documented here.
     </p>
+
+
+    <h3>2.10.02 (07 Jul 2016)</h3>
+
+    <p>Version information (and therefore top-bit-set encoding used therein) is saved in each Choices file.</p>
+
+    <p>BaseSingleCol construct is only saved in files where needed (i.e. when non-zero).</p>
+
+    <p>All newlines are suppressed in files between elements in Style definitions and Effect applications.</p>
+
+    <p>Reinstated the older Ctrl-Shift-D keyboard shortcut as synonym for Insert Date (now Ctrl-D).</p>
+
+
+    <h3>2.10.01 (04 Jul 2016)</h3>
+
+    <p>When the <em>Faint grid</em> option is used for on-screen display, the (thin) grid colour is now derived from the style system. For spreadsheets, this is usually best set in <code>BaseSheet</code>.</p>
 
 
     <H3>2.10 (24 Jun 2016)</H3>
@@ -760,7 +776,8 @@
     <p>LoadOther and SaveOther commands renamed as LoadForeign and SaveForeign for source consistency.</p>
 
     <p>
-        Fireworkz' inline identifier character changed to ASCII 21 (was ASCII 7). NB. This character value is not exposed in file data.
+        Fireworkz' internal inline sequence identifier character changed to ASCII 21 (was ASCII 7).
+        NB. This character value is not exposed in file data.
         This helps on RISC&nbsp;OS where the Font Manager SWI Font_ScanString reads a byte beyond the string length specified as
         ASCII 21 is the Font Manager Comment sequence lead-in byte and so is ignored rather than giving an Unhandled CtrlChar error.
     </p>
@@ -774,19 +791,19 @@
 
     <H4>Windows</H4>
 
-    <p>Windows: Standard release build is now done on Windows 7 using Visual Studio 2013 Update 5 with the v120_xp platform toolset.</p>
+    <p>Standard release build is now done on Windows 7 using Visual Studio 2013 Update 5 with the v120_xp platform toolset.</p>
 
-    <p>Windows: U:XXXX inline sequences are translated to UTF-16 and rendered using the Wide Character API.</p>
+    <p>U:XXXX inline sequences are translated to UTF-16 and rendered using the Wide Character API.</p>
 
-    <p>Windows: Additional value Windows-&lt;XXXX&gt; added to Version information in Fireworkz file to help file portability, where &lt;XXXXe&gt; is the current Windows ANSI Code Page</p>
+    <p>Additional value Windows-&lt;XXXX&gt; added to Version information in Fireworkz file to help file portability, where &lt;XXXXe&gt; is the current Windows ANSI Code Page</p>
 
     <p>
-        Windows: When loading supporting documents, such as custom function sheets,
+        When loading supporting documents, such as custom function sheets,
         Fireworkz will first scan the path without using the .fwk extension then, if needed, try again without the extension.
         This helps with cross-platform portability and centralised storage of supporting documents.
     </p>
 
-    <p>Windows: Updated templates in line with RISC&nbsp;OS ones (use of four-digit year).</p>
+    <p>Updated templates in line with RISC&nbsp;OS ones (use of four-digit year).</p>
 
 
     <H3>Other fixes</H3>

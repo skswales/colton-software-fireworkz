@@ -367,7 +367,7 @@ uref_event_after_msg_close2(
     /* for all loaded thunks, garbage collect and free uref tables if possible */
     DOCNO docno = DOCNO_NONE;
 
-    IGNOREPARM_DocuRef_(closing_p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(closing_p_docu);
 
     while(DOCNO_NONE != (docno = docno_enum_thunks(docno)))
     {

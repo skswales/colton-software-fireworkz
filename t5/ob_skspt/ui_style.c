@@ -341,7 +341,7 @@ dialog_style_intro_ctl_state_change(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_style_intro)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -365,8 +365,8 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
     BOOL looping_outer;
     STYLE_INTRO_CALLBACK style_intro_callback;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     assert((style_intro_interlock == MUTEX_AVAILABLE) || (style_intro_interlock == MUTEX_UNAVAILABLE));
 
@@ -667,7 +667,7 @@ T5_CMD_PROTO(extern, t5_cmd_effects_button)
     STATUS status;
     BOOL looping;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {   /* specified subdialog? */
@@ -1040,7 +1040,7 @@ dialog_new_style_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_new_style)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1297,8 +1297,8 @@ T5_MSG_PROTO(extern, t5_msg_uistyle_colour_picker, P_MSG_UISTYLE_COLOUR_PICKER p
     RGB rgb;
     BOOL res;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
@@ -1341,7 +1341,7 @@ T5_MSG_PROTO(extern, t5_msg_uistyle_style_edit, P_MSG_UISTYLE_STYLE_EDIT p_msg_u
 {
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     es_process_interlock = MUTEX_UNAVAILABLE;
 

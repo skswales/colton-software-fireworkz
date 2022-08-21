@@ -1009,7 +1009,7 @@ text_from_field_uchars(
     const U32 len_before = quick_ublock_bytes(p_quick_ublock);
     const IL_CODE il_code = inline_code(uchars_inline);
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(uchars_n));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(uchars_n));
     CODE_ANALYSIS_ONLY(assert(uchars_n >= inline_bytecount(uchars_inline)));
 
     switch(il_code)

@@ -68,8 +68,8 @@ T5_MSG_PROTO(extern, t5_msg_frame_windows_describe, _InoutRef_ P_MSG_FRAME_WINDO
 {
     const P_VIEW p_view = p_msg_frame_window->p_view;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     t5_msg_frame_windows_describe_toolbar(p_view, p_msg_frame_window);
 
@@ -174,7 +174,7 @@ t5_msg_frame_windows_posn_upper_status_line(
     RECT client_rect;
     SIZE size;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     GetClientRect(hwnd, &client_rect);
 
@@ -199,7 +199,7 @@ t5_msg_frame_windows_posn_lower_status_line(
     RECT client_rect;
     SIZE size;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     GetClientRect(hwnd, &client_rect);
 
@@ -218,7 +218,7 @@ T5_MSG_PROTO(extern, t5_msg_frame_windows_posn, _InoutRef_ P_MSG_FRAME_WINDOW p_
 {
     const P_VIEW p_view = p_msg_frame_window->p_view;
     
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(HOST_WND_NONE != p_view->main[WIN_TOOLBAR].hwnd)
         t5_msg_frame_windows_posn_toolbar(p_docu, p_view, p_msg_frame_window);
@@ -462,8 +462,8 @@ toolbar_set_tooltip_text(
     _ViewRef_   P_VIEW p_view,
     _InRef_     PC_UI_TEXT p_ui_text)
 {
-    IGNOREPARM_ViewRef_(p_view);
-    IGNOREPARM_InRef_(p_ui_text);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_InRef_(p_ui_text);
 }
 
 #endif /* TOOLBAR_TOOLTIPS */
@@ -476,8 +476,8 @@ toolbar_onCreate(
 #if defined(TOOLBAR_TOOLTIPS)
     p_view->toolbar.hwndTT = CreateToolTip(hwnd);
 #else
-    IGNOREPARM_HwndRef_(hwnd);
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 #endif
 }
 
@@ -979,7 +979,7 @@ wndproc_toolbar_onNotify(
     _InVal_     int idFrom,
     _In_        NMHDR * pnm)
 {
-    IGNOREPARM_InVal_(idFrom);
+    UNREFERENCED_PARAMETER_InVal_(idFrom);
 
     switch(pnm->code)
     {

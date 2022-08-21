@@ -354,7 +354,7 @@ ui_bytes_per_item(
 {
     P_UI_DATA dummy = NULL; /* keep compilers happy */
 
-    IGNOREPARM(dummy); /* keep dataflower happy */
+    UNREFERENCED_PARAMETER(dummy); /* keep dataflower happy */
 
     switch(ui_data_type)
     {
@@ -595,7 +595,7 @@ ui_data_n_items_query(
     _InVal_     UI_DATA_TYPE ui_data_type,
     _InRef_     PC_UI_SOURCE p_ui_source)
 {
-    IGNOREPARM_InVal_(ui_data_type);
+    UNREFERENCED_PARAMETER_InVal_(ui_data_type);
 
     switch(p_ui_source->type)
     {

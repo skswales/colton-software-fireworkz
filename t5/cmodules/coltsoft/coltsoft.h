@@ -854,12 +854,12 @@ typedef int HOST_WND; /* really wimp_w but don't tell everyone */
 #define _HwndRef_ _InVal_
 #define _HwndRef_opt_ _InVal_ /* may be 0 */
 
-#define IGNOREPARM_HwndRef_ IGNOREPARM_InVal_
+#define UNREFERENCED_PARAMETER_HwndRef_ UNREFERENCED_PARAMETER_InVal_
 #elif WINDOWS
 #define _HwndRef_ _InRef_
 #define _HwndRef_opt_ _InRef_opt_ /* may be NULL */
 
-#define IGNOREPARM_HwndRef_ IGNOREPARM_InRef_
+#define UNREFERENCED_PARAMETER_HwndRef_ UNREFERENCED_PARAMETER_InRef_
 #endif
 
 /*
@@ -1349,18 +1349,20 @@ div_round_floor_fn(
     return(div_round_floor(a, b));
 }
 
-#define IGNOREPARM(p)                       (p)=(p)
-#define IGNOREPARM_CONST(p)                 (void)(p)
-#define IGNOREPARM_InRef_(p)                (void)(p)
-#define IGNOREPARM_InoutRef_(p)             (void)(p)
-#define IGNOREPARM_OutRef_(p)               (void)(p)
-#define IGNOREPARM_InVal_(p)                (void)(p)
+#if !defined(UNREFERENCED_PARAMETER)
+#define UNREFERENCED_PARAMETER(p)           (p)=(p)
+#endif
+#define UNREFERENCED_PARAMETER_CONST(p)     (void)(p)
+#define UNREFERENCED_PARAMETER_InRef_(p)    (void)(p)
+#define UNREFERENCED_PARAMETER_InoutRef_(p) (void)(p)
+#define UNREFERENCED_PARAMETER_OutRef_(p)   (void)(p)
+#define UNREFERENCED_PARAMETER_InVal_(p)    (void)(p)
 
-#define IGNOREVAR(v)                        (void)(v)
+#define UNREFERENCED_LOCAL_VARIABLE(v)      (void)(v)
 
 #define consume(__base_type, expr) \
     do { \
-    __base_type __v = (expr); IGNOREVAR(__v); \
+    __base_type __v = (expr); UNREFERENCED_LOCAL_VARIABLE(__v); \
     } while_constant(0)
 
 #define consume_ptr(expr) consume(PC_ANY, expr)

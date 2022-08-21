@@ -138,7 +138,7 @@ pause_for_thought(
             FALSE /*bWaitAll*/,
             dwMilliseconds,
             QS_ALLINPUT /*dwWakeMask*/);
-    IGNOREPARM(dword);
+    UNREFERENCED_PARAMETER(dword);
     /*reportf(TEXT("MsgWaitForMultipleObjects returns %u"), dword);*/
 }
 

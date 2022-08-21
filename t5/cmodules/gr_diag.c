@@ -30,7 +30,7 @@ gr_diag_normalise_stt(
     _InVal_     GR_DIAG_OFFSET sttObject_in)
 {
     GR_DIAG_OFFSET sttObject = sttObject_in;
-    IGNOREPARM_InRef_(p_gr_diag);
+    UNREFERENCED_PARAMETER_InRef_(p_gr_diag);
 
     myassert0x(p_gr_diag && array_elements32(&p_gr_diag->handle), TEXT("gr_diag_normalise_stt has no diagram"));
 
@@ -52,7 +52,7 @@ gr_diag_normalise_end(
     GR_DIAG_OFFSET endObject = endObject_in;
 
     myassert0x(p_gr_diag && array_elements32(&p_gr_diag->handle), TEXT("gr_diag_normalise_end has no diagram"));
-    IGNOREPARM_InRef_(p_gr_diag);
+    UNREFERENCED_PARAMETER_InRef_(p_gr_diag);
 
     if(endObject == GR_DIAG_OBJECT_LAST)
         endObject = array_elements32(&p_gr_diag->handle);
@@ -648,7 +648,7 @@ gr_diag_ensure_riscdiag_font_table_entry_for_TEXT(
     if(status_ok(status))
         status = gr_diag_ensure_riscdiag_font_tableW_entry_for_TEXT(p_gr_textstyle, p_array_handleW, status);
 #else
-    IGNOREPARM_InoutRef_(p_array_handleW);
+    UNREFERENCED_PARAMETER_InoutRef_(p_array_handleW);
 #endif
 
     return(status);
@@ -670,7 +670,7 @@ gr_diag_ensure_riscdiag_font_table_entries_for_PICTURE(
     if(status_ok(status))
         status = gr_diag_ensure_riscdiag_font_tableW_entries_for_PICTURE(p_diag, diag_len, p_array_handleW, status);
 #else
-    IGNOREPARM_InoutRef_(p_array_handleW);
+    UNREFERENCED_PARAMETER_InoutRef_(p_array_handleW);
 #endif
 
     return(status);
@@ -1679,7 +1679,7 @@ gr_diag_piesector_hit_refine(
     _InRef_     PC_GR_POINT point,
     _InRef_     PC_GR_SIZE size)
 {
-    IGNOREPARM_InRef_(size);
+    UNREFERENCED_PARAMETER_InRef_(size);
 
     return(piesector_hit(&pie->pos, pie->radius, &pie->alpha, &pie->beta, point));
 }
@@ -1747,7 +1747,7 @@ gr_diag_quadrilateral_hit_refine(
 {
     GR_POINT points[4 + 1];
 
-    IGNOREPARM_InRef_(size);
+    UNREFERENCED_PARAMETER_InRef_(size);
 
     points[0] = quad->pos;
 

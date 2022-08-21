@@ -385,7 +385,7 @@ ob_sle_event_click_filter(
 
 MAEVE_SERVICES_EVENT_PROTO(static, maeve_services_ob_sle_click_filter)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -587,7 +587,7 @@ ss_formula_eval_then_msg(
 
 T5_CMD_PROTO(static, ss_formula_eval_then_msg_for_message)
 {
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     switch(t5_message)
     {
@@ -678,7 +678,7 @@ T5_CMD_PROTO(static, sle_key_command)
     STATUS status = STATUS_OK;
     BOOL auto_highlight = TRUE;
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     switch(t5_message)
     {
@@ -890,8 +890,8 @@ main events
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_sle)
 {
-    IGNOREPARM(p_data);
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER(p_data);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -938,8 +938,8 @@ sle_view_create(
 
 #if RISCOS
     /* we create icon when given a POSN_SET */
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
     hwnd = HOST_WND_NONE;
 #elif WINDOWS
     U32 packed_id = viewid_pack(p_docu, p_view, EVENT_HANDLER_SLE);
@@ -961,7 +961,7 @@ sle_view_destroy(
     _ViewRef_   P_VIEW p_view)
 {
 #if RISCOS && !defined(RISCOS_SLE_ICON)
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 #elif RISCOS && defined(RISCOS_SLE_ICON)
     if(* (wimp_i *) &p_view->main[WIN_SLE].hwnd != BAD_WIMP_I)
         void_WrapOsErrorReporting(wimp_dispose_icon(p_view->main[WIN_TOOLBAR].hwnd, (wimp_i *) &p_view->main[WIN_SLE].hwnd));
@@ -1200,7 +1200,7 @@ sle_onDestroy(
     _ViewRef_   P_VIEW p_view)
 {
     assert(p_view->main[WIN_SLE].hwnd == hwnd);
-    IGNOREPARM_HwndRef_(hwnd);
+    UNREFERENCED_PARAMETER_HwndRef_(hwnd);
     p_view->main[WIN_SLE].hwnd = NULL;
 }
 
@@ -1801,7 +1801,7 @@ sle_search_string(
     SIZE size;
 
     assert(0 == stt);
-    IGNOREPARM_InVal_(stt);
+    UNREFERENCED_PARAMETER_InVal_(stt);
 
     if(WrapOsBoolChecking(GetTextExtentExPoint(hdc, tstr, end, nMaxExtent, &nFit, NULL /*pDx*/, &size)))
     {
@@ -2136,7 +2136,7 @@ sle_index_compile(
         vis_selection_stt_index = MIN(len, vis_selection_stt_index);
         vis_selection_end_index = MIN(len, vis_selection_end_index);
 
-        IGNOREPARM_ViewRef_(p_view);
+        UNREFERENCED_PARAMETER_ViewRef_(p_view);
 
         p_sle_info_block->display.caret_pixits = vis_caret_index * CHAR_WIDTH_PIXITS;
 
@@ -2546,8 +2546,8 @@ sle_drag_editline(
     p_sle_info_block->left_offset = (control_query.inner_posn.x - p_sle_info_block->display.scroll_offset) /PIXITS_PER_RISCOS;
 #endif
 
-    IGNOREPARM(p_sle_info_block);
-    IGNOREPARM_InVal_(right);
+    UNREFERENCED_PARAMETER(p_sle_info_block);
+    UNREFERENCED_PARAMETER_InVal_(right);
     return(STATUS_OK);
 }
 
@@ -2724,8 +2724,8 @@ sle_tool_user_mouse(
 
     return(sle_index_compile(p_sle_info_block, TRUE, refresh, FALSE));
 #else
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
     return(STATUS_OK);
 #endif
 }
@@ -2744,6 +2744,31 @@ colour_of_sle_back(
 
 #if RISCOS && defined(RISCOS_FONTY_SLE)
 
+_Check_return_
+static HOST_FONT
+sle_find_font(
+    const char * name,
+    U32 x16_size_x,
+    U32 x16_size_y)
+{
+    HOST_FONT host_font = HOST_FONT_NONE;
+
+    /* c.f. host_font_find() in Fireworkz */
+    _kernel_swi_regs rs;
+    _kernel_oserror * p_kernel_oserror;
+
+    rs.r[1] = (int) name;
+    rs.r[2] = x16_size_x;
+    rs.r[3] = x16_size_y;
+    rs.r[4] = 0;
+    rs.r[5] = 0;
+
+    if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+        host_font = (HOST_FONT) rs.r[0];
+
+    return(host_font);
+}
+
 static int
 riscos_fonty_sle(
     _InoutRef_  P_FONT_SPEC p_font_spec)
@@ -2753,6 +2778,8 @@ riscos_fonty_sle(
 
     if(yes_or_no < 0)
     {
+        HOST_FONT host_font;
+
         /*U32 size_x = 0;*/
         U32 size_y = 12;
 
@@ -2760,30 +2787,28 @@ riscos_fonty_sle(
         /*U32 x16_size_x = 16 * 0;*/
         U32 x16_size_y = 16 * size_y;
 
-        /* c.f. host_font_find() in Fireworkz */
-        _kernel_swi_regs rs;
-        _kernel_oserror * p_kernel_oserror;
-
-        rs.r[1] = (int) /*"\\E" "Latin1"*/ "\\F" "DejaVuSans.Mono";
-        rs.r[2] = /*x16_size_x ? x16_size_x :*/ x16_size_y;
-        rs.r[3] = x16_size_y;
-        rs.r[4] = 0;
-        rs.r[5] = 0;
-
         yes_or_no = 0;
 
-        if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+        /* Only use DejaVuSans.Mono if we have a Unicode Font Manager */
+        host_font = sle_find_font("\\F" "DejaVuSans.Mono" "\\E" "UTF8", x16_size_y, x16_size_y);
+
+        if(HOST_FONT_NONE != host_font)
         {
-            HOST_FONT host_font = (HOST_FONT) rs.r[0];
-
-            if(status_ok(font_spec_name_alloc(&font_spec, "DejaVuSans.Mono")))
-            {
-                font_spec.size_y = size_y * PIXITS_PER_POINT;
-
-                yes_or_no = 1;
-            }
-
             host_font_dispose(&host_font, P_REDRAW_CONTEXT_NONE);
+
+            host_font = sle_find_font( /*"\\E" "Latin1"*/ "\\F" "DejaVuSans.Mono", /*x16_size_x ? x16_size_x :*/ x16_size_y, x16_size_y);
+
+            if(HOST_FONT_NONE != host_font)
+            {
+                if(status_ok(fontmap_font_spec_from_host_base_name(&font_spec, "DejaVuSans.Mono")))
+                {
+                    font_spec.size_y = size_y * PIXITS_PER_POINT;
+
+                    yes_or_no = 1;
+                }
+
+                host_font_dispose(&host_font, P_REDRAW_CONTEXT_NONE);
+            }
         }
     }
 
@@ -2833,7 +2858,7 @@ sle_tool_user_redraw(
         STATUS status = STATUS_OK;
         PIXIT base_line = 0;
 
-        if(0 != p_sle_style->font_spec.h_app_name_tstr)
+        /*if(0 != p_sle_style->font_spec.h_app_name_tstr)*/
         {
             FONT_SPEC font_spec = p_sle_style->font_spec;
 
@@ -2853,7 +2878,7 @@ sle_tool_user_redraw(
                 pixit_width_of_zero = fonty_chunk.width;
                 ascent = fonty_chunk.ascent;
 
-                reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&p_sle_style->font_spec.h_app_name_tstr), p_sle_style->font_spec.size_y);
+                reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&font_spec.h_app_name_tstr), font_spec.size_y);
                 reportf(TEXT("ascent=") PIXIT_TFMT, ascent);
 
 #if 0
@@ -2862,7 +2887,7 @@ sle_tool_user_redraw(
                 const PIXIT pixits_per_riscos_d_y = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_y;
                 pixit_width_of_zero = pixits_per_riscos_d_x * muldiv64_round_floor(pixit_width_of_zero, 1, pixits_per_riscos_d_x);
                 ascent = pixits_per_riscos_d_y * muldiv64_round_floor(ascent, 1, pixits_per_riscos_d_y);
-                reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&p_sle_style->font_spec.h_app_name_tstr), p_sle_style->font_spec.size_y);
+                reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&font_spec.h_app_name_tstr), font_spec.size_y);
                 reportf(TEXT("ascent=") PIXIT_TFMT, ascent);
 #endif
 
@@ -3075,8 +3100,8 @@ sle_tool_user_redraw(
         host_invert_rectangle_filled(p_redraw_context, &region_box, p_sle_info_block->pseudo_selection ? &rgb_pseudo_invert : &rgb_invert, &rgb_fill);
     }
 #else
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
 #endif
     return(STATUS_OK);
 }
@@ -3086,7 +3111,7 @@ T5_MSG_PROTO(static, sle_event_keys, _InRef_ P_SKELEVENT_KEYS p_skelevent_keys)
     const P_SLE_INSTANCE_DATA p_sle_instance = p_object_instance_data_SLE(p_docu);
     const P_SLE_INFO_BLOCK p_sle_info_block = &p_sle_instance->ss_editor;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(sle_skip_selection(p_sle_info_block));
 
@@ -3136,7 +3161,7 @@ sle_msg_close_thunk(
 
 T5_MSG_PROTO(static, sle_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -3180,7 +3205,7 @@ sle_msg_choice_changed_ui_styles(
 
 T5_MSG_PROTO(static, sle_msg_choice_changed, _InRef_ PC_MSG_CHOICE_CHANGED p_msg_choice_changed)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_choice_changed->t5_message)
     {
@@ -3197,8 +3222,8 @@ T5_MSG_PROTO(static, sle_msg_caret_show_claim, _InRef_ P_CARET_SHOW_CLAIM p_care
     const P_SLE_INSTANCE_DATA p_sle_instance = p_object_instance_data_SLE(p_docu);
     const P_SLE_INFO_BLOCK p_sle_info_block = &p_sle_instance->ss_editor;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_caret_show_claim);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_caret_show_claim);
 
     sle_display_caret(p_sle_info_block);
 
@@ -3207,8 +3232,8 @@ T5_MSG_PROTO(static, sle_msg_caret_show_claim, _InRef_ P_CARET_SHOW_CLAIM p_care
 
 T5_MSG_PROTO(static, sle_msg_docu_focus_query, _InoutRef_ P_DOCU_FOCUS_QUERY p_docu_focus_query)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(docno_ss_edit != DOCNO_NONE)
     {
@@ -3248,7 +3273,7 @@ T5_MSG_PROTO(static, sle_msg_object_keys, _InoutRef_ P_OBJECT_KEYS p_object_keys
 {
     T5_PASTE_EDITLINE t5_paste_editline;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_object_keys->p_skelevent_keys->processed = 1;
 
@@ -3265,8 +3290,8 @@ T5_CMD_PROTO(static, sle_cmd_ss_edit_formula)
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     { /* SKS after 1.07 15jul94 check for already editing */
     const P_SLE_INSTANCE_DATA p_sle_instance = p_object_instance_data_SLE(p_docu);
@@ -3356,8 +3381,8 @@ T5_CMD_PROTO(static, sle_cmd_selection_clear)
     const P_SLE_INSTANCE_DATA p_sle_instance = p_object_instance_data_SLE(p_docu);
     const P_SLE_INFO_BLOCK p_sle_info_block = &p_sle_instance->ss_editor;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     status_return(sle_skip_selection(p_sle_info_block));
 

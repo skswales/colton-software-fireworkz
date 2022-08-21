@@ -442,7 +442,7 @@ text_cache_msg_style_docu_area_changed(
 
 MAEVE_EVENT_PROTO(static, maeve_event_text_cache)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -499,7 +499,7 @@ text_cache_msg_close1(
 
 T5_MSG_PROTO(static, maeve_services_tx_cache_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -516,7 +516,7 @@ T5_MSG_PROTO(static, maeve_services_tx_cache_msg_initclose, _InRef_ PC_MSG_INITC
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_tx_cache)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

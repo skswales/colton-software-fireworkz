@@ -92,7 +92,7 @@ T5_CMD_PROTO(static, chart_load_pict_trans)
     LIST_ITEMNO key;
     S32 res;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     PTR_ASSERT(p_chart_load_instance);
 
     switch(t5_message)
@@ -625,7 +625,7 @@ T5_CMD_PROTO(extern, chart_io_gr_construct_load)
     const GR_CHART_OBJID id = chart_load_save_objid;
     P_ANY p0;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     p_con = (P_GR_CONSTRUCT_TABLE_ENTRY)
         bsearch(&t5_message, chart_construct_table, elemof(chart_construct_table), sizeof(chart_construct_table[0]), proc_bsearch_chart_construct_table);
@@ -1399,8 +1399,8 @@ T5_MSG_PROTO(static, chart_note_ensure_saved, _InoutRef_ P_NOTE_ENSURE_SAVED p_n
     P_CHART_SAVE_MAP p_chart_save_map;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != p_chart_save_instance)
     {
@@ -2348,7 +2348,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_1)
     P_CHART_HEADER p_chart_header = NULL;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     for(;;) /* loop for structure */
     {
@@ -2416,8 +2416,8 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_2)
     P_CHART_HEADER p_chart_header;
     CHART_SHAPEDESC chart_shapedesc;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     PTR_ASSERT(p_chart_load_instance);
 
@@ -2446,7 +2446,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_3)
     CHART_SHAPEDESC chart_shapedesc;
     GR_SERIES_TYPE sertype;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     PTR_ASSERT(p_chart_load_instance);
 
@@ -2563,8 +2563,8 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_objid)
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 3);
     GR_CHART_OBJID id;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     gr_chart_objid_clear(&id);
 
@@ -2591,8 +2591,8 @@ T5_MSG_PROTO(static, chart_note_load_intref_from_extref, _InoutRef_ P_NOTE_REF p
 {
     const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_note_ref->p_of_ip_format);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != p_chart_load_instance)
     {
@@ -2617,8 +2617,8 @@ T5_MSG_PROTO(static, chart_load_ended, _InoutRef_ P_OF_IP_FORMAT p_of_ip_format)
 {
     const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_of_ip_format);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != p_chart_load_instance)
         al_array_dispose(&p_chart_load_instance->h_mapping_list);
@@ -2628,8 +2628,8 @@ T5_MSG_PROTO(static, chart_load_ended, _InoutRef_ P_OF_IP_FORMAT p_of_ip_format)
 
 T5_MSG_PROTO(static, chart_io_direct_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -2657,8 +2657,8 @@ chart_io_save_ended(
 
 T5_MSG_PROTO(static, chart_io_direct_msg_save, _InRef_ PC_MSG_SAVE p_msg_save)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_save->t5_msg_save_message)
     {

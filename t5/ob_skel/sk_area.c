@@ -84,7 +84,7 @@ field_or_title_data_ref_in_region(
 {
     DATA_REF_AND_SLR data_ref_and_slr;
 
-    IGNOREPARM_InVal_(data_space);
+    UNREFERENCED_PARAMETER_InVal_(data_space);
 
     data_ref_and_slr.data_ref = *p_data_ref;
 

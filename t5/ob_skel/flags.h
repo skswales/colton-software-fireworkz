@@ -129,6 +129,11 @@ skeleton_save_style_handle(
     _InVal_     STYLE_HANDLE style_handle,
     _InVal_     BOOL part_save);
 
+_Check_return_
+extern STATUS
+skel_save_version(
+    _InoutRef_  P_OF_OP_FORMAT p_of_op_format);
+
 /*
 sk_table.c
 */

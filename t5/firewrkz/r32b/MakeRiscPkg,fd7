@@ -9,7 +9,7 @@
 
 IfThere $.Temp Then Else %CDir $.Temp
 
-Set t5$Release 2_10_00
+Set t5$Release 2_10_02
 
 Set t5$Disc $.Temp.Fireworkz_<t5$Release>
 Set t5$Zip  $.Temp.Fireworkz_<t5$Release>/zip

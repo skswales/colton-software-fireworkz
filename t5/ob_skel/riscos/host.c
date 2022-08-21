@@ -601,7 +601,7 @@ host_view_destroy(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(NULL == p_view)
         return;
@@ -647,7 +647,7 @@ host_view_query_posn(
 {
     WimpGetWindowStateBlock window_state;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* Get the state of the back window */
     window_state.window_handle = p_view->main[WIN_BACK].hwnd;
@@ -670,7 +670,7 @@ host_view_show(
 {
     union wimp_window_state_open_window_u window_u;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* Get the state of the window */
     window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
@@ -689,7 +689,7 @@ host_view_reopen(
 {
     union wimp_window_state_open_window_u window_u;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* Get the state of the window */
     window_u.window_state.window_handle = p_view->main[WIN_BACK].hwnd;
@@ -713,7 +713,7 @@ host_view_maximize(
 {
     union wimp_window_state_open_window_u window_u;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(p_view->flags.maximized)
         return;
@@ -741,7 +741,7 @@ host_view_minimize(
     WimpMessage msg;
     WimpIconizeMessage * const p_wimp_message_iconize = (WimpIconizeMessage *) &msg.data;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(p_view->flags.minimized)
         return;
@@ -1246,7 +1246,7 @@ back_window_open(
 #if defined(UNUSED) /* currently there are no such windows (e.g. list boxes) */
     /* open any windows maintained by win layer, modifying who to open this stack behind */
     winx_open_child_windows(p_view->main[WIN_BACK].hwnd, p_open_window, &behind);
-#endif
+#endif /* UNUSED */
 
     /* If wimp asked back window to open in place (i.e. behind itself)
      * then first window opened must be opened behind itself.
@@ -1594,8 +1594,8 @@ pane_window_create(
             break;
         }
 
-        wind_defn.min_width  = 128;
-        wind_defn.min_height = 128;
+        wind_defn.min_width  = 40;
+        wind_defn.min_height = 40;
 
         wind_defn.extent = * (const BBox *) &p_view->scaled_paneextent;
 
@@ -1793,7 +1793,7 @@ edge_window_create(
         case WIN_BORDER_HORZ:
             wind_defn.extent.ymin = -1024;
             wind_defn.extent.xmax = p_view->scaled_paneextent.x1;
-            wind_defn.min_width = 128;
+            wind_defn.min_width = 40;
             p_proc_host_event = horzborder_event_handler;
             break;
 
@@ -1801,7 +1801,7 @@ edge_window_create(
         case WIN_BORDER_VERT:
             wind_defn.extent.ymin = p_view->scaled_paneextent.y0;
             wind_defn.extent.xmax = 1280;
-            wind_defn.min_height = 128;
+            wind_defn.min_height = 40;
             p_proc_host_event = vertborder_event_handler;
             break;
 
@@ -1809,7 +1809,7 @@ edge_window_create(
         case WIN_RULER_HORZ:
             wind_defn.extent.ymin = -1024;
             wind_defn.extent.xmax = p_view->scaled_paneextent.x1;
-            wind_defn.min_width = 128;
+            wind_defn.min_width = 40;
             p_proc_host_event = horzruler_event_handler;
             break;
 
@@ -1817,7 +1817,7 @@ edge_window_create(
         case WIN_RULER_VERT:
             wind_defn.extent.ymin = p_view->scaled_paneextent.y0;
             wind_defn.extent.xmax = 1280;
-            wind_defn.min_height = 128;
+            wind_defn.min_height = 40;
             p_proc_host_event = vertruler_event_handler;
             break;
         }
@@ -1868,7 +1868,7 @@ set_cur_pane(
 
     case WINTYPE_PANE:
         pane_id = find_pane(p_view, hwnd);
-        IGNOREPARM_InVal_(window_id);
+        UNREFERENCED_PARAMETER_InVal_(window_id);
         break;
 
     default:
@@ -1930,7 +1930,7 @@ update_common_pre_loop(
 {
     const P_REDRAW_CONTEXT p_redraw_context = &p_viewevent_redraw->redraw_context;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     zero_struct_ptr(p_viewevent_redraw);
 
@@ -1966,7 +1966,7 @@ update_common_in_loop(
 {
     const P_REDRAW_CONTEXT p_redraw_context = &p_viewevent_redraw->redraw_context;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     /* invalidate cache foreground and background entries cos wimp may have drawn scroll bars/borders/icons etc. */
     host_invalidate_cache(HIC_REDRAW_LOOP_START);
@@ -2241,7 +2241,7 @@ send_click_event_to_view(
 
         view_point_from_screen_point_and_context(&viewevent_click.view_point, (PC_GDI_POINT) &p_mouse_click_event->mouse_x, &viewevent_click.click_context);
 
-        dragging_.allowed = ((t5_message == T5_EVENT_CLICK_LEFT_DRAG) || (t5_message == T5_EVENT_CLICK_RIGHT_DRAG));
+        dragging_.allowed = ((T5_EVENT_CLICK_LEFT_DRAG == t5_message) || (T5_EVENT_CLICK_RIGHT_DRAG == t5_message));
 
         if(dragging_.allowed)
         {
@@ -2368,14 +2368,14 @@ send_release_event_to_view(
     assert(dragging_.active);
 
     /* If aborted (rather than on receipt of Wimp_EUserDrag) then we need to cancel the current drag box */
-    if(t5_message == T5_EVENT_CLICK_DRAG_ABORTED)
+    if(T5_EVENT_CLICK_DRAG_ABORTED == t5_message)
         void_WrapOsErrorReporting(winx_drag_box(NULL)); /* NB winx_drag_box() NOT wimp_drag_box() */
 
     /* Send dragging event to view only if mouse has moved. Scroll the window if the pointer is outside it. */
     callback(T5_EVENT_CLICK_DRAG_MOVEMENT, &dragging_.callback, TRUE, TRUE);
 
     /* Send drag finished event to view (even if mouse hasn't moved). Don't scroll the window if the pointer is outside it. */
-    assert((t5_message == T5_EVENT_CLICK_DRAG_ABORTED) || (t5_message == T5_EVENT_CLICK_DRAG_FINISHED));
+    assert((T5_EVENT_CLICK_DRAG_ABORTED == t5_message) || (T5_EVENT_CLICK_DRAG_FINISHED == t5_message));
     callback(t5_message, &dragging_.callback, FALSE, FALSE);
 
     dragging_.active = FALSE;
@@ -2429,7 +2429,7 @@ send_key_event_to_docu(
             if(preprocess_key_event_ESCAPE())
                 return(1 /*processed*/);
 
-        fn_key = (t5_message != T5_EVENT_NONE);
+        fn_key = (T5_EVENT_NONE != t5_message);
 
         if(!fn_key)
         {
@@ -2445,7 +2445,7 @@ send_key_event_to_docu(
     }
     else
     {
-        IGNOREPARM(h_commands);
+        UNREFERENCED_PARAMETER(h_commands);
 
         fn_key = 1;
     }
@@ -2538,8 +2538,8 @@ host_drag_in_progress(
 
 PROC_EVENT_PROTO(static, null_event_host_drag)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
 
 #if CHECKING
     switch(t5_message)
@@ -2549,7 +2549,7 @@ PROC_EVENT_PROTO(static, null_event_host_drag)
 
     case T5_EVENT_NULL:
 #else
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
     {
 #endif
         if(dragging_.active)
@@ -2570,7 +2570,7 @@ host_settitle(
     _ViewRef_   P_VIEW p_view,
     _In_z_      PCTSTR title)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(0 != tstrcmp(p_view->window_title, title))
     {
@@ -2592,7 +2592,7 @@ host_show_caret(
     WimpCaret caret_cur;
     WimpCaret caret_new;
 
-    IGNOREPARM(width);
+    UNREFERENCED_PARAMETER(width);
 
     void_WrapOsErrorReporting(wimp_get_caret_position(&caret_cur));
 
@@ -2754,8 +2754,8 @@ host_main_hide_caret(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_ViewRef_(p_view);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_ViewRef_(p_view);
 
 #if FALSE
     myassert2(TEXT("why is host_main_hide_caret(") PTR_XTFMT TEXT(", ") PTR_XTFMT TEXT(") being called"), p_docu, p_view);
@@ -2823,7 +2823,7 @@ host_update_all(
     int index[2], i;
     WimpRedrawWindowBlock redraw_window;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(threaded_through_redraw)
         return;
@@ -3044,7 +3044,7 @@ host_update(
     WimpRedrawWindowBlock redraw_window;
     int wimp_more = 0;
 
-    IGNOREPARM_InVal_(redraw_flags);
+    UNREFERENCED_PARAMETER_InVal_(redraw_flags);
 
     if(threaded_through_redraw)
         return;
@@ -3190,7 +3190,7 @@ host_update_fast_start(
     WimpRedrawWindowBlock redraw_window;
     BOOL more;
 
-    IGNOREPARM_InVal_(redraw_tag);
+    UNREFERENCED_PARAMETER_InVal_(redraw_tag);
 
     if(threaded_through_redraw)
         return(FALSE);          /* Don't be mean to the wimp, it bites back! */
@@ -3322,7 +3322,7 @@ calc_window_positions(
     int excess_x = (con_x_9 - con_x_8) - (p_view->scaled_paneextent.x1 - p_view->scaled_paneextent.x0);
     int excess_y = (con_y_8 - con_y_9) - (p_view->scaled_paneextent.y1 - p_view->scaled_paneextent.y0);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(p_view->flags.horz_split_on  && (excess_x > 0))
     {
@@ -3341,14 +3341,14 @@ calc_window_positions(
      * Enlarging WIN_PANE and the back window may give us values that hang off the edge of the
      * screen, but lets not worry about that for now!
     */
-    excess_x = (116 + 4+8) - (con_x_9 - con_x_8);
+    excess_x = (40) - (con_x_9 - con_x_8);
     if(excess_x > 0)
     {
         con_x_9      += excess_x;
         p_bbox->xmax += excess_x;
     }
 
-    excess_y = (116 + 4+8) - (con_y_8 - con_y_9);
+    excess_y = (40) - (con_y_8 - con_y_9);
     if(excess_y > 0)
     {
         con_y_9      -= excess_y;
@@ -3434,7 +3434,7 @@ host_set_extent_this_view(
     BBox pane_box, edge_box, back_box;
     VIEW_RECT view_rect;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     view_rect.p_view = p_view;
     view_rect.rect.tl.x = view_rect.rect.tl.y = 0;
@@ -3451,7 +3451,7 @@ host_set_extent_this_view(
     window_rect_from_view_rect(&gdi_rect, P_DOCU_NONE, &view_rect, NULL, &screen_host_xform);
     sx = gdi_rect.br.x;
     sy = gdi_rect.br.y;
-    IGNOREPARM(sy);
+    UNREFERENCED_PARAMETER(sy);
 
     x = MAX(x, sx); /* never let x pane extent fall below 100% worth*/
 
@@ -3733,7 +3733,7 @@ T5_CMD_PROTO(extern, t5_cmd_help)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(t5_message)
     {

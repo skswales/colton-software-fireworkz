@@ -79,7 +79,7 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
     rect.right  = (rect.right  * iWidthMM  * 100)/iWidthPels;
     rect.bottom = (rect.bottom * iHeightMM * 100)/iHeightPels;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     // Create the metafile device context.
     hdc =
@@ -244,7 +244,7 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
 
     if(NULL != hdc) DeleteEnhMetaFile(CloseEnhMetaFile(hdc));
 
-    IGNOREPARM(p_t5_cmd);
+    UNREFERENCED_PARAMETER(p_t5_cmd);
 
     return(status);
 }

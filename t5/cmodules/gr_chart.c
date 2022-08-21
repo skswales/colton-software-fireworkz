@@ -862,7 +862,7 @@ gr_chart_preferred_save(
     if(gr_chart_preferred_ch)
         return(gr_chart_save_chart_without_dialog(gr_chart_preferred_ch, filename));
 #else
-    IGNOREPARM(filename);
+    UNREFERENCED_PARAMETER(filename);
 #endif
 
     assert0();
@@ -899,7 +899,7 @@ gr_chart_preferred_set(
 
     gr_chart_clone_noncore_pict_lose_refs(gr_chart_preferred_ch);
 #else
-    IGNOREPARM(ch);
+    UNREFERENCED_PARAMETER(ch);
 #endif
 
     pcp = p_gr_chart_from_chart_handle(gr_chart_preferred_ch);
@@ -932,7 +932,7 @@ gr_chart_preferred_use(
 #ifdef GR_CLONE
     return(gr_chart_clone(ch, gr_chart_preferred_ch, 0 /*leave non-core info alone*/));
 #else
-    IGNOREPARM(ch);
+    UNREFERENCED_PARAMETER(ch);
 
     return(status_nomem());
 #endif

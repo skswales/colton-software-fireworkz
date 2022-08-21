@@ -523,7 +523,7 @@ print_document_draft_to_file(
 
 T5_MSG_PROTO(extern, t5_msg_draft_print_to_file, P_DRAFT_PRINT_TO_FILE p_draft_print_to_file)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(print_document_draft_to_file(p_docu, p_draft_print_to_file->p_print_ctrl, p_draft_print_to_file->filename));
 }
@@ -683,7 +683,7 @@ T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
     WimpMessage msg;
     PRINTING printing;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     printing.p_docu         = p_docu;
     printing.p_print_ctrl   = p_print_ctrl;
@@ -737,7 +737,7 @@ T5_MSG_PROTO(extern, t5_msg_draft_print, P_PRINT_CTRL p_print_ctrl)
 {
     PCTSTR temp_filename = TEXT("c:\\temp\\draftout.txt");
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     {
     DRAFT_PRINT_TO_FILE draft_print_to_file;

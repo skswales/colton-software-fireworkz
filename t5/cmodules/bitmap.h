@@ -95,7 +95,7 @@ bitmap_bit_clear(
     const int bit = ((int) bit_number) & (BITMAP_BPW - 1);
     const BITMAP_WORD mask = (BITMAP_WORD) (ONE_BIT << bit);
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
     assert(bit_number < n_bits);
     if(bit_number < n_bits)
         p_bitmap[word] &= ~mask;
@@ -118,7 +118,7 @@ bitmap_bit_set(
     const int bit = ((int) bit_number) & (BITMAP_BPW - 1);
     const BITMAP_WORD mask = (BITMAP_WORD) (ONE_BIT << bit);
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
     assert(bit_number < n_bits);
     if(bit_number < n_bits)
         p_bitmap[word] |= mask;
@@ -136,7 +136,7 @@ bitmap_bit_test(
     const int bit = ((int) bit_number) & (BITMAP_BPW - 1);
     const BITMAP_WORD mask = (BITMAP_WORD) (ONE_BIT << bit);
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
     assert(bit_number < n_bits);
     if(bit_number < n_bits)
     {
@@ -153,7 +153,7 @@ bitmap_clear(
     _Out_writes_all_(n_words_for_n_bits) P_BITMAP p_bitmap,
     N_BITS_ARG_DECL(n_bits))
 {
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
 
     memset32(p_bitmap, 0, BITMAP_SIZE_FROM_BITS(n_bits) * sizeof32(BITMAP_WORD));
 }
@@ -171,7 +171,7 @@ bitmap_copy(
     _In_reads_(n_words_for_n_bits) PC_BITMAP p_bitmap,
     N_BITS_ARG_DECL(n_bits))
 {
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
 
     memcpy32(p_bitmap_result, p_bitmap, BITMAP_SIZE_FROM_BITS(n_bits) * sizeof32(BITMAP_WORD));
 }
@@ -185,7 +185,7 @@ bitmap_count(
     BIT_NUMBER bit_number;
     U32 count = 0;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
 
     for(bit_number = 0; bit_number < n_bits; bit_number += BITMAP_BPW)
     {
@@ -245,7 +245,7 @@ bitmap_test(
 {
     BIT_NUMBER bit_number;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_words_for_n_bits));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_words_for_n_bits));
 
     for(bit_number = 0; bit_number < n_bits; bit_number += BITMAP_BPW)
         if((*p_bitmap_1++ & *p_bitmap_2++) != 0)

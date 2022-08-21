@@ -516,7 +516,7 @@ MAEVE_EVENT_PROTO(static, maeve_event_ob_hefo)
 {
     const STATUS status = STATUS_OK;
 
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -619,7 +619,7 @@ T5_CMD_PROTO(static, hefo_load_data)
     P_HEADFOOT_DEF    p_headfoot_def;
     STATUS            status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     row        = p_args[ARG_HEFO_DATA_ROW].val.row;
     data_space = p_args[ARG_HEFO_DATA_DATA_SPACE].val.u8n;
@@ -1399,7 +1399,7 @@ dialog_page_hefo_break_intro_ctl_state_change(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_page_hefo_break_intro)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1611,7 +1611,7 @@ page_hefo_break_list_create(
 
     while(NULL != (p_page_hefo_break = page_hefo_break_enum(p_docu, &row)))
     {
-        IGNOREPARM(p_page_hefo_break);
+        UNREFERENCED_PARAMETER(p_page_hefo_break);
 
         if(NULL != (p_page_hefo_break_list_info = al_array_extend_by(p_array_handle, PAGE_HEFO_BREAK_LIST_INFO, 1, &aib, &status)))
         {
@@ -2064,7 +2064,7 @@ OBJECT_PROTO(extern, object_hefo)
 
         if(NULL != (p_markers = al_array_extend_by(&p_docu->mark_info_hefo.h_markers, MARKERS, 1, &array_init_block, &status)))
         {
-            IGNOREPARM(p_markers);
+            UNREFERENCED_PARAMETER(p_markers);
 
             al_array_auto_compact_set(&p_docu->mark_info_hefo.h_markers);
 
@@ -2899,7 +2899,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
             p_docu->anchor_mark.docu_area.br.object_position = object_position_find.object_data.object_position_start;
 
             status_consume(object_call_HEFO_with_hb(p_docu,
-                           (t5_message == T5_EVENT_CLICK_DRAG_FINISHED) ? T5_MSG_ANCHOR_FINISHED : T5_MSG_ANCHOR_UPDATE,
+                           (T5_EVENT_CLICK_DRAG_FINISHED == t5_message) ? T5_MSG_ANCHOR_FINISHED : T5_MSG_ANCHOR_UPDATE,
                            p_hefo_block));
 
             status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
@@ -2915,7 +2915,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
 
         if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
         {
-            if(t5_message == T5_EVENT_CLICK_LEFT_DOUBLE)
+            if(T5_EVENT_CLICK_LEFT_DOUBLE == t5_message)
             {
                 P_SKELEVENT_CLICK p_skelevent_click = P_DATA_FROM_HEFO_BLOCK(SKELEVENT_CLICK, p_hefo_block);
                 p_skelevent_click->processed = 1;
@@ -2948,7 +2948,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         {
         P_HEFO_BLOCK p_hefo_block = (P_HEFO_BLOCK) p_data;
 
-        if(t5_message == T5_EVENT_CLICK_LEFT_TRIPLE)
+        if(T5_EVENT_CLICK_LEFT_TRIPLE == t5_message)
         {
             P_SKELEVENT_CLICK p_skelevent_click = P_DATA_FROM_HEFO_BLOCK(SKELEVENT_CLICK, p_hefo_block);
             p_skelevent_click->processed = 1;
@@ -3024,7 +3024,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_UPDATE, p_hefo_block));
 
         /* either start drag or finish altogether */
-        if(t5_message == T5_EVENT_CLICK_RIGHT_SINGLE)
+        if(T5_EVENT_CLICK_RIGHT_SINGLE == t5_message)
             status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
         else
             host_drag_start(NULL);
@@ -3153,22 +3153,24 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         {
             if(array_elements(p_hefo_block->p_h_data))
                 status = object_call_HEFO_with_hb(p_docu, t5_message, p_hefo_block);
-            else if(object_redraw.flags.show_selection)
-            {
-                BOOL do_invert = FALSE;
-
-                if(!object_redraw.flags.show_content)
+            else
+            {   /* NULL object - nothing to paint, but invert if necessary */
+                if(object_redraw.flags.show_selection)
                 {
-                    if(object_redraw.flags.marked_now != object_redraw.flags.marked_screen)
-                        do_invert = TRUE;
-                }
-                else do_invert = object_redraw.flags.marked_now;
+                    BOOL do_invert;
 
-                if(do_invert)
-                    host_invert_rectangle_filled(&object_redraw.redraw_context,
-                                                 &object_redraw.pixit_rect_object,
-                                                 &object_redraw.rgb_fore,
-                                                 &object_redraw.rgb_back);
+                    if(object_redraw.flags.show_content)
+
+                        do_invert = object_redraw.flags.marked_now;
+                    else
+                        do_invert = (object_redraw.flags.marked_now != object_redraw.flags.marked_screen);
+
+                    if(do_invert)
+                        host_invert_rectangle_filled(&object_redraw.redraw_context,
+                                                     &object_redraw.pixit_rect_object,
+                                                     &object_redraw.rgb_fore,
+                                                     &object_redraw.rgb_back);
+                }
             }
         }
 

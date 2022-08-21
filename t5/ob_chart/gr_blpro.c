@@ -374,7 +374,7 @@ dialog_bl_process_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_bl_process)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -506,8 +506,8 @@ gr_chart_pie_process(
     P_CHART_HEADER p_chart_header,
     _InVal_     GR_CHART_OBJID id)
 {
-    IGNOREPARM(p_chart_header);
-    IGNOREPARM_InVal_(id);
+    UNREFERENCED_PARAMETER(p_chart_header);
+    UNREFERENCED_PARAMETER_InVal_(id);
     host_bleep();
     return(STATUS_OK);
 }
@@ -588,7 +588,7 @@ dialog_scat_process_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_scat_process)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {

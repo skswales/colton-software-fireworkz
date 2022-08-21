@@ -815,7 +815,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\errors.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -833,7 +833,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\filetypes.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\filetypes.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -851,7 +851,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\lashup.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\lashup.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -869,7 +869,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\memalloc.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\memalloc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -887,7 +887,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\myos.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\myos.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -905,7 +905,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\winderror.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\winderror.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -923,7 +923,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windflex.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windflex.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -941,7 +941,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windheap.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windheap.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -959,7 +959,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windrecv.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windrecv.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2319,7 +2319,7 @@
     <ClCompile Include="..\..\fs_xls\fs_xls_savex.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2337,7 +2337,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\wimp.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\wimp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2355,7 +2355,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\wimplib.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\wimplib.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2373,7 +2373,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\errors.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2391,7 +2391,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\filetypes.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\filetypes.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2409,7 +2409,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\flags.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\flags.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2427,7 +2427,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\gflags.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\gflags.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2445,7 +2445,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\lashup.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\lashup.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2463,7 +2463,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\memalloc.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\memalloc.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2481,7 +2481,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\msgs.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\msgs.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2499,7 +2499,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\myos.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\myos.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2517,7 +2517,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\winderror.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\winderror.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2535,7 +2535,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windflex.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windflex.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2553,7 +2553,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windheap.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windheap.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2571,7 +2571,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windquery2.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windquery2.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2589,7 +2589,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windrecv.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windrecv.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -3037,7 +3037,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\RISC_OSLib\bbc.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\RISC_OSLib\bbc.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -3055,7 +3055,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\RISC_OSLib\drawmod.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\RISC_OSLib\drawmod.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -3073,7 +3073,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\CLib\msvchack\kernel.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\kernel.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -3091,7 +3091,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\CLib\msvchack\swis.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\swis.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -3111,7 +3111,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\MakeAll" />
+    <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll" />
     <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc" />
     <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk" />
     <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp" />

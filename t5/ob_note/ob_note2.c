@@ -97,10 +97,12 @@ note_drop_object_selection(
 {
     switch(p_note_info->note_selection)
     {
-    default:
+    default: default_unhandled();
+    case NOTE_SELECTION_NONE:
+    case NOTE_SELECTION_SELECTED:
         break;
 
-    case NOTE_SELECTION_EDITED:
+    case NOTE_SELECTION_IN_EDIT:
         { /* tell the object that his selection has better go too */
         NOTE_OBJECT_SELECTION_CLEAR note_object_selection_clear;
         note_object_selection_clear.object_data_ref = p_note_info->object_data_ref;
@@ -168,6 +170,16 @@ note_save(
 
     switch(p_note_info->note_pinning)
     {
+    default:default_unhandled();
+#if CHECKING
+    case NOTE_UNPINNED:
+#endif
+        if(LAYER_PAPER_BELOW == p_note_info->layer)
+            t5_message = T5_CMD_NOTE_BACKDROP;
+        else
+            t5_message = T5_CMD_NOTE;
+        break;
+
     case NOTE_PIN_CELLS_SINGLE:
         t5_message = T5_CMD_NOTE;
         break;
@@ -175,17 +187,8 @@ note_save(
     case NOTE_PIN_CELLS_TWIN:
         t5_message = T5_CMD_NOTE_TWIN;
         break;
-
-    default:default_unhandled();
-#if CHECKING
-    case NOTE_UNPINNED:
-#endif
-        if(p_note_info->layer == LAYER_PAPER_BELOW)
-            t5_message = T5_CMD_NOTE_BACKDROP;
-        else
-            t5_message = T5_CMD_NOTE;
-        break;
     }
+
     status_return(arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table));
 
     p_args = p_arglist_args(&arglist_handle, ARG_CMD_NOTE_N_ARGS);
@@ -200,44 +203,6 @@ note_save(
 
     switch(p_note_info->note_pinning)
     {
-    case NOTE_PIN_CELLS_SINGLE:
-        { /* 1, x,y,c,r, w,h */
-        ext_mount_type = EXT_ID_NOTE_PIN_CELLS_SINGLE;
-
-        p_args[6].type = ARG_TYPE_COL;
-        p_args[6].val.col = p_note_info->region.tl.col;
-        p_args[7].type = ARG_TYPE_ROW;
-        p_args[7].val.row = p_note_info->region.tl.row;
-
-        p_args[8].val.pixit = p_note_info->pixit_size.cx;
-        p_args[9].val.pixit = p_note_info->pixit_size.cy;
-
-        arg_dispose(&arglist_handle, 10);
-        arg_dispose(&arglist_handle, 11);
-
-        break;
-        }
-
-    case NOTE_PIN_CELLS_TWIN:
-        { /* 2, x,y,c,r, x,y,c,r */
-        ext_mount_type = EXT_ID_NOTE_PIN_CELLS_TWIN;
-
-        p_args[6].type = ARG_TYPE_COL;
-        p_args[6].val.col = p_note_info->region.tl.col;
-        p_args[7].type = ARG_TYPE_ROW;
-        p_args[7].val.row = p_note_info->region.tl.row;
-
-        p_args[8].val.pixit = p_note_info->offset_br.x;
-        p_args[9].val.pixit = p_note_info->offset_br.y;
-
-        p_args[10].type = ARG_TYPE_COL;
-        p_args[10].val.col = p_note_info->region.br.col - 1; /* e,e -> i,i in file */
-        p_args[11].type = ARG_TYPE_ROW;
-        p_args[11].val.row = p_note_info->region.br.row - 1;
-
-        break;
-        }
-
     default: default_unhandled();
 #if CHECKING
     case NOTE_UNPINNED:
@@ -272,6 +237,44 @@ note_save(
 
         p_args[10].val.s32 = p_note_info->skel_rect.tl.page_num.x; /* SKS after 1.05 24oct93 save the page number! (previously unused args) */
         p_args[11].val.s32 = p_note_info->skel_rect.tl.page_num.y;
+
+        break;
+        }
+
+    case NOTE_PIN_CELLS_SINGLE:
+        { /* 1, x,y,c,r, w,h */
+        ext_mount_type = EXT_ID_NOTE_PIN_CELLS_SINGLE;
+
+        p_args[6].type = ARG_TYPE_COL;
+        p_args[6].val.col = p_note_info->region.tl.col;
+        p_args[7].type = ARG_TYPE_ROW;
+        p_args[7].val.row = p_note_info->region.tl.row;
+
+        p_args[8].val.pixit = p_note_info->pixit_size.cx;
+        p_args[9].val.pixit = p_note_info->pixit_size.cy;
+
+        arg_dispose(&arglist_handle, 10);
+        arg_dispose(&arglist_handle, 11);
+
+        break;
+        }
+
+    case NOTE_PIN_CELLS_TWIN:
+        { /* 2, x,y,c,r, x,y,c,r */
+        ext_mount_type = EXT_ID_NOTE_PIN_CELLS_TWIN;
+
+        p_args[6].type = ARG_TYPE_COL;
+        p_args[6].val.col = p_note_info->region.tl.col;
+        p_args[7].type = ARG_TYPE_ROW;
+        p_args[7].val.row = p_note_info->region.tl.row;
+
+        p_args[8].val.pixit = p_note_info->offset_br.x;
+        p_args[9].val.pixit = p_note_info->offset_br.y;
+
+        p_args[10].type = ARG_TYPE_COL;
+        p_args[10].val.col = p_note_info->region.br.col - 1; /* e,e -> i,i in file */
+        p_args[11].type = ARG_TYPE_ROW;
+        p_args[11].val.row = p_note_info->region.br.row - 1;
 
         break;
         }
@@ -587,7 +590,7 @@ sk_note_msg_focus_changed(
 
 T5_MSG_PROTO(static, sk_note_msg_reformat, _InRef_ PC_DOCU_REFORMAT p_docu_reformat)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_docu_reformat->action)
     {
@@ -704,7 +707,7 @@ sk_note_msg_data_save_3(
 
 T5_MSG_PROTO(static, sk_note_msg_save, _InRef_ PC_MSG_SAVE p_msg_save)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_save->t5_msg_save_message)
     {
@@ -718,7 +721,7 @@ T5_MSG_PROTO(static, sk_note_msg_save, _InRef_ PC_MSG_SAVE p_msg_save)
 
 MAEVE_EVENT_PROTO(extern, maeve_event_ob_note)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -837,7 +840,7 @@ T5_CMD_PROTO(extern, t5_cmd_note)
     NOTE_INFO note_info;
     zero_struct(note_info);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     note_info.object_id = OBJECT_ID_NONE;
 
@@ -984,7 +987,7 @@ T5_CMD_PROTO(extern, t5_cmd_note)
 
     scale_args_invalid = ((gr_scale_pair.x <= 0) || (gr_scale_pair.y <= 0)); /* SKS after 1.19/11 28jan95 add validation 'cos some 1.07 files are real shite */
 
-    if(scale_args_invalid || !scale_args_present || (note_info.note_pinning == NOTE_PIN_CELLS_TWIN))
+    if(scale_args_invalid || !scale_args_present || (NOTE_PIN_CELLS_TWIN == note_info.note_pinning))
     {
         NOTE_OBJECT_SIZE note_object_size;
         note_object_size.pixit_size.cx = note_object_size.pixit_size.cy = PIXITS_PER_INCH;
@@ -993,7 +996,7 @@ T5_CMD_PROTO(extern, t5_cmd_note)
         status_consume(object_call_id(note_info.object_id, p_docu, T5_MSG_NOTE_OBJECT_SIZE_QUERY, &note_object_size));
         if(note_object_size.processed)
         {
-            if((note_info.note_pinning == NOTE_PIN_CELLS_SINGLE) || (note_info.note_pinning == NOTE_UNPINNED))
+            if((NOTE_PIN_CELLS_SINGLE == note_info.note_pinning) || (NOTE_UNPINNED == note_info.note_pinning))
              {
                  gr_scale_pair.x = muldiv64(GR_SCALE_ONE, note_info.pixit_size.cx, note_object_size.pixit_size.cx);
                  gr_scale_pair.y = muldiv64(GR_SCALE_ONE, note_info.pixit_size.cy, note_object_size.pixit_size.cy);
@@ -1091,8 +1094,8 @@ T5_CMD_PROTO(extern, t5_cmd_note_back)
     S32 selection_changed = 0;
     ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     while(--note_index >= 0)
     {
@@ -1141,8 +1144,8 @@ T5_CMD_PROTO(extern, t5_cmd_note_embed)
 {
     ARRAY_INDEX note_index;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     for(note_index = 0; note_index < array_elements(&p_docu->h_note_list); ++note_index)
     {
@@ -1219,8 +1222,8 @@ T5_CMD_PROTO(extern, t5_cmd_note_swap)
     S32 selection_changed = 0;
     ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     while(--note_index >= 0)
     {
@@ -1496,7 +1499,7 @@ dialog_backdrop_ctl_create_state(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_backdrop)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1515,8 +1518,8 @@ T5_CMD_PROTO(extern, t5_cmd_backdrop_intro)
     S32 n_behind = 0;
     BACKDROP_CALLBACK backdrop_callback;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     { /* operate on selected note or backdrop */
     ARRAY_INDEX i = array_elements(&p_docu->h_note_list);
@@ -1561,14 +1564,6 @@ T5_CMD_PROTO(extern, t5_cmd_backdrop_intro)
 
     switch(p_note_info->note_pinning)
     {
-    default: default_unhandled();
-#if CHECKING
-    case NOTE_PIN_CELLS_SINGLE:
-    case NOTE_PIN_CELLS_TWIN:
-#endif
-        backdrop_callback.selected_mount = EXT_ID_NOTE_PIN_CELLS_AREA;
-        break;
-
     case NOTE_UNPINNED:
         {
         switch(p_note_info->layer)
@@ -1594,6 +1589,14 @@ T5_CMD_PROTO(extern, t5_cmd_backdrop_intro)
 
         break;
         }
+
+    default: default_unhandled();
+#if CHECKING
+    case NOTE_PIN_CELLS_SINGLE:
+    case NOTE_PIN_CELLS_TWIN:
+#endif
+        backdrop_callback.selected_mount = EXT_ID_NOTE_PIN_CELLS_AREA;
+        break;
     }
 
     backdrop_callback.all_pages = p_note_info->flags.all_pages;
@@ -1623,7 +1626,7 @@ T5_CMD_PROTO(extern, t5_cmd_backdrop)
     S32 n_selected = 0;
     S32 n_behind = 0;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     { /* operate on selected note or backdrop */
     ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
@@ -1647,7 +1650,7 @@ T5_CMD_PROTO(extern, t5_cmd_backdrop)
         case LAYER_PAPER_BELOW:
         case LAYER_PRINT_AREA_BELOW:
         case LAYER_CELLS_AREA_BELOW:
-            if(this_p_note_info->note_pinning == NOTE_UNPINNED)
+            if(NOTE_UNPINNED == this_p_note_info->note_pinning)
             {
                 ++n_behind;
 
@@ -2000,13 +2003,6 @@ relative_pixit_rect_from_note(
 {
     switch(p_note_info->note_pinning)
     {
-    default: default_unhandled();
-#if CHECKING
-    case NOTE_PIN_CELLS_SINGLE:
-    case NOTE_PIN_CELLS_TWIN:
-#endif
-        break;
-
     case NOTE_UNPINNED:
         if(p_note_info->flags.all_pages)
         {
@@ -2015,6 +2011,13 @@ relative_pixit_rect_from_note(
             return;
         }
 
+        break;
+
+    default: default_unhandled();
+#if CHECKING
+    case NOTE_PIN_CELLS_SINGLE:
+    case NOTE_PIN_CELLS_TWIN:
+#endif
         break;
     }
 

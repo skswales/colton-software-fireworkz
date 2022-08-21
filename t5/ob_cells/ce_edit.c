@@ -640,8 +640,8 @@ main events
 
 MAEVE_EVENT_PROTO(static, maeve_event_cells_edit)
 {
-    IGNOREPARM(p_data);
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER(p_data);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -685,7 +685,7 @@ cells_edit_msg_close1(
 
 T5_MSG_PROTO(static, cells_edit_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -768,7 +768,7 @@ T5_MSG_PROTO(static, cells_edit_msg_object_delete_sub, _InoutRef_ P_OBJECT_DELET
     STATUS status;
     OBJECT_DATA object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_object_delete_sub->h_data_del = 0;
 
@@ -917,7 +917,7 @@ T5_MSG_PROTO(static, cells_edit_msg_object_keys, P_OBJECT_KEYS p_object_keys)
 {
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = check_protection_simple(p_docu, TRUE)))
     {
@@ -983,7 +983,7 @@ T5_MSG_PROTO(static, cells_edit_msg_object_read_text, P_OBJECT_READ_TEXT p_objec
     STATUS status;
     OBJECT_DATA object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_done(status = text_in_cell(p_docu, &object_data, &p_object_read_text->object_data)))
     {
@@ -1000,7 +1000,7 @@ T5_MSG_PROTO(static, cells_edit_msg_object_string_replace, P_OBJECT_STRING_REPLA
     STATUS status;
     OBJECT_DATA object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_done(status = text_in_cell(p_docu, &object_data, &p_object_string_replace->object_data)))
     {
@@ -1082,7 +1082,7 @@ T5_MSG_PROTO(static, cells_edit_msg_load_cell_ownform, P_LOAD_CELL_OWNFORM p_loa
     STATUS status;
     OBJECT_DATA object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = text_from_cell(p_docu, &object_data, &p_load_cell_ownform->object_data)))
     {   /* SKS 11apr97 was status_done() but that's silly and I claim it'd never been thru this bit before */
@@ -1133,7 +1133,7 @@ T5_MSG_PROTO(static, cells_edit_msg_save_cell_ownform, P_SAVE_CELL_OWNFORM p_sav
     STATUS status;
     OBJECT_DATA object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_done(status = text_in_cell(p_docu, &object_data, &p_save_cell_ownform->object_data)))
     {

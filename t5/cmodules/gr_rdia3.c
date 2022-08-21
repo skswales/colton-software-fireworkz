@@ -112,7 +112,7 @@ gr_riscdiag_host_font_from_textstyle(
 
 #else
 
-    IGNOREPARM_InRef_(textstyle);
+    UNREFERENCED_PARAMETER_InRef_(textstyle);
 
 #endif /* OS */
 

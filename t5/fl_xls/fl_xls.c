@@ -97,8 +97,8 @@ xls_error_set(
 
 T5_MSG_PROTO(static, xls_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -125,8 +125,8 @@ T5_MSG_PROTO(static, xls_msg_error_rq, _InoutRef_ P_MSG_ERROR_RQ p_msg_error_rq)
         return(STATUS_FAIL);
     }
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     tstr_xstrkpy(p_msg_error_rq->tstr_buf, p_msg_error_rq->elemof_buffer, p_error);
     return(STATUS_OK);

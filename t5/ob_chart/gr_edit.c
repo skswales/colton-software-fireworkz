@@ -516,8 +516,8 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
     T5_MESSAGE t5_message_effective = p_note_object_edit_click->t5_message;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     CODE_ANALYSIS_ONLY(zero_struct(hitObject));
 
@@ -538,7 +538,7 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
 
     p_note_object_edit_click->processed = 1;
 
-    tighter_selection = (t5_message_effective == T5_EVENT_CLICK_RIGHT_SINGLE);
+    tighter_selection = (T5_EVENT_CLICK_RIGHT_SINGLE == t5_message_effective);
 
     if( !p_chart_header ||
         !gr_chart_diagram(p_chart_header->ch, &p_gr_diag) ||
@@ -633,7 +633,7 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
     if(hitObject[0] == GR_DIAG_OBJECT_NONE)
     {
         /* clear selection only on left click and if there was one */
-        if((t5_message_effective == T5_EVENT_CLICK_LEFT_SINGLE) && (p_chart_header->selection.id.name != GR_CHART_OBJNAME_ANON))
+        if((T5_EVENT_CLICK_LEFT_SINGLE == t5_message_effective) && (p_chart_header->selection.id.name != GR_CHART_OBJNAME_ANON))
             chart_selection_clear(p_chart_header, p_note_object_edit_click->p_note_info);
     }
     else
@@ -730,8 +730,8 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_size_query, _InoutRef_ P_NOTE_OB
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_size->object_data_ref;
     const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_note_object_size->pixit_size.cx = cp->core.layout.width  + CHART_NOTE_SIZE_FUDGE_X;
     p_note_object_size->pixit_size.cy = cp->core.layout.height + CHART_NOTE_SIZE_FUDGE_Y;
@@ -743,8 +743,8 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_size_query, _InoutRef_ P_NOTE_OB
 
 T5_MSG_PROTO(static, chart_edit_msg_note_object_size_set_possible, _InoutRef_ P_NOTE_OBJECT_SIZE p_note_object_size)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_note_object_size->processed = 1;
 
@@ -756,8 +756,8 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_size_set, _InoutRef_ P_NOTE_OBJE
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_size->object_data_ref;
     const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     cp->core.layout.width  = p_note_object_size->pixit_size.cx - CHART_NOTE_SIZE_FUDGE_X;
     cp->core.layout.height = p_note_object_size->pixit_size.cy - CHART_NOTE_SIZE_FUDGE_Y;
@@ -775,8 +775,8 @@ T5_MSG_PROTO(static, chart_edit_msg_save_picture, _InRef_ P_MSG_SAVE_PICTURE p_m
     P_GR_DIAG p_gr_diag;
     P_GR_RISCDIAG p_gr_riscdiag;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_msg_save_picture->t5_filetype == FILETYPE_DRAW);
 
@@ -801,8 +801,8 @@ T5_MSG_PROTO(static, chart_edit_msg_save_picture_filetypes_request, _InoutRef_ P
 {
     SAVE_FILETYPE save_filetype;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* Indicate that we can save charts as Drawfiles */
     save_filetype.object_id = OBJECT_ID_CHART;
@@ -815,8 +815,8 @@ T5_MSG_PROTO(static, chart_edit_msg_save_picture_filetypes_request, _InoutRef_ P
 
 T5_MSG_PROTO(static, chart_edit_msg_caret_show_claim, P_CARET_SHOW_CLAIM p_caret_show_claim)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_caret_show_claim);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_caret_show_claim);
 
     /* switch off caret */
     view_show_caret(p_docu, UPDATE_PANE_CELLS_AREA, &p_docu->caret, 0);
@@ -826,7 +826,7 @@ T5_MSG_PROTO(static, chart_edit_msg_caret_show_claim, P_CARET_SHOW_CLAIM p_caret
 
 T5_MSG_PROTO(static, chart_edit_msg_focus_changed, _InRef_ P_OBJECT_ID p_object_id)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(OBJECT_ID_CHART == *p_object_id)
     {
@@ -852,7 +852,7 @@ T5_CMD_PROTO(static, chart_edit_cmd_toggle_marks)
 {
     const P_CHART_HEADER p_chart_header = p_chart_header_from_docu_last(p_docu);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(docu_focus_owner_object_call(p_docu, p_chart_header && (p_chart_header->selection.id.name != GR_CHART_OBJNAME_ANON) ? T5_CMD_SELECTION_CLEAR : T5_CMD_SELECT_DOCUMENT, de_const_cast(P_T5_CMD, p_t5_cmd)));
 }
@@ -861,7 +861,7 @@ T5_MSG_PROTO(static, chart_edit_msg_mark_info_read, _InoutRef_ P_MARK_INFO p_mar
 {
     const P_CHART_HEADER p_chart_header = p_chart_header_from_docu_last(p_docu);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_mark_info->h_markers = p_chart_header && (p_chart_header->selection.id.name != GR_CHART_OBJNAME_ANON);
 
@@ -872,8 +872,8 @@ T5_MSG_PROTO(static, chart_edit_msg_selection_clear, _InRef_ P_NOTE_OBJECT_SELEC
 {
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_selection_clear->object_data_ref;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     chart_selection_clear(p_chart_header, p_note_object_selection_clear->p_note_info);
 
@@ -886,7 +886,7 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_snapshot, _InoutRef_ P_NOTE_OBJE
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_snapshot->object_data_ref;
     P_GR_DIAG p_gr_diag;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(!gr_chart_diagram(p_chart_header->ch, &p_gr_diag))
         return(STATUS_FAIL);
@@ -899,8 +899,8 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_snapshot, _InoutRef_ P_NOTE_OBJE
 
 T5_MSG_PROTO(static, chart_edit_cmd_force_recalc, _InRef_ P_CHART_HEADER p_chart_header)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     chart_rebuild_after_modify(p_chart_header);
 
@@ -909,8 +909,8 @@ T5_MSG_PROTO(static, chart_edit_cmd_force_recalc, _InRef_ P_CHART_HEADER p_chart
 
 T5_MSG_PROTO(static, chart_edit_msg_note_delete, _In_ P_CHART_HEADER p_chart_header)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     chart_dispose(&p_chart_header);
 
@@ -921,7 +921,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_gallery)
 {
     S32 arg_s32 = -1;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(0 != n_arglist_args(&p_t5_cmd->arglist_handle))
     {
@@ -970,7 +970,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_edit)
     GR_CHART_OBJID id;
     S32 arg_s32 = -1;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_chart_header)
     {
@@ -1045,7 +1045,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_style)
     GR_CHART_OBJID id;
     S32 arg_s32 = -1;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_chart_header)
     {
@@ -1119,7 +1119,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_editx)
     const P_CHART_HEADER p_chart_header = p_chart_header_from_docu_last(p_docu);
     S32 arg_s32 = -1;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_chart_header)
     {
@@ -1153,7 +1153,7 @@ T5_MSG_PROTO(static, chart_edit_msg_chart_edit_insert_picture, _InRef_ P_MSG_INS
     const BOOL ctrl_pressed = p_msg_insert_foreign->ctrl_pressed;
     BOOL embed_file = global_preferences.embed_inserted_files;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* SKS 10/13oct99 take note of Ctrl key state too - inverts the preference */
     if(ctrl_pressed) embed_file = !embed_file;
@@ -1181,7 +1181,7 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_edit_start, _InoutRef_ P_NOTE_OB
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_edit_start->object_data_ref;
     P_GR_DIAG p_gr_diag;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if((NULL == p_chart_header) || !gr_chart_diagram(p_chart_header->ch, &p_gr_diag))
     {
@@ -1247,8 +1247,8 @@ T5_MSG_PROTO(static, chart_edit_event_redraw, _InRef_ P_NOTE_OBJECT_REDRAW p_not
 {
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_redraw->object_redraw.object_data.u.p_object; /* (puke) */
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_chart_header)
         return(create_error(ERR_NOTE_NOT_LOADED));

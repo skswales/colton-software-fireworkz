@@ -576,9 +576,9 @@ command_record(
         return(status);
     }
 #else
-    IGNOREPARM_InVal_(arglist_handle);
-    IGNOREPARM_InVal_(object_id);
-    IGNOREPARM_InRef_(p_construct_table);
+    UNREFERENCED_PARAMETER_InVal_(arglist_handle);
+    UNREFERENCED_PARAMETER_InVal_(object_id);
+    UNREFERENCED_PARAMETER_InRef_(p_construct_table);
 #endif
 
     return(STATUS_OK);
@@ -1612,14 +1612,14 @@ T5_CMD_PROTO(extern, t5_cmd_current_document)
 {
     /*DOCU_NAME docu_name;*/
 
-    IGNOREPARM(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /*docu_name.leaf_name = p_args[0].val.tstr;*/
     /*docu_name.path_name = NULL;*/
 
-    /* IGNOREPARM(docu_name); <<< */
+    /* UNREFERENCED_PARAMETER(docu_name); <<< */
 
     return(STATUS_OK);
 }
@@ -1628,7 +1628,7 @@ T5_CMD_PROTO(extern, t5_cmd_current_position)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 4);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_docu->cur.slr.col = p_args[0].val.col;
     p_docu->cur.slr.row = p_args[1].val.row;
@@ -1736,7 +1736,7 @@ t5_cmd_set_interactive(void)
 
 T5_CMD_PROTO(extern, t5_cmd_undefine_key)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_t5_cmd->interactive)
     {

@@ -95,8 +95,8 @@ text_redisplay_from_info(
 
 T5_MSG_PROTO(static, story_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -212,7 +212,7 @@ T5_MSG_PROTO(static, story_msg_object_how_big, /**/ P_TEXT_MESSAGE_BLOCK p_text_
     const P_OBJECT_HOW_BIG p_object_how_big = (P_OBJECT_HOW_BIG) p_text_message_block->p_data;
     const P_OBJECT_DATA p_object_data = &p_text_message_block->inline_object.object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_object_data->u.p_object)
     {
@@ -245,7 +245,7 @@ T5_MSG_PROTO(static, story_msg_object_how_wide, /**/ P_TEXT_MESSAGE_BLOCK p_text
     const P_OBJECT_HOW_WIDE p_object_how_wide = (P_OBJECT_HOW_WIDE) p_text_message_block->p_data;
     const P_OBJECT_DATA p_object_data = &p_text_message_block->inline_object.object_data;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_object_data->u.p_object)
     {
@@ -265,7 +265,7 @@ T5_MSG_PROTO(static, story_msg_insert_inline_redisplay, /**/ P_TEXT_MESSAGE_BLOC
     const P_OBJECT_DATA p_object_data = &p_text_message_block->inline_object.object_data;
     TEXT_REDISPLAY_INFO text_redisplay_info;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     text_redisplay_info_save(p_docu,
                              &text_redisplay_info,
@@ -330,7 +330,7 @@ T5_MSG_PROTO(static, story_msg_delete_inline_redisplay, /**/ P_TEXT_MESSAGE_BLOC
     TEXT_REDISPLAY_INFO text_redisplay_info;
     S32 start, end;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     offsets_from_object_data(&start, &end, &p_text_message_block->inline_object.object_data, p_text_message_block->inline_object.inline_len);
 

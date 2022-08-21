@@ -85,8 +85,8 @@ do_auto_save_all(void)
 
 PROC_EVENT_PROTO(static, scheduled_event_auto_save_all)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER(p_data);
 
     switch(t5_message)
     {
@@ -137,7 +137,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_display_pictures)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.dont_display_pictures != !p_args[0].val.fBool)
@@ -153,7 +153,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_embed_inserted_files)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.embed_inserted_files != p_args[0].val.fBool)
@@ -169,7 +169,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_kerning)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.disable_kerning != !p_args[0].val.fBool)
@@ -189,7 +189,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_dithering)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.disable_dithering != !p_args[0].val.fBool)
@@ -209,7 +209,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_status_line)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.disable_status_line != !p_args[0].val.fBool)
@@ -225,7 +225,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_toolbar)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.disable_toolbar != !p_args[0].val.fBool)
@@ -241,7 +241,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_update_styles_from_choices)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.update_styles_from_choices != p_args[0].val.fBool)
@@ -257,7 +257,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_ascii_load_as_delimited)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.ascii_load_as_delimited != p_args[0].val.fBool)
@@ -273,7 +273,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_ascii_load_delimiter)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.ascii_load_delimiter != (UCS4) p_args[0].val.s32)
@@ -289,7 +289,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices_ascii_load_as_paragraphs)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     assert(p_docu == p_docu_from_config());
     if(global_preferences.ascii_load_as_paragraphs != p_args[0].val.fBool)
@@ -576,6 +576,7 @@ choices_save_object_id(
     STATUS status;
     OF_OP_FORMAT of_op_format = OF_OP_FORMAT_INIT;
     ARRAY_HANDLE array_handle = 0;
+    U32 initial_elements = 0;
 
     /* choices files should not be loadable directly */
     status_return(ownform_initialise_save(p_docu_config, &of_op_format, &array_handle, NULL, FILETYPE_ASCII, NULL));
@@ -583,14 +584,23 @@ choices_save_object_id(
     /* firstly save any options that might also get saved in a normal document */
     zero_struct(of_op_format.of_template);
 
-    if(OBJECT_ID_SKEL == object_id) /* saves handling another case in the big switch */
-        status = skel_msg_choices_save(&of_op_format);
-    else
-        status = object_call_id(object_id, p_docu_config, T5_MSG_CHOICES_SAVE, &of_op_format);
+    of_op_format.of_template.version = 1;
+    status = skel_save_version(&of_op_format);
+
+    if(status_ok(status))
+    {
+        initial_elements = array_elements32(&array_handle);
+
+        if(OBJECT_ID_SKEL == object_id) /* saves handling another case in the big switch */
+            status = skel_msg_choices_save(&of_op_format);
+        else
+            status = object_call_id(object_id, p_docu_config, T5_MSG_CHOICES_SAVE, &of_op_format);
+    }
 
     status = ownform_finalise_save(&p_docu_config, &of_op_format, status);
 
-    if((status_ok(status)) && (array_elements32(&array_handle) != 0))
+    /* try saving object's choices iff object added to the file data */
+    if((status_ok(status)) && (initial_elements != array_elements32(&array_handle)))
     {
         TCHARZ filename[BUF_MAX_PATHSTRING];
 
@@ -1179,7 +1189,7 @@ dialog_choices_process_end(
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_choices)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -1205,8 +1215,8 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
     CHOICES_MAIN_CALLBACK choices_main_callback;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     choices_query_block.ctl_create = 0;
 

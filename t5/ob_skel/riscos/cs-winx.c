@@ -108,14 +108,21 @@ winx_changedtitle(
 
     if(WimpWindow_Open & window_state.flags)
     {
-        const int dy = host_modevar_cache_current.dy;
-        BBox bbox;
-        bbox.xmin = window_state.visible_area.xmin;
-        bbox.ymin = window_state.visible_area.ymax + dy; /* title bar contents starts one raster up */
-        bbox.xmax = window_state.visible_area.xmax;
-        bbox.ymax = bbox.ymin + wimp_win_title_height(dy) - 2*dy;
-        trace_1(TRACE_RISCOS_HOST, TEXT("%s: forcing global redraw of inside of title bar area"), __Tfunc__);
-        void_WrapOsErrorReporting(wimp_force_redraw_BBox(-1 /* entire screen */, &bbox));
+        if(g_current_wm_version >= 380)
+        {   /* use more efficient method */
+            void_WrapOsErrorReporting(wimp_force_redraw(window_handle, 0x4B534154 /*TASK*/, 3 /*Title Bar*/, 0, 0));
+        }
+        else
+        {
+            const int dy = host_modevar_cache_current.dy;
+            BBox bbox;
+            bbox.xmin = window_state.visible_area.xmin;
+            bbox.ymin = window_state.visible_area.ymax + dy; /* title bar contents starts one raster up */
+            bbox.xmax = window_state.visible_area.xmax;
+            bbox.ymax = bbox.ymin + wimp_win_title_height(dy) - 2*dy;
+            trace_1(TRACE_RISCOS_HOST, TEXT("%s: forcing global redraw of inside of title bar area"), __Tfunc__);
+            void_WrapOsErrorReporting(wimp_force_redraw_BBox(-1 /* entire screen */, &bbox));
+        }
     }
 }
 

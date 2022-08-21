@@ -10,14 +10,16 @@ Copyright (C) 2013-2016 Stuart Swales
 Prerequisites
 -------------
 
-Acorn C/C++ Release 20 or later (!Amu, C compiler, headers, libraries, linker).
+Acorn C/C++ Release 25 or later (!Amu, C compiler, headers, libraries, linker).
 
-GNU Sed (Colton Software build - the one provided by PackMan doesn't work
-for this) to generate the Makefiles.
+GNU Sed to generate the Makefiles (you will need the Colton Software build as
+the one provided by PackMan doesn't work for this).
+
+InfoZip (install with PackMan) for creating a zip of the final build.
 
 Unzip (installed as InfoZip dependency) to populate the build directories.
 
-Zip (install InfoZip with PackMan) for creating a zip of the final build.
+Zip (install as InfoZip dependency) for creating a zip of the final build.
 
 
 First-time configuration and build
@@ -35,7 +37,7 @@ See ^.external.RISC_OSLib.ReadMe for instructions on how to do this.
 
 Edit 'configure' - set the URD macro to the directory containing t5.
 
-Edit !Amu.Desc for a larger WimpSlot. I use 5024k - it's ample.
+Edit DDE's !Amu.Desc for a larger WimpSlot. I use 5024k - it's ample.
 
 Run !Amu.
 
@@ -46,9 +48,9 @@ Please note that ObjMunge doesn't work on 32-bit only systems.  You will
 therefore need to build the fully-bound Fireworkz, r32b, on such systems.
 
 Then drag 'r32b.firewrkz.Makefile' to !Amu... and wait...  A Fireworkz build
-takes about fifty minutes on a SA RISC PC.  Building on a i.MX6 takes under
+takes about eighty minutes on a SA RISC PC.  Building on an ARMX6 takes about
 five minutes. A Fireworkz Pro build takes about ten minutes longer on a SA
-RISC PC, and about thirty seconds(!) on a i.MX6.
+RISC PC, and about thirty seconds(!) on an ARMX6.
 
 
 Subsequent builds

@@ -122,7 +122,7 @@ colourpicker_event_close_window(
     P_COLOURPICKER_CALLBACK p_colourpicker_callback,
     _In_        const WimpCloseWindowRequestEvent * const p_close_window_request)
 {
-    IGNOREPARM_CONST(p_close_window_request);
+    UNREFERENCED_PARAMETER_InRef_(p_close_window_request);
 
     colourpicker_close_dialogue(p_colourpicker_callback);
 
@@ -138,7 +138,7 @@ colourpicker_event_handler(
 {
     reportf(/*trace_3(TRACE_RISCOS_HOST,*/ TEXT("%s: %s handle=") PTR_XTFMT, __Tfunc__, report_wimp_event(event_code, p_event_data), handle);
 
-    IGNOREPARM_CONST(p_event_data);
+    UNREFERENCED_PARAMETER_InRef_(p_event_data);
 
     switch(event_code)
     {
@@ -181,7 +181,7 @@ colourpicker_message_ColourPickerCloseDialogueRequest(
     _In_        const WimpMessage * const p_wimp_message,
     P_COLOURPICKER_CALLBACK p_colourpicker_callback)
 {
-    IGNOREPARM_CONST(p_wimp_message);
+    UNREFERENCED_PARAMETER_InRef_(p_wimp_message);
 
     assert(p_colourpicker_callback->dialogue_handle == p_wimp_message->data.words[0]);
 
@@ -195,7 +195,7 @@ colourpicker_message_ColourPickerResetColourRequest(
     _In_        const WimpMessage * const p_wimp_message,
     P_COLOURPICKER_CALLBACK p_colourpicker_callback)
 {
-    IGNOREPARM_CONST(p_wimp_message);
+    UNREFERENCED_PARAMETER_InRef_(p_wimp_message);
 
     assert(p_colourpicker_callback->dialogue_handle == p_wimp_message->data.words[0]);
 

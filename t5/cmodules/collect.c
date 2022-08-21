@@ -178,7 +178,7 @@ _collect_first(
     P_LIST_ITEM it;
     LIST_ITEMNO item = 0;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
 
     it = list_initseq(p_list_block, &item);
 
@@ -212,7 +212,7 @@ _collect_first_from(
     P_LIST_ITEM it;
     LIST_ITEMNO item = *p_key;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
     myassert1x(item >= 0, TEXT("collect_first key ") LIST_ITEMNO_TFMT TEXT(" negative"), item);
 
     it = list_initseq(p_list_block, &item);
@@ -304,7 +304,7 @@ _collect_next(
     P_LIST_ITEM it;
     LIST_ITEMNO item;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
 
     if(p_key)
     {
@@ -345,7 +345,7 @@ _collect_prev(
     P_LIST_ITEM it;
     LIST_ITEMNO item = *p_key;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
     myassert1x(item >= 0, TEXT("collect_prev key ") LIST_ITEMNO_TFMT TEXT(" negative"), item);
 
     it = list_prevseq(p_list_block, &item);

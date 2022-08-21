@@ -243,7 +243,7 @@ host_select_old_palette(
     _HdcRef_    HDC hdc,
     _Inout_     HPALETTE * const p_h_palette)
 {
-    IGNOREPARM_CONST(hdc);
+    UNREFERENCED_PARAMETER_CONST(hdc);
     if(NULL != *p_h_palette)
     { /*EMPTY*/ } /*SelectPalette(hdc, *p_h_palette, FALSE)*/
     *p_h_palette = NULL;

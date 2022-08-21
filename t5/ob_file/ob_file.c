@@ -234,7 +234,7 @@ OpenFileHook(
 {
     const HWND hwnd = GetParent(hdlg); /* *This* is the 'Open File' window handle */
 
-    IGNOREPARM(wParam);
+    UNREFERENCED_PARAMETER(wParam);
 
     switch(uiMsg)
     {
@@ -615,7 +615,7 @@ t5_SHGetSpecialFolderLocation(
         void_WrapOsBoolChecking(SHGetPathFromIDListEx(pidl, p_dir_name, elemof_buffer, GPFIDL_DEFAULT));
 #else
         assert(elemof_buffer >= MAX_PATH); /* SHGetPathFromIDListEx() needs Vista or later */
-        IGNOREPARM_InVal_(elemof_buffer);
+        UNREFERENCED_PARAMETER_InVal_(elemof_buffer);
 
         if(!WrapOsBoolChecking(SHGetPathFromIDList(pidl, p_dir_name)))
             p_dir_name[0] = CH_NULL;
@@ -713,8 +713,8 @@ GetUserTemplatesDirectoryName(
 
 T5_MSG_PROTO(static, file_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -740,8 +740,8 @@ T5_MSG_PROTO(static, file_msg_error_rq, _InoutRef_ P_MSG_ERROR_RQ p_msg_error_rq
 {
     PCTSTR p_error = file_error_get();
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL == p_error)
     {   /* no error to be returned */
@@ -755,8 +755,8 @@ T5_MSG_PROTO(static, file_msg_error_rq, _InoutRef_ P_MSG_ERROR_RQ p_msg_error_rq
 
 T5_CMD_PROTO(static, file_cmd_new_document)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* pop up template list or load single template */
     return(load_this_template_file_rl(p_docu, NULL));
@@ -766,8 +766,8 @@ T5_CMD_PROTO(static, file_cmd_new_document)
 
 T5_CMD_PROTO(static, file_cmd_close_document_req)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     process_close_request(p_docu, P_VIEW_NONE, TRUE /*closing_a_doc*/, FALSE, FALSE);
 

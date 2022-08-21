@@ -826,31 +826,31 @@
     <ClCompile Include="..\..\ob_chart\gr_uigal.c">
       <Filter>Source Files\ob_chart</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\errors.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\filetypes.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\filetypes.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\lashup.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\lashup.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\memalloc.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\memalloc.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\myos.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\myos.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\winderror.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\winderror.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windflex.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windflex.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windheap.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windheap.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windrecv.c">
+    <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windrecv.c">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT.c">
@@ -1087,9 +1087,6 @@
     <ClCompile Include="..\..\cmodules\cfbfwrite.c">
       <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\fprowrkz\fprowrkz.c">
-      <Filter>Source Files\fprowrkz</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\firewrkz\firewrkz.c">
       <Filter>Source Files\firewrkz</Filter>
     </ClCompile>
@@ -1107,6 +1104,9 @@
     </ClCompile>
     <ClCompile Include="..\..\cmodules\im_convert.c">
       <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\fprowrkz\fprowrkz.c">
+      <Filter>Source Files\fprowrkz</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1344,64 +1344,64 @@
     <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math_private.h">
       <Filter>Source Files\ob_ss\ob_ss_external</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\errors.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\filetypes.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\filetypes.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\flags.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\flags.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\gflags.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\gflags.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\lashup.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\lashup.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\memalloc.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\memalloc.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\msgs.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\msgs.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\myos.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\myos.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\winderror.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\winderror.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windflex.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windflex.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windheap.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windheap.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windquery2.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windquery2.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windrecv.h">
+    <ClInclude Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\windrecv.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\CLib\msvchack\swis.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\swis.h">
       <Filter>Header Files\Norcroft_C</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\CLib\msvchack\kernel.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\CLib\msvchack\kernel.h">
       <Filter>Header Files\Norcroft_C</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\RISC_OSLib\bbc.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\RISC_OSLib\bbc.h">
       <Filter>Header Files\RISC_OSLib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\RISC_OSLib\drawmod.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\RISC_OSLib\drawmod.h">
       <Filter>Header Files\RISC_OSLib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
       <Filter>Header Files\tboxlibs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\wimp.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\wimp.h">
       <Filter>Header Files\tboxlibs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\wimplib.h">
+    <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\wimplib.h">
       <Filter>Header Files\tboxlibs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT.h">
@@ -1658,7 +1658,7 @@
     <None Include="..\..\fl_xls\resource\uk-msg">
       <Filter>Source Files\foreign_formats\fl_xls</Filter>
     </None>
-    <None Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\MakeAll">
+    <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
     </None>
     <None Include="..\..\ob_chart\resource\uk-msg">

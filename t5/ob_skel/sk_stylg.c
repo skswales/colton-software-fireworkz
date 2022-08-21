@@ -297,28 +297,31 @@ style_grid_from_grid_slot_h(
         if(p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_TOP].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].rgb;
 
-        if(grid_flags.faint_grid && p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE)
+        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
         {
             p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
             assert(p_grid_line_style->border_line_flags.border_style < SF_BORDER_COUNT);
-            p_grid_line_style->rgb = rgb_stash[COLOUR_OF_FAINT_GRID];
             level = S32_MAX;
         }
         else
+        {
             p_grid_line_style->border_line_flags.add_lw_to_r = 1;
+        }
 
-        if((p_grid_slot_lt->grid_element[IX_GRID_RIGHT].level < level &&
-            p_grid_slot_lt->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE)
+        if( ((p_grid_slot_lt->grid_element[IX_GRID_RIGHT].level < level) &&
+             (p_grid_slot_lt->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].level < level &&
-            p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE)
+            ((p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].level < level) &&
+             (p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_mt->grid_element[IX_GRID_LEFT].level < level &&
-            p_grid_slot_mt->grid_element[IX_GRID_LEFT].type != SF_BORDER_NONE)
+            ((p_grid_slot_mt->grid_element[IX_GRID_LEFT].level < level) &&
+             (p_grid_slot_mt->grid_element[IX_GRID_LEFT].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_lm->grid_element[IX_GRID_TOP].level < level &&
-            p_grid_slot_lm->grid_element[IX_GRID_TOP].type != SF_BORDER_NONE))
+            ((p_grid_slot_lm->grid_element[IX_GRID_TOP].level < level) &&
+             (p_grid_slot_lm->grid_element[IX_GRID_TOP].type != SF_BORDER_NONE)) )
+        {
             p_grid_line_style->border_line_flags.add_lw_to_l = 1;
+        }
     }
     else
     {
@@ -342,22 +345,25 @@ style_grid_from_grid_slot_h(
         if(p_grid_slot_mb->grid_element[IX_GRID_TOP].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_BOTTOM].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_mb->grid_element[IX_GRID_TOP].rgb;
 
-        if(grid_flags.faint_grid && p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE)
+        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
         {
             p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
             assert(p_grid_line_style->border_line_flags.border_style < SF_BORDER_COUNT);
-            p_grid_line_style->rgb = rgb_stash[COLOUR_OF_FAINT_GRID];
             level = S32_MAX;
         }
         else
+        {
             p_grid_line_style->border_line_flags.add_lw_to_r = 1;
+        }
 
-        if((p_grid_slot_lm->grid_element[IX_GRID_RIGHT].level < level &&
-            p_grid_slot_lm->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE)
+        if( ((p_grid_slot_lm->grid_element[IX_GRID_RIGHT].level < level) &&
+             (p_grid_slot_lm->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_lm->grid_element[IX_GRID_BOTTOM].level < level &&
-            p_grid_slot_lm->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE))
+            ((p_grid_slot_lm->grid_element[IX_GRID_BOTTOM].level < level) &&
+             (p_grid_slot_lm->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE)) )
+        {
             p_grid_line_style->border_line_flags.add_lw_to_l = 1;
+        }
     }
 }
 
@@ -396,28 +402,31 @@ style_grid_from_grid_slot_v(
         if(p_grid_slot_lm->grid_element[IX_GRID_RIGHT].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_LEFT].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_lm->grid_element[IX_GRID_RIGHT].rgb;
 
-        if(grid_flags.faint_grid && p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE)
+        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
         {
             p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
-            p_grid_line_style->rgb = rgb_stash[COLOUR_OF_FAINT_GRID];
             level = S32_MAX;
         }
         else
+        {
             p_grid_line_style->border_line_flags.add_lw_to_b = 1;
+        }
 
         /* check if any of the grid lines that meet at this point have higher priority */
-        if((p_grid_slot_lt->grid_element[IX_GRID_RIGHT].level < level &&
-            p_grid_slot_lt->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE)
+        if( ((p_grid_slot_lt->grid_element[IX_GRID_RIGHT].level < level) &&
+             (p_grid_slot_lt->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].level < level &&
-            p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE)
+            ((p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].level < level) &&
+             (p_grid_slot_lt->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_mt->grid_element[IX_GRID_LEFT].level < level &&
-            p_grid_slot_mt->grid_element[IX_GRID_LEFT].type != SF_BORDER_NONE)
+            ((p_grid_slot_mt->grid_element[IX_GRID_LEFT].level < level) &&
+             (p_grid_slot_mt->grid_element[IX_GRID_LEFT].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_lm->grid_element[IX_GRID_TOP].level < level &&
-            p_grid_slot_lm->grid_element[IX_GRID_TOP].type != SF_BORDER_NONE))
+            ((p_grid_slot_lm->grid_element[IX_GRID_TOP].level < level) &&
+             (p_grid_slot_lm->grid_element[IX_GRID_TOP].type != SF_BORDER_NONE)) )
+        {
             p_grid_line_style->border_line_flags.add_lw_to_t = 1;
+        }
     }
     else
     {
@@ -439,24 +448,27 @@ style_grid_from_grid_slot_v(
         if(p_grid_slot_rm->grid_element[IX_GRID_LEFT].rgb_level < p_grid_slot_mm->grid_element[IX_GRID_RIGHT].rgb_level)
             p_grid_line_style->rgb = p_grid_slot_rm->grid_element[IX_GRID_LEFT].rgb;
 
-        if(grid_flags.faint_grid && p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE)
+        if(grid_flags.faint_grid && (p_grid_line_style->border_line_flags.border_style == SF_BORDER_NONE))
         {
             p_grid_line_style->border_line_flags.border_style = SF_BORDER_THIN;
-            p_grid_line_style->rgb = rgb_stash[COLOUR_OF_FAINT_GRID];
             level = S32_MAX;
         }
         else
+        {
             p_grid_line_style->border_line_flags.add_lw_to_b = 1;
+        }
 
-        if((p_grid_slot_mt->grid_element[IX_GRID_RIGHT].level < level &&
-            p_grid_slot_mt->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE)
+        if( ((p_grid_slot_mt->grid_element[IX_GRID_RIGHT].level < level) &&
+             (p_grid_slot_mt->grid_element[IX_GRID_RIGHT].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].level < level &&
-            p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE)
+            ((p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].level < level) &&
+             (p_grid_slot_mt->grid_element[IX_GRID_BOTTOM].type != SF_BORDER_NONE))
            ||
-           (p_grid_slot_rt->grid_element[IX_GRID_LEFT].level < level &&
-            p_grid_slot_rt->grid_element[IX_GRID_LEFT].type != SF_BORDER_NONE))
+            ((p_grid_slot_rt->grid_element[IX_GRID_LEFT].level < level) &&
+             (p_grid_slot_rt->grid_element[IX_GRID_LEFT].type != SF_BORDER_NONE)) )
+        {
             p_grid_line_style->border_line_flags.add_lw_to_t = 1;
+        }
     }
 }
 

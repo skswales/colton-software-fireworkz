@@ -881,7 +881,7 @@ gr_axis_addin_value_grids_x(
     GR_DIAG_OFFSET gridStart;
     GR_LINESTYLE linestyle;
 
-    IGNOREPARM_InVal_(axis_ypos);
+    UNREFERENCED_PARAMETER_InVal_(axis_ypos);
 
     if(!p_axis_ticks->bits.grid)
         return(status);
@@ -1135,7 +1135,7 @@ gr_axis_addin_value_labels_x(
     HOST_FONT host_font;
     F64 maxval;
 
-    IGNOREPARM_InVal_(front_phase);
+    UNREFERENCED_PARAMETER_InVal_(front_phase);
 
     gr_axis_iterator.step = p_axis_ticks->current;
     if(!gr_axis_iterator.step)

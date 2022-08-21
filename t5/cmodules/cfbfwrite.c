@@ -299,7 +299,7 @@ cfbf_write_stream_in_storage(
             if(status_ok(status = t5_file_open(storage_filename, file_open_write, &file_handle, TRUE)))
             {
 #if !RISCOS
-                IGNOREPARM_InVal_(storage_filetype);
+                UNREFERENCED_PARAMETER_InVal_(storage_filetype);
 #else
                 status_assert(file_set_risc_os_filetype(file_handle, storage_filetype));
 #endif

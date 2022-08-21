@@ -1061,8 +1061,8 @@ pie_gallery_ctl_create[] =
 
 T5_MSG_PROTO(extern, chart_msg_chart_gallery, _InoutRef_ P_T5_MSG_CHART_GALLERY_DATA p_t5_msg_chart_gallery_data)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_t5_msg_chart_gallery_data->chart_type)
     {
@@ -1879,8 +1879,8 @@ series_ctl_create[] =
 
 T5_MSG_PROTO(extern, chart_msg_chart_dialog, _InoutRef_ P_T5_MSG_CHART_DIALOG_DATA p_msg_chart_dialog_data)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_chart_dialog_data->reason)
     {

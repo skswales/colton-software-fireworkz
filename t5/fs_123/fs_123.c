@@ -1477,7 +1477,7 @@ PROC_WRITE_PROTO(proc_write_cols)
     SCAN_BLOCK scan_block;
     OBJECT_DATA object_data;
 
-    IGNOREPARM_InRef_(p_lotus123_ins);
+    UNREFERENCED_PARAMETER_InRef_(p_lotus123_ins);
 
     if(status_done(cells_scan_init(p_docu, &scan_block, SCAN_DOWN, SCAN_AREA, &p_ff_op_format->of_op_format.save_docu_area, OBJECT_ID_NONE)))
     {
@@ -1551,7 +1551,7 @@ PROC_WRITE_PROTO(proc_write_graph)
     STATUS status = lotus123_write_ins(p_ff_op_format, p_lotus123_ins);
     S32 i;
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     for(i = 0; i < 26 && status_ok(status); ++i)
         status = lotus123_write_bytes(p_ff_op_format, part1, sizeof32(part1));
@@ -1580,7 +1580,7 @@ PROC_WRITE_PROTO(proc_write_range)
 
     STATUS status = lotus123_write_ins(p_ff_op_format, p_lotus123_ins);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(status_ok(status))
         status = lotus123_write_bytes(p_ff_op_format, def_start, sizeof32(def_start) - 1);
@@ -1668,7 +1668,7 @@ T5_MSG_PROTO(static, lotus123_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_
     STATUS status = STATUS_OK;
     U32 i;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     limits_from_docu_area(p_docu, &g_s_col, &g_e_col, &g_s_row, &g_e_row, &p_ff_op_format->of_op_format.save_docu_area);
 
@@ -1739,8 +1739,8 @@ T5_MSG_PROTO(static, lotus123_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_
 
 T5_MSG_PROTO(static, lotus123_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

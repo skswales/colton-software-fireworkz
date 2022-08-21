@@ -193,7 +193,7 @@ insert_field_intro_setup_entry_date(
     NUMFORM_PARMS numform_parms;
     STATUS status;
 
-    IGNOREPARM(p_setup_data);
+    UNREFERENCED_PARAMETER(p_setup_data);
 
     zero_struct(ev_data);
     zero_struct(numform_parms);
@@ -385,7 +385,7 @@ _InRef_     PC_DIALOG_MSG_PROCESS_END p_dialog_msg_process_end)
 
 PROC_DIALOG_EVENT_PROTO(static, dialog_event_insert_field_intro)
 {
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
@@ -511,7 +511,7 @@ T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_date)
 
     insert_field_intro_callback.dead_only = FALSE;
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* strictly speaking we should enquire as to whether this is possible */
     if(OBJECT_ID_REC_FLOW == p_docu->object_id_flow)
@@ -678,7 +678,7 @@ T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_page)
 
     insert_field_intro_callback.dead_only = FALSE;
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     /* strictly speaking we should enquire as to whether this is possible */
     if(OBJECT_ID_REC_FLOW == p_docu->object_id_flow)

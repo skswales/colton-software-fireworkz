@@ -12,9 +12,13 @@ call "C:\Program Files\Microsoft Visual Studio 8\VC\vcvarsall.bat" x86
 
 @rem call "C:\Program Files\Microsoft SDKs\Windows\v6.0\bin\setenv.cmd" /XP /x86 /Debug
 
+set FIREWORKZ_TBT=fireworkz__2_10__branch
+
+set FIREWORKZ_ROOT=N:\fireworkz\%FIREWORKZ_TBT%
+
 @rem display environment set for development
 set
 
-title fireworkz_trunk
+title %FIREWORKZ_ROOT%
 
-cd \fireworkz\trunk
+cd /D %FIREWORKZ_ROOT%

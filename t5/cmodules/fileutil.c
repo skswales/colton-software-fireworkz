@@ -770,7 +770,7 @@ file_find_on_path_or_relative(
     return(res);
 }
 
-#ifdef UNUSED_KEEP_ALIVE /* currently unused */
+#if defined(UNUSED_KEEP_ALIVE) /* currently unused */
 
 /******************************************************************************
 *
@@ -825,7 +825,7 @@ file_find_dir_on_path(
     return(res);
 }
 
-#endif
+#endif /* UNUSED_KEEP_ALIVE */
 
 /******************************************************************************
 *
@@ -940,7 +940,7 @@ file_is_dir(
     if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
-        IGNOREPARM_CONST(dwLastError);
+        UNREFERENCED_PARAMETER_CONST(dwLastError);
         return(FALSE);
     }
     return((dword & FILE_ATTRIBUTE_DIRECTORY) != 0);
@@ -973,7 +973,7 @@ file_is_file(
     if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
-        IGNOREPARM_CONST(dwLastError);
+        UNREFERENCED_PARAMETER_CONST(dwLastError);
         return(FALSE);
     }
     return((dword & FILE_ATTRIBUTE_DIRECTORY) == 0);
@@ -1009,7 +1009,7 @@ file_is_read_only(
     if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
-        IGNOREPARM_CONST(dwLastError);
+        UNREFERENCED_PARAMETER_CONST(dwLastError);
         return(FALSE);
     }
     return((dword & FILE_ATTRIBUTE_READONLY) != 0);

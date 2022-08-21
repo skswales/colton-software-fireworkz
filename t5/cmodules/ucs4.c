@@ -284,7 +284,7 @@ load_case_map_simple(
 #if TRACE_ALLOWED && 1
                         tracef(TRACE_OUT | TRACE_ANY, TEXT("CaseMap: U+%.6X: 0x%.6X(U),0x%.6X(L) # %s\n"), code_point, entry_mapping_uc, entry_mapping_lc, report_sbstr(code_point_name));
 #else
-                        IGNOREPARM(code_point_name);
+                        UNREFERENCED_PARAMETER(code_point_name);
 #endif
 
                         l2_table[code_point - l2_base_ucs4].lowercase = entry_mapping_lc;

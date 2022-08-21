@@ -122,7 +122,7 @@ static STATUS
 aligator_fail(
     _InVal_     U32 n_bytes)
 {
-    IGNOREPARM_InVal_(n_bytes);
+    UNREFERENCED_PARAMETER_InVal_(n_bytes);
     myassert1(TEXT("failed to allocate n_bytes=") U32_XTFMT, n_bytes);
     return(status_nomem());
 }
@@ -456,7 +456,7 @@ _al_array_add(
     {
         PC_ARRAY_BLOCK p_array_block = array_blockc_no_checks(p_array_handle);
         const U32 n_bytesof_elem_x_num_elem = n_elements * array_block_element_size(p_array_block);
-        CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem_x_num_elem));
+        CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem_x_num_elem));
         CODE_ANALYSIS_ONLY(assert((n_bytesof_elem_x_num_elem == n_bytesof_elem_x_num_elem) || (0 == bytesof_elem_x_num_elem)));
         memcpy32(p_any, p_data_in, n_bytesof_elem_x_num_elem);
     }
@@ -484,7 +484,7 @@ _al_array_alloc(
 
     *p_status = STATUS_OK;
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem_x_num_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem_x_num_elem));
 
     /* first of all, acquire a handle */
     if(0 != next_free_block)
@@ -638,7 +638,7 @@ _al_array_bfind(
         const U32 array_element_size = array_element_size32_no_checks(p_array_handle);
         P_ANY p_any;
 
-        CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+        CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
         CODE_ANALYSIS_ONLY(assert(bytesof_elem == array_element_size));
 
         p_any =
@@ -680,7 +680,7 @@ _al_array_bsearch(
     if(0 == array_elements32_no_checks(p_array_handle))
         return(P_DATA_NONE);
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
     CODE_ANALYSIS_ONLY(assert(bytesof_elem == array_element_size32_no_checks(p_array_handle)));
 
     p_data =
@@ -716,7 +716,7 @@ _al_array_lsearch(
     if(0 == array_elements32_no_checks(p_array_handle))
         return(P_DATA_NONE);
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_elem));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_elem));
     CODE_ANALYSIS_ONLY(assert(bytesof_elem == array_element_size32_no_checks(p_array_handle)));
 
     p_data =
@@ -994,7 +994,7 @@ al_array_garbage_collect(
                 STATUS status;
                 p_array_block->p_data = al_ptr_realloc_us(p_array_block->p_data, p_array_block->free * array_block_element_size(p_array_block), &status);
                 p_array_block->size = p_array_block->free;
-                IGNOREPARM(status);
+                UNREFERENCED_PARAMETER(status);
             }
         }
     }
@@ -1018,7 +1018,7 @@ al_array_handle_check(
     ARRAY_INDEX count = 0;
     UINT pass;
 
-    IGNOREPARM_InVal_(whinge);
+    UNREFERENCED_PARAMETER_InVal_(whinge);
 
     for(pass = 1; pass <= 2; ++pass)
     {
@@ -1570,14 +1570,14 @@ al_array_trim(
         {
             STATUS status;
             p_new_array = _dsapplib_ptr_realloc(p_array_block->p_data, n_bytes, &status);
-            IGNOREPARM(status);
+            UNREFERENCED_PARAMETER(status);
         }
         else /* if(ALLOC_USE_ALLOC == p_array_block->parms.use_alloc) */
 #endif /* WINDOWS */
         {
             STATUS status;
             p_new_array = al_ptr_realloc_us(p_array_block->p_data, n_bytes, &status);
-            IGNOREPARM(status);
+            UNREFERENCED_PARAMETER(status);
         }
 
         p_array_block->size = p_array_block->free;
@@ -2236,7 +2236,7 @@ array_range_check(
         return(P_BYTE_NONE);
     }
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(total_n_bytes));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(total_n_bytes));
 
     return(PtrAddBytes(P_BYTE, p_array_block->p_data, (ele_index * ele_size)));
 }
@@ -2302,7 +2302,7 @@ array_range_bytes_check(
         return(P_BYTE_NONE);
     }
 
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(n_bytes));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(n_bytes));
 
     return(PtrAddBytes(P_BYTE, p_array_block->p_data, byte_offset));
 }

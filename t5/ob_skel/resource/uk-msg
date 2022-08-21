@@ -13,14 +13,12 @@
 # NB Use Title Caps on Windows for:
 # Title Bar / Action Buttons
 #
-# when changing version number for release, remember other files:
-# definitive list of files is in common.mf_mid
+# When changing version number for release, remember other files
+# The definitive list of files is in common.mf_mid
 #1:2.xx.yy
 #1:2.xx
-1:2.10
-2:(24 Jun 2016)
-#
-# update date and version in the corresponding RelNotes HTML files too
+1:2.10.02
+2:(07 Jul 2016)
 #
 1033:© 1992-2016 Colton Software
 r1034:Portions © 1994-2016 R-Comp

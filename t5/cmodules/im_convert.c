@@ -196,9 +196,9 @@ image_convert_do_convert_data(
             *p_t5_filetype_converted = FILETYPE_BMP;
         else
             status = STATUS_FAIL;
-    }
 
-    GdipImage_Dispose(&gdip_image);
+        GdipImage_Dispose(&gdip_image);
+    }
 #endif /* OS */
 
     quick_tblock_dispose(&quick_tblock);
@@ -250,7 +250,7 @@ image_convert_do_convert_file(
     status_return(status);
 
 #if RISCOS
-    IGNOREPARM_InVal_(t5_filetype);
+    UNREFERENCED_PARAMETER_InVal_(t5_filetype);
 
     if(host_os_version_query() < RISCOS_4_0)
         mode = TEXT("28r");
@@ -307,9 +307,9 @@ image_convert_do_convert_file(
             *p_t5_filetype_converted = FILETYPE_BMP;
         else
             status = STATUS_FAIL;
-    }
 
-    GdipImage_Dispose(&gdip_image);
+        GdipImage_Dispose(&gdip_image);
+    }
 #endif /* OS */
 
     quick_tblock_dispose(&quick_tblock);

@@ -162,8 +162,8 @@ choices_spell_ctl_create[] =
 
 T5_MSG_PROTO(static, spelb_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_choices_query_block)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     choices_spell_auto_check_data.init_state  = (U8) global_preferences.spell_auto_check;
 #if 0
@@ -186,7 +186,7 @@ T5_MSG_PROTO(static, spelb_choices_set, P_CHOICES_SET_BLOCK p_choices_set_block)
     STATUS status;
     ARGLIST_HANDLE arglist_handle;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = arglist_prepare(&arglist_handle, spelb_args_bool)))
     {
@@ -211,8 +211,8 @@ T5_MSG_PROTO(static, spelb_choices_save, _InoutRef_ P_OF_OP_FORMAT p_of_op_forma
     PC_CONSTRUCT_TABLE p_construct_table;
     ARGLIST_HANDLE arglist_handle;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, T5_CMD_CHOICES_SPELL_AUTO_CHECK, &p_construct_table)))
     {
@@ -239,7 +239,7 @@ T5_CMD_PROTO(static, spelb_choices_spell_auto_check)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.spell_auto_check != p_args[0].val.fBool)
     {
@@ -255,7 +255,7 @@ T5_CMD_PROTO(static, spelb_choices_spell_write_user)
     STATUS status = STATUS_OK;
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
 
-    IGNOREPARM_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
 
     if(global_preferences.spell_write_user != p_args[0].val.fBool)
     {
@@ -272,8 +272,8 @@ T5_CMD_PROTO(static, spelb_choices_spell_write_user)
 
 T5_MSG_PROTO(static, spelb_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {

@@ -579,7 +579,7 @@ sbstr_buf_from_ustr(
     _InVal_     U32 uchars_n /*strlen_with,without_NULLCH*/)
 {
 #if USTR_IS_SBSTR
-    IGNOREPARM_InVal_(sbchar_codepage);
+    UNREFERENCED_PARAMETER_InVal_(sbchar_codepage);
     /* no conversion needed, don't waste any more time/space */
     return(xstrnkpy(buffer, elemof_buffer, ustr, ustrlen32_n(ustr, uchars_n)));
 #else

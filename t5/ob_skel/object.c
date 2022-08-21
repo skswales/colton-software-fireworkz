@@ -857,9 +857,9 @@ object_load_internal_install(
 
 OBJECT_PROTO(static, object_load_fail_sink)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER(p_data);
     return(STATUS_OK);
 }
 
@@ -1222,7 +1222,7 @@ _p_object_instance_data(
     P_BYTE p_data;
 
     DOCU_ASSERT(p_docu);
-    CODE_ANALYSIS_ONLY(IGNOREPARM_InVal_(bytesof_data));
+    CODE_ANALYSIS_ONLY(UNREFERENCED_PARAMETER_InVal_(bytesof_data));
 
     if(!IS_OBJECT_ID_VALID(object_id))
     {
@@ -1246,7 +1246,7 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_object);
 
 T5_MSG_PROTO(static, maeve_services_object_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1282,7 +1282,7 @@ T5_MSG_PROTO(static, maeve_services_object_msg_initclose, _InRef_ PC_MSG_INITCLO
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_object)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

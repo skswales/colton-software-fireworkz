@@ -28,7 +28,7 @@ T5_MSG_PROTO(static, implied_style_ext_style_cell_type, P_IMPLIED_STYLE_QUERY p_
     const PC_STYLE_DOCU_AREA p_style_docu_area = p_implied_style_query->p_style_docu_area;
     const P_CELL p_cell = p_cell_from_slr(p_docu, &p_implied_style_query->position.slr);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if((NULL != p_cell) && (object_id_from_cell(p_cell) == p_implied_style_query->arg))
     {
@@ -45,7 +45,7 @@ T5_MSG_PROTO(static, implied_style_ext_style_cell_current, P_IMPLIED_STYLE_QUERY
 {
     const PC_STYLE_DOCU_AREA p_style_docu_area = p_implied_style_query->p_style_docu_area;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(slr_equal(&p_implied_style_query->position.slr, &p_docu->cur.slr))
     {
@@ -66,7 +66,7 @@ T5_MSG_PROTO(static, implied_style_ext_style_stripe_cols, P_IMPLIED_STYLE_QUERY 
     const int repeat = (int) ((arg & 0xFF000000) >> 24) + 2;
     const COL col = p_style_docu_area->docu_area.whole_row ? 0 : p_style_docu_area->docu_area.tl.slr.col;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* I had this idea that it should be docu_area tl relative to preserve appearance as it was moved around */
     if(0 == ((int) (p_implied_style_query->position.slr.col - col) - offset) % repeat)
@@ -88,7 +88,7 @@ T5_MSG_PROTO(static, implied_style_ext_style_stripe_rows, P_IMPLIED_STYLE_QUERY 
     const int repeat = (int) ((arg & 0xFF000000) >> 24) + 2;
     const ROW row = p_style_docu_area->docu_area.whole_col ? 0 : p_style_docu_area->docu_area.tl.slr.row;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* I had this idea that it should be docu_area tl relative to preserve appearance as it was moved around */
     if(0 == ((int) (p_implied_style_query->position.slr.row - row) - offset) % repeat)

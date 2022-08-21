@@ -1654,7 +1654,7 @@ image_cache_activate_group(
 {
     STATUS status;
     P_S32 p_new = al_array_extend_by(p_array_handle, S32, 1, PC_ARRAY_INIT_BLOCK_NONE, &status);
-    IGNOREPARM(p_base);
+    UNREFERENCED_PARAMETER(p_base);
     PTR_ASSERT(p_new);
     *p_new = offset;
 }
@@ -1696,7 +1696,7 @@ image_cache_patch_groups(
     const ARRAY_INDEX n_elements = array_elements(p_array_handle);
     ARRAY_INDEX index;
 
-    IGNOREPARM_InVal_(offset);
+    UNREFERENCED_PARAMETER_InVal_(offset);
 
     if(delta == 0)
         return;

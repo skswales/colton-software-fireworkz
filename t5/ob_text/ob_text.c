@@ -562,24 +562,21 @@ T5_MSG_PROTO(static, text_event_redraw, P_OBJECT_REDRAW p_object_redraw)
     if(P_DATA_NONE == p_object_redraw->object_data.u.p_object)
     {
         /* NULL object - nothing to paint, but invert if necessary */
-        BOOL do_invert = FALSE;
-
         if(p_object_redraw->flags.show_selection)
         {
-            if(!p_object_redraw->flags.show_content)
-            {
-                if(p_object_redraw->flags.marked_now != p_object_redraw->flags.marked_screen)
-                    do_invert = TRUE;
-            }
-            else if(p_object_redraw->flags.marked_now)
-                do_invert = TRUE;
-        }
+            BOOL do_invert;
 
-        if(do_invert)
-            host_invert_rectangle_filled(&p_object_redraw->redraw_context,
-                                         &p_object_redraw->pixit_rect_object,
-                                         &p_object_redraw->rgb_fore,
-                                         &p_object_redraw->rgb_back);
+            if(p_object_redraw->flags.show_content)
+                do_invert = p_object_redraw->flags.marked_now;
+            else
+                do_invert = (p_object_redraw->flags.marked_now != p_object_redraw->flags.marked_screen);
+
+            if(do_invert)
+                host_invert_rectangle_filled(&p_object_redraw->redraw_context,
+                                             &p_object_redraw->pixit_rect_object,
+                                             &p_object_redraw->rgb_fore,
+                                             &p_object_redraw->rgb_back);
+        }
 
         return(STATUS_OK);
     }
@@ -746,7 +743,7 @@ ob_text_msg_docu_colrow(
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_text)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -793,8 +790,8 @@ ob_text_maeve_services_ss_name_change(
 
 MAEVE_SERVICES_EVENT_PROTO(static, maeve_services_event_ob_text)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {
@@ -849,7 +846,7 @@ ob_text_msg_close1(
 
 T5_MSG_PROTO(static, text_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -889,7 +886,7 @@ T5_MSG_PROTO(static, text_msg_object_keys, _InoutRef_ P_OBJECT_KEYS p_object_key
                                   p_object_keys->p_skelevent_keys->p_quick_ublock,
                                   TRUE, TRUE);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_object_keys->p_skelevent_keys->processed = 1;
 
@@ -898,7 +895,7 @@ T5_MSG_PROTO(static, text_msg_object_keys, _InoutRef_ P_OBJECT_KEYS p_object_key
 
 T5_MSG_PROTO(static, text_msg_object_delete_sub, P_OBJECT_DELETE_SUB p_object_delete_sub)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(
         text_delete_sub_redisplay(p_docu,
@@ -912,7 +909,7 @@ T5_MSG_PROTO(static, text_msg_object_string_replace, P_OBJECT_STRING_REPLACE p_o
     STATUS status = STATUS_OK;
     P_USTR_INLINE ustr_inline = p_object_string_replace->object_data.u.ustr_inline;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != ustr_inline)
     {
@@ -975,7 +972,7 @@ T5_MSG_PROTO(static, text_msg_object_copy, P_OBJECT_COPY p_object_copy)
     STATUS status = STATUS_OK;
     PC_USTR_INLINE p_from = (PC_USTR_INLINE) p_object_from_slr(p_docu, &p_object_copy->slr_from, OBJECT_ID_TEXT);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != p_from) /* SKS after 1.20/50 14mar95 this is now a valid case since caller no longer checks. Stops Taiwanese fill down */
     {
@@ -998,8 +995,8 @@ T5_MSG_PROTO(static, text_msg_object_compare, _InoutRef_ P_OBJECT_COMPARE p_obje
     const PC_USTR_INLINE ustr_inline_1 = (PC_USTR_INLINE) p_object_compare->p_object_1;
     const PC_USTR_INLINE ustr_inline_2 = (PC_USTR_INLINE) p_object_compare->p_object_2;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(ustr_inline_1 && ustr_inline_2)
     {
@@ -1015,7 +1012,7 @@ T5_MSG_PROTO(static, text_msg_object_data_read, _InoutRef_ P_OBJECT_DATA_READ p_
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE == p_object_data_read->object_data.u.p_object)
     {
@@ -1047,7 +1044,7 @@ T5_MSG_PROTO(static, text_msg_load_construct_ownform, _InoutRef_ P_CONSTRUCT_CON
     STATUS status = STATUS_OK;
     const IL_CODE il_code = (IL_CODE) p_construct_convert->p_construct->t5_message;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(t5_message_is_inline(p_construct_convert->p_construct->t5_message));
 
@@ -1120,7 +1117,7 @@ T5_MSG_PROTO(static, text_msg_save_construct_ownform, P_SAVE_CONSTRUCT_OWNFORM p
     const IL_CODE il_code = inline_code(p_save_inline_ownform->ustr_inline);
     PC_CONSTRUCT_TABLE p_construct_table;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(arglist_prepare_with_construct(&p_save_inline_ownform->arglist_handle,
                                                  OBJECT_ID_TEXT,
@@ -1192,7 +1189,7 @@ T5_MSG_PROTO(static, text_msg_load_cell_ownform, _InoutRef_ P_LOAD_CELL_OWNFORM 
     STATUS status = STATUS_OK;
     PC_USTR_INLINE ustr_inline;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* check the data type */
     switch(p_load_cell_ownform->data_type)
@@ -1240,8 +1237,8 @@ T5_MSG_PROTO(static, text_msg_save_cell_ownform, _InoutRef_ P_SAVE_CELL_OWNFORM 
     const P_USTR_INLINE ustr_inline = p_save_cell_ownform->object_data.u.ustr_inline;
     S32 start, end;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(P_DATA_NONE != ustr_inline)
     {
@@ -1260,7 +1257,7 @@ T5_MSG_PROTO(static, text_msg_load_cell_foreign, _InoutRef_ P_LOAD_CELL_FOREIGN 
     STATUS status = STATUS_OK;
     PC_USTR_INLINE ustr_inline;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     /* check the data type */
     switch(p_load_cell_foreign->data_type)
@@ -1308,7 +1305,7 @@ T5_MSG_PROTO(static, text_msg_new_object_from_text, _InRef_ P_NEW_OBJECT_FROM_TE
     OBJECT_DATA object_data;
     OBJECT_POSITION object_position_after;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     assert(p_new_object_from_text->data_ref.data_space == DATA_SLOT);
 
@@ -1348,7 +1345,7 @@ T5_MSG_PROTO(static, text_msg_spell_auto_check, P_SPELL_AUTO_CHECK p_spell_auto_
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if( (OBJECT_ID_NONE != p_spell_auto_check->position_now.object_position.object_id) &&
         (OBJECT_ID_NONE != p_spell_auto_check->position_was.object_position.object_id) &&

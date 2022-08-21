@@ -644,8 +644,8 @@ T5_CMD_PROTO(extern, t5_cmd_bind_file_type)
     SC_ARRAY_INIT_BLOCK type_binding_init_block = aib_init(1, sizeof32(*p_bound_filetype), TRUE);
     STATUS status;
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(NULL != (p_bound_filetype = al_array_extend_by(&g_bound_filetype_handle, BOUND_FILETYPE, 1, &type_binding_init_block, &status)))
     {
@@ -674,7 +674,7 @@ T5_CMD_PROTO(extern, t5_cmd_bind_file_type)
                 status = quick_ublock_ustr_add(&p_bound_filetype->description_quick_ublock, ustr_file_extension_desc);
         }
 #else
-        IGNOREPARM(ustr_file_extension_desc);
+        UNREFERENCED_PARAMETER(ustr_file_extension_desc);
 #endif
 
         if(status_ok(status))
@@ -684,7 +684,7 @@ T5_CMD_PROTO(extern, t5_cmd_bind_file_type)
         if(status_ok(status) && (NULL != ustr_file_extension_srch))
             status = quick_ublock_ustr_add_n(&p_bound_filetype->extension_srch_quick_ublock, ustr_file_extension_srch, strlen_with_NULLCH);
 #else
-        IGNOREPARM(ustr_file_extension_srch);
+        UNREFERENCED_PARAMETER(ustr_file_extension_srch);
 #endif
 
         if(status_fail(status))
@@ -790,8 +790,8 @@ T5_CMD_PROTO(extern, t5_cmd_object_bind_loader)
     INSTALLED_LOAD_OBJECT installed_load_object;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(installed_load_object), 0);
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     installed_load_object.object_id = p_args[0].val.object_id;
     installed_load_object.t5_filetype = p_args[1].val.t5_filetype;
@@ -1121,7 +1121,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
     QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 100);
     quick_tblock_with_buffer_setup(quick_tblock);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(OBJECT_ID_NONE == object_id)
         return(create_error(ERR_UNKNOWN_FILETYPE));

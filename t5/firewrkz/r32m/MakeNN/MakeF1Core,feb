@@ -37,8 +37,8 @@
 
 | These are the big dicts, later datestamps
 %CDir                                           <t5$Disc>.Z.User.Dicts
-%Copy <t5_root>.t5.ob_spell.resource.dicts.user  <t5$Disc>.Z.User.Dicts.User  f~cln~v
-%Copy <t5_root>.t5.ob_spell.resource.dicts.userc <t5$Disc>.Z.User.Dicts.UserC f~cln~v
+%Copy <fireworkz_root>.t5.ob_spell.resource.dicts.user  <t5$Disc>.Z.User.Dicts.User  f~cln~v
+%Copy <fireworkz_root>.t5.ob_spell.resource.dicts.userc <t5$Disc>.Z.User.Dicts.UserC f~cln~v
 %Access                                         <t5$Disc>.Z.User.Dicts.* wr/r
 
 %Access                                         <t5$Disc>.Z.User.* wr/r
@@ -46,4 +46,4 @@
 
 | Top level, contains Fireworkz
 
-%Copy <t5_root>.t5.<t5$Product>.r.RelNotes      <t5$Disc>.* f~cln~v
+%Copy <fireworkz_root>.t5.<t5$Product>.r.RelNotes <t5$Disc>.* f~cln~v

@@ -335,10 +335,10 @@ __status_assert(
         return(status);
 
 #if 0 /* sometimes you may need to take the assertions out */
-    IGNOREPARM(p_function);
-    IGNOREPARM(p_file);
-    IGNOREPARM_InVal_(line_no);
-    IGNOREPARM(tstr);
+    UNREFERENCED_PARAMETER(p_function);
+    UNREFERENCED_PARAMETER(p_file);
+    UNREFERENCED_PARAMETER_InVal_(line_no);
+    UNREFERENCED_PARAMETER(tstr);
 #else
     {
     PCTSTR tstr_s = resource_lookup_tstr_no_default(status);

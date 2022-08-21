@@ -53,11 +53,6 @@ save_rowtable(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_OF_OP_FORMAT p_of_op_format);
 
-_Check_return_
-static STATUS
-save_version(
-    _InoutRef_  P_OF_OP_FORMAT p_of_op_format);
-
 PROC_EVENT_PROTO(static, scheduled_event_auto_save);
 
 _Check_return_
@@ -117,7 +112,7 @@ do_auto_save(
 
 PROC_EVENT_PROTO(static, scheduled_event_auto_save)
 {
-    IGNOREPARM(p_data);
+    UNREFERENCED_PARAMETER(p_data);
 
     switch(t5_message)
     {
@@ -167,6 +162,7 @@ save_base_single_col(
 {
     STATUS status = STATUS_OK;
 
+    if(p_docu->flags.base_single_col) /* only bother saving non-default value (i.e. non-zero) */
     /*if(p_of_op_format->of_template.data_class >= DATA_SAVE_CHARACTER)*/
     {
         const OBJECT_ID object_id = OBJECT_ID_SKEL;
@@ -790,7 +786,7 @@ save_pre_save_1(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_OF_OP_FORMAT p_of_op_format)
 {
-    status_return(save_version(p_of_op_format));
+    status_return(skel_save_version(p_of_op_format));
 
     status_return(save_base_single_col(p_docu, p_of_op_format));
 
@@ -902,8 +898,8 @@ save_cell(
 }
 
 _Check_return_
-static STATUS
-save_version(
+extern STATUS
+skel_save_version(
     _InoutRef_  P_OF_OP_FORMAT p_of_op_format)
 {
     STATUS status = STATUS_OK;
@@ -1377,8 +1373,8 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_clipboard)
     PCTSTR filename = p_args[0].val.tstr;
     ARRAY_HANDLE h_local_clip_data = local_clip_data_query();
 
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     return(clip_data_save(filename, &h_local_clip_data));
 }
@@ -1412,7 +1408,7 @@ sk_save_msg_save(
 
 MAEVE_EVENT_PROTO(static, maeve_event_sk_save)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -1430,7 +1426,7 @@ exported services hook
 
 T5_MSG_PROTO(static, sk_save_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -1448,7 +1444,7 @@ T5_MSG_PROTO(static, sk_save_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initc
 
 MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_save)
 {
-    IGNOREPARM_InRef_(p_maeve_services_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_services_block);
 
     switch(t5_message)
     {

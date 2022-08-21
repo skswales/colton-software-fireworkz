@@ -112,7 +112,7 @@ docu_caret_position_after_command_null(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     P_NULL_EVENT_BLOCK p_null_event_block)
 {
-    IGNOREPARM_InRef_(p_null_event_block);
+    UNREFERENCED_PARAMETER_InRef_(p_null_event_block);
 
     trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_caret_position_after_command_null(docno=%d): null_event"), docno_from_p_docu(p_docu));
 
@@ -184,7 +184,7 @@ T5_MSG_PROTO(static, cells_msg_check_protection, P_CHECK_PROTECTION p_check_prot
     DOCU_AREA docu_area;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_check_protection->use_docu_area)
         docu_area = p_check_protection->docu_area;
@@ -392,8 +392,8 @@ global_clip_data_set(
 
     /*clip_issue_change();*/
 #else
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(object_id);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(object_id);
 #endif /* USE_GLOBAL_CLIPBOARD */
 
     /* no usable global clipboard - save to local clipboard as before */
@@ -1313,7 +1313,7 @@ main events
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_cells)
 {
-    IGNOREPARM_InRef_(p_maeve_block);
+    UNREFERENCED_PARAMETER_InRef_(p_maeve_block);
 
     switch(t5_message)
     {
@@ -2211,7 +2211,7 @@ T5_CMD_PROTO(static, cells_cmd_page_up_down)
     SLR slr;
     BOOL key_selection, extend_selection;
 
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     drop_anchor(p_docu, t5_message, &key_selection, &extend_selection);
 
@@ -2228,7 +2228,7 @@ T5_CMD_PROTO(static, cells_cmd_line_start)
     SKEL_POINT skel_point;
     BOOL extend_selection, key_selection;
 
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     drop_anchor(p_docu, t5_message, &key_selection, &extend_selection);
 
@@ -2250,7 +2250,7 @@ T5_CMD_PROTO(static, cells_cmd_line_end)
     SKEL_POINT skel_point;
     BOOL extend_selection, key_selection;
 
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     drop_anchor(p_docu, t5_message, &key_selection, &extend_selection);
 
@@ -2272,7 +2272,7 @@ T5_CMD_PROTO(static, cells_cmd_document_top)
     SLR slr = p_docu->cur.slr;
     BOOL extend_selection, key_selection;
 
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     drop_anchor(p_docu, t5_message, &key_selection, &extend_selection);
 
@@ -2288,7 +2288,7 @@ T5_CMD_PROTO(static, cells_cmd_document_bottom)
     SKEL_RECT skel_rect;
     BOOL extend_selection, key_selection;
 
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     drop_anchor(p_docu, t5_message, &key_selection, &extend_selection);
 
@@ -2303,8 +2303,8 @@ T5_CMD_PROTO(static, cells_cmd_first_column)
 {
     SLR slr = p_docu->cur.slr;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     slr.col = 0;
     caret_to_slr(p_docu, &slr, NULL, FALSE, FALSE, FALSE, FALSE);
@@ -2316,8 +2316,8 @@ T5_CMD_PROTO(static, cells_cmd_last_column)
 {
     SLR slr = p_docu->cur.slr;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InVal_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(p_t5_cmd);
 
     slr.col = n_cols_logical(p_docu) - 1;
     caret_to_slr(p_docu, &slr, NULL, FALSE, FALSE, FALSE, FALSE);
@@ -2840,8 +2840,8 @@ T5_CMD_PROTO(static, cells_cmd_block_clear)
     REGION region;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(p_docu->mark_info_cells.h_markers)
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -2882,7 +2882,7 @@ T5_CMD_PROTO(static, cells_cmd_box)
     DOCU_AREA docu_area;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->mark_info_cells.h_markers)
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -2983,7 +2983,7 @@ T5_CMD_PROTO(static, cells_cmd_object_convert)
     REGION region;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->mark_info_cells.h_markers)
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -3216,7 +3216,7 @@ cells_cmd_return(
 
 T5_MSG_PROTO(static, cells_msg_mark_info_read, _OutRef_ P_MARK_INFO p_mark_info)
 {
-    IGNOREPARM_InRef_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(t5_message);
 
     *p_mark_info = p_docu->mark_info_cells;
 
@@ -3225,7 +3225,7 @@ T5_MSG_PROTO(static, cells_msg_mark_info_read, _OutRef_ P_MARK_INFO p_mark_info)
 
 T5_CMD_PROTO(static, cells_cmd_toggle_marks)
 {
-    IGNOREPARM_InRef_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(t5_message);
 
     /* fire off appropriate command to focus owner, avoiding macro recording */
     return(docu_focus_owner_object_call(p_docu, (p_docu->mark_info_cells.h_markers ? T5_CMD_SELECTION_CLEAR : T5_CMD_SELECT_DOCUMENT), de_const_cast(P_T5_CMD, p_t5_cmd)));
@@ -3233,8 +3233,8 @@ T5_CMD_PROTO(static, cells_cmd_toggle_marks)
 
 T5_CMD_PROTO(static, cells_cmd_select_cell)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     docu_area_init(&p_docu->anchor_mark.docu_area);
     p_docu->anchor_mark.docu_area.tl = p_docu->cur;
@@ -3250,8 +3250,8 @@ T5_CMD_PROTO(static, cells_cmd_select_cell)
 
 T5_CMD_PROTO(static, cells_cmd_select_document)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     p_docu->anchor_mark.docu_area.whole_col =
     p_docu->anchor_mark.docu_area.whole_row = 1;
@@ -3276,8 +3276,8 @@ T5_CMD_PROTO(static, cells_cmd_select_word)
     OBJECT_POSITION_SET object_position_set;
     BOOL extend_selection = (p_docu->mark_info_cells.h_markers != 0);
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(extend_selection)
     {
@@ -3327,7 +3327,7 @@ T5_CMD_PROTO(static, cells_cmd_setc)
     STATUS status = STATUS_OK;
     STATUS status_cell = STATUS_OK;
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(p_docu->mark_info_cells.h_markers)
     {
@@ -3403,8 +3403,8 @@ T5_CMD_PROTO(static, cells_cmd_snapshot)
     REGION region;
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     if(p_docu->mark_info_cells.h_markers)
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -3530,7 +3530,7 @@ T5_CMD_PROTO(static, cells_cmd_style_apply)
     STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
     STYLE_DOCU_AREA_ADD_INLINE(&style_docu_area_add_parm, ustr_inline);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->mark_info_cells.h_markers)
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -3563,7 +3563,7 @@ T5_CMD_PROTO(static, cells_cmd_tab_lr)
     TAB_WANTED tab_wanted;
     zero_struct(tab_wanted);
 
-    IGNOREPARM_InRef_(p_t5_cmd);
+    UNREFERENCED_PARAMETER_InRef_(p_t5_cmd);
 
     tab_wanted.t5_message = t5_message;
     consume_bool(cell_data_from_position(p_docu, &tab_wanted.object_data, &p_docu->cur));
@@ -3643,7 +3643,7 @@ T5_MSG_PROTO(static, cells_event_click_left_single, _InoutRef_ P_SKELEVENT_CLICK
     OBJECT_DATA object_data;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(slr_owner_from_skel_point(p_docu, &slr, &tl, &p_skelevent_click->skel_point, ON_ROW_EDGE_GO_UP));
 
@@ -3705,7 +3705,7 @@ T5_MSG_PROTO(static, cells_event_click_left_triple, _InoutRef_ P_SKELEVENT_CLICK
     SKEL_POINT tl;
     SLR slr;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     status_return(slr_owner_from_skel_point(p_docu, &slr, &tl, &p_skelevent_click->skel_point, ON_ROW_EDGE_GO_UP));
 
@@ -3790,12 +3790,12 @@ T5_MSG_PROTO(static, cells_event_click_right, _InoutRef_ P_SKELEVENT_CLICK p_ske
             else
                 anchor_to_markers_update(p_docu);
 
-            if(t5_message == T5_EVENT_CLICK_RIGHT_SINGLE)
+            if(T5_EVENT_CLICK_RIGHT_SINGLE == t5_message)
                 anchor_to_markers_finish(p_docu);
 
             markers_show(p_docu);
 
-            if(t5_message == T5_EVENT_CLICK_RIGHT_DRAG)
+            if(T5_EVENT_CLICK_RIGHT_DRAG == t5_message)
                 host_drag_start(NULL);
         }
     }
@@ -3867,10 +3867,10 @@ T5_MSG_PROTO(static, cells_event_click_drags, _InoutRef_ P_SKELEVENT_CLICK p_ske
         return(object_call_id(object_id, p_docu, t5_message, p_skelevent_click));
     }
 
-    if(t5_message == T5_EVENT_CLICK_DRAG_STARTED)
+    if(T5_EVENT_CLICK_DRAG_STARTED == t5_message)
         return(status); /* not interesting to us */
 
-    if(t5_message == T5_EVENT_CLICK_DRAG_ABORTED)
+    if(T5_EVENT_CLICK_DRAG_ABORTED == t5_message)
     {
         status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
         return(status);
@@ -3888,7 +3888,7 @@ T5_MSG_PROTO(static, cells_event_click_drags, _InoutRef_ P_SKELEVENT_CLICK p_ske
         p_docu->anchor_mark.docu_area.br.slr = slr;
         p_docu->anchor_mark.docu_area.br.object_position = object_position_find.object_data.object_position_start;
 
-        if(t5_message == T5_EVENT_CLICK_DRAG_FINISHED)
+        if(T5_EVENT_CLICK_DRAG_FINISHED == t5_message)
             anchor_to_markers_finish(p_docu);
         else
             anchor_to_markers_update(p_docu);
@@ -3906,7 +3906,7 @@ T5_MSG_PROTO(static, cells_event_fileinsert_doinsert_1, _InoutRef_ P_SKELEVENT_C
     OBJECT_DATA object_data;
     STATUS status;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     cur_change_before(p_docu);
 
@@ -3931,7 +3931,7 @@ T5_MSG_PROTO(static, cells_event_fileinsert_doinsert, _InoutRef_ P_SKELEVENT_CLI
     MSG_INSERT_FILE msg_insert_file;
     zero_struct(msg_insert_file);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(OBJECT_ID_NONE == object_id)
         return(create_error(ERR_UNKNOWN_FILETYPE));
@@ -3957,7 +3957,7 @@ T5_MSG_PROTO(static, cells_event_fileinsert_doinsert, _InoutRef_ P_SKELEVENT_CLI
 
 T5_MSG_PROTO(static, cells_event_keys, _InRef_ P_SKELEVENT_KEYS p_skelevent_keys)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(!status_ok(check_protection_simple(p_docu, TRUE)))
         return(STATUS_OK);
@@ -3982,7 +3982,7 @@ T5_MSG_PROTO(static, cells_event_keys, _InRef_ P_SKELEVENT_KEYS p_skelevent_keys
 
 T5_MSG_PROTO(static, cells_msg_col_auto_width, _InoutRef_ P_COL_AUTO_WIDTH p_col_auto_width)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_col_auto_width->width =
         col_auto_width(p_docu, p_col_auto_width->col, p_col_auto_width->row_s, p_col_auto_width->row_e, p_col_auto_width->allow_special);
@@ -3997,7 +3997,7 @@ T5_MSG_PROTO(static, cells_msg_col_width_adjust, _InRef_ P_COL_WIDTH_ADJUST p_co
     STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
     DOCU_AREA docu_area;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     style_init(&style);
 
@@ -4042,7 +4042,7 @@ T5_MSG_PROTO(static, cells_msg_object_at_current_position, _InoutRef_ P_OBJECT_A
     /* SKS 17apr95 no point sending T5_MSG_OBJECT_WANTS_LOAD to ce_edit is it? Find the real cell owner */
     const OBJECT_ID object_id = cell_owner_from_slr(p_docu, &p_docu->cur.slr);
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     {
     OBJECT_WANTS_LOAD object_wants_load;
@@ -4059,7 +4059,7 @@ T5_MSG_PROTO(static, cells_msg_redraw_region, _InRef_ PC_REGION p_region)
 {
     REGION region_on_screen, region_clipped;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(region_intersect_region_out(&region_clipped, p_region, region_visible(p_docu, &region_on_screen)))
     {
@@ -4083,7 +4083,7 @@ T5_MSG_PROTO(static, cells_msg_redraw_region, _InRef_ PC_REGION p_region)
 
 T5_MSG_PROTO(static, cells_msg_redraw_cells, _InRef_ PC_SLR p_slr)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(row_is_visible(p_docu, p_slr->row))
     {
@@ -4103,7 +4103,7 @@ T5_MSG_PROTO(static, cells_msg_redraw_cells, _InRef_ PC_SLR p_slr)
 
 T5_MSG_PROTO(static, cells_msg_caret_show_claim, P_CARET_SHOW_CLAIM p_caret_show_claim)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     caret_position_set_show(p_docu, p_caret_show_claim->scroll);
 
@@ -4118,7 +4118,7 @@ T5_MSG_PROTO(static, cells_msg_caret_show_claim, P_CARET_SHOW_CLAIM p_caret_show
 
 T5_MSG_PROTO(static, cells_msg_menu_other_info, _InoutRef_ P_MENU_OTHER_INFO p_menu_other_info)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(OBJECT_ID_CELLS == p_docu->focus_owner)
     {
@@ -4138,7 +4138,7 @@ T5_MSG_PROTO(static, cells_msg_ruler_info, _InoutRef_ P_RULER_INFO p_ruler_info)
     ARRAY_HANDLE array_handle;
     ROW row;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(!p_docu->mark_info_cells.h_markers)
         row = p_docu->cur.slr.row;
@@ -4158,7 +4158,7 @@ T5_MSG_PROTO(static, cells_msg_ruler_info, _InoutRef_ P_RULER_INFO p_ruler_info)
 
 T5_MSG_PROTO(static, cells_msg_selection_make, _InRef_ PC_DOCU_AREA p_docu_area)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     p_docu->anchor_mark.docu_area = *p_docu_area;
 
@@ -4177,7 +4177,7 @@ T5_MSG_PROTO(static, cells_msg_selection_replace, _InRef_ P_SELECTION_REPLACE p_
 {
     STATUS status = STATUS_OK;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->mark_info_cells.h_markers)
     {
@@ -4207,7 +4207,7 @@ T5_MSG_PROTO(static, cells_msg_selection_style, _InoutRef_ P_SELECTION_STYLE p_s
 {
     DOCU_AREA docu_area;
 
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(p_docu->mark_info_cells.h_markers)
         docu_area_from_markers_first(p_docu, &docu_area);
@@ -4246,8 +4246,8 @@ OBJECT_PROTO(static, object_cells_default)
 
 T5_MSG_PROTO(static, cells_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclose)
 {
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_DocuRef_(p_docu);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     switch(p_msg_initclose->t5_msg_initclose_message)
     {
@@ -4274,8 +4274,8 @@ T5_MSG_PROTO(static, cells_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclo
 
 T5_MSG_PROTO(static, cells_msg_init_flow, _InRef_ P_OBJECT_ID p_object_id)
 {
-    IGNOREPARM_InVal_(t5_message);
-    IGNOREPARM_InRef_(p_object_id);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InRef_(p_object_id);
 
     position_init_from_col_row(&p_docu->cur, 0, 0);
     p_docu->old = p_docu->cur;
@@ -4285,7 +4285,7 @@ T5_MSG_PROTO(static, cells_msg_init_flow, _InRef_ P_OBJECT_ID p_object_id)
 
 T5_MSG_PROTO(static, cells_msg_goto_slr, _InRef_ P_SKELCMD_GOTO p_skelcmd_goto)
 {
-    IGNOREPARM_InVal_(t5_message);
+    UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     caret_to_slr(p_docu, &p_skelcmd_goto->slr, &p_skelcmd_goto->skel_point, FALSE, (BOOL) p_skelcmd_goto->keep_selection, FALSE, FALSE);
 

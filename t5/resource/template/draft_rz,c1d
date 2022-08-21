@@ -1,15 +1,13 @@
-{Version:2.10;24 Jun 2016;Resultz (UK);Colton Software}
+{Version:2.10.02;07 Jul 2016;Resultz (UK);Colton Software;0000 0000 0000 0000;Alphabet-Latin1}
 {RowTable:0}
 {Flow:10}
 {Block:0;0;;32;7;33;;32;7;33}
-{Style:BaseSheet;{ColWidth:1474}{ColName:x#}{RowHeight:240}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}
-{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:0}{ParaEnd:0}{LineSpace:3;240}{Justify:0}{JustifyV:0}
-{NewObject:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yyyy hh:mm:ss\\\;dd.mm.yyyy\\\;hh:mm:ss}{NumformSE:@\\\;Error}
-{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}
-{Typeface:Courier}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Style:BaseSheet;{ColWidth:1474}{ColName:x#}{RowHeight:240}{RowHeightFix:1}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:0}{ParaEnd:0}{LineSpace:3;240}{Justify:0}{JustifyV:0}{NewObject:1}{Numform:#,##0.#######\\\;-#,##0.#######[negative]}{NumformDT:dd.mm.yyyy hh:mm:ss\\\;dd.mm.yyyy\\\;hh:mm:ss}{NumformSE:@\\\;Error}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Courier}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseSheet}
 {Style:Header;{ColWidth:11164}{MarginLeft:114}{MarginRight:114}{Tablist:C5385 R10771}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
 {Style:Footer;{ColWidth:11164}{MarginLeft:114}{MarginRight:114}{Tablist:C5385 R10771}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:0}}
 {Style:Current cell;{Background:221;221;221}{BorderColour:0;0;0}{Border:0}}
+{StyleCurrent:Current cell}
 {Style:Text;{RowHeightFix:0}{NewObject:3}}
 {Style:Number;{Justify:2}{NewObject:1}}
 {Style:General;{StyleSearch:50}{Numform:#,##0.#######\\\;-#,##0.#######[Negative]}}
@@ -21,9 +19,9 @@
 {Style:Date_ISO_8601;{StyleSearch:0}{NumformDT:yyyy-mm-dd}}
 {Style:Time;{StyleSearch:30}{NumformDT:hh:mm}}
 {Style:Time_s;{StyleSearch:40}{NumformDT:hh:mm:ss}}
-{StyleBase:BaseSheet}
-{PrintQuality:1}
 {Paper:Default A4;0;16840;11906;442;1134;346;346;0;0;0;0;0;;0}
+{PaperScale:100}
+{PrintQuality:1}
 {StartOfData}
 {BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
 {Imp:;;;;;;;;1;1;36;1000;3;20;{StyleHandle:Text}}
