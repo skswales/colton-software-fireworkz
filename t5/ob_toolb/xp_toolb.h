@@ -14,26 +14,6 @@
 #ifndef __xp_toolb_h
 #define __xp_toolb_h
 
-#define T5_MSG_TOOLBAR_BASE                     (OBJECT_ID_TOOLBAR * STATUS_MSG_INCREMENT)
-
-#define T5_MSG_TOOLBAR_TOOLS                    ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 1))
-#define T5_MSG_TOOLBAR_TOOL_QUERY               ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 2))
-#define T5_MSG_TOOLBAR_TOOL_SET                 ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 3))
-#define T5_MSG_TOOLBAR_TOOL_ENABLE              ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 4))
-#define T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY        ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 5))
-#define T5_MSG_TOOLBAR_TOOL_DISABLE             ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 6))
-#define T5_MSG_TOOLBAR_TOOL_NOBBLE              ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 7))
-#define T5_MSG_BACK_WINDOW_EVENT                ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 8)) /* sent FROM back window TO toolbar */
-
-#define T5_MSG_TOOLBAR_TOOL_USER_VIEW_NEW       ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 16)) /* sent FROM toolbar TO client */
-#define T5_MSG_TOOLBAR_TOOL_USER_VIEW_DELETE    ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 17)) /* sent FROM toolbar TO client */
-#define T5_MSG_TOOLBAR_TOOL_USER_SIZE_QUERY     ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 18)) /* sent FROM toolbar TO client */
-#define T5_MSG_TOOLBAR_TOOL_USER_POSN_SET       ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 19)) /* sent FROM toolbar TO client */
-#define T5_MSG_TOOLBAR_TOOL_USER_REDRAW         ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 20)) /* sent FROM toolbar TO client */
-#define T5_MSG_TOOLBAR_TOOL_USER_MOUSE          ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 21)) /* sent FROM toolbar TO client */
-
-#define T5_CMD_TOOLBAR_TOOL                     ((T5_MESSAGE) (T5_MSG_TOOLBAR_BASE + 256))
-
 /* tools are always identifed by a string */
 
 typedef enum T5_TOOLBAR_TOOL_TYPE
@@ -49,7 +29,7 @@ typedef struct T5_TOOLBAR_TOOL_DESC_BITS
 {
     UBF type : 8;       /* packed T5_TOOLBAR_TOOL_TYPE */
     UBF immediate : 1;  /* act on key down event, not on key up */
-    UBF set_view : 1;   /* spectacles box etc */
+    UBF set_view : 1;   /* spectacles box etc. */
     UBF thin : 1;       /* e.g. for superscript, tabs */
     UBF auto_repeat : 1;
 }
@@ -57,7 +37,7 @@ T5_TOOLBAR_TOOL_DESC_BITS;
 
 typedef struct T5_TOOLBAR_TOOL_DESC
 {
-    PCTSTR name;
+    PC_USTR name;
     OBJECT_ID command_object_id; /* for command & state change */
     T5_MESSAGE t5_message;
     OBJECT_ID resource_object_id;
@@ -65,12 +45,12 @@ typedef struct T5_TOOLBAR_TOOL_DESC
     PC_SBSTR resource_id; /* sprite name - can't be UTF-8 */
     PC_SBSTR resource_id_on; /* ditto, for 'on' state */
 #else
-    UINT resource_id; /* for LoadBitmap */
+    UINT resource_id; /* for LoadImage */
     UINT resource_id_on; /* ditto, for 'on' state */
 #endif
     T5_TOOLBAR_TOOL_DESC_BITS bits;
     UI_TEXT ui_text; /* help text */
-    T5_MESSAGE t5_message_right;
+    T5_MESSAGE t5_message_alternate;
 }
 T5_TOOLBAR_TOOL_DESC /*, * P_T5_TOOLBAR_TOOL_DESC*/; typedef const T5_TOOLBAR_TOOL_DESC * PC_T5_TOOLBAR_TOOL_DESC;
 
@@ -92,7 +72,7 @@ T5_TOOLBAR_TOOL_STATE;
 typedef struct T5_TOOLBAR_TOOL_DISABLE
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
     BOOL disabled;
     U8 disable_id;
 }
@@ -101,7 +81,7 @@ T5_TOOLBAR_TOOL_DISABLE /*, * P_T5_TOOLBAR_TOOL_DISABLE*/; typedef const T5_TOOL
 typedef struct T5_TOOLBAR_TOOL_ENABLE
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
     BOOL enabled;
     U8 enable_id;
 }
@@ -110,7 +90,7 @@ T5_TOOLBAR_TOOL_ENABLE, * P_T5_TOOLBAR_TOOL_ENABLE; typedef const T5_TOOLBAR_TOO
 typedef struct T5_TOOLBAR_TOOL_NOBBLE
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
     BOOL nobbled;
 }
 T5_TOOLBAR_TOOL_NOBBLE /*, * P_T5_TOOLBAR_TOOL_NOBBLE*/; typedef const T5_TOOLBAR_TOOL_NOBBLE * PC_T5_TOOLBAR_TOOL_NOBBLE;
@@ -118,7 +98,7 @@ T5_TOOLBAR_TOOL_NOBBLE /*, * P_T5_TOOLBAR_TOOL_NOBBLE*/; typedef const T5_TOOLBA
 typedef struct T5_TOOLBAR_TOOL_QUERY
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
 
     /*OUT*/
     T5_TOOLBAR_TOOL_STATE state;
@@ -128,7 +108,7 @@ T5_TOOLBAR_TOOL_QUERY, * P_T5_TOOLBAR_TOOL_QUERY;
 typedef struct T5_TOOLBAR_TOOL_SET
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
     T5_TOOLBAR_TOOL_STATE state;
 }
 T5_TOOLBAR_TOOL_SET /*, * P_T5_TOOLBAR_TOOL_SET*/; typedef const T5_TOOLBAR_TOOL_SET * PC_T5_TOOLBAR_TOOL_SET;
@@ -136,7 +116,7 @@ T5_TOOLBAR_TOOL_SET /*, * P_T5_TOOLBAR_TOOL_SET*/; typedef const T5_TOOLBAR_TOOL
 typedef struct T5_TOOLBAR_TOOL_ENABLE_QUERY
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
 
     /*OUT*/
     BOOL enabled;
@@ -148,7 +128,7 @@ T5_TOOLBAR_TOOL_ENABLE_QUERY, * P_T5_TOOLBAR_TOOL_ENABLE_QUERY;
 typedef struct T5_TOOLBAR_TOOL_STATE_CHANGE
 {
     /*IN*/
-    PCTSTR name;
+    PC_USTR name;
     T5_TOOLBAR_TOOL_STATE current_state;
     T5_TOOLBAR_TOOL_STATE proposed_state;
 }
@@ -257,7 +237,7 @@ static void inline
 tool_enable(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_T5_TOOLBAR_TOOL_ENABLE p_t5_toolbar_tool_enable,
-    _In_z_      PCTSTR name)
+    _In_z_      PC_USTR name)
 {
     p_t5_toolbar_tool_enable->name = name;
 

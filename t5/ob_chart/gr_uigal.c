@@ -1132,7 +1132,7 @@ static const DIALOG_CONTROL_DATA_GROUPBOX
 gen_axis_position_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION), { 0, 0, 0, FRAMED_BOX_GROUP } };
 
 /*
-left/zero/right (bottom/auto/top)
+left/zero/right (bottom/zero/top)
 */
 
 static const DIALOG_CONTROL
@@ -1154,7 +1154,7 @@ gen_axis_position_lzr_lb =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_RADIOBUTTON
-gen_axis_position_lzr_lb_data = { { 0 }, GR_AXIS_POSITION_LEFT, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_LZR_L) };
+gen_axis_position_lzr_lb_data = { { 0 }, GR_AXIS_POSITION_LZR_LEFT, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_LZR_L) };
 
 static const DIALOG_CONTROL
 gen_axis_position_lzr_zero =
@@ -1166,7 +1166,7 @@ gen_axis_position_lzr_zero =
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
-gen_axis_position_lzr_zero_data = { { 0 }, GR_AXIS_POSITION_ZERO, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_LZR_ZERO) };
+gen_axis_position_lzr_zero_data = { { 0 }, GR_AXIS_POSITION_LZR_ZERO, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_LZR_ZERO) };
 
 static const DIALOG_CONTROL
 gen_axis_position_lzr_rt =
@@ -1178,7 +1178,7 @@ gen_axis_position_lzr_rt =
 };
 
 static /*poked*/ DIALOG_CONTROL_DATA_RADIOBUTTON
-gen_axis_position_lzr_rt_data = { { 0 }, GR_AXIS_POSITION_RIGHT, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_LZR_R) };
+gen_axis_position_lzr_rt_data = { { 0 }, GR_AXIS_POSITION_LZR_RIGHT, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_LZR_R) };
 
 /*
 front/auto/rear
@@ -1203,7 +1203,7 @@ gen_axis_position_arf_front =
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
-gen_axis_position_arf_front_data = { { 0 }, GR_AXIS_POSITION_FRONT, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_ARF_FRONT) };
+gen_axis_position_arf_front_data = { { 0 }, GR_AXIS_POSITION_ARF_FRONT, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_ARF_FRONT) };
 
 static const DIALOG_CONTROL
 gen_axis_position_arf_auto =
@@ -1215,7 +1215,7 @@ gen_axis_position_arf_auto =
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
-gen_axis_position_arf_auto_data = { { 0 }, GR_AXIS_POSITION_ZERO, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_ARF_AUTO) };
+gen_axis_position_arf_auto_data = { { 0 }, GR_AXIS_POSITION_ARF_AUTO, UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_ARF_AUTO) };
 
 static const DIALOG_CONTROL
 gen_axis_position_arf_rear =
@@ -1227,7 +1227,7 @@ gen_axis_position_arf_rear =
 };
 
 static const DIALOG_CONTROL_DATA_RADIOBUTTON
-gen_axis_position_arf_rear_data = { { 0 }, GR_AXIS_POSITION_REAR,  UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_ARF_REAR) };
+gen_axis_position_arf_rear_data = { { 0 }, GR_AXIS_POSITION_ARF_REAR,  UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_GEN_AXIS_POSITION_ARF_REAR) };
 
 /*
 major group

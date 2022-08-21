@@ -1,0 +1,3637 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{d6d24a70-cebf-41fa-9aa9-3cfabd130b84}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\ob_cells">
+      <UniqueIdentifier>{63684c8d-6418-43b0-8b70-8d6982d72bae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart">
+      <UniqueIdentifier>{816e2a62-77d1-4f32-a79c-499f08ab0c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_dlg">
+      <UniqueIdentifier>{a03bb359-77ce-4765-be2c-c08e6ea80810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_draw">
+      <UniqueIdentifier>{974cc663-2748-45e5-a94c-fcdfe94b9cf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_file">
+      <UniqueIdentifier>{eeaf5744-c1b6-4e73-910e-1826ae77fbf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_hefo">
+      <UniqueIdentifier>{d43ea339-1a0e-4546-8211-b59b3cd6dcee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_mails">
+      <UniqueIdentifier>{e8a45fa7-55cf-4b2c-a248-b93a3058a45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_mlec">
+      <UniqueIdentifier>{5fe161de-e9aa-4d0e-a9d0-7d8d19b16da0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_note">
+      <UniqueIdentifier>{bb654b3a-3464-4c9b-9fad-babac0e3ec12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ruler">
+      <UniqueIdentifier>{e17f0feb-d430-464a-b2c6-3e537efbd63a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel">
+      <UniqueIdentifier>{c42a83e0-0610-43b3-8328-78fc56338bc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skspt">
+      <UniqueIdentifier>{ffd6799c-70b3-4530-8e52-7355f9a5edee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_spelb">
+      <UniqueIdentifier>{089f4167-2e68-4760-a5b3-72a5488e3ecb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_spell">
+      <UniqueIdentifier>{93a07a65-1737-44ad-b53d-4f93b3f7ecb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss">
+      <UniqueIdentifier>{1e59057c-0e38-4d65-92d1-599ea24b2202}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_story">
+      <UniqueIdentifier>{46a643c2-eab4-4b1e-983d-0a9f19bf27fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_text">
+      <UniqueIdentifier>{a031d8cb-91f7-4db9-b4d4-fa0ae664a541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_toolb">
+      <UniqueIdentifier>{d7e6f01d-98c9-433a-9588-0da6b909b092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{1ff6912c-2499-4fcd-a936-216d4b5663b3}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{525d50ed-0bb5-4a47-8057-9238f9979868}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_external">
+      <UniqueIdentifier>{cd369a75-7a46-4c04-9c56-fa0f8864bb26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats">
+      <UniqueIdentifier>{c6a8f065-ef7b-4d0f-a832-1a1d5d9d689a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_123">
+      <UniqueIdentifier>{81dd4045-277e-4a9c-b432-337b7fb8d2f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fs_123">
+      <UniqueIdentifier>{81dd4045-277e-4a9c-b432-337b7fb8d2f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_ascii">
+      <UniqueIdentifier>{0a8834bd-c8a3-43bd-864c-ab46dcb3769a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fs_ascii">
+      <UniqueIdentifier>{0a8834bd-c8a3-43bd-864c-ab46dcb3769b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_csv">
+      <UniqueIdentifier>{44b90ccd-ac8a-4131-b683-28622f6d8264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fs_csv">
+      <UniqueIdentifier>{44b90ccd-ac8a-4131-b683-28622f6d8265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\ob_drwio">
+      <UniqueIdentifier>{f3977b70-4c33-4b1b-b366-99b1272ac9d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_fwp">
+      <UniqueIdentifier>{bab829d1-8bfc-421f-9f77-9b66e5bee1f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_pdss">
+      <UniqueIdentifier>{dc9aa51c-0e05-4b7a-84db-2c522b464b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_pdtx">
+      <UniqueIdentifier>{2f56a945-a770-4914-b88c-939e9aec995e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_rtf">
+      <UniqueIdentifier>{e14aaeb0-4d7a-4156-b490-38acf46bae56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fs_rtf">
+      <UniqueIdentifier>{e14aaeb0-4d7a-4156-b490-38acf46bae57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_cmodules">
+      <UniqueIdentifier>{d295128b-88f0-4ff3-b038-34d42bb05ddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_riscos">
+      <UniqueIdentifier>{ba0b565d-b9d9-4b96-adc9-dadf1efdfa8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_windows">
+      <UniqueIdentifier>{06268400-f901-4ead-93b7-6a29071b61fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fl_xls">
+      <UniqueIdentifier>{dd284604-8971-4fb0-aac1-ef749871d4f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\foreign_formats\fs_xls">
+      <UniqueIdentifier>{dd284604-8971-4fb0-aac1-ef749871d4fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Norcroft_C">
+      <UniqueIdentifier>{06fb5253-d961-4fc4-b8ba-da906673bac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\RISC_OSLib">
+      <UniqueIdentifier>{dfea88a0-a433-4b5c-9e14-01b782c19e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tboxlibs">
+      <UniqueIdentifier>{2ea88ae8-d9f2-476e-981a-92004b6df764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_external">
+      <UniqueIdentifier>{7aaab960-fc3d-46d7-988e-0506b0d86ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\coltsoft">
+      <UniqueIdentifier>{f5263ccc-66db-45bd-9922-fa0e7a15a104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_cmodules">
+      <UniqueIdentifier>{2892d81e-21c5-4b45-96fe-89fa5baf1d4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_cmodules">
+      <UniqueIdentifier>{672ffb80-0fb0-48ea-b5ca-f0d0779ec349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_resource">
+      <UniqueIdentifier>{0400c993-e55a-45e6-b877-2b3caa166b7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_ss\ob_ss_resource">
+      <UniqueIdentifier>{d2838c05-9ba8-4523-b158-37c6786171b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_resource">
+      <UniqueIdentifier>{b2b0282d-c159-47dc-a949-1b75ab0d0e2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\fprowrkz">
+      <UniqueIdentifier>{ac7e92ae-1bdd-461a-a038-b1b0930088ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\fprowrkz\ob_recb">
+      <UniqueIdentifier>{a22c138f-080b-4f9a-824d-be4ccc9f6e89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\fprowrkz\ob_rec">
+      <UniqueIdentifier>{f15d7c0c-29ad-4723-975b-21657274836d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\fprowrkz\ob_rec\ob_rec_dplib_low">
+      <UniqueIdentifier>{df43539e-419b-41e2-89cc-865e35f160dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\fprowrkz\ob_rec\ob_rec_windlib">
+      <UniqueIdentifier>{9a39e709-869a-4bfb-b242-32b7daef169f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\firewrkz">
+      <UniqueIdentifier>{1aa8aff8-2af4-49a0-8448-ee3cb4ccf86a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\firewrkz\ob_recn">
+      <UniqueIdentifier>{8459599f-5e6b-4f3c-9a2c-5230018b0a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{1f984e5c-e05e-4160-aaa6-d0765f82b237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html">
+      <UniqueIdentifier>{98af45a8-012b-4b3e-bf90-258dda9ed4b4}</UniqueIdentifier>
+      <Extensions>*htm</Extensions>
+    </Filter>
+    <Filter Include="Docs\html\sg">
+      <UniqueIdentifier>{85b8b9bb-f152-47f2-834b-d5f00ed8030b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg1">
+      <UniqueIdentifier>{d47a5db4-b736-474c-a8f5-7ad4b990c6ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg2">
+      <UniqueIdentifier>{077e06aa-fa59-4845-b42a-f5075ed44b92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg3">
+      <UniqueIdentifier>{33a3e414-d3ee-404d-beb9-5c07f4127f8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg4">
+      <UniqueIdentifier>{1db8826e-ceea-4560-80d9-33d00321e315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg5">
+      <UniqueIdentifier>{677cb0c5-4ce7-4a5b-a57e-f42bd9b3d5db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg6">
+      <UniqueIdentifier>{c8f83023-2f45-4cd2-81d1-01f3e896a2c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\sg\sg7">
+      <UniqueIdentifier>{c9e77a9f-2014-4f5a-a835-e693a95bfc8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug">
+      <UniqueIdentifier>{19868a1e-69c5-4b9f-8fbf-5f47371aed68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug2">
+      <UniqueIdentifier>{6918fdb7-3517-44bf-9337-b2ed0906528c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug3">
+      <UniqueIdentifier>{1c13a3a3-29a0-4f62-8811-06f97066d994}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug4">
+      <UniqueIdentifier>{a953e5be-1038-464b-b7dc-370a4961ba41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug5">
+      <UniqueIdentifier>{b85b215a-b6fe-4e3f-a073-24fffb9822db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug6">
+      <UniqueIdentifier>{b039c936-6b5b-4c0f-83f0-1a8729ee686e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug7">
+      <UniqueIdentifier>{ff1a91b4-22c0-4461-88a3-e0eb2da81796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug8">
+      <UniqueIdentifier>{3ca50ac5-fc89-4b46-b3fe-66cdf2804526}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug9">
+      <UniqueIdentifier>{82ce65b2-dd0c-4543-b4fd-62dbebddf654}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug10">
+      <UniqueIdentifier>{9ee223e9-e22f-4bdb-bdb3-8d60a9143626}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\html\ug\ug11">
+      <UniqueIdentifier>{a59ae198-cec4-49f0-b5e6-4fe1313ea809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\RISC OS">
+      <UniqueIdentifier>{93b8b2b9-fafa-44dd-a22c-9374f315f77a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\Windows">
+      <UniqueIdentifier>{a32c8282-43d5-4c0f-88e3-d6e54c41346e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_skel\ob_skel_cmodules\unicode">
+      <UniqueIdentifier>{2a714c18-2198-4068-a0c3-7e5b13dbae7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ob_chart\ob_chart_externals">
+      <UniqueIdentifier>{c396c5f2-a8c4-4256-9700-d163275a5111}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\fl_123\fl_123.c">
+      <Filter>Source Files\foreign_formats\fl_123</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_123\fs_123.c">
+      <Filter>Source Files\foreign_formats\fs_123</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_ascii\fl_ascii.c">
+      <Filter>Source Files\foreign_formats\fl_ascii</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_ascii\fs_ascii.c">
+      <Filter>Source Files\foreign_formats\fs_ascii</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_cells\ce_edit.c">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_cells\ob_cells.c">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_cells\sk_col.c">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_cells\sk_draw.c">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_cells\sk_form.c">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_cells\sk_slot.c">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_blgal.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_chtio.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_edit.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_uiaxi.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_uisty.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\ob_chart.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_csv\fl_csv.c">
+      <Filter>Source Files\foreign_formats\fl_csv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_csv\fs_csv.c">
+      <Filter>Source Files\foreign_formats\fs_csv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_dlg\ob_dlg.c">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_dlg\ob_dlg2.c">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_dlg\ob_dlg3.c">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_dlg\ri_dlg.c">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_dlg\ri_lbox.c">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_dlg\wi_dlg.c">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_draw\ob_draw.c">
+      <Filter>Source Files\ob_draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_drwio\drwprint.c">
+      <Filter>Source Files\foreign_formats\ob_drwio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_drwio\ob_drwio.c">
+      <Filter>Source Files\foreign_formats\ob_drwio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_file\ob_file.c">
+      <Filter>Source Files\ob_file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_fwp\fl_fwp.c">
+      <Filter>Source Files\foreign_formats\fl_fwp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_hefo\ob_hefo.c">
+      <Filter>Source Files\ob_hefo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_mails\ob_mails.c">
+      <Filter>Source Files\ob_mails</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mlec.c">
+      <Filter>Source Files\ob_mlec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mlec2.c">
+      <Filter>Source Files\ob_mlec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_mlec\ob_mlec.c">
+      <Filter>Source Files\ob_mlec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_note\ob_note.c">
+      <Filter>Source Files\ob_note</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_note\ob_note2.c">
+      <Filter>Source Files\ob_note</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_pdss\fl_pdss.c">
+      <Filter>Source Files\foreign_formats\fl_pdss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_pdtx\fl_pdtx.c">
+      <Filter>Source Files\foreign_formats\fl_pdtx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\ed_card.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\ed_rec.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\export.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\ob_rec.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\ob_rec2.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\project.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\rcbuf.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\rcread.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\redraw.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\remap.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\uilayot.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\uiprops.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\uisrch.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\uistyle.c">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\callback.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\dblow.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\dbquery.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\dbread.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\dppack.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\import.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_rec\rcio.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fprowrkz\ob_recb\ob_recb.c">
+      <Filter>Source Files\fprowrkz\ob_recb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_rtf\fl_rtf.c">
+      <Filter>Source Files\foreign_formats\fl_rtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_rtf\fs_rtf.c">
+      <Filter>Source Files\foreign_formats\fs_rtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_ruler\ob_ruler.c">
+      <Filter>Source Files\ob_ruler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\arglist.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\df_paint.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\fonty.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\inline.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\keys.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ma_event.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\object.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\of_load.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\of_save.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\prodinfo.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_alpha.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_area.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_bord.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_cmd.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_cont.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_docno.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_find.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_hefod.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_load.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_mark.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_menu.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_mrof.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_name.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_null.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_plain.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_print.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_prost.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_root.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_save.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_styl.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_stylc.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_stylg.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_table.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_uref.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\startup.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\t5_glue.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ui_data.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ui_field.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ui_misc.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ui_save.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\vi_cmd.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\view.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\alloc.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\flex.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_asm.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_core.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\ho_dll.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_event.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_menu.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_paint.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_print.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\ho_sqush.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_xform.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\host.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\main.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\muldivas.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\nsx.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\profile.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\win.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\riscos\winxtra.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_color.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_cpicture.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_dll.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_help.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_menu.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_misc.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_paint.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_print.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_win.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_xform.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\muldiv86.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\splash.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\winmain.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skspt\ob_skspt.c">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_spelb\ob_spelb.c">
+      <Filter>Source Files\ob_spelb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_spell\guess.c">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_spell\ob_spell.c">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\spell.c">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_spell\ui_check.c">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_spell\ui_dict.c">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_ss\link_ev.c">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_ss\ob_ss.c">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_ss\sle_ss.c">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_ss\ui_ss.c">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_story\ob_story.c">
+      <Filter>Source Files\ob_story</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_story\tx_cache.c">
+      <Filter>Source Files\ob_story</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_story\tx_form.c">
+      <Filter>Source Files\ob_story</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_story\tx_main.c">
+      <Filter>Source Files\ob_story</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_text\ob_text.c">
+      <Filter>Source Files\ob_text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_toolb\ob_toolb.c">
+      <Filter>Source Files\ob_toolb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_toolb\wi_toolb.c">
+      <Filter>Source Files\ob_toolb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_xls\fl_xls.c">
+      <Filter>Source Files\foreign_formats\fl_xls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_xls\fs_xls.c">
+      <Filter>Source Files\foreign_formats\fs_xls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\aligator.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\bitmap.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\cfbf.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\collect.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\debug.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\file.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\fileutil.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\im_cache.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_coord.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_rdiag.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\list.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\monotime.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mrofmun.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\myassert.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\numform.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\quickblk.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\resource.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ss_const.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\xstring.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\typepack.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\report.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_gdip.cpp">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_dde.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_event.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fl_xls\fl_xls_loadb.c">
+      <Filter>Source Files\foreign_formats\fl_xls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_xls\fs_xls_saveb.c">
+      <Filter>Source Files\foreign_formats\fs_xls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fs_xls\fs_xls_savex.c">
+      <Filter>Source Files\foreign_formats\fs_xls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_ss\ui_name.c">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_dial.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\allocblk.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_uigal.c">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\errors.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\filetypes.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\lashup.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\memalloc.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\myos.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\winderror.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windflex.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windheap.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windrecv.c">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT.c">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\Microsoft\InsideOLE2\BTTNCURP\BTTNCUR.C">
+      <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_comp.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_dcom.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_eval.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_exec.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_func.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_help.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_math.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_name.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_rpn.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_tabl.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_todo.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_tree.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_uref.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mathxtr2.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mathxtr3.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mathxtra.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\bezier.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_axis2.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_axisp.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_texts.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_scatc.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_style.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_rdia3.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_piesg.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_numcv.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_diag.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_chart.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_char2.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_build.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_chart\gr_blpro.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\gr_barch.c">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skspt\ui_remov.c">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skspt\ui_styl2.c">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skspt\ui_styl3.c">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skspt\ui_style.c">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_hefo\ui_hefo.c">
+      <Filter>Source Files\ob_hefo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_mcpx.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\utf8str.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\quicktblk.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\quickublk.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ucs4.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\utf8.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\utf16.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\xtstring.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\xustring.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_utf8.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ff_load.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ff_save.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\quickwblk.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\xwstring.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_recn\ob_recn.c">
+      <Filter>Source Files\firewrkz\ob_recn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\windows\ho_marker.c">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\riscos\ho_marker.c">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_choic.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\vi_edge.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ui_page.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\ob_imps.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ob_skel\sk_draft.c">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fndat.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnfin.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnsta.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnstr.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_mtri.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\FreeBSD\srcp\lib\msun\src\e_j0.c">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\FreeBSD\srcp\lib\msun\src\e_j1.c">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\FreeBSD\srcp\lib\msun\src\e_jn.c">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnstd.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fneng.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnstc.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\mathxtr4.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnstb.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnstm.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_fnstp.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_matr.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ev_matb.c">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\cfbfwrite.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fprowrkz\fprowrkz.c">
+      <Filter>Source Files\fprowrkz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\firewrkz\firewrkz.c">
+      <Filter>Source Files\firewrkz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ucs4conv.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\OtherFree\cn_pnpoly.c">
+      <Filter>Source Files\ob_chart\ob_chart_externals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\OtherFree\wn_pnpoly.c">
+      <Filter>Source Files\ob_chart\ob_chart_externals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\ss_date.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\im_convert.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\fl_123\fl_123.h">
+      <Filter>Source Files\foreign_formats\fl_123</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_123\ff_123.h">
+      <Filter>Source Files\foreign_formats\fl_123</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fs_123\fs_123.h">
+      <Filter>Source Files\foreign_formats\fs_123</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_ascii\fl_ascii.h">
+      <Filter>Source Files\foreign_formats\fl_ascii</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fs_ascii\fs_ascii.h">
+      <Filter>Source Files\foreign_formats\fs_ascii</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_cells\ce_edit.h">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_cells\ob_cells.h">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_cells\sk_col.h">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_cells\sk_draw.h">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_cells\sk_form.h">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_cells\sk_slot.h">
+      <Filter>Source Files\ob_cells</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_chart\ob_chart.h">
+      <Filter>Source Files\ob_chart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_csv\fl_csv.h">
+      <Filter>Source Files\foreign_formats\fl_csv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fs_csv\fs_csv.h">
+      <Filter>Source Files\foreign_formats\fs_csv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_dlg\ui_dlgin.h">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_dlg\xp_dlg.h">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_dlg\xp_dlgr.h">
+      <Filter>Source Files\ob_dlg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_draw\ob_draw.h">
+      <Filter>Source Files\ob_draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_drwio\ob_drwio.h">
+      <Filter>Source Files\foreign_formats\ob_drwio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_file\ob_file.h">
+      <Filter>Source Files\ob_file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_file\xp_file.h">
+      <Filter>Source Files\ob_file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_fwp\fl_fwp.h">
+      <Filter>Source Files\foreign_formats\fl_fwp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_hefo\ob_hefo.h">
+      <Filter>Source Files\ob_hefo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_hefo\xp_hefo.h">
+      <Filter>Source Files\ob_hefo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_mails\ob_mails.h">
+      <Filter>Source Files\ob_mails</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_note\ob_note.h">
+      <Filter>Source Files\ob_note</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_note\xp_note.h">
+      <Filter>Source Files\ob_note</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_pdss\fl_pdss.h">
+      <Filter>Source Files\foreign_formats\fl_pdss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_pdtx\fl_pdtx.h">
+      <Filter>Source Files\foreign_formats\fl_pdtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_rtf\fl_rtf.h">
+      <Filter>Source Files\foreign_formats\fl_rtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fs_rtf\fs_rtf.h">
+      <Filter>Source Files\foreign_formats\fs_rtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_ruler\ob_ruler.h">
+      <Filter>Source Files\ob_ruler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\flags.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\ho_print.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\xp_skel.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\xp_skeld.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\riscos\ho_sqush.h">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skspt\ob_skspt.h">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_spelb\ob_spelb.h">
+      <Filter>Source Files\ob_spelb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_spell\ob_spell.h">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\spell.h">
+      <Filter>Source Files\ob_spell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_ss\ob_ss.h">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_ss\xp_ss.h">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_story\ob_story.h">
+      <Filter>Source Files\ob_story</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_story\tx_cache.h">
+      <Filter>Source Files\ob_story</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_story\tx_form.h">
+      <Filter>Source Files\ob_story</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_story\tx_main.h">
+      <Filter>Source Files\ob_story</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_text\ob_text.h">
+      <Filter>Source Files\ob_text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_toolb\ob_toolb.h">
+      <Filter>Source Files\ob_toolb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_toolb\xp_toolb.h">
+      <Filter>Source Files\ob_toolb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fl_xls\fl_xls.h">
+      <Filter>Source Files\foreign_formats\fl_xls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\fs_xls\fs_xls.h">
+      <Filter>Source Files\foreign_formats\fs_xls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\gflags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\personal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\res_defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\aligator.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\bitmap.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\cfbf.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\collect.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\debug.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\file.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\im_cache.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\gr_coord.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\list.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\monotime.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mrofmun.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\muldiv.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\myassert.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\numform.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\quickblk.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\resource.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\ss_const.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\xstring.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\typepack.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\report.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\allocblk.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math.h">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math_private.h">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\errors.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\filetypes.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\flags.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\gflags.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\lashup.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\memalloc.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\msgs.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\myos.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\winderror.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windflex.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windheap.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windquery2.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\windrecv.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\CLib\msvchack\swis.h">
+      <Filter>Header Files\Norcroft_C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\CLib\msvchack\kernel.h">
+      <Filter>Header Files\Norcroft_C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\RISC_OSLib\bbc.h">
+      <Filter>Header Files\RISC_OSLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\RISC_OSLib\drawmod.h">
+      <Filter>Header Files\RISC_OSLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
+      <Filter>Header Files\tboxlibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\wimp.h">
+      <Filter>Header Files\tboxlibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\Acorn\Library\32\tboxlibs\wimplib.h">
+      <Filter>Header Files\tboxlibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT.h">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT-common.h">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT-params.h">
+      <Filter>Source Files\ob_ss\ob_ss_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\ho_dll.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\xp_skelr.h">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\Dial_Solutions\drawfile.h">
+      <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\Dial_Solutions\DsFF9.h">
+      <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\Dial_Solutions\DsAFF.h">
+      <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\ho_cpicture.h">
+      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\resource\resource.h">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_ss\resource\resource.h">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\coltsoft.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\defineos.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\defwin32.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\drawxtra.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\filetype.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\riscos\osfile.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\pragma.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\pragmams.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\pragmari.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\target_riscos_host_windows.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\ev_eval.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\ev_evali.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mathxtr2.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mathxtr3.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mathxtra.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mathxtri.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_ss\ss_linest.h">
+      <Filter>Source Files\ob_ss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\bezier.h">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\gr_rdia3.h">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\gr_diag.h">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\gr_chart.h">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\gr_chari.h">
+      <Filter>Source Files\ob_chart\ob_chart_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_chart\resource\resource.h">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\profile.h">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skspt\ui_styin.h">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skspt\xp_uisty.h">
+      <Filter>Source Files\ob_skspt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_hefo\ui_hefin.h">
+      <Filter>Source Files\ob_hefo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\ansi.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\mathnums.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\no-sal.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\utf8str.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\quicktblk.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\quickublk.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\ucs4.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\utf8.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\utf16.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\xtstring.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\xustring.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\ff_io.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\quickwblk.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\xwstring.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_recn\ob_recn.h">
+      <Filter>Source Files\firewrkz\ob_recn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ob_skel\vi_edge.h">
+      <Filter>Source Files\ob_skel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\mathxtr4.h">
+      <Filter>Source Files\ob_ss\ob_ss_cmodules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\firewrkz\pflags.h">
+      <Filter>Source Files\firewrkz</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\fprowrkz\fprowrkz\pflags.h">
+      <Filter>Source Files\fprowrkz</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u0080.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u0100.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u0180.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u02B0.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u2000.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u20A0.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u2100.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\uFB00.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cmodules\unicode\u0000.h">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\fl_123\resource\uk-msg">
+      <Filter>Source Files\foreign_formats\fl_123</Filter>
+    </None>
+    <None Include="..\..\fl_csv\resource\uk-msg">
+      <Filter>Source Files\foreign_formats\fl_csv</Filter>
+    </None>
+    <None Include="..\..\ob_dlg\resource\uk-msg">
+      <Filter>Source Files\ob_dlg</Filter>
+    </None>
+    <None Include="..\..\ob_draw\resource\uk-msg">
+      <Filter>Source Files\ob_draw</Filter>
+    </None>
+    <None Include="..\..\ob_drwio\resource\uk-msg">
+      <Filter>Source Files\foreign_formats\ob_drwio</Filter>
+    </None>
+    <None Include="..\..\ob_file\resource\uk-msg">
+      <Filter>Source Files\ob_file</Filter>
+    </None>
+    <None Include="..\..\ob_hefo\resource\uk-msg">
+      <Filter>Source Files\ob_hefo</Filter>
+    </None>
+    <None Include="..\..\ob_mails\resource\uk-msg">
+      <Filter>Source Files\ob_mails</Filter>
+    </None>
+    <None Include="..\..\ob_mlec\resource\uk-msg">
+      <Filter>Source Files\ob_mlec</Filter>
+    </None>
+    <None Include="..\..\..\fprowrkz\ob_rec\resource\uk-msg">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </None>
+    <None Include="..\..\..\fprowrkz\ob_recb\resource\uk-msg">
+      <Filter>Source Files\fprowrkz\ob_recb</Filter>
+    </None>
+    <None Include="..\..\fl_rtf\resource\uk-msg">
+      <Filter>Source Files\foreign_formats\fl_rtf</Filter>
+    </None>
+    <None Include="..\..\ob_ruler\resource\uk-msg">
+      <Filter>Source Files\ob_ruler</Filter>
+    </None>
+    <None Include="..\..\ob_skspt\resource\uk-msg">
+      <Filter>Source Files\ob_skspt</Filter>
+    </None>
+    <None Include="..\..\ob_spelb\resource\uk-msg">
+      <Filter>Source Files\ob_spelb</Filter>
+    </None>
+    <None Include="..\..\ob_spell\resource\uk-msg">
+      <Filter>Source Files\ob_spell</Filter>
+    </None>
+    <None Include="..\..\ob_toolb\resource\uk-msg">
+      <Filter>Source Files\ob_toolb</Filter>
+    </None>
+    <None Include="..\..\fl_xls\resource\uk-msg">
+      <Filter>Source Files\foreign_formats\fl_xls</Filter>
+    </None>
+    <None Include="..\..\..\..\..\coltsoft\trunk\cs-nonfree\DataPower\WindLibC\32\MakeAll">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
+    </None>
+    <None Include="..\..\ob_chart\resource\uk-msg">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\uk-msg">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </None>
+    <None Include="..\..\ob_ss\resource\uk-msg">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\uk\res00.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </None>
+    <None Include="..\..\ob_ss\resource\ss.rci">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </None>
+    <None Include="..\..\ob_chart\resource\chart.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\uk\res06.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\uk\res01.rci">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </None>
+    <None Include="..\..\ob_skel\resource\skel.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </None>
+    <None Include="..\..\firewrkz\resource\windows\uk\resXX.rci">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\ob_recn\resource\uk-msg">
+      <Filter>Source Files\firewrkz\ob_recn</Filter>
+    </None>
+    <None Include="..\..\firewrkz\RelNotes.htm">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\index.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\frindex.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms_fonts.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_between_platforms_pictures.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_from_risc_os_to_windows.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\hlp_transferring_files_from_windows_to_risc_os.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg0_spreadsheets.htm">
+      <Filter>Docs\html\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_absolute_references.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_autoentry.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_references.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_type_problem_areas.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_cell_types.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_changing_cell_types.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_clearing_cells.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_confirming_data_entry.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_copying_data_from_cell_to_cell.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_editing_number_cell_contents.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_and_editing_numerical_data.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_cell_references.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_dates.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_numbers.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_strings.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_entering_text_and_data_in_number_cells.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_external_references.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_filling_data.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_moving_from_cell_to_cell.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_number_cells.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_ranges.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_single_cell_references.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_sorting_your_data.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg1_text_cells.htm">
+      <Filter>Docs\html\sg\sg1</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_arithmetic_operators.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_arrays.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_autosum.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_building_and_editing_formulae.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_displaying_arrays.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_entering_and_editing_formulae.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_formula_building_blocks.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_logical_operators.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_names.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_operator_precedence.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_relational_operators.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_the_function_selector.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_troubleshooting.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_typing_arrays_directly_into_cells.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_using_arrays.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg2_using_operators_in_formulae.htm">
+      <Filter>Docs\html\sg\sg2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_12_and_24_hour_clocks.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_base_number_format.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_date_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_number_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_constructing_time_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_creating_date_and_time_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_days.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_displaying_parts_of_a_time.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_engineering_format.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_expressing_roman_numerals.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_foreign_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_hashes_and_zeroes.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_including_text_strings_in_number_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_interpreting_numbers_as_dates_or_times.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_months.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_number_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_number_formats_and_styles.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_percentage.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_positive_and_negative_numbers.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_precision.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_protecting_cells.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_saving_a_number_format_as_a_style.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_scientific_number_formats.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_styles_in_spreadsheet_documents.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_text_strings.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg3_years.htm">
+      <Filter>Docs\html\sg\sg3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_bar_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_creating_a_chart.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_customising_bar_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_customising_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_direction.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_axes.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_data_series.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_lines.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_editing_text_in_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_exploding_segments.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_line_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_overlays.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_pictograms.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_pie_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_pie_labelling_options.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_positioning_the_chart.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_start_position.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_bar_chart.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_line_chart.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_types_of_scatter_graph.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_updating_chart_data.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_using_colour_in_charts.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg4_x_y_scatter_graphs.htm">
+      <Filter>Docs\html\sg\sg4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_compatibility_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_database_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_date_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_engineering_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_financial_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_logical_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_lookup_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_mathematical_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_matrix_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_miscellaneous_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_statistical_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_string_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg5_trigonometrical_functions.htm">
+      <Filter>Docs\html\sg\sg5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ABS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOSH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ACOTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_AGE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ALERT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_AND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_array_or_range.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_arrays.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ASINH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATAN_2.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ATANH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_AVEDEV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_AVG.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_BETA.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_BIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOSH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ACOTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ADD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ASINH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ATAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ATANH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COMPLEX.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_CONJUGATE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COSH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_COTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_DIV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_EXP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_IMAGINARY.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_LN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_MUL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_POWER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_RADIUS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_REAL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_ROUND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SINH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SQRT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_SUB.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_TAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_TANH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_C_THETA.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CEILING.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CHAR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CHOOSE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CLEAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CODE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COLS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COMBIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COMMAND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_complex_numbers.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_complex_numbers_odf.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COSH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNTA.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COUNTBLANK.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COVARIANCE_P.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_COVARIANCE_S.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CTERM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_CURRENT_CELL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DATE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_date_formats.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DATEVALUE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAVG.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAY.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAYNAME.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DAYS_360.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DCOUNT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DCOUNTA.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DDB.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEG.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEREF.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DEVSQ.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DMAX.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DMIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DOLLAR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DOUBLECLICK.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DPRODUCT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSTD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSTDP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DSUM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DVAR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_DVARP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_EVEN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_EXACT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_EXP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FACT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FALSE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FIND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FIXED.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FLIP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FLOOR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FORMULA_TEXT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_FV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_GAMMALN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_GEOMEAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_GRAND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_GROWTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_HARMEAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_HLOOKUP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_HOUR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_IF.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_INDEX.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_INPUT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_INT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_IRR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ISEVEN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ISODD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_JOIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_KURT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LARGE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LEFT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LENGTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LINEST.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LISTCOUNT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOG.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOGEST.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOOKUP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_LOWER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_DETERM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_INVERSE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_M_MULT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MATCH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MAX.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MEDIAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MID.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MINUTE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MIRR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MOD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MODE_SNGL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTHDAYS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MONTHNAME.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_MROUND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_NOT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_NOW.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_NPER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_NPV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_BETADIST.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_COMPLEX.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_FV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMABS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMAGINARY.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMARGUMENT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMCONJUGATE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMCOS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMDIV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMEXP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLOG2.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMLOG10.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMPOWER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMPRODUCT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMREAL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSQRT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSUB.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_IMSUM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_PMT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ODF_TYPE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_OR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PAGE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PAGES.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_INC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERMUT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PI.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PMT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_POWER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PRODUCT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PROPER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PV.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_QUARTILE_INC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RAD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RAND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANDBETWEEN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ranges.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANK.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RANK_EQ.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RATE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_REPLACE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_REPT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_REVERSE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_RIGHT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUNDDOWN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROUNDUP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROW.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_ROWS.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SEC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SECH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SECOND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SET_NAME.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SET_VALUE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SGN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SIN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SINH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SKEW.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SKEW_P.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SLN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SMALL.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SORT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SPEARMAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SQR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_STANDARDIZE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_STD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_STDP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_STRING.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUBSTITUTE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_X2MY2.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_X2PY2.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUM_XMY2.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUMPRODUCT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SUMSQ.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_SYD.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TANH.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TERM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TEXT.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TIME.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_time_formats.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TIMEVALUE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TODAY.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRANSPOSE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TREND.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRIM.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRIMMEAN.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRUE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TRUNC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_TYPE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_UPPER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_VALUE.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_VAR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_VARP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_VERSION.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_VLOOKUP.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_WEEKDAY.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_WEEKNUMBER.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_XOR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_YEAR.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_BREAK.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_CONTINUE.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_function_control_statements.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_function_libraries.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_custom_functions.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_declaring_the_result.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_editing_custom_functions.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_FOR_NEXT.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_GOTO.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_IF_ELSE_ELSEIF_ENDIF.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_naming_custom_functions.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_parameters_to_FUNCTION.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_processing_ranges_of_data.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_recalculation_and_custom_function_sheets.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_REPEAT_UNTIL.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_RESULT.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_the_FUNCTION_function.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_using_custom_functions.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_what_is_a_custom_function.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_WHILE_ENDWHILE.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg7_writing_custom_functions.htm">
+      <Filter>Docs\html\sg\sg7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug1_introduction.htm">
+      <Filter>Docs\html\ug</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_accessing_the_view_control_dialogue_box.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_auto_save.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_charts_options.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_choices_dialogue_box.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_choices_status_line.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_choosing_the_ruler_measurement.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_customising_the_look_of_the_program.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_default_ruler.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_dialogue_boxes.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_displaying_paper_and_borders.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_dithering.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_fireworkz_basics.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_kerning.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_menus.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_new_view.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_pictures.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_recalculation.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_rulers_and_borders.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_selecting_a_view_scale.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_spelling.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_splitting_the_view.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_fireworkz_document_window.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_ruler.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_status_line.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug2_the_toolbar.htm">
+      <Filter>Docs\html\ug\ug2</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_a_new_document.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_new_documents.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_creating_templates.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_opening_existing_documents.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_removing_templates_from_the_template_selector.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_setting_up_a_template_file.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_templates.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug3_using_templates_to_reformat_existing_documents.htm">
+      <Filter>Docs\html\ug\ug3</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_bold.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_checking_spellings.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_clearing_a_selected_area.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_copying_text_within_and_between_documents.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_correcting_typing_errors.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_counting_words.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_dates.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_editing_text.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_entering_special_text_and_characters.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_entering_text_effects.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_find_and_replace.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_forcing_a_page_break.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_hints_and_tips.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_italic.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_line_spaces_and_paragraph_spaces.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_moving_around_the_document.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_moving_text_around_documents.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_overtyping_existing_text.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_page_numbers.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_paragraphs_and_rows.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_positioning_the_caret.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_preventing_line_breaks.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_preventing_page_breaks_within_paragraphs.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_printing_filename_within_documents.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_selecting_areas_of_text.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_special_characters.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_line_without_starting_a_new_paragraph.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_page.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_starting_a_new_paragraph.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_typing_text.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug4_upper_and_lower_case.htm">
+      <Filter>Docs\html\ug\ug4</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_adding_a_current_cell_style.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_applying_effects.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_buttons_and_effects.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_deleting_styles.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_effects.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_layering_styles.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_removing_styles_and_effects.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_special_styles.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_the_region_editor.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_the_style_list.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_what_are_styles.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_working_with_styles.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug5_working_with_styles_and_effects.htm">
+      <Filter>Docs\html\ug\ug5</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_adding_a_new_style.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_adding_colour_to_a_style.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_alignment.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_attributes.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_background_colour_and_borders.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_colour.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_colour_editing.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_column.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_editing_styles.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_fonts_and_typefaces.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_height_and_width.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_line_spacing.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_margins.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_paragraph_spacing.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_row.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_ruler.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_setting_up_styles.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_spacing.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_style.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_tabs.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_text.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_the_style_dialogue_box.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_the_style_editor.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug6_vertical_justification.htm">
+      <Filter>Docs\html\ug\ug6</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_creating_headers_and_footers.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_custom_page_sizes.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_different_headers_or_footers_on_the_first_page.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_editing_header_and_footer_text.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_forcing_page_breaks.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_headers_and_footers.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_multiple_headers_and_footers.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_numbering_pages.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_opposing_headers_and_footers.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_page_design.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_paper_margins.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_paper_orientation.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_printing_the_row_and_column_borders.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_repositioning_headers_and_footers.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_setting_paper_size.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_setting_up_paper_size.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug7_x_and_y_pages.htm">
+      <Filter>Docs\html\ug\ug7</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_adding_extra_rows_and_columns.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_adding_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_autowidth_and_autoheight.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_boxes.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_boxes_and_the_grid.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_changing_column_width.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_changing_row_height.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_designing_grids_boxes_and_borders.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_editing_table_layouts.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_editing_the_cell_layout.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_entering_numerical_live_data_into_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_entering_text_into_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_grid_lines.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_importing_data_into_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_merging_two_cells.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_removing_boxes_and_grid_lines.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_removing_redundant_rows_and_columns.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_repositioning_the_table_on_the_page.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_straddling_cells.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_typing_directly_into_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_using_background_colours.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug8_using_styles_and_effects_in_tables.htm">
+      <Filter>Docs\html\ug\ug8</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_adding_a_name_to_a_number_cell.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_adding_a_name_to_a_text_cell.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_advanced_features.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_naming_names.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_printing_a_mail_shot.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_setting_up_a_name.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_setting_up_your_letter.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_suitable_lists_for_mail_shots.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_uses_for_names.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_using_mail_merge.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug9_using_names_in_fireworkz.htm">
+      <Filter>Docs\html\ug\ug9</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_adding_pictures_to_your_document.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_backdrop_pictures.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_how_fireworkz_handles_pictures.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_picture_file_formats.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_pictures.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_positioning_pictures_on_the_page.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_resizing_pictures.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_showing_and_hiding_pictures.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug10_storing_pictures_in_documents.htm">
+      <Filter>Docs\html\ug\ug10</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_basic_print_options.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_before_printing.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_choosing_to_print.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_collated.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_extra_print_options.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_pamphlet_printing.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_print_scale.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing_labels.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_printing_problems.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_range_of_pages.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_reverse_printing.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_sides.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\ug11_two_up.htm">
+      <Filter>Docs\html\ug\ug11</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\us98_glossary.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\us99_addenda.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\usguide.css">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\usindex.htm">
+      <Filter>Docs\html</Filter>
+    </None>
+    <None Include="..\..\..\docs\LICENSE">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="..\..\..\docs\MakeRiscPkg,fd7">
+      <Filter>Docs\RISC OS</Filter>
+    </None>
+    <None Include="..\..\..\docs\RiscPkg\Control">
+      <Filter>Docs\RISC OS</Filter>
+    </None>
+    <None Include="..\..\..\docs\RiscPkg\Copyright">
+      <Filter>Docs\RISC OS</Filter>
+    </None>
+    <None Include="..\..\..\docs\RiscPkg\LICENSE">
+      <Filter>Docs\RISC OS</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhc">
+      <Filter>Docs\Windows</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhk">
+      <Filter>Docs\Windows</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\firewrkz.hhp">
+      <Filter>Docs\Windows</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_PERCENTILE_EXC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\..\fprowrkz\fprowrkz\RelNotes.htm">
+      <Filter>Source Files\fprowrkz</Filter>
+    </None>
+    <None Include="..\..\..\docs\htmlhelp\html\sg6_QUARTILE_EXC.htm">
+      <Filter>Docs\html\sg\sg6</Filter>
+    </None>
+    <None Include="..\..\LICENSE" />
+    <None Include="OUTx86\firewrkz-x86.iss">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="OUTx64\firewrkz-x64.iss">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+    <None Include="..\..\firewrkz\RelNotesW.htm">
+      <Filter>Source Files\firewrkz</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\firewrkz\resource\windows\PROG.BMP">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\firewrkz\resource\windows\doc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\firewrkz\resource\windows\prog.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\bar.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldadodo.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldash.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldashdot.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\ldot.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\line.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\pie.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\scatter.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\com16x16.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_chart\resource\bmp\overlay.bmp">
+      <Filter>Source Files\ob_chart\ob_chart_resource</Filter>
+    </Image>
+    <Image Include="..\..\firewrkz\resource\windows\uk\banner.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_ss\resource\BMP\ss_tbar_4bpp.bmp">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_ss\resource\BMP\ss_tbar_32bpp.bmp">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_ss\resource\BMP\ss_tbarh_4bpp.bmp">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </Image>
+    <Image Include="..\..\ob_ss\resource\BMP\ss_tbarh_32bpp.bmp">
+      <Filter>Source Files\ob_ss\ob_ss_resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\ob_dlg\ri_lbox.h">
+      <Filter>Source Files\ob_dlg</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\cmodules\mlec.h">
+      <Filter>Source Files\ob_mlec</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\cmodules\mleci.h">
+      <Filter>Source Files\ob_mlec</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_mlec\ob_mlec.h">
+      <Filter>Source Files\ob_mlec</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_mlec\xp_mlec.h">
+      <Filter>Source Files\ob_mlec</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\fprowrkz\ob_rec\ob_rec.h">
+      <Filter>Source Files\fprowrkz\ob_rec</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\fprowrkz\ob_rec\dplib.h">
+      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_dplib_low</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\fprowrkz\ob_recb\ob_recb.h">
+      <Filter>Source Files\fprowrkz\ob_recb</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\cmodules\alloc.h">
+      <Filter>Source Files\ob_skel\ob_skel_riscos</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\com16x16.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\com24x24.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\col_r.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\com07x11.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\dec.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\inc.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_none.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_std.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_stdd.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_thick.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\ls_thin.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_F.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_H.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_L.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_P.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\mar_R.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\row_b.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_C.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_D.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_L.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\ob_skel\resource\bmp\tab_R.bmp">
+      <Filter>Source Files\ob_skel\ob_skel_resource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\external\Microsoft\InsideOLE2\BTTNCURP\BTTNCUR.H">
+      <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\external\Microsoft\InsideOLE2\BTTNCURP\BTTNCURI.H">
+      <Filter>Source Files\ob_skel\ob_skel_external</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="firewrkz.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -19,9 +19,9 @@ typedef struct buff_region
 
 typedef struct cursor_position
 {
-    int            lcol;        /* logical col                        */
-    int            pcol;        /* physical col ie MIN(lcol, linelen) */
-    int            row;         /* row number                         */
+    int            lcol;        /* logical col                          */
+    int            pcol;        /* physical col i.e. MIN(lcol, linelen) */
+    int            row;         /* row number                           */
 }   cursor_position;
 
 typedef struct mark_position
@@ -32,8 +32,8 @@ typedef struct mark_position
 
 typedef struct marked_text
 {
-    mark_position  markstt;   /* start of marked text ie closest_to_text_home_of(cursor, selectanchor) */
-    int            marklines; /* number of line-ends in range (>=0) */
+    mark_position  markstt;     /* start of marked text i.e. closest_to_text_home_of(cursor, selectanchor) */
+    int            marklines;   /* number of line-ends in range (>=0) */
     buff_region    lower;
     buff_region    upper;
 }
@@ -47,9 +47,9 @@ struct MLEC
     buff_region      upper;        /* all characters right of, and rows below the physical cursor position */
     cursor_position  cursor;       /* cursor row number and logical & physical column number               */
     int              maxcol;       /* length of longest line (sort of!)                                    */
-    int              linecount;    /* number of line terminators ie 1 less than number of display lines    */
+    int              linecount;    /* number of line terminators i.e. 1 less than number of display lines  */
 
-    int              charwidth;    /* eg 16 } graphics mode specific */
+    int              charwidth;    /* e.g. 16 } graphics mode specific */
     int              termwidth;    /* on screen representation of an EOL char in a selection, typically charwidth/4 */
 
     wimp_w           main;
@@ -99,7 +99,7 @@ extern MLEC paste;      /* The paste buffer */
 
 #define window_NULL NULL
 
-#define TAB_MASK 3      /* ie insert 1..4 spaces */
+#define TAB_MASK 3      /* i.e. insert 1..4 spaces */
 
 typedef union XFER_HANDLE
 {

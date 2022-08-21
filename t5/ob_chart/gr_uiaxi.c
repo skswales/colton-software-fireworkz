@@ -68,20 +68,20 @@ gr_chart_axis_process_process_start(
         p_state->major.cat_value = (S32) (p_axis->major.bits.manual ? p_axis->major.punter : p_axis->major.current);
         p_state->minor.cat_value = (S32) (p_axis->minor.bits.manual ? p_axis->minor.punter : p_axis->minor.current);
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MAJOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MAJOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.s32 = (S32) gr_lin_major(p_state->major.cat_value);
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.s32 = (S32) gr_lin_major(p_state->minor.cat_value);
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MAJOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MAJOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_MAX;
         dialog_cmd_ctl_ui_control.data.s32 = (S32) p_state->major.cat_value;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
     }
     else
     {
@@ -96,47 +96,47 @@ gr_chart_axis_process_process_start(
         p_state->major.val_value = p_axis->major.bits.manual ? p_axis->major.punter : p_axis->major.current;
         p_state->minor.val_value = p_axis->minor.bits.manual ? p_axis->minor.punter : p_axis->minor.current;
 
-        dialog_cmd_ctl_ui_control.control_id = VAL_AXIS_ID_SCALING_MAXIMUM;
+        dialog_cmd_ctl_ui_control.dialog_control_id = VAL_AXIS_ID_SCALING_MAXIMUM;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.f64 = p_state->major.val_value;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = VAL_AXIS_ID_SCALING_MINIMUM;
+        dialog_cmd_ctl_ui_control.dialog_control_id = VAL_AXIS_ID_SCALING_MINIMUM;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.f64 = p_state->major.val_value;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
         if(p_state->val_axis.maximum == p_state->val_axis.minimum)
             p_state->val_axis.maximum += p_state->major.val_value;
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MAJOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MAJOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_UIC;
         dialog_cmd_ctl_ui_control.data.p_ui_control_f64 = p_state->val_axis.log_labels
                                                         ? &val_axis_major_control_under_log_labels
                                                         : &val_axis_major_control;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MAJOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MAJOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.f64 = p_state->minor.val_value;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_UIC;
         dialog_cmd_ctl_ui_control.data.p_ui_control_f64 = p_state->val_axis.log_labels
                                                         ? &val_axis_minor_control_under_log_labels
                                                         : &val_axis_minor_control;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.f64 = gr_lin_major(2.0 * p_state->minor.val_value);
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_MAX;
         dialog_cmd_ctl_ui_control.data.f64 = p_state->major.val_value;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
         * (int *) &p_state->val_series = 0;
         p_state->val_series.cumulative    = p_axes->bits.cumulative;
@@ -294,11 +294,11 @@ gr_chart_axis_process_ctl_state_change(
     switch(p_dialog_msg_ctl_state_change->dialog_control_id)
     {
     case GEN_AXIS_ID_POSITION_LZR_GROUP:
-        p_state->axis.lzr = (UBF) p_dialog_msg_ctl_state_change->new_state.radiobutton;
+        p_state->axis.lzr = UBF_PACK(p_dialog_msg_ctl_state_change->new_state.radiobutton);
         break;
 
     case GEN_AXIS_ID_POSITION_ARF_GROUP:
-        p_state->axis.arf = (UBF) p_dialog_msg_ctl_state_change->new_state.radiobutton;
+        p_state->axis.arf = UBF_PACK(p_dialog_msg_ctl_state_change->new_state.radiobutton);
         break;
 
     case GEN_AXIS_ID_MAJOR_AUTO:
@@ -348,29 +348,29 @@ gr_chart_axis_process_ctl_state_change(
         {
             p_state->major.cat_value = p_dialog_msg_ctl_state_change->new_state.bump_s32;
 
-            dialog_cmd_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+            dialog_cmd_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
             dialog_cmd_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_MAX;
             dialog_cmd_ui_control.data.s32 = p_state->major.cat_value;
-            status = call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control);
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control);
         }
         else
         {
             p_state->major.val_value = p_dialog_msg_ctl_state_change->new_state.bump_f64;
 
-            dialog_cmd_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+            dialog_cmd_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
             dialog_cmd_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_MAX;
             dialog_cmd_ui_control.data.f64 = p_state->major.val_value;
-            status = call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control);
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control);
 
-            dialog_cmd_ui_control.control_id = VAL_AXIS_ID_SCALING_MAXIMUM;
+            dialog_cmd_ui_control.dialog_control_id = VAL_AXIS_ID_SCALING_MAXIMUM;
             dialog_cmd_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
             dialog_cmd_ui_control.data.f64 = p_state->major.val_value;
-            status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control));
+            status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control));
 
-            dialog_cmd_ui_control.control_id = VAL_AXIS_ID_SCALING_MINIMUM;
+            dialog_cmd_ui_control.dialog_control_id = VAL_AXIS_ID_SCALING_MINIMUM;
             dialog_cmd_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
             dialog_cmd_ui_control.data.f64 = p_state->major.val_value;
-            status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control));
+            status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ui_control));
         }
 
         if(!p_state->level)
@@ -398,11 +398,11 @@ gr_chart_axis_process_ctl_state_change(
         break;
 
     case GEN_AXIS_ID_MAJOR_GROUP:
-        p_state->major.tick = (UBF) p_dialog_msg_ctl_state_change->new_state.radiobutton;
+        p_state->major.tick = UBF_PACK(p_dialog_msg_ctl_state_change->new_state.radiobutton);
         break;
 
     case GEN_AXIS_ID_MINOR_GROUP:
-        p_state->minor.tick = (UBF) p_dialog_msg_ctl_state_change->new_state.radiobutton;
+        p_state->minor.tick = UBF_PACK(p_dialog_msg_ctl_state_change->new_state.radiobutton);
         break;
 
     case VAL_AXIS_ID_SCALING_AUTO:
@@ -436,15 +436,15 @@ gr_chart_axis_process_ctl_state_change(
         major = gr_lin_major(p_state->val_axis.maximum - p_state->val_axis.minimum);
 
         dialog_cmd_ctl_ui_control.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-        dialog_cmd_ctl_ui_control.control_id = VAL_AXIS_ID_SCALING_MAXIMUM;
+        dialog_cmd_ctl_ui_control.dialog_control_id = VAL_AXIS_ID_SCALING_MAXIMUM;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.f64 = major;
-        status = call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control);
+        status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control);
 
-        dialog_cmd_ctl_ui_control.control_id = VAL_AXIS_ID_SCALING_MINIMUM;
+        dialog_cmd_ctl_ui_control.dialog_control_id = VAL_AXIS_ID_SCALING_MINIMUM;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_BUMP;
         dialog_cmd_ctl_ui_control.data.f64 = major;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
         if(!p_state->level)
             status_accumulate(status, ui_dlg_set_check(p_dialog_msg_ctl_state_change->h_dialog, VAL_AXIS_ID_SCALING_AUTO, 0));
@@ -469,18 +469,18 @@ gr_chart_axis_process_ctl_state_change(
         p_state->val_axis.log_labels = p_dialog_msg_ctl_state_change->new_state.checkbox;
 
         dialog_cmd_ctl_ui_control.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MAJOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MAJOR_SPACING;
         dialog_cmd_ctl_ui_control.what = DIALOG_CMD_CTL_UI_CONTROL_UIC;
         dialog_cmd_ctl_ui_control.data.p_ui_control_f64 = p_state->val_axis.log_labels
                                                         ? &val_axis_major_control_under_log_labels
                                                         : &val_axis_major_control;
-        status = call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control);
+        status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control);
 
-        dialog_cmd_ctl_ui_control.control_id = GEN_AXIS_ID_MINOR_SPACING;
+        dialog_cmd_ctl_ui_control.dialog_control_id = GEN_AXIS_ID_MINOR_SPACING;
         dialog_cmd_ctl_ui_control.data.p_ui_control_f64 = p_state->val_axis.log_labels
                                                         ? &val_axis_minor_control_under_log_labels
                                                         : &val_axis_minor_control;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_UI_CONTROL, &dialog_cmd_ctl_ui_control));
 
         break;
         }
@@ -572,7 +572,7 @@ gr_chart_axis_process(
 
         gr_chart_objid_clear(&id);
         id.name = GR_CHART_OBJNAME_AXIS;
-        id.no = (UBF) gr_axes_external_from_idx(cp, axes_idx, Y_AXIS_IDX);
+        id.no = UBF_PACK(gr_axes_external_from_idx(cp, axes_idx, Y_AXIS_IDX));
 
         break;
         }
@@ -580,7 +580,7 @@ gr_chart_axis_process(
     default:
         gr_chart_objid_clear(&id);
         id.name = GR_CHART_OBJNAME_AXIS;
-        id.no = (UBF) gr_axes_external_from_idx(cp, 0, Y_AXIS_IDX);
+        id.no = UBF_PACK(gr_axes_external_from_idx(cp, 0, Y_AXIS_IDX));
         break;
     }
 
@@ -611,7 +611,7 @@ gr_chart_axis_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_gr_chart_axis_process;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &state;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -837,7 +837,7 @@ gr_chart_series_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_gr_chart_series_process;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &state;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }

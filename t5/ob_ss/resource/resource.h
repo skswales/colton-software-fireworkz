@@ -11,59 +11,54 @@
 
 /* bitmap ids */
 #if RISCOS
-#define SS_ID_BM_FILL_DN        "rep_down"
-#define SS_ID_BM_FILL_RT        "rep_right"
-#define SS_ID_BM_AUTO_SUM       "auto_sum"
-#define SS_ID_BM_CHART          "ss_chart"
+#define SS_ID_BM_TOOLBAR_FILL_DN        "rep_down"
+#define SS_ID_BM_TOOLBAR_FILL_RT        "rep_right"
+#define SS_ID_BM_TOOLBAR_AUTO_SUM       "auto_sum"
+#define SS_ID_BM_TOOLBAR_CHART          "ss_chart"
 
-#define SS_ID_BM_FUNCTION       "form_func"
-#define SS_ID_BM_FORM_CAN       "form_cancel"
-#define SS_ID_BM_FORM_ENT       "form_enter"
+#define SS_ID_BM_TOOLBAR_FUNCTION       "form_func"
+#define SS_ID_BM_TOOLBAR_FORM_CAN       "form_cancel"
+#define SS_ID_BM_TOOLBAR_FORM_ENT       "form_enter"
 
-#define SS_ID_BM_PLUS           "plus"
-#define SS_ID_BM_MINUS          "minus"
-#define SS_ID_BM_TIMES          "times"
-#define SS_ID_BM_DIVIDE         "divide"
+#define SS_ID_BM_TOOLBAR_PLUS           "plus"
+#define SS_ID_BM_TOOLBAR_MINUS          "minus"
+#define SS_ID_BM_TOOLBAR_TIMES          "times"
+#define SS_ID_BM_TOOLBAR_DIVIDE         "divide"
 
-#define SS_ID_BM_MAKE_TEXT      "make_text"
-#define SS_ID_BM_MAKE_NUMBER    "make_number"
-#define SS_ID_BM_MAKE_CONSTANT  "make_const"
-
-#define SS_ID_BM_INSERT_DATE    "ins_date"
-#define SS_ID_BM_INSERT_NAME    "ins_name"
+#define SS_ID_BM_TOOLBAR_MAKE_TEXT      "make_text"
+#define SS_ID_BM_TOOLBAR_MAKE_NUMBER    "make_number"
+#define SS_ID_BM_TOOLBAR_MAKE_CONSTANT  "make_const"
 #elif WINDOWS
+/* multi-bitmaps: 0x1n (+1 = high-dpi variant) */
+#define SS_ID_BM_TOOLBAR_COM_BTN_ID T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SS, 0)
+#define SS_ID_BM_TOOLBAR_COM_BTN(n) T5_RESOURCE_COMMON_BMP(SS_ID_BM_TOOLBAR_COM_BTN_ID, n)
+
+#define SS_ID_BM_TOOLBAR_FILL_DN        SS_ID_BM_TOOLBAR_COM_BTN(0)
+#define SS_ID_BM_TOOLBAR_FILL_RT        SS_ID_BM_TOOLBAR_COM_BTN(1)
+#define SS_ID_BM_TOOLBAR_AUTO_SUM       SS_ID_BM_TOOLBAR_COM_BTN(2)
+#define SS_ID_BM_TOOLBAR_CHART          SS_ID_BM_TOOLBAR_COM_BTN(3)
+
+#define SS_ID_BM_TOOLBAR_FUNCTION       SS_ID_BM_TOOLBAR_COM_BTN(4)
+#define SS_ID_BM_TOOLBAR_FORM_CAN       SS_ID_BM_TOOLBAR_COM_BTN(5)
+#define SS_ID_BM_TOOLBAR_FORM_ENT       SS_ID_BM_TOOLBAR_COM_BTN(6)
+
+#define SS_ID_BM_TOOLBAR_PLUS           SS_ID_BM_TOOLBAR_COM_BTN(7)
+#define SS_ID_BM_TOOLBAR_MINUS          SS_ID_BM_TOOLBAR_COM_BTN(8)
+#define SS_ID_BM_TOOLBAR_TIMES          SS_ID_BM_TOOLBAR_COM_BTN(9)
+#define SS_ID_BM_TOOLBAR_DIVIDE         SS_ID_BM_TOOLBAR_COM_BTN(10)
+
+#define SS_ID_BM_TOOLBAR_MAKE_TEXT      SS_ID_BM_TOOLBAR_COM_BTN(11)
+#define SS_ID_BM_TOOLBAR_MAKE_NUMBER    SS_ID_BM_TOOLBAR_COM_BTN(12)
+#define SS_ID_BM_TOOLBAR_MAKE_CONSTANT  SS_ID_BM_TOOLBAR_COM_BTN(13)
+
 #define SS_ID_BM_BASE           0x1C00
-
-#define SS_ID_BM_COM_BTN_ID T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SS, 0)
-#define SS_ID_BM_COM_BTN(n) T5_RESOURCE_COMMON_BMP(SS_ID_BM_COM_BTN_ID, n)
-
-#define SS_ID_BM_FILL_DN        SS_ID_BM_COM_BTN(0)
-#define SS_ID_BM_FILL_RT        SS_ID_BM_COM_BTN(1)
-#define SS_ID_BM_AUTO_SUM       SS_ID_BM_COM_BTN(2)
-#define SS_ID_BM_CHART          SS_ID_BM_COM_BTN(3)
-
-#define SS_ID_BM_FUNCTION       SS_ID_BM_COM_BTN(4)
-#define SS_ID_BM_FORM_CAN       SS_ID_BM_COM_BTN(5)
-#define SS_ID_BM_FORM_ENT       SS_ID_BM_COM_BTN(6)
-
-#define SS_ID_BM_PLUS           SS_ID_BM_COM_BTN(7)
-#define SS_ID_BM_MINUS          SS_ID_BM_COM_BTN(8)
-#define SS_ID_BM_TIMES          SS_ID_BM_COM_BTN(9)
-#define SS_ID_BM_DIVIDE         SS_ID_BM_COM_BTN(10)
-
-#define SS_ID_BM_MAKE_TEXT      SS_ID_BM_COM_BTN(11)
-#define SS_ID_BM_MAKE_NUMBER    SS_ID_BM_COM_BTN(12)
-#define SS_ID_BM_MAKE_CONSTANT  SS_ID_BM_COM_BTN(13)
-
-#define SS_ID_BM_INSERT_DATE    SS_ID_BM_COM_BTN(14)
-#define SS_ID_BM_INSERT_NAME    SS_ID_BM_COM_BTN(15)
 #endif /* OS */
 
 #define SS_MSG_BASE (STATUS_MSG_INCREMENT * OBJECT_ID_SS)
 
 #define SS_MSG(n)   (SS_MSG_BASE + (n))
 
-/* NB these need to be in the same order as EV_RESO_ENGINEER etc */
+/* NB these need to be in the same order as EV_RESO_ENGINEER etc. */
 #define SS_MSG_DIALOG_FUNCTIONS_ENGINEER        SS_MSG(1)
 #define SS_MSG_DIALOG_FUNCTIONS_DATABASE        SS_MSG(2)
 #define SS_MSG_DIALOG_FUNCTIONS_DATE            SS_MSG(3)
@@ -84,7 +79,7 @@
 #define SS_MSG_DIALOG_FUNCTIONS_ALL             SS_MSG(17)
 #define SS_MSG_DIALOG_FUNCTIONS_SOME            SS_MSG(18)
 
-/* NB these also need to be in the same order as EV_RESO_ENGINEER etc */
+/* NB these also need to be in the same order as EV_RESO_ENGINEER etc. */
 #define SS_MSG_DLG_HT_FUNCTIONS_ENGINEER        SS_MSG(65)
 #define SS_MSG_DLG_HT_FUNCTIONS_DATABASE        SS_MSG(66)
 #define SS_MSG_DLG_HT_FUNCTIONS_DATE            SS_MSG(67)

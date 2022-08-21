@@ -103,7 +103,7 @@ ho_create_docu_menus(
     STATUS status = STATUS_OK;
     P_HO_MENU_DESC p_ho_menu_desc;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_ho_menu_desc), 1);
-    P_DOCU p_docu_config = p_docu_from_config_wr(); /* SKS 21jan95 */
+    const P_DOCU p_docu_config = p_docu_from_config_wr(); /* SKS 21jan95 */
 
     IGNOREPARM_DocuRef_(p_docu);
 
@@ -115,7 +115,7 @@ ho_create_docu_menus(
 
     {
     STATUS status = STATUS_OK;
-    UINT command = IDM_START; // SKS 20mar95 was 0 but that's confusingly low cf IDOK
+    UINT command = IDM_START; /* SKS 20mar95 was 0 but that's confusingly low c.f. IDOK */
     const MENU_ROOT_ID i_max = (MENU_ROOT_ID) array_elements(&p_docu_config->ho_menu_data);
     MENU_ROOT_ID i;
 
@@ -124,8 +124,10 @@ ho_create_docu_menus(
         P_MENU_ROOT p_menu_root;
         BOOL pop_up;
 
-        if(MENU_ROOT_ICON == i)
+        if(MENU_ROOT_ICON_BAR == i)
+        {   /* this is only for RISC OS */
             continue;
+        }
 
         if(NULL == (p_menu_root = sk_menu_root(p_docu_config, i)))
             continue;
@@ -158,11 +160,11 @@ ho_menu_popup(
     _InVal_     S32 menu_root)
 {
     STATUS status = STATUS_FAIL;
-    PC_DOCU p_docu_config = p_docu_from_config();
+    const PC_DOCU p_docu_config = p_docu_from_config();
 
     IGNOREPARM_DocuRef_(p_docu);
 
-    if(array_index_valid(&p_docu_config->ho_menu_data, menu_root))
+    if(array_index_is_valid(&p_docu_config->ho_menu_data, menu_root))
     {
         const PC_HO_MENU_DESC p_ho_menu_desc = array_ptrc(&p_docu_config->ho_menu_data, HO_MENU_DESC, menu_root);
 
@@ -199,7 +201,7 @@ ho_get_menu_bar(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    PC_DOCU p_docu_config = p_docu_from_config();
+    const PC_DOCU p_docu_config = p_docu_from_config();
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_ViewRef_(p_view);
     return(array_ptr(&p_docu_config->ho_menu_data, HO_MENU_DESC, MENU_ROOT_DOCU)->hmenu);
@@ -214,9 +216,9 @@ ho_prefer_menu_bar(
     _DocuRef_   P_DOCU p_docu_in,
     _InVal_     S32 menu_id)
 {
-    PC_DOCU p_docu_config = p_docu_from_config();
+    const PC_DOCU p_docu_config = p_docu_from_config();
 
-    if(array_index_valid(&p_docu_config->ho_menu_data, menu_id))
+    if(array_index_is_valid(&p_docu_config->ho_menu_data, menu_id))
     {
         const PC_HO_MENU_DESC p_ho_menu_desc = array_ptrc(&p_docu_config->ho_menu_data, HO_MENU_DESC, menu_id);
 
@@ -430,7 +432,7 @@ ho_menu_dispose(void)
 
 static void
 host_wm_initmenu_recurse(
-    _DocuRef_   PC_DOCU p_docu,
+    _DocuRef_maybenone_ PC_DOCU p_docu,
     P_MENU_ROOT p_menu_root,
     HMENU hmenu)
 {
@@ -448,7 +450,7 @@ host_wm_initmenu_recurse(
             if(0 == /*"C"*/strncmp("Button:", p_command, n_bytes))
             {
                 T5_TOOLBAR_TOOL_ENABLE_QUERY t5_toolbar_tool_enable_query;
-                t5_toolbar_tool_enable_query.name = _tstr_from_sbstr(p_command + n_bytes);
+                t5_toolbar_tool_enable_query.name = PtrAddBytes(PC_USTR, p_command, n_bytes);
                 status_assert(object_call_id(OBJECT_ID_TOOLBAR, de_const_cast(P_DOCU, p_docu), T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY, &t5_toolbar_tool_enable_query));
                 state = t5_toolbar_tool_enable_query.enabled ? MF_ENABLED : (MF_DISABLED | MF_GRAYED);
             }
@@ -523,6 +525,8 @@ host_onInitMenu(
             if(!IS_DOCU_NONE(p_docu))
                 host_wm_initmenu_for_docu(p_docu);
 
+            DOCU_ASSERT(p_docu); /* currently all callers DO pass valid DOCU */
+            __analysis_assume(p_docu);
             host_wm_initmenu_recurse(p_docu, p_menu_root, hmenu);
 
             break;

@@ -772,10 +772,13 @@ array_range_proc_number_try_integer(
     _InoutRef_  P_STAT_BLOCK p_stat_block,
     _InoutRef_  P_EV_DATA p_ev_data)
 {
-    BOOL int_done = 0;
+    BOOL int_done = FALSE;
 
     switch(p_stat_block->exec_array_range_id)
     {
+    default:
+        return(FALSE);
+
     case ARRAY_RANGE_MAX:
     case ARRAY_RANGE_MAXA:
         if((0 == p_stat_block->count) || (p_ev_data->arg.integer > p_stat_block->running_data.arg.integer))
@@ -2472,8 +2475,8 @@ poke_output(
             switch(p_ev_data->did_num)
             {
             case RPN_DAT_SLR:
-                /* SKS 04sep95 allows set_value to poke arrays eg set_value({a1,b1,c1,d1},{1,2,3,4}) */
-                /* the important case is obviously when using index as l-value eg set_value(index(a11d16,1,1,4,row),a2d2) */
+                /* SKS 04sep95 allows set_value to poke arrays e.g. set_value({a1,b1,c1,d1},{1,2,3,4}) */
+                /* the important case is obviously when using index as l-value e.g. set_value(index(a11d16,1,1,4,row),a2d2) */
                 status = poke_cell(&p_ev_data->arg.slr, p_ev_data_in, p_ev_slr_cur);
                 break;
 
@@ -3924,7 +3927,7 @@ ev_recalc(void)
 
     oldfpe = signal(SIGFPE, (P_PROC_SIGNAL) ev_recalc_signal_handler);
 
-    /* catch FP errors etc */
+    /* catch FP errors etc. */
     if((jmpval = setjmp(ev_recalc_jmp_buf)) != 0)
     {
         reportf(TEXT("*** ev_recalc setjmp returned from signal handler ***"));

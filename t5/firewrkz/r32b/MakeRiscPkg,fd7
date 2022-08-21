@@ -9,7 +9,7 @@
 
 IfThere $.Temp Then Else %CDir $.Temp
 
-Set t5$Release 2_00_05
+Set t5$Release 2_01_00
 
 Set t5$Disc $.Temp.Fireworkz_<t5$Release>
 Set t5$Zip  $.Temp.Fireworkz_<t5$Release>/zip
@@ -67,8 +67,8 @@ Set ap$Resource$Dir <Obey$Dir>.^.^.<t5$Product>.resource.riscos.<t5$Country>
 %Access                                         <t5$Disc>.Z.Resource.Choices.* r/r
 
 %CDir                                           <t5$Disc>.Z.Resource.Dicts
-%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.master  <t5$Disc>.Z.Resource.Dicts.Master  ~rf~cln~v
-%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.masterc <t5$Disc>.Z.Resource.Dicts.MasterC ~rf~cln~v
+%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.MasterAsz <t5$Disc>.Z.Resource.Dicts.Master  ~rf~cln~v
+%Copy <Obey$Dir>.^.^.ob_spell.resource.dicts.MasterCsz <t5$Disc>.Z.Resource.Dicts.MasterC ~rf~cln~v
 %Access                                         <t5$Disc>.Z.Resource.Dicts.* r/r
 
 |||%CDir                                           <t5$Disc>.Z.Resource.ForeignTem

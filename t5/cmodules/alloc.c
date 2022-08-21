@@ -809,7 +809,7 @@ alloc_init(void)
 
     for(;;) /* loop for structure */
     {
-        /*reportf("g_dynamic_area_limit: %d", g_dynamic_area_limit);*/
+        /*reportf(TEXT("g_dynamic_area_limit: %d"), g_dynamic_area_limit);*/
         if((alloc_dynamic_area_handle = flex_init(de_const_cast(char *, g_dynamic_area_name), 0, g_dynamic_area_limit)) < 0)
             break;
 
@@ -2422,7 +2422,9 @@ alloc_barf =
     alloc__barf_calloc,
     alloc__barf_free,
     alloc__barf_malloc,
-    alloc__barf_realloc
+    alloc__barf_realloc,
+    NULL,   /* size */
+    NULL    /* validate */
 };
 
 #endif /* RISCOS */

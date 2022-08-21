@@ -36,7 +36,7 @@ case T5_MSG_CLOSE2:
 * NOTE:
 *
 * the uref helper routines in here are configured for
-* updating dependent references (ie refto, not refby) - thus
+* updating dependent references (i.e. refto, not refby) - thus
 * a T5_MSG_UREF_OVERWRITE will never generate a DEP_DELETE even
 * if the entire range / cell is spanned, since the dependent is
 * not deleted; Old ev_uref muddled the by/to cases for deleting
@@ -69,8 +69,8 @@ case T5_MSG_CLOSE2:
 *    T5_MSG_UREF_CHANGE
 *       issued when part of a document has changed; typically follows
 *       a REPLACE, but is issued after the physical operation is complete;
-*       dependents use the CHANGE message to read the up-to-date data eg
-*       after a cell has been recalced
+*       dependents use the CHANGE message to read the up-to-date data
+*       e.g. after a cell has been recalced
 *
 *    T5_MSG_UREF_SWAP_ROWS
 *       issued when two rows are swapped in a sort; refs pointing
@@ -425,9 +425,10 @@ PROC_EVENT_PROTO(extern, uref_event)
             if(p_uref_entry->deleted)
                 continue;
 
-            if((uref_event_block.reason.code = (UBF) uref_match_region(&p_uref_entry->uref_id.region,
-                                                                       t5_message,
-                                                                       &uref_event_block)) != DEP_NONE)
+            if((uref_event_block.reason.code =
+                    UBF_PACK(uref_match_region(&p_uref_entry->uref_id.region,
+                                               t5_message,
+                                               &uref_event_block))) != DEP_NONE)
             {
                 uref_event_block.uref_id = p_uref_entry->uref_id;
                 (*p_uref_entry->p_proc_uref_event)(p_docu, t5_message, &uref_event_block);

@@ -7,7 +7,7 @@
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
 
-/* Drawfile objects for Fireworkz */
+/* Drawfile (and other image file) objects for Fireworkz */
 
 /* RCM June 1992 */
 
@@ -20,6 +20,10 @@
 #include "cmodules/gr_diag.h"
 
 #include "cmodules/collect.h"
+
+#if WINDOWS
+#include "ob_skel/ho_gdip_image.h"
+#endif
 
 /*
 internal structure
@@ -41,13 +45,16 @@ typedef struct DRAWING_INFO
 
     PTSTR filename; /* either referenced filename, or the original filename, if embedded */
 
-    PTSTR tstr_type_name;
-#define TYPE_NAME_RISCOS_DRAW_FILE TEXT("RISC OS") /* -> use_cache_handle */
-
-    BOOL use_cache_handle;
-    GR_CACHE_HANDLE cache_handle;
+    T5_FILETYPE t5_filetype; /* of the original image file data */
+    P_USTR ustr_type_name;
+#define USTR_TYPE_NAME_RISCOS USTR_TEXT("RISC OS")
+    /* for DrawFileReference actually means 'can be easily loaded on RISC OS Fireworkz without conversion' (Draw,Sprite,JPEG) but NOT for DrawFileEmbdedded where older versions would throw a fit */
 
     ARRAY_HANDLE h_unhandled_data;
+
+    BOOL use_image_cache_handle;
+    IMAGE_CACHE_HANDLE image_cache_handle;
+    BOOL image_cache_handle_is_draw_representation; /* i.e. not the original */
 }
 DRAWING_INFO, * P_DRAWING_INFO;
 
@@ -55,7 +62,7 @@ typedef struct DRAW_LOAD_INSTANCE
 {
     ARRAY_HANDLE h_mapping_list;
 }
-DRAW_LOAD_INSTANCE, * P_DRAW_LOAD_INSTANCE;
+DRAW_LOAD_INSTANCE, * P_DRAW_LOAD_INSTANCE, ** P_P_DRAW_LOAD_INSTANCE;
 
 typedef struct DRAW_LOAD_MAP
 {
@@ -87,20 +94,30 @@ construct argument types
 */
 
 static ARG_TYPE
-args_drawfile_embedded[] =
+args_image_file_embedded[] = /* new for 2.01 */
 {
     ARG_TYPE_S32  | ARG_MANDATORY, /* extref */
-    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK, /* type_name */
-    ARG_TYPE_RAW_DS | ARG_MANDATORY,
-    ARG_TYPE_TSTR | ARG_OPTIONAL, /* new for 1.31/03, therefore optional */
+    ARG_TYPE_USTR | ARG_MANDATORY_OR_BLANK, /* Image type_name (0xABC) */
+    ARG_TYPE_RAW_DS | ARG_MANDATORY, /* Image file data */
+    ARG_TYPE_TSTR | ARG_OPTIONAL, /* original leafname */
     ARG_TYPE_NONE
 };
 
 static ARG_TYPE
-args_drawfile_reference[] =
+args_drawfile_embedded[] =
 {
     ARG_TYPE_S32  | ARG_MANDATORY, /* extref */
-    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK, /* type_name */
+    ARG_TYPE_USTR | ARG_MANDATORY_OR_BLANK, /* Draw type_name */
+    ARG_TYPE_RAW_DS | ARG_MANDATORY, /* Draw file data */ /* for 2.01, this is usually best representation for backwards compatibility */
+    ARG_TYPE_TSTR | ARG_OPTIONAL, /* original leafname */
+    ARG_TYPE_NONE
+};
+
+static ARG_TYPE
+args_drawfile_reference[] = /* really ImageFileReference but try very hard for backwards/forwards compatibility */
+{
+    ARG_TYPE_S32  | ARG_MANDATORY, /* extref */
+    ARG_TYPE_USTR | ARG_MANDATORY_OR_BLANK, /* type_name */
     ARG_TYPE_TSTR | ARG_MANDATORY, /* filename */
     ARG_TYPE_NONE
 };
@@ -113,130 +130,264 @@ static CONSTRUCT_TABLE
 object_construct_table[] =
 {                                                                                                   /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
+    { "ImageFileEmbedded",      args_image_file_embedded,   T5_CMD_IMAGE_FILE_EMBEDDED,                 { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "DrawFileEmbedded",       args_drawfile_embedded,     T5_CMD_DRAWFILE_EMBEDDED,                   { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "DrawFileReference",      args_drawfile_reference,    T5_CMD_DRAWFILE_REFERENCE,                  { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
 
     { NULL,                     NULL,                       T5_EVENT_NONE } /* end of table */
 };
 
+static void
+type_name_from_filetype(
+    _Out_writes_z_(elemof_buffer) P_USTR buffer,
+    _InVal_     U32 elemof_buffer,
+    _InVal_     T5_FILETYPE t5_filetype,
+    _InVal_     BOOL strict_for_embed)
+{
+    if(!strict_for_embed)
+    {
+        switch(t5_filetype)
+        {
+        case FILETYPE_SPRITE:
+        case FILETYPE_JPEG:
+            ustr_xstrkpy(buffer, elemof_buffer, USTR_TYPE_NAME_RISCOS);
+            return;
+
+        default:
+            break;
+        }
+    }
+
+    switch(t5_filetype)
+    {
+    case FILETYPE_DRAW:
+        ustr_xstrkpy(buffer, elemof_buffer, USTR_TYPE_NAME_RISCOS);
+        break;
+
+    default:
+        consume_int(ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT("0x%03X"), (int) t5_filetype));
+        break;
+    }
+}
+
+_Check_return_
+static STATUS
+ensure_draw_load_instance(
+    _InRef_     P_OF_IP_FORMAT p_of_ip_format,
+    _OutRef_    P_P_DRAW_LOAD_INSTANCE p_p_draw_load_instance)
+{
+    P_DRAW_LOAD_INSTANCE p_draw_load_instance = collect_goto_item(DRAW_LOAD_INSTANCE, &p_of_ip_format->object_data_list, OBJECT_ID_DRAW);
+    STATUS status = STATUS_OK;
+
+    if(NULL == p_draw_load_instance)
+    {
+        DRAW_LOAD_INSTANCE draw_load_instance;
+
+        draw_load_instance.h_mapping_list = 0;
+
+        p_draw_load_instance = collect_add_entry_elem(DRAW_LOAD_INSTANCE, &p_of_ip_format->object_data_list, &draw_load_instance, OBJECT_ID_DRAW, &status);
+    }
+
+    *p_p_draw_load_instance = p_draw_load_instance;
+
+    return(status);
+}
+
 T5_CMD_PROTO(static, draw_file_load)
 {
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
-    P_DRAW_LOAD_INSTANCE p_draw_load_instance = collect_goto_item(DRAW_LOAD_INSTANCE, &p_t5_cmd->p_of_ip_format->object_data_list, OBJECT_ID_DRAW);
+    const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
+    P_DRAW_LOAD_INSTANCE p_draw_load_instance = NULL;
     P_DRAW_LOAD_MAP p_draw_load_map = NULL;
     P_DRAWING_INFO p_drawing_info = NULL;
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_drawing_info), TRUE);
+    BOOL subsequent_draw_data = FALSE;
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 3); /* NB just the common span */
     const S32 extref = p_args[0].val.s32;
-    PCTSTR tstr_type_name = p_args[1].val.tstr;
-    PCTSTR filename = (t5_message == T5_CMD_DRAWFILE_REFERENCE) ? p_args[2].val.tstr : NULL;
+    PC_USTR ustr_type_name = p_args[1].val.ustr; /* for referenced files we always ignore the incoming one now but older versions didn't */
+    UCHARZ type_name_buffer[8];
+    const PCTSTR filename = (T5_CMD_DRAWFILE_REFERENCE == t5_message) ? p_args[2].val.tstr : NULL;
+    T5_FILETYPE t5_filetype;
     STATUS status = STATUS_NOMEM;
 
-    /* there are some broken documents out there with empty type fields */
-    if(CH_NULL == tstr_type_name[0])
-        tstr_type_name = TYPE_NAME_RISCOS_DRAW_FILE;
+    status_return(ensure_draw_load_instance(p_of_ip_format, &p_draw_load_instance));
+
+    if(T5_CMD_DRAWFILE_EMBEDDED == t5_message)
+    {   /* is there already an entry created by an earlier ImageFileEmbedded? */
+        ARRAY_INDEX i;
+
+        for(i = 0; i < array_elements(&p_draw_load_instance->h_mapping_list); ++i)
+        {
+            P_DRAW_LOAD_MAP p_draw_load_map_test = array_ptr(&p_draw_load_instance->h_mapping_list, DRAW_LOAD_MAP, i);
+
+            if(extref == p_draw_load_map_test->extref)
+            {
+                P_DRAWING_INFO p_drawing_info_test = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, p_draw_load_map_test->intref);
+
+                if(DRAWING_EMBEDDED == p_drawing_info_test->tag)
+                {
+                    p_draw_load_map = p_draw_load_map_test;
+                    p_drawing_info = p_drawing_info_test;
+                    if(p_drawing_info->use_image_cache_handle)
+                    {   /* the earlier ImageFileEmbedded worked well, so ignore this subsequent DrawFileEmbedded */
+                        return(STATUS_OK);
+                    }
+                    /* the earlier ImageFileEmbedded did not work well, so use the Draw data from this DrawFileEmbedded */
+                    assert(0 != p_drawing_info->h_unhandled_data);
+                    subsequent_draw_data = TRUE;
+                    break;
+                }
+            }
+        }
+    }
 
     for(;;) /* loop for structure */
     {
-        if(NULL == p_draw_load_instance)
+        if(NULL == p_drawing_info)
         {
-            DRAW_LOAD_INSTANCE draw_load_instance;
-
-            draw_load_instance.h_mapping_list = 0;
-
-            if(NULL == (p_draw_load_instance = collect_add_entry_elem(DRAW_LOAD_INSTANCE, &p_t5_cmd->p_of_ip_format->object_data_list, &draw_load_instance, OBJECT_ID_DRAW, &status)))
-                break;
+            if(NULL == (p_drawing_info = al_array_extend_by(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, 1, &array_init_block, &status)))
+                return(status);
         }
 
+        if(NULL == p_draw_load_map)
         {
-        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_draw_load_map), TRUE);
+            SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_draw_load_map), TRUE);
 
-        if(NULL == (p_draw_load_map = al_array_extend_by(&p_draw_load_instance->h_mapping_list, DRAW_LOAD_MAP, 1, &array_init_block, &status)))
-            break;
+            if(NULL == (p_draw_load_map = al_array_extend_by(&p_draw_load_instance->h_mapping_list, DRAW_LOAD_MAP, 1, &array_init_block, &status)))
+                break;
 
-        p_draw_load_map->extref = extref;
-        } /*block*/
+            p_draw_load_map->extref = extref;
 
+            p_draw_load_map->intref = array_indexof_element(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, p_drawing_info);
+        }
+
+        if(T5_CMD_DRAWFILE_REFERENCE == t5_message)
         {
-        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_drawing_info), TRUE);
+            BOOL file_status;
 
-        if(NULL == (p_drawing_info = al_array_extend_by(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, 1, &array_init_block, &status)))
-            break;
-        } /*block*/
+            p_drawing_info->tag = DRAWING_REFERENCE;
 
-        p_draw_load_map->intref = array_indexof_element(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, p_drawing_info);
-
-        p_drawing_info->tag = (t5_message == T5_CMD_DRAWFILE_EMBEDDED) ? DRAWING_EMBEDDED : DRAWING_REFERENCE;
-
-        PTR_ASSERT(tstr_type_name);
-        status_break(status = alloc_block_tstr_set(&p_drawing_info->tstr_type_name, tstr_type_name, &p_docu->general_string_alloc_block));
-
-        if(0 == tstrcmp(tstr_type_name, TYPE_NAME_RISCOS_DRAW_FILE))
-            p_drawing_info->use_cache_handle = TRUE;
-
-        if(p_drawing_info->tag == DRAWING_REFERENCE)
-        {
             PTR_ASSERT(filename);
             status_break(status = alloc_block_tstr_set(&p_drawing_info->filename, filename, &p_docu->general_string_alloc_block))
 
-            if(p_drawing_info->use_cache_handle)
-            {
-                BOOL file_status;
-                ARRAY_HANDLE h_data;
+            file_status = file_is_file(filename);
 
-                if(!gr_cache_entry_query(&p_drawing_info->cache_handle, filename))
-                {
-                    T5_FILETYPE t5_filetype;
+            if(file_status <= 0)
+            {   /* report errors locally and keep loading the file, dependent notes OK */
+                reperr(ERR_NOTFOUND_REFERENCED_PICTURE, filename);
 
-                    file_status = file_is_file(filename);
+                t5_filetype = FILETYPE_UNDETERMINED;
 
-                    if(file_status == 0)
-                        /* report errors locally and keep loading the file, dependent notes OK */
-                        reperr(ERR_NOTFOUND_REFERENCED_PICTURE, filename);
-
-                    t5_filetype = host_t5_filetype_from_file(filename);
-
-                    status_break(gr_cache_entry_ensure(&p_drawing_info->cache_handle, filename, t5_filetype));
-                }
-                else
-                    file_status = 1;
-
-                h_data = (file_status > 0) ? gr_cache_loaded_ensure(p_drawing_info->cache_handle) : 0;
-
-                if(!h_data)
-                    /* report errors locally and keep loading the file, dependent notes OK */
-                    reperr(gr_cache_error_query(p_drawing_info->cache_handle), filename);
-
-                gr_cache_ref(p_drawing_info->cache_handle, 1);
+                ustr_type_name = USTR_TYPE_NAME_RISCOS; /* try to reload the next time if saved and then presented to an older version */
             }
             else
-            {   /* can't do anything with unhandled file references */
-                /*EMPTY*/
+            {
+                t5_filetype = t5_filetype_from_filename(filename);
+
+                type_name_from_filetype(ustr_bptr(type_name_buffer), elemof32(type_name_buffer), t5_filetype, FALSE /*strict_for_embed*/);
+
+                ustr_type_name = ustr_bptr(type_name_buffer);
+            }
+
+            p_drawing_info->t5_filetype = t5_filetype; /* remember the type of image file loaded this time (may vary!) */
+
+            status_break(status = alloc_block_ustr_set(&p_drawing_info->ustr_type_name, ustr_type_name, &p_docu->general_string_alloc_block));
+
+            if(image_cache_can_import_with_image_convert(t5_filetype))
+            {
+                status_break(status = image_cache_entry_ensure(&p_drawing_info->image_cache_handle, filename, t5_filetype));
+
+                p_drawing_info->use_image_cache_handle = TRUE;
+
+                if(file_status > 0)
+                {
+                    const ARRAY_HANDLE h_data = image_cache_loaded_ensure(p_drawing_info->image_cache_handle);
+
+                    if(0 == h_data)
+                    {   /* report errors locally and keep loading the file, dependent notes OK */
+                        reperr(image_cache_error_query(p_drawing_info->image_cache_handle), filename);
+                    }
+                }
             }
         }
-        else
+        else /* DRAWING_EMBEDDED */
         {
-            const P_ARGLIST_ARG p_arg_2 = de_const_cast(P_ARGLIST_ARG, &p_args[2]);
+            const P_ARGLIST_ARG p_arg_2 = de_const_cast(P_ARGLIST_ARG, &p_args[2]); /* Draw or Image file data */
             P_ARGLIST_ARG p_arg_3;
 
-            if(arg_present(&p_t5_cmd->arglist_handle, 3, &p_arg_3))
-            {   /* SKS 13.10.99 preserve original embedded picture's filename */
-                PCTSTR tstr_original_filename = p_arg_3->val.tstr;
-                PTR_ASSERT(tstr_original_filename);
-                status_break(status = alloc_block_tstr_set(&p_drawing_info->filename, tstr_original_filename, &p_docu->general_string_alloc_block))
-            }
-
-            if(p_drawing_info->use_cache_handle)
+            if(subsequent_draw_data)
             {
-                if(status_fail(gr_cache_embedded(&p_drawing_info->cache_handle, &p_arg_2->val.raw)))
-                    break;
-
-                gr_cache_ref(p_drawing_info->cache_handle, 1);
+                /* try embedding the supplied Draw data representation so the user might see something */
+                if(status_ok(image_cache_embedded(&p_drawing_info->image_cache_handle, &p_arg_2->val.raw, FILETYPE_DRAW)))
+                {
+                    p_drawing_info->use_image_cache_handle = TRUE;
+                    p_drawing_info->image_cache_handle_is_draw_representation = TRUE;
+                }
+                /* otherwise can't embed the Draw data either */ /* keep loading the file, dependent notes OK */
             }
             else
-            {   /* simply steal what we have been passed in and keep it around safely for the save */
-                p_drawing_info->h_unhandled_data = p_arg_2->val.raw;
-                p_arg_2->val.raw = 0; /* yum yum */
+            {
+                p_drawing_info->tag = DRAWING_EMBEDDED;
+
+                if(arg_present(&p_t5_cmd->arglist_handle, 3, &p_arg_3))
+                {   /* SKS 13.10.99 preserve original embedded picture's filename */
+                    PCTSTR tstr_original_filename = p_arg_3->val.tstr;
+                    PTR_ASSERT(tstr_original_filename);
+                    status_break(status = alloc_block_tstr_set(&p_drawing_info->filename, tstr_original_filename, &p_docu->general_string_alloc_block))
+                }
+                else
+                {
+                    p_drawing_info->filename = tstr_empty_string;
+                }
+
+                if((PtrGetByte(ustr_type_name) == '0') && (PtrGetByteOff(ustr_type_name, 1) == 'x'))
+                {   /* Fireworkz can't accurately discriminate between all filetype variants */
+                    /* hex filetype from command dominates */
+                    t5_filetype = (T5_FILETYPE) strtoul(PtrAddBytes(const char *, ustr_type_name, 2), NULL, 16);
+                }
+                else
+                {
+                    if(ustr_compare_equals(ustr_type_name, USTR_TYPE_NAME_RISCOS))
+                    {   /* pre-2.01 only allowed Draw files to be embedded */
+                        t5_filetype = FILETYPE_DRAW;
+
+                        ustr_type_name = USTR_TYPE_NAME_RISCOS;
+                    }
+                    else
+                    {   /* this way you can set the type name blank to let Fireworkz have another go at it */
+                        t5_filetype = t5_filetype_from_data(array_rangec(&p_arg_2->val.raw, BYTE, 0, array_elements32(&p_arg_2->val.raw)), array_elements32(&p_arg_2->val.raw));
+
+                        type_name_from_filetype(ustr_bptr(type_name_buffer), elemof32(type_name_buffer), t5_filetype, TRUE /*strict_for_embed*/);
+
+                        ustr_type_name = ustr_bptr(type_name_buffer);
+                    }
+                }
+
+                p_drawing_info->t5_filetype = t5_filetype; /* remember the type of image data */
+
+                status_break(status = alloc_block_ustr_set(&p_drawing_info->ustr_type_name, ustr_type_name, &p_docu->general_string_alloc_block));
+
+                if(image_cache_can_import_with_image_convert(t5_filetype))
+                {
+                    if(status_ok(image_cache_embedded(&p_drawing_info->image_cache_handle, &p_arg_2->val.raw, t5_filetype)))
+                    {
+                        p_drawing_info->use_image_cache_handle = TRUE;
+                    }
+                    /* otherwise can't embed the Image data */ /* keep loading the file, dependent notes OK */
+                }
+
+                if(!p_drawing_info->use_image_cache_handle)
+                {   /* either the Image file data was not importable on this system or the embed failed */
+                    /* simply steal what we have been passed in and keep it around safely for the save */
+                    p_drawing_info->h_unhandled_data = p_arg_2->val.raw;
+                    p_arg_2->val.raw = 0; /* yum yum */
+                }
             }
+        }
+
+        if(p_drawing_info->use_image_cache_handle)
+        {
+            image_cache_ref(p_drawing_info->image_cache_handle, 1);
         }
 
         return(STATUS_OK);
@@ -250,9 +401,6 @@ T5_CMD_PROTO(static, draw_file_load)
         al_array_shrink_by(&p_draw_load_instance->h_mapping_list, -1);
 
     /* don't care about the load instance data, he'll be freed at load process end (and may already have valid entries) */
-
-    if(STATUS_NOMEM == status)
-        status = (t5_message == T5_CMD_DRAWFILE_REFERENCE) ? ERR_NOMEM_REFERENCED_PICTURE : ERR_NOMEM_EMBEDDED_PICTURE;
 
     /* report errors locally and keep loading the file, but dependent notes should blow */
     if(filename)
@@ -270,16 +418,18 @@ T5_MSG_PROTO(static, draw_msg_note_delete, /*_Inout_*/ P_ANY p_data)
 
     IGNOREPARM_InVal_(t5_message);
 
-    if(array_index_valid(&p_draw_instance_data->h_drawing_list, intref))
+    if(array_index_is_valid(&p_draw_instance_data->h_drawing_list, intref))
     {
         const P_DRAWING_INFO p_drawing_info = array_ptr_no_checks(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, intref);
 
-        if(p_drawing_info->use_cache_handle)
+        if(p_drawing_info->use_image_cache_handle)
         {
-            p_drawing_info->use_cache_handle = FALSE;
+            p_drawing_info->use_image_cache_handle = FALSE;
 
-            gr_cache_ref(p_drawing_info->cache_handle, 0);
+            image_cache_ref(p_drawing_info->image_cache_handle, 0);
         }
+
+        al_array_dispose(&p_drawing_info->h_unhandled_data);
     }
 
     return(STATUS_OK);
@@ -317,13 +467,13 @@ T5_MSG_PROTO(static, draw_note_donate, P_NOTE_OBJECT_SNAPSHOT p_note_object_snap
 
         p_drawing_info->tag = DRAWING_EMBEDDED;
 
-        status_break(status = alloc_block_tstr_set(&p_drawing_info->tstr_type_name, TYPE_NAME_RISCOS_DRAW_FILE, &p_docu->general_string_alloc_block));
+        status_break(status = alloc_block_ustr_set(&p_drawing_info->ustr_type_name, USTR_TYPE_NAME_RISCOS, &p_docu->general_string_alloc_block));
 
-        status_break(status = gr_cache_embedded(&p_drawing_info->cache_handle, &array_handle));
+        status_break(status = image_cache_embedded(&p_drawing_info->image_cache_handle, &array_handle, FILETYPE_DRAW));
 
-        p_drawing_info->use_cache_handle = TRUE;
+        p_drawing_info->use_image_cache_handle = TRUE;
 
-        gr_cache_ref(p_drawing_info->cache_handle, 1);
+        image_cache_ref(p_drawing_info->image_cache_handle, 1);
 
         {
         NOTE_UPDATE_OBJECT_INFO note_update_object_info;
@@ -351,12 +501,28 @@ T5_MSG_PROTO(static, draw_msg_note_object_size_query, P_NOTE_OBJECT_SIZE p_note_
 
     IGNOREPARM_InVal_(t5_message);
 
-    if(p_drawing_info->use_cache_handle)
+    if(p_drawing_info->use_image_cache_handle)
     {
-        ARRAY_HANDLE h_data = gr_cache_search(p_drawing_info->cache_handle);
+        ARRAY_HANDLE h_data;
 
-        if(0 != array_elements32(&h_data))
-            host_read_drawfile_size(array_basec(&h_data, BYTE), &p_note_object_size->pixit_size);
+#if WINDOWS
+        GdipImage gdip_image = image_cache_search_gdip_image(p_drawing_info->image_cache_handle, &h_data);
+
+        if(NULL != gdip_image)
+        {
+            SIZE image_size;
+            GdipImage_GetImageSize(gdip_image, &image_size);
+            p_note_object_size->pixit_size.cx = image_size.cx;
+            p_note_object_size->pixit_size.cy = image_size.cy;
+        }
+        else
+#endif /* OS */
+        {   /* must be a Draw file */
+            h_data = image_cache_search(p_drawing_info->image_cache_handle, FALSE);
+
+            if(array_elements32(&h_data) >= sizeof32(DRAW_FILE_HEADER))
+                host_read_drawfile_pixit_size(array_basec(&h_data, BYTE), &p_note_object_size->pixit_size);
+        }
 
         p_note_object_size->processed = 1;
     }
@@ -399,18 +565,83 @@ T5_MSG_PROTO(static, draw_msg_note_ensure_embedded, P_NOTE_ENSURE_EMBEDDED p_not
 
     if(p_drawing_info->tag == DRAWING_REFERENCE)
     {
-        if(p_drawing_info->use_cache_handle)
+        if(p_drawing_info->use_image_cache_handle)
         {
-            ARRAY_HANDLE h_data = gr_cache_loaded_ensure(p_drawing_info->cache_handle);
+            const ARRAY_HANDLE h_data = image_cache_loaded_ensure(p_drawing_info->image_cache_handle);
 
-            if(!h_data)
-                return(gr_cache_error_query(p_drawing_info->cache_handle));
+            if(0 == h_data)
+                return(image_cache_error_query(p_drawing_info->image_cache_handle));
 
             p_drawing_info->tag = DRAWING_EMBEDDED;
         }
     }
 
     return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+draw_msg_note_save_reference(
+    _InRef_     P_DRAWING_INFO p_drawing_info,
+    _InRef_     P_NOTE_ENSURE_SAVED p_note_ensure_saved,
+    _InVal_     T5_MESSAGE t5_message)
+{
+    P_OF_OP_FORMAT p_of_op_format = p_note_ensure_saved->p_of_op_format;
+    const OBJECT_ID object_id = OBJECT_ID_DRAW;
+    PC_CONSTRUCT_TABLE p_construct_table;
+    ARGLIST_HANDLE arglist_handle;
+    STATUS status;
+
+    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
+    {
+        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 3);
+
+        PTR_ASSERT(p_drawing_info->ustr_type_name);
+
+        p_args[0].val.s32 = p_note_ensure_saved->extref;
+        p_args[1].val.ustr = p_drawing_info->ustr_type_name;
+        p_args[2].val.tstr = localise_filename(p_of_op_format->output.u.file.filename, p_drawing_info->filename);
+
+        status = ownform_save_arglist(arglist_handle, object_id, p_construct_table, p_of_op_format);
+
+        arglist_dispose(&arglist_handle);
+    }
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+draw_msg_note_save_embedded(
+    _InRef_     P_DRAWING_INFO p_drawing_info,
+    _InRef_     P_NOTE_ENSURE_SAVED p_note_ensure_saved,
+    _InVal_     T5_MESSAGE t5_message,
+    _In_z_      PC_USTR ustr_type_name,
+    _InVal_     ARRAY_HANDLE h_data)
+{
+    P_OF_OP_FORMAT p_of_op_format = p_note_ensure_saved->p_of_op_format;
+    const OBJECT_ID object_id = OBJECT_ID_DRAW;
+    PC_CONSTRUCT_TABLE p_construct_table;
+    ARGLIST_HANDLE arglist_handle;
+    STATUS status;
+
+    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
+    {
+        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 4);
+
+        p_args[0].val.s32 = p_note_ensure_saved->extref;
+        p_args[1].val.ustr = ustr_type_name;
+        p_args[2].val.raw = h_data;
+        p_args[3].val.tstr = file_leafname(p_drawing_info->filename); /* only original leafname stored when embedded (covers handling a scrapfile's name) */
+
+        status = ownform_save_arglist(arglist_handle, object_id, p_construct_table, p_of_op_format);
+
+        p_args[2].val.raw = 0; /* reclaim handle */
+
+        arglist_dispose(&arglist_handle);
+    }
+
+    return(status);
 }
 
 T5_MSG_PROTO(static, draw_msg_note_ensure_saved, P_NOTE_ENSURE_SAVED p_note_ensure_saved)
@@ -464,36 +695,51 @@ T5_MSG_PROTO(static, draw_msg_note_ensure_saved, P_NOTE_ENSURE_SAVED p_note_ensu
 
     {
     const P_DRAWING_INFO p_drawing_info = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, (ARRAY_INDEX) (intptr_t) p_draw_save_map->object_data_ref);
-    const T5_MESSAGE t5_message = (p_drawing_info->tag == DRAWING_EMBEDDED) ? T5_CMD_DRAWFILE_EMBEDDED : T5_CMD_DRAWFILE_REFERENCE;
-    PC_CONSTRUCT_TABLE p_construct_table;
-    ARGLIST_HANDLE arglist_handle;
 
-    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
+    if(DRAWING_REFERENCE == p_drawing_info->tag)
     {
-        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 3); /* just the common span */
+        status = draw_msg_note_save_reference(p_drawing_info, p_note_ensure_saved, T5_CMD_DRAWFILE_REFERENCE);
+    }
+    else
+    {
+        ARRAY_HANDLE h_image_data = 0;
+        ARRAY_HANDLE h_draw_data = 0;
 
-        p_args[0].val.s32 = p_note_ensure_saved->extref;
-        p_args[1].val.tstr = p_drawing_info->tstr_type_name;
+        if(FILETYPE_DRAW == p_drawing_info->t5_filetype)
+        {   /* just save DrawFileEmbedded */
+            assert(0 == p_drawing_info->h_unhandled_data);
+            assert(p_drawing_info->use_image_cache_handle);
+            if(p_drawing_info->use_image_cache_handle)
+                h_draw_data = image_cache_search(p_drawing_info->image_cache_handle, TRUE); /* obtain original Draw data handle for output (saves don't degrade) */
 
-        if(p_drawing_info->tag == DRAWING_EMBEDDED)
-        {
-            if(p_drawing_info->use_cache_handle)
-                p_args[2].val.raw = gr_cache_search(p_drawing_info->cache_handle); /* loan handle for output */
-            else
-                p_args[2].val.raw = p_drawing_info->h_unhandled_data; /* loan handle for output */
-            p_arglist_arg(&arglist_handle, 3)->val.tstr = p_drawing_info->filename; /* only original leafname stored when embedded */
+            if(0 != h_draw_data)
+                status = draw_msg_note_save_embedded(p_drawing_info, p_note_ensure_saved, T5_CMD_DRAWFILE_EMBEDDED, USTR_TYPE_NAME_RISCOS, h_draw_data);
         }
         else
-        {
-            p_args[2].val.tstr = localise_filename(p_of_op_format->output.u.file.filename, p_drawing_info->filename);
+        {   /* save ImageFileEmbdedded, followed by DrawFileEmbedded if possible */
+            if(0 != p_drawing_info->h_unhandled_data)
+            {
+                h_image_data = p_drawing_info->h_unhandled_data;
+
+                if(p_drawing_info->use_image_cache_handle)
+                    h_draw_data = image_cache_search(p_drawing_info->image_cache_handle, TRUE); /* obtain original Draw representation handle for output (saves don't degrade) */
+            }
+            else
+            {
+                assert(p_drawing_info->use_image_cache_handle);
+                if(p_drawing_info->use_image_cache_handle)
+                {
+                    h_image_data = image_cache_search(p_drawing_info->image_cache_handle, TRUE); /* obtain original Image data handle for output (saves don't degrade) */
+                    h_draw_data = image_cache_search(p_drawing_info->image_cache_handle, FALSE); /* obtain current Draw representation handle for output */
+                }
+            }
+
+            if(0 != h_image_data)
+                status = draw_msg_note_save_embedded(p_drawing_info, p_note_ensure_saved, T5_CMD_IMAGE_FILE_EMBEDDED, p_drawing_info->ustr_type_name, h_image_data);
+
+            if(status_ok(status) && (0 != h_draw_data))
+                status = draw_msg_note_save_embedded(p_drawing_info, p_note_ensure_saved, T5_CMD_DRAWFILE_EMBEDDED, USTR_TYPE_NAME_RISCOS, h_draw_data);
         }
-
-        status = ownform_save_arglist(arglist_handle, object_id, p_construct_table, p_of_op_format);
-
-        if(p_drawing_info->tag == DRAWING_EMBEDDED)
-            p_args[2].val.raw = 0; /* reclaim handle */
-
-        arglist_dispose(&arglist_handle);
     }
     } /*block*/
 
@@ -502,10 +748,10 @@ T5_MSG_PROTO(static, draw_msg_note_ensure_saved, P_NOTE_ENSURE_SAVED p_note_ensu
 
 /******************************************************************************
 *
-* Insert a drawfile into the notelayer at the given position.
+* Insert an image file into the notelayer at the given position.
 *
 * embed == TRUE causes the data to be loaded and embedded into the document
-*               (ie a later save operation causes the data to be saved as part
+*               (a later save operation causes the file data to be saved as part
 *                of the Fireworkz file within a DrawFileEmbedded command).
 *
 * embed == FALSE causes a reference to the data to be held in the document
@@ -516,39 +762,39 @@ T5_MSG_PROTO(static, draw_msg_note_ensure_saved, P_NOTE_ENSURE_SAVED p_note_ensu
 
 _Check_return_
 static STATUS
-notelayer_insert_drawfile(
+notelayer_insert_image_file(
     _DocuRef_   P_DOCU p_docu,
     P_SKEL_POINT p_skel_point,
     _In_z_      PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype,
-    _InVal_     BOOL file_is_not_safe,
-    _InVal_     BOOL desire_embed)
+    _InVal_     BOOL embed_file)
 {
     const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
-    /* if source is a scrapfile, we must embed, regardless of the checkbox/Ctrl key states */
-    BOOL embed_file = file_is_not_safe || desire_embed;
     P_DRAWING_INFO p_drawing_info;
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_drawing_info), TRUE);
+    UCHARZ type_name_buffer[8];
     STATUS status = STATUS_OK;
+
+    if(NULL == (p_drawing_info = al_array_extend_by(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, 1, &array_init_block, &status)))
+        return(status);
+
+    p_drawing_info->tag = embed_file ? DRAWING_EMBEDDED : DRAWING_REFERENCE;
+
+    p_drawing_info->t5_filetype = t5_filetype; /* remember the type of image data */
+
+    type_name_from_filetype(ustr_bptr(type_name_buffer), elemof32(type_name_buffer), t5_filetype, embed_file /*strict_for_embed*/);
 
     for(;;) /* loop for structure */
     {
-        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_drawing_info), TRUE);
+        status_break(status = alloc_block_ustr_set(&p_drawing_info->ustr_type_name, ustr_bptr(type_name_buffer), &p_docu->general_string_alloc_block));
 
-        if(NULL == (p_drawing_info = al_array_extend_by(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, 1, &array_init_block, &status)))
-            break;
-
-        p_drawing_info->tag = embed_file ? DRAWING_EMBEDDED : DRAWING_REFERENCE;
-
-        if(!file_is_not_safe) /* NB can't keep a scrapfile's original filename! If embedding, retain original's leafname */
-            status_break(status = alloc_block_tstr_set(&p_drawing_info->filename, embed_file ? file_leafname(filename) : filename, &p_docu->general_string_alloc_block));
-
-        status_break(status = alloc_block_tstr_set(&p_drawing_info->tstr_type_name, TYPE_NAME_RISCOS_DRAW_FILE, &p_docu->general_string_alloc_block));
+        status_break(status = alloc_block_tstr_set(&p_drawing_info->filename, filename, &p_docu->general_string_alloc_block));
 
         if(!embed_file)
         {
             ARRAY_HANDLE h_data;
 
-            if(!gr_cache_entry_query(&p_drawing_info->cache_handle, filename))
+            if(!image_cache_entry_query(&p_drawing_info->image_cache_handle, filename))
             {
                 BOOL file_status = file_is_file(filename);
 
@@ -558,35 +804,35 @@ notelayer_insert_drawfile(
                     break;
                 }
 
-                status_break(status = gr_cache_entry_ensure(&p_drawing_info->cache_handle, filename, t5_filetype));
-
-                p_drawing_info->use_cache_handle = TRUE;
+                status_break(status = image_cache_entry_ensure(&p_drawing_info->image_cache_handle, filename, t5_filetype));
             }
 
-            h_data = gr_cache_loaded_ensure(p_drawing_info->cache_handle);
+            h_data = image_cache_loaded_ensure(p_drawing_info->image_cache_handle);
 
-            if(!h_data)
-                status_break(status = gr_cache_error_query(p_drawing_info->cache_handle));
+            if(0 == h_data)
+                status_break(status = image_cache_error_query(p_drawing_info->image_cache_handle));
 
-            gr_cache_ref(p_drawing_info->cache_handle, 1);
+            p_drawing_info->use_image_cache_handle = TRUE;
+
+            image_cache_ref(p_drawing_info->image_cache_handle, 1);
         }
         else
         {
             /* create a new entry and load it, then test for equivalence with other embedded cache members */
             ARRAY_HANDLE h_data;
 
-            status_break(gr_cache_entry_ensure(&p_drawing_info->cache_handle, filename, t5_filetype));
+            status_break(image_cache_entry_ensure(&p_drawing_info->image_cache_handle, filename, t5_filetype));
 
-            h_data = gr_cache_loaded_ensure(p_drawing_info->cache_handle);
+            h_data = image_cache_loaded_ensure(p_drawing_info->image_cache_handle);
 
-            if(!h_data)
-                status_break(status = gr_cache_error_query(p_drawing_info->cache_handle));
+            if(0 == h_data)
+                status_break(status = image_cache_error_query(p_drawing_info->image_cache_handle));
 
-            gr_cache_embedded_updating_entry(&p_drawing_info->cache_handle);
+            image_cache_embedded_updating_entry(&p_drawing_info->image_cache_handle);
 
-            p_drawing_info->use_cache_handle = TRUE;
+            p_drawing_info->use_image_cache_handle = TRUE;
 
-            gr_cache_ref(p_drawing_info->cache_handle, 1);
+            image_cache_ref(p_drawing_info->image_cache_handle, 1);
         }
 
         /* if there is a selection, replace all the selected notes with the new drawing */
@@ -594,10 +840,27 @@ notelayer_insert_drawfile(
 
         {
         S32 intref = array_indexof_element(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, p_drawing_info);
-        PIXIT_SIZE drawing_pixit_size;
-        ARRAY_HANDLE h_data = gr_cache_search(p_drawing_info->cache_handle);
+        PIXIT_SIZE drawing_pixit_size = { 0, 0 };
+        ARRAY_HANDLE h_data;
 
-        host_read_drawfile_size(array_basec(&h_data, BYTE), &drawing_pixit_size);
+#if WINDOWS
+        GdipImage gdip_image = image_cache_search_gdip_image(p_drawing_info->image_cache_handle, &h_data);
+
+        if(NULL != gdip_image)
+        {
+            SIZE image_size;
+            GdipImage_GetImageSize(gdip_image, &image_size);
+            drawing_pixit_size.cx = image_size.cx;
+            drawing_pixit_size.cy = image_size.cy;
+        }
+        else
+#endif /* OS */
+        {   /* must be a Draw file */
+            h_data = image_cache_search(p_drawing_info->image_cache_handle, FALSE);
+
+            if(array_elements32(&h_data) >= sizeof32(DRAW_FILE_HEADER))
+                host_read_drawfile_pixit_size(array_basec(&h_data, BYTE), &drawing_pixit_size);
+        }
 
         /*if(selected note)
             replace selected note(p_docu, OBJECT_ID_DRAW, (P_ANY) intref);
@@ -610,7 +873,7 @@ notelayer_insert_drawfile(
 
             zero_struct(note_info);
 
-            note_info.layer = LAYER_CELLS_ABOVE; /* always insert into front layer */
+            note_info.layer = LAYER_CELLS_AREA_ABOVE; /* always insert into front layer */
 
             note_info.pixit_size = drawing_pixit_size; /* width and height */
 
@@ -624,7 +887,7 @@ notelayer_insert_drawfile(
 
                 docu_area_normalise(p_docu, &docu_area, p_docu_area_from_markers_first(p_docu));
 
-                note_info.note_pinning = NOTE_PIN_TWIN;
+                note_info.note_pinning = NOTE_PIN_CELLS_TWIN;
 
                 region_from_two_slrs(&note_info.region, &docu_area.tl.slr, &docu_area.br.slr, 1);
 
@@ -640,7 +903,7 @@ notelayer_insert_drawfile(
                 SLR tl_slr;
                 SKEL_POINT slot_skel_point;
 
-                note_info.note_pinning = NOTE_PIN_SINGLE;
+                note_info.note_pinning = NOTE_PIN_CELLS_SINGLE;
 
                 status_assert(slr_owner_from_skel_point(p_docu, &tl_slr, &slot_skel_point, p_skel_point, ON_ROW_EDGE_GO_DOWN));
                 region_from_two_slrs(&note_info.region, &tl_slr, &tl_slr, 1);
@@ -648,13 +911,13 @@ notelayer_insert_drawfile(
                 /* if the cell is on the same page, calc the offset from the cell's tl, else leave offset as 0,0 */
                 if((slot_skel_point.page_num.x == p_skel_point->page_num.x) && (slot_skel_point.page_num.y == p_skel_point->page_num.y))
                 {
-                    note_info.offset.tl.x = p_skel_point->pixit_point.x - slot_skel_point.pixit_point.x;
-                    note_info.offset.tl.y = p_skel_point->pixit_point.y - slot_skel_point.pixit_point.y;
+                    note_info.offset_tl.x = p_skel_point->pixit_point.x - slot_skel_point.pixit_point.x;
+                    note_info.offset_tl.y = p_skel_point->pixit_point.y - slot_skel_point.pixit_point.y;
                 }
 
                 skel_point_from_slr_tl(p_docu, &skel_rect.tl, &note_info.region.tl);
-                skel_rect.tl.pixit_point.x += note_info.offset.tl.x;
-                skel_rect.tl.pixit_point.y += note_info.offset.tl.y;
+                skel_rect.tl.pixit_point.x += note_info.offset_tl.x;
+                skel_rect.tl.pixit_point.y += note_info.offset_tl.y;
                 skel_point_normalise(p_docu, &skel_rect.tl, UPDATE_PANE_CELLS_AREA);
 
                 skel_rect.br = skel_rect.tl;
@@ -676,8 +939,7 @@ notelayer_insert_drawfile(
         /*NOTREACHED*/
     }
 
-    if(NULL != p_drawing_info)
-        al_array_shrink_by(&p_draw_instance_data->h_drawing_list, -1);
+    al_array_shrink_by(&p_draw_instance_data->h_drawing_list, -1);
 
     return(status);
 }
@@ -738,27 +1000,30 @@ T5_MSG_PROTO(static, draw_event_redraw, P_NOTE_OBJECT_REDRAW p_note_object_redra
     {
         ARRAY_INDEX intref = (ARRAY_INDEX) (intptr_t) p_note_object_redraw->object_redraw.object_data.u.p_object; /* position in h_drawing_list (puke) */
 
-        if(array_index_valid(&p_draw_instance_data->h_drawing_list, intref))
+        if(array_index_is_valid(&p_draw_instance_data->h_drawing_list, intref))
         {
             const P_DRAWING_INFO p_drawing_info = array_ptr_no_checks(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, intref);
 
-            if(p_drawing_info->use_cache_handle)
+            if(p_drawing_info->use_image_cache_handle)
             {
                 ARRAY_HANDLE h_data = 0;
 
 #if WINDOWS
-                CPicture cpicture = (CPicture) gr_cache_search_cpicture(p_drawing_info->cache_handle, &h_data);
-
-                if(cpicture)
                 {
-                    host_paint_cpicture(&p_note_object_redraw->object_redraw.redraw_context,
-                                        &p_note_object_redraw->object_redraw.pixit_rect_object,
-                                        cpicture);
+                GdipImage gdip_image = image_cache_search_gdip_image(p_drawing_info->image_cache_handle, &h_data);
+
+                if(NULL != gdip_image)
+                {
+                    host_paint_gdip_image(&p_note_object_redraw->object_redraw.redraw_context,
+                        &p_note_object_redraw->object_redraw.pixit_rect_object,
+                        gdip_image);
                     return(STATUS_OK);
                 }
-#else
-                h_data = gr_cache_search(p_drawing_info->cache_handle);
+                } /*block*/
 #endif /* OS */
+
+                /* must be a Draw file */
+                h_data = image_cache_search(p_drawing_info->image_cache_handle, FALSE);
 
                 if(0 != array_elements32(&h_data))
                 {
@@ -854,7 +1119,7 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
                     if(c == RISCOS_FILE_DIR_SEP_CH) /* Swap RISC OS dir sep char for Windows? */
                         f[f_idx-1] = WINDOWS_FILE_DIR_SEP_CH;
                     else
-                    if (c == RISCOS_FILE_EXT_SEP_CH) /* Swap RISC OS 'ext' sep char for Windows? */
+                    if(c == RISCOS_FILE_EXT_SEP_CH) /* Swap RISC OS 'ext' sep char for Windows? */
                         f[f_idx-1] = WINDOWS_FILE_EXT_SEP_CH;
                 }
                 while(c != CH_NULL);
@@ -884,31 +1149,29 @@ T5_MSG_PROTO(static, draw_msg_load_construct_ownform, P_CONSTRUCT_CONVERT p_cons
 
 T5_MSG_PROTO(static, draw_msg_insert_foreign, P_MSG_INSERT_FOREIGN p_msg_insert_foreign)
 {
-    BOOL desire_embed = global_preferences.embed_inserted_files;
     /* if not scrapfile, we *may* keep a reference to the file */
-    BOOL file_is_not_safe = p_msg_insert_foreign->scrap_file;
+    const BOOL file_is_not_safe = p_msg_insert_foreign->scrap_file;
+    const BOOL ctrl_pressed = p_msg_insert_foreign->ctrl_pressed;
+    BOOL embed_file = global_preferences.embed_inserted_files;
 
     IGNOREPARM_InVal_(t5_message);
 
-    switch(p_msg_insert_foreign->t5_filetype)
-    {
-    default: default_unhandled();
+    if(!image_cache_can_import_with_image_convert(p_msg_insert_foreign->t5_filetype))
         return(create_error(ERR_UNKNOWN_FILETYPE));
 
-    case FILETYPE_WINDOWS_BMP:
-    case FILETYPE_SPRITE:
-    case FILETYPE_DRAW:
-    case FILETYPE_JPEG:
-        break;
+    if(file_is_not_safe)
+    {   /* if source is a scrapfile, we must embed, regardless of the checkbox/Ctrl key states */
+        embed_file = TRUE;
+    }
+    else
+    {   /* SKS 10/13oct99 take note of Ctrl key state too - inverts the preference */
+        if(ctrl_pressed) embed_file = !embed_file;
     }
 
-    /* SKS 10/13oct99 take note of Ctrl key state too */
-    if(host_ctrl_pressed()) desire_embed = !desire_embed;
-
-    return(notelayer_insert_drawfile(p_docu, &p_msg_insert_foreign->skel_point,
-                                     p_msg_insert_foreign->filename,
-                                     p_msg_insert_foreign->t5_filetype,
-                                     file_is_not_safe, desire_embed));
+    return(notelayer_insert_image_file(p_docu, &p_msg_insert_foreign->skel_point,
+                                       p_msg_insert_foreign->filename,
+                                       p_msg_insert_foreign->t5_filetype,
+                                       embed_file));
 }
 
 T5_MSG_PROTO(static, draw_msg_save, _InRef_ PC_MSG_SAVE p_msg_save)
@@ -941,9 +1204,14 @@ T5_MSG_PROTO(static, draw_msg_save_picture, _InRef_ P_MSG_SAVE_PICTURE p_msg_sav
 
     IGNOREPARM_InVal_(t5_message);
 
-    if(p_drawing_info->use_cache_handle)
+    if(p_drawing_info->use_image_cache_handle)
     {
-        ARRAY_HANDLE h_data = gr_cache_search(p_drawing_info->cache_handle);
+        ARRAY_HANDLE h_data;
+
+        if(FILETYPE_DRAW == p_msg_save_picture->t5_filetype)
+            h_data = image_cache_search(p_drawing_info->image_cache_handle, FALSE); /* get the Draw file data (possibly amended for this platform) */
+        else
+            h_data = image_cache_search(p_drawing_info->image_cache_handle, TRUE); /* get the original image file data */
 
         if(0 != array_elements32(&h_data))
         {
@@ -952,29 +1220,62 @@ T5_MSG_PROTO(static, draw_msg_save_picture, _InRef_ P_MSG_SAVE_PICTURE p_msg_sav
             return(binary_write_bytes(&p_msg_save_picture->p_ff_op_format->of_op_format.output, p_data, n_bytes));
         }
     }
+    else if(0 != array_elements32(&p_drawing_info->h_unhandled_data))
+    {
+        const U32 n_bytes = array_elements32(&p_drawing_info->h_unhandled_data);
+        PC_BYTE p_data = array_rangec(&p_drawing_info->h_unhandled_data, BYTE, 0, n_bytes);
+        return(binary_write_bytes(&p_msg_save_picture->p_ff_op_format->of_op_format.output, p_data, n_bytes));
+    }
 
     return(STATUS_FAIL);
 }
 
-#if RISCOS
-
-T5_MSG_PROTO(static, draw_msg_save_picture_filetypes_request_riscos, _InoutRef_ P_ARRAY_HANDLE p_h_savetypes /*appended*/)
+T5_MSG_PROTO(static, draw_msg_save_picture_filetypes_request, _InoutRef_ P_MSG_SAVE_PICTURE_FILETYPES_REQUEST p_msg_save_picture_filetypes_request)
 {
+    const P_DRAW_INSTANCE_DATA p_draw_instance_data = p_object_instance_data_DRAW(p_docu);
+    const P_DRAWING_INFO p_drawing_info = array_ptr(&p_draw_instance_data->h_drawing_list, DRAWING_INFO, (ARRAY_INDEX) p_msg_save_picture_filetypes_request->extra);
+    STATUS status;
     SAVE_FILETYPE save_filetype;
+    zero_struct(save_filetype);
 
-    IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
 
-    /* Indicate that we can save pictures as DrawFiles */
+    if(FILETYPE_UNDETERMINED == p_drawing_info->t5_filetype)
+        return(STATUS_OK);
+
+    if(FILETYPE_DRAW != p_drawing_info->t5_filetype)
+    {
+        save_filetype.object_id = OBJECT_ID_DRAW;
+        save_filetype.t5_filetype = p_drawing_info->t5_filetype;
+
+        if(NULL != p_drawing_info->filename)
+            status_return(ui_text_alloc_from_tstr(&save_filetype.suggested_leafname, file_leafname(p_drawing_info->filename)));
+
+        if(status_fail(status = al_array_add(&p_msg_save_picture_filetypes_request->h_save_filetype, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype)))
+        {
+            ui_text_dispose(&save_filetype.suggested_leafname);
+            return(status);
+        }
+
+        zero_struct(save_filetype);
+    }
+
+    /* Indicate that we can save pictures as Drawfiles */
     save_filetype.object_id = OBJECT_ID_DRAW;
     save_filetype.t5_filetype = FILETYPE_DRAW;
-    save_filetype.description.type = UI_TEXT_TYPE_RESID;
-    save_filetype.description.text.resource_id = DRAW_MSG_FILEDESCRIPT;
 
-    return(al_array_add(p_h_savetypes, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype));
+    if(FILETYPE_DRAW == p_drawing_info->t5_filetype)
+        if(NULL != p_drawing_info->filename)
+            status_return(ui_text_alloc_from_tstr(&save_filetype.suggested_leafname, file_leafname(p_drawing_info->filename)));
+
+    if(status_fail(status = al_array_add(&p_msg_save_picture_filetypes_request->h_save_filetype, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype)))
+    {
+        ui_text_dispose(&save_filetype.suggested_leafname);
+        return(status);
+    }
+
+    return(STATUS_OK);
 }
-
-#endif /* RISCOS */
 
 OBJECT_PROTO(extern, object_draw);
 OBJECT_PROTO(extern, object_draw)
@@ -1005,10 +1306,8 @@ OBJECT_PROTO(extern, object_draw)
     case T5_MSG_SAVE_PICTURE:
         return(draw_msg_save_picture(p_docu, t5_message, (P_MSG_SAVE_PICTURE) p_data));
 
-#if RISCOS
-    case T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST_RISCOS:
-        return(draw_msg_save_picture_filetypes_request_riscos(p_docu, t5_message, (P_ARRAY_HANDLE) p_data));
-#endif
+    case T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST:
+        return(draw_msg_save_picture_filetypes_request(p_docu, t5_message, (P_MSG_SAVE_PICTURE_FILETYPES_REQUEST) p_data));
 
     case T5_MSG_NOTE_LOAD_INTREF_FROM_EXTREF:
         return(draw_msg_note_load_intref_from_extref(p_docu, t5_message, (P_NOTE_REF) p_data));
@@ -1025,6 +1324,7 @@ OBJECT_PROTO(extern, object_draw)
     case T5_MSG_DRAWING_DONATE:
         return(draw_note_donate(p_docu, t5_message, (P_NOTE_OBJECT_SNAPSHOT) p_data));
 
+    case T5_CMD_IMAGE_FILE_EMBEDDED:
     case T5_CMD_DRAWFILE_EMBEDDED:
     case T5_CMD_DRAWFILE_REFERENCE:
         return(draw_file_load(p_docu, t5_message, (PC_T5_CMD) p_data));

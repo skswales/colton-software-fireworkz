@@ -141,7 +141,7 @@ dict_add =
     { DRT(LBRT, PUSHBUTTON), 1 }
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 dict_add_data_argmap[] = { CONTROL_ID_WORD };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -228,11 +228,11 @@ dialog_check_process_start(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_process_start->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = CONTROL_ID_WORD,
+    dialog_cmd_ctl_state_set.dialog_control_id = CONTROL_ID_WORD,
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.edit.ui_text.type = UI_TEXT_TYPE_USTR_PERM;
     dialog_cmd_ctl_state_set.state.edit.ui_text.text.ustr = p_check_callback->ustr_init_word;
-    status_assert(status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    status_assert(status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     } /*block*/
 
     if(status_ok(status) && (0 != array_elements(&p_check_callback->ui_source.source.array_handle)))
@@ -397,7 +397,7 @@ t5_cmd_spell_check(
                         : OB_SPELL_MSG_CHECK_WITH_ERRS,
                     p_docu->spelling_mistakes);
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -440,7 +440,7 @@ ui_check_dbox(
     dialog_cmd_process_dbox.bits.note_position = 1;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_check;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &check_callback;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     if(status_ok(status))

@@ -45,8 +45,9 @@ typedef U16 XF_INDEX;
 
 typedef struct XLS_LOAD_INFO
 {
+    P_DOCU p_docu; /* the document being inserted into */
     P_MSG_INSERT_FOREIGN p_msg_insert_foreign;
-    DOCNO docno;
+
     PC_BYTE p_file_start;
     U32 file_end_offset;
     U32 worksheet_substream_offset;
@@ -112,7 +113,7 @@ xls_style_docu_area_add(
     _InRef_     PC_DOCU_AREA p_docu_area,
     P_STYLE_DOCU_AREA_ADD_PARM p_style_docu_area_add_parm)
 {
-    return(style_docu_area_add(p_docu_from_docno(p_xls_load_info->docno), p_docu_area, p_style_docu_area_add_parm));
+    return(style_docu_area_add(p_xls_load_info->p_docu, p_docu_area, p_style_docu_area_add_parm));
 }
 
 /*
@@ -141,7 +142,7 @@ static STATUS
 xls_style_from_xf_data(
     _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
     _InoutRef_  P_STYLE p_style,
-    _In_reads_(20) P_BYTE p_xf_data /* BIFF8 format */);
+    _In_reads_c_(20) P_BYTE p_xf_data /* BIFF8 format */);
 
 /******************************************************************************
 *
@@ -928,7 +929,7 @@ try_grokking_potential_cf_array_for_xls(
 _Check_return_
 static F64
 xls_read_F64(
-    _In_bytecount_c_(sizeof(F64)) PC_BYTE p)
+    _In_reads_bytes_c_(sizeof(F64)) PC_BYTE p)
 {
     union
     {
@@ -982,7 +983,7 @@ xls_read_F64(
 _Check_return_
 static inline U16
 xls_read_U16_LE(
-    _In_bytecount_c_(sizeof(U16)) PC_BYTE p)
+    _In_reads_bytes_c_(sizeof(U16)) PC_BYTE p)
 {
     union
     {
@@ -1028,7 +1029,7 @@ xls_read_WCHAR_off(
 _Check_return_
 static inline U32
 xls_read_U32_LE(
-    _In_bytecount_c_(sizeof(U32)) PC_BYTE p)
+    _In_reads_bytes_c_(sizeof(U32)) PC_BYTE p)
 {
     union
     {
@@ -1047,7 +1048,7 @@ xls_read_U32_LE(
 
 static void
 xls_read_cell_address_r2_c2(
-    _In_bytecount_c_(4) PC_BYTE p_byte,
+    _In_reads_bytes_c_(4) PC_BYTE p_byte,
     _OutRef_    P_XLS_ROW p_row,
     _OutRef_    P_XLS_COL p_col)
 {
@@ -1057,7 +1058,7 @@ xls_read_cell_address_r2_c2(
 
 static void
 xls_read_cell_address_formula(
-    _In_bytecount_c_(4) PC_BYTE p_byte,
+    _In_reads_bytes_c_(4) PC_BYTE p_byte,
     _OutRef_    P_U16 p_row,
     _OutRef_    P_U16 p_col)
 {
@@ -1075,7 +1076,7 @@ xls_read_cell_address_formula(
 
 static void
 xls_read_cell_range_formula(
-    _In_bytecount_c_(8) PC_BYTE p_byte,
+    _In_reads_bytes_c_(8) PC_BYTE p_byte,
     _OutRef_    P_U16 p_row_s,
     _OutRef_    P_U16 p_row_e,
     _OutRef_    P_U16 p_col_s,
@@ -1453,7 +1454,7 @@ xls_find_record_FORMAT_INDEX(
 static void
 xls_slurp_xf_data_from_XF_INDEX(
     P_XLS_LOAD_INFO p_xls_load_info,
-    _Out_writes_(20) P_BYTE p_xf_data, /* always as BIFF8 format data */
+    _Out_writes_c_(20) P_BYTE p_xf_data, /* always as BIFF8 format data */ /*writes[20]*/
     _InVal_     XF_INDEX xf_index_find,
     _InVal_     XLS_OPCODE xf_opcode)
 {
@@ -1828,7 +1829,7 @@ xls_sst_index_dispose(void)
 {
     ARRAY_INDEX i;
 
-    for(i = 0; array_index_valid(&g_h_sst_index, i); i++)
+    for(i = 0; array_index_is_valid(&g_h_sst_index, i); i++)
     {
         P_ARRAY_HANDLE p_array_handle = array_ptr_no_checks(&g_h_sst_index, ARRAY_HANDLE, i);
         al_array_dispose(p_array_handle);
@@ -3108,7 +3109,7 @@ dialog_pswd_process_end(
 {
     if(status_ok(p_dialog_msg_process_end->completion_code))
     {
-        ui_dlg_get_edit(p_dialog_msg_process_end->h_dialog, (DIALOG_CTL_ID) PSWD_ID_EDIT, &ui_text_edit);
+        ui_dlg_get_edit(p_dialog_msg_process_end->h_dialog, (DIALOG_CONTROL_ID) PSWD_ID_EDIT, &ui_text_edit);
     }
 
     return(STATUS_OK);
@@ -3148,13 +3149,14 @@ xls_get_password(
     dialog_cmd_process_dbox.caption.text.resource_id = XLS_MSG_PASSWORD_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_pswd;
     /*dialog_cmd_process_dbox.client_handle = NULL;*/
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     if(status_ok(status))
     {
         PCTSTR tstr = ui_text_tstr(&ui_text_edit);
         U32 length = tstrlen32(tstr);
+
         if(length >= elemof_password)
         {
             myassert0(TEXT("Password is too long"));
@@ -3162,6 +3164,8 @@ xls_get_password(
         }
         else
             xstrkpy(password, elemof_password, _sbstr_from_tstr(tstr));
+
+        SecureZeroMemory(de_const_cast(PTSTR, tstr), length * sizeof32(TCHAR));
     }
 
     return(status);
@@ -3311,11 +3315,13 @@ xls_decrypt_file(
     U8 password[16];
     U16 hash;
 
-    status_return(xls_get_password(p_docu_from_docno(p_xls_load_info->docno), password, elemof32(password)));
+    status_return(xls_get_password(p_xls_load_info->p_docu, password, elemof32(password)));
 
     xls_get_key_sequence_XOR(key_seq, password, key);
 
     hash = xls_get_password_hash(password);
+
+    SecureZeroMemory(password, sizeof32(password));
 
     if(hash != filepass_hash)
         return(XLS_ERR_BADFILE_PASSWORD_MISMATCH);
@@ -3809,7 +3815,7 @@ xls_rename_document_as_per_BOUNDSHEET_record(
 
     /* suggest that this document be renamed */
     if(status_ok(status))
-        status = maeve_event(p_docu_from_docno(p_xls_load_info->docno), T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, quick_tblock_tstr(&quick_tblock)));
+        status = maeve_event(p_xls_load_info->p_docu, T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, quick_tblock_tstr(&quick_tblock)));
 
     quick_tblock_dispose(&quick_tblock);
 
@@ -3970,7 +3976,7 @@ xls_rename_document_as_per_SHEETHDR_record(
 
     /* suggest that this document be renamed */
     if(status_ok(status))
-        status = maeve_event(p_docu_from_docno(p_xls_load_info->docno), T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, quick_tblock_tstr(&quick_tblock)));
+        status = maeve_event(p_xls_load_info->p_docu, T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, quick_tblock_tstr(&quick_tblock)));
 
     quick_tblock_dispose(&quick_tblock);
 
@@ -4646,7 +4652,7 @@ slr_convert_method_A(
     BOOL absolute_col, absolute_row;
 
     assert((elemof_buffer - *p_len) > 1);
-    ustr_buf[*p_len] = CH_NULL;
+    PtrPutByteOff(ustr_buf, *p_len, CH_NULL);
 
     if(biff_version >= 8)
     {   /* 16-bit row */
@@ -4692,7 +4698,7 @@ slr_convert_method_B(
     S16 new_col, new_row;
 
     assert((elemof_buffer - *p_len) > 1);
-    ustr_buf[*p_len] = CH_NULL;
+    PtrPutByteOff(ustr_buf, *p_len, CH_NULL);
 
     if(biff_version >= 8)
     {   /* 16-bit row */
@@ -5498,7 +5504,7 @@ static STATUS
 xls_decode_formula_result(
     P_XLS_LOAD_INFO p_xls_load_info,
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
-    _In_reads_(sizeof32(F64)) PC_BYTE p_formula_result)
+    _In_reads_c_(sizeof32(F64)) PC_BYTE p_formula_result)
 {
     IGNOREPARM(p_xls_load_info);
 
@@ -5886,10 +5892,10 @@ ExcelBuiltinFORMAT[0x32] =
 /*0x02*/ {  FALSE,  SBSTR_TEXT("0.00") },
 /*0x03*/ {  FALSE,  SBSTR_TEXT("#,##0") },
 /*0x04*/ {  FALSE,  SBSTR_TEXT("#,##0.00") },
-/*0x05*/ {  FALSE,  SBSTR_TEXT(" \\£#,##0 ;(\\£#,##0)") }, /*XLS spec "_(£#,##0_);(£#,##0)"*/
-/*0x06*/ {  FALSE,  SBSTR_TEXT(" \\£#,##0 ;[Red](\\£#,##0)") }, /*XLS spec "_(£#,##0_);[Red](£#,##0)"*/
-/*0x07*/ {  FALSE,  SBSTR_TEXT(" \\£#,##0.00 ;(\\£#,##0.00)") }, /*XLS spec "_(£#,##0.00_);(£#,##0.00)"*/
-/*0x08*/ {  FALSE,  SBSTR_TEXT(" \\£#,##0.00 ;[Red](\\£#,##0.00)") }, /*XLS spec "_(£#,##0.00_);[Red](£#,##0.00)"*/
+/*0x05*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0 ;(\\" "\xA3" "#,##0)") }, /*XLS spec "_(£#,##0_);(£#,##0)"*/
+/*0x06*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0 ;[Red](\\" "\xA3" "#,##0)") }, /*XLS spec "_(£#,##0_);[Red](£#,##0)"*/
+/*0x07*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0.00 ;(\\" "\xA3" "#,##0.00)") }, /*XLS spec "_(£#,##0.00_);(£#,##0.00)"*/
+/*0x08*/ {  FALSE,  SBSTR_TEXT(" \\" "\xA3" "#,##0.00 ;[Red](\\" "\xA3" "#,##0.00)") }, /*XLS spec "_(£#,##0.00_);[Red](£#,##0.00)"*/
 /*0x09*/ {  FALSE,  SBSTR_TEXT("0%") },
 /*0x0a*/ {  FALSE,  SBSTR_TEXT("0.00%") },
 /*0x0b*/ {  FALSE,  SBSTR_TEXT("0.00E+00") },
@@ -5923,9 +5929,9 @@ ExcelBuiltinFORMAT[0x32] =
 /*0x27*/ {  FALSE,  SBSTR_TEXT(" #,##0.00 ;(#,##0.00)") }, /*XLS spec "_(#,##0.00_);(#,##0.00)"*/
 /*0x28*/ {  FALSE,  SBSTR_TEXT(" #,##0.00 ;[Red](#,##0.00)") }, /*XLS spec "_(#,##0.00_);[Red](#,##0.00)" */
 /*0x29*/ {  FALSE,  SBSTR_TEXT("  #,##0 ; (#,##0)") }, /*XLS spec "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)"*/
-/*0x2a*/ {  FALSE,  SBSTR_TEXT("  \\£ #,##0 ; (\\£ #,##0)") }, /*XLS spec "_(£* #,##0_);_(£* (#,##0);_(£* \"-\"_);_(@_)"*/
+/*0x2a*/ {  FALSE,  SBSTR_TEXT("  \\" "\xA3" " #,##0 ; (\\" "\xA3" " #,##0)") }, /*XLS spec "_(£* #,##0_);_(£* (#,##0);_(£* \"-\"_);_(@_)"*/
 /*0x2b*/ {  FALSE,  SBSTR_TEXT("  #,##0.00 ; (#,##0.00)") }, /*XLS spec "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"*/
-/*0x2c*/ {  FALSE,  SBSTR_TEXT("  \\£ #,##0.00 ; (\\£ #,##0.00)") }, /*XLS spec "_(£* #,##0.00_);_(£* (#,##0.00);_(£* \"-\"??_);_(@_)"*/
+/*0x2c*/ {  FALSE,  SBSTR_TEXT("  \\" "\xA3" " #,##0.00 ; (\\" "\xA3" " #,##0.00)") }, /*XLS spec "_(£* #,##0.00_);_(£* (#,##0.00);_(£* \"-\"??_);_(@_)"*/
 /*0x2d*/ {  TRUE,   SBSTR_TEXT("mm:ss") },
 /*0x2e*/ {  TRUE,   SBSTR_TEXT("h:mm:ss") }, /*XLS spec "[h]:mm:ss"*/
 /*0x2f*/ {  TRUE,   SBSTR_TEXT("mm:ss") }, /*XLS spec "mm:ss.0"*/
@@ -6130,7 +6136,7 @@ xls_check_format(
                     {   /* CH_NULL-terminate this section so we can do string comparision, also skipping past end square bracket */
                         PtrPutByte(uchars, CH_NULL); uchars_IncByte_wr(uchars);
 #if USTR_IS_SBSTR
-                        if(0 == C_stricmp((const char *) start, "$" "£" "-809"))
+                        if(0 == C_stricmp((const char *) start, "$"     "\xA3" "-809"))
 #else
                         if(0 == C_stricmp((const char *) start, "$" "\xC2\xA3" "-809"))
 #endif
@@ -6139,13 +6145,14 @@ xls_check_format(
                         }
                         else if(0 == C_stricmp((const char *) start, "Red"))
                         {   /* Expect to use SheetXLS which has Red style defined */
-                            status_return(status = quick_ublock_ustr_add(p_quick_ublock_format, start-1));
+                            status_return(status = quick_ublock_a7char_add(p_quick_ublock_format, CH_LEFT_SQUARE_BRACKET));
+                            status_return(status = quick_ublock_ustr_add(p_quick_ublock_format, start));
                             status_return(status = quick_ublock_a7char_add(p_quick_ublock_format, CH_RIGHT_SQUARE_BRACKET));
                         }
                         else
-                        {
-                            /* all other ones we don't understand! but why not pipe them over so user can see? */
-                            status_return(status = quick_ublock_ustr_add(p_quick_ublock_format, start-1));
+                        {   /* all other ones we don't understand! but why not pipe them over so user can see? */
+                            status_return(status = quick_ublock_a7char_add(p_quick_ublock_format, CH_LEFT_SQUARE_BRACKET));
+                            status_return(status = quick_ublock_ustr_add(p_quick_ublock_format, start));
                             status_return(status = quick_ublock_a7char_add(p_quick_ublock_format, CH_RIGHT_SQUARE_BRACKET));
                         }
                         break;
@@ -6307,7 +6314,7 @@ xls_cell_make(
     _InVal_     STYLE_HANDLE style_handle)
 {
     STATUS status = STATUS_OK;
-    const P_DOCU p_docu = p_docu_from_docno(p_xls_load_info->docno);
+    const P_DOCU p_docu = p_xls_load_info->p_docu;
     SLR actual_slr;
     LOAD_CELL_FOREIGN load_cell_foreign;
     zero_struct(load_cell_foreign);
@@ -6410,7 +6417,7 @@ xls_promote_general_from_style_to_style_handle(
             {
                 if(STYLE_HANDLE_NONE == *p_style_handle)
                 {
-                    *p_style_handle = style_handle_from_name(p_docu_from_docno(p_xls_load_info->docno), TEXT("General"));
+                    *p_style_handle = style_handle_from_name(p_xls_load_info->p_docu, TEXT("General"));
 
                     if(0 != *p_style_handle)
                     {
@@ -6946,7 +6953,7 @@ xls_cell_make_from_excel(
 
         data_type = XLS_DATA_TEXT;
 
-        if(array_index_valid(&g_h_sst_index, sst_entry))
+        if(array_index_is_valid(&g_h_sst_index, sst_entry))
         {
             p_array_handle_ustr = array_ptr_no_checks(&g_h_sst_index, ARRAY_HANDLE_USTR, sst_entry);
 
@@ -7306,7 +7313,7 @@ font_spec_name_from_xls_FONT_record_name(
 
     for(i = 0; i < elemof32(xls_font_name_to_app_font_name_map); ++i)
     {
-        if(0 == strcmp(ustr_xls_font_name, xls_font_name_to_app_font_name_map[i].ustr_xls_font_name))
+        if(ustr_compare_equals(ustr_xls_font_name, xls_font_name_to_app_font_name_map[i].ustr_xls_font_name))
         {
             return(font_spec_name_alloc(p_font_spec, xls_font_name_to_app_font_name_map[i].tstr_app_font_name));
         }
@@ -7425,7 +7432,7 @@ static STATUS
 xls_style_from_xf_data(
     _InRef_     P_XLS_LOAD_INFO p_xls_load_info,
     _InoutRef_  P_STYLE p_style,
-    _In_reads_(20) P_BYTE p_xf_data /* BIFF8 format */)
+    _In_reads_c_(20) P_BYTE p_xf_data /* BIFF8 format */)
 {
     STATUS status = STATUS_OK;
 
@@ -7708,7 +7715,7 @@ xls_get_pixit_with_of_zero_in_default_font(
 
         if(status_ok(status = style_from_xls_FONT_record(p_xls_load_info, &default_style, opcode_offset, record_length)))
         {
-            pixit_width_of_zero = xls_get_pixit_width_of_zero_in_style(p_docu_from_docno(p_xls_load_info->docno), &default_style);
+            pixit_width_of_zero = xls_get_pixit_width_of_zero_in_style(p_xls_load_info->p_docu, &default_style);
         }
 
         status_assert(status);
@@ -7900,7 +7907,7 @@ xls_apply_structure_style_default_row_height(
 
     if(!p_xls_load_info->p_msg_insert_foreign->insert)
     {   /* and maybe tweak the grid size downwards too */
-        const P_DOCU p_docu = p_docu_from_docno(p_xls_load_info->docno);
+        const P_DOCU p_docu = p_xls_load_info->p_docu;
         p_docu->page_def.grid_size = MIN(p_docu->page_def.grid_size, 16); /* 0.8 points */ /* (2 * PIXITS_PER_RISCOS) */
         page_def_validate(&p_docu->page_def);
     }
@@ -7963,7 +7970,7 @@ xls_apply_structure_style(
     DOCU_AREA docu_area_interior = p_xls_load_info->docu_area_interior;
 
     if(p_xls_load_info->loi_as_table)
-        status_return(foreign_load_file_apply_style_table(p_docu_from_docno(p_xls_load_info->docno), &p_xls_load_info->docu_area_table, p_xls_load_info->lhs_extra_cols, p_xls_load_info->top_extra_rows, p_xls_load_info->bot_extra_rows));
+        status_return(foreign_load_file_apply_style_table(p_xls_load_info->p_docu, &p_xls_load_info->docu_area_table, p_xls_load_info->lhs_extra_cols, p_xls_load_info->top_extra_rows, p_xls_load_info->bot_extra_rows));
 
     if(p_xls_load_info->loi_as_table)
     {
@@ -8058,8 +8065,8 @@ xls_insert_foreign(
     P_POSITION p_position = &p_msg_insert_foreign->position;
     SLR interior_size_slr = SLR_INIT;
 
+    p_xls_load_info->p_docu = p_docu;
     p_xls_load_info->p_msg_insert_foreign = p_msg_insert_foreign;
-    p_xls_load_info->docno = docno_from_p_docu(p_docu);
 
     p_xls_load_info->sbchar_codepage = SBCHAR_CODEPAGE_WINDOWS_1252; /* until proven otherwise */
 

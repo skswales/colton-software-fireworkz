@@ -34,7 +34,7 @@
 _Check_return_
 extern F64
 readval_F64_from_8087(
-    _In_bytecount_c_(sizeof(F64)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(F64)) PC_ANY from)
 {
     union
     {
@@ -88,7 +88,7 @@ readval_F64_from_8087(
 _Check_return_
 extern F64
 readval_F64_from_ARM(
-    _In_bytecount_c_(sizeof(F64)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(F64)) PC_ANY from)
 {
     union
     {
@@ -146,7 +146,7 @@ readval_F64_from_ARM(
 _Check_return_
 extern U16
 readval_U16_LE(
-    _In_bytecount_c_(sizeof(U16)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(U16)) PC_ANY from)
 {
     union
     {
@@ -167,7 +167,7 @@ readval_U16_LE(
 _Check_return_
 extern U16
 readval_U16_BE(
-    _In_bytecount_c_(sizeof(U16)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(U16)) PC_ANY from)
 {
     union
     {
@@ -187,7 +187,7 @@ readval_U16_BE(
 
 extern U16
 readval_U16(
-    _In_bytecount_c_(sizeof(U16)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(U16)) PC_ANY from)
 {
 #if BYTE_ORDER == BIG_ENDIAN
     return(readval_U16_BE(from));
@@ -209,7 +209,7 @@ readval_U16(
 _Check_return_
 extern U32
 readval_U32_LE(
-    _In_bytecount_c_(sizeof(U32)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(U32)) PC_ANY from)
 {
     union
     {
@@ -232,7 +232,7 @@ readval_U32_LE(
 _Check_return_
 extern U32
 readval_U32_BE(
-    _In_bytecount_c_(sizeof(U32)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(U32)) PC_ANY from)
 {
     union
     {
@@ -254,7 +254,7 @@ readval_U32_BE(
 
 extern U32
 readval_U32(
-    _In_bytecount_c_(sizeof(U32)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(U32)) PC_ANY from)
 {
 #if BYTE_ORDER == BIG_ENDIAN
     return(readval_U32_BE(from));
@@ -276,7 +276,7 @@ readval_U32(
 _Check_return_
 extern S16
 readval_S16_LE(
-    _In_bytecount_c_(sizeof(S16)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(S16)) PC_ANY from)
 {
     union
     {
@@ -297,7 +297,7 @@ readval_S16_LE(
 _Check_return_
 extern S16
 readval_S16_BE(
-    _In_bytecount_c_(sizeof(S16)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(S16)) PC_ANY from)
 {
     union
     {
@@ -317,7 +317,7 @@ readval_S16_BE(
 
 extern S16
 readval_S16(
-    _In_bytecount_c_(sizeof(S16)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(S16)) PC_ANY from)
 {
 #if BYTE_ORDER == BIG_ENDIAN
     return(readval_S16_BE(from));
@@ -339,7 +339,7 @@ readval_S16(
 _Check_return_
 extern S32
 readval_S32_LE(
-    _In_bytecount_c_(sizeof(S32)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(S32)) PC_ANY from)
 {
     union
     {
@@ -362,7 +362,7 @@ readval_S32_LE(
 _Check_return_
 extern S32
 readval_S32_BE(
-    _In_bytecount_c_(sizeof(S32)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(S32)) PC_ANY from)
 {
     union
     {
@@ -384,7 +384,7 @@ readval_S32_BE(
 
 extern S32
 readval_S32(
-    _In_bytecount_c_(sizeof(S32)) PC_ANY from)
+    _In_reads_bytes_c_(sizeof(S32)) PC_ANY from)
 {
 #if BYTE_ORDER == BIG_ENDIAN
     return(readval_S32_BE(from));

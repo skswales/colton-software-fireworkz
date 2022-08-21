@@ -192,7 +192,7 @@ input_rewind(
     else /* if(IP_INPUT_MEM == p_ip_format_input->state) */
     {
         assert(IP_INPUT_MEM == p_ip_format_input->state);
-        assert(array_index_valid(p_ip_format_input->mem.p_array_handle, p_ip_format_input->bom_bytes));
+        assert(array_index_is_valid(p_ip_format_input->mem.p_array_handle, p_ip_format_input->bom_bytes));
         p_ip_format_input->mem.array_offset = p_ip_format_input->bom_bytes;
     }
 
@@ -517,7 +517,7 @@ _Check_return_
 extern STATUS
 ownform_initialise_load(
     _DocuRef_   P_DOCU p_docu,
-    _InRef_opt_ PC_POSITION p_position,
+    _InRef_maybenone_ PC_POSITION p_position,
     _InoutRef_  P_OF_IP_FORMAT p_of_ip_format,
     _In_opt_z_  PCTSTR filename,
     _InRef_opt_ PC_ARRAY_HANDLE p_array_handle)
@@ -611,7 +611,7 @@ load_object_config_file(
 
     if(status_done(status))
     {
-        P_DOCU p_docu_config = p_docu_from_config_wr();
+        const P_DOCU p_docu_config = p_docu_from_config_wr();
         OF_IP_FORMAT of_ip_format = OF_IP_FORMAT_INIT;
 
         of_ip_format.process_status.flags.foreground = 1;
@@ -697,7 +697,7 @@ extern STATUS
 load_ownform_from_array_handle(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_ARRAY_HANDLE p_array_handle,
-    _InRef_opt_ PC_POSITION p_position,
+    _InRef_maybenone_ PC_POSITION p_position,
     _InVal_     BOOL clip_data_from_cut_operation)
 {
     STATUS status;
@@ -780,7 +780,8 @@ _Check_return_
 static STATUS
 new_docno_using_core(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     BOOL fReadOnly)
 {
     STATUS status;
     POSITION position;
@@ -802,6 +803,12 @@ new_docno_using_core(
             /* SKS 04jun96 this is needed for ancient Wordz documents without EndOfData (intro'd 1.04); SKS 06mar13 but do take care with no_data! */
             status_accumulate(status, t5_cmd_of_end_of_data(&of_ip_format));
 
+        if(fReadOnly)
+        {
+            p_docu->flags.read_only = fReadOnly;
+            status_assert(maeve_event(p_docu, T5_MSG_DOCU_READWRITE, P_DATA_NONE));
+        }
+
         status_accumulate(status, ownform_finalise_load(p_docu, &of_ip_format));
     }
 
@@ -814,6 +821,7 @@ new_docno_using_existing_file(
     _OutRef_    P_DOCNO p_docno,
     _In_z_      PCTSTR filename, /* already checked to exist */
     _InRef_     PC_DOCU_NAME p_docu_name /*copied*/,
+    _InVal_     BOOL fReadOnly,
     _InVal_     BOOL allow_no_data)
 {
     STATUS status;
@@ -835,7 +843,7 @@ new_docno_using_existing_file(
             tstr_clr(&p_docu->docu_name.extension);
 #endif
 
-        status = new_docno_using_core(p_docu, filename);
+        status = new_docno_using_core(p_docu, filename, fReadOnly);
 
         if(status_ok(status) && !p_docu->flags.has_data && !allow_no_data)
             status = create_error(ERR_NO_DATA_LOADED);
@@ -854,7 +862,8 @@ extern /*for ff_load*/ STATUS
 new_docno_using(
     _OutRef_    P_DOCNO p_docno,
     _In_z_      PCTSTR leafname, /* might not exist */
-    _InRef_     PC_DOCU_NAME p_docu_name /*copied*/)
+    _InRef_     PC_DOCU_NAME p_docu_name /*copied*/,
+    _InVal_     BOOL fReadOnly)
 {
     PTSTR filename = NULL;
     STATUS status;
@@ -869,10 +878,15 @@ new_docno_using(
     status_return(tstr_set(&filename, filename_buffer));
     } /*block*/
 
-    status = new_docno_using_existing_file(p_docno, filename, p_docu_name, FALSE);
+    status = new_docno_using_existing_file(p_docno, filename, p_docu_name, fReadOnly, FALSE);
 
     if(status_ok(status))
-        p_docu_from_docno(*p_docno)->flags.allow_modified_change = 1;
+    {
+        P_DOCU p_docu = p_docu_from_docno(*p_docno);
+
+        if(!p_docu->flags.read_only)
+            p_docu->flags.allow_modified_change = 1;
+    }
 
     tstr_clr(&filename);
 
@@ -1295,7 +1309,7 @@ of_load_process_construct_read_arg_type_ustr(
                 {   /* move all data read so far over to quick_ublock as we will expand when adding this character */
                     const U32 n_so_far = PtrDiffBytesU32(p_data, p_arg->val.ustr_inline);
                     if(0 != n_so_far)
-                        status_break(status = quick_ublock_uchars_add(&quick_ublock, p_arg->val.ustr_inline, n_so_far));
+                        status_break(status = quick_ublock_uchars_add(&quick_ublock, (PC_UCHARS) p_arg->val.ustr_inline, n_so_far));
                     p_data = NULL;
                 }
 
@@ -1311,7 +1325,7 @@ of_load_process_construct_read_arg_type_ustr(
                 }
                 else
                 {
-                    status = quick_ublock_uchars_add(&quick_ublock, (PC_UCHARS_INLINE) p_construct_body, size);
+                    status = quick_ublock_uchars_add(&quick_ublock, (PC_UCHARS) p_construct_body, size);
                 }
             }
 
@@ -1344,7 +1358,7 @@ of_load_process_construct_read_arg_type_ustr(
             }
 
             /* move all data read so far over to quick_ublock as we will expand when adding this character */
-            status_break(status = quick_ublock_uchars_add(&quick_ublock, p_arg->val.ustr_inline, PtrDiffBytesU32(p_data, p_arg->val.ustr_inline)));
+            status_break(status = quick_ublock_uchars_add(&quick_ublock, (PC_UCHARS) p_arg->val.ustr_inline, PtrDiffBytesU32(p_data, p_arg->val.ustr_inline)));
             p_data = NULL;
         }
 
@@ -1409,7 +1423,7 @@ of_load_process_construct_read_arg_type_tstr(
             if(IL_UTF8 == inline_code(p_construct_body))
             {   /* Convert from Unicode inline (UTF-8) to UTF-16 */
 #if !TSTR_IS_SBSTR
-                PC_UCHARS uchars = inline_data_ptr(PC_BYTE, p_construct_body);
+                PC_UCHARS uchars = inline_data_ptr(PC_UCHARS, p_construct_body);
                 const U32 il_data_size = inline_data_size(p_construct_body);
 
                 status = quick_tblock_uchars_add(&quick_tblock, uchars, il_data_size);
@@ -1785,6 +1799,28 @@ dispose_args:;
     return(status);
 }
 
+extern void
+of_load_S32_arg_offset_as_COL(
+    _InRef_     P_OF_IP_FORMAT p_of_ip_format,
+    _InoutRef_  P_ARGLIST_ARG p_arg)
+{
+    /* offset a S32 arg as an unprocessed COL ref arg at load time */
+    assert(p_arg->type == ARG_TYPE_S32);
+    p_arg->type = ARG_TYPE_COL;
+    p_arg->val.col += (p_of_ip_format->insert_position.slr.col - p_of_ip_format->original_docu_area.tl.slr.col);
+}
+
+extern void
+of_load_S32_arg_offset_as_ROW(
+    _InRef_     P_OF_IP_FORMAT p_of_ip_format,
+    _InoutRef_  P_ARGLIST_ARG p_arg)
+{
+    /* offset a S32 arg as an unprocessed ROW ref arg at load time */
+    assert(p_arg->type == ARG_TYPE_S32);
+    p_arg->type = ARG_TYPE_ROW;
+    p_arg->val.row += (p_of_ip_format->insert_position.slr.row - p_of_ip_format->original_docu_area.tl.slr.row);
+}
+
 _Check_return_
 extern STATUS
 register_object_construct_table(
@@ -1964,14 +2000,15 @@ static int
 template_sort_order(
     _In_z_      PCTSTR leafname)
 {
-    PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_from_config()->numforms;
+    const PC_DOCU p_docu_config = p_docu_from_config();
+    const PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_config->numforms;
     const ARRAY_INDEX n_elements = array_elements(p_ui_numform_handle);
     ARRAY_INDEX i;
     const UI_NUMFORM_CLASS ui_numform_class = UI_NUMFORM_CLASS_LOAD_TEMPLATE;
 
     for(i = 0; i < n_elements; ++i)
     {
-        PC_UI_NUMFORM p_ui_numform = array_ptrc(p_ui_numform_handle, UI_NUMFORM, i);
+        const PC_UI_NUMFORM p_ui_numform = array_ptrc(p_ui_numform_handle, UI_NUMFORM, i);
         PC_USTR numform_leafname;
         PC_A7STR numform_sort_order;
 
@@ -2189,14 +2226,14 @@ select_a_template(
             dialog_cmd_process_dbox.caption = *p_ui_text_caption;
             dialog_cmd_process_dbox.p_proc_client = dialog_event_select_template;
             dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) (&g_selected_template);
-            status = call_dialog_with_docu(cur_p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+            status = object_call_DIALOG_with_docu(cur_p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         }
 
         if(status_ok(status))
         {   /* selected template to be copied back to caller */
             const S32 selected_template = g_selected_template;
 
-            if(array_index_valid(&template_list_handle, selected_template))
+            if(array_index_is_valid(&template_list_handle, selected_template))
                 p_template_name = quick_tblock_tstr(&(array_ptr(&template_list_handle, TEMPLATE_LIST_ENTRY, selected_template))->fullname_quick_tblock);
         }
     }
@@ -2275,7 +2312,7 @@ load_one_found_supporting_document(
     _In_z_      PCTSTR wholename)
 {
     STATUS status = STATUS_OK;
-    T5_FILETYPE t5_filetype = host_t5_filetype_from_file(wholename);
+    T5_FILETYPE t5_filetype = t5_filetype_from_filename(wholename);
     OBJECT_ID object_id = object_id_from_t5_filetype(t5_filetype);
     DOCNO docno;
 
@@ -2286,7 +2323,9 @@ load_one_found_supporting_document(
 
     if(OBJECT_ID_SKEL == object_id)
     {   /* it's a Fireworkz format file - should just work! */
-        if(status_fail(status = new_docno_using(&docno, wholename, &p_docu->docu_name)))
+        const BOOL fReadOnly = FALSE;
+
+        if(status_fail(status = new_docno_using(&docno, wholename, &p_docu->docu_name, fReadOnly)))
         {
             reperr(status, wholename);
             status = STATUS_OK;
@@ -2298,7 +2337,7 @@ load_one_found_supporting_document(
     { /* it's a foreign format file but give it a try */
     PTSTR template_name = TEMPLATES_SUBDIR FILE_DIR_SEP_TSTR TEXT("Sheet");
 
-    if(status_fail(status = new_docno_using(&docno, template_name, &p_docu->docu_name)))
+    if(status_fail(status = new_docno_using(&docno, template_name, &p_docu->docu_name, FALSE /*fReadOnly*/)))
     {
         reperr(status, template_name);
         status = STATUS_OK;
@@ -2314,6 +2353,7 @@ load_one_found_supporting_document(
 
         msg_insert_foreign.filename = wholename;
         msg_insert_foreign.t5_filetype = t5_filetype;
+        msg_insert_foreign.ctrl_pressed = FALSE;
         position_init(&msg_insert_foreign.position);
         status = object_call_id_load(p_docu, T5_MSG_INSERT_FOREIGN, &msg_insert_foreign, object_id);
 
@@ -2512,6 +2552,7 @@ load_all_files_from_dir(
             if(status_ok(status = file_objenum_fullname(&p_file_objenum, p_file_objinfo, &quick_tblock)))
             {
                 PCTSTR fullname = quick_tblock_tstr(&quick_tblock);
+                const BOOL fReadOnly = FALSE;
                 DOCU_NAME docu_name;
 
                 name_init(&docu_name);
@@ -2540,7 +2581,7 @@ load_all_files_from_dir(
                         }
 
                         if(status_ok(status))
-                            status = new_docno_using(&docno, fullname, &docu_name);
+                            status = new_docno_using(&docno, fullname, &docu_name, fReadOnly);
 
                         if(status_ok(status))
                         {
@@ -2578,8 +2619,8 @@ load_all_files_from_dir(
 }
 
 _Check_return_
-extern STATUS
-load_this_dir(
+extern STATUS /*reported*/
+load_this_dir_rl(
     _In_z_      PCTSTR dirname)
 {
     STATUS status;
@@ -2604,6 +2645,7 @@ _Check_return_
 extern STATUS
 load_ownform_config_file(void)
 {
+    const BOOL fReadOnly = FALSE; /* we may need to modify Choices etc. */
     DOCU_NAME docu_name;
     TCHARZ filename[BUF_MAX_PATHSTRING];
     STATUS status;
@@ -2620,7 +2662,7 @@ load_ownform_config_file(void)
     {
         DOCNO docno;
 
-        status = new_docno_using_existing_file(&docno, filename, &docu_name, TRUE); /* really needs to be a full live document (but it has no views and no data (yet)) */
+        status = new_docno_using_existing_file(&docno, filename, &docu_name, fReadOnly, TRUE); /* really needs to be a full live document (but it has no views and no data (yet)) */
 
         if(status_ok(status))
         {   /* try overwriting this bare document with one containing UI styles and a trivial amount of data */
@@ -2628,18 +2670,18 @@ load_ownform_config_file(void)
 
             if(status_done(status))
             {
-                P_DOCU p_docu_config = p_docu_from_config_wr();
+                const P_DOCU p_docu_config = p_docu_from_config_wr();
 
                 assert(p_docu_from_docno(docno) == p_docu_config);
 
-                status = new_docno_using_core(p_docu_config, filename);
+                status = new_docno_using_core(p_docu_config, filename, fReadOnly);
 
                 assert(FALSE == p_docu_config->flags.allow_modified_change);
             }
 
             if(status_ok(status))
             {   /* always flag document has data for closedown order */
-                P_DOCU p_docu_config = p_docu_from_config_wr();
+                const P_DOCU p_docu_config = p_docu_from_config_wr();
 
                 assert(p_docu_config->flags.has_data);
                 if(!p_docu_config->flags.has_data)
@@ -2670,7 +2712,8 @@ load_ownform_config_file(void)
 _Check_return_
 static STATUS
 load_fireworkz_file_core(
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     BOOL fReadOnly)
 {
     DOCU_NAME docu_name;
     DOCNO docno = DOCNO_NONE;
@@ -2703,7 +2746,7 @@ load_fireworkz_file_core(
     }
 
     if(status_ok(status))
-        status = new_docno_using(&docno, filename, &docu_name);
+        status = new_docno_using(&docno, filename, &docu_name, fReadOnly);
 
     if(status_ok(status))
         status_assert(maeve_event(p_docu_from_docno(docno), T5_MSG_SUPPORTER_LOADED, P_DATA_NONE));
@@ -2720,12 +2763,17 @@ T5_CMD_PROTO(extern, t5_cmd_load)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
     PCTSTR filename = p_args[0].val.tstr;
-    STATUS status = load_fireworkz_file_core(filename);
+    P_ARGLIST_ARG p_arg;
+    BOOL fReadOnly = FALSE;
+    STATUS status;
 
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
 
-    if(status_fail(status))
+    if(arg_present(&p_t5_cmd->arglist_handle, 1, &p_arg))
+        fReadOnly = p_arg->val.fBool;
+
+    if(status_fail(status = load_fireworkz_file_core(filename, fReadOnly)))
     {
         reperr(status, filename);
         status = STATUS_FAIL;
@@ -2741,7 +2789,8 @@ static STATUS
 load_this_file_core(
     _DocuRef_   P_DOCU cur_p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _In_opt_z_  PCTSTR filename)
+    _In_opt_z_  PCTSTR filename,
+    _InVal_     BOOL fReadOnly)
 {
     STATUS status = ensure_memory_froth();
 
@@ -2754,6 +2803,7 @@ load_this_file_core(
         if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
         {
             const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
+            P_ARGLIST_ARG p_arg;
             QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 128);
             quick_tblock_with_buffer_setup(quick_tblock);
 
@@ -2766,8 +2816,14 @@ load_this_file_core(
                  p_args[0].val.tstr = quick_tblock_tstr(&quick_tblock);
             }
 
+            if(fReadOnly && arg_present(&arglist_handle, 1, &p_arg))
+            {
+                assert(T5_CMD_LOAD == t5_message);
+                p_arg->val.fBool = fReadOnly;
+            }
+
             if(status_ok(status))
-                status = execute_command(object_id, cur_p_docu, t5_message, &arglist_handle);
+                status = execute_command(cur_p_docu, t5_message, &arglist_handle, object_id);
 
             quick_tblock_dispose(&quick_tblock);
 
@@ -2781,13 +2837,14 @@ load_this_file_core(
 /* Errors reported locally */
 
 _Check_return_
-extern STATUS
-load_this_file(
+static STATUS /*reported*/
+load_this_file_rl(
     _DocuRef_   P_DOCU cur_p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _In_opt_z_  PCTSTR filename)
+    _In_opt_z_  PCTSTR filename,
+    _InVal_     BOOL fReadOnly)
 {
-    STATUS status = load_this_file_core(cur_p_docu, t5_message, filename);
+    STATUS status = load_this_file_core(cur_p_docu, t5_message, filename, fReadOnly);
 
     if(status_fail(status))
     {
@@ -2798,27 +2855,59 @@ load_this_file(
     return(status);
 }
 
+_Check_return_
+extern STATUS /*reported*/
+load_this_fireworkz_file_rl(
+    _DocuRef_   P_DOCU cur_p_docu,
+    _In_z_      PCTSTR filename,
+    _InVal_     BOOL fReadOnly)
+{
+    return(load_this_file_rl(cur_p_docu, T5_CMD_LOAD, filename, fReadOnly ? TRUE : file_is_read_only(filename)));
+}
+
+_Check_return_
+extern STATUS /*reported*/
+load_this_template_file_rl(
+    _DocuRef_   P_DOCU cur_p_docu,
+    _In_opt_z_  PCTSTR filename)
+{
+    return(load_this_file_rl(cur_p_docu, T5_CMD_LOAD_TEMPLATE, filename, FALSE /*fReadOnly*/));
+}
+
+_Check_return_
+extern STATUS /*reported*/
+load_this_command_file_rl(
+    _DocuRef_   P_DOCU cur_p_docu,
+    _In_z_      PCTSTR filename)
+{
+    return(load_this_file_rl(cur_p_docu, T5_CMD_EXECUTE, filename, FALSE /*fReadOnly*/));
+}
+
 #if WINDOWS
 
 _Check_return_
-extern STATUS
-load_file_for_windows_startup(
+extern STATUS /*reported*/
+load_file_for_windows_startup_rl(
     _In_z_      PCTSTR filename)
 {
-    T5_FILETYPE t5_filetype = host_t5_filetype_from_file(filename);
+    T5_FILETYPE t5_filetype = t5_filetype_from_filename(filename);
 
     switch(t5_filetype)
     {
     case FILETYPE_T5_FIREWORKZ:
-        status_return(load_this_file(P_DOCU_NONE, T5_CMD_LOAD, filename));
+        status_return(load_this_fireworkz_file_rl(P_DOCU_NONE, filename, FALSE /*fReadOnly*/));
         break;
 
     case FILETYPE_T5_TEMPLATE:
-        status_return(load_this_file(P_DOCU_NONE, T5_CMD_LOAD_TEMPLATE, filename));
+        status_return(load_this_template_file_rl(P_DOCU_NONE, filename));
+        break;
+
+    case FILETYPE_T5_COMMAND:
+        status_return(load_this_command_file_rl(P_DOCU_NONE, filename));
         break;
 
     default:
-        status_return(load_foreign_file(P_DOCU_NONE, t5_filetype, filename));
+        status_return(load_foreign_file_rl(P_DOCU_NONE, filename, t5_filetype));
         break;
     }
 
@@ -2836,6 +2925,7 @@ load_and_print_this_file_core(
     _In_opt_z_  PCTSTR printername)
 {
     STATUS status;
+    BOOL need_to_load = TRUE;
     BOOL do_dispose = TRUE;
     DOCU_NAME docu_name;
     DOCNO docno = DOCNO_NONE;
@@ -2858,6 +2948,7 @@ load_and_print_this_file_core(
 
         if(ERR_DUPLICATE_FILE == status)
         {   /* already loaded this file */
+            need_to_load = FALSE;
             do_dispose = FALSE;
         }
         else if(STATUS_DONE == status)
@@ -2879,11 +2970,16 @@ load_and_print_this_file_core(
             do_dispose = TRUE;
     }
 
-    if(status_ok(status))
-        status = new_docno_using(&docno, filename, &docu_name);
+    if(need_to_load)
+    {
+        const BOOL fReadOnly = FALSE; /* don't care */
 
-    if(status_ok(status))
-        status_assert(maeve_event(p_docu_from_docno(docno), T5_MSG_SUPPORTER_LOADED, P_DATA_NONE));
+        if(status_ok(status))
+            status = new_docno_using(&docno, filename, &docu_name, fReadOnly);
+
+        if(status_ok(status))
+            status_assert(maeve_event(p_docu_from_docno(docno), T5_MSG_SUPPORTER_LOADED, P_DATA_NONE));
+    }
 
     if(status_ok(status))
     {
@@ -2896,7 +2992,7 @@ load_and_print_this_file_core(
 #endif
 
         if(status_ok(status))
-            status = execute_command(object_id, p_docu_from_docno(docno), T5_CMD_PRINT, _P_DATA_NONE(P_ARGLIST_HANDLE));
+            status = execute_command(p_docu_from_docno(docno), T5_CMD_PRINT, _P_DATA_NONE(P_ARGLIST_HANDLE), object_id);
 
 #if WINDOWS
         if(NULL != printername) status_consume(host_printer_set(NULL)); /* revert to default */
@@ -2914,8 +3010,8 @@ load_and_print_this_file_core(
 /* Errors reported locally */
 
 _Check_return_
-extern STATUS
-load_and_print_this_file(
+extern STATUS /*reported*/
+load_and_print_this_file_rl(
     _In_z_      PCTSTR filename,
     _In_opt_z_  PCTSTR printername)
 {
@@ -2986,7 +3082,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_template)
         else
         {
             if(status_ok(status = name_set_untitled_with(&docu_name, file_leafname(filename_template))))
-                if(status_ok(status = new_docno_using(&docno, filename_template, &docu_name)))
+                if(status_ok(status = new_docno_using(&docno, filename_template, &docu_name, FALSE /*fReadOnly*/)))
                 {   /* SKS 21jan96 stop those wusses wingeing about file date in templates */
 #if 1
                     /* SKS 24jul06 needed for READER, sensible for normal */

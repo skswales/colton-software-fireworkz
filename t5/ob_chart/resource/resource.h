@@ -67,8 +67,7 @@
 #define CHART_ID_BM_LDASHDOT "ldashdot"
 #define CHART_ID_BM_LDADODO  "ldashdotdot"
 #elif WINDOWS
-#define CHART_ID_BM_BASE        0x2000 /* 8192 */
-
+/* multi-bitmaps: 0x6n (+1 = high-dpi variant) */
 #define CHART_ID_BM_COMBAR_ID T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_CHART, 0) /* bar.bmp */
 #define CHART_ID_BM_COMBAR(n) T5_RESOURCE_COMMON_BMP(CHART_ID_BM_COMBAR_ID, n)
 
@@ -86,6 +85,8 @@
 
 #define CHART_ID_BM_COM_BTN_ID T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_CHART, 12)
 #define CHART_ID_BM_COM_BTN(n) T5_RESOURCE_COMMON_BMP(CHART_ID_BM_COM_BTN_ID, n)
+
+#define CHART_ID_BM_BASE        0x2000 /* 8192 */
 
 #define CHART_ID_BM_B0 CHART_ID_BM_COMBAR(0)
 #define CHART_ID_BM_B1 CHART_ID_BM_COMBAR(1)
@@ -175,7 +176,7 @@ messages
 #define CHART_MSG_DIALOG_PIE_GALLERY_START_POSITION_ANGLE           CHART_MSG(6)
 #define CHART_MSG_DIALOG_PIE_GALLERY_ANTICLOCKWISE                  CHART_MSG(7)
 
-#define CHART_MSG_FILEDESCRIPT                                      CHART_MSG(10)
+#define CHART_MSG_SUGGESTED_LEAFNAME                                CHART_MSG(10)
 
 #define CHART_MSG_DIALOG_BAR_GALLERY_CAPTION                        CHART_MSG(100)
 #define CHART_MSG_DIALOG_BAR_GALLERY_HELP_TOPIC                     CHART_MSG(101)
@@ -212,8 +213,8 @@ messages
 #define CHART_MSG_DIALOG_BAR_PROCESS_HELP_TOPIC                     CHART_MSG(160)
 
 #define CHART_MSG_DIALOG_BL_PROCESS_3D                              CHART_MSG(190)
-#define CHART_MSG_DIALOG_BL_PROCESS_3D_PITCH                        CHART_MSG(191)
-#define CHART_MSG_DIALOG_BL_PROCESS_3D_ROLL                         CHART_MSG(192)
+#define CHART_MSG_DIALOG_BL_PROCESS_3D_DROOP                        CHART_MSG(191)
+#define CHART_MSG_DIALOG_BL_PROCESS_3D_TURN                         CHART_MSG(192)
 
 #define CHART_MSG_DIALOG_LINE_GALLERY_CAPTION                       CHART_MSG(200)
 #define CHART_MSG_DIALOG_LINE_GALLERY_HELP_TOPIC                    CHART_MSG(201)

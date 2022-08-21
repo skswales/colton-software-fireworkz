@@ -50,6 +50,8 @@ object_construct_table[] =
     { "NewDocument",            NULL,                       T5_CMD_NEW_DOCUMENT },
 #if WINDOWS
     { "OpenDocument",           NULL,                       T5_CMD_OPEN_DOCUMENT },
+    { "CloseDocumentReq",       NULL,                       T5_CMD_CLOSE_DOCUMENT_REQ },
+
     { "InsertFile",             NULL,                       T5_MSG_INSERT_FILE_WINDOWS },
     { "InsertPicture",          NULL,                       T5_MSG_INSERT_FILE_WINDOWS_PICTURE },
 #endif /* WINDOWS */
@@ -76,33 +78,50 @@ _Check_return_
 extern STATUS /*n_filters*/
 windows_filter_list_create(
     _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
-    _InVal_     S32 filter_mask)
+    _InVal_     S32 filter_mask,
+    _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */)
 {
     /* build filters as description,CH_NULL,wildcard spec,CH_NULL sets */
     STATUS status = STATUS_OK;
-    ARRAY_INDEX array_index = ENUMERATE_BOUND_FILETYPES_START;
+    const BOOL fEnumerating = (0 == array_elements32(p_h_save_filetype));
+    ARRAY_INDEX array_index = fEnumerating ? ENUMERATE_BOUND_FILETYPES_START : 0;
     S32 n_filters = 0;
 
     for(;;)
     {
-        T5_FILETYPE t5_filetype = enumerate_bound_filetypes(&array_index, filter_mask);
-        PCTSTR description;
-        PCTSTR extension_srch;
+        T5_FILETYPE t5_filetype;
+        BOOL fFound_description, fFound_extension;
+        PC_USTR ustr_description;
+        PC_USTR ustr_extension_srch;
 
-        if(ENUMERATE_BOUND_FILETYPES_START == array_index)
-            break;
-
-        description = description_text_from_t5_filetype(t5_filetype);
-        extension_srch = extension_srch_text_from_t5_filetype(t5_filetype);
-
-        if(description && extension_srch)
+        if(fEnumerating)
         {
-            status_break(status = quick_tblock_tstr_add_n(p_filter_quick_tblock, description, strlen_with_NULLCH));
+            t5_filetype = enumerate_bound_filetypes(&array_index, filter_mask);
 
-            status_break(status = quick_tblock_tstr_add_n(p_filter_quick_tblock, extension_srch, strlen_with_NULLCH));
-
-            n_filters++;
+            if(ENUMERATE_BOUND_FILETYPES_START == array_index)
+                break;
         }
+        else
+        {
+            PC_SAVE_FILETYPE p_save_filetype;
+
+            if(!array_index_is_valid(p_h_save_filetype, array_index))
+                break;
+
+            p_save_filetype = array_ptrc(p_h_save_filetype, SAVE_FILETYPE, array_index);
+
+            t5_filetype = p_save_filetype->t5_filetype;
+
+            ++array_index;
+        }
+
+        ustr_description = description_ustr_from_t5_filetype(t5_filetype, &fFound_description);
+        ustr_extension_srch = extension_srch_ustr_from_t5_filetype(t5_filetype, &fFound_extension);
+
+        status_break(status = quick_tblock_ustr_add_n(p_filter_quick_tblock, ustr_description, strlen_with_NULLCH));
+        status_break(status = quick_tblock_ustr_add_n(p_filter_quick_tblock, ustr_extension_srch, strlen_with_NULLCH));
+
+        ++n_filters;
     }
 
     /* list ends with one final CH_NULL */
@@ -122,30 +141,42 @@ _Check_return_
 extern T5_FILETYPE
 windows_filter_list_get_t5_filetype_from_filter_index(
     _InVal_     S32 filter_index,
-    _InVal_     S32 filter_mask)
+    _InVal_     S32 filter_mask,
+    _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */)
 {
-    ARRAY_INDEX array_index = ENUMERATE_BOUND_FILETYPES_START;
+    const BOOL fEnumerating = (0 == array_elements32(p_h_save_filetype));
+    ARRAY_INDEX array_index = fEnumerating ? ENUMERATE_BOUND_FILETYPES_START : 0;
     S32 n_filters = 1; /* NB filter index returned by GetSaveFileName() is one-based */
 
     for(;;)
     {
-        T5_FILETYPE t5_filetype = enumerate_bound_filetypes(&array_index, filter_mask);
-        PCTSTR description;
-        PCTSTR extension_srch;
+        T5_FILETYPE t5_filetype;
 
-        if(ENUMERATE_BOUND_FILETYPES_START == array_index)
-            break;
+        if(fEnumerating)
+        {
+            t5_filetype = enumerate_bound_filetypes(&array_index, filter_mask);
+
+            if(ENUMERATE_BOUND_FILETYPES_START == array_index)
+                break;
+        }
+        else
+        {
+            PC_SAVE_FILETYPE p_save_filetype;
+
+            if(!array_index_is_valid(p_h_save_filetype, array_index))
+                break;
+
+            p_save_filetype = array_ptrc(p_h_save_filetype, SAVE_FILETYPE, array_index);
+
+            t5_filetype = p_save_filetype->t5_filetype;
+
+            ++array_index;
+        }
 
         if(n_filters == filter_index)
             return(t5_filetype);
 
-        description = description_text_from_t5_filetype(t5_filetype);
-        extension_srch = extension_srch_text_from_t5_filetype(t5_filetype);
-
-        if(description && extension_srch)
-        {
-            n_filters++;
-        }
+        ++n_filters;
     }
 
     return(FILETYPE_UNDETERMINED);
@@ -243,6 +274,7 @@ insert_file_here(
     msg_insert_file.filename = filename;
     msg_insert_file.t5_filetype = t5_filetype;
     msg_insert_file.insert = TRUE;
+    msg_insert_file.ctrl_pressed = FALSE;
     /***msg_insert_file.of_ip_format.flags.insert = 1;*/
     msg_insert_file.position = p_docu->cur;
     skel_point_from_slr_tl(p_docu, &msg_insert_file.skel_point, &p_docu->cur.slr);
@@ -267,17 +299,17 @@ Is_Win_Vista_or_Later(void)
    DWORDLONG dwlConditionMask = 0;
    BYTE op = VER_GREATER_EQUAL;
 
-   // Initialize the OSVERSIONINFOEX structure.
+   /* Initialize the OSVERSIONINFOEX structure. */
    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
    osvi.dwMajorVersion = 6;
    osvi.dwMinorVersion = 0;
 
-   // Initialize the condition mask.
+   /* Initialize the condition mask. */
    VER_SET_CONDITION(dwlConditionMask, VER_MAJORVERSION, op);
    VER_SET_CONDITION(dwlConditionMask, VER_MINORVERSION, op);
 
-   // Perform the test.
+   /* Perform the test. */
    return(
        VerifyVersionInfo(
             &osvi,
@@ -307,14 +339,19 @@ open_document(
     _InVal_     BOOL insert_file,
     _InVal_     BOOL importing_picture)
 {
-    T5_MESSAGE t5_message;
+    STATUS status;
     TCHARZ szFile[BUF_MAX_PATHSTRING];
     const S32 filter_mask = importing_picture ? BOUND_FILETYPE_READ_PICT : BOUND_FILETYPE_READ;
+    const ARRAY_HANDLE h_save_filetype = 0;
     BOOL ofnResult;
-    QUICK_TBLOCK_WITH_BUFFER(filter_quick_tblock, 32);
+    PTSTR loop_filename;
+    T5_FILETYPE t5_filetype;
+    QUICK_TBLOCK_WITH_BUFFER(filter_quick_tblock, 256);
     QUICK_TBLOCK_WITH_BUFFER(insert_file_title_quick_tblock, 48);
+    QUICK_TBLOCK_WITH_BUFFER(pathname_quick_tblock, 32);
     quick_tblock_with_buffer_setup(filter_quick_tblock);
     quick_tblock_with_buffer_setup(insert_file_title_quick_tblock);
+    quick_tblock_with_buffer_setup(pathname_quick_tblock);
 
     ob_file_statics.openfilename.lStructSize = sizeof32(ob_file_statics.openfilename);
     ob_file_statics.openfilename.hInstance = GetInstanceHandle();
@@ -327,16 +364,19 @@ open_document(
     ob_file_statics.openfilename.lpTemplateName = NULL;
 
     ob_file_statics.openfilename.Flags =
+        OFN_ALLOWMULTISELECT    |
+        OFN_EXPLORER            |
         OFN_NOCHANGEDIR         |
         OFN_PATHMUSTEXIST       |
         OFN_FILEMUSTEXIST       |
-        OFN_HIDEREADONLY        |   /* hides the 'Open as read only' check box */
-        OFN_EXPLORER            |
-        OFN_ENABLESIZING        |
-        OFN_LONGNAMES           ;
+      /*OFN_HIDEREADONLY        |*/   /* hides the 'Open as read only' check box */
+        OFN_ENABLESIZING        ;
+
+    if(!insert_file && !importing_picture)
+        ob_file_statics.openfilename.Flags |= OFN_ALLOWMULTISELECT;
 
     /* build filters as description,CH_NULL,wildcard spec,CH_NULL sets */
-    status_return(windows_filter_list_create(&filter_quick_tblock, filter_mask));
+    status_return(windows_filter_list_create(&filter_quick_tblock, filter_mask, &h_save_filetype));
 
     /* try to find some sensible place to start off - load relative to existing document */
     if(!ob_file_statics.szDirName[0]) /* SKS 10may94 now static buffer, first time only initialise */
@@ -450,72 +490,109 @@ open_document(
         }
     }
 
-    {
-    PTSTR filename = ob_file_statics.openfilename.lpstrFile;
-    T5_FILETYPE t5_filetype;
+    if(0 == (ob_file_statics.openfilename.Flags & OFN_ALLOWMULTISELECT))
+        loop_filename = ob_file_statics.openfilename.lpstrFile;
+    else
+        loop_filename = ob_file_statics.openfilename.lpstrFile + ob_file_statics.openfilename.nFileOffset;
 
-    if(file_is_zip(filename))
+    for(;;)
     {
-        reperr(FILE_ERR_ISAZIP, filename);
-        return(STATUS_FAIL);
+        PCTSTR filename;
+
+        if(0 == (ob_file_statics.openfilename.Flags & OFN_ALLOWMULTISELECT))
+        {   /* single file */
+            filename = loop_filename;
+        }
+        else if(FILE_DIR_SEP_CH == ob_file_statics.openfilename.lpstrFile[ob_file_statics.openfilename.nFileOffset - 1])
+        {   /* single file */
+            filename = ob_file_statics.openfilename.lpstrFile;
+        }
+        else
+        {   /* omit the trailing CH_NULL (multiple files) */
+            status_break(status = quick_tblock_tstr_add_n(&pathname_quick_tblock, ob_file_statics.openfilename.lpstrFile, ob_file_statics.openfilename.nFileOffset - 1));
+            status_break(status = quick_tblock_tchar_add(&pathname_quick_tblock, FILE_DIR_SEP_CH));
+            status_break(status = quick_tblock_tstr_add_n(&pathname_quick_tblock, loop_filename, strlen_with_NULLCH));
+            filename = quick_tblock_tstr(&pathname_quick_tblock);
+        }
+
+        if(file_is_zip(filename))
+        {
+            reperr(FILE_ERR_ISAZIP, filename);
+            status_break(status = STATUS_FAIL);
+        }
+
+        /* 95% job will have to do. would be better if Windows kept more state */
+        if(!importing_picture)
+            file_dirname(ob_file_statics.szDirName, filename);
+
+        /* remember filter indexes separately for each dialog */
+        if(!importing_picture)
+            ob_file_statics.nFilterIndex[insert_file ? 1 : 0] = ob_file_statics.openfilename.nFilterIndex;
+
+        t5_filetype = t5_filetype_from_filename(filename);
+
+        if(importing_picture)
+        {
+            MSG_INSERT_FOREIGN msg_insert_foreign;
+            zero_struct(msg_insert_foreign);
+            msg_insert_foreign.filename = filename;
+            msg_insert_foreign.t5_filetype = t5_filetype;
+            msg_insert_foreign.insert = TRUE;
+            msg_insert_foreign.ctrl_pressed = FALSE;
+            /***msg_insert_foreign.of_ip_format.flags.insert = 1;*/
+            msg_insert_foreign.position = cur_p_docu->cur; /*irrelevant, just do it*/
+            skel_point_from_slr_tl(cur_p_docu, &msg_insert_foreign.skel_point, &cur_p_docu->cur.slr);
+            status = object_call_id(OBJECT_ID_CHART, cur_p_docu, T5_MSG_CHART_EDIT_INSERT_PICTURE, &msg_insert_foreign);
+            break;
+        }
+
+        if(insert_file)
+        {
+            status = insert_file_here(cur_p_docu, t5_filetype, filename);
+            break;
+        }
+
+        switch(t5_filetype)
+        {
+        case FILETYPE_T5_FIREWORKZ:
+        case FILETYPE_T5_WORDZ:
+        case FILETYPE_T5_RESULTZ:
+        case FILETYPE_T5_RECORDZ:
+            {
+            const BOOL fReadOnly = (0 != (ob_file_statics.openfilename.Flags & OFN_READONLY));
+            status = load_this_fireworkz_file_rl(cur_p_docu, filename, fReadOnly);
+            break;
+            }
+
+        case FILETYPE_T5_TEMPLATE:
+            status = load_this_template_file_rl(cur_p_docu, filename);
+            break;
+
+        case FILETYPE_T5_COMMAND:
+            status = load_this_command_file_rl(cur_p_docu, filename);
+            break;
+
+        default:
+            status = load_foreign_file_rl(cur_p_docu, filename, t5_filetype);
+            break;
+        }
+
+        status_break(status);
+
+        if(0 == (ob_file_statics.openfilename.Flags & OFN_ALLOWMULTISELECT))
+            break;
+
+        loop_filename = loop_filename + tstrlen32p1(loop_filename); /* skip to next */
+
+        quick_tblock_dispose(&pathname_quick_tblock);
+
+        if(CH_NULL == *loop_filename)
+            break;
     }
 
-    /* 95% job will have to do. would be better if Windows kept more state */
-    file_dirname(ob_file_statics.szDirName, filename);
+    quick_tblock_dispose(&pathname_quick_tblock);
 
-    /* remember filter indexes separately for each dialog */
-    ob_file_statics.nFilterIndex[insert_file ? 1 : 0] = ob_file_statics.openfilename.nFilterIndex;
-
-    t5_filetype = host_t5_filetype_from_file(filename);
-
-    switch(t5_filetype)
-    {
-    case FILETYPE_T5_FIREWORKZ:
-    case FILETYPE_T5_WORDZ:
-    case FILETYPE_T5_RESULTZ:
-    case FILETYPE_T5_RECORDZ:
-        t5_message = T5_CMD_LOAD;
-        break;
-
-    case FILETYPE_T5_TEMPLATE:
-        t5_message = T5_CMD_LOAD_TEMPLATE;
-        break;
-
-    case FILETYPE_T5_COMMAND:
-        t5_message = T5_CMD_EXECUTE;
-        break;
-
-    default:
-        t5_message = T5_CMD_LOAD_FOREIGN;
-        break;
-    }
-
-    if(importing_picture)
-    {
-        assert(T5_CMD_LOAD_FOREIGN == t5_message);
-    }
-
-    if(importing_picture)
-    {
-        MSG_INSERT_FOREIGN msg_insert_foreign;
-        zero_struct(msg_insert_foreign);
-        msg_insert_foreign.filename = filename;
-        msg_insert_foreign.t5_filetype = t5_filetype;
-        msg_insert_foreign.insert = TRUE;
-        /***msg_insert_foreign.of_ip_format.flags.insert = 1;*/
-        msg_insert_foreign.position = cur_p_docu->cur; /*irrelevant, just do it*/
-        skel_point_from_slr_tl(cur_p_docu, &msg_insert_foreign.skel_point, &cur_p_docu->cur.slr);
-        return(object_call_id(OBJECT_ID_CHART, cur_p_docu, T5_MSG_CHART_EDIT_INSERT_PICTURE, &msg_insert_foreign));
-    }
-
-    if(insert_file)
-        return(insert_file_here(cur_p_docu, t5_filetype, filename));
-
-    if(T5_CMD_LOAD_FOREIGN == t5_message)
-        return(load_foreign_file(cur_p_docu, t5_filetype, filename));
-
-    return(load_this_file(cur_p_docu, t5_message, filename));
-    } /*block*/
+    return(status);
 }
 
 _Check_return_
@@ -682,8 +759,22 @@ T5_CMD_PROTO(static, file_cmd_new_document)
     IGNOREPARM_InRef_(p_t5_cmd);
 
     /* pop up template list or load single template */
-    return(load_this_file(p_docu, T5_CMD_LOAD_TEMPLATE, NULL));
+    return(load_this_template_file_rl(p_docu, NULL));
 }
+
+#if WINDOWS
+
+T5_CMD_PROTO(static, file_cmd_close_document_req)
+{
+    IGNOREPARM_InVal_(t5_message);
+    IGNOREPARM_InRef_(p_t5_cmd);
+
+    process_close_request(p_docu, P_VIEW_NONE, TRUE /*closing_a_doc*/, FALSE, FALSE);
+
+    return(STATUS_OK);
+}
+
+#endif /* WINDOWS */
 
 OBJECT_PROTO(extern, object_file);
 OBJECT_PROTO(extern, object_file)
@@ -702,6 +793,9 @@ OBJECT_PROTO(extern, object_file)
 #if WINDOWS
     case T5_CMD_OPEN_DOCUMENT:
         return(open_document(p_docu, FALSE, FALSE));
+
+    case T5_CMD_CLOSE_DOCUMENT_REQ:
+        return(file_cmd_close_document_req(p_docu, t5_message, (PC_T5_CMD) p_data));
 
     case T5_MSG_INSERT_FILE_WINDOWS:
         return(open_document(p_docu, TRUE, FALSE));

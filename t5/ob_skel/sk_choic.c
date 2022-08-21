@@ -29,7 +29,7 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
-extern GLOBAL_PREFERENCES global_preferences = { FALSE };
+GLOBAL_PREFERENCES global_preferences = { FALSE };
 
 extern void
 issue_choice_changed(
@@ -41,7 +41,7 @@ issue_choice_changed(
     msg_choice_changed.t5_message = t5_message;
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
-        status_assert(object_call_all(p_docu_from_docno(docno), T5_MSG_CHOICE_CHANGED, &msg_choice_changed));
+        status_assert(object_call_all(p_docu_from_docno_valid(docno), T5_MSG_CHOICE_CHANGED, &msg_choice_changed));
 
     status_assert(maeve_service_event(p_docu_from_config_wr(), T5_MSG_CHOICE_CHANGED, &msg_choice_changed));
 }
@@ -59,7 +59,7 @@ do_auto_save_all(void)
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno(docno);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
 
         if(p_docu->auto_save_period_minutes)
             continue; /* this one is on its own schedule */
@@ -67,7 +67,7 @@ do_auto_save_all(void)
         if(!p_docu->modified)
             continue;
 
-        status_break(status = execute_command_reperr(OBJECT_ID_SKEL, p_docu, T5_CMD_SAVE_OWNFORM, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+        status_break(status = execute_command_reperr(p_docu, T5_CMD_SAVE_OWNFORM, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
     }
 
     status = STATUS_OK;
@@ -510,6 +510,9 @@ choices_save_array_data_direct_to_file(
         status_accumulate(status, t5_file_close(&file_handle));
     }
 #endif /* OS */
+
+    if(status_fail(status))
+        status_consume(file_remove(filename));
 
     return(status);
 }
@@ -1053,75 +1056,75 @@ dialog_choices_process_end_update_skel(
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
     dialog_cmd_ctl_state_query.bits = 0;
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_AUTO_SAVE_PERIOD;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_AUTO_SAVE_PERIOD;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.s32 = dialog_cmd_ctl_state_query.state.bump_s32;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_AUTO_SAVE, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_AUTO_SAVE, &arglist_handle, OBJECT_ID_SKEL));
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_ASCII_LOAD_DELIMITER;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_ASCII_LOAD_DELIMITER;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     if(ui_text_is_blank(&dialog_cmd_ctl_state_query.state.edit.ui_text))
         p_args[0].val.s32 = 0;
     else
         p_args[0].val.s32 = (S32) uchars_char_decode_NULL(ui_text_ustr(&dialog_cmd_ctl_state_query.state.edit.ui_text));
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_ASCII_LOAD_DELIMITER, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_ASCII_LOAD_DELIMITER, &arglist_handle, OBJECT_ID_SKEL));
 
     /* bodge to save aggro */
     p_args[0].val.s32 = 0;
     p_args[0].type = ARG_TYPE_BOOL;
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_DISPLAY_PICTURES;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_DISPLAY_PICTURES;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_DISPLAY_PICTURES, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_DISPLAY_PICTURES, &arglist_handle, OBJECT_ID_SKEL));
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_EMBED_INSERTED_FILES;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_EMBED_INSERTED_FILES;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_EMBED_INSERTED_FILES, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_EMBED_INSERTED_FILES, &arglist_handle, OBJECT_ID_SKEL));
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_UPDATE_STYLES_FROM_CHOICES;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_UPDATE_STYLES_FROM_CHOICES;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_UPDATE_STYLES_FROM_CHOICES, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_UPDATE_STYLES_FROM_CHOICES, &arglist_handle, OBJECT_ID_SKEL));
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_ASCII_LOAD_AS_DELIMITED;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_ASCII_LOAD_AS_DELIMITED, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_ASCII_LOAD_AS_DELIMITED, &arglist_handle, OBJECT_ID_SKEL));
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_ASCII_LOAD_AS_PARAGRAPHS;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_ASCII_LOAD_AS_PARAGRAPHS, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_ASCII_LOAD_AS_PARAGRAPHS, &arglist_handle, OBJECT_ID_SKEL));
 
 #if RISCOS
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_KERNING;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_KERNING;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_KERNING, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_KERNING, &arglist_handle, OBJECT_ID_SKEL));
 #elif WINDOWS
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_DITHERING;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_DITHERING;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_DITHERING, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_DITHERING, &arglist_handle, OBJECT_ID_SKEL));
 #endif
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_STATUS_LINE;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_STATUS_LINE;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_STATUS_LINE, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_STATUS_LINE, &arglist_handle, OBJECT_ID_SKEL));
 
-    dialog_cmd_ctl_state_query.control_id = CHOICES_MAIN_ID_TOOLBAR;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = CHOICES_MAIN_ID_TOOLBAR;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     p_args[0].val.fBool = dialog_cmd_ctl_state_query.state.checkbox;
-    status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu_config, T5_CMD_CHOICES_TOOLBAR, &arglist_handle));
+    status_consume(execute_command_reperr(p_docu_config, T5_CMD_CHOICES_TOOLBAR, &arglist_handle, OBJECT_ID_SKEL));
 
     if(p_choices_main_callback->atx)
     {
         S32 itemno = ui_dlg_get_list_idx(h_dialog, CHOICES_MAIN_ID_RULERS_RULER_COMBO);
 
-        if(array_index_valid(&p_choices_main_callback->rulers_list_handle, itemno))
+        if(array_index_is_valid(&p_choices_main_callback->rulers_list_handle, itemno))
         {
             P_CHOICES_MAIN_RULERS_LIST_INFO p_choices_main_rulers_list_info = array_ptr_no_checks(&p_choices_main_callback->rulers_list_handle, CHOICES_MAIN_RULERS_LIST_INFO, itemno);
             p_docu_config->scale_info  = p_choices_main_rulers_list_info->scale_info;
@@ -1150,7 +1153,7 @@ dialog_choices_process_end_update_others(
     maeve_service_event(p_docu_config, T5_MSG_CHOICES_CHANGED, P_DATA_NONE);
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno))) /* SKS 04oct95 this is what clients really want */
-        status_assert(object_call_all(p_docu_from_docno(docno), T5_MSG_CHOICES_CHANGED, P_DATA_NONE));
+        status_assert(object_call_all(p_docu_from_docno_valid(docno), T5_MSG_CHOICES_CHANGED, P_DATA_NONE));
 
     return(STATUS_OK);
 }
@@ -1231,7 +1234,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
     static UCHARZ ustr_buffer[8];
     U32 bytes_of_char = 0;
     if(global_preferences.ascii_load_delimiter >= CH_SPACE)
-        bytes_of_char = uchars_char_encode(ustr_buffer, elemof(ustr_buffer), global_preferences.ascii_load_delimiter);
+        bytes_of_char = uchars_char_encode(ustr_bptr(ustr_buffer), elemof(ustr_buffer), global_preferences.ascii_load_delimiter);
     ustr_buffer[bytes_of_char] = CH_NULL;
     choices_main_ascii_load_delimiter_data.state.type = UI_TEXT_TYPE_USTR_PERM;
     choices_main_ascii_load_delimiter_data.state.text.ustr = ustr_bptr(ustr_buffer);
@@ -1262,13 +1265,13 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
 
         if(choices_main_callback.atx)
         {
-            choices_main_group.relative_control_id[2] =
-            choices_main_group.relative_control_id[3] = CHOICES_MAIN_ID_RULERS_RULER_COMBO;
+            choices_main_group.relative_dialog_control_id[2] =
+            choices_main_group.relative_dialog_control_id[3] = CHOICES_MAIN_ID_RULERS_RULER_COMBO;
         }
         else
         {
-            choices_main_group.relative_control_id[2] = CHOICES_MAIN_ID_AUTO_SAVE_PERIOD;
-            choices_main_group.relative_control_id[3] = CHOICES_MAIN_ID_TOOLBAR;
+            choices_main_group.relative_dialog_control_id[2] = CHOICES_MAIN_ID_AUTO_SAVE_PERIOD;
+            choices_main_group.relative_dialog_control_id[3] = CHOICES_MAIN_ID_TOOLBAR;
 
             n_ctls -= 2; /* remove ruler controls */
         }
@@ -1276,12 +1279,13 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
         status_break(status = al_array_add(&choices_query_block.ctl_create, DIALOG_CTL_CREATE, n_ctls, &array_init_block, choices_main_ctl_create));
         } /*block*/
 
-        choices_query_block.tr_id = choices_query_block.br_id = CHOICES_MAIN_ID_GROUP;
+        choices_query_block.tr_dialog_control_id =
+        choices_query_block.br_dialog_control_id = CHOICES_MAIN_ID_GROUP;
 
         /* add controls from other objects - NB. we may have to pass a PROCESS_START to them if they become more complicated */
         status_break(status = object_call_all(p_docu_config, T5_MSG_CHOICES_QUERY, &choices_query_block));
 
-        status_break(status = al_array_add(&choices_query_block.ctl_create, DIALOG_CTL_CREATE, elemof32(choices_ctl_create), NULL, choices_ctl_create));
+        status_break(status = al_array_add(&choices_query_block.ctl_create, DIALOG_CTL_CREATE, elemof32(choices_ctl_create), PC_ARRAY_INIT_BLOCK_NONE, choices_ctl_create));
 
         {
         const U32 n_elements = array_elements32(&choices_query_block.ctl_create);
@@ -1291,7 +1295,7 @@ T5_CMD_PROTO(extern, t5_cmd_choices)
         dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_CHOICES_CAPTION;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_choices;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &choices_main_callback;
-        status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         } /*block*/
 
         break; /* out of loop for structure */

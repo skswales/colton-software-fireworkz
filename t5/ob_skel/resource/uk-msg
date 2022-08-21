@@ -10,17 +10,20 @@
 #
 # messages
 #
+# NB Use Title Caps on Windows for:
+# Title Bar / Action Buttons
+#
 # when changing version number for release, remember other files:
 # definitive list of files is in common.mf_mid
 #1:2.xx.yy
 #1:2.xx
-1:2.00.05
-2:(10 Jun 2016)
+1:2.01.RC2
+2:(16 Jun 2016)
 #
 # update date and version in the corresponding RelNotes HTML files too
 #
 1033:© 1992-2016 Colton Software
-r1034:Portions © 1994-2015 R-Comp
+r1034:Portions © 1994-2016 R-Comp
 w1037:The product uses the following components
 w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
 #
@@ -31,6 +34,7 @@ w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
 1060:%d null events
 #
 92:&Remove
+93:&Insert
 94:&Help
 95:&Apply
 96:&New
@@ -41,6 +45,8 @@ w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions
 100:Untitled
 w101:%L - %P
 r101:%P: %W
+w1032:%L [Read-only] - %P
+r1032:%P: %W [Read-only]
 102: *
 103: at %g%%
 104:%
@@ -107,15 +113,18 @@ w160:Page Down
 r161:Page Up
 w161:Page Up
 #
-168:Insert time
-169:Insert file mod. time
-170:Insert date
-1032:Insert file mod. date
-171:Insert page number
+r168:Insert time
+w168:Insert Time
+# spare 169
+r170:Insert date
+w170:Insert Date
+# spare 1032
+r171:Insert page number
+w171:Insert Page Number
 172:&Live
-173:Insert x page number
-r174:Insert the date when this file was last changed (or ADJUST to insert today's date)
-w174:Insert the date when this file was last changed (or Ctrl+button to insert today's date)
+# spare 173
+r174:Insert date (or ADJUST to insert time). Inserts either when this file was last changed or today
+w174:Insert date (or Ctrl-click to insert time). Inserts either when this file was last changed or today
 #
 180:Name
 181:Shortcut
@@ -130,14 +139,16 @@ w174:Insert the date when this file was last changed (or Ctrl+button to insert t
 254:150%
 255:200%
 #
-256:View control
+r256:View control
+w256:View Control
 1239:ug2_accessing_the_view_control_dialogue_box.htm
 257:Scale
 258:C&olumn border
 259:&Row border
 262:&Top ruler
 263:&Side ruler
-264:&New view
+r264:&New view
+w264:&New View
 265:Display area
 266:&Full
 267:&Printable area
@@ -152,16 +163,19 @@ w174:Insert the date when this file was last changed (or Ctrl+button to insert t
 1056:This template is a set of files
 1057:contained in a directory. You must
 1058:drag this directory to a directory
-1059:viewer in order to make a copy of it.
-260:Save other
+1059:display in order to make a copy of it.
+r260:Export as other format
+w260:Export as Other Format
 261:Other
 #
 283:Column %d, width
 284:Row %d, height
 #
-290:Select template
+r290:Select template
+w290:Select Template
 291:ug3_creating_a_new_document.htm
-292:New document
+r292:New document
+w292:New Document
 #
 300:ug11_basic_print_options.htm
 301:Copies
@@ -170,7 +184,7 @@ w174:Insert the date when this file was last changed (or Ctrl+button to insert t
 304:&Two up
 305:ug11_extra_print_options.htm
 r307:No RISC OS printer installed
-w307:No printer selected
+w307:No Printer Selected
 321:Revers&e
 322:Co&llated
 323:Acros&s
@@ -185,9 +199,12 @@ w307:No printer selected
 1035:from page
 1036:to page
 #
-1020:Print scale
-1021:Fit one page
-1022:Fit one page X
+r1020:Print scale
+w1020:Print Scale
+r1021:Fit one page
+w1021:Fit One Page
+r1022:Fit one page X
+w1022:Fit One Page X
 1023:Scale
 1024:100%
 1025:ug11_print_scale.htm
@@ -259,7 +276,8 @@ w307:No printer selected
 466:&Right
 467:Margin
 468:&Alternate
-469:Read pr&inter
+r469:Read pr&inter
+w469:Read Pr&inter
 470:None
 471:From printer
 472:&Portrait
@@ -296,9 +314,11 @@ w307:No printer selected
 524:Page number
 #
 534:ug8_adding_extra_rows_and_columns.htm
-535:Add columns
+r535:Add columns
+w535:Add Columns
 536:Number of columns to add
-540:Add rows
+r540:Add rows
+w540:Add Rows
 541:Number of rows to add
 #
 550:Case
@@ -348,15 +368,15 @@ w721:Print document
 726:%d words counted
 730:Not found
 731:%d replaced
-r732:Drag to resize, double-click for auto-width. ADJUST-drag to reposition
-w732:Drag to resize, double-click for auto-width. Ctrl+drag to reposition
-733:Drag to resize, double-click for auto-height
+r732:Drag to resize. Double-click for auto-width. ADJUST-drag to reposition
+w732:Drag to resize. Double-click for auto-width. Ctrl+drag to reposition
+733:Drag to resize. Double-click for auto-height
 r734:ADJUST-drag to reposition
 w734:Ctrl+drag to reposition
-738:Picture at (%s,%s) cm - w=%s h=%s cm
-739:Picture at (%s,%s) mm - w=%s h=%s mm
-740:Picture at (%s,%s) in - w=%s h=%s in
-479:Picture at (%s,%s) pt - w=%s h=%s pt
+738:Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%
+739:Picture at (%s,%s) mm : w=%s h=%s mm %d%%,%d%%
+740:Picture at (%s,%s) in : w=%s h=%s in %d%%,%d%%
+479:Picture at (%s,%s) pt : w=%s h=%s pt %d%%,%d%%
 741:No action: column too wide
 742:%d word counted
 743:Selection contains %d regions
@@ -383,8 +403,10 @@ w734:Ctrl+drag to reposition
 762:ug10_backdrop_pictures.htm
 #
 790:One or more documents in the group have been modified
-791:Save group
-792:Discard group
+r791:Save group
+w791:Save Group
+r792:Discard group
+w792:Discard Group
 #
 r800:There is %d document edited but not saved in %s.
 r801:There are %d documents edited but not saved in %s.
@@ -399,8 +421,10 @@ w802:or exit now, discarding all unsaved changes?
 804:'%s'?
 #
 805:This document is part of a linked group
-806:Close group
-807:Close doc
+r806:Close group
+w806:Close Group
+r807:Close doc
+w807:Close Doc
 #
 #w810:
 #w811:
@@ -418,7 +442,8 @@ r816:About this program
 w818:http://groups.google.com/group/colton-software-fireworkz
 r818:http://www.croftnuisk.co.uk/coltsoft/fireworkz
 #
-819:Insert table
+r819:Insert table
+w819:Insert Table
 820:ug8_adding_tables.htm
 821:Number of c&olumns
 822:Number of &rows
@@ -443,7 +468,8 @@ r818:http://www.croftnuisk.co.uk/coltsoft/fireworkz
 857:Save
 #858:to-do.htm
 #
-859:Save template
+r859:Save as template
+w859:Save as Template
 860:ug3_creating_templates.htm
 r861:Template
 w861:template.fwt
@@ -451,7 +477,8 @@ w861:template.fwt
 863:All styl&es
 864:&Style
 #
-865:Save picture
+r865:Save picture
+w865:Save Picture
 #866:to-do.htm
 867:Picture
 #
@@ -460,8 +487,10 @@ w861:template.fwt
 872:&Replace with
 873:&Ignore capitals
 874:Co&py capitals
-875:From &caret
-876:From &top
+r875:From &caret
+w875:From &Caret
+r876:From &top
+w876:From &Top
 877:&Whole words
 w878:From Text &Cursor
 879:ug4_find_and_replace.htm
@@ -566,6 +595,14 @@ r1011:This is the %s application.|MClick SELECT to create a new document.
 1041:* DB data
 1042:Number
 #
+1038:Y page number
+1039:X page number
+#
+1044:Current date
+1045:File modification date
+1046:Current time
+1047:File modification time
+#
 # Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
 #
 # e0:Not an error
@@ -612,8 +649,6 @@ re79:No thesaurus loaded
 #
 e80:No data found in file
 re81:Unable to locate Stubs file
-e83:Unable to load embedded picture because memory full; picture discarded
-e84:Unable to load referenced picture %s because memory full; reference retained
 e85:Unable to load referenced picture %s because file not found; reference retained
 e86:Area is protected
 e87:Supporting file %s not found
@@ -627,7 +662,7 @@ e93:No browser available to access URL
 we94:Failed to load Dial Solutions Drawfile DLL
 e95:%s has bad raw arg %u, size %u, sep '%c'
 e96:Unable to locate compound file template for save
-re97:To save, drag the icon to a directory viewer
+re97:To save, drag the icon to a directory display
 re98:Can't transfer file (Scrap directory not set)
 e99:Invalid date/time
 #

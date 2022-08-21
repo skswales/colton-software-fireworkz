@@ -42,10 +42,10 @@ enum BL_CONTROL_IDS
     BL_ID_3D_GROUP,
     BL_ID_3D_ON,
     BL_ID_3D_GROUP_I,
-    BL_ID_3D_PITCH,
-    BL_ID_3D_PITCH_TEXT,
-    BL_ID_3D_ROLL,
-    BL_ID_3D_ROLL_TEXT
+    BL_ID_3D_DROOP,
+    BL_ID_3D_DROOP_TEXT,
+    BL_ID_3D_TURN,
+    BL_ID_3D_TURN_TEXT
 };
 
 static const DIALOG_CONTROL
@@ -170,58 +170,58 @@ bl_process_3d_group_i =
 };
 
 static const DIALOG_CONTROL
-bl_process_3d_roll =
+bl_process_3d_turn =
 {
-    BL_ID_3D_ROLL, BL_ID_3D_GROUP_I,
+    BL_ID_3D_TURN, BL_ID_3D_GROUP_I,
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT },
     { 0, 0, DIALOG_BUMP_H(4), DIALOG_STDBUMP_V },
     { DRT(LTLT, BUMP_F64) }
 };
 
 static const UI_CONTROL_F64
-bl_process_3d_roll_control = { 0.0, 80.0, 5.0 };
+bl_process_3d_turn_control = { 0.0, 80.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_3d_roll_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_roll_control } /*BUMP_XX*/ };
+bl_process_3d_turn_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_turn_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
-bl_process_3d_roll_text =
+bl_process_3d_turn_text =
 {
-    BL_ID_3D_ROLL_TEXT, BL_ID_3D_GROUP_I,
-    { BL_ID_3D_ROLL, BL_ID_3D_ROLL, DIALOG_CONTROL_SELF, BL_ID_3D_ROLL },
+    BL_ID_3D_TURN_TEXT, BL_ID_3D_GROUP_I,
+    { BL_ID_3D_TURN, BL_ID_3D_TURN, DIALOG_CONTROL_SELF, BL_ID_3D_TURN },
     { DIALOG_SMALLSPACING_H, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(RTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_process_3d_roll_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_ROLL), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+bl_process_3d_turn_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_TURN), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL
-bl_process_3d_pitch =
+bl_process_3d_droop =
 {
-    BL_ID_3D_PITCH, BL_ID_3D_GROUP_I,
-    { BL_ID_3D_ROLL, BL_ID_3D_ROLL, BL_ID_3D_ROLL },
+    BL_ID_3D_DROOP, BL_ID_3D_GROUP_I,
+    { BL_ID_3D_TURN, BL_ID_3D_TURN, BL_ID_3D_TURN },
     { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDBUMP_V },
     { DRT(LBRT, BUMP_F64) }
 };
 
 static const UI_CONTROL_F64
-bl_process_3d_pitch_control = { 0.0, 80.0, 5.0 };
+bl_process_3d_droop_control = { 0.0, 80.0, 5.0 };
 
 static const DIALOG_CONTROL_DATA_BUMP_F64
-bl_process_3d_pitch_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_pitch_control } /*BUMP_XX*/ };
+bl_process_3d_droop_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &bl_process_3d_droop_control } /*BUMP_XX*/ };
 
 static const DIALOG_CONTROL
-bl_process_3d_pitch_text =
+bl_process_3d_droop_text =
 {
-    BL_ID_3D_PITCH_TEXT, BL_ID_3D_GROUP_I,
-    { BL_ID_3D_ROLL_TEXT, BL_ID_3D_PITCH, DIALOG_CONTROL_SELF, BL_ID_3D_PITCH },
+    BL_ID_3D_DROOP_TEXT, BL_ID_3D_GROUP_I,
+    { BL_ID_3D_TURN_TEXT, BL_ID_3D_DROOP, DIALOG_CONTROL_SELF, BL_ID_3D_DROOP },
     { 0, 0, DIALOG_CONTENTS_CALC, 0 },
     { DRT(LTLB, STATICTEXT) }
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-bl_process_3d_pitch_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_PITCH), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
+bl_process_3d_droop_text_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BL_PROCESS_3D_DROOP), { 1 /*left_text*/, 0 /*centre_text*/, 1 /*windows_no_colon*/ } };
 
 static const DIALOG_CONTROL_DATA_GROUPBOX
 bar_process_bar_group_data = { UI_TEXT_INIT_RESID(CHART_MSG_DIALOG_BAR_PROCESS), { 0, 0, 0, FRAMED_BOX_GROUP } };
@@ -260,10 +260,10 @@ bar_process_ctl_create[] =
     { &bl_process_3d_group, &bl_process_3d_group_data },
     { &bl_process_3d_on, &bl_process_3d_on_data },
     { &bl_process_3d_group_i, NULL },
-    { &bl_process_3d_roll, &bl_process_3d_roll_data },
-    { &bl_process_3d_roll_text, &bl_process_3d_roll_text_data },
-    { &bl_process_3d_pitch, &bl_process_3d_pitch_data },
-    { &bl_process_3d_pitch_text, &bl_process_3d_pitch_text_data },
+    { &bl_process_3d_turn, &bl_process_3d_turn_data },
+    { &bl_process_3d_turn_text, &bl_process_3d_turn_text_data },
+    { &bl_process_3d_droop, &bl_process_3d_droop_data },
+    { &bl_process_3d_droop_text, &bl_process_3d_droop_text_data },
 
     { &stdbutton_cancel, &stdbutton_cancel_data },
     { &bar_process_ok, &defbutton_ok_persist_data }
@@ -322,8 +322,8 @@ dialog_bl_process_msg_process_start(
 
     status_return(ui_dlg_set_check_forcing(h_dialog, BL_ID_3D_ON, cp->d3.bits.on));
 
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_ROLL, &cp->d3.roll));
-    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_PITCH, &cp->d3.pitch));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_TURN, &cp->d3.turn));
+    status_return(ui_dlg_set_f64(h_dialog, BL_ID_3D_DROOP, &cp->d3.droop));
 
     p_bl_process_callback->slot_width_modified = TRUE; /* wot de fook are dese says SKS */
     p_bl_process_callback->slot_depth_modified = TRUE;
@@ -364,8 +364,8 @@ dialog_bl_process_process_end(
 
         if((cp->d3.bits.on = ui_dlg_get_check(h_dialog, BL_ID_3D_ON)) != FALSE)
         {
-            ui_dlg_get_f64(h_dialog, BL_ID_3D_ROLL, &cp->d3.roll);
-            ui_dlg_get_f64(h_dialog, BL_ID_3D_PITCH, &cp->d3.pitch);
+            ui_dlg_get_f64(h_dialog, BL_ID_3D_TURN, &cp->d3.turn);
+            ui_dlg_get_f64(h_dialog, BL_ID_3D_DROOP, &cp->d3.droop);
         }
     }
 
@@ -415,7 +415,7 @@ gr_chart_bar_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_bl_process;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &bl_process_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -460,10 +460,10 @@ line_process_ctl_create[] =
     { &bl_process_3d_group, &bl_process_3d_group_data },
     { &bl_process_3d_on, &bl_process_3d_on_data },
     { &bl_process_3d_group_i, NULL },
-    { &bl_process_3d_roll, &bl_process_3d_roll_data },
-    { &bl_process_3d_roll_text, &bl_process_3d_roll_text_data },
-    { &bl_process_3d_pitch, &bl_process_3d_pitch_data },
-    { &bl_process_3d_pitch_text, &bl_process_3d_pitch_text_data },
+    { &bl_process_3d_turn, &bl_process_3d_turn_data },
+    { &bl_process_3d_turn_text, &bl_process_3d_turn_text_data },
+    { &bl_process_3d_droop, &bl_process_3d_droop_data },
+    { &bl_process_3d_droop_text, &bl_process_3d_droop_text_data },
 
     { &stdbutton_cancel, &stdbutton_cancel_data },
     { &line_process_ok, &defbutton_ok_persist_data }
@@ -492,7 +492,7 @@ gr_chart_line_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_bl_process;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &bl_process_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -625,7 +625,7 @@ gr_chart_scat_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_scat_process;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &scat_process_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }

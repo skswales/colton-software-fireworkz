@@ -72,7 +72,7 @@ ensure_h_font_sk_prost(void)
     if(NULL != g_h_font_sk_prost)
         return;
 
-    { /* SKS 22feb2012 - obtain message font from system metrics for 2000, XP (2002), Vista (2006), 7 (2009), 8 (2012) */
+    { /* SKS 22feb2012 - obtain message font from system metrics */
     NONCLIENTMETRICS nonclientmetrics;
     nonclientmetrics.cbSize = (UINT) sizeof32(NONCLIENTMETRICS);
 #if (WINVER >= 0x0600) /* keep size compatible with older OSes even if we can target newer */
@@ -291,7 +291,7 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_process_status_reflect)
     }
 }
 
-#endif /* OS etc */
+#endif /* OS etc. */
 
 extern void
 process_status_begin(
@@ -346,7 +346,7 @@ process_status_end(
         DIALOG_CMD_DISPOSE_DBOX dialog_cmd_dispose_dbox;
         dialog_cmd_dispose_dbox.h_dialog = p_process_status->h_dialog;
         p_process_status->h_dialog = 0;
-        status_assert(call_dialog(DIALOG_CMD_CODE_DISPOSE_DBOX, &dialog_cmd_dispose_dbox));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DISPOSE_DBOX, &dialog_cmd_dispose_dbox));
     }
 #endif
 
@@ -393,7 +393,7 @@ process_status_reflect_create_dialog(
     dialog_cmd_process_dbox.bits.dialog_position_type = ENUM_PACK(UBF, DIALOG_POSITION_CENTRE_WINDOW);
     dialog_cmd_process_dbox.p_proc_client = dialog_event_process_status_reflect;
     dialog_cmd_process_dbox.client_handle = p_process_status;
-    status_assert(call_dialog_with_docu(p_docu_from_docno(p_process_status->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    status_assert(object_call_DIALOG_with_docu(p_docu_from_docno(p_process_status->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 
 #elif WINDOWS
 
@@ -498,11 +498,11 @@ process_status_reflect_update(
         }
 
         /* reflect state into dialog */
-        dialog_cmd_ctl_state_set.h_dialog   = p_process_status->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = PROCESS_STATUS_CONTROL_ID_STATUS;
-        dialog_cmd_ctl_state_set.bits       = DIALOG_STATE_SET_UPDATE_NOW;
+        dialog_cmd_ctl_state_set.h_dialog = p_process_status->h_dialog;
+        dialog_cmd_ctl_state_set.dialog_control_id = PROCESS_STATUS_CONTROL_ID_STATUS;
+        dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_UPDATE_NOW;
 
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
         return;
     }

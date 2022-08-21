@@ -500,7 +500,7 @@ print_extra =
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
 print_extra_data = { { CONTROL_ID_EXTRA }, UI_TEXT_INIT_RESID(MSG_DIALOG_PRINT_EXTRA) };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 e_print_ok_data_argmap[] =
 {
 #define ARG_PRINT_COPIES       0
@@ -524,7 +524,7 @@ e_print_ok_data_argmap[] =
 #define ARG_PRINT_N_ARGS       9
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 s_print_ok_data_argmap[elemof32(e_print_ok_data_argmap)] =
 {
     CONTROL_ID_COPIES,
@@ -1094,7 +1094,7 @@ margin_warning(
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_PRINT_WARNING_TITLE;
     dialog_cmd_process_dbox.bits.note_position = 1;
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-    if((status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox)) == STATUS_OK)
+    if((status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox)) == STATUS_OK)
         p_docu->flags.print_margin_warning_issued = 1;
     } /*block*/
 
@@ -1359,7 +1359,7 @@ T5_CMD_PROTO(extern, t5_cmd_print_intro)
         dialog_cmd_process_dbox.bits.note_position = !print_callback.extra;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_print_intro;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &print_callback;
-        completion_code = status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        completion_code = status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         ui_text_dispose(&dialog_cmd_process_dbox.caption);
         } /*block*/
 
@@ -1371,7 +1371,7 @@ T5_CMD_PROTO(extern, t5_cmd_print_intro)
         print_callback.extra = TRUE;
     } /*loop*/
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }

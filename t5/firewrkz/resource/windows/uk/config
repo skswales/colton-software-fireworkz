@@ -1,4 +1,4 @@
-{Version:2.00.05;10 Jun 2016;Fireworkz for Windows (uk);Colton Software;Windows-1252}
+{Version:2.01.RC2;16 Jun 2016;Fireworkz for Windows (uk);Colton Software;Windows-1252}
 {RowTable:1}
 {#:ObjectBindConstruct:object-id;command-suffix-character}
 {ObjectBindConstruct:0;*}
@@ -34,9 +34,11 @@
 {ObjectBindLoader:27;0xDB0;wk3}
 {ObjectBindLoader:27;0xDB0;wks}
 {ObjectBindLoader:28;0xC32;rtf}
-{ObjectBindLoader:32;0x695;gif;-}
-{ObjectBindLoader:32;0xB60;png;-}
-{ObjectBindLoader:32;0xFF0;tif;-}
+{#:ChangeFSI may handle these on RISC OS}
+{ObjectBindLoader:32;0x695;gif}
+{ObjectBindLoader:32;0xB60;png}
+{ObjectBindLoader:32;0xBE8;pcd}
+{ObjectBindLoader:32;0xFF0;tif}
 {#:ObjectBindSaver:object-id;file-type;clipboard-identifier}
 {ObjectBindSaver:33;0xFFF}
 {ObjectBindSaver:35;0xDFE;Csv}
@@ -44,17 +46,18 @@
 {ObjectBindSaver:41;0xC32}
 {ObjectBindSaver:42;0xBA6;Biff5}
 {BindFileType:1;0;All files;(*.*);*.*}
-{BindFileType:3;0xBDF;Fireworkz document;(*.fwk);*.fwk}
-{BindFileType:3;0xC1D;Fireworkz template;(*.fwt);*.fwt}
+{BindFileType:3;0xBDF;Colton Software Fireworkz;(*.fwk);*.fwk}
+{BindFileType:3;0xC1D;Colton Software Fireworkz template;(*.fwt);*.fwt}
 {BindFileType:3;0xFFF;Plain text;(*.txt);*.txt}
 {BindFileType:3;0xDFE;Comma separated values;(*.csv);*.csv}
-{BindFileType:1;0xDDE;PipeDream;(*.pd);*.pd}
-{BindFileType:3;0xC32;Rich text format;(*.rtf);*.rtf}
+{BindFileType:1;0xDDE;Colton Software PipeDream;(*.pd);*.pd}
 {BindFileType:3;0xBA6;Microsoft Excel;(*.xls);*.xls}
-{BindFileType:3;0xDB0;Lotus 1-2-3;(*.wks,*.wk1,*.wk3);*.wks\\\;*.wk1\\\;*.wk3}
+{BindFileType:3;0xC32;Rich text format;(*.rtf);*.rtf}
+{BindFileType:13;0xC85;JPEG/JFIF;(*.jpg);*.jpg}
 {BindFileType:13;0x69C;Windows Bitmap;(*.bmp,*.dib);*.bmp\\\;*.dib}
-{BindFileType:13;0xAFF;Acorn Draw;(*.aff);*.aff}
-{BindFileType:13;0xFF9;Acorn Sprite;(*.ff9);*.ff9}
+{BindFileType:13;0xAFF;RISC OS Draw;(*.aff);*.aff}
+{BindFileType:13;0xFF9;RISC OS Sprite;(*.ff9);*.ff9}
+{BindFileType:3;0xDB0;Lotus 1-2-3;(*.wks,*.wk1,*.wk3);*.wks\\\;*.wk1\\\;*.wk3}
 {BindFileType:1;0xAF8;GST 1st Word Plus;(*.fwp);*.fwp}
 {BindFileType:1;0xC7D;SID;(*.sid);*.sid}
 {#:Fontmap:portable-name;RTF-class;RTF-class-master;host-base-name;host-normal;host-bold;host-italic;host-bold-italic;riscos-normal;riscos-bold;riscos-italic;riscos-bold-italic}
@@ -81,6 +84,7 @@
 {NumformData:january february march april may june july august september october november december sunday monday tuesday wednesday thursday friday saturday st nd rd th th th th th th th th th th th th th th th th th st nd rd th th th th th th th st}
 {SSContext:,;.;.;:;,;\\\;;,;,;0}
 {#:Insert field - date formats}
+{UILoad:0;yyyy-mm-dd}
 {UILoad:0;dd.mm.yy}
 {UILoad:0;dd/mm/yy}
 {UILoad:0;dd Mmm yy}
@@ -98,7 +102,6 @@
 {UILoad:0;Mmm yy}
 {UILoad:0;Mmmm yy}
 {UILoad:0;Mmmm yyyy}
-{UILoad:0;yyyy-mm-dd}
 {#:Insert field - page number formats}
 {UILoad:1;#}
 {UILoad:1;r#}
@@ -208,10 +211,6 @@
 {DefineKey:^U;DeleteLine}
 {DefineKey:^W;SelectWord}
 {DefineKey:^Z;Clear}
-{DefineKey:^!C;Button:JUSTIFY_CENTRE}
-{DefineKey:^!F;Button:JUSTIFY_FULL}
-{DefineKey:^!L;Button:JUSTIFY_LEFT}
-{DefineKey:^!R;Button:JUSTIFY_RIGHT}
 {DefineKey:^!V;Button:VIEW}
 {DefineKey:^!X;Button:BOX}
 {DefineKey:^!Z;Button:CHART}
@@ -222,8 +221,8 @@
 {Paper:Letter;0;15840;12240;360;380;360;380;0;0;0;0;0;1}
 {MenuName:Function;Functions}
 {MenuAdd:Function;&Quick...;;Functions-S:-1}
-{MenuAdd:Function;&All...;;Functions-S}
 {MenuAdd:Function;&Categories}
+{MenuAdd:Function.Categories;&All...;;Functions-S}
 {MenuAdd:Function.Categories;&Custom control...;;Functions-S:10}
 {MenuAdd:Function.Categories;&Database...;;Functions-S:1}
 {MenuAdd:Function.Categories;Dat&e and time...;;Functions-S:2}
@@ -238,7 +237,9 @@
 {MenuAdd:Function.Categories;Strin&g...;;Functions-S:8}
 {MenuAdd:Function.Categories;&Trigonometrical...;;Functions-S:9}
 {MenuAdd:Function.Categories;Compatibilit&y...;;Functions-S:14}
+{MenuAdd:Function}
 {MenuAdd:Function;C&ustom...;;Functions-S:12}
+{MenuAdd:Function}
 {MenuAdd:Function;&Names...;;NameIntro-S:1}
 {MenuName:Chart;Chart}
 {MenuAdd:Chart;&Bar...;;Gallery-C:0;;6}
@@ -263,20 +264,21 @@
 {MenuAdd:$;&File}
 {MenuAdd:$.File;&New...;^N;NewDocument-f}
 {MenuAdd:$.File;&Open...;^O;OpenDocument-f}
-{MenuAdd:$.File;&Insert file...;;InsertFile-f}
+{MenuAdd:$.File;&Insert File...;;InsertFile-f}
 {MenuAdd:$.File}
 {MenuAdd:$.File;&Save;^S;Save}
-{MenuAdd:$.File;Save &as...;;SaveAsIntro}
-{MenuAdd:$.File;Save as &Drawfile...;;SaveAsDrawfileIntro-d}
-{MenuAdd:$.File;Save &template...;;SaveTemplateIntro}
+{MenuAdd:$.File;Save &As...;;SaveAsIntro}
+{MenuAdd:$.File;Export as &Drawfile...;;SaveAsDrawfileIntro-d}
+{MenuAdd:$.File;Save &Template...;;SaveTemplateIntro}
 {MenuAdd:$.File}
 {MenuAdd:$.File;&Print...;^P;Button:PRINT}
-{MenuAdd:$.File;Print set&up...;;PrintSetup}
+{MenuAdd:$.File;Print Set&up...;;PrintSetup}
 {MenuAdd:$.File}
 {MenuAdd:$.File;C&hoices...;;Choices}
 {MenuAdd:$.File;E&xit;;Quit}
 {MenuAdd:$;&View}
 {MenuAdd:$.View;&New;;ViewNew}
+{MenuAdd:$.View;&Close;;ViewCloseReq}
 {MenuAdd:$.View;Control...;;Button:VIEW}
 {MenuAdd:$.View;&Ruler}
 {MenuAdd:$.View.Ruler;cm}
@@ -294,23 +296,22 @@
 {MenuAdd:$.View.Ruler.inches;1/10 in;;RulerScale:2\\\;2\\\;5\\\;1}
 {MenuAdd:$.View.Ruler.inches;1/16 in;;RulerScale:2\\\;4\\\;4\\\;1}
 {MenuAdd:$.View.Ruler;points;;RulerScale:3\\\;6\\\;2\\\;72}
-{MenuAdd:$.View;Si&de ruler}
-{MenuAdd:$.View.Side ruler;cm}
-{MenuAdd:$.View.Side ruler.cm;0.5 cm;;VRulerScale:0\\\;2\\\;1\\\;1}
-{MenuAdd:$.View.Side ruler.cm;0.2 cm;;VRulerScale:0\\\;5\\\;1\\\;1}
-{MenuAdd:$.View.Side ruler.cm;0.1 cm;;VRulerScale:0\\\;2\\\;5\\\;1}
-{MenuAdd:$.View.Side ruler;mm}
-{MenuAdd:$.View.Side ruler.mm;5 mm;;VRulerScale:1\\\;2\\\;1\\\;10}
-{MenuAdd:$.View.Side ruler.mm;2 mm;;VRulerScale:1\\\;5\\\;1\\\;10}
-{MenuAdd:$.View.Side ruler.mm;1 mm;;VRulerScale:1\\\;10\\\;1\\\;10}
-{MenuAdd:$.View.Side ruler;inches}
-{MenuAdd:$.View.Side ruler.inches;1/4 in;;VRulerScale:2\\\;4\\\;1\\\;1}
-{MenuAdd:$.View.Side ruler.inches;1/6 in;;VRulerScale:2\\\;2\\\;3\\\;1}
-{MenuAdd:$.View.Side ruler.inches;1/8 in;;VRulerScale:2\\\;4\\\;2\\\;1}
-{MenuAdd:$.View.Side ruler.inches;1/10 in;;VRulerScale:2\\\;2\\\;5\\\;1}
-{MenuAdd:$.View.Side ruler.inches;1/16 in;;VRulerScale:2\\\;4\\\;4\\\;1}
-{MenuAdd:$.View.Side ruler;points;;VRulerScale:3\\\;6\\\;2\\\;72}
-{MenuAdd:$.View;&Close;;ViewCloseReq}
+{MenuAdd:$.View.Ruler;Si&de Ruler}
+{MenuAdd:$.View.Ruler.Side Ruler;cm}
+{MenuAdd:$.View.Ruler.Side Ruler.cm;0.5 cm;;VRulerScale:0\\\;2\\\;1\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler.cm;0.2 cm;;VRulerScale:0\\\;5\\\;1\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler.cm;0.1 cm;;VRulerScale:0\\\;2\\\;5\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler;mm}
+{MenuAdd:$.View.Ruler.Side Ruler.mm;5 mm;;VRulerScale:1\\\;2\\\;1\\\;10}
+{MenuAdd:$.View.Ruler.Side Ruler.mm;2 mm;;VRulerScale:1\\\;5\\\;1\\\;10}
+{MenuAdd:$.View.Ruler.Side Ruler.mm;1 mm;;VRulerScale:1\\\;10\\\;1\\\;10}
+{MenuAdd:$.View.Ruler.Side Ruler;inches}
+{MenuAdd:$.View.Ruler.Side Ruler.inches;1/4 in;;VRulerScale:2\\\;4\\\;1\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler.inches;1/6 in;;VRulerScale:2\\\;2\\\;3\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler.inches;1/8 in;;VRulerScale:2\\\;4\\\;2\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler.inches;1/10 in;;VRulerScale:2\\\;2\\\;5\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler.inches;1/16 in;;VRulerScale:2\\\;4\\\;4\\\;1}
+{MenuAdd:$.View.Ruler.Side Ruler;points;;VRulerScale:3\\\;6\\\;2\\\;72}
 {MenuAdd:$;&Edit}
 {MenuAdd:$.Edit;Cu&t;^X;Button:CUT}
 {MenuAdd:$.Edit;&Copy;^C;Button:COPY}
@@ -318,40 +319,63 @@
 {MenuAdd:$.Edit;&Delete;;SelectionDelete;;2}
 {MenuAdd:$.Edit}
 {MenuAdd:$.Edit;&Find...;F4;SearchIntro}
-{MenuAdd:$.Edit;Change cas&e}
-{MenuAdd:$.Edit.Change case;&UPPER-CASE;;CaseUpper}
-{MenuAdd:$.Edit.Change case;&lower-case;;CaseLower}
-{MenuAdd:$.Edit.Change case;&Initial Caps;;CaseIniCap}
-{MenuAdd:$.Edit.Change case;&Swap;;CaseSwap}
-{MenuAdd:$.Edit;&Insert field}
-{MenuAdd:$.Edit.Insert field;&Date...;^!D;FieldDate:0}
-{MenuAdd:$.Edit.Insert field;&Time...;^!T;FieldDate:1}
-{MenuAdd:$.Edit.Insert field;File mod. da&te...;^D;Button:INSERT_DATE}
-{MenuAdd:$.Edit.Insert field;File mod. ti&me...;^T;FieldFileDate:1}
-{MenuAdd:$.Edit.Insert field;&Page #...;^!P;FieldPage;;16}
-{MenuAdd:$.Edit.Insert field;&X Page #...;;FieldPageX;;16}
-{MenuAdd:$.Edit.Insert field;&Filename;;FieldInsLeafN;;16}
-{MenuAdd:$.Edit.Insert field;Pat&hname;;FieldInsWholeN;;16}
-{MenuAdd:$.Edit.Insert field;&Name...;^!N;NameIntro-S:0;;16}
-{MenuAdd:$.Edit;&Make}
-{MenuAdd:$.Edit.Make;Make &blank;;BlockClear;;4}
-{MenuAdd:$.Edit.Make;Make &constant;;Button:MAKE_CONSTANT}
-{MenuAdd:$.Edit.Make;Make &number;;Button:MAKE_NUMBER}
-{MenuAdd:$.Edit.Make;Make &text;;Button:MAKE_TEXT}
-{MenuAdd:$.Edit;Sor&t...;F6;Button:SORT}
+{MenuAdd:$.Edit;Change Cas&e}
+{MenuAdd:$.Edit.Change Case;&lower-case;;CaseLower}
+{MenuAdd:$.Edit.Change Case;&UPPER-CASE;;CaseUpper}
+{MenuAdd:$.Edit.Change Case;&Capitalise Every Word;;CaseIniCap}
+{MenuAdd:$.Edit.Change Case;&Toggle Case;;CaseSwap}
+{MenuAdd:$.Edit;&Insert}
+{MenuAdd:$.Edit.Insert;Page &Break;;InsertPageBreak}
+{MenuAdd:$.Edit.Insert}
+{MenuAdd:$.Edit.Insert;T&able...;^!T;Button:TABLE}
+{MenuAdd:$.Edit.Insert}
+{MenuAdd:$.Edit.Insert;&Date...;^D;InsertFieldIntroDate}
+{MenuAdd:$.Edit.Insert;&Time...;^T;InsertFieldIntroTime}
+{MenuAdd:$.Edit.Insert;&Page number...;^!P;InsertFieldIntroPage;;16}
+{MenuAdd:$.Edit.Insert;&Filename;;InsertFieldLeafname;;16}
+{MenuAdd:$.Edit.Insert;Pat&hname;;InsertFieldWholename;;16}
+{MenuAdd:$.Edit.Insert;&Mail merge Field...;;InsertFieldIntroMailshot;;16}
+{MenuAdd:$.Edit.Insert;&Name...;^!N;NameIntro-S:0;;16}
+{MenuAdd:$.Edit.Insert}
+{MenuAdd:$.Edit.Insert;&Function}
+{MenuAdd:$.Edit.Insert.Function;&Quick...;;Functions-S:-1}
+{MenuAdd:$.Edit.Insert.Function;&All...;;Functions-S}
+{MenuAdd:$.Edit.Insert.Function;&Custom control...;;Functions-S:10}
+{MenuAdd:$.Edit.Insert.Function;&Database...;;Functions-S:1}
+{MenuAdd:$.Edit.Insert.Function;Dat&e and time...;;Functions-S:2}
+{MenuAdd:$.Edit.Insert.Function;Eng&ineering...;;Functions-S:0}
+{MenuAdd:$.Edit.Insert.Function;&Financial...;;Functions-S:3}
+{MenuAdd:$.Edit.Insert.Function;L&ogical...;;Functions-S:13}
+{MenuAdd:$.Edit.Insert.Function;&Lookup...;;Functions-S:11}
+{MenuAdd:$.Edit.Insert.Function;&Mathematical...;;Functions-S:4}
+{MenuAdd:$.Edit.Insert.Function;Mat&rix...;;Functions-S:5}
+{MenuAdd:$.Edit.Insert.Function;Miscellane&ous...;;Functions-S:6}
+{MenuAdd:$.Edit.Insert.Function;&Statistical...;;Functions-S:7}
+{MenuAdd:$.Edit.Insert.Function;Strin&g...;;Functions-S:8}
+{MenuAdd:$.Edit.Insert.Function;&Trigonometrical...;;Functions-S:9}
+{MenuAdd:$.Edit.Insert.Function;Compatibilit&y...;;Functions-S:14}
+{MenuAdd:$.Edit.Insert.Function}
+{MenuAdd:$.Edit.Insert.Function;C&ustom...;;Functions-S:12}
 {MenuAdd:$.Edit}
 {MenuAdd:$.Edit;C&olumns}
-{MenuAdd:$.Edit.Columns;&Add after...;;AddColumnsIntro;;4}
-{MenuAdd:$.Edit.Columns;&Insert before;!F7;InsertCol;;4}
+{MenuAdd:$.Edit.Columns;&Add After...;;AddColumnsIntro;;4}
+{MenuAdd:$.Edit.Columns;&Insert Before;!F7;InsertCol;;4}
 {MenuAdd:$.Edit.Columns;&Delete;!F8;DeleteCol;;4}
 {MenuAdd:$.Edit;&Rows}
-{MenuAdd:$.Edit.Rows;&Add after...;;AddRowsIntro;;4}
-{MenuAdd:$.Edit.Rows;&Insert before;^F7;InsertRow;;4}
+{MenuAdd:$.Edit.Rows;&Add After...;;AddRowsIntro;;4}
+{MenuAdd:$.Edit.Rows;&Insert Before;^F7;InsertRow;;4}
 {MenuAdd:$.Edit.Rows;&Delete;^F8;DeleteRow;;4}
-{MenuAdd:$.Edit;T&able...;^!T;Button:TABLE}
-{MenuAdd:$.Edit;Fill}
-{MenuAdd:$.Edit.Fill;Fill down;;Button:FILL_DOWN}
-{MenuAdd:$.Edit.Fill;Fill right;;Button:FILL_RIGHT}
+{MenuAdd:$.Edit;Fill Cells}
+{MenuAdd:$.Edit.Fill Cells;Down;;Button:FILL_DOWN}
+{MenuAdd:$.Edit.Fill Cells;Right;;Button:FILL_RIGHT}
+{MenuAdd:$.Edit.Fill Cells;Up;;ReplicateUp-S;;2}
+{MenuAdd:$.Edit.Fill Cells;Left;;ReplicateLeft-S;;2}
+{MenuAdd:$.Edit;&Make Cells}
+{MenuAdd:$.Edit.Make Cells;&Blank;;BlockClear;;4}
+{MenuAdd:$.Edit.Make Cells;&Constant;;Button:MAKE_CONSTANT}
+{MenuAdd:$.Edit.Make Cells;&Number;;Button:MAKE_NUMBER}
+{MenuAdd:$.Edit.Make Cells;&Text;;Button:MAKE_TEXT}
+{MenuAdd:$.Edit;Sor&t...;F6;Button:SORT}
 {MenuAdd:$;&Style}
 {MenuAdd:$.Style;&Styles...;^!S;Button:STYLE}
 {MenuAdd:$.Style;&Effects}
@@ -361,17 +385,17 @@
 {MenuAdd:$.Style.Effects;&Underline;^!U;Button:UNDERLINE}
 {MenuAdd:$.Style.Effects;&Superscript;^!Q;Button:SUPERSCRIPT}
 {MenuAdd:$.Style.Effects;Subs&cript;^!W;Button:SUBSCRIPT}
-{MenuAdd:$.Style.Effects;Left justify;;Button:JUSTIFY_LEFT}
-{MenuAdd:$.Style.Effects;Centre justify;;Button:JUSTIFY_CENTRE}
-{MenuAdd:$.Style.Effects;Right justify;;Button:JUSTIFY_RIGHT}
-{MenuAdd:$.Style.Effects;Left and right justify;;Button:JUSTIFY_FULL}
+{MenuAdd:$.Style.Effects;&Justify}
+{MenuAdd:$.Style.Effects.Justify;Left;^!L;Button:JUSTIFY_LEFT}
+{MenuAdd:$.Style.Effects.Justify;Centre;^!C;Button:JUSTIFY_CENTRE}
+{MenuAdd:$.Style.Effects.Justify;Right;^!R;Button:JUSTIFY_RIGHT}
+{MenuAdd:$.Style.Effects.Justify;Full (L-R);^!F;Button:JUSTIFY_FULL}
 {MenuAdd:$.Style;&Regions}
 {MenuAdd:$.Style.Regions;C&ount;;StyleRegionCount;;2}
 {MenuAdd:$.Style.Regions;&Clear;;StyleRegionClear;;2}
-{MenuAdd:$.Style.Regions;&Edit...;^R;StyleRegionEdit;;16}
-{MenuAdd:$.Style;&Box...;^!B;Button:BOX}
+{MenuAdd:$.Style.Regions;&Edit;^R...;StyleRegionEdit;;16}
+{MenuAdd:$.Style;&Box;^!B...;Button:BOX}
 {MenuAdd:$;&Page}
-{MenuAdd:$.Page;&Break;;InsertPageBreak}
 {MenuAdd:$.Page;&Pages...;;PageHefoBreakIntro-H}
 {MenuAdd:$.Page;P&aper...;;PaperIntro}
 {MenuAdd:$.Page;&Scale...;;PaperScaleIntro}
@@ -383,39 +407,21 @@
 {MenuAdd:$.Extra.Chart;&X-Y...;;Gallery-C:3;;6}
 {MenuAdd:$.Extra.Chart;&Overlay...;;Gallery-C:4;;6}
 {MenuAdd:$.Extra.Chart;&Add;;Gallery-C:5;;6}
-{MenuAdd:$.Extra;&Mailshot}
-{MenuAdd:$.Extra.Mailshot;&Insert field...;;MailshotField-M;;16}
-{MenuAdd:$.Extra.Mailshot;&Select...;;MailshotSelect-M}
 {MenuAdd:$.Extra;&Pictures}
-{MenuAdd:$.Extra.Pictures;&Embed picture;;NoteEmbed;;11}
-{MenuAdd:$.Extra.Pictures;Send to &back;;NoteBack;;11}
-{MenuAdd:$.Extra.Pictures;S&wap front/back;;NoteSwap;;10}
+{MenuAdd:$.Extra.Pictures;&Embed Picture;;NoteEmbed;;11}
+{MenuAdd:$.Extra.Pictures;Send to &Back;;NoteBack;;11}
+{MenuAdd:$.Extra.Pictures;S&wap Front/Back;;NoteSwap;;10}
 {MenuAdd:$.Extra.Pictures;B&ackdrop...;;BackdropIntro;;12}
-{MenuAdd:$.Extra.Pictures;&Save picture...;;SavePictureIntro;;11}
+{MenuAdd:$.Extra.Pictures;&Save Picture...;;SavePictureIntro;;11}
 {MenuAdd:$.Extra;&Sheet}
-{MenuAdd:$.Extra.Sheet;&Functions}
-{MenuAdd:$.Extra.Sheet.Functions;&Quick...;;Functions-S:-1}
-{MenuAdd:$.Extra.Sheet.Functions;&All...;;Functions-S}
-{MenuAdd:$.Extra.Sheet.Functions;&Custom control...;;Functions-S:10}
-{MenuAdd:$.Extra.Sheet.Functions;&Database...;;Functions-S:1}
-{MenuAdd:$.Extra.Sheet.Functions;Dat&e and time...;;Functions-S:2}
-{MenuAdd:$.Extra.Sheet.Functions;Eng&ineering...;;Functions-S:0}
-{MenuAdd:$.Extra.Sheet.Functions;&Financial...;;Functions-S:3}
-{MenuAdd:$.Extra.Sheet.Functions;L&ogical...;;Functions-S:13}
-{MenuAdd:$.Extra.Sheet.Functions;&Lookup...;;Functions-S:11}
-{MenuAdd:$.Extra.Sheet.Functions;&Mathematical...;;Functions-S:4}
-{MenuAdd:$.Extra.Sheet.Functions;Mat&rix...;;Functions-S:5}
-{MenuAdd:$.Extra.Sheet.Functions;Miscellane&ous...;;Functions-S:6}
-{MenuAdd:$.Extra.Sheet.Functions;&Statistical...;;Functions-S:7}
-{MenuAdd:$.Extra.Sheet.Functions;Strin&g...;;Functions-S:8}
-{MenuAdd:$.Extra.Sheet.Functions;&Trigonometrical...;;Functions-S:9}
-{MenuAdd:$.Extra.Sheet.Functions;Compatibilit&y...;;Functions-S:14}
-{MenuAdd:$.Extra.Sheet.Functions;C&ustom...;;Functions-S:12}
-{MenuAdd:$.Extra.Sheet.Functions;&Names...;;NameIntro-S:1}
+{MenuAdd:$.Extra.Sheet;&Names...;;NameIntro-S:1}
 {MenuAdd:$.Extra.Sheet;&Recalculate;;ForceRecalc}
-{MenuAdd:$.Extra.Sheet;Recalculate &all;;ForceRecalc:*}
+{MenuAdd:$.Extra.Sheet;Recalculate &All;;ForceRecalc:*}
 {MenuAdd:$.Extra;&Text}
-{MenuAdd:$.Extra.Text;Count &words;;WordCount}
+{MenuAdd:$.Extra.Text;Count &Words;;WordCount}
+{MenuAdd:$.Extra.Text;&Mail Merge}
+{MenuAdd:$.Extra.Text.Mail Merge;&Select Source...;;MailshotSelect-M}
+{MenuAdd:$.Extra.Text.Mail Merge;&Insert Field...;;InsertFieldIntroMailshot;;16}
 {MenuAdd:$.Extra.Text;&Spell}
 {MenuAdd:$.Extra.Text.Spell;&Check;;Button:CHECK}
 {MenuAdd:$.Extra.Text.Spell;&Dictionary...;;Dictionary-W}

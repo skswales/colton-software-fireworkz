@@ -22,7 +22,7 @@
 
 #include "commctrl.h" /* for InitCommonControlsEx() */
 
-#include "commdlg.h" /* for HELPMSGSTRING */
+#include "commdlg.h"/* for HELPMSGSTRING */
 
 #if !defined(DD_DEFDRAGDELAY)
 #define DD_DEFDRAGDELAY         400
@@ -87,8 +87,8 @@ typedef struct HO_WIN_STATE
     /* Drag state, defines all important stuff about drags, active != 0 then valid */
     struct
     {
-        BOOL threaded ;     /* possible to call host_drag_start */
-        BOOL pending;       /* drag is pending, ie. timer active */
+        BOOL threaded;      /* possible to call host_drag_start */
+        BOOL pending;       /* drag is pending, i.e. timer active */
         BOOL enabled;       /* drag is in progress */
         BOOL right_button;  /* will start on right button */
 
@@ -186,7 +186,7 @@ scroll_and_recache(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _In_        PANE_ID pane_id,
-    P_GDI_POINT p_offset);
+    _InRef_     PC_GDI_POINT p_offset);
 
 static void
 scroll_pane(
@@ -299,7 +299,8 @@ send_click_to_view(
     _InVal_     int x,
     _InVal_     int y,
     _InVal_     EVENT_HANDLER event_handler,
-    _InVal_     BOOL ctrl);
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed);
 
 static void
 start_drag_monitor(
@@ -309,7 +310,7 @@ start_drag_monitor(
     _InVal_     int x,
     _InVal_     int y,
     _InVal_     EVENT_HANDLER event_handler,
-    _InVal_     BOOL right);
+    _InVal_     BOOL right_button);
 
 static void
 stop_drag_monitor(void);
@@ -322,6 +323,8 @@ send_mouse_event(
     _HwndRef_   HWND hwnd,
     _InVal_     int x,
     _InVal_     int y,
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed,
     _InVal_     EVENT_HANDLER event_handler);
 
 static void
@@ -438,7 +441,7 @@ host_event_desc_table[/*event_handler*/] =
 };
 
 /* Table defines the windows and borders that are associated with the given
- * pane.  It is indexed by the pane ID and gives the windows etc that can
+ * pane.  It is indexed by the pane ID and gives the windows etc. that can
  * be updated, scroll etc..
  */
 
@@ -655,6 +658,40 @@ host_top_level_window_event_handler(
 }
 
 static void
+do_drag_start(
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed)
+{
+    const P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
+    const P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
+
+    const T5_MESSAGE t5_message = ho_win_state.drag.right_button ? T5_EVENT_CLICK_RIGHT_DRAG : T5_EVENT_CLICK_LEFT_DRAG;
+
+    stop_drag_monitor();
+
+    ho_win_state.drag.threaded = TRUE;
+    send_mouse_event(p_docu, p_view, t5_message, ho_win_state.drag.hwnd, ho_win_state.drag.start.x, ho_win_state.drag.start.y, ctrl_pressed, shift_pressed, ho_win_state.drag.event_handler);
+    ho_win_state.drag.threaded = FALSE;
+}
+
+static void
+send_drag_movement_and_maybe_scroll(
+    _InVal_     int x,
+    _InVal_     int y,
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed)
+{
+    const P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
+    const P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
+
+    assert(ho_win_state.drag.enabled);
+
+    send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_MOVEMENT, ho_win_state.drag.hwnd, x, y, ctrl_pressed, shift_pressed, ho_win_state.drag.event_handler);
+
+    maybe_scroll(p_docu, p_view, x, y, ho_win_state.drag.event_handler);
+}
+
+static void
 GetMessagePosAsClient(
     _HwndRef_   HWND hwnd,
     _Out_       int * const p_x,
@@ -677,15 +714,13 @@ ho_win_maeve_service_win_host_null(void)
 {
     if(ho_win_state.drag.enabled)
     {
-        const P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
-        const P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
+        const BOOL ctrl_pressed = host_ctrl_pressed(); /* these may change during drag */
+        const BOOL shift_pressed = host_shift_pressed();
         int x, y;
 
         GetMessagePosAsClient(ho_win_state.drag.hwnd, &x, &y);
 
-        send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_MOVEMENT, ho_win_state.drag.hwnd, x, y, ho_win_state.drag.event_handler);
-
-        maybe_scroll(p_docu, p_view, x, y, ho_win_state.drag.event_handler);
+        send_drag_movement_and_maybe_scroll(x, y, ctrl_pressed, shift_pressed);
     }
 
     return(STATUS_OK);
@@ -1030,7 +1065,7 @@ host_view_show(
 }
 
 /* Attempt to re-open a viewer.  This is called as part of the
- * viewer has been changed - ie. a resize, or, the viewer
+ * viewer has been changed - i.e. a resize, or, the viewer
  * information has been updated (split etc!)
  */
 
@@ -1623,8 +1658,8 @@ move_pane(
         SWP_NOZORDER | SWP_NOACTIVATE | (show ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 }
 
-/* Cope with moving a slave window (ie. a scroll bar or a border window).  First
- * validate that the pane index is valid, ie. the handle is non-zero
+/* Cope with moving a slave window (i.e. a scroll bar or a border window).  First
+ * validate that the pane index is valid, i.e. the handle is non-zero
  * and then cause the window to be moved.
  */
 
@@ -1653,7 +1688,7 @@ scroll_and_recache(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _In_        PANE_ID pane_id,
-    P_GDI_POINT p_offset)
+    _InRef_     PC_GDI_POINT p_offset)
 {
     const P_PANE p_pane = &p_view->pane[pane_id];
 
@@ -1695,6 +1730,7 @@ scroll_and_recache(
     view_event_pane_window(p_docu, T5_EVENT_VISIBLEAREA_CHANGED, &event_info);
     } /*block*/
 
+    assert(NULL != p_pane->hwnd);
     ScrollWindow(p_pane->hwnd, (int) p_offset->x, (int) p_offset->y, NULL, NULL);
     UpdateWindow(p_pane->hwnd);
 }
@@ -2073,7 +2109,7 @@ update_pane_window(
 }
 
 /* Tidy the required panes attached to the view, this is mainly to do with
- * the extra window gadgets required, ie. split views and rulers and
+ * the extra window gadgets required, i.e. split views and rulers and
  * table borders.
  */
 
@@ -2145,7 +2181,7 @@ ensure_pane_set(
             if(!p_view->flags.vert_ruler_on && ((pane_id == WIN_PANE) || (pane_id == WIN_PANE_SPLIT_VERT)))
                 slave_window_destroy(p_view, (pane_id == WIN_PANE) ? WIN_RULER_VERT : WIN_RULER_VERT_SPLIT);
 
-            /* Loop through ensuring that rulers etc have been created */
+            /* Loop through ensuring that rulers etc. have been created */
             if(p_view->flags.horz_border_on && ((pane_id == WIN_PANE) || (pane_id == WIN_PANE_SPLIT_HORZ)))
                 status_return(slave_window_create(p_docu, p_view, (pane_id == WIN_PANE) ? WIN_BORDER_HORZ : WIN_BORDER_HORZ_SPLIT));
             if(p_view->flags.vert_border_on && ((pane_id == WIN_PANE) || (pane_id == WIN_PANE_SPLIT_VERT)))
@@ -2177,7 +2213,7 @@ some_document_windows(void)
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno(docno);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
         VIEWNO viewno = VIEWNO_NONE;
         P_VIEW p_view;
 
@@ -2410,7 +2446,7 @@ wndproc_host_onPaint(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onPaint(p_docu_from_docno(docno), p_view, event_handler, &paintstruct);
+        host_onPaint(p_docu_from_docno_valid(docno), p_view, event_handler, &paintstruct);
     }
 
     hard_assert(FALSE);
@@ -2458,7 +2494,7 @@ wndproc_host_onSize(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {   /* I think this is only called during first ShowWindow after creation now we handle WM_WINDOWPOSCHANGED */
-        host_onSize(p_docu_from_docno(docno), p_view, event_handler);
+        host_onSize(p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -2478,7 +2514,7 @@ wndproc_host_onWindowPosChanged(
     {
         if(NULL == lpwpos->hwnd)
             return; /* seem to get this during DestroyWindow() */
-        host_onSize(p_docu_from_docno(docno), p_view, event_handler);
+        host_onSize(p_docu_from_docno_valid(docno), p_view, event_handler);
         return; /* none of these windows require WM_SIZE and WM_MOVE so don't call DefWindowProc */
     }
 
@@ -2525,15 +2561,17 @@ host_acquire_global_clipboard(
     _DocuRef_   PC_DOCU p_docu,
     _ViewRef_   PC_VIEW p_view)
 {
+    const DOCNO acquiring_docno = docno_from_p_docu(p_docu);
+    const VIEWNO acquiring_viewno = viewno_from_p_view_fn(p_view);
     HWND hwndClipOwner = NULL;
     BOOL res;
 
-    trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard(docno=%d, viewno=%d)"), docno_from_p_docu(p_docu), viewno_from_p_view_fn(p_view));
+    trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard(docno=%d, viewno=%d)"), acquiring_docno, acquiring_viewno);
 
     if(!IS_VIEW_NONE(p_view))
     {
         hwndClipOwner = p_view->main[WIN_BACK].hwnd;
-        assert(p_view->docno == docno_from_p_docu(p_docu));
+        assert(p_view->docno == acquiring_docno);
     }
 
     res = WrapOsBoolChecking(OpenClipboard(hwndClipOwner)); /* NULL -> this task will own */
@@ -2544,8 +2582,8 @@ host_acquire_global_clipboard(
         trace_0(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: EmptyClipboard"));
         EmptyClipboard();
 
-        clipboard_owning_docno  = docno_from_p_docu(p_docu);
-        clipboard_owning_viewno = viewno_from_p_view_fn(p_view);
+        clipboard_owning_docno  = acquiring_docno;
+        clipboard_owning_viewno = acquiring_viewno;
         trace_2(TRACE_WINDOWS_HOST, TEXT("host_acquire_global_clipboard: cbo docno:=%d, viewno:=%d"), clipboard_owning_docno, clipboard_owning_viewno);
     }
     else
@@ -2639,7 +2677,7 @@ host_onClose(
     host_onClose_process_clipboard(p_docu, p_view);
 #endif /* USE_GLOBAL_CLIPBOARD */
 
-    process_close_request(p_docu, p_view, TRUE /*closing_a_view*/, FALSE);
+    process_close_request(p_docu, p_view, FALSE, TRUE /*closing_a_view*/, FALSE);
 
     if(!some_document_windows())
     {
@@ -2657,7 +2695,7 @@ wndproc_host_onClose(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onClose(p_docu_from_docno(docno), p_view);
+        host_onClose(p_docu_from_docno_valid(docno), p_view);
         return;
     }
 
@@ -2665,28 +2703,22 @@ wndproc_host_onClose(
 }
 
 static void
-host_onLButtonDown(
+host_onButtonDown(
     _HwndRef_   HWND hwnd,
     _InVal_     UINT uiMsg,
     _InVal_     int x,
     _InVal_     int y,
+    _InVal_     UINT keyFlags,
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     EVENT_HANDLER event_handler)
 {
-    const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
-    BOOL ctrl = host_ctrl_pressed();
-    BOOL shift = host_shift_pressed();
-    POINT point;
-
-    point.x = x;
-    point.y = y;
-
-    ctrl = ctrl || shift; // very pragmatic fix 31may94 <<< ctrl/shift state must be passed down to the relevant layer to determine correct action
+    const BOOL ctrl_pressed = (0 != (keyFlags & MK_CONTROL));
+    const BOOL shift_pressed = (0 != (keyFlags & MK_SHIFT));
 
     status_line_auto_clear(p_docu);
 
-    status_assert(host_key_cache_emit_events(DOCNO_NONE));
+    status_assert(host_key_cache_emit_events());
 
     switch(event_handler)
     {
@@ -2695,13 +2727,14 @@ host_onLButtonDown(
     case EVENT_HANDLER_PANE_SPLIT_VERT:
     case EVENT_HANDLER_PANE_SPLIT_DIAG:
         {
-        PANE_ID pane_id = p_host_event_desc->pane_id;
+        const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
+        const PANE_ID pane_id = p_host_event_desc->pane_id;
         //const P_PANE p_pane = &p_view->pane[pane_id];
 
         p_docu->viewno_caret = viewno_from_p_view(p_view);
         p_view->cur_pane = pane_id;
 
-        send_click_to_view(p_docu, p_view, hwnd, uiMsg, x, y, event_handler, ctrl);
+        send_click_to_view(p_docu, p_view, hwnd, uiMsg, x, y, event_handler, ctrl_pressed, shift_pressed);
         break;
         }
 
@@ -2717,7 +2750,7 @@ host_onLButtonDown(
     case EVENT_HANDLER_RULER_VERT_SPLIT:
     case EVENT_HANDLER_RULER_VERT:
 #endif
-        send_click_to_view(p_docu, p_view, hwnd, uiMsg, x, y, event_handler, ctrl);
+        send_click_to_view(p_docu, p_view, hwnd, uiMsg, x, y, event_handler, ctrl_pressed, shift_pressed);
         break;
     }
 }
@@ -2741,7 +2774,7 @@ wndproc_host_onLButtonDown(
         if(ho_win_state.drag.enabled)
             return;
 
-        host_onLButtonDown(hwnd, uiMsg, x, y, p_docu_from_docno(docno), p_view, event_handler);
+        host_onButtonDown(hwnd, uiMsg, x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -2751,13 +2784,16 @@ wndproc_host_onLButtonDown(
 /* When the button comes up stop the drag monitor, and silence any pending drags */
 
 static void
-host_onLButtonUp(
+host_onButtonUp_dragging(
     _HwndRef_   HWND hwnd,
     _InVal_     int x,
-    _InVal_     int y)
+    _InVal_     int y,
+    _InVal_     UINT keyFlags)
 {
-    P_DOCU p_docu_drag = p_docu_from_docno(ho_win_state.drag.docno);
-    P_VIEW p_view_drag = p_view_from_viewno(p_docu_drag, ho_win_state.drag.viewno);
+    const BOOL ctrl_pressed = (0 != (keyFlags & MK_CONTROL)); /* these may change during drag */
+    const BOOL shift_pressed = (0 != (keyFlags & MK_SHIFT));
+    P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
+    P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
     GDI_POINT point;
 
     assert(ho_win_state.drag.hwnd == hwnd);
@@ -2771,12 +2807,12 @@ host_onLButtonUp(
 
     ReleaseCapture();
 
-    trace_1(TRACE__NULL, TEXT("WM_xBUTTONUP - *** null_events_stop(docno=%d) - terminating drag monitor"), ho_win_state.drag.docno);
+    trace_1(TRACE__NULL, TEXT("WM_xBUTTONUP - terminating drag monitor - *** null_events_stop(docno=%d)"), ho_win_state.drag.docno);
     null_events_stop(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE);
 
     /* inform the current owner of the pending doom */
-    trace_0(TRACE_WINDOWS_HOST, TEXT("terminate_current_drag]: *** TERMINATING DRAG ***"));
-    send_mouse_event(p_docu_drag, p_view_drag, T5_EVENT_CLICK_DRAG_FINISHED, ho_win_state.drag.hwnd, point.x, point.y, ho_win_state.drag.event_handler);
+    trace_1(TRACE_WINDOWS_HOST, TEXT("WM_xBUTTONUP: *** TERMINATING DRAG in docno=%d ***"), ho_win_state.drag.docno);
+    send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_FINISHED, ho_win_state.drag.hwnd, point.x, point.y, ctrl_pressed, shift_pressed, ho_win_state.drag.event_handler);
     ho_win_state.drag.enabled = FALSE;
 }
 
@@ -2791,69 +2827,11 @@ wndproc_host_onLButtonUp(
 
     if(ho_win_state.drag.enabled)
     {
-        host_onLButtonUp(hwnd, x, y);
+        host_onButtonUp_dragging(hwnd, x, y, keyFlags);
         return;
     }
 
     FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, DefWindowProc);
-}
-
-static void
-host_onRButtonDown(
-    _HwndRef_   HWND hwnd,
-    _InVal_     UINT uiMsg,
-    _InVal_     int x,
-    _InVal_     int y,
-    _DocuRef_   P_DOCU p_docu,
-    _ViewRef_   P_VIEW p_view,
-    _InVal_     EVENT_HANDLER event_handler)
-{
-    const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
-    BOOL ctrl = host_ctrl_pressed();
-    BOOL shift = host_shift_pressed();
-    POINT point;
-
-    point.x = x;
-    point.y = y;
-
-    ctrl = ctrl || shift; // very pragmatic fix 31may94 <<< ctrl/shift state must be passed down to the relevant layer to determine correct action
-
-    status_line_auto_clear(p_docu);
-
-    status_assert(host_key_cache_emit_events(DOCNO_NONE));
-
-    switch(event_handler)
-    {
-    case EVENT_HANDLER_PANE:
-    case EVENT_HANDLER_PANE_SPLIT_HORZ:
-    case EVENT_HANDLER_PANE_SPLIT_VERT:
-    case EVENT_HANDLER_PANE_SPLIT_DIAG:
-        {
-        PANE_ID pane_id = p_host_event_desc->pane_id;
-        // const P_PANE p_pane = &p_view->pane[pane_id];
-
-        p_docu->viewno_caret = viewno_from_p_view(p_view);
-        p_view->cur_pane = pane_id;
-
-        send_click_to_view(p_docu, p_view, hwnd, uiMsg, x, y, event_handler, ctrl);
-        break;
-        }
-
-    default: default_unhandled();
-#if CHECKING
-    case EVENT_HANDLER_BACK_WINDOW:
-    case EVENT_HANDLER_BORDER_HORZ_SPLIT:
-    case EVENT_HANDLER_BORDER_HORZ:
-    case EVENT_HANDLER_BORDER_VERT_SPLIT:
-    case EVENT_HANDLER_BORDER_VERT:
-    case EVENT_HANDLER_RULER_HORZ_SPLIT:
-    case EVENT_HANDLER_RULER_HORZ:
-    case EVENT_HANDLER_RULER_VERT_SPLIT:
-    case EVENT_HANDLER_RULER_VERT:
-#endif
-        send_click_to_view(p_docu, p_view, hwnd, uiMsg, x, y, event_handler, ctrl);
-        break;
-    }
 }
 
 static void
@@ -2875,7 +2853,7 @@ wndproc_host_onRButtonDown(
         if(ho_win_state.drag.enabled)
             return;
 
-        host_onRButtonDown(hwnd, uiMsg, x, y, p_docu_from_docno(docno), p_view, event_handler);
+        host_onButtonDown(hwnd, uiMsg, x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -2893,7 +2871,7 @@ wndproc_host_onRButtonUp(
 
     if(ho_win_state.drag.enabled)
     {
-        host_onLButtonUp(hwnd, x, y); /* same for now */
+        host_onButtonUp_dragging(hwnd, x, y, keyFlags);
         return;
     }
 
@@ -2908,6 +2886,8 @@ host_onDropFiles_process_one(
     HWND hwnd,
     HDROP hdrop,
     UINT wIndex,
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed,
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     EVENT_HANDLER event_handler)
@@ -2926,6 +2906,8 @@ host_onDropFiles_process_one(
 
     /* setup the click context information and mouse point */
     viewevent_click.click_context.hwnd = hwnd;
+    viewevent_click.click_context.ctrl_pressed = ctrl_pressed;
+    viewevent_click.click_context.shift_pressed = shift_pressed;
     viewevent_click.click_context.gdi_org.x = 0; /* window-relative */
     viewevent_click.click_context.gdi_org.y = 0;
     {
@@ -2950,7 +2932,7 @@ host_onDropFiles_process_one(
     viewevent_click.data.fileinsert.filename = szFileName;
     viewevent_click.data.fileinsert.safesource = TRUE;
 
-    viewevent_click.data.fileinsert.t5_filetype = host_t5_filetype_from_file(viewevent_click.data.fileinsert.filename);
+    viewevent_click.data.fileinsert.t5_filetype = t5_filetype_from_filename(viewevent_click.data.fileinsert.filename);
 
     status = (* p_host_event_desc->p_proc_event) (p_docu, T5_EVENT_FILEINSERT_DOINSERT, &viewevent_click);
 
@@ -2965,6 +2947,9 @@ host_onDropFiles(
     _ViewRef_   P_VIEW p_view,
     _InVal_     EVENT_HANDLER event_handler)
 {
+    const BOOL ctrl_pressed = host_ctrl_pressed(); /* cache at start - may take some time to process several files */
+    const BOOL shift_pressed = host_shift_pressed();
+
     const DOCNO docno = docno_from_p_docu(p_docu);
     UINT gwFilesDropped = DragQueryFile(hdrop, (UINT) -1, NULL, 0); /* Total number of files dropped */
     UINT wIndex;
@@ -2973,7 +2958,7 @@ host_onDropFiles(
 
     for(wIndex = 0; wIndex < gwFilesDropped; ++wIndex) /* Retrieve each file name and process */
     {
-        status_break(host_onDropFiles_process_one(hwnd, hdrop, wIndex, p_docu_from_docno(docno) /* reload just in case */, p_view, event_handler));
+        status_break(host_onDropFiles_process_one(hwnd, hdrop, wIndex, ctrl_pressed, shift_pressed, p_docu_from_docno(docno) /* reload just in case */, p_view, event_handler));
     }
 
     DragFinish(hdrop);
@@ -2990,7 +2975,7 @@ wndproc_host_onDropFiles(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onDropFiles(hwnd, hdrop, p_docu_from_docno(docno), p_view, event_handler);
+        host_onDropFiles(hwnd, hdrop, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -3010,7 +2995,7 @@ wndproc_host_onInitMenu(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onInitMenu(hMenu, p_docu_from_docno(docno), p_view);
+        host_onInitMenu(hMenu, p_docu_from_docno_valid(docno), p_view);
         return;
     }
 
@@ -3053,7 +3038,7 @@ wndproc_host_onCommand(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onCommand(id, codeNotify, p_docu_from_docno(docno), p_view);
+        host_onCommand(id, codeNotify, p_docu_from_docno_valid(docno), p_view);
         return;
     }
 
@@ -3098,7 +3083,7 @@ wndproc_host_onSettingChange(
 }
 
 _Check_return_
-static inline S32
+static S32
 host_HScroll_get_new_scroll(
     _ViewRef_   P_VIEW p_view,
     _InVal_     EVENT_HANDLER event_handler,
@@ -3181,7 +3166,7 @@ wndproc_host_onHScroll(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwndCtl, &p_view, &event_handler)))
     {
-        host_onHScroll(code, pos, p_docu_from_docno(docno), p_view, event_handler);
+        host_onHScroll(code, pos, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -3189,7 +3174,7 @@ wndproc_host_onHScroll(
 }
 
 _Check_return_
-static inline S32
+static S32
 host_VScroll_get_new_scroll(
     _ViewRef_   P_VIEW p_view,
     _InVal_     EVENT_HANDLER event_handler,
@@ -3272,7 +3257,7 @@ wndproc_host_onVScroll(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwndCtl, &p_view, &event_handler)))
     {
-        host_onVScroll(code, pos, p_docu_from_docno(docno), p_view, event_handler);
+        host_onVScroll(code, pos, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -3290,7 +3275,7 @@ host_onMouseLeave(
 
     GetMessagePosAsClient(hwnd, &x, &y);
 
-    send_mouse_event(p_docu, p_view, T5_EVENT_POINTER_LEAVES_WINDOW, hwnd, x, y, event_handler);
+    send_mouse_event(p_docu, p_view, T5_EVENT_POINTER_LEAVES_WINDOW, hwnd, x, y, FALSE, FALSE, event_handler);
 }
 
 static void
@@ -3307,7 +3292,7 @@ wndproc_host_onMouseLeave(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onMouseLeave(hwnd, p_docu_from_docno(docno), p_view, event_handler);
+        host_onMouseLeave(hwnd, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -3326,7 +3311,8 @@ host_onMouseMove(
     /*_ViewRef_*/ P_VIEW p_view,
     /*_InVal_*/   EVENT_HANDLER event_handler)
 {
-    IGNOREPARM_InVal_(keyFlags);
+    const BOOL ctrl_pressed = (0 != (keyFlags & MK_CONTROL)); /* these may change between click and drag start / during drag */
+    const BOOL shift_pressed = (0 != (keyFlags & MK_SHIFT));
 
     if(host_set_tracking_for_window(hwnd))
     {
@@ -3338,7 +3324,7 @@ host_onMouseMove(
 
         trace_1(TRACE_WINDOWS_HOST, TEXT("wndproc_host: entering window ") HOST_WND_XTFMT, hwnd);
 
-        send_mouse_event(p_docu, p_view, T5_EVENT_POINTER_ENTERS_WINDOW, hwnd, point.x, point.y, event_handler);
+        send_mouse_event(p_docu, p_view, T5_EVENT_POINTER_ENTERS_WINDOW, hwnd, point.x, point.y, FALSE, FALSE, event_handler);
     }
 
     {
@@ -3352,34 +3338,21 @@ host_onMouseMove(
 
         if((dx >= ho_win_state.drag.dist.x) || (dy >= ho_win_state.drag.dist.y))
         {
-            p_docu = p_docu_from_docno(ho_win_state.drag.docno);
-            p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
-
-            t5_message = ho_win_state.drag.right_button ? T5_EVENT_CLICK_RIGHT_DRAG : T5_EVENT_CLICK_LEFT_DRAG;
-
-            stop_drag_monitor();
-
             trace_0(TRACE_WINDOWS_HOST, TEXT("WM_MOUSEMOVE: **** POSTING DRAG START ****"));
-            ho_win_state.drag.threaded = TRUE;
-            send_mouse_event(p_docu, p_view, t5_message, ho_win_state.drag.hwnd, ho_win_state.drag.start.x, ho_win_state.drag.start.y, ho_win_state.drag.event_handler);
-            ho_win_state.drag.threaded = FALSE;
+            do_drag_start(ctrl_pressed, shift_pressed);
         }
     }
 
     if(ho_win_state.drag.enabled)
     {
-        p_docu = p_docu_from_docno(ho_win_state.drag.docno);
-        p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
-        event_handler = ho_win_state.drag.event_handler;
-        t5_message = T5_EVENT_CLICK_DRAG_MOVEMENT;
+        send_drag_movement_and_maybe_scroll(x, y, ctrl_pressed, shift_pressed);
     }
     else
+    {
         t5_message = T5_EVENT_POINTER_MOVEMENT;
 
-    send_mouse_event(p_docu, p_view, t5_message, hwnd, x, y, event_handler);
-
-    if(ho_win_state.drag.enabled)
-        maybe_scroll(p_docu, p_view, x, y, event_handler);
+        send_mouse_event(p_docu, p_view, t5_message, hwnd, x, y, FALSE, FALSE, event_handler);
+    }
     } /*block*/
 }
 
@@ -3396,7 +3369,7 @@ wndproc_host_onMouseMove(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onMouseMove(hwnd, x, y, keyFlags, p_docu_from_docno(docno), p_view, event_handler);
+        host_onMouseMove(hwnd, x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 
@@ -3467,7 +3440,7 @@ wndproc_host_onMouseWheel(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd_caret, &p_view, &event_handler)))
     {
-        host_onMouseWheel(xPos, yPos, zDelta, fwKeys, p_docu_from_docno(docno), p_view, event_handler);
+        host_onMouseWheel(xPos, yPos, zDelta, fwKeys, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
     } /*block*/
@@ -3539,7 +3512,7 @@ wndproc_host_onMouseHWheel(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        return(host_onMouseHWheel(xPos, yPos, zDelta, fwKeys, p_docu_from_docno(docno), p_view, event_handler));
+        return(host_onMouseHWheel(xPos, yPos, zDelta, fwKeys, p_docu_from_docno_valid(docno), p_view, event_handler));
     }
     } /*block*/
 
@@ -3565,6 +3538,7 @@ host_onSetFocus(
         status_break(object_call_id(object_id, P_DOCU_NONE, T5_MSG_DOCU_FOCUS_QUERY, &docu_focus_query));
 
     p_docu = p_docu_from_docno(docu_focus_query.docno);
+    DOCU_ASSERT(p_docu);
     } /*block*/
 
     caret_show_claim(p_docu, p_docu->focus_owner, FALSE); /* MRJC 3.8.94 */
@@ -3585,7 +3559,7 @@ wndproc_host_onSetFocus(
     {
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_SETFOCUS: received, event handler %d"), event_handler);
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_SETFOCUS: cached hwnd ") HOST_WND_XTFMT, ho_win_state.caret.visible.hwnd);
-        host_onSetFocus(p_docu_from_docno(docno));
+        host_onSetFocus(p_docu_from_docno_valid(docno));
         return;
     }
 
@@ -3598,7 +3572,7 @@ static void
 host_onKillFocus(
     _DocuRef_   P_DOCU p_docu)
 {
-    status_assert(host_key_cache_emit_events(docno_from_p_docu(p_docu)));
+    status_assert(host_key_cache_emit_events_for(docno_from_p_docu(p_docu)));
 
     p_docu->flags.has_input_focus = FALSE;
 
@@ -3618,7 +3592,7 @@ wndproc_host_onKillFocus(
     {
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_KILLFOCUS: received, event handler %d"), event_handler);
         trace_1(TRACE_WINDOWS_HOST, TEXT("WM_KILLFOCUS: cached hwnd ") HOST_WND_XTFMT, ho_win_state.caret.visible.hwnd);
-        host_onKillFocus(p_docu_from_docno(docno));
+        host_onKillFocus(p_docu_from_docno_valid(docno));
         return;
     }
 
@@ -3665,17 +3639,11 @@ host_onTimer_drag(void)
 
     if(ho_win_state.drag.pending)
     {
-        const T5_MESSAGE t5_message = ho_win_state.drag.right_button ? T5_EVENT_CLICK_RIGHT_DRAG : T5_EVENT_CLICK_LEFT_DRAG;
-        const P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
-        const P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
+        const BOOL ctrl_pressed = host_ctrl_pressed(); /* these may change between click and drag start */
+        const BOOL shift_pressed = host_shift_pressed();
 
         trace_0(TRACE_WINDOWS_HOST, TEXT("WM_TIMER: **** POSTING DRAG START ****"));
-
-        stop_drag_monitor();
-
-        ho_win_state.drag.threaded = TRUE;
-        send_mouse_event(p_docu, p_view, t5_message, ho_win_state.drag.hwnd, ho_win_state.drag.start.x, ho_win_state.drag.start.y, ho_win_state.drag.event_handler);
-        ho_win_state.drag.threaded = FALSE;
+        do_drag_start(ctrl_pressed, shift_pressed);
     }
 }
 
@@ -3739,14 +3707,14 @@ wndproc_host_onKeyUpDown(
     {
         if(fDown)
         {
-            if(host_onKeyDown(vk, p_docu_from_docno(docno)))
+            if(host_onKeyDown(vk, p_docu_from_docno_valid(docno)))
                 return;
         }
         else /* fUp */
         {
             /* have a good flush here */
             if(!host_keys_in_buffer())
-                status_assert(host_key_cache_emit_events(DOCNO_NONE));
+                status_assert(host_key_cache_emit_events());
         }
 
         return;
@@ -3775,7 +3743,7 @@ host_onChar(
     }
 
     if(!host_keys_in_buffer())
-        status_assert(host_key_cache_emit_events(DOCNO_NONE));
+        status_assert(host_key_cache_emit_events());
 }
 
 static void
@@ -3790,7 +3758,7 @@ wndproc_host_onChar(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        host_onChar(ch, p_docu_from_docno(docno));
+        host_onChar(ch, p_docu_from_docno_valid(docno));
         return;
     }
 
@@ -4357,6 +4325,40 @@ render_split_drag_info(
     }
 }
 
+_Check_return_
+static BOOL
+preprocess_key_event_ESCAPE(
+    _DocuRef_   P_DOCU p_docu_for_key)
+{
+    IGNOREPARM_DocuRef_(p_docu_for_key);
+
+    host_key_buffer_flush();
+
+    /* If dragging then terminate the drag, otherwise we can pass the event down! */
+    if(ho_win_state.drag.enabled)
+    {
+        const P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
+        const P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
+        GDI_POINT point;
+
+        GetMessagePosAsClient(ho_win_state.drag.hwnd, &point.x, &point.y);
+
+        ReleaseCapture();
+
+        trace_2(TRACE__NULL, TEXT("send_key_to_docu(docno=%d) - terminating drag monitor - *** null_events_stop(docno=%d)"), docno_from_p_docu(p_docu_for_key), ho_win_state.drag.docno);
+        null_events_stop(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE);
+
+        /* inform the current owner of the pending doom */
+        trace_2(TRACE_WINDOWS_HOST, TEXT("send_key_to_docu(docno=%d): *** ABORTING DRAG in docno=%d ***"), docno_from_p_docu(p_docu_for_key), ho_win_state.drag.docno);
+        send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_ABORTED, ho_win_state.drag.hwnd, point.x, point.y, FALSE, FALSE, ho_win_state.drag.event_handler);
+        ho_win_state.drag.enabled = FALSE;
+
+        return(1 /*processed*/);
+    }
+
+    return(FALSE);
+}
+
 /* Send the key event to the view or cache it for a rainy day via ho_key.
  * We are given the docu that the key is to be posted to.
  */
@@ -4364,59 +4366,36 @@ render_split_drag_info(
 _Check_return_
 static STATUS
 send_key_to_docu(
-    _DocuRef_   P_DOCU p_docu_for_key,
+    _DocuRef_   P_DOCU p_docu,
     _In_        KMAP_CODE key_code)
 {
     ARRAY_HANDLE h_commands;
     T5_MESSAGE t5_message;
     BOOL fn_key = FALSE;
 
-    if((h_commands = command_array_handle_from_key_code(p_docu_for_key, key_code, &t5_message)) == 0)
+    if((h_commands = command_array_handle_from_key_code(p_docu, key_code, &t5_message)) == 0)
     {
         if(t5_message == T5_CMD_ESCAPE)
-        {
-            host_key_buffer_flush();
-
-            /* If dragging then terminate the drag, otherwise we can pass the event down! */
-            if(ho_win_state.drag.enabled)
-            {
-                const P_DOCU p_docu = p_docu_from_docno(ho_win_state.drag.docno);
-                const P_VIEW p_view = p_view_from_viewno(p_docu, ho_win_state.drag.viewno);
-                GDI_POINT point;
-
-                GetMessagePosAsClient(ho_win_state.drag.hwnd, &point.x, &point.y);
-
-                ReleaseCapture();
-
-                trace_1(TRACE__NULL, TEXT("send_key_to_docu - *** null_events_stop(docno=%d) - terminating drag monitor"), ho_win_state.drag.docno);
-                null_events_stop(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE);
-
-                /* inform the current owner of the pending doom */
-                trace_0(TRACE_WINDOWS_HOST, TEXT("send_key_to_docu]: *** ABORTING DRAG ***"));
-                send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_ABORTED, ho_win_state.drag.hwnd, point.x, point.y, ho_win_state.drag.event_handler);
-                ho_win_state.drag.enabled = FALSE;
-
+            if(preprocess_key_event_ESCAPE(p_docu))
                 return(1 /*processed*/);
-            }
-        }
 
         fn_key = (t5_message != T5_EVENT_NONE);
 
         if(!fn_key)
         {
-            if((key_code >= 0x20) && (key_code <= 0xFF))
-                docu_modify(p_docu_for_key);
-            else
+            if((key_code < 0x20) || (key_code > 0xFF))
             {
                 trace_1(TRACE_WINDOWS_HOST, TEXT("key kmap=") U32_XTFMT TEXT(" unprocessed"), (U32) key_code);
                 return(0 /*unprocessed*/);
             }
+
+            docu_modify(p_docu);
         }
     }
     else
         fn_key = TRUE;
 
-    status_assert(host_key_cache_event(docno_from_p_docu(p_docu_for_key), key_code, fn_key, 1));
+    status_assert(host_key_cache_event(docno_from_p_docu(p_docu), key_code, fn_key, 1));
 
     return(1 /*processed*/);
 }
@@ -4465,8 +4444,10 @@ send_click_to_view(
     _InVal_     int x,
     _InVal_     int y,
     _InVal_     EVENT_HANDLER event_handler,
-    _InVal_     BOOL ctrl)
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed)
 {
+    const BOOL emulate_right_button = FALSE; /* ctrl_pressed || shift_pressed; */ /* handled on case-by-case basis now */
     T5_MESSAGE t5_message;
 
     switch(uiMsg)
@@ -4483,14 +4464,14 @@ send_click_to_view(
             int dy = abs(ho_win_state.triple.start.y - y);
             if((dx <= ho_win_state.triple.dist.x) && (dy <= ho_win_state.triple.dist.y))
             {
-                t5_message = (ctrl) ? T5_EVENT_CLICK_RIGHT_TRIPLE : T5_EVENT_CLICK_LEFT_TRIPLE;
-                start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, ctrl);
+                t5_message = (emulate_right_button) ? T5_EVENT_CLICK_RIGHT_TRIPLE : T5_EVENT_CLICK_LEFT_TRIPLE;
+                start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, emulate_right_button);
                 break;
             }
         }
 
-        t5_message = (ctrl) ? T5_EVENT_CLICK_RIGHT_SINGLE : T5_EVENT_CLICK_LEFT_SINGLE;
-        start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, ctrl);
+        t5_message = (emulate_right_button) ? T5_EVENT_CLICK_RIGHT_SINGLE : T5_EVENT_CLICK_LEFT_SINGLE;
+        start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, emulate_right_button);
         break;
 
     case WM_RBUTTONDOWN:
@@ -4502,7 +4483,7 @@ send_click_to_view(
             if((dx <= ho_win_state.triple.dist.x) && (dy <= ho_win_state.triple.dist.y))
             {
                 t5_message = T5_EVENT_CLICK_RIGHT_TRIPLE;
-                start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, ctrl);
+                start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, TRUE);
                 break;
             }
         }
@@ -4512,22 +4493,22 @@ send_click_to_view(
         break;
 
     case WM_LBUTTONDBLCLK:
-        t5_message = (ctrl) ? T5_EVENT_CLICK_RIGHT_DOUBLE : T5_EVENT_CLICK_LEFT_DOUBLE;
-        start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, ctrl);
+        t5_message = (emulate_right_button) ? T5_EVENT_CLICK_RIGHT_DOUBLE : T5_EVENT_CLICK_LEFT_DOUBLE;
+        start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, emulate_right_button);
         break;
 
     case WM_RBUTTONDBLCLK:
         t5_message = T5_EVENT_CLICK_RIGHT_DOUBLE;
-        start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, ctrl);
+        start_drag_monitor(p_docu, p_view, hwnd, x, y, event_handler, TRUE);
         break;
     }
 
-    send_mouse_event(p_docu, p_view, t5_message, hwnd, x, y, event_handler);
+    send_mouse_event(p_docu, p_view, t5_message, hwnd, x, y, ctrl_pressed, shift_pressed, event_handler);
 }
 
-/* Post the mouse event to the outside world.  We are given a view,
- * the T5 message and other information to be bundled down
- * to the event handler.
+/* Post the mouse event to the outside world.
+ * We are given a view, the T5 message and other information
+ * to be bundled down to the event handler.
  */
 
 static void
@@ -4538,6 +4519,8 @@ send_mouse_event(
     _HwndRef_   HWND hwnd,
     _InVal_     int x,
     _InVal_     int y,
+    _InVal_     BOOL ctrl_pressed,
+    _InVal_     BOOL shift_pressed,
     _InVal_     EVENT_HANDLER event_handler)
 {
     const PC_HOST_EVENT_DESC p_host_event_desc = &host_event_desc_table[event_handler];
@@ -4553,6 +4536,8 @@ send_mouse_event(
 
     /* setup the click context information and mouse point */
     viewevent_click.click_context.hwnd = hwnd;
+    viewevent_click.click_context.ctrl_pressed = ctrl_pressed;
+    viewevent_click.click_context.shift_pressed = shift_pressed;
     viewevent_click.click_context.gdi_org.x = 0; /* window-relative */
     viewevent_click.click_context.gdi_org.y = 0;
     {
@@ -4588,7 +4573,7 @@ send_mouse_event(
     if(((t5_message == T5_EVENT_CLICK_LEFT_DRAG) || (t5_message == T5_EVENT_CLICK_RIGHT_DRAG)) && (ho_win_state.drag.enabled))
     {
         ho_win_state.drag.start_pixit_point = viewevent_click.view_point.pixit_point;
-        send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_STARTED, hwnd, x, y, event_handler);
+        send_mouse_event(p_docu, p_view, T5_EVENT_CLICK_DRAG_STARTED, hwnd, x, y, ctrl_pressed, shift_pressed, event_handler);
     }
 }
 
@@ -4655,7 +4640,7 @@ stop_drag_monitor(void)
 
 extern void
 host_drag_start(
-    P_ANY p_reason_data)
+    _In_opt_    P_ANY p_reason_data)
 {
     static S32 default_drag_reason_data = CB_CODE_NOREASON;
 
@@ -4670,7 +4655,7 @@ host_drag_start(
     /* ensure we capture the mouse, ensures we get the mouse events */
     SetCapture(ho_win_state.drag.hwnd);
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("host_drag_start - *** null_events_start(docno=%d) - starting drag monitor"), ho_win_state.drag.docno);
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("host_drag_start() - starting drag monitor - *** null_events_start(docno=%d)"), ho_win_state.drag.docno);
     if(status_fail(status_wrap(null_events_start(ho_win_state.drag.docno, T5_MSG_WIN_HOST_NULL, null_event_ho_win, HO_WIN_DRAG_NULL_CLIENT_HANDLE))))
     {
         ReleaseCapture();
@@ -5315,7 +5300,7 @@ host_main_show_caret(
             DOCNO docno = DOCNO_NONE;
 
             while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
-                p_docu_from_docno(docno)->flags.is_current = 0;
+                p_docu_from_docno_valid(docno)->flags.is_current = 0;
         }
 
         p_docu->flags.is_current = 1;
@@ -5448,6 +5433,8 @@ host_scroll_pane(
     p_view_point->pixit_point.y = MAX(0, p_view_point->pixit_point.y);
 }
 
+/* helpful hint to users - if this returns docno != DOCNO_NONE, you can use p_docu_from_docno_valid() */
+
 _Check_return_
 extern DOCNO
 resolve_hwnd(
@@ -5496,7 +5483,7 @@ host_reenter_window(void)
 
         GetMessagePosAsClient(hwnd, &x, &y);
 
-        send_mouse_event(p_docu_from_docno(docno), p_view, T5_EVENT_POINTER_ENTERS_WINDOW, hwnd, x, y, event_handler);
+        send_mouse_event(p_docu_from_docno_valid(docno), p_view, T5_EVENT_POINTER_ENTERS_WINDOW, hwnd, x, y, event_handler);
     }
 #endif
 }

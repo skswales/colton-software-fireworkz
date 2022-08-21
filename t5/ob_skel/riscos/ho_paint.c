@@ -264,7 +264,7 @@ host_fixup_system_sprites(void)
 * Paint to screen routines
 *
 * N.B. These routines may be called by view, skel or lower layer code on receipt of a T5_EVENT_REDRAW message
-*      The caller passes PIXIT coordinates (ie coordinates relative to the layers natural origin) and the REDRAW_CONTEXT
+*      The caller passes PIXIT coordinates (i.e. coordinates relative to the layers natural origin) and the REDRAW_CONTEXT
 *      supplied with the T5_EVENT_REDRAW message. The origin and scale information in the REDRAW_CONTEXT allows the
 *      PIXIT coordinates from the caller, which actually form part of a VIEW_POINT (or VIEW_RECT etc) or SKEL_POINT
 *      (or SKEL_RECT etc) to be converted to appropriatly zoomed machine specific screen, Window Manager or Font Manager
@@ -340,8 +340,8 @@ gr_riscdiag_path_new_raw(
 
 struct gr_riscdiag_line_guts
 {
-    DRAW_PATH_MOVE  move; /* move to bottom left  */
-    DRAW_PATH_LINE  line;  /* line to bottom right */
+    DRAW_PATH_MOVE  pos;    /* move to first point */
+    DRAW_PATH_LINE  lineto; /* line to second point */
     DRAW_PATH_TERM  term;
 };
 
@@ -393,13 +393,6 @@ host_paint_border_line(
 {
     (p_pixit_line->horizontal ? host_paint_border_line_h : host_paint_border_line_v) (p_redraw_context, p_pixit_line, p_rgb, flags);
 }
-
-struct gr_riscdiag_line_guts
-{
-    DRAW_PATH_MOVE  move; /* move to bottom left  */
-    DRAW_PATH_LINE  line;  /* line to bottom right */
-    DRAW_PATH_TERM  term;
-};
 
 static void
 hpbl_core(
@@ -633,7 +626,7 @@ host_paint_border_line(
 
     thin.term.tag = path_term;
 
-#define BROKEN_LINE_MARK  14513 /* 180*256*8/25.4 ie. 1mm */
+#define BROKEN_LINE_MARK  14513 /* 180*256*8/25.4 i.e. 1mm */
 #define BROKEN_LINE_SPACE 14513
 
     if(flags.border_style == SF_BORDER_BROKEN)
@@ -711,13 +704,13 @@ host_paint_border_line(
 #ifndef gr_riscDraw_from_pixit
 #define gr_riscDraw_from_pixit(x) ((x) * GR_RISCDRAW_PER_PIXIT)
 #endif
-        line.move.tag   = DRAW_PATH_TYPE_MOVE;
-        line.move.pt.x = thin.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.move.pt.y = thin.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        line.pos.tag  = DRAW_PATH_TYPE_MOVE;
+        line.pos.pt.x = thin.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        line.pos.pt.y = thin.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
-        line.line.tag    = DRAW_PATH_TYPE_LINE;
-        line.line.pt.x = thin.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.line.pt.y = thin.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        line.lineto.tag  = DRAW_PATH_TYPE_LINE;
+        line.lineto.pt.x = thin.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        line.lineto.pt.y = thin.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
         line.term.tag = DRAW_PATH_TYPE_TERM;
         if(NULL != (pPathGuts = gr_riscdiag_path_new_raw(p_redraw_context->p_gr_riscdiag, &line_start, &line_attributes, p_rgb, sizeof32(line), &status)))
@@ -913,13 +906,13 @@ host_paint_underline(
 #ifndef gr_riscDraw_from_pixit
 #define gr_riscDraw_from_pixit(x) ((x) * GR_RISCDRAW_PER_PIXIT)
 #endif
-        line.move.tag   = DRAW_PATH_TYPE_MOVE;
-        line.move.pt.x = thin.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.move.pt.y = thin.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        line.pos.tag  = DRAW_PATH_TYPE_MOVE;
+        line.pos.pt.x = thin.move.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        line.pos.pt.y = thin.move.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
-        line.line.tag    = DRAW_PATH_TYPE_LINE;
-        line.line.pt.x = thin.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
-        line.line.pt.y = thin.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
+        line.lineto.tag  = DRAW_PATH_TYPE_LINE;
+        line.lineto.pt.x = thin.line.pt.x + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.x);
+        line.lineto.pt.y = thin.line.pt.y + gr_riscDraw_from_pixit(p_redraw_context->page_pixit_origin_draw.y);
 
         line.term.tag = DRAW_PATH_TYPE_TERM;
 
@@ -1274,7 +1267,7 @@ _Check_return_
 extern HOST_FONT
 host_font_find(
     _InRef_     PC_HOST_FONT_SPEC p_host_font_spec,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context)
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context)
 {
     HOST_FONT host_font = HOST_FONT_NONE;
     S32 numer, denom;
@@ -1284,7 +1277,7 @@ host_font_find(
     /* RISC OS Font Manager needs 16x fontsize */
     S32 x16_font_size_x, x16_font_size_y;
 
-    /* SKS 20jan93 notes that a 16000 pixit sized font ie. one page would only overflow 31bits at ~8000% scale factor! */
+    /* SKS 20jan93 notes that a 16000 pixit sized font (i.e. one page) would only overflow 31bits at ~8000% scale factor! */
     numer = (16 * p_host_font_spec->size_y);
     denom = PIXITS_PER_POINT;
 
@@ -1336,14 +1329,14 @@ host_font_find(
         host_font = (HOST_FONT) rs.r[0];
 
     /*if(*array_tstr(&p_host_font_spec->h_host_name_tstr) == '\\')*/
-    /*    reportf("HFF(%s) got %d", array_tstr(&p_host_font_spec->h_host_name_tstr), host_font);*/
+    /*    reportf(TEXT("HFF(%s) got %d"), array_tstr(&p_host_font_spec->h_host_name_tstr), host_font);*/
     return(host_font);
 }
 
 extern void
 host_font_dispose(
     _InoutRef_  P_HOST_FONT p_host_font,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context)
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context)
 {
     HOST_FONT host_font = *p_host_font;
 
@@ -1608,7 +1601,7 @@ host_fonty_text_paint_uchars_in_framed_box(
     host_framed_box_trim_frame(&gdi_box, border_style);
 
     if(fill_wimpcolour >= 0)
-        host_framed_box_paint_core(&gdi_box, fill_wimpcolour);
+        host_framed_box_paint_core(&gdi_box, &rgb_stash[fill_wimpcolour]);
 
     /* never set a clip rect outside the parent clip rect */
     clip_box.x0 = MAX(gdi_box.x0, p_redraw_context->riscos.host_machine_clip_box.x0);
@@ -2597,29 +2590,18 @@ host_setfontcolours_for_mlec(
     return(STATUS_OK);
 }
 
+/* Read the pixit size of the Draw file, returning the width and height in pixits */
+
 extern void
-host_read_drawfile_size(
+host_read_drawfile_pixit_size(
     /*_In_reads_bytes_(DRAW_FILE_HEADER)*/ PC_ANY p_any,
     _OutRef_    P_PIXIT_SIZE p_pixit_size)
 {
     PC_DRAW_FILE_HEADER pDrawFileHdr = (PC_DRAW_FILE_HEADER) p_any;
     DRAW_POINT draw_size;
 
-#if 0
-    GR_BOX bound;
-
-    /* diagram bounding box (rounded out in screen coords, assuming worst case 2x4 OS per pixel, allowing for thin lines at edges) */
-    bound.x0 = muldiv64_floor(pDrawFileHdr->bbox.x0 - 128, 1, 2 * RISCDRAW_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
-    bound.y0 = muldiv64_floor(pDrawFileHdr->bbox.y0 - 128, 1, 4 * RISCDRAW_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
-    bound.x1 = muldiv64_ceil( pDrawFileHdr->bbox.x1 + 128, 1, 2 * RISCDRAW_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
-    bound.y1 = muldiv64_ceil( pDrawFileHdr->bbox.y1 + 128, 1, 4 * RISCDRAW_PER_RISCOS) * 4 * PIXITS_PER_RISCOS;
-
-    draw_size.x = bound.x1 - bound.x0;
-    draw_size.y = bound.y1 - bound.y0;
-#else
     draw_size.x = pDrawFileHdr->bbox.x1 - pDrawFileHdr->bbox.x0;
     draw_size.y = pDrawFileHdr->bbox.y1 - pDrawFileHdr->bbox.y0;
-#endif
 
     /* flooring ok 'cos paths got rounded out on loading to worst-case pixels */
     p_pixit_size->cx = muldiv64_floor(draw_size.x, 1, 2 * RISCDRAW_PER_RISCOS) * 2 * PIXITS_PER_RISCOS;
@@ -2804,7 +2786,7 @@ host_set_clip_rectangle(
     }
 #endif
 
-    /* never set a clip rect outside the parent clip rect (SKS - which we now modify 14jul93) (SKS 18apr95 threw away max/min - crap compiler) */
+    /* never set a clip rect outside the parent clip rect (SKS - which we now modify 14jul93) (SKS 18apr95 threw away max/min - duff compiler) */
     if( p_redraw_context->riscos.host_machine_clip_box.x0 < gdi_box.x0)
         p_redraw_context->riscos.host_machine_clip_box.x0 = gdi_box.x0;
     if( p_redraw_context->riscos.host_machine_clip_box.y0 < gdi_box.y0)
@@ -2896,7 +2878,7 @@ host_set_clip_rectangle2(
     gdi_box.x1 = gdi_rect.br.x;
     gdi_box.y1 = gdi_rect.tl.y;
 
-    /* does not take into account the rect_flags.extend_left_pixels etc - this is correct, see old action */
+    /* does not take into account the rect_flags.extend_left_pixels etc. - this is correct, see old action */
 
     /* never set a clip rect outside the parent clip rect (SKS - which we now modify 14jul93) */
     if( p_redraw_context->riscos.host_machine_clip_box.x0 < gdi_box.x0)
@@ -3057,6 +3039,9 @@ host_framed_box_paint_frame(
 
     /* thinnest (but min 2 OS) lines around inside */
     case FRAMED_BOX_PLAIN:
+#if !defined(FRAMED_BOX_EDIT_FANCY)
+    case FRAMED_BOX_EDIT:
+#endif
         {
         int line_colour;
 
@@ -3179,6 +3164,7 @@ host_framed_box_paint_frame(
         break;
         }
 
+#if defined(FRAMED_BOX_EDIT_FANCY)
     case FRAMED_BOX_EDIT:
         {
         int tl_colour, br_colour;
@@ -3207,6 +3193,7 @@ host_framed_box_paint_frame(
 
         break;
         }
+#endif /* FRAMED_BOX_EDIT_FANCY */
 
     case FRAMED_BOX_W31_BUTTON_IN:  /* filled Windows 3.1 style 3-D sunken recessed button */
     case FRAMED_BOX_W31_BUTTON_OUT: /* filled Windows 3.1 style 3-D raised button */
@@ -3278,11 +3265,11 @@ host_framed_box_paint_frame(
 extern void
 host_framed_box_paint_core(
     _InRef_     PC_GDI_BOX p_box_abs,
-    _InVal_     S32 core_wimpcolour)
+    _InRef_     PC_RGB p_rgb)
 {
     GDI_BOX box = *p_box_abs;
 
-    if(host_setfgcolour(&rgb_stash[core_wimpcolour]))
+    if(host_setfgcolour(p_rgb))
     {
         /* bl */
         void_WrapOsErrorChecking(
@@ -3314,6 +3301,9 @@ host_framed_box_trim_frame(
         break;
 
     case FRAMED_BOX_PLAIN:
+#if !defined(FRAMED_BOX_EDIT_FANCY)
+    case FRAMED_BOX_EDIT:
+#endif
         p_box->x0 += MAX(2, host_modevar_cache_current.dx);
         p_box->y0 += MAX(2, host_modevar_cache_current.dy);
         p_box->x1 -= MAX(2, host_modevar_cache_current.dx);
@@ -3349,6 +3339,7 @@ host_framed_box_trim_frame(
         p_box->y1 -= 4 + 4;
         break;
 
+#if defined(FRAMED_BOX_EDIT_FANCY)
     case FRAMED_BOX_EDIT:
         if(host_modevar_cache_current.XEig >= 2)
         {
@@ -3361,6 +3352,7 @@ host_framed_box_trim_frame(
         p_box->x1 -= 4;
         p_box->y1 -= 4;
         break;
+#endif /* FRAMED_BOX_EDIT_FANCY */
     }
 }
 
@@ -3702,13 +3694,10 @@ supersprite(
     rs.r[2] = 0;
     rs.r[3] = 0;
 
-    if(NULL != _kernel_swi(/*PicConvert_SStoFF9*/ 0x48E01, &rs, &rs))
-    {
-        status_return(gr_cache_ensure_PicConvert());
+    status_return(image_convert_ensure_PicConvert());
 
-        if(NULL != _kernel_swi(/*PicConvert_SStoFF9*/ 0x48E01, &rs, &rs))
-            return(STATUS_FAIL);
-    }
+    if(NULL != _kernel_swi(/*PicConvert_SStoFF9*/ 0x48E01, &rs, &rs))
+        return(STATUS_FAIL);
 
     len = rs.r[1];
     /*S32 mode = rs.r[2];*/
@@ -3903,7 +3892,6 @@ host_paint_bitmap(
 {
     GDI_RECT gdi_rect;
     S32 w, h;
-    STATUS status;
 
     if(!status_done(gdi_rect_from_pixit_rect_and_context(&gdi_rect, p_pixit_rect, p_redraw_context)))
         return;
@@ -3913,27 +3901,28 @@ host_paint_bitmap(
 
     {
     _kernel_swi_regs rs;
-    int options = 0; /* => 24bpp->8bpp,default palette */
+    int options = 3; /* 24 bpp BMP -> 24 bpp sprite */
     S32 newlength;
+
+    if(host_os_version_query() < RISCOS_3_5)
+        options = 0; /* 24 bpp BMP -> 8 bpp,default palette sprite */
 
     /* Do Enq call */
     rs.r[0] = (int) p_bmp;
     rs.r[1] = 0;
     rs.r[2] = options;
 
-    if(NULL != _kernel_swi(/*PicConvert_BMPtoFF9*/ 0x48E00, &rs, &rs))
-    {
-        if(status_fail(status = gr_cache_ensure_PicConvert()))
-            return;
+    if(status_fail(image_convert_ensure_PicConvert()))
+        return;
 
-        if(NULL != _kernel_swi(/*PicConvert_BMPtoFF9*/ 0x48E00, &rs, &rs))
-            return;
-    }
+    if(NULL != _kernel_swi(/*PicConvert_BMPtoFF9*/ 0x48E00, &rs, &rs))
+        return;
 
     newlength = rs.r[1];
 
     if(newlength)
     {
+        STATUS status;
         ARRAY_HANDLE newhandle;
         P_SAH p_sah = (P_SAH) al_array_alloc_BYTE(&newhandle, newlength, &array_init_block_u8, &status);
         P_SCB p_scb;
@@ -3949,7 +3938,7 @@ host_paint_bitmap(
             return;
         }
 
-        p_scb = PtrAddBytes(P_SCB, p_sah, 12 /*sizeof32 spritefileheader*/); /* Pop a Doodle Do */
+        p_scb = PtrAddBytes(P_SCB, p_sah, sizeof_SPRITE_FILE_HEADER); /* Pop a Doodle Do */
 
         status = plot_sprite(p_scb, gdi_rect.tl.x, gdi_rect.br.y, w, h, stretch);
 

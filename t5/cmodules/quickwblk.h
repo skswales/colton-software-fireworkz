@@ -220,7 +220,7 @@ quick_wblock_wchars(
 {
     if(0 != quick_wblock_array_handle_ref(p_quick_wblock))
     {
-        assert(array_handle_valid(&quick_wblock_array_handle_ref(p_quick_wblock)));
+        assert(array_handle_is_valid(&quick_wblock_array_handle_ref(p_quick_wblock)));
         return(array_basec_no_checks(&quick_wblock_array_handle_ref(p_quick_wblock), WCHAR));
     }
 
@@ -235,7 +235,7 @@ quick_wblock_wchars_wr(
 {
     if(0 != quick_wblock_array_handle_ref(p_quick_wblock))
     {
-        assert(array_handle_valid(&quick_wblock_array_handle_ref(p_quick_wblock)));
+        assert(array_handle_is_valid(&quick_wblock_array_handle_ref(p_quick_wblock)));
         return(array_base_no_checks(&quick_wblock_array_handle_ref(p_quick_wblock), WCHAR));
     }
 
@@ -250,7 +250,7 @@ quick_wblock_wstr(
 {
     if(0 != quick_wblock_array_handle_ref(p_quick_wblock))
     {
-        assert(array_handle_valid(&quick_wblock_array_handle_ref(p_quick_wblock)));
+        assert(array_handle_is_valid(&quick_wblock_array_handle_ref(p_quick_wblock)));
         return(array_basec_no_checks(&quick_wblock_array_handle_ref(p_quick_wblock), WCHAR));
     }
 

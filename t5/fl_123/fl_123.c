@@ -148,7 +148,7 @@ v123_map_opcode(
 _Check_return_
 static inline U8
 lotus123_read_U8(
-    _In_bytecount_c_(1) PC_BYTE p)
+    _In_reads_bytes_c_(1) PC_BYTE p)
 {
     return(PtrGetByte(p));
 }
@@ -162,7 +162,7 @@ lotus123_read_U8(
 _Check_return_
 static S16
 lotus123_read_S16(
-    _In_bytecount_c_(2) PC_BYTE p)
+    _In_reads_bytes_c_(2) PC_BYTE p)
 {
     union _lotus123_read_s16
     {
@@ -185,7 +185,7 @@ lotus123_read_S16(
 _Check_return_
 static U16
 lotus123_read_U16(
-    _In_bytecount_c_(2) PC_BYTE p)
+    _In_reads_bytes_c_(2) PC_BYTE p)
 {
     union _lotus123_read_u16
     {
@@ -208,7 +208,7 @@ lotus123_read_U16(
 _Check_return_
 static F64
 lotus123_read_F64(
-    _In_bytecount_c_(8) PC_BYTE p)
+    _In_reads_bytes_c_(8) PC_BYTE p)
 {
     union _lotus123_read_f64
     {
@@ -259,7 +259,7 @@ lotus123_read_F64(
 _Check_return_
 static F64
 lotus123_read_F64_from_x86_extended_precision(
-    _In_bytecount_c_(10) PC_BYTE p)
+    _In_reads_bytes_c_(10) PC_BYTE p)
 {
     union _lotus123_read_f64
     {
@@ -283,35 +283,35 @@ lotus123_read_F64_from_x86_extended_precision(
 
     b |= ((U32) p[2] << 8);
     b >>= 3;
-    u.bytes[0 +4] = b & 0xFF;           /* store source [18:11], discards source [10:8] */
+    u.bytes[0 +4] = (BYTE) ((b) & 0xFF);        /* store source [18:11], discards source [10:8] */
     b >>= (8-3);
 
     b |= ((U32) p[3] << 8);
     b >>= 3;
-    u.bytes[1 +4] = (b >> 3) & 0xFF;    /* store source [26:19] */
+    u.bytes[1 +4] = (BYTE) ((b >> 3) & 0xFF);   /* store source [26:19] */
     b >>= (8-3);
 
     b |= ((U32) p[4] << 8);
     b >>= 3;
-    u.bytes[2 +4] = (b >> 3) & 0xFF;    /* store source [34:27] */
+    u.bytes[2 +4] = (BYTE) ((b >> 3) & 0xFF);   /* store source [34:27] */
     b >>= (8-3);
 
     b |= ((U32) p[5] << 8);
     b >>= 3;
-    u.bytes[3 +4] = (b >> 3) & 0xFF;    /* store source [42:35] */
+    u.bytes[3 +4] = (BYTE) ((b >> 3) & 0xFF);   /* store source [42:35] */
     b >>= (8-3);
 
     b |= ((U32) p[6] << 8);
     b >>= 3;
-    u.bytes[4 -4] = (b >> 3) & 0xFF;    /* store source [50:43] */
+    u.bytes[4 -4] = (BYTE) ((b >> 3) & 0xFF);   /* store source [50:43] */
     b >>= (8-3);
 
     b |= ((U32) p[7] << 8);
     b >>= 3;
-    u.bytes[5 -4] = (b >> 3) & 0xFF;    /* store source [58:51] */
+    u.bytes[5 -4] = (BYTE) ((b >> 3) & 0xFF);   /* store source [58:51] */
     b >>= (8-3);
 
-    u.bytes[6 -4] = (b >> 3) & 0x0F;    /* store source [62:59], discards source [63] */
+    u.bytes[6 -4] = (BYTE) ((b >> 3) & 0x0F);   /* store source [62:59], discards source [63] */
 
     /* sign */
     u.bytes[7 -4]  = p[9] & 0x80;       /* store source [79] */
@@ -337,7 +337,7 @@ lotus123_read_F64_from_x86_extended_precision(
 
     b |= ((U32) p[2] << 8);
     b >>= 3;
-    u.bytes[0] = (BYTE) (b & 0xFF);         /* store source [18:11], discards source [10:8] */
+    u.bytes[0] = (BYTE) ((b) & 0xFF);       /* store source [18:11], discards source [10:8] */
     b >>= (8-3);
 
     b |= ((U32) p[3] << 8);
@@ -919,9 +919,7 @@ lotus123_auto_width_table(
     STYLE style;
 
     docu_area_init(&docu_area);
-    docu_area.tl.slr.row = -1;
-    docu_area.br.slr.row = -1;
-    docu_area.whole_col = 1;
+    docu_area_set_whole_col(&docu_area);
 
     style_init(&style);
     style_bit_set(&style, STYLE_SW_CS_WIDTH);
@@ -1256,7 +1254,7 @@ slr_convert(
     len += xsnprintf(buffer + len, elemof32(buffer) - len, ROW_FMT, row);
 
     /* if on second ref., check for highest and swap */
-    if(p_slr_first && ((col < p_slr_first->col) || (row < p_slr_first->row)))
+    if((NULL != p_slr_first) && ((col < p_slr_first->col) || (row < p_slr_first->row)))
     {
         memmove32(p_u8_out + len, p_u8_out, *p_len);
         memcpy32(p_u8_out, buffer, len);
@@ -1283,6 +1281,7 @@ slr_convert(
 *
 ******************************************************************************/
 
+_Check_return_
 static U32 /* length out */
 text_from_f64(
     _Out_writes_z_(elemof_buffer) P_USTR buffer,
@@ -1773,7 +1772,7 @@ lotus123_find_record(
 
                 /* p_data points to cell contents */
 
-                if(p_slr && (col == p_slr->col) && (row > p_slr->row))
+                if((NULL != p_slr) && (col == p_slr->col) && (row > p_slr->row))
                 {
                     p_slr->row = row;
                     res = (S32) opcode_offset; /* return offset of header */
@@ -2263,9 +2262,9 @@ lotus123_decode_format(
         break;
 
     case L_CURCY:
-        if( status_ok(status = quick_ublock_sbstr_add(p_quick_ublock_format, SBSTR_TEXT("£#,##0"))) &&
+        if( status_ok(status = quick_ublock_sbstr_add(p_quick_ublock_format, SBSTR_TEXT("\xA3" "#,##0"))) &&
             status_ok(status = lotus123_decode_format_add_places(p_quick_ublock_format, decplc)) &&
-            status_ok(status = quick_ublock_sbstr_add(p_quick_ublock_format, SBSTR_TEXT(" ;[Negative](£#,##0"))) &&
+            status_ok(status = quick_ublock_sbstr_add(p_quick_ublock_format, SBSTR_TEXT(" ;[Negative](" "\xA3" "#,##0"))) &&
             status_ok(status = lotus123_decode_format_add_places(p_quick_ublock_format, decplc)) )
                       status = quick_ublock_ustr_add(p_quick_ublock_format, USTR_TEXT(")"));
         break;

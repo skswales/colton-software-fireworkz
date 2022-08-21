@@ -1,0 +1,7 @@
+{ChoicesAutoSave:0}
+{ChoicesDisplayPictures:1}
+{ChoicesEmbedPictures:1}
+{ChoicesASCIIParagraph:1}
+{ChoicesDithering:1}
+{ChoicesKerning:1}
+{ChoicesStatusLine:1}

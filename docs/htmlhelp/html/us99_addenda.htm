@@ -41,7 +41,7 @@ several style effects you may wish to apply; it also designates control key
 shortcuts for underline, superscript and subscript.
 This is defined by the new Config file.</p>
 
-<p>There is an undocumented option 'Recalc on load' in the Choices dialogue box
+<p>There is now an option 'Recalc on load' in the Choices dialogue box
 which allows Fireworkz to force recalculation of spreadsheets on loading:
 you may wish to set this option if you regularly modify spreadsheets on which
 other documents depend without having those dependent documents loaded.
@@ -50,6 +50,9 @@ values stored in the document when it was last saved.
 Certain formulas always force recalculation of themselves (and their dependent cells)
 on reload in any case (the GRAND(), INPUT(), NOW(), PAGE(), PAGES() and RAND() spreadsheet functions).
 Charts always recalculate in any case as the picture is not stored with the document.</p>
+
+<p>Several toolbar buttons have been added since the documentation was printed;
+simply point at them and the status line will tell you what they can do.</p>
 
 <p>The toolbar in Fireworkz is actually configurable.
 The text file <code>Choice18</code> in the directory<br />
@@ -75,9 +78,6 @@ These now appear in the <code>Choice18</code> file commented out thus
 Simply delete the word Possible to make the button work.
 You can similarly comment out existing buttons.</p>
 
-<p>Other buttons have been added since the documentation went to print;
-simply point at them and the status line will tell you what they can do.</p>
-
 <p>The Tab well has been removed from the default toolbar by commenting it out
 using the ToolPossible commands (so it's easy to restore if you want it).</p>
 
@@ -86,11 +86,11 @@ using the ToolPossible commands (so it's easy to restore if you want it).</p>
 
 <h4><code>HKEY_CURRENT_USER\SOFTWARE\Colton Software\Fireworkz</code></h4>
 
-<p>Fireworkz for Windows uses entries in this section of the Registry for
+<p>Fireworkz uses entries in this section of the Registry for
 user-specific configuration.</p>
 
 <p><code>ButtonStyle</code>: This controls the appearance and behaviour of the
-toolbar buttons in Fireworkz.</p>
+toolbar buttons in Fireworkz when themes are not being used.</p>
 
 <ul>
 <li><code>ButtonStyle</code>=97 - Office 97 style buttons (default)</li>
@@ -109,7 +109,7 @@ files such as Choices & Dicts.</p>
 
 <h4><code>HKEY_LOCAL_MACHINE\SOFTWARE\Colton Software\Fireworkz</code></h4>
 
-<p>Fireworkz for Windows uses entries in this section of the Registry for
+<p>Fireworkz uses entries in this section of the Registry for
 machine-wide configuration.</p>
 
 <p><code>ButtonStyle</code>: This controls the appearance and behaviour of the

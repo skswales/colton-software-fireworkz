@@ -19,8 +19,8 @@
 276:Centre tab
 277:Right tab
 278:Decimal tab
-r279:Drag to reposition, double-click to clear. ADJUST double-click to change type
-w279:Drag to reposition, double-click to clear. Ctrl+double-click to change type
+r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
 #
 285:Left margin
 286:Paragraph margin

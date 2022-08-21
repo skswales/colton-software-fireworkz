@@ -60,11 +60,16 @@ $(BUILD_DIR).ob_chart.o.gr_numcv: $(T5).cmodules.c.gr_numcv
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_chart.o.gr_piesg: $(T5).cmodules.c.gr_piesg
  $(CC) -o $@ $(ccflags) $?
-$(BUILD_DIR).ob_chart.o.gr_scale: $(T5).cmodules.c.gr_scale
- $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_chart.o.gr_scatc: $(T5).cmodules.c.gr_scatc
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.gr_style: $(T5).cmodules.c.gr_style
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_chart.o.gr_texts: $(T5).cmodules.c.gr_texts
+ $(CC) -o $@ $(ccflags) $?
+
+$(BUILD_DIR).ob_chart.o.cn_pnpoly: $(T5).external.OtherFree.c.cn_pnpoly
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_chart.o.wn_pnpoly: $(T5).external.OtherFree.c.wn_pnpoly
  $(CC) -o $@ $(ccflags) $?
 
 OBJS_06_S=\
@@ -86,8 +91,9 @@ $(BUILD_DIR).ob_chart.o.gr_diag \
 $(BUILD_DIR).ob_chart.o.gr_numcv \
 $(BUILD_DIR).ob_chart.o.gr_piesg \
 $(BUILD_DIR).ob_chart.o.gr_scatc \
-$(BUILD_DIR).ob_chart.o.gr_scale \
+$(BUILD_DIR).ob_chart.o.gr_style \
 $(BUILD_DIR).ob_chart.o.gr_texts \
+$(BUILD_DIR).ob_chart.o.wn_pnpoly \
 
 OBJS_06_X=$(BUILD_DIR).ob_chart.o.$(COUNTRY)-B06 $(BUILD_DIR).ob_chart.o.b22_06 $(BUILD_DIR).ob_chart.o.b24_06
 

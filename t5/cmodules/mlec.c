@@ -605,7 +605,7 @@ mlec_create(
 #endif
 
             mlec->main        = window_NULL;
-            mlec->pane        = window_NULL;     /* ie not attached */
+            mlec->pane        = window_NULL;     /* i.e. not attached */
 
 #ifdef MLEC_PANE
             mlec->panemenu     = FALSE;
@@ -726,13 +726,13 @@ mlec_detach(
     if(mlec->panemenu)
     {
         /* Remove attached the filler & process routines from the window */
-        (void) event_register_window_menumaker(mlec->pane, NULL, NULL, NULL); /* ie remove attachment */
+        (void) event_register_window_menumaker(mlec->pane, NULL, NULL, NULL); /* i.e. remove attachment */
 
         mlec->panemenu = FALSE;
     }
 
     mlec->main = window_NULL;
-    mlec->pane = window_NULL;   /* ie not attached */
+    mlec->pane = window_NULL;   /* i.e. not attached */
 }
 
 #endif
@@ -1034,8 +1034,8 @@ mlec__event_handler(
         trace_1(TRACE_MODULE_MLEC, TEXT("action is %d"), p_event_data->msg.hdr.action);
         switch(e->data.msg.hdr.action)
         {
-        case Wimp_MDataLoad:   /* File dragged from file viewer, dropped on our window */
-        case Wimp_MDataOpen:   /* File double clicked in file viewer */
+        case Wimp_MDataLoad:   /* File dragged from directory display, dropped on our window */
+        case Wimp_MDataOpen:   /* File double clicked in directory display */
             {
             PCTSTR filename;
 
@@ -1086,7 +1086,7 @@ mlec__click_core(
     int col, row;
 
     point.x = p_mouse_click->mouse_x - p_origin->x;       /* mouse position relative to */
-    point.y = p_mouse_click->mouse_y - p_origin->y;       /* window (ie EditBox) origin */
+    point.y = p_mouse_click->mouse_y - p_origin->y;       /* window (i.e. EditBox) origin */
 
     mlec__colrow_from_point(mlec, &point, &col, &row);
 
@@ -1699,7 +1699,7 @@ mlec__cursor_linehome(
 *
 * Move the cursor left to the previous tab position
 *
-* ie move 1..(TAB_MASK+1) places
+* i.e. move 1..(TAB_MASK+1) places
 *
 ******************************************************************************/
 
@@ -1916,7 +1916,7 @@ mlec__insert_newline(
 *
 * Insert spaces upto the next tab position
 *
-* ie insert 1..(TAB_MASK+1) spaces
+* i.e. insert 1..(TAB_MASK+1) spaces
 *
 ******************************************************************************/
 
@@ -2949,7 +2949,7 @@ mlec__drag_start(
     /*CONSTANTCONDITION*/
     if_pane(mlec)
     {
-        trace_0(TRACE_OUT | TRACE_ANY, TEXT("mlec__drag_start - *** null_events_start(DOCNO_NONE)"));
+        trace_0(TRACE_OUT | TRACE_ANY, TEXT("mlec__drag_start() - *** null_events_start(DOCNO_NONE)"));
         status_assert(null_events_start(DOCNO_NONE, T5_EVENT_NULL, null_event_mlec_drag, (CLIENT_HANDLE) mlec));
     }
 
@@ -2965,7 +2965,7 @@ mlec__drag_complete(
 {
     IGNOREPARM(dragboxp);
 
-    trace_0(TRACE_OUT | TRACE_ANY, TEXT("mlec__drag_complete - *** null_events_stop(DOCNO_NONE)"));
+    trace_0(TRACE_OUT | TRACE_ANY, TEXT("mlec__drag_complete() - *** null_events_stop(DOCNO_NONE)"));
     null_events_stop(P_DOCU_NONE, T5_EVENT_NULL, null_event_mlec_drag, mlec);
 }
 
@@ -2999,13 +2999,18 @@ PROC_EVENT_PROTO(static, null_event_mlec_drag)
 {
     IGNOREPARM_DocuRef_(p_docu);
 
+#if CHECKING
     switch(t5_message)
     {
-    case T5_EVENT_NULL:
-        return(mlec_drag_null_event((P_NULL_EVENT_BLOCK) p_data));
-
     default: default_unhandled();
         return(STATUS_OK);
+
+    case T5_EVENT_NULL:
+#else
+    IGNOREPARM_InVal_(t5_message);
+    {
+#endif
+        return(mlec_drag_null_event((P_NULL_EVENT_BLOCK) p_data));
     }
 }
 
@@ -3544,7 +3549,7 @@ show_selection(
 
     lineCol = 0; lineRow = mlec->cursor.row;
 
-    lineBB.x0 = lineBB.x1 = cursor.x0;      /* NB x0 & x1 the same ie no CR width */
+    lineBB.x0 = lineBB.x1 = cursor.x0;      /* NB x0 & x1 the same i.e. no CR width */
     lineBB.y1 = cursor.y1;
     lineBB.y0 = lineBB.y1 - mlec->attributes[MLEC_ATTRIBUTE_CHARHEIGHT];
 

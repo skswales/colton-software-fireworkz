@@ -370,9 +370,6 @@ ui_bytes_per_item(
     case UI_DATA_TYPE_F64:
         return(sizeof32(dummy->f64));
 
-    case UI_DATA_TYPE_P_U8:
-        return(sizeof32(dummy->p_u8));
-
     case UI_DATA_TYPE_S32:
         return(sizeof32(dummy->s32));
 
@@ -400,7 +397,6 @@ ui_data_bound_check(
         default: default_unhandled();
 #if CHECKING
         case UI_DATA_TYPE_NONE:
-        case UI_DATA_TYPE_P_U8:
         case UI_DATA_TYPE_TEXT:
 #endif
             break;
@@ -559,7 +555,6 @@ ui_data_inc_dec(
     default: default_unhandled();
 #if CHECKING
     case UI_DATA_TYPE_NONE:
-    case UI_DATA_TYPE_P_U8:
     case UI_DATA_TYPE_TEXT:
 #endif
         bcheck = 0;
@@ -767,49 +762,49 @@ dialog_cmd_process_dbox_setup(
 extern void
 ui_dlg_ctl_enable(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL enabled)
 {
     DIALOG_CMD_CTL_ENABLE dialog_cmd_ctl_enable;
     msgclr(dialog_cmd_ctl_enable);
     dialog_cmd_ctl_enable.h_dialog = h_dialog;
-    dialog_cmd_ctl_enable.control_id = control_id;
+    dialog_cmd_ctl_enable.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_enable.enabled = enabled;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
 }
 
 extern void
 ui_dlg_ctl_encode(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
     msgclr(dialog_cmd_ctl_encode);
     dialog_cmd_ctl_encode.h_dialog = h_dialog;
-    dialog_cmd_ctl_encode.control_id = control_id;
+    dialog_cmd_ctl_encode.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_encode.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
 }
 
 extern void
 ui_dlg_ctl_size_estimate(
     P_DIALOG_CMD_CTL_SIZE_ESTIMATE p_dialog_cmd_ctl_size_estimate)
 {
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_SIZE_ESTIMATE, p_dialog_cmd_ctl_size_estimate));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_SIZE_ESTIMATE, p_dialog_cmd_ctl_size_estimate));
 }
 
 extern void
 ui_dlg_get_f64(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     /*out*/ P_F64 p_f64)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     *p_f64 = dialog_cmd_ctl_state_query.state.bump_f64;
 }
 
@@ -817,14 +812,14 @@ _Check_return_
 extern S32
 ui_dlg_get_s32(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     return(dialog_cmd_ctl_state_query.state.bump_s32);
 }
 
@@ -832,29 +827,29 @@ _Check_return_
 extern BOOL
 ui_dlg_get_check(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     return(dialog_cmd_ctl_state_query.state.checkbox == DIALOG_BUTTONSTATE_ON);
 }
 
 extern void
 ui_dlg_get_edit(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_    P_UI_TEXT p_ui_text)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     *p_ui_text = dialog_cmd_ctl_state_query.state.edit.ui_text;
 }
 
@@ -862,14 +857,14 @@ _Check_return_
 extern S32 /*radio_state*/
 ui_dlg_get_radio(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     return(dialog_cmd_ctl_state_query.state.radiobutton);
 }
 
@@ -877,194 +872,194 @@ _Check_return_
 extern S32
 ui_dlg_get_list_idx(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = DIALOG_STATE_QUERY_ALTERNATE;
     dialog_cmd_ctl_state_query.state.list_text.itemno = -1;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     return(dialog_cmd_ctl_state_query.state.list_text.itemno);
 }
 
 extern void
 ui_dlg_get_list_text(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_    P_UI_TEXT p_ui_text)
 {
     DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_query.control_id = control_id;
+    dialog_cmd_ctl_state_query.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_query.bits = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     *p_ui_text = dialog_cmd_ctl_state_query.state.list_text.ui_text;
 }
 
 extern void
 ui_dlg_ctl_new_source(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_NEW_SOURCE dialog_cmd_ctl_new_source;
     msgclr(dialog_cmd_ctl_new_source);
     dialog_cmd_ctl_new_source.h_dialog = h_dialog;
-    dialog_cmd_ctl_new_source.control_id = control_id;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_NEW_SOURCE, &dialog_cmd_ctl_new_source));
+    dialog_cmd_ctl_new_source.dialog_control_id = dialog_control_id;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_NEW_SOURCE, &dialog_cmd_ctl_new_source));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_f64(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InRef_     PC_F64 p_f64)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.bump_f64 = *p_f64;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_s32(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 s32)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.bump_s32 = s32;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_check(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL onoff)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.checkbox = (U8) (onoff ? DIALOG_BUTTONSTATE_ON : DIALOG_BUTTONSTATE_OFF);
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_check_forcing(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL onoff)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALWAYS_MSG;
     dialog_cmd_ctl_state_set.state.checkbox = (U8) (onoff ? DIALOG_BUTTONSTATE_ON : DIALOG_BUTTONSTATE_OFF);
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_edit(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InRef_     PC_UI_TEXT p_ui_text)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
     if(P_DATA_NONE != p_ui_text)
         dialog_cmd_ctl_state_set.state.edit.ui_text = *p_ui_text;
     else
         dialog_cmd_ctl_state_set.state.edit.ui_text.type = UI_TEXT_TYPE_NONE;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_list_idx(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 itemno)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALTERNATE;
     dialog_cmd_ctl_state_set.state.list_text.itemno = itemno;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_radio(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 radio_state)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.radiobutton = radio_state;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_set_radio_forcing(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 radio_state)
 {
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id;
     dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALWAYS_MSG;
     dialog_cmd_ctl_state_set.state.radiobutton = radio_state;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
 extern STATUS
 ui_dlg_ctl_set_default(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     DIALOG_CMD_CTL_SET_DEFAULT dialog_cmd_ctl_set_default;
     msgclr(dialog_cmd_ctl_set_default);
     dialog_cmd_ctl_set_default.h_dialog = h_dialog;
-    dialog_cmd_ctl_set_default.control_id = control_id;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_SET_DEFAULT, &dialog_cmd_ctl_set_default));
+    dialog_cmd_ctl_set_default.dialog_control_id = dialog_control_id;
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_SET_DEFAULT, &dialog_cmd_ctl_set_default));
 }
 
 _Check_return_
 extern S32
 ui_dlg_s32_from_f64(
     _InRef_     PC_F64 p_f64,
-    _InRef_     PC_F64 p_multiplier,
+    _InRef_opt_ PC_F64 p_multiplier,
     _InVal_     S32 s32_min,
     _InVal_     S32 s32_max)
 {
@@ -2071,11 +2066,6 @@ ui_text_from_data(
                                    p_ui_data->s32));
         return(ui_text_alloc_from_tstr(p_ui_text, tmp));
         }
-
-    case UI_DATA_TYPE_P_U8:
-        p_ui_text->type      = UI_TEXT_TYPE_USTR_PERM;
-        p_ui_text->text.ustr = p_ui_data->p_u8;
-        return(STATUS_OK);
 
     case UI_DATA_TYPE_TEXT:
         return(ui_text_copy(p_ui_text, &p_ui_data->text));

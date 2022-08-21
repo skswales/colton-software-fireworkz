@@ -175,7 +175,7 @@ enum __ss_function_indices
     SS_SPLIT_DAYNAME,
     SS_SPLIT_DAYS_360,
     SS_SPLIT_DB,
-    /* NO    DCOUNT etc */
+    /* NO    DCOUNT etc. */
     SS_SPLIT_DDB,
     SS_SPLIT_DEG,
     SS_SPLIT_DELTA,
@@ -183,6 +183,8 @@ enum __ss_function_indices
     SS_SPLIT_DOLLAR,
     SS_SPLIT_DOUBLECLICK,
 
+    SS_SPLIT_EDATE,
+    SS_SPLIT_EOMONTH,
     SS_SPLIT_ERF,
     SS_SPLIT_ERFC,
     SS_SPLIT_EVEN,

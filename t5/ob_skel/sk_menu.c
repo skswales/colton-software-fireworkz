@@ -44,7 +44,7 @@ menu_root_table[] =
 
 static void
 recursive_menu_dispose(
-    _DocuRef_   P_DOCU p_docu,
+    _DocuRef_maybenone_ P_DOCU p_docu,
     P_MENU_ROOT p_menu_root)
 {
     ARRAY_INDEX i;
@@ -53,7 +53,7 @@ recursive_menu_dispose(
     {
         P_MENU_ENTRY p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, i);
 
-        if(p_menu_entry->key_code && !IS_P_DATA_NONE(p_docu))
+        if(p_menu_entry->key_code && !IS_DOCU_NONE(p_docu))
             command_array_handle_dispose_from_key_code(p_docu, p_menu_entry->key_code);     /* undefine key binding */
 
         /*tstr_clr(&p_menu_entry->tstr_entry_text); alloc_block*/
@@ -387,11 +387,11 @@ sk_menu_msg_close1(
         al_ptr_dispose(P_P_ANY_PEDANTIC(&p_docu->p_menu_root));
     }
 
-    if(p_docu == p_docu_from_config())
+    if(DOCNO_CONFIG == docno_from_p_docu(p_docu))
     {
         MENU_ROOT_ID menu_root_id;
 
-        for(menu_root_id = MENU_ROOT_ICON; menu_root_id < elemof32(menu_root_table); ENUM_INCR(MENU_ROOT_ID, menu_root_id))
+        for(menu_root_id = MENU_ROOT_ICON_BAR; menu_root_id < elemof32(menu_root_table); ENUM_INCR(MENU_ROOT_ID, menu_root_id))
             recursive_menu_dispose(p_docu, sk_menu_root(p_docu, menu_root_id));
 
         ho_menu_dispose();
@@ -472,7 +472,7 @@ t5_cmd_activate_menu(
     _InVal_     T5_MESSAGE t5_message)
 {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
-    return(ho_menu_popup(p_docu, p_view, (t5_message == T5_CMD_ACTIVATE_MENU_CHART) ? MENU_ROOT_CHART : MENU_ROOT_FUNC));
+    return(ho_menu_popup(p_docu, p_view, (t5_message == T5_CMD_ACTIVATE_MENU_CHART) ? MENU_ROOT_CHART : MENU_ROOT_FUNCTION_SELECTOR));
 }
 
 #define ARG_MENU_ADD_NAME     0

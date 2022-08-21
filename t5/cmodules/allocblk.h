@@ -27,7 +27,7 @@ ALLOCBLOCK, * P_ALLOCBLOCK, ** P_P_ALLOCBLOCK;
 
 #define ALLOCBLOCK_OVH 16 /* sizeof32(ALLOCBLOCK) */
 
-/* each DOCU has a general_string_alloc_block but there are a few *limited* occasions where this is useful, eg. fontmap, fileutil */
+/* each DOCU has a general_string_alloc_block but there are a few *limited* occasions where this is useful, e.g. fontmap, fileutil */
 extern P_ALLOCBLOCK global_string_alloc_block;
 
 _Check_return_

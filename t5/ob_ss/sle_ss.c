@@ -21,6 +21,8 @@
 #include "ob_skel/xp_skeld.h"
 
 #include "ob_dlg/xp_dlgr.h"
+
+#define RISCOS_FONTY_SLE 1
 #endif
 
 #if RISCOS
@@ -28,7 +30,11 @@
 #define X_OFFSET_PIXITS (PIXITS_PER_RISCOS * 8)
 #define Y_OFFSET_PIXITS (PIXITS_PER_RISCOS * 8)
 
+#if defined(RISCOS_FONTY_SLE)
+static PIXIT CHAR_WIDTH_PIXITS = (PIXITS_PER_RISCOS * 16 /* OS units */);
+#else
 #define CHAR_WIDTH_PIXITS   (PIXITS_PER_RISCOS * 16 /* OS units */)
+#endif
 #define CHAR_HEIGHT_PIXITS  (PIXITS_PER_RISCOS * 32)
 
 #define CARET_HEIGHT_RISCOS (                32 +                     8)
@@ -209,11 +215,11 @@ ss_range_drag_output(
         abs_anchor = abs;
 
     ev_slr_from_slr(p_docu, &ev_slr[0], &slr[0]);
-    ev_slr[0].abs_col = ev_slr[0].abs_row = (UBF) abs_anchor;
+    ev_slr[0].abs_col = ev_slr[0].abs_row = UBF_PACK(abs_anchor);
 
     ev_slr_from_slr(p_docu, &ev_slr[1], &slr[1]);
     ev_slr[1].docno = EV_DOCNO_PACK(docno_ss_edit); /* SKS 18jul93 don't repeat extref gumf */
-    ev_slr[1].abs_col = ev_slr[1].abs_row = (UBF) abs_anchor;
+    ev_slr[1].abs_col = ev_slr[1].abs_row = UBF_PACK(abs_anchor);
 
     {
     const U32 elemof_buffer = elemof32(ustr_buf);
@@ -270,6 +276,9 @@ ob_sle_event_click_filter(
     case T5_EVENT_CLICK_LEFT_SINGLE:
     case T5_EVENT_CLICK_RIGHT_SINGLE:
         {
+        const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_SINGLE;
+        const T5_MESSAGE t5_message_effective = right_message_if_ctrl(p_skelevent_click_filter->t5_message, t5_message_right, &p_skelevent_click_filter->data.click[SKELEVENT_CLICK_FILTER_SLOTAREA].skelevent_click);
+        const BOOL abs = (t5_message_right == t5_message_effective);
         SKEL_POINT tl;
         SLR slr;
 
@@ -289,7 +298,7 @@ ob_sle_event_click_filter(
             slr_range_anchor = slr;
 
             ev_slr_from_slr(p_docu, &ev_slr, &slr);
-            if(p_skelevent_click_filter->t5_message == T5_EVENT_CLICK_RIGHT_SINGLE)
+            if(abs)
                 ev_slr.abs_col = ev_slr.abs_row = 1;
 
             {
@@ -327,6 +336,9 @@ ob_sle_event_click_filter(
     case T5_EVENT_CLICK_LEFT_DRAG:
     case T5_EVENT_CLICK_RIGHT_DRAG:
         {
+        const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+        const T5_MESSAGE t5_message_effective = right_message_if_ctrl(p_skelevent_click_filter->t5_message, t5_message_right, &p_skelevent_click_filter->data.click[SKELEVENT_CLICK_FILTER_SLOTAREA].skelevent_click);
+        const BOOL abs = (t5_message_right == t5_message_effective);
         SLR slr;
         SKEL_POINT tl;
 
@@ -345,7 +357,7 @@ ob_sle_event_click_filter(
 
             host_drag_start(NULL);
 
-            status = ss_range_drag_output(p_docu, &slr, p_skelevent_click_filter->t5_message == T5_EVENT_CLICK_RIGHT_DRAG);
+            status = ss_range_drag_output(p_docu, &slr, abs);
         }
         break;
         }
@@ -547,7 +559,7 @@ ss_formula_eval_then_msg(
     {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
         p_args[0].val.ustr = ustr;
-        status = execute_command(OBJECT_ID_SS, p_docu, T5_CMD_NEW_EXPRESSION, &arglist_handle);
+        status = execute_command(p_docu, T5_CMD_NEW_EXPRESSION, &arglist_handle, OBJECT_ID_SS);
         arglist_dispose(&arglist_handle);
     }
 
@@ -1016,14 +1028,14 @@ sle_tool_user_posn_set(
     } /*block*/
 
     SetWindowPos(p_view->main[WIN_SLE].hwnd, NULL, new_pos_rect.left, new_pos_rect.top, new_pos_rect.right - new_pos_rect.left, new_pos_rect.bottom - new_pos_rect.top, SWP_NOZORDER);
-    /*reportf("SLE SWP %d %d %d %d", new_pos_rect.left, new_pos_rect.top, new_pos_rect.right, new_pos_rect.bottom);*/
+    /*reportf(TEXT("SLE SWP %d %d %d %d"), new_pos_rect.left, new_pos_rect.top, new_pos_rect.right, new_pos_rect.bottom);*/
 
     invalidate_rect = client_rect;
     invalidate_rect.left = invalidate_rect.right - 2; /* have to redraw right-hand side when shrinking to left */
     if(invalidate_rect.right < (new_pos_rect.right - new_pos_rect.left)) /* have to redraw right-hand side when growing to right */
         invalidate_rect.right = (new_pos_rect.right - new_pos_rect.left);
     InvalidateRect(p_view->main[WIN_SLE].hwnd, &invalidate_rect, TRUE);
-    /*reportf("SLE IVR %d %d %d %d", invalidate_rect.left, invalidate_rect.top, invalidate_rect.right, invalidate_rect.bottom);*/
+    /*reportf(TEXT("SLE IVR %d %d %d %d"), invalidate_rect.left, invalidate_rect.top, invalidate_rect.right, invalidate_rect.bottom);*/
     } /*block*/
 #endif /* OS */
 
@@ -1238,13 +1250,13 @@ sle_draw_empty_frame(
 
     rect = *p_client_rect; rect.left += 1; rect.top += 1; rect.right -= 1; rect.bottom -= 1;
     *p_core_rect = rect;
-    FillRect(hdc, &rect, h_brush_fill); // core
+    FillRect(hdc, &rect, h_brush_fill); /* core */
 
-    rect = *p_client_rect; rect.bottom = rect.top + 1; FillRect(hdc, &rect, h_brush_stroke); // top
-    rect = *p_client_rect; rect.top = rect.bottom - 1; FillRect(hdc, &rect, h_brush_stroke); // bottom
+    rect = *p_client_rect; rect.bottom = rect.top + 1; FillRect(hdc, &rect, h_brush_stroke); /* top */
+    rect = *p_client_rect; rect.top = rect.bottom - 1; FillRect(hdc, &rect, h_brush_stroke); /* bottom */
 
-    rect = *p_client_rect; rect.right = rect.left + 1; rect.top += 1; rect.bottom -= 1; FillRect(hdc, &rect, h_brush_stroke); // left
-    rect = *p_client_rect; rect.left = rect.right - 1; rect.top += 1; rect.bottom -= 1; FillRect(hdc, &rect, h_brush_stroke); // right
+    rect = *p_client_rect; rect.right = rect.left + 1; rect.top += 1; rect.bottom -= 1; FillRect(hdc, &rect, h_brush_stroke); /* left */
+    rect = *p_client_rect; rect.left = rect.right - 1; rect.top += 1; rect.bottom -= 1; FillRect(hdc, &rect, h_brush_stroke); /* right */
 }
 
 static void
@@ -1263,8 +1275,8 @@ sle_onPaint(
     /* rect to be painted is paintstruct.rcPaint */
 
     GetClientRect(hwnd, &client_rect);
-    /*reportf("SLE RCP %d %d %d %d", p_paintstruct->rcPaint.left, p_paintstruct->rcPaint.top, p_paintstruct->rcPaint.right, p_paintstruct->rcPaint.bottom);*/
-    /*reportf("SLE GCR %d %d %d %d", client_rect.left, client_rect.top, client_rect.right, client_rect.bottom);*/
+    /*reportf(TEXT("SLE RCP %d %d %d %d"), p_paintstruct->rcPaint.left, p_paintstruct->rcPaint.top, p_paintstruct->rcPaint.right, p_paintstruct->rcPaint.bottom);*/
+    /*reportf(TEXT("SLE GCR %d %d %d %d"), client_rect.left, client_rect.top, client_rect.right, client_rect.bottom);*/
 
     {
     HBRUSH h_brush_fill = NULL;
@@ -1313,7 +1325,7 @@ sle_onPaint(
         SetTextAlign(hdc, TA_LEFT | TA_TOP | TA_UPDATECP);
 
         {
-        TCHARZ tstr_sizing[] = TEXT("$yÂ"); /* Generally the tallest Latin-1 character */
+        TCHARZ tstr_sizing[] = TEXT("$y") TEXT("\xC2"); /* UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX is generally the tallest Latin-1 character */
         void_WrapOsBoolChecking(
             GetTextExtentPoint32(hdc, tstr_sizing, tstrlen32(tstr_sizing), &size));
         } /*block*/
@@ -1397,7 +1409,7 @@ wndproc_sle_onPaint(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        sle_onPaint(hwnd, &paintstruct, p_docu_from_docno(docno));
+        sle_onPaint(hwnd, &paintstruct, p_docu_from_docno_valid(docno));
     }
 
     hard_assert(FALSE);
@@ -1489,7 +1501,7 @@ wndproc_sle_onLButtonDown(
     {
         if((docno_ss_edit == DOCNO_NONE) || (docno_ss_edit == docno))
         {
-            sle_onLButtonDown(hwnd, fDoubleClick, x, p_docu_from_docno(docno), p_view);
+            sle_onLButtonDown(hwnd, fDoubleClick, x, p_docu_from_docno_valid(docno), p_view);
             return;
         }
     }
@@ -1526,7 +1538,7 @@ wndproc_sle_onLButtonUp(
     {
         if((docno_ss_edit == DOCNO_NONE) || (docno_ss_edit == docno))
         {
-            sle_onLButtonUp(p_docu_from_docno(docno));
+            sle_onLButtonUp(p_docu_from_docno_valid(docno));
             return;
         }
     }
@@ -1547,7 +1559,7 @@ wndproc_sle_onMouseLeave(
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
         trace_0(TRACE_APP_CLICK, TEXT("proc_event_sle T5_EVENT_POINTER_LEAVES_WINDOW"));
-        status_line_clear(p_docu_from_docno(docno), STATUS_LINE_LEVEL_BACKWINDOW_CONTROLS);
+        status_line_clear(p_docu_from_docno_valid(docno), STATUS_LINE_LEVEL_BACKWINDOW_CONTROLS);
         return;
     }
 
@@ -1611,7 +1623,7 @@ wndproc_sle_onMouseMove(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        sle_onMouseMove(hwnd, x, p_docu_from_docno(docno));
+        sle_onMouseMove(hwnd, x, p_docu_from_docno_valid(docno));
         return;
     }
 
@@ -1701,7 +1713,7 @@ sle_index_from_pixel_x(
             else
             {
                 U32 bytes_of_char;
-                UCS4 ucs4 = ustr_char_decode_off(ustr_inline, offset, /*ref*/bytes_of_char);
+                UCS4 ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, offset, /*ref*/bytes_of_char);
 
                 if(CH_NULL == ucs4)
                     break;
@@ -1758,7 +1770,7 @@ sle_index_from_pixel_x(
             }
             else
             {
-                UCS4 ucs4 = uchars_char_decode_off(ustr_inline, real_index, /*ref*/bytes_of_thing);
+                UCS4 ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, real_index, /*ref*/bytes_of_thing);
 
                 if(CH_NULL == ucs4)
                     break;
@@ -2196,7 +2208,7 @@ sle_index_compile(
         }
         else
         {
-            UCS4 ucs4 = uchars_char_decode_off(ustr_inline, index, /*ref*/bytes_of_thing);
+            UCS4 ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, index, /*ref*/bytes_of_thing);
 
             if(CH_NULL == ucs4)
                 break;
@@ -2470,7 +2482,7 @@ sle_track_mouse(
                 p_sle_info_block->selection_stt = point;
             }
 
-             /* check for need to refresh the field - ie. has it been modified? */
+             /* check for need to refresh the field - i.e. has it been modified? */
 
             if((p_sle_info_block->selection_stt != stt) || (p_sle_info_block->selection_end != end))
               status_return(sle_compile_index(p_sle_info_block, TRUE, TRUE, FALSE));
@@ -2512,7 +2524,7 @@ sle_drag_editline(
     DIALOG_CMD_CTL_VIEW_SIZE_QUERY size_query;
 
     size_query.h_dialog_view = control_query.h_dialog_view = parent_query.h_dialog_view = p_sle_info_block->h_dialog_view;
-    size_query.control_id = control_query.control_id = parent_query.control_id = p_sle_info_block->control_id;
+    size_query.dialog_control_id = control_query.dialog_control_id = parent_query.dialog_control_id = p_sle_info_block->dialog_control_id;
 
     status_return(skel_call_dialog(DIALOG_CMD_CODE_CTL_VIEW_PARENT_QUERY, &parent_query));
     status_return(skel_call_dialog(DIALOG_CMD_CODE_CTL_VIEW_POSN_QUERY, &control_query));
@@ -2719,12 +2731,243 @@ sle_tool_user_mouse(
 }
 
 _Check_return_
+_Ret_valid_
+static inline PC_RGB
+colour_of_sle_back(
+    _InRef_     PC_STYLE p_sle_style)
+{
+    return(
+        style_bit_test(p_sle_style, STYLE_SW_PS_RGB_BACK)
+            ? &p_sle_style->para_style.rgb_back
+            : &rgb_stash[0]);
+}
+
+#if RISCOS && defined(RISCOS_FONTY_SLE)
+
+static int
+riscos_fonty_sle(
+    _InoutRef_  P_FONT_SPEC p_font_spec)
+{
+    static int yes_or_no = -1;
+    static FONT_SPEC font_spec;
+
+    if(yes_or_no < 0)
+    {
+        /*U32 size_x = 0;*/
+        U32 size_y = 12;
+
+        /* RISC OS font manager needs 16x fontsize */
+        /*U32 x16_size_x = 16 * 0;*/
+        U32 x16_size_y = 16 * size_y;
+
+        /* c.f. host_font_find() in Fireworkz */
+        _kernel_swi_regs rs;
+        _kernel_oserror * p_kernel_oserror;
+
+        rs.r[1] = (int) /*"\\E" "Latin1"*/ "\\F" "DejaVuSans.Mono";
+        rs.r[2] = /*x16_size_x ? x16_size_x :*/ x16_size_y;
+        rs.r[3] = x16_size_y;
+        rs.r[4] = 0;
+        rs.r[5] = 0;
+
+        yes_or_no = 0;
+
+        if(NULL == (p_kernel_oserror = (_kernel_swi(/*Font_FindFont*/ 0x040081, &rs, &rs))))
+        {
+            HOST_FONT host_font = (HOST_FONT) rs.r[0];
+
+            if(status_ok(font_spec_name_alloc(&font_spec, "DejaVuSans.Mono")))
+            {
+                font_spec.size_y = size_y * PIXITS_PER_POINT;
+
+                yes_or_no = 1;
+            }
+
+            host_font_dispose(&host_font, P_REDRAW_CONTEXT_NONE);
+        }
+    }
+
+    if(yes_or_no)
+        *p_font_spec = font_spec;
+
+    return(yes_or_no);
+}
+
+#endif /* RISCOS && defined(RISCOS_FONTY_SLE) */
+
+_Check_return_
 extern STATUS
 sle_tool_user_redraw(
     _DocuRef_   P_DOCU p_docu,
     P_ANY /*P_T5_TOOLBAR_TOOL_USER_REDRAW*/ p_data)
 {
-#if RISCOS
+#if RISCOS && defined(RISCOS_FONTY_SLE)
+    static const RGB rgb_g_paint = { 0x88, 0x88, 0x88, 0 }; /* colour to paint a greyed line of text */
+
+    const P_T5_TOOLBAR_TOOL_USER_REDRAW p_t5_toolbar_tool_user_redraw = (P_T5_TOOLBAR_TOOL_USER_REDRAW) p_data;
+    const PC_REDRAW_CONTEXT p_redraw_context = &p_t5_toolbar_tool_user_redraw->redraw_context;
+    const P_SLE_INSTANCE_DATA p_sle_instance = p_object_instance_data_SLE(p_docu);
+    const P_SLE_INFO_BLOCK p_sle_info_block = &p_sle_instance->ss_editor;
+    const PC_STYLE p_sle_style = p_style_for_sle();
+    const PC_RGB p_rgb_sle_back = colour_of_sle_back(p_sle_style);
+    PIXIT plot_x_pixits = p_t5_toolbar_tool_user_redraw->control_outer_pixit_rect.tl.x;
+    PIXIT plot_y_pixits = p_t5_toolbar_tool_user_redraw->control_outer_pixit_rect.tl.y;
+
+    plot_x_pixits += X_OFFSET_PIXITS;
+    plot_y_pixits += Y_OFFSET_PIXITS;
+
+    plot_x_pixits -= p_sle_info_block->display.scroll_offset_pixits;
+
+    host_paint_rectangle_filled(p_redraw_context, &p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect, p_rgb_sle_back);
+
+    if(array_elements(&p_sle_info_block->h_ustr_inline) > 1 /*CH_NULL*/)
+    {
+        PC_USTR_INLINE string = ustr_inline_from_h_ustr(&p_sle_info_block->h_ustr_inline);
+        U32 stt_index = 0;
+        U32 index = 0;
+        U32 length = 0;
+        PIXIT new_plot_x_pixits = plot_x_pixits;
+        PC_RGB p_rgb_sle_text = p_t5_toolbar_tool_user_redraw->enabled ? &p_sle_style->font_spec.colour : &rgb_g_paint;
+        PC_SBSTR sbstr;
+        HOST_FONT host_font_redraw = HOST_FONT_NONE;
+        STATUS status = STATUS_OK;
+        PIXIT base_line = 0;
+
+        if(0 != p_sle_style->font_spec.h_app_name_tstr)
+        {
+            FONT_SPEC font_spec = p_sle_style->font_spec;
+
+            if(riscos_fonty_sle(&font_spec) && status_ok(status = fonty_handle_from_font_spec(&font_spec, FALSE)))
+            {
+                const FONTY_HANDLE fonty_handle = (FONTY_HANDLE) status;
+                const PC_UCHARS uchars = USTR_TEXT("0");
+                const U32 uchars_n = 1;
+                FONTY_CHUNK fonty_chunk;
+                PIXIT pixit_width_of_zero;
+                PIXIT ascent;
+
+                host_font_redraw = fonty_host_font_from_fonty_handle_redraw(p_redraw_context, fonty_handle, FALSE);
+
+                fonty_chunk_info_read_uchars(p_docu, &fonty_chunk, fonty_handle, uchars, uchars_n, 0 /* trail_spaces */);
+
+                pixit_width_of_zero = fonty_chunk.width;
+                ascent = fonty_chunk.ascent;
+
+                reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&p_sle_style->font_spec.h_app_name_tstr), p_sle_style->font_spec.size_y);
+                reportf(TEXT("ascent=") PIXIT_TFMT, ascent);
+
+#if 0
+                /* round formatting values to pixels */
+                const PIXIT pixits_per_riscos_d_x = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_x;
+                const PIXIT pixits_per_riscos_d_y = PIXITS_PER_RISCOS * p_redraw_context->host_xform.riscos.d_y;
+                pixit_width_of_zero = pixits_per_riscos_d_x * muldiv64_round_floor(pixit_width_of_zero, 1, pixits_per_riscos_d_x);
+                ascent = pixits_per_riscos_d_y * muldiv64_round_floor(ascent, 1, pixits_per_riscos_d_y);
+                reportf(TEXT("width of zero=") PIXIT_TFMT TEXT(" in %s ") S32_TFMT, pixit_width_of_zero, array_tstr(&p_sle_style->font_spec.h_app_name_tstr), p_sle_style->font_spec.size_y);
+                reportf(TEXT("ascent=") PIXIT_TFMT, ascent);
+#endif
+
+                CHAR_WIDTH_PIXITS = pixit_width_of_zero;
+                base_line = ascent;
+            }
+            else
+            {
+                status = STATUS_OK;
+            }
+        }
+
+        plot_y_pixits += base_line;
+
+        for(;;)
+        {
+            U32 bytes_of_thing;
+
+            if(is_inline_off(string, index))
+            {
+                bytes_of_thing = inline_bytecount_off(string, index);
+
+                if(IL_SLE_ARGUMENT == inline_code_off(string, index))
+                {
+                    PIXIT_POINT pixit_point;
+
+                    /* output any plain bits we've accumulated */
+                    if(length)
+                    {
+                        pixit_point.x = new_plot_x_pixits;
+                        pixit_point.y = plot_y_pixits;
+                        sbstr = PtrAddBytes(PC_SBSTR, string, stt_index);
+                        if(HOST_FONT_NONE == host_font_redraw)
+                            host_paint_plain_text_counted(p_redraw_context, &pixit_point, sbstr, length, p_rgb_sle_text);
+                        else
+                            host_fonty_text_paint_uchars_simple(p_redraw_context, &pixit_point, sbstr, length, p_rgb_sle_text, p_rgb_sle_back, host_font_redraw, TA_LEFT);
+                        new_plot_x_pixits += length * CHAR_WIDTH_PIXITS;
+                    }
+
+                    /* output body of inline */
+                    pixit_point.x = new_plot_x_pixits;
+                    pixit_point.y = plot_y_pixits;
+                    sbstr = il_sle_argument_data_off(PC_SBSTR, string, index, IL_SLE_ARGUMENT_OFF_ARG_USTR);
+                    length = strlen32(sbstr);
+                    if(HOST_FONT_NONE == host_font_redraw)
+                        host_paint_plain_text_counted(p_redraw_context, &pixit_point, sbstr, length, p_rgb_sle_text);
+                    else
+                        host_fonty_text_paint_uchars_simple(p_redraw_context, &pixit_point, sbstr, length, p_rgb_sle_text, p_rgb_sle_back, host_font_redraw, TA_LEFT);
+                    new_plot_x_pixits += length * CHAR_WIDTH_PIXITS;
+
+                    length = 0;
+                }
+            }
+            else
+            {
+                bytes_of_thing = 1;
+
+                if(CH_NULL == PtrGetByteOff(string, index))
+                    break;
+
+                length += bytes_of_thing; /* accumulate another plain bit */
+            }
+
+            index += bytes_of_thing;
+
+            if(length == 0)
+                stt_index = index;
+        }
+
+        /* output any trailing bits not already printed */
+        if(length)
+        {
+            PIXIT_POINT pixit_point;
+            pixit_point.x = new_plot_x_pixits;
+            pixit_point.y = plot_y_pixits;
+            sbstr = PtrAddBytes(PC_SBSTR, string, stt_index);
+            if(HOST_FONT_NONE == host_font_redraw)
+                host_paint_plain_text_counted(p_redraw_context, &pixit_point, sbstr, length, p_rgb_sle_text);
+            else
+                host_fonty_text_paint_uchars_simple(p_redraw_context, &pixit_point, sbstr, length, p_rgb_sle_text, p_rgb_sle_back, host_font_redraw, TA_LEFT);
+        }
+    }
+
+    /* Is there a selection? if so then highlight that particular area of the string. */
+    if(p_sle_info_block->selection)
+    {
+        static const RGB rgb_invert        = { 0x00, 0x00, 0x00, 0 };
+        static const RGB rgb_pseudo_invert = { 0xDD, 0xDD, 0xDD, 0 };
+
+        PIXIT_RECT region_box = p_t5_toolbar_tool_user_redraw->control_inner_pixit_rect;
+        PIXIT stt_pixits = MIN(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
+        PIXIT end_pixits = MAX(p_sle_info_block->display.selection_stt_pixits, p_sle_info_block->display.selection_end_pixits);
+
+        if(stt_pixits == 0)
+            stt_pixits -= X_OFFSET_PIXITS * PIXITS_PER_RISCOS; /* SKS 15apr93 stops little white bit at lhs showing */
+
+        region_box.tl.x = plot_x_pixits + stt_pixits;
+        region_box.br.x = plot_x_pixits + end_pixits;
+
+        host_invert_rectangle_filled(p_redraw_context, &region_box, p_sle_info_block->pseudo_selection ? &rgb_pseudo_invert : &rgb_invert, p_rgb_sle_back);
+    }
+
+    /* host font handles belong to fonty session (upper redraw layers) */
+
+#elif RISCOS
     static const RGB rgb_fill    = { 0xFF, 0xFF, 0xFF, 0 }; /* colour to paint background in */
     static const RGB rgb_paint   = { 0x00, 0x00, 0x00, 0 }; /* colour to paint text in */
     static const RGB rgb_g_paint = { 0x88, 0x88, 0x88, 0 }; /* colour to paint a greyed line of text */
@@ -3054,7 +3297,7 @@ T5_CMD_PROTO(static, sle_cmd_ss_edit_formula)
     object_read_text.type = OBJECT_READ_TEXT_PLAIN;
 
     object_position_init(&position.object_position);
-    status_consume(object_data_from_position(p_docu, &object_read_text.object_data, &position, NULL));
+    status_consume(object_data_from_position(p_docu, &object_read_text.object_data, &position, P_OBJECT_POSITION_NONE));
 
     {
     SS_DECOMPILER_OPTIONS ss_decompiler_options = g_ss_decompiler_options;

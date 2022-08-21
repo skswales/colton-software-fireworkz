@@ -28,7 +28,7 @@ _Ret_writes_bytes_maybenull_(entry_size)
 extern P_ANY
 _bfind(
     _In_reads_bytes_(entry_size) PC_ANY key,
-    _In_bytecount_x_(entry_size * n_entries) PC_ANY p_start,
+    _In_reads_bytes_x_(entry_size * n_entries) PC_ANY p_start,
     _InVal_     S32 n_entries,
     _InVal_     U32 entry_size,
     _InRef_     P_PROC_BSEARCH p_proc_bsearch,
@@ -83,9 +83,9 @@ _bfind(
 _Check_return_
 _Ret_writes_bytes_maybenull_(entry_size)
 extern P_ANY
-_lsearch(
+xlsearch(
     _In_reads_bytes_(entry_size) PC_ANY key,
-    _In_bytecount_x_(entry_size * n_entries) PC_ANY p_start,
+    _In_reads_bytes_x_(entry_size * n_entries) PC_ANY p_start,
     _InVal_     S32 n_entries,
     _InVal_     U32 entry_size,
     _InRef_     P_PROC_BSEARCH p_proc_bsearch)
@@ -215,15 +215,6 @@ fast_strtoul(
     return((hi << 16) | lo);
 }
 
-_Check_return_
-extern U32
-fast_ustrtoul(
-    _In_z_      PC_USTR ustr_in,
-    _OutRef_opt_ P_PC_USTR endptr)
-{
-    return(fast_strtoul((PC_U8Z) ustr_in, (P_P_U8Z) endptr));
-}
-
 /******************************************************************************
 *
 * find first occurence of b in a
@@ -324,7 +315,7 @@ reverse an array
 
 extern void
 memrev32(
-    _Inout_bytecount_x_(n_elements * element_width) P_ANY p,
+    _Inout_updates_bytes_x_(n_elements * element_width) P_ANY p,
     _InVal_     U32 n_elements,
     _InVal_     U32 element_width)
 {
@@ -606,7 +597,7 @@ sbstr_compare_n2_nocase(
 /*
 portable string copy functions that ensure CH_NULL termination without buffer overflow
 
-strcpy(), strncat() etc and even their _s() variants are all a bit 'wonky'
+strcpy(), strncat() etc. and even their _s() variants are all a bit 'wonky'
 
 copying to dst buffer is limited by dst_n characters
 

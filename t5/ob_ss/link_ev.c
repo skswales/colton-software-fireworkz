@@ -58,7 +58,7 @@ ev_alert_close(void)
     DIALOG_CMD_DISPOSE_DBOX dialog_cmd_dispose_dbox;
     dialog_cmd_dispose_dbox.h_dialog = h_alert_dialog;
     h_alert_dialog = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_DISPOSE_DBOX, &dialog_cmd_dispose_dbox));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DISPOSE_DBOX, &dialog_cmd_dispose_dbox));
 }
 
 /******************************************************************************
@@ -126,7 +126,7 @@ ev_input_close(void)
     ui_text_dispose(&ui_text_input);
     dialog_cmd_dispose_dbox.h_dialog = h_input_dialog;
     h_input_dialog = 0;
-    status_assert(call_dialog(DIALOG_CMD_CODE_DISPOSE_DBOX, &dialog_cmd_dispose_dbox));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DISPOSE_DBOX, &dialog_cmd_dispose_dbox));
 }
 
 /******************************************************************************
@@ -196,7 +196,7 @@ ev_current_docno(void)
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const PC_DOCU p_docu = p_docu_from_docno_ok(docno);
+        const PC_DOCU p_docu = p_docu_from_docno_valid(docno);
 
         if(p_docu->flags.is_current)
             return((EV_DOCNO) docno);
@@ -266,6 +266,7 @@ ev_exit(void)
 *
 ******************************************************************************/
 
+_Check_return_
 extern EV_DOCNO
 ev_establish_docno_from_docu_name(
     _InoutRef_  P_DOCU_NAME p_docu_name,
@@ -655,37 +656,42 @@ ev_page_slr(
 
 #define RECALC_NULL_CLIENT_HANDLE ((CLIENT_HANDLE) 0x00000005)
 
-static BOOL ev_recalc_started = FALSE;
+BOOL g_ev_recalc_started = FALSE;
 
 PROC_EVENT_PROTO(static, null_event_recalc)
 {
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM(p_data);
 
+#if CHECKING
     switch(t5_message)
     {
-    case T5_EVENT_NULL: /* null events for recalc come here */
-        ev_recalc();
-        break;
-
     default: default_unhandled();
-        break;
-    }
+        return(STATUS_OK);
 
-    return(STATUS_OK);
+    case T5_EVENT_NULL: /* null events for recalc come here */
+#else
+    IGNOREPARM_InVal_(t5_message);
+    {
+#endif
+        ev_recalc();
+        return(STATUS_OK);
+    }
 }
 
 extern void
 ev_recalc_start(
-    _InVal_     U8 must)
+    _InVal_     BOOL must)
 {
-    if(must || ev_doc_auto_calc())
-    {
-        assert(!ev_recalc_started);
-        trace_1(TRACE_OUT | TRACE_ANY, TEXT("ev_recalc_start(must=%d) - *** null_events_start(DOCNO_NONE)"), (int) must);
-        if(status_ok(status_wrap(null_events_start(DOCNO_NONE, T5_EVENT_NULL, null_event_recalc, RECALC_NULL_CLIENT_HANDLE))))
-            ev_recalc_started = TRUE;
-    }
+    if(g_ev_recalc_started)
+        return;
+
+    if(!(must || ev_doc_auto_calc()))
+        return;
+
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("ev_recalc_start(must=%d) - *** null_events_start(DOCNO_NONE)"), (int) must);
+    if(status_ok(status_wrap(null_events_start(DOCNO_NONE, T5_EVENT_NULL, null_event_recalc, RECALC_NULL_CLIENT_HANDLE))))
+        g_ev_recalc_started = TRUE;
 }
 
 /******************************************************************************
@@ -702,7 +708,7 @@ ev_recalc_status(
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno_ok(docno);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
 
         if(p_docu->flags.is_current)
         {
@@ -734,12 +740,12 @@ ev_recalc_status(
 extern void
 ev_recalc_stop(void)
 {
-    if(!ev_recalc_started)
+    if(!g_ev_recalc_started)
         return;
 
-    ev_recalc_started = FALSE;
+    g_ev_recalc_started = FALSE;
 
-    trace_0(TRACE_OUT | TRACE_ANY, TEXT("ev_recalc_stop - *** null_events_stop(DOCNO_NONE)"));
+    trace_0(TRACE_OUT | TRACE_ANY, TEXT("ev_recalc_stop() - *** null_events_stop(DOCNO_NONE)"));
     null_events_stop(DOCNO_NONE, T5_EVENT_NULL, null_event_recalc, RECALC_NULL_CLIENT_HANDLE);
 
     status_assert(maeve_service_event(P_DOCU_NONE, T5_MSG_RECALCED, P_DATA_NONE));
@@ -749,7 +755,7 @@ ev_recalc_stop(void)
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno_ok(docno);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
 
         if(!p_docu->flags.is_current)
             continue;

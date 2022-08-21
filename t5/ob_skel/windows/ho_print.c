@@ -365,7 +365,7 @@ print_one_printer_page(
 
     // DC that comes back is where the printer wants it, so if we want printable area to
     // start further down(across) the page we obviously have to arrange it so that
-    // a +ve offset is added when going to GDI space ie our top margin - printer top offset
+    // a +ve offset is added when going to GDI space i.e. our top margin - printer top offset
     // p_redraw_context->gdi_org.y(x) is subtracted from the point so that needs to be -ve in the above case
     if(p_print_ctrl->flags.two_up)
     {
@@ -428,7 +428,7 @@ print_one_printer_page(
     {
         S32 page_ident = page_index + page_inner_index;
 
-        if(array_index_valid(&p_print_ctrl->h_page_list, page_ident))
+        if(array_index_is_valid(&p_print_ctrl->h_page_list, page_ident))
         {
             const PC_PAGE_ENTRY p_page_entry = array_ptrc_no_checks(&p_print_ctrl->h_page_list, PAGE_ENTRY, page_ident);
             /* PAGE page_num_y = p_page_entry->page.y; */

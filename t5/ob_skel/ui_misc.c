@@ -240,7 +240,7 @@ info_web =
     { DRT(LBRT, PUSHBUTTON) }
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 info_web_argmap[] = { INFO_ID_WEB };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -353,7 +353,7 @@ t5_cmd_info(
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_INFO_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_info;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     quick_tblock_dispose(&version_quick_tblock);
@@ -395,7 +395,7 @@ docs_modified(void)
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno(docno);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
 
         status_assert(maeve_event(p_docu, T5_MSG_CELL_MERGE, P_DATA_NONE)); /* flush */
 
@@ -421,7 +421,7 @@ modified_docno_save(
     if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
     {
         /* may fail to save or be saved to unsafe receiver */
-        if(status_ok(status = execute_command(object_id, p_docu, t5_message, &arglist_handle)))
+        if(status_ok(status = execute_command(p_docu, t5_message, &arglist_handle, object_id)))
             if(p_docu->modified)
                 status = STATUS_CANCEL;
 
@@ -568,12 +568,12 @@ query_quit_do_query(
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, quit_query_ctl_create, elemof32(quit_query_ctl_create), 0);
     dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
     dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
-    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
 #if RISCOS
+    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
     dialog_cmd_process_dbox.p_proc_client = NULL;
-    completion_code = status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    completion_code = status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     quick_tblock_dispose(&quick_tblock_1);
@@ -631,7 +631,7 @@ query_quit(
     while((QUERY_COMPLETION_SAVE == completion_code) && ((docno = docno_enum_docs(docno)) != DOCNO_NONE))
     {
         /* If punter cancels any save, he means abort the shutdown */
-        switch(query_save_modified(p_docu_from_docno(docno)))
+        switch(query_save_modified(p_docu_from_docno_valid(docno)))
         {
         case QUERY_COMPLETION_SAVE:
             {
@@ -754,12 +754,12 @@ query_save_linked(
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, save_linked_query_ctl_create, elemof32(save_linked_query_ctl_create), 0);
     dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
     dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
-    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
 #if RISCOS
+    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     /* LINKED_QUERY_COMPLETION_DISCARD_ALL */
@@ -969,12 +969,12 @@ query_save_modified(
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, close_query_ctl_create, elemof32(close_query_ctl_create), 0);
     dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
     dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
-    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
 #if RISCOS
+    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     /* QUERY_COMPLETION_DISCARD: discard file */
@@ -1021,11 +1021,11 @@ extern void
 process_close_request(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
+    _In_        BOOL closing_a_doc,
     _In_        BOOL closing_a_view,
     _InVal_     BOOL opening_a_directory)
 {
     STATUS status = STATUS_OK;
-    BOOL closing_a_doc = 0;
     BOOL closing_docs = 0;
     ARRAY_HANDLE h_linked = 0;
     S32 n_linked = 0;
@@ -1259,12 +1259,12 @@ query_close_linked(
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, close_linked_query_ctl_create, elemof32(close_linked_query_ctl_create), 0);
     dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
     dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
-    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
 #if RISCOS
+    dialog_cmd_process_dbox.bits.use_riscos_menu = 1;
     dialog_cmd_process_dbox.riscos.menu = DIALOG_RISCOS_STANDALONE_MENU;
 #endif
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     /* LINKED_QUERY_COMPLETION_CLOSE_DOC */

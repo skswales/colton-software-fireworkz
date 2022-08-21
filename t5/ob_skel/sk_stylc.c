@@ -76,7 +76,7 @@ typedef STATUS (* P_PROC_STYLE_DATA_FROM_INLINE) (
     /*_Inout_*/ const P_DOCU p_docu,
     _InoutRef_  P_STYLE p_style,
     _InRef_     PC_STYLE_ENCODING p_style_encoding,
-    _In_bytecount_c_(INLINE_OVH) const PC_USTR_INLINE ustr_inline);
+    _In_reads_c_(INLINE_OVH) const PC_USTR_INLINE ustr_inline);
 
 #define PROC_STYLE_DATA_FROM_INLINE_PROTO(_proc_name) \
 _Check_return_ \
@@ -85,7 +85,7 @@ _proc_name( \
     /*_Inout_*/ const P_DOCU p_docu, \
     _InoutRef_  P_STYLE p_style, \
     _InRef_     PC_STYLE_ENCODING p_style_encoding, \
-    _In_bytecount_c_(INLINE_OVH) const PC_USTR_INLINE ustr_inline)
+    _In_reads_c_(INLINE_OVH) const PC_USTR_INLINE ustr_inline)
 
 PROC_STYLE_DATA_FROM_INLINE_PROTO(proc_style_ps_tab_list_data_from_inline);
 PROC_STYLE_DATA_FROM_INLINE_PROTO(proc_style_numform_data_from_inline);
@@ -740,7 +740,7 @@ style_copy(
 
         assert(0 != member_size);
 
-        /* turn on only when being utterly paranoid. Doesn't matter on x86 etc */
+        /* turn on only when being utterly paranoid. Doesn't matter on x86 etc. */
 #if RISCOS && CHECKING && 1
         if(sizeof32(U32) == member_size)
         {
@@ -803,7 +803,7 @@ style_copy(
 
         assert(0 != member_size);
 
-        /* turn on only when being utterly paranoid. Doesn't matter on x86 etc */
+        /* turn on only when being utterly paranoid. Doesn't matter on x86 etc. */
 #if RISCOS && CHECKING && 1
         if(sizeof32(U32) == member_size)
         {
@@ -875,7 +875,7 @@ style_duplicate(
 
             assert(0 != member_size);
 
-            /* turn on only when being utterly paranoid. Doesn't matter on x86 etc */
+            /* turn on only when being utterly paranoid. Doesn't matter on x86 etc. */
 #if RISCOS && CHECKING && 1
             if(sizeof32(U32) == member_size)
             {
@@ -964,7 +964,7 @@ extern STATUS /* length processed */
 style_struct_from_ustr_inline(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_STYLE p_style,
-    _In_bytecount_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
+    _In_reads_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
     _InRef_     PC_STYLE_SELECTOR p_style_selector /* effects wanted */)
 {
     U32 offset = 0;

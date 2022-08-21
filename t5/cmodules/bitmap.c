@@ -388,7 +388,7 @@ bitmap_or(
 
 extern void
 bitmap_set(
-    P_BITMAP p_bitmap,
+    _Out_writes_all_(n_words_for_n_bits) P_BITMAP p_bitmap,
     N_BITS_ARG_DECL(n_bits))
 {
 #if defined(CODE_ANALYSIS)

@@ -131,7 +131,7 @@ guess_init(
                 {
                     found = TRUE;
                     p_rcm_template->remap[i]   = special[j];
-                    p_rcm_template->index[i++] = k + 1;        /* ie >= 0 */
+                    p_rcm_template->index[i++] = k + 1;        /* i.e. >= 0 */
 
                     while(--k)
                         p_rcm_template->index[i++] = GUESS_SKIP;

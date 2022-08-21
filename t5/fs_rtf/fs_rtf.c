@@ -911,7 +911,7 @@ rtf_save_data_ref(
         else
         {
             U32 bytes_of_char;
-            UCS4 ucs4 = ustr_char_decode_off(ustr_inline, offset, /*ref*/bytes_of_char); /* handled inlines above */
+            UCS4 ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, offset, /*ref*/bytes_of_char); /* handled inlines above */
 
             if(CH_NULL == ucs4)
                 break;
@@ -1177,7 +1177,9 @@ T5_MSG_PROTO(static, rtf_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg_s
                 status_return(plain_write_a7str(p_ff_op_format, "{"));
             }
 
-            if(last_slr.col != 0 && last_slr.row < object_data.data_ref.arg.slr.row /* in case text below single col in table */ || last_slr.col > object_data.data_ref.arg.slr.col) /* next row down in a table */
+            if( ((last_slr.col != 0) && (last_slr.row < object_data.data_ref.arg.slr.row) /* in case text below single col in table */ )
+                ||
+                (last_slr.col > object_data.data_ref.arg.slr.col) /* next row down in a table */ )
             {
                 /* make sure all table cells accounted for, since Word gets a bit stressed if this isn't the case */
                 for(; last_slr.col < table_width; last_slr.col++)
@@ -1291,9 +1293,9 @@ T5_MSG_PROTO(static, rtf_msg_save_foreign, _InoutRef_ P_MSG_SAVE_FOREIGN p_msg_s
             status_return(rtf_save_cell(p_docu, &object_data, p_ff_op_format));
         }
 
-        if((last_slr.col != 0) && (last_slr.row < object_data.data_ref.arg.slr.row) /* in case text below single col in table */
-        ||
-           (last_slr.col > object_data.data_ref.arg.slr.col)) /* next row down in a table */
+        if( ((last_slr.col != 0) && (last_slr.row < object_data.data_ref.arg.slr.row) /* in case text below single col in table */ )
+            ||
+            (last_slr.col > object_data.data_ref.arg.slr.col) /* next row down in a table */ )
         {
             /* make sure all table cells accounted for, since Word gets a bit stressed if this isn't the case */
             for(; last_slr.col < table_width; last_slr.col++)

@@ -12,112 +12,130 @@
 
 /* bitmap ids */
 #if RISCOS
-#define SKEL_ID_BM_VIEW             "view_ctrl"
-/*#define SKEL_ID_BM_NEW          201*/
-/*#define SKEL_ID_BM_OPEN         202*/
-#define SKEL_ID_BM_SAVE             "save"
-#define SKEL_ID_BM_PRINT            "print"
-#define SKEL_ID_BM_CUT              "edit_cut"
-#define SKEL_ID_BM_COPY             "edit_copy"
-#define SKEL_ID_BM_PASTE            "edit_paste"
-#define SKEL_ID_BM_MARKS            "edit_marks0"
-#define SKEL_ID_BM_MARKS_ON         "edit_marks1"
-#define SKEL_ID_BM_STYLE            "styl_s"
-#define SKEL_ID_BM_EFFECTS          "styl_e"
-#define SKEL_ID_BM_BOLD             "styl_b"
-#define SKEL_ID_BM_ITALIC           "styl_i"
-#define SKEL_ID_BM_UNDERLINE        "styl_u"
-#define SKEL_ID_BM_SUPERSCRIPT      "styl_super"
-#define SKEL_ID_BM_SUBSCRIPT        "styl_sub"
-#define SKEL_ID_BM_SUPERSCRIPT_THIN "thin_super"
-#define SKEL_ID_BM_SUBSCRIPT_THIN   "thin_sub"
-#define SKEL_ID_BM_J_LEFT           "j_l"
-#define SKEL_ID_BM_J_CENTRE         "j_c"
-#define SKEL_ID_BM_J_RIGHT          "j_r"
-#define SKEL_ID_BM_J_FULL           "j_b"
-#define SKEL_ID_BM_CASE_MAP_UPPER   "setc_upper"
-#define SKEL_ID_BM_CASE_MAP_LOWER   "setc_lower"
-#define SKEL_ID_BM_CASE_MAP_INICAP  "setc_inicap"
-#define SKEL_ID_BM_CASE_MAP_SWAP    "setc_swap"
+#define SKEL_ID_BM_TOOLBAR_VIEW             "view_ctrl"
+#define SKEL_ID_BM_TOOLBAR_SAVE             "save"
+#define SKEL_ID_BM_TOOLBAR_PRINT            "print"
+#define SKEL_ID_BM_TOOLBAR_CUT              "edit_cut"
+#define SKEL_ID_BM_TOOLBAR_COPY             "edit_copy"
+#define SKEL_ID_BM_TOOLBAR_PASTE            "edit_paste"
+#define SKEL_ID_BM_TOOLBAR_MARKS            "edit_marks0"
+#define SKEL_ID_BM_TOOLBAR_MARKS_ON         "edit_marks1"
+
+#define SKEL_ID_BM_TOOLBAR_STYLE            "styl_s"
+#define SKEL_ID_BM_TOOLBAR_EFFECTS          "styl_e"
+#define SKEL_ID_BM_TOOLBAR_BOLD             "styl_b"
+#define SKEL_ID_BM_TOOLBAR_ITALIC           "styl_i"
+#define SKEL_ID_BM_TOOLBAR_UNDERLINE        "styl_u"
+#define SKEL_ID_BM_TOOLBAR_SUPERSCRIPT_THIN "thin_super"
+#define SKEL_ID_BM_TOOLBAR_SUBSCRIPT_THIN   "thin_sub"
+
+#define SKEL_ID_BM_TOOLBAR_J_LEFT           "j_l"
+#define SKEL_ID_BM_TOOLBAR_J_CENTRE         "j_c"
+#define SKEL_ID_BM_TOOLBAR_J_RIGHT          "j_r"
+#define SKEL_ID_BM_TOOLBAR_J_FULL           "j_b"
+
+#define SKEL_ID_BM_TOOLBAR_SEARCH           "search"
+#define SKEL_ID_BM_TOOLBAR_TABLE            "table"
+#define SKEL_ID_BM_TOOLBAR_BOX              "box"
+#define SKEL_ID_BM_TOOLBAR_MARKER           "marker"
+#define SKEL_ID_BM_TOOLBAR_SORT             "sort"
+#define SKEL_ID_BM_TOOLBAR_CHECK            "check"
+#define SKEL_ID_BM_TOOLBAR_THESAURUS        "thesaurus"
+#define SKEL_ID_BM_TOOLBAR_INSERT_DATE      "insert_date"
+
+#define SKEL_ID_BM_TOOLBAR_TAB_LEFT         "tab+l"
+#define SKEL_ID_BM_TOOLBAR_TAB_CENTRE       "tab+c"
+#define SKEL_ID_BM_TOOLBAR_TAB_RIGHT        "tab+r"
+#define SKEL_ID_BM_TOOLBAR_TAB_DECIMAL      "tab+d"
+
+#define SKEL_ID_BM_BOLD                     SKEL_ID_BM_TOOLBAR_BOLD
+#define SKEL_ID_BM_ITALIC                   SKEL_ID_BM_TOOLBAR_ITALIC
+#define SKEL_ID_BM_UNDERLINE                SKEL_ID_BM_TOOLBAR_UNDERLINE
+#define SKEL_ID_BM_SUPERSCRIPT              "styl_super"
+#define SKEL_ID_BM_SUBSCRIPT                "styl_sub"
+
+#define SKEL_ID_BM_J_LEFT                   SKEL_ID_BM_TOOLBAR_J_LEFT
+#define SKEL_ID_BM_J_CENTRE                 SKEL_ID_BM_TOOLBAR_J_CENTRE
+#define SKEL_ID_BM_J_RIGHT                  SKEL_ID_BM_TOOLBAR_J_RIGHT
+#define SKEL_ID_BM_J_FULL                   SKEL_ID_BM_TOOLBAR_J_FULL
+
+#define SKEL_ID_BM_VJ_TOP           "v_t"
+#define SKEL_ID_BM_VJ_CENTRE        "v_c"
+#define SKEL_ID_BM_VJ_BOTTOM        "v_b"
+
+#define SKEL_ID_BM_PS_SINGLE        "spac1"
+#define SKEL_ID_BM_PS_ONEP5         "spac1p5"
+#define SKEL_ID_BM_PS_DOUBLE        "spac2"
+#define SKEL_ID_BM_PS_N             "spacn"
+
 #define SKEL_ID_BM_LINE_NONE        "lnone"
 #define SKEL_ID_BM_LINE_THIN        "lthin"
 #define SKEL_ID_BM_LINE_STD         "lstd"
 #define SKEL_ID_BM_LINE_STDD        "lstdd"
 #define SKEL_ID_BM_LINE_THICK       "lthick"
-#define SKEL_ID_BM_VJ_TOP           "v_t"
-#define SKEL_ID_BM_VJ_CENTRE        "v_c"
-#define SKEL_ID_BM_VJ_BOTTOM        "v_b"
-#define SKEL_ID_BM_PS_SINGLE        "spac1"
-#define SKEL_ID_BM_PS_ONEP5         "spac1p5"
-#define SKEL_ID_BM_PS_DOUBLE        "spac2"
-#define SKEL_ID_BM_PS_N             "spacn"
-#define SKEL_ID_BM_SEARCH           "search"
-#define SKEL_ID_BM_TABLE            "table"
-#define SKEL_ID_BM_BOX              "box"
-#define SKEL_ID_BM_MARKER           "marker"
-#define SKEL_ID_BM_SORT             "sort"
-#define SKEL_ID_BM_CHECK            "check"
-#define SKEL_ID_BM_THESAURUS        "thesaurus"
-#define SKEL_ID_BM_INSERT_DATE      "insert_date"
-#define SKEL_ID_BM_TAB_LEFT         "tab+l"
-#define SKEL_ID_BM_TAB_CENTRE       "tab+c"
-#define SKEL_ID_BM_TAB_RIGHT        "tab+r"
-#define SKEL_ID_BM_TAB_DECIMAL      "tab+d"
+
 #define SKEL_ID_BM_DEC              "down"
 #define SKEL_ID_BM_INC              "up"
 #elif WINDOWS
-#define SKEL_ID_BM_COM_BTN_ID           T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 1)
-#define SKEL_ID_BM_COM_BTN(n)           T5_RESOURCE_COMMON_BMP(SKEL_ID_BM_COM_BTN_ID, n)
+/* multi-bitmaps: 0x0n (+1 = high-dpi variant) */
+#define SKEL_ID_BM_TOOLBAR_COM_BTN_ID           T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 1)
+#define SKEL_ID_BM_TOOLBAR_COM_BTN(n)           T5_RESOURCE_COMMON_BMP(SKEL_ID_BM_TOOLBAR_COM_BTN_ID, n)
 
-#define SKEL_ID_BM_COM07X11_ID          T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 3)
-#define SKEL_ID_BM_COM07X11(n)          T5_RESOURCE_COMMON_BMP(SKEL_ID_BM_COM07X11_ID, n)
+#define SKEL_ID_BM_COM_BTN_ID                   T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 5)
+#define SKEL_ID_BM_COM_BTN(n)                   T5_RESOURCE_COMMON_BMP(SKEL_ID_BM_COM_BTN_ID, n)
 
-#define SKEL_ID_BM_VIEW                 SKEL_ID_BM_COM_BTN(0)
-#define SKEL_ID_BM_NEW                  SKEL_ID_BM_COM_BTN(28)
-#define SKEL_ID_BM_OPEN                 SKEL_ID_BM_COM_BTN(29)
-#define SKEL_ID_BM_SAVE                 SKEL_ID_BM_COM_BTN(30)
-#define SKEL_ID_BM_PRINT                SKEL_ID_BM_COM_BTN(31)
-#define SKEL_ID_BM_CUT                  SKEL_ID_BM_COM_BTN(32)
-#define SKEL_ID_BM_COPY                 SKEL_ID_BM_COM_BTN(33)
-#define SKEL_ID_BM_PASTE                SKEL_ID_BM_COM_BTN(34)
-#define SKEL_ID_BM_MARKS                SKEL_ID_BM_COM_BTN(23)
-#define SKEL_ID_BM_MARKS_ON             SKEL_ID_BM_COM_BTN(24)
+#define SKEL_ID_BM_COM07X11_ID                  T5_RESOURCE_COMMON_BMP_BASE(OBJECT_ID_SKEL, 7)
+#define SKEL_ID_BM_COM07X11(n)                  T5_RESOURCE_COMMON_BMP(SKEL_ID_BM_COM07X11_ID, n)
 
-#define SKEL_ID_BM_STYLE                SKEL_ID_BM_COM_BTN(1)
-#define SKEL_ID_BM_EFFECTS              SKEL_ID_BM_COM_BTN(2)
+#define SKEL_ID_BM_TOOLBAR_VIEW                 SKEL_ID_BM_TOOLBAR_COM_BTN(0)
+#define SKEL_ID_BM_TOOLBAR_NEW                  SKEL_ID_BM_TOOLBAR_COM_BTN(28)
+#define SKEL_ID_BM_TOOLBAR_OPEN                 SKEL_ID_BM_TOOLBAR_COM_BTN(29)
+#define SKEL_ID_BM_TOOLBAR_SAVE                 SKEL_ID_BM_TOOLBAR_COM_BTN(30)
+#define SKEL_ID_BM_TOOLBAR_PRINT                SKEL_ID_BM_TOOLBAR_COM_BTN(31)
+#define SKEL_ID_BM_TOOLBAR_CUT                  SKEL_ID_BM_TOOLBAR_COM_BTN(32)
+#define SKEL_ID_BM_TOOLBAR_COPY                 SKEL_ID_BM_TOOLBAR_COM_BTN(33)
+#define SKEL_ID_BM_TOOLBAR_PASTE                SKEL_ID_BM_TOOLBAR_COM_BTN(34)
+#define SKEL_ID_BM_TOOLBAR_MARKS                SKEL_ID_BM_TOOLBAR_COM_BTN(23)
+#define SKEL_ID_BM_TOOLBAR_MARKS_ON             SKEL_ID_BM_TOOLBAR_COM_BTN(24)
+
+#define SKEL_ID_BM_TOOLBAR_STYLE                SKEL_ID_BM_TOOLBAR_COM_BTN(1)
+#define SKEL_ID_BM_TOOLBAR_EFFECTS              SKEL_ID_BM_TOOLBAR_COM_BTN(2)
+#define SKEL_ID_BM_TOOLBAR_BOLD                 SKEL_ID_BM_TOOLBAR_COM_BTN(3)
+#define SKEL_ID_BM_TOOLBAR_ITALIC               SKEL_ID_BM_TOOLBAR_COM_BTN(4)
+#define SKEL_ID_BM_TOOLBAR_UNDERLINE            SKEL_ID_BM_TOOLBAR_COM_BTN(5)
+#define SKEL_ID_BM_TOOLBAR_SUPERSCRIPT_THIN     SKEL_ID_BM_TOOLBAR_COM_BTN(6)//SKEL_ID_BM_COM07X11(4)
+#define SKEL_ID_BM_TOOLBAR_SUBSCRIPT_THIN       SKEL_ID_BM_TOOLBAR_COM_BTN(7)//SKEL_ID_BM_COM07X11(5)
+
+#define SKEL_ID_BM_TOOLBAR_J_LEFT               SKEL_ID_BM_TOOLBAR_COM_BTN(8)
+#define SKEL_ID_BM_TOOLBAR_J_CENTRE             SKEL_ID_BM_TOOLBAR_COM_BTN(9)
+#define SKEL_ID_BM_TOOLBAR_J_RIGHT              SKEL_ID_BM_TOOLBAR_COM_BTN(10)
+#define SKEL_ID_BM_TOOLBAR_J_FULL               SKEL_ID_BM_TOOLBAR_COM_BTN(11)
+
+#define SKEL_ID_BM_TOOLBAR_TAB_LEFT             SKEL_ID_BM_COM07X11(0)
+#define SKEL_ID_BM_TOOLBAR_TAB_CENTRE           SKEL_ID_BM_COM07X11(1)
+#define SKEL_ID_BM_TOOLBAR_TAB_RIGHT            SKEL_ID_BM_COM07X11(2)
+#define SKEL_ID_BM_TOOLBAR_TAB_DECIMAL          SKEL_ID_BM_COM07X11(3)
+
+#define SKEL_ID_BM_TOOLBAR_SORT                 SKEL_ID_BM_TOOLBAR_COM_BTN(25)
+#define SKEL_ID_BM_TOOLBAR_CHECK                SKEL_ID_BM_TOOLBAR_COM_BTN(27)
+#define SKEL_ID_BM_TOOLBAR_THESAURUS            SKEL_ID_BM_TOOLBAR_COM_BTN(0)
+#define SKEL_ID_BM_TOOLBAR_INSERT_DATE          SKEL_ID_BM_TOOLBAR_COM_BTN(26)
+
+#define SKEL_ID_BM_TOOLBAR_SEARCH               SKEL_ID_BM_TOOLBAR_COM_BTN(12)
+#define SKEL_ID_BM_TOOLBAR_TABLE                SKEL_ID_BM_TOOLBAR_COM_BTN(13)
+#define SKEL_ID_BM_TOOLBAR_BOX                  SKEL_ID_BM_TOOLBAR_COM_BTN(14)
+#define SKEL_ID_BM_TOOLBAR_MARKER               SKEL_ID_BM_TOOLBAR_COM_BTN(15)
+
 #define SKEL_ID_BM_BOLD                 SKEL_ID_BM_COM_BTN(3)
 #define SKEL_ID_BM_ITALIC               SKEL_ID_BM_COM_BTN(4)
 #define SKEL_ID_BM_UNDERLINE            SKEL_ID_BM_COM_BTN(5)
 #define SKEL_ID_BM_SUPERSCRIPT          SKEL_ID_BM_COM_BTN(6)
 #define SKEL_ID_BM_SUBSCRIPT            SKEL_ID_BM_COM_BTN(7)
-#define SKEL_ID_BM_SUPERSCRIPT_THIN     SKEL_ID_BM_COM07X11(4)
-#define SKEL_ID_BM_SUBSCRIPT_THIN       SKEL_ID_BM_COM07X11(5)
 
 #define SKEL_ID_BM_J_LEFT               SKEL_ID_BM_COM_BTN(8)
 #define SKEL_ID_BM_J_CENTRE             SKEL_ID_BM_COM_BTN(9)
 #define SKEL_ID_BM_J_RIGHT              SKEL_ID_BM_COM_BTN(10)
 #define SKEL_ID_BM_J_FULL               SKEL_ID_BM_COM_BTN(11)
-
-#define SKEL_ID_BM_TAB_LEFT             SKEL_ID_BM_COM07X11(0)
-#define SKEL_ID_BM_TAB_CENTRE           SKEL_ID_BM_COM07X11(1)
-#define SKEL_ID_BM_TAB_RIGHT            SKEL_ID_BM_COM07X11(2)
-#define SKEL_ID_BM_TAB_DECIMAL          SKEL_ID_BM_COM07X11(3)
-
-#define SKEL_ID_BM_CASE_MAP_UPPER       1235
-#define SKEL_ID_BM_CASE_MAP_LOWER       1236
-#define SKEL_ID_BM_CASE_MAP_INICAP      1237
-#define SKEL_ID_BM_CASE_MAP_SWAP        1238
-
-#define SKEL_ID_BM_SORT                 SKEL_ID_BM_COM_BTN(25)
-#define SKEL_ID_BM_CHECK                SKEL_ID_BM_COM_BTN(27)
-#define SKEL_ID_BM_THESAURUS            SKEL_ID_BM_COM_BTN(0)
-#define SKEL_ID_BM_INSERT_DATE          SKEL_ID_BM_COM_BTN(26)
-
-#define SKEL_ID_BM_LINE_NONE            1225
-#define SKEL_ID_BM_LINE_THIN            1226
-#define SKEL_ID_BM_LINE_STD             1227
-#define SKEL_ID_BM_LINE_STDD            1228
-#define SKEL_ID_BM_LINE_THICK           1229
 
 #define SKEL_ID_BM_VJ_TOP               SKEL_ID_BM_COM_BTN(16)
 #define SKEL_ID_BM_VJ_CENTRE            SKEL_ID_BM_COM_BTN(17)
@@ -128,10 +146,11 @@
 #define SKEL_ID_BM_PS_DOUBLE            SKEL_ID_BM_COM_BTN(21)
 #define SKEL_ID_BM_PS_N                 SKEL_ID_BM_COM_BTN(22)
 
-#define SKEL_ID_BM_SEARCH               SKEL_ID_BM_COM_BTN(12)
-#define SKEL_ID_BM_TABLE                SKEL_ID_BM_COM_BTN(13)
-#define SKEL_ID_BM_BOX                  SKEL_ID_BM_COM_BTN(14)
-#define SKEL_ID_BM_MARKER               SKEL_ID_BM_COM_BTN(15)
+#define SKEL_ID_BM_LINE_NONE            1225
+#define SKEL_ID_BM_LINE_THIN            1226
+#define SKEL_ID_BM_LINE_STD             1227
+#define SKEL_ID_BM_LINE_STDD            1228
+#define SKEL_ID_BM_LINE_THICK           1229
 
 #define SKEL_ID_BM_RULER_TABL           1250
 #define SKEL_ID_BM_RULER_TABR           1251
@@ -193,8 +212,8 @@ keep consistent with &.t5.Resource.Res00.msg
 #define ERR_NO_DATA_LOADED                  -80
 #define ERR_NO_STUBS                        -81
 #define ERR_NOTE_NOT_LOADED                 -82 /* for display */
-#define ERR_NOMEM_EMBEDDED_PICTURE          -83
-#define ERR_NOMEM_REFERENCED_PICTURE        -84
+#define ERR_spare_83                        -83
+#define ERR_spare_84                        -84
 #define ERR_NOTFOUND_REFERENCED_PICTURE     -85
 #define ERR_AREA_PROTECTED                  -86
 #define ERR_SUPPORTER_NOT_FOUND             -87
@@ -253,6 +272,7 @@ string resource allocation
 #define MSG_SKEL_SINGLE_USER                    3
 
 #define MSG_REMOVE                              92
+#define MSG_INSERT                              93
 #define MSG_HELP                                94
 #define MSG_APPLY                               95
 #define MSG_NEW                                 96
@@ -261,8 +281,8 @@ string resource allocation
 #define MSG_REPLACE                             99
 
 #define MSG_FILENAME_UNTITLED                   100
-#define MSG_TITLEBAR_spare_93                   93
 #define MSG_TITLEBAR_NORMAL                     101
+#define MSG_TITLEBAR_READ_ONLY                  1032
 #define MSG_TITLEBAR_MODIFIED                   102
 #define MSG_AT_N_PERCENT                        103
 #define MSG_PERCENT                             104
@@ -323,13 +343,19 @@ long names for function keys
 #define MSG_FUNC_PAGE_UP                        161
 
 #define MSG_DIALOG_INSERT_FIELD_TIME_CAPTION        168
-#define MSG_DIALOG_INSERT_FIELD_FILE_TIME_CAPTION   169
+#define MSG_DIALOG_INSERT_FIELD_spare_169           169
 #define MSG_DIALOG_INSERT_FIELD_DATE_CAPTION        170
-#define MSG_DIALOG_INSERT_FIELD_FILE_DATE_CAPTION   1032
-#define MSG_DIALOG_INSERT_FIELD_PAGE_Y_CAPTION      171
+#define MSG_DIALOG_INSERT_FIELD_PAGE_CAPTION        171
 #define MSG_DIALOG_INSERT_FIELD_LIVE                172
-#define MSG_DIALOG_INSERT_FIELD_PAGE_X_CAPTION      173
-#define MSG_STATUS_INSERT_FIELD_FILE_DATE           174
+#define MSG_DIALOG_INSERT_FIELD_spare_173           173
+#define MSG_STATUS_INSERT_FIELD_DATE                174
+
+#define MSG_DIALOG_INSERT_FIELD_PAGE_Y_LABEL        1038
+#define MSG_DIALOG_INSERT_FIELD_PAGE_X_LABEL        1039
+#define MSG_DIALOG_INSERT_FIELD_DATE_LABEL          1044
+#define MSG_DIALOG_INSERT_FIELD_FILE_DATE_LABEL     1045
+#define MSG_DIALOG_INSERT_FIELD_TIME_LABEL          1046
+#define MSG_DIALOG_INSERT_FIELD_FILE_TIME_LABEL     1047
 
 #define MSG_DIALOG_ES_STYLE_NAME                180
 #define MSG_DIALOG_ES_STYLE_KEY                 181

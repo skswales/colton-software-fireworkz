@@ -13,8 +13,8 @@
 typedef struct NUMFORM_CONTEXT
 {
     PC_USTR month_names[12];
-    PC_USTR day_endings[31];
     PC_USTR day_names[7];
+    PC_USTR day_endings[31];
 }
 NUMFORM_CONTEXT, * P_NUMFORM_CONTEXT; typedef const NUMFORM_CONTEXT * PC_NUMFORM_CONTEXT;
 

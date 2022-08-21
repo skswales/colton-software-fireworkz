@@ -292,11 +292,15 @@ border_window_make_break(
     return(STATUS_OK);
 }
 
+_Check_return_
 static T5_MESSAGE
 button_click_event_encode(
-    _In_        const WimpMouseClickEvent * const p_mouse_click_event)
+    _In_        const WimpMouseClickEvent * const p_mouse_click_event,
+    _OutRef_    P_BOOL p_ctrl_pressed,
+    _OutRef_    P_BOOL p_shift_pressed)
 {
-    static BOOL mutating_click = FALSE;
+    static BOOL g_ctrl_pressed = FALSE; /* keep state consistent across all phases of click */
+    static BOOL g_shift_pressed = FALSE;
 
     int buttonstate = p_mouse_click_event->buttons;
     T5_MESSAGE t5_message;
@@ -304,37 +308,22 @@ button_click_event_encode(
     switch(buttonstate)
     {
     case Wimp_MouseButtonSingleSelect: /* 0x400 Single 'select' */
-        mutating_click = host_shift_pressed() /* || host_ctrl_pressed() PMF took this out */;
-        if(mutating_click)
-            buttonstate = Wimp_MouseButtonSingleAdjust;
-        break;
-
-    case Wimp_MouseButtonDragSelect:
-        if(mutating_click)
-            buttonstate = Wimp_MouseButtonDragAdjust;
-        break;
-
-    case Wimp_MouseButtonSelect: /* 0x004 Double 'select' */
-        if(mutating_click)
-            buttonstate = Wimp_MouseButtonAdjust;
-        break;
-
-    case Wimp_MouseButtonTripleSelect:
-        if(mutating_click)
-            buttonstate = Wimp_MouseButtonTripleAdjust;
-        break;
-
     case Wimp_MouseButtonSingleAdjust: /* 0x100 Single 'adjust' */
-    case Wimp_MouseButtonDragAdjust:
-    case Wimp_MouseButtonAdjust: /* 0x001 Double 'adjust' */
-    case Wimp_MouseButtonTripleAdjust:
+        /* cache on first phase of left or right click */
+        g_ctrl_pressed = host_ctrl_pressed();
+        g_shift_pressed = host_shift_pressed();
+        break;
+
     default:
          break;
     }
 
+    *p_ctrl_pressed = g_ctrl_pressed;
+    *p_shift_pressed = g_shift_pressed;
+
     switch(buttonstate)
     {
-    case Wimp_MouseButtonSingleSelect:
+    case Wimp_MouseButtonSingleSelect: /* 0x400 Single 'select' */
         t5_message = T5_EVENT_CLICK_LEFT_SINGLE;
         break;
 
@@ -342,7 +331,7 @@ button_click_event_encode(
         t5_message = T5_EVENT_CLICK_LEFT_DRAG;
         break;
 
-    case Wimp_MouseButtonSelect:
+    case Wimp_MouseButtonSelect: /* 0x004 Double 'select' */
         t5_message = T5_EVENT_CLICK_LEFT_DOUBLE;
         break;
 
@@ -350,7 +339,7 @@ button_click_event_encode(
         t5_message = T5_EVENT_CLICK_LEFT_TRIPLE;
         break;
 
-    case Wimp_MouseButtonSingleAdjust:
+    case Wimp_MouseButtonSingleAdjust: /* 0x100 Single 'adjust' */
         t5_message = T5_EVENT_CLICK_RIGHT_SINGLE;
         break;
 
@@ -358,7 +347,7 @@ button_click_event_encode(
         t5_message = T5_EVENT_CLICK_RIGHT_DRAG;
         break;
 
-    case Wimp_MouseButtonAdjust:
+    case Wimp_MouseButtonAdjust: /* 0x001 Double 'adjust' */
         t5_message = T5_EVENT_CLICK_RIGHT_DOUBLE;
         break;
 
@@ -827,7 +816,7 @@ generic_window_process_dataload(
         break;
 
     case FILETYPE_TEXT:
-        { /* SKS 10dec94 allow fred/fwk files of type Text (eg unmapped on NFS) to be detected - but does not scan these for recognisable headers */
+        { /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected - but does not scan these for recognisable headers */
         T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
 
         if(FILETYPE_UNDETERMINED != t_t5_filetype)
@@ -861,8 +850,10 @@ generic_window_process_dataload(
 
         zero_struct(viewevent_click);
 
-        /* NB dataload event x,y are screen coordinates (ie not window relative) */
+        /* NB dataload event x,y are screen coordinates (i.e. not window relative) */
         viewevent_click.click_context.hwnd = p_wimp_message_data_load->destination_window;
+        viewevent_click.click_context.ctrl_pressed = host_ctrl_pressed();
+        viewevent_click.click_context.shift_pressed = host_shift_pressed();
         set_click_context_gdi_org_from_screen(&viewevent_click.click_context, p_wimp_message_data_load->destination_window);
         host_set_click_context(p_docu, p_view, &viewevent_click.click_context, &p_view->host_xform[p_ctrl_host_view->xform_idx]);
 
@@ -909,7 +900,7 @@ generic_window_event_handler(
         {
         status_line_auto_clear(p_docu);
 
-        status_break(status = host_key_cache_emit_events(DOCNO_NONE));
+        status_break(status = host_key_cache_emit_events());
 
         set_cur_pane(p_view, window_type, window_id, p_event_data->mouse_click.window_handle);
 
@@ -952,7 +943,7 @@ generic_window_event_handler(
 
         /* SKS 30jul93 dump out any keys still destined for this document */
         trace_1(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("Wimp_ELoseCaret: host_key_cache_emit_events(docno ") S32_TFMT TEXT(")"), docno_from_p_docu(p_docu));
-        status = host_key_cache_emit_events(docno_from_p_docu(p_docu));
+        status = host_key_cache_emit_events_for(docno_from_p_docu(p_docu));
         break;
 
     case Wimp_EGainCaret:
@@ -986,10 +977,10 @@ generic_window_event_handler(
             }
 
         case Wimp_MDataLoad:
-            { /* File dragged from file viewer, dropped on our window */
+            { /* File dragged from directory display, dropped on our window */
             status_line_auto_clear(p_docu);
 
-            status_break(status = host_key_cache_emit_events(DOCNO_NONE));
+            status_break(status = host_key_cache_emit_events());
 
             set_cur_pane(p_view, window_type, window_id, p_wimp_message->data.data_load.destination_window);
 
@@ -1040,12 +1031,12 @@ back_window_close(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
-    BOOL adjustclicked = winx_adjustclicked();
-    BOOL shiftpressed  = host_shift_pressed();
-    BOOL opening_a_directory = adjustclicked;
-    BOOL closing_a_view = !(shiftpressed && adjustclicked);
+    const BOOL adjust_clicked = winx_adjustclicked();
+    const BOOL shift_pressed  = host_shift_pressed();
+    const BOOL opening_a_directory = adjust_clicked;
+    const BOOL closing_a_view = !(shift_pressed && adjust_clicked);
 
-    process_close_request(p_docu, p_view, closing_a_view, opening_a_directory);
+    process_close_request(p_docu, p_view, FALSE, closing_a_view, opening_a_directory);
 }
 
 static BOOL
@@ -1065,7 +1056,7 @@ back_window_event_handler(
     switch(event_code)
     {
     case Wimp_EOpenWindow:
-        back_window_open(p_view, &p_event_data->open_window_request); /* back, pane(s), ruler(s) etc */
+        back_window_open(p_view, &p_event_data->open_window_request); /* back, pane(s), ruler(s) etc. */
         break;
 
     case Wimp_ECloseWindow:
@@ -1257,7 +1248,7 @@ back_window_open(
     winx_open_child_windows(p_view->main[WIN_BACK].hwnd, p_open_window, &behind);
 #endif
 
-    /* If wimp asked back window to open in place (ie behind itself)
+    /* If wimp asked back window to open in place (i.e. behind itself)
      * then first window opened must be opened behind itself.
      * So find topmost window and set that as 'behind'
     */
@@ -1350,8 +1341,8 @@ back_window_open(
 
             {
             GDI_RECT gdi_rect; /* cf work_area_origin_x_from_visible_area_and_scroll() */
-            gdi_rect.tl.x = pane_open_window.xscroll; /* ie pane_open_window.visible_area.xmin - (pane_open_window.visible_area.xmin - pane_open_window.xscroll); */
-            gdi_rect.tl.y = pane_open_window.yscroll; /* ie pane_open_window.visible_area.ymax - (pane_open_window.visible_area.ymax - pane_open_window.yscroll); */
+            gdi_rect.tl.x = pane_open_window.xscroll; /* i.e. pane_open_window.visible_area.xmin - (pane_open_window.visible_area.xmin - pane_open_window.xscroll); */
+            gdi_rect.tl.y = pane_open_window.yscroll; /* i.e. pane_open_window.visible_area.ymax - (pane_open_window.visible_area.ymax - pane_open_window.yscroll); */
             gdi_rect.br.x = pane_open_window.visible_area.xmax - ((GDI_COORD) pane_open_window.visible_area.xmin - pane_open_window.xscroll);
             gdi_rect.br.y = pane_open_window.visible_area.ymin - ((GDI_COORD) pane_open_window.visible_area.ymax - pane_open_window.yscroll);
             pixit_rect_from_window_rect(&p_pane->visible_pixit_rect, &gdi_rect, &p_view->host_xform[XFORM_PANE]);
@@ -1568,7 +1559,7 @@ pane_window_create(
         wind_defn.flags.bits.flags_are_new = 1;
         wind_defn.flags.bits.moveable = 1;
         wind_defn.flags.bits.pane = 1;
-        wind_defn.flags.bits.trespass = (UBF) edge_or_pane_window_needs_trespass();
+        wind_defn.flags.bits.trespass = UBF_PACK(edge_or_pane_window_needs_trespass());
 
         wind_defn.work_flags.bits.button_type = ButtonType_DoubleClickDrag;
         wind_defn.sprite_area = (void *) 1; /* Window Manager sprite area (needed to satisfy RISC PC) */
@@ -1788,7 +1779,7 @@ edge_window_create(
         wind_defn.flags.bits.flags_are_new = 1;
         wind_defn.flags.bits.moveable = 1;
         wind_defn.flags.bits.pane = 1;
-        wind_defn.flags.bits.trespass = (UBF) edge_or_pane_window_needs_trespass();
+        wind_defn.flags.bits.trespass = UBF_PACK(edge_or_pane_window_needs_trespass());
 
         /*wind_defn.extent.xmin = 0; been zeroed */
         /*wind_defn.extent.ymax = 0; been zeroed */
@@ -1977,7 +1968,7 @@ update_common_in_loop(
 
     IGNOREPARM_DocuRef_(p_docu);
 
-    /* invalidate cache foreground and background entries cos wimp may have drawn scroll bars/borders/icons etc */
+    /* invalidate cache foreground and background entries cos wimp may have drawn scroll bars/borders/icons etc. */
     host_invalidate_cache(HIC_REDRAW_LOOP_START);
 
     p_viewevent_redraw->area.p_view = p_view;
@@ -2062,7 +2053,7 @@ callback(
     /* All the viewevent_click fields except 'view_point' and pixit_delta were initialised and saved in p_callback->viewevent_click by */
     /* send_click_event_to_view() and host_drag_start(), so we only need to process the mouse position.        */
 
-    /* Get pointer position, given in screen coordinates (ie not window relative) */
+    /* Get pointer position, given in screen coordinates (i.e. not window relative) */
     void_WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info));
 
     /* and window origin, (best to re-read as window may scroll or move under our feet) as per set_click_context_gdi_org_from_screen() */
@@ -2199,21 +2190,52 @@ send_click_event_to_view(
     P_CTRL_HOST_VIEW p_ctrl_host_view,
     _In_        const WimpMouseClickEvent * const p_mouse_click_event)
 {
+    BOOL ctrl_pressed;
+    BOOL shift_pressed;
     T5_MESSAGE t5_message;
 
     trace_0(TRACE_RISCOS_HOST, TEXT("host event: send_click_event_to_view"));
 
-    if(T5_EVENT_NONE != (t5_message = button_click_event_encode(p_mouse_click_event)))
+    if(T5_EVENT_NONE != (t5_message = button_click_event_encode(p_mouse_click_event, &ctrl_pressed, &shift_pressed)))
     {
         const P_HOST_XFORM p_host_xform = &p_view->host_xform[p_ctrl_host_view->xform_idx];
+
+#if 0 /* handled on case-by-case basis now */
+        if(shift_pressed) /* || ctrl_pressed PMF took this out */
+        {
+            switch(t5_message)
+            {
+            case T5_EVENT_CLICK_LEFT_SINGLE:
+                t5_message = T5_EVENT_CLICK_RIGHT_SINGLE;
+                break;
+
+            case T5_EVENT_CLICK_LEFT_DRAG:
+                t5_message = T5_EVENT_CLICK_RIGHT_DRAG;
+                break;
+
+            case T5_EVENT_CLICK_LEFT_DOUBLE:
+                t5_message = T5_EVENT_CLICK_RIGHT_DOUBLE;
+                break;
+
+            case T5_EVENT_CLICK_LEFT_TRIPLE:
+                t5_message = T5_EVENT_CLICK_RIGHT_TRIPLE;
+                break;
+
+            default:
+                 break;
+            }
+        }
+#endif
 
         {
         VIEWEVENT_CLICK viewevent_click;
 
         zero_struct(viewevent_click);
 
-        /* NB click event x,y are screen coordinates (ie not window relative) */
+        /* NB click event x,y are screen coordinates (i.e. not window relative) */
         viewevent_click.click_context.hwnd = p_mouse_click_event->window_handle;
+        viewevent_click.click_context.ctrl_pressed = ctrl_pressed;
+        viewevent_click.click_context.shift_pressed = shift_pressed;
         set_click_context_gdi_org_from_screen(&viewevent_click.click_context, p_mouse_click_event->window_handle);
         host_set_click_context(p_docu, p_view, &viewevent_click.click_context, p_host_xform);
 
@@ -2260,7 +2282,7 @@ send_pointer_enter_event_to_view(
 
     dragging_.deferred_leave.p_ctrl_host_view = NULL;
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_enter_event_to_view - *** null_events_start(docno=%d)"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_enter_event_to_view(docno=%d) - *** null_events_start()"), docno_from_p_docu(p_docu));
     status_assert(null_events_start(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_host_drag, 0));
 
     host_set_pointer_shape(POINTER_DEFAULT);
@@ -2274,8 +2296,10 @@ send_pointer_enter_event_to_view(
 
     void_WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info));
 
-    /* NB pointer event x,y are screen coordinates (ie not window relative) */
+    /* NB pointer event x,y are screen coordinates (i.e. not window relative) */
     viewevent_click.click_context.hwnd = hwnd;
+    viewevent_click.click_context.ctrl_pressed = FALSE;
+    viewevent_click.click_context.shift_pressed = FALSE;
     set_click_context_gdi_org_from_screen(&viewevent_click.click_context, hwnd);
     host_set_click_context(p_docu, p_view, &viewevent_click.click_context, p_host_xform);
 
@@ -2320,7 +2344,7 @@ send_pointer_leave_event_to_view(
 
     dragging_.deferred_leave.p_ctrl_host_view = NULL;
 
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_leave_event_to_view - *** null_events_stop(docno=%d)"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("send_pointer_leave_event_to_view(docno=%d) - *** null_events_stop()"), docno_from_p_docu(p_docu));
     null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_host_drag, 0);
 
     host_set_pointer_shape(POINTER_DEFAULT);
@@ -2361,6 +2385,33 @@ send_release_event_to_view(
 }
 
 _Check_return_
+static BOOL
+preprocess_key_event_ESCAPE(void)
+{
+    host_key_buffer_flush();
+
+    trace_0(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("key kmap=KMAP_ESCAPE, buffer flushed"));
+
+    if(dragging_.active)
+    {
+        /* N.B. dragging_.callback.p_docu may not equal p_docu as we can drag with the right button in a document */
+        /*      that doesn't have the input focus (its possible we may make right clicks claim focus one day)     */
+        /*      the escape was sent to the document with the input focus (p_docu), but the user wants to abort    */
+        /*      the drag happening in dragging_.callback.p_docu                                                   */
+        P_VIEW dragging_p_view;
+        P_DOCU dragging_p_docu = viewid_unpack((U32) dragging_.callback.event_handle, &dragging_p_view, NULL);
+
+        trace_0(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("key kmap=KMAP_ESCAPE processed, cancelling drag, buffer flushed"));
+
+        send_release_event_to_view(dragging_p_docu, dragging_p_view, T5_EVENT_CLICK_DRAG_ABORTED);
+
+        return(TRUE /*processed*/);
+    }
+
+    return(FALSE);
+}
+
+_Check_return_
 static STATUS
 send_key_event_to_docu(
     _DocuRef_   P_DOCU p_docu,
@@ -2375,27 +2426,8 @@ send_key_event_to_docu(
     if((h_commands = command_array_handle_from_key_code(p_docu, keycode, &t5_message)) == 0)
     {
         if(t5_message == T5_CMD_ESCAPE)
-        {
-            host_key_buffer_flush();
-
-            if(dragging_.active)
-            {
-                /* N.B. dragging_.callback.p_docu may not equal p_docu as we can drag with the right button in a document */
-                /*      that doesn't have the input focus (its possible we may make right clicks claim focus one day)     */
-                /*      the escape was sent to the document with the input focus (p_docu), but the user wants to abort    */
-                /*      the drag happening in dragging_.callback.p_docu                                                   */
-                P_VIEW dragging_p_view;
-                P_DOCU dragging_p_docu = viewid_unpack((U32) dragging_.callback.event_handle, &dragging_p_view, NULL);
-
-                trace_0(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("key kmap=KMAP_ESCAPE processed, cancelling drag, buffer flushed"));
-
-                send_release_event_to_view(dragging_p_docu, dragging_p_view, T5_EVENT_CLICK_DRAG_ABORTED);
-
+            if(preprocess_key_event_ESCAPE())
                 return(1 /*processed*/);
-            }
-
-            trace_0(TRACE_OUT | TRACE_RISCOS_HOST, TEXT("key kmap=KMAP_ESCAPE, buffer flushed"));
-        }
 
         fn_key = (t5_message != T5_EVENT_NONE);
 
@@ -2434,7 +2466,7 @@ send_key_event_to_docu(
 
 extern void
 host_drag_start(
-    P_ANY p_reason_data)
+    _In_opt_    P_ANY p_reason_data)
 {
     static S32 default_drag_reason_data = CB_CODE_NOREASON;
 
@@ -2509,9 +2541,17 @@ PROC_EVENT_PROTO(static, null_event_host_drag)
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM(p_data);
 
+#if CHECKING
     switch(t5_message)
     {
+    default: default_unhandled();
+        return(STATUS_OK);
+
     case T5_EVENT_NULL:
+#else
+    IGNOREPARM_InVal_(t5_message);
+    {
+#endif
         if(dragging_.active)
         {   /* Send event to view only if pointer has moved. Scroll the window if the pointer is outside it. */
             callback(T5_EVENT_CLICK_DRAG_MOVEMENT, &dragging_.callback, TRUE, TRUE);
@@ -2520,12 +2560,8 @@ PROC_EVENT_PROTO(static, null_event_host_drag)
         {   /* Send event to view only if pointer has moved. Don't scroll the window if the pointer is outside it. */
             callback(T5_EVENT_POINTER_MOVEMENT, &tracking__callback, TRUE, FALSE);
         }
-
-    default: default_unhandled();
-        break;
+        return(STATUS_OK);
     }
-
-    return(STATUS_OK);
 }
 
 extern void
@@ -2614,7 +2650,7 @@ host_main_show_caret(
             DOCNO docno = DOCNO_NONE;
 
             while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
-                p_docu_from_docno(docno)->flags.is_current = 0;
+                p_docu_from_docno_valid(docno)->flags.is_current = 0;
         }
 
         p_docu->flags.is_current = p_docu->flags.has_input_focus = 1;
@@ -3247,7 +3283,7 @@ host_recache_visible_row_range(
 #define RULER_VERT_GAP  0
 
 /* HORZ_INTERPANE_GAP or VERT_INTERPANE_GAP of zero means that the pane_window work areas abut
- * ie a split pane's border overlaps other pane's work area, calc_window_positions() kludges around this!
+ * i.e. a split pane's border overlaps other pane's work area, calc_window_positions() kludges around this!
  * A gap of one pixel would cause the pane_window borders to overlap, whilst a gap of 3 pixels would
  * leave a one pixel strip of the back window visible between the panes
  */
@@ -3281,7 +3317,7 @@ calc_window_positions(
 
     /* if the panes are split and the values of p_view->horz_split_pos or p_view->vert_split_pos are small, clicking */
     /* on 'fullsize' can cause us to try and open WIN_PANE with dimensions bigger than its extent, so check for this */
-    /* and open the other windows a bit bigger (ie adjust con_x_8 or con_y_8)                                        */
+    /* and open the other windows a bit bigger (i.e. adjust con_x_8 or con_y_8)                                      */
 
     int excess_x = (con_x_9 - con_x_8) - (p_view->scaled_paneextent.x1 - p_view->scaled_paneextent.x0);
     int excess_y = (con_y_8 - con_y_9) - (p_view->scaled_paneextent.y1 - p_view->scaled_paneextent.y0);
@@ -3386,8 +3422,7 @@ calc_window_positions(
 *
 * Typically called when some aspect of the view layout changes
 *
-* eg switching border/ruler windows on/off or when the zoom
-*    factor changes.
+* e.g. switching border/ruler windows on/off or when the zoom factor changes
 *
 ******************************************************************************/
 
@@ -3627,13 +3662,16 @@ filer_opendir(
     (void) _kernel_oscli(cmdbuffer);
 }
 
+/*ncr*/
+_Ret_z_
 extern PTSTR
 make_var_name(
-    _Out_cap_c_(BUF_MAX_PATHSTRING) PTSTR buffer /* [BUF_MAX_PATHSTRING]*/,
+    _Out_cap_(elemof_buffer) PTSTR buffer,
+    _InVal_     U32 elemof_buffer,
     _In_z_      PCTSTR suffix)
 {
-    tstr_xstrkpy(buffer, BUF_MAX_PATHSTRING, product_id());
-    tstr_xstrkat(buffer, BUF_MAX_PATHSTRING, suffix);
+    tstr_xstrkpy(buffer, elemof_buffer, product_id());
+    tstr_xstrkat(buffer, elemof_buffer, suffix);
     return(buffer);
 }
 
@@ -3643,7 +3681,7 @@ host_initialise_file_path(void)
     TCHARZ var_name[BUF_MAX_PATHSTRING];
     TCHARZ resource_path[BUF_MAX_PATHSTRING * 3];
 
-    if(NULL == _kernel_getenv(make_var_name(var_name, "$Path"), resource_path, elemof32(resource_path)))
+    if(NULL == _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$Path"), resource_path, elemof32(resource_path)))
     {
         trace_2(TRACE_APP_SKEL, "var=%s, path=%s", report_tstr(var_name), report_tstr(resource_path));
         trace_2(TRACE_OUT | TRACE_ANY, TEXT("file_path_set(%d): %s"), FILE_PATH_STANDARD, report_tstr(resource_path));

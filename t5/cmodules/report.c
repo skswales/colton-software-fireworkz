@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2013-2015 Stuart Swales */
+/* Copyright (C) 2013-2016 Stuart Swales */
 
 /* SKS February 2013 */
 
@@ -120,17 +120,20 @@ vreportf(
 
 #if RISCOS
 
+#if defined(__CC_NORCROFT)
 #ifndef __swis_h
 #include "swis.h" /*C:*/
 #endif
 
 #define XReport_Text0 (XOS_Bit | /*Report_Text0*/ 0x54C80)
-
-extern int __swi(XReport_Text0) __swi_XReport_Text0(const char * s);
-
 #define XRPCEmu_Debug (XOS_Bit | /*RPCEmu_Debug*/ 0x56AC2)
 
+extern int __swi(XReport_Text0) __swi_XReport_Text0(const char * s);
 extern int __swi(XRPCEmu_Debug) __swi_XRPCEmu_Debug(const char * s);
+#else
+extern int /*__swi(XReport_Text0)*/ __swi_XReport_Text0(const char * s);
+extern int /*__swi(XRPCEmu_Debug)*/ __swi_XRPCEmu_Debug(const char * s);
+#endif
 
 #endif /* RISCOS */
 
@@ -287,7 +290,7 @@ report_tstr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE_ANY(tstr))
+    if(IS_PTR_NONE(tstr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -329,7 +332,7 @@ report_ustr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE_ANY(ustr))
+    if(IS_PTR_NONE(ustr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -369,7 +372,7 @@ report_wstr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE_ANY(wstr))
+    if(IS_PTR_NONE(wstr))
         return(TEXT("<<NONE>>"));
 #endif
 
@@ -402,7 +405,7 @@ report_sbstr(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE_ANY(sbstr))
+    if(IS_PTR_NONE(sbstr))
         return(TEXT("<<NONE>>"));
 #endif
 

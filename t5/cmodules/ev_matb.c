@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 /* More mathematical function routines for evaluator */
 
@@ -21,7 +21,7 @@
 #endif
 
 _Check_return_
-static inline double
+static double
 log2(_InVal_ double d)
 {
     return(log(d) * _log2_e);
@@ -509,7 +509,7 @@ PROC_EXEC_PROTO(c_sumproduct)
         const PC_EV_DATA array_i = args[i];
         S32 x_size_i, y_size_i;
         array_range_sizes(array_i, &x_size_i, &y_size_i);
-        if((x_size != x_size) || (y_size != y_size_i))
+        if((x_size != x_size_i) || (y_size != y_size_i))
         {
             ev_data_set_error(p_ev_data_res, EVAL_ERR_ODF_VALUE);
             return;

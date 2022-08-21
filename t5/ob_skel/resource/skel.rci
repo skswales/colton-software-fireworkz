@@ -25,10 +25,16 @@
 112 CURSOR PRELOAD MOVEABLE PURE "../../ob_skel/resource/cur/tank.cur"
 
 // multi-bitmaps: 0x0n (+1 = high-dpi variant)
-1 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com16x15.bmp"
-2 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com24x22.bmp"
+1 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbar_4bpp.bmp"
+2 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbarh_4bpp.bmp"
+3 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbar_32bpp.bmp"
+4 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/skel_tbarh_32bpp.bmp"
 
-3 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com07x11.bmp"
+5 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com16x16.bmp"
+6 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com24x24.bmp"
+
+7 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/com07x11.bmp"
+// no 8
 
 // bitmaps
 1216 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/inc.bmp"
@@ -39,11 +45,6 @@
 1227 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_std.bmp"
 1228 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_stdd.bmp"
 1229 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/ls_thick.bmp"
-
-1235 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/case_u.bmp"
-1236 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/case_l.bmp"
-1237 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/case_p.bmp"
-1238 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/case_s.bmp"
 
 1250 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/tab_l.bmp"
 1251 BITMAP PRELOAD MOVEABLE PURE "../../ob_skel/resource/bmp/tab_r.bmp"

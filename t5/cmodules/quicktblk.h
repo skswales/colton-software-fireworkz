@@ -220,7 +220,7 @@ quick_tblock_tchars(
 {
     if(0 != quick_tblock_array_handle_ref(p_quick_tblock))
     {
-        assert(array_handle_valid(&quick_tblock_array_handle_ref(p_quick_tblock)));
+        assert(array_handle_is_valid(&quick_tblock_array_handle_ref(p_quick_tblock)));
         return(array_basec_no_checks(&quick_tblock_array_handle_ref(p_quick_tblock), TCHAR));
     }
 
@@ -235,7 +235,7 @@ quick_tblock_tchars_wr(
 {
     if(0 != quick_tblock_array_handle_ref(p_quick_tblock))
     {
-        assert(array_handle_valid(&quick_tblock_array_handle_ref(p_quick_tblock)));
+        assert(array_handle_is_valid(&quick_tblock_array_handle_ref(p_quick_tblock)));
         return(array_base_no_checks(&quick_tblock_array_handle_ref(p_quick_tblock), TCHAR));
     }
 
@@ -250,7 +250,7 @@ quick_tblock_tstr(
 {
     if(0 != quick_tblock_array_handle_ref(p_quick_tblock))
     {
-        assert(array_handle_valid(&quick_tblock_array_handle_ref(p_quick_tblock)));
+        assert(array_handle_is_valid(&quick_tblock_array_handle_ref(p_quick_tblock)));
         return(array_basec_no_checks(&quick_tblock_array_handle_ref(p_quick_tblock), TCHAR));
     }
 

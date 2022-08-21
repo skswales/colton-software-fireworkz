@@ -29,12 +29,12 @@ mapping from control ids to style bits etc.
 
 typedef struct ES_WIBBLE
 {
-    UBF control_id          : 16; /* DIALOG_CTL_ID */
-    UBF style_bit_number    : 8; /* could be bigger if pressed */
-    UBF enabler             : 1;
-    UBF set_state_on_enable : 1;
-    UBF enable_units        : 1;
-    UBF reserved            : 8-3;
+    UBF packed_dialog_control_id    : 16;   /* DIALOG_CONTROL_ID */
+    UBF style_bit_number            : 8;    /* could be bigger if pressed */
+    UBF enabler                     : 1;
+    UBF set_state_on_enable         : 1;
+    UBF enable_units                : 1;
+    UBF reserved                    : 8-3;
 
     U16 data_type; /* must fit a ES_WIBBLE_TYPE_* so could be 4 bits if pushed */
     U32 member_offset;
@@ -67,7 +67,7 @@ _Check_return_
 _Ret_maybenone_
 static P_ES_WIBBLE
 es_wibble_search(
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 static STATUS
@@ -260,7 +260,7 @@ tweak_style_process_start(
 {
     STATUS status = STATUS_OK;
     const P_ES_CALLBACK p_es_callback = (P_ES_CALLBACK) p_dialog_msg_process_start->client_handle;
-    DIALOG_CTL_ID i;
+    U32 i;
 
     p_es_callback->creating--;
 
@@ -268,10 +268,10 @@ tweak_style_process_start(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_process_start->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = ES_ID_CATEGORY_GROUP;
+    dialog_cmd_ctl_state_set.dialog_control_id = ES_ID_CATEGORY_GROUP;
     dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_DONT_MSG;
     dialog_cmd_ctl_state_set.state.radiobutton = ES_ID_RADIO_STT + p_es_callback->subdialog_current;
-    status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+    status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
     } /*block*/
 
     /* setting of initial light states needed (SKS 29apr94) */
@@ -280,10 +280,10 @@ tweak_style_process_start(
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_process_start->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = (DIALOG_CTL_ID) (ES_ID_LIGHT_STT + i);
+        dialog_cmd_ctl_state_set.dialog_control_id = (DIALOG_CONTROL_ID) (ES_ID_LIGHT_STT + i);
         dialog_cmd_ctl_state_set.bits = 0;
         * (P_RGB) &dialog_cmd_ctl_state_set.state.user = es_light_on_for(p_es_callback, i) ? rgb_stash[10 /*green*/] : rgb_stash[1 /*lt grey*/];
-        status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+        status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
     }
 
 #if defined(VALIDATE_MAIN_ALLOCS) && defined(VALIDATE_EDIT_STYLE)
@@ -358,14 +358,14 @@ tweak_style_ctl_state_change(
 {
     STATUS status = STATUS_OK;
     const P_ES_CALLBACK p_es_callback = (P_ES_CALLBACK) p_dialog_msg_ctl_state_change->client_handle;
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_state_change->dialog_control_id;
-    const P_ES_WIBBLE p_es_wibble = es_wibble_search(control_id);
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_state_change->dialog_control_id;
+    const P_ES_WIBBLE p_es_wibble = es_wibble_search(dialog_control_id);
 
     if(P_ES_WIBBLE_NONE != p_es_wibble)
         return((p_es_wibble->enabler ? new_using_es_wibble_enabler : new_using_es_wibble)
                    (p_dialog_msg_ctl_state_change, p_es_wibble, p_es_callback));
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     /* fire off the nth subdialog */
     case ES_ID_CATEGORY_GROUP:
@@ -374,7 +374,7 @@ tweak_style_ctl_state_change(
         msgclr(dialog_cmd_complete_dbox);
         dialog_cmd_complete_dbox.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
         dialog_cmd_complete_dbox.completion_code = p_dialog_msg_ctl_state_change->new_state.radiobutton;
-        status = call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox);
+        status = object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox);
         break;
         }
 
@@ -391,9 +391,9 @@ tweak_style_ctl_pushbutton(
     _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
 {
     STATUS status = STATUS_OK;
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case ES_FS_ID_COLOUR_BUTTON:
     case ES_PS_ID_RGB_BACK_BUTTON:
@@ -405,8 +405,8 @@ tweak_style_ctl_pushbutton(
         assert_EQ(ES_FS_ID_COLOUR_BUTTON - ES_FS_ID_COLOUR_PATCH, ES_PS_ID_RGB_BACK_BUTTON - ES_PS_ID_RGB_BACK_PATCH);
         assert_EQ(ES_FS_ID_COLOUR_BUTTON - ES_FS_ID_COLOUR_PATCH, ES_PS_ID_BORDER_BUTTON   - ES_PS_ID_BORDER_PATCH);
         assert_EQ(ES_FS_ID_COLOUR_BUTTON - ES_FS_ID_COLOUR_PATCH, ES_PS_ID_GRID_BUTTON     - ES_PS_ID_GRID_PATCH);
-        msg_uistyle_colour_picker.rgb_control_id = (DIALOG_CTL_ID) ((control_id - ES_FS_ID_COLOUR_BUTTON) + ES_FS_ID_COLOUR_PATCH);
-        msg_uistyle_colour_picker.button_control_id = control_id;
+        msg_uistyle_colour_picker.rgb_dialog_control_id = (DIALOG_CONTROL_ID) ((dialog_control_id - ES_FS_ID_COLOUR_BUTTON) + ES_FS_ID_COLOUR_PATCH);
+        msg_uistyle_colour_picker.button_dialog_control_id = dialog_control_id;
         status = object_call_id(OBJECT_ID_SKEL_SPLIT, P_DOCU_NONE, T5_MSG_UISTYLE_COLOUR_PICKER, &msg_uistyle_colour_picker);
         break;
         }
@@ -424,66 +424,66 @@ tweak_style_ctl_user_mouse(
     _InRef_     PC_DIALOG_MSG_CTL_USER_MOUSE p_dialog_msg_ctl_user_mouse)
 {
     STATUS status = STATUS_OK;
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_user_mouse->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_user_mouse->dialog_control_id;
   /*const P_ES_CALLBACK p_es_callback = p_dialog_msg_ctl_user_mouse->client_handle;*/
-    DIALOG_CTL_ID control_id_patch = 0;
-    DIALOG_CTL_ID control_id_trans = 0;
+    DIALOG_CONTROL_ID dialog_control_id_patch = 0;
+    DIALOG_CONTROL_ID dialog_control_id_trans = 0;
     RGB rgb;
 
     if(p_dialog_msg_ctl_user_mouse->click != DIALOG_MSG_USER_MOUSE_CLICK_LEFT_SINGLE)
         return(status);
 
-    if((control_id >= (DIALOG_CTL_ID) ES_FS_ID_COLOUR_0) && (control_id <= (DIALOG_CTL_ID) ES_FS_ID_COLOUR_15))
+    if((dialog_control_id >= (DIALOG_CONTROL_ID) ES_FS_ID_COLOUR_0) && (dialog_control_id <= (DIALOG_CONTROL_ID) ES_FS_ID_COLOUR_15))
     {
-        rgb = rgb_stash[control_id - ES_FS_ID_COLOUR_0];
+        rgb = rgb_stash[dialog_control_id - ES_FS_ID_COLOUR_0];
 
-        control_id_patch = ES_FS_ID_COLOUR_PATCH;
+        dialog_control_id_patch = ES_FS_ID_COLOUR_PATCH;
     }
-    else if((control_id >= (DIALOG_CTL_ID) ES_PS_ID_RGB_BACK_0) && (control_id <= (DIALOG_CTL_ID) ES_PS_ID_RGB_BACK_15))
+    else if((dialog_control_id >= (DIALOG_CONTROL_ID) ES_PS_ID_RGB_BACK_0) && (dialog_control_id <= (DIALOG_CONTROL_ID) ES_PS_ID_RGB_BACK_15))
     {
-        rgb = rgb_stash[control_id - ES_PS_ID_RGB_BACK_0];
+        rgb = rgb_stash[dialog_control_id - ES_PS_ID_RGB_BACK_0];
 
-        control_id_patch = ES_PS_ID_RGB_BACK_PATCH;
+        dialog_control_id_patch = ES_PS_ID_RGB_BACK_PATCH;
 
-        control_id_trans = ES_PS_ID_RGB_BACK_T;
+        dialog_control_id_trans = ES_PS_ID_RGB_BACK_T;
     }
-    else if((control_id >= (DIALOG_CTL_ID) ES_PS_ID_BORDER_0) && (control_id <= (DIALOG_CTL_ID) ES_PS_ID_BORDER_15))
+    else if((dialog_control_id >= (DIALOG_CONTROL_ID) ES_PS_ID_BORDER_0) && (dialog_control_id <= (DIALOG_CONTROL_ID) ES_PS_ID_BORDER_15))
     {
-        rgb = rgb_stash[control_id - ES_PS_ID_BORDER_0];
+        rgb = rgb_stash[dialog_control_id - ES_PS_ID_BORDER_0];
 
-        control_id_patch = ES_PS_ID_BORDER_PATCH;
+        dialog_control_id_patch = ES_PS_ID_BORDER_PATCH;
     }
-    else if((control_id >= (DIALOG_CTL_ID) ES_PS_ID_GRID_0) && (control_id <= (DIALOG_CTL_ID) ES_PS_ID_GRID_15))
+    else if((dialog_control_id >= (DIALOG_CONTROL_ID) ES_PS_ID_GRID_0) && (dialog_control_id <= (DIALOG_CONTROL_ID) ES_PS_ID_GRID_15))
     {
-        rgb = rgb_stash[control_id - ES_PS_ID_GRID_0];
+        rgb = rgb_stash[dialog_control_id - ES_PS_ID_GRID_0];
 
-        control_id_patch = ES_PS_ID_GRID_PATCH;
+        dialog_control_id_patch = ES_PS_ID_GRID_PATCH;
     }
     else
     {
         rgb = rgb_stash[0];
     }
 
-    if(control_id_trans)
+    if(0 != dialog_control_id_trans)
     {
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_user_mouse->h_dialog;
         dialog_cmd_ctl_state_set.bits = 0;
-        dialog_cmd_ctl_state_set.control_id = control_id_trans;
+        dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id_trans;
         dialog_cmd_ctl_state_set.state.checkbox = (U8) rgb.transparent;
-        status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+        status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
     }
 
-    if(control_id_patch)
+    if(0 != dialog_control_id_patch)
     {
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_user_mouse->h_dialog;
         dialog_cmd_ctl_state_set.bits = 0;
-        dialog_cmd_ctl_state_set.control_id = control_id_patch;
+        dialog_cmd_ctl_state_set.dialog_control_id = dialog_control_id_patch;
         dialog_cmd_ctl_state_set.state.user.rgb = rgb;
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     }
 
     return(status);
@@ -496,7 +496,7 @@ static STATUS
 tweak_style_ctl_user_redraw(
     _InRef_     PC_DIALOG_MSG_CTL_USER_REDRAW p_dialog_msg_ctl_user_redraw)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
     const P_ES_CALLBACK p_es_callback = (P_ES_CALLBACK) p_dialog_msg_ctl_user_redraw->client_handle;
     P_RGB p_rgb;
 
@@ -504,13 +504,13 @@ tweak_style_ctl_user_redraw(
         p_rgb = &rgb_stash[0];
     else
     {
-        S32 i = (S32) control_id - ES_ID_LIGHT_STT;
+        S32 i = (S32) dialog_control_id - ES_ID_LIGHT_STT;
 
         if((i >= 0) && (i < ES_SUBDIALOG_MAX))
         {
             p_rgb = es_light_on_for(p_es_callback, i) ? &rgb_stash[10] /* green */ : &rgb_stash[1]; /* lt grey */
         }
-        else switch(control_id)
+        else switch(dialog_control_id)
         {
         case ES_FS_ID_COLOUR_PATCH:
             p_rgb = &p_es_callback->style.font_spec.colour;
@@ -782,17 +782,17 @@ col style
     { ES_CS_ID_COL_NAME,                  STYLE_SW_CS_COL_NAME,      0, 0, 0, 0, ES_WIBBLE_TYPE_ANY,          offsetof32(STYLE, col_style) + offsetof32(COL_STYLE, h_numform) }
 };
 
-PROC_BSEARCH_PROTO(static, es_wibble_control_id_bsearch, DIALOG_CTL_ID, PC_ES_WIBBLE)
+PROC_BSEARCH_PROTO(static, es_wibble_control_id_bsearch, DIALOG_CONTROL_ID, PC_ES_WIBBLE)
 {
     BSEARCH_KEY_VAR_DECL(P_DIALOG_CTL_ID, key);
-    const DIALOG_CTL_ID key_id = *key;
+    const DIALOG_CONTROL_ID key_dialog_control_id = *key;
     BSEARCH_DATUM_VAR_DECL(PC_ES_WIBBLE, datum);
-    const DIALOG_CTL_ID datum_id = (DIALOG_CTL_ID) datum->control_id;
+    const DIALOG_CONTROL_ID datum_dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, datum->packed_dialog_control_id);
 
-    if(key_id > datum_id)
+    if(key_dialog_control_id > datum_dialog_control_id)
         return(+1);
 
-    if(key_id < datum_id)
+    if(key_dialog_control_id < datum_dialog_control_id)
         return(-1);
 
     return(0);
@@ -805,13 +805,13 @@ PROC_QSORT_PROTO(static, es_wibble_control_id_qsort, ES_WIBBLE)
     QSORT_ARG1_VAR_DECL(PC_ES_WIBBLE, esw1);
     QSORT_ARG2_VAR_DECL(PC_ES_WIBBLE, esw2);
 
-    const DIALOG_CTL_ID id1 = (DIALOG_CTL_ID) esw1->control_id;
-    const DIALOG_CTL_ID id2 = (DIALOG_CTL_ID) esw2->control_id;
+    const DIALOG_CONTROL_ID dialog_control_id1 = UBF_UNPACK(DIALOG_CONTROL_ID, esw1->packed_dialog_control_id);
+    const DIALOG_CONTROL_ID dialog_control_id2 = UBF_UNPACK(DIALOG_CONTROL_ID, esw2->packed_dialog_control_id);
 
-    if(id1 > id2)
+    if(dialog_control_id1 > dialog_control_id2)
         return(+1);
 
-    if(id1 < id2)
+    if(dialog_control_id1 < dialog_control_id2)
         return(-1);
 
     return(0);
@@ -821,10 +821,10 @@ _Check_return_
 _Ret_maybenone_
 static P_ES_WIBBLE
 es_wibble_search(
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     const P_ES_WIBBLE p_es_wibble = (P_ES_WIBBLE)
-        bsearch(&control_id, es_wibble, elemof(es_wibble), sizeof(es_wibble[0]), es_wibble_control_id_bsearch);
+        bsearch(&dialog_control_id, es_wibble, elemof(es_wibble), sizeof(es_wibble[0]), es_wibble_control_id_bsearch);
 
     if(NULL == p_es_wibble)
         return(P_ES_WIBBLE_NONE);
@@ -1059,7 +1059,7 @@ create_using_es_wibble(
     P_ES_WIBBLE p_es_wibble,
     P_ES_CALLBACK p_es_callback)
 {
-    const DIALOG_CTL_ID control_id = (DIALOG_CTL_ID) p_es_wibble->control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, p_es_wibble->packed_dialog_control_id);
     P_ANY p_member = PtrAddBytes(P_ANY, &p_es_callback->style, p_es_wibble->member_offset);
     STYLE_BIT_NUMBER style_bit_number = ENUM_UNPACK(STYLE_BIT_NUMBER, p_es_wibble->style_bit_number);
     STATUS discard_edit = 0;
@@ -1068,7 +1068,7 @@ create_using_es_wibble(
 
     p_dialog_msg_ctl_create_state->processed = 1;
 
-    /* some style bits are used multiple times, eg. RGB values, so only copy in once per subdialog */
+    /* some style bits are used multiple times, e.g. RGB values, so only copy in once per subdialog */
     if(!style_bit_test(&p_es_callback->style, style_bit_number))
     {
         STYLE_SELECTOR selector;
@@ -1077,7 +1077,7 @@ create_using_es_wibble(
         style_selector_clear(&selector);
         style_selector_bit_set(&selector, style_bit_number);
 
-        if((control_id == ES_PS_ID_GRID_LINE_GROUP) || (control_id == ES_PS_ID_GRID_PATCH)) /* MUST be first control to use this style bit to be created */
+        if((dialog_control_id == ES_PS_ID_GRID_LINE_GROUP) || (dialog_control_id == ES_PS_ID_GRID_PATCH)) /* MUST be first control to use this style bit to be created */
         {   /* dup our friends bits of style too */
             U32 i;
             for(i = 1; i <= 3; ++i)
@@ -1089,7 +1089,7 @@ create_using_es_wibble(
         /* copy over this one bit of enable state */
         style_selector_bit_copy(&p_es_callback->style_selector, &p_es_callback->committed_style_selector, style_bit_number);
 
-        if((control_id == ES_PS_ID_GRID_LINE_GROUP) || (control_id == ES_PS_ID_GRID_PATCH))
+        if((dialog_control_id == ES_PS_ID_GRID_LINE_GROUP) || (dialog_control_id == ES_PS_ID_GRID_PATCH))
         {   /* copy over our friends bits of enable state too */
             U32 i;
             for(i = 1; i <= 3; ++i)
@@ -1145,7 +1145,7 @@ create_using_es_wibble(
         break;
     }
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case ES_NAME_ID_NAME:
     case ES_CS_ID_COL_NAME:
@@ -1246,9 +1246,9 @@ create_using_es_wibble(
         DIALOG_CMD_CTL_ENABLE dialog_cmd_ctl_enable;
         msgclr(dialog_cmd_ctl_enable);
         dialog_cmd_ctl_enable.h_dialog = p_dialog_msg_ctl_create_state->h_dialog;
-        dialog_cmd_ctl_enable.control_id = ES_PS_ID_RGB_BACK_GROUP_INNER;
+        dialog_cmd_ctl_enable.dialog_control_id = ES_PS_ID_RGB_BACK_GROUP_INNER;
         dialog_cmd_ctl_enable.enabled = !p_rgb->transparent;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
         } /*block*/
 
         p_dialog_msg_ctl_create_state->state_set.state.checkbox = (U8) p_rgb->transparent;
@@ -1281,7 +1281,7 @@ create_using_es_wibble(
 
     p_dialog_msg_ctl_create_state->state_set.bits |= DIALOG_STATE_SET_DONT_MSG;
 
-    status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &p_dialog_msg_ctl_create_state->state_set);
+    status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &p_dialog_msg_ctl_create_state->state_set);
 
     if(discard_edit)
         ui_text_dispose(&p_dialog_msg_ctl_create_state->state_set.state.edit.ui_text);
@@ -1302,7 +1302,7 @@ create_using_es_wibble_enabler(
     STYLE_BIT_NUMBER style_bit_number = ENUM_UNPACK(STYLE_BIT_NUMBER, p_es_wibble->style_bit_number);
     BOOL enabled = style_selector_bit_test(&p_es_callback->style_selector, style_bit_number);
 
-    if((p_es_wibble->control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
+    if((p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
     {
         /* get our friends opinions too (enabled iff unanimous) */
         if(!style_selector_bit_test(&p_es_callback->style_selector, style_bit_number + 1))
@@ -1320,10 +1320,10 @@ create_using_es_wibble_enabler(
         msgclr(dialog_cmd_ctl_enable);
 
         dialog_cmd_ctl_enable.h_dialog = p_dialog_msg_ctl_create_state->h_dialog;
-        dialog_cmd_ctl_enable.control_id = (DIALOG_CTL_ID) p_es_wibble->control_id;
+        dialog_cmd_ctl_enable.dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, p_es_wibble->packed_dialog_control_id);
         dialog_cmd_ctl_enable.enabled = 0;
 
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
     }
 
     if(style_selector_bit_test(&p_es_callback->prohibited_enabler_2, style_bit_number))
@@ -1333,10 +1333,10 @@ create_using_es_wibble_enabler(
         msgclr(dialog_cmd_ctl_nobble);
 
         dialog_cmd_ctl_nobble.h_dialog = p_dialog_msg_ctl_create_state->h_dialog;
-        dialog_cmd_ctl_nobble.control_id = (DIALOG_CTL_ID) p_es_wibble->control_id;
+        dialog_cmd_ctl_nobble.dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, p_es_wibble->packed_dialog_control_id);
         dialog_cmd_ctl_nobble.nobbled = 1;
 
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_NOBBLE, &dialog_cmd_ctl_nobble));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_NOBBLE, &dialog_cmd_ctl_nobble));
     }
 
     /* on enable control creation, set the state of the enable control which
@@ -1350,7 +1350,7 @@ create_using_es_wibble_enabler(
 
     p_es_callback->creating++;
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &p_dialog_msg_ctl_create_state->state_set));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &p_dialog_msg_ctl_create_state->state_set));
 
     p_es_callback->creating--;
 
@@ -1366,7 +1366,7 @@ fill_using_es_wibble(
 {
     IGNOREPARM(p_es_callback);
 
-    switch(p_es_wibble->control_id)
+    switch(p_es_wibble->packed_dialog_control_id)
     {
     case ES_PS_ID_NUMFORM_LIST_NU:
         p_dialog_msg_ctl_fill_source->p_ui_source = &numform_list_nu_source;
@@ -1412,7 +1412,7 @@ new_using_es_wibble(
     P_ES_WIBBLE p_es_wibble,
     P_ES_CALLBACK p_es_callback)
 {
-    DIALOG_CTL_ID control_id = (DIALOG_CTL_ID) p_es_wibble->control_id;
+    DIALOG_CONTROL_ID dialog_control_id = UBF_UNPACK(DIALOG_CONTROL_ID, p_es_wibble->packed_dialog_control_id);
     P_ANY p_member = PtrAddBytes(P_ANY, &p_es_callback->style, p_es_wibble->member_offset);
     STYLE_BIT_NUMBER style_bit_number = ENUM_UNPACK(STYLE_BIT_NUMBER, p_es_wibble->style_bit_number);
     F64 f64;
@@ -1441,30 +1441,30 @@ new_using_es_wibble(
         break;
 
     case ES_WIBBLE_TYPE_U8:
-        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.type == DIALOG_CONTROL_BUMP_S32);
+        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.packed_dialog_control_type == DIALOG_CONTROL_BUMP_S32);
         * (P_U8)  p_member = (U8) p_dialog_msg_ctl_state_change->new_state.bump_s32;
         break;
 
     case ES_WIBBLE_TYPE_S32:
-        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.type == DIALOG_CONTROL_BUMP_S32);
+        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.packed_dialog_control_type == DIALOG_CONTROL_BUMP_S32);
         * (P_S32) p_member = p_dialog_msg_ctl_state_change->new_state.bump_s32;
         break;
 
     case ES_WIBBLE_TYPE_F64:
-        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.type == DIALOG_CONTROL_BUMP_F64);
+        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.packed_dialog_control_type == DIALOG_CONTROL_BUMP_F64);
         * (P_F64) p_member = p_dialog_msg_ctl_state_change->new_state.bump_f64;
         break;
 
     case ES_WIBBLE_TYPE_POINTS:
         /* translate from what punter expects to see, in this case points, not pixits or units */
-        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.type == DIALOG_CONTROL_BUMP_F64);
+        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.packed_dialog_control_type == DIALOG_CONTROL_BUMP_F64);
         f64 = /*FP_PIXIT*/ (p_dialog_msg_ctl_state_change->new_state.bump_f64 * PIXITS_PER_POINT + 0.5);
         * (P_PIXIT) p_member = (fabs(f64) <= S32_MAX) ? (PIXIT) f64 : 0;
         break;
 
     case ES_WIBBLE_TYPE_H_UNITS:
         /* translate from what punter expects to see, in this case user units, not pixits */
-        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.type == DIALOG_CONTROL_BUMP_F64);
+        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.packed_dialog_control_type == DIALOG_CONTROL_BUMP_F64);
         f64 = /*FP_PIXIT*/ (p_dialog_msg_ctl_state_change->new_state.bump_f64 * p_es_callback->info[IDX_HORZ].fp_pixits_per_user_unit + 0.5);
         * (P_PIXIT) p_member = (fabs(f64) <= S32_MAX) ? (PIXIT) f64 : 0;
         break;
@@ -1472,13 +1472,13 @@ new_using_es_wibble(
     case ES_WIBBLE_TYPE_V_UNITS:
     case ES_WIBBLE_TYPE_V_UNITS_FINE:
         /* translate from what punter expects to see, in this case user units, not pixits */
-        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.type == DIALOG_CONTROL_BUMP_F64);
+        assert(p_dialog_msg_ctl_state_change->p_dialog_control->bits.packed_dialog_control_type == DIALOG_CONTROL_BUMP_F64);
         f64 = /*FP_PIXIT*/ (p_dialog_msg_ctl_state_change->new_state.bump_f64 * p_es_callback->info[IDX_VERT].fp_pixits_per_user_unit + 0.5);
         * (P_PIXIT) p_member = (fabs(f64) <= S32_MAX) ? (PIXIT) f64 : 0;
         break;
     }
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case ES_NAME_ID_NAME:
     case ES_CS_ID_COL_NAME:
@@ -1564,7 +1564,7 @@ new_using_es_wibble(
 
         *p_object_id = OBJECT_ID_TEXT;
 
-        if(array_index_valid(&new_object_list_handle, i))
+        if(array_index_is_valid(&new_object_list_handle, i))
         {
             P_UI_LIST_ENTRY_NEW_OBJECT p_ui_list_entry_new_object = array_ptr_no_checks(&new_object_list_handle, UI_LIST_ENTRY_NEW_OBJECT, i);
 
@@ -1584,13 +1584,13 @@ new_using_es_wibble(
         DIALOG_CMD_CTL_ENABLE dialog_cmd_ctl_enable;
         msgclr(dialog_cmd_ctl_enable);
         dialog_cmd_ctl_enable.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-        dialog_cmd_ctl_enable.control_id = ES_PS_ID_RGB_BACK_GROUP_INNER;
+        dialog_cmd_ctl_enable.dialog_control_id = ES_PS_ID_RGB_BACK_GROUP_INNER;
         dialog_cmd_ctl_enable.enabled = !p_rgb->transparent;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
         } /*block*/
 
-        control_id += ES_PS_ID_RGB_BACK_B;
-        control_id -= ES_PS_ID_RGB_BACK_T;
+        dialog_control_id += ES_PS_ID_RGB_BACK_B;
+        dialog_control_id -= ES_PS_ID_RGB_BACK_T;
         p_member = (P_U8) p_member + 0x02;
         }
 
@@ -1600,8 +1600,8 @@ new_using_es_wibble(
     case ES_PS_ID_RGB_BACK_B:
     case ES_PS_ID_BORDER_B:
     case ES_PS_ID_GRID_B:
-        control_id += ES_FS_ID_COLOUR_G;
-        control_id -= ES_FS_ID_COLOUR_B;
+        dialog_control_id += ES_FS_ID_COLOUR_G;
+        dialog_control_id -= ES_FS_ID_COLOUR_B;
         p_member = (P_U8) p_member - 1;
 
         /*FALLTHRU*/
@@ -1610,8 +1610,8 @@ new_using_es_wibble(
     case ES_PS_ID_RGB_BACK_G:
     case ES_PS_ID_BORDER_G:
     case ES_PS_ID_GRID_G:
-        control_id += ES_FS_ID_COLOUR_R;
-        control_id -= ES_FS_ID_COLOUR_G;
+        dialog_control_id += ES_FS_ID_COLOUR_R;
+        dialog_control_id -= ES_FS_ID_COLOUR_G;
         p_member = (P_U8) p_member - 1;
 
         /*FALLTHRU*/
@@ -1624,10 +1624,10 @@ new_using_es_wibble(
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = (DIALOG_CTL_ID) (control_id + (ES_FS_ID_COLOUR_PATCH - ES_FS_ID_COLOUR_R));
+        dialog_cmd_ctl_state_set.dialog_control_id = (DIALOG_CONTROL_ID) (dialog_control_id + (ES_FS_ID_COLOUR_PATCH - ES_FS_ID_COLOUR_R));
         dialog_cmd_ctl_state_set.bits = 0;
         dialog_cmd_ctl_state_set.state.user.rgb = * (PC_RGB) p_member;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
         break;
         }
 
@@ -1648,20 +1648,20 @@ new_using_es_wibble(
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
         dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_DONT_MSG;
 
-        dialog_cmd_ctl_state_set.control_id = (DIALOG_CTL_ID) ((control_id - ES_FS_ID_COLOUR_PATCH) + ES_FS_ID_COLOUR_R);
+        dialog_cmd_ctl_state_set.dialog_control_id = (DIALOG_CONTROL_ID) ((dialog_control_id - ES_FS_ID_COLOUR_PATCH) + ES_FS_ID_COLOUR_R);
         dialog_cmd_ctl_state_set.state.bump_s32 = rgb.r;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
-        dialog_cmd_ctl_state_set.control_id = (DIALOG_CTL_ID) ((control_id - ES_FS_ID_COLOUR_PATCH) + ES_FS_ID_COLOUR_G);
+        dialog_cmd_ctl_state_set.dialog_control_id = (DIALOG_CONTROL_ID) ((dialog_control_id - ES_FS_ID_COLOUR_PATCH) + ES_FS_ID_COLOUR_G);
         dialog_cmd_ctl_state_set.state.bump_s32 = rgb.g;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
-        dialog_cmd_ctl_state_set.control_id = (DIALOG_CTL_ID) ((control_id - ES_FS_ID_COLOUR_PATCH) + ES_FS_ID_COLOUR_B);
+        dialog_cmd_ctl_state_set.dialog_control_id = (DIALOG_CONTROL_ID) ((dialog_control_id - ES_FS_ID_COLOUR_PATCH) + ES_FS_ID_COLOUR_B);
         dialog_cmd_ctl_state_set.state.bump_s32 = rgb.b;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
         } /*block*/
 
-        if(control_id == ES_PS_ID_GRID_PATCH)
+        if(dialog_control_id == ES_PS_ID_GRID_PATCH)
         {   /* set my friends up too */
             U32 i;
 
@@ -1734,7 +1734,7 @@ new_using_es_wibble_enabler(
     else
         style_selector_bit_clear(&p_es_callback->style_selector, style_bit_number);
 
-    if((p_es_wibble->control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
+    if((p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
     {   /* hack our friends too */
         U32 i;
         for(i = 1; i <= 3; ++i)
@@ -1751,7 +1751,7 @@ new_using_es_wibble_enabler(
         /* note the fact that the selector has been modified */
         style_selector_bit_set(&p_es_callback->style_selector_modified, style_bit_number);
 
-        if((p_es_wibble->control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
+        if((p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_LINE_GROUP_ENABLE) || (p_es_wibble->packed_dialog_control_id == ES_PS_ID_GRID_RGB_GROUP_ENABLE))
         {   /* hack our friends too */
             U32 i;
             for(i = 1; i <= 3; ++i)
@@ -1761,7 +1761,7 @@ new_using_es_wibble_enabler(
 
     {
     DIALOG_CMD_CTL_ENABLE dialog_cmd_ctl_enable;
-    const DIALOG_CTL_ID state_control_id = (DIALOG_CTL_ID) (p_dialog_msg_ctl_state_change->dialog_control_id - 1);
+    const DIALOG_CONTROL_ID state_control_id = (DIALOG_CONTROL_ID) (p_dialog_msg_ctl_state_change->dialog_control_id - 1);
 
     assert_EQ(ES_NAME_ID_NAME_ENABLE - 1, ES_NAME_ID_NAME);
 
@@ -1806,9 +1806,9 @@ new_using_es_wibble_enabler(
 
     msgclr(dialog_cmd_ctl_enable);
     dialog_cmd_ctl_enable.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-    dialog_cmd_ctl_enable.control_id = state_control_id;
+    dialog_cmd_ctl_enable.dialog_control_id = state_control_id;
     dialog_cmd_ctl_enable.enabled = enabled;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
 
     if(p_es_wibble->enable_units)
     {
@@ -1825,8 +1825,8 @@ new_using_es_wibble_enabler(
         assert_EQ(ES_FS_ID_HEIGHT_ENABLE            + 1, ES_FS_ID_HEIGHT_UNITS);
         assert_EQ(ES_FS_ID_WIDTH_ENABLE             + 1, ES_FS_ID_WIDTH_UNITS);
 
-        dialog_cmd_ctl_enable.control_id = (DIALOG_CTL_ID) (p_dialog_msg_ctl_state_change->dialog_control_id + 1);
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
+        dialog_cmd_ctl_enable.dialog_control_id = (DIALOG_CONTROL_ID) (p_dialog_msg_ctl_state_change->dialog_control_id + 1);
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENABLE, &dialog_cmd_ctl_enable));
     }
 
     /* auto-turn on feature for 4-3 states */
@@ -1835,10 +1835,10 @@ new_using_es_wibble_enabler(
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = state_control_id;
+        dialog_cmd_ctl_state_set.dialog_control_id = state_control_id;
         dialog_cmd_ctl_state_set.bits = 0;
         dialog_cmd_ctl_state_set.state.checkbox = DIALOG_BUTTONSTATE_ON;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     }
     } /*block*/
 
@@ -1846,10 +1846,10 @@ new_using_es_wibble_enabler(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = (DIALOG_CTL_ID) (ES_ID_LIGHT_STT + p_es_callback->subdialog_current);
+    dialog_cmd_ctl_state_set.dialog_control_id = (DIALOG_CONTROL_ID) (ES_ID_LIGHT_STT + p_es_callback->subdialog_current);
     dialog_cmd_ctl_state_set.bits = 0;
     * (P_RGB) &dialog_cmd_ctl_state_set.state.user = es_light_on_for(p_es_callback, p_es_callback->subdialog_current) ? rgb_stash[10 /*green*/] : rgb_stash[1 /*lt grey*/];
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     } /*block*/
 
     return(STATUS_OK);
@@ -1952,8 +1952,8 @@ es_tweak_style_precreate(
     {
         const P_DIALOG_CTL_CREATE p_dialog_ctl_create = &p_dialog_cmd_process_dbox->p_ctl_create[i];
         const PC_DIALOG_CONTROL p_dialog_control = p_dialog_ctl_create->p_dialog_control.p_dialog_control;
-        const DIALOG_CTL_ID control_id = p_dialog_control->control_id;
-        const P_ES_WIBBLE p_es_wibble = es_wibble_search(control_id);
+        const DIALOG_CONTROL_ID dialog_control_id = p_dialog_control->dialog_control_id;
+        const P_ES_WIBBLE p_es_wibble = es_wibble_search(dialog_control_id);
 
         if(P_ES_WIBBLE_NONE != p_es_wibble)
         {
@@ -1981,7 +1981,7 @@ es_tweak_style_precreate(
                 p_ui_control_f64->min_val = 0.0;
                 p_ui_control_f64->max_val =
                     /*FP_USER_UNIT*/ ((+100.0 * PIXITS_PER_INCH) / p_es_user_unit_info->fp_pixits_per_user_unit);
-                if(control_id == ES_PS_ID_MARGIN_PARA)
+                if(ES_PS_ID_MARGIN_PARA == dialog_control_id)
                     p_ui_control_f64->min_val = -p_ui_control_f64->max_val;
 
                 break;
@@ -1993,7 +1993,7 @@ es_tweak_style_precreate(
         }
         else
         {
-            switch(control_id)
+            switch(dialog_control_id)
             {
             case ES_RS_ID_HEIGHT_UNITS:
             case ES_PS_ID_PARA_START_UNITS:
@@ -2132,7 +2132,7 @@ ui_list_create_numform(
     *p_array_handle = 0;
 
     { /* use numform from all loaded numforms */
-    PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_from_config()->numforms;
+    const PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_from_config()->numforms;
     ARRAY_INDEX i;
 
     for(i = 0; i < array_elements(p_ui_numform_handle); ++i)

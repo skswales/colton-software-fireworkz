@@ -255,7 +255,7 @@ __ieee754_yn(int n, double x)
      *		   3	 s+c		 c-s
      */
 		switch(n&3) {
-#if CHECKING /* COLTON_SOFTWARE */
+#if defined(CODE_ANALYSIS) /* COLTON_SOFTWARE */
             default: /* for Code Analysis */
 #endif
 		    case 0: temp =  sin(x)-cos(x); break;

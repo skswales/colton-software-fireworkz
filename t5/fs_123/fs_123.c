@@ -1524,6 +1524,9 @@ PROC_WRITE_PROTO(proc_write_cols)
 
                 break;
                 }
+
+            default:
+                break;
             }
 
             status_break(status);

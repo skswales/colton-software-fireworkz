@@ -83,7 +83,7 @@ PROC_EXEC_PROTO(c_address)
 
         if(status_ok(status))
         {
-            U32 len = xtos_ustr_buf(ustr_buf, elemof32(ustr_buf), col, TRUE /*upper_case_slr*/);
+            U32 len = xtos_ustr_buf(ustr_bptr(ustr_buf), elemof32(ustr_buf), col, TRUE /*upper_case_slr*/);
             status = quick_ublock_uchars_add(&quick_ublock, uchars_bptr(ustr_buf), len);
         }
 

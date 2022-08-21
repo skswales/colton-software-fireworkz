@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2015 Stuart Swales */
+/* Copyright (C) 2012-2016 Stuart Swales */
 
 /* Additional math routines */
 
@@ -86,7 +86,7 @@ the source code in the external/OtherBSD/dSFMT-src-* directory
 
 #pragma warning(push)
 
-#if _MSC_VER < 1500
+#if _MSC_VER == 1400 /* VS2005 */
 #pragma warning(disable:4242) /* '=' : conversion from 'uint64_t' to 'uint32_t', possible loss of data */
 #pragma warning(disable:4244) /* '=' : conversion from 'uint64_t' to 'uint32_t', possible loss of data */
 #endif

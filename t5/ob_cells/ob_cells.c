@@ -31,6 +31,8 @@ internal routines
 
 OBJECT_PROTO(extern, object_cells);
 
+OBJECT_PROTO(static, object_cells_default);
+
 static void
 caret_position_set_show(
     _DocuRef_   P_DOCU p_docu,
@@ -112,7 +114,7 @@ docu_caret_position_after_command_null(
 {
     IGNOREPARM_InRef_(p_null_event_block);
 
-    trace_0(TRACE_OUT | TRACE_ANY, TEXT("docu_caret_position_after_command_null: null_event"));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_caret_position_after_command_null(docno=%d): null_event"), docno_from_p_docu(p_docu));
 
     assert(p_docu->flags.caret_position_after_command);
 
@@ -147,7 +149,7 @@ docu_flags_caret_position_after_command_clear(
     p_docu->flags.caret_position_after_command = 0;
 
 #if WINDOWS
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_clear - *** null_events_stop(docno=%d)"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_clear(docno=%d) - *** null_events_stop()"), docno_from_p_docu(p_docu));
     null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_docu_caret_position_after_command, DCP_NULL_CLIENT_HANDLE);
 #endif
 }
@@ -162,7 +164,7 @@ docu_flags_caret_position_after_command_set(
     p_docu->flags.caret_position_after_command = 1;
 
 #if WINDOWS
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_set - *** null_events_start(docno=%d)"), docno_from_p_docu(p_docu));
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("docu_flags_caret_position_after_command_set(docno=%d) - *** null_events_start()"), docno_from_p_docu(p_docu));
     status_assert(null_events_start(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_docu_caret_position_after_command, DCP_NULL_CLIENT_HANDLE));
 #endif
 }
@@ -505,6 +507,7 @@ load_foreign_from_array_handle(
     msg_insert_foreign.t5_filetype = t5_filetype;
     msg_insert_foreign.scrap_file = TRUE;
     msg_insert_foreign.insert = TRUE;
+    msg_insert_foreign.ctrl_pressed = FALSE;
     /***msg_insert_foreign.of_ip_format.flags.insert = 1;*/
     msg_insert_foreign.position = p_docu->cur;
     msg_insert_foreign.array_handle = *p_array_handle;
@@ -887,7 +890,7 @@ join_cells(
     DOCU_AREA docu_area;
 
     docu_area_from_position(&docu_area, &p_docu->cur);
-    (void) cell_data_from_position(p_docu, &object_position_set.object_data, &docu_area.tl, NULL);
+    consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &docu_area.tl));
     object_position_set.action = OBJECT_POSITION_SET_START;
     if(status_done(cell_call_id(object_position_set.object_data.object_id,
                                 p_docu,
@@ -904,7 +907,7 @@ join_cells(
             POSITION br_pos = docu_area.tl; /* SKS 04feb93 - try going to next ***row*** */
             br_pos.slr.row += 1;
 
-            (void) cell_data_from_position(p_docu, &object_position_set.object_data, &br_pos, NULL);
+            consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &br_pos));
             object_position_set.action = OBJECT_POSITION_SET_START;
             if(status_done(cell_call_id(object_position_set.object_data.object_id,
                                         p_docu,
@@ -981,7 +984,7 @@ cells_cmd_delete_character_right(
         /* save start and end coordinates */
         docu_area_from_position(&docu_area, &p_docu->cur);
 
-        (void) cell_data_from_position(p_docu, &object_position_set.object_data, &docu_area.tl, NULL);
+        consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &docu_area.tl));
         object_position_set.action = OBJECT_POSITION_SET_FORWARD;
 
         if(status_done(cell_call_id(object_position_set.object_data.object_id,
@@ -1374,12 +1377,12 @@ caret_position_set_show(
     p_docu->cur.slr.row = MIN(p_docu->cur.slr.row, extent.row - 1);
     } /*block*/
 
-    /* the object_id read here will be: 1) the active object (eg CELLS_EDIT if editing)
-                                     or 2) the stored object (eg TEXT or SS) if there's an object
+    /* the object_id read here will be: 1) the active object (e.g. CELLS_EDIT if editing)
+                                     or 2) the stored object (e.g. TEXT or SS) if there's an object
                                      or 3) the 'new type' object if cell is blank
     */
 
-    (void) cell_data_from_position(p_docu, &object_data, &p_docu->cur, NULL);
+    consume_bool(cell_data_from_position(p_docu, &object_data, &p_docu->cur));
 
     if(status_fail(check_protection_simple(p_docu, FALSE)))
         can_edit_object = FALSE;
@@ -1537,42 +1540,42 @@ cells_reflect_focus_change(
     t5_toolbar_tool_enable.enabled = (p_docu->focus_owner == OBJECT_ID_CELLS);
     t5_toolbar_tool_enable.enable_id = TOOL_ENABLE_CELLS_FOCUS;
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("PASTE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("PASTE"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("CHECK"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("CHECK"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("SEARCH"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("SEARCH"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TABLE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("BOX"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TABLE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("BOX"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("INSERT_DATE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("INSERT_DATE"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("STYLE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("EFFECTS"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("STYLE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("EFFECTS"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("BOLD"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("ITALIC"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("UNDERLINE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("SUPERSCRIPT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("SUBSCRIPT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("BOLD"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("ITALIC"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("UNDERLINE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("SUPERSCRIPT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("SUBSCRIPT"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_LEFT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_CENTRE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_RIGHT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_FULL"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_LEFT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_CENTRE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_RIGHT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_FULL"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_LEFT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_CENTRE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_RIGHT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_DECIMAL"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_LEFT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_CENTRE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_RIGHT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_DECIMAL"));
 
 #if RISCOS
     /* nobble button if we have no thesaurus app loaded as yet */
     if(!thesaurus_loaded())
         t5_toolbar_tool_enable.enabled = FALSE;
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("THESAURUS"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("THESAURUS"));
 #endif
 }
 
@@ -1626,7 +1629,7 @@ cells_reflect_selection_new(
     { /* because this is state, there must only be one controller */
     T5_TOOLBAR_TOOL_SET t5_toolbar_tool_set;
     t5_toolbar_tool_set.state.state = (mark_info.h_markers != 0);
-    t5_toolbar_tool_set.name = TEXT("SELECTION");
+    t5_toolbar_tool_set.name = USTR_TEXT("SELECTION");
     status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
     } /*block*/
 
@@ -1634,9 +1637,9 @@ cells_reflect_selection_new(
     T5_TOOLBAR_TOOL_ENABLE t5_toolbar_tool_enable;
     t5_toolbar_tool_enable.enabled = (p_docu->focus_owner == OBJECT_ID_CELLS) && (mark_info.h_markers != 0);
     t5_toolbar_tool_enable.enable_id = TOOL_ENABLE_CELLS_FOCUS_AND_SELECTION;
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("COPY"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("CUT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("SORT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("COPY"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("CUT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("SORT"));
     } /*block*/
 
     return(STATUS_OK);
@@ -1844,7 +1847,7 @@ cursor_left(
     {
         OBJECT_POSITION_SET object_position_set;
 
-        (void) cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur, NULL);
+        consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur));
 
         switch(t5_message)
         {
@@ -1939,7 +1942,7 @@ cursor_right(
     {
         OBJECT_POSITION_SET object_position_set;
 
-        (void) cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur, NULL);
+        consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur));
 
         switch(t5_message)
         {
@@ -2087,7 +2090,7 @@ logical_move(
     OBJECT_LOGICAL_MOVE object_logical_move;
     zero_struct(object_logical_move);
 
-    (void) cell_data_from_position(p_docu, &object_logical_move.object_data, &p_docu->cur, NULL);
+    consume_bool(cell_data_from_position(p_docu, &object_logical_move.object_data, &p_docu->cur));
     object_logical_move.action = action;
     if(status_ok(status = cell_call_id(object_logical_move.object_data.object_id, p_docu, T5_MSG_OBJECT_LOGICAL_MOVE, &object_logical_move, NO_CELLS_EDIT)))
     {
@@ -2333,10 +2336,10 @@ static STATUS
 row_col_ins_del(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InRef_opt_ PC_S32 p_n_given /* P_DATA_NONE == use selection */)
+    _InRef_maybenone_ PC_S32 p_n_given /* P_DATA_NONE -> use selection */)
 {
     STATUS status = STATUS_OK;
-    const BOOL use_n_given = !IS_PTR_NULL_OR_NONE_ANY(PC_S32, p_n_given);
+    const BOOL use_n_given = !IS_PTR_NONE(p_n_given);
     COL col_s, col_e;
     ROW row_s, row_e;
     DOCU_AREA docu_area;
@@ -2403,7 +2406,7 @@ row_col_ins_del(
         else if(t5_message == T5_CMD_ADD_COLS)
             col_s = col_e - 1;
 
-        /* SKS 07sep95 stop them deleting the first text column in letters etc */
+        /* SKS 07sep95 stop them deleting the first text column in letters etc. */
         if(was_base && (T5_CMD_DELETE_COL == t5_message) && (0 == col_s))
             return(create_error(ERR_CANT_DELETE_MAIN_COL));
 
@@ -2469,6 +2472,8 @@ row_col_ins_del(
 
     switch(t5_message)
     {
+    default: default_unhandled();
+        break;
     case T5_CMD_ADD_ROWS:
         status = cells_block_insert(p_docu, col_s, col_e, row_s, row_e - row_s, TRUE);
         break;
@@ -2956,7 +2961,7 @@ cells_cmd_selection_delete(
     return(delete_selection(p_docu));
 }
 
-T5_CMD_PROTO(static, cells_cmd_field_insert)
+T5_CMD_PROTO(static, cells_cmd_insert_field)
 {
     STATUS status;
     OBJECT_DATA object_data;
@@ -3166,7 +3171,7 @@ cells_cmd_return(
         on_last_row = p_docu->cur.slr.row + 1 >= n_rows(p_docu);
 
         /* see if object will accept sub-object position */
-        (void) cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur, NULL);
+        consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur));
         object_position_set.action = OBJECT_POSITION_SET_START;
         if(!status_done(cell_call_id(object_position_set.object_data.object_id,
                                      p_docu,
@@ -3290,8 +3295,7 @@ T5_CMD_PROTO(static, cells_cmd_select_word)
     if(cell_data_from_position(p_docu,
                                  &object_position_set.object_data,
                                  extend_selection ? &p_docu->anchor_mark.docu_area.br
-                                                  : &p_docu->anchor_mark.docu_area.tl,
-                                 NULL))
+                                                  : &p_docu->anchor_mark.docu_area.tl))
     {
         object_position_set.action = extend_selection ? OBJECT_POSITION_SET_NEXT_WORD : OBJECT_POSITION_SET_START_WORD;
         status_consume(cell_call_id(object_position_set.object_data.object_id, p_docu, T5_MSG_OBJECT_POSITION_SET, &object_position_set, NO_CELLS_EDIT));
@@ -3355,7 +3359,7 @@ T5_CMD_PROTO(static, cells_cmd_setc)
         OBJECT_POSITION_SET object_position_set;
         OBJECT_SET_CASE object_set_case;
 
-        (void) cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur, NULL);
+        consume_bool(cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu->cur));
         object_set_case.object_data = object_position_set.object_data;
         object_set_case.do_redraw = TRUE;
 
@@ -3562,13 +3566,13 @@ T5_CMD_PROTO(static, cells_cmd_tab_lr)
     IGNOREPARM_InRef_(p_t5_cmd);
 
     tab_wanted.t5_message = t5_message;
-    (void) cell_data_from_position(p_docu, &tab_wanted.object_data, &p_docu->cur, NULL);
+    consume_bool(cell_data_from_position(p_docu, &tab_wanted.object_data, &p_docu->cur));
     status_return(status = cell_call_id(tab_wanted.object_data.object_id, p_docu, T5_MSG_TAB_WANTED, &tab_wanted, NO_CELLS_EDIT));
 
     if(tab_wanted.want_inline_insert)
     {
         if(status_ok(check_protection_simple(p_docu, TRUE)))
-            return(object_cells(p_docu, T5_CMD_FIELD_INS_TAB, P_DATA_NONE));
+            return(object_cells(p_docu, T5_CMD_INSERT_FIELD_TAB, P_DATA_NONE));
     }
     else if(!tab_wanted.processed)
     {
@@ -3689,7 +3693,7 @@ T5_MSG_PROTO(static, cells_event_click_left_double, _InoutRef_ P_SKELEVENT_CLICK
         }
 
         if(!object_double_click.processed)
-            status = execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_SELECT_WORD, _P_DATA_NONE(P_ARGLIST_HANDLE));
+            status = execute_command(p_docu, T5_CMD_SELECT_WORD, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL);
         } /*block*/
     }
 
@@ -3707,7 +3711,7 @@ T5_MSG_PROTO(static, cells_event_click_left_triple, _InoutRef_ P_SKELEVENT_CLICK
 
     p_skelevent_click->processed = 1;
 
-    return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_SELECT_CELL, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+    return(execute_command(p_docu, T5_CMD_SELECT_CELL, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 }
 
 T5_MSG_PROTO(static, cells_event_click_left_drag, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
@@ -3799,6 +3803,60 @@ T5_MSG_PROTO(static, cells_event_click_right, _InoutRef_ P_SKELEVENT_CLICK p_ske
     return(status);
 }
 
+T5_MSG_PROTO(static, cells_event_click_right_double, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    return(object_cells_default(p_docu, t5_message, p_skelevent_click));
+}
+
+T5_MSG_PROTO(static, cells_event_click_right_triple, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    return(object_cells_default(p_docu, t5_message, p_skelevent_click));
+}
+
+T5_MSG_PROTO(static, cells_event_click_single, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_SINGLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(cells_event_click_right(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(cells_event_click_left_single(p_docu, t5_message_effective, p_skelevent_click));
+}
+
+T5_MSG_PROTO(static, cells_event_click_double, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(cells_event_click_right_double(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(cells_event_click_left_double(p_docu, t5_message_effective, p_skelevent_click));
+}
+
+T5_MSG_PROTO(static, cells_event_click_triple, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_TRIPLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(cells_event_click_right_triple(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(cells_event_click_left_triple(p_docu, t5_message_effective, p_skelevent_click));
+}
+
+T5_MSG_PROTO(static, cells_event_click_drag, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(cells_event_click_right(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(cells_event_click_left_drag(p_docu, t5_message_effective, p_skelevent_click));
+}
+
 T5_MSG_PROTO(static, cells_event_click_drags, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
 {
     STATUS status = STATUS_OK;
@@ -3886,6 +3944,7 @@ T5_MSG_PROTO(static, cells_event_fileinsert_doinsert, _InoutRef_ P_SKELEVENT_CLI
     msg_insert_file.t5_filetype = p_skelevent_click->data.fileinsert.t5_filetype;
     msg_insert_file.scrap_file = !p_skelevent_click->data.fileinsert.safesource;
     msg_insert_file.insert = TRUE;
+    msg_insert_file.ctrl_pressed = p_skelevent_click->click_context.ctrl_pressed;
     /***msg_insert_file.of_ip_format.flags.insert = 1;*/
     msg_insert_file.position = p_docu->cur;
     msg_insert_file.skel_point = p_skelevent_click->skel_point;
@@ -3915,7 +3974,7 @@ T5_MSG_PROTO(static, cells_event_keys, _InRef_ P_SKELEVENT_KEYS p_skelevent_keys
     U32 bytes_of_char;
     UCS4 ucs4 = uchars_char_decode(quick_ublock_uchars(p_skelevent_keys->p_quick_ublock), /*ref*/bytes_of_char);
     OBJECT_KEYS object_keys;
-    (void) cell_data_from_position(p_docu, &object_keys.object_data, &p_docu->cur, NULL);
+    consume_bool(cell_data_from_position(p_docu, &object_keys.object_data, &p_docu->cur));
     object_keys.p_skelevent_keys = p_skelevent_keys;
     return(process_keys(p_docu, T5_MSG_OBJECT_KEYS, &object_keys, &object_keys.object_data, ucs4));
     } /*block*/
@@ -4255,18 +4314,18 @@ T5_CMD_PROTO(static, object_cells_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_TAB_RIGHT):
         return(cells_cmd_tab_lr(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_DATE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_FILE_DATE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_PAGE_X):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_PAGE_Y):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_SS_NAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_MS_FIELD):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_WHOLENAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_LEAFNAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_RETURN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_SOFT_HYPHEN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_TAB):
-        return(cells_cmd_field_insert(p_docu, t5_message, p_t5_cmd));
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_FILE_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_X):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_Y):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SS_NAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_MS_FIELD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_WHOLENAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_LEAFNAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_RETURN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SOFT_HYPHEN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_TAB):
+        return(cells_cmd_insert_field(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_STYLE_APPLY_SOURCE):
         return(cells_cmd_style_apply_source(p_docu, t5_message, p_t5_cmd));
@@ -4436,25 +4495,21 @@ OBJECT_PROTO(extern, object_cells)
     default:
         return(object_cells_default(p_docu, t5_message, p_data));
 
-    /* *** left mouse button *** */
-
     case T5_EVENT_CLICK_LEFT_SINGLE:
-        return(cells_event_click_left_single(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+    case T5_EVENT_CLICK_RIGHT_SINGLE:
+        return(cells_event_click_single(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-        return(cells_event_click_left_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+    case T5_EVENT_CLICK_RIGHT_DOUBLE:
+        return(cells_event_click_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_LEFT_TRIPLE:
-        return(cells_event_click_left_triple(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+    case T5_EVENT_CLICK_RIGHT_TRIPLE:
+        return(cells_event_click_triple(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_LEFT_DRAG:
-        return(cells_event_click_left_drag(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
-
-    /* *** right mouse button *** */
-
-    case T5_EVENT_CLICK_RIGHT_SINGLE:
     case T5_EVENT_CLICK_RIGHT_DRAG:
-        return(cells_event_click_right(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+        return(cells_event_click_drag(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_DRAG_STARTED:
     case T5_EVENT_CLICK_DRAG_FINISHED:

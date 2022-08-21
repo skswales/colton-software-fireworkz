@@ -112,7 +112,7 @@ slot_object_splittable(
     OBJECT_POSITION_SET object_position_set;
     STATUS status = STATUS_FAIL;
 
-    if(cell_data_from_position(p_docu, &object_position_set.object_data, p_position, NULL))
+    if(cell_data_from_position(p_docu, &object_position_set.object_data, p_position))
     {
         object_position_set.action = OBJECT_POSITION_SET_START;
         status = cell_call_id(object_position_set.object_data.object_id, p_docu, T5_MSG_OBJECT_POSITION_SET, &object_position_set, NO_CELLS_EDIT);
@@ -305,7 +305,7 @@ cells_scan_init(
 {
     STATUS status = STATUS_DONE;
 
-    p_scan_block->state.scan_what = (UBF) scan_what;
+    p_scan_block->state.scan_what = UBF_PACK(scan_what);
 
     switch(scan_what)
     {
@@ -348,7 +348,7 @@ cells_scan_init(
 
     p_scan_block->ix_block = 0;
     p_scan_block->state.new_block = 1;
-    p_scan_block->state.scan_direction = (UBF) scan_direction;
+    p_scan_block->state.scan_direction = UBF_PACK(scan_direction);
     p_scan_block->object_id = object_id;
 
     return(status);
@@ -838,7 +838,7 @@ cells_block_insert(
         uref_parms.target.slr.col = 0;
         uref_parms.target.slr.row = (ROW) rows_n;
         uref_parms.add_col = 0;
-        uref_parms.add_row = (UBF) add;
+        uref_parms.add_row = UBF_PACK(add);
 
         uref_event(p_docu, T5_MSG_UREF_UREF, &uref_parms);
         } /*block*/
@@ -1019,7 +1019,7 @@ cells_column_insert(
 
     uref_parms.target.slr.col = cols_n;
     uref_parms.target.slr.row = 0;
-    uref_parms.add_col = (UBF) add;
+    uref_parms.add_col = UBF_PACK(add);
     uref_parms.add_row = 0;
 
     uref_event(p_docu, T5_MSG_UREF_UREF, &uref_parms);
@@ -1110,7 +1110,7 @@ cells_docu_area_delete(
             status_consume(cell_call_id(object_delete_sub.object_data.object_id, p_docu, T5_MSG_OBJECT_DELETE_SUB, &object_delete_sub, NO_CELLS_EDIT));
 
             position = p_docu_area->tl;
-            if(cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu_area->tl, NULL))
+            if(cell_data_from_position(p_docu, &object_position_set.object_data, &p_docu_area->tl))
             {
                 assert(object_position_set.object_data.object_id == object_delete_sub.object_data.object_id);
                 object_position_set.action = OBJECT_POSITION_SET_END;
@@ -1188,11 +1188,11 @@ cells_docu_area_delete(
 *
 * insert an area into a document
 *
-* final output position gives insert position adjusted for fragments etc (optional)
+* final output position gives insert position adjusted for fragments etc. (optional)
 *
 ******************************************************************************/
 
-_Check_return_
+_Check_return_ _Success_(return >= 0)
 extern STATUS
 cells_docu_area_insert(
     _DocuRef_   P_DOCU p_docu,
@@ -1327,7 +1327,7 @@ cells_object_at_end(
 
     if( (OBJECT_ID_NONE != p_position->object_position.object_id)
         &&
-        cell_data_from_position(p_docu, &object_position_set.object_data, p_position, NULL) )
+        cell_data_from_position(p_docu, &object_position_set.object_data, p_position) )
     {
         object_position_set.action = OBJECT_POSITION_SET_END;
         if(status_done(cell_call_id(object_position_set.object_data.object_id,
@@ -1380,7 +1380,7 @@ cells_object_split(
     {
         OBJECT_DELETE_SUB object_delete_sub;
 
-        (void) cell_data_from_position(p_docu, &object_delete_sub.object_data, p_position, NULL);
+        consume_bool(cell_data_from_position(p_docu, &object_delete_sub.object_data, p_position));
         assert(OBJECT_ID_NONE != object_delete_sub.object_data.object_id);
         object_delete_sub.save_data = 1;
 

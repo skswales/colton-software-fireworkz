@@ -267,7 +267,7 @@ ascii_msg_insert_foreign_core(
 #if !USTR_IS_SBSTR
                         if(u8_is_utf8_lead_byte(PtrGetByteOff(ustr_inline, offset)))
                         {
-                            offset += utf8_bytes_of_char_off(ustr_inline, offset);
+                            offset += utf8str_bytes_of_char(utf8str_AddBytes(ustr_inline, offset));
                             continue;
                         }
                         if(u8_is_utf8_trail_byte(PtrGetByteOff(ustr_inline, offset)))
@@ -289,7 +289,7 @@ ascii_msg_insert_foreign_core(
                 used_so_far = total_line_length;
             }
 
-            consume_bool(object_data_from_position(p_docu, &load_cell_foreign.object_data, &position_load, NULL));
+            consume_bool(object_data_from_position(p_docu, &load_cell_foreign.object_data, &position_load, P_OBJECT_POSITION_NONE));
             load_cell_foreign.original_slr = position_load.slr;
 
             load_cell_foreign.data_type = OWNFORM_DATA_TYPE_TEXT;

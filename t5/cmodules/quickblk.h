@@ -225,7 +225,7 @@ quick_block_ptr(
 {
     if(0 != quick_block_array_handle_ref(p_quick_block))
     {
-        assert(array_handle_valid(&quick_block_array_handle_ref(p_quick_block)));
+        assert(array_handle_is_valid(&quick_block_array_handle_ref(p_quick_block)));
         return(array_basec_no_checks(&quick_block_array_handle_ref(p_quick_block), BYTE));
     }
 
@@ -240,7 +240,7 @@ quick_block_ptr_wr(
 {
     if(0 != quick_block_array_handle_ref(p_quick_block))
     {
-        assert(array_handle_valid(&quick_block_array_handle_ref(p_quick_block)));
+        assert(array_handle_is_valid(&quick_block_array_handle_ref(p_quick_block)));
         return(array_base_no_checks(&quick_block_array_handle_ref(p_quick_block), BYTE));
     }
 

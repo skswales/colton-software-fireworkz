@@ -59,7 +59,7 @@ typedef struct CHART_SAVE_MAP
 }
 CHART_SAVE_MAP, * P_CHART_SAVE_MAP;
 
-#define RISCOS_DRAW_FILE_ID TEXT("RISC OS")
+#define TYPE_NAME_RISCOS TEXT("RISC OS")
 
 /*
 internal functions
@@ -86,8 +86,9 @@ chart_save_id_now(
 T5_CMD_PROTO(static, chart_load_pict_trans)
 {
     STATUS status = STATUS_OK;
-    const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_t5_cmd->p_of_ip_format);
-    GR_CACHE_HANDLE cah;
+    const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
+    const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_of_ip_format);
+    IMAGE_CACHE_HANDLE image_cache_handle;
     LIST_ITEMNO key;
     S32 res;
 
@@ -100,7 +101,7 @@ T5_CMD_PROTO(static, chart_load_pict_trans)
         {
         const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 3);
         TCHARZ picture_namebuf[BUF_MAX_PATHSTRING];
-        PCTSTR input_filename = p_t5_cmd->p_of_ip_format->input_filename;
+        PCTSTR input_filename = p_of_ip_format->input_filename;
         PCTSTR tstr_in_name = p_args[2].val.tstr;
         T5_FILETYPE t5_filetype;
 
@@ -110,9 +111,9 @@ T5_CMD_PROTO(static, chart_load_pict_trans)
         if((res = file_find_on_path_or_relative(picture_namebuf, elemof32(picture_namebuf), tstr_in_name, input_filename)) <= 0)
             return(res ? res : create_error(FILE_ERR_NOTFOUND));
 
-        t5_filetype = host_t5_filetype_from_file(picture_namebuf);
+        t5_filetype = t5_filetype_from_filename(picture_namebuf);
 
-        if((res = gr_cache_entry_ensure(&cah, picture_namebuf, t5_filetype)) <= 0)
+        if((res = image_cache_entry_ensure(&image_cache_handle, picture_namebuf, t5_filetype)) <= 0)
             return(res ? res : status_nomem());
 
         break;
@@ -128,13 +129,13 @@ T5_CMD_PROTO(static, chart_load_pict_trans)
         /* use external handle as key into list */
         key = (LIST_ITEMNO) p_args[0].val.s32;
 
-        status_return(gr_cache_embedded(&cah, &p_args[2].val.raw)); /* NB may steal handle */
+        status_return(image_cache_embedded(&image_cache_handle, &p_args[2].val.raw, FILETYPE_DRAW)); /* NB may steal handle */
         break;
         }
     }
 
     /* stick cache handle on the list */
-    if(NULL == collect_add_entry_elem(GR_CACHE_HANDLE, &p_chart_load_instance->fillstyleb_translation_table, &cah, key, &status))
+    if(NULL == collect_add_entry_elem(IMAGE_CACHE_HANDLE, &p_chart_load_instance->fillstyleb_translation_table, &image_cache_handle, key, &status))
         return(status);
 
     return(STATUS_OK);
@@ -146,7 +147,7 @@ gr_fillstyleb_translate_pict_for_load(
     _InoutRef_  P_CHART_LOAD_INSTANCE p_chart_load_instance)
 {
     LIST_ITEMNO key;
-    P_GR_CACHE_HANDLE cahp;
+    P_IMAGE_CACHE_HANDLE p_image_cache_handle;
 
     /* use external handle as key into list */
     key = (LIST_ITEMNO) fillstyleb->pattern; /* small non-zero integer here! */
@@ -154,9 +155,9 @@ gr_fillstyleb_translate_pict_for_load(
     if(!key)
         return(0); /* auto-picture, leave bits alone */
 
-    cahp = collect_goto_item(GR_CACHE_HANDLE, &p_chart_load_instance->fillstyleb_translation_table, key);
+    p_image_cache_handle = collect_goto_item(IMAGE_CACHE_HANDLE, &p_chart_load_instance->fillstyleb_translation_table, key);
 
-    if(!cahp)
+    if(NULL == p_image_cache_handle)
     {
         fillstyleb->pattern = GR_FILL_PATTERN_NONE;
 
@@ -166,7 +167,7 @@ gr_fillstyleb_translate_pict_for_load(
         return(0);
     }
 
-    fillstyleb->pattern = (GR_FILL_PATTERN_HANDLE) *cahp;
+    fillstyleb->pattern = (GR_FILL_PATTERN_HANDLE) *p_image_cache_handle;
 
     return(1);
 }
@@ -289,7 +290,7 @@ gr_fillstyleb_table_make_for_save(
             p_u32;
             p_u32 = collect_next(U32, &p_chart_save_instance->fillstyleb_translation_table, &key))
         {
-            GR_CACHE_HANDLE cah;
+            IMAGE_CACHE_HANDLE image_cache_handle;
             TCHARZ name_buffer[BUF_MAX_PATHSTRING];
             PTSTR picture_name;
             BOOL embedded;
@@ -297,9 +298,9 @@ gr_fillstyleb_table_make_for_save(
             if(ekey != *p_u32)
                 continue;
 
-            cah = (GR_CACHE_HANDLE) key;
+            image_cache_handle = (IMAGE_CACHE_HANDLE) key;
 
-            if(gr_cache_name_query(cah, name_buffer, elemof32(name_buffer)))
+            if(image_cache_name_query(image_cache_handle, name_buffer, elemof32(name_buffer)))
             {
                 P_FILE_PATHENUM path;
                 PTSTR tstr_path;
@@ -347,10 +348,10 @@ gr_fillstyleb_table_make_for_save(
 
                 p_args[0].val.s32 = ekey;
 
-                p_args[1].val.tstr = RISCOS_DRAW_FILE_ID;
+                p_args[1].val.tstr = TYPE_NAME_RISCOS;
 
                 if(embedded)
-                    p_args[2].val.raw = gr_cache_search(cah); /* loan handle for output */
+                    p_args[2].val.raw = image_cache_search(image_cache_handle, FALSE); /* must be a Draw file (for now at least) */
                 else
                     p_args[2].val.tstr = picture_name;
 
@@ -371,8 +372,6 @@ gr_fillstyleb_table_make_for_save(
 
     return(STATUS_OK);
 }
-
-#define BUF_MAX_LOADSAVELINE 1024
 
 /******************************************************************************
 *
@@ -425,8 +424,8 @@ chart_construct_table[] =
 
     gr_contab_entry(GR_STR_CHART,  offsetof32(GR_CHART, d3) + offsetof32(GR_CHART_D3, bits),                 T5_CMD_CHART_IO_D3_BITS),
 
-    gr_contab_entry(GR_STR_CHART,  offsetof32(GR_CHART, d3) + offsetof32(GR_CHART_D3, pitch),                T5_CMD_CHART_IO_D3_PITCH),
-    gr_contab_entry(GR_STR_CHART,  offsetof32(GR_CHART, d3) + offsetof32(GR_CHART_D3, roll),                 T5_CMD_CHART_IO_D3_ROLL),
+    gr_contab_entry(GR_STR_CHART,  offsetof32(GR_CHART, d3) + offsetof32(GR_CHART_D3, droop),                T5_CMD_CHART_IO_D3_DROOP),
+    gr_contab_entry(GR_STR_CHART,  offsetof32(GR_CHART, d3) + offsetof32(GR_CHART_D3, turn),                 T5_CMD_CHART_IO_D3_TURN),
 
     gr_contab_entry(GR_STR_CHART,  offsetof32(GR_CHART, barch) + offsetof32(GR_CHART_BARCH, slot_overlap_percentage), T5_CMD_CHART_IO_BARCH_SLOT_2D_OVERLAP),
 
@@ -461,7 +460,7 @@ chart_construct_table[] =
     */
 
     gr_contab_entry(GR_STR_SERIES, offsetof32(GR_SERIES, bits),                                                 T5_CMD_CHART_IO_SERIES_BITS),
-    gr_contab_entry(GR_STR_SERIES, offsetof32(GR_SERIES, style) + offsetof32(GR_SERIES_STYLE, pie_start_heading), T5_CMD_CHART_IO_SERIES_PIE_HEADING),
+    gr_contab_entry(GR_STR_SERIES, offsetof32(GR_SERIES, style) + offsetof32(GR_SERIES_STYLE, pie_start_heading_degrees), T5_CMD_CHART_IO_SERIES_PIE_HEADING),
     gr_contab_entry(GR_STR_SERIES, offsetof32(GR_SERIES, sertype),                                              T5_CMD_CHART_IO_SERIES_SERIES_TYPE),
     gr_contab_entry(GR_STR_SERIES, offsetof32(GR_SERIES, chart_type),                                           T5_CMD_CHART_IO_SERIES_CHART_TYPE),
 
@@ -741,8 +740,8 @@ T5_CMD_PROTO(extern, chart_io_gr_construct_load)
         break;
         }
 
-    case T5_CMD_CHART_IO_D3_PITCH:
-    case T5_CMD_CHART_IO_D3_ROLL:
+    case T5_CMD_CHART_IO_D3_DROOP:
+    case T5_CMD_CHART_IO_D3_TURN:
     case T5_CMD_CHART_IO_AXIS_PUNTER_MIN:
     case T5_CMD_CHART_IO_AXIS_PUNTER_MAX:
     case T5_CMD_CHART_IO_AXIS_MAJOR_PUNTER:
@@ -761,7 +760,8 @@ T5_CMD_PROTO(extern, chart_io_gr_construct_load)
 
     case T5_CMD_CHART_IO_FILLSTYLEB:
         {
-        const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_t5_cmd->p_of_ip_format);
+        const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
+        const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_of_ip_format);
         const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 2);
         GR_FILLSTYLEB style;
 
@@ -834,8 +834,8 @@ T5_CMD_PROTO(extern, chart_io_gr_construct_load)
         gr_chart_objid_textstyle_query(cp, id, &style);
 
         assert(n_arglist_args(&p_t5_cmd->arglist_handle) == 9);
-        style.height = (U16) p_args[0].val.s32; /* 16 bits limits to 45 inch or so */
-        style.width  = (U16) p_args[1].val.s32;
+        style.size_y = p_args[0].val.pixit;
+        style.size_x = p_args[1].val.pixit;
         tstr_xstrkpy(style.tstrFontName, elemof32(style.tstrFontName), fontmap_remap(p_args[2].val.tstr));
         style.bold   = p_args[3].val.fBool;
         style.italic = p_args[4].val.fBool;
@@ -1119,8 +1119,8 @@ chart_construct_save(
         break;
         }
 
-    case T5_CMD_CHART_IO_D3_PITCH:
-    case T5_CMD_CHART_IO_D3_ROLL:
+    case T5_CMD_CHART_IO_D3_DROOP:
+    case T5_CMD_CHART_IO_D3_TURN:
     case T5_CMD_CHART_IO_AXIS_PUNTER_MIN:
     case T5_CMD_CHART_IO_AXIS_PUNTER_MAX:
     case T5_CMD_CHART_IO_AXIS_MAJOR_PUNTER:
@@ -1210,8 +1210,8 @@ chart_construct_save(
             goto cancel_construct;
 
         assert(n_arglist_args(&arglist_handle) == 9);
-        p_args[0].val.s32 = style.height;
-        p_args[1].val.s32 = style.width;
+        p_args[0].val.pixit = style.size_y;
+        p_args[1].val.pixit = style.size_x;
         status_assert(arg_alloc_tstr(&arglist_handle, 2, style.tstrFontName));
         p_args[3].val.fBool = style.bold;
         p_args[4].val.fBool = style.italic;
@@ -1369,11 +1369,32 @@ cancel_construct:;
     return(STATUS_OK);
 }
 
+static STATUS
+chart_note_ensure_saved_io_1(
+    _InoutRef_ P_NOTE_ENSURE_SAVED p_note_ensure_saved)
+{
+    const P_OF_OP_FORMAT p_of_op_format = p_note_ensure_saved->p_of_op_format;
+    const OBJECT_ID object_id = OBJECT_ID_CHART;
+    const T5_MESSAGE t5_message = T5_CMD_CHART_IO_1;
+    PC_CONSTRUCT_TABLE p_construct_table;
+    ARGLIST_HANDLE arglist_handle;
+    STATUS status = STATUS_OK;
+
+    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
+    {
+        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
+        p_args[0].val.s32 = p_note_ensure_saved->extref;
+        status = ownform_save_arglist(arglist_handle, object_id, p_construct_table, p_of_op_format);
+        arglist_dispose(&arglist_handle);
+    }
+
+    return(status);
+}
+
 T5_MSG_PROTO(static, chart_note_ensure_saved, _InoutRef_ P_NOTE_ENSURE_SAVED p_note_ensure_saved)
 {
     const P_OF_OP_FORMAT p_of_op_format = p_note_ensure_saved->p_of_op_format;
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_ensure_saved->object_data_ref;
-    const OBJECT_ID object_id = OBJECT_ID_CHART;
     P_CHART_SAVE_INSTANCE p_chart_save_instance = chart_save_instance_goto(p_of_op_format);
     P_CHART_SAVE_MAP p_chart_save_map;
     STATUS status = STATUS_OK;
@@ -1399,6 +1420,8 @@ T5_MSG_PROTO(static, chart_note_ensure_saved, _InoutRef_ P_NOTE_ENSURE_SAVED p_n
     }
     else
     {
+        const OBJECT_ID object_id = OBJECT_ID_CHART;
+
         if(NULL == (p_chart_save_instance = collect_add_entry_elem(CHART_SAVE_INSTANCE, &p_of_op_format->object_data_list, P_DATA_NONE, object_id, &status)))
             return(status);
 
@@ -1417,19 +1440,7 @@ T5_MSG_PROTO(static, chart_note_ensure_saved, _InoutRef_ P_NOTE_ENSURE_SAVED p_n
 
     p_note_ensure_saved->extref = array_indexof_element(&p_chart_save_instance->h_mapping_list, CHART_SAVE_MAP, p_chart_save_map);
 
-    {
-    const T5_MESSAGE t5_message = T5_CMD_CHART_IO_1;
-    PC_CONSTRUCT_TABLE p_construct_table;
-    ARGLIST_HANDLE arglist_handle;
-    if(status_ok(status = arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
-    {
-        const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
-        p_args[0].val.s32 = p_note_ensure_saved->extref;
-        status = ownform_save_arglist(arglist_handle, object_id, p_construct_table, p_of_op_format);
-        arglist_dispose(&arglist_handle);
-    }
-    status_return(status);
-}
+    status_return(chart_note_ensure_saved_io_1(p_note_ensure_saved));
 
 #if 1
     status = chart_save_guts(p_of_op_format, p_chart_header);
@@ -1592,7 +1603,7 @@ chart_save_plotareas(
 
     for(plotidx = 0; plotidx < (cp->d3.bits.use ? GR_CHART_N_PLOTAREAS : 1); ++plotidx)
     {
-        chart_load_save_objid.no = (UBF) plotidx;
+        chart_load_save_objid.no = UBF_PACK(plotidx);
 
         status_break(status = chart_save_id(cp, f));
         status_break(status = chart_construct_save(cp, f, T5_CMD_CHART_IO_FILLSTYLEB));
@@ -1738,7 +1749,7 @@ chart_save_points(
         if(key >= max_key)
             break;
 
-        chart_load_save_objid.subno = (U16) gr_point_external_from_key(key);
+        chart_load_save_objid.subno = UBF_PACK(gr_point_external_from_key(key));
 
         status_return(chart_save_id(cp, f));
 
@@ -2258,7 +2269,7 @@ chart_save_guts(
 
             status_return(chart_save_axes(cp, f, axes_idx));
 
-            /* output value X and Y axes */
+            /* output value X and y-axis */
             for(axis_idx = 0; axis_idx <= 1; ++axis_idx)
                 status_return(chart_save_axis(cp, f, axes_idx, axis_idx));
 
@@ -2295,8 +2306,8 @@ chart_save_guts(
 
             status_return(chart_save_axes(cp, f, axes_idx));
 
-            /* output category X and 1 or 2 value Y axes.
-             * ignore Z axes as they are currently irrelevant
+            /* output category x-axis and 1 or 2 value y-axes.
+             * ignore z-axes as they are currently irrelevant
             */
             for(axis_idx = 0; axis_idx <= 1; ++axis_idx)
             {
@@ -2330,8 +2341,9 @@ chart_save_guts(
 
 T5_CMD_PROTO(static, t5_cmd_chart_io_1)
 {
+    const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
+    P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_of_ip_format);
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
-    P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_t5_cmd->p_of_ip_format);
     P_CHART_LOAD_MAP p_chart_load_map = NULL;
     P_CHART_HEADER p_chart_header = NULL;
     STATUS status;
@@ -2342,7 +2354,7 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_1)
     {
         if(NULL == p_chart_load_instance)
         {
-            if(NULL == (p_chart_load_instance = collect_add_entry_elem(CHART_LOAD_INSTANCE, &p_t5_cmd->p_of_ip_format->object_data_list, P_DATA_NONE, OBJECT_ID_CHART, &status)))
+            if(NULL == (p_chart_load_instance = collect_add_entry_elem(CHART_LOAD_INSTANCE, &p_of_ip_format->object_data_list, P_DATA_NONE, OBJECT_ID_CHART, &status)))
             {
                 status = create_error(CHART_ERR_LOAD_NO_MEM);
                 break;
@@ -2398,8 +2410,9 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_1)
 
 T5_CMD_PROTO(static, t5_cmd_chart_io_2)
 {
+    const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
+    const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_of_ip_format);
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 5);
-    const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_t5_cmd->p_of_ip_format);
     P_CHART_HEADER p_chart_header;
     CHART_SHAPEDESC chart_shapedesc;
 
@@ -2426,8 +2439,9 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_2)
 
 T5_CMD_PROTO(static, t5_cmd_chart_io_3)
 {
+    const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
+    const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_of_ip_format);
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 2 + 4*4);
-    const P_CHART_LOAD_INSTANCE p_chart_load_instance = chart_load_instance_goto(p_t5_cmd->p_of_ip_format);
     P_CHART_HEADER p_chart_header;
     CHART_SHAPEDESC chart_shapedesc;
     GR_SERIES_TYPE sertype;
@@ -2554,16 +2568,16 @@ T5_CMD_PROTO(static, t5_cmd_chart_io_objid)
 
     gr_chart_objid_clear(&id);
 
-    id.name = (UBF) p_args[0].val.s32;
+    id.name = UBF_PACK(p_args[0].val.s32);
 
     if(arg_is_present(p_args, 1))
     {
-        id.no = (UBF) p_args[1].val.s32;
+        id.no = UBF_PACK(p_args[1].val.s32);
         id.has_no = 1;
 
         if(arg_is_present(p_args, 2))
         {
-            id.subno = (UBF) p_args[2].val.s32;
+            id.subno = UBF_PACK(p_args[2].val.s32);
             id.has_subno = 1;
         }
     }

@@ -81,7 +81,7 @@ quick_ublock_empty(
 #if CHECKING_QUICK_UBLOCK
         /* trash handle on empty when CHECKING_QUICK_UBLOCK */
         const U32 n_bytes = array_elements32(&quick_ublock_array_handle_ref(p_quick_ublock));
-        _do_uqb_fill(array_range(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARS, 0, n_bytes), n_bytes);
+        _do_uqb_fill(uchars_bptr(array_range(&quick_ublock_array_handle_ref(p_quick_ublock), UCHARB, 0, n_bytes)), n_bytes);
 #endif
         al_array_empty(&quick_ublock_array_handle_ref(p_quick_ublock));
     }
@@ -110,6 +110,10 @@ quick_ublock_extend_by(
     _InVal_     U32 extend_by,
     _OutRef_    P_STATUS p_status)
 {
+    ARRAY_INIT_BLOCK array_init_block;
+    S32 size_increment;
+    P_UCHARS p_output;
+
     *p_status = STATUS_OK;
 
     if(0 == extend_by) /* realloc by 0 is OK, but return a non-NULL rubbish pointer */
@@ -125,15 +129,13 @@ quick_ublock_extend_by(
     if(0 != quick_ublock_array_handle_ref(p_quick_ublock))
         return(al_array_extend_by(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARS, extend_by, PC_ARRAY_INIT_BLOCK_NONE, p_status));
 
-    { /* transition from static buffer to array handle */
-    static /*poked*/ ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(UCHARB), FALSE);
-    S32 incr = p_quick_ublock->ub_static_buffer_size / 4;
-    P_UCHARS p_output;
+    /* transition from static buffer to array handle */
+    size_increment = p_quick_ublock->ub_static_buffer_size >> 2; /* / 4 */
 
-    if( incr < 4)
-        incr = 4;
+    if( size_increment < 4)
+        size_increment = 4;
 
-    array_init_block.size_increment = incr;
+    array_init_block_setup(&array_init_block, size_increment, sizeof32(UCHARB), FALSE);
 
     if(NULL != (p_output = al_array_alloc(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARS,
                                           p_quick_ublock->ub_static_buffer_used + extend_by, &array_init_block, p_status)))
@@ -144,14 +146,13 @@ quick_ublock_extend_by(
 
         uchars_IncBytes_wr(p_output, p_quick_ublock->ub_static_buffer_used);
 
-        p_quick_ublock->ub_static_buffer_used = p_quick_ublock->ub_static_buffer_size; /* indicate static buffer full for fast add etc */
+        p_quick_ublock->ub_static_buffer_used = p_quick_ublock->ub_static_buffer_size; /* indicate static buffer full for fast add etc. */
 
         /* trash buffer once copied when CHECKING_QUICK_UBLOCK */
         _do_uqb_fill(p_quick_ublock->ub_p_static_buffer, p_quick_ublock->ub_static_buffer_size);
     }
 
     return(p_output);
-    } /*block*/
 }
 
 /******************************************************************************

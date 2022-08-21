@@ -62,13 +62,18 @@ T5_MSG_PROTO(static, docu_new_extent_null, P_NULL_EVENT_BLOCK p_null_event_block
 
 PROC_EVENT_PROTO(static, null_event_docu_new_extent)
 {
+#if CHECKING
     switch(t5_message)
     {
-    case T5_EVENT_NULL:
-        return(docu_new_extent_null(p_docu, t5_message, (P_NULL_EVENT_BLOCK) p_data));
-
     default: default_unhandled();
         return(STATUS_OK);
+
+    case T5_EVENT_NULL:
+#else
+    IGNOREPARM_InVal_(t5_message);
+    {
+#endif
+        return(docu_new_extent_null(p_docu, t5_message, (P_NULL_EVENT_BLOCK) p_data));
     }
 }
 
@@ -237,7 +242,7 @@ format_below_row(
         return;
 
     if(row >= p_docu->format_start_row)
-        /* already running - row is below the current format_start_row value so will be formatted anyway */
+        /* row is below the current format_start_row value so will be formatted anyway */
         return;
 
     row = MIN(row, n_rows(p_docu) - 1);
@@ -252,17 +257,17 @@ format_below_row(
 
     if(p_docu->flags.null_event_rowtab_format_started)
     {   /* already running - null event will pick up this new format_start_row value */
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row() - *** null_events_running(docno=%d), reformat below row ") ROW_TFMT TEXT(", prev format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, prev_format_start_row);
+        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=%d, row=") ROW_TFMT TEXT(") - prev format_start_row ") ROW_TFMT TEXT(" - *** null_events already running"), docno_from_p_docu(p_docu), row, prev_format_start_row);
     }
     else
     {
-        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row() - *** null_events_start(docno=%d), reformat below row ") ROW_TFMT TEXT(", prev format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, prev_format_start_row);
+        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=%d, row=") ROW_TFMT TEXT(") - prev format_start_row ") ROW_TFMT TEXT(" - *** null_events_start()"), docno_from_p_docu(p_docu), row, prev_format_start_row);
     }
     } /*block*/
 #endif /* TRACE_ALLOWED */
 
     if(!p_docu->flags.null_event_rowtab_format_started)
-    {
+    {   /* ensure background formatter started */
         if(status_ok(status_wrap(null_events_start(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_rowtab_format, ROWTAB_NULL_CLIENT_HANDLE))))
             p_docu->flags.null_event_rowtab_format_started = TRUE;
     }
@@ -273,7 +278,7 @@ format_below_row(
     {
         SKEL_RECT skel_rect;
 
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("format_below_row visible, docno=%d, row: ") ROW_TFMT, docno_from_p_docu(p_docu), row);
+        trace_2(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=%d, row=") ROW_TFMT TEXT(") visible"), docno_from_p_docu(p_docu), row);
 
         {
         ROW_ENTRY row_entry;
@@ -300,12 +305,13 @@ format_below_row(
     }
     else
     {
-        trace_2(TRACE_OUT | TRACE_ANY, TEXT("format_below_row ALL/invisible, docno=%d, row: ") ROW_TFMT, docno_from_p_docu(p_docu), row);
+        trace_3(TRACE_OUT | TRACE_ANY, TEXT("format_below_row(docno=%d, row=") ROW_TFMT TEXT(") %s"), docno_from_p_docu(p_docu), row, (row == 0) ? TEXT(" ALL") : TEXT(" invisible"));
 
         view_update_all(p_docu, UPDATE_PANE_CELLS_AREA);
         view_update_all(p_docu, UPDATE_PANE_MARGIN_ROW);
         view_update_all(p_docu, UPDATE_BORDER_HORZ);
         view_update_all(p_docu, UPDATE_BORDER_VERT);
+
         view_update_all(p_docu, UPDATE_RULER_HORZ);
         view_update_all(p_docu, UPDATE_RULER_VERT);
     }
@@ -323,12 +329,12 @@ row_info_from_row__virtual_row_table(
     _OutRef_    P_ROW_INFO p_row_info,
     _InVal_     ROW row)
 {
-    p_row_info->page_height = p_docu->virtual_page_info.page_height;
     p_row_info->row = row;
     p_row_info->height = p_docu->virtual_page_info.row_height;
     p_row_info->height_fixed = TRUE;
     p_row_info->unbreakable = TRUE;
     p_row_info->page = row / p_docu->virtual_page_info.rows_per_page;
+    p_row_info->page_height = p_docu->virtual_page_info.page_height;
 }
 
 static void
@@ -444,7 +450,7 @@ format_object_size_change(
 
         /* typically, an object should not need to know about pages; therefore we check here if
          * the object needs moving onto the next page; certain object types may take account
-         * of pages themselves: eg text objects can distribute themselves over different
+         * of pages themselves: e.g. text objects can distribute themselves over different
          * pages and also move themselves onto different pages
          */
         if(p_skel_rect_new->tl.page_num.y == p_skel_rect_new->br.page_num.y)
@@ -478,7 +484,7 @@ format_object_size_change(
                 {
                     /* object is smaller than row - was it bigger than the row before ?
                      */
-                    if(!p_skel_rect_old
+                    if((NULL == p_skel_rect_old)
                        ||
                        skel_point_edge_compare(&p_skel_rect_old->br, &p_rowtab->edge_bot, y) >= 0)
                     {
@@ -789,17 +795,20 @@ ensure_formatted_upto_row__virtual_row_table(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     ROW row)
 {
-    ROW rows;
-    
-    rows = n_rows(p_docu) - 1;
+    if(row >= p_docu->format_start_row)
+    {
+        ROW rows;
+        
+        rows = n_rows(p_docu) - 1;
 
-    virtual_page_info_read(p_docu);
+        virtual_page_info_read(p_docu);
 
-    extent_y_check(p_docu, rows, rows / p_docu->virtual_page_info.rows_per_page);
+        extent_y_check(p_docu, rows, rows / p_docu->virtual_page_info.rows_per_page);
 
-    p_docu->format_start_row = row + 1;
+        p_docu->format_start_row = rows + 1; /* <<< SKS surely this should be rows + 1 (was row + 1) */
 
-    trace_3(TRACE_OUT | TRACE_ANY, TEXT("ensure_formatted_upto_row__virtual_row_table(docno=%d, row=") ROW_TFMT TEXT(") - format_start_row := ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
+        trace_3(TRACE_OUT | TRACE_ANY, TEXT("ensure_formatted_upto_row__virtual_row_table(docno=%d, row=") ROW_TFMT TEXT(") - format_start_row := ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
+    }
 }
 
 static void
@@ -807,79 +816,79 @@ ensure_formatted_upto_row__normal_row_table(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     ROW row)
 {
-    ARRAY_HANDLE h_row_changes;
-    
-    h_row_changes = col_changes_between_rows(p_docu, p_docu->format_start_row, row + 1);
-
-    if(h_row_changes != 0)
+    if(row >= p_docu->format_start_row)
     {
-        ROW i_row;
-        ARRAY_INDEX row_changes_index = 0;
-        ARRAY_HANDLE h_col_info = 0;
-        ROW_INFO row_info;
+        ARRAY_HANDLE h_row_changes;
 
-        row_info.row = -1;
-        row_info.page = -1;
+        h_row_changes = col_changes_between_rows(p_docu, p_docu->format_start_row, row + 1);
 
-        for(i_row = p_docu->format_start_row; i_row <= row; ++i_row)
+        if(h_row_changes != 0)
         {
-            P_ROW p_row = array_ptr(&h_row_changes, ROW, row_changes_index);
-            P_ROWTAB p_rowtab;
+            ROW i_row;
+            ARRAY_INDEX row_changes_index = 0;
+            ARRAY_HANDLE h_col_info = 0;
+            ROW_INFO row_info;
 
-            /* read column info when there is a change */
-            if(i_row == *p_row)
+            row_info.row = -1;
+            row_info.page = -1;
+
+            for(i_row = p_docu->format_start_row; i_row <= row; ++i_row)
             {
-                status_assert(skel_col_enum(p_docu, i_row, (PAGE) -1, (COL) -1, &h_col_info));
-                trace_1(TRACE_APP_FORMAT,
-                        TEXT("ensure_formatted_upto_row got: ") S32_TFMT TEXT(" cols from skel_col_enum"),
-                        array_elements(&h_col_info));
+                P_ROW p_row = array_ptr(&h_row_changes, ROW, row_changes_index);
+                P_ROWTAB p_rowtab;
 
-                /* move onto next change in column info, if there is one */
-                if(row_changes_index < array_elements(&h_row_changes))
-                    ++row_changes_index;
+                /* read column info when there is a change */
+                if(i_row == *p_row)
+                {
+                    status_assert(skel_col_enum(p_docu, i_row, (PAGE) -1, (COL) -1, &h_col_info));
+                    trace_1(TRACE_APP_FORMAT,
+                            TEXT("ensure_formatted_upto_row__normal_row_table got: ") S32_TFMT TEXT(" cols from skel_col_enum"),
+                            array_elements(&h_col_info));
+
+                    /* move onto next change in column info, if there is one */
+                    if(row_changes_index < array_elements(&h_row_changes))
+                        ++row_changes_index;
+                }
+
+                /* initialise top of row from bottom of previous row */
+                p_rowtab = array_ptr(&p_docu->h_rowtab, ROWTAB, i_row);
+
+                if(!i_row)
+                {
+                    /* top of row 0 is always at top of page 0 */
+                    p_rowtab[0].edge_top.pixit = 0;
+                    p_rowtab[0].edge_top.page  = 0;
+                }
+                else
+                    /* top of next row starts at bottom of previous row */
+                    p_rowtab[0].edge_top = p_rowtab[-1].edge_bot;
+
+                row_info_from_row(p_docu, &row_info, i_row);
+                format_row(p_docu, h_col_info, &row_info);
+
+                trace_3(TRACE_APP_FORMAT,
+                        TEXT("ensure_formatted_upto_row__normal_row_table: ") ROW_TFMT TEXT(", edge_bot.page: ") S32_TFMT TEXT(", edge_bot.pixit: ") PIXIT_TFMT,
+                        row, p_rowtab->edge_bot.page, p_rowtab->edge_bot.pixit);
             }
-
-            /* initialise top of row from bottom of previous row */
-            p_rowtab = array_ptr(&p_docu->h_rowtab, ROWTAB, i_row);
-
-            if(!i_row)
-            {
-                /* top of row 0 is always at top of page 0 */
-                p_rowtab[0].edge_top.pixit = 0;
-                p_rowtab[0].edge_top.page  = 0;
-            }
-            else
-                /* top of next row starts at bottom of previous row */
-                p_rowtab[0].edge_top = p_rowtab[-1].edge_bot;
-
-            row_info_from_row(p_docu, &row_info, i_row);
-            format_row(p_docu, h_col_info, &row_info);
-
-            trace_3(TRACE_APP_FORMAT,
-                    TEXT("ensure_formatted_upto_row: ") ROW_TFMT TEXT(", edge_bot.page: ") S32_TFMT TEXT(", edge_bot.pixit: ") PIXIT_TFMT,
-                    row, p_rowtab->edge_bot.page, p_rowtab->edge_bot.pixit);
         }
 
         al_array_dispose(&h_row_changes);
+
+        p_docu->format_start_row = row + 1;
+
+        trace_3(TRACE_OUT | TRACE_ANY, TEXT("ensure_formatted_upto_row__normal_row_table(docno=%d, row=") ROW_TFMT TEXT(") - format_start_row := ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
     }
-
-    p_docu->format_start_row = row + 1;
-
-    trace_3(TRACE_OUT | TRACE_ANY, TEXT("ensure_formatted_upto_row__normal_row_table(docno=%d, row=") ROW_TFMT TEXT(") - format_start_row := ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
 }
 
-static void
+static inline void
 ensure_formatted_upto_row(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     ROW row)
 {
-    if(row >= p_docu->format_start_row)
-    {
-        if(p_docu->flags.virtual_row_table)
-            ensure_formatted_upto_row__virtual_row_table(p_docu, row);
-        else
-            ensure_formatted_upto_row__normal_row_table(p_docu, row);
-    }
+    if(p_docu->flags.virtual_row_table)
+        ensure_formatted_upto_row__virtual_row_table(p_docu, row);
+    else
+        ensure_formatted_upto_row__normal_row_table(p_docu, row);
 }
 
 /******************************************************************************
@@ -1038,7 +1047,7 @@ row_entries_from_row__virtual_row_table(
     if(row >= p_docu->format_start_row)
     {
         trace_3(TRACE_OUT | TRACE_ANY, TEXT("row_entries_from_row__virtual_row_table(docno=%d, row=") ROW_TFMT TEXT(") >= format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
-        ensure_formatted_upto_row(p_docu, row);
+        ensure_formatted_upto_row__virtual_row_table(p_docu, row);
     }
 
     p_docu->last_used_row = row;
@@ -1057,7 +1066,7 @@ row_entries_from_row__virtual_row_table(
     {
         p_row_entry_next->rowtab.edge_top = p_row_entry->rowtab.edge_bot;
 
-        if(p_row_entry_next->rowtab.edge_top.pixit + p_docu->virtual_page_info.row_height > p_docu->virtual_page_info.page_height)
+        if((p_row_entry_next->rowtab.edge_top.pixit + p_docu->virtual_page_info.row_height) > p_docu->virtual_page_info.page_height)
         {
             p_row_entry_next->rowtab.edge_top.page = p_row_entry->rowtab.edge_top.page + 1;
             p_row_entry_next->rowtab.edge_bot.page = p_row_entry->rowtab.edge_bot.page + 1;
@@ -1087,14 +1096,14 @@ row_entries_from_row__normal_row_table(
     if(row >= p_docu->format_start_row)
     {
         trace_3(TRACE_OUT | TRACE_ANY, TEXT("row_entries_from_row__normal_row_table(docno=%d, row=") ROW_TFMT TEXT(") >= format_start_row ") ROW_TFMT, docno_from_p_docu(p_docu), row, p_docu->format_start_row);
-        ensure_formatted_upto_row(p_docu, row);
+        ensure_formatted_upto_row__normal_row_table(p_docu, row); /* <<< SKS for p_rowtab[1] to be valid this would have to be row + 1 */
     }
 
     p_docu->last_used_row = row;
 
-    p_rowtab = array_range(&p_docu->h_rowtab, ROWTAB, row, 1 + (NULL != p_row_entry_next));
-
     assert(row < n_rows(p_docu));
+
+    p_rowtab = array_range(&p_docu->h_rowtab, ROWTAB, row, (1 + (NULL != p_row_entry_next)));
 
     p_row_entry->rowtab = p_rowtab[0];
 
@@ -1199,6 +1208,19 @@ row_entry_from_skel_point(
 ******************************************************************************/
 
 _Check_return_
+static PIXIT
+page_height_from_row__normal_row_table(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     ROW row)
+{
+    ROW_INFO row_info;
+    row_info.row = -1;
+    row_info.page = -1;
+    row_info_from_row__normal_row_table(p_docu, &row_info, row);
+    return(row_info.page_height);
+}
+
+_Check_return_
 extern PIXIT
 page_height_from_row(
     _DocuRef_   P_DOCU p_docu,
@@ -1207,13 +1229,7 @@ page_height_from_row(
     if(p_docu->flags.virtual_row_table)
         return(p_docu->virtual_page_info.page_height);
     else
-    {   /* normal_row_table */
-        ROW_INFO row_info;
-        row_info.row = -1;
-        row_info.page = -1;
-        row_info_from_row__normal_row_table(p_docu, &row_info, row);
-        return(row_info.page_height);
-    }
+        return(page_height_from_row__normal_row_table(p_docu, row));
 }
 
 /******************************************************************************
@@ -1302,12 +1318,12 @@ T5_MSG_PROTO(static, rowtab_event_null, P_NULL_EVENT_BLOCK p_null_event_block)
 
 #if RISCOS
         { /* SKS 03jun93 - try to keep memory full away from guts of formatter */
-        STATUS status_froth = ensure_memory_froth();
+        STATUS status = ensure_memory_froth();
 
-        if(status_fail(status_froth))
+        if(status_fail(status))
         {
             p_docu->flags.no_memory_for_bg_format = 1;
-            reperr_null(status_froth);
+            reperr_null(status);
             break;
         }
         } /*block*/
@@ -1323,6 +1339,10 @@ T5_MSG_PROTO(static, rowtab_event_null, P_NULL_EVENT_BLOCK p_null_event_block)
                 p_docu->flags.null_event_rowtab_format_started = FALSE;
                 trace_1(TRACE_OUT | TRACE_ANY, TEXT("null_event_rowtab_format(docno=%d) - reformat ended - *** null_events_stop()"), docno_from_p_docu(p_docu));
                 null_events_stop(docno_from_p_docu(p_docu), T5_EVENT_NULL, null_event_rowtab_format, ROWTAB_NULL_CLIENT_HANDLE);
+            }
+            else
+            {
+                trace_1(TRACE_OUT | TRACE_ANY, TEXT("null_event_rowtab_format(docno=%d) - reformat ended - *** null_events ALREADY STOPPED"), docno_from_p_docu(p_docu));
             }
             break;
         }
@@ -1344,13 +1364,17 @@ T5_MSG_PROTO(static, rowtab_event_null, P_NULL_EVENT_BLOCK p_null_event_block)
 
 PROC_EVENT_PROTO(static, null_event_rowtab_format)
 {
+#if CHECKING
     switch(t5_message)
     {
-    case T5_EVENT_NULL:
-        return(rowtab_event_null(p_docu, t5_message, (P_NULL_EVENT_BLOCK) p_data));
-
     default: default_unhandled();
         return(STATUS_OK);
+
+    case T5_EVENT_NULL:
+#else
+    {
+#endif
+        return(rowtab_event_null(p_docu, t5_message, (P_NULL_EVENT_BLOCK) p_data));
     }
 }
 

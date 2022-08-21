@@ -16,13 +16,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#if WINDOWS
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 
-#if defined(_MSC_VER) && (_MSC_VER > 1500) /* Needs VS2010 or later */
+#include <inttypes.h> /* C99 header */
 
-#include <stdint.h> /* C99 header */
-
-#else /* _MSC_VER */
+#elif defined(_MSC_VER)
 
 /* Define from MSVC's internal types */
 typedef __int32 int32_t;
@@ -39,13 +37,11 @@ typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #define UINT64_MAX _UI64_MAX
 
-#endif /* _MSC_VER */
+#define _PFX_64 "ll"
 
-#else /* OS */
+#endif /* __STDC_VERSION__ */
 
-#include <stdint.h> /* C99 header */
-
-#ifndef __CC_NORCROFT
+#if RISCOS && !defined(__CC_NORCROFT)
 /* DO need 64-bit integer base types even though cross ain't C99 */
 
 #ifndef INT64_MAX
@@ -61,20 +57,10 @@ typedef unsigned __int64 uint64_t;
 
 #endif /* __CC_NORCROFT */
 
-#endif /* OS */
-
-#if defined(_MSC_VER)
-#define _PRId64 "I64d"
-#define _PRIu64 "I64u" /* NB %llu doesn't work on Windows 2000 runtime */
-#define _PRIx64 "I64x"
-#elif 0
-#define _PRId64 "lld"
-#define _PRIu64 "llu"
-#define _PRIx64 "llx"
-#elif defined(PRId64)
-#define _PRId64 PRId64
-#define _PRIu64 PRIu64
-#define _PRIx64 PRIx64
+#if !defined(PRId64)
+#define PRId64 "lld"
+#define PRIu64 "llu"
+#define PRIx64 "llx"
 #endif
 
 __pragma(warning(push)) __pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void)' */

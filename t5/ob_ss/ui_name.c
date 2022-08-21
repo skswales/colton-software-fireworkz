@@ -30,7 +30,7 @@ static STATUS
 ss_name_add(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID dialog_ctl_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 static STATUS
@@ -40,7 +40,7 @@ ss_name_edit(
     _InoutRef_opt_ P_QUICK_UBLOCK p_quick_ublock_value,
     _In_opt_z_  PC_USTR ustr_description,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 /******************************************************************************
 *
@@ -285,7 +285,7 @@ encode_from_selected_name(
     QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("a_buffer_for_some_text"));
     quick_ublock_with_buffer_setup(quick_ublock);
 
-    if(array_index_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
+    if(array_index_is_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
     {
         P_SS_NAME_LIST_ENTRY p_ss_name_list_entry = array_ptr_no_checks(&p_ss_name_intro_callback->ss_name_list_handle, SS_NAME_LIST_ENTRY, p_ss_name_intro_callback->selected_ss_name);
         PC_USTR ustr_name = quick_ublock_ustr(&p_ss_name_list_entry->name_quick_ublock);
@@ -409,7 +409,7 @@ ss_name_intro_delete_using_callback(
 {
     STATUS status = STATUS_OK;
 
-    if(array_index_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
+    if(array_index_is_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
     {
         P_SS_NAME_LIST_ENTRY p_ss_name_list_entry = array_ptr_no_checks(&p_ss_name_intro_callback->ss_name_list_handle, SS_NAME_LIST_ENTRY, p_ss_name_intro_callback->selected_ss_name);
         PC_USTR ustr_name = quick_ublock_ustr(&p_ss_name_list_entry->name_quick_ublock);
@@ -430,11 +430,11 @@ ss_name_intro_edit_using_callback(
     _DocuRef_   P_DOCU p_docu,
     P_SS_NAME_INTRO_CALLBACK p_ss_name_intro_callback,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     STATUS status = STATUS_OK;
 
-    if(array_index_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
+    if(array_index_is_valid(&p_ss_name_intro_callback->ss_name_list_handle, p_ss_name_intro_callback->selected_ss_name))
     {
         P_SS_NAME_LIST_ENTRY p_ss_name_list_entry = array_ptr_no_checks(&p_ss_name_intro_callback->ss_name_list_handle, SS_NAME_LIST_ENTRY, p_ss_name_intro_callback->selected_ss_name);
         PC_USTR ustr_name = quick_ublock_ustr(&p_ss_name_list_entry->name_quick_ublock);
@@ -460,7 +460,7 @@ ss_name_intro_edit_using_callback(
             } /*block*/
 
             if(status_ok(status))
-                status = ss_name_edit(p_docu, ustr_name, &quick_ublock, ustr_description, h_dialog, control_id);
+                status = ss_name_edit(p_docu, ustr_name, &quick_ublock, ustr_description, h_dialog, dialog_control_id);
 
             quick_ublock_dispose(&quick_ublock);
         }
@@ -529,13 +529,13 @@ dialog_ss_name_intro_ctl_pushbutton(
     _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
 {
     const P_SS_NAME_INTRO_CALLBACK p_ss_name_intro_callback = (P_SS_NAME_INTRO_CALLBACK) p_dialog_msg_ctl_pushbutton->client_handle;
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
     STATUS status = STATUS_OK;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case SS_NAME_INTRO_ID_ADD:
-        status = ss_name_add(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, control_id);
+        status = ss_name_add(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id);
         p_dialog_msg_ctl_pushbutton->processed = TRUE;
         /* and do NOT complete dialog */
 
@@ -567,7 +567,7 @@ dialog_ss_name_intro_ctl_pushbutton(
         break;
 
     case SS_NAME_INTRO_ID_EDIT:
-        status = ss_name_intro_edit_using_callback(p_docu, p_ss_name_intro_callback, p_dialog_msg_ctl_pushbutton->h_dialog, control_id);
+        status = ss_name_intro_edit_using_callback(p_docu, p_ss_name_intro_callback, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id);
         p_dialog_msg_ctl_pushbutton->processed = TRUE;
         /* and do NOT complete dialog */
 
@@ -644,7 +644,7 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &ss_name_intro_callback;
         if(ss_name_intro_callback.name_selector_type != 1)
             dialog_cmd_process_dbox.n_ctls -= 3; /* remove the add, edit and delete buttons */
-        status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         } /*block*/
 
         switch(status)
@@ -659,7 +659,7 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
                 status = check_protection_simple(p_docu, FALSE);
 
             if(status_ok(status))
-            if(array_index_valid(&ss_name_intro_callback.ss_name_list_handle, ss_name_intro_callback.selected_ss_name))
+            if(array_index_is_valid(&ss_name_intro_callback.ss_name_list_handle, ss_name_intro_callback.selected_ss_name))
             {
                 P_SS_NAME_LIST_ENTRY p_ss_name_list_entry = array_ptr_no_checks(&ss_name_intro_callback.ss_name_list_handle, SS_NAME_LIST_ENTRY, ss_name_intro_callback.selected_ss_name);
 
@@ -671,7 +671,7 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
                     {
                         EV_HANDLE ev_handle_name = status;
                         const OBJECT_ID object_id = OBJECT_ID_SKEL;
-                        T5_MESSAGE new_t5_message = T5_CMD_FIELD_INS_SS_NAME;
+                        T5_MESSAGE new_t5_message = T5_CMD_INSERT_FIELD_SS_NAME;
                         PC_CONSTRUCT_TABLE p_construct_table;
                         ARGLIST_HANDLE arglist_handle;
 
@@ -679,7 +679,7 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
                         {
                             const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
                             p_args[0].val.s32 = ev_handle_name;
-                            status = execute_command(object_id, p_docu, new_t5_message, &arglist_handle);
+                            status = execute_command(p_docu, new_t5_message, &arglist_handle, object_id);
                             arglist_dispose(&arglist_handle);
                         }
                     }
@@ -716,7 +716,7 @@ T5_CMD_PROTO(extern, t5_cmd_ss_name_intro)
         }
     }
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     ui_lists_dispose_ub(&ss_name_intro_callback.ss_name_list_handle, &ss_name_intro_callback.ss_name_list_source, offsetof32(SS_NAME_LIST_ENTRY, name_quick_ublock));
 
@@ -906,14 +906,14 @@ _Check_return_
 static HWND
 ss_name_get_parent_hwnd(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID dialog_ctl_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     if(0 != h_dialog)
     {
         DIALOG_CMD_HWND_QUERY dialog_cmd_hwnd_query;
         dialog_cmd_hwnd_query.h_dialog = h_dialog;
-        dialog_cmd_hwnd_query.control_id = dialog_ctl_id;
-        status_assert(call_dialog(DIALOG_CMD_CODE_HWND_QUERY, &dialog_cmd_hwnd_query));
+        dialog_cmd_hwnd_query.dialog_control_id = dialog_control_id;
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_HWND_QUERY, &dialog_cmd_hwnd_query));
         return(dialog_cmd_hwnd_query.hwnd);
     }
 
@@ -939,7 +939,7 @@ static STATUS
 ss_name_add(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID dialog_ctl_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     UCHARZ ustr_buf[BUF_EV_LONGNAMLEN + BUF_EV_INTNAMLEN]; /* SKS 18jul93 buffer[50] was a bit tiny */
     SS_NAME_EDIT_CALLBACK ss_name_edit_callback;
@@ -947,7 +947,7 @@ ss_name_add(
 
 #if RISCOS
     IGNOREPARM_InVal_(h_dialog);
-    IGNOREPARM_InVal_(dialog_ctl_id);
+    IGNOREPARM_InVal_(dialog_control_id);
 #endif
 
     ss_name_edit_callback.ui_text_name.type = UI_TEXT_TYPE_NONE;
@@ -991,11 +991,11 @@ ss_name_add(
 #if WINDOWS
     if(0 != h_dialog)
     {
-        dialog_cmd_process_dbox.windows.hwnd = ss_name_get_parent_hwnd(h_dialog, dialog_ctl_id);
+        dialog_cmd_process_dbox.windows.hwnd = ss_name_get_parent_hwnd(h_dialog, dialog_control_id);
         dialog_cmd_process_dbox.bits.use_windows_hwnd = 1;
     }
 #endif
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     if(status_ok(status))
@@ -1038,14 +1038,14 @@ ss_name_edit(
     _InoutRef_opt_ P_QUICK_UBLOCK p_quick_ublock_value /*modified*/,
     _In_opt_z_  PC_USTR ustr_description,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID dialog_ctl_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     SS_NAME_EDIT_CALLBACK ss_name_edit_callback;
     STATUS status;
 
 #if RISCOS
     IGNOREPARM_InVal_(h_dialog);
-    IGNOREPARM_InVal_(dialog_ctl_id);
+    IGNOREPARM_InVal_(dialog_control_id);
 #endif
 
     ss_name_edit_callback.ui_text_name.type = UI_TEXT_TYPE_USTR_TEMP;
@@ -1083,11 +1083,11 @@ ss_name_edit(
 #if WINDOWS
     if(0 != h_dialog)
     {
-        dialog_cmd_process_dbox.windows.hwnd = ss_name_get_parent_hwnd(h_dialog, dialog_ctl_id);
+        dialog_cmd_process_dbox.windows.hwnd = ss_name_get_parent_hwnd(h_dialog, dialog_control_id);
         dialog_cmd_process_dbox.bits.use_windows_hwnd = 1;
     }
 #endif
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     if(status_ok(status))

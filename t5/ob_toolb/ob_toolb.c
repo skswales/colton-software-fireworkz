@@ -44,12 +44,12 @@ _Ret_maybenull_
 static P_T5_TOOLBAR_DOCU_TOOL_DESC
 find_docu_tool(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PCTSTR name);
+    _In_z_      PC_USTR name);
 
 static void
 schedule_tool_redraw(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PCTSTR name,
+    _In_z_      PC_USTR name,
     _InVal_     S32 require_count);
 
 static void
@@ -87,6 +87,7 @@ toolbar_view_new(
 #define T5_TOOLBAR_BM           ( 4 * PIXITS_PER_RISCOS)
 
 #define T5_TOOLBAR_TOOL_SEP_H   (12 * PIXITS_PER_RISCOS)
+#define T5_TOOLBAR_TOOL_SEP_H_THEMED T5_TOOLBAR_TOOL_SEP_H
 #define T5_TOOLBAR_ROW_SEP_V    ( 4 * PIXITS_PER_RISCOS)
 
 #define T5_TOOLBAR_LARGE_WIDTH  (16384 * PIXITS_PER_RISCOS)
@@ -98,6 +99,7 @@ toolbar_view_new(
 #define T5_TOOLBAR_BM           ( 2 * PIXITS_PER_PIXEL)
 
 #define T5_TOOLBAR_TOOL_SEP_H   ( 6 * PIXITS_PER_PIXEL) /* from IDG */
+#define T5_TOOLBAR_TOOL_SEP_H_THEMED (12 * PIXITS_PER_PIXEL) /* better sized gap when using themed separator */
 #define T5_TOOLBAR_ROW_SEP_V    ( 2 * PIXITS_PER_PIXEL)
 #endif /* OS */
 
@@ -137,7 +139,7 @@ static const ARG_TYPE
 args_cmd_toolbar_tool[] =
 {
     ARG_TYPE_S32 | ARG_MANDATORY,       /* which toolbar */
-    ARG_TYPE_TSTR | ARG_MANDATORY_OR_BLANK, /* id name : BLANK -> separator */
+    ARG_TYPE_USTR | ARG_MANDATORY_OR_BLANK, /* id name : BLANK -> separator */
     ARG_TYPE_NONE
 };
 
@@ -187,7 +189,166 @@ T5_MSG_PROTO(static, toolbar_msg_view_new, _InRef_ P_T5_MSG_VIEW_NEW_BLOCK p_t5_
 
 #if WINDOWS
 
-static inline void
+static HBRUSH toolbar_hBrush; /* this is set by paint_toolbar() */
+
+__pragma(warning(push))
+__pragma(warning(disable:4255)) /* no function prototype given: converting '()' to '(void) (Windows SDK 6.0A) */
+#include <Uxtheme.h>
+__pragma(warning(pop))
+
+#include <vssym32.h>
+
+#pragma comment(lib, "Uxtheme.lib")
+
+static HTHEME g_hTheme;
+
+static BOOL
+themed_toolbar_UIToolButtonDraw(
+    HTHEME hTheme, BOOL f32bpp,
+    HDC hDC, PCRECT pRect,
+    HBITMAP hBitmap, int bmx, int bmy, int iImageIndex, UINT uStateIn)
+{
+    const int iPartId = TP_BUTTON;
+    int iStateId;
+    HIMAGELIST hImageList;
+    int i;
+
+    if(uStateIn & BUTTONGROUP_DISABLED)
+    {
+        iStateId = TS_DISABLED;
+    }
+    else if(uStateIn & BUTTONGROUP_MOUSEDOWN)
+    {
+        iStateId = TS_PRESSED;
+    }
+    else if(uStateIn & BUTTONGROUP_MOUSEOVER)
+    {
+        if(uStateIn & BUTTONGROUP_DOWN)
+            iStateId = TS_HOTCHECKED;
+        else
+            iStateId = TS_HOT;
+    }
+    else
+    {
+        if(uStateIn & BUTTONGROUP_DOWN)
+            iStateId = TS_CHECKED;
+        else
+            iStateId = TS_NORMAL;
+    }
+
+    if(f32bpp && (uStateIn & BUTTONGROUP_DISABLED))
+    {
+        const HDC hdcMem = CreateCompatibleDC(hDC);
+        HBITMAP hbmOld = SelectBitmap(hdcMem, hBitmap);
+        BLENDFUNCTION bf = { AC_SRC_OVER, 0, 96 /*alpha*/, AC_SRC_ALPHA };
+        RECT icon_rect;
+        LONG content_cx, content_cy;
+        DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL);
+        GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect);
+        /* centre icon in its slot */
+        content_cx = icon_rect.right - icon_rect.left;
+        content_cy = icon_rect.bottom - icon_rect.top;
+        if(bmx < content_cx)
+            icon_rect.left += (content_cx - bmx) / 2;
+        if(bmy < content_cy)
+            icon_rect.top  += (content_cy - bmy) / 2;
+        icon_rect.right  = icon_rect.left + bmx;
+        icon_rect.bottom = icon_rect.top  + bmy;
+        void_WrapOsBoolChecking(AlphaBlend(hDC, icon_rect.left, icon_rect.top, icon_rect.right - icon_rect.left, icon_rect.bottom - icon_rect.top, hdcMem, iImageIndex * bmx, 0, bmx, bmy, bf));
+        SelectBitmap(hdcMem, hbmOld);
+        DeleteDC(hdcMem);
+        return(TRUE);
+    }
+
+    if(NULL == (hImageList = ImageList_Create(bmx, bmy, f32bpp ? ILC_COLOR32 : (ILC_COLOR | ILC_MASK), 20, 20)))
+        return(FALSE);
+
+    ImageList_SetBkColor(hImageList, CLR_NONE);
+
+    if(f32bpp)
+    {
+        i = ImageList_Add(hImageList, hBitmap, NULL);
+    }
+    else
+    {
+        /* NB ImageList_AddMasked trashes hBitmapCopy */
+        HBITMAP hBitmapCopy;
+
+        if(NULL == (hBitmapCopy = CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, 0)))
+        {
+            i = -1;
+        }
+        else
+        {
+            i = ImageList_AddMasked(hImageList, hBitmapCopy, RGB(192, 192, 192) /* LTGRAY is the 4-bpp image colour key */);
+
+            DeleteBitmap(hBitmapCopy);
+        }
+    }
+
+    if(i < 0)
+    {
+        ImageList_Destroy(hImageList);
+        return(FALSE);
+    }
+
+    {
+    RECT icon_rect;
+    LONG content_cx, content_cy;
+    DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL);
+    GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect);
+    /* centre icon in its slot */
+    content_cx = icon_rect.right - icon_rect.left;
+    content_cy = icon_rect.bottom - icon_rect.top;
+    if(bmx < content_cx)
+        icon_rect.left += (content_cx - bmx) / 2;
+    if(bmy < content_cy)
+        icon_rect.top  += (content_cy - bmy) / 2;
+    icon_rect.right  = icon_rect.left + bmx;
+    icon_rect.bottom = icon_rect.top  + bmy;
+    if(uStateIn & BUTTONGROUP_DISABLED)
+    {
+        HICON hIcon = ImageList_GetIcon(hImageList, iImageIndex, ILD_TRANSPARENT);
+        if(NULL != hIcon)
+        {
+            DrawState(hDC, GetStockBrush(WHITE_BRUSH), NULL, (LPARAM) hIcon, 0, icon_rect.left, icon_rect.top, bmx, bmy, DSS_DISABLED | DST_ICON);
+            DestroyIcon(hIcon);
+        }
+    }
+    else
+    {
+        DrawThemeIcon(hTheme, hDC, iPartId, iStateId, &icon_rect, hImageList, iImageIndex);
+        //ImageList_Draw(hImageList, iImageIndex, hDC, icon_rect.left, icon_rect.top, ILD_TRANSPARENT);
+    }
+    } /*block*/
+
+    ImageList_Destroy(hImageList);
+
+    return(TRUE);
+}
+
+static BOOL
+toolbar_UIToolButtonDrawTDD(
+    HTHEME hTheme, BOOL f32bpp,
+    HDC hDC, PCRECT pRect,
+    HBITMAP hBmp, int bmx, int bmy, int iImageIndex, UINT uStateIn,
+    LPTOOLDISPLAYDATA pTDD)
+{
+    UINT uState;
+
+    if(hTheme)
+        if(themed_toolbar_UIToolButtonDraw(hTheme, f32bpp, hDC, pRect, hBmp, bmx, bmy, iImageIndex, uStateIn))
+            return(TRUE);
+
+    /* fallback is old implementation */
+    //assert(!f32bpp);
+    uState = uStateIn;
+    uState |= (PRESERVE_WHITE); /* | PRESERVE_DKGRAY | PRESERVE_BLACK); need these to map for high-contrast */ /* LTGRAY is colour key */
+    return(UIToolButtonDrawTDD(hDC, pRect->left, pRect->top, pRect->right - pRect->left, pRect->bottom - pRect->top,
+                               hBmp, bmx, bmy, iImageIndex, uState, pTDD));
+}
+
+static void
 fill_pixit_rect(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
@@ -195,8 +356,44 @@ fill_pixit_rect(
 {
     RECT rect;
 
-    if(status_done(RECT_limited_from_pixit_rect_and_context(&rect, p_pixit_rect, p_redraw_context)))
-        FillRect(p_redraw_context->windows.paintstruct.hdc, &rect, hBrush);
+    if(!status_done(RECT_limited_from_pixit_rect_and_context(&rect, p_pixit_rect, p_redraw_context)))
+        return;
+
+    if(g_hTheme)
+    {
+        DrawThemeBackground(g_hTheme, p_redraw_context->windows.paintstruct.hdc, 0, 0, &rect, NULL);
+        return;
+    }
+
+    FillRect(p_redraw_context->windows.paintstruct.hdc, &rect, hBrush);
+}
+
+/* fill the separator to the right of this tool (if present) */
+
+static void
+do_paint_separator(
+    _InRef_     PC_T5_TOOLBAR_VIEW_TOOL_DESC p_t5_toolbar_view_tool_desc,
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context)
+{
+    RECT rect;
+    PIXIT_RECT rhs_extra_rect = p_t5_toolbar_view_tool_desc->pixit_rect;
+    rhs_extra_rect.tl.x = rhs_extra_rect.br.x;
+    rhs_extra_rect.br.x += p_t5_toolbar_view_tool_desc->rhs_extra_div_20 * 20;
+    assert(0 != p_t5_toolbar_view_tool_desc->rhs_extra_div_20);
+
+    if(!status_done(RECT_limited_from_pixit_rect_and_context(&rect, &rhs_extra_rect, p_redraw_context)))
+        return;
+
+    if(g_hTheme)
+    {
+        FillRect(p_redraw_context->windows.paintstruct.hdc, &rect, toolbar_hBrush);
+        rect.left = ((rect.right + rect.left) / 2) - 1; /* centre the separator */
+        DrawThemeBackground(g_hTheme, p_redraw_context->windows.paintstruct.hdc, TP_SEPARATOR, 0, &rect, NULL);
+        return;
+    }
+
+    if(p_redraw_context->windows.paintstruct.fErase)
+        FillRect(p_redraw_context->windows.paintstruct.hdc, &rect, toolbar_hBrush);
 }
 
 #endif /* OS */
@@ -277,17 +474,17 @@ T5_MSG_PROTO(static, msg_toolbar_tool_enable_query, _InoutRef_ P_T5_TOOLBAR_TOOL
 extern void
 execute_tool(
     _DocuRef_   P_DOCU p_docu,
-    _ViewRef_   P_VIEW p_view,
+    _ViewRef_maybenone_ P_VIEW p_view,
     _InRef_     PC_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc,
-    _InVal_     BOOL right_button)
+    _InVal_     BOOL alternate)
 {
     STATUS status;
     PC_T5_TOOLBAR_TOOL_DESC p_t5_toolbar_tool_desc = p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc;
     T5_MESSAGE t5_message = p_t5_toolbar_tool_desc->t5_message;
     OBJECT_ID object_id = p_t5_toolbar_tool_desc->command_object_id;
 
-    if(right_button && p_t5_toolbar_tool_desc->t5_message_right)
-        t5_message = p_t5_toolbar_tool_desc->t5_message_right;
+    if(alternate && p_t5_toolbar_tool_desc->t5_message_alternate)
+        t5_message = p_t5_toolbar_tool_desc->t5_message_alternate;
 
     switch(ENUM_UNPACK(T5_TOOLBAR_TOOL_TYPE, p_t5_toolbar_tool_desc->bits.type))
     {
@@ -310,7 +507,7 @@ execute_tool(
             return;
         }
 
-        status_consume(execute_command_reperr(object_id, p_docu, t5_message, &arglist_handle));
+        status_consume(execute_command_reperr(p_docu, t5_message, &arglist_handle, object_id));
         break;
         }
 
@@ -332,17 +529,19 @@ execute_tool(
     }
 }
 
+/* NB equal hash is a *guarantee* of equal length for fast subsequent comparision */
+
 _Check_return_
 static inline U32
 trivial_name_hash(
-    _In_z_      PCTSTR name)
+    _In_reads_(name_len) PC_UCHARS name,
+    _InVal_     U32 name_len)
 {
-    const U32 name_len = tstrlen32(name);
     U32 name_hash = name_len;
     if(0 != name_len)
-    {
-        name_hash ^= (name[0] << 8);
-        name_hash ^= (name[name_len] << 16);
+    {   /* NB do NOT pollute the low byte of the hash - see above guarantee */
+        name_hash ^= (((U32) PtrGetByteOff(name,          0)) << 16);
+        name_hash ^= (((U32) PtrGetByteOff(name, name_len-1)) << 24);
     }
     return(name_hash);
 }
@@ -352,9 +551,10 @@ _Ret_maybenull_
 static P_T5_TOOLBAR_DOCU_TOOL_DESC
 find_docu_tool(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PCTSTR name)
+    _In_z_      PC_USTR name)
 {
-    const U32 name_hash = trivial_name_hash(name);
+    const U32 name_len = ustrlen32(name);
+    const U32 name_hash = trivial_name_hash(name, name_len);
     const ARRAY_INDEX n_elements = array_elements(&p_docu->h_toolbar);
     ARRAY_INDEX i;
     P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = array_range(&p_docu->h_toolbar, T5_TOOLBAR_DOCU_TOOL_DESC, 0, n_elements);
@@ -364,7 +564,7 @@ find_docu_tool(
         if(name_hash != p_t5_toolbar_docu_tool_desc->name_hash)
             continue;
 
-        if(0 != tstrcmp(p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc->name, name))
+        if(0 != memcmp32(p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc->name, name, name_len))
             continue;
 
         return(p_t5_toolbar_docu_tool_desc);
@@ -423,7 +623,7 @@ new_view_tool(
 
 T5_MSG_PROTO(static, msg_toolbar_tool_nobble, _InRef_ PC_T5_TOOLBAR_TOOL_NOBBLE p_t5_toolbar_tool_nobble)
 {
-    const PCTSTR name = p_t5_toolbar_tool_nobble->name;
+    const PC_USTR name = p_t5_toolbar_tool_nobble->name;
     const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, name);
 
     IGNOREPARM_InVal_(t5_message);
@@ -592,7 +792,7 @@ do_paint_tool(
     host_framed_box_trim_frame(&control_screen_inner, b);
 
     {                                             
-    S32 core_wimpcolour;
+    RGB core_rgb;
     FRAMED_BOX_STYLE disabled     = b &  FRAMED_BOX_DISABLED;
     FRAMED_BOX_STYLE border_style = b & ~disabled;
 
@@ -600,15 +800,23 @@ do_paint_tool(
     {
     case FRAMED_BOX_BUTTON_IN:
     case FRAMED_BOX_W31_BUTTON_IN:
-        core_wimpcolour = disabled ? 0x00 /*white*/ : 0x02; /*btn grey*/
+        core_rgb = rgb_stash[0x02]; /*btn grey*/
+#if 0
+        if(disabled)
+            core_rgb = rgb_stash[0x00];
+#endif
         break;
 
     default:
-        core_wimpcolour = disabled ? 0x00 /*white*/ : 0x01; /*lt grey*/
+        core_rgb = rgb_stash[0x01]; /*lt grey*/
+#if 0
+        if(disabled)
+            core_rgb = rgb_stash[0x00];
+#endif
         break;
     }
 
-    host_framed_box_paint_core(&control_screen_inner, core_wimpcolour);
+    host_framed_box_paint_core(&control_screen_inner, &core_rgb);
     } /*block*/
 
     if(resource_id)
@@ -766,8 +974,6 @@ do_paint_tool(
 
 #elif WINDOWS
 
-static HBRUSH toolbar_hBrush; /* this is set by paint_toolbar() */
-
 static void
 do_paint_tool(
     _DocuRef_   P_DOCU p_docu,
@@ -820,21 +1026,23 @@ do_paint_tool(
         break;
     }
 
-    if(enabled)
+    if(!enabled)
     {
-        if(2 == p_t5_toolbar_view_tool_desc->button_down)
-            uState |= BUTTONGROUP_MOUSEDOWN;
-        else if(1 == p_t5_toolbar_view_tool_desc->button_down)
-        {
-            /*if(0 == (uState & ATTRIBUTEBUTTON_ON))*/
-                uState |= BUTTONGROUP_MOUSEOVER;
-        }
-    }
-    else
         uState |= BUTTONGROUP_DISABLED;
+    }
+    else if(2 == p_t5_toolbar_view_tool_desc->button_down)
+    {
+        uState |= BUTTONGROUP_MOUSEDOWN;
+    }
+    else if(1 == p_t5_toolbar_view_tool_desc->button_down)
+    {
+        /*if(0 == (uState & ATTRIBUTEBUTTON_ON))*/
+        uState |= BUTTONGROUP_MOUSEOVER;
+    }
 
     if(resource_id)
     {
+        BOOL f32bpp = FALSE;
         BOOL bitmap_found;
         RESOURCE_BITMAP_ID resource_bitmap_id;
         RESOURCE_BITMAP_HANDLE resource_bitmap_handle;
@@ -844,29 +1052,33 @@ do_paint_tool(
         resource_bitmap_id.object_id = p_t5_toolbar_tool_desc->resource_object_id;
         resource_bitmap_id.bitmap_id = resource_id;
 
+        if(g_hTheme && (g_nColours > 256)) /* still prefer 4-bit icons for 8-bit modes */
+        {
+            resource_bitmap_id.bitmap_id += 2;
+            f32bpp = TRUE;
+        }
+
         bitmap_found = resource_bitmap_find_new(&resource_bitmap_id, &resource_bitmap_handle, &bm_grid_size, &index);
 
         if(!bitmap_found)
-        {
+        {   /* start again from a blank button */
             uState = BUTTONGROUP_BLANK;
 
-            if(enabled)
+            if(!enabled)
             {
-                if(2 == p_t5_toolbar_view_tool_desc->button_down)
-                    uState |= BUTTONGROUP_MOUSEDOWN;
-                else if(1 == p_t5_toolbar_view_tool_desc->button_down)
-                    uState |= BUTTONGROUP_MOUSEOVER;
-            }
-            else
                 uState |= BUTTONGROUP_DISABLED;
+            }
+            else if(2 == p_t5_toolbar_view_tool_desc->button_down)
+            {
+                uState |= BUTTONGROUP_MOUSEDOWN;
+            }
+            else if(1 == p_t5_toolbar_view_tool_desc->button_down)
+            {
+                uState |= BUTTONGROUP_MOUSEOVER;
+            }
         }
 
-        {
-        const HDC dst_hdc = p_redraw_context->windows.paintstruct.hdc;
-        int dst_cx = (rect.right - rect.left);
-        int dst_cy = (rect.bottom - rect.top);
-        (void) UIToolButtonDrawTDD(dst_hdc, rect.left, rect.top, dst_cx, dst_cy, resource_bitmap_handle.i, bm_grid_size.cx, bm_grid_size.cy, index, uState, &tdd);
-        } /*block*/
+        (void) toolbar_UIToolButtonDrawTDD(g_hTheme, f32bpp, p_redraw_context->windows.paintstruct.hdc, &rect, resource_bitmap_handle.i, bm_grid_size.cx, bm_grid_size.cy, index, uState, &tdd);
 
         resource_bitmap_lose(&resource_bitmap_handle);
     }
@@ -887,26 +1099,19 @@ paint_tool(
 
     if(intersect_pixit_rect(&intersection_rect, &p_t5_toolbar_view_tool_desc->pixit_rect, p_pixit_rect_clip))
     {
-#if WINDOWS && 0 /* we no longer support Windows 3.1 style buttons with wonky rounded corners */
-        /* because of on buttons we must do this unless drawing rectangular buttons */
+#if WINDOWS
+        /* used to be able to omit this given rectangular buttons but Themes complicate matters */
         if(p_redraw_context->windows.paintstruct.fErase)
-            fill_pixit_rect(p_redraw_context, &intersection_rect, toolbar_hBrush);
+            if(g_hTheme /*&& IsThemeBackgroundPartiallyTransparent(g_hTheme, TP_BUTTON, TS_NORMAL)*/)
+                fill_pixit_rect(p_redraw_context, &intersection_rect, toolbar_hBrush);
 #endif
 
         do_paint_tool(p_docu, p_view, p_t5_toolbar_view_tool_desc, p_redraw_context);
     }
 
 #if WINDOWS
-    if(p_redraw_context->windows.paintstruct.fErase)
-    {   /* fill the separator to the right of this tool (if present) */
-        if(0 != p_t5_toolbar_view_tool_desc->rhs_extra_div_20)
-        {
-            PIXIT_RECT rhs_extra_rect = p_t5_toolbar_view_tool_desc->pixit_rect;
-            rhs_extra_rect.tl.x = rhs_extra_rect.br.x;
-            rhs_extra_rect.br.x += p_t5_toolbar_view_tool_desc->rhs_extra_div_20 * 20;
-            fill_pixit_rect(p_redraw_context, &rhs_extra_rect, toolbar_hBrush);
-        }
-    }
+    if(0 != p_t5_toolbar_view_tool_desc->rhs_extra_div_20)
+        do_paint_separator(p_t5_toolbar_view_tool_desc, p_redraw_context);
 #endif
 }
 
@@ -1047,13 +1252,13 @@ status_line_font_ascent(
     _kernel_oserror * p_kernel_oserror;
 
     rs.r[0] = host_font;
-    rs.r[1] = 'Â'; /* A tall Latin-1 character */
+    rs.r[1] = (int) UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX; /* a tall Latin-1 character */
     rs.r[2] = FONT_PAINT_OSCOORDS;
     if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs)))
         ascent = abs(rs.r[4]) * PIXITS_PER_RISCOS;
 
     rs.r[0] = host_font;
-    rs.r[1] = 'y'; /* and one with a descender */
+    rs.r[1] = (int) 'y'; /* and one with a descender */
     rs.r[2] = FONT_PAINT_OSCOORDS;
     if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs)))
         descent = abs(rs.r[2]) * PIXITS_PER_RISCOS;
@@ -1364,7 +1569,7 @@ paint_status_line_windows(
             GDI_COORD text_x = text_rect.left + (GDI_COORD) MulDiv(T5_TOOLBAR_LM / PIXITS_PER_PIXEL, PixelsPerInch.cx, 96);
             GDI_COORD text_y = text_rect.top /*+ 1*/;
             SIZE size;
-            TCHARZ tstr_sizing[] = TEXT("yÂ"); /* A tall Latin-1 character and one with a descender */
+            TCHARZ tstr_sizing[] = TEXT("y") TEXT("\xC2"); /* UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX - a tall Latin-1 character, and one with a descender */
             void_WrapOsBoolChecking(
                 GetTextExtentPoint32(hdc, tstr_sizing, tstrlen32(tstr_sizing), &size));
             text_y = ((core_rect.bottom - core_rect.top) - size.cy) /2;
@@ -1433,8 +1638,14 @@ paint_toolbar_windows(
 
     host_paint_start(p_redraw_context);
 
+    if(g_nColours >= 256)
+        g_hTheme = OpenThemeData(hwnd, VSCLASS_TOOLBAR);
+
     /* set this so paint_tool() can retrieve a consistent value */
-    toolbar_hBrush = GetSysColorBrush(COLOR_BTNFACE);
+    if(g_hTheme)
+        toolbar_hBrush = GetThemeSysColorBrush(g_hTheme, COLOR_3DFACE);
+    else
+        toolbar_hBrush = GetSysColorBrush(COLOR_BTNFACE);
 
     {
     GDI_RECT gdi_rect;
@@ -1515,6 +1726,12 @@ paint_toolbar_windows(
     if(intersect_pixit_rect(&clip_rect, &bg_rect, &windows_clip_pixit_rect))
         fill_pixit_rect(p_redraw_context, &clip_rect, toolbar_hBrush);
 
+    if(g_hTheme)
+    {
+        CloseThemeData(g_hTheme);
+        g_hTheme = NULL;
+    }
+
     host_paint_end(p_redraw_context);
 }
 
@@ -1567,10 +1784,11 @@ static void
 schedule_tool_redraw_for_view(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
-    _In_z_      PCTSTR name,
+    _In_z_      PC_USTR name,
     _InVal_     S32 require_count)
 {
-    const U32 name_hash = trivial_name_hash(name);
+    const U32 name_len = ustrlen32(name);
+    const U32 name_hash = trivial_name_hash(name, name_len);
     const ARRAY_INDEX view_rows = array_elements(&p_view->toolbar.h_toolbar_view_row_desc);
     ARRAY_INDEX view_row_idx;
     PC_T5_TOOLBAR_VIEW_ROW_DESC p_t5_toolbar_view_row_desc = array_range(&p_view->toolbar.h_toolbar_view_row_desc, T5_TOOLBAR_VIEW_ROW_DESC, 0, view_rows);
@@ -1591,7 +1809,7 @@ schedule_tool_redraw_for_view(
             if(name_hash != p_t5_toolbar_docu_tool_desc->name_hash)
                 continue;
 
-            if(0 != tstrcmp(p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc->name, name))
+            if(0 != memcmp32(p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc->name, name, name_len))
                 continue;
 
             p_t5_toolbar_view_tool_desc->redraw_count += require_count;
@@ -1605,7 +1823,7 @@ schedule_tool_redraw_for_view(
 static void
 schedule_tool_redraw(
     _DocuRef_   P_DOCU p_docu,
-    _In_z_      PCTSTR name,
+    _In_z_      PC_USTR name,
     _InVal_     S32 require_count)
 {
     VIEWNO viewno = VIEWNO_NONE;
@@ -2007,7 +2225,8 @@ toolbar_candidate_range_added(
 
             p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc = p_t5_toolbar_tool_desc;
 
-            p_t5_toolbar_docu_tool_desc->name_hash = trivial_name_hash(p_t5_toolbar_tool_desc->name); /* hashed to save derefs in lookup */
+            /* store hash to save derefs during lookup */
+            p_t5_toolbar_docu_tool_desc->name_hash = trivial_name_hash(p_t5_toolbar_tool_desc->name, ustrlen32(p_t5_toolbar_tool_desc->name));
         }
     }
 
@@ -2102,13 +2321,14 @@ toolbar_view_new_toolbar_handles(
     for(i = 0; i < array_elements(&toolbar_requested_array_handle); ++i)
     {
         const PC_T5_TOOLBAR_REQUESTED_TOOL_DESC p_t5_toolbar_requested_tool_desc = array_ptr(&toolbar_requested_array_handle, T5_TOOLBAR_REQUESTED_TOOL_DESC, i);
+        const PC_USTR ustr_name = ustr_bptrc(p_t5_toolbar_requested_tool_desc->name);
 
-        if(p_t5_toolbar_requested_tool_desc->name[0])
+        if(CH_NULL != PtrGetByte(ustr_name))
         {
-            const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, p_t5_toolbar_requested_tool_desc->name);
+            const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, ustr_name);
             ARRAY_INDEX docu_tool_index;
 
-            if(NULL == p_t5_toolbar_docu_tool_desc) /* may have complete crap in choices file! */
+            if(NULL == p_t5_toolbar_docu_tool_desc) /* may have rubbish in choices file! */
                 continue;
 
             if(p_t5_toolbar_docu_tool_desc->nobble_state != 0)
@@ -2119,7 +2339,9 @@ toolbar_view_new_toolbar_handles(
             status = new_view_tool(p_h_toolbar_view_row_desc, docu_tool_index, p_t5_toolbar_requested_tool_desc->row, FALSE);
         }
         else
+        {
             status = new_view_tool(p_h_toolbar_view_row_desc, 0, p_t5_toolbar_requested_tool_desc->row, TRUE);
+        }
 
         status_break(status);
     }
@@ -2137,6 +2359,8 @@ toolbar_view_new(
     _ViewRef_   P_VIEW p_view,
     _InVal_     BOOL for_view_new)
 {
+    BOOL fThemedToolbar = FALSE;
+
     if(for_view_new)
     {
         status_return(toolbar_view_new_toolbar_handles(p_docu, &p_view->toolbar.h_toolbar_view_row_desc));
@@ -2235,6 +2459,19 @@ toolbar_view_new(
         const ARRAY_INDEX view_rows = array_elements(&p_view->toolbar.h_toolbar_view_row_desc);
         ARRAY_INDEX view_row_idx = view_rows;
 
+#if WINDOWS
+        if(g_nColours >= 256)
+        {   /* do we need a real hwnd? haven't got the toolbar one yet */
+            HTHEME hTheme = OpenThemeData(NULL/*p_view->main[WIN_BACK].hwnd*/, VSCLASS_TOOLBAR);
+
+            if(hTheme)
+            {
+                CloseThemeData(hTheme);
+                fThemedToolbar = TRUE;
+            }
+        }
+#endif
+
         cur_point.x = T5_TOOLBAR_LM;
         cur_point.y = T5_TOOLBAR_TM;
 
@@ -2307,7 +2544,8 @@ toolbar_view_new(
 
                 if(p_t5_toolbar_view_tool_desc->separator)
                 {
-                    p_t5_toolbar_view_tool_desc->rhs_extra_div_20 = (U8) (T5_TOOLBAR_TOOL_SEP_H / 20);
+                    PIXIT tool_sep_h = fThemedToolbar ? T5_TOOLBAR_TOOL_SEP_H_THEMED : T5_TOOLBAR_TOOL_SEP_H;
+                    p_t5_toolbar_view_tool_desc->rhs_extra_div_20 = (U8) (tool_sep_h / 20);
                     this_point.x += p_t5_toolbar_view_tool_desc->rhs_extra_div_20 * 20;
                 }
 
@@ -2554,20 +2792,20 @@ T5_CMD_PROTO(static, t5_cmd_button)
 {
     /* poke a toolbar button, even in if isn't in a view. but DO take note of its enable state! */
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 2);
-    const PCTSTR tstr_name = p_args[0].val.tstr;
-    const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, tstr_name);
-    BOOL right_button = FALSE;
+    const PC_USTR name = p_args[0].val.ustr;
+    const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = find_docu_tool(p_docu, name);
+    BOOL alternate = FALSE;
 
     IGNOREPARM_InVal_(t5_message);
 
     if(arg_is_present(p_args, 1))
-        right_button = p_args[1].val.fBool;
+        alternate = p_args[1].val.fBool;
 
     if(NULL == p_t5_toolbar_docu_tool_desc)
         return(create_error(TOOLB_ERR_UNKNOWN_CONTROL));
 
     if(0 == bitmap_count(p_t5_toolbar_docu_tool_desc->disable_state, N_BITS_ARG(32)))
-        execute_tool(p_docu, P_VIEW_NONE, p_t5_toolbar_docu_tool_desc, right_button);
+        execute_tool(p_docu, P_VIEW_NONE, p_t5_toolbar_docu_tool_desc, alternate);
 
     return(STATUS_OK);
 }
@@ -2575,7 +2813,7 @@ T5_CMD_PROTO(static, t5_cmd_button)
 T5_CMD_PROTO(static, t5_cmd_toolbar_tool)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 2);
-    const PCTSTR tstr_name = p_args[1].val.tstr;
+    const PC_USTR name = p_args[1].val.ustr;
     T5_TOOLBAR_REQUESTED_TOOL_DESC t5_toolbar_requested_tool_desc;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(t5_toolbar_requested_tool_desc), 0);
 
@@ -2583,7 +2821,7 @@ T5_CMD_PROTO(static, t5_cmd_toolbar_tool)
     IGNOREPARM_InVal_(t5_message);
 
     t5_toolbar_requested_tool_desc.row = p_args[0].val.u8n;
-    tstr_xstrkpy(t5_toolbar_requested_tool_desc.name, elemof32(t5_toolbar_requested_tool_desc.name), tstr_name);
+    ustr_xstrkpy(ustr_bptr(t5_toolbar_requested_tool_desc.name), elemof32(t5_toolbar_requested_tool_desc.name), name);
 
     return(al_array_add(&toolbar_requested_array_handle, T5_TOOLBAR_REQUESTED_TOOL_DESC, 1, &array_init_block, &t5_toolbar_requested_tool_desc));
 }
@@ -2593,14 +2831,14 @@ T5_CMD_PROTO(static, t5_cmd_toolbar_tool)
 T5_CMD_PROTO(static, t5_cmd_toolbar_tool_disallow)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
-    const PCTSTR tstr_name = p_args[0].val.tstr;
+    const PC_USTR name = p_args[0].val.ustr;
     T5_TOOLBAR_DISALLOWED_TOOL_DESC t5_toolbar_disallowed_tool_desc;
     SC_ARRAY_INIT_BLOCK array_init_block = ain_init(4, sizeof32(t5_toolbar_disallowed_tool_desc), 0);
     P_ARRAY_HANDLE p_array_handle = &toolbar_disallowed_array_handle;
 
     IGNOREPARM_InVal_(t5_message);
 
-    tstr_xstrkpy(t5_toolbar_disallowed_tool_desc.name, elemof32(t5_toolbar_disallowed_tool_desc.name), tstr_name);
+    ustr_xstrkpy(t5_toolbar_disallowed_tool_desc.name, elemof32(t5_toolbar_disallowed_tool_desc.name), name);
 
     return(al_array_add(p_array_handle, 1, &array_init_block, &t5_toolbar_disallowed_tool_desc));
 }
@@ -2617,7 +2855,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click, _InoutRef_ P_BACK_WINDOW_EV
     const P_VIEW p_view = p_skelevent_click->click_context.p_view;
     P_T5_TOOLBAR_VIEW_TOOL_DESC p_t5_toolbar_view_tool_desc;
 
-    status_assert(host_key_cache_emit_events(DOCNO_NONE));
+    status_assert(host_key_cache_emit_events());
 
     p_t5_toolbar_view_tool_desc = tool_from_point(p_view, &p_skelevent_click->skel_point.pixit_point);
 
@@ -2646,8 +2884,8 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click, _InoutRef_ P_BACK_WINDOW_EV
 
             default:
                 {
-                BOOL right_button = (t5_message == T5_EVENT_CLICK_RIGHT_SINGLE) || (t5_message == T5_EVENT_CLICK_RIGHT_DOUBLE);
-                execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, right_button);
+                const BOOL alternate = (t5_message == T5_EVENT_CLICK_RIGHT_SINGLE) || (t5_message == T5_EVENT_CLICK_RIGHT_DOUBLE);
+                execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
                 break;
                 }
             }
@@ -2664,7 +2902,7 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click_drag, _InoutRef_ P_BACK_WIND
     const P_VIEW p_view = p_skelevent_click->click_context.p_view;
     P_T5_TOOLBAR_VIEW_TOOL_DESC p_t5_toolbar_view_tool_desc;
 
-    status_assert(host_key_cache_emit_events(DOCNO_NONE));
+    status_assert(host_key_cache_emit_events());
 
     p_t5_toolbar_view_tool_desc = tool_from_point(p_view, &p_skelevent_click->skel_point.pixit_point);
 
@@ -2678,9 +2916,8 @@ T5_MSG_PROTO(static, t5_msg_back_window_event_click_drag, _InoutRef_ P_BACK_WIND
 
             if(p_t5_toolbar_tool_desc->bits.auto_repeat)
             {
-                BOOL right_button = (t5_message == T5_EVENT_CLICK_RIGHT_DRAG);
-
-                execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, right_button);
+                const BOOL alternate = (t5_message == T5_EVENT_CLICK_RIGHT_DRAG);
+                execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
             }
         }
     }
@@ -2850,7 +3087,7 @@ T5_MSG_PROTO(static, t5_msg_toolbar_tools, _InRef_ PC_T5_TOOLBAR_TOOLS p_t5_tool
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        status_break(status = toolbar_candidate_range_added(p_docu_from_docno(docno), n, n + p_t5_toolbar_tools->n_tool_desc));
+        status_break(status = toolbar_candidate_range_added(p_docu_from_docno_valid(docno), n, n + p_t5_toolbar_tools->n_tool_desc));
     }
     } /*block*/
 

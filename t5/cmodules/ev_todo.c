@@ -100,7 +100,7 @@ needs_recalc_remove(
 {
     const EV_DOCNO ev_docno = ev_slr_docno(p_ev_slr);
 
-    if(array_offset_valid(&h_nr_maps, ev_docno))
+    if(array_offset_is_valid(&h_nr_maps, ev_docno))
     {
         const PC_NR_MAP_BLOCK p_nr_map_block = array_ptrc(&h_nr_maps, NR_MAP_BLOCK, ev_docno);
 
@@ -387,37 +387,37 @@ ev_todo_add_slr(
     _InRef_     PC_EV_SLR p_ev_slr)
 {
     const EV_DOCNO ev_docno = ev_slr_docno(p_ev_slr);
+    P_NEEDS_RECALC p_needs_recalc;
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(200, sizeof32(NEEDS_RECALC), FALSE);
+    STATUS status;
 
-    if(!ev_doc_check_custom(ev_docno))
+    if(ev_doc_check_custom(ev_docno))
+        return;
+
+    assert(ev_slr_col(p_ev_slr) <= ev_numcol(ev_docno));
+    assert(ev_slr_row(p_ev_slr) <= ev_numrow(ev_docno));
+
+    if(NULL == (p_needs_recalc = al_array_extend_by(&h_needs_recalc, NEEDS_RECALC, 1, &array_init_block, &status)))
     {
-        P_NEEDS_RECALC p_needs_recalc;
-        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(200, sizeof32(NEEDS_RECALC), FALSE);
-        STATUS status;
+        status_assert(status);
+        return;
+    }
 
-        assert(ev_slr_col(p_ev_slr) <= ev_numcol(ev_docno));
-        assert(ev_slr_row(p_ev_slr) <= ev_numrow(ev_docno));
-
-        /* switch on background recalc */
-        if(!array_elements(&h_needs_recalc))
-            ev_recalc_start(FALSE);
-
-        if(NULL != (p_needs_recalc = al_array_extend_by(&h_needs_recalc, NEEDS_RECALC, 1, &array_init_block, &status)))
-        {
-            p_needs_recalc->ev_slr = *p_ev_slr;
-            p_needs_recalc->ev_slr.bad_ref = 0;
+    p_needs_recalc->ev_slr = *p_ev_slr;
+    p_needs_recalc->ev_slr.bad_ref = 0;
 
 #if TRACE_ALLOWED
-            if_constant(tracing(TRACE_MODULE_EVAL))
-            {
-                TCHARZ tstr_buf[64 + BUF_EV_LONGNAMLEN];
-                ev_trace_slr_tstr_buf(tstr_buf, elemof32(tstr_buf), TEXT("ev_todo_add_slr added: $$, ") S32_TFMT TEXT(" entries"), &p_needs_recalc->ev_slr);
-                trace_v1(TRACE_MODULE_EVAL, tstr_buf, array_elements(&h_needs_recalc));
-            }
-#endif
-        }
-
-        status_assert(status);
+    if_constant(tracing(TRACE_MODULE_EVAL))
+    {
+        TCHARZ tstr_buf[64 + BUF_EV_LONGNAMLEN];
+        ev_trace_slr_tstr_buf(tstr_buf, elemof32(tstr_buf), TEXT("ev_todo_add_slr added: $$, ") S32_TFMT TEXT(" entries"), &p_needs_recalc->ev_slr);
+        trace_v1(TRACE_MODULE_EVAL, tstr_buf, array_elements(&h_needs_recalc));
     }
+#endif
+
+    /* switch on background recalc */
+    if(!g_ev_recalc_started)
+        ev_recalc_start(FALSE);
 }
 
 typedef struct DEP_ADD_STACK
@@ -1215,7 +1215,7 @@ todo_next_slr(
     }
     else
     {
-        /* switches off recalc etc */
+        /* switches off recalc etc. */
         (void)todo_remove_slr();
         return(0);
     }

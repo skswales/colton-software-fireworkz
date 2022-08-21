@@ -17,22 +17,6 @@
 
 #include "external/Dial_Solutions/drawfile.h"
 
-/* exports needed for Dial Solutions Draw DLLs */
-
-extern
-#if defined(__cplusplus)
-"C"
-#endif
-void
-host_gdiplus_startup(void);
-
-extern
-#if defined(__cplusplus)
-"C"
-#endif
-void
-host_gdiplus_shutdown(void);
-
 static STATUS drawfile_status = STATUS_FAIL;
 
 static HMODULE dsff9_lib;
@@ -54,7 +38,7 @@ _ensure_drawfile_dlls(void)
         return(drawfile_status);
     }
 
-    host_gdiplus_startup(); /* New DLLs require GDI+ */
+    /*gdiplus_startup();*/ /* New DLLs require GDI+ */ /* Now startup/shutdown done by Fireworkz core */
 
     drawfile_status = load_drawfile_dlls();
 
@@ -600,7 +584,7 @@ ho_dial_msg_exit2(void)
         FreeLibrary(hInstance);
     }
 
-    host_gdiplus_shutdown();
+    /*gdiplus_shutdown();*/
 }
 
 /* end of windows/ho_dial.c */

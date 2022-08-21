@@ -24,50 +24,55 @@ NB EXT_ID_NOTE_PIN_xxx are 'forever' ids - they appear in files
 
 enum EXT_ID_NOTE_PINNING
 {
-    EXT_ID_NOTE_PIN_SINGLE = 1,
-    EXT_ID_NOTE_PIN_TWIN   = 2,
-    EXT_ID_NOTE_PIN_SLOT   = 3,
-    EXT_ID_NOTE_PIN_PRINT  = 4,
-    EXT_ID_NOTE_PIN_PAPER  = 5
+    EXT_ID_NOTE_PIN_CELLS_SINGLE    = 1,
+    EXT_ID_NOTE_PIN_CELLS_TWIN      = 2,
+    EXT_ID_NOTE_PIN_CELLS_AREA      = 3,
+    EXT_ID_NOTE_PIN_PRINT_AREA      = 4,
+    EXT_ID_NOTE_PIN_PAPER           = 5
 };
 
 typedef enum NOTE_PINNING
 {
-    NOTE_UNPINNED = 0,
-    NOTE_PIN_SINGLE,
-    NOTE_PIN_TWIN
+    NOTE_UNPINNED = 0,      /* this can be present on any layer */
+    NOTE_PIN_CELLS_SINGLE,  /* this must be LAYER_CELLS_AREA / LAYER_CELLS_BELOW */
+    NOTE_PIN_CELLS_TWIN     /* ditto */
 }
 NOTE_PINNING;
 
+typedef enum NOTE_SELECTION
+{
+    NOTE_SELECTION_NONE = 0,
+    NOTE_SELECTION_SELECTED,
+    NOTE_SELECTION_EDITED
+}
+NOTE_SELECTION;
+
 typedef struct NOTE_INFO_FLAGS
 {
-#define NOTE_SELECTION_NONE     0
-#define NOTE_SELECTION_SELECTED 1
-#define NOTE_SELECTION_EDITED   2
-    UBF selection      : 8;
-
-    UBF all_pages      : 1; /* only valid for NOTE_UNPINNED */
-    UBF bbox_valid     : 1;
-    UBF dont_print     : 1;
-    UBF scale_to_fit   : 1;
-    UBF uref_dependant : 1; /* TRUE if uref registered (NOTE_PIN_SINGLE and NOTE_PIN_TWIN) */
+    UBF all_pages       : 1; /* only valid for NOTE_UNPINNED */
+    UBF dont_print      : 1;
+    UBF scale_to_fit    : 1;
+    UBF uref_registered : 1; /* TRUE if uref registered (for NOTE_PIN_CELLS_SINGLE and NOTE_PIN_CELLS_TWIN) */
+    UBF skel_rect_valid : 1;
 }
 NOTE_INFO_FLAGS;
 
 typedef struct NOTE_INFO
 {
+    NOTE_INFO_FLAGS flags;
+
     LAYER layer;
 
     NOTE_PINNING note_pinning;
 
-    REGION region;
-    PIXIT_RECT offset;
+    SKEL_RECT skel_rect; /* current tl,br corners of note */ /* both points valid and recalculated on cell movement */
 
-    PIXIT_SIZE pixit_size;
+    PIXIT_SIZE pixit_size; /* only set when object is happy to cooperate with RESIZE */
+    GR_SCALE_PAIR gr_scale_pair;
 
-    NOTE_INFO_FLAGS flags;
+    PIXIT_POINT offset_tl, offset_br; /* offsets of tl,br corners of note in whichever layer (paper/print/work area or cell relative) */
 
-    SKEL_RECT bbox; /* current tl,br positions, both points valid - recalculated on cell movement */
+    REGION region; /* just tl,br SLRs (NOTE_PIN_CELLS_SINGLE and NOTE_PIN_CELLS_TWIN) but REGION simplifies uref for NOTE_PIN_CELLS_TWIN */
 
     UREF_HANDLE uref_handle;        /* UREF's handle to us */
     CLIENT_HANDLE client_handle;    /* our handle to UREF */
@@ -75,7 +80,7 @@ typedef struct NOTE_INFO
     OBJECT_ID object_id;
     P_ANY object_data_ref;
 
-    GR_SCALE_PAIR gr_scale_pair;
+    NOTE_SELECTION note_selection;
 }
 NOTE_INFO, * P_NOTE_INFO, * P_P_NOTE_INFO; typedef const NOTE_INFO * PC_NOTE_INFO;
 

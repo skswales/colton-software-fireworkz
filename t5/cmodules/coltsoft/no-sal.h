@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2015 Stuart Swales */
+/* Copyright (C) 2012-2016 Stuart Swales */
 
 /* SKS 2012 */
 
@@ -62,8 +62,6 @@ Some SAL2.0 fakes to SAL1.1 - only defined as needed
 #define _Ret_writes_bytes_to_(size, count)              _Ret_bytecap_(size)
 #define _Ret_writes_bytes_to_maybenull_(size, count)    _Ret_opt_bytecap_(size)
 
-#define _Null_terminated_
-
 #endif /* _In_reads_ */
 
 /*
@@ -87,15 +85,15 @@ or indeed with CC Norcroft on RISC OS!
 
 #define _In_
 #define _In_bytecount_(countvar)
-#define _In_bytecount_c_(constexpr)
+#define _In_bytecount_c_(_const_expr)
 #define _In_bytecount_x_(complexexpr)
 #define _In_count_(countvar)
-#define _In_count_c_(constexpr)
+#define _In_count_c_(_const_expr)
 #define _In_count_x_(complexexpr)
 #define _In_opt_
 #define _In_opt_bytecount_(countvar)
 #define _In_opt_count_(countvar)
-#define _In_opt_count_c_(constexpr)
+#define _In_opt_count_c_(_const_expr)
 #define _In_opt_count_x_(complexexpr)
 #define _In_opt_z_
 #define _In_z_
@@ -104,16 +102,16 @@ or indeed with CC Norcroft on RISC OS!
 
 #define _Inout_
 #define _Inout_bytecap_(countvar)
-#define _Inout_bytecap_c_(constexpr)
+#define _Inout_bytecap_c_(_const_expr)
 #define _Inout_bytecap_x_(complexexpr)
 #define _Inout_bytecount_(countvar)
-#define _Inout_bytecount_c_(constexpr)
+#define _Inout_bytecount_c_(_const_expr)
 #define _Inout_bytecount_x_(complexexpr)
 #define _Inout_cap_(countvar)
-#define _Inout_cap_c_(constexpr)
+#define _Inout_cap_c_(_const_expr)
 #define _Inout_cap_x_(complexexpr)
 #define _Inout_count_(countvar)
-#define _Inout_count_c_(constexpr)
+#define _Inout_count_c_(_const_expr)
 #define _Inout_count_x_(complexexpr)
 #define _Inout_opt_
 #define _Inout_z_
@@ -122,17 +120,17 @@ or indeed with CC Norcroft on RISC OS!
 
 #define _Out_
 #define _Out_bytecap_(countvar)
-#define _Out_bytecap_c_(constexpr)
+#define _Out_bytecap_c_(_const_expr)
 #define _Out_bytecap_x_(complexvar)
 #define _Out_bytecapcount_(countvar)
-#define _Out_bytecapcount_c_(constexpr)
+#define _Out_bytecapcount_c_(_const_expr)
 #define _Out_bytecapcount_x_(complexvar)
 #define _Out_bytecap_post_bytecount_(countvar1,countvar2)
 #define _Out_cap_(countvar)
-#define _Out_cap_c_(constexpr)
+#define _Out_cap_c_(_const_expr)
 #define _Out_cap_x_(complexexpr)
 #define _Out_capcount_(countvar)
-/*#define _Out_capcount_c_(constexpr)*/
+/*#define _Out_capcount_c_(_const_expr)*/
 #define _Out_capcount_x_(complexexpr)
 #define _Out_cap_post_count_(countvar1,countvar2)
 #define _Out_opt_
@@ -141,7 +139,7 @@ or indeed with CC Norcroft on RISC OS!
 #define _Out_opt_z_bytecap_(countvar)
 #define _Out_opt_z_cap_(countvar)
 #define _Out_z_bytecap_(countvar)
-#define _Out_z_bytecap_c_(constexpr)
+#define _Out_z_bytecap_c_(_const_expr)
 #define _Out_z_cap_(countvar)
 
 #define _Printf_format_string_

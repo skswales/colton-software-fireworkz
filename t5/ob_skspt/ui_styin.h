@@ -509,7 +509,7 @@ es_process(
     _InRef_opt_ PC_STYLE_SELECTOR p_prohibited_enabler,
     _InRef_opt_ PC_STYLE_SELECTOR p_prohibited_enabler_2,
     _OutRef_    P_STYLE p_style_out,
-    _InVal_     STYLE_HANDLE style_handle_being_modified /*ie not effects*/,
+    _InVal_     STYLE_HANDLE style_handle_being_modified /*i.e. not effects*/,
     _InVal_     S32 subdialog /*-1 -> whichever was last */);
 
 /*

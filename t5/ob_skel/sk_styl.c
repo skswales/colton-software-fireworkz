@@ -91,7 +91,7 @@ style_apply_struct_to_source(
         if(status_ok(status = style_ustr_inline_from_struct(p_docu, &quick_ublock, p_style)))
         {
             p_args[0].val.ustr_inline = quick_ublock_ustr_inline(&quick_ublock);
-            status = execute_command(object_id, p_docu, t5_message, &arglist_handle);
+            status = execute_command(p_docu, t5_message, &arglist_handle, object_id);
             quick_ublock_dispose(&quick_ublock);
         }
 
@@ -251,7 +251,7 @@ style_cache_slr_dispose(
         if(!p_style_cache_slr_entry->used)
             continue;
 
-        if(!p_region || slr_in_region(p_region, &p_style_cache_slr_entry->slr))
+        if((NULL == p_region) || slr_in_region(p_region, &p_style_cache_slr_entry->slr))
         {
             style_dispose(&p_style_cache_slr_entry->style);
             p_style_cache_slr_entry->used = 0;
@@ -398,7 +398,7 @@ style_cache_sub_dispose(
         if(!p_style_cache_sub_entry->used)
             continue;
 
-        if(!p_region || data_ref_in_region(p_docu, data_space, p_region, &p_style_cache_sub_entry->data_ref))
+        if((NULL == p_region) || data_ref_in_region(p_docu, data_space, p_region, &p_style_cache_sub_entry->data_ref))
         {
             al_array_dispose(&p_style_cache_sub_entry->h_sub_changes);
             p_style_cache_sub_entry->used = 0;
@@ -1391,6 +1391,7 @@ style_docu_area_add_internal(
 *
 ******************************************************************************/
 
+_Check_return_
 extern S32 /* index of chosen region; -1 == end */
 style_docu_area_choose(
     _InRef_     PC_ARRAY_HANDLE p_h_style_list,
@@ -1572,13 +1573,15 @@ PROC_ELEMENT_DELETED_PROTO(static, style_docu_area_deleted)
 *
 ******************************************************************************/
 
+_Check_return_
+_Ret_maybenull_
 extern P_STYLE_DOCU_AREA /* NULL == didn't find one */
 style_docu_area_enum_implied(
     _DocuRef_   P_DOCU p_docu,
     /*inout*/ P_ARRAY_INDEX p_array_index /* -1 to start */,
     _InVal_     OBJECT_ID object_id,
-    P_T5_MESSAGE p_t5_message /* NULL==don't care */,
-    P_S32 p_arg /* NULL==don't care */)
+    _InRef_opt_ PC_T5_MESSAGE p_t5_message /* NULL==don't care */,
+    _InRef_opt_ PC_S32 p_arg /* NULL==don't care */)
 {
     P_STYLE_DOCU_AREA p_style_docu_area_out = NULL;
     ARRAY_INDEX n_regions = array_elements(&p_docu->h_style_docu_area);
@@ -1602,11 +1605,11 @@ style_docu_area_enum_implied(
         if(p_style_docu_area->deleted)
             continue;
 
-        if(p_style_docu_area->object_message.object_id == object_id
-           &&
-           (!p_t5_message || *p_t5_message == p_style_docu_area->object_message.t5_message)
-           &&
-           (!p_arg || *p_arg == p_style_docu_area->arg))
+        if( (p_style_docu_area->object_message.object_id == object_id)
+            &&
+            ((NULL == p_t5_message) || (*p_t5_message == p_style_docu_area->object_message.t5_message))
+            &&
+            ((NULL == p_arg) || (*p_arg == p_style_docu_area->arg)) )
         {
             p_style_docu_area_out = p_style_docu_area;
             break;
@@ -2407,7 +2410,7 @@ style_effect_source_modify(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_ARRAY_HANDLE p_h_style_list,
     _InRef_     PC_POSITION p_position,
-    _In_opt_count_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline_in,
+    _In_reads_opt_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline_in,
     _InRef_opt_ P_STYLE p_style_in)
 {
     STYLE style;
@@ -2798,7 +2801,7 @@ style_handle_add(
     if(array_tstr(&p_style->h_style_name_tstr))
         style_handle = style_handle_from_name(p_docu, array_tstr(&p_style->h_style_name_tstr));
 
-    if(status_done(style_handle)) /* ie style found with this name */
+    if(status_done(style_handle)) /* i.e. style found with this name */
     {
         P_STYLE p_style_exist = p_style_from_handle(p_docu, style_handle);
         STYLE_CHANGED style_changed;
@@ -3042,7 +3045,7 @@ style_handle_remove(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     STYLE_HANDLE style_handle)
 {
-    if(array_index_valid(&p_docu->h_style_list, style_handle))
+    if(array_index_is_valid(&p_docu->h_style_list, style_handle))
     {
         P_STYLE p_style = array_ptr_no_checks(&p_docu->h_style_list, STYLE, style_handle);
         STYLE_CHANGED style_changed;
@@ -3506,7 +3509,7 @@ style_struct_from_handle(
 {
     profile_ensure_frame();
 
-    if(!array_index_valid(&p_docu->h_style_list, style_handle))
+    if(!array_index_is_valid(&p_docu->h_style_list, style_handle))
     {
         assert(style_handle < array_elements(&p_docu->h_style_list));
         return;

@@ -81,7 +81,9 @@ drawfile_paint_rectangle_filled(
     _InRef_     PC_RGB p_rgb)
 {
     DRAW_BOX draw_box;
-    static GR_LINESTYLE gr_linestyle; // init to zero
+    DRAW_POINT draw_point;
+    DRAW_SIZE draw_size;
+    static GR_LINESTYLE gr_linestyle; /* init to zero */
     GR_FILLSTYLEC gr_fillstylec;
     DRAW_DIAG_OFFSET rect_start;
     STATUS status;
@@ -95,7 +97,12 @@ drawfile_paint_rectangle_filled(
 
     draw_box_from_pixit_rect_and_context(&draw_box, p_pixit_rect, p_redraw_context);
 
-    if(status_fail(status = gr_riscdiag_rectangle_new(p_redraw_context->p_gr_riscdiag, &rect_start /*filled*/, &draw_box, &gr_linestyle, &gr_fillstylec)))
+    draw_point.x = draw_box.x0;
+    draw_point.y = draw_box.y0;
+    draw_size.cx = draw_box.x1 - draw_box.x0;
+    draw_size.cy = draw_box.y1 - draw_box.y0;
+
+    if(status_fail(status = gr_riscdiag_rectangle_new(p_redraw_context->p_gr_riscdiag, &rect_start /*filled*/, &draw_point, &draw_size, &gr_linestyle, &gr_fillstylec)))
         return;
 }
 
@@ -236,8 +243,8 @@ drawfile_paint_uchars(
 
     drawfile_adjust_font_size(&font_spec_adjust, p_redraw_context);
 
-    textstyle.width    = font_spec_adjust.size_x;
-    textstyle.height   = font_spec_adjust.size_y;
+    textstyle.size_x   = font_spec_adjust.size_x;
+    textstyle.size_y   = font_spec_adjust.size_y;
     textstyle.bold     = font_spec_adjust.bold;
     textstyle.italic   = font_spec_adjust.italic;
     tstr_xstrkpy(textstyle.tstrFontName, elemof32(textstyle.tstrFontName), array_tstr(&p_font_context->font_spec.h_app_name_tstr));
@@ -332,9 +339,9 @@ gr_riscdiag_path_new_raw(
 
 struct gr_riscdiag_line_guts
 {
-    DRAW_PATH_MOVE move;    /* move to bottom left  */
-    DRAW_PATH_LINE line;    /* line to bottom right */
-    DRAW_PATH_TERM term;
+    DRAW_PATH_MOVE  pos;    /* move to first point */
+    DRAW_PATH_LINE  lineto; /* line to second point */
+    DRAW_PATH_TERM  term;
 };
 
 extern void
@@ -353,13 +360,13 @@ drawfile_paint_line(
 
     draw_box_from_pixit_rect_and_context(&draw_box, p_pixit_rect, p_redraw_context);
 
-    line.move.tag = DRAW_PATH_TYPE_MOVE;
-    line.move.pt.x = MIN(draw_box.x0, draw_box.x1);
-    line.move.pt.y = MIN(draw_box.y0, draw_box.y1);
+    line.pos.tag = DRAW_PATH_TYPE_MOVE;
+    line.pos.pt.x = MIN(draw_box.x0, draw_box.x1);
+    line.pos.pt.y = MIN(draw_box.y0, draw_box.y1);
 
-    line.line.tag = DRAW_PATH_TYPE_LINE;
-    line.line.pt.x = MAX(draw_box.x0, draw_box.x1);
-    line.line.pt.y = MAX(draw_box.y0, draw_box.y1);
+    line.lineto.tag = DRAW_PATH_TYPE_LINE;
+    line.lineto.pt.x = MAX(draw_box.x0, draw_box.x1);
+    line.lineto.pt.y = MAX(draw_box.y0, draw_box.y1);
 
     line.term.tag = DRAW_PATH_TYPE_TERM;
 

@@ -155,13 +155,15 @@ $(BUILD_DIR).ob_skel.modules.o.file: $(T5).cmodules.c.file
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.fileutil: $(T5).cmodules.c.fileutil
  $(CC) -o $@ $(ccflags) $?
-$(BUILD_DIR).ob_skel.modules.o.gr_cache: $(T5).cmodules.c.gr_cache
- $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.gr_coord: $(T5).cmodules.c.gr_coord
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.gr_rdiag: $(T5).cmodules.c.gr_rdiag
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.gr_rdia3: $(T5).cmodules.c.gr_rdia3
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.im_cache: $(T5).cmodules.c.im_cache
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.im_convert: $(T5).cmodules.c.im_convert
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.list: $(T5).cmodules.c.list
  $(CC) -o $@ $(ccflags) $?
@@ -186,6 +188,8 @@ $(BUILD_DIR).ob_skel.modules.o.resource: $(T5).cmodules.c.resource
 $(BUILD_DIR).ob_skel.modules.o.sprites: $(T5).cmodules.c.sprites
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.ss_const: $(T5).cmodules.c.ss_const
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.ss_date: $(T5).cmodules.c.ss_date
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.typepack: $(T5).cmodules.c.typepack
  $(CC) -o $@ $(ccflags) $?
@@ -331,10 +335,11 @@ $(BUILD_DIR).ob_skel.modules.o.collect \
 $(BUILD_DIR).ob_skel.modules.o.debug \
 $(BUILD_DIR).ob_skel.modules.o.file \
 $(BUILD_DIR).ob_skel.modules.o.fileutil \
-$(BUILD_DIR).ob_skel.modules.o.gr_cache \
 $(BUILD_DIR).ob_skel.modules.o.gr_coord \
 $(BUILD_DIR).ob_skel.modules.o.gr_rdiag \
 $(BUILD_DIR).ob_skel.modules.o.gr_rdia3 \
+$(BUILD_DIR).ob_skel.modules.o.im_cache \
+$(BUILD_DIR).ob_skel.modules.o.im_convert \
 $(BUILD_DIR).ob_skel.modules.o.list \
 $(BUILD_DIR).ob_skel.modules.o.mrofmun \
 $(BUILD_DIR).ob_skel.modules.o.myassert \
@@ -346,6 +351,7 @@ $(BUILD_DIR).ob_skel.modules.o.quickwblk \
 $(BUILD_DIR).ob_skel.modules.o.report \
 $(BUILD_DIR).ob_skel.modules.o.resource \
 $(BUILD_DIR).ob_skel.modules.o.ss_const \
+$(BUILD_DIR).ob_skel.modules.o.ss_date \
 $(BUILD_DIR).ob_skel.modules.o.typepack \
 $(BUILD_DIR).ob_skel.modules.o.utf8 \
 $(BUILD_DIR).ob_skel.modules.o.utf8str \

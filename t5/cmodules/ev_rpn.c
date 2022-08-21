@@ -1252,13 +1252,12 @@ extern EV_IDNO
 rpn_skip(
     P_RPNSTATE p_rpnstate)
 {
-    assert(p_rpnstate->num != -1);
-    if(p_rpnstate->num != -1)
+    assert(p_rpnstate->num < ELEMOF_RPN_TABLE);
+    if(p_rpnstate->num < ELEMOF_RPN_TABLE)
     {
         /* work out how to skip symbol */
         p_rpnstate->pos += sizeof32(EV_IDNO);
 
-        assert(p_rpnstate->num < ELEMOF_RPN_TABLE);
         switch(rpn_table[p_rpnstate->num].rpn_type)
         {
         default: default_unhandled(); break;

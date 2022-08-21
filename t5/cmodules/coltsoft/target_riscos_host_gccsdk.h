@@ -4,31 +4,33 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2015 Stuart Swales */
+/* Copyright (C) 2012-2016 Stuart Swales */
 
 /* SKS 2012 */
 
 #ifndef __target_riscos_host_gccsdk_h
 #define __target_riscos_host_gccsdk_h
 
-#ifndef _CHAR_UNSIGNED
-#if 1
-#define _CHAR_UNSIGNED 1
-#else
-#error  _CHAR_UNSIGNED must be set (use -funsigned-char switch)
-#endif
+#ifndef __CHAR_UNSIGNED__
+#error  __CHAR_UNSIGNED__ must be set (use -funsigned-char switch)
 #endif
 
-#ifndef _In_reads_
-#include "cmodules/coltsoft/no-sal.h"
-#endif
+#include "cmodules/coltsoft/ns-sal.h"
 
 #undef  F64_IS_64_BIT_ALIGNED
 #define F64_IS_64_BIT_ALIGNED 1
 
-#define __swi(inline_swi_number) /* Norcroft specific */
-
 #define ___assert(e, s) 0 /* Norcroft specific */
+
+#if defined(__clang__)
+//#pragma clang diagnostic ignored "-Wchar-subscripts"
+
+#if defined(CODE_ANALYSIS)
+#define INTRINSIC_MEMCMP 1
+#define INTRINSIC_MEMCPY 1
+#define INTRINSIC_MEMSET 1
+#endif
+#endif /* __clang__ */
 
 #endif /* __target_riscos_host_gccsdk_h */
 

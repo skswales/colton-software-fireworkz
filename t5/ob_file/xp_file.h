@@ -42,13 +42,15 @@ _Check_return_
 extern STATUS /*n_filters*/
 windows_filter_list_create(
     _InoutRef_  P_QUICK_TBLOCK p_filter_quick_tblock,
-    _InVal_     S32 filter_mask);
+    _InVal_     S32 filter_mask,
+    _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */);
 
 _Check_return_
 extern T5_FILETYPE
 windows_filter_list_get_t5_filetype_from_filter_index(
     _InVal_     S32 filter_index,
-    _InVal_     S32 filter_mask);
+    _InVal_     S32 filter_mask,
+    _InRef_     PC_ARRAY_HANDLE p_h_save_filetype /* SAVE_FILETYPE[] */);
 
 #endif
 

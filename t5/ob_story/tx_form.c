@@ -555,7 +555,7 @@ text_chunkify_CHUNK_UTF8(
 
     if(HOST_FONT_NONE == host_font_utf8)
     {
-        /*reportf("CHUNK_UTF8: no host font handle for formatting");*/
+        /*reportf(TEXT("CHUNK_UTF8: no host font handle for formatting"));*/
         return(STATUS_OK); /* quick out for older non-UCS FM systems */
     }
 
@@ -577,7 +577,7 @@ text_chunkify_CHUNK_UTF8(
 
     if(0 == p_chunk->fonty_chunk.width_mp)
     {
-        /*reportf("CHUNK_UTF8: zero-width glyph - display as U+XXXX");*/
+        /*reportf(TEXT("CHUNK_UTF8: zero-width glyph - display as U+XXXX"));*/
         return(STATUS_OK); /* zero-width glyph */
     }
 
@@ -603,7 +603,7 @@ text_chunkify_CHUNK_UTF8(
     quick_wblock_dispose(&quick_wblock);
 
 #if 0
-    /*reportf("CHUNK_UTF8: pretend to be zero-width glyph - display as U+XXXX");*/
+    /*reportf(TEXT("CHUNK_UTF8: pretend to be zero-width glyph - display as U+XXXX"));*/
     return(STATUS_OK); /* pretend not to be able to do it */
 #endif
 
@@ -859,7 +859,7 @@ text_chunkify(
                         status = text_chunkify_CHUNK_UTF8(p_docu, ustr_inline_base, p_chunk, fonty_handle);
                         if(STATUS_OK == status)
                         {
-                            /*reportf("CHUNK_UTF8: failed formatting - mutate to CHUNK_UTF8_AS_TEXT");*/
+                            /*reportf(TEXT("CHUNK_UTF8: failed formatting - mutate to CHUNK_UTF8_AS_TEXT"));*/
                             p_chunk->type = CHUNK_UTF8_AS_TEXT; /* mutate for consistent handling */
                             goto text_from_field;
                         }
@@ -1002,8 +1002,8 @@ text_from_field_uchars(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n),
-    _InRef_opt_ PC_PAGE_NUM p_page_num,
-    _InRef_opt_ PC_STYLE p_style_text_global)
+    _InRef_maybenone_ PC_PAGE_NUM p_page_num,
+    _InRef_maybenone_ PC_STYLE p_style_text_global)
 {
     STATUS status = STATUS_OK;
     const U32 len_before = quick_ublock_bytes(p_quick_ublock);
@@ -1115,17 +1115,13 @@ text_from_field_uchars(
 
         {
         NUMFORM_PARMS numform_parms;
+        zero_struct(numform_parms);
 
         if(!IS_P_STYLE_NONE(p_style_text_global))
         {
-            /*zero_struct(numform_parms);*/
             numform_parms.ustr_numform_numeric = array_ustr(&p_style_text_global->para_style.h_numform_nu);
             numform_parms.ustr_numform_datetime = array_ustr(&p_style_text_global->para_style.h_numform_dt);
             numform_parms.ustr_numform_texterror = array_ustr(&p_style_text_global->para_style.h_numform_se);
-        }
-        else
-        {
-            zero_struct(numform_parms);
         }
 
         numform_parms.p_numform_context = get_p_numform_context(p_docu);
@@ -1315,7 +1311,7 @@ text_location_from_skel_point(
                     p_text_location->string_ix = p_chunk->input_ix + chunk_offset;
 
                     trace_2(TRACE_APP_SKEL_DRAW,
-                            TEXT("text_location_from_skel_point pixit x: ") S32_TFMT TEXT(", ix: ") S32_TFMT,
+                            TEXT("text_location_from_skel_point pixit x: ") S32_TFMT TEXT(", string_ix: ") S32_TFMT,
                             p_text_location->skel_point.pixit_point.x,
                             p_text_location->string_ix);
 
@@ -1929,7 +1925,7 @@ text_skel_point_from_location(
                 p_text_location->caret_height = p_segment->leading;
 
                 trace_2(TRACE_APP_SKEL_DRAW,
-                        TEXT("text_skel_point_from_location pixit x: ") S32_TFMT TEXT(", ix: ") S32_TFMT,
+                        TEXT("text_skel_point_from_location pixit x: ") S32_TFMT TEXT(", string_ix: ") S32_TFMT,
                         p_text_location->skel_point.pixit_point.x,
                         p_text_location->string_ix);
 

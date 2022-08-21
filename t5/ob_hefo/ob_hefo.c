@@ -100,6 +100,16 @@ save_page_hefo_break_values(
     _InoutRef_  P_OF_OP_FORMAT p_of_op_format,
     P_PAGE_HEFO_BREAK p_page_hefo_break);
 
+_Check_return_
+static inline STATUS
+object_call_HEFO_with_hb(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_HEFO_BLOCK p_hefo_block)
+{
+    return(object_call_id(OBJECT_ID_HEFO, p_docu, t5_message, p_hefo_block));
+}
+
 /*
 construct table
 */
@@ -246,7 +256,7 @@ initialise redisplay block
 static void
 text_inline_redisplay_init(
     P_TEXT_INLINE_REDISPLAY p_text_inline_redisplay,
-    _InRef_opt_ PC_QUICK_UBLOCK p_quick_ublock,
+    _InRef_maybenone_ PC_QUICK_UBLOCK p_quick_ublock,
     _InRef_     PC_SKEL_RECT p_skel_rect,
     _InVal_     BOOL do_redraw,
     _InVal_     REDRAW_TAG redraw_tag)
@@ -350,7 +360,7 @@ hefo_msg_selection_clear(
                                                 &p_docu->hefo_position.page_num,
                                                 focus_owner)))
         {
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_SHOW, &hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, &hefo_block));
         }
     }
 }
@@ -585,7 +595,7 @@ hefo_insert_sub_redisplay(
         if(status_ok(status))
         {
             text_message_block.inline_object.object_data.object_id = OBJECT_ID_HEFO;
-            status = object_call_id(OBJECT_ID_STORY, p_docu, T5_MSG_INSERT_INLINE_REDISPLAY, &text_message_block);
+            status = object_call_STORY_with_tmb(p_docu, T5_MSG_INSERT_INLINE_REDISPLAY, &text_message_block);
         }
 
         if(status_ok(status))
@@ -1032,27 +1042,27 @@ hefo_reflect_focus_change(
     t5_toolbar_tool_enable.enabled = ((OBJECT_ID_HEADER == p_docu->focus_owner) || (OBJECT_ID_FOOTER == p_docu->focus_owner));
     t5_toolbar_tool_enable.enable_id = TOOL_ENABLE_HEFO_FOCUS;
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("INSERT_DATE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("INSERT_DATE"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("BOX"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("STYLE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("EFFECTS"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("BOX"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("STYLE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("EFFECTS"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("BOLD"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("ITALIC"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("UNDERLINE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("SUPERSCRIPT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("SUBSCRIPT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("BOLD"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("ITALIC"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("UNDERLINE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("SUPERSCRIPT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("SUBSCRIPT"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_LEFT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_CENTRE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_RIGHT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("JUSTIFY_FULL"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_LEFT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_CENTRE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_RIGHT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("JUSTIFY_FULL"));
 
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_LEFT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_CENTRE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_RIGHT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TAB_DECIMAL"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_LEFT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_CENTRE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_RIGHT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TAB_DECIMAL"));
 
     {
     UI_TEXT ui_text;
@@ -1481,7 +1491,7 @@ t5_cmd_page_hefo_break_intro(
     dialog_cmd_process_dbox.bits.note_position = 1;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_page_hefo_break_intro;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &selected_item;
-    completion_code = status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    completion_code = status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     switch(completion_code)
@@ -1538,7 +1548,7 @@ t5_cmd_page_hefo_break_intro(
         }
     }
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     ui_lists_dispose(&page_hefo_break_list_handle, &page_hefo_break_list_source);
 
@@ -1759,7 +1769,7 @@ page_hefo_break_values_change(
 
         command_set_interactive();
 
-        status = execute_command(object_id, p_docu, t5_message, &arglist_handle);
+        status = execute_command(p_docu, t5_message, &arglist_handle, object_id);
 
         arglist_dispose(&arglist_handle);
     }
@@ -1850,23 +1860,23 @@ OBJECT_PROTO(extern, object_hefo)
     switch(t5_message)
     {
     /* transmogrify messages into inlines */
-    case T5_CMD_FIELD_INS_DATE:
-    case T5_CMD_FIELD_INS_FILE_DATE:
-    case T5_CMD_FIELD_INS_PAGE_X:
-    case T5_CMD_FIELD_INS_PAGE_Y:
-    case T5_CMD_FIELD_INS_SS_NAME:
-    case T5_CMD_FIELD_INS_MS_FIELD:
-    case T5_CMD_FIELD_INS_WHOLENAME:
-    case T5_CMD_FIELD_INS_LEAFNAME:
-    case T5_CMD_FIELD_INS_RETURN:
-    case T5_CMD_FIELD_INS_SOFT_HYPHEN:
-    case T5_CMD_FIELD_INS_TAB:
+    case T5_CMD_INSERT_FIELD_DATE:
+    case T5_CMD_INSERT_FIELD_FILE_DATE:
+    case T5_CMD_INSERT_FIELD_PAGE_X:
+    case T5_CMD_INSERT_FIELD_PAGE_Y:
+    case T5_CMD_INSERT_FIELD_SS_NAME:
+    case T5_CMD_INSERT_FIELD_MS_FIELD:
+    case T5_CMD_INSERT_FIELD_WHOLENAME:
+    case T5_CMD_INSERT_FIELD_LEAFNAME:
+    case T5_CMD_INSERT_FIELD_RETURN:
+    case T5_CMD_INSERT_FIELD_SOFT_HYPHEN:
+    case T5_CMD_INSERT_FIELD_TAB:
 
     case T5_CMD_WORD_COUNT:
         /* send these messages to our helper object */
         { /* SKS after 1.07 02dec93 - we can't just dereference p_data willy-nilly! */
         P_HEFO_BLOCK p_hefo_block = (P_HEFO_BLOCK) p_data;
-        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, (P_DATA_NONE != p_hefo_block) ? p_hefo_block->p_data : P_DATA_NONE));
+        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, !IS_PTR_NONE(p_hefo_block) ? p_hefo_block->p_data : P_DATA_NONE));
         }
 
     case T5_CMD_TAB_RIGHT:
@@ -1879,9 +1889,9 @@ OBJECT_PROTO(extern, object_hefo)
         tab_wanted.object_data = p_hefo_block->object_data;
         tab_wanted.t5_message = t5_message;
         text_message_block_init(p_docu, &text_message_block, &tab_wanted, p_hefo_block, &tab_wanted.object_data);
-        status = object_call_id(OBJECT_ID_STORY, p_docu, T5_MSG_TAB_WANTED, &text_message_block);
+        status = object_call_STORY_with_tmb(p_docu, T5_MSG_TAB_WANTED, &text_message_block);
         if(tab_wanted.want_inline_insert)
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_CMD_FIELD_INS_TAB, P_DATA_NONE));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_CMD_INSERT_FIELD_TAB, P_DATA_NONE));
         break;
         }
 
@@ -1928,7 +1938,7 @@ OBJECT_PROTO(extern, object_hefo)
         {
         TEXT_MESSAGE_BLOCK text_message_block;
         text_message_block_init(p_docu, &text_message_block, p_object_redraw, p_hefo_block, &p_object_redraw->object_data);
-        status = object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block);
+        status = object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block);
         fonty_cache_trash(&p_object_redraw->redraw_context);
         } /*block*/
 
@@ -1942,7 +1952,7 @@ OBJECT_PROTO(extern, object_hefo)
         TEXT_MESSAGE_BLOCK text_message_block;
 
         text_message_block_init(p_docu, &text_message_block, p_object_how_big, p_hefo_block, &p_object_how_big->object_data);
-        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+        return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
         }
 
     case T5_MSG_OBJECT_KEYS:
@@ -1967,7 +1977,7 @@ OBJECT_PROTO(extern, object_hefo)
         TEXT_MESSAGE_BLOCK text_message_block;
 
         text_message_block_init(p_docu, &text_message_block, p_object_position_find, p_hefo_block, &p_object_position_find->object_data);
-        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+        return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
         }
 
     case T5_MSG_OBJECT_POSITION_SET:
@@ -1983,7 +1993,7 @@ OBJECT_PROTO(extern, object_hefo)
         TEXT_MESSAGE_BLOCK text_message_block;
 
         text_message_block_init(p_docu, &text_message_block, p_object_logical_move, p_hefo_block, &p_object_logical_move->object_data);
-        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+        return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
         }
 
     case T5_MSG_CARET_SHOW_CLAIM:
@@ -2142,7 +2152,7 @@ OBJECT_PROTO(extern, object_hefo)
             REDRAW_FLAGS_CLEAR(redraw_flags);
             redraw_flags.show_selection = TRUE;
 
-            view_update_now(p_docu, p_hefo_block->redraw_tag, &skel_rect, rect_flags, redraw_flags, LAYER_SLOT);
+            view_update_now(p_docu, p_hefo_block->redraw_tag, &skel_rect, rect_flags, redraw_flags, LAYER_CELLS);
         }
 
         /* dispose of markers that were */
@@ -2201,7 +2211,7 @@ OBJECT_PROTO(extern, object_hefo)
         text_message_block.inline_object.object_data.object_position_start = p_object_delete_sub->object_data.object_position_start;
         text_message_block.inline_object.object_data.object_position_end = p_object_delete_sub->object_data.object_position_end;
         text_inline_redisplay_init(&text_inline_redisplay,
-                                   NULL,
+                                   P_QUICK_UBLOCK_NONE,
                                    &text_message_block.text_format_info.skel_rect_object,
                                    TRUE,
                                    p_hefo_block->redraw_tag);
@@ -2218,7 +2228,7 @@ OBJECT_PROTO(extern, object_hefo)
              * object_positions and a list of regions; a special hefo_save/_load
              * perhaps; see equivalent routine in ob_text
              */
-            if(status_ok(status = object_call_id(OBJECT_ID_STORY, p_docu, T5_MSG_DELETE_INLINE_REDISPLAY, &text_message_block)))
+            if(status_ok(status = object_call_STORY_with_tmb(p_docu, T5_MSG_DELETE_INLINE_REDISPLAY, &text_message_block)))
             {
                 /* adjust object size -- don't create object with just terminator byte */
                 al_array_shrink_by(p_hefo_block->p_h_data,
@@ -2248,11 +2258,11 @@ OBJECT_PROTO(extern, object_hefo)
 
         text_message_block_init(p_docu, &text_message_block, &text_inline_redisplay, p_hefo_block, &p_object_set_case->object_data);
         text_inline_redisplay_init(&text_inline_redisplay,
-                                   NULL,
+                                   P_QUICK_UBLOCK_NONE,
                                    &text_message_block.text_format_info.skel_rect_object,
                                    p_object_set_case->do_redraw,
                                    p_hefo_block->redraw_tag);
-        return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+        return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
         break;
         }
 
@@ -2268,6 +2278,9 @@ OBJECT_PROTO(extern, object_hefo)
 
     case T5_CMD_PAGE_HEFO_BREAK_VALUES:
         return(t5_cmd_page_hefo_break_values(p_docu, t5_message, (PC_T5_CMD) p_data));
+
+    default:
+        return(STATUS_OK);
     }
 
     return(status);
@@ -2476,11 +2489,11 @@ static BOOL
 object_data_from_hefo_block_and_object_position(
     _OutRef_    P_OBJECT_DATA p_object_data,
     _InRef_     P_HEFO_BLOCK p_hefo_block,
-    _InRef_opt_ PC_OBJECT_POSITION p_object_position)
+    _InRef_maybenone_ PC_OBJECT_POSITION p_object_position)
 {
     *p_object_data = p_hefo_block->object_data;
 
-    if(NULL != p_object_position)
+    if(!IS_P_DATA_NONE(p_object_position))
         p_object_data->object_position_start = *p_object_position;
 
     return(!IS_P_DATA_NONE(p_hefo_block->object_data.u.p_object));
@@ -2516,6 +2529,46 @@ try_hefo_common_event_click(
     }
 
     return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+try_hefo_common_event_click_single(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     OBJECT_ID object_id)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_SINGLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+    {
+        if(p_docu->focus_owner != object_id)
+            return(STATUS_OK);
+    }
+
+    return(try_hefo_common_event_click(p_docu, t5_message_effective, p_skelevent_click, object_id));
+}
+
+_Check_return_
+static STATUS
+try_hefo_common_event_click_drag(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     OBJECT_ID object_id)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+    {
+        if(p_docu->focus_owner != object_id)
+            return(STATUS_OK);
+    }
+
+    return(try_hefo_common_event_click(p_docu, t5_message_effective, p_skelevent_click, object_id));
 }
 
 _Check_return_
@@ -2631,7 +2684,7 @@ do_hefo_common_msg_object_read_text_draft(
     if(0 == text_message_block.inline_object.inline_len)
         return(STATUS_OK);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 _Check_return_
@@ -2689,17 +2742,17 @@ try_hefo_common_event(
     case T5_CMD_STYLE_APPLY_SOURCE:
     case T5_CMD_STYLE_REGION_EDIT:
 
-    case T5_CMD_FIELD_INS_DATE:
-    case T5_CMD_FIELD_INS_FILE_DATE:
-    case T5_CMD_FIELD_INS_PAGE_X:
-    case T5_CMD_FIELD_INS_PAGE_Y:
-    case T5_CMD_FIELD_INS_SS_NAME:
-    case T5_CMD_FIELD_INS_MS_FIELD:
-    case T5_CMD_FIELD_INS_WHOLENAME:
-    case T5_CMD_FIELD_INS_LEAFNAME:
-    case T5_CMD_FIELD_INS_RETURN:
-    case T5_CMD_FIELD_INS_SOFT_HYPHEN:
-    case T5_CMD_FIELD_INS_TAB:
+    case T5_CMD_INSERT_FIELD_DATE:
+    case T5_CMD_INSERT_FIELD_FILE_DATE:
+    case T5_CMD_INSERT_FIELD_PAGE_X:
+    case T5_CMD_INSERT_FIELD_PAGE_Y:
+    case T5_CMD_INSERT_FIELD_SS_NAME:
+    case T5_CMD_INSERT_FIELD_MS_FIELD:
+    case T5_CMD_INSERT_FIELD_WHOLENAME:
+    case T5_CMD_INSERT_FIELD_LEAFNAME:
+    case T5_CMD_INSERT_FIELD_RETURN:
+    case T5_CMD_INSERT_FIELD_SOFT_HYPHEN:
+    case T5_CMD_INSERT_FIELD_TAB:
 
     case T5_CMD_WORD_COUNT:
 
@@ -2724,21 +2777,22 @@ try_hefo_common_event(
     case T5_CMD_SELECTION_CLEAR:
         return(try_hefo_common_msg(p_docu, t5_message, p_data, object_id));
 
-    case T5_EVENT_CLICK_RIGHT_SINGLE:
-    case T5_EVENT_CLICK_RIGHT_DRAG:
-        if(p_docu->focus_owner != object_id)
-            return(STATUS_OK);
-
-        /*FALLTHRU*/
-
-    case T5_EVENT_CLICK_LEFT_SINGLE:
     case T5_EVENT_CLICK_LEFT_DOUBLE:
+    case T5_EVENT_CLICK_RIGHT_DOUBLE:
     case T5_EVENT_CLICK_LEFT_TRIPLE:
-    case T5_EVENT_CLICK_LEFT_DRAG:
+    case T5_EVENT_CLICK_RIGHT_TRIPLE:
     case T5_EVENT_CLICK_DRAG_FINISHED:
     case T5_EVENT_CLICK_DRAG_MOVEMENT:
     case T5_EVENT_FILEINSERT_DOINSERT:
         return(try_hefo_common_event_click(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data, object_id));
+
+    case T5_EVENT_CLICK_LEFT_SINGLE:
+    case T5_EVENT_CLICK_RIGHT_SINGLE:
+        return(try_hefo_common_event_click_single(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data, object_id));
+
+    case T5_EVENT_CLICK_LEFT_DRAG:
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        return(try_hefo_common_event_click_drag(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data, object_id));
 
     case T5_EVENT_REDRAW:
         return(try_hefo_common_event_redraw(p_docu, t5_message, (P_SKELEVENT_REDRAW) p_data, object_id));
@@ -2788,7 +2842,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
     switch(t5_message)
     {
     default:
-        return(object_call_id(OBJECT_ID_HEFO, p_docu, t5_message, p_data));
+        return(object_call_HEFO_with_hb(p_docu, t5_message, p_data));
 
     case T5_EVENT_CLICK_LEFT_SINGLE:
         {
@@ -2816,7 +2870,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         docu_area_init_hefo(&p_docu->anchor_mark.docu_area);
         p_docu->anchor_mark.docu_area.tl.object_position = object_position_find.object_data.object_position_start;
 
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
 
         host_drag_start(NULL);
         break;
@@ -2832,7 +2886,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         /* read current markers */
         CODE_ANALYSIS_ONLY(zero_struct(mark_info));
         p_hefo_block->p_data = &mark_info;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
         if(mark_info.h_markers)
         {
@@ -2844,11 +2898,11 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
 
             p_docu->anchor_mark.docu_area.br.object_position = object_position_find.object_data.object_position_start;
 
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu,
+            status_consume(object_call_HEFO_with_hb(p_docu,
                            (t5_message == T5_EVENT_CLICK_DRAG_FINISHED) ? T5_MSG_ANCHOR_FINISHED : T5_MSG_ANCHOR_UPDATE,
                            p_hefo_block));
 
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
         }
         break;
         }
@@ -2859,7 +2913,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         P_HEFO_BLOCK p_hefo_block = (P_HEFO_BLOCK) p_data;
         OBJECT_POSITION_SET object_position_set;
 
-        if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, NULL))
+        if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
         {
             if(t5_message == T5_EVENT_CLICK_LEFT_DOUBLE)
             {
@@ -2871,19 +2925,19 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
 
             object_position_set.action = OBJECT_POSITION_SET_START_WORD;
             p_hefo_block->p_data = &object_position_set;
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
             p_docu->anchor_mark.docu_area.tl.object_position = object_position_set.object_data.object_position_start;
 
             if(OBJECT_ID_NONE != p_docu->anchor_mark.docu_area.tl.object_position.object_id)
             {
                 object_position_set.action = OBJECT_POSITION_SET_END_WORD;
-                status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+                status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
                 p_docu->anchor_mark.docu_area.br.object_position = object_position_set.object_data.object_position_start;
             }
 
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
         }
         break;
         }
@@ -2904,25 +2958,25 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
 
         {
         OBJECT_POSITION_SET object_position_set;
-        if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, NULL))
+        if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
         {
             object_position_set.action = OBJECT_POSITION_SET_START;
             p_hefo_block->p_data = &object_position_set;
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
             p_docu->anchor_mark.docu_area.tl.object_position = object_position_set.object_data.object_position_start;
 
             if(OBJECT_ID_NONE != p_docu->anchor_mark.docu_area.tl.object_position.object_id)
             {
                 object_position_set.action = OBJECT_POSITION_SET_END;
-                status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+                status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
                 p_docu->anchor_mark.docu_area.br.object_position = object_position_set.object_data.object_position_start;
             }
         }
         } /*block*/
 
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
         break;
         }
 
@@ -2947,7 +3001,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         /* read current markers */
         CODE_ANALYSIS_ONLY(zero_struct(mark_info));
         p_hefo_block->p_data = &mark_info;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
         /* set up anchor start position -
          * use current position if no selection
@@ -2965,17 +3019,17 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         p_docu->anchor_mark.docu_area.br.object_position = object_position_find.object_data.object_position_start;
 
         if(!mark_info.h_markers)
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_NEW, p_hefo_block));
 
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_UPDATE, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_UPDATE, p_hefo_block));
 
         /* either start drag or finish altogether */
         if(t5_message == T5_EVENT_CLICK_RIGHT_SINGLE)
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_ANCHOR_FINISHED, p_hefo_block));
         else
             host_drag_start(NULL);
 
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
         break;
         }
 
@@ -3004,6 +3058,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         msg_insert_file.t5_filetype = p_skelevent_click->data.fileinsert.t5_filetype;
         msg_insert_file.scrap_file = !p_skelevent_click->data.fileinsert.safesource;
         msg_insert_file.insert = TRUE;
+        msg_insert_file.ctrl_pressed = p_skelevent_click->click_context.ctrl_pressed;
         /***msg_insert_file.of_ip_format.flags.insert = 1;*/
         msg_insert_file.position = p_docu->cur;
         msg_insert_file.skel_point = p_skelevent_click->skel_point;
@@ -3097,7 +3152,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
                                     rect_flags_clip))
         {
             if(array_elements(p_hefo_block->p_h_data))
-                status = object_call_id(OBJECT_ID_HEFO, p_docu, t5_message, p_hefo_block);
+                status = object_call_HEFO_with_hb(p_docu, t5_message, p_hefo_block);
             else if(object_redraw.flags.show_selection)
             {
                 BOOL do_invert = FALSE;
@@ -3132,7 +3187,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         hefo_keys.p_skelevent_keys = p_skelevent_keys;
         hefo_keys.object_position = p_docu->hefo_position.object_position;
 
-        if(status_ok(status = object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_KEYS, p_hefo_block)))
+        if(status_ok(status = object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_KEYS, p_hefo_block)))
         {
             p_docu->hefo_position.object_position = hefo_keys.object_position;
             hefo_object_data_init(p_docu, p_hefo_block, p_hefo_block->object_data.data_ref.data_space);
@@ -3205,26 +3260,26 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         P_HEFO_BLOCK p_hefo_block = (P_HEFO_BLOCK) p_data;
         OBJECT_DELETE_SUB object_delete_sub;
 
-        if(object_data_from_hefo_block_and_object_position(&object_delete_sub.object_data, p_hefo_block, NULL))
+        if(object_data_from_hefo_block_and_object_position(&object_delete_sub.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
         {
             MARK_INFO mark_info;
 
             /* read current markers */
             CODE_ANALYSIS_ONLY(zero_struct(mark_info));
             p_hefo_block->p_data = &mark_info;
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
             if(!mark_info.h_markers)
             {
                 OBJECT_POSITION_SET object_position_set;
 
-                if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, NULL))
+                if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
                 {
                     object_position_set.action = t5_message == T5_CMD_DELETE_CHARACTER_LEFT
                                                         ? OBJECT_POSITION_SET_BACK
                                                         : OBJECT_POSITION_SET_FORWARD;
                     p_hefo_block->p_data = &object_position_set;
-                    status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+                    status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
                 }
 
                 if(t5_message == T5_CMD_DELETE_CHARACTER_LEFT)
@@ -3249,7 +3304,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
 
             object_delete_sub.save_data = 0;
             p_hefo_block->p_data = &object_delete_sub;
-            status = object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_DELETE_SUB, p_hefo_block);
+            status = object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_DELETE_SUB, p_hefo_block);
             hefo_caret_position_set_show(p_docu, p_hefo_block, FALSE);
         }
         break;
@@ -3269,7 +3324,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         /* read current markers */
         CODE_ANALYSIS_ONLY(zero_struct(mark_info));
         p_hefo_block->p_data = &mark_info;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
         if(mark_info.h_markers)
             docu_area = array_ptr(&mark_info.h_markers, MARKERS, 0)->docu_area;
@@ -3297,7 +3352,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         /* read current markers */
         CODE_ANALYSIS_ONLY(zero_struct(mark_info));
         p_hefo_block->p_data = &mark_info;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
         /* if there's a selection - redirect to normal STYLE_APPLY */
         if(mark_info.h_markers)
@@ -3390,7 +3445,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         /* read current markers */
         CODE_ANALYSIS_ONLY(zero_struct(mark_info));
         p_hefo_block->p_data = &mark_info;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
         object_set_case.object_data = p_hefo_block->object_data;
         object_set_case.do_redraw = TRUE;
@@ -3410,16 +3465,16 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
             {
                 object_position_set.action = OBJECT_POSITION_SET_FORWARD;
                 p_hefo_block->p_data = &object_position_set;
-                status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+                status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
                 p_docu->hefo_position.object_position = object_set_case.object_data.object_position_end
                                                       = object_position_set.object_data.object_position_start;
             }
         }
 
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_HIDE, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_HIDE, p_hefo_block));
         p_hefo_block->p_data = &object_set_case;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, t5_message, p_hefo_block));
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, t5_message, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_SELECTION_SHOW, p_hefo_block));
         hefo_caret_position_set_show(p_docu, p_hefo_block, FALSE);
         break;
         }
@@ -3432,7 +3487,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
         /* read current markers */
         CODE_ANALYSIS_ONLY(zero_struct(mark_info));
         p_hefo_block->p_data = &mark_info;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
         if(mark_info.h_markers)
         {
@@ -3445,7 +3500,7 @@ PROC_EVENT_PROTO(static, proc_event_hefo_common)
             object_word_count.object_data.object_position_end = p_docu_area->br.object_position;
             object_word_count.words_counted = 0;
             p_hefo_block->p_data = &object_word_count;
-            status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, t5_message, p_hefo_block));
+            status_consume(object_call_HEFO_with_hb(p_docu, t5_message, p_hefo_block));
 
             status_line_setf(p_docu, STATUS_LINE_LEVEL_AUTO_CLEAR, (object_word_count.words_counted == 1) ? MSG_STATUS_WORD_COUNTED : MSG_STATUS_WORDS_COUNTED, object_word_count.words_counted );
         }
@@ -3523,7 +3578,7 @@ hefo_block_from_page_num(
     object_how_big.object_data = p_hefo_block->object_data;
     object_how_big.skel_rect = p_hefo_block->skel_rect_object;
     p_hefo_block->p_data = &object_how_big;
-    status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_HOW_BIG, p_hefo_block));
+    status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_HOW_BIG, p_hefo_block));
     p_hefo_block->skel_rect_object.br.pixit_point.y = MIN(object_how_big.skel_rect.br.pixit_point.y,
                                                           p_hefo_block->skel_rect_work.br.pixit_point.y);
     } /*block*/
@@ -3543,7 +3598,7 @@ hefo_caret_position_set_show(
     caret_show_claim.focus = p_hefo_block->event_focus;
     caret_show_claim.scroll = scroll;
     p_hefo_block->p_data = &caret_show_claim;
-    status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_CARET_SHOW_CLAIM, p_hefo_block));
+    status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_CARET_SHOW_CLAIM, p_hefo_block));
 }
 
 /******************************************************************************
@@ -3598,7 +3653,7 @@ hefo_cursor_left(
 
     status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
 
-    if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, NULL))
+    if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
     {
         object_position_set.action =
             (OBJECT_ID_NONE != p_docu->hefo_position.object_position.object_id)
@@ -3608,7 +3663,7 @@ hefo_cursor_left(
                 : OBJECT_POSITION_SET_END;
 
         p_hefo_block->p_data = &object_position_set;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
         p_docu->hefo_position.object_position = object_position_set.object_data.object_position_start;
     }
 
@@ -3631,7 +3686,7 @@ hefo_cursor_right(
 
     status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
 
-    if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, NULL))
+    if(object_data_from_hefo_block_and_object_position(&object_position_set.object_data, p_hefo_block, P_OBJECT_POSITION_NONE))
     {
         object_position_set.action =
             (OBJECT_ID_NONE != p_docu->hefo_position.object_position.object_id)
@@ -3641,7 +3696,7 @@ hefo_cursor_right(
                  : OBJECT_POSITION_SET_START;
 
         p_hefo_block->p_data = &object_position_set;
-        status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
+        status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_SET, p_hefo_block));
         p_docu->hefo_position.object_position = object_position_set.object_data.object_position_start;
     }
 
@@ -3673,7 +3728,7 @@ hefo_logical_move(
         object_logical_move.action = action;
 
         p_hefo_block->p_data = &object_logical_move;
-        if(status_ok(status = object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_LOGICAL_MOVE, p_hefo_block)))
+        if(status_ok(status = object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_LOGICAL_MOVE, p_hefo_block)))
             *p_skel_point = object_logical_move.skel_point_out;
     }
 
@@ -3698,7 +3753,7 @@ hefo_selection_delete_auto(
     /* read current markers */
     CODE_ANALYSIS_ONLY(zero_struct(mark_info));
     p_hefo_block->p_data = &mark_info;
-    status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+    status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
     /* delete selection >>> should this be saved somewhere ?? */
     if(mark_info.h_markers)
@@ -3716,7 +3771,7 @@ hefo_selection_delete_auto(
             status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
 
             p_hefo_block->p_data = &object_delete_sub;
-            return(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_DELETE_SUB, p_hefo_block));
+            return(object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_DELETE_SUB, p_hefo_block));
         }
     }
 
@@ -3771,7 +3826,7 @@ position_set_from_skel_point_hefo(
         /* send message to object to get position */
         p_object_position_find->pos = *p_skel_point;
 
-        status = object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_OBJECT_POSITION_FROM_SKEL_POINT, p_hefo_block);
+        status = object_call_HEFO_with_hb(p_docu, T5_MSG_OBJECT_POSITION_FROM_SKEL_POINT, p_hefo_block);
     }
 
     return(status);
@@ -3804,7 +3859,7 @@ selection_style_hefo(
     /* read current markers */
     CODE_ANALYSIS_ONLY(zero_struct(mark_info));
     p_hefo_block->p_data = &mark_info;
-    status_consume(object_call_id(OBJECT_ID_HEFO, p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
+    status_consume(object_call_HEFO_with_hb(p_docu, T5_MSG_MARK_INFO_READ, p_hefo_block));
 
     if(mark_info.h_markers)
         docu_area = array_ptr(&mark_info.h_markers, MARKERS, 0)->docu_area;

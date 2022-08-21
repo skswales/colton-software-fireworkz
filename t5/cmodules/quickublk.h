@@ -194,7 +194,7 @@ quick_ublock_dispose(
 #if CHECKING_QUICK_UBLOCK
         /* trash handle on dispose when CHECKING_QUICK_UBLOCK */
         const U32 uchars_n = array_elements32(&quick_ublock_array_handle_ref(p_quick_ublock));
-        _do_uqb_fill(array_range(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARS, 0, uchars_n), uchars_n);
+        _do_uqb_fill(uchars_bptr(array_range(&quick_ublock_array_handle_ref(p_quick_ublock), UCHARB, 0, uchars_n)), uchars_n);
 #endif
         al_array_dispose(&quick_ublock_array_handle_ref(p_quick_ublock));
     }
@@ -223,7 +223,7 @@ quick_ublock_uchars(
 {
     if(0 != quick_ublock_array_handle_ref(p_quick_ublock))
     {
-        assert(array_handle_valid(&quick_ublock_array_handle_ref(p_quick_ublock)));
+        assert(array_handle_is_valid(&quick_ublock_array_handle_ref(p_quick_ublock)));
         return(array_basec_no_checks(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARS));
     }
 
@@ -238,7 +238,7 @@ quick_ublock_uchars_wr(
 {
     if(0 != quick_ublock_array_handle_ref(p_quick_ublock))
     {
-        assert(array_handle_valid(&quick_ublock_array_handle_ref(p_quick_ublock)));
+        assert(array_handle_is_valid(&quick_ublock_array_handle_ref(p_quick_ublock)));
         return(array_base_no_checks(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARS));
     }
 
@@ -290,7 +290,7 @@ quick_ublock_ustr(
 {
     if(0 != quick_ublock_array_handle_ref(p_quick_ublock))
     {
-        assert(array_handle_valid(&quick_ublock_array_handle_ref(p_quick_ublock)));
+        assert(array_handle_is_valid(&quick_ublock_array_handle_ref(p_quick_ublock)));
         return(array_basec_no_checks(&quick_ublock_array_handle_ref(p_quick_ublock), _UCHARZ));
     }
 

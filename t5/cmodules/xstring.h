@@ -44,7 +44,7 @@ _Ret_writes_bytes_maybenull_(entry_size)
 extern P_ANY
 _bfind(
     _In_reads_bytes_(entry_size) PC_ANY key,
-    _In_bytecount_x_(entry_size * n_entries) PC_ANY p_start,
+    _In_reads_bytes_x_(entry_size * n_entries) PC_ANY p_start,
     _InVal_     S32 n_entries,
     _InVal_     U32 entry_size,
     _InRef_     P_PROC_BSEARCH p_proc_bsearch,
@@ -56,15 +56,15 @@ _bfind(
 _Check_return_
 _Ret_writes_bytes_maybenull_(entry_size)
 extern P_ANY
-_lsearch(
+xlsearch(
     _In_reads_bytes_(entry_size) PC_ANY key,
-    _In_bytecount_x_(entry_size * n_entries) PC_ANY p_start,
+    _In_reads_bytes_x_(entry_size * n_entries) PC_ANY p_start,
     _InVal_     S32 n_entries,
     _InVal_     U32 entry_size,
     _InRef_     P_PROC_BSEARCH p_proc_bsearch);
 
 #define lsearch(key, p_start, n_entries, entry_size, __base_type, p_proc_bsearch) ( \
-    (__base_type *) _lsearch(key, p_start, n_entries, entry_size, p_proc_bsearch) )
+    (__base_type *) xlsearch(key, p_start, n_entries, entry_size, p_proc_bsearch) )
 
 extern void __cdecl /* declared as qsort replacement */
 check_sorted(
@@ -87,15 +87,9 @@ fast_strtoul(
     _In_z_      PC_U8Z p_u8_in, /* NB NOT USTR */
     _OutRef_opt_ P_P_U8Z endptr);
 
-_Check_return_
-extern U32
-fast_ustrtoul(
-    _In_z_      PC_USTR ustr_in,
-    _OutRef_opt_ P_PC_USTR endptr);
-
 extern void
 memrev32(
-    _Inout_bytecount_x_(n_elements * element_width) P_ANY p,
+    _Inout_updates_bytes_x_(n_elements * element_width) P_ANY p,
     _InVal_     U32 n_elements,
     _InVal_     U32 element_width);
 

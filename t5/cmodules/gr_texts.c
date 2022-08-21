@@ -27,7 +27,6 @@ gr_text_addin(
     _ChartRef_  P_GR_CHART cp)
 {
     struct GR_CHART_TEXT * text = &cp->text;
-    const P_GR_DIAG p_gr_diag = cp->core.p_gr_diag;
     GR_DIAG_OFFSET textsStart;
     P_GR_TEXT t;
     LIST_ITEMNO key;
@@ -66,10 +65,10 @@ gr_text_addin(
         else
             ustr = gutsp.ustr;
 
-        status_break(status = gr_diag_text_new(p_gr_diag, NULL, id, &t->box, ustr, &textstyle));
+        status_break(status = gr_chart_text_new(cp, id, &t->box, ustr, &textstyle));
     }
 
-    gr_diag_group_end(p_gr_diag, &textsStart);
+    gr_chart_group_end(cp, &textsStart);
 
     return(status);
 }
@@ -220,13 +219,13 @@ gr_text_new(
     }
     else
     {
-        t->box.x0 = ((S32) key * (S32) cp->text.style.base.height);
-        t->box.y0 = ((S32) key * (S32) cp->text.style.base.height * 12) / 10;
+        t->box.x0 = ((S32) key * cp->text.style.base.size_y);
+        t->box.y0 = ((S32) key * cp->text.style.base.size_y * 12) / 10;
         t->box.y0 = t->box.y0 % cp->core.layout.height;
         t->box.y0 = cp->core.layout.height - t->box.y0;
     }
     t->box.x1 = t->box.x0 + (szText ? (text_lenp1-1) : 1) * SYSCHARWIDTH_PIXIT;
-    t->box.y1 = t->box.y0 + (UBF_UNPACK(GR_PIXIT, cp->text.style.base.height) * 3) / 2;
+    t->box.y1 = t->box.y0 + (cp->text.style.base.size_y * 3) / 2;
 
     if(szText)
         /* set contents to desired string */

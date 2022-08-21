@@ -89,7 +89,6 @@ static CONSTRUCT_TABLE
 object_construct_table[] =
 {                                                                                                   /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 
-    { "MailshotField",          NULL,                       T5_CMD_INSERT_FIELD_INTRO_FIELD,            { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "MailshotSelect",         NULL,                       T5_CMD_MAILSHOT_SELECT,                     { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "MailshotPrint",          NULL,                       T5_CMD_MAILSHOT_PRINT,                      { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
 
@@ -117,7 +116,7 @@ enum MAILSHOT_FIELD_INSERT_IDS
 };
 
 static const DIALOG_CONTROL
-mailshot_field_insert_number_text =
+insert_mailshot_field_number_text =
 {
     MAILSHOT_FIELD_INSERT_ID_NUMBER_TEXT, DIALOG_MAIN_GROUP,
 
@@ -130,10 +129,10 @@ mailshot_field_insert_number_text =
 };
 
 static const DIALOG_CONTROL_DATA_STATICTEXT
-mailshot_field_insert_number_text_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_INSERT_FIELD_NUMBER) };
+insert_mailshot_field_number_text_data = { UI_TEXT_INIT_RESID(MAILSHOT_MSG_DIALOG_INSERT_FIELD_NUMBER) };
 
 static const DIALOG_CONTROL
-mailshot_field_insert_number =
+insert_mailshot_field_number =
 {
     MAILSHOT_FIELD_INSERT_ID_NUMBER, DIALOG_MAIN_GROUP,
 
@@ -145,36 +144,36 @@ mailshot_field_insert_number =
 };
 
 static const UI_CONTROL_S32
-mailshot_field_insert_number_control = { 1, 1000 };
+insert_mailshot_field_number_control = { 1, 1000 };
 
 static const DIALOG_CONTROL_DATA_BUMP_S32
-mailshot_field_insert_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &mailshot_field_insert_number_control } /* BUMP_XX */ };
+insert_mailshot_field_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &insert_mailshot_field_number_control } /* BUMP_XX */ };
 
 static S32
-mailshot_field_insert_number_data_state = 1;
+insert_mailshot_field_number_data_state = 1;
 
 static const ARG_TYPE
-mailshot_field_insert_ok_data_args[] = { ARG_TYPE_S32, ARG_TYPE_NONE };
+insert_mailshot_field_insert_data_args[] = { ARG_TYPE_S32, ARG_TYPE_NONE };
 
-static const DIALOG_CTL_ID
-mailshot_field_insert_ok_data_argmap[] = { MAILSHOT_FIELD_INSERT_ID_NUMBER };
+static const DIALOG_CONTROL_ID
+insert_mailshot_field_insert_data_argmap[] = { MAILSHOT_FIELD_INSERT_ID_NUMBER };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
-mailshot_field_insert_ok_command = { T5_CMD_FIELD_INS_MS_FIELD, OBJECT_ID_SKEL, mailshot_field_insert_ok_data_args, mailshot_field_insert_ok_data_argmap };
+insert_mailshot_field_insert_command = { T5_CMD_INSERT_FIELD_MS_FIELD, OBJECT_ID_SKEL, insert_mailshot_field_insert_data_args, insert_mailshot_field_insert_data_argmap };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-mailshot_field_insert_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &mailshot_field_insert_ok_command };
+insert_mailshot_field_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_INSERT), &insert_mailshot_field_insert_command };
 
 static const DIALOG_CTL_CREATE
-mailshot_field_insert_ctl_create[] =
+insert_mailshot_field_ctl_create[] =
 {
     { &dialog_main_group },
 
-    { &mailshot_field_insert_number_text, &mailshot_field_insert_number_text_data },
-    { &mailshot_field_insert_number,      &mailshot_field_insert_number_data },
+    { &insert_mailshot_field_number_text, &insert_mailshot_field_number_text_data },
+    { &insert_mailshot_field_number,      &insert_mailshot_field_number_data },
 
     { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &mailshot_field_insert_ok_data }
+    { &defbutton_ok, &insert_mailshot_field_insert_data }
 };
 
 /******************************************************************************
@@ -185,36 +184,36 @@ mailshot_field_insert_ctl_create[] =
 
 _Check_return_
 static STATUS
-dialog_mailshot_insert_field_intro_process_start(
+dialog_insert_mailshot_field_intro_process_start(
     _InRef_     PC_DIALOG_MSG_PROCESS_START p_dialog_msg_process_start)
 {
-    return(ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, MAILSHOT_FIELD_INSERT_ID_NUMBER, mailshot_field_insert_number_data_state));
+    return(ui_dlg_set_s32(p_dialog_msg_process_start->h_dialog, MAILSHOT_FIELD_INSERT_ID_NUMBER, insert_mailshot_field_number_data_state));
 }
 
 _Check_return_
 static STATUS
-dialog_mailshot_insert_field_intro_process_end(
+dialog_insert_mailshot_field_intro_process_end(
     _InRef_     PC_DIALOG_MSG_PROCESS_END p_dialog_msg_process_end)
 {
     if(status_ok(p_dialog_msg_process_end->completion_code))
     {
-        mailshot_field_insert_number_data_state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, MAILSHOT_FIELD_INSERT_ID_NUMBER);
+        insert_mailshot_field_number_data_state = ui_dlg_get_s32(p_dialog_msg_process_end->h_dialog, MAILSHOT_FIELD_INSERT_ID_NUMBER);
     }
 
     return(STATUS_OK);
 }
 
-PROC_DIALOG_EVENT_PROTO(static, dialog_event_mailshot_insert_field_intro)
+PROC_DIALOG_EVENT_PROTO(static, dialog_event_insert_mailshot_field_intro)
 {
     IGNOREPARM_DocuRef_(p_docu);
 
     switch(dialog_message)
     {
     case DIALOG_MSG_CODE_PROCESS_START:
-        return(dialog_mailshot_insert_field_intro_process_start((PC_DIALOG_MSG_PROCESS_START) p_data));
+        return(dialog_insert_mailshot_field_intro_process_start((PC_DIALOG_MSG_PROCESS_START) p_data));
 
     case DIALOG_MSG_CODE_PROCESS_END:
-        return(dialog_mailshot_insert_field_intro_process_end((PC_DIALOG_MSG_PROCESS_END) p_data));
+        return(dialog_insert_mailshot_field_intro_process_end((PC_DIALOG_MSG_PROCESS_END) p_data));
 
     default:
         return(STATUS_OK);
@@ -223,7 +222,7 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_mailshot_insert_field_intro)
 
 _Check_return_
 static STATUS
-mailshot_cmd_insert_field_intro_field(
+mailshot_cmd_insert_field_intro_ms_field(
     _DocuRef_   P_DOCU p_docu)
 {
     /* put up a dialog box and get the punter to choose something */
@@ -231,11 +230,11 @@ mailshot_cmd_insert_field_intro_field(
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
-    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, mailshot_field_insert_ctl_create, elemof32(mailshot_field_insert_ctl_create), MAILSHOT_MSG_DIALOG_INSERT_FIELD_HELP_TOPIC);
+    dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, insert_mailshot_field_ctl_create, elemof32(insert_mailshot_field_ctl_create), MAILSHOT_MSG_DIALOG_INSERT_FIELD_HELP_TOPIC);
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MAILSHOT_MSG_DIALOG_INSERT_FIELD_CAPTION;
-    dialog_cmd_process_dbox.p_proc_client = dialog_event_mailshot_insert_field_intro;
-    if((status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox)) == STATUS_FAIL)
+    dialog_cmd_process_dbox.p_proc_client = dialog_event_insert_mailshot_field_intro;
+    if((status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox)) == STATUS_FAIL)
         status = STATUS_OK;
     } /*block*/
 
@@ -704,7 +703,7 @@ mailshot_cmd_mailshot_select(
         if(docno == docno_dependent)
             continue;
 
-        p_docu_src = p_docu_from_docno(docno);
+        p_docu_src = p_docu_from_docno_valid(docno);
 
         if(n_cols_logical(p_docu_src) < 2)
             continue;
@@ -762,7 +761,7 @@ mailshot_cmd_mailshot_select(
         dialog_cmd_process_dbox.caption.text.resource_id = MAILSHOT_MSG_DIALOG_SELECT_CAPTION;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_mailshot_select;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &mailshot_select_callback;
-        status = call_dialog_with_docu(p_docu_dependent, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_dependent, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         } /*block*/
     }
 
@@ -878,7 +877,7 @@ mailshot_cmd_mailshot_print(
             {
                 mailshot_change(p_docu_from_docno(docno)); /* ensure reformatted before every print */
 
-                status_break(status = execute_command(object_id, p_docu_from_docno(docno), t5_message, &arglist_handle));
+                status_break(status = execute_command(p_docu_from_docno(docno), t5_message, &arglist_handle, object_id));
             }
         }
 
@@ -1038,8 +1037,8 @@ OBJECT_PROTO(extern, object_mailshot)
     case T5_MSG_READ_MAIL_TEXT:
         return(mailshot_msg_read_mail_text(p_docu, t5_message, (P_READ_MAIL_TEXT) p_data));
 
-    case T5_CMD_INSERT_FIELD_INTRO_FIELD:
-        return(mailshot_cmd_insert_field_intro_field(p_docu));
+    case T5_CMD_INSERT_FIELD_INTRO_MS_FIELD:
+        return(mailshot_cmd_insert_field_intro_ms_field(p_docu));
 
     case T5_CMD_MAILSHOT_SELECT:
         return(mailshot_cmd_mailshot_select(p_docu));

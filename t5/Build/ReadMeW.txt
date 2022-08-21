@@ -5,7 +5,7 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-Copyright (C) 2013-2015 Stuart Swales
+Copyright (C) 2013-2016 Stuart Swales
 
 Prerequisites
 -------------
@@ -13,6 +13,10 @@ Prerequisites
 A Windows SVN client (such as TortoiseSVN - minimal install with command line tools, no en_US dictionary, no additional iconsets will suffice).
 
 Microsoft Visual Studio 2013 or later (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options).
+
+I recommend setting:
+
+    Options - Text editor - C++ - Tabs - Insert Spaces
 
 GNU Win32 Patch (install with PackMan) to generate the patched BTTNCUR(P) source files.
 
@@ -45,10 +49,6 @@ Build\w32\Setup.cmd
 to copy and patch those files as needed.
 
 Double-click on Build\w32\firewrkz-vs2013.sln to load the solution and project files into Visual Studio.
-
-I recommend setting:
-
-Options - Text editor - C++ - Tabs - Insert Spaces
 
 Choose the variant to build (e.g. Debug or Release).
 

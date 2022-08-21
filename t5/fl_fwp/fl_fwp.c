@@ -102,7 +102,7 @@ T5_MSG_PROTO(static, fwp_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
                         {
                             LOAD_CELL_FOREIGN load_cell_foreign;
                             zero_struct(load_cell_foreign);
-                            status_consume(object_data_from_position(p_docu, &load_cell_foreign.object_data, &position, NULL));
+                            status_consume(object_data_from_position(p_docu, &load_cell_foreign.object_data, &position, P_OBJECT_POSITION_NONE));
                             load_cell_foreign.data_type = OWNFORM_DATA_TYPE_TEXT;
 
                             load_cell_foreign.ustr_inline_contents = quick_ublock_ustr_inline(&quick_ublock_para);

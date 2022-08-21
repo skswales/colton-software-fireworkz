@@ -2,9 +2,9 @@
 | License, v. 2.0. If a copy of the MPL was not distributed with this
 | file, You can obtain one at http://mozilla.org/MPL/2.0/.
 |
-| Copyright (C) 2013-2015 Stuart Swales
+| Copyright (C) 2013-2016 Stuart Swales
 |
-set COLTSOFT_CS_NONFREE $.coltsoft.trunk.cs-nonfree
+set COLTSOFT_CS_NONFREE <Obey$Dir>.^.^.^.^.coltsoft.trunk.cs-nonfree
 |
 IfThere <COLTSOFT_CS_NONFREE>.Microsoft Then Else Error 0 <COLTSOFT_CS_NONFREE> not present
 |

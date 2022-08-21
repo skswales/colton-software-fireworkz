@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 /* Excel spreadsheet BIFF saver */
 
@@ -3019,7 +3019,7 @@ biff3_worksheet_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B3_B4),
     XLS_REC_LENGTH(0x0C),
     XLS_REC_U16(0xC8), /* height of the font in twips. SHOULD be greater than or equal to 20 and less than or equal to 8191 */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value. MUST be greater than or equal to 0x0008 and less than or equal to 0x003F or 0x0051 or 0x7FFF */
     0x05, 0x41, 0x72, 0x69, 0x61, 0x6c, /* (5)Arial */
@@ -3028,7 +3028,7 @@ biff3_worksheet_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B3_B4),
     XLS_REC_LENGTH(0x0C),
     XLS_REC_U16(0xC8), /* height of the font in twips */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value */
     0x05, 0x41, 0x72, 0x69, 0x61, 0x6c, /* (5)Arial */
@@ -3037,7 +3037,7 @@ biff3_worksheet_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B3_B4),
     XLS_REC_LENGTH(0x0C),
     XLS_REC_U16(0xC8), /* height of the font in twips */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value */
     0x05, 0x41, 0x72, 0x69, 0x61, 0x6c, /* (5)Arial */
@@ -3046,7 +3046,7 @@ biff3_worksheet_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B3_B4),
     XLS_REC_LENGTH(0x0C),
     XLS_REC_U16(0xC8), /* height of the font in twips */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value */
     0x05, 0x41, 0x72, 0x69, 0x61, 0x6c /* (5)Arial */
@@ -4045,7 +4045,7 @@ biff5_workbook_globals_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B2_B5_B8),
     XLS_REC_LENGTH(0x14),
     XLS_REC_U16(0xC8), /* height of the font in twips. SHOULD be greater than or equal to 20 and less than or equal to 8191 */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value. MUST be greater than or equal to 0x0008 and less than or equal to 0x003F or 0x0051 or 0x7FFF */
     XLS_REC_U16(400), /* font weight. SHOULD be 400 (normal) or 700 (bold). MUST be 0, or greater than or equal to 100 and less than or equal to 1000 */
@@ -4060,7 +4060,7 @@ biff5_workbook_globals_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B2_B5_B8),
     XLS_REC_LENGTH(0x14),
     XLS_REC_U16(0xC8), /* height of the font in twips */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value */
     XLS_REC_U16(400), /* normal weight */
@@ -4075,7 +4075,7 @@ biff5_workbook_globals_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B2_B5_B8),
     XLS_REC_LENGTH(0x14),
     XLS_REC_U16(0xC8), /* height of the font in twips */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value */
     XLS_REC_U16(400), /* normal weight */
@@ -4090,7 +4090,7 @@ biff5_workbook_globals_FONT_records[] =
     XLS_REC_OPCODE(X_FONT_B2_B5_B8),
     XLS_REC_LENGTH(0x14),
     XLS_REC_U16(0xC8), /* height of the font in twips */
-    0x00, /* fItalic etc */
+    0x00, /* fItalic etc. */
     0, /* reserved */
     XLS_REC_U16(0x7FFF), /* IcvFont value */
     XLS_REC_U16(400), /* normal weight */

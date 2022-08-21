@@ -17,7 +17,7 @@
 #include "ob_skel/xp_skelr.h"
 #endif
 
-int
+BOOL
 g_has_colour_picker = TRUE;
 
 /*
@@ -104,18 +104,15 @@ extern STATUS
 startup_t5_application_1(void)
 {
 #if RISCOS
-#if 1
     {
     _kernel_swi_regs rs;
     rs.r[1] = (int) "ColourPicker_OpenDialogue" /*0x47702*/;
     if(NULL != _kernel_swi(0x39 /*OS_SWINumberFromString*/, &rs, &rs))
         g_has_colour_picker = FALSE;
     } /*block*/
-#else
-    g_has_colour_picker = FALSE;
-#endif
 #endif /* RISCOS */
 
+    host_key_cache_init();
     sk_alpha_startup();
     sk_docno_startup();
 

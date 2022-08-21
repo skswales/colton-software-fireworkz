@@ -12,7 +12,7 @@
 # By the way, you may need set the wimpslot in !Amu.Desc to at 2760k or so ...
 
 # NB Substitute URD location as necessary
-URD=$.fireworkz.fireworkz__2_00__branch
+URD=$.fireworkz.trunk
 
 # Only Fireworkz Pro builders need to worry about this one
 CSNF=$.coltsoft.trunk.cs-nonfree
@@ -25,6 +25,7 @@ INC_RAM=
 SED=$._coltsoft.Library.gnu-sed
 
 all: \
+d32.firewrkz.Makefile \
 r32b.fprowrkz.Makefile \
 r32b.firewrkz.Makefile \
 Tools.ImageSlot.ImageSlot \
@@ -80,9 +81,9 @@ MF_FILES_Z1=\
 ^.ob_recn.recn+mkr
 
 MF_FILES_Z2=\
-^.^.fprowrkz.ob_recb.recb+mkr \
 ^.fs_xls.fs_xls+mkr \
-^.ob_rec.rec+mkr
+^.^.fprowrkz.ob_recb.recb+mkr \
+^.^.fprowrkz.ob_rec.rec+mkr
 
 INC_2_FIREWRKZ=
 

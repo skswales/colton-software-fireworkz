@@ -154,12 +154,12 @@ object_construct_table[] =
     { "MakeText",               NULL,                       T5_CMD_SS_MAKE_TEXT,                        { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1 } },
     { "MakeNumber",             NULL,                       T5_CMD_SS_MAKE_NUMBER,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1 } },
     { "AutoSum",                NULL,                       T5_CMD_AUTO_SUM,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
-    { "SS_Plus",                NULL,                       T5_CMD_SS_PLUS,                             { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
-    { "SS_Minus",               NULL,                       T5_CMD_SS_MINUS,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
-    { "SS_Times",               NULL,                       T5_CMD_SS_TIMES,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
-    { "SS_Divide",              NULL,                       T5_CMD_SS_DIVIDE,                           { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
+    { "InsertOperatorPlus",     NULL,                       T5_CMD_INSERT_OPERATOR_PLUS,                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
+    { "InsertOperatorMinus",    NULL,                       T5_CMD_INSERT_OPERATOR_MINUS,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
+    { "InsertOperatorTimes",    NULL,                       T5_CMD_INSERT_OPERATOR_TIMES,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
+    { "InsertOperatorDivide",   NULL,                       T5_CMD_INSERT_OPERATOR_DIVIDE,              { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 } },
     { "Functions",              ss_args_s32,                T5_CMD_SS_FUNCTIONS,                        { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
-    { "ActivateMenuFunc",       NULL,                       T5_CMD_ACTIVATE_MENU_FUNC,                  { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
+    { "ActivateMenuFunc",       NULL,                       T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR,     { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "NameIntro",              ss_args_s32,                T5_CMD_SS_NAME_INTRO,                       { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
     { "Name",                   ss_args_name,               T5_CMD_SS_NAME,                             { 0, 0, 0, 0, 0, 0, 0, 1, 0 } },
 
@@ -310,6 +310,8 @@ ss_func_table[] =
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DOLLAR,            c_dollar),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_DOUBLECLICK,       c_doubleclick),
 
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_EDATE,             c_edate),
+    SS_FUNC_TABLE_ENTRY(SS_SPLIT_EOMONTH,           c_eomonth),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ERF,               c_erf),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_ERFC,              c_erfc),
     SS_FUNC_TABLE_ENTRY(SS_SPLIT_EVEN,              c_even),
@@ -804,8 +806,6 @@ ob_ss_msg_save(
 
 MAEVE_EVENT_PROTO(static, maeve_event_ob_ss)
 {
-    const STATUS status = STATUS_OK;
-
     IGNOREPARM_InRef_(p_maeve_block);
 
     switch(t5_message)
@@ -818,24 +818,25 @@ MAEVE_EVENT_PROTO(static, maeve_event_ob_ss)
     case T5_MSG_RECALCED:
         status_assert(ss_formula_reflect_contents(p_docu));
         ss_show_error(p_docu, &p_docu->cur.slr);
-        break;
+        return(STATUS_OK);
 
     case T5_MSG_SUPPORTER_LOADED:
         ev_todo_add_doc_dependents(ev_docno_from_p_docu(p_docu));
-        break;
+        return(STATUS_OK);
 
     case T5_MSG_NAME_UREF:
         ev_field_names_check((P_NAME_UREF) p_data);
-        break;
+        return(STATUS_OK);
 
     case T5_MSG_SAVE:
         return(ob_ss_msg_save(p_docu, (PC_MSG_SAVE) p_data));
 
     case T5_MSG_CUR_CHANGE_AFTER:
         return(ss_formula_reflect_contents(p_docu));
-    }
 
-    return(status);
+    default:
+        return(STATUS_OK);
+    }
 }
 
 /******************************************************************************
@@ -879,6 +880,9 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_ss)
 
         break;
         }
+
+    default:
+        break;
     }
 
     if(status_ok(status))
@@ -925,12 +929,15 @@ ss_functions_list =
     { DRT(LTLT, LIST_TEXT), 1 }
 };
 
+static const DIALOG_CONTROL_DATA_PUSHBUTTON
+ss_functions_insert_data = { { DIALOG_COMPLETION_OK }, UI_TEXT_INIT_RESID(MSG_INSERT) };
+
 static const DIALOG_CTL_CREATE
 ss_functions_ctl_create[] =
 {
     { &dialog_main_group },
     { &stdbutton_cancel, &stdbutton_cancel_data },
-    { &defbutton_ok, &defbutton_ok_data },
+    { &defbutton_ok, &ss_functions_insert_data },
 
     { &ss_functions_list, &stdlisttext_data }
 };
@@ -991,7 +998,7 @@ dialog_ss_functions_ctl_state_change(
         {
         status_line_clear(p_docu, STATUS_LINE_LEVEL_FUNCTION_SELECTOR);
         p_function_list_state->selected_item = p_dialog_msg_ctl_state_change->new_state.list_text.itemno;
-        if(array_index_valid(&p_function_list_state->list_handle, p_function_list_state->selected_item))
+        if(array_index_is_valid(&p_function_list_state->list_handle, p_function_list_state->selected_item))
         {
             P_FUNCTION_LIST_ENTRY p_function_list_entry = array_ptr_no_checks(&p_function_list_state->list_handle, FUNCTION_LIST_ENTRY, p_function_list_state->selected_item);
             QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("some...space...for...a...status...message"));
@@ -1182,7 +1189,8 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
         /* SKS 09jun93 - 'some functions' list is now read in from config file */
         if(category == -1)
         {
-            PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_from_config()->numforms;
+            const PC_DOCU p_docu_config = p_docu_from_config();
+            const PC_ARRAY_HANDLE p_ui_numform_handle = &p_docu_config->numforms;
             PC_USTR ustr_function_name = NULL;
             const ARRAY_INDEX n_elements = array_elements(p_ui_numform_handle);
 
@@ -1295,7 +1303,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
         dialog_cmd_process_dbox.caption.text.resource_id = caption_resource_id;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_ss_functions;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &function_list_state;
-        status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         } /*block*/
 
         if(function_list_state.status_line_changed)
@@ -1305,7 +1313,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_functions)
             status = STATUS_OK;
         else if(status_ok(status))
         {
-            if(array_index_valid(&function_list_state.list_handle, function_list_state.selected_item))
+            if(array_index_is_valid(&function_list_state.list_handle, function_list_state.selected_item))
             {
                 /* selected function to use NB. UI list unsorted so maps directly onto field list index */
                 p_function_list_entry = array_ptr_no_checks(&function_list_state.list_handle, FUNCTION_LIST_ENTRY, function_list_state.selected_item);
@@ -2000,7 +2008,7 @@ T5_MSG_PROTO(static, ss_msg_ss_alert_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
     dialog_cmd_process_dbox.p_proc_client = dialog_event_alert;
     if(NULL == p_ss_input_exec->p_ev_string_but_2)
         dialog_cmd_process_dbox.n_ctls -= 1;
-    status = call_dialog_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     h_alert_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
     } /*block*/
 
@@ -2123,7 +2131,7 @@ T5_MSG_PROTO(static, ss_msg_ss_input_exec, _InoutRef_ P_SS_INPUT_EXEC p_ss_input
     dialog_cmd_process_dbox.p_proc_client = dialog_event_input;
     if(NULL == p_ss_input_exec->p_ev_string_but_2)
         dialog_cmd_process_dbox.n_ctls -= 1;
-    status = call_dialog_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu_from_ev_docno(p_ss_input_exec->ev_docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     h_input_dialog = dialog_cmd_process_dbox.modeless_h_dialog;
     } /*block*/
 
@@ -2166,7 +2174,7 @@ static void
 ss_choice_process(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     T5_MESSAGE t5_message)
 {
     const OBJECT_ID object_id = OBJECT_ID_SS;
@@ -2176,8 +2184,8 @@ ss_choice_process(
     if(status_ok(arglist_prepare_with_construct(&arglist_handle, object_id, t5_message, &p_construct_table)))
     {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
-        p_args[0].val.fBool = ui_dlg_get_check(h_dialog, control_id);
-        status_consume(execute_command_reperr(object_id, p_docu, t5_message, &arglist_handle));
+        p_args[0].val.fBool = ui_dlg_get_check(h_dialog, dialog_control_id);
+        status_consume(execute_command_reperr(p_docu, t5_message, &arglist_handle, object_id));
         arglist_dispose(&arglist_handle);
     }
 }
@@ -2224,23 +2232,23 @@ ss_text_paste_to_editing_line(
     return(object_call_id(OBJECT_ID_SLE, p_docu, t5_message, &t5_paste_editline));
 }
 
-T5_CMD_PROTO(static, t5_cmd_ss_trivial_functions)
+T5_CMD_PROTO(static, ss_cmd_insert_operator)
 {
     IGNOREPARM_InRef_(p_t5_cmd);
 
     switch(t5_message)
     {
     default: default_unhandled();
-    case T5_CMD_SS_PLUS:
+    case T5_CMD_INSERT_OPERATOR_PLUS:
         return(ss_text_paste_to_editing_line(p_docu, USTR_TEXT("+")));
 
-    case T5_CMD_SS_MINUS:
+    case T5_CMD_INSERT_OPERATOR_MINUS:
         return(ss_text_paste_to_editing_line(p_docu, USTR_TEXT("-")));
 
-    case T5_CMD_SS_TIMES:
+    case T5_CMD_INSERT_OPERATOR_TIMES:
         return(ss_text_paste_to_editing_line(p_docu, USTR_TEXT("*")));
 
-    case T5_CMD_SS_DIVIDE:
+    case T5_CMD_INSERT_OPERATOR_DIVIDE:
         return(ss_text_paste_to_editing_line(p_docu, USTR_TEXT("/")));
     }
 }
@@ -2293,7 +2301,7 @@ T5_CMD_PROTO(static, ss_cmd_force_recalc)
         DOCNO docno = DOCNO_NONE;
 
         while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
-            ss_cmd_force_recalc_for(p_docu_from_docno(docno), SCAN_WHOLE);
+            ss_cmd_force_recalc_for(p_docu_from_docno_valid(docno), SCAN_WHOLE);
     }
     else
         ss_cmd_force_recalc_for(p_docu, p_docu->mark_info_cells.h_markers ? SCAN_MARKERS : SCAN_WHOLE);
@@ -2601,7 +2609,7 @@ ss_object_from_text(
         compiler_output.ev_data = ev_data_autoformat;
         compiler_output.ev_parms.data_only = 1;
         compiler_output.ev_parms.did_num = compiler_output.ev_data.did_num;
-        compiler_output.ev_parms.style_handle_mrofmun = (UBF) style_handle_autoformat;
+        compiler_output.ev_parms.style_handle_mrofmun = UBF_PACK(style_handle_autoformat);
         status = STATUS_DONE;
         trace_1(TRACE_APP_SKEL,
                 TEXT("mrofmun found style: %s"),
@@ -2634,7 +2642,7 @@ ss_object_from_text(
             if(0 != style_handle)
             {
                 assert((U32) style_handle < 256);
-                compiler_output.ev_parms.style_handle_mrofmun = (UBF) style_handle;
+                compiler_output.ev_parms.style_handle_mrofmun = UBF_PACK(style_handle);
             }
         }
 
@@ -2864,10 +2872,14 @@ ss_msg_startup(void)
 
 #if WINDOWS
     {
-    static const RESOURCE_BITMAP_ID id_common_btn_16x15 = { OBJECT_ID_SS, SS_ID_BM_COM_BTN_ID + 0 }; /* 96 dpi buttons */
-    static const RESOURCE_BITMAP_ID id_common_btn_24x22 = { OBJECT_ID_SS, SS_ID_BM_COM_BTN_ID + 1 }; /* 120 dpi buttons */
-    status_assert(resource_bitmap_tool_size_register(&id_common_btn_16x15, 16, 15));
-    status_assert(resource_bitmap_tool_size_register(&id_common_btn_24x22, 24, 22));
+    static const RESOURCE_BITMAP_ID ss_toolbar_common_btn_16x16_4bpp  = { OBJECT_ID_SS, SS_ID_BM_TOOLBAR_COM_BTN_ID + 0 }; /* 96 dpi buttons, 4 bpp */
+    static const RESOURCE_BITMAP_ID ss_toolbar_common_btn_24x24_4bpp  = { OBJECT_ID_SS, SS_ID_BM_TOOLBAR_COM_BTN_ID + 1 }; /* 120 dpi buttons, 4 bpp */
+    static const RESOURCE_BITMAP_ID ss_toolbar_common_btn_16x16_32bpp = { OBJECT_ID_SS, SS_ID_BM_TOOLBAR_COM_BTN_ID + 2 }; /* 96 dpi buttons, 32 bpp */
+    static const RESOURCE_BITMAP_ID ss_toolbar_common_btn_24x24_32bpp = { OBJECT_ID_SS, SS_ID_BM_TOOLBAR_COM_BTN_ID + 3 }; /* 120 dpi buttons, 32 bpp */
+    status_assert(resource_bitmap_tool_size_register(&ss_toolbar_common_btn_16x16_4bpp,  16, 16));
+    status_assert(resource_bitmap_tool_size_register(&ss_toolbar_common_btn_24x24_4bpp,  24, 24));
+    status_assert(resource_bitmap_tool_size_register(&ss_toolbar_common_btn_16x16_32bpp, 16, 16));
+    status_assert(resource_bitmap_tool_size_register(&ss_toolbar_common_btn_24x24_32bpp, 24, 24));
     } /*block*/
 #endif
 
@@ -3317,7 +3329,7 @@ formula_load_furtle_ext_ref(
 {
     STATUS status = STATUS_OK;
     PC_USTR ustr = *p_ustr; /* contents, past the opening [ */
-    PC_USTR ustr_right = strchr(ustr, CH_RIGHT_SQUARE_BRACKET);
+    PC_USTR ustr_right = ustrchr(ustr, CH_RIGHT_SQUARE_BRACKET);
     PC_USTR ustr_match;
     U32 n_chars;
 
@@ -3393,7 +3405,7 @@ formula_load_sort_out_ext_refs(
             break;
         }
 
-        ++ustr;
+        ustr_IncByte(ustr);
 
         if(CH_QUOTATION_MARK == u8)
         {   /* consume the string contents so we don't find ext. refs. in there */
@@ -3404,14 +3416,14 @@ formula_load_sort_out_ext_refs(
                 if(CH_NULL == u8)
                     break; /* string ended - badly terminated */
 
-                ++ustr;
+                ustr_IncByte(ustr);
 
                 if(CH_QUOTATION_MARK == u8)
                 {
                     if(CH_QUOTATION_MARK != PtrGetByteOff(ustr, 1))
                         break; /* string ended normally */
 
-                    ++ustr; /* two quotation marks */
+                    ustr_IncByte(ustr); /* two quotation marks */
                 }
             }
 
@@ -3472,7 +3484,7 @@ T5_MSG_PROTO(static, ss_msg_load_cell_ownform, _InoutRef_ P_LOAD_CELL_OWNFORM p_
         }
         /* --- */
 
-        if((NULL != ustr_formula) && (NULL != strchr(ustr_formula, CH_LEFT_SQUARE_BRACKET))) /* most don't have ext. refs. */
+        if((NULL != ustr_formula) && (NULL != ustrchr(ustr_formula, CH_LEFT_SQUARE_BRACKET))) /* most don't have ext. refs. */
         {
             if(status_fail(status = formula_load_sort_out_ext_refs(&quick_ublock_formula, ustr_formula)))
             {
@@ -3839,7 +3851,7 @@ T5_CMD_PROTO(static, t5_cmd_ss_make_tn)
     {
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
         p_args[0].val.object_id = object_id;
-        status = execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_OBJECT_CONVERT, &arglist_handle);
+        status = execute_command(p_docu, T5_CMD_OBJECT_CONVERT, &arglist_handle, OBJECT_ID_SKEL);
         arglist_dispose(&arglist_handle);
     }
 
@@ -4182,6 +4194,7 @@ T5_MSG_PROTO(static, ss_msg_object_snapshot, _InRef_ P_OBJECT_SNAPSHOT p_object_
 T5_CMD_PROTO(static, t5_cmd_ss_name)
 {
     STATUS status = STATUS_OK;
+    const P_OF_IP_FORMAT p_of_ip_format = p_t5_cmd->p_of_ip_format;
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 3);
     PC_USTR ustr_name_id = p_args[0].val.ustr;
     PC_USTR ustr_name_def = p_args[1].val.ustr;
@@ -4190,10 +4203,10 @@ T5_CMD_PROTO(static, t5_cmd_ss_name)
 
     IGNOREPARM_InVal_(t5_message);
 
-    PTR_ASSERT(p_t5_cmd->p_of_ip_format);
+    PTR_ASSERT(p_of_ip_format);
 
-    if( !p_t5_cmd->p_of_ip_format->flags.insert ||
-        (p_t5_cmd->p_of_ip_format->flags.is_template ||
+    if( !p_of_ip_format->flags.insert ||
+        (p_of_ip_format->flags.is_template ||
         (find_name_in_list(ev_docno, ustr_name_id) < 0) ) )
     {
         docu_modify(p_docu);
@@ -4347,13 +4360,13 @@ T5_MSG_PROTO(static, ss_msg_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_ch
     /* saves having ob_charb */
     choices_chart_update_auto_data.init_state           = (U8) !global_preferences.chart_update_manual;
 
-    choices_ss_group.relative_control_id[0] = p_choices_query_block->tr_id;
-    choices_ss_group.relative_control_id[1] = p_choices_query_block->tr_id;
+    choices_ss_group.relative_dialog_control_id[0] = p_choices_query_block->tr_dialog_control_id;
+    choices_ss_group.relative_dialog_control_id[1] = p_choices_query_block->tr_dialog_control_id;
 
-    p_choices_query_block->tr_id = CHOICES_SS_ID_GROUP;
-    p_choices_query_block->br_id = CHOICES_CHART_ID_GROUP;
+    p_choices_query_block->tr_dialog_control_id = CHOICES_SS_ID_GROUP;
+    p_choices_query_block->br_dialog_control_id = CHOICES_CHART_ID_GROUP;
 
-    return(al_array_add(&p_choices_query_block->ctl_create, DIALOG_CTL_CREATE, elemof32(choices_ss_ctl_create), NULL, choices_ss_ctl_create));
+    return(al_array_add(&p_choices_query_block->ctl_create, DIALOG_CTL_CREATE, elemof32(choices_ss_ctl_create), PC_ARRAY_INIT_BLOCK_NONE, choices_ss_ctl_create));
 }
 
 T5_MSG_PROTO(static, ss_msg_choices_set, _InRef_ P_CHOICES_SET_BLOCK p_choices_set_block)
@@ -4509,17 +4522,17 @@ T5_CMD_PROTO(static, object_ss_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SETC_INICAP):
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SETC_SWAP):
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_DATE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_FILE_DATE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_PAGE_X):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_PAGE_Y):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_SS_NAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_MS_FIELD):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_WHOLENAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_LEAFNAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_RETURN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_SOFT_HYPHEN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_TAB):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_FILE_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_X):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_Y):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SS_NAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_MS_FIELD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_WHOLENAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_LEAFNAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_RETURN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SOFT_HYPHEN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_TAB):
         return(STATUS_FAIL);
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_MAKE_TEXT):
@@ -4535,11 +4548,11 @@ T5_CMD_PROTO(static, object_ss_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_AUTO_SUM):
         return(t5_cmd_auto_sum(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_PLUS):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_MINUS):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_TIMES):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_DIVIDE):
-        return(t5_cmd_ss_trivial_functions(p_docu, t5_message, p_t5_cmd));
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_OPERATOR_PLUS):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_OPERATOR_MINUS):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_OPERATOR_TIMES):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_OPERATOR_DIVIDE):
+        return(ss_cmd_insert_operator(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_SS_FUNCTIONS):
         return(t5_cmd_ss_functions(p_docu, t5_message, p_t5_cmd));
@@ -4577,7 +4590,7 @@ T5_CMD_PROTO(static, object_ss_cmd)
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_CHOICES_CHART_UPDATE_AUTO):
         return(ss_choices_chart_update_auto(p_docu, t5_message, p_t5_cmd));
 
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_FUNC):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR):
         return(t5_cmd_activate_menu(p_docu, t5_message));
 
 #if CHECKING

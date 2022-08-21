@@ -70,6 +70,16 @@ typedef struct TEXT_MESSAGE_BLOCK
 }
 TEXT_MESSAGE_BLOCK, * P_TEXT_MESSAGE_BLOCK;
 
+_Check_return_
+static inline STATUS
+object_call_STORY_with_tmb(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_TEXT_MESSAGE_BLOCK p_text_message_block)
+{
+    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, p_text_message_block));
+}
+
 /*
 structure for saving redisplay info
 */
@@ -90,7 +100,7 @@ structure for redisplay messages
 
 typedef struct TEXT_INLINE_REDISPLAY
 {
-    PC_QUICK_UBLOCK p_quick_ublock;     /* may be NULL */
+    PC_QUICK_UBLOCK p_quick_ublock;     /* may be P_QUICK_UBLOCK_NONE */
     SKEL_RECT skel_rect_para_after;
     REDRAW_TAG redraw_tag;              /* redraw tag for this data */
     BOOL do_redraw;                     /* -in- */

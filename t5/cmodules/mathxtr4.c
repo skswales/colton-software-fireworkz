@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 /* Additional math routines */
 
@@ -114,7 +114,7 @@ mx_incomplete_beta_continued_fraction(
 
     /* do the first step (d0==1) */
     a = 1.0;
-    //reportf("ibcf:d%d %+f",0,a);
+    //reportf(TEXT("ibcf:d%d %+f"),0,a);
 
     Dn = b + a * Dn/*n-1*/;
     En = b + a / En/*n-1*/;
@@ -125,7 +125,7 @@ mx_incomplete_beta_continued_fraction(
     Dn = 1.0 / Dn;
     Hn = En * Dn;
     Cn = Cn/*n-1*/ * Hn;
-    //reportf("ibcf:C%d %+f",0,Cn);
+    //reportf(TEXT("ibcf:C%d %+f"),0,Cn);
 
     for(n = 0; n < 100; ++n)
     {
@@ -133,7 +133,7 @@ mx_incomplete_beta_continued_fraction(
 
         /* do the odd step (d2n+1) */
         a = incomplete_beta_cf_d_odd(x, alpha, beta, n);
-        //reportf("ibcf:d%d %+f",2*n+1,a);
+        //reportf(TEXT("ibcf:d%d %+f"),2*n+1,a);
 
         Dn = b + a * Dn/*n-1*/;
         En = b + a / En/*n-1*/;
@@ -144,7 +144,7 @@ mx_incomplete_beta_continued_fraction(
         Dn = 1.0 / Dn;
         Hn = En * Dn;
         Cn = Cn/*n-1*/ * Hn;
-        //reportf("ibcf:C%d %+f",2*n+1,Cn);
+        //reportf(TEXT("ibcf:C%d %+f"),2*n+1,Cn);
 
         /* close enough? */
         delta_n = fabs(Hn - 1.0);
@@ -153,7 +153,7 @@ mx_incomplete_beta_continued_fraction(
 
         /* do the even step (d2n+2) */
         a = incomplete_beta_cf_d_even(x, alpha, beta, n);
-        //reportf("ibcf:d%d %+f",2*n+2,a);
+        //reportf(TEXT("ibcf:d%d %+f"),2*n+2,a);
 
         Dn = b + a * Dn/*n-1*/;
         En = b + a / En/*n-1*/;
@@ -164,7 +164,7 @@ mx_incomplete_beta_continued_fraction(
         Dn = 1.0 / Dn;
         Hn = En * Dn;
         Cn = Cn/*n-1*/ * Hn;
-        //reportf("ibcf:C%d %+f",2*n+1,Cn);
+        //reportf(TEXT("ibcf:C%d %+f"),2*n+1,Cn);
 
         /* close enough? */
         delta_n = fabs(Hn - 1.0);
@@ -172,7 +172,7 @@ mx_incomplete_beta_continued_fraction(
             break;
     }
 
-    //reportf("ibcf:res %+f after %d",Cn,n);
+    //reportf(TEXT("ibcf:res %+f after %d"),Cn,n);
     return(Cn);
 }
 
@@ -292,9 +292,9 @@ mx_P_gamma(
         const F64 Q_denominator = tgamma(s);
         const F64 Q = (Q_numerator / Q_denominator);
         const F64 P_Gu = 1.0 - Q;
-        //reportf("P_gamma(s=%f,x=%f): result=%f (result=%f (CF))", s, x, P, P_Gu);
+        //reportf(TEXT("P_gamma(s=%f,x=%f): result=%f (result=%f (CF))"), s, x, P, P_Gu);
 #else
-        //reportf("P_gamma(s=%f,x=%f): result=%f", s, x, P);
+        //reportf(TEXT("P_gamma(s=%f,x=%f): result=%f"), s, x, P);
 #endif
 
         return(P);
@@ -305,7 +305,7 @@ mx_P_gamma(
         const F64 Q_denominator = tgamma(s);
         const F64 Q = (Q_numerator / Q_denominator);
         const F64 P = 1.0 - Q;
-        //reportf("P_gamma(s=%f,x=%f): result=%f (CF)", s, x, P);
+        //reportf(TEXT("P_gamma(s=%f,x=%f): result=%f (CF)"), s, x, P);
 
         return(P);
     }
@@ -393,7 +393,7 @@ mx_y_gamma(
 
     y_gamma_result = common_product_term * sum;
 
-    //reportf("mx_y_gamma(s=%f,x=%f): result=%f after k=%d", s, x, y_gamma_result, k);
+    //reportf(TEXT("mx_y_gamma(s=%f,x=%f): result=%f after k=%d"), s, x, y_gamma_result, k);
     return(y_gamma_result);
 }
 
@@ -444,7 +444,7 @@ mx_incomplete_Gu_continued_fraction(
 
     /* do the first step (alp.0==1) */
     a = 1.0;
-    //reportf("iGucf:alp.%d %+f",0,a);
+    //reportf(TEXT("iGucf:alp.%d %+f"),0,a);
 
     Dn = b + a * Dn/*n-1*/;
     En = b + a / En/*n-1*/;
@@ -455,14 +455,14 @@ mx_incomplete_Gu_continued_fraction(
     Dn = 1.0 / Dn;
     Hn = En * Dn;
     Cn = Cn/*n-1*/ * Hn;
-    //reportf("iGucf:C%d %+f",0,Cn);
+    //reportf(TEXT("iGucf:C%d %+f"),0,Cn);
 
     for(n = 1; n < 100; ++n)
     {
         /* NB all bn are 1 */
 
         a = incomplete_Gu_cf_alpha_n(x, s, n); /* get alp.n */
-        //reportf("iGucf:alp.%d %+f",n,a);
+        //reportf(TEXT("iGucf:alp.%d %+f"),n,a);
 
         Dn = b + a * Dn/*n-1*/;
         En = b + a / En/*n-1*/;
@@ -473,7 +473,7 @@ mx_incomplete_Gu_continued_fraction(
         Dn = 1.0 / Dn;
         Hn = En * Dn;
         Cn = Cn/*n-1*/ * Hn;
-        //reportf("iGucf:C%d %+f",n,Cn);
+        //reportf(TEXT("iGucf:C%d %+f"),n,Cn);
 
         /* close enough? */
         delta_n = fabs(Hn - 1.0);
@@ -481,7 +481,7 @@ mx_incomplete_Gu_continued_fraction(
             break;
     }
 
-    //reportf("iGucf:res %+f after %d",Cn,n);
+    //reportf(TEXT("iGucf:res %+f after %d"),Cn,n);
     return(Cn);
 }
 
@@ -499,7 +499,7 @@ mx_Gu_gamma(
     const F64 continued_fraction_term = mx_incomplete_Gu_continued_fraction(s, x);
     F64 Gu_gamma_result = common_term * continued_fraction_term;
 
-    //reportf("mx_Gu_gamma(s=%f,x=%f): result=%f", s, x, Gu_gamma_result);
+    //reportf(TEXT("mx_Gu_gamma(s=%f,x=%f): result=%f"), s, x, Gu_gamma_result);
     return(Gu_gamma_result);
 }
 

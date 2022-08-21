@@ -227,7 +227,7 @@ wm_event_get(
     peek = (fgNullEventsWanted || bgScheduledEventsWanted || bgNullEventsWanted || bgNullTestWanted);
 
     {
-    /* note that other parts of RISC_OSLib etc may be trying
+    /* note that other parts of RISC_OSLib etc. may be trying
      * to enable nulls independently using event/win so take care
     */
     int poll_mask = Wimp_Poll_NullMask;
@@ -407,10 +407,10 @@ general_message_SaveDesktop(
     TCHARZ user_path[BUF_MAX_PATHSTRING];
     PTSTR p_user_path = user_path;
 
-    if(NULL != _kernel_getenv(make_var_name(var_name, "$Dir"), main_app, elemof32(main_app)))
+    if(NULL != _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$Dir"), main_app, elemof32(main_app)))
         main_app[0] = CH_NULL;
 
-    if(NULL != _kernel_getenv(make_var_name(var_name, "$UserPath"), user_path, elemof32(user_path)))
+    if(NULL != _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$UserPath"), user_path, elemof32(user_path)))
         user_path[0] = CH_NULL;
 
     /* Ignore PRM guideline about caching vars at startup; final seen one is most relevant */
@@ -539,7 +539,7 @@ claim_broadcast_foreign_file_as(
     if(NULL != strstr(var_value, "!Fireworkz.!Run"))
         claim = TRUE;
 
-    reportf("%s : %s - claim=%s", var_name, var_value, report_boolstring(claim));
+    reportf(TEXT("%s : %s - claim=%s"), var_name, var_value, report_boolstring(claim));
 
     if(claim)
         return(t5_filetype);
@@ -553,15 +553,17 @@ claim_broadcast_foreign_file_as(
         {
         T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename)); /* thing/ext? */
 
-        if(FILETYPE_UNDETERMINED == t_t5_filetype)
-            return(FILETYPE_UNDETERMINED);
+        if((FILETYPE_UNDETERMINED != t_t5_filetype) && (t5_filetype != t_t5_filetype)) /* don't recurse if same! */
+            return(claim_broadcast_foreign_file_as(t_t5_filetype, filename));
 
-        return(claim_broadcast_foreign_file_as(t_t5_filetype, filename));
+        break;
         }
 
     default:
-        return(FILETYPE_UNDETERMINED);
+        break;
     }
+
+    return(FILETYPE_UNDETERMINED);
 }
 
 static BOOL
@@ -570,7 +572,7 @@ g_host_xfer_loading_via_scrap_file = FALSE;
 static
 struct HOST_XFER_LOAD_STATICS
 {
-    U8Z scrap_name_buffer[32]; /* needed to delete it on done() */
+    TCHARZ scrap_name_buffer[BUF_MAX_PATHSTRING]; /* needed to delete it on done() */
 
     /* obtained from the Window Manager */
     int scrap_my_ref;
@@ -615,7 +617,7 @@ static void
 general_message_DataOpen(
     _In_        const WimpMessage * const p_wimp_message)
 {
-    /* File double-clicked in dirviewer */
+    /* File double-clicked in directory display */
     PCTSTR filename = p_wimp_message->data.data_load.leaf_name;
     T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
 
@@ -654,19 +656,19 @@ general_message_DataOpen(
     case FILETYPE_T5_WORDZ:
     case FILETYPE_T5_RESULTZ:
     case FILETYPE_T5_RECORDZ:
-        (void) load_this_file(P_DOCU_NONE, T5_CMD_LOAD, filename);
+        status_consume(load_this_fireworkz_file_rl(P_DOCU_NONE, filename, FALSE /*fReadOnly*/));
         break;
 
     case FILETYPE_T5_TEMPLATE:
-        (void) load_this_file(P_DOCU_NONE, T5_CMD_LOAD_TEMPLATE, filename);
+        status_consume(load_this_template_file_rl(P_DOCU_NONE, filename));
         break;
 
     case FILETYPE_T5_COMMAND:
-        (void) load_this_file(P_DOCU_NONE, T5_CMD_EXECUTE, filename);
+        status_consume(load_this_command_file_rl(P_DOCU_NONE, filename));
         break;
 
     default:
-        (void) load_foreign_file(P_DOCU_NONE, t5_filetype, filename);
+        status_consume(load_foreign_file_rl(P_DOCU_NONE, filename, t5_filetype));
         break;
     }
 
@@ -691,7 +693,7 @@ general_message_PrintTypeOdd(
         if(claim_broadcast_t5_file(t5_filetype))
         {
             host_xfer_print_file_done(p_wimp_message, -1); /* print 'all done' */
-            status_consume(load_and_print_this_file(filename, NULL));
+            status_consume(load_and_print_this_file_rl(filename, NULL));
         }
 
         break;
@@ -785,7 +787,7 @@ general_message_ThesaurusSend(
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno(docno);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
 
         if(p_docu->flags.is_current && p_docu->flags.has_input_focus)
             return(general_message_ThesaurusSend_for_docu(p_docu, p_wimp_message));
@@ -912,7 +914,7 @@ general_event_handler(
 *
 * Icon bar event handler
 *
-* Receives click and load events from the icon bar (ie from document_template icons)
+* Receives click and load events from the icon bar (i.e. from document_template icons)
 *
 ******************************************************************************/
 
@@ -925,14 +927,14 @@ iconbar_event_mouse_click_Select(void)
     {
         TCHARZ filename[BUF_MAX_PATHSTRING];
 
-        /* open the user's Choices directory viewer */
+        /* open the user's Choices directory display */
         tstr_xstrkpy(filename, elemof32(filename), TEXT("<Choices$Write>") FILE_DIR_SEP_TSTR TEXT("Fireworkz") FILE_DIR_SEP_TSTR);
         tstr_xstrkat(filename, elemof32(filename), TEXT("X"));
 
         filer_opendir(filename);
     }
     else
-        (void) load_this_file(P_DOCU_NONE, T5_CMD_LOAD_TEMPLATE, NULL);
+        status_consume(load_this_template_file_rl(P_DOCU_NONE, NULL));
 }
 
 static void
@@ -946,7 +948,7 @@ iconbar_event_mouse_click_Adjust(void)
     {
         of_load_prepare_first_template();
 
-        (void) load_this_file(P_DOCU_NONE, T5_CMD_LOAD_TEMPLATE, NULL);
+        status_consume(load_this_template_file_rl(P_DOCU_NONE, NULL));
     }
 }
 
@@ -994,10 +996,9 @@ static void
 iconbar_message_DataLoad(
     const WimpMessage * const p_wimp_message /*DataLoad*/)
 {
-    /* File dragged from file viewer, dropped on our icon */
+    /* File dragged from directory display, dropped on our icon */
     TCHARZ filename[256];
     T5_FILETYPE t5_filetype = (T5_FILETYPE) p_wimp_message->data.data_load.file_type;
-    T5_MESSAGE t5_message = T5_CMD_LOAD; /* keep dataflower happy */
 
     tstr_xstrkpy(filename, elemof32(filename), p_wimp_message->data.data_load.leaf_name); /* low-lifetime name */
 
@@ -1016,7 +1017,7 @@ iconbar_message_DataLoad(
         break;
 
     case FILETYPE_TEXT:
-        { /* SKS 10dec94 allow fred/fwk files of type Text (eg unmapped on NFS) to be detected - but does not scan these for recognisable headers */
+        { /* SKS 10dec94 allow fred/fwk files of type Text (e.g. unmapped on NFS) to be detected - but does not scan these for recognisable headers */
         T5_FILETYPE t_t5_filetype = t5_filetype_from_extension(file_extension(filename));
 
         if(FILETYPE_UNDETERMINED != t_t5_filetype)
@@ -1048,38 +1049,26 @@ iconbar_message_DataLoad(
     {
     case FILETYPE_DIRECTORY:
     case FILETYPE_APPLICATION:
+        status_consume(load_this_dir_rl(filename));
+        break;
+
     case FILETYPE_T5_FIREWORKZ:
     case FILETYPE_T5_WORDZ:
     case FILETYPE_T5_RESULTZ:
     case FILETYPE_T5_RECORDZ:
-        t5_message = T5_CMD_LOAD;
+        status_consume(load_this_fireworkz_file_rl(P_DOCU_NONE, filename, FALSE /*fReadOnly*/));
         break;
 
     case FILETYPE_T5_TEMPLATE:
-        t5_message = T5_CMD_LOAD_TEMPLATE;
+        status_consume(load_this_template_file_rl(P_DOCU_NONE, filename));
         break;
 
     case FILETYPE_T5_COMMAND:
-        t5_message = T5_CMD_EXECUTE;
+        status_consume(load_this_command_file_rl(P_DOCU_NONE, filename));
         break;
 
     default:
-        t5_message = T5_CMD_LOAD_FOREIGN;
-        break;
-    }
-
-    switch(t5_filetype)
-    {
-    case FILETYPE_DIRECTORY:
-    case FILETYPE_APPLICATION:
-        (void) load_this_dir(filename);
-        break;
-
-    default:
-        if(T5_CMD_LOAD_FOREIGN == t5_message)
-            (void) load_foreign_file(P_DOCU_NONE, t5_filetype, filename);
-        else
-            (void) load_this_file(P_DOCU_NONE, t5_message, filename);
+        status_consume(load_foreign_file_rl(P_DOCU_NONE, filename, t5_filetype));
         break;
     }
 
@@ -1185,7 +1174,7 @@ host_xfer_import_file_via_scrap(
     _kernel_swi_regs rs;
 
     /* first check that the preferred variable exists */
-    xstrkpy(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), "<" "Wimp$ScrapDir");
+    tstr_xstrkpy(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), TEXT("<") TEXT("Wimp$ScrapDir"));
 
     rs.r[0] = (int) host_xfer_load_statics.scrap_name_buffer + 1;
     rs.r[1] = (int) buffer;
@@ -1197,7 +1186,7 @@ host_xfer_import_file_via_scrap(
     if(rs.r[2] == 0)
     {
         /* nope, so check that the older variable exists */
-        xstrkpy(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), "<" "Wimp$Scrap");
+        tstr_xstrkpy(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), TEXT("<") TEXT("Wimp$Scrap"));
 
         rs.r[0] = (int) host_xfer_load_statics.scrap_name_buffer + 1;
         rs.r[1] = (int) buffer;
@@ -1212,12 +1201,17 @@ host_xfer_import_file_via_scrap(
             return;
         }
 
-        xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), ">");
+        tstr_xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), TEXT(">"));
     }
     else
     {
-        xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), ">.");
-        xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), SCRAP_NAME_LEAF);
+        tstr_xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), TEXT(">."));
+        tstr_xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), product_family_id());
+
+        if(!file_is_dir(host_xfer_load_statics.scrap_name_buffer))
+            file_create_directory(host_xfer_load_statics.scrap_name_buffer);
+
+        tstr_xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), SCRAP_NAME_LEAF);
     }
 
     msg.hdr.size = sizeof32(msg.hdr) + sizeof32(WimpDataSaveAckMessage);
@@ -1404,7 +1398,7 @@ ho_event_msg_startup(void)
 
     status_assert(winx_register_event_handler(ICONBAR_WIMP_W, iconbar_handle, iconbar_event_handler, NULL));
 
-    (void) event_register_iconbar_menumaker(iconbar_handle, ho_menu_event_maker, ho_menu_event_proc, (P_ANY) (uintptr_t) viewid_pack(P_DOCU_NONE, NULL, MENU_ROOT_ICON));
+    (void) event_register_iconbar_menumaker(iconbar_handle, ho_menu_event_maker, ho_menu_event_proc, (P_ANY) (uintptr_t) viewid_pack(P_DOCU_NONE, NULL, MENU_ROOT_ICON_BAR));
 
     return(STATUS_OK);
 }
@@ -1413,7 +1407,7 @@ _Check_return_
 static STATUS
 ho_event_msg_exit2(void)
 {
-    (void) event_register_iconbar_menumaker(iconbar_handle, NULL, NULL, (P_ANY) (uintptr_t) viewid_pack(P_DOCU_NONE, NULL, MENU_ROOT_ICON));
+    (void) event_register_iconbar_menumaker(iconbar_handle, NULL, NULL, (P_ANY) (uintptr_t) viewid_pack(P_DOCU_NONE, NULL, MENU_ROOT_ICON_BAR));
 
     status_assert(winx_register_event_handler(ICONBAR_WIMP_W, iconbar_handle, NULL, NULL));
 

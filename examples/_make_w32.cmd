@@ -2,7 +2,7 @@
 @rem License, v. 2.0. If a copy of the MPL was not distributed with this
 @rem file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-@rem Copyright (C) 2014 Stuart Swales
+@rem Copyright (C) 2014-2016 Stuart Swales
 
 @rem Assumes N: is mapped to the root of your development tree i.e. the dir containing \fireworkz
 @rem You can easily do this with a batch file dropped in your Startup folder
@@ -101,7 +101,7 @@ copy /A "%SRC_DIR%\Styles\0dp,c1d"           %OUT_DIR%\Styles\0dp.fwt
 copy /A "%SRC_DIR%\Styles\1dp,c1d"           %OUT_DIR%\Styles\1dp.fwt
 copy /A "%SRC_DIR%\Styles\ColStripe,c1d"     %OUT_DIR%\Styles\ColStripe.fwt
 copy /A "%SRC_DIR%\Styles\CurCell135,c1d"    %OUT_DIR%\Styles\CurCell135.fwt
-copy /A "%SRC_DIR%\Styles\CurCell136,c1d"    %OUT_DIR%\Styles\CurCell136.fwt
+copy /A "%SRC_DIR%\Styles\CurCell200,c1d"    %OUT_DIR%\Styles\CurCell200.fwt
 copy /A "%SRC_DIR%\Styles\ProStyle,c1d"      %OUT_DIR%\Styles\ProStyle.fwt
 copy /A "%SRC_DIR%\Styles\Protection,c1d"    %OUT_DIR%\Styles\Protection.fwt
 copy /A "%SRC_DIR%\Styles\ReadMe,bdf"        %OUT_DIR%\Styles\ReadMe.fwk

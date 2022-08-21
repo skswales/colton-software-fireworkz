@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2015 Stuart Swales */
+/* Copyright (C) 2006-2016 Stuart Swales */
 
 #ifndef __utf8str_h
 #define __utf8str_h
@@ -54,6 +54,20 @@ utf8str__bytes_of_char(
     return(utf8__bytes_of_char(ustr));
 }
 
+#define utf8str_bytes_of_char_off(ustr, off) /*num*/ (  \
+    u8_is_ascii7(PtrGetByteOff(ustr, off))              \
+    ? 1                                                 \
+    : utf8str__bytes_of_char_off(ustr, off)             )
+
+_Check_return_
+static inline U32
+utf8str__bytes_of_char_off(
+    _In_z_      PC_UTF8STR ustr,
+    _InVal_     U32 offset)
+{
+    return(utf8__bytes_of_char_off(ustr, offset));
+}
+
 /* single ASCII-7 bytes retrieved without function call overhead */
 #define utf8str_bytes_prev_of_char(ustr_start, ustr) /*num*/ (  \
     (   (ustr_start != ustr)                    &&              \
@@ -91,8 +105,8 @@ decode UCS-4 character from the first character in this USTR, with number of byt
         : utf8str__char_decode(ustr, NULL)          )
 
 #define utf8str_char_decode_off_NULL(ustr, off) /*UCS4*/ (  \
-    u8_is_ascii7(PtrGetByte(ustr, off))                     \
-        ? (UCS4) PtrGetByte(ustr, off)                      \
+    u8_is_ascii7(PtrGetByteOff(ustr, off))                  \
+        ? (UCS4) PtrGetByteOff(ustr, off)                   \
         : utf8str__char_decode_off(ustr, off, NULL)         )
 
 _Check_return_
@@ -297,7 +311,7 @@ utf8str_validate_n(
     _InVal_     U32 uchars_n /*strlen_with,without_NULLCH*/);
 
 /*
-for SBCHAR (U8 Latin-N) text, eg. for RISC OS Font Manager, Draw file text
+for SBCHAR (U8 Latin-N) text, e.g. for RISC OS Font Manager, Draw file text
 */
 
 _Check_return_
@@ -412,10 +426,16 @@ number of bytes of USTR encoding of the character pointed to
 #define ustr_bytes_of_char(ustr) /*num*/ \
     1
 
+#define ustr_bytes_of_char_off(ustr, off) /*num*/ \
+    1
+
 #else /* NOT USTR_IS_SBSTR */
 
 #define ustr_bytes_of_char(ustr) /*num*/ \
     utf8str_bytes_of_char(ustr)
+
+#define ustr_bytes_of_char_off(uchars, off) /*num*/ \
+    utf8str_bytes_of_char_off(uchars, off)
 
 #endif /* USTR_IS_SBSTR */
 

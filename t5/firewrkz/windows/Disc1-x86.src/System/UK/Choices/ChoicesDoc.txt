@@ -1,0 +1,22 @@
+{Version:2.01;01 Jan 2016;Fireworkz for Windows (uk);Colton Software}
+{BaseSingleCol:0}
+{RowTable:1}
+{Flow:10}
+{Block:0;0;;32;1;1;;32;1;1}
+{Style:UI.Base;{Background:240;240;240}{Typeface:Tahoma}{Fontx:0}{Fonty:160}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:UI.Base}
+{Style:UI.Border;{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{Foreground:0;0;0}}
+{Style:UI.Border.Horizontal}
+{Style:UI.Border.Vertical}
+{Style:UI.Ruler;{Background:255;255;255}{Typeface:Tahoma}{Fontx:0}{Fonty:140}{GridLeftColour:187;187;187}{GridTopColour:187;187;187}{GridRightColour:187;187;187}{GridBottomColour:187;187;187}}
+{Style:UI.Ruler.Horizontal}
+{Style:UI.Ruler.Vertical}
+{Style:UI.FormulaLine;{Background:255;255;255}{BorderColour:0;0;0}{Border:1}{Typeface:Helvetica}{Fonty:200}}
+{Style:UI.StatusLine;}
+{Style:Update.Current cell;{Background:238;238;238}{GridLeftColour:85;85;85}{GridTopColour:85;85;85}{GridRightColour:85;85;85}{GridBottomColour:85;85;85}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{StartOfData}
+{S:X;X;0;0;ChoicesDoc}
+{BR:;;;;;;;;1;1;{StyleHandle:UI.Base}}
+{EndOfData}
+{RulerScale:0;2;5;1}
+{VRulerScale:0;2;5;1}

@@ -20,6 +20,7 @@ body {
     line-height: 1.2em;
     margin-left: 2em;
     margin-right: 2em;
+	max-width: 720px;
 }
 
 a:link 	   {color: #800080;text-decoration: underline;}
@@ -31,13 +32,29 @@ h1 {
 	/*background-color: Silver;*/
 	/*border: 1px solid Gray;*/
 	padding: 5px 6px;
-	font-size: 150%;
+	font-size: 200%;
+    line-height: 1.2em;
 }
 
 /* ----- h2 ----- */
 h2 {
-	padding: 5px 6px;
+	padding: 5px 5px;
+	font-size: 160%;
+    line-height: 1.2em;
+}
+
+/* ----- h3 ----- */
+h3 {
+	padding: 4px 4px;
+	font-size: 140%;
+    line-height: 1.2em;
+}
+
+/* ----- h4 ----- */
+h4 {
+	padding: 3px 3px;
 	font-size: 120%;
+    line-height: 1.2em;
 }
 
 /* ----- table ----- */

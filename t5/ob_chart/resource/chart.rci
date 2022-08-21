@@ -11,16 +11,22 @@
 
 // multi-bitmaps: 0x6n (+1 = high-dpi variant)
 96 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/bar.bmp"
+// no 97
 
 98 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/line.bmp"
+// no 99
 
 100 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/overlay.bmp"
+// no 101
 
 102 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/pie.bmp"
+// no 103
 
 104 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/scatter.bmp"
+// no 105
 
-108 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/com16x15.bmp"
+108 BITMAP MOVEABLE LOADONCALL PURE "../../ob_chart/resource/bmp/com16x16.bmp"
+// no 109
 
 // rebased for ALL_IN_ONE at 0x2000 / 8192
 

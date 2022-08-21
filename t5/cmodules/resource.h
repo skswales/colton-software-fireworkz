@@ -74,11 +74,9 @@ RESOURCE_BITMAP_ID, * P_RESOURCE_BITMAP_ID, ** P_P_RESOURCE_BITMAP_ID; typedef c
 
 typedef U32 T5_RESOURCE_BITMAP_ID_PACKED;
 
-#define T5_RESOURCE_BTTNCUR_MASK 0xC000
 #define T5_RESOURCE_COMMON_BMP_BIT 0x8000
-/* if resource_id & T5_RESOURCE_BTTNCUR_MASK == T5_RESOURCE_BTTNCUR_MASK then use BTTNCUR bitmap, index with other bits */
-/* if resource_id & T5_RESOURCE_BTTNCUR_MASK then use other top 6 bits as bitmap index, bottom byte as bitmap id */
-/* if resource_id & T5_RESOURCE_BTTNCUR_MASK == 0 then all bits are bitmap id */
+/* if resource_id & T5_RESOURCE_COMMON_BMP_BIT then use other top 6 bits as bitmap index, bottom byte as bitmap id */
+/* otherwise all bits are bitmap id */
 #define T5_RESOURCE_COMMON_BMP(id, index) ( \
     T5_RESOURCE_COMMON_BMP_BIT | ((index) << 8) | (id) )
 
@@ -131,12 +129,12 @@ resource_bitmap_find_in_area(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id,
     _InVal_     S32 area_id);
 
+#if RISCOS
+
 _Check_return_
 extern RESOURCE_BITMAP_HANDLE
 resource_bitmap_find_defaulting(
     _InRef_     PC_RESOURCE_BITMAP_ID p_resource_bitmap_id);
-
-#if RISCOS
 
 _Check_return_
 extern RESOURCE_BITMAP_HANDLE

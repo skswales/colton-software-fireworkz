@@ -237,7 +237,7 @@ typedef struct DRAW_PATH_STYLE
     U8 tricap_w;                    /* 1 byte   */  /* 1/16th of line width */
     U8 tricap_h;                    /* 1 byte   */  /* 1/16th of line width */
 }                                   /* 1 word   */
-DRAW_PATH_STYLE;
+DRAW_PATH_STYLE, * P_DRAW_PATH_STYLE; typedef const DRAW_PATH_STYLE * PC_DRAW_PATH_STYLE;
 
 typedef struct DRAW_OBJECT_PATH
 {
@@ -255,7 +255,7 @@ DRAW_OBJECT_PATH, * P_DRAW_OBJECT_PATH;
 
 typedef struct DRAW_DASH_HEADER
 {
-    U32 dashstart;                  /* 1 word   */  /* distance into pattern */
+    DRAW_COORD dashstart;           /* 1 word   */  /* distance into pattern */
     U32 dashcount;                  /* 1 word   */  /* number of elements    */
 }
 DRAW_DASH_HEADER, * P_DRAW_DASH_HEADER; typedef const DRAW_DASH_HEADER * PC_DRAW_DASH_HEADER;
@@ -266,6 +266,13 @@ DRAW_DASH_HEADER, * P_DRAW_DASH_HEADER; typedef const DRAW_DASH_HEADER * PC_DRAW
 Elements within a path
 */
 
+typedef struct DRAW_PATH_TERM
+{
+#define DRAW_PATH_TYPE_TERM     0 /* end of path */
+    U32 tag;
+}
+DRAW_PATH_TERM;
+
 typedef struct DRAW_PATH_MOVE
 {
 #define DRAW_PATH_TYPE_MOVE     2 /* move to (x,y), starts new subpath */
@@ -274,13 +281,13 @@ typedef struct DRAW_PATH_MOVE
 }
 DRAW_PATH_MOVE;
 
-typedef struct DRAW_PATH_LINE
+typedef struct DRAW_PATH_CLOSE
 {
-#define DRAW_PATH_TYPE_LINE     8 /* line to (x,y) */
+#define DRAW_PATH_TYPE_CLOSE_WITH_GAP   4 /* close current subpath with a gap  */
+#define DRAW_PATH_TYPE_CLOSE_WITH_LINE  5 /* close current subpath with a line */
     U32 tag;
-    DRAW_POINT pt;
 }
-DRAW_PATH_LINE;
+DRAW_PATH_CLOSE;
 
 typedef struct DRAW_PATH_CURVE
 {
@@ -292,19 +299,13 @@ typedef struct DRAW_PATH_CURVE
 }
 DRAW_PATH_CURVE;
 
-typedef struct DRAW_PATH_CLOSE
+typedef struct DRAW_PATH_LINE
 {
-#define DRAW_PATH_TYPE_CLOSE    5 /* close current subpath with a line */
+#define DRAW_PATH_TYPE_LINE     8 /* line to (x,y) */
     U32 tag;
+    DRAW_POINT pt;
 }
-DRAW_PATH_CLOSE;
-
-typedef struct DRAW_PATH_TERM
-{
-#define DRAW_PATH_TYPE_TERM     0 /* end of path */
-    U32 tag;
-}
-DRAW_PATH_TERM;
+DRAW_PATH_LINE;
 
 /*
 A RISC OS sprite
@@ -370,7 +371,7 @@ typedef struct DRAW_OBJECT_OPTIONS
 #define DRAW_OBJECT_TYPE_OPTIONS    11 /*RO3*/
     DRAW_OBJECT_HEADER_;            /* 6 words  */ /* NB bounding box should be ignored */
 
-    U32 paper_size;                 /* 1 word   */ /* (paper size + 1) × &100 (ie &500 for A4) */
+    U32 paper_size;                 /* 1 word   */ /* (paper size + 1) × &100 (i.e. &500 for A4) */
 
     struct DRAW_OBJECT_OPTIONS_PAPER_LIMITS
     {
@@ -543,7 +544,7 @@ typedef BITMAPINFO * P_BITMAPINFO;
 #endif
 
 /* same structure (but different member names) as sprite_area from RISC_OSLib:sprite.h */
-typedef struct SAH /* ie NOT a spritefileheader */
+typedef struct SAH /* i.e. NOT a spritefileheader */
 {
     S32 area_size; /* this word omitted from Sprite (FF9) files */
     S32 number_of_sprites;
@@ -551,6 +552,8 @@ typedef struct SAH /* ie NOT a spritefileheader */
     S32 offset_to_free;
 }
 SAH, * P_SAH;
+
+#define sizeof_SPRITE_FILE_HEADER 12 /* sprite files have a sprite area bound on the front but without the length word */
 
 typedef struct SCB
 {

@@ -26,7 +26,7 @@
 #if WINDOWS
 
 _Check_return_
-static inline double
+static double
 log2(_InVal_ double d)
 {
     return(log(d) * _log2_e);
@@ -159,10 +159,10 @@ complex_check_arg_ustr(
     BOOL negate = FALSE;
     F64 f64;
     U32 uchars_read;
-    P_USTR new_ustr;
+    PC_USTR new_ustr;
 
     /* read a number */
-    f64 = strtod(ustr, &new_ustr);
+    f64 = ustrtod(ustr, &new_ustr);
     uchars_read = PtrDiffBytesU32(new_ustr, ustr);
 
     if(0 == uchars_read)
@@ -170,12 +170,12 @@ complex_check_arg_ustr(
         if(CH_MINUS_SIGN__BASIC == PtrGetByte(ustr))
         {
             negate = TRUE;
-            ustr++;
+            ustr_IncByte(ustr);
         }
         else if(CH_PLUS_SIGN == PtrGetByte(ustr))
         {
             negate = FALSE;
-            ustr++;
+            ustr_IncByte(ustr);
         }
         else
             negate = FALSE;
@@ -223,7 +223,7 @@ complex_check_arg_ustr(
         return(EVAL_ERR_BADCOMPLEX);
 
     /* read another number */
-    f64 = strtod(ustr, &new_ustr);
+    f64 = ustrtod(ustr, &new_ustr);
     uchars_read = PtrDiffBytesU32(new_ustr, ustr);
 
     if(0 == uchars_read)
@@ -231,12 +231,12 @@ complex_check_arg_ustr(
         if(CH_MINUS_SIGN__BASIC == PtrGetByte(ustr))
         {
             negate = TRUE;
-            ustr++;
+            ustr_IncByte(ustr);
         }
         else if(CH_PLUS_SIGN == PtrGetByte(ustr))
         {
             negate = FALSE;
-            ustr++;
+            ustr_IncByte(ustr);
         }
         else
             return(EVAL_ERR_BADCOMPLEX);
@@ -490,7 +490,7 @@ decode_fp(
 
     /* search for exponent and remove leading zeros because they are confusing */
     /* also remove the + for good measure */
-    if(NULL != (exp = strchr(ustr_buf, 'e')))
+    if(NULL != (exp = strchr((char *) ustr_buf, 'e')))
     {
         U8 sign = *(++exp);
         P_U8 exps;

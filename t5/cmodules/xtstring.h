@@ -159,7 +159,7 @@ tstr_xvsnprintf(
 #include <tchar.h> /* See Windows tchar.h */
 #endif
 
-/* preferably our own controlled string copy fns: tstr_xstrkpy{,nkpy,kat,nkat} etc */
+/* preferably our own controlled string copy fns: tstr_xstrkpy{,nkpy,kat,nkat} etc. */
 
 #define tstrlen(s)                  _tcslen(s)
 

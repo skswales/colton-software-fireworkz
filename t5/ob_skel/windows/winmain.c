@@ -33,6 +33,8 @@ Windows libraries (saves hacking link properties in project which seem to differ
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "winspool.lib")
 
+#pragma comment(lib, "msimg32.lib")
+
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "oleaut32.lib")
 
@@ -41,6 +43,20 @@ Request comctl32.dll version 6 for Windows XP visual styles
 */
 
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+extern
+#if defined(__cplusplus)
+"C"
+#endif
+void
+gdiplus_startup(void);
+
+extern
+#if defined(__cplusplus)
+"C"
+#endif
+void
+gdiplus_shutdown(void);
 
 #include "ob_skel/prodinfo.h"
 
@@ -64,7 +80,7 @@ eor_with_me[16] = { 155, 164, 33, 75, 166, 2, 8, 0, 30, 27, 5, 6, 29, 223, 242, 
 _Check_return_
 static int
 decode_byte(
-    _In_bytecount_c_(2) PC_BYTE c,
+    _In_reads_bytes_c_(2) PC_BYTE c,
     _In_        int i)
 {
     BYTE c1 = *c++; /* MSN */
@@ -945,7 +961,7 @@ decode_command_line_options(
             }
 
             if(pass == 2)
-                status_break(load_file_for_windows_startup(filename));
+                status_break(load_file_for_windows_startup_rl(filename));
         }
 
         command_line = p_next;
@@ -991,7 +1007,7 @@ _tWinMain(
     /* determine which platform we are running on */
     /*host_os_version_determine();*/ /* very early indeed */
 
-#if 1 /* not on Windows 2000 */
+#if 1
     (void) HeapSetInformation(GetProcessHeap(), HeapEnableTerminationOnCorruption, NULL, 0);
 
     { /* Use the Low-Fragmentation Heap - even on Windows XP (LFH is default on Vista) */
@@ -1048,6 +1064,8 @@ _tWinMain(
     resource_startup(dll_store);
 
     status_assert(resource_init(OBJECT_ID_SKEL, NULL, LOAD_RESOURCES));
+
+    gdiplus_startup(); /* New Dial Solution Draw rendering DLLs require GDI+, as do we too for PNG etc. handling */
 
     host_create_default_palette();
 
@@ -1112,13 +1130,19 @@ _tWinMain(
 fallout:
     docno_close_all();
 
+    t5_do_exit();
+
+    return(EXIT_SUCCESS);
+}
+
+extern void
+host_shutdown(void)
+{
     splash_window_remove();
 
     host_destroy_default_palette();
 
-    t5_do_exit();
-
-    return(EXIT_SUCCESS);
+    gdiplus_shutdown();
 }
 
 #endif /* WINDOWS */

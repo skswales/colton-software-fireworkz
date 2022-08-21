@@ -74,9 +74,9 @@ args_bind_file_type[] =
 {
     ARG_TYPE_S32 | ARG_MANDATORY,   /* load, save, insert mask */
     ARG_TYPE_X32 | ARG_MANDATORY,   /* file type */
-    ARG_TYPE_TSTR | ARG_MANDATORY,  /* string displayed (for saver / loader) */
-    ARG_TYPE_TSTR,                  /* extra string displayed (for saver / loader (windows)) */
-    ARG_TYPE_TSTR,                  /* optional wildcard spec for windows saver / loader */
+    ARG_TYPE_USTR | ARG_MANDATORY,  /* descriptive string displayed (for saver / loader) */
+    ARG_TYPE_USTR,                  /* extra string displayed (for saver / loader (Windows)) */
+    ARG_TYPE_USTR,                  /* optional wildcard spec for saver / loader (Windows) */
     ARG_TYPE_NONE
 };
 
@@ -250,68 +250,26 @@ args_cmd_view_scroll[] =
 };
 
 static const ARG_TYPE
-args_cmd_note_1[] =
+args_cmd_note[] =
 {
     ARG_TYPE_U8C,       /* object type D (DrawFile) */
     ARG_TYPE_U8C,
     ARG_TYPE_S32,       /* layer */
-    ARG_TYPE_S32,                       /* mounting 0            1            2            3 4 5        */
-    ARG_TYPE_S32,                       /*          tl pixit.x   tl pixit.x   tl pixit.x   tl pixit.x   */
-    ARG_TYPE_S32,                       /*          tl pixit.y   tl pixit.y   tl pixit.y   tl pixit.y   */
-    ARG_TYPE_COL,                       /*          tl page.x    tl col       tl col       width        */
-    ARG_TYPE_ROW,                       /*          tl page.y    tl row       tl row       height       */
-    ARG_TYPE_S32,                       /*          width        width        br pixit.x   scale_to_fit */
-    ARG_TYPE_S32,                       /*          height       height       br pixit.y   all_pages    */
-    ARG_TYPE_S32,                       /*                                    br col                    */
-    ARG_TYPE_S32,                       /*                                    br row                    */
+    ARG_TYPE_S32,       /* mounting 1            2            3 4 5        */
+    ARG_TYPE_S32,       /*          tl pixit.x   tl pixit.x   tl pixit.x   */
+    ARG_TYPE_S32,       /*          tl pixit.y   tl pixit.y   tl pixit.y   */
+    ARG_TYPE_S32,       /*          tl col       tl col       width        */
+    ARG_TYPE_S32,       /*          tl row       tl row       height       */
+    ARG_TYPE_S32,       /*          width        br pixit.x   scale_to_fit */
+    ARG_TYPE_S32,       /*          height       br pixit.y   all_pages    */
+    ARG_TYPE_S32,       /*          -            br col       -            */
+    ARG_TYPE_S32,       /*          -            br row       -            */
     ARG_TYPE_S32,       /* ref */
     ARG_TYPE_S32,       /* don't print */
     ARG_TYPE_S32,       /* scale x 16.16 */
     ARG_TYPE_S32,       /* scale y 16.16 */
-    ARG_TYPE_NONE
-};
-
-static const ARG_TYPE
-args_cmd_note_2[] =
-{
-    ARG_TYPE_U8C,       /* object type D (DrawFile) */
-    ARG_TYPE_U8C,
-    ARG_TYPE_S32,       /* layer */
-    ARG_TYPE_S32,                       /* mounting 0            1            2            3 4 5        */
-    ARG_TYPE_S32,                       /*          tl pixit.x   tl pixit.x   tl pixit.x   tl pixit.x   */
-    ARG_TYPE_S32,                       /*          tl pixit.y   tl pixit.y   tl pixit.y   tl pixit.y   */
-    ARG_TYPE_COL,                       /*          tl page.x    tl col       tl col       width        */
-    ARG_TYPE_ROW,                       /*          tl page.y    tl row       tl row       height       */
-    ARG_TYPE_S32,                       /*          width        width        br pixit.x   scale_to_fit */
-    ARG_TYPE_S32,                       /*          height       height       br pixit.y   all_pages    */
-    ARG_TYPE_COL,                       /*                                    br col                    */
-    ARG_TYPE_ROW,                       /*                                    br row                    */
-    ARG_TYPE_S32,       /* ref */
-    ARG_TYPE_S32,       /* don't print */
-    ARG_TYPE_S32,       /* scale x 16.16 */
-    ARG_TYPE_S32,       /* scale y 16.16 */
-    ARG_TYPE_NONE
-};
-
-static const ARG_TYPE
-args_cmd_note_345[] =
-{
-    ARG_TYPE_U8C,       /* object type D (DrawFile) */
-    ARG_TYPE_U8C,
-    ARG_TYPE_S32,       /* layer */
-    ARG_TYPE_S32,                       /* mounting 0            1            2            3 4 5        */
-    ARG_TYPE_S32,                       /*          tl pixit.x   tl pixit.x   tl pixit.x   tl pixit.x   */
-    ARG_TYPE_S32,                       /*          tl pixit.y   tl pixit.y   tl pixit.y   tl pixit.y   */
-    ARG_TYPE_S32,                       /*          tl page.x    tl col       tl col       width        */
-    ARG_TYPE_S32,                       /*          tl page.y    tl row       tl row       height       */
-    ARG_TYPE_S32,                       /*          width        width        br pixit.x   scale_to_fit */
-    ARG_TYPE_S32,                       /*          height       height       br pixit.y   all_pages    */
-    ARG_TYPE_S32,                       /*                                    br col                    */
-    ARG_TYPE_S32,                       /*                                    br row                    */
-    ARG_TYPE_S32,       /* ref */
-    ARG_TYPE_S32,       /* don't print */
-    ARG_TYPE_S32,       /* scale x 16.16 */
-    ARG_TYPE_S32,       /* scale y 16.16 */
+    ARG_TYPE_S32,       /* width  (from 2.01) */
+    ARG_TYPE_S32,       /* height (from 2.01) */
     ARG_TYPE_NONE
 };
 
@@ -348,6 +306,14 @@ args_cmd_button[] =
 {
     ARG_TYPE_TSTR | ARG_MANDATORY,
     ARG_TYPE_BOOL,
+    ARG_TYPE_NONE
+};
+
+static const ARG_TYPE
+args_cmd_load[] =
+{
+    ARG_TYPE_TSTR | ARG_MANDATORY,
+    ARG_TYPE_BOOL | ARG_OPTIONAL,
     ARG_TYPE_NONE
 };
 
@@ -860,7 +826,7 @@ object_construct_table[] =
 
     { "Execute",                args_ustr_mandorblk,        T5_CMD_EXECUTE },
 
-    { "Load",                   args_tstr_mandatory,        T5_CMD_LOAD,                                { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
+    { "Load",                   args_cmd_load,              T5_CMD_LOAD,                                { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
     { "LoadForeign",            args_tstr_s32_tstr,         T5_CMD_LOAD_FOREIGN ,                       { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
     { "LoadTemplate",           args_tstr_mandatory,        T5_CMD_LOAD_TEMPLATE,                       { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
 
@@ -890,9 +856,9 @@ object_construct_table[] =
     { "RulerScale",             args_s32_s32_s32_s32,       T5_CMD_RULER_SCALE,                         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
     { "VRulerScale",            args_s32_s32_s32_s32,       T5_CMD_RULER_SCALE_V,                       { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
 
-    { "NoteSingle",             args_cmd_note_1,            T5_CMD_NOTE,                                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
-    { "NoteTwin",               args_cmd_note_2,            T5_CMD_NOTETWIN,                            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } }, /* compatibility */ /* not saved */
-    { "NoteBackdrop",           args_cmd_note_345,          T5_CMD_NOTEBD,                              { 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
+    { "NoteSingle",             args_cmd_note,              T5_CMD_NOTE,                                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } },
+    { "NoteTwin",               args_cmd_note,              T5_CMD_NOTE_TWIN,                           { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } }, /* compatibility with older readers */
+    { "NoteBackdrop",           args_cmd_note,              T5_CMD_NOTE_BACKDROP,                       { 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 } }, /* exists so that backdrops can be rejected on file insert */
     { "NoteBack",               NULL,                       T5_CMD_NOTE_BACK,                           { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 } },
     { "NoteSwap",               NULL,                       T5_CMD_NOTE_SWAP,                           { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 } },
     { "NoteEmbed",              NULL,                       T5_CMD_NOTE_EMBED,                          { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 } },
@@ -924,22 +890,21 @@ object_construct_table[] =
     { "CaseIniCap",             NULL,                       T5_CMD_SETC_INICAP,                         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1 } },
     { "CaseSwap",               NULL,                       T5_CMD_SETC_SWAP,                           { 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1 } },
 
-    { "FieldDate",              args_s32,                   T5_CMD_INSERT_FIELD_INTRO_DATE,             { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
-    { "FieldFileDate",          args_s32,                   T5_CMD_INSERT_FIELD_INTRO_FILE_DATE,        { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0 } },
-    { "FieldPageX",             NULL,                       T5_CMD_INSERT_FIELD_INTRO_PAGE_X,           { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
-    { "FieldPage",              NULL,                       T5_CMD_INSERT_FIELD_INTRO_PAGE_Y,           { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+    { "InsertFieldIntroDate",   NULL,                       T5_CMD_INSERT_FIELD_INTRO_DATE,             { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+    { "InsertFieldIntroTime",   NULL,                       T5_CMD_INSERT_FIELD_INTRO_TIME,             { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
+    { "InsertFieldIntroPage",   NULL,                       T5_CMD_INSERT_FIELD_INTRO_PAGE,             { 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0 } },
 
-    { "FieldInsDate",           args_ustr,                  T5_CMD_FIELD_INS_DATE,                      { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsFileDate",       args_ustr,                  T5_CMD_FIELD_INS_FILE_DATE,                 { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsPageX",          args_ustr,                  T5_CMD_FIELD_INS_PAGE_X,                    { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsPage",           args_ustr,                  T5_CMD_FIELD_INS_PAGE_Y,                    { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsName",           args_s32,                   T5_CMD_FIELD_INS_SS_NAME,                   { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsField",          args_s32_mandatory,         T5_CMD_FIELD_INS_MS_FIELD,                  { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldDate",        args_ustr,                  T5_CMD_INSERT_FIELD_DATE,                   { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldFileDate",    args_ustr,                  T5_CMD_INSERT_FIELD_FILE_DATE,              { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldPageX",       args_ustr,                  T5_CMD_INSERT_FIELD_PAGE_X,                 { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldPageY",       args_ustr,                  T5_CMD_INSERT_FIELD_PAGE_Y,                 { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldName",        args_s32,                   T5_CMD_INSERT_FIELD_SS_NAME,                { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldMailshotField", args_s32_mandatory,       T5_CMD_INSERT_FIELD_MS_FIELD,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
 
-    { "FieldInsWholeN",         NULL,                       T5_CMD_FIELD_INS_WHOLENAME,                 { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsLeafN",          NULL,                       T5_CMD_FIELD_INS_LEAFNAME,                  { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsReturn",         NULL,                       T5_CMD_FIELD_INS_RETURN,                    { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
-    { "FieldInsSoftH",          NULL,                       T5_CMD_FIELD_INS_SOFT_HYPHEN,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldWholename",   NULL,                       T5_CMD_INSERT_FIELD_WHOLENAME,              { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldLeafname",    NULL,                       T5_CMD_INSERT_FIELD_LEAFNAME,               { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldReturn",      NULL,                       T5_CMD_INSERT_FIELD_RETURN,                 { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
+    { "InsertFieldSoftHyphen",  NULL,                       T5_CMD_INSERT_FIELD_SOFT_HYPHEN,            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 } },
 
                                                                                                     /*   fi ti mi ur up xi md mf nn cp sm ba fo */
 

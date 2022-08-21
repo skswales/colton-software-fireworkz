@@ -95,7 +95,7 @@ get_user_info(void)
 {
     TCHARZ var_name[BUF_MAX_PATHSTRING];
 
-    if(NULL != _kernel_getenv(make_var_name(var_name, "$User1"), __user_name, elemof32(__user_name)))
+    if(NULL != _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$User1"), __user_name, elemof32(__user_name)))
         /*EMPTY*//*__user_name[0] = CH_NULL*/;
 
 #define SPECIAL_VERSION_PREFIX "+++"
@@ -107,10 +107,10 @@ get_user_info(void)
         __user_name[len] = CH_NULL;
     }
 
-    if(NULL != _kernel_getenv(make_var_name(var_name, "$User2"), __organisation_name, elemof32(__organisation_name)))
+    if(NULL != _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$User2"), __organisation_name, elemof32(__organisation_name)))
         /*EMPTY*//*__organisation_name[0] = CH_NULL*/;
 
-    if(NULL != _kernel_getenv(make_var_name(var_name, "$RegNo"), __registration_number, elemof32(__registration_number)))
+    if(NULL != _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$RegNo"), __registration_number, elemof32(__registration_number)))
         /*EMPTY*//*__registration_number[0] = CH_NULL*/;
 }
 
@@ -142,14 +142,14 @@ decode_command_line_options(
                 /* Execute command file */
                 arg = argv[++argi];
                 if(pass == 2)
-                    status = load_this_file(P_DOCU_NONE, T5_CMD_EXECUTE, arg);
+                    status = load_this_command_file_rl(P_DOCU_NONE, arg);
                 break;
 
             case 't':
                 /* LoadTemplate */
                 arg = argv[++argi];
                 if(pass == 2)
-                    status = load_this_file(P_DOCU_NONE, T5_CMD_LOAD_TEMPLATE, arg);
+                    status = load_this_template_file_rl(P_DOCU_NONE, arg);
                 break;
 
             case 'o':
@@ -157,7 +157,7 @@ decode_command_line_options(
                 /* Print */
                 arg = argv[++argi];
                 if(pass == 2)
-                    status = load_and_print_this_file(arg, NULL);
+                    status = load_and_print_this_file_rl(arg, NULL);
                 break;
 
             default:
@@ -167,7 +167,7 @@ decode_command_line_options(
         else
         {
             if(pass == 2)
-                status = load_this_file(P_DOCU_NONE, T5_CMD_LOAD, arg);
+                status = load_this_fireworkz_file_rl(P_DOCU_NONE, arg, FALSE /*fReadOnly*/);
         }
 
         status_break(status);
@@ -183,7 +183,7 @@ decode_run_options(void)
     TCHARZ run_options[BUF_MAX_PATHSTRING];
     PC_SBSTR p_u8 = run_options;
 
-    if(NULL != _kernel_getenv(make_var_name(var_name, "$RunOptions"), run_options, elemof32(run_options)))
+    if(NULL != _kernel_getenv(make_var_name(var_name, elemof32(var_name), "$RunOptions"), run_options, elemof32(run_options)))
         return;
 
     while(NULL != p_u8)
@@ -300,7 +300,7 @@ t5_signal_handler(int sig)
     int errflags_out;
 
     must_die = host_must_die_query() || (host_task_handle() == 0);
-    host_must_die_set(TRUE); /* trap errors in lookup/sprintf etc */
+    host_must_die_set(TRUE); /* trap errors in lookup/sprintf etc. */
 
     consume_int(snprintf(causebuffer, elemof32(causebuffer), "sig%d", sig));
     cause = string_for_object(causebuffer, OBJECT_ID_SKEL);

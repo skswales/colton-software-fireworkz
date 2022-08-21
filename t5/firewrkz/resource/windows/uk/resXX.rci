@@ -450,6 +450,7 @@ BEGIN
 // messages
 //
 	0x6201,	"DrawFile"
+	0x6202,	"Image"
 //
 // end of msg (ob_draw)
 END
@@ -478,7 +479,7 @@ BEGIN
 //
 // messages
 //
-	0x6881,	"Save as Drawfile"
+	0x6881,	"Export as Drawfile"
 //2:to-do.htm
 	0x6883,	"Drawfile"
 //
@@ -765,12 +766,12 @@ BEGIN
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 2014 Stuart Swales
+// Copyright (C) 2014-2016 Stuart Swales
 //
 // errors
 //
 // re2:No database module present. You can purchase Fireworkz Pro from R-Comp
-	0xF302,	"No database module present. For RISC OS, you can purchase Fireworkz Pro from R-Comp"
+	0xF302,	"No database module present. You can purchase Fireworkz Pro from R-Comp for RISC OS systems"
 //
 // end of msg (ob_recn)
 END
@@ -809,8 +810,8 @@ BEGIN
 	0x6A94,	"Centre tab"
 	0x6A95,	"Right tab"
 	0x6A96,	"Decimal tab"
-// r279:Drag to reposition, double-click to clear. ADJUST double-click to change type
-	0x6A97,	"Drag to reposition, double-click to clear. Ctrl+double-click to change type"
+// r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+	0x6A97,	"Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type"
 //
 	0x6A9D,	"Left margin"
 	0x6A9E,	"Paragraph margin"
@@ -948,13 +949,9 @@ BEGIN
 // errors
 //
 	0xE400,	"File already exists"
-	0xE402,	"Filing system error"
-	0xE403,	"Can't open dictionary"
 	0xE404,	"Bad dictionary"
 	0xE406,	"Bad word"
 	0xE407,	"Dictionary read only"
-	0xE408,	"Can't close dictionary"
-	0xE409,	"Not implemented"
 //
 	0xE40A,	"Word not found"
 	0xE40B,	"Escape"
@@ -963,8 +960,6 @@ BEGIN
 	0xE40E,	"Can't enlarge dictionary"
 	0xE40F,	"Bad dictionary definition file"
 	0xE410,	"Bad character in dictionary definition file"
-	0xE411,	"Can't open dictionary definition file"
-	0xE412,	"Can't close dictionary definition file"
 //
 // ob_spell errors
 //

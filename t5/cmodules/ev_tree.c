@@ -362,8 +362,8 @@ ev_add_compiler_output_to_tree(
         status = add_event_use(array_ptr(&p_compiler_output->h_events, EVENT_TYPE, by_index), p_ev_slr);
 
     /* restore flags */
-    custom_def.flags.checkuse = (UBF) custom_checkuse;
-    name_def.flags.checkuse = (UBF) name_checkuse;
+    custom_def.flags.checkuse = UBF_PACK(custom_checkuse);
+    name_def.flags.checkuse = UBF_PACK(name_checkuse);
 
     if(status_ok(status) && add_todo)
         ev_todo_add_slr(p_ev_slr);

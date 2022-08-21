@@ -26,7 +26,7 @@
 > #endif /* COLTON_SOFTWARE */
 > 
 > 
-30a54,93
+30a54,95
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
 > 
 > typedef struct _COLORREF_SET /* Added by Colton Software */
@@ -51,6 +51,8 @@
 > 
 > static int g_button_output_style;
 > 
+> #define BUTTON_OUTPUT_STYLE_NATIVE_FRAME (-1)
+> 
 > // DrawBlankButton - Modified by Colton Software
 > 
 > static void
@@ -67,7 +69,7 @@
 > 
 > #else /* NOT COLTON_SOFTWARE */
 > 
-55a119,125
+55a121,130
 > #endif /* COLTON_SOFTWARE */
 > 
 > 
@@ -75,10 +77,10 @@
 > 
 > void CursorsCache(HINSTANCE hInstance)
 > { hInstance=hInstance; /*EMPTY*/ }
-56a127,137
+> 
 > void CursorsFree(void)
 > { /*EMPTY*/ }
-> 
+56a132,139
 > _Check_return_
 > extern BOOL
 > bttncur_LibMain(HINSTANCE hInstance)
@@ -87,9 +89,9 @@
 > }
 > 
 > #else /* NOT COLTON_SOFTWARE */
-108a190
+108a192
 > #endif /* COLTON_SOFTWARE */
-128a211,234
+128a213,236
 > #if defined(COLTON_SOFTWARE)
 > 
 >     TCHAR buffer[16];
@@ -114,17 +116,17 @@
 > 
 > #else /* NOT COLTON_SOFTWARE */
 > 
-153c259,261
+153c261,263
 <     ghInst=hInstance;
 ---
 > #endif /* COLTON_SOFTWARE */
 > 
 >     ghInst=(HINSTANCE)hInstance;
-158c266
+158c268
 <         CursorsCache(hInstance);
 ---
 >         CursorsCache((HINSTANCE)hInstance);
-167a276,286
+167a278,288
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
 > 
 > extern void
@@ -136,9 +138,9 @@
 > 
 > #else
 > 
-215a335
+215a337
 > #endif /* COLTON_SOFTWARE */
-273a394,420
+273a396,422
 > 
 > #if defined(COLTON_SOFTWARE)
 > 
@@ -166,53 +168,67 @@
 > 
 > #else /* NOT COLTON_SOFTWARE */
 > 
-307a455,456
+307a457,458
 > #endif /* COLTON_SOFTWARE */
 > 
-343a493,495
+343a495,497
 > #if defined(COLTON_SOFTWARE)
 >     rgbHi=GetSysColor(COLOR_BTNHIGHLIGHT);
 > #else
-348a501
+348a503
 > #endif
-405a559,561
+405a561,563
 > #if defined(COLTON_SOFTWARE)
 >         /* No rghBmpStandardImages to delete in Fireworkz*/
 > #else
-408a565
+408a567
 > #endif
-602a760,765
+602a762,767
 > #if defined(COLTON_SOFTWARE)
 >     int             button_output_style = g_button_output_style;
 >     int             shift;
 >     COLORREF_SET    sys;
 > #define crSys sys.cr
 > #else /* NOT COLTON_SOFTWARE */
-603a767,768
+603a769,770
 > #endif /* COLTON_SOFTWARE */
 > 
-618a784,788
+618a786,793
 > #if defined(COLTON_SOFTWARE)
 >     /* NB No rghBmpStandardImages to use in Fireworkz */
 > 
 >     (void) pTDD;
+> 
+>     if(uStateIn & BUTTONGROUP_DIALOGUE_BOX_BUTTON)
+>         button_output_style = BUTTON_OUTPUT_STYLE_NATIVE_FRAME; /* for dialogue box buttons */
 > #else /* NOT COLTON_SOFTWARE */
-645a816
+645a821
 > #endif /* COLTON_SOFTWARE */
-658a830,839
+658a835,855
 > #if defined(COLTON_SOFTWARE)
 >     //Get the current system colors for buttons.
->     crSys[0] = GetSysColor(COLOR_BTNTEXT);
->     crSys[1] = GetSysColor(COLOR_BTNSHADOW);
->     crSys[2] = GetSysColor(COLOR_BTNFACE);
->     crSys[3] = GetSysColor(COLOR_BTNHIGHLIGHT);
+>     crSys[SYSCOLOR_TEXT]    = GetSysColor(COLOR_BTNTEXT);
+>     crSys[SYSCOLOR_SHADOW]  = GetSysColor(COLOR_BTNSHADOW);
+>     crSys[SYSCOLOR_FACE]    = GetSysColor(COLOR_BTNFACE);
+>     crSys[SYSCOLOR_HILIGHT] = GetSysColor(COLOR_BTNHIGHLIGHT);
+> 
+>     { /* If BTNFACE is dim (i.e. any two components near zero), make BTNTEXT its inverse */
+>     int btnface_dim = 0;
+>     btnface_dim += (GetRValue(crSys[SYSCOLOR_FACE]) < 0x40);
+>     btnface_dim += (GetGValue(crSys[SYSCOLOR_FACE]) < 0x40);
+>     btnface_dim += (GetBValue(crSys[SYSCOLOR_FACE]) < 0x40);
+>     if(btnface_dim >= 2)
+>     {
+>         crSys[SYSCOLOR_TEXT] = crSys[SYSCOLOR_FACE] ^ RGB(0xFF,0xFF,0xFF);
+>     }
+>     } /*block*/
 > 
 >     /* Draw a button sans image. */
 >     DrawBlankButtonEx(hDC, &x, &y, &dx, &dy, &uState, &sys, &shift, button_output_style);
 > #else /* NOT COLTON_SOFTWARE */
-670a852
+670a868
 > #endif /* COLTON_SOFTWARE */
-671a854,860
+671a870,876
 > #if defined(COLTON_SOFTWARE)
 >     /*
 >      * Determine the offset necessary to center the image but also reflect
@@ -220,35 +236,23 @@
 >      */
 >     i=shift;
 > #else
-676a866
+676a882
 > #endif /* COLTON_SOFTWARE */
-696a887,889
+696a903,905
 > #if defined(COLTON_SOFTWARE)
 >     if( ((uState & BUTTONGROUP_DISABLED) == 0) && !(uState & BUTTONGROUP_BLANK))
 > #else
-697a891
+697a907
 > #endif/* COLTON_SOFTWARE */
-715a910,912
-> #if defined(COLTON_SOFTWARE)
->         for (i=STDCOLOR_BLACK; i<=STDCOLOR_LTGRAY/*STDCOLOR_WHITE*/; i++)
-> #else
-716a914
-> #endif/* COLTON_SOFTWARE */
-751a950,952
-> #if defined(COLTON_SOFTWARE)
->             for (i=STDCOLOR_BLACK; i<=STDCOLOR_LTGRAY/*STDCOLOR_WHITE*/; i++)
-> #else
-752a954
-> #endif /* COLTON_SOFTWARE */
-788c990
+788c998
 <     if ((uState & BUTTONGROUP_DISABLED || ATTRIBUTEBUTTON_INDETERMINATE==uState)
 ---
 >     if ((uState & BUTTONGROUP_DISABLED || (ATTRIBUTEBUTTON_INDETERMINATE==uState))
-792c994
+792c1002
 <         MaskCreate(iImage, dx, dy, bmx, bmy, xOffsetGlyph, yOffsetGlyph, 0);
 ---
 >         MaskCreate((UINT) iImage, dx, dy, bmx, bmy, xOffsetGlyph, yOffsetGlyph, 0);
-858c1060,1066
+858c1068,1074
 <             MaskCreate(iImage, dx, dy, bmx, bmy
 ---
 > #if defined(COLTON_SOFTWARE)
@@ -258,9 +262,9 @@
 >                        , xOffsetGlyph/*-1*/, yOffsetGlyph/*-1*/, uState);
 > #else
 >             MaskCreate((UINT) iImage, dx, dy, bmx, bmy
-859a1068
+859a1076
 > #endif
-870a1080,1087
+870a1088,1095
 > #if defined(COLTON_SOFTWARE)
 >             i = (ATTRIBUTEBUTTON_INDETERMINATE & uState) ? 3 : 1;
 > 
@@ -269,9 +273,9 @@
 >             /* SKS 03may95 hacks +/- 1 in this block */
 >             BitBlt(hDC, x/*+1*/, y/*+1*/, dx+2-i, dy+2-i, hDCMono, 0, 0, ROP_DSPDxax);
 > #else
-874a1092
+874a1100
 > #endif /* COLTON_SOFTWARE */
-896a1115,1284
+896a1123,1326
 > #if defined(COLTON_SOFTWARE)
 > 
 > /*
@@ -307,22 +311,12 @@
 >     int y  = *p_y;
 >     int dx = *p_dx;
 >     int dy = *p_dy;
->     int btnface_dim = 0;
 >     BOOL drawn_border = TRUE;
 >     COLORREF pcr4; /* frame window colour, not needed by caller */
 > 
 >     *p_shift = 0;
 > 
 >     pcr4 = GetSysColor(COLOR_WINDOWFRAME);
-> 
->     /* If BTNFACE is dim (i.e. any two components near zero), make BTNTEXT its inverse */
->     btnface_dim += (GetRValue(p->cr[2]) < 0x40);
->     btnface_dim += (GetGValue(p->cr[2]) < 0x40);
->     btnface_dim += (GetBValue(p->cr[2]) < 0x40);
->     if(btnface_dim >= 2)
->     {
->         p->cr[0] = p->cr[2] ^ RGB(0xFF,0xFF,0xFF);
->     }
 > 
 >     switch(button_output_style)
 >     {
@@ -333,10 +327,10 @@
 >         /* Draw shadows and highlights */
 >         if(*p_uState & BUTTONGROUP_MOUSEOVER)
 >         {   /* Pointed-at button look */
->             PatB(hDC, x,      y,      1,    dy-1, p->cr[3]);
->             PatB(hDC, x+1,    y,      dx-2, 1,    p->cr[3]);
->             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[1]);
->             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[1]);
+>             PatB(hDC, x,      y,      1,    dy-1, p->cr[SYSCOLOR_HILIGHT]); /* left */
+>             PatB(hDC, x+1,    y,      dx-2, 1,    p->cr[SYSCOLOR_HILIGHT]); /* top */
+>             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[SYSCOLOR_SHADOW]); /* right */
+>             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[SYSCOLOR_SHADOW]); /* bottom */
 > 
 >             if(*p_uState & BUTTONGROUP_LIGHTFACE)
 >             {
@@ -347,10 +341,10 @@
 >         }
 >         else if(*p_uState & BUTTONGROUP_MOUSEDOWN)
 >         {   /* Held-down button look */
->             PatB(hDC, x,      y,       1,    dy-1, p->cr[1]);
->             PatB(hDC, x+1,    y,       dx-2, 1,    p->cr[1]);
->             PatB(hDC, x+dx-1, y,       1,    dy,   p->cr[3]);
->             PatB(hDC, x,      y+dy-1,  dx-1, 1,    p->cr[3]);
+>             PatB(hDC, x,      y,       1,    dy-1, p->cr[SYSCOLOR_SHADOW]); /* left */
+>             PatB(hDC, x+1,    y,       dx-2, 1,    p->cr[SYSCOLOR_SHADOW]); /* top */
+>             PatB(hDC, x+dx-1, y,       1,    dy,   p->cr[SYSCOLOR_HILIGHT]); /* right */
+>             PatB(hDC, x,      y+dy-1,  dx-1, 1,    p->cr[SYSCOLOR_HILIGHT]); /* bottom */
 > 
 >             *p_shift = 1;
 > 
@@ -363,10 +357,10 @@
 >         }
 >         else if(*p_uState & BUTTONGROUP_LIGHTFACE)
 >         {   /* 'on' button look */
->             PatB(hDC, x,      y,      1,    dy-1, p->cr[1]);
->             PatB(hDC, x+1,    y,      dx-2, 1,    p->cr[1]);
->             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[3]);
->             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[3]);
+>             PatB(hDC, x,      y,      1,    dy-1, p->cr[SYSCOLOR_SHADOW]); /* left */
+>             PatB(hDC, x+1,    y,      dx-2, 1,    p->cr[SYSCOLOR_SHADOW]); /* top */
+>             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[SYSCOLOR_HILIGHT]); /* right */
+>             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[SYSCOLOR_HILIGHT]); /* bottom */
 > 
 >             *p_shift = 1;
 >         }
@@ -384,41 +378,45 @@
 >         }
 > 
 >         /* Paint the interior COLOR_BTNFACE as a default. */
->         PatB(hDC, x, y, dx, dy, p->cr[2]);
+>         PatB(hDC, x, y, dx, dy, p->cr[SYSCOLOR_FACE]);
 > 
 >         break;
 >         }
 > 
 >     case 95: /* Different (Windows 95 - like) style of button */
 >         {
+>         const UINT uState = *p_uState;
 >         COLORREF vlt_gray = GetNearestColor(hDC, PALETTERGB(192, 192, 192));
 > 
->         /* Draw shadows and highlights. */
->         if((*p_uState & BUTTONGROUP_DOWN) || (*p_uState & BUTTONGROUP_MOUSEDOWN))
->         {
->             PatB(hDC, x,      y,      1,    dy-1, pcr4);
->             PatB(hDC, x+1,    y,      dx-2, 1,    pcr4);
->             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[3]); /* NB NOT the obvious way round! */
->             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[3]);
+>         // Paint the interior COLOR_BTNFACE as a default.
+>         PatB(hDC, x, y, dx, dy, p->cr[SYSCOLOR_FACE]);
 > 
->             PatB(hDC, x+1,    y+1,    1,    dy-2, p->cr[1]);
->             PatB(hDC, x+2,    y+1,    dx-3, 1,    p->cr[1]);
->             PatB(hDC, x+dx-2, y+1,    1,    dy-2, vlt_gray);
->             PatB(hDC, x+1,    y+dy-2, dx-3, 1,    vlt_gray);
+>         /* Draw shadows and highlights. */
+>         if((uState & BUTTONGROUP_DOWN) || (uState & BUTTONGROUP_MOUSEDOWN))
+>         {
+>             PatB(hDC, x,      y,      1,    dy-1, pcr4); /* outer left */
+>             PatB(hDC, x+1,    y,      dx-2, 1,    pcr4); /* outer top */
+>             PatB(hDC, x+dx-1, y,      1,    dy,   p->cr[SYSCOLOR_HILIGHT]); /* outer right */
+>             PatB(hDC, x,      y+dy-1, dx-1, 1,    p->cr[SYSCOLOR_HILIGHT]); /* outer bottom */
+> 
+>             PatB(hDC, x+1,    y+1,    1,    dy-2, p->cr[SYSCOLOR_SHADOW]); /* inner left */
+>             PatB(hDC, x+2,    y+1,    dx-3, 1,    p->cr[SYSCOLOR_SHADOW]); /* inner top */
+>             PatB(hDC, x+dx-2, y+1,    1,    dy-2, vlt_gray); /* inner right */
+>             PatB(hDC, x+1,    y+dy-2, dx-3, 1,    vlt_gray); /* inner bottom */
 > 
 >             *p_shift = 1;
 >         }
 >         else
 >         {   /* Normal button look */
->             PatB(hDC, x,      y,       1,    dy-1, p->cr[3]);
->             PatB(hDC, x+1,    y,       dx-2, 1,    p->cr[3]);
->             PatB(hDC, x+dx-1, y,       1,    dy,   pcr4);
->             PatB(hDC, x,      y+dy-1,  dx-1, 1,    pcr4);
+>             PatB(hDC, x,      y,       1,    dy-1, p->cr[SYSCOLOR_HILIGHT]); /* outer left */
+>             PatB(hDC, x+1,    y,       dx-2, 1,    p->cr[SYSCOLOR_HILIGHT]); /* outer top */
+>             PatB(hDC, x+dx-1, y,       1,    dy,   pcr4); /* outer right */
+>             PatB(hDC, x,      y+dy-1,  dx-1, 1,    pcr4); /* outer bottom */
 > 
->             PatB(hDC, x+1,    y+1,     1,    dy-2, vlt_gray);
->             PatB(hDC, x+2,    y+1,     dx-3, 1,    vlt_gray);
->             PatB(hDC, x+dx-2, y+1,     1,    dy-2, p->cr[1]);
->             PatB(hDC, x+1,    y+dy-2,  dx-3, 1,    p->cr[1]);
+>             /*PatB(hDC, x+1,    y+1,     1,    dy-2, p->cr[SYSCOLOR_FACE]);*/ /* inner left */
+>             /*PatB(hDC, x+2,    y+1,     dx-3, 1,    p->cr[SYSCOLOR_FACE]);*/ /* inner top */
+>             PatB(hDC, x+dx-2, y+1,     1,    dy-2, p->cr[SYSCOLOR_SHADOW]); /* inner right */
+>             PatB(hDC, x+1,    y+dy-2,  dx-3, 1,    p->cr[SYSCOLOR_SHADOW]); /* inner bottom */
 >         }
 > 
 >         /* Shift coordinates to account for the border we just drew */
@@ -426,9 +424,49 @@
 >         y += 2;
 >         dx -= 2 * 2;
 >         dy -= 2 * 2;
+>         break;
+>         }
 > 
->         // Paint the interior COLOR_BTNFACE as a default.
->         PatB(hDC, x, y, dx, dy, p->cr[2]);
+>     case BUTTON_OUTPUT_STYLE_NATIVE_FRAME:
+>         { /* use native frame control rendering */
+>         const UINT uState = *p_uState;
+>         RECT rect;
+>         UINT bits;
+> 
+>         if(uState & BUTTONGROUP_DISABLED)
+>         {
+>             bits = DFCS_INACTIVE;
+>         }
+>         else if(uState & BUTTONGROUP_MOUSEDOWN)
+>         {
+>             bits = DFCS_PUSHED;
+>         }
+>         else if(uState & BUTTONGROUP_MOUSEOVER)
+>         {
+>             bits = DFCS_HOT;
+>         }
+>         else
+>         {
+>             if(uState & BUTTONGROUP_DOWN)
+>                 bits = DFCS_PUSHED;
+>             else
+>                 bits = 0;
+>         }
+> 
+>         bits |= DFCS_ADJUSTRECT; /* get the rectangle adjusted appropriately */
+> 
+>         rect.left = x;
+>         rect.top = y;
+>         rect.right = x + dx;
+>         rect.bottom = y + dy;
+>         DrawFrameControl(hDC, &rect, DFC_BUTTON, DFCS_BUTTONPUSH | bits);
+>         x = rect.left;
+>         y = rect.top;
+>         dx = rect.right - rect.left;
+>         dy = rect.bottom - rect.top;
+> 
+>         if((*p_uState & BUTTONGROUP_DOWN) || (*p_uState & BUTTONGROUP_MOUSEDOWN))
+>             *p_shift = 1;
 > 
 >         break;
 >         }
@@ -442,29 +480,29 @@
 > }
 > 
 > #else /* NOT COLTON_SOFTWARE */
-977a1366
+977a1408
 > #endif /* COLTON_SOFTWARE */
-1050c1439
+1050c1481
 <     BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, iImage*bmx, 0, SRCCOPY);
 ---
 >     BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, (int) (iImage*bmx), 0, SRCCOPY);
-1052a1442,1444
+1052a1484,1486
 > #if defined(COLTON_SOFTWARE)
 >     if ((ATTRIBUTEBUTTON_INDETERMINATE & uState) == 0)
 > #else
-1053a1446
+1053a1488
 > #endif /* COLTON_SOFTWARE */
-1057c1450
+1057c1492
 <         BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, iImage*bmx, 0, SRCPAINT);
 ---
 >         BitBlt(hDCMono, xOffset, yOffset, bmx, bmy, hDCGlyphs, (int) (iImage*bmx), 0, SRCPAINT);
-1063a1457,1459
+1063a1499,1501
 > #if defined(COLTON_SOFTWARE)
 >     if ((ATTRIBUTEBUTTON_ON & uState) && (BUTTONGROUP_DISABLED & uState))
 > #else
-1064a1461
+1064a1503
 > #endif /* COLTON_SOFTWARE */
-1068a1466,1489
+1068a1508,1531
 > 
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
 > 

@@ -2913,7 +2913,7 @@ es_process(
     _InRef_opt_ PC_STYLE_SELECTOR p_prohibited_enabler,
     _InRef_opt_ PC_STYLE_SELECTOR p_prohibited_enabler_2,
     _OutRef_    P_STYLE p_style_out,
-    _InVal_     STYLE_HANDLE style_handle_being_modified /*ie not effects*/,
+    _InVal_     STYLE_HANDLE style_handle_being_modified /*i.e. not effects*/,
     _InVal_     S32 subdialog /*-1 -> whichever was last */)
 {
     ES_CALLBACK escb = { 0 };
@@ -3101,22 +3101,22 @@ es_subdialog_process(
         es_ps2_data.caption.text.resource_id = p_es_callback->atx ? MSG_DIALOG_ES_PS2 : MSG_DIALOG_ES_PS2_CELL;
 
         /* unfortunate explicit knowledge to remove ps3 and/or ps4 groups entirely */
-        es_ps4.relative_control_id[0] =
-        es_ps4.relative_control_id[1] =
-            (DIALOG_CTL_ID) (p_es_callback->atx ? ES_ID_PS3 : es_ps3.relative_control_id[0]);
+        es_ps4.relative_dialog_control_id[0] =
+        es_ps4.relative_dialog_control_id[1] =
+            (DIALOG_CONTROL_ID) (p_es_callback->atx ? ES_ID_PS3 : es_ps3.relative_dialog_control_id[0]);
 
-        es_rs.relative_control_id[0] =
-        es_rs.relative_control_id[1] =
-            (DIALOG_CTL_ID) (p_es_callback->num ? ES_ID_PS4 : es_ps4.relative_control_id[0]);
+        es_rs.relative_dialog_control_id[0] =
+        es_rs.relative_dialog_control_id[1] =
+            (DIALOG_CONTROL_ID) (p_es_callback->num ? ES_ID_PS4 : es_ps4.relative_dialog_control_id[0]);
 
         /* and also for individual controls */
-        es_ps_margin_right.relative_control_id[1] = ES_PS_ID_MARGIN_PARA;
+        es_ps_margin_right.relative_dialog_control_id[1] = ES_PS_ID_MARGIN_PARA;
         if(!p_es_callback->atx)
-            es_ps_margin_right.relative_control_id[1] = ES_PS_ID_MARGIN_LEFT;
+            es_ps_margin_right.relative_dialog_control_id[1] = ES_PS_ID_MARGIN_LEFT;
 
-        es_ps_tab_list_group.relative_control_id[1] = ES_PS_ID_VERT_JUSTIFY_GROUP_MAIN;
+        es_ps_tab_list_group.relative_dialog_control_id[1] = ES_PS_ID_VERT_JUSTIFY_GROUP_MAIN;
         if(!p_es_callback->atx)
-            es_ps_tab_list_group.relative_control_id[1] = ES_PS_ID_HORZ_JUSTIFY_GROUP_MAIN;
+            es_ps_tab_list_group.relative_dialog_control_id[1] = ES_PS_ID_HORZ_JUSTIFY_GROUP_MAIN;
         } /*block*/
 
         assert(n_ctls <= elemof32(es_subdialog_ctl_create));
@@ -3136,7 +3136,7 @@ es_subdialog_process(
             dialog_cmd_process_dbox.bits.use_windows_hwnd = 1;
         }
 #endif
-        status_break(status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+        status_break(status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
         }
 
         if(status == ES_ID_REVERT)

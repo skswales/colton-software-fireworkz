@@ -64,6 +64,20 @@ typedef struct GR_CHART_OBJID
 }
 GR_CHART_OBJID, * P_GR_CHART_OBJID; typedef const GR_CHART_OBJID * PC_GR_CHART_OBJID;
 
+#define GR_CHART_OBJID_INIT(name, has_no, has_subno, no, subno) \
+{ \
+    (name), 0, (has_no), (has_subno), (no), (subno) \
+}
+
+#define GR_CHART_OBJID_INIT_NAME(name) \
+    GR_CHART_OBJID_INIT(name, 0, 0, 0, 0)
+
+#define GR_CHART_OBJID_INIT_NAME_NO(name, no) \
+    GR_CHART_OBJID_INIT(name, 1, 0, no, 0)
+
+#define GR_CHART_OBJID_INIT_NAME_NO_SUBNO(name, no, subno) \
+    GR_CHART_OBJID_INIT(name, 1, 1, no, subno)
+
 #define gr_chart_objid_clear(p_id) \
     * (P_U32) (p_id) = 0
 

@@ -104,9 +104,9 @@ BEGIN
 // ob_ss messages
 //
 // r90:Fill down (or ADJUST to Fill up)
-	0x205A,	"Fill down (or Ctrl+button to Fill up)"
+	0x205A,	"Fill down (or Ctrl-click to Fill up)"
 // r91:Fill right (or ADJUST to Fill left)
-	0x205B,	"Fill right (or Ctrl+button to Fill left)"
+	0x205B,	"Fill right (or Ctrl-click to Fill left)"
 	0x205C,	"Auto sum"
 	0x205D,	"Create chart"
 	0x205E,	"Function selector"
@@ -178,7 +178,7 @@ BEGIN
 	0x2051,	"frindex.htm"
 	0x2052,	"frindex.htm"
 //
-// This text is used to define the default text and help message for undefined parameters (ie. ones which do not have an entry down below)
+// This text is used to define the default text and help message for undefined parameters (i.e. ones which do not have an entry down below)
 // These must be blank otherwise custom functions display invalid parameter descriptions
 	0x2020,	""
 	0x2021,	""
@@ -1006,6 +1006,10 @@ BEGIN
 	0x2367,	"lognorm.inv"
 	0x21D8,	"Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places"
 	0x2368,	"percentrank.exc"
+	0x21D9,	"Returns the date that is the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|"
+	0x2369,	"edate"
+	0x21DA,	"Returns the date that is the the last day of the month for the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|"
+	0x236A,	"eomonth"
 //
 // end of msg (ob_ss)
 END

@@ -58,6 +58,7 @@ al_tstr_append(
 *
 ******************************************************************************/
 
+_Check_return_
 extern STATUS
 al_tstr_set(
     _OutRef_    P_ARRAY_HANDLE_TSTR p_array_handle_tstr,
@@ -123,7 +124,7 @@ tstr_set_n(
 
     if(NULL == tchars)
     {   /* NULL == tchars allows client to allocate for a string of tchars_n characters (and the CH_NULL) */
-        tstr_wr[0] = CH_NULL; /* allows append eg tstr_xstrkat() */
+        tstr_wr[0] = CH_NULL; /* allows append e.g. tstr_xstrkat() */
         tstr_wr[tchars_n] = CH_NULL; /* in case client forgets it */
     }
     else
@@ -317,7 +318,7 @@ tstr_compare_n2_nocase(
 /*
 portable string copy functions that ensure CH_NULL termination without buffer overflow
 
-strcpy(), strncat() etc and even their _s() variants are all a bit 'wonky'
+strcpy(), strncat() etc. and even their _s() variants are all a bit 'wonky'
 
 copying to dst buffer is limited by dst_n characters
 
@@ -684,7 +685,7 @@ _sbstr_from_tstr(
     if(NULL == tstr)
         return(("<<sbstr_from_tstr - NULL>>"));
 
-    if(IS_PTR_NONE_ANY(tstr))
+    if(IS_PTR_NONE(tstr))
         return(("<<sbstr_from_tstr - NONE>>"));
 #endif
 
@@ -746,7 +747,7 @@ _tstr_from_sbstr(
     if(NULL == sbstr)
         return(TEXT("<<tstr_from_sbstr - NULL>>"));
 
-    if(IS_PTR_NONE_ANY(sbstr))
+    if(IS_PTR_NONE(sbstr))
         return(TEXT("<<tstr_from_sbstr - NONE>>"));
 
     if(contains_inline(sbstr, strlen32(sbstr)))

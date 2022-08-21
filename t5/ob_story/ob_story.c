@@ -143,7 +143,7 @@ T5_MSG_PROTO(static, story_cmd_setc, /**/ P_TEXT_MESSAGE_BLOCK p_text_message_bl
             continue;
         }
 
-        ucs4 = uchars_char_decode_off(ustr_inline, offset, /*ref*/bytes_of_char);
+        ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, offset, /*ref*/bytes_of_char);
 
         if(!t5_ucs4_is_alphabetic(ucs4) && !t5_ucs4_is_decimal_digit(ucs4))
         {
@@ -186,7 +186,7 @@ T5_MSG_PROTO(static, story_cmd_setc, /**/ P_TEXT_MESSAGE_BLOCK p_text_message_bl
                 const U32 new_bytes_of_char = uchars_bytes_of_char_encoding(ucs4_x);
                 assert(new_bytes_of_char == bytes_of_char);
                 if(new_bytes_of_char == bytes_of_char)
-                    (void) uchars_char_encode_off(ustr_inline, (U32) end, offset, ucs4_x);
+                    (void) uchars_char_encode_off((P_UCHARS) ustr_inline, (U32) end, offset, ucs4_x);
             }
 
             offset_in_word++;
@@ -274,7 +274,10 @@ T5_MSG_PROTO(static, story_msg_insert_inline_redisplay, /**/ P_TEXT_MESSAGE_BLOC
                              p_object_data->object_position_start.data);
 
     { /* actually insert the data */
-    S32 ins_size = quick_ublock_bytes(p_text_inline_redisplay->p_quick_ublock);
+    S32 ins_size;
+
+    PTR_ASSERT(p_text_inline_redisplay->p_quick_ublock);
+    ins_size = quick_ublock_bytes(p_text_inline_redisplay->p_quick_ublock);
 
     if(ins_size)
     {

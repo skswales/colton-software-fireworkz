@@ -106,7 +106,7 @@ wstr_set_n(
 
     if(NULL == wchars)
     {   /* NULL == wchars allows client to allocate for a string of wchars_n characters (and the CH_NULL) */
-        wstr_wr[0] = CH_NULL; /* allows append eg wstr_xstrkat() */
+        wstr_wr[0] = CH_NULL; /* allows append e.g. wstr_xstrkat() */
         wstr_wr[wchars_n] = CH_NULL; /* in case client forgets it */
     }
     else
@@ -301,7 +301,7 @@ wstr_compare_n2_nocase(
 /*
 portable string copy functions that ensure CH_NULL termination without buffer overflow
 
-strcpy(), strncat() etc and even their _s() variants are all a bit 'wonky'
+strcpy(), strncat() etc. and even their _s() variants are all a bit 'wonky'
 
 copying to dst buffer is limited by dst_n characters
 

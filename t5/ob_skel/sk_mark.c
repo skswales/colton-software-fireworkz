@@ -359,7 +359,7 @@ markers_show(
         redraw_flags.show_selection = TRUE;
 
         RECT_FLAGS_CLEAR(rect_flags);
-        view_update_now(p_docu, UPDATE_PANE_CELLS_AREA, &skel_rect_all, rect_flags, redraw_flags, LAYER_SLOT);
+        view_update_now(p_docu, UPDATE_PANE_CELLS_AREA, &skel_rect_all, rect_flags, redraw_flags, LAYER_CELLS);
 
         trace_4(TRACE_APP_SKEL_DRAW,
                 TEXT("markers_show skel_rect_all pixits: ") S32_TFMT TEXT(", ") S32_TFMT TEXT(", ") S32_TFMT TEXT(", ") S32_TFMT,

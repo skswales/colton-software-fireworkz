@@ -14,13 +14,14 @@
 > #endif /* COLTON_SOFTWARE */
 > 
 > 
-140a156,160
+140a156,161
 > #if defined(COLTON_SOFTWARE) /* Added by Colton Software */
+> #define BUTTONGROUP_DIALOGUE_BOX_BUTTON 0x0020 /* for dialogue box buttons */
 > #define BUTTONGROUP_MOUSEDOWN           0x0040
 > #define BUTTONGROUP_MOUSEOVER           0x0080
 > #endif /* COLTON_SOFTWARE */
 > 
-187a208,212
+187a209,213
 > 
 > #if defined(COLTON_SOFTWARE) /* Exported by Colton Software */
 > //Display sensitive information

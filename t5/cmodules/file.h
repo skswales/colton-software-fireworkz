@@ -451,7 +451,7 @@ file_ungetc(
 _Check_return_
 extern STATUS
 file_write(
-    _In_bytecount_x_(size*nmemb) PC_ANY ptr,
+    _In_reads_bytes_x_(size*nmemb) PC_ANY ptr,
     _InVal_     U32 size,
     _InVal_     U32 nmemb,
     _InoutRef_opt_ FILE_HANDLE file_handle);
@@ -589,6 +589,11 @@ file_is_file(
 
 _Check_return_
 extern BOOL
+file_is_read_only(
+    _In_z_      PCTSTR filename);
+
+_Check_return_
+extern BOOL
 file_is_rooted(
     _In_z_      PCTSTR filename);
 
@@ -692,6 +697,14 @@ _Check_return_
 extern STATUS
 file_tempname(
     _In_z_      PCTSTR dir,
+    _In_z_      PCTSTR prefix,
+    _In_opt_z_  PCTSTR suffix,
+    _InVal_     S32 flags,
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/);
+
+_Check_return_
+extern STATUS
+file_tempname_null(
     _In_z_      PCTSTR prefix,
     _In_opt_z_  PCTSTR suffix,
     _InVal_     S32 flags,

@@ -545,7 +545,7 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
 
-    offsets_from_object_data(&start, &end, p_object_data, (P_DATA_NONE != p_object_data->u.ustr_inline) ? ustr_inline_strlen(p_object_data->u.ustr_inline) : 0);
+    offsets_from_object_data(&start, &end, p_object_data, !IS_PTR_NONE(p_object_data->u.ustr_inline) ? ustr_inline_strlen(p_object_data->u.ustr_inline) : 0);
 
     switch(action)
     {
@@ -554,14 +554,14 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
         p_object_data->object_position_start.object_id = p_object_data->object_id;
         break;
 
-    case OBJECT_POSITION_SET_START_CLEAR:
-        if(!start)
-            p_object_data->object_position_start.object_id = OBJECT_ID_NONE;
-        break;
-
     case OBJECT_POSITION_SET_END:
         p_object_data->object_position_start.data = end;
         p_object_data->object_position_start.object_id = p_object_data->object_id;
+        break;
+
+    case OBJECT_POSITION_SET_START_CLEAR:
+        if(!start)
+            p_object_data->object_position_start.object_id = OBJECT_ID_NONE;
         break;
 
     case OBJECT_POSITION_SET_END_CLEAR:
@@ -577,8 +577,10 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
             status = STATUS_OK;
         else
         {
-            S32 charcount = inline_b_bytecount_off(p_object_data->u.ustr_inline, start);
-            S32 ix = start - charcount;
+            S32 charcount, ix;
+            PTR_ASSERT(p_object_data->u.ustr_inline);
+            charcount = inline_b_bytecount_off(p_object_data->u.ustr_inline, start);
+            ix = start - charcount;
             p_object_data->object_position_start.data = ix;
         }
         break;
@@ -588,10 +590,22 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
             status = STATUS_OK;
         else
         {
-            S32 charcount = inline_bytecount_off(p_object_data->u.ustr_inline, start);
-            S32 ix = start + charcount;
+            S32 charcount, ix;
+            PTR_ASSERT(p_object_data->u.ustr_inline);
+            charcount = inline_bytecount_off(p_object_data->u.ustr_inline, start);
+            ix = start + charcount;
             p_object_data->object_position_start.data = ix;
         }
+        break;
+
+    case OBJECT_POSITION_SET_START_WORD:
+        PTR_ASSERT(p_object_data->u.ustr_inline);
+        p_object_data->object_position_start.data = text_backward(p_object_data->u.ustr_inline, start, tab_word_start);
+        break;
+
+    case OBJECT_POSITION_SET_END_WORD:
+        PTR_ASSERT(p_object_data->u.ustr_inline);
+        p_object_data->object_position_start.data = text_forward(p_object_data->u.ustr_inline, start, tab_word_end, end);
         break;
 
     case OBJECT_POSITION_SET_PREV_WORD:
@@ -599,13 +613,10 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
             status = STATUS_OK;
         else
         {
+            PTR_ASSERT(p_object_data->u.ustr_inline);
             start = text_backward(p_object_data->u.ustr_inline, start, tab_word_next_prev);
             p_object_data->object_position_start.data = text_backward(p_object_data->u.ustr_inline, start, tab_word_start);
         }
-        break;
-
-    case OBJECT_POSITION_SET_START_WORD:
-        p_object_data->object_position_start.data = text_backward(p_object_data->u.ustr_inline, start, tab_word_start);
         break;
 
     case OBJECT_POSITION_SET_NEXT_WORD:
@@ -613,13 +624,10 @@ T5_MSG_PROTO(static, text_main_msg_object_position_set, _InoutRef_ P_OBJECT_POSI
             status = STATUS_OK;
         else
         {
+            PTR_ASSERT(p_object_data->u.ustr_inline);
             start = text_forward(p_object_data->u.ustr_inline, start, tab_word_next_prev, end);
             p_object_data->object_position_start.data = text_forward(p_object_data->u.ustr_inline, start, tab_word_start, end);
         }
-        break;
-
-    case OBJECT_POSITION_SET_END_WORD:
-        p_object_data->object_position_start.data = text_forward(p_object_data->u.ustr_inline, start, tab_word_end, end);
         break;
 
     case OBJECT_POSITION_SET_AT_CHECK:
@@ -1096,11 +1104,11 @@ text_segment_paint(
         HOST_FONT host_font = fonty_host_font_from_fonty_handle_redraw(p_redraw_context, fonty_handle, p_docu->flags.draft_mode);
         HOST_FONT host_font_utf8 = HOST_FONT_NONE;
 
-        /*reportf("chunk[%d]: type %d @ %d", chunk_ix, p_chunk->type, p_chunk->input_ix);*/
+        /*reportf(TEXT("chunk[%d]: type %d @ %d"), chunk_ix, p_chunk->type, p_chunk->input_ix);*/
         if(CHUNK_UTF8 == p_chunk->type)
         {
             host_font_utf8 = fonty_host_font_utf8_from_fonty_handle_redraw(p_redraw_context, fonty_handle, p_docu->flags.draft_mode);
-            /*reportf("CHUNK_UTF8: got host font handle %d for redraw", host_font_utf8);*/
+            /*reportf(TEXT("CHUNK_UTF8: got host font handle %d for redraw"), host_font_utf8);*/
         }
 
         if(p_chunk->fonty_chunk.underline)
@@ -1200,7 +1208,7 @@ text_segment_paint(
         case CHUNK_UTF8:
             if(HOST_FONT_NONE == host_font_utf8)
             {
-                /*reportf("CHUNK_UTF8: no host font handle for redraw - odd, as we must have had one for formatting");*/
+                /*reportf(TEXT("CHUNK_UTF8: no host font handle for redraw - odd, as we must have had one for formatting"));*/
                 goto text_from_field;
             }
 
@@ -1527,7 +1535,7 @@ text_classify_char(
     if(CH_SPACE == PtrGetByte(uchars_inline))
         return(CHAR_SPACE);
 
-    ucs4 = uchars_char_decode_NULL(uchars_inline);
+    ucs4 = uchars_char_decode_NULL((PC_UCHARS) uchars_inline);
 
     if(t5_ucs4_is_alphabetic(ucs4) || t5_ucs4_is_decimal_digit(ucs4))
         return(CHAR_TEXT);
@@ -1665,7 +1673,7 @@ text_redisplay_fast(
             rect_flags_clip.reduce_down_by_1 = 1;
 
         /* clipping here is done by fast update call */
-        if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &skel_rect_clip, rect_flags_clip, LAYER_SLOT))
+        if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &skel_rect_clip, rect_flags_clip, LAYER_CELLS))
         {
             do  {
                 text_segment_paint(p_docu,
@@ -1733,7 +1741,7 @@ text_redisplay_fast(
                 pixit_rect.tl = skel_rect_uncovered.tl.pixit_point;
                 pixit_rect.br = skel_rect_uncovered.br.pixit_point;
 
-                if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &skel_rect_uncovered, rect_flags, LAYER_SLOT))
+                if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &skel_rect_uncovered, rect_flags, LAYER_CELLS))
                 {
                     do  {
                         trace_4(TRACE_APP_SKEL_DRAW,
@@ -1785,7 +1793,7 @@ text_redisplay_fast(
                 pixit_rect.tl = skel_rect_uncovered.tl.pixit_point;
                 pixit_rect.br = skel_rect_uncovered.br.pixit_point;
 
-                if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &skel_rect_uncovered, rect_flags, LAYER_SLOT))
+                if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &skel_rect_uncovered, rect_flags, LAYER_CELLS))
                 {
                     do  {
                         trace_4(TRACE_APP_SKEL_DRAW,
@@ -1816,7 +1824,7 @@ text_redisplay_fast(
         pixit_rect.tl = p_text_redisplay_info->skel_rect_object.tl.pixit_point;
         pixit_rect.br = p_text_redisplay_info->skel_rect_object.br.pixit_point;
 
-        if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &p_text_redisplay_info->skel_rect_object, rect_flags, LAYER_SLOT))
+        if(view_update_fast_start(p_docu, &redraw_context, redraw_tag, &p_text_redisplay_info->skel_rect_object, rect_flags, LAYER_CELLS))
         {
             do  {
                 trace_4(TRACE_APP_SKEL_DRAW,
@@ -2013,7 +2021,7 @@ uchars_inline_result_convert(
         }
         else
         {
-            const U32 bytes_of_char = uchars_bytes_of_char_off(uchars_inline, offset);
+            const U32 bytes_of_char = uchars_bytes_of_char_off((PC_UCHARS) uchars_inline, offset);
 
             status = quick_ublock_uchars_add(p_quick_ublock, uchars_AddBytes(uchars_inline, offset), bytes_of_char);
 
@@ -2029,7 +2037,7 @@ uchars_inline_result_convert(
 
 /* transmogrify messages with no arguments into inlines */
 
-T5_CMD_PROTO(static, text_main_cmd_field_ins0)
+T5_CMD_PROTO(static, text_main_cmd_insert_field_none)
 {
     STATUS status = STATUS_OK;
     IL_CODE il_code;
@@ -2040,25 +2048,25 @@ T5_CMD_PROTO(static, text_main_cmd_field_ins0)
 
     switch(t5_message)
     {
-    case T5_CMD_FIELD_INS_WHOLENAME:
+    case T5_CMD_INSERT_FIELD_WHOLENAME:
         il_code = IL_WHOLENAME;
         break;
 
-    case T5_CMD_FIELD_INS_LEAFNAME:
+    case T5_CMD_INSERT_FIELD_LEAFNAME:
         il_code = IL_LEAFNAME;
         break;
 
-    case T5_CMD_FIELD_INS_SOFT_HYPHEN:
+    case T5_CMD_INSERT_FIELD_SOFT_HYPHEN:
         il_code = IL_SOFT_HYPHEN;
         break;
 
-    case T5_CMD_FIELD_INS_RETURN:
+    case T5_CMD_INSERT_FIELD_RETURN:
         il_code = IL_RETURN;
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_CMD_FIELD_INS_TAB:
+    case T5_CMD_INSERT_FIELD_TAB:
 #endif
         il_code = IL_TAB;
         break;
@@ -2072,9 +2080,9 @@ T5_CMD_PROTO(static, text_main_cmd_field_ins0)
     return(status);
 }
 
-/* turn page number etc into inline */
+/* turn page number etc. into inline */
 
-T5_CMD_PROTO(static, text_main_cmd_field_ins_ustr)
+T5_CMD_PROTO(static, text_main_cmd_insert_field_ustr)
 {
     STATUS status = STATUS_OK;
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
@@ -2085,21 +2093,21 @@ T5_CMD_PROTO(static, text_main_cmd_field_ins_ustr)
 
     switch(t5_message)
     {
-    case T5_CMD_FIELD_INS_DATE:
+    case T5_CMD_INSERT_FIELD_DATE:
         il_code = IL_DATE;
         break;
 
-    case T5_CMD_FIELD_INS_FILE_DATE:
+    case T5_CMD_INSERT_FIELD_FILE_DATE:
         il_code = IL_FILE_DATE;
         break;
 
-    case T5_CMD_FIELD_INS_PAGE_X:
+    case T5_CMD_INSERT_FIELD_PAGE_X:
         il_code = IL_PAGE_X;
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case T5_CMD_FIELD_INS_PAGE_Y:
+    case T5_CMD_INSERT_FIELD_PAGE_Y:
 #endif
         il_code = IL_PAGE_Y;
         break;
@@ -2113,7 +2121,7 @@ T5_CMD_PROTO(static, text_main_cmd_field_ins_ustr)
     return(status);
 }
 
-T5_CMD_PROTO(static, text_main_cmd_field_ins_ss_name)
+T5_CMD_PROTO(static, text_main_cmd_insert_field_ss_name)
 {
     STATUS status = STATUS_OK;
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
@@ -2131,7 +2139,7 @@ T5_CMD_PROTO(static, text_main_cmd_field_ins_ss_name)
     return(status);
 }
 
-T5_CMD_PROTO(static, text_main_cmd_field_ins_ms_field)
+T5_CMD_PROTO(static, text_main_cmd_insert_field_ms_field)
 {
     STATUS status = STATUS_OK;
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
@@ -2151,8 +2159,6 @@ T5_CMD_PROTO(static, text_main_cmd_field_ins_ms_field)
 
 PROC_EVENT_PROTO(extern, proc_event_tx_main)
 {
-    STATUS status = STATUS_OK;
-
     switch(t5_message)
     {
         /* --- via TEXT_MESSAGE_BLOCK --- */
@@ -2195,27 +2201,28 @@ PROC_EVENT_PROTO(extern, proc_event_tx_main)
     case T5_CMD_WORD_COUNT:
         return(text_main_cmd_word_count(p_docu, t5_message, (P_OBJECT_WORD_COUNT) p_data));
 
-    case T5_CMD_FIELD_INS_WHOLENAME:
-    case T5_CMD_FIELD_INS_LEAFNAME:
-    case T5_CMD_FIELD_INS_SOFT_HYPHEN:
-    case T5_CMD_FIELD_INS_RETURN:
-    case T5_CMD_FIELD_INS_TAB:
-        return(text_main_cmd_field_ins0(p_docu, t5_message, (PC_T5_CMD) p_data));
+    case T5_CMD_INSERT_FIELD_WHOLENAME:
+    case T5_CMD_INSERT_FIELD_LEAFNAME:
+    case T5_CMD_INSERT_FIELD_SOFT_HYPHEN:
+    case T5_CMD_INSERT_FIELD_RETURN:
+    case T5_CMD_INSERT_FIELD_TAB:
+        return(text_main_cmd_insert_field_none(p_docu, t5_message, (PC_T5_CMD) p_data));
 
-    case T5_CMD_FIELD_INS_DATE:
-    case T5_CMD_FIELD_INS_FILE_DATE:
-    case T5_CMD_FIELD_INS_PAGE_X:
-    case T5_CMD_FIELD_INS_PAGE_Y:
-        return(text_main_cmd_field_ins_ustr(p_docu, t5_message, (PC_T5_CMD) p_data));
+    case T5_CMD_INSERT_FIELD_DATE:
+    case T5_CMD_INSERT_FIELD_FILE_DATE:
+    case T5_CMD_INSERT_FIELD_PAGE_X:
+    case T5_CMD_INSERT_FIELD_PAGE_Y:
+        return(text_main_cmd_insert_field_ustr(p_docu, t5_message, (PC_T5_CMD) p_data));
 
-    case T5_CMD_FIELD_INS_SS_NAME:
-        return(text_main_cmd_field_ins_ss_name(p_docu, t5_message, (PC_T5_CMD) p_data));
+    case T5_CMD_INSERT_FIELD_SS_NAME:
+        return(text_main_cmd_insert_field_ss_name(p_docu, t5_message, (PC_T5_CMD) p_data));
 
-    case T5_CMD_FIELD_INS_MS_FIELD:
-        return(text_main_cmd_field_ins_ms_field(p_docu, t5_message, (PC_T5_CMD) p_data));
+    case T5_CMD_INSERT_FIELD_MS_FIELD:
+        return(text_main_cmd_insert_field_ms_field(p_docu, t5_message, (PC_T5_CMD) p_data));
+
+    default:
+        return(STATUS_OK);
     }
-
-    return(status);
 }
 
 /* end of tx_main.c */

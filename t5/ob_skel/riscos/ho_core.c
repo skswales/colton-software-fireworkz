@@ -51,15 +51,15 @@ wimp_reporterror_rf(
     _In_opt_z_  const char * message,
     _InVal_     int error_level)
 {
-    static _kernel_oserror ie;
+    static _kernel_oserror g_e;
 
     *errflags_out = Wimp_ReportError_OK;
 
-    ie.errnum = 1 /* lie to over-knowledgeable RISC PC error handler - was e->errnum */;
+    g_e.errnum = 1 /* lie to over-knowledgeable RISC PC error handler - was e->errnum */;
 
     {
     const char * p_u8 = e->errmess;
-    char * p_u8_out = ie.errmess;
+    char * p_u8_out = g_e.errmess;
     int len = 0;
     int non_blanks = 0;
 
@@ -81,21 +81,21 @@ wimp_reporterror_rf(
 
     if(0 == len)
     {
-        ie.errnum = 1;
-        strcpy(ie.errmess, "No characters in error string");
-        e = &ie;
+        g_e.errnum = 1;
+        strcpy(g_e.errmess, "No characters in error string");
+        e = &g_e;
     }
     else if(!non_blanks)
     {
-        ie.errnum = 1;
-        strcpy(ie.errmess, "All characters in error string are blank");
-        e = &ie;
+        g_e.errnum = 1;
+        strcpy(g_e.errmess, "All characters in error string are blank");
+        e = &g_e;
     }
     else
-        e = &ie;
+        e = &g_e;
     } /*block*/
 
-    reportf("OS error: %d:%s", e->errnum, ie.errmess);
+    reportf(TEXT("OS error: %d:%s"), e->errnum, g_e.errmess);
 
     if(!g_silent_shutdown)
     {
@@ -180,7 +180,7 @@ _Check_return_
 extern int
 host_query_alphabet_number(void)
 {
-reportf("alphabet_number: %d", _kernel_osbyte(0x47, 0x7F, 0xFF) & 0xFF);
+reportf(TEXT("alphabet_number: %d"), _kernel_osbyte(0x47, 0x7F, 0xFF) & 0xFF);
     return((_kernel_osbyte(0x47, 0x7F, 0xFF) & 0xFF));
 }
 

@@ -163,7 +163,7 @@ ustr_set_n(
 
     if(NULL == uchars)
     {   /* NULL == uchars allows client to allocate for a string of uchars_n bytes (and the CH_NULL) */
-        PtrPutByte(ustr_wr, CH_NULL); /* allows append eg ustr_xstrkat() */
+        PtrPutByte(ustr_wr, CH_NULL); /* allows append e.g. ustr_xstrkat() */
         PtrPutByteOff(ustr_wr, uchars_n, CH_NULL); /* in case client forgets it */
     }
     else
@@ -605,7 +605,7 @@ _tstr_from_ustr(
         return(TEXT("<<tstr_from_ustr - NULL>>"));
     }
 
-    if(IS_PTR_NONE_ANY(ustr))
+    if(IS_PTR_NONE(ustr))
     {
         assert0();
         return(TEXT("<<tstr_from_ustr - NONE>>"));
@@ -629,7 +629,7 @@ _ustr_from_tstr(
     if(NULL == tstr)
         return(("<<ustr_from_tstr - NULL>>"));
 
-    if(IS_PTR_NONE_ANY(tstr))
+    if(IS_PTR_NONE(tstr))
         return(("<<ustr_from_tstr - NONE>>"));
 
     return((PC_USTR) _sbstr_from_tstr(tstr));

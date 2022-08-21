@@ -307,13 +307,11 @@ convert_number_engineering(
     P_NUMFORM_INFO p_numform_info)
 {
     F64 work_value = (RPN_DAT_REAL == p_numform_info->ev_data.did_num) ? p_numform_info->ev_data.arg.fp : p_numform_info->ev_data.arg.integer;
-    S32 remainder;
+    S32 remainder = 0;
     S32 decimal_places;
     P_USTR ustr;
 
-    if(work_value < F64_MIN)
-        remainder = 0;
-    else
+    if(work_value >= F64_MIN)
     {
         F64 log10_work_value = log10(work_value);
         F64 f64_exponent;
@@ -837,7 +835,7 @@ eE   - exponent (followed by +, - or nothing)
 %    - % char and *100
 gG   - Engineering notation (afpnum.kMGTPE)
 rR   - Roman numerals (if < 4999)
-xX   - Spreadsheet (ie  1 -> A  etc.)
+xX   - Spreadsheet (1 -> A etc.)
 hH   - hours
 nN   - minutes
 sS   - seconds
@@ -866,6 +864,16 @@ default_numform_context =
     USTR_TEXT("october"),
     USTR_TEXT("november"),
     USTR_TEXT("december")
+    },
+
+    {
+    USTR_TEXT("sunday"),
+    USTR_TEXT("monday"),
+    USTR_TEXT("tuesday"),
+    USTR_TEXT("wednesday"),
+    USTR_TEXT("thursday"),
+    USTR_TEXT("friday"),
+    USTR_TEXT("saturday")
     },
 
     {
@@ -1624,7 +1632,7 @@ numform_output_date_fields(
 
                 if(arg <= 0)
                 {
-                    arg = 1 - arg; /* NB. year 0000 -> 1BC, -0001 -> 2BC etc */
+                    arg = 1 - arg; /* NB. year 0000 -> 1BC, -0001 -> 2BC etc. */
                     bc_date = TRUE;
                     count = 4;
                 }
@@ -1637,7 +1645,7 @@ numform_output_date_fields(
 
                 if(arg <= 0)
                 {
-                    arg = 1 - arg; /* NB. year 0000 -> 1BCE, -0001 -> 2BCE etc */
+                    arg = 1 - arg; /* NB. year 0000 -> 1BCE, -0001 -> 2BCE etc. */
                     bce_date = TRUE;
                     count = 4;
                 }
@@ -1685,7 +1693,7 @@ numform_output_number_fields(
                 if(!p_numform_info->decimal_section_has_zero && !p_numform_info->decimal_section_spaces)
                     ch_out = CH_NULL;
 
-        /* ie a format such as .### will display just the fractional part of a number */
+        /* i.e. a format such as .### will display just the fractional part of a number */
         p_numform_info->integer_places_actual = 0;
 
         if(ch_out)

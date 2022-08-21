@@ -6,7 +6,7 @@
 
 /* Compound File Binary Format (COM / OLE 2 Structured Storage) access functions */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 #include "common/gflags.h"
 
@@ -15,6 +15,10 @@
 #endif
 
 #include "cmodules/cfbf.h"
+
+#ifndef          __typepack_h
+#include "cmodules/typepack.h"
+#endif
 
 static void
 patch_header_common(
@@ -37,29 +41,18 @@ patch_header_common(
 
     file_dir->_cb = 2; /* for the terminating wide-char CH_NULL */
 
-    { /* Write stream name as wide character string in this directory entry, filling with zeros */
+    { /* Write stream name as wide character string in this directory entry, padding with zeros */
     U32 i = 0;
     while(i < sizeof32(file_dir->_ab))
     {
-#if APP_UNICODE
-        TCHAR ch = *stream_name;
-        if(CH_NULL != ch)
+        WCHAR wch = *stream_name;
+        if(CH_NULL != wch)
         {
             stream_name++;
             file_dir->_cb += 2;
         }
-        * (PTSTR) &file_dir->_ab[i] = ch;
+        writeval_U16_LE(&file_dir->_ab[i], wch);
         i += 2;
-#else
-        U8 ch = *stream_name;
-        if(CH_NULL != ch)
-        {
-            stream_name++;
-            file_dir->_cb += 2;
-        }
-        file_dir->_ab[i++] = ch;
-        file_dir->_ab[i++] = CH_NULL;
-#endif
     }
     } /*block*/
 }

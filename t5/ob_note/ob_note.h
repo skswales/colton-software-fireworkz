@@ -26,9 +26,11 @@ note_install_layer_handler(
 extern void
 note_update_later(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info,
+    _InoutRef_  P_NOTE_INFO p_note_info,
     _In_        S32 note_update_flags);
 
+_Check_return_
+_Ret_maybenull_
 extern P_NOTE_INFO
 notelayer_selection_first(
     _DocuRef_   P_DOCU p_docu);
@@ -67,12 +69,13 @@ notelayer_save_clip_data(
 extern void
 notelayer_mount_note(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info);
+    _InoutRef_  P_NOTE_INFO p_note_info);
 
 extern void
 notelayer_selection_delete(
     _DocuRef_   P_DOCU p_docu);
 
+_Check_return_
 extern REDRAW_TAG
 redraw_tag_from_layer(
     _InVal_     LAYER layer);
@@ -86,25 +89,28 @@ notelayer_replace_selection(
 extern void
 note_delete(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info);
+    _InoutRef_  P_NOTE_INFO p_note_info);
 
 extern void
 note_move(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info,
-    P_SKEL_POINT p_skel_point,
+    _InoutRef_  P_NOTE_INFO p_note_info,
+    _InRef_     PC_SKEL_POINT p_skel_point,
     _InRef_     PC_PIXIT_SIZE p_pixit_size);
 
 extern void
 note_pin_change(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info,
+    _InoutRef_  P_NOTE_INFO p_note_info,
     _In_        NOTE_PINNING new_note_pinning);
 
+/*ncr*/
+_Ret_maybenull_
 extern P_NOTE_INFO
 notelayer_new_note(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info_in);
+    _InRef_     PC_NOTE_INFO p_note_info_in,
+    _OutRef_    P_STATUS p_status);
 
 T5_CMD_PROTO(extern, t5_cmd_note);
 T5_CMD_PROTO(extern, t5_cmd_note_back);

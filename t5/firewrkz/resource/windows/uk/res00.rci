@@ -22,17 +22,20 @@ BEGIN
 //
 // messages
 //
+// NB Use Title Caps on Windows for:
+// Title Bar / Action Buttons
+//
 // when changing version number for release, remember other files:
 // definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	"2.00.05"
-	0x2,	"(10 Jun 2016)"
+	0x1,	"2.01.RC2"
+	0x2,	"(16 Jun 2016)"
 //
 // update date and version in the corresponding RelNotes HTML files too
 //
 	0x409,	"© 1992-2016 Colton Software"
-// r1034:Portions © 1994-2015 R-Comp
+// r1034:Portions © 1994-2016 R-Comp
 	0x40D,	"The product uses the following components"
 	0x407,	"Drawfile rendering DLLs © 1994-2005 Dial Solutions"
 //
@@ -43,6 +46,7 @@ BEGIN
 	0x424,	"%d null events"
 //
 	0x5C,	"&Remove"
+	0x5D,	"&Insert"
 	0x5E,	"&Help"
 	0x5F,	"&Apply"
 	0x60,	"&New"
@@ -53,6 +57,8 @@ BEGIN
 	0x64,	"Untitled"
 	0x65,	"%L - %P"
 // r101:%P: %W
+	0x408,	"%L [Read-only] - %P"
+// r1032:%P: %W [Read-only]
 	0x66,	" *"
 	0x67,	" at %g%%"
 	0x68,	"%"
@@ -119,15 +125,18 @@ BEGIN
 // r161:Page Up
 	0xA1,	"Page Up"
 //
-	0xA8,	"Insert time"
-	0xA9,	"Insert file mod. time"
-	0xAA,	"Insert date"
-	0x408,	"Insert file mod. date"
-	0xAB,	"Insert page number"
+// r168:Insert time
+	0xA8,	"Insert Time"
+// spare 169
+// r170:Insert date
+	0xAA,	"Insert Date"
+// spare 1032
+// r171:Insert page number
+	0xAB,	"Insert Page Number"
 	0xAC,	"&Live"
-	0xAD,	"Insert x page number"
-// r174:Insert the date when this file was last changed (or ADJUST to insert today's date)
-	0xAE,	"Insert the date when this file was last changed (or Ctrl+button to insert today's date)"
+// spare 173
+// r174:Insert date (or ADJUST to insert time). Inserts either when this file was last changed or today
+	0xAE,	"Insert date (or Ctrl-click to insert time). Inserts either when this file was last changed or today"
 //
 	0xB4,	"Name"
 	0xB5,	"Shortcut"
@@ -142,14 +151,16 @@ BEGIN
 	0xFE,	"150%"
 	0xFF,	"200%"
 //
-	0x100,	"View control"
+// r256:View control
+	0x100,	"View Control"
 	0x4D7,	"ug2_accessing_the_view_control_dialogue_box.htm"
 	0x101,	"Scale"
 	0x102,	"C&olumn border"
 	0x103,	"&Row border"
 	0x106,	"&Top ruler"
 	0x107,	"&Side ruler"
-	0x108,	"&New view"
+// r264:&New view
+	0x108,	"&New View"
 	0x109,	"Display area"
 	0x10A,	"&Full"
 	0x10B,	"&Printable area"
@@ -164,16 +175,19 @@ BEGIN
 	0x420,	"This template is a set of files"
 	0x421,	"contained in a directory. You must"
 	0x422,	"drag this directory to a directory"
-	0x423,	"viewer in order to make a copy of it."
-	0x104,	"Save other"
+	0x423,	"display in order to make a copy of it."
+// r260:Export as other format
+	0x104,	"Export as Other Format"
 	0x105,	"Other"
 //
 	0x11B,	"Column %d, width"
 	0x11C,	"Row %d, height"
 //
-	0x122,	"Select template"
+// r290:Select template
+	0x122,	"Select Template"
 	0x123,	"ug3_creating_a_new_document.htm"
-	0x124,	"New document"
+// r292:New document
+	0x124,	"New Document"
 //
 	0x12C,	"ug11_basic_print_options.htm"
 	0x12D,	"Copies"
@@ -182,7 +196,7 @@ BEGIN
 	0x130,	"&Two up"
 	0x131,	"ug11_extra_print_options.htm"
 // r307:No RISC OS printer installed
-	0x133,	"No printer selected"
+	0x133,	"No Printer Selected"
 	0x141,	"Revers&e"
 	0x142,	"Co&llated"
 	0x143,	"Acros&s"
@@ -197,9 +211,12 @@ BEGIN
 	0x40B,	"from page"
 	0x40C,	"to page"
 //
-	0x3FC,	"Print scale"
-	0x3FD,	"Fit one page"
-	0x3FE,	"Fit one page X"
+// r1020:Print scale
+	0x3FC,	"Print Scale"
+// r1021:Fit one page
+	0x3FD,	"Fit One Page"
+// r1022:Fit one page X
+	0x3FE,	"Fit One Page X"
 	0x3FF,	"Scale"
 	0x400,	"100%"
 	0x401,	"ug11_print_scale.htm"
@@ -271,7 +288,8 @@ BEGIN
 	0x1D2,	"&Right"
 	0x1D3,	"Margin"
 	0x1D4,	"&Alternate"
-	0x1D5,	"Read pr&inter"
+// r469:Read pr&inter
+	0x1D5,	"Read Pr&inter"
 	0x1D6,	"None"
 	0x1D7,	"From printer"
 	0x1D8,	"&Portrait"
@@ -308,9 +326,11 @@ BEGIN
 	0x20C,	"Page number"
 //
 	0x216,	"ug8_adding_extra_rows_and_columns.htm"
-	0x217,	"Add columns"
+// r535:Add columns
+	0x217,	"Add Columns"
 	0x218,	"Number of columns to add"
-	0x21C,	"Add rows"
+// r540:Add rows
+	0x21C,	"Add Rows"
 	0x21D,	"Number of rows to add"
 //
 	0x226,	"Case"
@@ -360,15 +380,15 @@ BEGIN
 	0x2D6,	"%d words counted"
 	0x2DA,	"Not found"
 	0x2DB,	"%d replaced"
-// r732:Drag to resize, double-click for auto-width. ADJUST-drag to reposition
-	0x2DC,	"Drag to resize, double-click for auto-width. Ctrl+drag to reposition"
-	0x2DD,	"Drag to resize, double-click for auto-height"
+// r732:Drag to resize. Double-click for auto-width. ADJUST-drag to reposition
+	0x2DC,	"Drag to resize. Double-click for auto-width. Ctrl+drag to reposition"
+	0x2DD,	"Drag to resize. Double-click for auto-height"
 // r734:ADJUST-drag to reposition
 	0x2DE,	"Ctrl+drag to reposition"
-	0x2E2,	"Picture at (%s,%s) cm - w=%s h=%s cm"
-	0x2E3,	"Picture at (%s,%s) mm - w=%s h=%s mm"
-	0x2E4,	"Picture at (%s,%s) in - w=%s h=%s in"
-	0x1DF,	"Picture at (%s,%s) pt - w=%s h=%s pt"
+	0x2E2,	"Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%"
+	0x2E3,	"Picture at (%s,%s) mm : w=%s h=%s mm %d%%,%d%%"
+	0x2E4,	"Picture at (%s,%s) in : w=%s h=%s in %d%%,%d%%"
+	0x1DF,	"Picture at (%s,%s) pt : w=%s h=%s pt %d%%,%d%%"
 	0x2E5,	"No action: column too wide"
 	0x2E6,	"%d word counted"
 	0x2E7,	"Selection contains %d regions"
@@ -395,8 +415,10 @@ BEGIN
 	0x2FA,	"ug10_backdrop_pictures.htm"
 //
 	0x316,	"One or more documents in the group have been modified"
-	0x317,	"Save group"
-	0x318,	"Discard group"
+// r791:Save group
+	0x317,	"Save Group"
+// r792:Discard group
+	0x318,	"Discard Group"
 //
 // r800:There is %d document edited but not saved in %s.
 // r801:There are %d documents edited but not saved in %s.
@@ -411,8 +433,10 @@ BEGIN
 	0x324,	"'%s'?"
 //
 	0x325,	"This document is part of a linked group"
-	0x326,	"Close group"
-	0x327,	"Close doc"
+// r806:Close group
+	0x326,	"Close Group"
+// r807:Close doc
+	0x327,	"Close Doc"
 //
 //w810:
 //w811:
@@ -430,7 +454,8 @@ BEGIN
 	0x332,	"http://groups.google.com/group/colton-software-fireworkz"
 // r818:http://www.croftnuisk.co.uk/coltsoft/fireworkz
 //
-	0x333,	"Insert table"
+// r819:Insert table
+	0x333,	"Insert Table"
 	0x334,	"ug8_adding_tables.htm"
 	0x335,	"Number of c&olumns"
 	0x336,	"Number of &rows"
@@ -455,7 +480,8 @@ BEGIN
 	0x359,	"Save"
 //858:to-do.htm
 //
-	0x35B,	"Save template"
+// r859:Save as template
+	0x35B,	"Save as Template"
 	0x35C,	"ug3_creating_templates.htm"
 // r861:Template
 	0x35D,	"template.fwt"
@@ -463,7 +489,8 @@ BEGIN
 	0x35F,	"All styl&es"
 	0x360,	"&Style"
 //
-	0x361,	"Save picture"
+// r865:Save picture
+	0x361,	"Save Picture"
 //866:to-do.htm
 	0x363,	"Picture"
 //
@@ -472,8 +499,10 @@ BEGIN
 	0x368,	"&Replace with"
 	0x369,	"&Ignore capitals"
 	0x36A,	"Co&py capitals"
-	0x36B,	"From &caret"
-	0x36C,	"From &top"
+// r875:From &caret
+	0x36B,	"From &Caret"
+// r876:From &top
+	0x36C,	"From &Top"
 	0x36D,	"&Whole words"
 	0x36E,	"From Text &Cursor"
 	0x36F,	"ug4_find_and_replace.htm"
@@ -578,6 +607,14 @@ BEGIN
 	0x411,	"* DB data"
 	0x412,	"Number"
 //
+	0x40E,	"Y page number"
+	0x40F,	"X page number"
+//
+	0x414,	"Current date"
+	0x415,	"File modification date"
+	0x416,	"Current time"
+	0x417,	"File modification time"
+//
 // Global errors: keep consistent with coltsoft/coltsoft.h STATUS_xxx
 //
 // e0:Not an error
@@ -624,8 +661,6 @@ BEGIN
 //
 	0x8050,	"No data found in file"
 // re81:Unable to locate Stubs file
-	0x8053,	"Unable to load embedded picture because memory full; picture discarded"
-	0x8054,	"Unable to load referenced picture %s because memory full; reference retained"
 	0x8055,	"Unable to load referenced picture %s because file not found; reference retained"
 	0x8056,	"Area is protected"
 	0x8057,	"Supporting file %s not found"
@@ -639,7 +674,7 @@ BEGIN
 	0x805E,	"Failed to load Dial Solutions Drawfile DLL"
 	0x805F,	"%s has bad raw arg %u, size %u, sep '%c'"
 	0x8060,	"Unable to locate compound file template for save"
-// re97:To save, drag the icon to a directory viewer
+// re97:To save, drag the icon to a directory display
 // re98:Can't transfer file (Scrap directory not set)
 	0x8063,	"Invalid date/time"
 //

@@ -89,7 +89,7 @@ add_cr_table_rows_bump_control = { 1, 1000000 };
 static const DIALOG_CONTROL_DATA_BUMP_S32
 add_cols_number_data = { { { { FRAMED_BOX_EDIT } } /*EDIT_XX*/, &add_cr_table_cols_bump_control } /* BUMP_XX */, 1 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 add_cr_ok_data_argmap[] = { ADD_CR_ID_NUMBER };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -165,7 +165,7 @@ T5_CMD_PROTO(static, t5_cmd_add_cr_intro)
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = add_cols ? MSG_DIALOG_ADD_COLS : MSG_DIALOG_ADD_ROWS;
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
 /******************************************************************************
@@ -182,14 +182,14 @@ enum INSERT_TABLE_CONTROL_IDS
     INSERT_TABLE_ID_ROWS
 };
 
-static const DIALOG_CTL_ID
-insert_table_ok_data_argmap[] = { INSERT_TABLE_ID_COLS, INSERT_TABLE_ID_ROWS };
+static const DIALOG_CONTROL_ID
+insert_table_insert_data_argmap[] = { INSERT_TABLE_ID_COLS, INSERT_TABLE_ID_ROWS };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
-insert_table_ok_command = { T5_CMD_INSERT_TABLE, OBJECT_ID_SKEL, NULL, insert_table_ok_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
+insert_table_insert_command = { T5_CMD_INSERT_TABLE, OBJECT_ID_SKEL, NULL, insert_table_insert_data_argmap, { 0, 0, 0, 1 /*lookup_arglist*/ } };
 
 static const DIALOG_CONTROL_DATA_PUSHBUTTON
-insert_table_ok_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_OK), &insert_table_ok_command };
+insert_table_insert_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_INSERT), &insert_table_insert_command };
 
 /*
 cols
@@ -258,7 +258,7 @@ insert_table_ctl_create[] =
     { &insert_table_rows,      &insert_table_rows_data      },
 
     { &stdbutton_cancel,       &stdbutton_cancel_data },
-    { &defbutton_ok,           &insert_table_ok_data }
+    { &defbutton_ok,           &insert_table_insert_data }
 };
 
 /******************************************************************************
@@ -276,7 +276,7 @@ T5_CMD_PROTO(static, t5_cmd_insert_table_intro)
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_INSERT_TABLE_CAPTION;
     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
 /******************************************************************************
@@ -631,7 +631,7 @@ args_cmd_sort_intro[] =
     ARG_TYPE_NONE
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 sort_intro_argmap[] =
 {
     SORT_ID_COL_0, SORT_ID_ORDER_0,
@@ -908,7 +908,7 @@ T5_CMD_PROTO(static, t5_cmd_sort_intro)
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SORT_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_sort_intro;
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
     } /*block*/
 }
 

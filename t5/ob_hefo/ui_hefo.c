@@ -885,7 +885,7 @@ page_hefo_break_values_ok =
     { DRT(RBRB, PUSHBUTTON), 1 }
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 argmap_cmd_page_hefo_break_values[] =
 {
     0,
@@ -1115,10 +1115,10 @@ static STATUS
 dialog_page_hefo_break_values_ctl_state_change(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_state_change->dialog_control_id;
-    DIALOG_CTL_ID disable_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_state_change->dialog_control_id;
+    DIALOG_CONTROL_ID disable_dialog_control_id;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_ENABLE:
     case PAGE_HEFO_BREAK_VALUES_ID_HEADER_EVEN_ENABLE:
@@ -1126,18 +1126,18 @@ dialog_page_hefo_break_values_ctl_state_change(
     case PAGE_HEFO_BREAK_VALUES_ID_FOOTER_ODD_ENABLE:
     case PAGE_HEFO_BREAK_VALUES_ID_FOOTER_EVEN_ENABLE:
     case PAGE_HEFO_BREAK_VALUES_ID_FOOTER_FIRST_ENABLE:
-        disable_id = (DIALOG_CTL_ID) ((control_id - PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_ENABLE) + PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_GROUP2);
+        disable_dialog_control_id = (DIALOG_CONTROL_ID) ((dialog_control_id - PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_ENABLE) + PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_GROUP2);
         break;
 
     case PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER_ENABLE:
-        disable_id = (DIALOG_CTL_ID) ((control_id - PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER_ENABLE) + PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER);
+        disable_dialog_control_id = (DIALOG_CONTROL_ID) ((dialog_control_id - PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER_ENABLE) + PAGE_HEFO_BREAK_VALUES_ID_PAGE_NUMBER);
         break;
 
     default:
         return(STATUS_OK);
     }
 
-    ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, disable_id, (p_dialog_msg_ctl_state_change->new_state.checkbox == DIALOG_BUTTONSTATE_ON));
+    ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, disable_dialog_control_id, (p_dialog_msg_ctl_state_change->new_state.checkbox == DIALOG_BUTTONSTATE_ON));
 
     return(STATUS_OK);
 }
@@ -1252,7 +1252,7 @@ page_hefo_break_values_precreate(
     {
         const P_DIALOG_CTL_CREATE p_dialog_ctl_create = &p_dialog_cmd_process_dbox->p_ctl_create[i];
 
-        switch(p_dialog_ctl_create->p_dialog_control.p_dialog_control->control_id)
+        switch(p_dialog_ctl_create->p_dialog_control.p_dialog_control->dialog_control_id)
         {
         case PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_MARGIN:
         case PAGE_HEFO_BREAK_VALUES_ID_HEADER_ODD_OFFSET:
@@ -1446,7 +1446,7 @@ T5_CMD_PROTO(extern, t5_cmd_page_hefo_break_values_interactive)
     dialog_cmd_process_dbox.p_proc_client = dialog_event_page_hefo_break_values;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &page_hefo_break_values_callback;
     page_hefo_break_values_precreate(p_docu, &dialog_cmd_process_dbox);
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     return(status);

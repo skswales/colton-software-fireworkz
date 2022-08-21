@@ -153,7 +153,7 @@ wstr_xvsnprintf(
 
 #if WINDOWS && 0
 
-/* preferably our own controlled string copy fns: safe_wstr{kpy,nkpy,kat,nkat} etc */
+/* preferably our own controlled string copy fns: safe_wstr{kpy,nkpy,kat,nkat} etc. */
 
 #define wstrlen(s)                  wcslen(s)
 

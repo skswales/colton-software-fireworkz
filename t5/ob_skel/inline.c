@@ -31,7 +31,7 @@ extern void
 data_from_inline(
     _Out_writes_bytes_(bytesof_buffer) P_ANY buffer,
     _InVal_     U32 bytesof_buffer,
-    _In_bytecount_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
+    _In_reads_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
     _InVal_     S32 type_expected)
 {
     U32 n_bytes;
@@ -59,7 +59,7 @@ data_from_inline(
 _Check_return_
 extern S32
 data_from_inline_s32(
-    _In_bytecount_c_(INLINE_OVH + sizeof32(S32)) PC_USTR_INLINE ustr_inline)
+    _In_reads_c_(INLINE_OVH + sizeof32(S32)) PC_USTR_INLINE ustr_inline)
 {
     PC_BYTE p_data;
     S32 s32_result;
@@ -219,7 +219,7 @@ inline_uchars_buf_from_data(
 
     if(0 != data_size)
     {
-        if(IS_PTR_NULL_OR_NONE_ANY(PC_ANY, p_data))
+        if(IS_PTR_NULL_OR_NONE(p_data))
             return(0/*status_check()*/);
 
         memcpy32(inline_data_ptr(P_BYTE, uchars_inline), p_data, data_size);
@@ -319,7 +319,7 @@ inline_quick_ublock_from_data(
 
     if(0 != data_size)
     {
-        if(IS_PTR_NULL_OR_NONE_ANY(PC_ANY, p_data))
+        if(IS_PTR_NULL_OR_NONE(p_data))
             return(status_check());
 
         memcpy32(inline_data_ptr(P_BYTE, uchars_inline), p_data, data_size);
@@ -359,7 +359,7 @@ inline_quick_ublock_from_multiple_data(
         if(0 == n_bytes)
             continue;
 
-        if(IS_PTR_NULL_OR_NONE_ANY(PC_ANY, p_src))
+        if(IS_PTR_NULL_OR_NONE(p_src))
             return(status_check());
 
         data_size += n_bytes;
@@ -422,7 +422,7 @@ inline_quick_ublock_from_ustr(
     U32 data_size;
     P_USTR_INLINE uchars_inline;
 
-    if(IS_PTR_NULL_OR_NONE_ANY(PC_USTR, ustr))
+    if(IS_PTR_NULL_OR_NONE(ustr))
         return(status_check());
 
 #if CHECKING_UCHARS
@@ -599,7 +599,7 @@ uchars_inline_copy_strip(
         }
         else
         {
-            U32 bytes_of_char = uchars_bytes_of_char_off(uchars_inline, offset);
+            U32 bytes_of_char = uchars_bytes_of_char_off((PC_UCHARS) uchars_inline, offset);
 
             /* is there room to put this whole character to destination buffer? */
             if((dst_idx + bytes_of_char) > elemof_buffer)
@@ -645,7 +645,7 @@ ustr_inline_copy_strip(
         }
         else
         {
-            U32 bytes_of_char = uchars_bytes_of_char_off(ustr_inline, offset);
+            U32 bytes_of_char = ustr_bytes_of_char_off((PC_USTR) ustr_inline, offset);
 
             if(CH_NULL == PtrGetByteOff(ustr_inline, offset))
                 break;
@@ -711,7 +711,7 @@ uchars_inline_plain_convert(
         else
         {
             U32 bytes_of_char;
-            UCS4 ucs4 = uchars_char_decode_off(uchars_inline, offset, /*ref*/bytes_of_char);
+            UCS4 ucs4 = uchars_char_decode_off((PC_UCHARS) uchars_inline, offset, /*ref*/bytes_of_char);
 
             status = quick_ublock_ucs4_add(p_quick_ublock, ucs4);
 
@@ -909,7 +909,7 @@ uchars_inline_search(
                     status = STATUS_DONE;
                     break;
                 }
-                ucs4 = uchars_char_decode_NULL(uchars_inline_look_in);
+                ucs4 = uchars_char_decode_NULL((PC_UCHARS) uchars_inline_look_in);
                 if(!t5_ucs4_is_alphabetic(ucs4) && !t5_ucs4_is_decimal_digit(ucs4))
                 {
                     status = STATUS_DONE;
@@ -984,7 +984,7 @@ uchars_inline_search(
             else
             {
                 U32 bytes_of_char_look_in;
-                ch_look_in = uchars_char_decode(uchars_inline_look_in, bytes_of_char_look_in);
+                ch_look_in = uchars_char_decode((PC_UCHARS) uchars_inline_look_in, bytes_of_char_look_in);
                 uchars_inline_IncBytes(uchars_inline_look_in, bytes_of_char_look_in);
             }
 
@@ -1084,7 +1084,7 @@ uchars_inline_search_convert(
         else
         {
             U32 bytes_of_char;
-            UCS4 ucs4 = uchars_char_decode_off(uchars_inline, offset, /*ref*/bytes_of_char);
+            UCS4 ucs4 = uchars_char_decode_off((PC_UCHARS) uchars_inline, offset, /*ref*/bytes_of_char);
 
             status = quick_ublock_ucs4_add(p_quick_ublock, ucs4);
 
@@ -1163,7 +1163,7 @@ report_ustr_inline(
         return(TEXT("<<NULL>>"));
 
 #if CHECKING
-    if(IS_PTR_NONE_ANY(ustr_inline))
+    if(IS_PTR_NONE(ustr_inline))
         return(TEXT("<<NONE>>"));
 #endif
 

@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 /* Engineering function routines for evaluator */
 
@@ -12,24 +12,13 @@
 
 #include "ob_ss/ob_ss.h"
 
+#include "cmodules/mathxtra.h"
+
 /******************************************************************************
 *
 * Engineering functions
 *
 ******************************************************************************/
-
-extern double erf(double);
-extern double erfc(double);
-
-_Check_return_
-extern double FreeBSD_jn(int, double);
-
-#define bessel_jn(n, x) FreeBSD_jn(n, x)
-
-_Check_return_
-extern double FreeBSD_yn(int, double);
-
-#define bessel_yn(n, x) FreeBSD_yn(n, x)
 
 /******************************************************************************
 *

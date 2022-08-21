@@ -171,10 +171,12 @@ user-supplied handle to a dialog control - must be unique within the dialog
 also has to fit in Windows' control id type, so restricted to 16 bits
 */
 
-typedef U16 DIALOG_CTL_ID; typedef DIALOG_CTL_ID * P_DIALOG_CTL_ID; typedef const DIALOG_CTL_ID * PC_DIALOG_CTL_ID;
+typedef U16 PACKED_DIALOG_CTL_ID;
+
+typedef U32 DIALOG_CONTROL_ID; typedef DIALOG_CONTROL_ID * P_DIALOG_CTL_ID; typedef const DIALOG_CONTROL_ID * PC_DIALOG_CTL_ID;
 
 #if RISCOS /* Windows control ids are defined in WinUser.h - define compatible set for use on RISC OS */
-#define IDOK 1
+#define IDOK 1U
 #define IDCANCEL 2
 #define IDHELP 9
 #endif /* OS */
@@ -189,7 +191,7 @@ typedef U16 DIALOG_CTL_ID; typedef DIALOG_CTL_ID * P_DIALOG_CTL_ID; typedef cons
 #define DIALOG_COMPLETION_OK         STATUS_DONE
 #define DIALOG_COMPLETION_OK_PERSIST (STATUS_DONE+1)
 
-#define DIALOG_BORDER_STYLE_BITS 7 /* to fit a basic FRAMED_BOX_STYLE (ie. without diasble) */
+#define DIALOG_BORDER_STYLE_BITS 7 /* to fit a basic FRAMED_BOX_STYLE (i.e. without disable) */
 
 /*
 dialog positions and sizes specified in PIXITS
@@ -267,7 +269,11 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + (digits) * DIALOG_NUMCHAR_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
 #define DIALOG_STDBUMPSPACING_H DIALOG_SMALLSPACING_H
 
+#if 1
+#define DIALOG_STDEDIT_V        ((2 * 2 + 52) * PIXITS_PER_RISCOS) /* RO5SG - no fancy borders but extra space for fancy font */
+#else
 #define DIALOG_STDEDIT_V        ((2 * 4 + 52) * PIXITS_PER_RISCOS) /* i.e. 60 once again: RO3SG says 68 but that contradicts the description */
+#endif
 #define DIALOG_STDEDITOVH_H     ((2 * 10 + 6) * PIXITS_PER_RISCOS)
 
 #define DIALOG_MINLISTOVH_H     ((24 + 8) /*was 24 but encourage margins!*/ * PIXITS_PER_RISCOS)
@@ -289,7 +295,7 @@ dialog positions and sizes specified in PIXITS
  * ok here goes (NB true only for System Font):
  * Windows VGA is 96dpi;
  * GetDialogBaseUnits returns 8 as 4x pixels/h-DU (and 16 as 8x pixels/v-DU)
- * ie 2 VGA pixels per DU
+ * i.e. 2 VGA pixels per DU
  * there are 48 DU per inch (I've seen this somewhere before)
  * and hence 1440/48=30 pixits per h-DU and v-DU
  *
@@ -326,8 +332,8 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_CAPTIONOVH_H     (24 * PIXITS_PER_WDU_H) /* a system menu and nowadays, a wide close button too */
 
 /* bttncur sized standard tools */
-#define PIXITS_PER_STDTOOL_H    (14 * PIXITS_PER_WDU_H) /* now bigger but I don't know why they need to be so big given 16x15 pixel core bitmap! */
-#define PIXITS_PER_STDTOOL_V    (14 * PIXITS_PER_WDU_V)
+#define PIXITS_PER_STDTOOL_H    (15 * PIXITS_PER_WDU_H) /* now bigger but I don't know why they need to be so big given 16x16 pixel core bitmap! */
+#define PIXITS_PER_STDTOOL_V    (15 * PIXITS_PER_WDU_V)
 
 #define DIALOG_STDGROUP_LM      ( 6 * PIXITS_PER_WDU_H)
 #define DIALOG_STDGROUP_RM      ( 6 * PIXITS_PER_WDU_H)
@@ -364,7 +370,7 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_CHECKGAP_H       ( 4 * PIXITS_PER_WDU_H)
 #define DIALOG_STDCHECK_V       (10 * PIXITS_PER_WDU_V)
 
-#define DIALOG_STDBUMP_H        (12 * PIXITS_PER_WDU_H) // was 8
+#define DIALOG_STDBUMP_H        (12 * PIXITS_PER_WDU_H) /* was 8 */
 #define DIALOG_BUMPGAP_H        ( 2 * PIXITS_PER_WDU_V)
 #define DIALOG_STDBUMP_V        DIALOG_STDEDIT_V
 
@@ -372,7 +378,7 @@ dialog positions and sizes specified in PIXITS
 #define DIALOG_BUMP_H(digits)   (DIALOG_STDBUMPOVH_H + (digits) * DIALOG_NUMCHAR_H + DIALOG_BUMPGAP_H + DIALOG_STDBUMP_H)
 #define DIALOG_STDBUMPSPACING_H ( 2 * PIXITS_PER_WDU_H)
 
-#define DIALOG_STDEDIT_V        (12 * PIXITS_PER_WDU_V) // 14 in style guide but that's crazy. 10 looks ok on Win 7 but is too small on XP
+#define DIALOG_STDEDIT_V        (12 * PIXITS_PER_WDU_V) /* 14 in style guide but that's crazy. 10 looks ok on Windows 7 but is too small on Windows XP */
 #define DIALOG_STDEDITOVH_H     ( 8 * PIXITS_PER_WDU_H)
 
 #define DIALOG_MINLISTOVH_H     ( 4 * PIXITS_PER_WDU_H)
@@ -421,28 +427,38 @@ on/off button states
 types of control in an on-screen dialog
 */
 
-#define DIALOG_CONTROL_GROUPBOX 128
-#define DIALOG_CONTROL_STATICTEXT 129
-#define DIALOG_CONTROL_STATICPICTURE 130
-#define DIALOG_CONTROL_PUSHBUTTON 131
-#define DIALOG_CONTROL_PUSHPICTURE 132
-#define DIALOG_CONTROL_RADIOBUTTON 133
-#define DIALOG_CONTROL_CHECKBOX 134
-#define DIALOG_CONTROL_TRISTATE 135
-#define DIALOG_CONTROL_EDIT 136
-#define DIALOG_CONTROL_STATICFRAME 137
-#define DIALOG_CONTROL_BUMP_S32 138
-#define DIALOG_CONTROL_BUMP_F64 139
-#define DIALOG_CONTROL_LIST_TEXT 140
-#define DIALOG_CONTROL_LIST_S32 141
-#define DIALOG_CONTROL_COMBO_TEXT 142
-#define DIALOG_CONTROL_COMBO_S32 143
-#define DIALOG_CONTROL_USER 144
-#define DIALOG_CONTROL_RADIOPICTURE 145
-#define DIALOG_CONTROL_CHECKPICTURE 146
-#define DIALOG_CONTROL_TRIPICTURE 147
+typedef enum DIALOG_CONTROL_TYPE
+{
+    DIALOG_CONTROL_GROUPBOX         = 128,
+    DIALOG_CONTROL_STATICTEXT       = 129,
+    DIALOG_CONTROL_STATICPICTURE    = 130,
+    DIALOG_CONTROL_STATICFRAME      = 131,
+    DIALOG_CONTROL_PUSHBUTTON       = 132,
+    DIALOG_CONTROL_PUSHPICTURE      = 133,
+    DIALOG_CONTROL_RADIOBUTTON      = 134,
+    DIALOG_CONTROL_RADIOPICTURE     = 135,
+    DIALOG_CONTROL_CHECKBOX         = 136,
+    DIALOG_CONTROL_CHECKPICTURE     = 137,
+    DIALOG_CONTROL_TRISTATE         = 138,
+    DIALOG_CONTROL_TRIPICTURE       = 139,
+    DIALOG_CONTROL_EDIT             = 140,
+    DIALOG_CONTROL_BUMP_S32         = 141,
+    DIALOG_CONTROL_BUMP_F64         = 142,
+    DIALOG_CONTROL_LIST_TEXT        = 143,
+    DIALOG_CONTROL_LIST_S32         = 144,
+    DIALOG_CONTROL_COMBO_TEXT       = 145,
+    DIALOG_CONTROL_COMBO_S32        = 146,
+    DIALOG_CONTROL_USER             = 147
 
-#define DIALOG_CONTROL_TYPE int
+#if RISCOS
+    ,
+    DIALOG_CONTROL_GROUPBOX_PX100   = DIALOG_CONTROL_GROUPBOX + 0x100,
+    DIALOG_CONTROL_BUMP_S32_PX100   = DIALOG_CONTROL_BUMP_S32 + 0x100,
+    DIALOG_CONTROL_BUMP_S32_PX200   = DIALOG_CONTROL_BUMP_S32 + 0x200,
+    DIALOG_CONTROL_COMBO_TEXT_PX100 = DIALOG_CONTROL_COMBO_TEXT + 0x100
+#endif
+}
+DIALOG_CONTROL_TYPE;
 
 #define DIALOG_RELATIVE_BIT_L 0
 #define DIALOG_RELATIVE_BIT_T 1
@@ -473,21 +489,23 @@ useful shorthand for filling in the bit pairs in a DIALOG_CONTROL_BITS
 /* token pasting to the rescue! */
 #define DRT(LBRT, TYPE) DIALOG_RELATIVE_BIT_ ## LBRT, DIALOG_CONTROL_ ## TYPE
 
-#define DIALOG_CONTROL_MAX      ((DIALOG_CTL_ID) 0x7F00)
-#define DIALOG_CONTROL_CONTENTS ((DIALOG_CTL_ID) 0xFFFD)
-#define DIALOG_CONTROL_WINDOW   ((DIALOG_CTL_ID) 0xFFFE)
-#define DIALOG_CONTROL_PARENT   ((DIALOG_CTL_ID) 0xFFFF)
-#define DIALOG_CONTROL_SELF     ((DIALOG_CTL_ID) 0)
+#define DIALOG_CONTROL_MAX      ((DIALOG_CONTROL_ID) 0x7F00U) /* need to leave room for shifting up by WINDOWS_CTL_ID_STT */
 
-#define DIALOG_CONTROL_INVALID  ((DIALOG_CTL_ID) 0xBCBC)
+#define DIALOG_CONTROL_INVALID  ((DIALOG_CONTROL_ID) 0xBCBCU)
+
+/* 'specials' for relative_dialog_control_id */
+#define DIALOG_CONTROL_CONTENTS ((DIALOG_CONTROL_ID) 0xFFFDU)
+#define DIALOG_CONTROL_WINDOW   ((DIALOG_CONTROL_ID) 0xFFFEU)
+#define DIALOG_CONTROL_PARENT   ((DIALOG_CONTROL_ID) 0xFFFFU)
+#define DIALOG_CONTROL_SELF     ((DIALOG_CONTROL_ID) 0U)
 
 typedef struct DIALOG_CONTROL
 {
-    DIALOG_CTL_ID control_id;        /* id for this control */
-    DIALOG_CTL_ID parent_control_id; /* either DIALOG_CONTROL_WINDOW or real group id */
+    DIALOG_CONTROL_ID   dialog_control_id;              /* id for this control */
+    DIALOG_CONTROL_ID   parent_dialog_control_id;       /* either DIALOG_CONTROL_WINDOW or real group id */
 
-    DIALOG_CTL_ID relative_control_id[4]; /* <0 special, 0 for self relative, >0 for other control relative */
-    PIXIT         relative_offset[4];     /* edge offset */
+    DIALOG_CONTROL_ID   relative_dialog_control_id[4];  /* '<0' special, 0 for self relative, >0 for other control relative */
+    PIXIT               relative_offset[4];             /* edge offset */
 
     struct DIALOG_CONTROL_BITS
     {
@@ -497,13 +515,15 @@ typedef struct DIALOG_CONTROL
         UBF br_relative_x : 2; /* l or r */
         UBF br_relative_y : 2; /* b or t */
 
-        UBF type          : 8;
+        UBF packed_dialog_control_type : 8; /* DIALOG_CONTROL_TYPE */
 
         UBF tabstop       : 1;
 
         UBF logical_group : 1; /* can have logical group with no data for shorter defs */
 
         UBF has_help      : 1;
+
+        UBF reserved      : 8*sizeof(int) - (4*2 + 8 + 3*1);
     } bits;
 }
 DIALOG_CONTROL; typedef const DIALOG_CONTROL * PC_DIALOG_CONTROL;
@@ -712,7 +732,7 @@ typedef struct DIALOG_CONTROL_DATA_RADIOBUTTONF
 {
     DIALOG_CONTROL_DATA_RADIOBUTTON radiobutton;
 
-    DIALOG_CTL_ID move_focus_control_id; /* valid iff bits.move_focus */
+    DIALOG_CONTROL_ID move_focus_dialog_control_id; /* valid iff bits.move_focus */
 }
 DIALOG_CONTROL_DATA_RADIOBUTTONF; typedef const DIALOG_CONTROL_DATA_RADIOBUTTONF * PC_DIALOG_CONTROL_DATA_RADIOBUTTONF;
 
@@ -748,7 +768,7 @@ typedef struct DIALOG_CONTROL_DATA_CHECKBOXF
 {
     DIALOG_CONTROL_DATA_CHECKBOX checkbox;
 
-    DIALOG_CTL_ID move_focus_control_id;
+    DIALOG_CONTROL_ID move_focus_dialog_control_id;
 }
 DIALOG_CONTROL_DATA_CHECKBOXF; typedef const DIALOG_CONTROL_DATA_CHECKBOXF * PC_DIALOG_CONTROL_DATA_CHECKBOXF;
 
@@ -782,7 +802,7 @@ typedef struct DIALOG_CONTROL_DATA_TRISTATEF
 {
     DIALOG_CONTROL_DATA_CHECKBOX tristate;
 
-    DIALOG_CTL_ID move_focus_control_id;
+    DIALOG_CONTROL_ID move_focus_dialog_control_id;
 }
 DIALOG_CONTROL_DATA_TRISTATEF; typedef const DIALOG_CONTROL_DATA_TRISTATEF * PC_DIALOG_CONTROL_DATA_TRISTATEF;
 
@@ -815,7 +835,7 @@ typedef struct DIALOG_CONTROL_DATA_EDIT_XX
         UBF v_scroll            : 1;
         UBF always_update_later : 1;
 
-        UBF reserved            : 8*sizeof(int) -6*1 -DIALOG_BORDER_STYLE_BITS;
+        UBF reserved            : 8*sizeof(int) - (DIALOG_BORDER_STYLE_BITS + 6*1);
     } bits;
 
     const BITMAP_WORD * p_bitmap_validation; /* NULL -> use class default */
@@ -1041,8 +1061,10 @@ typedef struct DIALOG_CMD_PROCESS_DBOX
         UBF note_position           : 1;
         UBF use_windows_hwnd        : 1;
         UBF use_riscos_menu         : 1;
+
         UBF dialog_position_type    : 4; /* packed DIALOG_POSITION_TYPE */
-        UBF reserved : 8*sizeof(int) - 4*1;
+
+        UBF reserved                : 8*sizeof(int) - (4 + 4*1);
     } bits;
 
     S32 modal_completion_code; /*OUT*/
@@ -1104,9 +1126,9 @@ control handling
 
 typedef struct DIALOG_CMD_DEFPUSHBUTTON
 {
-    H_DIALOG h_dialog; /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID double_control_id; /*IN*/
+    DIALOG_CONTROL_ID   double_dialog_control_id; /*IN*/
 }
 DIALOG_CMD_DEFPUSHBUTTON, * P_DIALOG_CMD_DEFPUSHBUTTON;
 
@@ -1118,11 +1140,11 @@ controls may want enabling/disabling
 
 typedef struct DIALOG_CMD_CTL_ENABLE
 {
-    H_DIALOG      h_dialog;      /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;    /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    S32           enabled;       /*IN*/
+    S32                 enabled;            /*IN*/
 }
 DIALOG_CMD_CTL_ENABLE, * P_DIALOG_CMD_CTL_ENABLE;
 
@@ -1134,11 +1156,11 @@ controls may want nobbling
 
 typedef struct DIALOG_CMD_CTL_NOBBLE
 {
-    H_DIALOG      h_dialog;      /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;    /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    S32           nobbled;       /*IN*/
+    S32                 nobbled;            /*IN*/
 }
 DIALOG_CMD_CTL_NOBBLE, * P_DIALOG_CMD_CTL_NOBBLE;
 
@@ -1150,9 +1172,9 @@ controls has been given a new source of data (typically list box's strings)
 
 typedef struct DIALOG_CMD_CTL_NEW_SOURCE
 {
-    H_DIALOG      h_dialog;      /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;    /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 }
 DIALOG_CMD_CTL_NEW_SOURCE, * P_DIALOG_CMD_CTL_NEW_SOURCE;
 
@@ -1164,12 +1186,12 @@ query enable/disable state of control
 
 typedef struct DIALOG_CMD_CTL_ENABLE_QUERY
 {
-    H_DIALOG      h_dialog;          /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;        /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    S32           enabled;           /*OUT*/
-    S32           enable_suppressed; /*OUT*/ /* says whether enabled state is used or being suppressed from a higher level */
+    S32                 enabled;            /*OUT*/
+    S32                 enable_suppressed;  /*OUT*/ /* says whether enabled state is used or being suppressed from a higher level */
 }
 DIALOG_CMD_CTL_ENABLE_QUERY, * P_DIALOG_CMD_CTL_ENABLE_QUERY;
 
@@ -1181,11 +1203,11 @@ client has changed control's data, so wants control reencoding
 
 typedef struct DIALOG_CMD_CTL_ENCODE
 {
-    H_DIALOG      h_dialog;      /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;    /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    S32           bits;          /*IN*/
+    S32                 bits;               /*IN*/
 
 #define DIALOG_ENCODE_UPDATE_NOW DIALOG_STATE_SET_UPDATE_NOW
 }
@@ -1194,16 +1216,16 @@ DIALOG_CMD_CTL_ENCODE, * P_DIALOG_CMD_CTL_ENCODE;
 /*
 DIALOG_CMD_CODE_CTL_UI_CONTROL
 
-client wants to change control's ui control or one of its data bits
+client wants to change control's UI control or one of its data bits
 */
 
 typedef struct DIALOG_CMD_CTL_UI_CONTROL
 {
-    H_DIALOG      h_dialog;      /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;    /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    S32           what;          /*IN*/
+    S32                 what;               /*IN*/
 #define DIALOG_CMD_CTL_UI_CONTROL_UIC  0
 #define DIALOG_CMD_CTL_UI_CONTROL_MAX  1
 #define DIALOG_CMD_CTL_UI_CONTROL_MIN  2
@@ -1225,9 +1247,9 @@ DIALOG_CMD_CODE_CTL_SET_DEFAULT
 
 typedef struct DIALOG_CMD_CTL_SET_DEFAULT
 {
-    H_DIALOG      h_dialog;   /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 }
 DIALOG_CMD_CTL_SET_DEFAULT, * P_DIALOG_CMD_CTL_SET_DEFAULT;
 
@@ -1237,9 +1259,9 @@ DIALOG_CMD_CODE_CTL_FOCUS_SET
 
 typedef struct DIALOG_CMD_CTL_FOCUS_SET
 {
-    H_DIALOG      h_dialog;   /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 }
 DIALOG_CMD_CTL_FOCUS_SET, * P_DIALOG_CMD_CTL_FOCUS_SET;
 
@@ -1249,9 +1271,9 @@ DIALOG_CMD_CODE_CTL_FOCUS_QUERY
 
 typedef struct DIALOG_CMD_CTL_FOCUS_QUERY
 {
-    H_DIALOG      h_dialog;   /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*OUT*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*OUT*/
 }
 DIALOG_CMD_CTL_FOCUS_QUERY, * P_DIALOG_CMD_CTL_FOCUS_QUERY;
 
@@ -1311,17 +1333,17 @@ DIALOG_CTL_STATE, * P_DIALOG_CTL_STATE; typedef const DIALOG_CTL_STATE * PC_DIAL
 
 typedef struct DIALOG_CMD_CTL_STATE_SET
 {
-    H_DIALOG         h_dialog;   /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID    control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id; /*IN*/
 
 #define DIALOG_STATE_SET_UPDATE_NOW  0x08000000
 #define DIALOG_STATE_SET_ALTERNATE   0x10000000
 #define DIALOG_STATE_SET_ALWAYS_MSG  0x20000000
 #define DIALOG_STATE_SET_DONT_MSG    0x40000000
-    S32              bits;       /*IN*/
+    S32                 bits;               /*IN*/
 
-    DIALOG_CTL_STATE state;      /*IN, owned by caller, copied by dialog*/
+    DIALOG_CTL_STATE    state;              /*IN*/ /* owned by caller, copied by dialog */
 }
 DIALOG_CMD_CTL_STATE_SET, * P_DIALOG_CMD_CTL_STATE_SET;
 
@@ -1331,16 +1353,16 @@ DIALOG_CMD_CODE_CTL_STATE_QUERY
 
 typedef struct DIALOG_CMD_CTL_STATE_QUERY
 {
-    H_DIALOG            h_dialog;   /*IN*/
+    H_DIALOG            h_dialog;               /*IN*/
 
-    DIALOG_CTL_ID       control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;      /*IN*/
 
 #define DIALOG_STATE_QUERY_ALTERNATE DIALOG_STATE_SET_ALTERNATE
-    S32                 bits;       /*IN*/
+    S32                 bits;                   /*IN*/
 
-    DIALOG_CTL_STATE    state;      /*out, copy now owned by caller*/
+    DIALOG_CTL_STATE    state;                  /*OUT*/ /* copy now owned by caller */
 
-    DIALOG_CONTROL_TYPE type;       /*OUT*/
+    DIALOG_CONTROL_TYPE dialog_control_type;    /*OUT*/
 }
 DIALOG_CMD_CTL_STATE_QUERY, * P_DIALOG_CMD_CTL_STATE_QUERY;
 
@@ -1358,11 +1380,11 @@ controls may want to have an area of their control redrawn sometime
 
 typedef struct DIALOG_CMD_CTL_UPDATE_LATER
 {
-    H_DIALOG h_dialog; /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    GR_BOX box; /*IN*/ /* relative to control */
+    GR_BOX              box;                /*IN*/ /* relative to control */
 }
 DIALOG_CMD_CTL_UPDATE_LATER, * P_DIALOG_CMD_CTL_UPDATE_LATER;
 
@@ -1374,11 +1396,11 @@ controls may want repositioning
 
 typedef struct DIALOG_CMD_CTL_REPOSITION
 {
-    H_DIALOG h_dialog; /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    PIXIT_POINT posn; /*IN*/ /* new offset */
+    PIXIT_POINT         posn;               /*IN*/ /* new offset */
 }
 DIALOG_CMD_CTL_REPOSITION, * P_DIALOG_CMD_CTL_REPOSITION;
 
@@ -1388,12 +1410,12 @@ DIALOG_CMD_CODE_CTL_SIZE_QUERY
 
 typedef struct DIALOG_CMD_CTL_SIZE_QUERY
 {
-    H_DIALOG h_dialog; /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    PIXIT_POINT outer_size; /*OUT*/ /* current size */
-    PIXIT_POINT inner_size; /*OUT*/ /* current size */
+    PIXIT_POINT         outer_size;         /*OUT*/ /* current size */
+    PIXIT_POINT         inner_size;         /*OUT*/ /* current size */
 }
 DIALOG_CMD_CTL_SIZE_QUERY, * P_DIALOG_CMD_CTL_SIZE_QUERY;
 
@@ -1403,12 +1425,12 @@ DIALOG_CMD_CODE_CTL_POSN_QUERY
 
 typedef struct DIALOG_CMD_CTL_POSN_QUERY
 {
-    H_DIALOG h_dialog; /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id; /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    PIXIT_POINT outer_posn; /*OUT*/ /* current posn tl */
-    PIXIT_POINT inner_posn; /*OUT*/ /* current posn tl */
+    PIXIT_POINT         outer_posn;         /*OUT*/ /* current posn tl */
+    PIXIT_POINT         inner_posn;         /*OUT*/ /* current posn tl */
 }
 DIALOG_CMD_CTL_POSN_QUERY, * P_DIALOG_CMD_CTL_POSN_QUERY;
 
@@ -1418,13 +1440,13 @@ DIALOG_CMD_CODE_CTL_PARENT_QUERY
 
 typedef struct DIALOG_CMD_CTL_PARENT_QUERY
 {
-    H_DIALOG      h_dialog;          /*IN*/
+    H_DIALOG            h_dialog;                   /*IN*/
 
-    DIALOG_CTL_ID control_id;        /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;          /*IN*/
 
-    DIALOG_CTL_ID parent_control_id; /*OUT*/
+    DIALOG_CONTROL_ID   parent_dialog_control_id;   /*OUT*/
 
-    HOST_WND      hwnd;              /*OUT*/
+    HOST_WND            hwnd;                       /*OUT*/
 }
 DIALOG_CMD_CTL_PARENT_QUERY, * P_DIALOG_CMD_CTL_PARENT_QUERY;
 
@@ -1434,11 +1456,11 @@ DIALOG_CMD_CODE_CTL_PARENT_QUERY
 
 typedef struct DIALOG_CMD_HWND_QUERY
 {
-    H_DIALOG      h_dialog;          /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;        /*IN, 0->whole dialog*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/ /* 0->whole dialog */
 
-    HOST_WND      hwnd;              /*OUT*/
+    HOST_WND            hwnd;               /*OUT*/
 }
 DIALOG_CMD_HWND_QUERY, * P_DIALOG_CMD_HWND_QUERY;
 
@@ -1450,11 +1472,11 @@ controls may want resizing
 
 typedef struct DIALOG_CMD_CTL_SIZE_SET
 {
-    H_DIALOG h_dialog; /*IN*/
+    H_DIALOG            h_dialog;           /*IN*/
 
-    DIALOG_CTL_ID control_id;    /*IN*/
+    DIALOG_CONTROL_ID   dialog_control_id;  /*IN*/
 
-    PIXIT_POINT   size;          /*IN*/ /* new size: -ve -> try to make either/both 'reasonable' for this control */
+    PIXIT_POINT         size;               /*IN*/ /* new size: -ve -> try to make either/both 'reasonable' for this control */
 }
 DIALOG_CMD_CTL_SIZE_SET, * P_DIALOG_CMD_CTL_SIZE_SET;
 
@@ -1473,7 +1495,7 @@ all DIALOG_MSG_xxx events start like this
 #define DIALOG_MSG_CTL_HDR_DEF \
     H_DIALOG h_dialog; \
     CLIENT_HANDLE client_handle; \
-    DIALOG_CTL_ID dialog_control_id; \
+    DIALOG_CONTROL_ID dialog_control_id; \
     PC_DIALOG_CONTROL p_dialog_control; \
     const void * p_dialog_control_data; \
 
@@ -1509,7 +1531,7 @@ typedef struct DIALOG_MSG_PROCESS_START
 {
     DIALOG_MSG_HDR_DEF
 
-    DIALOG_CTL_ID initial_focus; /*IN=0;OUT*/ /* change to other than 0 to attempt initial focus setting */
+    DIALOG_CONTROL_ID initial_focus_dialog_control_id; /*IN=0;OUT*/ /* change to other than 0 to attempt initial focus setting */
 }
 DIALOG_MSG_PROCESS_START, * P_DIALOG_MSG_PROCESS_START; typedef const DIALOG_MSG_PROCESS_START * PC_DIALOG_MSG_PROCESS_START;
 
@@ -1708,7 +1730,7 @@ typedef struct DIALOG_MSG_CTL_PUSHBUTTON
     BOOL processed;        /*IN=0;OUT*/
     S32  completion_code;  /*IN=0;OUT iff processed*/
     BOOL right_button;
-    DIALOG_CTL_ID double_control_id; /* !=0 if caused by double-clicking on a control */
+    DIALOG_CONTROL_ID double_dialog_control_id; /* !=0 if caused by double-clicking on a control */
 }
 DIALOG_MSG_CTL_PUSHBUTTON, * P_DIALOG_MSG_CTL_PUSHBUTTON;
 

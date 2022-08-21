@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 /* RISC OS specific colour picker routines for Fireworkz */
 
@@ -167,7 +167,7 @@ colourpicker_message_ColourPickerColourChoice(
 
     assert(p_colourpicker_callback->dialogue_handle == p_wimp_message->data.words[0]);
 
-    p_colourpicker_callback->rgb.transparent = (0 != (p_wimp_message->data.words[1] & 1));
+    p_colourpicker_callback->rgb.transparent = u8_from_int(0 != (p_wimp_message->data.words[1] & 1));
 
     p_colourpicker_callback->rgb.r = p_colour_descriptor->red;
     p_colourpicker_callback->rgb.g = p_colour_descriptor->green;
@@ -340,7 +340,7 @@ colourpicker_close_dialogue(
     }
 }
 
-extern void
+extern BOOL
 riscos_colour_picker(
     HOST_WND    parent_window_handle,
     _InoutRef_  P_RGB p_rgb)
@@ -381,7 +381,7 @@ colour_picker_block.colour_descriptor.extra_bytes = 0;
 colour_picker_block.colour_descriptor.colour_model = COLOUR_MODEL_RGB;
 
     if(!colourpicker_open_dialogue(p_colourpicker_callback))
-        return;
+        return(FALSE);
 
     colourpicker_process_dialogue(p_colourpicker_callback);
 
@@ -389,6 +389,7 @@ colour_picker_block.colour_descriptor.colour_model = COLOUR_MODEL_RGB;
 
 reportf("RGB out: %d,%d,%d(%d)", colourpicker_callback.rgb.r, colourpicker_callback.rgb.g, colourpicker_callback.rgb.b, colourpicker_callback.rgb.transparent);
     *p_rgb = colourpicker_callback.rgb;
+    return(TRUE);
 }
 
 #endif /* RISCOS */

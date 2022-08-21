@@ -106,6 +106,10 @@ do_this_null_event(
     return(res);
 }
 
+#if CHECKING && 0
+static U32 count = 0;
+#endif
+
 /*ncr*/
 extern NULL_EVENT_RETURN_CODE
 null_events_do_events(void)
@@ -114,6 +118,18 @@ null_events_do_events(void)
     S32 n = array_elements(&null_.event_list); /* do at most this many per slice; ignore list changing size during slice */
     S32 i = null_.item;
     MONOTIME initialTime;
+
+#if CHECKING && 0 /* attempt to throttle delivery of null events for debugging bg/fg interaction */
+    if(count != 0)
+    {
+        --count;
+        return(res);
+    }
+    else
+    {
+        count = 4*1024*1024;
+    }
+#endif
 
     if(0 == n) /* need for null events may have gone away during last event processing */
         return(res);

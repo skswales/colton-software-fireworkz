@@ -66,51 +66,51 @@ gr_axis_form_category(
     const GR_AXES_IDX axes_idx = 0;
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
     const P_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    P_GR_AXIS_TICKS ticksp;
+    P_GR_AXIS_TICKS p_axis_ticks;
 
     /* how far up the interval is the zero line? */
     /* answer: categories thinks zero is at left */
     p_axis->zero_frac = 0.0;
 
     /* category axis major ticks */
-    ticksp = &p_axis->major;
+    p_axis_ticks = &p_axis->major;
 
-    ticksp->current = gr_lin_major(total_n_points - 0.0);
+    p_axis_ticks->current = gr_lin_major(total_n_points - 0.0);
     /* forbid sub-category ticks */
-    if( ticksp->current < 1.0)
-        ticksp->current = 1.0;
+    if( p_axis_ticks->current < 1.0)
+        p_axis_ticks->current = 1.0;
 
-    if(ticksp->bits.manual)
+    if(p_axis_ticks->bits.manual)
     {
-        if(ticksp->punter <= 0.0)
-            ticksp->current = 0.0; /* off */
+        if(p_axis_ticks->punter <= 0.0)
+            p_axis_ticks->current = 0.0; /* off */
         else
         {
-            F64 test = ticksp->punter / ticksp->current;
+            F64 test = p_axis_ticks->punter / p_axis_ticks->current;
 
             if((test >= AXIS_RATIO_SILLY_MIN) && (test <= AXIS_RATIO_SILLY_MAX)) /* use punter value unless it is silly or we area doing autocalc */
-                ticksp->current = ticksp->punter;
+                p_axis_ticks->current = p_axis_ticks->punter;
         }
     }
 
     /* category axis minor ticks */
-    ticksp = &p_axis->minor;
+    p_axis_ticks = &p_axis->minor;
 
-    ticksp->current = gr_lin_major(/*2.0 **/ p_axis->major.current);
+    p_axis_ticks->current = gr_lin_major(/*2.0 **/ p_axis->major.current);
     /* forbid sub-category ticks */
-    if( ticksp->current < 1.0)
-        ticksp->current = 1.0;
+    if( p_axis_ticks->current < 1.0)
+        p_axis_ticks->current = 1.0;
 
-    if(ticksp->bits.manual)
+    if(p_axis_ticks->bits.manual)
     {
-        if(ticksp->punter <= 0.0)
-            ticksp->current = 0.0; /* off */
+        if(p_axis_ticks->punter <= 0.0)
+            p_axis_ticks->current = 0.0; /* off */
         else
         {
-            F64 test = ticksp->punter / ticksp->current;
+            F64 test = p_axis_ticks->punter / p_axis_ticks->current;
 
             if((test >= AXIS_RATIO_SILLY_MIN) && (test <= AXIS_RATIO_SILLY_MAX)) /* use punter value unless it is silly or we area doing autocalc */
-                ticksp->current = ticksp->punter;
+                p_axis_ticks->current = p_axis_ticks->punter;
         }
     }
 }
@@ -131,7 +131,7 @@ gr_axis_form_category(
 #endif
 
 _Check_return_
-static inline double
+static double
 log2(_InVal_ double d)
 {
     return(log(d) * _log2_e);
@@ -147,7 +147,6 @@ gr_axis_form_value_log(
     P_GR_AXIS p_axis,
     _InVal_     BOOL is_y_axis)
 {
-    P_GR_AXIS_TICKS ticksp;
     F64 lna;
 
     p_axis->current = p_axis->actual;
@@ -178,52 +177,52 @@ gr_axis_form_value_log(
     if( p_axis->current.max < 10.0 * F64_MIN)
         p_axis->current.max = 10.0 * F64_MIN;
 
-    /* value axis major ticks (multiplier between ticks) */
-    ticksp = &p_axis->major;
+    { /* value axis major ticks (multiplier between ticks) */
+    P_GR_AXIS_TICKS p_axis_ticks = &p_axis->major;
 
     /* attempt to find a useful and 'pretty' major interval using both deduced and punter values */
     /* my guesses are always in base 10 */
-    ticksp->current = gr_lin_major(log10(p_axis->current.max) - log10(p_axis->current.min));
-    if( ticksp->current < 1.0)
-        ticksp->current = 1.0;
+    p_axis_ticks->current = gr_lin_major(log10(p_axis->current.max) - log10(p_axis->current.min));
+    if( p_axis_ticks->current < 1.0)
+        p_axis_ticks->current = 1.0;
     p_axis->bits.log_base = 10;
-    ticksp->current = pow(p_axis->bits.log_base, ticksp->current);
+    p_axis_ticks->current = pow(p_axis->bits.log_base, p_axis_ticks->current);
 
-    if(ticksp->bits.manual)
+    if(p_axis_ticks->bits.manual)
     {
-        if(ticksp->punter <= 1.0) /* must be multiplying by something significant each time */
-            ticksp->current = 0.0; /* off */
+        if(p_axis_ticks->punter <= 1.0) /* must be multiplying by something significant each time */
+            p_axis_ticks->current = 0.0; /* off */
         else
         {
             /* look at punter value and split into base and exponent step adder */
             /* first try and split punter value up as base 10 animacule */
-            F64 test = log10(ticksp->punter);
+            F64 test = log10(p_axis_ticks->punter);
             F64 exponent;
             F64 mantissa = splitlognum(&test, &exponent);
 
             /* was number close enough to a power of the base? */
             if(mantissa < LOG_SIG_EPS)
             {
-                test = log10(ticksp->current);
+                test = log10(p_axis_ticks->current);
 
                 consume(F64, splitlognum(&test, &exponent));
 
-                test = ticksp->punter / exponent;
+                test = p_axis_ticks->punter / exponent;
 
                 if((test >= AXIS_RATIO_SILLY_MIN) && (test <= AXIS_RATIO_SILLY_MAX)) /* use punter value unless it is silly or we area doing autocalc */
-                    ticksp->current = ticksp->punter;
+                    p_axis_ticks->current = p_axis_ticks->punter;
             }
             else
             {
                 /* try base 2 */
-                test = log2(ticksp->punter);
+                test = log2(p_axis_ticks->punter);
 
                 mantissa = splitlognum(&test, &exponent);
 
                 /* was number close enough to a power of the base? */
                 if(mantissa < LOG_SIG_EPS)
                 {
-                    ticksp->current = ticksp->punter;
+                    p_axis_ticks->current = p_axis_ticks->punter;
                     p_axis->bits.log_base = 2;
                 }
             }
@@ -259,7 +258,8 @@ gr_axis_form_value_log(
 
     /* account for stupid graphs */
     if( p_axis->current.max <= p_axis->current.min)
-        p_axis->current.max  = p_axis->current.min * (ticksp->current ? ticksp->current : 2.0);
+        p_axis->current.max  = p_axis->current.min * (p_axis_ticks->current ? p_axis_ticks->current : 2.0);
+    } /*block*/
 
     /* Round up the current.max to a multiple of the major value towards an exponent of +infinity */
     if(!p_axis->bits.manual || (p_axis->current.max != p_axis->punter.max))
@@ -293,30 +293,30 @@ gr_axis_form_value_log(
 
     p_axis->zero_frac = 0.0; /* no real zero so say at bottom */
 
-    /* value axis minor ticks (mantissa increment between ticks) */
-    ticksp = &p_axis->minor;
+    { /* value axis minor ticks (mantissa increment between ticks) */
+    const P_GR_AXIS_TICKS p_axis_ticks = &p_axis->minor;
 
-    ticksp->current = 1.0;
+    p_axis_ticks->current = 1.0;
 
-    if(ticksp->bits.manual)
+    if(p_axis_ticks->bits.manual)
     {
-        if(ticksp->punter <= 0.0)
-            ticksp->current = 0.0; /* off */
+        if(p_axis_ticks->punter <= 0.0)
+            p_axis_ticks->current = 0.0; /* off */
         else
         {
-            F64 test = ticksp->punter / ticksp->current;
+            F64 test = p_axis_ticks->punter / p_axis_ticks->current;
 
             if((test >= AXIS_RATIO_SILLY_MIN) && (test <= AXIS_RATIO_SILLY_MAX)) /* use punter value unless it is silly or we area doing autocalc */
-                ticksp->current = ticksp->punter;
+                p_axis_ticks->current = p_axis_ticks->punter;
         }
     }
+    } /*block*/
 }
 
 static void
 gr_axis_form_value_lin(
     P_GR_AXIS p_axis)
 {
-    P_GR_AXIS_TICKS ticksp;
     F64 major_interval;
 
     p_axis->current = p_axis->actual;
@@ -347,37 +347,38 @@ gr_axis_form_value_lin(
         p_axis->current.max = MAX(p_axis->current.max, 0.0);
     }
 
-    /* value axis major ticks */
-    ticksp = &p_axis->major;
+    { /* value axis major ticks */
+    P_GR_AXIS_TICKS p_axis_ticks = &p_axis->major;
 
     /* attempt to find a useful and 'pretty' major interval using both deduced and punter values */
-    ticksp->current = gr_lin_major(p_axis->current.max - p_axis->current.min);
-    major_interval = ticksp->current;
+    p_axis_ticks->current = gr_lin_major(p_axis->current.max - p_axis->current.min);
+    major_interval = p_axis_ticks->current;
 
-    if(ticksp->bits.manual)
+    if(p_axis_ticks->bits.manual)
     {
-        if(ticksp->punter <= 0.0)
-            ticksp->current = 0.0; /* off */
+        if(p_axis_ticks->punter <= 0.0)
+            p_axis_ticks->current = 0.0; /* off */
         else
         {
-            F64 test = ticksp->punter / ticksp->current;
+            F64 test = p_axis_ticks->punter / p_axis_ticks->current;
 
             if((test >= AXIS_RATIO_SILLY_MIN) && (test <= AXIS_RATIO_SILLY_MAX)) /* use punter value unless it is silly or we area doing autocalc */
             {
-                ticksp->current = ticksp->punter;
-                major_interval = ticksp->current;
+                p_axis_ticks->current = p_axis_ticks->punter;
+                major_interval = p_axis_ticks->current;
             }
         }
     }
     /* SKS after PD 4.12 26mar92 - in auto mode only: RJM reckons this is what punters would like and I agree */
     else
     {
-        if(ticksp->current == 0.5)
+        if(p_axis_ticks->current == 0.5)
         {
-            ticksp->current = 1.0;
-            major_interval = ticksp->current;
+            p_axis_ticks->current = 1.0;
+            major_interval = p_axis_ticks->current;
         }
     }
+    } /*block*/
 
     { /* remember for decimal places rounding of values shown on axis */
     F64 log10_major = log10(major_interval);
@@ -423,23 +424,24 @@ gr_axis_form_value_lin(
     /* major tick interval as a fraction of the current span */
     p_axis->current_frac = major_interval / p_axis->current_span;
 
-    /* value axis minor ticks */
-    ticksp = &p_axis->minor;
+    { /* value axis minor ticks */
+    P_GR_AXIS_TICKS p_axis_ticks = &p_axis->minor;
 
-    ticksp->current = gr_lin_major(/*2.0 **/ major_interval);
+    p_axis_ticks->current = gr_lin_major(/*2.0 **/ major_interval);
 
-    if(ticksp->bits.manual)
+    if(p_axis_ticks->bits.manual)
     {
-        if(ticksp->punter <= 0.0)
-            ticksp->current = 0.0; /* off */
+        if(p_axis_ticks->punter <= 0.0)
+            p_axis_ticks->current = 0.0; /* off */
         else
         {
-            F64 test = ticksp->punter / ticksp->current;
+            F64 test = p_axis_ticks->punter / p_axis_ticks->current;
 
             if((test >= AXIS_RATIO_SILLY_MIN) && (test <= AXIS_RATIO_SILLY_MAX)) /* use punter value unless it is silly or we area doing autocalc */
-                ticksp->current = ticksp->punter;
+                p_axis_ticks->current = p_axis_ticks->punter;
         }
     }
+    } /*block*/
 }
 
 extern void
@@ -482,7 +484,7 @@ gr_lin_major_test(
     return(FALSE);
 }
 
-/* eg.
+/* e.g.
  *   99 -> 1, .9956 -> 10 so leave 10
  *   49 -> 1, .6902 -> 10 but make 5
  *   19 -> 1, .2788 -> 10 but make 2

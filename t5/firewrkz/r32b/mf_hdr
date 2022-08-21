@@ -35,9 +35,6 @@ $(PROD_BUILD_DIR).!$(APPL).Resource.Choices.Choice29 \
 $(PROD_BUILD_DIR).!$(APPL).Resource.Choices.ChoicesDoc \
 $(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.Master \
 $(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.MasterC \
-$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetFgn \
-$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetXLS \
-$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.TextFgn \
 $(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S1 \
 $(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S2 \
 $(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S3 \

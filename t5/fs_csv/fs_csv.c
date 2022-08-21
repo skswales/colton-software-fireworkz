@@ -72,7 +72,7 @@ csv_save_cell_data(
         else
         {
             U32 bytes_of_char;
-            UCS4 ucs4 = ustr_char_decode_off(ustr_inline, offset, /*ref*/bytes_of_char);
+            UCS4 ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, offset, /*ref*/bytes_of_char);
 
             if(CH_NULL == ucs4)
                 break;

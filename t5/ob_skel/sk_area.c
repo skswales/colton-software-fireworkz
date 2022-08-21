@@ -456,6 +456,8 @@ docu_area_equal(
 *
 ******************************************************************************/
 
+/*ncr*/
+_Ret_valid_
 extern P_DOCU_AREA
 docu_area_from_object_data(
     _OutRef_    P_DOCU_AREA p_docu_area,
@@ -481,6 +483,8 @@ docu_area_from_object_data(
 *
 ******************************************************************************/
 
+/*ncr*/
+_Ret_valid_
 extern P_DOCU_AREA
 docu_area_from_position(
     _OutRef_    P_DOCU_AREA p_docu_area,
@@ -501,6 +505,8 @@ docu_area_from_position(
 *
 ******************************************************************************/
 
+/*ncr*/
+_Ret_valid_
 extern P_DOCU_AREA
 docu_area_from_position_max(
     _OutRef_    P_DOCU_AREA p_docu_area,
@@ -521,6 +527,8 @@ docu_area_from_position_max(
 *
 ******************************************************************************/
 
+/*ncr*/
+_Ret_valid_
 extern P_DOCU_AREA
 docu_area_from_region(
     _OutRef_    P_DOCU_AREA p_docu_area,
@@ -546,6 +554,8 @@ docu_area_from_region(
 *
 ******************************************************************************/
 
+/*ncr*/
+_Ret_valid_
 extern P_DOCU_AREA
 docu_area_from_slr(
     _OutRef_    P_DOCU_AREA p_docu_area,
@@ -820,7 +830,7 @@ docu_area_is_cell_or_less(
 
 /******************************************************************************
 *
-* normalise docu_area - ie ensure that
+* normalise docu_area - i.e. ensure that
 * tl and br slrs contain sensible numbers,
 * and the whole_col/whole_row bits are cleared
 *
@@ -857,7 +867,7 @@ docu_area_normalise(
 
 /******************************************************************************
 *
-* normalise docu_area - ie ensure that
+* normalise docu_area - i.e. ensure that
 * tl and br slrs contain sensible numbers,
 * and the whole_col/whole_row bits are cleared
 *

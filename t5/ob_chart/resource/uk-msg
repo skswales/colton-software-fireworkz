@@ -29,7 +29,7 @@ e7:Charts can only use Draw and Sprite files
 6:°
 7:Anticlockwise
 #
-10:DrawFile
+10:Chart
 #
 100:Bar chart
 101:sg4_bar_charts.htm
@@ -57,7 +57,8 @@ e7:Charts can only use Draw and Sprite files
 125:Category labels
 126:Series label
 #
-130:Click on a chart element to select it
+r130:Click on a chart element to select it. ADJUST-click for finer selection
+w130:Click on a chart element to select it. Ctrl-click for finer selection
 #
 150:Bar
 151:% width
@@ -66,8 +67,8 @@ e7:Charts can only use Draw and Sprite files
 160:sg4_customising_bar_charts.htm
 #
 190:3D
-191:° pitch
-192:° roll
+191:° droop
+192:° turn
 #
 200:Line chart
 201:sg4_line_charts.htm

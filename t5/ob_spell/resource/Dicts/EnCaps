@@ -1,0 +1,35 @@
+| Dictionary definition file for Spellcheck II for English
+|
+| This Source Code Form is subject to the terms of the Mozilla Public
+| License, v. 2.0. If a copy of the MPL was not distributed with this
+| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+|
+| Copyright (C) 1990-1998 Colton Software Limited
+| Copyright (C) 1998-2015 R W Colton
+|
+| Created:       SKS 17 Jan 2016
+| Last modified: SKS 17 Jan 2016
+|
+| '|' is the comment character; use || if you really want a |
+| leading spaces are not significant
+|
+| Copyright string follows:
+|
+Fireworkz En Caps Dictionary Definition Copyright Colton Software 1990-2015
+|
+32 | Max word length  (min 32, max 63)
+00 | Ending offset    (normally 0 for auto-calculation; otherwise min 64)
+|
+| valid first letters MUST BE A SUBSET of valid other letters
+| valid first letters and valid other letters MUST BE IN UPPER CASE
+| maximum number of valid other letters is 96
+| (Character offset) + (number of valid other letters) + (number of endings)
+|   MUST BE LESS THAN 256
+|
+  ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz     | valid first letters (in ascending order)
+'-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz     | valid other letters (in ascending order)
+'-abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz     | lower case equivalents (must line up)
+|
+| Near-empty ending list
+|
+-

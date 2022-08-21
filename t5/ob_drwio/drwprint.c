@@ -84,9 +84,9 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
     // Create the metafile device context.
     hdc =
         CreateEnhMetaFile(hdcRef,
-                          (LPCTSTR) TEXT("C:\\Temp\\sks.emf"),
+                          (PCTSTR) TEXT("C:\\Temp\\sks.emf"),
                           &rect,
-                          (LPCTSTR) TEXT("Colton Fireworkz\0A Passion Play\0\0"));
+                          (PCTSTR) TEXT("Colton Fireworkz\0A Passion Play\0\0"));
 
     // Release the reference device context.
 
@@ -148,7 +148,7 @@ T5_CMD_PROTO(static, t5_cmd_test_save_metafile)
 
     // DC that comes back is where the printer wants it, so if we want printable area to
     // start further down(across) the page we obviously have to arrange it so that
-    // a +ve offset is added when going to GDI space ie our top margin - printer top offset
+    // a +ve offset is added when going to GDI space i.e. our top margin - printer top offset
     // p_redraw_context->gdi_org.y(x) is subtracted from the point so that needs to be -ve in the above case
     {
     PIXIT_POINT tl;
@@ -388,7 +388,7 @@ save_as_drawfile_one_document_page(
 
     host_redraw_context_fillin(p_redraw_context);
 
-    if(array_index_valid(&h_page_list, page_ident))
+    if(array_index_is_valid(&h_page_list, page_ident))
     {
         const PC_PAGE_ENTRY p_page_entry = array_ptrc_no_checks(&h_page_list, PAGE_ENTRY, page_ident);
 
@@ -504,7 +504,7 @@ save_as_drawfile_host_print_document_core(
     ARRAY_INDEX page_index, docu_pages_per_printer_page;
     PRINTER_PERCENTAGE printer_percentage;
 
-    docu_pages_per_printer_page = 1; /* probably ... as we don't emulate two up etc */
+    docu_pages_per_printer_page = 1; /* probably ... as we don't emulate two up etc. */
 
     save_as_drawfile_percentage_initialise(p_docu, &printer_percentage, page_count);
 
@@ -539,7 +539,7 @@ save_as_drawfile_host_print_document_core(
     status_return(status);
 
     if(p_gr_riscdiag_saving->dd_options)
-    {   /* adjust options for paper size etc */
+    {   /* adjust options for paper size etc. */
         P_BYTE pObject = gr_riscdiag_getoffptr(BYTE, p_gr_riscdiag_saving, p_gr_riscdiag_saving->dd_options);
         DRAW_OBJECT_OPTIONS options;
 

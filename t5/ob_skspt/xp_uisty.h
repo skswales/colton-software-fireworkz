@@ -19,8 +19,8 @@
 typedef struct MSG_UISTYLE_COLOUR_PICKER
 {
     H_DIALOG h_dialog;
-    DIALOG_CTL_ID rgb_control_id; /* assumes this control id has a U32 == RGB state to set/get */
-    DIALOG_CTL_ID button_control_id; /* this one is disabled during colour selection as a trivial interlock */
+    DIALOG_CONTROL_ID rgb_dialog_control_id; /* assumes this control id has a U32 == RGB state to set/get */
+    DIALOG_CONTROL_ID button_dialog_control_id; /* this one is disabled during colour selection as a trivial interlock */
 }
 MSG_UISTYLE_COLOUR_PICKER, * P_MSG_UISTYLE_COLOUR_PICKER;
 
@@ -35,7 +35,7 @@ typedef struct MSG_UISTYLE_STYLE_EDIT
     PC_STYLE_SELECTOR p_prohibited_enabler /*_In_opt_*/;
     PC_STYLE_SELECTOR p_prohibited_enabler_2 /*_In_opt_*/;
     P_STYLE p_style_out /*_Out_*/;
-    STYLE_HANDLE style_handle_being_modified /*ie not effects*/;
+    STYLE_HANDLE style_handle_being_modified /*i.e. not effects*/;
     S32 subdialog;
 }
 MSG_UISTYLE_STYLE_EDIT, * P_MSG_UISTYLE_STYLE_EDIT;

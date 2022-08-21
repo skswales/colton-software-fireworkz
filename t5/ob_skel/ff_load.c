@@ -508,8 +508,8 @@ bound filetype handing
 
 typedef struct BOUND_FILETYPE
 {
-    QUICK_TBLOCK description_quick_tblock;    /* NB Can't have associated static_buffer as we will get realloc()ed */
-    QUICK_TBLOCK extension_srch_quick_tblock; /* ditto */
+    QUICK_UBLOCK description_quick_ublock;    /* NB Can't have associated static_buffer as we will get realloc()ed */
+    QUICK_UBLOCK extension_srch_quick_ublock; /* ditto */
 
     S32 mask;
     T5_FILETYPE t5_filetype;
@@ -526,8 +526,8 @@ ff_load_msg_exit2(void)
     {
         P_BOUND_FILETYPE p_bound_filetype = array_ptr(&g_bound_filetype_handle, BOUND_FILETYPE, i);
 
-        quick_tblock_dispose(&p_bound_filetype->description_quick_tblock);
-        quick_tblock_dispose(&p_bound_filetype->extension_srch_quick_tblock);
+        quick_ublock_dispose(&p_bound_filetype->description_quick_ublock);
+        quick_ublock_dispose(&p_bound_filetype->extension_srch_quick_ublock);
     }
 
     al_array_dispose(&g_bound_filetype_handle);
@@ -569,11 +569,13 @@ enumerate_bound_filetypes(
 }
 
 _Check_return_
-_Ret_maybenull_z_
-extern PCTSTR
-description_text_from_t5_filetype(
-    _InVal_     T5_FILETYPE t5_filetype)
+_Ret_z_
+extern PC_USTR
+description_ustr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _OutRef_    P_BOOL p_found)
 {
+    static UCHARZ description_buffer[32];
     ARRAY_INDEX i = array_elements(&g_bound_filetype_handle);
 
     while(--i >= 0)
@@ -582,20 +584,34 @@ description_text_from_t5_filetype(
 
         if(p_bound_filetype->t5_filetype == t5_filetype)
         {
-            assert(0 != quick_tblock_array_handle_ref(&p_bound_filetype->description_quick_tblock));
-            return(quick_tblock_tstr(&p_bound_filetype->description_quick_tblock));
+            assert(0 != quick_ublock_array_handle_ref(&p_bound_filetype->description_quick_ublock));
+            *p_found = TRUE;
+            return(quick_ublock_ustr(&p_bound_filetype->description_quick_ublock));
         }
     }
 
-    return(NULL /* no match */);
+    *p_found = FALSE;
+#if RISCOS
+    {
+    U8Z var_name_buffer[32];
+    consume_int(xsnprintf(var_name_buffer, elemof32(var_name_buffer), "File$Type_%03X", t5_filetype));
+    if(NULL == _kernel_getenv(var_name_buffer, description_buffer, elemof32(description_buffer)))
+        consume_int(ustr_xsnprintf(ustr_bptr(description_buffer), elemof32(description_buffer), USTR_TEXT("Unknown [RISC OS &x03X]"), t5_filetype));
+    } /*block*/
+#else
+    consume_int(ustr_xsnprintf(ustr_bptr(description_buffer), elemof32(description_buffer), USTR_TEXT("Unknown [RISC OS &%03X] (*.%3x)"), t5_filetype, t5_filetype));
+#endif /* OS */
+    return(ustr_bptr(description_buffer));
 }
 
 _Check_return_
-_Ret_maybenull_z_
-extern PCTSTR
-extension_srch_text_from_t5_filetype(
-    _InVal_     T5_FILETYPE t5_filetype)
+_Ret_z_
+extern PC_USTR
+extension_srch_ustr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _OutRef_    P_BOOL p_found)
 {
+    static UCHARZ extension_buffer[8];
     ARRAY_INDEX i = array_elements(&g_bound_filetype_handle);
 
     while(--i >= 0)
@@ -604,12 +620,15 @@ extension_srch_text_from_t5_filetype(
 
         if(p_bound_filetype->t5_filetype == t5_filetype)
         {
-            assert(0 != quick_tblock_array_handle_ref(&p_bound_filetype->extension_srch_quick_tblock));
-            return(quick_tblock_tstr(&p_bound_filetype->extension_srch_quick_tblock));
+            assert(0 != quick_ublock_array_handle_ref(&p_bound_filetype->extension_srch_quick_ublock));
+            *p_found = TRUE;
+            return(quick_ublock_ustr(&p_bound_filetype->extension_srch_quick_ublock));
         }
     }
 
-    return(NULL /* no match */);
+    *p_found = FALSE;
+    consume_int(ustr_xsnprintf(ustr_bptr(extension_buffer), elemof32(extension_buffer), RISCOS ? USTR_TEXT("/x%03x") : USTR_TEXT("*.%03x"), t5_filetype));
+    return(ustr_bptr(extension_buffer));
 }
 
 /* Bind a file type to its textual description.
@@ -618,7 +637,7 @@ extension_srch_text_from_t5_filetype(
  * onto something that can be displayed to the user.
  */
 
-T5_CMD_PROTO(extern, t5_cmd_bind_filetype)
+T5_CMD_PROTO(extern, t5_cmd_bind_file_type)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 5);
     P_BOUND_FILETYPE p_bound_filetype;
@@ -630,42 +649,42 @@ T5_CMD_PROTO(extern, t5_cmd_bind_filetype)
 
     if(NULL != (p_bound_filetype = al_array_extend_by(&g_bound_filetype_handle, BOUND_FILETYPE, 1, &type_binding_init_block, &status)))
     {
-        PCTSTR tstr_filetype_name = p_args[2].val.tstr;
-        PCTSTR tstr_file_extension_desc = NULL;
-        PCTSTR tstr_file_extension_srch = NULL;
+        PC_USTR ustr_filetype_name = p_args[2].val.ustr;
+        PC_USTR ustr_file_extension_desc = NULL;
+        PC_USTR ustr_file_extension_srch = NULL;
 
         if(arg_is_present(p_args, 3))
-            tstr_file_extension_desc = p_args[3].val.tstr;
+            ustr_file_extension_desc = p_args[3].val.ustr;
 
         if(arg_is_present(p_args, 4))
-            tstr_file_extension_srch = p_args[4].val.tstr;
+            ustr_file_extension_srch = p_args[4].val.ustr;
 
-        quick_tblock_setup_using_array(&p_bound_filetype->description_quick_tblock, 0); /* force it to use array */
-        quick_tblock_setup_using_array(&p_bound_filetype->extension_srch_quick_tblock, 0); /* ditto */
+        quick_ublock_setup_using_array(&p_bound_filetype->description_quick_ublock, 0); /* force it to use array as it will move */
+        quick_ublock_setup_using_array(&p_bound_filetype->extension_srch_quick_ublock, 0); /* ditto */
 
         p_bound_filetype->mask = p_args[0].val.s32;
         p_bound_filetype->t5_filetype = p_args[1].val.t5_filetype;
 
-        status = quick_tblock_tstr_add(&p_bound_filetype->description_quick_tblock, tstr_filetype_name);
+        status = quick_ublock_ustr_add(&p_bound_filetype->description_quick_ublock, ustr_filetype_name);
 
 #if WINDOWS
-        if(status_ok(status) && tstr_file_extension_desc)
+        if(status_ok(status) && (NULL != ustr_file_extension_desc))
         {
-            if(status_ok(status = quick_tblock_tchar_add(&p_bound_filetype->description_quick_tblock, CH_SPACE)))
-                status = quick_tblock_tstr_add(&p_bound_filetype->description_quick_tblock, tstr_file_extension_desc);
+            if(status_ok(status = quick_ublock_a7char_add(&p_bound_filetype->description_quick_ublock, CH_SPACE)))
+                status = quick_ublock_ustr_add(&p_bound_filetype->description_quick_ublock, ustr_file_extension_desc);
         }
 #else
-        IGNOREPARM(tstr_file_extension_desc);
+        IGNOREPARM(ustr_file_extension_desc);
 #endif
 
         if(status_ok(status))
-            status = quick_tblock_nullch_add(&p_bound_filetype->description_quick_tblock);
+            status = quick_ublock_nullch_add(&p_bound_filetype->description_quick_ublock);
 
 #if WINDOWS
-        if(status_ok(status) && tstr_file_extension_srch)
-            status = quick_tblock_tstr_add_n(&p_bound_filetype->extension_srch_quick_tblock, tstr_file_extension_srch, strlen_with_NULLCH);
+        if(status_ok(status) && (NULL != ustr_file_extension_srch))
+            status = quick_ublock_ustr_add_n(&p_bound_filetype->extension_srch_quick_ublock, ustr_file_extension_srch, strlen_with_NULLCH);
 #else
-        IGNOREPARM(tstr_file_extension_srch);
+        IGNOREPARM(ustr_file_extension_srch);
 #endif
 
         if(status_fail(status))
@@ -737,6 +756,10 @@ object_id_from_t5_filetype(
             return(p_installed_load_object->object_id);
     }
 
+    /* ugly temporary hack so we don't have to set huge config and it's dynamic */
+    if(image_cache_can_import_with_image_convert(t5_filetype))
+        return(OBJECT_ID_DRAW);
+
     return(OBJECT_ID_NONE);
 }
 
@@ -787,7 +810,7 @@ static T5_FILETYPE
 detect_compound_document_file(
     _InoutRef_  FILE_HANDLE file_handle)
 {
-    T5_FILETYPE t5_filetype = FILETYPE_TEXT;
+    T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
     STATUS status;
     P_COMPOUND_FILE p_compound_file = compound_file_create_from_file_handle(file_handle, &status);
     U32 directory_index;
@@ -823,80 +846,132 @@ detect_compound_document_file(
 }
 
 _Check_return_
-static T5_FILETYPE
-t5_filetype_from_file_header_test(
-    FILE_HANDLE file_handle)
+static int
+try_memcmp32(
+    _In_reads_bytes_(n_bytes) PC_BYTE p_data,
+    _InVal_     U32 n_bytes,
+    _In_reads_bytes_(n_bytes_compare) PC_BYTE p_data_compare,
+    _InVal_     U32 n_bytes_compare)
 {
+    if(n_bytes < n_bytes_compare)
+        return(-1); /* not enough data to compare with pattern */
+
+    return(memcmp32(p_data, p_data_compare, n_bytes_compare));
+}
+
+_Check_return_
+extern T5_FILETYPE
+t5_filetype_from_data(
+    _In_reads_bytes_(n_bytes) PC_BYTE p_data,
+    _InVal_     U32 n_bytes)
+{
+    /* compare longest first */
     static const BYTE buffer_fireworkz[]    = { '{',    'V',    'e',    'r',    's',    'i',    'o',    'n',   ':' };
-    static const BYTE buffer_pipedream[]    = { '%',    'O',    'P',    '%' };
-    static const BYTE buffer_pipedream_2[]  = { '%',    'C',    'O',    ':' };
-    static const BYTE buffer_rtf[]          = { '{',    '\\',   'r',    't',    'f' };
-    static const BYTE buffer_acorn_draw[]   = { 'D',    'r',    'a',    'w',    '\xC9' };
+    static const BYTE buffer_jfif_00[]      = { '\xFF', '\xD8', /*SOI*/ '\xFF', '\xE0' /*APP0*/ };
+    static const BYTE buffer_jfif_06[]      = { 'J',    'F',    'I',    'F',    '\x00' /*JFIF*/ };
+    static const BYTE buffer_dib_00[]       = { 'B',    'M' };
+    static const BYTE buffer_dib_0E[]       = { '\x28', '\x00', '\x00', '\x00' /*BITMAPINFOHEADER*/ };
+    static const BYTE buffer_dibv4_0E[]     = { '\x6C', '\x00', '\x00', '\x00' /*BITMAPV4HEADER*/ };
+    static const BYTE buffer_dibv5_0E[]     = { '\x7C', '\x00', '\x00', '\x00' /*BITMAPV5HEADER*/ };
     static const BYTE buffer_acorn_sprite[] = { '\x01', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00' }; /* assumes only one sprite and no extension area */
-    static const BYTE buffer_jfif_0[]       = { '\xFF', '\xD8', /*SOI*/ '\xFF', '\xE0' /*APP0*/ };
-    static const BYTE buffer_jfif_6[]       = { 'J',    'F',    'I',    'F',    '\x00' /*JFIF*/ };
-    static const BYTE buffer_tiff_LE[]      = { 'I',    'I',    '*',    '\x00' };
-    static const BYTE buffer_tiff_BE[]      = { 'M',    'M',    '\x00', '*'    };
-    static const BYTE buffer_png[]          = { '\x89', 'P',    'N',    'G',    '\x0D', '\x0A', '\x1A', '\x0A' };
-    static const BYTE buffer_gif87a[]       = { 'G',    'I',    'F',    '8',    '7',    'a' };
-    static const BYTE buffer_gif89a[]       = { 'G',    'I',    'F',    '8',    '9',    'a' };
-    static const BYTE buffer_compound_file[]= { '\xD0', '\xCF', '\x11', '\xE0', '\xA1', '\xB1', '\x1A', '\xE1' };
     static const BYTE buffer_excel_biff4w[] = { '\x09', '\x04', '\x06', '\x00', '\x00', '\x04', '\x00', '\x01' };
     static const BYTE buffer_excel_biff4[]  = { '\x09', '\x04', '\x06', '\x00', '\x00', '\x00', '\x02', '\x00' };
     static const BYTE buffer_excel_biff3[]  = { '\x09', '\x02', '\x06', '\x00', '\x00', '\x00', '\x02', '\x00' };
     static const BYTE buffer_excel_biff2[]  = { '\x09', '\x00', '\x06', '\x00', '\x00', '\x00', '\x02', '\x00' };
+    static const BYTE buffer_png[]          = { '\x89', 'P',    'N',    'G',    '\x0D', '\x0A', '\x1A', '\x0A' };
+    static const BYTE buffer_gif87a[]       = { 'G',    'I',    'F',    '8',    '7',    'a' };
+    static const BYTE buffer_gif89a[]       = { 'G',    'I',    'F',    '8',    '9',    'a' };
+    static const BYTE buffer_rtf[]          = { '{',    '\\',   'r',    't',    'f' };
+    static const BYTE buffer_acorn_draw[]   = { 'D',    'r',    'a',    'w',    '\xC9' };
+    static const BYTE buffer_pipedream[]    = { '%',    'O',    'P',    '%' };
+    static const BYTE buffer_pipedream_2[]  = { '%',    'C',    'O',    ':' };
+    static const BYTE buffer_tiff_LE[]      = { 'I',    'I',    '*',    '\x00' };
+    static const BYTE buffer_tiff_BE[]      = { 'M',    'M',    '\x00', '*'    };
     static const BYTE buffer_lotus_wk1[]    = { '\x00', '\x00', '\x02', '\x00' /*BOF*/ };
     static const BYTE buffer_lotus_wk3[]    = { '\x00', '\x00', '\x1A', '\x00' /*BOF*/ };
     static const BYTE buffer_acorn_sid[]    = { '%',    '%' };
 
-    T5_FILETYPE t5_filetype = FILETYPE_TEXT;
+    T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
+    
+    if(0 == try_memcmp32(p_data, n_bytes, buffer_fireworkz, sizeof32(buffer_fireworkz)))
+        t5_filetype = FILETYPE_T5_FIREWORKZ;
+    else if( (n_bytes > (0x06 + sizeof32(buffer_jfif_06))) &&
+             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_jfif_00, sizeof32(buffer_jfif_00))) &&
+             (0 == try_memcmp32(&p_data[0x06], n_bytes - 0x06, buffer_jfif_06, sizeof32(buffer_jfif_06))) )
+        t5_filetype = FILETYPE_JPEG;
+    else if( (n_bytes > (0x0E + sizeof32(buffer_dib_0E))) &&
+             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00, sizeof32(buffer_dib_00))) &&
+             (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dib_0E, sizeof32(buffer_dib_0E))) )
+        t5_filetype = FILETYPE_BMP;
+    else if( (n_bytes > (0x0E + sizeof32(buffer_dibv4_0E))) &&
+             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00,   sizeof32(buffer_dib_00)))   &&
+             (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dibv4_0E, sizeof32(buffer_dibv4_0E))) )
+        t5_filetype = FILETYPE_BMP;
+    else if( (n_bytes > (0x0E + sizeof32(buffer_dibv5_0E))) &&
+             (0 == try_memcmp32(&p_data[0x00], n_bytes,        buffer_dib_00,   sizeof32(buffer_dib_00)))   &&
+             (0 == try_memcmp32(&p_data[0x0E], n_bytes - 0x0E, buffer_dibv5_0E, sizeof32(buffer_dibv5_0E))) )
+        t5_filetype = FILETYPE_BMP;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_sprite, sizeof32(buffer_acorn_sprite)))
+        t5_filetype = FILETYPE_SPRITE;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_excel_biff4w, sizeof32(buffer_excel_biff4w)))
+        t5_filetype = FILETYPE_MS_XLS;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_excel_biff4, sizeof32(buffer_excel_biff4)))
+        t5_filetype = FILETYPE_MS_XLS;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_excel_biff3, sizeof32(buffer_excel_biff3)))
+        t5_filetype = FILETYPE_MS_XLS;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_excel_biff2, sizeof32(buffer_excel_biff2)))
+        t5_filetype = FILETYPE_MS_XLS;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_png, sizeof32(buffer_png)))
+        t5_filetype = FILETYPE_PNG;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_gif87a, sizeof32(buffer_gif87a)))
+        t5_filetype = FILETYPE_GIF;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_gif89a, sizeof32(buffer_gif89a)))
+        t5_filetype = FILETYPE_GIF;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_rtf, sizeof32(buffer_rtf)))
+        t5_filetype = FILETYPE_RTF;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_draw, sizeof32(buffer_acorn_draw)))
+        t5_filetype = FILETYPE_DRAW;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_pipedream, sizeof32(buffer_pipedream)))
+        t5_filetype = FILETYPE_PIPEDREAM;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_pipedream_2, sizeof32(buffer_pipedream_2)))
+        t5_filetype = FILETYPE_PIPEDREAM;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_tiff_LE, sizeof32(buffer_tiff_LE)))
+        t5_filetype = FILETYPE_TIFF;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_tiff_BE, sizeof32(buffer_tiff_BE)))
+        t5_filetype = FILETYPE_TIFF;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_lotus_wk1, sizeof32(buffer_lotus_wk1)))
+        t5_filetype = FILETYPE_LOTUS123;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_lotus_wk3, sizeof32(buffer_lotus_wk3)))
+        t5_filetype = FILETYPE_LOTUS123;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_sid, sizeof32(buffer_acorn_sid)))
+        t5_filetype = FILETYPE_SID;
+
+    return(t5_filetype);
+}
+
+_Check_return_
+static T5_FILETYPE
+t5_filetype_from_file_header_test(
+    FILE_HANDLE file_handle)
+{
+    static const BYTE buffer_compound_file[]= { '\xD0', '\xCF', '\x11', '\xE0', '\xA1', '\xB1', '\x1A', '\xE1' };
+
+    T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
     U32 bytesread;
-    BYTE buffer[16]; /* >= MAX(CFBF_FILE_HEADER_ID_BYTES, all-the-above) */
+    BYTE buffer[0x20]; /* >= MAX(CFBF_FILE_HEADER_ID_BYTES, all-the-above) */
     zero_struct(buffer);
 
-    if(status_ok(file_read_bytes(buffer, sizeof32(buffer), &bytesread, file_handle)) && (bytesread == sizeof32(buffer)))
+    if(status_ok(file_read_bytes(buffer, sizeof32(buffer), &bytesread, file_handle)))
     {   /* NB Not an error if not all bytes read! */
-        if(0 == memcmp32(buffer, buffer_fireworkz, sizeof32(buffer_fireworkz)))
-            t5_filetype = FILETYPE_T5_FIREWORKZ;
-        else if(0 == memcmp32(buffer, buffer_pipedream, sizeof32(buffer_pipedream)))
-            t5_filetype = FILETYPE_PIPEDREAM;
-        else if(0 == memcmp32(buffer, buffer_pipedream_2, sizeof32(buffer_pipedream_2)))
-            t5_filetype = FILETYPE_PIPEDREAM;
-        else if(0 == memcmp32(buffer, buffer_rtf, sizeof32(buffer_rtf)))
-            t5_filetype = FILETYPE_RTF;
-        else if(0 == memcmp32(buffer, buffer_acorn_draw, sizeof32(buffer_acorn_draw)))
-            t5_filetype = FILETYPE_DRAW;
-        else if(0 == memcmp32(buffer, buffer_acorn_sprite, sizeof32(buffer_acorn_sprite)))
-            t5_filetype = FILETYPE_SPRITE;
-        else if( (0 == memcmp32(&buffer[6], buffer_jfif_0, sizeof32(buffer_jfif_0))) &&
-                 (0 == memcmp32(&buffer[6], buffer_jfif_6, sizeof32(buffer_jfif_6))) )
-            t5_filetype = FILETYPE_JPEG;
-        else if(0 == memcmp32(buffer, buffer_tiff_LE, sizeof32(buffer_tiff_LE)))
-            t5_filetype = FILETYPE_TIFF;
-        else if(0 == memcmp32(buffer, buffer_tiff_BE, sizeof32(buffer_tiff_BE)))
-            t5_filetype = FILETYPE_TIFF;
-        else if(0 == memcmp32(buffer, buffer_png, sizeof32(buffer_png)))
-            t5_filetype = FILETYPE_PNG;
-        else if(0 == memcmp32(buffer, buffer_gif87a, sizeof32(buffer_gif87a)))
-            t5_filetype = FILETYPE_GIF;
-        else if(0 == memcmp32(buffer, buffer_gif89a, sizeof32(buffer_gif89a)))
-            t5_filetype = FILETYPE_GIF;
-        else if(0 == memcmp32(buffer, buffer_compound_file, sizeof32(buffer_compound_file)))
+        if(0 == memcmp32(buffer, buffer_compound_file, sizeof32(buffer_compound_file)))
             t5_filetype = detect_compound_document_file(file_handle);
-        else if(0 == memcmp32(buffer, buffer_excel_biff4w, sizeof32(buffer_excel_biff4w)))
-            t5_filetype = FILETYPE_MS_XLS;
-        else if(0 == memcmp32(buffer, buffer_excel_biff4, sizeof32(buffer_excel_biff4)))
-            t5_filetype = FILETYPE_MS_XLS;
-        else if(0 == memcmp32(buffer, buffer_excel_biff3, sizeof32(buffer_excel_biff3)))
-            t5_filetype = FILETYPE_MS_XLS;
-        else if(0 == memcmp32(buffer, buffer_excel_biff2, sizeof32(buffer_excel_biff2)))
-            t5_filetype = FILETYPE_MS_XLS;
-        else if(0 == memcmp32(buffer, buffer_lotus_wk1, sizeof32(buffer_lotus_wk1)))
-            t5_filetype = FILETYPE_LOTUS123;
-        else if(0 == memcmp32(buffer, buffer_lotus_wk3, sizeof32(buffer_lotus_wk3)))
-            t5_filetype = FILETYPE_LOTUS123;
-        else if(0 == memcmp32(buffer, buffer_acorn_sid, sizeof32(buffer_acorn_sid)))
-            t5_filetype = FILETYPE_SID;
+        else
+        {
+            t5_filetype = t5_filetype_from_data(buffer, bytesread);
+
+            if(FILETYPE_UNDETERMINED == t5_filetype)
+                t5_filetype = FILETYPE_TEXT;
+        }
     }
 
     return(t5_filetype);
@@ -927,7 +1002,7 @@ t5_filetype_from_file_header(
 
 _Check_return_
 extern T5_FILETYPE
-t5_filetype_from_file_risc_os( /*host_t5_filetype_from_file*/
+t5_filetype_from_filename(
     _In_z_      PCTSTR filename)
 {
     T5_FILETYPE t5_filetype = FILETYPE_UNDETERMINED;
@@ -974,7 +1049,7 @@ t5_filetype_from_file_risc_os( /*host_t5_filetype_from_file*/
 
 _Check_return_
 extern T5_FILETYPE
-t5_filetype_from_file_windows( /*host_t5_filetype_from_file*/
+t5_filetype_from_filename(
     _In_z_      PCTSTR filename)
 {
     T5_FILETYPE t5_filetype = t5_filetype_from_extension(file_extension(filename));
@@ -992,6 +1067,44 @@ t5_filetype_from_file_windows( /*host_t5_filetype_from_file*/
 * load non-Fireworkz format file
 *
 ******************************************************************************/
+
+_Check_return_
+static STATUS
+load_foreign_core(
+    _InVal_     DOCNO docno,
+    _InVal_     T5_FILETYPE t5_filetype,
+    _In_z_      PCTSTR filename_foreign,
+    _InVal_     OBJECT_ID object_id,
+    _InoutRef_  P_U32 p_retry_with_this_arg)
+{
+    STATUS status;
+    P_DOCU p_docu = p_docu_from_docno(docno);
+    MSG_INSERT_FOREIGN msg_insert_foreign;
+    zero_struct(msg_insert_foreign);
+
+    msg_insert_foreign.old_virtual_row_table = p_docu->flags.virtual_row_table;
+    status_assert(virtual_row_table_set(p_docu, TRUE)); /* NB loading speed bodge */
+
+    cur_change_before(p_docu);
+
+    msg_insert_foreign.filename = filename_foreign;
+    msg_insert_foreign.t5_filetype = t5_filetype;
+    msg_insert_foreign.ctrl_pressed = FALSE;
+    position_init(&msg_insert_foreign.position);
+    msg_insert_foreign.retry_with_this_arg = *p_retry_with_this_arg;
+    status = object_call_id_load(p_docu, T5_MSG_INSERT_FOREIGN, &msg_insert_foreign, object_id);
+    *p_retry_with_this_arg = msg_insert_foreign.retry_with_this_arg;
+
+    p_docu = p_docu_from_docno(docno);
+
+    cur_change_after(p_docu);
+
+    status_accumulate(status, virtual_row_table_set(p_docu, msg_insert_foreign.old_virtual_row_table));
+
+    p_docu->flags.allow_modified_change = 1;
+
+    return(status);
+}
 
 T5_CMD_PROTO(extern, t5_cmd_load_foreign)
 {
@@ -1110,7 +1223,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
         }
 
         if(status_ok(status))
-            status = new_docno_using(&docno, filename_template, &docu_name);
+            status = new_docno_using(&docno, filename_template, &docu_name, FALSE /*fReadOnly*/);
 
         if(status_fail(status))
         {
@@ -1125,31 +1238,7 @@ T5_CMD_PROTO(extern, t5_cmd_load_foreign)
         status = command_set_current_docu(p_docu_from_docno(docno));
 
     if(status_ok(status))
-    {
-        P_DOCU p_docu = p_docu_from_docno(docno);
-        MSG_INSERT_FOREIGN msg_insert_foreign;
-        zero_struct(msg_insert_foreign);
-
-        msg_insert_foreign.old_virtual_row_table = p_docu->flags.virtual_row_table;
-        status_assert(virtual_row_table_set(p_docu, TRUE)); /* NB loading speed bodge */
-
-        cur_change_before(p_docu);
-
-        msg_insert_foreign.filename = filename_foreign;
-        msg_insert_foreign.t5_filetype = t5_filetype;
-        position_init(&msg_insert_foreign.position);
-        msg_insert_foreign.retry_with_this_arg = retry_with_this_arg;
-        status = object_call_id_load(p_docu, T5_MSG_INSERT_FOREIGN, &msg_insert_foreign, object_id);
-        retry_with_this_arg = msg_insert_foreign.retry_with_this_arg;
-
-        p_docu = p_docu_from_docno(docno);
-
-        cur_change_after(p_docu);
-
-        status_accumulate(status, virtual_row_table_set(p_docu, msg_insert_foreign.old_virtual_row_table));
-
-        p_docu->flags.allow_modified_change = 1;
-    }
+        status = load_foreign_core(docno, t5_filetype, filename_foreign, object_id, &retry_with_this_arg);
 
     looping = (0 != retry_with_this_arg);
     }
@@ -1164,7 +1253,7 @@ _Check_return_
 extern STATUS
 foreign_load_initialise(
     _DocuRef_   P_DOCU p_docu,
-    P_POSITION p_position,
+    _InoutRef_maybenone_ P_POSITION p_position,
     _InoutRef_  P_FF_IP_FORMAT p_ff_ip_format,
     _In_opt_z_  PCTSTR filename,
     _InRef_opt_ PC_ARRAY_HANDLE p_array_handle)
@@ -1538,8 +1627,8 @@ _Check_return_
 static STATUS
 load_foreign_file_core(
     _DocuRef_   P_DOCU cur_p_docu,
-    _InVal_     T5_FILETYPE t5_filetype,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
     STATUS status = ensure_memory_froth();
 
@@ -1582,7 +1671,7 @@ load_foreign_file_core(
             }
 
             if(status_ok(status))
-                status = execute_command(object_id, cur_p_docu, t5_message, &arglist_handle);
+                status = execute_command(cur_p_docu, t5_message, &arglist_handle, object_id);
 
             quick_tblock_dispose(&quick_tblock);
 
@@ -1596,13 +1685,13 @@ load_foreign_file_core(
 /* Errors reported locally */
 
 _Check_return_
-extern STATUS
-load_foreign_file(
+extern STATUS /*reported*/
+load_foreign_file_rl(
     _DocuRef_   P_DOCU cur_p_docu,
-    _InVal_     T5_FILETYPE t5_filetype,
-    _In_z_      PCTSTR filename)
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype)
 {
-    STATUS status = load_foreign_file_core(cur_p_docu, t5_filetype, filename);
+    STATUS status = load_foreign_file_core(cur_p_docu, filename, t5_filetype);
 
     if(status_fail(status))
     {

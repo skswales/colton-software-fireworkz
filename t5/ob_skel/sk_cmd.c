@@ -78,6 +78,9 @@ extern STATUS
 check_protection_selection(
     _DocuRef_   P_DOCU p_docu)
 {
+    if(p_docu->flags.read_only)
+        return(ERR_READ_ONLY);
+
     if(p_docu->mark_info_cells.h_markers)
     {
         CHECK_PROTECTION check_protection;
@@ -96,10 +99,26 @@ check_protection_simple(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     BOOL status_line_message)
 {
+    if(p_docu->flags.read_only)
+    {
+        STATUS status = ERR_READ_ONLY;
+        if(status_line_message)
+        {
+            UI_TEXT ui_text;
+            ui_text.type = UI_TEXT_TYPE_RESID;
+            ui_text.text.resource_id = status;
+            status_line_set(p_docu, STATUS_LINE_LEVEL_AUTO_CLEAR, &ui_text);
+            host_bleep();
+        }
+        return(status);
+    }
+
+    {
     CHECK_PROTECTION check_protection;
     check_protection.status_line_message = status_line_message;
     check_protection.use_docu_area = FALSE;
     return(object_skel(p_docu, T5_MSG_CHECK_PROTECTION, &check_protection));
+    } /*block*/
 }
 
 extern void
@@ -110,6 +129,8 @@ docu_modify(
 
     if(!p_docu->flags.allow_modified_change)
         return;
+
+    assert(!p_docu->flags.read_only);
 
     p_docu->modified += 1;
 
@@ -217,9 +238,9 @@ kmap_assoc_table[] =
     { KMAP_ESCAPE,             T5_CMD_ESCAPE,                 TEXT("ESC") },
 
 #if 0
-    { '\x1F',                  T5_CMD_FIELD_INS_HARDH,        TEXT("NBH") },  /* Non-breaking Hyphen */
+    { '\x1F',                  T5_CMD_INSERT_FIELD_HARDH,     TEXT("NBH") },  /* Non-breaking Hyphen */
 #endif
-    { '\xAD',                  T5_CMD_FIELD_INS_SOFT_HYPHEN,  TEXT("SHY") },  /* ISO 8859-1 Soft Hyphen */
+    { '\xAD',                  T5_CMD_INSERT_FIELD_SOFT_HYPHEN, TEXT("SHY") },  /* ISO 8859-1 Soft Hyphen */
 
     /*
     function keys              vvv this field is used to buffer up simple commands
@@ -309,7 +330,7 @@ kmap_assoc_table[] =
     { KMAP_FUNC_CDELETE,       T5_EVENT_NONE,                 TEXT("^Del"),        MSG_FUNC_DELETE,    PREFIX_C, PREFIX_C },
     { KMAP_FUNC_CHOME,         T5_CMD_DOCUMENT_TOP,           TEXT("^Home"),       MSG_FUNC_HOME,      PREFIX_C, PREFIX_C },
     { KMAP_FUNC_CBACKSPACE,    T5_EVENT_NONE,                 TEXT("^Bsp"),        MSG_FUNC_BACKSPACE, PREFIX_C, PREFIX_C },
-    { KMAP_FUNC_CRETURN,       T5_CMD_FIELD_INS_RETURN,       TEXT("^Ret"),        MSG_FUNC_RETURN,    PREFIX_C, PREFIX_C },
+    { KMAP_FUNC_CRETURN,       T5_CMD_INSERT_FIELD_RETURN,    TEXT("^Ret"),        MSG_FUNC_RETURN,    PREFIX_C, PREFIX_C },
     { KMAP_FUNC_CTAB,          T5_CMD_LAST_COLUMN,            TEXT("^Tab"),        MSG_FUNC_TAB,       PREFIX_C, PREFIX_C },
     { KMAP_FUNC_CEND,          T5_CMD_DOCUMENT_BOTTOM,        TEXT("^End"),        MSG_FUNC_END,       PREFIX_C, PREFIX_C },
 #if RISCOS
@@ -853,10 +874,10 @@ cmd_interactive(
 _Check_return_
 static STATUS
 execute_command_common(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_CONSTRUCT_TABLE p_construct_table,
-    _InoutRef_  P_T5_CMD p_t5_cmd)
+    _InoutRef_  P_T5_CMD p_t5_cmd,
+    _InVal_     OBJECT_ID object_id)
 {
     STATUS status = STATUS_OK;
 
@@ -909,10 +930,10 @@ execute_command_common(
 _Check_return_
 extern STATUS
 execute_command(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle)
+    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle,
+    _InVal_     OBJECT_ID object_id)
 {
     PC_CONSTRUCT_TABLE p_construct_table;
     T5_CMD cmd;
@@ -934,18 +955,18 @@ execute_command(
     cmd.count = 1;
     cmd.p_of_ip_format = NULL;
 
-    return(execute_command_common(object_id, p_docu, p_construct_table, &cmd));
+    return(execute_command_common(p_docu, p_construct_table, &cmd, object_id));
 }
 
 _Check_return_
 extern STATUS
 execute_command_reperr(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle)
+    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle,
+    _InVal_     OBJECT_ID object_id)
 {
-    STATUS status = execute_command(object_id, p_docu, t5_message, pc_arglist_handle);
+    STATUS status = execute_command(p_docu, t5_message, pc_arglist_handle, object_id);
 
     if(status_fail(status))
     {
@@ -961,10 +982,10 @@ execute_command_reperr(
 _Check_return_
 extern STATUS
 execute_command_n(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InVal_     S32 count)
+    _InVal_     OBJECT_ID object_id,
+    _InVal_     U32 count)
 {
     PC_CONSTRUCT_TABLE p_construct_table;
     T5_CMD cmd;
@@ -986,7 +1007,7 @@ execute_command_n(
     cmd.count = count;
     cmd.p_of_ip_format = NULL;
 
-    return(execute_command_common(object_id, p_docu, p_construct_table, &cmd));
+    return(execute_command_common(p_docu, p_construct_table, &cmd, object_id));
 }
 
 /******************************************************************************
@@ -1017,7 +1038,7 @@ execute_loaded_command(
     cmd.count = 1;
     cmd.p_of_ip_format = p_construct_convert->p_of_ip_format;
 
-    return(execute_command_common(object_id, p_docu, p_construct_convert->p_construct, &cmd));
+    return(execute_command_common(p_docu, p_construct_convert->p_construct, &cmd, object_id));
 }
 
 /******************************************************************************

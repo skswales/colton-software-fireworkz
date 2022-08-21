@@ -245,7 +245,7 @@ collect_has_data(
 ******************************************************************************/
 
 _Check_return_
-_Ret_writes_to_maybenull_(size, 0)
+_Ret_writes_maybenull_(size)
 extern P_BYTE
 _collect_insert_entry(
     _InoutRef_  P_LIST_BLOCK p_list_block,

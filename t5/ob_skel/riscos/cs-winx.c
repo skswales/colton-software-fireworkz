@@ -637,7 +637,7 @@ short_circuit_retry:; /* from below, with same window_handle but now with BAD_WI
                     /* try again for this real window with no icon this time */
                     icon_handle = BAD_WIMP_I;
 
-                    if(array_index_valid(&winx_statics.h_winx_windows, array_index))
+                    if(array_index_is_valid(&winx_statics.h_winx_windows, array_index))
                     {   /* short-circuit: have a quick peek at where we stopped and see if it is the match we're about to test */
                         p = array_ptr_no_checks(&winx_statics.h_winx_windows, WINX_WINDOW, array_index);
 
@@ -1020,13 +1020,13 @@ winx_dispose_window(
 *       -------------------------------------------------------------------- w
 *
 * note that the entire child 2 stack is between the parent and child 1
-* and that this applies recursively eg to child1.1 and child1.2 stacks
+* and that this applies recursively e.g. to child1.1 and child1.2 stacks
 *
 * recursive generation of winx_open_window() via Wimp_EOpenWindow of each child
 * window is the key to this happening, either by the child window doing
 * the winx_open_window itself or by allowing the default event handler to
 * do it for it. note that the child windows get events to allow them to
-* set extents etc at a suitable place rather than this routine simply
+* set extents etc. at a suitable place rather than this routine simply
 * calling itself directly.
 *
 */
@@ -1230,7 +1230,7 @@ winx_menu_process(
         return(0);
 
     if(event_code == Wimp_ERedrawWindow)
-        /* note that the Window Manager cannot cope with any window opening etc issued
+        /* note that the Window Manager cannot cope with any window opening etc. issued
          * between the receipt of the Wimp_ERedrawWindow and the SWI Wimp_RedrawWindow
         */
         return(0);
@@ -1449,7 +1449,7 @@ winx_create_menu(
 }
 
 /* SKS created to handle those windows which are not 'true' Window Manager
- * menu windows eg. apply style dialog which has a list box hanging off it
+ * menu windows e.g. apply style dialog which has a list box hanging off it
 */
 
 extern void

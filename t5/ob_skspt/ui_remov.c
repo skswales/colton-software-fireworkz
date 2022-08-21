@@ -235,7 +235,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_region_edit)
             dialog_cmd_process_dbox.bits.note_position = 1;
             dialog_cmd_process_dbox.p_proc_client = dialog_event_ui_remove;
             dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &ui_remove_callback;
-            remove_action = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+            remove_action = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
             } /*block*/
 
             switch(remove_action)
@@ -275,7 +275,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_region_edit)
     }
 
     status_line_auto_clear(p_docu);
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -328,7 +328,7 @@ enum BOX_CONTROL_IDS
     BOX_ID_LINE_4
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 box_ok_data_argmap[] =
 {
     BOX_ID_ALL,
@@ -587,7 +587,7 @@ _Check_return_
 static STATUS
 clear_down(
     _InVal_     H_DIALOG h_dialog,
-    _In_reads_(n_control_id) const PC_DIALOG_CTL_ID p_control_id,
+    _In_reads_(n_control_id) const PC_DIALOG_CTL_ID p_dialog_control_id,
     _InVal_     U32 n_control_id)
 {
     STATUS status = STATUS_OK;
@@ -600,29 +600,29 @@ clear_down(
 
     for(control_idx = 0; control_idx < n_control_id; ++control_idx)
     {
-        dialog_cmd_ctl_state_set.control_id = p_control_id[control_idx];
-        status_accumulate(status, call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_control_id[control_idx];
+        status_accumulate(status, object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     }
 
     return(status);
 }
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 clear_all[]     = {             BOX_ID_OUTSIDE, BOX_ID_V_ALL, BOX_ID_V_L, BOX_ID_V_R, BOX_ID_H_ALL, BOX_ID_H_T, BOX_ID_H_B };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 clear_outside[] = { BOX_ID_ALL,                 BOX_ID_V_ALL, BOX_ID_V_L, BOX_ID_V_R, BOX_ID_H_ALL, BOX_ID_H_T, BOX_ID_H_B };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 clear_V_all[]   = { BOX_ID_ALL, BOX_ID_OUTSIDE,               BOX_ID_V_L, BOX_ID_V_R,                                      };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 clear_V_lr[]    = { BOX_ID_ALL, BOX_ID_OUTSIDE, BOX_ID_V_ALL,                                                              };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 clear_H_all[]   = { BOX_ID_ALL, BOX_ID_OUTSIDE,                                                     BOX_ID_H_T, BOX_ID_H_B };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 clear_H_tb[]    = { BOX_ID_ALL, BOX_ID_OUTSIDE,                                       BOX_ID_H_ALL,                        };
 
 _Check_return_
@@ -634,10 +634,10 @@ rgb_patch_set(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_PATCH;
+    dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_PATCH;
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.user.rgb = *p_rgb;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
@@ -686,8 +686,8 @@ box_ctl_pushbutton(
         {
         MSG_UISTYLE_COLOUR_PICKER msg_uistyle_colour_picker;
         msg_uistyle_colour_picker.h_dialog = p_dialog_msg_ctl_pushbutton->h_dialog;
-        msg_uistyle_colour_picker.rgb_control_id = DIALOG_ID_RGB_PATCH;
-        msg_uistyle_colour_picker.button_control_id = DIALOG_ID_RGB_BUTTON;
+        msg_uistyle_colour_picker.rgb_dialog_control_id = DIALOG_ID_RGB_PATCH;
+        msg_uistyle_colour_picker.button_dialog_control_id = DIALOG_ID_RGB_BUTTON;
         return(object_call_id(OBJECT_ID_SKEL_SPLIT, p_docu, T5_MSG_UISTYLE_COLOUR_PICKER, &msg_uistyle_colour_picker));
         }
 
@@ -759,17 +759,17 @@ box_ctl_state_change(
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
         dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_DONT_MSG;
 
-        dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_R;
+        dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_R;
         dialog_cmd_ctl_state_set.state.bump_s32 = g_box_persistent_state.rgb.r;
-        status_return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
-        dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_G;
+        dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_G;
         dialog_cmd_ctl_state_set.state.bump_s32 = g_box_persistent_state.rgb.g;
-        status_return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
-        dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_B;
+        dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_B;
         dialog_cmd_ctl_state_set.state.bump_s32 = g_box_persistent_state.rgb.b;
-        status_return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
         } /*block*/
 
         return(STATUS_OK);
@@ -790,16 +790,16 @@ static STATUS
 box_ctl_user_mouse(
     _InRef_     PC_DIALOG_MSG_CTL_USER_MOUSE p_dialog_msg_ctl_user_mouse)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_user_mouse->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_user_mouse->dialog_control_id;
 
 #if RISCOS
     if(p_dialog_msg_ctl_user_mouse->click != DIALOG_MSG_USER_MOUSE_CLICK_LEFT_SINGLE)
         return(STATUS_OK);
 #endif
 
-    if((control_id >= DIALOG_ID_RGB_0) && (control_id <= DIALOG_ID_RGB_15))
+    if((dialog_control_id >= DIALOG_ID_RGB_0) && (dialog_control_id <= DIALOG_ID_RGB_15))
     {
-        return(rgb_patch_set(p_dialog_msg_ctl_user_mouse->h_dialog, &rgb_stash[control_id - DIALOG_ID_RGB_0]));
+        return(rgb_patch_set(p_dialog_msg_ctl_user_mouse->h_dialog, &rgb_stash[dialog_control_id - DIALOG_ID_RGB_0]));
     }
 
     return(STATUS_OK);
@@ -819,9 +819,9 @@ box_ctl_user_redraw(
         DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
         msgclr(dialog_cmd_ctl_state_query);
         dialog_cmd_ctl_state_query.h_dialog = p_dialog_msg_ctl_user_redraw->h_dialog;
-        dialog_cmd_ctl_state_query.control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
+        dialog_cmd_ctl_state_query.dialog_control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
         dialog_cmd_ctl_state_query.bits = 0;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
         rgb = dialog_cmd_ctl_state_query.state.user.rgb;
         break;
         }
@@ -882,7 +882,7 @@ T5_CMD_PROTO(extern, t5_cmd_box_intro)
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_BOX_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_box;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &rgb;
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
 /******************************************************************************
@@ -936,11 +936,11 @@ box_setup_from_handle(
 
 T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
 {
-    PC_DOCU_AREA p_docu_area_in = &p_box_apply->docu_area;
-    DOCU_AREA docu_area = *p_docu_area_in;
+    const PC_DOCU_AREA p_docu_area_in = &p_box_apply->docu_area;
+    DOCU_AREA docu_area;
     BOX_PERSISTENT_STATE box_persistent_state;
     STYLE style;
-    STYLE_SELECTOR init_style_selector;
+    STYLE_SELECTOR empty_style_selector;
     STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
     STATUS status = STATUS_OK;
 
@@ -948,7 +948,7 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
 
     style_init(&style);
 
-    style_selector_clear(&init_style_selector);
+    style_selector_clear(&empty_style_selector);
 
     STYLE_DOCU_AREA_ADD_STYLE(&style_docu_area_add_parm, &style);
     style_docu_area_add_parm.p_array_handle = p_box_apply->p_array_handle;
@@ -962,18 +962,21 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
 
     g_box_persistent_state = box_persistent_state;
 
-    style.para_style.grid_left   =
-    style.para_style.grid_right  =
-    style.para_style.grid_top    =
-    style.para_style.grid_bottom = (U8) box_persistent_state.line_style;
-
     style.para_style.rgb_grid_left   = box_persistent_state.rgb;
     style.para_style.rgb_grid_top    = box_persistent_state.rgb;
     style.para_style.rgb_grid_right  = box_persistent_state.rgb;
     style.para_style.rgb_grid_bottom = box_persistent_state.rgb;
 
+    style.para_style.grid_left   =
+    style.para_style.grid_right  =
+    style.para_style.grid_top    =
+    style.para_style.grid_bottom = (U8) box_persistent_state.line_style;
+
     if(box_persistent_state.all)
     {
+        docu_area = *p_docu_area_in;
+
+        style_selector_copy(&style.selector, &empty_style_selector);
         style_bit_set(&style, STYLE_SW_PS_RGB_GRID_LEFT);
         style_bit_set(&style, STYLE_SW_PS_RGB_GRID_RIGHT);
         style_bit_set(&style, STYLE_SW_PS_RGB_GRID_TOP);
@@ -990,9 +993,9 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
 
         for(i = 0; i <= 3; ++i)
         {
-            style_selector_copy(&style.selector, &init_style_selector);
-
             docu_area = *p_docu_area_in;
+
+            style_selector_copy(&style.selector, &empty_style_selector);
 
             switch(i)
             {
@@ -1028,6 +1031,9 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
     {
         if(box_persistent_state.V_all)
         {
+            docu_area = *p_docu_area_in;
+
+            style_selector_copy(&style.selector, &empty_style_selector);
             style_bit_set(&style, STYLE_SW_PS_RGB_GRID_LEFT);
             style_bit_set(&style, STYLE_SW_PS_RGB_GRID_RIGHT);
             style_bit_set(&style, STYLE_SW_PS_GRID_LEFT);
@@ -1038,6 +1044,9 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
         {
             if(box_persistent_state.V_l)
             {
+                docu_area = *p_docu_area_in;
+
+                style_selector_copy(&style.selector, &empty_style_selector);
                 style_bit_set(&style, STYLE_SW_PS_RGB_GRID_LEFT);
                 style_bit_set(&style, STYLE_SW_PS_GRID_LEFT);
                 docu_area.br.slr.col = docu_area.tl.slr.col + 1;
@@ -1046,10 +1055,9 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
 
             if(box_persistent_state.V_r)
             {
-                style_selector_copy(&style.selector, &init_style_selector);
-
                 docu_area = *p_docu_area_in;
 
+                style_selector_copy(&style.selector, &empty_style_selector);
                 style_bit_set(&style, STYLE_SW_PS_RGB_GRID_RIGHT);
                 style_bit_set(&style, STYLE_SW_PS_GRID_RIGHT);
                 docu_area.tl.slr.col = docu_area.br.slr.col - 1;
@@ -1057,12 +1065,11 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
             }
         }
 
-        style_selector_copy(&style.selector, &init_style_selector);
-
-        docu_area = *p_docu_area_in;
-
         if(box_persistent_state.H_all)
         {
+            docu_area = *p_docu_area_in;
+
+            style_selector_copy(&style.selector, &empty_style_selector);
             style_bit_set(&style, STYLE_SW_PS_RGB_GRID_TOP);
             style_bit_set(&style, STYLE_SW_PS_RGB_GRID_BOTTOM);
             style_bit_set(&style, STYLE_SW_PS_GRID_TOP);
@@ -1073,6 +1080,9 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
         {
             if(box_persistent_state.H_t)
             {
+                docu_area = *p_docu_area_in;
+
+                style_selector_copy(&style.selector, &empty_style_selector);
                 style_bit_set(&style, STYLE_SW_PS_RGB_GRID_TOP);
                 style_bit_set(&style, STYLE_SW_PS_GRID_TOP);
                 docu_area.br.slr.row = docu_area.tl.slr.row + 1;
@@ -1081,10 +1091,9 @@ T5_MSG_PROTO(extern, t5_msg_box_apply, P_BOX_APPLY p_box_apply)
 
             if(box_persistent_state.H_b)
             {
-                style_selector_copy(&style.selector, &init_style_selector);
-
                 docu_area = *p_docu_area_in;
 
+                style_selector_copy(&style.selector, &empty_style_selector);
                 style_bit_set(&style, STYLE_SW_PS_RGB_GRID_BOTTOM);
                 style_bit_set(&style, STYLE_SW_PS_GRID_BOTTOM);
                 docu_area.tl.slr.row = docu_area.br.slr.row - 1;

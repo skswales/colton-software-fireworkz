@@ -106,7 +106,7 @@ dialog_riscos_redraw_core(
     _InVal_     H_DIALOG h_dialog,
     _InVal_     BOOL is_update_now);
 
-static DIALOG_CTL_ID
+static DIALOG_CONTROL_ID
 dialog_riscos_scan_controls_in(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL_GROUP p_ictl_group,
@@ -118,7 +118,7 @@ part_control_redraw(
     P_DIALOG_CONTROL_REDRAW p_dialog_control_redraw,
     _In_        FRAMED_BOX_STYLE b,
     _InRef_     PC_DIALOG_WIMP_I i,
-    _InVal_     DIALOG_CONTROL_TYPE id);
+    _InVal_     DIALOG_CONTROL_TYPE dialog_control_type);
 
 _Check_return_
 _Ret_maybenull_
@@ -276,7 +276,7 @@ dialog_riscos_free_cached_bitmaps(
 PROC_DIALOG_EVENT_PROTO(static, lbn_event_dialog)
 {
     IGNOREPARM_DocuRef_(p_docu);
-    return(call_dialog(dialog_message, p_data));
+    return(object_call_DIALOG(dialog_message, p_data));
 }
 
 _Check_return_
@@ -287,7 +287,7 @@ dialog_riscos_combobox_dropdown(
 {
     BBox abs_bbox;
 
-    assert((p_dialog_ictl->type == DIALOG_CONTROL_COMBO_TEXT) || (p_dialog_ictl->type == DIALOG_CONTROL_COMBO_S32));
+    assert((p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_TEXT) || (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32));
 
     { /* read coordinates of parent icon */
     GDI_POINT gdi_org;
@@ -334,7 +334,7 @@ dialog_riscos_combobox_dropdown(
         _ri_lbox_new.p_ui_control = p_dialog_ictl->data.combo_xx.list_xx.p_ui_control_s32;
         _ri_lbox_new.p_ui_source = p_dialog_ictl->data.combo_xx.list_xx.p_ui_source;
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled();
 #if CHECKING
@@ -371,15 +371,15 @@ dialog_riscos_combobox_dropdown(
 static void
 dialog_riscos_current_move(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID current_id,
+    _InVal_     DIALOG_CONTROL_ID current_id,
     _InVal_     STATUS movement)
 {
     DIALOG_CMD_CTL_FOCUS_SET dialog_cmd_ctl_focus_set;
     msgclr(dialog_cmd_ctl_focus_set);
     dialog_cmd_ctl_focus_set.h_dialog = p_dialog->h_dialog;
-    dialog_cmd_ctl_focus_set.control_id = dialog_current_move(p_dialog, current_id, movement);
-    if(dialog_cmd_ctl_focus_set.control_id)
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
+    dialog_cmd_ctl_focus_set.dialog_control_id = dialog_current_move(p_dialog, current_id, movement);
+    if(dialog_cmd_ctl_focus_set.dialog_control_id)
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
 }
 
 /******************************************************************************
@@ -490,7 +490,7 @@ dialog_riscos_dbox_event_close_window(
     msgclr(dialog_cmd_complete_dbox);
     dialog_cmd_complete_dbox.h_dialog = p_dialog->h_dialog;
     dialog_cmd_complete_dbox.completion_code = DIALOG_COMPLETION_CANCEL;
-    status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
     return(TRUE /*processed*/);
 }
 
@@ -510,7 +510,7 @@ dialog_riscos_dbox_event_open_window(
         DIALOG_RISCOS_EVENT_POINTER_ENTER dialog_riscos_event_pointer_enter;
         dialog_riscos_event_pointer_enter.h_dialog = h_dialog;
         dialog_riscos_event_pointer_enter.enter = 1;
-        status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
+        status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
     }
     return(TRUE /*processed*/);
 }
@@ -544,7 +544,7 @@ dialog_riscos_dbox_event_mouse_click(
     DIALOG_RISCOS_EVENT_MOUSE_CLICK dialog_riscos_event_mouse_click;
     dialog_riscos_event_mouse_click.h_dialog = h_dialog;
     dialog_riscos_event_mouse_click.mouse_click = *p_mouse_click;
-    status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_MOUSE_CLICK, &dialog_riscos_event_mouse_click));
+    status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_MOUSE_CLICK, &dialog_riscos_event_mouse_click));
     return(TRUE /*processed*/);
 }
 
@@ -558,7 +558,7 @@ dialog_riscos_dbox_event_key_pressed(
     DIALOG_RISCOS_EVENT_KEY_PRESSED dialog_riscos_event_key_pressed;
     dialog_riscos_event_key_pressed.h_dialog = h_dialog;
     dialog_riscos_event_key_pressed.key_pressed = *p_key_pressed;
-    status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_KEY_PRESSED, &dialog_riscos_event_key_pressed));
+    status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_KEY_PRESSED, &dialog_riscos_event_key_pressed));
     return(dialog_riscos_event_key_pressed.processed);
 }
 
@@ -572,7 +572,7 @@ dialog_riscos_dbox_event_user_drag_box(
     DIALOG_RISCOS_EVENT_USER_DRAG dialog_riscos_event_userdrag;
     dialog_riscos_event_userdrag.h_dialog = h_dialog;
     dialog_riscos_event_userdrag.user_drag_box = *p_user_drag_box;
-    status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_USER_DRAG, &dialog_riscos_event_userdrag));
+    status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_USER_DRAG, &dialog_riscos_event_userdrag));
     return(TRUE /*processed*/);
 }
 
@@ -585,7 +585,7 @@ dialog_riscos_dbox_event_pointer_enter_leave(
     DIALOG_RISCOS_EVENT_POINTER_ENTER dialog_riscos_event_pointer_enter;
     dialog_riscos_event_pointer_enter.h_dialog = h_dialog;
     dialog_riscos_event_pointer_enter.enter = (event_code == Wimp_EPointerEnteringWindow);
-    status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
+    status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
     return(TRUE /*processed*/);
 }
 
@@ -712,7 +712,7 @@ dialog_riscos_dbox_modify_open_type_in(
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
 #ifdef MRJC_SWITCHED_OFF
             default:
@@ -759,7 +759,7 @@ dialog_riscos_event_mouse_click_core(
 {
     const WimpMouseClickEvent * const p_mouse_click = &p_dialog_riscos_event_mouse_click->mouse_click;
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(p_dialog_riscos_event_mouse_click->h_dialog);
-    DIALOG_CTL_ID control_id;
+    DIALOG_CONTROL_ID dialog_control_id;
     STATUS status = STATUS_OK;
 
     if(NULL == p_dialog)
@@ -768,16 +768,16 @@ dialog_riscos_event_mouse_click_core(
         return(STATUS_OK);
     }
 
-    if((control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click)) != 0)
+    if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click)) != 0)
     {
-        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
         const wimp_i hit_icon_handle = p_mouse_click->icon_handle;
 
         PTR_ASSERT(p_dialog_ictl);
 
         if(!p_dialog_ictl->bits.disabled && !p_dialog_ictl->bits.nobbled)
         {
-            switch(p_dialog_ictl->type)
+            switch(p_dialog_ictl->dialog_control_type)
             {
             default:
 #if CHECKING
@@ -851,6 +851,7 @@ dialog_riscos_event_mouse_click_core(
                 if(hit_icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle)
                     status = dialog_riscos_mlec_event_mouse_click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.bump_xx.edit_xx, p_mouse_click);
                 else if((hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle) || (hit_icon_handle == p_dialog_ictl->riscos.dwi[2].icon_handle))
+                {
                     switch(p_mouse_click->buttons)
                     {
                     case Wimp_MouseButtonSingleSelect:
@@ -862,6 +863,7 @@ dialog_riscos_event_mouse_click_core(
                         break;
                         }
                     }
+                }
                 break;
 
             case DIALOG_CONTROL_COMBO_TEXT:
@@ -869,6 +871,7 @@ dialog_riscos_event_mouse_click_core(
                 if(hit_icon_handle == p_dialog_ictl->riscos.dwi[0].icon_handle)
                     status = dialog_riscos_mlec_event_mouse_click(p_dialog, p_dialog_ictl, &p_dialog_ictl->data.combo_xx.edit_xx, p_mouse_click);
                 else if(hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle)
+                {
                     switch(p_mouse_click->buttons)
                     {
                     case Wimp_MouseButtonSingleSelect:
@@ -877,7 +880,7 @@ dialog_riscos_event_mouse_click_core(
                         status = dialog_riscos_combobox_dropdown(p_dialog, p_dialog_ictl);
                         break;
                     }
-
+                }
                 break;
 
             case DIALOG_CONTROL_USER:
@@ -921,7 +924,7 @@ dialog_riscos_event_mouse_click_core(
                 /* always processed */
                 status = STATUS_OK;
 
-                if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->control_id, &dialog_msg_ctl_user_mouse.client_handle)))
+                if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_user_mouse.client_handle)))
                 {
                     DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_user_mouse, p_dialog, p_dialog_ictl);
 
@@ -1007,7 +1010,7 @@ dialog_riscos_event_pointer_enter(
         /* start tracking. won't ever occur if a drag is active */
         if(!p_dialog->has_nulls)
         {
-            trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter - *** null_events_start(docno=%d) - start tracking"), p_dialog->docno);
+            trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter(docno=%d) - start tracking - *** null_events_start()"), p_dialog->docno);
             if(status_ok(status_wrap(null_events_start(p_dialog->docno, (T5_MESSAGE) DIALOG_CMD_CODE_NULL_EVENT, object_dialog, (CLIENT_HANDLE) h_dialog))))
                 p_dialog->has_nulls = 1;
         }
@@ -1031,7 +1034,7 @@ dialog_riscos_event_pointer_enter(
             if(p_dialog->has_nulls)
             {
                 p_dialog->has_nulls = 0;
-                trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter - *** null_events_stop(docno=%d) - stop tracking"), p_dialog->docno);
+                trace_1(TRACE_OUT | TRACE_ANY, TEXT("dialog_riscos_event_pointer_enter(docno=%d) - stop tracking - *** null_events_stop()"), p_dialog->docno);
                 null_events_stop(p_dialog->docno, (T5_MESSAGE) DIALOG_CMD_CODE_NULL_EVENT, object_dialog, (CLIENT_HANDLE) h_dialog);
             }
 
@@ -1134,7 +1137,7 @@ dialog_riscos_event_user_drag(
         return(STATUS_OK);
     }
 
-    /* give ourselves a NULL process immediately to reset pointer etc */
+    /* give ourselves a NULL process immediately to reset pointer etc. */
     dialog_riscos_null_event_do(p_dialog);
 
     /* don't seem to have to tell mlec about drag end */
@@ -1222,15 +1225,15 @@ dialog_riscos_event_lbn_click(
         msgclr(dialog_cmd_ctl_state_set);
 
         dialog_cmd_ctl_state_set.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = p_dialog_ictl->control_id;
+        dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl->dialog_control_id;
         dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALTERNATE;
 
         dialog_cmd_ctl_state_set.state.list_text.itemno = selected_item;
 
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
 #if 1 /* SKS 15apr93 see if this keeps MRJC happy. no it can't */
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -1264,7 +1267,7 @@ dialog_riscos_event_lbn_click(
 
     case DIALOG_MSG_CODE_LBN_DBLCLK:
         {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled();
 #if CHECKING
@@ -1274,8 +1277,8 @@ dialog_riscos_event_lbn_click(
             { /* a double click means OK to the containing dialog */
             DIALOG_CMD_DEFPUSHBUTTON dialog_cmd_defpushbutton;
             dialog_cmd_defpushbutton.h_dialog = p_dialog->h_dialog;
-            dialog_cmd_defpushbutton.double_control_id = p_dialog_ictl->control_id;
-            status_assert(call_dialog(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
+            dialog_cmd_defpushbutton.double_dialog_control_id = p_dialog_ictl->dialog_control_id;
+            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
             break;
             }
 
@@ -1349,7 +1352,7 @@ dialog_riscos_event_lbn_focus(
         return(STATUS_OK);
     }
 
-    dialog_current_set(p_dialog, p_dialog_ictl->control_id, 0);
+    dialog_current_set(p_dialog, p_dialog_ictl->dialog_control_id, 0);
 
     return(STATUS_OK);
 }
@@ -1400,7 +1403,7 @@ dialog_riscos_event_lbn_scan_ictls_for_owner_in(
     {
         P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_dialog_ictl_group, i);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             continue;
@@ -1443,7 +1446,7 @@ dialog_riscos_event_lbn_scan_ictls_for_owner(
     /* scan DIALOG_ICTLs for handle (will only find combo or list) */
     if(NULL != (p_dialog_ictl = dialog_riscos_event_lbn_scan_ictls_for_owner_in(&p_dialog->ictls, lbox_handle)))
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled();
 #if CHECKING
@@ -1866,7 +1869,7 @@ dialog_riscos_ictl_create_here(
     b_icon = a_icon; /* make copies of these */
     c_icon = a_icon;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
@@ -2021,7 +2024,7 @@ dialog_riscos_ictl_create_here(
             a_icon.flags.bits.border = 1;
             a_icon.flags.bits.filled = 1;
 
-            if((p_dialog_ictl->control_id == IDOK) || p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.def_pushbutton)
+            if((p_dialog_ictl->dialog_control_id == IDOK) || p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.def_pushbutton)
                 a_icon.data.it.validation = "R6,3"; /* Default action */
             else
                 a_icon.data.it.validation = "R5,3"; /* Action button */
@@ -2304,7 +2307,7 @@ dialog_riscos_ictl_create_here(
             c_icon.flags.bits.indirect = 1;
             c_icon.flags.bits.text = 1;
             c_icon.data.it.buffer = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer;
-            c_icon.data.it.validation = (p_dialog_ictl->type == DIALOG_CONTROL_BUMP_S32) ? "A0-9+-" : "A0-9.E+-";
+            c_icon.data.it.validation = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_BUMP_S32) ? "A0-9+-" : "A0-9.E+-";
             c_icon.data.it.buffer_length = p_dialog_ictl->data.edit.edit_xx.riscos.slec_buffer_size;
 
             if(!p_dialog_ictl->data.bump_xx.edit_xx.readonly)
@@ -2371,7 +2374,7 @@ dialog_riscos_ictl_create_here(
         _ri_lbox_new.p_ui_control = p_dialog_ictl->data.list_xx.list_xx.p_ui_control_s32;
         _ri_lbox_new.p_ui_source = p_dialog_ictl->data.list_xx.list_xx.p_ui_source;
 
-        _ri_lbox_new.ui_data_type = (p_dialog_ictl->type == DIALOG_CONTROL_LIST_S32)
+        _ri_lbox_new.ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
                                        ? UI_DATA_TYPE_S32
                                        : UI_DATA_TYPE_TEXT;
 
@@ -2612,7 +2615,7 @@ dialog_riscos_ictl_enable_here(
             *ppir++ = p_i;
     }
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
@@ -2680,7 +2683,7 @@ dialog_riscos_ictl_focus_query(
     }
     } /*block*/
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     case DIALOG_CONTROL_LIST_TEXT:
     case DIALOG_CONTROL_LIST_S32:
@@ -2724,16 +2727,16 @@ dialog_riscos_ictls_create_in(
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
         PIXIT_RECT pixit_rect;
 
-        dialog_control_rect(p_dialog, p_dialog_ictl->control_id, &pixit_rect);
+        dialog_control_rect(p_dialog, p_dialog_ictl->dialog_control_id, &pixit_rect);
 
 #ifdef DIALOG_COORD_DEBUG
-        myassert3x(pixit_rect.tl.x < pixit_rect.br.x-1, TEXT("control_id ") S32_TFMT TEXT(" pixit_rect tl.x ") PIXIT_TFMT TEXT(" br.x ") PIXIT_TFMT, (S32) p_dialog_ictl->control_id, pixit_rect.tl.x, pixit_rect.br.x);
-        myassert3x(pixit_rect.tl.y < pixit_rect.br.y-1, TEXT("control_id ") S32_TFMT TEXT(" pixit_rect tl.y ") PIXIT_TFMT TEXT(" br.y ") PIXIT_TFMT, (S32) p_dialog_ictl->control_id, pixit_rect.tl.y, pixit_rect.br.y);
+        myassert3x(pixit_rect.tl.x < pixit_rect.br.x-1, TEXT("dialog_control_id ") U32_TFMT TEXT(" pixit_rect tl.x ") PIXIT_TFMT TEXT(" br.x ") PIXIT_TFMT, (U32) p_dialog_ictl->dialog_control_id, pixit_rect.tl.x, pixit_rect.br.x);
+        myassert3x(pixit_rect.tl.y < pixit_rect.br.y-1, TEXT("dialog_control_id ") U32_TFMT TEXT(" pixit_rect tl.y ") PIXIT_TFMT TEXT(" br.y ") PIXIT_TFMT, (U32) p_dialog_ictl->dialog_control_id, pixit_rect.tl.y, pixit_rect.br.y);
 #endif
 
         status_return(dialog_riscos_ictl_create_here(p_dialog, p_dialog_ictl, &pixit_rect));
 
-        if(p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX)
+        if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX)
             /* create subcontrols AFTER group icons 'cos they go on top */
             status_return(dialog_riscos_ictls_create_in(p_dialog, &p_dialog_ictl->data.groupbox.ictls));
     }
@@ -2747,7 +2750,7 @@ dialog_riscos_ictls_create_in(
 *
 ******************************************************************************/
 
-static DIALOG_CTL_ID
+static DIALOG_CONTROL_ID
 dialog_riscos_key_pressed_hot_key_in(
     P_DIALOG_ICTL_GROUP p_ictl_group,
     _InVal_     U8 kh)
@@ -2759,14 +2762,14 @@ dialog_riscos_key_pressed_hot_key_in(
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
         if(p_dialog_ictl->riscos.hot_key == kh)
-            return(p_dialog_ictl->control_id);
+            return(p_dialog_ictl->dialog_control_id);
 
-        if(p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX)
+        if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX)
         {
-            const DIALOG_CTL_ID control_id = dialog_riscos_key_pressed_hot_key_in(&p_dialog_ictl->data.groupbox.ictls, kh);
+            const DIALOG_CONTROL_ID dialog_control_id = dialog_riscos_key_pressed_hot_key_in(&p_dialog_ictl->data.groupbox.ictls, kh);
 
-            if(0 != control_id)
-                return(control_id);
+            if(0 != dialog_control_id)
+                return(dialog_control_id);
         }
     }
 
@@ -2841,19 +2844,19 @@ dialog_riscos_key_pressed_hot_key(
     _InVal_     U8 kh)
 {
     /* scan dialog for this hot key */
-    const DIALOG_CTL_ID control_id = dialog_riscos_key_pressed_hot_key_in(&p_dialog->ictls, kh);
+    const DIALOG_CONTROL_ID dialog_control_id = dialog_riscos_key_pressed_hot_key_in(&p_dialog->ictls, kh);
     P_DIALOG_ICTL p_dialog_ictl;
     STATUS status = STATUS_OK;
 
-    if(!control_id)
+    if(!dialog_control_id)
         return(STATUS_OK /*NOT processed*/);
 
-    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
     PTR_ASSERT(p_dialog_ictl);
 
     if(!p_dialog_ictl->bits.disabled && !p_dialog_ictl->bits.nobbled)
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         case DIALOG_CONTROL_PUSHBUTTON:
         case DIALOG_CONTROL_PUSHPICTURE:
@@ -2879,7 +2882,7 @@ dialog_riscos_key_pressed_hot_key(
 
         default:
             /* try to make next control with tabstop get focus */
-            dialog_riscos_current_move(p_dialog, p_dialog_ictl->control_id, 1);
+            dialog_riscos_current_move(p_dialog, p_dialog_ictl->dialog_control_id, 1);
             break;
         }
     }
@@ -2900,20 +2903,20 @@ dialog_riscos_key_pressed(
     STATUS status;
 
     /* key event and current control? */
-    if(0 != p_dialog->current_id)
+    if(0 != p_dialog->current_dialog_control_id)
     {
         P_PROC_DIALOG_EVENT p_proc_client;
         DIALOG_MSG_CTL_KEY dialog_msg_ctl_key;
         msgclr(dialog_msg_ctl_key);
 
-        p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+        p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
         PTR_ASSERT(p_dialog_ictl);
 
         p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
-        assert(!p_dialog_ictl_edit_xx || !p_dialog_ictl_edit_xx->readonly);
+        assert((NULL == p_dialog_ictl_edit_xx) || !p_dialog_ictl_edit_xx->readonly);
 
         /* send to control first off */
-        if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->control_id, &dialog_msg_ctl_key.client_handle)))
+        if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_key.client_handle)))
         {
             DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_key, p_dialog, p_dialog_ictl);
 
@@ -2942,7 +2945,7 @@ dialog_riscos_key_pressed(
         msgclr(dialog_cmd_complete_dbox);
         dialog_cmd_complete_dbox.h_dialog = p_dialog->h_dialog;
         dialog_cmd_complete_dbox.completion_code = DIALOG_COMPLETION_CANCEL;
-        status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
         break;
         }
 
@@ -2957,21 +2960,21 @@ dialog_riscos_key_pressed(
         {
         DIALOG_CMD_DEFPUSHBUTTON dialog_cmd_defpushbutton;
         dialog_cmd_defpushbutton.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_defpushbutton.double_control_id = 0;
-        status_assert(call_dialog(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
+        dialog_cmd_defpushbutton.double_dialog_control_id = 0;
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
         break;
         }
 
     case KMAP_FUNC_TAB:
     case KMAP_FUNC_STAB:
         /* move input focus along to next/prev item with a tabstop set */
-        dialog_riscos_current_move(p_dialog, p_dialog->current_id, (ch == KMAP_FUNC_TAB) ? +1 : -1);
+        dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, (ch == KMAP_FUNC_TAB) ? +1 : -1);
         break;
 
     case KMAP_FUNC_ARROW_DOWN:
     case KMAP_FUNC_ARROW_UP:
 #if 1
-        if(p_dialog_ictl_edit_xx && p_dialog_ictl_edit_xx->riscos.mlec && p_dialog_ictl_edit_xx->multiline)
+        if((NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec && p_dialog_ictl_edit_xx->multiline)
         {
             status = mlec__key_core(p_dialog_ictl_edit_xx->riscos.mlec, ch);
             break;
@@ -2988,7 +2991,7 @@ dialog_riscos_key_pressed(
         }
 #endif
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
@@ -2997,7 +3000,7 @@ dialog_riscos_key_pressed(
 
         default:
             /* move input focus along to next/prev control */
-            dialog_riscos_current_move(p_dialog, p_dialog->current_id, (ch == KMAP_FUNC_ARROW_UP) ? -1 : +1);
+            dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, (ch == KMAP_FUNC_ARROW_UP) ? -1 : +1);
             break;
         }
 
@@ -3074,7 +3077,7 @@ dialog_riscos_null_event_status(
     const WimpMouseClickEvent * const p_mouse_click = (const WimpMouseClickEvent * const) &pointer_info;
     POINTER_SHAPE pshape;
     UI_TEXT ui_text;
-    DIALOG_CTL_ID control_id;
+    DIALOG_CONTROL_ID dialog_control_id;
 
     void_WrapOsErrorReporting(wimp_get_pointer_info(&pointer_info));
     pointer_info.button_state = 0;
@@ -3082,9 +3085,9 @@ dialog_riscos_null_event_status(
     pshape = POINTER_DEFAULT;
     ui_text.type = UI_TEXT_TYPE_NONE;
 
-    if((control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click)) != 0)
+    if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog->ictls, p_mouse_click)) != 0)
     {
-        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
         const wimp_i hit_icon_handle = p_mouse_click->icon_handle;
 
         PTR_ASSERT(p_dialog_ictl);
@@ -3094,7 +3097,7 @@ dialog_riscos_null_event_status(
 
         if(!p_dialog_ictl->bits.disabled && !p_dialog_ictl->bits.nobbled)
         {
-            switch(p_dialog_ictl->type)
+            switch(p_dialog_ictl->dialog_control_type)
             {
             default:
 #if CHECKING
@@ -3127,7 +3130,7 @@ dialog_riscos_null_event_status(
                 DIALOG_MSG_CTL_USER_POINTER_QUERY dialog_msg_ctl_user_pointer_query;
                 msgclr(dialog_msg_ctl_user_pointer_query);
 
-                if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->control_id, &dialog_msg_ctl_user_pointer_query.client_handle)))
+                if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_user_pointer_query.client_handle)))
                 {
                     DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_user_pointer_query, p_dialog, p_dialog_ictl);
 
@@ -3217,9 +3220,9 @@ dialog_riscos_null_event_do(
             P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx;
 
             /* send to current control, probably mlec */
-            assert(p_dialog->current_id);
+            assert(p_dialog->current_dialog_control_id);
 
-            p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+            p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
             PTR_ASSERT(p_dialog_ictl);
 
             if(NULL != (p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl)))
@@ -3238,28 +3241,28 @@ static void
 dialog_riscos_redraw_control_bump_xx(
     P_DIALOG_CONTROL_REDRAW p_dialog_control_redraw,
     _InRef_     PC_DIALOG_ICTL p_dialog_ictl,
-    _InVal_     DIALOG_CONTROL_TYPE type)
+    _InVal_     DIALOG_CONTROL_TYPE dialog_control_type)
 {
     FRAMED_BOX_STYLE b;
 
     b = p_dialog_control_redraw->p_dialog_ictl_edit_xx->border_style;
-    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[0], type);
+    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[0], dialog_control_type);
 
     b = FRAMED_BOX_BUTTON_OUT;
-    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[1], type | 0x100);
-    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[2], type | 0x200);
+    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[1], (DIALOG_CONTROL_TYPE) (dialog_control_type | 0x100));
+    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[2], (DIALOG_CONTROL_TYPE) (dialog_control_type | 0x200));
 }
 
 static void
 dialog_riscos_redraw_control_combo_xx(
     P_DIALOG_CONTROL_REDRAW p_dialog_control_redraw,
     _InRef_     PC_DIALOG_ICTL p_dialog_ictl,
-    _InVal_     DIALOG_CONTROL_TYPE type)
+    _InVal_     DIALOG_CONTROL_TYPE dialog_control_type)
 {
     FRAMED_BOX_STYLE b;
 
     b = p_dialog_control_redraw->p_dialog_ictl_edit_xx->border_style;
-    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[0], type);
+    part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[0], dialog_control_type);
 }
 
 _Check_return_
@@ -3268,11 +3271,11 @@ dialog_riscos_redraw_control(
     P_DIALOG_CONTROL_REDRAW p_dialog_control_redraw)
 {
     const P_DIALOG_ICTL p_dialog_ictl = p_dialog_control_redraw->p_dialog_ictl;
-    const DIALOG_CONTROL_TYPE type = p_dialog_ictl->type;
+    const DIALOG_CONTROL_TYPE dialog_control_type = p_dialog_ictl->dialog_control_type;
     const P_DIALOG_WIMP_I p_i = &p_dialog_ictl->riscos.dwi[0];
     FRAMED_BOX_STYLE b = FRAMED_BOX_NONE;
 
-    switch(type)
+    switch(dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
@@ -3284,14 +3287,14 @@ dialog_riscos_redraw_control(
         break;
 
     case DIALOG_CONTROL_STATICTEXT:
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 
     case DIALOG_CONTROL_PUSHBUTTON:
     case DIALOG_CONTROL_PUSHPICTURE:
         if(!p_dialog_control_redraw->p_dialog_control_data.pushbutton->push_xx.not_dlg_framed)
-            b = (p_dialog_control_redraw->p_dialog->default_id == p_dialog_ictl->control_id) ? FRAMED_BOX_DEFBUTTON_OUT : FRAMED_BOX_BUTTON_OUT;
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+            b = (p_dialog_control_redraw->p_dialog->default_dialog_control_id == p_dialog_ictl->dialog_control_id) ? FRAMED_BOX_DEFBUTTON_OUT : FRAMED_BOX_BUTTON_OUT;
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 
     case DIALOG_CONTROL_RADIOBUTTON:
@@ -3299,29 +3302,29 @@ dialog_riscos_redraw_control(
 #ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRISTATE:
 #endif
-        part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[1], type);
+        part_control_redraw(p_dialog_control_redraw, b, &p_dialog_ictl->riscos.dwi[1], dialog_control_type);
         break;
 
     case DIALOG_CONTROL_RADIOPICTURE:
         b = (p_dialog_ictl->bits.radiobutton_active) ? FRAMED_BOX_BUTTON_IN : FRAMED_BOX_BUTTON_OUT;
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 
     case DIALOG_CONTROL_CHECKPICTURE:
         b = (p_dialog_ictl->state.checkbox == DIALOG_BUTTONSTATE_ON) ? FRAMED_BOX_BUTTON_IN : FRAMED_BOX_BUTTON_OUT;
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 
 #ifdef DIALOG_HAS_TRISTATE
     case DIALOG_CONTROL_TRIPICTURE:
         b = (p_dialog_ictl->state.tristate == DIALOG_TRISTATE_ON) ? FRAMED_BOX_BUTTON_IN : FRAMED_BOX_BUTTON_OUT;
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 #endif
 
     case DIALOG_CONTROL_EDIT:
         b = p_dialog_control_redraw->p_dialog_ictl_edit_xx->border_style;
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
 
     case DIALOG_CONTROL_BUMP_F64:
@@ -3329,7 +3332,7 @@ dialog_riscos_redraw_control(
         break;
 
     case DIALOG_CONTROL_BUMP_S32:
-        dialog_riscos_redraw_control_bump_xx(p_dialog_control_redraw, p_dialog_ictl, type);
+        dialog_riscos_redraw_control_bump_xx(p_dialog_control_redraw, p_dialog_ictl, dialog_control_type);
         break;
 
     case DIALOG_CONTROL_COMBO_S32:
@@ -3337,12 +3340,12 @@ dialog_riscos_redraw_control(
         break;
 
     case DIALOG_CONTROL_COMBO_TEXT:
-        dialog_riscos_redraw_control_combo_xx(p_dialog_control_redraw, p_dialog_ictl, type);
+        dialog_riscos_redraw_control_combo_xx(p_dialog_control_redraw, p_dialog_ictl, dialog_control_type);
         break;
 
     case DIALOG_CONTROL_USER:
         b = p_dialog_ictl->data.user.border_style;
-        part_control_redraw(p_dialog_control_redraw, b, p_i, type);
+        part_control_redraw(p_dialog_control_redraw, b, p_i, dialog_control_type);
         break;
     }
 
@@ -3370,7 +3373,7 @@ dialog_riscos_redraw_controls_in(
         {
             dialog_control_redraw.p_dialog_ictl = p_dialog_ictl_from(p_dialog_control_redraw->p_ictl_group, i);
 
-            assert(dialog_control_redraw.p_dialog_ictl->control_id == dialog_control_redraw.p_dialog_ictl->control_id);
+            assert(dialog_control_redraw.p_dialog_ictl->dialog_control_id == dialog_control_redraw.p_dialog_ictl->dialog_control_id);
 
             if(pass == 1)
             {
@@ -3383,7 +3386,7 @@ dialog_riscos_redraw_controls_in(
             }
             else /* if(pass == 2) */
             {
-                if(dialog_control_redraw.p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX)
+                if(dialog_control_redraw.p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX)
                 {
                     dialog_control_redraw.p_ictl_group = &dialog_control_redraw.p_dialog_ictl->data.groupbox.ictls;
 
@@ -3466,7 +3469,7 @@ dialog_riscos_redraw_core(
         pixit_rect_from_screen_rect_and_context(&dialog_riscos_event_redraw_window.area_rect, &gdi_rect, p_redraw_context);
         } /*block*/
 
-        status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_REDRAW_WINDOW, &dialog_riscos_event_redraw_window));
+        status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_REDRAW_WINDOW, &dialog_riscos_event_redraw_window));
 
         if(WrapOsErrorReporting(wimp_get_rectangle(p_redraw_window, p_wimp_more)))
             *p_wimp_more = 0;
@@ -3480,7 +3483,7 @@ dialog_riscos_redraw_core(
 *
 ******************************************************************************/
 
-static DIALOG_CTL_ID
+static DIALOG_CONTROL_ID
 dialog_riscos_scan_controls_in(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL_GROUP p_ictl_group,
@@ -3488,7 +3491,7 @@ dialog_riscos_scan_controls_in(
 {
     const wimp_i hit_icon_handle = p_mouse_click->icon_handle;
     ARRAY_INDEX i;
-    DIALOG_CTL_ID control_id;
+    DIALOG_CONTROL_ID dialog_control_id;
     BOOL is_hit = 0;
 
     if(hit_icon_handle == BAD_WIMP_I)
@@ -3501,7 +3504,7 @@ dialog_riscos_scan_controls_in(
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
         int n_test;
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled();
 #if CHECKING
@@ -3523,8 +3526,8 @@ dialog_riscos_scan_controls_in(
             break;
 
         case DIALOG_CONTROL_GROUPBOX:
-            if((control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog_ictl->data.groupbox.ictls, p_mouse_click)) != 0)
-                return(control_id);
+            if((dialog_control_id = dialog_riscos_scan_controls_in(p_dialog, &p_dialog_ictl->data.groupbox.ictls, p_mouse_click)) != 0)
+                return(dialog_control_id);
 
             n_test = 0;
             break;
@@ -3557,7 +3560,7 @@ dialog_riscos_scan_controls_in(
             }
 
         if(is_hit)
-            return(p_dialog_ictl->control_id);
+            return(p_dialog_ictl->dialog_control_id);
     }
 
     /* indicate no hit detected at this level */
@@ -3609,7 +3612,7 @@ dialog_riscos_mlec_event_mouse_click(
             {
             case Wimp_MouseButtonSingleSelect:
             case Wimp_MouseButtonSingleAdjust:
-                dialog_current_set(p_dialog, p_dialog_ictl->control_id, 1);
+                dialog_current_set(p_dialog, p_dialog_ictl->dialog_control_id, 1);
                 break;
 
             default:
@@ -3703,7 +3706,7 @@ dialog_riscos_mlec_event_common(
     /*out*/ WimpIconBlockWithBitset * p_icon)
 {
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(p_dialog_ictl_edit_xx->h_dialog);
-    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_ictl_edit_xx->control_id);
+    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_ictl_edit_xx->dialog_control_id);
 
     *p_p_dialog_ictl = p_dialog_ictl;
 
@@ -3802,7 +3805,7 @@ mlec_event_proto(dialog_riscos_mlec_event_handler, rc, handle, p_eventdata)
 
                 void_WrapOsErrorReporting(wimp_get_caret_position(&current));
 
-                if((current.window_handle == p_dialog->hwnd) && (p_dialog->current_id == p_dialog_ictl->control_id))
+                if((current.window_handle == p_dialog->hwnd) && (p_dialog->current_dialog_control_id == p_dialog_ictl->dialog_control_id))
                 {
                     trace_0(TRACE_RISCOS_HOST, TEXT("window and control own input focus "));
 
@@ -3943,7 +3946,7 @@ mlec_event_proto(dialog_riscos_mlec_event_handler, rc, handle, p_eventdata)
 
                 msgclr(dialog_cmd_ctl_state_set);
 
-                switch(p_dialog_ictl->type)
+                switch(p_dialog_ictl->dialog_control_type)
                 {
                 default: default_unhandled();
 #if CHECKING
@@ -3984,11 +3987,11 @@ mlec_event_proto(dialog_riscos_mlec_event_handler, rc, handle, p_eventdata)
 
                 /* command ourselves with a state change, with interlock against killer recursion */
                 dialog_cmd_ctl_state_set.h_dialog = p_dialog_ictl_edit_xx->h_dialog;
-                dialog_cmd_ctl_state_set.control_id = p_dialog_ictl_edit_xx->control_id;
+                dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl_edit_xx->dialog_control_id;
                 dialog_cmd_ctl_state_set.bits = 0;
 
                 p_dialog_ictl->bits.in_update += 1;
-                status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+                status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
                 p_dialog_ictl->bits.in_update -= 1;
 
                 if(status_fail(status))
@@ -4021,7 +4024,7 @@ dialog_riscos_mlec_update(
     _InRef_     PC_BBox p_update_bbox,
     _InVal_     BOOL later)
 {
-    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_ictl_edit_xx->control_id);
+    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_ictl_edit_xx->dialog_control_id);
     WimpIconBlockWithBitset icon;
     GDI_POINT mlec_origin_rel;
     WimpRedrawWindowBlock redraw_window;
@@ -4208,7 +4211,7 @@ part_control_redraw(
     P_DIALOG_CONTROL_REDRAW p_dialog_control_redraw,
     _In_        FRAMED_BOX_STYLE b,
     _InRef_     PC_DIALOG_WIMP_I p_i,
-    _InVal_     DIALOG_CONTROL_TYPE id)
+    _InVal_     DIALOG_CONTROL_TYPE dialog_control_type)
 {
     P_DIALOG p_dialog;
     P_DIALOG_ICTL p_dialog_ictl;
@@ -4261,7 +4264,7 @@ part_control_redraw(
     text_colour = icon.flags.bits.fg_colour;
     normal_fill_colour = icon.flags.bits.bg_colour;
 
-    switch(id)
+    switch(dialog_control_type)
     {
     default: default_unhandled(); return(STATUS_OK);
 #if CHECKING
@@ -4272,7 +4275,7 @@ part_control_redraw(
         /*FALLTHRU*/
 
     case DIALOG_CONTROL_GROUPBOX:
-    case DIALOG_CONTROL_GROUPBOX + 0x100:
+    case DIALOG_CONTROL_GROUPBOX_PX100:
     case DIALOG_CONTROL_LIST_TEXT:
         return(STATUS_OK);
 #endif
@@ -4285,8 +4288,8 @@ part_control_redraw(
         fill_colour = 0x00;
         break;
 
-    case DIALOG_CONTROL_BUMP_S32 + 0x100:
-    case DIALOG_CONTROL_BUMP_S32 + 0x200:
+    case DIALOG_CONTROL_BUMP_S32_PX100:
+    case DIALOG_CONTROL_BUMP_S32_PX200:
         plot_sprite = 1;
         fill_colour = normal_fill_colour;
         break;
@@ -4491,7 +4494,7 @@ part_control_redraw(
                 icon.bbox.xmin -= horz_shift; /* Window Manager plots text too far right */
             } /*block*/
 
-            icon.flags.bits.fg_colour = (UBF) text_colour;
+            icon.flags.bits.fg_colour = UBF_PACK(text_colour);
 
             assert(!icon.flags.bits.text);
             assert(!icon.flags.bits.sprite);
@@ -4537,7 +4540,7 @@ part_control_redraw(
         DIALOG_MSG_CTL_USER_REDRAW dialog_msg_ctl_user_redraw;
         msgclr(dialog_msg_ctl_user_redraw);
 
-        if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->control_id, &dialog_msg_ctl_user_redraw.client_handle)))
+        if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_user_redraw.client_handle)))
         {
             /*const P_REDRAW_CONTEXT p_redraw_context = &dialog_msg_ctl_user_redraw.redraw_context;*/
 

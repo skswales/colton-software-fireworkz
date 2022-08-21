@@ -66,6 +66,7 @@ object_construct_table[] =
     { NULL,                     NULL,                       T5_EVENT_NONE } /* end of table */
 };
 
+
 /******************************************************************************
 *
 * ss_name dependency handling
@@ -370,7 +371,7 @@ initialise redisplay block
 static void
 text_inline_redisplay_init(
     P_TEXT_INLINE_REDISPLAY p_text_inline_redisplay,
-    _InRef_opt_ PC_QUICK_UBLOCK p_quick_ublock,
+    _InRef_maybenone_ PC_QUICK_UBLOCK p_quick_ublock,
     _InRef_     PC_SKEL_RECT p_skel_rect,
     _InVal_     BOOL do_redraw,
     _InVal_     BOOL do_position_update)
@@ -411,7 +412,12 @@ text_delete_sub_redisplay(
                             NULL,
                             p_object_data);
 
-    text_inline_redisplay_init(&text_inline_redisplay, NULL, &text_message_block.text_format_info.skel_rect_object, TRUE, TRUE);
+    text_inline_redisplay_init(&text_inline_redisplay,
+                               P_QUICK_UBLOCK_NONE,
+                               &text_message_block.text_format_info.skel_rect_object,
+                               TRUE,
+                               TRUE);
+
     offsets_from_object_data(&start, &end, &text_message_block.inline_object.object_data, text_message_block.inline_object.inline_len);
 
     if(save_data)
@@ -438,7 +444,7 @@ text_delete_sub_redisplay(
             status = save_ownform_to_array_from_docu_area(p_docu, p_h_data_del, &of_template, &docu_area);
 
         if(status_ok(status))
-            status = object_call_id(OBJECT_ID_STORY, p_docu, T5_MSG_DELETE_INLINE_REDISPLAY, &text_message_block);
+            status = object_call_STORY_with_tmb(p_docu, T5_MSG_DELETE_INLINE_REDISPLAY, &text_message_block);
 
         if(status_ok(status))
         {
@@ -524,7 +530,7 @@ text_insert_sub_redisplay(
                            &style_selector_para_text,
                            &text_message_block.inline_object.object_data.data_ref.arg.slr);
 
-            status = object_call_id(OBJECT_ID_STORY, p_docu, T5_MSG_INSERT_INLINE_REDISPLAY, &text_message_block);
+            status = object_call_STORY_with_tmb(p_docu, T5_MSG_INSERT_INLINE_REDISPLAY, &text_message_block);
         }
 
         if(status_ok(status))
@@ -587,7 +593,7 @@ T5_MSG_PROTO(static, text_event_redraw, P_OBJECT_REDRAW p_object_redraw)
                             &p_object_redraw->skel_rect_object,
                             &p_object_redraw->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
     } /*block*/
 }
 
@@ -601,7 +607,7 @@ T5_MSG_PROTO(static, text_msg_object_how_big, _InoutRef_ P_OBJECT_HOW_BIG p_obje
                             &p_object_how_big->skel_rect,
                             &p_object_how_big->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 T5_MSG_PROTO(static, text_msg_object_how_wide, _InoutRef_ P_OBJECT_HOW_WIDE p_object_how_wide)
@@ -619,7 +625,7 @@ T5_MSG_PROTO(static, text_msg_object_how_wide, _InoutRef_ P_OBJECT_HOW_WIDE p_ob
                             &skel_rect,
                             &p_object_how_wide->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 T5_MSG_PROTO(static, text_msg_object_position_find, _InoutRef_ P_OBJECT_POSITION_FIND p_object_position_find)
@@ -632,7 +638,7 @@ T5_MSG_PROTO(static, text_msg_object_position_find, _InoutRef_ P_OBJECT_POSITION
                             &p_object_position_find->skel_rect,
                             &p_object_position_find->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 T5_MSG_PROTO(static, text_msg_object_logical_move, _InoutRef_ P_OBJECT_LOGICAL_MOVE p_object_logical_move)
@@ -645,7 +651,7 @@ T5_MSG_PROTO(static, text_msg_object_logical_move, _InoutRef_ P_OBJECT_LOGICAL_M
                             NULL,
                             &p_object_logical_move->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 T5_MSG_PROTO(static, text_cmd_setc, P_OBJECT_SET_CASE p_object_set_case)
@@ -661,12 +667,12 @@ T5_MSG_PROTO(static, text_cmd_setc, P_OBJECT_SET_CASE p_object_set_case)
                             &p_object_set_case->object_data);
 
     text_inline_redisplay_init(&text_inline_redisplay,
-                               NULL,
+                               P_QUICK_UBLOCK_NONE,
                                &text_message_block.text_format_info.skel_rect_object,
                                p_object_set_case->do_redraw,
                                TRUE);
 
-    status = object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block);
+    status = object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block);
 
     if(status_ok(status))
         status = format_object_size_set(p_docu,
@@ -688,7 +694,7 @@ T5_MSG_PROTO(static, text_msg_read_text_draft, P_OBJECT_READ_TEXT_DRAFT p_object
                             &p_object_read_text_draft->skel_rect_object,
                             &p_object_read_text_draft->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 T5_MSG_PROTO(static, text_msg_tab_wanted, P_TAB_WANTED p_tab_wanted)
@@ -701,7 +707,7 @@ T5_MSG_PROTO(static, text_msg_tab_wanted, P_TAB_WANTED p_tab_wanted)
                             NULL,
                             &p_tab_wanted->object_data);
 
-    return(object_call_id(OBJECT_ID_STORY, p_docu, t5_message, &text_message_block));
+    return(object_call_STORY_with_tmb(p_docu, t5_message, &text_message_block));
 }
 
 /*
@@ -764,8 +770,8 @@ ob_text_maeve_services_ss_name_change(
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
     {
-        const P_DOCU p_docu = p_docu_from_docno(docno);
-        P_SS_NAME_RECORD p_ss_name_record = ss_name_record_find(p_docu, p_ss_name_change->ev_handle);
+        const P_DOCU p_docu = p_docu_from_docno_valid(docno);
+        const P_SS_NAME_RECORD p_ss_name_record = ss_name_record_find(p_docu, p_ss_name_change->ev_handle);
 
         if(NULL != p_ss_name_record)
         {
@@ -928,13 +934,13 @@ T5_MSG_PROTO(static, text_msg_object_string_replace, P_OBJECT_STRING_REPLACE p_o
 
             if((end - start) != 0)
             {
-                UCS4 ucs4 = uchars_char_decode_off(ustr_inline, start, /*ref*/bytes_of_char_start);
+                UCS4 ucs4 = ustr_char_decode_off((PC_USTR) ustr_inline, start, /*ref*/bytes_of_char_start);
                 case_1 = t5_ucs4_is_uppercase(ucs4);
             }
 
             if((end - start) > (S32) bytes_of_char_start)
             {
-                UCS4 ucs4 = uchars_char_decode_off_NULL(ustr_inline, start + bytes_of_char_start);
+                UCS4 ucs4 = ustr_char_decode_off_NULL((PC_USTR) ustr_inline, start + bytes_of_char_start);
                 case_2 = t5_ucs4_is_uppercase(ucs4);
             }
         }
@@ -1406,17 +1412,17 @@ T5_CMD_PROTO(static, object_text_cmd)
     {
     default:
 #if CHECKING
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_DATE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_FILE_DATE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_PAGE_X):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_PAGE_Y):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_SS_NAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_MS_FIELD):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_WHOLENAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_LEAFNAME):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_RETURN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_SOFT_HYPHEN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_FIELD_INS_TAB):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_FILE_DATE):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_X):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_PAGE_Y):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SS_NAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_MS_FIELD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_WHOLENAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_LEAFNAME):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_RETURN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_SOFT_HYPHEN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_INSERT_FIELD_TAB):
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_WORD_COUNT):
 #endif

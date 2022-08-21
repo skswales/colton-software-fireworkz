@@ -13,10 +13,12 @@
 typedef struct DOCU DOCU, * P_DOCU, ** P_P_DOCU; typedef const DOCU * PC_DOCU; /* rare use */
 
 #if 0
-#define _DocuRef_   _InoutRef_
+#define _DocuRef_           _InoutRef_
+#define _DocuRef_maybenone_ _InoutRef_
 #define IGNOREPARM_DocuRef_(p_docu) IGNOREPARM_InoutRef_(p_docu)
 #else
-#define _DocuRef_   _Inout_ /*const*/
+#define _DocuRef_           _Inout_ /*const*/
+#define _DocuRef_maybenone_ _Inout_maybenone_ /*const*/
 #define IGNOREPARM_DocuRef_(p_docu) IGNOREPARM_CONST(p_docu)
 #endif
 
@@ -34,10 +36,12 @@ typedef U8 PACKED_DOCNO; /* packed version for critical structures */
 typedef struct VIEW VIEW, * P_VIEW, ** P_P_VIEW; typedef const VIEW * PC_VIEW; /* rare use */
 
 #if 1
-#define _ViewRef_   _InoutRef_
+#define _ViewRef_           _InoutRef_
+#define _ViewRef_maybenone_ _InoutRef_maybenone_
 #define IGNOREPARM_ViewRef_(p_view) IGNOREPARM_InoutRef_(p_view)
 #else
-#define _ViewRef_   const
+#define _ViewRef_           const
+#define _ViewRef_maybenone_ const
 #define IGNOREPARM_ViewRef_(p_view) IGNOREPARM_CONST(p_view)
 #endif
 
@@ -82,8 +86,8 @@ only UCHARS/USTR can contain CH_INLINE
 typedef       _UCHARS_INLINE *  P_UCHARS_INLINE;
 typedef const _UCHARS_INLINE * PC_UCHARS_INLINE;
 
-typedef _Null_terminated_       _UCHARS_INLINE *  P_USTR_INLINE;
-typedef _Null_terminated_ const _UCHARS_INLINE * PC_USTR_INLINE;
+typedef       _UCHARS_INLINE *  P_USTR_INLINE; /*_Null_terminated_*/
+typedef const _UCHARS_INLINE * PC_USTR_INLINE; /*_Null_terminated_*/
 
 typedef        UCHARB             UCHARB_INLINE; /* this is needed to make arrays of them on the stack */
 
@@ -105,8 +109,8 @@ module includes
 #include "cmodules/aligator.h"
 #include "cmodules/allocblk.h"
 #include "cmodules/bitmap.h"
-#include "cmodules/gr_cache.h"
 #include "cmodules/gr_coord.h"
+#include "cmodules/im_cache.h"
 #include "cmodules/list.h"
 #include "cmodules/monotime.h"
 #include "cmodules/muldiv.h"
@@ -195,8 +199,9 @@ typedef S32 UREF_HANDLE; typedef UREF_HANDLE * P_UREF_HANDLE;
 definition of object numbers
 
 note that the object character binding is now supplied
-by the Config file on a per-product basis
-eg S maps to SS in Resultz/Fireworkz, but CONST in Wordz/Recordz
+by the Config file on a per-product basis, e.g.
+'S' maps to OBJECT_ID_SS in Resultz/Fireworkz,
+but maps to OBJECT_ID_CONST in Wordz/Recordz
 
 think VERY CAREFULLY about changing any of these!
 */
@@ -358,7 +363,7 @@ typedef enum T5_MESSAGE
 
     T5_MSG_SAVE_FOREIGN,
     T5_MSG_SAVE_PICTURE,
-    T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST_RISCOS,
+    T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST,
 
     T5_MSG_INSERT_OWNFORM,
     T5_MSG_INSERT_FOREIGN,
@@ -418,7 +423,7 @@ typedef enum T5_MESSAGE
     T5_MSG_OBJECT_NEW_TYPE_RQ,
     T5_MSG_OBJECT_POSITION_AT_START,
     T5_MSG_OBJECT_POSITION_FROM_SKEL_POINT,     /* request to object to find sub-object position from SKEL_POINT */
-    T5_MSG_OBJECT_POSITION_SET,                 /* set object position to start/end etc */
+    T5_MSG_OBJECT_POSITION_SET,                 /* set object position to start/end etc. */
     T5_MSG_OBJECT_POSITION_SET_START,
     T5_MSG_OBJECT_READ_TEXT,
     T5_MSG_OBJECT_READ_TEXT_DRAFT,
@@ -523,6 +528,8 @@ typedef enum T5_MESSAGE
     T5_MSG_WIN_HOST_NULL,
     T5_MSG_WORD_FROM_THESAURUS,
 
+    /*******************************************************/
+
     T5_MSG_NOTE_DELETE,
     T5_MSG_NOTE_ENSURE_EMBEDED,
     T5_MSG_NOTE_ENSURE_SAVED,
@@ -540,6 +547,8 @@ typedef enum T5_MESSAGE
     T5_MSG_NOTE_UPDATE_OBJECT,
     T5_MSG_NOTE_UPDATE_OBJECT_INFO,
 
+    /*******************************************************/
+
     T5_MSG_SS_ALERT_EXEC,
     T5_MSG_SS_FUNCTION_ARGUMENT_HELP,
     T5_MSG_SS_INPUT_EXEC,
@@ -554,9 +563,13 @@ typedef enum T5_MESSAGE
     T5_MSG_ACTIVATE_EDITLINE,
     T5_MSG_PASTE_EDITLINE,
 
+    /*******************************************************/
+
     T5_MSG_CHART_DIALOG,
     T5_MSG_CHART_GALLERY,
     T5_MSG_CHART_EDIT_INSERT_PICTURE,
+
+    /*******************************************************/
 
     T5_MSG_SPELL_AUTO_CHECK,
     T5_MSG_SPELL_ISUPPER,
@@ -566,13 +579,37 @@ typedef enum T5_MESSAGE
     T5_MSG_SPELL_VALID1,
     T5_MSG_SPELL_WORD_CHECK,
 
+    /*******************************************************/
+
     T5_MSG_UISTYLE_COLOUR_PICKER,
     T5_MSG_UISTYLE_STYLE_EDIT,
+
+    /*******************************************************/
 
     T5_MSG_FIELD_NEXT,
     T5_MSG_FIELD_PREV,
     T5_MSG_RECORDZ_IMPORT,
     T5_MSG_STYLE_RECORDZ,
+
+    /*******************************************************/
+
+    T5_MSG_TOOLBAR_TOOLS,
+    T5_MSG_TOOLBAR_TOOL_QUERY,
+    T5_MSG_TOOLBAR_TOOL_SET,
+    T5_MSG_TOOLBAR_TOOL_ENABLE,
+    T5_MSG_TOOLBAR_TOOL_ENABLE_QUERY,
+    T5_MSG_TOOLBAR_TOOL_DISABLE,
+    T5_MSG_TOOLBAR_TOOL_NOBBLE,
+    T5_MSG_BACK_WINDOW_EVENT,               /* sent FROM back window TO toolbar */
+
+    T5_MSG_TOOLBAR_TOOL_USER_VIEW_NEW,      /* sent FROM toolbar TO client */
+    T5_MSG_TOOLBAR_TOOL_USER_VIEW_DELETE,   /* sent FROM toolbar TO client */
+    T5_MSG_TOOLBAR_TOOL_USER_SIZE_QUERY,    /* sent FROM toolbar TO client */
+    T5_MSG_TOOLBAR_TOOL_USER_POSN_SET,      /* sent FROM toolbar TO client */
+    T5_MSG_TOOLBAR_TOOL_USER_REDRAW,        /* sent FROM toolbar TO client */
+    T5_MSG_TOOLBAR_TOOL_USER_MOUSE,         /* sent FROM toolbar TO client */
+
+    /*******************************************************/
 
     T5_MSG__END,
 
@@ -665,6 +702,7 @@ typedef enum T5_MESSAGE
 
     T5_CMD_NEW_DOCUMENT,
     T5_CMD_OPEN_DOCUMENT,
+    T5_CMD_CLOSE_DOCUMENT_REQ,
 
     T5_CMD_VIEW_CONTROL,
     T5_CMD_VIEW_CONTROL_INTRO,
@@ -745,6 +783,8 @@ typedef enum T5_MESSAGE
     T5_CMD_MENU_NAME,
 
     T5_CMD_NOTE,
+    T5_CMD_NOTE_TWIN,           /* maps onto T5_CMD_NOTE, exists so that very old files still load and for compatibility with older readers */
+    T5_CMD_NOTE_BACKDROP,       /* maps onto T5_CMD_NOTE, exists so that backdrops can be rejected on file insert */
     T5_CMD_NOTE_BACK,
     T5_CMD_NOTE_SWAP,
     T5_CMD_NOTE_EMBED,
@@ -830,6 +870,7 @@ typedef enum T5_MESSAGE
 
     T5_CMD_NEW_EXPRESSION,
 
+    T5_CMD_IMAGE_FILE_EMBEDDED,
     T5_CMD_DRAWFILE_EMBEDDED,
     T5_CMD_DRAWFILE_REFERENCE,
 
@@ -842,24 +883,23 @@ typedef enum T5_MESSAGE
     T5_CMD_SETC_INICAP,
     T5_CMD_SETC_SWAP,
 
-    T5_CMD_INSERT_FIELD_INTRO_DATE,
-    T5_CMD_INSERT_FIELD_INTRO_FILE_DATE,
-    T5_CMD_INSERT_FIELD_INTRO_PAGE_X,
-    T5_CMD_INSERT_FIELD_INTRO_PAGE_Y,
-    T5_CMD_INSERT_FIELD_INTRO_FIELD, /* mailshot */
+    T5_CMD_INSERT_FIELD_DATE,
+    T5_CMD_INSERT_FIELD_FILE_DATE,
+    T5_CMD_INSERT_FIELD_PAGE_X,
+    T5_CMD_INSERT_FIELD_PAGE_Y,
+    T5_CMD_INSERT_FIELD_SS_NAME,
+    T5_CMD_INSERT_FIELD_MS_FIELD,
+    T5_CMD_INSERT_FIELD_WHOLENAME,
+    T5_CMD_INSERT_FIELD_LEAFNAME,
+    /*T5_CMD_INSERT_FIELD_HARD_HYPHEN,*/
+    T5_CMD_INSERT_FIELD_RETURN,
+    T5_CMD_INSERT_FIELD_SOFT_HYPHEN,
+    T5_CMD_INSERT_FIELD_TAB,
 
-    T5_CMD_FIELD_INS_DATE,
-    T5_CMD_FIELD_INS_FILE_DATE,
-    T5_CMD_FIELD_INS_PAGE_X,
-    T5_CMD_FIELD_INS_PAGE_Y,
-    T5_CMD_FIELD_INS_SS_NAME,
-    T5_CMD_FIELD_INS_MS_FIELD,
-    T5_CMD_FIELD_INS_WHOLENAME,
-    T5_CMD_FIELD_INS_LEAFNAME,
-    /*T5_CMD_FIELD_INS_HARDH,*/
-    T5_CMD_FIELD_INS_RETURN,
-    T5_CMD_FIELD_INS_SOFT_HYPHEN,
-    T5_CMD_FIELD_INS_TAB,
+    T5_CMD_INSERT_FIELD_INTRO_DATE,
+    T5_CMD_INSERT_FIELD_INTRO_TIME,
+    T5_CMD_INSERT_FIELD_INTRO_PAGE,
+    T5_CMD_INSERT_FIELD_INTRO_MS_FIELD, /* mailshot */
 
     T5_CMD_NUMFORM_LOAD,
     T5_CMD_NUMFORM_DATA,
@@ -882,8 +922,6 @@ typedef enum T5_MESSAGE
 
     T5_CMD_INSERT_PAGE_BREAK,
 
-    T5_CMD_NOTETWIN,            /* maps onto T5_CMD_NOTE, exists so that old files still load */ /* not saved */
-    T5_CMD_NOTEBD,              /* maps onto T5_CMD_NOTE, exists so that backdrops can be rejected on file insert */
     T5_CMD_PLAIN_TEXT_TEMP,
     T5_CMD_WORD_COUNT,
 
@@ -899,7 +937,7 @@ typedef enum T5_MESSAGE
     T5_CMD_OBJECT_ENSURE,
 
     T5_CMD_FORCE_RECALC,
-    T5_CMD_ACTIVATE_MENU_FUNC,
+    T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR,
     T5_CMD_ACTIVATE_MENU_CHART,
 
     T5_CMD_SS_CONTEXT,
@@ -910,10 +948,11 @@ typedef enum T5_MESSAGE
 
     T5_CMD_SS_MAKE_TEXT,
     T5_CMD_SS_MAKE_NUMBER,
-    T5_CMD_SS_PLUS,
-    T5_CMD_SS_MINUS,
-    T5_CMD_SS_TIMES,
-    T5_CMD_SS_DIVIDE,
+
+    T5_CMD_INSERT_OPERATOR_PLUS,
+    T5_CMD_INSERT_OPERATOR_MINUS,
+    T5_CMD_INSERT_OPERATOR_TIMES,
+    T5_CMD_INSERT_OPERATOR_DIVIDE,
 
     T5_CMD_SPELL_CHECK,
     T5_CMD_SPELL_DICTIONARY,
@@ -948,8 +987,8 @@ typedef enum T5_MESSAGE
     T5_CMD_CHART_IO_LEGEND_POSN,
 
     T5_CMD_CHART_IO_D3_BITS,
-    T5_CMD_CHART_IO_D3_PITCH,
-    T5_CMD_CHART_IO_D3_ROLL,
+    T5_CMD_CHART_IO_D3_DROOP,
+    T5_CMD_CHART_IO_D3_TURN,
 
     T5_CMD_CHART_IO_BARCH_SLOT_2D_OVERLAP,
 
@@ -1061,6 +1100,12 @@ typedef enum T5_MESSAGE
     T5_CMD_REMOVED,
     T5_CMD_TRACE,
     T5_CMD_TEST,
+
+    /*******************************************************/
+
+    T5_CMD_TOOLBAR_TOOL,
+
+    /*******************************************************/
 
     T5_CMD__ACTUAL_END,
 
@@ -1418,7 +1463,7 @@ typedef struct DATA_REF
 }
 DATA_REF, * P_DATA_REF; typedef const DATA_REF * PC_DATA_REF;
 
-/* Used to get objects to convert one to the other, eg T5_MSG_DATA_REF_FROM_SLR */
+/* Used to get objects to convert one to the other, e.g. T5_MSG_DATA_REF_FROM_SLR */
 
 typedef struct DATA_REF_AND_SLR
 {
@@ -1600,6 +1645,8 @@ typedef struct OBJECT_POSITION
     OBJECT_ID object_id;
 }
 OBJECT_POSITION, * P_OBJECT_POSITION; typedef const OBJECT_POSITION * PC_OBJECT_POSITION;
+
+#define P_OBJECT_POSITION_NONE _P_DATA_NONE(P_OBJECT_POSITION)
 
 #define object_position_init(p_object_position) ( \
     (p_object_position)->data = 0, \
@@ -1862,7 +1909,7 @@ _proc_name( \
 #include "ob_skel/resource/resource.h"
 #endif
 
-extern int g_has_colour_picker;
+extern BOOL g_has_colour_picker;
 
 /*
 but best not to test on these
@@ -2072,13 +2119,16 @@ REDRAW_TAG_AND_EVENT, * P_REDRAW_TAG_AND_EVENT;
 
 typedef enum LAYER
 {
-    LAYER_PAPER_BELOW = -128,
-    LAYER_PRINT_BELOW = -2,
-    LAYER_CELLS_BELOW = -1,
-    LAYER_SLOT        = 0,
-    LAYER_CELLS_ABOVE = +1,
-    LAYER_PRINT_ABOVE = +2,
-    LAYER_PAPER_ABOVE = +3
+    /* -ve layers are below */
+    LAYER_PAPER_BELOW       = -128,
+    LAYER_PRINT_AREA_BELOW  = -2,
+    LAYER_CELLS_AREA_BELOW  = -1,
+
+    LAYER_CELLS             = 0,
+
+    LAYER_CELLS_AREA_ABOVE  = +1,
+    LAYER_PRINT_AREA_ABOVE  = +2,
+    LAYER_PAPER_ABOVE       = +3
 }
 LAYER;
 
@@ -2141,11 +2191,11 @@ RECT_FLAGS, * P_RECT_FLAGS; typedef const RECT_FLAGS * PC_RECT_FLAGS;
 #endif
 
 /*
-*                                              text  selection printing
-* normal screen redraw (eg after update_later) TRUE  TRUE      FALSE
-* printing                                     TRUE  FALSE     TRUE
+*                                                text  selection printing
+* normal screen redraw (e.g. after update_later) TRUE  TRUE      FALSE
+* printing                                       TRUE  FALSE     TRUE
 *
-* dragging a selection (ie during update_now)  FALSE TRUE      FALSE
+* dragging a selection (i.e. during update_now)  FALSE TRUE      FALSE
 *
 */
 
@@ -2224,11 +2274,13 @@ typedef struct CLICK_CONTEXT
     HOST_XFORM host_xform;      /*>>>should this be hidden from all except host???*/
     PIXIT_POINT pixit_origin;
     PIXIT_POINT one_real_pixel; /* PIXITS per real screen pixel */
-    PIXIT_POINT one_program_pixel; /* PIXITS per program pixel (eg for note ears) */
+    PIXIT_POINT one_program_pixel; /* PIXITS per program pixel (e.g. for note ears) */
     PIXIT_POINT border_width;
     S32 display_mode;
 
     HOST_WND hwnd;
+    BOOL ctrl_pressed;
+    BOOL shift_pressed;
 }
 CLICK_CONTEXT, * P_CLICK_CONTEXT; typedef const CLICK_CONTEXT * PC_CLICK_CONTEXT;
 
@@ -2290,7 +2342,7 @@ typedef struct REDRAW_CONTEXT
     HOST_XFORM host_xform;
     PIXIT_POINT pixit_origin;
     PIXIT_POINT one_real_pixel;
-    PIXIT_POINT one_program_pixel; /* PIXITS per program pixel (eg for note ears) */
+    PIXIT_POINT one_program_pixel; /* PIXITS per program pixel (e.g. for note ears) */
     PIXIT_POINT border_width;
     S32 display_mode;
 
@@ -2317,8 +2369,8 @@ typedef struct REDRAW_CONTEXT
 }
 REDRAW_CONTEXT, * P_REDRAW_CONTEXT; typedef const REDRAW_CONTEXT * PC_REDRAW_CONTEXT;
 
-#define P_REDRAW_CONTEXT_NONE   _P_DATA_NONE(P_REDRAW_CONTEXT)
-#define IS_REDRAW_CONTEXT_NONE(p_redraw_context) IS_PTR_NULL_OR_NONE_ANY(P_REDRAW_CONTEXT, p_redraw_context)
+#define   P_REDRAW_CONTEXT_NONE                 _P_DATA_NONE(P_REDRAW_CONTEXT)
+#define IS_REDRAW_CONTEXT_NONE(p_redraw_context) IS_PTR_NONE(p_redraw_context)
 
 typedef enum RULER_MARKER
 {
@@ -2523,7 +2575,7 @@ host_drag_in_progress(
 
 extern void
 host_drag_start(
-    _InRef_opt_ P_ANY p_reason_data);
+    _In_opt_    P_ANY p_reason_data);
 
 extern void
 host_paint_end(
@@ -2569,13 +2621,21 @@ host_paint_underline(
     _InRef_     PC_RGB p_rgb,
     _InVal_     PIXIT line_thickness);
 
-typedef struct CPicture_struct * CPicture; /* opaque */
+#if WINDOWS
 
 extern void
-host_paint_cpicture(
+host_paint_bitmap(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
-    _In_        CPicture cpicture);
+    _In_        HBITMAP hbitmap);
+
+extern void
+host_paint_gdip_image(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InRef_     PC_PIXIT_RECT p_pixit_rect,
+    _In_        GdipImage gdip_image);
+
+#endif /* OS */
 
 extern void
 host_paint_drawfile(
@@ -2707,7 +2767,7 @@ host_invert_rectangle_outline(
     _InRef_     PC_RGB p_rgb_background);
 
 extern void
-host_read_drawfile_size(
+host_read_drawfile_pixit_size(
     /*_In_reads_bytes_(DRAW_FILE_HEADER)*/ PC_ANY p_any,
     _OutRef_    P_PIXIT_SIZE p_pixit_size);
 
@@ -2830,7 +2890,7 @@ host_framed_box_paint_frame(
 extern void
 host_framed_box_paint_core(
     _InRef_     PC_GDI_BOX p_box_abs,
-    _InVal_     S32 core_wimpcolour);
+    _InRef_     PC_RGB p_rgb);
 
 extern void
 host_framed_box_trim_frame(
@@ -2899,7 +2959,7 @@ host_setfontcolours_for_mlec(
     _InRef_     PC_RGB p_rgb_foreground,
     _InRef_     PC_RGB p_rgb_background);
 
-extern void
+extern BOOL
 riscos_colour_picker(
     HOST_WND    parent_window_handle,
     _InoutRef_  P_RGB p_rgb);
@@ -2910,6 +2970,11 @@ extern void
 host_palette_cache_reset(void);
 
 #if WINDOWS
+
+extern BOOL
+windows_colour_picker(
+    HOST_WND    parent_window_handle,
+    _InoutRef_  P_RGB p_rgb);
 
 extern void
 host_rgb_stash(
@@ -3103,6 +3168,10 @@ host_cache_view_info(
 
 #if WINDOWS
 
+extern HBITMAP
+gdiplus_load_bitmap_from_file(
+    _In_z_      PCTSTR filename);
+
 #define TYPE5_PROPERTY_WORD TEXT("TYPE5WORD")
 
 enum EVENT_HANDLER_IDS
@@ -3265,9 +3334,12 @@ string_for_object(
     _In_z_      PCTSTR tag_and_default,
     _InVal_     OBJECT_ID object_id);
 
+/*ncr*/
+_Ret_z_
 extern PTSTR
 make_var_name(
-    _Out_cap_c_(BUF_MAX_PATHSTRING) PTSTR buffer /* [BUF_MAX_PATHSTRING]*/,
+    _Out_cap_(elemof_buffer) PTSTR buffer,
+    _InVal_     U32 elemof_buffer,
     _In_z_      PCTSTR suffix);
 
 #endif
@@ -3363,7 +3435,7 @@ scheduled_events_do_query(void);
 extern void
 host_font_delete(
     _HfontRef_  HOST_FONT host_font,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context);
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context);
 
 extern HPALETTE g_hPalette;
 
@@ -3730,12 +3802,12 @@ _Check_return_
 extern HOST_FONT
 host_font_find(
     _InRef_     PC_HOST_FONT_SPEC p_host_font_spec,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context);
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context);
 
 extern void
 host_font_dispose(
     _InoutRef_  P_HOST_FONT p_host_font,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context);
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context);
 
 #if WINDOWS
 
@@ -3991,6 +4063,7 @@ typedef S32 KMAP_CODE; typedef KMAP_CODE * P_KMAP_CODE; typedef const KMAP_CODE 
 exported routines
 */
 
+_Check_return_
 extern KMAP_CODE
 #if RISCOS
 ri_kmap_convert(
@@ -4003,9 +4076,16 @@ ri_kmap_convert(
 extern void
 host_key_buffer_flush(void);
 
+extern void
+host_key_cache_init(void);
+
 _Check_return_
 extern STATUS
-host_key_cache_emit_events(
+host_key_cache_emit_events(void);
+
+_Check_return_
+extern STATUS
+host_key_cache_emit_events_for(
     _InVal_     DOCNO docno);
 
 _Check_return_
@@ -4113,13 +4193,13 @@ backwards methods look for a sequence *before* the current position, hence non-z
 #define inline_bytecount(ptr) ( \
     is_inline(ptr) \
         ? (S32) PtrGetByteOff(ptr, IL_OFF_COUNT) \
-        : uchars_bytes_of_char(ptr) )
+        : uchars_bytes_of_char(((PC_UCHARS) (ptr))) )
 
 /* return number of bytes in an in-line sequence (or character) at given offset */
 #define inline_bytecount_off(ptr, off) ( \
     is_inline_off(ptr, off) \
         ? (S32) PtrGetByteOff(ptr, (off) + IL_OFF_COUNT) \
-        : uchars_bytes_of_char_off(ptr, off) )
+        : (S32) uchars_bytes_of_char_off(((PC_UCHARS) (ptr)), off) )
 
 #define contains_inline(ptr, n_bytes) ( /*BOOL*/ \
     NULL != memchr(ptr, CH_INLINE, n_bytes) )
@@ -4282,7 +4362,7 @@ inline data types
 
 #define IL_TYPE_MAX     6
 
-#define IL_TYPE_PRIVATE 6 /* eg for IL_ARGUMENT */
+#define IL_TYPE_PRIVATE 6 /* e.g. for IL_ARGUMENT */
 
 typedef S32 IL_TYPE; typedef IL_TYPE * P_IL_TYPE;
 
@@ -4322,13 +4402,13 @@ extern void
 data_from_inline(
     _Out_writes_bytes_(bytesof_buffer) P_ANY buffer,
     _InVal_     U32 bytesof_buffer,
-    _In_bytecount_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
+    _In_reads_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
     _InVal_     S32 type_expected);
 
 _Check_return_
 extern S32
 data_from_inline_s32(
-    _In_bytecount_c_(INLINE_OVH + sizeof32(S32)) PC_USTR_INLINE ustr_inline);
+    _In_reads_c_(INLINE_OVH + sizeof32(S32)) PC_USTR_INLINE ustr_inline);
 
 _Check_return_
 extern STATUS /* size out */
@@ -4710,7 +4790,7 @@ p_arglist_args(
     _InRef_     PC_ARGLIST_HANDLE pc_arglist_handle,
     _InVal_     U32 n_args)
 {
-    assert(n_args <= array_elements32(pc_arglist_handle)); /* NB NOT array_index_valid(pc_arglist_handle, n_args) */
+    assert(n_args <= array_elements32(pc_arglist_handle)); /* NB NOT array_index_is_valid(pc_arglist_handle, n_args) */
     IGNOREPARM_InVal_(n_args);
     return(array_range(pc_arglist_handle, ARGLIST_ARG, 0, n_args));
 }
@@ -4722,7 +4802,7 @@ pc_arglist_args(
     _InRef_     PC_ARGLIST_HANDLE pc_arglist_handle,
     _InVal_     U32 n_args)
 {
-    assert(n_args <= array_elements32(pc_arglist_handle)); /* NB NOT array_index_valid(pc_arglist_handle, n_args) */
+    assert(n_args <= array_elements32(pc_arglist_handle)); /* NB NOT array_index_is_valid(pc_arglist_handle, n_args) */
     IGNOREPARM_InVal_(n_args);
     return(array_rangec(pc_arglist_handle, ARGLIST_ARG, 0, n_args));
 }
@@ -4972,7 +5052,7 @@ object_data_from_position(
     _DocuRef_   P_DOCU p_docu,
     _OutRef_    P_OBJECT_DATA p_object_data,
     _InRef_     PC_POSITION p_position,
-    _InRef_opt_ PC_OBJECT_POSITION p_object_position);
+    _InRef_maybenone_ PC_OBJECT_POSITION p_object_position);
 
 /*ncr*/
 extern STATUS /* STATUS_DONE == cell contains data */
@@ -5129,8 +5209,8 @@ these are the known classes of UI data
 typedef enum UI_DATA_TYPE
 {
     UI_DATA_TYPE_NONE = 0,
-    UI_DATA_TYPE_P_U8,
-    UI_DATA_TYPE_spare,
+    UI_DATA_TYPE_spare_1,
+    UI_DATA_TYPE_spare_2,
     UI_DATA_TYPE_S32,
     UI_DATA_TYPE_F64,
     UI_DATA_TYPE_ANY,
@@ -5144,10 +5224,8 @@ typedef union UI_DATA
 {
     ARRAY_HANDLE any;
     F64          f64;
-    P_U8         p_u8;
     S32          s32;
     UI_TEXT      text;
-    U8           u8;
 }
 UI_DATA, * P_UI_DATA;
 
@@ -5291,7 +5369,7 @@ UI_CONTROL_S32; typedef const UI_CONTROL_S32 * PC_UI_CONTROL_S32;
 #define PC_UI_CONTROL_S32_NONE _P_DATA_NONE(PC_UI_CONTROL_S32)
 
 typedef struct UI_CONTROL_TEXT /* also for p_u8 */
-    {
+{
     S32 maxlen;
 
     P_BITMAP p_allowed /*NULL->all*/;
@@ -5659,7 +5737,7 @@ typedef struct PROCESS_STATUS_CONTROLS
 }
 PROCESS_STATUS_CONTROLS;
 
-#endif /* OS etc */
+#endif /* OS etc. */
 
 typedef struct PROCESS_STATUS
 {
@@ -5904,6 +5982,8 @@ typedef S32 STYLE_HANDLE; typedef STYLE_HANDLE * P_STYLE_HANDLE;
 /* style style_selector switches */
 typedef enum STYLE_BIT_NUMBER
 {
+    STYLE_BIT_NUMBER_ENUM_END = -1, /* from style_selector_next_bit() */
+
     STYLE_BIT_NUMBER_FIRST = 0, /* for explicit for(;;) loops */
 
     /* bw0 b0 */    STYLE_SW_NAME               = 0,    /* style name */
@@ -6308,7 +6388,7 @@ typedef struct STYLE
 STYLE, * P_STYLE, ** P_P_STYLE; typedef const STYLE * PC_STYLE;
 
 #define    P_STYLE_NONE             _P_DATA_NONE(P_STYLE)
-#define IS_P_STYLE_NONE(p_style) _IS_P_DATA_NONE(P_STYLE, p_style)
+#define IS_P_STYLE_NONE(p_style)     IS_PTR_NONE(p_style)
 
 static inline void
 style_bit_set(
@@ -6704,13 +6784,15 @@ style_docu_area_delete(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_STYLE_DOCU_AREA p_style_docu_area);
 
+_Check_return_
+_Ret_maybenull_
 extern P_STYLE_DOCU_AREA /* NULL == didn't find one */
 style_docu_area_enum_implied(
     _DocuRef_   P_DOCU p_docu,
     /*inout*/ P_ARRAY_INDEX p_array_index /* -1 to start */,
     _InVal_     OBJECT_ID object_id,
-    P_T5_MESSAGE p_t5_message /* NULL==don't care */,
-    P_S32 p_arg /* NULL==don't care */);
+    _InRef_opt_ PC_T5_MESSAGE p_t5_message /* NULL==don't care */,
+    _InRef_opt_ PC_S32 p_arg /* NULL==don't care */);
 
 extern void
 style_docu_area_delete_list(
@@ -6766,7 +6848,7 @@ style_effect_source_modify(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_ARRAY_HANDLE p_h_style_list,
     _InRef_     PC_POSITION p_position,
-    _In_opt_count_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline_in,
+    _In_reads_opt_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline_in,
     _InRef_opt_ P_STYLE p_style_in);
 
 _Check_return_
@@ -7027,7 +7109,7 @@ extern STATUS /* length processed */
 style_struct_from_ustr_inline(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_STYLE p_style,
-    _In_bytecount_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
+    _In_reads_c_(INLINE_OVH) PC_USTR_INLINE ustr_inline,
     _InRef_     PC_STYLE_SELECTOR p_style_selector);
 
 _Check_return_
@@ -7114,21 +7196,21 @@ of_load.c
 
 typedef enum IO_TYPE
 {
-    IO_TYPE_AUTO     = 0, /* only for load! */
-    IO_TYPE_LATIN_1  = 1,
-    IO_TYPE_LATIN_2  = 2,
-    IO_TYPE_LATIN_3  = 3,
-    IO_TYPE_LATIN_4  = 4,
-    IO_TYPE_LATIN_9  = 9,
+    IO_TYPE_AUTO        = 0,    /* this is only applicable for load! */
+    IO_TYPE_LATIN_1     = 1,
+    IO_TYPE_LATIN_2     = 2,
+    IO_TYPE_LATIN_3     = 3,
+    IO_TYPE_LATIN_4     = 4,
+    IO_TYPE_LATIN_9     = 9,
 
-    IO_TYPE_UTF_32LE = 32,
-    IO_TYPE_UTF_32BE = 33,
-    IO_TYPE_UTF_16LE = 34,
-    IO_TYPE_UTF_16BE = 35,
-    IO_TYPE_UTF_8    = 36, /* eg XLS XML */
+    IO_TYPE_UTF_32LE    = 32,
+    IO_TYPE_UTF_32BE    = 33,
+    IO_TYPE_UTF_16LE    = 34,
+    IO_TYPE_UTF_16BE    = 35,
+    IO_TYPE_UTF_8       = 36,   /* e.g. XLS XML */
 
-    IO_TYPE_ASCII    = 64, /* eg RTF */
-    IO_TYPE_TRANSLATE_8 = 65 /* eg EBCDIC 8-bit plain text I/O */
+    IO_TYPE_ASCII       = 64,   /* e.g. RTF */
+    IO_TYPE_TRANSLATE_8 = 65    /* e.g. EBCDIC 8-bit plain text I/O */
 }
 IO_TYPE;
 
@@ -7335,6 +7417,7 @@ typedef struct MSG_INSERT_OWNFORM
     T5_FILETYPE t5_filetype;
     BOOL insert;
     BOOL scrap_file;
+    BOOL ctrl_pressed; /* really just for FOREIGN */
     POSITION position;
     SKEL_POINT skel_point;
     U32 retry_with_this_arg;
@@ -7354,7 +7437,7 @@ typedef struct T5_CMD
 {
     ARGLIST_HANDLE arglist_handle;
     S32            interactive;
-    S32            count;
+    U32            count;
     P_OF_IP_FORMAT p_of_ip_format; /* NULL if not in load context */
 }
 T5_CMD, * P_T5_CMD; typedef const T5_CMD * PC_T5_CMD;
@@ -7487,22 +7570,34 @@ load_supporting_documents(
     _DocuRef_   P_DOCU p_docu);
 
 _Check_return_
-extern STATUS
-load_and_print_this_file(
+extern STATUS /*reported*/
+load_and_print_this_file_rl(
     _In_z_      PCTSTR filename,
     _In_opt_z_  PCTSTR printername);
 
 _Check_return_
-extern STATUS
-load_this_dir(
+extern STATUS /*reported*/
+load_this_dir_rl(
     _In_z_      PCTSTR dirname);
 
 _Check_return_
-extern STATUS
-load_this_file(
+extern STATUS /*reported*/
+load_this_fireworkz_file_rl(
     _DocuRef_   P_DOCU cur_p_docu,
-    _InVal_     T5_MESSAGE t5_message,
+    _In_z_      PCTSTR filename,
+    _InVal_     BOOL fReadOnly);
+
+_Check_return_
+extern STATUS /*reported*/
+load_this_template_file_rl(
+    _DocuRef_   P_DOCU cur_p_docu,
     _In_opt_z_  PCTSTR filename);
+
+_Check_return_
+extern STATUS /*reported*/
+load_this_command_file_rl(
+    _DocuRef_   P_DOCU cur_p_docu,
+    _In_z_      PCTSTR filename);
 
 _Check_return_
 extern STATUS
@@ -7514,7 +7609,7 @@ _Check_return_
 extern STATUS
 ownform_initialise_load(
     _DocuRef_   P_DOCU p_docu,
-    _InRef_opt_ PC_POSITION p_position,
+    _InRef_maybenone_ PC_POSITION p_position,
     _InoutRef_  P_OF_IP_FORMAT p_of_ip_format,
     _In_opt_z_  PCTSTR filename,
     _InRef_opt_ PC_ARRAY_HANDLE p_array_handle);
@@ -7534,7 +7629,7 @@ extern STATUS
 load_ownform_from_array_handle(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_ARRAY_HANDLE p_array_handle,
-    _InRef_opt_ PC_POSITION p_position,
+    _InRef_maybenone_ PC_POSITION p_position,
     _InVal_     BOOL clip_data_from_cut_operation);
 
 extern void
@@ -7550,9 +7645,19 @@ object_id_from_construct_id(
 extern void
 of_load_prepare_first_template(void);
 
+extern void
+of_load_S32_arg_offset_as_COL(
+    _InRef_     P_OF_IP_FORMAT p_of_ip_format,
+    _InoutRef_  P_ARGLIST_ARG p_arg);
+
+extern void
+of_load_S32_arg_offset_as_ROW(
+    _InRef_     P_OF_IP_FORMAT p_of_ip_format,
+    _InoutRef_  P_ARGLIST_ARG p_arg);
+
 _Check_return_
-extern STATUS
-load_file_for_windows_startup(
+extern STATUS /*reported*/
+load_file_for_windows_startup_rl(
     _In_z_      PCTSTR filename);
 
 _Check_return_
@@ -7582,7 +7687,7 @@ _Check_return_
 extern STATUS
 foreign_load_initialise(
     _DocuRef_   P_DOCU p_docu,
-    P_POSITION p_position,
+    _InoutRef_maybenone_ P_POSITION p_position,
     _InoutRef_  P_FF_IP_FORMAT p_ff_ip_format,
     _In_opt_z_  PCTSTR filename,
     _InRef_opt_ PC_ARRAY_HANDLE p_array_handle);
@@ -7598,11 +7703,11 @@ foreign_load_determine_io_type(
     _Inout_     P_FF_IP_FORMAT p_ff_ip_format);
 
 _Check_return_
-extern STATUS
-load_foreign_file(
+extern STATUS /*reported*/
+load_foreign_file_rl(
     _DocuRef_   P_DOCU cur_p_docu,
-    _InVal_     T5_FILETYPE t5_filetype,
-    _In_z_      PCTSTR filename);
+    _In_z_      PCTSTR filename,
+    _InVal_     T5_FILETYPE t5_filetype);
 
 #define ENUMERATE_BOUND_FILETYPES_START -1
 
@@ -7619,22 +7724,30 @@ enumerate_bound_filetypes(
     _InVal_     S32 mask);
 
 _Check_return_
-_Ret_maybenull_z_
-extern PCTSTR
-description_text_from_t5_filetype(
-    _InVal_     T5_FILETYPE t5_filetype);
+_Ret_z_
+extern PC_USTR
+description_ustr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _OutRef_    P_BOOL p_found);
 
 _Check_return_
-_Ret_maybenull_z_
-extern PCTSTR
-extension_srch_text_from_t5_filetype(
-    _InVal_     T5_FILETYPE t5_filetype);
+_Ret_z_
+extern PC_USTR
+extension_srch_ustr_from_t5_filetype(
+    _InVal_     T5_FILETYPE t5_filetype,
+    _OutRef_    P_BOOL p_found);
 
 _Check_return_
 _Ret_maybenull_
 extern PCTSTR
 foreign_template_from_t5_filetype(
     _InVal_     T5_FILETYPE t5_filetype);
+
+_Check_return_
+extern T5_FILETYPE
+t5_filetype_from_data(
+    _In_reads_bytes_(n_bytes) PC_BYTE p_data,
+    _InVal_     U32 n_bytes);
 
 _Check_return_
 extern T5_FILETYPE
@@ -7646,27 +7759,10 @@ extern T5_FILETYPE
 t5_filetype_from_file_header(
     _In_z_      PCTSTR filename);
 
-#if RISCOS
-
 _Check_return_
 extern T5_FILETYPE
-t5_filetype_from_file_risc_os(
+t5_filetype_from_filename(
     _In_z_      PCTSTR filename);
-
-#define host_t5_filetype_from_file(filename) \
-    t5_filetype_from_file_risc_os(filename)
-
-#elif WINDOWS
-
-_Check_return_
-extern T5_FILETYPE
-t5_filetype_from_file_windows(
-    _In_z_      PCTSTR filename);
-
-#define host_t5_filetype_from_file(filename) \
-    t5_filetype_from_file_windows(filename)
-
-#endif /* OS */
 
 _Check_return_
 extern OBJECT_ID
@@ -7864,15 +7960,16 @@ typedef struct SAVE_FILETYPE
     OBJECT_ID   object_id;
     T5_FILETYPE t5_filetype;
     UI_TEXT     description;
+    UI_TEXT     suggested_leafname;
 }
 SAVE_FILETYPE, * P_SAVE_FILETYPE; typedef const SAVE_FILETYPE * PC_SAVE_FILETYPE;
 
 /*DATA_CLASS_INDEX*/
 
-#define DATA_SAVE_CHARACTER ((UBF) 0)
-#define DATA_SAVE_MANY      ((UBF) 1)
-#define DATA_SAVE_DOC       ((UBF) 2)
-#define DATA_SAVE_WHOLE_DOC ((UBF) 3)
+#define DATA_SAVE_CHARACTER UBF_PACK(0)
+#define DATA_SAVE_MANY      UBF_PACK(1)
+#define DATA_SAVE_DOC       UBF_PACK(2)
+#define DATA_SAVE_WHOLE_DOC UBF_PACK(3)
 
 typedef struct OF_TEMPLATE
 {
@@ -8112,6 +8209,15 @@ typedef struct MSG_SAVE_PICTURE
     uintptr_t           extra;
 }
 MSG_SAVE_PICTURE, * P_MSG_SAVE_PICTURE;
+
+/* Save as picture request */
+
+typedef struct MSG_SAVE_PICTURE_FILETYPES_REQUEST
+{
+    ARRAY_HANDLE        h_save_filetype; /* SAVE_FILETYPE[] */ /*appended*/
+    uintptr_t           extra;
+}
+MSG_SAVE_PICTURE_FILETYPES_REQUEST, * P_MSG_SAVE_PICTURE_FILETYPES_REQUEST;
 
 /*
 reperr.c
@@ -8517,18 +8623,18 @@ docu_modify_clear(
 _Check_return_
 extern STATUS
 execute_command(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle);
+    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle,
+    _InVal_     OBJECT_ID object_id);
 
 _Check_return_
 extern STATUS
 execute_command_reperr(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle);
+    _InRef_opt_ PC_ARGLIST_HANDLE pc_arglist_handle,
+    _InVal_     OBJECT_ID object_id);
 
 _Check_return_
 extern STATUS
@@ -8540,10 +8646,10 @@ execute_loaded_command(
 _Check_return_
 extern STATUS
 execute_command_n(
-    _InVal_     OBJECT_ID object_id,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
-    _InVal_     S32 count);
+    _InVal_     OBJECT_ID object_id,
+    _InVal_     U32 count);
 
 extern KMAP_CODE
 key_code_from_key_of_name(
@@ -8730,6 +8836,11 @@ docno_get_supporting_docs(
     _OutRef_    P_ARRAY_HANDLE p_h_docnos);
 
 _Check_return_
+extern BOOL
+docno_is_valid(
+    _InVal_     DOCNO docno);
+
+_Check_return_
 extern U32 /* number of chars output */
 docno_name_write_ustr_buf(
     _Out_writes_z_(elemof_buffer) P_USTR ustr_buf,
@@ -8778,22 +8889,24 @@ p_docu_from_docno(
 _Check_return_
 _Ret_valid_
 static inline P_DOCU
-p_docu_from_docno_ok(
+p_docu_from_docno_valid(
     _InVal_     DOCNO docno)
 {
-    return(p_docu_from_docno(docno));
+    const P_DOCU p_docu = p_docu_from_docno(docno);
+    __analysis_assume(p_docu);
+    return(p_docu);
 }
 
 _Check_return_
-_Ret_maybenone_
+_Ret_valid_
 static inline P_DOCU
 p_docu_from_config_wr(void)
 {
-    return(p_docu_from_docno(DOCNO_CONFIG));
+    return(p_docu_from_docno_valid(DOCNO_CONFIG));
 }
 
 _Check_return_
-_Ret_maybenone_
+_Ret_valid_
 static inline PC_DOCU
 p_docu_from_config(void)
 {
@@ -8806,7 +8919,7 @@ __sk_event_h
 
 typedef struct SKELEVENT_REDRAW
 {
-    REDRAW_TAG     work_window; /* identifies HORZBORDER, PANE_MARGIN_HEADER, PANE_WORKAREA etc */
+    REDRAW_TAG     work_window; /* identifies HORZBORDER, PANE_MARGIN_HEADER, PANE_WORKAREA etc. */
     SKEL_RECT      work_skel_rect;
     SKEL_RECT      clip_skel_rect;
     REDRAW_FLAGS   flags;
@@ -8841,7 +8954,7 @@ typedef struct SKELEVENT_CLICK
 {
     CLICK_CONTEXT click_context;
     SKEL_POINT    skel_point;
-    REDRAW_TAG    work_window; /* identifies HORZBORDER, PANE_MARGIN_HEADER, PANE_WORKAREA etc */
+    REDRAW_TAG    work_window; /* identifies HORZBORDER, PANE_MARGIN_HEADER, PANE_WORKAREA etc. */
     SKEL_RECT     work_skel_rect;
 
     STATUS        processed; /*IN:0;OUT*/
@@ -8878,6 +8991,32 @@ typedef struct SKELEVENT_CLICK_FILTER
     SKELEVENT_CLICK_FILTER_DATA data;
 }
 SKELEVENT_CLICK_FILTER, * P_SKELEVENT_CLICK_FILTER;
+
+_Check_return_
+static inline T5_MESSAGE
+right_message_if_ctrl(
+    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     T5_MESSAGE t5_message_right,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click)
+{
+    if((t5_message == t5_message_right) || p_skelevent_click->click_context.ctrl_pressed)
+        return(t5_message_right);
+
+    return(t5_message);
+}
+
+_Check_return_
+static inline T5_MESSAGE
+right_message_if_shift(
+    _InVal_     T5_MESSAGE t5_message,
+    _InVal_     T5_MESSAGE t5_message_right,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click)
+{
+    if((t5_message == t5_message_right) || p_skelevent_click->click_context.shift_pressed)
+        return(t5_message_right);
+
+    return(t5_message);
+}
 
 typedef struct SKELEVENT_KEY
 {
@@ -9880,7 +10019,7 @@ typedef struct VIEWEVENT_CLICK_DATA_FILEINSERT
 VIEWEVENT_CLICK_DATA_FILEINSERT;
 
 typedef union VIEWEVENT_CLICK_DATA /* directed events other than simple click need more data */
-    {
+{
     VIEWEVENT_CLICK_DATA_DRAG drag;
     VIEWEVENT_CLICK_DATA_FILEINSERT fileinsert;
 }
@@ -9956,7 +10095,7 @@ p_view_from_viewno_caret(
 _Check_return_
 extern VIEWNO
 viewno_from_p_view_fn(
-    _ViewRef_   PC_VIEW p_view);
+    _ViewRef_maybenone_ PC_VIEW p_view);
 
 extern void
 view_destroy(
@@ -10311,8 +10450,8 @@ typedef enum MENU_ROOT_ID
     MENU_ROOT_ID_FIRST = 0,
 
     MENU_ROOT_DOCU = MENU_ROOT_ID_FIRST,
-    MENU_ROOT_ICON = 1, /* RISC OS */
-    MENU_ROOT_FUNC = 2,
+    MENU_ROOT_ICON_BAR = 1, /* RISC OS */
+    MENU_ROOT_FUNCTION_SELECTOR = 2,
     MENU_ROOT_CHART = 3,
     MENU_ROOT_CHART_EDIT = 4,
 
@@ -11258,6 +11397,7 @@ typedef struct DOCU_FLAGS
     BOOL init_close;                /* init/close interlock flags */
     BOOL init_close_thunk;          /* for init/close messages */
     BOOL allow_modified_change;
+    BOOL read_only;
 
     BOOL is_current;                /* should have caret */
     BOOL has_input_focus;           /* caret is in one of pane windows */
@@ -11316,9 +11456,9 @@ tree structures
 
 typedef struct DEPTABLE
 {
-    ARRAY_HANDLE h_table;               /* handle of table eg [] of CUSTOM_USE, [] of NAME_USE */
-    ARRAY_INDEX sorted;                 /* sorted limit */
-    ARRAY_INDEX mindel;                 /* minimum deleted entry */
+    ARRAY_HANDLE h_table;           /* handle of table e.g. [] of CUSTOM_USE, [] of NAME_USE */
+    ARRAY_INDEX sorted;             /* sorted limit */
+    ARRAY_INDEX mindel;             /* minimum deleted entry */
     DEF_FLAGS flags;
 }
 DEPTABLE, * P_DEPTABLE;
@@ -11533,13 +11673,13 @@ struct DOCU
 
 /* no longer rounded out in size as it's referenced by a pointer in the doc table (which is now private to sk_docno.c) */
 
-#define  P_DOCU_NONE                    PTR_NONE_X(P_DOCU, 1)
-#define IS_DOCU_NONE(p_docu) IS_PTR_NULL_OR_NONE_X(P_DOCU, 1, p_docu)
+#define  P_DOCU_NONE                    PTR_NONE_X(P_DOCU, 2)
+#define IS_DOCU_NONE(p_docu)         IS_PTR_NONE_X(P_DOCU, 2, p_docu)
 #define    DOCU_ASSERT(p_docu) \
     assert(!IS_DOCU_NONE(p_docu))
 
-#define  P_VIEW_NONE                    PTR_NONE_X(P_VIEW, 2)
-#define IS_VIEW_NONE(p_view) IS_PTR_NULL_OR_NONE_X(P_VIEW, 2, p_view)
+#define  P_VIEW_NONE                    PTR_NONE_X(P_VIEW, 3)
+#define IS_VIEW_NONE(p_view)         IS_PTR_NONE_X(P_VIEW, 3, p_view)
 #define    VIEW_ASSERT(p_view) \
     assert(!IS_VIEW_NONE(p_view))
 
@@ -11804,7 +11944,7 @@ object_position_set_start(
     _InVal_     OBJECT_ID object_id);
 
 #define OBJECT_POSITION_COMPARE_PP 0    /* two arbitrary points */
-#define OBJECT_POSITION_COMPARE_SE 1    /* inclusive/exclusive points from (eg) a docu_area */
+#define OBJECT_POSITION_COMPARE_SE 1    /* inclusive/exclusive points from (e.g.) a docu_area */
 
 _Check_return_
 extern S32 /* strcmp like result */
@@ -12289,17 +12429,17 @@ exports from prodinfo.c
 _Check_return_
 _Ret_z_
 extern PCTSTR
-product_id(void); /* eg FireworkzPro */
+product_id(void); /* e.g. FireworkzPro */
 
 _Check_return_
 _Ret_z_
 extern PCTSTR
-product_family_id(void); /* eg Fireworkz */
+product_family_id(void); /* e.g. Fireworkz */
 
 _Check_return_
 _Ret_z_
 extern PCTSTR
-product_ui_id(void); /* eg Fireworkz<nbsp>Pro */
+product_ui_id(void); /* e.g. Fireworkz<nbsp>Pro */
 
 _Check_return_
 _Ret_z_
@@ -12335,6 +12475,7 @@ extern void
 process_close_request(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
+    _In_        BOOL closing_a_doc,
     _In_        BOOL closing_a_view,
     _InVal_     BOOL opening_a_directory);
 

@@ -349,7 +349,7 @@ pdtx_para_process(
         {
             LOAD_CELL_FOREIGN load_cell_foreign;
             zero_struct(load_cell_foreign);
-            status_consume(object_data_from_position(p_docu, &load_cell_foreign.object_data, p_position, NULL));
+            status_consume(object_data_from_position(p_docu, &load_cell_foreign.object_data, p_position, P_OBJECT_POSITION_NONE));
             load_cell_foreign.original_slr = p_position->slr;
 
             load_cell_foreign.data_type = OWNFORM_DATA_TYPE_TEXT;

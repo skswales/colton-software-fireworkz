@@ -23,9 +23,18 @@ LDflags_AIF=-d -aif -base &8000
 
 OBJMUNGE=@| No 32-bit ObjMunge
 
+# just one product-specific file is built for each target product
+# NB this #include profinfo.c and t5_glue.c
+$(PROD_BUILD_DIR).o.firewrkz: $(PROD_SOURCE_DIR).c.firewrkz
+ $(CC) -o $@ $(ccflags) $?
+
 # objects to be bound into !RunImage
 
-AOF_S=\
+AOF_S0=\
+$(PROD_BUILD_DIR).o.$(PROD) \
+$(PROD_BUILD_DIR).o.$(COUNTRY)-M38 \
+
+AOF_S1=\
 $(BUILD_DIR).ob_skel.skelA \
 $(BUILD_DIR).ob_skel.skelB \
 $(BUILD_DIR).ob_skel.skelC \
@@ -41,6 +50,10 @@ $(PROD_BUILD_DIR).o.$(COUNTRY)-M18 \
 $(PROD_BUILD_DIR).o.$(COUNTRY)-M29 \
 $(PROD_BUILD_DIR).o.$(COUNTRY)-M30 \
 $(PROD_BUILD_DIR).o.$(COUNTRY)-M31 \
+
+AOF_S=\
+$(AOF_S0) \
+$(AOF_S1) \
 
 # modules that are dynamically loaded
 

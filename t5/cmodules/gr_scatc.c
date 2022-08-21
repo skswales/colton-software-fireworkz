@@ -411,7 +411,6 @@ gr_scatterchart_series_addin(
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_SERIES_IDX series_idx)
 {
-    const P_GR_DIAG p_gr_diag = cp->core.p_gr_diag;
     const P_GR_SERIES serp = getserp(cp, series_idx);
     GR_DATASOURCE_FOURSOME dsh;
     GR_CHART_OBJID serid;
@@ -466,7 +465,7 @@ gr_scatterchart_series_addin(
 
         for(point = 0; point < n_points; ++point)
         {
-            id.subno = (U16) gr_point_external_from_key(point);
+            id.subno = UBF_PACK(gr_point_external_from_key(point));
 
             if(!status_done(gr_travel_dsh_valof(cp, dsh.value_x, point, &value.x)))
             {
@@ -588,7 +587,7 @@ gr_scatterchart_series_addin(
 
                 err_box.y0 = err_box.y1 = valpoint.y;
 
-                status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &err_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &err_box, &linestyle));
 
                 /* vertical part of H at left */
                 right_side = err_box.x1;
@@ -597,12 +596,12 @@ gr_scatterchart_series_addin(
                 err_box.y1 = err_box.y0 + tbar_halfsize;
                 err_box.y0 = err_box.y0 - tbar_halfsize;
 
-                status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &err_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &err_box, &linestyle));
 
                 /* vertical part of H at right */
                 err_box.x0 = err_box.x1 = right_side;
 
-                status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &err_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &err_box, &linestyle));
             }
 
             /* y error tits plotted below point? */
@@ -635,7 +634,7 @@ gr_scatterchart_series_addin(
                     err_box.y1 = valpoint.y + errsize;
                 }
 
-                status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &err_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &err_box, &linestyle));
 
                 /* horizontal part of I at bottom */
                 err_box.x1 = err_box.x0 + tbar_halfsize;
@@ -644,12 +643,12 @@ gr_scatterchart_series_addin(
                 top_side = err_box.y1;
                 err_box.y1 = err_box.y0;
 
-                status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &err_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &err_box, &linestyle));
 
                 /* horizontal part of I at top */
                 err_box.y0 = err_box.y1 = top_side;
 
-                status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &err_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &err_box, &linestyle));
             }
 
             if(!had_first)
@@ -666,7 +665,7 @@ gr_scatterchart_series_addin(
                     line_box.x1 =     valpoint.x;
                     line_box.y1 =     valpoint.y;
 
-                    status_break(status = gr_diag_line_new(p_gr_diag, NULL, id, &line_box, &linestyle));
+                    status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
                 }
             }
 
@@ -686,10 +685,10 @@ gr_scatterchart_series_addin(
                 status_break(status = gr_chart_scaled_picture_add(cp, id, &pict_box, &fillstyleb, &fillstylec));
             }
 
-            gr_diag_group_end(p_gr_diag, &pointStart);
+            gr_chart_group_end(cp, &pointStart);
         }
 
-        gr_diag_group_end(p_gr_diag, &linepassStart);
+        gr_chart_group_end(cp, &linepassStart);
 
         status_break(status);
 
@@ -711,7 +710,7 @@ gr_scatterchart_series_addin(
         /* end of point_pass loop */
     }
 
-    gr_diag_group_end(p_gr_diag, &lineStart);
+    gr_chart_group_end(cp, &lineStart);
 
     return(status);
 }
@@ -720,7 +719,7 @@ _Check_return_
 static STATUS
 gr_scatterchart_axes_addin(
     _ChartRef_  P_GR_CHART cp,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
     GR_DIAG_OFFSET axesGroupStart;
     GR_AXES_IDX axes_idx;
@@ -731,12 +730,12 @@ gr_scatterchart_axes_addin(
     axes_idx = cp->axes_idx_max;
 
     do  {
-        status_break(status = gr_axis_addin_value_x(cp, axes_idx, front));
-        status_break(status = gr_axis_addin_value_y(cp, axes_idx, front));
+        status_break(status = gr_axis_addin_value_x(cp, axes_idx, front_phase));
+        status_break(status = gr_axis_addin_value_y(cp, axes_idx, front_phase));
     }
     while(axes_idx-- > 0);
 
-    gr_diag_group_end(cp->core.p_gr_diag, &axesGroupStart);
+    gr_chart_group_end(cp, &axesGroupStart);
 
     return(status);
 }
@@ -817,7 +816,7 @@ gr_scatterchart_addin(
     }
 
     /* loop over axes again after total_n_points accumulated,
-     * sussing best fit lines and forming X axis & Y axis for each axes set
+     * sussing best fit lines and forming x-axis & y-axis for each axes set
     */
     for(axes_idx = 0; axes_idx <= cp->axes_idx_max; ++axes_idx)
     {
@@ -1085,7 +1084,7 @@ gr_barlinescatch_best_fit_addin(
 
     gr_chart_objid_linestyle_query(cp, id, &linestyle);
 
-    return(gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+    return(gr_chart_line_new(cp, id, &line_box, &linestyle));
 }
 
 /* end of gr_scatc.c */

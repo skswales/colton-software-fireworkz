@@ -47,8 +47,15 @@ extern BOOL
 cell_data_from_position(
     _DocuRef_   P_DOCU p_docu,
     _OutRef_    P_OBJECT_DATA p_object_data,
+    _InRef_     PC_POSITION p_position);
+
+/*ncr*/
+extern BOOL
+cell_data_from_position_and_object_position(
+    _DocuRef_   P_DOCU p_docu,
+    _OutRef_    P_OBJECT_DATA p_object_data,
     _InRef_     PC_POSITION p_position,
-    _InRef_opt_ PC_OBJECT_POSITION p_object_position_end);
+    _InRef_maybenone_ PC_OBJECT_POSITION p_object_position_end);
 
 /*ncr*/
 extern BOOL

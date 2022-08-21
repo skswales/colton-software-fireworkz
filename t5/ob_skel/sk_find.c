@@ -285,7 +285,7 @@ search_intro_cancel =
     { DRT(RTLB, PUSHBUTTON), 1 }
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 search_argmap[] =
 {
 #define ARG_SEARCH_FIND            0
@@ -380,7 +380,7 @@ dialog_search_intro_preprocess_command(
     /*           1.06 08nov93 - setup BEFORE the command duplicate so subsequent searches retain default */
     const P_ARGLIST_ARG p_arg = p_arglist_arg(&p_dialog_msg_preprocess_command->arglist_handle, ARG_SEARCH_FROM);
     p_arg->type    = ARG_TYPE_S32;
-    p_arg->val.s32 = (p_dialog_msg_preprocess_command->p_dialog_control->control_id == SEARCH_INTRO_ID_FROM_TOP) ? SEARCH_FROM_TOP : SEARCH_FROM_CARET;
+    p_arg->val.s32 = (p_dialog_msg_preprocess_command->p_dialog_control->dialog_control_id == SEARCH_INTRO_ID_FROM_TOP) ? SEARCH_FROM_TOP : SEARCH_FROM_CARET;
 
     /* take a copy for use by next match */
     arglist_dispose(&p_docu->h_arglist_search);
@@ -621,7 +621,7 @@ T5_CMD_PROTO(extern, t5_cmd_search_do)
                                     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SEARCH_QUERY_CAPTION;
                                     dialog_cmd_process_dbox.bits.note_position = 1;
                                     /*dialog_cmd_process_dbox.p_proc_client = NULL;*/
-                                    search_query = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+                                    search_query = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
                                     } /*block*/
 
                                     switch(search_query)
@@ -787,10 +787,10 @@ T5_CMD_PROTO(extern, t5_cmd_search_intro)
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SEARCH_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_search_intro;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     quick_ublock_dispose(&quick_ublock);
 

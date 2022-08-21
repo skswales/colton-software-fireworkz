@@ -48,7 +48,7 @@
  * margin_righ and col_right have non-centred BBoxes that overhang
  * to the left and right respectively to allow col_right to
  * be selected even when margin_righ is plotted on top of it
- * (ie when margin right offset is zero)
+ * (i.e. when margin right offset is zero)
  *
  * also margin_head/off, margin_foot/off have non-centred BBoxes
  */
@@ -98,20 +98,20 @@ host_marker_rect_flags(
     assert(ruler_marker < RULER_MARKER_COUNT);
 
     program_pixels = -p_marker_bitmap->offset.x;
-    assert((program_pixels <= 7) && (program_pixels >= 0));
-    rect_flags.extend_left_ppixels  = (UBF) (program_pixels &  7);
+    assert((program_pixels >= 0) &&           (program_pixels <= 7));
+    rect_flags.extend_left_ppixels = UBF_PACK((program_pixels &  7));
 
     program_pixels = +p_marker_bitmap->offset.y;
-    assert((program_pixels <= 7) && (program_pixels >= 0));
-    rect_flags.extend_up_ppixels = (UBF) (program_pixels &  7);
+    assert((program_pixels >= 0) &&           (program_pixels <= 7));
+    rect_flags.extend_up_ppixels   = UBF_PACK((program_pixels &  7));
 
     program_pixels = p_marker_bitmap->bm_size.cx + p_marker_bitmap->offset.x;
-    assert((program_pixels <= 31) && (program_pixels >= 0));
-    rect_flags.extend_right_ppixels = (UBF) (program_pixels & 31);
+    assert((program_pixels >= 0) &&           (program_pixels <= 31));
+    rect_flags.extend_right_ppixels = UBF_PACK((program_pixels & 31));
 
     program_pixels = p_marker_bitmap->bm_size.cy - p_marker_bitmap->offset.y;
-    assert((program_pixels <= 15) && (program_pixels >= 0));
-    rect_flags.extend_down_ppixels  = (UBF) (program_pixels & 15);
+    assert((program_pixels >= 0) &&           (program_pixels <= 15));
+    rect_flags.extend_down_ppixels  = UBF_PACK((program_pixels & 15));
 
     return(rect_flags);
 }

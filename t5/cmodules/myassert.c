@@ -142,7 +142,6 @@ __vmyasserted(
     va_list va;
     _kernel_oserror err;
     PTSTR p = err.errmess;
-    PTSTR p_out;
     int errflags_out;
 
     /* we need to know how to copy this! */
@@ -184,8 +183,6 @@ __vmyasserted(
 
     p += xsnprintf(p, elemof32(err.errmess) - (p - err.errmess), TEXT("%s"), message ? message : ASSERTION_FAILURE_YN);
 
-    p_out = p;
-
     if(!IS_P_DATA_NONE(format))
     {
         *p++ = CH_SPACE;
@@ -213,32 +210,31 @@ __vmyasserted(
     TCHARZ szBuffer[1024];
     size_t len = 0;
     UINT uType = MB_TASKMODAL | MB_OKCANCEL | MB_ICONEXCLAMATION;
-    PTSTR p_out;
 
     len = _sntprintf_s(szBuffer, elemof32(szBuffer), _TRUNCATE,
                        ASSERTION_FAILURE_PREFIX TEXT("\n\n%s"),
                        p_function, p_file, line_no, message ? message : ASSERTION_FAILURE_YN);
     assert(len != (size_t) -1);
 
-    p_out = szBuffer + len;
-
     if(!IS_P_DATA_NONE(format))
     {
-        szBuffer[len++] = '\n';
-        szBuffer[len++] = '\n';
-        p_out = szBuffer + len;
-        (void) _vsntprintf_s(p_out, elemof32(szBuffer) - len, _TRUNCATE, format, va_in);
+        if(len < elemof32(szBuffer) - 3)
+        {
+            szBuffer[len++] = '\n';
+            szBuffer[len++] = '\n';
+            (void) _vsntprintf_s(szBuffer + len, elemof32(szBuffer) - len, _TRUNCATE, format, va_in);
+        }
     }
 
 #if TRACE_ALLOWED
-    trace_1(TRACE_OUT | TRACE_ANY, TEXT("!!!%s"), p_out);
+    trace_1(TRACE_OUT | TRACE_ANY, TEXT("!!!%s"), szBuffer);
 #endif
 
 #if 1
     if(0 != hard_assertion)
     {
         /* avoid putting up a simple message box in this state */
-        reportf(TEXT("!!!%s"), p_out);
+        reportf(TEXT("!!!%s"), szBuffer);
         return(TRUE);
     }
 #endif
@@ -475,7 +471,7 @@ WrapOsBoolReporting(
         }
 
         len = _sntprintf_s(szBuffer, elemof32(szBuffer), _TRUNCATE,
-                           TEXT("Error from Windows: err=%d:") U32_XTFMT TEXT(" %s)"),
+                           TEXT("Error from Windows: err=") DWORD_TFMT TEXT(":") DWORD_XTFMT TEXT(" %s)"),
                            dwLastError, dwLastError,
                            buffer ? buffer : TEXT("Error message unavailable"));
 

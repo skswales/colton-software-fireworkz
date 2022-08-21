@@ -18,9 +18,9 @@
 #endif
 
 _Check_return_
-static F64 /*rad*/
+static F64 /*radians*/
 reduce_into_range(
-    _InRef_     PC_F64 p_alpha /*rad*/)
+    _InRef_     PC_F64 p_alpha /*radians*/)
 {
     F64 alpha = *p_alpha;
 
@@ -34,23 +34,28 @@ reduce_into_range(
 }
 
 _Check_return_
-static F64 /*rad*/
+static F64 /*radians*/
 conv_heading_to_angle(
-    _InRef_     PC_F64 p_heading /*deg*/)
+    _InRef_     PC_F64 p_heading_degrees)
 {
-    F64 heading = *p_heading * _radians_per_degree;
-    F64 alpha;
+    F64 heading_degrees = *p_heading_degrees;
+    F64 heading_radians, alpha;
 
-    while(heading < 0.0)
-        heading += _two_pi;
+    /* sanitise input degrees into [0,360) */
+    while(heading_degrees >= 360.0)
+        heading_degrees -= 360.0;
+    while(heading_degrees < 0.0)
+        heading_degrees += 360.0;
+
+    heading_radians = heading_degrees * _radians_per_degree;
 
     /* if heading <= 90 or >= 270 it's +ve between 0 and pi */
     /* if heading > 90 and < 270 it's -ve between 0 and pi */
-    alpha = _pi_div_two - heading;
+    alpha = _pi_div_two - heading_radians;
 
     alpha = reduce_into_range(&alpha);
 
-    trace_2(TRACE_MODULE_GR_CHART, TEXT("conv_heading_to_angle(%g) yields %g"), heading, alpha);
+    trace_2(TRACE_MODULE_GR_CHART, TEXT("conv_heading_to_angle(%g degrees) yields %g radians"), *p_heading_degrees, alpha);
 
     return(alpha);
 }
@@ -79,7 +84,7 @@ gr_pie_addin(
     STATUS neg_or_zero;
     F64 total, value;
     GR_CHART_OBJID id;
-    GR_DIAG_OFFSET pieStart, pointStart;
+    GR_DIAG_OFFSET pieStart;
     GR_DATASOURCE_HANDLE dsh;
     F64 alpha, beta, bisector;
     GR_LINESTYLE linestyle;
@@ -98,8 +103,8 @@ gr_pie_addin(
 
     /* use about 90% of the available area */
     radius = MIN(cp->plotarea.size.x, cp->plotarea.size.y) / 2;
-    if( radius  > (GR_PIXIT) textstyle.height)
-        radius -= (GR_PIXIT) textstyle.height;
+    if( radius  > textstyle.size_y)
+        radius -= textstyle.size_y;
     radius *= 90;
     radius /= 100;
 
@@ -153,28 +158,27 @@ gr_pie_addin(
     id.name = GR_CHART_OBJNAME_POINT;
     id.has_subno = 1;
 
-    alpha = conv_heading_to_angle(&serp->style.pie_start_heading);
-
     /* reduce radius correspondingly */
     radius = (GR_PIXIT) (radius / (1.0 + pct_radial_disp_max / 100.0));
 
     for(pass = 1; pass <= 2; ++pass)
     {
+        alpha = conv_heading_to_angle(&serp->style.pie_start_heading_degrees);
+
         for(point = 0; point < n_points; ++point)
         {
-            id.subno = (U16) gr_point_external_from_key(point);
+            id.subno = UBF_PACK(gr_point_external_from_key(point));
 
             if(status_done(gr_travel_dsh_valof(cp, dsh, point, &value)) && (value > 0.0))
             {
                 BOOL output_segment = TRUE;
-                F64 percentage = value / total;
-
-                beta = _two_pi * percentage;
+                F64 fraction = value / total;
+                F64 theta = _two_pi * fraction;
 
                 if(serp->bits.pie_anticlockwise)
-                    beta = alpha + beta;
+                    beta = alpha + theta;
                 else
-                    beta = alpha - beta;
+                    beta = alpha - theta;
 
                 bisector = (alpha + beta) / 2;
 
@@ -188,11 +192,6 @@ gr_pie_addin(
 
                 labelling = piechlabelstyle.bits.label_leg | piechlabelstyle.bits.label_val | piechlabelstyle.bits.label_pct;
 
-                if(!labelling)
-                    pointStart = 0;
-                else
-                    status_break(status = gr_chart_group_new(cp, &pointStart, id));
-
                 thisOrigin = origin;
 
                 if(point_radial_displacement != 0.0)
@@ -202,7 +201,7 @@ gr_pie_addin(
                 }
 
                 /* SKS 27jul95 attempts to keep big segments at back so little ones are selectable in crude bbox scheme */
-                if(percentage < 0.25)
+                if(fraction < 0.25)
                 {
                     if(pass == 1)
                         /* ignore small segments on pass 1 */
@@ -217,6 +216,11 @@ gr_pie_addin(
 
                 if(output_segment)
                 {
+                    GR_DIAG_OFFSET pointStart = 0;
+
+                    if(labelling)
+                        status_break(status = gr_chart_group_new(cp, &pointStart, id));
+
                     status_break(status = gr_diag_piesector_new(p_gr_diag, NULL, id, &thisOrigin, radius,
                                                                 (alpha < beta) ? &alpha : &beta,
                                                                 (alpha < beta) ? &beta  : &alpha, &linestyle, &fillstylec));
@@ -272,7 +276,7 @@ gr_pie_addin(
                         if(swidth_px)
                         {
                             GR_PIXIT width  = swidth_px;
-                            GR_PIXIT height = textstyle.height;
+                            GR_PIXIT height = textstyle.size_y;
                             GR_BOX text_box;
 
                             /* move further out relative to actual centre of sector rather than centre of pie */
@@ -296,21 +300,21 @@ gr_pie_addin(
 
                             text_box.y1 = text_box.y0 + (height * 12) / 10;
 
-                            status_break(status = gr_diag_text_new(p_gr_diag, NULL, id, &text_box, cv.data.text, &textstyle));
+                            status_break(status = gr_chart_text_new(cp, id, &text_box, ustr_bptr(cv.data.text), &textstyle));
                         }
                     }
 
                     if(pointStart)
-                        gr_diag_group_end(p_gr_diag, &pointStart);
+                        gr_chart_group_end(cp, &pointStart);
                 }
 
                 /* use this angle as the next segment's start angle */
-                alpha = beta;
+                alpha = reduce_into_range(&beta);
             }
         }
     }
 
-    gr_diag_group_end(p_gr_diag, &pieStart);
+    gr_chart_group_end(cp, &pieStart);
 
     return(status);
 }

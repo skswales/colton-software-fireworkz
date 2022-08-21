@@ -36,6 +36,8 @@
 
 /* collisions with MSVC math.h */
 #define lgamma_r FreeBSD_lgamma_r
+#define erf FreeBSD_erf
+#define erfc FreeBSD_erfc
 #define j0 FreeBSD_j0
 #define j1 FreeBSD_j1
 #define jn FreeBSD_jn
@@ -73,7 +75,7 @@
 #define __INTEL_COMPILER 0
 
 #if defined(_MSC_VER)
-#if _MSC_VER >= 1600
+#if _MSC_VER >= 1600 /* VS2010 or later */
 __pragma(warning(disable:4574)) /* 'FLT_EVAL_METHOD' is defined to be '0': did you mean to use '#if FLT_EVAL_METHOD'? */
 #endif
 #endif
@@ -331,6 +333,7 @@ double	scalb(double, double);
 #endif /* __BSD_VISIBLE || __XSI_VISIBLE */
 
 #if __BSD_VISIBLE || __ISO_C_VISIBLE >= 1999
+#ifndef _INC_MATH /* COLTON_SOFTWARE */ /* protection against MSVC math.h */
 double	copysign(double, double) __pure2;
 double	fdim(double, double);
 double	fmax(double, double) __pure2;
@@ -341,6 +344,7 @@ double	scalbln(double, long);
 double	scalbn(double, int);
 double	tgamma(double);
 double	trunc(double);
+#endif /* _INC_MATH */ /* COLTON_SOFTWARE */ /* protection against MSVC math.h */
 #endif
 
 /*

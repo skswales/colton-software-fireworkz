@@ -210,8 +210,9 @@ ARRAY_BLOCK, * P_ARRAY_BLOCK; typedef const ARRAY_BLOCK * PC_ARRAY_BLOCK;
 
 /*
 different typedef for root allocation allows us to see better in debugger
-eg watch and expand array_root.p_array_block[25]
-and it also makes aligator.c implementation simpler
+e.g. watch and expand
+    array_root.p_array_block[<array_handle>]
+and it also makes implementation in aligator.c simpler
 */
 
 typedef struct ARRAY_ROOT_BLOCK
@@ -228,7 +229,7 @@ typedef struct ARRAY_ROOT_BLOCK
 }
 ARRAY_ROOT_BLOCK;
 
-/* NB. SKS 1.03 19mar93 made handle zero info kosher - ie. NULL pointer, zero size, zero element size etc. */
+/* NB. SKS 1.03 19mar93 made handle zero info kosher - i.e. NULL pointer, zero size, zero element size etc. */
 
 /*
 functions as macros
@@ -439,14 +440,14 @@ array_range_bytes_check(
     array_block_element_size(array_blockc(pc_array_handle)) )
 
 /* return whether given array handle is valid (NB doesn't check for handle zero) */
-#define array_handle_valid(pc_array_handle) ( \
+#define array_handle_is_valid(pc_array_handle) ( \
     (U32) *(pc_array_handle) < array_root.free )
 
 /* return whether given index is valid in array */
-#define array_index_valid(pc_array_handle, ele_index) ( \
+#define array_index_is_valid(pc_array_handle, ele_index) ( \
     (U32) (ele_index) < array_elements32(pc_array_handle) )
 
-#define array_offset_valid(pc_array_handle, ele_offset) ( \
+#define array_offset_is_valid(pc_array_handle, ele_offset) ( \
     (U32) (ele_offset) < array_elements32(pc_array_handle) )
 
 /* return the element index of a pointer to an element in an array */
@@ -537,7 +538,7 @@ extern STATUS
 _al_array_add(
     _InoutRef_  P_ARRAY_HANDLE p_array_handle,
     _InVal_     U32 num_elements,
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block,
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block,
     _In_reads_bytes_(bytesof_elem_x_num_elem) PC_ANY p_data_in /*copied*/
     CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 bytesof_elem_x_num_elem));
 
@@ -616,7 +617,7 @@ _al_array_bfind(
     CODE_ANALYSIS_ONLY_ARG(sizeof32(__base_type))) )
 
 _Check_return_
-_Ret_writes_maybenull_(bytesof_elem)
+_Ret_writes_maybenone_(bytesof_elem)
 extern P_BYTE
 _al_array_bsearch(
     _In_        PC_ANY key,
@@ -629,7 +630,7 @@ _al_array_bsearch(
     CODE_ANALYSIS_ONLY_ARG(sizeof32(__base_type))) )
 
 _Check_return_
-_Ret_writes_maybenull_(bytesof_elem)
+_Ret_writes_maybenone_(bytesof_elem)
 extern P_BYTE
 _al_array_lsearch(
     _In_        PC_ANY key,
@@ -688,7 +689,7 @@ extern P_BYTE
 _al_array_insert_before(
     _InoutRef_  P_ARRAY_HANDLE p_array_handle,
     _InVal_     S32 num_elements,
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block,
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block,
     _OutRef_    P_STATUS p_status,
     _InVal_     ARRAY_INDEX insert_before
     CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 bytesof_elem_x_num_elem));
@@ -704,7 +705,7 @@ _e_s __base_type * /* pointer to new allocation if ok, NULL if failed */ \
 al_array_insert_before_ ## __base_type( \
     _InoutRef_  P_ARRAY_HANDLE p_array_handle, \
     _InVal_     S32 num_elements, \
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
     _OutRef_    P_STATUS p_status, \
     _InVal_     ARRAY_INDEX insert_before)
 
@@ -716,7 +717,7 @@ _e_s __base_type * /* pointer to new allocation if ok, NULL if failed */ \
 al_array_insert_before_ ## __base_type( \
     _InoutRef_  P_ARRAY_HANDLE p_array_handle, \
     _InVal_     S32 num_elements, \
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
     _OutRef_    P_STATUS p_status, \
     _InVal_     ARRAY_INDEX insert_before) \
 { \
@@ -743,7 +744,7 @@ extern P_BYTE
 _al_array_extend_by(
     _InoutRef_  P_ARRAY_HANDLE p_array_handle,
     _InVal_     U32 add_elements,
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block,
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block,
     _OutRef_    P_STATUS p_status
     CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 bytesof_elem_x_num_elem));
 
@@ -758,7 +759,7 @@ _e_s __base_type * /* pointer to new allocation if ok, NULL if failed */ \
 al_array_extend_by_ ## __base_type( \
     _InoutRef_  P_ARRAY_HANDLE p_array_handle, \
     _InVal_     U32 add_elements, \
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
     _OutRef_    P_STATUS p_status)
 
 #define AL_ARRAY_EXTEND_BY_IMPL(_e_s, __base_type) \
@@ -769,7 +770,7 @@ _e_s __base_type * /* pointer to new allocation if ok, NULL if failed */ \
 al_array_extend_by_ ## __base_type( \
     _InoutRef_  P_ARRAY_HANDLE p_array_handle, \
     _InVal_     U32 add_elements, \
-    _InRef_opt_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
+    _InRef_maybenone_ PC_ARRAY_INIT_BLOCK p_array_init_block, \
     _OutRef_    P_STATUS p_status) \
 { \
     return( (__base_type *) \

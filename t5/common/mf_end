@@ -218,15 +218,6 @@ $(PROD_BUILD_DIR).!$(APPL).Resource.cfbf: $(T5).resource.cfbf
 $(PROD_BUILD_DIR).!$(APPL).Resource.cfbf-mini: $(T5).resource.cfbf-mini
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetFgn: $(T5).resource.ForeignTem.SheetFgn
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.SheetXLS: $(T5).resource.ForeignTem.SheetXLS
- Copy $? $@ ~C FV
-
-$(PROD_BUILD_DIR).!$(APPL).Resource.ForeignTem.TextFgn: $(T5).resource.ForeignTem.TextFgn
- Copy $? $@ ~C FV
-
 $(PROD_BUILD_DIR).!$(APPL).Resource.Markers.S1: $(T5).resource.Markers.S1
  Copy $? $@ ~C FV
 
@@ -262,10 +253,10 @@ $(PROD_BUILD_DIR).!$(APPL).Resource.Template.Text: $(T5).resource.Template.Text
 $(PROD_BUILD_DIR).!$(APPL).Resource.Template.Letter: $(T5).resource.Template.Letter
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.Master: $(T5).ob_spell.resource.dicts.master
+$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.Master: $(T5).ob_spell.resource.dicts.MasterAsz
  Copy $? $@ ~C FV
 
-$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.MasterC: $(T5).ob_spell.resource.dicts.masterc
+$(PROD_BUILD_DIR).!$(APPL).Resource.Dicts.MasterC: $(T5).ob_spell.resource.dicts.MasterCsz
  Copy $? $@ ~C FV
 #
 # CCMATH

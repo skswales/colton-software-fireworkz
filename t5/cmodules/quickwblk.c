@@ -106,6 +106,10 @@ quick_wblock_extend_by(
     _InVal_     U32 extend_by,
     _OutRef_    P_STATUS p_status)
 {
+    ARRAY_INIT_BLOCK array_init_block;
+    S32 size_increment;
+    PWCH p_output;
+
     *p_status = STATUS_OK;
 
     if(0 == extend_by) /* realloc by 0 is OK, but return a non-NULL rubbish pointer */
@@ -132,15 +136,13 @@ quick_wblock_extend_by(
     if(0 != quick_wblock_array_handle_ref(p_quick_wblock))
         return(al_array_extend_by_WCHAR(&quick_wblock_array_handle_ref(p_quick_wblock), extend_by, PC_ARRAY_INIT_BLOCK_NONE, p_status));
 
-    { /* transition from static buffer to array handle */
-    static /*poked*/ ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(WCHAR), FALSE);
-    S32 incr = p_quick_wblock->wb_static_buffer_elem / 4;
-    PWCH p_output;
+    /* transition from static buffer to array handle */
+    size_increment = p_quick_wblock->wb_static_buffer_elem >> 2; /* / 4 */
 
-    if( incr < 4)
-        incr = 4;
+    if( size_increment < 4)
+        size_increment = 4;
 
-    array_init_block.size_increment = incr;
+    array_init_block_setup(&array_init_block, size_increment, sizeof32(WCHAR), FALSE);
 
     if(NULL != (p_output = al_array_alloc_WCHAR(&quick_wblock_array_handle_ref(p_quick_wblock),
                                                 p_quick_wblock->wb_static_buffer_used + extend_by, &array_init_block, p_status)))
@@ -149,14 +151,13 @@ quick_wblock_extend_by(
 
         p_output += p_quick_wblock->wb_static_buffer_used;
 
-        p_quick_wblock->wb_static_buffer_used = p_quick_wblock->wb_static_buffer_elem; /* indicate static buffer full for fast add etc */
+        p_quick_wblock->wb_static_buffer_used = p_quick_wblock->wb_static_buffer_elem; /* indicate static buffer full for fast add etc. */
 
         /* trash buffer once copied when CHECKING_QUICK_WBLOCK */
         _do_wqb_fill(p_quick_wblock->wb_p_static_buffer, p_quick_wblock->wb_static_buffer_elem);
     }
 
     return(p_output);
-    } /*block*/
 }
 
 extern void

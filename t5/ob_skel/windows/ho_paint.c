@@ -27,7 +27,7 @@
 
 #include "external/Dial_Solutions/drawfile.h"
 
-#include "ob_skel/ho_cpicture.h"
+#include "ob_skel/ho_gdip_image.h"
 
 #include "cmodules/gr_rdia3.h"
 
@@ -267,7 +267,7 @@ hbrush_from_colour(
         p_redraw_context->p_redraw_context_cache->current_brush_rgb = *p_rgb;
     }
     else
-    { // failed to create new brush, so keep on using current one (ie don't delete it if it's one of ours)
+    { // failed to create new brush, so keep on using current one (i.e. don't delete it if it's one of ours)
         return_h_brush = delete_h_brush;
         delete_h_brush = NULL;
     }
@@ -312,7 +312,7 @@ hpen_from_colour(
         p_redraw_context->p_redraw_context_cache->current_pen_width = width;
     }
     else
-    { // failed to create new pen, so keep on using current one (ie don't delete it if it's one of ours)
+    { // failed to create new pen, so keep on using current one (i.e. don't delete it if it's one of ours)
         return_h_pen = delete_h_pen;
         delete_h_pen = NULL;
     }
@@ -475,7 +475,7 @@ _Check_return_
 extern HOST_FONT
 host_font_find(
     _InRef_     PC_HOST_FONT_SPEC p_host_font_spec,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context)
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context)
 {
     HOST_FONT host_font;
     LOGFONT logfont = p_host_font_spec->logfont; /* take all data except size info from font enumeration */
@@ -590,7 +590,7 @@ host_font_find(
 extern void
 host_font_dispose(
     _InoutRef_  P_HOST_FONT p_host_font,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context)
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context)
 {
     HOST_FONT host_font = *p_host_font;
 
@@ -607,7 +607,7 @@ host_font_dispose(
 extern void
 host_font_delete(
     _HfontRef_  HOST_FONT host_font,
-    _InRef_opt_ PC_REDRAW_CONTEXT p_redraw_context_in)
+    _InRef_maybenone_ PC_REDRAW_CONTEXT p_redraw_context_in)
 {
     const PC_REDRAW_CONTEXT p_redraw_context = (P_REDRAW_CONTEXT_NONE != p_redraw_context_in) ? p_redraw_context_in : cur_p_redraw_context;
 
@@ -1560,7 +1560,7 @@ host_paint_border_line(
         PC_DRAW_DASH_HEADER line_dash_pattern = NULL;
         S32 thickness = 0; /* thin, unless otherwise specified */
 
-#define BROKEN_LINE_MARK  14513 /* 180*256*8/25.4 ie. 1mm */
+#define BROKEN_LINE_MARK  14513 /* 180*256*8/25.4 i.e. 1mm */
 #define BROKEN_LINE_SPACE 14513
 
         if(flags.border_style == SF_BORDER_BROKEN)
@@ -1854,14 +1854,49 @@ host_work_area_gdi_size_query(
     p_gdi_size->cy = screen_rect.bottom - screen_rect.top;
 }
 
-/* Render the given CPicture in the given rectangle using the IPicture rendering code.
+/* Render the given bitmap in the given rectangle.
 */
 
 extern void
-host_paint_cpicture(
+host_paint_bitmap(
     _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
     _InRef_     PC_PIXIT_RECT p_pixit_rect,
-    _In_        CPicture cpicture)
+    _In_        HBITMAP hbitmap)
+{
+    const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
+    RECT rect;
+    LONG bmWidth;
+    LONG bmHeight;
+
+    if(!status_done(RECT_limited_from_pixit_rect_and_context(&rect, p_pixit_rect, p_redraw_context)))
+        return;
+    {
+    BITMAP bm;
+    GetObject(hbitmap, sizeof(bm), &bm);
+    bmWidth  = bm.bmWidth;
+    bmHeight = bm.bmHeight;
+    } /*block*/
+
+    {
+    const HDC hdcMem = CreateCompatibleDC(NULL);
+    HBITMAP hbmOld = SelectBitmap(hdcMem, hbitmap);
+
+    BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255 /*alpha*/, AC_SRC_ALPHA };
+    void_WrapOsBoolChecking(AlphaBlend(hdc, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, hdcMem, 0, 0, bmWidth, bmHeight, bf));
+
+    SelectObject(hdcMem, hbmOld);
+    DeleteDC(hdcMem);
+    } /*block*/
+}
+
+/* Render the given GdipImage in the given rectangle.
+*/
+
+extern void
+host_paint_gdip_image(
+    _InRef_     PC_REDRAW_CONTEXT p_redraw_context,
+    _InRef_     PC_PIXIT_RECT p_pixit_rect,
+    _In_        GdipImage gdip_image)
 {
     const HDC hdc = p_redraw_context->windows.paintstruct.hdc;
     RECT rect;
@@ -1869,10 +1904,10 @@ host_paint_cpicture(
     if(!status_done(RECT_limited_from_pixit_rect_and_context(&rect, p_pixit_rect, p_redraw_context)))
         return;
 
-    consume_bool(CPicture_Render(cpicture, hdc, &rect, NULL));
+    consume_bool(GdipImage_Render(gdip_image, hdc, &rect));
 }
 
-/* Render the given draw file at the required position.
+/* Render the given Draw file at the required position.
  * This code calls the Draw rendering module from Dial Solutions
  * having first setup the transformation matrix.
 */
@@ -1917,17 +1952,17 @@ draw_render_range(
             case DRAW_OBJECT_TYPE_FONTLIST:
             case DRAW_OBJECT_TYPE_DS_WINFONTLIST:
             case DRAW_OBJECT_TYPE_OPTIONS:
-                /*reportf("draw_render_range(%p,0x%x:%d:0x%x..0x%x) - object ignored", d.data, d.length, objectType, sttObject, sttObject + objectSize);*/
+                /*reportf(TEXT("draw_render_range(%p,0x%x:%d:0x%x..0x%x) - object ignored"), d.data, d.length, objectType, sttObject, sttObject + objectSize);*/
                 break;
 
             case DRAW_OBJECT_TYPE_GROUP:
-                /*reportf("draw_render_range(%p,0x%x:%d:0x%x..0x%x) - group", d.data, d.length, objectType, sttObject, sttObject + objectSize);*/
+                /*reportf(TEXT("draw_render_range(%p,0x%x:%d:0x%x..0x%x) - group"), d.data, d.length, objectType, sttObject, sttObject + objectSize);*/
                 break;
 
             default:
-                /*reportf("draw_render_range(%p,0x%x:%d:0x%x..0x%x)", d.data, d.length, objectType, sttObject, sttObject + objectSize);*/
+                /*reportf(TEXT("draw_render_range(%p,0x%x:%d:0x%x..0x%x)"), d.data, d.length, objectType, sttObject, sttObject + objectSize);*/
                 consume_bool(Draw_RenderRange(&d, hdc, &rect/*&p_redraw_context->windows.paintstruct.rcPaint*/, t, sttObject, sttObject + objectSize, &de));
-                /*if(de.errnum) reportf("draw_render_range:de(%d,%s)", de.errnum, report_sbstr(de.errmess));*/
+                /*if(de.errnum) reportf(TEXT("draw_render_range:de(%d,%s)"), de.errnum, report_sbstr(de.errmess));*/
                 break;
             }
         }
@@ -2023,10 +2058,10 @@ if(de.errmess[0]) reportf(TEXT("hpd:de %d,%s"), de.errnum, report_sbstr(de.errme
     } /*block*/
 }
 
-// Read the size of the draw file, returning the width and height in pixits into the point structure provided
+/* Read the pixit size of the Draw file, returning the width and height in pixits */
 
 extern void
-host_read_drawfile_size(
+host_read_drawfile_pixit_size(
     /*_In_reads_bytes_(DRAW_FILE_HEADER)*/ PC_ANY p_any,
     _OutRef_    P_PIXIT_SIZE p_pixit_size)
 {
@@ -2539,7 +2574,7 @@ typedef struct POINTER_INFO
     BOOL discard;
     enum CURSOR_SOURCE cursor_source;
     POINT offset;
-    PCTSTR id;
+    PCTSTR id; /* for LoadImage */
 }
 POINTER_INFO; typedef const POINTER_INFO * PC_POINTER_INFO;
 
@@ -2571,7 +2606,7 @@ pointer_table[POINTER_SHAPE_COUNT] =
     { 1, CURSOR_SOURCE_BOUND,   {  0, -2 }, MAKEINTRESOURCE(TYPE5_RESOURCE_CURSOR_SPLIT_UD) }   /* split point (up / down) */
 };
 
-/* Cursor state information - which one is active etc */
+/* Cursor state information - which one is active etc. */
 
 static
 struct CURSOR_STATE_INFO
@@ -2652,7 +2687,7 @@ host_set_pointer_shape(
     case CURSOR_SOURCE_BOUND:
         {
         HINSTANCE hInstance = resource_get_object_resources(OBJECT_ID_SKEL);
-        cursor.hcursor = LoadCursor(hInstance, p_pointer_info->id);
+        cursor.hcursor = (HCURSOR) LoadImage(hInstance, p_pointer_info->id, IMAGE_CURSOR, 0, 0, 0);
         break;
         }
     }

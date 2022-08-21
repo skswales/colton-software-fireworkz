@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2015 Stuart Swales */
+/* Copyright (C) 2006-2016 Stuart Swales */
 
 /* Library module for UTF-8 character & characters handling */
 
@@ -858,7 +858,7 @@ utf8_grapheme_clusters_of_bytes(
 * validate a UTF-8 character sequence
 *
 * variant including inline processing may be used
-* eg. needed for recursive construct processing during file load
+* e.g. needed for recursive construct processing during file load
 *
 ******************************************************************************/
 
@@ -1023,7 +1023,7 @@ uchars_inline_validate(
         if(allow_inlines && is_inline(p_u8) && ((n_bytes_so_far + INLINE_OVH) <= uchars_n))
         {
             bytes_of_char = inline_bytecount((PC_UCHARS_INLINE) p_u8);
-            assert(bytes_of_char == inline_b_bytecount(uchars_inline_AddBytes(p_u8, bytes_of_char)));
+            assert(bytes_of_char == (U32) inline_b_bytecount(uchars_inline_AddBytes(p_u8, bytes_of_char)));
             assert(inline_code(p_u8) == inline_b_code(uchars_inline_AddBytes(p_u8, bytes_of_char)));
             if(IL_TYPE_USTR == inline_code(p_u8))
             {

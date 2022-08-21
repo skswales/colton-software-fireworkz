@@ -138,7 +138,7 @@ paper_scale_units_data = { UI_TEXT_INIT_RESID(MSG_PERCENT), { 1 /*left_text*/, 0
 ok
 */
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 paper_scale_ok_data_argmap[] =
 {
     PAPER_SCALE_ID_VALUE,
@@ -181,7 +181,7 @@ static STATUS
 dialog_paper_scale_ctl_pushbutton_fit(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     PIXIT_POINT paper_size, docu_size;
     HEADFOOT_BOTH headfoot_both;
@@ -220,7 +220,7 @@ dialog_paper_scale_ctl_pushbutton_fit(
 
     scale = (100 * paper_size.x) / (docu_size.x + SMALL_PIXIT_FUDGE_TO_ADD);
 
-    if(control_id == PAPER_SCALE_ID_FIT)
+    if(PAPER_SCALE_ID_FIT == dialog_control_id)
     {
         S32 scale_y = (100 * paper_size.y) / (docu_size.y + SMALL_PIXIT_FUDGE_TO_ADD);
 
@@ -236,13 +236,13 @@ dialog_paper_scale_ctl_pushbutton(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case PAPER_SCALE_ID_FIT:
     case PAPER_SCALE_ID_FIT_X:
-        return(dialog_paper_scale_ctl_pushbutton_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, control_id));
+        return(dialog_paper_scale_ctl_pushbutton_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id));
 
     case PAPER_SCALE_ID_100:
         return(ui_dlg_set_s32(p_dialog_msg_ctl_pushbutton->h_dialog, PAPER_SCALE_ID_VALUE, 100));
@@ -277,7 +277,7 @@ T5_CMD_PROTO(extern, t5_cmd_paper_scale_intro)
     /*dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_RESID;*/
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_PAPER_SCALE_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_paper_scale;
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
 /******************************************************************************
@@ -972,7 +972,7 @@ paper_grid_faint_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_PAPER_GRID_FAINT)
 ok
 */
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 paper_ok_data_argmap[] =
 {
     PAPER_ID_NAME,
@@ -1085,24 +1085,17 @@ paper_precreate_button(
     _InRef_     P_DIALOG_CTL_CREATE p_dialog_ctl_create)
 {
     const PC_DOCU p_docu_config = p_docu_from_config();
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_ctl_create->p_dialog_control.p_dialog_control->dialog_control_id;
+    const ARRAY_INDEX control_index = (ARRAY_INDEX) dialog_control_id - PAPER_ID_BUTTON_1;
 
-    if(NULL != p_docu_config)
+    if(array_index_is_valid(&p_docu_config->loaded_phys_page_defs, control_index))
     {
-        const DIALOG_CTL_ID control_id = p_dialog_ctl_create->p_dialog_control.p_dialog_control->control_id;
-        const ARRAY_INDEX control_index = (ARRAY_INDEX) control_id - PAPER_ID_BUTTON_1;
-
-        if(array_index_valid(&p_docu_config->loaded_phys_page_defs, control_index))
-        {
-            P_PHYS_PAGE_DEF p_phys_page_def = array_ptr_no_checks(&p_docu_config->loaded_phys_page_defs, PHYS_PAGE_DEF, control_index);
-            PC_DIALOG_CONTROL_DATA_PUSHBUTTON p_dialog_control_data_pushbutton = (PC_DIALOG_CONTROL_DATA_PUSHBUTTON) p_dialog_ctl_create->p_dialog_control_data;
-            P_UI_TEXT p_ui_text = (P_UI_TEXT) &p_dialog_control_data_pushbutton->caption;
-            /* a bold assignment follows ... I assert these will not move (at least not during the paper box!) */
-            p_ui_text->type = UI_TEXT_TYPE_USTR_PERM;
-            p_ui_text->text.ustr = ustr_bptr(p_phys_page_def->ustr_name);
-        }
-        else
-            /* don't add this control */
-            * (PC_DIALOG_CONTROL *) &p_dialog_ctl_create->p_dialog_control.p_dialog_control = NULL;
+        P_PHYS_PAGE_DEF p_phys_page_def = array_ptr_no_checks(&p_docu_config->loaded_phys_page_defs, PHYS_PAGE_DEF, control_index);
+        PC_DIALOG_CONTROL_DATA_PUSHBUTTON p_dialog_control_data_pushbutton = (PC_DIALOG_CONTROL_DATA_PUSHBUTTON) p_dialog_ctl_create->p_dialog_control_data;
+        P_UI_TEXT p_ui_text = (P_UI_TEXT) &p_dialog_control_data_pushbutton->caption;
+        /* a bold assignment follows ... I assert these will not move (at least not during the paper box!) */
+        p_ui_text->type = UI_TEXT_TYPE_USTR_PERM;
+        p_ui_text->text.ustr = ustr_bptr(p_phys_page_def->ustr_name);
     }
     else
         /* don't add this control */
@@ -1214,14 +1207,14 @@ paper_precreate(
     for(i = 0; i < p_dialog_cmd_process_dbox->n_ctls; ++i)
     {
         const P_DIALOG_CTL_CREATE p_dialog_ctl_create = &p_dialog_cmd_process_dbox->p_ctl_create[i];
-        DIALOG_CTL_ID control_id;
+        DIALOG_CONTROL_ID dialog_control_id;
 
         if(NULL == p_dialog_ctl_create->p_dialog_control.p_dialog_control)
             continue;
 
-        control_id = p_dialog_ctl_create->p_dialog_control.p_dialog_control->control_id;
+        dialog_control_id = p_dialog_ctl_create->p_dialog_control.p_dialog_control->dialog_control_id;
 
-        switch(control_id)
+        switch(dialog_control_id)
         {
         case PAPER_ID_BUTTON_1:
         case PAPER_ID_BUTTON_2:
@@ -1243,14 +1236,14 @@ _Check_return_
 static STATUS
 paper_set_dlg_as_unit(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     PIXIT value)
 {
     F64 f64 = /*FP_USER_UNIT*/ ((FP_PIXIT) value / paper_fp_pixits_per_user_unit);
-    return(ui_dlg_set_f64(h_dialog, control_id, &f64));
+    return(ui_dlg_set_f64(h_dialog, dialog_control_id, &f64));
 }
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 button_control_id[6] =
 {
     PAPER_ID_HEIGHT,
@@ -1549,12 +1542,9 @@ dialog_paper_intro_ctl_pushbutton_N(
     FP_PIXIT data[6];
     UI_TEXT ui_text;
     P_PHYS_PAGE_DEF p_phys_page_def;
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
-    ARRAY_INDEX control_index = (ARRAY_INDEX) control_id - PAPER_ID_BUTTON_1;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+    ARRAY_INDEX control_index = (ARRAY_INDEX) dialog_control_id - PAPER_ID_BUTTON_1;
     const PC_DOCU p_docu_config = p_docu_from_config();
-
-    if(NULL == p_docu_config)
-        return(status);
 
     if(control_index >= array_elements(&p_docu_config->loaded_phys_page_defs))
         return(status);
@@ -1652,7 +1642,7 @@ T5_CMD_PROTO(extern, t5_cmd_paper_intro)
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &paper_orientation_pl_current;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_paper_intro;
     paper_precreate(p_docu, &dialog_cmd_process_dbox);
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
     } /*block*/
 }
 

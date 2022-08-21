@@ -83,7 +83,7 @@ host_dde_execute(
         }
         while(ch);
 
-        (void) load_this_file(P_DOCU_NONE, T5_CMD_LOAD_TEMPLATE, buffer);
+        status_consume(load_this_template_file_rl(P_DOCU_NONE, buffer));
         return(TRUE);
     }
 
@@ -100,10 +100,10 @@ host_dde_execute(
                 ch = *tstr++;
                 if(ch == term) ch = CH_NULL;
                 buffer[outidx++] = ch;
-            }
+        }
         while(ch);
 
-        (void) load_file_for_windows_startup(buffer);
+        status_consume(load_file_for_windows_startup_rl(buffer));
         return(TRUE);
     }
 
@@ -123,7 +123,7 @@ host_dde_execute(
         }
         while(ch);
 
-        status_consume(load_and_print_this_file(buffer, NULL));
+        status_consume(load_and_print_this_file_rl(buffer, NULL));
         return(TRUE);
     }
 
@@ -162,7 +162,7 @@ host_dde_execute(
         }
         while(ch);
 
-        status_consume(load_and_print_this_file(buffer, printer));
+        status_consume(load_and_print_this_file_rl(buffer, printer));
         return(TRUE);
     }
 

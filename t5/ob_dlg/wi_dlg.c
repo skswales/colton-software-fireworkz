@@ -21,6 +21,10 @@
 
 #include <htmlhelp.h>
 
+#pragma comment(lib, "uxtheme.lib")
+
+#include <vssym32.h>
+
 /*
 internal types
 */
@@ -29,7 +33,7 @@ typedef const DRAWITEMSTRUCT * LPCDRAWITEMSTRUCT; /* windows.h inadequate */
 
 typedef struct WINDOWS_CTL_MAP
 {
-    DIALOG_CTL_ID control_id;
+    DIALOG_CONTROL_ID dialog_control_id;
     HWND hwnd;
 }
 WINDOWS_CTL_MAP, * P_WINDOWS_CTL_MAP;
@@ -42,7 +46,7 @@ internal routines
 */
 
 _Check_return_
-static DIALOG_CTL_ID
+static DIALOG_CONTROL_ID
 control_id_from_windows_control_id(
     _InRef_     PC_DIALOG p_dialog,
     _InVal_     UINT windows_control_id);
@@ -93,14 +97,18 @@ static LRESULT
 dialog_onNotify(
     _HwndRef_   HWND hwnd,
     _In_        int wParam,
-    _In_bytecount_c_(sizeof32(NMUPDOWN)) NMHDR * p_nmhdr);
+    _In_reads_bytes_c_(sizeof32(NMUPDOWN)) NMHDR * p_nmhdr);
+
+static void
+dialog_onThemeChanged(
+    _HwndRef_   HWND hwnd);
 
 static HHOOK g_hhook; /* nasty */
 
 #define WINDOWS_CTL_ID_STT 256
 
 _Check_return_
-static DIALOG_CTL_ID
+static DIALOG_CONTROL_ID
 control_id_from_windows_control_id(
     _InRef_     PC_DIALOG p_dialog,
     _InVal_     UINT windows_control_id)
@@ -108,17 +116,17 @@ control_id_from_windows_control_id(
     ARRAY_INDEX map_index;
 
     if((windows_control_id == IDOK) || (windows_control_id == IDCANCEL))
-        return((DIALOG_CTL_ID) windows_control_id);
+        return((DIALOG_CONTROL_ID) windows_control_id);
 
     if(windows_control_id < WINDOWS_CTL_ID_STT)
         return(0);
 
     map_index = ((ARRAY_INDEX) windows_control_id) - WINDOWS_CTL_ID_STT;
 
-    if(map_index >= array_elements(&p_dialog->windows.control_id_map))
+    if(!array_index_is_valid(&p_dialog->windows.h_windows_ctl_map, map_index))
         return(0);
 
-    return(array_ptr(&p_dialog->windows.control_id_map, WINDOWS_CTL_MAP, map_index)->control_id);
+    return(array_ptr(&p_dialog->windows.h_windows_ctl_map, WINDOWS_CTL_MAP, map_index)->dialog_control_id);
 }
 
 static void
@@ -235,6 +243,7 @@ modal_dialog_handler(
     HANDLE_DLGMSG(hwnd, WM_DRAWITEM,        dialog_onDrawItem);
 
     HANDLE_MSG(hwnd,    WM_NOTIFY,          dialog_onNotify);
+    HANDLE_MSG(hwnd,    WM_THEMECHANGED,    dialog_onThemeChanged);
 
     case WM_COMMAND:
         return(dialog_onCommand(hwnd, (int) LOWORD(wParam), (HWND) lParam, (UINT) HIWORD(wParam)));
@@ -270,6 +279,7 @@ modeless_dialog_handler(
     HANDLE_DLGMSG(hwnd, WM_DRAWITEM,        dialog_onDrawItem);
 
     HANDLE_MSG(hwnd,    WM_NOTIFY,          dialog_onNotify);
+    HANDLE_MSG(hwnd,    WM_THEMECHANGED,    dialog_onThemeChanged);
 
     case WM_COMMAND:
         return(dialog_onCommand(hwnd, (int) LOWORD(wParam), (HWND) lParam, (UINT) HIWORD(wParam)));
@@ -290,7 +300,7 @@ dialog_ictls_make_lists(
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -365,16 +375,16 @@ SubclassedDialogControlProc(
 {
     const H_DIALOG h_dialog = bastard_windows_h_dialog; /* Windows inadequacy */
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
-    const DIALOG_CTL_ID control_id = (DIALOG_CTL_ID) GetWindowLong(hwnd, GWLP_USERDATA);
+    const DIALOG_CONTROL_ID dialog_control_id = (DIALOG_CONTROL_ID) GetWindowLong(hwnd, GWLP_USERDATA);
     P_DIALOG_ICTL p_dialog_ictl;
 
-    if((0 == control_id) || (NULL == p_dialog))
+    if((0 == dialog_control_id) || (NULL == p_dialog))
     {
         assert0();
         return(0L);
     }
 
-    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
 
     switch(message)
     {
@@ -413,7 +423,7 @@ dialog_ictls_subclass(
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -428,7 +438,7 @@ dialog_ictls_subclass(
         case DIALOG_CONTROL_TRIPICTURE:
             {
             const HWND hwnd = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid);
-            consume(LONG, SetWindowLong(hwnd, GWLP_USERDATA, p_dialog_ictl->control_id));
+            consume(LONG, SetWindowLong(hwnd, GWLP_USERDATA, (LONG) p_dialog_ictl->dialog_control_id));
             p_dialog_ictl->windows.prev_proc = (WNDPROC) SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR) SubclassedDialogControlProc);
             break;
             }
@@ -474,11 +484,14 @@ dialog_onInitDialog(
 
     p_dialog->hwnd = hwnd;
 
+    if(g_nColours >= 256)
+        p_dialog->windows.hTheme_Button = OpenThemeData(hwnd, VSCLASS_BUTTON);
+
     { /* loop over control id map and find the hwnds for all our controls */
     ARRAY_INDEX map_index;
-    for(map_index = 0; map_index < array_elements(&p_dialog->windows.control_id_map); ++map_index)
+    for(map_index = 0; map_index < array_elements(&p_dialog->windows.h_windows_ctl_map); ++map_index)
     {
-        P_WINDOWS_CTL_MAP p_windows_ctl_map = array_ptr(&p_dialog->windows.control_id_map, WINDOWS_CTL_MAP, map_index);
+        P_WINDOWS_CTL_MAP p_windows_ctl_map = array_ptr(&p_dialog->windows.h_windows_ctl_map, WINDOWS_CTL_MAP, map_index);
         const UINT windows_control_id = ((UINT) map_index) + WINDOWS_CTL_ID_STT;
         p_windows_ctl_map->hwnd = GetDlgItem(p_dialog->hwnd, windows_control_id);
     }
@@ -626,7 +639,7 @@ static const WORD dialog_windows_empty_string = 0x0000; /* Unicode string */
 
 _Check_return_
 _Ret_notnull_
-static __forceinline P_BYTE
+static P_BYTE
 dialog_windows_memcpy32(
     _Out_writes_bytes_(n_bytes) P_ANY p_out,
     _In_reads_bytes_(n_bytes) PC_ANY p_in,
@@ -687,9 +700,9 @@ dialog_windows_dlgtemplate_prepare_controls_in(
         WORD n_cw;
         UINT n_id, j;
 
-        dialog_control_rect(p_dialog, p_dialog_ictl->control_id, &pixit_rect);
+        dialog_control_rect(p_dialog, p_dialog_ictl->dialog_control_id, &pixit_rect);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         case DIALOG_CONTROL_COMBO_S32:
         case DIALOG_CONTROL_COMBO_TEXT:
@@ -728,7 +741,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
         p_dialog_ictl->windows.wid = (p_dh->windows_control_id)++;
         pcd->di.id = /*(WORD)*/ p_dialog_ictl->windows.wid;
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         case DIALOG_CONTROL_GROUPBOX:
             if(p_dialog_ictl->p_dialog_control->bits.logical_group || !p_dialog_control_data.groupbox || p_dialog_control_data.groupbox->bits.logical_group)
@@ -798,14 +811,14 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             break;
 
         case DIALOG_CONTROL_PUSHBUTTON:
-            if((p_dialog_ictl->control_id == IDOK) || (p_dialog_ictl->control_id == IDCANCEL))
+            if((p_dialog_ictl->dialog_control_id == IDOK) || (p_dialog_ictl->dialog_control_id == IDCANCEL))
             {
-                p_dialog_ictl->windows.wid = pcd->di.id = (WORD) p_dialog_ictl->control_id;
+                p_dialog_ictl->windows.wid = pcd->di.id = (WORD) p_dialog_ictl->dialog_control_id;
                 n_id--;
                 (p_dh->windows_control_id)--;
             }
             pcd->diCaption = &p_dialog_ictl->state.pushbutton;
-            if((p_dialog_ictl->control_id == IDOK) || p_dialog_control_data.pushbutton->push_xx.def_pushbutton)
+            if((p_dialog_ictl->dialog_control_id == IDOK) || p_dialog_control_data.pushbutton->push_xx.def_pushbutton)
                 pcd->di.style |= BS_DEFPUSHBUTTON;
             else
                 pcd->di.style |= BS_PUSHBUTTON;
@@ -816,9 +829,9 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             break;
 
         case DIALOG_CONTROL_PUSHPICTURE:
-            if((p_dialog_ictl->control_id == IDOK) || (p_dialog_ictl->control_id == IDCANCEL))
+            if((p_dialog_ictl->dialog_control_id == IDOK) || (p_dialog_ictl->dialog_control_id == IDCANCEL))
             {
-                pcd->di.id = (WORD) p_dialog_ictl->control_id;
+                pcd->di.id = (WORD) p_dialog_ictl->dialog_control_id;
                 n_id--;
                 (p_dh->windows_control_id)--;
             }
@@ -981,9 +994,9 @@ dialog_windows_dlgtemplate_prepare_controls_in(
             SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(windows_ctl_map), FALSE);
             for(j = 0; j < n_id; ++j)
             { /* for each real Windows control that will be created, make a mapping entry (except for OK & Cancel) */
-                windows_ctl_map.control_id = p_dialog_ictl->control_id;
+                windows_ctl_map.dialog_control_id = p_dialog_ictl->dialog_control_id;
                 windows_ctl_map.hwnd = NULL;
-                status_break(status = al_array_add(&p_dh->p_dialog->windows.control_id_map, WINDOWS_CTL_MAP, 1, &array_init_block, &windows_ctl_map));
+                status_break(status = al_array_add(&p_dh->p_dialog->windows.h_windows_ctl_map, WINDOWS_CTL_MAP, 1, &array_init_block, &windows_ctl_map));
             }
         }
 
@@ -1065,7 +1078,7 @@ dialog_windows_dlgtemplate_prepare_controls_in(
         }
         } /*block*/
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -1262,14 +1275,14 @@ dialog_windows_build_list(
     const void /*UI_CONTROL*/ * p_ui_control = NULL;
     UI_DATA_TYPE ui_data_type;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default:
         return;
 
     case DIALOG_CONTROL_LIST_S32:
     case DIALOG_CONTROL_LIST_TEXT:
-        if(!p_dialog_ictl->windows.wid) /* may be called to reencode prior to any id allocation eg spell dictionary dialog */
+        if(!p_dialog_ictl->windows.wid) /* may be called to reencode prior to any id allocation e.g. spell dictionary dialog */
             return;
         hwnd  = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid);
         if(HOST_WND_NONE == hwnd)
@@ -1297,7 +1310,7 @@ dialog_windows_build_list(
         break;
     }
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     case DIALOG_CONTROL_LIST_S32:
         ui_data_type = UI_DATA_TYPE_S32;
@@ -1352,7 +1365,7 @@ dialog_windows_ictl_enable_here(
 
     hwnd = GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid);
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     case DIALOG_CONTROL_GROUPBOX:
         EnableWindow(hwnd, enabled);
@@ -1458,12 +1471,12 @@ dialog_onCommand_edit_EN_UPDATE(
             dialog_cmd_ctl_state_set.state.edit.ui_text = ui_text;
 
             /* command ourselves with a state change, with interlock against killer recursion */
-            dialog_cmd_ctl_state_set.h_dialog   = p_dialog_ictl_edit_xx->h_dialog;
-            dialog_cmd_ctl_state_set.control_id = p_dialog_ictl_edit_xx->control_id;
+            dialog_cmd_ctl_state_set.h_dialog = p_dialog_ictl_edit_xx->h_dialog;
+            dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl_edit_xx->dialog_control_id;
             dialog_cmd_ctl_state_set.bits = 0;
 
             p_dialog_ictl->bits.in_update += 1;
-            status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
             p_dialog_ictl->bits.in_update -= 1;
 
             if(status_fail(status))
@@ -1500,7 +1513,7 @@ dialog_onCommand_edit(
         return(status_nomem());
 
     case EN_SETFOCUS:
-        p_dialog->current_id = p_dialog_ictl->control_id;
+        p_dialog->current_dialog_control_id = p_dialog_ictl->dialog_control_id;
         return(STATUS_OK);
 
     case EN_UPDATE:
@@ -1538,7 +1551,7 @@ dialog_onCommand_bump_xx_EN_UPDATE(
             /* state change will want to rejig views iff chars rejected */
             p_dialog_ictl->bits.force_update = (ui_text_validate(&ui_text, p_dialog_ictl_edit_xx->p_bitmap_validation) != 0);
 
-            switch(p_dialog_ictl->type)
+            switch(p_dialog_ictl->dialog_control_type)
             {
             default: default_unhandled();
 #if CHECKING
@@ -1568,12 +1581,12 @@ dialog_onCommand_bump_xx_EN_UPDATE(
             }
 
             /* command ourselves with a state change, with interlock against killer recursion */
-            dialog_cmd_ctl_state_set.h_dialog   = p_dialog_ictl_edit_xx->h_dialog;
-            dialog_cmd_ctl_state_set.control_id = p_dialog_ictl_edit_xx->control_id;
+            dialog_cmd_ctl_state_set.h_dialog = p_dialog_ictl_edit_xx->h_dialog;
+            dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl_edit_xx->dialog_control_id;
             dialog_cmd_ctl_state_set.bits = 0;
 
             p_dialog_ictl->bits.in_update += 1;
-            status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
             p_dialog_ictl->bits.in_update -= 1;
 
             if(status_fail(status))
@@ -1607,7 +1620,7 @@ dialog_onCommand_bump_xx(
         return(status_nomem());
 
     case EN_SETFOCUS:
-        p_dialog->current_id = p_dialog_ictl->control_id;
+        p_dialog->current_dialog_control_id = p_dialog_ictl->dialog_control_id;
         return(STATUS_OK);
 
     case EN_UPDATE:
@@ -1628,8 +1641,8 @@ dialog_onCommand_list_xx_LBN_DBLCLK(
     {   /* a double click means OK to the containing dialog */
         DIALOG_CMD_DEFPUSHBUTTON dialog_cmd_defpushbutton;
         dialog_cmd_defpushbutton.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_defpushbutton.double_control_id = p_dialog_ictl->control_id;
-        status_assert(call_dialog(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
+        dialog_cmd_defpushbutton.double_dialog_control_id = p_dialog_ictl->dialog_control_id;
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
     }
 
     return(STATUS_DONE); /* get caller to exit early */
@@ -1656,13 +1669,13 @@ dialog_onCommand_list_xx_LBN_SELCHANGE(
     }
 
     msgclr(dialog_cmd_ctl_state_set);
-    dialog_cmd_ctl_state_set.h_dialog   = p_dialog->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = p_dialog_ictl->control_id;
+    dialog_cmd_ctl_state_set.h_dialog = p_dialog->h_dialog;
+    dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl->dialog_control_id;
     dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALTERNATE;
 
     dialog_cmd_ctl_state_set.state.list_text.itemno = selected_item;
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
     return(STATUS_OK);
 }
@@ -1680,7 +1693,7 @@ dialog_onCommand_list_xx(
         return(status_nomem());
 
     case LBN_SETFOCUS:
-        p_dialog->current_id = p_dialog_ictl->control_id;
+        p_dialog->current_dialog_control_id = p_dialog_ictl->dialog_control_id;
         return(STATUS_OK);
 
     case LBN_DBLCLK:
@@ -1705,8 +1718,8 @@ dialog_onCommand_combo_xx_CBN_DBLCLK(
     {   /* a double click means OK to the containing dialog */
         DIALOG_CMD_DEFPUSHBUTTON dialog_cmd_defpushbutton;
         dialog_cmd_defpushbutton.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_defpushbutton.double_control_id = p_dialog_ictl->control_id;
-        status_assert(call_dialog(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
+        dialog_cmd_defpushbutton.double_dialog_control_id = p_dialog_ictl->dialog_control_id;
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_DEFPUSHBUTTON, &dialog_cmd_defpushbutton));
     }
 
     return(STATUS_DONE); /* get caller to exit early */
@@ -1732,13 +1745,13 @@ dialog_onCommand_combo_xx_CBN_SELCHANGE(
     } /*block*/
 
     msgclr(dialog_cmd_ctl_state_set);
-    dialog_cmd_ctl_state_set.h_dialog   = p_dialog->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = p_dialog_ictl->control_id;
+    dialog_cmd_ctl_state_set.h_dialog = p_dialog->h_dialog;
+    dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl->dialog_control_id;
     dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALTERNATE;
 
     dialog_cmd_ctl_state_set.state.list_text.itemno = selected_item;
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
     return(STATUS_OK);
 }
@@ -1771,7 +1784,7 @@ dialog_onCommand_combo_xx_CBN_EDITUPDATE(
 
             p_dialog_ictl->bits.force_update = (ui_text_validate(&ui_text, p_dialog_ictl_edit_xx->p_bitmap_validation) != 0);
 
-            switch(p_dialog_ictl->type)
+            switch(p_dialog_ictl->dialog_control_type)
             {
             default: default_unhandled();
 #if CHECKING
@@ -1782,12 +1795,12 @@ dialog_onCommand_combo_xx_CBN_EDITUPDATE(
             }
 
             /* command ourselves with a state change, with interlock against killer recursion */
-            dialog_cmd_ctl_state_set.h_dialog   = p_dialog_ictl_edit_xx->h_dialog;
-            dialog_cmd_ctl_state_set.control_id = p_dialog_ictl_edit_xx->control_id;
+            dialog_cmd_ctl_state_set.h_dialog = p_dialog_ictl_edit_xx->h_dialog;
+            dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl_edit_xx->dialog_control_id;
             dialog_cmd_ctl_state_set.bits = 0;
 
             p_dialog_ictl->bits.in_update += 1;
-            status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set);
             p_dialog_ictl->bits.in_update -= 1;
 
             if(status_fail(status))
@@ -1818,7 +1831,7 @@ dialog_onCommand_combo_xx(
         return(status_nomem());
 
     case CBN_SETFOCUS:
-        p_dialog->current_id = p_dialog_ictl->control_id;
+        p_dialog->current_dialog_control_id = p_dialog_ictl->dialog_control_id;
         return(STATUS_OK);
 
     case CBN_DBLCLK:
@@ -1849,7 +1862,7 @@ dialog_onCommand_user_BN_CLICKED(
 
     /* always processed */
 
-    if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->control_id, &dialog_msg_ctl_user_mouse.client_handle)))
+    if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_user_mouse.client_handle)))
     {
         DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_user_mouse, p_dialog, p_dialog_ictl);
 
@@ -1892,14 +1905,14 @@ dialog_onCommand(
     const H_DIALOG h_dialog = h_dialog_from_hwnd(hwnd);
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
     const UINT windows_control_id = id;
-    const DIALOG_CTL_ID control_id = control_id_from_windows_control_id(p_dialog, windows_control_id);
-    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+    const DIALOG_CONTROL_ID dialog_control_id = control_id_from_windows_control_id(p_dialog, windows_control_id);
+    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
     STATUS status = STATUS_OK;
 
     IGNOREPARM_HwndRef_(hwndCtl);
 
     if(NULL != p_dialog_ictl) /* some of them don't have Cancel buttons, for instance */
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default:
         break;
@@ -1970,7 +1983,7 @@ dialog_onCommand(
         msgclr(dialog_cmd_complete_dbox);
         dialog_cmd_complete_dbox.h_dialog = p_dialog->h_dialog;
         dialog_cmd_complete_dbox.completion_code = (windows_control_id == IDOK) ? DIALOG_COMPLETION_OK : DIALOG_COMPLETION_CANCEL;
-        status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
         return(TRUE);
     }
 
@@ -2004,6 +2017,12 @@ dialog_onDestroy(
     {
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
 
+    if(p_dialog->windows.hTheme_Button)
+    {
+        CloseThemeData(p_dialog->windows.hTheme_Button);
+        p_dialog->windows.hTheme_Button = NULL;
+    }
+
     if(p_dialog->completion_code == 0)
         p_dialog->completion_code = DIALOG_COMPLETION_CANCEL;
 
@@ -2034,6 +2053,114 @@ dialog_onSetFont(
 *
 ******************************************************************************/
 
+static BOOL
+themed_dialog_UIToolButtonDraw(
+    HTHEME hTheme,
+    HDC hDC, PCRECT pRect,
+    HBITMAP hBmp, int bmx, int bmy, int iImageIndex, UINT uStateIn)
+{
+    const int iPartId = BP_PUSHBUTTON;
+    int iStateId;
+    HIMAGELIST hImageList;
+    HBITMAP hBitmapCopy;
+
+    if(uStateIn & BUTTONGROUP_DISABLED)
+    {
+        iStateId = PBS_DISABLED;
+    }
+    else if(uStateIn & BUTTONGROUP_MOUSEDOWN)
+    {
+        iStateId = PBS_PRESSED;
+    }
+    else if(uStateIn & BUTTONGROUP_MOUSEOVER)
+    {
+        iStateId = PBS_HOT;
+    }
+    else
+    {
+        if(uStateIn & BUTTONGROUP_DOWN)
+            iStateId = PBS_PRESSED;
+        else
+            iStateId = PBS_NORMAL;
+    }
+
+    if(NULL == (hImageList = ImageList_Create(bmx, bmy, ILC_COLOR | ILC_MASK, 20, 20)))
+        return(FALSE);
+
+    if(NULL == (hBitmapCopy = CopyImage(hBmp, IMAGE_BITMAP, 0, 0, 0)))
+    {
+        ImageList_Destroy(hImageList);
+        return(FALSE);
+    }
+
+    ImageList_SetBkColor(hImageList, CLR_NONE);
+
+    /* NB ImageList_AddMasked trashes hBitmapCopy */
+    if(ImageList_AddMasked(hImageList, hBitmapCopy, RGB(192, 192, 192)) < 0) /* LTGRAY is the colour key */
+    {
+        DeleteBitmap(hBitmapCopy);
+        ImageList_Destroy(hImageList);
+        return(FALSE);
+    }
+
+    DeleteBitmap(hBitmapCopy);
+
+    {
+    RECT icon_rect;
+    LONG content_cx, content_cy;
+    DrawThemeBackground(hTheme, hDC, iPartId, iStateId, pRect, NULL);
+    GetThemeBackgroundContentRect(hTheme, hDC, iPartId, iStateId, pRect, &icon_rect);
+    /* centre icon in its slot */
+    content_cx = icon_rect.right - icon_rect.left;
+    content_cy = icon_rect.bottom - icon_rect.top;
+    if(bmx < content_cx)
+        icon_rect.left += (content_cx - bmx) / 2;
+    if(bmy < content_cy)
+        icon_rect.top  += (content_cy - bmy) / 2;
+    icon_rect.right  = icon_rect.left + bmx;
+    icon_rect.bottom = icon_rect.top  + bmy;
+    if(uStateIn & BUTTONGROUP_DISABLED)
+    {
+        HICON hIcon = ImageList_GetIcon(hImageList, iImageIndex, ILD_TRANSPARENT);
+        if(NULL != hIcon)
+        {
+            DrawState(hDC, GetStockBrush(WHITE_BRUSH), NULL, (LPARAM) hIcon, 0, icon_rect.left, icon_rect.top, bmx, bmy, DSS_DISABLED | DST_ICON);
+            DestroyIcon(hIcon);
+        }
+    }
+    else
+    {
+        DrawThemeIcon(hTheme, hDC, iPartId, iStateId, &icon_rect, hImageList, iImageIndex);
+        //ImageList_Draw(hImageList, iImageIndex, hDC, icon_rect.left, icon_rect.top, ILD_TRANSPARENT);
+    }
+    } /*block*/
+
+    ImageList_Destroy(hImageList);
+
+    return(TRUE);
+}
+
+static BOOL
+dialog_UIToolButtonDrawTDD(
+    HTHEME hTheme,
+    HDC hDC, PCRECT pRect,
+    HBITMAP hBmp, int bmx, int bmy, int iImageIndex, UINT uStateIn,
+    LPTOOLDISPLAYDATA pTDD)
+{
+    UINT uState;
+
+    if(NULL != hTheme)
+        if(themed_dialog_UIToolButtonDraw(hTheme, hDC, pRect, hBmp, bmx, bmy, iImageIndex, uStateIn))
+            return(TRUE);
+
+    /* fallback is old implementation */
+    uState = uStateIn;
+    uState |= (PRESERVE_WHITE); /* | PRESERVE_DKGRAY | PRESERVE_BLACK); need these to map for high-contrast */ /* LTGRAY is colour key */
+    uState |= BUTTONGROUP_DIALOGUE_BOX_BUTTON;
+    return(UIToolButtonDrawTDD(hDC, pRect->left, pRect->top, pRect->right - pRect->left, pRect->bottom - pRect->top,
+                               hBmp, bmx, bmy, iImageIndex, uState, pTDD));
+}
+
 /* dialog equivalent of host_redraw_context_set_host_xform() */
 
 static void
@@ -2062,10 +2189,9 @@ dialog_onDrawItem(
     const H_DIALOG h_dialog = h_dialog_from_hwnd(hwnd);
     const P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
     const UINT windows_control_id = pDrawItem->CtlID;
-    DIALOG_CTL_ID control_id;
+    DIALOG_CONTROL_ID dialog_control_id;
     P_DIALOG_ICTL p_dialog_ictl;
     RESOURCE_BITMAP_ID resource_bitmap_id;
-    SIZE size;
     BOOL mouse_down = FALSE;
     BOOL mouse_over = FALSE;
     UINT uState = 0;
@@ -2075,13 +2201,10 @@ dialog_onDrawItem(
     if(pDrawItem->CtlType != ODT_BUTTON)
         return;
 
-    control_id = control_id_from_windows_control_id(p_dialog, windows_control_id);
-    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+    dialog_control_id = control_id_from_windows_control_id(p_dialog, windows_control_id);
+    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
 
     host_select_default_palette(pDrawItem->hDC, &old_hpalette);
-
-    size.cx = pDrawItem->rcItem.right - pDrawItem->rcItem.left;
-    size.cy = pDrawItem->rcItem.bottom - pDrawItem->rcItem.top;
 
     if(pDrawItem->itemAction == ODA_SELECT)
     {
@@ -2101,7 +2224,7 @@ dialog_onDrawItem(
         mouse_over = FALSE;
     }
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     case DIALOG_CONTROL_PUSHPICTURE:
         resource_bitmap_id = p_dialog_ictl->p_dialog_control_data.pushpicture->picture_bitmap_id;
@@ -2208,7 +2331,7 @@ dialog_onDrawItem(
         DIALOG_MSG_CTL_USER_REDRAW dialog_msg_ctl_user_redraw;
         msgclr(dialog_msg_ctl_user_redraw);
 
-        if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->control_id, &dialog_msg_ctl_user_redraw.client_handle)))
+        if(NULL != (p_proc_client = dialog_find_handler(p_dialog, p_dialog_ictl->dialog_control_id, &dialog_msg_ctl_user_redraw.client_handle)))
         {
             REDRAW_CONTEXT_CACHE redraw_context_cache = { NULL };
             const P_REDRAW_CONTEXT p_redraw_context = &dialog_msg_ctl_user_redraw.redraw_context;
@@ -2299,7 +2422,7 @@ dialog_onDrawItem(
         }
 #endif
 
-        consume_bool(UIToolButtonDrawTDD(pDrawItem->hDC, 0, 0, size.cx, size.cy, resource_bitmap_handle.i, bm_grid_size.cx, bm_grid_size.cy, index, uState, &tdd));
+        consume_bool(dialog_UIToolButtonDrawTDD(p_dialog->windows.hTheme_Button, pDrawItem->hDC, &pDrawItem->rcItem, resource_bitmap_handle.i, bm_grid_size.cx, bm_grid_size.cy, index, uState, &tdd));
 
         if(resource_bitmap_handle.i)
             resource_bitmap_lose(&resource_bitmap_handle);
@@ -2337,8 +2460,8 @@ dialog_onMeasureItem(
     /*const UINT windows_control_id = (UINT) wParam;*/
     /*PMEASUREITEMSTRUCT pMeasureItemStruct = (PMEASUREITEMSTRUCT) lParam;*/
     /*const UINT windows_control_id = pMeasureItem->CtlID;*/ /* or the other id??? */
-    /*DIALOG_CTL_ID control_id = control_id_from_windows_control_id(p_dialog, windows_control_id);*/
-    /*const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);*/
+    /*DIALOG_CONTROL_ID dialog_control_id = control_id_from_windows_control_id(p_dialog, windows_control_id);*/
+    /*const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);*/
     SIZE gdi_size = { 16, 16 }; /* Keep dataflower happy */
 
     IGNOREPARM_HwndRef_(hwnd);
@@ -2364,7 +2487,7 @@ dialog_ictls_find_windows_control_id_in(
         if(windows_control_id == p_dialog_ictl->windows.wid)
             return(p_dialog_ictl);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -2404,7 +2527,7 @@ dialog_onUdnDeltaPos(
 
     if(NULL != p_dialog_ictl)
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: /*default_unhandled();*/
             break;
@@ -2412,11 +2535,11 @@ dialog_onUdnDeltaPos(
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
             {
-            BOOL adjust_clicked = host_ctrl_pressed();
-            BOOL dec_button = (pNmUpDown->iDelta < 0);
-            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, (!dec_button) ^ adjust_clicked)); /* can't pass error back */
+          /*const BOOL adjust_clicked = host_ctrl_pressed();*/
+            const BOOL dec_button = (pNmUpDown->iDelta < 0);
+            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, (!dec_button) /* ^ adjust_clicked */)); /* can't pass error back */
             break;
-        }
+            }
         }
     }
 }
@@ -2431,7 +2554,7 @@ static LRESULT
 dialog_onNotify(
     _HwndRef_   HWND hwnd,
     _In_        int wParam,
-    _In_bytecount_c_(sizeof32(NMUPDOWN)) NMHDR * pNmHdr)
+    _In_reads_bytes_c_(sizeof32(NMUPDOWN)) NMHDR * pNmHdr)
 {
     IGNOREPARM(wParam); /* The identifier of the common control sending the message */
 
@@ -2443,6 +2566,25 @@ dialog_onNotify(
     }
 
     return(0L);
+}
+
+/******************************************************************************
+*
+* WM_THEMECHANGED
+*
+******************************************************************************/
+
+static void
+dialog_onThemeChanged(
+    _HwndRef_   HWND hwnd)
+{
+    const H_DIALOG h_dialog = h_dialog_from_hwnd(hwnd);
+    const P_DIALOG p_dialog = p_dialog_from_h_dialog(h_dialog);
+
+    if(NULL != p_dialog->windows.hTheme_Button)
+        CloseThemeData(p_dialog->windows.hTheme_Button);
+
+    p_dialog->windows.hTheme_Button = OpenThemeData(hwnd, VSCLASS_BUTTON);
 }
 
 /* ****** Context-Sensitive Help in a Dialog Box Through F1 ****** */
@@ -2644,7 +2786,7 @@ dialog_dbox_process_windows(
 extern void
 dialog_windows_ui_len_init(void)
 {
-    { /* SKS 18mar2010 - obtain message font from system metrics for 2000, XP (2002), Vista (2006), 7 (2009), 8 (2012) */
+    { /* SKS 18mar2010 - obtain message font from system metrics */
     NONCLIENTMETRICS nonclientmetrics;
     nonclientmetrics.cbSize = (UINT) sizeof32(NONCLIENTMETRICS);
 #if (WINVER >= 0x0600) /* keep size compatible with older OSes even if we can target newer */

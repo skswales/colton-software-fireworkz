@@ -26,7 +26,7 @@
 
 #if !defined(SPELL_OFF)
 
-#ifndef _CHAR_UNSIGNED
+#if !defined(__CHAR_UNSIGNED__)
 #error chars must be unsigned (see coltsoft/coltsoft.h)
 #endif
 
@@ -37,7 +37,6 @@ internal structure
 __pragma(pack(push, 2)) /* WINDOWS */
 
 #define NAM_SIZE     100                        /* maximum size of names */
-#define BUF_SIZE    1024                        /* size of buffer on stream */
 #define EXT_SIZE     500                        /* size of disk extend */
 #define ESC_CHAR     '|'                        /* escape character */
 #define MIN_CHAR      32                        /* minimum character offset */
@@ -48,8 +47,7 @@ __pragma(pack(push, 2)) /* WINDOWS */
 #define MAX_ENDLEN    15                        /* maximum ending length */
 #define BUF_MAX_ENDLEN (MAX_ENDLEN + 1)
 
-#define KEYSTR      "[Colton Soft]"
-#define OLD_KEYSTR  "Integrale"
+#define KEYSTR "[Colton Soft]"
 
 /*
 cached block structure
@@ -58,7 +56,7 @@ cached block structure
 typedef struct CACHEBLOCK
 {
     S32 usecount;
-    S32 dict;
+    DICT_NUMBER dict_number;
     S32 lettix;
     S32 diskaddress;
     S32 diskspace;
@@ -237,7 +235,7 @@ char_ordinal_1(
 _Check_return_
 static STATUS
 def_file_position(
-    _InoutRef_  FILE_HANDLE def_file);
+    _InoutRef_  FILE_HANDLE def_file_handle);
 
 #endif /* OS */
 
@@ -248,8 +246,8 @@ delreins(
     _In_z_      PC_SBSTR word,
     P_TOKWORD p_tokword);
 
-#define dict_number(p_dict) \
-    array_indexof_element(&h_dict_table, DICT, p_dict)
+#define dict_number(p_dict) ((DICT_NUMBER) \
+    array_indexof_element(&h_dict_table, DICT, p_dict) )
 
 _Check_return_
 static inline STATUS
@@ -264,20 +262,20 @@ _Check_return_
 static inline STATUS
 dict_validate(
     _OutRef_    P_P_DICT p_p_dict,
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
-     *p_p_dict = P_DICT_NONE;
+    *p_p_dict = P_DICT_NONE;
 
-     if(array_index_valid(&h_dict_table, dict))
-     {
-        *p_p_dict = array_ptr_no_checks(&h_dict_table, DICT, dict);
+    if(array_index_is_valid(&h_dict_table, dict_number))
+    {
+        *p_p_dict = array_ptr_no_checks(&h_dict_table, DICT, dict_number);
 
         assert(0 != (*p_p_dict)->h_index);
         if(0 != (*p_p_dict)->h_index)
-             return(STATUS_OK);
-     }
+            return(STATUS_OK);
+    }
 
-     return(create_error(SPELL_ERR_BADDICT));
+    return(create_error(SPELL_ERR_BADDICT));
 }
 
 static S32
@@ -327,8 +325,7 @@ killcache(
 _Check_return_
 static STATUS
 load_dict_def(
-    _InoutRef_  P_DICT p_dict,
-    _In_opt_z_  PCTSTR def_name);
+    _InoutRef_  P_DICT p_dict);
 
 _Check_return_
 static STATUS
@@ -460,7 +457,7 @@ writeindex(
 _Check_return_
 extern STATUS
 spell_addword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word)
 {
     static S32 spell_addword_nestf = 0;
@@ -474,7 +471,7 @@ spell_addword(
     P_LETTER p_letter;
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     if(!makeindex(p_dict, &newword, word))
         return(create_error(SPELL_ERR_BADWORD));
@@ -682,13 +679,13 @@ spell_addword(
 _Check_return_
 extern STATUS
 spell_checkword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word)
 {
     TOKWORD curword;
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     if(!makeindex(p_dict, &curword, word))
         return(create_error(SPELL_ERR_BADWORD));
@@ -706,28 +703,27 @@ spell_checkword(
 _Check_return_
 extern STATUS
 spell_close(
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
     STATUS err = STATUS_OK;
     P_DICT p_dict;
 
     trace_0(TRACE_MODULE_SPELL, TEXT("spell_close"));
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     if(p_dict->file_handle_dict)
     {
-        STATUS close_err;
-
         /* write out any modified part */
         err = ensuredict(p_dict);
+
         /* close file on media */
-        if(status_fail(close_err = t5_file_close(&p_dict->file_handle_dict)))
-            err = status_fail(err) ? err : close_err;
+        status_accumulate(err, t5_file_close(&p_dict->file_handle_dict));
     }
 
     /* make sure no cache blocks left */
     stuffcache(p_dict);
+
     release_dict_entry(p_dict);
 
     return(err);
@@ -746,14 +742,14 @@ spell_close(
 _Check_return_
 extern STATUS
 spell_close_file_only(
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
     STATUS err;
     P_DICT p_dict;
 
     trace_0(TRACE_MODULE_SPELL, TEXT("spell_close_file_only"));
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     assert(p_dict->file_handle_dict);
 
@@ -784,48 +780,34 @@ spell_createdict(
     _In_z_      PCTSTR def_name)
 {
     STATUS status, err;
-    DICT_NUMBER dict;
     S32 n_bytes, i;
-    FILE_HANDLE newdict, def_file;
+    FILE_HANDLE def_file_handle = NULL;
     P_DICT p_dict;
     LETTER wix;
     U8Z buffer[255 + 1];
 
-    /* get a dictionary number */
-    status_return(err = get_dict_entry(&p_dict));
-    dict = (DICT_NUMBER) err;
-
-    /* check to see if it exists */
-    if(status_done(t5_file_open(filename, file_open_read, &newdict, TRUE)))
-    {
-        status_assert(t5_file_close(&newdict));
-        release_dict_entry(p_dict);
+    /* first check to see if it exists */
+    if(file_is_file(filename))
         return(create_error(SPELL_ERR_EXISTS));
-    }
+
+    /* get a dictionary entry */
+    status_return(err = get_dict_entry(&p_dict));
 
     /* dummy loop for structure */
     for(;;)
     {
         err = STATUS_OK;
-        newdict = def_file = NULL;
 
-        /* try to open definition file */
-        if(status_fail(t5_file_open(def_name, file_open_read, &def_file, TRUE)))
-        {
-            err = create_error(SPELL_ERR_CANTOPENDEFN);
-            break;
-        }
+        /* open definition file */
+        status_break(err = t5_file_open(def_name, file_open_read, &def_file_handle, TRUE));
+
+        /* position definition file */
+        trace_0(TRACE_MODULE_SPELL, TEXT("spell_createdict about to def_file_position"));
+        status_break(err = def_file_position(def_file_handle));
+        trace_1(TRACE_MODULE_SPELL, TEXT("spell_createdict def_file_position returned: ") S32_TFMT, err);
 
         /* create a blank file */
-        if(status_fail(t5_file_open(filename, file_open_write, &newdict, TRUE)))
-        {
-            err = create_error(SPELL_ERR_CANTOPEN);
-            break;
-        }
-
-        /* get file buffers */
-        status_assert(file_buffer(newdict, NULL, BUF_SIZE));
-        status_assert(file_buffer(def_file, NULL, BUF_SIZE));
+        status_break(err = t5_file_open(filename, file_open_write, &p_dict->file_handle_dict, TRUE));
 
         trace_on();
 
@@ -833,21 +815,14 @@ spell_createdict(
 
         /* write out file identifier */
         n_bytes = strlen32(KEYSTR);
-        status_break(err = file_write_bytes(KEYSTR, n_bytes, newdict));
-
-        trace_0(TRACE_MODULE_SPELL, TEXT("spell_createdict about to def_file_position"));
-
-        /* position definition file */
-        status_break(err = def_file_position(def_file));
-
-        trace_1(TRACE_MODULE_SPELL, TEXT("spell_createdict def_file_position returned: ") S32_TFMT, err);
+        status_break(err = file_write_bytes(KEYSTR, n_bytes, p_dict->file_handle_dict));
 
         /* copy across definition file */
-        while((status = read_def_line(def_file, buffer)) > 0)
+        while((status = read_def_line(def_file_handle, buffer)) > 0)
         {
             trace_1(TRACE_MODULE_SPELL, TEXT("spell_createdict def line: %s"), report_sbstr(buffer));
 
-            if(status_fail(err = file_write_bytes(buffer, (S32) status, newdict)))
+            if(status_fail(err = file_write_bytes(buffer, (S32) status, p_dict->file_handle_dict)))
                 goto error;
         }
 
@@ -861,51 +836,46 @@ spell_createdict(
         }
 
         /* write out definition end byte */
-        status_break(err = file_putc(0, newdict));
+        status_break(err = file_putc(0, p_dict->file_handle_dict));
 
         /* write out dictionary flag byte */
-        status_break(err = file_putc(0, newdict));
+        status_break(err = file_putc(0, p_dict->file_handle_dict));
 
         /* close file so far */
-        status_break(err = t5_file_close(&newdict));
+        status_break(err = t5_file_close(&p_dict->file_handle_dict));
 
-        newdict = 0;
+        p_dict->file_handle_dict = 0;
 
         trace_1(TRACE_MODULE_SPELL, TEXT("spell_createdict err: ") S32_TFMT, err);
 
         /* re-open for update */
-        if(status_fail(t5_file_open(filename, file_open_readwrite, &newdict, TRUE)))
-        {
-            err = create_error(SPELL_ERR_CANTOPEN);
-            break;
-        }
+        status_break(err = t5_file_open(filename, file_open_readwrite, &p_dict->file_handle_dict, TRUE));
 
-        p_dict->file_handle_dict = newdict;
-        status_assert(file_buffer(newdict, NULL, BUF_SIZE));
-
-        /* process definition file */
-        if(status_fail(status = load_dict_def(p_dict, NULL)))
+        /* process dictionary definition file */
+        if(status_fail(status = load_dict_def(p_dict)))
         {
             err = status;
             break;
         }
+
+        status_break(err = dict_seek_set(p_dict, p_dict->index_offset));
 
         /* get a blank structure */
         wix.p.disk   = 0;
         wix.blklen   = 0;
         wix.letflags = 0;
 
-        status_break(err = dict_seek_set(p_dict, p_dict->index_offset));
-
         /* write out blank structures */
         for(i = 0; i < p_dict->n_index; ++i)
         {
-            if(status_fail(err = file_write_bytes(&wix, sizeof32(LETTER), newdict)))
+            if(status_fail(err = file_write_bytes(&wix, sizeof32(LETTER), p_dict->file_handle_dict)))
             {
                 trace_1(TRACE_MODULE_SPELL, TEXT("spell_createdict failed to write out index entry ") S32_TFMT, i);
                 goto error;
             }
         }
+
+        err = t5_file_flush(p_dict->file_handle_dict);
 
         break;
         /*NOTREACHED*/
@@ -913,35 +883,25 @@ spell_createdict(
 
 error:
 
-    if(status_ok(err))
-        err = t5_file_flush(newdict);
+    trace_off();
+
+    status_accumulate(err, t5_file_close(&p_dict->file_handle_dict));
+
+    status_accumulate(err, t5_file_close(&def_file_handle));
 
     /* get rid of our entry */
     release_dict_entry(p_dict);
 
-    trace_off();
-
     if(status_fail(err))
     {
-        if(newdict)
-            status_assert(t5_file_close(&newdict)); /* have to ignore any close error - current takes precedence */
-
-        if(def_file)
-            status_assert(t5_file_close(&def_file)); /* ditto */
-
-        status_assert(file_remove(filename)); /* ditto */
-
+        status_assert(file_remove(filename)); /* have to ignore any close error - current takes precedence */
         return(err);
     }
 
-    status_accumulate(err, t5_file_close(&def_file));
-
-    status_accumulate(err, t5_file_close(&newdict));
-
-    return(err);
+    return(STATUS_OK);
 }
 
-#endif
+#endif /* OS */
 
 /******************************************************************************
 *
@@ -952,7 +912,7 @@ error:
 _Check_return_
 extern STATUS
 spell_deleteword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word)
 {
     STATUS status;
@@ -964,7 +924,7 @@ spell_deleteword(
     P_LETTER p_letter;
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     if(!makeindex(p_dict, &curword, word))
         return(create_error(SPELL_ERR_BADWORD));
@@ -977,7 +937,7 @@ spell_deleteword(
         return(create_error(SPELL_ERR_READONLY));
 
     if(!status)
-        return(create_error(SPELL_ERR_NOTFOUND));
+        return(create_error(SPELL_ERR_WORDNOTFOUND));
 
     p_letter = array_ptr(&p_dict->h_index, LETTER, curword.lettix);
     p_letter->letflags |= LET_WRITE;
@@ -1065,6 +1025,8 @@ spell_deleteword(
     return(STATUS_OK);
 }
 
+#if WINDOWS /* RISC OS Fireworkz family does not use this - leave in Windows section so it still gets compiled sometimes */
+
 /******************************************************************************
 *
 * flush a dictionary
@@ -1074,14 +1036,14 @@ spell_deleteword(
 _Check_return_
 extern STATUS
 spell_flush(
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
     STATUS err;
     P_DICT p_dict;
 
     trace_0(TRACE_MODULE_SPELL, TEXT("spell_flush"));
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     assert(p_dict->file_handle_dict);
 
@@ -1094,6 +1056,8 @@ spell_flush(
     return(err);
 }
 
+#endif /* OS */
+
 /******************************************************************************
 *
 * is the character upper case ?
@@ -1103,13 +1067,13 @@ spell_flush(
 _Check_return_
 extern STATUS
 spell_isupper(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch)
 {
     P_DICT p_dict;
     S32 ch_upper;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     ch_upper = toupper_us(p_dict, ch);
 
@@ -1126,40 +1090,43 @@ spell_isupper(
 _Check_return_
 extern STATUS
 spell_iswordc(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch)
 {
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
+
     return(iswordc_us(p_dict, ch));
 }
 
 /******************************************************************************
 *
 * load a dictionary
-* all the dictionary is loaded and
-* locked into place
+*
+* all the dictionary is loaded and locked into place
 *
 ******************************************************************************/
 
 _Check_return_
 extern STATUS
 spell_load(
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
     ARRAY_INDEX i;
     P_DICT p_dict;
     P_LETTER p_letter;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     for(i = 0, p_letter = array_ptr(&p_dict->h_index, LETTER, i); i < p_dict->n_index; i += 1, p_letter += 1)
+    {
         if(p_letter->blklen)
         {
             status_return(fetchblock(p_dict, i));
             p_letter->letflags |= LET_LOCKED;
         }
+    }
 
     return(STATUS_OK);
 }
@@ -1182,7 +1149,7 @@ spell_load(
 _Check_return_
 extern STATUS
 spell_nextword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _Out_writes_z_(sizeof_wordout) P_U8 wordout,
     _InVal_     S32 sizeof_wordout,
     _In_z_      PC_SBSTR wordin,
@@ -1194,12 +1161,12 @@ spell_nextword(
     P_DICT p_dict;
 
     trace_5(TRACE_MODULE_SPELL, TEXT("spell_nextword(") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(", %s, %s, ") PTR_XTFMT TEXT(")"),
-            dict, wordout, report_sbstr(wordin), report_sbstr(mask), brkflg);
+            dict_number, wordout, report_sbstr(wordin), report_sbstr(mask), brkflg);
 
     assert(sizeof_wordout != 0);
     wordout[0] = CH_NULL;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     if(badcharsin(p_dict, wordin))
         return(create_error(SPELL_ERR_BADWORD));
@@ -1209,7 +1176,7 @@ spell_nextword(
 
     /* check for start of dictionary */
     if((gotw = initmatch(p_dict, wordout, sizeof_wordout, wordin, mask)) != 0)
-        status_return(gotw = spell_checkword(dict, wordout));
+        status_return(gotw = spell_checkword(dict_number, wordout));
 
     do
     {
@@ -1251,12 +1218,13 @@ _Check_return_
 extern STATUS /*DICT_NUMBER*/
 spell_opendict(
     _In_z_      PCTSTR filename,
-    _In_z_      PCTSTR def_name,
     _OutRef_    P_PCTSTR copy_right,
     _InVal_     BOOL load_and_close_file_after)
 {
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(LETTER), TRUE);
+
     STATUS err;
-    DICT_NUMBER dict;
+    DICT_NUMBER dict_number;
     S32 i, nmemb;
     P_DICT p_dict;
     P_LETTER p_letter;
@@ -1272,29 +1240,21 @@ spell_opendict(
 
     /* get a dictionary number */
     status_return(err = get_dict_entry(&p_dict));
-    dict = (DICT_NUMBER) err;
+    dict_number = (DICT_NUMBER) err;
 
-    /* dummy loop for structure */
-    for(;;)
+    for(;;) /* loop for structure */
     {
-        SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(LETTER), TRUE);
         P_LETTER p_index;
         filelength_t filelength;
 
         /* look for the file */
-        if(status_fail(t5_file_open(filename, file_open_read, &p_dict->file_handle_dict, TRUE)))
-        {
-            err = create_error(SPELL_ERR_CANTOPEN);
-            break;
-        }
+        status_break(err = t5_file_open(filename, file_open_read, &p_dict->file_handle_dict, TRUE));
 
         /* take copy of name for reopening in setoptions */
         status_break(err = al_tstr_set(&p_dict->h_dict_filename, filename));
 
-        status_assert(file_buffer(p_dict->file_handle_dict, NULL, BUF_SIZE));
-
         /* load dictionary definition */
-        status_break(err = load_dict_def(p_dict, def_name));
+        status_break(err = load_dict_def(p_dict));
 
         if(NULL == (p_index = al_array_alloc(&p_dict->h_index, LETTER, p_dict->n_index, &array_init_block, &err)))
             break;
@@ -1318,16 +1278,10 @@ spell_opendict(
             al_ptr_dispose(P_P_ANY_PEDANTIC(&p_dict->dictbuf));
 
             /* look for the file */
-            if(status_fail(t5_file_open(filename, file_open_readwrite, &p_dict->file_handle_dict, TRUE)))
-            {
-                err = create_error(SPELL_ERR_CANTOPEN);
-                break;
-            }
-
-            status_assert(file_buffer(p_dict->file_handle_dict, NULL, BUF_SIZE));
+            status_break(err = t5_file_open(filename, file_open_readwrite, &p_dict->file_handle_dict, TRUE));
         }
 
-        break;
+        break; /* out of loop for structure */
         /*NOTREACHED*/
     }
 
@@ -1348,20 +1302,22 @@ spell_opendict(
 
     if(load_and_close_file_after)
     {
-        if(status_ok(err = spell_load(dict)))
-            err = spell_close_file_only(dict);
+        if(status_ok(err = spell_load(dict_number)))
+            err = spell_close_file_only(dict_number);
 
         if(status_fail(err))
         {
-            (void) spell_close(dict);
+            status_consume(spell_close(dict_number));
             return(err);
         }
     }
 
-    trace_1(TRACE_MODULE_SPELL, TEXT("spell_opendict returns: ") S32_TFMT, dict);
+    trace_1(TRACE_MODULE_SPELL, TEXT("spell_opendict returns: ") S32_TFMT, dict_number);
 
-    return(dict);
+    return(dict_number);
 }
+
+#if WINDOWS /* RISC OS Fireworkz family does not use this - leave in Windows section so it still gets compiled sometimes */
 
 /******************************************************************************
 *
@@ -1372,8 +1328,8 @@ spell_opendict(
 _Check_return_
 extern STATUS
 spell_pack(
-    _InVal_     DICT_NUMBER olddict,
-    _InVal_     DICT_NUMBER newdict)
+    _InVal_     DICT_NUMBER old_dict_number,
+    _InVal_     DICT_NUMBER new_dict_number)
 {
     STATUS err = STATUS_OK;
     S32 i, diskpoint;
@@ -1381,8 +1337,8 @@ spell_pack(
     P_DICT p_dict_old, p_dict_new;
     P_LETTER p_letter_in, p_letter_out;
 
-    status_return(dict_validate(&p_dict_old, olddict));
-    status_return(dict_validate(&p_dict_new, newdict));
+    status_return(dict_validate(&p_dict_old, old_dict_number));
+    status_return(dict_validate(&p_dict_new, new_dict_number));
 
     status_return(ensuredict(p_dict_old));
 
@@ -1420,7 +1376,7 @@ spell_pack(
         diskpoint += p_letter_out->blklen;
         diskpoint += sizeof32(S32);
         p_cacheblock->diskspace = p_letter_out->blklen;
-        p_cacheblock->dict = newdict;
+        p_cacheblock->dict_number = new_dict_number;
         p_cacheblock->lettix = i;
         p_letter_out->letflags |= LET_WRITE;
     }
@@ -1429,6 +1385,8 @@ spell_pack(
 
     return(err);
 }
+
+#endif /* OS */
 
 /******************************************************************************
 *
@@ -1439,8 +1397,8 @@ spell_pack(
 _Check_return_
 extern STATUS
 spell_prevword(
-    _InVal_     DICT_NUMBER dict,
-    P_U8 wordout,
+    _InVal_     DICT_NUMBER dict_number,
+    _Out_writes_z_(sizeof_wordout) P_SBSTR wordout,
     _InVal_     S32 sizeof_wordout,
     _In_z_      PC_SBSTR wordin,
     _In_opt_z_  PC_U8Z mask,
@@ -1450,12 +1408,12 @@ spell_prevword(
     P_DICT p_dict;
 
     trace_5(TRACE_MODULE_SPELL, TEXT("spell_prevword(") S32_TFMT TEXT(", ") PTR_XTFMT TEXT(", %s, %s, ") PTR_XTFMT TEXT(")"),
-            dict, wordout, report_sbstr(wordin), report_sbstr(mask), brkflg);
+            dict_number, wordout, report_sbstr(wordin), report_sbstr(mask), brkflg);
 
     assert(sizeof_wordout != 0);
     wordout[0] = CH_NULL;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     if(badcharsin(p_dict, wordin))
         return(create_error(SPELL_ERR_BADWORD));
@@ -1483,6 +1441,8 @@ spell_prevword(
     return(status);
 }
 
+#if WINDOWS /* RISC OS Fireworkz family does not use this - leave in Windows section so it still gets compiled sometimes */
+
 /******************************************************************************
 *
 * set dictionary options
@@ -1492,13 +1452,13 @@ spell_prevword(
 _Check_return_
 extern STATUS
 spell_setoptions(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 optionset,
     _InVal_     S32 optionmask)
 {
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     /* may need to open for update! */
     if(p_dict->dictflags & DICT_READONLY)
@@ -1550,7 +1510,7 @@ spell_stats(
     {
         do  {
             P_CACHEBLOCK p_cacheblock = list_itemcontents(CACHEBLOCK, it);
-            P_DICT p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict);
+            P_DICT p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict_number);
 
             ++(*cblocks);
             blksiz = (S32) sizeof32(CACHEBLOCK) + array_ptr(&p_dict->h_index, LETTER, p_cacheblock->lettix)->blklen;
@@ -1561,6 +1521,8 @@ spell_stats(
     }
 }
 
+#endif /* OS */
+
 extern void
 spell_startup(void)
 {
@@ -1569,6 +1531,8 @@ spell_startup(void)
     p_list_block_cache = NULL;
     cache_lock = 0;
 }
+
+#if WINDOWS /* RISC OS Fireworkz family does not use this - leave in Windows section so it still gets compiled sometimes */
 
 /******************************************************************************
 *
@@ -1580,17 +1544,19 @@ spell_startup(void)
 _Check_return_
 extern STATUS
 spell_strnicmp(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word1,
     _In_z_      PC_SBSTR word2,
     _InVal_     S32 len)
 {
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     return(strnicmp_us(p_dict, word1, word2, len));
 }
+
+#endif /* OS */
 
 /******************************************************************************
 *
@@ -1602,12 +1568,12 @@ spell_strnicmp(
 _Check_return_
 extern STATUS
 spell_tolower(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch)
 {
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     return(tolower_us(p_dict, ch));
 }
@@ -1622,15 +1588,17 @@ spell_tolower(
 _Check_return_
 extern STATUS
 spell_toupper(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch)
 {
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     return(toupper_us(p_dict, ch));
 }
+
+#if WINDOWS /* RISC OS Fireworkz family does not use this - leave in Windows section so it still gets compiled sometimes */
 
 /******************************************************************************
 *
@@ -1641,13 +1609,13 @@ spell_toupper(
 _Check_return_
 extern STATUS
 spell_unlock(
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
     S32 i, n_index;
     P_LETTER p_letter;
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     for(i = 0, p_letter = array_ptr(&p_dict->h_index, LETTER, 0), n_index = p_dict->n_index;
         i < n_index;
@@ -1656,6 +1624,8 @@ spell_unlock(
 
     return(STATUS_OK);
 }
+
+#endif /* OS */
 
 /******************************************************************************
 *
@@ -1667,7 +1637,7 @@ spell_unlock(
 _Check_return_
 extern STATUS
 spell_write_whole(
-    _InVal_     DICT_NUMBER dict)
+    _InVal_     DICT_NUMBER dict_number)
 {
     STATUS status = STATUS_OK;
     P_DICT p_dict;
@@ -1675,7 +1645,7 @@ spell_write_whole(
     P_LETTER p_letter;
     ARRAY_INDEX i;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     /* check if some part of the dictionary has been modified */
     for(i = 0, modified = 0, p_letter = array_ptr(&p_dict->h_index, LETTER, i); i < p_dict->n_index; i += 1, p_letter += 1)
@@ -1687,15 +1657,13 @@ spell_write_whole(
         S32 diskpoint;
 
         /* whole dictionary must be in memory - ensure that it is */
-        status_return(spell_load(dict));
+        status_return(spell_load(dict_number));
 
         if(!p_dict->file_handle_dict)
             status_assert(t5_file_open(array_tstr(&p_dict->h_dict_filename), file_open_readwrite, &p_dict->file_handle_dict, TRUE));
 
         if(!p_dict->file_handle_dict)
             return(create_error(SPELL_ERR_CANTWRITE));
-
-        status_assert(file_buffer(p_dict->file_handle_dict, NULL, BUF_SIZE));
 
         diskpoint = p_dict->data_offset;
 
@@ -1734,12 +1702,12 @@ spell_write_whole(
 _Check_return_
 extern STATUS
 spell_valid_1(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch)
 {
     P_DICT p_dict;
 
-    status_return(dict_validate(&p_dict, dict));
+    status_return(dict_validate(&p_dict, dict_number));
 
     return(char_ordinal_1(p_dict, (U8) toupper_us(p_dict, ch)) >= 0);
 }
@@ -1995,32 +1963,27 @@ decodeword(
 _Check_return_
 static STATUS
 def_file_position(
-    _InoutRef_  FILE_HANDLE def_file)
+    _InoutRef_  FILE_HANDLE def_file_handle)
 {
-    U8 keystr[MAX(sizeof32(OLD_KEYSTR), sizeof32(KEYSTR))];
+    U8 keystr[sizeof32(KEYSTR)];
     S32 keylen, n_bytes;
 
     trace_0(TRACE_MODULE_SPELL, TEXT("def_file_position"));
 
     /* position to start of file */
-    status_return(file_rewind(def_file));
+    status_return(file_rewind(def_file_handle));
 
     /* read key string to determine if it's a dictionary */
-    n_bytes = MAX(strlen32(OLD_KEYSTR), strlen32(KEYSTR));
-    status_return(file_read_bytes_requested(keystr, n_bytes, def_file));
-
-    /* is it old dictionary format ? */
-    if(0 == memcmp32(keystr, OLD_KEYSTR, strlen32(OLD_KEYSTR)))
-        return(create_error(SPELL_ERR_BADDEFFILE));
-
-    trace_0(TRACE_MODULE_SPELL, TEXT("def_file_position: is not old format dictionary"));
+    n_bytes = strlen32(KEYSTR);
+    *keystr = CH_NULL;
+    status_return(file_read_bytes_requested(keystr, n_bytes, def_file_handle));
 
     if(0 == memcmp32(keystr, KEYSTR, strlen32(KEYSTR)))
         keylen = strlen32(KEYSTR);
     else
         keylen = 0;
 
-    status_return(file_seek(def_file, keylen, NULL /*hi*/, SEEK_SET));
+    status_return(file_seek(def_file_handle, keylen, NULL /*hi*/, SEEK_SET));
 
     trace_1(TRACE_MODULE_SPELL, TEXT("def_file_position keylen: ") S32_TFMT, keylen);
 
@@ -2052,7 +2015,7 @@ deletecache(
     for(i = list_atitem(p_list_block_cache); i < list_numitem(p_list_block_cache); ++i)
     {
         P_CACHEBLOCK p_cacheblock = cacheblock_goto_item(i);
-        P_DICT p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict);
+        P_DICT p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict_number);
 
         trace_2(TRACE_MODULE_SPELL,
                 TEXT("p_cacheblock: ") PTR_XTFMT TEXT(", ixp: ") PTR_XTFMT,
@@ -2341,7 +2304,7 @@ fetchblock(
     /* save parameters in cacheblock */
     p_cacheblock_new->usecount = 0;
     p_cacheblock_new->lettix = lettix;
-    p_cacheblock_new->dict = dict_number(p_dict);
+    p_cacheblock_new->dict_number = dict_number(p_dict);
 
     /* move index pointer */
     p_letter->p.cacheno = list_atitem(p_list_block_cache);
@@ -2382,7 +2345,7 @@ freecache(
             P_CACHEBLOCK p_cacheblock_t = list_itemcontents(CACHEBLOCK, it);
 
             /* check if block is locked */
-            p_dict_t = array_ptr(&h_dict_table, DICT, p_cacheblock_t->dict);
+            p_dict_t = array_ptr(&h_dict_table, DICT, p_cacheblock_t->dict_number);
             if(lettix != p_cacheblock_t->lettix
                &&
                !(array_ptr(&p_dict_t->h_index, LETTER, p_cacheblock_t->lettix)->letflags & LET_LOCKED))
@@ -2401,7 +2364,7 @@ freecache(
         return(status_nomem());
 
     p_cacheblock = cacheblock_goto_item(minno);
-    p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict);
+    p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict_number);
     bytes_freed = array_ptr(&p_dict->h_index, LETTER, p_cacheblock->lettix)->blklen;
 
 #if TRACE_ALLOWED
@@ -2547,7 +2510,7 @@ killcache(
 
     err = STATUS_OK;
     p_cacheblock = cacheblock_goto_item(cacheno);
-    p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict);
+    p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict_number);
 
     trace_1(TRACE_MODULE_SPELL, TEXT("killcache cacheno: %d"), cacheno);
 
@@ -2599,49 +2562,24 @@ killcache(
 _Check_return_
 static STATUS
 load_dict_def(
-    _InoutRef_  P_DICT p_dict,
-    _In_opt_z_  PCTSTR def_name)
+    _InoutRef_  P_DICT p_dict)
 {
-    STATUS status, err;
-    U8 keystr[MAX(sizeof32(OLD_KEYSTR), sizeof32(KEYSTR))];
+    U8 keystr[sizeof32(KEYSTR)];
     S32 keylen, n_bytes;
-    FILE_HANDLE def_file;
 
     /* position to start of dictionary */
     status_return(file_rewind(p_dict->file_handle_dict));
 
     /* read key string to determine dictionary type */
-    n_bytes = MAX(strlen32(OLD_KEYSTR), strlen32(KEYSTR));
+    n_bytes = strlen32(KEYSTR);
+    *keystr = CH_NULL;
     status_return(file_read_bytes_requested(keystr, n_bytes, p_dict->file_handle_dict));
 
-    /* is it old dictionary format ? */
-    if(0 == memcmp32(keystr, OLD_KEYSTR, strlen32(OLD_KEYSTR)))
-    {
-        /* try to open definition file */
-        PTR_ASSERT(def_name);
-        if(status_fail(t5_file_open(def_name, file_open_read, &def_file, TRUE)))
-            return(create_error(SPELL_ERR_BADDEFFILE));
-
-        keylen = strlen32(OLD_KEYSTR);
-    }
-    else if(0 == memcmp32(keystr, KEYSTR, strlen32(KEYSTR)))
-    {
-        keylen = strlen32(KEYSTR);
-        def_file = p_dict->file_handle_dict;
-    }
-    else
+    keylen = strlen32(KEYSTR);
+    if(0 != memcmp32(keystr, KEYSTR, strlen32(KEYSTR)))
         return(create_error(SPELL_ERR_BADDICT));
 
-    status = load_dict_def_now(p_dict, def_file, keylen);
-
-    /* close definition file if separate */
-    if(def_file != p_dict->file_handle_dict)
-    {
-        if(status_fail(err = t5_file_close(&def_file)) && status_ok(status))
-            status = err;
-    }
-
-    return(status);
+    return(load_dict_def_now(p_dict, p_dict->file_handle_dict, keylen));
 }
 
 /******************************************************************************
@@ -2679,7 +2617,7 @@ load_dict_def_now(
 
     p_dict->char_offset = (U8) atoi(buffer);
 
-    if(p_dict->char_offset < MIN_CHAR || p_dict->char_offset >= MAX_CHAR)
+    if((p_dict->char_offset < MIN_CHAR) || (p_dict->char_offset >= MAX_CHAR))
         return(create_error(SPELL_ERR_BADDEFFILE));
 
     /* read token offset */
@@ -2689,7 +2627,7 @@ load_dict_def_now(
 
     if(p_dict->man_token_start                     &&
        ((S32) p_dict->man_token_start <  MIN_TOKEN ||
-        (S32) p_dict->man_token_start >= MAX_TOKEN))
+        (S32) p_dict->man_token_start >= MAX_TOKEN) )
         return(create_error(SPELL_ERR_BADDEFFILE));
 
     /* read first letter list */
@@ -2722,7 +2660,7 @@ load_dict_def_now(
     {
         if(p_dict->man_token_start &&
            (*in >= p_dict->man_token_start ||
-            *in <  p_dict->char_offset))
+            *in <  p_dict->char_offset) )
             return(create_error(SPELL_ERR_DEFCHARERR));
 
         *out++ = *in++;
@@ -2802,7 +2740,7 @@ load_dict_def_now(
     }
 
     /* check we read some endings */
-    if(status >= 0 && end == 1)
+    if((status >= 0) && (end == 1))
         status = create_error(SPELL_ERR_BADDEFFILE);
     status_return(status);
 
@@ -3989,7 +3927,7 @@ stuffcache(
     {
         p_cacheblock = cacheblock_goto_item(i);
 
-        if(p_cacheblock->dict == (S32) dict_number(p_dict))
+        if(p_cacheblock->dict_number == dict_number(p_dict))
             deletecache(i);
     }
 }
@@ -4084,9 +4022,9 @@ writeblock(
     P_DICT p_dict;
     P_LETTER p_letter;
 
-    trace_2(TRACE_MODULE_SPELL, TEXT("writeblock dict: ") S32_TFMT TEXT(", letter: ") S32_TFMT, p_cacheblock->dict, p_cacheblock->lettix);
+    trace_2(TRACE_MODULE_SPELL, TEXT("writeblock dict: ") S32_TFMT TEXT(", letter: ") S32_TFMT, p_cacheblock->dict_number, p_cacheblock->lettix);
 
-    p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict);
+    p_dict = array_ptr(&h_dict_table, DICT, p_cacheblock->dict_number);
     p_letter = array_ptr(&p_dict->h_index, LETTER, p_cacheblock->lettix);
 
     if(p_letter->blklen)

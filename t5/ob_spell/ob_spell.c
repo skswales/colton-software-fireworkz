@@ -56,14 +56,14 @@ construct argument types
 static const ARG_TYPE
 args_cmd_dictionary_add_word[] =
 {
-    ARG_TYPE_TSTR | ARG_MANDATORY,
+    ARG_TYPE_USTR | ARG_MANDATORY,
     ARG_TYPE_NONE
 };
 
 static const ARG_TYPE
 args_cmd_dictionary_delete_word[] =
 {
-    ARG_TYPE_TSTR | ARG_MANDATORY,
+    ARG_TYPE_USTR | ARG_MANDATORY,
     ARG_TYPE_NONE
 };
 
@@ -321,7 +321,7 @@ T5_MSG_PROTO(static, t5_msg_spell_word_check, _InoutRef_ P_WORD_CHECK p_word_che
         U32 dst_idx = 0;
         P_U8 hptr = NULL;
 
-        /* skip forward over funny chars eg robs famous '[Section]' */
+        /* skip forward over funny chars e.g. Rob's famous '[Section]' */
         while(*src && !ob_spell_valid_1(*src))
             ++src;
 
@@ -486,14 +486,15 @@ T5_MSG_PROTO(static, t5_msg_spell_word_check, _InoutRef_ P_WORD_CHECK p_word_che
 T5_CMD_PROTO(static, t5_cmd_spell_dictionary_add_word)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
+    const PC_USTR ustr_word = p_args[0].val.ustr;
     STATUS status = STATUS_OK;
 
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
 
-    if(p_args[0].val.tstr && (tstrlen32(p_args[0].val.tstr) >= 2))
+    if((NULL != ustr_word) && (ustrlen32(ustr_word) >= 2))
     {
-        const PC_SBSTR word = _sbstr_from_tstr(p_args[0].val.tstr);
+        const PC_SBSTR sbstr_word = _sbstr_from_ustr(ustr_word);
         /* We ask the 'proper-word' user dictionary whether it thinks the word is capitalised, */
         /* the test looks at the initial letter of the word only.                              */
         /* We rather assume that both normal and capitialised dictionaries must exist.         */
@@ -507,14 +508,14 @@ T5_CMD_PROTO(static, t5_cmd_spell_dictionary_add_word)
                 status = create_error(SPELL_ERR_NO_USER_DICTS);
         }
 
-        if(status_ok(status) && status_ok(status = spell_isupper(ob_spell_.dictionary[dictionary_id].dict_number, *word)))
+        if(status_ok(status) && status_ok(status = spell_isupper(ob_spell_.dictionary[dictionary_id].dict_number, sbstr_word[0])))
         {
             /* if the 'proper' dictionary thinks the word is not upper cased, put it in the 'normal' dictionary */
             if(status == 0)
                 dictionary_id = DICTIONARY_USER; /* seems to be lower case */
 
             assert(status_ok(ob_spell_.dictionary[dictionary_id].status));
-            status = spell_addword(ob_spell_.dictionary[dictionary_id].dict_number, word);
+            status = spell_addword(ob_spell_.dictionary[dictionary_id].dict_number, sbstr_word);
             /* returns: >0 word added, =0 word exists, <0 error */
 #if FALSE
             if(status == 0)
@@ -533,17 +534,19 @@ T5_CMD_PROTO(static, t5_cmd_spell_dictionary_add_word)
 T5_CMD_PROTO(static, t5_cmd_spell_dictionary_delete_word)
 {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 1);
+    const PC_USTR ustr_word = p_args[0].val.ustr;
     STATUS status = STATUS_OK;
 
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
 
-    if(p_args[0].val.tstr && (tstrlen32(p_args[0].val.tstr) >= 3))
+    if((NULL != ustr_word) && (ustrlen32(ustr_word) >= 3))
     {
-        PC_SBSTR word = _sbstr_from_tstr(p_args[0].val.tstr);
+        PC_SBSTR sbstr_word = _sbstr_from_ustr(ustr_word);
         DICTIONARY_ID dictionary_id = DICTIONARY_USER_CAPITALISED;
 
-        word += 2 /* skip <star><tab> */;
+        if(('*' == sbstr_word[0]) && ('\t' == sbstr_word[1]))
+            sbstr_word += 2; /* skip <star><tab> - see set_wordlist_entry() */
 
         if(status_fail(ob_spell_.dictionary[dictionary_id].status))
         {
@@ -553,12 +556,12 @@ T5_CMD_PROTO(static, t5_cmd_spell_dictionary_delete_word)
                 status = create_error(SPELL_ERR_NO_USER_DICTS);
         }
 
-        if(status_ok(status) && status_ok(status = spell_isupper(ob_spell_.dictionary[dictionary_id].dict_number, *word)))
+        if(status_ok(status) && status_ok(status = spell_isupper(ob_spell_.dictionary[dictionary_id].dict_number, sbstr_word[0])))
         {
             if(status == 0)
                 dictionary_id = DICTIONARY_USER;
 
-            status = spell_deleteword(ob_spell_.dictionary[dictionary_id].dict_number, word);
+            status = spell_deleteword(ob_spell_.dictionary[dictionary_id].dict_number, sbstr_word);
 
 #if IMMEDIATE_UPDATE
             if(status_ok(status) && ob_spell_.cfg__flags_write_user_dict)
@@ -588,7 +591,7 @@ opendict(
             status = create_error(FILE_ERR_NOTFOUND);
         ob_spell_.dictionary[dictionary_id].status = status;
     }
-    else if(status_ok(status = spell_opendict(filename, tstr_empty_string, &copy_right, TRUE)))
+    else if(status_ok(status = spell_opendict(filename, &copy_right, TRUE)))
     {
         ob_spell_.dictionary[dictionary_id].status = STATUS_DONE;
         ob_spell_.dictionary[dictionary_id].dict_number = (DICT_NUMBER) status;
@@ -975,22 +978,24 @@ skip_list_find_word(
     _DocuRef_   P_DOCU p_docu,
     _In_z_      PC_USTR ustr)
 {
+    const U32 ustr_len = ustrlen32(ustr);
     const P_SPELL_INSTANCE_DATA p_spell_instance = p_object_instance_data_SPELL(p_docu);
     const P_LIST_BLOCK p_list_block = &p_spell_instance->skip_list;
     LIST_ITEMNO key;
-    PC_USTR p_entry;
+    PC_USTR ustr_entry;
 
-    for(p_entry = (PC_USTR) collect_first(UCHARZ, p_list_block, &key);
-        p_entry;
-        p_entry = (PC_USTR) collect_next(UCHARZ, p_list_block, &key))
+    for(ustr_entry = (PC_USTR) collect_first(UCHARZ, p_list_block, &key);
+        ustr_entry;
+        ustr_entry = (PC_USTR) collect_next(UCHARZ, p_list_block, &key))
     {
-#if USTR_IS_SBSTR
-        if(0 == C_stricmp(p_entry, ustr))
+        const U32 entry_len = ustrlen32(ustr_entry);
+
+        if(entry_len != ustr_len)
+            continue;
+
+        /* now requires precise match - caps variants must be added separately */
+        if(0 == memcmp(ustr_entry, ustr, ustr_len))
             return(TRUE); /* found */
-#else
-        if(0 == C_stricmp((const char *) p_entry, (const char *) ustr)) /* <<< more work */
-            return(TRUE); /* found */
-#endif
     }
 
     return(FALSE); /* not found */

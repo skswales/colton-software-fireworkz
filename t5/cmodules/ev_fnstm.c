@@ -51,7 +51,7 @@ PROC_EXEC_PROTO(c_growth)
     array_range_sizes(array_known_x, &x, &y);
 
     /* SKS after PD 4.12 28apr92 - allow TREND() and GROWTH() to receive data
-     * in untransposed form ie. more naturally matched to linest data
+     * in untransposed form i.e. more naturally matched to linest data
     */
     across_rows = (x == x_vars);
 
@@ -655,7 +655,7 @@ PROC_EXEC_PROTO(c_trend)
     array_range_sizes(array_known_x, &x, &y);
 
     /* SKS after PD 4.12 28apr92 - allow TREND() and GROWTH() to receive data
-     * in untransposed form ie. more naturally matched to linest data
+     * in untransposed form i.e. more naturally matched to linest data
     */
     across_rows = (x == x_vars);
 

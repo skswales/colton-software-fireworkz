@@ -91,7 +91,7 @@ save_as_drawfile_percentage_reflect(
 static void
 save_as_drawfile_details_query(
     _InoutRef_  P_SAVE_AS_DRAWFILE_CALLBACK p_save_as_drawfile_callback,
-    _OutRef_    P_T5_FILETYPE p_filetype,
+    _OutRef_    P_T5_FILETYPE p_t5_filetype,
     /*out*/ P_UI_TEXT p_ui_text_filename);
 
 _Check_return_
@@ -160,7 +160,7 @@ enum SAVE_AS_DRAWFILE_CTRL_IDS
 #endif
 };
 
-#define SAVE_AS_DRAWFILE_TOTAL_H        ((PIXITS_PER_INCH * 17) / 10)
+#define SAVE_AS_DRAWFILE_TOTAL_H        ((PIXITS_PER_INCH * 22) / 10)
 
 #if RISCOS
 
@@ -189,9 +189,9 @@ static DIALOG_CONTROL
 save_as_drawfile_name =
 {
     CONTROL_ID_NAME, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, CONTROL_ID_PICT },
-    { 0, DIALOG_STDSPACING_V, SAVE_AS_DRAWFILE_TOTAL_H, DIALOG_STDEDIT_V },
-    { DRT(LBLT, EDIT), 1 }
+    { DIALOG_CONTROL_PARENT, CONTROL_ID_PICT, CONTROL_ID_RANGE_GROUP },
+    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
+    { DRT(LBRT, EDIT), 1 }
 };
 
 static
@@ -210,7 +210,7 @@ save_as_drawfile_ar_group =
     CONTROL_ID_AR_GROUP, DIALOG_MAIN_GROUP,
 #if RISCOS
     { CONTROL_ID_NAME, CONTROL_ID_NAME, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
-    { DIALOG_STDSPACING_H, DIALOG_STDSPACING_V, 0, 0 },
+    { 0, DIALOG_STDSPACING_V, 0, 0 },
     { DRT(LBRB, GROUPBOX), 0, 1 /*logical_group*/ }
 #else
     { DIALOG_CONTROL_PARENT, DIALOG_CONTROL_PARENT, DIALOG_CONTROL_CONTENTS, DIALOG_CONTROL_CONTENTS },
@@ -333,7 +333,7 @@ proc_save_as_drawfile(
         msgclr(dialog_cmd_complete_dbox);
         dialog_cmd_complete_dbox.h_dialog = p_save_as_drawfile_callback->h_dialog;
         dialog_cmd_complete_dbox.completion_code = DIALOG_COMPLETION_OK;
-        status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
     }
 
     return(TRUE);
@@ -610,10 +610,10 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_save_as_drawfile)
 static void
 save_as_drawfile_details_query(
     _InoutRef_  P_SAVE_AS_DRAWFILE_CALLBACK p_save_as_drawfile_callback,
-    _OutRef_    P_T5_FILETYPE p_filetype,
+    _OutRef_    P_T5_FILETYPE p_t5_filetype,
     /*out*/ P_UI_TEXT p_ui_text_filename)
 {
-    *p_filetype = FILETYPE_DRAW;
+    *p_t5_filetype = FILETYPE_DRAW;
 
 #if RISCOS
     if(NULL != p_ui_text_filename)
@@ -857,17 +857,14 @@ save_as_drawfile_windows_filter_list_create(
     {
         const T5_FILETYPE t5_filetype = FILETYPE_DRAW;
 
-        PCTSTR description = description_text_from_t5_filetype(t5_filetype);
-        PCTSTR extension_srch = extension_srch_text_from_t5_filetype(t5_filetype);
+        BOOL fFound_description, fFound_extension;
+        const PC_USTR ustr_description = description_ustr_from_t5_filetype(t5_filetype, &fFound_description);
+        const PC_USTR ustr_extension_srch = extension_srch_ustr_from_t5_filetype(t5_filetype, &fFound_extension);
 
-        if(description && extension_srch)
-        {
-            status_break(status = quick_tblock_tstr_add_n(p_filter_quick_tblock, description, strlen_with_NULLCH));
+        status_break(status = quick_tblock_ustr_add_n(p_filter_quick_tblock, ustr_description, strlen_with_NULLCH));
+        status_break(status = quick_tblock_ustr_add_n(p_filter_quick_tblock, ustr_extension_srch, strlen_with_NULLCH));
 
-            status_break(status = quick_tblock_tstr_add_n(p_filter_quick_tblock, extension_srch, strlen_with_NULLCH));
-
-            n_filters++;
-        }
+        n_filters++;
 
         break; /* end of loop for structure */
     }
@@ -961,14 +958,12 @@ save_as_drawfile_get_filename(
         openfilename.lpstrTitle = szDialogTitle;
     }
     openfilename.Flags =
+        OFN_EXPLORER            |
         OFN_NOCHANGEDIR         |
         OFN_PATHMUSTEXIST       |
         OFN_HIDEREADONLY        |
-        OFN_NOREADONLYRETURN    |
         OFN_OVERWRITEPROMPT     |
-        OFN_EXPLORER            |
-        OFN_ENABLESIZING        |
-        OFN_LONGNAMES           ;
+        OFN_ENABLESIZING        ;
     openfilename.nFileOffset = 0;
     openfilename.nFileExtension = 0;
     openfilename.lpstrDefExt = TEXT("aff"); /* without the preceding dot */
@@ -1123,11 +1118,11 @@ T5_CMD_PROTO(static, t5_cmd_save_as_drawfile_intro)
         dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SAVE_AS_DRAWFILE_INTRO_CAPTION;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_save_as_drawfile;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &save_as_drawfile_callback;
-        status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         ui_text_dispose(&dialog_cmd_process_dbox.caption);
     }
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     quick_tblock_dispose(&quick_tblock);
 

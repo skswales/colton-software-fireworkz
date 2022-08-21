@@ -303,6 +303,102 @@ PROC_EXEC_PROTO(c_days_360)
 
 /******************************************************************************
 *
+* DATE edate(date, delta_months)
+*
+******************************************************************************/
+
+static void
+edate_eomonth_calc(
+    _OutRef_    P_EV_DATA p_ev_data_out,
+    _InVal_     S32 start_year,
+    _InVal_     S32 start_month,
+    _InVal_     S32 start_day,
+    _InVal_     S32 delta_months,
+    _InVal_     BOOL f_is_eomonth)
+{
+    S32 result_year = start_year;
+    S32 result_month = start_month + delta_months;
+    S32 result_day = start_day;
+    S32 monthdays;
+
+    /* does adjusted month underflow or overflow the current year? */
+    /* NB can be adjusting by more than one year */
+    while(result_month < 1)
+    {
+        result_month += 12;
+        result_year -= 1;
+    }
+    while(result_month > 12)
+    {
+        result_month -= 12;
+        result_year += 1;
+    }
+
+    monthdays = (LEAP_YEAR_ACTUAL(result_year) ? ev_days_in_month_leap[result_month - 1] : ev_days_in_month[result_month - 1]);
+
+    if(f_is_eomonth)
+    {   /* always return the last day of the month */
+        result_day = monthdays;
+    }
+    else
+    {   /* try to return the same day of the month unless that's off the end */
+        if(result_day > monthdays)
+            result_day = monthdays;
+    }
+
+    p_ev_data_out->did_num = RPN_DAT_DATE;
+    ev_date_init(&p_ev_data_out->arg.ev_date);
+    /* I did think about taking the time component across but Excel doesn't */
+
+    if(ss_ymd_to_dateval(&p_ev_data_out->arg.ev_date.date, result_year, result_month, result_day) < 0)
+    {
+        ev_data_set_error(p_ev_data_out, EVAL_ERR_ARGRANGE);
+        return;
+    }
+}
+
+PROC_EXEC_PROTO(c_edate)
+{
+    STATUS status;
+    S32 delta_months = args[1]->arg.integer;
+    S32 start_year, start_month, start_day;
+
+    exec_func_ignore_parms();
+
+    if(status_fail(status = ss_dateval_to_ymd(&args[0]->arg.ev_date.date, &start_year, &start_month, &start_day)))
+    {
+        ev_data_set_error(p_ev_data_res, status);
+        return;
+    }
+
+    edate_eomonth_calc(p_ev_data_res, start_year, start_month, start_day, delta_months, FALSE);
+}
+
+/******************************************************************************
+*
+* DATE eomonth(date, delta_months)
+*
+******************************************************************************/
+
+PROC_EXEC_PROTO(c_eomonth)
+{
+    STATUS status;
+    S32 delta_months = args[1]->arg.integer;
+    S32 start_year, start_month, start_day;
+
+    exec_func_ignore_parms();
+
+    if(status_fail(status = ss_dateval_to_ymd(&args[0]->arg.ev_date.date, &start_year, &start_month, &start_day)))
+    {
+        ev_data_set_error(p_ev_data_res, status);
+        return;
+    }
+
+    edate_eomonth_calc(p_ev_data_res, start_year, start_month, start_day, delta_months, TRUE);
+}
+
+/******************************************************************************
+*
 * INTEGER return hour number of time
 *
 ******************************************************************************/

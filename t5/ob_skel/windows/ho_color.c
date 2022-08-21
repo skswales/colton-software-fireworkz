@@ -19,7 +19,7 @@ helper code to map RISC OS like stuff under Windows
 
 HPALETTE g_hPalette = NULL;
 
-UINT g_nColours = 0;
+UINT g_nColours = UINT_MAX;
 
 typedef struct LOGPALETTE256
 {
@@ -174,7 +174,7 @@ host_create_default_palette(void)
 
     host_destroy_default_palette(); /* default is not to do any palette mapping */
 
-    g_nColours = 0;
+    g_nColours = UINT_MAX;
 
     if(0 != (RC_PALETTE & GetDeviceCaps(hDC, RASTERCAPS)))
         g_nColours = GetSystemPaletteEntries(hDC, 0, 0, NULL);
@@ -182,7 +182,7 @@ host_create_default_palette(void)
     /* SKS notes 15mar94 that you get very small values in palette entries with 16 and 24 bit modes */
     /* SKS notes 07jan96 that this is NOT true on NT3.51 or Win95(490) hence extra test */
 
-    if(g_nColours > 0)
+    if((g_nColours != 0) && (g_nColours != UINT_MAX))
     {
         /* 16 color modes never allow hardware palette mapping, and certainly don't bother with > 256 colour modes! */
         if(0 != MyGetProfileString(TEXT("NumColours"), tstr_empty_string, buffer, elemof32(buffer))) /* SKS 14oct96 hack to allow no palette mucking about for debugging */
@@ -314,6 +314,64 @@ host_rgb_stash(
     /* can presumably set up our favouite Wimp 16 colours and get almost sensible representations thereof */
     for(index = 0; index < 16; ++index)
         host_rgb_stash_colour(hDC, index);
+}
+
+#include "commdlg.h"
+
+#include "cderr.h"
+
+static COLORREF
+choosecolor_custom_colours[16] = /* all white */
+{
+    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF),
+    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF),
+    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF),
+    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF)
+};
+
+static void
+choosecolor_custom_colours_init(void)
+{
+    static BOOL f_choosecolor_custom_colours_init = FALSE;
+
+    UINT index;
+
+    if(f_choosecolor_custom_colours_init)
+        return;
+
+    for(index = 0; index < 16; ++index)
+        choosecolor_custom_colours[index] = RGB(rgb_stash[index].r, rgb_stash[index].g, rgb_stash[index].b);
+
+    f_choosecolor_custom_colours_init = TRUE;
+}
+
+extern BOOL
+windows_colour_picker(
+    HOST_WND    parent_window_handle,
+    _InoutRef_  P_RGB p_rgb)
+{
+    BOOL res;
+    CHOOSECOLOR choosecolor;
+    choosecolor.lStructSize = sizeof32(choosecolor);
+    choosecolor.hwndOwner = parent_window_handle;
+    choosecolor.hInstance = (HWND /* bug in commdlg.h! */) GetInstanceHandle();
+    choosecolor.rgbResult = RGB(p_rgb->r, p_rgb->g, p_rgb->b); /* it's a COLORREF */
+    choosecolor_custom_colours_init();
+    choosecolor.lpCustColors = choosecolor_custom_colours;
+    choosecolor.Flags = CC_RGBINIT | CC_FULLOPEN;
+    choosecolor.lCustData = 0;
+    choosecolor.lpfnHook = NULL;
+    choosecolor.lpTemplateName = NULL;
+    res = ChooseColor(&choosecolor);
+    if(!res)
+    {
+        /* extended error sometime */
+    }
+    else
+    {
+        rgb_set(p_rgb, GetRValue(choosecolor.rgbResult), GetGValue(choosecolor.rgbResult), GetBValue(choosecolor.rgbResult));
+    }
+    return(res);
 }
 
 /* end of windows/ho_color.c */

@@ -114,6 +114,30 @@ mx_sech(
 #define PRAGMA_SIDE_EFFECTS
 #include "coltsoft/pragma.h"
 
+#if defined(_MSC_VER)
+#if _MSC_VER < 1800 /* < VS2013 */
+
+extern double FreeBSD_erf(double);
+
+#define erf(x) FreeBSD_erf(x)
+
+extern double FreeBSD_erfc(double);
+
+#define erfc(x) FreeBSD_erfc(x)
+
+#endif
+#endif /* _MSC_VER */
+
+_Check_return_
+extern double FreeBSD_jn(int, double);
+
+#define bessel_jn(n, x) FreeBSD_jn(n, x)
+
+_Check_return_
+extern double FreeBSD_yn(int, double);
+
+#define bessel_yn(n, x) FreeBSD_yn(n, x)
+
 #endif /* __mathxtra_h */
 
 /* end of mathxtra.h  */

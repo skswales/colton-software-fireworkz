@@ -281,11 +281,8 @@ _Check_return_
 static BOOL
 gr_axis_iterator_first(
     _InRef_     PC_GR_AXIS p_axis,
-    _InVal_     BOOL major,
     _InoutRef_  P_GR_AXIS_ITERATOR p_iter)
 {
-    IGNOREPARM_InVal_(major);
-
     p_iter->iter = p_axis->current.min;
 
     if(p_axis->bits.log_scale)
@@ -303,11 +300,8 @@ gr_axis_iterator_first(
 static void
 gr_axis_iterator_last(
     _InRef_     PC_GR_AXIS p_axis,
-    _InVal_     BOOL major,
     _InoutRef_  P_GR_AXIS_ITERATOR p_iter)
 {
-    IGNOREPARM_InVal_(major);
-
     p_iter->iter = p_axis->current.max;
 
     if(p_axis->bits.log_scale)
@@ -322,8 +316,8 @@ _Check_return_
 static BOOL
 gr_axis_iterator_next(
     _InRef_     PC_GR_AXIS p_axis,
-    _InVal_     BOOL major,
-    _InoutRef_  P_GR_AXIS_ITERATOR p_iter)
+    _InoutRef_  P_GR_AXIS_ITERATOR p_iter,
+    _InVal_     BOOL major)
 {
     if(p_axis->bits.log_scale)
     {
@@ -372,15 +366,14 @@ gr_axis_addin_category_grids(
     _In_        GR_CHART_OBJID id /*may mutate*/,
     _In_        GR_POINT_NO total_n_points /*may mutate*/,
     _InVal_     GR_PIXIT axis_ypos,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major)
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_grids)
 {
     const GR_AXES_IDX axes_idx = 0;
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_grids ? &p_axis->major : &p_axis->minor;
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_DIAG_OFFSET gridStart;
     GR_POINT_NO point;
     int step;
@@ -388,27 +381,27 @@ gr_axis_addin_category_grids(
     BOOL draw_main;
     BOOL doing_line_chart = (cp->axes[0].chart_type == GR_CHART_TYPE_LINE);
 
-    if(!ticksp->bits.grid)
+    if(!p_axis_ticks->bits.grid)
         return(status);
 
-    step = (int) ticksp->current;
+    step = (int) p_axis_ticks->current;
     if(!step)
         return(status);
 
-    if(front)
+    if(front_phase)
     {
         switch(p_axis->bits.arf)
         {
         default:
-        case GR_AXIS_POSITION_AUTO:
+        case GR_AXIS_POSITION_ARF_AUTO:
             return(status);
 
-        case GR_AXIS_POSITION_FRONT:
+        case GR_AXIS_POSITION_ARF_REAR:
+            return(status);
+
+        case GR_AXIS_POSITION_ARF_FRONT:
             draw_main = 1;
             break;
-
-        case GR_AXIS_POSITION_REAR:
-            return(status);
         }
     }
     else
@@ -422,21 +415,21 @@ gr_axis_addin_category_grids(
         switch(p_axis->bits.arf)
         {
         default:
-        case GR_AXIS_POSITION_AUTO:
+        case GR_AXIS_POSITION_ARF_AUTO:
             draw_main = 1;
             break;
 
-        case GR_AXIS_POSITION_FRONT:
+        case GR_AXIS_POSITION_ARF_REAR:
+            draw_main = 1;
+            break;
+
+        case GR_AXIS_POSITION_ARF_FRONT:
             return(status);
-
-        case GR_AXIS_POSITION_REAR:
-            draw_main = 1;
-            break;
         }
 #endif
     }
 
-    gr_chart_objid_from_axis_grid(&id, major);
+    gr_chart_objid_from_axis_grid(&id, major_grids);
 
     status_return(gr_chart_group_new(cp, &gridStart, id));
 
@@ -468,13 +461,15 @@ gr_axis_addin_category_grids(
             line_box.x1 = line_box.x0;
             line_box.y1 = line_box.y0 + cp->plotarea.size.y;
 
-            /* map together to front or back of 3-D world */
-            gr_map_point((P_GR_POINT) &line_box.x0, cp, fob);
-            gr_map_point((P_GR_POINT) &line_box.x1, cp, fob);
+            if(cp->d3.bits.use)
+            {   /* map together to front or back of 3-D world */
+                gr_map_point_front_or_back((P_GR_POINT) &line_box.x0, cp, front_phase);
+                gr_map_point_front_or_back((P_GR_POINT) &line_box.x1, cp, front_phase);
+            }
 
-            status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+            status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
 
-            if(cp->d3.bits.use && front)
+            if(cp->d3.bits.use && front_phase)
             {
                 /* diagonal grid lines across the top too ONLY DURING THE FRONT PHASE */
                 line_box.x0 = x_pos;
@@ -483,11 +478,11 @@ gr_axis_addin_category_grids(
                 /* put one to the front and one to the back */
                 gr_map_box_front_and_back(&line_box, cp);
 
-                status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
             }
         }
 
-        if(cp->d3.bits.use && !front)
+        if(cp->d3.bits.use && !front_phase)
         {
             /* diagonal grid lines across the midplane and floor too ONLY DURING THE REAR PHASE */
             line_box.x0 = x_pos;
@@ -496,7 +491,7 @@ gr_axis_addin_category_grids(
             /* one to the front and one to the back */
             gr_map_box_front_and_back(&line_box, cp);
 
-            status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+            status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
 
             if((axis_ypos != 0) && (axis_ypos != cp->plotarea.size.y))
             {
@@ -504,12 +499,12 @@ gr_axis_addin_category_grids(
                 line_box.y0 += axis_ypos;
                 line_box.y1 += axis_ypos;
 
-                status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
             }
         }
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &gridStart);
+    gr_chart_group_end(cp, &gridStart);
 
     return(status);
 }
@@ -518,13 +513,13 @@ gr_axis_addin_category_grids(
 static U32
 gr_axis_ticksizes(
     _ChartRef_  P_GR_CHART cp,
-    _InRef_     PC_GR_AXIS_TICKS ticksp,
+    _InRef_     PC_GR_AXIS_TICKS p_axis_ticks,
     _OutRef_    P_GR_PIXIT p_top /* or p_right */,
     _OutRef_    P_GR_PIXIT p_bottom /* or p_left  */)
 {
     GR_PIXIT ticksize = MIN(cp->plotarea.size.x, cp->plotarea.size.y) / TICKLEN_FRAC;
 
-    switch(ticksp->bits.tick)
+    switch(p_axis_ticks->bits.tick)
     {
     case GR_AXIS_TICK_POSITION_NONE:
         *p_top = 0;
@@ -564,15 +559,14 @@ gr_axis_addin_category_labels(
     _InVal_     GR_CHART_OBJID id,
     _InVal_     GR_POINT_NO total_n_points,
     _InVal_     GR_PIXIT axis_ypos,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
-/*  const BOOL major = 1; */
+/*  const BOOL major_grids = TRUE; */
     const GR_AXES_IDX axes_idx = 0;
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = &p_axis->major;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = &p_axis->major;
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_DIAG_OFFSET labelStart;
     GR_POINT_NO point;
     int step;
@@ -583,13 +577,13 @@ gr_axis_addin_category_labels(
     GR_MILLIPOINT available_width_mp;
     GR_PIXIT available_width_px;
 
-    step = (int) ticksp->current;
+    step = (int) p_axis_ticks->current;
     if(!step)
         return(status);
 
     status_return(gr_chart_group_new(cp, &labelStart, id));
 
-    (void) gr_axis_ticksizes(cp, ticksp, &ticksize_top, &ticksize_bottom);
+    (void) gr_axis_ticksizes(cp, p_axis_ticks, &ticksize_top, &ticksize_bottom);
 
     gr_chart_objid_textstyle_query(cp, id, &textstyle);
 
@@ -632,32 +626,32 @@ gr_axis_addin_category_labels(
             text_box.x0 += (available_width_mp - swidth_mp) / (GR_MILLIPOINTS_PER_PIXIT * 2);
         }
 
-        switch(p_axis->bits.lzr)
+        switch(p_axis->bits.lzr /*bzt for category axis*/)
         {
-        case GR_AXIS_POSITION_TOP:
+        case GR_AXIS_POSITION_BZT_TOP:
             text_box.y0 += (3 * ticksize_top) / 2;
-            text_box.y0 += (1 * UBF_UNPACK(GR_PIXIT, textstyle.height)) / 4; /* st. descenders don't crash into ticks */
+            text_box.y0 += (1 * textstyle.size_y) / 4; /* st. descenders don't crash into ticks */
             break;
 
         default:
             text_box.y0 -= (3 * ticksize_bottom) / 2;
-            text_box.y0 -= (4 * UBF_UNPACK(GR_PIXIT, textstyle.height)) / 4; /* st. ascenders don't crash into ticks (SKS after 1.05 25oct93 changed first 3 to 4) */
+            text_box.y0 -= (4 * textstyle.size_y) / 4; /* st. ascenders don't crash into ticks (SKS after 1.05 25oct93 changed first 3 to 4) */
             break;
         }
 
         /* map to front or back of 3-D world */
         if(cp->d3.bits.use)
-            gr_map_point((P_GR_POINT) &text_box.x0, cp, fob);
+            gr_map_point_front_or_back((P_GR_POINT) &text_box.x0, cp, front_phase);
 
         text_box.x1 = text_box.x0 + available_width_mp; /* text covers 1..step categories */
-        text_box.y1 = text_box.y0 + textstyle.height;
+        text_box.y1 = text_box.y0 + textstyle.size_y;
 
-        status_break(status = gr_diag_text_new(cp->core.p_gr_diag, NULL, id, &text_box, cv.data.text, &textstyle));
+        status_break(status = gr_chart_text_new(cp, id, &text_box, ustr_bptr(cv.data.text), &textstyle));
     }
 
     gr_riscdiag_host_font_dispose(&host_font);
 
-    gr_diag_group_end(cp->core.p_gr_diag, &labelStart);
+    gr_chart_group_end(cp, &labelStart);
 
     return(status);
 }
@@ -673,15 +667,14 @@ gr_axis_addin_category_ticks(
     _In_        GR_CHART_OBJID id /*may mutate*/,
     _In_        GR_POINT_NO total_n_points /*may mutate*/,
     _In_        GR_PIXIT axis_ypos /*may mutate*/,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major)
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_ticks)
 {
     const GR_AXES_IDX axes_idx = 0;
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_ticks ? &p_axis->major : &p_axis->minor;
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_DIAG_OFFSET tickStart;
     GR_POINT_NO point;
     int step;
@@ -689,14 +682,14 @@ gr_axis_addin_category_ticks(
     GR_LINESTYLE linestyle;
     BOOL doing_line_chart = (cp->axes[0].chart_type == GR_CHART_TYPE_LINE);
 
-    step = (int) ticksp->current;
+    step = (int) p_axis_ticks->current;
     if(!step)
         return(status);
 
-    if(0 == gr_axis_ticksizes(cp, ticksp, &ticksize_top, &ticksize_bottom))
+    if(0 == gr_axis_ticksizes(cp, p_axis_ticks, &ticksize_top, &ticksize_bottom))
         return(status);
 
-    if(!major)
+    if(!major_ticks)
     {
         ticksize_top    /= 2;
         ticksize_bottom /= 2;
@@ -705,7 +698,7 @@ gr_axis_addin_category_ticks(
     axis_ypos -= ticksize_bottom;
     ticksize = ticksize_top + ticksize_bottom;
 
-    gr_chart_objid_from_axis_tick(&id, major);
+    gr_chart_objid_from_axis_tick(&id, major_ticks);
 
     status_return(gr_chart_group_new(cp, &tickStart, id));
 
@@ -732,15 +725,15 @@ gr_axis_addin_category_ticks(
 
         /* map to front or back of 3-D world */
         if(cp->d3.bits.use)
-            gr_map_point((P_GR_POINT) &line_box.x0, cp, fob);
+            gr_map_point_front_or_back((P_GR_POINT) &line_box.x0, cp, front_phase);
 
         line_box.x1  = line_box.x0;
         line_box.y1  = line_box.y0 + ticksize;
 
-        status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+        status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &tickStart);
+    gr_chart_group_end(cp, &tickStart);
 
     return(status);
 }
@@ -756,32 +749,31 @@ extern STATUS
 gr_axis_addin_category(
     _ChartRef_  P_GR_CHART cp,
     _InVal_     GR_POINT_NO total_n_points,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
     const GR_AXES_IDX axes_idx = 0;
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_DIAG_OFFSET axisStart;
     GR_PIXIT axis_ypos;
     BOOL draw_main;
     GR_CHART_OBJID id;
 
-    switch(p_axis->bits.lzr)
+    switch(p_axis->bits.lzr /*bzt for category axis*/)
     {
-    case GR_AXIS_POSITION_TOP:
+    case GR_AXIS_POSITION_BZT_TOP:
         axis_ypos = cp->plotarea.size.y;
         break;
 
-    case GR_AXIS_POSITION_ZERO:
+    case GR_AXIS_POSITION_BZT_ZERO:
         axis_ypos = (GR_PIXIT) ((F64) cp->plotarea.size.y *
                                 cp->axes[axes_idx].axis[Y_AXIS_IDX].zero_frac); /*NB*/
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case GR_AXIS_POSITION_BOTTOM:
+    case GR_AXIS_POSITION_BZT_BOTTOM:
 #endif
         axis_ypos = 0;
         break;
@@ -789,14 +781,9 @@ gr_axis_addin_category(
 
     switch(p_axis->bits.arf)
     {
-    case GR_AXIS_POSITION_FRONT:
-    atfront:;
-        draw_main = (front == 1);
-        break;
-
     default: default_unhandled();
 #if CHECKING
-    case GR_AXIS_POSITION_AUTO:
+    case GR_AXIS_POSITION_ARF_AUTO:
 #endif
         if(cp->d3.bits.use)
             if(axis_ypos != cp->plotarea.size.y)
@@ -804,8 +791,13 @@ gr_axis_addin_category(
 
         /*FALLTHRU*/
 
-    case GR_AXIS_POSITION_REAR:
-        draw_main = (front == 0);
+    case GR_AXIS_POSITION_ARF_REAR:
+        draw_main = !front_phase;
+        break;
+
+    case GR_AXIS_POSITION_ARF_FRONT:
+    atfront:;
+        draw_main = front_phase;
         break;
     }
 
@@ -814,10 +806,10 @@ gr_axis_addin_category(
     status_return(gr_chart_group_new(cp, &axisStart, id));
 
     /* minor grids */
-    status_return(gr_axis_addin_category_grids(cp, id, total_n_points, axis_ypos, front, 0));
+    status_return(gr_axis_addin_category_grids(cp, id, total_n_points, axis_ypos, front_phase, FALSE));
 
     /* major grids */
-    status_return(gr_axis_addin_category_grids(cp, id, total_n_points, axis_ypos, front, 1));
+    status_return(gr_axis_addin_category_grids(cp, id, total_n_points, axis_ypos, front_phase, TRUE));
 
     if(draw_main)
     {
@@ -835,39 +827,39 @@ gr_axis_addin_category(
 
         /* map to front or back of 3-D world */
         if(cp->d3.bits.use)
-            gr_map_point((P_GR_POINT) &line_box.x0, cp, fob);
+            gr_map_point_front_or_back((P_GR_POINT) &line_box.x0, cp, front_phase);
 
         line_box.x1  = line_box.x0 + cp->plotarea.size.x;
         line_box.y1  = line_box.y0;
 
         gr_chart_objid_linestyle_query(cp, id, &linestyle);
 
-        status_return(gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+        status_return(gr_chart_line_new(cp, id, &line_box, &linestyle));
         } /*block*/
 
         /* minor ticks */
-        status_return(gr_axis_addin_category_ticks(cp, id, total_n_points, axis_ypos, front, 0));
+        status_return(gr_axis_addin_category_ticks(cp, id, total_n_points, axis_ypos, front_phase, FALSE));
 
         /* major ticks */
-        status_return(gr_axis_addin_category_ticks(cp, id, total_n_points, axis_ypos, front, 1));
+        status_return(gr_axis_addin_category_ticks(cp, id, total_n_points, axis_ypos, front_phase, TRUE));
 
         /* labels */
-        status_return(gr_axis_addin_category_labels(cp, id, total_n_points, axis_ypos, front));
+        status_return(gr_axis_addin_category_labels(cp, id, total_n_points, axis_ypos, front_phase));
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &axisStart);
+    gr_chart_group_end(cp, &axisStart);
 
     return(status);
 }
 
 /******************************************************************************
 *
-* value X & Y axes
+* value x-axis & y-axis
 *
 ******************************************************************************/
 
 /*
-value X axis - major and minor grids
+value x-axis - major and minor grids
 */
 
 _Check_return_
@@ -877,12 +869,12 @@ gr_axis_addin_value_grids_x(
     _In_        GR_CHART_OBJID id /*may mutate*/,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_PIXIT axis_ypos,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major)
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_grids)
 {
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_grids ? &p_axis->major : &p_axis->minor;
     STATUS status = STATUS_OK;
     GR_AXIS_ITERATOR gr_axis_iterator;
     STATUS loop;
@@ -891,53 +883,53 @@ gr_axis_addin_value_grids_x(
 
     IGNOREPARM_InVal_(axis_ypos);
 
-    if(!ticksp->bits.grid)
+    if(!p_axis_ticks->bits.grid)
         return(status);
 
-    gr_axis_iterator.step = ticksp->current;
+    gr_axis_iterator.step = p_axis_ticks->current;
     if(!gr_axis_iterator.step)
         return(status);
 
-    if(front)
+    if(front_phase)
     {
         switch(p_axis->bits.arf)
         {
-        case GR_AXIS_POSITION_FRONT:
-            break;
-
         default: default_unhandled();
 #if CHECKING
-        case GR_AXIS_POSITION_AUTO:
-        case GR_AXIS_POSITION_REAR:
+        case GR_AXIS_POSITION_ARF_AUTO:
+        case GR_AXIS_POSITION_ARF_REAR:
 #endif
             return(status);
+
+        case GR_AXIS_POSITION_ARF_FRONT:
+            break;
         }
     }
     else
     {
         switch(p_axis->bits.arf)
         {
-        case GR_AXIS_POSITION_FRONT:
-            return(status);
-
         default: default_unhandled();
 #if CHECKING
-        case GR_AXIS_POSITION_AUTO:
-        case GR_AXIS_POSITION_REAR:
+        case GR_AXIS_POSITION_ARF_AUTO:
+        case GR_AXIS_POSITION_ARF_REAR:
 #endif
             break;
+
+        case GR_AXIS_POSITION_ARF_FRONT:
+            return(status);
         }
     }
 
-    gr_chart_objid_from_axis_grid(&id, major);
+    gr_chart_objid_from_axis_grid(&id, major_grids);
 
     status_return(gr_chart_group_new(cp, &gridStart, id));
 
     gr_chart_objid_linestyle_query(cp, id, &linestyle);
 
-    for(loop = gr_axis_iterator_first(p_axis, major, &gr_axis_iterator);
+    for(loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
         loop;
-        loop = gr_axis_iterator_next( p_axis, major, &gr_axis_iterator))
+        loop = gr_axis_iterator_next( p_axis, &gr_axis_iterator, major_grids))
     {
         GR_PIXIT x_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
         GR_BOX line_box;
@@ -952,16 +944,16 @@ gr_axis_addin_value_grids_x(
         line_box.x1  = line_box.x0;
         line_box.y1  = line_box.y0 + cp->plotarea.size.y;
 
-        status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+        status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &gridStart);
+    gr_chart_group_end(cp, &gridStart);
 
     return(status);
 }
 
 /*
-value Y axis - major and minor grids
+value y-axis - major and minor grids
 */
 
 _Check_return_
@@ -971,43 +963,42 @@ gr_axis_addin_value_grids_y(
     _In_        GR_CHART_OBJID id /*may mutate*/,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_PIXIT axis_xpos,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major)
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_grids)
 {
     const GR_AXIS_IDX axis_idx = Y_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_grids ? &p_axis->major : &p_axis->minor;
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_DIAG_OFFSET gridStart;
     GR_AXIS_ITERATOR gr_axis_iterator;
     STATUS loop;
     GR_LINESTYLE linestyle;
     BOOL draw_main;
 
-    if(!ticksp->bits.grid)
+    if(!p_axis_ticks->bits.grid)
         return(status);
 
-    gr_axis_iterator.step = ticksp->current;
+    gr_axis_iterator.step = p_axis_ticks->current;
     if(!gr_axis_iterator.step)
         return(status);
 
-    if(front)
+    if(front_phase)
     {
         switch(p_axis->bits.arf)
         {
         default: default_unhandled();
 #if CHECKING
-        case GR_AXIS_POSITION_AUTO:
+        case GR_AXIS_POSITION_ARF_AUTO:
 #endif
             return(status);
 
-        case GR_AXIS_POSITION_FRONT:
+        case GR_AXIS_POSITION_ARF_REAR:
+            return(status);
+
+        case GR_AXIS_POSITION_ARF_FRONT:
             draw_main = 1;
             break;
-
-        case GR_AXIS_POSITION_REAR:
-            return(status);
         }
     }
     else
@@ -1022,30 +1013,30 @@ gr_axis_addin_value_grids_y(
         {
         default: default_unhandled();
 #if CHECKING
-        case GR_AXIS_POSITION_AUTO:
+        case GR_AXIS_POSITION_ARF_AUTO:
 #endif
             draw_main = 1;
             break;
 
-        case GR_AXIS_POSITION_FRONT:
-            return(status);
-
-        case GR_AXIS_POSITION_REAR:
+        case GR_AXIS_POSITION_ARF_REAR:
             draw_main = 1;
             break;
+
+        case GR_AXIS_POSITION_ARF_FRONT:
+            return(status);
         }
 #endif
     }
 
-    gr_chart_objid_from_axis_grid(&id, major);
+    gr_chart_objid_from_axis_grid(&id, major_grids);
 
     status_return(gr_chart_group_new(cp, &gridStart, id));
 
     gr_chart_objid_linestyle_query(cp, id, &linestyle);
 
-    for(loop = gr_axis_iterator_first(p_axis, major, &gr_axis_iterator);
+    for(loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
         loop;
-        loop = gr_axis_iterator_next( p_axis, major, &gr_axis_iterator))
+        loop = gr_axis_iterator_next( p_axis, &gr_axis_iterator, major_grids))
     {
         GR_PIXIT y_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
         GR_BOX line_box;
@@ -1062,13 +1053,15 @@ gr_axis_addin_value_grids_y(
             line_box.x1  = line_box.x0 + cp->plotarea.size.x;
             line_box.y1  = line_box.y0;
 
-            /* map together to front or back of 3-D world */
-            gr_map_point((P_GR_POINT) &line_box.x0, cp, fob);
-            gr_map_point((P_GR_POINT) &line_box.x1, cp, fob);
+            if(cp->d3.bits.use)
+            {   /* map together to front or back of 3-D world */
+                gr_map_point_front_or_back((P_GR_POINT) &line_box.x0, cp, front_phase);
+                gr_map_point_front_or_back((P_GR_POINT) &line_box.x1, cp, front_phase);
+            }
 
-            status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+            status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
 
-            if(cp->d3.bits.use && front)
+            if(cp->d3.bits.use && front_phase)
             {
                 /* grid lines across front of right hand side ONLY DURING THE FRONT PHASE */
 
@@ -1081,11 +1074,11 @@ gr_axis_addin_value_grids_y(
                 /* put one to the front and one to the back */
                 gr_map_box_front_and_back(&line_box, cp);
 
-                status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
             }
         }
 
-        if(cp->d3.bits.use && !front)
+        if(cp->d3.bits.use && !front_phase)
         {
             /* grid lines across midplane and side wall ONLY DURING THE REAR PHASE */
             line_box.x0  = 0;
@@ -1097,7 +1090,7 @@ gr_axis_addin_value_grids_y(
             /* put one to the front and one to the back */
             gr_map_box_front_and_back(&line_box, cp);
 
-            status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+            status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
 
             if((axis_xpos != 0) && (axis_xpos != cp->plotarea.size.x))
             {
@@ -1105,18 +1098,18 @@ gr_axis_addin_value_grids_y(
                 line_box.x0 += axis_xpos;
                 line_box.x1 += axis_xpos;
 
-                status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+                status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
             }
         }
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &gridStart);
+    gr_chart_group_end(cp, &gridStart);
 
     return(status);
 }
 
 /*
-value X axis - labels next to ticks
+value x-axis - labels next to ticks
 */
 
 _Check_return_
@@ -1126,12 +1119,12 @@ gr_axis_addin_value_labels_x(
     _InVal_     GR_CHART_OBJID id,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_PIXIT axis_ypos,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
-    const BOOL major = 1;
+    const BOOL major_ticks = TRUE;
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = &p_axis->major;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = &p_axis->major;
     STATUS status = STATUS_OK;
     GR_DIAG_OFFSET labelStart;
     GR_AXIS_ITERATOR gr_axis_iterator;
@@ -1142,27 +1135,27 @@ gr_axis_addin_value_labels_x(
     HOST_FONT host_font;
     F64 maxval;
 
-    IGNOREPARM_InVal_(front);
+    IGNOREPARM_InVal_(front_phase);
 
-    gr_axis_iterator.step = ticksp->current;
+    gr_axis_iterator.step = p_axis_ticks->current;
     if(!gr_axis_iterator.step)
         return(status);
 
     status_return(gr_chart_group_new(cp, &labelStart, id));
 
-    (void) gr_axis_ticksizes(cp, ticksp, &ticksize_top, &ticksize_bottom);
+    (void) gr_axis_ticksizes(cp, p_axis_ticks, &ticksize_top, &ticksize_bottom);
 
     gr_chart_objid_textstyle_query(cp, id, &textstyle);
 
     host_font = gr_riscdiag_host_font_from_textstyle(&textstyle);
 
-    gr_axis_iterator_last(p_axis, major, &gr_axis_iterator);
+    gr_axis_iterator_last(p_axis, &gr_axis_iterator);
     maxval = gr_axis_iterator.iter;
 
-    loop = gr_axis_iterator_first(p_axis, major, &gr_axis_iterator);
-    gr_numtonumstr_init(&gr_axis_iterator.iter, &maxval, ticksp->bits.decimals);
+    loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
+    gr_numtonumstr_init(&gr_axis_iterator.iter, &maxval, p_axis_ticks->bits.decimals);
 
-    for(; loop && status_ok(status); loop = gr_axis_iterator_next(p_axis, major, &gr_axis_iterator))
+    for(; loop && status_ok(status); loop = gr_axis_iterator_next(p_axis, &gr_axis_iterator, major_ticks))
     {
         GR_PIXIT x_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
         GR_BOX text_box;
@@ -1194,25 +1187,25 @@ gr_axis_addin_value_labels_x(
 
             if(text_box.x0 >= last_x1)
             {
-                switch(p_axis->bits.lzr)
+                switch(p_axis->bits.lzr /*bzt for category axis*/)
                 {
-                case GR_AXIS_POSITION_TOP:
+                case GR_AXIS_POSITION_BZT_TOP:
                     text_box.y0 += (3 * ticksize_top) / 2;
-                    text_box.y0 += (1 * UBF_UNPACK(GR_PIXIT, textstyle.height)) / 4; /* st. descenders don't crash into ticks */
+                    text_box.y0 += (1 * textstyle.size_y) / 4; /* st. descenders don't crash into ticks */
                     break;
 
                 default:
                     text_box.y0 -= (3 * ticksize_bottom) / 2;
-                    text_box.y0 -= (4 * UBF_UNPACK(GR_PIXIT, textstyle.height)) / 4; /* st. ascenders don't crash into ticks (SKS see above 25oct93) */
+                    text_box.y0 -= (4 * textstyle.size_y) / 4; /* st. ascenders don't crash into ticks (SKS see above 25oct93) */
                     break;
                 }
 
                 text_box.x1 = text_box.x0 + swidth_px;
-                text_box.y1 = text_box.y0 + textstyle.height;
+                text_box.y1 = text_box.y0 + textstyle.size_y;
 
-                last_x1 = text_box.x1 + (UBF_UNPACK(GR_PIXIT, textstyle.height) / 8);
+                last_x1 = text_box.x1 + (textstyle.size_y / 8);
 
-                status = gr_diag_text_new(cp->core.p_gr_diag, NULL, id, &text_box, cv.data.text, &textstyle);
+                status = gr_chart_text_new(cp, id, &text_box, ustr_bptr(cv.data.text), &textstyle);
             }
         }
 
@@ -1221,13 +1214,13 @@ gr_axis_addin_value_labels_x(
 
     gr_riscdiag_host_font_dispose(&host_font);
 
-    gr_diag_group_end(cp->core.p_gr_diag, &labelStart);
+    gr_chart_group_end(cp, &labelStart);
 
     return(status);
 }
 
 /*
-value Y axis - labels next to ticks
+value y-axis - labels next to ticks
 */
 
 _Check_return_
@@ -1237,14 +1230,13 @@ gr_axis_addin_value_labels_y(
     _InVal_     GR_CHART_OBJID id,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_PIXIT axis_xpos,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
-    const BOOL major = 1;
+    const BOOL major_ticks = TRUE;
     const GR_AXIS_IDX axis_idx = Y_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = &p_axis->major;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = &p_axis->major;
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_DIAG_OFFSET labelStart;
     GR_AXIS_ITERATOR gr_axis_iterator;
     STATUS loop;
@@ -1254,11 +1246,11 @@ gr_axis_addin_value_labels_y(
     HOST_FONT host_font;
     F64 maxval;
 
-    gr_axis_iterator.step = ticksp->current;
+    gr_axis_iterator.step = p_axis_ticks->current;
     if(!gr_axis_iterator.step)
         return(status);
 
-    (void) gr_axis_ticksizes(cp, ticksp, &ticksize_right, &ticksize_left); /* NB. order! */
+    (void) gr_axis_ticksizes(cp, p_axis_ticks, &ticksize_right, &ticksize_left); /* NB. order! */
 
     status_return(gr_chart_group_new(cp, &labelStart, id));
 
@@ -1272,13 +1264,13 @@ gr_axis_addin_value_labels_y(
     spacewidth_px = swidth_mp / GR_MILLIPOINTS_PER_PIXIT;
     } /*block*/
 
-    gr_axis_iterator_last(p_axis, major, &gr_axis_iterator);
+    gr_axis_iterator_last(p_axis, &gr_axis_iterator);
     maxval = gr_axis_iterator.iter;
 
-    loop = gr_axis_iterator_first(p_axis, major, &gr_axis_iterator);
-    gr_numtonumstr_init(&gr_axis_iterator.iter, &maxval, ticksp->bits.decimals);
+    loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
+    gr_numtonumstr_init(&gr_axis_iterator.iter, &maxval, p_axis_ticks->bits.decimals);
 
-    for(; loop && status_ok(status); loop = gr_axis_iterator_next(p_axis, major, &gr_axis_iterator))
+    for(; loop && status_ok(status); loop = gr_axis_iterator_next(p_axis, &gr_axis_iterator, major_ticks))
     {
         GR_PIXIT y_pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
         GR_BOX text_box;
@@ -1295,7 +1287,7 @@ gr_axis_addin_value_labels_y(
         text_box.x0 += cp->plotarea.posn.x;
         text_box.y0 += cp->plotarea.posn.y;
 
-        text_box.y0 -= (1 * UBF_UNPACK(GR_PIXIT, textstyle.height)) / 4; /* a vague attempt to centre the number on the tick */
+        text_box.y0 -= (1 * textstyle.size_y) / 4; /* a vague attempt to centre the number on the tick */
 
         if(text_box.y0 >= last_y1)
         {
@@ -1310,7 +1302,7 @@ gr_axis_addin_value_labels_y(
                 GR_PIXIT swidth_px = swidth_mp / GR_MILLIPOINTS_PER_PIXIT;
 
                 /* if axis at right then left just else right just */
-                if(p_axis->bits.lzr == GR_AXIS_POSITION_RIGHT)
+                if(p_axis->bits.lzr == GR_AXIS_POSITION_LZR_RIGHT)
                 {
                     text_box.x0 += ticksize_right;
                     if(!ticksize_right)
@@ -1328,15 +1320,15 @@ gr_axis_addin_value_labels_y(
 
                 /* map to front or back of 3-D world */
                 if(cp->d3.bits.use)
-                    gr_map_point((P_GR_POINT) &text_box.x0, cp, fob);
+                    gr_map_point_front_or_back((P_GR_POINT) &text_box.x0, cp, front_phase);
 
                 text_box.x1 = text_box.x0 + swidth_px;
-                text_box.y1 = text_box.y0 + textstyle.height;
+                text_box.y1 = text_box.y0 + textstyle.size_y;
 
                 /* use standard 120% line spacing as guide */
-                last_y1 = text_box.y1 + (2 * UBF_UNPACK(GR_PIXIT, textstyle.height)) / 10;
+                last_y1 = text_box.y1 + (2 * textstyle.size_y) / 10;
 
-                status = gr_diag_text_new(cp->core.p_gr_diag, NULL, id, &text_box, cv.data.text, &textstyle);
+                status = gr_chart_text_new(cp, id, &text_box, ustr_bptr(cv.data.text), &textstyle);
             }
         }
 
@@ -1345,13 +1337,13 @@ gr_axis_addin_value_labels_y(
 
     gr_riscdiag_host_font_dispose(&host_font);
 
-    gr_diag_group_end(cp->core.p_gr_diag, &labelStart);
+    gr_chart_group_end(cp, &labelStart);
 
     return(status);
 }
 
 /*
-value X & Y axis - major and minor ticks
+value x-axis & y-axis - major and minor ticks
 */
 
 _Check_return_
@@ -1362,33 +1354,32 @@ gr_axis_addin_value_ticks(
     _InVal_     GR_AXIS_IDX axis_idx,
     _In_        GR_CHART_OBJID id /*may mutate*/,
     _InRef_     PC_GR_POINT axis_pos,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major,
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_ticks,
     _InVal_     GR_PIXIT ticksize,
     _InVal_     BOOL doing_x)
 {
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_ticks ? &p_axis->major : &p_axis->minor;
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_AXIS_ITERATOR gr_axis_iterator;
     STATUS loop;
     GR_DIAG_OFFSET tickStart;
     GR_LINESTYLE linestyle;
 
-    gr_axis_iterator.step = ticksp->current;
+    gr_axis_iterator.step = p_axis_ticks->current;
     if(!gr_axis_iterator.step)
         return(status);
 
-    gr_chart_objid_from_axis_tick(&id, major);
+    gr_chart_objid_from_axis_tick(&id, major_ticks);
 
     status_return(gr_chart_group_new(cp, &tickStart, id));
 
     gr_chart_objid_linestyle_query(cp, id, &linestyle);
 
-    for(loop = gr_axis_iterator_first(p_axis, major, &gr_axis_iterator);
+    for(loop = gr_axis_iterator_first(p_axis, &gr_axis_iterator);
         loop;
-        loop = gr_axis_iterator_next( p_axis, major, &gr_axis_iterator))
+        loop = gr_axis_iterator_next( p_axis, &gr_axis_iterator, major_ticks))
     {
         GR_PIXIT pos = gr_value_pos(cp, axes_idx, axis_idx, &gr_axis_iterator.iter);
         GR_BOX line_box;
@@ -1401,7 +1392,7 @@ gr_axis_addin_value_ticks(
 
         /* map to front or back of 3-D world */
         if(cp->d3.bits.use)
-            gr_map_point((P_GR_POINT) &line_box.x0, cp, fob);
+            gr_map_point_front_or_back((P_GR_POINT) &line_box.x0, cp, front_phase);
 
         line_box.x1  = line_box.x0;
         line_box.y1  = line_box.y0;
@@ -1413,16 +1404,16 @@ gr_axis_addin_value_ticks(
             /* tick is horizontal */
             line_box.x1 += ticksize;
 
-        status_break(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle));
+        status_break(status = gr_chart_line_new(cp, id, &line_box, &linestyle));
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &tickStart);
+    gr_chart_group_end(cp, &tickStart);
 
     return(status);
 }
 
 /*
-value X axis - major and minor ticks
+value x-axis - major and minor ticks
 */
 
 _Check_return_
@@ -1432,21 +1423,21 @@ gr_axis_addin_value_ticks_x(
     _InVal_     GR_CHART_OBJID id,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_PIXIT axis_ypos,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major)
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_ticks)
 {
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_ticks ? &p_axis->major : &p_axis->minor;
     GR_POINT axis_pos;
     GR_PIXIT ticksize, ticksize_top, ticksize_bottom;
 
     ticksize = MIN(cp->plotarea.size.x, cp->plotarea.size.y) / TICKLEN_FRAC;
 
-    if(0 == gr_axis_ticksizes(cp, ticksp, &ticksize_top, &ticksize_bottom))
+    if(0 == gr_axis_ticksizes(cp, p_axis_ticks, &ticksize_top, &ticksize_bottom))
         return(STATUS_OK);
 
-    if(!major)
+    if(!major_ticks)
     {
         ticksize_top    /= 2;
         ticksize_bottom /= 2;
@@ -1455,11 +1446,11 @@ gr_axis_addin_value_ticks_x(
     axis_pos.y = axis_ypos - ticksize_bottom;
     ticksize = ticksize_top + ticksize_bottom;
 
-    return(gr_axis_addin_value_ticks(cp, axes_idx, axis_idx, id, &axis_pos, front, major, ticksize, TRUE /*doing_x*/));
+    return(gr_axis_addin_value_ticks(cp, axes_idx, axis_idx, id, &axis_pos, front_phase, major_ticks, ticksize, TRUE /*doing_x*/));
 }
 
 /*
-value Y axis - major and minor ticks
+value y-axis - major and minor ticks
 */
 
 _Check_return_
@@ -1469,19 +1460,19 @@ gr_axis_addin_value_ticks_y(
     _InVal_     GR_CHART_OBJID id,
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_PIXIT axis_xpos,
-    _InVal_     BOOL front,
-    _InVal_     BOOL major)
+    _InVal_     BOOL front_phase,
+    _InVal_     BOOL major_ticks)
 {
     const GR_AXIS_IDX axis_idx = Y_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
-    PC_GR_AXIS_TICKS ticksp = major ? &p_axis->major : &p_axis->minor;
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS_TICKS p_axis_ticks = major_ticks ? &p_axis->major : &p_axis->minor;
     GR_POINT axis_pos;
     GR_PIXIT ticksize, ticksize_left, ticksize_right;
 
-    if(0 == gr_axis_ticksizes(cp, ticksp, &ticksize_right, &ticksize_left)) /* NB. order! */
+    if(0 == gr_axis_ticksizes(cp, p_axis_ticks, &ticksize_right, &ticksize_left)) /* NB. order! */
         return(STATUS_OK);
 
-    if(!major)
+    if(!major_ticks)
     {
         ticksize_left  /= 2;
         ticksize_right /= 2;
@@ -1490,12 +1481,12 @@ gr_axis_addin_value_ticks_y(
     axis_pos.x = axis_xpos - ticksize_left;
     ticksize = ticksize_left + ticksize_right;
 
-    return(gr_axis_addin_value_ticks(cp, axes_idx, axis_idx, id, &axis_pos, front, major, ticksize, FALSE /*doing_x*/));
+    return(gr_axis_addin_value_ticks(cp, axes_idx, axis_idx, id, &axis_pos, front_phase, major_ticks, ticksize, FALSE /*doing_x*/));
 }
 
 /******************************************************************************
 *
-* value X axis
+* value x-axis
 *
 ******************************************************************************/
 
@@ -1504,30 +1495,30 @@ extern STATUS
 gr_axis_addin_value_x(
     _ChartRef_  P_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
     const GR_AXIS_IDX axis_idx = X_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
     STATUS status = STATUS_OK;
     GR_PIXIT axis_ypos;
     GR_DIAG_OFFSET axisStart;
     BOOL draw_main;
     GR_CHART_OBJID id;
 
-    switch(p_axis->bits.lzr)
+    switch(p_axis->bits.lzr /*bzt for x-axis*/)
     {
-    case GR_AXIS_POSITION_TOP:
+    case GR_AXIS_POSITION_BZT_TOP:
         axis_ypos = cp->plotarea.size.y;
         break;
 
-    case GR_AXIS_POSITION_ZERO:
+    case GR_AXIS_POSITION_BZT_ZERO:
         axis_ypos = (GR_PIXIT) ((F64) cp->plotarea.size.y *
                                 cp->axes[axes_idx].axis[Y_AXIS_IDX].zero_frac); /*NB*/
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case GR_AXIS_POSITION_LEFT:
+    case GR_AXIS_POSITION_BZT_BOTTOM:
 #endif
         axis_ypos = 0;
         break;
@@ -1539,16 +1530,16 @@ gr_axis_addin_value_x(
 
     switch(p_axis->bits.arf)
     {
-    case GR_AXIS_POSITION_FRONT:
-        draw_main = front;
-        break;
-
     default: default_unhandled();
 #if CHECKING
-    case GR_AXIS_POSITION_AUTO:
-    case GR_AXIS_POSITION_REAR:
+    case GR_AXIS_POSITION_ARF_AUTO:
+    case GR_AXIS_POSITION_ARF_REAR:
 #endif
-        draw_main = !front;
+        draw_main = !front_phase;
+        break;
+
+    case GR_AXIS_POSITION_ARF_FRONT:
+        draw_main = front_phase;
         break;
     }
 
@@ -1556,11 +1547,11 @@ gr_axis_addin_value_x(
 
     status_return(gr_chart_group_new(cp, &axisStart, id));
 
-    /* minor ticks */
-    status_return(gr_axis_addin_value_grids_x(cp, id, axes_idx, axis_ypos, front, 0));
+    /* minor grids */
+    status_return(gr_axis_addin_value_grids_x(cp, id, axes_idx, axis_ypos, front_phase, FALSE));
 
     /* major grids */
-    status_return(gr_axis_addin_value_grids_x(cp, id, axes_idx, axis_ypos, front, 1));
+    status_return(gr_axis_addin_value_grids_x(cp, id, axes_idx, axis_ypos, front_phase, TRUE));
 
     if(draw_main)
     {
@@ -1581,21 +1572,21 @@ gr_axis_addin_value_x(
 
         /* horizontal main axis line, minor ticks, major ticks, labels */
         ss_recog_context_push(&ss_recog_context);
-        if(status_ok(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle)))
-        if(status_ok(status = gr_axis_addin_value_ticks_x( cp, id, axes_idx, axis_ypos, front, 0)))
-        if(status_ok(status = gr_axis_addin_value_ticks_x( cp, id, axes_idx, axis_ypos, front, 1)))
-                     status = gr_axis_addin_value_labels_x(cp, id, axes_idx, axis_ypos, front);
+        if(status_ok(status = gr_chart_line_new(cp, id, &line_box, &linestyle)))
+        if(status_ok(status = gr_axis_addin_value_ticks_x( cp, id, axes_idx, axis_ypos, front_phase, FALSE)))
+        if(status_ok(status = gr_axis_addin_value_ticks_x( cp, id, axes_idx, axis_ypos, front_phase, TRUE)))
+                     status = gr_axis_addin_value_labels_x(cp, id, axes_idx, axis_ypos, front_phase);
         ss_recog_context_pull(&ss_recog_context);
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &axisStart);
+    gr_chart_group_end(cp, &axisStart);
 
     return(status);
 }
 
 /******************************************************************************
 *
-* value Y axis
+* value y-axis
 *
 ******************************************************************************/
 
@@ -1604,12 +1595,11 @@ extern STATUS
 gr_axis_addin_value_y(
     _ChartRef_  P_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
-    _InVal_     BOOL front)
+    _InVal_     BOOL front_phase)
 {
     const GR_AXIS_IDX axis_idx = Y_AXIS_IDX;
-    PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
+    const PC_GR_AXIS p_axis = &cp->axes[axes_idx].axis[axis_idx];
     STATUS status = STATUS_OK;
-    S32 /*GR_SERIES_NO*/ fob = (front ? 0 : cp->cache.n_contrib_series);
     GR_PIXIT axis_xpos;
     GR_DIAG_OFFSET axisStart;
     BOOL draw_main;
@@ -1617,18 +1607,18 @@ gr_axis_addin_value_y(
 
     switch(p_axis->bits.lzr)
     {
-    case GR_AXIS_POSITION_RIGHT:
+    case GR_AXIS_POSITION_LZR_RIGHT:
         axis_xpos = cp->plotarea.size.x;
         break;
 
-    case GR_AXIS_POSITION_ZERO:
+    case GR_AXIS_POSITION_LZR_ZERO:
         axis_xpos = (GR_PIXIT) ((F64) cp->plotarea.size.x *
                                 cp->axes[axes_idx].axis[X_AXIS_IDX].zero_frac); /*NB*/
         break;
 
     default: default_unhandled();
 #if CHECKING
-    case GR_AXIS_POSITION_LEFT:
+    case GR_AXIS_POSITION_LZR_LEFT:
 #endif
         axis_xpos = 0;
         break;
@@ -1638,14 +1628,9 @@ gr_axis_addin_value_y(
 
     switch(p_axis->bits.arf)
     {
-    case GR_AXIS_POSITION_FRONT:
-    atfront:;
-        draw_main = (front == 1);
-        break;
-
     default: default_unhandled();
 #if CHECKING
-    case GR_AXIS_POSITION_AUTO:
+    case GR_AXIS_POSITION_ARF_AUTO:
 #endif
         if(cp->d3.bits.use)
             if(axis_xpos != cp->plotarea.size.x)
@@ -1653,8 +1638,13 @@ gr_axis_addin_value_y(
 
         /*FALLTHRU*/
 
-    case GR_AXIS_POSITION_REAR:
-        draw_main = (front == 0);
+    case GR_AXIS_POSITION_ARF_REAR:
+        draw_main = !front_phase;
+        break;
+
+    case GR_AXIS_POSITION_ARF_FRONT:
+    atfront:;
+        draw_main = front_phase;
         break;
     }
 
@@ -1662,11 +1652,11 @@ gr_axis_addin_value_y(
 
     status_return(gr_chart_group_new(cp, &axisStart, id));
 
-    /* minor ticks */
-    status_return(gr_axis_addin_value_grids_y(cp, id, axes_idx, axis_xpos, front, 0));
+    /* minor grids */
+    status_return(gr_axis_addin_value_grids_y(cp, id, axes_idx, axis_xpos, front_phase, FALSE));
 
     /* major grids */
-    status_return(gr_axis_addin_value_grids_y(cp, id, axes_idx, axis_xpos, front, 1));
+    status_return(gr_axis_addin_value_grids_y(cp, id, axes_idx, axis_xpos, front_phase, TRUE));
 
     if(draw_main)
     {
@@ -1682,7 +1672,7 @@ gr_axis_addin_value_y(
 
         /* map to front or back of 3-D world */
         if(cp->d3.bits.use)
-            gr_map_point((P_GR_POINT) &line_box.x0, cp, fob);
+            gr_map_point_front_or_back((P_GR_POINT) &line_box.x0, cp, front_phase);
 
         line_box.x1 = line_box.x0;
         line_box.y1 = line_box.y0 + cp->plotarea.size.y;
@@ -1691,14 +1681,14 @@ gr_axis_addin_value_y(
 
         /* vertical main axis line, minor ticks, major ticks, labels */
         ss_recog_context_push(&ss_recog_context);
-        if(status_ok(status = gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &line_box, &linestyle)))
-        if(status_ok(status = gr_axis_addin_value_ticks_y( cp, id, axes_idx, axis_xpos, front, 0)))
-        if(status_ok(status = gr_axis_addin_value_ticks_y( cp, id, axes_idx, axis_xpos, front, 1)))
-                     status = gr_axis_addin_value_labels_y(cp, id, axes_idx, axis_xpos, front);
+        if(status_ok(status = gr_chart_line_new(cp, id, &line_box, &linestyle)))
+        if(status_ok(status = gr_axis_addin_value_ticks_y( cp, id, axes_idx, axis_xpos, front_phase, FALSE)))
+        if(status_ok(status = gr_axis_addin_value_ticks_y( cp, id, axes_idx, axis_xpos, front_phase, TRUE)))
+                     status = gr_axis_addin_value_labels_y(cp, id, axes_idx, axis_xpos, front_phase);
         ss_recog_context_pull(&ss_recog_context);
     }
 
-    gr_diag_group_end(cp->core.p_gr_diag, &axisStart);
+    gr_chart_group_end(cp, &axisStart);
 
     return(status);
 }

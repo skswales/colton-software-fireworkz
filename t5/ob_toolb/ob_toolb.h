@@ -38,14 +38,14 @@ internal types
 typedef struct T5_TOOLBAR_REQUESTED_TOOL_DESC
 {
     /*IN*/
-    TCHARZ name[BUF_MAX_T5_TOOLBAR_NAME];
+    UCHARZ name[BUF_MAX_T5_TOOLBAR_NAME];
     U8 row;
 }
 T5_TOOLBAR_REQUESTED_TOOL_DESC /*, * P_T5_TOOLBAR_REQUESTED_TOOL_DESC*/; typedef const T5_TOOLBAR_REQUESTED_TOOL_DESC * PC_T5_TOOLBAR_REQUESTED_TOOL_DESC;
 
 /*typedef struct T5_TOOLBAR_DISALLOWED_TOOL_DESC
 {
-    TCHARZ name[BUF_MAX_T5_TOOLBAR_NAME];
+    UCHARZ name[BUF_MAX_T5_TOOLBAR_NAME];
 }
 T5_TOOLBAR_DISALLOWED_TOOL_DESC, * P_T5_TOOLBAR_DISALLOWED_TOOL_DESC;*/
 
@@ -100,9 +100,9 @@ toolbar_register_wndclass(void);
 extern void
 execute_tool(
     _DocuRef_   P_DOCU p_docu,
-    _ViewRef_   P_VIEW p_view,
+    _ViewRef_maybenone_ P_VIEW p_view,
     _InRef_     PC_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc,
-    _InVal_     BOOL right_button);
+    _InVal_     BOOL alternate);
 
 #if WINDOWS
 

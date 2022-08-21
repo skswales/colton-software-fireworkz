@@ -171,8 +171,8 @@ typedef struct GR_TEXTSTYLE
 {
     GR_COLOUR fg;
 
-    UBF width : 16;
-    UBF height : 16;
+    PIXIT size_x;
+    PIXIT size_y;
 
     UBF bold : 1;
     UBF italic : 1;
@@ -240,19 +240,17 @@ object 'names'
 #define GR_DIAG_OBJTYPE_LINE          3U
 #define GR_DIAG_OBJTYPE_RECTANGLE     4U
 #define GR_DIAG_OBJTYPE_PIESECTOR     5U
-#define GR_DIAG_OBJTYPE_was_MARKER    6U
+#define GR_DIAG_OBJTYPE_QUADRILATERAL 6U
 #define GR_DIAG_OBJTYPE_PICTURE       7U
-#define GR_DIAG_OBJTYPE_PARALLELOGRAM 8U
-#define GR_DIAG_OBJTYPE_TRAPEZOID     9U
 
 typedef U32 GR_DIAG_OBJTYPE;
 
 #define GR_DIAG_OBJHDR_DEF    \
     GR_DIAG_OBJTYPE    type;  \
-    U32                size;  \
+    U32                n_bytes; \
     GR_BOX             bbox;  \
     GR_DIAG_OBJID_T    objid; \
-    DRAW_DIAG_OFFSET   sys_off /* offset in system-dependent (actually both are Drawfile) representation of corresponding object */
+    DRAW_DIAG_OFFSET   sys_off /* offset in system-dependent (actually RISC OS and Windows both use Drawfile) representation of corresponding object */
 
 #define DIAG_OBJHDR(__base_type, pObject, field) ( \
     (__base_type *) ((P_U8) (pObject) + offsetof32(GR_DIAG_OBJHDR, field)))
@@ -273,7 +271,7 @@ groups are simply encapulators
 typedef struct GR_DIAG_OBJGROUP
 {
     GR_DIAG_OBJHDR_DEF;
-    TCHARZ name[12];
+    /*TCHARZ name[12];*/
 }
 GR_DIAG_OBJGROUP;
 
@@ -294,66 +292,56 @@ GR_DIAG_POSOBJHDR;
 typedef struct GR_DIAG_OBJLINE
 {
     GR_DIAG_POSOBJHDR_DEF;
-    GR_SIZE d;
+    GR_POINT offset;
     GR_LINESTYLE linestyle;
 }
 GR_DIAG_OBJLINE;
 
-typedef struct GR_DIAG_OBJRECTANGLE
-{
-    GR_DIAG_POSOBJHDR_DEF;
-    GR_SIZE wid_hei;
-    GR_LINESTYLE linestyle;
-    GR_FILLSTYLEC fillstylec;
-}
-GR_DIAG_OBJRECTANGLE;
-
-typedef struct GR_DIAG_OBJPARALLELOGRAM
-{
-    GR_DIAG_POSOBJHDR_DEF; /* pos == BL */
-    GR_POINT offset_BR;
-    GR_POINT offset_TR;
-    GR_LINESTYLE linestyle;
-    GR_FILLSTYLEC fillstylec;
-}
-GR_DIAG_OBJPARALLELOGRAM;
-
-typedef struct GR_DIAG_OBJTRAPEZOID
-{
-    GR_DIAG_POSOBJHDR_DEF; /* pos == BL */
-    GR_POINT offset_BR;
-    GR_POINT offset_TR;
-    GR_POINT offset_TL;
-    GR_LINESTYLE linestyle;
-    GR_FILLSTYLEC fillstylec;
-}
-GR_DIAG_OBJTRAPEZOID;
-
 typedef struct GR_DIAG_OBJPIESECTOR
 {
     GR_DIAG_POSOBJHDR_DEF;
-    GR_PIXIT     radius;
-    F64          alpha, beta;
+    GR_PIXIT radius;
+    F64 alpha, beta;
     GR_LINESTYLE linestyle;
     GR_FILLSTYLEC fillstylec;
-    GR_POINT     p0, p1;
+    GR_POINT p0, p1;
 }
 GR_DIAG_OBJPIESECTOR;
 
 typedef struct GR_DIAG_OBJPICTURE
 {
     GR_DIAG_POSOBJHDR_DEF;
-    GR_SIZE wid_hei;
-    GR_CACHE_HANDLE picture;
+    GR_SIZE size;
+    IMAGE_CACHE_HANDLE picture;
     GR_FILLSTYLEB fillstyleb;
     GR_FILLSTYLEC fillstylec;
 }
 GR_DIAG_OBJPICTURE;
 
+typedef struct GR_DIAG_OBJQUADRILATERAL
+{
+    GR_DIAG_POSOBJHDR_DEF; /* pos == BL */
+    GR_POINT offset1;
+    GR_POINT offset2;
+    GR_POINT offset3;
+    GR_LINESTYLE linestyle;
+    GR_FILLSTYLEC fillstylec;
+}
+GR_DIAG_OBJQUADRILATERAL;
+
+typedef struct GR_DIAG_OBJRECTANGLE
+{
+    GR_DIAG_POSOBJHDR_DEF;
+    GR_SIZE size;
+    GR_LINESTYLE linestyle;
+    GR_FILLSTYLEC fillstylec;
+}
+GR_DIAG_OBJRECTANGLE;
+
 typedef struct GR_DIAG_OBJTEXT
 {
     GR_DIAG_POSOBJHDR_DEF;
-    GR_SIZE wid_hei;
+    GR_SIZE size;
     GR_TEXTSTYLE textstyle;
 
     /* data stored in here */
@@ -408,7 +396,8 @@ gr_diag_line_new(
     _InoutRef_  P_GR_DIAG p_gr_diag,
     _Out_opt_   P_GR_DIAG_OFFSET pObjectStart,
     _InVal_     GR_DIAG_OBJID_T objid,
-    _InRef_     PC_GR_BOX pBox,
+    _InRef_     PC_GR_POINT pPos,
+    _InRef_     PC_GR_POINT pOffset,
     _InRef_     PC_GR_LINESTYLE linestyle);
 
 _Check_return_
@@ -421,11 +410,11 @@ extern STATUS
 gr_diag_object_correlate_between(
     _InoutRef_  P_GR_DIAG p_gr_diag,
     _InRef_     PC_GR_POINT point,
-    _InRef_     PC_GR_POINT semimajor,
-    P_GR_DIAG_OFFSET pHitObject /*[]out*/,
+    _InRef_     PC_GR_SIZE size,
+    _Inout_updates_(recursion_limit) P_GR_DIAG_OFFSET pHitObject /*[]out*/,
+    _InVal_     U32 recursion_limit,
     _InVal_     GR_DIAG_OFFSET sttObject,
-    _InVal_     GR_DIAG_OFFSET endObject,
-    _InVal_     S32 recursionLimit);
+    _InVal_     GR_DIAG_OFFSET endObject);
 
 extern U32
 gr_diag_object_end(
@@ -479,9 +468,9 @@ gr_diag_parallelogram_new(
     _InoutRef_  P_GR_DIAG p_gr_diag,
     _Out_opt_   P_GR_DIAG_OFFSET pObjectStart,
     _InVal_     GR_DIAG_OBJID_T objid,
-    _InRef_     PC_GR_POINT pOriginBL,
-    _InRef_     PC_GR_POINT pOffsetBR,
-    _InRef_     PC_GR_POINT pOffsetTR,
+    _InRef_     PC_GR_POINT pPos,
+    _InRef_     PC_GR_POINT pOffset1,
+    _InRef_     PC_GR_POINT pOffset2,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec);
 
@@ -495,6 +484,19 @@ gr_diag_piesector_new(
     _InVal_     PIXIT radius,
     _InRef_     PC_F64 alpha,
     _InRef_     PC_F64 beta,
+    _InRef_     PC_GR_LINESTYLE linestyle,
+    _InRef_     PC_GR_FILLSTYLEC fillstylec);
+
+_Check_return_
+extern STATUS
+gr_diag_quadrilateral_new(
+    _InoutRef_  P_GR_DIAG p_gr_diag,
+    _Out_opt_   P_GR_DIAG_OFFSET pObjectStart,
+    _InVal_     GR_DIAG_OBJID_T objid,
+    _InRef_     PC_GR_POINT pPos,
+    _InRef_     PC_GR_POINT pOffset1,
+    _InRef_     PC_GR_POINT pOffset2,
+    _InRef_     PC_GR_POINT pOffset3,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec);
 
@@ -515,7 +517,7 @@ gr_diag_scaled_picture_add(
     _Out_opt_   P_GR_DIAG_OFFSET pObjectStart,
     _InVal_     GR_DIAG_OBJID_T objid,
     _InRef_     PC_GR_BOX pBox,
-    _InVal_     GR_CACHE_HANDLE picture,
+    _InVal_     IMAGE_CACHE_HANDLE picture,
     _InRef_     PC_GR_FILLSTYLEB fillstyleb,
     _InRef_opt_ PC_GR_FILLSTYLEC fillstylec);
 
@@ -528,19 +530,6 @@ gr_diag_text_new(
     _InRef_     PC_GR_BOX pBox,
     _In_z_      PC_USTR ustr,
     _InRef_     PC_GR_TEXTSTYLE textstyle);
-
-_Check_return_
-extern STATUS
-gr_diag_trapezoid_new(
-    _InoutRef_  P_GR_DIAG p_gr_diag,
-    _Out_opt_   P_GR_DIAG_OFFSET pObjectStart,
-    _InVal_     GR_DIAG_OBJID_T objid,
-    _InRef_     PC_GR_POINT pOriginBL,
-    _InRef_     PC_GR_POINT pOffsetBR,
-    _InRef_     PC_GR_POINT pOffsetTR,
-    _InRef_     PC_GR_POINT pOffsetTL,
-    _InRef_     PC_GR_LINESTYLE linestyle,
-    _InRef_     PC_GR_FILLSTYLEC fillstylec);
 
 /*
 end of exports from gr_diag.c

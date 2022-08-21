@@ -44,7 +44,7 @@ binary_read_byte(
     }
     else /* if(IP_INPUT_MEM == p_ip_format_input->state) */
     {
-        if(array_offset_valid(p_ip_format_input->mem.p_array_handle, p_ip_format_input->mem.array_offset))
+        if(array_offset_is_valid(p_ip_format_input->mem.p_array_handle, p_ip_format_input->mem.array_offset))
         {
             const U32 array_offset = p_ip_format_input->mem.array_offset++;
             return(*array_ptr32c(p_ip_format_input->mem.p_array_handle, U8, array_offset));
@@ -228,7 +228,8 @@ extern /*for ff_load*/ STATUS
 new_docno_using(
     _OutRef_    P_DOCNO p_docno,
     _In_z_      PCTSTR leafname, /* might not exist */
-    _InRef_     PC_DOCU_NAME p_docu_name /*copied*/);
+    _InRef_     PC_DOCU_NAME p_docu_name /*copied*/,
+    _InVal_     BOOL fReadOnly);
 
 _Check_return_
 extern /*for ff_load*/ STATUS

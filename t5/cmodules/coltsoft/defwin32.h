@@ -12,6 +12,10 @@
 #ifndef __def_win32_h
 #define __def_win32_h
 
+#if !defined(WINVER)
+#error WINVER not defined (try 0x0500)
+#endif
+
 /* Ensure that compiler switches are set correctly */
 
 /* -J switch to compiler defines this */
@@ -19,19 +23,19 @@
 #error  _CHAR_UNSIGNED must be set (use -J switch)
 #endif
 
-#ifndef WINVER
-#error WINVER not defined (try 0x0500)
+#if !defined(__CHAR_UNSIGNED__)
+#define      __CHAR_UNSIGNED__ 1
 #endif
 
-#ifndef __STDC_VERSION__
-#if _MSC_VER >= 1800 /* VS2103 */
+#if !defined(__STDC_VERSION__)
+#if _MSC_VER >= 1800 /* VS2013 or later */
 #define __STDC_VERSION__ 199901L /* MSVC is still not quite C99 but pretend that it is */
 #else
 #define __STDC_VERSION__ 0L /* MSVC is still not C99 */
 #endif
 #endif
 
-#if _MSC_VER > 1500 /* Needs VS2010 or later */
+#if _MSC_VER >= 1600 /* VS2010 or later */
 /* __func__ is defined */
 #else /* _MSC_VER */
 #define __func__ __FUNCTION__
@@ -45,38 +49,42 @@
 #define __Tfunc__ TEXT("__FUNCTION__")
 #endif
 
-#if __STDC_VERSION__ < 199901L
+#if _MSC_VER < 1800 /* < VS2013 */
 /* fix some functions that we use that MSVC < 2013 provides with non-C99 names but compatible API */
 #define copysign(_Number, _Sign)    _copysign(_Number, _Sign)
 #define isfinite(X)                 _finite(X)
 #define isnan(X)                    _isnan(X)
-#endif /* __STDC_VERSION__ */
+#endif /* _MSC_VER */
 
-#if defined(CODE_ANALYSIS)
-/* some functions we inline for arg type checking */
-#else
-/* let compiler intrinsics work */
-#define INTRINSIC_MEMCMP 1
-#define INTRINSIC_MEMCPY 1
-#define INTRINSIC_MEMSET 1
+#if defined(_PREFAST_)
+#ifndef CODE_ANALYSIS
+#define CODE_ANALYSIS 1
 #endif
+#elif defined(CODE_ANALYSIS) // && !defined(__INTELLISENSE__)
+#if _MSC_VER > 1500 /* > VS2008 */
+//#error To use CODE_ANALYSIS you must enable Code Analysis in the project's property page
+#define _PREFAST_ 1
+#endif /* _MSC_VER */
+#endif /* _PREFAST_ */
 
-#if defined(CODE_ANALYSIS) && 1
+#if defined(_PREFAST_)
+#if 1
 #define _PFT_SHOULD_CHECK_RETURN 1
 #endif
-
-#if defined(CODE_ANALYSIS) && 1
+#if 1
 #define _PFT_SHOULD_CHECK_RETURN_WAT 1
 #endif
+#endif /* _PREFAST_ */
 
-#if (defined(CODE_ANALYSIS) || 0) && 1
-/* Could allow sal.h to choose attribute or __declspec implementation - these override */
-#define _USE_DECLSPECS_FOR_SAL  0
-#define _USE_ATTRIBUTES_FOR_SAL 1
+#if (defined(_PREFAST_) || 0) && 0
+/* Allow sal.h to choose attribute or __declspec implementation */
+/* these permit override if needed */
+/*#define _USE_DECLSPECS_FOR_SAL  1*/
+/*#define _USE_ATTRIBUTES_FOR_SAL 0*/
 #elif 1
 /* Enable expansion of SAL macros in non-Code Analysis mode for API conformance checking */
-#define _USE_DECLSPECS_FOR_SAL  0
-#define _USE_ATTRIBUTES_FOR_SAL 1
+#define _USE_DECLSPECS_FOR_SAL  1
+#define _USE_ATTRIBUTES_FOR_SAL 0
 #else
 /* Usually disable expansion of SAL macros in non-Code Analysis mode to improve compiler throughput */
 #define _USE_DECLSPECS_FOR_SAL  0
@@ -87,28 +95,31 @@
 #pragma warning(disable:4820) /* 'x' bytes padding added after data member */
 
 #ifndef SAL_SUPP_H /* try to suppress inclusion as we get macro redefinition warnings when using Visual C++ 11.0 with the Windows 7.1 SDK */
-//#define SAL_SUPP_H 1
+/*#define SAL_SUPP_H 1*/
 #endif
 
-//#if !defined(__INTELLISENSE__) /* Google "Troubleshooting Tips for IntelliSense Slowness" */
+/*#if !defined(__INTELLISENSE__)*/ /* Google "Troubleshooting Tips for IntelliSense Slowness" */
 #include "sal.h"
-//#endif /* __INTELLISENSE__ (VS2012 package manager crashes - does this help?) */
+/*#endif*/ /* __INTELLISENSE__ */ /* (VS2012 package manager crashes - does this help?) */
 
 #pragma warning(pop)
 
-#if defined(__ANNOTATION)
-#define SAL_SUPP_H 1 /* try to suppress inclusion as we get macro redefinition warnings when using Visual C++ 12.0 with the Windows 7.1 SDK */
-#endif
+/* VC2012/2013/2015 2.0 SAL; VC2008 1.1 SAL; VC2005 1.0 SAL - sal.h is different across these so fix up differences */
 
-/* VC2012/2013 2.0 SAL; VC2008 1.1 SAL; VC2005 1.0 SAL - sal.h is different across these so fix up differences */
+#include "cmodules/coltsoft/ns-sal.h"
 
-#ifndef _In_reads_
-#include "cmodules/coltsoft/no-sal.h"
+#if defined(CODE_ANALYSIS)
+/* some functions we inline for arg type checking */
+#else
+/* let compiler intrinsics work */
+#define INTRINSIC_MEMCMP 1
+#define INTRINSIC_MEMCPY 1
+#define INTRINSIC_MEMSET 1
 #endif
 
 /* Now include (a limited set of) Windows header files */
 
-#if _MSC_VER >= 1500
+#if _MSC_VER >= 1500 /* VS2008 or later */
 #include "WinSDKVer.h"
 #endif
 
@@ -190,8 +201,7 @@ macros that ought to be in windows.h but aren't
 #else
 #error Oh come on! Define _WIN32_WINNT
 #endif
-// This value must be defined to handle the WM_MOUSEHWHEEL on
-// Windows 2000 and Windows XP, it will be defined in the Longhorn SDK
+// This value must be defined to handle the WM_MOUSEHWHEEL
 // NB it is now defined with _WIN32_WINNT >= 0x0600
 // WM_MOUSEHWHEEL messages MAY be emulated by IntelliType Pro
 // or IntelliPoint (if implemented in future versions).
@@ -215,6 +225,10 @@ shellapi.h must be included before windowsx.h for relevant message crackers
 /* void Cls_OnMouseLeave(HWND hwnd) */
 #define HANDLE_WM_MOUSELEAVE(hwnd, wParam, lParam, fn) \
     ((fn)((hwnd)), 0L)
+
+/* void Cls_OnThemeChanged(HWND hwnd)*/
+#define HANDLE_WM_THEMECHANGED(hwnd, wParam, lParam, fn) \
+    ((fn)(hwnd), 0L)
 
 /*
 * From the book Advanced Windows (Third Edition) by Jeffrey Richter:
@@ -263,9 +277,19 @@ Turn off various Level 4 warnings
 #endif
 #endif /* __cplusplus */
 
+/* Temporarily disable some VS2015 warnings */
+#if _MSC_VER >= 1900 /* VS2015 or later */
+#pragma warning(disable:4456) /* declaration of 'x' hides previous local declaration */
+#pragma warning(disable:4457) /* declaration of 'x' hides previous function parameter */
+#endif
+
 /* Temporarily disable some /analyze warnings */
-#pragma warning(disable:6246) /* Local declaration of 'x' hides declaration of the same name in outer scope. For additional information, see previous declaration at line 'y'  */
+#pragma warning(disable:6246) /* Local declaration of 'x' hides declaration of the same name in outer scope. For additional information, see previous declaration at line 'y' */
 #pragma warning(disable:6385) /* Invalid data: accessing 'argument 2', the readable size is 'x' bytes, but 'y' bytes might be read */
+
+#if !defined(__cplusplus)
+#define inline __inline /* for MSVC < C99 */
+#endif
 
 #endif /* __def_win32_h */
 

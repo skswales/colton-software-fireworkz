@@ -16,91 +16,91 @@
 static const T5_TOOLBAR_TOOL_DESC
 ss_tools[] =
 {
-    { TEXT("MAKE_TEXT"),
-        OBJECT_ID_SS, T5_CMD_SS_MAKE_TEXT,
-        OBJECT_ID_SS, SS_ID_BM_MAKE_TEXT, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MAKE_TEXT) },
-
-    { TEXT("MAKE_NUMBER"),
-        OBJECT_ID_SS, T5_CMD_SS_MAKE_NUMBER,
-        OBJECT_ID_SS, SS_ID_BM_MAKE_NUMBER, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MAKE_NUMBER) },
-
-    { TEXT("MAKE_CONSTANT"),
-        OBJECT_ID_SKEL, T5_CMD_SNAPSHOT,
-        OBJECT_ID_SS, SS_ID_BM_MAKE_CONSTANT, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MAKE_CONSTANT) },
-
-    { TEXT("PLUS"),
-        OBJECT_ID_SS, T5_CMD_SS_PLUS,
-        OBJECT_ID_SS, SS_ID_BM_PLUS, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_PLUS) },
-
-    { TEXT("MINUS"),
-        OBJECT_ID_SS, T5_CMD_SS_MINUS,
-        OBJECT_ID_SS, SS_ID_BM_MINUS, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MINUS) },
-
-    { TEXT("TIMES"),
-        OBJECT_ID_SS, T5_CMD_SS_TIMES,
-        OBJECT_ID_SS, SS_ID_BM_TIMES, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_TIMES) },
-
-    { TEXT("DIVIDE"),
-        OBJECT_ID_SS, T5_CMD_SS_DIVIDE,
-        OBJECT_ID_SS, SS_ID_BM_DIVIDE, 0,
-        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(SS_MSG_STATUS_DIVIDE) },
-
-    { TEXT("FILL_DOWN"),
+    { USTR_TEXT("FILL_DOWN"),
         OBJECT_ID_SS, T5_CMD_REPLICATE_DOWN,
-        OBJECT_ID_SS, SS_ID_BM_FILL_DN, 0,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_FILL_DN, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_FILL_DOWN), T5_CMD_REPLICATE_UP },
 
-    { TEXT("FILL_RIGHT"),
+    { USTR_TEXT("FILL_RIGHT"),
         OBJECT_ID_SS, T5_CMD_REPLICATE_RIGHT,
-        OBJECT_ID_SS, SS_ID_BM_FILL_RT, 0,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_FILL_RT, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_FILL_RIGHT), T5_CMD_REPLICATE_LEFT },
 
-    { TEXT("AUTO_SUM"),
+    { USTR_TEXT("MAKE_TEXT"),
+        OBJECT_ID_SS, T5_CMD_SS_MAKE_TEXT,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_MAKE_TEXT, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MAKE_TEXT) },
+
+    { USTR_TEXT("MAKE_NUMBER"),
+        OBJECT_ID_SS, T5_CMD_SS_MAKE_NUMBER,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_MAKE_NUMBER, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MAKE_NUMBER) },
+
+    { USTR_TEXT("MAKE_CONSTANT"),
+        OBJECT_ID_SKEL, T5_CMD_SNAPSHOT,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_MAKE_CONSTANT, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MAKE_CONSTANT) },
+
+    { USTR_TEXT("PLUS"),
+        OBJECT_ID_SS, T5_CMD_INSERT_OPERATOR_PLUS,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_PLUS, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_PLUS) },
+
+    { USTR_TEXT("MINUS"),
+        OBJECT_ID_SS, T5_CMD_INSERT_OPERATOR_MINUS,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_MINUS, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_MINUS) },
+
+    { USTR_TEXT("TIMES"),
+        OBJECT_ID_SS, T5_CMD_INSERT_OPERATOR_TIMES,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_TIMES, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_TIMES) },
+
+    { USTR_TEXT("DIVIDE"),
+        OBJECT_ID_SS, T5_CMD_INSERT_OPERATOR_DIVIDE,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_DIVIDE, 0,
+        { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
+        UI_TEXT_INIT_RESID(SS_MSG_STATUS_DIVIDE) },
+
+    { USTR_TEXT("AUTO_SUM"),
         OBJECT_ID_SS, T5_CMD_AUTO_SUM,
-        OBJECT_ID_SS, SS_ID_BM_AUTO_SUM, 0,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_AUTO_SUM, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_AUTO_SUM) },
 
-    { TEXT("CHART"),
+    { USTR_TEXT("CHART"),
         OBJECT_ID_CHART, T5_CMD_ACTIVATE_MENU_CHART,
-        OBJECT_ID_SS, SS_ID_BM_CHART, 0,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_CHART, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 1/*im*/ },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_CHART) },
 
-    { TEXT("FUNCTION"),
-        OBJECT_ID_SS, T5_CMD_ACTIVATE_MENU_FUNC,
-        OBJECT_ID_SS, SS_ID_BM_FUNCTION, 0,
+    { USTR_TEXT("FUNCTION"),
+        OBJECT_ID_SS, T5_CMD_ACTIVATE_MENU_FUNCTION_SELECTOR,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_FUNCTION, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 1/*im*/ },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_FORMULA_FUNCTION) },
 
-    { TEXT("FORMULA_CANCEL"),
+    { USTR_TEXT("FORMULA_CANCEL"),
         OBJECT_ID_SLE, T5_CMD_ESCAPE,
-        OBJECT_ID_SS, SS_ID_BM_FORM_CAN, 0,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_FORM_CAN, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_FORMULA_CANCEL) },
 
-    { TEXT("FORMULA_ENTER"),
+    { USTR_TEXT("FORMULA_ENTER"),
         OBJECT_ID_SLE, T5_CMD_RETURN,
-        OBJECT_ID_SS, SS_ID_BM_FORM_ENT, 0,
+        OBJECT_ID_SS, SS_ID_BM_TOOLBAR_FORM_ENT, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(SS_MSG_STATUS_FORMULA_ENTER) },
 
-    { TEXT("FORMULA_LINE"),
+    { USTR_TEXT("FORMULA_LINE"),
         OBJECT_ID_SS, T5_EVENT_NONE,
         OBJECT_ID_SS, 0, 0,
         { T5_TOOLBAR_TOOL_TYPE_USER, 0 },
@@ -121,29 +121,29 @@ ss_backcontrols_enable(
     t5_toolbar_tool_enable.enable_id = 0; /* very simple usage */
 
     t5_toolbar_tool_enable.enabled = (OBJECT_ID_CELLS == p_docu->focus_owner) && (0 != p_docu->mark_info_cells.h_markers);
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("FILL_RIGHT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("FILL_DOWN"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("FILL_RIGHT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("FILL_DOWN"));
 
     t5_toolbar_tool_enable.enabled = (OBJECT_ID_CELLS == p_docu->focus_owner) || (OBJECT_ID_SLE == p_docu->focus_owner);
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("AUTO_SUM"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("PLUS"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("MINUS"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("TIMES"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("DIVIDE"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("FUNCTION"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("AUTO_SUM"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("PLUS"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("MINUS"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("TIMES"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("DIVIDE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("FUNCTION"));
 
     t5_toolbar_tool_enable.enabled = (OBJECT_ID_CELLS == p_docu->focus_owner);
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("CHART"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("MAKE_TEXT"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("MAKE_NUMBER"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("MAKE_CONSTANT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("CHART"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("MAKE_TEXT"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("MAKE_NUMBER"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("MAKE_CONSTANT"));
 
     t5_toolbar_tool_enable.enabled = (OBJECT_ID_SLE == p_docu->focus_owner);
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("FORMULA_CANCEL"));
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("FORMULA_ENTER"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("FORMULA_CANCEL"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("FORMULA_ENTER"));
 
     t5_toolbar_tool_enable.enabled = (OBJECT_ID_CELLS == p_docu->focus_owner) || (OBJECT_ID_SLE == p_docu->focus_owner);
-    tool_enable(p_docu, &t5_toolbar_tool_enable, TEXT("FORMULA_LINE"));
+    tool_enable(p_docu, &t5_toolbar_tool_enable, USTR_TEXT("FORMULA_LINE"));
 
     return(STATUS_OK);
 }

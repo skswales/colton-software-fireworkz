@@ -1,9 +1,11 @@
-| Make_TS.oby - Fireworkz-Manuals
+| MakeRiscPkg.oby - Fireworkz-Manuals
+
+| Copyright (C) 2013-2016 Stuart Swales
 
 IfThere $.Temp Then Else %CDir $.Temp
 
 | Remember to update RiscPkg.Control too
-Set t5$Release 20151020
+Set t5$Release 201602xx
 
 Set t5$Disc $.Temp.FzManuals_<t5$Release>
 Set t5$Zip  $.Temp.FzManuals_<t5$Release>/zip
@@ -11,19 +13,29 @@ Set t5$Zip  $.Temp.FzManuals_<t5$Release>/zip
 X %Wipe <t5$Disc> ~cfr~v
 
 time
-echo Starting svn export - please be patient
-svn export svn://repos.croftnuisk.local/svn/fireworkz/branches/fireworkz__2_00__branch/docs <t5$Disc>
+echo Starting svn export (local) - please be patient
+Dir <Obey$Dir>.^
+svn export docs <t5$Disc>
+Back
 time
 
 cdir <t5$Disc>.Manuals
 cdir <t5$Disc>.Manuals.Fireworkz
 
 | Move the docs to where they are expected in the package
-rename <t5$Disc>.htmlhelp.html <t5$Disc>.Manuals.Fireworkz.USGuide
+rename <t5$Disc>.GSGuide.riscos  <t5$Disc>.Manuals.Fireworkz.GSGuide
+rename <t5$Disc>.htmlhelp.html   <t5$Disc>.Manuals.Fireworkz.USGuide
 
+| Get rid of everything else
+X %Wipe <t5$Disc>.GSGuide  ~cfr~v
 X %Wipe <t5$Disc>.htmlhelp ~cfr~v
+X %Wipe <t5$Disc>.Originals ~cfr~v
 
-settype <t5$Disc>.Manuals.Fireworkz.USGuide.index/htm FAF
+settype <t5$Disc>.Manuals.Fireworkz.GSGuide.gsgindex/htm &FAF
+|
+settype <t5$Disc>.Manuals.Fireworkz.USGuide.index/htm   &FAF
+settype <t5$Disc>.Manuals.Fireworkz.USGuide.frindex/htm &FAF
+settype <t5$Disc>.Manuals.Fireworkz.USGuide.usindex/htm &FAF
 
 | The one in RiscPkg is the useful one for these packaged docs
 delete <t5$Disc>.LICENSE

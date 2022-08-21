@@ -61,7 +61,7 @@ arg_alloc_ustr(
 #if CHECKING
     assert(!contains_inline(ustr_inline, n_bytes - 1));
 
-    if(!array_index_valid(p_h_args, arg_idx))
+    if(!array_index_is_valid(p_h_args, arg_idx))
     {
         myassert4(TEXT("arg_alloc_ustr: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return(status_nomem());
@@ -96,7 +96,7 @@ arg_alloc_tstr(
         tstr = tstr_empty_string;
 
 #if CHECKING
-    if(!array_offset_valid(p_h_args, arg_idx))
+    if(!array_offset_is_valid(p_h_args, arg_idx))
     {
         myassert4(TEXT("arg_alloc_tstr: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return(status_check());
@@ -132,7 +132,7 @@ arg_dispose(
         return;
 
 #if CHECKING
-    if(!array_offset_valid(p_h_args, arg_idx))
+    if(!array_offset_is_valid(p_h_args, arg_idx))
     {
         myassert4(TEXT("arg_dispose: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return;
@@ -187,7 +187,7 @@ arg_dispose_val(
         return;
 
 #if CHECKING
-    if(!array_offset_valid(p_h_args, arg_idx))
+    if(!array_offset_is_valid(p_h_args, arg_idx))
     {
         myassert4(TEXT("arg_dispose_val: arg_idx ") S32_TFMT TEXT(" < n_arglist_args(p_h_args ") PTR_XTFMT TEXT("->") S32_TFMT TEXT(") ") S32_TFMT, (S32) arg_idx, p_h_args, *p_h_args, n_arglist_args(p_h_args));
         return;
@@ -312,7 +312,7 @@ arglist_dispose_after(
 {
     const U32 n_args = n_arglist_args(p_h_args);
 
-    assert((U32_MAX == arg_idx) || (array_offset_valid(p_h_args, arg_idx)));
+    assert((U32_MAX == arg_idx) || (array_offset_is_valid(p_h_args, arg_idx)));
 
     while(++arg_idx < n_args)
     {

@@ -96,6 +96,10 @@ quick_block_extend_by(
     _InVal_     U32 extend_by,
     _OutRef_    P_STATUS p_status)
 {
+    ARRAY_INIT_BLOCK array_init_block;
+    S32 size_increment;
+    P_BYTE p_output;
+
     *p_status = STATUS_OK;
 
     if(0 == extend_by) /* realloc by 0 is OK, but return a non-NULL rubbish pointer */
@@ -122,15 +126,13 @@ quick_block_extend_by(
     if(0 != quick_block_array_handle_ref(p_quick_block))
         return(al_array_extend_by_BYTE(&quick_block_array_handle_ref(p_quick_block), extend_by, PC_ARRAY_INIT_BLOCK_NONE, p_status));
 
-    { /* transition from static buffer to array handle */
-    static /*poked*/ ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(BYTE), FALSE);
-    S32 incr = p_quick_block->static_buffer_size / 4;
-    P_BYTE p_output;
+    /* transition from static buffer to array handle */
+    size_increment = p_quick_block->static_buffer_size >> 2; /* / 4 */
 
-    if( incr < 4)
-        incr = 4;
+    if( size_increment < 4)
+        size_increment = 4;
 
-    array_init_block.size_increment = incr;
+    array_init_block_setup(&array_init_block, size_increment, sizeof32(BYTE), FALSE);
 
     if(NULL != (p_output = al_array_alloc_BYTE(&quick_block_array_handle_ref(p_quick_block),
                                                p_quick_block->static_buffer_used + extend_by, &array_init_block, p_status)))
@@ -139,14 +141,13 @@ quick_block_extend_by(
 
         p_output += p_quick_block->static_buffer_used;
 
-        p_quick_block->static_buffer_used = p_quick_block->static_buffer_size; /* indicate static buffer full for fast add etc */
+        p_quick_block->static_buffer_used = p_quick_block->static_buffer_size; /* indicate static buffer full for fast add etc. */
 
         /* trash buffer once copied when CHECKING_QUICK_BLOCK */
         _do_aqb_fill(p_quick_block->p_static_buffer, p_quick_block->static_buffer_size);
     }
 
     return(p_output);
-    } /*block*/
 }
 
 /******************************************************************************

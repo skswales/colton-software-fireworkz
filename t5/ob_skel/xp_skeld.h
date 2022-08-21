@@ -65,33 +65,33 @@ line_style_data[5];
 #define LINE_STYLE_V (14 * PIXITS_PER_WDU_V)
 #endif
 
-#define DIALOG_ID_RGB_GROUP       ((DIALOG_CTL_ID) 1024)
-#define DIALOG_ID_RGB_GROUP_INNER ((DIALOG_CTL_ID) 1025)
-#define DIALOG_ID_RGB_TX_R        ((DIALOG_CTL_ID) 1026)
-#define DIALOG_ID_RGB_TX_G        ((DIALOG_CTL_ID) 1027)
-#define DIALOG_ID_RGB_TX_B        ((DIALOG_CTL_ID) 1028)
-#define DIALOG_ID_RGB_R           ((DIALOG_CTL_ID) 1029)
-#define DIALOG_ID_RGB_G           ((DIALOG_CTL_ID) 1030)
-#define DIALOG_ID_RGB_B           ((DIALOG_CTL_ID) 1031)
-#define DIALOG_ID_RGB_PATCH       ((DIALOG_CTL_ID) 1032)
-#define DIALOG_ID_RGB_BUTTON      ((DIALOG_CTL_ID) 1033)
-#define DIALOG_ID_RGB_0           ((DIALOG_CTL_ID) 1034)
-#define DIALOG_ID_RGB_1           ((DIALOG_CTL_ID) 1035)
-#define DIALOG_ID_RGB_2           ((DIALOG_CTL_ID) 1036)
-#define DIALOG_ID_RGB_3           ((DIALOG_CTL_ID) 1037)
-#define DIALOG_ID_RGB_4           ((DIALOG_CTL_ID) 1038)
-#define DIALOG_ID_RGB_5           ((DIALOG_CTL_ID) 1039)
-#define DIALOG_ID_RGB_6           ((DIALOG_CTL_ID) 1040)
-#define DIALOG_ID_RGB_7           ((DIALOG_CTL_ID) 1041)
-#define DIALOG_ID_RGB_8           ((DIALOG_CTL_ID) 1042)
-#define DIALOG_ID_RGB_9           ((DIALOG_CTL_ID) 1043)
-#define DIALOG_ID_RGB_10          ((DIALOG_CTL_ID) 1044)
-#define DIALOG_ID_RGB_11          ((DIALOG_CTL_ID) 1045)
-#define DIALOG_ID_RGB_12          ((DIALOG_CTL_ID) 1046)
-#define DIALOG_ID_RGB_13          ((DIALOG_CTL_ID) 1047)
-#define DIALOG_ID_RGB_14          ((DIALOG_CTL_ID) 1048)
-#define DIALOG_ID_RGB_15          ((DIALOG_CTL_ID) 1049)
-#define DIALOG_ID_RGB_T           ((DIALOG_CTL_ID) 1050)
+#define DIALOG_ID_RGB_GROUP       ((DIALOG_CONTROL_ID) 1024)
+#define DIALOG_ID_RGB_GROUP_INNER ((DIALOG_CONTROL_ID) 1025)
+#define DIALOG_ID_RGB_TX_R        ((DIALOG_CONTROL_ID) 1026)
+#define DIALOG_ID_RGB_TX_G        ((DIALOG_CONTROL_ID) 1027)
+#define DIALOG_ID_RGB_TX_B        ((DIALOG_CONTROL_ID) 1028)
+#define DIALOG_ID_RGB_R           ((DIALOG_CONTROL_ID) 1029)
+#define DIALOG_ID_RGB_G           ((DIALOG_CONTROL_ID) 1030)
+#define DIALOG_ID_RGB_B           ((DIALOG_CONTROL_ID) 1031)
+#define DIALOG_ID_RGB_PATCH       ((DIALOG_CONTROL_ID) 1032)
+#define DIALOG_ID_RGB_BUTTON      ((DIALOG_CONTROL_ID) 1033)
+#define DIALOG_ID_RGB_0           ((DIALOG_CONTROL_ID) 1034)
+#define DIALOG_ID_RGB_1           ((DIALOG_CONTROL_ID) 1035)
+#define DIALOG_ID_RGB_2           ((DIALOG_CONTROL_ID) 1036)
+#define DIALOG_ID_RGB_3           ((DIALOG_CONTROL_ID) 1037)
+#define DIALOG_ID_RGB_4           ((DIALOG_CONTROL_ID) 1038)
+#define DIALOG_ID_RGB_5           ((DIALOG_CONTROL_ID) 1039)
+#define DIALOG_ID_RGB_6           ((DIALOG_CONTROL_ID) 1040)
+#define DIALOG_ID_RGB_7           ((DIALOG_CONTROL_ID) 1041)
+#define DIALOG_ID_RGB_8           ((DIALOG_CONTROL_ID) 1042)
+#define DIALOG_ID_RGB_9           ((DIALOG_CONTROL_ID) 1043)
+#define DIALOG_ID_RGB_10          ((DIALOG_CONTROL_ID) 1044)
+#define DIALOG_ID_RGB_11          ((DIALOG_CONTROL_ID) 1045)
+#define DIALOG_ID_RGB_12          ((DIALOG_CONTROL_ID) 1046)
+#define DIALOG_ID_RGB_13          ((DIALOG_CONTROL_ID) 1047)
+#define DIALOG_ID_RGB_14          ((DIALOG_CONTROL_ID) 1048)
+#define DIALOG_ID_RGB_15          ((DIALOG_CONTROL_ID) 1049)
+#define DIALOG_ID_RGB_T           ((DIALOG_CONTROL_ID) 1050)
 
 extern const DIALOG_CONTROL
 rgb_group_inner;
@@ -175,7 +175,7 @@ dialog_event( /* direct call */
 
 _Check_return_
 static inline STATUS
-call_dialog(
+object_call_DIALOG(
     _InVal_     DIALOG_MESSAGE dialog_message,
     /*_Inout_*/ P_ANY p_data)
 {
@@ -188,7 +188,7 @@ call_dialog(
 
 _Check_return_
 static inline STATUS
-call_dialog_with_docu(
+object_call_DIALOG_with_docu(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     DIALOG_MESSAGE dialog_message,
     /*_Inout_*/ P_ANY p_data)
@@ -206,13 +206,13 @@ dialog_cmd_process_dbox_setup(
 extern void
 ui_dlg_ctl_enable(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL enabled);
 
 extern void
 ui_dlg_ctl_encode(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 extern void
 ui_dlg_ctl_size_estimate(
@@ -221,117 +221,117 @@ ui_dlg_ctl_size_estimate(
 extern void
 ui_dlg_get_f64(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     /*out*/ P_F64 p_f64);
 
 _Check_return_
 extern S32
 ui_dlg_get_s32(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 extern BOOL /*onoff*/
 ui_dlg_get_check(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 extern void
 ui_dlg_get_edit(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_    P_UI_TEXT p_ui_text);
 
 _Check_return_
 extern S32 /*radio_state*/
 ui_dlg_get_radio(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 extern S32
 ui_dlg_get_list_idx(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 extern void
 ui_dlg_get_list_text(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_    P_UI_TEXT p_ui_text);
 
 extern void
 ui_dlg_ctl_new_source(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_f64(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InRef_     PC_F64 p_f64);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_s32(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 s32);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_check(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL onoff);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_check_forcing(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL onoff);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_edit(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InRef_     PC_UI_TEXT p_ui_text);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_list_idx(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 itemno);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_radio(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 radio_state);
 
 _Check_return_
 extern STATUS
 ui_dlg_set_radio_forcing(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     S32 radio_state);
 
 _Check_return_
 extern STATUS
 ui_dlg_ctl_set_default(
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 _Check_return_
 extern S32
 ui_dlg_s32_from_f64(
     _InRef_     PC_F64 p_f64,
-    _InRef_     PC_F64 p_multiplier,
+    _InRef_opt_ PC_F64 p_multiplier,
     _InVal_     S32 s32_min,
     _InVal_     S32 s32_max);
 
@@ -342,8 +342,8 @@ choices
 typedef struct CHOICES_QUERY_BLOCK
 {
     ARRAY_HANDLE ctl_create; /* [] DIALOG_CTL_CREATE */
-    DIALOG_CTL_ID tr_id;
-    DIALOG_CTL_ID br_id;
+    DIALOG_CONTROL_ID tr_dialog_control_id;
+    DIALOG_CONTROL_ID br_dialog_control_id;
 }
 CHOICES_QUERY_BLOCK, * P_CHOICES_QUERY_BLOCK;
 

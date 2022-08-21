@@ -172,12 +172,13 @@ T5_MSG_PROTO(static, spelb_choices_query, _InoutRef_ P_CHOICES_QUERY_BLOCK p_cho
 #endif
     choices_spell_write_user_data.init_state  = (U8) global_preferences.spell_write_user;
 
-    choices_spell_group.relative_control_id[0] = p_choices_query_block->tr_id;
-    choices_spell_group.relative_control_id[1] = p_choices_query_block->tr_id;
+    choices_spell_group.relative_dialog_control_id[0] = p_choices_query_block->tr_dialog_control_id;
+    choices_spell_group.relative_dialog_control_id[1] = p_choices_query_block->tr_dialog_control_id;
 
-    p_choices_query_block->tr_id = p_choices_query_block->br_id = CHOICES_SPELB_ID_GROUP;
+    p_choices_query_block->tr_dialog_control_id =
+    p_choices_query_block->br_dialog_control_id = CHOICES_SPELB_ID_GROUP;
 
-    return(al_array_add(&p_choices_query_block->ctl_create, DIALOG_CTL_CREATE, elemof32(choices_spell_ctl_create), NULL, choices_spell_ctl_create));
+    return(al_array_add(&p_choices_query_block->ctl_create, DIALOG_CTL_CREATE, elemof32(choices_spell_ctl_create), PC_ARRAY_INIT_BLOCK_NONE, choices_spell_ctl_create));
 }
 
 T5_MSG_PROTO(static, spelb_choices_set, P_CHOICES_SET_BLOCK p_choices_set_block)
@@ -192,10 +193,10 @@ T5_MSG_PROTO(static, spelb_choices_set, P_CHOICES_SET_BLOCK p_choices_set_block)
         const P_ARGLIST_ARG p_args = p_arglist_args(&arglist_handle, 1);
 
         p_args[0].val.fBool = ui_dlg_get_check(p_choices_set_block->h_dialog, CHOICES_SPELB_ID_AUTO_CHECK);
-        status_consume(execute_command_reperr(OBJECT_ID_SPELB, p_docu, T5_CMD_CHOICES_SPELL_AUTO_CHECK, &arglist_handle));
+        status_consume(execute_command_reperr(p_docu, T5_CMD_CHOICES_SPELL_AUTO_CHECK, &arglist_handle, OBJECT_ID_SPELB));
 
         p_args[0].val.fBool = ui_dlg_get_check(p_choices_set_block->h_dialog, CHOICES_SPELB_ID_WRITE_USER);
-        status_consume(execute_command_reperr(OBJECT_ID_SPELB, p_docu, T5_CMD_CHOICES_SPELL_WRITE_USER, &arglist_handle));
+        status_consume(execute_command_reperr(p_docu, T5_CMD_CHOICES_SPELL_WRITE_USER, &arglist_handle, OBJECT_ID_SPELB));
 
         arglist_dispose(&arglist_handle);
     }

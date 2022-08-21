@@ -717,7 +717,6 @@ scale_info_from_docu(
 
     {
     const PC_DOCU p_docu_config = p_docu_from_config();
-    DOCU_ASSERT(p_docu_config);
 
     if(!horizontal && p_docu_config->vscale_info.loaded)
     {
@@ -745,7 +744,7 @@ T5_CMD_PROTO(extern, t5_cmd_ruler_scale)
     {
     const PC_ARGLIST_ARG p_args = pc_arglist_args(&p_t5_cmd->arglist_handle, 4);
 
-    /* prevent division by zero etc in release code */
+    /* prevent division by zero etc. in release code */
     scale_info.display_unit = (DISPLAY_UNIT) p_args[0].val.s32;
     if((scale_info.display_unit < DISPLAY_UNIT_STT) || (scale_info.display_unit >= DISPLAY_UNIT_COUNT))
     {

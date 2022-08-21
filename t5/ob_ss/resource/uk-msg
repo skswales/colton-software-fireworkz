@@ -90,9 +90,9 @@ e103:You must give names a non-blank value
 # ob_ss messages
 #
 r90:Fill down (or ADJUST to Fill up)
-w90:Fill down (or Ctrl+button to Fill up)
+w90:Fill down (or Ctrl-click to Fill up)
 r91:Fill right (or ADJUST to Fill left)
-w91:Fill right (or Ctrl+button to Fill left)
+w91:Fill right (or Ctrl-click to Fill left)
 92:Auto sum
 93:Create chart
 94:Function selector
@@ -164,7 +164,7 @@ w91:Fill right (or Ctrl+button to Fill left)
 81:frindex.htm
 82:frindex.htm
 #
-# This text is used to define the default text and help message for undefined parameters (ie. ones which do not have an entry down below)
+# This text is used to define the default text and help message for undefined parameters (i.e. ones which do not have an entry down below)
 # These must be blank otherwise custom functions display invalid parameter descriptions
 32:
 33:
@@ -992,5 +992,9 @@ w870:odf.complex
 w871:lognorm.inv
 472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
 w872:percentrank.exc
+473:Returns the date that is the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
+w873:edate
+474:Returns the date that is the the last day of the month for the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
+w874:eomonth
 #
 # end of msg (ob_ss)

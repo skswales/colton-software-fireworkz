@@ -97,7 +97,7 @@ insert_cell_contents_ownform(
     _InoutRef_  P_LOAD_CELL_OWNFORM p_load_cell_ownform,
     _InRef_     PC_POSITION p_position)
 {
-    consume_bool(cell_data_from_position(p_docu, &p_load_cell_ownform->object_data, p_position, NULL));
+    consume_bool(cell_data_from_position(p_docu, &p_load_cell_ownform->object_data, p_position));
 
     p_load_cell_ownform->processed = 0;
 
@@ -1243,8 +1243,10 @@ t5_cmd_of_block(
 
         { /* 19.12.94 send load fragment to object owning an existing cell */
         OBJECT_DATA object_data;
-        if(cell_data_from_position(p_docu, &object_data, &p_of_ip_format->insert_position, NULL))
+        if(cell_data_from_position(p_docu, &object_data, &p_of_ip_format->insert_position))
+        {
             object_id = object_data.object_id;
+        }
         else if(status_fail(status = object_id_from_construct_id(p_args[ARG_BLOCK_FA_CS1].val.u8c, &object_id)))
         {
             if(status != STATUS_FAIL)
@@ -1281,8 +1283,10 @@ t5_cmd_of_block(
 
         { /* 19.12.94 send load fragment to object owning an existing cell */
         OBJECT_DATA object_data;
-        if(cell_data_from_position(p_docu, &object_data, &p_of_ip_format->insert_position, NULL))
+        if(cell_data_from_position(p_docu, &object_data, &p_of_ip_format->insert_position))
+        {
             object_id = object_data.object_id;
+        }
         else if(status_fail(status = object_id_from_construct_id(p_args[ARG_BLOCK_FB_CS1].val.u8c, &object_id)))
         {
             if(status != STATUS_FAIL)
@@ -1311,7 +1315,7 @@ t5_cmd_of_block(
 
         position_end.object_position.object_id = OBJECT_ID_NONE;
 
-        if(STATUS_DONE == object_data_from_position(p_docu, &object_position_set.object_data, &position_end, NULL))
+        if(STATUS_DONE == object_data_from_position(p_docu, &object_position_set.object_data, &position_end, P_OBJECT_POSITION_NONE))
         {
             object_position_set.action = OBJECT_POSITION_SET_START;
             status_consume(object_call_id(object_position_set.object_data.object_id, p_docu, T5_MSG_OBJECT_POSITION_SET, &object_position_set));

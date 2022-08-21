@@ -126,7 +126,8 @@ events_set_accelerator(
 ******************************************************************************/
 
 static void
-pause_for_thought(void)
+pause_for_thought(
+    __in DWORD dwMilliseconds)
 {
     HANDLE handles[1];
     DWORD dword;
@@ -135,7 +136,7 @@ pause_for_thought(void)
         MsgWaitForMultipleObjects(
             0 /*nCount*/, handles /*pHandles*/,
             FALSE /*bWaitAll*/,
-            10 /*dwMilliseconds*/,
+            dwMilliseconds,
             QS_ALLINPUT /*dwWakeMask*/);
     IGNOREPARM(dword);
     /*reportf(TEXT("MsgWaitForMultipleObjects returns %u"), dword);*/
@@ -269,7 +270,7 @@ wm_event_get(
     }
 
     if(bgScheduledEventsWanted && !(fgNullEventsWanted || bgNullEventsWanted))
-        pause_for_thought();
+        pause_for_thought(10 /*dwMilliseconds*/);
 
 #if 1
     return(WM_EVENT_PROCESSED);

@@ -98,7 +98,7 @@ csv_quick_ublock_dispose(
 _Check_return_
 static STATUS
 csv_load_decode_line(
-    _DocuRef_   P_DOCU p_docu,
+    _DocuRef_maybenone_ P_DOCU p_docu,
     _In_z_      PC_USTR_INLINE ustr_inline_line_contents,
     _InoutRef_  P_SLR p_slr,
     _InVal_     S32 labels_across,
@@ -111,6 +111,13 @@ csv_load_decode_line(
     STATUS status = STATUS_OK;
     COL col = 0;
     BOOL eol = FALSE;
+
+#if CHECKING
+    if(sizing_up)
+        assert(IS_DOCU_NONE(p_docu));
+    else
+        DOCU_ASSERT(p_docu);
+#endif
 
     while(!eol)
     {
@@ -1046,7 +1053,7 @@ csv_load_query(
     dialog_cmd_process_dbox.p_proc_client = dialog_event_csv_load_query;
     if(!has_real_database)
         dialog_cmd_process_dbox.n_ctls -= 1; /* strip end radiobutton off */
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
     } /*block*/
 }
 
@@ -1074,7 +1081,10 @@ T5_MSG_PROTO(static, csv_msg_insert_foreign, _InoutRef_ P_MSG_INSERT_FOREIGN p_m
     return(status);
 }
 
-T5_MSG_PROTO(static, csv_msg_csv_read_record, _InoutRef_ P_CSV_READ_RECORD p_csv_read_record)
+_Check_return_
+static STATUS
+csv_msg_csv_read_record_core(
+    _InoutRef_ P_CSV_READ_RECORD p_csv_read_record)
 {
     P_FF_IP_FORMAT p_ff_ip_format = p_csv_read_record->p_ff_ip_format;
     P_QUICK_UBLOCK p_quick_ublock_temp_contents = &p_csv_read_record->temp_contents_quick_ublock;
@@ -1083,9 +1093,6 @@ T5_MSG_PROTO(static, csv_msg_csv_read_record, _InoutRef_ P_CSV_READ_RECORD p_csv
     P_ARRAY_HANDLE p_array_handle_temp_decode = &p_csv_read_record->temp_decode_array_handle;
     SLR dummy_slr = { 0, 0 };
     STATUS status;
-
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
 
     if(status_ok(status = csv_load_line(p_ff_ip_format, p_quick_ublock_temp_contents)))
     {
@@ -1111,6 +1118,14 @@ T5_MSG_PROTO(static, csv_msg_csv_read_record, _InoutRef_ P_CSV_READ_RECORD p_csv
     csv_quick_ublock_dispose(p_quick_ublock_temp_contents, p_array_handle_temp_contents);
 
     return(status);
+}
+
+T5_MSG_PROTO(static, csv_msg_csv_read_record, _InoutRef_ P_CSV_READ_RECORD p_csv_read_record)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+
+    return(csv_msg_csv_read_record_core(p_csv_read_record));
 }
 
 /******************************************************************************

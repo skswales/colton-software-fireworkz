@@ -32,7 +32,6 @@ X %Wipe <t5$Build$Dir>.ob_skel.riscos
 
 X %Wipe <t5$Build$Dir>.ob_cells
 X %Wipe <t5$Build$Dir>.ob_chart
-X %Wipe <t5$Build$Dir>.ob_chspt
 X %Wipe <t5$Build$Dir>.ob_dlg
 X %Wipe <t5$Build$Dir>.ob_draw
 X %Wipe <t5$Build$Dir>.ob_drwio

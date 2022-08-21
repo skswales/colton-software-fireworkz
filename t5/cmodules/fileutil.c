@@ -155,7 +155,7 @@ file_derive_name(
 *
 * return the directory part of a filename with correct termination
 *
-* eg.
+* e.g.
 *   c:\windev\lib\lwindll.lib -> c:\windev\lib\
 *   adfs::4.$.cmodules.c.file -> adfs::4.$.cmodules.c.
 *
@@ -173,7 +173,7 @@ file_dirname(
 *
 * return the extension part of a filename
 *
-* eg.
+* e.g.
 *   file.c -> c
 *   fixx_z -> z
 *
@@ -937,7 +937,7 @@ file_is_dir(
     return((rs.r[0] == OSFile_ObjectType_Dir) || (rs.r[0] == OSFile_ObjectType_Image));
 #elif WINDOWS
     DWORD dword = GetFileAttributes(dirname);
-    if(0xFFFFFFFF == dword)
+    if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
         IGNOREPARM_CONST(dwLastError);
@@ -970,13 +970,49 @@ file_is_file(
     return(rs.r[0] == OSFile_ObjectType_File);
 #elif WINDOWS
     DWORD dword = GetFileAttributes(filename);
-    if(0xFFFFFFFF == dword)
+    if(INVALID_FILE_ATTRIBUTES == dword)
     {
         const DWORD dwLastError = GetLastError();
         IGNOREPARM_CONST(dwLastError);
         return(FALSE);
     }
     return((dword & FILE_ATTRIBUTE_DIRECTORY) == 0);
+#else
+    return(FALSE);
+#endif
+}
+
+/******************************************************************************
+*
+* determine whether a file is read only
+*
+******************************************************************************/
+
+_Check_return_
+extern BOOL
+file_is_read_only(
+    _In_z_      PCTSTR filename)
+{
+#if RISCOS
+    _kernel_swi_regs rs;
+    rs.r[0] = OSFile_ReadNoPath;
+    rs.r[1] = (int) filename;
+    if(NULL != _kernel_swi(OS_File, &rs, &rs))
+        return(FALSE);
+    if(rs.r[0] != OSFile_ObjectType_File)
+        return(FALSE);
+    if((rs.r[5] & OSFile_ObjectAttribute_write) != 0) /* writable bit set? */
+        return(FALSE);
+    return(TRUE);
+#elif WINDOWS
+    DWORD dword = GetFileAttributes(filename);
+    if(INVALID_FILE_ATTRIBUTES == dword)
+    {
+        const DWORD dwLastError = GetLastError();
+        IGNOREPARM_CONST(dwLastError);
+        return(FALSE);
+    }
+    return((dword & FILE_ATTRIBUTE_READONLY) != 0);
 #else
     return(FALSE);
 #endif
@@ -1447,6 +1483,76 @@ file_tempname(
 
         return(quick_tblock_tchars_add(p_quick_tblock, filename, tstrlen32p1(filename) /*CH_NULL*/));
     }
+}
+
+_Check_return_
+extern STATUS
+file_tempname_null(
+    _In_z_      PCTSTR prefix,
+    _In_opt_z_  PCTSTR suffix,
+    _InVal_     S32 flags,
+    _InoutRef_  P_QUICK_TBLOCK p_quick_tblock /*appended,terminated*/)
+{
+    STATUS status = STATUS_OK;
+    QUICK_TBLOCK_WITH_BUFFER(quick_tblock, 256);
+    quick_tblock_with_buffer_setup(quick_tblock);
+
+#if RISCOS
+    { /* check that the preferred variable exists */
+    char buffer[16];
+    _kernel_swi_regs rs;
+
+    rs.r[0] = (int) TEXT("Wimp$ScrapDir");
+    rs.r[1] = (int) buffer;
+    rs.r[2] = sizeof32(buffer);
+    rs.r[3] = 0;
+    rs.r[4] = 3;
+    void_WrapOsErrorChecking(_kernel_swi(OS_ReadVarVal, &rs, &rs));
+
+    if(rs.r[2] == 0)
+        status = create_error(ERR_RISCOS_NO_SCRAP);
+    } /*block*/
+
+    if(status_ok(status))
+        status = quick_tblock_tstr_add(&quick_tblock, TEXT("<") TEXT("Wimp$ScrapDir") TEXT(">") FILE_DIR_SEP_TSTR);
+#elif WINDOWS
+    {
+    TCHAR buffer[BUF_MAX_PATHSTRING];
+    size_t requiredSize;
+
+    if(0 == _tgetenv_s(&requiredSize, buffer, elemof32(buffer), TEXT("TEMP")))
+    {
+        status = quick_tblock_tstr_add(&quick_tblock, buffer);
+    }
+    else
+    {
+        status = create_error(FILE_ERR_NOTADIR);
+    }
+
+    if(status_ok(status))
+        status = quick_tblock_tstr_add(&quick_tblock, FILE_DIR_SEP_TSTR);
+    } /*block*/
+#endif
+
+    if(status_ok(status))
+        status = quick_tblock_tstr_add_n(&quick_tblock, product_family_id(), strlen_with_NULLCH);
+
+    if(status_ok(status))
+        if(!file_is_dir(quick_tblock_tstr(&quick_tblock)))
+            status = file_create_directory(quick_tblock_tstr(&quick_tblock));
+
+    if(status_ok(status))
+    {
+        quick_tblock_nullch_strip(&quick_tblock);
+        status = quick_tblock_tstr_add_n(&quick_tblock, FILE_DIR_SEP_TSTR, strlen_with_NULLCH);
+    }
+
+    if(status_ok(status))
+        status = file_tempname(quick_tblock_tstr(&quick_tblock), prefix, suffix, flags, p_quick_tblock);
+
+    quick_tblock_dispose(&quick_tblock);
+
+    return(status);
 }
 
 /******************************************************************************

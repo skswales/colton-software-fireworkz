@@ -33,7 +33,7 @@ ff_load.c
 */
 
 T5_CMD_PROTO(extern, t5_cmd_load_foreign);
-T5_CMD_PROTO(extern, t5_cmd_bind_filetype);
+T5_CMD_PROTO(extern, t5_cmd_bind_file_type);
 T5_CMD_PROTO(extern, t5_cmd_object_bind_loader);
 
 /*
@@ -335,7 +335,7 @@ enum MENU_ACTIVE_STATE
     MENU_CARET_IN_CELLS_NOT_DATABASE  = 15,
     MENU_CARET_IN_TEXT_NOT_DATABASE   = 16,
 
-    MENU_DATABASE_TEMPLATE            = 17,   /* grey if not in empty database. ie Database->Create */
+    MENU_DATABASE_TEMPLATE            = 17,   /* grey if not in empty database. i.e. Database->Create */
 
     MENU_ACTIVE_STATE_COUNT
 };
@@ -394,7 +394,8 @@ sk_cmd_direct_msg_initclose(
 ui_field.c
 */
 
-T5_CMD_PROTO(extern, t5_cmd_insert_field_intro);
+T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_date);
+T5_CMD_PROTO(extern, t5_cmd_insert_field_intro_page);
 
 /*
 ui_page.c

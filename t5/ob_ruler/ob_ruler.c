@@ -58,7 +58,7 @@ typedef struct RULER_DRAG_STATUS
     FP_PIXIT fp_pixits_per_unit;    /* PIXITS_PER_CM     , PIXITS_PER_MM     , PIXITS_PER_INCH      */
     STATUS unit_message;            /* MSG_DRAG_STATUS_CM, MSG_DRAG_STATUS_MM, MSG_DRAG_STATUS_INCH */
 
-    STATUS drag_message;            /* eg MSG_DRAG_STATUS_RULER_HORZ_TAB which is "Left tab" */
+    STATUS drag_message;            /* e.g. MSG_DRAG_STATUS_RULER_HORZ_TAB which is "Left tab" */
     STATUS post_message;
 }
 RULER_DRAG_STATUS, * P_RULER_DRAG_STATUS;
@@ -409,7 +409,7 @@ ruler_horz_event_click_left_single_place_tab(
         p_col_info->h_tab_list = 0;
     }
 
-    /* now that we've placed a new tab, get the pointer to change shape, update status line etc */
+    /* now that we've placed a new tab, get the pointer to change shape, update status line etc. */
     status_accumulate(status, ruler_horz_ruler_info_ensure(p_docu));
 
 #if 0 /* new poller should come round real soon and get it */
@@ -454,6 +454,26 @@ T5_MSG_PROTO(static, ruler_horz_event_click_left_single, _InoutRef_ P_SKELEVENT_
     }
 }
 
+T5_MSG_PROTO(static, ruler_horz_event_click_right_single, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+    IGNOREPARM_InoutRef_(p_skelevent_click);
+
+    return(STATUS_OK);
+}
+
+T5_MSG_PROTO(static, ruler_horz_event_click_single, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_SINGLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(ruler_horz_event_click_right_single(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(ruler_horz_event_click_left_single(p_docu, t5_message_effective, p_skelevent_click));
+}
+
 /* left double-click on an existing tab, so delete it */
 
 _Check_return_
@@ -468,7 +488,7 @@ ruler_horz_event_click_left_double_tab(
     RULER_INFO ruler_info = p_docu->ruler_horz_info.ruler_info;
     P_COL_INFO p_col_info = &ruler_info.col_info;
 
-    assert(array_index_valid(&p_col_info->h_tab_list, tab_number));
+    assert(array_index_is_valid(&p_col_info->h_tab_list, tab_number));
 
     {
     P_TAB_INFO p_tab_info = array_ptr(&p_col_info->h_tab_list, TAB_INFO, tab_number);
@@ -505,7 +525,7 @@ ruler_horz_event_click_left_double_tab(
 
     p_col_info->h_tab_list = 0;
 
-    /* now that we've deleted a tab, get the pointer to change shape, update status bar etc */
+    /* now that we've deleted a tab, get the pointer to change shape, update status bar etc. */
     status_accumulate(status, ruler_horz_ruler_info_ensure(p_docu));
 
 #if 0 /* new poller should come round real soon and get change */
@@ -540,7 +560,7 @@ T5_MSG_PROTO(static, ruler_horz_event_click_left_double, _InoutRef_ P_SKELEVENT_
 
     case RULER_MARKER_COL_RIGHT:
         /* left double click on column width marker, do an auto width */
-        return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_AUTO_WIDTH, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+        return(execute_command(p_docu, T5_CMD_AUTO_WIDTH, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
     case RULER_MARKER_TAB_LEFT:
     case RULER_MARKER_TAB_CENTRE:
@@ -564,7 +584,7 @@ ruler_horz_event_click_right_double_tab(
     RULER_INFO ruler_info = p_docu->ruler_horz_info.ruler_info;
     P_COL_INFO p_col_info = &ruler_info.col_info;
 
-    assert(array_index_valid(&p_col_info->h_tab_list, tab_number));
+    assert(array_index_is_valid(&p_col_info->h_tab_list, tab_number));
 
     {
     P_TAB_INFO p_tab_info = array_ptr(&p_col_info->h_tab_list, TAB_INFO, tab_number);
@@ -606,7 +626,7 @@ ruler_horz_event_click_right_double_tab(
 
     p_col_info->h_tab_list = 0;
 
-    /* now that we've mutated a tab, get the pointer to change shape, update status bar etc */
+    /* now that we've mutated a tab, get the pointer to change shape, update status bar etc. */
     status_accumulate(status, ruler_horz_ruler_info_ensure(p_docu));
 
     return(status);
@@ -636,7 +656,7 @@ T5_MSG_PROTO(static, ruler_horz_event_click_right_double, _InoutRef_ P_SKELEVENT
 
     case RULER_MARKER_COL_RIGHT:
         /* right double click on column width marker, do a straddle */
-        return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_STRADDLE_HORZ, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+        return(execute_command(p_docu, T5_CMD_STRADDLE_HORZ, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
     case RULER_MARKER_TAB_LEFT:
     case RULER_MARKER_TAB_CENTRE:
@@ -644,6 +664,17 @@ T5_MSG_PROTO(static, ruler_horz_event_click_right_double, _InoutRef_ P_SKELEVENT
     case RULER_MARKER_TAB_DECIMAL:
         return(ruler_horz_event_click_right_double_tab(p_docu, p_skelevent_click, ruler_marker, tab_number));
     }
+}
+
+T5_MSG_PROTO(static, ruler_horz_event_click_double, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(ruler_horz_event_click_right_double(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(ruler_horz_event_click_left_double(p_docu, t5_message_effective, p_skelevent_click));
 }
 
 T5_MSG_PROTO(static, ruler_horz_event_click_drag, _InRef_ P_SKELEVENT_CLICK p_skelevent_click)
@@ -658,7 +689,10 @@ T5_MSG_PROTO(static, ruler_horz_event_click_drag, _InRef_ P_SKELEVENT_CLICK p_sk
 
     if(ruler_marker > RULER_NO_MARK)
     {
-        if(status_ok(ruler_horz_drag_limits(p_docu, p_skelevent_click->skel_point.page_num, p_docu->cur.slr.col, ruler_marker, tab_number, t5_message, &adjust_marker_position_blk.ruler_horz)))
+        const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+        const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+        if(status_ok(ruler_horz_drag_limits(p_docu, p_skelevent_click->skel_point.page_num, p_docu->cur.slr.col, ruler_marker, tab_number, t5_message_effective, &adjust_marker_position_blk.ruler_horz)))
         {
             adjust_marker_position_blk.ruler_horz.reason_code = CB_CODE_RULER_HORZ_ADJUST_MARKER_POSITION;
 
@@ -831,13 +865,12 @@ PROC_EVENT_PROTO(static, edge_window_event_ruler_horz)
         return(ruler_horz_event_redraw(p_docu, t5_message, (P_SKELEVENT_REDRAW) p_data));
 
     case T5_EVENT_CLICK_LEFT_SINGLE:
-        return(ruler_horz_event_click_left_single(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+    case T5_EVENT_CLICK_RIGHT_SINGLE:
+        return(ruler_horz_event_click_single(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-        return(ruler_horz_event_click_left_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
-
     case T5_EVENT_CLICK_RIGHT_DOUBLE:
-        return(ruler_horz_event_click_right_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+        return(ruler_horz_event_click_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_LEFT_DRAG:
     case T5_EVENT_CLICK_RIGHT_DRAG:
@@ -859,6 +892,8 @@ PROC_EVENT_PROTO(static, edge_window_event_ruler_horz)
         return(ruler_horz_event_click_pointer_leaves_window(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     default:
+    /*case T5_EVENT_CLICK_LEFT_TRIPLE:*/
+    /*case T5_EVENT_CLICK_RIGHT_TRIPLE:*/
         return(STATUS_OK);
     }
 }
@@ -1565,7 +1600,7 @@ ruler_horz_drag_ended(
 
         status_assert(al_array_duplicate(&h_tab_list_copy, &p_col_info->h_tab_list));
 
-        for(i = p_horz_blk->tab_number; array_index_valid(&h_tab_list_copy, i); ++i)
+        for(i = p_horz_blk->tab_number; array_index_is_valid(&h_tab_list_copy, i); ++i)
         {
             P_TAB_INFO p_tab_info = array_ptr_no_checks(&h_tab_list_copy, TAB_INFO, i);
 
@@ -2147,11 +2182,31 @@ T5_MSG_PROTO(static, ruler_vert_event_click_left_double, _InoutRef_ P_SKELEVENT_
     {
     case RULER_MARKER_ROW_BOTTOM:
         /* left double click on row height marker, do an auto height */
-        return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_AUTO_HEIGHT, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+        return(execute_command(p_docu, T5_CMD_AUTO_HEIGHT, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
     default:
         return(STATUS_OK);
     }
+}
+
+T5_MSG_PROTO(static, ruler_vert_event_click_right_double, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+    IGNOREPARM_InoutRef_(p_skelevent_click);
+
+    return(STATUS_OK);
+}
+
+T5_MSG_PROTO(static, ruler_vert_event_click_double, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(ruler_vert_event_click_right_double(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(ruler_vert_event_click_left_double(p_docu, t5_message_effective, p_skelevent_click));
 }
 
 T5_MSG_PROTO(static, ruler_vert_event_click_left_drag, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
@@ -2182,6 +2237,26 @@ T5_MSG_PROTO(static, ruler_vert_event_click_left_drag, _InoutRef_ P_SKELEVENT_CL
     }
 
     return(STATUS_OK);
+}
+
+T5_MSG_PROTO(static, ruler_vert_event_click_right_drag, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+    IGNOREPARM_InoutRef_(p_skelevent_click);
+
+    return(STATUS_OK);
+}
+
+T5_MSG_PROTO(static, ruler_vert_event_click_drag, _InoutRef_ P_SKELEVENT_CLICK p_skelevent_click)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(ruler_vert_event_click_right_drag(p_docu, t5_message_effective, p_skelevent_click));
+
+    return(ruler_vert_event_click_left_drag(p_docu, t5_message_effective, p_skelevent_click));
 }
 
 T5_MSG_PROTO(static, ruler_vert_event_click_drag_movement_adjust_marker_position, _InRef_ P_SKELEVENT_CLICK p_skelevent_click)
@@ -2341,10 +2416,12 @@ PROC_EVENT_PROTO(static, edge_window_event_ruler_vert)
         return(ruler_vert_event_redraw(p_docu, t5_message, (P_SKELEVENT_REDRAW) p_data));
 
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-        return(ruler_vert_event_click_left_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+    case T5_EVENT_CLICK_RIGHT_DOUBLE:
+        return(ruler_vert_event_click_double(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_LEFT_DRAG:
-        return(ruler_vert_event_click_left_drag(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        return(ruler_vert_event_click_drag(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
     case T5_EVENT_CLICK_DRAG_STARTED:
     case T5_EVENT_CLICK_DRAG_MOVEMENT:
@@ -2365,8 +2442,6 @@ PROC_EVENT_PROTO(static, edge_window_event_ruler_vert)
     /*case T5_EVENT_CLICK_LEFT_SINGLE:*/
     /*case T5_EVENT_CLICK_LEFT_TRIPLE:*/
     /*case T5_EVENT_CLICK_RIGHT_SINGLE:*/
-    /*case T5_EVENT_CLICK_RIGHT_DRAG:*/
-    /*case T5_EVENT_CLICK_RIGHT_DOUBLE:*/
     /*case T5_EVENT_CLICK_RIGHT_TRIPLE:*/
         return(STATUS_OK);
     }
@@ -2413,7 +2488,10 @@ ruler_vert_drag_apply(
 
     switch(ruler_marker)
     {
+    default: default_unhandled();
+#if CHECKING
     case RULER_MARKER_HEADER_EXT:
+#endif
         p_headfoot_def->headfoot_sizes.margin += drag_delta_y;
         break;
 
@@ -3122,10 +3200,9 @@ ruler_horz_area_offsets_for_page(
 
 /******************************************************************************
 *
-* Return positions of various headers footers
-* etc relative to workarea for given page
+* Return positions of various headers footers etc. relative to workarea for given page
 *
-* Used by ruler_vert when plotting margin markers etc
+* Used by ruler_vert when plotting margin markers etc.
 *
 ******************************************************************************/
 

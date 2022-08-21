@@ -11,13 +11,9 @@
 # errors
 #
 e0:File already exists
-e2:Filing system error
-e3:Can't open dictionary
 e4:Bad dictionary
 e6:Bad word
 e7:Dictionary read only
-e8:Can't close dictionary
-e9:Not implemented
 #
 e10:Word not found
 e11:Escape
@@ -26,8 +22,6 @@ e13:Can't read dictionary
 e14:Can't enlarge dictionary
 e15:Bad dictionary definition file
 e16:Bad character in dictionary definition file
-e17:Can't open dictionary definition file
-e18:Can't close dictionary definition file
 #
 # ob_spell errors
 #

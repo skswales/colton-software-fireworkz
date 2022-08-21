@@ -64,20 +64,20 @@ dialog_cmd_ctl_enable(
     P_DIALOG_ICTL p_dialog_ictl;
     S32 enabled;
 
-    assert(p_dialog_cmd_ctl_enable->control_id != DIALOG_CONTROL_INVALID);
-    assert(p_dialog_cmd_ctl_enable->enabled    != (S32) 0xBCBCBCBC);
+    assert(p_dialog_cmd_ctl_enable->dialog_control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_enable->enabled           != (S32) 0xBCBCBCBC);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_enable->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_enable->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_enable->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
     enabled = (p_dialog_cmd_ctl_enable->enabled != 0);
 
-    if(p_dialog_ictl->bits.enabled != (UBF) enabled)
+    if(p_dialog_ictl->bits.enabled != UBF_PACK(enabled))
     {
-        p_dialog_ictl->bits.enabled = (UBF) enabled;
+        p_dialog_ictl->bits.enabled = UBF_PACK(enabled);
 
         /* reflect enabled state (taking suppression into account) and propagate down tree if a group */
         dialog_ictl_enable_in_tree(p_dialog, p_dialog_ictl);
@@ -94,12 +94,12 @@ dialog_cmd_ctl_enable_query(
     P_DIALOG p_dialog;
     P_DIALOG_ICTL p_dialog_ictl;
 
-    assert(p_dialog_cmd_ctl_enable_query->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_enable_query->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_enable_query->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_enable_query->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_enable_query->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
     p_dialog_cmd_ctl_enable_query->enabled = p_dialog_ictl->bits.enabled;
@@ -124,7 +124,7 @@ dialog_cmd_ctl_encode(
     P_DIALOG p_dialog;
     P_DIALOG_ICTL p_dialog_ictl;
 
-    assert(p_dialog_cmd_ctl_encode->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_encode->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_encode->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
@@ -132,10 +132,10 @@ dialog_cmd_ctl_encode(
     if(HOST_WND_NONE == p_dialog->hwnd)
         return(STATUS_OK);
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_encode->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_encode->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default:
         status_return(dialog_ictl_encode_here(p_dialog, p_dialog_ictl, p_dialog_cmd_ctl_encode->bits));
@@ -164,16 +164,16 @@ dialog_cmd_ctl_focus_set(
 {
     P_DIALOG p_dialog;
 
-    assert(p_dialog_cmd_ctl_focus_set->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_focus_set->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_focus_set->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(p_dialog_cmd_ctl_focus_set->control_id)
+    if(p_dialog_cmd_ctl_focus_set->dialog_control_id)
     {
         P_DIALOG_ICTL p_dialog_ictl;
 
-        if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_focus_set->control_id)))
+        if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_focus_set->dialog_control_id)))
             return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
         /* is this control enabled? */
@@ -181,7 +181,7 @@ dialog_cmd_ctl_focus_set(
             return(STATUS_FAIL);
     }
 
-    dialog_current_set(p_dialog, p_dialog_cmd_ctl_focus_set->control_id, 0);
+    dialog_current_set(p_dialog, p_dialog_cmd_ctl_focus_set->dialog_control_id, 0);
 
     return(STATUS_OK);
 }
@@ -194,15 +194,15 @@ dialog_cmd_ctl_new_source(
     P_DIALOG p_dialog;
     P_DIALOG_ICTL p_dialog_ictl;
 
-    assert(p_dialog_cmd_ctl_new_source->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_new_source->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_new_source->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_new_source->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_new_source->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default:
         return(STATUS_OK);
@@ -240,21 +240,23 @@ dialog_cmd_ctl_nobble(
     P_DIALOG_ICTL p_dialog_ictl;
     S32 nobbled;
 
-    assert(p_dialog_cmd_ctl_nobble->control_id != DIALOG_CONTROL_INVALID);
-    assert(p_dialog_cmd_ctl_nobble->nobbled    != 0xBCBCBCBC);
+    assert(p_dialog_cmd_ctl_nobble->dialog_control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_nobble->nobbled           != 0xBCBCBCBC);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_nobble->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_nobble->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_nobble->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
     nobbled = (p_dialog_cmd_ctl_nobble->nobbled != 0);
 
-    if(p_dialog_ictl->bits.nobbled != (UBF) nobbled)
-        p_dialog_ictl->bits.nobbled = (UBF) nobbled;
+    if(p_dialog_ictl->bits.nobbled != UBF_PACK(nobbled))
+    {
+        p_dialog_ictl->bits.nobbled = UBF_PACK(nobbled);
 
-    /* no state to reflect, this only takes effect later */
+        /* no state to reflect, this only takes effect later */
+    }
 
     return(STATUS_OK);
 }
@@ -267,16 +269,16 @@ dialog_cmd_ctl_ui_control(
     P_DIALOG p_dialog;
     P_DIALOG_ICTL p_dialog_ictl;
 
-    assert(p_dialog_cmd_ctl_ui_control->control_id != DIALOG_CONTROL_INVALID);
-    assert(p_dialog_cmd_ctl_ui_control->what       != 0xBCBCBCBC);
+    assert(p_dialog_cmd_ctl_ui_control->dialog_control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_ui_control->what              != 0xBCBCBCBC);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_ui_control->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_ui_control->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_ui_control->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default:
         return(create_error(DIALOG_ERR_CANT_UI_CONTROL));
@@ -375,14 +377,14 @@ dialog_cmd_ctl_parent_query(
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_parent_query->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, p_dialog_cmd_ctl_parent_query->control_id, &p_parent_ictls)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, p_dialog_cmd_ctl_parent_query->dialog_control_id, &p_parent_ictls)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
     IGNOREPARM(p_dialog_ictl);
 
     PTR_ASSERT(p_parent_ictls);
 
-    p_dialog_cmd_ctl_parent_query->parent_control_id = dialog_control_id_of_group(p_dialog, p_parent_ictls);
+    p_dialog_cmd_ctl_parent_query->parent_dialog_control_id = dialog_control_id_of_group(p_dialog, p_parent_ictls);
 
 #if RISCOS
     p_dialog_cmd_ctl_parent_query->hwnd = p_dialog->hwnd;
@@ -412,10 +414,10 @@ dialog_cmd_ctl_posn_query(
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_posn_query->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_posn_query->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_posn_query->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    dialog_control_rect(p_dialog, p_dialog_cmd_ctl_posn_query->control_id, NULL);
+    dialog_control_rect(p_dialog, p_dialog_cmd_ctl_posn_query->dialog_control_id, NULL);
 
     p_dialog_cmd_ctl_posn_query->outer_posn.x = p_dialog_ictl->pixit_rect.tl.x;
     p_dialog_cmd_ctl_posn_query->outer_posn.y = p_dialog_ictl->pixit_rect.tl.y;
@@ -425,7 +427,7 @@ dialog_cmd_ctl_posn_query(
     gdi_box.x1 = 0;
     gdi_box.y1 = 0;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled(); break;
 
@@ -458,41 +460,41 @@ dialog_cmd_ctl_set_default(
     P_DIALOG_CMD_CTL_SET_DEFAULT p_dialog_cmd_ctl_set_default)
 {
     P_DIALOG p_dialog;
-    DIALOG_CTL_ID old_default_id;
+    DIALOG_CONTROL_ID old_default_dialog_control_id;
 
-    assert(p_dialog_cmd_ctl_set_default->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_set_default->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_set_default->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(p_dialog_cmd_ctl_set_default->control_id == p_dialog->default_id)
+    if(p_dialog_cmd_ctl_set_default->dialog_control_id == p_dialog->default_dialog_control_id)
         return(STATUS_OK);
 
-    if(p_dialog_cmd_ctl_set_default->control_id)
-        if(NULL == p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_set_default->control_id))
+    if(p_dialog_cmd_ctl_set_default->dialog_control_id)
+        if(NULL == p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_set_default->dialog_control_id))
             return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    old_default_id = p_dialog->default_id;
-    p_dialog->default_id = p_dialog_cmd_ctl_set_default->control_id;
+    old_default_dialog_control_id = p_dialog->default_dialog_control_id;
+    p_dialog->default_dialog_control_id = p_dialog_cmd_ctl_set_default->dialog_control_id;
 
-    if(p_dialog->default_id)
+    if(p_dialog->default_dialog_control_id)
     {
         DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
         msgclr(dialog_cmd_ctl_encode);
         dialog_cmd_ctl_encode.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_ctl_encode.control_id = p_dialog->default_id;
+        dialog_cmd_ctl_encode.dialog_control_id = p_dialog->default_dialog_control_id;
         dialog_cmd_ctl_encode.bits = DIALOG_ENCODE_UPDATE_NOW;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
     }
 
-    if(old_default_id)
+    if(old_default_dialog_control_id)
     {
         DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
         msgclr(dialog_cmd_ctl_encode);
         dialog_cmd_ctl_encode.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_ctl_encode.control_id = old_default_id;
+        dialog_cmd_ctl_encode.dialog_control_id = old_default_dialog_control_id;
         dialog_cmd_ctl_encode.bits = DIALOG_ENCODE_UPDATE_NOW;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
     }
 
     return(STATUS_OK);
@@ -517,7 +519,7 @@ dialog_cmd_ctl_size_estimate(
 
     p_dialog_control_data.p_any = p_dialog_cmd_ctl_size_estimate->p_dialog_control_data;
 
-    switch(p_dialog_control->bits.type)
+    switch(p_dialog_control->bits.packed_dialog_control_type)
     {
     default:
         est_size.x = est_size.y = 0;
@@ -621,7 +623,7 @@ dialog_cmd_ctl_size_estimate(
 
         est_size.x += width;
 
-        if((IDOK == p_dialog_control->control_id) || (p_dialog_control_data.pushbutton->push_xx.def_pushbutton))
+        if((IDOK == p_dialog_control->dialog_control_id) || (p_dialog_control_data.pushbutton->push_xx.def_pushbutton))
         {
             est_size.x += 2 * DIALOG_DEFPUSHEXTRA_H;
             est_size.y += 2 * DIALOG_DEFPUSHEXTRA_V;
@@ -713,10 +715,10 @@ dialog_cmd_ctl_size_query(
     if((p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_size_query->h_dialog)) == NULL)
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if((p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_size_query->control_id)) == NULL)
+    if((p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_size_query->dialog_control_id)) == NULL)
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    dialog_control_rect(p_dialog, p_dialog_cmd_ctl_size_query->control_id, NULL);
+    dialog_control_rect(p_dialog, p_dialog_cmd_ctl_size_query->dialog_control_id, NULL);
 
     p_dialog_cmd_ctl_size_query->outer_size.x = pixit_rect_width(&p_dialog_ictl->pixit_rect);
     p_dialog_cmd_ctl_size_query->outer_size.y = pixit_rect_height(&p_dialog_ictl->pixit_rect);
@@ -726,7 +728,7 @@ dialog_cmd_ctl_size_query(
     gdi_box.x1 = p_dialog_cmd_ctl_size_query->outer_size.x / PIXITS_PER_RISCOS;
     gdi_box.y1 = p_dialog_cmd_ctl_size_query->outer_size.y / PIXITS_PER_RISCOS;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled(); break;
 
@@ -782,20 +784,20 @@ dialog_cmd_ctl_state_query(
     P_DIALOG_ICTL p_dialog_ictl;
     STATUS status = STATUS_OK;
 
-    assert(p_dialog_cmd_ctl_state_query->control_id != DIALOG_CONTROL_INVALID);
-    assert(p_dialog_cmd_ctl_state_query->bits       != 0xBCBCBCBC);
+    assert(p_dialog_cmd_ctl_state_query->dialog_control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_state_query->bits              != 0xBCBCBCBC);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_state_query->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_state_query->control_id)))
+    if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog_cmd_ctl_state_query->dialog_control_id)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
-    p_dialog_cmd_ctl_state_query->type = p_dialog_ictl->type;
+    p_dialog_cmd_ctl_state_query->dialog_control_type = p_dialog_ictl->dialog_control_type;
 
     if(p_dialog_cmd_ctl_state_query->bits & DIALOG_STATE_QUERY_ALTERNATE)
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled(); break;
 
@@ -814,7 +816,7 @@ dialog_cmd_ctl_state_query(
     }
     else
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         case DIALOG_CONTROL_STATICPICTURE:
         case DIALOG_CONTROL_PUSHPICTURE:
@@ -873,12 +875,12 @@ static STATUS
 dialog_cmd_ctl_state_query_dispose(
     P_DIALOG_CMD_CTL_STATE_QUERY p_dialog_cmd_ctl_state_query_dispose)
 {
-    assert(p_dialog_cmd_ctl_state_query_dispose->bits != 0xBCBCBCBC);
-    assert(p_dialog_cmd_ctl_state_query_dispose->type != 0xBCBCBCBC);
+    assert(p_dialog_cmd_ctl_state_query_dispose->bits                != 0xBCBCBCBC);
+    assert(p_dialog_cmd_ctl_state_query_dispose->dialog_control_type != 0xBCBCBCBC);
 
     if(p_dialog_cmd_ctl_state_query_dispose->bits & DIALOG_STATE_QUERY_ALTERNATE)
     {
-        switch(p_dialog_cmd_ctl_state_query_dispose->type)
+        switch(p_dialog_cmd_ctl_state_query_dispose->dialog_control_type)
         {
         default:
             break;
@@ -886,7 +888,7 @@ dialog_cmd_ctl_state_query_dispose(
     }
     else
     {
-        switch(p_dialog_cmd_ctl_state_query_dispose->type)
+        switch(p_dialog_cmd_ctl_state_query_dispose->dialog_control_type)
         {
         default:
 #if CHECKING
@@ -945,16 +947,16 @@ dialog_cmd_ctl_state_set(
     P_DIALOG p_dialog;
     P_DIALOG_ICTL_GROUP p_parent_ictls;
     P_DIALOG_ICTL p_dialog_ictl, message_p_dialog_ictl;
-    DIALOG_CTL_ID encode_control_id;
+    DIALOG_CONTROL_ID encode_control_id;
     BOOL changed;
     BOOL force_update;
 
-    assert(p_dialog_cmd_ctl_state_set->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_ctl_state_set->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_ctl_state_set->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    encode_control_id = p_dialog_cmd_ctl_state_set->control_id;
+    encode_control_id = p_dialog_cmd_ctl_state_set->dialog_control_id;
 
     if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, encode_control_id, &p_parent_ictls)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
@@ -965,7 +967,7 @@ dialog_cmd_ctl_state_set(
 
     if(p_dialog_cmd_ctl_state_set->bits & DIALOG_STATE_SET_ALTERNATE)
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled(); return(STATUS_OK);
 
@@ -983,14 +985,14 @@ dialog_cmd_ctl_state_set(
                 if(p_dialog_ictl->state.list_text.itemno >= 0)
                 {
                     UI_DATA ui_data;
-                    UI_DATA_TYPE ui_data_type = (p_dialog_ictl->type == DIALOG_CONTROL_LIST_S32)
+                    UI_DATA_TYPE ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
                                               ? UI_DATA_TYPE_S32
                                               : UI_DATA_TYPE_TEXT;
                     UI_DATA_TYPE this_ui_data_type = ui_data_type;
 
                     status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.list_xx.list_xx.p_ui_source, p_dialog_ictl->state.list_text.itemno, &ui_data));
 
-                    if(p_dialog_ictl->type == DIALOG_CONTROL_LIST_S32)
+                    if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_LIST_S32)
                     {
                         /* this_ui_data_type == ui_data_type fails if item doesn't exist */
                         if(this_ui_data_type == ui_data_type)
@@ -1023,7 +1025,7 @@ dialog_cmd_ctl_state_set(
                 if((p_dialog_ictl->state.combo_text.itemno = p_dialog_cmd_ctl_state_set->state.combo_text.itemno) >= 0)
                 {
                     UI_DATA ui_data;
-                    UI_DATA_TYPE ui_data_type = (p_dialog_ictl->type == DIALOG_CONTROL_COMBO_S32)
+                    UI_DATA_TYPE ui_data_type = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32)
                                               ? UI_DATA_TYPE_S32
                                               : UI_DATA_TYPE_TEXT;
                     UI_DATA_TYPE this_ui_data_type = ui_data_type;
@@ -1031,7 +1033,7 @@ dialog_cmd_ctl_state_set(
                     status_assert(ui_data_query(&this_ui_data_type, p_dialog_ictl->data.combo_xx.list_xx.p_ui_source, p_dialog_ictl->state.combo_text.itemno, &ui_data));
                     assert(this_ui_data_type == ui_data_type);
 
-                    if(p_dialog_ictl->type == DIALOG_CONTROL_COMBO_S32)
+                    if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_COMBO_S32)
                         p_dialog_ictl->state.combo_s32.s32 = ui_data.s32;
                     else
                     {
@@ -1048,7 +1050,7 @@ dialog_cmd_ctl_state_set(
     }
     else
     {
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled(); return(STATUS_OK);
 
@@ -1089,7 +1091,7 @@ dialog_cmd_ctl_state_set(
             /* master copy of radiobutton state held in containing group */
             P_S32 p_state;
 
-            if(p_dialog_ictl->type != DIALOG_CONTROL_GROUPBOX)
+            if(p_dialog_ictl->dialog_control_type != DIALOG_CONTROL_GROUPBOX)
             {
                 P_U8 p_u8 = (P_U8) p_parent_ictls;
                 p_u8 -= (offsetof32(DIALOG_ICTL, data) + offsetof32(union DIALOG_ICTL_DATA, groupbox) + offsetof32(struct DIALOG_ICTL_DATA_GROUPBOX, ictls));
@@ -1108,7 +1110,7 @@ dialog_cmd_ctl_state_set(
 
                 *p_state = p_dialog_cmd_ctl_state_set->state.radiobutton;
 
-                if(p_dialog_ictl->type != DIALOG_CONTROL_GROUPBOX)
+                if(p_dialog_ictl->dialog_control_type != DIALOG_CONTROL_GROUPBOX)
                     message_p_dialog_ictl = NULL;
                 else
                     p_parent_ictls = &p_dialog_ictl->data.groupbox.ictls;
@@ -1120,7 +1122,8 @@ dialog_cmd_ctl_state_set(
                 {
                     P_DIALOG_ICTL this_p_dialog_ictl = p_dialog_ictl_from(p_parent_ictls, i);
 
-                    if((this_p_dialog_ictl->type == DIALOG_CONTROL_RADIOBUTTON) || (this_p_dialog_ictl->type == DIALOG_CONTROL_RADIOPICTURE))
+                    if( (this_p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_RADIOBUTTON) ||
+                        (this_p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_RADIOPICTURE) )
                     {
                         BOOL old_active = this_p_dialog_ictl->bits.radiobutton_active;
 
@@ -1135,16 +1138,16 @@ dialog_cmd_ctl_state_set(
                                                                        this_p_dialog_ictl->p_dialog_control_data.radiobutton->activate_state);
 
                         if(this_p_dialog_ictl->bits.radiobutton_active)
-                            encode_control_id = this_p_dialog_ictl->control_id;
+                            encode_control_id = this_p_dialog_ictl->dialog_control_id;
 
                         if(old_active)
                         {
                             DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
                             msgclr(dialog_cmd_ctl_encode);
                             dialog_cmd_ctl_encode.h_dialog = p_dialog->h_dialog;
-                            dialog_cmd_ctl_encode.control_id = this_p_dialog_ictl->control_id;
+                            dialog_cmd_ctl_encode.dialog_control_id = this_p_dialog_ictl->dialog_control_id;
                             dialog_cmd_ctl_encode.bits = 0;
-                            status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
+                            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
                         }
                     }
                 }
@@ -1334,9 +1337,9 @@ dialog_cmd_ctl_state_set(
             DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
             msgclr(dialog_cmd_ctl_encode);
             dialog_cmd_ctl_encode.h_dialog = p_dialog->h_dialog;
-            dialog_cmd_ctl_encode.control_id = encode_control_id;
+            dialog_cmd_ctl_encode.dialog_control_id = encode_control_id;
             dialog_cmd_ctl_encode.bits = p_dialog_cmd_ctl_state_set->bits & DIALOG_STATE_SET_UPDATE_NOW;
-            status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
+            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
         }
 
     if(p_dialog_cmd_ctl_state_set->bits & DIALOG_STATE_SET_DONT_MSG)
@@ -1349,7 +1352,7 @@ dialog_cmd_ctl_state_set(
             DIALOG_MSG_CTL_STATE_CHANGE dialog_msg_ctl_state_change;
             msgclr(dialog_msg_ctl_state_change);
 
-            if(NULL != (p_proc_client = dialog_find_handler(p_dialog, dialog_msg_ctl_state_change.dialog_control_id, &dialog_msg_ctl_state_change.client_handle)))
+            if(NULL != (p_proc_client = dialog_find_handler(p_dialog, encode_control_id, &dialog_msg_ctl_state_change.client_handle)))
             {
                 DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_state_change, p_dialog, message_p_dialog_ictl);
                 /* give them a cheap and nasty replica, not a full copy. If they want that, they can ask for it! */
@@ -1379,12 +1382,12 @@ dialog_cmd_defpushbutton(
     if(NULL == p_dialog)
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
-    if(p_dialog->default_id)
+    if(p_dialog->default_dialog_control_id)
     {
-        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->default_id);
+        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->default_dialog_control_id);
 
         if(NULL != p_dialog_ictl)
-            return(dialog_click_pushbutton(p_dialog, p_dialog_ictl, 0, p_dialog_cmd_defpushbutton->double_control_id));
+            return(dialog_click_pushbutton(p_dialog, p_dialog_ictl, 0, p_dialog_cmd_defpushbutton->double_dialog_control_id));
     }
 
     host_bleep();
@@ -1411,18 +1414,18 @@ dialog_cmd_hwnd_query(
     P_DIALOG p_dialog;
     P_DIALOG_ICTL_GROUP p_parent_ictls;
     P_DIALOG_ICTL p_dialog_ictl;
-    DIALOG_CTL_ID control_id;
+    DIALOG_CONTROL_ID dialog_control_id;
 
-    assert(p_dialog_cmd_hwnd_query->control_id != DIALOG_CONTROL_INVALID);
+    assert(p_dialog_cmd_hwnd_query->dialog_control_id != DIALOG_CONTROL_INVALID);
 
     if(NULL == (p_dialog = p_dialog_from_h_dialog(p_dialog_cmd_hwnd_query->h_dialog)))
         return(create_error(DIALOG_ERR_UNKNOWN_DIALOG));
 
     p_dialog_cmd_hwnd_query->hwnd = p_dialog->hwnd;
 
-    if(0 != (control_id = p_dialog_cmd_hwnd_query->control_id))
+    if(0 != (dialog_control_id = p_dialog_cmd_hwnd_query->dialog_control_id))
     {
-        if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, control_id, &p_parent_ictls)))
+        if(NULL == (p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, dialog_control_id, &p_parent_ictls)))
             return(create_error(DIALOG_ERR_UNKNOWN_DIALOG_CONTROL));
 
         /* otherwise WHAT? */
@@ -1470,7 +1473,7 @@ dialog_ictl_enable_suppress_clear_changes_in(
     {
         p_dialog_ictl->bits.enable_suppress_change = 0;
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -1500,14 +1503,14 @@ dialog_ictl_enable_suppress_in(
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
-        if(p_dialog_ictl->bits.enable_suppressed != (UBF) suppress)
+        if(p_dialog_ictl->bits.enable_suppressed != UBF_PACK(suppress))
         {
-            p_dialog_ictl->bits.enable_suppressed = (UBF) suppress;
+            p_dialog_ictl->bits.enable_suppressed = UBF_PACK(suppress);
             p_dialog_ictl->bits.enable_suppress_change = 1;
             ++nsc;
         }
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -1535,7 +1538,7 @@ dialog_ictl_enable_in_tree(
 {
     UINT nsc = 0;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default:
         break;
@@ -1559,7 +1562,7 @@ dialog_ictl_enable_in_tree(
     if(nsc)
     {
         /* enabled state of group has suppressed enabled state of its children */
-        assert(p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX);
+        assert(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX);
         dialog_ictl_enable_suppressed_changes_in(p_dialog, &p_dialog_ictl->data.groupbox.ictls);
     }
 
@@ -1570,7 +1573,7 @@ dialog_ictl_enable_in_tree(
 
     if(nsc)
     {
-        assert(p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX);
+        assert(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX);
         dialog_ictl_enable_suppress_clear_changes_in(&p_dialog_ictl->data.groupbox.ictls);
     }
 }
@@ -1595,15 +1598,17 @@ dialog_ictl_enable_here(
 #endif
 
     if(p_dialog_ictl->bits.disabled)
-        if((DIALOG_CTL_ID) p_dialog_ictl->control_id == p_dialog->current_id)
+    {
+        if(p_dialog_ictl->dialog_control_id == p_dialog->current_dialog_control_id)
         {
             /* remove focus from control */
             DIALOG_CMD_CTL_FOCUS_SET dialog_cmd_ctl_focus_set;
             msgclr(dialog_cmd_ctl_focus_set);
-            dialog_cmd_ctl_focus_set.h_dialog   = p_dialog->h_dialog;
-            dialog_cmd_ctl_focus_set.control_id = 0;
-            status_assert(call_dialog(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
+            dialog_cmd_ctl_focus_set.h_dialog = p_dialog->h_dialog;
+            dialog_cmd_ctl_focus_set.dialog_control_id = 0;
+            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
         }
+    }
 }
 
 static void
@@ -1626,7 +1631,7 @@ dialog_ictl_enable_suppressed_changes_in(
                 dialog_ictl_enable_here(p_dialog, p_dialog_ictl);
         }
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -1660,7 +1665,7 @@ dialog_ictl_edit_xx_encode_here(
     BOOL kill_ui_text = FALSE;
     BOOL combo_type = FALSE;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
@@ -1802,7 +1807,7 @@ dialog_ictl_encode_here(
     const HWND hwnd = (p_dialog->hwnd && p_dialog_ictl->windows.wid) ? GetDlgItem(p_dialog->hwnd, p_dialog_ictl->windows.wid) : HOST_WND_NONE;
 #endif
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
@@ -2106,7 +2111,7 @@ dialog_ictls_enable_in(
 
         dialog_ictl_enable_here(p_dialog, p_dialog_ictl);
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -2142,7 +2147,7 @@ dialog_ictls_encode_in(
 
         status_return(dialog_ictl_encode_here(p_dialog, p_dialog_ictl, bits));
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
@@ -2208,7 +2213,7 @@ dialog_init(void)
     array_init_block_setup(&dialog_statics.ictls_init_block, 8, sizeof32(DIALOG_ICTL), 1);
 
 #if WINDOWS
-    dialog_windows_ui_len_init(); /* ensure we know all about which font to use etc */
+    dialog_windows_ui_len_init(); /* ensure we know all about which font to use etc. */
 #endif
 
     return(STATUS_OK);
@@ -2342,14 +2347,14 @@ OBJECT_PROTO(extern, object_dialog)
     case T5_MSG_INITCLOSE:
         return(dialog_msg_initclose(p_docu, t5_message, (PC_MSG_INITCLOSE) p_data));
 
-    case DIALOG_CMD_CODE_PROCESS_DBOX:
-        return(dialog_dbox_process(p_docu, t5_message, (P_DIALOG_CMD_PROCESS_DBOX) p_data));
-
     default:
-        if(((U32) t5_message - (U32) DIALOG_MESSAGE_STT) < ((U32) DIALOG_MESSAGE_END - (U32) DIALOG_MESSAGE_STT))
-           return(dialog_event((const DIALOG_MESSAGE) t5_message, p_data));
+        if(((U32) t5_message - (U32) DIALOG_MESSAGE_STT) >= ((U32) DIALOG_MESSAGE_END - (U32) DIALOG_MESSAGE_STT))
+            return(STATUS_OK);
 
-        return(STATUS_OK);
+        if(DIALOG_MESSAGE_CMD_OFFSET(DIALOG_CMD_CODE_PROCESS_DBOX) == DIALOG_MESSAGE_CMD_OFFSET(t5_message)) /* this one needs p_docu */
+            return(dialog_dbox_process(p_docu, t5_message, (P_DIALOG_CMD_PROCESS_DBOX) p_data));
+
+        return(dialog_event((const DIALOG_MESSAGE) t5_message, p_data));
     }
 }
 

@@ -5,7 +5,7 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-Copyright (C) 2013-2015 Stuart Swales
+Copyright (C) 2013-2016 Stuart Swales
 
 Prerequisites
 -------------
@@ -17,11 +17,7 @@ for this) to generate the Makefiles.
 
 Unzip (installed as InfoZip dependency) to populate the build directories.
 
-InfoZip (install with PackMan) for creating a zip of the final build.
-
-NB. Fireworkz Pro can only be built if licensed R-Comp components are
-present in the $.coltsoft.trunk.cs-nonfree tree - if this is the case, you can
-follow the same instructions but replacing fire<xxx> with fpro<xxx>.
+Zip (install InfoZip with PackMan) for creating a zip of the final build.
 
 
 First-time configuration and build
@@ -72,13 +68,8 @@ Then drag 'r32b.firewrkz.Makefile' to !Amu... and wait...
 Creating a package for distribution
 -----------------------------------
 
-In firewrkz.r32b.MakeNN, execute the Obey file Make_TS.
+In firewrkz.r32b.MakeNN, ensure t5$Release is set appropriately in the Obey file MakeRiscPkg, then run it.
 
-This will copy only those files needed for distribution to fire-1xxyy in
-$.Temp.
+This will copy only those files needed for distribution to $.Temp.Fireworkz_<t5$Release>.
 
-Rename that directory as fire-1<xx><yy> where <xx> is the actual major
-version number and <yy> the minor version number (usually 00).
-
-Use !InfoZip to create the distributable files containing the
-fire-<ver> directory.
+!Zip (from !InfoZip) is used to create the distributable file $.Temp.Fireworkz_<t5$Release>/zip.

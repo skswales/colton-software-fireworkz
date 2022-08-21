@@ -26,17 +26,15 @@ data_ensure_constant_sub(
 
 /******************************************************************************
 *
-* given a data item and a set of data
-* allowable flags, convert as many different
-* data items as possible into acceptable types
+* given a data item and a set of data allowable flags,
+* convert as many different data items as possible into acceptable types
 *
 * --out--
 * <0  error returned
 * >=0 rpn number of data
 *
-* NOTE: if you pass in an SLR that has to
-* be dereferenced, you may get a local copy
-* of a string that will need freeing!
+* NOTE: if you pass in an SLR that has to be dereferenced,
+* you may get a local copy of a string that will need freeing!
 *
 ******************************************************************************/
 
@@ -49,39 +47,72 @@ arg_normalise(
     _InoutRef_opt_ P_S32 p_max_y,
     P_STACK_DBASE p_stack_dbase)
 {
+    /* what have we currently got? */
     switch(p_ev_data->did_num)
     {
     case RPN_DAT_REAL:
-        if(!(type_flags & (EM_INT | EM_REA)))
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXNUMBER));
+        {
+        if(type_flags & EM_REA)
+            break; /* preferred */
 
-        if(!(type_flags & EM_REA))
-            if(!status_done(real_to_integer_force(p_ev_data)))
-                return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
-        break;
+        if(type_flags & EM_INT)
+        {   /* try to obtain integer value from this real arg */
+            if(status_done(real_to_integer_force(p_ev_data)))
+                break;
+
+            return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
+        }
+
+        if(type_flags & EM_DAT)
+        {   /* try to obtain date value from this real arg */
+            if(status_ok(ss_serial_number_to_date(&p_ev_data->arg.ev_date, p_ev_data->arg.fp)))
+                break;
+
+            return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
+        }
+
+        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXNUMBER));
+        }
 
     case RPN_DAT_BOOL8:
     case RPN_DAT_WORD8:
     case RPN_DAT_WORD16:
     case RPN_DAT_WORD32:
-        if(!(type_flags & (EM_INT | EM_REA)))
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXNUMBER));
+        {
+        if(type_flags & EM_INT)
+            break; /* preferred */
 
-        if(!(type_flags & EM_INT))
+        if(type_flags & EM_REA)
+        {   /* promote this integer arg to real value */
             ev_data_set_real(p_ev_data, (F64) p_ev_data->arg.integer);
-        break;
+            break;
+        }
+
+        if(type_flags & EM_DAT)
+        {   /* try to obtain date value from this integer arg */
+            if(status_ok(ss_serial_number_to_date(&p_ev_data->arg.ev_date, (F64) p_ev_data->arg.integer)))
+                break;
+
+            return(ev_data_set_error(p_ev_data, EVAL_ERR_ARGRANGE));
+        }
+
+        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXNUMBER));
+        }
 
     case RPN_DAT_STRING:
-        if(!(type_flags & EM_STR))
         {
-            ss_data_free_resources(p_ev_data);
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXSTRING));
+        if(type_flags & EM_STR)
+            break; /* preferred */
+
+        /* can't do anything with this string arg, best free it */
+        ss_data_free_resources(p_ev_data);
+        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXSTRING));
         }
-        break;
 
     case RPN_DAT_ARRAY:
     case RPN_DAT_RANGE:
     case RPN_DAT_FIELD:
+        {
         if(NULL != p_stack_dbase)
         {
             EV_DATA ev_data;
@@ -91,86 +122,96 @@ arg_normalise(
             return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, NULL));
         }
 
-        if(!(type_flags & EM_ARY))
+        if(type_flags & EM_ARY)
+            break; /* preferred */
+
+        if((NULL != p_max_x) && (NULL != p_max_y))
         {
-            if((NULL != p_max_x) && (NULL != p_max_y))
-            {
-                S32 x_size, y_size;
-                array_range_sizes(p_ev_data, &x_size, &y_size);
-                *p_max_x = MAX(*p_max_x, (S32) x_size);
-                *p_max_y = MAX(*p_max_y, (S32) y_size);
-            }
-            else
-            {
-                ss_data_free_resources(p_ev_data);
-                return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXARRAY));
-            }
+            S32 x_size, y_size;
+            array_range_sizes(p_ev_data, &x_size, &y_size);
+            *p_max_x = MAX(*p_max_x, (S32) x_size);
+            *p_max_y = MAX(*p_max_y, (S32) y_size);
+            break;
         }
-        break;
+
+        ss_data_free_resources(p_ev_data);
+        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXARRAY));
+        }
 
     case RPN_DAT_DATE:
-        if(!(type_flags & EM_DAT))
         {
-#if 1       /* coerce dates to Excel-compatible serial number if a number is acceptable */
-            if(!(type_flags & (EM_INT | EM_REA)))
-                return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXDATE));
+        if(type_flags & EM_DAT)
+            break; /* preferred */
 
-            if(!(type_flags & EM_REA))
-            {
-                if(EV_DATE_NULL != p_ev_data->arg.ev_date.date)
-                    ev_data_set_integer(p_ev_data, ss_dateval_to_serial_number(&p_ev_data->arg.ev_date.date)); /* for EM_INT args ignore any time component */
-                else
-                    ev_data_set_integer(p_ev_data, 0); /* for EM_INT args ignore any time component, and this is a pure time value */
-            }
-            else
-                ev_data_set_real(p_ev_data, ss_date_to_serial_number(&p_ev_data->arg.ev_date));
-#else
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXDATE));
-#endif
+        /* coerce dates to Excel-compatible serial number if a number is acceptable */
+        if(type_flags & EM_REA)
+        {
+            ev_data_set_real(p_ev_data, ss_date_to_serial_number(&p_ev_data->arg.ev_date));
+            break;
         }
-        break;
+
+        if(type_flags & EM_INT)
+        {   /* for EM_INT args ignore any time component */
+            if(EV_DATE_NULL != p_ev_data->arg.ev_date.date)
+                ev_data_set_integer(p_ev_data, ss_dateval_to_serial_number(&p_ev_data->arg.ev_date.date));
+            else
+                ev_data_set_integer(p_ev_data, 0); /* this is a pure time value */
+
+            break;
+        }
+
+        return(ev_data_set_error(p_ev_data, EVAL_ERR_UNEXDATE));
+        }
 
     case RPN_DAT_BLANK:
-        if(!(type_flags & EM_BLK))
         {
-            if(!(type_flags & EM_STR))
-            {
-                *p_ev_data = ev_data_real_zero;
-                return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
-            }
-            else
-            {
-                p_ev_data->arg.string.uchars = uchars_empty_string;
-                p_ev_data->arg.string.size = 0;
-                p_ev_data->did_num = RPN_DAT_STRING;
-                p_ev_data->local_data = 0;
-            }
+        if(type_flags & EM_BLK)
+            break; /* preferred */
+
+        if(type_flags & EM_STR)
+        {   /* map blank arg to empty string */
+            p_ev_data->arg.string.uchars = uchars_empty_string;
+            p_ev_data->arg.string.size = 0;
+            p_ev_data->did_num = RPN_DAT_STRING;
+            p_ev_data->local_data = 0;
+            break;
         }
-        break;
+
+        /* map blank arg to zero and retry */
+        ev_data_set_integer(p_ev_data, 0);
+        return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+        }
 
     case RPN_DAT_ERROR:
-        if(!(type_flags & EM_ERR))
-            return(p_ev_data->arg.ev_error.status);
-        break;
+        {
+        if(type_flags & EM_ERR)
+            break; /* preferred */
+
+        return(p_ev_data->arg.ev_error.status);
+        }
 
     case RPN_DAT_SLR:
-        /* if function doesn't want SLRs, dereference them */
-        if(!(type_flags & EM_SLR))
         {
-            ev_slr_deref(p_ev_data, &p_ev_data->arg.slr);
-            return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
+        if(type_flags & EM_SLR)
+            break; /* preferred */
+
+        /* function doesn't want SLRs, so dereference them and retry */
+        ev_slr_deref(p_ev_data, &p_ev_data->arg.slr);
+        return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
         }
-        break;
 
     case RPN_DAT_NAME:
+        /* no function handles NAME args, so dereference them and retry */
         name_deref(p_ev_data, p_ev_data->arg.h_name);
         return(arg_normalise(p_ev_data, type_flags, p_max_x, p_max_y, p_stack_dbase));
-        break;
 
     case RPN_FRM_COND:
-        if(!(type_flags & EM_CDX))
-            return(ev_data_set_error(p_ev_data, EVAL_ERR_BADEXPR));
-        break;
+        {
+        if(type_flags & EM_CDX)
+            break; /* preferred */
+
+        return(ev_data_set_error(p_ev_data, EVAL_ERR_BADEXPR));
+        }
     }
 
     return(p_ev_data->did_num);
@@ -208,7 +249,7 @@ array_element_copy(
 * copy one array into another; the target array is not shrunk, only expanded
 *
 * this task is not as simple as appears at first sight since the array may
-* contain handle based resources eg strings which need copies making
+* contain handle based resources e.g. strings which need copies making
 *
 ******************************************************************************/
 
@@ -262,7 +303,7 @@ array_copy(
 *
 * expand an existing array or data element to the given x,y size
 *
-* note that max_x, max_y are sizes not indices; ie to store element 0,2 sizes must be 1,3
+* note that max_x, max_y are sizes not indices; i.e. to store element 0,2 sizes must be 1,3
 *
 ******************************************************************************/
 
@@ -1332,7 +1373,7 @@ slr_offset_add(
         p_ev_slr->row -= 1;
     }
 
-    if(!p_ev_range_scope || ev_slr_in_range(p_ev_range_scope, p_ev_slr))
+    if((NULL == p_ev_range_scope) || ev_slr_in_range(p_ev_range_scope, p_ev_slr))
     {
         if(!use_abs || !p_ev_slr->abs_col)
             p_ev_slr->col += p_ev_slr_offset->col;
@@ -1341,7 +1382,7 @@ slr_offset_add(
             p_ev_slr->row += p_ev_slr_offset->row;
     }
 
-    if(p_ev_range_scope && (ev_slr_docno(p_ev_slr) == ev_slr_docno(&p_ev_range_scope->s)))
+    if((NULL != p_ev_range_scope) && (ev_slr_docno(p_ev_slr) == ev_slr_docno(&p_ev_range_scope->s)))
         p_ev_slr->docno = p_ev_slr_offset->docno;
 
     if(end_coord)

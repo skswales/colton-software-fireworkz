@@ -93,11 +93,11 @@ typedef struct FUN_PARMS
     UBF load_recalc     : 1;            /* recalc on load */
     UBF event_type      : 2;            /* event type */
 #if defined(EV_IDNO_U16)
-    UBF rpn_alias       : 10;           /* RPN number alias for (eg) database functions - an EV_IDNO MUST fit! */
+    UBF rpn_alias       : 10;           /* RPN number alias for (e.g.) database functions - an EV_IDNO MUST fit! */
     /*            =28 */
     UBF _spare          : 32-28;
 #else
-    UBF rpn_alias       : 8;            /* RPN number alias for (eg) database functions - an EV_IDNO MUST fit! */
+    UBF rpn_alias       : 8;            /* RPN number alias for (e.g.) database functions - an EV_IDNO MUST fit! */
     /*            =26 */
     UBF _spare          : 32-26;
 #endif
@@ -876,6 +876,8 @@ PROC_EXEC_PROTO(c_datevalue);
 PROC_EXEC_PROTO(c_day);
 PROC_EXEC_PROTO(c_dayname);
 PROC_EXEC_PROTO(c_days_360);
+PROC_EXEC_PROTO(c_edate);
+PROC_EXEC_PROTO(c_eomonth);
 PROC_EXEC_PROTO(c_hour);
 PROC_EXEC_PROTO(c_minute);
 PROC_EXEC_PROTO(c_month);

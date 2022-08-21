@@ -18,11 +18,11 @@
 #include "ob_note/xp_note.h"
 #endif
 
-#ifndef          __gr_cache_h
-#include "cmodules/gr_cache.h"
+#ifndef          __im_cache_h
+#include "cmodules/im_cache.h"
 #endif
 
-#define DRAW_MSG_FILEDESCRIPT 4001
+#define DRAW_MSG_DRAWFILEDESCRIPT   4001
 
 #endif /* __ob_draw_h */
 

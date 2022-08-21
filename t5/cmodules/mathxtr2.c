@@ -36,7 +36,7 @@ linest() : multivariate linear fit using least squares
 * ----------------
 *
 * each matrix has all rows in a column stored contiguously to enable
-* swift transposition, ie col1,row0 follows on from col0,rowM
+* swift transposition, i.e. col1,row0 follows on from col0,rowM
 *
 */
 
@@ -49,7 +49,7 @@ linest() : multivariate linear fit using least squares
 _Check_return_
 static STATUS
 data_in_columns_determinant(
-    _In_count_x_(m*m) PC_F64 A /*[m][m]*/,
+    _In_reads_x_(m*m) PC_F64 A /*[m][m]*/,
     _InVal_     U32 m,
     _OutRef_    P_F64 dp)
 {
@@ -69,8 +69,8 @@ data_in_columns_determinant(
     default:
         { /* recurse evaluating minors */
         P_F64 minorp;
-        U32 minor_m = m - 1;
-        U32 minor_nbytes_per_col = minor_m * sizeof32(*minorp);
+        const U32 minor_m = m - 1;
+        const U32 minor_nbytes_per_col = minor_m * sizeof32(*minorp);
         U32 col_idx, i_col_idx, o_col_idx;
         F64 minor_D;
 
@@ -91,7 +91,7 @@ data_in_columns_determinant(
 
                 /* copy all the row data (bar the top row) in this column */
                 memcpy32(&minorp[0 + (o_col_idx * minor_m)], /* to   row_idx 0, o_col_idx */
-                              &A[     1 + (i_col_idx * m)      ], /* from row_idx 1, i_col_idx */
+                              &A[1 + (i_col_idx * m)      ], /* from row_idx 1, i_col_idx */
                               minor_nbytes_per_col);
             }
 
@@ -125,12 +125,12 @@ linest_permute_for_cramer(
     P_F64 A /*[m][m]*/,
     P_F64 C /*[m]*/,
     _InVal_     U32 m,
-    _InVal_     U32 i)
+    _InVal_     U32 j)
 {
     const U32 n_elements = array_elements(&permute_tmp);
     const U32 n_bytes = n_elements * sizeof32(F64);
     P_F64 p_tmp = array_range(&permute_tmp, F64, 0, n_elements);
-    P_F64 A_j = &A[0 + (i * m)];
+    P_F64 A_j = &A[0 + (j * m)];
 
     memcpy32(p_tmp, C,     n_bytes);
     memcpy32(C,     A_j,   n_bytes);
@@ -149,9 +149,9 @@ linest_permute_for_cramer(
 _Check_return_
 static STATUS
 linest_solve_system(
-    P_F64 A /*abused but preserved*/,
-    P_F64 C /*abused but preserved*/,
-    /*out*/ P_F64 X,
+    P_F64 A /*[m][m]*/ /*abused but preserved*/,
+    P_F64 C /*[m]*/ /*abused but preserved*/,
+    P_F64 X /*[m]*/ /*out*/,
     _InVal_     U32 m)
 {
     STATUS status = STATUS_OK;

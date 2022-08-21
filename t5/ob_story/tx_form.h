@@ -134,8 +134,8 @@ text_from_field_uchars(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     _In_reads_(uchars_n) PC_UCHARS_INLINE uchars_inline CODE_ANALYSIS_ONLY_ARG(_InVal_ U32 uchars_n),
-    _InRef_opt_ PC_PAGE_NUM p_page_num,
-    _InRef_opt_ PC_STYLE p_style_text_global);
+    _InRef_maybenone_ PC_PAGE_NUM p_page_num,
+    _InRef_maybenone_ PC_STYLE p_style_text_global);
 
 /*ncr*/
 extern BOOL

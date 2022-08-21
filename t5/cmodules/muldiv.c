@@ -21,6 +21,8 @@
 #include "cmodules/muldiv.h"
 #endif
 
+#include <signal.h>
+
 static struct _muldiv_statics
 {
 	S32 remainder;

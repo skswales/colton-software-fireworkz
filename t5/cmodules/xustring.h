@@ -244,6 +244,24 @@ _ustr_from_tstr(
 
 #endif /* TSTR_IS_SBSTR && USTR_IS_SBSTR */
 
+_Check_return_
+static inline U32
+fast_ustrtoul(
+    _In_z_      PC_USTR ustr_in,
+    _OutRef_opt_ P_PC_USTR endptr)
+{
+    return(fast_strtoul((PC_U8Z) ustr_in, (P_P_U8Z) endptr));
+}
+
+_Check_return_
+static inline F64
+ustrtod(
+    _In_z_      PC_USTR ustr_in,
+    _OutRef_opt_ P_PC_USTR endptr)
+{
+    return((F64) strtod((const char *) ustr_in, (char **) endptr));
+}
+
 #endif /* __xustring_h */
 
 /* end of xustring.h */

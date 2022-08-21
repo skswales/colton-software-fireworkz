@@ -220,7 +220,7 @@ ctrl_skel_view[/*modified_redraw_tag*/] =
     &ctrl_skel_view[(uintptr_t) (redraw_tag) - (uintptr_t) UPDATE_BORDER_HORZ] )
 
 #if defined(NOTE_LAYER) && 0
-static LAYER update_now_caller_layer = LAYER_SLOT;
+static LAYER update_now_caller_layer = LAYER_CELLS;
 #endif
 
 _Check_return_
@@ -300,7 +300,7 @@ docu_enum_views(
     else
         *p_viewno += 1;
 
-    while(array_index_valid(&p_docu->h_view_table, *p_viewno - VIEWNO_FIRST)) /* handle 0 avoidance */
+    while(array_index_is_valid(&p_docu->h_view_table, *p_viewno - VIEWNO_FIRST)) /* handle 0 avoidance */
     {
         const P_VIEW p_view = array_ptr_no_checks(&p_docu->h_view_table, VIEW, *p_viewno - VIEWNO_FIRST); /* handle 0 avoidance */
 
@@ -842,7 +842,7 @@ viewevent_click_process(
 *
 * Convert a VIEW_POINT to a SKEL_POINT
 *
-* ie calculate the page number & pixit offset and adjust the context origin
+* i.e. calculate the page number & pixit offset and adjust the context origin
 *
 ******************************************************************************/
 
@@ -908,7 +908,7 @@ skel_point_from_view_point_and_redraw_tag(
         return(TRUE);
     }
 
-    /* area specified isn't visible (ie wrong display_mode) */
+    /* area specified isn't visible (i.e. wrong display_mode) */
     return(FALSE);
 }
 
@@ -1001,8 +1001,8 @@ view_default_event(
 
         if(t5_message == T5_EVENT_FILEINSERT_DOINSERT)
         {
-            skelevent_click.data.fileinsert.filename   = p_viewevent_click->data.fileinsert.filename;
-            skelevent_click.data.fileinsert.t5_filetype   = p_viewevent_click->data.fileinsert.t5_filetype;
+            skelevent_click.data.fileinsert.filename = p_viewevent_click->data.fileinsert.filename;
+            skelevent_click.data.fileinsert.t5_filetype = p_viewevent_click->data.fileinsert.t5_filetype;
             skelevent_click.data.fileinsert.safesource = p_viewevent_click->data.fileinsert.safesource;
         }
 #if WINDOWS && 1
@@ -1676,7 +1676,7 @@ try_calling(
                     host_set_clip_rectangle(&skelevent_redraw.redraw_context, &trimmed_pixit_rect, rect_flags);
                 }
 
-                if(skelevent_redraw.flags.show_content || (update_now_caller_layer <= LAYER_SLOT))
+                if(skelevent_redraw.flags.show_content || (update_now_caller_layer <= LAYER_CELLS))
                 {
                     /* call skeleton to render cells */
                     (* p_redraw_tag_and_event->p_proc_event) (p_docu, T5_EVENT_REDRAW, &skelevent_redraw);
@@ -2546,24 +2546,24 @@ view_install_pane_window_handler(
         p_docu->ctrl_view_skel_pane_window.paper_below.p_proc_event = p_proc_event;
         break;
 
-    case LAYER_PRINT_BELOW:
+    case LAYER_PRINT_AREA_BELOW:
         p_docu->ctrl_view_skel_pane_window.print_area_below.p_proc_event = p_proc_event;
         break;
 
-    case LAYER_CELLS_BELOW:
+    case LAYER_CELLS_AREA_BELOW:
         p_docu->ctrl_view_skel_pane_window.cells_area_below.p_proc_event = p_proc_event;
+        break;
+
+    case LAYER_CELLS_AREA_ABOVE:
+        p_docu->ctrl_view_skel_pane_window.cells_area_above.p_proc_event = p_proc_event;
+        break;
+
+    case LAYER_PRINT_AREA_ABOVE:
+        p_docu->ctrl_view_skel_pane_window.print_area_above.p_proc_event = p_proc_event;
         break;
 
     case LAYER_PAPER_ABOVE:
         p_docu->ctrl_view_skel_pane_window.paper_above.p_proc_event = p_proc_event;
-        break;
-
-    case LAYER_PRINT_ABOVE:
-        p_docu->ctrl_view_skel_pane_window.print_area_above.p_proc_event = p_proc_event;
-        break;
-
-    case LAYER_CELLS_ABOVE:
-        p_docu->ctrl_view_skel_pane_window.cells_area_above.p_proc_event = p_proc_event;
         break;
 
     default: default_unhandled(); break;
@@ -2639,7 +2639,7 @@ p_view_from_viewno(
     {
         ARRAY_INDEX view_table_index = viewno - VIEWNO_FIRST; /* handle 0 avoidance */
 
-        if(array_index_valid(&p_docu->h_view_table, view_table_index))
+        if(array_index_is_valid(&p_docu->h_view_table, view_table_index))
         {
             const P_VIEW p_view = array_ptr_no_checks(&p_docu->h_view_table, VIEW, view_table_index);
 

@@ -69,6 +69,7 @@ gr_riscdiag_path_new(
     _OutRef_    P_DRAW_DIAG_OFFSET pPathStart,
     _InRef_opt_ PC_GR_LINESTYLE linestyle,
     _InRef_opt_ PC_GR_FILLSTYLEC fillstylec,
+    _InRef_opt_ PC_DRAW_PATH_STYLE pathstyle,
     _InVal_     U32 extraBytes,
     _OutRef_    P_STATUS p_status);
 
@@ -127,28 +128,26 @@ extern STATUS
 gr_riscdiag_circle_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
     _OutRef_    P_DRAW_DIAG_OFFSET pCircleStart,
-    _InRef_     PC_DRAW_POINT pOrigin,
+    _InRef_     PC_DRAW_POINT pPos,
     _InVal_     DRAW_COORD radius,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec);
 
 _Check_return_
 extern STATUS
-gr_riscdiag_parallelogram_new(
+gr_riscdiag_line_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pParaStart,
-    _InRef_     PC_DRAW_POINT pOriginBL,
-    _InRef_     PC_DRAW_POINT pOffsetBR,
-    _InRef_     PC_DRAW_POINT pOffsetTR,
-    _InRef_     PC_GR_LINESTYLE linestyle,
-    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec);
+    _OutRef_    P_DRAW_DIAG_OFFSET pLineStart,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InRef_     PC_DRAW_POINT pOffset,
+    _InRef_     PC_GR_LINESTYLE linestyle);
 
 _Check_return_
 extern STATUS
 gr_riscdiag_piesector_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
     _OutRef_    P_DRAW_DIAG_OFFSET pPieStart,
-    _InRef_     PC_DRAW_POINT pOrigin,
+    _InRef_     PC_DRAW_POINT pPos,
     _InVal_     DRAW_COORD radius,
     _InRef_     PC_F64 alpha,
     _InRef_     PC_F64 beta,
@@ -157,12 +156,29 @@ gr_riscdiag_piesector_new(
 
 _Check_return_
 extern STATUS
+gr_riscdiag_quadrilateral_new(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _OutRef_    P_DRAW_DIAG_OFFSET pQuadStart,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InRef_     PC_DRAW_POINT pOffset1,
+    _InRef_     PC_DRAW_POINT pOffset2,
+    _InRef_     PC_DRAW_POINT pOffset3,
+    _InRef_     PC_GR_LINESTYLE linestyle,
+    _InRef_     PC_GR_FILLSTYLEC fillstylec);
+
+_Check_return_
+extern STATUS
 gr_riscdiag_rectangle_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
     _OutRef_    P_DRAW_DIAG_OFFSET pRectStart,
-    _InRef_     PC_DRAW_BOX pBox,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InRef_     PC_DRAW_SIZE pSize,
     _InRef_opt_ PC_GR_LINESTYLE linestyle,
     _InRef_opt_ PC_GR_FILLSTYLEC fillstylec);
+
+/*
+scaled diagram
+*/
 
 _Check_return_
 extern STATUS
@@ -182,18 +198,6 @@ gr_riscdiag_scale_diagram(
     _InRef_     PC_GR_BOX pBox,
     _InRef_     PC_GR_FILLSTYLEB fillstyleb);
 
-_Check_return_
-extern STATUS
-gr_riscdiag_trapezoid_new(
-    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pRectStart,
-    _InRef_     PC_DRAW_POINT pOriginBL,
-    _InRef_     PC_DRAW_POINT pOffsetBR,
-    _InRef_     PC_DRAW_POINT pOffsetTR,
-    _InRef_     PC_DRAW_POINT pOffsetTL,
-    _InRef_     PC_GR_LINESTYLE linestyle,
-    _InRef_     PC_GR_FILLSTYLEC fillstylec);
-
 /*
 misc
 */
@@ -210,7 +214,7 @@ gr_riscdiag_host_font_from_textstyle(
 _Check_return_
 extern STATUS
 gr_riscdiag_host_font_spec_riscos_from_textstyle(
-    _OutRef_    P_HOST_FONT_SPEC p_host_font_spec /* h_host_name_tstr as RISC OS eg Trinity.Bold.Italic */,
+    _OutRef_    P_HOST_FONT_SPEC p_host_font_spec /* h_host_name_tstr as RISC OS e.g. Trinity.Bold.Italic */,
     _InRef_     PC_GR_TEXTSTYLE textstyle);
 
 /*

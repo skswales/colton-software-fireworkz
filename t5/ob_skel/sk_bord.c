@@ -56,7 +56,7 @@ typedef struct BORDER_DRAG_STATUS
     FP_PIXIT fp_pixits_per_unit;    /* PIXITS_PER_CM     , PIXITS_PER_CM     , PIXITS_PER_INCH      */
     STATUS unit_message;            /* MSG_DRAG_STATUS_CM, MSG_DRAG_STATUS_MM, MSG_DRAG_STATUS_INCH */
 
-    STATUS drag_message;            /* eg MSG_DRAG_STATUS_RULER_HORZ_TAB which is "Left tab" */
+    STATUS drag_message;            /* e.g. MSG_DRAG_STATUS_RULER_HORZ_TAB which is "Left tab" */
     STATUS post_message;
 }
 BORDER_DRAG_STATUS, * P_BORDER_DRAG_STATUS;
@@ -360,7 +360,7 @@ PROC_EVENT_PROTO(extern, proc_event_margin_col)
 *
 ******************************************************************************/
 
-/* goto column col_number */
+/* goto column col_number, current row */
 
 _Check_return_
 static STATUS
@@ -385,7 +385,6 @@ _Check_return_
 static STATUS
 border_horz_event_click_left_double_column_centre(
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message, /* double or drag */
     _InVal_     COL col_number)
 {
     p_docu->anchor_mark.docu_area.tl.slr.col = col_number;
@@ -401,22 +400,41 @@ border_horz_event_click_left_double_column_centre(
 
     status_assert(anchor_to_markers_new(p_docu));
 
-    if(T5_EVENT_CLICK_LEFT_DRAG == t5_message)
-    {
-        anchor_to_markers_update(p_docu);
+    anchor_to_markers_finish(p_docu);
 
-        markers_show(p_docu);
+    markers_show(p_docu);
 
-        adjust_blk_border_horz_column_width.reason_code = CB_CODE_BORDER_HORZ_EXTEND_SELECTION;
+    return(STATUS_OK);
+}
 
-        host_drag_start(&adjust_blk_border_horz_column_width);
-    }
-    else /* T5_EVENT_CLICK_LEFT_DOUBLE */
-    {
-        anchor_to_markers_finish(p_docu);
+/* select column col_number and start drag */
 
-        markers_show(p_docu);
-    }
+_Check_return_
+static STATUS
+border_horz_event_click_left_drag_column_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     COL col_number)
+{
+    p_docu->anchor_mark.docu_area.tl.slr.col = col_number;
+    p_docu->anchor_mark.docu_area.tl.slr.row = 0;
+    p_docu->anchor_mark.docu_area.tl.object_position.object_id = OBJECT_ID_NONE;
+
+    p_docu->anchor_mark.docu_area.br.slr.col = col_number;
+    p_docu->anchor_mark.docu_area.br.slr.row = n_rows(p_docu) - 1;
+    p_docu->anchor_mark.docu_area.br.object_position.object_id = OBJECT_ID_NONE;
+
+    p_docu->anchor_mark.docu_area.whole_col = TRUE;
+    p_docu->anchor_mark.docu_area.whole_row = FALSE;
+
+    status_assert(anchor_to_markers_new(p_docu));
+
+    anchor_to_markers_update(p_docu);
+
+    markers_show(p_docu);
+
+    adjust_blk_border_horz_column_width.reason_code = CB_CODE_BORDER_HORZ_EXTEND_SELECTION;
+
+    host_drag_start(&adjust_blk_border_horz_column_width);
 
     return(STATUS_OK);
 }
@@ -465,27 +483,79 @@ border_horz_event_click_right_column_centre(
 
 _Check_return_
 static STATUS
+border_horz_event_click_single_column_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     COL col_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_SINGLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_horz_event_click_right_column_centre(p_docu, t5_message_effective, col_number));
+
+    return(border_horz_event_click_left_single_column_centre(p_docu, col_number));
+}
+
+_Check_return_
+static STATUS
+border_horz_event_click_double_column_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     COL col_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_horz_event_click_right_column_centre(p_docu, t5_message_effective, col_number));
+
+    return(border_horz_event_click_left_double_column_centre(p_docu, col_number));
+}
+
+_Check_return_
+static STATUS
+border_horz_event_click_drag_column_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     COL col_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_horz_event_click_right_column_centre(p_docu, t5_message_effective, col_number));
+
+    return(border_horz_event_click_left_drag_column_centre(p_docu, col_number));
+}
+
+_Check_return_
+static STATUS
 border_horz_event_click_column_centre(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
     _InVal_     COL col_number)
 {
     switch(t5_message)
     {
     case T5_EVENT_CLICK_LEFT_SINGLE:
-        return(border_horz_event_click_left_single_column_centre(p_docu, col_number));
+    case T5_EVENT_CLICK_RIGHT_SINGLE:
+        return(border_horz_event_click_single_column_centre(p_docu, t5_message, p_skelevent_click, col_number));
 
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-    case T5_EVENT_CLICK_LEFT_DRAG: /* start drag process to capture columns (anchors at col_number) */
-        return(border_horz_event_click_left_double_column_centre(p_docu, t5_message, col_number));
+    case T5_EVENT_CLICK_RIGHT_DOUBLE:
+        return(border_horz_event_click_double_column_centre(p_docu, t5_message, p_skelevent_click, col_number));
 
     default: default_unhandled();
 #if CHECKING
-    case T5_EVENT_CLICK_RIGHT_SINGLE:
-    case T5_EVENT_CLICK_RIGHT_DOUBLE:
+    case T5_EVENT_CLICK_LEFT_DRAG:
     case T5_EVENT_CLICK_RIGHT_DRAG:
 #endif
-        return(border_horz_event_click_right_column_centre(p_docu, t5_message, col_number));
+        return(border_horz_event_click_drag_column_centre(p_docu, t5_message, p_skelevent_click, col_number));
     }
 }
 
@@ -509,7 +579,32 @@ border_horz_event_click_left_double_column_width_adjustor(
         /*>>>this may need changing if 'goto' tries to prevent entry to zero height columns */
     }
 
-    return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_AUTO_WIDTH, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+    return(execute_command(p_docu, T5_CMD_AUTO_WIDTH, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
+}
+
+_Check_return_
+static STATUS
+border_horz_event_click_right_double_column_width_adjustor(
+    _DocuRef_   P_DOCU p_docu)
+{
+    return(execute_command(p_docu, T5_CMD_STRADDLE_HORZ, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
+}
+
+_Check_return_
+static STATUS
+border_horz_event_click_double_column_width_adjustor(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     COL col_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_horz_event_click_right_double_column_width_adjustor(p_docu));
+
+    return(border_horz_event_click_left_double_column_width_adjustor(p_docu, col_number));
 }
 
 _Check_return_
@@ -520,16 +615,17 @@ border_horz_event_click_drag_column_width_adjustor(
     _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
     _InVal_     COL col_number)
 {
-    /*S32 split = (t5_message == T5_EVENT_CLICK_LEFT_DRAG) && ((col_number+1) < n_cols_logical(p_docu));*/ /* SKS reversed l/r 11may94 and back again */
-    S32 split = (t5_message == T5_EVENT_CLICK_RIGHT_DRAG) && ((col_number+1) < n_cols_logical(p_docu));
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+    BOOL split = (t5_message_effective == T5_EVENT_CLICK_RIGHT_DRAG) && ((col_number+1) < n_cols_logical(p_docu));
 
     /* 'goto' the new column, cos resizes apply to current column */
     if(p_docu->cur.slr.col != col_number)
     {
         SKELCMD_GOTO skelcmd_goto;
 
-        skelcmd_goto.slr.col  = col_number;
-        skelcmd_goto.slr.row  = p_docu->cur.slr.row;
+        skelcmd_goto.slr.col = col_number;
+        skelcmd_goto.slr.row = p_docu->cur.slr.row;
         skelcmd_goto.keep_selection = FALSE;
 
         skel_point_from_slr_tl(p_docu, &skelcmd_goto.skel_point, &skelcmd_goto.slr);
@@ -552,14 +648,6 @@ border_horz_event_click_drag_column_width_adjustor(
 
 _Check_return_
 static STATUS
-border_horz_event_click_right_double_column_width_adjustor(
-    _DocuRef_   P_DOCU p_docu)
-{
-    return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_STRADDLE_HORZ, _P_DATA_NONE(P_ARGLIST_HANDLE)));
-}
-
-_Check_return_
-static STATUS
 border_horz_event_click_column_width_adjustor(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
@@ -569,14 +657,12 @@ border_horz_event_click_column_width_adjustor(
     switch(t5_message)
     {
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-        return(border_horz_event_click_left_double_column_width_adjustor(p_docu, col_number));
-
-    case T5_EVENT_CLICK_LEFT_DRAG: /* Move dividing line between this column and the next */
-    case T5_EVENT_CLICK_RIGHT_DRAG: /* Increase/decrease column width */
-        return(border_horz_event_click_drag_column_width_adjustor(p_docu, t5_message, p_skelevent_click, col_number));
-
     case T5_EVENT_CLICK_RIGHT_DOUBLE:
-        return(border_horz_event_click_right_double_column_width_adjustor(p_docu));
+        return(border_horz_event_click_double_column_width_adjustor(p_docu, t5_message, p_skelevent_click, col_number));
+
+    case T5_EVENT_CLICK_LEFT_DRAG: /* Increase/decrease column width */
+    case T5_EVENT_CLICK_RIGHT_DRAG: /* Move dividing line between this column and the next */
+        return(border_horz_event_click_drag_column_width_adjustor(p_docu, t5_message, p_skelevent_click, col_number));
 
     default: default_unhandled();
 #if CHECKING
@@ -599,7 +685,7 @@ T5_MSG_PROTO(static, border_horz_event_click, _InoutRef_ P_SKELEVENT_CLICK p_ske
     switch(position)
     {
     case OVER_COLUMN_CENTRE:
-        return(border_horz_event_click_column_centre(p_docu, t5_message, col_number));
+        return(border_horz_event_click_column_centre(p_docu, t5_message, p_skelevent_click, col_number));
 
     case OVER_COLUMN_WIDTH_ADJUSTOR:
         return(border_horz_event_click_column_width_adjustor(p_docu, t5_message, p_skelevent_click, col_number));
@@ -653,7 +739,7 @@ T5_MSG_PROTO(static, border_horz_event_click_drag_movement, _InoutRef_ P_SKELEVE
                 REDRAW_FLAGS_CLEAR(redraw_flags);
                 redraw_flags.show_selection = TRUE;
 
-                view_update_now(p_docu, UPDATE_BORDER_HORZ, &skel_rect, rect_flags, redraw_flags, LAYER_SLOT);
+                view_update_now(p_docu, UPDATE_BORDER_HORZ, &skel_rect, rect_flags, redraw_flags, LAYER_CELLS);
 #if FALSE
                 view_update_later(p_docu, UPDATE_RULER_HORZ, &skel_rect, rect_flags);
 #endif
@@ -916,7 +1002,7 @@ border_horz_redraw(
     col_rect.tl.y = p_skelevent_redraw->work_skel_rect.tl.pixit_point.y;
     col_rect.br.y = p_skelevent_redraw->work_skel_rect.br.pixit_point.y;
 
-    status_assert(skel_col_enum(p_docu, p_docu->cur.slr.row, p_skelevent_redraw->clip_skel_rect.tl.page_num.x, (COL) -1 /*ie all columns for given row on given page*/, &col_array));
+    status_assert(skel_col_enum(p_docu, p_docu->cur.slr.row, p_skelevent_redraw->clip_skel_rect.tl.page_num.x, (COL) -1 /* i.e. all columns for given row on given page */, &col_array));
 
     if(0 != array_elements(&col_array))
     {
@@ -1139,7 +1225,7 @@ PROC_EVENT_PROTO(extern, proc_event_margin_row)
 static BORDER_FLAGS
 init_border_vert_border_flags = { { TRUE, FALSE }, { TRUE, FALSE }, { TRUE, FALSE }, { TRUE, FALSE } };
 
-/* goto row row_number */
+/* goto row row_number, current column */
 
 _Check_return_
 static STATUS
@@ -1164,7 +1250,6 @@ _Check_return_
 static STATUS
 border_vert_event_click_left_double_row_centre(
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message, /* double or drag */
     _InVal_     ROW row_number)
 {
     p_docu->anchor_mark.docu_area.tl.slr.col = 0;
@@ -1180,23 +1265,42 @@ border_vert_event_click_left_double_row_centre(
 
     status_assert(anchor_to_markers_new(p_docu));
 
-    if(T5_EVENT_CLICK_LEFT_DRAG == t5_message)
-    {
-        anchor_to_markers_update(p_docu);
+    anchor_to_markers_finish(p_docu);
 
-        markers_show(p_docu);
+    markers_show(p_docu);
 
-        /* start drag process to capture rows (anchors at row_number) */
-        adjust_blk_border_vert_row_height.reason_code = CB_CODE_BORDER_VERT_EXTEND_SELECTION;
+    return(STATUS_OK);
+}
 
-        host_drag_start(&adjust_blk_border_vert_row_height);
-    }
-    else /* T5_EVENT_CLICK_LEFT_DOUBLE */
-    {
-        anchor_to_markers_finish(p_docu);
+/* select row row_number and start drag */
 
-        markers_show(p_docu);
-    }
+_Check_return_
+static STATUS
+border_vert_event_click_left_drag_row_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     ROW row_number)
+{
+    p_docu->anchor_mark.docu_area.tl.slr.col = 0;
+    p_docu->anchor_mark.docu_area.tl.slr.row = row_number;
+    p_docu->anchor_mark.docu_area.tl.object_position.object_id = OBJECT_ID_NONE;
+
+    p_docu->anchor_mark.docu_area.br.slr.col = n_cols_logical(p_docu) - 1;
+    p_docu->anchor_mark.docu_area.br.slr.row = row_number;
+    p_docu->anchor_mark.docu_area.br.object_position.object_id = OBJECT_ID_NONE;
+
+    p_docu->anchor_mark.docu_area.whole_col = FALSE;
+    p_docu->anchor_mark.docu_area.whole_row = TRUE;
+
+    status_assert(anchor_to_markers_new(p_docu));
+
+    anchor_to_markers_update(p_docu);
+
+    markers_show(p_docu);
+
+    /* start drag process to capture rows (anchors at row_number) */
+    adjust_blk_border_vert_row_height.reason_code = CB_CODE_BORDER_VERT_EXTEND_SELECTION;
+
+    host_drag_start(&adjust_blk_border_vert_row_height);
 
     return(STATUS_OK);
 }
@@ -1246,28 +1350,115 @@ border_vert_event_click_right_single_row_centre(
     return(STATUS_OK);
 }
 
+_Check_return_
+static STATUS
+border_vert_event_click_right_double_row_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+    IGNOREPARM_InRef_(p_skelevent_click);
+    IGNOREPARM_InVal_(row_number);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_right_drag_row_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+    IGNOREPARM_InRef_(p_skelevent_click);
+    IGNOREPARM_InVal_(row_number);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_single_row_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_SINGLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_vert_event_click_right_single_row_centre(p_docu, t5_message_effective, row_number));
+
+    return(border_vert_event_click_left_single_row_centre(p_docu, row_number));
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_double_row_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_vert_event_click_right_double_row_centre(p_docu, t5_message_effective, p_skelevent_click, row_number));
+
+    return(border_vert_event_click_left_double_row_centre(p_docu, row_number));
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_drag_row_centre(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_shift(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_vert_event_click_right_drag_row_centre(p_docu, t5_message_effective, p_skelevent_click, row_number));
+
+    return(border_vert_event_click_left_drag_row_centre(p_docu, row_number));
+}
+
 static STATUS
 border_vert_event_click_row_centre(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
     _InVal_     ROW row_number)
 {
     switch(t5_message)
     {
     case T5_EVENT_CLICK_LEFT_SINGLE:
-        return(border_vert_event_click_left_single_row_centre(p_docu, row_number));
+    case T5_EVENT_CLICK_RIGHT_SINGLE:
+        return(border_vert_event_click_single_row_centre(p_docu, t5_message, p_skelevent_click, row_number));
 
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-    case T5_EVENT_CLICK_LEFT_DRAG:
-        return(border_vert_event_click_left_double_row_centre(p_docu, t5_message, row_number));
+    case T5_EVENT_CLICK_RIGHT_DOUBLE:
+        return(border_vert_event_click_double_row_centre(p_docu, t5_message, p_skelevent_click, row_number));
 
-    case T5_EVENT_CLICK_RIGHT_SINGLE:
+    case T5_EVENT_CLICK_LEFT_DRAG:
     case T5_EVENT_CLICK_RIGHT_DRAG:
-        return(border_vert_event_click_right_single_row_centre(p_docu, t5_message, row_number));
+        return(border_vert_event_click_drag_row_centre(p_docu, t5_message, p_skelevent_click, row_number));
 
     default: default_unhandled();
-    case T5_EVENT_CLICK_RIGHT_DOUBLE:
-        /* <<< reserved for RJM's 'vertical spanning' */
+#if CHECKING
+    case T5_EVENT_CLICK_LEFT_TRIPLE:
+    case T5_EVENT_CLICK_RIGHT_TRIPLE:
+#endif
         return(STATUS_OK);
     }
 }
@@ -1292,7 +1483,7 @@ border_vert_event_click_left_double_height_adjustor(
         /*>>>this may need changing if 'goto' tries to prevent entry to zero height rows */
     }
 
-    return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_AUTO_HEIGHT, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+    return(execute_command(p_docu, T5_CMD_AUTO_HEIGHT, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 }
 
 /* Increase/decrease row height */
@@ -1330,6 +1521,66 @@ border_vert_event_click_left_drag_height_adjustor(
 
 _Check_return_
 static STATUS
+border_vert_event_click_right_double_height_adjustor(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     ROW row_number)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(row_number);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_right_drag_height_adjustor(
+    _DocuRef_   P_DOCU p_docu,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InRef_(p_skelevent_click);
+    IGNOREPARM_InVal_(row_number);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_double_height_adjustor(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DOUBLE;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_vert_event_click_right_double_height_adjustor(p_docu, row_number));
+
+    return(border_vert_event_click_left_double_height_adjustor(p_docu, row_number));
+}
+
+_Check_return_
+static STATUS
+border_vert_event_click_drag_height_adjustor(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InRef_     P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     ROW row_number)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    if(t5_message_right == t5_message_effective)
+        return(border_vert_event_click_right_drag_height_adjustor(p_docu, p_skelevent_click, row_number));
+
+    return(border_vert_event_click_left_drag_height_adjustor(p_docu, p_skelevent_click, row_number));
+}
+
+_Check_return_
+static STATUS
 border_vert_event_click_row_height_adjustor(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     T5_MESSAGE t5_message,
@@ -1339,17 +1590,19 @@ border_vert_event_click_row_height_adjustor(
     switch(t5_message)
     {
     case T5_EVENT_CLICK_LEFT_DOUBLE:
-        return(border_vert_event_click_left_double_height_adjustor(p_docu, row_number));
+    case T5_EVENT_CLICK_RIGHT_DOUBLE:
+        return(border_vert_event_click_double_height_adjustor(p_docu, t5_message, p_skelevent_click, row_number));
 
     case T5_EVENT_CLICK_LEFT_DRAG:
-        return(border_vert_event_click_left_drag_height_adjustor(p_docu, p_skelevent_click, row_number));
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        return(border_vert_event_click_drag_height_adjustor(p_docu, t5_message, p_skelevent_click, row_number));
 
     default: default_unhandled();
 #if CHECKING
     case T5_EVENT_CLICK_LEFT_SINGLE:
     case T5_EVENT_CLICK_RIGHT_SINGLE:
-    case T5_EVENT_CLICK_RIGHT_DOUBLE:
-    case T5_EVENT_CLICK_RIGHT_DRAG:
+    case T5_EVENT_CLICK_LEFT_TRIPLE:
+    case T5_EVENT_CLICK_RIGHT_TRIPLE:
 #endif
         return(STATUS_OK);
     }
@@ -1372,7 +1625,7 @@ border_vert_event_click(
     switch(position)
     {
     case OVER_ROW_CENTRE:
-        return(border_vert_event_click_row_centre(p_docu, t5_message, row_number));
+        return(border_vert_event_click_row_centre(p_docu, t5_message, p_skelevent_click, row_number));
 
     case OVER_ROW_HEIGHT_ADJUSTOR:
         return(border_vert_event_click_row_height_adjustor(p_docu, t5_message, p_skelevent_click, row_number));
@@ -1420,7 +1673,7 @@ border_vert_event_drag_movement_adjust_row_height(
             REDRAW_FLAGS_CLEAR(redraw_flags);
             redraw_flags.show_selection = TRUE;
 
-            view_update_now(p_docu, UPDATE_BORDER_VERT, &skel_rect, rect_flags, redraw_flags, LAYER_SLOT);
+            view_update_now(p_docu, UPDATE_BORDER_VERT, &skel_rect, rect_flags, redraw_flags, LAYER_CELLS);
         }
     }
     else
@@ -1505,9 +1758,11 @@ PROC_EVENT_PROTO(extern, edge_window_event_border_vert)
 
     case T5_EVENT_CLICK_LEFT_SINGLE:
     case T5_EVENT_CLICK_LEFT_DOUBLE:
+    case T5_EVENT_CLICK_LEFT_TRIPLE:
     case T5_EVENT_CLICK_LEFT_DRAG:
     case T5_EVENT_CLICK_RIGHT_SINGLE:
     case T5_EVENT_CLICK_RIGHT_DOUBLE:
+    case T5_EVENT_CLICK_RIGHT_TRIPLE:
     case T5_EVENT_CLICK_RIGHT_DRAG:
         return(border_vert_event_click(p_docu, t5_message, (P_SKELEVENT_CLICK) p_data));
 
@@ -1894,7 +2149,7 @@ border_horz_where(
         skel_point_minus_delta.pixit_point.x -= hitband;
         skel_point_plus_delta.pixit_point.x  += hitband;
 
-        status_break(skel_col_enum(p_docu, p_docu->cur.slr.row, p_skel_point->page_num.x, (COL) -1 /*ie all columns for given row on given page*/, &col_array));
+        status_break(skel_col_enum(p_docu, p_docu->cur.slr.row, p_skel_point->page_num.x, (COL) -1 /* i.e. all columns for given row on given page */, &col_array));
 
         if((col = col_at_skel_point(p_docu, col_array, p_skel_point)) >= 0)
         {
@@ -2642,14 +2897,15 @@ style_text_for_marker(
 
         p_style_docu_area = style_effect_source_find(p_docu, &selector, &p_docu->cur, &p_docu->h_style_docu_area, FALSE);
 
-        if(p_style_docu_area && p_style_docu_area->style_handle)
-        {
-            status = style_text_convert(p_docu,
-                                        p_quick_ublock,
-                                        p_style_from_docu_area(p_docu, p_style_docu_area),
-                                        &style_selector_all);
-            region = FALSE;
-        }
+        if(NULL != p_style_docu_area)
+            if(p_style_docu_area->style_handle)
+            {
+                status = style_text_convert(p_docu,
+                                            p_quick_ublock,
+                                            p_style_from_docu_area(p_docu, p_style_docu_area),
+                                            &style_selector_all);
+                region = FALSE;
+            }
     }
 
     if(region)

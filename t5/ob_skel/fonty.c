@@ -47,7 +47,7 @@ internal structure
 typedef struct HOST_FONT_TAB
 {
 #if RISCOS
-    PTSTR fullname;     /* eg Trinity.Bold.Italic */
+    PTSTR fullname;     /* e.g. Trinity.Bold.Italic */
 #elif WINDOWS
     LOGFONT logfont;    /* copy of the LOGFONT passed during enumeration */
 #endif
@@ -216,7 +216,7 @@ fonty_scanstring(
 
     if(NULL == (p_kernel_oserror = _kernel_swi(/*Font_ScanString*/ 0x400A1, &rs, &rs)))
     {
-//reportf("fonty_scanstring(x:%u,len:%u,%.*s) returns x:%u,len:%u",
+//reportf(TEXT("fonty_scanstring(x:%u,len:%u,%.*s) returns x:%u,len:%u"),
 //        *x_stop, *p_len, (int) *p_len, sbstr, rs.r[3], PtrDiffBytesU32(rs.r[1], p_buffer));
         *x_stop = rs.r[3];
         *p_len = PtrDiffBytesU32(rs.r[1], sbstr);
@@ -315,7 +315,7 @@ host_font_context_fill_info_riscos(
     _InVal_     BOOL draft_mode)
 {
     { /* eob in next conditional bit! */
-    S32 limit_min = (p_host_font_spec->size_y * 15) / 16; /* ratio of 'Â' ascent to point size in worst font so far (Homerton) */
+    S32 limit_min = (p_host_font_spec->size_y * 15) / 16; /* ratio of UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX ascent to point size in worst font so far (Homerton) */
 
     { /* read width of a space */
     static /*non-const*/ U8Z space_string[] = " ";
@@ -336,7 +336,7 @@ host_font_context_fill_info_riscos(
         host_font_formatting = host_font_find(p_host_font_spec, P_REDRAW_CONTEXT_NONE);
 
     rs.r[0] = host_font_formatting;
-    rs.r[1] = 'Â'; /* Generally the tallest Latin-1 character */
+    rs.r[1] = (int) UCH_LATIN_CAPITAL_LETTER_A_WITH_CIRCUMFLEX; /* This is generally the tallest Latin-1 character */
     rs.r[2] = 0;
     if(NULL == _kernel_swi(/*Font_CharBBox*/ 0x04008E, &rs, &rs))
         p_font_context->ascent = pixits_from_millipoints_ceil(abs(rs.r[4]));
@@ -369,7 +369,7 @@ host_font_context_fill_info_windows(
     _InoutRef_  P_FONT_CONTEXT p_font_context,
     _InRef_     P_HOST_FONT_SPEC p_host_font_spec)
 {
-    /* avoid rereading font info. note - may need to throw away font info on printer change, new font load etc */
+    /* avoid rereading font info. note - may need to throw away font info on printer change, new font load etc. */
 #if defined(USE_CACHED_ABC_WIDTHS)
     if(0 == p_font_context->h_abc_widths)
 #else
@@ -410,7 +410,7 @@ host_font_context_fill_info_windows(
                 res = GetCharWidth(hic_format_pixits, textmetric.tmFirstChar, textmetric.tmLastChar, &p_int[textmetric.tmFirstChar]);
                 assert(res);
                 for(i = textmetric.tmFirstChar; i <= textmetric.tmLastChar; ++i)
-                    p_abc[i].abcB = p_int[i]; // abcA and abcC left zero from init
+                    p_abc[i].abcB = p_int[i]; /* abcA and abcC left zero from init */
             }
 
             if((textmetric.tmFirstChar != 0x00) || (textmetric.tmLastChar != 0xFF))
@@ -1548,7 +1548,7 @@ fontmap_host_fonts_available(
 
     bitmap_clear(p_bitmap_out, N_BITS_ARG(FONTMAP_N_BITS));
 
-    if(!array_index_valid(&fontmap_table_app, app_index))
+    if(!array_index_is_valid(&fontmap_table_app, app_index))
     {
         assert(app_index >= 0);
         assert(app_index <  array_elements(&fontmap_table_app));
@@ -1580,7 +1580,7 @@ fontmap_host_base_name_from_app_index(
 
     *p_array_handle_tstr = 0;
 
-    if(!array_index_valid(&fontmap_table_app, app_index))
+    if(!array_index_is_valid(&fontmap_table_app, app_index))
     {
         assert(app_index >= 0);
         assert(app_index <  array_elements(&fontmap_table_app));
@@ -1629,7 +1629,7 @@ fontmap_host_base_names(void)
 _Check_return_
 extern STATUS
 fontmap_host_font_spec_riscos_from_font_spec(
-    _OutRef_    P_HOST_FONT_SPEC p_host_font_spec /* h_host_name_tstr as RISC OS eg Trinity.Bold.Italic */,
+    _OutRef_    P_HOST_FONT_SPEC p_host_font_spec /* h_host_name_tstr as RISC OS e.g. Trinity.Bold.Italic */,
     _InRef_     PC_FONT_SPEC p_font_spec_key /*key*/)
 {
     STATUS status;
@@ -2379,7 +2379,7 @@ fontmap_invent_app_font_name(
     }
 
 #ifdef UNDEF
-    { /* at the end of the day, we must panic and rename the font if it now exactly matches a Fireworkz configured name eg Courier on Windows */
+    { /* at the end of the day, we must panic and rename the font if it now exactly matches a Fireworkz configured name e.g. Courier on Windows */
     ARRAY_INDEX app_index;
 
     for(app_index = 0; app_index < array_elements(&fontmap_table_app); ++app_index)
@@ -2697,7 +2697,7 @@ fontmap_font_spec_from_app_index(
 
     zero_struct_ptr(p_font_spec);
 
-    if(!array_index_valid(&fontmap_table_app, app_index))
+    if(!array_index_is_valid(&fontmap_table_app, app_index))
     {
         assert(app_index >= 0);
         assert(app_index == array_elements(&fontmap_table_app)); /* SKS: == case so you can enum from 0 till error return without whinge */

@@ -49,8 +49,8 @@ internal structure kept per control per dialog
 typedef struct DIALOG_ICTL_GROUP
 {
     ARRAY_HANDLE handle; /* group of nested DIALOG_ICTLs */
-    DIALOG_CTL_ID min_id; /* incl */
-    DIALOG_CTL_ID max_id; /* incl */
+    DIALOG_CONTROL_ID min_dialog_control_id; /* incl */
+    DIALOG_CONTROL_ID max_dialog_control_id; /* incl */
 }
 DIALOG_ICTL_GROUP, * P_DIALOG_ICTL_GROUP, ** P_P_DIALOG_ICTL_GROUP; typedef const DIALOG_ICTL_GROUP * PC_DIALOG_ICTL_GROUP;
 
@@ -66,7 +66,7 @@ typedef struct DIALOG_ICTL_EDIT_XX
 
     UBF border_style        : DIALOG_BORDER_STYLE_BITS;
 
-    DIALOG_CTL_ID control_id; /* backref out to control */
+    DIALOG_CONTROL_ID dialog_control_id; /* backref out to control */
 
     H_DIALOG h_dialog; /* backref out to parent dialog */
     const BITMAP_WORD * p_bitmap_validation;
@@ -257,10 +257,9 @@ typedef struct DIALOG_ICTL
 
     UI_TEXT caption;
 
-    DIALOG_CTL_ID control_id; /* cache here */
+    DIALOG_CONTROL_ID dialog_control_id; /* cache here */
 
-    U8 type;  /* cache here */
-    U8 _padding_to_stop_compiler_winge[3];
+    DIALOG_CONTROL_TYPE dialog_control_type; /* cache here */
 
     struct DIALOG_ICTL_BITS
     {
@@ -340,9 +339,9 @@ typedef struct DIALOG
 
     DIALOG_ICTL_GROUP ictls; /* top-level DIALOG_ICTLs */
 
-    DIALOG_CTL_ID current_id; /* which control has the input focus, 0 if none */
-    DIALOG_CTL_ID default_id;
-    DIALOG_CTL_ID help_control_id;
+    DIALOG_CONTROL_ID current_dialog_control_id; /* which control has the input focus, 0 if none */
+    DIALOG_CONTROL_ID default_dialog_control_id;
+    DIALOG_CONTROL_ID help_dialog_control_id;
 
     HOST_WND hwnd;
 
@@ -397,7 +396,7 @@ typedef struct DIALOG
     struct DIALOG_WINDOWS
     {
         HGLOBAL dlgtemplate; /* disposed of immediately */
-        ARRAY_HANDLE control_id_map; /* [] of DIALOG_CTL_ID */
+        ARRAY_HANDLE h_windows_ctl_map; /* [] of WINDOWS_CTL_MAP */
         HWND hwnd_parent;
         HWND hwnd_idok;
         HWND hwnd_idcancel;
@@ -407,6 +406,7 @@ typedef struct DIALOG
         UINT windows_control_id_pressed;
         BOOL help_engine_used;
         PTSTR help_filename;
+        HTHEME hTheme_Button;
     } windows;
 #endif /* OS */
 }
@@ -430,7 +430,7 @@ internal functions as macros from ob_dlg.c
 
 #define DIALOG_MSG_CTL_HDR_from_dialog_ictl(msg_ctl_hdr__ref, p_dialog, p_dialog_ictl) \
     msg_ctl_hdr__ref.h_dialog = (p_dialog)->h_dialog; \
-    msg_ctl_hdr__ref.dialog_control_id = (p_dialog_ictl)->p_dialog_control->control_id; \
+    msg_ctl_hdr__ref.dialog_control_id = (p_dialog_ictl)->p_dialog_control->dialog_control_id; \
     msg_ctl_hdr__ref.p_dialog_control = (p_dialog_ictl)->p_dialog_control; \
     msg_ctl_hdr__ref.p_dialog_control_data = (p_dialog_ictl)->p_dialog_control_data.p_any
 
@@ -469,7 +469,7 @@ dialog_click_pushbutton(
     _In_        P_DIALOG p_dialog,
     _In_        P_DIALOG_ICTL p_dialog_ictl,
     _InVal_     BOOL right_button,
-    _InVal_     DIALOG_CTL_ID double_control_id);
+    _InVal_     DIALOG_CONTROL_ID double_dialog_control_id);
 
 _Check_return_
 extern STATUS
@@ -483,7 +483,7 @@ dialog_click_tristate(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl);
 
-extern DIALOG_CTL_ID
+extern DIALOG_CONTROL_ID
 dialog_control_id_of_group(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL_GROUP p_group_ictls);
@@ -491,25 +491,25 @@ dialog_control_id_of_group(
 extern void
 dialog_control_rect(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_opt_ P_PIXIT_RECT p_rect /*NULL->ensure*/);
 
 extern void
 dialog_control_rect_changed(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InRef_     PC_BITMAP p_bitmap);
 
-extern DIALOG_CTL_ID
+extern DIALOG_CONTROL_ID
 dialog_current_move(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID current_id,
+    _InVal_     DIALOG_CONTROL_ID current_dialog_control_id,
     _InVal_     STATUS movement);
 
 extern void
 dialog_current_set(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL disallow_movement);
 
 _Check_return_
@@ -537,7 +537,7 @@ _Ret_maybenull_
 extern P_PROC_DIALOG_EVENT
 dialog_find_handler(
     _InRef_     PC_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_    P_CLIENT_HANDLE p_client_handle);
 
 _Check_return_
@@ -591,12 +591,12 @@ p_dialog_ictl_edit_xx_from(
 extern P_DIALOG_ICTL
 p_dialog_ictl_from_control_id(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id);
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id);
 
 extern P_DIALOG_ICTL
 p_dialog_ictl_from_control_id_in(
     P_DIALOG_ICTL_GROUP p_ictl_group,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     /*out*/ P_P_DIALOG_ICTL_GROUP p_p_parent_ictls);
 
 MAEVE_EVENT_PROTO(extern, maeve_event_dialog);

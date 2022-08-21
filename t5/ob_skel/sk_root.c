@@ -7,7 +7,7 @@
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
 
-/* Manage redirection of events according to input focus etc */
+/* Manage redirection of events according to input focus etc. */
 
 /* MRJC October 1992 */
 
@@ -43,12 +43,20 @@ T5_MSG_PROTO(static, skel_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
         host_fixup_system_sprites();
 #elif WINDOWS
         {
-        static const RESOURCE_BITMAP_ID id_common_btn_16x15 = { OBJECT_ID_SKEL, SKEL_ID_BM_COM_BTN_ID };
-        static const RESOURCE_BITMAP_ID id_common_btn_24x22 = { OBJECT_ID_SKEL, SKEL_ID_BM_COM_BTN_ID + 1 }; /* 120 dpi buttons */
-        static const RESOURCE_BITMAP_ID id_common_btn_07x11 = { OBJECT_ID_SKEL, SKEL_ID_BM_COM07X11_ID };
-        status_assert(resource_bitmap_tool_size_register(&id_common_btn_16x15, 16, 15));
-        status_assert(resource_bitmap_tool_size_register(&id_common_btn_24x22, 24, 22));
-        status_assert(resource_bitmap_tool_size_register(&id_common_btn_07x11,  7, 11));
+        static const RESOURCE_BITMAP_ID skel_toolbar_common_btn_16x16_4bpp  = { OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COM_BTN_ID + 0 }; /* 96 dpi buttons, 4 bpp */
+        static const RESOURCE_BITMAP_ID skel_toolbar_common_btn_24x24_4bpp  = { OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COM_BTN_ID + 1 }; /* 120 dpi buttons, 4 bpp */
+        static const RESOURCE_BITMAP_ID skel_toolbar_common_btn_16x16_32bpp = { OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COM_BTN_ID + 2 }; /* 96 dpi buttons, 32 bpp */
+        static const RESOURCE_BITMAP_ID skel_toolbar_common_btn_24x24_32bpp = { OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COM_BTN_ID + 3 }; /* 120 dpi buttons, 32 bpp */
+        static const RESOURCE_BITMAP_ID skel_common_btn_16x16 = { OBJECT_ID_SKEL, SKEL_ID_BM_COM_BTN_ID + 0 }; /* 96 dpi buttons */
+        static const RESOURCE_BITMAP_ID skel_common_btn_24x24 = { OBJECT_ID_SKEL, SKEL_ID_BM_COM_BTN_ID + 1 }; /* 120 dpi buttons */
+        static const RESOURCE_BITMAP_ID skel_common_btn_07x11 = { OBJECT_ID_SKEL, SKEL_ID_BM_COM07X11_ID };
+        status_assert(resource_bitmap_tool_size_register(&skel_toolbar_common_btn_16x16_4bpp,  16, 16));
+        status_assert(resource_bitmap_tool_size_register(&skel_toolbar_common_btn_24x24_4bpp,  24, 24));
+        status_assert(resource_bitmap_tool_size_register(&skel_toolbar_common_btn_16x16_32bpp, 16, 16));
+        status_assert(resource_bitmap_tool_size_register(&skel_toolbar_common_btn_24x24_32bpp, 24, 24));
+        status_assert(resource_bitmap_tool_size_register(&skel_common_btn_16x16, 16, 16));
+        status_assert(resource_bitmap_tool_size_register(&skel_common_btn_24x24, 24, 24));
+        status_assert(resource_bitmap_tool_size_register(&skel_common_btn_07x11,  7, 11));
         } /*block*/
 #endif
         return(STATUS_OK);
@@ -630,19 +638,19 @@ OBJECT_PROTO(extern, object_skel)
     case T5_CMD_SEARCH:
     case T5_CMD_SNAPSHOT:
 
-    case T5_CMD_FIELD_INS_DATE:
-    case T5_CMD_FIELD_INS_FILE_DATE:
-    case T5_CMD_FIELD_INS_PAGE_X:
-    case T5_CMD_FIELD_INS_PAGE_Y:
-    case T5_CMD_FIELD_INS_MS_FIELD:
-    case T5_CMD_FIELD_INS_SS_NAME:
-    case T5_CMD_FIELD_INS_WHOLENAME:
-    case T5_CMD_FIELD_INS_LEAFNAME:
-    case T5_CMD_FIELD_INS_RETURN:
-    case T5_CMD_FIELD_INS_SOFT_HYPHEN:
+    case T5_CMD_INSERT_FIELD_DATE:
+    case T5_CMD_INSERT_FIELD_FILE_DATE:
+    case T5_CMD_INSERT_FIELD_PAGE_X:
+    case T5_CMD_INSERT_FIELD_PAGE_Y:
+    case T5_CMD_INSERT_FIELD_MS_FIELD:
+    case T5_CMD_INSERT_FIELD_SS_NAME:
+    case T5_CMD_INSERT_FIELD_WHOLENAME:
+    case T5_CMD_INSERT_FIELD_LEAFNAME:
+    case T5_CMD_INSERT_FIELD_RETURN:
+    case T5_CMD_INSERT_FIELD_SOFT_HYPHEN:
 #endif
 
-    /*case T5_CMD_FIELD_INS_HARDH:*/
+    /*case T5_CMD_INSERT_FIELD_HARD_HYPHEN:*/
 
     case T5_CMD_WORD_COUNT:
         return(docu_focus_owner_object_call(p_docu, t5_message, p_data));
@@ -725,16 +733,17 @@ OBJECT_PROTO(extern, object_skel)
         return(t5_cmd_set_interactive(/*p_docu, p_data*/));
 
     case T5_CMD_INSERT_FIELD_INTRO_DATE:
-    case T5_CMD_INSERT_FIELD_INTRO_FILE_DATE:
-    case T5_CMD_INSERT_FIELD_INTRO_PAGE_X:
-    case T5_CMD_INSERT_FIELD_INTRO_PAGE_Y:
-        return(t5_cmd_insert_field_intro(p_docu, t5_message, (PC_T5_CMD) p_data));
+    case T5_CMD_INSERT_FIELD_INTRO_TIME:
+        return(t5_cmd_insert_field_intro_date(p_docu, t5_message, (PC_T5_CMD) p_data));
+
+    case T5_CMD_INSERT_FIELD_INTRO_PAGE:
+        return(t5_cmd_insert_field_intro_page(p_docu, t5_message, (PC_T5_CMD) p_data));
 
     case T5_CMD_BACKDROP: /* make/adjust backdrop */
     case T5_CMD_BACKDROP_INTRO: /* make/adjust backdrop */
     case T5_CMD_NOTE:
-    case T5_CMD_NOTETWIN: /* compatibility */
-    case T5_CMD_NOTEBD: /* different so that backdrops can be rejected on file insert 'cos they aren't cell relative */
+    case T5_CMD_NOTE_TWIN:      /* compatibility with older readers */
+    case T5_CMD_NOTE_BACKDROP:  /* different so that backdrops can be rejected on file insert 'cos they aren't cell relative */
     case T5_CMD_NOTE_BACK:
     case T5_CMD_NOTE_SWAP:
     case T5_CMD_NOTE_EMBED:
@@ -887,7 +896,7 @@ OBJECT_PROTO(extern, object_skel)
         return(t5_cmd_load_foreign(p_docu, t5_message, (PC_T5_CMD) p_data));
 
     case T5_CMD_BIND_FILE_TYPE:
-        return(t5_cmd_bind_filetype(p_docu, t5_message, (PC_T5_CMD) p_data));
+        return(t5_cmd_bind_file_type(p_docu, t5_message, (PC_T5_CMD) p_data));
 
     case T5_CMD_OBJECT_BIND_CONSTRUCT:
         return(t5_cmd_object_bind_construct(p_docu, t5_message, (PC_T5_CMD) p_data));
@@ -1024,13 +1033,13 @@ reperr(
 
     if(status == ERR_OUTPUT_STRING)
     {
-        assert(!IS_P_DATA_NONE(text));
+        assert(!IS_PTR_NULL_OR_NONE(text));
 
         tstr_xstrkpy(output, elemof32(output), text);
     }
     else if(status == ERR_OUTPUT_SPRINTF)
     {
-        assert(!IS_P_DATA_NONE(text));
+        assert(!IS_PTR_NULL_OR_NONE(text));
 
         va_start(args, text);
 
@@ -1076,7 +1085,7 @@ reperr(
                 return(status);
             }
 
-            if(!IS_P_DATA_NONE(text))
+            if(!IS_PTR_NULL_OR_NONE(text))
             {
                 if((NULL == tstrstr(output, text)) || !file_is_rooted(text)) /* don't repeat ourselves on looked-up filing system errors */
                 {
@@ -1094,7 +1103,7 @@ reperr(
                 tstr_xstrkpy(output, elemof32(output), lookup);
 
                 /* if we have an arg then append it if not a %s error */
-                if(!IS_P_DATA_NONE(text))
+                if(!IS_PTR_NULL_OR_NONE(text))
                 {
                     tstr_xstrkat(output, elemof32(output), TEXT(" "));
                     tstr_xstrkat(output, elemof32(output), text);
@@ -1103,7 +1112,7 @@ reperr(
             else
             {
                 /* ensure %s error messages don't look too bad */
-                if(IS_P_DATA_NONE(text))
+                if(IS_PTR_NULL_OR_NONE(text))
                     text = tstr_empty_string;
 
                 /* unusual start due to text being passed too */
@@ -1154,7 +1163,7 @@ messagef(
 #endif
     va_list args;
 
-    assert(!IS_P_DATA_NONE(text));
+    assert(!IS_PTR_NULL_OR_NONE(text));
 
     va_start(args, text);
 

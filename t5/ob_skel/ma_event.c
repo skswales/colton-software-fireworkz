@@ -236,19 +236,16 @@ PROC_EVENT_PROTO(extern, maeve_event)
         switch(t5_message)
         {
         case T5_MSG_INITCLOSE:
-            {
-            const PC_MSG_INITCLOSE p_msg_initclose = (PC_MSG_INITCLOSE) p_data;
-
-            switch(p_msg_initclose->t5_msg_initclose_message)
+            switch(((PC_MSG_INITCLOSE) p_data)->t5_msg_initclose_message)
             {
             case T5_MSG_IC__CLOSE1:
             case T5_MSG_IC__CLOSE2:
             case T5_MSG_IC__CLOSE_THUNK:
                 continue;
-            }
-            } /*block*/
 
-            /*FALLTHRU*/
+            default:
+                return(status);
+            }
 
         default:
             return(status);
@@ -436,10 +433,7 @@ PROC_EVENT_PROTO(extern, maeve_service_event)
         switch(t5_message)
         {
         case T5_MSG_INITCLOSE:
-            {
-            const PC_MSG_INITCLOSE p_msg_initclose = (PC_MSG_INITCLOSE) p_data;
-
-            switch(p_msg_initclose->t5_msg_initclose_message)
+            switch(((PC_MSG_INITCLOSE) p_data)->t5_msg_initclose_message)
             {
             case T5_MSG_IC__CLOSE1:
             case T5_MSG_IC__CLOSE2:
@@ -447,10 +441,10 @@ PROC_EVENT_PROTO(extern, maeve_service_event)
             case T5_MSG_IC__EXIT1:
             case T5_MSG_IC__EXIT2:
                 continue;
-            }
-            } /*block*/
 
-            /*FALLTHRU*/
+            default:
+                return(status);
+            }
 
         default:
             return(status);

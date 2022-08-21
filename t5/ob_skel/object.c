@@ -112,11 +112,9 @@ PROC_ATEXIT_PROTO(static, atexit_services2)
 
     resource_shutdown(); /* SKS after 1.12 28oct94 - nasty explicit tidy up */
 
-#if RISCOS
-    gr_cache_trash(); /* SKS after 1.05 24oct93 - nasty explicit tidy up */
+    image_cache_trash(); /* SKS after 1.05 24oct93 - nasty explicit tidy up */
 
     host_shutdown();
-#endif
 
     alloc_block_dispose(&global_string_alloc_block);
 
@@ -546,21 +544,23 @@ object_data_from_docu_area_tl(
 ******************************************************************************/
 
 /*ncr*/
-extern STATUS /* STATUS_DONE == cell contains data */
+extern STATUS /* STATUS_DONE -> cell contains data */
 object_data_from_position(
     _DocuRef_   P_DOCU p_docu,
     _OutRef_    P_OBJECT_DATA p_object_data,
     _InRef_     PC_POSITION p_position,
-    _InRef_opt_ PC_OBJECT_POSITION p_object_position_end)
+    _InRef_maybenone_ PC_OBJECT_POSITION p_object_position_end)
 {
     STATUS status = object_data_from_slr(p_docu, p_object_data, &p_position->slr);
 
     if(p_object_data->object_id == p_position->object_position.object_id)
         p_object_data->object_position_start = p_position->object_position;
 
-    if( (NULL != p_object_position_end) &&
+    if( !IS_P_DATA_NONE(p_object_position_end) &&
         (p_object_data->object_id == p_object_position_end->object_id) )
+    {
         p_object_data->object_position_end = *p_object_position_end;
+    }
 
     return(status);
 }
@@ -572,7 +572,7 @@ object_data_from_position(
 ******************************************************************************/
 
 /*ncr*/
-extern STATUS /* STATUS_DONE == cell contains data */
+extern STATUS /* STATUS_DONE -> cell contains data */
 object_data_from_slr(
     _DocuRef_   P_DOCU p_docu,
     _OutRef_    P_OBJECT_DATA p_object_data,

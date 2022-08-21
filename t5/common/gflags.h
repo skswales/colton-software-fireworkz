@@ -14,19 +14,9 @@
 #ifndef __gflags_h
 #define __gflags_h
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 /* Define the version number of this release */
-#define VERSION_NUMBER 20005
+#define VERSION_NUMBER 20100
 /* NB keep in step with other files (definitive list in common.mf_mid) */
-
-#if defined(_PREFAST_)
-#ifndef CODE_ANALYSIS
-#define CODE_ANALYSIS 1
-#endif
-#endif /* _PREFAST_ */
 
 #ifdef RELEASED
 #undef UNRELEASED
@@ -49,13 +39,13 @@ extern "C" {
 #endif
 #endif /* CHECKING */
 
+#include "cmodules/coltsoft/defineos.h"
+
 #if defined(CODE_ANALYSIS)
 #define CHECKING_FOR_CODE_ANALYSIS 1
 #else
 #define CHECKING_FOR_CODE_ANALYSIS 0
 #endif
-
-#include "cmodules/coltsoft/defineos.h"
 
 #if defined(FPROWORKZ)
 /* Fireworkz Pro - deviant file suffix Y */
@@ -141,6 +131,10 @@ extern "C" {
 #endif /* RISCOS */
 
 /* ----------------------- WINDOWS specific flags ------------------------ */
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 #if defined(__cplusplus)
 }   /* ... extern "C" */

@@ -215,7 +215,7 @@ resource_bitmap_find(
     {
         HINSTANCE hInstance = resource_get_object_resources(object_id);
 
-        h_bitmap.i = *p_hBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id));
+        h_bitmap.i = *p_hBitmap = (HBITMAP) LoadImage(hInstance, MAKEINTRESOURCE(p_resource_bitmap_id->bitmap_id), IMAGE_BITMAP, 0, 0, 0);
     }
 #endif /* OS */
     } /*block*/
@@ -236,7 +236,7 @@ resource_bitmap_find_new(
     RESOURCE_BITMAP_ID resource_bitmap_id;
 
     resource_bitmap_id.object_id = p_resource_bitmap_id->object_id;
-    resource_bitmap_id.bitmap_id = p_resource_bitmap_id->bitmap_id & ~T5_RESOURCE_BTTNCUR_MASK;
+    resource_bitmap_id.bitmap_id = p_resource_bitmap_id->bitmap_id & ~(T5_RESOURCE_COMMON_BMP_BIT);
 
     p_bm_grid_size->cx = 0;
     p_bm_grid_size->cy = 0;
@@ -341,6 +341,8 @@ resource_bitmap_find_in_area(
 
 #endif /* OS */
 
+#if RISCOS
+
 _Check_return_
 extern RESOURCE_BITMAP_HANDLE
 resource_bitmap_find_defaulting(
@@ -350,7 +352,6 @@ resource_bitmap_find_defaulting(
 
     h_bitmap = resource_bitmap_find(p_resource_bitmap_id);
 
-#if RISCOS
     if(!h_bitmap.i)
     {
         h_bitmap = resource_bitmap_find_system(p_resource_bitmap_id);
@@ -361,10 +362,11 @@ resource_bitmap_find_defaulting(
             h_bitmap.i |= RESOURCE_BITMAP_HANDLE_RISCOS_BODGE;
         }
     }
-#endif /* OS */
 
     return(h_bitmap);
 }
+
+#endif /* RISCOS */
 
 #if RISCOS
 

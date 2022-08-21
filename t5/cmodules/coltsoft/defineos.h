@@ -84,8 +84,8 @@
 
 /* Norcroft compiler, target ARM / RISC OS */
 
-#ifndef _CHAR_UNSIGNED
-#define _CHAR_UNSIGNED 1
+#ifndef __CHAR_UNSIGNED__
+#define __CHAR_UNSIGNED__ 1
 #endif
 
 #if __STDC_VERSION__ >= 199901L
@@ -103,7 +103,6 @@
 #endif /* CROSS_COMPILE */
 
 #define F64_IS_64_BIT_ALIGNED 0
-#define P_ANY_IS_64_BIT_ALIGNED 0
 
 #if CROSS_COMPILE && defined(HOST_GCCSDK) && defined(TARGET_RISCOS)
 /*__pragma(message("CROSS_COMPILE: HOST_GCCSDK & TARGET_RISCOS"))*/
@@ -115,8 +114,8 @@ __pragma(message("CROSS_COMPILE: HOST_WINDOWS & TARGET_RISCOS"))
 #include "cmodules/coltsoft/target_riscos_host_windows.h"
 #endif
 
-#ifndef _In_reads_
-#include "cmodules/coltsoft/no-sal.h"
+#ifndef _In_reads_c_
+#include "cmodules/coltsoft/ns-sal.h"
 #endif
 
 #endif /* RISCOS */
@@ -126,10 +125,6 @@ __pragma(message("CROSS_COMPILE: HOST_WINDOWS & TARGET_RISCOS"))
 #define BYTE_ORDER LITTLE_ENDIAN
 
 #include "cmodules/coltsoft/defwin32.h"
-
-#if !defined(__cplusplus)
-#define inline __inline /* for MSVC < C99 */
-#endif
 
 #endif /* WINDOWS */
 
@@ -164,7 +159,9 @@ __pragma(message("CROSS_COMPILE: HOST_WINDOWS & TARGET_RISCOS"))
 
 #if RISCOS
 
+#if !CROSS_COMPILE
 #define __cdecl
+#endif
 #define PASCAL
 
 #if CROSS_COMPILE && defined(HOST_WINDOWS)
@@ -179,10 +176,11 @@ __pragma(message("CROSS_COMPILE: HOST_WINDOWS & TARGET_RISCOS"))
 #ifndef __assume
 #define __assume(expr) /*EMPTY*/
 #endif
+#endif /* _MSC_VER */
+
 #ifndef __analysis_assume
 #define __analysis_assume(expr) __assume(expr)
 #endif
-#endif /* _MSC_VER */
 
 /* much more of differences covered in coltsoft/coltsoft.h ... */
 

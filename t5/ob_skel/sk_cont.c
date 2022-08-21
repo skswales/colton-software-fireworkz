@@ -50,199 +50,199 @@ STYLE_SELECTOR skel_controls_selector_character;
 static const T5_TOOLBAR_TOOL_DESC
 skel_tools[] =
 {
-    { TEXT("VIEW"),
+    { USTR_TEXT("VIEW"),
         OBJECT_ID_SKEL, T5_CMD_VIEW_CONTROL_INTRO,
-        OBJECT_ID_SKEL, SKEL_ID_BM_VIEW, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_VIEW, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0/*im*/, 1/*sv*/ },
         UI_TEXT_INIT_RESID(MSG_STATUS_VIEW_CONTROL) },
 
 #if WINDOWS
-    { TEXT("NEW"),
+    { USTR_TEXT("NEW"),
         OBJECT_ID_FILE, T5_CMD_NEW_DOCUMENT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_NEW, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_NEW, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_NEW_DOCUMENT) },
 
-    { TEXT("OPEN"),
+    { USTR_TEXT("OPEN"),
         OBJECT_ID_FILE, T5_CMD_OPEN_DOCUMENT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_OPEN, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_OPEN, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_OPEN_DOCUMENT) },
 
-    { TEXT("SAVE"),
+    { USTR_TEXT("SAVE"),
         OBJECT_ID_SKEL, T5_CMD_SAVE_OWNFORM,
-        OBJECT_ID_SKEL, SKEL_ID_BM_SAVE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SAVE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_SAVE), T5_CMD_SAVE_OWNFORM_AS_INTRO },
 #else
-    { TEXT("SAVE"),
+    { USTR_TEXT("SAVE"),
         OBJECT_ID_SKEL, T5_CMD_SAVE_OWNFORM_AS_INTRO,
-        OBJECT_ID_SKEL, SKEL_ID_BM_SAVE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SAVE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_SAVE), T5_CMD_SAVE_OWNFORM },
 #endif
 
-    { TEXT("PRINT"),
+    { USTR_TEXT("PRINT"),
         OBJECT_ID_SKEL, T5_CMD_PRINT_INTRO,
-        OBJECT_ID_SKEL, SKEL_ID_BM_PRINT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_PRINT, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_PRINT), T5_CMD_PRINT_EXTRA_INTRO },
 
-    { TEXT("CUT"),
+    { USTR_TEXT("CUT"),
         OBJECT_ID_SKEL, T5_CMD_SELECTION_CUT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_CUT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_CUT, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_CUT) },
 
-    { TEXT("COPY"),
+    { USTR_TEXT("COPY"),
         OBJECT_ID_SKEL, T5_CMD_SELECTION_COPY,
-        OBJECT_ID_SKEL, SKEL_ID_BM_COPY, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_COPY, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0, },
         UI_TEXT_INIT_RESID(MSG_STATUS_COPY) },
 
-    { TEXT("PASTE"),
+    { USTR_TEXT("PASTE"),
         OBJECT_ID_SKEL, T5_CMD_PASTE_AT_CURSOR,
-        OBJECT_ID_SKEL, SKEL_ID_BM_PASTE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_PASTE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_PASTE) },
 
-    { TEXT("SELECTION"),
+    { USTR_TEXT("SELECTION"),
         OBJECT_ID_SKEL, T5_CMD_TOGGLE_MARKS,
-        OBJECT_ID_SKEL, SKEL_ID_BM_MARKS, SKEL_ID_BM_MARKS_ON,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_MARKS, SKEL_ID_BM_TOOLBAR_MARKS_ON,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_TOGGLE_MARKS) },
 
-    { TEXT("SEARCH"),
+    { USTR_TEXT("SEARCH"),
         OBJECT_ID_SKEL, T5_CMD_SEARCH_BUTTON_POSS_DB_QUERY,
-        OBJECT_ID_SKEL, SKEL_ID_BM_SEARCH, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SEARCH, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_SEARCH), T5_CMD_SEARCH_BUTTON_POSS_DB_QUERIES },
 
-    { TEXT("SORT"),
+    { USTR_TEXT("SORT"),
         OBJECT_ID_SKEL, T5_CMD_SORT_INTRO,
-        OBJECT_ID_SKEL, SKEL_ID_BM_SORT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SORT, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_SORT) },
 
-    { TEXT("CHECK"),
+    { USTR_TEXT("CHECK"),
         OBJECT_ID_SPELL, T5_CMD_SPELL_CHECK,
-        OBJECT_ID_SKEL, SKEL_ID_BM_CHECK, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_CHECK, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_CHECK), T5_CMD_SPELL_DICTIONARY },
 
 #if RISCOS
-    { TEXT("THESAURUS"),
+    { USTR_TEXT("THESAURUS"),
         OBJECT_ID_SKEL, T5_CMD_THESAURUS,
-        OBJECT_ID_SKEL, SKEL_ID_BM_THESAURUS, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_THESAURUS, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_THESAURUS) },
 #endif
 
-    { TEXT("TABLE"),
+    { USTR_TEXT("TABLE"),
         OBJECT_ID_SKEL, T5_CMD_INSERT_TABLE_INTRO,
-        OBJECT_ID_SKEL, SKEL_ID_BM_TABLE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_TABLE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_INSERT_TABLE) },
 
-    { TEXT("INSERT_DATE"),
-        OBJECT_ID_SKEL, T5_CMD_INSERT_FIELD_INTRO_FILE_DATE,
-        OBJECT_ID_SKEL, SKEL_ID_BM_INSERT_DATE, 0,
+    { USTR_TEXT("INSERT_DATE"),
+        OBJECT_ID_SKEL, T5_CMD_INSERT_FIELD_INTRO_DATE,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_INSERT_DATE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
-        UI_TEXT_INIT_RESID(MSG_STATUS_INSERT_FIELD_FILE_DATE), T5_CMD_INSERT_FIELD_INTRO_DATE },
+        UI_TEXT_INIT_RESID(MSG_STATUS_INSERT_FIELD_DATE), T5_CMD_INSERT_FIELD_INTRO_TIME },
 
-    { TEXT("BOX"),
+    { USTR_TEXT("BOX"),
         OBJECT_ID_SKEL, T5_CMD_BOX_INTRO,
-        OBJECT_ID_SKEL, SKEL_ID_BM_BOX, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_BOX, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_BOX) },
 
-    { TEXT("STYLE"),
+    { USTR_TEXT("STYLE"),
         OBJECT_ID_SKEL, T5_CMD_STYLE_BUTTON,
-        OBJECT_ID_SKEL, SKEL_ID_BM_STYLE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_STYLE, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_STYLE), T5_CMD_STYLE_FOR_CONFIG },
 
-    { TEXT("EFFECTS"),
+    { USTR_TEXT("EFFECTS"),
         OBJECT_ID_SKEL, T5_CMD_EFFECTS_BUTTON,
-        OBJECT_ID_SKEL, SKEL_ID_BM_EFFECTS, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_EFFECTS, 0,
         { T5_TOOLBAR_TOOL_TYPE_COMMAND, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_EFFECTS) },
 
-    { TEXT("BOLD"),
+    { USTR_TEXT("BOLD"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_BOLD,
-        OBJECT_ID_SKEL, SKEL_ID_BM_BOLD, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_BOLD, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_BOLD) },
 
-    { TEXT("ITALIC"),
+    { USTR_TEXT("ITALIC"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_ITALIC,
-        OBJECT_ID_SKEL, SKEL_ID_BM_ITALIC, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_ITALIC, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_ITALIC) },
 
-    { TEXT("UNDERLINE"),
+    { USTR_TEXT("UNDERLINE"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_UNDERLINE,
-        OBJECT_ID_SKEL, SKEL_ID_BM_UNDERLINE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_UNDERLINE, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_UNDERLINE) },
 
-    { TEXT("SUPERSCRIPT"),
+    { USTR_TEXT("SUPERSCRIPT"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_SUPERSCRIPT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_SUPERSCRIPT_THIN, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SUPERSCRIPT_THIN, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0/*im*/, 0/*sv*/, 1 /*thin*/ },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_SUPERSCRIPT) },
 
-    { TEXT("SUBSCRIPT"),
+    { USTR_TEXT("SUBSCRIPT"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_SUBSCRIPT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_SUBSCRIPT_THIN, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_SUBSCRIPT_THIN, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0/*im*/, 0/*sv*/, 1 /*thin*/ },
         UI_TEXT_INIT_RESID(MSG_STATUS_APPLY_SUBSCRIPT) },
 
-    { TEXT("JUSTIFY_LEFT"),
+    { USTR_TEXT("JUSTIFY_LEFT"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_JUSTIFY_LEFT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_J_LEFT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_J_LEFT, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_JUSTIFY_LEFT) },
 
-    { TEXT("JUSTIFY_CENTRE"),
+    { USTR_TEXT("JUSTIFY_CENTRE"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_JUSTIFY_CENTRE,
-        OBJECT_ID_SKEL, SKEL_ID_BM_J_CENTRE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_J_CENTRE, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_JUSTIFY_CENTRE) },
 
-    { TEXT("JUSTIFY_RIGHT"),
+    { USTR_TEXT("JUSTIFY_RIGHT"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_JUSTIFY_RIGHT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_J_RIGHT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_J_RIGHT, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_JUSTIFY_RIGHT) },
 
-    { TEXT("JUSTIFY_FULL"),
+    { USTR_TEXT("JUSTIFY_FULL"),
         OBJECT_ID_SKEL, T5_MSG_STYLE_CHANGE_JUSTIFY_FULL,
-        OBJECT_ID_SKEL, SKEL_ID_BM_J_FULL, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_J_FULL, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0 },
         UI_TEXT_INIT_RESID(MSG_STATUS_JUSTIFY_FULL) },
 
-    { TEXT("TAB_LEFT"),
+    { USTR_TEXT("TAB_LEFT"),
         OBJECT_ID_SKEL, T5_MSG_SET_TAB_LEFT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_TAB_LEFT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_TAB_LEFT, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0/*im*/, 0/*sv*/, 1 /*thin*/ },
         UI_TEXT_INIT_RESID(MSG_STATUS_TAB_LEFT) },
 
-    { TEXT("TAB_CENTRE"),
+    { USTR_TEXT("TAB_CENTRE"),
         OBJECT_ID_SKEL, T5_MSG_SET_TAB_CENTRE,
-        OBJECT_ID_SKEL, SKEL_ID_BM_TAB_CENTRE, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_TAB_CENTRE, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0/*im*/,0/*sv*/,  1 /*thin*/ }, 
         UI_TEXT_INIT_RESID(MSG_STATUS_TAB_CENTRE) },
 
-    { TEXT("TAB_RIGHT"),
+    { USTR_TEXT("TAB_RIGHT"),
         OBJECT_ID_SKEL, T5_MSG_SET_TAB_RIGHT,
-        OBJECT_ID_SKEL, SKEL_ID_BM_TAB_RIGHT, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_TAB_RIGHT, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0/*im*/, 0/*sv*/, 1 /*thin*/ },
         UI_TEXT_INIT_RESID(MSG_STATUS_TAB_RIGHT) },
 
-    { TEXT("TAB_DECIMAL"),
+    { USTR_TEXT("TAB_DECIMAL"),
         OBJECT_ID_SKEL, T5_MSG_SET_TAB_DECIMAL,
-        OBJECT_ID_SKEL, SKEL_ID_BM_TAB_DECIMAL, 0,
+        OBJECT_ID_SKEL, SKEL_ID_BM_TOOLBAR_TAB_DECIMAL, 0,
         { T5_TOOLBAR_TOOL_TYPE_STATE, 0/*im*/, 0/*sv*/, 1 /*thin*/ },
         UI_TEXT_INIT_RESID(MSG_STATUS_TAB_DECIMAL) }
 };
@@ -263,7 +263,7 @@ view_set_title(
 {
     TCHARZ wintitle[BUF_MAX_TITLEBAR];
     U32 len = 0;
-    STATUS resource_id = MSG_TITLEBAR_NORMAL;
+    STATUS resource_id = p_docu->flags.read_only ? MSG_TITLEBAR_READ_ONLY : MSG_TITLEBAR_NORMAL;
 
     wintitle[0] = CH_NULL;
     ui_string_to_text(p_docu, wintitle, elemof32(wintitle), resource_lookup_tstr(resource_id));
@@ -377,20 +377,20 @@ static STATUS
 skel_controls_msg_init2(
     _DocuRef_   P_DOCU p_docu)
 {
-    static const PCTSTR tools[] = /* some tools ought to be enabled all the time */
+    static const PC_USTR tools[] = /* some tools ought to be enabled all the time */
     {
-        TEXT("VIEW"),
+        USTR_TEXT("VIEW"),
 #if WINDOWS
-        TEXT("NEW"),
-        TEXT("OPEN"),
+        USTR_TEXT("NEW"),
+        USTR_TEXT("OPEN"),
 #endif
-        TEXT("SAVE"),
-        TEXT("PRINT"),
-        TEXT("SELECTION"),
-        TEXT("TAB_LEFT"),
-        TEXT("TAB_CENTRE"),
-        TEXT("TAB_RIGHT"),
-        TEXT("TAB_DECIMAL")
+        USTR_TEXT("SAVE"),
+        USTR_TEXT("PRINT"),
+        USTR_TEXT("SELECTION"),
+        USTR_TEXT("TAB_LEFT"),
+        USTR_TEXT("TAB_CENTRE"),
+        USTR_TEXT("TAB_RIGHT"),
+        USTR_TEXT("TAB_DECIMAL")
     };
 
     U32 i;
@@ -457,17 +457,17 @@ MAEVE_SERVICES_EVENT_PROTO(extern, maeve_services_event_sk_cont)
 static const
 struct BBAR_STYLES
 {
+    PC_USTR name;
     STYLE_BIT_NUMBER style_bit_number;
-    PCTSTR name;
     U32 offset;
 }
 bbar_styles[] =
 {
-    { STYLE_SW_FS_BOLD,         TEXT("BOLD"),           offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, bold) },
-    { STYLE_SW_FS_ITALIC,       TEXT("ITALIC"),         offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, italic) },
-    { STYLE_SW_FS_UNDERLINE,    TEXT("UNDERLINE"),      offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, underline) },
-    { STYLE_SW_FS_SUPERSCRIPT,  TEXT("SUPERSCRIPT"),    offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, superscript) },
-    { STYLE_SW_FS_SUBSCRIPT,    TEXT("SUBSCRIPT"),      offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, subscript) }
+    { USTR_TEXT("BOLD"),        STYLE_SW_FS_BOLD,        offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, bold) },
+    { USTR_TEXT("ITALIC"),      STYLE_SW_FS_ITALIC,      offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, italic) },
+    { USTR_TEXT("UNDERLINE"),   STYLE_SW_FS_UNDERLINE,   offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, underline) },
+    { USTR_TEXT("SUPERSCRIPT"), STYLE_SW_FS_SUPERSCRIPT, offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, superscript) },
+    { USTR_TEXT("SUBSCRIPT"),   STYLE_SW_FS_SUBSCRIPT,   offsetof32(STYLE, font_spec) + offsetof32(FONT_SPEC, subscript) }
 };
 
 #define N_BBAR_STYLES elemof32(bbar_styles)
@@ -508,19 +508,19 @@ skel_controls_query_and_encode_style_bitmap(
             selection_style.style_out.para_style.justify = 0xFF;
 
         t5_toolbar_tool_set.state.state = (selection_style.style_out.para_style.justify == SF_JUSTIFY_LEFT);
-        t5_toolbar_tool_set.name = TEXT("JUSTIFY_LEFT");
+        t5_toolbar_tool_set.name = USTR_TEXT("JUSTIFY_LEFT");
         status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
         t5_toolbar_tool_set.state.state = (selection_style.style_out.para_style.justify == SF_JUSTIFY_CENTRE);
-        t5_toolbar_tool_set.name = TEXT("JUSTIFY_CENTRE");
+        t5_toolbar_tool_set.name = USTR_TEXT("JUSTIFY_CENTRE");
         status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
         t5_toolbar_tool_set.state.state = (selection_style.style_out.para_style.justify == SF_JUSTIFY_RIGHT);
-        t5_toolbar_tool_set.name = TEXT("JUSTIFY_RIGHT");
+        t5_toolbar_tool_set.name = USTR_TEXT("JUSTIFY_RIGHT");
         status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
         t5_toolbar_tool_set.state.state = (selection_style.style_out.para_style.justify == SF_JUSTIFY_BOTH);
-        t5_toolbar_tool_set.name = TEXT("JUSTIFY_FULL");
+        t5_toolbar_tool_set.name = USTR_TEXT("JUSTIFY_FULL");
         status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
     }
 
@@ -630,13 +630,13 @@ skel_style_set(
         if(status_ok(status = style_ustr_inline_from_struct(p_docu, &quick_ublock, &style)))
         {
             p_args[0].val.ustr_inline = quick_ublock_ustr_inline(&quick_ublock);
-            status = execute_command(object_id, p_docu, T5_CMD_STYLE_APPLY, &arglist_handle);
+            status = execute_command(p_docu, T5_CMD_STYLE_APPLY, &arglist_handle, object_id);
             quick_ublock_dispose(&quick_ublock);
         }
         arglist_dispose(&arglist_handle);
     }
 
-    /* reencode selection's state into tools' state etc whatever status happened */
+    /* reencode selection's state into tools' state etc. whatever status happened */
     skel_controls_query_and_encode_style_bitmap(p_docu, &style.selector);
 
     return(status);
@@ -650,19 +650,19 @@ encode_toolbar_tabs(
     T5_TOOLBAR_TOOL_SET t5_toolbar_tool_set;
 
     t5_toolbar_tool_set.state.state = (p_docu->insert_tab_type == TAB_LEFT);
-    t5_toolbar_tool_set.name = TEXT("TAB_LEFT");
+    t5_toolbar_tool_set.name = USTR_TEXT("TAB_LEFT");
     status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
     t5_toolbar_tool_set.state.state = (p_docu->insert_tab_type == TAB_CENTRE);
-    t5_toolbar_tool_set.name = TEXT("TAB_CENTRE");
+    t5_toolbar_tool_set.name = USTR_TEXT("TAB_CENTRE");
     status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
     t5_toolbar_tool_set.state.state = (p_docu->insert_tab_type == TAB_RIGHT);
-    t5_toolbar_tool_set.name = TEXT("TAB_RIGHT");
+    t5_toolbar_tool_set.name = USTR_TEXT("TAB_RIGHT");
     status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
     t5_toolbar_tool_set.state.state = (p_docu->insert_tab_type == TAB_DECIMAL);
-    t5_toolbar_tool_set.name = TEXT("TAB_DECIMAL");
+    t5_toolbar_tool_set.name = USTR_TEXT("TAB_DECIMAL");
     status_consume(object_call_id(OBJECT_ID_TOOLBAR, p_docu, T5_MSG_TOOLBAR_TOOL_SET, &t5_toolbar_tool_set));
 
     return(STATUS_OK);

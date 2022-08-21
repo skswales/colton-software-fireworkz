@@ -179,7 +179,7 @@ docno_close(
 extern void
 docno_close_all(void)
 {
-    { /* SKS 27sep95 introduce separate phase to take down real documents first ie. before the config doc etc! */
+    { /* SKS 27sep95 introduce separate phase to take down real documents first i.e. before the config doc etc! */
     DOCNO docno = DOCNO_SKIP_CONFIG; /* SKS 09sep14 ensure that the config doc is skipped in this first phase */
 
     while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
@@ -210,6 +210,8 @@ docno_close_all(void)
 * enumerate all valid documents
 * start by calling with DOCNO_NONE (or DOCNO_SKIP_CONFIG)
 * ends by returning DOCNO_NONE
+*
+* you can use p_docu_from_docno_valid() if DOCNO_NONE != docno returned
 *
 ******************************************************************************/
 
@@ -595,8 +597,8 @@ docno_get_supporting_docs(
 
 /******************************************************************************
 *
-* write out the whole name of a document; if
-* it has part or all of its path in common with
+* write out the whole name of a document;
+* if it has part or all of its path in common with
 * another document, this is stripped out
 *
 ******************************************************************************/
@@ -609,18 +611,20 @@ docno_name_write_ustr_buf(
     _InVal_     DOCNO docno_to /* name output */,
     _InVal_     DOCNO docno_from /* common path */)
 {
-    P_DOCU p_docu_from;
+    P_DOCU_NAME p_docu_name_from = NULL;
 
-    assert(DOCNO_NONE != docno_to);
-    if(DOCNO_NONE == docno_to)
+    if(!docno_is_valid(docno_to))
     {
-        ustr_buf[0] = CH_NULL;
+        assert(docno_is_valid(docno_to));
+        assert(0 != elemof_buffer);
+        PtrPutByte(ustr_buf, CH_NULL);
         return(0);
     }
 
-    p_docu_from = p_docu_from_docno(docno_from);
+    if(docno_is_valid(docno_from))
+        p_docu_name_from = &p_docu_from_docno_valid(docno_from)->docu_name;
 
-    return(name_write_ustr_buf(ustr_buf, elemof_buffer, &p_docu_from_docno(docno_to)->docu_name, !IS_DOCU_NONE(p_docu_from) ? &p_docu_from->docu_name : NULL, FALSE));
+    return(name_write_ustr_buf(ustr_buf, elemof_buffer, &p_docu_from_docno_valid(docno_to)->docu_name, p_docu_name_from, FALSE));
 }
 
 /******************************************************************************
@@ -919,6 +923,23 @@ p_docu_from_docno(
 }
 
 #endif
+
+/* returns TRUE iff docno pertains to an allocated DOCU
+ *
+ * you may call p_docu_from_docno_valid() if so
+ */
+
+_Check_return_
+extern BOOL
+docno_is_valid(
+    _InVal_     DOCNO docno)
+{
+    assert(docno < g_docu_table_limit);
+    if(docno >= g_docu_table_limit)
+        return(FALSE);
+
+    return(!IS_DOCU_NONE(g_docu_table[docno]));
+}
 
 extern void
 sk_docno_startup(void)

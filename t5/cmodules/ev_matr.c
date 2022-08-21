@@ -46,7 +46,7 @@
 _Check_return_
 static STATUS
 determinant(
-    _In_count_x_(m*m) PC_F64 ap /*[m][m]*/,
+    _In_reads_x_(m*m) PC_F64 ap /*[m][m]*/,
     _InVal_     U32 m,
     _OutRef_    P_F64 dp)
 {

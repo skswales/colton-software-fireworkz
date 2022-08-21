@@ -29,7 +29,7 @@ plain_text_is_page_break(
     PC_UCHARS uchars;
     if(array_elements(&h_chars) < INLINE_OVH)
         return(FALSE);
-    uchars = array_rangec(&h_chars, _UCHARS, 0, INLINE_OVH);
+    uchars = (PC_UCHARS) array_rangec(&h_chars, UCHARB, 0, INLINE_OVH);
     return(is_inline(uchars) && (inline_code(uchars) == IL_PAGE_BREAK));
 }
 

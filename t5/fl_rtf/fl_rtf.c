@@ -705,7 +705,7 @@ load_cell_foreign_init(
 {
     const P_DOCU p_docu = p_docu_from_docno(p_rtf_load_info->docno);
     zero_struct_ptr(p_load_cell_foreign);
-    consume_bool(object_data_from_position(p_docu, &p_load_cell_foreign->object_data, &p_rtf_load_info->position, NULL));
+    consume_bool(object_data_from_position(p_docu, &p_load_cell_foreign->object_data, &p_rtf_load_info->position, P_OBJECT_POSITION_NONE));
     /* turns out this is abused */
     if(OBJECT_ID_TEXT == p_load_cell_foreign->object_data.object_position_start.object_id)
     {
@@ -1230,7 +1230,7 @@ rtf_load_process_group(
                 p_rtf_load_info->doc_regions++;
             }
 
-            status = al_array_add(&p_rtf_load_info->h_da_list, ARRAY_HANDLE, 1, NULL, &h_sub_regions);
+            status = al_array_add(&p_rtf_load_info->h_da_list, ARRAY_HANDLE, 1, PC_ARRAY_INIT_BLOCK_NONE, &h_sub_regions);
         }
         else
             al_array_dispose(&h_sub_regions); /* Release zero-element handles */
@@ -3021,7 +3021,7 @@ rtf_load_decode_colour(
     _OutRef_    P_RGB p_rgb,
     _InVal_     S32 colour)
 {
-    if(array_index_valid(&p_rtf_load_info->h_colour_table_load, colour))
+    if(array_index_is_valid(&p_rtf_load_info->h_colour_table_load, colour))
     {
         *p_rgb = *array_ptrc_no_checks(&p_rtf_load_info->h_colour_table_load, RGB, colour);
         return;
@@ -3806,8 +3806,8 @@ rtf_load_document_style(
     style_init(&style);
 
     docu_area_init(&docu_area);
-    docu_area.whole_col = 1;
-    docu_area.whole_row = 1;
+    docu_area_set_whole_col(&docu_area);
+    docu_area_set_whole_row(&docu_area);
 
     {
     STYLE_DOCU_AREA_ADD_PARM style_docu_area_add_parm;
@@ -3843,7 +3843,7 @@ rtf_load_set_width(
     style_bit_set(&style, STYLE_SW_CS_WIDTH);
 
     docu_area_init(&docu_area);
-    docu_area.whole_col = 1;
+    docu_area_set_whole_col(&docu_area);
     docu_area.whole_row = 0;
     docu_area.tl.slr.col = 0;
     docu_area.tl.object_position.object_id = OBJECT_ID_NONE;
@@ -3891,6 +3891,7 @@ PROC_RTF_CONTROL_PROTO(rtf_control_clbrdr)
 
     switch(style_bit_number)
     {
+    default: default_unhandled();                                      break;
     case STYLE_SW_PS_GRID_TOP:    p_rtf_table->top    = RTF_BORDER_ON; break;
     case STYLE_SW_PS_GRID_BOTTOM: p_rtf_table->bottom = RTF_BORDER_ON; break;
     case STYLE_SW_PS_GRID_LEFT:   p_rtf_table->left   = RTF_BORDER_ON; break;

@@ -31,8 +31,8 @@ typedef struct BROWSE_ENTRY
 BROWSE_ENTRY, * P_BROWSE_ENTRY;
 
 #if WINDOWS
-#define N_DICTIONARY_LIST_ITEMS 9       /* number of words shown by browse word list in dictionary DBOX */
-#define BROWSE_CENTRE 4
+#define N_DICTIONARY_LIST_ITEMS 7       /* number of words shown by browse word list in dictionary DBOX */
+#define BROWSE_CENTRE 3
 #else
 #define N_DICTIONARY_LIST_ITEMS 5       /* number of words shown by browse word list in dictionary DBOX */
 #define BROWSE_CENTRE 2
@@ -142,7 +142,7 @@ dict_list =
 static const DIALOG_CONTROL_DATA_LIST_TEXT
 dict_list_data = { { 0 /*force_v_scroll*/, 1 /*disable_double*/, 2 /*tab_position*/} };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 dict_add_data_argmap[] = { CONTROL_ID_WORD };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -160,7 +160,7 @@ dict_add =
     { DRT(LBRT, PUSHBUTTON), 1 }
 };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 dict_delete_data_argmap[] = { CONTROL_ID_LIST };
 
 static const DIALOG_CONTROL_DATA_PUSH_COMMAND
@@ -306,14 +306,14 @@ dialog_dictionary_ctl_pushbutton(
     _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
 {
     const P_DICTIONARY_CALLBACK p_dictionary_callback = (P_DICTIONARY_CALLBACK) p_dialog_msg_ctl_pushbutton->client_handle;
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case CONTROL_ID_UP:
     case CONTROL_ID_DOWN:
         {
-        BOOL up = (CONTROL_ID_UP == control_id);
+        BOOL up = (CONTROL_ID_UP == dialog_control_id);
 
         if(p_dialog_msg_ctl_pushbutton->right_button)
             up = !up;
@@ -486,7 +486,7 @@ t5_cmd_spell_dictionary(
     dialog_cmd_process_dbox.caption.text.resource_id = OB_SPELL_MSG_DICTIONARY_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_dictionary;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &dictionary_callback;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     ui_source_dispose(&dictionary_callback.ui_source);

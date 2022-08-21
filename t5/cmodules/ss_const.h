@@ -569,59 +569,11 @@ ss_data_resource_copy(
     _OutRef_    P_EV_DATA p_ev_data_out,
     _InRef_     PC_EV_DATA p_ev_data_in);
 
-extern void
-ss_date_normalise(
-    _InoutRef_  P_EV_DATE p_ev_date);
-
-_Check_return_
-extern F64
-ss_date_to_serial_number(
-    _InRef_     PC_EV_DATE p_ev_date);
-
-_Check_return_
-extern S32
-ss_dateval_to_serial_number(
-    _InRef_     PC_EV_DATE_DATE p_ev_date_date);
-
-_Check_return_
-extern STATUS
-ss_dateval_to_ymd(
-    _InRef_     PC_EV_DATE_DATE p_ev_date_date,
-    _OutRef_    P_S32 p_year,
-    _OutRef_    P_S32 p_month,
-    _OutRef_    P_S32 p_day);
-
 _Check_return_
 extern STATUS
 ss_decode_constant(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     _InRef_     PC_EV_DATA p_ev_data);
-
-/*ncr*/
-extern S32
-ss_hms_to_timeval(
-    _OutRef_    P_EV_DATE_TIME p_ev_date_time,
-    _InVal_     S32 hours,
-    _InVal_     S32 minutes,
-    _InVal_     S32 seconds);
-
-extern void
-ss_local_time(
-    _OutRef_    P_S32 p_year,
-    _OutRef_    P_S32 p_month,
-    _OutRef_    P_S32 p_day,
-    _OutRef_    P_S32 p_hours,
-    _OutRef_    P_S32 p_minutes,
-    _OutRef_    P_S32 p_seconds);
-
-extern void
-ss_local_time_as_ev_date(
-    _OutRef_    P_EV_DATE p_ev_date);
-
-_Check_return_
-extern S32
-sliding_window_year(
-    _InVal_     S32 year);
 
 _Check_return_
 extern STATUS
@@ -645,12 +597,6 @@ ss_recog_boolean(
 
 _Check_return_ _Success_(return > 0)
 extern STATUS
-ss_recog_date_time(
-    _OutRef_    P_EV_DATA p_ev_data,
-    _In_z_      PC_USTR in_str);
-
-_Check_return_ _Success_(return > 0)
-extern STATUS
 ss_recog_number(
     _OutRef_    P_EV_DATA p_ev_data,
     _In_z_      PC_USTR in_str_in);
@@ -660,27 +606,6 @@ extern STATUS
 ss_recog_string(
     _OutRef_    P_EV_DATA p_ev_data,
     _In_z_      PC_USTR in_str);
-
-_Check_return_
-extern STATUS
-ss_timeval_to_hms(
-    _InRef_     PC_EV_DATE_TIME p_ev_date_time,
-    _OutRef_    P_S32 hours,
-    _OutRef_    P_S32 minutes,
-    _OutRef_    P_S32 seconds);
-
-_Check_return_
-extern F64
-ss_timeval_to_serial_fraction(
-    _InRef_     PC_EV_DATE_TIME p_ev_date_time);
-
-/*ncr*/
-extern S32
-ss_ymd_to_dateval(
-    _OutRef_    P_EV_DATE_DATE p_ev_date_date,
-    _In_        S32 year,
-    _In_        S32 month,
-    _In_        S32 day);
 
 _Check_return_
 extern BOOL
@@ -747,12 +672,6 @@ ui_strtol(
 
 extern const EV_DATA
 ev_data_real_zero;
-
-extern const S32
-ev_days_in_month[];
-
-extern const S32
-ev_days_in_month_leap[];
 
 extern SS_DECOMPILER_OPTIONS
 g_ss_decompiler_options;
@@ -858,6 +777,120 @@ ev_data_set_real_ti(
 
     consume_bool(real_to_integer_try(p_ev_data));
 }
+
+/*
+ss_date.c
+*/
+
+extern const S32
+ev_days_in_month[];
+
+extern const S32
+ev_days_in_month_leap[];
+
+/* conversion to / from dateval */
+
+_Check_return_
+extern S32
+ss_dateval_to_serial_number(
+    _InRef_     PC_EV_DATE_DATE p_ev_date_date);
+
+_Check_return_ _Success_(return >= 0)
+extern STATUS
+ss_serial_number_to_dateval(
+    _OutRef_    P_EV_DATE_DATE p_ev_date_date,
+    _InRef_     F64 serial_number);
+
+_Check_return_
+extern STATUS
+ss_dateval_to_ymd(
+    _InRef_     PC_EV_DATE_DATE p_ev_date_date,
+    _OutRef_    P_S32 p_year,
+    _OutRef_    P_S32 p_month,
+    _OutRef_    P_S32 p_day);
+
+/*ncr*/
+extern S32
+ss_ymd_to_dateval(
+    _OutRef_    P_EV_DATE_DATE p_ev_date_date,
+    _In_        S32 year,
+    _In_        S32 month,
+    _In_        S32 day);
+
+/* conversion to / from timeval */
+
+_Check_return_
+extern F64
+ss_timeval_to_serial_fraction(
+    _InRef_     PC_EV_DATE_TIME p_ev_date_time);
+
+extern void
+ss_serial_fraction_to_timeval(
+    _OutRef_    P_EV_DATE_TIME p_ev_date_time,
+    _InVal_     F64 serial_fraction);
+
+_Check_return_
+extern STATUS
+ss_timeval_to_hms(
+    _InRef_     PC_EV_DATE_TIME p_ev_date_time,
+    _OutRef_    P_S32 hours,
+    _OutRef_    P_S32 minutes,
+    _OutRef_    P_S32 seconds);
+
+/*ncr*/
+extern S32
+ss_hms_to_timeval(
+    _OutRef_    P_EV_DATE_TIME p_ev_date_time,
+    _InVal_     S32 hours,
+    _InVal_     S32 minutes,
+    _InVal_     S32 seconds);
+
+/* date processing */
+
+extern void
+ss_date_normalise(
+    _InoutRef_  P_EV_DATE p_ev_date);
+
+_Check_return_
+extern F64
+ss_date_to_serial_number(
+    _InRef_     PC_EV_DATE p_ev_date);
+
+_Check_return_
+extern STATUS
+ss_serial_number_to_date(
+    _OutRef_    P_EV_DATE p_ev_date,
+    _InVal_     F64 serial_number);
+
+extern void
+ss_local_time_as_ymd_hms(
+    _OutRef_    P_S32 p_year,
+    _OutRef_    P_S32 p_month,
+    _OutRef_    P_S32 p_day,
+    _OutRef_    P_S32 p_hours,
+    _OutRef_    P_S32 p_minutes,
+    _OutRef_    P_S32 p_seconds);
+
+extern void
+ss_local_time_as_ev_date(
+    _OutRef_    P_EV_DATE p_ev_date);
+
+_Check_return_
+extern S32
+sliding_window_year(
+    _InVal_     S32 year);
+
+_Check_return_ _Success_(return >= 0)
+extern STATUS
+ss_recog_date_time(
+    _OutRef_    P_EV_DATA p_ev_data,
+    _In_z_      PC_USTR in_str);
+
+_Check_return_
+extern STATUS
+ss_date_decode(
+    _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
+    _InRef_     PC_EV_DATE p_ev_date);
 
 #endif /* __ss_const_h */
 

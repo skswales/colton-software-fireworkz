@@ -4,14 +4,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2015 Stuart Swales */
+/* Copyright (C) 2006-2016 Stuart Swales */
 
 /* SKS Feb 2006 */
 
 #ifndef __ho_cpicture_h
 #define __ho_cpicture_h
 
-//typedef struct CPicture_struct * CPicture; // opaque
+#if WINDOWS
+
+typedef struct CPicture_struct * CPicture; // opaque
 
 _Check_return_
 _Ret_maybenull_
@@ -47,6 +49,8 @@ CPicture_Render(
     _HdcRef_    HDC hDC,
     _InRef_     LPCRECT p_rect,
     LPCRECT prcMFBounds);
+
+#endif /* OS */
 
 #endif /* ho_cpicture_h */
 

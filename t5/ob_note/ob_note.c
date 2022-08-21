@@ -28,7 +28,7 @@ internal structure
 typedef struct NOTE_DRAG_STATUS
 {
     STATUS      drag_message;
-    PIXIT       param[4];
+    PIXIT       param[6];
     STATUS      unit_message;
     FP_PIXIT    fp_pixits_per_unit;
     STATUS      post_message;
@@ -50,12 +50,12 @@ typedef struct CB_DATA_NOTELAYER_DRAG_DATA
 
     SKEL_POINT skel_point; /* last recorded pointer position */
 
-    SKEL_RECT box_skel_rect_current; /* the raw unnormalised skel rect one gets from adding skel_point and translate_box_pixit_rect_offset etc */
+    SKEL_RECT skel_rect_current; /* the raw unnormalised skel_rect one gets from adding skel_point and translate_box_pixit_rect_offset etc. */
 
     CB_DATA_NOTELAYER_ADJUST resize;
     BOOL resize_tie_xy;
     SKEL_POINT resize_first_skel_point;
-    SKEL_RECT resize_original_bbox;
+    SKEL_RECT resize_original_skel_rect;
     PIXIT_SIZE resize_current_pixit_size;
 
     GR_SCALE_PAIR rescale_gr_scale_pair;
@@ -68,6 +68,7 @@ CB_DATA_NOTELAYER_DRAG_DATA, * P_CB_DATA_NOTELAYER_DRAG_DATA;
 
 typedef struct NOTE_DIRN NOTE_DIRN;
 
+/* PIXIT_RECT_EAR_XXX */
 typedef S32 NOTE_POSITION; typedef NOTE_POSITION * P_NOTE_POSITION;
 
 typedef struct NOTE_OBJECT_BOUNDS
@@ -164,7 +165,7 @@ static BOOL static_flag = 0; /* nasty temporary bodge for suppressing otherwise 
 static void
 note_select(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info)
+    _InoutRef_  P_NOTE_INFO p_note_info)
 {
     if(NULL == notelayer_selection_first(p_docu))
     {
@@ -177,7 +178,7 @@ note_select(
         caret_show_claim(p_docu, OBJECT_ID_NOTE, FALSE);
     }
 
-    p_note_info->flags.selection = NOTE_SELECTION_SELECTED;
+    p_note_info->note_selection = NOTE_SELECTION_SELECTED;
 
     note_update_later(p_docu, p_note_info, NOTE_UPDATE_SELECTION_MARKS);
 
@@ -188,13 +189,14 @@ note_select(
 extern void
 note_update_later(
     _DocuRef_   P_DOCU p_docu,
-    P_NOTE_INFO p_note_info,
+    _InoutRef_  P_NOTE_INFO p_note_info,
     _In_        S32 note_update_flags)
 {
     RECT_FLAGS rect_flags;
     REDRAW_TAG redraw_tag;
+    SKEL_RECT skel_rect;
 
-    if((note_update_flags == NOTE_UPDATE_SELECTION_MARKS) && (p_note_info->flags.selection == NOTE_SELECTION_NONE))
+    if((note_update_flags == NOTE_UPDATE_SELECTION_MARKS) && (p_note_info->note_selection == NOTE_SELECTION_NONE))
         /* nothing to do */
         return;
 
@@ -202,14 +204,14 @@ note_update_later(
 
     /* extend slightly anyway so that thin (zero width vertical or zero height horizontal) lines are displayed */
     rect_flags.extend_left_ppixels  =
-    rect_flags.extend_right_ppixels = (p_note_info->flags.selection != NOTE_SELECTION_NONE) ? 6 /*ears*/ : 1 /*thin*/;
+    rect_flags.extend_right_ppixels = (p_note_info->note_selection != NOTE_SELECTION_NONE) ? 6 /*ears*/ : 1 /*thin*/;
 
     rect_flags.extend_up_ppixels    =
-    rect_flags.extend_down_ppixels  = (p_note_info->flags.selection != NOTE_SELECTION_NONE) ? 3 /*ears*/ : 1 /*thin*/;
+    rect_flags.extend_down_ppixels  = (p_note_info->note_selection != NOTE_SELECTION_NONE) ? 3 /*ears*/ : 1 /*thin*/;
 
     redraw_tag = redraw_tag_from_layer(p_note_info->layer);
 
-    if(p_note_info->note_pinning == NOTE_UNPINNED)
+    if(NOTE_UNPINNED == p_note_info->note_pinning)
     {
         if(p_note_info->flags.all_pages)
         {
@@ -219,39 +221,40 @@ note_update_later(
         }
     }
 
-    if(!p_note_info->flags.bbox_valid)
+    if(!p_note_info->flags.skel_rect_valid)
         notelayer_mount_note(p_docu, p_note_info);
 
     if(note_update_flags == NOTE_UPDATE_SELECTION_MARKS)
     {
-        SKEL_RECT skel_rect;
-
         /* top */
-        skel_rect = p_note_info->bbox;
+        skel_rect = p_note_info->skel_rect;
         skel_rect.br.page_num.y = skel_rect.tl.page_num.y;
         skel_rect.br.pixit_point.y = skel_rect.tl.pixit_point.y;
         view_update_later(p_docu, redraw_tag, &skel_rect, rect_flags);
 
         /* bottom */
-        skel_rect = p_note_info->bbox;
+        skel_rect = p_note_info->skel_rect;
         skel_rect.tl.page_num.y = skel_rect.br.page_num.y;
         skel_rect.tl.pixit_point.y = skel_rect.br.pixit_point.y;
         view_update_later(p_docu, redraw_tag, &skel_rect, rect_flags);
 
         /* left */
-        skel_rect = p_note_info->bbox;
+        skel_rect = p_note_info->skel_rect;
         skel_rect.br.page_num.x = skel_rect.tl.page_num.x;
         skel_rect.br.pixit_point.x = skel_rect.tl.pixit_point.x;
         view_update_later(p_docu, redraw_tag, &skel_rect, rect_flags);
 
         /* right */
-        skel_rect = p_note_info->bbox;
+        skel_rect = p_note_info->skel_rect;
         skel_rect.tl.page_num.x = skel_rect.br.page_num.x;
         skel_rect.tl.pixit_point.x = skel_rect.br.pixit_point.x;
         view_update_later(p_docu, redraw_tag, &skel_rect, rect_flags);
     }
     else
-        view_update_later(p_docu, redraw_tag, &p_note_info->bbox, rect_flags);
+    {
+        skel_rect = p_note_info->skel_rect;
+        view_update_later(p_docu, redraw_tag, &skel_rect, rect_flags);
+    }
 }
 
 /******************************************************************************
@@ -260,19 +263,22 @@ note_update_later(
 *
 ******************************************************************************/
 
+_Check_return_
 static S32
 notelayer_count_selection(
     _DocuRef_   P_DOCU p_docu)
 {
-    ARRAY_INDEX selection_count = 0;
+    S32 selection_count = 0;
     ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
 
     while(--note_index >= 0)
     {
-        P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
+        const PC_NOTE_INFO p_note_info = array_ptrc(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-        if(p_note_info->flags.selection != NOTE_SELECTION_NONE)
-            ++selection_count;
+        if(NOTE_SELECTION_NONE == p_note_info->note_selection)
+            continue;
+
+        ++selection_count;
     }
 
     return(selection_count);
@@ -287,6 +293,9 @@ notelayer_drag_status_set(
 {
     SCALE_INFO scale_info;
     DISPLAY_UNIT_INFO display_unit_info;
+    PIXIT_POINT pixit_point;
+    PIXIT_SIZE scaled_pixit_size;
+    GR_SCALE_PAIR gr_scale_pair;
 
     scale_info_from_docu(p_docu, TRUE, &scale_info);
 
@@ -322,17 +331,29 @@ notelayer_drag_status_set(
 
     if(NULL != p_notelayer_drag_data)
     {
-        p_note_drag_status->param[0] = p_notelayer_drag_data->box_skel_rect_current.tl.pixit_point.x;
-        p_note_drag_status->param[1] = p_notelayer_drag_data->box_skel_rect_current.tl.pixit_point.y;
-        p_note_drag_status->param[2] = p_notelayer_drag_data->box_skel_rect_current.br.pixit_point.x - p_notelayer_drag_data->box_skel_rect_current.tl.pixit_point.x;
-        p_note_drag_status->param[3] = p_notelayer_drag_data->box_skel_rect_current.br.pixit_point.y - p_notelayer_drag_data->box_skel_rect_current.tl.pixit_point.y;
-        return;
+        pixit_point.x = p_notelayer_drag_data->skel_rect_current.tl.pixit_point.x;
+        pixit_point.y = p_notelayer_drag_data->skel_rect_current.tl.pixit_point.y;
+        scaled_pixit_size.cx = p_notelayer_drag_data->skel_rect_current.br.pixit_point.x - p_notelayer_drag_data->skel_rect_current.tl.pixit_point.x;
+        scaled_pixit_size.cy = p_notelayer_drag_data->skel_rect_current.br.pixit_point.y - p_notelayer_drag_data->skel_rect_current.tl.pixit_point.y;
+        gr_scale_pair = (p_notelayer_drag_data->reason_code == CB_CODE_NOTELAYER_NOTE_RESCALE)
+            ? p_notelayer_drag_data->rescale_gr_scale_pair
+            : p_notelayer_drag_data->original_gr_scale_pair;
+    }
+    else
+    {
+        pixit_point.x = p_note_info->skel_rect.tl.pixit_point.x;
+        pixit_point.y = p_note_info->skel_rect.tl.pixit_point.y;
+        scaled_pixit_size.cx = p_note_info->skel_rect.br.pixit_point.x - p_note_info->skel_rect.tl.pixit_point.x;
+        scaled_pixit_size.cy = p_note_info->skel_rect.br.pixit_point.y - p_note_info->skel_rect.tl.pixit_point.y;
+        gr_scale_pair = p_note_info->gr_scale_pair;
     }
 
-    p_note_drag_status->param[0] = p_note_info->bbox.tl.pixit_point.x;
-    p_note_drag_status->param[1] = p_note_info->bbox.tl.pixit_point.y;
-    p_note_drag_status->param[2] = p_note_info->bbox.br.pixit_point.x - p_note_info->bbox.tl.pixit_point.x;
-    p_note_drag_status->param[3] = p_note_info->bbox.br.pixit_point.y - p_note_info->bbox.tl.pixit_point.y;
+    p_note_drag_status->param[0] = pixit_point.x;
+    p_note_drag_status->param[1] = pixit_point.y;
+    p_note_drag_status->param[2] = scaled_pixit_size.cx;
+    p_note_drag_status->param[3] = scaled_pixit_size.cy;
+    p_note_drag_status->param[4] = muldiv64_round_floor(100, gr_scale_pair.x, GR_SCALE_ONE);
+    p_note_drag_status->param[5] = muldiv64_round_floor(100, gr_scale_pair.y, GR_SCALE_ONE);
 }
 
 static void
@@ -370,7 +391,9 @@ notelayer_drag_status_show(
                          quick_ublock_ustr(&numform_res_quick_ublock[0]),
                          quick_ublock_ustr(&numform_res_quick_ublock[1]),
                          quick_ublock_ustr(&numform_res_quick_ublock[2]),
-                         quick_ublock_ustr(&numform_res_quick_ublock[3]));
+                         quick_ublock_ustr(&numform_res_quick_ublock[3]),
+                         p_note_drag_status->param[4],
+                         p_note_drag_status->param[5]);
     }
 
     for(i = 0; i < 4; i++)
@@ -410,9 +433,9 @@ T5_MSG_PROTO(static, note_msg_notelayer_selection_info,  P_NOTELAYER_SELECTION_I
 
 T5_MSG_PROTO(static, note_msg_menu_other_info, _InoutRef_ P_MENU_OTHER_INFO p_menu_other_info)
 {
-    ARRAY_INDEX behind_count = 0;
-    ARRAY_INDEX picture_count = 0;
-    ARRAY_INDEX selection_count = 0;
+    S32 behind_count = 0;
+    S32 picture_count = 0;
+    S32 selection_count = 0;
     ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
 
     IGNOREPARM_InVal_(t5_message);
@@ -423,7 +446,7 @@ T5_MSG_PROTO(static, note_msg_menu_other_info, _InoutRef_ P_MENU_OTHER_INFO p_me
 
         ++picture_count;
 
-        if(p_note_info->flags.selection != NOTE_SELECTION_NONE)
+        if(NOTE_SELECTION_NONE != p_note_info->note_selection)
             ++selection_count;
 
         switch(p_note_info->layer)
@@ -431,10 +454,10 @@ T5_MSG_PROTO(static, note_msg_menu_other_info, _InoutRef_ P_MENU_OTHER_INFO p_me
         default:
             break;
 
-        case LAYER_CELLS_BELOW:
-        case LAYER_PRINT_BELOW:
         case LAYER_PAPER_BELOW:
-            if(p_note_info->note_pinning == NOTE_UNPINNED)
+        case LAYER_PRINT_AREA_BELOW:
+        case LAYER_CELLS_AREA_BELOW:
+            if(NOTE_UNPINNED == p_note_info->note_pinning)
                 ++behind_count;
             break;
         }
@@ -459,7 +482,7 @@ notelayer_menu_query(
     {
         const PC_NOTE_INFO p_note_info = array_ptrc(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-        if(p_note_info->flags.selection != NOTE_SELECTION_EDITED)
+        if(NOTE_SELECTION_EDITED != p_note_info->note_selection)
             continue;
 
         if(OBJECT_ID_CHART == p_note_info->object_id)
@@ -505,10 +528,12 @@ notelayer_replace_selection(
 
     while(--note_index >= 0)
     {
-        P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
+        const P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-        if(p_note_info->flags.selection == NOTE_SELECTION_SELECTED)
-            notelayer_replace_note(p_docu, p_note_info, object_id, object_data);
+        if(NOTE_SELECTION_SELECTED != p_note_info->note_selection)
+            continue;
+
+        notelayer_replace_note(p_docu, p_note_info, object_id, object_data);
     }
 }
 
@@ -518,6 +543,8 @@ notelayer_replace_selection(
 *
 ******************************************************************************/
 
+_Check_return_
+_Ret_maybenull_
 extern P_NOTE_INFO
 notelayer_selection_first(
     _DocuRef_   P_DOCU p_docu)
@@ -526,9 +553,9 @@ notelayer_selection_first(
 
     while(--note_index >= 0)
     {
-        P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
+        const P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-        if(p_note_info->flags.selection != NOTE_SELECTION_NONE)
+        if(NOTE_SELECTION_NONE != p_note_info->note_selection)
             return(p_note_info);
     }
 
@@ -547,8 +574,10 @@ T5_MSG_PROTO(static, note_msg_note_update_object, P_NOTE_UPDATE_OBJECT p_note_up
     {
         const P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-        if((p_note_info->object_id == object_id) && (p_note_info->object_data_ref == object_data_ref))
-            note_update_later(p_docu, p_note_info, NOTE_UPDATE_ALL);
+        if((p_note_info->object_id != object_id) || (p_note_info->object_data_ref != object_data_ref))
+            continue;
+
+        note_update_later(p_docu, p_note_info, NOTE_UPDATE_ALL);
     }
 
     return(STATUS_OK);
@@ -770,7 +799,7 @@ notelayer_note_translate_for_client(
 {
     P_NOTE_INFO p_note_info = p_note_object_click->p_note_info;
     P_SKELEVENT_CLICK p_skelevent_click = p_note_object_click->p_skelevent_click;
-    SKEL_RECT skel_rect = p_note_info->bbox;
+    SKEL_RECT skel_rect = p_note_info->skel_rect;
 
     notelayer_drag_data.reason_code = CB_CODE_NOTELAYER_NOTE_TRANSLATE_FOR_CLIENT;
 
@@ -843,45 +872,48 @@ notelayer_click_trap(void)
 #endif
 
 _Check_return_
-static STATUS
-notelayer_click(
+static ARRAY_INDEX
+notelayer_click_find_note(
     _DocuRef_   P_DOCU p_docu,
-    _InVal_     T5_MESSAGE t5_message,
     P_SKELEVENT_CLICK p_skelevent_click,
-    _InVal_     LAYER layer)
+    _InVal_     LAYER layer,
+    _OutRef_    P_NOTE_POSITION p_note_position)
 {
-    STATUS status = STATUS_OK;
-    NOTE_POSITION position = PIXIT_RECT_EAR_NONE;
+    NOTE_POSITION note_position = PIXIT_RECT_EAR_NONE;
     ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
-
-#if CHECKING && 1
-    /* make trapping certain click types easier */
-    switch(t5_message)
-    {
-    case T5_EVENT_CLICK_LEFT_DRAG:
-        status = notelayer_click_trap();
-        break;
-    }
-#endif
 
     while(--note_index >= 0)
     {
-        P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
+        const PC_NOTE_INFO p_note_info = array_ptrc(&p_docu->h_note_list, NOTE_INFO, note_index);
         PIXIT_RECT pixit_rect;
 
         if(p_note_info->layer != layer)
             continue;
 
-        if(!p_note_info->flags.bbox_valid)
-            /* bbox will be set if we can see it, and if we can't see it,
+        if(!p_note_info->flags.skel_rect_valid)
+        {   /* bbox will be set if we can see it, and if we can't see it,
              * we certainly aren't in any position to be clicking on it
             */
             continue;
+        }
 
         relative_pixit_rect_from_note(p_docu, p_note_info, &p_skelevent_click->skel_point.page_num, &pixit_rect);
 
-        switch(p_note_info->flags.selection)
+        switch(p_note_info->note_selection)
         {
+        default: default_unhandled();
+#if CHECKING
+        case NOTE_SELECTION_NONE:
+#endif
+            /* make thin horizontal/vertical lines easier to click on */
+            expand_pixit_rect(&pixit_rect, &p_skelevent_click->click_context.one_program_pixel);
+
+            if(!POINT_INSIDE_RECTANGLE(p_skelevent_click->skel_point.pixit_point, pixit_rect))
+                continue;
+
+            note_position = PIXIT_RECT_EAR_CENTRE;
+            break;
+
         case NOTE_SELECTION_EDITED:
         case NOTE_SELECTION_SELECTED:
             {
@@ -889,41 +921,413 @@ notelayer_click(
 
             notelayer_object_bounds(&note_object_bounds, p_note_info->note_pinning, &pixit_rect, &p_skelevent_click->click_context.one_program_pixel);
 
-            if(POINT_INSIDE_RECTANGLE(p_skelevent_click->skel_point.pixit_point, note_object_bounds.ears.outer_bound))
+            if(!POINT_INSIDE_RECTANGLE(p_skelevent_click->skel_point.pixit_point, note_object_bounds.ears.outer_bound))
+                continue;
+
+            note_position = PIXIT_RECT_EAR_COUNT;
+
+            while(--note_position >= 0)
             {
-                NOTE_POSITION note_position = PIXIT_RECT_EAR_COUNT;
+                if(!note_object_bounds.ears.ear_active[note_position])
+                    continue;
 
-                position = PIXIT_RECT_EAR_CENTRE; /* even if missed everything else! */
+                if(!POINT_INSIDE_RECTANGLE(p_skelevent_click->skel_point.pixit_point, note_object_bounds.ears.ear[note_position]))
+                    continue;
 
-                while(--note_position >= 0)
-                    if(note_object_bounds.ears.ear_active[note_position])
-                        if(POINT_INSIDE_RECTANGLE(p_skelevent_click->skel_point.pixit_point, note_object_bounds.ears.ear[note_position]))
-                        {
-                            position = note_position;
-                            break;
-                        }
+                break;
             }
+
+            if(note_position < 0)
+                note_position = PIXIT_RECT_EAR_CENTRE; /* even if missed everything else! */
+
+            break;
+            }
+        }
+
+        assert(PIXIT_RECT_EAR_NONE != note_position);
+        if(PIXIT_RECT_EAR_NONE != note_position)
+        {
+            *p_note_position = note_position;
+            return(note_index);
+        }
+    }
+
+    *p_note_position = PIXIT_RECT_EAR_NONE;
+    return(-1);
+}
+
+_Check_return_
+static STATUS
+notelayer_click_ear_start_drag(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_SKELEVENT_CLICK p_skelevent_click,
+    _InoutRef_  P_NOTE_INFO p_note_info,
+    _InVal_     NOTE_POSITION note_position)
+{
+    const T5_MESSAGE t5_message_right = T5_EVENT_CLICK_RIGHT_DRAG;
+    const T5_MESSAGE t5_message_effective = right_message_if_ctrl(t5_message, t5_message_right, p_skelevent_click);
+
+    IGNOREPARM_DocuRef_(p_docu);
+
+    if(p_note_info->flags.scale_to_fit)
+        return(create_error(ERR_CANT_EDIT_SCALED_TO_FIT_NOTE));
+
+    notelayer_drag_data.resize = notelayer_resize[note_position];
+    notelayer_drag_data.resize_tie_xy = 0;
+
+    switch(t5_message_effective)
+    {
+    case T5_EVENT_CLICK_LEFT_DRAG:
+        notelayer_drag_data.reason_code = CB_CODE_NOTELAYER_NOTE_RESIZE;
+        if((note_position == PIXIT_RECT_EAR_TL) || (note_position == PIXIT_RECT_EAR_BR))
+            notelayer_drag_data.resize_tie_xy = 1;
+        break;
+
+    default: default_unhandled();
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        notelayer_drag_data.reason_code = CB_CODE_NOTELAYER_NOTE_RESCALE;
+        break;
+    }
+
+    host_drag_start(&notelayer_drag_data);
+
+    return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+notelayer_click_ear_TL(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_SKELEVENT_CLICK p_skelevent_click,
+    _InoutRef_  P_NOTE_INFO p_note_info,
+    _InVal_     NOTE_POSITION note_position)
+{
+    switch(t5_message)
+    {
+    case T5_EVENT_CLICK_LEFT_DRAG:
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        return(notelayer_click_ear_start_drag(p_docu, t5_message, p_skelevent_click, p_note_info, note_position));
+
+    case T5_EVENT_CLICK_LEFT_DOUBLE:
+        {
+        if(p_note_info->flags.scale_to_fit)
+            return(create_error(ERR_CANT_EDIT_SCALED_TO_FIT_NOTE));
+
+        note_pin_change(p_docu, p_note_info, (p_note_info->note_pinning == NOTE_UNPINNED) ? NOTE_PIN_CELLS_SINGLE : NOTE_UNPINNED);
+        return(STATUS_OK);
+        }
+
+    default:
+        return(STATUS_OK);
+    }
+}
+
+_Check_return_
+static STATUS
+notelayer_click_ear_BR(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_SKELEVENT_CLICK p_skelevent_click,
+    _InoutRef_  P_NOTE_INFO p_note_info,
+    _InVal_     NOTE_POSITION note_position)
+{
+    switch(t5_message)
+    {
+    case T5_EVENT_CLICK_LEFT_DRAG:
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        return(notelayer_click_ear_start_drag(p_docu, t5_message, p_skelevent_click, p_note_info, note_position));
+
+    case T5_EVENT_CLICK_LEFT_DOUBLE:
+        {
+        if(p_note_info->flags.scale_to_fit)
+            return(create_error(ERR_CANT_EDIT_SCALED_TO_FIT_NOTE));
+
+        note_pin_change(p_docu, p_note_info, (p_note_info->note_pinning == NOTE_PIN_CELLS_SINGLE) ? NOTE_PIN_CELLS_TWIN : NOTE_PIN_CELLS_SINGLE);
+        return(STATUS_OK);
+        }
+
+    default:
+        return(STATUS_OK);
+    }
+}
+
+_Check_return_
+static STATUS
+notelayer_click_ear_other(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    _InoutRef_  P_SKELEVENT_CLICK p_skelevent_click,
+    _InoutRef_  P_NOTE_INFO p_note_info,
+    _InVal_     NOTE_POSITION note_position)
+{
+    switch(t5_message)
+    {
+    case T5_EVENT_CLICK_LEFT_DRAG:
+    case T5_EVENT_CLICK_RIGHT_DRAG:
+        return(notelayer_click_ear_start_drag(p_docu, t5_message, p_skelevent_click, p_note_info, note_position));
+
+    default:
+        return(STATUS_OK);
+    }
+}
+
+_Check_return_
+static STATUS
+notelayer_click_ear_CENTRE(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    P_SKELEVENT_CLICK p_skelevent_click,
+    _InoutRef_  P_NOTE_INFO p_note_info)
+{
+    STATUS status = STATUS_OK;
+
+    switch(p_note_info->note_selection)
+    {
+    case NOTE_SELECTION_EDITED:
+        {
+        NOTE_OBJECT_CLICK note_object_click;
+        note_object_click.object_data_ref = p_note_info->object_data_ref;
+        note_object_click.t5_message = t5_message;
+        note_object_click.pixit_point.x = p_skelevent_click->skel_point.pixit_point.x - p_note_info->skel_rect.tl.pixit_point.x;
+        note_object_click.pixit_point.y = p_skelevent_click->skel_point.pixit_point.y - p_note_info->skel_rect.tl.pixit_point.y;
+        note_object_click.pixit_point.x = gr_coord_scale_inverse(note_object_click.pixit_point.x, p_note_info->gr_scale_pair.x);
+        note_object_click.pixit_point.y = gr_coord_scale_inverse(note_object_click.pixit_point.y, p_note_info->gr_scale_pair.y);
+        note_object_click.p_note_info = p_note_info;
+        note_object_click.p_skelevent_click = p_skelevent_click;
+        note_object_click.processed = 0;
+        status_consume(object_call_id(p_note_info->object_id, p_docu, T5_MSG_NOTE_OBJECT_CLICK, &note_object_click));
+        if(1 == note_object_click.processed)
+            break;
+        if(CB_CODE_NOTELAYER_NOTE_TRANSLATE_FOR_CLIENT == note_object_click.processed)
+        {
+            notelayer_note_translate_for_client(p_docu, &note_object_click);
+            break;
+        }
+        } /*block*/
+
+        /*FALLTHRU*/
+
+    default:
+#if CHECKING
+        assert(p_note_info->note_selection == NOTE_SELECTION_EDITED);
+
+        /*FALLTHRU*/
+
+    case NOTE_SELECTION_NONE:
+    case NOTE_SELECTION_SELECTED:
+#endif
+        {
+        switch(t5_message)
+        {
+        case T5_EVENT_CLICK_LEFT_SINGLE:
+        case T5_EVENT_CLICK_RIGHT_SINGLE:
+            if(p_note_info->note_selection == NOTE_SELECTION_SELECTED)
+            {
+                /* 'select' a selected item - leave selection intact */ /*EMPTY*/
+            }
+            else
+            {
+                /* 'select' an unselected item - clear selection (either in note layer or elsewhere) and select this item */
+                status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
+
+                note_select(p_docu, p_note_info);
+            }
+            break;
+
+#if 0
+        /* goodbye multiple selection */
+        case T5_EVENT_CLICK_RIGHT_SINGLE:
+            if(p_note_info->note_selection == NOTE_SELECTION_SELECTED)
+            {
+                /* 'adjust' a selected item - remove it from the selection */
+                note_update_later(p_docu, p_note_info, NOTE_UPDATE_SELECTION_MARKS);
+
+                p_note_info->note_selection = NOTE_SELECTION_NONE;
+
+                /* tell everyone that selection has changed */
+                status_assert(maeve_event(p_docu, T5_MSG_SELECTION_NEW, P_DATA_NONE));
+
+                if(!notelayer_selection_first(p_docu))
+                    caret_show_claim(p_docu, p_docu->focus_owner_old, FALSE); /* ensure focus is not in notelayer */
+            }
+            else
+            {
+                /* 'adjust' an unselected item - add it to the selection */
+                P_NOTE_INFO sel_p_note_info = notelayer_selection_first(p_docu);
+
+                /* however, if the current selection is an edited note, drop that first */
+                if(sel_p_note_info->note_selection == NOTE_SELECTION_EDITED)
+                    status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
+
+                note_select(p_docu, p_note_info);
+            }
+            break;
+#endif
+
+        case T5_EVENT_CLICK_LEFT_DOUBLE:
+            {
+            { /* if the current selection contains any other, drop them first */
+            STATUS clear_sel = 0;
+            STATUS sel_changed = 0;
+            ARRAY_INDEX note_index = array_elements(&p_docu->h_note_list);
+
+            while(--note_index >= 0)
+            {
+                const P_NOTE_INFO this_p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
+
+                switch(this_p_note_info->note_selection)
+                {
+                default:
+                    break;
+
+                case NOTE_SELECTION_SELECTED:
+                    if(this_p_note_info != p_note_info)
+                        sel_changed = 1;
+                    break;
+
+                case NOTE_SELECTION_EDITED:
+                    clear_sel = 1;
+                    break;
+                }
+            }
+
+            if(clear_sel || sel_changed)
+                status_assert(maeve_event(p_docu, clear_sel ? T5_MSG_SELECTION_CLEAR : T5_MSG_SELECTION_NEW, P_DATA_NONE));
+            } /*block*/
+
+            { /* start an edit for the object */
+            NOTE_OBJECT_EDIT_START note_object_edit_start;
+            note_object_edit_start.processed = 0;
+            note_object_edit_start.object_data_ref = p_note_info->object_data_ref;
+            note_object_edit_start.p_note_info = p_note_info;
+            status_consume(object_call_id(p_note_info->object_id, p_docu, T5_MSG_NOTE_OBJECT_EDIT_START, &note_object_edit_start));
+            if(!note_object_edit_start.processed)
+                break;
+            } /*block*/
+
+            p_note_info->note_selection = NOTE_SELECTION_EDITED;
+
+            note_update_later(p_docu, p_note_info, NOTE_UPDATE_SELECTION_MARKS);
+
+            p_docu->focus_owner_old = p_docu->focus_owner;
+
+            /* give the bugger the input focus too */
+            caret_show_claim(p_docu, p_note_info->object_id, FALSE);
+
+            break;
+            }
+
+        case T5_EVENT_CLICK_LEFT_DRAG:
+        case T5_EVENT_CLICK_RIGHT_DRAG:
+            {
+            /* T5_EVENT_CLICK_RIGHT_DRAG, select note incase earlier T5_EVENT_CLICK_RIGHT_SINGLE deselected it */
+            /* T5_EVENT_CLICK_LEFT_DRAG, note should (on RISCOS maybe?) already be selected, but making sure won't hurt */
+            if(NOTE_SELECTION_NONE == p_note_info->note_selection)
+                note_select(p_docu, p_note_info);
+
+            notelayer_drag_data.reason_code = CB_CODE_NOTELAYER_NOTE_TRANSLATE;
+
+            { /* work out the offset to the tl and br points of the box to be dragged from the point where we clicked */
+            SKEL_RECT skel_rect = p_note_info->skel_rect;
+
+            skel_rect.tl.pixit_point.x -= p_skelevent_click->skel_point.pixit_point.x;
+            skel_rect.tl.pixit_point.y -= p_skelevent_click->skel_point.pixit_point.y;
+            skel_rect.br.pixit_point.x -= p_skelevent_click->skel_point.pixit_point.x;
+            skel_rect.br.pixit_point.y -= p_skelevent_click->skel_point.pixit_point.y;
+
+            if(!p_note_info->flags.all_pages)
+            {
+                REDRAW_TAG redraw_tag = redraw_tag_from_layer(p_note_info->layer);
+
+                assert(skel_rect.tl.page_num.x <= p_skelevent_click->skel_point.page_num.x);
+                while(skel_rect.tl.page_num.x < p_skelevent_click->skel_point.page_num.x)
+                {
+                    PIXIT_POINT work_area;
+                    page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.tl.page_num);
+                    skel_rect.tl.pixit_point.x -= work_area.x;
+                    skel_rect.tl.page_num.x += 1;
+                }
+
+                assert(skel_rect.tl.page_num.y <= p_skelevent_click->skel_point.page_num.y);
+                while(skel_rect.tl.page_num.y < p_skelevent_click->skel_point.page_num.y)
+                {
+                    PIXIT_POINT work_area;
+                    page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.tl.page_num);
+                    skel_rect.tl.pixit_point.y -= work_area.y;
+                    skel_rect.tl.page_num.y += 1;
+                }
+
+                assert(skel_rect.br.page_num.x >= p_skelevent_click->skel_point.page_num.x);
+                while(skel_rect.br.page_num.x > p_skelevent_click->skel_point.page_num.x)
+                {
+                    PIXIT_POINT work_area;
+                    skel_rect.br.page_num.x -= 1;
+                    page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.br.page_num);
+                    skel_rect.br.pixit_point.x += work_area.x;
+                }
+
+                assert(skel_rect.br.page_num.y >= p_skelevent_click->skel_point.page_num.y);
+                while(skel_rect.br.page_num.y > p_skelevent_click->skel_point.page_num.y)
+                {
+                    PIXIT_POINT work_area;
+                    skel_rect.br.page_num.y -= 1;
+                    page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.br.page_num);
+                    skel_rect.br.pixit_point.y += work_area.y;
+                }
+            }
+
+            notelayer_drag_data.translate_box_pixit_rect_offset.tl = skel_rect.tl.pixit_point;
+            notelayer_drag_data.translate_box_pixit_rect_offset.br = skel_rect.br.pixit_point;
+            } /*block*/
+
+            host_drag_start(&notelayer_drag_data);
 
             break;
             }
 
         default:
-            /* make thin horizontal/vertical lines easier to click on */
-            expand_pixit_rect(&pixit_rect, &p_skelevent_click->click_context.one_program_pixel);
-
-            if(POINT_INSIDE_RECTANGLE(p_skelevent_click->skel_point.pixit_point, pixit_rect))
-                position = PIXIT_RECT_EAR_CENTRE;
-
             break;
         }
 
-        if(position != PIXIT_RECT_EAR_NONE)
-            break;
+        break;
+        }
     }
+
+    return(status);
+}
+
+_Check_return_
+static STATUS
+notelayer_click(
+    _DocuRef_   P_DOCU p_docu,
+    _InVal_     T5_MESSAGE t5_message,
+    P_SKELEVENT_CLICK p_skelevent_click,
+    _InVal_     LAYER layer)
+{
+    NOTE_POSITION note_position;
+    ARRAY_INDEX note_index;
+    P_NOTE_INFO p_note_info;
+
+#if CHECKING && 1
+    /* make trapping certain click types easier */
+    switch(t5_message)
+    {
+    case T5_EVENT_CLICK_LEFT_DRAG:
+        status_return(notelayer_click_trap());
+        break;
+    }
+#endif
+
+    note_index = notelayer_click_find_note(p_docu, p_skelevent_click, layer, &note_position);
+
+    if(note_index < 0)
+        return(STATUS_OK);
 
 #if TRACE_ALLOWED
     if_constant(tracing(TRACE_APP_CLICK))
-        switch(position)
+        switch(note_position)
         {
         case PIXIT_RECT_EAR_CENTRE: trace_0(TRACE_APP_CLICK, TEXT("over note centre"));    break;
         case PIXIT_RECT_EAR_TC: trace_0(TRACE_APP_CLICK, TEXT("over note top centre"));    break;
@@ -937,296 +1341,36 @@ notelayer_click(
         }
 #endif
 
-    if(note_index < 0)
-        return(STATUS_OK);
-
     p_skelevent_click->processed = 1;
 
-    {
-    P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
+    p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-    switch(position)
+    switch(note_position)
     {
+    case PIXIT_RECT_EAR_NONE:
+        assert0();
+        return(STATUS_OK);
+
+    case PIXIT_RECT_EAR_CENTRE:
+        return(notelayer_click_ear_CENTRE(p_docu, t5_message, p_skelevent_click, p_note_info));
+
     case PIXIT_RECT_EAR_TL:
-        switch(t5_message)
-        {
-        case T5_EVENT_CLICK_LEFT_DOUBLE:
-            if(p_note_info->flags.scale_to_fit)
-                return(create_error(ERR_CANT_EDIT_SCALED_TO_FIT_NOTE));
-
-            note_pin_change(p_docu, p_note_info, (p_note_info->note_pinning == NOTE_UNPINNED) ? NOTE_PIN_SINGLE : NOTE_UNPINNED);
-            return(STATUS_OK);
-        }
-
-        /*FALLTHRU*/
+        return(notelayer_click_ear_TL(p_docu, t5_message, p_skelevent_click, p_note_info, note_position));
 
     case PIXIT_RECT_EAR_BR:
-        switch(t5_message)
-        {
-        case T5_EVENT_CLICK_LEFT_DOUBLE:
-            if(p_note_info->flags.scale_to_fit)
-                return(create_error(ERR_CANT_EDIT_SCALED_TO_FIT_NOTE));
+        return(notelayer_click_ear_BR(p_docu, t5_message, p_skelevent_click, p_note_info, note_position));
 
-            note_pin_change(p_docu, p_note_info, (p_note_info->note_pinning == NOTE_PIN_TWIN) ? NOTE_PIN_SINGLE : NOTE_PIN_TWIN);
-            return(STATUS_OK);
-        }
-
-        /*FALLTHRU*/
-
+    default: default_unhandled();
+#if CHECKING
     case PIXIT_RECT_EAR_TC:
     case PIXIT_RECT_EAR_LC:
     case PIXIT_RECT_EAR_RC:
     case PIXIT_RECT_EAR_BC:
     case PIXIT_RECT_EAR_TR:
     case PIXIT_RECT_EAR_BL:
-        {
-        switch(t5_message)
-        {
-        case T5_EVENT_CLICK_LEFT_DRAG:
-        case T5_EVENT_CLICK_RIGHT_DRAG:
-            {
-            if(p_note_info->flags.scale_to_fit)
-                return(create_error(ERR_CANT_EDIT_SCALED_TO_FIT_NOTE));
-
-            notelayer_drag_data.reason_code = (t5_message == T5_EVENT_CLICK_LEFT_DRAG) ? CB_CODE_NOTELAYER_NOTE_RESIZE: CB_CODE_NOTELAYER_NOTE_RESCALE;
-            notelayer_drag_data.resize_tie_xy = 0;
-            if(t5_message == T5_EVENT_CLICK_LEFT_DRAG)
-                if((position == PIXIT_RECT_EAR_TL) || (position == PIXIT_RECT_EAR_BR))
-                    notelayer_drag_data.resize_tie_xy = 1;
-            notelayer_drag_data.resize = notelayer_resize[position];
-            host_drag_start(&notelayer_drag_data);
-            break;
-            }
-        }
-
-        break;
-        }
-
-    default:
-#if CHECKING
-    case PIXIT_RECT_EAR_NONE:
-        assert0();
-
-        /*FALLTHRU*/
-
-    case PIXIT_RECT_EAR_CENTRE:
 #endif
-        {
-        switch(p_note_info->flags.selection)
-        {
-        case NOTE_SELECTION_EDITED:
-            {
-            NOTE_OBJECT_CLICK note_object_click;
-            note_object_click.object_data_ref = p_note_info->object_data_ref;
-            note_object_click.t5_message = t5_message;
-            note_object_click.pixit_point.x = p_skelevent_click->skel_point.pixit_point.x - p_note_info->bbox.tl.pixit_point.x;
-            note_object_click.pixit_point.y = p_skelevent_click->skel_point.pixit_point.y - p_note_info->bbox.tl.pixit_point.y;
-            note_object_click.pixit_point.x = gr_coord_scale_inverse(note_object_click.pixit_point.x, p_note_info->gr_scale_pair.x);
-            note_object_click.pixit_point.y = gr_coord_scale_inverse(note_object_click.pixit_point.y, p_note_info->gr_scale_pair.y);
-            note_object_click.p_note_info = p_note_info;
-            note_object_click.p_skelevent_click = p_skelevent_click;
-            note_object_click.processed = 0;
-            status_consume(object_call_id(p_note_info->object_id, p_docu, T5_MSG_NOTE_OBJECT_CLICK, &note_object_click));
-            if(1 == note_object_click.processed)
-                break;
-            if(CB_CODE_NOTELAYER_NOTE_TRANSLATE_FOR_CLIENT == note_object_click.processed)
-            {
-                notelayer_note_translate_for_client(p_docu, &note_object_click);
-                break;
-            }
-            } /*block*/
-
-            /*FALLTHRU*/
-
-        default:
-#if CHECKING
-            assert(p_note_info->flags.selection == NOTE_SELECTION_EDITED);
-
-            /*FALLTHRU*/
-
-        case NOTE_SELECTION_NONE:
-        case NOTE_SELECTION_SELECTED:
-#endif
-            {
-            switch(t5_message)
-            {
-            case T5_EVENT_CLICK_LEFT_SINGLE:
-            case T5_EVENT_CLICK_RIGHT_SINGLE:
-                if(p_note_info->flags.selection == NOTE_SELECTION_SELECTED)
-                {
-                    /* 'select' a selected item - leave selection intact */ /*EMPTY*/
-                }
-                else
-                {
-                    /* 'select' an unselected item - clear selection (either in note layer or elsewhere) and select this item */
-                    status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
-
-                    note_select(p_docu, p_note_info);
-                }
-                break;
-
-#if 0
-            /* goodbye multiple selection */
-            case T5_EVENT_CLICK_RIGHT_SINGLE:
-                if(p_note_info->flags.selection == NOTE_SELECTION_SELECTED)
-                {
-                    /* 'adjust' a selected item - remove it from the selection */
-                    note_update_later(p_docu, p_note_info, NOTE_UPDATE_SELECTION_MARKS);
-
-                    p_note_info->flags.selection = NOTE_SELECTION_NONE;
-
-                    /* tell everyone that selection has changed */
-                    status_assert(maeve_event(p_docu, T5_MSG_SELECTION_NEW, P_DATA_NONE));
-
-                    if(!notelayer_selection_first(p_docu))
-                        caret_show_claim(p_docu, p_docu->focus_owner_old, FALSE); /* ensure focus is not in notelayer */
-                }
-                else
-                {
-                    /* 'adjust' an unselected item - add it to the selection */
-                    P_NOTE_INFO sel_p_note_info = notelayer_selection_first(p_docu);
-
-                    /* however, if the current selection is an edited note, drop that first */
-                    if(sel_p_note_info->flags.selection == NOTE_SELECTION_EDITED)
-                        status_assert(maeve_event(p_docu, T5_MSG_SELECTION_CLEAR, P_DATA_NONE));
-
-                    note_select(p_docu, p_note_info);
-                }
-                break;
-#endif
-
-            case T5_EVENT_CLICK_LEFT_DOUBLE:
-                {
-                { /* if the current selection contains any other, drop them first */
-                STATUS clear_sel = 0;
-                STATUS sel_changed = 0;
-                ARRAY_INDEX i = array_elements(&p_docu->h_note_list);
-
-                while(--i >= 0)
-                {
-                    P_NOTE_INFO this_p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, i);
-
-                    switch(this_p_note_info->flags.selection)
-                    {
-                    case NOTE_SELECTION_EDITED:
-                        clear_sel = 1;
-                        break;
-
-                    case NOTE_SELECTION_SELECTED:
-                        if(this_p_note_info != p_note_info)
-                            sel_changed = 1;
-                        break;
-
-                    default:
-                        break;
-                    }
-                }
-
-                if(clear_sel || sel_changed)
-                    status_assert(maeve_event(p_docu, clear_sel ? T5_MSG_SELECTION_CLEAR : T5_MSG_SELECTION_NEW, P_DATA_NONE));
-                } /*block*/
-
-                { /* start an edit for the object */
-                NOTE_OBJECT_EDIT_START note_object_edit_start;
-                note_object_edit_start.processed = 0;
-                note_object_edit_start.object_data_ref = p_note_info->object_data_ref;
-                note_object_edit_start.p_note_info = p_note_info;
-                status_consume(object_call_id(p_note_info->object_id, p_docu, T5_MSG_NOTE_OBJECT_EDIT_START, &note_object_edit_start));
-                if(!note_object_edit_start.processed)
-                    break;
-                } /*block*/
-
-                p_note_info->flags.selection = NOTE_SELECTION_EDITED;
-
-                note_update_later(p_docu, p_note_info, NOTE_UPDATE_SELECTION_MARKS);
-
-                p_docu->focus_owner_old = p_docu->focus_owner;
-
-                /* give the bugger the input focus too */
-                caret_show_claim(p_docu, p_note_info->object_id, FALSE);
-
-                break;
-                }
-
-            case T5_EVENT_CLICK_LEFT_DRAG:
-            case T5_EVENT_CLICK_RIGHT_DRAG:
-                {
-                /* T5_EVENT_CLICK_RIGHT_DRAG, select note incase earlier T5_EVENT_CLICK_RIGHT_SINGLE deselected it */
-                /* T5_EVENT_CLICK_LEFT_DRAG, note should (on RISCOS maybe?) already be selected, but making sure won't hurt */
-                if(p_note_info->flags.selection == NOTE_SELECTION_NONE)
-                    note_select(p_docu, p_note_info);
-
-                notelayer_drag_data.reason_code = CB_CODE_NOTELAYER_NOTE_TRANSLATE;
-
-                { /* work out the offset to the tl and br points of the box to be dragged from the point where we clicked */
-                SKEL_RECT skel_rect = p_note_info->bbox;
-
-                skel_rect.tl.pixit_point.x -= p_skelevent_click->skel_point.pixit_point.x;
-                skel_rect.tl.pixit_point.y -= p_skelevent_click->skel_point.pixit_point.y;
-                skel_rect.br.pixit_point.x -= p_skelevent_click->skel_point.pixit_point.x;
-                skel_rect.br.pixit_point.y -= p_skelevent_click->skel_point.pixit_point.y;
-
-                if(!p_note_info->flags.all_pages)
-                {
-                    REDRAW_TAG redraw_tag = redraw_tag_from_layer(p_note_info->layer);
-
-                    assert(skel_rect.tl.page_num.x <= p_skelevent_click->skel_point.page_num.x);
-                    while(skel_rect.tl.page_num.x < p_skelevent_click->skel_point.page_num.x)
-                    {
-                        PIXIT_POINT work_area;
-                        page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.tl.page_num);
-                        skel_rect.tl.pixit_point.x -= work_area.x;
-                        skel_rect.tl.page_num.x += 1;
-                    }
-
-                    assert(skel_rect.tl.page_num.y <= p_skelevent_click->skel_point.page_num.y);
-                    while(skel_rect.tl.page_num.y < p_skelevent_click->skel_point.page_num.y)
-                    {
-                        PIXIT_POINT work_area;
-                        page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.tl.page_num);
-                        skel_rect.tl.pixit_point.y -= work_area.y;
-                        skel_rect.tl.page_num.y += 1;
-                    }
-
-                    assert(skel_rect.br.page_num.x >= p_skelevent_click->skel_point.page_num.x);
-                    while(skel_rect.br.page_num.x > p_skelevent_click->skel_point.page_num.x)
-                    {
-                        PIXIT_POINT work_area;
-                        skel_rect.br.page_num.x -= 1;
-                        page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.br.page_num);
-                        skel_rect.br.pixit_point.x += work_area.x;
-                    }
-
-                    assert(skel_rect.br.page_num.y >= p_skelevent_click->skel_point.page_num.y);
-                    while(skel_rect.br.page_num.y > p_skelevent_click->skel_point.page_num.y)
-                    {
-                        PIXIT_POINT work_area;
-                        skel_rect.br.page_num.y -= 1;
-                        page_limits_from_page(p_docu, &work_area, redraw_tag, &skel_rect.br.page_num);
-                        skel_rect.br.pixit_point.y += work_area.y;
-                    }
-                }
-
-                notelayer_drag_data.translate_box_pixit_rect_offset.tl = skel_rect.tl.pixit_point;
-                notelayer_drag_data.translate_box_pixit_rect_offset.br = skel_rect.br.pixit_point;
-                } /*block*/
-
-                host_drag_start(&notelayer_drag_data);
-
-                break;
-                }
-            }
-
-            break;
-            }
-        }
-
-        break;
-        }
+        return(notelayer_click_ear_other(p_docu, t5_message, p_skelevent_click, p_note_info, note_position));
     }
-
-    return(status);
-    } /*block*/
 }
 
 static void
@@ -1251,8 +1395,8 @@ notelayer_drag_start_setup(
 
     case CB_CODE_NOTELAYER_NOTE_RESCALE:
         p_notelayer_drag_data->resize_first_skel_point = p_skelevent_click->skel_point;
-        p_notelayer_drag_data->box_skel_rect_current = p_note_info->bbox;
-        p_notelayer_drag_data->resize_original_bbox = p_note_info->bbox;
+        p_notelayer_drag_data->skel_rect_current = p_note_info->skel_rect;
+        p_notelayer_drag_data->resize_original_skel_rect = p_note_info->skel_rect;
         break;
 
     case CB_CODE_NOTELAYER_NOTE_RESIZE:
@@ -1265,8 +1409,8 @@ notelayer_drag_start_setup(
             p_notelayer_drag_data->reason_code = CB_CODE_NOTELAYER_NOTE_RESCALE;
 
         p_notelayer_drag_data->resize_first_skel_point = p_skelevent_click->skel_point;
-        p_notelayer_drag_data->box_skel_rect_current = p_note_info->bbox;
-        p_notelayer_drag_data->resize_original_bbox = p_note_info->bbox;
+        p_notelayer_drag_data->skel_rect_current = p_note_info->skel_rect;
+        p_notelayer_drag_data->resize_original_skel_rect = p_note_info->skel_rect;
         /* don't bother initialising resize_current_size */
         break;
         }
@@ -1284,7 +1428,8 @@ notelayer_drag_started_or_movement(
     const P_CB_DATA_NOTELAYER_DRAG_DATA p_notelayer_drag_data = (P_CB_DATA_NOTELAYER_DRAG_DATA) p_skelevent_click->data.drag.p_reason_data;
     STATUS status = STATUS_OK;
     P_NOTE_INFO p_note_info = notelayer_selection_first(p_docu);
-    const BOOL do_snap = !host_ctrl_pressed();
+    const BOOL ctrl_pressed = p_skelevent_click->click_context.ctrl_pressed;
+    const BOOL do_snap = !ctrl_pressed; /* Ctrl allows finer placement */
     PTR_ASSERT(p_note_info);
 
     trace_0(TRACE_APP_CLICK, TEXT("proc_event_note T5_EVENT_CLICK_DRAG_MOVEMENT"));
@@ -1302,7 +1447,7 @@ notelayer_drag_started_or_movement(
 
     { /* work out changes to box (if any) */
     SKEL_POINT skel_point = p_skelevent_click->skel_point;
-    SKEL_RECT box_skel_rect = p_notelayer_drag_data->box_skel_rect_current;
+    SKEL_RECT skel_rect = p_notelayer_drag_data->skel_rect_current;
     BOOL moved = FALSE;
 
     switch(p_notelayer_drag_data->reason_code)
@@ -1318,22 +1463,22 @@ notelayer_drag_started_or_movement(
         pixit_size.cx = p_notelayer_drag_data->translate_box_pixit_rect_offset.br.x - p_notelayer_drag_data->translate_box_pixit_rect_offset.tl.x;
         pixit_size.cy = p_notelayer_drag_data->translate_box_pixit_rect_offset.br.y - p_notelayer_drag_data->translate_box_pixit_rect_offset.tl.y;
 
-        box_skel_rect.tl = p_notelayer_drag_data->skel_point;
+        skel_rect.tl = p_notelayer_drag_data->skel_point;
 
-        box_skel_rect.tl.pixit_point.x += p_notelayer_drag_data->translate_box_pixit_rect_offset.tl.x;
-        box_skel_rect.tl.pixit_point.y += p_notelayer_drag_data->translate_box_pixit_rect_offset.tl.y;
+        skel_rect.tl.pixit_point.x += p_notelayer_drag_data->translate_box_pixit_rect_offset.tl.x;
+        skel_rect.tl.pixit_point.y += p_notelayer_drag_data->translate_box_pixit_rect_offset.tl.y;
 
         if(do_snap)
         {   /* top and left edges of note both snap to click stop during translate op */
-            box_skel_rect.tl.pixit_point.x = skel_ruler_snap_to_click_stop(p_docu, 1, box_skel_rect.tl.pixit_point.x, SNAP_TO_CLICK_STOP_FLOOR);
-            box_skel_rect.tl.pixit_point.y = skel_ruler_snap_to_click_stop(p_docu, 0, box_skel_rect.tl.pixit_point.y, SNAP_TO_CLICK_STOP_FLOOR);
+            skel_rect.tl.pixit_point.x = skel_ruler_snap_to_click_stop(p_docu, 1, skel_rect.tl.pixit_point.x, SNAP_TO_CLICK_STOP_FLOOR);
+            skel_rect.tl.pixit_point.y = skel_ruler_snap_to_click_stop(p_docu, 0, skel_rect.tl.pixit_point.y, SNAP_TO_CLICK_STOP_FLOOR);
         }
 
         /* but keep the note's existing size */
-        box_skel_rect.br = box_skel_rect.tl;
+        skel_rect.br = skel_rect.tl;
 
-        box_skel_rect.br.pixit_point.x += pixit_size.cx;
-        box_skel_rect.br.pixit_point.y += pixit_size.cy;
+        skel_rect.br.pixit_point.x += pixit_size.cx;
+        skel_rect.br.pixit_point.y += pixit_size.cy;
 
         break;
         }
@@ -1347,30 +1492,30 @@ notelayer_drag_started_or_movement(
 
         if(resize.tl_x)
         {
-            box_skel_rect.tl.page_num.x = skel_point.page_num.x;
-            box_skel_rect.tl.pixit_point.x = skel_point.pixit_point.x;
+            skel_rect.tl.page_num.x = skel_point.page_num.x;
+            skel_rect.tl.pixit_point.x = skel_point.pixit_point.x;
         }
 
         if(resize.tl_y)
         {
-            box_skel_rect.tl.page_num.y = skel_point.page_num.y;
-            box_skel_rect.tl.pixit_point.y = skel_point.pixit_point.y;
+            skel_rect.tl.page_num.y = skel_point.page_num.y;
+            skel_rect.tl.pixit_point.y = skel_point.pixit_point.y;
         }
 
         if(resize.br_x)
         {
-            box_skel_rect.br.page_num.x = skel_point.page_num.x;
-            box_skel_rect.br.pixit_point.x = skel_point.pixit_point.x;
+            skel_rect.br.page_num.x = skel_point.page_num.x;
+            skel_rect.br.pixit_point.x = skel_point.pixit_point.x;
         }
 
         if(resize.br_y)
         {
-            box_skel_rect.br.page_num.y = skel_point.page_num.y;
-            box_skel_rect.br.pixit_point.y = skel_point.pixit_point.y;
+            skel_rect.br.page_num.y = skel_point.page_num.y;
+            skel_rect.br.pixit_point.y = skel_point.pixit_point.y;
         }
 
-        relative_pixit_point_from_skel_point_in_layer(p_docu, &skel_point.page_num, &box_skel_rect.tl, &pixit_rect.tl, layer);
-        relative_pixit_point_from_skel_point_in_layer(p_docu, &skel_point.page_num, &box_skel_rect.br, &pixit_rect.br, layer);
+        relative_pixit_point_from_skel_point_in_layer(p_docu, &skel_point.page_num, &skel_rect.tl, &pixit_rect.tl, layer);
+        relative_pixit_point_from_skel_point_in_layer(p_docu, &skel_point.page_num, &skel_rect.br, &pixit_rect.br, layer);
 
         pixit_size.cx = pixit_rect_width(&pixit_rect);
         pixit_size.cy = pixit_rect_height(&pixit_rect);
@@ -1379,48 +1524,48 @@ notelayer_drag_started_or_movement(
         {
             if(resize.tl_x) /* snap tl_x? */
             {
-                PIXIT new_x = skel_ruler_snap_to_click_stop(p_docu, 1, box_skel_rect.tl.pixit_point.x, SNAP_TO_CLICK_STOP_FLOOR);
-                PIXIT delta_x = new_x - box_skel_rect.tl.pixit_point.x;
+                PIXIT new_x = skel_ruler_snap_to_click_stop(p_docu, 1, skel_rect.tl.pixit_point.x, SNAP_TO_CLICK_STOP_FLOOR);
+                PIXIT delta_x = new_x - skel_rect.tl.pixit_point.x;
                 if(0 != delta_x)
                 {
                     PIXIT new_width = pixit_size.cx - delta_x; /* +ve delta_x at tl shrinks object */
-                    box_skel_rect.tl.pixit_point.x = new_x;
+                    skel_rect.tl.pixit_point.x = new_x;
                     pixit_size.cx = new_width;
                 }
             }
 
             if(resize.tl_y) /* snap tl_y? */
             {
-                PIXIT new_y = skel_ruler_snap_to_click_stop(p_docu, 0, box_skel_rect.tl.pixit_point.y, SNAP_TO_CLICK_STOP_FLOOR);
-                PIXIT delta_y = new_y - box_skel_rect.tl.pixit_point.y;
+                PIXIT new_y = skel_ruler_snap_to_click_stop(p_docu, 0, skel_rect.tl.pixit_point.y, SNAP_TO_CLICK_STOP_FLOOR);
+                PIXIT delta_y = new_y - skel_rect.tl.pixit_point.y;
                 if(0 != delta_y)
                 {
                     PIXIT new_height = pixit_size.cy - delta_y; /* +ve delta_y at tl shrinks object */
-                    box_skel_rect.tl.pixit_point.y = new_y;
+                    skel_rect.tl.pixit_point.y = new_y;
                     pixit_size.cy = new_height;
                 }
             }
 
             if(resize.br_x) /* snap br_x? */
             {
-                PIXIT new_x = skel_ruler_snap_to_click_stop(p_docu, 1, box_skel_rect.br.pixit_point.x, SNAP_TO_CLICK_STOP_ROUND);
-                PIXIT delta_x = new_x - box_skel_rect.br.pixit_point.x;
+                PIXIT new_x = skel_ruler_snap_to_click_stop(p_docu, 1, skel_rect.br.pixit_point.x, SNAP_TO_CLICK_STOP_ROUND);
+                PIXIT delta_x = new_x - skel_rect.br.pixit_point.x;
                 if(0 != delta_x)
                 {
                     PIXIT new_width = pixit_size.cx + delta_x; /* +ve delta_x at br grows object */
-                    box_skel_rect.br.pixit_point.x = new_x;
+                    skel_rect.br.pixit_point.x = new_x;
                     pixit_size.cx = new_width;
                 }
             }
 
             if(resize.br_y) /* snap br_y? */
             {
-                PIXIT new_y = skel_ruler_snap_to_click_stop(p_docu, 0, box_skel_rect.br.pixit_point.y, SNAP_TO_CLICK_STOP_ROUND);
-                PIXIT delta_y = new_y - box_skel_rect.br.pixit_point.y;
+                PIXIT new_y = skel_ruler_snap_to_click_stop(p_docu, 0, skel_rect.br.pixit_point.y, SNAP_TO_CLICK_STOP_ROUND);
+                PIXIT delta_y = new_y - skel_rect.br.pixit_point.y;
                 if(0 != delta_y)
                 {
                     PIXIT new_height = pixit_size.cy + delta_y; /* +ve delta_y at br grows object */
-                    box_skel_rect.br.pixit_point.y = new_y;
+                    skel_rect.br.pixit_point.y = new_y;
                     pixit_size.cy = new_height;
                 }
             }
@@ -1451,16 +1596,16 @@ notelayer_drag_started_or_movement(
             pixit_size.cy = muldiv64(p_notelayer_drag_data->original_pixit_size.cy, p_notelayer_drag_data->rescale_gr_scale_pair.y, GR_SCALE_ONE);
 
             if(resize.tl_x)
-                box_skel_rect.tl.pixit_point.x = pixit_rect.br.x - pixit_size.cx;
+                skel_rect.tl.pixit_point.x = pixit_rect.br.x - pixit_size.cx;
 
             if(resize.tl_y)
-                box_skel_rect.tl.pixit_point.y = pixit_rect.br.y - pixit_size.cy;
+                skel_rect.tl.pixit_point.y = pixit_rect.br.y - pixit_size.cy;
 
             if(resize.br_x)
-                box_skel_rect.br.pixit_point.x = pixit_rect.tl.x + pixit_size.cx;
+                skel_rect.br.pixit_point.x = pixit_rect.tl.x + pixit_size.cx;
 
             if(resize.br_y)
-                box_skel_rect.br.pixit_point.y = pixit_rect.tl.y + pixit_size.cy;
+                skel_rect.br.pixit_point.y = pixit_rect.tl.y + pixit_size.cy;
         }
 
         p_notelayer_drag_data->resize_current_pixit_size = pixit_size;
@@ -1477,7 +1622,7 @@ notelayer_drag_started_or_movement(
     }
     else /*(t5_message == T5_EVENT_CLICK_DRAG_MOVEMENT)*/
     {
-        if(0 != memcmp32(&box_skel_rect, &p_notelayer_drag_data->box_skel_rect_current, sizeof32(box_skel_rect)))
+        if(0 != memcmp32(&skel_rect, &p_notelayer_drag_data->skel_rect_current, sizeof32(skel_rect)))
         {
             /* remove the grey boxes */
             notelayer_invert_drag_boxes(p_docu, layer);
@@ -1489,7 +1634,7 @@ notelayer_drag_started_or_movement(
     if(!moved)
         return(status);
 
-    p_notelayer_drag_data->box_skel_rect_current = box_skel_rect;
+    p_notelayer_drag_data->skel_rect_current = skel_rect;
     } /*block*/
 
     /* (re)paint the grey boxes */
@@ -1532,8 +1677,8 @@ notelayer_drag_finished_or_aborted(
         case CB_CODE_NOTELAYER_NOTE_TRANSLATE:
 #endif
             {
-            SKEL_POINT skel_point = p_notelayer_drag_data->box_skel_rect_current.tl;
-            PIXIT_SIZE pixit_size = p_notelayer_drag_data->original_pixit_size;
+            const SKEL_POINT skel_point = p_notelayer_drag_data->skel_rect_current.tl;
+            const PIXIT_SIZE pixit_size = p_notelayer_drag_data->original_pixit_size;
             PTR_ASSERT(p_note_info);
             note_move(p_docu, p_note_info, &skel_point, &pixit_size);
             break;
@@ -1541,7 +1686,7 @@ notelayer_drag_finished_or_aborted(
 
         case CB_CODE_NOTELAYER_NOTE_RESIZE:
             {
-            SKEL_POINT skel_point = p_notelayer_drag_data->box_skel_rect_current.tl;
+            const SKEL_POINT skel_point = p_notelayer_drag_data->skel_rect_current.tl;
             NOTE_OBJECT_SIZE note_object_size;
             note_object_size.object_data_ref = p_note_info->object_data_ref;
             note_object_size.pixit_size = p_notelayer_drag_data->resize_current_pixit_size;
@@ -1550,15 +1695,18 @@ notelayer_drag_finished_or_aborted(
             note_object_size.processed = 0;
             status_consume(object_call_id(p_note_info->object_id, p_docu, T5_MSG_NOTE_OBJECT_SIZE_SET, &note_object_size));
             assert(note_object_size.processed);
-            p_note_info->pixit_size = note_object_size.pixit_size;
-            note_move(p_docu, p_note_info, &skel_point, &note_object_size.pixit_size);
+            if(note_object_size.processed)
+            {
+                p_note_info->pixit_size = note_object_size.pixit_size;
+                note_move(p_docu, p_note_info, &skel_point, &note_object_size.pixit_size);
+            }
             break;
             }
 
         case CB_CODE_NOTELAYER_NOTE_RESCALE:
             {
-            SKEL_POINT skel_point = p_notelayer_drag_data->box_skel_rect_current.tl;
-            PIXIT_SIZE pixit_size = p_notelayer_drag_data->original_pixit_size;
+            const SKEL_POINT skel_point = p_notelayer_drag_data->skel_rect_current.tl;
+            const PIXIT_SIZE pixit_size = p_notelayer_drag_data->original_pixit_size;
             p_note_info->gr_scale_pair = p_notelayer_drag_data->rescale_gr_scale_pair;
             note_move(p_docu, p_note_info, &skel_point, &pixit_size);
             break;
@@ -1662,22 +1810,22 @@ PROC_EVENT_PROTO(static, note_event_paper_below)
 
 PROC_EVENT_PROTO(static, note_event_print_area_above)
 {
-    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_PRINT_ABOVE));
+    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_PRINT_AREA_ABOVE));
 }
 
 PROC_EVENT_PROTO(static, note_event_print_area_below)
 {
-    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_PRINT_BELOW));
+    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_PRINT_AREA_BELOW));
 }
 
 PROC_EVENT_PROTO(static, note_event_cells_area_above)
 {
-    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_CELLS_ABOVE));
+    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_CELLS_AREA_ABOVE));
 }
 
 PROC_EVENT_PROTO(static, note_event_cells_area_below)
 {
-    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_CELLS_BELOW));
+    return(note_send_event_to_layer(p_docu, t5_message, p_data, LAYER_CELLS_AREA_BELOW));
 }
 
 extern void
@@ -1697,24 +1845,24 @@ note_install_layer_handler(
         p_proc_event = note_event_paper_below;
         break;
 
-    case LAYER_PRINT_BELOW:
+    case LAYER_PRINT_AREA_BELOW:
         p_proc_event = note_event_print_area_below;
         break;
 
-    case LAYER_CELLS_BELOW:
+    case LAYER_CELLS_AREA_BELOW:
         p_proc_event = note_event_cells_area_below;
+        break;
+
+    case LAYER_CELLS_AREA_ABOVE:
+        p_proc_event = note_event_cells_area_above;
+        break;
+
+    case LAYER_PRINT_AREA_ABOVE:
+        p_proc_event = note_event_print_area_above;
         break;
 
     case LAYER_PAPER_ABOVE:
         p_proc_event = note_event_paper_above;
-        break;
-
-    case LAYER_PRINT_ABOVE:
-        p_proc_event = note_event_print_area_above;
-        break;
-
-    case LAYER_CELLS_ABOVE:
-        p_proc_event = note_event_cells_area_above;
         break;
     }
 
@@ -1787,7 +1935,7 @@ notelayer_rect_redraw_drag(
         if(p_note_info->layer != layer)
             return;
 
-        skel_rect = p_notelayer_drag_data->box_skel_rect_current;
+        skel_rect = p_notelayer_drag_data->skel_rect_current;
 
         /* make rect relative to the page that is being redrawn rather than the page that the pointer was at and in the right layer! */
         make_skel_point_relative_to_page_num_in_layer(p_docu, &p_skelevent_redraw->clip_skel_rect.tl.page_num, &skel_rect.tl, p_note_info->layer);
@@ -1815,7 +1963,7 @@ notelayer_rect_redraw_drag(
         if(p_note_info->layer != layer)
             return;
 
-        skel_rect = p_notelayer_drag_data->box_skel_rect_current;
+        skel_rect = p_notelayer_drag_data->skel_rect_current;
 
         /* make rect relative to the page that is being redrawn rather than the page that the pointer was at and in the right layer! */
         make_skel_point_relative_to_page_num_in_layer(p_docu, &p_skelevent_redraw->clip_skel_rect.tl.page_num, &skel_rect.tl, p_note_info->layer);
@@ -1866,17 +2014,18 @@ notelayer_rect_redraw(
         case NOTE_UNPINNED:
             {
             if(!p_note_info->flags.all_pages)
-                /* check note's tl.page_num against clip_skel_rect.page_num so we don't cause too much fg formatting to go on */
-                if(p_note_info->bbox.tl.page_num.y > p_skelevent_redraw->clip_skel_rect.tl.page_num.y)
+            {   /* check note tl corner's page_num against clip_skel_rect.page_num so we don't cause too much fg formatting to go on */
+                if(p_note_info->skel_rect.tl.page_num.y > p_skelevent_redraw->clip_skel_rect.tl.page_num.y)
                     continue;
+            }
 
             break;
             }
 
         default: default_unhandled();
 #if CHECKING
-        case NOTE_PIN_SINGLE:
-        case NOTE_PIN_TWIN:
+        case NOTE_PIN_CELLS_SINGLE:
+        case NOTE_PIN_CELLS_TWIN:
 #endif
             {
             /* note is pinned to a cell: do a quick check of its tl.row against
@@ -1893,7 +2042,7 @@ notelayer_rect_redraw(
             }
         }
 
-        if(!p_note_info->flags.bbox_valid)
+        if(!p_note_info->flags.skel_rect_valid)
             notelayer_mount_note(p_docu, p_note_info);
 
         {
@@ -1912,7 +2061,7 @@ notelayer_rect_redraw(
             /* set up object rectangle */
             note_object_redraw.object_redraw.pixit_rect_object = pixit_rect;
 
-            note_object_redraw.object_redraw.skel_rect_object = p_note_info->bbox;
+            note_object_redraw.object_redraw.skel_rect_object = p_note_info->skel_rect;
 
             status_consume(object_data_from_slr(p_docu, &note_object_redraw.object_redraw.object_data, &p_note_info->region.tl));
             note_object_redraw.object_redraw.skel_rect_clip = p_skelevent_redraw->clip_skel_rect;
@@ -1921,7 +2070,7 @@ notelayer_rect_redraw(
             note_object_redraw.object_redraw.flags.show_selection = p_skelevent_redraw->flags.show_selection;
 
             /* work out any markers on cell */
-            note_object_redraw.object_redraw.flags.marked_now = (p_note_info->flags.selection != NOTE_SELECTION_NONE);
+            note_object_redraw.object_redraw.flags.marked_now = (p_note_info->note_selection != NOTE_SELECTION_NONE);
             note_object_redraw.object_redraw.flags.marked_screen = 0;
 
             note_object_redraw.object_redraw.redraw_context = p_skelevent_redraw->redraw_context;
@@ -1962,7 +2111,7 @@ notelayer_rect_redraw(
         /* if note selected, consider drawing a border with grab ears around it */
         if(p_skelevent_redraw->flags.show_selection && !static_flag /* needs expansion of show_selection state eventually <<< */)
         {
-            switch(p_note_info->flags.selection)
+            switch(p_note_info->note_selection)
             {
             case NOTE_SELECTION_EDITED:
             case NOTE_SELECTION_SELECTED:
@@ -1976,7 +2125,7 @@ notelayer_rect_redraw(
                 {
                     NOTE_POSITION note_position = PIXIT_RECT_EAR_CENTRE;
 
-                    if(p_note_info->flags.selection == NOTE_SELECTION_EDITED)
+                    if(NOTE_SELECTION_EDITED == p_note_info->note_selection)
                         host_paint_rectangle_outline(&p_skelevent_redraw->redraw_context, &note_object_bounds.ears.outer_bound, rgb_frame);
 
                     host_paint_rectangle_outline(&p_skelevent_redraw->redraw_context, &note_object_bounds.ears.ear[note_position], rgb_frame);
@@ -1987,7 +2136,9 @@ notelayer_rect_redraw(
                             continue;
 
                         if(note_object_bounds.pinned[note_position])
+                        {
                             host_paint_rectangle_filled(&p_skelevent_redraw->redraw_context, &note_object_bounds.ears.ear[note_position], rgb_ear_outer);
+                        }
                         else
                         {
                             host_paint_rectangle_filled(&p_skelevent_redraw->redraw_context, &note_object_bounds.ears.ear[note_position], rgb_ear_inner);
@@ -2055,7 +2206,7 @@ where_in_notelayer(
     {
         P_NOTE_INFO p_note_info = array_ptr(&p_docu->h_note_list, NOTE_INFO, note_index);
 
-        if(p_note_info->layer >= LAYER_CELLS_ABOVE)
+        if(p_note_info->layer >= LAYER_CELLS_AREA_ABOVE)
         {
             PIXIT_RECT pixit_rect;
 
@@ -2213,8 +2364,8 @@ notelayer_object_bounds(
     pixit_rect_get_ears(&p_note_object_bounds->ears, p_pixit_rect, p_one_program_pixel);
 
     p_note_object_bounds->pinned[PIXIT_RECT_EAR_CENTRE] = FALSE;
-    p_note_object_bounds->pinned[PIXIT_RECT_EAR_TL] = (note_pinning == NOTE_PIN_SINGLE) || (note_pinning == NOTE_PIN_TWIN);
-    p_note_object_bounds->pinned[PIXIT_RECT_EAR_BR] = (note_pinning == NOTE_PIN_TWIN);
+    p_note_object_bounds->pinned[PIXIT_RECT_EAR_TL] = (note_pinning == NOTE_PIN_CELLS_SINGLE) || (note_pinning == NOTE_PIN_CELLS_TWIN);
+    p_note_object_bounds->pinned[PIXIT_RECT_EAR_BR] = (note_pinning == NOTE_PIN_CELLS_TWIN);
     p_note_object_bounds->pinned[PIXIT_RECT_EAR_BL] = FALSE;
     p_note_object_bounds->pinned[PIXIT_RECT_EAR_TR] = FALSE;
     p_note_object_bounds->pinned[PIXIT_RECT_EAR_LC] = FALSE;
@@ -2284,14 +2435,15 @@ T5_MSG_PROTO(static, note_msg_initclose, _InRef_ PC_MSG_INITCLOSE p_msg_initclos
     }
 }
 
-T5_MSG_PROTO(static, note_msg_note_new, P_NOTE_INFO p_note_info)
+T5_MSG_PROTO(static, note_msg_note_new, _InRef_ PC_NOTE_INFO p_note_info)
 {
+    STATUS status;
+
     IGNOREPARM_InVal_(t5_message);
 
-    if(!notelayer_new_note(p_docu, p_note_info))
-        return(status_nomem());
+    consume_ptr(notelayer_new_note(p_docu, p_note_info, &status));
 
-    return(STATUS_OK);
+    return(status);
 }
 
 _Check_return_
@@ -2360,8 +2512,8 @@ T5_CMD_PROTO(static, object_note_cmd)
     switch(T5_MESSAGE_CMD_OFFSET(t5_message))
     {
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTETWIN):
-    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTEBD):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_TWIN):
+    case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_BACKDROP):
         return(t5_cmd_note(p_docu, t5_message, p_t5_cmd));
 
     case T5_MESSAGE_CMD_OFFSET(T5_CMD_NOTE_BACK):
@@ -2425,7 +2577,7 @@ OBJECT_PROTO(extern, object_note)
         return(note_msg_choice_changed(p_docu, t5_message, (PC_MSG_CHOICE_CHANGED) p_data));
 
     case T5_MSG_NOTE_NEW:
-        return(note_msg_note_new(p_docu, t5_message, (P_NOTE_INFO) p_data));
+        return(note_msg_note_new(p_docu, t5_message, (PC_NOTE_INFO) p_data));
 
     case T5_MSG_NOTE_UPDATE_NOW:
         return(note_msg_note_update_now(p_docu, t5_message, (P_NOTE_UPDATE_NOW) p_data));

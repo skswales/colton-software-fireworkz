@@ -43,7 +43,7 @@ BEGIN
 	0x3006,	"°"
 	0x3007,	"Anticlockwise"
 //
-	0x300A,	"DrawFile"
+	0x300A,	"Chart"
 //
 	0x3064,	"Bar chart"
 	0x3065,	"sg4_bar_charts.htm"
@@ -71,7 +71,8 @@ BEGIN
 	0x307D,	"Category labels"
 	0x307E,	"Series label"
 //
-	0x3082,	"Click on a chart element to select it"
+// r130:Click on a chart element to select it. ADJUST-click for finer selection
+	0x3082,	"Click on a chart element to select it. Ctrl-click for finer selection"
 //
 	0x3096,	"Bar"
 	0x3097,	"% width"
@@ -80,8 +81,8 @@ BEGIN
 	0x30A0,	"sg4_customising_bar_charts.htm"
 //
 	0x30BE,	"3D"
-	0x30BF,	"° pitch"
-	0x30C0,	"° roll"
+	0x30BF,	"° droop"
+	0x30C0,	"° turn"
 //
 	0x30C8,	"Line chart"
 	0x30C9,	"sg4_line_charts.htm"

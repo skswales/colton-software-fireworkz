@@ -117,10 +117,10 @@ rgb_patch_set(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_PATCH;
+    dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_PATCH;
     dialog_cmd_ctl_state_set.bits = 0;
     dialog_cmd_ctl_state_set.state.user.rgb = *p_rgb;
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 _Check_return_
@@ -169,17 +169,17 @@ rgb_class_handler_ctl_state_change(
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
         dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_DONT_MSG;
 
-        dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_R;
+        dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_R;
         dialog_cmd_ctl_state_set.state.bump_s32 = p_flt_callback->rgb.r;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
-        dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_G;
+        dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_G;
         dialog_cmd_ctl_state_set.state.bump_s32 = p_flt_callback->rgb.g;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
-        dialog_cmd_ctl_state_set.control_id = DIALOG_ID_RGB_B;
+        dialog_cmd_ctl_state_set.dialog_control_id = DIALOG_ID_RGB_B;
         dialog_cmd_ctl_state_set.state.bump_s32 = p_flt_callback->rgb.b;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
         /*ui_dlg_set_check(h_dialog, DIALOG_ID_RGB_AUTOMATIC, 0);*/
 
@@ -210,14 +210,14 @@ static STATUS
 rgb_class_handler_ctl_user_mouse(
     _InRef_     PC_DIALOG_MSG_CTL_USER_MOUSE p_dialog_msg_ctl_user_mouse)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_user_mouse->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_user_mouse->dialog_control_id;
 
     if(p_dialog_msg_ctl_user_mouse->click != DIALOG_MSG_USER_MOUSE_CLICK_LEFT_SINGLE)
         return(STATUS_OK);
 
-    if((control_id >= DIALOG_ID_RGB_0) && (control_id <= DIALOG_ID_RGB_15))
+    if((dialog_control_id >= DIALOG_ID_RGB_0) && (dialog_control_id <= DIALOG_ID_RGB_15))
     {
-        return(rgb_patch_set(p_dialog_msg_ctl_user_mouse->h_dialog, &rgb_stash[control_id - DIALOG_ID_RGB_0]));
+        return(rgb_patch_set(p_dialog_msg_ctl_user_mouse->h_dialog, &rgb_stash[dialog_control_id - DIALOG_ID_RGB_0]));
     }
 
     return(STATUS_OK);
@@ -237,9 +237,9 @@ rgb_class_handler_ctl_user_redraw(
         DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
         msgclr(dialog_cmd_ctl_state_query);
         dialog_cmd_ctl_state_query.h_dialog = p_dialog_msg_ctl_user_redraw->h_dialog;
-        dialog_cmd_ctl_state_query.control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
+        dialog_cmd_ctl_state_query.dialog_control_id = p_dialog_msg_ctl_user_redraw->dialog_control_id;
         dialog_cmd_ctl_state_query.bits = 0;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
         rgb = dialog_cmd_ctl_state_query.state.user.rgb;
         break;
         }
@@ -280,7 +280,7 @@ rgb_class_handler(
 
 static void
 control_data_setup(
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _Inout_     UI_CONTROL_F64 * const p_ui_control_f64)
 {
     static UCHARZ control_data_points_numform_ustr_buf[16];
@@ -289,13 +289,13 @@ control_data_setup(
 
     p_ui_control_f64->ustr_numform  = ustr_bptr(control_data_points_numform_ustr_buf);
     p_ui_control_f64->inc_dec_round = 1.0;
-    if(control_id == STYLE_ID_LINE_THICKNESS)
+    if(STYLE_ID_LINE_THICKNESS == dialog_control_id)
         p_ui_control_f64->inc_dec_round = 10.0;
     p_ui_control_f64->bump_val      = 1.0 / p_ui_control_f64->inc_dec_round;
     p_ui_control_f64->min_val       = 0.0;
-    if(control_id == STYLE_ID_TEXT_HEIGHT)
+    if(STYLE_ID_TEXT_HEIGHT == dialog_control_id)
         p_ui_control_f64->min_val   = 1.0;
-    if(control_id == STYLE_ID_LINE_THICKNESS)
+    if(STYLE_ID_LINE_THICKNESS == dialog_control_id)
         p_ui_control_f64->max_val   = (F64) LINE_THICKNESS_MAX_VAL;
     else
         p_ui_control_f64->max_val   = (F64) HEIGHT_WIDTH_MAX_VAL;
@@ -503,8 +503,8 @@ dialog_style_fill_ctl_pushbutton(
         {
         MSG_UISTYLE_COLOUR_PICKER msg_uistyle_colour_picker;
         msg_uistyle_colour_picker.h_dialog = p_dialog_msg_ctl_pushbutton->h_dialog;
-        msg_uistyle_colour_picker.rgb_control_id = DIALOG_ID_RGB_PATCH;
-        msg_uistyle_colour_picker.button_control_id = DIALOG_ID_RGB_BUTTON;
+        msg_uistyle_colour_picker.rgb_dialog_control_id = DIALOG_ID_RGB_PATCH;
+        msg_uistyle_colour_picker.button_dialog_control_id = DIALOG_ID_RGB_BUTTON;
         status = object_call_id_load(P_DOCU_NONE, T5_MSG_UISTYLE_COLOUR_PICKER, &msg_uistyle_colour_picker, OBJECT_ID_SKEL_SPLIT);
         break;
         }
@@ -661,7 +661,7 @@ gr_chart_style_fill_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_style_fill;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &flt_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -922,7 +922,7 @@ gr_chart_style_line_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_style_line;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &flt_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -1190,11 +1190,11 @@ dialog_style_text_process_start(
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_process_start->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = STYLE_ID_TEXT_TYPEFACE_LIST;
+        dialog_cmd_ctl_state_set.dialog_control_id = STYLE_ID_TEXT_TYPEFACE_LIST;
         dialog_cmd_ctl_state_set.bits = 0;
         dialog_cmd_ctl_state_set.state.list_text.ui_text.type = UI_TEXT_TYPE_TSTR_ARRAY;
         dialog_cmd_ctl_state_set.state.list_text.ui_text.text.array_handle_tstr = h_host_font_name_tstr;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
         ui_text_dispose(&dialog_cmd_ctl_state_set.state.list_text.ui_text);
     }
     } /*block*/
@@ -1204,9 +1204,9 @@ dialog_style_text_process_start(
 
     { /* translate in UI to what punter expects to see, in this case points, not pixits or units */
     F64 f64;
-    f64 = ((FP_PIXIT) p_flt_callback->gr_textstyle.height) / PIXITS_PER_POINT;
+    f64 = ((FP_PIXIT) p_flt_callback->gr_textstyle.size_y) / PIXITS_PER_POINT;
     status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_TEXT_HEIGHT, &f64));
-    f64 = ((FP_PIXIT) p_flt_callback->gr_textstyle.width) / PIXITS_PER_POINT;
+    f64 = ((FP_PIXIT) p_flt_callback->gr_textstyle.size_x) / PIXITS_PER_POINT;
     status_return(ui_dlg_set_f64(p_dialog_msg_process_start->h_dialog, STYLE_ID_TEXT_WIDTH, &f64));
     }
 
@@ -1263,9 +1263,9 @@ dialog_style_text_process_end(
         F64 multiplier = PIXITS_PER_POINT;
         F64 f64;
         ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_HEIGHT, &f64);
-        p_flt_callback->gr_textstyle.height = (U16) ui_dlg_s32_from_f64(&f64, &multiplier, 1 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
+        p_flt_callback->gr_textstyle.size_y = (PIXIT) ui_dlg_s32_from_f64(&f64, &multiplier, 1 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
         ui_dlg_get_f64(p_dialog_msg_process_end->h_dialog, STYLE_ID_TEXT_WIDTH, &f64);
-        p_flt_callback->gr_textstyle.width  = (U16) ui_dlg_s32_from_f64(&f64, &multiplier, 0 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
+        p_flt_callback->gr_textstyle.size_x = (PIXIT) ui_dlg_s32_from_f64(&f64, &multiplier, 0 * PIXITS_PER_POINT, (S32) HEIGHT_WIDTH_MAX_VAL * PIXITS_PER_POINT);
         } /*block*/
 
         status_return(gr_chart_objid_textstyle_set(p_gr_chart_from_chart_handle(p_flt_callback->p_chart_header->ch), p_flt_callback->id, &p_flt_callback->gr_textstyle));
@@ -1328,7 +1328,7 @@ gr_chart_style_text_process(
         dialog_cmd_process_dbox.caption.text.ustr = ustr_bptr(buffer);
         dialog_cmd_process_dbox.p_proc_client = dialog_event_style_text;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &flt_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -1754,7 +1754,7 @@ gr_chart_margins_process(
         dialog_cmd_process_dbox.p_proc_client = dialog_event_chart_margins;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &chart_margins_callback;
         chart_margins_precreate(p_chart_header->docno);
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }
@@ -1878,7 +1878,7 @@ gr_chart_legend_process(
         dialog_cmd_process_dbox.caption.text.resource_id = CHART_MSG_DIALOG_CHART_LEGEND_CAPTION;
         dialog_cmd_process_dbox.p_proc_client = dialog_event_chart_legend;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &chart_legend_callback;
-        status = call_dialog_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu_from_docno(p_chart_header->docno), DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         if(status != DIALOG_COMPLETION_OK_PERSIST)
             break;
     }

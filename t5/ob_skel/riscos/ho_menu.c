@@ -27,11 +27,13 @@
 internal routines
 */
 
+_Check_return_
 static U32
 menu_size(
     P_MENU_ROOT p_menu_root,
     _In_z_      PC_SBSTR menu_title);
 
+_Check_return_
 static WimpMenu *
 menu_build(
     _DocuRef_   P_DOCU p_docu,
@@ -55,8 +57,8 @@ struct MENU_BUILD_AREA
     P_U8 area_start;
     U32 area_size;
 
-    P_U8 next_menu;     /* place next menu here, then inc this */
-    P_U8 last_string;   /* last string starts here, so dec, then place new string */
+    U32 next_menu_offset;   /* place next menu/submenu at this offset, then inc this */
+    U32 last_string_offset; /* last string starts at this offset, so dec, then place new string */
 }
 menu_build_area;
 
@@ -95,8 +97,8 @@ p_menu_root_from_si_handle(
 
         /*FALLTHRU*/
 
-    case MENU_ROOT_ICON:
-    case MENU_ROOT_FUNC:
+    case MENU_ROOT_ICON_BAR:
+    case MENU_ROOT_FUNCTION_SELECTOR:
     case MENU_ROOT_CHART:
         return(sk_menu_root(p_docu_from_config_wr(), menu_root_id));
     }
@@ -171,7 +173,7 @@ ho_menu_event_maker_core(
 
     p_menu_title = p_menu_root->name[0] ? p_menu_root->name : product_id();
 
-    if(!menu_build_area.area_start)
+    if(NULL == menu_build_area.area_start)
     {
         /* scan document menu tree to determine size of RISC OS menu equivalent */
         STATUS status;
@@ -181,14 +183,14 @@ ho_menu_event_maker_core(
         menu_build_area.area_start = al_ptr_alloc_bytes(P_U8, menu_build_area.area_size, &status); /* then allocate space */
         status_assert(status);
 
-        if(!menu_build_area.area_start)
+        if(NULL == menu_build_area.area_start)
             return(NULL);
     }
     else
         assert(menu_build_area.area_size == menu_size(p_menu_root, p_menu_title)); /* but make sure we reuse the same stuff */
 
-    menu_build_area.next_menu   = menu_build_area.area_start;
-    menu_build_area.last_string = menu_build_area.area_start + menu_build_area.area_size;
+    menu_build_area.next_menu_offset = 0;
+    menu_build_area.last_string_offset = menu_build_area.area_size;
 
     memset32(menu_build_area.area_start, 0, menu_build_area.area_size); /* clear out each time prior to build */
 
@@ -219,13 +221,31 @@ ho_menu_event_core(
     _InVal_     BOOL submenurequest)
 {
     P_MENU_ENTRY p_menu_entry = NULL;
-    ARRAY_INDEX index;
+    U32 hit_num;
 
-    while((index = *hit++) != 0)
+    while((hit_num = *hit++) != 0)
     {
-        if(--index < array_elements(&p_menu_root->h_entry_list))
+        U32 menu_item_num = 1;
+        ARRAY_INDEX match_index = S32_MAX;
+        ARRAY_INDEX index;
+
+        for(index = 0; index < array_elements(&p_menu_root->h_entry_list); ++index)
+        {
             p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, index);
-        else
+
+            if(NULL == p_menu_entry->tstr_entry_text)
+                continue; /* ignore separator entries */
+
+            if(menu_item_num == hit_num)
+            {
+                match_index = index;
+                break;
+            }
+
+            ++menu_item_num;
+        }
+
+        if(S32_MAX == match_index)
         {
             p_menu_entry = NULL; /* wimp's view and our view of menu are inconsistent! */
             assert0();
@@ -273,6 +293,7 @@ ho_menu_event_proc(
 *
 ******************************************************************************/
 
+_Check_return_
 static U32
 menu_size(
     P_MENU_ROOT p_menu_root,
@@ -280,7 +301,7 @@ menu_size(
 {
     U32 max_entry_len = strlen(p_menu_title);
     U32 padded_entry_count = 0;
-    U32 size = sizeof32(WimpMenu) - sizeof32(WimpMenuItem); /* allocate space for menu header */ /* NB there is always one item declared */
+    U32 size = (sizeof32(WimpMenu) - sizeof32(WimpMenuItem)); /* allocate space for menu header */ /* NB there is always one WimpMenuItem declared at the end of WimpMenu */
     ARRAY_INDEX index;
 
     if(!array_elements(&p_menu_root->h_entry_list))
@@ -369,6 +390,7 @@ menu_build_disable_query(
     return(disabled);
 }
 
+_Check_return_
 static WimpMenu *
 menu_build(
     _DocuRef_   P_DOCU p_docu,
@@ -377,15 +399,18 @@ menu_build(
 {
     U32 max_entry_len;
     WimpMenu * p_wimp_menuhdr;
-    WimpMenuItemWithBitset * p_wimp_menuentry;
+    WimpMenuItemWithBitset * wimp_menu_items;
     int pass;
 
     if(!array_elements(&p_menu_root->h_entry_list))
         return((WimpMenu *) -1);
 
     /* must allocate the menu header and body of 'entry_count' menu entries in one lump */
-    p_wimp_menuhdr = (WimpMenu *) menu_build_area.next_menu;
-    menu_build_area.next_menu += sizeof32(WimpMenu) - sizeof32(WimpMenuItem); /* NB there is always one item declared */
+    p_wimp_menuhdr = PtrAddBytes(WimpMenu *, menu_build_area.area_start, menu_build_area.next_menu_offset);
+    menu_build_area.next_menu_offset += (sizeof32(WimpMenu) - sizeof32(WimpMenuItem)); /* NB there is always one WimpMenuItem declared at the end of WimpMenu */
+
+    wimp_menu_items = PtrAddBytes(WimpMenuItemWithBitset *, menu_build_area.area_start, menu_build_area.next_menu_offset);
+    /* menu_build_area.next_menu_offset is updated on second pass per valid menu item */
 
     /* menu colours, entry heights and gap widths - copied from cwimp.c.menu */
     p_wimp_menuhdr->title_fg    = 7;  /* title fore: black */
@@ -395,9 +420,6 @@ menu_build(
     p_wimp_menuhdr->item_width  = 0;  /* now ignored */
     p_wimp_menuhdr->item_height = 44; /* OS units per entry */
     p_wimp_menuhdr->gap         = 0;  /* gap between entries, in OS units */
-
-    p_wimp_menuentry = (WimpMenuItemWithBitset *) menu_build_area.next_menu;
-    menu_build_area.next_menu += sizeof32(WimpMenuItem) * array_elements(&p_menu_root->h_entry_list);
 
     {
     BOOL had_escape = 0;
@@ -432,14 +454,16 @@ menu_build(
     /* Menu entries with key short cuts are shown as "<menu text><1 or more spaces><key text>"   */
     /* spaces are added between the two text pieces, so that the key text is right justified     */
     /* first pass scans through all entries, to find the max_entry_len, so we can pad as needed. */
+    /* third pass adds any submenus to this menu structure. */
 
-    for(pass = 1; pass <= 2; ++pass)
+    for(pass = 1; pass <= 3; ++pass)
     {
+        U32 menu_item = 0;
         ARRAY_INDEX index;
 
         for(index = 0; index < array_elements(&p_menu_root->h_entry_list); ++index)
         {
-            P_MENU_ENTRY p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, index);
+            const P_MENU_ENTRY p_menu_entry = array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, index);
             PCTSTR text_lhs, text_rhs;
             U32 text_lhs_len, text_rhs_len, entry_len;
 
@@ -463,14 +487,17 @@ menu_build(
 
                 max_entry_len = MAX(max_entry_len, entry_len);
             }
-            else /*if(pass == 2)*/
+            else if(pass == 2)
             {
+                WimpMenuItemWithBitset * const p_wimp_menuentry = wimp_menu_items + menu_item;
                 U32 menu_text_len = text_rhs ? max_entry_len : text_lhs_len;
                 int menu_text_wid = 16 + (menu_text_len * 16); /* in OS units, 16 per char */
                 P_U8 p_dst;
 
+                menu_build_area.next_menu_offset += sizeof32(WimpMenuItem);
+
                 /* entry may need a dotted line to separate it from the entry below */
-                if(array_index_valid(&p_menu_root->h_entry_list, index + 1))
+                if(array_index_is_valid(&p_menu_root->h_entry_list, index + 1))
                     if(NULL == array_ptr(&p_menu_root->h_entry_list, MENU_ENTRY, index + 1)->tstr_entry_text)
                         p_wimp_menuentry->flags |= WimpMenuItem_DottedLine;
 
@@ -480,9 +507,9 @@ menu_build(
                     p_wimp_menuentry->flags |= WimpMenuItem_Ticked;
 #endif
 
-                if(p_menu_entry->sub_menu.h_entry_list)
+                /*if(p_menu_entry->sub_menu.h_entry_list)
                     p_wimp_menuentry->submenu.m = menu_build(p_docu, &p_menu_entry->sub_menu, text_lhs);
-                else
+                else*/
                     p_wimp_menuentry->submenu.i = -1;
 
                 if(p_menu_entry->h_command2)
@@ -506,9 +533,9 @@ menu_build(
                 {
                     P_U8 indirected_string;
 
-                    menu_build_area.last_string -= (menu_text_len + 1 /*term*/); /* claim space for indirected text */
+                    menu_build_area.last_string_offset -= (menu_text_len + 1 /*term*/); /* claim space at end of work area for indirected text entry */
 
-                    indirected_string = menu_build_area.last_string;
+                    indirected_string = PtrAddBytes(P_U8, menu_build_area.area_start, menu_build_area.last_string_offset);
 
                     p_wimp_menuentry->icon_flags.bits.indirect = 1;
                     p_wimp_menuentry->icon_data.it.buffer = indirected_string;
@@ -528,11 +555,13 @@ menu_build(
                 {
                     U8 ch = *p_src++;
                     if(CH_AMPERSAND == ch) /* omit first & found */
+                    {
                         if(!had_escape)
                         {
                             had_escape = 1;
                             continue;
                         }
+                    }
                     *p_dst++ = ch;
                     ++dst;
                 }
@@ -550,14 +579,21 @@ menu_build(
                         *p_dst++ = text_rhs[j];
                 }
 
-                if(menu_text_len != 12) /* only case without termination is when icon fills exactly */
+                if(menu_text_len != 12) /* only case without termination is when text fills icon data exactly */
                     *p_dst++ = CH_NULL;
 
                 if((index + 1) == array_elements(&p_menu_root->h_entry_list)) /* mark last entry in submenu */
                     p_wimp_menuentry->flags |= WimpMenuItem_Last;
-
-                ++p_wimp_menuentry;
             }
+            else /*if(pass == 3)*/
+            {
+                WimpMenuItemWithBitset * const p_wimp_menuentry = wimp_menu_items + menu_item;
+
+                if(p_menu_entry->sub_menu.h_entry_list)
+                    p_wimp_menuentry->submenu.m = menu_build(p_docu, &p_menu_entry->sub_menu, text_lhs);
+            }
+
+            ++menu_item;
         }
     }
 

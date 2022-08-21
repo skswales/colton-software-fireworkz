@@ -273,7 +273,7 @@ wndproc_status_line_onPaint(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        paint_status_line_windows(hwnd, &paintstruct, p_docu_from_docno(docno), p_view);
+        paint_status_line_windows(hwnd, &paintstruct, p_docu_from_docno_valid(docno), p_view);
     }
 
     hard_assert(FALSE);
@@ -294,7 +294,7 @@ wndproc_status_line_onMouseLeave(
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
         trace_0(TRACE_APP_CLICK, TEXT("wndproc_status_line_onMouseLeave T5_EVENT_POINTER_LEAVES_WINDOW"));
-        status_line_clear(p_docu_from_docno(docno), STATUS_LINE_LEVEL_DIALOG_CONTROLS);
+        status_line_clear(p_docu_from_docno_valid(docno), STATUS_LINE_LEVEL_DIALOG_CONTROLS);
         return;
     }
 
@@ -333,7 +333,7 @@ wndproc_status_line_onMouseMove(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        status_line_onMouseMove(hwnd, p_docu_from_docno(docno));
+        status_line_onMouseMove(hwnd, p_docu_from_docno_valid(docno));
         return;
     }
 
@@ -527,7 +527,7 @@ wndproc_toolbar_onPaint(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        paint_toolbar_windows(hwnd, &paintstruct, p_docu_from_docno(docno), p_view);
+        paint_toolbar_windows(hwnd, &paintstruct, p_docu_from_docno_valid(docno), p_view);
     }
 
     hard_assert(FALSE);
@@ -571,14 +571,17 @@ wndproc_toolbar_onSize(
 }
 
 static void
-toolbar_onLButtonDown(
+toolbar_onButtonDown(
     _HwndRef_   HWND hwnd,
+    _InVal_     BOOL fDoubleClick,
     _InVal_     int x,
     _InVal_     int y,
+    _InVal_     UINT keyFlags,
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     BOOL right_button_down)
 {
+    const BOOL ctrl_pressed = (0 != (keyFlags & MK_CONTROL));
     PIXIT_POINT pixit_point;
     P_T5_TOOLBAR_VIEW_TOOL_DESC p_t5_toolbar_view_tool_desc;
 
@@ -589,7 +592,13 @@ toolbar_onLButtonDown(
     pixit_point_from_window_point(&pixit_point, &gdi_point, &p_view->host_xform[XFORM_TOOLBAR]);
     } /*block*/
 
-    status_assert(host_key_cache_emit_events(DOCNO_NONE));
+    status_assert(host_key_cache_emit_events());
+
+    if(fDoubleClick)
+        return;
+
+    if(right_button_down)
+        return;
 
     p_t5_toolbar_view_tool_desc = tool_from_point(p_view, &pixit_point);
 
@@ -601,8 +610,9 @@ toolbar_onLButtonDown(
         {
             if(p_t5_toolbar_docu_tool_desc->p_t5_toolbar_tool_desc->bits.immediate)
             {
+                const BOOL alternate = /*right_button_down ||*/ ctrl_pressed;
                 status_line_clear(p_docu, STATUS_LINE_LEVEL_BACKWINDOW_CONTROLS);
-                execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, right_button_down || host_ctrl_pressed());
+                execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
                 return;
             }
 
@@ -629,7 +639,7 @@ wndproc_toolbar_onLButtonDown(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        toolbar_onLButtonDown(hwnd, x, y, p_docu_from_docno(docno), p_view, FALSE);
+        toolbar_onButtonDown(hwnd, fDoubleClick, x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, FALSE);
         return;
     }
 
@@ -650,7 +660,7 @@ wndproc_toolbar_onRButtonDown(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        toolbar_onLButtonDown(hwnd, x, y, p_docu_from_docno(docno), p_view, TRUE);
+        toolbar_onButtonDown(hwnd, fDoubleClick, x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, TRUE);
         return;
     }
 
@@ -658,13 +668,15 @@ wndproc_toolbar_onRButtonDown(
 }
 
 static void
-toolbar_onLButtonUp(
+toolbar_onButtonUp(
     _InVal_     int x,
     _InVal_     int y,
+    _InVal_     UINT keyFlags,
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     BOOL right_button_up)
 {
+    const BOOL ctrl_pressed = (0 != (keyFlags & MK_CONTROL));
     PIXIT_POINT pixit_point;
     P_T5_TOOLBAR_VIEW_TOOL_DESC p_t5_toolbar_view_tool_desc;
 
@@ -676,6 +688,9 @@ toolbar_onLButtonUp(
     gdi_point.y = y;
     pixit_point_from_window_point(&pixit_point, &gdi_point, &p_view->host_xform[XFORM_TOOLBAR]);
     } /*block*/
+
+    if(right_button_up)
+        return;
 
     p_t5_toolbar_view_tool_desc = tool_from_point(p_view, &pixit_point);
 
@@ -720,8 +735,9 @@ toolbar_onLButtonUp(
     if(NULL != p_t5_toolbar_view_tool_desc)
     {
         const P_T5_TOOLBAR_DOCU_TOOL_DESC p_t5_toolbar_docu_tool_desc = array_ptr(&p_docu->h_toolbar, T5_TOOLBAR_DOCU_TOOL_DESC, p_t5_toolbar_view_tool_desc->docu_tool_index);
+        const BOOL alternate = /*right_button_up ||*/ ctrl_pressed;
         status_line_clear(p_docu, STATUS_LINE_LEVEL_BACKWINDOW_CONTROLS);
-        execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, right_button_up || host_ctrl_pressed());
+        execute_tool(p_docu, p_view, p_t5_toolbar_docu_tool_desc, alternate);
         return;
     }
 }
@@ -739,7 +755,7 @@ wndproc_toolbar_onLButtonUp(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        toolbar_onLButtonUp(x, y, p_docu_from_docno(docno), p_view, FALSE);
+        toolbar_onButtonUp(x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, FALSE);
         return;
     }
 
@@ -759,7 +775,7 @@ wndproc_toolbar_onRButtonUp(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        toolbar_onLButtonUp(x, y, p_docu_from_docno(docno), p_view, TRUE);
+        toolbar_onButtonUp(x, y, keyFlags, p_docu_from_docno_valid(docno), p_view, TRUE);
         return;
     }
 
@@ -780,7 +796,7 @@ wndproc_toolbar_onMouseLeave(
     {
         static const UI_TEXT ui_text = { UI_TEXT_TYPE_NONE };
         trace_0(TRACE_APP_CLICK, TEXT("wndproc_toolbar_onMouseLeave T5_EVENT_POINTER_LEAVES_WINDOW"));
-        status_line_clear(p_docu_from_docno(docno), STATUS_LINE_LEVEL_DIALOG_CONTROLS);
+        status_line_clear(p_docu_from_docno_valid(docno), STATUS_LINE_LEVEL_DIALOG_CONTROLS);
         toolbar_set_tooltip_text(p_view, &ui_text);
         return;
     }
@@ -914,7 +930,7 @@ wndproc_toolbar_onMouseMove(
 
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
-        toolbar_onMouseMove(hwnd, x, y, p_docu_from_docno(docno), p_view);
+        toolbar_onMouseMove(hwnd, x, y, p_docu_from_docno_valid(docno), p_view);
         return;
     }
 

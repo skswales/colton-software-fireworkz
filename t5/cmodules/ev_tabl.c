@@ -55,6 +55,10 @@ static const EV_TYPE arg_IoRoD[] = { 1, EM_INT | EM_REA | EM_DAT };
 static const EV_TYPE arg_A_R[]  = { 2, EM_ARY,
                                        EM_REA };
 
+/* D_I: date and integer */
+static const EV_TYPE arg_D_I[]  = { 2, EM_DAT,
+                                       EM_INT };
+
 /* R_A: real and array */
 static const EV_TYPE arg_R_A[]  = { 2, EM_REA,
                                        EM_ARY };
@@ -62,6 +66,7 @@ static const EV_TYPE arg_R_A[]  = { 2, EM_REA,
 /* S_I: string and integer */
 static const EV_TYPE arg_S_I[]  = { 2, EM_STR,
                                        EM_INT };
+
 /* ARR: array, array, real  */
 static const EV_TYPE arg_AAR[]  = { 3, EM_ARY,
                                        EM_ARY,
@@ -856,6 +861,9 @@ _rpn_table[] =
     rpn_table_entry( RPN_FNF,   3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_LOGNORM_INV,   arg_REA, RPN_FNF_LOGNORM_INV ),
     rpn_table_entry( RPN_FNV,  -3, 0, EV_RESO_STATS,     NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_PERCENTRANK_EXC, arg_prk, RPN_FNV_PERCENTRANK_EXC ),
 
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EDATE,         arg_D_I, RPN_FNF_EDATE ),
+    rpn_table_entry( RPN_FNF,   2, 0, EV_RESO_DATE,      NAP, OBJECT_ID_SS_SPLIT,     SS_SPLIT_EOMONTH,       arg_D_I, RPN_FNF_EOMONTH ),
+
 #endif /* end of any new functions */
 
     rpn_table_entry( RPN_FNM,  -1, 0, EV_RESO_NOTME,     NAP, NAS,                    NIX,                    NAA,     RPN_FNM_CUSTOMCALL ),
@@ -1040,10 +1048,12 @@ look_table[] = /* ordered by id for bsearch()*/
     look_table_entry("dvar",            RPN_FNF_DVAR),
     look_table_entry("dvarp",           RPN_FNF_DVARP),
 
+    look_table_entry("edate",           RPN_FNF_EDATE),
     look_table_entry("else",            RPN_FN0_ELSE),
     look_table_entry("elseif",          RPN_FNF_ELSEIF),
     look_table_entry("endif",           RPN_FN0_ENDIF),
     look_table_entry("endwhile",        RPN_FN0_ENDWHILE),
+    look_table_entry("eomonth",         RPN_FNF_EOMONTH),
     look_table_entry("erf",             RPN_FNV_ERF),
     look_table_entry("erfc",            RPN_FNF_ERFC),
     look_table_entry("even",            RPN_FNF_EVEN),

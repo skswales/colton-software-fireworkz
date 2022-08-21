@@ -12,7 +12,9 @@
 // rebased for ALL_IN_ONE at 0x1C00 / 7168
 
 // multi-bitmaps: 0x1n (+1 = high-dpi variant)
-16 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbar.bmp"
-17 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbarh.bmp"
+16 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbar_4bpp.bmp"
+17 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbarh_4bpp.bmp"
+18 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbar_32bpp.bmp"
+19 BITMAP MOVEABLE PRELOAD PURE "../../ob_ss/resource/bmp/ss_tbarh_32bpp.bmp"
 
 // end

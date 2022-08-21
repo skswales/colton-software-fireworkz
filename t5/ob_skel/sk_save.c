@@ -69,7 +69,7 @@ auto_save(
     BOOL once_only = FALSE;
     STATUS status = STATUS_OK;
 
-    if(-1 == auto_save_period_minutes) /* ie do it once only */
+    if(-1 == auto_save_period_minutes) /* i.e. do it once only */
     {
         auto_save_period_minutes = 0;
         once_only = TRUE;
@@ -102,7 +102,7 @@ do_auto_save(
     STATUS status = STATUS_OK;
 
     if(p_docu->modified)
-        status_consume(execute_command_reperr(OBJECT_ID_SKEL, p_docu, T5_CMD_SAVE_OWNFORM, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+        status_consume(execute_command_reperr(p_docu, T5_CMD_SAVE_OWNFORM, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
     /* and rechedule for another one sometime */
     if(p_docu->auto_save_period_minutes)

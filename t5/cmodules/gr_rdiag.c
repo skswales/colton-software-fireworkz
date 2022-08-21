@@ -17,8 +17,8 @@
 #include "ob_skel/flags.h"
 #endif
 
-#ifndef          __gr_cache_h
-#include "cmodules/gr_cache.h"
+#ifndef          __im_cache_h
+#include "cmodules/im_cache.h"
 #endif
 
 #ifndef          __gr_diag_h
@@ -181,7 +181,7 @@ gr_riscdiag_diagram_end(
 
 #if WINDOWS
     /* SKS 09.05.2006 I think the trim problem may be caused by leaving it locked
-     * as we still get problems eg with Gerald damped oscillation charts
+     * as we still get problems e.g. with Gerald damped oscillation charts
      */
     gr_riscdiag_diagram_unlock(p_gr_riscdiag);
 
@@ -850,7 +850,7 @@ gr_riscdiag_fontlist_lookup_fontref(
  * nFonts=N
  * Font1=...
  * ...
- * FontN=RISC_OS_Full_Name,lfWeight(400|700),lfItalic(0|255),lfUnderline(0|1),lfStrikeOut(0|1),lfCharSet(0..255),lfPitchAndFamily(eg.32),lfFaceName
+ * FontN=RISC_OS_Full_Name,lfWeight(400|700),lfItalic(0|255),lfUnderline(0|1),lfStrikeOut(0|1),lfCharSet(0..255),lfPitchAndFamily(e.g.32),lfFaceName
  */
 
 _Check_return_
@@ -1727,7 +1727,7 @@ gr_riscdiag_dib_recompute_bbox(
 
         memcpy32(&bitmapinfoheader, p_bitmapinfoheader, sizeof32(bitmapinfoheader));
 
-        /* SKS 16oct95 cope with crap converters. 23nov95 do for RISCOS too */
+        /* SKS 16oct95 cope with duff converters. 23nov95 do for RISCOS too */
         if(0 == bitmapinfoheader.biXPelsPerMeter)
             x1 = muldiv64(bitmapinfoheader.biWidth,  GR_RISCDRAW_PER_INCH, 96);
         else

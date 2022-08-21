@@ -250,9 +250,9 @@ view_new_create(
 
         p_view->docno = p_view_create->docno;
 
-        zero_array(&p_view->main);
-        zero_array(&p_view->edge);
-        zero_array(&p_view->pane);
+        zero_array(p_view->main);
+        zero_array(p_view->edge);
+        zero_array(p_view->pane);
 
         p_view->cur_pane = WIN_PANE;
 
@@ -301,7 +301,7 @@ view_new_create(
 _Check_return_
 extern VIEWNO
 viewno_from_p_view_fn(
-    _ViewRef_   PC_VIEW p_view)
+    _ViewRef_maybenone_ PC_VIEW p_view)
 {
     if(IS_VIEW_NONE(p_view))
         return(VIEWNO_NONE);
@@ -599,7 +599,7 @@ view_control_split_v =
 static const DIALOG_CONTROL_DATA_CHECKBOX
 view_control_split_v_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_DIALOG_VIEW_SPLIT_V) };
 
-static const DIALOG_CTL_ID
+static const DIALOG_CONTROL_ID
 view_control_ok_data_argmap[] =
 {
 #define ARG_VIEW_CONTROL_ZOOM           0
@@ -723,7 +723,7 @@ static S32 /* new zoom factor */
 process_zoom_fit(
     _DocuRef_   P_DOCU p_docu,
     _InVal_     H_DIALOG h_dialog,
-    _InVal_     DIALOG_CTL_ID control_id)
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id)
 {
     const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
     DISPLAY_MODE display_mode = (DISPLAY_MODE) ui_dlg_get_radio(h_dialog, VIEW_CONTROL_ID_DISPLAY_GROUP);
@@ -818,11 +818,11 @@ process_zoom_fit(
     if(horz_border_on)
         screen_pixit_size.y -= view_border_pixit_size(p_view, TRUE);
 
-    if(VIEW_CONTROL_ID_ZOOM_FIT_H == control_id)
+    if(VIEW_CONTROL_ID_ZOOM_FIT_H == dialog_control_id)
     {
         new_zoom_factor = 5 * muldiv64_round_floor(screen_pixit_size.x, 100, 5 * page_size.x); /* round down to nearest 5% */
     }
-    else /* (VIEW_CONTROL_ID_ZOOM_FIT_V == control_id) */
+    else /* (VIEW_CONTROL_ID_ZOOM_FIT_V == dialog_control_id) */
     {
         /*reportf(TEXT("sps.y = %d; ps.y = %d"), screen_pixit_size.y, page_size.y);*/
         new_zoom_factor = 5 * muldiv64_round_floor(screen_pixit_size.y, 100, 5 * page_size.y); /* round down to nearest 5% */
@@ -837,13 +837,13 @@ dialog_view_control_ctl_pushbutton(
     _DocuRef_   P_DOCU p_docu,
     _InoutRef_  P_DIALOG_MSG_CTL_PUSHBUTTON p_dialog_msg_ctl_pushbutton)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_pushbutton->dialog_control_id;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case VIEW_CONTROL_ID_NEW_VIEW:
         /* first of all, fire off a New View command, then apply commands to it just like OK does */
-        return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_VIEW_NEW, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+        return(execute_command(p_docu, T5_CMD_VIEW_NEW, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 
     case VIEW_CONTROL_ID_ZOOM_FIT_H:
     case VIEW_CONTROL_ID_ZOOM_FIT_V:
@@ -855,14 +855,14 @@ dialog_view_control_ctl_pushbutton(
         {
         S32 new_zoom_factor;
 
-        if((control_id == VIEW_CONTROL_ID_ZOOM_FIT_H) || (control_id == VIEW_CONTROL_ID_ZOOM_FIT_V))
+        if((dialog_control_id == VIEW_CONTROL_ID_ZOOM_FIT_H) || (dialog_control_id == VIEW_CONTROL_ID_ZOOM_FIT_V))
         {
-            new_zoom_factor = process_zoom_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, control_id);
+            new_zoom_factor = process_zoom_fit(p_docu, p_dialog_msg_ctl_pushbutton->h_dialog, dialog_control_id);
         }
         else
         {
             /* read new zoom factor from messages file; up to us, and then punter, to keep icons & messages file in step */
-            PC_USTR ustr = resource_lookup_ustr(((S32) control_id - VIEW_CONTROL_ID_ZOOM_1) + MSG_DIALOG_VIEW_SCALE_1);
+            PC_USTR ustr = resource_lookup_ustr(((S32) dialog_control_id - VIEW_CONTROL_ID_ZOOM_1) + MSG_DIALOG_VIEW_SCALE_1);
             new_zoom_factor = (S32) fast_ustrtoul(ustr, NULL);
             assert(new_zoom_factor > 0);
         }
@@ -916,7 +916,7 @@ T5_CMD_PROTO(extern, t5_cmd_view_control_intro)
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_VIEW_CONTROL;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_view_control;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &view_control_callback;
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
     } /*block*/
 }
 
@@ -1248,6 +1248,7 @@ T5_CMD_PROTO(extern, t5_cmd_view_new)
     /* zoom factor */
     if(!IS_VIEW_NONE(p_sourceview))
     {
+        __analysis_assume(p_sourceview);
         view_set_zoomfactor(p_docu, p_view, p_sourceview->scalet, p_sourceview->scaleb);
 
         p_view->flags.horz_split_on = p_sourceview->flags.horz_split_on;
@@ -1429,7 +1430,7 @@ view_set_zoom_from_wheel_delta(
 * Set the window extents of all the windows in all the views of a document.
 *
 * Typically called when some property of the document length changes,
-* eg the number of pages or the size of a page.
+* e.g. the number of pages or the size of a page.
 *
 ******************************************************************************/
 

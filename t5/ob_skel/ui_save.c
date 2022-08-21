@@ -53,8 +53,8 @@ typedef STATUS (* P_PROC_SAVE) (
 typedef struct SAVE_CALLBACK
 {
 #define SAVING_OWNFORM  0
-#define SAVING_FOREIGN  1
-#define SAVING_TEMPLATE 2
+#define SAVING_TEMPLATE 1
+#define SAVING_FOREIGN  2
 #define SAVING_PICTURE  3
 #define LOCATING_TEMPLATE 4
     S32          saving;
@@ -81,7 +81,7 @@ typedef struct SAVE_CALLBACK
     S32          style_radio;
 
     STYLE_HANDLE style_handle;
-    ARRAY_HANDLE other_filemap;
+    ARRAY_HANDLE h_save_filetype; /* SAVE_FILETYPE[] */
     OBJECT_ID    picture_object_id;
     P_ANY        picture_object_data_ref;
 
@@ -99,7 +99,7 @@ static void
 save_common_details_query(
     _InoutRef_  P_SAVE_CALLBACK p_save_callback,
     _OutRef_    P_T5_FILETYPE p_filetype,
-    /*out*/ P_UI_TEXT p_ui_text_filename);
+    _InoutRef_opt_ P_UI_TEXT p_ui_text_filename);
 
 _Check_return_
 static STATUS
@@ -135,11 +135,27 @@ static
 BITMAP(save_name_validation, 256);
 #endif
 
-static UI_SOURCE
-save_foreign_type_list_source;
+static struct SAVE_TEMPLATE_STATICS
+{
+    UI_SOURCE ui_source; /* for styles */
+}
+save_template_statics;
 
-static UI_SOURCE
-save_template_style_list_source;
+static struct SAVE_FOREIGN_STATICS
+{
+    T5_FILETYPE t5_filetype;
+    S32 itemno;
+    UI_SOURCE ui_source; /* for filetype */
+}
+save_foreign_statics = { FILETYPE_ASCII };
+
+static struct SAVE_PICTURE_STATICS
+{
+    T5_FILETYPE t5_filetype;
+    S32 itemno;
+    UI_SOURCE ui_source; /* for filetype */
+}
+save_picture_statics = { FILETYPE_DRAW };
 
 /*
 exported services hook
@@ -259,47 +275,51 @@ T5_CMD_PROTO(extern, t5_cmd_object_bind_saver)
 enum SAVE_CONTROL_IDS
 {
     SAVE_ID_STT = 32,
+    SAVE_ID_FILETYPE_PICT,
     SAVE_ID_NAME,
-    SAVE_ID_PICT,
     SAVE_ID_SELECTION,
-    SAVE_ID_TYPE,
-    SAVE_ID_WAFFLE_1,
-    SAVE_ID_WAFFLE_2,
-    SAVE_ID_WAFFLE_3,
-    SAVE_ID_WAFFLE_4,
 
     SAVE_ID_STYLE_GROUP = 50,
     SAVE_ID_STYLE_0,
     SAVE_ID_STYLE_1,
     SAVE_ID_STYLE_2,
-    SAVE_ID_STYLE_LIST
+    SAVE_ID_STYLE_LIST,
+
+    SAVE_ID_FOREIGN_TYPE_LIST,
+
+    SAVE_ID_PICTURE_TYPE_LIST,
+
+    SAVE_ID_WAFFLE_1,
+    SAVE_ID_WAFFLE_2,
+    SAVE_ID_WAFFLE_3,
+    SAVE_ID_WAFFLE_4
 };
 
-#define SAVE_OWNFORM_TOTAL_H        ((PIXITS_PER_INCH * 17) / 10)
-#define SAVE_OWNFORM_PICT_OFFSET_H  ((SAVE_OWNFORM_TOTAL_H - 68 * PIXITS_PER_RISCOS) / 2)
-
-#define SAVE_FOREIGN_LIST_H         ((PIXITS_PER_INCH * 17) / 10)
-#define SAVE_FOREIGN_PICT_OFFSET_H  ((SAVE_FOREIGN_LIST_H  - 68 * PIXITS_PER_RISCOS) / 2)
-
-#define SAVE_TEMPLATE_LIST_H        ((PIXITS_PER_INCH * 17) / 10)
-#define SAVE_TEMPLATE_PICT_OFFSET_H ((SAVE_TEMPLATE_LIST_H - 68 * PIXITS_PER_RISCOS) / 2)
+#define SAVE_OWNFORM_TOTAL_H                    ((PIXITS_PER_INCH * 17) / 10)
+#define SAVE_TEMPLATE_LIST_H                    ((PIXITS_PER_INCH * 17) / 10)
+#define SAVE_FOREIGN_LIST_H                     ((PIXITS_PER_INCH * 22) / 10)
+#define SAVE_PICTURE_LIST_H                     ((PIXITS_PER_INCH * 17) / 10)
 
 #if RISCOS
 
-static DIALOG_CONTROL
-save_pict =
+/*
+* picture representing type of file - can be dragged to save
+*/
+
+static /*poked*/ DIALOG_CONTROL
+save_filetype_pict =
 {
-    SAVE_ID_PICT, DIALOG_MAIN_GROUP,
+    SAVE_ID_FILETYPE_PICT, DIALOG_MAIN_GROUP,
     { SAVE_ID_NAME, DIALOG_CONTROL_PARENT },
-    { -SAVE_OWNFORM_PICT_OFFSET_H, 0, 68 * PIXITS_PER_RISCOS, 68 * PIXITS_PER_RISCOS /* standard RISC OS file icon size */ },
+    { 0, 0, 68 * PIXITS_PER_RISCOS, 68 * PIXITS_PER_RISCOS /* standard RISC OS file icon size */ },
     { DRT(LTLT, USER) }
 };
 
 static const RGB
-save_pict_rgb = { 0, 0, 0, 1 /*transparent*/ };
+save_filetype_pict_rgb = { 0, 0, 0, 1 /*transparent*/ };
 
 static const DIALOG_CONTROL_DATA_USER
-save_pict_data = { 0, { FRAMED_BOX_NONE /* border_style */ }, (P_RGB) &save_pict_rgb };
+save_filetype_pict_data = { 0, { FRAMED_BOX_NONE /* border_style */ }, (P_RGB) &save_filetype_pict_rgb };
 
 #endif /* OS */
 
@@ -307,14 +327,36 @@ save_pict_data = { 0, { FRAMED_BOX_NONE /* border_style */ }, (P_RGB) &save_pict
 * name of file
 */
 
-static DIALOG_CONTROL
-save_name_control =
+#if RISCOS
+
+static const DIALOG_CONTROL
+save_name_normal =
 {
     SAVE_ID_NAME, DIALOG_MAIN_GROUP,
-    { DIALOG_CONTROL_PARENT, SAVE_ID_PICT },
+    { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT },
     { 0, DIALOG_STDSPACING_V, SAVE_OWNFORM_TOTAL_H, DIALOG_STDEDIT_V },
     { DRT(LBLT, EDIT), 1 }
 };
+
+static const DIALOG_CONTROL
+save_name_foreign =
+{
+    SAVE_ID_NAME, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT, SAVE_ID_FOREIGN_TYPE_LIST },
+    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
+    { DRT(LBRT, EDIT), 1 }
+};
+
+static const DIALOG_CONTROL
+save_name_picture =
+{
+    SAVE_ID_NAME, DIALOG_MAIN_GROUP,
+    { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT, SAVE_ID_PICTURE_TYPE_LIST },
+    { 0, DIALOG_STDSPACING_V, 0, DIALOG_STDEDIT_V },
+    { DRT(LBRT, EDIT), 1 }
+};
+
+#endif /* OS */
 
 static DIALOG_CONTROL
 save_name_template =
@@ -322,7 +364,7 @@ save_name_template =
     SAVE_ID_NAME, DIALOG_MAIN_GROUP,
 
 #if RISCOS
-    { DIALOG_CONTROL_PARENT, SAVE_ID_PICT },
+    { DIALOG_CONTROL_PARENT, SAVE_ID_FILETYPE_PICT },
     { 0, DIALOG_STDSPACING_V, SAVE_TEMPLATE_LIST_H, DIALOG_STDEDIT_V },
     { DRT(LBLT, EDIT), 1 }
 #else
@@ -356,21 +398,6 @@ save_selection =
 
 static DIALOG_CONTROL_DATA_CHECKBOX
 save_selection_data = { { 0 }, UI_TEXT_INIT_RESID(MSG_SELECTION) };
-
-/*
-* list of types of file
-*/
-
-static DIALOG_CONTROL
-save_foreign_type_list =
-{
-    SAVE_ID_TYPE, DIALOG_MAIN_GROUP,
-    { SAVE_ID_SELECTION, SAVE_ID_SELECTION },
-    { 0, DIALOG_STDSPACING_V, (PIXITS_PER_INCH * 22) / 10 },
-    { DRT(LBLT, LIST_TEXT), 1 }
-};
-
-static S32 save_foreign_type_itemno;
 
 static DIALOG_CONTROL
 save_template_style_group =
@@ -421,11 +448,37 @@ save_template_style_2_data = { { 0 }, SAVING_TEMPLATE_ONE_STYLE, UI_TEXT_INIT_RE
 * list of styles
 */
 
-static DIALOG_CONTROL
+static /*poked*/ DIALOG_CONTROL
 save_template_style_list =
 {
     SAVE_ID_STYLE_LIST, SAVE_ID_STYLE_GROUP,
     { SAVE_ID_STYLE_2, SAVE_ID_STYLE_2 },
+    { 0, DIALOG_STDSPACING_V },
+    { DRT(LBLT, LIST_TEXT), 1 }
+};
+
+/*
+* list of types of file we can export document as
+*/
+
+static /*poked*/ DIALOG_CONTROL
+save_foreign_type_list =
+{
+    SAVE_ID_FOREIGN_TYPE_LIST, DIALOG_MAIN_GROUP,
+    { SAVE_ID_NAME, SAVE_ID_SELECTION },
+    { 0, DIALOG_STDSPACING_V },
+    { DRT(LBLT, LIST_TEXT), 1 }
+};
+
+/*
+* list of types of file we can export picture as
+*/
+
+static /*poked*/ DIALOG_CONTROL
+save_picture_type_list =
+{
+    SAVE_ID_PICTURE_TYPE_LIST, DIALOG_MAIN_GROUP,
+    { SAVE_ID_NAME, SAVE_ID_NAME },
     { 0, DIALOG_STDSPACING_V },
     { DRT(LBLT, LIST_TEXT), 1 }
 };
@@ -479,7 +532,7 @@ proc_save_common(
         msgclr(dialog_cmd_complete_dbox);
         dialog_cmd_complete_dbox.h_dialog = p_save_callback->h_dialog;
         dialog_cmd_complete_dbox.completion_code = DIALOG_COMPLETION_OK;
-        status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
     }
 
     return(TRUE);
@@ -490,14 +543,25 @@ static STATUS
 dialog_save_common_ctl_fill_source(
     _InoutRef_  P_DIALOG_MSG_CTL_FILL_SOURCE p_dialog_msg_ctl_fill_source)
 {
+    const P_SAVE_CALLBACK p_save_callback = (P_SAVE_CALLBACK) p_dialog_msg_ctl_fill_source->client_handle;
+
+    IGNOREPARM_CONST(p_save_callback);
+
     switch(p_dialog_msg_ctl_fill_source->dialog_control_id)
     {
     case SAVE_ID_STYLE_LIST:
-        p_dialog_msg_ctl_fill_source->p_ui_source = &save_template_style_list_source;
+        assert(SAVING_TEMPLATE == p_save_callback->saving);
+        p_dialog_msg_ctl_fill_source->p_ui_source = &save_template_statics.ui_source;
         break;
 
-    case SAVE_ID_TYPE:
-        p_dialog_msg_ctl_fill_source->p_ui_source = &save_foreign_type_list_source;
+    case SAVE_ID_FOREIGN_TYPE_LIST:
+        assert(SAVING_FOREIGN == p_save_callback->saving);
+        p_dialog_msg_ctl_fill_source->p_ui_source = &save_foreign_statics.ui_source;
+        break;
+
+    case SAVE_ID_PICTURE_TYPE_LIST:
+        assert(SAVING_PICTURE == p_save_callback->saving);
+        p_dialog_msg_ctl_fill_source->p_ui_source = &save_picture_statics.ui_source;
         break;
 
     default:
@@ -553,7 +617,7 @@ dialog_save_common_ctl_create_state(
         break;
 
     case SAVE_ID_STYLE_LIST:
-        assert(p_save_callback->saving == SAVING_TEMPLATE);
+        assert(SAVING_TEMPLATE == p_save_callback->saving);
         style_name_from_marked_area(p_docu, &p_dialog_msg_ctl_create_state->state_set.state.list_text.ui_text);
         if(ui_text_is_blank(&p_dialog_msg_ctl_create_state->state_set.state.list_text.ui_text))
         {
@@ -562,8 +626,15 @@ dialog_save_common_ctl_create_state(
         }
         break;
 
-    case SAVE_ID_TYPE:
-        p_dialog_msg_ctl_create_state->state_set.state.list_text.itemno = save_foreign_type_itemno;
+    case SAVE_ID_FOREIGN_TYPE_LIST:
+        assert(SAVING_FOREIGN == p_save_callback->saving);
+        p_dialog_msg_ctl_create_state->state_set.state.list_text.itemno = save_foreign_statics.itemno;
+        p_dialog_msg_ctl_create_state->state_set.bits |= DIALOG_STATE_SET_ALTERNATE;
+        break;
+
+    case SAVE_ID_PICTURE_TYPE_LIST:
+        assert(SAVING_PICTURE == p_save_callback->saving);
+        p_dialog_msg_ctl_create_state->state_set.state.list_text.itemno = save_picture_statics.itemno;
         p_dialog_msg_ctl_create_state->state_set.bits |= DIALOG_STATE_SET_ALTERNATE;
         break;
 
@@ -596,17 +667,6 @@ dialog_save_common_ctl_state_change(
         break;
         }
 
-    case SAVE_ID_TYPE:
-        {
-        DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
-        msgclr(dialog_cmd_ctl_encode);
-        dialog_cmd_ctl_encode.h_dialog   = p_dialog_msg_ctl_state_change->h_dialog;
-        dialog_cmd_ctl_encode.control_id = SAVE_ID_PICT;
-        dialog_cmd_ctl_encode.bits       = 0;
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
-        break;
-        }
-
     case SAVE_ID_SELECTION:
         {
         p_save_callback->save_selection = (p_dialog_msg_ctl_state_change->new_state.checkbox == DIALOG_BUTTONSTATE_ON);
@@ -617,12 +677,12 @@ dialog_save_common_ctl_state_change(
 
             DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
             msgclr(dialog_cmd_ctl_state_set);
-            dialog_cmd_ctl_state_set.h_dialog   = p_dialog_msg_ctl_state_change->h_dialog;
-            dialog_cmd_ctl_state_set.control_id = SAVE_ID_NAME;
-            dialog_cmd_ctl_state_set.bits       = 0;
+            dialog_cmd_ctl_state_set.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
+            dialog_cmd_ctl_state_set.dialog_control_id = SAVE_ID_NAME;
+            dialog_cmd_ctl_state_set.bits = 0;
             dialog_cmd_ctl_state_set.state.edit.ui_text = p_save_callback->save_selection ? selection_filename : p_save_callback->init_filename;
             p_save_callback->self_abuse++;
-            status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
             p_save_callback->self_abuse--;
         }
 
@@ -639,6 +699,18 @@ dialog_save_common_ctl_state_change(
     case SAVE_ID_STYLE_LIST:
         p_save_callback->style_handle = style_handle_from_name(p_docu, ui_text_tstr(&p_dialog_msg_ctl_state_change->new_state.list_text.ui_text));
         break;
+
+    case SAVE_ID_FOREIGN_TYPE_LIST:
+    case SAVE_ID_PICTURE_TYPE_LIST:
+        {
+        DIALOG_CMD_CTL_ENCODE dialog_cmd_ctl_encode;
+        msgclr(dialog_cmd_ctl_encode);
+        dialog_cmd_ctl_encode.h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
+        dialog_cmd_ctl_encode.dialog_control_id = SAVE_ID_FILETYPE_PICT;
+        dialog_cmd_ctl_encode.bits = 0;
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_ENCODE, &dialog_cmd_ctl_encode));
+        break;
+        }
 
     default:
         break;
@@ -815,8 +887,8 @@ PROC_DIALOG_EVENT_PROTO(static, dialog_event_save_common)
 static void
 save_common_details_query(
     _InoutRef_  P_SAVE_CALLBACK p_save_callback,
-    _OutRef_   P_T5_FILETYPE p_filetype,
-    /*out*/ P_UI_TEXT p_ui_text_filename)
+    _OutRef_   P_T5_FILETYPE p_t5_filetype,
+    _InoutRef_opt_ P_UI_TEXT p_ui_text_filename)
 {
     switch(p_save_callback->saving)
     {
@@ -824,32 +896,34 @@ save_common_details_query(
 #if CHECKING
     case SAVING_OWNFORM:
 #endif
-        *p_filetype = which_t5_filetype(p_docu_from_docno(p_save_callback->docno));
+        *p_t5_filetype = which_t5_filetype(p_docu_from_docno(p_save_callback->docno));
+        break;
+
+    case SAVING_TEMPLATE:
+        *p_t5_filetype = FILETYPE_T5_TEMPLATE;
         break;
 
     case SAVING_FOREIGN:
     case SAVING_PICTURE:
-        if(array_elements(&p_save_callback->other_filemap) >= 2)
+        if(array_elements(&p_save_callback->h_save_filetype) >= 2)
         {
+            const DIALOG_CONTROL_ID dialog_control_id = (SAVING_FOREIGN == p_save_callback->saving) ? SAVE_ID_FOREIGN_TYPE_LIST : SAVE_ID_PICTURE_TYPE_LIST;
+            const T5_FILETYPE t5_filetype_default = (SAVING_FOREIGN == p_save_callback->saving) ? FILETYPE_ASCII : FILETYPE_DRAW;
             UI_TEXT ui_text;
 
-            ui_dlg_get_list_text(p_save_callback->h_dialog, SAVE_ID_TYPE, &ui_text);
+            ui_dlg_get_list_text(p_save_callback->h_dialog, dialog_control_id, &ui_text);
 
-            if((*p_filetype = save_foreign_lookup_filetype_from_description(p_save_callback, &ui_text)) == STATUS_FAIL)
-                *p_filetype = FILETYPE_ASCII;
+            if((*p_t5_filetype = save_foreign_lookup_filetype_from_description(p_save_callback, &ui_text)) == STATUS_FAIL)
+                *p_t5_filetype = t5_filetype_default;
 
             ui_text_dispose(&ui_text);
         }
         else
-            *p_filetype = array_ptr(&p_save_callback->other_filemap, SAVE_FILETYPE, 0)->t5_filetype;
-        break;
-
-    case SAVING_TEMPLATE:
-        *p_filetype = FILETYPE_T5_TEMPLATE;
+            *p_t5_filetype = array_ptrc(&p_save_callback->h_save_filetype, SAVE_FILETYPE, 0)->t5_filetype;
         break;
 
     case LOCATING_TEMPLATE:
-        *p_filetype = FILETYPE_DIRECTORY;
+        *p_t5_filetype = FILETYPE_DIRECTORY;
         break;
     }
 
@@ -931,6 +1005,12 @@ save_ownform_save(
         {
             p_docu->file_date = of_op_format.output.u.file.ev_date;
 
+            if(p_docu->flags.read_only)
+            {
+                p_docu->flags.read_only = FALSE;
+                status_assert(maeve_event(p_docu, T5_MSG_DOCU_READWRITE, P_DATA_NONE));
+            }
+
             /* rename this document to be filename */
             status_assert(maeve_event(p_docu, T5_MSG_DOCU_RENAME, (P_ANY) de_const_cast(PTSTR, filename)));
         }
@@ -980,7 +1060,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform)
 
     status_return(status);
 
-    return(execute_command(OBJECT_ID_SKEL, p_docu, T5_CMD_SAVE_OWNFORM_AS_INTRO, _P_DATA_NONE(P_ARGLIST_HANDLE)));
+    return(execute_command(p_docu, T5_CMD_SAVE_OWNFORM_AS_INTRO, _P_DATA_NONE(P_ARGLIST_HANDLE), OBJECT_ID_SKEL));
 }
 
 CCBA_WRAP_T5_CMD(extern, t5_cmd_save_ownform)
@@ -992,9 +1072,9 @@ save_ctl_create[] =
 {
     { &dialog_main_group }
 
-,   { &save_pict,           &save_pict_data       }
-,   { &save_name_control,   &save_name_data       }
-,   { &save_selection,      &save_selection_data  }
+,   { &save_filetype_pict,  &save_filetype_pict_data    }
+,   { &save_name_normal,    &save_name_data             }
+,   { &save_selection,      &save_selection_data        }
 
 ,   { &stdbutton_cancel, &stdbutton_cancel_data }
 ,   { &defbutton_ok, &save_ok_data }
@@ -1038,10 +1118,23 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform_as_intro)
 
     t5_cmd_save_as_common_init(p_docu, &save_callback);
 
-    status_assert(name_make_wholename(&p_docu->docu_name, &quick_tblock, TRUE));
+#if WINDOWS
+    if(p_docu->mark_info_cells.h_markers) /* always do save selection if markers present */
+        save_callback.save_selection = TRUE;
+#endif
 
-    save_callback.init_filename.type = UI_TEXT_TYPE_TSTR_TEMP;
-    save_callback.init_filename.text.tstr = quick_tblock_tstr(&quick_tblock);
+    if(save_callback.save_selection)
+    {
+        save_callback.init_filename.type = UI_TEXT_TYPE_RESID;
+        save_callback.init_filename.text.resource_id = MSG_SELECTION;
+    }
+    else
+    {
+        status_assert(name_make_wholename(&p_docu->docu_name, &quick_tblock, TRUE));
+
+        save_callback.init_filename.type = UI_TEXT_TYPE_TSTR_TEMP;
+        save_callback.init_filename.text.tstr = quick_tblock_tstr(&quick_tblock);
+    }
 
     {
     TCHARZ directory[BUF_MAX_PATHSTRING];
@@ -1051,21 +1144,11 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform_as_intro)
         status_assert(ui_text_alloc_from_tstr(&save_callback.init_directory, directory));
     } /*block*/
 
-#if WINDOWS
-    if(p_docu->mark_info_cells.h_markers) /* always do save selection */
-    {
-        save_callback.save_selection = TRUE;
-
-        save_callback.init_filename.type = UI_TEXT_TYPE_RESID;
-        save_callback.init_filename.text.resource_id = MSG_SELECTION;
-    }
-#endif
-
 #if RISCOS
+    save_filetype_pict.relative_offset[0] = -( (save_name_normal.relative_offset[2] - save_filetype_pict.relative_offset[2]) / 2 );
+
     save_callback.test_for_saved_file_is_safe = TRUE;
     host_xfer_set_saved_file_is_safe(TRUE);
-
-    save_pict.relative_offset[0] = -SAVE_OWNFORM_PICT_OFFSET_H;
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
@@ -1074,7 +1157,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform_as_intro)
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SAVE_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_save_common;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &save_callback;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 #elif WINDOWS
     status = windows_save_as(p_docu, &save_callback);
@@ -1113,7 +1196,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_ownform_as)
 
 CCBA_WRAP_T5_CMD(extern, t5_cmd_save_ownform_as)
 
-PROC_BSEARCH_PROTO(static, save_foreign_filemap_description_compare_bsearch, UI_TEXT, SAVE_FILETYPE)
+PROC_BSEARCH_PROTO(static, save_filetype_description_compare_bsearch, UI_TEXT, SAVE_FILETYPE)
 {
     BSEARCH_KEY_VAR_DECL(PC_UI_TEXT, p1);
     BSEARCH_DATUM_VAR_DECL(PC_SAVE_FILETYPE, p2);
@@ -1123,7 +1206,7 @@ PROC_BSEARCH_PROTO(static, save_foreign_filemap_description_compare_bsearch, UI_
 
 /* no context needed for qsort() */
 
-PROC_QSORT_PROTO(static, save_foreign_filemap_description_compare_qsort, SAVE_FILETYPE)
+PROC_QSORT_PROTO(static, save_filetype_description_compare_qsort, SAVE_FILETYPE)
 {
     QSORT_ARG1_VAR_DECL(PC_SAVE_FILETYPE, p1);
     QSORT_ARG2_VAR_DECL(PC_SAVE_FILETYPE, p2);
@@ -1146,7 +1229,7 @@ save_foreign_lookup_filetype_from_description(
     _InoutRef_  P_SAVE_CALLBACK p_save_callback,
     _InRef_     PC_UI_TEXT p_description)
 {
-    P_SAVE_FILETYPE p_save_filetype = al_array_bsearch(p_description, &p_save_callback->other_filemap, SAVE_FILETYPE, save_foreign_filemap_description_compare_bsearch);
+    P_SAVE_FILETYPE p_save_filetype = al_array_bsearch(p_description, &p_save_callback->h_save_filetype, SAVE_FILETYPE, save_filetype_description_compare_bsearch);
     return(!IS_P_DATA_NONE(p_save_filetype) ? p_save_filetype->t5_filetype : FILETYPE_UNDETERMINED);
 }
 
@@ -1156,9 +1239,9 @@ save_foreign_lookup_object_id_from_t5_filetype(
     P_SAVE_CALLBACK p_save_callback,
     _InVal_     T5_FILETYPE t5_filetype)
 {
-    const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->other_filemap);
+    const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->h_save_filetype);
     ARRAY_INDEX i;
-    P_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->other_filemap, SAVE_FILETYPE, 0, filemap_elements);
+    P_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->h_save_filetype, SAVE_FILETYPE, 0, filemap_elements);
 
     for(i = 0; i < filemap_elements; ++i, ++p_save_filetype)
     {
@@ -1175,118 +1258,79 @@ save_foreign_lookup_object_id_from_t5_filetype(
 *
 ******************************************************************************/
 
-static T5_FILETYPE save_foreign_type_filetype = FILETYPE_ASCII;
-
-static T5_FILETYPE save_picture_type_filetype = FILETYPE_DRAW;
-
 _Check_return_
 static STATUS
-save_foreign_filemap_create(
+save_create_filemap_common(
     P_SAVE_CALLBACK p_save_callback,
-    /*out*/ P_UI_TEXT p_ui_text_dst,
-    P_UI_SOURCE p_ui_source_dst,
-    _InVal_     BOOL graphic)
+    _OutRef_opt_ P_UI_TEXT p_ui_text_dst,
+    _InoutRef_opt_ P_UI_SOURCE p_ui_source_dst,
+    _InoutRef_  P_T5_FILETYPE p_t5_filetype,
+    _OutRef_    P_S32 p_itemno)
 {
-    P_T5_FILETYPE p_current_filetype = (p_save_callback->saving == SAVING_PICTURE) ? &save_picture_type_filetype : &save_foreign_type_filetype;
     STATUS status = STATUS_OK;
 
-    { /* objects will each append to this handle */
-    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(8, sizeof32(SAVE_FILETYPE), 0);
-    status_return(al_array_preallocate_zero(&p_save_callback->other_filemap, &array_init_block));
-    } /*block*/
+    /* sort the textual representations list into order for neat display */
+    al_array_qsort(&p_save_callback->h_save_filetype, save_filetype_description_compare_qsort);
 
-    if(graphic)
-    {
-#if RISCOS
-        STATUS status;
-        if(status_fail(status = object_call_id(p_save_callback->picture_object_id, P_DOCU_NONE, T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST_RISCOS, &p_save_callback->other_filemap)))
-        {
-            al_array_dispose(&p_save_callback->other_filemap);
-            return(status);
-        }
-#endif
-    }
-    else
-    {
-        const ARRAY_INDEX n_elements = array_elements(&installed_save_objects_handle);
-        ARRAY_INDEX i;
-        P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_range(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, 0, n_elements);
-
-        for(i = 0; i < n_elements; ++i, ++p_installed_save_object)
-        {
-            SAVE_FILETYPE save_filetype;
-            save_filetype.object_id = p_installed_save_object->object_id;
-            save_filetype.t5_filetype  = p_installed_save_object->t5_filetype;
-            save_filetype.description.type = UI_TEXT_TYPE_TSTR_PERM;
-            save_filetype.description.text.tstr = description_text_from_t5_filetype(p_installed_save_object->t5_filetype);
-            if(status_fail(status = al_array_add(&p_save_callback->other_filemap, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype)))
-            {
-                al_array_dispose(&p_save_callback->other_filemap);
-                return(status);
-            }
-        }
-    }
-
-    /* now sort the textual representations list into ASCII order for neat display */
-    al_array_qsort(&p_save_callback->other_filemap, save_foreign_filemap_description_compare_qsort);
-
-    save_foreign_type_itemno = DIALOG_CTL_STATE_LIST_ITEM_NONE;
+    *p_itemno = DIALOG_CTL_STATE_LIST_ITEM_NONE;
 
     {
     BOOL had_default = FALSE;
-    const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->other_filemap);
+    const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->h_save_filetype);
     ARRAY_INDEX i;
-    PC_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->other_filemap, SAVE_FILETYPE, 0, filemap_elements);
+    PC_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->h_save_filetype, SAVE_FILETYPE, 0, filemap_elements);
 
     for(i = 0; i < filemap_elements; ++i)
     {
-        if(p_save_filetype->t5_filetype == *p_current_filetype)
+        if(p_save_filetype->t5_filetype == *p_t5_filetype) /* same as what we have? */
         {
             had_default = TRUE;
-            save_foreign_type_itemno = i;
+            *p_itemno = (S32) i;
             break;
         }
     }
 
-    if(!had_default && filemap_elements)
+    if(!had_default && (0 != filemap_elements))
     {
         /* be content with the first thing we find */
-        p_save_filetype = array_basec(&p_save_callback->other_filemap, SAVE_FILETYPE);
+        p_save_filetype = array_basec(&p_save_callback->h_save_filetype, SAVE_FILETYPE);
 
-        save_foreign_type_itemno = 0;
+        *p_itemno = 0;
 
-        *p_current_filetype = p_save_filetype->t5_filetype;
+        *p_t5_filetype = p_save_filetype->t5_filetype;
     }
     } /*block*/
 
-    if(p_ui_text_dst && p_ui_source_dst)
+    if(NULL != p_ui_text_dst)
+        p_ui_text_dst->type = UI_TEXT_TYPE_NONE;
+
+    if(NULL != p_ui_source_dst)
     {
         P_UI_TEXT p_ui_text;
         SC_ARRAY_INIT_BLOCK array_init_block = aib_init(1, sizeof32(*p_ui_text), 0);
-        const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->other_filemap);
+        const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->h_save_filetype);
 
         al_array_dispose(&p_ui_source_dst->source.array_handle);
-        p_ui_text_dst->type = UI_TEXT_TYPE_NONE;
 
         /* lookup filetype in list to obtain current state for combo,
          * also make a source of text pointers to these elements
         */
         if(NULL == (p_ui_text = al_array_alloc_UI_TEXT(&p_ui_source_dst->source.array_handle, filemap_elements, &array_init_block, &status)))
         {
-            al_array_dispose(&p_save_callback->other_filemap);
+            al_array_dispose(&p_save_callback->h_save_filetype);
             return(status);
         }
 
         {
         ARRAY_INDEX i;
-        P_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->other_filemap, SAVE_FILETYPE, 0, filemap_elements);
+        P_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->h_save_filetype, SAVE_FILETYPE, 0, filemap_elements);
 
         for(i = 0; i < filemap_elements; ++i, ++p_save_filetype, ++p_ui_text)
         {
             status_assert(ui_text_copy(p_ui_text, &p_save_filetype->description));
 
-            if(p_save_filetype->t5_filetype == *p_current_filetype)
-                status_assert(ui_text_copy(p_ui_text_dst, p_ui_text));
+            if((p_save_filetype->t5_filetype == *p_t5_filetype) && (NULL != p_ui_text_dst) && !ui_text_is_blank(&p_save_filetype->suggested_leafname))
+                status_assert(ui_text_copy(p_ui_text_dst, &p_save_filetype->suggested_leafname));
         }
         } /*block*/
 
@@ -1294,6 +1338,102 @@ save_foreign_filemap_create(
     }
 
     return(STATUS_OK);
+}
+
+_Check_return_
+static STATUS
+save_foreign_create_filemap(
+    P_SAVE_CALLBACK p_save_callback,
+    _OutRef_opt_ P_UI_TEXT p_ui_text_dst,
+    _InoutRef_opt_ P_UI_SOURCE p_ui_source_dst)
+{
+    const P_DOCU p_docu = p_docu_from_docno(p_save_callback->docno);
+    const ARRAY_INDEX n_elements = array_elements(&installed_save_objects_handle);
+    ARRAY_INDEX i;
+    P_INSTALLED_SAVE_OBJECT p_installed_save_object = array_range(&installed_save_objects_handle, INSTALLED_SAVE_OBJECT, 0, n_elements);
+    STATUS status = STATUS_OK;
+
+    { /* each exporting objects will each append a type to this handle */
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(8, sizeof32(SAVE_FILETYPE), 0);
+    status_return(al_array_preallocate_zero(&p_save_callback->h_save_filetype, &array_init_block));
+    } /*block*/
+
+    for(i = 0; i < n_elements; ++i, ++p_installed_save_object)
+    {
+        BOOL fFound;
+        PC_USTR ustr_description = description_ustr_from_t5_filetype(p_installed_save_object->t5_filetype, &fFound);
+        SAVE_FILETYPE save_filetype;
+        save_filetype.object_id = p_installed_save_object->object_id;
+        save_filetype.t5_filetype  = p_installed_save_object->t5_filetype;
+        save_filetype.description.type = UI_TEXT_TYPE_USTR_PERM;
+        if(fFound)
+            save_filetype.description.text.ustr = ustr_description;
+        else
+            status_break(status = alloc_block_ustr_set(&save_filetype.description.text.ustr_wr, ustr_description, &p_docu->general_string_alloc_block));
+        status_break(status = al_array_add(&p_save_callback->h_save_filetype, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype));
+    }
+
+    if(status_fail(status))
+    {
+        al_array_dispose(&p_save_callback->h_save_filetype);
+        return(status);
+    }
+
+    return(save_create_filemap_common(p_save_callback, p_ui_text_dst, p_ui_source_dst, &save_foreign_statics.t5_filetype, &save_foreign_statics.itemno));
+}
+
+_Check_return_
+static STATUS
+save_picture_create_filemap(
+    P_SAVE_CALLBACK p_save_callback,
+    _OutRef_opt_ P_UI_TEXT p_ui_text_dst,
+    _InoutRef_opt_ P_UI_SOURCE p_ui_source_dst)
+{
+    const P_DOCU p_docu = p_docu_from_docno(p_save_callback->docno);
+    MSG_SAVE_PICTURE_FILETYPES_REQUEST msg_save_picture_filetypes_request;
+    STATUS status;
+
+    { /* this picture's owning object will append one or more types to this handle */
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(2, sizeof32(SAVE_FILETYPE), 0);
+    status_return(al_array_preallocate_zero(&p_save_callback->h_save_filetype, &array_init_block));
+    } /*block*/
+
+    msg_save_picture_filetypes_request.h_save_filetype = p_save_callback->h_save_filetype;
+    msg_save_picture_filetypes_request.extra = (S32) (intptr_t) p_save_callback->picture_object_data_ref;
+    status = object_call_id(p_save_callback->picture_object_id, p_docu, T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST, &msg_save_picture_filetypes_request);
+    p_save_callback->h_save_filetype = msg_save_picture_filetypes_request.h_save_filetype;
+
+    if(status_ok(status))
+    {   /* supply a suitable default for filetypes with no description override */
+        const ARRAY_INDEX filemap_elements = array_elements(&p_save_callback->h_save_filetype);
+        ARRAY_INDEX i;
+        P_SAVE_FILETYPE p_save_filetype = array_range(&p_save_callback->h_save_filetype, SAVE_FILETYPE, 0, filemap_elements);
+        for(i = 0; i < filemap_elements; ++i, ++p_save_filetype)
+        {
+            if(ui_text_is_blank(&p_save_filetype->description))
+            {
+                BOOL fFound;
+                PC_USTR ustr_description = description_ustr_from_t5_filetype(p_save_filetype->t5_filetype, &fFound);
+                p_save_filetype->description.type = UI_TEXT_TYPE_USTR_TEMP;
+                if(fFound)
+                    p_save_filetype->description.text.ustr = ustr_description;
+                else
+                    status_break(status = alloc_block_ustr_set(&p_save_filetype->description.text.ustr_wr, ustr_description, &p_docu->general_string_alloc_block));
+            }
+
+            if(ui_text_is_blank(&p_save_filetype->suggested_leafname))
+            {
+            }
+        }
+    }
+
+    if(status_fail(status))
+    {
+        al_array_dispose(&p_save_callback->h_save_filetype);
+        return(status);
+    }
+
+    return(save_create_filemap_common(p_save_callback, p_ui_text_dst, p_ui_source_dst, &save_picture_statics.t5_filetype, &save_picture_statics.itemno));
 }
 
 /******************************************************************************
@@ -1346,10 +1486,10 @@ save_foreign_ctl_create[] =
 {
     { &dialog_main_group },
 
-    { &save_pict,               &save_pict_data },
-    { &save_name_control,       &save_name_data },
-    { &save_selection,          &save_selection_data },
-    { &save_foreign_type_list,  &stdlisttext_data_dd },
+    { &save_filetype_pict,      &save_filetype_pict_data    },
+    { &save_name_foreign,       &save_name_data             },
+    { &save_selection,          &save_selection_data        },
+    { &save_foreign_type_list,  &stdlisttext_data_dd        },
 
     { &stdbutton_cancel, &stdbutton_cancel_data },
     { &defbutton_ok,  &save_ok_data }
@@ -1374,19 +1514,19 @@ t5_cmd_save_foreign_common_init(
     p_save_callback->saving = SAVING_FOREIGN;
     p_save_callback->p_proc_save = save_foreign_save;
 
-    p_save_callback->t5_filetype = save_foreign_type_filetype;
+    p_save_callback->t5_filetype = save_foreign_statics.t5_filetype;
 
 #if RISCOS
     if(intro)
     {
         p_ui_text = &p_save_callback->ui_text;
-        p_ui_source = &save_foreign_type_list_source;
+        p_ui_source = &save_foreign_statics.ui_source;
     }
 #else
     IGNOREPARM_InVal_(intro);
 #endif
 
-    return(save_foreign_filemap_create(p_save_callback, p_ui_text, p_ui_source, FALSE));
+    return(save_foreign_create_filemap(p_save_callback, p_ui_text, p_ui_source));
 }
 
 T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign_intro)
@@ -1398,23 +1538,11 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign_intro)
     IGNOREPARM_InVal_(t5_message);
     IGNOREPARM_InRef_(p_t5_cmd);
 
+    /* create a list of filetypes and textual representations thereof from the loaded objects */
     status_return(t5_cmd_save_foreign_common_init(p_docu, &save_callback, TRUE));
 
     save_callback.init_filename.type = UI_TEXT_TYPE_RESID;
     save_callback.init_filename.text.resource_id = MSG_DIALOG_SAVE_FOREIGN_NAME;
-
-#if RISCOS
-    { /* make appropriate size box */
-    S32 show_elements = array_elements(&save_callback.other_filemap);
-    DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
-    dialog_cmd_ctl_size_estimate.p_dialog_control = &save_foreign_type_list;
-    dialog_cmd_ctl_size_estimate.p_dialog_control_data = NULL;
-    ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
-    show_elements = MAX(show_elements, 4);
-    show_elements = MIN(show_elements, 8);
-    save_foreign_type_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y + DIALOG_STDLISTITEM_V * show_elements;
-    } /*block*/
-#endif
 
     {
     TCHARZ directory[BUF_MAX_PATHSTRING];
@@ -1431,14 +1559,26 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign_intro)
     } /*block*/
 
 #if RISCOS
+    { /* make appropriate size box */
+    S32 show_elements = array_elements(&save_callback.h_save_filetype);
+    PIXIT_SIZE list_size;
+    DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
+    dialog_cmd_ctl_size_estimate.p_dialog_control = &save_foreign_type_list;
+    dialog_cmd_ctl_size_estimate.p_dialog_control_data = NULL;
+    ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
+    show_elements = MAX(show_elements, 2);
+    show_elements = MIN(show_elements, 8);
+    ui_list_size_estimate(show_elements, &list_size);
+    dialog_cmd_ctl_size_estimate.size.x += list_size.cx;
+    dialog_cmd_ctl_size_estimate.size.y += list_size.cy;
+    dialog_cmd_ctl_size_estimate.size.x = MAX(dialog_cmd_ctl_size_estimate.size.x, SAVE_FOREIGN_LIST_H);
+    save_foreign_type_list.relative_offset[2] = dialog_cmd_ctl_size_estimate.size.x;
+    save_foreign_type_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y;
+    save_filetype_pict.relative_offset[0] = -( (save_foreign_type_list.relative_offset[2] - save_filetype_pict.relative_offset[2]) / 2 ); /* yuk */
+    } /*block*/
+
     save_callback.test_for_saved_file_is_safe = TRUE;
     host_xfer_set_saved_file_is_safe(TRUE);
-
-    /* create a list of filetypes and textual representations thereof from the loaded objects */
-    save_pict.relative_offset[0] = -SAVE_FOREIGN_PICT_OFFSET_H;
-
-    save_foreign_type_list.relative_control_id[0] = SAVE_ID_SELECTION;
-    save_foreign_type_list.relative_control_id[1] = SAVE_ID_SELECTION;
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
@@ -1447,13 +1587,13 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign_intro)
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SAVE_FOREIGN_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_save_common;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &save_callback;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 #else
     status = windows_save_as(p_docu, &save_callback);
 #endif
 
-    al_array_dispose(&save_foreign_type_list_source.source.array_handle);
+    ui_source_dispose(&save_foreign_statics.ui_source);
 
     ui_text_dispose(&save_callback.ui_text);
 
@@ -1461,7 +1601,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign_intro)
     ui_text_dispose(&save_callback.init_filename);
     ui_text_dispose(&save_callback.filename);
 
-    al_array_dispose(&save_callback.other_filemap);
+    al_array_dispose(&save_callback.h_save_filetype);
 
     return(status);
 }
@@ -1487,7 +1627,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_foreign)
 
     status = proc_save_common(filename, (CLIENT_HANDLE) &save_callback);
 
-    al_array_dispose(&save_callback.other_filemap);
+    al_array_dispose(&save_callback.h_save_filetype);
 
     return(status);
 }
@@ -1527,9 +1667,9 @@ save_picture_ctl_create[] =
 {
     { &dialog_main_group },
 
-    { &save_pict,               &save_pict_data }, /*[1]*/
-    { &save_name_control,       &save_name_data }, /*[2]*/
-    { &save_foreign_type_list,  &stdlisttext_data_dd }, /*[3]*/
+    { &save_filetype_pict,      &save_filetype_pict_data    }, /*[1]*/
+    { &save_name_picture,       &save_name_data             }, /*[2]*/
+    { &save_picture_type_list,  &stdlisttext_data_dd        }, /*[3]*/
 
     { &stdbutton_cancel, &stdbutton_cancel_data },
     { &defbutton_ok, &save_ok_data }
@@ -1548,18 +1688,17 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_picture_intro)
 
     zero_struct(save_callback);
 
+    if(!object_present(OBJECT_ID_NOTE))
+        return(STATUS_OK);      /* no note(s) can be selected, give up now */
+
     save_callback.docno = docno_from_p_docu(p_docu);
 
     save_callback.saving = SAVING_PICTURE;
     save_callback.p_proc_save = save_picture_save;
 
-    save_callback.t5_filetype = save_picture_type_filetype;
+    save_callback.t5_filetype = save_picture_statics.t5_filetype;
 
-    /* identify note's object and ref, store in callback */
-    if(!object_present(OBJECT_ID_NOTE))
-        return(STATUS_OK);      /* no note(s) to be selected, give up now */
-
-    {
+    { /* identify note's object and ref, store in callback */
     NOTELAYER_SELECTION_INFO notelayer_selection_info;
     if(status_fail(object_call_id(OBJECT_ID_NOTE, p_docu, T5_MSG_NOTELAYER_SELECTION_INFO, &notelayer_selection_info)))
         return(STATUS_OK);      /* no note(s) selected, give up now */
@@ -1567,11 +1706,19 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_picture_intro)
     save_callback.picture_object_data_ref = notelayer_selection_info.object_data_ref;
     } /*block*/
 
-    status_return(save_foreign_filemap_create(&save_callback, &save_callback.ui_text, &save_foreign_type_list_source, TRUE));
+    /* create a list of filetypes and textual representations thereof from the loaded objects */
+    status_return(save_picture_create_filemap(&save_callback, &save_callback.ui_text, &save_picture_statics.ui_source));
 
     /* encode initial state of control(s) */
-    save_callback.init_filename.type = UI_TEXT_TYPE_RESID;
-    save_callback.init_filename.text.resource_id = MSG_DIALOG_SAVE_PICTURE_NAME;
+    if(ui_text_is_blank(&save_callback.ui_text))
+    {
+        save_callback.init_filename.type = UI_TEXT_TYPE_RESID;
+        save_callback.init_filename.text.resource_id = MSG_DIALOG_SAVE_PICTURE_NAME;
+    }
+    else
+    {
+        status_assert(ui_text_copy(&save_callback.init_filename, &save_callback.ui_text));
+    }
     name_set = FALSE;
 
     {
@@ -1589,14 +1736,23 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_picture_intro)
     } /*block*/
 
 #if RISCOS
-    /* create a list of filetypes and textual representations thereof from the loaded objects */
-    save_pict.relative_offset[0] = -SAVE_FOREIGN_PICT_OFFSET_H;
-
-    save_foreign_type_list.relative_control_id[0] = SAVE_ID_NAME;
-    save_foreign_type_list.relative_control_id[1] = SAVE_ID_NAME;
-
-    assert((save_picture_ctl_create[3].p_dialog_control.p_dialog_control == &save_foreign_type_list) || (NULL == save_picture_ctl_create[3].p_dialog_control.p_dialog_control));
-    save_picture_ctl_create[3].p_dialog_control.p_dialog_control = (array_elements(&save_foreign_type_list_source.source.array_handle) >= 2) ? &save_foreign_type_list : NULL;
+    { /* make appropriate size box */
+    S32 show_elements = array_elements(&save_callback.h_save_filetype);
+    PIXIT_SIZE list_size;
+    DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
+    dialog_cmd_ctl_size_estimate.p_dialog_control = &save_picture_type_list;
+    dialog_cmd_ctl_size_estimate.p_dialog_control_data = NULL;
+    ui_dlg_ctl_size_estimate(&dialog_cmd_ctl_size_estimate);
+    show_elements = MAX(show_elements, 2);
+    show_elements = MIN(show_elements, 8);
+    ui_list_size_estimate(show_elements, &list_size);
+    dialog_cmd_ctl_size_estimate.size.x += list_size.cx;
+    dialog_cmd_ctl_size_estimate.size.y += list_size.cy;
+    dialog_cmd_ctl_size_estimate.size.x = MAX(dialog_cmd_ctl_size_estimate.size.x, SAVE_PICTURE_LIST_H);
+    save_picture_type_list.relative_offset[2] = dialog_cmd_ctl_size_estimate.size.x;
+    save_picture_type_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y;
+    save_filetype_pict.relative_offset[0] = -( (save_picture_type_list.relative_offset[2] - save_filetype_pict.relative_offset[2]) / 2 ); /* yuk */
+    } /*block*/
 
     {
     DIALOG_CMD_PROCESS_DBOX dialog_cmd_process_dbox;
@@ -1605,13 +1761,13 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_picture_intro)
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SAVE_PICTURE_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_save_common;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &save_callback;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 #else
     status = windows_save_as(p_docu, &save_callback);
 #endif
 
-    al_array_dispose(&save_foreign_type_list_source.source.array_handle);
+    ui_source_dispose(&save_picture_statics.ui_source);
 
     ui_text_dispose(&save_callback.ui_text);
 
@@ -1619,7 +1775,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_picture_intro)
     ui_text_dispose(&save_callback.init_filename);
     ui_text_dispose(&save_callback.filename);
 
-    al_array_dispose(&save_callback.other_filemap);
+    al_array_dispose(&save_callback.h_save_filetype);
 
     return(status);
 }
@@ -1676,10 +1832,11 @@ save_template_ctl_create[] =
     { &dialog_main_group },
 
 #if RISCOS
-    { &save_pict, &save_pict_data },
+    { &save_filetype_pict,        &save_filetype_pict_data },
 #endif
 
     { &save_name_template,        &save_name_data },
+
     { &save_template_style_group },
     { &save_template_style_list,  &stdlisttext_data_dd }, /* first to get initial state set! */
     { &save_template_style_0,     &save_template_style_0_data },
@@ -1724,7 +1881,7 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_template_intro)
     save_callback.init_filename.text.resource_id = MSG_DIALOG_SAVE_TEMPLATE_NAME;
 
     /* encode initial state of control(s) */
-    status_return(ui_list_create_style(p_docu, &save_template_style_list_handle, &save_template_style_list_source, &max_width));
+    status_return(ui_list_create_style(p_docu, &save_template_style_list_handle, &save_template_statics.ui_source, &max_width));
 
     { /* make appropriate size box */
     PIXIT_SIZE list_size;
@@ -1739,13 +1896,14 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_template_intro)
     dialog_cmd_ctl_size_estimate.size.x = MAX(dialog_cmd_ctl_size_estimate.size.x, SAVE_TEMPLATE_LIST_H);
     save_template_style_list.relative_offset[2] = dialog_cmd_ctl_size_estimate.size.x;
     save_template_style_list.relative_offset[3] = dialog_cmd_ctl_size_estimate.size.y;
+#if RISCOS
+    save_filetype_pict.relative_offset[0] = -( (save_template_style_list.relative_offset[2] - save_filetype_pict.relative_offset[2]) / 2 );
+#endif
     } /*block*/
 
 #if RISCOS
     save_callback.test_for_saved_file_is_safe = TRUE;
     host_xfer_set_saved_file_is_safe(TRUE);
-
-    save_pict.relative_offset[0] = -SAVE_TEMPLATE_PICT_OFFSET_H;
 #endif
 
     {
@@ -1755,10 +1913,10 @@ T5_CMD_PROTO(static, ccba_wrapped_t5_cmd_save_template_intro)
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_SAVE_TEMPLATE_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_save_common;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &save_callback;
-    status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
-    ui_list_dispose_style(&save_template_style_list_handle, &save_template_style_list_source);
+    ui_list_dispose_style(&save_template_style_list_handle, &save_template_statics.ui_source);
 
     ui_text_dispose(&save_callback.init_filename);
     ui_text_dispose(&save_callback.filename);
@@ -1973,11 +2131,11 @@ windows_save_as(
     const S32 filter_mask = (p_save_callback->saving == SAVING_PICTURE) ? BOUND_FILETYPE_WRITE_PICT : BOUND_FILETYPE_WRITE;
     OPENFILENAME openfilename;
     BOOL ofnResult;
-    QUICK_TBLOCK_WITH_BUFFER(filter_quick_tblock, 32);
+    QUICK_TBLOCK_WITH_BUFFER(filter_quick_tblock, 256);
     quick_tblock_with_buffer_setup(filter_quick_tblock);
 
     /* build filters as description,CH_NULL,wildcard spec,CH_NULL sets */
-    status_return(windows_filter_list_create(&filter_quick_tblock, filter_mask));
+    status_return(windows_filter_list_create(&filter_quick_tblock, filter_mask, &p_save_callback->h_save_filetype));
 
     /* try to find some sensible place to dump these */
     if(!ui_text_is_blank(&p_save_callback->init_directory))
@@ -2029,14 +2187,12 @@ windows_save_as(
         openfilename.lpstrTitle = szDialogTitle;
     }
     openfilename.Flags =
+        OFN_EXPLORER            |
         OFN_NOCHANGEDIR         |
         OFN_PATHMUSTEXIST       |
         OFN_HIDEREADONLY        |
-        OFN_NOREADONLYRETURN    |
         OFN_OVERWRITEPROMPT     |
-        OFN_EXPLORER            |
-        OFN_ENABLESIZING        |
-        OFN_LONGNAMES           ;
+        OFN_ENABLESIZING        ;
     openfilename.nFileOffset = 0;
     openfilename.nFileExtension = 0;
     openfilename.lpstrDefExt = file_extension(szFile); /* let user call it what they like! */
@@ -2096,7 +2252,7 @@ windows_save_as(
 #if 1
     { /* use nFilterIndex to determine file type to save as */
     T5_FILETYPE t5_filetype;
-    t5_filetype = windows_filter_list_get_t5_filetype_from_filter_index(openfilename.nFilterIndex, filter_mask);
+    t5_filetype = windows_filter_list_get_t5_filetype_from_filter_index(openfilename.nFilterIndex, filter_mask, &p_save_callback->h_save_filetype);
 #else
     { /* NB User might have stripped the extension off - ensure we stick the default one on if so */
     T5_FILETYPE t5_filetype;
@@ -2144,7 +2300,7 @@ windows_save_as(
             p_save_callback->saving = SAVING_FOREIGN;
             p_save_callback->p_proc_save = save_foreign_save;
 
-            status_break(status = save_foreign_filemap_create(p_save_callback, NULL, NULL, FALSE));
+            status_break(status = save_foreign_create_filemap(p_save_callback, NULL, NULL));
 
             p_save_callback->rename_after_save = FALSE;
             p_save_callback->clear_modify_after_save = FALSE;
@@ -2223,8 +2379,8 @@ locate_ctl_create[] =
     { &locate_waffle_3, &locate_waffle_3_data },
     { &locate_waffle_4, &locate_waffle_4_data },
 
-    { &save_pict, &save_pict_data },
-    { &save_name_control, &save_name_data }
+    { &save_filetype_pict, &save_filetype_pict_data },
+    { &save_name_normal, &save_name_data }
 };
 
 #endif /* RISCOS */
@@ -2309,7 +2465,7 @@ locate_copy_of_dir_template(
     dialog_cmd_process_dbox.caption.text.resource_id = MSG_DIALOG_LOCATE_TEMPLATE_CAPTION;
     dialog_cmd_process_dbox.p_proc_client = dialog_event_save_common;
     dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &save_callback;
-    status = call_dialog_with_docu(cur_p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+    status = object_call_DIALOG_with_docu(cur_p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
     } /*block*/
 
     ui_text_dispose(&save_callback.init_filename);

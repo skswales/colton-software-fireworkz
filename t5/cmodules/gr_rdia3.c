@@ -17,11 +17,11 @@
 
 #include "ob_chart/ob_chart.h"
 
-#ifndef __gr_cache_h
-#include "cmodules/gr_cache.h"
+#ifndef          __im_cache_h
+#include "cmodules/im_cache.h"
 #endif
 
-#ifndef __bezier_h
+#ifndef          __bezier_h
 #include "cmodules/bezier.h"
 #endif
 
@@ -53,67 +53,6 @@ gr_colour_to_riscDraw(
 
     return((DRAW_COLOUR) (((((((U32) colour.blue) << 8) | (U32) colour.green) << 8) | (U32) colour.red) << 8));
 }
-
-#if defined(UNUSED_KEEP_ALIVE)
-
-/******************************************************************************
-*
-* no circle object; we make as composite path
-*
-******************************************************************************/
-
-struct gr_riscdiag_circle_guts
-{
-    DRAW_PATH_MOVE  move;
-    DRAW_PATH_CURVE curve[4];
-    DRAW_PATH_CLOSE close;
-    DRAW_PATH_TERM  term;
-};
-
-_Check_return_
-extern STATUS
-gr_riscdiag_circle_new(
-    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pCircleStart,
-    _InRef_     PC_DRAW_POINT pOrigin,
-    _InVal_     DRAW_COORD radius,
-    _InRef_     PC_GR_LINESTYLE linestyle,
-    _InRef_     PC_GR_FILLSTYLEC fillstylec)
-{
-    DRAW_POINT bezCentre = *pOrigin;
-    DRAW_COORD bezRadius = radius;
-    DRAW_POINT bezPoints[13];
-    STATUS status;
-    P_BYTE pPathGuts;
-    struct gr_riscdiag_circle_guts Circle;
-    int i, j;
-
-    bezier_arc_circle(&bezCentre, bezRadius, &bezPoints[0]);
-
-    Circle.move.tag = DRAW_PATH_TYPE_MOVE;
-    Circle.move.pt  = bezPoints[0];
-
-    for(i = 0, j  = 1;
-        i < 4;
-        i++,   j += 3 /* cp1, cp2, end */)
-    {
-        Circle.curve[i].tag = DRAW_PATH_TYPE_CURVE;
-        Circle.curve[i].cp1 = bezPoints[j + 0]; /* 1, 4, 7, 10 */
-        Circle.curve[i].cp2 = bezPoints[j + 1]; /* 2, 5, 8, 11 */
-        Circle.curve[i].end = bezPoints[j + 2]; /* 3, 6, 9, 12 */
-    }
-
-    Circle.close.tag = DRAW_PATH_TYPE_CLOSE;
-
-    Circle.term.tag  = DRAW_PATH_TYPE_TERM;
-
-    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pCircleStart, linestyle, fillstylec, sizeof32(Circle), &status)))
-        memcpy32(pPathGuts, &Circle, sizeof32(Circle));
-
-    return(status);
-}
-
-#endif /* UNUSED_KEEP_ALIVE */
 
 /******************************************************************************
 *
@@ -183,7 +122,7 @@ gr_riscdiag_host_font_from_textstyle(
 _Check_return_
 extern STATUS
 gr_riscdiag_host_font_spec_riscos_from_textstyle(
-    _OutRef_    P_HOST_FONT_SPEC p_host_font_spec /* h_host_name_tstr as RISC OS eg Trinity.Bold.Italic */,
+    _OutRef_    P_HOST_FONT_SPEC p_host_font_spec /* h_host_name_tstr as RISC OS e.g. Trinity.Bold.Italic */,
     _InRef_     PC_GR_TEXTSTYLE textstyle)
 {
     STATUS status;
@@ -192,10 +131,10 @@ gr_riscdiag_host_font_spec_riscos_from_textstyle(
     zero_struct_ptr(p_host_font_spec);
 
     zero_struct(font_spec);
-    font_spec.size_x = textstyle->width;
-    font_spec.size_y = textstyle->height;
-    font_spec.bold = (U8) textstyle->bold;
-    font_spec.italic = (U8) textstyle->italic;
+    font_spec.size_x = textstyle->size_x;
+    font_spec.size_y = textstyle->size_y;
+    font_spec.bold = UBF_UNPACK(U8, textstyle->bold);
+    font_spec.italic = UBF_UNPACK(U8, textstyle->italic);
     status_return(font_spec_name_alloc(&font_spec, textstyle->tstrFontName));
 
     status = fontmap_host_font_spec_riscos_from_font_spec(p_host_font_spec, &font_spec);
@@ -221,7 +160,7 @@ gr_riscdiag_path_close(
     P_U32 p_u32;
 
     if(NULL != (p_u32 = gr_riscdiag_ensure(U32, p_gr_riscdiag, sizeof32(DRAW_PATH_CLOSE), &status)))
-        *p_u32 = DRAW_PATH_TYPE_CLOSE;
+        *p_u32 = DRAW_PATH_TYPE_CLOSE_WITH_LINE;
 
     return(status);
 }
@@ -324,6 +263,11 @@ gr_riscdiag_path_moveto(
 static const DRAW_PATH_STYLE
 gr_riscdiag_path_style_default =
 {
+    (DRAW_PS_JOIN_MITRED      << DRAW_PS_JOIN_PACK_SHIFT    ) | /* NB. big mitres > width converted into bevels automagically */
+    (DRAW_PS_CAP_BUTT         << DRAW_PS_ENDCAP_PACK_SHIFT  ) |
+    (DRAW_PS_CAP_BUTT         << DRAW_PS_STARTCAP_PACK_SHIFT) |
+    (DRAW_PS_WINDRULE_NONZERO << DRAW_PS_WINDRULE_PACK_SHIFT) |
+    (DRAW_PS_DASH_ABSENT      << DRAW_PS_DASH_PACK_SHIFT    ) |
     0, /* flags     */
     0, /* reserved  */
     0, /* tricap_w  */
@@ -376,13 +320,16 @@ _Check_return_
 _Ret_maybenull_
 static const PC_DRAW_DASH_HEADER
 gr_linestyle_to_riscDraw(
-    _InVal_     GR_LINE_PATTERN pattern)
+    _InRef_opt_ PC_GR_LINESTYLE linestyle)
 {
-    assert(pattern < elemof32(gr_linestyle_riscos_dashes));
-    if(pattern >= elemof32(gr_linestyle_riscos_dashes))
+    if(NULL == linestyle)
         return(NULL);
 
-    return(gr_linestyle_riscos_dashes[pattern]);
+    assert(linestyle->pattern < elemof32(gr_linestyle_riscos_dashes));
+    if(linestyle->pattern >= elemof32(gr_linestyle_riscos_dashes))
+        return(NULL);
+
+    return(gr_linestyle_riscos_dashes[linestyle->pattern]);
 }
 
 _Check_return_
@@ -393,10 +340,11 @@ gr_riscdiag_path_new(
     _OutRef_    P_DRAW_DIAG_OFFSET pPathStart,
     _InRef_opt_ PC_GR_LINESTYLE linestyle,
     _InRef_opt_ PC_GR_FILLSTYLEC fillstylec,
+    _InRef_opt_ PC_DRAW_PATH_STYLE pathstyle,
     _InVal_     U32 extraBytes,
     _OutRef_    P_STATUS p_status)
 {
-    PC_DRAW_DASH_HEADER dash_pattern = linestyle ? gr_linestyle_to_riscDraw(linestyle->pattern) : NULL;
+    PC_DRAW_DASH_HEADER dash_pattern = gr_linestyle_to_riscDraw(linestyle);
     U32 nDashBytes = 0;
     DRAW_OBJECT_PATH path;
     P_BYTE pObject;
@@ -408,7 +356,8 @@ gr_riscdiag_path_new(
 #ifdef GR_CHART_LINE_FILL_INTERSTICES
         if(linestyle->bg.visible)
             /* hmm. consider at a later date allocating two paths: on path_end memcpy first to second and patch colour fields */
-        { /*EMPTY*/ }
+        { /*EMPTY*/
+        }
 #endif
     }
 
@@ -418,12 +367,12 @@ gr_riscdiag_path_new(
 
     path.fillcolour = fillstylec ? gr_colour_to_riscDraw(fillstylec->fg) : DRAW_COLOUR_Transparent;
     path.pathcolour = (linestyle && (linestyle->pattern != GR_LINE_PATTERN_NONE))
-                             ? gr_colour_to_riscDraw(linestyle->fg)
-                             : DRAW_COLOUR_Transparent;
+        ? gr_colour_to_riscDraw(linestyle->fg)
+        : DRAW_COLOUR_Transparent;
     path.pathwidth  = (linestyle && (linestyle->pattern != GR_LINE_PATTERN_THIN))
-                             ? gr_riscDraw_from_pixit(linestyle->width)
-                             : 0;
-    path.pathstyle  = gr_riscdiag_path_style_default;
+        ? gr_riscDraw_from_pixit(linestyle->width)
+        : 0;
+    path.pathstyle  = pathstyle ? *pathstyle : gr_riscdiag_path_style_default;
 
     if(NULL != dash_pattern)
         path.pathstyle.flags |= DRAW_PS_DASH_PACK_MASK;
@@ -495,84 +444,111 @@ gr_riscdiag_path_term(
     return(status);
 }
 
+#if defined(UNUSED_KEEP_ALIVE)
+
 /******************************************************************************
 *
-* no parallelogram object; we make as composite path
+* circle object
 *
 ******************************************************************************/
 
-struct gr_riscdiag_parallelogram_guts
+struct gr_riscdiag_circle_guts
 {
-    DRAW_PATH_MOVE  bl;  /* move to bottom left  */
-    DRAW_PATH_LINE  br;  /* line to bottom right */
-    DRAW_PATH_LINE  tr;  /* line to top right    */
-    DRAW_PATH_LINE  tl;  /* line to top left    */
-    DRAW_PATH_LINE  bl2; /* line to bottom left again */
+    DRAW_PATH_MOVE  move;
+    DRAW_PATH_CURVE curve[4];
     DRAW_PATH_CLOSE close;
     DRAW_PATH_TERM  term;
 };
 
 _Check_return_
 extern STATUS
-gr_riscdiag_parallelogram_new(
+gr_riscdiag_circle_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pParaStart,
-    _InRef_     PC_DRAW_POINT pOriginBL,
-    _InRef_     PC_DRAW_POINT pOffsetBR,
-    _InRef_     PC_DRAW_POINT pOffsetTR,
+    _OutRef_    P_DRAW_DIAG_OFFSET pCircleStart,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InVal_     DRAW_COORD radius,
     _InRef_     PC_GR_LINESTYLE linestyle,
-    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec)
+    _InRef_     PC_GR_FILLSTYLEC fillstylec)
 {
-    U32 para_line_diff, para_size;
-    struct gr_riscdiag_parallelogram_guts Para;
-    DRAW_POINT s1 = *pOffsetBR;
+    DRAW_POINT bezCentre = *pPos;
+    DRAW_COORD bezRadius = radius;
+    DRAW_POINT bezPoints[13];
+    STATUS status;
+    P_BYTE pPathGuts;
+    struct gr_riscdiag_circle_guts Circle;
+    int i, j;
+
+    bezier_arc_circle(&bezCentre, bezRadius, &bezPoints[0]);
+
+    Circle.move.tag = DRAW_PATH_TYPE_MOVE;
+    Circle.move.pt  = bezPoints[0];
+
+    for(i = 0, j  = 1;
+        i < 4;
+        i++,   j += 3 /* cp1, cp2, end */)
+    {
+        Circle.curve[i].tag = DRAW_PATH_TYPE_CURVE;
+        Circle.curve[i].cp1 = bezPoints[j + 0]; /* 1, 4, 7, 10 */
+        Circle.curve[i].cp2 = bezPoints[j + 1]; /* 2, 5, 8, 11 */
+        Circle.curve[i].end = bezPoints[j + 2]; /* 3, 6, 9, 12 */
+    }
+
+    Circle.close.tag = DRAW_PATH_TYPE_CLOSE_WITH_LINE;
+
+    Circle.term.tag  = DRAW_PATH_TYPE_TERM;
+
+    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pCircleStart, linestyle, fillstylec, NULL, sizeof32(Circle), &status)))
+        memcpy32(pPathGuts, &Circle, sizeof32(Circle));
+
+    return(status);
+}
+
+#endif /* UNUSED_KEEP_ALIVE */
+
+/******************************************************************************
+*
+* line object
+*
+******************************************************************************/
+
+struct gr_riscdiag_line_guts
+{
+    DRAW_PATH_MOVE  pos;    /* move to first point  */
+    DRAW_PATH_LINE  lineto; /* line to second point */
+    DRAW_PATH_TERM  term;
+};
+
+_Check_return_
+extern STATUS
+gr_riscdiag_line_new(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _OutRef_    P_DRAW_DIAG_OFFSET pLineStart,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InRef_     PC_DRAW_POINT pOffset,
+    _InRef_     PC_GR_LINESTYLE linestyle)
+{
+    struct gr_riscdiag_line_guts Line;
     STATUS status;
     P_BYTE pPathGuts;
 
-    para_line_diff = ((pOffsetBR->x == pOffsetTR->x) && (pOffsetBR->y == pOffsetTR->y))
-                   ? 3 * sizeof32(DRAW_PATH_LINE) + sizeof32(DRAW_PATH_CLOSE)
-                   : 0;
+    Line.pos.tag        = DRAW_PATH_TYPE_MOVE;
+    Line.pos.pt         = *pPos;
 
-    Para.bl.tag    = DRAW_PATH_TYPE_MOVE;
-    Para.bl.pt     = *pOriginBL;
+    Line.lineto.tag     = DRAW_PATH_TYPE_LINE;
+    Line.lineto.pt.x    = Line.pos.pt.x + pOffset->x;
+    Line.lineto.pt.y    = Line.pos.pt.y + pOffset->y;
 
-    Para.br.tag    = DRAW_PATH_TYPE_LINE;
-    Para.br.pt.x   = Para.bl.pt.x + s1.x;
-    Para.br.pt.y   = Para.bl.pt.y + s1.y;
+    Line.term.tag       = DRAW_PATH_TYPE_TERM;
 
-    if(para_line_diff)
-        Para.tr.tag = DRAW_PATH_TYPE_TERM; /* deviant one */
-    else
-    {
-        DRAW_POINT s2 = *pOffsetTR;
-
-        Para.tr.tag    = DRAW_PATH_TYPE_LINE;
-        Para.tr.pt.x   = Para.bl.pt.x + s2.x;
-        Para.tr.pt.y   = Para.bl.pt.y + s2.y;
-
-        Para.tl.tag    = DRAW_PATH_TYPE_LINE;
-        Para.tl.pt.x   = Para.bl.pt.x + (s2.x - s1.x);
-        Para.tl.pt.y   = Para.bl.pt.y + (s2.y - s1.y);
-
-        Para.bl2.tag   = DRAW_PATH_TYPE_LINE;
-        Para.bl2.pt    = Para.bl.pt;
-
-        Para.close.tag = DRAW_PATH_TYPE_CLOSE; /* SKS after 1.05 25oct93 - don't close simple lines (attempt to fix Ola Lind bug) */
-
-        Para.term.tag  = DRAW_PATH_TYPE_TERM;
-    }
-
-    para_size = sizeof32(Para) - para_line_diff;
-
-    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pParaStart, linestyle, fillstylec, para_size, &status)))
-        memcpy32(pPathGuts, &Para, para_size);
+    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pLineStart, linestyle, NULL, NULL, sizeof32(Line), &status)))
+        memcpy32(pPathGuts, &Line, sizeof32(Line));
 
     return(status);
 }
 
 /******************************************************************************
 *
-* no pie sector object; we make as composite path
+* pie sector object
 *
 ******************************************************************************/
 
@@ -581,14 +557,14 @@ extern STATUS
 gr_riscdiag_piesector_new(
     _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
     _OutRef_    P_DRAW_DIAG_OFFSET pPieStart,
-    _InRef_     PC_DRAW_POINT pOrigin,
+    _InRef_     PC_DRAW_POINT pPos,
     _InVal_     DRAW_COORD radius,
     _InRef_     PC_F64 alpha,
     _InRef_     PC_F64 beta,
     _InRef_     PC_GR_LINESTYLE linestyle,
     _InRef_     PC_GR_FILLSTYLEC fillstylec)
 {
-    DRAW_POINT bezCentre = *pOrigin;
+    DRAW_POINT bezCentre = *pPos;
     DRAW_COORD bezRadius = radius;
     DRAW_POINT bezStart, bezEnd, bezCP1, bezCP2;
     U32 n_segments, segment_id;
@@ -597,7 +573,7 @@ gr_riscdiag_piesector_new(
 
     if(bezRadius <= 0)
     {
-        *pPieStart = 0;
+        *pPieStart = DRAW_DIAG_OFFSET_NONE;
         return(STATUS_OK);
     }
 
@@ -605,7 +581,8 @@ gr_riscdiag_piesector_new(
 
     /* NB. variable number of segments precludes fixed structure */
     if(NULL == (pPathGuts =
-        gr_riscdiag_path_new(p_gr_riscdiag, pPieStart, linestyle, fillstylec,
+        gr_riscdiag_path_new(p_gr_riscdiag, pPieStart,
+                             linestyle, fillstylec, NULL,
                              sizeof32(DRAW_PATH_MOVE)  +
                              sizeof32(DRAW_PATH_LINE)  +
                              (sizeof32(DRAW_PATH_CURVE) * n_segments) +
@@ -653,12 +630,350 @@ gr_riscdiag_piesector_new(
     pPathGuts += sizeof32(line);
     } /*block*/
 
-    * (P_U32) pPathGuts = DRAW_PATH_TYPE_CLOSE; /* ok to poke single words */
+    * (P_U32) pPathGuts = DRAW_PATH_TYPE_CLOSE_WITH_LINE; /* ok to poke single words */
     pPathGuts += sizeof32(DRAW_PATH_CLOSE);
 
     * (P_U32) pPathGuts = DRAW_PATH_TYPE_TERM;
 
     return(STATUS_OK);
+}
+
+/******************************************************************************
+*
+* quadrilateral object
+*
+******************************************************************************/
+
+struct gr_riscdiag_quadrilateral_guts
+{
+    DRAW_PATH_MOVE  pos;    /* move to first point  */
+    DRAW_PATH_LINE  second; /* line to second point */
+    DRAW_PATH_LINE  third;  /* line to third point  */
+    DRAW_PATH_LINE  fourth; /* line to fourth point */
+#if WINDOWS
+    DRAW_PATH_LINE  again;  /* line to first point  */
+#endif
+    DRAW_PATH_CLOSE close;
+    DRAW_PATH_TERM  term;
+};
+
+_Check_return_
+extern STATUS
+gr_riscdiag_quadrilateral_new(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _OutRef_    P_DRAW_DIAG_OFFSET pQuadStart,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InRef_     PC_DRAW_POINT pOffset1,
+    _InRef_     PC_DRAW_POINT pOffset2,
+    _InRef_     PC_DRAW_POINT pOffset3,
+    _InRef_     PC_GR_LINESTYLE linestyle,
+    _InRef_     PC_GR_FILLSTYLEC fillstylec)
+{
+    DRAW_PATH_STYLE pathstyle;
+    struct gr_riscdiag_quadrilateral_guts Quad;
+    STATUS status;
+    P_BYTE pPathGuts;
+
+    zero_struct(pathstyle);
+
+    pathstyle.flags |= DRAW_PS_JOIN_ROUND;
+
+#if WINDOWS
+    {
+    PC_DRAW_DASH_HEADER dash_pattern = gr_linestyle_to_riscDraw(linestyle);
+
+    if(NULL == dash_pattern)
+    {
+        pathstyle.flags |= (
+            (DRAW_PS_CAP_ROUND << DRAW_PS_ENDCAP_PACK_SHIFT  ) |
+            (DRAW_PS_CAP_ROUND << DRAW_PS_STARTCAP_PACK_SHIFT) );
+    }
+    } /*block*/
+#endif
+
+    Quad.pos.tag        = DRAW_PATH_TYPE_MOVE;
+    Quad.pos.pt         = *pPos;
+
+    Quad.second.tag     = DRAW_PATH_TYPE_LINE;
+    Quad.second.pt.x    = Quad.pos.pt.x + pOffset1->x;
+    Quad.second.pt.y    = Quad.pos.pt.y + pOffset1->y;
+
+    Quad.third.tag      = DRAW_PATH_TYPE_LINE;
+    Quad.third.pt.x     = Quad.pos.pt.x + pOffset2->x;
+    Quad.third.pt.y     = Quad.pos.pt.y + pOffset2->y;
+
+    Quad.fourth.tag     = DRAW_PATH_TYPE_LINE;
+    Quad.fourth.pt.x    = Quad.pos.pt.x + pOffset3->x;
+    Quad.fourth.pt.y    = Quad.pos.pt.y + pOffset3->y;
+
+#if WINDOWS
+    Quad.again.tag      = DRAW_PATH_TYPE_LINE;
+    Quad.again.pt       = *pPos;
+#endif
+
+    Quad.close.tag      = DRAW_PATH_TYPE_CLOSE_WITH_LINE;
+
+    Quad.term.tag       = DRAW_PATH_TYPE_TERM;
+
+    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pQuadStart, linestyle, fillstylec, &pathstyle, sizeof32(Quad), &status)))
+        memcpy32(pPathGuts, &Quad, sizeof32(Quad));
+
+    return(status);
+}
+
+/******************************************************************************
+*
+* rectangle object
+*
+******************************************************************************/
+
+struct gr_riscdiag_rectangle_guts
+{
+    DRAW_PATH_MOVE  bl;  /* move to bottom left  */
+    DRAW_PATH_LINE  br;  /* line to bottom right */
+    DRAW_PATH_LINE  tr;  /* line to top left     */
+    DRAW_PATH_LINE  tl;  /* line to top right    */
+#if WINDOWS
+    DRAW_PATH_LINE  again;  /* line to first point  */
+#endif
+    DRAW_PATH_CLOSE close;
+    DRAW_PATH_TERM  term;
+};
+
+_Check_return_
+extern STATUS
+gr_riscdiag_rectangle_new(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _OutRef_    P_DRAW_DIAG_OFFSET pRectStart,
+    _InRef_     PC_DRAW_POINT pPos,
+    _InRef_     PC_DRAW_SIZE pSize,
+    _InRef_opt_ PC_GR_LINESTYLE linestyle,
+    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec)
+{
+    DRAW_PATH_STYLE pathstyle;
+    struct gr_riscdiag_rectangle_guts Rect;
+    STATUS status;
+    P_BYTE pPathGuts;
+
+    zero_struct(pathstyle);
+
+#if WINDOWS
+    pathstyle.flags |= DRAW_PS_JOIN_MITRED;
+
+    {
+    PC_DRAW_DASH_HEADER dash_pattern = gr_linestyle_to_riscDraw(linestyle);
+
+    if(NULL == dash_pattern)
+    {
+        pathstyle.flags |= (
+            (DRAW_PS_CAP_BUTT   << DRAW_PS_ENDCAP_PACK_SHIFT  ) |
+            (DRAW_PS_CAP_SQUARE << DRAW_PS_STARTCAP_PACK_SHIFT) );
+    }
+    } /*block*/
+#endif
+
+    Rect.bl.tag    = DRAW_PATH_TYPE_MOVE;
+    Rect.bl.pt.x   = pPos->x;
+    Rect.bl.pt.y   = pPos->y;
+
+    Rect.br.tag    = DRAW_PATH_TYPE_LINE;
+    Rect.br.pt.x   = Rect.bl.pt.x + pSize->cx;
+    Rect.br.pt.y   = Rect.bl.pt.y;
+
+    Rect.tr.tag    = DRAW_PATH_TYPE_LINE;
+    Rect.tr.pt.x   = Rect.br.pt.x;
+    Rect.tr.pt.y   = Rect.br.pt.y + pSize->cy;
+
+    Rect.tl.tag    = DRAW_PATH_TYPE_LINE;
+    Rect.tl.pt.x   = Rect.bl.pt.x;
+    Rect.tl.pt.y   = Rect.tr.pt.y;
+
+#if WINDOWS
+    /* horrific bodge needed due to Draw DLLs not rendering closing line with correct style */
+    Rect.again.tag  = DRAW_PATH_TYPE_LINE;
+    Rect.again.pt.x = pPos->x;
+    Rect.again.pt.y = pPos->y;
+#endif
+
+    Rect.close.tag = DRAW_PATH_TYPE_CLOSE_WITH_LINE;
+
+    Rect.term.tag  = DRAW_PATH_TYPE_TERM;
+
+    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pRectStart, linestyle, fillstylec, &pathstyle, sizeof32(Rect), &status)))
+        memcpy32(pPathGuts, &Rect, sizeof32(Rect));
+
+    return(status);
+}
+
+/******************************************************************************
+*
+* string object
+*
+******************************************************************************/
+
+_Check_return_
+extern STATUS
+gr_riscdiag_string_new_sbchars(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _OutRef_    P_DRAW_DIAG_OFFSET pTextStart,
+    _InRef_     PC_DRAW_POINT point,
+    _In_reads_(sbchars_n) PC_SBCHARS sbchars,
+    _InVal_     U32 sbchars_n,
+    _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle,
+    _InVal_     GR_COLOUR fg,
+    _In_opt_    const GR_COLOUR * const bg,
+    _InRef_     PC_GR_RISCDIAG lookup_gr_riscdiag)
+{
+    GR_PIXIT fsize_y = p_gr_textstyle->size_y;
+    GR_PIXIT fsize_x = p_gr_textstyle->size_x; /* may be zero */
+    U32 size = sbchars_n + 1 /*CH_NULL*/;
+    DRAW_OBJECT_TEXT text;
+    P_BYTE pObject;
+    DRAW_FONT_REF16 fontRef;
+    PIXIT_POINT fsize_mp;
+    STATUS status;
+
+    text.type = DRAW_OBJECT_TYPE_TEXT;
+    text.size = sizeof32(text) + round_up(size, 4); /* round up to output word boundary */
+    draw_box_make_bad(&text.bbox);
+
+    text.textcolour = gr_colour_to_riscDraw(fg);
+
+    if(bg && bg->visible)
+        text.background = gr_colour_to_riscDraw(*bg); /* hint colour */
+    else
+        text.background = (DRAW_COLOUR) 0xFFFFFF00U; /* hint is white if unspecified */
+
+    /* search for the text style using lookup_gr_riscdiag */
+    fontRef = gr_riscdiag_fontlist_lookup_textstyle(lookup_gr_riscdiag, lookup_gr_riscdiag->dd_fontListR, lookup_gr_riscdiag->dd_fontListW, p_gr_textstyle);
+
+    /* blat reserved fields in this 32-bit structure */
+    * (P_U32) &text.textstyle = (U32) fontRef;
+
+    /* NB. NOT DRAW UNITS!!! --- 1/640 point */
+    fsize_mp.y = gr_mp_from_pixit(fsize_y);
+    text.fsize_y = draw_fontsize_from_mp(fsize_mp.y);
+
+    if(0 == fsize_x)
+    { /* -> same as y */
+        fsize_mp.x = fsize_mp.y;
+        text.fsize_x = text.fsize_y;
+    }
+    else
+    {
+        fsize_mp.x = gr_mp_from_pixit(fsize_x);
+        text.fsize_x = draw_fontsize_from_mp(fsize_mp.x);
+    }
+
+    /* baseline origin coords */
+    text.coord = *point;
+
+    if(fontRef == 0)
+        /* Draw rendering positions System font strangely: quickly correct baseline */
+        text.coord.y -= (gr_riscDraw_from_pixit(fsize_y) / 8);
+
+    *pTextStart = gr_riscdiag_query_offset(p_gr_riscdiag);
+
+    if(NULL != (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, text.size, &status)))
+    {
+        memcpy32(pObject, &text, sizeof32(text));
+
+        /* SKS 01.07.01 only copy the amount requested! */
+        memcpy32(pObject + sizeof32(text), sbchars, sbchars_n);
+        PtrPutByteOff(pObject, sizeof32(text) + sbchars_n, CH_NULL); /* needs explicit termination */
+    }
+
+    return(status);
+}
+
+_Check_return_
+extern STATUS
+gr_riscdiag_string_new_uchars(
+    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
+    _OutRef_    P_DRAW_DIAG_OFFSET pTextStart,
+    _InRef_     PC_DRAW_POINT point,
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n,
+    _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle,
+    _InVal_     GR_COLOUR fg,
+    _In_opt_    const GR_COLOUR * const bg,
+    _InRef_     PC_GR_RISCDIAG lookup_gr_riscdiag)
+{
+#if USTR_IS_SBSTR
+    return(gr_riscdiag_string_new_sbchars(p_gr_riscdiag, pTextStart, point, uchars, uchars_n, p_gr_textstyle, fg, bg, lookup_gr_riscdiag));
+#else
+    GR_PIXIT fsize_y = p_gr_textstyle->size_y;
+    GR_PIXIT fsize_x = p_gr_textstyle->size_x; /* may be zero */
+    BOOL is_pure_ascii7;
+    U32 sbchars_n = sbchars_from_utf8_bytes_needed(uchars, uchars_n, &is_pure_ascii7);
+    U32 size = sbchars_n + 1 /*CH_NULL*/;
+    DRAW_OBJECT_TEXT text;
+    P_BYTE pObject;
+    DRAW_FONT_REF16 fontRef;
+    PIXIT_POINT fsize_mp;
+    STATUS status;
+
+    text.type = DRAW_OBJECT_TYPE_TEXT;
+    text.size = sizeof32(text) + round_up(size, 4); /* round up to output word boundary */
+    draw_box_make_bad(&text.bbox);
+
+    text.textcolour = gr_colour_to_riscDraw(fg);
+
+    if(bg && bg->visible)
+        text.background = gr_colour_to_riscDraw(*bg); /* hint colour */
+    else
+        text.background = (DRAW_COLOUR) 0xFFFFFF00U; /* hint is white if unspecified */
+
+    /* search for the text style using lookup_gr_riscdiag */
+    fontRef = gr_riscdiag_fontlist_lookup_textstyle(lookup_gr_riscdiag, lookup_gr_riscdiag->dd_fontListR, lookup_gr_riscdiag->dd_fontListW, p_gr_textstyle);
+
+    /* blat reserved fields in this 32-bit structure */
+    * (P_U32) &text.textstyle = (U32) fontRef;
+
+    /* NB. NOT DRAW UNITS!!! --- 1/640 point */
+    fsize_mp.y = gr_mp_from_pixit(fsize_y);
+    text.fsize_y = draw_fontsize_from_mp(fsize_mp.y);
+
+    if(0 == fsize_x)
+    { /* -> same as y */
+        fsize_mp.x = fsize_mp.y;
+        text.fsize_x = text.fsize_y;
+    }
+    else
+    {
+        fsize_mp.x = gr_mp_from_pixit(fsize_x);
+        text.fsize_x = draw_fontsize_from_mp(fsize_mp.x);
+    }
+
+    /* baseline origin coords */
+    text.coord = *point;
+
+    if(fontRef == 0)
+        /* Draw rendering positions System font strangely: quickly correct baseline */
+        text.coord.y -= (gr_riscDraw_from_pixit(fsize_y) / 8);
+
+    *pTextStart = gr_riscdiag_query_offset(p_gr_riscdiag);
+
+    if(NULL != (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, text.size, &status)))
+    {
+        memcpy32(pObject, &text, sizeof32(text));
+
+        if(is_pure_ascii7)
+        {
+            assert(sbchars_n == uchars_n);
+            memcpy32(PtrAddBytes(P_SBCHARS, pObject, sizeof32(text)), uchars, uchars_n);
+        }
+        else
+        {
+            bool_assert(sbchars_n ==
+                sbchars_from_utf8(PtrAddBytes(P_SBCHARS, pObject, sizeof32(text)), sbchars_n, get_system_codepage(), uchars, uchars_n));
+        }
+
+        PtrPutByteOff(pObject, sizeof32(text) + sbchars_n, CH_NULL); /* needs explicit termination */
+    }
+
+    return(status);
+#endif /* USTR_IS_SBSTR */
 }
 
 /******************************************************************************
@@ -711,7 +1026,7 @@ gr_riscdiag_scaled_diagram_add(
     /* scan the diagram to be copied for font tables - no need to set hglobal */
     gr_riscdiag_diagram_setup_from_data(&source_gr_riscdiag, p_diag, diag_len);
 
-    { /* never put the file header, font lists or RISC OS 3 crap object in our diagram */
+    { /* never put the file header, font lists or RISC OS 3 rubbish object in our diagram */
     P_U8 pDiagCopy = NULL; /* keep dataflower happy */
     UINT pass;
 
@@ -795,6 +1110,7 @@ gr_riscdiag_scaled_diagram_add(
     init_posn.y = pDrawFileHdr->bbox.y0;
     init_size.x = pDrawFileHdr->bbox.x1 - init_posn.x;
     init_size.y = pDrawFileHdr->bbox.y1 - init_posn.y;
+    /*reportf("init_posn = %d,%d; init_size = %d,%d", init_posn.x, init_posn.y, init_size.x, init_size.y);*/
     } /*block*/
 
     posn.x = pBox->x0;
@@ -858,7 +1174,7 @@ gr_riscdiag_scaled_diagram_add(
     if(gr_riscdiag_object_first(p_gr_riscdiag, &thisObject, &endObject, &pObject, TRUE))
     {
         do  {
-            /* note that there are no awkward font table or RO3 DRAW_OBJECT_TYPE_OPTIONS etc in the copy */
+            /* note that there are no awkward font table or RO3 DRAW_OBJECT_TYPE_OPTIONS etc. in the copy */
             switch(*DRAW_OBJHDR(U32, pObject, type))
             {
             case DRAW_OBJECT_TYPE_TEXT:
@@ -985,7 +1301,7 @@ gr_riscdiag_scaled_diagram_add(
 
                         /*FALLTHRU*/
 
-                    case DRAW_PATH_TYPE_CLOSE:
+                    case DRAW_PATH_TYPE_CLOSE_WITH_LINE:
 #endif
                         p_path += sizeof32(DRAW_PATH_CLOSE);
                         break;
@@ -996,10 +1312,37 @@ gr_riscdiag_scaled_diagram_add(
                 break;
                 }
 
+            case DRAW_OBJECT_TYPE_JPEG:
+                {
+                DRAW_OBJECT_JPEG jpeg;
+
+                memcpy32(&jpeg, pObject, sizeof32(jpeg));
+
+                /* shift and scale and shift bbox (x1,y1 will need recomputing) */
+                draw_box_xform(&jpeg.bbox, &jpeg.bbox, &scale_xform);
+
+                /* scale both width and height */
+                jpeg.width  = gr_coord_scale(jpeg.width,  simple_scale.x);
+                jpeg.height = gr_coord_scale(jpeg.height, simple_scale.y);
+
+                /* scale the transform matrix */
+                jpeg.trfm.a = gr_coord_scale(jpeg.trfm.a, simple_scale.x);
+                jpeg.trfm.b = 0; /*gr_coord_scale(jpeg.trfm.b, simple_scale.x);*/ /* only handles upright images */
+                jpeg.trfm.c = 0; /*gr_coord_scale(jpeg.trfm.c, simple_scale.y);*/
+                jpeg.trfm.d = gr_coord_scale(jpeg.trfm.d, simple_scale.y);
+
+                /* update the translation component of the transform matrix to position this instance */
+                jpeg.trfm.e = jpeg.bbox.x0;
+                jpeg.trfm.f = jpeg.bbox.y0;
+
+                memcpy32(pObject, &jpeg, sizeof32(jpeg));
+
+                break;
+                }
+
             case DRAW_OBJECT_TYPE_SPRITE:
             case DRAW_OBJECT_TYPE_TRFMSPRITE:
             case DRAW_OBJECT_TYPE_TRFMTEXT:
-            case DRAW_OBJECT_TYPE_JPEG:
             case DRAW_OBJECT_TYPE_DS_DIB:
             case DRAW_OBJECT_TYPE_DS_DIBROT:
                 {
@@ -1048,6 +1391,7 @@ gr_riscdiag_scaled_diagram_add(
 /******************************************************************************
 *
 * scale the contents of a diagram.
+*
 * Note that text column objects and tagged objects can NOT be scaled at this point
 *
 ******************************************************************************/
@@ -1241,7 +1585,7 @@ gr_riscdiag_scale_diagram(
 
                         /*FALLTHRU*/
 
-                    case DRAW_PATH_TYPE_CLOSE:
+                    case DRAW_PATH_TYPE_CLOSE_WITH_LINE:
 #endif
                         p_path += sizeof32(DRAW_PATH_CLOSE);
                         break;
@@ -1252,10 +1596,12 @@ gr_riscdiag_scale_diagram(
                 break;
                 }
 
+            case DRAW_OBJECT_TYPE_JPEG:
+                break;
+
             case DRAW_OBJECT_TYPE_SPRITE:
             case DRAW_OBJECT_TYPE_TRFMSPRITE:
             case DRAW_OBJECT_TYPE_TRFMTEXT:
-            case DRAW_OBJECT_TYPE_JPEG:
             case DRAW_OBJECT_TYPE_DS_DIB:
             case DRAW_OBJECT_TYPE_DS_DIBROT:
                 {
@@ -1288,303 +1634,11 @@ gr_riscdiag_scale_diagram(
 
 /******************************************************************************
 *
-* no rectangle object; we make as composite path
-*
-******************************************************************************/
-
-struct gr_riscdiag_rectangle_guts
-{
-    DRAW_PATH_MOVE  bl;  /* move to bottom left  */
-    DRAW_PATH_LINE  br;  /* line to bottom right */
-    DRAW_PATH_LINE  tr;  /* line to top left     */
-    DRAW_PATH_LINE  tl;  /* line to top right    */
-    DRAW_PATH_LINE  bl2; /* line to bottom left again */
-    DRAW_PATH_CLOSE close;
-    DRAW_PATH_TERM  term;
-};
-
-_Check_return_
-extern STATUS
-gr_riscdiag_rectangle_new(
-    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pRectStart,
-    _InRef_     PC_DRAW_BOX pBox,
-    _InRef_opt_ PC_GR_LINESTYLE linestyle,
-    _InRef_opt_ PC_GR_FILLSTYLEC fillstylec)
-{
-    STATUS status;
-    P_BYTE pPathGuts;
-    struct gr_riscdiag_rectangle_guts Rect;
-
-    Rect.bl.tag    = DRAW_PATH_TYPE_MOVE;
-    Rect.bl.pt.x   = pBox->x0;
-    Rect.bl.pt.y   = pBox->y0;
-
-    Rect.br.tag    = DRAW_PATH_TYPE_LINE;
-    Rect.br.pt.x   = pBox->x1;
-    Rect.br.pt.y   = pBox->y0;
-
-    Rect.tr.tag    = DRAW_PATH_TYPE_LINE;
-    Rect.tr.pt.x   = pBox->x1;
-    Rect.tr.pt.y   = pBox->y1;
-
-    Rect.tl.tag    = DRAW_PATH_TYPE_LINE;
-    Rect.tl.pt.x   = pBox->x0;
-    Rect.tl.pt.y   = pBox->y1;
-
-    Rect.bl2.tag   = DRAW_PATH_TYPE_LINE;
-    Rect.bl2.pt    = Rect.bl.pt;
-
-    Rect.close.tag = DRAW_PATH_TYPE_CLOSE;
-
-    Rect.term.tag  = DRAW_PATH_TYPE_TERM;
-
-    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pRectStart, linestyle, fillstylec, sizeof32(Rect), &status)))
-        memcpy32(pPathGuts, &Rect, sizeof32(Rect));
-
-    return(status);
-}
-
-/******************************************************************************
-*
-* add a fonty string to the file
-*
-******************************************************************************/
-
-_Check_return_
-extern STATUS
-gr_riscdiag_string_new_sbchars(
-    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pTextStart,
-    _InRef_     PC_DRAW_POINT point,
-    _In_reads_(sbchars_n) PC_SBCHARS sbchars,
-    _InVal_     U32 sbchars_n,
-    _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle,
-    _InVal_     GR_COLOUR fg,
-    _In_opt_    const GR_COLOUR * const bg,
-    _InRef_     PC_GR_RISCDIAG lookup_gr_riscdiag)
-{
-    GR_PIXIT fsize_y = p_gr_textstyle->height;
-    GR_PIXIT fsize_x = p_gr_textstyle->width; /* may be zero */
-    U32 size = sbchars_n + 1 /*CH_NULL*/;
-    DRAW_OBJECT_TEXT text;
-    P_BYTE pObject;
-    DRAW_FONT_REF16 fontRef;
-    PIXIT_POINT fsize_mp;
-    STATUS status;
-
-    text.type = DRAW_OBJECT_TYPE_TEXT;
-    text.size = sizeof32(text) + round_up(size, 4); /* round up to output word boundary */
-    draw_box_make_bad(&text.bbox);
-
-    text.textcolour = gr_colour_to_riscDraw(fg);
-
-    if(bg && bg->visible)
-        text.background = gr_colour_to_riscDraw(*bg); /* hint colour */
-    else
-        text.background = (DRAW_COLOUR) 0xFFFFFF00U; /* hint is white if unspecified */
-
-    /* search for the text style using lookup_gr_riscdiag */
-    fontRef = gr_riscdiag_fontlist_lookup_textstyle(lookup_gr_riscdiag, lookup_gr_riscdiag->dd_fontListR, lookup_gr_riscdiag->dd_fontListW, p_gr_textstyle);
-
-    /* blat reserved fields in this 32-bit structure */
-    * (P_U32) &text.textstyle = (U32) fontRef;
-
-    /* NB. NOT DRAW UNITS!!! --- 1/640 point */
-    fsize_mp.y = gr_mp_from_pixit(fsize_y);
-    text.fsize_y = draw_fontsize_from_mp(fsize_mp.y);
-
-    if(0 == fsize_x)
-    { /* -> same as y */
-        fsize_mp.x = fsize_mp.y;
-        text.fsize_x = text.fsize_y;
-    }
-    else
-    {
-        fsize_mp.x = gr_mp_from_pixit(fsize_x);
-        text.fsize_x = draw_fontsize_from_mp(fsize_mp.x);
-    }
-
-    /* baseline origin coords */
-    text.coord = *point;
-
-    if(fontRef == 0)
-        /* Draw rendering positions System font strangely: quickly correct baseline */
-        text.coord.y -= (gr_riscDraw_from_pixit(fsize_y) / 8);
-
-    *pTextStart = gr_riscdiag_query_offset(p_gr_riscdiag);
-
-    if(NULL != (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, text.size, &status)))
-    {
-        memcpy32(pObject, &text, sizeof32(text));
-
-        /* SKS 01.07.01 only copy the amount requested! */
-        memcpy32(pObject + sizeof32(text), sbchars, sbchars_n);
-        PtrPutByteOff(pObject, sizeof32(text) + sbchars_n, CH_NULL); /* needs explicit termination */
-    }
-
-    return(status);
-}
-
-_Check_return_
-extern STATUS
-gr_riscdiag_string_new_uchars(
-    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET pTextStart,
-    _InRef_     PC_DRAW_POINT point,
-    _In_reads_(uchars_n) PC_UCHARS uchars,
-    _InVal_     U32 uchars_n,
-    _InRef_     PC_GR_TEXTSTYLE p_gr_textstyle,
-    _InVal_     GR_COLOUR fg,
-    _In_opt_    const GR_COLOUR * const bg,
-    _InRef_     PC_GR_RISCDIAG lookup_gr_riscdiag)
-{
-#if USTR_IS_SBSTR
-    return(gr_riscdiag_string_new_sbchars(p_gr_riscdiag, pTextStart, point, uchars, uchars_n, p_gr_textstyle, fg, bg, lookup_gr_riscdiag));
-#else
-    GR_PIXIT fsize_y = p_gr_textstyle->height;
-    GR_PIXIT fsize_x = p_gr_textstyle->width; /* may be zero */
-    BOOL is_pure_ascii7;
-    U32 sbchars_n = sbchars_from_utf8_bytes_needed(uchars, uchars_n, &is_pure_ascii7);
-    U32 size = sbchars_n + 1 /*CH_NULL*/;
-    DRAW_OBJECT_TEXT text;
-    P_BYTE pObject;
-    DRAW_FONT_REF16 fontRef;
-    PIXIT_POINT fsize_mp;
-    STATUS status;
-
-    text.type = DRAW_OBJECT_TYPE_TEXT;
-    text.size = sizeof32(text) + round_up(size, 4); /* round up to output word boundary */
-    draw_box_make_bad(&text.bbox);
-
-    text.textcolour = gr_colour_to_riscDraw(fg);
-
-    if(bg && bg->visible)
-        text.background = gr_colour_to_riscDraw(*bg); /* hint colour */
-    else
-        text.background = (DRAW_COLOUR) 0xFFFFFF00U; /* hint is white if unspecified */
-
-    /* search for the text style using lookup_gr_riscdiag */
-    fontRef = gr_riscdiag_fontlist_lookup_textstyle(lookup_gr_riscdiag, lookup_gr_riscdiag->dd_fontListR, lookup_gr_riscdiag->dd_fontListW, p_gr_textstyle);
-
-    /* blat reserved fields in this 32-bit structure */
-    * (P_U32) &text.textstyle = (U32) fontRef;
-
-    /* NB. NOT DRAW UNITS!!! --- 1/640 point */
-    fsize_mp.y = gr_mp_from_pixit(fsize_y);
-    text.fsize_y = draw_fontsize_from_mp(fsize_mp.y);
-
-    if(0 == fsize_x)
-    { /* -> same as y */
-        fsize_mp.x = fsize_mp.y;
-        text.fsize_x = text.fsize_y;
-    }
-    else
-    {
-        fsize_mp.x = gr_mp_from_pixit(fsize_x);
-        text.fsize_x = draw_fontsize_from_mp(fsize_mp.x);
-    }
-
-    /* baseline origin coords */
-    text.coord = *point;
-
-    if(fontRef == 0)
-        /* Draw rendering positions System font strangely: quickly correct baseline */
-        text.coord.y -= (gr_riscDraw_from_pixit(fsize_y) / 8);
-
-    *pTextStart = gr_riscdiag_query_offset(p_gr_riscdiag);
-
-    if(NULL != (pObject = gr_riscdiag_ensure(BYTE, p_gr_riscdiag, text.size, &status)))
-    {
-        memcpy32(pObject, &text, sizeof32(text));
-
-        if(is_pure_ascii7)
-        {
-            assert(sbchars_n == uchars_n);
-            memcpy32(PtrAddBytes(P_SBCHARS, pObject, sizeof32(text)), uchars, uchars_n);
-        }
-        else
-        {
-            bool_assert(sbchars_n ==
-                sbchars_from_utf8(PtrAddBytes(P_SBCHARS, pObject, sizeof32(text)), sbchars_n, get_system_codepage(), uchars, uchars_n));
-        }
-
-        PtrPutByteOff(pObject, sizeof32(text) + sbchars_n, CH_NULL); /* needs explicit termination */
-    }
-
-    return(status);
-#endif /* USTR_IS_SBSTR */
-}
-
-/******************************************************************************
-*
-* no trapezoid object; we make as composite path
-*
-******************************************************************************/
-
-struct gr_riscdiag_trapezoid_guts
-{
-    DRAW_PATH_MOVE  bl;     /* move to bottom left  */
-    DRAW_PATH_LINE  br;     /* line to bottom right */
-    DRAW_PATH_LINE  tr;     /* line to top right    */
-    DRAW_PATH_LINE  tl;     /* line to top left    */
-    DRAW_PATH_LINE  bl2;    /* line to bottom left again */
-    DRAW_PATH_CLOSE close;
-    DRAW_PATH_TERM  term;
-};
-
-_Check_return_
-extern STATUS
-gr_riscdiag_trapezoid_new(
-    _InoutRef_  P_GR_RISCDIAG p_gr_riscdiag,
-    _OutRef_    P_DRAW_DIAG_OFFSET epTrapStart,
-    _InRef_     PC_DRAW_POINT pOriginBL,
-    _InRef_     PC_DRAW_POINT pOffsetBR,
-    _InRef_     PC_DRAW_POINT pOffsetTR,
-    _InRef_     PC_DRAW_POINT pOffsetTL,
-    _InRef_     PC_GR_LINESTYLE linestyle,
-    _InRef_     PC_GR_FILLSTYLEC fillstylec)
-{
-    DRAW_DIAG_OFFSET trapStart;
-    P_DRAW_DIAG_OFFSET pTrapStart = epTrapStart ? epTrapStart : &trapStart;
-    STATUS status;
-    P_BYTE pPathGuts;
-    struct gr_riscdiag_trapezoid_guts Trap;
-
-    Trap.bl.tag    = DRAW_PATH_TYPE_MOVE;
-    Trap.bl.pt     = *pOriginBL;
-
-    Trap.br.tag    = DRAW_PATH_TYPE_LINE;
-    Trap.br.pt.x   = Trap.bl.pt.x + pOffsetBR->x;
-    Trap.br.pt.y   = Trap.bl.pt.y + pOffsetBR->y;
-
-    Trap.tr.tag    = DRAW_PATH_TYPE_LINE;
-    Trap.tr.pt.x   = Trap.bl.pt.x + pOffsetTR->x;
-    Trap.tr.pt.y   = Trap.bl.pt.y + pOffsetTR->y;
-
-    Trap.tl.tag    = DRAW_PATH_TYPE_LINE;
-    Trap.tl.pt.x   = Trap.bl.pt.x + pOffsetTL->x;
-    Trap.tl.pt.y   = Trap.bl.pt.y + pOffsetTL->y;
-
-    Trap.bl2.tag   = DRAW_PATH_TYPE_LINE;
-    Trap.bl2.pt    = Trap.bl.pt;
-
-    Trap.close.tag = DRAW_PATH_TYPE_CLOSE;
-
-    Trap.term.tag  = DRAW_PATH_TYPE_TERM;
-
-    if(NULL != (pPathGuts = gr_riscdiag_path_new(p_gr_riscdiag, pTrapStart, linestyle, fillstylec, sizeof32(Trap), &status)))
-        memcpy32(pPathGuts, &Trap, sizeof32(Trap));
-
-    return(status);
-}
-
-/******************************************************************************
-*
 * search diagram's font list object for given font, returning its fontref
 *
 ******************************************************************************/
 
+_Check_return_
 extern DRAW_FONT_REF16
 gr_riscdiag_fontlist_lookup_textstyle(
     _InRef_     PC_GR_RISCDIAG p_gr_riscdiag,

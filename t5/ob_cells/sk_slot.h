@@ -221,7 +221,7 @@ cells_docu_area_delete(
     _InVal_     BOOL delete_whole_rows,
     _InVal_     BOOL before_and_after);
 
-_Check_return_
+_Check_return_ _Success_(return >= 0)
 extern STATUS
 cells_docu_area_insert(
     _DocuRef_   P_DOCU p_docu,
@@ -235,14 +235,8 @@ cells_object_split(
     _DocuRef_   P_DOCU p_docu,
     _InRef_     PC_POSITION p_position);
 
-_Check_return_
-static inline BOOL
-slr_is_blank(
-    _DocuRef_   P_DOCU p_docu,
-    _InRef_     PC_SLR p_slr)
-{
-    return(NULL == p_cell_from_slr(p_docu, p_slr));
-}
+#define slr_is_blank(p_docu, p_slr) ( \
+    NULL == p_cell_from_slr(p_docu, p_slr) )
 
 _Check_return_
 extern STATUS

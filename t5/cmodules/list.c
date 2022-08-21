@@ -902,6 +902,8 @@ list_nextseq(
 *
 ******************************************************************************/
 
+_Check_return_
+_Ret_maybenull_
 extern P_LIST_ITEM
 list_prevseq(
     _InoutRef_  P_LIST_BLOCK lp,
@@ -1061,7 +1063,7 @@ allocpool(
 
     /* try to allocate new pool
      * we use the initial size of the pool as the pool increment
-     * ie (typically) the size of the first item in the pool
+     * i.e. (typically) the size of the first item in the pool
      * which seems to be as good a number as any
      */
     pool_inc = MIN(MAX_POOL, size * 5);

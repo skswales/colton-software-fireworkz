@@ -19,12 +19,6 @@
 #include "ob_dlg/xp_dlgr.h"
 #endif
 
-#if WINDOWS
-#include "commdlg.h"
-
-#include "cderr.h"
-#endif
-
 /*
 internal routines
 */
@@ -50,19 +44,6 @@ es_process_interlock;
 
 static U32
 style_intro_interlock;
-
-#if WINDOWS
-
-static COLORREF
-choosecolor_custom_colours[16] = /* all white */
-{
-    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF),
-    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF),
-    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF),
-    RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF), RGB(0xFF, 0xFF, 0xFF)
-};
-
-#endif /* OS */
 
 static void
 base_style_on_handles(
@@ -165,7 +146,7 @@ remove_style_use_query(
     dialog_cmd_process_dbox_setup(&dialog_cmd_process_dbox, remove_style_use_query_ctl_create, elemof32(remove_style_use_query_ctl_create), SKEL_SPLIT_MSG_DIALOG_REMOVE_STYLE_USE_QUERY_HELP_TOPIC);
     dialog_cmd_process_dbox.caption.type = UI_TEXT_TYPE_TSTR_PERM;
     dialog_cmd_process_dbox.caption.text.tstr = product_ui_id();
-    return(call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+    return(object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 }
 
 /******************************************************************************
@@ -437,7 +418,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
             dialog_cmd_process_dbox.p_proc_client = dialog_event_style_intro;
             dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &style_intro_callback;
             style_intro_interlock = MUTEX_UNAVAILABLE;
-            status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+            status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
             style_intro_interlock = MUTEX_AVAILABLE;
             } /*block*/
 
@@ -453,7 +434,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
                 }
                 else
                 {
-                    assert(array_index_valid(&style_intro_list_handle, style_intro_callback.selected_item));
+                    assert(array_index_is_valid(&style_intro_list_handle, style_intro_callback.selected_item));
 
                     /* NB. it's the UI list that's sorted, so get name from there! */
                     tstr_style_name = ui_text_tstr(array_ptr(&style_intro_callback.ui_source.source.array_handle, UI_TEXT, style_intro_callback.selected_item));
@@ -611,7 +592,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
                 if(p_style_use_query_entry->use)
                 {
                     /* option to remove style uses */
-                    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+                    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
                     status = remove_style_use_query(p_docu);
 
@@ -674,7 +655,7 @@ T5_CMD_PROTO(extern, t5_cmd_style_intro)
     }
     while(looping_outer);
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -773,7 +754,7 @@ T5_CMD_PROTO(extern, t5_cmd_effects_button)
     }
     while(looping);
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     return(status);
 }
@@ -930,9 +911,9 @@ static STATUS
 dialog_new_style_ctl_state_change(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change)
 {
-    const DIALOG_CTL_ID control_id = p_dialog_msg_ctl_state_change->dialog_control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_msg_ctl_state_change->dialog_control_id;
 
-    switch(control_id)
+    switch(dialog_control_id)
     {
     case NEW_STYLE_ID_USE_GROUP:
         /* enable style list according to possibility of use */
@@ -985,7 +966,7 @@ dialog_new_style_process_start(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-    dialog_cmd_ctl_state_set.control_id = NEW_STYLE_ID_LIST;
+    dialog_cmd_ctl_state_set.dialog_control_id = NEW_STYLE_ID_LIST;
     dialog_cmd_ctl_state_set.bits = 0;
 
     if(p_new_style_callback->tstr_style_name && *p_new_style_callback->tstr_style_name)
@@ -1004,7 +985,7 @@ dialog_new_style_process_start(
         }
     }
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     } /*block*/
 
     { /* if a suitable selection exists, allow that to be used as well as a named style */
@@ -1249,7 +1230,7 @@ new_style(
         dialog_cmd_process_dbox.p_proc_client = dialog_event_new_style;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &new_style_callback;
         es_process_interlock = MUTEX_UNAVAILABLE;
-        status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
+        status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox);
         es_process_interlock = MUTEX_AVAILABLE;
         } /*block*/
 
@@ -1260,7 +1241,7 @@ new_style(
         /*NOTREACHED*/
     }
 
-    status_assert(call_dialog(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_NOTE_POSITION_TRASH, P_DATA_NONE));
 
     ui_list_dispose_style(&new_style_list_handle, &new_style_callback.ui_source);
 
@@ -1290,7 +1271,7 @@ style_apply_struct(
         if(status_ok(status = style_ustr_inline_from_struct(p_docu, &quick_ublock, p_style)))
         {
             p_args[0].val.ustr_inline = quick_ublock_ustr_inline(&quick_ublock);
-            status = execute_command(object_id, p_docu, t5_message, &arglist_handle);
+            status = execute_command(p_docu, t5_message, &arglist_handle, object_id);
             quick_ublock_dispose(&quick_ublock);
         }
 
@@ -1300,9 +1281,21 @@ style_apply_struct(
     return(status);
 }
 
+_Check_return_
+static HOST_WND
+get_colour_picker_parent_window_handle(P_MSG_UISTYLE_COLOUR_PICKER p_msg_uistyle_colour_picker)
+{
+    DIALOG_CMD_HWND_QUERY dialog_cmd_hwnd_query;
+    dialog_cmd_hwnd_query.h_dialog = p_msg_uistyle_colour_picker->h_dialog;
+    dialog_cmd_hwnd_query.dialog_control_id = p_msg_uistyle_colour_picker->rgb_dialog_control_id;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_HWND_QUERY, &dialog_cmd_hwnd_query));
+    return(dialog_cmd_hwnd_query.hwnd);
+}
+
 T5_MSG_PROTO(extern, t5_msg_uistyle_colour_picker, P_MSG_UISTYLE_COLOUR_PICKER p_msg_uistyle_colour_picker)
 {
     RGB rgb;
+    BOOL res;
 
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
@@ -1312,66 +1305,34 @@ T5_MSG_PROTO(extern, t5_msg_uistyle_colour_picker, P_MSG_UISTYLE_COLOUR_PICKER p
     msgclr(dialog_cmd_ctl_state_query);
     dialog_cmd_ctl_state_query.h_dialog = p_msg_uistyle_colour_picker->h_dialog;
     dialog_cmd_ctl_state_query.bits = 0;
-    dialog_cmd_ctl_state_query.control_id = p_msg_uistyle_colour_picker->rgb_control_id;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
+    dialog_cmd_ctl_state_query.dialog_control_id = p_msg_uistyle_colour_picker->rgb_dialog_control_id;
+    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query));
     rgb = dialog_cmd_ctl_state_query.state.user.rgb;
     } /*block*/
 
     /* disable controlling button as a trivial UI interlock */
-    ui_dlg_ctl_enable(p_msg_uistyle_colour_picker->h_dialog, p_msg_uistyle_colour_picker->button_control_id, FALSE);
+    ui_dlg_ctl_enable(p_msg_uistyle_colour_picker->h_dialog, p_msg_uistyle_colour_picker->button_dialog_control_id, FALSE);
 
 #if WINDOWS
-    { /* wop up Windows' colour selector */
-    CHOOSECOLOR choosecolor;
-    BOOL res;
-    choosecolor.lStructSize = sizeof32(choosecolor);
+    /* wop up Windows' colour selector */
+    res = windows_colour_picker(get_colour_picker_parent_window_handle(p_msg_uistyle_colour_picker), &rgb);
+#elif RISCOS
+    /* wop up RISC OS's colour selector */
+    res = riscos_colour_picker(get_colour_picker_parent_window_handle(p_msg_uistyle_colour_picker), &rgb);
+#endif /* OS */
+
+    ui_dlg_ctl_enable(p_msg_uistyle_colour_picker->h_dialog, p_msg_uistyle_colour_picker->button_dialog_control_id, TRUE);
+
+    if(res)
     {
-    DIALOG_CMD_HWND_QUERY dialog_cmd_hwnd_query;
-    dialog_cmd_hwnd_query.h_dialog = p_msg_uistyle_colour_picker->h_dialog;
-    dialog_cmd_hwnd_query.control_id = p_msg_uistyle_colour_picker->rgb_control_id;
-    status_assert(call_dialog(DIALOG_CMD_CODE_HWND_QUERY, &dialog_cmd_hwnd_query));
-    choosecolor.hwndOwner = dialog_cmd_hwnd_query.hwnd;
-    } /*block*/
-    choosecolor.hInstance = (HWND /* bug in commdlg.h! */) GetInstanceHandle();
-    choosecolor.rgbResult = RGB(rgb.r, rgb.g, rgb.b); /* it's a COLORREF */
-    choosecolor.lpCustColors = choosecolor_custom_colours;
-    choosecolor.Flags = CC_RGBINIT | CC_FULLOPEN;
-    choosecolor.lCustData = 0;
-    choosecolor.lpfnHook = NULL;
-    choosecolor.lpTemplateName = NULL;
-    res = ChooseColor(&choosecolor);
-    if(!res)
-    {
-        /* extended error sometime */
-        return(STATUS_OK);
+        DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
+        msgclr(dialog_cmd_ctl_state_set);
+        dialog_cmd_ctl_state_set.h_dialog = p_msg_uistyle_colour_picker->h_dialog;
+        dialog_cmd_ctl_state_set.bits = 0;
+        dialog_cmd_ctl_state_set.dialog_control_id = p_msg_uistyle_colour_picker->rgb_dialog_control_id;
+        dialog_cmd_ctl_state_set.state.user.rgb = rgb;
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     }
-    rgb_set(&rgb, GetRValue(choosecolor.rgbResult), GetGValue(choosecolor.rgbResult), GetBValue(choosecolor.rgbResult));
-    } /*block*/
-#else
-    { /* wop up RISC OS's colour selector */
-    HOST_WND parent_window_handle;
-    {
-    DIALOG_CMD_HWND_QUERY dialog_cmd_hwnd_query;
-    dialog_cmd_hwnd_query.h_dialog = p_msg_uistyle_colour_picker->h_dialog;
-    dialog_cmd_hwnd_query.control_id = p_msg_uistyle_colour_picker->rgb_control_id;
-    status_assert(call_dialog(DIALOG_CMD_CODE_HWND_QUERY, &dialog_cmd_hwnd_query));
-    parent_window_handle = dialog_cmd_hwnd_query.hwnd;
-    } /*block*/
-    riscos_colour_picker(parent_window_handle, &rgb);
-    } /*block*/
-#endif
-
-    ui_dlg_ctl_enable(p_msg_uistyle_colour_picker->h_dialog, p_msg_uistyle_colour_picker->button_control_id, TRUE);
-
-    {
-    DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
-    msgclr(dialog_cmd_ctl_state_set);
-    dialog_cmd_ctl_state_set.h_dialog = p_msg_uistyle_colour_picker->h_dialog;
-    dialog_cmd_ctl_state_set.bits = 0;
-    dialog_cmd_ctl_state_set.control_id = p_msg_uistyle_colour_picker->rgb_control_id;
-    dialog_cmd_ctl_state_set.state.user.rgb = rgb;
-    status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
-    } /*block*/
 
     return(STATUS_OK);
 }

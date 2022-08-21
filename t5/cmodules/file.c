@@ -204,7 +204,7 @@ file_buffer(
     {
         /* consider user has done file_buffer(f, b, sizeof(b)) then
          * file_buffer(f, NULL, q) - we have to assume that he's doing
-         * this for a good reason eg. the buffer is going out of scope
+         * this for a good reason e.g. the buffer is going out of scope
          * so failure to alloc can leave file in an unbuffered and error state
         */
         file_handle->flags = file_handle->flags & ~_FILE_USERBUFFER;
@@ -268,9 +268,11 @@ t5_file_close(
 
     trace_2(TRACE_MODULE_FILE, TEXT("t5_file_close(") PTR_XTFMT TEXT(" -> ") PTR_XTFMT TEXT(")"), p_file_handle, p_file_handle ? *p_file_handle : NULL);
 
-    PTR_ASSERT(p_file_handle);
-    if(IS_PTR_NULL_OR_NONE_ANY(P_FILE_HANDLE, p_file_handle))
+    if(IS_PTR_NULL_OR_NONE(p_file_handle))
+    {
+        PTR_ASSERT(p_file_handle);
         return(create_error(FILE_ERR_BADHANDLE));
+    }
 
     file_handle = *p_file_handle;
 
@@ -1395,7 +1397,7 @@ file_validate(
 _Check_return_
 extern STATUS
 file_write(
-    _In_bytecount_x_(size*nmemb) const void * ptr,
+    _In_reads_bytes_x_(size*nmemb) const void * ptr,
     _InVal_     U32 size,
     _InVal_     U32 nmemb,
     _InoutRef_opt_ FILE_HANDLE file_handle)

@@ -51,13 +51,13 @@ exported variables
 */
 
 const GR_CHART_OBJID
-gr_chart_objid_anon = { GR_CHART_OBJNAME_ANON };
+gr_chart_objid_anon = GR_CHART_OBJID_INIT_NAME(GR_CHART_OBJNAME_ANON);
 
 const GR_CHART_OBJID
-gr_chart_objid_chart = { GR_CHART_OBJNAME_CHART };
+gr_chart_objid_chart = GR_CHART_OBJID_INIT_NAME(GR_CHART_OBJNAME_CHART);
 
 const GR_CHART_OBJID
-gr_chart_objid_legend = { GR_CHART_OBJNAME_LEGEND };
+gr_chart_objid_legend = GR_CHART_OBJID_INIT_NAME(GR_CHART_OBJNAME_LEGEND);
 
 /*
 preferred defaults - exported solely for check in chtIO
@@ -88,7 +88,7 @@ gr_chart_add(
 * add a datasource as the labels datasource
 * even with multiple axes there is only one
 * if punter tries to add more then let him
-* but its really ignored by us (eg add range)
+* but its really ignored by us (e.g. add range)
 *
 ******************************************************************************/
 
@@ -533,8 +533,8 @@ gr_chart_new(
     /* SKS after PD 4.12 25mar92 - must reallocate series to chart on first gr_chart_build() even if no datasources have been added */
     cp->bits.realloc_series = 1;
 
-    cp->d3.pitch = 10.0; /* DEGREES */
-    cp->d3.roll = 10.0;
+    cp->d3.droop = 10.0; /* DEGREES */
+    cp->d3.turn  = 10.0;
 
     cp->barch.slot_overlap_percentage = 0.0; /* no overlap */
     cp->linech.slot_shift_percentage = 0.0; /* complete overlap */
@@ -582,8 +582,8 @@ gr_chart_new(
         }
     }
 
-    cp->axes[1].axis[X_AXIS_IDX].bits.lzr = GR_AXIS_POSITION_TOP;
-    cp->axes[1].axis[Y_AXIS_IDX].bits.lzr = GR_AXIS_POSITION_RIGHT;
+    cp->axes[1].axis[X_AXIS_IDX].bits.lzr = GR_AXIS_POSITION_BZT_TOP; /* bzt for category or x-axis */
+    cp->axes[1].axis[Y_AXIS_IDX].bits.lzr = GR_AXIS_POSITION_LZR_RIGHT;
 
     gr_colour_set_BLACK(  cp->chart.borderstyle.fg);
                         /*cp->chart.borderstyle.width = 4;*/ /* 0.2 point */
@@ -630,10 +630,13 @@ gr_chart_new(
 
     {
     PC_USTR ustr = resource_lookup_ustr(CHART_MSG_DEFAULT_FONT);
-    cp->text.style.base.height = (U16) (fast_ustrtoul(ustr, &ustr) * GR_PIXITS_PER_POINT);
+    PIXIT height, width;
+    height = (PIXIT) fast_ustrtoul(ustr, &ustr) * GR_PIXITS_PER_POINT;
     ustr_IncByte(ustr);
-    cp->text.style.base.width  = (U16) (fast_ustrtoul(ustr, &ustr) * GR_PIXITS_PER_POINT);
+    width = (PIXIT) fast_ustrtoul(ustr, &ustr) * GR_PIXITS_PER_POINT;
     ustr_IncByte(ustr);
+    cp->text.style.base.size_y = height;
+    cp->text.style.base.size_x = width;
     tstr_xstrkpy(cp->text.style.base.tstrFontName, elemof32(cp->text.style.base.tstrFontName), _tstr_from_ustr(ustr));
     } /*block*/
 
@@ -1060,7 +1063,7 @@ gr_chart_clone(
     status_assert(status1);
 
     /* if anything failed blow the new copied non-core contents away */
-    /* but only when we have reached a consistent state with no stolen list_blkrefs etc */
+    /* but only when we have reached a consistent state with no stolen list_blkrefs etc. */
     if(status_fail(status1))
         gr_chart_dispose_noncore(dst_cp);
 

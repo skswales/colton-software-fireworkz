@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2015 Stuart Swales */
+/* Copyright (C) 2014-2016 Stuart Swales */
 
 /* Statistical function routines (distributions etc) for evaluator */
 
@@ -26,8 +26,6 @@
 * Statistical functions - Continuous distributions
 *
 ******************************************************************************/
-
-extern double erf(double); /* for normal-based CDFs */
 
 _Check_return_
 static F64
@@ -390,12 +388,12 @@ beta_std_inv_calc(
         /* we can improve the bracketing constraints on the solution at each step */
         if(F_x < 0.0)
         {
-            //reportf("refine [,] from [l=%f to [l=%f", lower_bracket, x);
+            //reportf(TEXT("refine [,] from [l=%f to [l=%f"), lower_bracket, x);
             lower_bracket = x;
         }
         else
         {
-            //reportf("refine [,] from u=%f] to u=%f]", upper_bracket, x);
+            //reportf(TEXT("refine [,] from u=%f] to u=%f]"), upper_bracket, x);
             upper_bracket = x;
         }
 
@@ -1016,12 +1014,12 @@ F_inv_calc(
         /* we can improve the bracketing constraints on the solution at each step */
         if(F_x < 0.0)
         {
-            //reportf("refine [,] from [l=%g to [l=%f", lower_bracket, x);
+            //reportf(TEXT("refine [,] from [l=%g to [l=%f"), lower_bracket, x);
             lower_bracket = x;
         }
         else
         {
-            //reportf("refine [,] from u=%g] to u=%f]", upper_bracket, x);
+            //reportf(TEXT("refine [,] from u=%g] to u=%f]"), upper_bracket, x);
             upper_bracket = x;
         }
 
@@ -1414,12 +1412,12 @@ gamma_inv_calc(
         /* we can improve the bracketing constraints on the solution at each step */
         if(F_x < 0.0)
         {
-            //reportf("refine [,] from [l=%g to [l=%f", lower_bracket, x);
+            //reportf(TEXT("refine [,] from [l=%g to [l=%f"), lower_bracket, x);
             lower_bracket = x;
         }
         else
         {
-            //reportf("refine [,] from u=%g] to u=%f]", upper_bracket, x);
+            //reportf(TEXT("refine [,] from u=%g] to u=%f]"), upper_bracket, x);
             upper_bracket = x;
         }
 
@@ -2013,12 +2011,12 @@ t_inv_calc(
         /* we can improve the bracketing constraints on the solution at each step */
         if(F_x < 0.0)
         {
-            //reportf("refine [,] from [l=%g to [l=%f", lower_bracket, x);
+            //reportf(TEXT("refine [,] from [l=%g to [l=%f"), lower_bracket, x);
             lower_bracket = x;
         }
         else
         {
-            //reportf("refine [,] from u=%g] to u=%f]", upper_bracket, x);
+            //reportf(TEXT("refine [,] from u=%g] to u=%f]"), upper_bracket, x);
             upper_bracket = x;
         }
 

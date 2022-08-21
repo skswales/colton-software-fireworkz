@@ -281,9 +281,9 @@ ri_lbox_enable(
 {
     P_RI_LBOX p_lbox = ri_lbox_p_from_h(handle);
 
-    if(p_lbox->bits.disabled != (UBF) !enable)
+    if(p_lbox->bits.disabled != UBF_PACK(!enable))
     {
-        p_lbox->bits.disabled = (UBF) !enable;
+        p_lbox->bits.disabled = UBF_PACK(!enable);
 
         /* queue a redraw for the entire window */
         ri_lbox_item_update(p_lbox, 0, p_lbox->n_items, RI_LBOX_UPDATE_LATER);

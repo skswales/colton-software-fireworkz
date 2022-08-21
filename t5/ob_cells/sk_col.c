@@ -115,7 +115,7 @@ col_changes_between_rows(
 *
 * work out which column contains a skeleton point
 * points 'drift to the left' if they are not contained
-* by any column; ie gaps are considered owned by the
+* by any column; i.e. gaps are considered owned by the
 * column immediately to their left
 *
 ******************************************************************************/

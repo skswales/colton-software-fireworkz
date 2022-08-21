@@ -55,29 +55,27 @@ callback_from_gr_chart(
 
 _Check_return_
 static STATUS
-chart_load_drawfile_to_selection(
+chart_load_image_file_to_selection(
     P_CHART_HEADER p_chart_header,
     _In_z_      PCTSTR filename,
     _InVal_     T5_FILETYPE t5_filetype,
-    _InVal_     BOOL file_is_not_safe,
-    _InVal_     BOOL desire_embed)
+    _InVal_     BOOL embed_file)
 {
     const P_GR_CHART cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
-    BOOL embed_file = file_is_not_safe || desire_embed; /* SKS 13.10.99 */
     GR_FILLSTYLEB gr_fillstyleb;
-    GR_CACHE_HANDLE cache_handle;
+    IMAGE_CACHE_HANDLE image_cache_handle;
     STATUS status;
     ARRAY_HANDLE h_data;
 
-    status_return(gr_cache_entry_ensure(&cache_handle, filename, t5_filetype));
+    status_return(image_cache_entry_ensure(&image_cache_handle, filename, t5_filetype));
 
-    h_data = gr_cache_loaded_ensure(cache_handle);
+    h_data = image_cache_loaded_ensure(image_cache_handle);
 
     if(!h_data)
-        return(gr_cache_error_query(cache_handle));
+        return(image_cache_error_query(image_cache_handle));
 
     if(embed_file)
-        gr_cache_embedded_updating_entry(&cache_handle);
+        image_cache_embedded_updating_entry(&image_cache_handle);
 
     chart_modify_docu(p_chart_header);
 
@@ -91,7 +89,7 @@ chart_load_drawfile_to_selection(
         gr_fillstyleb.bits.notsolid = 1;
     }
 
-    * (P_U32) &gr_fillstyleb.pattern = * (P_U32) &cache_handle;
+    * (P_U32) &gr_fillstyleb.pattern = * (P_U32) &image_cache_handle;
 
     status = gr_chart_objid_fillstyleb_set(cp, p_chart_header->selection.id, &gr_fillstyleb);
 
@@ -280,7 +278,7 @@ chart_selection_make_repr(
     if(hitObject != GR_DIAG_OBJECT_NONE)
     {
         PC_BYTE pObject = array_ptr(&cp->core.p_gr_diag->handle, BYTE, hitObject);
-        U32 objectSize = * (P_S32) (pObject + offsetof32(GR_DIAG_OBJHDR, size));
+        U32 objectSize = * PtrAddBytes(PC_U32, pObject, offsetof32(GR_DIAG_OBJHDR, n_bytes));
         GR_DIAG_OBJHDR objhdr;
 
         memcpy32(&objhdr, pObject, sizeof32(objhdr));
@@ -299,7 +297,7 @@ chart_selection_make_repr(
                 break;
 
             pObject = array_ptr(&cp->core.p_gr_diag->handle, BYTE, hitObject);
-            objectSize = * (P_S32) (pObject + offsetof32(GR_DIAG_OBJHDR, size));
+            objectSize = * PtrAddBytes(PC_U32, pObject, offsetof32(GR_DIAG_OBJHDR, n_bytes));
 
             memcpy32(&objhdr, pObject, sizeof32(objhdr));
 
@@ -339,9 +337,13 @@ chart_selection_make_repr(
             if(NULL != (pDrawFileHdr = gr_riscdiag_diagram_lock(cp->core.p_gr_diag->p_gr_riscdiag)))
             {
                 DRAW_DIAG_OFFSET dummy_sys_off;
-                DRAW_BOX draw_box;
-                memcpy32(&draw_box, &pDrawFileHdr->bbox, sizeof32(draw_box));
-                status = gr_riscdiag_rectangle_new(p_chart_header->selection.p_gr_riscdiag, &dummy_sys_off, &draw_box, NULL, NULL);
+                DRAW_POINT draw_point;
+                DRAW_SIZE draw_size;
+                draw_point.x = pDrawFileHdr->bbox.x0;
+                draw_point.y = pDrawFileHdr->bbox.y0;
+                draw_size.cx = pDrawFileHdr->bbox.x1 - pDrawFileHdr->bbox.x0;
+                draw_size.cy = pDrawFileHdr->bbox.y1 - pDrawFileHdr->bbox.y0;
+                status = gr_riscdiag_rectangle_new(p_chart_header->selection.p_gr_riscdiag, &dummy_sys_off, &draw_point, &draw_size, NULL, NULL);
                 gr_riscdiag_diagram_unlock(cp->core.p_gr_diag->p_gr_riscdiag);
             }
             } /*block*/
@@ -349,8 +351,14 @@ chart_selection_make_repr(
             if(status_ok(status))
             {
                 DRAW_BOX draw_box;
+                DRAW_POINT draw_point;
+                DRAW_SIZE draw_size;
                 draw_box_from_gr_box(&draw_box, &p_chart_header->selection.box);
-                status = gr_riscdiag_rectangle_new(p_chart_header->selection.p_gr_riscdiag, &selectionPathStart, &draw_box, &linestyle, NULL);
+                draw_point.x = draw_box.x0;
+                draw_point.y = draw_box.y0;
+                draw_size.cx = draw_box.x1 - draw_box.x0;
+                draw_size.cy = draw_box.y1 - draw_box.y0;
+                status = gr_riscdiag_rectangle_new(p_chart_header->selection.p_gr_riscdiag, &selectionPathStart, &draw_point, &draw_size, &linestyle, NULL);
             }
 
             if(status_ok(status))
@@ -495,24 +503,31 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_note_object_edit_click->object_data_ref;
     P_GR_DIAG p_gr_diag;
     P_GR_CHART cp;
-    BOOL adjust_clicked;
+    BOOL tighter_selection;
     GR_CHART_OBJID id;
     GR_DIAG_OFFSET hitObject[64];
     U32 hitObjectDepth = elemof32(hitObject);
     P_BYTE pObject;
-    GR_POINT selpoint, selellipse;
+    GR_POINT selpoint;
+    GR_SIZE selsize;
     U32 hitIndex;
     GR_DIAG_OFFSET endObject;
     GR_POINT origin_offset = { 0, 0 };
+    T5_MESSAGE t5_message_effective = p_note_object_edit_click->t5_message;
     STATUS status = STATUS_OK;
 
     IGNOREPARM_DocuRef_(p_docu);
     IGNOREPARM_InVal_(t5_message);
 
-    switch(p_note_object_edit_click->t5_message)
+    CODE_ANALYSIS_ONLY(zero_struct(hitObject));
+
+    switch(t5_message_effective)
     {
     case T5_EVENT_CLICK_LEFT_SINGLE:
     case T5_EVENT_CLICK_RIGHT_SINGLE:
+        t5_message_effective = right_message_if_ctrl(t5_message_effective, T5_EVENT_CLICK_RIGHT_SINGLE, p_note_object_edit_click->p_skelevent_click);
+        break;
+
     case T5_EVENT_FILEINSERT_DOINSERT:
     case T5_EVENT_CLICK_LEFT_DRAG:
         break;
@@ -522,6 +537,8 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
     }
 
     p_note_object_edit_click->processed = 1;
+
+    tighter_selection = (t5_message_effective == T5_EVENT_CLICK_RIGHT_SINGLE);
 
     if( !p_chart_header ||
         !gr_chart_diagram(p_chart_header->ch, &p_gr_diag) ||
@@ -534,43 +551,38 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
 
     cp = p_gr_chart_from_chart_handle(p_chart_header->ch);
 
-    adjust_clicked = (p_note_object_edit_click->t5_message == T5_EVENT_CLICK_RIGHT_SINGLE);
-
     {
     P_DRAW_FILE_HEADER pDiagHdr = (P_DRAW_FILE_HEADER) gr_riscdiag_diagram_lock(p_gr_diag->p_gr_riscdiag);
     if(NULL != pDiagHdr)
     {
         origin_offset.x = - pDiagHdr->bbox.x0;
         origin_offset.y = + pDiagHdr->bbox.y1;
+
+        origin_offset.x *= PIXITS_PER_RISCOS;
+        origin_offset.y *= PIXITS_PER_RISCOS;
+
+        origin_offset.x /= GR_RISCDRAW_PER_RISCOS;
+        origin_offset.y /= GR_RISCDRAW_PER_RISCOS;
+
         gr_riscdiag_diagram_unlock(p_gr_diag->p_gr_riscdiag);
     }
     } /*block*/
 
-    origin_offset.x *= PIXITS_PER_RISCOS;
-    origin_offset.y *= PIXITS_PER_RISCOS;
-
-    origin_offset.x /= GR_RISCDRAW_PER_RISCOS;
-    origin_offset.y /= GR_RISCDRAW_PER_RISCOS;
-
-    /* tighter correlation if ADJUST clicked (but remember some objects may be truly subpixel ...) */
-    if(adjust_clicked)
+    if(tighter_selection)
     {
-        /* tight error ellipse centred on pixel centre */
-        selellipse.x = 4 /*host_modevar_cache_current.dx*/ * PIXITS_PER_RISCOS / 2;
-        selellipse.y = 4 /*host_modevar_cache_current.dy*/ * PIXITS_PER_RISCOS / 2;
-
-        selpoint.x = p_note_object_edit_click->pixit_point.x + selellipse.x;
-        selpoint.y = p_note_object_edit_click->pixit_point.y + selellipse.y;
+        /* tighter click box if ADJUST clicked (but remember some objects may be truly subpixel ...) */
+        selsize.cx = 2 * MAX(p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.x, p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.y);
+        selsize.cy = PIXITS_PER_PIXEL;
     }
     else
     {
-        /* larger (but still small) error circle if SELECT clicked */
-        selellipse.x = 8 * PIXITS_PER_RISCOS;
-        selellipse.y = selellipse.x;
-
-        selpoint.x = p_note_object_edit_click->pixit_point.x;
-        selpoint.y = p_note_object_edit_click->pixit_point.y;
+        /* larger (but still small) click box if SELECT clicked */
+        selsize.cx = 4 * MAX(p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.x, p_note_object_edit_click->p_skelevent_click->click_context.one_real_pixel.y);
+        selsize.cy = selsize.cx;
     }
+
+    selpoint.x = p_note_object_edit_click->pixit_point.x;
+    selpoint.y = p_note_object_edit_click->pixit_point.y;
 
     /* invert coordinate space again */
     selpoint.x = selpoint.x - origin_offset.x;
@@ -583,7 +595,7 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
 
     for(;;)
     {
-        status_consume(gr_diag_object_correlate_between(cp->core.p_gr_diag, &selpoint, &selellipse, hitObject, GR_DIAG_OBJECT_FIRST, endObject, hitObjectDepth - 1));
+        status_consume(gr_diag_object_correlate_between(cp->core.p_gr_diag, &selpoint, &selsize, hitObject, hitObjectDepth - 1, GR_DIAG_OBJECT_FIRST, endObject));
 
         if(hitObject[0] == GR_DIAG_OBJECT_NONE)
         {
@@ -593,11 +605,13 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
 
         /* find deepest named hit */
         for(hitIndex = 1; hitIndex < hitObjectDepth; ++hitIndex)
+        {
             if(hitObject[hitIndex] == GR_DIAG_OBJECT_NONE)
             {
                 --hitIndex;
                 break;
             }
+        }
 
         pObject = array_ptr(&cp->core.p_gr_diag->handle, BYTE, hitObject[hitIndex]);
 
@@ -614,12 +628,12 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
         break;
     }
 
-    consume_bool(gr_chart_objid_find_parent(&id, adjust_clicked));
+    consume_bool(gr_chart_objid_find_parent(&id, tighter_selection));
 
     if(hitObject[0] == GR_DIAG_OBJECT_NONE)
     {
         /* clear selection only on left click and if there was one */
-        if((p_note_object_edit_click->t5_message == T5_EVENT_CLICK_LEFT_SINGLE) && (p_chart_header->selection.id.name != GR_CHART_OBJNAME_ANON))
+        if((t5_message_effective == T5_EVENT_CLICK_LEFT_SINGLE) && (p_chart_header->selection.id.name != GR_CHART_OBJNAME_ANON))
             chart_selection_clear(p_chart_header, p_note_object_edit_click->p_note_info);
     }
     else
@@ -627,7 +641,7 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
         /* change selection unless file insert or drag start or if there wasn't one */
         BOOL change_selection = FALSE;
 
-        switch(p_note_object_edit_click->t5_message)
+        switch(t5_message_effective)
         {
         case T5_EVENT_FILEINSERT_DOINSERT:
         case T5_EVENT_CLICK_LEFT_DRAG:
@@ -644,17 +658,24 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
             (void) chart_selection_make(p_chart_header, &id, p_note_object_edit_click->p_note_info);
     }
 
-    switch(p_note_object_edit_click->t5_message)
+    switch(t5_message_effective)
     {
     case T5_EVENT_FILEINSERT_DOINSERT:
         {
         PCTSTR filename = p_note_object_edit_click->p_skelevent_click->data.fileinsert.filename;
         T5_FILETYPE t5_filetype = p_note_object_edit_click->p_skelevent_click->data.fileinsert.t5_filetype;
-        BOOL file_is_not_safe = !p_note_object_edit_click->p_skelevent_click->data.fileinsert.safesource;
-        BOOL desire_embed = global_preferences.embed_inserted_files;
+        const BOOL file_is_not_safe = !p_note_object_edit_click->p_skelevent_click->data.fileinsert.safesource;
+        const BOOL ctrl_pressed = p_note_object_edit_click->p_skelevent_click->click_context.ctrl_pressed;
+        BOOL embed_file = global_preferences.embed_inserted_files;
 
-        /* SKS 10/13oct99 take note of Ctrl key state too */
-        if(host_ctrl_pressed()) desire_embed = !desire_embed;
+        if(file_is_not_safe)
+        {   /* if source is a scrapfile, we must embed, regardless of the checkbox/Ctrl key states */
+            embed_file = TRUE;
+        }
+        else
+        {   /* SKS 10/13oct99 take note of Ctrl key state too - inverts the preference */
+            if(ctrl_pressed) embed_file = !embed_file;
+        }
 
         if(GR_CHART_OBJNAME_ANON == p_chart_header->selection.id.name)
         {
@@ -662,18 +683,10 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_click, _InoutRef_ P_NOTE_OBJECT_
             return(STATUS_OK);
         }
 
-        switch(p_note_object_edit_click->p_skelevent_click->data.fileinsert.t5_filetype)
-        {
-        case FILETYPE_WINDOWS_BMP:
-        case FILETYPE_DRAW:
-        case FILETYPE_SPRITE:
-            break;
-
-        default:
+        if(!image_cache_can_import_with_image_convert(p_note_object_edit_click->p_skelevent_click->data.fileinsert.t5_filetype))
             return(create_error(CHART_ERR_FILETYPE_BAD));
-        }
 
-        status = chart_load_drawfile_to_selection(p_chart_header, filename, t5_filetype, file_is_not_safe, desire_embed);
+        status = chart_load_image_file_to_selection(p_chart_header, filename, t5_filetype, embed_file);
 
         break;
         }
@@ -756,26 +769,6 @@ T5_MSG_PROTO(static, chart_edit_msg_note_object_size_set, _InoutRef_ P_NOTE_OBJE
     return(STATUS_OK);
 }
 
-#if RISCOS
-
-T5_MSG_PROTO(static, chart_edit_msg_save_picture_filetypes_request_riscos, _InRef_ P_ARRAY_HANDLE p_h_savetypes /*extended*/)
-{
-    SAVE_FILETYPE save_filetype;
-
-    IGNOREPARM_DocuRef_(p_docu);
-    IGNOREPARM_InVal_(t5_message);
-
-    /* Indicate that we can save charts as DrawFiles */
-    save_filetype.object_id = OBJECT_ID_CHART;
-    save_filetype.t5_filetype = FILETYPE_DRAW;
-    save_filetype.description.type = UI_TEXT_TYPE_RESID;
-    save_filetype.description.text.resource_id = CHART_MSG_FILEDESCRIPT;
-
-    return(al_array_add(p_h_savetypes, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype));
-}
-
-#endif
-
 T5_MSG_PROTO(static, chart_edit_msg_save_picture, _InRef_ P_MSG_SAVE_PICTURE p_msg_save_picture)
 {
     const P_CHART_HEADER p_chart_header = (P_CHART_HEADER) p_msg_save_picture->extra;
@@ -802,6 +795,22 @@ T5_MSG_PROTO(static, chart_edit_msg_save_picture, _InRef_ P_MSG_SAVE_PICTURE p_m
     }
 
     return(STATUS_FAIL);
+}
+
+T5_MSG_PROTO(static, chart_edit_msg_save_picture_filetypes_request, _InoutRef_ P_MSG_SAVE_PICTURE_FILETYPES_REQUEST p_msg_save_picture_filetypes_request)
+{
+    SAVE_FILETYPE save_filetype;
+
+    IGNOREPARM_DocuRef_(p_docu);
+    IGNOREPARM_InVal_(t5_message);
+
+    /* Indicate that we can save charts as Drawfiles */
+    save_filetype.object_id = OBJECT_ID_CHART;
+    save_filetype.t5_filetype = FILETYPE_DRAW;
+    save_filetype.suggested_leafname.type = UI_TEXT_TYPE_RESID;
+    save_filetype.suggested_leafname.text.resource_id = CHART_MSG_SUGGESTED_LEAFNAME;
+
+    return(al_array_add(&p_msg_save_picture_filetypes_request->h_save_filetype, SAVE_FILETYPE, 1, PC_ARRAY_INIT_BLOCK_NONE, &save_filetype));
 }
 
 T5_MSG_PROTO(static, chart_edit_msg_caret_show_claim, P_CARET_SHOW_CLAIM p_caret_show_claim)
@@ -1140,13 +1149,14 @@ T5_MSG_PROTO(static, chart_edit_msg_chart_edit_insert_picture, _InRef_ P_MSG_INS
     const P_CHART_HEADER p_chart_header = p_chart_header_from_docu_last(p_docu);
     PCTSTR filename = p_msg_insert_foreign->filename;
     T5_FILETYPE t5_filetype = p_msg_insert_foreign->t5_filetype;
-    BOOL file_is_not_safe = FALSE;
-    BOOL desire_embed = global_preferences.embed_inserted_files;
+  /*const BOOL file_is_not_safe = FALSE;*/
+    const BOOL ctrl_pressed = p_msg_insert_foreign->ctrl_pressed;
+    BOOL embed_file = global_preferences.embed_inserted_files;
 
     IGNOREPARM_InVal_(t5_message);
 
-    /* SKS 10/13oct99 take note of Ctrl key state too */
-    if(host_ctrl_pressed()) desire_embed = !desire_embed;
+    /* SKS 10/13oct99 take note of Ctrl key state too - inverts the preference */
+    if(ctrl_pressed) embed_file = !embed_file;
 
     if(NULL == p_chart_header)
     {
@@ -1160,16 +1170,10 @@ T5_MSG_PROTO(static, chart_edit_msg_chart_edit_insert_picture, _InRef_ P_MSG_INS
         return(STATUS_OK);
     }
 
-    switch(p_msg_insert_foreign->t5_filetype)
-    {
-    case FILETYPE_WINDOWS_BMP:
-    case FILETYPE_DRAW:
-    case FILETYPE_SPRITE:
-        return(chart_load_drawfile_to_selection(p_chart_header, filename, t5_filetype, file_is_not_safe, desire_embed));
-
-    default:
+    if(!image_cache_can_import_with_image_convert(p_msg_insert_foreign->t5_filetype))
         return(create_error(CHART_ERR_FILETYPE_BAD));
-    }
+
+    return(chart_load_image_file_to_selection(p_chart_header, filename, t5_filetype, embed_file));
 }
 
 T5_MSG_PROTO(static, chart_edit_msg_note_object_edit_start, _InoutRef_ P_NOTE_OBJECT_EDIT_START p_note_object_edit_start)
@@ -1283,14 +1287,11 @@ OBJECT_PROTO(extern, object_chart_edit_sideways)
     case T5_MSG_NOTE_OBJECT_SIZE_SET:
         return(chart_edit_msg_note_object_size_set(p_docu, t5_message, (P_NOTE_OBJECT_SIZE) p_data));
 
-#if RISCOS
-    case T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST_RISCOS:
-        return(chart_edit_msg_save_picture_filetypes_request_riscos(p_docu, t5_message, (P_ARRAY_HANDLE) p_data));
-#endif
-
     case T5_MSG_SAVE_PICTURE:
-        /* Save chart as a picture */
         return(chart_edit_msg_save_picture(p_docu, t5_message, (P_MSG_SAVE_PICTURE) p_data));
+
+    case T5_MSG_SAVE_PICTURE_FILETYPES_REQUEST:
+        return(chart_edit_msg_save_picture_filetypes_request(p_docu, t5_message, (P_MSG_SAVE_PICTURE_FILETYPES_REQUEST) p_data));
 
     /*********************************************************************************************/
 

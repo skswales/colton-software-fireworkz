@@ -18,25 +18,36 @@
 
 #include "flex.h" /* C: tboxlibs */
 
+/* reporting shims */
+
+_Check_return_
+extern BOOL
+report_flex_alloc(
+    flex_ptr anchor,
+    int size);
+
+_Check_return_
+extern BOOL
+report_flex_extend(
+    flex_ptr anchor,
+    int newsize);
+
+extern void
+report_flex_free(
+    flex_ptr anchor);
+
+_Check_return_
+extern int
+report_flex_size(
+    flex_ptr anchor);
+
 /*#define REPORT_FLEX 1*/
 
-#if defined(REPORT_FLEX) /* reporting shims */
-
+#if defined(REPORT_FLEX)
 #define flex_alloc(anchor, size) report_flex_alloc(anchor, size)
-_Check_return_
-extern BOOL report_flex_alloc(flex_ptr anchor, int size);
-
 #define flex_extend(anchor, newsize) report_flex_extend(anchor, newsize)
-_Check_return_
-extern BOOL report_flex_extend(flex_ptr anchor, int newsize);
-
 #define flex_free(anchor) report_flex_free(anchor)
-extern void report_flex_free(flex_ptr anchor);
-
 #define flex_size(anchor) report_flex_size(anchor)
-_Check_return_
-extern int report_flex_size(flex_ptr anchor);
-
 #endif /* REPORT_FLEX */
 
 /* granularity of flex allocation to use */
@@ -74,7 +85,7 @@ extern int
 flex_size_maybe_null(
     flex_ptr anchor);
 
-/* A number to tell the user, ie. only approximate: number of bytes free. */
+/* A number to tell the user, i.e. only approximate: number of bytes free. */
 
 _Check_return_
 extern int

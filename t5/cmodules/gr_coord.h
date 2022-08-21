@@ -125,12 +125,11 @@ box operations
 */
 
 _Check_return_
-extern S32
+extern BOOL
 gr_box_hit(
-    _OutRef_    P_GR_POINT offset,
-    _InRef_     PC_GR_BOX abox,
-    _InRef_     PC_GR_POINT apoint,
-    _InRef_opt_ PC_GR_POINT semimajor /*NULL->exact hit required*/);
+    _InRef_     PC_GR_BOX box,
+    _InRef_     PC_GR_POINT point,
+    _InRef_opt_ PC_GR_SIZE size /*NULL->exact hit required*/);
 
 _Check_return_
 extern S32
@@ -262,6 +261,20 @@ gr_point_xform(
     _OutRef_    P_GR_POINT xpoint,
     _InRef_     PC_GR_POINT apoint,
     _InRef_     PC_GR_XFORMMATRIX xform);
+
+_Check_return_
+extern BOOL
+cn_PnPoly(
+    _InRef_     PC_GR_POINT P,
+    _In_reads_(N) PC_GR_POINT V,
+    _InVal_     U32 N);
+
+_Check_return_
+extern U32
+wn_PnPoly(
+    _InRef_     PC_GR_POINT P,
+    _In_reads_(N) PC_GR_POINT V,
+    _InVal_     U32 N);
 
 /*
 scale building

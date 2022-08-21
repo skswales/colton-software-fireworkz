@@ -26,9 +26,9 @@ chart_add_note(
 
     zero_struct(note_info);
 
-    note_info.layer = LAYER_CELLS_ABOVE; /* always insert into front layer */
+    note_info.layer = LAYER_CELLS_AREA_ABOVE; /* always insert into front layer */
 
-    note_info.note_pinning = NOTE_PIN_SINGLE;
+    note_info.note_pinning = NOTE_PIN_CELLS_SINGLE; /* and pinned to a cell */
 
     /* try to position chart below the data if that cell could exist else position in bottom cell */
     note_info.region.tl.col = p_chart_shapedesc->region.tl.col;
@@ -50,7 +50,7 @@ chart_add_note(
     {
     ROW_ENTRY row_entry;
     row_entry_from_row(p_docu, &row_entry, note_info.region.tl.row);
-    note_info.offset.tl.y = (row_entry.rowtab.edge_bot.pixit - row_entry.rowtab.edge_top.pixit) * 3 / 4;
+    note_info.offset_tl.y = (row_entry.rowtab.edge_bot.pixit - row_entry.rowtab.edge_top.pixit) * 3 / 4;
     } /*block*/
 
     region_from_two_slrs(&note_info.region, &note_info.region.tl, &note_info.region.tl, 1);
@@ -81,8 +81,8 @@ chart_add_note(
     RECT_FLAGS rect_flags;
 
     skel_point_from_slr_tl(p_docu, &skel_rect.tl, &note_info.region.tl);
-    skel_rect.tl.pixit_point.x += note_info.offset.tl.x;
-    skel_rect.tl.pixit_point.y += note_info.offset.tl.y;
+    skel_rect.tl.pixit_point.x += note_info.offset_tl.x;
+    skel_rect.tl.pixit_point.y += note_info.offset_tl.y;
     skel_point_normalise(p_docu, &skel_rect.tl, UPDATE_PANE_CELLS_AREA);
 
     skel_rect.br = skel_rect.tl;
@@ -156,7 +156,7 @@ typedef struct CHART_BL_GALLERY_CALLBACK
     CHART_SHAPEDESC chart_shapedesc;
     P_S32 p_selected_pict;
     F64 pie_explode_value;
-    F64 pie_start_heading;
+    F64 pie_start_heading_degrees;
     BOOL pie_anticlockwise;
     BOOL auto_pict;
     BOOL solid_if_auto_pict;
@@ -275,10 +275,10 @@ dialog_bl_gallery_process_start(
 
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = h_dialog;
-        dialog_cmd_ctl_state_set.control_id = PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE;
+        dialog_cmd_ctl_state_set.dialog_control_id = PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE;
         dialog_cmd_ctl_state_set.state.bump_f64 = 0.0;
         dialog_cmd_ctl_state_set.bits = DIALOG_STATE_SET_ALWAYS_MSG; /*NB*/
-        status_return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
         break;
         }
 
@@ -322,7 +322,7 @@ dialog_bl_gallery_process_end(
 
         case GR_CHART_TYPE_PIE:
             pie_gallery_selected_explode_pict = ui_dlg_get_radio(h_dialog, PIE_GALLERY_ID_EXPLODE_GROUP);
-            ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE, &p_chart_bl_gallery_callback->pie_start_heading);
+            ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_START_POSITION_ANGLE_VALUE, &p_chart_bl_gallery_callback->pie_start_heading_degrees);
             ui_dlg_get_f64(h_dialog, PIE_GALLERY_ID_EXPLODE_BY_VALUE, &p_chart_bl_gallery_callback->pie_explode_value);
             p_chart_bl_gallery_callback->pie_anticlockwise = ui_dlg_get_check(h_dialog, PIE_GALLERY_ID_ANTICLOCKWISE);
             break;
@@ -404,7 +404,7 @@ gr_chart_bl_gallery(
 
         dialog_cmd_process_dbox.p_proc_client = dialog_event_bl_gallery;
         dialog_cmd_process_dbox.client_handle = (CLIENT_HANDLE) &chart_bl_gallery_callback;
-        status_break(status = call_dialog_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
+        status_break(status = object_call_DIALOG_with_docu(p_docu, DIALOG_CMD_CODE_PROCESS_DBOX, &dialog_cmd_process_dbox));
 
         /* restrict initial penguin chart */
         if(chart_bl_gallery_callback.chart_shapedesc.bits.chart_type == GR_CHART_TYPE_BAR)
@@ -698,7 +698,7 @@ gr_chart_bl_gallery(
 
                     gr_chart_objid_from_series_idx(cp, 0, &modifying_id);
 
-                    serp->style.pie_start_heading = chart_bl_gallery_callback.pie_start_heading;
+                    serp->style.pie_start_heading_degrees = chart_bl_gallery_callback.pie_start_heading_degrees;
                     serp->bits.pie_anticlockwise = chart_bl_gallery_callback.pie_anticlockwise;
 
                     switch(pie_gallery_selected_explode_pict)

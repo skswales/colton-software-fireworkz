@@ -10,6 +10,10 @@
 
 #include "cmodules/cfbf.h"
 
+#ifndef          __typepack_h
+#include "cmodules/typepack.h"
+#endif
+
 _Check_return_
 static STATUS
 compound_file_read_file_header(
@@ -530,9 +534,9 @@ compound_file_dump_directory_entry(
 
     PC_BYTE p = file_dir->_ab;
 
-    if(*p < CH_SPACE)
+    if(readval_U16_LE(p) < CH_SPACE)
     {
-        U16 unknown = * ((PC_U16) p);
+        U16 unknown = readval_U16_LE(p);
         trace_1(TRACE_MODULE_CFBF, TEXT("|[%.4X]|"), unknown);
         p += 2; /* step over unknown short */
         i += 2;
@@ -542,16 +546,16 @@ compound_file_dump_directory_entry(
         if(CH_NULL == p[1])
             trace_1(TRACE_MODULE_CFBF, TEXT("|%c|"), p[0]);
         else
-            trace_1(TRACE_MODULE_CFBF, TEXT("|[%.4X]|"), * ((PC_U16) p));
+            trace_1(TRACE_MODULE_CFBF, TEXT("|[%.4X]|"), readval_U16_LE(p));
     }
 
 #elif WINDOWS
 
     const WCHAR * p = (const WCHAR *) file_dir->_ab;
 
-    if((* (PC_BYTE) p) < CH_SPACE)
+    if(readval_U16_LE(p) < CH_SPACE)
     {
-        U16 unknown = * ((PC_U16) p);
+        U16 unknown = readval_U16_LE(p);
         trace_1(TRACE_MODULE_CFBF, TEXT("|[%.4X]|"), unknown);
         p += 1; /* step over unknown short */
         i += 2;
@@ -560,7 +564,7 @@ compound_file_dump_directory_entry(
     __pragma(warning(suppress: 28182))
     for( ; i < file_dir->_cb/2; i++, p++)
     {
-        trace_1(TRACE_MODULE_CFBF, TEXT("|%lc|"), *p);
+        trace_1(TRACE_MODULE_CFBF, TEXT("|%lc|"), readval_U16_LE(p));
     }
 
 #endif /* OS */
@@ -634,7 +638,7 @@ compound_file_decode_info_from_file_dir(
     __pragma(warning(suppress: 28182))
     for(j = 0; j < file_dir->_cb/2; j++, p++)
     {
-        *q++ = *p;
+        *q++ = readval_U16_LE(p);
     }
     *q = CH_NULL;
 

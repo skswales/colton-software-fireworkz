@@ -309,11 +309,11 @@ object_construct_table[] =
     { "ChartMargins",           chart_args_s32_s32_s32_s32, T5_CMD_CHART_IO_CORE_MARGINS },
 
     { "LegendBits",             chart_args_s32,             T5_CMD_CHART_IO_LEGEND_BITS,                { 0, 0, 0, 0, 0, 0, 0, 0, 1 } },
-    { "Legend",                 chart_args_s32_s32_s32_s32, T5_CMD_CHART_IO_LEGEND_POSN,                { 0, 0, 0, 0, 0, 0, 0, 0, 1 } }, /* and size too */
+    { "Legend",                 chart_args_s32_s32_s32_s32, T5_CMD_CHART_IO_LEGEND_POSN,                { 0, 0, 0, 0, 0, 0, 0, 0, 0/*1*/ } }, /* and size too */
 
     { "Chart3D",                chart_args_s32,             T5_CMD_CHART_IO_D3_BITS,                    { 0, 0, 0, 0, 0, 0, 0, 0, 1 } },
-    { "Chart3DPitch",           chart_args_f64,             T5_CMD_CHART_IO_D3_PITCH,                   { 0, 0, 0, 0, 0, 0, 0, 0, 1 } },
-    { "Chart3DRoll",            chart_args_f64,             T5_CMD_CHART_IO_D3_ROLL,                    { 0, 0, 0, 0, 0, 0, 0, 0, 0/*1*/ } },
+    { "Chart3DPitch",           chart_args_f64,             T5_CMD_CHART_IO_D3_DROOP,                   { 0, 0, 0, 0, 0, 0, 0, 0, 1 } },
+    { "Chart3DRoll",            chart_args_f64,             T5_CMD_CHART_IO_D3_TURN,                    { 0, 0, 0, 0, 0, 0, 0, 0, 0/*1*/ } },
 
     { "Bar2DOverlap",           chart_args_s32,             T5_CMD_CHART_IO_BARCH_SLOT_2D_OVERLAP },
     { "Line2DShift",            chart_args_s32,             T5_CMD_CHART_IO_LINECH_SLOT_2D_SHIFT },
@@ -730,6 +730,10 @@ chart_modify(
     case CHART_MODIFIED_AWAITING_REBUILD:
         p_chart_header->recalc.state = CHART_MODIFIED_AGAIN;
         break;
+
+    default: default_unhandled();
+    case CHART_MODIFIED_AGAIN:
+        break;
     }
 }
 
@@ -748,6 +752,10 @@ chart_modify_in_a_bit(
     case CHART_MODIFIED_AWAITING_REBUILD:
         p_chart_header->recalc.state = CHART_MODIFIED_AGAIN;
         break;
+
+    default: default_unhandled();
+    case CHART_MODIFIED_AGAIN:
+        break;
     }
 }
 
@@ -764,7 +772,7 @@ chart_rebuild_after_modify(
     _InoutRef_  P_CHART_HEADER p_chart_header)
 {
     if(p_chart_header->recalc.state != CHART_UNMODIFIED)
-    { /* clear any scheduled events for this chart */
+    {   /* clear any scheduled events for this chart */
         p_chart_header->recalc.state = CHART_UNMODIFIED;
         trace_1(TRACE__SCHEDULED, TEXT("chart_rebuild_after_modify - *** scheduled_event_remove(docno=%d), clear pending rebuild"), p_chart_header->docno);
         scheduled_event_remove(p_chart_header->docno, T5_EVENT_SCHEDULED, scheduled_event_chart, (CLIENT_HANDLE) p_chart_header);
@@ -1898,13 +1906,13 @@ chart_msg_startup(void)
 
 #if WINDOWS
     {
-    static const RESOURCE_BITMAP_ID id_common_btn_16x15 = { OBJECT_ID_CHART, CHART_ID_BM_COM_BTN_ID };
+    static const RESOURCE_BITMAP_ID id_common_btn_16x16 = { OBJECT_ID_CHART, CHART_ID_BM_COM_BTN_ID };
     static const RESOURCE_BITMAP_ID id_common_bar = { OBJECT_ID_CHART, CHART_ID_BM_COMBAR_ID };
     static const RESOURCE_BITMAP_ID id_common_lin = { OBJECT_ID_CHART, CHART_ID_BM_COMLIN_ID };
     static const RESOURCE_BITMAP_ID id_common_ovr = { OBJECT_ID_CHART, CHART_ID_BM_COMOVR_ID };
     static const RESOURCE_BITMAP_ID id_common_pie = { OBJECT_ID_CHART, CHART_ID_BM_COMPIE_ID };
     static const RESOURCE_BITMAP_ID id_common_sct = { OBJECT_ID_CHART, CHART_ID_BM_COMSCT_ID };
-    status_assert(resource_bitmap_tool_size_register(&id_common_btn_16x15, 16, 15));
+    status_assert(resource_bitmap_tool_size_register(&id_common_btn_16x16, 16, 16));
     status_assert(resource_bitmap_tool_size_register(&id_common_bar, 64, 60));
     status_assert(resource_bitmap_tool_size_register(&id_common_lin, 64, 60));
     status_assert(resource_bitmap_tool_size_register(&id_common_ovr, 64, 60));
@@ -1980,8 +1988,8 @@ OBJECT_PROTO(extern, object_chart)
     case T5_CMD_CHART_IO_LEGEND_BITS:
     case T5_CMD_CHART_IO_LEGEND_POSN:
     case T5_CMD_CHART_IO_D3_BITS:
-    case T5_CMD_CHART_IO_D3_PITCH:
-    case T5_CMD_CHART_IO_D3_ROLL:
+    case T5_CMD_CHART_IO_D3_DROOP:
+    case T5_CMD_CHART_IO_D3_TURN:
     case T5_CMD_CHART_IO_BARCH_SLOT_2D_OVERLAP:
     case T5_CMD_CHART_IO_LINECH_SLOT_2D_SHIFT:
     case T5_CMD_CHART_IO_AXES_BITS:

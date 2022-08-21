@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2015 Stuart Swales */
+/* Copyright (C) 2006-2016 Stuart Swales */
 
 #include "common/gflags.h"
 
@@ -176,7 +176,7 @@ _tstr_from_ustr(
         return(TEXT("<<tstr_from_ustr - NULL>>"));
     }
 
-    if(IS_PTR_NONE_ANY(ustr))
+    if(IS_PTR_NONE(ustr))
     {
         assert0();
         return(TEXT("<<tstr_from_ustr - NONE>>"));
@@ -246,8 +246,10 @@ _ustr_from_tstr(
     if(NULL == tstr)
         return(USTR_TEXT("<<ustr_from_tstr - NULL>>"));
 
-    if(IS_PTR_NONE_ANY(tstr))
+#if CHECKING
+    if(IS_PTR_NONE(tstr))
         return(USTR_TEXT("<<ustr_from_tstr - NONE>>"));
+#endif
 
     do  {
         U32 avail = elemof32(ustr_from_tstr_statics.buffer) - ustr_from_tstr_statics.used; /* NB may be zero! */

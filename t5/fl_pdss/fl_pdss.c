@@ -425,9 +425,7 @@ pdss_auto_width(
     COL col;
 
     docu_area_init(&docu_area);
-    docu_area.tl.slr.row = -1;
-    docu_area.br.slr.row = -1;
-    docu_area.whole_col = 1;
+    docu_area_set_whole_col(&docu_area);
 
     style_init(&style);
     style_bit_set(&style, STYLE_SW_CS_WIDTH);
@@ -470,9 +468,7 @@ pdss_set_column_width(
     STYLE style;
 
     docu_area_init(&docu_area);
-    docu_area.tl.slr.row = -1;
-    docu_area.br.slr.row = -1;
-    docu_area.whole_col = 1;
+    docu_area_set_whole_col(&docu_area);
 
     style_init(&style);
     style_bit_set(&style, STYLE_SW_CS_WIDTH);

@@ -72,7 +72,14 @@ splash_onPaint_banner(
     w = p_size->cx;
     h = p_size->cy;
 
+#if 0
+    {
+    BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255 /*alpha*/, AC_SRC_ALPHA };
+    void_WrapOsBoolChecking(AlphaBlend(hdcDisplay, x, y, w, h, hdcMem, xm, ym, wm, hm, bf));
+    } /*block*/
+#else
     void_WrapOsBoolChecking(StretchBlt(hdcDisplay, x, y, w, h, hdcMem, xm, ym, wm, hm, SRCCOPY));
+#endif
 
     SelectBitmap(hdcMem, hbmOld);
     DeleteDC(hdcMem);
@@ -347,7 +354,11 @@ splash_window_create(
         wndclass.hInstance = GetInstanceHandle();
       /*wndclass.hIcon = NULL;*/
         wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+#if 0
+        wndclass.hbrBackground = GetStockBrush(WHITE_BRUSH);
+#else
         wndclass.hbrBackground = GetStockBrush(HOLLOW_BRUSH);
+#endif
       /*wndclass.lpszMenuName = NULL;*/
         wndclass.lpszClassName = window_class[APP_WINDOW_CLASS_SPLASH];
         if(!WrapOsBoolChecking(RegisterClass(&wndclass)))
@@ -358,9 +369,13 @@ splash_window_create(
     if(!WrapOsBoolChecking(SystemParametersInfo(SPI_GETWORKAREA, 0, &screen_rect, 0)))
         return;
 
+#if 0
+    g_h_bitmap_banner = gdiplus_load_bitmap_from_file(TEXT("c:\\Users\\sks\\Pictures\\wiki.png"));
+#else
     void_WrapOsBoolChecking(NULL != (
     g_h_bitmap_banner = (HBITMAP)
         LoadImage(GetInstanceHandle(), (PCTSTR) (UINT_PTR) APP_RESOURCE_BANNER_BITMAP, IMAGE_BITMAP, 0, 0, 0)));
+#endif
 
     if(NULL != g_h_bitmap_banner)
     {
@@ -380,7 +395,7 @@ splash_window_create(
 
     if(NULL != g_h_bitmap_banner)
     {
-        { /* SKS 22feb2012 - obtain message font from system metrics for 2000, XP (2002), Vista (2006), 7 (2009), 8 (2012) */
+        { /* SKS 22feb2012 - obtain message font from system metrics */
         NONCLIENTMETRICS nonclientmetrics;
         nonclientmetrics.cbSize = (UINT) sizeof32(NONCLIENTMETRICS);
 #if (WINVER >= 0x0600) /* keep size compatible with older OSes even if we can target newer */

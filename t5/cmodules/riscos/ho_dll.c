@@ -59,7 +59,7 @@ typedef struct OB_MODULE_RELOC
 
     UBF relocation_type : 4;                    /* type of relocation required */
     UBF external_reference : 1;                 /* reference to an externally declared function */
-    UBF PC_relative : 1;                        /* PC relative value (ie. instruction to be relocated) */
+    UBF PC_relative : 1;                        /* PC relative value (i.e. instruction to be relocated) */
     UBF internal_reloc : 1;                     /* add area base to value for non PC relative relocations */
 
     UBF absolute_value : 1;                     /* value is a constant and should not be relocated on loading */

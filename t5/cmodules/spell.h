@@ -23,24 +23,24 @@ function declarations
 _Check_return_
 extern STATUS
 spell_addword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word);
 
 _Check_return_
 extern STATUS
 spell_checkword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word);
 
 _Check_return_
 extern STATUS
 spell_close(
-    _InVal_     DICT_NUMBER dict);
+    _InVal_     DICT_NUMBER dict_number);
 
 _Check_return_
 extern STATUS
 spell_close_file_only(
-    _InVal_     DICT_NUMBER dict);
+    _InVal_     DICT_NUMBER dict_number);
 
 _Check_return_
 extern STATUS
@@ -51,35 +51,35 @@ spell_createdict(
 _Check_return_
 extern STATUS
 spell_deleteword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word);
 
 _Check_return_
 extern STATUS
 spell_flush(
-    _InVal_     DICT_NUMBER dict);
+    _InVal_     DICT_NUMBER dict_number);
 
 _Check_return_
 extern STATUS
 spell_isupper(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch);
 
 _Check_return_
 extern STATUS
 spell_iswordc(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch);
 
 _Check_return_
 extern STATUS
 spell_load(
-    _InVal_     DICT_NUMBER dict);
+    _InVal_     DICT_NUMBER dict_number);
 
 _Check_return_
 extern STATUS
 spell_nextword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _Out_writes_z_(sizeof_wordout) P_SBSTR wordout,
     _InVal_     S32 sizeof_wordout,
     _In_z_      PC_SBSTR wordin,
@@ -90,20 +90,19 @@ _Check_return_
 extern STATUS /*DICT_NUMBER*/
 spell_opendict(
     _In_z_      PCTSTR filename,
-    _In_z_      PCTSTR def_name,
     _OutRef_    P_PCTSTR copy_right,
     _InVal_     BOOL load_and_close_file_after);
 
 _Check_return_
 extern STATUS
 spell_pack(
-    _InVal_     DICT_NUMBER olddict,
-    _InVal_     DICT_NUMBER newdict);
+    _InVal_     DICT_NUMBER old_dict_number,
+    _InVal_     DICT_NUMBER new_dict_number);
 
 _Check_return_
 extern STATUS
 spell_prevword(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _Out_writes_z_(sizeof_wordout) P_SBSTR wordout,
     _InVal_     S32 sizeof_wordout,
     _In_z_      PC_SBSTR wordin,
@@ -113,7 +112,7 @@ spell_prevword(
 _Check_return_
 extern STATUS
 spell_setoptions(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 optionset,
     _InVal_     S32 optionmask);
 
@@ -129,7 +128,7 @@ spell_startup(void);
 _Check_return_
 extern STATUS
 spell_strnicmp(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _In_z_      PC_SBSTR word1,
     _In_z_      PC_SBSTR word2,
     _InVal_     S32 len);
@@ -137,30 +136,30 @@ spell_strnicmp(
 _Check_return_
 extern STATUS
 spell_tolower(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch);
 
 _Check_return_
 extern STATUS
 spell_toupper(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch);
 
 _Check_return_
 extern STATUS
 spell_unlock(
-    _InVal_     DICT_NUMBER dict);
+    _InVal_     DICT_NUMBER dict_number);
 
 _Check_return_
 extern STATUS
 spell_valid_1(
-    _InVal_     DICT_NUMBER dict,
+    _InVal_     DICT_NUMBER dict_number,
     _InVal_     S32 ch);
 
 _Check_return_
 extern STATUS
 spell_write_whole(
-    _InVal_     DICT_NUMBER dict);
+    _InVal_     DICT_NUMBER dict_number);
 
 /*
 wildcard characters

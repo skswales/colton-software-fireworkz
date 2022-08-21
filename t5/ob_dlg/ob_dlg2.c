@@ -22,10 +22,10 @@ internal functions
 static void
 dialog_control_rect_changed_zap_dependents_in(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BIT_NUMBER bit_number,
     P_DIALOG_ICTL_GROUP p_ictl_group,
-    _InVal_     DIALOG_CTL_ID parent_control_id);
+    _InVal_     DIALOG_CONTROL_ID parent_dialog_control_id);
 
 static void
 dialog_dbox_process_focus_return_post(
@@ -68,7 +68,7 @@ dialog_arglist_construct(
     _OutRef_    P_ARGLIST_HANDLE p_arglist_handle,
     P_DIALOG p_dialog,
     _InRef_     PC_ARG_TYPE p_arg_types /*[], terminator is ARG_TYPE_NONE*/,
-    const PC_DIALOG_CTL_ID p_control_id /*[n_arglist_args]*/)
+    const PC_DIALOG_CTL_ID p_dialog_control_id /*[n_arglist_args]*/)
 {
     status_return(arglist_prepare(p_arglist_handle, p_arg_types));
 
@@ -84,9 +84,9 @@ dialog_arglist_construct(
             DIALOG_CMD_CTL_STATE_QUERY dialog_cmd_ctl_state_query;
             STATUS status;
 
-            dialog_cmd_ctl_state_query.control_id = p_control_id[arg_idx];
+            dialog_cmd_ctl_state_query.dialog_control_id = p_dialog_control_id[arg_idx];
 
-            if(0 == dialog_cmd_ctl_state_query.control_id)
+            if(0 == dialog_cmd_ctl_state_query.dialog_control_id)
             {
                 p_arg->type = ARG_TYPE_NONE; /*arg_dispose(p_arglist_handle, arg_idx);*/
                 continue;
@@ -94,14 +94,14 @@ dialog_arglist_construct(
 
             dialog_cmd_ctl_state_query.h_dialog = p_dialog->h_dialog;
             dialog_cmd_ctl_state_query.bits = 0;
-            status = call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query);
+            status = object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY, &dialog_cmd_ctl_state_query);
 
             if(status_fail(status))
-            {   /* eg view control may not have controls for ruler on/off */
+            {   /* e.g. view control may not have controls for ruler on/off */
                 p_arg->type = ARG_TYPE_NONE; /*arg_dispose(p_arglist_handle, i);*/
                 continue;
             }
-            switch(dialog_cmd_ctl_state_query.type)
+            switch(dialog_cmd_ctl_state_query.dialog_control_type)
             {
             default: default_unhandled();
 #if CHECKING
@@ -172,7 +172,7 @@ dialog_arglist_construct(
                 break;
             }
 
-            status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_QUERY_DISPOSE, &dialog_cmd_ctl_state_query));
+            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_QUERY_DISPOSE, &dialog_cmd_ctl_state_query));
         }
     }
 
@@ -209,7 +209,7 @@ dialog_click_bump_xx(
 
     p_ui_control = p_dialog_ictl->p_dialog_control_data.bump_s32->bump_xx.p_uic;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
@@ -240,10 +240,10 @@ dialog_click_bump_xx(
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
         msgclr(dialog_cmd_ctl_state_set);
         dialog_cmd_ctl_state_set.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_ctl_state_set.control_id = p_dialog_ictl->control_id;
+        dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl->dialog_control_id;
         dialog_cmd_ctl_state_set.bits = 0;
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default: default_unhandled();
 #if CHECKING
@@ -257,12 +257,12 @@ dialog_click_bump_xx(
             break;
         }
 
-        status_assert(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
     }
 
     /* SKS 21apr93 after 1.03 - all callers of this will have want control to be current and want caret to go to end */
     if(changed)
-        dialog_current_set(p_dialog, p_dialog_ictl->control_id, FALSE);
+        dialog_current_set(p_dialog, p_dialog_ictl->dialog_control_id, FALSE);
 
     return(changed ? 1 : STATUS_OK);
     } /*block*/
@@ -280,13 +280,13 @@ dialog_click_pushbutton(
     _In_        P_DIALOG p_dialog,
     _In_        P_DIALOG_ICTL p_dialog_ictl,
     _InVal_     BOOL right_button,
-    _InVal_     DIALOG_CTL_ID double_control_id)
+    _InVal_     DIALOG_CONTROL_ID double_dialog_control_id)
 {
     const H_DIALOG h_dialog = p_dialog->h_dialog;
-    const DIALOG_CTL_ID control_id = p_dialog_ictl->control_id;
+    const DIALOG_CONTROL_ID dialog_control_id = p_dialog_ictl->dialog_control_id;
     STATUS status;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     case DIALOG_CONTROL_PUSHBUTTON:
     case DIALOG_CONTROL_PUSHPICTURE:
@@ -306,21 +306,21 @@ dialog_click_pushbutton(
     DIALOG_MSG_CTL_PUSHBUTTON dialog_msg_ctl_pushbutton;
     msgclr(dialog_msg_ctl_pushbutton);
 
-    if(NULL != (p_proc_client = dialog_find_handler(p_dialog, control_id, &dialog_msg_ctl_pushbutton.client_handle)))
+    if(NULL != (p_proc_client = dialog_find_handler(p_dialog, dialog_control_id, &dialog_msg_ctl_pushbutton.client_handle)))
     {
         DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_pushbutton, p_dialog, p_dialog_ictl);
 
         dialog_msg_ctl_pushbutton.processed = 0;
         dialog_msg_ctl_pushbutton.completion_code = 0;
         dialog_msg_ctl_pushbutton.right_button = right_button;
-        dialog_msg_ctl_pushbutton.double_control_id = double_control_id;
+        dialog_msg_ctl_pushbutton.double_dialog_control_id = double_dialog_control_id;
 
         status_return(dialog_call_client(p_dialog, DIALOG_MSG_CODE_CTL_PUSHBUTTON, &dialog_msg_ctl_pushbutton, p_proc_client));
 
         /* recache after going to client */
         p_dialog = p_dialog_from_h_dialog(h_dialog);
         if(NULL != p_dialog)
-            p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+            p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
 
         if(dialog_msg_ctl_pushbutton.processed)
         {
@@ -330,7 +330,7 @@ dialog_click_pushbutton(
                 msgclr(dialog_cmd_complete_dbox);
                 dialog_cmd_complete_dbox.h_dialog = p_dialog->h_dialog;
                 dialog_cmd_complete_dbox.completion_code = dialog_msg_ctl_pushbutton.completion_code;
-                status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+                status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
             }
 
             return(STATUS_OK);
@@ -339,16 +339,16 @@ dialog_click_pushbutton(
     } /*block*/
 
 #if WINDOWS
-    if(p_dialog && p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.help_id_offset)
+    if((NULL != p_dialog) && p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.help_id_offset)
         return(dialog_windows_help(p_dialog));
 #endif
 
     { /* is there an associated completion code for this button? */
     S32 completion_code = p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.completion_code;
 
-    if(p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.alternate_right && right_button)
+    if(right_button && p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.alternate_right)
     {
-        completion_code = (p_dialog_ictl->type == DIALOG_CONTROL_PUSHPICTURE)
+        completion_code = (p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_PUSHPICTURE)
             ? p_dialog_ictl->p_dialog_control_data.pushpicturer->completion_code_r
             : p_dialog_ictl->p_dialog_control_data.pushbuttonr->completion_code_r;
 
@@ -361,7 +361,7 @@ dialog_click_pushbutton(
         msgclr(dialog_cmd_complete_dbox);
         dialog_cmd_complete_dbox.h_dialog = h_dialog;
         dialog_cmd_complete_dbox.completion_code = completion_code;
-        status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+        status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
         return(STATUS_OK);
     }
     } /*block*/
@@ -369,19 +369,19 @@ dialog_click_pushbutton(
     {
     PC_DIALOG_CONTROL_DATA_PUSH_COMMAND p;
 
-    switch(p_dialog_ictl->type)
+    switch(p_dialog_ictl->dialog_control_type)
     {
     default: default_unhandled();
 #if CHECKING
     case DIALOG_CONTROL_PUSHBUTTON:
 #endif
-        p = /*(p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.alternate_right && right_button)
+        p = /*(right_button && p_dialog_ictl->p_dialog_control_data.pushbutton->push_xx.alternate_right)
           ? p_dialog_ictl->p_dialog_control_data.pushbuttonr->command_r
           :*/ p_dialog_ictl->p_dialog_control_data.pushbutton->command;
         break;
 
     case DIALOG_CONTROL_PUSHPICTURE:
-        p = /*(p_dialog_ictl->p_dialog_control_data.pushpicture->push_xx.alternate_right && right_button)
+        p = /*(right_button && p_dialog_ictl->p_dialog_control_data.pushpicture->push_xx.alternate_right)
           ? p_dialog_ictl->p_dialog_control_data.pushpicturer->command_r
           :*/ p_dialog_ictl->p_dialog_control_data.pushpicture->command;
         break;
@@ -408,7 +408,7 @@ dialog_click_pushbutton(
             DIALOG_MSG_PREPROCESS_COMMAND dialog_msg_preprocess_command;
             msgclr(dialog_msg_preprocess_command);
 
-            if(NULL != (p_proc_client = dialog_find_handler(p_dialog, control_id, &dialog_msg_preprocess_command.client_handle)))
+            if(NULL != (p_proc_client = dialog_find_handler(p_dialog, dialog_control_id, &dialog_msg_preprocess_command.client_handle)))
             {
                 DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_preprocess_command, p_dialog, p_dialog_ictl);
 
@@ -421,7 +421,7 @@ dialog_click_pushbutton(
                 /* recache after going to client */
                 p_dialog = p_dialog_from_h_dialog(h_dialog);
                 if(NULL != p_dialog)
-                    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, control_id);
+                    p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, dialog_control_id);
             }
             } /*block*/
 
@@ -430,7 +430,7 @@ dialog_click_pushbutton(
                 if(p->bits.set_interactive)
                     command_set_interactive();
 
-                status = execute_command(p->object_id, p_docu_from_docno(p_dialog->docno), p->t5_message, &arglist_handle);
+                status = execute_command(p_docu_from_docno(p_dialog->docno), p->t5_message, &arglist_handle, p->object_id);
             }
 
             arglist_dispose(&arglist_handle);
@@ -440,11 +440,11 @@ dialog_click_pushbutton(
             if(NULL != (p_dialog = p_dialog_from_h_dialog(h_dialog)))
             {
                 /* if dialog boxing, then complete unless right button */
-                if(right_button || p->bits.dont_complete)
+                if(p->bits.dont_complete || right_button)
                 {
                     /* tell the client we're being persistent */
                     CLIENT_HANDLE client_handle;
-                    const P_PROC_DIALOG_EVENT p_proc_client = dialog_find_handler(p_dialog, control_id, &client_handle);
+                    const P_PROC_DIALOG_EVENT p_proc_client = dialog_find_handler(p_dialog, dialog_control_id, &client_handle);
 
                     if(NULL != p_proc_client)
                     {
@@ -461,7 +461,7 @@ dialog_click_pushbutton(
                     msgclr(dialog_cmd_complete_dbox);
                     dialog_cmd_complete_dbox.h_dialog = p_dialog->h_dialog;
                     dialog_cmd_complete_dbox.completion_code = DIALOG_COMPLETION_OK;
-                    status_assert(call_dialog(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
+                    status_assert(object_call_DIALOG(DIALOG_CMD_CODE_COMPLETE_DBOX, &dialog_cmd_complete_dbox));
                 }
             }
         }
@@ -484,15 +484,15 @@ dialog_click_radiobutton(
     P_DIALOG_ICTL p_dialog_ictl)
 {
     /* set this state into the button's group */
-    status_return(ui_dlg_set_radio(p_dialog->h_dialog, p_dialog_ictl->p_dialog_control->parent_control_id, p_dialog_ictl->p_dialog_control_data.radiobutton->activate_state));
+    status_return(ui_dlg_set_radio(p_dialog->h_dialog, p_dialog_ictl->p_dialog_control->parent_dialog_control_id, p_dialog_ictl->p_dialog_control_data.radiobutton->activate_state));
 
     if(p_dialog_ictl->p_dialog_control_data.radiobutton->bits.move_focus)
     {
         DIALOG_CMD_CTL_FOCUS_SET dialog_cmd_ctl_focus_set;
         msgclr(dialog_cmd_ctl_focus_set);
-        dialog_cmd_ctl_focus_set.h_dialog   = p_dialog->h_dialog;
-        dialog_cmd_ctl_focus_set.control_id = p_dialog_ictl->p_dialog_control_data.radiobuttonf->move_focus_control_id;
-        status_return(call_dialog(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
+        dialog_cmd_ctl_focus_set.h_dialog = p_dialog->h_dialog;
+        dialog_cmd_ctl_focus_set.dialog_control_id = p_dialog_ictl->p_dialog_control_data.radiobuttonf->move_focus_dialog_control_id;
+        status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
     }
 
     return(STATUS_OK);
@@ -513,7 +513,7 @@ dialog_click_checkbox(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = p_dialog->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = p_dialog_ictl->control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl->dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
 
     /* toggle state */
@@ -531,16 +531,16 @@ dialog_click_checkbox(
         break;
     }
 
-    status_return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 
     if(p_dialog_ictl->p_dialog_control_data.checkbox->bits.move_focus
     && (dialog_cmd_ctl_state_set.state.checkbox == DIALOG_BUTTONSTATE_ON))
     {
         DIALOG_CMD_CTL_FOCUS_SET dialog_cmd_ctl_focus_set;
         msgclr(dialog_cmd_ctl_focus_set);
-        dialog_cmd_ctl_focus_set.h_dialog   = p_dialog->h_dialog;
-        dialog_cmd_ctl_focus_set.control_id = p_dialog_ictl->p_dialog_control_data.checkboxf->move_focus_control_id;
-        status_return(call_dialog(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
+        dialog_cmd_ctl_focus_set.h_dialog = p_dialog->h_dialog;
+        dialog_cmd_ctl_focus_set.dialog_control_id = p_dialog_ictl->p_dialog_control_data.checkboxf->move_focus_dialog_control_id;
+        status_return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
     }
 
     return(STATUS_OK);
@@ -563,7 +563,7 @@ dialog_click_tristate(
     DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
     msgclr(dialog_cmd_ctl_state_set);
     dialog_cmd_ctl_state_set.h_dialog = p_dialog->h_dialog;
-    dialog_cmd_ctl_state_set.control_id = p_dialog_ictl->control_id;
+    dialog_cmd_ctl_state_set.dialog_control_id = p_dialog_ictl->dialog_control_id;
     dialog_cmd_ctl_state_set.bits = 0;
 
     /* cycle state */
@@ -585,7 +585,7 @@ dialog_click_tristate(
         break;
     }
 
-    return(call_dialog(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
+    return(object_call_DIALOG(DIALOG_CMD_CODE_CTL_STATE_SET, &dialog_cmd_ctl_state_set));
 }
 
 #endif
@@ -596,7 +596,7 @@ dialog_click_tristate(
 *
 ******************************************************************************/
 
-static DIALOG_CTL_ID
+static DIALOG_CONTROL_ID
 dialog_control_id_of_group_in(
     P_DIALOG_ICTL_GROUP p_ictl_group,
     P_DIALOG_ICTL_GROUP p_ictl_group_group)
@@ -608,19 +608,19 @@ dialog_control_id_of_group_in(
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
 
         /* check at this level */
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
         default:
             break;
 
         case DIALOG_CONTROL_GROUPBOX:
             if(&p_dialog_ictl->data.groupbox.ictls == p_ictl_group_group)
-                return(p_dialog_ictl->control_id);
+                return(p_dialog_ictl->dialog_control_id);
 
             { /* recurse into subgroups */
-            const DIALOG_CTL_ID control_id = dialog_control_id_of_group_in(&p_dialog_ictl->data.groupbox.ictls, p_ictl_group_group);
-            if(control_id > 0)
-                return(control_id);
+            const DIALOG_CONTROL_ID dialog_control_id = dialog_control_id_of_group_in(&p_dialog_ictl->data.groupbox.ictls, p_ictl_group_group);
+            if(dialog_control_id > 0)
+                return(dialog_control_id);
             } /*block*/
 
             break;
@@ -630,7 +630,7 @@ dialog_control_id_of_group_in(
     return(DIALOG_CONTROL_WINDOW);
 }
 
-extern DIALOG_CTL_ID
+extern DIALOG_CONTROL_ID
 dialog_control_id_of_group(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL_GROUP p_ictl_group_group)
@@ -656,8 +656,8 @@ stop_here(void)
 
 typedef struct DSC
 {
-    DIALOG_CTL_ID dep_id;
-    BIT_NUMBER    dep_bn;
+    DIALOG_CONTROL_ID dep_id;
+    BIT_NUMBER dep_bn;
 }
 DSC, * P_DSC;
 
@@ -672,13 +672,13 @@ dialog_control_rect_using_bitmap(
     CHECKING_ONLY_ARG(_InRef_ P_ARRAY_HANDLE p_stack))
 {
     PC_DIALOG_CONTROL p_dialog_control = p_dialog_ictl->p_dialog_control;
-    const DIALOG_CTL_ID this_control_id = p_dialog_ictl->control_id;
+    const DIALOG_CONTROL_ID this_dialog_control_id = p_dialog_ictl->dialog_control_id;
     BIT_NUMBER bit_number;
-    DIALOG_CTL_ID cached_control_id;
+    DIALOG_CONTROL_ID cached_dialog_control_id;
     BITMAP(cached_control_valid, 4);
     PIXIT_RECT cached_control_rect = { { 0, 0 }, { 0, 0 } }; /* dataflower */
 
-    cached_control_id = 0;
+    cached_dialog_control_id = 0;
     bitmap_clear(cached_control_valid, N_BITS_ARG(4));
 
     bit_number = 4; /* get the ball rolling; read edges in pairings for cache efficiency */
@@ -706,7 +706,7 @@ dialog_control_rect_using_bitmap(
             continue;
 
 #if CHECKING
-        if(this_control_id == 42)
+        if(this_dialog_control_id == 42)
             stop_here();
 #endif
 
@@ -714,13 +714,13 @@ dialog_control_rect_using_bitmap(
         if(bitmap_bit_test((PC_BITMAP) &p_dialog_ictl->bits, bit_number, N_BITS_ARG(4)))
         {
             trace_3(TRACE_APP_DIALOG,
-                    TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" is ") PIXIT_TFMT,
-                    (S32) this_control_id, (S32) bit_number, ((PC_PIXIT) &p_dialog_ictl->pixit_rect)[bit_number]);
+                    TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" is ") PIXIT_TFMT,
+                    (U32) this_dialog_control_id, (S32) bit_number, ((PC_PIXIT) &p_dialog_ictl->pixit_rect)[bit_number]);
             continue;
         }
 
         { /* we don't yet have the coord containing this bit defined, so calculate it */
-        const DIALOG_CTL_ID relative_control_id_actual = p_dialog_control->relative_control_id[bit_number];
+        const DIALOG_CONTROL_ID relative_dialog_control_id_actual = p_dialog_control->relative_dialog_control_id[bit_number];
         PIXIT relative_offset = p_dialog_control->relative_offset[bit_number];
         /* first byte of bits field is set of four pairs of bits, indexed by bit_number */
         BIT_NUMBER relative_bit_number = ((* (P_U32) &p_dialog_control->bits) >> (2 * bit_number)) & 0x03;
@@ -733,7 +733,7 @@ dialog_control_rect_using_bitmap(
                 DIALOG_CMD_CTL_SIZE_ESTIMATE dialog_cmd_ctl_size_estimate;
                 dialog_cmd_ctl_size_estimate.p_dialog_control = p_dialog_control;
                 dialog_cmd_ctl_size_estimate.p_dialog_control_data = p_dialog_ictl->p_dialog_control_data.p_any;
-                status_assert(call_dialog(DIALOG_CMD_CODE_CTL_SIZE_ESTIMATE, &dialog_cmd_ctl_size_estimate));
+                status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_SIZE_ESTIMATE, &dialog_cmd_ctl_size_estimate));
                 relative_offset = dialog_cmd_ctl_size_estimate.size.x;
             }
             else
@@ -744,14 +744,14 @@ dialog_control_rect_using_bitmap(
         /* check appropriate pairing */
         myassert4x((relative_bit_number == bit_number) ||
                   (relative_bit_number == bit_number + ((relative_bit_number > bit_number) ? +2 : -2)),
-                  TEXT("control id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" can't be relative to id/bit ") S32_TFMT TEXT("/") S32_TFMT,
-                  (S32) this_control_id, (S32) bit_number, (S32) relative_control_id_actual, (S32) relative_bit_number);
+                  TEXT("control id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" can't be relative to id/bit ") U32_TFMT TEXT("/") S32_TFMT,
+                  (U32) this_dialog_control_id, (S32) bit_number, (U32) relative_dialog_control_id_actual, (S32) relative_bit_number);
 
-        if(relative_control_id_actual == DIALOG_CONTROL_PARENT)
-            myassert2x((p_dialog_control->parent_control_id == DIALOG_CONTROL_WINDOW)
-                   || ((p_dialog_control->parent_control_id >= 0) && (p_dialog_control->parent_control_id < DIALOG_CONTROL_MAX)),
-                      TEXT("control id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" must be relative to a given parent id or window"),
-                      (S32) this_control_id, (S32) bit_number);
+        if(DIALOG_CONTROL_PARENT == relative_dialog_control_id_actual)
+            myassert2x((DIALOG_CONTROL_WINDOW == p_dialog_control->parent_dialog_control_id)
+                   || (/*(p_dialog_control->parent_dialog_control_id >= 0) &&*/ (p_dialog_control->parent_dialog_control_id < DIALOG_CONTROL_MAX)),
+                      TEXT("control id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" must be relative to a given parent id or window"),
+                      (U32) this_dialog_control_id, (S32) bit_number);
 
         {
         const U32 n_stack_elements = array_elements32(p_stack);
@@ -769,9 +769,9 @@ dialog_control_rect_using_bitmap(
 
             dsc = *--ptr;
 
-            if((dsc.dep_id == this_control_id) && (dsc.dep_bn == bit_number))
+            if((dsc.dep_id == this_dialog_control_id) && (dsc.dep_bn == bit_number))
             {
-                myassert3(TEXT("control id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" is self-dependent over a cycle of ") S32_TFMT, (S32) dsc.dep_id, (S32) dsc.dep_bn, (S32) ((top - ptr) / 2));
+                myassert3(TEXT("control id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" is self-dependent over a cycle of ") S32_TFMT, (U32) dsc.dep_id, (S32) dsc.dep_bn, (S32) ((top - ptr) / 2));
 
                 for(;;)
                 {
@@ -793,18 +793,20 @@ dialog_control_rect_using_bitmap(
 #endif
 
         if(relative_bit_number < 2)
-            relative_offset = 0 - relative_offset; /* if relative to left or top then -ve offset, else +ve */
+        {   /* yuk. I'm sure this was unintentional... */
+            relative_offset = 0 - relative_offset; /* if relative to left or top then -ve offset, else +ve */ /* except where turned around below! surely clearer to make explicit in each case */
+        }
 
-        if(relative_control_id_actual == DIALOG_CONTROL_CONTENTS)
+        if(relative_dialog_control_id_actual == DIALOG_CONTROL_CONTENTS)
         {
             P_DIALOG_ICTL_GROUP p_ictl_group = &p_dialog_ictl->data.groupbox.ictls;
             ARRAY_INDEX i;
 
-            assert(p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX);
+            assert(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX);
 
             trace_4(TRACE_APP_DIALOG,
-                    TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" - group needs data from contents bit ") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
-                    (S32) this_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
+                    TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" - group needs data from contents bit ") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
+                    (U32) this_dialog_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
 
             coord = (relative_bit_number < 2) ? S16_MAX : S16_MIN;
 
@@ -825,7 +827,7 @@ dialog_control_rect_using_bitmap(
                 {
                     /* push an element on dependency stack */
                     DSC dsc;
-                    dsc.dep_id = this_control_id;
+                    dsc.dep_id = this_dialog_control_id;
                     dsc.dep_bn = bit_number;
                     status_assert(al_array_add(p_stack, DSC, 1, PC_ARRAY_INIT_BLOCK_NONE, &dsc));
 #endif
@@ -854,8 +856,8 @@ dialog_control_rect_using_bitmap(
         }
         else
         {
-            if( (relative_control_id_actual == DIALOG_CONTROL_WINDOW)
-            || ((relative_control_id_actual == DIALOG_CONTROL_PARENT) && (p_dialog_control->parent_control_id == DIALOG_CONTROL_WINDOW)))
+            if( (DIALOG_CONTROL_WINDOW == relative_dialog_control_id_actual)
+            || ((DIALOG_CONTROL_PARENT == relative_dialog_control_id_actual) && (DIALOG_CONTROL_WINDOW == p_dialog_control->parent_dialog_control_id)))
             {
                 relative_offset = 0 - relative_offset; /* if relative to dialog, then come back in the other direction (like self) */
 
@@ -879,73 +881,73 @@ dialog_control_rect_using_bitmap(
                 }
 
                 trace_4(TRACE_APP_DIALOG,
-                        TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" needs data from dialog window bit ") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
-                        (S32) this_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
+                        TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" needs data from dialog window bit ") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
+                        (U32) this_dialog_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
             }
             else
             {
-                DIALOG_CTL_ID relative_control_id;
+                DIALOG_CONTROL_ID relative_dialog_control_id;
 
-                if(relative_control_id_actual == DIALOG_CONTROL_SELF)
+                if(DIALOG_CONTROL_SELF == relative_dialog_control_id_actual)
                 {
                     /* if relative to self, then come back in the other direction */
-                    relative_control_id = this_control_id;
+                    relative_dialog_control_id = this_dialog_control_id;
 
                     relative_offset = 0 - relative_offset;
 
                     if(relative_bit_number == bit_number)
                     {
-                        myassert2(TEXT("control id ") S32_TFMT TEXT(" bit number ") S32_TFMT TEXT(" is self-relative"), (S32) this_control_id, (S32) relative_bit_number);
+                        myassert2(TEXT("control id ") U32_TFMT TEXT(" bit number ") S32_TFMT TEXT(" is self-relative"), (U32) this_dialog_control_id, (S32) relative_bit_number);
                         relative_bit_number = (bit_number + 2) & 3;
                     }
 
                     trace_4(TRACE_APP_DIALOG,
-                            TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" needs data self bit ") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
-                            (S32) this_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
+                            TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" needs data self bit ") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
+                            (U32) this_dialog_control_id, (S32) bit_number, (S32) relative_bit_number, relative_offset);
                 }
-                else if(relative_control_id_actual == DIALOG_CONTROL_PARENT)
+                else if(DIALOG_CONTROL_PARENT == relative_dialog_control_id_actual)
                 {
                     /* if relative to parent, then come back in the other direction */
-                    relative_control_id = p_dialog_control->parent_control_id;
+                    relative_dialog_control_id = p_dialog_control->parent_dialog_control_id;
 
                     relative_offset = 0 - relative_offset;
 
                     trace_5(TRACE_APP_DIALOG,
-                            TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" needs data from parent id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
-                            (S32) this_control_id, (S32) bit_number, (S32) relative_control_id, (S32) relative_bit_number, relative_offset);
+                            TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" needs data from parent id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
+                            (U32) this_dialog_control_id, (S32) bit_number, (U32) relative_dialog_control_id, (S32) relative_bit_number, relative_offset);
                 }
                 else
                 {
-                    relative_control_id = relative_control_id_actual;
+                    relative_dialog_control_id = relative_dialog_control_id_actual;
 
                     trace_5(TRACE_APP_DIALOG,
-                            TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" needs data from id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
-                            (S32) this_control_id, (S32) bit_number, (S32) relative_control_id, (S32) relative_bit_number, relative_offset);
+                            TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" needs data from id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(", offset ") PIXIT_TFMT,
+                            (U32) this_dialog_control_id, (S32) bit_number, (U32) relative_dialog_control_id, (S32) relative_bit_number, relative_offset);
                 }
 
                 /* quick optimisation for already cached valid coords */
-                if((relative_control_id == cached_control_id) && bitmap_bit_test(cached_control_valid, relative_bit_number, N_BITS_ARG(4)))
+                if((relative_dialog_control_id == cached_dialog_control_id) && bitmap_bit_test(cached_control_valid, relative_bit_number, N_BITS_ARG(4)))
                 {
                     coord = ((PC_PIXIT) &cached_control_rect)[relative_bit_number];
 
                     trace_3(TRACE_APP_DIALOG,
-                            TEXT("rect_bitmap: data from id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" was in local cache rect at level ") TEXT(", value ") PIXIT_TFMT,
-                            (S32) relative_control_id, (S32) relative_bit_number, coord);
+                            TEXT("rect_bitmap: data from id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" was in local cache rect at level ") TEXT(", value ") PIXIT_TFMT,
+                            (U32) relative_dialog_control_id, (S32) relative_bit_number, coord);
                 }
                 else
                 {
                     P_DIALOG_ICTL relative_p_dialog_ictl;
 
-                    if(relative_control_id_actual == DIALOG_CONTROL_SELF)
+                    if(DIALOG_CONTROL_SELF == relative_dialog_control_id_actual)
                         relative_p_dialog_ictl = p_dialog_ictl;
                     else
                     {
                         P_DIALOG_ICTL_GROUP relative_p_parent_ictls;
-                        relative_p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, relative_control_id, &relative_p_parent_ictls);
+                        relative_p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, relative_dialog_control_id, &relative_p_parent_ictls);
                     }
 
                     /* load up the cache with what we find */
-                    cached_control_id = relative_control_id;
+                    cached_dialog_control_id = relative_dialog_control_id;
                     bitmap_clear(cached_control_valid, N_BITS_ARG(4));
                     bitmap_bit_set(cached_control_valid, relative_bit_number, N_BITS_ARG(4));
 
@@ -955,7 +957,7 @@ dialog_control_rect_using_bitmap(
                     {
                         /* push an element on dependency stack */
                         DSC dsc;
-                        dsc.dep_id = this_control_id;
+                        dsc.dep_id = this_dialog_control_id;
                         dsc.dep_bn = bit_number;
                         status_assert(al_array_add(p_stack, DSC, 1, PC_ARRAY_INIT_BLOCK_NONE, &dsc));
 #endif
@@ -980,8 +982,8 @@ dialog_control_rect_using_bitmap(
         ((P_PIXIT) &p_dialog_ictl->pixit_rect)[bit_number] = coord;
 
         trace_3(TRACE_APP_DIALOG,
-                TEXT("rect_bitmap: id/bit ") S32_TFMT TEXT("/") S32_TFMT TEXT(" := ") PIXIT_TFMT,
-                (S32) this_control_id, (S32) bit_number, ((PC_PIXIT) &p_dialog_ictl->pixit_rect)[bit_number]);
+                TEXT("rect_bitmap: id/bit ") U32_TFMT TEXT("/") S32_TFMT TEXT(" := ") PIXIT_TFMT,
+                (U32) this_dialog_control_id, (S32) bit_number, ((PC_PIXIT) &p_dialog_ictl->pixit_rect)[bit_number]);
 
         bitmap_bit_set((P_BITMAP) &p_dialog_ictl->bits, bit_number, N_BITS_ARG(4));
         } /*block*/
@@ -993,11 +995,11 @@ dialog_control_rect_using_bitmap(
 extern void
 dialog_control_rect(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _OutRef_opt_ P_PIXIT_RECT p_pixit_rect /*NULL->ensure*/)
 {
     P_DIALOG_ICTL_GROUP p_parent_ictls;
-    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, control_id, &p_parent_ictls);
+    const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id_in(&p_dialog->ictls, dialog_control_id, &p_parent_ictls);
 
     if(!p_dialog_ictl->bits.valid_rect)
     {
@@ -1026,7 +1028,7 @@ dialog_control_rect(
 extern void
 dialog_control_rect_changed(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InRef_     PC_BITMAP p_bitmap)
 {
     BIT_NUMBER bit_number;
@@ -1034,14 +1036,14 @@ dialog_control_rect_changed(
     for(bit_number = 0; bit_number < 4; ++bit_number)
         if(bitmap_bit_test(p_bitmap, bit_number, N_BITS_ARG(4)))
             /* find and zap all dependents of this control and edge in this dialog */
-            dialog_control_rect_changed_zap_dependents_in(p_dialog, control_id, bit_number, &p_dialog->ictls, DIALOG_CONTROL_WINDOW);
+            dialog_control_rect_changed_zap_dependents_in(p_dialog, dialog_control_id, bit_number, &p_dialog->ictls, DIALOG_CONTROL_WINDOW);
 }
 
 /******************************************************************************
 *
 * when a coordinate associated with a control changes,
 * find its dependents and notify them. to get minimal
-* redraw we find the roots of the tree (ie a control
+* redraw we find the roots of the tree (i.e. a control
 * which is depended on but has no dependents) and
 * then work down all its branches. all changed controls
 * have their valid_rect bits nobbled, and have invalid
@@ -1052,29 +1054,29 @@ dialog_control_rect_changed(
 static void
 dialog_control_rect_changed_zap_dependents_in(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BIT_NUMBER bit_number,
     P_DIALOG_ICTL_GROUP p_ictl_group,
-    _InVal_     DIALOG_CTL_ID parent_control_id)
+    _InVal_     DIALOG_CONTROL_ID parent_dialog_control_id)
 {
     ARRAY_INDEX i;
 
     for(i = 0; i < n_ictls_from_group(p_ictl_group); ++i)
     {
         const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from(p_ictl_group, i);
-        const DIALOG_CTL_ID this_control_id = p_dialog_ictl->control_id;
+        const DIALOG_CONTROL_ID this_dialog_control_id = p_dialog_ictl->dialog_control_id;
         BIT_NUMBER relative_bit_number;
 
         for(relative_bit_number = 0; relative_bit_number < 4; ++relative_bit_number)
         {
-            DIALOG_CTL_ID relative_control_id = p_dialog_ictl->p_dialog_control->relative_control_id[relative_bit_number];
+            DIALOG_CONTROL_ID relative_dialog_control_id = p_dialog_ictl->p_dialog_control->relative_dialog_control_id[relative_bit_number];
 
-            if(relative_control_id == DIALOG_CONTROL_PARENT)
-                relative_control_id = parent_control_id;
-            else if(relative_control_id == DIALOG_CONTROL_SELF)
-                relative_control_id = this_control_id;
+            if(DIALOG_CONTROL_PARENT == relative_dialog_control_id)
+                relative_dialog_control_id = parent_dialog_control_id;
+            else if(DIALOG_CONTROL_SELF == relative_dialog_control_id)
+                relative_dialog_control_id = this_dialog_control_id;
 
-            if(relative_control_id == control_id)
+            if(relative_dialog_control_id == dialog_control_id)
             {   /* this control has a dependency on the given control and bit */
                 BITMAP(    changed, 4);
                 PIXIT_RECT pixit_rect;
@@ -1090,21 +1092,21 @@ dialog_control_rect_changed_zap_dependents_in(
                 p_dialog_ictl->bits.valid_rect = 0;
 
                 /* rejig new coordinates */
-                dialog_control_rect(p_dialog, this_control_id, &pixit_rect);
+                dialog_control_rect(p_dialog, this_dialog_control_id, &pixit_rect);
 
 #ifdef DIALOG_COORD_DEBUG
-                myassert3x(pixit_rect.tl.x < pixit_rect.br.x - 1, TEXT("control_id ") S32_TFMT TEXT(" pixit_rect tl.x ") PIXIT_TFMT TEXT(" br.x ") PIXIT_TFMT, (S32) this_control_id, pixit_rect.tl.x, pixit_rect.br.x);
-                myassert3x(pixit_rect.tl.y < pixit_rect.br.y - 1, TEXT("control_id ") S32_TFMT TEXT(" pixit_rect tl.y ") PIXIT_TFMT TEXT(" br.y ") PIXIT_TFMT, (S32) this_control_id, pixit_rect.tl.y, pixit_rect.br.y);
+                myassert3x(pixit_rect.tl.x < pixit_rect.br.x - 1, TEXT("dialog_control_id ") U32_TFMT TEXT(" pixit_rect tl.x ") PIXIT_TFMT TEXT(" br.x ") PIXIT_TFMT, (U32) this_dialog_control_id, pixit_rect.tl.x, pixit_rect.br.x);
+                myassert3x(pixit_rect.tl.y < pixit_rect.br.y - 1, TEXT("dialog_control_id ") U32_TFMT TEXT(" pixit_rect tl.y ") PIXIT_TFMT TEXT(" br.y ") PIXIT_TFMT, (U32) this_dialog_control_id, pixit_rect.tl.y, pixit_rect.br.y);
 #else
-                myassert3x(pixit_rect.tl.x <= pixit_rect.br.x, TEXT("control_id ") S32_TFMT TEXT(" pixit_rect tl.x ") PIXIT_TFMT TEXT(" br.x ") PIXIT_TFMT, (S32) this_control_id, pixit_rect.tl.x, pixit_rect.br.x);
-                myassert3x(pixit_rect.tl.y <= pixit_rect.br.y, TEXT("control_id ") S32_TFMT TEXT(" pixit_rect tl.y ") PIXIT_TFMT TEXT(" br.y ") PIXIT_TFMT, (S32) this_control_id, pixit_rect.tl.y, pixit_rect.br.y);
+                myassert3x(pixit_rect.tl.x <= pixit_rect.br.x, TEXT("dialog_control_id ") U32_TFMT TEXT(" pixit_rect tl.x ") PIXIT_TFMT TEXT(" br.x ") PIXIT_TFMT, (U32) this_dialog_control_id, pixit_rect.tl.x, pixit_rect.br.x);
+                myassert3x(pixit_rect.tl.y <= pixit_rect.br.y, TEXT("dialog_control_id ") U32_TFMT TEXT(" pixit_rect tl.y ") PIXIT_TFMT TEXT(" br.y ") PIXIT_TFMT, (U32) this_dialog_control_id, pixit_rect.tl.y, pixit_rect.br.y);
 #endif
             }
 
-            switch(p_dialog_ictl->type)
+            switch(p_dialog_ictl->dialog_control_type)
             {
             case DIALOG_CONTROL_GROUPBOX:
-                dialog_control_rect_changed_zap_dependents_in(p_dialog, control_id, bit_number, &p_dialog_ictl->data.groupbox.ictls, this_control_id);
+                dialog_control_rect_changed_zap_dependents_in(p_dialog, dialog_control_id, bit_number, &p_dialog_ictl->data.groupbox.ictls, this_dialog_control_id);
                 break;
 
             default:
@@ -1114,57 +1116,57 @@ dialog_control_rect_changed_zap_dependents_in(
     }
 }
 
-typedef struct CTL_CONTEXT
+typedef struct DIALOG_CTL_CONTEXT
 {
     P_DIALOG_ICTL_GROUP p_ictl_group;
     ARRAY_INDEX i;
 }
-CTL_CONTEXT, * P_CTL_CONTEXT;
+DIALOG_CTL_CONTEXT, * P_DIALOG_CTL_CONTEXT;
 
-extern DIALOG_CTL_ID
+extern DIALOG_CONTROL_ID
 dialog_current_move(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID current_id,
+    _InVal_     DIALOG_CONTROL_ID current_dialog_control_id,
     _InVal_     STATUS movement)
 {
-    CTL_CONTEXT ctl_context;
+    DIALOG_CTL_CONTEXT dialog_ctl_context;
     ARRAY_HANDLE context_handle = 0;
-    P_CTL_CONTEXT p_ctl_context;
-    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(*p_ctl_context), FALSE);
+    P_DIALOG_CTL_CONTEXT p_dialog_ctl_context;
+    SC_ARRAY_INIT_BLOCK array_init_block = aib_init(4, sizeof32(*p_dialog_ctl_context), FALSE);
     P_DIALOG_ICTL p_dialog_ictl;
-    DIALOG_CTL_ID control_id = 0;
+    DIALOG_CONTROL_ID dialog_control_id = 0;
     BOOL seen_current = 0;
-    BOOL just_one_pass = (current_id == 0); /* if no current id, just run through once */
+    BOOL just_one_pass = (current_dialog_control_id == 0); /* if no current id, just run through once */
     BOOL forwards = (movement >= 0);
     STATUS status = STATUS_OK;
     UINT pass = 1;
     BOOL load_context_i;
     BOOL ended_this_level = 0;
 
-    memset32(&ctl_context, 0, sizeof32(ctl_context)); /* keep dataflower happy */
-    ctl_context.p_ictl_group = &p_dialog->ictls;
+    memset32(&dialog_ctl_context, 0, sizeof32(dialog_ctl_context)); /* keep dataflower happy */
+    dialog_ctl_context.p_ictl_group = &p_dialog->ictls;
     load_context_i = 1;
 
     /* find a control to move to */
-    while(!control_id)
+    while(!dialog_control_id)
     {
         if(load_context_i)
         {
             load_context_i = 0;
 
-            ctl_context.i = forwards ? -1 : n_ictls_from_group(ctl_context.p_ictl_group);
+            dialog_ctl_context.i = forwards ? -1 : n_ictls_from_group(dialog_ctl_context.p_ictl_group);
 
             continue;
         }
 
         if(forwards)
         {
-            if(++ctl_context.i >= n_ictls_from_group(ctl_context.p_ictl_group))
+            if(++dialog_ctl_context.i >= n_ictls_from_group(dialog_ctl_context.p_ictl_group))
                 ended_this_level = 1;
         }
         else
         {
-            if(--ctl_context.i < 0)
+            if(--dialog_ctl_context.i < 0)
                 ended_this_level = 1;
         }
 
@@ -1187,15 +1189,15 @@ dialog_current_move(
 
                 pass++;
 
-                ctl_context.p_ictl_group = &p_dialog->ictls;
+                dialog_ctl_context.p_ictl_group = &p_dialog->ictls;
                 load_context_i = 1;
             }
             else
             {
                 /* pull tos context and keep going */
-                p_ctl_context = array_ptr(&context_handle, CTL_CONTEXT, top_element);
+                p_dialog_ctl_context = array_ptr(&context_handle, DIALOG_CTL_CONTEXT, top_element);
 
-                ctl_context = *p_ctl_context;
+                dialog_ctl_context = *p_dialog_ctl_context;
 
                 al_array_shrink_by(&context_handle, -1);
             }
@@ -1203,23 +1205,23 @@ dialog_current_move(
             continue;
         }
 
-        p_dialog_ictl = p_dialog_ictl_from(ctl_context.p_ictl_group, ctl_context.i);
+        p_dialog_ictl = p_dialog_ictl_from(dialog_ctl_context.p_ictl_group, dialog_ctl_context.i);
 
-        if(p_dialog_ictl->type == DIALOG_CONTROL_GROUPBOX)
+        if(p_dialog_ictl->dialog_control_type == DIALOG_CONTROL_GROUPBOX)
         {
             /* push current context and keep going */
-            if(NULL == (p_ctl_context = al_array_extend_by(&context_handle, CTL_CONTEXT, 1, &array_init_block, &status)))
+            if(NULL == (p_dialog_ctl_context = al_array_extend_by(&context_handle, DIALOG_CTL_CONTEXT, 1, &array_init_block, &status)))
                 break;
 
-            *p_ctl_context = ctl_context;
+            *p_dialog_ctl_context = dialog_ctl_context;
 
-            ctl_context.p_ictl_group = &p_dialog_ictl->data.groupbox.ictls;
+            dialog_ctl_context.p_ictl_group = &p_dialog_ictl->data.groupbox.ictls;
             load_context_i = 1;
 
             continue;
         }
 
-        if(current_id == (DIALOG_CTL_ID) p_dialog_ictl->control_id)
+        if(current_dialog_control_id == p_dialog_ictl->dialog_control_id)
         {
             if(!seen_current)
             {
@@ -1235,7 +1237,7 @@ dialog_current_move(
         if(p_dialog_ictl->p_dialog_control->bits.tabstop && !p_dialog_ictl->bits.disabled)
         {
             if(seen_current || just_one_pass)
-                switch(p_dialog_ictl->type)
+                switch(p_dialog_ictl->dialog_control_type)
                 {
                 case DIALOG_CONTROL_EDIT:
                 case DIALOG_CONTROL_BUMP_S32:
@@ -1244,7 +1246,7 @@ dialog_current_move(
                 case DIALOG_CONTROL_LIST_TEXT:
                 case DIALOG_CONTROL_COMBO_S32:
                 case DIALOG_CONTROL_COMBO_TEXT:
-                    control_id = p_dialog_ictl->control_id;
+                    dialog_control_id = p_dialog_ictl->dialog_control_id;
                     break;
 
                 default:
@@ -1261,7 +1263,7 @@ dialog_current_move(
         return(0);
     }
 
-    return(control_id);
+    return(dialog_control_id);
 }
 
 /******************************************************************************
@@ -1273,20 +1275,21 @@ dialog_current_move(
 extern void
 dialog_current_set(
     P_DIALOG p_dialog,
-    _InVal_     DIALOG_CTL_ID control_id,
+    _InVal_     DIALOG_CONTROL_ID dialog_control_id,
     _InVal_     BOOL disallow_movement)
 {
-    const DIALOG_CTL_ID old_current_id = p_dialog->current_id;
+    const DIALOG_CONTROL_ID old_current_dialog_control_id = p_dialog->current_dialog_control_id;
 
 #if !RISCOS
     IGNOREPARM_InVal_(disallow_movement);
 #endif
 
 #if RISCOS
-    if(p_dialog->current_id)
-        if(p_dialog->current_id != control_id)
+    if(p_dialog->current_dialog_control_id)
+    {
+        if(p_dialog->current_dialog_control_id != dialog_control_id)
         {
-            const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+            const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
             const P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
 
             if(NULL != p_dialog_ictl_edit_xx)
@@ -1298,6 +1301,7 @@ dialog_current_set(
                     mlec__cursor_texthome(p_dialog_ictl_edit_xx->riscos.mlec);
             }
         }
+    }
 #endif
 
 #if RISCOS
@@ -1313,18 +1317,18 @@ dialog_current_set(
     } /*block*/
 #endif
 
-    p_dialog->current_id = control_id;
+    p_dialog->current_dialog_control_id = dialog_control_id;
 
-    if(p_dialog->current_id != old_current_id)
+    if(p_dialog->current_dialog_control_id != old_current_dialog_control_id)
     {
         DIALOG_MSG_CTL_CURRENT dialog_msg_ctl_current;
         P_PROC_DIALOG_EVENT p_proc_client;
 
         if(NULL != (p_proc_client = dialog_main_handler(p_dialog, &dialog_msg_ctl_current.client_handle)))
         {
-            if(0 != p_dialog->current_id)
+            if(0 != p_dialog->current_dialog_control_id)
             {
-                const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+                const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
                 DIALOG_MSG_CTL_HDR_from_dialog_ictl(dialog_msg_ctl_current, p_dialog, p_dialog_ictl);
             }
             else
@@ -1340,9 +1344,9 @@ dialog_current_set(
     }
 
 #if RISCOS
-    if(p_dialog->current_id)
+    if(p_dialog->current_dialog_control_id)
     {
-        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+        const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
         const P_DIALOG_ICTL_EDIT_XX p_dialog_ictl_edit_xx = p_dialog_ictl_edit_xx_from(p_dialog_ictl);
 
         if(NULL != p_dialog_ictl_edit_xx)
@@ -1358,7 +1362,7 @@ dialog_current_set(
             return;
         }
 
-        switch(p_dialog_ictl->type)
+        switch(p_dialog_ictl->dialog_control_type)
         {
 #if CHECKING
             case DIALOG_CONTROL_STATICTEXT:
@@ -1372,7 +1376,7 @@ dialog_current_set(
             case DIALOG_CONTROL_LIST_S32:
             case DIALOG_CONTROL_LIST_TEXT:
                 {
-                const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+                const P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
                 assert(p_dialog_ictl->data.list_xx.list_xx.riscos.lbox);
                 ri_lbox_focus_set(p_dialog_ictl->data.list_xx.list_xx.riscos.lbox);
                 break;
@@ -1427,7 +1431,7 @@ dialog_cmd_complete_dbox(
         DIALOG_RISCOS_EVENT_POINTER_ENTER dialog_riscos_event_pointer_enter;
         dialog_riscos_event_pointer_enter.h_dialog = p_dialog->h_dialog;
         dialog_riscos_event_pointer_enter.enter = 0;
-        status_assert(call_dialog(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
+        status_assert(object_call_DIALOG(DIALOG_RISCOS_EVENT_CODE_POINTER_ENTER, &dialog_riscos_event_pointer_enter));
     }
 #endif
 
@@ -1520,7 +1524,7 @@ dialog_dbox_dispose(
         p_dialog->windows.hfont = NULL;
     }
 
-    al_array_dispose(&p_dialog->windows.control_id_map);
+    al_array_dispose(&p_dialog->windows.h_windows_ctl_map);
 #endif
 
     /* send a MSG_DISPOSE iff MSG_CREATE sent */
@@ -1588,7 +1592,7 @@ dialog_dbox_process_focus_steal(
 
         while(DOCNO_NONE != (docno = docno_enum_docs(docno)))
         {
-            const P_DOCU p_docu = p_docu_from_docno(docno);
+            const P_DOCU p_docu = p_docu_from_docno_valid(docno);
             const P_VIEW p_view = p_view_from_viewno_caret(p_docu);
 
             if(IS_VIEW_NONE(p_view))
@@ -1631,7 +1635,7 @@ dialog_dbox_process_focus_return_pre(
         {
             if(caretstr.window_handle != (wimp_w) -1) /* Window Manager may have shut us up already the git (which would return -1) */
             {
-                P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_id);
+                P_DIALOG_ICTL p_dialog_ictl = p_dialog_ictl_from_control_id(p_dialog, p_dialog->current_dialog_control_id);
 
                 if((NULL != p_dialog_ictl) && status_fail(dialog_riscos_ictl_focus_query(p_dialog, p_dialog_ictl)))
                     p_dialog->stolen_focus = 0;
@@ -1934,7 +1938,7 @@ dialog_dbox_process_riscos(
     P_PROC_DIALOG_EVENT p_proc_client;
     DIALOG_MSG_PROCESS_START dialog_msg_process_start;
     msgclr(dialog_msg_process_start);
-    dialog_msg_process_start.initial_focus = 0;
+    dialog_msg_process_start.initial_focus_dialog_control_id = 0;
     if(NULL != (p_proc_client = p_dialog->p_proc_client))
     {
         dialog_msg_process_start.h_dialog = p_dialog->h_dialog;
@@ -1951,9 +1955,12 @@ dialog_dbox_process_riscos(
         DIALOG_CMD_CTL_FOCUS_SET dialog_cmd_ctl_focus_set;
         msgclr(dialog_cmd_ctl_focus_set);
         dialog_cmd_ctl_focus_set.h_dialog = p_dialog->h_dialog;
-        dialog_cmd_ctl_focus_set.control_id = dialog_msg_process_start.initial_focus ? dialog_msg_process_start.initial_focus : dialog_current_move(p_dialog, 0, 0);
-        if(dialog_cmd_ctl_focus_set.control_id)
-            status_assert(call_dialog(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
+        dialog_cmd_ctl_focus_set.dialog_control_id =
+            dialog_msg_process_start.initial_focus_dialog_control_id
+            ? dialog_msg_process_start.initial_focus_dialog_control_id
+            : dialog_current_move(p_dialog, 0, 0);
+        if(dialog_cmd_ctl_focus_set.dialog_control_id)
+            status_assert(object_call_DIALOG(DIALOG_CMD_CODE_CTL_FOCUS_SET, &dialog_cmd_ctl_focus_set));
         } /*block*/
 
         host_key_buffer_flush();

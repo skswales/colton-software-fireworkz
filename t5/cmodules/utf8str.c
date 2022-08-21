@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2006-2015 Stuart Swales */
+/* Copyright (C) 2006-2016 Stuart Swales */
 
 /* Library module for UTF-8 character string handling */
 
@@ -64,7 +64,7 @@ utf8str_char_next(
 * validate a UTF-8 character string
 *
 * variant including inline processing may be used
-* eg. needed for recursive construct processing during file load
+* e.g. needed for recursive construct processing during file load
 *
 ******************************************************************************/
 
@@ -801,7 +801,7 @@ utf8str_xstrkpy(
         _s_raise(errno);
         if(0 == dst_n)
             return(0);
-        dst[0] = CH_NULL;
+        PtrPutByte(dst, CH_NULL);
         return(utf8str_strlen32p1(dst));
     }
 #endif
@@ -883,7 +883,7 @@ utf8str_xstrnkpy(
         _s_raise(errno);
         if(0 == dst_n)
             return(0);
-        dst[0] = CH_NULL;
+        PtrPutByte(dst, CH_NULL);
         return(utf8str_strlen32p1(dst));
     }
 #endif
@@ -1007,7 +1007,7 @@ utf8str_xvsnprintf(
     {
         errno = EINVAL;
         _s_raise(errno);
-        dst[0] = CH_NULL;
+        PtrPutByte(dst, CH_NULL);
         return(-1);
     }
 #endif
@@ -1129,7 +1129,7 @@ _sbstr_from_utf8str(
 *
 * Convert to SBCHAR (U8 Latin-N) string buffer from a UTF-8 counted string
 *
-* eg. for RISC OS Font Manager, Draw file text, Lotus 1-2-3 export
+* e.g. for RISC OS Font Manager, Draw file text, Lotus 1-2-3 export
 *
 * NB always CH_NULL-terminated
 *

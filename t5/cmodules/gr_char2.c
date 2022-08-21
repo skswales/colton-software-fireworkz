@@ -419,7 +419,7 @@ gr_chart_datasource_subtract_using_dsh(
                 {
                     serp = getserp(cp, series_idx);
 
-                    id.no = (UBF) gr_series_external_from_idx(cp, series_idx);
+                    id.no = UBF_PACK(gr_series_external_from_idx(cp, series_idx));
 
                     for(ds = 0; ds < serp->datasources.n_req; ++ds)
                     {
@@ -427,7 +427,7 @@ gr_chart_datasource_subtract_using_dsh(
                         {
                             p_gr_datasource = gr_chart_datasource_p_from_h(cp, serp->datasources.dsh[ds]);
                             PTR_ASSERT(p_gr_datasource);
-                            id.subno = (UBF) ds;
+                            id.subno = UBF_PACK(ds);
                             p_gr_datasource->id = id;
                         }
                     }
@@ -642,8 +642,8 @@ gr_chart_realloc_series(
                 dsh = GR_DATASOURCE_HANDLE_NONE;
             else
             {
-                id.no = (UBF) gr_series_external_from_idx(cp, series_idx);
-                id.subno = (UBF) serp->datasources.n;
+                id.no = UBF_PACK(gr_series_external_from_idx(cp, series_idx));
+                id.subno = UBF_PACK(serp->datasources.n);
 
                 dsh = p_gr_datasource->dsh;
                 p_gr_datasource->id = id;
@@ -813,16 +813,18 @@ gr_chart_realloc_series(
         serp->internal_bits.descriptor_ok = 1;
 #endif
 
-        id.no = (UBF) gr_series_external_from_idx(cp, series_idx);
+        id.no = UBF_PACK(gr_series_external_from_idx(cp, series_idx));
 
         for(ds = 0; ds < serp->datasources.n_req; ++ds)
+        {
             if(serp->datasources.dsh[ds] != GR_DATASOURCE_HANDLE_NONE)
             {
                 p_gr_datasource = gr_chart_datasource_p_from_h(cp, serp->datasources.dsh[ds]);
                 PTR_ASSERT(p_gr_datasource);
-                id.subno = (UBF) ds;
+                id.subno = UBF_PACK(ds);
                 p_gr_datasource->id = id;
             }
+        }
     }
 
     return(1);
@@ -1071,6 +1073,7 @@ gr_travel_dsp_null(
 *
 ******************************************************************************/
 
+_Check_return_
 extern GR_DATASOURCE_HANDLE
 gr_travel_series_dsh_from_ds(
     _ChartRef_  P_GR_CHART cp,
@@ -1079,7 +1082,7 @@ gr_travel_series_dsh_from_ds(
 {
     P_GR_SERIES serp;
 
-    assert(array_index_valid(&cp->series.mh, series_idx));
+    assert(array_index_is_valid(&cp->series.mh, series_idx));
 
     serp = getserp(cp, series_idx);
 
@@ -1103,7 +1106,7 @@ gr_travel_series_label(
     P_GR_SERIES serp;
     const GR_DATASOURCE_NO ds = 0; /* always get series label from ds 0 in a series */
 
-    assert(array_index_valid(&cp->series.mh, series_idx));
+    assert(array_index_is_valid(&cp->series.mh, series_idx));
 
     serp = getserp(cp, series_idx);
 
@@ -1125,6 +1128,7 @@ gr_travel_series_label(
 *
 ******************************************************************************/
 
+_Check_return_
 extern GR_CHART_ITEMNO
 gr_travel_series_n_items(
     _ChartRef_  P_GR_CHART cp,
@@ -1133,7 +1137,7 @@ gr_travel_series_n_items(
 {
     P_GR_SERIES serp;
 
-    assert(array_index_valid(&cp->series.mh, series_idx));
+    assert(array_index_is_valid(&cp->series.mh, series_idx));
 
     serp = getserp(cp, series_idx);
 
@@ -1142,6 +1146,7 @@ gr_travel_series_n_items(
 
 /* scan all ds belonging to this series */
 
+_Check_return_
 extern GR_CHART_ITEMNO
 gr_travel_series_n_items_total(
     _ChartRef_  P_GR_CHART cp,
@@ -1151,7 +1156,7 @@ gr_travel_series_n_items_total(
     GR_DATASOURCE_NO ds;
     GR_CHART_ITEMNO curnum, maxnum;
 
-    assert(array_index_valid(&cp->series.mh, series_idx));
+    assert(array_index_is_valid(&cp->series.mh, series_idx));
 
     serp = getserp(cp, series_idx);
 

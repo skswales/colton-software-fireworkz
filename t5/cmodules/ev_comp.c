@@ -602,11 +602,11 @@ ev_compile(
                 if(compiler_context.fun_parms.load_recalc)
                     p_compiler_output->load_recalc = 1;
 
-                p_compiler_output->ev_parms.slr_n    = (UBF) array_elements32(&p_compiler_output->h_slrs);
-                p_compiler_output->ev_parms.range_n  = (UBF) array_elements32(&p_compiler_output->h_ranges);
-                p_compiler_output->ev_parms.name_n   = (UBF) array_elements32(&p_compiler_output->h_names);
-                p_compiler_output->ev_parms.custom_n = (UBF) array_elements32(&p_compiler_output->h_custom_calls);
-                p_compiler_output->ev_parms.event_n  = (UBF) array_elements32(&p_compiler_output->h_events);
+                p_compiler_output->ev_parms.slr_n    = UBF_PACK(array_elements32(&p_compiler_output->h_slrs));
+                p_compiler_output->ev_parms.range_n  = UBF_PACK(array_elements32(&p_compiler_output->h_ranges));
+                p_compiler_output->ev_parms.name_n   = UBF_PACK(array_elements32(&p_compiler_output->h_names));
+                p_compiler_output->ev_parms.custom_n = UBF_PACK(array_elements32(&p_compiler_output->h_custom_calls));
+                p_compiler_output->ev_parms.event_n  = UBF_PACK(array_elements32(&p_compiler_output->h_events));
 
                 status = 1;
             }
@@ -733,7 +733,7 @@ ev_cell_from_compiler_output(
     p_ev_cell->parms = p_compiler_output->ev_parms;
     ev_cell_constant_from_data(p_ev_cell, &p_compiler_output->ev_data);
 
-    if(p_ev_slr_offset && p_compiler_output->ev_parms.slr_n)
+    if((NULL != p_ev_slr_offset) && p_compiler_output->ev_parms.slr_n)
     {
         const U32 n = p_ev_cell->parms.slr_n;
         P_EV_SLR p_ev_slr = array_range(&p_compiler_output->h_slrs, EV_SLR, 0, n);
@@ -755,7 +755,7 @@ ev_cell_from_compiler_output(
         p_u8 += size;
     }
 
-    if(p_ev_slr_offset && p_compiler_output->ev_parms.range_n)
+    if((NULL != p_ev_slr_offset) && p_compiler_output->ev_parms.range_n)
     {
         const U32 n = p_ev_cell->parms.range_n;
         P_EV_RANGE p_ev_range = array_range(&p_compiler_output->h_ranges, EV_RANGE, 0, n);
@@ -1304,7 +1304,7 @@ proc_func_custom(
     /* store custom name (first arg to function()) in rpn */
     out_string_free(&sym_inf, &compiler_context.data_cur);
 
-    /* now loop over arguments, commas etc storing
+    /* now loop over arguments, commas etc. storing
      * the results in the custom definition structure
      * as well as sending them to the rpn for decompilation
      * closing bracket will stop argument scanning

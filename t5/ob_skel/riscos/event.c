@@ -119,7 +119,7 @@ event__attach(
  * Returns:       TRUE if able to attach menu maker
  * Other Info:    This works similarly to event_attachmenu, except that it
  *                allows you to make any last minute changes to flags in the
- *                menu etc. (eg. ticks/fades), before displaying it. Call
+ *                menu etc. (e.g. ticks/fades), before displaying it. Call
  *                with event_menu_maker==0 removes attachment
 
  */

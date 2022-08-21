@@ -180,7 +180,7 @@ evaluator resource enumeration
 
 enum ev_resource_types
 {
-    EV_RESO_ENGINEER    = 0, /* Yuk. These ones are in Config files: eg. Function-S:0 for Function->Complex menu (now Engineering) */
+    EV_RESO_ENGINEER    = 0, /* Yuk. These ones are in Config files: e.g. Function-S:0 for Function->Complex menu (now Engineering) */
     EV_RESO_DATABASE    = 1,
     EV_RESO_DATE        = 2,
     EV_RESO_FINANCE     = 3,
@@ -681,6 +681,10 @@ enum RPN_NUMBERS
     RPN_FNF_LOGNORM_INV,
     RPN_FNV_PERCENTRANK_EXC,
 
+    /* 2.01 */
+    RPN_FNF_EDATE,
+    RPN_FNF_EOMONTH,
+
 #endif /* end of any new functions */
 
     RPN_END_BUILT_IN,
@@ -1044,7 +1048,7 @@ ev_page_slr(
 
 extern void
 ev_recalc_start(
-    _InVal_     U8 must);
+    _InVal_     BOOL must);
 
 extern void
 ev_recalc_status(
@@ -1052,6 +1056,9 @@ ev_recalc_status(
 
 extern void
 ev_recalc_stop(void);
+
+extern BOOL
+g_ev_recalc_started;
 
 extern void
 ev_redraw_slot_range(

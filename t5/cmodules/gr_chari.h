@@ -294,7 +294,7 @@ GR_SERIES_BITS; /* U32 for sys indep expansion */
 
 typedef struct GR_SERIES_STYLE
 {
-    F64                pie_start_heading;
+    F64                pie_start_heading_degrees;
 
     GR_FILLSTYLEB      pdrop_fillb;
     GR_FILLSTYLEC      pdrop_fillc;
@@ -369,7 +369,7 @@ typedef struct GR_SERIES_CACHE
     GR_CHART_ITEMNO  n_items_total;
 
     /* actual min/max limits from this series in its given
-     * plotstyle eg. taking error bars, log axes etc. into account
+     * plotstyle e.g. taking error bars, log axes etc. into account
     */
     GR_MINMAX_NUMBER limits_x;
     GR_MINMAX_NUMBER limits_y;
@@ -422,16 +422,17 @@ descriptor for an individual axis
 where an axis is drawn
 */
 
-#define GR_AXIS_POSITION_ZERO 0  /* zero or closest edge of plotted area */
-#define GR_AXIS_POSITION_LEFT 1  /* left(bottom) edge of plotted area */
-#define GR_AXIS_POSITION_RIGHT 2 /* right(top) edge of plotted area */
+#define GR_AXIS_POSITION_LZR_ZERO   0 /* zero or closest edge of plotted area */
+#define GR_AXIS_POSITION_LZR_LEFT   1 /* left(bottom) edge of plotted area */
+#define GR_AXIS_POSITION_LZR_RIGHT  2 /* right(top) edge of plotted area */
 
-#define GR_AXIS_POSITION_BOTTOM GR_AXIS_POSITION_LEFT
-#define GR_AXIS_POSITION_TOP    GR_AXIS_POSITION_RIGHT
+#define GR_AXIS_POSITION_BZT_ZERO   GR_AXIS_POSITION_LZR_ZERO
+#define GR_AXIS_POSITION_BZT_BOTTOM GR_AXIS_POSITION_LZR_LEFT
+#define GR_AXIS_POSITION_BZT_TOP    GR_AXIS_POSITION_LZR_RIGHT
 
-#define GR_AXIS_POSITION_AUTO 0 /* deduce position from lzr in 3-D */
-#define GR_AXIS_POSITION_REAR 1
-#define GR_AXIS_POSITION_FRONT 2
+#define GR_AXIS_POSITION_ARF_AUTO   0 /* deduce position from lzr in 3-D */
+#define GR_AXIS_POSITION_ARF_REAR   1
+#define GR_AXIS_POSITION_ARF_FRONT  2
 
 /*
 where ticks are drawn on the axis
@@ -635,7 +636,7 @@ typedef struct GR_CHART_LAYOUT
 GR_CHART_LAYOUT, * P_GR_CHART_LAYOUT;
 
 typedef struct GR_CHART_CORE /* the core of the chart - preserve over clone */
-    {
+{
     GR_CHART_HANDLE     ch;                 /* the handle under which this structure is exported */
 
     U32 ceh;                                /* the handle of the single chart editor that is allowed on this chart */
@@ -657,7 +658,7 @@ typedef struct GR_CHART_CORE /* the core of the chart - preserve over clone */
 GR_CHART_CORE;
 
 typedef struct GR_CHART_CHART               /* attributes of 'chart' object */
-    {
+{
     GR_FILLSTYLEB areastyleb;
     GR_FILLSTYLEC areastylec;
     GR_LINESTYLE borderstyle;
@@ -673,7 +674,7 @@ typedef struct GR_CHART_PLOTAREA_AREA
 GR_CHART_PLOTAREA_AREA;
 
 typedef struct GR_CHART_PLOTAREA            /* attributes of 'plotarea' object */
-    {
+{
     GR_POINT posn;         /* offset of plotted area in chart */
     GR_POINT size;         /* how big the plotted area is */
 
@@ -693,7 +694,7 @@ typedef struct GR_CHART_LEGEND_BITS
 GR_CHART_LEGEND_BITS; /* U32 for sys indep expansion */
 
 typedef struct GR_CHART_LEGEND              /* attributes of 'legend' object */
-    {
+{
     GR_CHART_LEGEND_BITS bits;
 
 #if RISCOS
@@ -759,7 +760,7 @@ GR_CHART_BITS;
 typedef struct GR_CHART_D3_BITS
 {
     UBF on        : 1; /* 3-D embellishment? applies to whole chart */
-    UBF use       : 1; /* whether 3-D is in use, eg pie & scat turn off */
+    UBF use       : 1; /* whether 3-D is in use, e.g. pie & scat turn off */
 
     UBF reserved1 : sizeof(U16)*8 - 1;
     UBF reserved2 : 16;
@@ -786,8 +787,8 @@ typedef struct GR_CHART_D3
 {
     GR_CHART_D3_BITS bits;
 
-    F64 pitch; /* angle pitched about a horizontal axis, bringing top into view */
-    F64 roll;  /* angle pitched about the vertical axis, bringing side into view */
+    F64 droop; /* angle about the horizontal x-axis, bringing top into view */
+    F64 turn;  /* angle about the vertical y-axis, bringing side into view */
 
     GR_CHART_D3_VALID valid; /* validity bits for cached items */
     GR_CHART_D3_CACHE cache; /* cached items */
@@ -908,7 +909,7 @@ GR_TEXT, * P_GR_TEXT;
 
 typedef union P_GR_TEXT_GUTS
 {
-    P_GR_TEXT p_gr_text; /* used for assignment ie. p_gr_text_guts.p_gr_text = p_gr_text + 1; */
+    P_GR_TEXT p_gr_text; /* used for assignment i.e. p_gr_text_guts.p_gr_text = p_gr_text + 1; */
 
     P_GR_DATASOURCE p_gr_datasource;
     P_USTR ustr;
@@ -968,6 +969,55 @@ typedef struct GR_BARLINESCATCH_LINEST_STATE
     F64                    a[2]; /* just m and c please */
 }
 GR_BARLINESCATCH_LINEST_STATE, * P_GR_BARLINESCATCH_LINEST_STATE;
+
+_Check_return_
+static inline STATUS
+gr_chart_group_new(
+    _ChartRef_  P_GR_CHART cp,
+    P_GR_DIAG_OFFSET groupStart,
+    _InVal_     GR_CHART_OBJID id)
+{
+    return(gr_diag_group_new(cp->core.p_gr_diag, groupStart, id));
+}
+
+static inline void
+gr_chart_group_end(
+    _ChartRef_  P_GR_CHART cp,
+    _InRef_     PC_GR_DIAG_OFFSET pGroupStart)
+{
+    consume(U32, gr_diag_group_end(cp->core.p_gr_diag, pGroupStart));
+}
+
+_Check_return_
+static inline STATUS
+gr_chart_line_new(
+    _InoutRef_  P_GR_CHART cp,
+    _InVal_     GR_CHART_OBJID id,
+    _InRef_     PC_GR_BOX pBox,
+    _InRef_     PC_GR_LINESTYLE linestyle)
+{
+    GR_POINT pos, offset;
+
+    pos.x = pBox->x0;
+    pos.y = pBox->y0;
+
+    offset.x = pBox->x1 - pBox->x0;
+    offset.y = pBox->y1 - pBox->y0;
+
+    return(gr_diag_line_new(cp->core.p_gr_diag, NULL, id, &pos, &offset, linestyle));
+}
+
+_Check_return_
+static inline STATUS
+gr_chart_text_new(
+    P_GR_CHART cp,
+    _InVal_     GR_CHART_OBJID id,
+    _InRef_     PC_GR_BOX pBox,
+    _In_z_      PC_USTR szText,
+    _InRef_     PC_GR_TEXTSTYLE textstyle)
+{
+    return(gr_diag_text_new(cp->core.p_gr_diag, NULL, id, pBox, szText, textstyle));
+}
 
 /*
 internally exported functions from gr_chart.c
@@ -1049,13 +1099,6 @@ _Check_return_
 extern STATUS
 gr_chart_realloc_series(
     _ChartRef_  P_GR_CHART cp);
-
-_Check_return_
-extern STATUS
-gr_chart_group_new(
-    _ChartRef_  P_GR_CHART cp,
-    P_GR_DIAG_OFFSET groupStart,
-    _InVal_     GR_CHART_OBJID id);
 
 _Check_return_
 extern STATUS
@@ -1237,7 +1280,7 @@ gr_axes_external_from_idx(
     _InVal_     GR_AXES_IDX axes_idx,
     _InVal_     GR_AXIS_IDX axis_idx);
 
-_Check_return_
+/*ncr*/
 extern GR_AXIS_IDX
 gr_axes_idx_from_external(
     _InRef_     PC_GR_CHART cp,
@@ -1267,21 +1310,21 @@ extern STATUS
 gr_axis_addin_category(
     _ChartRef_  P_GR_CHART cp,
     _InVal_     GR_POINT_NO total_n_points,
-    _InVal_     BOOL front);
+    _InVal_     BOOL front_phase);
 
 _Check_return_
 extern STATUS
 gr_axis_addin_value_x(
     _ChartRef_  P_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
-    _InVal_     BOOL front);
+    _InVal_     BOOL front_phase);
 
 _Check_return_
 extern STATUS
 gr_axis_addin_value_y(
     _ChartRef_  P_GR_CHART cp,
     _InVal_     GR_AXES_IDX axes_idx,
-    _InVal_     BOOL front);
+    _InVal_     BOOL front_phase);
 
 extern void
 gr_axis_form_category(
@@ -1328,14 +1371,16 @@ gr_categ_pos(
     _InVal_     GR_POINT_NO point);
 
 extern void
-gr_chart_d3_cache_vector(
-    _InRef_     PC_GR_CHART cp);
-
-extern void
 gr_map_point(
     _InoutRef_  P_GR_POINT xpoint,
     _InRef_     PC_GR_CHART cp,
     _In_        S32 plotindex);
+
+extern void
+gr_map_point_front_or_back(
+    _InoutRef_  P_GR_POINT xpoint,
+    _InRef_     PC_GR_CHART cp,
+    _InVal_     BOOL front);
 
 extern void
 gr_map_box_front_and_back(
@@ -1480,12 +1525,12 @@ gr_chart_objid_from_axes_idx(
 extern void
 gr_chart_objid_from_axis_grid(
     _InoutRef_  P_GR_CHART_OBJID id,
-    _InVal_     BOOL major);
+    _InVal_     BOOL major_grids);
 
 extern void
 gr_chart_objid_from_axis_tick(
     _InoutRef_  P_GR_CHART_OBJID id,
-    _InVal_     BOOL major);
+    _InVal_     BOOL major_ticks);
 
 extern void
 gr_chart_objid_from_series_idx(

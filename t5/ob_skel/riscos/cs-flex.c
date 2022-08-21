@@ -577,7 +577,7 @@ flex_init(
     } /*block*/
 
     if(flex_granularity < 0x4000)
-        /* SKS says don't page violently on RISC PC (allow 2MB A3000 etc to get away with 16KB pages though) */
+        /* SKS says don't page violently on RISC PC (allow 2MB A3000 etc. to get away with 16KB pages though) */
         flex_granularity = 0x8000;
 
 #if defined(SHAKE_HEAP_VIOLENTLY)
