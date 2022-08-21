@@ -59,7 +59,7 @@ $(PROD_BUILD_DIR).!$(APPL).!Sprites: \
 $(T5).resource.!spr_comm \
 $(T5).resource.!spr24 \
 $(PROD_SOURCE_DIR).resource.riscos.!spr24
- X SNew; ChangeDynamicArea -SpriteSize 64K; SNew
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
  SMerge $(T5).resource.!spr_comm
  SMerge $(T5).resource.!spr24
  SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr24
@@ -73,7 +73,7 @@ $(PROD_BUILD_DIR).!$(APPL).!Sprites22: \
 $(T5).resource.!spr_comm \
 $(T5).resource.!spr22 \
 $(PROD_SOURCE_DIR).resource.riscos.!spr22
- X SNew; ChangeDynamicArea -SpriteSize 64K; SNew
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
  SMerge $(T5).resource.!spr_comm
  SMerge $(T5).resource.!spr22
  SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr22
@@ -91,7 +91,7 @@ $(PROD_SOURCE_DIR).resource.riscos.!spr22 \
 $(T5).resource.!sprR5 \
 $(T5).resource.!sprR5L \
 $(PROD_SOURCE_DIR).resource.riscos.!sprR5
- X SNew; ChangeDynamicArea -SpriteSize 64K; SNew
+ X SNew; ChangeDynamicArea -SpriteSize 128K; SNew
  SMerge $(T5).resource.!spr_comm
  SMerge $(T5).resource.!spr22
  SMerge $(PROD_SOURCE_DIR).resource.riscos.!spr22

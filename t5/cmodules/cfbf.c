@@ -317,7 +317,6 @@ compound_file_read_file_MSAT(
 {
     STATUS status;
     U32 msat_entry_bytes;
-    CFBF_SECT sector_id;
 
     if(NULL == (p_compound_file->full_MSAT =
                 al_ptr_calloc_bytes(CFBF_SECT *, sizeof32(p_compound_file->hdr._sectFat) + (p_compound_file->standard_sector_size * (U32) p_compound_file->hdr._csectDif), &status)))
@@ -351,55 +350,55 @@ compound_file_read_file_MSAT(
     } /*block*/
 #endif
 
-    /* load the rest of the MSAT entries from the file */
-    sector_id = p_compound_file->hdr._sectDifStart;
+    { /* load the rest of the MSAT entries from the file (a FAT chain) */
+    P_BYTE p = PtrAddBytes(P_BYTE, p_compound_file->full_MSAT, msat_entry_bytes);
+    CFBF_FSINDEX i;
+    CFBF_SECT sector_id = p_compound_file->hdr._sectDifStart;
 
-    if(CFBF_ENDOFCHAIN != sector_id)
+    for(i = 0; i < p_compound_file->hdr._csectDif; i++)
     {
-        P_BYTE p = PtrAddBytes(P_BYTE, p_compound_file->full_MSAT, msat_entry_bytes);
-        CFBF_FSINDEX i;
+        U32 bytes_read;
 
-        for(i = 0; i < p_compound_file->hdr._csectDif; i++)
-        {
-            U32 bytes_read;
+        if((CFBF_ENDOFCHAIN != sector_id) || (CFBF_FREESECT == sector_id))
+            break; /* NB some writers use CFBF_FREESECT - naughty! This is how LibreOffice handles them */
 
-            assert((S32) sector_id >= 0);
-            status_assert(compound_file_read_file_sector(p_compound_file, sector_id, p_compound_file->p_standard_sector_buffer, &bytes_read));
-            assert(bytes_read == p_compound_file->standard_sector_size);
+        assert((S32) sector_id >= 0);
+        status_assert(compound_file_read_file_sector(p_compound_file, sector_id, p_compound_file->p_standard_sector_buffer, &bytes_read));
+        assert(bytes_read == p_compound_file->standard_sector_size);
 
-            msat_entry_bytes = p_compound_file->standard_sector_size - sizeof32(int); /* don't copy the link word */
-            memcpy32(p, p_compound_file->p_standard_sector_buffer, msat_entry_bytes);
+        msat_entry_bytes = p_compound_file->standard_sector_size - sizeof32(int); /* don't copy the link word */
+        memcpy32(p, p_compound_file->p_standard_sector_buffer, msat_entry_bytes);
 
 #if TRACE_ALLOWED
+        {
+        const CFBF_SECT * x = (const CFBF_SECT *) p;
+        const U32 msat_entries = msat_entry_bytes/sizeof32(*x);
+        U32 list_index;
+        BOOL needs_newline = TRUE;
+        trace_2(TRACE_MODULE_CFBF, TEXT("MSAT from file DIF (part %d, %u entries):"), i, msat_entries);
+        for(list_index = 0; list_index < msat_entries; list_index++, x++)
+        {
+            if(0 == (list_index % 8))
             {
-            const CFBF_SECT * x = (const CFBF_SECT *) p;
-            const U32 msat_entries = msat_entry_bytes/sizeof32(*x);
-            U32 list_index;
-            BOOL needs_newline = TRUE;
-            trace_2(TRACE_MODULE_CFBF, TEXT("MSAT from file DIF (part %d, %u entries):"), i, msat_entries);
-            for(list_index = 0; list_index < msat_entries; list_index++, x++)
-            {
-                if(0 == (list_index % 8))
-                {
-                    trace_2(TRACE_MODULE_CFBF, TEXT("DIF %d entry %.3u |"), i, list_index);
-                    needs_newline = FALSE;
-                }
-                else
-                    needs_newline = TRUE;
-                trace_1(TRACE_MODULE_CFBF, TEXT("|%.8X |"), *x);
+                trace_2(TRACE_MODULE_CFBF, TEXT("DIF %d entry %.3u |"), i, list_index);
+                needs_newline = FALSE;
             }
-            if(needs_newline)
-                trace_0(TRACE_MODULE_CFBF, TEXT(""));
-            } /*block*/
+            else
+                needs_newline = TRUE;
+            trace_1(TRACE_MODULE_CFBF, TEXT("|%.8X |"), *x);
+        }
+        if(needs_newline)
+            trace_0(TRACE_MODULE_CFBF, TEXT(""));
+        } /*block*/
 #endif
 
-            p += msat_entry_bytes;
+        p += msat_entry_bytes;
 
-            sector_id = * (const CFBF_SECT *) (p_compound_file->p_standard_sector_buffer + msat_entry_bytes); /* chain using the link word */
-        }
-
-        assert(CFBF_ENDOFCHAIN == sector_id);
+        sector_id = * (const CFBF_SECT *) (p_compound_file->p_standard_sector_buffer + msat_entry_bytes); /* chain using the link word */
     }
+
+    assert((CFBF_ENDOFCHAIN == sector_id) || (CFBF_FREESECT == sector_id));
+    } /*block*/
 
     return(status);
 }

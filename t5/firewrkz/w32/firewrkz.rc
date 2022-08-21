@@ -8,8 +8,8 @@
 // Copyright (C) 1998-2015 R W Colton
 
 /*#define VER_FILEVERSION            2,xx,y,0*/
-#define VER_FILEVERSION              2,00,3,0
-#define VER_FILEVERSION_STR         "2.00.03\0"
+#define VER_FILEVERSION              2,00,4,0
+#define VER_FILEVERSION_STR         "2.00.04\0"
 /*#define VER_FILEVERSION_STR       "2.xx\0"*/
 /*#define VER_FILEVERSION_STR       "2.xx.yy\0"*/
 
@@ -111,8 +111,7 @@ BEGIN
             VALUE "FileDescription", "Colton Fireworkz for Windows\0"
             VALUE "FileVersion", VER_FILEVERSION_STR
             VALUE "InternalName", "firewrkz\0"
-            VALUE "LegalCopyright", "Copyright © 1992-1998 Colton Software Limited, "
-                                    "Copyright © 1998-2015 R W Colton. "
+            VALUE "LegalCopyright", "Copyright © 1992-2016 Colton Software. "
                                     "Please see RelNotes.htm for additional copyright information\0"
             VALUE "LegalTrademarks", "Please see RelNotes.htm for all trademark information\0"
             VALUE "OriginalFilename", "firewrkz.exe\0"

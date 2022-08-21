@@ -1637,6 +1637,12 @@ xls_slurp_xf_data_from_XF_INDEX(
         if(0xFFF == parent_xf_index)
             return; /* end of chain */
 
+        if(xf_index == parent_xf_index)
+        {
+            /* assert(xf_index != parent_xf_index); some Mac software triggers this */
+            return; /* end of chain */
+        }
+
         xf_index = parent_xf_index;
         } /*block*/
     }
@@ -2808,27 +2814,35 @@ xls_dump_records(
             FONT_INDEX font_index;
             FORMAT_INDEX format_index;
             XF_INDEX parent_xf_index;
+            U8 xf_attrib; /* which attributes are valid in this record? */
+
             if(biff_version >= 5)
             {
                 font_index      = xls_read_U16_LE(p_x);
                 format_index    = xls_read_U16_LE(p_x + 2);
                 parent_xf_index = xls_read_U16_LE(p_x + 4) >> 4;
+                if(biff_version >= 8)
+                    xf_attrib = p_x[9];
+                else /*if(biff_version == 5)*/
+                    xf_attrib = p_x[7];
             }
             else if(biff_version == 4)
             {
                 font_index      = (FONT_INDEX) p_x[0];
                 format_index    = (FORMAT_INDEX) p_x[1];
                 parent_xf_index = xls_read_U16_LE(p_x + 2) >> 4;
+                xf_attrib = p_x[5];
             }
             else /* (biff_version == 3) */
             {
                 font_index      = (FONT_INDEX) p_x[0];
                 format_index    = (FORMAT_INDEX) p_x[1];
                 parent_xf_index = xls_read_U16_LE(p_x + 4) >> 4;
+                xf_attrib = p_x[3];
             }
             consume_int(ustr_xsnprintf(ustr_bptr(extra_data), elemof32(extra_data),
-                        USTR_TEXT("[" U32_FMT "] font=" U32_FMT ", format=" U32_FMT ", parent=" U32_FMT),
-                        (U32) this_record_idx, (U32) font_index, (U32) format_index, (U32) parent_xf_index));
+                        USTR_TEXT("[" U32_FMT "] font=" U32_FMT ", format=" U32_FMT ", parent=" U32_FMT ", attr=0x%02X"),
+                        (U32) this_record_idx, (U32) font_index, (U32) format_index, (U32) parent_xf_index, (U32) xf_attrib));
             break;
             }
 
