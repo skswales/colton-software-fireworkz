@@ -1036,17 +1036,18 @@ proc_custom_argument(
     /*filled*/  P_USTR name_out,
     _OutRef_    P_EV_TYPE p_ev_type)
 {
-    PC_UCHARS ci = text_in->uchars;
-    U32 used_in = 0;
+    const U32 uchars_n = text_in->size;
+    const PC_UCHARS uchars = text_in->uchars;
+    U32 uchars_idx = 0;
     U32 outidx = 0;
 
     /* default to accepting real, string, date */
     *p_ev_type = EM_REA | EM_STR | EM_DAT;
 
-    while((used_in < text_in->size) && (outidx < EV_INTNAMLEN))
+    while((uchars_idx < uchars_n) && (outidx < EV_INTNAMLEN))
     {
         U32 bytes_of_char;
-        UCS4 ucs4 = uchars_char_decode_off(ci, used_in, bytes_of_char);
+        UCS4 ucs4 = uchars_char_decode_off(uchars, uchars_idx, bytes_of_char);
         SBCHAR ident_ch;
 
         if(!ucs4_is_sbchar(ucs4))
@@ -1054,7 +1055,7 @@ proc_custom_argument(
 
         ident_ch = (SBCHAR) ucs4;
 
-        if(0 == used_in)
+        if(0 == uchars_idx)
         {   /* "XID_Start" */
             if(sbchar_isalpha(ident_ch)) /* Latin-1, no remapping (for document portability) */
             {
@@ -1079,41 +1080,34 @@ proc_custom_argument(
 
         outidx += uchars_char_encode_off(name_out, EV_INTNAMLEN, outidx, ident_ch);
 
-        used_in += bytes_of_char;
+        uchars_idx += bytes_of_char;
     }
 
     assert(outidx < BUF_EV_INTNAMLEN);
     PtrPutByteOff(name_out, outidx, CH_NULL);
 
-    ustr_IncBytes(ci, used_in);
-
     status_return(ident_validate(name_out, FALSE));
 
-    /* is there a type following ? */
-    if(CH_COLON == PtrGetByte(ci))
+    /* is there a type following? (actually a list of types is acceptable) */
+    if((uchars_idx < uchars_n) && (CH_COLON == PtrGetByteOff(uchars, uchars_idx)))
     {
         EV_TYPE type_list = 0;
 
-        ustr_IncByte(ci);
-        ++used_in;
+        ++uchars_idx;
 
-        for(;;)
-            {
+        while(uchars_idx < uchars_n)
+        {
             UCHARZ type_id[BUF_EV_INTNAMLEN]; /* really A7STR */
             EV_TYPE type_res;
 
-            while(CH_SPACE == PtrGetByte(ci))
-            {
-                ustr_IncByte(ci);
-                ++used_in;
-            }
-
             outidx = 0;
 
-            while((used_in < text_in->size) && (outidx < EV_INTNAMLEN))
+            uchars_idx += ss_string_skip_internal_whitespace_uchars(uchars, uchars_n, uchars_idx);
+
+            while((uchars_idx < uchars_n) && (outidx < EV_INTNAMLEN))
             {
                 U32 bytes_of_char;
-                UCS4 ucs4 = uchars_char_decode(ci, bytes_of_char);
+                UCS4 ucs4 = uchars_char_decode_off(uchars, uchars_idx, bytes_of_char);
                 SBCHAR type_ch;
 
                 if(!ucs4_is_sbchar(ucs4))
@@ -1127,32 +1121,31 @@ proc_custom_argument(
                 type_id[outidx++] = (A7CHAR) /*"C"*/tolower(type_ch);
 
                 assert(1 == bytes_of_char);
-                ustr_IncBytes(ci, bytes_of_char);
-                used_in += bytes_of_char;
+                uchars_idx += bytes_of_char;
             }
 
             type_id[outidx] = CH_NULL;
 
-            if(0 == (type_res = type_lookup(ustr_bptr(type_id))))
+            if(0 == (type_res = type_name_lookup(ustr_bptr(type_id))))
                 return(create_error(EVAL_ERR_ARGCUSTTYPE));
 
             type_list |= type_res;
 
-            while(CH_SPACE == PtrGetByte(ci))
-            {
-                ustr_IncByte(ci);
-                ++used_in;
+            uchars_idx += ss_string_skip_internal_whitespace_uchars(uchars, uchars_n, uchars_idx);
+
+            if((uchars_idx < uchars_n) && (PtrGetByteOff(uchars, uchars_idx) == g_ss_recog_context.function_arg_sep))
+            {     
+                ++uchars_idx;
+                continue;
             }
 
-            if(PtrGetByte(ci) != g_ss_recog_context.function_arg_sep)
-                break;
-
-            ustr_IncByte(ci);
-            ++used_in;
+            break;
         }
 
         *p_ev_type = type_list;
     }
+
+    assert(uchars_idx == uchars_n);
 
     return(STATUS_OK);
 }
@@ -1291,7 +1284,7 @@ proc_func_custom(
     /* does the custom already exist ? */
     if((custom_num = find_custom_in_list(ev_slr_docno(&compiler_context.ev_slr), ustr_bptr(custom_name))) >= 0)
     {
-        p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+        p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
         if(!p_ev_custom->flags.undefined)
         {   /* SKS 24sep97 allow redefinition in the same cell */
             if( (ev_slr_col(&p_ev_custom->owner) != ev_slr_col(&compiler_context.ev_slr)) ||
@@ -1303,7 +1296,7 @@ proc_func_custom(
     else if(status_fail(custom_num = ensure_custom_in_list(ev_slr_docno(&compiler_context.ev_slr), ustr_bptr(custom_name))))
         return(set_compile_error((STATUS) custom_num));
     else
-        p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+        p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
     /* send custom identidier home */
     *p_h_custom = p_ev_custom->handle;
@@ -2022,7 +2015,7 @@ rec_lterm(void)
                 break;
             }
 
-            p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+            p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
             sym_inf.sym_idno = RPN_FNM_CUSTOMCALL;
             func_call(&sym_inf, p_ev_custom->handle);
         }
@@ -2036,11 +2029,11 @@ rec_lterm(void)
              * or it's a database field name
              * 28.2.95: allow names if they refer to an external document
              */
-            if(ev_doc_check_custom(ev_slr_docno(&compiler_context.ev_slr))
-               ||
-               (ev_slr_docno(&compiler_context.ev_slr) != refto_ev_docno)
-               ||
-               (ident[0] == CH_QUESTION_MARK) /* database field */ )
+            if( ev_doc_check_is_custom(ev_slr_docno(&compiler_context.ev_slr))
+                ||
+                (ev_slr_docno(&compiler_context.ev_slr) != refto_ev_docno)
+                ||
+                (ident[0] == CH_QUESTION_MARK) /* database field */ )
                 name_num = ensure_name_in_list(refto_ev_docno, ustr_bptr(ident));
             else
                 name_num = find_name_in_list(refto_ev_docno, ustr_bptr(ident));
@@ -2051,7 +2044,7 @@ rec_lterm(void)
                 break;
             }
 
-            p_ev_name = array_ptrc(&name_def.h_table, EV_NAME, name_num);
+            p_ev_name = array_ptrc(&name_def_deptable.h_table, EV_NAME, name_num);
             sym_inf.sym_idno = DATA_ID_NAME;
             out_idno_format(&sym_inf);
             out_name(p_ev_name->handle, compiler_context.fun_parms.nodep);

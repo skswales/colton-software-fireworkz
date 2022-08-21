@@ -109,6 +109,26 @@
     </p>
 
 
+    <h3>2.24.06 (28 Apr 2020)</h3>
+
+    <p>Fixed an unitialised memory issue that caused problems when loading documents containing custom functions.</p>
+
+
+    <h3>2.24.05 (23 Apr 2020)</h3>
+
+    <p>Fixed a spreadsheet issue that caused problems when updating/closing documents containing custom functions and/or names.</p>
+
+
+    <h3>2.24.04 (11 Apr 2020)</h3>
+
+    <p>Windows: No longer uses enhanced CPU instructions in 32-bit build. Allows use on older (Pentium-class) systems.</p>
+
+
+    <h3>2.24.03 (01 Apr 2020)</h3>
+
+    <p>Fixed an unitialised memory issue that cased problems with zero length strings as results of spreadsheet functions.</p>
+
+
     <h3>2.24.02 (27 Mar 2020)</h3>
 
     <p>Fixed a floating point rounding issue that caused problems with subtraction of dates.</p>
@@ -374,6 +394,13 @@
 
     <h3>2.10 (24 Jun 2016)</h3>
 
+    <h4>Date spreadsheet functions added:</h4>
+
+    <p>
+        EDATE(),<br />
+        EOMONTH().
+    </p>
+
     <p>
         Spreadsheet functions that take date parameters have been extended to accept numeric input.
         If a number is supplied where a date is required, it is treated as an Microsoft Excel-compatible serial number and converted to a date value.
@@ -450,13 +477,6 @@
     <p>Windows: Uses GDI+ to handle a much wider range of image file formats.</p>
 
     <p>Windows: Windows 2000 Professional is no longer supported.</p>
-
-    <h4>Date spreadsheet functions added:</h4>
-
-    <p>
-        EDATE(),<br />
-        EOMONTH().
-    </p>
 
 
     <h3>2.00.05 (10 Jun 2016)</h3>

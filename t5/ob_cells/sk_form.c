@@ -1423,13 +1423,13 @@ T5_MSG_PROTO(static, rowtab_msg_reformat, _InRef_ PC_DOCU_REFORMAT p_docu_reform
 
                     trace_4(TRACE_APP_MEMORY_USE,
                             TEXT("TOTAL cols: ") COL_TFMT TEXT(", used: ") U32_TFMT TEXT(", size: ") U32_TFMT TEXT(", pools: ") U32_TFMT,
-                             n_cols_physical(p_docu), total_used, total_size, total_pools);
+                            n_cols_physical(p_docu), total_used, total_size, total_pools);
                     trace_2(TRACE_APP_MEMORY_USE,
                             TEXT("handle table has: ") U32_TFMT TEXT(" entries, total: ") U32_TFMT TEXT(" bytes"),
-                             (U32) array_root.free, array_root.size * sizeof32(ARRAY_BLOCK));
+                            (U32) array_root.used_handles, array_root.size * sizeof32(ARRAY_BLOCK));
                     trace_2(TRACE_APP_MEMORY_USE,
                             TEXT("row table has: ") U32_TFMT TEXT(" entries, total: ") U32_TFMT TEXT(" bytes"),
-                             array_elements32(&p_docu->h_rowtab), array_elements32(&p_docu->h_rowtab) * sizeof32(ROWTAB));
+                            array_elements32(&p_docu->h_rowtab), array_elements32(&p_docu->h_rowtab) * sizeof32(ROWTAB));
                 }
 
             }

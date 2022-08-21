@@ -212,12 +212,12 @@ decode_data_name(
     _InRef_     PC_SS_DATA p_ss_data,
     _InVal_     EV_DOCNO ev_docno)
 {
-    ARRAY_INDEX name_num = name_def_find(p_ss_data->arg.h_name);
+    ARRAY_INDEX name_num = name_def_from_handle(p_ss_data->arg.h_name);
     STATUS status = STATUS_OK;
 
     if(name_num >= 0)
     {
-        const PC_EV_NAME p_ev_name = array_ptrc(&name_def.h_table, EV_NAME, name_num);
+        const PC_EV_NAME p_ev_name = array_ptrc(&name_def_deptable.h_table, EV_NAME, name_num);
 
         if(ev_slr_docno(&p_ev_name->owner) != ev_docno)
         {
@@ -345,8 +345,9 @@ quick_ublock_func_name_add(
 
 /******************************************************************************
 *
-* take current rpn token details and decompile, combining with arguments on
-* the stack; op_buf contains new argument;
+* take current rpn token details and decompile,
+* combining with arguments on the stack;
+* op_buf contains new argument;
 *
 ******************************************************************************/
 
@@ -533,9 +534,9 @@ dec_rpn_token(
             /* read custom id */
             h_custom = *(p_ev_custom_from_ev_cell(p_decompiler_context->rpnstate.p_ev_cell,
                                                   (S32) *(p_decompiler_context->rpnstate.pos + sizeof32(EV_IDNO) + sizeof32(U8))));
-            custom_num = custom_def_find(h_custom);
+            custom_num = custom_def_from_handle(h_custom);
             assert(custom_num >= 0);
-            p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+            p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
             if(ev_slr_docno(&p_ev_custom->owner) != p_decompiler_context->docno)
             {

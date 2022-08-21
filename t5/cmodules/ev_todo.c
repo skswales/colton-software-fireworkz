@@ -49,7 +49,7 @@ needs_recalc_add_to_maps(
     STATUS status = STATUS_OK;
     const EV_DOCNO ev_docno = ev_slr_docno(p_ev_slr);
 
-    if(!ev_doc_check_custom(ev_docno))
+    if(!ev_doc_check_is_custom(ev_docno))
     {
         const ARRAY_INDEX n_nr_maps = array_elements(&h_nr_maps);
 
@@ -182,11 +182,11 @@ ev_todo_add_custom_dependents(
     _InVal_     EV_HANDLE h_custom)
 {
     BOOL found_use = 0;
-    const ARRAY_INDEX custom_num = custom_def_find(h_custom);
+    const ARRAY_INDEX custom_num = custom_def_from_handle(h_custom);
 
     if(custom_num >= 0)
     {
-        DOCNO owner_docno = (DOCNO) ev_slr_docno(&array_ptrc(&custom_def.h_table, EV_CUSTOM, custom_num)->owner);
+        DOCNO owner_docno = (DOCNO) ev_slr_docno(&array_ptrc(&custom_def_deptable.h_table, EV_CUSTOM, custom_num)->owner);
         ARRAY_INDEX custom_ix = search_for_custom_use(h_custom);
 
         if(custom_ix >= 0)
@@ -226,9 +226,9 @@ todo_add_name_deps_of_slr(
     _InRef_     PC_EV_SLR p_ev_slr,
     _InVal_     EV_DOCNO ev_docno)
 {
-    const ARRAY_INDEX n_elements = array_elements(&name_def.h_table);
+    const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
     ARRAY_INDEX i;
-    P_EV_NAME p_ev_name = array_range(&name_def.h_table, EV_NAME, 0, n_elements);
+    P_EV_NAME p_ev_name = array_range(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
 
     /* look for name references */
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
@@ -313,7 +313,7 @@ ev_todo_add_doc_dependents(
 
     { /* add dependents of names referencing this document */
     EV_SLR slr;
-    const ARRAY_INDEX custom_table_elements = array_elements(&custom_def.h_table);
+    const ARRAY_INDEX custom_table_elements = array_elements(&custom_def_deptable.h_table);
     ARRAY_INDEX i;
     P_EV_CUSTOM p_ev_custom;
 
@@ -321,7 +321,7 @@ ev_todo_add_doc_dependents(
 
     todo_add_name_deps_of_slr(&slr, ev_docno);
 
-    for(i = 0, p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, i);
+    for(i = 0, p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, i);
         i < custom_table_elements;
         ++i, ++p_ev_custom)
     {
@@ -391,7 +391,7 @@ ev_todo_add_slr(
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(200, sizeof32(NEEDS_RECALC), FALSE);
     STATUS status;
 
-    if(ev_doc_check_custom(ev_docno))
+    if(ev_doc_check_is_custom(ev_docno))
         return;
 
     assert(ev_slr_col(p_ev_slr) <= ev_numcol(ev_docno));
@@ -512,7 +512,7 @@ todo_add_to_maps(
     const EV_DOCNO ev_docno = ev_slr_docno(p_ev_slr);
     STATUS status = STATUS_OK;
 
-    if(!ev_doc_check_custom(ev_docno))
+    if(!ev_doc_check_is_custom(ev_docno))
     {
         const P_ARRAY_HANDLE p_h_todo_maps = &h_todo_maps;
         ARRAY_INDEX n_todo_maps = array_elements(p_h_todo_maps);
@@ -753,9 +753,9 @@ dep_add_name(void)
     ARRAY_INDEX name_ix;
 
     { /* look for references by a name to the cell */
-    const ARRAY_INDEX n_elements = array_elements(&name_def.h_table); /* SKS 19apr95 goes big document speed tweaky */
+    const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table); /* SKS 19apr95 goes big document speed tweaky */
 
-    for(name_ix = MAX(p_dep_add_stack->index, 0), p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_ix);
+    for(name_ix = MAX(p_dep_add_stack->index, 0), p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_ix);
         name_ix < n_elements;
         ++name_ix, ++p_ev_name)
     {
@@ -788,7 +788,7 @@ dep_add_name(void)
                 }
                 else if(status_fail(status)) /* SKS 19apr95 moved from loop condition for Mr Speedy */
                     break;
-                assert(n_elements == array_elements(&name_def.h_table));
+                assert(n_elements == array_elements(&name_def_deptable.h_table));
             }
         }
     }

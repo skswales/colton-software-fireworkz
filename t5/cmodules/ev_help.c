@@ -1340,12 +1340,12 @@ name_deref(
     P_SS_DATA p_ss_data,
     _InVal_     EV_HANDLE h_name)
 {
-    ARRAY_INDEX name_num = name_def_find(h_name);
+    ARRAY_INDEX name_num = name_def_from_handle(h_name);
     BOOL got_def = FALSE;
 
     if(name_num >= 0)
     {
-        const PC_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+        const PC_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
         if(!p_ev_name->flags.undefined)
         {

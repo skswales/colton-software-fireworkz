@@ -20,18 +20,18 @@ internal functions
 */
 
 static void
-tree_sort_customs(void);
+tree_sort_custom_use(void);
 
 static void
-tree_sort_names(void);
+tree_sort_name_use(void);
 
 static void
-tree_sort_ranges(
+tree_sort_range_use(
     _InVal_     EV_DOCNO ev_docno,
     P_SS_DOC p_ss_doc);
 
 static void
-tree_sort_slrs(
+tree_sort_slr_use(
     P_SS_DOC p_ss_doc);
 
 /*
@@ -47,10 +47,11 @@ block size increments
 */
 
 #define CUSTOM_USE_INC 10
+#define EVENT_USE_INC 2
 #define NAME_USE_INC 10
+
 #define SLR_USE_INC 100
 #define RANGE_USE_INC 20
-#define EVENT_USE_INC 2
 
 /******************************************************************************
 *
@@ -149,12 +150,13 @@ add_range_use(
     _InRef_     PC_EV_SLR p_ev_slr,
     _InVal_     UINT by_index)
 {
-    STATUS status = STATUS_OK;
-    P_SS_DOC p_ss_doc;
+    const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_range->s));
     P_RANGE_USE p_range_use;
+    STATUS status = STATUS_OK;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(RANGE_USE_INC, sizeof32(RANGE_USE), TRUE);
 
-    if(P_DATA_NONE == (p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_range->s))))
+    PTR_ASSERT(p_ss_doc);
+    if(P_SS_DOC_NONE == p_ss_doc)
         return(STATUS_FAIL);
 
     if(NULL != (p_range_use = al_array_extend_by(&p_ss_doc->range_table.h_table, RANGE_USE, 1, &array_init_block, &status)))
@@ -183,12 +185,13 @@ add_slr_use(
     _InRef_     PC_EV_SLR p_ev_slr_by,
     _InVal_     UINT by_index)
 {
-    STATUS status = STATUS_OK;
-    P_SS_DOC p_ss_doc;
+    const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(p_ev_slr));
     P_SLR_USE p_slr_use;
+    STATUS status = STATUS_OK;
     SC_ARRAY_INIT_BLOCK array_init_block = aib_init(SLR_USE_INC, sizeof32(SLR_USE), TRUE);
 
-    if(P_DATA_NONE == (p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(p_ev_slr))))
+    PTR_ASSERT(p_ss_doc);
+    if(P_SS_DOC_NONE == p_ss_doc)
         return(STATUS_FAIL);
 
     if(NULL != (p_slr_use = al_array_extend_by(&p_ss_doc->slr_table.h_table, SLR_USE, 1, &array_init_block, &status)))
@@ -274,27 +277,27 @@ PROC_BSEARCH_PROTO(static, compare_slr, SLR_USE, SLR_USE)
 *
 ******************************************************************************/
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_custom)
+PROC_ELEMENT_IS_DELETED_PROTO(static, custom_use_is_deleted)
 {
     return(((PC_CUSTOM_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_event)
+PROC_ELEMENT_IS_DELETED_PROTO(static, event_use_is_deleted)
 {
     return(((PC_EVENT_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_name)
+PROC_ELEMENT_IS_DELETED_PROTO(static, name_use_is_deleted)
 {
     return(((PC_NAME_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_range)
+PROC_ELEMENT_IS_DELETED_PROTO(static, range_use_is_deleted)
 {
     return(((PC_RANGE_USE) p_any)->flags.to_be_deleted);
 }
 
-PROC_ELEMENT_IS_DELETED_PROTO(static, deleted_slr)
+PROC_ELEMENT_IS_DELETED_PROTO(static, slr_use_is_deleted)
 {
     return(((PC_SLR_USE) p_any)->flags.to_be_deleted);
 }
@@ -316,14 +319,13 @@ ev_add_compiler_output_to_tree(
     STATUS status = STATUS_OK;
     U8 by_index, by_stop;
 
-    /* push state of names and custom check use flags, then
-     * clear them; we don't want to delete definitions that
-     * may have uses that we are about to add
+    /* push state of names and custom check use flags, then clear them;
+     * we don't want to delete definitions that may have uses that we are about to add
      */
-    custom_checkuse = custom_def.flags.checkuse;
-    custom_def.flags.checkuse = 0;
-    name_checkuse = name_def.flags.checkuse;
-    name_def.flags.checkuse = 0;
+    custom_checkuse = custom_def_deptable.flags.checkuse;
+    custom_def_deptable.flags.checkuse = 0;
+    name_checkuse = name_def_deptable.flags.checkuse;
+    name_def_deptable.flags.checkuse = 0;
 
     for(by_index = 0, by_stop = (U8) array_elements32(&p_compiler_output->h_slrs); status_ok(status) && by_index < by_stop; ++by_index)
         status = add_slr_use(array_ptr(&p_compiler_output->h_slrs, EV_SLR, by_index), p_ev_slr, by_index);
@@ -340,19 +342,21 @@ ev_add_compiler_output_to_tree(
     for(by_index = 0, by_stop = (U8) array_elements32(&p_compiler_output->h_custom_defs); status_ok(status) && by_index < by_stop; ++by_index)
     {
         P_EV_HANDLE p_ev_handle = array_ptr(&p_compiler_output->h_custom_defs, EV_HANDLE, by_index);
-        ARRAY_INDEX custom_num = custom_def_find(*p_ev_handle);
+        const ARRAY_INDEX custom_num = custom_def_from_handle(*p_ev_handle);
 
         if(custom_num >= 0)
         {
-            P_EV_CUSTOM p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
-            P_SS_DOC p_ss_doc;
+            const P_EV_CUSTOM p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
+
+            { /* mark document as a custom function document */
+            const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(p_ev_slr));
+
+            if(P_SS_DOC_NONE != p_ss_doc)
+                p_ss_doc->is_custom = TRUE;
+            } /*block*/
 
             p_ev_custom->owner = *p_ev_slr;
             p_ev_custom->flags.undefined = 0;
-
-            /* mark document as a custom function document */
-            if(P_DATA_NONE != (p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(p_ev_slr))))
-                p_ss_doc->custom = 1;
 
             ev_todo_add_custom_dependents(*p_ev_handle);
         }
@@ -362,8 +366,8 @@ ev_add_compiler_output_to_tree(
         status = add_event_use(array_ptr(&p_compiler_output->h_events, EVENT_TYPE, by_index), p_ev_slr);
 
     /* restore flags */
-    custom_def.flags.checkuse = UBF_PACK(custom_checkuse);
-    name_def.flags.checkuse = UBF_PACK(name_checkuse);
+    custom_def_deptable.flags.checkuse = UBF_PACK(custom_checkuse);
+    name_def_deptable.flags.checkuse = UBF_PACK(name_checkuse);
 
     if(status_ok(status) && add_todo)
         ev_todo_add_slr(p_ev_slr);
@@ -427,7 +431,7 @@ search_for_custom_use(
     ARRAY_INDEX res;
     CUSTOM_USE target;
 
-    tree_sort_customs();
+    tree_sort_custom_use();
 
     if(!custom_use_deptable.sorted)
         return(STATUS_FAIL);
@@ -473,7 +477,7 @@ search_for_name_use(
     ARRAY_INDEX res;
     NAME_USE target;
 
-    tree_sort_names();
+    tree_sort_name_use();
 
     if(!name_use_deptable.sorted)
         return(STATUS_FAIL);
@@ -515,13 +519,14 @@ extern ARRAY_INDEX
 search_for_slr_use(
     _InRef_     PC_EV_SLR p_ev_slr)
 {
-    P_SS_DOC p_ss_doc;
+    const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(p_ev_slr));
     ARRAY_INDEX res;
 
-    if(P_DATA_NONE == (p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(p_ev_slr))))
+    PTR_ASSERT(p_ss_doc);
+    if(P_SS_DOC_NONE == p_ss_doc)
         return(STATUS_FAIL);
 
-    tree_sort_slrs(p_ss_doc);
+    tree_sort_slr_use(p_ss_doc);
 
     res = STATUS_FAIL;
 
@@ -578,7 +583,7 @@ ensure_refs_to_name_in_list(
 
         while((name_ix < n_name_uses) && (0 == compare_name(p_name_use, &key)))
         {
-            (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_name_use->slr_by));
+            (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_name_use->slr_by));
             ++p_name_use;
             ++name_ix;
         }
@@ -598,64 +603,67 @@ tree_get_dependent_docs(
 {
     P_SS_DOC p_ss_doc;
 
-    (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_docno);
+    (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_docno);
 
-    if(P_DATA_NONE == (p_ss_doc = ev_p_ss_doc_from_docno(ev_docno)))
-    {
-        assert0();
+    p_ss_doc = ev_p_ss_doc_from_docno(ev_docno);
+    PTR_ASSERT(p_ss_doc);
+    if(P_SS_DOC_NONE == p_ss_doc)
         return;
-    }
 
     {
     const ARRAY_INDEX n_slrs = array_elements(&p_ss_doc->slr_table.h_table);
     ARRAY_INDEX i;
-    P_SLR_USE p_slr_use = array_range(&p_ss_doc->slr_table.h_table, SLR_USE, 0, n_slrs);
+    PC_SLR_USE p_slr_use = array_rangec(&p_ss_doc->slr_table.h_table, SLR_USE, 0, n_slrs);
 
     for(i = 0; i < n_slrs; ++i, ++p_slr_use)
     {
-        if(!p_slr_use->flags.to_be_deleted)
-            (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_slr_use->slr_by));
+        if(p_slr_use->flags.to_be_deleted)
+            continue;
+
+        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_slr_use->slr_by));
     }
     } /*block*/
 
     {
     const ARRAY_INDEX n_ranges = array_elements(&p_ss_doc->range_table.h_table);
     ARRAY_INDEX i;
-    P_RANGE_USE p_range_use = array_range(&p_ss_doc->range_table.h_table, RANGE_USE, 0, n_ranges);
+    PC_RANGE_USE p_range_use = array_rangec(&p_ss_doc->range_table.h_table, RANGE_USE, 0, n_ranges);
 
     for(i = 0; i < n_ranges; ++i, ++p_range_use)
     {
-        if(!p_range_use->flags.to_be_deleted)
-            (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_range_use->slr_by));
+        if(p_range_use->flags.to_be_deleted)
+            continue;
+
+        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_range_use->slr_by));
     }
     } /*block*/
 
     {
-    const ARRAY_INDEX n_names = array_elements(&name_def.h_table);
+    const ARRAY_INDEX n_names = array_elements(&name_def_deptable.h_table);
 
-    if(p_ss_doc->nam_ref_count && n_names)
+    if( (0 != n_names) && (0 != p_ss_doc->name_ref_count) )
     {
-        P_EV_NAME p_ev_name = array_range(&name_def.h_table, EV_NAME, 0, n_names);
+        PC_EV_NAME p_ev_name = array_rangec(&name_def_deptable.h_table, EV_NAME, 0, n_names);
         ARRAY_INDEX i;
 
         for(i = 0; i < n_names; ++i, ++p_ev_name)
         {
-            if(!p_ev_name->flags.to_be_deleted)
-            {
-                switch(ss_data_get_data_id(&p_ev_name->def_data))
-                {
-                case DATA_ID_SLR:
-                    /* if name refers to this document */
-                    if(ev_slr_docno(&p_ev_name->def_data.arg.slr) == ev_docno)
-                        ensure_refs_to_name_in_list(p_docu_dep_sup, p_ev_name->handle);
-                    break;
+            if(p_ev_name->flags.to_be_deleted)
+                continue;
 
-                case DATA_ID_RANGE:
-                    /* if name refers to this document */
-                    if(ev_slr_docno(&p_ev_name->def_data.arg.range.s) == ev_docno)
-                        ensure_refs_to_name_in_list(p_docu_dep_sup, p_ev_name->handle);
-                    break;
-                }
+            switch(ss_data_get_data_id(&p_ev_name->def_data))
+            {
+            case DATA_ID_SLR:
+                /* if name refers to this document */
+                if(ev_slr_docno(&p_ev_name->def_data.arg.slr) == ev_docno)
+                    ensure_refs_to_name_in_list(p_docu_dep_sup, p_ev_name->handle);
+                break;
+
+            case DATA_ID_RANGE:
+                /* if name refers to this document */
+                if(ev_slr_docno(&p_ev_name->def_data.arg.range.s) == ev_docno)
+                    ensure_refs_to_name_in_list(p_docu_dep_sup, p_ev_name->handle);
+                break;
             }
         }
     }
@@ -668,20 +676,20 @@ tree_get_dependent_docs(
     if(0 != n_customs)
     {
         ARRAY_INDEX i;
-        P_CUSTOM_USE p_custom_use = array_range(&custom_use_deptable.h_table, CUSTOM_USE, 0, n_customs);
+        PC_CUSTOM_USE p_custom_use = array_rangec(&custom_use_deptable.h_table, CUSTOM_USE, 0, n_customs);
 
         for(i = 0; i < n_customs; ++i, ++p_custom_use)
         {
             if(!p_custom_use->flags.to_be_deleted)
             {
-                ARRAY_INDEX custom_num = custom_def_find(p_custom_use->custom_to);
+                const ARRAY_INDEX custom_num = custom_def_from_handle(p_custom_use->custom_to);
 
                 if(custom_num >= 0)
                 {
-                    P_EV_CUSTOM p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+                    const PC_EV_CUSTOM p_ev_custom = array_ptrc(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
                     if(ev_slr_docno(&p_ev_custom->owner) == ev_docno)
-                        (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_custom_use->slr_by));
+                        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_custom_use->slr_by));
                 }
             }
         }
@@ -700,16 +708,16 @@ tree_get_supporting_docs(
     _InVal_     EV_DOCNO ev_docno_in,
     P_DOCU_DEP_SUP p_docu_dep_sup)
 {
-    (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_docno_in);
+    (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_docno_in);
 
     {
     DOCNO docno = DOCNO_NONE;
 
     while(DOCNO_NONE != (docno = docno_enum_thunks(docno)))
     {
-        P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(docno);
+        const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(docno);
 
-        if(P_DATA_NONE != p_ss_doc)
+        if(P_SS_DOC_NONE != p_ss_doc)
         {
             U8 this_docno = 0;
 
@@ -725,7 +733,7 @@ tree_get_supporting_docs(
 
                 if(ev_slr_docno(&p_slr_use->slr_by) == ev_docno_in)
                 {
-                    (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, docno);
+                    (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, docno);
                     this_docno = 1;
                     break;
                 }
@@ -745,7 +753,7 @@ tree_get_supporting_docs(
 
                     if(ev_slr_docno(&p_range_use->slr_by) == ev_docno_in)
                     {
-                        (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, docno);
+                        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, docno);
                         break;
                     }
                 }
@@ -773,24 +781,24 @@ tree_get_supporting_docs(
 
             if(ev_slr_docno(&p_name_use->slr_by) == ev_docno_in)
             {
-                EV_HANDLE name_num = name_def_find(p_name_use->name_to.h_name);
+                const ARRAY_INDEX name_num = name_def_from_handle(p_name_use->name_to.h_name);
 
                 if(name_num >= 0)
                 {
-                    P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+                    const PC_EV_NAME p_ev_name = array_ptrc(&name_def_deptable.h_table, EV_NAME, name_num);
 
                     switch(ss_data_get_data_id(&p_ev_name->def_data))
                     {
                     case DATA_ID_SLR:
-                        (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->def_data.arg.slr));
+                        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->def_data.arg.slr));
                         break;
 
                     case DATA_ID_RANGE:
-                        (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->def_data.arg.range.s));
+                        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->def_data.arg.range.s));
                         break;
                     }
 
-                    (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->owner));
+                    (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_name->owner));
                 }
             }
         }
@@ -812,14 +820,14 @@ tree_get_supporting_docs(
 
             if(ev_slr_docno(&p_custom_use->slr_by) == ev_docno_in)
             {
-                ARRAY_INDEX custom_num = custom_def_find(p_custom_use->custom_to);
+                const ARRAY_INDEX custom_num = custom_def_from_handle(p_custom_use->custom_to);
 
                 if(custom_num >= 0)
                 {
-                    P_EV_CUSTOM p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+                    const PC_EV_CUSTOM p_ev_custom = array_ptrc(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
 
                     if(DOCNO_NONE != ev_slr_docno(&p_ev_custom->owner))
-                        (*p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_custom->owner));
+                        (* p_docu_dep_sup->p_proc_ensure_docno) (p_docu_dep_sup, ev_slr_docno(&p_ev_custom->owner));
                 }
             }
         }
@@ -833,7 +841,7 @@ tree_get_supporting_docs(
 *
 ******************************************************************************/
 
-static S32 /* we delete any ? */
+static BOOL /* we delete any ? */
 tree_remove_to_be_deleted(
     P_DEPTABLE p_deptable,
     _InRef_     P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted)
@@ -855,10 +863,10 @@ tree_remove_to_be_deleted(
         p_deptable->sorted -= undeleted_elements - array_elements(&p_deptable->h_table);
 
         p_deptable->flags.to_be_deleted = 0;
-        return(1);
+        return(TRUE);
     }
 
-    return(0);
+    return(FALSE);
 }
 
 /******************************************************************************
@@ -868,13 +876,13 @@ tree_remove_to_be_deleted(
 ******************************************************************************/
 
 /*ncr*/
-extern S32 /* table was altered */
+extern BOOL /* table was altered */
 tree_sort(
     P_DEPTABLE p_deptable,
     _InRef_     P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted,
     _InRef_opt_ P_PROC_BSEARCH p_proc_bsearch)
 {
-    S32 blown = tree_remove_to_be_deleted(p_deptable, p_proc_element_is_deleted);
+    BOOL blown = tree_remove_to_be_deleted(p_deptable, p_proc_element_is_deleted);
 
     if(p_deptable->sorted < array_elements(&p_deptable->h_table))
     {
@@ -886,7 +894,7 @@ tree_sort(
 
         p_deptable->sorted = array_elements(&p_deptable->h_table);
 
-        blown = 1;
+        blown = TRUE;
     }
 
     return(blown);
@@ -905,18 +913,18 @@ tree_sort_all(void)
 
     while(DOCNO_NONE != (docno = docno_enum_thunks(docno)))
     {
-        P_SS_DOC p_ss_doc;
+        const P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(docno);
 
-        if(P_DATA_NONE != (p_ss_doc = ev_p_ss_doc_from_docno(docno)))
+        if(P_SS_DOC_NONE != p_ss_doc)
         {
-            tree_sort_ranges(docno, p_ss_doc);
-            tree_sort_slrs(p_ss_doc);
+            tree_sort_range_use(docno, p_ss_doc);
+            tree_sort_slr_use(p_ss_doc);
         }
     }
 
-    tree_sort_customs();
-    tree_sort_events();
-    tree_sort_names();
+    tree_sort_custom_use();
+    tree_sort_event_use();
+    tree_sort_name_use();
 
     custom_list_sort();
     name_list_sort();
@@ -929,17 +937,17 @@ tree_sort_all(void)
 ******************************************************************************/
 
 static void
-tree_sort_customs(void)
+tree_sort_custom_use(void)
 {
     if(global_flags.lock)
         return;
 
-    if(tree_sort(&custom_use_deptable, deleted_custom, compare_custom))
+    if(tree_sort(&custom_use_deptable, custom_use_is_deleted, compare_custom))
         global_flags.blown = 1;
 
     trace_2(TRACE_APP_MEMORY_USE,
-            TEXT("custom use table is: ") U32_TFMT TEXT(" elements") U32_TFMT TEXT(" bytes"),
-            array_elements(&custom_use_deptable.h_table), array_size32(&custom_use_deptable.h_table) * sizeof32(CUSTOM_USE));
+            TEXT("custom use table is: ") U32_TFMT TEXT(" elements, ") U32_TFMT TEXT(" bytes"),
+            array_elements32(&custom_use_deptable.h_table), array_size32(&custom_use_deptable.h_table) * array_element_size32(&custom_use_deptable.h_table));
 }
 
 /******************************************************************************
@@ -949,17 +957,17 @@ tree_sort_customs(void)
 ******************************************************************************/
 
 extern void
-tree_sort_events(void)
+tree_sort_event_use(void)
 {
     if(global_flags.lock)
         return;
 
-    if(tree_sort(&event_use_deptable, deleted_event, NULL))
+    if(tree_sort(&event_use_deptable, event_use_is_deleted, NULL))
         global_flags.blown = 1;
 
     trace_2(TRACE_APP_MEMORY_USE,
-            TEXT("event use table is: ") U32_TFMT TEXT(" elements") U32_TFMT TEXT(" bytes"),
-            array_elements(&event_use_deptable.h_table), array_size32(&event_use_deptable.h_table) * sizeof32(EVENT_USE));
+            TEXT("event use table is: ") U32_TFMT TEXT(" elements, ") U32_TFMT TEXT(" bytes"),
+            array_elements32(&event_use_deptable.h_table), array_size32(&event_use_deptable.h_table) * array_element_size32(&event_use_deptable.h_table));
 }
 
 /******************************************************************************
@@ -969,17 +977,17 @@ tree_sort_events(void)
 ******************************************************************************/
 
 static void
-tree_sort_names(void)
+tree_sort_name_use(void)
 {
     if(global_flags.lock)
         return;
 
-    if(tree_sort(&name_use_deptable, deleted_name, compare_name))
+    if(tree_sort(&name_use_deptable, name_use_is_deleted, compare_name))
         global_flags.blown = 1;
 
     trace_2(TRACE_APP_MEMORY_USE,
-            TEXT("name use table is: ") U32_TFMT TEXT(" elements") U32_TFMT TEXT(" bytes"),
-            array_elements(&name_use_deptable.h_table), array_size32(&name_use_deptable.h_table) * sizeof32(NAME_USE));
+            TEXT("name use table is: ") U32_TFMT TEXT(" elements, ") U32_TFMT TEXT(" bytes"),
+            array_elements32(&name_use_deptable.h_table), array_size32(&name_use_deptable.h_table) * array_element_size32(&name_use_deptable.h_table));
 }
 
 /******************************************************************************
@@ -1065,7 +1073,7 @@ range_lookup_tables_dispose(
 }
 
 static void
-tree_sort_ranges(
+tree_sort_range_use(
     _InVal_     EV_DOCNO ev_docno,
     P_SS_DOC p_ss_doc)
 {
@@ -1074,11 +1082,11 @@ tree_sort_ranges(
         EV_COL numcol = ev_numcol(ev_docno);
         EV_ROW numrow = ev_numrow(ev_docno);
 
-        if(tree_sort(&p_ss_doc->range_table, deleted_range, NULL)
-           ||
-           numcol != array_elements(&p_ss_doc->h_range_cols)
-           ||
-           numrow != array_elements(&p_ss_doc->h_range_rows))
+        if( tree_sort(&p_ss_doc->range_table, range_use_is_deleted, NULL)
+            ||
+            (numcol != array_elements(&p_ss_doc->h_range_cols))
+            ||
+            (numrow != array_elements(&p_ss_doc->h_range_rows)) )
         {
             STATUS status = STATUS_OK;
 
@@ -1174,9 +1182,9 @@ tree_sort_ranges(
         if_constant(tracing(TRACE_APP_MEMORY_USE))
         {
             U32 col_size, row_size;
-            trace_1(TRACE_APP_MEMORY_USE,
-                    TEXT("range use table is: ") U32_TFMT TEXT(" bytes"),
-                    array_size32(&p_ss_doc->range_table.h_table) * sizeof32(RANGE_USE));
+            trace_2(TRACE_APP_MEMORY_USE,
+                    TEXT("range use table is: ") U32_TFMT TEXT(" elements, ") U32_TFMT TEXT(" bytes"),
+                    array_elements32(&p_ss_doc->range_table.h_table), array_size32(&p_ss_doc->range_table.h_table) * array_element_size32(&p_ss_doc->range_table.h_table));
             range_lookup_tables_size(p_ss_doc, &col_size, &row_size);
             trace_1(TRACE_APP_MEMORY_USE, TEXT("range col table is: ") U32_TFMT TEXT(" bytes"), col_size);
             trace_1(TRACE_APP_MEMORY_USE, TEXT("range row table is: ") U32_TFMT TEXT(" bytes"), row_size);
@@ -1206,18 +1214,18 @@ tree_sort_ranges(
 ******************************************************************************/
 
 static void
-tree_sort_slrs(
+tree_sort_slr_use(
     P_SS_DOC p_ss_doc)
 {
-    if(!global_flags.lock)
-    {
-        if(tree_sort(&p_ss_doc->slr_table, deleted_slr, compare_slr))
-            global_flags.blown = 1;
+    if(global_flags.lock)
+        return;
 
-        trace_1(TRACE_APP_MEMORY_USE,
-                TEXT("slr use table is: ") U32_TFMT TEXT(" bytes"),
-                array_size32(&p_ss_doc->slr_table.h_table) * sizeof32(SLR_USE));
-    }
+    if(tree_sort(&p_ss_doc->slr_table, slr_use_is_deleted, compare_slr))
+        global_flags.blown = 1;
+
+    trace_2(TRACE_APP_MEMORY_USE,
+            TEXT("slr use table is: ") U32_TFMT TEXT(" elements, ") U32_TFMT TEXT(" bytes"),
+            array_elements32(&p_ss_doc->slr_table.h_table), array_size32(&p_ss_doc->slr_table.h_table) * array_element_size32(&p_ss_doc->slr_table.h_table));
 }
 
 /* end of ev_tree.c */

@@ -1949,7 +1949,7 @@ custom_jmp(
 
         res = 0;
 
-        p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, p_stack_entry->data.stack_executing_custom.custom_num);
+        p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, p_stack_entry->data.stack_executing_custom.custom_num);
 
         last_row  = ev_numrow(ev_slr_docno(p_ev_slr));
         first_row = p_ev_custom->owner.row;
@@ -1983,7 +1983,7 @@ static void
 custom_result_slr_deref(
     _InoutRef_  P_SS_DATA p_ss_data)
 {
-    if((DATA_ID_SLR == ss_data_get_data_id(p_ss_data)) && ev_doc_check_custom(ev_slr_docno(&p_ss_data->arg.slr)))
+    if((DATA_ID_SLR == ss_data_get_data_id(p_ss_data)) && ev_doc_check_is_custom(ev_slr_docno(&p_ss_data->arg.slr)))
         ev_slr_deref(p_ss_data, &p_ss_data->arg.slr);
 }
 
@@ -2956,12 +2956,12 @@ process_control_for_cond(
     P_STACK_CONTROL_LOOP p_stack_control_loop,
     _InVal_     S32 step)
 {
-    const ARRAY_INDEX name_num = name_def_find(p_stack_control_loop->h_name);
+    const ARRAY_INDEX name_num = name_def_from_handle(p_stack_control_loop->h_name);
     S32 res = 0;
 
     if(name_num >= 0)
     {
-        const P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+        const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
         if(ss_data_is_real(&p_ev_name->def_data))
         {
@@ -3193,7 +3193,7 @@ ev_recalc_pass_end_calc(void)
 {
     /* called when recalculation of a cell is over */
     BOOL had_custom_result = 0;
-    BOOL custom_sheet = ev_doc_check_custom(ev_slr_docno(&stack_base[stack_offset].slr));
+    BOOL is_custom_sheet = ev_doc_check_is_custom(ev_slr_docno(&stack_base[stack_offset].slr));
     S32 need_redraw = 0;
 
     /* did we actually get a result ? */
@@ -3210,7 +3210,7 @@ ev_recalc_pass_end_calc(void)
                                    &stack_base[stack_offset].data.stack_in_calc.result_data);
 
         /* on error in custom function document, return custom function result error */
-        if(custom_sheet && ss_data_is_error(&stack_base[stack_offset].data.stack_in_calc.result_data))
+        if(is_custom_sheet && ss_data_is_error(&stack_base[stack_offset].data.stack_in_calc.result_data))
         {
             custom_result(NULL, stack_base[stack_offset].data.stack_in_calc.result_data.arg.ss_error.status);
             had_custom_result = 1;
@@ -3221,11 +3221,11 @@ ev_recalc_pass_end_calc(void)
 
     if(!had_custom_result)
     {
-        if(!custom_sheet && (need_redraw || stack_base[stack_offset].stack_flags.calcederror))
+        if(!is_custom_sheet && (need_redraw || stack_base[stack_offset].stack_flags.calcederror))
             cell_add_to_ranges_affected(&stack_base[stack_offset].slr);
 
         /* remove cell's entry from the todo list */
-        if(!custom_sheet)
+        if(!is_custom_sheet)
             (void) todo_remove_slr();
 
         /* continue with what we were doing previously */

@@ -1745,9 +1745,6 @@
     <None Include="..\..\fl_xls\resource\uk-msg">
       <Filter>Source Files\foreign_formats\fl_xls</Filter>
     </None>
-    <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll">
-      <Filter>Source Files\fprowrkz\ob_rec\ob_rec_windlib</Filter>
-    </None>
     <None Include="..\..\firewrkz\resource\windows\UK\resXX.rci">
       <Filter>Resource Files</Filter>
     </None>
@@ -1756,12 +1753,6 @@
     </None>
     <None Include="..\..\firewrkz\RelNotes.htm">
       <Filter>Source Files\firewrkz</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\index.htm">
-      <Filter>Docs\UserGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug00\sg00_spreadsheets.htm">
-      <Filter>Docs\UserGuide\sg</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\ug00\ug01_introduction.htm">
       <Filter>Docs\UserGuide\ug</Filter>
@@ -1773,9 +1764,6 @@
       <Filter>Source Files\fprowrkz</Filter>
     </None>
     <None Include="OUTx86\firewrkz-x86.iss">
-      <Filter>Source Files\firewrkz</Filter>
-    </None>
-    <None Include="OUTx64\firewrkz-x64.iss">
       <Filter>Source Files\firewrkz</Filter>
     </None>
     <None Include="..\..\firewrkz\RelNotesW.htm">
@@ -1790,26 +1778,8 @@
     <None Include="..\..\..\docs\MakeRiscPkg,fd7">
       <Filter>Docs\RISC OS\RiscPkg</Filter>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms.htm">
-      <Filter>Docs\UserGuide\ug\ug90</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_fonts.htm">
-      <Filter>Docs\UserGuide\ug\ug90</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_pictures.htm">
-      <Filter>Docs\UserGuide\ug\ug90</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_risc_os_to_windows.htm">
-      <Filter>Docs\UserGuide\ug\ug90</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_windows_to_risc_os.htm">
-      <Filter>Docs\UserGuide\ug\ug90</Filter>
-    </None>
     <None Include="..\..\..\docs\GSGuide\riscos\index.html">
       <Filter>Docs\RISC OS\GSGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\indexR.htm">
-      <Filter>Docs\RISC OS\RiscPkg</Filter>
     </None>
     <None Include="..\..\..\docs\GSGuide\riscos\content\gsg_glossary.html">
       <Filter>Docs\RISC OS\GSGuide\content</Filter>
@@ -1876,15 +1846,6 @@
     </None>
     <None Include="..\..\..\docs\GSGuide\windows\content\gsguide.css">
       <Filter>Docs\Windows\GSGuide\content</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhc">
-      <Filter>Docs\Windows\HTMLHelp</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhk">
-      <Filter>Docs\Windows\HTMLHelp</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhp">
-      <Filter>Docs\Windows\HTMLHelp</Filter>
     </None>
     <None Include="..\..\firewrkz\RelHistPrev.htm">
       <Filter>Source Files\firewrkz</Filter>
@@ -3161,9 +3122,6 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_FV.htm">
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_FVSCHEDULE.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GAMMALN.htm">
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
@@ -3288,9 +3246,6 @@
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_MROUND.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_MULTINOMIAL.htm">
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_N.htm">
@@ -3477,9 +3432,6 @@
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SECOND.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SERIESSUM.htm">
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SET_NAME.htm">
@@ -3710,27 +3662,6 @@
     <None Include="..\..\ob_chart\resource\Neutral\chart-li.rci">
       <Filter>Source Files\ob_chart\ob_chart_resource\Neutral</Filter>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELI.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELJ.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELK.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELY.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DELTA.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERF.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERFC.htm">
-      <Filter>Docs\UserGuide\sg\sg06</Filter>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GCD.htm">
       <Filter>Docs\UserGuide\sg\sg06</Filter>
     </None>
@@ -3748,9 +3679,6 @@
     </None>
     <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_windows_to_risc_os.htm">
       <Filter>Docs\UserGuide</Filter>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug00\ug00_contents.htm">
-      <Filter>Docs\UserGuide\ug</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELI.htm">
       <Filter>Docs\UserGuide\sg</Filter>

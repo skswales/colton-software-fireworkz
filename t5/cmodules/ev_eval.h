@@ -89,6 +89,7 @@ evaluator's view of a cell
 typedef struct EV_CELL
 {
     EV_PARMS ev_parms;
+
     SS_CONSTANT ss_constant;
 
 #define OVH_EV_CELL offsetof32(EV_CELL, slrs)
@@ -968,8 +969,8 @@ ev_input_poll(
 #define ev_doc_auto_calc() ( \
     !global_preferences.ss_calc_manual )
 
-#define ev_doc_check_custom(docno) ( \
-    ev_p_ss_doc_from_docno(docno)->custom )
+#define ev_doc_check_is_custom(docno) ( \
+    ev_p_ss_doc_from_docno(docno)->is_custom )
 
 #define ev_doc_error(docno) ( \
     ev_doc_is_thunk(docno) ? EVAL_ERR_CANTEXTREF : 0 )
@@ -988,6 +989,12 @@ ev_input_poll(
 
 #define ev_doc_reuse_release() \
     docno_reuse_release()
+
+extern void
+ev_recog_constant_using_autoformat(
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InVal_     EV_DOCNO ev_docno,
+    _In_z_      PC_USTR ustr);
 
 extern void
 ev_current_cell(
@@ -1066,11 +1073,31 @@ extern EV_ROW
 ev_numrow(
     _InVal_     EV_DOCNO ev_docno);
 
+/* get pointer to spreadsheet instance data */
+
+_Check_return_
+_Ret_valid_
+static inline P_SS_INSTANCE_DATA
+p_object_instance_data_SS(
+    _InRef_     P_DOCU p_docu)
+{
+    P_SS_INSTANCE_DATA p_ss_instance_data = &p_docu->ss_instance_data;
+    return(p_ss_instance_data);
+}
+
 _Check_return_
 _Ret_maybenone_
-extern P_SS_DOC
+static inline P_SS_DOC
 ev_p_ss_doc_from_docno(
-    _InVal_     EV_DOCNO ev_docno);
+    _InVal_     EV_DOCNO ev_docno)
+{
+    const P_DOCU p_docu = p_docu_from_ev_docno(ev_docno); /* SKS 06jan95 this could well have been it !!! */
+
+    if(IS_DOCU_NONE(p_docu))
+        return(P_SS_DOC_NONE);
+
+    return(&p_object_instance_data_SS(p_docu)->ss_doc);
+}
 
 _Check_return_
 extern S32
@@ -1133,10 +1160,8 @@ extern void
 ev_uref_change_range(
     _InRef_     PC_EV_RANGE p_ev_range);
 
-PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref);
-
 _Check_return_
-extern S32
+extern UREF_COMMS
 ev_uref_match_range(
     _InoutRef_  P_EV_RANGE p_ev_range,
     _DocuRef_   P_DOCU p_docu,
@@ -1144,7 +1169,7 @@ ev_uref_match_range(
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
 _Check_return_
-extern S32
+extern UREF_COMMS
 ev_uref_match_slr(
     _InoutRef_  P_EV_SLR p_ev_slr,
     _DocuRef_   P_DOCU p_docu,
@@ -1257,7 +1282,7 @@ ev_add_ev_cell_to_tree(
 ev_uref.c external functions
 */
 
-PROC_UREF_EVENT_PROTO(extern, proc_uref_event_ev_uref);
+PROC_UREF_EVENT_PROTO(extern, ev_uref_uref_event);
 
 #endif /* __ev_eval_h */
 

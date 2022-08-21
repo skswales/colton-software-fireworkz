@@ -339,7 +339,7 @@ field_data_query_init(
     _InVal_     ARRAY_INDEX name_num,
     _InVal_     S32 record_no)
 {
-    P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+    P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
     p_field_data_query->p_compound_name = p_ev_name->ustr_name_id;
     p_field_data_query->record_no = record_no;
@@ -353,7 +353,7 @@ ev_field_data_read(
     _InVal_     EV_HANDLE ev_handle,
     _InVal_     S32 iy)
 {
-    ARRAY_INDEX name_num = name_def_find(ev_handle);
+    const ARRAY_INDEX name_num = name_def_from_handle(ev_handle);
     FIELD_DATA_QUERY field_data_query;
 
     if(name_num < 0)
@@ -385,7 +385,7 @@ ev_field_n_records(
     _InVal_     EV_HANDLE ev_handle,
     _OutRef_    P_S32 p_n_records_out)
 {
-    ARRAY_INDEX name_num = name_def_find(ev_handle);
+    const ARRAY_INDEX name_num = name_def_from_handle(ev_handle);
     FIELD_DATA_QUERY field_data_query;
 
     *p_n_records_out = 0;
@@ -413,9 +413,9 @@ extern void
 ev_field_names_check(
     P_NAME_UREF p_name_uref)
 {
-    const ARRAY_INDEX n_elements = array_elements(&name_def.h_table);
+    const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
     ARRAY_INDEX i;
-    P_EV_NAME p_ev_name = array_range(&name_def.h_table, EV_NAME, 0, n_elements);
+    P_EV_NAME p_ev_name = array_range(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
 
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
     {
@@ -580,26 +580,6 @@ ev_numrow(
         return(n_rows(p_docu));
 
     return(0);
-}
-
-/******************************************************************************
-*
-* get pointer to spreadsheet instance data
-*
-******************************************************************************/
-
-_Check_return_
-_Ret_maybenone_
-extern P_SS_DOC
-ev_p_ss_doc_from_docno(
-    _InVal_     EV_DOCNO ev_docno)
-{
-    const P_DOCU p_docu = p_docu_from_ev_docno(ev_docno); /* SKS 06jan95 this could well have been it !!! */
-
-    if(IS_DOCU_NONE(p_docu))
-        return(P_SS_DOC_NONE);
-
-    return(&p_object_instance_data_SS(p_docu)->ss_doc);
 }
 
 /******************************************************************************
@@ -896,14 +876,14 @@ ev_uref_change_range(
 ******************************************************************************/
 
 _Check_return_
-extern S32
+extern UREF_COMMS
 ev_uref_match_range(
     _InoutRef_  P_EV_RANGE p_ev_range,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
-    S32 res = DEP_NONE;
+    UREF_COMMS res = Uref_Dep_None;
 
     DOCU_ASSERT(p_docu);
 
@@ -917,18 +897,20 @@ ev_uref_match_range(
         region.br.row = p_ev_range->e.row;
         region.whole_col = region.whole_row = FALSE;
 
-        if((res = uref_match_region(&region, uref_message, p_uref_event_block)) != DEP_NONE)
+        res = uref_match_region(&region, uref_message, p_uref_event_block);
+
+        if(Uref_Dep_None != res)
         {
             p_ev_range->s.col = EV_COL_PACK(region.tl.col);
             p_ev_range->s.row = (EV_ROW)    region.tl.row;
             p_ev_range->e.col = EV_COL_PACK(region.br.col);
             p_ev_range->e.row = (EV_ROW)    region.br.row;
 
-            if( (res == DEP_DELETE)
+            if( (Uref_Dep_Delete == res)
                 &&
-                (uref_message != Uref_Msg_CLOSE1)
+                (Uref_Msg_CLOSE1 != uref_message)
                 &&
-                (uref_message != Uref_Msg_CLOSE2) )
+                (Uref_Msg_CLOSE2 != uref_message) )
             {
                 p_ev_range->s.bad_ref = p_ev_range->e.bad_ref = 1;
             }
@@ -945,14 +927,14 @@ ev_uref_match_range(
 ******************************************************************************/
 
 _Check_return_
-extern S32
+extern UREF_COMMS
 ev_uref_match_slr(
     _InoutRef_  P_EV_SLR p_ev_slr,
     _DocuRef_   P_DOCU p_docu,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
-    S32 res = DEP_NONE;
+    UREF_COMMS res = Uref_Dep_None;
 
     DOCU_ASSERT(p_docu);
 
@@ -963,16 +945,18 @@ ev_uref_match_slr(
         slr.col = ev_slr_col(p_ev_slr);
         slr.row = ev_slr_row(p_ev_slr);
 
-        if(DEP_NONE != (res = uref_match_slr(&slr, uref_message, p_uref_event_block)))
+        res = uref_match_slr(&slr, uref_message, p_uref_event_block);
+
+        if(Uref_Dep_None != res)
         {
             p_ev_slr->col = EV_COL_PACK(slr.col);
             p_ev_slr->row = (EV_ROW)    slr.row;
 
-            if( (res == DEP_DELETE)
+            if( (Uref_Dep_Delete == res)
                 &&
-                (uref_message != Uref_Msg_CLOSE1)
+                (Uref_Msg_CLOSE1 != uref_message)
                 &&
-                (uref_message != Uref_Msg_CLOSE2) )
+                (Uref_Msg_CLOSE2 != uref_message) )
             {
                 p_ev_slr->bad_ref = 1;
             }

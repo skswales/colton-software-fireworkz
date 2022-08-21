@@ -57,9 +57,9 @@ read_check_custom_def(
     P_ARRAY_INDEX custom_num,
     P_P_EV_CUSTOM p_p_ev_custom)
 {
-    if((*custom_num = custom_def_find(h_custom)) >= 0)
+    if((*custom_num = custom_def_from_handle(h_custom)) >= 0)
     {
-        *p_p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, *custom_num);
+        *p_p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, *custom_num);
 
         if(!(*p_p_ev_custom)->flags.undefined)
         {
@@ -493,7 +493,7 @@ eval_rpn(
 
                 arg_ix = -1;
 
-                p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, p_stack_entry->data.stack_executing_custom.custom_num);
+                p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, p_stack_entry->data.stack_executing_custom.custom_num);
 
                 for(i = 0; i < p_ev_custom->args->n; ++i)
                 {

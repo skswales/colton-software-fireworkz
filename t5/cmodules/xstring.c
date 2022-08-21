@@ -17,8 +17,6 @@
 #include "ob_skel/flags.h"
 #endif
 
-#include <ctype.h> /* for "C"isalpha and friends */
-
 /******************************************************************************
 *
 * like bsearch but always return a pointer even if not perfect match
@@ -335,6 +333,8 @@ memrev32(
 }
 
 #if !WINDOWS
+
+#include <ctype.h> /* for "C"isalpha and friends */
 
 /******************************************************************************
 *

@@ -133,7 +133,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_ss)
 {
     switch(p_uref_event_block->reason.code)
     {
-    case DEP_DELETE: /* dependency must be deleted */
+    case Uref_Dep_Delete: /* dependency must be deleted */
         switch(uref_message)
         {
         /* free a region */
@@ -149,14 +149,14 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_ss)
         }
         break;
 
-    case DEP_UPDATE: /* dependency region must be updated */
-    case DEP_INFORM:
+    case Uref_Dep_Update: /* dependency region must be updated */
+    case Uref_Dep_Inform:
         {
         /* find our entry */
         const P_SS_NAME_RECORD p_ss_name_record = p_ss_name_record_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
 
         if(NULL != p_ss_name_record)
-            if(uref_match_slr(&p_ss_name_record->slr, uref_message, p_uref_event_block) == DEP_DELETE)
+            if(Uref_Dep_Delete == uref_match_slr(&p_ss_name_record->slr, uref_message, p_uref_event_block))
                 ss_name_record_delete(p_docu, p_ss_name_record);
 
         break;

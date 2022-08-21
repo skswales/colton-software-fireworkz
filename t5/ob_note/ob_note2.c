@@ -783,12 +783,12 @@ PROC_UREF_EVENT_PROTO(static, sk_note_ref_dep_update) /* dependency region must 
 
         case NOTE_PIN_CELLS_SINGLE:
             /* simple update if ok */
-            if(uref_match_slr(&p_note_info->region.tl, uref_message, p_uref_event_block) == DEP_DELETE)
+            if(Uref_Dep_Delete == uref_match_slr(&p_note_info->region.tl, uref_message, p_uref_event_block))
                 note_delete(p_docu, p_note_info);
             break;
 
         case NOTE_PIN_CELLS_TWIN:
-            if(uref_match_region(&p_note_info->region, uref_message, p_uref_event_block) == DEP_DELETE)
+            if(Uref_Dep_Delete == uref_match_region(&p_note_info->region, uref_message, p_uref_event_block))
                 note_delete(p_docu, p_note_info);
             break;
         }
@@ -801,13 +801,13 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_note)
 {
     switch(p_uref_event_block->reason.code)
     {
-    case DEP_DELETE: /* dependency must be deleted */
+    case Uref_Dep_Delete: /* dependency must be deleted */
         return(sk_note_ref_dep_delete(p_docu, uref_message, p_uref_event_block));
 
-    case DEP_INFORM:
+    case Uref_Dep_Inform:
         return(STATUS_OK);
 
-    case DEP_UPDATE: /* dependency region must be updated */
+    case Uref_Dep_Update: /* dependency region must be updated */
         return(sk_note_ref_dep_update(p_docu, uref_message, p_uref_event_block));
 
     default: default_unhandled();

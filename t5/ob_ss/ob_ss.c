@@ -910,7 +910,7 @@ PROC_UREF_EVENT_PROTO(static, ob_ss_uref_event)
     }
 
     if(status_ok(status))
-        status = proc_uref_event_ev_uref(p_docu, uref_message, p_uref_event_block);
+        status = ev_uref_uref_event(p_docu, uref_message, p_uref_event_block);
 
     return(status);
 }
@@ -2443,7 +2443,7 @@ ss_object_convert_to_output_text(
     const EV_DOCNO ev_docno = ev_docno_from_p_docu(p_docu);
     U32 strip_nullch = 0;
 
-    if(ev_doc_check_custom(ev_docno))
+    if(ev_doc_check_is_custom(ev_docno))
     {
         /* decode cell contents as it would appear in the formula line i.e. with alternate/foreign UI if wanted */
         status_return(ev_cell_decode_ui(p_quick_ublock, p_ev_cell, ev_docno));
@@ -3572,7 +3572,7 @@ T5_MSG_PROTO(static, ss_msg_save_cell_ownform, _InoutRef_ P_SAVE_CELL_OWNFORM p_
         }
         else
         {
-            if(ev_doc_check_custom(ev_docno)) /* SKS 09apr96 don't save data behind the formulas in custom sheets */
+            if(ev_doc_check_is_custom(ev_docno)) /* SKS 09apr96 don't save data behind the formulae in custom sheets */
                 save_data = FALSE;
 
             p_save_cell_ownform->data_type = OWNFORM_DATA_TYPE_FORMULA;
@@ -4246,7 +4246,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_ensure, _InoutRef_ P_SS_NAME_ENSURE p_ss_nam
 
             if((name_num = ensure_name_in_list((EV_DOCNO) docno, ustr_name_id)) >= 0)
             {
-                P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+                P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
                 p_ss_name_ensure->ev_handle = p_ev_name->handle;
             }
             else
@@ -4260,14 +4260,14 @@ T5_MSG_PROTO(static, ss_msg_ss_name_ensure, _InoutRef_ P_SS_NAME_ENSURE p_ss_nam
 T5_MSG_PROTO(static, ss_msg_ss_name_id_from_handle, _InRef_ P_SS_NAME_ID_FROM_HANDLE p_ss_name_id_from_handle) /* p_quick_ublock appended */
 {
     STATUS status = STATUS_OK;
-    const ARRAY_INDEX name_num = name_def_find(p_ss_name_id_from_handle->ev_handle);
+    const ARRAY_INDEX name_num = name_def_from_handle(p_ss_name_id_from_handle->ev_handle);
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
 
     if(name_num >= 0)
     {
-        const PC_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+        const PC_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
         if(ev_slr_docno(&p_ev_name->owner) != p_ss_name_id_from_handle->docno)
         {
@@ -4288,7 +4288,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_id_from_handle, _InRef_ P_SS_NAME_ID_FROM_HA
 T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_read)
 {
     STATUS status = STATUS_OK;
-    const ARRAY_INDEX name_num = name_def_find(p_ss_name_read->ev_handle);
+    const ARRAY_INDEX name_num = name_def_from_handle(p_ss_name_read->ev_handle);
 
     UNREFERENCED_PARAMETER_DocuRef_(p_docu);
     UNREFERENCED_PARAMETER_InVal_(t5_message);
@@ -4297,7 +4297,7 @@ T5_MSG_PROTO(static, ss_msg_ss_name_read, _InoutRef_ P_SS_NAME_READ p_ss_name_re
 
     if(name_num >= 0)
     {
-        const PC_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+        const PC_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
         if(p_ev_name->flags.undefined)
             status = create_error(EVAL_ERR_NAMEUNDEF);

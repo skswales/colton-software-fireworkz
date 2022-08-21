@@ -3610,7 +3610,7 @@ style_uref_current_cell(
         &&
         (p_style_docu_area->object_message.t5_message == T5_EXT_STYLE_CELL_CURRENT)
         &&
-        (uref_message != Uref_Msg_CLOSE1) )
+        (Uref_Msg_CLOSE1 != uref_message) )
     {
         return(TRUE);
     }
@@ -3622,7 +3622,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
 {
     switch(p_uref_event_block->reason.code)
     {
-    case DEP_DELETE: /* dependency must be deleted */
+    case Uref_Dep_Delete: /* dependency must be deleted */
         {
         switch(uref_message)
         {
@@ -3695,8 +3695,8 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
         break;
         }
 
-    case DEP_UPDATE: /* dependency region must be updated */
-    case DEP_INFORM:
+    case Uref_Dep_Update: /* dependency region must be updated */
+    case Uref_Dep_Inform:
         {
         P_STYLE_DOCU_AREA p_style_docu_area;
 
@@ -3706,19 +3706,17 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
             if(!style_uref_current_cell(p_style_docu_area, uref_message))
             {
                 BOOL delete_it = FALSE;
-                S32 res;
+                UREF_COMMS res = uref_match_docu_area(&p_style_docu_area->docu_area, uref_message, p_uref_event_block);
 
-                res = uref_match_docu_area(&p_style_docu_area->docu_area, uref_message, p_uref_event_block);
-
-                if(res == DEP_DELETE)
+                if(Uref_Dep_Delete == res)
                     delete_it = TRUE;
-                else if(res != DEP_NONE
-                        &&
-                        uref_message == Uref_Msg_Overwrite
-                        &&
-                        !p_style_docu_area->uref_hold
-                        &&
-                        docu_area_is_frag(&p_style_docu_area->docu_area))
+                else if( (res != Uref_Dep_None)
+                         &&
+                         (Uref_Msg_Overwrite == uref_message)
+                         &&
+                         !p_style_docu_area->uref_hold
+                         &&
+                         docu_area_is_frag(&p_style_docu_area->docu_area) )
                 {
                     /* delete overwritten regions less than a cell */
                     REGION region;
@@ -3729,7 +3727,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_style)
 
                 if(delete_it)
                     style_docu_area_delete(p_docu, p_style_docu_area);
-                else if(res != DEP_NONE)
+                else if(res != Uref_Dep_None)
                 {
                     REGION region;
                     region_from_docu_area_max(&region, &p_style_docu_area->docu_area);

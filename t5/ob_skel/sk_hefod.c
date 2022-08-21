@@ -223,7 +223,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
 
     switch(p_uref_event_block->reason.code)
     {
-    case DEP_DELETE: /* dependency must be deleted */
+    case Uref_Dep_Delete: /* dependency must be deleted */
         {
         switch(uref_message)
         {
@@ -282,7 +282,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
         break;
         }
 
-    case DEP_UPDATE: /* dependency region must be updated */
+    case Uref_Dep_Update: /* dependency region must be updated */
         {
         REGION region_old;
 
@@ -292,7 +292,8 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
 
         region_old = p_page_hefo_break->region;
 
-        uref_match_region(&p_page_hefo_break->region, uref_message, p_uref_event_block);
+        consume(UREF_COMMS, uref_match_region(&p_page_hefo_break->region, uref_message, p_uref_event_block));
+
         if(region_old.tl.row != p_page_hefo_break->region.tl.row)
         {
             DOCU_REFORMAT docu_reformat;
@@ -306,7 +307,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_sk_hefod)
         break;
         }
 
-    case DEP_INFORM:
+    case Uref_Dep_Inform:
         break;
 
     default: default_unhandled();

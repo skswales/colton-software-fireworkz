@@ -355,7 +355,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_cache)
 
     switch(p_uref_event_block->reason.code)
     {
-    case DEP_DELETE: /* dependency must be deleted */
+    case Uref_Dep_Delete: /* dependency must be deleted */
         {
         P_TEXT_CACHE p_text_cache = p_text_cache_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
 
@@ -365,14 +365,14 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_text_cache)
         break;
         }
 
-    case DEP_UPDATE: /* dependency region must be updated */
-    case DEP_INFORM:
+    case Uref_Dep_Update: /* dependency region must be updated */
+    case Uref_Dep_Inform:
         {
         P_TEXT_CACHE p_text_cache = p_text_cache_from_client_handle(p_docu, p_uref_event_block->uref_id.client_handle);
 
         /* find our entry */
         if(NULL != p_text_cache)
-            if(uref_match_slr(&p_text_cache->data_ref.arg.slr, uref_message, p_uref_event_block) != DEP_NONE)
+            if(uref_match_slr(&p_text_cache->data_ref.arg.slr, uref_message, p_uref_event_block) != Uref_Dep_None)
                 text_cache_dispose_entry(p_text_cache, TRUE);
 
         break;

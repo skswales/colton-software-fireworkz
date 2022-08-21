@@ -117,7 +117,6 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0502;_WIN32_WINNT=0x0502;_WIN32_IE=0x0800;_DEBUG;UNRELEASED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>common/gflags.h</PrecompiledHeaderFile>
       <BrowseInformation />
@@ -125,6 +124,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <EnablePREfast>false</EnablePREfast>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -156,7 +156,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0502;_WIN32_WINNT=0x0502;_WIN32_IE=0x0800;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>common/gflags.h</PrecompiledHeaderFile>
       <WarningLevel>EnableAllWarnings</WarningLevel>
@@ -1924,16 +1924,10 @@
     </None>
     <None Include="..\..\..\docs\GSGuide\windows\index.html" />
     <None Include="..\..\..\docs\UserGuide\content\common\usguide.css" />
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_FVSCHEDULE.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GCD.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_LCM.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_MULTINOMIAL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_OCT2BIN.htm">
@@ -1943,38 +1937,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_OCT2HEX.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SERIESSUM.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug00\ug00_contents.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\indexR.htm" />
-    <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll" />
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhc" />
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhk" />
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhp" />
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_fonts.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_pictures.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_risc_os_to_windows.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_windows_to_risc_os.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\index.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug00\sg00_spreadsheets.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg01\sg1_absolute_references.htm">
@@ -2355,18 +2317,6 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_AVG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELI.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELJ.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELK.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELY.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BETA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2565,18 +2515,6 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_C_THETA.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELI.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELJ.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELK.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BESSELY.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_BIN2DEC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2608,15 +2546,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DEC2OCT.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DELTA.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERF.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERFC.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GESTEP.htm">
@@ -2667,9 +2596,6 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DEG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DELTA.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DEREF.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2706,12 +2632,6 @@
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_DVARP.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERF.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_ERFC.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_EVEN.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -2743,9 +2663,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_FV.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_FVSCHEDULE.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_GAMMALN.htm">
@@ -2863,9 +2780,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_MROUND.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_MULTINOMIAL.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_M_DETERM.htm">
@@ -3061,9 +2975,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SECOND.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SERIESSUM.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_SET_NAME.htm">
@@ -3274,9 +3185,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg07\sg7_writing_custom_functions.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug00\ug00_contents.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\ug02\ug2_accessing_the_view_control_dialogue_box.htm">
@@ -3804,32 +3712,6 @@
     <None Include="..\..\..\docs\UserGuide\content\ug11\ug11_two_up.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="..\..\..\docs\UserGuide\indexR.htm" />
-    <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll" />
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhc" />
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhk" />
-    <None Include="..\..\..\docs\UserGuide\firewrkz.hhp" />
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_fonts.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_between_platforms_pictures.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_risc_os_to_windows.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug90\ug90_transferring_files_from_windows_to_risc_os.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\index.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug00\sg00_spreadsheets.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="..\..\..\docs\UserGuide\content\ug00\ug01_introduction.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -3902,7 +3784,6 @@
     <None Include="..\..\ob_ss\resource\UK\msg" />
     <None Include="..\..\ob_toolb\resource\uk-msg" />
     <None Include="..\..\fl_xls\resource\uk-msg" />
-    <None Include="OUTx64\firewrkz-x64.iss" />
     <None Include="OUTx86\firewrkz-x86.iss" />
   </ItemGroup>
   <ItemGroup>

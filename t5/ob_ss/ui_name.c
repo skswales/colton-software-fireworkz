@@ -259,7 +259,7 @@ name_handle_from_external_id(
         ustr_name_id = ustr_AddBytes(ustr_name_id, doc_prefix_len);
 
         if((name_num = find_name_in_list((EV_DOCNO) docno, ustr_name_id)) >= 0)
-            status = array_ptr(&name_def.h_table, EV_NAME, name_num)->handle;
+            status = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num)->handle;
     }
 
     return(status);

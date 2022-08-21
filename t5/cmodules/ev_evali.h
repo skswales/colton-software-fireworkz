@@ -18,6 +18,12 @@
 #include "cmodules/ev_eval.h"
 #endif
 
+/* maximum size of symbol */
+#define EV_INTNAMLEN        25
+#define BUF_EV_INTNAMLEN    (EV_INTNAMLEN + 1)
+#define EV_LONGNAMLEN       (1/*[*/ + MAX_PATHSTRING/*rooted-doc*/ + 1/*]*/ + EV_MAX_RANGE_LEN + 1/*CH_NULL*/) /* was 200 */
+#define BUF_EV_LONGNAMLEN   (EV_LONGNAMLEN + 1)
+
 /*
 named resources
 */
@@ -1579,9 +1585,9 @@ PROC_EXEC_PROTO(c_tanh);
 ev_name.c
 */
 
-extern DEPTABLE custom_def;
+extern DEPTABLE custom_def_deptable;
 
-extern DEPTABLE name_def;
+extern DEPTABLE name_def_deptable;
 
 /*
 ev_name.c external functions
@@ -1589,8 +1595,8 @@ ev_name.c external functions
 
 _Check_return_
 extern ARRAY_INDEX
-custom_def_find(
-    _InVal_     EV_HANDLE handle);
+custom_def_from_handle(
+    _InVal_     EV_HANDLE ev_handle);
 
 extern void
 custom_list_sort(void);
@@ -1621,8 +1627,8 @@ find_name_in_list(
 
 _Check_return_
 extern ARRAY_INDEX
-name_def_find(
-    _InVal_     EV_HANDLE handle);
+name_def_from_handle(
+    _InVal_     EV_HANDLE ev_handle);
 
 extern void
 name_free_resources(
@@ -1722,12 +1728,12 @@ func_name(
 _Check_return_
 _Ret_maybenull_z_
 extern PC_A7STR
-type_from_flags(
+type_name_from_type_flags(
     _InVal_     EV_TYPE type_flags);
 
 _Check_return_
 extern EV_TYPE
-type_lookup(
+type_name_lookup(
     _In_z_      PC_USTR ustr_id);
 
 /*
@@ -1794,7 +1800,7 @@ tree_get_supporting_docs(
     P_DOCU_DEP_SUP p_docu_dep_sup);
 
 /*ncr*/
-extern S32
+extern BOOL
 tree_sort(
     P_DEPTABLE p_deptable,
     _InRef_     P_PROC_ELEMENT_IS_DELETED p_proc_element_is_deleted,
@@ -1804,7 +1810,7 @@ extern void
 tree_sort_all(void);
 
 extern void
-tree_sort_events(void);
+tree_sort_event_use(void);
 
 /*
 link_ev.c

@@ -31,15 +31,17 @@ PROC_ELEMENT_IS_DELETED_PROTO(static, proc_deleted_name_def);
 resource lists
 */
 
-DEPTABLE name_def;                      /* name definition table */
-DEPTABLE custom_def;                    /* custom function definition table */
+DEPTABLE custom_def_deptable;   /* custom function definition table */
 
-static EV_HANDLE next_name_handle = 0;
+DEPTABLE name_def_deptable;     /* name definition table */
 
 static EV_HANDLE next_custom_handle = 0;
 
-#define NAME_INC        5
+static EV_HANDLE next_name_handle = 0;
+
 #define CUSTOM_INC      2
+
+#define NAME_INC        5
 
 /******************************************************************************
 *
@@ -82,23 +84,23 @@ name_set_def(
 
 _Check_return_
 extern ARRAY_INDEX
-custom_def_find(
-    _InVal_     EV_HANDLE handle)
+custom_def_from_handle(
+    _InVal_     EV_HANDLE ev_handle)
 {
     ARRAY_INDEX res = -1;
     EV_CUSTOM temp;
 
     custom_list_sort();
 
-    temp.handle = handle;
+    temp.handle = ev_handle;
 
-    if(array_elements(&custom_def.h_table))
+    if(array_elements(&custom_def_deptable.h_table))
     {
         P_EV_CUSTOM p_ev_custom = (P_EV_CUSTOM)
-            bsearch(&temp, array_basec(&custom_def.h_table, EV_CUSTOM), (U32) custom_def.sorted, sizeof(EV_CUSTOM), proc_compare_custom_def);
+            bsearch(&temp, array_basec(&custom_def_deptable.h_table, EV_CUSTOM), (U32) custom_def_deptable.sorted, sizeof(EV_CUSTOM), proc_compare_custom_def);
 
         if(NULL != p_ev_custom)
-            res = array_indexof_element(&custom_def.h_table, EV_CUSTOM, p_ev_custom);
+            res = array_indexof_element(&custom_def_deptable.h_table, EV_CUSTOM, p_ev_custom);
     }
 
     return(res);
@@ -110,49 +112,53 @@ custom_def_find(
 *
 ******************************************************************************/
 
+static inline void
+custom_list_sort_checkuse(void)
+{
+    /* check through custom table to see if the deletion of
+     * a custom use has rendered the definition record useless
+     */
+    const ARRAY_INDEX n_elements = array_elements(&custom_def_deptable.h_table);
+    ARRAY_INDEX custom_num;
+
+    for(custom_num = 0; custom_num < n_elements; ++custom_num)
+    {
+        const P_EV_CUSTOM p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
+
+        if(p_ev_custom->flags.to_be_deleted)
+            continue;
+
+        /* custom reference must be undefined before we can delete it */
+        if(!p_ev_custom->flags.undefined)
+            continue;
+
+        if(search_for_custom_use(p_ev_custom->handle) < 0)
+        {
+            trace_1(TRACE_MODULE_EVAL, TEXT("custom_list_sort deleting undefined custom: %s"), report_ustr(ustr_bptr(p_ev_custom->ustr_custom_id)));
+
+            {
+            P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
+
+            if(P_DATA_NONE != p_ss_doc)
+                p_ss_doc->custom_ref_count -= 1;
+            } /*block*/
+
+            p_ev_custom->flags.to_be_deleted = 1;
+            custom_def_deptable.flags.to_be_deleted = 1;
+            custom_def_deptable.mindel = MIN(custom_def_deptable.mindel, custom_num);
+        }
+    }
+
+    custom_def_deptable.flags.checkuse = 0;
+}
+
 extern void
 custom_list_sort(void)
 {
-    /* check through custom table to see if the deletion of
-     * a custom use has rendered the definition record
-     * useless
-     */
-    if(custom_def.flags.checkuse /* && !custom_def.flags.delhold */) /* SKS -delhold 08aug2015 as unused in Fz */
-    {
-        const ARRAY_INDEX custom_table_elements = array_elements(&custom_def.h_table);
-        ARRAY_INDEX custom_num;
-        P_EV_CUSTOM p_ev_custom = array_range(&custom_def.h_table, EV_CUSTOM, 0, custom_table_elements);
+    if(custom_def_deptable.flags.checkuse /* && !custom_def_deptable.flags.delhold */) /* SKS -delhold 08aug2015 as unused in Fz */
+        custom_list_sort_checkuse();
 
-        for(custom_num = 0; custom_num < custom_table_elements; ++custom_num, ++p_ev_custom)
-        {
-            if(p_ev_custom->flags.to_be_deleted)
-                continue;
-
-            /* custom reference must be undefined before we can delete it */
-            if(!p_ev_custom->flags.undefined)
-                continue;
-
-            if(search_for_custom_use(p_ev_custom->handle) < 0)
-            {
-                {
-                P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_custom->owner));
-
-                if(P_DATA_NONE != p_ss_doc)
-                    p_ss_doc->custom_ref_count -= 1;
-                } /*block*/
-
-                p_ev_custom->flags.to_be_deleted = 1;
-                custom_def.flags.to_be_deleted = 1;
-                custom_def.mindel = MIN(custom_def.mindel, custom_num);
-
-                trace_1(TRACE_MODULE_EVAL, TEXT("custom_list_sort deleting custom: %s"), report_ustr(ustr_bptr(p_ev_custom->ustr_custom_id)));
-            }
-        }
-
-        custom_def.flags.checkuse = 0;
-    }
-
-    tree_sort(&custom_def, proc_deleted_custom_def, proc_compare_custom_def);
+    tree_sort(&custom_def_deptable, proc_deleted_custom_def, proc_compare_custom_def);
 }
 
 /******************************************************************************
@@ -186,7 +192,7 @@ ensure_custom_in_list(
     if(NULL == (p_ev_custom_args = al_ptr_calloc_elem(EV_CUSTOM_ARGS, 1, &status)))
         return(status);
 
-    if(NULL == (p_ev_custom = al_array_extend_by(&custom_def.h_table, EV_CUSTOM, 1, &array_init_block, &status)))
+    if(NULL == (p_ev_custom = al_array_extend_by(&custom_def_deptable.h_table, EV_CUSTOM, 1, &array_init_block, &status)))
     {
         al_ptr_free(p_ev_custom_args);
         return(status);
@@ -212,7 +218,7 @@ ensure_custom_in_list(
         p_ss_doc->custom_ref_count += 1;
     } /*block*/
 
-    return(array_indexof_element(&custom_def.h_table, EV_CUSTOM, p_ev_custom));
+    return(array_indexof_element(&custom_def_deptable.h_table, EV_CUSTOM, p_ev_custom));
 }
 
 /******************************************************************************
@@ -241,10 +247,10 @@ ensure_name_in_list(
     if((name_num = find_name_in_list(owner_ev_docno, ustr_name)) >= 0)
         return(name_num);
 
-    if(NULL == (p_ev_name = al_array_extend_by(&name_def.h_table, EV_NAME, 1, &array_init_block, &status)))
+    if(NULL == (p_ev_name = al_array_extend_by(&name_def_deptable.h_table, EV_NAME, 1, &array_init_block, &status)))
         return(status);
 
-    name_num = array_indexof_element(&name_def.h_table, EV_NAME, p_ev_name);
+    name_num = array_indexof_element(&name_def_deptable.h_table, EV_NAME, p_ev_name);
 
     p_ev_name->handle = next_name_handle++;
     p_ev_name->owner.docno = EV_DOCNO_PACK(owner_ev_docno);
@@ -263,7 +269,7 @@ ensure_name_in_list(
     P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
 
     if(P_DATA_NONE != p_ss_doc)
-        p_ss_doc->nam_ref_count += 1;
+        p_ss_doc->name_ref_count += 1;
     } /*block*/
 
     return(name_num);
@@ -282,7 +288,7 @@ ensure_name_in_list(
 extern void
 ev_name_del_hold(void)
 {
-    name_def.flags.delhold = 1;
+    name_def_deptable.flags.delhold = 1;
 }
 
 /******************************************************************************
@@ -294,7 +300,7 @@ ev_name_del_hold(void)
 extern void
 ev_name_del_release(void)
 {
-    name_def.flags.delhold = 0;
+    name_def_deptable.flags.delhold = 0;
 }
 
 #endif /* UNUSED */
@@ -330,7 +336,7 @@ ev_name_make(
 
         if((name_num = find_name_in_list(ev_docno, ustr_name_id)) >= 0)
         {
-            const P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+            const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
             ev_todo_add_name_dependents(p_ev_name->handle);
             ss_data_free_resources(&p_ev_name->def_data);
             p_ev_name->flags.undefined = 1;
@@ -394,8 +400,8 @@ find_custom_in_list(
     _InVal_     EV_DOCNO owner_ev_docno,
     _In_z_      PC_USTR ustr_custom_name)
 {
-    const ARRAY_INDEX n_elements = array_elements(&custom_def.h_table);
-    P_EV_CUSTOM p_ev_custom = array_range(&custom_def.h_table, EV_CUSTOM, 0, n_elements);
+    const ARRAY_INDEX n_elements = array_elements(&custom_def_deptable.h_table);
+    P_EV_CUSTOM p_ev_custom = array_range(&custom_def_deptable.h_table, EV_CUSTOM, 0, n_elements);
     ARRAY_INDEX i;
 
     for(i = 0; i < n_elements; ++i, ++p_ev_custom)
@@ -429,8 +435,8 @@ find_name_in_list(
     _InVal_     EV_DOCNO owner_ev_docno,
     _In_z_      PC_USTR ustr_name)
 {
-    const ARRAY_INDEX n_elements = array_elements(&name_def.h_table);
-    PC_EV_NAME p_ev_name = array_rangec(&name_def.h_table, EV_NAME, 0, n_elements);
+    const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
+    PC_EV_NAME p_ev_name = array_rangec(&name_def_deptable.h_table, EV_NAME, 0, n_elements);
     ARRAY_INDEX i;
 
     for(i = 0; i < n_elements; ++i, ++p_ev_name)
@@ -467,10 +473,10 @@ nam_ref_count_update(
 
         if(P_DATA_NONE != p_ss_doc)
         {
-            p_ss_doc->nam_ref_count += update;
+            p_ss_doc->name_ref_count += update;
             trace_2(TRACE_MODULE_EVAL,
                     TEXT("nam_ref_count_update docno: ") U32_TFMT TEXT(", ref now: ") S32_TFMT,
-                    (U32) ev_slr_docno(&p_ev_name->def_data.arg.slr), (S32) p_ss_doc->nam_ref_count);
+                    (U32) ev_slr_docno(&p_ev_name->def_data.arg.slr), p_ss_doc->name_ref_count);
         }
 
         break;
@@ -482,10 +488,10 @@ nam_ref_count_update(
 
         if(P_DATA_NONE != p_ss_doc)
         {
-            p_ss_doc->nam_ref_count += update;
+            p_ss_doc->name_ref_count += update;
             trace_2(TRACE_MODULE_EVAL,
                     TEXT("nam_ref_count_update docno: ") U32_TFMT TEXT(", ref now: ") S32_TFMT,
-                    (U32) ev_slr_docno(&p_ev_name->def_data.arg.range.s), (S32) p_ss_doc->nam_ref_count);
+                    (U32) ev_slr_docno(&p_ev_name->def_data.arg.range.s), p_ss_doc->name_ref_count);
         }
 
         break;
@@ -505,23 +511,23 @@ nam_ref_count_update(
 
 _Check_return_
 extern ARRAY_INDEX
-name_def_find(
-    _InVal_     EV_HANDLE handle)
+name_def_from_handle(
+    _InVal_     EV_HANDLE ev_handle)
 {
     ARRAY_INDEX res = -1;
     EV_NAME temp;
 
     name_list_sort();
 
-    temp.handle = handle;
+    temp.handle = ev_handle;
 
-    if(array_elements(&name_def.h_table))
+    if(array_elements(&name_def_deptable.h_table))
     {
         const PC_EV_NAME p_ev_name = (PC_EV_NAME)
-            bsearch(&temp, array_basec(&name_def.h_table, EV_NAME), (U32) name_def.sorted, sizeof(EV_NAME), proc_compare_name_def);
+            bsearch(&temp, array_basec(&name_def_deptable.h_table, EV_NAME), (U32) name_def_deptable.sorted, sizeof(EV_NAME), proc_compare_name_def);
 
         if(NULL != p_ev_name)
-            res = array_indexof_element(&name_def.h_table, EV_NAME, p_ev_name);
+            res = array_indexof_element(&name_def_deptable.h_table, EV_NAME, p_ev_name);
     }
 
     return(res);
@@ -549,54 +555,57 @@ name_free_resources(
 *
 ******************************************************************************/
 
+static inline void
+name_list_sort_checkuse(void)
+{
+    /* check through name table to see if the deletion of
+     * a name use has rendered the definition record useless
+     */
+    const ARRAY_INDEX n_elements = array_elements(&name_def_deptable.h_table);
+    ARRAY_INDEX name_num;
+
+    for(name_num = 0; name_num < n_elements; ++name_num)
+    {
+        const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
+
+        if(p_ev_name->flags.to_be_deleted)
+            continue;
+
+        /* reference must be undefined before we can delete it */
+        if(!p_ev_name->flags.undefined)
+            continue;
+
+        if( (search_for_name_use(p_ev_name->handle) < 0)
+            &&
+            !ev_tell_name_clients(p_ev_name->handle, FALSE /* changed */))
+        {
+            trace_1(TRACE_MODULE_EVAL, TEXT("name_list_sort deleting undefined name: %s"), report_ustr(ustr_bptr(p_ev_name->ustr_name_id)));
+
+            name_free_resources(p_ev_name);
+
+            {
+            P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
+
+            if(P_DATA_NONE != p_ss_doc)
+                p_ss_doc->name_ref_count -= 1;
+            } /*block*/
+
+            p_ev_name->flags.to_be_deleted = 1;
+            name_def_deptable.flags.to_be_deleted = 1;
+            name_def_deptable.mindel = MIN(name_def_deptable.mindel, name_num);
+        }
+    }
+
+    name_def_deptable.flags.checkuse = 0;
+}
+
 extern void
 name_list_sort(void)
 {
-    /* check through name table to see if the deletion of
-     * a name use has rendered the definition record
-     * useless
-     */
-    if(name_def.flags.checkuse /* && !name_def.flags.delhold */) /* SKS -delhold 08aug2015 as unused in Fz */
-    {
-        const ARRAY_INDEX n_elements = array_elements(&name_def.h_table);
-        ARRAY_INDEX name_num;
+    if(name_def_deptable.flags.checkuse /* && !name_def_deptable.flags.delhold */) /* SKS -delhold 08aug2015 as unused in Fz */
+        name_list_sort_checkuse();
 
-        for(name_num = 0; name_num < n_elements; ++name_num)
-        {
-            const P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
-
-            if(p_ev_name->flags.to_be_deleted)
-                continue;
-
-            /* reference must be undefined before we can delete it */
-            if(!p_ev_name->flags.undefined)
-                continue;
-
-            if( (search_for_name_use(p_ev_name->handle) < 0)
-                &&
-                !ev_tell_name_clients(p_ev_name->handle, FALSE /* changed */))
-            {
-                name_free_resources(p_ev_name);
-
-                {
-                P_SS_DOC p_ss_doc = ev_p_ss_doc_from_docno(ev_slr_docno(&p_ev_name->owner));
-
-                if(P_DATA_NONE != p_ss_doc)
-                    p_ss_doc->nam_ref_count -= 1;
-                } /*block*/
-
-                p_ev_name->flags.to_be_deleted = 1;
-                name_def.flags.to_be_deleted = 1;
-                name_def.mindel = MIN(name_def.mindel, name_num);
-
-                trace_1(TRACE_MODULE_EVAL, TEXT("name_list_sort deleting name: %s"), report_ustr(ustr_bptr(p_ev_name->ustr_name_id)));
-            }
-        }
-
-        name_def.flags.checkuse = 0;
-    }
-
-    tree_sort(&name_def, proc_deleted_name_def, proc_compare_name_def);
+    tree_sort(&name_def_deptable, proc_deleted_name_def, proc_compare_name_def);
 }
 
 /******************************************************************************
@@ -630,7 +639,7 @@ name_make(
 
     if(status_ok(name_num))
     {
-        const P_EV_NAME p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+        const P_EV_NAME p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
 
         name_free_resources(p_ev_name);
         name_set_def(p_ev_name, p_ss_data_in, 0);

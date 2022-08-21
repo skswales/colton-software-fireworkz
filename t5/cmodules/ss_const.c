@@ -1559,6 +1559,8 @@ ss_recog_string(
 *
 * allocate space for a string
 *
+* NB MUST cater for zero-length strings
+*
 ******************************************************************************/
 
 _Check_return_
@@ -1644,25 +1646,18 @@ ss_string_make_uchars(
     _In_reads_opt_(uchars_n) PC_UCHARS uchars,
     _InVal_     U32 uchars_n)
 {
-    const U32 actual_len = uchars_n;
-
     PTR_ASSERT(p_ss_data);
     assert((S32) uchars_n >= 0);
+    assert(uchars_n <= EV_MAX_STRING_LEN); /* sometimes we get copied willy-nilly into buffers! */
 
-    if(0 != actual_len)
+    status_return(ss_string_allocate(p_ss_data, uchars_n)); /* NB includes zero-length strings */
+
+    if(0 != uchars_n)
     {
-        assert(actual_len <= EV_MAX_STRING_LEN); /* sometimes we get copied willy-nilly into buffers! */
-        status_return(ss_string_allocate(p_ss_data, actual_len));
         if(NULL == uchars)
             PtrPutByte(p_ss_data->arg.string_wr.uchars, CH_NULL); /* allows append (like ustr_set_n()) */
         else
-            memcpy32(p_ss_data->arg.string_wr.uchars, uchars, actual_len);
-    }
-    else
-    {
-        p_ss_data->arg.string.uchars = uchars_empty_string;
-        p_ss_data->local_data = 0;
-        ss_data_set_data_id(p_ss_data, DATA_ID_STRING);
+            memcpy32(p_ss_data->arg.string_wr.uchars, uchars, uchars_n);
     }
 
     return(STATUS_OK);

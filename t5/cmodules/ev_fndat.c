@@ -483,7 +483,7 @@ PROC_EXEC_PROTO(c_hour)
 
     exec_func_ignore_parms();
 
-    status = ss_timeval_to_hms(ss_data_get_date(args[0])->time, &hours, &minutes, &seconds);
+    status = ss_timeval_to_hms(ss_data_get_date_time(args[0]), &hours, &minutes, &seconds);
     exec_func_status_return(p_ss_data_res, status);
 
     hour_result = hours;
@@ -553,7 +553,7 @@ PROC_EXEC_PROTO(c_minute)
 
     exec_func_ignore_parms();
 
-    status = ss_timeval_to_hms(ss_data_get_date(args[0])->time, &hours, &minutes, &seconds);
+    status = ss_timeval_to_hms(ss_data_get_date_time(args[0]), &hours, &minutes, &seconds);
     exec_func_status_return(p_ss_data_res, status);
 
     minute_result = minutes;
@@ -679,7 +679,7 @@ PROC_EXEC_PROTO(c_second)
 
     exec_func_ignore_parms();
 
-    status = ss_timeval_to_hms(ss_data_get_date(args[0])->time, &hours, &minutes, &seconds);
+    status = ss_timeval_to_hms(ss_data_get_date_time(args[0]), &hours, &minutes, &seconds);
     exec_func_status_return(p_ss_data_res, status);
 
     second_result = seconds;

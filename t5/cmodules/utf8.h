@@ -47,9 +47,9 @@ static inline BOOL
 u8_is_utf8_lead_byte(
     _InVal_     U8 u8)
 {
-    return( (((u8) & 0xE0) == 0xC0) ||
-            (((u8) & 0xF0) == 0xE0) ||
-            (((u8) & 0xF8) == 0xF0) );
+    return( ((u8 & 0xE0) == 0xC0) ||
+            ((u8 & 0xF0) == 0xE0) ||
+            ((u8 & 0xF8) == 0xF0) );
 }
 
 /*
@@ -62,7 +62,7 @@ static inline BOOL
 u8_is_utf8_trail_byte(
     _InVal_     U8 u8)
 {
-    return( (((u8) & 0xC0) == 0x80) );
+    return( ((u8 & 0xC0) == 0x80) );
 }
 
 /*
@@ -73,15 +73,15 @@ number of bytes of UTF-8 encoding of the character pointed to
 
 /* NL variant is not required as total length is encoded in the first byte */
 
-#define utf8_bytes_of_char(uchars) /*num*/ (    \
-    u8_is_ascii7(PtrGetByte(uchars))            \
-    ? 1                                         \
-    : utf8__bytes_of_char(uchars)               )
+#define utf8_bytes_of_char(uchars) /*U32 num*/ (    \
+    u8_is_ascii7(PtrGetByte(uchars))                \
+    ? 1U                                            \
+    : utf8__bytes_of_char(uchars)                   )
 
-#define utf8_bytes_of_char_off(uchars, off) /*num*/ (   \
-    u8_is_ascii7(PtrGetByteOff(uchars, off))            \
-    ? 1                                                 \
-    : utf8__bytes_of_char_off(uchars, off)              )
+#define utf8_bytes_of_char_off(uchars, off) /*U32 num*/ (   \
+    u8_is_ascii7(PtrGetByteOff(uchars, off))                \
+    ? 1U                                                    \
+    : utf8__bytes_of_char_off(uchars, off)                  )
 
 _Check_return_
 extern U32
@@ -98,15 +98,15 @@ utf8__bytes_of_char_off(
 }
 
 /* single ASCII-7 bytes retrieved without function call overhead */
-#define utf8_bytes_prev_of_char(uchars_start, uchars) /*num*/ ( \
-    (   (uchars_start != uchars)                    &&          \
-        u8_is_ascii7(PtrGetByteOff(uchars, -1))   )             \
-        ? 1                                                     \
-        : utf8__bytes_prev_of_char(uchars_start, uchars)        )
+#define utf8_bytes_prev_of_char(uchars_start, uchars) /*U32 num*/ ( \
+    (   (uchars_start != uchars)                    &&              \
+        u8_is_ascii7(PtrGetByteOff(uchars, -1))   )                 \
+        ? 1U                                                        \
+        : utf8__bytes_prev_of_char(uchars_start, uchars)            )
 
-#define utf8_bytes_prev_of_char_NS(uchars) /*num*/ (            \
+#define utf8_bytes_prev_of_char_NS(uchars) /*U32 num*/ (        \
         u8_is_ascii7(PtrGetByteOff(uchars, -1))                 \
-        ? 1                                                     \
+        ? 1U                                                    \
         : utf8__bytes_prev_of_char_NS(uchars)                   )
 
 _Check_return_
@@ -156,12 +156,12 @@ decode UCS-4 character from UTF-8 character encoding, with number of bytes
 /* single ASCII-7 bytes retrieved without function call overhead */
 #define utf8_char_decode(uchars, bytes_of_char__ref) /*UCS4*/ (     \
     u8_is_ascii7(PtrGetByte(uchars))                                \
-        ? ( (bytes_of_char__ref) = 1, (UCS4) PtrGetByte(uchars) )   \
+        ? ( (bytes_of_char__ref) = 1U, (UCS4) PtrGetByte(uchars) )  \
         : utf8__char_decode(uchars, &(bytes_of_char__ref))          )
 
 #define utf8_char_decode_off(uchars, off, bytes_of_char__ref) /*UCS4*/ (    \
     u8_is_ascii7(PtrGetByteOff(uchars, off))                                \
-        ? ( (bytes_of_char__ref) = 1, (UCS4) PtrGetByteOff(uchars, off) )   \
+        ? ( (bytes_of_char__ref) = 1U, (UCS4) PtrGetByteOff(uchars, off) )  \
         : utf8__char_decode_off(uchars, off, &(bytes_of_char__ref))         )
 
 #define utf8_char_decode_NULL(uchars) /*UCS4*/ (    \
@@ -195,16 +195,16 @@ encode UCS-4 character as UTF-8 character encoding
 */
 
 /* single ASCII-7 bytes poked direct to output buffer without function call overhead */
-#define utf8_char_encode(utf8_buf, elemof_buffer, ucs4) /*num*/ (   \
-    (ucs4_is_ascii7(ucs4) && (0 != elemof_buffer))                  \
-        ? ( PtrPutByte(utf8_buf, (U8) (ucs4)), 1 )                  \
-        : utf8__char_encode_off(utf8_buf, elemof_buffer, 0, ucs4)   )
+#define utf8_char_encode(utf8_buf, elemof_buffer, ucs4) /*U32 num*/ (   \
+    (ucs4_is_ascii7(ucs4) && (0 != elemof_buffer))                      \
+        ? ( PtrPutByte(utf8_buf, (U8) (ucs4)), 1U )                     \
+        : utf8__char_encode_off(utf8_buf, elemof_buffer, 0, ucs4)       )
 
 /* single ASCII-7 bytes poked direct to given offset in output buffer without function call overhead */
-#define utf8_char_encode_off(utf8_buf, elemof_buffer, encode_offset, ucs4) /*num*/ (    \
-    (ucs4_is_ascii7(ucs4) && (encode_offset < elemof_buffer))                           \
-        ? ( PtrPutByteOff(utf8_buf, encode_offset, (U8) (ucs4)), 1 )                    \
-        : utf8__char_encode_off(utf8_buf, elemof_buffer, encode_offset, ucs4)           )
+#define utf8_char_encode_off(utf8_buf, elemof_buffer, encode_offset, ucs4) /*U32 num*/ (    \
+    (ucs4_is_ascii7(ucs4) && (encode_offset < elemof_buffer))                               \
+        ? ( PtrPutByteOff(utf8_buf, encode_offset, (U8) (ucs4)), 1U )                       \
+        : utf8__char_encode_off(utf8_buf, elemof_buffer, encode_offset, ucs4)               )
 
 _Check_return_
 extern U32 /* number of bytes */
@@ -219,10 +219,10 @@ number of bytes required to encode UCS-4 character as UTF-8 character encoding
 */
 
 /* single ASCII-7 character sized without function call overhead */
-#define utf8_bytes_of_char_encoding(ucs4) /*num*/ ( \
-    ucs4_is_ascii7(ucs4)                            \
-    ? 1                                             \
-    : utf8__bytes_of_char_encoding(ucs4)            )
+#define utf8_bytes_of_char_encoding(ucs4) /*U32 num*/ ( \
+    ucs4_is_ascii7(ucs4)                                \
+    ? 1U                                                \
+    : utf8__bytes_of_char_encoding(ucs4)                )
 
 _Check_return_
 extern U32 /* number of bytes */
@@ -282,17 +282,17 @@ uchars_n == strlen_without_NULLCH abused to mean don't limit
 /* if more than one byte, we can read the next pair of bytes: if both are ASCII-7 then GrCluster size is one */
 /* if just one byte, we can read the next single byte: if it is ASCII-7 then GrCluster size is one */
 /* otherwise call the function to work it out */
-#define utf8_bytes_of_grapheme_cluster(uchars, uchars_n) /*num*/ (                              \
+#define utf8_bytes_of_grapheme_cluster(uchars, uchars_n) /*U32 num*/ (                          \
     (   ((uchars_n >  1) && u8_is_ascii7(PtrGetByte(uchars) | PtrGetByteOff(uchars, 1))) ||     \
         ((uchars_n == 1) && u8_is_ascii7(PtrGetByte(uchars)))                                )  \
-        ? 1                                                                                     \
+        ? 1U                                                                                    \
         : utf8__bytes_of_grapheme_cluster(uchars, uchars_n)                                     )
 
 /* simple version for CH_NULL-terminated strings, see notes */
-#define utf8_bytes_of_grapheme_cluster_NC(uchars) /*num*/ (                 \
+#define utf8_bytes_of_grapheme_cluster_NC(uchars) /*U32 num*/ (             \
     (   (CH_NULL == PtrGetByte(uchars))                                ||   \
         (u8_is_ascii7(PtrGetByte(uchars) | PtrGetByteOff(uchars, 1)))     ) \
-        ? 1                                                                 \
+        ? 1U                                                                \
         : utf8__bytes_of_grapheme_cluster_NC(uchars)                        )
 
 _Check_return_
@@ -306,16 +306,16 @@ extern U32
 utf8__bytes_of_grapheme_cluster_NC(
     _In_        PC_UTF8 uchars);
 
-#define utf8_bytes_prev_of_grapheme_cluster(uchars_start, uchars) /*num*/ ( \
-    (   (uchars_start != uchars)                    &&                      \
-        u8_is_ascii7(PtrGetByteOff(uchars, -1))     )                       \
-        ? 1                                                                 \
-        : utf8__bytes_prev_of_grapheme_cluster(uchars_start, uchars)        )
+#define utf8_bytes_prev_of_grapheme_cluster(uchars_start, uchars) /*U32 num*/ ( \
+    (   (uchars_start != uchars)                    &&                          \
+        u8_is_ascii7(PtrGetByteOff(uchars, -1))     )                           \
+        ? 1U                                                                    \
+        : utf8__bytes_prev_of_grapheme_cluster(uchars_start, uchars)            )
 
-#define utf8_bytes_prev_of_grapheme_cluster_NS(uchars) /*num*/ (    \
-    u8_is_ascii7(PtrGetByteOff(uchars, -1))                         \
-        ? 1                                                         \
-        : utf8__bytes_prev_of_grapheme_cluster_NS(uchars)           )
+#define utf8_bytes_prev_of_grapheme_cluster_NS(uchars) /*U32 num*/ (    \
+    u8_is_ascii7(PtrGetByteOff(uchars, -1))                             \
+        ? 1U                                                            \
+        : utf8__bytes_prev_of_grapheme_cluster_NS(uchars)               )
 
 _Check_return_
 extern U32
@@ -353,7 +353,7 @@ utf8_bytes_of_grapheme_clusters(
 #define utf8_grapheme_cluster_decode(uchars, uchars_n, bytes_of_char__ref, bytes_of_grapheme_cluster__ref) /*UCS4*/ (   \
     (   ((uchars_n >  1) && u8_is_ascii7(PtrGetByte(uchars) | PtrGetByteOff(uchars, 1))) ||                             \
         ((uchars_n == 1) && u8_is_ascii7(PtrGetByte(uchars)))                             )                             \
-        ? ( (bytes_of_grapheme_cluster__ref) = (bytes_of_char__ref) = 1, (UCS4) PtrGetByte(uchars) )                    \
+        ? ( (bytes_of_grapheme_cluster__ref) = (bytes_of_char__ref) = 1U, (UCS4) PtrGetByte(uchars) )                   \
         : utf8__grapheme_cluster_decode(uchars, uchars_n, &(bytes_of_char__ref), &(bytes_of_grapheme_cluster__ref))     )
 
 _Check_return_
@@ -515,36 +515,36 @@ number of bytes of UCHARS encoding of the character pointed to
 
 #if USTR_IS_SBSTR
 
-#define uchars_bytes_of_char(uchars) /*num*/ \
-    1
+#define uchars_bytes_of_char(uchars) /*U32 num*/ \
+    1U
 
-#define uchars_bytes_of_char_off(uchars, off) /*num*/ \
-    1
+#define uchars_bytes_of_char_off(uchars, off) /*U32 num*/ \
+    1U
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_bytes_of_char(uchars) /*num*/ \
+#define uchars_bytes_of_char(uchars) /*U32 num*/ \
     utf8_bytes_of_char(uchars)
 
-#define uchars_bytes_of_char_off(uchars, off) /*num*/ \
+#define uchars_bytes_of_char_off(uchars, off) /*U32 num*/ \
     utf8_bytes_of_char_off(uchars, off)
 
 #endif /* USTR_IS_SBSTR */
 
 #if USTR_IS_SBSTR
 
-#define uchars_bytes_prev_of_char(uchars_start, uchars) /*num*/ \
-    ( (uchars_start != uchars) ? 1 : 0 )
+#define uchars_bytes_prev_of_char(uchars_start, uchars) /*U32 num*/ \
+    ( (uchars_start != uchars) ? 1U : 0U )
 
-#define uchars_bytes_prev_of_char_NS(uchars) /*num*/ \
-    1
+#define uchars_bytes_prev_of_char_NS(uchars) /*U32 num*/ \
+    1U
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_bytes_prev_of_char(uchars_start, uchars) /*num*/ \
+#define uchars_bytes_prev_of_char(uchars_start, uchars) /*U32 num*/ \
     utf8_bytes_prev_of_char(uchars_start, uchars)
 
-#define uchars_bytes_prev_of_char_NS(uchars) /*num*/ \
+#define uchars_bytes_prev_of_char_NS(uchars) /*U32 num*/ \
     utf8_bytes_prev_of_char_NS(uchars)
 
 #endif /* USTR_IS_SBSTR */
@@ -555,12 +555,12 @@ number of bytes
 
 #if USTR_IS_SBSTR
 
-#define uchars_bytes_of_chars(uchars, uchars_n, n_chars) /*num*/ \
+#define uchars_bytes_of_chars(uchars, uchars_n, n_chars) /*U32 num*/ \
     min(uchars_n, n_chars)
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_bytes_of_chars(uchars, uchars_n, n_chars) /*num*/ \
+#define uchars_bytes_of_chars(uchars, uchars_n, n_chars) /*U32 num*/ \
     utf8_bytes_of_chars(uchars, uchars_n, n_chars)
 
 #endif /* USTR_IS_SBSTR */
@@ -592,10 +592,10 @@ decode UCS-4 character from UCHARS character encoding, with number of bytes
 #if USTR_IS_SBSTR
 
 #define uchars_char_decode(uchars, bytes_of_char__ref) /*UCS4*/ \
-    ( (bytes_of_char__ref) = 1, (UCS4) PtrGetByte(uchars) )
+    ( (bytes_of_char__ref) = 1U, (UCS4) PtrGetByte(uchars) )
 
 #define uchars_char_decode_off(uchars, off, bytes_of_char__ref) /*UCS4*/ \
-    ( (bytes_of_char__ref) = 1, (UCS4) PtrGetByteOff(uchars, off) )
+    ( (bytes_of_char__ref) = 1U, (UCS4) PtrGetByteOff(uchars, off) )
 
 #define uchars_char_decode_NULL(uchars) /*UCS4*/ \
     (UCS4) PtrGetByte(uchars)
@@ -626,23 +626,23 @@ encode UCS-4 character as UCHARS character encoding
 #if USTR_IS_SBSTR
 
 /* single bytes poked direct to output buffer */
-#define uchars_char_encode(uchars, elemof_buffer, ucs4) /*num*/ (   \
-    ((0 != elemof_buffer))                                          \
-        ? ( PtrPutByte(uchars, (U8) (ucs4)), 1 )                    \
-        : 1                                                         )
+#define uchars_char_encode(uchars, elemof_buffer, ucs4) /*U32 num*/ (   \
+    ((0 != elemof_buffer))                                              \
+        ? ( PtrPutByte(uchars, (U8) (ucs4)), 1U )                       \
+        : 1U                                                            )
 
 /* single bytes poked direct to given offset in output buffer */
-#define uchars_char_encode_off(uchars, elemof_buffer, encode_offset, ucs4) /*num*/ (    \
-    (encode_offset < elemof_buffer)                                                     \
-        ? ( PtrPutByteOff(uchars, encode_offset, (U8) (ucs4)), 1 )                      \
-        : 1                                                                             )
+#define uchars_char_encode_off(uchars, elemof_buffer, encode_offset, ucs4) /*U32 num*/ (    \
+    (encode_offset < elemof_buffer)                                                         \
+        ? ( PtrPutByteOff(uchars, encode_offset, (U8) (ucs4)), 1U )                         \
+        : 1U                                                                                )
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_char_encode(uchars, elemof_buffer, ucs4) /*num*/ \
+#define uchars_char_encode(uchars, elemof_buffer, ucs4) /*U32 num*/ \
     utf8_char_encode(uchars, elemof_buffer, ucs4)
 
-#define uchars_char_encode_off(uchars, elemof_buffer, encode_offset, ucs4) /*num*/ \
+#define uchars_char_encode_off(uchars, elemof_buffer, encode_offset, ucs4) /*U32 num*/ \
     utf8_char_encode_off(uchars, elemof_buffer, encode_offset, ucs4)
 
 #endif /* USTR_IS_SBSTR */
@@ -653,13 +653,13 @@ number of bytes required to encode UCS-4 character as UCHARS character encoding
 
 #if USTR_IS_SBSTR
 
-#define uchars_bytes_of_char_encoding(ucs4) /*num*/ \
-    1
+#define uchars_bytes_of_char_encoding(ucs4) /*U32 num*/ \
+    1U
 
 #else /* NOT USTR_IS_SBSTR */
 
 /* single ASCII-7 character sized without function call overhead */
-#define uchars_bytes_of_char_encoding(ucs4) /*num*/ \
+#define uchars_bytes_of_char_encoding(ucs4) /*U32 num*/ \
     utf8_bytes_of_char_encoding(ucs4)
 
 #endif /* USTR_IS_SBSTR */
@@ -670,12 +670,12 @@ number of UCS-4 characters represented by uchars_n bytes of UCHARS encoding
 
 #if USTR_IS_SBSTR
 
-#define uchars_chars_of_bytes(uchars, uchars_n) /*num*/ \
+#define uchars_chars_of_bytes(uchars, uchars_n) /*U32 num*/ \
     (uchars_n)
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_chars_of_bytes(uchars, uchars_n) /*num*/ \
+#define uchars_chars_of_bytes(uchars, uchars_n) /*U32 num*/ \
     utf8_chars_of_bytes(uchars, uchars_n)
 
 #endif /* USTR_IS_SBSTR */
@@ -692,30 +692,30 @@ uchars_n == strlen_without_NULLCH abused to mean don't limit
 
 #if USTR_IS_SBSTR
 
-#define uchars_bytes_of_grapheme_cluster_NC(uchars) /*num*/ \
-    1
+#define uchars_bytes_of_grapheme_cluster_NC(uchars) /*U32 num*/ \
+    1U
 
-#define uchars_bytes_of_grapheme_cluster(uchars, uchars_n) /*num*/ \
-    1
+#define uchars_bytes_of_grapheme_cluster(uchars, uchars_n) /*U32 num*/ \
+    1U
 
-#define uchars_bytes_prev_of_grapheme_cluster_NC(uchars) /*num*/ \
-    1
+#define uchars_bytes_prev_of_grapheme_cluster_NC(uchars) /*U32 num*/ \
+    1U
 
-#define uchars_bytes_prev_of_grapheme_cluster(uchars_start, uchars) /*num*/ \
-    ( (uchars_start != uchars) ? 1 : 0 )
+#define uchars_bytes_prev_of_grapheme_cluster(uchars_start, uchars) /*U32 num*/ \
+    ( (uchars_start != uchars) ? 1U : 0U )
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_bytes_of_grapheme_cluster_NC(uchars) /*num*/ \
+#define uchars_bytes_of_grapheme_cluster_NC(uchars) /*U32 num*/ \
     utf8_bytes_of_grapheme_cluster_NC(uchars)
 
-#define uchars_bytes_of_grapheme_cluster(uchars, uchars_n) /*num*/ \
+#define uchars_bytes_of_grapheme_cluster(uchars, uchars_n) /*U32 num*/ \
     utf8_bytes_of_grapheme_cluster(uchars, uchars_n)
 
-#define uchars_bytes_prev_of_grapheme_cluster_NS(uchars) /*num*/ \
+#define uchars_bytes_prev_of_grapheme_cluster_NS(uchars) /*U32 num*/ \
     utf8_bytes_prev_of_grapheme_cluster_NS(uchars)
 
-#define uchars_bytes_prev_of_grapheme_cluster(uchars_start, uchars) /*num*/ \
+#define uchars_bytes_prev_of_grapheme_cluster(uchars_start, uchars) /*U32 num*/ \
     utf8_bytes_prev_of_grapheme_cluster(uchars_start, uchars)
 
 #endif /* USTR_IS_SBSTR */
@@ -726,12 +726,12 @@ number of bytes
 
 #if USTR_IS_SBSTR
 
-#define uchars_bytes_of_grapheme_clusters(uchars, uchars_n, n_grapheme_clusters) /*num*/ \
+#define uchars_bytes_of_grapheme_clusters(uchars, uchars_n, n_grapheme_clusters) /*U32 num*/ \
     min(uchars_n, n_grapheme_clusters)
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_bytes_of_grapheme_clusters(uchars, uchars_n, n_grapheme_clusters) /*num*/ \
+#define uchars_bytes_of_grapheme_clusters(uchars, uchars_n, n_grapheme_clusters) /*U32 num*/ \
     utf8_bytes_of_grapheme_clusters(uchars, uchars_n, n_grapheme_clusters) 
 
 #endif /* USTR_IS_SBSTR */
@@ -751,7 +751,7 @@ number of bytes
 #if USTR_IS_SBSTR
 
 #define uchars_grapheme_cluster_decode(uchars, uchars_n, bytes_of_char__ref, bytes_of_grapheme_cluster__ref) /*UCS4*/ \
-    ( (bytes_of_grapheme_cluster__ref) = (bytes_of_char__ref) = 1, (UCS4) PtrGetByte(uchars) )
+    ( (bytes_of_grapheme_cluster__ref) = (bytes_of_char__ref) = 1U, (UCS4) PtrGetByte(uchars) )
 
 #else /* NOT USTR_IS_SBSTR */
 
@@ -762,12 +762,12 @@ number of bytes
 
 #if USTR_IS_SBSTR
 
-#define uchars_grapheme_clusters_of_bytes(uchars, uchars_n) /*num*/ \
+#define uchars_grapheme_clusters_of_bytes(uchars, uchars_n) /*U32 num*/ \
     (uchars_n)
 
 #else /* NOT USTR_IS_SBSTR */
 
-#define uchars_grapheme_clusters_of_bytes(uchars, uchars_n) /*num*/ \
+#define uchars_grapheme_clusters_of_bytes(uchars, uchars_n) /*U32 num*/ \
     utf8_grapheme_clusters_of_bytes(uchars, uchars_n)
 
 #endif /* USTR_IS_SBSTR */

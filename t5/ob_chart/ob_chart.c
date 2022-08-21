@@ -1395,11 +1395,11 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
     {
     default: default_unhandled();
 #if CHECKING
-    case DEP_NONE:
+    case Uref_Dep_None:
 #endif
         break;
 
-    case DEP_DELETE:
+    case Uref_Dep_Delete:
         switch(p_chart_element->bits.type)
         {
         default:
@@ -1419,17 +1419,17 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
             {
             default:
 #if CHECKING
-            case DEP_UPDATE:
+            case Uref_Dep_Update:
                 assert0();
                 break;
 
-            case DEP_INFORM:
+            case Uref_Dep_Inform:
                 /* cell contents in our range are being deleted; we will get a uref */
-            case DEP_NONE:
+            case Uref_Dep_None:
 #endif
                 break;
 
-            case DEP_DELETE:
+            case Uref_Dep_Delete:
                 chart_element_subtract(p_chart_element);
                 chart_modify_in_a_bit(p_chart_element->p_chart_header);
                 break;
@@ -1441,7 +1441,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
 
         break;
 
-    case DEP_UPDATE:
+    case Uref_Dep_Update:
         /* simple motion of elements harmless; just update structures
          * if rows(columns) have been inserted/added into a col(row)-based element then recalc chart
         */
@@ -1465,17 +1465,17 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
             {
             default:
 #if CHECKING
-            case DEP_DELETE:
-            case DEP_INFORM:
+            case Uref_Dep_Delete:
+            case Uref_Dep_Inform:
                 assert0();
 
                 /*FALLTHRU*/
 
-            case DEP_NONE:
+            case Uref_Dep_None:
 #endif
                 break;
 
-            case DEP_UPDATE:
+            case Uref_Dep_Update:
                 if((p_chart_element->region.br.row - p_chart_element->region.tl.row) != (element_region.br.row - element_region.tl.row))
                 {
                     /* col-based live range has had row insertion/deletion: recalc */
@@ -1496,17 +1496,17 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
             {
             default:
 #if CHECKING
-            case DEP_DELETE:
-            case DEP_INFORM:
+            case Uref_Dep_Delete:
+            case Uref_Dep_Inform:
                 assert0();
 
                 /*FALLTHRU*/
 
-            case DEP_NONE:
+            case Uref_Dep_None:
 #endif
                 break;
 
-            case DEP_UPDATE:
+            case Uref_Dep_Update:
                 if((p_chart_element->region.br.col - p_chart_element->region.tl.col) != (element_region.br.col - element_region.tl.col))
                 {
                     /* row-based live range has had col insertion/deletion: recalc */
@@ -1522,7 +1522,7 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
 
         break;
 
-    case DEP_INFORM:
+    case Uref_Dep_Inform:
         switch(p_chart_element->bits.type)
         {
         default:
@@ -1535,17 +1535,17 @@ PROC_UREF_EVENT_PROTO(static, proc_uref_event_ob_chart)
             {
             default:
 #if CHECKING
-            case DEP_UPDATE:
-            case DEP_DELETE:
+            case Uref_Dep_Update:
+            case Uref_Dep_Delete:
                 assert0();
 
                 /*FALLTHRU*/
 
-            case DEP_NONE:
+            case Uref_Dep_None:
 #endif
                 break;
 
-            case DEP_INFORM:
+            case Uref_Dep_Inform:
                 switch(uref_message)
                 {
                 default:

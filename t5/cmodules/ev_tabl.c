@@ -924,7 +924,7 @@ lowercase ASCII sorted compiler function lookup
 
 typedef struct LOOKDEF
 {
-    PC_A7STR id;
+    PC_A7STR sz_id;
     EV_IDNO ev_idno;
     EV_IDNO ev_idno_function_id;
 #if !defined(EV_IDNO_U16)
@@ -1490,11 +1490,11 @@ ev_enum_resource_get_custom(
     P_EV_RESOURCE p_ev_resource)
 {
     STATUS status = STATUS_FAIL;
-    const ARRAY_INDEX custom_table_entries = array_elements(&custom_def.h_table);
+    const ARRAY_INDEX custom_table_entries = array_elements(&custom_def_deptable.h_table);
     ARRAY_INDEX custom_num;
     P_EV_CUSTOM p_ev_custom;
 
-    for(custom_num = p_ev_resource->item_no, p_ev_custom = array_ptr(&custom_def.h_table, EV_CUSTOM, custom_num);
+    for(custom_num = p_ev_resource->item_no, p_ev_custom = array_ptr(&custom_def_deptable.h_table, EV_CUSTOM, custom_num);
         custom_num < custom_table_entries;
         ++custom_num, ++p_ev_custom)
     {
@@ -1534,11 +1534,11 @@ ev_enum_resource_get_names(
     P_EV_RESOURCE p_ev_resource)
 {
     STATUS status = STATUS_FAIL;
-    const ARRAY_INDEX name_table_entries = array_elements(&name_def.h_table);
+    const ARRAY_INDEX name_table_entries = array_elements(&name_def_deptable.h_table);
     ARRAY_INDEX name_num;
     P_EV_NAME p_ev_name;
 
-    for(name_num = p_ev_resource->item_no, p_ev_name = array_ptr(&name_def.h_table, EV_NAME, name_num);
+    for(name_num = p_ev_resource->item_no, p_ev_name = array_ptr(&name_def_deptable.h_table, EV_NAME, name_num);
         name_num < name_table_entries;
         ++name_num, ++p_ev_name)
     {
@@ -1667,7 +1667,7 @@ PROC_BSEARCH_PROTO_Z(static, func_lookcomp, U8 /*UTF8Z*/, LOOKDEF)
 {
     BSEARCH_KEY_VAR_DECL(PC_U8Z, key_id);
     BSEARCH_DATUM_VAR_DECL(PC_LOOKDEF, datum);
-    PC_U8Z datum_id = datum->id;
+    PC_U8Z datum_id = datum->sz_id;
 
     return(C_stricmp(key_id, datum_id)); /* very simple comparison for operators */
 }
@@ -1679,8 +1679,8 @@ PROC_QSORT_PROTO(static, func_lookcomp_qsort, LOOKDEF)
     QSORT_ARG1_VAR_DECL(PC_LOOKDEF, lookdef_1);
     QSORT_ARG2_VAR_DECL(PC_LOOKDEF, lookdef_2);
 
-    PC_U8Z s1 = lookdef_1->id;
-    PC_U8Z s2 = lookdef_2->id;
+    PC_U8Z s1 = lookdef_1->sz_id;
+    PC_U8Z s2 = lookdef_2->sz_id;
 
     return(C_stricmp(s1, s2)); /* ditto */
 }
@@ -1697,6 +1697,43 @@ PROC_QSORT_PROTO(static, func_lookcomp_qsort, LOOKDEF)
 *
 ******************************************************************************/
 
+#if CHECKING
+
+static void
+ev_func_lookup_check(void)
+{
+    assert(elemof32(_rpn_table) == ELEMOF_RPN_TABLE);
+#if defined(EV_IDNO_U16)
+    assert(RPN_END <= U16_MAX);
+#else
+    assert(RPN_END <= U8_MAX);
+#endif
+    assert(ELEMOF_RPN_TABLE <= RPN_END); /* in fact it should be several symbols smaller */
+    {
+    EV_IDNO i;
+    for(i = 0; i < elemof32(_rpn_table); ++i)
+    {
+        assert((i == _rpn_table[i].own_did_num) || (0 == _rpn_table[i].own_did_num));
+        if(_rpn_table[i].rpn_type == RPN_FNF)
+        {
+            assert(_rpn_table[i].n_args >= 0);
+        }
+        else if(_rpn_table[i].rpn_type == RPN_FNV)
+        {
+            assert(_rpn_table[i].n_args < 0);
+        }
+        else if(_rpn_table[i].rpn_type == RPN_FN0)
+        {
+            assert(_rpn_table[i].n_args == 0);
+        }
+    }
+    }/*block*/
+
+    check_sorted(look_table, elemof(look_table) - LOOK_TABLE_EXTRA, sizeof(LOOKDEF), func_lookcomp_qsort);
+}
+
+#endif /*CHECKING*/
+
 _Check_return_
 extern S32
 ev_func_lookup(
@@ -1705,42 +1742,7 @@ ev_func_lookup(
     PC_LOOKDEF opr;
 
 #if CHECKING
-    {
-    static BOOL inited = 0;
-    if(!inited)
-    {
-        inited = 1;
-
-        assert(elemof32(_rpn_table) == ELEMOF_RPN_TABLE);
-#if defined(EV_IDNO_U16)
-        assert(RPN_END <= U16_MAX);
-#else
-        assert(RPN_END <= U8_MAX);
-#endif
-        assert(ELEMOF_RPN_TABLE <= RPN_END); /* in fact it should be several symbols smaller */
-        {
-        EV_IDNO i;
-        for(i = 0; i < elemof32(_rpn_table); ++i)
-        {
-            assert((i == _rpn_table[i].own_did_num) || (0 == _rpn_table[i].own_did_num));
-            if(_rpn_table[i].rpn_type == RPN_FNF)
-            {
-                assert(_rpn_table[i].n_args >= 0);
-            }
-            else if(_rpn_table[i].rpn_type == RPN_FNV)
-            {
-                assert(_rpn_table[i].n_args < 0);
-            }
-            else if(_rpn_table[i].rpn_type == RPN_FN0)
-            {
-                assert(_rpn_table[i].n_args == 0);
-            }
-        }
-        }/*block*/
-
-        check_sorted(look_table, elemof(look_table) - LOOK_TABLE_EXTRA, sizeof(LOOKDEF), func_lookcomp_qsort);
-    }
-    } /*block*/
+    { static bool inited = false; if(!inited) { inited = true; ev_func_lookup_check(); } } /*block*/
 #endif
 
     if(g_ss_recog_context.alternate_function_flag)
@@ -1755,7 +1757,7 @@ ev_func_lookup(
             PC_USTR ustr_id_2 = look_2->ev_idno_function_id ? resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(look_2->ev_idno_function_id)) : NULL;
 
             if(NULL == ustr_id_2)
-                ustr_id_2 = (PC_USTR) look_2->id; /* U is superset of A7 */
+                ustr_id_2 = (PC_USTR) look_2->sz_id; /* U is superset of A7 */
 
             if(ustr_compare_equals_nocase(ustr_id, ustr_id_2))
             {
@@ -1793,21 +1795,21 @@ func_name(
 
     for(i = 0, p_lookdef = look_table; i < elemof32(look_table); ++i, ++p_lookdef)
     {
-        if(p_lookdef->ev_idno == ev_idno)
+        if(p_lookdef->ev_idno != ev_idno)
+            continue;
+
+        if(g_ss_recog_context.alternate_function_flag)
         {
-            if(g_ss_recog_context.alternate_function_flag)
+            if(p_lookdef->ev_idno_function_id)
             {
-                if(p_lookdef->ev_idno_function_id)
-                {
-                    PC_USTR ustr = resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(p_lookdef->ev_idno_function_id));
+                PC_USTR ustr = resource_lookup_ustr_no_default(SS_MSG_FUNCTION_FROM_RPN(p_lookdef->ev_idno_function_id));
 
-                    if(NULL != ustr)
-                        return(ustr);
-                }
+                if(NULL != ustr)
+                    return(ustr);
             }
-
-            return((PC_USTR) p_lookdef->id); /* U is superset of A7 */
         }
+
+        return((PC_USTR) p_lookdef->sz_id); /* U is superset of A7 */
     }
 
     return(NULL);
@@ -1822,7 +1824,7 @@ func_name(
 _Check_return_
 _Ret_maybenull_z_
 extern PC_A7STR
-type_from_flags(
+type_name_from_type_flags(
     _InVal_     EV_TYPE type_flags)
 {
     U32 i;
@@ -1843,7 +1845,7 @@ type_from_flags(
 *
 ******************************************************************************/
 
-PROC_BSEARCH_PROTO_Z(static, type_lookup_compare, A7CHARZ, TYPES)
+PROC_BSEARCH_PROTO_Z(static, type_name_compare, A7CHARZ, TYPES)
 {
     BSEARCH_KEY_VAR_DECL(PC_A7STR, a7str_key_id);
     BSEARCH_DATUM_VAR_DECL(PC_TYPES, datum);
@@ -1860,12 +1862,12 @@ PROC_BSEARCH_PROTO_Z(static, type_lookup_compare, A7CHARZ, TYPES)
 
 _Check_return_
 extern EV_TYPE
-type_lookup(
+type_name_lookup(
     _In_z_      PC_USTR ustr_id)
 {
     /* although we are searching using a USTR for caller convenience, type ids are all A7STR */
     PC_TYPES p_types = (PC_TYPES)
-        bsearch(ustr_id, type_table, elemof(type_table) - TYPE_TABLE_EXTRA, sizeof(type_table[0]), type_lookup_compare);
+        bsearch(ustr_id, type_table, elemof(type_table) - TYPE_TABLE_EXTRA, sizeof(type_table[0]), type_name_compare);
 
     if(NULL == p_types)
         return(0);

@@ -9613,13 +9613,14 @@ typedef P_PROC_UREF_EVENT * P_P_PROC_UREF_EVENT;
 internal communication in uref
 */
 
-enum UREF_COMMS
+typedef enum UREF_COMMS
 {
-    DEP_DELETE, /* dependent needs deleting */
-    DEP_UPDATE, /* dependent reference needs updating */
-    DEP_INFORM, /* dependent needs informing */
-    DEP_NONE    /* no action for dependent */
-};
+    Uref_Dep_Delete,    /* dependent needs deleting */
+    Uref_Dep_Update,    /* dependent reference needs updating */
+    Uref_Dep_Inform,    /* dependent needs informing */
+    Uref_Dep_None       /* no action for dependent */
+}
+UREF_COMMS;
 
 _Check_return_
 extern STATUS
@@ -9650,19 +9651,19 @@ uref_event(
     _InVal_     UREF_MESSAGE uref_message,
     /*_Inout_*/ P_ANY p_data);
 
-extern S32 /* reason code out */
+extern UREF_COMMS /* reason code out */
 uref_match_docu_area(
     _InoutRef_  P_DOCU_AREA p_docu_area,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
-extern S32 /* reason code out */
+extern UREF_COMMS /* reason code out */
 uref_match_region(
     _InoutRef_  P_REGION p_region,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block);
 
-extern S32 /* reason code out */
+extern UREF_COMMS /* reason code out */
 uref_match_slr(
     _InoutRef_  P_SLR p_slr,
     _InVal_     UREF_MESSAGE uref_message,
@@ -9672,7 +9673,7 @@ uref_match_slr(
 
 extern void
 uref_trace_reason(
-    _InVal_     S32 reason_code,
+    _InVal_     UREF_COMMS reason_code,
     _In_z_      PCTSTR tstr);
 
 #endif
@@ -11588,10 +11589,10 @@ typedef struct SS_DOC
     ARRAY_HANDLE h_range_cols;
     ARRAY_HANDLE h_range_rows;
 
-    S32 nam_ref_count;              /* ref count of names (to this doc) */
+    S32 name_ref_count;             /* ref count of names (to this doc) */
     S32 custom_ref_count;           /* ref count of custom functions (to this doc) */
 
-    BOOL custom;                    /* document is a custom function document */
+    BOOL is_custom;                 /* document is a custom function document */
 }
 SS_DOC, * P_SS_DOC;
 
@@ -11798,16 +11799,6 @@ struct DOCU
 #define IS_VIEW_NONE(p_view)         IS_PTR_NONE_X(P_VIEW, 3, p_view)
 #define    VIEW_ASSERT(p_view) \
     assert(!IS_VIEW_NONE(p_view))
-
-_Check_return_
-_Ret_valid_
-static inline P_SS_INSTANCE_DATA
-p_object_instance_data_SS(
-    _InRef_     P_DOCU p_docu)
-{
-    P_SS_INSTANCE_DATA p_ss_instance_data = &p_docu->ss_instance_data;
-    return(p_ss_instance_data);
-}
 
 #if RISCOS
 

@@ -908,17 +908,18 @@ PROC_EXEC_PROTO(c_pages)
 PROC_EXEC_PROTO(c_set_name)
 {
     S32 res;
-    EV_HANDLE name_key, name_num;
+    EV_HANDLE name_key;
+    ARRAY_INDEX name_num;
 
     exec_func_ignore_parms();
 
     if((res = name_make(&name_key, ev_slr_docno(p_cur_slr), &args[0]->arg.string, args[1], NULL)) < 0)
         exec_func_status_return(p_ss_data_res, res);
 
-    name_num = name_def_find(name_key);
+    name_num = name_def_from_handle(name_key);
     assert(name_num >= 0);
 
-    status_assert(ss_data_resource_copy(p_ss_data_res, &array_ptr(&name_def.h_table, EV_NAME, name_num)->def_data));
+    status_assert(ss_data_resource_copy(p_ss_data_res, &array_ptr(&name_def_deptable.h_table, EV_NAME, name_num)->def_data));
 }
 
 /******************************************************************************
@@ -1017,7 +1018,7 @@ PROC_EXEC_PROTO(c_type)
         break;
     }
 
-    a7str_type = type_from_flags(type);
+    a7str_type = type_name_from_type_flags(type);
     PTR_ASSERT(a7str_type);
 
     status_assert(ss_string_make_ustr(p_ss_data_res, (PC_USTR) a7str_type)); /* U is superset of A7 */

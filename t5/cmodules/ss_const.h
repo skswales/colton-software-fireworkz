@@ -20,12 +20,6 @@
 
 #define FP_SECS_IN_24 (60.0 * 60.0 * 24.0)
 
-/* maximum size of symbol */
-#define EV_INTNAMLEN        25
-#define BUF_EV_INTNAMLEN    (EV_INTNAMLEN + 1)
-#define EV_LONGNAMLEN       (1/*[*/ + MAX_PATHSTRING/*rooted-doc*/ + 1/*]*/ + EV_MAX_RANGE_LEN + 1/*CH_NULL*/) /* was 200 */
-#define BUF_EV_LONGNAMLEN   (EV_LONGNAMLEN + 1)
-
 /* maximum size of a string value  -
 *  this is also the maximum string length
 *  of a calculated result of whatever type
@@ -684,6 +678,12 @@ ss_string_skip_internal_whitespace_uchars(
     _In_reads_(uchars_n) PC_UCHARS uchars,
     _InRef_     U32 uchars_n,
     _InVal_     U32 uchars_idx);
+
+_Check_return_
+extern U32
+ss_string_skip_trailing_whitespace_uchars(
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InRef_     U32 uchars_n);
 
 /*
 two_nums_type_match result values

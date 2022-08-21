@@ -84,13 +84,13 @@ PROC_EXEC_PROTO(c_db)
 
     exec_func_ignore_parms();
 
-    if( cost < 0.0     ||
-        salvage < 0.0  ||
-        salvage > cost ||
-        life < 1       ||
-        month < 1.0    ||
-        month > 12.0   ||
-        period < 1     ||
+    if( cost < 0.0      ||
+        salvage < 0.0   ||
+        salvage > cost  ||
+        life < 1        ||
+        month < 1.0     ||
+        month > 12.0    ||
+        period < 1      ||
         (period > life + (12.0 != month)) )
     {
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
@@ -153,12 +153,12 @@ PROC_EXEC_PROTO(c_ddb)
 
     exec_func_ignore_parms();
 
-    if( cost < 0.0     ||
-        salvage < 0.0  ||
-        salvage > cost ||
-        life < 1.0     ||
-        period < 1.0   ||
-        period > life  )
+    if( cost < 0.0      ||
+        salvage < 0.0   ||
+        salvage > cost  ||
+        life < 1.0      ||
+        period < 1.0    ||
+        period > life   )
     {
         exec_func_status_return(p_ss_data_res, EVAL_ERR_ARGRANGE);
     }

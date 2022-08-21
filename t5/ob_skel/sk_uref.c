@@ -37,7 +37,7 @@ case T5_MSG_CLOSE2:
 *
 * the uref helper routines in here are configured for
 * updating dependent references (i.e. refto, not refby) - thus
-* a Uref_Msg_Overwrite will never generate a DEP_DELETE even
+* a Uref_Msg_Overwrite will never generate a Uref_Dep_Delete even
 * if the entire range / cell is spanned, since the dependent is
 * not deleted; Old ev_uref muddled the by/to cases for deleting
 * references contained by a REPLACEd area; an extra flag or
@@ -114,7 +114,7 @@ enum START_END_FLAGS
     REGION_BR
 };
 
-static S32 /* reason code out */
+static UREF_COMMS /* reason code out */
 uref_region_ends(
     _InoutRef_  P_REGION p_region,
     _InVal_     enum START_END_FLAGS start_end_flags,
@@ -123,7 +123,7 @@ uref_region_ends(
     _InVal_     BOOL add_col,
     _InVal_     BOOL add_row)
 {
-    S32 res = DEP_NONE;
+    UREF_COMMS res = Uref_Dep_None;
     P_SLR p_slr;
 
     switch(start_end_flags)
@@ -141,45 +141,46 @@ uref_region_ends(
             p_slr->row -= 1;
         break;
 
-    default: default_unhandled(); return(DEP_NONE);
+    default: default_unhandled();
+        return(Uref_Dep_None);
     }
 
     switch(uref_message)
     {
     case Uref_Msg_Uref:
-        if((p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
-           &&
-           (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)))
+        if( (p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
+            &&
+            (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)) )
         {
             if(!p_region->whole_row)
             {
                 p_slr->col += p_uref_parms->target.slr.col;
                 p_slr->col = MAX(0, p_slr->col);
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
 
             if(!p_region->whole_col)
             {
                 p_slr->row += p_uref_parms->target.slr.row;
                 p_slr->row = MAX(0, p_slr->row);
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
         }
         break;
 
     case Uref_Msg_Delete:
-        if((p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
-           &&
-           (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)))
-             res = DEP_DELETE;
+        if( (p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
+            &&
+            (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)) )
+            res = Uref_Dep_Delete;
          break;
 
     case Uref_Msg_Overwrite:
     case Uref_Msg_Change:
-         if((p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
-           &&
-           (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)))
-             res = DEP_INFORM;
+         if( (p_region->whole_col || row_in_region(&p_uref_parms->source.region, p_slr->row))
+             &&
+             (p_region->whole_row || col_in_region(&p_uref_parms->source.region, p_slr->col)) )
+             res = Uref_Dep_Inform;
          break;
 
     case Uref_Msg_Swap_Rows:
@@ -188,19 +189,19 @@ uref_region_ends(
             if(p_slr->row == p_uref_parms->source.region.tl.row)
             {
                 p_slr->row = p_uref_parms->source.region.br.row;
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
             else if(p_slr->row == p_uref_parms->source.region.br.row)
             {
                 p_slr->row = p_uref_parms->source.region.tl.row;
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
         }
         break;
 
     case Uref_Msg_CLOSE1:
     case Uref_Msg_CLOSE2:
-        res = DEP_DELETE;
+        res = Uref_Dep_Delete;
         break;
 
     default: default_unhandled();
@@ -433,7 +434,7 @@ uref_event(
             if((uref_event_block.reason.code =
                     UBF_PACK(uref_match_region(&p_uref_entry->uref_id.region,
                                                uref_message,
-                                               &uref_event_block))) != DEP_NONE)
+                                               &uref_event_block))) != Uref_Dep_None)
             {
                 uref_event_block.uref_id = p_uref_entry->uref_id;
                 (*p_uref_entry->p_proc_uref_event)(p_docu, uref_message, &uref_event_block);
@@ -458,20 +459,20 @@ uref_event(
 *
 ******************************************************************************/
 
-extern S32 /* reason code out */
+extern UREF_COMMS /* reason code out */
 uref_match_region(
     _InoutRef_  P_REGION p_region,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
-    S32 res = DEP_NONE;
+    UREF_COMMS res = Uref_Dep_None;
 
     switch(uref_message)
     {
     case Uref_Msg_Uref:
         {
         BOOL colspan, rowspan, do_uref = 0;
-        S32 res_s = DEP_NONE, res_e = DEP_NONE;
+        UREF_COMMS res_s = Uref_Dep_None, res_e = Uref_Dep_None;
         BOOL add_col = FALSE, add_row = FALSE;
 
         region_span(&colspan, &rowspan, p_region, &p_uref_event_block->uref_parms.source.region);
@@ -503,17 +504,17 @@ uref_match_region(
             res_e = uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, add_col, add_row);
         }
 
-        if(res_s == DEP_DELETE || res_e == DEP_DELETE)
-            res = DEP_DELETE;
-        else if(res_s == DEP_UPDATE || res_e == DEP_UPDATE)
+        if(res_s == Uref_Dep_Delete || res_e == Uref_Dep_Delete)
+            res = Uref_Dep_Delete;
+        else if(res_s == Uref_Dep_Update || res_e == Uref_Dep_Update)
         {
             if(region_empty(p_region))
-                res = DEP_DELETE;
+                res = Uref_Dep_Delete;
             else
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
         }
         else if(region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region))
-            res = DEP_INFORM;
+            res = Uref_Dep_Inform;
         break;
         }
 
@@ -525,41 +526,41 @@ uref_match_region(
 
         /* range completely deleted ? */
         if(colspan && rowspan)
-            res = DEP_DELETE;
+            res = Uref_Dep_Delete;
         else if(colspan && !p_region->whole_col)
         {
             /* lop off some rows of the dependency */
-            if(uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            if(Uref_Dep_Delete == uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE))
             {
                 p_region->tl.row = p_uref_event_block->uref_parms.source.region.br.row;
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
-            else if(uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            else if(Uref_Dep_Delete == uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE))
             {
                 p_region->br.row = p_uref_event_block->uref_parms.source.region.tl.row;
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
         }
         else if(rowspan && !p_region->whole_row)
         {
             /* lop off some columns of the dependency */
-            if(uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            if(Uref_Dep_Delete == uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE))
             {
                 p_region->tl.col = p_uref_event_block->uref_parms.source.region.br.col;
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
-            else if(uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE) == DEP_DELETE)
+            else if(Uref_Dep_Delete == uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE))
             {
                 p_region->br.col = p_uref_event_block->uref_parms.source.region.tl.col;
-                res = DEP_UPDATE;
+                res = Uref_Dep_Update;
             }
         }
 
         /* if the area affected and the range intersect
          * at all, then the dependents must be told
          */
-        if(res == DEP_NONE && region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region))
-            res = DEP_INFORM;
+        if(res == Uref_Dep_None && region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region))
+            res = Uref_Dep_Inform;
         break;
         }
 
@@ -567,7 +568,7 @@ uref_match_region(
     case Uref_Msg_Overwrite:
     case Uref_Msg_Change:
         if(region_intersect_region(p_region, &p_uref_event_block->uref_parms.source.region))
-            res = DEP_INFORM;
+            res = Uref_Dep_Inform;
         break;
 
     case Uref_Msg_Swap_Rows:
@@ -590,18 +591,18 @@ uref_match_region(
         {
             uref_region_ends(p_region, REGION_TL, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
             uref_region_ends(p_region, REGION_BR, uref_message, &p_uref_event_block->uref_parms, FALSE, FALSE);
-            res = DEP_UPDATE;
+            res = Uref_Dep_Update;
         }
         else if(region_intersect_region(p_region, &region_1))
-            res = DEP_INFORM;
+            res = Uref_Dep_Inform;
         else if(region_intersect_region(p_region, &region_2))
-            res = DEP_INFORM;
+            res = Uref_Dep_Inform;
         break;
         }
 
     case Uref_Msg_CLOSE1:
     case Uref_Msg_CLOSE2:
-        res = DEP_DELETE;
+        res = Uref_Dep_Delete;
         break;
 
     default: default_unhandled();
@@ -617,20 +618,22 @@ uref_match_region(
 *
 ******************************************************************************/
 
-extern S32 /* reason code out */
+extern UREF_COMMS /* reason code out */
 uref_match_docu_area(
     _InoutRef_  P_DOCU_AREA p_docu_area,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     REGION region;
-    S32 res;
+    UREF_COMMS res;
 
     region_from_docu_area_max(&region, p_docu_area);
 
     trace_0(TRACE_APP_UREF, TEXT("uref_match_docu_area 0"));
 
-    if((res = uref_match_region(&region, uref_message, p_uref_event_block)) != DEP_NONE)
+    res = uref_match_region(&region, uref_message, p_uref_event_block);
+
+    if(Uref_Dep_None != res)
     {
         p_docu_area->tl.slr = region.tl;
         p_docu_area->br.slr = region.br;
@@ -645,14 +648,14 @@ uref_match_docu_area(
 *
 ******************************************************************************/
 
-extern S32 /* reason code out */
+extern UREF_COMMS /* reason code out */
 uref_match_slr(
     _InoutRef_  P_SLR p_slr,
     _InVal_     UREF_MESSAGE uref_message,
     P_UREF_EVENT_BLOCK p_uref_event_block)
 {
     REGION region;
-    S32 res;
+    UREF_COMMS res;
 
     region_from_two_slrs(&region, p_slr, p_slr, FALSE);
 
@@ -673,89 +676,16 @@ uref_match_slr(
 
 extern void
 uref_trace_reason(
-    _InVal_     S32 reason_code,
+    _InVal_     UREF_COMMS reason_code,
     _In_z_      PCTSTR tstr)
 {
     switch(reason_code)
     {
-    case DEP_DELETE: trace_1(TRACE_APP_UREF, TEXT("%s UREF DEP_DELETE"), tstr); break;
-    case DEP_UPDATE: trace_1(TRACE_APP_UREF, TEXT("%s UREF DEP_UPDATE"), tstr); break;
-    case DEP_INFORM: trace_1(TRACE_APP_UREF, TEXT("%s UREF DEP_INFORM"), tstr); break;
-    case DEP_NONE:   trace_1(TRACE_APP_UREF, TEXT("%s UREF DEP_NONE"), tstr); break;
+    case Uref_Dep_Delete: trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_Delete"), tstr); break;
+    case Uref_Dep_Update: trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_Update"), tstr); break;
+    case Uref_Dep_Inform: trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_Inform"), tstr); break;
+    case Uref_Dep_None:   trace_1(TRACE_APP_UREF, TEXT("%s Uref_Dep_None"), tstr); break;
     }
-}
-
-#endif
-
-/*
-old swap cell code
-*/
-
-#if 0
-
-/*
-from uref_region_ends
-*/
-
-case T5_MSG_UREF_SWAPSLOT:
-    if(slr_equal(ref, &p_uref_parms->source.region.tl))
-        res = uref_swapslot(ref, &p_uref_parms->source.region.br);
-    else if(slr_equal(ref, &p_uref_parms->source.region.br))
-        res = uref_swapslot(ref, &p_uref_parms->source.region.tl);
-    break;
-
-/*
-from uref_match_region
-*/
-
-        /* (range may be a cell after all) */
-        case T5_MSG_UREF_SWAPSLOT:
-            if(!(p_region->tl.flags & SLR_ALL_REF))
-            {
-                /* check if the whole range can be moved */
-                if(p_region->br.col == p_region->tl.col + 1 &&
-                   p_region->br.row == p_region->tl.row + 1)
-                {
-                    if(slr_equal(&p_region->s, &p_uref_event_block->uref_parms.slr_source1))
-                    {
-                        p_region->s = p_uref_event_block->uref_parms.slr_source2;
-                        res = DEP_UPDATE;
-                    }
-                    else if(slr_equal(&p_region->s, &p_uref_event_block->uref_parms.slr_source2))
-                    {
-                        p_region->s = p_uref_event_block->uref_parms.slr_source1;
-                        res = DEP_UPDATE;
-                    }
-
-                    if(res == DEP_UPDATE)
-                    {
-                        p_region->e = p_region->s;
-                        p_region->br.col += 1;
-                        p_region->br.row += 1;
-                    }
-                }
-            }
-
-            /* tell people who have ranges affected */
-            if(res != DEP_UPDATE &&
-               (slr_in_range(p_region, &p_uref_event_block->uref_parms.slr_source1) ||
-                slr_in_range(p_region, &p_uref_event_block->uref_parms.slr_source2)))
-                res = DEP_INFORM;
-            break;
-
-/******************************************************************************
-*
-* update reference when cells are swapped
-*
-******************************************************************************/
-
-static int
-uref_swapslot(
-    ev_slrp ref,
-    ev_slrp slrp)
-{
-    *ref = *slrp;
-    return(DEP_UPDATE);
 }
 
 #endif

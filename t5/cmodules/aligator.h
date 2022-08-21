@@ -183,7 +183,7 @@ typedef struct ARRAY_BLOCK
 {
     /* private to aligator - export only for macros */
     P_BYTE              p_data;
-    ARRAY_INDEX         free;
+    ARRAY_INDEX         used_elements;
     ARRAY_INDEX         size;
     ARRAY_BLOCK_PARMS   parms;
 
@@ -219,7 +219,7 @@ typedef struct ARRAY_ROOT_BLOCK
 {
     /* private to aligator - export only for macros */
     PC_ARRAY_BLOCK      p_array_block; /* NB const makes for safer access outside of aligator */
-    U32                 free;
+    U32                 used_handles; /* same as 'used_elements' in ARRAY_BLOCK */
     U32                 size;
     ARRAY_BLOCK_PARMS   parms;
 
@@ -251,7 +251,7 @@ functions as macros
 
 /* return number of used elements in array */
 #define array_elements_no_checks(pc_array_handle) ( \
-    array_blockc_no_checks(pc_array_handle)->free )
+    array_blockc_no_checks(pc_array_handle)->used_elements )
 
 /* return number of used elements in array (unsigned 32-bit) */
 #define array_elements32_no_checks(pc_array_handle) \
@@ -401,11 +401,11 @@ array_range_bytes_check(
 
 /* return number of used elements in array */
 #define array_elements(pc_array_handle) ( \
-    array_blockc(pc_array_handle)->free )
+    array_blockc(pc_array_handle)->used_elements )
 
 /* return number of used elements in array (unsigned 32-bit) */
 #define array_elements32(pc_array_handle) ( \
-    (U32) array_blockc(pc_array_handle)->free )
+    (U32) array_blockc(pc_array_handle)->used_elements )
 
 /* return pointer to array element - NB. pc_array_handle must point to a valid handle */
 #define array_ptr(pc_array_handle, __base_type, ele_index) ( \
@@ -441,7 +441,7 @@ array_range_bytes_check(
 
 /* return whether given array handle is valid (NB doesn't check for handle zero) */
 #define array_handle_is_valid(pc_array_handle) ( \
-    (U32) *(pc_array_handle) < array_root.free )
+    (U32) *(pc_array_handle) < array_root.used_handles )
 
 /* return whether given index is valid in array */
 #define array_index_is_valid(pc_array_handle, ele_index) ( \

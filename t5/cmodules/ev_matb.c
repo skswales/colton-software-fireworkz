@@ -118,7 +118,7 @@ from_base_decode_real(
 _Check_return_
 static STATUS
 from_base_decode_string(
-    _InoutRef_  P_SS_DATA p_ev_data_res,
+    _InoutRef_  P_SS_DATA p_ss_data_res,
     _In_reads_(uchars_n) PC_UCHARS uchars,
     _InVal_     U32 uchars_n,
     _InVal_     U32 radix,
@@ -194,13 +194,13 @@ from_base_decode_string(
     }
 
     if(buf_idx == initial_buf_idx) /* nothing read? */
-        return(ss_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NUM));
+        return(ss_data_set_error(p_ss_data_res, EVAL_ERR_ODF_NUM));
 
     wss = ss_string_skip_internal_whitespace_uchars(uchars, uchars_n, buf_idx);
     buf_idx += wss;
 
     if(buf_idx < uchars_n) /* trailing garbage? */
-        return(ss_data_set_error(p_ev_data_res, EVAL_ERR_ODF_NUM));
+        return(ss_data_set_error(p_ss_data_res, EVAL_ERR_ODF_NUM));
 
     *p_f64 = f64;
 
