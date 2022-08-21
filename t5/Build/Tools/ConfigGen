@@ -177,7 +177,9 @@ PROCco(f%,"ObjectBindSaver:33"+asp$+"0xFFF"+FNwindows("")): REM CF_TEXT doesn't 
 PROCco(f%,"ObjectBindSaver:35"+asp$+"0xDFE"+FNwindows(asp$+"Csv"))
 PROCco(f%,"ObjectBindSaver:40"+asp$+"0xDB0"+FNwindows(asp$+"Wk1"))
 PROCco(f%,"ObjectBindSaver:41"+asp$+"0xC32"+FNwindows("")): REM RTF still poor - don't use clipboard "+asp$+"Rich Text Format
+IF is_y% OR windows% THEN
 PROCco(f%,"ObjectBindSaver:42"+asp$+"0xBA6"+FNwindows(+asp$+"Biff5"))
+ENDIF
 :
 IF windows% THEN
 PROCbind_file_type(f%,"1"+asp$+"0"+asp$+"All files","*.*","*.*")
@@ -190,7 +192,11 @@ PROCbind_file_type(f%,"3"+asp$+"0xFFF"+asp$+"Plain text","*.txt","*.txt")
 PROCbind_file_type(f%,"3"+asp$+"0xDFE"+asp$+"Comma separated values","*.csv","*.csv")
 PROCbind_file_type(f%,"1"+asp$+"0xDDE"+asp$+colton_prefix$+"PipeDream","*.pd","*.pd")
 PROCbind_file_type(f%,"3"+asp$+"0xC32"+asp$+"Rich text format","*.rtf","*.rtf")
+IF is_y% OR windows% THEN
 PROCbind_file_type(f%,"3"+asp$+"0xBA6"+asp$+"Microsoft Excel","*.xls","*.xls")
+ELSE
+PROCbind_file_type(f%,"1"+asp$+"0xBA6"+asp$+"Microsoft Excel","*.xls","*.xls")
+ENDIF
 PROCbind_file_type(f%,"3"+asp$+"0xDB0"+asp$+"Lotus 1-2-3","*.wks,*.wk1,*.wk3","*.wks"+semico$+"*.wk1"+semico$+"*.wk3")
 PROCbind_file_type(f%,"13"+asp$+"0x69C"+asp$+"Windows Bitmap","*.bmp,*.dib","*.bmp"+semico$+"*.dib")
 PROCbind_file_type(f%,"13"+asp$+"0xAFF"+asp$+"Acorn Draw","*.aff","*.aff")

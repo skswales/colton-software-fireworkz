@@ -106,6 +106,64 @@ inline_array_from_data(
     return(status);
 }
 
+#if !defined(IL_OFF_COUNT_B)
+
+/* return number of bytes in an in-line sequence (or character) going backwards from given offset */
+
+_Check_return_
+extern S32
+inline_b_bytecount_off(
+    _In_reads_(offset) PC_UCHARS_INLINE uchars,
+    _InVal_     U32 offset)
+{
+    if(is_inline_b_off(uchars, offset))
+    {   /* there is an end inline byte at (the byte before) offset
+         * start looking for its matching start inline byte a minimum inline length away (backwards)
+         */
+        U32 test_offset = offset - (INLINE_OVH - 1);
+        S32 found_bytecount = -1;
+
+        for(;;)
+        {
+            S32 bytecount;
+
+            if(0 == test_offset)
+                break; /* ran out of string to test */
+
+            --test_offset;
+
+            bytecount = (S32) (offset - test_offset);
+
+            if(bytecount >= 256) /* inlines are limited in length */
+                break;
+
+            if(!is_inline_off(uchars, test_offset))
+                continue;
+
+            if(inline_bytecount_off(uchars, test_offset) != bytecount)
+                continue;
+
+            /* this start inline matched up with the initial end inline */
+            found_bytecount = bytecount;
+
+            /* but keep searching backwards on the off chance that we may have just hit the right pattern in the inline sequence header or payload */
+            continue;
+        }
+
+        if(found_bytecount < 0)
+        {
+            assert0(); /* no matching start inline byte found within plausible span */
+            return(1); /* can only reverse over this byte */
+        }
+
+        return(found_bytecount);
+    }
+
+    return(uchars_bytes_prev_of_char_NS(uchars_AddBytes(uchars, offset)));
+}
+
+#endif /* IL_OFF_COUNT_B */
+
 /******************************************************************************
 *
 * make an inline from an array of data
@@ -167,7 +225,9 @@ inline_uchars_buf_from_data(
         memcpy32(inline_data_ptr(P_BYTE, uchars_inline), p_data, data_size);
     }
 
+#if defined(IL_OFF_COUNT_B)
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_COUNT_B, (BYTE) inline_size);
+#endif
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_LEAD_B,  CH_INLINE);
 
     return(inline_size);
@@ -202,7 +262,9 @@ inline_quick_ublock_from_code(
 
     /* no payload */
 
+#if defined(IL_OFF_COUNT_B)
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_COUNT_B, (BYTE) inline_size);
+#endif
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_LEAD_B,  CH_INLINE);
 
     return((S32) inline_size);
@@ -263,7 +325,9 @@ inline_quick_ublock_from_data(
         memcpy32(inline_data_ptr(P_BYTE, uchars_inline), p_data, data_size);
     }
 
+#if defined(IL_OFF_COUNT_B)
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_COUNT_B, (BYTE) inline_size);
+#endif
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_LEAD_B,  CH_INLINE);
 
     return(inline_size);
@@ -338,7 +402,9 @@ inline_quick_ublock_from_multiple_data(
     }
     } /*block*/
 
+#if defined(IL_OFF_COUNT_B)
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_COUNT_B, (BYTE) inline_size);
+#endif
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_LEAD_B,  CH_INLINE);
 
     return(inline_size);
@@ -386,7 +452,9 @@ inline_quick_ublock_from_ustr(
 
     memcpy32(inline_data_ptr(P_BYTE, uchars_inline), ustr, data_size);
 
+#if defined(IL_OFF_COUNT_B)
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_COUNT_B, (BYTE) inline_size);
+#endif
     PtrPutByteOff(uchars_inline, inline_size - IL_OFF_LEAD_B,  CH_INLINE);
 
     return((S32) inline_size);

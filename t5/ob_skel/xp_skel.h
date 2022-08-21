@@ -4037,14 +4037,22 @@ inline.c
 
 /* in-line identifier code is CH_INLINE */
 
-#define IL_OFF_LEAD  0
-#define IL_OFF_NULL  1  /* opportunity for much faster scanning of strings with inlines */
-#define IL_OFF_COUNT 2  /* offsets - to count */
-#define IL_OFF_CODE  3
-#define IL_OFF_TYPE  4
-#define IL_OFF_DATA  5
+#define IL_OFF_LEAD     0
+#define IL_OFF_NULL     1  /* opportunity for much faster scanning of strings with inlines */
+#define IL_OFF_COUNT    2  /* offsets - to count */
+#define IL_OFF_CODE     3
+#define IL_OFF_TYPE     4
+#define IL_OFF_DATA     5
 
-#define INLINE_SOVH 5U  /* leadin, zero, count, code, type */
+#define INLINE_SOVH     5U  /* leadin, zero, count, code, type */
+
+/*
+backwards methods look for a sequence *before* the current position, hence non-zero IL_OFF_LEADB
+*/
+
+#define IL_OFF_LEAD_B   1
+
+#define INLINE_EOVH     1U  /* count, leadout */
 
 #else
 
@@ -4059,15 +4067,13 @@ inline.c
 
 /* in-line identifier code is CH_INLINE */
 
-#define IL_OFF_LEAD  0
-#define IL_OFF_COUNT 1  /* offsets - to count */
-#define IL_OFF_CODE  2
-#define IL_OFF_TYPE  3
-#define IL_OFF_DATA  4
+#define IL_OFF_LEAD     0
+#define IL_OFF_COUNT    1  /* offsets - to count */
+#define IL_OFF_CODE     2
+#define IL_OFF_TYPE     3
+#define IL_OFF_DATA     4
 
-#define INLINE_SOVH 4U  /* leadin, count, code, type */
-
-#endif
+#define INLINE_SOVH     4U  /* leadin, count, code, type */
 
 /*
 backwards methods look for a sequence *before* the current position, hence non-zero IL_OFF_LEADB
@@ -4076,7 +4082,9 @@ backwards methods look for a sequence *before* the current position, hence non-z
 #define IL_OFF_COUNT_B  2
 #define IL_OFF_LEAD_B   1
 
-#define INLINE_EOVH 2U  /* count, leadout */
+#define INLINE_EOVH     2U  /* count, leadout */
+
+#endif
 
 #define INLINE_OVH (INLINE_SOVH + INLINE_EOVH)
 
@@ -4167,11 +4175,23 @@ backwards methods
 #define inline_b_bytecount(ptr) ( \
     inline_b_bytecount_off(ptr, 0) )
 
+#if defined(IL_OFF_COUNT_B)
+
 /* return number of bytes in an in-line sequence (or character) going backwards from given offset */
 #define inline_b_bytecount_off(ptr, off) ( \
     is_inline_b_off(ptr, off) \
         ? (S32) PtrGetByteOff(ptr, (off) - IL_OFF_COUNT_B) \
         : uchars_bytes_prev_of_char_NS(uchars_AddBytes(ptr, off)) )
+
+#else /* !IL_OFF_COUNT_B */
+
+_Check_return_
+extern S32
+inline_b_bytecount_off(
+    _In_reads_(offset) PC_UCHARS_INLINE uchars,
+    _InVal_     U32 offset);
+
+#endif /* IL_OFF_COUNT_B */
 
 /* inline codes */
 

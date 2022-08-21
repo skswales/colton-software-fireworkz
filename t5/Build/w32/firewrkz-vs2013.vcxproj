@@ -4137,8 +4137,10 @@
     <None Include="..\..\..\docs\RiscPkg\Copyright" />
     <None Include="..\..\..\docs\RiscPkg\LICENSE" />
     <None Include="..\..\..\fprowrkz\fprowrkz\RelNotes.htm" />
+    <None Include="..\..\common\mf_mid" />
     <None Include="..\..\firewrkz\resource\windows\uk\res00.rci" />
     <None Include="..\..\Build\w32\OUT\firewrkz.iss" />
+    <None Include="..\..\firewrkz\r\RiscPkg\Control" />
     <None Include="..\..\firewrkz\w32\Disc1-32.src\RelNotes.htm">
       <DeploymentContent>true</DeploymentContent>
       <SubType>Designer</SubType>

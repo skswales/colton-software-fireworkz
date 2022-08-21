@@ -8,8 +8,8 @@
 // Copyright (C) 1998-2015 R W Colton
 
 /*#define VER_FILEVERSION            2,xx,y,0*/
-#define VER_FILEVERSION              2,00,1,0
-#define VER_FILEVERSION_STR         "2.00.01\0"
+#define VER_FILEVERSION              2,00,2,0
+#define VER_FILEVERSION_STR         "2.00.02\0"
 /*#define VER_FILEVERSION_STR       "2.xx\0"*/
 /*#define VER_FILEVERSION_STR       "2.xx.yy\0"*/
 
