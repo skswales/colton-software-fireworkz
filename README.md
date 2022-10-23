@@ -1,5 +1,7 @@
 # colton-software-fireworkz
-Colton Software's Fireworkz - an integrated word processor and spreadsheet for RISC OS and Windows
+** Fireworkz from Colton Software **
+
+An integrated word processor and spreadsheet for RISC OS and Windows.
 
 Please see the appropriate ReadMe (for RISC OS or Windows) in the t5/Build directory.
 
